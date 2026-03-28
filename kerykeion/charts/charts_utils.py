@@ -268,6 +268,15 @@ _DOUBLE_CHART_TYPES: tuple[ChartType, ...] = ("Synastry", "Transit", "DualReturn
 #: Width in pixels of each column in the planet grid.
 _GRID_COLUMN_WIDTH: int = 125
 
+#: Width in pixels of each column in the Gauquelin unified grid.
+_GAUQUELIN_COLUMN_WIDTH: int = 220
+
+#: Maximum rows per column in the Gauquelin unified grid.
+_GAUQUELIN_MAX_ROWS: int = 18
+
+#: Gauquelin plus zones — sectors near the four angles with enhanced statistical significance.
+_GAUQUELIN_PLUS_ZONES: frozenset[int] = frozenset({36, 1, 9, 10, 18, 19, 27, 28})
+
 
 def _select_planet_grid_thresholds(chart_type: ChartType, num_points: int = 0) -> tuple[int, int, int]:
     """
@@ -1391,26 +1400,75 @@ def draw_secondary_house_grid(
     return svg_output
 
 
-def draw_gauquelin_sector_grid(
+def _gauquelin_grid_thresholds(n: int) -> tuple[int, int, int]:
+    """Return column thresholds for the Gauquelin unified grid.
+
+    Uses balanced distribution across columns, with a maximum of
+    ``_GAUQUELIN_MAX_ROWS`` rows per column.
+
+    Args:
+        n: Total number of Gauquelin points.
+
+    Returns:
+        Tuple of (second, third, fourth) column thresholds.
+    """
+    if n <= _GAUQUELIN_MAX_ROWS:
+        return (_GAUQUELIN_MAX_ROWS, _GAUQUELIN_MAX_ROWS * 2, _GAUQUELIN_MAX_ROWS * 3)
+    num_cols = min(4, max(1, math.ceil(n / _GAUQUELIN_MAX_ROWS)))
+    rows_per_col = math.ceil(n / num_cols)
+    return (rows_per_col, rows_per_col * 2, rows_per_col * 3)
+
+
+def _gauquelin_grid_layout_position(index: int, thresholds: tuple[int, int, int]) -> tuple[int, int]:
+    """Calculate grid position for a point in the Gauquelin unified grid.
+
+    Args:
+        index: Zero-based index of the point.
+        thresholds: Column thresholds from ``_gauquelin_grid_thresholds``.
+
+    Returns:
+        Tuple of (horizontal_offset, row_index).
+    """
+    t2, t3, t4 = thresholds
+    if index < t2:
+        col, row = 0, index
+    elif index < t3:
+        col, row = 1, index - t2
+    elif index < t4:
+        col, row = 2, index - t3
+    else:
+        col, row = 3, index - t4
+    offset = -(_GAUQUELIN_COLUMN_WIDTH * col)
+    return offset, row
+
+
+def draw_gauquelin_unified_grid(
     celestial_points: list,
     text_color: str = "#000000",
-    x_position: int = 750,
-    y_position: int = 30,
+    x_position: int = 645,
+    y_position: int = 0,
+    celestial_point_language: Optional["KerykeionLanguageCelestialPointModel"] = None,
+    plus_zone_color: str = "var(--kerykeion-color-warning, #e6a817)",
 ) -> str:
-    """Compact sector grid in the house-cusp area when Gauquelin is active.
+    """Unified Gauquelin table replacing both planet grid and house cusp grid.
 
-    Shows planet name + sector number. Fits in the same ~140px × 180px
-    area as the 12-cusp grid. Uses adaptive row height based on count.
-    Plus-zone sectors (near angles: 36,1,9,10,18,19,27,28) are highlighted.
+    Renders a single table showing for each celestial point:
+    Name | Sign Glyph | Longitude | R | Declination | Sector
+
+    Supports multi-column layout for >18 points (columns extend leftward,
+    using the same pattern as the standard planet grid). Sector values in
+    "plus zones" (36, 1, 9, 10, 18, 19, 27, 28) are highlighted.
 
     Args:
         celestial_points: All active KerykeionPointModel instances.
         text_color: Default text fill color.
-        x_position: SVG X offset (house grid position).
-        y_position: SVG Y offset.
+        x_position: SVG X offset for the table.
+        y_position: SVG Y offset for the table.
+        celestial_point_language: Language model for localized point names.
+        plus_zone_color: Color for plus-zone sector highlighting.
 
     Returns:
-        SVG string replacing the house cusp grid.
+        SVG string with the unified Gauquelin table.
     """
     gauq_points = [
         p for p in celestial_points
@@ -1419,224 +1477,128 @@ def draw_gauquelin_sector_grid(
     if not gauq_points:
         return ""
 
-    _ABBREV = {
-        "True_North_Lunar_Node": "N.Node",
-        "True_South_Lunar_Node": "S.Node",
-        "Mean_North_Lunar_Node": "MN.Node",
-        "Mean_South_Lunar_Node": "MS.Node",
-        "Mean_Lilith": "Lilith",
-        "True_Lilith": "Lilith(T)",
-        "Deneb_Algedi": "D.Algedi",
-        "Pars_Fortunae": "Fortune",
-        "Pars_Spiritus": "Spirit",
-        "Pars_Amoris": "P.Amoris",
-        "Pars_Fidei": "P.Fidei",
-        "Anti_Vertex": "AntiVtx",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "IC",
-    }
-    _PLUS_ZONES = {36, 1, 9, 10, 18, 19, 27, 28}
-    plus_color = "var(--kerykeion-color-warning, #e6a817)"
-
-    n = len(gauq_points)
-    max_height = 168  # Same as 12 cusps (12 * 14)
-
-    # Adaptive: single column if fits, two columns otherwise
-    if n <= 14:
-        row_h = min(14, max_height // max(n, 1))
-        fs = 10
-        cols = 1
-        col_w = 0
-    else:
-        cols = 2
-        rows_per_col = (n + 1) // 2
-        row_h = min(12, max(7, max_height // rows_per_col))
-        fs = 8
-        col_w = 70
-
-    svg = f'<g transform="translate({x_position},{y_position})">'
-
-    for i, point in enumerate(gauq_points):
-        if cols == 2:
-            col = i // ((n + 1) // 2)
-            row = i % ((n + 1) // 2)
-        else:
-            col = 0
-            row = i
-
-        x_off = col * col_w
-        y_off = 10 + row * row_h
-        name = _ABBREV.get(point.name, point.name)
-        if len(name) > 8:
-            name = name[:8]
-
-        sector = point.gauquelin_sector
-        sec_int = int(sector)
-        is_plus = sec_int in _PLUS_ZONES
-        sec_color = plus_color if is_plus else text_color
-        sec_weight = "bold" if is_plus else "normal"
-
-        # Format: "Name  ♊  s19.13"
-        svg += (
-            f'<g transform="translate({x_off},{y_off})">'
-            f'<text text-anchor="end" x="32" style="fill:{text_color}; font-size:{fs}px;">{name}</text>'
-            f'<g transform="translate(33,-{int(fs * 0.7)})"><use transform="scale(0.25)" xlink:href="#{point.sign}" /></g>'
-            f'<text text-anchor="end" x="{col_w if cols == 2 else 65}" '
-            f'style="fill:{sec_color}; font-size:{fs}px; font-weight:{sec_weight};">'
-            f'{sector:.1f}</text>'
-            f'</g>'
-        )
-
-    svg += "</g>"
-    return svg
-
-
-def draw_gauquelin_combined_table(
-    celestial_points: list,
-    text_color: str = "#000000",
-    x_position: int = 0,
-    y_position: int = 30,
-    plus_zone_color: str = "var(--kerykeion-color-warning, #e6a817)",
-) -> str:
-    """Unified Gauquelin table: Planet | Sign Longitude | Declination | Sector.
-
-    Replaces both the planet grid and the house cusp grid when Gauquelin
-    mode is active. Produces a single table with all the data needed for
-    Gauquelin sector analysis.
-
-    Sector values in "plus zones" (sectors 36, 1, 9, 10, 18, 19, 27, 28
-    — the zones near the four angles) are highlighted in a different color.
-
-    Args:
-        celestial_points: All KerykeionPointModel instances for the chart.
-        text_color: Default text fill color.
-        x_position: SVG X offset for the entire table.
-        y_position: SVG Y offset for the entire table.
-        plus_zone_color: Color for highlighting "plus zone" sector values.
-
-    Returns:
-        SVG string with the unified table.
-    """
-    gauq_points = [
-        p for p in celestial_points
-        if hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
-    ]
-    if not gauq_points:
-        return ""
-
-    _ABBREV = {
-        "True_North_Lunar_Node": "N. Node (T)",
-        "True_South_Lunar_Node": "S. Node (T)",
-        "Mean_North_Lunar_Node": "N. Node (M)",
-        "Mean_South_Lunar_Node": "S. Node (M)",
-        "Mean_Lilith": "Lilith",
-        "True_Lilith": "Lilith (T)",
-        "Deneb_Algedi": "Deneb Alg.",
-        "Pars_Fortunae": "P. Fortune",
-        "Pars_Spiritus": "P. Spirit",
-        "Pars_Amoris": "P. Amoris",
-        "Pars_Fidei": "P. Fidei",
-        "Anti_Vertex": "Anti-Vertex",
-        "Medium_Coeli": "MC",
-        "Imum_Coeli": "IC",
-    }
-
-    # Plus zones: sectors near the four angles (most significant for Gauquelin)
-    _PLUS_ZONES = {36, 1, 9, 10, 18, 19, 27, 28}
-
     n = len(gauq_points)
 
-    # Adaptive sizing
+    # Adaptive sizing based on point count
     if n <= 16:
         row_h = 14
         fs = 10
         glyph_s = 0.3
+        max_name_len = 10
     elif n <= 24:
-        row_h = 11
+        row_h = 12
         fs = 9
-        glyph_s = 0.25
+        glyph_s = 0.27
+        max_name_len = 9
     else:
-        row_h = 9
+        row_h = 10
         fs = 8
         glyph_s = 0.22
+        max_name_len = 8
 
-    # Column layout — must fit within ~240px (viewBox 890 - planet_grid_x 645 = 245)
-    #   Name(65) | Sign+Long(75) | Decl(55) | Sector(40) = ~235px
-    col_name = 0
-    col_sign = 68
-    col_long = 80
-    col_decl = 150
-    col_sector = 205
+    # Column positions within each ~220px column
+    COL_NAME_END = 55       # Name text-anchor="end"
+    COL_SIGN = 58           # Sign glyph
+    COL_LONG = 70           # Longitude text start
+    COL_DECL = 135          # Declination text start
+    COL_SECTOR_END = 212    # Sector text-anchor="end"
+
+    # Multi-column thresholds
+    thresholds = _gauquelin_grid_thresholds(n)
 
     svg = f'<g transform="translate({x_position},{y_position})">'
 
-    # Header
+    # Title
     svg += (
-        f'<text x="{col_name}" style="fill:{text_color}; font-size:{fs}px; font-weight:bold;">Gauquelin Sectors</text>'
+        f'<text style="fill:{text_color}; font-size:{fs + 2}px; font-weight:bold;" y="12">'
+        f'Gauquelin Sectors</text>'
     )
 
-    line_y = row_h + 4
+    # Column headers
+    hdr_y = 24
+    hdr_fs = max(fs - 1, 7)
+    svg += (
+        f'<g transform="translate(0,{hdr_y})" opacity="0.55">'
+        f'<text text-anchor="end" x="{COL_NAME_END}" style="fill:{text_color}; font-size:{hdr_fs}px;">Planet</text>'
+        f'<text x="{COL_LONG}" style="fill:{text_color}; font-size:{hdr_fs}px;">Longitude</text>'
+        f'<text x="{COL_DECL}" style="fill:{text_color}; font-size:{hdr_fs}px;">Decl.</text>'
+        f'<text text-anchor="end" x="{COL_SECTOR_END}" style="fill:{text_color}; font-size:{hdr_fs}px;">Sector</text>'
+        f'</g>'
+    )
 
-    for point in gauq_points:
-        name = _ABBREV.get(point.name, point.name.replace("_", " "))
-        longitude_str = convert_decimal_to_degree_string(point.position)
-        retrograde_str = "R" if point.retrograde else ""
+    BASE_Y = 30  # Below title + header
 
-        # Declination
+    for i, point in enumerate(gauq_points):
+        offset, row_index = _gauquelin_grid_layout_position(i, thresholds)
+        y = BASE_Y + 10 + row_index * row_h
+
+        # Get display name (localized, with fallback)
+        if celestial_point_language is not None:
+            try:
+                name = get_decoded_kerykeion_celestial_point_name(
+                    point.name, celestial_point_language
+                )
+            except Exception:
+                name = point.name.replace("_", " ")
+        else:
+            name = point.name.replace("_", " ")
+        if len(name) > max_name_len:
+            name = name[: max_name_len - 1] + "."
+
+        # Longitude string + retrograde marker
+        long_str = convert_decimal_to_degree_string(point.position)
+        r_str = " R" if point.retrograde else ""
+
+        # Declination in DMS
         decl = getattr(point, "declination", None)
         if decl is not None:
-            decl_abs = abs(decl)
-            decl_deg = int(decl_abs)
-            decl_min = int((decl_abs - decl_deg) * 60)
-            decl_sec = int(((decl_abs - decl_deg) * 60 - decl_min) * 60)
+            da = abs(decl)
+            dd = int(da)
+            dm = int((da - dd) * 60)
+            ds = int(((da - dd) * 60 - dm) * 60)
             decl_dir = "N" if decl >= 0 else "S"
-            decl_str = f"{decl_deg:02d}°{decl_min:02d}'{decl_sec:02d}\"{decl_dir}"
+            decl_str = f"{dd:02d}°{dm:02d}'{ds:02d}\"{decl_dir}"
         else:
             decl_str = ""
 
+        # Sector with plus-zone highlighting
         sector = point.gauquelin_sector
         sector_int = int(sector)
         sector_str = f"{sector:.2f}"
-        is_plus = sector_int in _PLUS_ZONES
+        is_plus = sector_int in _GAUQUELIN_PLUS_ZONES
         sec_color = plus_zone_color if is_plus else text_color
+        sec_weight = "bold" if is_plus else "normal"
 
-        svg += f'<g transform="translate(0,{line_y})">'
+        glyph_y = int(glyph_s * 24)
 
-        # Planet name
+        svg += f'<g transform="translate({offset},{y})">'
+        # Planet name (right-aligned)
         svg += (
-            f'<text text-anchor="end" x="{col_name + 62}" '
+            f'<text text-anchor="end" x="{COL_NAME_END}" '
             f'style="fill:{text_color}; font-size:{fs}px;">{name}</text>'
         )
-
         # Sign glyph
-        glyph_y = int(glyph_s * 24)
         svg += (
-            f'<g transform="translate({col_sign},-{glyph_y})">'
+            f'<g transform="translate({COL_SIGN},-{glyph_y})">'
             f'<use transform="scale({glyph_s})" xlink:href="#{point.sign}" /></g>'
         )
-
-        # Longitude
+        # Longitude + retrograde
         svg += (
-            f'<text x="{col_long}" '
-            f'style="fill:{text_color}; font-size:{fs}px;">'
-            f'{longitude_str}{retrograde_str}</text>'
+            f'<text x="{COL_LONG}" '
+            f'style="fill:{text_color}; font-size:{fs}px;">{long_str}{r_str}</text>'
         )
-
         # Declination
         svg += (
-            f'<text x="{col_decl}" '
+            f'<text x="{COL_DECL}" '
             f'style="fill:{text_color}; font-size:{fs}px;">{decl_str}</text>'
         )
-
         # Sector (highlighted if plus zone)
         svg += (
-            f'<text text-anchor="end" x="{col_sector + 35}" '
-            f'style="fill:{sec_color}; font-size:{fs}px; font-weight:{"bold" if is_plus else "normal"};">'
+            f'<text text-anchor="end" x="{COL_SECTOR_END}" '
+            f'style="fill:{sec_color}; font-size:{fs}px; font-weight:{sec_weight};">'
             f'{sector_str}</text>'
         )
-
         svg += '</g>'
-        line_y += row_h
 
     svg += "</g>"
     return svg

@@ -2121,17 +2121,38 @@ class ChartDrawer:  # type: ignore[no-redef]
             return 0
 
         from kerykeion.charts.charts_utils import (
+            _GAUQUELIN_COLUMN_WIDTH,
+            _GAUQUELIN_MAX_ROWS,
             _GRID_COLUMN_WIDTH,
             _SECOND_COLUMN_THRESHOLD,
+            _gauquelin_grid_thresholds,
             _select_planet_grid_thresholds,
         )
 
-        n = self._count_active_planets()
-        if n <= _SECOND_COLUMN_THRESHOLD:
-            return 0
+        # Check if Gauquelin mode is active
+        has_gauquelin = any(
+            hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
+            for p in self.available_kerykeion_celestial_points
+        )
+
+        if has_gauquelin:
+            n_gauq = sum(
+                1 for p in self.available_kerykeion_celestial_points
+                if hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
+            )
+            if n_gauq <= _GAUQUELIN_MAX_ROWS:
+                return 0
+            col_width = _GAUQUELIN_COLUMN_WIDTH
+            thresholds = _gauquelin_grid_thresholds(n_gauq)
+            n = n_gauq
+        else:
+            n = self._count_active_planets()
+            if n <= _SECOND_COLUMN_THRESHOLD:
+                return 0
+            col_width = _GRID_COLUMN_WIDTH
+            thresholds = _select_planet_grid_thresholds(self.chart_type, n)
 
         # Determine how many columns will be used
-        thresholds = _select_planet_grid_thresholds(self.chart_type, n)
         if n <= thresholds[0]:
             num_cols = 1
         elif n <= thresholds[1]:
@@ -2149,7 +2170,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         gap = 20  # Minimum gap between wheel and leftmost column
 
         # Leftmost column position without shift
-        leftmost_x = self._MAIN_PLANET_GRID_X - (num_cols - 1) * _GRID_COLUMN_WIDTH
+        leftmost_x = self._MAIN_PLANET_GRID_X - (num_cols - 1) * col_width
 
         overlap = (wheel_right + gap) - leftmost_x
         return max(0, int(overlap))
@@ -2809,9 +2830,21 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Common grids present on many chart types
         # Apply grid shift when multi-column layout would overlap the wheel
         grid_shift = getattr(self, "_grid_x_shift", 0)
-        main_planet_grid_right = 645 + grid_shift + 80
-        main_houses_grid_right = 750 + grid_shift + 120
-        extents.extend([main_planet_grid_right, main_houses_grid_right])
+
+        has_gauquelin = any(
+            hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
+            for p in self.available_kerykeion_celestial_points
+        )
+
+        if has_gauquelin:
+            # Unified Gauquelin grid replaces both planet and house grids
+            from kerykeion.charts.charts_utils import _GAUQUELIN_COLUMN_WIDTH
+            main_grid_right = 645 + grid_shift + _GAUQUELIN_COLUMN_WIDTH
+            extents.append(main_grid_right)
+        else:
+            main_planet_grid_right = 645 + grid_shift + 80
+            main_houses_grid_right = 750 + grid_shift + 120
+            extents.extend([main_planet_grid_right, main_houses_grid_right])
 
         if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
             # Triangular aspect grid at x_start=540, width ~ 14 * n_active
@@ -3555,12 +3588,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         )
 
         if has_gauquelin:
-            from kerykeion.charts.charts_utils import draw_gauquelin_sector_grid
-            template_dict["makeMainHousesGrid"] = draw_gauquelin_sector_grid(
-                celestial_points=self.available_kerykeion_celestial_points,
-                text_color=self.chart_colors_settings["paper_0"],
-                x_position=self._MAIN_HOUSES_GRID_X + self._grid_x_shift,
-            )
+            # Gauquelin data is shown in the unified planet grid — no separate house grid
+            template_dict["makeMainHousesGrid"] = ""
         else:
             template_dict["makeMainHousesGrid"] = draw_main_house_grid(
                 main_subject_houses_list=houses_list,
@@ -3589,16 +3618,24 @@ class ChartDrawer:  # type: ignore[no-redef]
             for p in self.available_kerykeion_celestial_points
         )
 
-        # Planet grid stays standard — no modifications for Gauquelin
-        template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
-            planets_and_houses_grid_title=title,
-            subject_name=subject_name,
-            available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-            chart_type=self.chart_type,
-            text_color=self.chart_colors_settings["paper_0"],
-            celestial_point_language=self._language_model.celestial_points,
-            x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
-        )
+        if has_gauquelin:
+            from kerykeion.charts.charts_utils import draw_gauquelin_unified_grid
+            template_dict["makeMainPlanetGrid"] = draw_gauquelin_unified_grid(
+                celestial_points=self.available_kerykeion_celestial_points,
+                text_color=self.chart_colors_settings["paper_0"],
+                x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
+                celestial_point_language=self._language_model.celestial_points,
+            )
+        else:
+            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
+                planets_and_houses_grid_title=title,
+                subject_name=subject_name,
+                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                celestial_point_language=self._language_model.celestial_points,
+                x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
+            )
 
     def _setup_secondary_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
         """
