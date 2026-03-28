@@ -1557,6 +1557,7 @@ def draw_main_planet_grid(
     text_color: str = "#000000",
     x_position: int = 645,
     y_position: int = 0,
+    show_gauquelin_sector: bool = False,
 ) -> str:
     """
     Draw the planet grid (main subject) and optional title.
@@ -1596,11 +1597,36 @@ def draw_main_planet_grid(
 
     end_of_line = "</g>"
 
+    # Gauquelin layout: column headers + extra columns for declination & sector
+    _PLUS_ZONES = {36, 1, 9, 10, 18, 19, 27, 28}
+    plus_zone_color = "var(--kerykeion-color-warning, #e6a817)"
+
+    if show_gauquelin_sector:
+        # Title
+        svg_output += (
+            f'<g transform="translate(0, {BASE_Y})">'
+            f'<text style="fill:{text_color}; font-size: 12px; font-weight:bold;">Gauquelin Sectors</text>'
+            f'</g>'
+        )
+        # Column headers
+        svg_output += (
+            f'<g transform="translate(0, {BASE_Y + LINE_START})">'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 8px; opacity:0.6;">Planet</text>'
+            f'<text x="19" style="fill:{text_color}; font-size: 8px; opacity:0.6;">Longitude</text>'
+            f'<text x="88" style="fill:{text_color}; font-size: 8px; opacity:0.6;">Decl.</text>'
+            f'<text text-anchor="end" x="145" style="fill:{text_color}; font-size: 8px; opacity:0.6;">Sector</text>'
+            f'</g>'
+        )
+        # Shift all rows down to accommodate headers
+        header_offset = LINE_STEP + 4
+    else:
+        header_offset = 0
+
     column_thresholds = _select_planet_grid_thresholds(chart_type, len(available_kerykeion_celestial_points))
 
     for i, planet in enumerate(available_kerykeion_celestial_points):
         offset, row_index = _planet_grid_layout_position(i, column_thresholds)
-        line_height = LINE_START + (row_index * LINE_STEP)
+        line_height = LINE_START + (row_index * LINE_STEP) + header_offset
 
         decoded_name = get_decoded_kerykeion_celestial_point_name(
             planet["name"],
@@ -1617,6 +1643,31 @@ def draw_main_planet_grid(
 
         if planet["retrograde"]:
             svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+
+        # Gauquelin extra columns: declination + sector
+        if show_gauquelin_sector:
+            decl = planet.get("declination", None) if hasattr(planet, "get") else getattr(planet, "declination", None)
+            if decl is not None:
+                d_abs = abs(decl)
+                d_d = int(d_abs)
+                d_m = int((d_abs - d_d) * 60)
+                d_s = int(((d_abs - d_d) * 60 - d_m) * 60)
+                d_dir = "N" if decl >= 0 else "S"
+                decl_str = f"{d_d:02d}°{d_m:02d}'{d_dir}"
+            else:
+                decl_str = ""
+            svg_output += f'<text x="88" style="fill:{text_color}; font-size: 9px;">{decl_str}</text>'
+
+            sector = planet.get("gauquelin_sector", None) if hasattr(planet, "get") else getattr(planet, "gauquelin_sector", None)
+            if sector is not None:
+                sec_int = int(sector)
+                sec_color = plus_zone_color if sec_int in _PLUS_ZONES else text_color
+                sec_weight = "bold" if sec_int in _PLUS_ZONES else "normal"
+                svg_output += (
+                    f'<text text-anchor="end" x="145" '
+                    f'style="fill:{sec_color}; font-size: 10px; font-weight:{sec_weight};">'
+                    f'{sector:.2f}</text>'
+                )
 
         svg_output += end_of_line
 
