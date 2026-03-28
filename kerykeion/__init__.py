@@ -64,6 +64,7 @@ from .occultations import OccultationFactory
 from .relocated_chart_factory import RelocatedChartFactory
 from .fixed_stars import FixedStarDiscoveryFactory
 from .primary_directions import PrimaryDirectionsFactory
+from .astro_cartography import AstroCartographyFactory
 
 # =============================================================================
 # ANALYSIS FACTORIES
@@ -118,6 +119,7 @@ __all__ = [
     "RelocatedChartFactory",
     "FixedStarDiscoveryFactory",
     "PrimaryDirectionsFactory",
+    "AstroCartographyFactory",
     # Analysis Factories
     "AspectsFactory",
     "RelationshipScoreFactory",
