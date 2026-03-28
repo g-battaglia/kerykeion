@@ -80,6 +80,27 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 - [Fixed Stars](#fixed-stars)
 - [JSON Support](#json-support)
 - [Moon Phase Details](#moon-phase-details)
+- [V6 Advanced Features](#v6-advanced-features)
+  - [Uranian / Hamburg School Planets](#uranian--hamburg-school-planets)
+  - [Essential Dignities](#essential-dignities)
+  - [Vedic Nakshatras](#vedic-nakshatras)
+  - [Eclipse Search](#eclipse-search)
+  - [Planetary Phenomena](#planetary-phenomena)
+  - [Planetary Nodes & Apsides](#planetary-nodes--apsides)
+  - [Heliacal Risings & Settings](#heliacal-risings--settings)
+  - [Occultation Search](#occultation-search)
+  - [Davison Composite Chart](#davison-composite-chart)
+  - [Relocated Charts](#relocated-charts)
+  - [Declination & Out-of-Bounds Detection](#declination--out-of-bounds-detection)
+  - [Barycentric & Planetocentric Perspectives](#barycentric--planetocentric-perspectives)
+  - [Nutation Model](#nutation-model)
+  - [Dynamic Fixed Star Discovery](#dynamic-fixed-star-discovery)
+  - [Gauquelin Sectors](#gauquelin-sectors)
+  - [Local Space (Azimuth & Altitude)](#local-space-azimuth--altitude)
+  - [Lilith Variants & Priapus Points](#lilith-variants--priapus-points)
+  - [Transit Exactness & Refinement](#transit-exactness--refinement)
+  - [Primary Directions (Placidus Semi-Arc)](#primary-directions-placidus-semi-arc)
+  - [Astro-Cartography (ACG)](#astro-cartography-acg)
 - [Documentation](#documentation)
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Development](#development)
@@ -1331,7 +1352,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 
 **📖 Full list of supported house systems: [HouseSystemIdentifier Schema](https://www.kerykeion.net/content/docs/schemas#housesystemidentifier)**
 
-So far all the available houses system in the Swiss Ephemeris are supported but the Gauquelin Sectors.
+All house systems available in the Swiss Ephemeris are supported, including Gauquelin Sectors (see [Gauquelin Sectors](#gauquelin-sectors) below).
 
 ## Perspective Type
 
@@ -1662,6 +1683,310 @@ print(overview.model_dump_json(exclude_none=True, indent=2))
 
 **📖 Examples: [Moon Phase Details Examples](https://www.kerykeion.net/content/examples/moon-phase-details)**
 
+## V6 Advanced Features
+
+Kerykeion v6 adds a suite of advanced astronomical and astrological calculation modules. All v6 features are optional opt-in — existing code works unchanged.
+
+### Uranian / Hamburg School Planets
+
+Eight hypothetical planets used in Uranian astrology: Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+    active_points=["Sun", "Moon", "Cupido", "Hades", "Zeus", "Kronos",
+                   "Apollon", "Admetos", "Vulkanus", "Poseidon"],
+)
+print(f"Cupido: {subject.cupido.abs_pos:.4f}")
+print(f"Poseidon: {subject.poseidon.abs_pos:.4f}")
+```
+
+### Essential Dignities
+
+Ptolemaic essential dignities (Domicile, Exaltation, Detriment, Fall, Term, Peregrine) for any planet.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+    calculate_dignities=True,
+)
+print(f"Sun dignity: {subject.sun.essential_dignity}")
+```
+
+### Vedic Nakshatras
+
+Lunar mansions with pada and Vimsottari Dasha lord.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+    calculate_nakshatra=True,
+)
+print(f"Moon nakshatra: {subject.moon.nakshatra}, pada: {subject.moon.nakshatra_pada}")
+```
+
+### Eclipse Search
+
+Find upcoming solar and lunar eclipses globally or from a specific location.
+
+```python
+from kerykeion import EclipseFactory
+
+result = EclipseFactory.search_global(start_year=2025, count=3)
+for ecl in result.solar_eclipses:
+    print(f"Solar: {ecl.datestamp} ({ecl.type})")
+for ecl in result.lunar_eclipses:
+    print(f"Lunar: {ecl.datestamp} ({ecl.type})")
+```
+
+### Planetary Phenomena
+
+Phase angle, elongation, apparent magnitude, and morning/evening star status.
+
+```python
+from kerykeion import PlanetaryPhenomenaFactory, AstrologicalSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 2000, 1, 1, 12, 0,
+    lng=0, lat=0, tz_str="Etc/GMT", online=False,
+)
+phenom = PlanetaryPhenomenaFactory.from_subject(subject)
+venus = phenom["Venus"]
+print(f"Venus elongation: {venus.elongation:.2f}, magnitude: {venus.apparent_magnitude:.2f}")
+```
+
+### Planetary Nodes & Apsides
+
+Ascending/descending node and perihelion/aphelion positions.
+
+```python
+from kerykeion import PlanetaryNodesFactory
+
+nodes = PlanetaryNodesFactory.from_julian_day(2451545.0, planets=["Mars", "Jupiter"])
+for entry in nodes:
+    print(f"{entry.planet}: ascending node {entry.ascending_node_longitude:.2f}")
+```
+
+### Heliacal Risings & Settings
+
+Find when a planet first becomes visible or disappears in twilight.
+
+```python
+from kerykeion import HeliacalFactory
+
+factory = HeliacalFactory()
+import swisseph as swe
+jd = swe.julday(2025, 1, 1, 0.0)
+event = factory.next_heliacal_rising(jd, "Venus", geopos=(12.5, 41.9, 0))
+print(f"Venus heliacal rising: {event.datestamp}")
+```
+
+### Occultation Search
+
+Find lunar occultations of planets.
+
+```python
+from kerykeion import OccultationFactory
+import swisseph as swe
+
+factory = OccultationFactory()
+jd = swe.julday(2025, 1, 1, 0.0)
+events = factory.search_global(jd, swe.VENUS, count=3)
+for occ in events:
+    print(f"{occ.planet_name} occultation: {occ.datestamp} ({occ.type})")
+```
+
+### Davison Composite Chart
+
+Time-space midpoint composite method (in addition to the existing midpoint composite).
+
+```python
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
+s1 = AstrologicalSubjectFactory.from_birth_data("A", 1990, 3, 15, 10, 0,
+    lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False)
+s2 = AstrologicalSubjectFactory.from_birth_data("B", 1992, 7, 20, 14, 30,
+    lng=-73.9, lat=40.7, tz_str="America/New_York", online=False)
+
+factory = CompositeSubjectFactory(s1, s2)
+davison = factory.get_davison_composite_subject_model()
+print(f"Davison Sun: {davison.sun.abs_pos:.4f}")
+```
+
+### Relocated Charts
+
+Keep planetary positions, recalculate houses for a new location.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, RelocatedChartFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+relocated = RelocatedChartFactory.relocate(subject, new_lng=139.69, new_lat=35.69, new_city="Tokyo")
+print(f"Original ASC: {subject.first_house.abs_pos:.2f}")
+print(f"Tokyo ASC: {relocated.first_house.abs_pos:.2f}")
+```
+
+### Declination & Out-of-Bounds Detection
+
+Equatorial declination and OOB detection for all celestial points.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+print(f"Sun declination: {subject.sun.declination:.4f}")
+print(f"Sun OOB: {subject.sun.is_out_of_bounds}")
+```
+
+### Barycentric & Planetocentric Perspectives
+
+Solar system barycenter or any planet as the observer origin.
+
+```python
+bary = AstrologicalSubjectFactory.from_birth_data(
+    "Bary", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+    perspective_type="Barycentric",
+)
+print(f"Barycentric Sun: {bary.sun.abs_pos:.4f}")
+```
+
+### Nutation Model
+
+True/mean obliquity and nutation in longitude/obliquity.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 2000, 1, 1, 12, 0,
+    lng=0, lat=0, tz_str="Etc/GMT", online=False,
+    calculate_nutation=True,
+)
+print(f"True obliquity: {subject.nutation.true_obliquity:.4f}")
+print(f"Nutation in longitude: {subject.nutation.nutation_in_longitude:.6f}")
+```
+
+### Dynamic Fixed Star Discovery
+
+Auto-discover fixed stars near natal planet positions.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, FixedStarDiscoveryFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+stars = FixedStarDiscoveryFactory.find_prominent_stars(subject, orb=2.0)
+for star in stars:
+    print(f"{star.name} at {star.longitude:.2f} (mag {star.magnitude:.1f})")
+```
+
+### Gauquelin Sectors
+
+36-sector system for statistical astrology research.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+    calculate_gauquelin=True,
+)
+print(f"Sun Gauquelin sector: {subject.sun.gauquelin_sector:.2f}")
+print(f"Mars Gauquelin sector: {subject.mars.gauquelin_sector:.2f}")
+```
+
+### Local Space (Azimuth & Altitude)
+
+Horizon coordinates for all celestial points.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+    calculate_local_space=True,
+)
+print(f"Sun azimuth: {subject.sun.azimuth:.2f}, altitude: {subject.sun.altitude:.2f}")
+```
+
+### Lilith Variants & Priapus Points
+
+Interpolated Lilith, Mean Priapus, and True Priapus (anti-Lilith points).
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+    active_points=["Sun", "Moon", "Mean_Lilith", "True_Lilith",
+                   "Interpolated_Lilith", "Mean_Priapus", "True_Priapus"],
+)
+print(f"Interpolated Lilith: {subject.interpolated_lilith.abs_pos:.4f}")
+print(f"Mean Priapus: {subject.mean_priapus.abs_pos:.4f}")
+```
+
+### Transit Exactness & Refinement
+
+Bisection refinement for sub-step precision on exact transit moments.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, TransitsTimeRangeFactory
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+transit = AstrologicalSubjectFactory.from_birth_data(
+    "Now", 2025, 6, 1, 12, 0,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+factory = TransitsTimeRangeFactory(natal, transit)
+events = factory.get_transit_events(refine_exact_moments=True)
+for ev in events.events[:3]:
+    print(f"{ev.p1_name} {ev.aspect} {ev.p2_name}: {ev.exact_moment} (orb {ev.min_orb:.4f})")
+```
+
+### Primary Directions (Placidus Semi-Arc)
+
+Classical predictive technique with Ptolemy and Naibod rate keys.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, PrimaryDirectionsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+directions = PrimaryDirectionsFactory.compute(subject, max_years=30)
+for d in directions[:5]:
+    print(f"{d.promissor} {d.aspect} {d.significator}: {d.direction_years:.1f} years")
+```
+
+### Astro-Cartography (ACG)
+
+Compute MC, IC, ASC, DSC planetary lines on the world map.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, AstroCartographyFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+lines = AstroCartographyFactory.compute(subject)
+for line in lines[:5]:
+    print(f"{line.planet} {line.line_type}: {len(line.points)} points")
+```
 
 ## Documentation
 
