@@ -929,24 +929,42 @@ class AstrologicalSubjectFactory:
                 if point is not None and hasattr(point, "point_type") and point.point_type == "AstrologicalPoint":
                     nak_data = calc_nak(point.abs_pos)
                     calc_data[point_key] = point.model_copy(update=nak_data)
-        # Calculate Gauquelin sectors (optional)
+        # Calculate Gauquelin sectors (optional) — for ALL celestial points
         if config.calculate_gauquelin and calc_data.get("lng") and calc_data.get("lat"):
             geopos = [calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0]
             jd = calc_data["julian_day"]
+
+            # Get ASC degree for geometric fallback
+            asc_degree = calc_data.get("ascendant")
+            asc_abs = asc_degree.abs_pos if asc_degree else 0.0
+
             for point_key in list(calc_data.keys()):
                 point = calc_data.get(point_key)
-                if point is not None and hasattr(point, "point_type") and point.point_type == "AstrologicalPoint":
-                    # Only calculate for planets with known SwissEph IDs
+                if point is None or not hasattr(point, "point_type") or point.point_type != "AstrologicalPoint":
+                    continue
+
+                sector = None
+
+                # Try swe.gauquelin_sector for planets with known SwissEph IDs
+                pid = STANDARD_PLANETS.get(point.name)
+                if pid is not None:
                     try:
-                        from kerykeion.astrological_subject_factory import STANDARD_PLANETS
-                        pid = STANDARD_PLANETS.get(point.name)
-                        if pid is not None and pid <= 20:
-                            sector = swe.gauquelin_sector(jd, pid, 0, geopos)
-                            calc_data[point_key] = point.model_copy(
-                                update={"gauquelin_sector": round(sector, 4)}
-                            )
+                        sector = swe.gauquelin_sector(jd, pid, 0, geopos)
                     except Exception:
                         pass
+
+                # Fallback: compute sector geometrically from longitude relative to ASC
+                # Sectors go clockwise from ASC: sector 1 = ASC, sector 10 = MC area, etc.
+                # Each sector spans 10 degrees.
+                if sector is None:
+                    diff = (asc_abs - point.abs_pos) % 360.0
+                    sector = (diff / 10.0) + 1.0
+                    if sector >= 37.0:
+                        sector -= 36.0
+
+                calc_data[point_key] = point.model_copy(
+                    update={"gauquelin_sector": round(sector, 4)}
+                )
 
         # Create and return the AstrologicalSubjectModel
         return AstrologicalSubjectModel(**calc_data)
