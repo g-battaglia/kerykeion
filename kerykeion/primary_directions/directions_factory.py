@@ -157,18 +157,20 @@ class PrimaryDirectionsFactory:
                         continue
 
                     # Arc = OA(promissor under sig pole) - OA(significator)
-                    arc = oa_prom - sig.oblique_ascension
+                    # Direct arc (clockwise) and converse arc (counterclockwise)
+                    raw_arc = oa_prom - sig.oblique_ascension
 
-                    # Normalize arc to positive
-                    if arc < 0:
-                        arc += 360
+                    # Normalize to [0, 360)
+                    arc = raw_arc % 360
+                    # Primary directions use both direct and converse arcs.
+                    # We report the smaller of the two arcs as the "active" direction.
                     if arc > 180:
-                        arc = 360 - arc  # Use the shorter arc
+                        arc = 360 - arc
 
                     # Convert to years
                     years = arc / rate
 
-                    if 0 < years <= max_years:
+                    if 0.1 < years <= max_years:
                         directions.append(PrimaryDirectionModel(
                             promissor=prom_name,
                             significator=sig_name,
@@ -209,7 +211,6 @@ class PrimaryDirectionsFactory:
         from kerykeion.astrological_subject_factory import STANDARD_PLANETS
 
         entries: List[SpeculumEntry] = []
-        eps_rad = math.radians(obliquity)
         lat_rad = math.radians(geo_lat)
 
         for point_name in PrimaryDirectionsFactory.DIRECTION_POINTS:
@@ -220,18 +221,38 @@ class PrimaryDirectionsFactory:
             ecl_lon = point.abs_pos
             dec = point.declination if point.declination is not None else 0.0
 
-            # Compute RA from ecliptic longitude
-            ecl_rad = math.radians(ecl_lon)
-            ra_rad = math.atan2(
-                math.sin(ecl_rad) * math.cos(eps_rad),
-                math.cos(ecl_rad)
-            )
-            ra = math.degrees(ra_rad) % 360
+            # Compute RA from equatorial coordinates via Swiss Ephemeris
+            # This is more accurate than converting from ecliptic, as it accounts
+            # for the planet's ecliptic latitude (important for Moon, asteroids).
+            planet_id = STANDARD_PLANETS.get(point_name)
+            if planet_id is not None:
+                try:
+                    eq_coords = swe.calc_ut(jd, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+                    ra = eq_coords[0]  # RA in degrees
+                    dec = eq_coords[1]  # Dec in degrees (more precise)
+                except Exception:
+                    # Fallback: compute from ecliptic (zero ecliptic latitude approximation)
+                    eps_rad = math.radians(obliquity)
+                    ecl_rad = math.radians(ecl_lon)
+                    ra = math.degrees(math.atan2(
+                        math.sin(ecl_rad) * math.cos(eps_rad),
+                        math.cos(ecl_rad)
+                    )) % 360
+            else:
+                # For non-standard points (ASC, MC), compute from ecliptic longitude
+                eps_rad = math.radians(obliquity)
+                ecl_rad = math.radians(ecl_lon)
+                ra = math.degrees(math.atan2(
+                    math.sin(ecl_rad) * math.cos(eps_rad),
+                    math.cos(ecl_rad)
+                )) % 360
 
-            # Meridian distance
-            md = (ra - ramc) % 360
+            # Meridian distance: angular distance from MC in RA
+            md = ra - ramc
             if md > 180:
                 md -= 360
+            elif md < -180:
+                md += 360
 
             # Determine if above horizon
             is_above = -90 < md < 90  # Simplified: within 90 deg of MC

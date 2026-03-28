@@ -118,3 +118,40 @@ class TestDeclinationAspects:
         aspects = AspectsFactory.single_chart_declination_aspects(john_lennon, orb=0.0)
         for a in aspects:
             assert a.orbit == 0.0
+
+    def test_no_duplicate_pairs(self, john_lennon):
+        """Each planet pair should appear at most once (no parallel AND contra-parallel)."""
+        aspects = AspectsFactory.single_chart_declination_aspects(john_lennon, orb=2.0)
+        seen_pairs = set()
+        for a in aspects:
+            pair = (a.p1_name, a.p2_name)
+            assert pair not in seen_pairs, (
+                f"Duplicate pair {pair}: both parallel and contra-parallel reported"
+            )
+            seen_pairs.add(pair)
+
+    def test_parallel_same_sign(self, john_lennon):
+        """Parallels should only occur between same-sign declinations."""
+        aspects = AspectsFactory.single_chart_declination_aspects(john_lennon, orb=2.0)
+        for a in aspects:
+            if a.aspect == "parallel":
+                p1 = getattr(john_lennon, a.p1_name.lower(), None)
+                p2 = getattr(john_lennon, a.p2_name.lower(), None)
+                if p1 and p2 and p1.declination is not None and p2.declination is not None:
+                    assert (p1.declination >= 0) == (p2.declination >= 0), (
+                        f"Parallel between {a.p1_name} (dec={p1.declination:.2f}) and "
+                        f"{a.p2_name} (dec={p2.declination:.2f}) but signs differ"
+                    )
+
+    def test_contra_parallel_opposite_sign(self, john_lennon):
+        """Contra-parallels should only occur between opposite-sign declinations."""
+        aspects = AspectsFactory.single_chart_declination_aspects(john_lennon, orb=2.0)
+        for a in aspects:
+            if a.aspect == "contra_parallel":
+                p1 = getattr(john_lennon, a.p1_name.lower(), None)
+                p2 = getattr(john_lennon, a.p2_name.lower(), None)
+                if p1 and p2 and p1.declination is not None and p2.declination is not None:
+                    assert (p1.declination >= 0) != (p2.declination >= 0), (
+                        f"Contra-parallel between {a.p1_name} (dec={p1.declination:.2f}) and "
+                        f"{a.p2_name} (dec={p2.declination:.2f}) but signs are same"
+                    )

@@ -86,6 +86,18 @@ class TestDynamicFixedStars:
         assert 0 <= subject_all_stars.regulus.abs_pos < 360
 
 
+    def test_nonexistent_star_silently_skipped(self):
+        """Non-existent star names should not crash, just be silently skipped."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Nonexistent Star", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            active_fixed_stars=["NonExistentStarXYZ123", "AnotherFakeStar"],
+        )
+        # Should not crash; fake stars are simply not in the list
+        assert isinstance(subject.fixed_stars, list)
+
+
 class TestFixedStarDiscovery:
     def test_find_prominent_stars(self, subject_all_stars):
         """Auto-discovery should find stars conjunct natal planets."""

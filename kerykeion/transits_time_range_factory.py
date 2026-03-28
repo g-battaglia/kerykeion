@@ -479,12 +479,8 @@ class TransitsTimeRangeFactory:
                 except Exception:
                     return None
 
-                orb_q1 = abs(abs(pos_q1 - natal_pos) % 360 - aspect_settings[0]["degree"])
-                if orb_q1 > 180:
-                    orb_q1 = 360 - orb_q1
-                orb_q3 = abs(abs(pos_q3 - natal_pos) % 360 - aspect_settings[0]["degree"])
-                if orb_q3 > 180:
-                    orb_q3 = 360 - orb_q3
+                orb_q1 = abs(abs(difdeg2n(pos_q1, natal_pos)) - aspect_settings[0]["degree"])
+                orb_q3 = abs(abs(difdeg2n(pos_q3, natal_pos)) - aspect_settings[0]["degree"])
 
                 # Narrow to the half containing the minimum
                 if orb_q1 < orb_q3:

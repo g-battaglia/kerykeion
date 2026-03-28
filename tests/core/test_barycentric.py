@@ -47,3 +47,14 @@ class TestBarycentricPerspective:
         # The barycenter is very close to the Sun, so inner planets show small shifts
         jupiter_diff = abs(barycentric_subject.jupiter.abs_pos - geocentric_subject.jupiter.abs_pos)
         assert jupiter_diff > 0.001  # Should be measurably different
+
+    def test_sun_nearly_unchanged(self, barycentric_subject, geocentric_subject):
+        """Sun's barycentric position should be very close to geocentric.
+
+        The solar system barycenter is mostly inside the Sun, so the Sun's
+        position barely changes between geocentric and barycentric frames.
+        """
+        if barycentric_subject.sun is not None and geocentric_subject.sun is not None:
+            sun_diff = abs(barycentric_subject.sun.abs_pos - geocentric_subject.sun.abs_pos)
+            # Sun should differ by less than 1 degree between frames
+            assert sun_diff < 1.0, f"Sun diff {sun_diff} too large for barycentric"

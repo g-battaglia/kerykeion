@@ -692,9 +692,15 @@ class AspectsFactory:
                 abs_pos_a = pa["abs_pos"] if isinstance(pa, dict) else pa.abs_pos
                 abs_pos_b = pb["abs_pos"] if isinstance(pb, dict) else pb.abs_pos
 
-                # Parallel: same sign declinations within orb
+                # Parallel: both declinations same sign AND close in magnitude
+                # Contra-parallel: declinations opposite sign AND close in magnitude
+                # Use if/elif to prevent reporting BOTH for the same pair
+                # (near-zero declinations could match both conditions)
+                same_sign = (dec_a >= 0) == (dec_b >= 0)
                 parallel_diff = abs(dec_a - dec_b)
-                if parallel_diff <= orb:
+                contra_diff = abs(dec_a + dec_b)
+
+                if same_sign and parallel_diff <= orb:
                     aspects.append(AspectModel(
                         p1_name=name_a,
                         p1_owner=owner_a,
@@ -712,10 +718,7 @@ class AspectsFactory:
                         p1_speed=0.0,
                         p2_speed=0.0,
                     ))
-
-                # Contra-parallel: opposite sign declinations within orb
-                contra_diff = abs(dec_a + dec_b)
-                if contra_diff <= orb:
+                elif not same_sign and contra_diff <= orb:
                     aspects.append(AspectModel(
                         p1_name=name_a,
                         p1_owner=owner_a,

@@ -61,6 +61,7 @@ class AstroCartographyFactory:
         subject: AstrologicalSubjectModel,
         *,
         step: float = 1.0,
+        tolerance: Optional[float] = None,
         lat_range: tuple = (-66, 66),
         planets: Optional[List[str]] = None,
     ) -> List[ACGLine]:
@@ -69,7 +70,9 @@ class AstroCartographyFactory:
 
         Args:
             subject: The natal chart subject.
-            step: Longitude step in degrees (default 1.0). Smaller = more precise.
+            step: Longitude/latitude scanning step in degrees (default 1.0).
+            tolerance: Angular tolerance for ASC/DSC matching in degrees.
+                Defaults to step/2 if not specified. Independent of step.
             lat_range: Latitude range to compute (default -66 to +66, avoids polar).
             planets: List of planet names. Defaults to Sun through Pluto.
 
@@ -100,6 +103,9 @@ class AstroCartographyFactory:
         if not planet_positions:
             swe.close()
             return []
+
+        # Angular tolerance for matching planet to ASC/DSC (independent of scan step)
+        match_tol = tolerance if tolerance is not None else step / 2.0
 
         # MC/IC lines: where the planet crosses the meridian
         # MC longitude = planet_RA - GAST (in degrees)
@@ -162,7 +168,7 @@ class AstroCartographyFactory:
                         asc_diff = abs(plon - asc_deg)
                         if asc_diff > 180:
                             asc_diff = 360 - asc_diff
-                        if asc_diff <= step:
+                        if asc_diff <= match_tol:
                             asc_lines[pname].append(
                                 ACGLinePoint(longitude=round(lng, 4), latitude=round(lat, 4))
                             )
@@ -171,7 +177,7 @@ class AstroCartographyFactory:
                         dsc_diff = abs(plon - dsc_deg)
                         if dsc_diff > 180:
                             dsc_diff = 360 - dsc_diff
-                        if dsc_diff <= step:
+                        if dsc_diff <= match_tol:
                             dsc_lines[pname].append(
                                 ACGLinePoint(longitude=round(lng, 4), latitude=round(lat, 4))
                             )
