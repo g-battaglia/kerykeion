@@ -1391,6 +1391,106 @@ def draw_secondary_house_grid(
     return svg_output
 
 
+def draw_gauquelin_sector_grid(
+    celestial_points: list,
+    text_color: str = "#000000",
+    x_position: int = 750,
+    y_position: int = 30,
+) -> str:
+    """Compact sector grid in the house-cusp area when Gauquelin is active.
+
+    Shows planet name + sector number. Fits in the same ~140px × 180px
+    area as the 12-cusp grid. Uses adaptive row height based on count.
+    Plus-zone sectors (near angles: 36,1,9,10,18,19,27,28) are highlighted.
+
+    Args:
+        celestial_points: All active KerykeionPointModel instances.
+        text_color: Default text fill color.
+        x_position: SVG X offset (house grid position).
+        y_position: SVG Y offset.
+
+    Returns:
+        SVG string replacing the house cusp grid.
+    """
+    gauq_points = [
+        p for p in celestial_points
+        if hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
+    ]
+    if not gauq_points:
+        return ""
+
+    _ABBREV = {
+        "True_North_Lunar_Node": "N.Node",
+        "True_South_Lunar_Node": "S.Node",
+        "Mean_North_Lunar_Node": "MN.Node",
+        "Mean_South_Lunar_Node": "MS.Node",
+        "Mean_Lilith": "Lilith",
+        "True_Lilith": "Lilith(T)",
+        "Deneb_Algedi": "D.Algedi",
+        "Pars_Fortunae": "Fortune",
+        "Pars_Spiritus": "Spirit",
+        "Pars_Amoris": "P.Amoris",
+        "Pars_Fidei": "P.Fidei",
+        "Anti_Vertex": "AntiVtx",
+        "Medium_Coeli": "MC",
+        "Imum_Coeli": "IC",
+    }
+    _PLUS_ZONES = {36, 1, 9, 10, 18, 19, 27, 28}
+    plus_color = "var(--kerykeion-color-warning, #e6a817)"
+
+    n = len(gauq_points)
+    max_height = 168  # Same as 12 cusps (12 * 14)
+
+    # Adaptive: single column if fits, two columns otherwise
+    if n <= 14:
+        row_h = min(14, max_height // max(n, 1))
+        fs = 10
+        cols = 1
+        col_w = 0
+    else:
+        cols = 2
+        rows_per_col = (n + 1) // 2
+        row_h = min(12, max(7, max_height // rows_per_col))
+        fs = 8
+        col_w = 70
+
+    svg = f'<g transform="translate({x_position},{y_position})">'
+
+    for i, point in enumerate(gauq_points):
+        if cols == 2:
+            col = i // ((n + 1) // 2)
+            row = i % ((n + 1) // 2)
+        else:
+            col = 0
+            row = i
+
+        x_off = col * col_w
+        y_off = 10 + row * row_h
+        name = _ABBREV.get(point.name, point.name)
+        if len(name) > 8:
+            name = name[:8]
+
+        sector = point.gauquelin_sector
+        sec_int = int(sector)
+        is_plus = sec_int in _PLUS_ZONES
+        sec_color = plus_color if is_plus else text_color
+        sec_weight = "bold" if is_plus else "normal"
+
+        # Format: "Name  ♊  s19.13"
+        svg += (
+            f'<g transform="translate({x_off},{y_off})">'
+            f'<text text-anchor="end" x="32" style="fill:{text_color}; font-size:{fs}px;">{name}</text>'
+            f'<g transform="translate(33,-{int(fs * 0.7)})"><use transform="scale(0.25)" xlink:href="#{point.sign}" /></g>'
+            f'<text text-anchor="end" x="{col_w if cols == 2 else 65}" '
+            f'style="fill:{sec_color}; font-size:{fs}px; font-weight:{sec_weight};">'
+            f'{sector:.1f}</text>'
+            f'</g>'
+        )
+
+    svg += "</g>"
+    return svg
+
+
 def draw_gauquelin_combined_table(
     celestial_points: list,
     text_color: str = "#000000",
@@ -1557,7 +1657,6 @@ def draw_main_planet_grid(
     text_color: str = "#000000",
     x_position: int = 645,
     y_position: int = 0,
-    show_gauquelin_sector: bool = False,
 ) -> str:
     """
     Draw the planet grid (main subject) and optional title.
@@ -1597,36 +1696,11 @@ def draw_main_planet_grid(
 
     end_of_line = "</g>"
 
-    # Gauquelin layout: column headers + extra columns for declination & sector
-    _PLUS_ZONES = {36, 1, 9, 10, 18, 19, 27, 28}
-    plus_zone_color = "var(--kerykeion-color-warning, #e6a817)"
-
-    if show_gauquelin_sector:
-        # Title
-        svg_output += (
-            f'<g transform="translate(0, {BASE_Y})">'
-            f'<text style="fill:{text_color}; font-size: 12px; font-weight:bold;">Gauquelin Sectors</text>'
-            f'</g>'
-        )
-        # Column headers
-        svg_output += (
-            f'<g transform="translate(0, {BASE_Y + LINE_START})">'
-            f'<text text-anchor="end" style="fill:{text_color}; font-size: 8px; opacity:0.6;">Planet</text>'
-            f'<text x="19" style="fill:{text_color}; font-size: 8px; opacity:0.6;">Longitude</text>'
-            f'<text x="88" style="fill:{text_color}; font-size: 8px; opacity:0.6;">Decl.</text>'
-            f'<text text-anchor="end" x="145" style="fill:{text_color}; font-size: 8px; opacity:0.6;">Sector</text>'
-            f'</g>'
-        )
-        # Shift all rows down to accommodate headers
-        header_offset = LINE_STEP + 4
-    else:
-        header_offset = 0
-
     column_thresholds = _select_planet_grid_thresholds(chart_type, len(available_kerykeion_celestial_points))
 
     for i, planet in enumerate(available_kerykeion_celestial_points):
         offset, row_index = _planet_grid_layout_position(i, column_thresholds)
-        line_height = LINE_START + (row_index * LINE_STEP) + header_offset
+        line_height = LINE_START + (row_index * LINE_STEP)
 
         decoded_name = get_decoded_kerykeion_celestial_point_name(
             planet["name"],
@@ -1643,31 +1717,6 @@ def draw_main_planet_grid(
 
         if planet["retrograde"]:
             svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
-
-        # Gauquelin extra columns: declination + sector
-        if show_gauquelin_sector:
-            decl = planet.get("declination", None) if hasattr(planet, "get") else getattr(planet, "declination", None)
-            if decl is not None:
-                d_abs = abs(decl)
-                d_d = int(d_abs)
-                d_m = int((d_abs - d_d) * 60)
-                d_s = int(((d_abs - d_d) * 60 - d_m) * 60)
-                d_dir = "N" if decl >= 0 else "S"
-                decl_str = f"{d_d:02d}°{d_m:02d}'{d_dir}"
-            else:
-                decl_str = ""
-            svg_output += f'<text x="88" style="fill:{text_color}; font-size: 9px;">{decl_str}</text>'
-
-            sector = planet.get("gauquelin_sector", None) if hasattr(planet, "get") else getattr(planet, "gauquelin_sector", None)
-            if sector is not None:
-                sec_int = int(sector)
-                sec_color = plus_zone_color if sec_int in _PLUS_ZONES else text_color
-                sec_weight = "bold" if sec_int in _PLUS_ZONES else "normal"
-                svg_output += (
-                    f'<text text-anchor="end" x="145" '
-                    f'style="fill:{sec_color}; font-size: 10px; font-weight:{sec_weight};">'
-                    f'{sector:.2f}</text>'
-                )
 
         svg_output += end_of_line
 
