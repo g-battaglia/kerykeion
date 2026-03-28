@@ -3555,13 +3555,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         )
 
         if has_gauquelin:
-            from kerykeion.charts.charts_utils import draw_gauquelin_sector_grid
-            template_dict["makeMainHousesGrid"] = draw_gauquelin_sector_grid(
-                celestial_points=self.available_kerykeion_celestial_points,
-                text_color=self.chart_colors_settings["paper_0"],
-                x_position=self._MAIN_HOUSES_GRID_X + self._grid_x_shift,
-                seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-            )
+            # Gauquelin mode: the combined table replaces BOTH grids.
+            # makeMainHousesGrid is empty — all data is in makeMainPlanetGrid.
+            template_dict["makeMainHousesGrid"] = ""
         else:
             template_dict["makeMainHousesGrid"] = draw_main_house_grid(
                 main_subject_houses_list=houses_list,
@@ -3575,23 +3571,38 @@ class ChartDrawer:  # type: ignore[no-redef]
         Populate template_dict with the main planet grid table.
 
         Creates the tabular display of planet positions for the primary subject.
-        Applies horizontal grid shift when multi-column planet grids would
-        overlap the chart wheel.
+        When Gauquelin sectors are active, produces a unified table with
+        Planet | Longitude | Declination | Sector that replaces both the
+        planet grid and the house cusp grid.
 
         Args:
             template_dict: Dictionary to populate with grid SVG elements.
             subject_name: Name to display in the grid header.
             title: Optional title prefix (e.g., "Points for").
         """
-        template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
-            planets_and_houses_grid_title=title,
-            subject_name=subject_name,
-            available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
-            chart_type=self.chart_type,
-            text_color=self.chart_colors_settings["paper_0"],
-            celestial_point_language=self._language_model.celestial_points,
-            x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
+        # Check for Gauquelin mode
+        has_gauquelin = any(
+            hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
+            for p in self.available_kerykeion_celestial_points
         )
+
+        if has_gauquelin:
+            from kerykeion.charts.charts_utils import draw_gauquelin_combined_table
+            template_dict["makeMainPlanetGrid"] = draw_gauquelin_combined_table(
+                celestial_points=self.available_kerykeion_celestial_points,
+                text_color=self.chart_colors_settings["paper_0"],
+                x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
+            )
+        else:
+            template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
+                planets_and_houses_grid_title=title,
+                subject_name=subject_name,
+                available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
+                chart_type=self.chart_type,
+                text_color=self.chart_colors_settings["paper_0"],
+                celestial_point_language=self._language_model.celestial_points,
+                x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
+            )
 
     def _setup_secondary_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
         """
