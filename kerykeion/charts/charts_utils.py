@@ -1432,27 +1432,69 @@ def draw_gauquelin_sector_grid(
         "Mean_South_Lunar_Node": "MS.Node",
         "Mean_Lilith": "Lilith",
         "True_Lilith": "Lilith(T)",
+        "Deneb_Algedi": "D.Algedi",
+        "Pars_Fortunae": "Fortune",
+        "Pars_Spiritus": "Spirit",
+        "Pars_Amoris": "Love",
+        "Pars_Fidei": "Faith",
+        "Anti_Vertex": "AntiVtx",
     }
+
+    n = len(gauq_points)
+
+    # Adaptive layout: fit all entries in the same ~180px vertical space
+    # as the standard 12-cusp house grid.
+    #
+    # Strategy: always target max_height=170px.
+    #   <=14: 1 column, standard sizes
+    #   >14:  2 columns, compact sizes
+    max_height = 170  # px — same vertical space as 12 cusps
+
+    if n <= 14:
+        cols = 1
+        row_height = min(14, max_height // n)
+        font_size = 10 if n <= 12 else 9
+        col_width = 0
+        glyph_scale = 0.3 if n <= 12 else 0.25
+        name_x = 50
+        sign_x = 52
+        sec_x = 65
+    else:
+        cols = 2
+        rows_per_col = (n + 1) // 2
+        row_height = min(12, max(7, max_height // rows_per_col))
+        font_size = 7
+        col_width = 68
+        glyph_scale = 0.2
+        name_x = 33
+        sign_x = 35
+        sec_x = 45
 
     svg = f'<g transform="translate({x_position},{y_position})">'
 
-    row_height = 14  # Same as standard house grid
-    line_y = 10
+    for i, point in enumerate(gauq_points):
+        if cols == 2:
+            col = i // ((n + 1) // 2)
+            row = i % ((n + 1) // 2)
+        else:
+            col = 0
+            row = i
 
-    for point in gauq_points:
+        x_off = col * col_width
+        y_off = 10 + row * row_height
         sector_int = int(point.gauquelin_sector)
         name = _ABBREV.get(point.name, point.name)
-        # Pad sector number for alignment
+        if len(name) > 8:
+            name = name[:8]
         sec_str = f"&#160;{sector_int}" if sector_int < 10 else str(sector_int)
 
         svg += (
-            f'<g transform="translate(0,{line_y})">'
-            f'<text text-anchor="end" x="50" style="fill:{text_color}; font-size: 10px;">{name}</text>'
-            f'<g transform="translate(52,-8)"><use transform="scale(0.3)" xlink:href="#{point.sign}" /></g>'
-            f'<text x="65" style="fill:{text_color}; font-size: 10px;">sec {sec_str}</text>'
+            f'<g transform="translate({x_off},{y_off})">'
+            f'<text text-anchor="end" x="{name_x}" style="fill:{text_color}; font-size: {font_size}px;">{name}</text>'
+            f'<g transform="translate({sign_x},-{int(glyph_scale*24)})"><use transform="scale({glyph_scale})" xlink:href="#{point.sign}" /></g>'
+            f'<text x="{sec_x}" style="fill:{text_color}; font-size: {font_size}px;">s{sec_str}</text>'
             f'</g>'
         )
-        line_y += row_height
 
     svg += "</g>"
     return svg
