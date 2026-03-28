@@ -267,7 +267,7 @@ class TransitsTimeRangeFactory:
         )
 
 
-    def get_transit_events(self) -> "TransitEventsTimeRangeModel":
+    def get_transit_events(self, *, refine_exact_moments: bool = False, refinement_iterations: int = 12) -> "TransitEventsTimeRangeModel":
         """Group transit moments into discrete transit events.
 
         Unlike ``get_transit_moments()`` which returns raw snapshots, this
@@ -280,6 +280,15 @@ class TransitsTimeRangeFactory:
             3. Group consecutive occurrences into events
             4. Find the moment with minimum orb as the "exact" moment
             5. Calculate orb rate of change at exact moment
+            6. (Optional) Refine exact_moment via bisection for sub-step precision
+
+        Args:
+            refine_exact_moments: If True, uses bisection between the two
+                ephemeris steps bracketing the minimum orb to refine the
+                exact moment to sub-minute precision. Each iteration halves
+                the uncertainty interval. Added in v6.0.
+            refinement_iterations: Number of bisection iterations (default 12,
+                giving ~1-second precision for daily steps). Added in v6.0.
 
         Returns:
             TransitEventsTimeRangeModel with sorted transit events.
@@ -313,6 +322,19 @@ class TransitsTimeRangeFactory:
             exact_date = track[min_orb_idx][0]
             min_orb = track[min_orb_idx][1]
 
+            # Bisection refinement (v6.0): refine exact_moment between bracketing steps
+            if refine_exact_moments and min_orb_idx > 0 and min_orb_idx < len(track) - 1:
+                refined = self._refine_exact_moment(
+                    p1_name=p1,
+                    p2_name=p2,
+                    aspect_name=aspect_name,
+                    left_date_str=track[min_orb_idx - 1][0],
+                    right_date_str=track[min_orb_idx + 1][0],
+                    iterations=refinement_iterations,
+                )
+                if refined is not None:
+                    exact_date, min_orb = refined
+
             # First and last dates
             applying_start = track[0][0] if len(track) > 1 else None
             separating_end = track[-1][0] if len(track) > 1 else None
@@ -343,6 +365,139 @@ class TransitsTimeRangeFactory:
             events=events,
             subject=self.natal_chart,
         )
+
+    def _refine_exact_moment(
+        self,
+        p1_name: str,
+        p2_name: str,
+        aspect_name: str,
+        left_date_str: str,
+        right_date_str: str,
+        iterations: int = 12,
+    ) -> "tuple[str, float] | None":
+        """Bisect the interval [left, right] to find the sub-step exact moment.
+
+        At each iteration, calculates the transiting planet's position at the
+        midpoint and evaluates the aspect orb. The half with the smaller orb
+        is kept, halving the uncertainty each time.
+
+        Args:
+            p1_name: Transit planet name.
+            p2_name: Natal planet name.
+            aspect_name: Aspect being refined (e.g. "conjunction").
+            left_date_str: ISO datetime of the step before minimum orb.
+            right_date_str: ISO datetime of the step after minimum orb.
+            iterations: Number of bisection steps.
+
+        Returns:
+            Tuple of (refined_iso_datetime, refined_orb) or None if refinement fails.
+        """
+        import swisseph as swe
+        from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+        from kerykeion.utilities import datetime_to_julian
+        from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
+
+        try:
+            left_dt = datetime.fromisoformat(left_date_str)
+            right_dt = datetime.fromisoformat(right_date_str)
+
+            # Get the natal planet's fixed position
+            natal_point = getattr(self.natal_chart, p2_name.lower(), None)
+            if natal_point is None:
+                return None
+            natal_pos = natal_point.abs_pos
+
+            # Determine the transit planet's Swiss Ephemeris ID
+            from kerykeion.astrological_subject_factory import STANDARD_PLANETS, TNO_PLANETS
+            planet_id = STANDARD_PLANETS.get(p1_name)
+            if planet_id is None:
+                tno_num = TNO_PLANETS.get(p1_name)
+                if tno_num is not None:
+                    planet_id = swe.AST_OFFSET + tno_num
+            if planet_id is None:
+                return None
+
+            # Build the aspect settings filter for the target aspect
+            aspect_settings = [
+                s for s in DEFAULT_CHART_ASPECTS_SETTINGS
+                if s["name"] == aspect_name
+            ]
+            if not aspect_settings:
+                return None
+
+            # Resolve matching active_aspect orb
+            for aa in self.active_aspects:
+                if aa["name"] == aspect_name:
+                    aspect_settings = [dict(aspect_settings[0])]
+                    aspect_settings[0]["orb"] = aa["orb"]
+                    break
+
+            ephe_path = str(Path(__file__).parent / "sweph")
+            swe.set_ephe_path(ephe_path)
+            iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+
+            best_date = left_dt
+            best_orb = 999.0
+
+            for _ in range(iterations):
+                mid_dt = left_dt + (right_dt - left_dt) / 2
+
+                # Calculate transit planet position at midpoint
+                jd_mid = datetime_to_julian(mid_dt.year, mid_dt.month, mid_dt.day,
+                                            mid_dt.hour, mid_dt.minute, mid_dt.second)
+                try:
+                    calc = swe.calc_ut(jd_mid, planet_id, iflag)[0]
+                except Exception:
+                    return None
+
+                transit_pos = calc[0]
+
+                # Evaluate aspect orb at midpoint
+                aspect_result = get_aspect_from_two_points(aspect_settings, transit_pos, natal_pos)
+                if aspect_result["verdict"]:
+                    mid_orb = aspect_result["orbit"]
+                else:
+                    # If aspect not in range at midpoint, use raw angular distance
+                    from kerykeion.aspects.aspects_utils import difdeg2n
+                    mid_orb = abs(abs(difdeg2n(transit_pos, natal_pos)) - aspect_settings[0]["degree"])
+
+                if mid_orb < best_orb:
+                    best_orb = mid_orb
+                    best_date = mid_dt
+
+                # Evaluate both halves: compute orb at quarter points
+                q1_dt = left_dt + (mid_dt - left_dt) / 2
+                q3_dt = mid_dt + (right_dt - mid_dt) / 2
+
+                jd_q1 = datetime_to_julian(q1_dt.year, q1_dt.month, q1_dt.day,
+                                           q1_dt.hour, q1_dt.minute, q1_dt.second)
+                jd_q3 = datetime_to_julian(q3_dt.year, q3_dt.month, q3_dt.day,
+                                           q3_dt.hour, q3_dt.minute, q3_dt.second)
+                try:
+                    pos_q1 = swe.calc_ut(jd_q1, planet_id, iflag)[0][0]
+                    pos_q3 = swe.calc_ut(jd_q3, planet_id, iflag)[0][0]
+                except Exception:
+                    return None
+
+                orb_q1 = abs(abs(pos_q1 - natal_pos) % 360 - aspect_settings[0]["degree"])
+                if orb_q1 > 180:
+                    orb_q1 = 360 - orb_q1
+                orb_q3 = abs(abs(pos_q3 - natal_pos) % 360 - aspect_settings[0]["degree"])
+                if orb_q3 > 180:
+                    orb_q3 = 360 - orb_q3
+
+                # Narrow to the half containing the minimum
+                if orb_q1 < orb_q3:
+                    right_dt = mid_dt
+                else:
+                    left_dt = mid_dt
+
+            swe.close()
+
+            return (best_date.isoformat(), round(best_orb, 6))
+
+        except Exception:
+            return None
 
 
 if __name__ == "__main__":
