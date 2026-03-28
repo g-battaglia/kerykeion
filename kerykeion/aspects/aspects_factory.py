@@ -598,6 +598,144 @@ class AspectsFactory:
             axis_orb_limit=axis_orb_limit,
         )
 
+    # =========================================================================
+    # DECLINATION ASPECTS (Parallels / Contra-Parallels) — v6.0
+    # =========================================================================
+
+    @staticmethod
+    def single_chart_declination_aspects(
+        subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        *,
+        active_points: Optional[List[AstrologicalPoint]] = None,
+        orb: float = 1.0,
+    ) -> List[AspectModel]:
+        """
+        Calculate declination-based aspects within a single chart.
+
+        Two points form a **parallel** when their declinations are within *orb*
+        degrees of each other (both north or both south of the equator).
+        A **contra-parallel** occurs when their declinations are equal in
+        magnitude but opposite in sign (one north, one south).
+
+        Args:
+            subject: The astrological subject.
+            orb: Maximum orb in degrees (default 1.0, standard for declination aspects).
+            active_points: Optional list of points to include.
+
+        Returns:
+            List of AspectModel with aspect="parallel" or aspect="contra_parallel".
+        """
+        points_to_use = active_points if active_points is not None else subject.active_points
+        points_list = get_active_points_list(subject, points_to_use)
+
+        return AspectsFactory._compute_declination_aspects(
+            points_list, points_list, subject.name, subject.name, orb, single_chart=True
+        )
+
+    @staticmethod
+    def dual_chart_declination_aspects(
+        first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        second_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
+        *,
+        active_points: Optional[List[AstrologicalPoint]] = None,
+        orb: float = 1.0,
+    ) -> List[AspectModel]:
+        """
+        Calculate declination-based aspects between two charts.
+
+        Args:
+            first_subject: First astrological subject.
+            second_subject: Second astrological subject.
+            orb: Maximum orb in degrees (default 1.0).
+            active_points: Optional list of points to include.
+
+        Returns:
+            List of AspectModel with aspect="parallel" or aspect="contra_parallel".
+        """
+        pts1 = active_points if active_points is not None else first_subject.active_points
+        pts2 = active_points if active_points is not None else second_subject.active_points
+        list1 = get_active_points_list(first_subject, pts1)
+        list2 = get_active_points_list(second_subject, pts2)
+
+        return AspectsFactory._compute_declination_aspects(
+            list1, list2, first_subject.name, second_subject.name, orb, single_chart=False
+        )
+
+    @staticmethod
+    def _compute_declination_aspects(
+        points_a: list,
+        points_b: list,
+        owner_a: str,
+        owner_b: str,
+        orb: float,
+        *,
+        single_chart: bool,
+    ) -> List[AspectModel]:
+        """
+        Core declination aspect computation shared by single and dual chart methods.
+        """
+        aspects: List[AspectModel] = []
+        planet_id_lookup = {p["name"]: p["id"] for p in DEFAULT_CELESTIAL_POINTS_SETTINGS}
+
+        for i, pa in enumerate(points_a):
+            start_j = i + 1 if single_chart else 0
+            for j in range(start_j, len(points_b)):
+                pb = points_b[j]
+                dec_a = pa.get("declination") if hasattr(pa, "get") else getattr(pa, "declination", None)
+                dec_b = pb.get("declination") if hasattr(pb, "get") else getattr(pb, "declination", None)
+
+                if dec_a is None or dec_b is None:
+                    continue
+
+                name_a = pa["name"] if isinstance(pa, dict) else pa.name
+                name_b = pb["name"] if isinstance(pb, dict) else pb.name
+                abs_pos_a = pa["abs_pos"] if isinstance(pa, dict) else pa.abs_pos
+                abs_pos_b = pb["abs_pos"] if isinstance(pb, dict) else pb.abs_pos
+
+                # Parallel: same sign declinations within orb
+                parallel_diff = abs(dec_a - dec_b)
+                if parallel_diff <= orb:
+                    aspects.append(AspectModel(
+                        p1_name=name_a,
+                        p1_owner=owner_a,
+                        p1_abs_pos=abs_pos_a,
+                        p2_name=name_b,
+                        p2_owner=owner_b,
+                        p2_abs_pos=abs_pos_b,
+                        aspect="parallel",
+                        orbit=round(parallel_diff, 6),
+                        aspect_degrees=0,
+                        diff=round(parallel_diff, 6),
+                        p1=planet_id_lookup.get(name_a, 0),
+                        p2=planet_id_lookup.get(name_b, 0),
+                        aspect_movement="Static",
+                        p1_speed=0.0,
+                        p2_speed=0.0,
+                    ))
+
+                # Contra-parallel: opposite sign declinations within orb
+                contra_diff = abs(dec_a + dec_b)
+                if contra_diff <= orb:
+                    aspects.append(AspectModel(
+                        p1_name=name_a,
+                        p1_owner=owner_a,
+                        p1_abs_pos=abs_pos_a,
+                        p2_name=name_b,
+                        p2_owner=owner_b,
+                        p2_abs_pos=abs_pos_b,
+                        aspect="contra_parallel",
+                        orbit=round(contra_diff, 6),
+                        aspect_degrees=0,
+                        diff=round(contra_diff, 6),
+                        p1=planet_id_lookup.get(name_a, 0),
+                        p2=planet_id_lookup.get(name_b, 0),
+                        aspect_movement="Static",
+                        p1_speed=0.0,
+                        p2_speed=0.0,
+                    ))
+
+        return aspects
+
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging

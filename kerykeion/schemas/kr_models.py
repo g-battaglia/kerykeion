@@ -432,6 +432,29 @@ class KerykeionPointModel(SubscriptableBaseModel):
         description="Gauquelin sector position (1-36). Sectors are numbered clockwise from the eastern horizon. "
         "Sectors near 1 and 36 (the 'plus zones') are traditionally considered most powerful.",
     )
+    # Out of Bounds (v6.0)
+    is_out_of_bounds: Optional[bool] = Field(
+        default=None,
+        description="True when the planet's declination exceeds the Sun's maximum declination "
+        "(the true obliquity of the ecliptic, ~23.44 deg). OOB planets are considered to "
+        "operate outside normal boundaries in psychological/evolutionary astrology. Added in v6.0.",
+    )
+
+
+class NutationObliquityModel(SubscriptableBaseModel):
+    """
+    Nutation and obliquity parameters for a given moment.
+
+    These values describe the orientation of Earth's axis and its
+    short-period oscillations, computed via ``swe.calc_ut(jd, swe.ECL_NUT)``.
+
+    Added in v6.0.
+    """
+
+    true_obliquity: float = Field(description="True (apparent) obliquity of the ecliptic in degrees.")
+    mean_obliquity: float = Field(description="Mean obliquity of the ecliptic in degrees (without nutation).")
+    nutation_longitude: float = Field(description="Nutation in longitude (delta-psi) in degrees.")
+    nutation_obliquity: float = Field(description="Nutation in obliquity (delta-epsilon) in degrees.")
 
 
 class AstrologicalBaseModel(SubscriptableBaseModel):
@@ -617,6 +640,13 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
     # Common lunar phase data (optional)
     lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")
+
+    # Nutation/Obliquity (v6.0)
+    nutation: Optional[NutationObliquityModel] = Field(
+        default=None,
+        description="Nutation and obliquity parameters for the chart moment. "
+        "Populated when calculate_nutation=True. Added in v6.0.",
+    )
 
 
 class AstrologicalSubjectModel(AstrologicalBaseModel):

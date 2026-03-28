@@ -35,6 +35,7 @@ from .kr_models import (
     LunarPhaseModel,
     MoonPhaseOverviewModel,
     KerykeionPointModel,
+    NutationObliquityModel,
     AstrologicalBaseModel,
     AstrologicalSubjectModel,
     CompositeSubjectModel,
@@ -99,6 +100,7 @@ __all__ = [
     "ScoreBreakdownItemModel",
     "RelationshipScoreModel",
     "ActiveAspect",
+    "NutationObliquityModel",
     "TransitMomentModel",
     "TransitsTimeRangeModel",
 ]

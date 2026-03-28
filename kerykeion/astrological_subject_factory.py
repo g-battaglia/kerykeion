@@ -284,6 +284,8 @@ def ephemeris_context(
         iflag |= swe.FLG_TOPOCTR
         swe.set_topo(lng, lat, alt or 0.0)
         topo_used = True
+    elif config.perspective_type == "Barycentric":
+        iflag |= swe.FLG_BARYCTR
 
     # Sidereal configuration
     if config.zodiac_type == "Sidereal":
@@ -353,6 +355,7 @@ class ChartConfiguration:
     calculate_dignities: bool = False
     calculate_nakshatra: bool = False
     calculate_gauquelin: bool = False
+    calculate_nutation: bool = False
 
     def __post_init__(self) -> None:
         self.validate()
@@ -965,6 +968,41 @@ class AstrologicalSubjectFactory:
                 calc_data[point_key] = point.model_copy(
                     update={"gauquelin_sector": round(sector, 4)}
                 )
+
+        # Calculate Out-of-Bounds status for all celestial points (v6.0)
+        # A planet is OOB when |declination| > true obliquity of the ecliptic (~23.44 deg).
+        # The obliquity varies over millennia (22.1 - 24.5 deg) so we use the true value
+        # for the chart's epoch, not a hardcoded constant.
+        true_obliquity = None
+        try:
+            nut_data = swe.calc_ut(calc_data["julian_day"], swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+            true_obliquity = nut_data[0]
+        except Exception as e:
+            logging.warning(f"Could not compute obliquity for OOB detection: {e}")
+
+        if true_obliquity is not None:
+            for point_key in list(calc_data.keys()):
+                point = calc_data.get(point_key)
+                if point is not None and hasattr(point, "point_type") and point.point_type == "AstrologicalPoint":
+                    if point.declination is not None:
+                        is_oob = abs(point.declination) > true_obliquity
+                        calc_data[point_key] = point.model_copy(update={"is_out_of_bounds": is_oob})
+
+        # Calculate Nutation/Obliquity parameters (optional, v6.0)
+        if config.calculate_nutation:
+            from kerykeion.schemas.kr_models import NutationObliquityModel
+
+            try:
+                nut_raw = swe.calc_ut(calc_data["julian_day"], swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+                calc_data["nutation"] = NutationObliquityModel(
+                    true_obliquity=nut_raw[0],
+                    mean_obliquity=nut_raw[1],
+                    nutation_longitude=nut_raw[2],
+                    nutation_obliquity=nut_raw[3],
+                )
+            except Exception as e:
+                logging.warning(f"Could not compute nutation parameters: {e}")
+                calc_data["nutation"] = None
 
         # Create and return the AstrologicalSubjectModel
         return AstrologicalSubjectModel(**calc_data)

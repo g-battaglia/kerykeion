@@ -340,6 +340,8 @@ Usually the standard is Placidus (P)
 PerspectiveType: TypeAlias = Literal[
     "Apparent Geocentric", "Heliocentric", "Topocentric", "True Geocentric",
     "Selenocentric", "Mercurycentric", "Venuscentric", "Marscentric", "Jupitercentric", "Saturncentric",
+    # v6.0 addition
+    "Barycentric",
 ]
 """
 Literal type for perspective types.
@@ -347,6 +349,7 @@ Literal type for perspective types.
 - "Heliocentric": Sun-centered.
 - "Topocentric": Observer's location on Earth's surface.
 - "True Geocentric": Earth-centered, true positions.
+- "Barycentric": Solar-system barycenter. Used in financial astrology (v6.0).
 
 Usually the standard is "Apparent Geocentric"
 """
@@ -390,8 +393,16 @@ AspectName: TypeAlias = Literal[
     "biquintile",
     "quincunx",
     "opposition",
+    # Declination-based aspects (v6.0)
+    "parallel",
+    "contra_parallel",
 ]
-"""Literal type for all the available aspects names"""
+"""Literal type for all the available aspects names.
+
+Ecliptic aspects (conjunction through opposition) are measured along the zodiac.
+Declination aspects (parallel, contra_parallel) compare celestial latitude
+north/south of the equator and are added in v6.0.
+"""
 
 ReturnType: TypeAlias = Literal["Lunar", "Solar", "Heliocentric", "Lunar_Node_Crossing"]
 """Literal type for Return Types"""
