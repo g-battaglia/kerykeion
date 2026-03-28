@@ -89,6 +89,130 @@ class TestLocalSearch:
                 assert ecl.datestamp.endswith("Z")
 
 
+class TestClassifyHelpers:
+    """Test the classification helper functions and _jd_to_iso edge cases."""
+
+    def test_classify_solar_annular_total(self):
+        """ECL_ANNULAR_TOTAL flag should classify as 'annular-total'."""
+        from kerykeion.eclipses.eclipse_factory import (
+            _classify_solar_eclipse, ECL_ANNULAR_TOTAL,
+        )
+        assert _classify_solar_eclipse(ECL_ANNULAR_TOTAL) == "annular-total"
+
+    def test_classify_solar_unknown(self):
+        """Flag 0 (no type bits) should classify as 'unknown'."""
+        from kerykeion.eclipses.eclipse_factory import _classify_solar_eclipse
+        assert _classify_solar_eclipse(0) == "unknown"
+
+    def test_classify_lunar_unknown(self):
+        """Flag 0 (no type bits) should classify as 'unknown'."""
+        from kerykeion.eclipses.eclipse_factory import _classify_lunar_eclipse
+        assert _classify_lunar_eclipse(0) == "unknown"
+
+    def test_jd_to_iso_exception_returns_empty(self):
+        """_jd_to_iso should return '' when swe.revjul raises."""
+        from kerykeion.eclipses.eclipse_factory import _jd_to_iso
+        from unittest.mock import patch
+        with patch("kerykeion.eclipses.eclipse_factory.swe.revjul", side_effect=RuntimeError("bad")):
+            assert _jd_to_iso(0.0) == ""
+
+
+class TestEclipseSearchBreakAndErrorPaths:
+    """Test break-on-zero and exception paths in the internal search methods."""
+
+    def test_solar_local_break_on_zero_tret(self):
+        """_find_solar_local should return empty list if tret[0] == 0."""
+        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from unittest.mock import patch
+        zero_tret = [0.0] * 10
+        with patch(
+            "kerykeion.eclipses.eclipse_factory.swe.sol_eclipse_when_loc",
+            return_value=(0, zero_tret, [0.0] * 10),
+        ):
+            result = EclipseFactory._find_solar_local(2451545.0, (12.0, 41.0, 0.0), 3)
+            assert result == []
+
+    def test_solar_local_exception_path(self):
+        """_find_solar_local should handle exceptions gracefully."""
+        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from unittest.mock import patch
+        with patch(
+            "kerykeion.eclipses.eclipse_factory.swe.sol_eclipse_when_loc",
+            side_effect=RuntimeError("swe failure"),
+        ):
+            result = EclipseFactory._find_solar_local(2451545.0, (12.0, 41.0, 0.0), 3)
+            assert result == []
+
+    def test_solar_global_break_on_zero_tret(self):
+        """_find_solar_global should return empty list if tret[0] == 0."""
+        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from unittest.mock import patch
+        zero_tret = [0.0] * 10
+        with patch(
+            "kerykeion.eclipses.eclipse_factory.swe.sol_eclipse_when_glob",
+            return_value=(0, zero_tret),
+        ):
+            result = EclipseFactory._find_solar_global(2451545.0, 3)
+            assert result == []
+
+    def test_solar_global_exception_path(self):
+        """_find_solar_global should handle exceptions gracefully."""
+        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from unittest.mock import patch
+        with patch(
+            "kerykeion.eclipses.eclipse_factory.swe.sol_eclipse_when_glob",
+            side_effect=RuntimeError("swe failure"),
+        ):
+            result = EclipseFactory._find_solar_global(2451545.0, 3)
+            assert result == []
+
+    def test_lunar_local_break_on_zero_tret(self):
+        """_find_lunar_local should return empty list if tret[0] == 0."""
+        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from unittest.mock import patch
+        zero_tret = [0.0] * 10
+        with patch(
+            "kerykeion.eclipses.eclipse_factory.swe.lun_eclipse_when_loc",
+            return_value=(0, zero_tret, [0.0] * 10),
+        ):
+            result = EclipseFactory._find_lunar_local(2451545.0, (12.0, 41.0, 0.0), 3)
+            assert result == []
+
+    def test_lunar_local_exception_path(self):
+        """_find_lunar_local should handle exceptions gracefully."""
+        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from unittest.mock import patch
+        with patch(
+            "kerykeion.eclipses.eclipse_factory.swe.lun_eclipse_when_loc",
+            side_effect=RuntimeError("swe failure"),
+        ):
+            result = EclipseFactory._find_lunar_local(2451545.0, (12.0, 41.0, 0.0), 3)
+            assert result == []
+
+    def test_lunar_global_break_on_zero_tret(self):
+        """_find_lunar_global should return empty list if tret[0] == 0."""
+        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from unittest.mock import patch
+        zero_tret = [0.0] * 10
+        with patch(
+            "kerykeion.eclipses.eclipse_factory.swe.lun_eclipse_when",
+            return_value=(0, zero_tret),
+        ):
+            result = EclipseFactory._find_lunar_global(2451545.0, 3)
+            assert result == []
+
+    def test_lunar_global_exception_path(self):
+        """_find_lunar_global should handle exceptions gracefully."""
+        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from unittest.mock import patch
+        with patch(
+            "kerykeion.eclipses.eclipse_factory.swe.lun_eclipse_when",
+            side_effect=RuntimeError("swe failure"),
+        ):
+            result = EclipseFactory._find_lunar_global(2451545.0, 3)
+            assert result == []
+
+
 class TestSweRegressionEclipses:
     """Regression tests: verify factory results match raw Swiss Ephemeris calls."""
 

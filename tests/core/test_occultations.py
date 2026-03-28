@@ -118,6 +118,61 @@ class TestImports:
 # SWE reference tests
 # ---------------------------------------------------------------------------
 
+class TestClassifyOccultation:
+    """Test the _classify_occultation helper."""
+
+    def test_classify_unknown_flag(self):
+        """Flag 0 (no matching bits) should return 'Unknown'."""
+        from kerykeion.occultations.occultation_factory import _classify_occultation
+        assert _classify_occultation(0) == "Unknown"
+
+
+class TestOccultationBreakAndErrorPaths:
+    """Test break-on-zero and exception paths in the search methods."""
+
+    def test_global_retflags_zero_breaks(self, factory, start_jd):
+        """search_global should return empty list when retflags == 0."""
+        from unittest.mock import patch
+        zero_tret = [0.0] * 10
+        with patch(
+            "kerykeion.occultations.occultation_factory.swe.lun_occult_when_glob",
+            return_value=(0, zero_tret),
+        ):
+            results = factory.search_global(start_jd, swe.VENUS, count=3)
+            assert results == []
+
+    def test_global_exception_breaks(self, factory, start_jd):
+        """search_global should stop on exception from swe.lun_occult_when_glob."""
+        from unittest.mock import patch
+        with patch(
+            "kerykeion.occultations.occultation_factory.swe.lun_occult_when_glob",
+            side_effect=RuntimeError("swe failure"),
+        ):
+            results = factory.search_global(start_jd, swe.VENUS, count=3)
+            assert results == []
+
+    def test_local_retflags_zero_breaks(self, factory, start_jd):
+        """search_local should return empty list when retflags == 0."""
+        from unittest.mock import patch
+        zero_tret = [0.0] * 10
+        with patch(
+            "kerykeion.occultations.occultation_factory.swe.lun_occult_when_loc",
+            return_value=(0, zero_tret, [0.0] * 10),
+        ):
+            results = factory.search_local(start_jd, swe.VENUS, lat=41.9, lng=12.5, count=3)
+            assert results == []
+
+    def test_local_exception_breaks(self, factory, start_jd):
+        """search_local should stop on exception from swe.lun_occult_when_loc."""
+        from unittest.mock import patch
+        with patch(
+            "kerykeion.occultations.occultation_factory.swe.lun_occult_when_loc",
+            side_effect=RuntimeError("swe failure"),
+        ):
+            results = factory.search_local(start_jd, swe.VENUS, lat=41.9, lng=12.5, count=3)
+            assert results == []
+
+
 class TestSweReference:
     """Compare factory results with direct swe.lun_occult_when_glob() calls."""
 

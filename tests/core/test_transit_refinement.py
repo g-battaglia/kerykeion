@@ -166,3 +166,106 @@ class TestTransitRefinement:
             assert event.aspect is not None
             assert event.exact_moment is not None
             assert event.min_orb >= 0
+
+
+class TestRefineExactMomentEdgeCases:
+    """Test edge-case/error paths in _refine_exact_moment."""
+
+    def test_refine_unknown_natal_planet_returns_none(self, transit_factory):
+        """If p2_name doesn't match any natal point, should return None."""
+        result = transit_factory._refine_exact_moment(
+            p1_name="Sun",
+            p2_name="NonExistentPlanet",
+            aspect_name="conjunction",
+            left_date_str="2025-01-01T00:00:00",
+            right_date_str="2025-01-03T00:00:00",
+        )
+        assert result is None
+
+    def test_refine_unknown_transit_planet_returns_none(self, transit_factory):
+        """If p1_name doesn't match any known planet, should return None."""
+        result = transit_factory._refine_exact_moment(
+            p1_name="NonExistentTransitPlanet",
+            p2_name="Sun",
+            aspect_name="conjunction",
+            left_date_str="2025-01-01T00:00:00",
+            right_date_str="2025-01-03T00:00:00",
+        )
+        assert result is None
+
+    def test_refine_invalid_aspect_returns_none(self, transit_factory):
+        """If aspect_name doesn't match any chart aspect, should return None."""
+        result = transit_factory._refine_exact_moment(
+            p1_name="Sun",
+            p2_name="Moon",
+            aspect_name="nonexistent_aspect",
+            left_date_str="2025-01-01T00:00:00",
+            right_date_str="2025-01-03T00:00:00",
+        )
+        assert result is None
+
+    def test_refine_invalid_date_returns_none(self, transit_factory):
+        """If date strings are invalid, should return None."""
+        result = transit_factory._refine_exact_moment(
+            p1_name="Sun",
+            p2_name="Moon",
+            aspect_name="conjunction",
+            left_date_str="not-a-date",
+            right_date_str="also-not-a-date",
+        )
+        assert result is None
+
+    def test_refine_calc_ut_exception_returns_none(self, transit_factory):
+        """If swe.calc_ut raises during refinement, should return None."""
+        from unittest.mock import patch
+        with patch(
+            "swisseph.calc_ut",
+            side_effect=RuntimeError("Mock swe failure"),
+        ):
+            result = transit_factory._refine_exact_moment(
+                p1_name="Sun",
+                p2_name="Moon",
+                aspect_name="conjunction",
+                left_date_str="2025-01-01T00:00:00",
+                right_date_str="2025-01-03T00:00:00",
+            )
+            assert result is None
+
+    def test_refine_tno_planet_path(self, transit_factory):
+        """If p1_name is a TNO like 'Eris', should use AST_OFFSET + tno_num path."""
+        # Eris is a TNO, so it goes through the TNO_PLANETS lookup
+        # If natal chart doesn't have Eris as p2, this tests the p1 TNO path
+        result = transit_factory._refine_exact_moment(
+            p1_name="Eris",
+            p2_name="Sun",
+            aspect_name="conjunction",
+            left_date_str="2025-01-01T00:00:00",
+            right_date_str="2025-01-03T00:00:00",
+        )
+        # Should return a result (or None if Eris is not found), but shouldn't crash
+        assert result is None or isinstance(result, tuple)
+
+    def test_refine_quarter_point_exception_returns_none(self, transit_factory):
+        """If swe.calc_ut raises during quarter-point evaluation, should return None."""
+        from unittest.mock import patch
+        import swisseph as swe
+
+        original_calc_ut = swe.calc_ut
+        call_count = [0]
+
+        def mock_calc_ut(jd, planet_id, iflag):
+            call_count[0] += 1
+            # Let the first call (midpoint) succeed, fail on subsequent (quarter points)
+            if call_count[0] <= 1:
+                return original_calc_ut(jd, planet_id, iflag)
+            raise RuntimeError("Mock quarter-point failure")
+
+        with patch("swisseph.calc_ut", side_effect=mock_calc_ut):
+            result = transit_factory._refine_exact_moment(
+                p1_name="Sun",
+                p2_name="Moon",
+                aspect_name="conjunction",
+                left_date_str="2025-01-01T00:00:00",
+                right_date_str="2025-01-03T00:00:00",
+            )
+            assert result is None

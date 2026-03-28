@@ -70,6 +70,54 @@ class TestDavisonComposite:
         assert davison.composite_chart_type == "Davison"
 
 
+class TestCompositeSubjectDunderMethods:
+    """Test __str__, __repr__, __eq__, __ne__, __hash__ on CompositeSubjectFactory."""
+
+    def test_str(self, subjects):
+        s1, s2 = subjects
+        factory = CompositeSubjectFactory(s1, s2, "Test Chart")
+        assert str(factory) == "Composite Chart Data for Test Chart"
+
+    def test_repr(self, subjects):
+        s1, s2 = subjects
+        factory = CompositeSubjectFactory(s1, s2, "Test Chart")
+        assert repr(factory) == "Composite Chart Data for Test Chart"
+
+    def test_eq_same_inputs(self, subjects):
+        s1, s2 = subjects
+        f1 = CompositeSubjectFactory(s1, s2, "Chart")
+        f2 = CompositeSubjectFactory(s1, s2, "Chart")
+        assert f1 == f2
+
+    def test_ne_different_name(self, subjects):
+        s1, s2 = subjects
+        f1 = CompositeSubjectFactory(s1, s2, "Chart A")
+        f2 = CompositeSubjectFactory(s1, s2, "Chart B")
+        assert f1 != f2
+
+    def test_hash_raises_for_unhashable_subjects(self, subjects):
+        """__hash__ tries to hash the subjects; if they're unhashable, TypeError is raised."""
+        s1, s2 = subjects
+        f1 = CompositeSubjectFactory(s1, s2, "Chart")
+        # AstrologicalSubjectModel (Pydantic BaseModel) is not hashable
+        with pytest.raises(TypeError):
+            hash(f1)
+
+
+class TestCompositeValidation:
+    """Test validation errors in CompositeSubjectFactory.__init__."""
+
+    def test_different_houses_system_name_raises(self, subjects):
+        """Subjects with different houses_system_name should raise."""
+        from kerykeion.schemas import KerykeionException
+        s1, s2 = subjects
+        # Mutate s2's houses_system_name (keeping identifier the same)
+        s2_mod = s2.model_copy()
+        s2_mod.houses_system_name = "Fake House System"
+        with pytest.raises(KerykeionException, match="houses system name"):
+            CompositeSubjectFactory(s1, s2_mod)
+
+
 class TestDavisonSweReference:
     """Compare Davison factory Sun position with direct swe.calc_ut() at midpoint JD."""
 

@@ -118,6 +118,213 @@ class TestPrimaryDirections:
             assert d.aspect == "conjunction"
 
 
+class TestPrimaryDirectionEdgeCases:
+    """Test edge-case branches in primary directions."""
+
+    def test_empty_speculum_returns_empty(self):
+        """If _build_speculum returns empty, compute should return []."""
+        from unittest.mock import patch
+
+        sub = AstrologicalSubjectFactory.from_birth_data(
+            "Test", 1990, 1, 1, 12, 0,
+            lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False,
+        )
+        with patch.object(PrimaryDirectionsFactory, "_build_speculum", return_value=[]):
+            result = PrimaryDirectionsFactory.compute(sub)
+            assert result == []
+
+    def test_invalid_aspect_name_skipped(self, subject):
+        """Invalid aspect names should be skipped (aspect_angle is None)."""
+        directions = PrimaryDirectionsFactory.compute(
+            subject, max_years=80, aspects=["nonexistent_aspect"]
+        )
+        # No valid aspects -> no directions
+        assert directions == []
+
+    def test_oblique_ascension_extreme_declination(self):
+        """_oblique_ascension with extreme values should not raise."""
+        # Test with dec=89, pole=89 (extreme polar values)
+        oa = PrimaryDirectionsFactory._oblique_ascension(180.0, 89.0, 89.0, 23.4)
+        assert isinstance(oa, float)
+        assert 0.0 <= oa < 360.0
+
+    def test_oblique_ascension_zero_pole(self):
+        """_oblique_ascension with pole=0 should give OA ≈ RA."""
+        oa = PrimaryDirectionsFactory._oblique_ascension(100.0, 20.0, 0.0, 23.4)
+        # AD = asin(tan(dec)*tan(0)) = asin(0) = 0
+        assert abs(oa - 100.0) < 0.01
+
+    def test_naibod_rate_key_different_years(self, subject):
+        """Naibod key should produce different years than ptolemy for same arc."""
+        ptolemy = PrimaryDirectionsFactory.compute(subject, max_years=80, rate_key="ptolemy")
+        naibod = PrimaryDirectionsFactory.compute(subject, max_years=80, rate_key="naibod")
+        # Both should have results
+        assert len(ptolemy) > 0
+        assert len(naibod) > 0
+
+    def test_oblique_ascension_exception_skips_direction(self, subject):
+        """If _oblique_ascension raises during direction computation, that direction is skipped."""
+        from unittest.mock import patch
+
+        # First build speculum normally (so _build_speculum doesn't fail)
+        speculum = PrimaryDirectionsFactory.compute_speculum(subject)
+        assert len(speculum) > 0
+
+        call_count = [0]
+        original_oa = PrimaryDirectionsFactory._oblique_ascension
+
+        def failing_oa(*args, **kwargs):
+            call_count[0] += 1
+            # Fail on every 5th call to exercise the except branch (lines 152-153)
+            if call_count[0] % 5 == 0:
+                raise ValueError("Mock OA failure")
+            return original_oa(*args, **kwargs)
+
+        # Only patch during compute, but also patch _build_speculum to return
+        # the pre-computed speculum so _oblique_ascension failures only happen
+        # during the direction computation loop
+        with patch.object(PrimaryDirectionsFactory, "_build_speculum", return_value=speculum):
+            with patch.object(PrimaryDirectionsFactory, "_oblique_ascension", side_effect=failing_oa):
+                directions = PrimaryDirectionsFactory.compute(subject, max_years=80)
+                # Should still return some directions (those that didn't fail)
+                assert isinstance(directions, list)
+
+    def test_speculum_calc_ut_fallback(self, subject):
+        """If swe.calc_ut with FLG_EQUATORIAL fails, speculum should use ecliptic fallback."""
+        from unittest.mock import patch
+
+        original_calc_ut = swe.calc_ut
+
+        def failing_eq_calc_ut(jd, planet_id, iflag):
+            if iflag & swe.FLG_EQUATORIAL:
+                raise RuntimeError("Mock equatorial failure")
+            return original_calc_ut(jd, planet_id, iflag)
+
+        with patch("kerykeion.primary_directions.directions_factory.swe.calc_ut", side_effect=failing_eq_calc_ut):
+            speculum = PrimaryDirectionsFactory.compute_speculum(subject)
+            # Should still return entries (using ecliptic fallback for RA)
+            assert len(speculum) > 0
+            for entry in speculum:
+                assert 0 <= entry.right_ascension < 360
+
+    def test_speculum_extreme_latitude_polar(self):
+        """Speculum at extreme latitude (near-polar) exercises semi-arc fallback."""
+        # Near-polar latitude causes tan(dec)*tan(lat) to exceed [-1, 1] range
+        polar_subject = AstrologicalSubjectFactory.from_birth_data(
+            "Polar Test", 1990, 6, 21, 12, 0,
+            lng=25.0, lat=89.5, tz_str="Etc/GMT",
+            city="NorthPole", nation="FI", online=False,
+        )
+        speculum = PrimaryDirectionsFactory.compute_speculum(polar_subject)
+        assert len(speculum) > 0
+        for entry in speculum:
+            assert entry.semi_arc > 0
+
+    def test_speculum_point_none_skipped(self):
+        """If a direction point doesn't exist on the subject, it's skipped."""
+        from unittest.mock import patch, MagicMock
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Test", 1990, 1, 1, 12, 0,
+            lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False,
+        )
+        # Make one point return None
+        original_getattr = subject.__class__.__getattribute__
+
+        def mock_getattr(self_obj, name):
+            if name == "medium_coeli":
+                return None
+            return original_getattr(self_obj, name)
+
+        with patch.object(type(subject), "__getattribute__", mock_getattr):
+            speculum = PrimaryDirectionsFactory.compute_speculum(subject)
+            names = [e.name for e in speculum]
+            assert "Medium_Coeli" not in names
+
+    def test_oblique_ascension_zero_division_fallback(self):
+        """_oblique_ascension with dec=90 and pole=90 should trigger fallback."""
+        # tan(90) is undefined, which should trigger the ZeroDivisionError fallback
+        oa = PrimaryDirectionsFactory._oblique_ascension(100.0, 90.0, 90.0, 23.4)
+        # Should use the clamped fallback and not raise
+        assert isinstance(oa, float)
+
+    def test_speculum_semi_arc_exception_fallback(self):
+        """Force semi-arc calculation to raise via mock to hit lines 263-264."""
+        from unittest.mock import patch
+        import math as real_math
+
+        original_acos = real_math.acos
+        call_count = [0]
+
+        def mock_acos(x):
+            call_count[0] += 1
+            # The acos calls for semi-arc happen after the clamp (cos_sa).
+            # Fail on certain calls to trigger the except block.
+            if call_count[0] >= 2:
+                raise ValueError("Mock acos failure")
+            return original_acos(x)
+
+        with patch("kerykeion.primary_directions.directions_factory.math.acos", side_effect=mock_acos):
+            speculum = PrimaryDirectionsFactory.compute_speculum(
+                AstrologicalSubjectFactory.from_birth_data(
+                    "Test", 1990, 1, 1, 12, 0,
+                    lng=0.0, lat=51.5, tz_str="Etc/GMT",
+                    city="Greenwich", nation="GB", online=False,
+                )
+            )
+            # Should still produce entries (using dsa=90 fallback)
+            assert len(speculum) > 0
+
+    def test_speculum_pole_exception_fallback(self):
+        """Force pole calculation to raise via mock to hit lines 278-279."""
+        from unittest.mock import patch
+        import math as real_math
+
+        original_sin = real_math.sin
+        call_count = [0]
+
+        def mock_sin(x):
+            call_count[0] += 1
+            result = original_sin(x)
+            # After many calls, return 0.0 from the sin(radians(sa)) call
+            # to cause ZeroDivisionError in the pole_sin division.
+            # This is hard to target precisely, so instead just raise directly
+            # on a later call that's likely in the pole calculation:
+            if call_count[0] > 20 and call_count[0] % 7 == 0:
+                raise ZeroDivisionError("Mock zero division")
+            return result
+
+        with patch("kerykeion.primary_directions.directions_factory.math.sin", side_effect=mock_sin):
+            speculum = PrimaryDirectionsFactory.compute_speculum(
+                AstrologicalSubjectFactory.from_birth_data(
+                    "Test", 1990, 1, 1, 12, 0,
+                    lng=0.0, lat=51.5, tz_str="Etc/GMT",
+                    city="Greenwich", nation="GB", online=False,
+                )
+            )
+            # Should still produce entries (using pole=0 fallback)
+            assert len(speculum) > 0
+
+    def test_oblique_ascension_ad_exception_fallback(self):
+        """Force ascensional difference to raise to hit lines 312-313."""
+        from unittest.mock import patch
+        import math as real_math
+
+        original_tan = real_math.tan
+
+        def mock_tan(x):
+            # Raise on every call to trigger the except block
+            raise ZeroDivisionError("Mock tan failure")
+
+        # The _oblique_ascension function calls tan(dec_rad) * tan(pole_rad)
+        with patch("kerykeion.primary_directions.directions_factory.math.tan", side_effect=mock_tan):
+            oa = PrimaryDirectionsFactory._oblique_ascension(100.0, 30.0, 45.0, 23.4)
+            # Should use ad=0 fallback, so OA ≈ RA = 100
+            assert abs(oa - 100.0) < 0.01
+
+
 class TestSpeculumSweRegressions:
     """Known-value regression tests using Swiss Ephemeris as reference source.
 

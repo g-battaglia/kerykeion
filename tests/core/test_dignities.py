@@ -132,6 +132,51 @@ class TestDignityCalculation:
         assert result["dignity_score"] >= 3  # At least triplicity
 
 
+class TestDignityHelperEdgeCases:
+    """Test edge-case branches in dignity helper functions."""
+
+    def test_get_decan_ruler_unknown_sign(self):
+        """_get_decan_ruler should return None for an unknown sign."""
+        from kerykeion.dignities.dignity_factory import _get_decan_ruler
+        assert _get_decan_ruler("Unknown", 1) is None
+
+    def test_get_term_ruler_unknown_sign(self):
+        """_get_term_ruler should return None for an unknown sign."""
+        from kerykeion.dignities.dignity_factory import _get_term_ruler
+        assert _get_term_ruler("Unknown", 15.0) is None
+
+    def test_get_term_ruler_no_match(self):
+        """_get_term_ruler should return None when degree matches no term range."""
+        from kerykeion.dignities.dignity_factory import _get_term_ruler
+        # Egyptian terms cover 0-30 for each sign, so degree 30+ should not match
+        assert _get_term_ruler("Ari", 30.0) is None
+
+    def test_compute_dignity_non_classical_planet(self):
+        """_compute_dignity should return (None, None) for non-classical planets."""
+        from kerykeion.dignities.dignity_factory import _compute_dignity
+        result = _compute_dignity("Uranus", "Aqu", "Air", 15.0, True, 2, None, None)
+        assert result == (None, None)
+
+    def test_fall_only_label(self):
+        """A planet with only Fall (no detriment) should be labeled 'Fall'."""
+        # Saturn is in fall in Aries (FALL_TABLE["Ari"] == "Saturn")
+        # but is NOT in detriment in Aries (DETRIMENT_RULERS["Ari"] should not include Saturn)
+        # Let's pick a case: Moon is in fall in Scorpio (FALL_TABLE["Sco"] == "Moon")
+        # and Moon is NOT in detriment in Scorpio
+        from kerykeion.dignities.dignity_data import FALL_TABLE, DETRIMENT_RULERS
+        # Find a planet that is in fall but not in detriment for a sign
+        for sign, fall_planet in FALL_TABLE.items():
+            if fall_planet and fall_planet not in DETRIMENT_RULERS.get(sign, []):
+                # Use a position where there's no other dignity
+                result = calculate_essential_dignity(fall_planet, sign, "Fire", 15.0, True)
+                if result["essential_dignity"] == "Fall":
+                    assert result["dignity_score"] < 0
+                    return
+        # If no pure Fall case is found (unlikely), just verify Saturn in Aries
+        result = calculate_essential_dignity("Saturn", "Ari", "Fire", 15.0, True)
+        assert result["dignity_score"] < 0
+
+
 class TestDignityIntegration:
     """Test dignities integrated in AstrologicalSubjectFactory."""
 

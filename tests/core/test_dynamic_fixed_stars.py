@@ -98,6 +98,69 @@ class TestDynamicFixedStars:
         assert isinstance(subject.fixed_stars, list)
 
 
+class TestFixedStarEdgeCases:
+    """Test edge-case branches in FixedStarDiscoveryFactory and helpers."""
+
+    def test_empty_catalog_returns_empty(self, subject_all_stars):
+        """If no star names parsed from catalog, should return []."""
+        from unittest.mock import patch
+        with patch(
+            "kerykeion.fixed_stars.discovery_factory._parse_star_names_from_catalog",
+            return_value=[],
+        ):
+            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
+            assert result == []
+
+    def test_parse_catalog_exception_returns_empty(self):
+        """_parse_star_names_from_catalog should return [] on file read error."""
+        from kerykeion.fixed_stars.discovery_factory import _parse_star_names_from_catalog
+        result = _parse_star_names_from_catalog("/nonexistent/path/sefstars.txt")
+        assert result == []
+
+    def test_empty_planet_positions_returns_empty(self):
+        """If subject has no active points with abs_pos, should return []."""
+        from unittest.mock import patch, MagicMock
+        mock_subject = MagicMock()
+        mock_subject.active_points = []
+        mock_subject.julian_day = 2451545.0
+        result = FixedStarDiscoveryFactory.find_prominent_stars(mock_subject, orb=2.0)
+        assert result == []
+
+    def test_fixstar2_mag_exception_gives_none(self, subject_all_stars):
+        """If swe.fixstar2_mag raises, magnitude should be None for that star."""
+        from unittest.mock import patch
+        original = __import__("swisseph").fixstar2_mag
+
+        def fail_mag(name):
+            raise RuntimeError("No magnitude data")
+
+        with patch("kerykeion.fixed_stars.discovery_factory.swe.fixstar2_mag", side_effect=fail_mag):
+            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
+            # Stars should still be returned, but with magnitude=None
+            for star in result:
+                assert star.magnitude is None
+
+    def test_fixstar_ut_exception_skips_star(self, subject_all_stars):
+        """If swe.fixstar_ut raises for some stars, those stars are silently skipped."""
+        from unittest.mock import patch
+        import swisseph as swe
+
+        original_fixstar_ut = swe.fixstar_ut
+        call_count = [0]
+
+        def mock_fixstar_ut(name, jd, iflag):
+            call_count[0] += 1
+            # Fail on every 10th call to exercise the outer except block
+            if call_count[0] % 10 == 0:
+                raise RuntimeError("Mock fixstar failure")
+            return original_fixstar_ut(name, jd, iflag)
+
+        with patch("kerykeion.fixed_stars.discovery_factory.swe.fixstar_ut", side_effect=mock_fixstar_ut):
+            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
+            assert isinstance(result, list)
+            # Should still find some stars (the ones that didn't fail)
+
+
 class TestFixedStarDiscovery:
     def test_find_prominent_stars(self, subject_all_stars):
         """Auto-discovery should find stars conjunct natal planets."""

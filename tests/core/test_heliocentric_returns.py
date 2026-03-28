@@ -149,6 +149,85 @@ class TestHeliocentricReturn:
 # Lunar node crossing tests
 # ---------------------------------------------------------------------------
 
+class TestPlanetaryReturnValidation:
+    """Test validation and error paths in PlanetaryReturnFactory."""
+
+    def test_unknown_planet_heliocentric_raises(self, factory, start_jd):
+        """next_heliocentric_return with an unknown planet name should raise."""
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException, match="Unknown planet"):
+            factory.next_heliocentric_return("NonExistentPlanet", start_jd)
+
+    def test_user_sidereal_without_custom_ayanamsa_raises(self, subject):
+        """USER sidereal mode without custom ayanamsa params should raise."""
+        from kerykeion.schemas import KerykeionException
+        # Create a subject with sidereal_mode = "USER"
+        from unittest.mock import patch
+        user_subject = subject.model_copy()
+        user_subject.sidereal_mode = "USER"
+        with pytest.raises(KerykeionException, match="custom_ayanamsa"):
+            PlanetaryReturnFactory(
+                user_subject,
+                lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+                city="Rome", nation="IT", online=False,
+            )
+
+    def test_custom_ayanamsa_propagation_build_return_chart(self, subject):
+        """Factory with custom ayanamsa attrs should propagate them via _build_return_chart."""
+        factory_obj = PlanetaryReturnFactory(
+            subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        # Manually set custom ayanamsa attributes to exercise lines 828, 830
+        factory_obj.custom_ayanamsa_t0 = 2451545.0
+        factory_obj.custom_ayanamsa_ayan_t0 = 23.5
+
+        # Call _build_return_chart to exercise the propagation path
+        result = factory_obj._build_return_chart(swe.julday(2025, 6, 15, 12.0), "Solar")
+        assert result is not None
+        assert result.return_type == "Solar"
+
+    def test_custom_ayanamsa_propagation_iso_time(self, subject):
+        """Factory with custom ayanamsa attrs should propagate them via next_return_from_iso_formatted_time."""
+        factory_obj = PlanetaryReturnFactory(
+            subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        # Manually set custom ayanamsa attributes to exercise lines 550, 552
+        factory_obj.custom_ayanamsa_t0 = 2451545.0
+        factory_obj.custom_ayanamsa_ayan_t0 = 23.5
+
+        result = factory_obj.next_return_from_iso_formatted_time("2025-06-15T12:00:00", "Solar")
+        assert result is not None
+        assert result.return_type == "Solar"
+
+    def test_solar_return_with_no_sun_raises(self, subject):
+        """Solar return with a subject whose sun is None should raise."""
+        from kerykeion.schemas import KerykeionException
+        factory_obj = PlanetaryReturnFactory(
+            subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        # Mock subject.sun = None
+        factory_obj.subject = subject.model_copy()
+        factory_obj.subject.sun = None
+        with pytest.raises(KerykeionException, match="Sun position"):
+            factory_obj.next_return_from_iso_formatted_time("2025-06-15T12:00:00", "Solar")
+
+    def test_lunar_return_with_no_moon_raises(self, subject):
+        """Lunar return with a subject whose moon is None should raise."""
+        from kerykeion.schemas import KerykeionException
+        factory_obj = PlanetaryReturnFactory(
+            subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        # Mock subject.moon = None
+        factory_obj.subject = subject.model_copy()
+        factory_obj.subject.moon = None
+        with pytest.raises(KerykeionException, match="Moon position"):
+            factory_obj.next_return_from_iso_formatted_time("2025-06-15T12:00:00", "Lunar")
+
+
 class TestLunarNodeCrossing:
     """Verify that lunar node crossings place the Moon near a node."""
 

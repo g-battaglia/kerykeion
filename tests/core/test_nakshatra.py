@@ -101,6 +101,41 @@ class TestNakshatraCalculation:
         assert result["nakshatra"] == "Ashwini"
         assert result["nakshatra_number"] == 1
 
+    def test_just_below_360(self):
+        """359.999° should be Revati with clamped pada <= 4."""
+        result = calculate_nakshatra(359.999)
+        assert result["nakshatra"] == "Revati"
+        assert result["nakshatra_number"] == 27
+        assert 1 <= result["nakshatra_pada"] <= 4
+
+    def test_nakshatra_index_ge_27_guard(self):
+        """Exercise the nakshatra_index >= 27 guard (line 39).
+
+        This guard protects against floating-point edge cases where
+        int(pos / NAKSHATRA_SPAN) could be 27. We mock NAKSHATRA_SPAN
+        to trigger it.
+        """
+        from unittest.mock import patch
+        # With a slightly smaller NAKSHATRA_SPAN, int(359.0 / 13.0) = 27
+        with patch("kerykeion.vedic.nakshatra_utils.NAKSHATRA_SPAN", 13.0):
+            # 27 * 13 = 351, so pos_in_nakshatra = 359 - 351 = 8
+            # Pada span is still 3.333..., pada = int(8/3.333)+1 = 3
+            result = calculate_nakshatra(359.0)
+            assert result["nakshatra_number"] == 27  # clamped to 26+1
+            assert result["nakshatra"] == "Revati"
+
+    def test_pada_gt_4_guard(self):
+        """Exercise the pada > 4 guard (line 47).
+
+        This guard protects against floating-point edge cases where
+        int(pos_in_nakshatra / PADA_SPAN) + 1 could exceed 4.
+        """
+        from unittest.mock import patch
+        # With a smaller PADA_SPAN, int(12.5 / 2.5) + 1 = 6 > 4
+        with patch("kerykeion.vedic.nakshatra_utils.PADA_SPAN", 2.5):
+            result = calculate_nakshatra(12.5)
+            assert result["nakshatra_pada"] == 4  # clamped
+
 
 class TestNakshatraIntegration:
     """Test nakshatra integrated in AstrologicalSubjectFactory."""
