@@ -6,6 +6,7 @@ Vimsottari Dasha lord assignments.
 """
 
 import pytest
+import swisseph as swe
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.vedic.nakshatra_utils import calculate_nakshatra
 from kerykeion.vedic.nakshatra_data import NAKSHATRAS, NAKSHATRA_SPAN, PADA_SPAN
@@ -147,3 +148,72 @@ class TestNakshatraIntegration:
         moon = subject_with_nakshatra.moon
         nakshatra_names = [n[0] for n in NAKSHATRAS]
         assert moon.nakshatra in nakshatra_names
+
+
+class TestNakshatraSwissEphRegression:
+    """Known-value regression tests using Swiss Ephemeris sidereal positions.
+
+    For each test date, the Moon's sidereal longitude is computed via
+    swe.calc_ut with FLG_SIDEREAL + LAHIRI ayanamsa.  The expected nakshatra
+    number is derived manually as int(sidereal_pos / (360/27)) + 1.
+    Then calculate_nakshatra is called and the results must match.
+    """
+
+    @classmethod
+    def setup_class(cls):
+        swe.set_ephe_path("")
+
+    # (year, month, day, hour, label, expected_nakshatra_name, expected_number)
+    # Values pre-computed with swe.calc_ut + LAHIRI
+    TEST_DATES = [
+        (2000, 1, 1, 12.0, "J2000.0",
+         199.470553, "Swati", 15, 4, "Rahu"),
+        (2000, 6, 15, 12.0, "mid-2000",
+         225.045266, "Anuradha", 17, 4, "Saturn"),
+        (2010, 3, 21, 12.0, "2010-equinox",
+         42.318238, "Rohini", 4, 1, "Moon"),
+    ]
+
+    @pytest.mark.parametrize(
+        "year,month,day,hour,label,expected_sid_pos,exp_name,exp_num,exp_pada,exp_lord",
+        TEST_DATES,
+        ids=[t[4] for t in TEST_DATES],
+    )
+    def test_moon_nakshatra_matches_swe_sidereal(
+        self, year, month, day, hour, label,
+        expected_sid_pos, exp_name, exp_num, exp_pada, exp_lord,
+    ):
+        """Verify nakshatra from swe sidereal Moon position matches calculate_nakshatra."""
+        jd = swe.julday(year, month, day, hour)
+
+        # Compute sidereal Moon longitude using LAHIRI ayanamsa
+        swe.set_sid_mode(swe.SIDM_LAHIRI)
+        moon_sid = swe.calc_ut(jd, swe.MOON, swe.FLG_SWIEPH | swe.FLG_SIDEREAL)
+        sid_pos = moon_sid[0][0]
+
+        # Verify swe gives the expected sidereal position (within 0.01 deg)
+        assert abs(sid_pos - expected_sid_pos) < 0.01, (
+            f"[{label}] swe sidereal Moon = {sid_pos:.6f}, expected ~{expected_sid_pos:.6f}"
+        )
+
+        # Manually compute expected nakshatra index
+        manual_index = int(sid_pos / (360.0 / 27.0))
+        manual_number = manual_index + 1
+        assert manual_number == exp_num, (
+            f"[{label}] manual nakshatra number = {manual_number}, expected {exp_num}"
+        )
+
+        # Use kerykeion's calculate_nakshatra and verify all fields
+        result = calculate_nakshatra(sid_pos)
+        assert result["nakshatra"] == exp_name, (
+            f"[{label}] nakshatra name = {result['nakshatra']}, expected {exp_name}"
+        )
+        assert result["nakshatra_number"] == exp_num, (
+            f"[{label}] nakshatra number = {result['nakshatra_number']}, expected {exp_num}"
+        )
+        assert result["nakshatra_pada"] == exp_pada, (
+            f"[{label}] pada = {result['nakshatra_pada']}, expected {exp_pada}"
+        )
+        assert result["nakshatra_lord"] == exp_lord, (
+            f"[{label}] lord = {result['nakshatra_lord']}, expected {exp_lord}"
+        )

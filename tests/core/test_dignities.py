@@ -6,6 +6,7 @@ triplicity, Egyptian terms, Chaldean decans, detriment, and fall.
 """
 
 import pytest
+import swisseph as swe
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.dignities.dignity_factory import calculate_essential_dignity
 from kerykeion.dignities.dignity_data import (
@@ -180,3 +181,82 @@ class TestDignityIntegration:
             point = getattr(subject_with_dignities, name)
             if point is not None:
                 assert point.essential_dignity is None, f"{name} should not have essential_dignity"
+
+
+class TestDignitySwissEphRegression:
+    """Known-value regression tests using Swiss Ephemeris (swe) as reference.
+
+    Each test computes a planet's ecliptic longitude via swe.calc_ut, derives
+    the zodiac sign and degree-within-sign, then verifies that
+    calculate_essential_dignity returns the correct Ptolemaic dignity.
+    """
+
+    SIGNS = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir",
+             "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+    ELEMENTS = ["Fire", "Earth", "Air", "Water", "Fire", "Earth",
+                "Air", "Water", "Fire", "Earth", "Air", "Water"]
+
+    @classmethod
+    def setup_class(cls):
+        swe.set_ephe_path("")
+
+    @staticmethod
+    def _sign_and_position(abs_lon: float):
+        """Return (sign_abbrev, element, degree_in_sign) from absolute longitude."""
+        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir",
+                 "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+        elements = ["Fire", "Earth", "Air", "Water", "Fire", "Earth",
+                    "Air", "Water", "Fire", "Earth", "Air", "Water"]
+        idx = int(abs_lon / 30.0)
+        return signs[idx], elements[idx], abs_lon - idx * 30.0
+
+    def test_sun_in_leo_domicile_swe(self):
+        """Sun on 2000-08-01 12:00 UTC is in Leo (~129.5 deg) -> Domicile.
+
+        Reference: swe.calc_ut(2451758.0, swe.SUN, swe.FLG_SWIEPH)
+        Sun rules Leo in the Ptolemaic domicile table.
+        """
+        jd = swe.julday(2000, 8, 1, 12.0)
+        assert abs(jd - 2451758.0) < 1e-6
+        sun_lon = swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH)[0][0]
+
+        sign, element, pos_in_sign = self._sign_and_position(sun_lon)
+        assert sign == "Leo", f"Expected Leo, got {sign} at {sun_lon:.4f} deg"
+
+        result = calculate_essential_dignity("Sun", sign, element, pos_in_sign, True)
+        assert result["essential_dignity"] == "Domicile"
+        assert result["dignity_score"] >= 5
+
+    def test_moon_in_cancer_domicile_swe(self):
+        """Moon on 2000-01-19 12:00 UTC is in Cancer (~95.0 deg) -> Domicile.
+
+        Reference: swe.calc_ut(2451563.0, swe.MOON, swe.FLG_SWIEPH)
+        Moon rules Cancer in the Ptolemaic domicile table.
+        """
+        jd = swe.julday(2000, 1, 19, 12.0)
+        assert abs(jd - 2451563.0) < 1e-6
+        moon_lon = swe.calc_ut(jd, swe.MOON, swe.FLG_SWIEPH)[0][0]
+
+        sign, element, pos_in_sign = self._sign_and_position(moon_lon)
+        assert sign == "Can", f"Expected Can, got {sign} at {moon_lon:.4f} deg"
+
+        result = calculate_essential_dignity("Moon", sign, element, pos_in_sign, True)
+        assert result["essential_dignity"] == "Domicile"
+        assert result["dignity_score"] >= 5
+
+    def test_mars_in_capricorn_exaltation_swe(self):
+        """Mars on 2020-03-20 12:00 UTC is in Capricorn (~292.8 deg) -> Exaltation.
+
+        Reference: swe.calc_ut(2458929.0, swe.MARS, swe.FLG_SWIEPH)
+        Mars is exalted in Capricorn at 28 deg in the Ptolemaic table.
+        """
+        jd = swe.julday(2020, 3, 20, 12.0)
+        assert abs(jd - 2458929.0) < 1e-6
+        mars_lon = swe.calc_ut(jd, swe.MARS, swe.FLG_SWIEPH)[0][0]
+
+        sign, element, pos_in_sign = self._sign_and_position(mars_lon)
+        assert sign == "Cap", f"Expected Cap, got {sign} at {mars_lon:.4f} deg"
+
+        result = calculate_essential_dignity("Mars", sign, element, pos_in_sign, True)
+        assert result["essential_dignity"] == "Exaltation"
+        assert result["dignity_score"] >= 4

@@ -2,6 +2,7 @@
 """Tests for Local Space azimuth/altitude calculations."""
 
 import pytest
+import swisseph as swe
 from kerykeion import AstrologicalSubjectFactory
 
 
@@ -77,3 +78,54 @@ class TestLocalSpaceCalculation:
             if point is not None and point.azimuth is not None:
                 azimuths.append(round(point.azimuth))
         assert len(set(azimuths)) > 1, "All planets have the same azimuth"
+
+    def test_sun_azalt_matches_swe_reference(self, subject_with_local_space):
+        """Sun azimuth/altitude must match a direct swe.azalt call."""
+        jd = subject_with_local_space.julian_day
+        geopos = (
+            subject_with_local_space.lng,
+            subject_with_local_space.lat,
+            0.0,
+        )
+        swe.set_ephe_path("")
+
+        # Get the Sun ecliptic longitude that the factory used (abs_pos)
+        sun_ecl_lon = subject_with_local_space.sun.abs_pos
+        # The factory passes (abs_pos, 0.0, 1.0) for ecl_coords
+        ecl_coords = (sun_ecl_lon, 0.0, 1.0)
+        azalt_result = swe.azalt(jd, swe.ECL2HOR, geopos, 0, 0, ecl_coords)
+
+        expected_azimuth = azalt_result[0]
+        expected_altitude = azalt_result[1]
+
+        assert abs(subject_with_local_space.sun.azimuth - expected_azimuth) < 0.01, (
+            f"Sun azimuth {subject_with_local_space.sun.azimuth} != "
+            f"swe reference {expected_azimuth}"
+        )
+        assert abs(subject_with_local_space.sun.altitude_above_horizon - expected_altitude) < 0.01, (
+            f"Sun altitude {subject_with_local_space.sun.altitude_above_horizon} != "
+            f"swe reference {expected_altitude}"
+        )
+
+    def test_mars_azalt_matches_swe_reference(self, subject_with_local_space):
+        """Mars azimuth/altitude must match a direct swe.azalt call."""
+        jd = subject_with_local_space.julian_day
+        geopos = (
+            subject_with_local_space.lng,
+            subject_with_local_space.lat,
+            0.0,
+        )
+        swe.set_ephe_path("")
+
+        mars_ecl_lon = subject_with_local_space.mars.abs_pos
+        ecl_coords = (mars_ecl_lon, 0.0, 1.0)
+        azalt_result = swe.azalt(jd, swe.ECL2HOR, geopos, 0, 0, ecl_coords)
+
+        assert abs(subject_with_local_space.mars.azimuth - azalt_result[0]) < 0.01, (
+            f"Mars azimuth {subject_with_local_space.mars.azimuth} != "
+            f"swe reference {azalt_result[0]}"
+        )
+        assert abs(subject_with_local_space.mars.altitude_above_horizon - azalt_result[1]) < 0.01, (
+            f"Mars altitude {subject_with_local_space.mars.altitude_above_horizon} != "
+            f"swe reference {azalt_result[1]}"
+        )

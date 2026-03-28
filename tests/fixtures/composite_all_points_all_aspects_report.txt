@@ -16,7 +16,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Zodiac Type         | Tropical            |
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
-| Active Points Count | 71                  |
+| Active Points Count | 74                  |
 +---------------------+---------------------+
 
 +Composite – First Subject — Birth Data----------+
@@ -41,7 +41,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 71                  |
+| Active Points Count | 74                  |
 +---------------------+---------------------+
 
 +Composite – Second Subject — Birth Data---------+
@@ -66,7 +66,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2427121.979167      |
-| Active Points Count | 71                  |
+| Active Points Count | 74                  |
 +---------------------+---------------------+
 
 +Composite Chart Celestial Points-+----------+-------+-------+------+----------------+
@@ -88,61 +88,64 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pluto                 | Vir ♍️ | 18.30°   | N/A   | N/A   | -    | Eleventh House |
 | Mean North Lunar Node | Aqu ♒️ | 23.06°   | N/A   | N/A   | -    | Fourth House   |
 | True North Lunar Node | Aqu ♒️ | 22.53°   | N/A   | N/A   | -    | Fourth House   |
-| Mean South Lunar Node | Leo ♌️ | 23.06°   | N/A   | N/A   | -    | Tenth House    |
-| True South Lunar Node | Leo ♌️ | 22.53°   | N/A   | N/A   | -    | Tenth House    |
-| Mean Lilith           | Vir ♍️ | 0.75°    | N/A   | N/A   | -    | Tenth House    |
-| True Lilith           | Pis ♓️ | 14.44°   | N/A   | N/A   | -    | Fifth House    |
-| Earth                 | Ari ♈️ | 0.00°    | N/A   | N/A   | -    | Sixth House    |
-| Chiron                | Gem ♊️ | 21.81°   | N/A   | N/A   | -    | Eighth House   |
-| Pholus                | Ari ♈️ | 8.09°    | N/A   | N/A   | -    | Sixth House    |
-| Ceres                 | Tau ♉️ | 22.10°   | N/A   | N/A   | -    | Eighth House   |
-| Pallas                | Ari ♈️ | 23.85°   | N/A   | N/A   | -    | Seventh House  |
-| Juno                  | Sco ♏️ | 7.97°    | N/A   | N/A   | -    | First House    |
-| Vesta                 | Tau ♉️ | 22.69°   | N/A   | N/A   | -    | Eighth House   |
-| Cupido                | Lib ♎️ | 9.65°    | N/A   | N/A   | -    | Twelfth House  |
-| Hades                 | Tau ♉️ | 10.06°   | N/A   | N/A   | -    | Seventh House  |
-| Zeus                  | Vir ♍️ | 3.25°    | N/A   | N/A   | -    | Eleventh House |
-| Kronos                | Gem ♊️ | 1.11°    | N/A   | N/A   | -    | Eighth House   |
-| Apollon               | Vir ♍️ | 26.36°   | N/A   | N/A   | -    | Eleventh House |
+| Achernar              | Pis ♓️ | 14.77°   | N/A   | N/A   | -    | Fifth House    |
 | Admetos               | Ari ♈️ | 27.56°   | N/A   | N/A   | -    | Seventh House  |
-| Vulkanus              | Gem ♊️ | 29.28°   | N/A   | N/A   | -    | Ninth House    |
-| Poseidon              | Lib ♎️ | 15.31°   | N/A   | N/A   | -    | Twelfth House  |
-| Eris                  | Ari ♈️ | 9.82°    | N/A   | N/A   | -    | Sixth House    |
-| Sedna                 | Ari ♈️ | 29.37°   | N/A   | N/A   | -    | Seventh House  |
-| Haumea                | Vir ♍️ | 0.67°    | N/A   | N/A   | -    | Tenth House    |
-| Makemake              | Leo ♌️ | 2.66°    | N/A   | N/A   | -    | Tenth House    |
-| Ixion                 | Lib ♎️ | 25.96°   | N/A   | N/A   | -    | First House    |
-| Orcus                 | Can ♋️ | 4.31°    | N/A   | N/A   | -    | Ninth House    |
-| Quaoar                | Lib ♎️ | 20.42°   | N/A   | N/A   | -    | Twelfth House  |
-| Regulus               | Leo ♌️ | 29.30°   | N/A   | N/A   | -    | Tenth House    |
-| Spica                 | Lib ♎️ | 23.31°   | N/A   | N/A   | -    | First House    |
+| Alcyone               | Tau ♉️ | 29.46°   | N/A   | N/A   | -    | Eighth House   |
 | Aldebaran             | Gem ♊️ | 9.26°    | N/A   | N/A   | -    | Eighth House   |
-| Antares               | Sag ♐️ | 9.23°    | N/A   | N/A   | -    | Second House   |
-| Sirius                | Can ♋️ | 13.56°   | N/A   | N/A   | -    | Ninth House    |
-| Fomalhaut             | Pis ♓️ | 3.33°    | N/A   | N/A   | -    | Fifth House    |
 | Algol                 | Tau ♉️ | 25.64°   | N/A   | N/A   | -    | Eighth House   |
+| Algorab               | Lib ♎️ | 12.93°   | N/A   | N/A   | -    | Twelfth House  |
+| Alkaid                | Vir ♍️ | 26.40°   | N/A   | N/A   | -    | Eleventh House |
+| Alphecca              | Sco ♏️ | 11.76°   | N/A   | N/A   | -    | First House    |
+| Altair                | Aqu ♒️ | 1.24°    | N/A   | N/A   | -    | Fourth House   |
+| Antares               | Sag ♐️ | 9.23°    | N/A   | N/A   | -    | Second House   |
+| Anti Vertex           | Sco ♏️ | 19.11°   | N/A   | N/A   | -    | First House    |
+| Apollon               | Vir ♍️ | 26.36°   | N/A   | N/A   | -    | Eleventh House |
+| Arcturus              | Lib ♎️ | 23.71°   | N/A   | N/A   | -    | First House    |
 | Betelgeuse            | Gem ♊️ | 28.22°   | N/A   | N/A   | -    | Ninth House    |
 | Canopus               | Can ♋️ | 14.43°   | N/A   | N/A   | -    | Ninth House    |
-| Procyon               | Can ♋️ | 25.26°   | N/A   | N/A   | -    | Ninth House    |
-| Arcturus              | Lib ♎️ | 23.71°   | N/A   | N/A   | -    | First House    |
-| Pollux                | Can ♋️ | 22.69°   | N/A   | N/A   | -    | Ninth House    |
-| Deneb                 | Pis ♓️ | 4.81°    | N/A   | N/A   | -    | Fifth House    |
-| Altair                | Aqu ♒️ | 1.24°    | N/A   | N/A   | -    | Fourth House   |
-| Rigel                 | Gem ♊️ | 16.30°   | N/A   | N/A   | -    | Eighth House   |
-| Achernar              | Pis ♓️ | 14.77°   | N/A   | N/A   | -    | Fifth House    |
 | Capella               | Gem ♊️ | 21.33°   | N/A   | N/A   | -    | Eighth House   |
-| Vega                  | Cap ♑️ | 14.79°   | N/A   | N/A   | -    | Third House    |
-| Alcyone               | Tau ♉️ | 29.46°   | N/A   | N/A   | -    | Eighth House   |
-| Alphecca              | Sco ♏️ | 11.76°   | N/A   | N/A   | -    | First House    |
-| Algorab               | Lib ♎️ | 12.93°   | N/A   | N/A   | -    | Twelfth House  |
+| Ceres                 | Tau ♉️ | 22.10°   | N/A   | N/A   | -    | Eighth House   |
+| Chiron                | Gem ♊️ | 21.81°   | N/A   | N/A   | -    | Eighth House   |
+| Cupido                | Lib ♎️ | 9.65°    | N/A   | N/A   | -    | Twelfth House  |
+| Deneb                 | Pis ♓️ | 4.81°    | N/A   | N/A   | -    | Fifth House    |
 | Deneb Algedi          | Aqu ♒️ | 23.01°   | N/A   | N/A   | -    | Fourth House   |
-| Alkaid                | Vir ♍️ | 26.40°   | N/A   | N/A   | -    | Eleventh House |
-| Pars Fortunae         | Sco ♏️ | 27.58°   | N/A   | N/A   | -    | Second House   |
-| Pars Spiritus         | Vir ♍️ | 16.66°   | N/A   | N/A   | -    | Eleventh House |
+| Earth                 | Ari ♈️ | 0.00°    | N/A   | N/A   | -    | Sixth House    |
+| Eris                  | Ari ♈️ | 9.82°    | N/A   | N/A   | -    | Sixth House    |
+| Fomalhaut             | Pis ♓️ | 3.33°    | N/A   | N/A   | -    | Fifth House    |
+| Hades                 | Tau ♉️ | 10.06°   | N/A   | N/A   | -    | Seventh House  |
+| Haumea                | Vir ♍️ | 0.67°    | N/A   | N/A   | -    | Tenth House    |
+| Interpolated Lilith   | Pis ♓️ | 7.60°    | N/A   | N/A   | -    | Fifth House    |
+| Ixion                 | Lib ♎️ | 25.96°   | N/A   | N/A   | -    | First House    |
+| Juno                  | Sco ♏️ | 7.97°    | N/A   | N/A   | -    | First House    |
+| Kronos                | Gem ♊️ | 1.11°    | N/A   | N/A   | -    | Eighth House   |
+| Makemake              | Leo ♌️ | 2.66°    | N/A   | N/A   | -    | Tenth House    |
+| Mean Lilith           | Vir ♍️ | 0.75°    | N/A   | N/A   | -    | Tenth House    |
+| Mean Priapus          | Pis ♓️ | 0.75°    | N/A   | N/A   | -    | Fourth House   |
+| Mean South Lunar Node | Leo ♌️ | 23.06°   | N/A   | N/A   | -    | Tenth House    |
+| Orcus                 | Can ♋️ | 4.31°    | N/A   | N/A   | -    | Ninth House    |
+| Pallas                | Ari ♈️ | 23.85°   | N/A   | N/A   | -    | Seventh House  |
 | Pars Amoris           | Lib ♎️ | 0.90°    | N/A   | N/A   | -    | Twelfth House  |
 | Pars Fidei            | Tau ♉️ | 13.79°   | N/A   | N/A   | -    | Seventh House  |
+| Pars Fortunae         | Sco ♏️ | 27.58°   | N/A   | N/A   | -    | Second House   |
+| Pars Spiritus         | Vir ♍️ | 16.66°   | N/A   | N/A   | -    | Eleventh House |
+| Pholus                | Ari ♈️ | 8.09°    | N/A   | N/A   | -    | Sixth House    |
+| Pollux                | Can ♋️ | 22.69°   | N/A   | N/A   | -    | Ninth House    |
+| Poseidon              | Lib ♎️ | 15.31°   | N/A   | N/A   | -    | Twelfth House  |
+| Procyon               | Can ♋️ | 25.26°   | N/A   | N/A   | -    | Ninth House    |
+| Quaoar                | Lib ♎️ | 20.42°   | N/A   | N/A   | -    | Twelfth House  |
+| Regulus               | Leo ♌️ | 29.30°   | N/A   | N/A   | -    | Tenth House    |
+| Rigel                 | Gem ♊️ | 16.30°   | N/A   | N/A   | -    | Eighth House   |
+| Sedna                 | Ari ♈️ | 29.37°   | N/A   | N/A   | -    | Seventh House  |
+| Sirius                | Can ♋️ | 13.56°   | N/A   | N/A   | -    | Ninth House    |
+| Spica                 | Lib ♎️ | 23.31°   | N/A   | N/A   | -    | First House    |
+| True Lilith           | Pis ♓️ | 14.44°   | N/A   | N/A   | -    | Fifth House    |
+| True Priapus          | Vir ♍️ | 14.44°   | N/A   | N/A   | -    | Eleventh House |
+| True South Lunar Node | Leo ♌️ | 22.53°   | N/A   | N/A   | -    | Tenth House    |
+| Vega                  | Cap ♑️ | 14.79°   | N/A   | N/A   | -    | Third House    |
 | Vertex                | Tau ♉️ | 19.11°   | N/A   | N/A   | -    | Seventh House  |
-| Anti Vertex           | Sco ♏️ | 19.11°   | N/A   | N/A   | -    | First House    |
+| Vesta                 | Tau ♉️ | 22.69°   | N/A   | N/A   | -    | Eighth House   |
+| Vulkanus              | Gem ♊️ | 29.28°   | N/A   | N/A   | -    | Ninth House    |
+| Zeus                  | Vir ♍️ | 3.25°    | N/A   | N/A   | -    | Eleventh House |
 +-----------------------+---------+----------+-------+-------+------+----------------+
 
 +Composite Chart Houses (Placidus)----+-------------------+
@@ -173,96 +176,99 @@ Sample Natal Subject & Yoko Ono — Composite Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 8.3                | 18.8%      |
-| Earth 🌍 | 13.899999999999999 | 31.4%      |
-| Air 💨   | 14.099999999999994 | 31.9%      |
-| Water 💧 | 7.900000000000001  | 17.9%      |
-| Total    | 44.199999999999996 | 100%       |
+| Fire 🔥  | 7.6                | 19.3%      |
+| Earth 🌍 | 11.5               | 29.3%      |
+| Air 💨   | 11.299999999999997 | 28.8%      |
+| Water 💧 | 8.900000000000002  | 22.6%      |
+| Total    | 39.3               | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 19.2               | 43.4%      |
-| Fixed    | 15.299999999999999 | 34.6%      |
-| Mutable  | 9.700000000000001  | 21.9%      |
-| Total    | 44.2               | 100%       |
+| Cardinal | 17.1               | 43.5%      |
+| Fixed    | 14.6               | 37.2%      |
+| Mutable  | 7.6000000000000005 | 19.3%      |
+| Total    | 39.300000000000004 | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |
 +----+-----------------------+
-| 1  | Sun                   |
-| 2  | Moon                  |
-| 3  | Mercury               |
-| 4  | Venus                 |
-| 5  | Mars                  |
-| 6  | Jupiter               |
-| 7  | Saturn                |
-| 8  | Uranus                |
-| 9  | Neptune               |
-| 10 | Pluto                 |
-| 11 | Mean_North_Lunar_Node |
-| 12 | Mean_South_Lunar_Node |
-| 13 | True_North_Lunar_Node |
-| 14 | True_South_Lunar_Node |
-| 15 | Mean_Lilith           |
-| 16 | True_Lilith           |
-| 17 | Earth                 |
-| 18 | Chiron                |
-| 19 | Pholus                |
-| 20 | Ceres                 |
-| 21 | Pallas                |
-| 22 | Juno                  |
-| 23 | Vesta                 |
-| 24 | Cupido                |
-| 25 | Hades                 |
-| 26 | Zeus                  |
-| 27 | Kronos                |
-| 28 | Apollon               |
-| 29 | Admetos               |
-| 30 | Vulkanus              |
-| 31 | Poseidon              |
-| 32 | Eris                  |
-| 33 | Sedna                 |
-| 34 | Haumea                |
+| 1  | Achernar              |
+| 2  | Admetos               |
+| 3  | Alcyone               |
+| 4  | Aldebaran             |
+| 5  | Algol                 |
+| 6  | Algorab               |
+| 7  | Alkaid                |
+| 8  | Alphecca              |
+| 9  | Altair                |
+| 10 | Antares               |
+| 11 | Anti_Vertex           |
+| 12 | Apollon               |
+| 13 | Arcturus              |
+| 14 | Ascendant             |
+| 15 | Betelgeuse            |
+| 16 | Canopus               |
+| 17 | Capella               |
+| 18 | Ceres                 |
+| 19 | Chiron                |
+| 20 | Cupido                |
+| 21 | Deneb                 |
+| 22 | Deneb_Algedi          |
+| 23 | Descendant            |
+| 24 | Earth                 |
+| 25 | Eris                  |
+| 26 | Fomalhaut             |
+| 27 | Hades                 |
+| 28 | Haumea                |
+| 29 | Imum_Coeli            |
+| 30 | Interpolated_Lilith   |
+| 31 | Ixion                 |
+| 32 | Juno                  |
+| 33 | Jupiter               |
+| 34 | Kronos                |
 | 35 | Makemake              |
-| 36 | Ixion                 |
-| 37 | Orcus                 |
-| 38 | Quaoar                |
-| 39 | Regulus               |
-| 40 | Spica                 |
-| 41 | Aldebaran             |
-| 42 | Antares               |
-| 43 | Sirius                |
-| 44 | Fomalhaut             |
-| 45 | Algol                 |
-| 46 | Betelgeuse            |
-| 47 | Canopus               |
-| 48 | Procyon               |
-| 49 | Arcturus              |
-| 50 | Pollux                |
-| 51 | Deneb                 |
-| 52 | Altair                |
-| 53 | Rigel                 |
-| 54 | Achernar              |
-| 55 | Capella               |
-| 56 | Vega                  |
-| 57 | Alcyone               |
-| 58 | Alphecca              |
-| 59 | Algorab               |
-| 60 | Deneb_Algedi          |
-| 61 | Alkaid                |
-| 62 | Pars_Fortunae         |
-| 63 | Pars_Spiritus         |
-| 64 | Pars_Amoris           |
-| 65 | Pars_Fidei            |
-| 66 | Vertex                |
-| 67 | Anti_Vertex           |
-| 68 | Ascendant             |
-| 69 | Medium_Coeli          |
-| 70 | Descendant            |
-| 71 | Imum_Coeli            |
+| 36 | Mars                  |
+| 37 | Mean_Lilith           |
+| 38 | Mean_North_Lunar_Node |
+| 39 | Mean_Priapus          |
+| 40 | Mean_South_Lunar_Node |
+| 41 | Medium_Coeli          |
+| 42 | Mercury               |
+| 43 | Moon                  |
+| 44 | Neptune               |
+| 45 | Orcus                 |
+| 46 | Pallas                |
+| 47 | Pars_Amoris           |
+| 48 | Pars_Fidei            |
+| 49 | Pars_Fortunae         |
+| 50 | Pars_Spiritus         |
+| 51 | Pholus                |
+| 52 | Pluto                 |
+| 53 | Pollux                |
+| 54 | Poseidon              |
+| 55 | Procyon               |
+| 56 | Quaoar                |
+| 57 | Regulus               |
+| 58 | Rigel                 |
+| 59 | Saturn                |
+| 60 | Sedna                 |
+| 61 | Sirius                |
+| 62 | Spica                 |
+| 63 | Sun                   |
+| 64 | True_Lilith           |
+| 65 | True_North_Lunar_Node |
+| 66 | True_Priapus          |
+| 67 | True_South_Lunar_Node |
+| 68 | Uranus                |
+| 69 | Vega                  |
+| 70 | Venus                 |
+| 71 | Vertex                |
+| 72 | Vesta                 |
+| 73 | Vulkanus              |
+| 74 | Zeus                  |
 +----+-----------------------+
 
 +----------------+---------+
@@ -302,6 +308,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Sun                   | sextile ⚹                     | Achernar              | 0.81° | Static = |
 | Sun                   | trine △                       | Vega                  | 0.82° | Static = |
 | Sun                   | opposition ☍                  | Alphecca              | 2.20° | Static = |
+| Sun                   | trine △                       | True Priapus          | 0.48° | Static = |
 | Sun                   | conjunction ☌                 | Hades                 | 3.90° | Static = |
 | Sun                   | semi-square semi-square       | Vulkanus              | 0.32° | Static = |
 | Moon                  | trine △                       | Mercury               | 3.42° | Static = |
@@ -323,6 +330,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Moon                  | trine △                       | Altair                | 0.07° | Static = |
 | Moon                  | trine △                       | Alcyone               | 1.71° | Static = |
 | Moon                  | conjunction ☌                 | Alkaid                | 4.77° | Static = |
+| Moon                  | quincunx ⚻                    | Mean Priapus          | 0.42° | Static = |
 | Moon                  | conjunction ☌                 | Cupido                | 8.48° | Static = |
 | Moon                  | trine △                       | Kronos                | 0.06° | Static = |
 | Moon                  | conjunction ☌                 | Apollon               | 4.81° | Static = |
@@ -356,6 +364,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mercury               | sesquiquadrate sesquiquadrate | Algorab               | 0.18° | Static = |
 | Mercury               | square □                      | Deneb Algedi          | 4.74° | Static = |
 | Mercury               | trine △                       | Alkaid                | 1.35° | Static = |
+| Mercury               | square □                      | Mean Priapus          | 3.00° | Static = |
 | Mercury               | conjunction ☌                 | Kronos                | 3.36° | Static = |
 | Mercury               | trine △                       | Apollon               | 1.39° | Static = |
 | Mercury               | semi-sextile semi-sextile     | Admetos               | 0.18° | Static = |
@@ -386,6 +395,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Venus                 | sextile ⚹                     | Capella               | 1.42° | Static = |
 | Venus                 | opposition ☍                  | Algorab               | 9.82° | Static = |
 | Venus                 | sextile ⚹                     | Deneb Algedi          | 0.26° | Static = |
+| Venus                 | semi-square semi-square       | Interpolated Lilith   | 0.15° | Static = |
 | Venus                 | conjunction ☌                 | Admetos               | 4.82° | Static = |
 | Venus                 | opposition ☍                  | Poseidon              | 7.44° | Static = |
 | Mars                  | trine △                       | Neptune               | 0.37° | Static = |
@@ -405,6 +415,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mars                  | opposition ☍                  | Vega                  | 4.24° | Static = |
 | Mars                  | trine △                       | Alphecca              | 1.22° | Static = |
 | Mars                  | square □                      | Algorab               | 2.38° | Static = |
+| Mars                  | trine △                       | Interpolated Lilith   | 2.95° | Static = |
+| Mars                  | sextile ⚹                     | True Priapus          | 3.90° | Static = |
 | Mars                  | square □                      | Cupido                | 0.90° | Static = |
 | Mars                  | sextile ⚹                     | Hades                 | 0.48° | Static = |
 | Mars                  | quintile Q                    | Admetos               | 0.98° | Static = |
@@ -436,6 +448,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Jupiter               | semi-sextile semi-sextile     | Pollux                | 0.39° | Static = |
 | Jupiter               | sextile ⚹                     | Capella               | 0.98° | Static = |
 | Jupiter               | opposition ☍                  | Deneb Algedi          | 0.71° | Static = |
+| Jupiter               | opposition ☍                  | Mean Priapus          | 8.45° | Static = |
 | Jupiter               | trine △                       | Admetos               | 5.26° | Static = |
 | Saturn                | opposition ☍                  | Medium Coeli          | 1.02° | Static = |
 | Saturn                | conjunction ☌                 | Imum Coeli            | 1.02° | Static = |
@@ -457,6 +470,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Saturn                | semi-square semi-square       | Achernar              | 0.86° | Static = |
 | Saturn                | trine △                       | Alcyone               | 1.17° | Static = |
 | Saturn                | trine △                       | Alkaid                | 4.23° | Static = |
+| Saturn                | semi-sextile semi-sextile     | Mean Priapus          | 0.13° | Static = |
 | Saturn                | trine △                       | Kronos                | 0.48° | Static = |
 | Saturn                | trine △                       | Apollon               | 4.27° | Static = |
 | Saturn                | square □                      | Admetos               | 3.06° | Static = |
@@ -489,6 +503,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Uranus                | square □                      | Alcyone               | 0.82° | Static = |
 | Uranus                | sesquiquadrate sesquiquadrate | Algorab               | 0.72° | Static = |
 | Uranus                | conjunction ☌                 | Deneb Algedi          | 5.63° | Static = |
+| Uranus                | conjunction ☌                 | Interpolated Lilith   | 8.96° | Static = |
+| Uranus                | conjunction ☌                 | Mean Priapus          | 2.11° | Static = |
 | Uranus                | quintile Q                    | Hades                 | 0.58° | Static = |
 | Uranus                | opposition ☍                  | Zeus                  | 4.61° | Static = |
 | Uranus                | square □                      | Kronos                | 2.46° | Static = |
@@ -511,6 +527,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Neptune               | sextile ⚹                     | Vega                  | 3.87° | Static = |
 | Neptune               | conjunction ☌                 | Alphecca              | 0.84° | Static = |
 | Neptune               | semi-square semi-square       | Alkaid                | 0.48° | Static = |
+| Neptune               | trine △                       | Interpolated Lilith   | 3.32° | Static = |
+| Neptune               | sextile ⚹                     | True Priapus          | 3.52° | Static = |
 | Neptune               | opposition ☍                  | Hades                 | 0.86° | Static = |
 | Neptune               | semi-square semi-square       | Apollon               | 0.44° | Static = |
 | Pluto                 | square □                      | Chiron                | 3.51° | Static = |
@@ -532,6 +550,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pluto                 | square □                      | Capella               | 3.03° | Static = |
 | Pluto                 | trine △                       | Vega                  | 3.52° | Static = |
 | Pluto                 | conjunction ☌                 | Alkaid                | 8.10° | Static = |
+| Pluto                 | conjunction ☌                 | True Priapus          | 3.86° | Static = |
 | Pluto                 | conjunction ☌                 | Apollon               | 8.06° | Static = |
 | Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 0.53° | Static = |
 | Mean North Lunar Node | trine △                       | Chiron                | 1.26° | Static = |
@@ -558,6 +577,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean North Lunar Node | trine △                       | Rigel                 | 6.77° | Static = |
 | Mean North Lunar Node | trine △                       | Capella               | 1.74° | Static = |
 | Mean North Lunar Node | conjunction ☌                 | Deneb Algedi          | 0.05° | Static = |
+| Mean North Lunar Node | conjunction ☌                 | Mean Priapus          | 7.69° | Static = |
 | Mean North Lunar Node | sextile ⚹                     | Admetos               | 4.50° | Static = |
 | Mean North Lunar Node | trine △                       | Vulkanus              | 6.21° | Static = |
 | Mean North Lunar Node | trine △                       | Poseidon              | 7.75° | Static = |
@@ -584,6 +604,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | True North Lunar Node | trine △                       | Rigel                 | 6.23° | Static = |
 | True North Lunar Node | trine △                       | Capella               | 1.20° | Static = |
 | True North Lunar Node | conjunction ☌                 | Deneb Algedi          | 0.48° | Static = |
+| True North Lunar Node | conjunction ☌                 | Mean Priapus          | 8.22° | Static = |
 | True North Lunar Node | sextile ⚹                     | Admetos               | 5.03° | Static = |
 | True North Lunar Node | trine △                       | Vulkanus              | 6.75° | Static = |
 | True North Lunar Node | trine △                       | Poseidon              | 7.22° | Static = |
@@ -627,6 +648,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Ascendant             | trine △                       | Capella               | 0.79° | Static = |
 | Ascendant             | conjunction ☌                 | Algorab               | 9.19° | Static = |
 | Ascendant             | trine △                       | Deneb Algedi          | 0.89° | Static = |
+| Ascendant             | sesquiquadrate sesquiquadrate | Interpolated Lilith   | 0.48° | Static = |
 | Ascendant             | opposition ☍                  | Admetos               | 5.45° | Static = |
 | Ascendant             | trine △                       | Vulkanus              | 7.16° | Static = |
 | Ascendant             | conjunction ☌                 | Poseidon              | 6.81° | Static = |
@@ -646,6 +668,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Medium Coeli          | sesquiquadrate sesquiquadrate | Achernar              | 0.16° | Static = |
 | Medium Coeli          | sextile ⚹                     | Alcyone               | 0.15° | Static = |
 | Medium Coeli          | sextile ⚹                     | Alkaid                | 3.21° | Static = |
+| Medium Coeli          | semi-square semi-square       | True Priapus          | 0.17° | Static = |
 | Medium Coeli          | sextile ⚹                     | Kronos                | 1.50° | Static = |
 | Medium Coeli          | sextile ⚹                     | Apollon               | 3.25° | Static = |
 | Medium Coeli          | square □                      | Admetos               | 2.05° | Static = |
@@ -670,6 +693,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Descendant            | sextile ⚹                     | Capella               | 0.79° | Static = |
 | Descendant            | opposition ☍                  | Algorab               | 9.19° | Static = |
 | Descendant            | sextile ⚹                     | Deneb Algedi          | 0.89° | Static = |
+| Descendant            | semi-square semi-square       | Interpolated Lilith   | 0.48° | Static = |
 | Descendant            | conjunction ☌                 | Admetos               | 5.45° | Static = |
 | Descendant            | opposition ☍                  | Poseidon              | 6.81° | Static = |
 | Imum Coeli            | semi-square semi-square       | True Lilith           | 0.17° | Static = |
@@ -689,6 +713,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Imum Coeli            | semi-square semi-square       | Achernar              | 0.16° | Static = |
 | Imum Coeli            | trine △                       | Alcyone               | 0.15° | Static = |
 | Imum Coeli            | trine △                       | Alkaid                | 3.21° | Static = |
+| Imum Coeli            | sesquiquadrate sesquiquadrate | True Priapus          | 0.17° | Static = |
 | Imum Coeli            | trine △                       | Kronos                | 1.50° | Static = |
 | Imum Coeli            | trine △                       | Apollon               | 3.25° | Static = |
 | Imum Coeli            | square □                      | Admetos               | 2.05° | Static = |
@@ -712,6 +737,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean Lilith           | square □                      | Alcyone               | 1.29° | Static = |
 | Mean Lilith           | quintile Q                    | Alphecca              | 0.99° | Static = |
 | Mean Lilith           | opposition ☍                  | Deneb Algedi          | 7.74° | Static = |
+| Mean Lilith           | opposition ☍                  | Interpolated Lilith   | 6.85° | Static = |
+| Mean Lilith           | opposition ☍                  | Mean Priapus          | 0.00° | Static = |
 | Mean Lilith           | conjunction ☌                 | Zeus                  | 2.50° | Static = |
 | Mean Lilith           | square □                      | Kronos                | 0.35° | Static = |
 | Mean Lilith           | trine △                       | Admetos               | 3.19° | Static = |
@@ -738,6 +765,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean South Lunar Node | semi-sextile semi-sextile     | Pollux                | 0.37° | Static = |
 | Mean South Lunar Node | sextile ⚹                     | Capella               | 1.74° | Static = |
 | Mean South Lunar Node | opposition ☍                  | Deneb Algedi          | 0.05° | Static = |
+| Mean South Lunar Node | opposition ☍                  | Mean Priapus          | 7.69° | Static = |
 | Mean South Lunar Node | trine △                       | Admetos               | 4.50° | Static = |
 | True South Lunar Node | sesquiquadrate sesquiquadrate | Pholus                | 0.56° | Static = |
 | True South Lunar Node | square □                      | Ceres                 | 0.43° | Static = |
@@ -757,6 +785,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | True South Lunar Node | semi-sextile semi-sextile     | Pollux                | 0.16° | Static = |
 | True South Lunar Node | sextile ⚹                     | Capella               | 1.20° | Static = |
 | True South Lunar Node | opposition ☍                  | Deneb Algedi          | 0.48° | Static = |
+| True South Lunar Node | opposition ☍                  | Mean Priapus          | 8.22° | Static = |
 | True South Lunar Node | trine △                       | Admetos               | 5.03° | Static = |
 | True Lilith           | trine △                       | Juno                  | 6.48° | Static = |
 | True Lilith           | semi-square semi-square       | Sedna                 | 0.08° | Static = |
@@ -773,6 +802,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | True Lilith           | conjunction ☌                 | Achernar              | 0.33° | Static = |
 | True Lilith           | sextile ⚹                     | Vega                  | 0.34° | Static = |
 | True Lilith           | trine △                       | Alphecca              | 2.68° | Static = |
+| True Lilith           | conjunction ☌                 | Interpolated Lilith   | 6.85° | Static = |
+| True Lilith           | opposition ☍                  | True Priapus          | 0.00° | Static = |
 | True Lilith           | sextile ⚹                     | Hades                 | 4.38° | Static = |
 | True Lilith           | quincunx ⚻                    | Poseidon              | 0.86° | Static = |
 | Earth                 | conjunction ☌                 | Pholus                | 8.09° | Static = |
@@ -791,6 +822,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Earth                 | sextile ⚹                     | Altair                | 1.24° | Static = |
 | Earth                 | sextile ⚹                     | Alcyone               | 0.54° | Static = |
 | Earth                 | opposition ☍                  | Alkaid                | 3.60° | Static = |
+| Earth                 | semi-sextile semi-sextile     | Mean Priapus          | 0.75° | Static = |
 | Earth                 | opposition ☍                  | Cupido                | 9.65° | Static = |
 | Earth                 | sextile ⚹                     | Kronos                | 1.11° | Static = |
 | Earth                 | opposition ☍                  | Apollon               | 3.64° | Static = |
@@ -806,6 +838,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pholus                | trine △                       | Antares               | 1.14° | Static = |
 | Pholus                | opposition ☍                  | Algorab               | 4.83° | Static = |
 | Pholus                | semi-square semi-square       | Deneb Algedi          | 0.08° | Static = |
+| Pholus                | semi-sextile semi-sextile     | Interpolated Lilith   | 0.50° | Static = |
 | Pholus                | opposition ☍                  | Cupido                | 1.56° | Static = |
 | Pholus                | opposition ☍                  | Poseidon              | 7.21° | Static = |
 | Ceres                 | conjunction ☌                 | Vesta                 | 0.59° | Static = |
@@ -822,6 +855,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Ceres                 | conjunction ☌                 | Alcyone               | 7.36° | Static = |
 | Ceres                 | square □                      | Deneb Algedi          | 0.91° | Static = |
 | Ceres                 | trine △                       | Alkaid                | 4.30° | Static = |
+| Ceres                 | trine △                       | True Priapus          | 7.66° | Static = |
 | Ceres                 | conjunction ☌                 | Kronos                | 9.00° | Static = |
 | Ceres                 | trine △                       | Apollon               | 4.26° | Static = |
 | Ceres                 | biquintile biquintile         | Poseidon              | 0.79° | Static = |
@@ -851,6 +885,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Juno                  | trine △                       | Deneb                 | 3.16° | Static = |
 | Juno                  | trine △                       | Achernar              | 6.81° | Static = |
 | Juno                  | conjunction ☌                 | Alphecca              | 3.80° | Static = |
+| Juno                  | trine △                       | Interpolated Lilith   | 0.37° | Static = |
+| Juno                  | trine △                       | Mean Priapus          | 7.21° | Static = |
 | Juno                  | opposition ☍                  | Hades                 | 2.10° | Static = |
 | Juno                  | sextile ⚹                     | Zeus                  | 4.71° | Static = |
 | Vesta                 | quincunx ⚻                    | Spica                 | 0.62° | Static = |
@@ -897,6 +933,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Sedna                 | square □                      | Altair                | 1.88° | Static = |
 | Sedna                 | semi-square semi-square       | Achernar              | 0.40° | Static = |
 | Sedna                 | semi-sextile semi-sextile     | Alcyone               | 0.10° | Static = |
+| Sedna                 | sextile ⚹                     | Mean Priapus          | 1.39° | Static = |
+| Sedna                 | sesquiquadrate sesquiquadrate | True Priapus          | 0.08° | Static = |
 | Sedna                 | trine △                       | Zeus                  | 3.89° | Static = |
 | Sedna                 | conjunction ☌                 | Admetos               | 1.80° | Static = |
 | Sedna                 | sextile ⚹                     | Vulkanus              | 0.09° | Static = |
@@ -913,6 +951,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Haumea                | square □                      | Alcyone               | 1.21° | Static = |
 | Haumea                | quintile Q                    | Alphecca              | 0.91° | Static = |
 | Haumea                | opposition ☍                  | Deneb Algedi          | 7.66° | Static = |
+| Haumea                | opposition ☍                  | Interpolated Lilith   | 6.93° | Static = |
+| Haumea                | opposition ☍                  | Mean Priapus          | 0.08° | Static = |
 | Haumea                | conjunction ☌                 | Zeus                  | 2.58° | Static = |
 | Haumea                | square □                      | Kronos                | 0.44° | Static = |
 | Haumea                | trine △                       | Admetos               | 3.11° | Static = |
@@ -942,6 +982,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Ixion                 | trine △                       | Capella               | 4.63° | Static = |
 | Ixion                 | trine △                       | Deneb Algedi          | 2.95° | Static = |
 | Ixion                 | semi-sextile semi-sextile     | Alkaid                | 0.44° | Static = |
+| Ixion                 | trine △                       | Mean Priapus          | 4.79° | Static = |
 | Ixion                 | biquintile biquintile         | Kronos                | 0.86° | Static = |
 | Ixion                 | semi-sextile semi-sextile     | Apollon               | 0.40° | Static = |
 | Ixion                 | opposition ☍                  | Admetos               | 1.60° | Static = |
@@ -957,6 +998,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Orcus                 | conjunction ☌                 | Betelgeuse            | 6.09° | Static = |
 | Orcus                 | trine △                       | Deneb                 | 0.49° | Static = |
 | Orcus                 | trine △                       | Alphecca              | 7.45° | Static = |
+| Orcus                 | trine △                       | Interpolated Lilith   | 3.29° | Static = |
+| Orcus                 | trine △                       | Mean Priapus          | 3.56° | Static = |
 | Orcus                 | sextile ⚹                     | Hades                 | 5.75° | Static = |
 | Orcus                 | sextile ⚹                     | Zeus                  | 1.06° | Static = |
 | Orcus                 | conjunction ☌                 | Vulkanus              | 5.03° | Static = |
@@ -987,6 +1030,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Regulus               | square □                      | Alcyone               | 0.16° | Static = |
 | Regulus               | quintile Q                    | Alphecca              | 0.46° | Static = |
 | Regulus               | opposition ☍                  | Deneb Algedi          | 6.29° | Static = |
+| Regulus               | opposition ☍                  | Interpolated Lilith   | 8.30° | Static = |
+| Regulus               | opposition ☍                  | Mean Priapus          | 1.45° | Static = |
 | Regulus               | conjunction ☌                 | Zeus                  | 3.95° | Static = |
 | Regulus               | square □                      | Kronos                | 1.80° | Static = |
 | Regulus               | trine △                       | Admetos               | 1.74° | Static = |
@@ -1001,6 +1046,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Spica                 | trine △                       | Capella               | 1.99° | Static = |
 | Spica                 | biquintile biquintile         | Alcyone               | 0.15° | Static = |
 | Spica                 | trine △                       | Deneb Algedi          | 0.30° | Static = |
+| Spica                 | sesquiquadrate sesquiquadrate | Interpolated Lilith   | 0.71° | Static = |
+| Spica                 | trine △                       | Mean Priapus          | 7.44° | Static = |
 | Spica                 | opposition ☍                  | Admetos               | 4.25° | Static = |
 | Spica                 | trine △                       | Vulkanus              | 5.96° | Static = |
 | Spica                 | conjunction ☌                 | Poseidon              | 8.00° | Static = |
@@ -1017,6 +1064,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pars Fortunae         | semi-square semi-square       | Algorab               | 0.35° | Static = |
 | Pars Fortunae         | square □                      | Deneb Algedi          | 4.56° | Static = |
 | Pars Fortunae         | sextile ⚹                     | Alkaid                | 1.18° | Static = |
+| Pars Fortunae         | square □                      | Mean Priapus          | 3.18° | Static = |
 | Pars Fortunae         | opposition ☍                  | Kronos                | 3.53° | Static = |
 | Pars Fortunae         | sextile ⚹                     | Apollon               | 1.22° | Static = |
 | Pars Fortunae         | quincunx ⚻                    | Admetos               | 0.01° | Static = |
@@ -1032,6 +1080,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pars Spiritus         | trine △                       | Vega                  | 1.87° | Static = |
 | Pars Spiritus         | sextile ⚹                     | Alphecca              | 4.90° | Static = |
 | Pars Spiritus         | conjunction ☌                 | Alkaid                | 9.74° | Static = |
+| Pars Spiritus         | opposition ☍                  | Interpolated Lilith   | 9.06° | Static = |
+| Pars Spiritus         | conjunction ☌                 | True Priapus          | 2.22° | Static = |
 | Pars Spiritus         | trine △                       | Hades                 | 6.60° | Static = |
 | Pars Spiritus         | conjunction ☌                 | Apollon               | 9.70° | Static = |
 | Pars Amoris           | trine △                       | Algol                 | 5.27° | Static = |
@@ -1040,6 +1090,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pars Amoris           | trine △                       | Altair                | 0.34° | Static = |
 | Pars Amoris           | trine △                       | Alcyone               | 1.44° | Static = |
 | Pars Amoris           | conjunction ☌                 | Alkaid                | 4.50° | Static = |
+| Pars Amoris           | quincunx ⚻                    | Mean Priapus          | 0.15° | Static = |
 | Pars Amoris           | conjunction ☌                 | Cupido                | 8.75° | Static = |
 | Pars Amoris           | trine △                       | Kronos                | 0.20° | Static = |
 | Pars Amoris           | conjunction ☌                 | Apollon               | 4.55° | Static = |
@@ -1054,6 +1105,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pars Fidei            | trine △                       | Vega                  | 0.99° | Static = |
 | Pars Fidei            | opposition ☍                  | Alphecca              | 2.03° | Static = |
 | Pars Fidei            | quincunx ⚻                    | Algorab               | 0.87° | Static = |
+| Pars Fidei            | trine △                       | True Priapus          | 0.65° | Static = |
 | Pars Fidei            | conjunction ☌                 | Hades                 | 3.73° | Static = |
 | Pars Fidei            | semi-square semi-square       | Vulkanus              | 0.48° | Static = |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static = |
@@ -1067,6 +1119,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Vertex                | biquintile biquintile         | Algorab               | 0.18° | Static = |
 | Vertex                | square □                      | Deneb Algedi          | 3.90° | Static = |
 | Vertex                | trine △                       | Alkaid                | 7.29° | Static = |
+| Vertex                | quintile Q                    | Interpolated Lilith   | 0.49° | Static = |
+| Vertex                | trine △                       | True Priapus          | 4.66° | Static = |
 | Vertex                | conjunction ☌                 | Hades                 | 9.05° | Static = |
 | Vertex                | trine △                       | Apollon               | 7.25° | Static = |
 | Anti Vertex           | trine △                       | Sirius                | 5.55° | Static = |
@@ -1079,6 +1133,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Anti Vertex           | sextile ⚹                     | Vega                  | 4.32° | Static = |
 | Anti Vertex           | conjunction ☌                 | Alphecca              | 7.35° | Static = |
 | Anti Vertex           | square □                      | Deneb Algedi          | 3.90° | Static = |
+| Anti Vertex           | sextile ⚹                     | True Priapus          | 4.66° | Static = |
 | Anti Vertex           | opposition ☍                  | Hades                 | 9.05° | Static = |
 | Aldebaran             | opposition ☍                  | Antares               | 0.02° | Static = |
 | Aldebaran             | sesquiquadrate sesquiquadrate | Arcturus              | 0.55° | Static = |
@@ -1087,6 +1142,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Aldebaran             | biquintile biquintile         | Vega                  | 0.47° | Static = |
 | Aldebaran             | conjunction ☌                 | Alcyone               | 9.80° | Static = |
 | Aldebaran             | trine △                       | Algorab               | 3.67° | Static = |
+| Aldebaran             | square □                      | Interpolated Lilith   | 1.66° | Static = |
 | Aldebaran             | trine △                       | Cupido                | 0.39° | Static = |
 | Aldebaran             | semi-sextile semi-sextile     | Hades                 | 0.81° | Static = |
 | Aldebaran             | conjunction ☌                 | Kronos                | 8.15° | Static = |
@@ -1098,6 +1154,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Antares               | opposition ☍                  | Alcyone               | 9.77° | Static = |
 | Antares               | sextile ⚹                     | Algorab               | 3.69° | Static = |
 | Antares               | quintile Q                    | Alkaid                | 0.83° | Static = |
+| Antares               | square □                      | Interpolated Lilith   | 1.64° | Static = |
 | Antares               | sextile ⚹                     | Cupido                | 0.42° | Static = |
 | Antares               | quincunx ⚻                    | Hades                 | 0.83° | Static = |
 | Antares               | opposition ☍                  | Kronos                | 8.13° | Static = |
@@ -1110,6 +1167,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Sirius                | trine △                       | Alphecca              | 1.80° | Static = |
 | Sirius                | square □                      | Algorab               | 0.63° | Static = |
 | Sirius                | quintile Q                    | Alkaid                | 0.84° | Static = |
+| Sirius                | trine △                       | Interpolated Lilith   | 5.96° | Static = |
+| Sirius                | sextile ⚹                     | True Priapus          | 0.89° | Static = |
 | Sirius                | square □                      | Cupido                | 3.91° | Static = |
 | Sirius                | sextile ⚹                     | Hades                 | 3.50° | Static = |
 | Sirius                | quintile Q                    | Apollon               | 0.80° | Static = |
@@ -1117,6 +1176,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Fomalhaut             | trine △                       | Betelgeuse            | 5.10° | Static = |
 | Fomalhaut             | conjunction ☌                 | Deneb                 | 1.48° | Static = |
 | Fomalhaut             | square □                      | Alcyone               | 3.86° | Static = |
+| Fomalhaut             | conjunction ☌                 | Interpolated Lilith   | 4.27° | Static = |
+| Fomalhaut             | conjunction ☌                 | Mean Priapus          | 2.57° | Static = |
 | Fomalhaut             | biquintile biquintile         | Cupido                | 0.33° | Static = |
 | Fomalhaut             | opposition ☍                  | Zeus                  | 0.07° | Static = |
 | Fomalhaut             | square □                      | Kronos                | 2.22° | Static = |
@@ -1136,6 +1197,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Betelgeuse            | conjunction ☌                 | Capella               | 6.90° | Static = |
 | Betelgeuse            | trine △                       | Deneb Algedi          | 5.21° | Static = |
 | Betelgeuse            | square □                      | Alkaid                | 1.82° | Static = |
+| Betelgeuse            | trine △                       | Mean Priapus          | 2.53° | Static = |
 | Betelgeuse            | sextile ⚹                     | Zeus                  | 5.03° | Static = |
 | Betelgeuse            | square □                      | Apollon               | 1.87° | Static = |
 | Betelgeuse            | sextile ⚹                     | Admetos               | 0.66° | Static = |
@@ -1147,6 +1209,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Canopus               | trine △                       | Alphecca              | 2.67° | Static = |
 | Canopus               | square □                      | Algorab               | 1.51° | Static = |
 | Canopus               | quintile Q                    | Alkaid                | 0.03° | Static = |
+| Canopus               | trine △                       | Interpolated Lilith   | 6.84° | Static = |
+| Canopus               | sextile ⚹                     | True Priapus          | 0.01° | Static = |
 | Canopus               | square □                      | Cupido                | 4.78° | Static = |
 | Canopus               | sextile ⚹                     | Hades                 | 4.37° | Static = |
 | Canopus               | quintile Q                    | Apollon               | 0.08° | Static = |
@@ -1156,6 +1220,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Procyon               | opposition ☍                  | Altair                | 5.98° | Static = |
 | Procyon               | sextile ⚹                     | Alcyone               | 4.20° | Static = |
 | Procyon               | sextile ⚹                     | Alkaid                | 1.14° | Static = |
+| Procyon               | biquintile biquintile         | Mean Priapus          | 0.51° | Static = |
 | Procyon               | sextile ⚹                     | Kronos                | 5.84° | Static = |
 | Procyon               | sextile ⚹                     | Apollon               | 1.10° | Static = |
 | Procyon               | square □                      | Admetos               | 2.30° | Static = |
@@ -1164,6 +1229,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Arcturus              | trine △                       | Capella               | 2.38° | Static = |
 | Arcturus              | biquintile biquintile         | Alcyone               | 0.24° | Static = |
 | Arcturus              | trine △                       | Deneb Algedi          | 0.70° | Static = |
+| Arcturus              | trine △                       | Mean Priapus          | 7.05° | Static = |
 | Arcturus              | opposition ☍                  | Admetos               | 3.86° | Static = |
 | Arcturus              | trine △                       | Vulkanus              | 5.57° | Static = |
 | Arcturus              | conjunction ☌                 | Poseidon              | 8.40° | Static = |
@@ -1172,11 +1238,15 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pollux                | opposition ☍                  | Vega                  | 7.91° | Static = |
 | Pollux                | quincunx ⚻                    | Deneb Algedi          | 0.32° | Static = |
 | Pollux                | sextile ⚹                     | Alkaid                | 3.71° | Static = |
+| Pollux                | sesquiquadrate sesquiquadrate | Interpolated Lilith   | 0.09° | Static = |
 | Pollux                | quintile Q                    | Hades                 | 0.63° | Static = |
 | Pollux                | sextile ⚹                     | Apollon               | 3.67° | Static = |
 | Pollux                | square □                      | Admetos               | 4.87° | Static = |
 | Deneb                 | conjunction ☌                 | Achernar              | 9.96° | Static = |
 | Deneb                 | trine △                       | Alphecca              | 6.96° | Static = |
+| Deneb                 | conjunction ☌                 | Interpolated Lilith   | 2.79° | Static = |
+| Deneb                 | conjunction ☌                 | Mean Priapus          | 4.05° | Static = |
+| Deneb                 | opposition ☍                  | True Priapus          | 9.64° | Static = |
 | Deneb                 | sextile ⚹                     | Hades                 | 5.26° | Static = |
 | Deneb                 | opposition ☍                  | Zeus                  | 1.55° | Static = |
 | Deneb                 | square □                      | Kronos                | 3.70° | Static = |
@@ -1184,6 +1254,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Altair                | sesquiquadrate sesquiquadrate | Rigel                 | 0.06° | Static = |
 | Altair                | trine △                       | Alcyone               | 1.78° | Static = |
 | Altair                | trine △                       | Alkaid                | 4.84° | Static = |
+| Altair                | semi-sextile semi-sextile     | Mean Priapus          | 0.49° | Static = |
 | Altair                | trine △                       | Kronos                | 0.14° | Static = |
 | Altair                | trine △                       | Apollon               | 4.88° | Static = |
 | Altair                | square □                      | Admetos               | 3.68° | Static = |
@@ -1191,10 +1262,13 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Rigel                 | conjunction ☌                 | Capella               | 5.03° | Static = |
 | Rigel                 | trine △                       | Algorab               | 3.37° | Static = |
 | Rigel                 | trine △                       | Deneb Algedi          | 6.71° | Static = |
+| Rigel                 | square □                      | True Priapus          | 1.85° | Static = |
 | Rigel                 | trine △                       | Cupido                | 6.65° | Static = |
 | Rigel                 | trine △                       | Poseidon              | 0.99° | Static = |
 | Achernar              | sextile ⚹                     | Vega                  | 0.02° | Static = |
 | Achernar              | trine △                       | Alphecca              | 3.01° | Static = |
+| Achernar              | conjunction ☌                 | Interpolated Lilith   | 7.17° | Static = |
+| Achernar              | opposition ☍                  | True Priapus          | 0.33° | Static = |
 | Achernar              | sextile ⚹                     | Hades                 | 4.71° | Static = |
 | Achernar              | quincunx ⚻                    | Poseidon              | 0.54° | Static = |
 | Capella               | trine △                       | Deneb Algedi          | 1.68° | Static = |
@@ -1204,25 +1278,43 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Vega                  | sesquiquadrate sesquiquadrate | Alcyone               | 0.32° | Static = |
 | Vega                  | sextile ⚹                     | Alphecca              | 3.02° | Static = |
 | Vega                  | square □                      | Algorab               | 1.86° | Static = |
+| Vega                  | semi-square semi-square       | Mean Priapus          | 0.97° | Static = |
+| Vega                  | trine △                       | True Priapus          | 0.34° | Static = |
 | Vega                  | trine △                       | Hades                 | 4.72° | Static = |
 | Vega                  | square □                      | Poseidon              | 0.52° | Static = |
 | Alcyone               | trine △                       | Alkaid                | 3.06° | Static = |
+| Alcyone               | square □                      | Mean Priapus          | 1.29° | Static = |
 | Alcyone               | square □                      | Zeus                  | 3.79° | Static = |
 | Alcyone               | conjunction ☌                 | Kronos                | 1.64° | Static = |
 | Alcyone               | trine △                       | Apollon               | 3.10° | Static = |
 | Alcyone               | semi-sextile semi-sextile     | Vulkanus              | 0.18° | Static = |
 | Alcyone               | sesquiquadrate sesquiquadrate | Poseidon              | 0.85° | Static = |
 | Alphecca              | semi-square semi-square       | Alkaid                | 0.36° | Static = |
+| Alphecca              | trine △                       | Interpolated Lilith   | 4.16° | Static = |
+| Alphecca              | sextile ⚹                     | True Priapus          | 2.68° | Static = |
 | Alphecca              | opposition ☍                  | Hades                 | 1.70° | Static = |
 | Alphecca              | semi-square semi-square       | Apollon               | 0.40° | Static = |
+| Algorab               | biquintile biquintile         | Interpolated Lilith   | 0.67° | Static = |
 | Algorab               | conjunction ☌                 | Cupido                | 3.27° | Static = |
 | Algorab               | conjunction ☌                 | Poseidon              | 2.38° | Static = |
+| Deneb Algedi          | conjunction ☌                 | Mean Priapus          | 7.74° | Static = |
 | Deneb Algedi          | sextile ⚹                     | Admetos               | 4.55° | Static = |
 | Deneb Algedi          | trine △                       | Vulkanus              | 6.27° | Static = |
 | Deneb Algedi          | trine △                       | Poseidon              | 7.70° | Static = |
 | Alkaid                | trine △                       | Kronos                | 4.71° | Static = |
 | Alkaid                | conjunction ☌                 | Apollon               | 0.04° | Static = |
 | Alkaid                | square □                      | Vulkanus              | 2.88° | Static = |
+| Interpolated Lilith   | conjunction ☌                 | Mean Priapus          | 6.85° | Static = |
+| Interpolated Lilith   | opposition ☍                  | True Priapus          | 6.85° | Static = |
+| Interpolated Lilith   | sextile ⚹                     | Hades                 | 2.46° | Static = |
+| Interpolated Lilith   | opposition ☍                  | Zeus                  | 4.35° | Static = |
+| Mean Priapus          | opposition ☍                  | Zeus                  | 2.50° | Static = |
+| Mean Priapus          | square □                      | Kronos                | 0.35° | Static = |
+| Mean Priapus          | sextile ⚹                     | Admetos               | 3.19° | Static = |
+| Mean Priapus          | trine △                       | Vulkanus              | 1.48° | Static = |
+| Mean Priapus          | sesquiquadrate sesquiquadrate | Poseidon              | 0.44° | Static = |
+| True Priapus          | trine △                       | Hades                 | 4.38° | Static = |
+| True Priapus          | semi-sextile semi-sextile     | Poseidon              | 0.86° | Static = |
 | Cupido                | quincunx ⚻                    | Hades                 | 0.41° | Static = |
 | Cupido                | conjunction ☌                 | Poseidon              | 5.66° | Static = |
 | Hades                 | trine △                       | Zeus                  | 6.81° | Static = |

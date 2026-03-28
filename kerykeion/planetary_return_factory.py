@@ -334,7 +334,7 @@ class PlanetaryReturnFactory:
             )
 
         # Geonames username
-        if geonames_username is None and online and (not lat or not lng or not tz_str):
+        if geonames_username is None and online and (lat is None or lng is None or not tz_str):
             logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             self.geonames_username = DEFAULT_GEONAMES_USERNAME
         else:
@@ -353,7 +353,7 @@ class PlanetaryReturnFactory:
             self.nation = nation
 
         # Latitude
-        if not lat and not online:
+        if lat is None and not online:
             raise KerykeionException(
                 "You need to set the coordinates and timezone if you want to use the offline mode!"
             )
@@ -361,7 +361,7 @@ class PlanetaryReturnFactory:
             self.lat = lat  # type: ignore
 
         # Longitude
-        if not lng and not online:
+        if lng is None and not online:
             raise KerykeionException(
                 "You need to set the coordinates and timezone if you want to use the offline mode!"
             )
@@ -377,7 +377,7 @@ class PlanetaryReturnFactory:
             self.tz_str = tz_str  # type: ignore
 
         # Online mode
-        if (self.online) and (not self.tz_str) and (not self.lat) and (not self.lng):
+        if (self.online) and (not self.tz_str) and (self.lat is None) and (self.lng is None):
             logging.info("Fetching timezone/coordinates from geonames")
 
             if not self.city or not self.nation or not self.geonames_username:
@@ -806,6 +806,8 @@ class PlanetaryReturnFactory:
         """Build a return chart at the given Julian Day."""
         return_dt = julian_to_datetime(return_jd)
 
+        # julian_to_datetime returns UTC; use from_birth_data with Etc/GMT
+        # to avoid double timezone conversion.
         return_subject = AstrologicalSubjectFactory.from_birth_data(
             name=f"{self.subject.name} {return_type} Return",
             year=return_dt.year,
@@ -816,7 +818,7 @@ class PlanetaryReturnFactory:
             seconds=return_dt.second,
             lng=self.lng,
             lat=self.lat,
-            tz_str=self.tz_str,
+            tz_str="Etc/GMT",
             city=self.city,
             nation=self.nation,
             online=False,

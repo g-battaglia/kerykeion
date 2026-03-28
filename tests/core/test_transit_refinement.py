@@ -77,8 +77,10 @@ class TestTransitRefinement:
     def test_refined_exact_moment_differs(self, transit_factory):
         """At least some refined exact_moments should differ from unrefined.
 
-        Note: Refinement only applies to events where the minimum orb is NOT
+        Refinement only applies to events where the minimum orb is NOT
         at the first or last step of the track (needs bracketing steps on both sides).
+        This test verifies that refinement actually changes at least one event,
+        so the test would fail if the refinement code were a no-op.
         """
         unrefined = transit_factory.get_transit_events(refine_exact_moments=False)
         refined = transit_factory.get_transit_events(refine_exact_moments=True)
@@ -99,9 +101,61 @@ class TestTransitRefinement:
             if event.exact_moment != unref.exact_moment or event.min_orb < unref.min_orb:
                 different_count += 1
 
-        # Refinement may not apply to all events (edge events lack bracketing)
-        # so we just verify the method runs and optionally improves some
         assert comparable_count > 0, "No comparable events found"
+        # The critical assertion: refinement must actually change some events.
+        # With 30 days of daily steps, there should be several events with
+        # bracketing steps eligible for bisection refinement.
+        assert different_count > 0, (
+            f"Refinement was a no-op: {comparable_count} comparable events but "
+            f"none had a different exact_moment or improved orb"
+        )
+
+    def test_refined_orb_not_worse_than_unrefined(self, transit_factory):
+        """For matched events, the refined orb should be <= the unrefined orb."""
+        unrefined = transit_factory.get_transit_events(refine_exact_moments=False)
+        refined = transit_factory.get_transit_events(refine_exact_moments=True)
+
+        unrefined_lookup = {
+            (e.p1_name, e.p2_name, e.aspect): e
+            for e in unrefined.events
+        }
+
+        checked = 0
+        for event in refined.events:
+            key = (event.p1_name, event.p2_name, event.aspect)
+            unref = unrefined_lookup.get(key)
+            if unref is None:
+                continue
+            # Allow a tiny floating-point tolerance (1e-6 degrees ~ 0.004 arcsec)
+            assert event.min_orb <= unref.min_orb + 1e-6, (
+                f"Refined orb ({event.min_orb}) is worse than unrefined "
+                f"({unref.min_orb}) for {key}"
+            )
+            checked += 1
+
+        assert checked > 0, "No comparable events to check orbs"
+
+    def test_refined_exact_moment_within_event_window(self, transit_factory):
+        """The refined exact_moment must fall between applying_start and separating_end."""
+        refined = transit_factory.get_transit_events(refine_exact_moments=True)
+
+        checked = 0
+        for event in refined.events:
+            if event.applying_start is None or event.separating_end is None:
+                continue
+
+            exact_dt = datetime.fromisoformat(event.exact_moment)
+            start_dt = datetime.fromisoformat(event.applying_start)
+            end_dt = datetime.fromisoformat(event.separating_end)
+
+            assert start_dt <= exact_dt <= end_dt, (
+                f"Refined exact_moment {event.exact_moment} is outside the event "
+                f"window [{event.applying_start}, {event.separating_end}] "
+                f"for ({event.p1_name}, {event.p2_name}, {event.aspect})"
+            )
+            checked += 1
+
+        assert checked > 0, "No events with both applying_start and separating_end"
 
     def test_event_structure_preserved(self, transit_factory):
         """Refined events should have all required fields."""

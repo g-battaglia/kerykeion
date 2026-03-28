@@ -172,7 +172,7 @@ class EclipseFactory:
         jd = start_jd
         for _ in range(count):
             try:
-                retflags, tret, attr = swe.sol_eclipse_when_loc(jd, geopos)
+                retflags, tret, attr = swe.sol_eclipse_when_loc(jd, geopos, swe.FLG_SWIEPH)
                 if tret[0] == 0.0:
                     break
                 max_jd = tret[0]
@@ -180,9 +180,9 @@ class EclipseFactory:
                     type=_classify_solar_eclipse(retflags),
                     maximum_jd=max_jd,
                     datestamp=_jd_to_iso(max_jd),
-                    magnitude=round(attr[1], 6) if len(attr) > 1 else 0.0,
+                    magnitude=round(attr[0], 6) if len(attr) > 0 else 0.0,
                     obscuration=round(attr[2], 6) if len(attr) > 2 else 0.0,
-                    sun_altitude=round(attr[3], 4) if len(attr) > 3 else None,
+                    sun_altitude=round(attr[5], 4) if len(attr) > 5 else None,
                 ))
                 jd = max_jd + 10  # Skip ahead
             except Exception as e:
@@ -219,7 +219,7 @@ class EclipseFactory:
         jd = start_jd
         for _ in range(count):
             try:
-                retflags, tret, attr = swe.lun_eclipse_when_loc(jd, geopos)
+                retflags, tret, attr = swe.lun_eclipse_when_loc(jd, geopos, swe.FLG_SWIEPH)
                 if tret[0] == 0.0:
                     break
                 max_jd = tret[0]

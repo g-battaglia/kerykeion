@@ -2,7 +2,11 @@
 """Tests for the Planetary Nodes & Apsides factory."""
 
 import pytest
+import swisseph as swe
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, PlanetaryNodesFactory
+
+_EPHE_PATH = str(Path(__file__).parent.parent.parent / "kerykeion" / "sweph")
 
 
 @pytest.fixture(scope="module")
@@ -63,3 +67,61 @@ class TestNodesFiltering:
         assert len(result.nodes) == 2
         names = {n.planet_name for n in result.nodes}
         assert names == {"Mars", "Saturn"}
+
+
+class TestSweRegressionNodes:
+    """Regression tests: verify factory results match raw Swiss Ephemeris calls."""
+
+    def test_mars_ascending_node_matches_swe(self):
+        """Factory Mars ascending node longitude should match swe.nod_aps_ut."""
+        jd_j2000 = 2451545.0
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
+
+        swe.set_ephe_path(_EPHE_PATH)
+        swe_result = swe.nod_aps_ut(jd_j2000, swe.MARS, iflag, NODBIT_MEAN)
+        swe_asc_lon = swe_result[0][0] % 360
+        swe_desc_lon = swe_result[1][0] % 360
+        swe_peri_lon = swe_result[2][0] % 360
+        swe_aph_lon = swe_result[3][0] % 360
+        swe.close()
+
+        factory_result = PlanetaryNodesFactory.from_julian_day(
+            jd_j2000, method="mean", planets=["Mars"]
+        )
+        assert len(factory_result.nodes) == 1
+        mars = factory_result.nodes[0]
+
+        assert abs(mars.ascending_node.abs_pos - swe_asc_lon) < 0.01, (
+            f"asc node: factory={mars.ascending_node.abs_pos} swe={swe_asc_lon}"
+        )
+        assert abs(mars.descending_node.abs_pos - swe_desc_lon) < 0.01, (
+            f"desc node: factory={mars.descending_node.abs_pos} swe={swe_desc_lon}"
+        )
+        assert abs(mars.perihelion.abs_pos - swe_peri_lon) < 0.01, (
+            f"perihelion: factory={mars.perihelion.abs_pos} swe={swe_peri_lon}"
+        )
+        assert abs(mars.aphelion.abs_pos - swe_aph_lon) < 0.01, (
+            f"aphelion: factory={mars.aphelion.abs_pos} swe={swe_aph_lon}"
+        )
+
+    def test_jupiter_ascending_node_matches_swe(self):
+        """Factory Jupiter ascending node longitude should match swe.nod_aps_ut."""
+        jd_j2000 = 2451545.0
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
+
+        swe.set_ephe_path(_EPHE_PATH)
+        swe_result = swe.nod_aps_ut(jd_j2000, swe.JUPITER, iflag, NODBIT_MEAN)
+        swe_asc_lon = swe_result[0][0] % 360
+        swe.close()
+
+        factory_result = PlanetaryNodesFactory.from_julian_day(
+            jd_j2000, method="mean", planets=["Jupiter"]
+        )
+        assert len(factory_result.nodes) == 1
+        jupiter = factory_result.nodes[0]
+
+        assert abs(jupiter.ascending_node.abs_pos - swe_asc_lon) < 0.01, (
+            f"Jupiter asc node: factory={jupiter.ascending_node.abs_pos} swe={swe_asc_lon}"
+        )

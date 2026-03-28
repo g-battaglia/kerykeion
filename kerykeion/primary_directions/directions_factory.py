@@ -117,7 +117,8 @@ class PrimaryDirectionsFactory:
             obliquity = 23.4393
 
         # Get RAMC (Right Ascension of the Medium Coeli)
-        ramc = swe.sidtime(jd) * 15.0  # Sidereal time in hours -> degrees
+        # Local sidereal time = Greenwich sidereal time + observer longitude
+        ramc = (swe.sidtime(jd) * 15.0 + subject.lng) % 360
 
         # Build speculum
         speculum = PrimaryDirectionsFactory._build_speculum(
@@ -191,7 +192,7 @@ class PrimaryDirectionsFactory:
         jd = subject.julian_day
         iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
         obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
-        ramc = swe.sidtime(jd) * 15.0
+        ramc = (swe.sidtime(jd) * 15.0 + subject.lng) % 360
         speculum = PrimaryDirectionsFactory._build_speculum(
             subject, jd, iflag, obliquity, ramc, subject.lat
         )

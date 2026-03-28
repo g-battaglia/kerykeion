@@ -23,7 +23,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448459.314653      |
-| Active Points Count | 71                  |
+| Active Points Count | 74                  |
 +---------------------+---------------------+
 
 +Solar Return Chart Celestial Points---------+--------------+---------+------+---------------+
@@ -64,6 +64,9 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Admetos               | Tau ♉️ | 15.54°   | +0.0055°/d   | +16.50° | -    | Third House   |
 | Vulkanus              | Can ♋️ | 15.88°   | +0.0136°/d   | +22.51° | -    | Seventh House |
 | Poseidon              | Lib ♎️ | 29.17°   | +0.0012°/d   | -11.19° | -    | Ninth House   |
+| Interpolated Lilith   | Cap ♑️ | 5.33°    | +0.8595°/d   | -24.47° | -    | Twelfth House |
+| Mean Priapus          | Can ♋️ | 9.64°    | +0.1108°/d   | +23.88° | -    | Sixth House   |
+| True Priapus          | Can ♋️ | 1.02°    | +1.6082°/d   | +25.07° | -    | Sixth House   |
 | Eris                  | Ari ♈️ | 17.83°   | -0.0012°/d   | -8.90°  | R    | Second House  |
 | Sedna                 | Tau ♉️ | 12.06°   | +0.0039°/d   | +4.38°  | -    | Third House   |
 | Haumea                | Vir ♍️ | 27.25°   | +0.0132°/d   | +22.86° | -    | Eighth House  |
@@ -130,20 +133,20 @@ Sample Natal Subject Solar Return — Solar Return 1991
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 7.199999999999999  | 16.3%      |
-| Earth 🌍 | 16.3               | 36.9%      |
-| Air 💨   | 8.700000000000001  | 19.7%      |
-| Water 💧 | 11.999999999999995 | 27.1%      |
-| Total    | 44.199999999999996 | 100%       |
+| Fire 🔥  | 7.199999999999999  | 18.3%      |
+| Earth 🌍 | 14.600000000000001 | 37.2%      |
+| Air 💨   | 5.9                | 15.0%      |
+| Water 💧 | 11.599999999999996 | 29.5%      |
+| Total    | 39.3               | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 16.9               | 38.2%      |
-| Fixed    | 14.999999999999998 | 33.9%      |
-| Mutable  | 12.3               | 27.8%      |
-| Total    | 44.2               | 100%       |
+| Cardinal | 16.299999999999997 | 41.5%      |
+| Fixed    | 13.6               | 34.6%      |
+| Mutable  | 9.400000000000002  | 23.9%      |
+| Total    | 39.3               | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -180,46 +183,49 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | 29 | Admetos               |
 | 30 | Vulkanus              |
 | 31 | Poseidon              |
-| 32 | Eris                  |
-| 33 | Sedna                 |
-| 34 | Haumea                |
-| 35 | Makemake              |
-| 36 | Ixion                 |
-| 37 | Orcus                 |
-| 38 | Quaoar                |
-| 39 | Regulus               |
-| 40 | Spica                 |
-| 41 | Aldebaran             |
-| 42 | Antares               |
-| 43 | Sirius                |
-| 44 | Fomalhaut             |
-| 45 | Algol                 |
-| 46 | Betelgeuse            |
-| 47 | Canopus               |
-| 48 | Procyon               |
-| 49 | Arcturus              |
-| 50 | Pollux                |
-| 51 | Deneb                 |
-| 52 | Altair                |
-| 53 | Rigel                 |
-| 54 | Achernar              |
-| 55 | Capella               |
-| 56 | Vega                  |
-| 57 | Alcyone               |
-| 58 | Alphecca              |
-| 59 | Algorab               |
-| 60 | Deneb_Algedi          |
-| 61 | Alkaid                |
-| 62 | Pars_Fortunae         |
-| 63 | Pars_Spiritus         |
-| 64 | Pars_Amoris           |
-| 65 | Pars_Fidei            |
-| 66 | Vertex                |
-| 67 | Anti_Vertex           |
-| 68 | Ascendant             |
-| 69 | Medium_Coeli          |
-| 70 | Descendant            |
-| 71 | Imum_Coeli            |
+| 32 | Interpolated_Lilith   |
+| 33 | Mean_Priapus          |
+| 34 | True_Priapus          |
+| 35 | Eris                  |
+| 36 | Sedna                 |
+| 37 | Haumea                |
+| 38 | Makemake              |
+| 39 | Ixion                 |
+| 40 | Orcus                 |
+| 41 | Quaoar                |
+| 42 | Regulus               |
+| 43 | Spica                 |
+| 44 | Aldebaran             |
+| 45 | Antares               |
+| 46 | Sirius                |
+| 47 | Fomalhaut             |
+| 48 | Algol                 |
+| 49 | Betelgeuse            |
+| 50 | Canopus               |
+| 51 | Procyon               |
+| 52 | Arcturus              |
+| 53 | Pollux                |
+| 54 | Deneb                 |
+| 55 | Altair                |
+| 56 | Rigel                 |
+| 57 | Achernar              |
+| 58 | Capella               |
+| 59 | Vega                  |
+| 60 | Alcyone               |
+| 61 | Alphecca              |
+| 62 | Algorab               |
+| 63 | Deneb_Algedi          |
+| 64 | Alkaid                |
+| 65 | Pars_Fortunae         |
+| 66 | Pars_Spiritus         |
+| 67 | Pars_Amoris           |
+| 68 | Pars_Fidei            |
+| 69 | Vertex                |
+| 70 | Anti_Vertex           |
+| 71 | Ascendant             |
+| 72 | Medium_Coeli          |
+| 73 | Descendant            |
+| 74 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+
@@ -290,6 +296,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Moon                  | square □                      | Deneb                 | 0.59° | Applying →   |
 | Moon                  | sextile ⚹                     | Altair                | 2.96° | Separating ← |
 | Moon                  | opposition ☍                  | Alcyone               | 4.76° | Separating ← |
+| Moon                  | semi-sextile semi-sextile     | Interpolated Lilith   | 0.70° | Applying →   |
+| Moon                  | biquintile biquintile         | Mean Priapus          | 1.00° | Separating ← |
 | Moon                  | opposition ☍                  | Hades                 | 6.29° | Applying →   |
 | Mercury               | conjunction ☌                 | Venus                 | 9.99° | Applying →   |
 | Mercury               | conjunction ☌                 | Mars                  | 8.56° | Applying →   |
@@ -319,6 +327,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mercury               | sextile ⚹                     | Capella               | 3.58° | Separating ← |
 | Mercury               | square □                      | Alcyone               | 4.56° | Applying →   |
 | Mercury               | opposition ☍                  | Deneb Algedi          | 1.88° | Separating ← |
+| Mercury               | semi-square semi-square       | Mean Priapus          | 0.68° | Separating ← |
+| Mercury               | sextile ⚹                     | True Priapus          | 5.71° | Separating ← |
 | Mercury               | sextile ⚹                     | Kronos                | 2.73° | Separating ← |
 | Mercury               | sextile ⚹                     | Poseidon              | 3.85° | Applying →   |
 | Venus                 | conjunction ☌                 | Mars                  | 1.43° | Applying →   |
@@ -337,6 +347,9 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Venus                 | opposition ☍                  | Fomalhaut             | 1.55° | Separating ← |
 | Venus                 | opposition ☍                  | Deneb                 | 0.08° | Separating ← |
 | Venus                 | opposition ☍                  | Achernar              | 9.90° | Applying →   |
+| Venus                 | trine △                       | Interpolated Lilith   | 0.03° | Separating ← |
+| Venus                 | sextile ⚹                     | Mean Priapus          | 4.33° | Applying →   |
+| Venus                 | sextile ⚹                     | True Priapus          | 4.28° | Applying →   |
 | Venus                 | quintile Q                    | Kronos                | 0.72° | Separating ← |
 | Mars                  | quincunx ⚻                    | Saturn                | 0.02° | Applying →   |
 | Mars                  | trine △                       | Uranus                | 7.26° | Applying →   |
@@ -356,6 +369,9 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mars                  | opposition ☍                  | Deneb                 | 1.35° | Applying →   |
 | Mars                  | quintile Q                    | Capella               | 0.14° | Separating ← |
 | Mars                  | square □                      | Alcyone               | 4.00° | Separating ← |
+| Mars                  | trine △                       | Interpolated Lilith   | 1.46° | Separating ← |
+| Mars                  | sextile ⚹                     | Mean Priapus          | 5.76° | Applying →   |
+| Mars                  | sextile ⚹                     | True Priapus          | 2.85° | Applying →   |
 | Mars                  | quintile Q                    | Kronos                | 0.71° | Applying →   |
 | Mars                  | sextile ⚹                     | Poseidon              | 4.71° | Separating ← |
 | Jupiter               | square □                      | Pluto                 | 1.06° | Separating ← |
@@ -423,6 +439,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Uranus                | conjunction ☌                 | Vega                  | 4.08° | Separating ← |
 | Uranus                | sextile ⚹                     | Alphecca              | 1.05° | Separating ← |
 | Uranus                | square □                      | Algorab               | 2.20° | Separating ← |
+| Uranus                | conjunction ☌                 | Interpolated Lilith   | 5.80° | Applying →   |
+| Uranus                | opposition ☍                  | Mean Priapus          | 1.50° | Applying →   |
 | Uranus                | quincunx ⚻                    | Hades                 | 0.22° | Applying →   |
 | Uranus                | square □                      | Apollon               | 3.31° | Separating ← |
 | Uranus                | trine △                       | Admetos               | 4.41° | Separating ← |
@@ -454,6 +472,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Neptune               | sesquiquadrate sesquiquadrate | Alcyone               | 0.14° | Applying →   |
 | Neptune               | sextile ⚹                     | Alphecca              | 2.83° | Applying →   |
 | Neptune               | square □                      | Algorab               | 1.67° | Applying →   |
+| Neptune               | conjunction ☌                 | Interpolated Lilith   | 9.68° | Applying →   |
+| Neptune               | opposition ☍                  | Mean Priapus          | 5.37° | Applying →   |
 | Neptune               | sextile ⚹                     | Cupido                | 5.01° | Separating ← |
 | Neptune               | square □                      | Apollon               | 0.56° | Applying →   |
 | Neptune               | trine △                       | Admetos               | 0.53° | Separating ← |
@@ -484,6 +504,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Pluto                 | trine △                       | Achernar              | 2.37° | Applying →   |
 | Pluto                 | sextile ⚹                     | Vega                  | 2.36° | Applying →   |
 | Pluto                 | conjunction ☌                 | Alphecca              | 5.39° | Applying →   |
+| Pluto                 | trine △                       | Mean Priapus          | 7.94° | Applying →   |
 | Pluto                 | conjunction ☌                 | Cupido                | 2.44° | Static =     |
 | Pluto                 | biquintile biquintile         | Kronos                | 1.00° | Applying →   |
 | Pluto                 | opposition ☍                  | Admetos               | 2.04° | Applying →   |
@@ -511,6 +532,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mean North Lunar Node | opposition ☍                  | Pollux                | 4.65° | Separating ← |
 | Mean North Lunar Node | sextile ⚹                     | Achernar              | 3.24° | Applying →   |
 | Mean North Lunar Node | conjunction ☌                 | Vega                  | 3.23° | Applying →   |
+| Mean North Lunar Node | opposition ☍                  | Mean Priapus          | 8.81° | Applying →   |
 | Mean North Lunar Node | sextile ⚹                     | Cupido                | 1.57° | Separating ← |
 | Mean North Lunar Node | square □                      | Apollon               | 4.00° | Applying →   |
 | Mean North Lunar Node | trine △                       | Admetos               | 2.91° | Applying →   |
@@ -540,6 +562,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | True North Lunar Node | sextile ⚹                     | Achernar              | 3.74° | Separating ← |
 | True North Lunar Node | conjunction ☌                 | Vega                  | 3.73° | Separating ← |
 | True North Lunar Node | trine △                       | Alkaid                | 7.87° | Applying →   |
+| True North Lunar Node | opposition ☍                  | Mean Priapus          | 9.30° | Applying →   |
 | True North Lunar Node | sextile ⚹                     | Cupido                | 1.08° | Applying →   |
 | True North Lunar Node | trine △                       | Zeus                  | 7.88° | Applying →   |
 | True North Lunar Node | square □                      | Apollon               | 4.49° | Separating ← |
@@ -585,6 +608,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Ascendant             | conjunction ☌                 | Vega                  | 1.39° | Applying →   |
 | Ascendant             | sextile ⚹                     | Alphecca              | 1.64° | Separating ← |
 | Ascendant             | square □                      | Algorab               | 0.49° | Separating ← |
+| Ascendant             | conjunction ☌                 | Interpolated Lilith   | 8.49° | Separating ← |
+| Ascendant             | opposition ☍                  | Mean Priapus          | 4.19° | Separating ← |
 | Ascendant             | square □                      | Apollon               | 0.62° | Applying →   |
 | Ascendant             | trine △                       | Admetos               | 1.72° | Applying →   |
 | Ascendant             | opposition ☍                  | Vulkanus              | 2.05° | Applying →   |
@@ -639,6 +664,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Descendant            | trine △                       | Alphecca              | 1.64° | Separating ← |
 | Descendant            | square □                      | Algorab               | 0.49° | Separating ← |
 | Descendant            | quintile Q                    | Alkaid                | 0.99° | Applying →   |
+| Descendant            | opposition ☍                  | Interpolated Lilith   | 8.49° | Separating ← |
+| Descendant            | conjunction ☌                 | Mean Priapus          | 4.19° | Separating ← |
 | Descendant            | trine △                       | Cupido                | 6.20° | Applying →   |
 | Descendant            | square □                      | Apollon               | 0.62° | Applying →   |
 | Descendant            | sextile ⚹                     | Admetos               | 1.72° | Applying →   |
@@ -690,6 +717,9 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mean Lilith           | conjunction ☌                 | Vega                  | 5.58° | Applying →   |
 | Mean Lilith           | sextile ⚹                     | Alphecca              | 2.55° | Applying →   |
 | Mean Lilith           | square □                      | Algorab               | 3.70° | Applying →   |
+| Mean Lilith           | conjunction ☌                 | Interpolated Lilith   | 4.31° | Applying →   |
+| Mean Lilith           | opposition ☍                  | Mean Priapus          | 0.00° | Static =     |
+| Mean Lilith           | opposition ☍                  | True Priapus          | 8.61° | Applying →   |
 | Mean Lilith           | square □                      | Apollon               | 4.81° | Applying →   |
 | Mean Lilith           | trine △                       | Admetos               | 5.90° | Applying →   |
 | Mean Lilith           | opposition ☍                  | Vulkanus              | 6.24° | Applying →   |
@@ -709,6 +739,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mean South Lunar Node | trine △                       | Achernar              | 3.24° | Separating ← |
 | Mean South Lunar Node | opposition ☍                  | Vega                  | 3.23° | Separating ← |
 | Mean South Lunar Node | trine △                       | Alphecca              | 6.26° | Separating ← |
+| Mean South Lunar Node | conjunction ☌                 | Mean Priapus          | 8.81° | Applying →   |
 | Mean South Lunar Node | trine △                       | Cupido                | 1.57° | Applying →   |
 | Mean South Lunar Node | square □                      | Apollon               | 4.00° | Separating ← |
 | Mean South Lunar Node | sextile ⚹                     | Admetos               | 2.91° | Separating ← |
@@ -730,6 +761,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | True South Lunar Node | trine △                       | Achernar              | 3.74° | Applying →   |
 | True South Lunar Node | opposition ☍                  | Vega                  | 3.73° | Applying →   |
 | True South Lunar Node | trine △                       | Alphecca              | 6.76° | Applying →   |
+| True South Lunar Node | conjunction ☌                 | Mean Priapus          | 9.30° | Applying →   |
 | True South Lunar Node | trine △                       | Cupido                | 1.08° | Separating ← |
 | True South Lunar Node | square □                      | Apollon               | 4.49° | Applying →   |
 | True South Lunar Node | sextile ⚹                     | Admetos               | 3.40° | Applying →   |
@@ -749,6 +781,9 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | True Lilith           | semi-sextile semi-sextile     | Altair                | 0.64° | Applying →   |
 | True Lilith           | opposition ☍                  | Capella               | 9.28° | Separating ← |
 | True Lilith           | square □                      | Alkaid                | 4.21° | Separating ← |
+| True Lilith           | conjunction ☌                 | Interpolated Lilith   | 4.31° | Applying →   |
+| True Lilith           | opposition ☍                  | Mean Priapus          | 8.61° | Applying →   |
+| True Lilith           | opposition ☍                  | True Priapus          | 0.00° | Static =     |
 | True Lilith           | square □                      | Zeus                  | 4.20° | Separating ← |
 | True Lilith           | opposition ☍                  | Kronos                | 8.44° | Separating ← |
 | True Lilith           | sesquiquadrate sesquiquadrate | Admetos               | 0.48° | Separating ← |
@@ -768,6 +803,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Earth                 | sextile ⚹                     | Altair                | 1.67° | Static =     |
 | Earth                 | sextile ⚹                     | Alcyone               | 0.12° | Static =     |
 | Earth                 | opposition ☍                  | Alkaid                | 3.19° | Static =     |
+| Earth                 | square □                      | True Priapus          | 1.02° | Separating ← |
 | Earth                 | opposition ☍                  | Zeus                  | 3.17° | Applying →   |
 | Earth                 | semi-square semi-square       | Admetos               | 0.54° | Separating ← |
 | Earth                 | quincunx ⚻                    | Poseidon              | 0.83° | Applying →   |
@@ -819,6 +855,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Ceres                 | trine △                       | Capella               | 5.05° | Separating ← |
 | Ceres                 | trine △                       | Deneb Algedi          | 3.36° | Separating ← |
 | Ceres                 | semi-sextile semi-sextile     | Alkaid                | 0.02° | Applying →   |
+| Ceres                 | trine △                       | True Priapus          | 4.23° | Separating ← |
 | Ceres                 | sesquiquadrate sesquiquadrate | Hades                 | 0.87° | Separating ← |
 | Ceres                 | semi-sextile semi-sextile     | Zeus                  | 0.03° | Applying →   |
 | Ceres                 | trine △                       | Kronos                | 4.21° | Separating ← |
@@ -845,6 +882,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Pallas                | trine △                       | Alcyone               | 2.53° | Applying →   |
 | Pallas                | semi-square semi-square       | Alphecca              | 0.16° | Separating ← |
 | Pallas                | conjunction ☌                 | Alkaid                | 0.53° | Separating ← |
+| Pallas                | square □                      | True Priapus          | 3.68° | Separating ← |
 | Pallas                | conjunction ☌                 | Zeus                  | 0.52° | Separating ← |
 | Pallas                | square □                      | Kronos                | 4.76° | Separating ← |
 | Pallas                | quintile Q                    | Vulkanus              | 0.54° | Applying →   |
@@ -926,6 +964,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Sedna                 | trine △                       | Vega                  | 3.16° | Applying →   |
 | Sedna                 | opposition ☍                  | Alphecca              | 0.13° | Applying →   |
 | Sedna                 | sesquiquadrate sesquiquadrate | Alkaid                | 0.24° | Separating ← |
+| Sedna                 | trine △                       | Interpolated Lilith   | 6.73° | Applying →   |
+| Sedna                 | sextile ⚹                     | Mean Priapus          | 2.42° | Applying →   |
 | Sedna                 | opposition ☍                  | Cupido                | 7.96° | Applying →   |
 | Sedna                 | sesquiquadrate sesquiquadrate | Zeus                  | 0.23° | Applying →   |
 | Sedna                 | conjunction ☌                 | Admetos               | 3.48° | Separating ← |
@@ -948,6 +988,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Haumea                | trine △                       | Alcyone               | 2.63° | Applying →   |
 | Haumea                | semi-square semi-square       | Alphecca              | 0.07° | Separating ← |
 | Haumea                | conjunction ☌                 | Alkaid                | 0.43° | Separating ← |
+| Haumea                | square □                      | True Priapus          | 3.78° | Separating ← |
 | Haumea                | conjunction ☌                 | Zeus                  | 0.42° | Separating ← |
 | Haumea                | square □                      | Kronos                | 4.67° | Static =     |
 | Haumea                | quintile Q                    | Vulkanus              | 0.63° | Static =     |
@@ -960,6 +1001,9 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Makemake              | opposition ☍                  | Fomalhaut             | 1.80° | Separating ← |
 | Makemake              | opposition ☍                  | Deneb                 | 0.32° | Separating ← |
 | Makemake              | opposition ☍                  | Achernar              | 9.66° | Applying →   |
+| Makemake              | trine △                       | Interpolated Lilith   | 0.22° | Applying →   |
+| Makemake              | sextile ⚹                     | Mean Priapus          | 4.09° | Separating ← |
+| Makemake              | sextile ⚹                     | True Priapus          | 4.52° | Applying →   |
 | Makemake              | quintile Q                    | Kronos                | 0.96° | Separating ← |
 | Ixion                 | conjunction ☌                 | Quaoar                | 1.59° | Static =     |
 | Ixion                 | semi-sextile semi-sextile     | Spica                 | 0.02° | Applying →   |
@@ -975,6 +1019,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Ixion                 | opposition ☍                  | Alcyone               | 6.13° | Separating ← |
 | Ixion                 | square □                      | Deneb Algedi          | 0.31° | Applying →   |
 | Ixion                 | sextile ⚹                     | Alkaid                | 3.07° | Separating ← |
+| Ixion                 | sesquiquadrate sesquiquadrate | Mean Priapus          | 0.89° | Separating ← |
 | Ixion                 | conjunction ☌                 | Cupido                | 3.72° | Applying →   |
 | Ixion                 | sextile ⚹                     | Zeus                  | 3.08° | Separating ← |
 | Ixion                 | opposition ☍                  | Admetos               | 8.20° | Applying →   |
@@ -989,6 +1034,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Orcus                 | square □                      | Alphecca              | 0.33° | Applying →   |
 | Orcus                 | sextile ⚹                     | Algorab               | 1.49° | Applying →   |
 | Orcus                 | semi-square semi-square       | Alkaid                | 0.04° | Separating ← |
+| Orcus                 | biquintile biquintile         | Interpolated Lilith   | 0.52° | Applying →   |
 | Orcus                 | sextile ⚹                     | Hades                 | 0.93° | Separating ← |
 | Orcus                 | semi-square semi-square       | Zeus                  | 0.02° | Separating ← |
 | Orcus                 | sextile ⚹                     | Apollon               | 2.60° | Applying →   |
@@ -1005,6 +1051,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Quaoar                | opposition ☍                  | Alcyone               | 4.54° | Separating ← |
 | Quaoar                | square □                      | Deneb Algedi          | 1.90° | Applying →   |
 | Quaoar                | sextile ⚹                     | Alkaid                | 1.48° | Separating ← |
+| Quaoar                | sesquiquadrate sesquiquadrate | Mean Priapus          | 0.70° | Applying →   |
+| Quaoar                | biquintile biquintile         | True Priapus          | 0.31° | Applying →   |
 | Quaoar                | conjunction ☌                 | Cupido                | 5.32° | Applying →   |
 | Quaoar                | sextile ⚹                     | Zeus                  | 1.49° | Separating ← |
 | Quaoar                | opposition ☍                  | Admetos               | 9.80° | Applying →   |
@@ -1024,6 +1072,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Regulus               | square □                      | Alcyone               | 0.16° | Static =     |
 | Regulus               | quintile Q                    | Alphecca              | 0.47° | Static =     |
 | Regulus               | opposition ☍                  | Deneb Algedi          | 6.28° | Static =     |
+| Regulus               | trine △                       | Interpolated Lilith   | 5.62° | Separating ← |
+| Regulus               | sextile ⚹                     | True Priapus          | 1.31° | Separating ← |
 | Regulus               | semi-square semi-square       | Apollon               | 0.26° | Applying →   |
 | Regulus               | sextile ⚹                     | Poseidon              | 0.54° | Applying →   |
 | Spica                 | semi-square semi-square       | Pars Spiritus         | 0.99° | Static =     |
@@ -1041,6 +1091,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Spica                 | trine △                       | Capella               | 1.99° | Static =     |
 | Spica                 | biquintile biquintile         | Alcyone               | 0.15° | Static =     |
 | Spica                 | trine △                       | Deneb Algedi          | 0.29° | Static =     |
+| Spica                 | quintile Q                    | Interpolated Lilith   | 0.40° | Applying →   |
+| Spica                 | trine △                       | True Priapus          | 7.30° | Separating ← |
 | Spica                 | trine △                       | Kronos                | 1.15° | Applying →   |
 | Spica                 | conjunction ☌                 | Apollon               | 9.28° | Applying →   |
 | Spica                 | conjunction ☌                 | Poseidon              | 5.44° | Separating ← |
@@ -1057,6 +1109,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Pars Fortunae         | biquintile biquintile         | Algorab               | 0.58° | Static =     |
 | Pars Fortunae         | square □                      | Deneb Algedi          | 3.52° | Static =     |
 | Pars Fortunae         | trine △                       | Alkaid                | 6.90° | Static =     |
+| Pars Fortunae         | sesquiquadrate sesquiquadrate | Interpolated Lilith   | 0.42° | Separating ← |
 | Pars Fortunae         | opposition ☍                  | Cupido                | 0.11° | Applying →   |
 | Pars Fortunae         | trine △                       | Zeus                  | 6.91° | Separating ← |
 | Pars Fortunae         | biquintile biquintile         | Apollon               | 0.53° | Separating ← |
@@ -1071,6 +1124,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Pars Spiritus         | opposition ☍                  | Achernar              | 7.47° | Static =     |
 | Pars Spiritus         | trine △                       | Vega                  | 7.48° | Static =     |
 | Pars Spiritus         | sextile ⚹                     | Alphecca              | 4.45° | Static =     |
+| Pars Spiritus         | trine △                       | Interpolated Lilith   | 2.40° | Applying →   |
+| Pars Spiritus         | sextile ⚹                     | Mean Priapus          | 1.90° | Separating ← |
 | Pars Spiritus         | quintile Q                    | Cupido                | 0.29° | Applying →   |
 | Pars Spiritus         | square □                      | Hades                 | 3.18° | Separating ← |
 | Pars Spiritus         | trine △                       | Admetos               | 7.81° | Separating ← |
@@ -1084,6 +1139,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Pars Amoris           | trine △                       | Algorab               | 7.25° | Static =     |
 | Pars Amoris           | conjunction ☌                 | Deneb Algedi          | 2.85° | Static =     |
 | Pars Amoris           | biquintile biquintile         | Alkaid                | 0.23° | Static =     |
+| Pars Amoris           | semi-square semi-square       | Interpolated Lilith   | 0.25° | Applying →   |
 | Pars Amoris           | square □                      | Cupido                | 0.56° | Separating ← |
 | Pars Amoris           | biquintile biquintile         | Zeus                  | 0.24° | Separating ← |
 | Pars Amoris           | trine △                       | Kronos                | 2.00° | Separating ← |
@@ -1110,6 +1166,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Vertex                | square □                      | Alcyone               | 3.18° | Static =     |
 | Vertex                | opposition ☍                  | Deneb Algedi          | 3.26° | Static =     |
 | Vertex                | semi-sextile semi-sextile     | Alkaid                | 0.12° | Static =     |
+| Vertex                | sextile ⚹                     | True Priapus          | 4.33° | Separating ← |
 | Vertex                | semi-sextile semi-sextile     | Zeus                  | 0.13° | Separating ← |
 | Vertex                | sextile ⚹                     | Kronos                | 4.11° | Applying →   |
 | Vertex                | sextile ⚹                     | Poseidon              | 2.47° | Separating ← |
@@ -1122,6 +1179,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Anti Vertex           | square □                      | Alcyone               | 3.18° | Static =     |
 | Anti Vertex           | conjunction ☌                 | Deneb Algedi          | 3.26° | Static =     |
 | Anti Vertex           | quincunx ⚻                    | Alkaid                | 0.12° | Static =     |
+| Anti Vertex           | trine △                       | True Priapus          | 4.33° | Separating ← |
 | Anti Vertex           | quincunx ⚻                    | Zeus                  | 0.13° | Separating ← |
 | Anti Vertex           | trine △                       | Kronos                | 4.11° | Applying →   |
 | Anti Vertex           | trine △                       | Poseidon              | 2.47° | Separating ← |
@@ -1133,6 +1191,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Aldebaran             | biquintile biquintile         | Vega                  | 0.46° | Static =     |
 | Aldebaran             | conjunction ☌                 | Alcyone               | 9.80° | Static =     |
 | Aldebaran             | trine △                       | Algorab               | 3.67° | Static =     |
+| Aldebaran             | semi-sextile semi-sextile     | Mean Priapus          | 0.04° | Applying →   |
 | Aldebaran             | conjunction ☌                 | Hades                 | 1.25° | Separating ← |
 | Aldebaran             | trine △                       | Apollon               | 4.77° | Separating ← |
 | Antares               | biquintile biquintile         | Canopus               | 0.83° | Static =     |
@@ -1142,6 +1201,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Antares               | opposition ☍                  | Alcyone               | 9.78° | Static =     |
 | Antares               | sextile ⚹                     | Algorab               | 3.68° | Static =     |
 | Antares               | quintile Q                    | Alkaid                | 0.84° | Static =     |
+| Antares               | quincunx ⚻                    | Mean Priapus          | 0.02° | Applying →   |
 | Antares               | opposition ☍                  | Hades                 | 1.27° | Separating ← |
 | Antares               | quintile Q                    | Zeus                  | 0.83° | Applying →   |
 | Antares               | sextile ⚹                     | Apollon               | 4.79° | Separating ← |
@@ -1154,6 +1214,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Sirius                | trine △                       | Alphecca              | 1.78° | Static =     |
 | Sirius                | square □                      | Algorab               | 0.63° | Static =     |
 | Sirius                | quintile Q                    | Alkaid                | 0.85° | Static =     |
+| Sirius                | opposition ☍                  | Interpolated Lilith   | 8.63° | Applying →   |
+| Sirius                | conjunction ☌                 | Mean Priapus          | 4.33° | Applying →   |
 | Sirius                | trine △                       | Cupido                | 6.06° | Applying →   |
 | Sirius                | quintile Q                    | Zeus                  | 0.86° | Separating ← |
 | Sirius                | square □                      | Apollon               | 0.48° | Separating ← |
@@ -1162,6 +1224,9 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Fomalhaut             | trine △                       | Betelgeuse            | 5.11° | Static =     |
 | Fomalhaut             | conjunction ☌                 | Deneb                 | 1.48° | Static =     |
 | Fomalhaut             | square □                      | Alcyone               | 3.87° | Static =     |
+| Fomalhaut             | sextile ⚹                     | Interpolated Lilith   | 1.58° | Separating ← |
+| Fomalhaut             | trine △                       | Mean Priapus          | 5.89° | Separating ← |
+| Fomalhaut             | trine △                       | True Priapus          | 2.73° | Applying →   |
 | Fomalhaut             | quintile Q                    | Admetos               | 0.21° | Applying →   |
 | Fomalhaut             | trine △                       | Poseidon              | 4.58° | Applying →   |
 | Algol                 | sextile ⚹                     | Procyon               | 0.38° | Static =     |
@@ -1177,6 +1242,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Betelgeuse            | conjunction ☌                 | Capella               | 6.90° | Static =     |
 | Betelgeuse            | trine △                       | Deneb Algedi          | 5.20° | Static =     |
 | Betelgeuse            | square □                      | Alkaid                | 1.82° | Static =     |
+| Betelgeuse            | opposition ☍                  | Interpolated Lilith   | 6.69° | Separating ← |
+| Betelgeuse            | conjunction ☌                 | True Priapus          | 2.39° | Separating ← |
 | Betelgeuse            | square □                      | Zeus                  | 1.81° | Applying →   |
 | Betelgeuse            | conjunction ☌                 | Kronos                | 6.05° | Applying →   |
 | Betelgeuse            | trine △                       | Poseidon              | 0.53° | Separating ← |
@@ -1187,6 +1254,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Canopus               | trine △                       | Alphecca              | 2.64° | Static =     |
 | Canopus               | square □                      | Algorab               | 1.49° | Static =     |
 | Canopus               | quintile Q                    | Alkaid                | 0.01° | Static =     |
+| Canopus               | opposition ☍                  | Interpolated Lilith   | 9.50° | Applying →   |
+| Canopus               | conjunction ☌                 | Mean Priapus          | 5.19° | Applying →   |
 | Canopus               | trine △                       | Cupido                | 5.19° | Applying →   |
 | Canopus               | quintile Q                    | Zeus                  | 0.00° | Applying →   |
 | Canopus               | square □                      | Apollon               | 0.38° | Applying →   |
@@ -1207,6 +1276,8 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Arcturus              | trine △                       | Capella               | 2.38° | Static =     |
 | Arcturus              | biquintile biquintile         | Alcyone               | 0.24° | Static =     |
 | Arcturus              | trine △                       | Deneb Algedi          | 0.69° | Static =     |
+| Arcturus              | quintile Q                    | Interpolated Lilith   | 0.79° | Applying →   |
+| Arcturus              | trine △                       | True Priapus          | 6.90° | Separating ← |
 | Arcturus              | trine △                       | Kronos                | 1.54° | Applying →   |
 | Arcturus              | conjunction ☌                 | Apollon               | 9.67° | Applying →   |
 | Arcturus              | conjunction ☌                 | Poseidon              | 5.05° | Separating ← |
@@ -1221,10 +1292,14 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Pollux                | conjunction ☌                 | Vulkanus              | 7.22° | Applying →   |
 | Deneb                 | conjunction ☌                 | Achernar              | 9.98° | Static =     |
 | Deneb                 | trine △                       | Alphecca              | 6.96° | Static =     |
+| Deneb                 | sextile ⚹                     | Interpolated Lilith   | 0.10° | Separating ← |
+| Deneb                 | trine △                       | Mean Priapus          | 4.41° | Separating ← |
+| Deneb                 | trine △                       | True Priapus          | 4.20° | Applying →   |
 | Deneb                 | trine △                       | Poseidon              | 6.06° | Applying →   |
 | Altair                | sesquiquadrate sesquiquadrate | Rigel                 | 0.04° | Static =     |
 | Altair                | trine △                       | Alcyone               | 1.79° | Static =     |
 | Altair                | trine △                       | Alkaid                | 4.85° | Static =     |
+| Altair                | quincunx ⚻                    | True Priapus          | 0.64° | Applying →   |
 | Altair                | quintile Q                    | Cupido                | 0.35° | Applying →   |
 | Altair                | trine △                       | Zeus                  | 4.84° | Applying →   |
 | Altair                | square □                      | Poseidon              | 2.50° | Applying →   |
@@ -1238,40 +1313,60 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Rigel                 | semi-sextile semi-sextile     | Vulkanus              | 0.83° | Applying →   |
 | Achernar              | sextile ⚹                     | Vega                  | 0.01° | Static =     |
 | Achernar              | trine △                       | Alphecca              | 3.02° | Static =     |
+| Achernar              | trine △                       | Mean Priapus          | 5.57° | Applying →   |
 | Achernar              | trine △                       | Cupido                | 4.82° | Applying →   |
 | Achernar              | square □                      | Hades                 | 4.29° | Applying →   |
 | Achernar              | quincunx ⚻                    | Apollon               | 0.76° | Applying →   |
 | Achernar              | sextile ⚹                     | Admetos               | 0.34° | Separating ← |
 | Achernar              | trine △                       | Vulkanus              | 0.67° | Separating ← |
 | Capella               | trine △                       | Deneb Algedi          | 1.69° | Static =     |
+| Capella               | conjunction ☌                 | True Priapus          | 9.28° | Separating ← |
 | Capella               | conjunction ☌                 | Kronos                | 0.84° | Separating ← |
 | Capella               | trine △                       | Apollon               | 7.29° | Applying →   |
 | Capella               | trine △                       | Poseidon              | 7.43° | Separating ← |
 | Vega                  | sesquiquadrate sesquiquadrate | Alcyone               | 0.34° | Static =     |
 | Vega                  | sextile ⚹                     | Alphecca              | 3.03° | Static =     |
 | Vega                  | square □                      | Algorab               | 1.88° | Static =     |
+| Vega                  | conjunction ☌                 | Interpolated Lilith   | 9.88° | Applying →   |
+| Vega                  | opposition ☍                  | Mean Priapus          | 5.58° | Applying →   |
 | Vega                  | sextile ⚹                     | Cupido                | 4.81° | Applying →   |
 | Vega                  | square □                      | Apollon               | 0.77° | Applying →   |
 | Vega                  | trine △                       | Admetos               | 0.33° | Separating ← |
 | Vega                  | opposition ☍                  | Vulkanus              | 0.66° | Separating ← |
 | Alcyone               | trine △                       | Alkaid                | 3.06° | Static =     |
+| Alcyone               | biquintile biquintile         | Interpolated Lilith   | 0.55° | Applying →   |
 | Alcyone               | opposition ☍                  | Cupido                | 9.86° | Separating ← |
 | Alcyone               | trine △                       | Zeus                  | 3.05° | Applying →   |
 | Alcyone               | sesquiquadrate sesquiquadrate | Apollon               | 0.43° | Applying →   |
 | Alcyone               | quincunx ⚻                    | Poseidon              | 0.71° | Applying →   |
 | Alphecca              | semi-square semi-square       | Alkaid                | 0.37° | Static =     |
+| Alphecca              | trine △                       | Mean Priapus          | 2.55° | Applying →   |
 | Alphecca              | conjunction ☌                 | Cupido                | 7.84° | Applying →   |
 | Alphecca              | semi-square semi-square       | Zeus                  | 0.36° | Applying →   |
 | Alphecca              | opposition ☍                  | Admetos               | 3.36° | Separating ← |
 | Alphecca              | trine △                       | Vulkanus              | 3.69° | Separating ← |
+| Algorab               | square □                      | Mean Priapus          | 3.70° | Applying →   |
 | Algorab               | trine △                       | Hades                 | 2.42° | Applying →   |
 | Algorab               | conjunction ☌                 | Apollon               | 1.11° | Separating ← |
 | Algorab               | square □                      | Vulkanus              | 2.54° | Separating ← |
+| Deneb Algedi          | trine △                       | True Priapus          | 7.59° | Separating ← |
 | Deneb Algedi          | square □                      | Cupido                | 3.41° | Separating ← |
 | Deneb Algedi          | trine △                       | Kronos                | 0.85° | Applying →   |
 | Deneb Algedi          | trine △                       | Poseidon              | 5.73° | Separating ← |
+| Alkaid                | square □                      | True Priapus          | 4.21° | Separating ← |
 | Alkaid                | conjunction ☌                 | Zeus                  | 0.01° | Separating ← |
 | Alkaid                | square □                      | Kronos                | 4.23° | Applying →   |
+| Interpolated Lilith   | opposition ☍                  | Mean Priapus          | 4.31° | Applying →   |
+| Interpolated Lilith   | opposition ☍                  | True Priapus          | 4.31° | Applying →   |
+| Interpolated Lilith   | semi-square semi-square       | Cupido                | 0.31° | Separating ← |
+| Mean Priapus          | conjunction ☌                 | True Priapus          | 8.61° | Applying →   |
+| Mean Priapus          | square □                      | Apollon               | 4.81° | Applying →   |
+| Mean Priapus          | sextile ⚹                     | Admetos               | 5.90° | Applying →   |
+| Mean Priapus          | conjunction ☌                 | Vulkanus              | 6.24° | Applying →   |
+| True Priapus          | square □                      | Zeus                  | 4.20° | Separating ← |
+| True Priapus          | conjunction ☌                 | Kronos                | 8.44° | Separating ← |
+| True Priapus          | semi-square semi-square       | Admetos               | 0.48° | Separating ← |
+| True Priapus          | trine △                       | Poseidon              | 1.86° | Separating ← |
 | Cupido                | opposition ☍                  | Admetos               | 4.48° | Applying →   |
 | Cupido                | trine △                       | Vulkanus              | 4.14° | Applying →   |
 | Hades                 | trine △                       | Apollon               | 3.53° | Applying →   |

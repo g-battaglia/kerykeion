@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """Tests for the Primary Directions factory (v6.0)."""
 
+import math
 import pytest
+import swisseph as swe
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, PrimaryDirectionsFactory
 
 
@@ -113,3 +116,63 @@ class TestPrimaryDirections:
         assert len(conj_only) <= len(all_aspects)
         for d in conj_only:
             assert d.aspect == "conjunction"
+
+
+class TestSpeculumSweRegressions:
+    """Known-value regression tests using Swiss Ephemeris as reference source.
+
+    These tests call swe functions directly to obtain reference values, then
+    verify that PrimaryDirectionsFactory.compute_speculum produces matching
+    results.  The subject is John Lennon (1940-10-09 18:30, Liverpool).
+    """
+
+    @pytest.fixture(scope="class")
+    def lennon(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "John Lennon", 1940, 10, 9, 18, 30,
+            lng=-2.9916, lat=53.4084, tz_str="Europe/London",
+            city="Liverpool", nation="GB", online=False,
+        )
+
+    def test_sun_ra_dec_matches_swe(self, lennon):
+        """Sun RA and declination from speculum must match swe.calc_ut equatorial coords."""
+        ephe_path = str(Path(__file__).resolve().parent.parent.parent / "kerykeion" / "sweph")
+        swe.set_ephe_path(ephe_path)
+
+        jd = lennon.julian_day
+        eq = swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)
+        swe_ra = eq[0][0]
+        swe_dec = eq[0][1]
+        swe.close()
+
+        speculum = PrimaryDirectionsFactory.compute_speculum(lennon)
+        sun_entry = next(e for e in speculum if e.name == "Sun")
+
+        assert abs(sun_entry.right_ascension - swe_ra) < 0.01, (
+            f"Sun RA mismatch: speculum={sun_entry.right_ascension}, swe={swe_ra}"
+        )
+        assert abs(sun_entry.declination - swe_dec) < 0.01, (
+            f"Sun Dec mismatch: speculum={sun_entry.declination}, swe={swe_dec}"
+        )
+
+    def test_ramc_matches_swe_sidtime(self, lennon):
+        """RAMC must equal (swe.sidtime(jd) * 15 + lng) mod 360."""
+        ephe_path = str(Path(__file__).resolve().parent.parent.parent / "kerykeion" / "sweph")
+        swe.set_ephe_path(ephe_path)
+
+        jd = lennon.julian_day
+        expected_ramc = (swe.sidtime(jd) * 15.0 + lennon.lng) % 360
+        swe.close()
+
+        # The speculum does not directly expose RAMC, but we can verify it
+        # through the MC entry: MC's meridian distance should be ~0 because
+        # it sits on the meridian.  Also verify via re-derivation:
+        # For any planet, MD = RA - RAMC (normalized).
+        # So RAMC = RA - MD for any planet entry.
+        speculum = PrimaryDirectionsFactory.compute_speculum(lennon)
+        sun_entry = next(e for e in speculum if e.name == "Sun")
+        derived_ramc = (sun_entry.right_ascension - sun_entry.meridian_distance) % 360
+
+        assert abs(derived_ramc - expected_ramc) < 0.01, (
+            f"RAMC mismatch: derived={derived_ramc}, expected={expected_ramc}"
+        )

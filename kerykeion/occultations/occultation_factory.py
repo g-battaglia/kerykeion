@@ -32,10 +32,14 @@ License: AGPL-3.0
 import logging
 import swisseph as swe
 
+from pathlib import Path
 from pydantic import Field
 from typing import List
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
+
+# Set ephemeris path at module load
+swe.set_ephe_path(str(Path(__file__).parent.parent / "sweph"))
 
 logger = logging.getLogger(__name__)
 
@@ -44,9 +48,9 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _ECL_TYPE_LABELS = {
-    swe.ECL_TOTAL: "Total",
-    swe.ECL_ANNULAR: "Annular",
-    swe.ECL_PARTIAL: "Partial",
+    getattr(swe, "ECL_TOTAL", 1): "Total",
+    getattr(swe, "ECL_ANNULAR", 2): "Annular",
+    getattr(swe, "ECL_PARTIAL", 4): "Partial",
 }
 
 

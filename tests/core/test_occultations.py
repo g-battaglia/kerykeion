@@ -86,11 +86,14 @@ class TestSearchLocal:
 
     def test_local_model_fields(self, factory, start_jd):
         results = factory.search_local(start_jd, swe.VENUS, lat=41.9, lng=12.5, count=1)
-        if results:
-            occ = results[0]
-            assert occ.planet_name == "Venus"
-            assert occ.maximum_jd > start_jd
-            assert occ.datestamp.endswith("Z")
+        # Local occultation visibility depends on observer location; may legitimately
+        # return fewer results than requested, but test_returns_results already
+        # asserts >= 1 for this same query, so we assert here too.
+        assert len(results) >= 1, "Local Venus occultation search should find at least 1 result"
+        occ = results[0]
+        assert occ.planet_name == "Venus"
+        assert occ.maximum_jd > start_jd
+        assert occ.datestamp.endswith("Z")
 
 
 # ---------------------------------------------------------------------------

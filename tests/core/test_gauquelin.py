@@ -2,6 +2,7 @@
 """Tests for the Gauquelin sectors feature."""
 
 import pytest
+import swisseph as swe
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 
@@ -54,6 +55,39 @@ class TestGauquelinCalculation:
         """Integer part of sector should be 1-36."""
         sun_sector = int(subject_with_gauquelin.sun.gauquelin_sector)
         assert 1 <= sun_sector <= 36
+
+    def test_sun_sector_matches_swe_reference(self, subject_with_gauquelin):
+        """Sun Gauquelin sector must match a direct swe.gauquelin_sector call within 0.01."""
+        jd = subject_with_gauquelin.julian_day
+        geopos = [
+            subject_with_gauquelin.lng,
+            subject_with_gauquelin.lat,
+            0.0,
+        ]
+        swe.set_ephe_path("")
+        # Sun = swe planet ID 0, method 0 (with latitude)
+        expected_sector = swe.gauquelin_sector(jd, 0, 0, geopos)
+        assert abs(subject_with_gauquelin.sun.gauquelin_sector - expected_sector) < 0.01, (
+            f"Sun sector {subject_with_gauquelin.sun.gauquelin_sector} != "
+            f"swe reference {expected_sector}"
+        )
+
+    def test_multiple_planets_match_swe_reference(self, subject_with_gauquelin):
+        """Moon and Mars Gauquelin sectors must match direct swe calls within 0.01."""
+        jd = subject_with_gauquelin.julian_day
+        geopos = [
+            subject_with_gauquelin.lng,
+            subject_with_gauquelin.lat,
+            0.0,
+        ]
+        swe.set_ephe_path("")
+        planet_ids = {"moon": 1, "mars": 4}
+        for attr, pid in planet_ids.items():
+            point = getattr(subject_with_gauquelin, attr)
+            expected = swe.gauquelin_sector(jd, pid, 0, geopos)
+            assert abs(point.gauquelin_sector - expected) < 0.01, (
+                f"{attr} sector {point.gauquelin_sector} != swe reference {expected}"
+            )
 
 
 class TestGauquelinSVG:

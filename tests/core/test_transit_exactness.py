@@ -64,11 +64,16 @@ class TestTransitEvents:
         assert result.subject is not None
         assert result.subject.name == "Transit Test"
 
-    def test_unique_events(self, transit_factory):
-        """Each (p1, p2, aspect) combination should appear at most once."""
+    def test_unique_events_per_exact_moment(self, transit_factory):
+        """Each (p1, p2, aspect, exact_moment) combination should be unique.
+
+        Note: the same (p1, p2, aspect) triple *can* appear more than once
+        in a 30-day window due to retrograde motion causing multiple exact
+        passes.  We only check that the exact same moment is not duplicated.
+        """
         result = transit_factory.get_transit_events()
         keys = set()
         for event in result.events:
-            key = (event.p1_name, event.p2_name, event.aspect)
-            assert key not in keys, f"Duplicate event: {key}"
+            key = (event.p1_name, event.p2_name, event.aspect, event.exact_moment)
+            assert key not in keys, f"Duplicate event at same moment: {key}"
             keys.add(key)

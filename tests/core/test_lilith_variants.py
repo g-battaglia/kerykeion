@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Tests for Interpolated Lilith, Mean Priapus, and True Priapus."""
 
+import math
 import pytest
+import swisseph as swe
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from typing import List
@@ -136,3 +138,57 @@ class TestTruePriapus:
             point = getattr(subject_with_lilith_variants, attr)
             if point is not None:
                 assert point.house is not None, f"{attr} should have house placement"
+
+
+class TestLilithSweReference:
+    """Regression tests comparing Lilith/Priapus positions against direct swe calls."""
+
+    def test_mean_lilith_matches_swe_reference(self, subject_with_lilith_variants):
+        """Mean Lilith abs_pos must match swe.calc_ut for SE_MEAN_APOG (ID 12) within 0.001 deg."""
+        jd = subject_with_lilith_variants.julian_day
+        swe.set_ephe_path("")
+        mean_lil_calc = swe.calc_ut(jd, 12, swe.FLG_SWIEPH | swe.FLG_SPEED)[0]
+        expected_lon = mean_lil_calc[0]
+        actual_lon = subject_with_lilith_variants.mean_lilith.abs_pos
+        assert abs(actual_lon - expected_lon) < 0.001, (
+            f"Mean Lilith abs_pos {actual_lon} != swe reference {expected_lon}"
+        )
+
+    def test_true_lilith_matches_swe_reference(self, subject_with_lilith_variants):
+        """True Lilith abs_pos must match swe.calc_ut for SE_OSCU_APOG (ID 13) within 0.001 deg."""
+        jd = subject_with_lilith_variants.julian_day
+        swe.set_ephe_path("")
+        true_lil_calc = swe.calc_ut(jd, 13, swe.FLG_SWIEPH | swe.FLG_SPEED)[0]
+        expected_lon = true_lil_calc[0]
+        actual_lon = subject_with_lilith_variants.true_lilith.abs_pos
+        assert abs(actual_lon - expected_lon) < 0.001, (
+            f"True Lilith abs_pos {actual_lon} != swe reference {expected_lon}"
+        )
+
+    def test_mean_priapus_opposite_swe_mean_lilith(self, subject_with_lilith_variants):
+        """Mean Priapus must be Mean Lilith + 180 deg (mod 360), verified against swe."""
+        jd = subject_with_lilith_variants.julian_day
+        swe.set_ephe_path("")
+        mean_lil_lon = swe.calc_ut(jd, 12, swe.FLG_SWIEPH | swe.FLG_SPEED)[0][0]
+        expected_priapus = math.fmod(mean_lil_lon + 180, 360)
+        actual_priapus = subject_with_lilith_variants.mean_priapus.abs_pos
+        diff = abs(actual_priapus - expected_priapus)
+        if diff > 180:
+            diff = 360 - diff
+        assert diff < 0.001, (
+            f"Mean Priapus {actual_priapus} != swe Mean Lilith+180 ({expected_priapus})"
+        )
+
+    def test_true_priapus_opposite_swe_true_lilith(self, subject_with_lilith_variants):
+        """True Priapus must be True Lilith + 180 deg (mod 360), verified against swe."""
+        jd = subject_with_lilith_variants.julian_day
+        swe.set_ephe_path("")
+        true_lil_lon = swe.calc_ut(jd, 13, swe.FLG_SWIEPH | swe.FLG_SPEED)[0][0]
+        expected_priapus = math.fmod(true_lil_lon + 180, 360)
+        actual_priapus = subject_with_lilith_variants.true_priapus.abs_pos
+        diff = abs(actual_priapus - expected_priapus)
+        if diff > 180:
+            diff = 360 - diff
+        assert diff < 0.001, (
+            f"True Priapus {actual_priapus} != swe True Lilith+180 ({expected_priapus})"
+        )

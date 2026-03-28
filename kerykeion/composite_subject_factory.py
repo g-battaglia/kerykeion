@@ -191,12 +191,6 @@ class CompositeSubjectFactory:
             raise KerykeionException("Both subjects must have the same perspective type")
         self.perspective_type = first_subject.perspective_type
 
-        # Planets Names List
-        self.active_points = []
-        for planet in first_subject.active_points:
-            if planet in second_subject.active_points:
-                self.active_points.append(planet)
-
         # Houses Names List
         self.houses_names_list = self.first_subject.houses_names_list
 
@@ -231,7 +225,7 @@ class CompositeSubjectFactory:
         return (
             self.first_subject == other.first_subject
             and self.second_subject == other.second_subject
-            and self.name == other.chart_name
+            and self.name == other.name
         )
 
     def __ne__(self, other):
@@ -425,14 +419,15 @@ class CompositeSubjectFactory:
         else:
             tz_str = f"Etc/GMT+{abs(tz_offset_hours)}"
 
-        # Convert midpoint JD to date components
+        # Convert midpoint JD to date components (UTC)
         import swisseph as swe
         year, month, day, hour_frac = swe.revjul(mid_jd)
         hour = int(hour_frac)
         minute = int((hour_frac - hour) * 60)
         seconds = int(((hour_frac - hour) * 60 - minute) * 60)
 
-        # Cast a real natal chart at the midpoint moment/location
+        # Cast a real natal chart at the midpoint moment/location.
+        # swe.revjul returns UTC, so use Etc/GMT to avoid double-conversion.
         davison_subject = AstrologicalSubjectFactory.from_birth_data(
             name=self.name,
             year=year,
@@ -443,7 +438,7 @@ class CompositeSubjectFactory:
             seconds=seconds,
             lng=mid_lng,
             lat=mid_lat,
-            tz_str=tz_str,
+            tz_str="Etc/GMT",
             city=f"Davison({s1.city}-{s2.city})",
             nation=s1.nation,
             online=False,

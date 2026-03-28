@@ -130,15 +130,15 @@ Sample Natal Subject & Yoko Ono — Composite Report
 +Active Celestial Points----+
 | # | Active Point          |
 +---+-----------------------+
-| 1 | Sun                   |
-| 2 | Moon                  |
+| 1 | Jupiter               |
+| 2 | Mars                  |
 | 3 | Mercury               |
-| 4 | Venus                 |
-| 5 | Mars                  |
-| 6 | Jupiter               |
-| 7 | Saturn                |
-| 8 | True_North_Lunar_Node |
-| 9 | True_South_Lunar_Node |
+| 4 | Moon                  |
+| 5 | Saturn                |
+| 6 | Sun                   |
+| 7 | True_North_Lunar_Node |
+| 8 | True_South_Lunar_Node |
+| 9 | Venus                 |
 +---+-----------------------+
 
 +-------------+---------+

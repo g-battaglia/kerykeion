@@ -87,9 +87,9 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Neptune               | Sco ♏️ | 10.92°   | N/A   | N/A   | -    | First House    |
 | Pluto                 | Vir ♍️ | 18.30°   | N/A   | N/A   | -    | Eleventh House |
 | True North Lunar Node | Aqu ♒️ | 22.53°   | N/A   | N/A   | -    | Fourth House   |
-| True South Lunar Node | Leo ♌️ | 22.53°   | N/A   | N/A   | -    | Tenth House    |
-| Mean Lilith           | Vir ♍️ | 0.75°    | N/A   | N/A   | -    | Tenth House    |
 | Chiron                | Gem ♊️ | 21.81°   | N/A   | N/A   | -    | Eighth House   |
+| Mean Lilith           | Vir ♍️ | 0.75°    | N/A   | N/A   | -    | Tenth House    |
+| True South Lunar Node | Leo ♌️ | 22.53°   | N/A   | N/A   | -    | Tenth House    |
 +-----------------------+---------+----------+-------+-------+------+----------------+
 
 +Composite Chart Houses (Placidus)----+-------------------+
@@ -139,24 +139,24 @@ Sample Natal Subject & Yoko Ono — Composite Report
 +Active Celestial Points-----+
 | #  | Active Point          |
 +----+-----------------------+
-| 1  | Sun                   |
-| 2  | Moon                  |
-| 3  | Mercury               |
-| 4  | Venus                 |
-| 5  | Mars                  |
-| 6  | Jupiter               |
-| 7  | Saturn                |
-| 8  | Uranus                |
-| 9  | Neptune               |
-| 10 | Pluto                 |
-| 11 | True_North_Lunar_Node |
-| 12 | True_South_Lunar_Node |
-| 13 | Mean_Lilith           |
-| 14 | Chiron                |
-| 15 | Ascendant             |
-| 16 | Medium_Coeli          |
-| 17 | Descendant            |
-| 18 | Imum_Coeli            |
+| 1  | Ascendant             |
+| 2  | Chiron                |
+| 3  | Descendant            |
+| 4  | Imum_Coeli            |
+| 5  | Jupiter               |
+| 6  | Mars                  |
+| 7  | Mean_Lilith           |
+| 8  | Medium_Coeli          |
+| 9  | Mercury               |
+| 10 | Moon                  |
+| 11 | Neptune               |
+| 12 | Pluto                 |
+| 13 | Saturn                |
+| 14 | Sun                   |
+| 15 | True_North_Lunar_Node |
+| 16 | True_South_Lunar_Node |
+| 17 | Uranus                |
+| 18 | Venus                 |
 +----+-----------------------+
 
 +-------------+---------+

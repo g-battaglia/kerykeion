@@ -2,7 +2,11 @@
 """Tests for the Eclipse Factory module."""
 
 import pytest
+import swisseph as swe
+from pathlib import Path
 from kerykeion.eclipses import EclipseFactory
+
+_EPHE_PATH = str(Path(__file__).parent.parent.parent / "kerykeion" / "sweph")
 
 
 class TestGlobalSearch:
@@ -25,18 +29,18 @@ class TestGlobalSearch:
 
     def test_solar_eclipse_has_type(self):
         result = EclipseFactory.search_global(start_year=2025, count=1)
-        if result.solar_eclipses:
-            ecl = result.solar_eclipses[0]
-            assert ecl.type in ("total", "annular", "partial", "annular-total", "unknown")
-            assert ecl.maximum_jd > 0
-            assert len(ecl.datestamp) > 0
+        assert len(result.solar_eclipses) >= 1, "Global search with count=1 should find at least one solar eclipse"
+        ecl = result.solar_eclipses[0]
+        assert ecl.type in ("total", "annular", "partial", "annular-total", "unknown")
+        assert ecl.maximum_jd > 0
+        assert len(ecl.datestamp) > 0
 
     def test_lunar_eclipse_has_type(self):
         result = EclipseFactory.search_global(start_year=2025, count=1)
-        if result.lunar_eclipses:
-            ecl = result.lunar_eclipses[0]
-            assert ecl.type in ("total", "partial", "penumbral", "unknown")
-            assert ecl.maximum_jd > 0
+        assert len(result.lunar_eclipses) >= 1, "Global search with count=1 should find at least one lunar eclipse"
+        ecl = result.lunar_eclipses[0]
+        assert ecl.type in ("total", "partial", "penumbral", "unknown")
+        assert ecl.maximum_jd > 0
 
     def test_eclipses_in_chronological_order(self):
         result = EclipseFactory.search_global(start_year=2020, count=5)
@@ -71,9 +75,9 @@ class TestLocalSearch:
         result = EclipseFactory.search_from_location(
             lat=41.9, lng=12.5, start_year=2020, count=1
         )
-        if result.solar_eclipses:
-            ecl = result.solar_eclipses[0]
-            assert ecl.magnitude >= 0
+        assert len(result.solar_eclipses) >= 1, "Local search from Rome with count=1 should find at least one solar eclipse"
+        ecl = result.solar_eclipses[0]
+        assert ecl.magnitude >= 0
 
     def test_datestamp_format(self):
         result = EclipseFactory.search_from_location(
@@ -83,3 +87,39 @@ class TestLocalSearch:
             for ecl in eclipses:
                 assert "T" in ecl.datestamp
                 assert ecl.datestamp.endswith("Z")
+
+
+class TestSweRegressionEclipses:
+    """Regression tests: verify factory results match raw Swiss Ephemeris calls."""
+
+    def test_solar_eclipse_jd_matches_swe(self):
+        """Factory solar eclipse maximum_jd should match swe.sol_eclipse_when_glob."""
+        swe.set_ephe_path(_EPHE_PATH)
+        jd_2024 = swe.julday(2024, 1, 1, 0.0)
+        _retflags, tret = swe.sol_eclipse_when_glob(jd_2024, swe.FLG_SWIEPH)
+        swe_solar_max_jd = tret[0]
+        swe.close()
+
+        result = EclipseFactory.search_global(start_year=2024, count=1)
+        assert len(result.solar_eclipses) >= 1
+        factory_solar_max_jd = result.solar_eclipses[0].maximum_jd
+
+        assert abs(factory_solar_max_jd - swe_solar_max_jd) < 0.01, (
+            f"Factory solar JD {factory_solar_max_jd} != swe JD {swe_solar_max_jd}"
+        )
+
+    def test_lunar_eclipse_jd_matches_swe(self):
+        """Factory lunar eclipse maximum_jd should match swe.lun_eclipse_when."""
+        swe.set_ephe_path(_EPHE_PATH)
+        jd_2024 = swe.julday(2024, 1, 1, 0.0)
+        _retflags, tret = swe.lun_eclipse_when(jd_2024, swe.FLG_SWIEPH, 0)
+        swe_lunar_max_jd = tret[0]
+        swe.close()
+
+        result = EclipseFactory.search_global(start_year=2024, count=1)
+        assert len(result.lunar_eclipses) >= 1
+        factory_lunar_max_jd = result.lunar_eclipses[0].maximum_jd
+
+        assert abs(factory_lunar_max_jd - swe_lunar_max_jd) < 0.01, (
+            f"Factory lunar JD {factory_lunar_max_jd} != swe JD {swe_lunar_max_jd}"
+        )

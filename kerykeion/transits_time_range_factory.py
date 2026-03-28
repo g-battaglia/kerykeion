@@ -302,10 +302,8 @@ class TransitsTimeRangeFactory:
         active_tracks: dict[tuple[str, str, str], list[tuple[str, float, str]]] = {}
 
         for moment in transit_data.transits:
-            seen_keys = set()
             for asp in moment.aspects:
                 key = (asp.p1_name, asp.p2_name, asp.aspect)
-                seen_keys.add(key)
                 if key not in active_tracks:
                     active_tracks[key] = []
                 active_tracks[key].append((moment.date, asp.orbit, asp.aspect_movement))
@@ -436,6 +434,8 @@ class TransitsTimeRangeFactory:
             swe.set_ephe_path(ephe_path)
             iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 
+            from kerykeion.aspects.aspects_utils import difdeg2n
+
             best_date = left_dt
             best_orb = 999.0
 
@@ -443,8 +443,7 @@ class TransitsTimeRangeFactory:
                 mid_dt = left_dt + (right_dt - left_dt) / 2
 
                 # Calculate transit planet position at midpoint
-                jd_mid = datetime_to_julian(mid_dt.year, mid_dt.month, mid_dt.day,
-                                            mid_dt.hour, mid_dt.minute, mid_dt.second)
+                jd_mid = datetime_to_julian(mid_dt)
                 try:
                     calc = swe.calc_ut(jd_mid, planet_id, iflag)[0]
                 except Exception:
@@ -458,7 +457,6 @@ class TransitsTimeRangeFactory:
                     mid_orb = aspect_result["orbit"]
                 else:
                     # If aspect not in range at midpoint, use raw angular distance
-                    from kerykeion.aspects.aspects_utils import difdeg2n
                     mid_orb = abs(abs(difdeg2n(transit_pos, natal_pos)) - aspect_settings[0]["degree"])
 
                 if mid_orb < best_orb:
@@ -469,10 +467,8 @@ class TransitsTimeRangeFactory:
                 q1_dt = left_dt + (mid_dt - left_dt) / 2
                 q3_dt = mid_dt + (right_dt - mid_dt) / 2
 
-                jd_q1 = datetime_to_julian(q1_dt.year, q1_dt.month, q1_dt.day,
-                                           q1_dt.hour, q1_dt.minute, q1_dt.second)
-                jd_q3 = datetime_to_julian(q3_dt.year, q3_dt.month, q3_dt.day,
-                                           q3_dt.hour, q3_dt.minute, q3_dt.second)
+                jd_q1 = datetime_to_julian(q1_dt)
+                jd_q3 = datetime_to_julian(q3_dt)
                 try:
                     pos_q1 = swe.calc_ut(jd_q1, planet_id, iflag)[0][0]
                     pos_q3 = swe.calc_ut(jd_q3, planet_id, iflag)[0][0]

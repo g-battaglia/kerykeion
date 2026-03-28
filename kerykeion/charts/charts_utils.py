@@ -169,6 +169,20 @@ DEFAULT_WEIGHTED_POINT_WEIGHTS: dict[str, float] = {
     "alphecca": 0.2,
     "algorab": 0.2,
     "deneb_algedi": 0.2,
+    "alkaid": 0.2,
+    # Lilith/Priapus variants
+    "interpolated_lilith": 0.5,
+    "mean_priapus": 0.5,
+    "true_priapus": 0.5,
+    # Uranian / Hamburg School hypothetical planets
+    "cupido": 0.3,
+    "hades": 0.3,
+    "zeus": 0.3,
+    "kronos": 0.3,
+    "apollon": 0.3,
+    "admetos": 0.3,
+    "vulkanus": 0.3,
+    "poseidon": 0.3,
     # Other
     "earth": 0.3,
 }

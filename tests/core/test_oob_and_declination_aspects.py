@@ -2,6 +2,7 @@
 """Tests for Out-of-Bounds detection and declination aspects (parallels/contra-parallels)."""
 
 import pytest
+import swisseph as swe
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
 
@@ -60,6 +61,45 @@ class TestOutOfBounds:
             if point is not None and point.is_out_of_bounds is False:
                 assert abs(point.declination) <= 23.5, (
                     f"{name} not OOB but declination {point.declination} exceeds 23.5 deg"
+                )
+
+    def test_sun_declination_matches_swe_reference(self, john_lennon):
+        """Sun declination must match swe.calc_ut with FLG_EQUATORIAL within 0.001 deg."""
+        jd = john_lennon.julian_day
+        swe.set_ephe_path("")
+        sun_eq = swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)[0]
+        expected_dec = sun_eq[1]
+        assert abs(john_lennon.sun.declination - expected_dec) < 0.001, (
+            f"Sun declination {john_lennon.sun.declination} != "
+            f"swe reference {expected_dec}"
+        )
+
+    def test_moon_declination_matches_swe_reference(self, john_lennon):
+        """Moon declination must match swe.calc_ut with FLG_EQUATORIAL within 0.001 deg."""
+        jd = john_lennon.julian_day
+        swe.set_ephe_path("")
+        moon_eq = swe.calc_ut(jd, swe.MOON, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)[0]
+        expected_dec = moon_eq[1]
+        assert abs(john_lennon.moon.declination - expected_dec) < 0.001, (
+            f"Moon declination {john_lennon.moon.declination} != "
+            f"swe reference {expected_dec}"
+        )
+
+    def test_oob_flag_consistent_with_obliquity(self, john_lennon):
+        """is_out_of_bounds must equal abs(declination) > true obliquity from swe."""
+        jd = john_lennon.julian_day
+        swe.set_ephe_path("")
+        nut_data = swe.calc_ut(jd, swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+        true_obliquity = nut_data[0]
+
+        for name in ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]:
+            point = getattr(john_lennon, name)
+            if point is not None and point.declination is not None:
+                expected_oob = abs(point.declination) > true_obliquity
+                assert point.is_out_of_bounds == expected_oob, (
+                    f"{name}: is_out_of_bounds={point.is_out_of_bounds} but "
+                    f"|dec|={abs(point.declination):.4f} vs obliquity={true_obliquity:.4f} "
+                    f"=> expected {expected_oob}"
                 )
 
 

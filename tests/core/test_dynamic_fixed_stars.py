@@ -107,6 +107,7 @@ class TestFixedStarDiscovery:
         assert isinstance(prominent, list)
         # With a 2-degree orb and 10+ planets, we should find at least a few stars
         # (there are ~1000 stars spread across 360 degrees)
+        assert len(prominent) >= 1, "A 2-degree orb with 10+ natal points should discover at least one star"
 
     def test_prominent_stars_have_positions(self, subject_all_stars):
         """Prominent stars should have full position data."""
@@ -130,5 +131,5 @@ class TestFixedStarDiscovery:
             subject_all_stars, orb=3.0
         )
         mags = [s.magnitude for s in prominent if s.magnitude is not None]
-        if len(mags) >= 2:
-            assert mags == sorted(mags), "Stars should be sorted by magnitude (brightest first)"
+        assert len(mags) >= 2, "A 3-degree orb should discover at least 2 stars with magnitude data"
+        assert mags == sorted(mags), "Stars should be sorted by magnitude (brightest first)"

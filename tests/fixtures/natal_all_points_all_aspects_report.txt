@@ -24,7 +24,7 @@ Sample Natal Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 71                  |
+| Active Points Count | 74                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -65,6 +65,9 @@ Sample Natal Subject — Natal Chart Report
 | Admetos               | Tau ♉️ | 14.96°   | +0.0054°/d   | +16.33° | -    | Seventh House  |
 | Vulkanus              | Can ♋️ | 15.34°   | +0.0136°/d   | +22.57° | -    | Ninth House    |
 | Poseidon              | Lib ♎️ | 28.68°   | +0.0013°/d   | -11.01° | -    | Twelfth House  |
+| Interpolated Lilith   | Sag ♐️ | 8.51°    | -0.6657°/d   | -25.75° | R    | Second House   |
+| Mean Priapus          | Tau ♉️ | 28.99°   | +0.1119°/d   | +24.62° | -    | Seventh House  |
+| True Priapus          | Gem ♊️ | 18.03°   | -1.4433°/d   | +26.89° | R    | Eighth House   |
 | Eris                  | Ari ♈️ | 17.60°   | -0.0012°/d   | -9.16°  | R    | Sixth House    |
 | Sedna                 | Tau ♉️ | 11.55°   | +0.0038°/d   | +4.25°  | -    | Seventh House  |
 | Haumea                | Vir ♍️ | 26.32°   | +0.0134°/d   | +23.02° | -    | Eleventh House |
@@ -131,21 +134,21 @@ Sample Natal Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 7.1                | 16.1%      |
-| Earth 🌍 | 10.5               | 23.8%      |
-| Air 💨   | 10.5               | 23.8%      |
-| Water 💧 | 16.099999999999994 | 36.4%      |
-| Total    | 44.199999999999996 | 100%       |
+| Fire 🔥  | 7.6                | 19.3%      |
+| Earth 🌍 | 8.8                | 22.4%      |
+| Air 💨   | 8.200000000000001  | 20.9%      |
+| Water 💧 | 14.699999999999998 | 37.4%      |
+| Total    | 39.3               | 100%       |
 +----------+--------------------+------------+
 
-+Quality Distribution-----------+
-| Quality  | Count | Percentage |
-+----------+-------+------------+
-| Cardinal | 16.4  | 37.1%      |
-| Fixed    | 19.5  | 44.1%      |
-| Mutable  | 8.3   | 18.8%      |
-| Total    | 44.2  | 100%       |
-+----------+-------+------------+
++Quality Distribution-----------+------------+
+| Quality  | Count              | Percentage |
++----------+--------------------+------------+
+| Cardinal | 14.299999999999999 | 36.4%      |
+| Fixed    | 18.6               | 47.3%      |
+| Mutable  | 6.400000000000001  | 16.3%      |
+| Total    | 39.3               | 100%       |
++----------+--------------------+------------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |
@@ -181,46 +184,49 @@ Sample Natal Subject — Natal Chart Report
 | 29 | Admetos               |
 | 30 | Vulkanus              |
 | 31 | Poseidon              |
-| 32 | Eris                  |
-| 33 | Sedna                 |
-| 34 | Haumea                |
-| 35 | Makemake              |
-| 36 | Ixion                 |
-| 37 | Orcus                 |
-| 38 | Quaoar                |
-| 39 | Regulus               |
-| 40 | Spica                 |
-| 41 | Aldebaran             |
-| 42 | Antares               |
-| 43 | Sirius                |
-| 44 | Fomalhaut             |
-| 45 | Algol                 |
-| 46 | Betelgeuse            |
-| 47 | Canopus               |
-| 48 | Procyon               |
-| 49 | Arcturus              |
-| 50 | Pollux                |
-| 51 | Deneb                 |
-| 52 | Altair                |
-| 53 | Rigel                 |
-| 54 | Achernar              |
-| 55 | Capella               |
-| 56 | Vega                  |
-| 57 | Alcyone               |
-| 58 | Alphecca              |
-| 59 | Algorab               |
-| 60 | Deneb_Algedi          |
-| 61 | Alkaid                |
-| 62 | Pars_Fortunae         |
-| 63 | Pars_Spiritus         |
-| 64 | Pars_Amoris           |
-| 65 | Pars_Fidei            |
-| 66 | Vertex                |
-| 67 | Anti_Vertex           |
-| 68 | Ascendant             |
-| 69 | Medium_Coeli          |
-| 70 | Descendant            |
-| 71 | Imum_Coeli            |
+| 32 | Interpolated_Lilith   |
+| 33 | Mean_Priapus          |
+| 34 | True_Priapus          |
+| 35 | Eris                  |
+| 36 | Sedna                 |
+| 37 | Haumea                |
+| 38 | Makemake              |
+| 39 | Ixion                 |
+| 40 | Orcus                 |
+| 41 | Quaoar                |
+| 42 | Regulus               |
+| 43 | Spica                 |
+| 44 | Aldebaran             |
+| 45 | Antares               |
+| 46 | Sirius                |
+| 47 | Fomalhaut             |
+| 48 | Algol                 |
+| 49 | Betelgeuse            |
+| 50 | Canopus               |
+| 51 | Procyon               |
+| 52 | Arcturus              |
+| 53 | Pollux                |
+| 54 | Deneb                 |
+| 55 | Altair                |
+| 56 | Rigel                 |
+| 57 | Achernar              |
+| 58 | Capella               |
+| 59 | Vega                  |
+| 60 | Alcyone               |
+| 61 | Alphecca              |
+| 62 | Algorab               |
+| 63 | Deneb_Algedi          |
+| 64 | Alkaid                |
+| 65 | Pars_Fortunae         |
+| 66 | Pars_Spiritus         |
+| 67 | Pars_Amoris           |
+| 68 | Pars_Fidei            |
+| 69 | Vertex                |
+| 70 | Anti_Vertex           |
+| 71 | Ascendant             |
+| 72 | Medium_Coeli          |
+| 73 | Descendant            |
+| 74 | Imum_Coeli            |
 +----+-----------------------+
 
 +----------------+---------+
@@ -267,6 +273,7 @@ Sample Natal Subject — Natal Chart Report
 | Sun                   | opposition ☍                  | Altair                | 3.11° | Applying →   |
 | Sun                   | sextile ⚹                     | Alcyone               | 1.32° | Applying →   |
 | Sun                   | sextile ⚹                     | Alkaid                | 1.74° | Separating ← |
+| Sun                   | sextile ⚹                     | Mean Priapus          | 0.45° | Applying →   |
 | Sun                   | sextile ⚹                     | Zeus                  | 2.51° | Separating ← |
 | Sun                   | square □                      | Poseidon              | 0.14° | Applying →   |
 | Moon                  | conjunction ☌                 | Jupiter               | 2.70° | Applying →   |
@@ -315,6 +322,7 @@ Sample Natal Subject — Natal Chart Report
 | Mercury               | sextile ⚹                     | Capella               | 4.12° | Applying →   |
 | Mercury               | sextile ⚹                     | Algorab               | 4.29° | Separating ← |
 | Mercury               | opposition ☍                  | Deneb Algedi          | 5.81° | Applying →   |
+| Mercury               | sextile ⚹                     | True Priapus          | 0.42° | Applying →   |
 | Mercury               | square □                      | Cupido                | 1.01° | Applying →   |
 | Mercury               | sextile ⚹                     | Kronos                | 4.28° | Applying →   |
 | Mercury               | sextile ⚹                     | Apollon               | 3.78° | Separating ← |
@@ -396,6 +404,8 @@ Sample Natal Subject — Natal Chart Report
 | Jupiter               | sextile ⚹                     | Alcyone               | 5.95° | Applying →   |
 | Jupiter               | quincunx ⚻                    | Deneb Algedi          | 0.49° | Separating ← |
 | Jupiter               | sextile ⚹                     | Alkaid                | 2.89° | Applying →   |
+| Jupiter               | sesquiquadrate sesquiquadrate | Interpolated Lilith   | 0.40° | Separating ← |
+| Jupiter               | sextile ⚹                     | Mean Priapus          | 5.08° | Applying →   |
 | Jupiter               | trine △                       | Cupido                | 5.29° | Separating ← |
 | Jupiter               | sextile ⚹                     | Zeus                  | 2.12° | Applying →   |
 | Jupiter               | conjunction ☌                 | Vulkanus              | 8.57° | Separating ← |
@@ -418,6 +428,7 @@ Sample Natal Subject — Natal Chart Report
 | Saturn                | quincunx ⚻                    | Capella               | 0.21° | Separating ← |
 | Saturn                | conjunction ☌                 | Vega                  | 6.32° | Applying →   |
 | Saturn                | trine △                       | Alkaid                | 5.28° | Separating ← |
+| Saturn                | trine △                       | Mean Priapus          | 7.47° | Separating ← |
 | Saturn                | sextile ⚹                     | Cupido                | 2.90° | Applying →   |
 | Saturn                | trine △                       | Zeus                  | 4.51° | Separating ← |
 | Saturn                | quincunx ⚻                    | Kronos                | 0.37° | Separating ← |
@@ -518,6 +529,7 @@ Sample Natal Subject — Natal Chart Report
 | Mean North Lunar Node | trine △                       | Alcyone               | 7.93° | Applying →   |
 | Mean North Lunar Node | square □                      | Alphecca              | 4.38° | Separating ← |
 | Mean North Lunar Node | trine △                       | Algorab               | 5.53° | Separating ← |
+| Mean North Lunar Node | sextile ⚹                     | Interpolated Lilith   | 0.72° | Applying →   |
 | Mean North Lunar Node | trine △                       | Hades                 | 2.13° | Separating ← |
 | Mean North Lunar Node | sesquiquadrate sesquiquadrate | Kronos                | 0.90° | Applying →   |
 | Mean North Lunar Node | trine △                       | Apollon               | 6.04° | Separating ← |
@@ -541,6 +553,7 @@ Sample Natal Subject — Natal Chart Report
 | True North Lunar Node | trine △                       | Alcyone               | 7.40° | Applying →   |
 | True North Lunar Node | square □                      | Alphecca              | 4.90° | Separating ← |
 | True North Lunar Node | trine △                       | Algorab               | 6.06° | Separating ← |
+| True North Lunar Node | sextile ⚹                     | Interpolated Lilith   | 1.25° | Applying →   |
 | True North Lunar Node | trine △                       | Hades                 | 2.66° | Separating ← |
 | True North Lunar Node | sesquiquadrate sesquiquadrate | Kronos                | 0.37° | Applying →   |
 | True North Lunar Node | trine △                       | Apollon               | 6.56° | Separating ← |
@@ -599,6 +612,7 @@ Sample Natal Subject — Natal Chart Report
 | Medium Coeli          | sextile ⚹                     | Rigel                 | 3.22° | Separating ← |
 | Medium Coeli          | sextile ⚹                     | Capella               | 1.81° | Applying →   |
 | Medium Coeli          | opposition ☍                  | Deneb Algedi          | 3.50° | Applying →   |
+| Medium Coeli          | sextile ⚹                     | True Priapus          | 1.89° | Separating ← |
 | Medium Coeli          | square □                      | Cupido                | 1.30° | Separating ← |
 | Medium Coeli          | sextile ⚹                     | Kronos                | 1.97° | Applying →   |
 | Medium Coeli          | square □                      | Admetos               | 4.96° | Separating ← |
@@ -640,6 +654,8 @@ Sample Natal Subject — Natal Chart Report
 | Imum Coeli            | trine △                       | Algorab               | 6.59° | Separating ← |
 | Imum Coeli            | conjunction ☌                 | Deneb Algedi          | 3.50° | Applying →   |
 | Imum Coeli            | biquintile biquintile         | Alkaid                | 0.88° | Applying →   |
+| Imum Coeli            | quintile Q                    | Interpolated Lilith   | 0.59° | Applying →   |
+| Imum Coeli            | trine △                       | True Priapus          | 1.89° | Separating ← |
 | Imum Coeli            | square □                      | Cupido                | 1.30° | Separating ← |
 | Imum Coeli            | biquintile biquintile         | Zeus                  | 0.11° | Separating ← |
 | Imum Coeli            | trine △                       | Kronos                | 1.97° | Applying →   |
@@ -662,6 +678,8 @@ Sample Natal Subject — Natal Chart Report
 | Mean Lilith           | opposition ☍                  | Alcyone               | 0.87° | Applying →   |
 | Mean Lilith           | semi-square semi-square       | Algorab               | 0.67° | Separating ← |
 | Mean Lilith           | sextile ⚹                     | Alkaid                | 2.19° | Separating ← |
+| Mean Lilith           | conjunction ☌                 | Interpolated Lilith   | 9.52° | Applying →   |
+| Mean Lilith           | opposition ☍                  | Mean Priapus          | 0.00° | Static =     |
 | Mean Lilith           | sextile ⚹                     | Zeus                  | 2.96° | Separating ← |
 | Mean Lilith           | semi-square semi-square       | Apollon               | 0.17° | Separating ← |
 | Mean Lilith           | semi-sextile semi-sextile     | Poseidon              | 0.31° | Separating ← |
@@ -683,6 +701,7 @@ Sample Natal Subject — Natal Chart Report
 | Mean South Lunar Node | opposition ☍                  | Altair                | 6.13° | Separating ← |
 | Mean South Lunar Node | square □                      | Alphecca              | 4.38° | Applying →   |
 | Mean South Lunar Node | sextile ⚹                     | Algorab               | 5.53° | Applying →   |
+| Mean South Lunar Node | trine △                       | Interpolated Lilith   | 0.72° | Applying →   |
 | Mean South Lunar Node | sextile ⚹                     | Hades                 | 2.13° | Applying →   |
 | Mean South Lunar Node | semi-square semi-square       | Kronos                | 0.90° | Separating ← |
 | True South Lunar Node | trine △                       | Earth                 | 7.26° | Separating ← |
@@ -702,6 +721,7 @@ Sample Natal Subject — Natal Chart Report
 | True South Lunar Node | opposition ☍                  | Altair                | 5.61° | Separating ← |
 | True South Lunar Node | semi-square semi-square       | Capella               | 0.54° | Separating ← |
 | True South Lunar Node | square □                      | Alphecca              | 4.90° | Applying →   |
+| True South Lunar Node | trine △                       | Interpolated Lilith   | 1.25° | Applying →   |
 | True South Lunar Node | sextile ⚹                     | Hades                 | 2.66° | Separating ← |
 | True South Lunar Node | semi-square semi-square       | Kronos                | 0.37° | Applying →   |
 | True Lilith           | trine △                       | Ceres                 | 4.31° | Applying →   |
@@ -720,6 +740,8 @@ Sample Natal Subject — Natal Chart Report
 | True Lilith           | opposition ☍                  | Capella               | 3.70° | Separating ← |
 | True Lilith           | sextile ⚹                     | Algorab               | 4.71° | Applying →   |
 | True Lilith           | sextile ⚹                     | Deneb Algedi          | 5.39° | Separating ← |
+| True Lilith           | conjunction ☌                 | Interpolated Lilith   | 9.52° | Applying →   |
+| True Lilith           | opposition ☍                  | True Priapus          | 0.00° | Static =     |
 | True Lilith           | semi-sextile semi-sextile     | Cupido                | 0.59° | Separating ← |
 | True Lilith           | opposition ☍                  | Hades                 | 8.11° | Applying →   |
 | True Lilith           | opposition ☍                  | Kronos                | 3.86° | Separating ← |
@@ -737,6 +759,7 @@ Sample Natal Subject — Natal Chart Report
 | Earth                 | sextile ⚹                     | Altair                | 1.65° | Static =     |
 | Earth                 | sextile ⚹                     | Alcyone               | 0.14° | Static =     |
 | Earth                 | opposition ☍                  | Alkaid                | 3.20° | Static =     |
+| Earth                 | sextile ⚹                     | Mean Priapus          | 1.01° | Applying →   |
 | Earth                 | opposition ☍                  | Zeus                  | 3.97° | Applying →   |
 | Earth                 | semi-square semi-square       | Admetos               | 0.04° | Applying →   |
 | Pholus                | conjunction ☌                 | Pallas                | 0.74° | Applying →   |
@@ -756,6 +779,7 @@ Sample Natal Subject — Natal Chart Report
 | Pholus                | opposition ☍                  | Vega                  | 7.21° | Applying →   |
 | Pholus                | trine △                       | Alphecca              | 4.18° | Applying →   |
 | Pholus                | sesquiquadrate sesquiquadrate | Deneb Algedi          | 0.43° | Applying →   |
+| Pholus                | quincunx ⚻                    | Interpolated Lilith   | 0.52° | Applying →   |
 | Pholus                | conjunction ☌                 | Vulkanus              | 7.35° | Applying →   |
 | Ceres                 | square □                      | Juno                  | 3.62° | Separating ← |
 | Ceres                 | square □                      | Vesta                 | 4.43° | Applying →   |
@@ -774,6 +798,8 @@ Sample Natal Subject — Natal Chart Report
 | Ceres                 | square □                      | Alphecca              | 1.55° | Separating ← |
 | Ceres                 | sextile ⚹                     | Algorab               | 0.39° | Separating ← |
 | Ceres                 | opposition ☍                  | Deneb Algedi          | 9.70° | Applying →   |
+| Ceres                 | trine △                       | Interpolated Lilith   | 5.21° | Separating ← |
+| Ceres                 | sextile ⚹                     | True Priapus          | 4.31° | Applying →   |
 | Ceres                 | square □                      | Cupido                | 4.90° | Applying →   |
 | Ceres                 | sextile ⚹                     | Hades                 | 3.79° | Separating ← |
 | Ceres                 | sextile ⚹                     | Apollon               | 0.11° | Applying →   |
@@ -829,6 +855,7 @@ Sample Natal Subject — Natal Chart Report
 | Vesta                 | sextile ⚹                     | Achernar              | 2.96° | Separating ← |
 | Vesta                 | trine △                       | Vega                  | 2.95° | Separating ← |
 | Vesta                 | opposition ☍                  | Alphecca              | 5.98° | Separating ← |
+| Vesta                 | semi-sextile semi-sextile     | True Priapus          | 0.12° | Separating ← |
 | Vesta                 | opposition ☍                  | Cupido                | 0.47° | Applying →   |
 | Vesta                 | trine △                       | Zeus                  | 7.88° | Applying →   |
 | Vesta                 | conjunction ☌                 | Admetos               | 3.19° | Separating ← |
@@ -849,6 +876,7 @@ Sample Natal Subject — Natal Chart Report
 | Eris                  | square □                      | Vega                  | 2.40° | Applying →   |
 | Eris                  | opposition ☍                  | Algorab               | 4.27° | Applying →   |
 | Eris                  | sextile ⚹                     | Deneb Algedi          | 5.82° | Separating ← |
+| Eris                  | sextile ⚹                     | True Priapus          | 0.43° | Applying →   |
 | Eris                  | sextile ⚹                     | Kronos                | 4.29° | Separating ← |
 | Eris                  | opposition ☍                  | Apollon               | 3.77° | Applying →   |
 | Eris                  | square □                      | Vulkanus              | 2.26° | Applying →   |
@@ -884,6 +912,8 @@ Sample Natal Subject — Natal Chart Report
 | Haumea                | trine △                       | Alcyone               | 3.54° | Applying →   |
 | Haumea                | semi-square semi-square       | Alphecca              | 0.85° | Applying →   |
 | Haumea                | conjunction ☌                 | Alkaid                | 0.48° | Applying →   |
+| Haumea                | quintile Q                    | Interpolated Lilith   | 0.19° | Applying →   |
+| Haumea                | trine △                       | Mean Priapus          | 2.67° | Separating ← |
 | Haumea                | conjunction ☌                 | Zeus                  | 0.29° | Separating ← |
 | Haumea                | square □                      | Kronos                | 4.43° | Static =     |
 | Makemake              | conjunction ☌                 | Regulus               | 4.80° | Separating ← |
@@ -893,6 +923,7 @@ Sample Natal Subject — Natal Chart Report
 | Makemake              | opposition ☍                  | Deneb                 | 0.72° | Applying →   |
 | Makemake              | quintile Q                    | Capella               | 0.77° | Separating ← |
 | Makemake              | square □                      | Alcyone               | 4.64° | Separating ← |
+| Makemake              | square □                      | Interpolated Lilith   | 4.01° | Applying →   |
 | Makemake              | quintile Q                    | Kronos                | 0.61° | Separating ← |
 | Makemake              | sextile ⚹                     | Poseidon              | 5.82° | Separating ← |
 | Ixion                 | conjunction ☌                 | Quaoar                | 1.37° | Static =     |
@@ -907,6 +938,7 @@ Sample Natal Subject — Natal Chart Report
 | Ixion                 | opposition ☍                  | Alcyone               | 7.16° | Separating ← |
 | Ixion                 | square □                      | Deneb Algedi          | 0.72° | Separating ← |
 | Ixion                 | sextile ⚹                     | Alkaid                | 4.10° | Separating ← |
+| Ixion                 | opposition ☍                  | Mean Priapus          | 6.29° | Separating ← |
 | Ixion                 | conjunction ☌                 | Cupido                | 4.09° | Applying →   |
 | Ixion                 | sextile ⚹                     | Zeus                  | 3.33° | Separating ← |
 | Ixion                 | quincunx ⚻                    | Kronos                | 0.81° | Applying →   |
@@ -925,6 +957,8 @@ Sample Natal Subject — Natal Chart Report
 | Orcus                 | square □                      | Alphecca              | 1.33° | Applying →   |
 | Orcus                 | sextile ⚹                     | Algorab               | 2.48° | Applying →   |
 | Orcus                 | semi-square semi-square       | Alkaid                | 0.96° | Applying →   |
+| Orcus                 | trine △                       | Interpolated Lilith   | 2.33° | Separating ← |
+| Orcus                 | quintile Q                    | Mean Priapus          | 0.15° | Separating ← |
 | Orcus                 | sextile ⚹                     | Hades                 | 0.92° | Separating ← |
 | Orcus                 | semi-square semi-square       | Zeus                  | 0.19° | Applying →   |
 | Orcus                 | sextile ⚹                     | Apollon               | 2.98° | Applying →   |
@@ -938,6 +972,7 @@ Sample Natal Subject — Natal Chart Report
 | Quaoar                | opposition ☍                  | Alcyone               | 5.79° | Separating ← |
 | Quaoar                | square □                      | Deneb Algedi          | 0.66° | Applying →   |
 | Quaoar                | sextile ⚹                     | Alkaid                | 2.72° | Separating ← |
+| Quaoar                | opposition ☍                  | Mean Priapus          | 4.91° | Separating ← |
 | Quaoar                | conjunction ☌                 | Cupido                | 5.46° | Applying →   |
 | Quaoar                | sextile ⚹                     | Zeus                  | 1.95° | Separating ← |
 | Quaoar                | opposition ☍                  | Admetos               | 9.12° | Applying →   |
@@ -954,6 +989,8 @@ Sample Natal Subject — Natal Chart Report
 | Regulus               | square □                      | Alcyone               | 0.16° | Static =     |
 | Regulus               | quintile Q                    | Alphecca              | 0.47° | Static =     |
 | Regulus               | opposition ☍                  | Deneb Algedi          | 6.28° | Static =     |
+| Regulus               | square □                      | Mean Priapus          | 0.71° | Applying →   |
+| Regulus               | quintile Q                    | True Priapus          | 0.33° | Applying →   |
 | Regulus               | semi-square semi-square       | Apollon               | 0.87° | Applying →   |
 | Regulus               | semi-square semi-square       | Vulkanus              | 0.64° | Separating ← |
 | Regulus               | sextile ⚹                     | Poseidon              | 1.01° | Applying →   |
@@ -968,6 +1005,9 @@ Sample Natal Subject — Natal Chart Report
 | Spica                 | trine △                       | Capella               | 1.99° | Static =     |
 | Spica                 | biquintile biquintile         | Alcyone               | 0.15° | Static =     |
 | Spica                 | trine △                       | Deneb Algedi          | 0.29° | Static =     |
+| Spica                 | semi-square semi-square       | Interpolated Lilith   | 0.20° | Separating ← |
+| Spica                 | biquintile biquintile         | Mean Priapus          | 0.72° | Applying →   |
+| Spica                 | trine △                       | True Priapus          | 5.68° | Separating ← |
 | Spica                 | trine △                       | Kronos                | 1.82° | Applying →   |
 | Spica                 | conjunction ☌                 | Apollon               | 9.89° | Applying →   |
 | Spica                 | conjunction ☌                 | Poseidon              | 4.97° | Separating ← |
@@ -980,6 +1020,7 @@ Sample Natal Subject — Natal Chart Report
 | Pars Fortunae         | square □                      | Altair                | 3.17° | Static =     |
 | Pars Fortunae         | trine △                       | Capella               | 6.76° | Static =     |
 | Pars Fortunae         | trine △                       | Deneb Algedi          | 5.07° | Static =     |
+| Pars Fortunae         | quincunx ⚻                    | Mean Priapus          | 0.50° | Separating ← |
 | Pars Fortunae         | trine △                       | Kronos                | 6.60° | Applying →   |
 | Pars Fortunae         | conjunction ☌                 | Poseidon              | 0.19° | Separating ← |
 | Pars Spiritus         | opposition ☍                  | Pars Fidei            | 4.94° | Static =     |
@@ -1006,6 +1047,7 @@ Sample Natal Subject — Natal Chart Report
 | Pars Amoris           | trine △                       | Rigel                 | 7.71° | Static =     |
 | Pars Amoris           | conjunction ☌                 | Algorab               | 4.34° | Static =     |
 | Pars Amoris           | sesquiquadrate sesquiquadrate | Deneb Algedi          | 0.57° | Static =     |
+| Pars Amoris           | sextile ⚹                     | Interpolated Lilith   | 0.48° | Separating ← |
 | Pars Amoris           | trine △                       | Hades                 | 0.93° | Separating ← |
 | Pars Amoris           | conjunction ☌                 | Apollon               | 4.84° | Separating ← |
 | Pars Amoris           | biquintile biquintile         | Admetos               | 0.03° | Applying →   |
@@ -1014,6 +1056,7 @@ Sample Natal Subject — Natal Chart Report
 | Pars Fidei            | sextile ⚹                     | Deneb                 | 3.01° | Static =     |
 | Pars Fidei            | trine △                       | Vega                  | 6.98° | Static =     |
 | Pars Fidei            | opposition ☍                  | Alphecca              | 3.95° | Static =     |
+| Pars Fidei            | quincunx ⚻                    | Interpolated Lilith   | 0.29° | Applying →   |
 | Pars Fidei            | conjunction ☌                 | Admetos               | 6.74° | Separating ← |
 | Pars Fidei            | opposition ☍                  | Poseidon              | 9.54° | Applying →   |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static =     |
@@ -1024,6 +1067,8 @@ Sample Natal Subject — Natal Chart Report
 | Vertex                | square □                      | Achernar              | 3.72° | Static =     |
 | Vertex                | quincunx ⚻                    | Alphecca              | 0.70° | Static =     |
 | Vertex                | trine △                       | Algorab               | 1.86° | Static =     |
+| Vertex                | opposition ☍                  | Interpolated Lilith   | 2.96° | Separating ← |
+| Vertex                | conjunction ☌                 | True Priapus          | 6.56° | Applying →   |
 | Vertex                | conjunction ☌                 | Hades                 | 1.54° | Applying →   |
 | Vertex                | trine △                       | Apollon               | 2.36° | Separating ← |
 | Anti Vertex           | opposition ☍                  | Aldebaran             | 1.81° | Static =     |
@@ -1034,6 +1079,8 @@ Sample Natal Subject — Natal Chart Report
 | Anti Vertex           | semi-sextile semi-sextile     | Alphecca              | 0.70° | Static =     |
 | Anti Vertex           | sextile ⚹                     | Algorab               | 1.86° | Static =     |
 | Anti Vertex           | quintile Q                    | Deneb Algedi          | 0.05° | Static =     |
+| Anti Vertex           | conjunction ☌                 | Interpolated Lilith   | 2.96° | Separating ← |
+| Anti Vertex           | opposition ☍                  | True Priapus          | 6.56° | Applying →   |
 | Anti Vertex           | opposition ☍                  | Hades                 | 1.54° | Applying →   |
 | Anti Vertex           | sextile ⚹                     | Apollon               | 2.36° | Separating ← |
 | Aldebaran             | opposition ☍                  | Antares               | 0.02° | Static =     |
@@ -1044,6 +1091,8 @@ Sample Natal Subject — Natal Chart Report
 | Aldebaran             | biquintile biquintile         | Vega                  | 0.46° | Static =     |
 | Aldebaran             | conjunction ☌                 | Alcyone               | 9.80° | Static =     |
 | Aldebaran             | trine △                       | Algorab               | 3.67° | Static =     |
+| Aldebaran             | opposition ☍                  | Interpolated Lilith   | 1.15° | Separating ← |
+| Aldebaran             | conjunction ☌                 | True Priapus          | 8.37° | Applying →   |
 | Aldebaran             | conjunction ☌                 | Hades                 | 0.26° | Separating ← |
 | Aldebaran             | trine △                       | Apollon               | 4.17° | Separating ← |
 | Antares               | biquintile biquintile         | Canopus               | 0.83° | Static =     |
@@ -1053,6 +1102,8 @@ Sample Natal Subject — Natal Chart Report
 | Antares               | opposition ☍                  | Alcyone               | 9.78° | Static =     |
 | Antares               | sextile ⚹                     | Algorab               | 3.68° | Static =     |
 | Antares               | quintile Q                    | Alkaid                | 0.84° | Static =     |
+| Antares               | conjunction ☌                 | Interpolated Lilith   | 1.13° | Separating ← |
+| Antares               | opposition ☍                  | True Priapus          | 8.39° | Applying →   |
 | Antares               | opposition ☍                  | Hades                 | 0.28° | Separating ← |
 | Antares               | sextile ⚹                     | Apollon               | 4.19° | Separating ← |
 | Antares               | biquintile biquintile         | Vulkanus              | 0.30° | Applying →   |
@@ -1064,6 +1115,8 @@ Sample Natal Subject — Natal Chart Report
 | Sirius                | trine △                       | Alphecca              | 1.78° | Static =     |
 | Sirius                | square □                      | Algorab               | 0.63° | Static =     |
 | Sirius                | quintile Q                    | Alkaid                | 0.85° | Static =     |
+| Sirius                | biquintile biquintile         | Interpolated Lilith   | 0.56° | Applying →   |
+| Sirius                | semi-square semi-square       | Mean Priapus          | 0.04° | Separating ← |
 | Sirius                | trine △                       | Cupido                | 4.67° | Applying →   |
 | Sirius                | quintile Q                    | Zeus                  | 0.08° | Separating ← |
 | Sirius                | square □                      | Apollon               | 0.12° | Applying →   |
@@ -1072,6 +1125,8 @@ Sample Natal Subject — Natal Chart Report
 | Fomalhaut             | trine △                       | Betelgeuse            | 5.11° | Static =     |
 | Fomalhaut             | conjunction ☌                 | Deneb                 | 1.48° | Static =     |
 | Fomalhaut             | square □                      | Alcyone               | 3.87° | Static =     |
+| Fomalhaut             | square □                      | Interpolated Lilith   | 4.77° | Applying →   |
+| Fomalhaut             | square □                      | Mean Priapus          | 4.75° | Applying →   |
 | Fomalhaut             | quintile Q                    | Admetos               | 0.78° | Applying →   |
 | Fomalhaut             | trine △                       | Poseidon              | 5.05° | Applying →   |
 | Algol                 | sextile ⚹                     | Procyon               | 0.38° | Static =     |
@@ -1080,6 +1135,7 @@ Sample Natal Subject — Natal Chart Report
 | Algol                 | conjunction ☌                 | Alcyone               | 3.82° | Static =     |
 | Algol                 | square □                      | Deneb Algedi          | 2.62° | Static =     |
 | Algol                 | trine △                       | Alkaid                | 0.76° | Static =     |
+| Algol                 | conjunction ☌                 | Mean Priapus          | 2.95° | Separating ← |
 | Algol                 | opposition ☍                  | Cupido                | 7.42° | Separating ← |
 | Algol                 | trine △                       | Zeus                  | 0.01° | Applying →   |
 | Betelgeuse            | trine △                       | Arcturus              | 4.52° | Static =     |
@@ -1087,6 +1143,7 @@ Sample Natal Subject — Natal Chart Report
 | Betelgeuse            | conjunction ☌                 | Capella               | 6.90° | Static =     |
 | Betelgeuse            | trine △                       | Deneb Algedi          | 5.20° | Static =     |
 | Betelgeuse            | square □                      | Alkaid                | 1.82° | Static =     |
+| Betelgeuse            | semi-sextile semi-sextile     | Mean Priapus          | 0.37° | Separating ← |
 | Betelgeuse            | square □                      | Zeus                  | 2.59° | Applying →   |
 | Betelgeuse            | conjunction ☌                 | Kronos                | 6.73° | Applying →   |
 | Betelgeuse            | trine △                       | Poseidon              | 0.06° | Separating ← |
@@ -1097,6 +1154,8 @@ Sample Natal Subject — Natal Chart Report
 | Canopus               | trine △                       | Alphecca              | 2.64° | Static =     |
 | Canopus               | square □                      | Algorab               | 1.49° | Static =     |
 | Canopus               | quintile Q                    | Alkaid                | 0.01° | Static =     |
+| Canopus               | biquintile biquintile         | Interpolated Lilith   | 0.30° | Separating ← |
+| Canopus               | semi-square semi-square       | Mean Priapus          | 0.82° | Applying →   |
 | Canopus               | trine △                       | Cupido                | 3.80° | Applying →   |
 | Canopus               | quintile Q                    | Zeus                  | 0.78° | Applying →   |
 | Canopus               | square □                      | Apollon               | 0.99° | Applying →   |
@@ -1107,6 +1166,7 @@ Sample Natal Subject — Natal Chart Report
 | Procyon               | opposition ☍                  | Altair                | 6.00° | Static =     |
 | Procyon               | sextile ⚹                     | Alcyone               | 4.21° | Static =     |
 | Procyon               | sextile ⚹                     | Alkaid                | 1.15° | Static =     |
+| Procyon               | sextile ⚹                     | Mean Priapus          | 3.34° | Separating ← |
 | Procyon               | trine △                       | Cupido                | 7.04° | Separating ← |
 | Procyon               | semi-square semi-square       | Hades                 | 0.73° | Applying →   |
 | Procyon               | sextile ⚹                     | Zeus                  | 0.38° | Separating ← |
@@ -1116,6 +1176,8 @@ Sample Natal Subject — Natal Chart Report
 | Arcturus              | trine △                       | Capella               | 2.38° | Static =     |
 | Arcturus              | biquintile biquintile         | Alcyone               | 0.24° | Static =     |
 | Arcturus              | trine △                       | Deneb Algedi          | 0.69° | Static =     |
+| Arcturus              | semi-square semi-square       | Interpolated Lilith   | 0.60° | Separating ← |
+| Arcturus              | trine △                       | True Priapus          | 6.08° | Separating ← |
 | Arcturus              | sesquiquadrate sesquiquadrate | Hades                 | 0.82° | Separating ← |
 | Arcturus              | trine △                       | Kronos                | 2.22° | Applying →   |
 | Arcturus              | conjunction ☌                 | Poseidon              | 4.58° | Separating ← |
@@ -1124,31 +1186,39 @@ Sample Natal Subject — Natal Chart Report
 | Pollux                | opposition ☍                  | Vega                  | 7.88° | Static =     |
 | Pollux                | quincunx ⚻                    | Deneb Algedi          | 0.34° | Static =     |
 | Pollux                | sextile ⚹                     | Alkaid                | 3.72° | Static =     |
+| Pollux                | sesquiquadrate sesquiquadrate | Interpolated Lilith   | 0.43° | Applying →   |
+| Pollux                | sextile ⚹                     | Mean Priapus          | 5.91° | Separating ← |
 | Pollux                | trine △                       | Cupido                | 4.47° | Separating ← |
 | Pollux                | sextile ⚹                     | Zeus                  | 2.95° | Separating ← |
 | Pollux                | conjunction ☌                 | Vulkanus              | 7.74° | Applying →   |
 | Deneb                 | conjunction ☌                 | Achernar              | 9.98° | Static =     |
 | Deneb                 | trine △                       | Alphecca              | 6.96° | Static =     |
+| Deneb                 | square □                      | Interpolated Lilith   | 3.30° | Applying →   |
 | Deneb                 | square □                      | Hades                 | 4.71° | Separating ← |
 | Deneb                 | trine △                       | Poseidon              | 6.53° | Applying →   |
 | Altair                | sesquiquadrate sesquiquadrate | Rigel                 | 0.04° | Static =     |
 | Altair                | trine △                       | Alcyone               | 1.79° | Static =     |
 | Altair                | trine △                       | Alkaid                | 4.85° | Static =     |
+| Altair                | trine △                       | Mean Priapus          | 2.66° | Applying →   |
 | Altair                | trine △                       | Zeus                  | 5.62° | Applying →   |
 | Altair                | square □                      | Poseidon              | 2.97° | Applying →   |
 | Rigel                 | square □                      | Achernar              | 1.51° | Static =     |
 | Rigel                 | conjunction ☌                 | Capella               | 5.03° | Static =     |
 | Rigel                 | trine △                       | Algorab               | 3.37° | Static =     |
 | Rigel                 | trine △                       | Deneb Algedi          | 6.72° | Static =     |
+| Rigel                 | opposition ☍                  | Interpolated Lilith   | 8.19° | Separating ← |
+| Rigel                 | conjunction ☌                 | True Priapus          | 1.33° | Applying →   |
 | Rigel                 | conjunction ☌                 | Hades                 | 6.78° | Applying →   |
 | Rigel                 | conjunction ☌                 | Kronos                | 5.19° | Separating ← |
 | Rigel                 | trine △                       | Apollon               | 2.87° | Applying →   |
 | Achernar              | sextile ⚹                     | Vega                  | 0.01° | Static =     |
 | Achernar              | trine △                       | Alphecca              | 3.02° | Static =     |
+| Achernar              | square □                      | True Priapus          | 2.84° | Applying →   |
 | Achernar              | trine △                       | Cupido                | 3.43° | Applying →   |
 | Achernar              | sextile ⚹                     | Admetos               | 0.23° | Applying →   |
 | Achernar              | trine △                       | Vulkanus              | 0.15° | Separating ← |
 | Capella               | trine △                       | Deneb Algedi          | 1.69° | Static =     |
+| Capella               | conjunction ☌                 | True Priapus          | 3.70° | Separating ← |
 | Capella               | square □                      | Zeus                  | 4.30° | Separating ← |
 | Capella               | conjunction ☌                 | Kronos                | 0.16° | Separating ← |
 | Capella               | trine △                       | Apollon               | 7.90° | Applying →   |
@@ -1162,21 +1232,43 @@ Sample Natal Subject — Natal Chart Report
 | Vega                  | trine △                       | Admetos               | 0.24° | Applying →   |
 | Vega                  | opposition ☍                  | Vulkanus              | 0.14° | Separating ← |
 | Alcyone               | trine △                       | Alkaid                | 3.06° | Static =     |
+| Alcyone               | opposition ☍                  | Interpolated Lilith   | 8.65° | Applying →   |
+| Alcyone               | conjunction ☌                 | Mean Priapus          | 0.87° | Applying →   |
 | Alcyone               | trine △                       | Zeus                  | 3.83° | Applying →   |
 | Alcyone               | semi-square semi-square       | Vulkanus              | 0.48° | Separating ← |
 | Alphecca              | semi-square semi-square       | Alkaid                | 0.37° | Static =     |
+| Alphecca              | biquintile biquintile         | True Priapus          | 0.14° | Separating ← |
 | Alphecca              | conjunction ☌                 | Cupido                | 6.45° | Applying →   |
 | Alphecca              | opposition ☍                  | Admetos               | 2.79° | Separating ← |
 | Alphecca              | trine △                       | Vulkanus              | 3.17° | Separating ← |
+| Algorab               | sextile ⚹                     | Interpolated Lilith   | 4.81° | Separating ← |
+| Algorab               | sesquiquadrate sesquiquadrate | Mean Priapus          | 0.67° | Separating ← |
+| Algorab               | trine △                       | True Priapus          | 4.71° | Applying →   |
 | Algorab               | trine △                       | Hades                 | 3.40° | Applying →   |
 | Algorab               | conjunction ☌                 | Apollon               | 0.50° | Separating ← |
 | Algorab               | square □                      | Vulkanus              | 2.02° | Separating ← |
+| Deneb Algedi          | trine △                       | True Priapus          | 5.39° | Separating ← |
 | Deneb Algedi          | square □                      | Cupido                | 4.80° | Separating ← |
 | Deneb Algedi          | trine △                       | Kronos                | 1.53° | Applying →   |
 | Deneb Algedi          | trine △                       | Poseidon              | 5.26° | Separating ← |
+| Alkaid                | quintile Q                    | Interpolated Lilith   | 0.29° | Separating ← |
+| Alkaid                | trine △                       | Mean Priapus          | 2.19° | Separating ← |
 | Alkaid                | conjunction ☌                 | Zeus                  | 0.77° | Applying →   |
 | Alkaid                | square □                      | Kronos                | 4.91° | Applying →   |
 | Alkaid                | quintile Q                    | Vulkanus              | 0.54° | Separating ← |
+| Interpolated Lilith   | opposition ☍                  | Mean Priapus          | 9.52° | Applying →   |
+| Interpolated Lilith   | opposition ☍                  | True Priapus          | 9.52° | Applying →   |
+| Interpolated Lilith   | opposition ☍                  | Hades                 | 1.41° | Separating ← |
+| Interpolated Lilith   | quintile Q                    | Zeus                  | 0.48° | Applying →   |
+| Interpolated Lilith   | sextile ⚹                     | Apollon               | 5.31° | Separating ← |
+| Interpolated Lilith   | biquintile biquintile         | Vulkanus              | 0.83° | Separating ← |
+| Mean Priapus          | trine △                       | Zeus                  | 2.96° | Separating ← |
+| Mean Priapus          | sesquiquadrate sesquiquadrate | Apollon               | 0.17° | Separating ← |
+| Mean Priapus          | quincunx ⚻                    | Poseidon              | 0.31° | Separating ← |
+| True Priapus          | quincunx ⚻                    | Cupido                | 0.59° | Separating ← |
+| True Priapus          | conjunction ☌                 | Hades                 | 8.11° | Applying →   |
+| True Priapus          | conjunction ☌                 | Kronos                | 3.86° | Separating ← |
+| True Priapus          | trine △                       | Apollon               | 4.20° | Applying →   |
 | Cupido                | opposition ☍                  | Admetos               | 3.66° | Applying →   |
 | Cupido                | trine △                       | Vulkanus              | 3.28° | Applying →   |
 | Hades                 | trine △                       | Apollon               | 3.90° | Applying →   |

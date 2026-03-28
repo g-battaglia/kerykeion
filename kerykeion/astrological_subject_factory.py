@@ -947,7 +947,7 @@ class AstrologicalSubjectFactory:
                     nak_data = calc_nak(point.abs_pos)
                     calc_data[point_key] = point.model_copy(update=nak_data)
         # Calculate Gauquelin sectors (optional) — for ALL celestial points
-        if config.calculate_gauquelin and calc_data.get("lng") and calc_data.get("lat"):
+        if config.calculate_gauquelin and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
             geopos = [calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0]
             jd = calc_data["julian_day"]
 
@@ -984,7 +984,7 @@ class AstrologicalSubjectFactory:
                 )
 
         # Calculate Local Space (azimuth/altitude) for all celestial points (v6.0)
-        if config.calculate_local_space and calc_data.get("lng") and calc_data.get("lat"):
+        if config.calculate_local_space and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
             ls_geopos = (calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0)
             ls_jd = calc_data["julian_day"]
             for point_key in list(calc_data.keys()):

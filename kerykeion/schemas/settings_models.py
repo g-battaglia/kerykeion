@@ -68,6 +68,9 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
         title="Mean South Lunar Node", description="The name of Mean South Lunar Node in the chart, in the language"
     )
     True_Lilith: str = Field(title="True Lilith", description="The name of True Lilith in the chart, in the language")
+    Interpolated_Lilith: str = Field(default="Interpolated Lilith", title="Interpolated Lilith", description="The name of Interpolated Lilith in the chart, in the language")
+    Mean_Priapus: str = Field(default="Mean Priapus", title="Mean Priapus", description="The name of Mean Priapus in the chart, in the language")
+    True_Priapus: str = Field(default="True Priapus", title="True Priapus", description="The name of True Priapus in the chart, in the language")
     Earth: str = Field(title="Earth", description="The name of Earth in the chart, in the language")
     Pholus: str = Field(title="Pholus", description="The name of Pholus in the chart, in the language")
     Ceres: str = Field(title="Ceres", description="The name of Ceres in the chart, in the language")

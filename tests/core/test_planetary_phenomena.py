@@ -6,7 +6,11 @@ and morning/evening star status calculations via swe.pheno_ut().
 """
 
 import pytest
+import swisseph as swe
+from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, PlanetaryPhenomenaFactory
+
+_EPHE_PATH = str(Path(__file__).parent.parent.parent / "kerykeion" / "sweph")
 
 
 @pytest.fixture(scope="module")
@@ -105,3 +109,67 @@ class TestPhenomenaFiltering:
             subject, planets=["FakePlanet"]
         )
         assert len(result.phenomena) == 0
+
+
+class TestSweRegressionPhenomena:
+    """Regression tests: verify factory results match raw Swiss Ephemeris calls."""
+
+    def test_venus_phenomena_at_j2000_matches_swe(self):
+        """Factory Venus phenomena at J2000.0 should match swe.pheno_ut directly."""
+        jd_j2000 = 2451545.0
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+
+        swe.set_ephe_path(_EPHE_PATH)
+        swe_result = swe.pheno_ut(jd_j2000, swe.VENUS, iflag)
+        swe_phase_angle = swe_result[0]
+        swe_phase = swe_result[1]
+        swe_elongation = swe_result[2]
+        swe_apparent_diameter = swe_result[3]
+        swe_apparent_magnitude = swe_result[4]
+        swe.close()
+
+        factory_result = PlanetaryPhenomenaFactory.from_julian_day(
+            jd_j2000, planets=["Venus"]
+        )
+        assert len(factory_result.phenomena) == 1
+        venus = factory_result.phenomena[0]
+
+        assert abs(venus.phase_angle - swe_phase_angle) < 0.001, (
+            f"phase_angle: factory={venus.phase_angle} swe={swe_phase_angle}"
+        )
+        assert abs(venus.phase - swe_phase) < 0.001, (
+            f"phase: factory={venus.phase} swe={swe_phase}"
+        )
+        assert abs(venus.elongation - swe_elongation) < 0.001, (
+            f"elongation: factory={venus.elongation} swe={swe_elongation}"
+        )
+        assert abs(venus.apparent_diameter - swe_apparent_diameter) < 0.0001, (
+            f"apparent_diameter: factory={venus.apparent_diameter} swe={swe_apparent_diameter}"
+        )
+        assert abs(venus.apparent_magnitude - swe_apparent_magnitude) < 0.01, (
+            f"apparent_magnitude: factory={venus.apparent_magnitude} swe={swe_apparent_magnitude}"
+        )
+
+    def test_mars_phenomena_at_j2000_matches_swe(self):
+        """Factory Mars phenomena at J2000.0 should match swe.pheno_ut directly."""
+        jd_j2000 = 2451545.0
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+
+        swe.set_ephe_path(_EPHE_PATH)
+        swe_result = swe.pheno_ut(jd_j2000, swe.MARS, iflag)
+        swe_phase_angle = swe_result[0]
+        swe_elongation = swe_result[2]
+        swe.close()
+
+        factory_result = PlanetaryPhenomenaFactory.from_julian_day(
+            jd_j2000, planets=["Mars"]
+        )
+        assert len(factory_result.phenomena) == 1
+        mars = factory_result.phenomena[0]
+
+        assert abs(mars.phase_angle - swe_phase_angle) < 0.001, (
+            f"phase_angle: factory={mars.phase_angle} swe={swe_phase_angle}"
+        )
+        assert abs(mars.elongation - swe_elongation) < 0.001, (
+            f"elongation: factory={mars.elongation} swe={swe_elongation}"
+        )

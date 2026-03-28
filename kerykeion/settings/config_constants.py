@@ -353,6 +353,10 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Admetos",
     "Vulkanus",
     "Poseidon",
+    # Lilith/Priapus variants
+    "Interpolated_Lilith",
+    "Mean_Priapus",
+    "True_Priapus",
     # Arabic Parts (Lots)
     "Pars_Fortunae",
     "Pars_Spiritus",
