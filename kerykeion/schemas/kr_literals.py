@@ -71,6 +71,9 @@ AstrologicalPoint: TypeAlias = Literal[
     "Chiron",
     "Mean_Lilith",
     "True_Lilith",
+    "Interpolated_Lilith",
+    "Mean_Priapus",
+    "True_Priapus",
     "Earth",
     "Pholus",
     # Asteroids

@@ -563,6 +563,11 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     # Lilith Points
     mean_lilith: Optional[KerykeionPointModel] = None
     true_lilith: Optional[KerykeionPointModel] = None
+    interpolated_lilith: Optional[KerykeionPointModel] = None
+
+    # Priapus Points (opposite of Lilith, v6.0)
+    mean_priapus: Optional[KerykeionPointModel] = None
+    true_priapus: Optional[KerykeionPointModel] = None
 
     # Asteroids
     ceres: Optional[KerykeionPointModel] = None

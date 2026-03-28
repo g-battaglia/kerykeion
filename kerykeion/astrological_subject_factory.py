@@ -1981,6 +1981,56 @@ class AstrologicalSubjectFactory:
                         calculated_planets.append(south_node_true)
 
         # =============================================================================
+        # DERIVED LILITH / PRIAPUS POINTS (v6.0)
+        # =============================================================================
+        # Interpolated Lilith = midpoint between Mean and True Lilith positions.
+        # Priapus = point diametrically opposite Lilith (+ 180 degrees).
+        if should_calculate("Interpolated_Lilith"):
+            mean_lil = data.get("mean_lilith")
+            true_lil = data.get("true_lilith")
+            if mean_lil is not None and true_lil is not None:
+                # Circular midpoint to handle wrap-around at 0/360 degrees
+                from kerykeion.utilities import circular_mean
+                interp_deg = circular_mean(mean_lil.abs_pos, true_lil.abs_pos)
+                interp_speed = ((mean_lil.speed or 0.0) + (true_lil.speed or 0.0)) / 2.0
+                interp_dec = None
+                if mean_lil.declination is not None and true_lil.declination is not None:
+                    interp_dec = (mean_lil.declination + true_lil.declination) / 2.0
+                data["interpolated_lilith"] = get_kerykeion_point_from_degree(
+                    interp_deg, "Interpolated_Lilith", point_type=point_type,
+                    speed=interp_speed, declination=interp_dec,
+                )
+                data["interpolated_lilith"].house = get_planet_house(interp_deg, houses_degree_ut)
+                data["interpolated_lilith"].retrograde = interp_speed < 0
+                calculated_planets.append("Interpolated_Lilith")
+
+        if should_calculate("Mean_Priapus"):
+            mean_lil = data.get("mean_lilith")
+            if mean_lil is not None:
+                priapus_deg = math.fmod(mean_lil.abs_pos + 180, 360)
+                data["mean_priapus"] = get_kerykeion_point_from_degree(
+                    priapus_deg, "Mean_Priapus", point_type=point_type,
+                    speed=mean_lil.speed,
+                    declination=-mean_lil.declination if mean_lil.declination is not None else None,
+                )
+                data["mean_priapus"].house = get_planet_house(priapus_deg, houses_degree_ut)
+                data["mean_priapus"].retrograde = mean_lil.retrograde
+                calculated_planets.append("Mean_Priapus")
+
+        if should_calculate("True_Priapus"):
+            true_lil = data.get("true_lilith")
+            if true_lil is not None:
+                priapus_deg = math.fmod(true_lil.abs_pos + 180, 360)
+                data["true_priapus"] = get_kerykeion_point_from_degree(
+                    priapus_deg, "True_Priapus", point_type=point_type,
+                    speed=true_lil.speed,
+                    declination=-true_lil.declination if true_lil.declination is not None else None,
+                )
+                data["true_priapus"].house = get_planet_house(priapus_deg, houses_degree_ut)
+                data["true_priapus"].retrograde = true_lil.retrograde
+                calculated_planets.append("True_Priapus")
+
+        # =============================================================================
         # TRANS-NEPTUNIAN OBJECTS (using centralized mapping)
         # =============================================================================
         # TNOs require AST_OFFSET and may fail for dates outside ephemeris range
