@@ -140,43 +140,86 @@ directory = "htmlcov"
 
 # Task Runner
 [tool.poe.tasks]
-# Test — 4 levels, hierarchy: core < base < medium < extended
-"test:core" = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
-"test:base" = "pytest tests/ --tier=base -m 'not online'"
-"test:medium" = "pytest tests/ --tier=medium -m 'not online'"
-"test:extended" = "pytest tests/ -m 'not online'"
-"test:all" = "pytest tests/ -m 'not online'"
-"test:all:cov" = "pytest tests/ -m 'not online' --cov=kerykeion --cov-report=term-missing --cov-report=html"
 
-# Backend-specific test suites (identical tests, different ephemeris engine)
+# ── Test suites (4 tiers: core < base < medium < extended) ──
+[tool.poe.tasks."test:core"]
+cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
+help = "Run core hand-written tests (fastest, default backend)"
+
+[tool.poe.tasks."test:base"]
+cmd = "pytest tests/ --tier=base -m 'not online'"
+help = "Run base-tier tests (core + parametrized basics)"
+
+[tool.poe.tasks."test:medium"]
+cmd = "pytest tests/ --tier=medium -m 'not online'"
+help = "Run medium-tier tests (base + house/planetary positions)"
+
+[tool.poe.tasks."test:extended"]
+cmd = "pytest tests/ -m 'not online'"
+help = "Run extended-tier tests (all offline tests)"
+
+[tool.poe.tasks."test:all"]
+cmd = "pytest tests/ -m 'not online'"
+help = "Run all tests (alias for test:extended)"
+
+[tool.poe.tasks."test:all:cov"]
+cmd = "pytest tests/ -m 'not online' --cov=kerykeion --cov-report=term-missing --cov-report=html"
+help = "Run all tests with coverage report (terminal + htmlcov/)"
+
+# ── Backend-specific test suites (identical tests, different ephemeris engine) ──
 [tool.poe.tasks."test:lib"]
 cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_backend_comparison.py --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
-help = "Run core tests with libephemeris backend"
+help = "Run core tests forced on libephemeris (KERYKEION_BACKEND=libephemeris)"
 [tool.poe.tasks."test:lib".env]
 KERYKEION_BACKEND = "libephemeris"
 
 [tool.poe.tasks."test:swe"]
 cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_backend_comparison.py --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
-help = "Run core tests with swisseph backend"
+help = "Run core tests forced on swisseph (KERYKEION_BACKEND=swisseph)"
 [tool.poe.tasks."test:swe".env]
 KERYKEION_BACKEND = "swisseph"
 
 [tool.poe.tasks."test:compare"]
 cmd = "pytest tests/core/test_backend_comparison.py -v"
-help = "Compare libephemeris vs swisseph results (both must be installed)"
+help = "Compare libephemeris vs swisseph (both must be installed via pip install kerykeion[all])"
 
-# Coverage — same tiers with coverage report (terminal + HTML in htmlcov/)
-"test:core:cov" = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py --cov --cov-report=term-missing --cov-report=html"
-"test:base:cov" = "pytest tests/ --tier=base -m 'not online' --cov --cov-report=term-missing --cov-report=html"
-"test:medium:cov" = "pytest tests/ --tier=medium -m 'not online' --cov --cov-report=term-missing --cov-report=html"
-"test:extended:cov" = "pytest tests/ -m 'not online' --cov --cov-report=term-missing --cov-report=html"
+# ── Coverage ──
+[tool.poe.tasks."test:core:cov"]
+cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py --cov --cov-report=term-missing --cov-report=html"
+help = "Core tests with coverage report"
 
-# Code Quality
-lint = "ruff check"
-format = "ruff format"
-"format:all" = "ruff format kerykeion tests"
-analyze = "mypy"
-typecheck = "pyright"
+[tool.poe.tasks."test:base:cov"]
+cmd = "pytest tests/ --tier=base -m 'not online' --cov --cov-report=term-missing --cov-report=html"
+help = "Base-tier tests with coverage report"
+
+[tool.poe.tasks."test:medium:cov"]
+cmd = "pytest tests/ --tier=medium -m 'not online' --cov --cov-report=term-missing --cov-report=html"
+help = "Medium-tier tests with coverage report"
+
+[tool.poe.tasks."test:extended:cov"]
+cmd = "pytest tests/ -m 'not online' --cov --cov-report=term-missing --cov-report=html"
+help = "Extended-tier tests with coverage report"
+
+# ── Code Quality ──
+[tool.poe.tasks.lint]
+cmd = "ruff check"
+help = "Lint code with ruff"
+
+[tool.poe.tasks.format]
+cmd = "ruff format"
+help = "Format code with ruff"
+
+[tool.poe.tasks."format:all"]
+cmd = "ruff format kerykeion tests"
+help = "Format all code (kerykeion + tests)"
+
+[tool.poe.tasks.analyze]
+cmd = "mypy"
+help = "Static type analysis with mypy"
+
+[tool.poe.tasks.typecheck]
+cmd = "pyright"
+help = "Static type checking with pyright"
 
 [tool.poe.tasks.check]
 sequence = ["lint", "analyze", "typecheck", "test:core"]
