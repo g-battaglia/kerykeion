@@ -1,5 +1,41 @@
 # Changelog
 
+## 6.0.0a2
+
+_2026-03-30_
+
+**BCE date support -- historical charts for dates before 1 AD.**
+
+### BCE Date Support
+
+- **Dates before 1 AD are now fully supported.** Pass negative years (astronomical year numbering: 0 = 1 BCE, -1 = 2 BCE, etc.) to `AstrologicalSubjectFactory.from_birth_data()` and all chart types work: natal, transit, synastry, with any house system or sidereal mode.
+
+- **How it works:** For `year < 1`, Python's `datetime` is bypassed entirely. Julian Day is computed directly via `swe.julday()` with the Julian calendar (`SE_JUL_CAL`). Timezone offset uses Local Mean Time (LMT) based on longitude -- historically correct for dates predating standardized time zones.
+
+- **Both backends supported:** Works identically with libephemeris and swisseph. Julian Day agreement < 1e-6, Sun position agreement < 0.1°.
+
+- **Chart rendering:** SVG charts (natal, transit, synastry) render correctly for BCE dates. ISO 8601 extended year format (e.g. `-0500-03-21T12:00:00+01:35`) used throughout.
+
+- **New utility functions:** `format_ancient_iso()`, `format_iso_display()`, `extract_year_from_iso()` in `kerykeion.utilities` for BCE-safe date formatting.
+
+- **68 new tests** covering subject creation, Julian Day baselines, LMT offset, ISO formatting, day of week, planetary positions, SVG baselines (natal/transit/synastry), house systems, sidereal modes, backend comparison, report generation, and modern date regression.
+
+#### Example
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+# Spring equinox in Ancient Greece, 501 BCE
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="Ancient Greece",
+    year=-500, month=3, day=21, hour=12, minute=0,
+    lat=37.9838, lng=23.7275, tz_str="Europe/Athens",
+    online=False,
+)
+print(subject.sun.sign)  # Pis
+print(subject.julian_day)  # 1538512.934...
+```
+
 ## 6.0.0a1
 
 _2026-03-29_
