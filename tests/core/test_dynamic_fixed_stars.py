@@ -143,7 +143,7 @@ class TestFixedStarEdgeCases:
     def test_fixstar_ut_exception_skips_star(self, subject_all_stars):
         """If swe.fixstar_ut raises for some stars, those stars are silently skipped."""
         from unittest.mock import patch
-        swe = pytest.importorskip("swisseph")
+        from kerykeion.ephemeris_backend import swe
 
         original_fixstar_ut = swe.fixstar_ut
         call_count = [0]

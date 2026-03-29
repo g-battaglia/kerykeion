@@ -14,7 +14,7 @@ Verifies the core invariants:
 from pathlib import Path
 
 import pytest
-swe = pytest.importorskip("swisseph")
+from kerykeion.ephemeris_backend import swe
 
 from kerykeion import AstrologicalSubjectFactory, PlanetaryReturnFactory
 

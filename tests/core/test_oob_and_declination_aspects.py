@@ -2,7 +2,7 @@
 """Tests for Out-of-Bounds detection and declination aspects (parallels/contra-parallels)."""
 
 import pytest
-swe = pytest.importorskip("swisseph")
+from kerykeion.ephemeris_backend import swe
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
 

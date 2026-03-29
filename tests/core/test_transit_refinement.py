@@ -248,7 +248,7 @@ class TestRefineExactMomentEdgeCases:
     def test_refine_quarter_point_exception_returns_none(self, transit_factory):
         """If swe.calc_ut raises during quarter-point evaluation, should return None."""
         from unittest.mock import patch
-        swe = pytest.importorskip("swisseph")
+        from kerykeion.ephemeris_backend import swe
 
         original_calc_ut = swe.calc_ut
         call_count = [0]

@@ -6,7 +6,7 @@ and morning/evening star status calculations via swe.pheno_ut().
 """
 
 import pytest
-swe = pytest.importorskip("swisseph")
+from kerykeion.ephemeris_backend import swe
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, PlanetaryPhenomenaFactory
 

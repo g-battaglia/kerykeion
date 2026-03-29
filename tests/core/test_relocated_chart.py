@@ -57,7 +57,7 @@ class TestRelocatedSweReference:
 
     def test_relocated_asc_mc_match_swe(self, natal):
         """Factory relocated ASC and MC must match raw swe.houses_armc()."""
-        swe = pytest.importorskip("swisseph")
+        from kerykeion.ephemeris_backend import swe
         from pathlib import Path
 
         swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
@@ -92,7 +92,7 @@ class TestRelocatedSweReference:
 
     def test_relocated_tokyo_asc_mc_match_swe(self, natal):
         """Same check for Tokyo to ensure generalisation across locations."""
-        swe = pytest.importorskip("swisseph")
+        from kerykeion.ephemeris_backend import swe
         from pathlib import Path
 
         swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))

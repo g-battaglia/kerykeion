@@ -6,7 +6,7 @@ well-formed OccultationModel results using the Swiss Ephemeris.
 """
 
 import pytest
-swe = pytest.importorskip("swisseph")
+from kerykeion.ephemeris_backend import swe
 
 from kerykeion.occultations import OccultationFactory, OccultationModel
 

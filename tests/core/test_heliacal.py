@@ -7,7 +7,7 @@ with default atmospheric parameters.
 """
 
 import pytest
-swe = pytest.importorskip("swisseph")
+from kerykeion.ephemeris_backend import swe
 
 from kerykeion.heliacal import (
     HeliacalFactory,

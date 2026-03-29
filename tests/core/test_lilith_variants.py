@@ -3,7 +3,7 @@
 
 import math
 import pytest
-swe = pytest.importorskip("swisseph")
+from kerykeion.ephemeris_backend import swe
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from typing import List

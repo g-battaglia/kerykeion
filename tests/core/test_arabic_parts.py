@@ -377,7 +377,7 @@ class TestFallbackPaths:
         This is expected: _ensure_point_calculated does not catch exceptions,
         and the caller (_calculate_planets) handles them at a higher level.
         """
-        swe = pytest.importorskip("swisseph")
+        from kerykeion.ephemeris_backend import swe
 
         original_calc = swe.calc_ut
 

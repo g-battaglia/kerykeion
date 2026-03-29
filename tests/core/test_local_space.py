@@ -2,7 +2,7 @@
 """Tests for Local Space azimuth/altitude calculations."""
 
 import pytest
-swe = pytest.importorskip("swisseph")
+from kerykeion.ephemeris_backend import swe
 from kerykeion import AstrologicalSubjectFactory
 
 

@@ -2,7 +2,7 @@
 """Tests for the Gauquelin sectors feature."""
 
 import pytest
-swe = pytest.importorskip("swisseph")
+from kerykeion.ephemeris_backend import swe
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 

@@ -1476,7 +1476,7 @@ class TestMockErrorConditions:
     def test_planet_calculation_error_handling(self):
         """Test error handling when planet calculation fails (lines 1184-1187)."""
         from unittest.mock import patch
-        swe = pytest.importorskip("swisseph")
+        from kerykeion.ephemeris_backend import swe
 
         # Mock swe.calc_ut to raise an exception for a specific planet
         original_calc = swe.calc_ut
