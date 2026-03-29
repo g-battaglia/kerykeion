@@ -87,12 +87,22 @@ All activated via `AstrologicalSubjectFactory.from_birth_data()` keyword argumen
 
 - **Gauquelin grid centering:** The unified Gauquelin grid (220px wide) now shifts 30px left for better visual symmetry.
 
+### Ephemeris Backend Abstraction
+
+- **Dual-backend architecture**: Kerykeion now supports two interchangeable ephemeris backends -- **libephemeris** (pure Python, AGPL-3.0, default) and **swisseph** (C bindings, GPL-2.0, optional). Both are 100% API-compatible; all features work identically on both.
+- **libephemeris** uses NASA JPL DE440/DE441 ephemeris data via Skyfield. No C compiler required. Installed by default with `pip install kerykeion`.
+- **swisseph** remains available via `pip install kerykeion[swiss]` for users who need maximum speed or have existing GPL workflows.
+- Backend selection: auto-detected (libephemeris preferred) or explicit via `KERYKEION_BACKEND=swisseph|libephemeris` environment variable.
+- **Barycentric precision**: libephemeris uses JPL DE440 native barycentric coordinates (N-body gravitational dynamics), making it the more accurate backend for barycentric work.
+- Planetary longitude agreement < 0.02 deg across backends; house cusps < 0.05 deg; retrograde status always identical. See `site/docs/backend_precision_comparison.md` for full details.
+- Three test suites: `poe test:swe` (swisseph, 8659 tests), `poe test:lib` (libephemeris, 2460+ tests), `poe test:compare` (cross-backend equivalence).
+
 ### Internal / Deprecations
 
 - Removed v4 backward compatibility layer (`kr_types` module excluded from coverage, marked for deprecation).
 - Removed stale v6 planning docs (all features implemented and tested).
 - `SubscriptableBaseModel` added for dictionary-style field access on Pydantic models.
-- 2464+ tests passing (0 failures), including 50+ dedicated v6 feature tests and factory coverage at 98-100%.
+- 8700+ tests passing across both backends, including 50+ dedicated v6 feature tests and factory coverage at 98-100%.
 
 ## 5.12.0
 
