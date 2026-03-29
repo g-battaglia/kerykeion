@@ -1517,6 +1517,17 @@ def draw_gauquelin_unified_grid(
     # Multi-column thresholds
     thresholds = _gauquelin_grid_thresholds(n)
 
+    # Determine number of columns for header replication
+    t2, t3, t4 = thresholds
+    if n <= t2:
+        num_cols = 1
+    elif n <= t3:
+        num_cols = 2
+    elif n <= t4:
+        num_cols = 3
+    else:
+        num_cols = 4
+
     svg = f'<g transform="translate({x_position},{y_position})">'
 
     # Title
@@ -1525,17 +1536,19 @@ def draw_gauquelin_unified_grid(
         f'Gauquelin Sectors</text>'
     )
 
-    # Column headers
+    # Column headers — draw for each column so all columns have labels
     hdr_y = 24
     hdr_fs = max(fs - 1, 7)
-    svg += (
-        f'<g transform="translate(0,{hdr_y})" opacity="0.55">'
-        f'<text text-anchor="end" x="{COL_NAME_END}" style="fill:{text_color}; font-size:{hdr_fs}px;">Planet</text>'
-        f'<text x="{COL_LONG}" style="fill:{text_color}; font-size:{hdr_fs}px;">Longitude</text>'
-        f'<text x="{COL_DECL}" style="fill:{text_color}; font-size:{hdr_fs}px;">Decl.</text>'
-        f'<text text-anchor="end" x="{COL_SECTOR_END}" style="fill:{text_color}; font-size:{hdr_fs}px;">Sector</text>'
-        f'</g>'
-    )
+    for col in range(num_cols):
+        col_offset = -(_GAUQUELIN_COLUMN_WIDTH * col)
+        svg += (
+            f'<g transform="translate({col_offset},{hdr_y})" opacity="0.55">'
+            f'<text text-anchor="end" x="{COL_NAME_END}" style="fill:{text_color}; font-size:{hdr_fs}px;">Planet</text>'
+            f'<text x="{COL_LONG}" style="fill:{text_color}; font-size:{hdr_fs}px;">Longitude</text>'
+            f'<text x="{COL_DECL}" style="fill:{text_color}; font-size:{hdr_fs}px;">Decl.</text>'
+            f'<text text-anchor="end" x="{COL_SECTOR_END}" style="fill:{text_color}; font-size:{hdr_fs}px;">Sector</text>'
+            f'</g>'
+        )
 
     BASE_Y = 30  # Below title + header
 

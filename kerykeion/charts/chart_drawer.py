@@ -2500,8 +2500,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Even with balanced multi-column planet grids, the triangular aspect
         # grid (single-wheel charts) still scales with total active points,
         # so height must accommodate the full point count.
+        #
+        # The triangular aspect grid uses 14px boxes and grows upward from y=468.
+        # Its absolute top is: (default_aspect_offset + delta_height) + (468 - 14*n).
+        # Ensure this stays within the viewbox (>= -VERTICAL_PADDING_TOP).
         extra_points = active_points_count - 20
-        extra_height = extra_points * self._ROW_HEIGHT  # 8px per additional point
+        row_based_height = extra_points * self._ROW_HEIGHT  # 8px per additional point
+        aspect_grid_min_delta = max(0, 14 * active_points_count - 468 - 50 - self._VERTICAL_PADDING_TOP)
+        extra_height = max(row_based_height, aspect_grid_min_delta)
 
         self.height = max(self.height, minimum_height + extra_height)
 
@@ -2847,8 +2853,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             extents.extend([main_planet_grid_right, main_houses_grid_right])
 
         if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
-            # Triangular aspect grid at x_start=540, width ~ 14 * n_active
-            aspect_grid_right = 560 + 14 * n_active
+            # Triangular aspect grid at x_start=510+grid_shift (inside translate(35,...))
+            aspect_grid_right = 560 + grid_shift + 14 * n_active
             extents.append(aspect_grid_right)
 
         if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
@@ -3380,10 +3386,14 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict: Dictionary to populate with aspect SVG elements.
         """
         template_dict["makeDoubleChartAspectList"] = ""
+        # Shift the aspect grid rightward by the same amount as the planet/house
+        # grids so multi-column Gauquelin layouts don't overlap it.
+        aspect_x = 510 + self._grid_x_shift
         template_dict["makeAspectGrid"] = draw_aspect_grid(
             self.chart_colors_settings["paper_0"],
             self.available_planets_setting,
             self.aspects_list,
+            x_start=aspect_x,
         )
         template_dict["makeAspects"] = self._draw_all_aspects_lines(
             self.main_radius, self.main_radius - self.third_circle_radius
@@ -3620,10 +3630,14 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if has_gauquelin:
             from kerykeion.charts.charts_utils import draw_gauquelin_unified_grid
+            # Shift the Gauquelin grid 30px left for better symmetry: the unified
+            # grid (220px) replaces both planet grid (80px) + house grid (120px),
+            # and centering it in the same footprint requires a leftward nudge.
+            gauquelin_x_nudge = -30
             template_dict["makeMainPlanetGrid"] = draw_gauquelin_unified_grid(
                 celestial_points=self.available_kerykeion_celestial_points,
                 text_color=self.chart_colors_settings["paper_0"],
-                x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
+                x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift + gauquelin_x_nudge,
                 celestial_point_language=self._language_model.celestial_points,
             )
         else:

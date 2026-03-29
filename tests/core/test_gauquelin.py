@@ -117,3 +117,23 @@ class TestGauquelinSVG:
         svg_content = (tmp_path / "gauquelin_lines.svg").read_text()
         # Should have sector division lines
         assert svg_content.count("<line") > 12  # More than just house lines
+
+    def test_modern_style_gauquelin_no_house_lines(self, subject_with_gauquelin, tmp_path):
+        """Modern style with Gauquelin should NOT draw standard 12-house division lines."""
+        chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
+        drawer = ChartDrawer(chart_data=chart_data, theme="dark")
+        svg_content = drawer.generate_svg_string(style="modern")
+        # Should contain the modern horoscope group
+        assert "ModernHoroscope" in svg_content
+        # Should NOT contain standard house ring content (kr:node="HouseRing")
+        # The Gauquelin house ring replaces it without the HouseRing node
+        assert 'kr:slug="First_House"' not in svg_content
+
+    def test_modern_style_gauquelin_renders(self, subject_with_gauquelin, tmp_path):
+        """Modern style with Gauquelin sectors should render without errors."""
+        chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
+        drawer = ChartDrawer(chart_data=chart_data, theme="dark")
+        svg_content = drawer.generate_svg_string(style="modern")
+        assert len(svg_content) > 1000
+        # Should have many sector lines (36 sectors × 3 rings = ~108 lines)
+        assert svg_content.count("<line") > 36

@@ -1,5 +1,99 @@
 # Changelog
 
+## 6.0.0a1
+
+_2026-03-29_
+
+**First alpha release of Kerykeion v6 -- major feature release with 22 new astrological features, 8 new standalone factories, and 11 new celestial points.**
+
+All v6 features are **opt-in** -- existing code works unchanged with no breaking changes to the public API.
+
+### New Standalone Factories
+
+- **PrimaryDirectionsFactory** -- Placidus semi-arc primary directions with Ptolemy (1 deg = 1 year) and Naibod (0.9856 deg/year) rate keys. Computes speculum with equatorial coordinates, meridian distance, and semi-arc data.
+
+- **AstroCartographyFactory** -- Planetary line mapping (ACG). Computes MC, IC, ASC, DSC lines globally with configurable step size, geographic tolerance, and latitude range.
+
+- **EclipseFactory** -- Localized and global solar/lunar eclipse search. Returns eclipse type (total, annular, partial, penumbral), magnitude, obscuration, and sun altitude for visibility.
+
+- **PlanetaryPhenomenaFactory** -- Observational phenomena: phase angle, illumination, elongation, apparent diameter/magnitude, and morning/evening star detection for Mercury and Venus.
+
+- **PlanetaryNodesFactory** -- Ascending/descending nodes and perihelion/aphelion for all planets. Supports mean and osculating (instantaneous) calculation methods.
+
+- **HeliacalFactory** -- Heliacal rising, setting, evening first, and morning last events. Customizable atmospheric conditions (pressure, temperature, humidity, extinction) and observer parameters.
+
+- **OccultationFactory** -- Lunar occultation search (global and location-specific). Returns occultation type (total, partial, annular), maximum Julian Day, and datestamp.
+
+- **FixedStarDiscoveryFactory** -- Auto-discover fixed stars near natal planets beyond the default 23. Configurable orb tolerance, accesses the full Swiss Ephemeris star catalog.
+
+### New Chart Features
+
+- **Davison Composite Chart** -- New composite method that calculates the midpoint in both time and space (vs. existing zodiac-midpoint method). Available via `CompositeSubjectFactory.get_davison_composite_subject_model()`.
+
+- **Relocated Charts** (`RelocatedChartFactory`) -- Recalculate houses and angles for a different geographic location while keeping all planetary positions unchanged.
+
+### New Celestial Points
+
+- **8 Uranian / Hamburg School hypothetical planets:** Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon. Full SVG symbols, CSS color variables (all 6 themes), and chart default settings included.
+
+- **3 Lilith/Priapus variants:** Interpolated Lilith, Mean Priapus, and True Priapus (anti-Lilith points, opposite of Mean/True Lilith).
+
+### New Calculation Options
+
+All activated via `AstrologicalSubjectFactory.from_birth_data()` keyword arguments:
+
+- **`calculate_dignities=True`** -- Ptolemaic essential dignities. New fields: `decan_number`, `decan_ruler`, `term_ruler`, `essential_dignity` ("Domicile"/"Exaltation"/"Detriment"/"Fall"/"Peregrine"), `dignity_score` (-5 to +5).
+
+- **`calculate_nakshatra=True`** -- Vedic lunar mansions (27 Nakshatras). New fields: `nakshatra`, `nakshatra_number` (1-27), `nakshatra_pada` (1-4), `nakshatra_lord` (Vimsottari Dasha ruler).
+
+- **`calculate_gauquelin=True`** -- Gauquelin 36-sector system for statistical astrology. New field: `gauquelin_sector` (1.0-36.99). Full SVG rendering with sector lines replacing house cusps in both classic and modern chart styles.
+
+- **`calculate_local_space=True`** -- Horizon coordinates. New fields: `azimuth` (compass bearing 0-360) and `altitude_above_horizon` (degrees above/below horizon).
+
+- **`calculate_nutation=True`** -- Earth's nutation model. New model-level field: `nutation` (`NutationObliquityModel` with `true_obliquity`, `mean_obliquity`, `nutation_longitude`, `nutation_obliquity`).
+
+- **`active_fixed_stars=["Sirius", ...]`** -- Dynamically add fixed stars beyond the default 23-star catalog.
+
+### New Perspective Types
+
+- **Barycentric** perspective (solar system barycenter as origin). Added to the existing set: Apparent Geocentric, True Geocentric, Heliocentric, Topocentric, and 7 planetocentric variants (Seleno-, Mercury-, Venus-, Mars-, Jupiter-, Saturn-centric).
+
+### New Aspect Types
+
+- **Declination aspects:** `parallel` (same declination) and `contra_parallel` (opposite declination).
+
+### Enhanced Returns & Transits
+
+- **Heliocentric returns** and **Lunar Node Crossing** returns via `PlanetaryReturnFactory`.
+- **Transit exactness refinement** via bisection: `refine_exact_moments=True` with configurable `refinement_iterations` (default 12 = ~0.244s precision).
+
+### New Model Fields on KerykeionPointModel
+
+- `is_out_of_bounds: Optional[bool]` -- True when declination exceeds the Sun's maximum (~23.44°), indicating a planet operating outside normal boundaries. Always populated when declination is available.
+- All dignity, nakshatra, gauquelin, local space, and azimuth fields listed above.
+
+### Bug Fixes
+
+- **Modern style Gauquelin rendering:** Fixed three bugs that broke the modern chart wheel when Gauquelin sectors were active:
+  - House division lines (12 thick lines crossing the planet ring) were still drawn instead of 36 sector lines. Now correctly draws Gauquelin sector divisions through the planet ring.
+  - The inner house ring used wrong Y coordinates and inconsistent rotation sign, causing sector markers to render as a misplaced bar.
+  - Added new `_draw_gauquelin_division_lines()` function for sector lines in the planet ring.
+
+- **Multi-column grid headers:** When many active points cause the Gauquelin unified grid to split into multiple columns, the header row (Planet, Longitude, Decl., Sector) now appears on all columns instead of only the first.
+
+- **SVG height for many active points:** The triangular aspect grid grows by 14px per point but the SVG height was only growing by 8px per point. With 55+ active points, the aspect grid was clipped at the top. Height calculation now accounts for the aspect grid's actual growth rate.
+
+- **Aspect grid / planet grid overlap:** With multi-column Gauquelin layouts, the planet grid extends leftward and could overlap the aspect grid. The aspect grid X position now shifts rightward together with the planet grid.
+
+- **Gauquelin grid centering:** The unified Gauquelin grid (220px wide) now shifts 30px left for better visual symmetry.
+
+### Internal / Deprecations
+
+- Removed v4 backward compatibility layer (`kr_types` module excluded from coverage, marked for deprecation).
+- Removed stale v6 planning docs (all features implemented and tested).
+- `SubscriptableBaseModel` added for dictionary-style field access on Pydantic models.
+- 2464+ tests passing (0 failures), including 50+ dedicated v6 feature tests and factory coverage at 98-100%.
+
 ## 5.12.0
 
 _2026-03-18_

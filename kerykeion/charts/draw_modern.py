@@ -755,6 +755,30 @@ def _draw_indicator_line(
     return out
 
 
+def _draw_gauquelin_division_lines(
+    line_outer_y: float = HOUSE_LINE_OUTER_Y,
+    line_inner_y: float = HOUSE_LINE_INNER_Y,
+) -> str:
+    """Draw 36 Gauquelin sector division lines through the planet ring.
+
+    Replaces house division lines when Gauquelin mode is active.
+    Angular sectors (1, 10, 19, 28) get thicker lines.
+    """
+    out = ""
+    for i in range(36):
+        angle = i * 10.0
+        is_angular = (i % 9 == 0)
+        stroke_w = ANGULAR_STROKE_WIDTH if is_angular else NORMAL_STROKE_WIDTH
+
+        out += (
+            f'<line x1="{CENTER}" y1="{line_outer_y}" '
+            f'x2="{CENTER}" y2="{line_inner_y}" '
+            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'transform="rotate({angle:.6f} {CENTER} {CENTER})"/>\n'
+        )
+    return out
+
+
 def _draw_planet_ring(
     planets: list[KerykeionPointModel],
     planets_settings: list[dict],
@@ -770,6 +794,7 @@ def _draw_planet_ring(
     indicator_config: Union[dict, None] = None,
     horoscope_id: Union[str, None] = None,
     scale_config: Union[dict, None] = None,
+    gauquelin_sectors: bool = False,
 ) -> str:
     """
     Draw the planet ring with data clusters and indicator lines.
@@ -790,6 +815,7 @@ def _draw_planet_ring(
         horoscope_id: Optional kr:horoscope attribute value ("0" or "1").
         scale_config: Dict with planet_scale_base, degrees_font_size, sign_scale_base,
                       minutes_font_size, rx_font_size overrides.
+        gauquelin_sectors: If True, draw 36 sector lines instead of 12 house lines.
 
     Returns:
         SVG group string for the planet ring.
@@ -803,8 +829,11 @@ def _draw_planet_ring(
         f'stroke="{COLOR_STROKE}" stroke-width="0.25"/>\n'
     )
 
-    # House division lines through the planet ring
-    out += _draw_house_division_lines(houses, seventh_house_degree_ut, line_outer_y, line_inner_y)
+    # Division lines through the planet ring
+    if gauquelin_sectors:
+        out += _draw_gauquelin_division_lines(line_outer_y, line_inner_y)
+    else:
+        out += _draw_house_division_lines(houses, seventh_house_degree_ut, line_outer_y, line_inner_y)
 
     # Build planet angle data
     planets_with_angles = []
@@ -1097,10 +1126,10 @@ def _draw_gauquelin_house_ring(
         stroke_w = 0.5 if is_angular else 0.15
 
         out += (
-            f'<line x1="{CENTER}" y1="{R_HOUSE_OUTER}" '
-            f'x2="{CENTER}" y2="{R_HOUSE_INNER}" '
+            f'<line x1="{CENTER}" y1="{CENTER - R_HOUSE_OUTER}" '
+            f'x2="{CENTER}" y2="{CENTER - R_HOUSE_INNER}" '
             f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
-            f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
+            f'transform="rotate({angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 
     return out
@@ -1383,7 +1412,7 @@ def draw_modern_horoscope(
     else:
         out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring)
     out += _draw_ruler_ring()
-    out += _draw_planet_ring(planets, planets_settings, seventh_house_degree_ut, houses)
+    out += _draw_planet_ring(planets, planets_settings, seventh_house_degree_ut, houses, gauquelin_sectors=gauquelin_sectors)
     if gauquelin_sectors:
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut)
     else:
