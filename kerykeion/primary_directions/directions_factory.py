@@ -18,7 +18,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 from pathlib import Path
 from typing import List, Optional, Literal
 from pydantic import BaseModel, Field

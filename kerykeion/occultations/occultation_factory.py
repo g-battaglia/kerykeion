@@ -30,7 +30,7 @@ License: AGPL-3.0
 """
 
 import logging
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 
 from pathlib import Path
 from pydantic import Field

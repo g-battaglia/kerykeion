@@ -392,7 +392,7 @@ class TransitsTimeRangeFactory:
         Returns:
             Tuple of (refined_iso_datetime, refined_orb) or None if refinement fails.
         """
-        import swisseph as swe
+        from kerykeion.ephemeris_backend import swe
         from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
         from kerykeion.utilities import datetime_to_julian
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS

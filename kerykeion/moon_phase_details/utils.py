@@ -26,7 +26,7 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, Tuple
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 
 logger = logging.getLogger(__name__)
 

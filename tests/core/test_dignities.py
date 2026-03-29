@@ -6,7 +6,7 @@ triplicity, Egyptian terms, Chaldean decans, detriment, and fall.
 """
 
 import pytest
-import swisseph as swe
+swe = pytest.importorskip("swisseph")
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.dignities.dignity_factory import calculate_essential_dignity
 from kerykeion.dignities.dignity_data import (

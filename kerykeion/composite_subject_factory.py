@@ -413,7 +413,7 @@ class CompositeSubjectFactory:
         mid_lng = circular_mean(s1.lng + 180.0, s2.lng + 180.0) - 180.0
 
         # Convert midpoint JD to date components (UTC)
-        import swisseph as swe
+        from kerykeion.ephemeris_backend import swe
         year, month, day, hour_frac = swe.revjul(mid_jd)
         hour = int(hour_frac)
         minute = int((hour_frac - hour) * 60)

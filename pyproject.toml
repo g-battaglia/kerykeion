@@ -47,7 +47,7 @@ classifiers = [
 ]
 requires-python = ">=3.9"
 dependencies = [
-    "pyswisseph>=2.10.3.1",
+    "libephemeris>=1.0.0a4",
     "pydantic>=2.5",
     "scour>=0.38.2",
     "requests-cache>=1.2.1",
@@ -56,6 +56,10 @@ dependencies = [
     "pytz>=2024.2",
     "typing-extensions>=4.12.2",
 ]
+
+[project.optional-dependencies]
+swiss = ["pyswisseph>=2.10.3.1"]
+all = ["pyswisseph>=2.10.3.1", "libephemeris>=1.0.0a4"]
 
 [project.urls]
 Homepage = "https://www.kerykeion.net/"

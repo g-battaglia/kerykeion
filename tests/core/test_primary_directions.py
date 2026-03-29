@@ -3,7 +3,7 @@
 
 import math
 import pytest
-import swisseph as swe
+swe = pytest.importorskip("swisseph")
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, PrimaryDirectionsFactory
 

@@ -15,7 +15,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house

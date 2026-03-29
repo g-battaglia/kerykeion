@@ -6,7 +6,7 @@ Vimsottari Dasha lord assignments.
 """
 
 import pytest
-import swisseph as swe
+swe = pytest.importorskip("swisseph")
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.vedic.nakshatra_utils import calculate_nakshatra
 from kerykeion.vedic.nakshatra_data import NAKSHATRAS, NAKSHATRA_SPAN, PADA_SPAN

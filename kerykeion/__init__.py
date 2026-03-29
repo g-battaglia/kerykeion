@@ -100,6 +100,11 @@ from .schemas.kr_models import (
 from .settings import KerykeionSettingsModel
 from .context_serializer import to_context
 
+# =============================================================================
+# EPHEMERIS BACKEND
+# =============================================================================
+from .ephemeris_backend import BACKEND_NAME
+
 
 __all__ = [
     # Core Factories
@@ -140,4 +145,6 @@ __all__ = [
     # Settings and Utilities
     "KerykeionSettingsModel",
     "to_context",
+    # Ephemeris Backend
+    "BACKEND_NAME",
 ]

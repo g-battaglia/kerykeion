@@ -72,7 +72,7 @@ import calendar
 import logging
 from pathlib import Path
 
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 
 from datetime import datetime, timezone
 from typing import Union

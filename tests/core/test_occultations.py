@@ -5,7 +5,7 @@ Verifies that global and local lunar occultation searches return
 well-formed OccultationModel results using the Swiss Ephemeris.
 """
 
-import swisseph as swe
+swe = pytest.importorskip("swisseph")
 import pytest
 
 from kerykeion.occultations import OccultationFactory, OccultationModel

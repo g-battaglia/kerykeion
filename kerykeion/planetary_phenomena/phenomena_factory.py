@@ -18,7 +18,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,

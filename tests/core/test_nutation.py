@@ -2,7 +2,7 @@
 """Tests for the Nutation/Obliquity model."""
 
 import pytest
-import swisseph as swe
+swe = pytest.importorskip("swisseph")
 from kerykeion import AstrologicalSubjectFactory
 
 

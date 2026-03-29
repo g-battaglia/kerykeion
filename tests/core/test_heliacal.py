@@ -6,7 +6,7 @@ Verifies heliacal rising/setting calculations using swe.heliacal_ut()
 with default atmospheric parameters.
 """
 
-import swisseph as swe
+swe = pytest.importorskip("swisseph")
 import pytest
 
 from kerykeion.heliacal import (

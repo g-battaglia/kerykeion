@@ -146,7 +146,7 @@ class TestUranianSweReference:
     ])
     def test_uranian_longitude_matches_swe(self, subject_with_uranian, attr, swe_id):
         """Factory Uranian abs_pos must match swe.calc_ut() longitude."""
-        import swisseph as swe
+        swe = pytest.importorskip("swisseph")
         from pathlib import Path
 
         swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))

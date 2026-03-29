@@ -2,7 +2,7 @@
 """Tests for the Planetary Nodes & Apsides factory."""
 
 import pytest
-import swisseph as swe
+swe = pytest.importorskip("swisseph")
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, PlanetaryNodesFactory
 
