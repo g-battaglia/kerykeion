@@ -123,31 +123,51 @@ def compare_chart_svg(file_name: str, chart_svg: str) -> None:
 # =============================================================================
 
 
+_subject_cache: dict = {}
+
+
 def _make_john(name_suffix="", **kwargs):
-    """Create a John Lennon subject with optional suffix and overrides."""
-    name = f"John Lennon{' - ' + name_suffix if name_suffix else ''}"
-    return AstrologicalSubjectFactory.from_birth_data(
-        name, *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True, **kwargs
-    )
+    """Create a John Lennon subject with optional suffix and overrides.
+
+    Results are cached by (suffix, kwargs) to avoid redundant ephemeris
+    calculations across parametrized tests.
+    """
+    key = ("john", name_suffix, tuple(sorted(kwargs.items())))
+    if key not in _subject_cache:
+        name = f"John Lennon{' - ' + name_suffix if name_suffix else ''}"
+        _subject_cache[key] = AstrologicalSubjectFactory.from_birth_data(
+            name, *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True, **kwargs
+        )
+    return _subject_cache[key]
 
 
 def _make_paul(name_suffix="", **kwargs):
-    """Create a Paul McCartney subject with optional suffix and overrides."""
-    name = f"Paul McCartney{' - ' + name_suffix if name_suffix else ''}"
-    return AstrologicalSubjectFactory.from_birth_data(
-        name, *PAUL_MCCARTNEY_BIRTH_DATA, suppress_geonames_warning=True, **kwargs
-    )
+    """Create a Paul McCartney subject with optional suffix and overrides.
+
+    Results are cached by (suffix, kwargs) to avoid redundant ephemeris
+    calculations across parametrized tests.
+    """
+    key = ("paul", name_suffix, tuple(sorted(kwargs.items())))
+    if key not in _subject_cache:
+        name = f"Paul McCartney{' - ' + name_suffix if name_suffix else ''}"
+        _subject_cache[key] = AstrologicalSubjectFactory.from_birth_data(
+            name, *PAUL_MCCARTNEY_BIRTH_DATA, suppress_geonames_warning=True, **kwargs
+        )
+    return _subject_cache[key]
 
 
 def _make_sidereal_subject(name_suffix, sidereal_mode):
-    """Create a sidereal John Lennon subject."""
-    return AstrologicalSubjectFactory.from_birth_data(
-        f"John Lennon {name_suffix}",
-        *JOHN_LENNON_BIRTH_DATA,
-        zodiac_type="Sidereal",
-        sidereal_mode=sidereal_mode,
-        suppress_geonames_warning=True,
-    )
+    """Create a sidereal John Lennon subject (cached)."""
+    key = ("sidereal", name_suffix, sidereal_mode)
+    if key not in _subject_cache:
+        _subject_cache[key] = AstrologicalSubjectFactory.from_birth_data(
+            f"John Lennon {name_suffix}",
+            *JOHN_LENNON_BIRTH_DATA,
+            zodiac_type="Sidereal",
+            sidereal_mode=sidereal_mode,
+            suppress_geonames_warning=True,
+        )
+    return _subject_cache[key]
 
 
 def _make_return_factory(subject):
@@ -162,37 +182,25 @@ def _make_return_factory(subject):
 
 
 def _make_angelina():
-    return AstrologicalSubjectFactory.from_birth_data(
-        "Angelina Jolie",
-        1975,
-        6,
-        4,
-        9,
-        9,
-        "Los Angeles",
-        "US",
-        lng=-118.15,
-        lat=34.03,
-        tz_str="America/Los_Angeles",
-        suppress_geonames_warning=True,
-    )
+    key = ("angelina",)
+    if key not in _subject_cache:
+        _subject_cache[key] = AstrologicalSubjectFactory.from_birth_data(
+            "Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US",
+            lng=-118.15, lat=34.03, tz_str="America/Los_Angeles",
+            suppress_geonames_warning=True,
+        )
+    return _subject_cache[key]
 
 
 def _make_brad():
-    return AstrologicalSubjectFactory.from_birth_data(
-        "Brad Pitt",
-        1963,
-        12,
-        18,
-        6,
-        31,
-        "Shawnee",
-        "US",
-        lng=-96.56,
-        lat=35.20,
-        tz_str="America/Chicago",
-        suppress_geonames_warning=True,
-    )
+    key = ("brad",)
+    if key not in _subject_cache:
+        _subject_cache[key] = AstrologicalSubjectFactory.from_birth_data(
+            "Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US",
+            lng=-96.56, lat=35.20, tz_str="America/Chicago",
+            suppress_geonames_warning=True,
+        )
+    return _subject_cache[key]
 
 
 # =============================================================================
@@ -203,7 +211,7 @@ def _make_brad():
 class TestChartDrawerBasic:
     """Basic creation, properties, and attribute tests (from test_chart_drawer_complete.py)."""
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture(autouse=True, scope="class")
     def setup(self):
         self.subject = AstrologicalSubjectFactory.from_birth_data(
             name="Test Subject",

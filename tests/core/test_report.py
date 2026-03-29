@@ -208,40 +208,29 @@ def _make_offline_subject(
     )
 
 
+_report_cache: dict = {}
+
+
 def _snapshot_subject(**kwargs):
-    return AstrologicalSubjectFactory.from_birth_data(
-        name="Sample Natal Subject",
-        year=1990,
-        month=7,
-        day=21,
-        hour=14,
-        minute=45,
-        city="Liverpool",
-        nation="GB",
-        lat=53.4084,
-        lng=-2.9916,
-        tz_str="Europe/London",
-        online=False,
-        **kwargs,
-    )
+    key = ("snapshot_subject", tuple(sorted(kwargs.items())))
+    if key not in _report_cache:
+        _report_cache[key] = AstrologicalSubjectFactory.from_birth_data(
+            name="Sample Natal Subject", year=1990, month=7, day=21, hour=14, minute=45,
+            city="Liverpool", nation="GB", lat=53.4084, lng=-2.9916,
+            tz_str="Europe/London", online=False, **kwargs,
+        )
+    return _report_cache[key]
 
 
 def _snapshot_partner(**kwargs):
-    return AstrologicalSubjectFactory.from_birth_data(
-        name="Yoko Ono",
-        year=1933,
-        month=2,
-        day=18,
-        hour=20,
-        minute=30,
-        city="Tokyo",
-        nation="JP",
-        lat=35.6762,
-        lng=139.6503,
-        tz_str="Asia/Tokyo",
-        online=False,
-        **kwargs,
-    )
+    key = ("snapshot_partner", tuple(sorted(kwargs.items())))
+    if key not in _report_cache:
+        _report_cache[key] = AstrologicalSubjectFactory.from_birth_data(
+            name="Yoko Ono", year=1933, month=2, day=18, hour=20, minute=30,
+            city="Tokyo", nation="JP", lat=35.6762, lng=139.6503,
+            tz_str="Asia/Tokyo", online=False, **kwargs,
+        )
+    return _report_cache[key]
 
 
 def _snapshot_transit(**kwargs):
