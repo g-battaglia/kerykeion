@@ -573,6 +573,104 @@ def circular_sort(degrees: list[Union[int, float]]) -> list[Union[int, float]]:
 # =============================================================================
 
 
+def format_iso_display(iso_datetime_string: str, fmt: str = "%Y-%m-%d %H:%M") -> str:
+    """Format an ISO datetime string for display, supporting BCE dates.
+
+    For modern dates (year >= 1), delegates to ``datetime.fromisoformat`` +
+    ``strftime``.  For BCE dates (leading ``-``), parses the components
+    manually and applies a subset of strftime-style directives.
+
+    Supported format codes: ``%Y``, ``%m``, ``%d``, ``%H``, ``%M``, ``%S``.
+
+    Args:
+        iso_datetime_string: ISO 8601 string, possibly with a negative year.
+        fmt: strftime-compatible format string.
+
+    Returns:
+        Formatted date/time string.
+    """
+    if not iso_datetime_string.startswith("-"):
+        return datetime.fromisoformat(iso_datetime_string).strftime(fmt)
+
+    # Parse "-YYYY-MM-DDThh:mm:ss±HH:MM" manually
+    rest = iso_datetime_string[1:]  # strip leading minus
+    year_str, remainder = rest.split("-", 1)
+    year_str = "-" + year_str  # e.g. "-0500"
+    parts = remainder.split("T", 1)
+    date_tokens = parts[0].split("-")  # ["03", "21"]
+    time_str = parts[1] if len(parts) > 1 else "00:00:00"
+    # Strip timezone offset for time parsing
+    for i in range(len(time_str) - 1, 0, -1):
+        if time_str[i] in ("+", "-"):
+            time_str = time_str[:i]
+            break
+    time_tokens = time_str.split(":")  # ["12", "00", "00"]
+
+    result = fmt
+    result = result.replace("%Y", year_str)
+    result = result.replace("%m", date_tokens[0] if len(date_tokens) > 0 else "01")
+    result = result.replace("%d", date_tokens[1] if len(date_tokens) > 1 else "01")
+    result = result.replace("%H", time_tokens[0] if len(time_tokens) > 0 else "00")
+    result = result.replace("%M", time_tokens[1] if len(time_tokens) > 1 else "00")
+    result = result.replace("%S", time_tokens[2] if len(time_tokens) > 2 else "00")
+    return result
+
+
+def extract_year_from_iso(iso_datetime_string: str) -> int:
+    """Extract the year as an integer from an ISO datetime string, including BCE dates.
+
+    Args:
+        iso_datetime_string: ISO 8601 string, possibly with a negative year.
+
+    Returns:
+        Year as integer (e.g. -500, 0, 1940).
+    """
+    if iso_datetime_string.startswith("-"):
+        rest = iso_datetime_string[1:]
+        year_str, _ = rest.split("-", 1)
+        return -int(year_str)
+    return datetime.fromisoformat(iso_datetime_string).year
+
+
+def format_ancient_iso(
+    year: int, month: int, day: int, decimal_hour: float, utc_offset_hours: float
+) -> str:
+    """Format a date with potentially negative year as an ISO 8601 extended-year string.
+
+    Produces strings like ``"-0500-03-21T12:00:00+01:35"`` for dates that
+    Python's ``datetime`` cannot represent (year < 1).
+
+    Args:
+        year: Calendar year in astronomical numbering (0 = 1 BCE, −1 = 2 BCE, etc.).
+        month: Month (1–12).
+        day: Day of month (1–31).
+        decimal_hour: Hour as a decimal (e.g. 14.5 = 14:30:00).
+        utc_offset_hours: UTC offset in decimal hours (east-positive).
+
+    Returns:
+        ISO 8601 formatted string with extended year.
+    """
+    h = int(decimal_hour)
+    remainder = (decimal_hour - h) * 60
+    m = int(remainder)
+    s = int((remainder - m) * 60)
+
+    # ISO 8601 extended year: negative sign for years <= 0
+    year_str = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
+
+    # UTC offset string
+    if utc_offset_hours == 0.0:
+        offset_str = "+00:00"
+    else:
+        sign = "+" if utc_offset_hours >= 0 else "-"
+        abs_off = abs(utc_offset_hours)
+        oh = int(abs_off)
+        om = int(round((abs_off - oh) * 60))
+        offset_str = f"{sign}{oh:02d}:{om:02d}"
+
+    return f"{year_str}-{month:02d}-{day:02d}T{h:02d}:{m:02d}:{s:02d}{offset_str}"
+
+
 def datetime_to_julian(dt: datetime) -> float:
     """
     Convert a Python datetime object to Julian Day Number.

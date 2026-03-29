@@ -487,10 +487,6 @@ class TestTemporalCoverage:
     )
     def test_temporal_subject_creation(self, subject_data):
         """Test that subjects can be created for all temporal periods."""
-        # Python's datetime doesn't support years before 1 AD
-        if subject_data["year"] < 1:
-            pytest.skip(f"Python datetime doesn't support years before 1 AD: {subject_data['year']}")
-
         try:
             subject = create_subject_from_data(subject_data)
 

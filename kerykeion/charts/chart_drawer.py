@@ -77,7 +77,7 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.charts.draw_modern import draw_modern_horoscope, draw_modern_dual_horoscope
-from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg, distribute_percentages_to_100
+from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg, distribute_percentages_to_100, format_iso_display, extract_year_from_iso
 from kerykeion.settings.chart_defaults import (
     DEFAULT_CHART_COLORS,
     DEFAULT_CELESTIAL_POINTS_SETTINGS,
@@ -632,14 +632,14 @@ class CompositeChartRenderer(BaseChartRenderer):
         )
 
         template_dict["top_left_0"] = f"{d.first_obj.first_subject.name}"  # type: ignore[union-attr]
-        template_dict["top_left_1"] = datetime.fromisoformat(
+        template_dict["top_left_1"] = format_iso_display(
             d.first_obj.first_subject.iso_formatted_local_datetime  # type: ignore[union-attr]
-        ).strftime("%Y-%m-%d %H:%M")
+        )
         template_dict["top_left_2"] = f"{first_lat} {first_lng}"
         template_dict["top_left_3"] = d.first_obj.second_subject.name  # type: ignore[union-attr]
-        template_dict["top_left_4"] = datetime.fromisoformat(
+        template_dict["top_left_4"] = format_iso_display(
             d.first_obj.second_subject.iso_formatted_local_datetime  # type: ignore[union-attr]
-        ).strftime("%Y-%m-%d %H:%M")
+        )
         template_dict["top_left_5"] = f"{second_lat} / {second_lng}"
 
         # Bottom left section
@@ -3981,8 +3981,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         elif self.chart_type == "Transit":
             transit_label = self._translate("transits", "Transits")
-            date_obj = datetime.fromisoformat(self.second_obj.iso_formatted_local_datetime)  # type: ignore
-            date_str = date_obj.strftime("%Y-%m-%d")
+            date_str = format_iso_display(self.second_obj.iso_formatted_local_datetime, "%Y-%m-%d")  # type: ignore
             truncated_name = self._truncate_name(self.first_obj.name)
             return f"{truncated_name} - {transit_label} {date_str}"
 
@@ -3994,9 +3993,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             return f"{synastry_label}: {name1} {and_word} {name2}"
 
         elif self.chart_type == "DualReturnChart":
-            return_datetime = datetime.fromisoformat(self.second_obj.iso_formatted_local_datetime)  # type: ignore
-            year = return_datetime.year
-            month_year = return_datetime.strftime("%Y-%m")
+            year = extract_year_from_iso(self.second_obj.iso_formatted_local_datetime)  # type: ignore
+            month_year = format_iso_display(self.second_obj.iso_formatted_local_datetime, "%Y-%m")  # type: ignore
             truncated_name = self._truncate_name(self.first_obj.name)
             if (
                 self.second_obj is not None
@@ -4010,9 +4008,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 return f"{truncated_name} - {lunar_label} {month_year}"
 
         elif self.chart_type == "SingleReturnChart":
-            return_datetime = datetime.fromisoformat(self.first_obj.iso_formatted_local_datetime)  # type: ignore
-            year = return_datetime.year
-            month_year = return_datetime.strftime("%Y-%m")
+            year = extract_year_from_iso(self.first_obj.iso_formatted_local_datetime)  # type: ignore
+            month_year = format_iso_display(self.first_obj.iso_formatted_local_datetime, "%Y-%m")  # type: ignore
             truncated_name = self._truncate_name(self.first_obj.name)
             if isinstance(self.first_obj, PlanetReturnModel) and self.first_obj.return_type == "Solar":
                 solar_label = self._translate("solar_return", "Solar")

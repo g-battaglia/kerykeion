@@ -1924,12 +1924,41 @@ def format_datetime_with_timezone(iso_datetime_string: str) -> str:
     """
     Format an ISO datetime string with a custom format that includes properly formatted timezone.
 
+    Supports BCE dates (negative years in ISO 8601 extended format) that Python's
+    ``datetime.fromisoformat`` cannot parse.
+
     Args:
         iso_datetime_string: ISO formatted datetime string
 
     Returns:
         Formatted datetime string with properly formatted timezone offset (HH:MM)
     """
+    # BCE dates: negative-year ISO strings like "-0500-03-21T12:00:00+01:35"
+    # Python's datetime.fromisoformat cannot handle these.
+    if iso_datetime_string.startswith("-"):
+        # Split: "-0500-03-21T12:00:00+01:35" → year="-0500", rest="03-21T12:00:00+01:35"
+        # The year is everything up to the second hyphen (after the leading minus)
+        rest = iso_datetime_string[1:]  # "0500-03-21T12:00:00+01:35"
+        year_str, remainder = rest.split("-", 1)  # "0500", "03-21T12:00:00+01:35"
+        year_str = "-" + year_str  # "-0500"
+
+        # Extract date and time parts
+        date_part, time_with_tz = remainder.split("T", 1)  # "03-21", "12:00:00+01:35"
+        month_day = date_part  # "03-21"
+
+        # Extract timezone offset (last +HH:MM or -HH:MM)
+        for tz_sep_idx in range(len(time_with_tz) - 1, -1, -1):
+            if time_with_tz[tz_sep_idx] in ("+", "-"):
+                time_part = time_with_tz[:tz_sep_idx]  # "12:00:00"
+                tz_part = time_with_tz[tz_sep_idx:]  # "+01:35"
+                break
+        else:
+            time_part = time_with_tz
+            tz_part = ""
+
+        hm = time_part[:5]  # "12:00"
+        return f"{year_str}-{month_day} {hm} [{tz_part}]"
+
     dt = datetime.datetime.fromisoformat(iso_datetime_string)
     custom_format = dt.strftime("%Y-%m-%d %H:%M [%z]")
     custom_format = custom_format[:-3] + ":" + custom_format[-3:]

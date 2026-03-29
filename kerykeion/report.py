@@ -5,7 +5,7 @@ from typing import List, Optional, Sequence, Tuple, Union, Literal
 
 from simple_ascii_tables import AsciiTable
 
-from kerykeion.utilities import get_available_astrological_points_list, get_houses_list
+from kerykeion.utilities import get_available_astrological_points_list, get_houses_list, format_iso_display
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     ChartDataModel,
@@ -826,8 +826,8 @@ class ReportGenerator:
         if not iso_datetime:
             return None
         try:
-            return datetime.fromisoformat(iso_datetime).strftime("%Y")
-        except ValueError:
+            return format_iso_display(iso_datetime, "%Y")
+        except (ValueError, IndexError):
             return None
 
     @staticmethod
@@ -841,8 +841,8 @@ class ReportGenerator:
         if not iso_datetime:
             return ""
         try:
-            return datetime.fromisoformat(iso_datetime).strftime("%d/%m/%Y")
-        except ValueError:
+            return format_iso_display(iso_datetime, "%d/%m/%Y")
+        except (ValueError, IndexError):
             return iso_datetime
 
     @staticmethod
@@ -855,8 +855,8 @@ class ReportGenerator:
         if not iso_datetime:
             return ""
         try:
-            return datetime.fromisoformat(iso_datetime).strftime("%Y-%m-%d")
-        except ValueError:
+            return format_iso_display(iso_datetime, "%Y-%m-%d")
+        except (ValueError, IndexError):
             return iso_datetime
 
 

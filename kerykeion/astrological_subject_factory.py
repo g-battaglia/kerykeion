@@ -60,6 +60,7 @@ from kerykeion.utilities import (
     check_and_adjust_polar_latitude,
     calculate_moon_phase,
     datetime_to_julian,
+    format_ancient_iso,
     normalize_zodiac_type,
 )
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
@@ -1339,6 +1340,11 @@ class AstrologicalSubjectFactory:
         Handles timezone-aware conversion from local civil time to UTC and astronomical
         Julian Day Number, including proper DST handling and timezone localization.
 
+        For dates before 1 AD (year < 1), Python's datetime cannot represent the date.
+        In that case, the method delegates to ``_calculate_time_conversions_bce`` which
+        bypasses datetime/pytz entirely and uses the ephemeris backend's Julian Day
+        functions directly with Local Mean Time (LMT) for timezone offset.
+
         Args:
             data (Dict[str, Any]): Calculation data dictionary containing time components
                 (year, month, day, hour, minute, seconds) and optional DST flag.
@@ -1359,6 +1365,11 @@ class AstrologicalSubjectFactory:
             (spring forward). The method raises an exception for ambiguous times unless
             the is_dst parameter is explicitly set to True or False.
         """
+        # BCE dates: bypass datetime/pytz (Python datetime doesn't support year < 1)
+        if data["year"] < 1:
+            AstrologicalSubjectFactory._calculate_time_conversions_bce(data, location)
+            return
+
         # Convert local time to UTC
         local_timezone = pytz.timezone(location.tz_str)
         naive_datetime = datetime(
@@ -1385,6 +1396,68 @@ class AstrologicalSubjectFactory:
 
         # Calculate Julian day
         data["julian_day"] = datetime_to_julian(utc_datetime)
+
+    @staticmethod
+    def _calculate_time_conversions_bce(data: Dict[str, Any], location: LocationData) -> None:
+        """
+        Calculate time conversions for BCE dates (year < 1 in astronomical numbering).
+
+        For dates before 1 AD, Python's ``datetime`` cannot represent the date, so we
+        bypass it entirely and use the ephemeris backend's Julian Day functions directly.
+
+        **Timezone handling:** standardized time zones did not exist before the 19th
+        century.  The input time is interpreted as Local Mean Time (LMT) and converted
+        to Universal Time (UT) using the longitude-based offset (1 hour per 15° of
+        longitude, east-positive).
+
+        **Calendar:** all dates with ``year < 1`` predate the Gregorian reform
+        (15 Oct 1582), so the Julian calendar (``SE_JUL_CAL``) is used.
+
+        **Year convention:** astronomical year numbering — year 0 = 1 BCE,
+        year −1 = 2 BCE, year −2 = 3 BCE, etc.
+
+        Args:
+            data: Calculation data dictionary with year, month, day, hour, minute,
+                seconds keys.
+            location: Location data with ``lng`` for LMT offset calculation.
+
+        Side Effects:
+            Updates *data* with ``iso_formatted_utc_datetime``,
+            ``iso_formatted_local_datetime``, and ``julian_day``.
+        """
+        year = data["year"]
+        month = data["month"]
+        day = data["day"]
+        hour = data["hour"]
+        minute = data["minute"]
+        seconds = data["seconds"]
+
+        decimal_hour = hour + minute / 60.0 + seconds / 3600.0
+
+        # All BCE dates predate the Gregorian reform — use Julian calendar
+        cal_flag = swe.SE_JUL_CAL
+
+        # Compute Julian Day for the input time (treated as local solar time)
+        jd_local = swe.julday(year, month, day, decimal_hour, cal_flag)
+
+        # Local Mean Time offset: 1 hour per 15° of longitude (east = ahead of UT)
+        lmt_offset_hours = location.lng / 15.0
+
+        # Convert from Local Mean Time to Universal Time
+        jd_ut = jd_local - lmt_offset_hours / 24.0
+
+        data["julian_day"] = jd_ut
+
+        # Local datetime: the user's input with LMT offset notation
+        data["iso_formatted_local_datetime"] = format_ancient_iso(
+            year, month, day, decimal_hour, lmt_offset_hours
+        )
+
+        # UTC datetime: derived from the UT Julian Day
+        ut_year, ut_month, ut_day, ut_dec_hour = swe.revjul(jd_ut, cal_flag)
+        data["iso_formatted_utc_datetime"] = format_ancient_iso(
+            int(ut_year), int(ut_month), int(ut_day), ut_dec_hour, 0.0
+        )
 
     @staticmethod
     def _calculate_houses(
@@ -2181,19 +2254,29 @@ class AstrologicalSubjectFactory:
         """
         Calculate the day of the week for the given astronomical event.
 
-        Determines the day of the week corresponding to the local datetime
-        using the standard library for consistency.
+        For modern dates (year >= 1), uses ``datetime.strftime``.
+        For BCE dates (year < 1), computes from the Julian Day Number directly
+        since Python's ``datetime`` cannot represent those dates.
 
         Args:
             data (Dict[str, Any]): Calculation data dictionary containing
-                iso_formatted_local_datetime. Updated with the calculated day_of_week string.
+                iso_formatted_local_datetime (or julian_day for BCE dates).
+                Updated with the calculated day_of_week string.
 
         Side Effects:
             Updates data dictionary with:
             - day_of_week: Human-readable day name (e.g., "Monday", "Tuesday")
         """
-        dt = datetime.fromisoformat(data["iso_formatted_local_datetime"])
-        data["day_of_week"] = dt.strftime("%A")
+        _DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+        if data.get("year", 1) < 1:
+            # BCE dates: compute from Julian Day (floor(jd + 0.5) % 7 → 0=Mon … 6=Sun)
+            jd = data["julian_day"]
+            day_index = int(math.floor(jd + 0.5)) % 7
+            data["day_of_week"] = _DAY_NAMES[day_index]
+        else:
+            dt = datetime.fromisoformat(data["iso_formatted_local_datetime"])
+            data["day_of_week"] = dt.strftime("%A")
 
 
 if __name__ == "__main__":
