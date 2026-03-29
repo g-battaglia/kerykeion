@@ -83,12 +83,18 @@ sub-0.02 deg deltas as tropical positions.
 | True Geocentric               | Full     | Full         |
 | Heliocentric                  | Full     | Full         |
 | Topocentric                   | Full     | Full         |
-| Barycentric                   | Full     | Partial (\*) |
+| Barycentric                   | Full     | Full         |
 
-(\*) libephemeris supports the barycentric flag but the resulting Sun
-position may show a large offset (~24 deg in tests) because the JPL
-DE440 barycenter definition differs from Swiss Ephemeris. Other bodies
-are unaffected. **Recommendation**: use swisseph for barycentric work.
+**Barycentric note**: libephemeris uses the JPL DE440 native barycentric
+reference frame, which is the authoritative source for solar-system
+barycenter coordinates. Swiss Ephemeris derives barycentric positions
+from its internal heliocentric frame via a Sun-barycenter offset. The
+two approaches produce noticeably different Sun positions (~24 deg in
+tests) because the JPL definition of the solar-system barycenter
+accounts for the full N-body gravitational dynamics, while Swiss
+Ephemeris uses a simplified model. **For barycentric work,
+libephemeris is the more accurate backend** as it relies directly on
+JPL's numerical integration.
 
 ---
 
@@ -135,6 +141,21 @@ The libephemeris mode is controlled by the `KERYKEION_LEB_MODE` env var
 
 ---
 
+## Edge-case behavioural differences
+
+These differences do not affect chart interpretation but are observable
+in automated test comparisons:
+
+| Area | Behaviour |
+| ---- | --------- |
+| **Aspect movement** | Very slow planet pairs (e.g. Pluto-Chiron) may be classified differently ("Static" vs "Applying") because tiny speed differences cross the threshold. |
+| **Aspect list at orb boundaries** | A few aspects near the orb limit may appear in one backend and not the other, producing slightly different aspect tables. |
+| **SVG chart layout** | Small position differences cause different overlap-resolution paths in the chart renderer, producing structurally different (but visually equivalent) SVG output. |
+| **Minor bodies on ancient dates** | For dates before ~1550 CE, libephemeris may return `None` for TNOs (Eris, Sedna, etc.), Juno, and Vesta because the underlying SPK segments do not cover that range. swisseph falls back to its built-in Moshier analytical ephemeris and still returns a value. |
+| **Uranian hypothetical planets** | Positions agree within ~1 deg. The larger tolerance reflects differences in how each backend evaluates the Hamburg School polynomial series for bodies 40-47. |
+
+---
+
 ## Test suite tolerances
 
 The cross-backend test tolerances used in the project reflect the
@@ -157,5 +178,5 @@ For natal chart interpretation, transit analysis, synastry, and all
 standard astrological work, **both backends produce equivalent results**.
 Choose based on your constraints:
 
-- **libephemeris** (default): no C compiler, AGPL-3.0, pure Python
-- **swisseph**: faster, GPL-2.0, needed for barycentric precision
+- **libephemeris** (default): no C compiler, AGPL-3.0, pure Python, more accurate barycentric
+- **swisseph**: fastest option (C), GPL-2.0, broader minor-body coverage on ancient dates
