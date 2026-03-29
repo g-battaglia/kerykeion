@@ -30,7 +30,7 @@ License: AGPL-3.0
 """
 
 import logging
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 from pathlib import Path
 from pydantic import Field
@@ -39,7 +39,7 @@ from typing import List
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 # Set ephemeris path at module load
-swe.set_ephe_path(str(Path(__file__).parent.parent / "sweph"))
+swe.set_ephe_path(EPHE_DATA_PATH)
 
 logger = logging.getLogger(__name__)
 

@@ -160,8 +160,8 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Moon    | trine △       | Saturn                | 0.54° | Static = |
 | Mercury | trine △       | Saturn                | 2.88° | Static = |
 | Venus   | trine △       | Jupiter               | 0.44° | Static = |
-| Venus   | sextile ⚹     | True North Lunar Node | 0.22° | Static = |
-| Venus   | trine △       | True South Lunar Node | 0.22° | Static = |
+| Venus   | sextile ⚹     | True North Lunar Node | 0.21° | Static = |
+| Venus   | trine △       | True South Lunar Node | 0.21° | Static = |
 | Jupiter | opposition ☍  | True North Lunar Node | 0.23° | Static = |
 | Jupiter | conjunction ☌ | True South Lunar Node | 0.23° | Static = |
 +---------+---------------+-----------------------+-------+----------+

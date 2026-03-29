@@ -72,7 +72,7 @@ import calendar
 import logging
 from pathlib import Path
 
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 from datetime import datetime, timezone
 from typing import Union
@@ -764,7 +764,7 @@ class PlanetaryReturnFactory:
         if planet_id is None:
             raise KerykeionException(f"Unknown planet for heliocentric return: {planet_name}")
 
-        swe.set_ephe_path(str(Path(__file__).parent / "sweph"))
+        swe.set_ephe_path(EPHE_DATA_PATH)
 
         # Get natal heliocentric longitude
         natal_data = swe.calc_ut(self.subject.julian_day, planet_id, swe.FLG_SWIEPH | swe.FLG_HELCTR)
@@ -794,7 +794,7 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the node crossing chart.
         """
-        swe.set_ephe_path(str(Path(__file__).parent / "sweph"))
+        swe.set_ephe_path(EPHE_DATA_PATH)
         result = swe.mooncross_node_ut(start_jd, swe.FLG_SWIEPH)
         crossing_jd = result[0]
         swe.close()

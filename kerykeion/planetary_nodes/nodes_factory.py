@@ -17,7 +17,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -29,7 +29,7 @@ from pydantic import Field
 
 logger = logging.getLogger(__name__)
 
-_EPHE_PATH = str(Path(__file__).parent.parent / "sweph")
+_EPHE_PATH = EPHE_DATA_PATH
 
 NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
 NODBIT_OSCU = getattr(swe, "NODBIT_OSCU", 2)

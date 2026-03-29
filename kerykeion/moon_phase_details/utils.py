@@ -26,7 +26,7 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, Tuple
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -130,7 +130,7 @@ def configure_ephemeris_path() -> int:
     """
     global _EPHEMERIS_CONFIG
     if _EPHEMERIS_CONFIG is None:
-        ephe_path = str(Path(__file__).parents[1].absolute() / "sweph")
+        ephe_path = EPHE_DATA_PATH
         swe.set_ephe_path(ephe_path)
         _EPHEMERIS_CONFIG = swe.FLG_SWIEPH
     return _EPHEMERIS_CONFIG

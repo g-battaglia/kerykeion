@@ -138,6 +138,23 @@ else:
 swe = _backend_module
 
 # ---------------------------------------------------------------------------
+# Ephemeris data path (shared by both backends)
+# ---------------------------------------------------------------------------
+# Default: the ``kerykeion/sweph/`` directory bundled with the package.
+# Override via ``KERYKEION_EPHE_PATH`` environment variable, e.g.:
+#
+#     KERYKEION_EPHE_PATH=/Volumes/Data/libephemeris python my_script.py
+#
+# All factories call ``swe.set_ephe_path(EPHE_DATA_PATH)`` at init time.
+
+from pathlib import Path as _Path
+
+_default_ephe_path = str(_Path(__file__).parent.absolute() / "sweph")
+EPHE_DATA_PATH: str = os.environ.get("KERYKEION_EPHE_PATH", _default_ephe_path).strip()
+
+logger.debug("Ephemeris data path: %s", EPHE_DATA_PATH)
+
+# ---------------------------------------------------------------------------
 # libephemeris: enforce .leb binary ephemeris mode
 # ---------------------------------------------------------------------------
 # When libephemeris is active, force the "leb" calculation mode so that
@@ -156,4 +173,4 @@ if BACKEND_NAME == "libephemeris":
     _backend_module.set_calc_mode(_leb_mode)
     logger.debug("libephemeris calc mode set to: %s", _leb_mode)
 
-__all__ = ["swe", "BACKEND_NAME"]
+__all__ = ["swe", "BACKEND_NAME", "EPHE_DATA_PATH"]

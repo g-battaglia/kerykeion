@@ -18,7 +18,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -28,7 +28,7 @@ from kerykeion.schemas.kr_models import (
 
 logger = logging.getLogger(__name__)
 
-_EPHE_PATH = str(Path(__file__).parent.parent / "sweph")
+_EPHE_PATH = EPHE_DATA_PATH
 
 # Planets for which phenomena are meaningful (not fixed stars, nodes, etc.)
 _PHENOMENA_PLANETS = {

@@ -21,7 +21,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional, Sequence, Tuple
 
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
@@ -109,7 +109,7 @@ class HeliacalFactory:
 
     def __init__(self, ephe_path: Optional[str] = None) -> None:
         if ephe_path is None:
-            ephe_path = str(Path(__file__).parents[1].absolute() / "sweph")
+            ephe_path = EPHE_DATA_PATH
         swe.set_ephe_path(ephe_path)
 
     # ------------------------------------------------------------------ #

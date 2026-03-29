@@ -31,7 +31,7 @@ License: AGPL-3.0
 """
 
 import pytz
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 import logging
 import math
 from datetime import datetime
@@ -867,7 +867,7 @@ class AstrologicalSubjectFactory:
         # Calculate time conversions
         AstrologicalSubjectFactory._calculate_time_conversions(calc_data, location)
         # Initialize Swiss Ephemeris and calculate houses and planets with context manager
-        ephe_path = str(Path(__file__).parent.absolute() / "sweph")
+        ephe_path = EPHE_DATA_PATH
         with ephemeris_context(
             ephe_path=ephe_path,
             config=config,

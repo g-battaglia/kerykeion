@@ -9,7 +9,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import logging
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 from pathlib import Path
 from typing import List, Optional
 
@@ -79,7 +79,7 @@ class FixedStarDiscoveryFactory:
             List of KerykeionPointModel for each prominent star found.
         """
         if catalog_path is None:
-            catalog_path = str(Path(__file__).parent.parent / "sweph" / "sefstars.txt")
+            catalog_path = str(Path(EPHE_DATA_PATH) / "sefstars.txt")
 
         star_names = _parse_star_names_from_catalog(catalog_path)
         if not star_names:
@@ -109,7 +109,7 @@ class FixedStarDiscoveryFactory:
                 houses_degree_ut.append(h.abs_pos)
 
         # Setup ephemeris
-        ephe_path = str(Path(__file__).parent.parent / "sweph")
+        ephe_path = EPHE_DATA_PATH
         swe.set_ephe_path(ephe_path)
         iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
         jd = subject.julian_day

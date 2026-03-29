@@ -187,11 +187,11 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mercury               | square □      | Mean Lilith           | 3.00° | Static = |
 | Venus                 | trine △       | Jupiter               | 0.44° | Static = |
 | Venus                 | sextile ⚹     | Uranus                | 5.90° | Static = |
-| Venus                 | sextile ⚹     | True North Lunar Node | 0.22° | Static = |
+| Venus                 | sextile ⚹     | True North Lunar Node | 0.21° | Static = |
 | Venus                 | sextile ⚹     | Chiron                | 0.94° | Static = |
 | Venus                 | opposition ☍  | Ascendant             | 0.63° | Static = |
 | Venus                 | conjunction ☌ | Descendant            | 0.63° | Static = |
-| Venus                 | trine △       | True South Lunar Node | 0.22° | Static = |
+| Venus                 | trine △       | True South Lunar Node | 0.21° | Static = |
 | Mars                  | trine △       | Neptune               | 0.37° | Static = |
 | Jupiter               | opposition ☍  | Uranus                | 6.34° | Static = |
 | Jupiter               | opposition ☍  | True North Lunar Node | 0.23° | Static = |
@@ -209,13 +209,13 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Uranus                | opposition ☍  | True South Lunar Node | 6.11° | Static = |
 | Pluto                 | square □      | Chiron                | 3.51° | Static = |
 | True North Lunar Node | trine △       | Chiron                | 0.72° | Static = |
-| True North Lunar Node | trine △       | Ascendant             | 0.41° | Static = |
-| True North Lunar Node | sextile ⚹     | Descendant            | 0.41° | Static = |
+| True North Lunar Node | trine △       | Ascendant             | 0.42° | Static = |
+| True North Lunar Node | sextile ⚹     | Descendant            | 0.42° | Static = |
 | True North Lunar Node | opposition ☍  | Mean Lilith           | 8.22° | Static = |
 | Chiron                | trine △       | Ascendant             | 0.31° | Static = |
 | Chiron                | sextile ⚹     | Descendant            | 0.31° | Static = |
 | Chiron                | sextile ⚹     | True South Lunar Node | 0.72° | Static = |
-| Ascendant             | sextile ⚹     | True South Lunar Node | 0.41° | Static = |
-| Descendant            | trine △       | True South Lunar Node | 0.41° | Static = |
+| Ascendant             | sextile ⚹     | True South Lunar Node | 0.42° | Static = |
+| Descendant            | trine △       | True South Lunar Node | 0.42° | Static = |
 | Mean Lilith           | conjunction ☌ | True South Lunar Node | 8.22° | Static = |
 +-----------------------+---------------+-----------------------+-------+----------+

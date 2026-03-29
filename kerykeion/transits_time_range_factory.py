@@ -392,7 +392,7 @@ class TransitsTimeRangeFactory:
         Returns:
             Tuple of (refined_iso_datetime, refined_orb) or None if refinement fails.
         """
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
         from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
         from kerykeion.utilities import datetime_to_julian
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -432,7 +432,7 @@ class TransitsTimeRangeFactory:
                     aspect_settings[0]["orb"] = aa["orb"]
                     break
 
-            ephe_path = str(Path(__file__).parent / "sweph")
+            ephe_path = EPHE_DATA_PATH
             swe.set_ephe_path(ephe_path)
             iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 

@@ -148,6 +148,23 @@ directory = "htmlcov"
 "test:all" = "pytest tests/ -m 'not online'"
 "test:all:cov" = "pytest tests/ -m 'not online' --cov=kerykeion --cov-report=term-missing --cov-report=html"
 
+# Backend-specific test suites (identical tests, different ephemeris engine)
+[tool.poe.tasks."test:lib"]
+cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_backend_comparison.py --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
+help = "Run core tests with libephemeris backend"
+[tool.poe.tasks."test:lib".env]
+KERYKEION_BACKEND = "libephemeris"
+
+[tool.poe.tasks."test:swe"]
+cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_backend_comparison.py --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
+help = "Run core tests with swisseph backend"
+[tool.poe.tasks."test:swe".env]
+KERYKEION_BACKEND = "swisseph"
+
+[tool.poe.tasks."test:compare"]
+cmd = "pytest tests/core/test_backend_comparison.py -v"
+help = "Compare libephemeris vs swisseph results (both must be installed)"
+
 # Coverage — same tiers with coverage report (terminal + HTML in htmlcov/)
 "test:core:cov" = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py --cov --cov-report=term-missing --cov-report=html"
 "test:base:cov" = "pytest tests/ --tier=base -m 'not online' --cov --cov-report=term-missing --cov-report=html"

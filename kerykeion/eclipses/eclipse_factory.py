@@ -17,14 +17,14 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from pydantic import Field
 
 logger = logging.getLogger(__name__)
 
-_EPHE_PATH = str(Path(__file__).parent.parent / "sweph")
+_EPHE_PATH = EPHE_DATA_PATH
 
 # Eclipse type constants (handle SE_ prefix variance across pyswisseph builds)
 ECL_TOTAL = getattr(swe, "SE_ECL_TOTAL", getattr(swe, "ECL_TOTAL", 4))

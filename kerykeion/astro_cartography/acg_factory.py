@@ -17,7 +17,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 from pathlib import Path
 from typing import List, Optional, Dict, Literal
 from pydantic import BaseModel, Field
@@ -81,7 +81,7 @@ class AstroCartographyFactory:
         if planets is None:
             planets = AstroCartographyFactory.PLANETS
 
-        ephe_path = str(Path(__file__).parent.parent / "sweph")
+        ephe_path = EPHE_DATA_PATH
         swe.set_ephe_path(ephe_path)
         iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 

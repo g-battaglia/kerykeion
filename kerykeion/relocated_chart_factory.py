@@ -15,12 +15,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
 
-_EPHE_PATH = str(Path(__file__).parent / "sweph")
+_EPHE_PATH = EPHE_DATA_PATH
 
 
 class RelocatedChartFactory:

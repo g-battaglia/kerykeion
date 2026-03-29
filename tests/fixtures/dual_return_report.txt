@@ -54,47 +54,47 @@ Sample Natal Subject — Solar Return Comparison 1991
 +Natal Subject Celestial Points---+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Sco ♏️ | 5.82°    | +245.7250°/d | N/A     | -    | First House   |
+| Ascendant             | Sco ♏️ | 5.82°    | +245.7251°/d | N/A     | -    | First House   |
 | Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House   |
-| Descendant            | Tau ♉️ | 5.82°    | +245.7250°/d | N/A     | -    | Seventh House |
+| Descendant            | Tau ♉️ | 5.82°    | +245.7251°/d | N/A     | -    | Seventh House |
 | Imum Coeli            | Aqu ♒️ | 19.91°   | +367.6409°/d | N/A     | -    | Fourth House  |
-| Sun                   | Can ♋️ | 28.54°   | +0.9551°/d   | +20.45° | -    | Ninth House   |
-| Moon                  | Can ♋️ | 21.21°   | +14.4024°/d  | +23.21° | -    | Ninth House   |
-| Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d   | +16.88° | -    | Ninth House   |
-| Venus                 | Can ♋️ | 1.71°    | +1.2038°/d   | +22.74° | -    | Eighth House  |
-| Mars                  | Tau ♉️ | 5.97°    | +0.6554°/d   | +11.57° | -    | Seventh House |
-| Jupiter               | Can ♋️ | 23.91°   | +0.2240°/d   | +21.56° | -    | Ninth House   |
-| Saturn                | Cap ♑️ | 21.52°   | -0.0732°/d   | -21.66° | R    | Third House   |
-| Uranus                | Cap ♑️ | 6.74°    | -0.0366°/d   | -23.60° | R    | Second House  |
-| Neptune               | Cap ♑️ | 12.76°   | -0.0257°/d   | -21.96° | R    | Third House   |
+| Sun                   | Can ♋️ | 28.54°   | +0.9550°/d   | +20.45° | -    | Ninth House   |
+| Moon                  | Can ♋️ | 21.21°   | +14.4025°/d  | +23.21° | -    | Ninth House   |
+| Mercury               | Leo ♌️ | 17.61°   | +1.6908°/d   | +16.88° | -    | Ninth House   |
+| Venus                 | Can ♋️ | 1.71°    | +1.2037°/d   | +22.74° | -    | Eighth House  |
+| Mars                  | Tau ♉️ | 5.97°    | +0.6553°/d   | +11.57° | -    | Seventh House |
+| Jupiter               | Can ♋️ | 23.91°   | +0.2239°/d   | +21.56° | -    | Ninth House   |
+| Saturn                | Cap ♑️ | 21.52°   | -0.0733°/d   | -21.66° | R    | Third House   |
+| Uranus                | Cap ♑️ | 6.74°    | -0.0367°/d   | -23.60° | R    | Second House  |
+| Neptune               | Cap ♑️ | 12.76°   | -0.0258°/d   | -21.96° | R    | Third House   |
 | Pluto                 | Sco ♏️ | 14.97°   | -0.0025°/d   | -1.42°  | R    | First House   |
-| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0090°/d   | -18.46° | R    | Third House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0090°/d   | +18.46° | R    | Ninth House   |
+| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d   | -18.46° | R    | Third House   |
+| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0080°/d   | +18.46° | R    | Ninth House   |
 | Mean Lilith           | Sco ♏️ | 28.99°   | +0.1119°/d   | -24.62° | -    | First House   |
-| Chiron                | Can ♋️ | 19.88°   | +0.1071°/d   | +15.79° | -    | Ninth House   |
+| Chiron                | Can ♋️ | 19.88°   | +0.1070°/d   | +15.79° | -    | Ninth House   |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 
 +Return Subject Celestial Points--+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Cap ♑️ | 13.82°   | +409.8309°/d | N/A     | -    | First House   |
-| Medium Coeli          | Sco ♏️ | 21.77°   | +355.0355°/d | N/A     | -    | Tenth House   |
-| Descendant            | Can ♋️ | 13.82°   | +409.8309°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Tau ♉️ | 21.77°   | +355.0355°/d | N/A     | -    | Fourth House  |
+| Ascendant             | Cap ♑️ | 13.82°   | +409.8346°/d | N/A     | -    | First House   |
+| Medium Coeli          | Sco ♏️ | 21.77°   | +355.0356°/d | N/A     | -    | Tenth House   |
+| Descendant            | Can ♋️ | 13.82°   | +409.8346°/d | N/A     | -    | Seventh House |
+| Imum Coeli            | Tau ♉️ | 21.77°   | +355.0356°/d | N/A     | -    | Fourth House  |
 | Sun                   | Can ♋️ | 28.54°   | +0.9544°/d   | +20.45° | -    | Seventh House |
-| Moon                  | Sag ♐️ | 4.63°    | +11.9553°/d  | -24.70° | -    | Tenth House   |
-| Mercury               | Leo ♌️ | 25.32°   | +1.1015°/d   | +12.70° | -    | Seventh House |
+| Moon                  | Sag ♐️ | 4.63°    | +11.9545°/d  | -24.70° | -    | Tenth House   |
+| Mercury               | Leo ♌️ | 25.32°   | +1.1013°/d   | +12.70° | -    | Seventh House |
 | Venus                 | Vir ♍️ | 5.30°    | +0.3635°/d   | +7.49°  | -    | Seventh House |
 | Mars                  | Vir ♍️ | 3.87°    | +0.6178°/d   | +11.07° | -    | Seventh House |
 | Jupiter               | Leo ♌️ | 18.64°   | +0.2120°/d   | +15.95° | -    | Seventh House |
-| Saturn                | Aqu ♒️ | 3.89°    | -0.0738°/d   | -19.74° | R    | First House   |
-| Uranus                | Cap ♑️ | 11.13°   | -0.0379°/d   | -23.35° | R    | Twelfth House |
+| Saturn                | Aqu ♒️ | 3.89°    | -0.0739°/d   | -19.74° | R    | First House   |
+| Uranus                | Cap ♑️ | 11.13°   | -0.0380°/d   | -23.35° | R    | Twelfth House |
 | Neptune               | Cap ♑️ | 15.01°   | -0.0261°/d   | -21.79° | R    | First House   |
-| Pluto                 | Sco ♏️ | 17.58°   | -0.0040°/d   | -2.43°  | R    | Ninth House   |
-| True North Lunar Node | Cap ♑️ | 18.94°   | +0.0212°/d   | -22.10° | -    | First House   |
-| True South Lunar Node | Can ♋️ | 18.94°   | -0.0212°/d   | +22.10° | -    | Seventh House |
+| Pluto                 | Sco ♏️ | 17.58°   | -0.0039°/d   | -2.43°  | R    | Ninth House   |
+| True North Lunar Node | Cap ♑️ | 18.94°   | +0.0160°/d   | -22.10° | -    | First House   |
+| True South Lunar Node | Can ♋️ | 18.94°   | -0.0160°/d   | +22.10° | -    | Seventh House |
 | Mean Lilith           | Cap ♑️ | 9.64°    | +0.1108°/d   | -23.88° | -    | Twelfth House |
-| Chiron                | Leo ♌️ | 0.02°    | +0.1160°/d   | +13.98° | -    | Seventh House |
+| Chiron                | Leo ♌️ | 0.02°    | +0.1159°/d   | +13.98° | -    | Seventh House |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 
 +Natal Subject Houses (Placidus)------+-------------------+
@@ -320,13 +320,13 @@ Sample Natal Subject — Solar Return Comparison 1991
 | Saturn                | Sample Natal Subject | opposition ☍  | Sun                   | Sample Natal Subject Solar Return | 7.03° | Separating ← |
 | Saturn                | Sample Natal Subject | conjunction ☌ | Neptune               | Sample Natal Subject Solar Return | 6.50° | Separating ← |
 | Saturn                | Sample Natal Subject | sextile ⚹     | Pluto                 | Sample Natal Subject Solar Return | 3.94° | Separating ← |
-| Saturn                | Sample Natal Subject | conjunction ☌ | True North Lunar Node | Sample Natal Subject Solar Return | 2.58° | Applying →   |
+| Saturn                | Sample Natal Subject | conjunction ☌ | True North Lunar Node | Sample Natal Subject Solar Return | 2.57° | Applying →   |
 | Saturn                | Sample Natal Subject | opposition ☍  | Chiron                | Sample Natal Subject Solar Return | 8.50° | Separating ← |
 | Saturn                | Sample Natal Subject | conjunction ☌ | Ascendant             | Sample Natal Subject Solar Return | 7.69° | Applying →   |
 | Saturn                | Sample Natal Subject | sextile ⚹     | Medium Coeli          | Sample Natal Subject Solar Return | 0.26° | Separating ← |
 | Saturn                | Sample Natal Subject | opposition ☍  | Descendant            | Sample Natal Subject Solar Return | 7.69° | Applying →   |
 | Saturn                | Sample Natal Subject | trine △       | Imum Coeli            | Sample Natal Subject Solar Return | 0.26° | Separating ← |
-| Saturn                | Sample Natal Subject | opposition ☍  | True South Lunar Node | Sample Natal Subject Solar Return | 2.58° | Separating ← |
+| Saturn                | Sample Natal Subject | opposition ☍  | True South Lunar Node | Sample Natal Subject Solar Return | 2.57° | Separating ← |
 | Uranus                | Sample Natal Subject | trine △       | Venus                 | Sample Natal Subject Solar Return | 1.43° | Applying →   |
 | Uranus                | Sample Natal Subject | trine △       | Mars                  | Sample Natal Subject Solar Return | 2.86° | Applying →   |
 | Uranus                | Sample Natal Subject | conjunction ☌ | Uranus                | Sample Natal Subject Solar Return | 4.40° | Applying →   |

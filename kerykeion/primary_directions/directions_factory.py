@@ -18,7 +18,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 from pathlib import Path
 from typing import List, Optional, Literal
 from pydantic import BaseModel, Field
@@ -101,7 +101,7 @@ class PrimaryDirectionsFactory:
         rate = 1.0 if rate_key == "ptolemy" else 0.98564
 
         # Setup ephemeris
-        ephe_path = str(Path(__file__).parent.parent / "sweph")
+        ephe_path = EPHE_DATA_PATH
         swe.set_ephe_path(ephe_path)
 
         jd = subject.julian_day
@@ -182,7 +182,7 @@ class PrimaryDirectionsFactory:
     @staticmethod
     def compute_speculum(subject: AstrologicalSubjectModel) -> List[SpeculumEntry]:
         """Compute and return the speculum (coordinate table) for a chart."""
-        ephe_path = str(Path(__file__).parent.parent / "sweph")
+        ephe_path = EPHE_DATA_PATH
         swe.set_ephe_path(ephe_path)
         jd = subject.julian_day
         iflag = swe.FLG_SWIEPH | swe.FLG_SPEED

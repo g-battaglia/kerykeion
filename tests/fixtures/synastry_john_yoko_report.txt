@@ -55,45 +55,45 @@ John Lennon & Yoko Ono — Synastry Report
 +First Subject Celestial Points---+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Ari ♈️ | 19.71°   | +886.9442°/d | N/A     | -    | First House    |
-| Medium Coeli          | Cap ♑️ | 7.06°    | +332.1251°/d | N/A     | -    | Tenth House    |
-| Descendant            | Lib ♎️ | 19.71°   | +886.9442°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Can ♋️ | 7.06°    | +332.1251°/d | N/A     | -    | Fourth House   |
+| Ascendant             | Ari ♈️ | 19.71°   | +886.9308°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑️ | 7.06°    | +332.1254°/d | N/A     | -    | Tenth House    |
+| Descendant            | Lib ♎️ | 19.71°   | +886.9308°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Can ♋️ | 7.06°    | +332.1254°/d | N/A     | -    | Fourth House   |
 | Sun                   | Lib ♎️ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
-| Moon                  | Aqu ♒️ | 3.55°    | +12.5292°/d  | -14.60° | -    | Eleventh House |
-| Mercury               | Sco ♏️ | 8.56°    | +1.3195°/d   | -16.23° | -    | Seventh House  |
+| Moon                  | Aqu ♒️ | 3.55°    | +12.5279°/d  | -14.60° | -    | Eleventh House |
+| Mercury               | Sco ♏️ | 8.56°    | +1.3193°/d   | -16.23° | -    | Seventh House  |
 | Venus                 | Vir ♍️ | 3.22°    | +1.1337°/d   | +10.57° | -    | Sixth House    |
 | Mars                  | Lib ♎️ | 2.66°    | +0.6449°/d   | -0.18°  | -    | Sixth House    |
-| Jupiter               | Tau ♉️ | 13.69°   | -0.1069°/d   | +14.61° | R    | First House    |
-| Saturn                | Tau ♉️ | 13.22°   | -0.0669°/d   | +13.30° | R    | First House    |
-| Uranus                | Tau ♉️ | 25.55°   | -0.0294°/d   | +18.88° | R    | First House    |
+| Jupiter               | Tau ♉️ | 13.69°   | -0.1070°/d   | +14.61° | R    | First House    |
+| Saturn                | Tau ♉️ | 13.22°   | -0.0670°/d   | +13.30° | R    | First House    |
+| Uranus                | Tau ♉️ | 25.55°   | -0.0295°/d   | +18.88° | R    | First House    |
 | Neptune               | Vir ♍️ | 26.03°   | +0.0353°/d   | +2.68°  | -    | Sixth House    |
-| Pluto                 | Leo ♌️ | 4.19°    | +0.0114°/d   | +23.12° | -    | Fifth House    |
-| True North Lunar Node | Lib ♎️ | 11.03°   | +0.0001°/d   | -4.36°  | -    | Sixth House    |
-| True South Lunar Node | Ari ♈️ | 11.03°   | -0.0001°/d   | +4.36°  | -    | Twelfth House  |
+| Pluto                 | Leo ♌️ | 4.19°    | +0.0112°/d   | +23.12° | -    | Fifth House    |
+| True North Lunar Node | Lib ♎️ | 11.02°   | +0.0059°/d   | -4.36°  | -    | Sixth House    |
+| True South Lunar Node | Ari ♈️ | 11.02°   | -0.0059°/d   | +4.36°  | -    | Twelfth House  |
 | Mean Lilith           | Ari ♈️ | 13.37°   | +0.1107°/d   | +5.05°  | -    | Twelfth House  |
-| Chiron                | Leo ♌️ | 0.57°    | +0.0529°/d   | +13.41° | -    | Fifth House    |
+| Chiron                | Leo ♌️ | 0.57°    | +0.0528°/d   | +13.41° | -    | Fifth House    |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
 
 +Second Subject Celestial Points--+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
 | Ascendant             | Lib ♎️ | 8.41°    | +299.6097°/d | N/A     | -    | First House    |
-| Medium Coeli          | Can ♋️ | 9.31°    | +332.7994°/d | N/A     | -    | Tenth House    |
+| Medium Coeli          | Can ♋️ | 9.31°    | +332.7998°/d | N/A     | -    | Tenth House    |
 | Descendant            | Ari ♈️ | 8.41°    | +299.6097°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Cap ♑️ | 9.31°    | +332.7994°/d | N/A     | -    | Fourth House   |
+| Imum Coeli            | Cap ♑️ | 9.31°    | +332.7998°/d | N/A     | -    | Fourth House   |
 | Sun                   | Aqu ♒️ | 29.38°   | +1.0085°/d   | -11.70° | -    | Fifth House    |
-| Moon                  | Sag ♐️ | 11.13°   | +14.2183°/d  | -27.33° | -    | Third House    |
-| Mercury               | Pis ♓️ | 7.89°    | +1.8561°/d   | -9.86°  | -    | Fifth House    |
+| Moon                  | Sag ♐️ | 11.13°   | +14.2197°/d  | -27.33° | -    | Third House    |
+| Mercury               | Pis ♓️ | 7.89°    | +1.8559°/d   | -9.86°  | -    | Fifth House    |
 | Venus                 | Aqu ♒️ | 13.79°   | +1.2483°/d   | -17.56° | -    | Fifth House    |
-| Mars                  | Vir ♍️ | 15.13°   | -0.3444°/d   | +9.78°  | R    | Twelfth House  |
-| Jupiter               | Vir ♍️ | 20.70°   | -0.1138°/d   | +5.03°  | R    | Twelfth House  |
-| Saturn                | Aqu ♒️ | 9.74°    | +0.1150°/d   | -18.38° | -    | Fourth House   |
+| Mars                  | Vir ♍️ | 15.13°   | -0.3445°/d   | +9.78°  | R    | Twelfth House  |
+| Jupiter               | Vir ♍️ | 20.70°   | -0.1139°/d   | +5.03°  | R    | Twelfth House  |
+| Saturn                | Aqu ♒️ | 9.74°    | +0.1149°/d   | -18.38° | -    | Fourth House   |
 | Uranus                | Ari ♈️ | 20.55°   | +0.0405°/d   | +7.49°  | -    | Seventh House  |
-| Neptune               | Vir ♍️ | 9.08°    | -0.0273°/d   | +8.96°  | R    | Eleventh House |
-| Pluto                 | Can ♋️ | 21.63°   | -0.0164°/d   | +22.66° | R    | Tenth House    |
-| True North Lunar Node | Pis ♓️ | 7.80°    | -0.0059°/d   | -8.65°  | R    | Fifth House    |
-| True South Lunar Node | Vir ♍️ | 7.80°    | +0.0059°/d   | +8.65°  | R    | Eleventh House |
+| Neptune               | Vir ♍️ | 9.08°    | -0.0274°/d   | +8.96°  | R    | Eleventh House |
+| Pluto                 | Can ♋️ | 21.63°   | -0.0165°/d   | +22.66° | R    | Tenth House    |
+| True North Lunar Node | Pis ♓️ | 7.80°    | -0.0063°/d   | -8.65°  | R    | Fifth House    |
+| True South Lunar Node | Vir ♍️ | 7.80°    | +0.0063°/d   | +8.65°  | R    | Eleventh House |
 | Mean Lilith           | Gem ♊️ | 2.52°    | +0.1121°/d   | +25.69° | -    | Eighth House   |
 | Chiron                | Tau ♉️ | 23.74°   | +0.0192°/d   | +15.49° | -    | Eighth House   |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
@@ -172,8 +172,8 @@ John Lennon & Yoko Ono — Synastry Report
 | John Lennon – Uranus                | 1 (First_House)     | 8 (Eighth_House)    | Tau  | 25.55° |
 | John Lennon – Neptune               | 6 (Sixth_House)     | 12 (Twelfth_House)  | Vir  | 26.03° |
 | John Lennon – Pluto                 | 5 (Fifth_House)     | 10 (Tenth_House)    | Leo  | 4.19°  |
-| John Lennon – True North Lunar Node | 6 (Sixth_House)     | 1 (First_House)     | Lib  | 11.03° |
-| John Lennon – True South Lunar Node | 12 (Twelfth_House)  | 7 (Seventh_House)   | Ari  | 11.03° |
+| John Lennon – True North Lunar Node | 6 (Sixth_House)     | 1 (First_House)     | Lib  | 11.02° |
+| John Lennon – True South Lunar Node | 12 (Twelfth_House)  | 7 (Seventh_House)   | Ari  | 11.02° |
 | John Lennon – Mean Lilith           | 12 (Twelfth_House)  | 7 (Seventh_House)   | Ari  | 13.37° |
 | John Lennon – Chiron                | 5 (Fifth_House)     | 10 (Tenth_House)    | Leo  | 0.57°  |
 | John Lennon – Ascendant             | 1 (First_House)     | 7 (Seventh_House)   | Ari  | 19.71° |
@@ -312,10 +312,10 @@ John Lennon & Yoko Ono — Synastry Report
 | Venus                 | John Lennon | opposition ☍  | Sun                   | Yoko Ono | 3.84° | Static = |
 | Venus                 | John Lennon | opposition ☍  | Mercury               | Yoko Ono | 4.68° | Static = |
 | Venus                 | John Lennon | conjunction ☌ | Neptune               | Yoko Ono | 5.86° | Static = |
-| Venus                 | John Lennon | opposition ☍  | True North Lunar Node | Yoko Ono | 4.58° | Static = |
+| Venus                 | John Lennon | opposition ☍  | True North Lunar Node | Yoko Ono | 4.59° | Static = |
 | Venus                 | John Lennon | trine △       | Imum Coeli            | Yoko Ono | 6.09° | Static = |
 | Venus                 | John Lennon | square □      | Mean Lilith           | Yoko Ono | 0.70° | Static = |
-| Venus                 | John Lennon | conjunction ☌ | True South Lunar Node | Yoko Ono | 4.58° | Static = |
+| Venus                 | John Lennon | conjunction ☌ | True South Lunar Node | Yoko Ono | 4.59° | Static = |
 | Mars                  | John Lennon | trine △       | Saturn                | Yoko Ono | 7.07° | Static = |
 | Mars                  | John Lennon | quintile Q    | Pluto                 | Yoko Ono | 0.97° | Static = |
 | Mars                  | John Lennon | conjunction ☌ | Ascendant             | Yoko Ono | 5.75° | Static = |
@@ -337,15 +337,15 @@ John Lennon & Yoko Ono — Synastry Report
 | Saturn                | John Lennon | trine △       | Jupiter               | Yoko Ono | 7.48° | Static = |
 | Saturn                | John Lennon | square □      | Saturn                | Yoko Ono | 3.48° | Static = |
 | Saturn                | John Lennon | trine △       | Neptune               | Yoko Ono | 4.14° | Static = |
-| Saturn                | John Lennon | sextile ⚹     | True North Lunar Node | Yoko Ono | 5.42° | Static = |
+| Saturn                | John Lennon | sextile ⚹     | True North Lunar Node | Yoko Ono | 5.41° | Static = |
 | Saturn                | John Lennon | sextile ⚹     | Medium Coeli          | Yoko Ono | 3.91° | Static = |
 | Saturn                | John Lennon | trine △       | Imum Coeli            | Yoko Ono | 3.91° | Static = |
-| Saturn                | John Lennon | trine △       | True South Lunar Node | Yoko Ono | 5.42° | Static = |
+| Saturn                | John Lennon | trine △       | True South Lunar Node | Yoko Ono | 5.41° | Static = |
 | Uranus                | John Lennon | square □      | Sun                   | Yoko Ono | 3.83° | Static = |
 | Uranus                | John Lennon | trine △       | Jupiter               | Yoko Ono | 4.86° | Static = |
 | Uranus                | John Lennon | sextile ⚹     | Pluto                 | Yoko Ono | 3.92° | Static = |
 | Uranus                | John Lennon | conjunction ☌ | Chiron                | Yoko Ono | 1.82° | Static = |
-| Uranus                | John Lennon | conjunction ☌ | Mean Lilith           | Yoko Ono | 6.97° | Static = |
+| Uranus                | John Lennon | conjunction ☌ | Mean Lilith           | Yoko Ono | 6.96° | Static = |
 | Neptune               | John Lennon | conjunction ☌ | Jupiter               | Yoko Ono | 5.33° | Static = |
 | Neptune               | John Lennon | sextile ⚹     | Pluto                 | Yoko Ono | 4.40° | Static = |
 | Neptune               | John Lennon | trine △       | Chiron                | Yoko Ono | 2.29° | Static = |
@@ -353,10 +353,10 @@ John Lennon & Yoko Ono — Synastry Report
 | Pluto                 | John Lennon | trine △       | Moon                  | Yoko Ono | 6.94° | Static = |
 | Pluto                 | John Lennon | opposition ☍  | Venus                 | Yoko Ono | 9.60° | Static = |
 | Pluto                 | John Lennon | opposition ☍  | Saturn                | Yoko Ono | 5.55° | Static = |
-| Pluto                 | John Lennon | sextile ⚹     | Ascendant             | Yoko Ono | 4.22° | Static = |
-| Pluto                 | John Lennon | trine △       | Descendant            | Yoko Ono | 4.22° | Static = |
+| Pluto                 | John Lennon | sextile ⚹     | Ascendant             | Yoko Ono | 4.23° | Static = |
+| Pluto                 | John Lennon | trine △       | Descendant            | Yoko Ono | 4.23° | Static = |
 | Pluto                 | John Lennon | sextile ⚹     | Mean Lilith           | Yoko Ono | 1.67° | Static = |
-| True North Lunar Node | John Lennon | sextile ⚹     | Moon                  | Yoko Ono | 0.10° | Static = |
+| True North Lunar Node | John Lennon | sextile ⚹     | Moon                  | Yoko Ono | 0.11° | Static = |
 | True North Lunar Node | John Lennon | trine △       | Venus                 | Yoko Ono | 2.76° | Static = |
 | True North Lunar Node | John Lennon | trine △       | Saturn                | Yoko Ono | 1.29° | Static = |
 | True North Lunar Node | John Lennon | opposition ☍  | Uranus                | Yoko Ono | 9.52° | Static = |
@@ -399,7 +399,7 @@ John Lennon & Yoko Ono — Synastry Report
 | Mean Lilith           | John Lennon | square □      | Medium Coeli          | Yoko Ono | 4.07° | Static = |
 | Mean Lilith           | John Lennon | conjunction ☌ | Descendant            | Yoko Ono | 4.96° | Static = |
 | Mean Lilith           | John Lennon | square □      | Imum Coeli            | Yoko Ono | 4.07° | Static = |
-| True South Lunar Node | John Lennon | trine △       | Moon                  | Yoko Ono | 0.10° | Static = |
+| True South Lunar Node | John Lennon | trine △       | Moon                  | Yoko Ono | 0.11° | Static = |
 | True South Lunar Node | John Lennon | sextile ⚹     | Venus                 | Yoko Ono | 2.76° | Static = |
 | True South Lunar Node | John Lennon | sextile ⚹     | Saturn                | Yoko Ono | 1.29° | Static = |
 | True South Lunar Node | John Lennon | conjunction ☌ | Uranus                | Yoko Ono | 9.52° | Static = |
