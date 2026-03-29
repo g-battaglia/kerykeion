@@ -3,7 +3,9 @@
 
 import pytest
 from datetime import datetime, timedelta
+from unittest.mock import patch
 from kerykeion import AstrologicalSubjectFactory
+from kerykeion.ephemeris_backend import swe as _swe_module
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
 
@@ -168,6 +170,7 @@ class TestTransitRefinement:
             assert event.min_orb >= 0
 
 
+@pytest.mark.xdist_group("transit_mock")
 class TestRefineExactMomentEdgeCases:
     """Test edge-case/error paths in _refine_exact_moment."""
 
@@ -217,9 +220,8 @@ class TestRefineExactMomentEdgeCases:
 
     def test_refine_calc_ut_exception_returns_none(self, transit_factory):
         """If swe.calc_ut raises during refinement, should return None."""
-        from unittest.mock import patch
-        with patch(
-            "swisseph.calc_ut",
+        with patch.object(
+            _swe_module, "calc_ut",
             side_effect=RuntimeError("Mock swe failure"),
         ):
             result = transit_factory._refine_exact_moment(
@@ -247,10 +249,7 @@ class TestRefineExactMomentEdgeCases:
 
     def test_refine_quarter_point_exception_returns_none(self, transit_factory):
         """If swe.calc_ut raises during quarter-point evaluation, should return None."""
-        from unittest.mock import patch
-        from kerykeion.ephemeris_backend import swe
-
-        original_calc_ut = swe.calc_ut
+        original_calc_ut = _swe_module.calc_ut
         call_count = [0]
 
         def mock_calc_ut(jd, planet_id, iflag):
@@ -260,7 +259,7 @@ class TestRefineExactMomentEdgeCases:
                 return original_calc_ut(jd, planet_id, iflag)
             raise RuntimeError("Mock quarter-point failure")
 
-        with patch("swisseph.calc_ut", side_effect=mock_calc_ut):
+        with patch.object(_swe_module, "calc_ut", side_effect=mock_calc_ut):
             result = transit_factory._refine_exact_moment(
                 p1_name="Sun",
                 p2_name="Moon",

@@ -14,6 +14,7 @@ from pytest import approx
 from typing import Dict, Any
 
 from kerykeion import AstrologicalSubjectFactory
+from kerykeion.ephemeris_backend import BACKEND_NAME
 
 from tests.data.test_subjects_matrix import (
     TEMPORAL_SUBJECTS,
@@ -110,7 +111,8 @@ def create_subject_from_id(subject_id: str, house_system: str = "P"):
 # TOLERANCE CONSTANTS
 # =============================================================================
 
-POSITION_ABS_TOL = 1e-2  # 0.01 degrees (36 arcseconds)
+# Cross-backend: libephemeris house cusps may differ from swisseph by a few arcminutes.
+POSITION_ABS_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
 
 
 # =============================================================================

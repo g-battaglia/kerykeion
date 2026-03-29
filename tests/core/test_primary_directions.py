@@ -255,6 +255,14 @@ class TestPrimaryDirectionEdgeCases:
         from unittest.mock import patch
         import math as real_math
 
+        # Create the subject outside the mock so that ephemeris calculations
+        # are not affected by the math.acos mock.
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Test", 1990, 1, 1, 12, 0,
+            lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False,
+        )
+
         original_acos = real_math.acos
         call_count = [0]
 
@@ -267,13 +275,7 @@ class TestPrimaryDirectionEdgeCases:
             return original_acos(x)
 
         with patch("kerykeion.primary_directions.directions_factory.math.acos", side_effect=mock_acos):
-            speculum = PrimaryDirectionsFactory.compute_speculum(
-                AstrologicalSubjectFactory.from_birth_data(
-                    "Test", 1990, 1, 1, 12, 0,
-                    lng=0.0, lat=51.5, tz_str="Etc/GMT",
-                    city="Greenwich", nation="GB", online=False,
-                )
-            )
+            speculum = PrimaryDirectionsFactory.compute_speculum(subject)
             # Should still produce entries (using dsa=90 fallback)
             assert len(speculum) > 0
 
@@ -281,6 +283,14 @@ class TestPrimaryDirectionEdgeCases:
         """Force pole calculation to raise via mock to hit lines 278-279."""
         from unittest.mock import patch
         import math as real_math
+
+        # Create the subject outside the mock so that ephemeris calculations
+        # are not affected by the math.sin mock (call count differs per backend).
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Test", 1990, 1, 1, 12, 0,
+            lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False,
+        )
 
         original_sin = real_math.sin
         call_count = [0]
@@ -297,13 +307,7 @@ class TestPrimaryDirectionEdgeCases:
             return result
 
         with patch("kerykeion.primary_directions.directions_factory.math.sin", side_effect=mock_sin):
-            speculum = PrimaryDirectionsFactory.compute_speculum(
-                AstrologicalSubjectFactory.from_birth_data(
-                    "Test", 1990, 1, 1, 12, 0,
-                    lng=0.0, lat=51.5, tz_str="Etc/GMT",
-                    city="Greenwich", nation="GB", online=False,
-                )
-            )
+            speculum = PrimaryDirectionsFactory.compute_speculum(subject)
             # Should still produce entries (using pole=0 fallback)
             assert len(speculum) > 0
 

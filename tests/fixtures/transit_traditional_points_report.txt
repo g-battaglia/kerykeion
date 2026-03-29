@@ -55,29 +55,29 @@ Sample Natal Subject — Transit 1980-12-08
 +Natal Subject Celestial Points---+----------+-------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed       | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
-| Sun                   | Can ♋️ | 28.54°   | +0.9550°/d  | +20.45° | -    | Ninth House   |
-| Moon                  | Can ♋️ | 21.21°   | +14.4025°/d | +23.21° | -    | Ninth House   |
-| Mercury               | Leo ♌️ | 17.61°   | +1.6908°/d  | +16.88° | -    | Ninth House   |
-| Venus                 | Can ♋️ | 1.71°    | +1.2037°/d  | +22.74° | -    | Eighth House  |
-| Mars                  | Tau ♉️ | 5.97°    | +0.6553°/d  | +11.57° | -    | Seventh House |
-| Jupiter               | Can ♋️ | 23.91°   | +0.2239°/d  | +21.56° | -    | Ninth House   |
-| Saturn                | Cap ♑️ | 21.52°   | -0.0733°/d  | -21.66° | R    | Third House   |
-| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d  | -18.46° | R    | Third House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0080°/d  | +18.46° | R    | Ninth House   |
+| Sun                   | Can ♋️ | 28.54°   | +0.9551°/d  | +20.45° | -    | Ninth House   |
+| Moon                  | Can ♋️ | 21.21°   | +14.4024°/d | +23.21° | -    | Ninth House   |
+| Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d  | +16.88° | -    | Ninth House   |
+| Venus                 | Can ♋️ | 1.71°    | +1.2038°/d  | +22.74° | -    | Eighth House  |
+| Mars                  | Tau ♉️ | 5.97°    | +0.6554°/d  | +11.57° | -    | Seventh House |
+| Jupiter               | Can ♋️ | 23.91°   | +0.2240°/d  | +21.56° | -    | Ninth House   |
+| Saturn                | Cap ♑️ | 21.52°   | -0.0732°/d  | -21.66° | R    | Third House   |
+| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0090°/d  | -18.46° | R    | Third House   |
+| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0090°/d  | +18.46° | R    | Ninth House   |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
 
 +Transit Subject Celestial Points-+----------+-------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed       | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
-| Sun                   | Sag ♐️ | 17.24°   | +1.0164°/d  | -22.83° | -    | Fourth House  |
-| Moon                  | Cap ♑️ | 5.06°    | +12.6288°/d | -20.27° | -    | Fourth House  |
+| Sun                   | Sag ♐️ | 17.24°   | +1.0165°/d  | -22.83° | -    | Fourth House  |
+| Moon                  | Cap ♑️ | 5.06°    | +12.6293°/d | -20.27° | -    | Fourth House  |
 | Mercury               | Sag ♐️ | 5.09°    | +1.5319°/d  | -20.71° | -    | Fourth House  |
 | Venus                 | Sco ♏️ | 18.67°   | +1.2420°/d  | -15.83° | -    | Third House   |
-| Mars                  | Cap ♑️ | 13.06°   | +0.7711°/d  | -23.90° | -    | Fifth House   |
-| Jupiter               | Lib ♎️ | 7.16°    | +0.1300°/d  | -1.73°  | -    | Second House  |
-| Saturn                | Lib ♎️ | 8.35°    | +0.0682°/d  | -1.24°  | -    | Second House  |
-| True North Lunar Node | Leo ♌️ | 12.16°   | -0.1140°/d  | +17.15° | R    | Twelfth House |
-| True South Lunar Node | Aqu ♒️ | 12.16°   | +0.1140°/d  | -17.15° | R    | Sixth House   |
+| Mars                  | Cap ♑️ | 13.06°   | +0.7712°/d  | -23.90° | -    | Fifth House   |
+| Jupiter               | Lib ♎️ | 7.16°    | +0.1301°/d  | -1.73°  | -    | Second House  |
+| Saturn                | Lib ♎️ | 8.35°    | +0.0684°/d  | -1.24°  | -    | Second House  |
+| True North Lunar Node | Leo ♌️ | 12.16°   | -0.1159°/d  | +17.15° | R    | Twelfth House |
+| True South Lunar Node | Aqu ♒️ | 12.16°   | +0.1159°/d  | -17.15° | R    | Sixth House   |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
 
 +Natal Subject Houses (Placidus)------+-------------------+

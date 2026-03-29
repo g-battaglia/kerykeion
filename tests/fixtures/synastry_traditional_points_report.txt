@@ -55,29 +55,29 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +First Subject Celestial Points---+----------+-------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed       | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
-| Sun                   | Can ♋️ | 28.54°   | +0.9550°/d  | +20.45° | -    | Ninth House   |
-| Moon                  | Can ♋️ | 21.21°   | +14.4025°/d | +23.21° | -    | Ninth House   |
-| Mercury               | Leo ♌️ | 17.61°   | +1.6908°/d  | +16.88° | -    | Ninth House   |
-| Venus                 | Can ♋️ | 1.71°    | +1.2037°/d  | +22.74° | -    | Eighth House  |
-| Mars                  | Tau ♉️ | 5.97°    | +0.6553°/d  | +11.57° | -    | Seventh House |
-| Jupiter               | Can ♋️ | 23.91°   | +0.2239°/d  | +21.56° | -    | Ninth House   |
-| Saturn                | Cap ♑️ | 21.52°   | -0.0733°/d  | -21.66° | R    | Third House   |
-| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d  | -18.46° | R    | Third House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0080°/d  | +18.46° | R    | Ninth House   |
+| Sun                   | Can ♋️ | 28.54°   | +0.9551°/d  | +20.45° | -    | Ninth House   |
+| Moon                  | Can ♋️ | 21.21°   | +14.4024°/d | +23.21° | -    | Ninth House   |
+| Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d  | +16.88° | -    | Ninth House   |
+| Venus                 | Can ♋️ | 1.71°    | +1.2038°/d  | +22.74° | -    | Eighth House  |
+| Mars                  | Tau ♉️ | 5.97°    | +0.6554°/d  | +11.57° | -    | Seventh House |
+| Jupiter               | Can ♋️ | 23.91°   | +0.2240°/d  | +21.56° | -    | Ninth House   |
+| Saturn                | Cap ♑️ | 21.52°   | -0.0732°/d  | -21.66° | R    | Third House   |
+| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0090°/d  | -18.46° | R    | Third House   |
+| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0090°/d  | +18.46° | R    | Ninth House   |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
 
 +Second Subject Celestial Points--+----------+-------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed       | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+-------------+---------+------+----------------+
 | Sun                   | Aqu ♒️ | 29.38°   | +1.0085°/d  | -11.70° | -    | Fifth House    |
-| Moon                  | Sag ♐️ | 11.13°   | +14.2197°/d | -27.33° | -    | Third House    |
-| Mercury               | Pis ♓️ | 7.89°    | +1.8559°/d  | -9.86°  | -    | Fifth House    |
+| Moon                  | Sag ♐️ | 11.13°   | +14.2183°/d | -27.33° | -    | Third House    |
+| Mercury               | Pis ♓️ | 7.89°    | +1.8561°/d  | -9.86°  | -    | Fifth House    |
 | Venus                 | Aqu ♒️ | 13.79°   | +1.2483°/d  | -17.56° | -    | Fifth House    |
-| Mars                  | Vir ♍️ | 15.13°   | -0.3445°/d  | +9.78°  | R    | Twelfth House  |
-| Jupiter               | Vir ♍️ | 20.70°   | -0.1139°/d  | +5.03°  | R    | Twelfth House  |
-| Saturn                | Aqu ♒️ | 9.74°    | +0.1149°/d  | -18.38° | -    | Fourth House   |
-| True North Lunar Node | Pis ♓️ | 7.80°    | -0.0063°/d  | -8.65°  | R    | Fifth House    |
-| True South Lunar Node | Vir ♍️ | 7.80°    | +0.0063°/d  | +8.65°  | R    | Eleventh House |
+| Mars                  | Vir ♍️ | 15.13°   | -0.3444°/d  | +9.78°  | R    | Twelfth House  |
+| Jupiter               | Vir ♍️ | 20.70°   | -0.1138°/d  | +5.03°  | R    | Twelfth House  |
+| Saturn                | Aqu ♒️ | 9.74°    | +0.1150°/d  | -18.38° | -    | Fourth House   |
+| True North Lunar Node | Pis ♓️ | 7.80°    | -0.0059°/d  | -8.65°  | R    | Fifth House    |
+| True South Lunar Node | Vir ♍️ | 7.80°    | +0.0059°/d  | +8.65°  | R    | Eleventh House |
 +-----------------------+---------+----------+-------------+---------+------+----------------+
 
 +First Subject Houses (Placidus)------+-------------------+
@@ -253,10 +253,10 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Jupiter               | Sample Natal Subject | sextile ⚹     | Jupiter               | Yoko Ono | 3.22° | Static = |
 | Saturn                | Sample Natal Subject | trine △       | Mars                  | Yoko Ono | 6.39° | Static = |
 | Saturn                | Sample Natal Subject | trine △       | Jupiter               | Yoko Ono | 0.82° | Static = |
-| True North Lunar Node | Sample Natal Subject | sextile ⚹     | Moon                  | Yoko Ono | 3.86° | Static = |
+| True North Lunar Node | Sample Natal Subject | sextile ⚹     | Moon                  | Yoko Ono | 3.87° | Static = |
 | True North Lunar Node | Sample Natal Subject | conjunction ☌ | Venus                 | Yoko Ono | 6.52° | Static = |
 | True North Lunar Node | Sample Natal Subject | conjunction ☌ | Saturn                | Yoko Ono | 2.47° | Static = |
-| True South Lunar Node | Sample Natal Subject | trine △       | Moon                  | Yoko Ono | 3.86° | Static = |
+| True South Lunar Node | Sample Natal Subject | trine △       | Moon                  | Yoko Ono | 3.87° | Static = |
 | True South Lunar Node | Sample Natal Subject | opposition ☍  | Venus                 | Yoko Ono | 6.52° | Static = |
 | True South Lunar Node | Sample Natal Subject | opposition ☍  | Saturn                | Yoko Ono | 2.47° | Static = |
 +-----------------------+----------------------+---------------+-----------------------+----------+-------+----------+
