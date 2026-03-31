@@ -173,3 +173,24 @@ different ephemeris sources and algorithms:
 | True Node | ~ 6 arcsec | Different osculating element methods |
 | Zodiac signs | Identical | Deltas too small to cross boundaries |
 | Retrograde status | Identical | Speed sign always agrees |
+
+## Debug: Backend Source Tracing
+
+To see which specific backend (LEB, Skyfield, SPK, Horizons, ASSIST,
+Keplerian) computed each celestial body, enable DEBUG-level logging on
+the `"libephemeris"` logger:
+
+```bash
+LIBEPHEMERIS_LOG_LEVEL=DEBUG python my_script.py
+```
+
+This emits log lines like `body=0 jd=2448045.9 source=LEB` at every
+dispatch point. See the libephemeris
+[testing documentation](https://github.com/g-battaglia/libephemeris)
+for the full list of source values.
+
+When using the **Astrologer API**, the same information is available via the
+opt-in `X-Debug-Ephemeris: true` HTTP header, which injects an
+`_ephemeris_debug.backends` map into the JSON response. See the API's
+[ephemeris debug documentation](https://github.com/g-battaglia/Astrologer-API)
+for details.
