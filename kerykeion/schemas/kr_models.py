@@ -402,31 +402,22 @@ class KerykeionPointModel(SubscriptableBaseModel):
     decan_number: Optional[int] = Field(
         default=None, description="Decan number (1-3) within the sign, each spanning 10 degrees."
     )
-    decan_ruler: Optional[str] = Field(
-        default=None, description="Ruling planet of the Chaldean decan."
-    )
-    term_ruler: Optional[str] = Field(
-        default=None, description="Ruling planet of the Egyptian term (bound)."
-    )
+    decan_ruler: Optional[str] = Field(default=None, description="Ruling planet of the Chaldean decan.")
+    term_ruler: Optional[str] = Field(default=None, description="Ruling planet of the Egyptian term (bound).")
     essential_dignity: Optional[str] = Field(
-        default=None, description="Highest active essential dignity (e.g. 'Domicile', 'Exaltation', 'Detriment', 'Fall', 'Peregrine')."
+        default=None,
+        description="Highest active essential dignity (e.g. 'Domicile', 'Exaltation', 'Detriment', 'Fall', 'Peregrine').",
     )
-    dignity_score: Optional[int] = Field(
-        default=None, description="Ptolemaic essential dignity score (-5 to +5)."
-    )
+    dignity_score: Optional[int] = Field(default=None, description="Ptolemaic essential dignity score (-5 to +5).")
     # Nakshatra (Vedic lunar mansions, v6.0)
     nakshatra: Optional[str] = Field(
         default=None, description="Name of the Nakshatra (Vedic lunar mansion), e.g. 'Rohini'."
     )
-    nakshatra_number: Optional[int] = Field(
-        default=None, description="Nakshatra number (1-27)."
-    )
+    nakshatra_number: Optional[int] = Field(default=None, description="Nakshatra number (1-27).")
     nakshatra_pada: Optional[int] = Field(
         default=None, description="Pada (quarter) within the Nakshatra (1-4), each spanning 3°20'."
     )
-    nakshatra_lord: Optional[str] = Field(
-        default=None, description="Vimsottari Dasha lord of the Nakshatra."
-    )
+    nakshatra_lord: Optional[str] = Field(default=None, description="Vimsottari Dasha lord of the Nakshatra.")
     gauquelin_sector: Optional[float] = Field(
         default=None,
         description="Gauquelin sector position (1-36). Sectors are numbered clockwise from the eastern horizon. "
@@ -450,6 +441,15 @@ class KerykeionPointModel(SubscriptableBaseModel):
         description="True when the planet's declination exceeds the Sun's maximum declination "
         "(the true obliquity of the ecliptic, ~23.44 deg). OOB planets are considered to "
         "operate outside normal boundaries in psychological/evolutionary astrology. Added in v6.0.",
+    )
+    # Data provenance (v6.0)
+    source: Optional[Literal["ephemeris", "derived", "formula"]] = Field(
+        default=None,
+        description="Provenance of the point's position data. "
+        "'ephemeris' = computed by the ephemeris backend (swe.calc_ut / swe.houses_ex2). "
+        "'derived' = geometric opposite (+180°) of an ephemeris point (e.g. Descendant from Ascendant). "
+        "'formula' = astrological formula combining other points (e.g. Arabic Parts). "
+        "Added in v6.0.",
     )
 
 
@@ -568,6 +568,10 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     # Priapus Points (opposite of Lilith, v6.0)
     mean_priapus: Optional[KerykeionPointModel] = None
     true_priapus: Optional[KerykeionPointModel] = None
+
+    # Lunar apse points (v6.0)
+    interpolated_perigee: Optional[KerykeionPointModel] = None
+    white_moon: Optional[KerykeionPointModel] = None
 
     # Asteroids
     ceres: Optional[KerykeionPointModel] = None
@@ -955,7 +959,6 @@ class DualChartAspectsModel(SubscriptableBaseModel):
     active_aspects: List["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 
 
-
 class TransitsTimeRangeModel(SubscriptableBaseModel):
     """
     Model representing a collection of transit moments for an astrological subject.
@@ -975,6 +978,7 @@ class TransitEventModel(SubscriptableBaseModel):
     Groups consecutive transit moments where the same aspect is active into
     a single event with applying start, exact moment, and separating end.
     """
+
     p1_name: str = Field(description="Transit planet name")
     p2_name: str = Field(description="Natal planet name")
     aspect: str = Field(description="Aspect name (e.g. 'conjunction')")
@@ -982,11 +986,14 @@ class TransitEventModel(SubscriptableBaseModel):
     exact_moment: str = Field(description="ISO datetime of closest approach (minimum orb)")
     separating_end: Optional[str] = Field(default=None, description="ISO datetime when aspect finishes separating")
     min_orb: float = Field(description="Minimum orb reached at exact_moment (degrees)")
-    orb_rate: Optional[float] = Field(default=None, description="Rate of orb change at exact moment (degrees per 2 steps)")
+    orb_rate: Optional[float] = Field(
+        default=None, description="Rate of orb change at exact moment (degrees per 2 steps)"
+    )
 
 
 class TransitEventsTimeRangeModel(SubscriptableBaseModel):
     """Collection of transit events over a time range."""
+
     events: List[TransitEventModel] = Field(description="Transit events, sorted by exact_moment")
     subject: Optional[AstrologicalSubjectModel] = Field(default=None, description="Natal subject")
 

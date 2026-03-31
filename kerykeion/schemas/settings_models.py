@@ -68,9 +68,31 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
         title="Mean South Lunar Node", description="The name of Mean South Lunar Node in the chart, in the language"
     )
     True_Lilith: str = Field(title="True Lilith", description="The name of True Lilith in the chart, in the language")
-    Interpolated_Lilith: str = Field(default="Interpolated Lilith", title="Interpolated Lilith", description="The name of Interpolated Lilith in the chart, in the language")
-    Mean_Priapus: str = Field(default="Mean Priapus", title="Mean Priapus", description="The name of Mean Priapus in the chart, in the language")
-    True_Priapus: str = Field(default="True Priapus", title="True Priapus", description="The name of True Priapus in the chart, in the language")
+    Interpolated_Lilith: str = Field(
+        default="Interpolated Lilith",
+        title="Interpolated Lilith",
+        description="The name of Interpolated Lilith in the chart, in the language",
+    )
+    Mean_Priapus: str = Field(
+        default="Mean Priapus",
+        title="Mean Priapus",
+        description="The name of Mean Priapus in the chart, in the language",
+    )
+    True_Priapus: str = Field(
+        default="True Priapus",
+        title="True Priapus",
+        description="The name of True Priapus in the chart, in the language",
+    )
+    Interpolated_Perigee: str = Field(
+        default="Interpolated Perigee",
+        title="Interpolated Perigee",
+        description="The name of Interpolated Perigee (lunar perigee) in the chart, in the language",
+    )
+    White_Moon: str = Field(
+        default="White Moon",
+        title="White Moon",
+        description="The name of White Moon (Selena) in the chart, in the language",
+    )
     Earth: str = Field(title="Earth", description="The name of Earth in the chart, in the language")
     Pholus: str = Field(title="Pholus", description="The name of Pholus in the chart, in the language")
     Ceres: str = Field(title="Ceres", description="The name of Ceres in the chart, in the language")
@@ -84,14 +106,26 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
     Ixion: str = Field(title="Ixion", description="The name of Ixion in the chart, in the language")
     Orcus: str = Field(title="Orcus", description="The name of Orcus in the chart, in the language")
     Quaoar: str = Field(title="Quaoar", description="The name of Quaoar in the chart, in the language")
-    Cupido: str = Field(default="Cupido", title="Cupido", description="The name of Cupido in the chart, in the language")
+    Cupido: str = Field(
+        default="Cupido", title="Cupido", description="The name of Cupido in the chart, in the language"
+    )
     Hades: str = Field(default="Hades", title="Hades", description="The name of Hades in the chart, in the language")
     Zeus: str = Field(default="Zeus", title="Zeus", description="The name of Zeus in the chart, in the language")
-    Kronos: str = Field(default="Kronos", title="Kronos", description="The name of Kronos in the chart, in the language")
-    Apollon: str = Field(default="Apollon", title="Apollon", description="The name of Apollon in the chart, in the language")
-    Admetos: str = Field(default="Admetos", title="Admetos", description="The name of Admetos in the chart, in the language")
-    Vulkanus: str = Field(default="Vulkanus", title="Vulkanus", description="The name of Vulkanus in the chart, in the language")
-    Poseidon: str = Field(default="Poseidon", title="Poseidon", description="The name of Poseidon in the chart, in the language")
+    Kronos: str = Field(
+        default="Kronos", title="Kronos", description="The name of Kronos in the chart, in the language"
+    )
+    Apollon: str = Field(
+        default="Apollon", title="Apollon", description="The name of Apollon in the chart, in the language"
+    )
+    Admetos: str = Field(
+        default="Admetos", title="Admetos", description="The name of Admetos in the chart, in the language"
+    )
+    Vulkanus: str = Field(
+        default="Vulkanus", title="Vulkanus", description="The name of Vulkanus in the chart, in the language"
+    )
+    Poseidon: str = Field(
+        default="Poseidon", title="Poseidon", description="The name of Poseidon in the chart, in the language"
+    )
     Regulus: str = Field(title="Regulus", description="The name of Regulus in the chart, in the language")
     Spica: str = Field(title="Spica", description="The name of Spica in the chart, in the language")
     Aldebaran: str = Field(

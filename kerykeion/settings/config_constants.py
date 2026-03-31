@@ -357,6 +357,9 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Interpolated_Lilith",
     "Mean_Priapus",
     "True_Priapus",
+    # Lunar apse points
+    "Interpolated_Perigee",
+    "White_Moon",
     # Arabic Parts (Lots)
     "Pars_Fortunae",
     "Pars_Spiritus",
@@ -375,22 +378,56 @@ The full list of points is available in the `schemas.kr_literals.AstrologicalPoi
 # Names must match entries in the Swiss Ephemeris sefstars.txt catalog.
 
 ROYAL_FIXED_STARS: List[str] = [
-    "Aldebaran", "Regulus", "Antares", "Fomalhaut",
+    "Aldebaran",
+    "Regulus",
+    "Antares",
+    "Fomalhaut",
 ]
 """The four Royal Stars (Watchers of the Sky) in Persian/Hellenistic astrology."""
 
 BEHENIAN_FIXED_STARS: List[str] = [
-    "Algol", "Alcyone", "Aldebaran", "Capella", "Sirius", "Procyon",
-    "Regulus", "Algorab", "Spica", "Arcturus", "Alphecca", "Antares",
-    "Vega", "Deneb Algedi", "Fomalhaut",
+    "Algol",
+    "Alcyone",
+    "Aldebaran",
+    "Capella",
+    "Sirius",
+    "Procyon",
+    "Regulus",
+    "Algorab",
+    "Spica",
+    "Arcturus",
+    "Alphecca",
+    "Antares",
+    "Vega",
+    "Deneb Algedi",
+    "Fomalhaut",
 ]
 """The 15 Behenian stars of the medieval/Hermetic magical tradition."""
 
 DEFAULT_FIXED_STARS: List[str] = [
-    "Regulus", "Spica", "Aldebaran", "Antares", "Sirius", "Fomalhaut",
-    "Algol", "Betelgeuse", "Canopus", "Procyon", "Arcturus", "Pollux",
-    "Deneb", "Altair", "Rigel", "Achernar", "Capella", "Vega",
-    "Alcyone", "Alphecca", "Algorab", "Deneb Algedi", "Alkaid",
+    "Regulus",
+    "Spica",
+    "Aldebaran",
+    "Antares",
+    "Sirius",
+    "Fomalhaut",
+    "Algol",
+    "Betelgeuse",
+    "Canopus",
+    "Procyon",
+    "Arcturus",
+    "Pollux",
+    "Deneb",
+    "Altair",
+    "Rigel",
+    "Achernar",
+    "Capella",
+    "Vega",
+    "Alcyone",
+    "Alphecca",
+    "Algorab",
+    "Deneb Algedi",
+    "Alkaid",
 ]
 """The 23 default fixed stars (same set as Kerykeion v5.12)."""
 

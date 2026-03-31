@@ -31,7 +31,7 @@ License: AGPL-3.0
 """
 
 import pytz
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, BACKEND_NAME
 import logging
 import math
 from datetime import datetime
@@ -81,7 +81,7 @@ DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS = 30
 # Using a centralized configuration eliminates repetitive code and makes
 # it easier to add new celestial bodies in the future.
 
-# Standard planets with direct Swiss Ephemeris IDs (0-20)
+# Standard planets with direct Swiss Ephemeris IDs (0-20+)
 STANDARD_PLANETS: Dict[AstrologicalPoint, int] = {
     "Sun": 0,
     "Moon": 1,
@@ -104,6 +104,9 @@ STANDARD_PLANETS: Dict[AstrologicalPoint, int] = {
     "Pallas": 18,
     "Juno": 19,
     "Vesta": 20,
+    # Interpolated lunar apse points (SwissEph IDs 21-22)
+    "Interpolated_Lilith": 21,  # SE_INTP_APOG — proper interpolated apogee
+    "Interpolated_Perigee": 22,  # SE_INTP_PERG — proper interpolated perigee
     # Uranian / Hamburg School hypothetical planets (SwissEph IDs 40-47)
     "Cupido": 40,
     "Hades": 41,
@@ -165,10 +168,17 @@ FIXED_STAR_SWE_NAMES: Dict[str, str] = {
     "Deneb_Algedi": "Deneb Algedi",
 }
 
-# Opposite points derived from other calculations
-OPPOSITE_POINTS: Dict[AstrologicalPoint, AstrologicalPoint] = {
-    "Mean_South_Lunar_Node": "Mean_North_Lunar_Node",
-    "True_South_Lunar_Node": "True_North_Lunar_Node",
+# Declarative mapping of geometrically opposite point pairs.
+# Each derived point is computed as primary.abs_pos + 180 (mod 360).
+# negate_speed/negate_dec control whether speed and declination are negated.
+OPPOSITE_PAIRS: Dict[AstrologicalPoint, Dict[str, Any]] = {
+    "Descendant": {"primary": "Ascendant", "negate_speed": False, "negate_dec": False},
+    "Imum_Coeli": {"primary": "Medium_Coeli", "negate_speed": False, "negate_dec": False},
+    "Anti_Vertex": {"primary": "Vertex", "negate_speed": False, "negate_dec": False},
+    "Mean_South_Lunar_Node": {"primary": "Mean_North_Lunar_Node", "negate_speed": True, "negate_dec": True},
+    "True_South_Lunar_Node": {"primary": "True_North_Lunar_Node", "negate_speed": True, "negate_dec": True},
+    "Mean_Priapus": {"primary": "Mean_Lilith", "negate_speed": False, "negate_dec": True},
+    "True_Priapus": {"primary": "True_Lilith", "negate_speed": False, "negate_dec": True},
 }
 
 # Arabic Parts configuration: (name, required_points, formula_type)
@@ -980,9 +990,7 @@ class AstrologicalSubjectFactory:
                     if sector >= 37.0:
                         sector -= 36.0
 
-                calc_data[point_key] = point.model_copy(
-                    update={"gauquelin_sector": round(sector, 4)}
-                )
+                calc_data[point_key] = point.model_copy(update={"gauquelin_sector": round(sector, 4)})
 
         # Calculate Local Space (azimuth/altitude) for all celestial points (v6.0)
         if config.calculate_local_space and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
@@ -1411,7 +1419,7 @@ class AstrologicalSubjectFactory:
         longitude, east-positive).
 
         **Calendar:** all dates with ``year < 1`` predate the Gregorian reform
-        (15 Oct 1582), so the Julian calendar (``SE_JUL_CAL``) is used.
+        (15 Oct 1582), so the Julian calendar (``JUL_CAL``) is used.
 
         **Year convention:** astronomical year numbering — year 0 = 1 BCE,
         year −1 = 2 BCE, year −2 = 3 BCE, etc.
@@ -1435,7 +1443,9 @@ class AstrologicalSubjectFactory:
         decimal_hour = hour + minute / 60.0 + seconds / 3600.0
 
         # All BCE dates predate the Gregorian reform — use Julian calendar
-        cal_flag = swe.SE_JUL_CAL
+        # Note: swisseph uses `JUL_CAL`, libephemeris exposes both `JUL_CAL`
+        # and `SE_JUL_CAL`.  Using `JUL_CAL` for cross-backend compatibility.
+        cal_flag = swe.JUL_CAL
 
         # Compute Julian Day for the input time (treated as local solar time)
         jd_local = swe.julday(year, month, day, decimal_hour, cal_flag)
@@ -1449,9 +1459,7 @@ class AstrologicalSubjectFactory:
         data["julian_day"] = jd_ut
 
         # Local datetime: the user's input with LMT offset notation
-        data["iso_formatted_local_datetime"] = format_ancient_iso(
-            year, month, day, decimal_hour, lmt_offset_hours
-        )
+        data["iso_formatted_local_datetime"] = format_ancient_iso(year, month, day, decimal_hour, lmt_offset_hours)
 
         # UTC datetime: derived from the UT Julian Day
         ut_year, ut_month, ut_day, ut_dec_hour = swe.revjul(jd_ut, cal_flag)
@@ -1554,7 +1562,11 @@ class AstrologicalSubjectFactory:
         point_type: PointType = "House"
         for i, (attr_name, house_name) in enumerate(HOUSE_CONFIG):
             data[attr_name] = get_kerykeion_point_from_degree(
-                cusps[i], house_name, point_type=point_type, speed=cusps_speed[i]
+                cusps[i],
+                house_name,
+                point_type=point_type,
+                speed=cusps_speed[i],
+                source="ephemeris",
             )
 
         # Store house names
@@ -1566,43 +1578,36 @@ class AstrologicalSubjectFactory:
         # ascmc_speed from houses_ex2 provides real speeds for angles:
         # ascmc_speed[0] = ASC speed, ascmc_speed[1] = MC speed
 
-        # Calculate Ascendant if needed
+        # Always store Ascendant and Medium Coeli in data — they are needed by
+        # _calculate_opposite_points() to derive Descendant and Imum Coeli, and
+        # by Arabic Parts prerequisites.  Only append to calculated_axial_cusps
+        # (which feeds active_points) when explicitly requested.
+        data["ascendant"] = get_kerykeion_point_from_degree(
+            ascmc[0],
+            "Ascendant",
+            point_type=point_type,
+            speed=ascmc_speed[0],
+            source="ephemeris",
+        )
+        data["ascendant"].house = get_planet_house(data["ascendant"].abs_pos, data["_houses_degree_ut"])
+        data["ascendant"].retrograde = False
         if should_calculate("Ascendant"):
-            data["ascendant"] = get_kerykeion_point_from_degree(
-                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]
-            )
-            data["ascendant"].house = get_planet_house(data["ascendant"].abs_pos, data["_houses_degree_ut"])
-            data["ascendant"].retrograde = False
             calculated_axial_cusps.append("Ascendant")
 
-        # Calculate Medium Coeli if needed
+        data["medium_coeli"] = get_kerykeion_point_from_degree(
+            ascmc[1],
+            "Medium_Coeli",
+            point_type=point_type,
+            speed=ascmc_speed[1],
+            source="ephemeris",
+        )
+        data["medium_coeli"].house = get_planet_house(data["medium_coeli"].abs_pos, data["_houses_degree_ut"])
+        data["medium_coeli"].retrograde = False
         if should_calculate("Medium_Coeli"):
-            data["medium_coeli"] = get_kerykeion_point_from_degree(
-                ascmc[1], "Medium_Coeli", point_type=point_type, speed=ascmc_speed[1]
-            )
-            data["medium_coeli"].house = get_planet_house(data["medium_coeli"].abs_pos, data["_houses_degree_ut"])
-            data["medium_coeli"].retrograde = False
             calculated_axial_cusps.append("Medium_Coeli")
 
-        # Calculate Descendant if needed (same speed as ASC, opposite direction)
-        if should_calculate("Descendant"):
-            dsc_deg = math.fmod(ascmc[0] + 180, 360)
-            data["descendant"] = get_kerykeion_point_from_degree(
-                dsc_deg, "Descendant", point_type=point_type, speed=ascmc_speed[0]
-            )
-            data["descendant"].house = get_planet_house(data["descendant"].abs_pos, data["_houses_degree_ut"])
-            data["descendant"].retrograde = False
-            calculated_axial_cusps.append("Descendant")
-
-        # Calculate Imum Coeli if needed (same speed as MC, opposite direction)
-        if should_calculate("Imum_Coeli"):
-            ic_deg = math.fmod(ascmc[1] + 180, 360)
-            data["imum_coeli"] = get_kerykeion_point_from_degree(
-                ic_deg, "Imum_Coeli", point_type=point_type, speed=ascmc_speed[1]
-            )
-            data["imum_coeli"].house = get_planet_house(data["imum_coeli"].abs_pos, data["_houses_degree_ut"])
-            data["imum_coeli"].retrograde = False
-            calculated_axial_cusps.append("Imum_Coeli")
+        # NOTE: Descendant and Imum Coeli are calculated by _calculate_opposite_points()
+        # via the OPPOSITE_PAIRS mapping (Descendant = ASC + 180, IC = MC + 180).
 
         return calculated_axial_cusps
 
@@ -1680,7 +1685,12 @@ class AstrologicalSubjectFactory:
 
             # Create Kerykeion point from degree
             data[planet_name.lower()] = get_kerykeion_point_from_degree(
-                planet_calc[0], planet_name, point_type=point_type, speed=planet_calc[3], declination=declination
+                planet_calc[0],
+                planet_name,
+                point_type=point_type,
+                speed=planet_calc[3],
+                declination=declination,
+                source="ephemeris",
             )
 
             # Calculate house position
@@ -1696,6 +1706,73 @@ class AstrologicalSubjectFactory:
             logging.error(f"Error calculating {planet_name}: {e}")
             if planet_name in active_points:
                 active_points.remove(planet_name)
+
+    @staticmethod
+    def _calculate_opposite_points(
+        data: Dict[str, Any],
+        houses_degree_ut: List[float],
+        point_type: PointType,
+        active_points: List[AstrologicalPoint],
+        calculated_planets: List[AstrologicalPoint],
+    ) -> None:
+        """
+        Calculate all geometrically opposite (derived) points using OPPOSITE_PAIRS.
+
+        Each derived point is the geometric opposite (+180 degrees) of its primary
+        point. Speed and declination may be negated depending on the pair's
+        configuration. All derived points receive ``source="derived"``.
+
+        Handles: Descendant (from ASC), Imum Coeli (from MC), Anti-Vertex (from
+        Vertex), Mean/True South Lunar Node (from North Nodes), Mean/True Priapus
+        (from Mean/True Lilith).
+
+        Args:
+            data: Main calculation data dictionary containing primary point data.
+            houses_degree_ut: House cusp degrees for house determination.
+            point_type: Classification of the point type.
+            active_points: List of active points (unmodified).
+            calculated_planets: Running list of successfully calculated points.
+
+        Side Effects:
+            Adds derived point objects to the data dictionary and appends their
+            names to calculated_planets.
+        """
+
+        def should_calculate(point: AstrologicalPoint) -> bool:
+            return not active_points or point in active_points
+
+        for derived_name, config in OPPOSITE_PAIRS.items():
+            if not should_calculate(derived_name):
+                continue
+
+            primary_key = config["primary"].lower()
+            if primary_key not in data:
+                continue
+
+            primary = data[primary_key]
+            deg = math.fmod(primary.abs_pos + 180, 360)
+
+            speed = None
+            if primary.speed is not None:
+                speed = -primary.speed if config["negate_speed"] else primary.speed
+
+            dec = None
+            if primary.declination is not None:
+                dec = -primary.declination if config["negate_dec"] else primary.declination
+
+            point = get_kerykeion_point_from_degree(
+                deg,
+                derived_name,
+                point_type=point_type,
+                speed=speed,
+                declination=dec,
+                source="derived",
+            )
+            point.house = get_planet_house(deg, houses_degree_ut)
+            point.retrograde = primary.retrograde if primary.retrograde is not None else False
+
+            data[derived_name.lower()] = point
+            calculated_planets.append(derived_name)
 
     @staticmethod
     def _ensure_point_calculated(
@@ -1736,7 +1813,7 @@ class AstrologicalSubjectFactory:
                 flags=iflag,
             )
             data["ascendant"] = get_kerykeion_point_from_degree(
-                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]
+                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0], source="ephemeris"
             )
             data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
             data["ascendant"].retrograde = False
@@ -1750,7 +1827,12 @@ class AstrologicalSubjectFactory:
             planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
             declination = planet_eq[1]
             data[point_key] = get_kerykeion_point_from_degree(
-                planet_calc[0], point, point_type=point_type, speed=planet_calc[3], declination=declination
+                planet_calc[0],
+                point,
+                point_type=point_type,
+                speed=planet_calc[3],
+                declination=declination,
+                source="ephemeris",
             )
             data[point_key].house = get_planet_house(planet_calc[0], houses_degree_ut)
             data[point_key].retrograde = planet_calc[3] < 0
@@ -1868,7 +1950,7 @@ class AstrologicalSubjectFactory:
 
         # Store the result
         part_key = part_name.lower()
-        data[part_key] = get_kerykeion_point_from_degree(part_deg, part_name, point_type=point_type)
+        data[part_key] = get_kerykeion_point_from_degree(part_deg, part_name, point_type=point_type, source="formula")
         data[part_key].house = get_planet_house(part_deg, houses_degree_ut)
         data[part_key].retrograde = False  # Arabic Parts are never retrograde
         calculated_planets.append(part_name)
@@ -1984,19 +2066,23 @@ class AstrologicalSubjectFactory:
 
         # Determine planetocentric center body (if applicable)
         _PCTR_MAP = {
-            "Selenocentric": swe.MOON, "Mercurycentric": swe.MERCURY,
-            "Venuscentric": swe.VENUS, "Marscentric": swe.MARS,
-            "Jupitercentric": swe.JUPITER, "Saturncentric": swe.SATURN,
+            "Selenocentric": swe.MOON,
+            "Mercurycentric": swe.MERCURY,
+            "Venuscentric": swe.VENUS,
+            "Marscentric": swe.MARS,
+            "Jupitercentric": swe.JUPITER,
+            "Saturncentric": swe.SATURN,
         }
         center_body_id = _PCTR_MAP.get(data.get("perspective_type", ""), None)
 
         # =============================================================================
         # STANDARD PLANETS (using centralized mapping)
         # =============================================================================
-        # This loop replaces ~150 lines of repetitive individual planet calculations.
-        # All standard planets (Sun through Vesta) use the same calculation pattern.
-        # South lunar nodes are calculated after True_North_Lunar_Node to preserve
-        # the original calculation order (Mean_North, True_North, Mean_South, True_South).
+        # All standard planets (Sun through Poseidon, plus Interpolated_Lilith and
+        # Interpolated_Perigee via SE_INTP_APOG/SE_INTP_PERG) use the same
+        # calculation pattern via swe.calc_ut().
+        # South lunar nodes, Priapus, Descendant, IC, and Anti-Vertex are handled
+        # declaratively by _calculate_opposite_points() via OPPOSITE_PAIRS.
         for planet_name, planet_id in STANDARD_PLANETS.items():
             if should_calculate(planet_name):
                 AstrologicalSubjectFactory._calculate_single_planet(
@@ -2012,98 +2098,13 @@ class AstrologicalSubjectFactory:
                     center_body_id=center_body_id,
                 )
 
-                # Special handling for lunar nodes: calculate declination
+                # Special handling for lunar nodes: ensure declination is set
                 if planet_name in ("Mean_North_Lunar_Node", "True_North_Lunar_Node"):
                     node_key = planet_name.lower()
                     if node_key in data:
                         # Calculate declination using equatorial coordinates
                         node_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
                         data[node_key].declination = node_eq[1]
-
-                # Calculate corresponding south node immediately after each north node
-                if planet_name == "Mean_North_Lunar_Node":
-                    south_node: AstrologicalPoint = "Mean_South_Lunar_Node"
-                    north_key = planet_name.lower()
-                    if should_calculate(south_node) and north_key in data:
-                        north_data = data[north_key]
-                        south_deg = math.fmod(north_data.abs_pos + 180, 360)
-                        data[south_node.lower()] = get_kerykeion_point_from_degree(
-                            south_deg,
-                            south_node,
-                            point_type=point_type,
-                            speed=-north_data.speed if north_data.speed is not None else None,
-                            declination=-north_data.declination if north_data.declination is not None else None,
-                        )
-                        data[south_node.lower()].house = get_planet_house(south_deg, houses_degree_ut)
-                        data[south_node.lower()].retrograde = north_data.retrograde
-                        calculated_planets.append(south_node)
-
-                if planet_name == "True_North_Lunar_Node":
-                    south_node_true: AstrologicalPoint = "True_South_Lunar_Node"
-                    north_key = planet_name.lower()
-                    if should_calculate(south_node_true) and north_key in data:
-                        north_data = data[north_key]
-                        south_deg = math.fmod(north_data.abs_pos + 180, 360)
-                        data[south_node_true.lower()] = get_kerykeion_point_from_degree(
-                            south_deg,
-                            south_node_true,
-                            point_type=point_type,
-                            speed=-north_data.speed if north_data.speed is not None else None,
-                            declination=-north_data.declination if north_data.declination is not None else None,
-                        )
-                        data[south_node_true.lower()].house = get_planet_house(south_deg, houses_degree_ut)
-                        data[south_node_true.lower()].retrograde = north_data.retrograde
-                        calculated_planets.append(south_node_true)
-
-        # =============================================================================
-        # DERIVED LILITH / PRIAPUS POINTS (v6.0)
-        # =============================================================================
-        # Interpolated Lilith = midpoint between Mean and True Lilith positions.
-        # Priapus = point diametrically opposite Lilith (+ 180 degrees).
-        if should_calculate("Interpolated_Lilith"):
-            mean_lil = data.get("mean_lilith")
-            true_lil = data.get("true_lilith")
-            if mean_lil is not None and true_lil is not None:
-                # Circular midpoint to handle wrap-around at 0/360 degrees
-                from kerykeion.utilities import circular_mean
-                interp_deg = circular_mean(mean_lil.abs_pos, true_lil.abs_pos)
-                interp_speed = ((mean_lil.speed or 0.0) + (true_lil.speed or 0.0)) / 2.0
-                interp_dec = None
-                if mean_lil.declination is not None and true_lil.declination is not None:
-                    interp_dec = (mean_lil.declination + true_lil.declination) / 2.0
-                data["interpolated_lilith"] = get_kerykeion_point_from_degree(
-                    interp_deg, "Interpolated_Lilith", point_type=point_type,
-                    speed=interp_speed, declination=interp_dec,
-                )
-                data["interpolated_lilith"].house = get_planet_house(interp_deg, houses_degree_ut)
-                data["interpolated_lilith"].retrograde = interp_speed < 0
-                calculated_planets.append("Interpolated_Lilith")
-
-        if should_calculate("Mean_Priapus"):
-            mean_lil = data.get("mean_lilith")
-            if mean_lil is not None:
-                priapus_deg = math.fmod(mean_lil.abs_pos + 180, 360)
-                data["mean_priapus"] = get_kerykeion_point_from_degree(
-                    priapus_deg, "Mean_Priapus", point_type=point_type,
-                    speed=mean_lil.speed,
-                    declination=-mean_lil.declination if mean_lil.declination is not None else None,
-                )
-                data["mean_priapus"].house = get_planet_house(priapus_deg, houses_degree_ut)
-                data["mean_priapus"].retrograde = mean_lil.retrograde
-                calculated_planets.append("Mean_Priapus")
-
-        if should_calculate("True_Priapus"):
-            true_lil = data.get("true_lilith")
-            if true_lil is not None:
-                priapus_deg = math.fmod(true_lil.abs_pos + 180, 360)
-                data["true_priapus"] = get_kerykeion_point_from_degree(
-                    priapus_deg, "True_Priapus", point_type=point_type,
-                    speed=true_lil.speed,
-                    declination=-true_lil.declination if true_lil.declination is not None else None,
-                )
-                data["true_priapus"].house = get_planet_house(priapus_deg, houses_degree_ut)
-                data["true_priapus"].retrograde = true_lil.retrograde
-                calculated_planets.append("True_Priapus")
 
         # =============================================================================
         # TRANS-NEPTUNIAN OBJECTS (using centralized mapping)
@@ -2149,8 +2150,13 @@ class AstrologicalSubjectFactory:
                 except Exception:
                     star_mag = None
                 point = get_kerykeion_point_from_degree(
-                    star_deg, star_name, point_type=point_type,
-                    speed=star_speed, declination=star_dec, magnitude=star_mag,
+                    star_deg,
+                    star_name,
+                    point_type=point_type,
+                    speed=star_speed,
+                    declination=star_dec,
+                    magnitude=star_mag,
+                    source="ephemeris",
                 )
                 point.house = get_planet_house(star_deg, houses_degree_ut)
                 point.retrograde = False
@@ -2204,7 +2210,7 @@ class AstrologicalSubjectFactory:
                 )
 
         # =============================================================================
-        # VERTEX AND ANTI-VERTEX
+        # VERTEX (ephemeris-derived, Anti-Vertex handled by OPPOSITE_PAIRS)
         # =============================================================================
         if should_calculate("Vertex") or should_calculate("Anti_Vertex"):
             try:
@@ -2219,29 +2225,85 @@ class AstrologicalSubjectFactory:
 
                 vertex_deg = ascmc[3]
 
-                # Calculate Vertex if requested
+                # Always store Vertex when computed (needed by Anti_Vertex via OPPOSITE_PAIRS)
+                data["vertex"] = get_kerykeion_point_from_degree(
+                    vertex_deg,
+                    "Vertex",
+                    point_type=point_type,
+                    source="ephemeris",
+                )
+                data["vertex"].house = get_planet_house(vertex_deg, houses_degree_ut)
+                data["vertex"].retrograde = False
                 if should_calculate("Vertex"):
-                    data["vertex"] = get_kerykeion_point_from_degree(vertex_deg, "Vertex", point_type=point_type)
-                    data["vertex"].house = get_planet_house(vertex_deg, houses_degree_ut)
-                    data["vertex"].retrograde = False
                     calculated_planets.append("Vertex")
 
-                # Calculate Anti-Vertex if requested
-                if should_calculate("Anti_Vertex"):
-                    anti_vertex_deg = math.fmod(vertex_deg + 180, 360)
-                    data["anti_vertex"] = get_kerykeion_point_from_degree(
-                        anti_vertex_deg, "Anti_Vertex", point_type=point_type
-                    )
-                    data["anti_vertex"].house = get_planet_house(anti_vertex_deg, houses_degree_ut)
-                    data["anti_vertex"].retrograde = False
-                    calculated_planets.append("Anti_Vertex")
-
             except Exception as e:
-                logging.warning("Could not calculate Vertex/Anti-Vertex position, error: %s", e)
+                logging.warning("Could not calculate Vertex position, error: %s", e)
                 if "Vertex" in active_points:
                     active_points.remove("Vertex")
                 if "Anti_Vertex" in active_points:
                     active_points.remove("Anti_Vertex")
+
+        # =============================================================================
+        # WHITE MOON / SELENA (SE_WHITE_MOON = 56, with fallback)
+        # =============================================================================
+        # White Moon is natively supported by libephemeris (body ID 56).
+        # On swisseph, we fall back to Mean Lilith + 180 (same as Mean Priapus).
+        if should_calculate("White_Moon"):
+            # Attempt native backend calculation (body ID 56)
+            AstrologicalSubjectFactory._calculate_single_planet(
+                data,
+                "White_Moon",
+                56,
+                julian_day,
+                iflag,
+                houses_degree_ut,
+                point_type,
+                calculated_planets,
+                active_points,
+                center_body_id=center_body_id,
+            )
+            # Fallback: if backend doesn't support ID 56, derive from Mean Lilith + 180
+            if "white_moon" not in data:
+                # Compute Mean Lilith locally (body ID 12) without storing it in data,
+                # to avoid leaking an unrequested point into the public model.
+                try:
+                    ml_calc = swe.calc_ut(julian_day, 12, iflag)[0]
+                    ml_eq = swe.calc_ut(julian_day, 12, iflag | swe.FLG_EQUATORIAL)[0]
+                    wm_deg = math.fmod(ml_calc[0] + 180, 360)
+                    data["white_moon"] = get_kerykeion_point_from_degree(
+                        wm_deg,
+                        "White_Moon",
+                        point_type=point_type,
+                        speed=ml_calc[3],
+                        declination=-ml_eq[1],
+                        source="derived",
+                    )
+                    data["white_moon"].house = get_planet_house(wm_deg, houses_degree_ut)
+                    data["white_moon"].retrograde = ml_calc[3] < 0
+                    calculated_planets.append("White_Moon")
+                    # Re-add to active_points if it was removed by _calculate_single_planet
+                    if "White_Moon" not in active_points and active_points:
+                        active_points.append("White_Moon")
+                except Exception:
+                    logging.warning(
+                        "Could not calculate White_Moon: no backend support and Mean_Lilith computation failed"
+                    )
+                    if "White_Moon" in active_points:
+                        active_points.remove("White_Moon")
+
+        # =============================================================================
+        # OPPOSITE / DERIVED POINTS (declarative, via OPPOSITE_PAIRS)
+        # =============================================================================
+        # All geometrically opposite points (DSC, IC, Anti-Vertex, South Nodes,
+        # Priapus) are calculated here from their primary point + 180 degrees.
+        AstrologicalSubjectFactory._calculate_opposite_points(
+            data,
+            houses_degree_ut,
+            point_type,
+            active_points,
+            calculated_planets,
+        )
 
         # Store only the planets that were actually calculated
         all_calculated_points = calculated_planets.copy()

@@ -22,9 +22,18 @@ LILITH_POINTS: List[AstrologicalPoint] = [
 def subject_with_lilith_variants():
     """Subject with all Lilith and Priapus points active."""
     return AstrologicalSubjectFactory.from_birth_data(
-        "Lilith Test", 1990, 6, 15, 14, 30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        "Lilith Test",
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
         active_points=LILITH_POINTS,
     )
 
@@ -33,9 +42,18 @@ def subject_with_lilith_variants():
 def subject_default():
     """Subject with default active_points (no Interpolated Lilith or Priapus)."""
     return AstrologicalSubjectFactory.from_birth_data(
-        "Default Test", 1990, 6, 15, 14, 30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        "Default Test",
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
     )
 
 
@@ -46,29 +64,35 @@ class TestInterpolatedLilith:
         assert il is not None
         assert il.name == "Interpolated_Lilith"
 
-    def test_interpolated_between_mean_and_true(self, subject_with_lilith_variants):
-        """Interpolated Lilith should lie between Mean and True Lilith positions."""
+    def test_interpolated_lilith_near_lunar_apogee(self, subject_with_lilith_variants):
+        """Interpolated Lilith (SE_INTP_APOG) should be in the lunar apogee region.
+
+        Since v6.0, Interpolated Lilith uses the Swiss Ephemeris interpolated
+        apogee (body ID 21, ELP2000-82B perturbation series) instead of the
+        previous naive circular_mean(Mean, True) formula.  It measures the same
+        physical point as Mean/True Lilith (lunar apogee) so it should remain
+        within ~30 degrees of Mean Lilith, but it is NOT constrained to lie
+        between Mean and True.
+        """
         mean = subject_with_lilith_variants.mean_lilith
-        true = subject_with_lilith_variants.true_lilith
         interp = subject_with_lilith_variants.interpolated_lilith
 
         assert mean is not None
-        assert true is not None
         assert interp is not None
 
-        # The interpolated value should be close to both mean and true
-        # (within 15 degrees — True Lilith can deviate significantly from Mean)
-        diff_from_mean = abs(interp.abs_pos - mean.abs_pos)
-        if diff_from_mean > 180:
-            diff_from_mean = 360 - diff_from_mean
-        diff_from_true = abs(interp.abs_pos - true.abs_pos)
-        if diff_from_true > 180:
-            diff_from_true = 360 - diff_from_true
+        diff = abs(interp.abs_pos - mean.abs_pos)
+        if diff > 180:
+            diff = 360 - diff
 
-        assert diff_from_mean <= 15.0 or diff_from_true <= 15.0, (
-            f"Interpolated Lilith ({interp.abs_pos:.2f}) too far from both "
-            f"Mean ({mean.abs_pos:.2f}) and True ({true.abs_pos:.2f})"
+        assert diff <= 30.0, (
+            f"Interpolated Lilith ({interp.abs_pos:.2f}) too far from Mean Lilith ({mean.abs_pos:.2f}), diff={diff:.2f}"
         )
+
+    def test_interpolated_lilith_source(self, subject_with_lilith_variants):
+        """Interpolated Lilith should have source='ephemeris' (backend-native)."""
+        il = subject_with_lilith_variants.interpolated_lilith
+        assert il is not None
+        assert il.source == "ephemeris"
 
     def test_interpolated_not_default(self, subject_default):
         """Interpolated Lilith should be None when not in active_points."""
@@ -100,8 +124,7 @@ class TestMeanPriapus:
         if diff > 180:
             diff = 360 - diff
         assert abs(diff - 180) < 0.01, (
-            f"Mean Priapus ({mean_pri.abs_pos:.4f}) not opposite "
-            f"Mean Lilith ({mean_lil.abs_pos:.4f}), diff={diff:.4f}"
+            f"Mean Priapus ({mean_pri.abs_pos:.4f}) not opposite Mean Lilith ({mean_lil.abs_pos:.4f}), diff={diff:.4f}"
         )
 
     def test_mean_priapus_not_default(self, subject_default):
@@ -128,8 +151,7 @@ class TestTruePriapus:
         if diff > 180:
             diff = 360 - diff
         assert abs(diff - 180) < 0.01, (
-            f"True Priapus ({true_pri.abs_pos:.4f}) not opposite "
-            f"True Lilith ({true_lil.abs_pos:.4f}), diff={diff:.4f}"
+            f"True Priapus ({true_pri.abs_pos:.4f}) not opposite True Lilith ({true_lil.abs_pos:.4f}), diff={diff:.4f}"
         )
 
     def test_all_lilith_points_have_house(self, subject_with_lilith_variants):
@@ -175,9 +197,7 @@ class TestLilithSweReference:
         diff = abs(actual_priapus - expected_priapus)
         if diff > 180:
             diff = 360 - diff
-        assert diff < 0.001, (
-            f"Mean Priapus {actual_priapus} != swe Mean Lilith+180 ({expected_priapus})"
-        )
+        assert diff < 0.001, f"Mean Priapus {actual_priapus} != swe Mean Lilith+180 ({expected_priapus})"
 
     def test_true_priapus_opposite_swe_true_lilith(self, subject_with_lilith_variants):
         """True Priapus must be True Lilith + 180 deg (mod 360), verified against swe."""
@@ -189,6 +209,4 @@ class TestLilithSweReference:
         diff = abs(actual_priapus - expected_priapus)
         if diff > 180:
             diff = 360 - diff
-        assert diff < 0.001, (
-            f"True Priapus {actual_priapus} != swe True Lilith+180 ({expected_priapus})"
-        )
+        assert diff < 0.001, f"True Priapus {actual_priapus} != swe True Lilith+180 ({expected_priapus})"

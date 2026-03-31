@@ -75,19 +75,35 @@ class RelocatedChartFactory:
         # Create house KerykeionPointModels
         house_data = {}
         house_names = [
-            "first_house", "second_house", "third_house", "fourth_house",
-            "fifth_house", "sixth_house", "seventh_house", "eighth_house",
-            "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+            "first_house",
+            "second_house",
+            "third_house",
+            "fourth_house",
+            "fifth_house",
+            "sixth_house",
+            "seventh_house",
+            "eighth_house",
+            "ninth_house",
+            "tenth_house",
+            "eleventh_house",
+            "twelfth_house",
         ]
         houses_list = [
-            "First_House", "Second_House", "Third_House", "Fourth_House",
-            "Fifth_House", "Sixth_House", "Seventh_House", "Eighth_House",
-            "Ninth_House", "Tenth_House", "Eleventh_House", "Twelfth_House",
+            "First_House",
+            "Second_House",
+            "Third_House",
+            "Fourth_House",
+            "Fifth_House",
+            "Sixth_House",
+            "Seventh_House",
+            "Eighth_House",
+            "Ninth_House",
+            "Tenth_House",
+            "Eleventh_House",
+            "Twelfth_House",
         ]
         for i, hname in enumerate(house_names):
-            house_data[hname] = get_kerykeion_point_from_degree(
-                cusps[i], houses_list[i], "House"
-            )
+            house_data[hname] = get_kerykeion_point_from_degree(cusps[i], houses_list[i], "House")
 
         # Create angular points
         asc_deg = ascmc[0] % 360
@@ -95,10 +111,18 @@ class RelocatedChartFactory:
         desc_deg = (asc_deg + 180) % 360
         ic_deg = (mc_deg + 180) % 360
 
-        house_data["ascendant"] = get_kerykeion_point_from_degree(asc_deg, "Ascendant", "AstrologicalPoint")
-        house_data["medium_coeli"] = get_kerykeion_point_from_degree(mc_deg, "Medium_Coeli", "AstrologicalPoint")
-        house_data["descendant"] = get_kerykeion_point_from_degree(desc_deg, "Descendant", "AstrologicalPoint")
-        house_data["imum_coeli"] = get_kerykeion_point_from_degree(ic_deg, "Imum_Coeli", "AstrologicalPoint")
+        house_data["ascendant"] = get_kerykeion_point_from_degree(
+            asc_deg, "Ascendant", "AstrologicalPoint", source="ephemeris"
+        )
+        house_data["medium_coeli"] = get_kerykeion_point_from_degree(
+            mc_deg, "Medium_Coeli", "AstrologicalPoint", source="ephemeris"
+        )
+        house_data["descendant"] = get_kerykeion_point_from_degree(
+            desc_deg, "Descendant", "AstrologicalPoint", source="derived"
+        )
+        house_data["imum_coeli"] = get_kerykeion_point_from_degree(
+            ic_deg, "Imum_Coeli", "AstrologicalPoint", source="derived"
+        )
 
         # Copy original subject data and override houses + angles
         relocated_data = subject.model_dump()

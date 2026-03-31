@@ -179,6 +179,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "Part of Faith",
             "Vertex": "Vertex",
             "Anti_Vertex": "Anti-Vertex",
+            "Interpolated_Perigee": "Interpolated Perigee",
+            "White_Moon": "White Moon",
         },
     },
     "FR": {
@@ -354,6 +356,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "Pars Fidei",
             "Vertex": "Vertex",
             "Anti_Vertex": "Anti-Vertex",
+            "Interpolated_Perigee": "Périgée Interpolé",
+            "White_Moon": "Lune Blanche",
         },
     },
     "PT": {
@@ -529,6 +533,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "Pars Fidei",
             "Vertex": "Vertex",
             "Anti_Vertex": "Anti-Vertex",
+            "Interpolated_Perigee": "Perigeu Interpolado",
+            "White_Moon": "Lua Branca",
         },
     },
     "IT": {
@@ -704,6 +710,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "Pars Fidei",
             "Vertex": "Vertex",
             "Anti_Vertex": "Anti-Vertex",
+            "Interpolated_Perigee": "Perigeo Interpolato",
+            "White_Moon": "Luna Bianca",
         },
     },
     "CN": {
@@ -879,6 +887,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "信仰點",
             "Vertex": "命運點",
             "Anti_Vertex": "反命運點",
+            "Interpolated_Perigee": "內插近地點",
+            "White_Moon": "白月",
         },
     },
     "ES": {
@@ -1054,6 +1064,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "Pars Fidei",
             "Vertex": "Vertex",
             "Anti_Vertex": "Anti-Vertex",
+            "Interpolated_Perigee": "Perigeo Interpolado",
+            "White_Moon": "Luna Blanca",
         },
     },
     "RU": {
@@ -1225,6 +1237,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "Жребий Веры",
             "Vertex": "Вертекс",
             "Anti_Vertex": "Анти-Вертекс",
+            "Interpolated_Perigee": "Интерполированный Перигей",
+            "White_Moon": "Белая Луна",
         },
     },
     "TR": {
@@ -1396,6 +1410,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "İnanç Payı",
             "Vertex": "Vertex",
             "Anti_Vertex": "Anti-Vertex",
+            "Interpolated_Perigee": "İnterpolasyonlu Perige",
+            "White_Moon": "Beyaz Ay",
         },
     },
     "DE": {
@@ -1567,6 +1583,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "Glaubenspunkt",
             "Vertex": "Vertex",
             "Anti_Vertex": "Anti-Vertex",
+            "Interpolated_Perigee": "Interpoliertes Perigäum",
+            "White_Moon": "Weißer Mond",
         },
     },
     "HI": {
@@ -1738,6 +1756,8 @@ LANGUAGE_SETTINGS = {
             "Pars_Fidei": "विश्वास अंश",
             "Vertex": "वर्टेक्स",
             "Anti_Vertex": "एंटी-वर्टेक्स",
+            "Interpolated_Perigee": "प्रक्षेपित उपभू",
+            "White_Moon": "श्वेत चंद्र",
         },
     },
 }

@@ -548,6 +548,21 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
         "element_points": 0,
         "label": "True_Priapus",
     },
+    # Lunar apse points (v6.0)
+    {
+        "id": 74,
+        "name": "Interpolated_Perigee",
+        "color": "var(--kerykeion-chart-color-mean-lilith)",
+        "element_points": 0,
+        "label": "Interp_Perigee",
+    },
+    {
+        "id": 75,
+        "name": "White_Moon",
+        "color": "var(--kerykeion-chart-color-mean-lilith)",
+        "element_points": 0,
+        "label": "White_Moon",
+    },
     # Uranian / Hamburg School hypothetical planets
     {
         "id": 66,

@@ -74,6 +74,8 @@ AstrologicalPoint: TypeAlias = Literal[
     "Interpolated_Lilith",
     "Mean_Priapus",
     "True_Priapus",
+    "Interpolated_Perigee",
+    "White_Moon",
     "Earth",
     "Pholus",
     # Asteroids
@@ -341,8 +343,16 @@ Usually the standard is Placidus (P)
 
 
 PerspectiveType: TypeAlias = Literal[
-    "Apparent Geocentric", "Heliocentric", "Topocentric", "True Geocentric",
-    "Selenocentric", "Mercurycentric", "Venuscentric", "Marscentric", "Jupitercentric", "Saturncentric",
+    "Apparent Geocentric",
+    "Heliocentric",
+    "Topocentric",
+    "True Geocentric",
+    "Selenocentric",
+    "Mercurycentric",
+    "Venuscentric",
+    "Marscentric",
+    "Jupitercentric",
+    "Saturncentric",
     # v6.0 addition
     "Barycentric",
 ]

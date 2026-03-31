@@ -64,6 +64,10 @@ _POINT_NUMBER_MAP: dict[str, int] = {
     "True_South_Lunar_Node": 1100,
     "Chiron": 15,
     "Mean_Lilith": 12,
+    "True_Lilith": 13,
+    "Interpolated_Lilith": 21,  # SE_INTP_APOG — interpolated lunar apogee
+    "Interpolated_Perigee": 22,  # SE_INTP_PERG — interpolated lunar perigee
+    "White_Moon": 56,  # SE_WHITE_MOON / Selena (libephemeris native, fallback on swisseph)
     "Ascendant": 9900,
     "Descendant": 9901,
     "Medium_Coeli": 9902,
@@ -203,6 +207,7 @@ def get_kerykeion_point_from_degree(
     speed: Optional[float] = None,
     declination: Optional[float] = None,
     magnitude: Optional[float] = None,
+    source: Optional[str] = None,
 ) -> KerykeionPointModel:
     """
     Create a KerykeionPointModel from a degree position.
@@ -214,6 +219,7 @@ def get_kerykeion_point_from_degree(
         speed: The velocity/speed of the celestial point in degrees per day (optional)
         declination: The declination of the celestial point in degrees (optional)
         magnitude: The apparent visual magnitude for fixed stars (optional)
+        source: Data provenance — "ephemeris", "derived", or "formula" (optional)
 
     Returns:
         A KerykeionPointModel with calculated zodiac sign, position, and properties
@@ -245,6 +251,7 @@ def get_kerykeion_point_from_degree(
         speed=speed,
         declination=declination,
         magnitude=magnitude,
+        source=source,
     )
 
 
@@ -632,9 +639,7 @@ def extract_year_from_iso(iso_datetime_string: str) -> int:
     return datetime.fromisoformat(iso_datetime_string).year
 
 
-def format_ancient_iso(
-    year: int, month: int, day: int, decimal_hour: float, utc_offset_hours: float
-) -> str:
+def format_ancient_iso(year: int, month: int, day: int, decimal_hour: float, utc_offset_hours: float) -> str:
     """Format a date with potentially negative year as an ISO 8601 extended-year string.
 
     Produces strings like ``"-0500-03-21T12:00:00+01:35"`` for dates that
