@@ -1566,7 +1566,6 @@ class AstrologicalSubjectFactory:
                 house_name,
                 point_type=point_type,
                 speed=cusps_speed[i],
-                source="ephemeris",
             )
 
         # Store house names
@@ -1587,7 +1586,6 @@ class AstrologicalSubjectFactory:
             "Ascendant",
             point_type=point_type,
             speed=ascmc_speed[0],
-            source="ephemeris",
         )
         data["ascendant"].house = get_planet_house(data["ascendant"].abs_pos, data["_houses_degree_ut"])
         data["ascendant"].retrograde = False
@@ -1599,7 +1597,6 @@ class AstrologicalSubjectFactory:
             "Medium_Coeli",
             point_type=point_type,
             speed=ascmc_speed[1],
-            source="ephemeris",
         )
         data["medium_coeli"].house = get_planet_house(data["medium_coeli"].abs_pos, data["_houses_degree_ut"])
         data["medium_coeli"].retrograde = False
@@ -1690,7 +1687,6 @@ class AstrologicalSubjectFactory:
                 point_type=point_type,
                 speed=planet_calc[3],
                 declination=declination,
-                source="ephemeris",
             )
 
             # Calculate house position
@@ -1720,7 +1716,7 @@ class AstrologicalSubjectFactory:
 
         Each derived point is the geometric opposite (+180 degrees) of its primary
         point. Speed and declination may be negated depending on the pair's
-        configuration. All derived points receive ``source="derived"``.
+        configuration. All derived points are the geometric opposite (+180°) of their primary.
 
         Handles: Descendant (from ASC), Imum Coeli (from MC), Anti-Vertex (from
         Vertex), Mean/True South Lunar Node (from North Nodes), Mean/True Priapus
@@ -1766,7 +1762,6 @@ class AstrologicalSubjectFactory:
                 point_type=point_type,
                 speed=speed,
                 declination=dec,
-                source="derived",
             )
             point.house = get_planet_house(deg, houses_degree_ut)
             point.retrograde = primary.retrograde if primary.retrograde is not None else False
@@ -1813,7 +1808,7 @@ class AstrologicalSubjectFactory:
                 flags=iflag,
             )
             data["ascendant"] = get_kerykeion_point_from_degree(
-                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0], source="ephemeris"
+                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]
             )
             data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
             data["ascendant"].retrograde = False
@@ -1832,7 +1827,6 @@ class AstrologicalSubjectFactory:
                 point_type=point_type,
                 speed=planet_calc[3],
                 declination=declination,
-                source="ephemeris",
             )
             data[point_key].house = get_planet_house(planet_calc[0], houses_degree_ut)
             data[point_key].retrograde = planet_calc[3] < 0
@@ -1950,7 +1944,7 @@ class AstrologicalSubjectFactory:
 
         # Store the result
         part_key = part_name.lower()
-        data[part_key] = get_kerykeion_point_from_degree(part_deg, part_name, point_type=point_type, source="formula")
+        data[part_key] = get_kerykeion_point_from_degree(part_deg, part_name, point_type=point_type)
         data[part_key].house = get_planet_house(part_deg, houses_degree_ut)
         data[part_key].retrograde = False  # Arabic Parts are never retrograde
         calculated_planets.append(part_name)
@@ -2156,7 +2150,6 @@ class AstrologicalSubjectFactory:
                     speed=star_speed,
                     declination=star_dec,
                     magnitude=star_mag,
-                    source="ephemeris",
                 )
                 point.house = get_planet_house(star_deg, houses_degree_ut)
                 point.retrograde = False
@@ -2230,7 +2223,6 @@ class AstrologicalSubjectFactory:
                     vertex_deg,
                     "Vertex",
                     point_type=point_type,
-                    source="ephemeris",
                 )
                 data["vertex"].house = get_planet_house(vertex_deg, houses_degree_ut)
                 data["vertex"].retrograde = False
@@ -2277,7 +2269,6 @@ class AstrologicalSubjectFactory:
                         point_type=point_type,
                         speed=ml_calc[3],
                         declination=-ml_eq[1],
-                        source="derived",
                     )
                     data["white_moon"].house = get_planet_house(wm_deg, houses_degree_ut)
                     data["white_moon"].retrograde = ml_calc[3] < 0

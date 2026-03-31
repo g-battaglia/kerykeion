@@ -442,15 +442,6 @@ class KerykeionPointModel(SubscriptableBaseModel):
         "(the true obliquity of the ecliptic, ~23.44 deg). OOB planets are considered to "
         "operate outside normal boundaries in psychological/evolutionary astrology. Added in v6.0.",
     )
-    # Data provenance (v6.0)
-    source: Optional[Literal["ephemeris", "derived", "formula"]] = Field(
-        default=None,
-        description="Provenance of the point's position data. "
-        "'ephemeris' = computed by the ephemeris backend (swe.calc_ut / swe.houses_ex2). "
-        "'derived' = geometric opposite (+180°) of an ephemeris point (e.g. Descendant from Ascendant). "
-        "'formula' = astrological formula combining other points (e.g. Arabic Parts). "
-        "Added in v6.0.",
-    )
 
 
 class NutationObliquityModel(SubscriptableBaseModel):

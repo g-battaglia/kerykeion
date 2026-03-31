@@ -1,10 +1,25 @@
 # Changelog
 
+## 6.0.0a4
+
+_2026-03-31_
+
+**Remove `source` field from `KerykeionPointModel`.**
+
+The `source` field added in 6.0.0a3 (`"ephemeris"`, `"derived"`, `"formula"`) has been removed. It provided redundant information -- the provenance of every point is already obvious from its name and type (e.g. Descendant is always derived from ASC+180, Pars Fortunae is always a formula). The field added noise to every API response without aiding actual debugging.
+
+Ephemeris backend tracing (LEB vs Skyfield vs SPK vs Horizons) -- which is the genuinely useful debug information -- is handled at the API layer via an opt-in `X-Debug-Ephemeris` header that captures `libephemeris` log output. This keeps kerykeion clean and the debug infrastructure where it belongs.
+
+### Breaking Changes
+
+- **Removed `source` field** from `KerykeionPointModel`. Consumers that read `.source` on points will get an `AttributeError`. Since this field was only introduced in 6.0.0a3 (never in a stable release), the impact is minimal.
+- **Removed `source` parameter** from `get_kerykeion_point_from_degree()` in `utilities.py`.
+
 ## 6.0.0a3
 
 _2026-03-31_
 
-**Ephemeris delegation refactor -- delegate derived/analytical points to backends, add `source` field, new celestial points.**
+**Ephemeris delegation refactor -- delegate derived/analytical points to backends, new celestial points.**
 
 This release refactors how kerykeion computes derived and analytical astrological points, following the principle: _"Astronomical calculations belong to the backend. Astrological logic belongs to Kerykeion."_
 
@@ -17,14 +32,6 @@ This release refactors how kerykeion computes derived and analytical astrologica
 ### Breaking Changes
 
 - **Interpolated Lilith now uses `SE_INTP_APOG = 21`** instead of the previous naive `circular_mean(Mean, True)` formula. The new value is the astronomically correct interpolated apogee computed via the ELP2000-82B perturbation series (~50 terms). This is numerically different from the old formula and is no longer constrained to lie between Mean and True Lilith.
-
-### `source` Field on `KerykeionPointModel`
-
-Every calculated point now carries a `source` field (`Optional[Literal["ephemeris", "derived", "formula"]]`) indicating how it was computed:
-
-- **`"ephemeris"`** -- computed directly by the ephemeris backend (`swe.calc_ut`, `swe.houses_ex2`, `swe.fixstar_ut`). Includes: all planets, nodes, Lilith variants, asteroids, TNOs, Uranian planets, houses, ASC, MC, Vertex, fixed stars.
-- **`"derived"`** -- geometric opposite (`+180°`) of a primary ephemeris point. Includes: Descendant, Imum Coeli, Anti-Vertex, Mean/True South Lunar Node, Mean/True Priapus, White Moon (fallback).
-- **`"formula"`** -- computed by an astrological formula from multiple point positions. Includes: all Arabic Parts (Pars Fortunae, Pars Spiritus, Pars Amoris, Pars Fidei).
 
 ### `OPPOSITE_PAIRS` Consolidation
 
@@ -46,8 +53,6 @@ Consolidated pairs: Descendant (from ASC), Imum Coeli (from MC), Anti-Vertex (fr
 
 - Added `Interpolated_Perigee` and `White_Moon` to: `AstrologicalPoint` literal type, `AstrologicalBaseModel`, `KerykeionLanguageCelestialPointModel`, `DEFAULT_CELESTIAL_POINTS_SETTINGS`, `ALL_ACTIVE_POINTS`, and all 10 language translation dictionaries.
 - Updated `_POINT_NUMBER_MAP` in `utilities.py` with correct body IDs for `True_Lilith` (13), `Interpolated_Lilith` (21), `Interpolated_Perigee` (22), `White_Moon` (56).
-- `get_kerykeion_point_from_degree()` accepts an optional `source` parameter.
-- `relocated_chart_factory.py` now sets `source="ephemeris"` on ASC/MC and `source="derived"` on DSC/IC.
 - Regenerated all modern SVG chart baselines to reflect new points.
 - Updated `test_lilith_variants.py` to reflect the new `SE_INTP_APOG` semantics.
 

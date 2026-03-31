@@ -111,18 +111,10 @@ class RelocatedChartFactory:
         desc_deg = (asc_deg + 180) % 360
         ic_deg = (mc_deg + 180) % 360
 
-        house_data["ascendant"] = get_kerykeion_point_from_degree(
-            asc_deg, "Ascendant", "AstrologicalPoint", source="ephemeris"
-        )
-        house_data["medium_coeli"] = get_kerykeion_point_from_degree(
-            mc_deg, "Medium_Coeli", "AstrologicalPoint", source="ephemeris"
-        )
-        house_data["descendant"] = get_kerykeion_point_from_degree(
-            desc_deg, "Descendant", "AstrologicalPoint", source="derived"
-        )
-        house_data["imum_coeli"] = get_kerykeion_point_from_degree(
-            ic_deg, "Imum_Coeli", "AstrologicalPoint", source="derived"
-        )
+        house_data["ascendant"] = get_kerykeion_point_from_degree(asc_deg, "Ascendant", "AstrologicalPoint")
+        house_data["medium_coeli"] = get_kerykeion_point_from_degree(mc_deg, "Medium_Coeli", "AstrologicalPoint")
+        house_data["descendant"] = get_kerykeion_point_from_degree(desc_deg, "Descendant", "AstrologicalPoint")
+        house_data["imum_coeli"] = get_kerykeion_point_from_degree(ic_deg, "Imum_Coeli", "AstrologicalPoint")
 
         # Copy original subject data and override houses + angles
         relocated_data = subject.model_dump()

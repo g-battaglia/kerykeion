@@ -88,12 +88,6 @@ class TestInterpolatedLilith:
             f"Interpolated Lilith ({interp.abs_pos:.2f}) too far from Mean Lilith ({mean.abs_pos:.2f}), diff={diff:.2f}"
         )
 
-    def test_interpolated_lilith_source(self, subject_with_lilith_variants):
-        """Interpolated Lilith should have source='ephemeris' (backend-native)."""
-        il = subject_with_lilith_variants.interpolated_lilith
-        assert il is not None
-        assert il.source == "ephemeris"
-
     def test_interpolated_not_default(self, subject_default):
         """Interpolated Lilith should be None when not in active_points."""
         assert subject_default.interpolated_lilith is None
