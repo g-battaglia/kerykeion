@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.0.0a6
+
+_2026-04-01_
+
+**DEBUG logging for backend tracing and chart layout is now concise, structured, and module-scoped.**
+
+This release cleans up the new ephemeris tracing logs introduced in `6.0.0a5`. Backend provenance is still available only in DEBUG mode, but the output is now grouped by concern: a compact ephemeris trace table during subject calculation, and overlap-group summaries during chart layout. Per-point rendering noise and root-logger output have been removed.
+
+### Changes
+
+- Replaced one-line-per-body backend trace logs with an ordered `Ephemeris trace` table showing point, absolute degree, and backend.
+- Removed noisy per-point `Planet index` and `distance_to_prev` / `distance_to_next` logs from `draw_planets.py`.
+- Added compact `Layout overlap groups` DEBUG logs that only report actual collision groups that require visual spreading.
+- Switched these debug paths to module loggers instead of `root`, so log output now identifies `kerykeion.astrological_subject_factory`, `kerykeion.charts.draw_planets`, and `kerykeion.aspects.aspects_factory` explicitly.
+
 ## 6.0.0a5
 
 _2026-04-01_

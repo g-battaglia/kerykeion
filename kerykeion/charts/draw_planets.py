@@ -20,6 +20,8 @@ from kerykeion.schemas.kr_literals import Houses
 import logging
 from typing import Union, get_args, List, Optional, Tuple, Sequence, Mapping, Any
 
+logger = logging.getLogger(__name__)
+
 # =============================================================================
 # CONSTANTS
 # =============================================================================
@@ -114,10 +116,6 @@ def draw_planets(
     # -------------------------------------------------------------------------
     position_index_map = {main_points_abs_positions[i]: i for i in range(len(available_planets_setting))}
     sorted_positions = sorted(position_index_map.keys())
-
-    for i, pos in enumerate(sorted_positions):
-        _pt = available_kerykeion_celestial_points[position_index_map[pos]]
-        logging.debug(f"Planet index: {position_index_map[pos]}, name: {_pt.name}, degree: {pos}")
 
     # -------------------------------------------------------------------------
     # 4. Calculate position adjustments to prevent overlapping
@@ -297,7 +295,6 @@ def _calculate_planet_adjustments(
 
         planets_by_position[position_idx] = [point_idx, distance_to_prev, distance_to_next]
         label = points_settings[point_idx]["label"]
-        logging.debug(f"{label}, distance_to_prev: {distance_to_prev}, distance_to_next: {distance_to_next}")
 
         # Group points that are close to each other
         if distance_to_next < PLANET_GROUPING_THRESHOLD:
@@ -319,6 +316,17 @@ def _calculate_planet_adjustments(
             _handle_two_point_group(group, planets_by_position, position_adjustments, PLANET_GROUPING_THRESHOLD)
         elif len(group) >= 3:
             _handle_multi_point_group(group, position_adjustments, PLANET_GROUPING_THRESHOLD)
+
+    if point_groups and logger.isEnabledFor(logging.DEBUG):
+        logger.debug("Layout overlap groups")
+        for group_idx, group in enumerate(point_groups, start=1):
+            group_entries: List[str] = []
+            for point_data in group:
+                position_idx = int(point_data[0])
+                label = str(point_data[3])
+                abs_position = float(sorted_positions[position_idx])
+                group_entries.append(f"{label}({abs_position:.2f})")
+            logger.debug("  group %d: %s", group_idx, " ".join(group_entries))
 
     return position_adjustments
 

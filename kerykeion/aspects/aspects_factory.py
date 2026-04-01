@@ -29,6 +29,8 @@ from kerykeion.settings.chart_defaults import (
 )
 from kerykeion.utilities import find_common_active_points
 
+logger = logging.getLogger(__name__)
+
 # Axes constants for orb filtering
 AXES_LIST = [
     "Ascendant",
@@ -535,7 +537,7 @@ class AspectsFactory:
         Returns:
             Filtered list of relevant aspects
         """
-        logging.debug("Calculating relevant aspects by filtering orbs...")
+        logger.debug("Calculating relevant aspects by filtering orbs...")
 
         relevant_aspects = []
 
@@ -701,41 +703,45 @@ class AspectsFactory:
                 contra_diff = abs(dec_a + dec_b)
 
                 if same_sign and parallel_diff <= orb:
-                    aspects.append(AspectModel(
-                        p1_name=name_a,
-                        p1_owner=owner_a,
-                        p1_abs_pos=abs_pos_a,
-                        p2_name=name_b,
-                        p2_owner=owner_b,
-                        p2_abs_pos=abs_pos_b,
-                        aspect="parallel",
-                        orbit=round(parallel_diff, 6),
-                        aspect_degrees=0,
-                        diff=round(parallel_diff, 6),
-                        p1=planet_id_lookup.get(name_a, 0),
-                        p2=planet_id_lookup.get(name_b, 0),
-                        aspect_movement="Static",
-                        p1_speed=0.0,
-                        p2_speed=0.0,
-                    ))
+                    aspects.append(
+                        AspectModel(
+                            p1_name=name_a,
+                            p1_owner=owner_a,
+                            p1_abs_pos=abs_pos_a,
+                            p2_name=name_b,
+                            p2_owner=owner_b,
+                            p2_abs_pos=abs_pos_b,
+                            aspect="parallel",
+                            orbit=round(parallel_diff, 6),
+                            aspect_degrees=0,
+                            diff=round(parallel_diff, 6),
+                            p1=planet_id_lookup.get(name_a, 0),
+                            p2=planet_id_lookup.get(name_b, 0),
+                            aspect_movement="Static",
+                            p1_speed=0.0,
+                            p2_speed=0.0,
+                        )
+                    )
                 elif not same_sign and contra_diff <= orb:
-                    aspects.append(AspectModel(
-                        p1_name=name_a,
-                        p1_owner=owner_a,
-                        p1_abs_pos=abs_pos_a,
-                        p2_name=name_b,
-                        p2_owner=owner_b,
-                        p2_abs_pos=abs_pos_b,
-                        aspect="contra_parallel",
-                        orbit=round(contra_diff, 6),
-                        aspect_degrees=0,
-                        diff=round(contra_diff, 6),
-                        p1=planet_id_lookup.get(name_a, 0),
-                        p2=planet_id_lookup.get(name_b, 0),
-                        aspect_movement="Static",
-                        p1_speed=0.0,
-                        p2_speed=0.0,
-                    ))
+                    aspects.append(
+                        AspectModel(
+                            p1_name=name_a,
+                            p1_owner=owner_a,
+                            p1_abs_pos=abs_pos_a,
+                            p2_name=name_b,
+                            p2_owner=owner_b,
+                            p2_abs_pos=abs_pos_b,
+                            aspect="contra_parallel",
+                            orbit=round(contra_diff, 6),
+                            aspect_degrees=0,
+                            diff=round(contra_diff, 6),
+                            p1=planet_id_lookup.get(name_a, 0),
+                            p2=planet_id_lookup.get(name_b, 0),
+                            aspect_movement="Static",
+                            p1_speed=0.0,
+                            p2_speed=0.0,
+                        )
+                    )
 
         return aspects
 

@@ -65,6 +65,8 @@ from kerykeion.utilities import (
 )
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
+logger = logging.getLogger(__name__)
+
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 GEONAMES_USERNAME_ENV_VAR = "KERYKEION_GEONAMES_USERNAME"
@@ -1010,7 +1012,7 @@ class AstrologicalSubjectFactory:
                         }
                     )
                 except Exception as e:
-                    logging.debug(f"Could not compute azalt for {point_key}: {e}")
+                    logger.debug("Could not compute azalt for %s: %s", point_key, e)
 
         # Calculate Out-of-Bounds status for all celestial points (v6.0)
         # A planet is OOB when |declination| > true obliquity of the ecliptic (~23.44 deg).
@@ -2323,15 +2325,26 @@ class AstrologicalSubjectFactory:
                 _trace_token.var.reset(_trace_token)
             except Exception:
                 pass
-            if trace_map and logging.getLogger().isEnabledFor(logging.DEBUG):
+            if trace_map and logger.isEnabledFor(logging.DEBUG):
                 # Build reverse map: body_id -> planet_name
                 _id_to_name: Dict[int, str] = {v: k for k, v in STANDARD_PLANETS.items()}
                 for tname, tnum in TNO_PLANETS.items():
                     _id_to_name[swe.AST_OFFSET + tnum] = tname
                 _id_to_name[56] = "White_Moon"
-                for body_id, backend in sorted(trace_map.items()):
+
+                trace_rows: List[tuple[float, str, str]] = []
+                for body_id, backend in trace_map.items():
                     name = _id_to_name.get(body_id, f"body_{body_id}")
-                    logging.debug(f"Planet: {name}, body_id: {body_id}, backend: {backend}")
+                    point = data.get(name.lower())
+                    if point is not None and hasattr(point, "abs_pos"):
+                        trace_rows.append((float(point.abs_pos), name, backend))
+
+                if trace_rows:
+                    trace_rows.sort(key=lambda row: row[0])
+                    logger.debug("Ephemeris trace [%s]", data.get("name", "unknown"))
+                    logger.debug("  %-24s %8s  %s", "point", "deg", "backend")
+                    for abs_pos, name, backend in trace_rows:
+                        logger.debug("  %-24s %8.2f  %s", name, abs_pos, backend)
 
     @staticmethod
     def _calculate_day_of_week(data: Dict[str, Any]) -> None:
