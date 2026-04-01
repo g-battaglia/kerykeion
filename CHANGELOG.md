@@ -1,5 +1,18 @@
 # Changelog
 
+## 6.0.0a7
+
+_2026-04-01_
+
+**Ephemeris trace output now follows canonical planetary order instead of zodiac degree order.**
+
+This release makes the new DEBUG trace easier to scan during debugging sessions. The `Ephemeris trace` table now follows the stable astrological order of bodies (`Sun`, `Moon`, `Mercury`, `Venus`, `Mars`, ...) instead of reordering rows by absolute position in the zodiac for each chart.
+
+### Changes
+
+- Changed `AstrologicalSubjectFactory._calculate_planets()` trace ordering from absolute degree sorting to canonical point ordering based on the declared `STANDARD_PLANETS`, `White_Moon`, and `TNO_PLANETS` sequences.
+- Kept absolute degree as a displayed value in the table, but no longer use it as the primary sort key.
+
 ## 6.0.0a6
 
 _2026-04-01_

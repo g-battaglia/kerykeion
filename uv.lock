@@ -909,7 +909,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a6"
+version = "6.0.0a7"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },

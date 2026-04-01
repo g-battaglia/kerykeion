@@ -2332,18 +2332,25 @@ class AstrologicalSubjectFactory:
                     _id_to_name[swe.AST_OFFSET + tnum] = tname
                 _id_to_name[56] = "White_Moon"
 
-                trace_rows: List[tuple[float, str, str]] = []
+                trace_order: Dict[str, int] = {}
+                for order_idx, point_name in enumerate(
+                    list(STANDARD_PLANETS.keys()) + ["White_Moon"] + list(TNO_PLANETS.keys())
+                ):
+                    trace_order[point_name] = order_idx
+
+                trace_rows: List[tuple[int, float, str, str]] = []
                 for body_id, backend in trace_map.items():
                     name = _id_to_name.get(body_id, f"body_{body_id}")
                     point = data.get(name.lower())
                     if point is not None and hasattr(point, "abs_pos"):
-                        trace_rows.append((float(point.abs_pos), name, backend))
+                        order_idx = trace_order.get(name, len(trace_order))
+                        trace_rows.append((order_idx, float(point.abs_pos), name, backend))
 
                 if trace_rows:
-                    trace_rows.sort(key=lambda row: row[0])
+                    trace_rows.sort(key=lambda row: (row[0], row[1]))
                     logger.debug("Ephemeris trace [%s]", data.get("name", "unknown"))
                     logger.debug("  %-24s %8s  %s", "point", "deg", "backend")
-                    for abs_pos, name, backend in trace_rows:
+                    for _, abs_pos, name, backend in trace_rows:
                         logger.debug("  %-24s %8.2f  %s", name, abs_pos, backend)
 
     @staticmethod
