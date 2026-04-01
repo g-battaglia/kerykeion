@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a4"
+version = "6.0.0a5"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -47,7 +47,7 @@ classifiers = [
 ]
 requires-python = ">=3.9"
 dependencies = [
-    "libephemeris>=1.0.0a6",
+    "libephemeris==1.0.0a8",
     "pydantic>=2.5",
     "scour>=0.38.2",
     "requests-cache>=1.2.1",
@@ -59,7 +59,7 @@ dependencies = [
 
 [project.optional-dependencies]
 swiss = ["pyswisseph>=2.10.3.1"]
-all = ["pyswisseph>=2.10.3.1", "libephemeris>=1.0.0a6"]
+all = ["pyswisseph>=2.10.3.1", "libephemeris==1.0.0a8"]
 
 [project.urls]
 Homepage = "https://www.kerykeion.net/"

@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.0.0a5
+
+_2026-04-01_
+
+**Backend debug tracing stays out of the public model and is exposed only through DEBUG logs.**
+
+This release keeps `KerykeionPointModel` clean while still making ephemeris provenance visible during debugging. When `libephemeris` is the active backend and logging is set to DEBUG, kerykeion now logs which backend computed each body (for example `LEB`, `Skyfield`, `Horizons`, `SPK`, `ASSIST`, `Keplerian`) without adding any new public response fields.
+
+### Changes
+
+- Added DEBUG-only tracing logs in `AstrologicalSubjectFactory._calculate_planets()` using `libephemeris.start_tracing()` / `get_trace_results()`.
+- Improved chart rendering debug logs to include both point index and point name.
+- Pinned the core `libephemeris` dependency to `1.0.0a8`, which provides the tracing API required by this release.
+
 ## 6.0.0a4
 
 _2026-03-31_
