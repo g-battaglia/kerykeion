@@ -2069,6 +2069,14 @@ class AstrologicalSubjectFactory:
         }
         center_body_id = _PCTR_MAP.get(data.get("perspective_type", ""), None)
 
+        # Start ephemeris backend tracing (libephemeris only)
+        _trace_token = None
+        if BACKEND_NAME == "libephemeris":
+            try:
+                _trace_token = swe.start_tracing()
+            except AttributeError:
+                pass  # libephemeris version without tracing support
+
         # =============================================================================
         # STANDARD PLANETS (using centralized mapping)
         # =============================================================================
@@ -2301,6 +2309,29 @@ class AstrologicalSubjectFactory:
         if calculated_axial_cusps:
             all_calculated_points.extend(calculated_axial_cusps)
         data["active_points"] = all_calculated_points
+
+        # ---------------------------------------------------------------------
+        # Log ephemeris backend tracing at DEBUG level
+        # ---------------------------------------------------------------------
+        if BACKEND_NAME == "libephemeris" and _trace_token is not None:
+            try:
+                trace_map = swe.get_trace_results()  # {body_id: "LEB", ...}
+            except AttributeError:
+                trace_map = {}
+            # Reset the tracing token
+            try:
+                _trace_token.var.reset(_trace_token)
+            except Exception:
+                pass
+            if trace_map and logging.getLogger().isEnabledFor(logging.DEBUG):
+                # Build reverse map: body_id -> planet_name
+                _id_to_name: Dict[int, str] = {v: k for k, v in STANDARD_PLANETS.items()}
+                for tname, tnum in TNO_PLANETS.items():
+                    _id_to_name[swe.AST_OFFSET + tnum] = tname
+                _id_to_name[56] = "White_Moon"
+                for body_id, backend in sorted(trace_map.items()):
+                    name = _id_to_name.get(body_id, f"body_{body_id}")
+                    logging.debug(f"Planet: {name}, body_id: {body_id}, backend: {backend}")
 
     @staticmethod
     def _calculate_day_of_week(data: Dict[str, Any]) -> None:

@@ -116,7 +116,8 @@ def draw_planets(
     sorted_positions = sorted(position_index_map.keys())
 
     for i, pos in enumerate(sorted_positions):
-        logging.debug(f"Planet index: {position_index_map[pos]}, degree: {pos}")
+        _pt = available_kerykeion_celestial_points[position_index_map[pos]]
+        logging.debug(f"Planet index: {position_index_map[pos]}, name: {_pt.name}, degree: {pos}")
 
     # -------------------------------------------------------------------------
     # 4. Calculate position adjustments to prevent overlapping
