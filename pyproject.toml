@@ -281,9 +281,17 @@ cmd = "python scripts/regenerate_synastry_aspects.py"
 [tool.poe.tasks."regenerate:aspects:matrix"]
 cmd = "python scripts/regenerate_all.py --aspects"
 
+[tool.poe.tasks."regenerate:configurations"]
+cmd = "python scripts/regenerate_all.py --configurations"
+help = "Regenerate all configuration-specific fixtures (house-systems, sidereal-modes, perspectives, returns, composite, ephemeris, arabic-parts)"
+
 [tool.poe.tasks."regenerate:all"]
-sequence = ["regenerate:svg", "regenerate:reports", "regenerate:positions", "regenerate:aspects"]
+sequence = ["regenerate:svg", "regenerate:reports", "regenerate:positions", "regenerate:aspects", "regenerate:configurations"]
 help = "Regenerate all golden standards"
+
+[tool.poe.tasks.benchmark]
+cmd = "python scripts/benchmark.py"
+help = "Run performance benchmarks (subject creation, aspects, SVG rendering)"
 
 # Utilities
 [tool.poe.tasks.clean]
