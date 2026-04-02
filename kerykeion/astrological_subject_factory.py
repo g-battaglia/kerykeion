@@ -312,11 +312,14 @@ def ephemeris_context(
     try:
         yield iflag
     finally:
-        # Defensive cleanup: reset topo if it was set
-        if topo_used:
-            swe.set_topo(0.0, 0.0, 0.0)
-        # Close all open ephemeris files to release file descriptors
-        swe.close()
+        # Reset per-calculation state (topo, sidereal, angles) without
+        # closing file handles or clearing LRU caches. This keeps the
+        # LEB reader, Skyfield timescale, and SPK kernels alive across
+        # consecutive calculations for dramatically better performance.
+        # Falls back to close() for backends without reset_session()
+        # (e.g. pyswisseph).
+        _reset = getattr(swe, "reset_session", None) or swe.close
+        _reset()
 
 
 @dataclass
