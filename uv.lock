@@ -909,7 +909,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a7"
+version = "6.0.0a10"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -952,8 +952,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "libephemeris", specifier = "==1.0.0a8" },
-    { name = "libephemeris", marker = "extra == 'all'", specifier = "==1.0.0a8" },
+    { name = "libephemeris", specifier = "==1.0.0a11" },
+    { name = "libephemeris", marker = "extra == 'all'", specifier = "==1.0.0a11" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'all'", specifier = ">=2.10.3.1" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -1004,7 +1004,7 @@ wheels = [
 
 [[package]]
 name = "libephemeris"
-version = "1.0.0a8"
+version = "1.0.0a11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astroquery" },
@@ -1018,9 +1018,9 @@ dependencies = [
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/be/4c/7566d4d390bd9ffec3fee727b78cee1f0f7d3bfd968389dd4b9499b03431/libephemeris-1.0.0a8.tar.gz", hash = "sha256:b04b70c2efb67dccd3b696ebaa6d281e04365f830561dd81d4324dd4e56907c5", size = 10975605, upload-time = "2026-04-01T13:34:45.508Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f1/f5/9c499779e9fc7a69f9f82f8a3806d2952df864111e3b8fa7e597ba0416bc/libephemeris-1.0.0a11.tar.gz", hash = "sha256:e674c03e4563073c93a3ea20df6a633aa55137cab18fb7d6c5a6d77bd7acd0d3", size = 10988961, upload-time = "2026-04-02T13:06:22.241Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/9b/a248aec2bbb2ca1df1f5f40c1d1be6d5f1d3e9af298c8f0c63800df88903/libephemeris-1.0.0a8-py3-none-any.whl", hash = "sha256:4bc83093ded83b7fefacd7bc15c735eb99d381cb9c1c0bced6438d171d631b72", size = 11019049, upload-time = "2026-04-01T13:34:51.473Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/7f/a21194e2c35dbc5c49c96f0b534391b45332fafa5febf93b27de16f4a5e4/libephemeris-1.0.0a11-py3-none-any.whl", hash = "sha256:702e167e22875ee6af2538bae525c55ed241b7d5fbc7b12f3c8521e6772cfe31", size = 11035212, upload-time = "2026-04-02T13:06:18.378Z" },
 ]
 
 [[package]]
