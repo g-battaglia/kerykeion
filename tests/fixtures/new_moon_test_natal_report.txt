@@ -30,24 +30,24 @@ New Moon - Test — Natal Chart Report
 +Natal Celestial Points-+---------+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Vir ♍️ | 22.88°   | +287.0322°/d | N/A     | -    | First House   |
-| Medium Coeli          | Gem ♊️ | 21.77°   | +332.4745°/d | N/A     | -    | Tenth House   |
-| Descendant            | Pis ♓️ | 22.88°   | +287.0322°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Sag ♐️ | 21.77°   | +332.4745°/d | N/A     | -    | Fourth House  |
+| Ascendant             | Vir ♍️ | 22.88°   | +287.0321°/d | N/A     | -    | First House   |
+| Medium Coeli          | Gem ♊️ | 21.77°   | +332.4749°/d | N/A     | -    | Tenth House   |
+| Descendant            | Pis ♓️ | 22.88°   | +287.0321°/d | N/A     | -    | Seventh House |
+| Imum Coeli            | Sag ♐️ | 21.77°   | +332.4749°/d | N/A     | -    | Fourth House  |
 | Sun                   | Sco ♏️ | 28.20°   | +1.0097°/d   | -19.76° | -    | Third House   |
 | Moon                  | Sco ♏️ | 28.19°   | +11.8608°/d  | -24.41° | -    | Third House   |
 | Mercury               | Sco ♏️ | 28.46°   | -1.3593°/d   | -19.32° | R    | Third House   |
-| Venus                 | Sco ♏️ | 16.73°   | +1.2560°/d   | -15.82° | -    | Second House  |
+| Venus                 | Sco ♏️ | 16.73°   | +1.2559°/d   | -15.82° | -    | Second House  |
 | Mars                  | Sag ♐️ | 11.40°   | +0.7319°/d   | -22.71° | -    | Third House   |
-| Jupiter               | Can ♋️ | 25.03°   | -0.0287°/d   | +21.26° | R    | Tenth House   |
-| Saturn                | Pis ♓️ | 25.21°   | -0.0141°/d   | -4.11°  | R    | Seventh House |
+| Jupiter               | Can ♋️ | 25.03°   | -0.0288°/d   | +21.26° | R    | Tenth House   |
+| Saturn                | Pis ♓️ | 25.21°   | -0.0140°/d   | -4.11°  | R    | Seventh House |
 | Uranus                | Tau ♉️ | 29.50°   | -0.0419°/d   | +19.84° | R    | Ninth House   |
-| Neptune               | Pis ♓️ | 29.49°   | -0.0112°/d   | -1.45°  | R    | Seventh House |
+| Neptune               | Pis ♓️ | 29.49°   | -0.0111°/d   | -1.45°  | R    | Seventh House |
 | Pluto                 | Aqu ♒️ | 1.69°    | +0.0173°/d   | -23.45° | -    | Fifth House   |
-| True North Lunar Node | Pis ♓️ | 15.44°   | -0.2318°/d   | -5.74°  | R    | Sixth House   |
-| True South Lunar Node | Vir ♍️ | 15.44°   | +0.2318°/d   | +5.74°  | R    | Twelfth House |
-| Mean Lilith           | Sco ♏️ | 26.58°   | +0.1120°/d   | -24.15° | -    | Third House   |
+| True North Lunar Node | Pis ♓️ | 15.44°   | -0.2335°/d   | -5.74°  | R    | Sixth House   |
+| Mean Lilith           | Sco ♏️ | 26.58°   | +0.1119°/d   | -24.15° | -    | Third House   |
 | Chiron                | Ari ♈️ | 23.43°   | -0.0359°/d   | +9.63°  | R    | Eighth House  |
+| True South Lunar Node | Vir ♍️ | 15.44°   | +0.2335°/d   | +5.74°  | R    | Twelfth House |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 
 +Natal Houses (Placidus)---+----------+-------------------+
@@ -108,13 +108,13 @@ New Moon - Test — Natal Chart Report
 | 9  | Neptune               |
 | 10 | Pluto                 |
 | 11 | True_North_Lunar_Node |
-| 12 | True_South_Lunar_Node |
-| 13 | Mean_Lilith           |
-| 14 | Chiron                |
-| 15 | Ascendant             |
-| 16 | Medium_Coeli          |
-| 17 | Descendant            |
-| 18 | Imum_Coeli            |
+| 12 | Mean_Lilith           |
+| 13 | Chiron                |
+| 14 | Descendant            |
+| 15 | Imum_Coeli            |
+| 16 | True_South_Lunar_Node |
+| 17 | Ascendant             |
+| 18 | Medium_Coeli          |
 +----+-----------------------+
 
 +-------------+---------+
@@ -176,13 +176,13 @@ New Moon - Test — Natal Chart Report
 | Jupiter               | trine △       | Mean Lilith           | 1.55° | Separating ← |
 | Saturn                | sextile ⚹     | Uranus                | 4.28° | Applying →   |
 | Saturn                | conjunction ☌ | Neptune               | 4.27° | Separating ← |
-| Saturn                | conjunction ☌ | True North Lunar Node | 9.78° | Separating ← |
+| Saturn                | conjunction ☌ | True North Lunar Node | 9.77° | Separating ← |
 | Saturn                | opposition ☍  | Ascendant             | 2.34° | Applying →   |
 | Saturn                | square □      | Medium Coeli          | 3.44° | Applying →   |
 | Saturn                | conjunction ☌ | Descendant            | 2.34° | Applying →   |
 | Saturn                | square □      | Imum Coeli            | 3.44° | Applying →   |
 | Saturn                | trine △       | Mean Lilith           | 1.37° | Separating ← |
-| Saturn                | opposition ☍  | True South Lunar Node | 9.78° | Applying →   |
+| Saturn                | opposition ☍  | True South Lunar Node | 9.77° | Applying →   |
 | Uranus                | sextile ⚹     | Neptune               | 0.01° | Applying →   |
 | Uranus                | trine △       | Pluto                 | 2.20° | Separating ← |
 | Uranus                | trine △       | Ascendant             | 6.62° | Applying →   |
@@ -190,7 +190,7 @@ New Moon - Test — Natal Chart Report
 | Neptune               | sextile ⚹     | Pluto                 | 2.21° | Separating ← |
 | Neptune               | opposition ☍  | Ascendant             | 6.61° | Applying →   |
 | Neptune               | conjunction ☌ | Descendant            | 6.61° | Applying →   |
-| Neptune               | trine △       | Mean Lilith           | 2.90° | Applying →   |
+| Neptune               | trine △       | Mean Lilith           | 2.91° | Applying →   |
 | Pluto                 | sextile ⚹     | Mean Lilith           | 5.11° | Applying →   |
 | True North Lunar Node | opposition ☍  | Ascendant             | 7.44° | Separating ← |
 | True North Lunar Node | conjunction ☌ | Descendant            | 7.44° | Separating ← |
@@ -204,5 +204,5 @@ New Moon - Test — Natal Chart Report
 | Descendant            | square □      | Imum Coeli            | 1.10° | Static =     |
 | Descendant            | trine △       | Mean Lilith           | 3.71° | Applying →   |
 | Descendant            | opposition ☍  | True South Lunar Node | 7.44° | Separating ← |
-| Mean Lilith           | quintile Q    | True South Lunar Node | 0.85° | Separating ← |
+| Mean Lilith           | quintile Q    | True South Lunar Node | 0.86° | Separating ← |
 +-----------------------+---------------+-----------------------+-------+--------------+
