@@ -1,5 +1,23 @@
 # Changelog
 
+## 6.0.0a14
+
+_2026-04-03_
+
+**Performance optimizations, benchmark tooling, and baseline regeneration.**
+
+### Changes
+
+- Cache SVG templates and CSS themes with `@lru_cache` (eliminates ~400KB disk I/O per render after first call).
+- Consolidate `model_copy()` calls in optional calculations: accumulate all updates per point, apply single `model_copy` at the end (reduces Pydantic model constructions from up to 345 to max 69).
+- Convert string concatenation (`output +=`) to list-join pattern in SVG drawing functions.
+- Cache `load_language_settings()` for the common no-overrides case.
+- Use `reset_session()` instead of `close()` in `ephemeris_context` to preserve LEB reader, Skyfield timescale, and LRU caches across consecutive calculations.
+- Added `poe benchmark` for measuring subject creation, aspects, and SVG rendering performance.
+- Added `poe regenerate:configurations` and included it in `poe regenerate:all`.
+- Regenerated all configuration-specific baselines (sidereal modes, perspectives, house systems, returns, composite, ephemeris, arabic parts) for libephemeris 1.0.0a15.
+- Relaxed Pluto-Chiron aspect movement test to accept both Static and Applying (boundary-sensitive with slow planets).
+
 ## 6.0.0a13
 
 _2026-04-03_
