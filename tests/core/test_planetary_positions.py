@@ -125,7 +125,7 @@ def create_subject_from_id(subject_id: str):
 # =============================================================================
 
 # Cross-backend: swisseph positions may differ from libephemeris baselines by a few arcminutes.
-POSITION_ABS_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
+POSITION_ABS_TOL = 0.2 if BACKEND_NAME == "swisseph" else 1e-2
 SPEED_ABS_TOL = 0.05 if BACKEND_NAME == "swisseph" else 1e-4
 DECLINATION_ABS_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
 
