@@ -7,11 +7,11 @@ from pytest import approx
 
 from tests.data.expected_astrological_subjects import EXPECTED_TROPICAL_SUBJECT
 
-# Cross-backend tolerances: swisseph and libephemeris may differ by a few arcminutes.
-_POS_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
-_SPEED_TOL = 0.05 if BACKEND_NAME != "swisseph" else 1e-4
-_DECL_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
-_STRICT_HOUSE = BACKEND_NAME == "swisseph"
+# Cross-backend tolerances: swisseph may differ from libephemeris baselines by a few arcminutes.
+_POS_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
+_SPEED_TOL = 0.05 if BACKEND_NAME == "swisseph" else 1e-4
+_DECL_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
+_STRICT_HOUSE = BACKEND_NAME != "swisseph"
 
 
 class TestAstrologicalSubject:

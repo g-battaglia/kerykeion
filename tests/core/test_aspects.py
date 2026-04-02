@@ -39,9 +39,9 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Tolerance constants (aligned with conftest)
 # ---------------------------------------------------------------------------
-POSITION_ABS_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
-SPEED_ABS_TOL = 0.05 if BACKEND_NAME != "swisseph" else 1e-2
-ORB_ABS_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
+POSITION_ABS_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
+SPEED_ABS_TOL = 0.05 if BACKEND_NAME == "swisseph" else 1e-2
+ORB_ABS_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
 
 
 # ---------------------------------------------------------------------------
@@ -101,7 +101,7 @@ class TestNatalAspects:
         result = AspectsFactory.single_chart_aspects(johnny_depp)
         actual = [a.model_dump() for a in result.aspects]
 
-        if BACKEND_NAME == "swisseph":
+        if BACKEND_NAME != "swisseph":
             assert len(actual) == len(EXPECTED_NATAL_ALL_ASPECTS), (
                 f"Natal aspect count mismatch: got {len(actual)}, expected {len(EXPECTED_NATAL_ALL_ASPECTS)}"
             )
@@ -115,8 +115,8 @@ class TestNatalAspects:
         """Every natal aspect matches its expected counterpart."""
         if EXPECTED_NATAL_ALL_ASPECTS is None:
             pytest.skip("Expected natal aspects data not available")
-        if BACKEND_NAME != "swisseph":
-            pytest.skip("Aspect-by-aspect comparison requires swisseph reference data")
+        if BACKEND_NAME == "swisseph":
+            pytest.skip("Aspect-by-aspect comparison requires libephemeris reference data")
 
         result = AspectsFactory.single_chart_aspects(johnny_depp)
         actual = [a.model_dump() for a in result.aspects]
@@ -161,10 +161,10 @@ class TestNatalAspects:
         aspects = result.aspects
 
         found = [a for a in aspects if a.p1_name == "Pluto" and a.p2_name == "Chiron" and a.aspect == "opposition"]
-        if not found and BACKEND_NAME != "swisseph":
+        if not found and BACKEND_NAME == "swisseph":
             pytest.skip("Pluto-Chiron opposition not found with this backend (orb boundary)")
         assert len(found) == 1, "Expected exactly one Pluto-Chiron opposition"
-        if BACKEND_NAME == "swisseph":
+        if BACKEND_NAME != "swisseph":
             assert found[0].aspect_movement == "Static"
         else:
             # Speed differences between backends may change movement classification

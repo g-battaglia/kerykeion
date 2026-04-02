@@ -131,8 +131,8 @@ def get_subject_data_by_id(subject_id: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-# Cross-backend tolerance: libephemeris positions may differ from swisseph by a few arcminutes.
-_DEFAULT_TOLERANCE = 0.15 if BACKEND_NAME != "swisseph" else 0.0001
+# Cross-backend tolerance: swisseph positions may differ from libephemeris baselines by a few arcminutes.
+_DEFAULT_TOLERANCE = 0.15 if BACKEND_NAME == "swisseph" else 0.0001
 
 
 def assert_position_within_tolerance(

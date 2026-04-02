@@ -124,10 +124,10 @@ def create_subject_from_id(subject_id: str):
 # TOLERANCE CONSTANTS
 # =============================================================================
 
-# Cross-backend: libephemeris positions may differ from swisseph by a few arcminutes.
-POSITION_ABS_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
-SPEED_ABS_TOL = 0.05 if BACKEND_NAME != "swisseph" else 1e-4
-DECLINATION_ABS_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
+# Cross-backend: swisseph positions may differ from libephemeris baselines by a few arcminutes.
+POSITION_ABS_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
+SPEED_ABS_TOL = 0.05 if BACKEND_NAME == "swisseph" else 1e-4
+DECLINATION_ABS_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
 
 
 # =============================================================================
@@ -331,7 +331,7 @@ class TestLunarNodes:
         assert actual_point.abs_pos == approx(node_data["abs_pos"], abs=POSITION_ABS_TOL), (
             f"{temporal_subject_id}/{lunar_node}: abs_pos mismatch"
         )
-        if BACKEND_NAME == "swisseph":
+        if BACKEND_NAME != "swisseph":
             assert actual_point.sign == node_data["sign"], f"{temporal_subject_id}/{lunar_node}: sign mismatch"
 
 
