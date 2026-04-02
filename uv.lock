@@ -446,7 +446,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a11"
+version = "6.0.0a12"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -485,8 +485,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "libephemeris", specifier = "==1.0.0a11" },
-    { name = "libephemeris", marker = "extra == 'all'", specifier = "==1.0.0a11" },
+    { name = "libephemeris", specifier = "==1.0.0a15" },
+    { name = "libephemeris", marker = "extra == 'all'", specifier = ">=1.0.0a13" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'all'", specifier = ">=2.10.3.1" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -533,7 +533,7 @@ wheels = [
 
 [[package]]
 name = "libephemeris"
-version = "1.0.0a11"
+version = "1.0.0a15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astroquery" },
@@ -542,12 +542,11 @@ dependencies = [
     { name = "pyerfa" },
     { name = "skyfield" },
     { name = "skyfield-data" },
-    { name = "spktype21" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/f5/9c499779e9fc7a69f9f82f8a3806d2952df864111e3b8fa7e597ba0416bc/libephemeris-1.0.0a11.tar.gz", hash = "sha256:e674c03e4563073c93a3ea20df6a633aa55137cab18fb7d6c5a6d77bd7acd0d3", size = 10988961, upload-time = "2026-04-02T13:06:22.241Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ed/4d/98cdcd2547844dde56d58093332fc58d721ea74258a92e02c1b0578fd67e/libephemeris-1.0.0a15.tar.gz", hash = "sha256:acb307e2c701f9db09c9343fd76edc03eafa0c7a5ea72247ff0e94c6149afd07", size = 12397822, upload-time = "2026-04-02T21:30:53.133Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/7f/a21194e2c35dbc5c49c96f0b534391b45332fafa5febf93b27de16f4a5e4/libephemeris-1.0.0a11-py3-none-any.whl", hash = "sha256:702e167e22875ee6af2538bae525c55ed241b7d5fbc7b12f3c8521e6772cfe31", size = 11035212, upload-time = "2026-04-02T13:06:18.378Z" },
+    { url = "https://files.pythonhosted.org/packages/13/76/082105903fedd9c1a46cfe3d07ff13ad19d330c047578a08e02f3fe72de4/libephemeris-1.0.0a15-py3-none-any.whl", hash = "sha256:9a522a9a8d0e54afd88692918b5ad5b8f6307b64613750607aceda3190b2f8d7", size = 12442799, upload-time = "2026-04-02T21:30:49.437Z" },
 ]
 
 [[package]]
@@ -1280,15 +1279,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7b/ae/2d9c981590ed9999a0d91755b47fc74f74de286b0f5cee14c9269041e6c4/soupsieve-2.8.3.tar.gz", hash = "sha256:3267f1eeea4251fb42728b6dfb746edc9acaffc4a45b27e19450b676586e8349", size = 118627, upload-time = "2026-01-20T04:27:02.457Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/46/2c/1462b1d0a634697ae9e55b3cecdcb64788e8b7d63f54d923fcd0bb140aed/soupsieve-2.8.3-py3-none-any.whl", hash = "sha256:ed64f2ba4eebeab06cc4962affce381647455978ffc1e36bb79a545b91f45a95", size = 37016, upload-time = "2026-01-20T04:27:01.012Z" },
-]
-
-[[package]]
-name = "spktype21"
-version = "0.1.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/08/1f/48d9d9e41c092b86e62facc63fc0d35f1b1a4556f86b145b86eda58ec090/spktype21-0.1.0.tar.gz", hash = "sha256:e7fbeb15a13493eb34b5ea5ab3c4d57c7beb239d66916ca522cea1da9d22356b", size = 8836, upload-time = "2018-10-16T01:12:57.022Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/56/a0/225c807eebf51abf8a2bece8bc92feaa029d4dca822e704f5fdfa39ac6b2/spktype21-0.1.0-py3-none-any.whl", hash = "sha256:440db3b86492e19095738c9676910504729f604318040808ec37582c3a06bbe4", size = 10498, upload-time = "2018-10-16T01:12:55.588Z" },
 ]
 
 [[package]]
