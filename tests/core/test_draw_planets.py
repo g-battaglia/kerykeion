@@ -1171,18 +1171,33 @@ class TestChartTypes:
 class TestLogging:
     """Ensure logging calls are made during draw_planets execution."""
 
-    @patch("kerykeion.charts.draw_planets.logging.debug")
-    def test_debug_logging_called(self, mock_debug):
-        """Debug logging is invoked for planet index reporting."""
-        _natal_draw([_mock_points()[0]], [_mock_settings()[0]])
-        assert mock_debug.called
+    @patch("kerykeion.charts.draw_planets.logger")
+    def test_debug_logging_called(self, mock_logger):
+        """Debug logging is invoked when overlapping planets produce groups."""
+        mock_logger.isEnabledFor.return_value = True
+        # Two planets within PLANET_GROUPING_THRESHOLD (3.4°) to trigger overlap logging
+        close_points = _mock_points([
+            {**MOCK_POINTS_DATA[0], "abs_pos": 15.0, "position": 15.0},
+            {**MOCK_POINTS_DATA[1], "abs_pos": 17.0, "position": 17.0},
+        ])
+        close_settings = _mock_settings(MOCK_SETTINGS_DATA[:2])
+        _natal_draw(close_points, close_settings)
+        assert mock_logger.debug.called
 
-    @patch("kerykeion.charts.draw_planets.logging.debug")
-    def test_debug_logging_called_with_multiple_planets(self, mock_debug):
-        """Debug logging is invoked once per planet for index and distance info."""
-        _natal_draw(_mock_points(), _mock_settings())
-        # At minimum: one call per planet for index + one per planet for distances
-        assert mock_debug.call_count >= 3
+    @patch("kerykeion.charts.draw_planets.logger")
+    def test_debug_logging_called_with_multiple_planets(self, mock_logger):
+        """Debug logging is invoked for overlap groups with multiple planets."""
+        mock_logger.isEnabledFor.return_value = True
+        # Three planets within PLANET_GROUPING_THRESHOLD to form a multi-point group
+        close_points = _mock_points([
+            {**MOCK_POINTS_DATA[0], "abs_pos": 15.0, "position": 15.0},
+            {**MOCK_POINTS_DATA[2], "abs_pos": 16.5, "position": 16.5},
+            {**MOCK_POINTS_DATA[1], "abs_pos": 18.0, "position": 18.0},
+        ])
+        close_settings = _mock_settings(MOCK_SETTINGS_DATA)
+        _natal_draw(close_points, close_settings)
+        # "Layout overlap groups" header + at least one group entry
+        assert mock_logger.debug.call_count >= 2
 
 
 # =============================================================================
