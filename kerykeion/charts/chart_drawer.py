@@ -5,7 +5,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import re
-from copy import deepcopy
+from functools import lru_cache
 from math import ceil
 from datetime import datetime
 from pathlib import Path
@@ -90,6 +90,13 @@ from dataclasses import dataclass
 
 
 logger = logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=8)
+def _load_cached_file(path: str) -> str:
+    """Read a file from disk and cache the result for subsequent calls."""
+    with open(path, "r", encoding="utf-8", errors="ignore") as f:
+        return f.read()
 
 
 # =============================================================================
@@ -1968,8 +1975,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         self.transparent_background = transparent_background
         self.external_view = external_view
 
-        # Color and rendering settings (deep copy to avoid mutation)
-        self.chart_colors_settings = deepcopy(colors_settings)
+        # Color and rendering settings (shallow copy — values are immutable strings)
+        self.chart_colors_settings = dict(colors_settings)
         self.planets_settings = [dict(body) for body in celestial_points_settings]
         self.aspects_settings = [dict(aspect) for aspect in aspects_settings]
 
@@ -3229,8 +3236,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         theme_dir = Path(__file__).parent / "themes"
 
-        with open(theme_dir / f"{theme}.css", "r") as f:
-            self.color_style_tag = f.read()
+        self.color_style_tag = _load_cached_file(str(theme_dir / f"{theme}.css"))
 
     def _load_language_settings(
         self,
@@ -3881,9 +3887,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             str: Concatenated SVG elements for zodiac slices.
         """
         sings = get_args(Sign)
-        output = ""
-        for i, sing in enumerate(sings):
-            output += draw_zodiac_slice(
+        return "".join(
+            draw_zodiac_slice(
                 c1=self.first_circle_radius,
                 chart_type=self.chart_type,
                 seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
@@ -3892,8 +3897,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 style=f"fill:{self.chart_colors_settings[f'zodiac_bg_{i}']}; fill-opacity: 0.5;",
                 type=sing,
             )
-
-        return output
+            for i, sing in enumerate(sings)
+        )
 
     def _draw_all_aspects_lines(self, r, ar):
         """
@@ -3906,14 +3911,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             str: SVG markup for all aspect lines.
         """
-        out = ""
+        parts: list[str] = []
         # Track rendered icon positions (x, y, aspect_degrees) to avoid overlapping symbols of same type
         rendered_icon_positions: list[tuple[float, float, int]] = []
         for aspect in self.aspects_list:
             aspect_name = aspect["aspect"]
             aspect_color = next((a["color"] for a in self.aspects_settings if a["name"] == aspect_name), None)
             if aspect_color:
-                out += draw_aspect_line(
+                parts.append(draw_aspect_line(
                     r=r,
                     ar=ar,
                     aspect=aspect,
@@ -3921,8 +3926,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                     seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                     show_aspect_icon=self.show_aspect_icons,
                     rendered_icon_positions=rendered_icon_positions,
-                )
-        return out
+                ))
+        return "".join(parts)
 
     def _truncate_name(
         self, name: str, max_length: int = 50, ellipsis_symbol: str = "…", truncate_at_space: bool = False
@@ -4260,10 +4265,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         td = self._create_template_dictionary(custom_title=custom_title)
 
         DATA_DIR = Path(__file__).parent
-        xml_svg = DATA_DIR / "templates" / "chart.xml"
-
-        with open(xml_svg, "r", encoding="utf-8", errors="ignore") as f:
-            raw_template = f.read()
+        raw_template = _load_cached_file(str(DATA_DIR / "templates" / "chart.xml"))
 
         template_data = td.model_dump()
 
@@ -4436,13 +4438,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._validate_chart_style(effective_style)
 
         if effective_style == "modern":
-            with open(
-                Path(__file__).parent / "templates" / "modern_wheel.xml",
-                "r",
-                encoding="utf-8",
-                errors="ignore",
-            ) as f:
-                raw_template = f.read()
+            raw_template = _load_cached_file(str(Path(__file__).parent / "templates" / "modern_wheel.xml"))
 
             template_dict = self._create_template_dictionary()
             modern_content = self._generate_modern_content(
@@ -4456,13 +4452,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 }
             )
         else:
-            with open(
-                Path(__file__).parent / "templates" / "wheel_only.xml",
-                "r",
-                encoding="utf-8",
-                errors="ignore",
-            ) as f:
-                raw_template = f.read()
+            raw_template = _load_cached_file(str(Path(__file__).parent / "templates" / "wheel_only.xml"))
 
             template_dict = self._create_template_dictionary()
             wheel_viewbox = self._wheel_only_viewbox()
@@ -4526,13 +4516,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             str: SVG markup for the aspect grid only.
         """
 
-        with open(
-            Path(__file__).parent / "templates" / "aspect_grid_only.xml",
-            "r",
-            encoding="utf-8",
-            errors="ignore",
-        ) as f:
-            template = f.read()
+        template = _load_cached_file(str(Path(__file__).parent / "templates" / "aspect_grid_only.xml"))
 
         template_dict = self._create_template_dictionary()
 

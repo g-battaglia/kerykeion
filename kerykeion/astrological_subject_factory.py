@@ -47,6 +47,7 @@ from kerykeion.schemas import (
     KerykeionException,
     ZodiacType,
     AstrologicalSubjectModel,
+    KerykeionPointModel,
     PointType,
     SiderealMode,
     HousesSystemIdentifier,
@@ -183,6 +184,16 @@ OPPOSITE_PAIRS: Dict[AstrologicalPoint, Dict[str, Any]] = {
     "True_Priapus": {"primary": "True_Lilith", "negate_speed": False, "negate_dec": True},
 }
 
+# Planetocentric center body mapping (used for planetocentric perspectives)
+_PLANETOCENTRIC_CENTERS: Dict[str, int] = {
+    "Selenocentric": swe.MOON,
+    "Mercurycentric": swe.MERCURY,
+    "Venuscentric": swe.VENUS,
+    "Marscentric": swe.MARS,
+    "Jupitercentric": swe.JUPITER,
+    "Saturncentric": swe.SATURN,
+}
+
 # Arabic Parts configuration: (name, required_points, formula_type)
 # formula_type: "fortune" = day/night variant, "simple" = single formula
 ARABIC_PARTS_CONFIG: Dict[AstrologicalPoint, Dict[str, Any]] = {
@@ -277,16 +288,6 @@ def ephemeris_context(
     iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 
     topo_used = False
-
-    # Planetocentric center body mapping
-    _PLANETOCENTRIC_CENTERS = {
-        "Selenocentric": swe.MOON,
-        "Mercurycentric": swe.MERCURY,
-        "Venuscentric": swe.VENUS,
-        "Marscentric": swe.MARS,
-        "Jupitercentric": swe.JUPITER,
-        "Saturncentric": swe.SATURN,
-    }
 
     # Perspective configuration
     if config.perspective_type == "True Geocentric":
@@ -935,33 +936,45 @@ class AstrologicalSubjectFactory:
         else:
             calc_data["lunar_phase"] = None
 
+        # =====================================================================
+        # Optional per-point calculations (dignities, nakshatras, gauquelin,
+        # local space, OOB).  We collect all updates per point into a single
+        # dict, then apply ONE model_copy() at the end to avoid creating
+        # intermediate Pydantic models for each individual update.
+        # =====================================================================
+
+        # Build a list of point keys once — avoids iterating all calc_data
+        # keys (which include non-point entries like name, year, etc.) in
+        # every optional calculation loop.
+        point_keys = [k for k, v in calc_data.items() if isinstance(v, KerykeionPointModel)]
+        point_updates: Dict[str, Dict[str, Any]] = {k: {} for k in point_keys}
+
         # Calculate essential dignities (optional)
         if config.calculate_dignities:
             from kerykeion.dignities import calculate_essential_dignity
 
             is_diurnal = calc_data.get("is_diurnal", True)
-            for point_key in list(calc_data.keys()):
-                point = calc_data.get(point_key)
-                if point is not None and hasattr(point, "point_type") and point.point_type == "AstrologicalPoint":
-                    dignity_data = calculate_essential_dignity(
-                        planet_name=point.name,
-                        sign=point.sign,
-                        element=point.element,
-                        position=point.position,
-                        is_diurnal=is_diurnal,
-                    )
-                    if dignity_data["essential_dignity"] is not None:
-                        calc_data[point_key] = point.model_copy(update=dignity_data)
+            for pk in point_keys:
+                point = calc_data[pk]
+                dignity_data = calculate_essential_dignity(
+                    planet_name=point.name,
+                    sign=point.sign,
+                    element=point.element,
+                    position=point.position,
+                    is_diurnal=is_diurnal,
+                )
+                if dignity_data["essential_dignity"] is not None:
+                    point_updates[pk].update(dignity_data)
 
         # Calculate Nakshatras (optional)
         if config.calculate_nakshatra:
             from kerykeion.vedic import calculate_nakshatra as calc_nak
 
-            for point_key in list(calc_data.keys()):
-                point = calc_data.get(point_key)
-                if point is not None and hasattr(point, "point_type") and point.point_type == "AstrologicalPoint":
-                    nak_data = calc_nak(point.abs_pos)
-                    calc_data[point_key] = point.model_copy(update=nak_data)
+            for pk in point_keys:
+                point = calc_data[pk]
+                nak_data = calc_nak(point.abs_pos)
+                point_updates[pk].update(nak_data)
+
         # Calculate Gauquelin sectors (optional) — for ALL celestial points
         if config.calculate_gauquelin and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
             geopos = [calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0]
@@ -971,11 +984,8 @@ class AstrologicalSubjectFactory:
             asc_degree = calc_data.get("ascendant")
             asc_abs = asc_degree.abs_pos if asc_degree else 0.0
 
-            for point_key in list(calc_data.keys()):
-                point = calc_data.get(point_key)
-                if point is None or not hasattr(point, "point_type") or point.point_type != "AstrologicalPoint":
-                    continue
-
+            for pk in point_keys:
+                point = calc_data[pk]
                 sector = None
 
                 # Try swe.gauquelin_sector for planets with known SwissEph IDs
@@ -987,35 +997,27 @@ class AstrologicalSubjectFactory:
                         pass
 
                 # Fallback: compute sector geometrically from longitude relative to ASC
-                # Sectors go clockwise from ASC: sector 1 = ASC, sector 10 = MC area, etc.
-                # Each sector spans 10 degrees.
                 if sector is None:
                     diff = (asc_abs - point.abs_pos) % 360.0
                     sector = (diff / 10.0) + 1.0
                     if sector >= 37.0:
                         sector -= 36.0
 
-                calc_data[point_key] = point.model_copy(update={"gauquelin_sector": round(sector, 4)})
+                point_updates[pk]["gauquelin_sector"] = round(sector, 4)
 
         # Calculate Local Space (azimuth/altitude) for all celestial points (v6.0)
         if config.calculate_local_space and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
             ls_geopos = (calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0)
             ls_jd = calc_data["julian_day"]
-            for point_key in list(calc_data.keys()):
-                point = calc_data.get(point_key)
-                if point is None or not hasattr(point, "point_type") or point.point_type != "AstrologicalPoint":
-                    continue
+            for pk in point_keys:
+                point = calc_data[pk]
                 try:
                     ecl_coords = (point.abs_pos, 0.0, 1.0)
                     azalt_result = swe.azalt(ls_jd, swe.ECL2HOR, ls_geopos, 0, 0, ecl_coords)
-                    calc_data[point_key] = point.model_copy(
-                        update={
-                            "azimuth": round(azalt_result[0], 4),
-                            "altitude_above_horizon": round(azalt_result[1], 4),
-                        }
-                    )
+                    point_updates[pk]["azimuth"] = round(azalt_result[0], 4)
+                    point_updates[pk]["altitude_above_horizon"] = round(azalt_result[1], 4)
                 except Exception as e:
-                    logger.debug("Could not compute azalt for %s: %s", point_key, e)
+                    logger.debug("Could not compute azalt for %s: %s", pk, e)
 
         # Calculate Out-of-Bounds status for all celestial points (v6.0)
         # A planet is OOB when |declination| > true obliquity of the ecliptic (~23.44 deg).
@@ -1029,12 +1031,15 @@ class AstrologicalSubjectFactory:
             logging.warning(f"Could not compute obliquity for OOB detection: {e}")
 
         if true_obliquity is not None:
-            for point_key in list(calc_data.keys()):
-                point = calc_data.get(point_key)
-                if point is not None and hasattr(point, "point_type") and point.point_type == "AstrologicalPoint":
-                    if point.declination is not None:
-                        is_oob = abs(point.declination) > true_obliquity
-                        calc_data[point_key] = point.model_copy(update={"is_out_of_bounds": is_oob})
+            for pk in point_keys:
+                point = calc_data[pk]
+                if point.declination is not None:
+                    point_updates[pk]["is_out_of_bounds"] = abs(point.declination) > true_obliquity
+
+        # Apply all accumulated updates with a single model_copy per point
+        for pk in point_keys:
+            if point_updates[pk]:
+                calc_data[pk] = calc_data[pk].model_copy(update=point_updates[pk])
 
         # Calculate Nutation/Obliquity parameters (optional, v6.0)
         if config.calculate_nutation:
@@ -2064,15 +2069,7 @@ class AstrologicalSubjectFactory:
         calculated_planets: List[AstrologicalPoint] = []
 
         # Determine planetocentric center body (if applicable)
-        _PCTR_MAP = {
-            "Selenocentric": swe.MOON,
-            "Mercurycentric": swe.MERCURY,
-            "Venuscentric": swe.VENUS,
-            "Marscentric": swe.MARS,
-            "Jupitercentric": swe.JUPITER,
-            "Saturncentric": swe.SATURN,
-        }
-        center_body_id = _PCTR_MAP.get(data.get("perspective_type", ""), None)
+        center_body_id = _PLANETOCENTRIC_CENTERS.get(data.get("perspective_type", ""), None)
 
         # Start ephemeris backend tracing (libephemeris only)
         _trace_token = None

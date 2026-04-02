@@ -758,11 +758,13 @@ def _generate_point_svg(
     is_retrograde = point_details["retrograde"] is True
     retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
 
-    svg = f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" '
-    svg += f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" '
-    svg += f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr} '
-    svg += f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
-    svg += f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />'
+    parts: list[str] = [
+        f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
+        f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',
+        f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr} ',
+        f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
+        f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />',
+    ]
 
     if is_retrograde:
         # Position the retrograde symbol at the bottom-right foot of the planet glyph.
@@ -770,12 +772,12 @@ def _generate_point_svg(
         # y=+18 aligns the symbol with the glyph's baseline (foot).
         retro_x = x * (1 / scale) + 22
         retro_y = y * (1 / scale) + 18
-        svg += f'<g transform="translate({retro_x},{retro_y}) scale(0.55)">'
-        svg += '<use xlink:href="#retrograde" />'
-        svg += "</g>"
+        parts.append(f'<g transform="translate({retro_x},{retro_y}) scale(0.55)">')
+        parts.append('<use xlink:href="#retrograde" />')
+        parts.append("</g>")
 
-    svg += "</g>"
-    return svg
+    parts.append("</g>")
+    return "".join(parts)
 
 
 def _draw_external_natal_lines(
@@ -810,17 +812,18 @@ def _draw_external_natal_lines(
     y1 = sliceToY(0, radius - third_circle_radius, true_offset) + third_circle_radius
     x2 = sliceToX(0, radius - point_radius - 30, true_offset) + point_radius + 30
     y2 = sliceToY(0, radius - point_radius - 30, true_offset) + point_radius + 30
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-    output += f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
 
     # Second line: from intermediate to final adjusted position
-    x1, y1 = x2, y2
-    x2 = sliceToX(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
-    y2 = sliceToY(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-    output += f'style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
+    x3 = sliceToX(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
+    y3 = sliceToY(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
 
-    return output
+    return (
+        output
+        + f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+        + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
+        + f'<line x1="{x2}" y1="{y2}" x2="{x3}" y2="{y3}" '
+        + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
+    )
 
 
 # =============================================================================
@@ -863,6 +866,8 @@ def _draw_primary_point_indicators(
     position_adjustments = _calculate_indicator_adjustments(points_abs_positions, points_settings)
     zero_point = 360 - seventh_house_degree
 
+    parts: list[str] = [output]
+
     for point_idx in range(len(points_settings)):
         point_offset = zero_point + points_abs_positions[point_idx]
         if point_offset > 360:
@@ -875,8 +880,6 @@ def _draw_primary_point_indicators(
         y2 = sliceToY(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
 
         point_color = points_settings[point_idx]["color"]
-        output += f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-        output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
         # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
@@ -886,11 +889,15 @@ def _draw_primary_point_indicators(
         deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
-        output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text text-anchor="middle" dominant-baseline="middle" '
-        output += f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+        parts.append(
+            f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+            f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
+            f'<g transform="translate({deg_x},{deg_y})">'
+            f'<text text-anchor="middle" dominant-baseline="middle" '
+            f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+        )
 
-    return output
+    return "".join(parts)
 
 
 def _draw_inner_point_indicators(
@@ -924,6 +931,7 @@ def _draw_inner_point_indicators(
     """
     position_adjustments = _calculate_indicator_adjustments(points_abs_positions, points_settings)
     zero_point = 360 - seventh_house_degree
+    parts: list[str] = [output]
 
     for point_idx in range(len(points_settings)):
         point_offset = zero_point + points_abs_positions[point_idx]
@@ -937,8 +945,6 @@ def _draw_inner_point_indicators(
         y2 = sliceToY(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
 
         point_color = points_settings[point_idx]["color"]
-        output += f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-        output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
         # Draw degree text (always horizontal, positioned toward center)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
@@ -948,11 +954,15 @@ def _draw_inner_point_indicators(
         deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
-        output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text text-anchor="middle" dominant-baseline="middle" '
-        output += f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
+        parts.append(
+            f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+            f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
+            f'<g transform="translate({deg_x},{deg_y})">'
+            f'<text text-anchor="middle" dominant-baseline="middle" '
+            f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
+        )
 
-    return output
+    return "".join(parts)
 
 
 def _draw_secondary_points(
@@ -1041,26 +1051,26 @@ def _draw_secondary_points(
             and celestial_points[point_idx].retrograde is True
         )
         retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
-        output += f'<g class="transit-planet-name"{retro_attr} transform="translate(-6,-6)"><g transform="scale(0.5)">'
-        output += f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{points_settings[point_idx]["name"]}" />'
+        point_color = points_settings[point_idx]["color"]
+
+        # Build point symbol
+        point_svg = (
+            f'<g class="transit-planet-name"{retro_attr} transform="translate(-6,-6)"><g transform="scale(0.5)">'
+            f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{points_settings[point_idx]["name"]}" />'
+        )
         if is_retrograde:
             # Same offset logic as _generate_point_svg: bottom-right foot of the glyph.
             # Inner coordinate space is 2x due to scale(0.5) wrapper.
             retro_x = point_x * 2 + 22
             retro_y = point_y * 2 + 18
-            output += f'<g transform="translate({retro_x},{retro_y}) scale(0.55)">'
-            output += '<use xlink:href="#retrograde" />'
-            output += "</g>"
-        output += "</g></g>"
+            point_svg += f'<g transform="translate({retro_x},{retro_y}) scale(0.55)"><use xlink:href="#retrograde" /></g>'
+        point_svg += "</g></g>"
 
         # Draw indicator line
         x1 = sliceToX(0, radius + 3, point_offset) - 3
         y1 = sliceToY(0, radius + 3, point_offset) - 3
         x2 = sliceToX(0, radius - 3, point_offset) + 3
         y2 = sliceToY(0, radius - 3, point_offset) + 3
-        point_color = points_settings[point_idx]["color"]
-        output += f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-        output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
         # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
@@ -1070,9 +1080,14 @@ def _draw_secondary_points(
         deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
-        output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text text-anchor="middle" dominant-baseline="middle" '
-        output += f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+        output += (
+            point_svg
+            + f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+            + f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
+            + f'<g transform="translate({deg_x},{deg_y})">'
+            + f'<text text-anchor="middle" dominant-baseline="middle" '
+            + f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+        )
 
     # Draw connecting lines for the main reference point
     dropin = 36 if chart_type in DUAL_CHART_TYPES else 0
@@ -1081,16 +1096,19 @@ def _draw_secondary_points(
     x2 = sliceToX(0, radius - (dropin - 3), main_offset) + (dropin - 3)
     y2 = sliceToY(0, radius - (dropin - 3), main_offset) + (dropin - 3)
     point_color = points_settings[point_idx]["color"]
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-    output += f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
 
     # Second connecting line segment
-    dropin = 160 if chart_type in DUAL_CHART_TYPES else 120
-    x1 = sliceToX(0, radius - dropin, main_offset) + dropin
-    y1 = sliceToY(0, radius - dropin, main_offset) + dropin
-    x2 = sliceToX(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-    y2 = sliceToY(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-    output += f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
+    dropin2 = 160 if chart_type in DUAL_CHART_TYPES else 120
+    x3 = sliceToX(0, radius - dropin2, main_offset) + dropin2
+    y3 = sliceToY(0, radius - dropin2, main_offset) + dropin2
+    x4 = sliceToX(0, radius - (dropin2 - 3), main_offset) + (dropin2 - 3)
+    y4 = sliceToY(0, radius - (dropin2 - 3), main_offset) + (dropin2 - 3)
+
+    output += (
+        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+        f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
+        f'<line x1="{x3}" y1="{y3}" x2="{x4}" y2="{y4}" '
+        f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
+    )
 
     return output
