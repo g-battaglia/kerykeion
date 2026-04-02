@@ -102,8 +102,8 @@ if _forced_backend:
         ) from None
     logger.info("Kerykeion ephemeris backend forced via KERYKEION_BACKEND: %s", BACKEND_NAME)
 else:
-    # Auto-detect: try libephemeris first (default, AGPL-3.0 safe for dual-licensing),
-    # then fall back to swisseph (GPL, requires user to accept GPL terms).
+    # Auto-detect: try libephemeris first (our own backend, license-independent),
+    # then fall back to swisseph (third-party, AGPL-3.0 by Astrodienst AG).
     for _candidate in ("libephemeris", "swisseph"):
         try:
             _backend_module = importlib.import_module(_candidate)
@@ -117,8 +117,8 @@ else:
             "Kerykeion requires an ephemeris backend but neither 'libephemeris' nor "
             "'pyswisseph' is installed.\n\n"
             "Install one of:\n"
-            "  pip install libephemeris     # Pure Python, AGPL-3.0 (included by default)\n"
-            "  pip install pyswisseph       # Swiss Ephemeris C bindings (GPL)\n"
+            "  pip install libephemeris     # Pure Python, license-independent (default)\n"
+            "  pip install pyswisseph       # Swiss Ephemeris C bindings (AGPL-3.0)\n"
         )
 
     logger.debug("Kerykeion ephemeris backend (auto-detected): %s", BACKEND_NAME)
@@ -172,5 +172,35 @@ if BACKEND_NAME == "libephemeris":
     _leb_mode = os.environ.get("KERYKEION_LEB_MODE", "leb").strip().lower()
     _backend_module.set_calc_mode(_leb_mode)
     logger.debug("libephemeris calc mode set to: %s", _leb_mode)
+
+# ---------------------------------------------------------------------------
+# Startup log: backend identity, version, and format
+# ---------------------------------------------------------------------------
+
+if BACKEND_NAME == "libephemeris":
+    _mode = _backend_module.get_calc_mode()
+    _tier = _backend_module.get_precision_tier()
+    _parts = [f"mode={_mode}", f"tier={_tier}"]
+    if _mode in ("leb", "auto"):
+        _reader = _backend_module.state.get_leb_reader()
+        if _reader is not None:
+            _cls = type(_reader).__name__
+            if "Composite" in _cls:
+                _inner = type(_reader._readers[0]).__name__ if _reader._readers else "?"
+            else:
+                _inner = _cls
+            _fmt = "LEB2" if "LEB2" in _inner else "LEB1"
+            _parts.append(f"format={_fmt}")
+    logger.info(
+        "kerykeion ephemeris: libephemeris %s (%s)",
+        _backend_module.__version__,
+        ", ".join(_parts),
+    )
+elif BACKEND_NAME == "swisseph":
+    logger.warning(
+        "kerykeion ephemeris: pyswisseph (Swiss Ephemeris by Astrodienst AG, AGPL-3.0). "
+        "This is third-party code with AGPL network-disclosure obligations. "
+        "Install libephemeris for a license-independent backend."
+    )
 
 __all__ = ["swe", "BACKEND_NAME", "EPHE_DATA_PATH"]
