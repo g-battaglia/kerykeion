@@ -111,8 +111,8 @@ def create_subject_from_id(subject_id: str, house_system: str = "P"):
 # TOLERANCE CONSTANTS
 # =============================================================================
 
-# Cross-backend: libephemeris house cusps may differ from swisseph by a few arcminutes.
-POSITION_ABS_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
+# Cross-backend: swisseph house cusps may differ from libephemeris baselines by a few arcminutes.
+POSITION_ABS_TOL = 0.2 if BACKEND_NAME == "swisseph" else 1e-2
 
 
 # =============================================================================

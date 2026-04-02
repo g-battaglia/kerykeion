@@ -28,6 +28,7 @@ from unittest.mock import patch
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory
+from kerykeion.ephemeris_backend import BACKEND_NAME
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.charts.charts_utils import makeLunarPhase
@@ -925,6 +926,10 @@ class TestSynastryChart:
         svg = ChartDrawer(data, theme="strawberry").generate_svg_string()
         compare_chart_svg("John Lennon - Strawberry Theme Synastry - Synastry Chart.svg", svg)
 
+    @pytest.mark.skipif(
+        BACKEND_NAME == "swisseph",
+        reason="Heliocentric house comparison numbers differ across backends",
+    )
     def test_heliocentric_synastry(self):
         john = _make_john("Heliocentric Synastry", perspective_type="Heliocentric")
         paul = _make_paul("Heliocentric", perspective_type="Heliocentric")

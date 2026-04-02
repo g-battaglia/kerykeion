@@ -30,24 +30,24 @@ Johnny Depp — Natal Chart Report
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Aqu ♒️ | 20.70°   | +507.7877°/d | N/A     | -    | First House    |
-| Medium Coeli          | Sag ♐️ | 6.59°    | +341.0208°/d | N/A     | -    | Tenth House    |
-| Descendant            | Leo ♌️ | 20.70°   | +507.7877°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Gem ♊️ | 6.59°    | +341.0208°/d | N/A     | -    | Fourth House   |
-| Sun                   | Gem ♊️ | 17.66°   | +0.9560°/d   | +22.87° | -    | Fourth House   |
-| Moon                  | Cap ♑️ | 8.74°    | +12.4796°/d  | -22.08° | -    | Eleventh House |
+| Ascendant             | Aqu ♒️ | 20.70°   | +507.7874°/d | N/A     | -    | First House    |
+| Medium Coeli          | Sag ♐️ | 6.59°    | +341.0211°/d | N/A     | -    | Tenth House    |
+| Descendant            | Leo ♌️ | 20.70°   | +507.7874°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Gem ♊️ | 6.59°    | +341.0211°/d | N/A     | -    | Fourth House   |
+| Sun                   | Gem ♊️ | 17.66°   | +0.9559°/d   | +22.87° | -    | Fourth House   |
+| Moon                  | Cap ♑️ | 8.74°    | +12.4799°/d  | -22.08° | -    | Eleventh House |
 | Mercury               | Tau ♉️ | 25.00°   | +0.6817°/d   | +15.27° | -    | Third House    |
 | Venus                 | Tau ♉️ | 25.60°   | +1.2129°/d   | +17.95° | -    | Third House    |
 | Mars                  | Vir ♍️ | 3.01°    | +0.5146°/d   | +11.55° | -    | Seventh House  |
-| Jupiter               | Ari ♈️ | 13.91°   | +0.1660°/d   | +4.37°  | -    | Second House   |
-| Saturn                | Aqu ♒️ | 23.08°   | -0.0094°/d   | -14.84° | R    | First House    |
+| Jupiter               | Ari ♈️ | 13.91°   | +0.1658°/d   | +4.37°  | -    | Second House   |
+| Saturn                | Aqu ♒️ | 23.08°   | -0.0095°/d   | -14.84° | R    | First House    |
 | Uranus                | Vir ♍️ | 1.57°    | +0.0268°/d   | +11.62° | -    | Seventh House  |
 | Neptune               | Sco ♏️ | 13.42°   | -0.0213°/d   | -14.13° | R    | Ninth House    |
 | Pluto                 | Vir ♍️ | 9.63°    | +0.0095°/d   | +20.46° | -    | Seventh House  |
-| True North Lunar Node | Can ♋️ | 20.64°   | -0.0231°/d   | +21.86° | R    | Fifth House    |
-| True South Lunar Node | Cap ♑️ | 20.64°   | +0.0231°/d   | -21.86° | R    | Eleventh House |
+| True North Lunar Node | Can ♋️ | 20.64°   | -0.0232°/d   | +21.86° | R    | Fifth House    |
 | Mean Lilith           | Sco ♏️ | 5.57°    | +0.1120°/d   | -8.65°  | -    | Eighth House   |
-| Chiron                | Pis ♓️ | 14.87°   | +0.0086°/d   | -1.23°  | -    | First House    |
+| Chiron                | Pis ♓️ | 14.87°   | +0.0084°/d   | -1.23°  | -    | First House    |
+| True South Lunar Node | Cap ♑️ | 20.64°   | +0.0232°/d   | -21.86° | R    | Eleventh House |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
 
 +Natal Houses (Placidus)---+----------+-------------------+
@@ -108,13 +108,13 @@ Johnny Depp — Natal Chart Report
 | 9  | Neptune               |
 | 10 | Pluto                 |
 | 11 | True_North_Lunar_Node |
-| 12 | True_South_Lunar_Node |
-| 13 | Mean_Lilith           |
-| 14 | Chiron                |
-| 15 | Ascendant             |
-| 16 | Medium_Coeli          |
-| 17 | Descendant            |
-| 18 | Imum_Coeli            |
+| 12 | Mean_Lilith           |
+| 13 | Chiron                |
+| 14 | Descendant            |
+| 15 | Imum_Coeli            |
+| 16 | True_South_Lunar_Node |
+| 17 | Ascendant             |
+| 18 | Medium_Coeli          |
 +----+-----------------------+
 
 +-------------+---------+
@@ -170,7 +170,7 @@ Johnny Depp — Natal Chart Report
 | Neptune               | trine △       | True North Lunar Node | 7.22° | Applying →   |
 | Neptune               | trine △       | Chiron                | 1.45° | Separating ← |
 | Neptune               | conjunction ☌ | Mean Lilith           | 7.85° | Applying →   |
-| Pluto                 | opposition ☍  | Chiron                | 5.25° | Static =     |
+| Pluto                 | opposition ☍  | Chiron                | 5.25° | Applying →   |
 | Pluto                 | square □      | Medium Coeli          | 3.04° | Applying →   |
 | Pluto                 | square □      | Imum Coeli            | 3.04° | Applying →   |
 | Pluto                 | sextile ⚹     | Mean Lilith           | 4.05° | Applying →   |

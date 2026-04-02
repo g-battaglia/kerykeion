@@ -30,24 +30,24 @@ Sample Natal Subject — Natal Chart Report
 +Natal Celestial Points-+---------+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Sco ♏️ | 5.82°    | +245.7250°/d | N/A     | -    | First House   |
+| Ascendant             | Sco ♏️ | 5.82°    | +245.7251°/d | N/A     | -    | First House   |
 | Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House   |
-| Descendant            | Tau ♉️ | 5.82°    | +245.7250°/d | N/A     | -    | Seventh House |
+| Descendant            | Tau ♉️ | 5.82°    | +245.7251°/d | N/A     | -    | Seventh House |
 | Imum Coeli            | Aqu ♒️ | 19.91°   | +367.6409°/d | N/A     | -    | Fourth House  |
-| Sun                   | Can ♋️ | 28.54°   | +0.9551°/d   | +20.45° | -    | Ninth House   |
-| Moon                  | Can ♋️ | 21.21°   | +14.4024°/d  | +23.21° | -    | Ninth House   |
-| Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d   | +16.88° | -    | Ninth House   |
-| Venus                 | Can ♋️ | 1.71°    | +1.2038°/d   | +22.74° | -    | Eighth House  |
-| Mars                  | Tau ♉️ | 5.97°    | +0.6554°/d   | +11.57° | -    | Seventh House |
-| Jupiter               | Can ♋️ | 23.91°   | +0.2240°/d   | +21.56° | -    | Ninth House   |
-| Saturn                | Cap ♑️ | 21.52°   | -0.0732°/d   | -21.66° | R    | Third House   |
-| Uranus                | Cap ♑️ | 6.74°    | -0.0366°/d   | -23.60° | R    | Second House  |
-| Neptune               | Cap ♑️ | 12.76°   | -0.0257°/d   | -21.96° | R    | Third House   |
+| Sun                   | Can ♋️ | 28.54°   | +0.9550°/d   | +20.45° | -    | Ninth House   |
+| Moon                  | Can ♋️ | 21.21°   | +14.4025°/d  | +23.21° | -    | Ninth House   |
+| Mercury               | Leo ♌️ | 17.61°   | +1.6908°/d   | +16.88° | -    | Ninth House   |
+| Venus                 | Can ♋️ | 1.71°    | +1.2037°/d   | +22.74° | -    | Eighth House  |
+| Mars                  | Tau ♉️ | 5.97°    | +0.6553°/d   | +11.57° | -    | Seventh House |
+| Jupiter               | Can ♋️ | 23.91°   | +0.2239°/d   | +21.56° | -    | Ninth House   |
+| Saturn                | Cap ♑️ | 21.52°   | -0.0733°/d   | -21.66° | R    | Third House   |
+| Uranus                | Cap ♑️ | 6.74°    | -0.0367°/d   | -23.60° | R    | Second House  |
+| Neptune               | Cap ♑️ | 12.76°   | -0.0258°/d   | -21.96° | R    | Third House   |
 | Pluto                 | Sco ♏️ | 14.97°   | -0.0025°/d   | -1.42°  | R    | First House   |
-| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0090°/d   | -18.46° | R    | Third House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0090°/d   | +18.46° | R    | Ninth House   |
+| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d   | -18.46° | R    | Third House   |
 | Mean Lilith           | Sco ♏️ | 28.99°   | +0.1119°/d   | -24.62° | -    | First House   |
-| Chiron                | Can ♋️ | 19.88°   | +0.1071°/d   | +15.79° | -    | Ninth House   |
+| Chiron                | Can ♋️ | 19.88°   | +0.1070°/d   | +15.79° | -    | Ninth House   |
+| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0080°/d   | +18.46° | R    | Ninth House   |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 
 +Natal Houses (Placidus)---+----------+-------------------+
@@ -108,13 +108,13 @@ Sample Natal Subject — Natal Chart Report
 | 9  | Neptune               |
 | 10 | Pluto                 |
 | 11 | True_North_Lunar_Node |
-| 12 | True_South_Lunar_Node |
-| 13 | Mean_Lilith           |
-| 14 | Chiron                |
-| 15 | Ascendant             |
-| 16 | Medium_Coeli          |
-| 17 | Descendant            |
-| 18 | Imum_Coeli            |
+| 12 | Mean_Lilith           |
+| 13 | Chiron                |
+| 14 | Descendant            |
+| 15 | Imum_Coeli            |
+| 16 | True_South_Lunar_Node |
+| 17 | Ascendant             |
+| 18 | Medium_Coeli          |
 +----+-----------------------+
 
 +----------------+---------+
@@ -146,7 +146,7 @@ Sample Natal Subject — Natal Chart Report
 | Moon                  | conjunction ☌             | Jupiter               | 2.70° | Applying →   |
 | Moon                  | opposition ☍              | Saturn                | 0.31° | Applying →   |
 | Moon                  | opposition ☍              | Neptune               | 8.45° | Separating ← |
-| Moon                  | trine △                   | Pluto                 | 6.24° | Separating ← |
+| Moon                  | trine △                   | Pluto                 | 6.23° | Separating ← |
 | Moon                  | conjunction ☌             | Chiron                | 1.33° | Separating ← |
 | Moon                  | trine △                   | Mean Lilith           | 7.78° | Applying →   |
 | Mercury               | semi-square semi-square   | Venus                 | 0.90° | Separating ← |
@@ -159,7 +159,7 @@ Sample Natal Subject — Natal Chart Report
 | Venus                 | trine △                   | Ascendant             | 4.11° | Separating ← |
 | Venus                 | sextile ⚹                 | Descendant            | 4.11° | Separating ← |
 | Mars                  | trine △                   | Uranus                | 0.77° | Applying →   |
-| Mars                  | trine △                   | Neptune               | 6.80° | Applying →   |
+| Mars                  | trine △                   | Neptune               | 6.79° | Applying →   |
 | Mars                  | opposition ☍              | Pluto                 | 9.01° | Applying →   |
 | Mars                  | square □                  | True North Lunar Node | 1.30° | Applying →   |
 | Mars                  | opposition ☍              | Ascendant             | 0.15° | Applying →   |

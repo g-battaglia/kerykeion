@@ -446,7 +446,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a11"
+version = "6.0.0a12"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -477,6 +477,7 @@ dev = [
     { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pytest-sugar" },
     { name = "pytest-xdist" },
     { name = "ruff" },
     { name = "types-pytz" },
@@ -485,8 +486,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "libephemeris", specifier = "==1.0.0a11" },
-    { name = "libephemeris", marker = "extra == 'all'", specifier = "==1.0.0a11" },
+    { name = "libephemeris", specifier = "==1.0.0a15" },
+    { name = "libephemeris", marker = "extra == 'all'", specifier = ">=1.0.0a13" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'all'", specifier = ">=2.10.3.1" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -508,6 +509,7 @@ dev = [
     { name = "pyright", specifier = ">=1.1.408" },
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "pytest-cov", specifier = ">=6.0.0" },
+    { name = "pytest-sugar", specifier = ">=1.1.1" },
     { name = "pytest-xdist", specifier = ">=3.5.0" },
     { name = "ruff", specifier = ">=0.12.9" },
     { name = "types-pytz", specifier = ">=2025.2.0.20250516" },
@@ -533,7 +535,7 @@ wheels = [
 
 [[package]]
 name = "libephemeris"
-version = "1.0.0a11"
+version = "1.0.0a15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astroquery" },
@@ -542,12 +544,11 @@ dependencies = [
     { name = "pyerfa" },
     { name = "skyfield" },
     { name = "skyfield-data" },
-    { name = "spktype21" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/f5/9c499779e9fc7a69f9f82f8a3806d2952df864111e3b8fa7e597ba0416bc/libephemeris-1.0.0a11.tar.gz", hash = "sha256:e674c03e4563073c93a3ea20df6a633aa55137cab18fb7d6c5a6d77bd7acd0d3", size = 10988961, upload-time = "2026-04-02T13:06:22.241Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ed/4d/98cdcd2547844dde56d58093332fc58d721ea74258a92e02c1b0578fd67e/libephemeris-1.0.0a15.tar.gz", hash = "sha256:acb307e2c701f9db09c9343fd76edc03eafa0c7a5ea72247ff0e94c6149afd07", size = 12397822, upload-time = "2026-04-02T21:30:53.133Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/7f/a21194e2c35dbc5c49c96f0b534391b45332fafa5febf93b27de16f4a5e4/libephemeris-1.0.0a11-py3-none-any.whl", hash = "sha256:702e167e22875ee6af2538bae525c55ed241b7d5fbc7b12f3c8521e6772cfe31", size = 11035212, upload-time = "2026-04-02T13:06:18.378Z" },
+    { url = "https://files.pythonhosted.org/packages/13/76/082105903fedd9c1a46cfe3d07ff13ad19d330c047578a08e02f3fe72de4/libephemeris-1.0.0a15-py3-none-any.whl", hash = "sha256:9a522a9a8d0e54afd88692918b5ad5b8f6307b64613750607aceda3190b2f8d7", size = 12442799, upload-time = "2026-04-02T21:30:49.437Z" },
 ]
 
 [[package]]
@@ -1040,6 +1041,19 @@ wheels = [
 ]
 
 [[package]]
+name = "pytest-sugar"
+version = "1.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+    { name = "termcolor" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0b/4e/60fed105549297ba1a700e1ea7b828044842ea27d72c898990510b79b0e2/pytest-sugar-1.1.1.tar.gz", hash = "sha256:73b8b65163ebf10f9f671efab9eed3d56f20d2ca68bda83fa64740a92c08f65d", size = 16533, upload-time = "2025-08-23T12:19:35.737Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/87/d5/81d38a91c1fdafb6711f053f5a9b92ff788013b19821257c2c38c1e132df/pytest_sugar-1.1.1-py3-none-any.whl", hash = "sha256:2f8319b907548d5b9d03a171515c1d43d2e38e32bd8182a1781eb20b43344cc8", size = 11440, upload-time = "2025-08-23T12:19:34.894Z" },
+]
+
+[[package]]
 name = "pytest-xdist"
 version = "3.8.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1283,12 +1297,12 @@ wheels = [
 ]
 
 [[package]]
-name = "spktype21"
-version = "0.1.0"
+name = "termcolor"
+version = "3.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/08/1f/48d9d9e41c092b86e62facc63fc0d35f1b1a4556f86b145b86eda58ec090/spktype21-0.1.0.tar.gz", hash = "sha256:e7fbeb15a13493eb34b5ea5ab3c4d57c7beb239d66916ca522cea1da9d22356b", size = 8836, upload-time = "2018-10-16T01:12:57.022Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/46/79/cf31d7a93a8fdc6aa0fbb665be84426a8c5a557d9240b6239e9e11e35fc5/termcolor-3.3.0.tar.gz", hash = "sha256:348871ca648ec6a9a983a13ab626c0acce02f515b9e1983332b17af7979521c5", size = 14434, upload-time = "2025-12-29T12:55:21.882Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/56/a0/225c807eebf51abf8a2bece8bc92feaa029d4dca822e704f5fdfa39ac6b2/spktype21-0.1.0-py3-none-any.whl", hash = "sha256:440db3b86492e19095738c9676910504729f604318040808ec37582c3a06bbe4", size = 10498, upload-time = "2018-10-16T01:12:55.588Z" },
+    { url = "https://files.pythonhosted.org/packages/33/d1/8bb87d21e9aeb323cc03034f5eaf2c8f69841e40e4853c2627edf8111ed3/termcolor-3.3.0-py3-none-any.whl", hash = "sha256:cf642efadaf0a8ebbbf4bc7a31cec2f9b5f21a9f726f4ccbb08192c9c26f43a5", size = 7734, upload-time = "2025-12-29T12:55:20.718Z" },
 ]
 
 [[package]]

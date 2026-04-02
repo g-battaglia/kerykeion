@@ -1,5 +1,18 @@
 # Changelog
 
+## 6.0.0a13
+
+_2026-04-03_
+
+**Regenerate test baselines for libephemeris 1.0.0a15 and fix cross-backend test tolerances.**
+
+### Changes
+
+- Regenerated all SVG, report, and expected-data test baselines with libephemeris 1.0.0a15.
+- Fixed cross-backend test tolerances: baselines are now generated with libephemeris (not swisseph), so swisseph gets relaxed tolerances and libephemeris gets tight tolerances.
+- Increased position tolerance from 0.15° to 0.2° for swisseph cross-backend comparison to accommodate ancient date ΔT divergence (500 BC).
+- Skipped heliocentric synastry SVG test for swisseph (house comparison integers differ across backends).
+
 ## 6.0.0a7
 
 _2026-04-01_

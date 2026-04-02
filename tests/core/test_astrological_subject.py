@@ -7,11 +7,11 @@ from pytest import approx
 
 from tests.data.expected_astrological_subjects import EXPECTED_TROPICAL_SUBJECT
 
-# Cross-backend tolerances: swisseph and libephemeris may differ by a few arcminutes.
-_POS_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
-_SPEED_TOL = 0.05 if BACKEND_NAME != "swisseph" else 1e-4
-_DECL_TOL = 0.15 if BACKEND_NAME != "swisseph" else 1e-2
-_STRICT_HOUSE = BACKEND_NAME == "swisseph"
+# Cross-backend tolerances: swisseph may differ from libephemeris baselines by a few arcminutes.
+_POS_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
+_SPEED_TOL = 0.05 if BACKEND_NAME == "swisseph" else 1e-4
+_DECL_TOL = 0.15 if BACKEND_NAME == "swisseph" else 1e-2
+_STRICT_HOUSE = BACKEND_NAME != "swisseph"
 
 
 class TestAstrologicalSubject:
@@ -1526,7 +1526,7 @@ class TestMockErrorConditions:
                 raise Exception("Mock ephemeris error")
             return original_calc(jd, planet_num, flags)
 
-        with patch("swisseph.calc_ut", side_effect=mock_calc_ut):
+        with patch("kerykeion.ephemeris_backend.swe.calc_ut", side_effect=mock_calc_ut):
             # This should handle the error gracefully
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Error Test",
@@ -1895,10 +1895,11 @@ class TestAllDwarfPlanetsAndFixedStars:
     def test_vertex_calculation_with_exception_mock(self):
         """Test Vertex exception handling (line 1836-1841)."""
         from unittest.mock import patch
+        from kerykeion.ephemeris_backend import swe
 
         # First create subject normally to ensure houses work
         # Then mock only the Vertex calculation part
-        original_houses = __import__("swisseph").houses
+        original_houses = swe.houses_ex
 
         def conditional_mock(*args, **kwargs):
             # Check if this is being called with 'V' house system (for Vertex)
@@ -1906,7 +1907,7 @@ class TestAllDwarfPlanetsAndFixedStars:
                 raise Exception("Mock vertex error")
             return original_houses(*args, **kwargs)
 
-        with patch("swisseph.houses", side_effect=conditional_mock):
+        with patch("kerykeion.ephemeris_backend.swe.houses_ex", side_effect=conditional_mock):
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Vertex Error",
                 1990,
