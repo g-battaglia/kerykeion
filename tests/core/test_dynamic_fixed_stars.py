@@ -129,7 +129,8 @@ class TestFixedStarEdgeCases:
     def test_fixstar2_mag_exception_gives_none(self, subject_all_stars):
         """If swe.fixstar2_mag raises, magnitude should be None for that star."""
         from unittest.mock import patch
-        original = __import__("swisseph").fixstar2_mag
+        from kerykeion.ephemeris_backend import swe
+        original = swe.fixstar2_mag
 
         def fail_mag(name):
             raise RuntimeError("No magnitude data")
