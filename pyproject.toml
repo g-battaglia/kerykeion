@@ -47,7 +47,7 @@ classifiers = [
 ]
 requires-python = ">=3.9"
 dependencies = [
-    "libephemeris==1.0.0a10",
+    "libephemeris @ file:///Users/giacomo/dev/libephemeris",
     "pydantic>=2.5",
     "scour>=0.38.2",
     "requests-cache>=1.2.1",
@@ -59,7 +59,7 @@ dependencies = [
 
 [project.optional-dependencies]
 swiss = ["pyswisseph>=2.10.3.1"]
-all = ["pyswisseph>=2.10.3.1", "libephemeris==1.0.0a10"]
+all = ["pyswisseph>=2.10.3.1", "libephemeris @ file:///Users/giacomo/dev/libephemeris"]
 
 [project.urls]
 Homepage = "https://www.kerykeion.net/"
@@ -68,6 +68,9 @@ Repository = "https://github.com/g-battaglia/kerykeion"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]
