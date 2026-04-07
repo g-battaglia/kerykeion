@@ -1,5 +1,16 @@
 # Changelog
 
+## 6.0.0a19
+
+_2026-04-07_
+
+**Fix house sector geometry: use visual center (r,r) for arc calculations.**
+
+### Changes
+
+- Compute house sector arc points from the visual chart center `(r, r)` using `r + R * cos(θ)` instead of `sliceToX(0, R, θ) + dropin`. The old formula placed inner/outer circles at different centers (`(c1,c1)` vs `(c3,c3)`), causing arcs to curve inward instead of following the chart's concentric circles.
+- Regenerated all SVG test baselines.
+
 ## 6.0.0a18
 
 _2026-04-07_

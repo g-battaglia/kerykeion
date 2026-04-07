@@ -617,52 +617,47 @@ def draw_house_sectors(
     """
     seventh_house_abs = houses_list[6].abs_pos
 
-    # Determine inner/outer dropin based on chart type
+    # All chart circles are visually centered at (r, r) in SVG coordinates.
+    # The visual radii match the <circle> elements drawn by draw_first_circle etc.
     if chart_type in ("Transit", "Synastry", "DualReturnChart"):
-        inner_dropin = 160
-        outer_dropin = 72
+        outer_visual_r = r - 72    # matches roff=72 for dual charts
+        inner_visual_r = r - 160   # matches dropin=160 for dual charts
     else:
-        inner_dropin = c3
-        outer_dropin = c1
-
-    inner_r = r - inner_dropin   # radius of inner circle
-    outer_r = r - outer_dropin   # radius of outer circle
+        outer_visual_r = r - c1    # outer boundary (c1=first_circle_radius)
+        inner_visual_r = r - c3    # inner boundary (c3=third_circle_radius)
 
     output = ""
     for i in range(12):
         next_i = (i + 1) % 12
         house_num = i + 1
 
-        # Same formula as draw_houses_cusps_and_text_number:
-        # offset = -seventh_house_abs + cusp_abs_pos
         offset_start = -seventh_house_abs + houses_list[i].abs_pos
         offset_end = -seventh_house_abs + houses_list[next_i].abs_pos
 
-        # Outer arc points: x = dropin + R * cos(θ), y = dropin + R * sin(θ)
-        # This matches sliceToX(0, R, offset) + dropin
-        ox1 = sliceToX(0, outer_r, offset_start) + outer_dropin
-        oy1 = sliceToY(0, outer_r, offset_start) + outer_dropin
-        ox2 = sliceToX(0, outer_r, offset_end) + outer_dropin
-        oy2 = sliceToY(0, outer_r, offset_end) + outer_dropin
+        # Points on circles centered at (r, r) with correct visual radii
+        angle_s = math.radians(offset_start)
+        angle_e = math.radians(offset_end)
 
-        # Inner arc points
-        ix1 = sliceToX(0, inner_r, offset_start) + inner_dropin
-        iy1 = sliceToY(0, inner_r, offset_start) + inner_dropin
-        ix2 = sliceToX(0, inner_r, offset_end) + inner_dropin
-        iy2 = sliceToY(0, inner_r, offset_end) + inner_dropin
+        ox1 = r + outer_visual_r * math.cos(angle_s)
+        oy1 = r + outer_visual_r * math.sin(angle_s)
+        ox2 = r + outer_visual_r * math.cos(angle_e)
+        oy2 = r + outer_visual_r * math.sin(angle_e)
 
-        # Determine large-arc flag (house spans > 180°)
+        ix1 = r + inner_visual_r * math.cos(angle_s)
+        iy1 = r + inner_visual_r * math.sin(angle_s)
+        ix2 = r + inner_visual_r * math.cos(angle_e)
+        iy2 = r + inner_visual_r * math.sin(angle_e)
+
         span = (houses_list[next_i].abs_pos - houses_list[i].abs_pos) % 360
         large_arc = 1 if span > 180 else 0
 
-        # SVG path: start at cusp N+1 outer, arc BACK to cusp N outer (sweep=0
-        # gives outward-curving arcs), then line to inner, arc forward, close.
-        # This traces the house sector with correctly curved arcs.
+        # Outer arc: from cusp N+1 back to cusp N (sweep=0 curves outward).
+        # Inner arc: from cusp N forward to cusp N+1 (sweep=1 curves outward).
         d = (
             f"M {ox2},{oy2} "
-            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox1},{oy1} "
+            f"A {outer_visual_r},{outer_visual_r} 0 {large_arc},0 {ox1},{oy1} "
             f"L {ix1},{iy1} "
-            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix2},{iy2} Z"
+            f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},1 {ix2},{iy2} Z"
         )
 
         output += (
