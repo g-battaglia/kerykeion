@@ -616,7 +616,6 @@ def draw_house_sectors(
         SVG string containing 12 house sector path elements.
     """
     seventh_house_abs = houses_list[6].abs_pos
-    base_offset = 360 - seventh_house_abs
 
     # Determine inner/outer dropin based on chart type
     if chart_type in ("Transit", "Synastry", "DualReturnChart"):
@@ -634,9 +633,10 @@ def draw_house_sectors(
         next_i = (i + 1) % 12
         house_num = i + 1
 
-        # Angles: use same formula as sliceToX/Y — offset from seventh house
-        offset_start = base_offset + houses_list[i].abs_pos - seventh_house_abs
-        offset_end = base_offset + houses_list[next_i].abs_pos - seventh_house_abs
+        # Same formula as draw_houses_cusps_and_text_number:
+        # offset = -seventh_house_abs + cusp_abs_pos
+        offset_start = -seventh_house_abs + houses_list[i].abs_pos
+        offset_end = -seventh_house_abs + houses_list[next_i].abs_pos
 
         # Outer arc points: x = dropin + R * cos(θ), y = dropin + R * sin(θ)
         # This matches sliceToX(0, R, offset) + dropin
