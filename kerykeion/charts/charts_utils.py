@@ -655,13 +655,13 @@ def draw_house_sectors(
         span = (houses_list[next_i].abs_pos - houses_list[i].abs_pos) % 360
         large_arc = 1 if span > 180 else 0
 
-        # SVG path: outer arc → line to inner → inner arc back → close
-        # sweep=0 for both arcs (counter-clockwise in SVG coords)
+        # SVG path: outer arc (CW) → line to inner → inner arc back (CCW) → close
+        # In Kerykeion's SVG, zodiac degrees increase clockwise (sweep=1).
         d = (
             f"M {ox1},{oy1} "
-            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2},{oy2} "
+            f"A {outer_r},{outer_r} 0 {large_arc},1 {ox2},{oy2} "
             f"L {ix2},{iy2} "
-            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1},{iy1} Z"
+            f"A {inner_r},{inner_r} 0 {large_arc},0 {ix1},{iy1} Z"
         )
 
         output += (
