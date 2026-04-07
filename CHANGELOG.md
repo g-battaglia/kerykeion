@@ -1,5 +1,16 @@
 # Changelog
 
+## 6.0.0a18
+
+_2026-04-07_
+
+**Fix house sector arc geometry.**
+
+### Changes
+
+- Fix house sector arc sweep direction: reverse start/end points and use sweep=0 for outer arc, sweep=1 for inner arc. This produces correctly outward-curving arcs that cover the right house sector (both classic and modern chart styles).
+- Regenerated all SVG test baselines.
+
 ## 6.0.0a17
 
 _2026-04-07_
