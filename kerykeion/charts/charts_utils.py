@@ -588,6 +588,91 @@ def draw_zodiac_slice(
     return f'<g kr:node="ZodiacSign" kr:sign="{type}" kr:signnumber="{num}">' + slice + sign + "</g>"
 
 
+def draw_house_sectors(
+    r: Union[int, float],
+    houses_list: list[KerykeionPointModel],
+    c1: Union[int, float],
+    c3: Union[int, float],
+    chart_type: ChartType,
+    external_view: bool = False,
+) -> str:
+    """
+    Draw transparent house sector wedges for interactive highlighting.
+
+    Each sector is an annular wedge between the inner circle (c3) and the
+    outer circle (c1), spanning from one house cusp to the next. The sectors
+    are fully transparent by default and only become visible when the
+    frontend applies a CSS class (.chart-focused).
+
+    Args:
+        r: Chart radius in pixels.
+        houses_list: List of 12 house cusp models.
+        c1: Outer boundary offset (first_circle_radius).
+        c3: Inner boundary offset (third_circle_radius).
+        chart_type: Type of chart being rendered.
+        external_view: If True, adjusts radii for external view mode.
+
+    Returns:
+        SVG string containing 12 house sector path elements.
+    """
+    seventh_house_abs = houses_list[6].abs_pos
+    base_offset = 360 - seventh_house_abs
+
+    # Determine inner/outer dropin based on chart type
+    if chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        inner_dropin = 160
+        outer_dropin = 72
+    else:
+        inner_dropin = c3
+        outer_dropin = c1
+
+    inner_r = r - inner_dropin   # radius of inner circle
+    outer_r = r - outer_dropin   # radius of outer circle
+
+    output = ""
+    for i in range(12):
+        next_i = (i + 1) % 12
+        house_num = i + 1
+
+        # Angles: use same formula as sliceToX/Y — offset from seventh house
+        offset_start = base_offset + houses_list[i].abs_pos - seventh_house_abs
+        offset_end = base_offset + houses_list[next_i].abs_pos - seventh_house_abs
+
+        # Outer arc points: x = dropin + R * cos(θ), y = dropin + R * sin(θ)
+        # This matches sliceToX(0, R, offset) + dropin
+        ox1 = sliceToX(0, outer_r, offset_start) + outer_dropin
+        oy1 = sliceToY(0, outer_r, offset_start) + outer_dropin
+        ox2 = sliceToX(0, outer_r, offset_end) + outer_dropin
+        oy2 = sliceToY(0, outer_r, offset_end) + outer_dropin
+
+        # Inner arc points
+        ix1 = sliceToX(0, inner_r, offset_start) + inner_dropin
+        iy1 = sliceToY(0, inner_r, offset_start) + inner_dropin
+        ix2 = sliceToX(0, inner_r, offset_end) + inner_dropin
+        iy2 = sliceToY(0, inner_r, offset_end) + inner_dropin
+
+        # Determine large-arc flag (house spans > 180°)
+        span = (houses_list[next_i].abs_pos - houses_list[i].abs_pos) % 360
+        large_arc = 1 if span > 180 else 0
+
+        # SVG path: outer arc → line to inner → inner arc back → close
+        # sweep=0 for both arcs (counter-clockwise in SVG coords)
+        d = (
+            f"M {ox1},{oy1} "
+            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2},{oy2} "
+            f"L {ix2},{iy2} "
+            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1},{iy1} Z"
+        )
+
+        output += (
+            f'<g kr:node="HouseSector" kr:house="{house_num}">'
+            f'<path d="{d}" style="fill: transparent; stroke: none; pointer-events: all;"/>'
+            f"</g>"
+        )
+
+    return output
+
+
 # =============================================================================
 # COORDINATE STRING FORMATTING
 # =============================================================================

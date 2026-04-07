@@ -111,6 +111,11 @@
                 $degreeRing
             </g>
 
+            <!-- House Sectors (transparent, for interactive highlighting) -->
+            <g kr:node="House_Sectors">
+                $makeHouseSectors
+            </g>
+
             <!-- Houses -->
             <g kr:node="Houses_Wheel">
                 $makeHouses

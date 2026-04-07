@@ -74,6 +74,7 @@ from kerykeion.charts.charts_utils import (
     draw_secondary_planet_grid,
     format_location_string,
     format_datetime_with_timezone,
+    draw_house_sectors,
 )
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.charts.draw_modern import draw_modern_horoscope, draw_modern_dual_horoscope
@@ -596,6 +597,7 @@ class NatalChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, houses_list)
         template_dict["makeSecondaryHousesGrid"] = ""
         d._setup_single_wheel_houses(template_dict, houses_list)
+        d._setup_house_sectors(template_dict, houses_list)
         d._setup_gauquelin_sectors(template_dict)
         d._setup_single_wheel_planets(template_dict)
         d._setup_main_planet_grid(
@@ -671,6 +673,7 @@ class CompositeChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, houses_list)
         template_dict["makeSecondaryHousesGrid"] = ""
         d._setup_single_wheel_houses(template_dict, houses_list)
+        d._setup_house_sectors(template_dict, houses_list)
         d._setup_gauquelin_sectors(template_dict)
         d._setup_single_wheel_planets(template_dict)
 
@@ -831,6 +834,7 @@ class TransitChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, first_houses)
         template_dict["makeSecondaryHousesGrid"] = ""  # Transit doesn't show transit houses grid
         d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        d._setup_house_sectors(template_dict, first_houses)
         template_dict["makeGauquelinSectors"] = ""  # Not rendered for dual-wheel charts
         d._setup_dual_wheel_planets(template_dict)
 
@@ -1009,6 +1013,7 @@ class SynastryChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, first_houses)
         d._setup_secondary_houses_grid(template_dict, second_houses)
         d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        d._setup_house_sectors(template_dict, first_houses)
         template_dict["makeGauquelinSectors"] = ""
         d._setup_dual_wheel_planets(template_dict)
 
@@ -1196,6 +1201,7 @@ class SingleReturnChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, houses_list)
         template_dict["makeSecondaryHousesGrid"] = ""
         d._setup_single_wheel_houses(template_dict, houses_list)
+        d._setup_house_sectors(template_dict, houses_list)
         d._setup_gauquelin_sectors(template_dict)
         d._setup_single_wheel_planets(template_dict)
         d._setup_main_planet_grid(
@@ -1318,6 +1324,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, first_houses)
         d._setup_secondary_houses_grid(template_dict, second_houses)
         d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        d._setup_house_sectors(template_dict, first_houses)
         template_dict["makeGauquelinSectors"] = ""
         d._setup_dual_wheel_planets(template_dict)
 
@@ -3465,6 +3472,17 @@ class ChartDrawer:  # type: ignore[no-redef]
             external_view=self.external_view,
         )
 
+    def _setup_house_sectors(self, template_dict: dict, houses_list: list) -> None:
+        """Populate template_dict with transparent house sector wedges for interactive highlighting."""
+        template_dict["makeHouseSectors"] = draw_house_sectors(
+            r=self.main_radius,
+            houses_list=houses_list,
+            c1=self.first_circle_radius,
+            c3=self.third_circle_radius,
+            chart_type=self.chart_type,
+            external_view=self.external_view,
+        )
+
     def _setup_gauquelin_sectors(self, template_dict: dict) -> None:
         """Replace house lines with 36 Gauquelin sectors when active.
 
@@ -4042,6 +4060,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Initialize template dictionary
         template_dict: dict = {}
         template_dict["makeGauquelinSectors"] = ""  # Default empty, populated if Gauquelin sectors present
+        template_dict["makeHouseSectors"] = ""  # Default empty, populated by _setup_house_sectors
 
         # -------------------------------------#
         #  COMMON SETTINGS FOR ALL CHART TYPES #

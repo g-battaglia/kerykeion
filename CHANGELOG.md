@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.0.0a17
+
+_2026-04-07_
+
+**Add transparent house sector wedges for interactive highlighting.**
+
+### Changes
+
+- Add `draw_house_sectors()` in `charts_utils.py` — generates 12 transparent annular wedge paths (`kr:node="HouseSector" kr:house="{n}"`) between house cusp boundaries.
+- Add `_draw_house_sectors_modern()` in `draw_modern.py` for modern chart style.
+- Add `makeHouseSectors` template variable and `$makeHouseSectors` placeholder in classic chart templates (chart.xml, wheel_only.xml).
+- Add `makeHouseSectors` field to `ChartTemplateModel`.
+- Sectors are invisible by default (`fill: transparent`) but have `pointer-events: all` so the frontend can attach click handlers and apply CSS highlighting.
+- Regenerated all SVG test baselines.
+
 ## 6.0.0a16
 
 _2026-04-07_

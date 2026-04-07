@@ -1145,6 +1145,55 @@ def _draw_gauquelin_house_ring(
 # =============================================================================
 
 
+def _draw_house_sectors_modern(
+    houses: list[KerykeionPointModel],
+    seventh_house_degree_ut: float,
+    inner_r: float = R_HOUSE_INNER,
+    outer_r: float = R_CUSP_OUTER,
+) -> str:
+    """Draw transparent house sector wedges for interactive highlighting (modern style)."""
+    out = ""
+    for i in range(12):
+        next_i = (i + 1) % 12
+        house_num = i + 1
+
+        a_start = _zodiac_to_wheel_angle(houses[i].abs_pos, seventh_house_degree_ut)
+        a_end = _zodiac_to_wheel_angle(houses[next_i].abs_pos, seventh_house_degree_ut)
+
+        # Convert wheel angles to radians (parent group has rotate(-90), so subtract 90)
+        r_start = math.radians(-a_start - 90)
+        r_end = math.radians(-a_end - 90)
+
+        # 4 corners of the annular sector
+        ox1 = CENTER + outer_r * math.cos(r_start)
+        oy1 = CENTER + outer_r * math.sin(r_start)
+        ox2 = CENTER + outer_r * math.cos(r_end)
+        oy2 = CENTER + outer_r * math.sin(r_end)
+        ix1 = CENTER + inner_r * math.cos(r_start)
+        iy1 = CENTER + inner_r * math.sin(r_start)
+        ix2 = CENTER + inner_r * math.cos(r_end)
+        iy2 = CENTER + inner_r * math.sin(r_end)
+
+        # Angular span to determine large-arc flag
+        span = _normalize_angle(houses[next_i].abs_pos - houses[i].abs_pos)
+        large_arc = 1 if span > 180 else 0
+
+        d = (
+            f"M {ox1:.6f},{oy1:.6f} "
+            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2:.6f},{oy2:.6f} "
+            f"L {ix2:.6f},{iy2:.6f} "
+            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1:.6f},{iy1:.6f} Z"
+        )
+
+        out += (
+            f'<g kr:node="HouseSector" kr:house="{house_num}">'
+            f'<path d="{d}" fill="transparent" stroke="none" pointer-events="all"/>'
+            f"</g>\n"
+        )
+
+    return out
+
+
 def _draw_house_ring(
     houses: list[KerykeionPointModel],
     seventh_house_degree_ut: float,
@@ -1424,6 +1473,7 @@ def draw_modern_horoscope(
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut)
     else:
         out += _draw_house_ring(houses, seventh_house_degree_ut)
+    out += _draw_house_sectors_modern(houses, seventh_house_degree_ut)
     out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut)
 
     if show_zodiac_background_ring:
@@ -1572,6 +1622,9 @@ def draw_modern_dual_horoscope(
         house_outer_r=SYN_R_HOUSE_OUTER,
         text_y=36.0,
     )
+
+    # ─── HOUSE SECTORS (transparent, for interactive highlighting) ───
+    out += _draw_house_sectors_modern(houses_1, seventh_house_degree_ut, inner_r=SYN_R_HOUSE_INNER, outer_r=R_CUSP_OUTER)
 
     # ─── ASPECT CORE (cross-chart aspects) ──────────────────────────
     out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut, core_radius=SYN_R_ASPECT)
