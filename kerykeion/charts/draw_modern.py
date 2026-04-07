@@ -695,6 +695,7 @@ def _draw_indicator_line(
     start_y: float = HOUSE_LINE_OUTER_Y,
     tick_length: float = 1.075,
     arc_radius: Union[float, None] = None,
+    planet_slug: str = "",
 ) -> str:
     """
     Draw a tether/indicator line from a displaced planet to its true position.
@@ -709,6 +710,7 @@ def _draw_indicator_line(
         tick_length: Length and direction of the initial tick. Positive = downward,
                      negative = upward (default 1.075).
         arc_radius: Radius for the connecting arc. If None, uses R_PLANET_OUTER - 1.
+        planet_slug: Name of the celestial point (for kr:slug metadata).
 
     Returns:
         SVG group string for the indicator line.
@@ -716,7 +718,8 @@ def _draw_indicator_line(
     if arc_radius is None:
         arc_radius = R_PLANET_OUTER - 1  # 42.5
 
-    out = f'<g kr:node="Indicator" transform="rotate(-{real_angle:.6f} {CENTER} {CENTER})">\n'
+    slug_attr = f' kr:slug="{planet_slug}"' if planet_slug else ""
+    out = f'<g kr:node="Indicator"{slug_attr} transform="rotate(-{real_angle:.6f} {CENTER} {CENTER})">\n'
 
     angle_diff = _normalize_angle(display_angle - real_angle)
     if angle_diff > 180:
@@ -908,7 +911,7 @@ def _draw_planet_ring(
         out += planet_svg
 
         # Draw indicator line
-        out += _draw_indicator_line(real_angle, display_angle, **ind_kwargs)
+        out += _draw_indicator_line(real_angle, display_angle, planet_slug=point.name, **ind_kwargs)
 
     out += "</g>\n"
     return out
@@ -1197,12 +1200,14 @@ def _draw_house_ring(
             # Place at the absolute mid-angle, keep text upright
             angle_upright = 90 + mid_angle_abs
             out += (
+                f'<g kr:node="HouseNumber" kr:house="{house_num}">'
                 f'<text text-anchor="middle" dominant-baseline="middle" '
                 f'x="{CENTER}" y="{text_y}" font-size="1.5" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate(-{mid_angle_abs:.6f} {CENTER} {CENTER}) '
                 f'rotate({angle_upright:.6f} {CENTER} {text_y})">'
-                f"{house_num}</text>\n"
+                f"{house_num}</text>"
+                f"</g>\n"
             )
 
     out += "</g>\n"
