@@ -1180,9 +1180,9 @@ def _draw_house_sectors_modern(
 
         d = (
             f"M {ox1:.6f},{oy1:.6f} "
-            f"A {outer_r},{outer_r} 0 {large_arc},1 {ox2:.6f},{oy2:.6f} "
+            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2:.6f},{oy2:.6f} "
             f"L {ix2:.6f},{iy2:.6f} "
-            f"A {inner_r},{inner_r} 0 {large_arc},0 {ix1:.6f},{iy1:.6f} Z"
+            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1:.6f},{iy1:.6f} Z"
         )
 
         out += (

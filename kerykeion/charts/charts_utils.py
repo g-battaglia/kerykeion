@@ -652,12 +652,14 @@ def draw_house_sectors(
         span = (houses_list[next_i].abs_pos - houses_list[i].abs_pos) % 360
         large_arc = 1 if span > 180 else 0
 
-        # Path from cusp N to cusp N+1 (CW direction in Kerykeion's coords).
+        # Path from cusp N to cusp N+1.
+        # sweep=0 for outer arc, sweep=1 for inner arc → both curve outward
+        # (convex away from chart center, following the concentric circles).
         d = (
             f"M {ox1},{oy1} "
-            f"A {outer_visual_r},{outer_visual_r} 0 {large_arc},1 {ox2},{oy2} "
+            f"A {outer_visual_r},{outer_visual_r} 0 {large_arc},0 {ox2},{oy2} "
             f"L {ix2},{iy2} "
-            f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},0 {ix1},{iy1} Z"
+            f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},1 {ix1},{iy1} Z"
         )
 
         output += (
