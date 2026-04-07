@@ -166,6 +166,7 @@ def draw_planets(
                 true_offset,
                 adjusted_offset,
                 available_planets_setting[point_idx]["color"],
+                available_planets_setting[point_idx]["name"],
             )
 
         # Draw the celestial point SVG element
@@ -788,6 +789,7 @@ def _draw_external_natal_lines(
     true_offset: Union[int, float],
     adjusted_offset: Union[int, float],
     color: str,
+    point_name: str = "",
 ) -> str:
     """
     Draw connecting lines for external view mode.
@@ -803,6 +805,7 @@ def _draw_external_natal_lines(
         true_offset: True angular position.
         adjusted_offset: Visually adjusted position.
         color: Line color.
+        point_name: Name of the celestial point (for kr:slug metadata).
 
     Returns:
         Updated SVG output with added lines.
@@ -819,10 +822,12 @@ def _draw_external_natal_lines(
 
     return (
         output
+        + f'<g kr:node="ConnectingLine" kr:slug="{point_name}">'
         + f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
         + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
         + f'<line x1="{x2}" y1="{y2}" x2="{x3}" y2="{y3}" '
         + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
+        + f'</g>'
     )
 
 
@@ -889,12 +894,15 @@ def _draw_primary_point_indicators(
         deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
+        point_slug = points_settings[point_idx]["name"]
         parts.append(
+            f'<g kr:node="Indicator" kr:slug="{point_slug}">'
             f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
             f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
             f'<g transform="translate({deg_x},{deg_y})">'
             f'<text text-anchor="middle" dominant-baseline="middle" '
             f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+            f'</g>'
         )
 
     return "".join(parts)
@@ -954,12 +962,15 @@ def _draw_inner_point_indicators(
         deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
+        point_slug = points_settings[point_idx]["name"]
         parts.append(
+            f'<g kr:node="Indicator" kr:slug="{point_slug}">'
             f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
             f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
             f'<g transform="translate({deg_x},{deg_y})">'
             f'<text text-anchor="middle" dominant-baseline="middle" '
             f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
+            f'</g>'
         )
 
     return "".join(parts)
@@ -1053,10 +1064,15 @@ def _draw_secondary_points(
         retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
         point_color = points_settings[point_idx]["color"]
 
-        # Build point symbol
+        # Build point symbol with kr: metadata (matching _generate_point_svg attributes)
+        point_name = points_settings[point_idx]["name"]
+        kr_attrs = f'kr:node="ChartPoint" kr:slug="{point_name}"'
+        if celestial_points is not None and point_idx < len(celestial_points):
+            cp = celestial_points[point_idx]
+            kr_attrs += f' kr:house="{cp.house}" kr:sign="{cp.sign}" kr:absoluteposition="{cp.abs_pos}" kr:signposition="{cp.position}"'
         point_svg = (
-            f'<g class="transit-planet-name"{retro_attr} transform="translate(-6,-6)"><g transform="scale(0.5)">'
-            f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{points_settings[point_idx]["name"]}" />'
+            f'<g {kr_attrs}{retro_attr} class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
+            f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{point_name}" />'
         )
         if is_retrograde:
             # Same offset logic as _generate_point_svg: bottom-right foot of the glyph.

@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.0.0a15
+
+_2026-04-07_
+
+**Enrich SVG chart metadata for frontend interactivity (focus mode, DataCards).**
+
+### Changes
+
+- Wrap degree indicators in `<g kr:node="Indicator" kr:slug="{planet}">` so they can be targeted by planet slug (both primary outer-ring and inner dual-chart indicators).
+- Add full `kr:` metadata to transit/secondary planet glyphs (`kr:node="ChartPoint"`, `kr:slug`, `kr:house`, `kr:sign`, `kr:absoluteposition`, `kr:signposition`) — previously only had `class="transit-planet-name"`.
+- Add `kr:house` attribute to `HouseNumber` elements (`<g kr:node="HouseNumber" kr:house="{n}">`) for direct querying without parsing text content.
+- Wrap external-view connecting lines in `<g kr:node="ConnectingLine" kr:slug="{planet}">`.
+- Fix typo: `kr:sing` → `kr:sign` on Cusp elements (both first and second subject).
+- Regenerated all SVG test baselines.
+
 ## 6.0.0a14
 
 _2026-04-03_
