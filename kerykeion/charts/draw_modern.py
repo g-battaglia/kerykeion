@@ -1178,11 +1178,12 @@ def _draw_house_sectors_modern(
         span = _normalize_angle(houses[next_i].abs_pos - houses[i].abs_pos)
         large_arc = 1 if span > 180 else 0
 
+        la_flip = 1 - large_arc
         d = (
-            f"M {ox2:.6f},{oy2:.6f} "
-            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox1:.6f},{oy1:.6f} "
-            f"L {ix1:.6f},{iy1:.6f} "
-            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix2:.6f},{iy2:.6f} Z"
+            f"M {ox1:.6f},{oy1:.6f} "
+            f"A {outer_r},{outer_r} 0 {la_flip},1 {ox2:.6f},{oy2:.6f} "
+            f"L {ix2:.6f},{iy2:.6f} "
+            f"A {inner_r},{inner_r} 0 {la_flip},0 {ix1:.6f},{iy1:.6f} Z"
         )
 
         out += (

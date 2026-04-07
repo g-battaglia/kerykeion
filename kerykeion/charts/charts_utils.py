@@ -634,30 +634,33 @@ def draw_house_sectors(
         offset_start = -seventh_house_abs + houses_list[i].abs_pos
         offset_end = -seventh_house_abs + houses_list[next_i].abs_pos
 
-        # Points on circles centered at (r, r) with correct visual radii
-        angle_s = math.radians(offset_start)
-        angle_e = math.radians(offset_end)
+        # Use sliceToX/Y (which has built-in +1 centering) + dropin offset.
+        # This matches the cusp line coordinate system exactly.
+        outer_dropin = r - outer_visual_r  # = c1 for natal, 72 for transit
+        inner_dropin = r - inner_visual_r  # = c3 for natal, 160 for transit
 
-        ox1 = r + outer_visual_r * math.cos(angle_s)
-        oy1 = r + outer_visual_r * math.sin(angle_s)
-        ox2 = r + outer_visual_r * math.cos(angle_e)
-        oy2 = r + outer_visual_r * math.sin(angle_e)
+        ox1 = sliceToX(0, outer_visual_r, offset_start) + outer_dropin
+        oy1 = sliceToY(0, outer_visual_r, offset_start) + outer_dropin
+        ox2 = sliceToX(0, outer_visual_r, offset_end) + outer_dropin
+        oy2 = sliceToY(0, outer_visual_r, offset_end) + outer_dropin
 
-        ix1 = r + inner_visual_r * math.cos(angle_s)
-        iy1 = r + inner_visual_r * math.sin(angle_s)
-        ix2 = r + inner_visual_r * math.cos(angle_e)
-        iy2 = r + inner_visual_r * math.sin(angle_e)
+        ix1 = sliceToX(0, inner_visual_r, offset_start) + inner_dropin
+        iy1 = sliceToY(0, inner_visual_r, offset_start) + inner_dropin
+        ix2 = sliceToX(0, inner_visual_r, offset_end) + inner_dropin
+        iy2 = sliceToY(0, inner_visual_r, offset_end) + inner_dropin
 
         span = (houses_list[next_i].abs_pos - houses_list[i].abs_pos) % 360
         large_arc = 1 if span > 180 else 0
 
-        # Outer arc: from cusp N+1 back to cusp N (sweep=0 curves outward).
-        # Inner arc: from cusp N forward to cusp N+1 (sweep=1 curves outward).
+        # Path from cusp N to cusp N+1.
+        # sweep=1 for outer (CW = house direction), sweep=0 for inner (CCW = back).
+        # large_arc_flip: invert the large-arc flag so SVG picks the outward-curving arc.
+        la_flip = 1 - large_arc
         d = (
-            f"M {ox2},{oy2} "
-            f"A {outer_visual_r},{outer_visual_r} 0 {large_arc},0 {ox1},{oy1} "
-            f"L {ix1},{iy1} "
-            f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},1 {ix2},{iy2} Z"
+            f"M {ox1},{oy1} "
+            f"A {outer_visual_r},{outer_visual_r} 0 {la_flip},1 {ox2},{oy2} "
+            f"L {ix2},{iy2} "
+            f"A {inner_visual_r},{inner_visual_r} 0 {la_flip},0 {ix1},{iy1} Z"
         )
 
         output += (

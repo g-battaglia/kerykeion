@@ -1,5 +1,17 @@
 # Changelog
 
+## 6.0.0a20
+
+_2026-04-08_
+
+**Fix house sector arc curvature (arcs now curve outward correctly).**
+
+### Changes
+
+- Fix house sector SVG arcs curving inward instead of outward. The solution: invert the `large-arc-flag` (`1 - large_arc`) so the SVG renderer picks the outward-curving arc segment. Applied to both classic and modern chart styles.
+- Reverted coordinate calculation back to `sliceToX/Y + dropin` (the proven formula that matches cusp line positions exactly).
+- Regenerated all SVG test baselines.
+
 ## 6.0.0a19
 
 _2026-04-07_
