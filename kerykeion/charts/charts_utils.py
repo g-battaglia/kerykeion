@@ -652,15 +652,12 @@ def draw_house_sectors(
         span = (houses_list[next_i].abs_pos - houses_list[i].abs_pos) % 360
         large_arc = 1 if span > 180 else 0
 
-        # Path from cusp N to cusp N+1.
-        # sweep=1 for outer (CW = house direction), sweep=0 for inner (CCW = back).
-        # large_arc_flip: invert the large-arc flag so SVG picks the outward-curving arc.
-        la_flip = 1 - large_arc
+        # Path from cusp N to cusp N+1 (CW direction in Kerykeion's coords).
         d = (
             f"M {ox1},{oy1} "
-            f"A {outer_visual_r},{outer_visual_r} 0 {la_flip},1 {ox2},{oy2} "
+            f"A {outer_visual_r},{outer_visual_r} 0 {large_arc},1 {ox2},{oy2} "
             f"L {ix2},{iy2} "
-            f"A {inner_visual_r},{inner_visual_r} 0 {la_flip},0 {ix1},{iy1} Z"
+            f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},0 {ix1},{iy1} Z"
         )
 
         output += (
