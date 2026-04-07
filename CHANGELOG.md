@@ -1,5 +1,18 @@
 # Changelog
 
+## 6.0.0a22
+
+_2026-04-08_
+
+**Fix house sector arc geometry — final correct version.**
+
+### Changes
+
+- Remove `la_flip` (large-arc inversion) that caused sector paths to cover the complement area instead of the house itself.
+- Swap arc sweep flags (outer 1→0, inner 0→1) so both arcs curve outward following the chart's concentric circles.
+- Verified visually on both classic and modern chart styles.
+- Regenerated all SVG test baselines.
+
 ## 6.0.0a20
 
 _2026-04-08_
