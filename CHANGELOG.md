@@ -1,5 +1,18 @@
 # Changelog
 
+## 6.0.0a16
+
+_2026-04-07_
+
+**Add kr: metadata to zodiac sign slices and modern chart indicators/house numbers.**
+
+### Changes
+
+- Wrap each zodiac sign slice in `<g kr:node="ZodiacSign" kr:sign="{sign}" kr:signnumber="{n}">` in both classic (`draw_zodiac_slice`) and modern (`_draw_zodiac_backgrounds`) charts.
+- Add `kr:slug` to modern chart indicators (`_draw_indicator_line`).
+- Wrap modern chart house numbers in `<g kr:node="HouseNumber" kr:house="{n}">`.
+- Regenerated all SVG test baselines.
+
 ## 6.0.0a15
 
 _2026-04-07_

@@ -585,7 +585,7 @@ def draw_zodiac_slice(
         dropin = 18 + c1
     sign = f'<g transform="translate(-16,-16)"><use x="{str(dropin + sliceToX(num, r - dropin, offset))}" y="{str(dropin + sliceToY(num, r - dropin, offset))}" xlink:href="#{type}" /></g>'
 
-    return slice + "" + sign
+    return f'<g kr:node="ZodiacSign" kr:sign="{type}" kr:signnumber="{num}">' + slice + sign + "</g>"
 
 
 # =============================================================================

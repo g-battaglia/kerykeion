@@ -183,77 +183,101 @@
     <g kr:node='Main_Chart'>
         <g kr:node='ModernDualHoroscope' kr:charttype='Synastry' transform='rotate(-90 50.0 50.0)'>
 <g kr:node='ZodiacBackgrounds'>
+  <g kr:node='ZodiacSign' kr:sign='Ari' kr:signnumber='0'>
   <path d='M 66.893180,2.940246 A 50.0,50.0 0 0,0 41.100046,0.798467 L 41.812043,4.734590 A 46.0,46.0 0 0,1 65.541726,6.705026 Z' fill='var(--kerykeion-modern-zodiac-bg-0)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-355.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(445.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Ari' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Tau' kr:signnumber='1'>
   <path d='M 41.100046,0.798467 A 50.0,50.0 0 0,0 17.691648,11.840200 L 20.276316,14.892984 A 46.0,46.0 0 0,1 41.812043,4.734590 Z' fill='var(--kerykeion-modern-zodiac-bg-1)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-25.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(115.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Tau' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Gem' kr:signnumber='2'>
   <path d='M 17.691648,11.840200 A 50.0,50.0 0 0,0 2.940246,33.106820 L 6.705026,34.458274 A 46.0,46.0 0 0,1 20.276316,14.892984 Z' fill='var(--kerykeion-modern-zodiac-bg-2)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-55.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(145.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Gem' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Can' kr:signnumber='3'>
   <path d='M 2.940246,33.106820 A 50.0,50.0 0 0,0 0.798467,58.899954 L 4.734590,58.187957 A 46.0,46.0 0 0,1 6.705026,34.458274 Z' fill='var(--kerykeion-modern-zodiac-bg-3)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-85.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(175.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Can' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Leo' kr:signnumber='4'>
   <path d='M 0.798467,58.899954 A 50.0,50.0 0 0,0 11.840200,82.308352 L 14.892984,79.723684 A 46.0,46.0 0 0,1 4.734590,58.187957 Z' fill='var(--kerykeion-modern-zodiac-bg-4)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-115.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(205.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Leo' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Vir' kr:signnumber='5'>
   <path d='M 11.840200,82.308352 A 50.0,50.0 0 0,0 33.106820,97.059754 L 34.458274,93.294974 A 46.0,46.0 0 0,1 14.892984,79.723684 Z' fill='var(--kerykeion-modern-zodiac-bg-5)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-145.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(235.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Vir' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Lib' kr:signnumber='6'>
   <path d='M 33.106820,97.059754 A 50.0,50.0 0 0,0 58.899954,99.201533 L 58.187957,95.265410 A 46.0,46.0 0 0,1 34.458274,93.294974 Z' fill='var(--kerykeion-modern-zodiac-bg-6)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-175.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(265.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Lib' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Sco' kr:signnumber='7'>
   <path d='M 58.899954,99.201533 A 50.0,50.0 0 0,0 82.308352,88.159800 L 79.723684,85.107016 A 46.0,46.0 0 0,1 58.187957,95.265410 Z' fill='var(--kerykeion-modern-zodiac-bg-7)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-205.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(295.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Sco' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Sag' kr:signnumber='8'>
   <path d='M 82.308352,88.159800 A 50.0,50.0 0 0,0 97.059754,66.893180 L 93.294974,65.541726 A 46.0,46.0 0 0,1 79.723684,85.107016 Z' fill='var(--kerykeion-modern-zodiac-bg-8)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-235.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(325.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Sag' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Cap' kr:signnumber='9'>
   <path d='M 97.059754,66.893180 A 50.0,50.0 0 0,0 99.201533,41.100046 L 95.265410,41.812043 A 46.0,46.0 0 0,1 93.294974,65.541726 Z' fill='var(--kerykeion-modern-zodiac-bg-9)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-265.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(355.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Cap' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Aqu' kr:signnumber='10'>
   <path d='M 99.201533,41.100046 A 50.0,50.0 0 0,0 88.159800,17.691648 L 85.107016,20.276316 A 46.0,46.0 0 0,1 95.265410,41.812043 Z' fill='var(--kerykeion-modern-zodiac-bg-10)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-295.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(385.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Aqu' />
     </g>
   </g>
+  </g>
+  <g kr:node='ZodiacSign' kr:sign='Pis' kr:signnumber='11'>
   <path d='M 88.159800,17.691648 A 50.0,50.0 0 0,0 66.893180,2.940246 L 65.541726,6.705026 A 46.0,46.0 0 0,1 85.107016,20.276316 Z' fill='var(--kerykeion-modern-zodiac-bg-11)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
   <g transform='rotate(-325.253233 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(415.253233) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Pis' />
     </g>
+  </g>
   </g>
   <circle r='46.0' cx='50.0' cy='50.0' fill='none' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.15'/>
   <circle r='50.0' cx='50.0' cy='50.0' fill='none' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.15'/>

@@ -360,6 +360,8 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
         # L  inner_end
         # A  inner arc (r=R_ZODIAC_BG_INNER) 30deg, sweep counter-clockwise
         # Z  close
+        sign_id = _ZODIAC_SIGN_IDS[sign_num]
+        out += f'  <g kr:node="ZodiacSign" kr:sign="{sign_id}" kr:signnumber="{sign_num}">\n'
         out += (
             f'  <path d="'
             f"M {ox1:.6f},{oy1:.6f} "
@@ -371,7 +373,6 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
         )
 
         # Draw the zodiac glyph centered in the wedge
-        sign_id = _ZODIAC_SIGN_IDS[sign_num]
         # The group is already rotated by -90°. Each glyph is placed via
         # rotate(-mid_angle) which points it to the correct angular position,
         # then translated to r_mid, then counter-rotated to stay upright.
@@ -385,6 +386,7 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
             f"    </g>\n"
             f"  </g>\n"
         )
+        out += f"  </g>\n"  # close ZodiacSign group
 
     # Border circles at the inner and outer edges of the zodiac ring
     out += (
