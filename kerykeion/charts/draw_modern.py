@@ -908,6 +908,7 @@ def _draw_planet_ring(
             display_angle=display_angle,
             counter_rotation=counter_rotation,
             color=color,
+            horoscope_id=horoscope_id,
             **planet_kwargs,
         )
         out += planet_svg
@@ -934,6 +935,7 @@ def _draw_single_planet_in_ring(
     sign_scale_base: float = SIGN_SCALE_BASE,
     minutes_font_size: float = MINUTES_FONT_SIZE,
     rx_font_size: float = RX_FONT_SIZE,
+    horoscope_id: Union[str, None] = None,
 ) -> str:
     """
     Draw a single planet with its data cluster in the planet ring.
@@ -971,11 +973,12 @@ def _draw_single_planet_in_ring(
     planet_id = point.name
 
     retro_attr = ' kr:retrograde="true"' if is_retro else ""
+    horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
 
     out = (
         f'<g kr:node="ChartPoint" kr:house="{point.house}" '
         f'kr:sign="{sign}" kr:absoluteposition="{point.abs_pos}" '
-        f'kr:signposition="{point.position}" kr:slug="{planet_id}"{retro_attr} '
+        f'kr:signposition="{point.position}" kr:slug="{planet_id}"{retro_attr}{horoscope_attr} '
         f'transform="rotate(-{display_angle:.6f} {CENTER} {CENTER})">\n'
     )
 

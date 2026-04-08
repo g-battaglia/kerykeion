@@ -171,12 +171,15 @@ def draw_planets(
 
         # Draw the celestial point SVG element
         point_details = available_kerykeion_celestial_points[point_idx]
+        # In dual charts, main subject is horoscope "0"
+        h_id = "0" if chart_type in DUAL_CHART_TYPES else None
         output += _generate_point_svg(
             point_details,
             point_x,
             point_y,
             scale_factor,
             available_planets_setting[point_idx]["name"],
+            horoscope_id=h_id,
         )
 
     # -------------------------------------------------------------------------
@@ -738,6 +741,7 @@ def _generate_point_svg(
     y: float,
     scale: float,
     point_name: str,
+    horoscope_id: Union[str, None] = None,
 ) -> str:
     """
     Generate SVG markup for a celestial point.
@@ -758,11 +762,12 @@ def _generate_point_svg(
     """
     is_retrograde = point_details["retrograde"] is True
     retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
+    horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
 
     parts: list[str] = [
         f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
         f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',
-        f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr} ',
+        f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr}{horoscope_attr} ',
         f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
         f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />',
     ]
@@ -1066,7 +1071,7 @@ def _draw_secondary_points(
 
         # Build point symbol with kr: metadata (matching _generate_point_svg attributes)
         point_name = points_settings[point_idx]["name"]
-        kr_attrs = f'kr:node="ChartPoint" kr:slug="{point_name}"'
+        kr_attrs = f'kr:node="ChartPoint" kr:slug="{point_name}" kr:horoscope="1"'
         if celestial_points is not None and point_idx < len(celestial_points):
             cp = celestial_points[point_idx]
             kr_attrs += f' kr:house="{cp.house}" kr:sign="{cp.sign}" kr:absoluteposition="{cp.abs_pos}" kr:signposition="{cp.position}"'
