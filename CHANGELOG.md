@@ -1,5 +1,23 @@
 # Changelog
 
+## 6.0.0a23
+
+_2026-04-12_
+
+**Add `kr:horoscope` attribute to house elements in classic dual charts.**
+
+### Changes
+
+- Add `kr:horoscope` attribute to all house-related SVG elements (`Cusp`, `HouseNumber`, `HouseSector`) in classic dual charts (Transit, Synastry, DualReturnChart). Value `"0"` identifies Subject 1 (inner ring), `"1"` identifies Subject 2 (outer ring).
+- Add Subject 2's transparent interactive `HouseSector` wedges in the outer ring area (r-36 to r-72). Clicking in the outer ring now targets Subject 2's houses; clicking in the inner area targets Subject 1's houses.
+- `draw_house_sectors()` accepts new optional parameters: `horoscope_id`, `seventh_house_abs_override`, `outer_r_offset`, `inner_r_offset`.
+- `_setup_house_sectors()` accepts optional `second_houses_list` to render both subjects' sectors.
+- Regenerated sidereal SVG test baselines.
+
+### Breaking Changes
+
+None — all new parameters have defaults. Existing callers continue to work without changes.
+
 ## 6.0.0a22
 
 _2026-04-08_

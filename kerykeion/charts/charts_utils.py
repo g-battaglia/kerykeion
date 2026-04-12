@@ -595,6 +595,10 @@ def draw_house_sectors(
     c3: Union[int, float],
     chart_type: ChartType,
     external_view: bool = False,
+    horoscope_id: Union[str, None] = None,
+    seventh_house_abs_override: Union[float, None] = None,
+    outer_r_offset: Union[int, float, None] = None,
+    inner_r_offset: Union[int, float, None] = None,
 ) -> str:
     """
     Draw transparent house sector wedges for interactive highlighting.
@@ -611,17 +615,22 @@ def draw_house_sectors(
         c3: Inner boundary offset (third_circle_radius).
         chart_type: Type of chart being rendered.
         external_view: If True, adjusts radii for external view mode.
+        horoscope_id: Subject identifier ("0" for first, "1" for second) or None.
+        seventh_house_abs_override: Override for the 7th house position used to orient
+            the wheel. When None, uses houses_list[6].abs_pos.
+        outer_r_offset: Override for the outer radius offset (distance from r).
+        inner_r_offset: Override for the inner radius offset (distance from r).
 
     Returns:
         SVG string containing 12 house sector path elements.
     """
-    seventh_house_abs = houses_list[6].abs_pos
+    seventh_house_abs = seventh_house_abs_override if seventh_house_abs_override is not None else houses_list[6].abs_pos
 
     # All chart circles are visually centered at (r, r) in SVG coordinates.
     # The visual radii match the <circle> elements drawn by draw_first_circle etc.
     if chart_type in ("Transit", "Synastry", "DualReturnChart"):
-        outer_visual_r = r - 72    # matches roff=72 for dual charts
-        inner_visual_r = r - 160   # matches dropin=160 for dual charts
+        outer_visual_r = r - (outer_r_offset if outer_r_offset is not None else 72)
+        inner_visual_r = r - (inner_r_offset if inner_r_offset is not None else 160)
     else:
         outer_visual_r = r - c1    # outer boundary (c1=first_circle_radius)
         inner_visual_r = r - c3    # inner boundary (c3=third_circle_radius)
@@ -662,8 +671,9 @@ def draw_house_sectors(
             f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},1 {ix1},{iy1} Z"
         )
 
+        horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
         output += (
-            f'<g kr:node="HouseSector" kr:house="{house_num}">'
+            f'<g kr:node="HouseSector" kr:house="{house_num}"{horoscope_attr}>'
             f'<path d="{d}" style="fill: transparent; stroke: none; pointer-events: all;"/>'
             f"</g>"
         )
@@ -1204,13 +1214,13 @@ def draw_houses_cusps_and_text_number(
 
             # Add the house number text for the second subject
             fill_opacity = "0" if chart_type == "Transit" else ".4"
-            path += f'<g kr:node="HouseNumber" kr:house="{i + 1}">'
+            path += f'<g kr:node="HouseNumber" kr:house="{i + 1}" kr:horoscope="1">'
             path += f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: {fill_opacity}; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
             path += "</g>"
 
             # Add the house cusp line for the second subject
             stroke_opacity = "0" if chart_type == "Transit" else ".3"
-            path += f'<g kr:node="Cusp" kr:absoluteposition="{second_subject_houses_list[i].abs_pos}" kr:signposition="{second_subject_houses_list[i].position}" kr:sign="{second_subject_houses_list[i].sign}" kr:slug="{second_subject_houses_list[i].name}">'
+            path += f'<g kr:node="Cusp" kr:absoluteposition="{second_subject_houses_list[i].abs_pos}" kr:signposition="{second_subject_houses_list[i].position}" kr:sign="{second_subject_houses_list[i].sign}" kr:slug="{second_subject_houses_list[i].name}" kr:horoscope="1">'
             path += f"<line x1='{t_x1}' y1='{t_y1}' x2='{t_x2}' y2='{t_y2}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:{stroke_opacity};'/>"
             path += "</g>"
 
@@ -1224,12 +1234,12 @@ def draw_houses_cusps_and_text_number(
         ytext = sliceToY(0, (r - dropin), text_offset) + dropin
 
         # Add the house cusp line for the first subject
-        path += f'<g kr:node="Cusp" kr:absoluteposition="{first_subject_houses_list[i].abs_pos}" kr:signposition="{first_subject_houses_list[i].position}" kr:sign="{first_subject_houses_list[i].sign}" kr:slug="{first_subject_houses_list[i].name}">'
+        path += f'<g kr:node="Cusp" kr:absoluteposition="{first_subject_houses_list[i].abs_pos}" kr:signposition="{first_subject_houses_list[i].position}" kr:sign="{first_subject_houses_list[i].sign}" kr:slug="{first_subject_houses_list[i].name}" kr:horoscope="0">'
         path += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
         path += "</g>"
 
         # Add the house number text for the first subject
-        path += f'<g kr:node="HouseNumber" kr:house="{i + 1}">'
+        path += f'<g kr:node="HouseNumber" kr:house="{i + 1}" kr:horoscope="0">'
         path += f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
         path += "</g>"
 

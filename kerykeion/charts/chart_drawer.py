@@ -834,7 +834,7 @@ class TransitChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, first_houses)
         template_dict["makeSecondaryHousesGrid"] = ""  # Transit doesn't show transit houses grid
         d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
-        d._setup_house_sectors(template_dict, first_houses)
+        d._setup_house_sectors(template_dict, first_houses, second_houses)
         template_dict["makeGauquelinSectors"] = ""  # Not rendered for dual-wheel charts
         d._setup_dual_wheel_planets(template_dict)
 
@@ -1013,7 +1013,7 @@ class SynastryChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, first_houses)
         d._setup_secondary_houses_grid(template_dict, second_houses)
         d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
-        d._setup_house_sectors(template_dict, first_houses)
+        d._setup_house_sectors(template_dict, first_houses, second_houses)
         template_dict["makeGauquelinSectors"] = ""
         d._setup_dual_wheel_planets(template_dict)
 
@@ -1324,7 +1324,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
         d._setup_main_houses_grid(template_dict, first_houses)
         d._setup_secondary_houses_grid(template_dict, second_houses)
         d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
-        d._setup_house_sectors(template_dict, first_houses)
+        d._setup_house_sectors(template_dict, first_houses, second_houses)
         template_dict["makeGauquelinSectors"] = ""
         d._setup_dual_wheel_planets(template_dict)
 
@@ -3472,16 +3472,37 @@ class ChartDrawer:  # type: ignore[no-redef]
             external_view=self.external_view,
         )
 
-    def _setup_house_sectors(self, template_dict: dict, houses_list: list) -> None:
-        """Populate template_dict with transparent house sector wedges for interactive highlighting."""
-        template_dict["makeHouseSectors"] = draw_house_sectors(
+    def _setup_house_sectors(self, template_dict: dict, houses_list: list, second_houses_list: list | None = None) -> None:
+        """Populate template_dict with transparent house sector wedges for interactive highlighting.
+
+        For dual charts, when second_houses_list is provided, renders two sets of sectors:
+        - Subject 1 (horoscope="0"): inner area (r-72 to r-160)
+        - Subject 2 (horoscope="1"): outer area (r-36 to r-72), oriented using Subject 1's wheel
+        """
+        is_dual = second_houses_list is not None and self.chart_type in ("Transit", "Synastry", "DualReturnChart")
+        sectors = draw_house_sectors(
             r=self.main_radius,
             houses_list=houses_list,
             c1=self.first_circle_radius,
             c3=self.third_circle_radius,
             chart_type=self.chart_type,
             external_view=self.external_view,
+            horoscope_id="0" if is_dual else None,
         )
+        if is_dual and second_houses_list is not None:
+            sectors += draw_house_sectors(
+                r=self.main_radius,
+                houses_list=second_houses_list,
+                c1=self.first_circle_radius,
+                c3=self.third_circle_radius,
+                chart_type=self.chart_type,
+                external_view=self.external_view,
+                horoscope_id="1",
+                seventh_house_abs_override=houses_list[6].abs_pos,
+                outer_r_offset=36,
+                inner_r_offset=72,
+            )
+        template_dict["makeHouseSectors"] = sectors
 
     def _setup_gauquelin_sectors(self, template_dict: dict) -> None:
         """Replace house lines with 36 Gauquelin sectors when active.
