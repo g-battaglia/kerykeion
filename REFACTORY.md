@@ -249,6 +249,11 @@ def get_planet_house(planet_degree, houses_degree_ut_list):
 
 ### 1.2 — Eliminare chiamata EQUATORIAL `calc_ut` duplicata per ogni pianeta
 
+> **RICLASSIFICAZIONE POST-REVIEW:** Questo punto e' numerato 1.2 per continuita' storica, ma
+> la sua classificazione effettiva e' **TIER 3 (rischio alto)**. Non va implementato insieme
+> ai cleanup sicuri del TIER 1. Vedere la sezione "Strategia di esecuzione" per il posizionamento
+> corretto nel piano.
+
 **File:** `kerykeion/astrological_subject_factory.py`, linea 1684-1691
 
 **Problema:** Per ogni pianeta vengono fatte **2 chiamate** a `swe.calc_ut()`:
@@ -267,20 +272,74 @@ Dove:
 - `lambda` = longitudine eclittica (gia' calcolata)
 - `beta` = latitudine eclittica (gia' calcolata)
 
-**Riclassificazione:** questa ottimizzazione **non va trattata come safe by default**.
-E' promettente, ma deve essere eseguita con validazione numerica estesa e quindi va pianificata come
-**Fase 3 / TIER 2**, non insieme ai cleanup sicuri.
+**Riclassificazione:** questa ottimizzazione **non va trattata come safe**.
+La formula trigonometrica sferica assume che le coordinate eclittiche ricevute siano le stesse
+coordinate su cui Swiss Ephemeris basa la sua conversione interna ECLIPTIC→EQUATORIAL. In realta'
+SE applica internamente una **matrice di rotazione completa** (precession + nutation frame) che
+gestisce in modo integrato:
+- aberrazione della luce (annual + planetary)
+- ritardo luce (light-time iteration)
+- nutazione (true obliquity vs mean obliquity, a seconda dei flag)
+- termini relativistici per corpi vicini (Sole, Luna)
+
+La formula analitica `asin(...)` usa l'obliquita' **istantanea** letta da `ECL_NUT`, ma non replica
+i termini di aberrazione e light-time che SE applica *prima* della rotazione di coordinate.
+Su corpi con latitudine eclittica significativa (Luna ~5°, Pluto ~17°) e su prospettive non standard
+(Topocentric con parallasse locale, Heliocentric senza aberrazione), la differenza puo' raggiungere
+ordini di **decimi di arcosecondo** — sufficienti a rompere i golden file.
+
+**Inventario completo dei call site `FLG_EQUATORIAL`:**
+
+Prima di implementare questa ottimizzazione, bisogna avere chiaro che `FLG_EQUATORIAL` non viene
+usato solo in `_calculate_single_planet()`. I call site sono **7**, distribuiti su **4 file**:
+
+| # | File | Linea | Contesto | Note |
+|---|---|---|---|---|
+| 1 | `astrological_subject_factory.py` | 1684 | `calc_pctr` planetocentrico | iflag specifico del centro |
+| 2 | `astrological_subject_factory.py` | 1688 | `calc_ut` fallback geocentrico | dentro try/except |
+| 3 | `astrological_subject_factory.py` | 1691 | `calc_ut` standard planets | il caso principale |
+| 4 | `astrological_subject_factory.py` | 1834 | `_ensure_point_calculated` | prerequisiti Arabic Parts |
+| 5 | `astrological_subject_factory.py` | 2110 | nodi lunari (post-calc override) | sovrascrive declinazione |
+| 6 | `astrological_subject_factory.py` | 2274 | White_Moon fallback (Mean Lilith) | declinazione negata |
+| 7 | `astrological_subject_factory.py` | 2150 | `fixstar_ut` stelle fisse | **non eliminabile** con formula planetaria |
+
+**Attenzione:** il call site #7 (`fixstar_ut` con `FLG_EQUATORIAL`) usa un'API diversa da `calc_ut`.
+Le stelle fisse non hanno latitudine eclittica nel senso standard, quindi la formula analitica
+non si applica direttamente. Questo call site **deve restare invariato**.
+
+In aggiunta, `FLG_EQUATORIAL` e' usato anche **fuori** dal subject factory:
+
+| # | File | Linea | Contesto |
+|---|---|---|---|
+| 8 | `primary_directions/directions_factory.py` | 226 | speculum: RA e Dec per direzioni primarie |
+| 9 | `moon_phase_details/utils.py` | 535 | posizione equatoriale del Sole |
+| 10 | `fixed_stars/discovery_factory.py` | 146 | declinazione stelle fisse |
+
+Questi call site **non sono eliminabili** dall'ottimizzazione 1.2 perche' operano in contesti
+diversi (direzioni primarie necessitano di RA, non solo Dec; moon_phase usa coordinate orizzontali).
+Quindi il risparmio reale e' limitato ai call site #1-#6, e solo dove la validazione numerica
+lo conferma.
+
+**Impatto reale corretto:** Sui 18 active points default, i call site #1-#3 producono ~18 chiamate
+EQUATORIAL (una per pianeta). I call site #4-#6 aggiungono ~3-5 chiamate condizionali (nodi,
+White_Moon, Arabic Parts prerequisites). Stelle fisse (#7) aggiungono ~23 chiamate `fixstar_ut`
+con EQUATORIAL che **non sono eliminabili**. Il risparmio massimo e' quindi ~21-23 chiamate
+`calc_ut`, non il 45% inizialmente stimato sull'intera catena.
 
 **Verifica richiesta:** non basta un confronto su chart tropicali standard. La parita' numerica va dimostrata
 almeno su:
 - Tropical / Apparent Geocentric
 - True Geocentric
-- Topocentric
-- Heliocentric
-- almeno un Sidereal mode
+- Topocentric (parallasse locale altera le coordinate eclittiche apparenti)
+- Heliocentric (nessuna aberrazione annua: la formula diverge di piu')
+- almeno un Sidereal mode (ayanamsa shift applicato prima o dopo?)
 - almeno un codepath planetocentric (`calc_pctr`)
+- almeno un corpo con latitudine eclittica significativa (Luna, Pluto)
+- almeno una data storica pre-1900 e una data futura post-2100
 
-**Impatto:** Da 29 a ~16 chiamate `calc_ut` per subject (~45% in meno).
+La soglia di accettazione dev'essere **< 0.01 arcsec** per ogni corpo su ogni configurazione.
+Se anche un singolo caso supera questa soglia, l'ottimizzazione va scartata o limitata ai soli
+codepath dove la parita' e' dimostrata.
 
 **Codice attuale (linee 1689-1694):**
 ```python
@@ -289,7 +348,7 @@ planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
 declination = planet_eq[1]
 ```
 
-**Codice target:**
+**Codice target (se validato):**
 ```python
 planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
 # Declination from ecliptic coords + obliquity (no extra calc_ut needed)
@@ -300,11 +359,14 @@ declination = math.degrees(math.asin(
 ```
 
 L'obliquita' (`obliquity`) non va solo letta in `_calculate_single_planet()`: per avere comportamento coerente,
-la stessa logica va applicata anche ai codepath secondari che oggi ricalcolano la declinazione in modo separato
-(prerequisiti delle Arabic Parts, nodi, fallback correlati). Una patch parziale introdurrebbe comportamento misto.
+la stessa logica va applicata anche ai call site #4 (`_ensure_point_calculated`), #5 (nodi lunari)
+e #6 (White_Moon fallback). Una patch parziale introdurrebbe **comportamento misto** dove alcuni
+punti hanno la declinazione da SE e altri dalla formula analitica — questo renderebbe impossibile
+diagnosticare regressioni.
 
 **Attenzione per `calc_pctr`:** Lo stesso pattern si applica ai calcoli planetocentrici
-(linee 1683-1684). La formula analitica resta identica, va solo usata l'obliquita' corretta.
+(call site #1, linea 1683-1684). La formula analitica resta identica, ma va usata l'obliquita'
+corretta per il frame planetocentrico, che potrebbe differire da quella geocentrica.
 
 ### 1.3 — Pre-build lookup dict per aspect settings
 
@@ -455,6 +517,14 @@ in coordinate siderali, non tropicali.
 **Azione sicura:** Solo se il chart e' **Tropical + Apparent Geocentric**, riusare il valore gia' calcolato.
 In tutti gli altri casi, mantenere la chiamata separata. Aggiungere un parametro opzionale
 `sun_tropical_lon: Optional[float] = None` al metodo.
+
+**Nota aggiuntiva (post-review):** Lo stesso pattern esiste in `_ensure_point_calculated()` (linea 1832-1834)
+che fa una coppia `calc_ut` ECLIPTIC + EQUATORIAL per i prerequisiti delle Arabic Parts.
+Se la longitudine del Sole e' gia' stata calcolata da `_calculate_single_planet()`, il ricalcolo
+in `_ensure_point_calculated` e' ridondante **solo** quando il Sole e' gia' in `data`.
+Il codice attuale gia' controlla `if point_key in data: return` (linea 1810-1811), quindi
+il ricalcolo avviene solo per Arabic Parts con prerequisiti non ancora calcolati. Il costo
+e' quindi trascurabile nella maggioranza dei casi.
 
 ### 1.7 — Unificare `_POINT_NUMBER_MAP` e `STANDARD_PLANETS` in `config_constants.py`
 
@@ -695,13 +765,48 @@ Queste modifiche hanno impatto significativo ma richiedono analisi e test approf
 - Date storiche (pre-1970) potrebbero comportarsi diversamente
 - La libreria di astrologia calcola spesso date storiche molto antiche
 
-**Prerequisiti:**
+**Differenza semantica critica — `is_dst` vs `fold`:**
+
+`pytz` gestisce le ambiguita' DST con il parametro `is_dst` in `localize()`:
+```python
+local_timezone.localize(naive_datetime, is_dst=data.get("is_dst"))
+```
+Questo parametro (linea 1398 del factory) viene passato dall'utente per risolvere le ambiguita'.
+
+`zoneinfo` usa invece il parametro `fold` (PEP 495) sul datetime stesso:
+```python
+datetime(..., tzinfo=ZoneInfo(tz_str), fold=1)  # fold=1 = seconda occorrenza
+```
+
+La semantica e' **invertita**: `is_dst=True` corrisponde a `fold=0` (prima occorrenza, DST attiva),
+`is_dst=False` a `fold=1` (seconda occorrenza, standard time). Inoltre `pytz` lancia
+`AmbiguousTimeError` quando `is_dst=None`, mentre `zoneinfo` sceglie silenziosamente `fold=0`.
+Questo significa che la migrazione non e' un semplice search/replace: la logica di gestione
+dell'ambiguita' in `_calculate_time_conversions()` va riscritta, e il contratto dell'API
+pubblica (`is_dst` come parametro utente di `from_birth_data`) va mantenuto compatibile.
+
+**Call site completi di `pytz`:**
+
+| # | File | Linea | Uso |
+|---|---|---|---|
+| 1 | `astrological_subject_factory.py` | 1190 | `pytz.timezone()` in `_resolve_timezone` |
+| 2 | `astrological_subject_factory.py` | 1392 | `pytz.timezone()` + `localize()` in `_calculate_time_conversions` |
+| 3 | `astrological_subject_factory.py` | 1399 | `pytz.exceptions.AmbiguousTimeError` catch |
+| 4 | `astrological_subject_factory.py` | 1404 | `pytz.exceptions.NonExistentTimeError` catch |
+| 5 | `astrological_subject_factory.py` | 1411 | `pytz.utc` per conversione UTC |
+| 6 | `moon_phase_details/factory.py` | 232-234 | `pytz.timezone()` per sunrise/sunset DST |
+
+**Prerequisiti aggiornati (post-review):**
 1. Test con date storiche (e.g. 1800, 1900, 1950) in varie timezone
 2. Confronto preciso dei risultati Julian Day con pytz vs zoneinfo
-3. Verifica che `pytz` non sia usato anche da dipendenze (requests-cache lo usa?)
-
-**Correzione del piano:** includere anche i codepath `moon_phase_details/*`, non solo
-`astrological_subject_factory.py`, perche' anche li' la semantica `pytz.localize()` e' usata in modo esplicito.
+3. ~~Verifica che `pytz` non sia usato anche da dipendenze (requests-cache lo usa?)~~
+   **Risolto:** `requests-cache>=1.2.1` **non** dipende da `pytz` — usa `datetime` stdlib.
+   La rimozione di `pytz` da `pyproject.toml` non rompe dipendenze transitive.
+4. **Nuovo:** Verifica che la logica `is_dst`→`fold` mapping sia corretta per tutte le timezone
+   IANA usate nei test (soprattutto timezone con regole DST storiche cambiate, e.g. `Europe/Moscow`
+   che ha cambiato regime DST nel 2014)
+5. **Nuovo:** Includere il codepath `moon_phase_details/factory.py` (linea 232-234) che usa
+   `pytz.timezone()` in modo esplicito per calcoli sunrise/sunset con DST
 
 **Se implementato:** Rimuovere `pytz` e `types-pytz` da `pyproject.toml`.
 
@@ -723,7 +828,27 @@ piu' lento dell'accesso diretto `.field`.
 - Bisognerebbe fare un audit **completo** di ogni call site per determinare se l'oggetto e'
   un Pydantic model o un plain dict prima di cambiare la sintassi.
 
+**Dettaglio dei tipi misti (post-review):**
+
+Il problema strutturale e' che il codebase passa dati eterogenei attraverso le stesse interfacce:
+
+| Call site | Oggetto | Tipo reale | `["key"]` safe | `.key` safe |
+|---|---|---|---|---|
+| `charts_utils.py` `draw_aspect_grid` | `planet_a`, `planet_b` | `dict` (da `planets_settings`) | si' | **NO** |
+| `charts_utils.py` `draw_aspect_grid` | `aspect` | `dict` (da `aspects`) | si' | **NO** |
+| `charts_utils.py` `draw_aspect_line` | `aspect` | `AspectModel` o `dict` | si' | solo se `AspectModel` |
+| `aspects_utils.py:222` | `subject` | `AstrologicalSubjectModel` | si' | si' |
+| `aspects_utils.py:222` | `planet` | `dict` (da `celestial_points_settings`) | si' | **NO** |
+| `chart_drawer.py` init | `celestial_points_settings` | `list[dict]` | si' | **NO** |
+| `report.py:155,163` | `aspect` | Pydantic model | si' | si' |
+
+Senza un refactoring strutturale che separi chiaramente i dict dalle istanze Pydantic
+(e.g. creando modelli tipizzati per `planets_settings` e `aspects_settings`), qualsiasi
+sostituzione `["key"]`→`.key` rischia di rompere a runtime in modo silenzioso.
+
 **Se implementato:** Solo su oggetti **certamente** Pydantic (non dict), e solo nei path caldi.
+Una strada piu' sicura sarebbe introdurre `TypedDict` per le configurazioni, ma questo e'
+un refactoring architetturale che va oltre lo scope di questo piano.
 
 ### 3.3 — `__slots__` su dataclass interne
 
@@ -793,6 +918,14 @@ In sintesi, i win a maggiore confidenza sono:
 
 Il win potenzialmente piu' grande sul core numerico resta `1.2`, ma **solo dopo** validazione estesa.
 
+**Nota post-review sul conteggio `FLG_EQUATORIAL`:** L'inventario completo (sezione 1.2) mostra
+10 call site distribuiti su 4 file. Di questi, solo i 6 in `astrological_subject_factory.py`
+sono candidati all'ottimizzazione (e solo 5 dopo aver escluso `fixstar_ut`). I restanti 4
+(in `primary_directions`, `moon_phase_details`, `fixed_stars`) non sono eliminabili perche'
+necessitano di Right Ascension, non solo Declination. Il risparmio reale per subject e' quindi
+piu' basso di quanto inizialmente stimato (~21 chiamate risparmiabili su ~34 totali), e il
+rischio di divergenza numerica resta concreto.
+
 ## Matrice di validazione
 
 Per garantire piena retrocompatibilita', la validazione va espansa per area. Il principio operativo e':
@@ -822,11 +955,13 @@ Eseguire:
 - `pytest tests/core/test_oob_and_declination_aspects.py -q`
 - `pytest tests/core/test_transits.py -q`
 - `pytest tests/core/test_subject_factory_parametrized.py -q`
+- `pytest tests/core/test_primary_directions.py -q` *(usa `FLG_EQUATORIAL` indipendentemente dal factory)*
 
 Quando il refactor tocca coordinate, prospettive o backend:
 - `pytest tests/core/test_planetocentric.py -q`
 - `pytest tests/core/test_houses_positions.py -q`
 - `pytest tests/core/test_planetary_positions.py -q`
+- `pytest tests/core/test_barycentric.py -q`
 - `poe test:compare` **se** entrambi i backend sono disponibili
 
 **Scopo:** non limitarsi ai casi canonici di `test:core`, ma coprire anche house systems, sidereal modes,
@@ -936,12 +1071,8 @@ Applicare una modifica alla volta, con commit separati e `poe test:core` dopo ci
 - Gate 0 sempre
 - Gate 2 per ogni modifica che tocca rendering, template o SVG utility
 
-### Fase 3: TIER 2 (moderate)
+### Fase 3: TIER 2 (moderate, escluso 1.2)
 Ogni modifica richiede test mirato:
-- `1.2` (declinazione analitica):
-  - Gate 0
-  - Gate 1 completo
-  - Gate RC prima del merge
 - `2.1` (fork compatibile di `scour`):
   - Gate 0
   - Gate 2 completo
@@ -950,13 +1081,19 @@ Ogni modifica richiede test mirato:
   - Gate 0
   - eventuale Gate 1 / Gate 2 / Gate 3 a seconda del modulo toccato
 
-### Fase 4: TIER 3 (avanzate)
+### Fase 4: TIER 3 (avanzate, incluso 1.2)
 Solo dopo aver completato e validato TIER 0-2:
-- 3.1 (pytz): Richiede test matrix con date storiche
-- 3.2 (dict vs dot access): Richiede audit completo dei tipi
+- 1.2 (declinazione analitica — riclassificato da TIER 1):
+  - Gate 0
+  - Gate 1 completo (incluso `test_primary_directions.py` e `test_barycentric.py`)
+  - Script di validazione numerica dedicato (N >= 1000 date, tutti i perspective_type)
+  - Soglia: < 0.01 arcsec di scostamento per ogni corpo/configurazione
+  - Gate RC prima del merge
+- 3.1 (pytz): Richiede test matrix con date storiche e verifica mapping `is_dst`→`fold`
+- 3.2 (dict vs dot access): Richiede audit completo dei tipi (vedere tabella in sezione 3.2)
 - 3.3 (slots): Verifica assenza di `__dict__` access
 
-**Gate richiesto:** sempre Gate RC; per `3.1` anche Gate 4 completo.
+**Gate richiesto:** sempre Gate RC; per `1.2` e `3.1` anche Gate 4 completo.
 
 ### Regola finale di accettazione
 
