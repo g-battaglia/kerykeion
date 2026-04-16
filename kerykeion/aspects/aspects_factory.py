@@ -508,7 +508,9 @@ class AspectsFactory:
         Returns:
             List of filtered and updated aspect settings
         """
-        active_orbs = {a["name"]: a["orb"] for a in active_aspects}
+        active_orbs: dict[str, float] = {}
+        for a in active_aspects:
+            active_orbs.setdefault(a["name"], a["orb"])
         filtered_settings = []
         for aspect_setting in aspects_settings:
             orb = active_orbs.get(aspect_setting["name"])
