@@ -570,7 +570,7 @@ def draw_zodiac_slice(
     # pie slices
     offset = 360 - seventh_house_degree_ut
     # check transit
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "DualReturnChart":
+    if chart_type in ("Transit", "Synastry", "DualReturnChart"):
         dropin: Union[int, float] = 0
     else:
         dropin = c1
@@ -579,7 +579,7 @@ def draw_zodiac_slice(
     # symbols
     offset = offset + 15
     # check transit
-    if chart_type == "Transit" or chart_type == "Synastry" or chart_type == "DualReturnChart":
+    if chart_type in ("Transit", "Synastry", "DualReturnChart"):
         dropin = 54
     else:
         dropin = 18 + c1
@@ -632,8 +632,8 @@ def draw_house_sectors(
         outer_visual_r = r - (outer_r_offset if outer_r_offset is not None else 72)
         inner_visual_r = r - (inner_r_offset if inner_r_offset is not None else 160)
     else:
-        outer_visual_r = r - c1    # outer boundary (c1=first_circle_radius)
-        inner_visual_r = r - c3    # inner boundary (c3=third_circle_radius)
+        outer_visual_r = r - c1  # outer boundary (c1=first_circle_radius)
+        inner_visual_r = r - c3  # inner boundary (c3=third_circle_radius)
 
     output = ""
     for i in range(12):
@@ -686,6 +686,28 @@ def draw_house_sectors(
 # =============================================================================
 
 
+def _convert_coordinate_to_string(coord: Union[int, float], positive_label: str, negative_label: str) -> str:
+    """
+    Convert a coordinate (latitude or longitude) to a formatted string with cardinal direction.
+
+    Args:
+        coord: Coordinate in decimal degrees (negative values use negative_label).
+        positive_label: Label for positive direction (e.g., "N", "E").
+        negative_label: Label for negative direction (e.g., "S", "W").
+
+    Returns:
+        Formatted string (e.g., "52°7'25\" N").
+    """
+    sign = positive_label
+    if coord < 0.0:
+        sign = negative_label
+        coord = abs(coord)
+    deg = int(coord)
+    minutes = int((float(coord) - deg) * 60)
+    sec = int(round(float(((float(coord) - deg) * 60) - minutes) * 60.0))
+    return f"{deg}°{minutes}'{sec}\" {sign}"
+
+
 def convert_latitude_coordinate_to_string(coord: Union[int, float], north_label: str, south_label: str) -> str:
     """
     Convert latitude to a formatted string with cardinal direction.
@@ -698,14 +720,7 @@ def convert_latitude_coordinate_to_string(coord: Union[int, float], north_label:
     Returns:
         Formatted string (e.g., "52°7'25\" N").
     """
-    sign = north_label
-    if coord < 0.0:
-        sign = south_label
-        coord = abs(coord)
-    deg = int(coord)
-    min = int((float(coord) - deg) * 60)
-    sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
-    return f"{deg}°{min}'{sec}\" {sign}"
+    return _convert_coordinate_to_string(coord, north_label, south_label)
 
 
 def convert_longitude_coordinate_to_string(coord: Union[int, float], east_label: str, west_label: str) -> str:
@@ -720,14 +735,7 @@ def convert_longitude_coordinate_to_string(coord: Union[int, float], east_label:
     Returns:
         Formatted string (e.g., "2°59'30\" W").
     """
-    sign = east_label
-    if coord < 0.0:
-        sign = west_label
-        coord = abs(coord)
-    deg = int(coord)
-    min = int((float(coord) - deg) * 60)
-    sec = int(round(float(((float(coord) - deg) * 60) - min) * 60.0))
-    return f"{deg}°{min}'{sec}\" {sign}"
+    return _convert_coordinate_to_string(coord, east_label, west_label)
 
 
 # =============================================================================
@@ -973,7 +981,7 @@ def draw_first_circle(
     Raises:
         KerykeionException: If c1 is None for single-wheel charts.
     """
-    if chart_type == "Synastry" or chart_type == "Transit" or chart_type == "DualReturnChart":
+    if chart_type in ("Transit", "Synastry", "DualReturnChart"):
         return f'<circle cx="{r}" cy="{r}" r="{r - 36}" style="fill: none; stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.4;" />'
     else:
         if c1 is None:
@@ -1018,7 +1026,7 @@ def draw_second_circle(
         str: The SVG path of the second circle.
     """
 
-    if chart_type == "Synastry" or chart_type == "Transit" or chart_type == "DualReturnChart":
+    if chart_type in ("Transit", "Synastry", "DualReturnChart"):
         return f'<circle cx="{r}" cy="{r}" r="{r - 72}" style="fill: {fill_color}; fill-opacity:.4; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
 
     else:
@@ -1078,7 +1086,7 @@ def draw_aspect_grid(
         SVG string containing the aspect grid rectangles and symbols.
     """
     svg_output = ""
-    style = f"stroke:{stroke_color}; stroke-width: 1px; stroke-width: 0.5px; fill:none"
+    style = f"stroke:{stroke_color}; stroke-width: 0.5px; fill:none"
     box_size = 14
 
     # Filter active planets
@@ -1574,10 +1582,7 @@ def draw_gauquelin_unified_grid(
     Returns:
         SVG string with the unified Gauquelin table.
     """
-    gauq_points = [
-        p for p in celestial_points
-        if hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
-    ]
+    gauq_points = [p for p in celestial_points if hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None]
     if not gauq_points:
         return ""
 
@@ -1601,11 +1606,11 @@ def draw_gauquelin_unified_grid(
         max_name_len = 8
 
     # Column positions within each ~220px column
-    COL_NAME_END = 55       # Name text-anchor="end"
-    COL_SIGN = 58           # Sign glyph
-    COL_LONG = 70           # Longitude text start
-    COL_DECL = 135          # Declination text start
-    COL_SECTOR_END = 212    # Sector text-anchor="end"
+    COL_NAME_END = 55  # Name text-anchor="end"
+    COL_SIGN = 58  # Sign glyph
+    COL_LONG = 70  # Longitude text start
+    COL_DECL = 135  # Declination text start
+    COL_SECTOR_END = 212  # Sector text-anchor="end"
 
     # Multi-column thresholds
     thresholds = _gauquelin_grid_thresholds(n)
@@ -1624,10 +1629,7 @@ def draw_gauquelin_unified_grid(
     svg = f'<g transform="translate({x_position},{y_position})">'
 
     # Title
-    svg += (
-        f'<text style="fill:{text_color}; font-size:{fs + 2}px; font-weight:bold;" y="12">'
-        f'Gauquelin Sectors</text>'
-    )
+    svg += f'<text style="fill:{text_color}; font-size:{fs + 2}px; font-weight:bold;" y="12">Gauquelin Sectors</text>'
 
     # Column headers — draw for each column so all columns have labels
     hdr_y = 24
@@ -1640,7 +1642,7 @@ def draw_gauquelin_unified_grid(
             f'<text x="{COL_LONG}" style="fill:{text_color}; font-size:{hdr_fs}px;">Longitude</text>'
             f'<text x="{COL_DECL}" style="fill:{text_color}; font-size:{hdr_fs}px;">Decl.</text>'
             f'<text text-anchor="end" x="{COL_SECTOR_END}" style="fill:{text_color}; font-size:{hdr_fs}px;">Sector</text>'
-            f'</g>'
+            f"</g>"
         )
 
     BASE_Y = 30  # Below title + header
@@ -1652,9 +1654,7 @@ def draw_gauquelin_unified_grid(
         # Get display name (localized, with fallback)
         if celestial_point_language is not None:
             try:
-                name = get_decoded_kerykeion_celestial_point_name(
-                    point.name, celestial_point_language
-                )
+                name = get_decoded_kerykeion_celestial_point_name(point.name, celestial_point_language)
             except Exception:
                 name = point.name.replace("_", " ")
         else:
@@ -1690,32 +1690,23 @@ def draw_gauquelin_unified_grid(
 
         svg += f'<g transform="translate({offset},{y})">'
         # Planet name (right-aligned)
-        svg += (
-            f'<text text-anchor="end" x="{COL_NAME_END}" '
-            f'style="fill:{text_color}; font-size:{fs}px;">{name}</text>'
-        )
+        svg += f'<text text-anchor="end" x="{COL_NAME_END}" style="fill:{text_color}; font-size:{fs}px;">{name}</text>'
         # Sign glyph
         svg += (
             f'<g transform="translate({COL_SIGN},-{glyph_y})">'
             f'<use transform="scale({glyph_s})" xlink:href="#{point.sign}" /></g>'
         )
         # Longitude + retrograde
-        svg += (
-            f'<text x="{COL_LONG}" '
-            f'style="fill:{text_color}; font-size:{fs}px;">{long_str}{r_str}</text>'
-        )
+        svg += f'<text x="{COL_LONG}" style="fill:{text_color}; font-size:{fs}px;">{long_str}{r_str}</text>'
         # Declination
-        svg += (
-            f'<text x="{COL_DECL}" '
-            f'style="fill:{text_color}; font-size:{fs}px;">{decl_str}</text>'
-        )
+        svg += f'<text x="{COL_DECL}" style="fill:{text_color}; font-size:{fs}px;">{decl_str}</text>'
         # Sector (highlighted if plus zone)
         svg += (
             f'<text text-anchor="end" x="{COL_SECTOR_END}" '
             f'style="fill:{sec_color}; font-size:{fs}px; font-weight:{sec_weight};">'
-            f'{sector_str}</text>'
+            f"{sector_str}</text>"
         )
-        svg += '</g>'
+        svg += "</g>"
 
     svg += "</g>"
     return svg
@@ -1925,7 +1916,7 @@ def draw_transit_aspect_grid(
         str: SVG string representing the aspect grid.
     """
     svg_output = ""
-    style = f"stroke:{stroke_color}; stroke-width: 1px; stroke-width: 0.5px; fill:none"
+    style = f"stroke:{stroke_color}; stroke-width: 0.5px; fill:none"
     x_start = x_indent
     y_start = y_indent
 
@@ -2670,7 +2661,7 @@ def draw_gauquelin_sectors(
         y2 = sliceToY(0, r - inner_r, offset) + inner_r
 
         # Angular sectors (every 9th = quadrant boundary) get bolder lines
-        is_quadrant = (i % 9 == 0)  # sectors 1, 10, 19, 28 (ASC, MC, DSC, IC)
+        is_quadrant = i % 9 == 0  # sectors 1, 10, 19, 28 (ASC, MC, DSC, IC)
         if is_quadrant:
             stroke_width = 1.8
             stroke_opacity = 1.0
@@ -2700,7 +2691,7 @@ def draw_gauquelin_sectors(
             f'<text x="{tx:.2f}" y="{ty:.2f}" '
             f'style="fill:{color}; font-size:{font_size}px; font-weight:{font_weight}; '
             f'opacity:0.9; text-anchor:middle; dominant-baseline:central;">'
-            f'{sector_num}</text>\n'
+            f"{sector_num}</text>\n"
         )
 
     return output

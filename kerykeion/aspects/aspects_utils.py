@@ -2,7 +2,6 @@
 """
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
-# TODO: Better documentation and unit tests
 
 from kerykeion.ephemeris_backend import swe as _swe
 
@@ -33,8 +32,7 @@ def get_aspect_from_two_points(
     distance = abs(difdeg2n(point_one, point_two))
     diff = abs(point_one - point_two)
 
-    for aid, aspect in enumerate(aspects_settings):
-        # TODO: Remove the "degree" element EVERYWHERE!
+    for aspect in aspects_settings:
         aspect_degree = aspect["degree"]  # type: ignore
         aspect_orb = aspect["orb"]  # type: ignore
 

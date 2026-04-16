@@ -29,7 +29,7 @@ from __future__ import annotations
 import logging
 import math
 from datetime import datetime, timezone, timedelta
-from typing import Optional, Tuple
+from typing import Optional
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -85,9 +85,9 @@ def _get_utc_datetime(subject: AstrologicalSubjectModel) -> datetime:
     Returns:
         datetime: Parsed UTC datetime object.
     """
-    iso_utc = getattr(subject, "iso_formatted_utc_datetime", None)
+    iso_utc = subject.iso_formatted_utc_datetime
     if not iso_utc:
-        iso_utc = getattr(subject, "iso_formatted_local_datetime", None)
+        iso_utc = subject.iso_formatted_local_datetime
     return safe_parse_iso_datetime(iso_utc)
 
 
@@ -213,16 +213,16 @@ def _build_upcoming_phases(
 
 def _compute_sun_times(
     subject: AstrologicalSubjectModel,
-) -> Optional[Tuple[datetime, datetime]]:
+) -> Optional[tuple[datetime, datetime]]:
     """
     Compute precise sunrise and sunset local datetimes using Swiss Ephemeris.
 
     Uses Swiss Ephemeris `swe.rise_trans` (via `compute_sun_rise_set_swe`)
     to obtain sunrise and sunset for the subject's local civil day.
     """
-    lat = getattr(subject, "lat", None)
-    lng = getattr(subject, "lng", None)
-    tz_str = getattr(subject, "tz_str", None)
+    lat = subject.lat
+    lng = subject.lng
+    tz_str = subject.tz_str
 
     if lat is None or lng is None or tz_str is None:
         return None
@@ -281,12 +281,12 @@ def _compute_sun_times(
 
 def _compute_sun_position(
     subject: AstrologicalSubjectModel,
-) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+) -> tuple[Optional[float], Optional[float], Optional[float]]:
     """
     Compute apparent Sun altitude, azimuth and distance using Swiss Ephemeris.
     """
-    lat = getattr(subject, "lat", None)
-    lng = getattr(subject, "lng", None)
+    lat = subject.lat
+    lng = subject.lng
 
     if lat is None or lng is None:
         return None, None, None
@@ -351,7 +351,7 @@ def _compute_lunar_phase_metrics(
     moon: object,
     base_dt: datetime,
     upcoming_phases: MoonPhaseUpcomingPhasesModel,
-) -> Tuple[float, str, str, str, str, str, int, str, MoonPhaseIlluminationDetailsModel]:
+) -> tuple[float, str, str, str, str, str, int, str, MoonPhaseIlluminationDetailsModel]:
     """
     Compute lunar phase metrics including phase fraction, illumination, and age.
 
@@ -499,7 +499,7 @@ class MoonPhaseDetailsFactory:
         )
 
     @staticmethod
-    def _build_timestamp_fields(subject: AstrologicalSubjectModel) -> Tuple[int, str]:
+    def _build_timestamp_fields(subject: AstrologicalSubjectModel) -> tuple[int, str]:
         """
         Build Unix timestamp and RFC-2822-like datestamp from the subject.
         """
@@ -670,8 +670,8 @@ class MoonPhaseDetailsFactory:
         """
         Build the location block from the subject coordinates, when available.
         """
-        lat = getattr(subject, "lat", None)
-        lng = getattr(subject, "lng", None)
+        lat = subject.lat
+        lng = subject.lng
 
         if lat is None or lng is None:
             latitude_str = None

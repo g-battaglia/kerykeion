@@ -66,8 +66,13 @@ from kerykeion.schemas import (
     ZodiacType,
 )
 from datetime import datetime, timedelta
-from typing import Any, Dict, Literal, Union, List
+from typing import Any, Literal, Optional
 import logging
+
+# Default limits to prevent excessive computational load
+_MAX_DAYS = 730  # ~2 years of daily data points
+_MAX_HOURS = 8760  # ~1 year of hourly data points
+_MAX_MINUTES = 525600  # ~1 year of minute-interval data points
 
 
 class EphemerisDataFactory:
@@ -165,14 +170,14 @@ class EphemerisDataFactory:
         tz_str: str = "Etc/UTC",
         is_dst: bool = False,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
-        sidereal_mode: Union[SiderealMode, None] = None,
+        sidereal_mode: Optional[SiderealMode] = None,
         houses_system_identifier: HousesSystemIdentifier = DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
         perspective_type: PerspectiveType = DEFAULT_PERSPECTIVE_TYPE,
-        max_days: Union[int, None] = 730,
-        max_hours: Union[int, None] = 8760,
-        max_minutes: Union[int, None] = 525600,
-        custom_ayanamsa_t0: Union[float, None] = None,
-        custom_ayanamsa_ayan_t0: Union[float, None] = None,
+        max_days: Optional[int] = _MAX_DAYS,
+        max_hours: Optional[int] = _MAX_HOURS,
+        max_minutes: Optional[int] = _MAX_MINUTES,
+        custom_ayanamsa_t0: Optional[float] = None,
+        custom_ayanamsa_ayan_t0: Optional[float] = None,
     ):
         self.start_datetime = start_datetime
         self.end_datetime = end_datetime
@@ -233,6 +238,29 @@ class EphemerisDataFactory:
         if len(self.dates_list) > 1000:
             logging.warning(f"Large number of dates: {len(self.dates_list)}. The calculation may take a while.")
 
+    def _create_subject_for_date(self, date: datetime) -> AstrologicalSubjectModel:
+        """Create an AstrologicalSubject for a given date using the factory's settings."""
+        return AstrologicalSubjectFactory.from_birth_data(
+            year=date.year,
+            month=date.month,
+            day=date.day,
+            hour=date.hour,
+            minute=date.minute,
+            lng=self.lng,
+            lat=self.lat,
+            tz_str=self.tz_str,
+            city="Placeholder",
+            nation="Placeholder",
+            online=False,
+            zodiac_type=self.zodiac_type,
+            sidereal_mode=self.sidereal_mode,
+            houses_system_identifier=self.houses_system_identifier,
+            perspective_type=self.perspective_type,
+            is_dst=self.is_dst,
+            custom_ayanamsa_t0=self.custom_ayanamsa_t0,
+            custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
+        )
+
     def get_ephemeris_data(self, as_model: bool = False) -> list:
         """
         Generate ephemeris data for the specified date range.
@@ -289,28 +317,9 @@ class EphemerisDataFactory:
             - House system affects the house cusp calculations
             - All positions are in the configured zodiac system (tropical/sidereal)
         """
-        ephemeris_data_list: List[Dict[str, Any]] = []
+        ephemeris_data_list: list[dict[str, Any]] = []
         for date in self.dates_list:
-            subject = AstrologicalSubjectFactory.from_birth_data(
-                year=date.year,
-                month=date.month,
-                day=date.day,
-                hour=date.hour,
-                minute=date.minute,
-                lng=self.lng,
-                lat=self.lat,
-                tz_str=self.tz_str,
-                city="Placeholder",
-                nation="Placeholder",
-                online=False,
-                zodiac_type=self.zodiac_type,
-                sidereal_mode=self.sidereal_mode,
-                houses_system_identifier=self.houses_system_identifier,
-                perspective_type=self.perspective_type,
-                is_dst=self.is_dst,
-                custom_ayanamsa_t0=self.custom_ayanamsa_t0,
-                custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
-            )
+            subject = self._create_subject_for_date(date)
 
             houses_list = get_houses_list(subject)
             available_planets = get_available_astrological_points_list(subject)
@@ -326,7 +335,7 @@ class EphemerisDataFactory:
 
         return ephemeris_data_list
 
-    def get_ephemeris_data_as_astrological_subjects(self, as_model: bool = False) -> List[AstrologicalSubjectModel]:
+    def get_ephemeris_data_as_astrological_subjects(self, as_model: bool = False) -> list[AstrologicalSubjectModel]:
         """
         Generate ephemeris data as complete AstrologicalSubject instances.
 
@@ -340,15 +349,8 @@ class EphemerisDataFactory:
         access to methods like get_sun(), get_all_points(), draw_chart(), calculate
         aspects, and all other astrological analysis features.
 
-        Args:
-            as_model (bool, optional): If True, returns AstrologicalSubjectModel instances
-                (Pydantic model versions) which provide serialization and validation features.
-                If False, returns raw AstrologicalSubject instances with full method access.
-                Defaults to False.
-
         Returns:
-            List[AstrologicalSubjectModel]: A list of AstrologicalSubject or
-                AstrologicalSubjectModel instances (depending on as_model parameter).
+            list[AstrologicalSubjectModel]: A list of AstrologicalSubject instances.
                 Each element represents one calculated moment in time with full
                 astrological chart data and methods available.
 
@@ -374,12 +376,6 @@ class EphemerisDataFactory:
             >>>
             >>> # Generate chart visualization
             >>> chart_svg = subjects[0].draw_chart()
-
-            Using model instances for serialization:
-
-            >>> subjects_models = factory.get_ephemeris_data_as_astrological_subjects(as_model=True)
-            >>> # Model instances can be easily serialized to JSON
-            >>> json_data = subjects_models[0].model_dump_json()
 
             Batch processing for analysis:
 
@@ -408,26 +404,7 @@ class EphemerisDataFactory:
         """
         subjects_list = []
         for date in self.dates_list:
-            subject = AstrologicalSubjectFactory.from_birth_data(
-                year=date.year,
-                month=date.month,
-                day=date.day,
-                hour=date.hour,
-                minute=date.minute,
-                lng=self.lng,
-                lat=self.lat,
-                tz_str=self.tz_str,
-                city="Placeholder",
-                nation="Placeholder",
-                online=False,
-                zodiac_type=self.zodiac_type,
-                sidereal_mode=self.sidereal_mode,
-                houses_system_identifier=self.houses_system_identifier,
-                perspective_type=self.perspective_type,
-                is_dst=self.is_dst,
-                custom_ayanamsa_t0=self.custom_ayanamsa_t0,
-                custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
-            )
+            subject = self._create_subject_for_date(date)
 
             subjects_list.append(subject)
 

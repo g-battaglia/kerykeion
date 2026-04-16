@@ -25,7 +25,7 @@ import logging
 import math
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 logger = logging.getLogger(__name__)
@@ -136,7 +136,7 @@ def configure_ephemeris_path() -> int:
     return _EPHEMERIS_CONFIG
 
 
-def _extract_eclipse_result(result: object) -> Optional[Tuple[int, float]]:
+def _extract_eclipse_result(result: object) -> Optional[tuple[int, float]]:
     """
     Extract (retflag, jd) from Swiss Ephemeris eclipse calculation result.
 
@@ -147,7 +147,7 @@ def _extract_eclipse_result(result: object) -> Optional[Tuple[int, float]]:
         result: Raw result from swe.sol_eclipse_when_glob or swe.lun_eclipse_when.
 
     Returns:
-        Optional[Tuple[int, float]]: (retflag, eclipse_jd) or None if extraction fails.
+        Optional[tuple[int, float]]: (retflag, eclipse_jd) or None if extraction fails.
     """
     if not (isinstance(result, tuple) and len(result) >= 2):
         return None
@@ -161,7 +161,7 @@ def _extract_eclipse_result(result: object) -> Optional[Tuple[int, float]]:
     return retflag, float(tret[0])
 
 
-def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]]:
+def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]]:
     """
     Compute the next global solar eclipse after the given Julian day.
 
@@ -171,7 +171,7 @@ def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
         jd_start: Starting Julian Day in Universal Time (UT).
 
     Returns:
-        Optional[Tuple[int, float]]: (retflag, eclipse_jd) where:
+        Optional[tuple[int, float]]: (retflag, eclipse_jd) where:
             - retflag: Eclipse type flags (e.g. SE_ECL_TOTAL, SE_ECL_PARTIAL)
             - eclipse_jd: Julian Day of maximum eclipse in UT
             Returns None if calculation fails or no eclipse found.
@@ -199,7 +199,7 @@ def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
     return _extract_eclipse_result(result)
 
 
-def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]]:
+def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]]:
     """
     Compute the next global lunar eclipse after the given Julian day.
 
@@ -209,7 +209,7 @@ def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
         jd_start: Starting Julian Day in Universal Time (UT).
 
     Returns:
-        Optional[Tuple[int, float]]: (retflag, eclipse_jd) where:
+        Optional[tuple[int, float]]: (retflag, eclipse_jd) where:
             - retflag: Eclipse type flags (e.g. SE_ECL_TOTAL, SE_ECL_PARTIAL)
             - eclipse_jd: Julian Day of maximum eclipse in UT
             Returns None if calculation fails or no eclipse found.
@@ -241,7 +241,7 @@ def compute_sun_rise_set_swe(
     jd_midnight: float,
     latitude: float,
     longitude: float,
-) -> Tuple[Optional[float], Optional[float]]:
+) -> tuple[Optional[float], Optional[float]]:
     """
     Compute precise sunrise and sunset times using Swiss Ephemeris `swe.rise_trans`.
 
@@ -256,7 +256,7 @@ def compute_sun_rise_set_swe(
         longitude: Observer longitude in degrees.
 
     Returns:
-        Tuple[Optional[float], Optional[float]]: (sunrise_jd, sunset_jd)
+        tuple[Optional[float], Optional[float]]: (sunrise_jd, sunset_jd)
             Returns None for each event that doesn't occur on this day (polar day/night).
     """
     try:
@@ -462,7 +462,7 @@ def equatorial_to_horizontal(
     jd_ut: float,
     latitude: float,
     longitude: float,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Convert equatorial coordinates (RA, Dec) to horizontal coordinates (alt, az).
 
@@ -477,7 +477,7 @@ def equatorial_to_horizontal(
         longitude: Observer longitude in degrees.
 
     Returns:
-        Tuple[float, float]: (altitude_degrees, azimuth_degrees).
+        tuple[float, float]: (altitude_degrees, azimuth_degrees).
     """
     # Convert RA to hours and angles to radians for spherical trigonometry
     ra_hours = ra_deg / 15.0
@@ -518,12 +518,12 @@ def compute_sun_position(
     jd_ut: float,
     latitude: float,
     longitude: float,
-) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+) -> tuple[Optional[float], Optional[float], Optional[float]]:
     """
     Compute apparent Sun altitude, azimuth and distance using Swiss Ephemeris.
 
     Returns:
-        Tuple[Optional[float], Optional[float], Optional[float]]:
+        tuple[Optional[float], Optional[float], Optional[float]]:
             (altitude_deg, azimuth_deg, distance_km)
     """
     try:

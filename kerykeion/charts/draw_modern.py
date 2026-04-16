@@ -19,7 +19,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
-from typing import Union
+from typing import Optional
 
 from kerykeion.schemas.kr_models import KerykeionPointModel
 
@@ -173,37 +173,30 @@ GLYPH_SCALE_MAP = {
     "Medium_Coeli": 0.95,
 }
 
+# Default scale factor for all zodiac sign glyphs
+_ZODIAC_DEFAULT_SCALE = 0.9
+
+# Zodiac sign abbreviations (ordered from Aries to Pisces)
+_ZODIAC_SIGN_IDS = [
+    "Ari",
+    "Tau",
+    "Gem",
+    "Can",
+    "Leo",
+    "Vir",
+    "Lib",
+    "Sco",
+    "Sag",
+    "Cap",
+    "Aqu",
+    "Pis",
+]
+
 # Zodiac signs in the outer cusp ring (paths are ~32x32)
-ZODIAC_OUTER_SCALE_MAP = {
-    "Ari": 0.9,
-    "Tau": 0.9,
-    "Gem": 0.9,
-    "Can": 0.9,
-    "Leo": 0.9,
-    "Vir": 0.9,
-    "Lib": 0.9,
-    "Sco": 0.9,
-    "Sag": 0.9,
-    "Cap": 0.9,
-    "Aqu": 0.9,
-    "Pis": 0.9,
-}
+ZODIAC_OUTER_SCALE_MAP = {sign: _ZODIAC_DEFAULT_SCALE for sign in _ZODIAC_SIGN_IDS}
 
 # Zodiac signs in the inner planet ring (smaller base size)
-ZODIAC_INNER_SCALE_MAP = {
-    "Ari": 0.9,
-    "Tau": 0.9,
-    "Gem": 0.9,
-    "Can": 0.9,
-    "Leo": 0.9,
-    "Vir": 0.9,
-    "Lib": 0.9,
-    "Sco": 0.9,
-    "Sag": 0.9,
-    "Cap": 0.9,
-    "Aqu": 0.9,
-    "Pis": 0.9,
-}
+ZODIAC_INNER_SCALE_MAP = {sign: _ZODIAC_DEFAULT_SCALE for sign in _ZODIAC_SIGN_IDS}
 
 
 # =============================================================================
@@ -293,21 +286,6 @@ def _annulus_path(outer_r: float, inner_r: float) -> str:
 # =============================================================================
 # RING 1: ZODIAC BACKGROUND WEDGE RING (Optional)
 # =============================================================================
-
-_ZODIAC_SIGN_IDS = [
-    "Ari",
-    "Tau",
-    "Gem",
-    "Can",
-    "Leo",
-    "Vir",
-    "Lib",
-    "Sco",
-    "Sag",
-    "Cap",
-    "Aqu",
-    "Pis",
-]
 
 
 def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
@@ -519,7 +497,6 @@ def _draw_cusp_ring(
     # since all 12 signs are already visible in that ring.
     if not show_zodiac_background_ring:
         cusp_signs = {h.sign_num for h in houses}
-        zodiac_abbrevs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
 
         for sign_num in range(12):
             if sign_num not in cusp_signs:
@@ -527,7 +504,7 @@ def _draw_cusp_ring(
                 # exactly in the middle of its 30-degree span.
                 mid_sign_abs = sign_num * 30.0 + 15.0
                 sign_angle = _zodiac_to_wheel_angle(mid_sign_abs, seventh_house_degree_ut)
-                sign_abbrev = zodiac_abbrevs[sign_num]
+                sign_abbrev = _ZODIAC_SIGN_IDS[sign_num]
                 upright_angle = 90 + sign_angle
                 final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
 
@@ -696,7 +673,7 @@ def _draw_indicator_line(
     display_angle: float,
     start_y: float = HOUSE_LINE_OUTER_Y,
     tick_length: float = 1.075,
-    arc_radius: Union[float, None] = None,
+    arc_radius: Optional[float] = None,
     planet_slug: str = "",
 ) -> str:
     """
@@ -772,7 +749,7 @@ def _draw_gauquelin_division_lines(
     out = ""
     for i in range(36):
         angle = i * 10.0
-        is_angular = (i % 9 == 0)
+        is_angular = i % 9 == 0
         stroke_w = ANGULAR_STROKE_WIDTH if is_angular else NORMAL_STROKE_WIDTH
 
         out += (
@@ -795,10 +772,10 @@ def _draw_planet_ring(
     ring_fill_color: str = COLOR_PLANET_RING,
     line_outer_y: float = HOUSE_LINE_OUTER_Y,
     line_inner_y: float = HOUSE_LINE_INNER_Y,
-    planet_y_config: Union[dict, None] = None,
-    indicator_config: Union[dict, None] = None,
-    horoscope_id: Union[str, None] = None,
-    scale_config: Union[dict, None] = None,
+    planet_y_config: Optional[dict] = None,
+    indicator_config: Optional[dict] = None,
+    horoscope_id: Optional[str] = None,
+    scale_config: Optional[dict] = None,
     gauquelin_sectors: bool = False,
 ) -> str:
     """
@@ -935,7 +912,7 @@ def _draw_single_planet_in_ring(
     sign_scale_base: float = SIGN_SCALE_BASE,
     minutes_font_size: float = MINUTES_FONT_SIZE,
     rx_font_size: float = RX_FONT_SIZE,
-    horoscope_id: Union[str, None] = None,
+    horoscope_id: Optional[str] = None,
 ) -> str:
     """
     Draw a single planet with its data cluster in the planet ring.
@@ -1088,7 +1065,7 @@ def _draw_gauquelin_cusp_ring(
 
     for i in range(36):
         angle = i * 10.0
-        is_angular = (i % 9 == 0)
+        is_angular = i % 9 == 0
         stroke_w = ANGULAR_STROKE_WIDTH if is_angular else 0.3
 
         # Division line
@@ -1109,7 +1086,7 @@ def _draw_gauquelin_cusp_ring(
             f'text-anchor="middle" dominant-baseline="central" '
             f'transform="rotate({mid_angle:.6f} {CENTER} {CENTER}) '
             f'rotate({90 - mid_angle:.6f} {CENTER} {CENTER - text_r})">'
-            f'{i + 1}</text>\n'
+            f"{i + 1}</text>\n"
         )
 
     return out
@@ -1130,7 +1107,7 @@ def _draw_gauquelin_house_ring(
     # 36 sector division lines
     for i in range(36):
         angle = i * 10.0
-        is_angular = (i % 9 == 0)
+        is_angular = i % 9 == 0
         stroke_w = 0.5 if is_angular else 0.15
 
         out += (
@@ -1471,7 +1448,9 @@ def draw_modern_horoscope(
     else:
         out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring)
     out += _draw_ruler_ring()
-    out += _draw_planet_ring(planets, planets_settings, seventh_house_degree_ut, houses, gauquelin_sectors=gauquelin_sectors)
+    out += _draw_planet_ring(
+        planets, planets_settings, seventh_house_degree_ut, houses, gauquelin_sectors=gauquelin_sectors
+    )
     if gauquelin_sectors:
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut)
     else:
@@ -1627,7 +1606,9 @@ def draw_modern_dual_horoscope(
     )
 
     # ─── HOUSE SECTORS (transparent, for interactive highlighting) ───
-    out += _draw_house_sectors_modern(houses_1, seventh_house_degree_ut, inner_r=SYN_R_HOUSE_INNER, outer_r=R_CUSP_OUTER)
+    out += _draw_house_sectors_modern(
+        houses_1, seventh_house_degree_ut, inner_r=SYN_R_HOUSE_INNER, outer_r=R_CUSP_OUTER
+    )
 
     # ─── ASPECT CORE (cross-chart aspects) ──────────────────────────
     out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut, core_radius=SYN_R_ASPECT)

@@ -11,11 +11,12 @@ from copy import deepcopy
 from typing import Any, Mapping, Optional, cast
 
 from .translation_strings import LANGUAGE_SETTINGS
+from .translations import _deep_merge
 
 SettingsSource = Optional[Mapping[str, Any]]
 
 
-def load_settings_mapping(settings_source: Optional[SettingsSource] = None) -> Mapping[str, Any]:
+def load_settings_mapping(settings_source: SettingsSource = None) -> Mapping[str, Any]:
     """
     Resolve the configuration mapping from the provided source.
 
@@ -36,16 +37,6 @@ def load_settings_mapping(settings_source: Optional[SettingsSource] = None) -> M
         language_settings = _deep_merge(language_settings, overrides)
 
     return {"language_settings": language_settings}
-
-
-def _deep_merge(base: Mapping[str, Any], overrides: Mapping[str, Any]) -> dict[str, Any]:
-    merged: dict[str, Any] = {key: deepcopy(value) for key, value in base.items()}
-    for key, value in overrides.items():
-        if key in merged and isinstance(merged[key], Mapping) and isinstance(value, Mapping):
-            merged[key] = _deep_merge(cast(Mapping[str, Any], merged[key]), cast(Mapping[str, Any], value))
-        else:
-            merged[key] = deepcopy(value)
-    return merged
 
 
 # Keep the public surface area explicit for downstream imports.

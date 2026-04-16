@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Optional, Sequence, Tuple, Union, Literal
+from typing import Optional, Sequence, Union, Literal
 
 from simple_ascii_tables import AsciiTable
 
@@ -42,6 +42,16 @@ MOVEMENT_SYMBOLS = {
 SubjectLike = Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
 LiteralReportKind = Literal["subject", "single_chart", "dual_chart", "moon_phase_overview"]
 
+# Ordering constants for celestial point reports
+_MAIN_PLANETS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
+_NODES = ["Mean_North_Lunar_Node", "True_North_Lunar_Node"]
+_ANGLES = ["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
+
+
+def _humanize(name: str) -> str:
+    """Replace underscores with spaces for display."""
+    return name.replace("_", " ")
+
 
 class ReportGenerator:
     """
@@ -69,8 +79,8 @@ class ReportGenerator:
         self._chart_data: Optional[ChartDataModel] = None
         self._primary_subject: Optional[SubjectLike] = None
         self._secondary_subject: Optional[SubjectLike] = None
-        self._active_points: List[str] = []
-        self._active_aspects: List[dict] = []
+        self._active_points: list[str] = []
+        self._active_aspects: list[dict] = []
 
         self._resolve_model()
 
@@ -160,7 +170,7 @@ class ReportGenerator:
     # Report builders
     # ------------------------------------------------------------------ #
 
-    def _build_subject_report(self) -> List[str]:
+    def _build_subject_report(self) -> list[str]:
         assert self._primary_subject is not None
         sections = [
             self._subject_data_report(self._primary_subject, "Astrological Subject"),
@@ -170,15 +180,15 @@ class ReportGenerator:
         ]
         return sections
 
-    def _build_moon_phase_overview_report(self) -> List[str]:
+    def _build_moon_phase_overview_report(self) -> list[str]:
         """Build a detailed report from a MoonPhaseOverviewModel."""
         assert isinstance(self.model, MoonPhaseOverviewModel)
         overview = self.model
-        sections: List[str] = []
+        sections: list[str] = []
 
         # -- Moon Summary --
         moon = overview.moon
-        moon_data: List[List[str]] = [["Field", "Value"]]
+        moon_data: list[list[str]] = [["Field", "Value"]]
         if moon.phase_name is not None:
             moon_data.append(["Phase Name", f"{moon.phase_name} {moon.emoji or ''}".strip()])
         if moon.major_phase is not None:
@@ -200,7 +210,7 @@ class ReportGenerator:
         # -- Illumination Details --
         if moon.detailed and moon.detailed.illumination_details:
             illum = moon.detailed.illumination_details
-            illum_data: List[List[str]] = [["Field", "Value"]]
+            illum_data: list[list[str]] = [["Field", "Value"]]
             if illum.percentage is not None:
                 illum_data.append(["Percentage", f"{illum.percentage}%"])
             if illum.visible_fraction is not None:
@@ -213,7 +223,7 @@ class ReportGenerator:
         # -- Upcoming Phases --
         if moon.detailed and moon.detailed.upcoming_phases:
             phases = moon.detailed.upcoming_phases
-            phases_data: List[List[str]] = [["Phase", "Last", "Next"]]
+            phases_data: list[list[str]] = [["Phase", "Last", "Next"]]
             for label, window in [
                 ("New Moon", phases.new_moon),
                 ("First Quarter", phases.first_quarter),
@@ -230,7 +240,7 @@ class ReportGenerator:
         # -- Next Lunar Eclipse --
         if moon.next_lunar_eclipse:
             eclipse = moon.next_lunar_eclipse
-            ecl_data: List[List[str]] = [["Field", "Value"]]
+            ecl_data: list[list[str]] = [["Field", "Value"]]
             if eclipse.datestamp:
                 ecl_data.append(["Date", eclipse.datestamp])
             if eclipse.type:
@@ -241,7 +251,7 @@ class ReportGenerator:
         # -- Sun Info --
         sun = overview.sun
         if sun is not None:
-            sun_data: List[List[str]] = [["Field", "Value"]]
+            sun_data: list[list[str]] = [["Field", "Value"]]
             if sun.sunrise_timestamp is not None:
                 sun_data.append(["Sunrise", sun.sunrise_timestamp])
             if sun.sunset_timestamp is not None:
@@ -261,7 +271,7 @@ class ReportGenerator:
             # -- Next Solar Eclipse --
             if sun.next_solar_eclipse:
                 se = sun.next_solar_eclipse
-                se_data: List[List[str]] = [["Field", "Value"]]
+                se_data: list[list[str]] = [["Field", "Value"]]
                 if se.datestamp:
                     se_data.append(["Date", se.datestamp])
                 if se.type:
@@ -272,7 +282,7 @@ class ReportGenerator:
         # -- Location --
         loc = overview.location
         if loc is not None:
-            loc_data: List[List[str]] = [["Field", "Value"]]
+            loc_data: list[list[str]] = [["Field", "Value"]]
             if loc.latitude is not None:
                 loc_data.append(["Latitude", loc.latitude])
             if loc.longitude is not None:
@@ -284,10 +294,10 @@ class ReportGenerator:
 
         return sections
 
-    def _build_single_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> List[str]:
+    def _build_single_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> list[str]:
         assert self._chart_data is not None
         assert self._primary_subject is not None
-        sections: List[str] = [
+        sections: list[str] = [
             self._subject_data_report(self._primary_subject, self._primary_subject_label()),
         ]
 
@@ -323,12 +333,12 @@ class ReportGenerator:
 
         return sections
 
-    def _build_dual_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> List[str]:
+    def _build_dual_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> list[str]:
         assert self._chart_data is not None
         assert self._primary_subject is not None
         primary_label, secondary_label = self._subject_role_labels()
 
-        sections: List[str] = [
+        sections: list[str] = [
             self._subject_data_report(self._primary_subject, primary_label),
         ]
 
@@ -431,7 +441,7 @@ class ReportGenerator:
             return "Lunar Return Chart"
         return f"{self.chart_type or 'Chart'}"
 
-    def _subject_role_labels(self) -> Tuple[str, str]:
+    def _subject_role_labels(self) -> tuple[str, str]:
         if self.chart_type == "Transit":
             return "Natal Subject", "Transit Subject"
         if self.chart_type == "Synastry":
@@ -507,26 +517,22 @@ class ReportGenerator:
         if not points:
             return "No celestial points data available."
 
-        main_planets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
-        nodes = ["Mean_North_Lunar_Node", "True_North_Lunar_Node"]
-        angles = ["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
-
         sorted_points = []
-        for name in angles + main_planets + nodes:
+        for name in _ANGLES + _MAIN_PLANETS + _NODES:
             sorted_points.extend([p for p in points if p.name == name])
 
-        used_names = set(angles + main_planets + nodes)
+        used_names = set(_ANGLES + _MAIN_PLANETS + _NODES)
         sorted_points.extend([p for p in points if p.name not in used_names])
 
-        celestial_data: List[List[str]] = [["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]]
+        celestial_data: list[list[str]] = [["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]]
         for point in sorted_points:
             speed_str = f"{point.speed:+.4f}°/d" if point.speed is not None else "N/A"
             decl_str = f"{point.declination:+.2f}°" if point.declination is not None else "N/A"
             ret_str = "R" if point.retrograde else "-"
-            house_str = point.house.replace("_", " ") if point.house else "-"
+            house_str = _humanize(point.house) if point.house else "-"
             celestial_data.append(
                 [
-                    point.name.replace("_", " "),
+                    _humanize(point.name),
                     f"{point.sign} {point.emoji}",
                     f"{point.position:.2f}°",
                     speed_str,
@@ -538,11 +544,11 @@ class ReportGenerator:
 
         return AsciiTable(celestial_data, title=title).table
 
-    def _collect_celestial_points(self, subject: SubjectLike) -> List[KerykeionPointModel]:
+    def _collect_celestial_points(self, subject: SubjectLike) -> list[KerykeionPointModel]:
         if isinstance(subject, AstrologicalSubjectModel):
             return get_available_astrological_points_list(subject)
 
-        points: List[KerykeionPointModel] = []
+        points: list[KerykeionPointModel] = []
         active_points: Optional[Sequence[str]] = getattr(subject, "active_points", None)
         if not active_points:
             return points
@@ -564,11 +570,11 @@ class ReportGenerator:
         if not houses:
             return "No houses data available."
 
-        houses_data: List[List[str]] = [["House", "Sign", "Position", "Absolute Position"]]
+        houses_data: list[list[str]] = [["House", "Sign", "Position", "Absolute Position"]]
         for house in houses:
             houses_data.append(
                 [
-                    house.name.replace("_", " "),
+                    _humanize(house.name),
                     f"{house.sign} {house.emoji}",
                     f"{house.position:.2f}°",
                     f"{house.abs_pos:.2f}°",
@@ -633,7 +639,7 @@ class ReportGenerator:
         if not self._active_points and not self._active_aspects:
             return ""
 
-        sections: List[str] = []
+        sections: list[str] = []
 
         if self._active_points:
             points_table = [["#", "Active Point"]]
@@ -667,11 +673,11 @@ class ReportGenerator:
 
         is_dual = isinstance(self._chart_data, DualChartDataModel)
         if is_dual:
-            table_header: List[str] = ["Point 1", "Owner 1", "Aspect", "Point 2", "Owner 2", "Orb", "Movement"]
+            table_header: list[str] = ["Point 1", "Owner 1", "Aspect", "Point 2", "Owner 2", "Orb", "Movement"]
         else:
             table_header = ["Point 1", "Aspect", "Point 2", "Orb", "Movement"]
 
-        aspects_table: List[List[str]] = [table_header]
+        aspects_table: list[list[str]] = [table_header]
         for aspect in aspects_list:
             aspect_name = str(aspect.aspect)
             symbol = ASPECT_SYMBOLS.get(aspect_name.lower(), aspect_name)
@@ -681,10 +687,10 @@ class ReportGenerator:
             if is_dual:
                 aspects_table.append(
                     [
-                        aspect.p1_name.replace("_", " "),
+                        _humanize(aspect.p1_name),
                         aspect.p1_owner,
                         f"{aspect.aspect} {symbol}",
-                        aspect.p2_name.replace("_", " "),
+                        _humanize(aspect.p2_name),
                         aspect.p2_owner,
                         f"{aspect.orbit:.2f}°",
                         movement,
@@ -693,9 +699,9 @@ class ReportGenerator:
             else:
                 aspects_table.append(
                     [
-                        aspect.p1_name.replace("_", " "),
+                        _humanize(aspect.p1_name),
                         f"{aspect.aspect} {symbol}",
-                        aspect.p2_name.replace("_", " "),
+                        _humanize(aspect.p2_name),
                         f"{aspect.orbit:.2f}°",
                         movement,
                     ]
@@ -748,7 +754,7 @@ class ReportGenerator:
         if not points:
             return ""
 
-        table_data: List[List[str]] = [["Point", "Owner House", "Projected House", "Sign", "Degree"]]
+        table_data: list[list[str]] = [["Point", "Owner House", "Projected House", "Sign", "Degree"]]
         for point in points:
             owner_house = "-"
             if point.point_owner_house_number is not None or point.point_owner_house_name:
@@ -771,7 +777,7 @@ class ReportGenerator:
         if not points:
             return ""
 
-        table_data: List[List[str]] = [["Point", "Projected House", "Sign", "Degree"]]
+        table_data: list[list[str]] = [["Point", "Projected House", "Sign", "Degree"]]
         for point in points:
             projected_house = f"{point.projected_house_number} ({point.projected_house_name})"
             table_data.append(
@@ -803,13 +809,13 @@ class ReportGenerator:
         sections = [AsciiTable(summary_table, title="Relationship Score Summary").table]
 
         if score.aspects:
-            aspects_table: List[List[str]] = [["Point 1", "Aspect", "Point 2", "Orb"]]
+            aspects_table: list[list[str]] = [["Point 1", "Aspect", "Point 2", "Orb"]]
             for aspect in score.aspects:
                 aspects_table.append(
                     [
-                        aspect.p1_name.replace("_", " "),
+                        _humanize(aspect.p1_name),
                         aspect.aspect,
-                        aspect.p2_name.replace("_", " "),
+                        _humanize(aspect.p2_name),
                         f"{aspect.orbit:.2f}°",
                     ]
                 )
@@ -829,21 +835,6 @@ class ReportGenerator:
             return format_iso_display(iso_datetime, "%Y")
         except (ValueError, IndexError):
             return None
-
-    @staticmethod
-    def _format_date(iso_datetime: Optional[str]) -> str:
-        """
-        Format datetime in dd/mm/yyyy format.
-
-        .. deprecated::
-            Use _format_date_iso() for internationally unambiguous date formatting.
-        """
-        if not iso_datetime:
-            return ""
-        try:
-            return format_iso_display(iso_datetime, "%d/%m/%Y")
-        except (ValueError, IndexError):
-            return iso_datetime
 
     @staticmethod
     def _format_date_iso(iso_datetime: Optional[str]) -> str:

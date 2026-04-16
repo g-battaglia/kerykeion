@@ -16,7 +16,6 @@ and reduces the risk of typos.
 
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import ActiveAspect
-from typing import List
 
 
 # =============================================================================
@@ -190,7 +189,7 @@ QUALITY_MUTABLE: str = "Mutable"
 # =============================================================================
 
 
-TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: List[AstrologicalPoint] = [
+TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: list[AstrologicalPoint] = [
     "Sun",
     "Moon",
     "Mercury",
@@ -206,7 +205,7 @@ Traditional astrology active points: the seven classical planets (Sun to Saturn)
 Excludes modern planets (Uranus, Neptune, Pluto), asteroids, and calculated points (Asc, MC, etc.).
 """
 
-DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
+DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
     "Sun",
     "Moon",
     "Mercury",
@@ -277,7 +276,7 @@ Default list of active points in the charts or aspects calculations.
 The full list of points is available in the `schemas.kr_literals.AstrologicalPoint` literal.
 """
 
-ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
+ALL_ACTIVE_POINTS: list[AstrologicalPoint] = [
     # Planets
     "Sun",
     "Moon",
@@ -377,7 +376,7 @@ The full list of points is available in the `schemas.kr_literals.AstrologicalPoi
 # Use these with the `active_fixed_stars` parameter of AstrologicalSubjectFactory.
 # Names must match entries in the Swiss Ephemeris sefstars.txt catalog.
 
-ROYAL_FIXED_STARS: List[str] = [
+ROYAL_FIXED_STARS: list[str] = [
     "Aldebaran",
     "Regulus",
     "Antares",
@@ -385,7 +384,7 @@ ROYAL_FIXED_STARS: List[str] = [
 ]
 """The four Royal Stars (Watchers of the Sky) in Persian/Hellenistic astrology."""
 
-BEHENIAN_FIXED_STARS: List[str] = [
+BEHENIAN_FIXED_STARS: list[str] = [
     "Algol",
     "Alcyone",
     "Aldebaran",
@@ -404,7 +403,7 @@ BEHENIAN_FIXED_STARS: List[str] = [
 ]
 """The 15 Behenian stars of the medieval/Hermetic magical tradition."""
 
-DEFAULT_FIXED_STARS: List[str] = [
+DEFAULT_FIXED_STARS: list[str] = [
     "Regulus",
     "Spica",
     "Aldebaran",
@@ -432,7 +431,7 @@ DEFAULT_FIXED_STARS: List[str] = [
 """The 23 default fixed stars (same set as Kerykeion v5.12)."""
 
 
-URANIAN_ACTIVE_POINTS: List[AstrologicalPoint] = [
+URANIAN_ACTIVE_POINTS: list[AstrologicalPoint] = [
     "Cupido",
     "Hades",
     "Zeus",
@@ -448,7 +447,7 @@ Use these alongside DEFAULT_ACTIVE_POINTS for Uranian astrology work.
 """
 
 
-DEFAULT_ACTIVE_ASPECTS: List[ActiveAspect] = [
+DEFAULT_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "conjunction", "orb": 10},
     {"name": "opposition", "orb": 10},
     {"name": "trine", "orb": 8},
@@ -466,7 +465,7 @@ Default list of active aspects in the aspects calculations.
 The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
 """
 
-ALL_ACTIVE_ASPECTS: List[ActiveAspect] = [
+ALL_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "conjunction", "orb": 10},
     {"name": "opposition", "orb": 10},
     {"name": "trine", "orb": 8},
@@ -484,7 +483,7 @@ Full list of active aspects in the charts or aspects calculations.
 The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
 """
 
-DISCEPOLO_SCORE_ACTIVE_ASPECTS: List[ActiveAspect] = [
+DISCEPOLO_SCORE_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "conjunction", "orb": 8},
     {"name": "semi-sextile", "orb": 2},
     {"name": "semi-square", "orb": 2},

@@ -45,7 +45,6 @@ License: AGPL-3.0
 import logging
 from typing import Optional
 
-from kerykeion import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -147,7 +146,9 @@ class RelationshipScoreFactory:
                     details=f"{self.first_subject.sun['sign']} - {self.second_subject.sun['sign']}",  # type: ignore
                 )
             )
-            logging.debug(f"Destiny sign found, adding {DESTINY_SIGN_POINTS} points, total score: {self.score_value}")
+            logging.debug(
+                "Destiny sign found, adding %d points, total score: %d", DESTINY_SIGN_POINTS, self.score_value
+            )
 
     def _evaluate_aspect(self, aspect, points, rule: str, description: str):
         """
@@ -180,7 +181,14 @@ class RelationshipScoreFactory:
             )
         )
         logging.debug(
-            f"{aspect['p1_name']}-{aspect['p2_name']} aspect: {aspect['aspect']} with orbit {aspect['orbit']} degrees, adding {points} points, total score: {self.score_value}, total aspects: {len(self.relationship_score_aspects)}"
+            "%s-%s aspect: %s with orbit %s degrees, adding %d points, total score: %d, total aspects: %d",
+            aspect["p1_name"],
+            aspect["p2_name"],
+            aspect["aspect"],
+            aspect["orbit"],
+            points,
+            self.score_value,
+            len(self.relationship_score_aspects),
         )
 
     def _evaluate_sun_sun_main_aspect(self, aspect):
@@ -320,6 +328,11 @@ class RelationshipScoreFactory:
             RelationshipScoreModel: Score object containing numerical value, description,
                 destiny sign status, contributing aspects, and subject data.
         """
+        # Reset state to ensure reentrancy
+        self.score_value = 0
+        self.relationship_score_aspects = []
+        self.score_breakdown = []
+
         self._evaluate_destiny_sign()
 
         for aspect in self._synastry_aspects:
@@ -344,6 +357,7 @@ class RelationshipScoreFactory:
 
 
 if __name__ == "__main__":
+    from kerykeion import AstrologicalSubjectFactory
     from kerykeion.utilities import setup_logging
 
     setup_logging(level="critical")

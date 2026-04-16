@@ -65,42 +65,13 @@ def calculate_points_in_reciprocal_houses(
             celestial_points.append(point_obj)
 
     # Ordered list of house cusps degrees for house_subject
-    house_cusps = [
-        house_subject.first_house.abs_pos,
-        house_subject.second_house.abs_pos,
-        house_subject.third_house.abs_pos,
-        house_subject.fourth_house.abs_pos,
-        house_subject.fifth_house.abs_pos,
-        house_subject.sixth_house.abs_pos,
-        house_subject.seventh_house.abs_pos,
-        house_subject.eighth_house.abs_pos,
-        house_subject.ninth_house.abs_pos,
-        house_subject.tenth_house.abs_pos,
-        house_subject.eleventh_house.abs_pos,
-        house_subject.twelfth_house.abs_pos,
-    ]
+    house_cusps = [h.abs_pos for h in get_houses_list(house_subject)]
 
     # Ordered list of house cusps degrees for point_subject
-    point_subject_house_cusps = [
-        point_subject.first_house.abs_pos,
-        point_subject.second_house.abs_pos,
-        point_subject.third_house.abs_pos,
-        point_subject.fourth_house.abs_pos,
-        point_subject.fifth_house.abs_pos,
-        point_subject.sixth_house.abs_pos,
-        point_subject.seventh_house.abs_pos,
-        point_subject.eighth_house.abs_pos,
-        point_subject.ninth_house.abs_pos,
-        point_subject.tenth_house.abs_pos,
-        point_subject.eleventh_house.abs_pos,
-        point_subject.twelfth_house.abs_pos,
-    ]
+    point_subject_house_cusps = [h.abs_pos for h in get_houses_list(point_subject)]
 
     # For each point, determine which house it falls in
     for point in celestial_points:
-        if point is None:
-            continue
-
         point_degree = point.abs_pos
         house_name = get_planet_house(point_degree, house_cusps)
         house_number = get_house_number(house_name)

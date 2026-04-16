@@ -18,7 +18,7 @@ from kerykeion.charts.charts_utils import degreeDiff, sliceToX, sliceToY, conver
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
 from kerykeion.schemas.kr_literals import Houses
 import logging
-from typing import Union, get_args, List, Optional, Tuple, Sequence, Mapping, Any
+from typing import Union, get_args, Optional, Sequence, Mapping, Any
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ def draw_planets(
         KerykeionException: If secondary points are required but not provided.
     """
     # Points to exclude from transit ring (house cusps)
-    transit_ring_exclude_points: List[str] = list(get_args(Houses))
+    transit_ring_exclude_points: list[str] = list(get_args(Houses))
     output = ""
 
     # -------------------------------------------------------------------------
@@ -260,7 +260,7 @@ def _calculate_planet_adjustments(
     points_settings: Sequence[Mapping[str, Any]],
     position_index_map: dict,
     sorted_positions: Sequence[Any],
-) -> List[float]:
+) -> list[float]:
     """
     Calculate position adjustments for planets to prevent visual overlapping.
 
@@ -276,9 +276,9 @@ def _calculate_planet_adjustments(
     Returns:
         List of adjustment values (in degrees) for each position.
     """
-    planets_by_position: List[Optional[List[Union[int, float]]]] = [None] * len(position_index_map)
-    point_groups: List[List[List[Union[int, float, str]]]] = []
-    position_adjustments: List[float] = [0.0] * len(points_settings)
+    planets_by_position: list[Optional[list[Union[int, float]]]] = [None] * len(position_index_map)
+    point_groups: list[list[list[Union[int, float, str]]]] = []
+    position_adjustments: list[float] = [0.0] * len(points_settings)
     is_group_open = False
 
     # Build position data and identify groups
@@ -324,7 +324,7 @@ def _calculate_planet_adjustments(
     if point_groups and logger.isEnabledFor(logging.DEBUG):
         logger.debug("Layout overlap groups")
         for group_idx, group in enumerate(point_groups, start=1):
-            group_entries: List[str] = []
+            group_entries: list[str] = []
             for point_data in group:
                 position_idx = int(point_data[0])
                 label = str(point_data[3])
@@ -340,7 +340,7 @@ def _get_adjacent_positions(
     sorted_positions: Sequence[Any],
     position_index_map: dict,
     points_abs_positions: Sequence[Any],
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """Get the absolute positions of adjacent points (with wraparound)."""
     total = len(sorted_positions)
     if position_idx == 0:
@@ -453,7 +453,7 @@ def _calculate_point_offset(
     adjustment: Union[int, float],
 ) -> float:
     """Calculate the angular offset for placing a celestial point on the chart."""
-    return (int(seventh_house_degree) / -1) + int(point_degree + adjustment)
+    return -int(seventh_house_degree) + int(point_degree + adjustment)
 
 
 def _determine_point_radius(
@@ -490,12 +490,7 @@ def _determine_point_radius(
     # Original calculations: amin = 74-10=64, bmin = 94-10=84, cmin = 40-10=30
     # Result: 74 - 64 = 10, 94 - 84 = 10, 40 - 30 = 10
     if external_view:
-        if is_chart_angle:
-            return 40 - (40 - 10)  # = 10
-        elif is_alternate_position:
-            return 74 - (74 - 10)  # = 10
-        else:
-            return 94 - (94 - 10)  # = 10
+        return 10
 
     # Standard natal chart
     if is_chart_angle:
@@ -542,7 +537,7 @@ def _calculate_indicator_adjustments(
     sorted_positions = sorted(position_index_map.keys())
 
     # Identify groups of close points
-    point_groups: List[List[int]] = []
+    point_groups: list[list[int]] = []
     in_group = False
 
     for pos_idx, abs_position in enumerate(sorted_positions):
@@ -669,7 +664,7 @@ def _calculate_secondary_indicator_adjustments(
     sorted_positions = sorted(position_index_map.keys())
 
     # Identify groups of close points
-    point_groups: List[List[int]] = []
+    point_groups: list[list[int]] = []
     in_group = False
 
     for pos_idx, abs_position in enumerate(sorted_positions):
@@ -699,7 +694,7 @@ def _calculate_secondary_indicator_adjustments(
 def _calculate_text_rotation(
     first_house_degree: float,
     point_abs_position: float,
-) -> Tuple[float, str]:
+) -> tuple[float, str]:
     """
     Calculate text rotation angle and anchor for degree labels.
 
@@ -832,7 +827,7 @@ def _draw_external_natal_lines(
         + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
         + f'<line x1="{x2}" y1="{y2}" x2="{x3}" y2="{y3}" '
         + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
-        + f'</g>'
+        + f"</g>"
     )
 
 
@@ -907,7 +902,7 @@ def _draw_primary_point_indicators(
             f'<g transform="translate({deg_x},{deg_y})">'
             f'<text text-anchor="middle" dominant-baseline="middle" '
             f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
-            f'</g>'
+            f"</g>"
         )
 
     return "".join(parts)
@@ -975,7 +970,7 @@ def _draw_inner_point_indicators(
             f'<g transform="translate({deg_x},{deg_y})">'
             f'<text text-anchor="middle" dominant-baseline="middle" '
             f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
-            f'</g>'
+            f"</g>"
         )
 
     return "".join(parts)
@@ -1084,7 +1079,9 @@ def _draw_secondary_points(
             # Inner coordinate space is 2x due to scale(0.5) wrapper.
             retro_x = point_x * 2 + 22
             retro_y = point_y * 2 + 18
-            point_svg += f'<g transform="translate({retro_x},{retro_y}) scale(0.55)"><use xlink:href="#retrograde" /></g>'
+            point_svg += (
+                f'<g transform="translate({retro_x},{retro_y}) scale(0.55)"><use xlink:href="#retrograde" /></g>'
+            )
         point_svg += "</g></g>"
 
         # Draw indicator line

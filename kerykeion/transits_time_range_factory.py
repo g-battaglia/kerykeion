@@ -56,11 +56,10 @@ License: AGPL-3.0
 """
 
 from typing import Union, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.schemas.settings_models import KerykeionSettingsModel
@@ -268,8 +267,9 @@ class TransitsTimeRangeFactory:
             transits=transit_moments,
         )
 
-
-    def get_transit_events(self, *, refine_exact_moments: bool = False, refinement_iterations: int = 12) -> "TransitEventsTimeRangeModel":
+    def get_transit_events(
+        self, *, refine_exact_moments: bool = False, refinement_iterations: int = 12
+    ) -> "TransitEventsTimeRangeModel":
         """Group transit moments into discrete transit events.
 
         Unlike ``get_transit_moments()`` which returns raw snapshots, this
@@ -347,16 +347,18 @@ class TransitsTimeRangeFactory:
                 # Simple difference (degrees per step)
                 orb_rate = round(orb_after - orb_before, 6)
 
-            events.append(TransitEventModel(
-                p1_name=p1,
-                p2_name=p2,
-                aspect=aspect_name,
-                applying_start=applying_start,
-                exact_moment=exact_date,
-                separating_end=separating_end,
-                min_orb=round(min_orb, 6),
-                orb_rate=orb_rate,
-            ))
+            events.append(
+                TransitEventModel(
+                    p1_name=p1,
+                    p2_name=p2,
+                    aspect=aspect_name,
+                    applying_start=applying_start,
+                    exact_moment=exact_date,
+                    separating_end=separating_end,
+                    min_orb=round(min_orb, 6),
+                    orb_rate=orb_rate,
+                )
+            )
 
         # Sort by exact_moment
         events.sort(key=lambda e: e.exact_moment)
@@ -409,6 +411,7 @@ class TransitsTimeRangeFactory:
 
             # Determine the transit planet's Swiss Ephemeris ID
             from kerykeion.astrological_subject_factory import STANDARD_PLANETS, TNO_PLANETS
+
             planet_id = STANDARD_PLANETS.get(p1_name)
             if planet_id is None:
                 tno_num = TNO_PLANETS.get(p1_name)
@@ -418,10 +421,7 @@ class TransitsTimeRangeFactory:
                 return None
 
             # Build the aspect settings filter for the target aspect
-            aspect_settings = [
-                s for s in DEFAULT_CHART_ASPECTS_SETTINGS
-                if s["name"] == aspect_name
-            ]
+            aspect_settings = [s for s in DEFAULT_CHART_ASPECTS_SETTINGS if s["name"] == aspect_name]
             if not aspect_settings:
                 return None
 
@@ -495,6 +495,9 @@ class TransitsTimeRangeFactory:
 
 
 if __name__ == "__main__":
+    from datetime import timedelta
+    from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+
     # Create a natal chart for the subject
     person = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 20, 15, "Owensboro", "US")
 

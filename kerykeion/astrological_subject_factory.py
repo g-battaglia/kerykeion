@@ -1478,6 +1478,11 @@ class AstrologicalSubjectFactory:
         )
 
     @staticmethod
+    def _should_calculate(point: AstrologicalPoint, active_points: Optional[List[AstrologicalPoint]]) -> bool:
+        """Check if a given point should be calculated based on active_points filter."""
+        return not active_points or point in active_points
+
+    @staticmethod
     def _calculate_houses(
         data: Dict[str, Any], active_points: Optional[List[AstrologicalPoint]]
     ) -> List[AstrologicalPoint]:
@@ -1532,9 +1537,7 @@ class AstrologicalSubjectFactory:
             for angles).
         """
 
-        # Skip calculation if point is not in active_points
-        def should_calculate(point: AstrologicalPoint) -> bool:
-            return not active_points or point in active_points
+        should_calculate = lambda point: AstrologicalSubjectFactory._should_calculate(point, active_points)
 
         # Track which axial cusps are actually calculated
         calculated_axial_cusps: List[AstrologicalPoint] = []
@@ -1744,8 +1747,7 @@ class AstrologicalSubjectFactory:
             names to calculated_planets.
         """
 
-        def should_calculate(point: AstrologicalPoint) -> bool:
-            return not active_points or point in active_points
+        should_calculate = lambda point: AstrologicalSubjectFactory._should_calculate(point, active_points)
 
         for derived_name, config in OPPOSITE_PAIRS.items():
             if not should_calculate(derived_name):
@@ -2056,9 +2058,7 @@ class AstrologicalSubjectFactory:
             This ensures that dependent calculations and aspects only use valid data.
         """
 
-        # Skip calculation if point is not in active_points
-        def should_calculate(point: AstrologicalPoint) -> bool:
-            return not active_points or point in active_points
+        should_calculate = lambda point: AstrologicalSubjectFactory._should_calculate(point, active_points)
 
         point_type: PointType = "AstrologicalPoint"
         julian_day = data["julian_day"]
