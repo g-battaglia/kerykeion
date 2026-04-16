@@ -330,6 +330,8 @@ class RelationshipScoreFactory:
         """
         # Reset state to ensure reentrancy
         self.score_value = 0
+        self.is_destiny_sign = False
+        self.relationship_score_description = "Minimal"
         self.relationship_score_aspects = []
         self.score_breakdown = []
 

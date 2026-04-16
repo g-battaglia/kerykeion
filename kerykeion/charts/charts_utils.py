@@ -702,9 +702,9 @@ def _convert_coordinate_to_string(coord: Union[int, float], positive_label: str,
     if coord < 0.0:
         sign = negative_label
         coord = abs(coord)
-    deg = int(coord)
-    minutes = int((float(coord) - deg) * 60)
-    sec = int(round(float(((float(coord) - deg) * 60) - minutes) * 60.0))
+    total_seconds = int(round(float(coord) * 3600))
+    deg, rem = divmod(total_seconds, 3600)
+    minutes, sec = divmod(rem, 60)
     return f"{deg}°{minutes}'{sec}\" {sign}"
 
 

@@ -61,7 +61,7 @@ from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
 from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import ActiveAspect, TransitMomentModel, TransitsTimeRangeModel
+from kerykeion.schemas.kr_models import ActiveAspect, TransitEventModel, TransitEventsTimeRangeModel, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.schemas.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
 from pathlib import Path
@@ -269,7 +269,7 @@ class TransitsTimeRangeFactory:
 
     def get_transit_events(
         self, *, refine_exact_moments: bool = False, refinement_iterations: int = 12
-    ) -> "TransitEventsTimeRangeModel":
+    ) -> TransitEventsTimeRangeModel:
         """Group transit moments into discrete transit events.
 
         Unlike ``get_transit_moments()`` which returns raw snapshots, this
@@ -295,7 +295,6 @@ class TransitsTimeRangeFactory:
         Returns:
             TransitEventsTimeRangeModel with sorted transit events.
         """
-        from kerykeion.schemas.kr_models import TransitEventModel, TransitEventsTimeRangeModel
 
         transit_data = self.get_transit_moments()
 

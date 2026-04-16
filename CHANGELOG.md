@@ -14,10 +14,10 @@ _2026-04-16_
 
 ### Code Deduplication
 
-- Extract `_should_calculate()` static method in `AstrologicalSubjectFactory` — replaces 3 identical local function definitions across `_calculate_houses`, `_calculate_derived_planets`, and `_calculate_planets`.
-- Extract `_create_subject_for_date()` in `EphemerisDataFactory` — replaces 2 identical 18-line `from_birth_data()` call blocks.
-- Extract `_convert_coordinate_to_string()` in `charts_utils` — replaces 2 identical lat/lng formatting functions (also fixes `min` shadowing the builtin).
-- Extract `_serialize_active_config()` in `context_serializer` — replaces 2 identical 3-line blocks for active points/aspects XML serialization.
+- Deduplicate `_should_calculate()` into a static method on `AstrologicalSubjectFactory` — replaces 3 identical local function definitions across `_calculate_houses`, `_calculate_derived_planets`, and `_calculate_planets`.
+- Consolidate `_create_subject_for_date()` in `EphemerisDataFactory` — replaces 2 identical 18-line `from_birth_data()` call blocks.
+- Refactor `_convert_coordinate_to_string()` in `charts_utils` — replaces 2 identical lat/lng formatting functions (also fixes `min` shadowing the builtin and DMS carry-over at 60 seconds).
+- Replace inline XML serialization with `_serialize_active_config()` in `context_serializer` — deduplicates 2 identical 3-line blocks for active points/aspects.
 - Consolidate `_deep_merge()` — remove duplicate in `kerykeion_settings.py`, import from `translations.py`.
 - Remove redundant `common_planets` rebuild in `CompositeSubjectFactory._calculate_midpoint_composite_points_and_houses` — uses `self.active_points` directly.
 - Simplify house cusp list construction in `house_comparison_utils` — `[h.abs_pos for h in get_houses_list(subject)]` replaces 12-line explicit lists (x2).

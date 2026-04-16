@@ -515,11 +515,11 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
     """
     if latitude > _POLAR_LATITUDE_LIMIT:
         latitude = _POLAR_LATITUDE_LIMIT
-        logger.info("Latitude capped at 66° to keep house calculations stable.")
+        logger.info(f"Latitude capped at {_POLAR_LATITUDE_LIMIT:.0f}° to keep house calculations stable.")
 
     elif latitude < -_POLAR_LATITUDE_LIMIT:
         latitude = -_POLAR_LATITUDE_LIMIT
-        logger.info("Latitude capped at -66° to keep house calculations stable.")
+        logger.info(f"Latitude capped at -{_POLAR_LATITUDE_LIMIT:.0f}° to keep house calculations stable.")
 
     return latitude
 

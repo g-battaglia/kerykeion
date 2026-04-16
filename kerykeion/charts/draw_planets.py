@@ -827,7 +827,7 @@ def _draw_external_natal_lines(
         + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
         + f'<line x1="{x2}" y1="{y2}" x2="{x3}" y2="{y3}" '
         + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
-        + f"</g>"
+        + "</g>"
     )
 
 
@@ -902,7 +902,7 @@ def _draw_primary_point_indicators(
             f'<g transform="translate({deg_x},{deg_y})">'
             f'<text text-anchor="middle" dominant-baseline="middle" '
             f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
-            f"</g>"
+            "</g>"
         )
 
     return "".join(parts)
@@ -970,7 +970,7 @@ def _draw_inner_point_indicators(
             f'<g transform="translate({deg_x},{deg_y})">'
             f'<text text-anchor="middle" dominant-baseline="middle" '
             f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
-            f"</g>"
+            "</g>"
         )
 
     return "".join(parts)
@@ -1103,7 +1103,7 @@ def _draw_secondary_points(
             + f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
             + f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
             + f'<g transform="translate({deg_x},{deg_y})">'
-            + f'<text text-anchor="middle" dominant-baseline="middle" '
+            + '<text text-anchor="middle" dominant-baseline="middle" '
             + f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
         )
 

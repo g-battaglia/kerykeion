@@ -246,6 +246,7 @@ class EphemerisDataFactory:
             day=date.day,
             hour=date.hour,
             minute=date.minute,
+            seconds=date.second,
             lng=self.lng,
             lat=self.lat,
             tz_str=self.tz_str,

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Optional, Sequence, Union, Literal
 
 from simple_ascii_tables import AsciiTable
@@ -763,7 +762,7 @@ class ReportGenerator:
             projected_house = f"{point.projected_house_number} ({point.projected_house_name})"
             table_data.append(
                 [
-                    f"{point.point_owner_name} – {point.point_name.replace('_', ' ')}",
+                    f"{point.point_owner_name} – {_humanize(point.point_name)}",
                     owner_house,
                     projected_house,
                     point.point_sign,
@@ -782,7 +781,7 @@ class ReportGenerator:
             projected_house = f"{point.projected_house_number} ({point.projected_house_name})"
             table_data.append(
                 [
-                    f"{point.point_owner_name} – {point.point_name.replace('_', ' ')}",
+                    f"{point.point_owner_name} – {_humanize(point.point_name)}",
                     projected_house,
                     point.point_sign,
                     f"{point.point_degree:.2f}°",
