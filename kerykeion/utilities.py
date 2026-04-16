@@ -45,8 +45,16 @@ logger = getLogger(__name__)
 # CONSTANTS AND MAPPINGS
 # =============================================================================
 
+# Maximum latitude for reliable house calculations
+_POLAR_LATITUDE_LIMIT = 66.0
+
 # Mapping of astrological point names to Swiss Ephemeris IDs
+# NOTE: The main planets (Sun through Poseidon) are defined in STANDARD_PLANETS
+# in astrological_subject_factory.py. The entries below include those plus
+# extra points (South Nodes, White Moon, Axial Cusps) that don't have SE IDs.
+# Kept explicit here to avoid circular imports with astrological_subject_factory.
 _POINT_NUMBER_MAP: dict[str, int] = {
+    # Main planets (must match STANDARD_PLANETS in astrological_subject_factory.py)
     "Sun": 0,
     "Moon": 1,
     "Mercury": 2,
@@ -59,15 +67,29 @@ _POINT_NUMBER_MAP: dict[str, int] = {
     "Pluto": 9,
     "Mean_North_Lunar_Node": 10,
     "True_North_Lunar_Node": 11,
-    # Swiss Ephemeris has no dedicated IDs for the south nodes; we reserve high values.
-    "Mean_South_Lunar_Node": 1000,
-    "True_South_Lunar_Node": 1100,
-    "Chiron": 15,
     "Mean_Lilith": 12,
     "True_Lilith": 13,
-    "Interpolated_Lilith": 21,  # SE_INTP_APOG — interpolated lunar apogee
-    "Interpolated_Perigee": 22,  # SE_INTP_PERG — interpolated lunar perigee
-    "White_Moon": 56,  # SE_WHITE_MOON / Selena (libephemeris native, fallback on swisseph)
+    "Earth": 14,
+    "Chiron": 15,
+    "Pholus": 16,
+    "Ceres": 17,
+    "Pallas": 18,
+    "Juno": 19,
+    "Vesta": 20,
+    "Interpolated_Lilith": 21,  # SE_INTP_APOG
+    "Interpolated_Perigee": 22,  # SE_INTP_PERG
+    "Cupido": 40,
+    "Hades": 41,
+    "Zeus": 42,
+    "Kronos": 43,
+    "Apollon": 44,
+    "Admetos": 45,
+    "Vulkanus": 46,
+    "Poseidon": 47,
+    # Extra points without Swiss Ephemeris IDs
+    "Mean_South_Lunar_Node": 1000,
+    "True_South_Lunar_Node": 1100,
+    "White_Moon": 56,  # SE_WHITE_MOON / Selena
     "Ascendant": 9900,
     "Descendant": 9901,
     "Medium_Coeli": 9902,
@@ -176,8 +198,8 @@ def normalize_zodiac_type(value: str) -> ZodiacType:
         return cast(ZodiacType, "Sidereal")
     else:
         raise ValueError(
-            "'{value}' is not a valid zodiac type. Accepted values are: Tropical, Sidereal "
-            "(case-insensitive, 'tropic' also accepted as legacy).".format(value=value)
+            f"'{value}' is not a valid zodiac type. Accepted values are: Tropical, Sidereal "
+            "(case-insensitive, 'tropic' also accepted as legacy)."
         )
 
 
@@ -274,11 +296,9 @@ def is_point_between(
     Raises:
         KerykeionException: If the arc exceeds 180°
     """
-    normalize = lambda value: value % 360
-
-    start = normalize(start_angle)
-    end = normalize(end_angle)
-    target = normalize(candidate)
+    start = start_angle % 360
+    end = end_angle % 360
+    target = candidate % 360
     span = (end - start) % 360
 
     if span > 180:
@@ -493,13 +513,13 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
     Returns:
         The adjusted latitude value, clamped between -66° and 66°
     """
-    if latitude > 66.0:
-        latitude = 66.0
-        logger.info("Latitude capped at 66° to keep house calculations stable.")
+    if latitude > _POLAR_LATITUDE_LIMIT:
+        latitude = _POLAR_LATITUDE_LIMIT
+        logger.info(f"Latitude capped at {_POLAR_LATITUDE_LIMIT:.0f}° to keep house calculations stable.")
 
-    elif latitude < -66.0:
-        latitude = -66.0
-        logger.info("Latitude capped at -66° to keep house calculations stable.")
+    elif latitude < -_POLAR_LATITUDE_LIMIT:
+        latitude = -_POLAR_LATITUDE_LIMIT
+        logger.info(f"Latitude capped at -{_POLAR_LATITUDE_LIMIT:.0f}° to keep house calculations stable.")
 
     return latitude
 

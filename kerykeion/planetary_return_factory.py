@@ -524,14 +524,14 @@ class PlanetaryReturnFactory:
         else:
             raise KerykeionException(f"Invalid return type {return_type}. Use 'Solar' or 'Lunar'.")
 
-        solar_return_date_utc = julian_to_datetime(return_julian_date)
-        solar_return_date_utc = solar_return_date_utc.replace(tzinfo=timezone.utc)
+        return_date_utc = julian_to_datetime(return_julian_date)
+        return_date_utc = return_date_utc.replace(tzinfo=timezone.utc)
 
         # Build kwargs, propagating the source subject's zodiac/sidereal settings
         # so that return charts use the same astrological configuration.
         return_kwargs: dict = dict(
             name=self.subject.name,
-            iso_utc_time=solar_return_date_utc.isoformat(),
+            iso_utc_time=return_date_utc.isoformat(),
             lng=self.lng,
             lat=self.lat,
             tz_str=self.tz_str,
@@ -546,16 +546,16 @@ class PlanetaryReturnFactory:
             perspective_type=self.subject.perspective_type,
         )
         # Propagate USER-mode custom ayanamsa parameters if present on the factory
-        if hasattr(self, "custom_ayanamsa_t0") and self.custom_ayanamsa_t0 is not None:
+        if self.custom_ayanamsa_t0 is not None:
             return_kwargs["custom_ayanamsa_t0"] = self.custom_ayanamsa_t0
-        if hasattr(self, "custom_ayanamsa_ayan_t0") and self.custom_ayanamsa_ayan_t0 is not None:
+        if self.custom_ayanamsa_ayan_t0 is not None:
             return_kwargs["custom_ayanamsa_ayan_t0"] = self.custom_ayanamsa_ayan_t0
 
-        solar_return_astrological_subject = AstrologicalSubjectFactory.from_iso_utc_time(
+        return_astrological_subject = AstrologicalSubjectFactory.from_iso_utc_time(
             **return_kwargs,  # type: ignore[arg-type]
         )
 
-        model_data = solar_return_astrological_subject.model_dump()
+        model_data = return_astrological_subject.model_dump()
         model_data["name"] = f"{self.subject.name} {return_type} Return"
         model_data["return_type"] = return_type
 
@@ -739,7 +739,6 @@ class PlanetaryReturnFactory:
             stacklevel=2,
         )
         return self.next_return_from_date(year, month, 1, return_type=return_type)
-
 
     def next_heliocentric_return(
         self,

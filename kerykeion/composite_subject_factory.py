@@ -171,10 +171,7 @@ class CompositeSubjectFactory:
         if first_subject.sidereal_mode != second_subject.sidereal_mode:
             raise KerykeionException("Both subjects must have the same sidereal mode")
 
-        if first_subject.sidereal_mode is not None:
-            self.sidereal_mode = first_subject.sidereal_mode
-        else:
-            self.sidereal_mode = None
+        self.sidereal_mode = first_subject.sidereal_mode
 
         # Houses System
         if first_subject.houses_system_identifier != second_subject.houses_system_identifier:
@@ -204,13 +201,7 @@ class CompositeSubjectFactory:
         return f"Composite Chart Data for {self.name}"
 
     def __repr__(self):
-        """
-        Return detailed string representation of the composite subject.
-
-        Returns:
-            str: Detailed string representation for debugging purposes.
-        """
-        return f"Composite Chart Data for {self.name}"
+        return self.__str__()
 
     def __eq__(self, other):
         """
@@ -227,18 +218,6 @@ class CompositeSubjectFactory:
             and self.second_subject == other.second_subject
             and self.name == other.name
         )
-
-    def __ne__(self, other):
-        """
-        Check inequality with another composite subject.
-
-        Args:
-            other (CompositeSubjectFactory): Another composite subject to compare with.
-
-        Returns:
-            bool: True if subjects or chart name are different.
-        """
-        return not self.__eq__(other)
 
     def __hash__(self):
         """
@@ -321,13 +300,8 @@ class CompositeSubjectFactory:
             self[house_lower] = get_kerykeion_point_from_degree(house_degree_list_ut[house_index], house_name, "House")
 
         # Planets
-        common_planets = []
-        for planet in self.first_subject.active_points:
-            if planet in self.second_subject.active_points:
-                common_planets.append(planet)
-
         planets = {}
-        for planet in common_planets:
+        for planet in self.active_points:
             planet_lower = planet.lower()
             planets[planet_lower] = {}
             planets[planet_lower]["abs_pos"] = circular_mean(
@@ -414,6 +388,7 @@ class CompositeSubjectFactory:
 
         # Convert midpoint JD to date components (UTC)
         from kerykeion.ephemeris_backend import swe
+
         year, month, day, hour_frac = swe.revjul(mid_jd)
         hour = int(hour_frac)
         minute = int((hour_frac - hour) * 60)

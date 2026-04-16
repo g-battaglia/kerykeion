@@ -100,6 +100,13 @@ def _el(tag: str, text, **kwargs) -> str:
     return f"{_o(tag, **kwargs)}{_xe(text)}{_c(tag)}"
 
 
+def _serialize_active_config(chart_data, lines: list[str]) -> None:
+    """Append active_points and active_aspects serialization to *lines*."""
+    lines.append(f"  {_el('active_points', ', '.join(chart_data.active_points))}")
+    active_aspects_str = ", ".join([f"{a['name']} ({a['orb']})" for a in chart_data.active_aspects])
+    lines.append(f"  {_el('active_aspects', active_aspects_str)}")
+
+
 # ============================================================================
 # Individual Model Converters
 # ============================================================================
@@ -515,9 +522,7 @@ def single_chart_data_to_context(chart_data: SingleChartDataModel) -> str:
         lines.append(f"  {_c('aspects')}")
 
     # Active configuration
-    lines.append(f"  {_el('active_points', ', '.join(chart_data.active_points))}")
-    active_aspects_str = ", ".join([f"{a['name']} ({a['orb']})" for a in chart_data.active_aspects])
-    lines.append(f"  {_el('active_aspects', active_aspects_str)}")
+    _serialize_active_config(chart_data, lines)
 
     lines.append(_c("chart_analysis"))
     return "\n".join(lines)
@@ -578,9 +583,7 @@ def dual_chart_data_to_context(chart_data: DualChartDataModel) -> str:
     lines.append(f"  {quality_distribution_to_context(chart_data.quality_distribution)}")
 
     # Active configuration
-    lines.append(f"  {_el('active_points', ', '.join(chart_data.active_points))}")
-    active_aspects_str = ", ".join([f"{a['name']} ({a['orb']})" for a in chart_data.active_aspects])
-    lines.append(f"  {_el('active_aspects', active_aspects_str)}")
+    _serialize_active_config(chart_data, lines)
 
     lines.append(_c("chart_analysis"))
     return "\n".join(lines)

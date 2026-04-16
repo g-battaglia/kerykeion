@@ -29,7 +29,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from typing import Mapping, Union, Optional, List, Literal, cast
+from typing import Mapping, Union, Optional, Literal, cast
 
 from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
@@ -93,8 +93,8 @@ class ChartDataFactory:
         chart_type: ChartType,
         first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         second_subject: Optional[Union[AstrologicalSubjectModel, PlanetReturnModel]] = None,
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_points: Optional[list[AstrologicalPoint]] = None,
+        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
         include_relationship_score: bool = False,
         *,
@@ -348,8 +348,8 @@ class ChartDataFactory:
     @staticmethod
     def create_natal_chart_data(
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_points: Optional[list[AstrologicalPoint]] = None,
+        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         *,
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
@@ -380,8 +380,8 @@ class ChartDataFactory:
     def create_synastry_chart_data(
         first_subject: AstrologicalSubjectModel,
         second_subject: AstrologicalSubjectModel,
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_points: Optional[list[AstrologicalPoint]] = None,
+        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
         include_relationship_score: bool = True,
         *,
@@ -420,8 +420,8 @@ class ChartDataFactory:
     def create_transit_chart_data(
         natal_subject: AstrologicalSubjectModel,
         transit_subject: AstrologicalSubjectModel,
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_points: Optional[list[AstrologicalPoint]] = None,
+        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
         *,
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -456,8 +456,8 @@ class ChartDataFactory:
     @staticmethod
     def create_composite_chart_data(
         composite_subject: CompositeSubjectModel,
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_points: Optional[list[AstrologicalPoint]] = None,
+        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         *,
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
@@ -488,8 +488,8 @@ class ChartDataFactory:
     def create_return_chart_data(
         natal_subject: AstrologicalSubjectModel,
         return_subject: PlanetReturnModel,
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_points: Optional[list[AstrologicalPoint]] = None,
+        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
         *,
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -524,8 +524,8 @@ class ChartDataFactory:
     @staticmethod
     def create_single_wheel_return_chart_data(
         return_subject: PlanetReturnModel,
-        active_points: Optional[List[AstrologicalPoint]] = None,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_points: Optional[list[AstrologicalPoint]] = None,
+        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
         *,
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,

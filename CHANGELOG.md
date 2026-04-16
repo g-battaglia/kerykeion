@@ -1,5 +1,51 @@
 # Changelog
 
+## 6.0.0a24
+
+_2026-04-16_
+
+**Code quality audit: bug fixes, deduplication, type modernization, and cleanup.**
+
+### Bug Fixes
+
+- Fix `RelationshipScoreFactory.get_relationship_score()` reentrancy — calling it twice on the same instance no longer accumulates stale state. Score, aspects list, and breakdown are reset at the start of each call.
+- Fix duplicate CSS `stroke-width: 1px; stroke-width: 0.5px` in aspect grid rendering — the first declaration was dead (overridden by the second). Now emits only `stroke-width: 0.5px`.
+- Regenerated 10 sidereal theme combination SVG baselines affected by the CSS fix.
+
+### Code Deduplication
+
+- Deduplicate `_should_calculate()` into a static method on `AstrologicalSubjectFactory` — replaces 3 identical local function definitions across `_calculate_houses`, `_calculate_derived_planets`, and `_calculate_planets`.
+- Consolidate `_create_subject_for_date()` in `EphemerisDataFactory` — replaces 2 identical 18-line `from_birth_data()` call blocks.
+- Refactor `_convert_coordinate_to_string()` in `charts_utils` — replaces 2 identical lat/lng formatting functions (also fixes `min` shadowing the builtin and DMS carry-over at 60 seconds).
+- Replace inline XML serialization with `_serialize_active_config()` in `context_serializer` — deduplicates 2 identical 3-line blocks for active points/aspects.
+- Consolidate `_deep_merge()` — remove duplicate in `kerykeion_settings.py`, import from `translations.py`.
+- Remove redundant `common_planets` rebuild in `CompositeSubjectFactory._calculate_midpoint_composite_points_and_houses` — uses `self.active_points` directly.
+- Simplify house cusp list construction in `house_comparison_utils` — `[h.abs_pos for h in get_houses_list(subject)]` replaces 12-line explicit lists (x2).
+
+### Cleanup & Modernization
+
+- `List[X]` → `list[X]`, `Tuple[X]` → `tuple[X]`, `Union[X, None]` → `Optional[X]` across 15+ files (PEP 585 / PEP 604).
+- `AnySubjectModel` type alias in `kr_models.py` replaces 5 repeated `Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]`.
+- `_MODULE_DIR` constant in `chart_drawer.py` replaces 5+ repeated `Path(__file__).parent` calls.
+- `_ZODIAC_DEFAULT_SCALE` + `_ZODIAC_SIGN_IDS` in `draw_modern.py` replace 2 hardcoded 12-entry dicts and a duplicate local list.
+- `_POLAR_LATITUDE_LIMIT`, `_MAX_DAYS`, `_MAX_HOURS`, `_MAX_MINUTES` constants replace magic numbers.
+- `_MAIN_PLANETS`, `_NODES`, `_ANGLES` constants and `_humanize()` helper in `report.py` replace 12+ inline `.replace("_", " ")` calls.
+- Expanded `_POINT_NUMBER_MAP` with Earth, Pholus, Ceres, Pallas, Juno, Vesta, and all 8 Uranian points.
+- Remove dead code: `__ne__` in `CompositeSubjectFactory` (Python 3 auto-generates it), `_format_date` in `ReportGenerator`, unused `aid` loop variable, TODO comments.
+- Fix typos: `sings` → `signs`, `VIWBOX` → `VIEWBOX`.
+- Remove superfluous `hasattr()` checks in `PlanetaryReturnFactory`.
+- Remove unnecessary `getattr()` calls in `moon_phase_details/factory.py` (attributes always exist on `AstrologicalSubjectModel`).
+- Rename `solar_return_date_utc` → `return_date_utc` and `solar_return_astrological_subject` → `return_astrological_subject` (applies to both Solar and Lunar returns).
+- Move demo-only imports (`AstrologicalSubjectFactory`, `EphemerisDataFactory`, `timedelta`) to `if __name__ == "__main__"` blocks.
+- Convert f-string logging to lazy `%s` formatting in `RelationshipScoreFactory`.
+- `or` chains → `in` tuples for chart type checks.
+- Formatting: consistent double quotes in f-strings, line length compliance, PEP 8 blank lines.
+- Add 4 missing translation keys (`cusp_position_comparison`, `transit_cusp`, `return_cusp`, `house`) to RU, TR, DE, HI.
+
+### Breaking Changes
+
+None — all changes are internal. Public API, model schemas, and SVG output structure are unchanged.
+
 ## 6.0.0a23
 
 _2026-04-12_

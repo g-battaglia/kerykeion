@@ -18,6 +18,9 @@ from typing import Any, Mapping, Optional, Sequence, Union, get_args
 # default set in __init__ is used instead.
 _UNSET: Any = object()
 
+# Module directory for resolving template/theme paths
+_MODULE_DIR = Path(__file__).parent
+
 from kerykeion.ephemeris_backend import swe
 from scour.scour import scourString
 
@@ -78,7 +81,13 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.charts.draw_modern import draw_modern_horoscope, draw_modern_dual_horoscope
-from kerykeion.utilities import get_houses_list, inline_css_variables_in_svg, distribute_percentages_to_100, format_iso_display, extract_year_from_iso
+from kerykeion.utilities import (
+    get_houses_list,
+    inline_css_variables_in_svg,
+    distribute_percentages_to_100,
+    format_iso_display,
+    extract_year_from_iso,
+)
 from kerykeion.settings.chart_defaults import (
     DEFAULT_CHART_COLORS,
     DEFAULT_CELESTIAL_POINTS_SETTINGS,
@@ -1712,7 +1721,7 @@ class ChartDrawer:  # type: ignore[no-redef]
     _BASIC_CHART_VIEWBOX = f"0 0 {DEFAULT_DIMENSIONS.natal_width} {DEFAULT_DIMENSIONS.default_height}"
     _WIDE_CHART_VIEWBOX = f"0 0 {DEFAULT_DIMENSIONS.full_width} 546.0"
     _ULTRA_WIDE_CHART_VIEWBOX = f"0 0 {DEFAULT_DIMENSIONS.ultra_wide_width} 546.0"
-    _TRANSIT_CHART_WITH_TABLE_VIWBOX = f"0 0 {DEFAULT_DIMENSIONS.full_width_with_table} 546.0"
+    _TRANSIT_CHART_WITH_TABLE_VIEWBOX = f"0 0 {DEFAULT_DIMENSIONS.full_width_with_table} 546.0"
 
     # -------------------------------------------------------------------------
     # GRID X-POSITIONS (from GridPositionsConfig)
@@ -2151,7 +2160,8 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if has_gauquelin:
             n_gauq = sum(
-                1 for p in self.available_kerykeion_celestial_points
+                1
+                for p in self.available_kerykeion_celestial_points
                 if hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
             )
             if n_gauq <= _GAUQUELIN_MAX_ROWS:
@@ -2859,6 +2869,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         if has_gauquelin:
             # Unified Gauquelin grid replaces both planet and house grids
             from kerykeion.charts.charts_utils import _GAUQUELIN_COLUMN_WIDTH
+
             main_grid_right = 645 + grid_shift + _GAUQUELIN_COLUMN_WIDTH
             extents.append(main_grid_right)
         else:
@@ -3217,7 +3228,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 location_name = self.first_obj.city or "Unknown"
                 latitude = self.first_obj.lat or 0.0
                 longitude = self.first_obj.lng or 0.0
-        elif self.chart_type in ["Transit", "DualReturnChart"] and self.second_obj:
+        elif self.chart_type in ("Transit", "DualReturnChart") and self.second_obj:
             # Use location from the second subject (transit/return)
             location_name = self.second_obj.city or "Unknown"
             latitude = self.second_obj.lat or 0.0
@@ -3241,7 +3252,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.color_style_tag = ""
             return
 
-        theme_dir = Path(__file__).parent / "themes"
+        theme_dir = _MODULE_DIR / "themes"
 
         self.color_style_tag = _load_cached_file(str(theme_dir / f"{theme}.css"))
 
@@ -3472,7 +3483,9 @@ class ChartDrawer:  # type: ignore[no-redef]
             external_view=self.external_view,
         )
 
-    def _setup_house_sectors(self, template_dict: dict, houses_list: list, second_houses_list: list | None = None) -> None:
+    def _setup_house_sectors(
+        self, template_dict: dict, houses_list: list, second_houses_list: list | None = None
+    ) -> None:
         """Populate template_dict with transparent house sector wedges for interactive highlighting.
 
         For dual charts, when second_houses_list is provided, renders two sets of sectors:
@@ -3520,6 +3533,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if has_gauquelin:
             from kerykeion.charts.charts_utils import draw_gauquelin_sectors
+
             # Replace houses with Gauquelin sectors
             template_dict["makeHouses"] = draw_gauquelin_sectors(
                 r=self.main_radius,
@@ -3675,6 +3689,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if has_gauquelin:
             from kerykeion.charts.charts_utils import draw_gauquelin_unified_grid
+
             # Shift the Gauquelin grid 30px left for better symmetry: the unified
             # grid (220px) replaces both planet grid (80px) + house grid (120px),
             # and centering it in the same footprint requires a leftward nudge.
@@ -3925,7 +3940,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             str: Concatenated SVG elements for zodiac slices.
         """
-        sings = get_args(Sign)
+        signs = get_args(Sign)
         return "".join(
             draw_zodiac_slice(
                 c1=self.first_circle_radius,
@@ -3934,9 +3949,9 @@ class ChartDrawer:  # type: ignore[no-redef]
                 num=i,
                 r=r,
                 style=f"fill:{self.chart_colors_settings[f'zodiac_bg_{i}']}; fill-opacity: 0.5;",
-                type=sing,
+                type=sign,
             )
-            for i, sing in enumerate(sings)
+            for i, sign in enumerate(signs)
         )
 
     def _draw_all_aspects_lines(self, r, ar):
@@ -3957,15 +3972,17 @@ class ChartDrawer:  # type: ignore[no-redef]
             aspect_name = aspect["aspect"]
             aspect_color = next((a["color"] for a in self.aspects_settings if a["name"] == aspect_name), None)
             if aspect_color:
-                parts.append(draw_aspect_line(
-                    r=r,
-                    ar=ar,
-                    aspect=aspect,
-                    color=aspect_color,
-                    seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                    show_aspect_icon=self.show_aspect_icons,
-                    rendered_icon_positions=rendered_icon_positions,
-                ))
+                parts.append(
+                    draw_aspect_line(
+                        r=r,
+                        ar=ar,
+                        aspect=aspect,
+                        color=aspect_color,
+                        seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                        show_aspect_icon=self.show_aspect_icons,
+                        rendered_icon_positions=rendered_icon_positions,
+                    )
+                )
         return "".join(parts)
 
     def _truncate_name(
@@ -4304,7 +4321,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._validate_chart_style(effective_style)
         td = self._create_template_dictionary(custom_title=custom_title)
 
-        DATA_DIR = Path(__file__).parent
+        DATA_DIR = _MODULE_DIR
         raw_template = _load_cached_file(str(DATA_DIR / "templates" / "chart.xml"))
 
         template_data = td.model_dump()
@@ -4478,7 +4495,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._validate_chart_style(effective_style)
 
         if effective_style == "modern":
-            raw_template = _load_cached_file(str(Path(__file__).parent / "templates" / "modern_wheel.xml"))
+            raw_template = _load_cached_file(str(_MODULE_DIR / "templates" / "modern_wheel.xml"))
 
             template_dict = self._create_template_dictionary()
             modern_content = self._generate_modern_content(
@@ -4492,7 +4509,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 }
             )
         else:
-            raw_template = _load_cached_file(str(Path(__file__).parent / "templates" / "wheel_only.xml"))
+            raw_template = _load_cached_file(str(_MODULE_DIR / "templates" / "wheel_only.xml"))
 
             template_dict = self._create_template_dictionary()
             wheel_viewbox = self._wheel_only_viewbox()
@@ -4556,11 +4573,11 @@ class ChartDrawer:  # type: ignore[no-redef]
             str: SVG markup for the aspect grid only.
         """
 
-        template = _load_cached_file(str(Path(__file__).parent / "templates" / "aspect_grid_only.xml"))
+        template = _load_cached_file(str(_MODULE_DIR / "templates" / "aspect_grid_only.xml"))
 
         template_dict = self._create_template_dictionary()
 
-        if self.chart_type in ["Transit", "Synastry", "DualReturnChart"]:
+        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
             aspects_grid = draw_transit_aspect_grid(
                 self.chart_colors_settings["paper_0"],
                 self.available_planets_setting,

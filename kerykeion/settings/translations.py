@@ -60,6 +60,7 @@ def _select_language(language_dict: Optional[Mapping[str, Any]], language: Optio
 
 
 def _deep_merge(base: Mapping[str, Any], overrides: Mapping[str, Any]) -> dict[str, Any]:
+    """Recursively merge overrides into base, returning a new dict."""
     merged: dict[str, Any] = {}
     for key, value in base.items():
         merged[key] = deepcopy(value)

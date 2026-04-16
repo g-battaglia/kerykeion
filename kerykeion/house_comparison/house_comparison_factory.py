@@ -16,7 +16,6 @@ from kerykeion.house_comparison.house_comparison_utils import (
 from typing import Union
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.schemas.kr_models import HouseComparisonModel
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.schemas import AstrologicalSubjectModel, PlanetReturnModel
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 
@@ -108,6 +107,8 @@ class HouseComparisonFactory:
 
 
 if __name__ == "__main__":
+    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
     natal_chart = AstrologicalSubjectFactory.from_birth_data("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
     partner_chart = AstrologicalSubjectFactory.from_birth_data("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
 
