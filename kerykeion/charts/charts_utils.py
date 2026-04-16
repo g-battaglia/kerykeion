@@ -17,7 +17,7 @@ The module is organized in the following sections:
 
 import datetime
 import math
-from typing import Literal, Mapping, Optional, Sequence, TYPE_CHECKING, Union
+from typing import Literal, Mapping, Optional, Sequence, Union
 
 from kerykeion.schemas import ChartType, KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
@@ -25,12 +25,10 @@ from kerykeion.schemas.kr_models import (
     AspectModel,
     AstrologicalSubjectModel,
     CompositeSubjectModel,
+    HouseComparisonModel,
     KerykeionPointModel,
     PlanetReturnModel,
 )
-
-if TYPE_CHECKING:
-    from kerykeion.schemas.kr_models import HouseComparisonModel  # noqa: F401
 from kerykeion.schemas.settings_models import (
     KerykeionLanguageCelestialPointModel,
     KerykeionSettingsCelestialPointModel,

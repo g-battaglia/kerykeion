@@ -340,9 +340,10 @@ DEFAULT_GRID_POSITIONS = GridPositionsConfig()
 
 from typing import Protocol, TYPE_CHECKING
 
+from kerykeion.schemas.kr_models import ChartDataModel
+
 if TYPE_CHECKING:
     from kerykeion.charts.chart_drawer import ChartDrawer  # type: ignore[attr-defined]  # noqa: F811
-    from kerykeion.schemas.kr_models import ChartDataModel  # noqa: F401
 
 
 class ChartRendererProtocol(Protocol):

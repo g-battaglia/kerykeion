@@ -13,16 +13,14 @@ from kerykeion.house_comparison.house_comparison_utils import (
     calculate_points_in_reciprocal_houses,
     calculate_cusps_in_reciprocal_houses,
 )
-from typing import TYPE_CHECKING, Union
+from typing import Union
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
-from kerykeion.schemas.kr_models import HouseComparisonModel
+from kerykeion.schemas.kr_models import (
+    AstrologicalSubjectModel,
+    HouseComparisonModel,
+    PlanetReturnModel,
+)
 from kerykeion.schemas.kr_literals import AstrologicalPoint
-
-if TYPE_CHECKING:
-    from kerykeion.schemas.kr_models import (  # noqa: F401
-        AstrologicalSubjectModel,
-        PlanetReturnModel,
-    )
 
 
 class HouseComparisonFactory:
