@@ -420,14 +420,18 @@ class TransitsTimeRangeFactory:
                 return None
 
             # Build the aspect settings filter for the target aspect
-            aspect_settings = [s for s in DEFAULT_CHART_ASPECTS_SETTINGS if s["name"] == aspect_name]
-            if not aspect_settings:
+            matching_setting = next(
+                (s for s in DEFAULT_CHART_ASPECTS_SETTINGS if s["name"] == aspect_name),
+                None,
+            )
+            if matching_setting is None:
                 return None
+            aspect_settings = [matching_setting]
 
             # Resolve matching active_aspect orb
             for aa in self.active_aspects:
                 if aa["name"] == aspect_name:
-                    aspect_settings = [dict(aspect_settings[0])]
+                    aspect_settings = [dict(matching_setting)]
                     aspect_settings[0]["orb"] = aa["orb"]
                     break
 

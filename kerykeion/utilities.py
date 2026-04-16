@@ -31,6 +31,7 @@ from kerykeion.schemas.kr_literals import (
     AstrologicalPoint,
     Houses,
 )
+from kerykeion.settings.config_constants import POINT_NUMBER_MAP as _POINT_NUMBER_MAP_IMPORT
 from typing import Union, Optional, get_args, cast
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
@@ -41,6 +42,15 @@ from datetime import datetime
 logger = getLogger(__name__)
 
 
+# Pre-compiled regex patterns (invariant, compiled once at module load)
+_CSS_VARIABLE_PATTERN = re.compile(r"--([a-zA-Z0-9_-]+)\s*:\s*([^;]+);")
+
+# Cached get_args() tuples (type introspection is expensive, values are invariant)
+_HOUSE_NAMES_TUPLE: tuple[Houses, ...] = get_args(Houses)
+_LUNAR_PHASE_EMOJIS: tuple[LunarPhaseEmoji, ...] = get_args(LunarPhaseEmoji)
+_LUNAR_PHASE_NAMES: tuple[LunarPhaseName, ...] = get_args(LunarPhaseName)
+
+
 # =============================================================================
 # CONSTANTS AND MAPPINGS
 # =============================================================================
@@ -48,53 +58,11 @@ logger = getLogger(__name__)
 # Maximum latitude for reliable house calculations
 _POLAR_LATITUDE_LIMIT = 66.0
 
-# Mapping of astrological point names to Swiss Ephemeris IDs
-# NOTE: The main planets (Sun through Poseidon) are defined in STANDARD_PLANETS
-# in astrological_subject_factory.py. The entries below include those plus
-# extra points (South Nodes, White Moon, Axial Cusps) that don't have SE IDs.
-# Kept explicit here to avoid circular imports with astrological_subject_factory.
-_POINT_NUMBER_MAP: dict[str, int] = {
-    # Main planets (must match STANDARD_PLANETS in astrological_subject_factory.py)
-    "Sun": 0,
-    "Moon": 1,
-    "Mercury": 2,
-    "Venus": 3,
-    "Mars": 4,
-    "Jupiter": 5,
-    "Saturn": 6,
-    "Uranus": 7,
-    "Neptune": 8,
-    "Pluto": 9,
-    "Mean_North_Lunar_Node": 10,
-    "True_North_Lunar_Node": 11,
-    "Mean_Lilith": 12,
-    "True_Lilith": 13,
-    "Earth": 14,
-    "Chiron": 15,
-    "Pholus": 16,
-    "Ceres": 17,
-    "Pallas": 18,
-    "Juno": 19,
-    "Vesta": 20,
-    "Interpolated_Lilith": 21,  # SE_INTP_APOG
-    "Interpolated_Perigee": 22,  # SE_INTP_PERG
-    "Cupido": 40,
-    "Hades": 41,
-    "Zeus": 42,
-    "Kronos": 43,
-    "Apollon": 44,
-    "Admetos": 45,
-    "Vulkanus": 46,
-    "Poseidon": 47,
-    # Extra points without Swiss Ephemeris IDs
-    "Mean_South_Lunar_Node": 1000,
-    "True_South_Lunar_Node": 1100,
-    "White_Moon": 56,  # SE_WHITE_MOON / Selena
-    "Ascendant": 9900,
-    "Descendant": 9901,
-    "Medium_Coeli": 9902,
-    "Imum_Coeli": 9903,
-}
+# Mapping of astrological point names to Swiss Ephemeris IDs.
+# Canonical definition lives in `kerykeion.settings.config_constants.POINT_NUMBER_MAP`
+# (shared with STANDARD_PLANETS in astrological_subject_factory). The historical
+# module-private alias is preserved here for backward compatibility.
+_POINT_NUMBER_MAP: dict[str, int] = _POINT_NUMBER_MAP_IMPORT
 
 # Zodiac sign properties lookup table
 _ZODIAC_SIGNS: dict[int, ZodiacSignModel] = {
@@ -325,14 +293,12 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
     Raises:
         ValueError: If the planet's position doesn't fall within any house range
     """
-    house_names = get_args(Houses)
-
-    for i in range(len(house_names)):
+    for i in range(len(_HOUSE_NAMES_TUPLE)):
         start_degree = houses_degree_ut_list[i]
         end_degree = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
 
         if is_point_between(start_degree, end_degree, planet_degree):
-            return house_names[i]
+            return _HOUSE_NAMES_TUPLE[i]
 
     raise ValueError(f"Error in house calculation, planet: {planet_degree}, houses: {houses_degree_ut_list}")
 
@@ -478,9 +444,8 @@ def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     Raises:
         KerykeionException: If phase is outside valid range
     """
-    lunar_phase_emojis = get_args(LunarPhaseEmoji)
     index = _get_lunar_phase_index(phase)
-    return lunar_phase_emojis[index]
+    return _LUNAR_PHASE_EMOJIS[index]
 
 
 def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
@@ -496,9 +461,8 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     Raises:
         KerykeionException: If phase is outside valid range
     """
-    lunar_phase_names = get_args(LunarPhaseName)
     index = _get_lunar_phase_index(phase)
-    return lunar_phase_names[index]
+    return _LUNAR_PHASE_NAMES[index]
 
 
 def check_and_adjust_polar_latitude(latitude: float) -> float:
@@ -797,8 +761,7 @@ def inline_css_variables_in_svg(svg_content: str) -> str:
     style_blocks = style_tag_pattern.findall(svg_content)
 
     for style_block in style_blocks:
-        css_variable_pattern = re.compile(r"--([a-zA-Z0-9_-]+)\s*:\s*([^;]+);")
-        for match in css_variable_pattern.finditer(style_block):
+        for match in _CSS_VARIABLE_PATTERN.finditer(style_block):
             variable_name = match.group(1)
             variable_value = match.group(2).strip()
             css_variable_map[f"--{variable_name}"] = variable_value

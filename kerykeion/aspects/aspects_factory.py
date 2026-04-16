@@ -323,42 +323,44 @@ class AspectsFactory:
         }
 
         all_aspects_list = []
+        n_points = len(active_points_list)
 
-        for first in range(len(active_points_list)):
+        for first_idx, first_point in enumerate(active_points_list):
+            first_name = first_point["name"]
+            first_abs_pos = first_point["abs_pos"]
+            first_speed = first_point.get("speed") or 0.0
+            first_in_axes = first_name in AXES_LIST
             # Generate aspects list without repetitions (single chart - same chart)
-            for second in range(first + 1, len(active_points_list)):
-                # Skip predefined opposite pairs (AC/DC, MC/IC, North/South nodes)
-                first_name = active_points_list[first]["name"]
-                second_name = active_points_list[second]["name"]
+            for second_idx in range(first_idx + 1, n_points):
+                second_point = active_points_list[second_idx]
+                second_name = second_point["name"]
 
+                # Skip predefined opposite pairs (AC/DC, MC/IC, North/South nodes)
                 if (first_name, second_name) in opposite_pairs:
                     continue
 
-                aspect = get_aspect_from_two_points(
-                    filtered_settings, active_points_list[first]["abs_pos"], active_points_list[second]["abs_pos"]
-                )
+                second_abs_pos = second_point["abs_pos"]
+                aspect = get_aspect_from_two_points(filtered_settings, first_abs_pos, second_abs_pos)
 
                 if aspect["verdict"]:
                     # Get planet IDs using lookup dictionary for better performance
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)
 
-                    # Get speeds first, fall back to 0.0 only if missing/None
-                    first_speed = active_points_list[first].get("speed") or 0.0
-                    second_speed = active_points_list[second].get("speed") or 0.0
+                    second_speed = second_point.get("speed") or 0.0
 
                     # Determine aspect movement.
                     # If both points are chart axes, there is no meaningful
                     # dynamic movement between them, so we mark the aspect as
                     # "Static" regardless of any synthetic speeds.
                     aspect_movement: AspectMovementType
-                    if first_name in AXES_LIST and second_name in AXES_LIST:
+                    if first_in_axes and second_name in AXES_LIST:
                         aspect_movement = "Static"
                     else:
                         # Calculate aspect movement (applying/separating/fixed)
                         aspect_movement = calculate_aspect_movement(
-                            active_points_list[first]["abs_pos"],
-                            active_points_list[second]["abs_pos"],
+                            first_abs_pos,
+                            second_abs_pos,
                             aspect["aspect_degrees"],
                             first_speed,
                             second_speed,
@@ -367,10 +369,10 @@ class AspectsFactory:
                     aspect_model = AspectModel(
                         p1_name=first_name,
                         p1_owner=subject.name,
-                        p1_abs_pos=active_points_list[first]["abs_pos"],
+                        p1_abs_pos=first_abs_pos,
                         p2_name=second_name,
                         p2_owner=subject.name,
-                        p2_abs_pos=active_points_list[second]["abs_pos"],
+                        p2_abs_pos=second_abs_pos,
                         aspect=aspect["name"],
                         orbit=aspect["orbit"],
                         aspect_degrees=aspect["aspect_degrees"],
@@ -506,14 +508,14 @@ class AspectsFactory:
         Returns:
             List of filtered and updated aspect settings
         """
+        active_orbs = {a["name"]: a["orb"] for a in active_aspects}
         filtered_settings = []
         for aspect_setting in aspects_settings:
-            for active_aspect in active_aspects:
-                if aspect_setting["name"] == active_aspect["name"]:
-                    aspect_setting_copy = dict(aspect_setting)  # Don't modify original
-                    aspect_setting_copy["orb"] = active_aspect["orb"]
-                    filtered_settings.append(aspect_setting_copy)
-                    break
+            orb = active_orbs.get(aspect_setting["name"])
+            if orb is not None:
+                aspect_setting_copy = dict(aspect_setting)  # Don't modify original
+                aspect_setting_copy["orb"] = orb
+                filtered_settings.append(aspect_setting_copy)
         return filtered_settings
 
     @staticmethod

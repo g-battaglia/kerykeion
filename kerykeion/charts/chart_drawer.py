@@ -7,7 +7,6 @@ import logging
 import re
 from functools import lru_cache
 from math import ceil
-from datetime import datetime
 from pathlib import Path
 from string import Template
 from typing import Any, Mapping, Optional, Sequence, Union, get_args
@@ -47,7 +46,6 @@ from kerykeion.schemas.kr_literals import (
     KerykeionChartLanguage,
     AstrologicalPoint,
 )
-from kerykeion.schemas.kr_models import ChartDataModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.settings.translations import get_translations, load_language_settings
 from kerykeion.charts.charts_utils import (
@@ -344,6 +342,7 @@ from typing import Protocol, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from kerykeion.charts.chart_drawer import ChartDrawer  # type: ignore[attr-defined]  # noqa: F811
+    from kerykeion.schemas.kr_models import ChartDataModel  # noqa: F401
 
 
 class ChartRendererProtocol(Protocol):

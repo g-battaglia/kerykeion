@@ -17,6 +17,7 @@ from kerykeion.schemas.kr_models import (
     SingleChartDataModel,
     KerykeionPointModel,
 )
+from kerykeion.settings.config_constants import AXIAL_POINTS, LUNAR_NODES, MAIN_PLANETS
 
 
 ASPECT_SYMBOLS = {
@@ -41,10 +42,12 @@ MOVEMENT_SYMBOLS = {
 SubjectLike = Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
 LiteralReportKind = Literal["subject", "single_chart", "dual_chart", "moon_phase_overview"]
 
-# Ordering constants for celestial point reports
-_MAIN_PLANETS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
-_NODES = ["Mean_North_Lunar_Node", "True_North_Lunar_Node"]
-_ANGLES = ["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
+# Ordering constants for celestial point reports.
+# Canonical definitions live in `kerykeion.settings.config_constants`; the module-private
+# aliases below are kept so downstream code referring to them keeps working unchanged.
+_MAIN_PLANETS = list(MAIN_PLANETS)
+_NODES = list(LUNAR_NODES)
+_ANGLES = list(AXIAL_POINTS)
 
 
 def _humanize(name: str) -> str:
@@ -516,12 +519,13 @@ class ReportGenerator:
         if not points:
             return "No celestial points data available."
 
+        points_by_name = {p.name: p for p in points}
         sorted_points = []
         for name in _ANGLES + _MAIN_PLANETS + _NODES:
-            sorted_points.extend([p for p in points if p.name == name])
-
-        used_names = set(_ANGLES + _MAIN_PLANETS + _NODES)
-        sorted_points.extend([p for p in points if p.name not in used_names])
+            point = points_by_name.pop(name, None)
+            if point is not None:
+                sorted_points.append(point)
+        sorted_points.extend(points_by_name.values())
 
         celestial_data: list[list[str]] = [["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]]
         for point in sorted_points:

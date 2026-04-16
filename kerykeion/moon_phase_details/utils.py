@@ -24,7 +24,6 @@ from __future__ import annotations
 import logging
 import math
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Optional
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
