@@ -519,13 +519,19 @@ class ReportGenerator:
         if not points:
             return "No celestial points data available."
 
-        points_by_name = {p.name: p for p in points}
-        sorted_points = []
+        ordered_names = set(_ANGLES + _MAIN_PLANETS + _NODES)
+        grouped_points: dict[str, list] = {}
+        remaining_points: list = []
+        for point in points:
+            if point.name in ordered_names:
+                grouped_points.setdefault(point.name, []).append(point)
+            else:
+                remaining_points.append(point)
+
+        sorted_points: list = []
         for name in _ANGLES + _MAIN_PLANETS + _NODES:
-            point = points_by_name.pop(name, None)
-            if point is not None:
-                sorted_points.append(point)
-        sorted_points.extend(points_by_name.values())
+            sorted_points.extend(grouped_points.get(name, []))
+        sorted_points.extend(remaining_points)
 
         celestial_data: list[list[str]] = [["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]]
         for point in sorted_points:

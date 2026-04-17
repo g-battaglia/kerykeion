@@ -559,9 +559,14 @@ POINT_NUMBER_MAP: dict[str, int] = {
     "Imum_Coeli": 9903,
 }
 """
-Full mapping of astrological point names to Swiss Ephemeris IDs, including
-synthetic IDs (>=1000) for points that don't have a native SE identifier
-(South Nodes, axial cusps, White Moon).
+Swiss Ephemeris–compatible subset of astrological points: bodies with native SE
+IDs plus synthetic IDs (>=1000) for points that can still be looked up by this
+map (South Nodes, axial cusps, White Moon).
+
+This is NOT a full mapping of all `AstrologicalPoint` values. Many active points
+(Vertex, Arabic parts / Lots, fixed stars, TNOs, etc.) are intentionally absent
+because they are not used by the call sites that consume this constant. Callers
+that can receive arbitrary `AstrologicalPoint` names must handle `KeyError`.
 """
 
 MAIN_PLANETS: list[AstrologicalPoint] = [

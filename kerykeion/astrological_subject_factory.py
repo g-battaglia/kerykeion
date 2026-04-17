@@ -93,7 +93,7 @@ DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS = 30
 # Re-exported here as the historical public symbol for backward compatibility
 # (imported by transits_time_range_factory, planetary_return_factory,
 # primary_directions/directions_factory, etc.).
-STANDARD_PLANETS: Dict[AstrologicalPoint, int] = _STANDARD_PLANETS_CANONICAL
+STANDARD_PLANETS: Dict[AstrologicalPoint, int] = dict(_STANDARD_PLANETS_CANONICAL)
 
 # Trans-Neptunian Objects requiring AST_OFFSET
 # These use Swiss Ephemeris asteroid offset + minor planet number
