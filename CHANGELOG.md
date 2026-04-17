@@ -1,5 +1,27 @@
 # Changelog
 
+## 6.0.0a26
+
+_2026-04-17_
+
+**Drop-in replacement of `scour` with [`svg-polish`](https://pypi.org/project/svg-polish/) — modernised, type-safe, secure-by-default SVG optimizer.**
+
+### Dependency
+
+- Replace `scour>=0.38.2` with `svg-polish>=1.0.0` in runtime dependencies. `svg-polish` is a hardened, type-safe modernisation of Scour 0.38.2 (dormant upstream since August 2021): identical optimization output on the inputs `kerykeion` produces, plus protection against the `var(--…)` / `calc(…)` / keyword-token crashes that the legacy `scour` raises on real-world chart SVGs.
+
+### Internal
+
+- `ChartDrawer._minify` now imports `optimize` from `svg_polish` instead of `scourString` from `scour.scour`. The narrow `try/except` around the call is preserved as a defensive fallback for malformed XML; svg_polish itself no longer raises on the CSS edge-cases that scour did.
+
+### Compatibility
+
+- No public API change. SVG output is byte-identical to the previous `scour`-based pipeline on the kerykeion test matrix (8885 / 8885 tests pass; 165 skipped, all online-only).
+
+### Breaking Changes
+
+None.
+
 ## 6.0.0a25
 
 _2026-04-17_

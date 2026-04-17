@@ -21,7 +21,7 @@ _UNSET: Any = object()
 _MODULE_DIR = Path(__file__).parent
 
 from kerykeion.ephemeris_backend import swe
-from scour.scour import scourString
+from svg_polish import optimize as _svg_polish_optimize
 
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
 from kerykeion.schemas import (
@@ -3925,13 +3925,13 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if minify:
             try:
-                template = scourString(template)
+                template = _svg_polish_optimize(template)
             except Exception as exc:
-                # scour may crash on complex SVG structures (e.g. NotFoundErr
-                # when moveCommonAttributesToParentGroup encounters style-based
-                # attributes).  Fall back to string-only minification.
+                # svg_polish handles the scour-inherited var()/calc() crashes
+                # on complex SVG structures, but keep the fallback for truly
+                # malformed XML and other unexpected failures.
                 logging.warning(
-                    "scour failed on SVG minification, falling back to string-based minification: %s",
+                    "svg_polish failed on SVG minification, falling back to string-based minification: %s",
                     exc,
                 )
 

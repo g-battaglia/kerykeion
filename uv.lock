@@ -339,6 +339,15 @@ wheels = [
 ]
 
 [[package]]
+name = "defusedxml"
+version = "0.7.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0f/d5/c66da9b79e5bdb124974bfe172b4daf3c984ebd9c2a06e2b8a4dc7331c72/defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69", size = 75520, upload-time = "2021-03-08T10:59:26.269Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/6c/aa3f2f849e01cb6a001cd8554a88d4c77c5c1a31c95bdf1cf9301e6d9ef4/defusedxml-0.7.1-py2.py3-none-any.whl", hash = "sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61", size = 25604, upload-time = "2021-03-08T10:59:24.45Z" },
+]
+
+[[package]]
 name = "execnet"
 version = "2.1.2"
 source = { registry = "https://pypi.org/simple" }
@@ -446,7 +455,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a25"
+version = "6.0.0a26"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -454,8 +463,8 @@ dependencies = [
     { name = "pytz" },
     { name = "requests" },
     { name = "requests-cache" },
-    { name = "scour" },
     { name = "simple-ascii-tables" },
+    { name = "svg-polish" },
     { name = "typing-extensions" },
 ]
 
@@ -494,8 +503,8 @@ requires-dist = [
     { name = "pytz", specifier = ">=2024.2" },
     { name = "requests", specifier = ">=2.33.0" },
     { name = "requests-cache", specifier = ">=1.2.1" },
-    { name = "scour", specifier = ">=0.38.2" },
     { name = "simple-ascii-tables", specifier = ">=1.0.0" },
+    { name = "svg-polish", specifier = ">=1.0.0" },
     { name = "typing-extensions", specifier = ">=4.12.2" },
 ]
 provides-extras = ["swiss", "all"]
@@ -1202,15 +1211,6 @@ wheels = [
 ]
 
 [[package]]
-name = "scour"
-version = "0.38.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/75/19/f519ef8aa2f379935a44212c5744e2b3a46173bf04e0110fb7f4af4028c9/scour-0.38.2.tar.gz", hash = "sha256:6881ec26660c130c5ecd996ac6f6b03939dd574198f50773f2508b81a68e0daf", size = 52947, upload-time = "2020-11-22T14:05:55.677Z" }
-
-[[package]]
 name = "secretstorage"
 version = "3.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1294,6 +1294,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7b/ae/2d9c981590ed9999a0d91755b47fc74f74de286b0f5cee14c9269041e6c4/soupsieve-2.8.3.tar.gz", hash = "sha256:3267f1eeea4251fb42728b6dfb746edc9acaffc4a45b27e19450b676586e8349", size = 118627, upload-time = "2026-01-20T04:27:02.457Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/46/2c/1462b1d0a634697ae9e55b3cecdcb64788e8b7d63f54d923fcd0bb140aed/soupsieve-2.8.3-py3-none-any.whl", hash = "sha256:ed64f2ba4eebeab06cc4962affce381647455978ffc1e36bb79a545b91f45a95", size = 37016, upload-time = "2026-01-20T04:27:01.012Z" },
+]
+
+[[package]]
+name = "svg-polish"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "defusedxml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7d/c5/e7987aa81660268e7cc64db5360ca28ef6e729cd225a28443d9da246a2ec/svg_polish-1.0.0.tar.gz", hash = "sha256:56df761f7f0beb7c41060616e7eb5ddc990ce78e4a3323f04d62790ab431273d", size = 209970, upload-time = "2026-04-17T11:06:26.648Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/59/3e/3de48cd6c5c0c94924fb28127bd392ba99175f8a3f03bc43d9eb694bd61c/svg_polish-1.0.0-py3-none-any.whl", hash = "sha256:a513b3f584b64b293c2535d0231eb8bb27e977f193f8f1e5f59cdf7fc59ae61d", size = 122129, upload-time = "2026-04-17T11:06:24.881Z" },
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a25"
+version = "6.0.0a26"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -47,7 +47,7 @@ requires-python = ">=3.12"
 dependencies = [
     "libephemeris==1.0.0a15",
     "pydantic>=2.5",
-    "scour>=0.38.2",
+    "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",
     "requests>=2.33.0",
     "simple-ascii-tables>=1.0.0",
