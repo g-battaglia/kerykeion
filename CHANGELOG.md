@@ -1,5 +1,38 @@
 # Changelog
 
+## 6.0.0a25
+
+_2026-04-17_
+
+**Performance refactor of hot paths (TIER 0-2), plus targeted bug fixes from Codex and CodeRabbit review.**
+
+### Performance
+
+- Refactor hot paths per `REFACTORY.md` TIER 0-2 — zero breaking changes, 260 SHA-256 signatures byte-identical across all chart types, house systems, sidereal modes, perspectives, returns, transits, eclipses, occultations, ACG, primary directions, fixed stars, dignities.
+- Central constants unification (`STANDARD_PLANETS`, `POINT_NUMBER_MAP`, `AXIAL_POINTS` frozenset) in `kerykeion.settings.config_constants`.
+- Aspect loop optimization, SVG `list+join` rendering, pre-indexed aspect grid (`O(n²·k)` → `O(n² + k)`), cached `get_args()`, `O(n+m)` orb merge, matching-setting lookup in transit range.
+- Measured speedups (min-of-N, best-of-2): `svg_natal` -39.3% (1.65x), `house_comparison` -23.4% (1.30x), `custom_aspects_squares` -20.5% (1.26x), `composite_midpoint` -19.4% (1.24x), `svg_synastry` -17.7% (1.21x), `transits_time_range` -15.4% (1.18x), 15/15 benchmarks faster, 0 regressions.
+
+### Bug Fixes
+
+- Fix `_update_aspect_settings` regression in `AspectsFactory`: when `active_aspects` contains duplicate names, the first occurrence's orb now wins (the prior dict-comprehension refactor had silently introduced last-wins semantics). Uses `dict.setdefault` instead.
+- Restore runtime availability of `AstrologicalSubjectModel`, `PlanetReturnModel`, `HouseComparisonModel`, `ChartDataModel`, `AspectModel`, `CompositeSubjectModel`, `KerykeionPointModel`, `ChartType`, `KerykeionException`, `AstrologicalPoint` in modules that expose them as public annotations. The perf refactor had moved them under `if TYPE_CHECKING:`, which would break `typing.get_type_hints()` introspection for downstream consumers that rely on runtime type resolution (e.g. FastAPI).
+- `_setup_gauquelin_sectors` now clears `template_dict["makeHouseSectors"]` when Gauquelin mode is active — the 12-wedge invisible hit-area overlay was inconsistent with the 36-sector visible ring and would mislead any frontend using it for click/hover targeting.
+
+### Public API hygiene (CodeRabbit review)
+
+- `kerykeion.astrological_subject_factory.STANDARD_PLANETS` is now re-exported as a shallow copy of the canonical dict in `config_constants`, so downstream mutation of the public symbol no longer leaks into the shared constant.
+- `ReportGenerator._celestial_points_report` now preserves duplicate point entries when ordering the report (previously collapsed by `{p.name: p}` dict comprehension).
+- `POINT_NUMBER_MAP` docstring rewritten to accurately describe it as the Swiss Ephemeris–compatible subset and enumerate which point classes are outside its scope.
+
+### Chores
+
+- `.opencode/` fully gitignored (replaces the narrower `.opencode/plans` rule).
+
+### Breaking Changes
+
+None — all changes preserve public API, model schemas, and SVG output structure. 260 byte-identical SVG signatures across the test matrix verify output stability.
+
 ## 6.0.0a24
 
 _2026-04-16_
