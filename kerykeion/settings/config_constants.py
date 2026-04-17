@@ -496,3 +496,103 @@ DISCEPOLO_SCORE_ACTIVE_ASPECTS: list[ActiveAspect] = [
 """
 List of active aspects with their orbs according to Ciro Discepolo's affinity scoring methodology.
 """
+
+
+# =============================================================================
+# POINT ID MAPPINGS (Swiss Ephemeris)
+# =============================================================================
+# Centralized celestial point name -> Swiss Ephemeris ID mappings.
+# Previously duplicated in `utilities.py` (_POINT_NUMBER_MAP) and
+# `astrological_subject_factory.py` (STANDARD_PLANETS); unified here to
+# eliminate drift between the two. Historic symbols remain re-exported in
+# those modules for backward compatibility.
+
+STANDARD_PLANETS: dict[AstrologicalPoint, int] = {
+    "Sun": 0,
+    "Moon": 1,
+    "Mercury": 2,
+    "Venus": 3,
+    "Mars": 4,
+    "Jupiter": 5,
+    "Saturn": 6,
+    "Uranus": 7,
+    "Neptune": 8,
+    "Pluto": 9,
+    "Mean_North_Lunar_Node": 10,
+    "True_North_Lunar_Node": 11,
+    "Mean_Lilith": 12,
+    "True_Lilith": 13,
+    "Earth": 14,
+    "Chiron": 15,
+    "Pholus": 16,
+    "Ceres": 17,
+    "Pallas": 18,
+    "Juno": 19,
+    "Vesta": 20,
+    # Interpolated lunar apse points (SwissEph IDs 21-22)
+    "Interpolated_Lilith": 21,  # SE_INTP_APOG -- proper interpolated apogee
+    "Interpolated_Perigee": 22,  # SE_INTP_PERG -- proper interpolated perigee
+    # Uranian / Hamburg School hypothetical planets (SwissEph IDs 40-47)
+    "Cupido": 40,
+    "Hades": 41,
+    "Zeus": 42,
+    "Kronos": 43,
+    "Apollon": 44,
+    "Admetos": 45,
+    "Vulkanus": 46,
+    "Poseidon": 47,
+}
+"""
+Standard planets with direct Swiss Ephemeris IDs (0-22, 40-47).
+Used for `swe.calc_ut()` calls where the planet identifier is a native SE code.
+"""
+
+POINT_NUMBER_MAP: dict[str, int] = {
+    **STANDARD_PLANETS,
+    # Extra points without Swiss Ephemeris IDs
+    "Mean_South_Lunar_Node": 1000,
+    "True_South_Lunar_Node": 1100,
+    "White_Moon": 56,  # SE_WHITE_MOON / Selena
+    "Ascendant": 9900,
+    "Descendant": 9901,
+    "Medium_Coeli": 9902,
+    "Imum_Coeli": 9903,
+}
+"""
+Swiss Ephemeris–compatible subset of astrological points: bodies with native SE
+IDs plus synthetic IDs (>=1000) for points that can still be looked up by this
+map (South Nodes, axial cusps, White Moon).
+
+This is NOT a full mapping of all `AstrologicalPoint` values. Many active points
+(Vertex, Arabic parts / Lots, fixed stars, TNOs, etc.) are intentionally absent
+because they are not used by the call sites that consume this constant. Callers
+that can receive arbitrary `AstrologicalPoint` names must handle `KeyError`.
+"""
+
+MAIN_PLANETS: list[AstrologicalPoint] = [
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+]
+"""The ten main planets (Sun, Moon, Mercury..Pluto) in canonical report order."""
+
+LUNAR_NODES: list[AstrologicalPoint] = [
+    "Mean_North_Lunar_Node",
+    "True_North_Lunar_Node",
+]
+"""North lunar nodes (mean and true). South nodes are derived via OPPOSITE_PAIRS."""
+
+AXIAL_POINTS: list[AstrologicalPoint] = [
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
+]
+"""The four axial cusps (angles) of the horoscope."""

@@ -403,9 +403,11 @@ def _draw_cusp_ring(
     Returns:
         SVG group string for the cusp ring.
     """
-    out = '<g kr:node="CuspRing">\n'
+    parts: list[str] = ['<g kr:node="CuspRing">\n']
 
-    out += f'<path d="{_annulus_path(R_CUSP_OUTER, R_CUSP_INNER)}" fill="{COLOR_BACKGROUND}" fill-rule="evenodd"/>\n'
+    parts.append(
+        f'<path d="{_annulus_path(R_CUSP_OUTER, R_CUSP_INNER)}" fill="{COLOR_BACKGROUND}" fill-rule="evenodd"/>\n'
+    )
 
     for house in houses:
         cusp_angle = _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut)
@@ -425,7 +427,7 @@ def _draw_cusp_ring(
         # Upright angle counteracts global (-90) and group (-cusp_angle)
         angle_upright = 90 + cusp_angle
 
-        out += (
+        parts.append(
             f'  <g kr:node="Cusp" kr:absoluteposition="{house.abs_pos}" '
             f'kr:signposition="{house.position}" kr:sign="{sign_abbrev}" '
             f'kr:slug="{house.name}" '
@@ -434,7 +436,7 @@ def _draw_cusp_ring(
 
         if is_upper_half:
             # Minutes text
-            out += (
+            parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
                 f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
@@ -445,14 +447,14 @@ def _draw_cusp_ring(
 
             # Sign glyph
             final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
-            out += (
+            parts.append(
                 f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
                 f"    </g>\n"
             )
 
             # Degrees text
-            out += (
+            parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
                 f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
@@ -463,7 +465,7 @@ def _draw_cusp_ring(
         else:
             # Alternate layout for lower half (mirrored text order)
             # Minutes text
-            out += (
+            parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
                 f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
@@ -474,14 +476,14 @@ def _draw_cusp_ring(
 
             # Sign glyph
             final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
-            out += (
+            parts.append(
                 f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
                 f"    </g>\n"
             )
 
             # Degrees text
-            out += (
+            parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
                 f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
@@ -490,7 +492,7 @@ def _draw_cusp_ring(
                 f"{degrees}º</text>\n"
             )
 
-        out += "  </g>\n"
+        parts.append("  </g>\n")
 
     # Only draw signs that are NOT already represented by a house cusp.
     # Skip entirely when the outer zodiac background ring is active,
@@ -508,15 +510,15 @@ def _draw_cusp_ring(
                 upright_angle = 90 + sign_angle
                 final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
 
-                out += (
+                parts.append(
                     f'<g transform="rotate(-{sign_angle:.6f} {CENTER} {CENTER}) '
                     f'translate({CENTER} 2.75) rotate({upright_angle:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                     f'  <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}"/>\n'
                     f"</g>\n"
                 )
 
-    out += "</g>\n"
-    return out
+    parts.append("</g>\n")
+    return "".join(parts)
 
 
 # =============================================================================

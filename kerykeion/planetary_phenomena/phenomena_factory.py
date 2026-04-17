@@ -15,7 +15,6 @@ determine morning/evening star status.
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH

@@ -70,7 +70,6 @@ License: AGPL-3.0
 
 import calendar
 import logging
-from pathlib import Path
 
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 

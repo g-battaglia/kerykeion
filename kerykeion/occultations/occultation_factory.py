@@ -32,7 +32,6 @@ License: AGPL-3.0
 import logging
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
-from pathlib import Path
 from pydantic import Field
 from typing import List
 

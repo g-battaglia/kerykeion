@@ -14,7 +14,6 @@ Methods: NODBIT_MEAN (mean elements), NODBIT_OSCU (osculating/instantaneous)
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 from typing import Dict, List, Optional
 
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH

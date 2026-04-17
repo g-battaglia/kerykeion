@@ -12,13 +12,15 @@ Swiss Ephemeris function: ``swe.houses_armc(armc, lat, eps, hsys)``
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Optional
 
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+from kerykeion.settings.config_constants import AXIAL_POINTS
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
+
+_AXIAL_POINTS_SET: frozenset[str] = frozenset(AXIAL_POINTS)
 
 _EPHE_PATH = EPHE_DATA_PATH
 
@@ -127,9 +129,8 @@ class RelocatedChartFactory:
         relocated_data["houses_names_list"] = houses_list
 
         # Reassign planets to new houses
-        axial_points = {"Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"}
         for point_name in subject.active_points:
-            if point_name in axial_points:
+            if point_name in _AXIAL_POINTS_SET:
                 continue
             field_name = point_name.lower()
             point = relocated_data.get(field_name)

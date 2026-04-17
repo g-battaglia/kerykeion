@@ -40,6 +40,7 @@ from pathlib import Path
 from typing import Optional, List, Dict, Any, get_args
 from dataclasses import dataclass, field
 from contextlib import contextmanager
+from functools import partial
 
 
 from kerykeion.fetch_geonames import FetchGeonames
@@ -64,7 +65,10 @@ from kerykeion.utilities import (
     format_ancient_iso,
     normalize_zodiac_type,
 )
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.config_constants import (
+    DEFAULT_ACTIVE_POINTS,
+    STANDARD_PLANETS as _STANDARD_PLANETS_CANONICAL,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -84,42 +88,12 @@ DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS = 30
 # Using a centralized configuration eliminates repetitive code and makes
 # it easier to add new celestial bodies in the future.
 
-# Standard planets with direct Swiss Ephemeris IDs (0-20+)
-STANDARD_PLANETS: Dict[AstrologicalPoint, int] = {
-    "Sun": 0,
-    "Moon": 1,
-    "Mercury": 2,
-    "Venus": 3,
-    "Mars": 4,
-    "Jupiter": 5,
-    "Saturn": 6,
-    "Uranus": 7,
-    "Neptune": 8,
-    "Pluto": 9,
-    "Mean_North_Lunar_Node": 10,
-    "True_North_Lunar_Node": 11,
-    "Mean_Lilith": 12,
-    "True_Lilith": 13,
-    "Earth": 14,
-    "Chiron": 15,
-    "Pholus": 16,
-    "Ceres": 17,
-    "Pallas": 18,
-    "Juno": 19,
-    "Vesta": 20,
-    # Interpolated lunar apse points (SwissEph IDs 21-22)
-    "Interpolated_Lilith": 21,  # SE_INTP_APOG — proper interpolated apogee
-    "Interpolated_Perigee": 22,  # SE_INTP_PERG — proper interpolated perigee
-    # Uranian / Hamburg School hypothetical planets (SwissEph IDs 40-47)
-    "Cupido": 40,
-    "Hades": 41,
-    "Zeus": 42,
-    "Kronos": 43,
-    "Apollon": 44,
-    "Admetos": 45,
-    "Vulkanus": 46,
-    "Poseidon": 47,
-}
+# Standard planets with direct Swiss Ephemeris IDs (0-22, 40-47).
+# Canonical definition lives in `kerykeion.settings.config_constants.STANDARD_PLANETS`.
+# Re-exported here as the historical public symbol for backward compatibility
+# (imported by transits_time_range_factory, planetary_return_factory,
+# primary_directions/directions_factory, etc.).
+STANDARD_PLANETS: Dict[AstrologicalPoint, int] = dict(_STANDARD_PLANETS_CANONICAL)
 
 # Trans-Neptunian Objects requiring AST_OFFSET
 # These use Swiss Ephemeris asteroid offset + minor planet number
@@ -1537,7 +1511,7 @@ class AstrologicalSubjectFactory:
             for angles).
         """
 
-        should_calculate = lambda point: AstrologicalSubjectFactory._should_calculate(point, active_points)
+        should_calculate = partial(AstrologicalSubjectFactory._should_calculate, active_points=active_points)
 
         # Track which axial cusps are actually calculated
         calculated_axial_cusps: List[AstrologicalPoint] = []
@@ -1747,7 +1721,7 @@ class AstrologicalSubjectFactory:
             names to calculated_planets.
         """
 
-        should_calculate = lambda point: AstrologicalSubjectFactory._should_calculate(point, active_points)
+        should_calculate = partial(AstrologicalSubjectFactory._should_calculate, active_points=active_points)
 
         for derived_name, config in OPPOSITE_PAIRS.items():
             if not should_calculate(derived_name):
@@ -2058,7 +2032,7 @@ class AstrologicalSubjectFactory:
             This ensures that dependent calculations and aspects only use valid data.
         """
 
-        should_calculate = lambda point: AstrologicalSubjectFactory._should_calculate(point, active_points)
+        should_calculate = partial(AstrologicalSubjectFactory._should_calculate, active_points=active_points)
 
         point_type: PointType = "AstrologicalPoint"
         julian_day = data["julian_day"]

@@ -1085,7 +1085,6 @@ def draw_aspect_grid(
     Returns:
         SVG string containing the aspect grid rectangles and symbols.
     """
-    svg_output = ""
     style = f"stroke:{stroke_color}; stroke-width: 0.5px; fill:none"
     box_size = 14
 
@@ -1095,10 +1094,25 @@ def draw_aspect_grid(
     # Reverse the list of active planets for the first iteration
     reversed_planets = active_planets[::-1]
 
+    # Pre-index aspects by unordered pair (O(k)) so the grid loop can look up aspects
+    # in O(1) instead of scanning the full aspects list for every cell (was O(n^2 * k)).
+    # Preserve original order when multiple aspects exist for the same pair (synastry).
+    aspect_lookup: dict[tuple[int, int], list] = {}
+    for aspect in aspects:
+        p1 = aspect["p1"]
+        p2 = aspect["p2"]
+        key = (p1, p2) if p1 <= p2 else (p2, p1)
+        aspect_lookup.setdefault(key, []).append(aspect)
+
+    parts: list[str] = []
     for index, planet_a in enumerate(reversed_planets):
         # Draw the grid box for the planet
-        svg_output += f'<rect kr:node="AspectsGridRect" x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
-        svg_output += f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{planet_a["name"]}" />'
+        parts.append(
+            f'<rect kr:node="AspectsGridRect" x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
+        )
+        parts.append(
+            f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{planet_a["name"]}" />'
+        )
 
         # Update the starting coordinates for the next box
         x_start += box_size
@@ -1108,20 +1122,26 @@ def draw_aspect_grid(
         x_aspect = x_start
         y_aspect = y_start + box_size
 
+        planet_a_id = planet_a["id"]
         # Iterate over the remaining planets
         for planet_b in reversed_planets[index + 1 :]:
             # Draw the grid box for the aspect
-            svg_output += f'<rect kr:node="AspectsGridRect" x="{x_aspect}" y="{y_aspect}" width="{box_size}" height="{box_size}" style="{style}"/>'
+            parts.append(
+                f'<rect kr:node="AspectsGridRect" x="{x_aspect}" y="{y_aspect}" width="{box_size}" height="{box_size}" style="{style}"/>'
+            )
             x_aspect += box_size
 
-            # Check for aspects between the planets
-            for aspect in aspects:
-                if (aspect["p1"] == planet_a["id"] and aspect["p2"] == planet_b["id"]) or (
-                    aspect["p1"] == planet_b["id"] and aspect["p2"] == planet_a["id"]
-                ):
-                    svg_output += f'<use  x="{x_aspect - box_size + 1}" y="{y_aspect + 1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
+            # Check for aspects between the planets via pre-built index
+            planet_b_id = planet_b["id"]
+            key = (planet_a_id, planet_b_id) if planet_a_id <= planet_b_id else (planet_b_id, planet_a_id)
+            matches = aspect_lookup.get(key)
+            if matches:
+                for aspect in matches:
+                    parts.append(
+                        f'<use  x="{x_aspect - box_size + 1}" y="{y_aspect + 1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
+                    )
 
-    return svg_output
+    return "".join(parts)
 
 
 def draw_houses_cusps_and_text_number(
@@ -1169,7 +1189,7 @@ def draw_houses_cusps_and_text_number(
             or transit_house_cusp_color but they are None.
     """
 
-    path = ""
+    parts: list[str] = []
     xr = 12
 
     for i in range(xr):
@@ -1222,15 +1242,21 @@ def draw_houses_cusps_and_text_number(
 
             # Add the house number text for the second subject
             fill_opacity = "0" if chart_type == "Transit" else ".4"
-            path += f'<g kr:node="HouseNumber" kr:house="{i + 1}" kr:horoscope="1">'
-            path += f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: {fill_opacity}; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
-            path += "</g>"
+            parts.append(f'<g kr:node="HouseNumber" kr:house="{i + 1}" kr:horoscope="1">')
+            parts.append(
+                f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: {fill_opacity}; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
+            )
+            parts.append("</g>")
 
             # Add the house cusp line for the second subject
             stroke_opacity = "0" if chart_type == "Transit" else ".3"
-            path += f'<g kr:node="Cusp" kr:absoluteposition="{second_subject_houses_list[i].abs_pos}" kr:signposition="{second_subject_houses_list[i].position}" kr:sign="{second_subject_houses_list[i].sign}" kr:slug="{second_subject_houses_list[i].name}" kr:horoscope="1">'
-            path += f"<line x1='{t_x1}' y1='{t_y1}' x2='{t_x2}' y2='{t_y2}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:{stroke_opacity};'/>"
-            path += "</g>"
+            parts.append(
+                f'<g kr:node="Cusp" kr:absoluteposition="{second_subject_houses_list[i].abs_pos}" kr:signposition="{second_subject_houses_list[i].position}" kr:sign="{second_subject_houses_list[i].sign}" kr:slug="{second_subject_houses_list[i].name}" kr:horoscope="1">'
+            )
+            parts.append(
+                f"<line x1='{t_x1}' y1='{t_y1}' x2='{t_x2}' y2='{t_y2}' style='stroke: {t_linecolor}; stroke-width: 1px; stroke-opacity:{stroke_opacity};'/>"
+            )
+            parts.append("</g>")
 
         # Adjust dropin based on chart type and external view
         dropin_map = {"Transit": 84, "Synastry": 84, "DualReturnChart": 84}
@@ -1242,16 +1268,22 @@ def draw_houses_cusps_and_text_number(
         ytext = sliceToY(0, (r - dropin), text_offset) + dropin
 
         # Add the house cusp line for the first subject
-        path += f'<g kr:node="Cusp" kr:absoluteposition="{first_subject_houses_list[i].abs_pos}" kr:signposition="{first_subject_houses_list[i].position}" kr:sign="{first_subject_houses_list[i].sign}" kr:slug="{first_subject_houses_list[i].name}" kr:horoscope="0">'
-        path += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
-        path += "</g>"
+        parts.append(
+            f'<g kr:node="Cusp" kr:absoluteposition="{first_subject_houses_list[i].abs_pos}" kr:signposition="{first_subject_houses_list[i].position}" kr:sign="{first_subject_houses_list[i].sign}" kr:slug="{first_subject_houses_list[i].name}" kr:horoscope="0">'
+        )
+        parts.append(
+            f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {linecolor}; stroke-width: 1px; stroke-dasharray:3,2; stroke-opacity:.4;"/>'
+        )
+        parts.append("</g>")
 
         # Add the house number text for the first subject
-        path += f'<g kr:node="HouseNumber" kr:house="{i + 1}" kr:horoscope="0">'
-        path += f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
-        path += "</g>"
+        parts.append(f'<g kr:node="HouseNumber" kr:house="{i + 1}" kr:horoscope="0">')
+        parts.append(
+            f'<text style="fill: var(--kerykeion-chart-color-house-number); fill-opacity: .6; font-size: 14px"><tspan x="{xtext - 3}" y="{ytext + 3}">{i + 1}</tspan></text>'
+        )
+        parts.append("</g>")
 
-    return path
+    return "".join(parts)
 
 
 def draw_transit_aspect_list(

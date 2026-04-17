@@ -18,7 +18,6 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import math
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
-from pathlib import Path
 from typing import List, Optional, Dict, Literal
 from pydantic import BaseModel, Field
 

@@ -7,7 +7,6 @@ import logging
 import re
 from functools import lru_cache
 from math import ceil
-from datetime import datetime
 from pathlib import Path
 from string import Template
 from typing import Any, Mapping, Optional, Sequence, Union, get_args
@@ -47,7 +46,6 @@ from kerykeion.schemas.kr_literals import (
     KerykeionChartLanguage,
     AstrologicalPoint,
 )
-from kerykeion.schemas.kr_models import ChartDataModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 from kerykeion.settings.translations import get_translations, load_language_settings
 from kerykeion.charts.charts_utils import (
@@ -341,6 +339,8 @@ DEFAULT_GRID_POSITIONS = GridPositionsConfig()
 # =============================================================================
 
 from typing import Protocol, TYPE_CHECKING
+
+from kerykeion.schemas.kr_models import ChartDataModel
 
 if TYPE_CHECKING:
     from kerykeion.charts.chart_drawer import ChartDrawer  # type: ignore[attr-defined]  # noqa: F811
@@ -3542,6 +3542,10 @@ class ChartDrawer:  # type: ignore[no-redef]
                 seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 color=self.chart_colors_settings["houses_radix_line"],
             )
+            # Clear the 12-house invisible hit-area wedges: in Gauquelin mode the
+            # visible ring is 36 sectors, so the 12-wedge geometry would mislead
+            # any frontend using makeHouseSectors for click/hover targeting.
+            template_dict["makeHouseSectors"] = ""
             template_dict["makeGauquelinSectors"] = ""
         else:
             template_dict["makeGauquelinSectors"] = ""
