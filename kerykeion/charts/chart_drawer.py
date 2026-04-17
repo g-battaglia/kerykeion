@@ -3542,6 +3542,10 @@ class ChartDrawer:  # type: ignore[no-redef]
                 seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 color=self.chart_colors_settings["houses_radix_line"],
             )
+            # Clear the 12-house invisible hit-area wedges: in Gauquelin mode the
+            # visible ring is 36 sectors, so the 12-wedge geometry would mislead
+            # any frontend using makeHouseSectors for click/hover targeting.
+            template_dict["makeHouseSectors"] = ""
             template_dict["makeGauquelinSectors"] = ""
         else:
             template_dict["makeGauquelinSectors"] = ""
