@@ -3532,7 +3532,10 @@ class ChartDrawer:  # type: ignore[no-redef]
                 break
 
         if has_gauquelin:
-            from kerykeion.charts.charts_utils import draw_gauquelin_sectors
+            from kerykeion.charts.charts_utils import (
+                draw_gauquelin_sector_hit_areas,
+                draw_gauquelin_sectors,
+            )
 
             # Replace houses with Gauquelin sectors
             template_dict["makeHouses"] = draw_gauquelin_sectors(
@@ -3546,7 +3549,14 @@ class ChartDrawer:  # type: ignore[no-redef]
             # visible ring is 36 sectors, so the 12-wedge geometry would mislead
             # any frontend using makeHouseSectors for click/hover targeting.
             template_dict["makeHouseSectors"] = ""
-            template_dict["makeGauquelinSectors"] = ""
+            # Emit 36 transparent clickable wedges so the frontend can focus
+            # individual Gauquelin sectors (mirrors the HouseSector convention).
+            template_dict["makeGauquelinSectors"] = draw_gauquelin_sector_hit_areas(
+                r=self.main_radius,
+                c1=self.first_circle_radius,
+                c3=self.third_circle_radius,
+                seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+            )
         else:
             template_dict["makeGauquelinSectors"] = ""
 

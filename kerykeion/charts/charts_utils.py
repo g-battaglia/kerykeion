@@ -2727,3 +2727,68 @@ def draw_gauquelin_sectors(
         )
 
     return output
+
+
+def draw_gauquelin_sector_hit_areas(
+    r: Union[int, float],
+    c1: Union[int, float],
+    c3: Union[int, float],
+    seventh_house_degree_ut: float,
+) -> str:
+    """Draw 36 transparent annular wedges for interactive Gauquelin sector highlighting.
+
+    Each wedge spans 10° (1/36 of the diurnal circle) between the outer circle (c1)
+    and the inner circle (c3). The wedges are fully transparent by default and only
+    become visible when the frontend applies a CSS class (.chart-focused).
+
+    Sector 1 starts at the Ascendant (east horizon), numbered clockwise. Emitted
+    elements mirror the HouseSector convention so the same frontend click handlers
+    can target them: ``<g kr:node="GauquelinSector" kr:sector="N">``.
+
+    Args:
+        r: Chart radius in pixels.
+        c1: Outer boundary dropin offset (first_circle_radius) — same convention
+            as draw_house_sectors.
+        c3: Inner boundary dropin offset (third_circle_radius).
+        seventh_house_degree_ut: Descendant absolute position for wheel orientation
+            (matches draw_gauquelin_sectors convention).
+
+    Returns:
+        SVG string containing 36 transparent annular wedge elements.
+    """
+    outer_visual_r = r - c1
+    inner_visual_r = r - c3
+    outer_dropin = c1
+    inner_dropin = c3
+
+    sector_span = 10.0
+    output = ""
+
+    for i in range(36):
+        sector_num = i + 1
+        offset_start = (-seventh_house_degree_ut) + i * sector_span
+        offset_end = (-seventh_house_degree_ut) + (i + 1) * sector_span
+
+        ox1 = sliceToX(0, outer_visual_r, offset_start) + outer_dropin
+        oy1 = sliceToY(0, outer_visual_r, offset_start) + outer_dropin
+        ox2 = sliceToX(0, outer_visual_r, offset_end) + outer_dropin
+        oy2 = sliceToY(0, outer_visual_r, offset_end) + outer_dropin
+        ix1 = sliceToX(0, inner_visual_r, offset_start) + inner_dropin
+        iy1 = sliceToY(0, inner_visual_r, offset_start) + inner_dropin
+        ix2 = sliceToX(0, inner_visual_r, offset_end) + inner_dropin
+        iy2 = sliceToY(0, inner_visual_r, offset_end) + inner_dropin
+
+        d = (
+            f"M {ox1},{oy1} "
+            f"A {outer_visual_r},{outer_visual_r} 0 0,0 {ox2},{oy2} "
+            f"L {ix2},{iy2} "
+            f"A {inner_visual_r},{inner_visual_r} 0 0,1 {ix1},{iy1} Z"
+        )
+
+        output += (
+            f'<g kr:node="GauquelinSector" kr:sector="{sector_num}">'
+            f'<path d="{d}" style="fill: transparent; stroke: none; pointer-events: all;"/>'
+            f"</g>"
+        )
+
+    return output

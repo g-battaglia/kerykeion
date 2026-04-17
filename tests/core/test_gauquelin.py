@@ -137,3 +137,34 @@ class TestGauquelinSVG:
         assert len(svg_content) > 1000
         # Should have many sector lines (36 sectors × 3 rings = ~108 lines)
         assert svg_content.count("<line") > 36
+
+    def test_svg_contains_36_sector_hit_areas(self, subject_with_gauquelin, tmp_path):
+        """Gauquelin mode must emit 36 transparent clickable wedges with kr:sector attrs."""
+        chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
+        drawer = ChartDrawer(chart_data=chart_data, theme="light")
+        drawer.save_svg(output_path=str(tmp_path), filename="gauq_hit_areas")
+        svg = (tmp_path / "gauq_hit_areas.svg").read_text()
+
+        # 36 hit-area groups total (double/single quote tolerant for scour)
+        double = svg.count('kr:node="GauquelinSector"')
+        single = svg.count("kr:node='GauquelinSector'")
+        assert double + single == 36, f"expected 36 hit areas, got {double + single}"
+
+        # All 36 sector numbers present as kr:sector attributes
+        for n in range(1, 37):
+            assert f'kr:sector="{n}"' in svg or f"kr:sector='{n}'" in svg, (
+                f"sector {n} missing from SVG"
+            )
+
+        # Wedges are transparent and interactive
+        assert "fill: transparent" in svg or "fill:transparent" in svg
+        assert "pointer-events: all" in svg or "pointer-events:all" in svg
+
+    def test_svg_without_gauquelin_has_no_sector_hit_areas(self, subject_without_gauquelin, tmp_path):
+        """Non-Gauquelin charts must not emit GauquelinSector hit-areas."""
+        chart_data = ChartDataFactory.create_natal_chart_data(subject_without_gauquelin)
+        drawer = ChartDrawer(chart_data=chart_data, theme="light")
+        drawer.save_svg(output_path=str(tmp_path), filename="no_gauq_hit_areas")
+        svg = (tmp_path / "no_gauq_hit_areas.svg").read_text()
+
+        assert "GauquelinSector" not in svg
