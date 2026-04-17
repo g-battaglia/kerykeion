@@ -758,11 +758,13 @@ def _generate_point_svg(
     is_retrograde = point_details["retrograde"] is True
     retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
+    gauq = getattr(point_details, "gauquelin_sector", None)
+    gauq_attr = f' kr:gauquelinsector="{gauq}"' if gauq is not None else ""
 
     parts: list[str] = [
         f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
         f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',
-        f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr}{horoscope_attr} ',
+        f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr}{horoscope_attr}{gauq_attr} ',
         f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
         f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />',
     ]

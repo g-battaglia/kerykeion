@@ -2704,7 +2704,7 @@ def draw_gauquelin_sectors(
         output += (
             f'<line x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}" '
             f'style="stroke:{color}; stroke-width:{stroke_width}px; '
-            f'stroke-opacity:{stroke_opacity};" />\n'
+            f'stroke-opacity:{stroke_opacity}; pointer-events:none;" />\n'
         )
 
         # Sector number — placed in the middle of each sector arc
@@ -2722,7 +2722,7 @@ def draw_gauquelin_sectors(
         output += (
             f'<text x="{tx:.2f}" y="{ty:.2f}" '
             f'style="fill:{color}; font-size:{font_size}px; font-weight:{font_weight}; '
-            f'opacity:0.9; text-anchor:middle; dominant-baseline:central;">'
+            f'opacity:0.9; text-anchor:middle; dominant-baseline:central; pointer-events:none;">'
             f"{sector_num}</text>\n"
         )
 
