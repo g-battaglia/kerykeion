@@ -3537,6 +3537,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 draw_gauquelin_sectors,
             )
 
+            gauq_cusps = getattr(self.first_obj, "gauquelin_sector_cusps", None)
+
             # Replace houses with Gauquelin sectors
             template_dict["makeHouses"] = draw_gauquelin_sectors(
                 r=self.main_radius,
@@ -3544,6 +3546,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 outer_r=self.third_circle_radius,
                 seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                 color=self.chart_colors_settings["houses_radix_line"],
+                gauquelin_cusps=gauq_cusps,
             )
             # Clear the 12-house invisible hit-area wedges: in Gauquelin mode the
             # visible ring is 36 sectors, so the 12-wedge geometry would mislead
@@ -3556,6 +3559,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 c1=self.first_circle_radius,
                 c3=self.third_circle_radius,
                 seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
+                gauquelin_cusps=gauq_cusps,
             )
         else:
             template_dict["makeGauquelinSectors"] = ""
@@ -4275,6 +4279,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 hasattr(p, "gauquelin_sector") and p.gauquelin_sector is not None
                 for p in self.available_kerykeion_celestial_points
             )
+            gauq_cusps = getattr(self.first_obj, "gauquelin_sector_cusps", None)
             return draw_modern_horoscope(
                 planets=self.available_kerykeion_celestial_points,
                 houses=houses_list,
@@ -4284,6 +4289,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 aspects_settings=self.aspects_settings,
                 show_zodiac_background_ring=show_zodiac_background_ring,
                 gauquelin_sectors=has_gauquelin,
+                gauquelin_cusps=gauq_cusps,
             )
 
     def _validate_chart_style(self, style: KerykeionChartStyle) -> None:

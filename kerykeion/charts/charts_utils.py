@@ -2648,52 +2648,59 @@ def calculate_synastry_quality_points(
 # =============================================================================
 
 
+def _classic_gauquelin_mid_offset(
+    offsets: list[float],
+    i: int,
+) -> float:
+    """Compute the offset midpoint of Gauquelin sector i (0-indexed) for the classic chart."""
+    a = offsets[i]
+    b = offsets[(i + 1) % 36]
+    span = (a - b) % 360
+    return (b + span / 2) % 360
+
+
 def draw_gauquelin_sectors(
     r: Union[int, float],
     inner_r: Union[int, float],
     outer_r: Union[int, float],
     seventh_house_degree_ut: float,
     color: str = "var(--kerykeion-color-secondary)",
+    gauquelin_cusps: Optional[list[float]] = None,
 ) -> str:
     """Draw 36 Gauquelin sector divisions, replacing the 12-house system.
 
-    The Gauquelin system divides the diurnal circle into 36 equal sectors
-    of 10° each, numbered clockwise from the Ascendant (east horizon).
-    This function replaces ``draw_houses_cusps_and_text_number`` when
-    Gauquelin mode is active.
-
-    Sector 1 starts at the Ascendant (east). The "plus zones" (sectors
-    near the angles: 36, 1 near ASC; 9, 10 near MC; 18, 19 near DSC;
-    27, 28 near IC) are where Gauquelin found statistical correlations.
+    The Gauquelin system divides the diurnal circle into 36 sectors
+    numbered clockwise from the Ascendant (east horizon).
+    When ``gauquelin_cusps`` are provided, sector lines are drawn at the
+    actual diurnal-arc cusp positions (unequal zodiacal spacing).
 
     Args:
         r: Main chart radius (same as for house cusps).
-        inner_r: Inner radius offset (first_circle_radius — cusp lines
-            extend from here to outer_r).
-        outer_r: Outer radius offset (third_circle_radius — cusp lines
-            start from here toward inner_r).
+        inner_r: Inner radius offset (first_circle_radius).
+        outer_r: Outer radius offset (third_circle_radius).
         seventh_house_degree_ut: Descendant degree for chart orientation.
         color: CSS color for sector cusp lines.
+        gauquelin_cusps: 36 zodiacal longitudes for actual sector boundaries.
 
     Returns:
         SVG string with 36 sector lines + sector numbers (replaces makeHouses).
     """
     output = ""
-    sector_span = 10.0  # degrees per sector
+
+    if gauquelin_cusps is not None:
+        offsets = [(-seventh_house_degree_ut) + c for c in gauquelin_cusps]
+    else:
+        offsets = [(-seventh_house_degree_ut) + i * 10.0 for i in range(36)]
 
     for i in range(36):
-        angle_deg = i * sector_span
-        # Chart coordinate offset (same system as house cusps)
-        offset = (-seventh_house_degree_ut) + angle_deg
+        offset = offsets[i]
 
-        # Line endpoints — same geometry as draw_houses_cusps_and_text_number
         x1 = sliceToX(0, (r - outer_r), offset) + outer_r
         y1 = sliceToY(0, (r - outer_r), offset) + outer_r
         x2 = sliceToX(0, r - inner_r, offset) + inner_r
         y2 = sliceToY(0, r - inner_r, offset) + inner_r
 
-        # Angular sectors (every 9th = quadrant boundary) get bolder lines
-        is_quadrant = i % 9 == 0  # sectors 1, 10, 19, 28 (ASC, MC, DSC, IC)
+        is_quadrant = i % 9 == 0
         if is_quadrant:
             stroke_width = 1.8
             stroke_opacity = 1.0
@@ -2707,15 +2714,12 @@ def draw_gauquelin_sectors(
             f'stroke-opacity:{stroke_opacity}; pointer-events:none;" />\n'
         )
 
-        # Sector number — placed in the middle of each sector arc
-        mid_offset = offset + sector_span / 2.0
-        # Position text between inner and outer radius
+        mid_offset = _classic_gauquelin_mid_offset(offsets, i)
         text_r_factor = (r - inner_r) + (inner_r - outer_r) * 0.5
         tx = sliceToX(0, text_r_factor, mid_offset) + (r - text_r_factor)
         ty = sliceToY(0, text_r_factor, mid_offset) + (r - text_r_factor)
         sector_num = i + 1
 
-        # Font size: larger for quadrant sectors, smaller for others
         font_size = 8 if is_quadrant else 6
         font_weight = "bold" if is_quadrant else "normal"
 
@@ -2734,24 +2738,20 @@ def draw_gauquelin_sector_hit_areas(
     c1: Union[int, float],
     c3: Union[int, float],
     seventh_house_degree_ut: float,
+    gauquelin_cusps: Optional[list[float]] = None,
 ) -> str:
     """Draw 36 transparent annular wedges for interactive Gauquelin sector highlighting.
 
-    Each wedge spans 10° (1/36 of the diurnal circle) between the outer circle (c1)
-    and the inner circle (c3). The wedges are fully transparent by default and only
-    become visible when the frontend applies a CSS class (.chart-focused).
-
-    Sector 1 starts at the Ascendant (east horizon), numbered clockwise. Emitted
-    elements mirror the HouseSector convention so the same frontend click handlers
-    can target them: ``<g kr:node="GauquelinSector" kr:sector="N">``.
+    Each wedge spans a Gauquelin sector between the outer circle (c1)
+    and the inner circle (c3). When ``gauquelin_cusps`` are provided,
+    wedge boundaries match the actual diurnal-arc cusp positions.
 
     Args:
         r: Chart radius in pixels.
-        c1: Outer boundary dropin offset (first_circle_radius) — same convention
-            as draw_house_sectors.
+        c1: Outer boundary dropin offset (first_circle_radius).
         c3: Inner boundary dropin offset (third_circle_radius).
-        seventh_house_degree_ut: Descendant absolute position for wheel orientation
-            (matches draw_gauquelin_sectors convention).
+        seventh_house_degree_ut: Descendant absolute position for wheel orientation.
+        gauquelin_cusps: 36 zodiacal longitudes for actual sector boundaries.
 
     Returns:
         SVG string containing 36 transparent annular wedge elements.
@@ -2761,13 +2761,17 @@ def draw_gauquelin_sector_hit_areas(
     outer_dropin = c1
     inner_dropin = c3
 
-    sector_span = 10.0
+    if gauquelin_cusps is not None:
+        offsets = [(-seventh_house_degree_ut) + c for c in gauquelin_cusps]
+    else:
+        offsets = [(-seventh_house_degree_ut) + i * 10.0 for i in range(36)]
+
     output = ""
 
     for i in range(36):
         sector_num = i + 1
-        offset_start = (-seventh_house_degree_ut) + i * sector_span
-        offset_end = (-seventh_house_degree_ut) + (i + 1) * sector_span
+        offset_start = offsets[i]
+        offset_end = offsets[(i + 1) % 36]
 
         ox1 = sliceToX(0, outer_visual_r, offset_start) + outer_dropin
         oy1 = sliceToY(0, outer_visual_r, offset_start) + outer_dropin

@@ -979,6 +979,15 @@ class AstrologicalSubjectFactory:
 
                 point_updates[pk]["gauquelin_sector"] = round(sector, 4)
 
+            # Compute the 36 Gauquelin sector cusps (zodiacal longitudes)
+            try:
+                lat_geo = geopos[1]
+                lon_geo = geopos[0]
+                cusps_g = swe.houses_ex2(jd, lat_geo, lon_geo, ord("G"))
+                calc_data["gauquelin_sector_cusps"] = [round(c, 4) for c in cusps_g[0]]
+            except Exception:
+                pass
+
         # Calculate Local Space (azimuth/altitude) for all celestial points (v6.0)
         if config.calculate_local_space and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
             ls_geopos = (calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0)

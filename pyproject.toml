@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a26"
+version = "6.0.0a27"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -364,4 +364,5 @@ dev = [
     "ruff>=0.12.9",
     "types-pytz>=2025.2.0.20250516",
     "types-requests>=2.32.4.20250611",
+    "pyswisseph>=2.10.3.2",
 ]

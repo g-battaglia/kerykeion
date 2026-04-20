@@ -455,7 +455,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a26"
+version = "6.0.0a27"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -484,6 +484,7 @@ dev = [
     { name = "pdoc" },
     { name = "poethepoet" },
     { name = "pyright" },
+    { name = "pyswisseph" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-sugar" },
@@ -516,6 +517,7 @@ dev = [
     { name = "pdoc", specifier = ">=15.0.4" },
     { name = "poethepoet", specifier = ">=0.36.0" },
     { name = "pyright", specifier = ">=1.1.408" },
+    { name = "pyswisseph", specifier = ">=2.10.3.2" },
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "pytest-cov", specifier = ">=6.0.0" },
     { name = "pytest-sugar", specifier = ">=1.1.1" },

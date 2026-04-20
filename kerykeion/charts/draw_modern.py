@@ -742,6 +742,8 @@ def _draw_indicator_line(
 def _draw_gauquelin_division_lines(
     line_outer_y: float = HOUSE_LINE_OUTER_Y,
     line_inner_y: float = HOUSE_LINE_INNER_Y,
+    gauquelin_cusps: Optional[list[float]] = None,
+    seventh_house_degree_ut: float = 0.0,
 ) -> str:
     """Draw 36 Gauquelin sector division lines through the planet ring.
 
@@ -750,7 +752,10 @@ def _draw_gauquelin_division_lines(
     """
     out = ""
     for i in range(36):
-        angle = i * 10.0
+        if gauquelin_cusps is not None:
+            angle = _zodiac_to_wheel_angle(gauquelin_cusps[i], seventh_house_degree_ut)
+        else:
+            angle = i * 10.0
         is_angular = i % 9 == 0
         stroke_w = ANGULAR_STROKE_WIDTH if is_angular else NORMAL_STROKE_WIDTH
 
@@ -779,6 +784,7 @@ def _draw_planet_ring(
     horoscope_id: Optional[str] = None,
     scale_config: Optional[dict] = None,
     gauquelin_sectors: bool = False,
+    gauquelin_cusps: Optional[list[float]] = None,
 ) -> str:
     """
     Draw the planet ring with data clusters and indicator lines.
@@ -800,6 +806,7 @@ def _draw_planet_ring(
         scale_config: Dict with planet_scale_base, degrees_font_size, sign_scale_base,
                       minutes_font_size, rx_font_size overrides.
         gauquelin_sectors: If True, draw 36 sector lines instead of 12 house lines.
+        gauquelin_cusps: 36 zodiacal longitudes for actual sector boundaries.
 
     Returns:
         SVG group string for the planet ring.
@@ -815,7 +822,7 @@ def _draw_planet_ring(
 
     # Division lines through the planet ring
     if gauquelin_sectors:
-        out += _draw_gauquelin_division_lines(line_outer_y, line_inner_y)
+        out += _draw_gauquelin_division_lines(line_outer_y, line_inner_y, gauquelin_cusps=gauquelin_cusps, seventh_house_degree_ut=seventh_house_degree_ut)
     else:
         out += _draw_house_division_lines(houses, seventh_house_degree_ut, line_outer_y, line_inner_y)
 
@@ -1047,9 +1054,21 @@ def _draw_house_division_lines(
     return out
 
 
+def _gauquelin_sector_mid_angle(
+    cusps_wheel: list[float],
+    i: int,
+) -> float:
+    """Compute the wheel-angle midpoint of Gauquelin sector i (0-indexed)."""
+    a = cusps_wheel[i]
+    b = cusps_wheel[(i + 1) % 36]
+    span = (a - b) % 360
+    return (b + span / 2) % 360
+
+
 def _draw_gauquelin_cusp_ring(
     seventh_house_degree_ut: float,
     show_zodiac_background_ring: bool = True,
+    gauquelin_cusps: Optional[list[float]] = None,
 ) -> str:
     """Draw 36 Gauquelin sector lines in the cusp ring area (replaces houses)."""
     out = ""
@@ -1065,8 +1084,14 @@ def _draw_gauquelin_cusp_ring(
 
     text_r = (ring_outer + ring_inner) / 2  # midpoint of ring for text
 
+    # Pre-compute wheel angles for all cusps
+    if gauquelin_cusps is not None:
+        cusps_wheel = [_zodiac_to_wheel_angle(c, seventh_house_degree_ut) for c in gauquelin_cusps]
+    else:
+        cusps_wheel = [i * 10.0 for i in range(36)]
+
     for i in range(36):
-        angle = i * 10.0
+        angle = cusps_wheel[i]
         is_angular = i % 9 == 0
         stroke_w = ANGULAR_STROKE_WIDTH if is_angular else 0.3
 
@@ -1079,7 +1104,7 @@ def _draw_gauquelin_cusp_ring(
         )
 
         # Sector number text — rotate to midpoint of sector, counter-rotate text
-        mid_angle = angle + 5.0
+        mid_angle = _gauquelin_sector_mid_angle(cusps_wheel, i)
         fs = 2.5 if is_angular else 1.8
         fw = "bold" if is_angular else "normal"
         out += (
@@ -1096,6 +1121,7 @@ def _draw_gauquelin_cusp_ring(
 
 def _draw_gauquelin_house_ring(
     seventh_house_degree_ut: float,
+    gauquelin_cusps: Optional[list[float]] = None,
 ) -> str:
     """Draw 36 Gauquelin sector markers in the house ring (replaces house numbers)."""
     out = ""
@@ -1108,7 +1134,10 @@ def _draw_gauquelin_house_ring(
 
     # 36 sector division lines
     for i in range(36):
-        angle = i * 10.0
+        if gauquelin_cusps is not None:
+            angle = _zodiac_to_wheel_angle(gauquelin_cusps[i], seventh_house_degree_ut)
+        else:
+            angle = i * 10.0
         is_angular = i % 9 == 0
         stroke_w = 0.5 if is_angular else 0.15
 
@@ -1404,6 +1433,7 @@ def draw_modern_horoscope(
     aspects_settings: list[dict],
     show_zodiac_background_ring: bool = True,
     gauquelin_sectors: bool = False,
+    gauquelin_cusps: Optional[list[float]] = None,
 ) -> str:
     """
     Generate the complete modern concentric-rings horoscope SVG content.
@@ -1419,6 +1449,7 @@ def draw_modern_horoscope(
         planets_settings: Planet configuration dicts (name, color, id).
         aspects_settings: Aspect configuration dicts (name, color, degree).
         show_zodiac_background_ring: If True, draws the outer colored zodiac boundaries.
+        gauquelin_cusps: 36 zodiacal longitudes for actual Gauquelin sector boundaries.
 
     Returns:
         Complete SVG content string for the modern horoscope.
@@ -1446,15 +1477,16 @@ def draw_modern_horoscope(
 
     # Draw rings from outside in
     if gauquelin_sectors:
-        out += _draw_gauquelin_cusp_ring(seventh_house_degree_ut, show_zodiac_background_ring)
+        out += _draw_gauquelin_cusp_ring(seventh_house_degree_ut, show_zodiac_background_ring, gauquelin_cusps=gauquelin_cusps)
     else:
         out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring)
     out += _draw_ruler_ring()
     out += _draw_planet_ring(
-        planets, planets_settings, seventh_house_degree_ut, houses, gauquelin_sectors=gauquelin_sectors
+        planets, planets_settings, seventh_house_degree_ut, houses,
+        gauquelin_sectors=gauquelin_sectors, gauquelin_cusps=gauquelin_cusps,
     )
     if gauquelin_sectors:
-        out += _draw_gauquelin_house_ring(seventh_house_degree_ut)
+        out += _draw_gauquelin_house_ring(seventh_house_degree_ut, gauquelin_cusps=gauquelin_cusps)
     else:
         out += _draw_house_ring(houses, seventh_house_degree_ut)
     out += _draw_house_sectors_modern(houses, seventh_house_degree_ut)

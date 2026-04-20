@@ -1,5 +1,30 @@
 # Changelog
 
+## 6.0.0a27
+
+_2026-04-20_
+
+**Fix Gauquelin sector visualization: draw sectors at actual diurnal-arc boundaries instead of equal 10° zodiacal divisions.**
+
+### Bug Fixes
+
+- **Gauquelin sector drawing mismatch** — sector lines, sector numbers, and interactive hit areas were drawn as equal 10° zodiacal divisions from the Ascendant, but the computed `gauquelin_sector` values (from `house_pos('G')` / `swe.gauquelin_sector()`) use the actual diurnal-arc division, which produces unequal zodiacal spans (6°–16° depending on latitude and obliquity). This caused every planet to appear in the wrong visual sector. All drawing functions now use the actual Gauquelin cusp positions computed via `houses_ex2(jd, lat, lon, 'G')`.
+
+### New Features
+
+- `AstrologicalBaseModel.gauquelin_sector_cusps` — new optional field containing the 36 Gauquelin sector cusp positions as zodiacal longitudes. Populated automatically when `calculate_gauquelin=True`. Consumers can use these cusps to draw sector boundaries or verify planet-sector membership.
+
+### Internal
+
+- `AstrologicalSubjectFactory` now computes the 36 Gauquelin cusps via `swe.houses_ex2(jd, lat, lon, ord('G'))` alongside the per-planet sector values.
+- `draw_modern.py`: `_draw_gauquelin_cusp_ring`, `_draw_gauquelin_division_lines`, `_draw_gauquelin_house_ring` accept optional `gauquelin_cusps` and draw lines at actual cusp positions.
+- `charts_utils.py`: `draw_gauquelin_sectors` and `draw_gauquelin_sector_hit_areas` accept optional `gauquelin_cusps` for actual sector boundaries.
+- `chart_drawer.py`: passes `gauquelin_sector_cusps` from the subject to both modern and classic drawing pipelines.
+
+### Breaking Changes
+
+None — the new `gauquelin_sector_cusps` field is optional with `default=None`. Without cusps, drawing falls back to the previous equal-10° behavior.
+
 ## 6.0.0a26
 
 _2026-04-17_

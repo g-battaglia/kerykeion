@@ -666,6 +666,14 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     # Common lunar phase data (optional)
     lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")
 
+    # Gauquelin sector cusps (v6.0)
+    gauquelin_sector_cusps: Optional[list[float]] = Field(
+        default=None,
+        description="36 Gauquelin sector cusp positions as zodiacal longitudes (0-360). "
+        "Cusp[i] is the boundary where sector i+1 starts. Sectors are unequal "
+        "divisions of the diurnal arc. Populated when calculate_gauquelin=True. Added in v6.0.",
+    )
+
     # Nutation/Obliquity (v6.0)
     nutation: Optional[NutationObliquityModel] = Field(
         default=None,
