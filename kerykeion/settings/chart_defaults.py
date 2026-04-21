@@ -39,7 +39,7 @@ class _ChartAspectSettingRequired(TypedDict):
 class _ChartAspectSetting(_ChartAspectSettingRequired, total=False):
     """Chart aspect settings with optional orb field."""
 
-    orb: int
+    orb: float
 
 
 DEFAULT_CHART_COLORS: Final[dict[str, str]] = {

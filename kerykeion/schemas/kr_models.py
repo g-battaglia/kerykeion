@@ -895,7 +895,7 @@ class RelationshipScoreModel(SubscriptableBaseModel):
 
 class ActiveAspect(TypedDict):
     name: AspectName
-    orb: int
+    orb: float
 
 
 class TransitMomentModel(SubscriptableBaseModel):

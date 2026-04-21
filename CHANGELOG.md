@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.0.0a28
+
+_2026-04-21_
+
+**Allow fractional orbs in aspect configuration — `ActiveAspect.orb` and `_ChartAspectSetting.orb` accept `float` instead of `int`.**
+
+### Bug Fixes
+
+- **`ActiveAspect.orb` type mismatch** — the `orb` field in `ActiveAspect` (TypedDict) was typed as `int`, causing Pydantic v2 to reject valid fractional orb values like `7.5` with `int_from_float` validation errors. Changed to `float`. Integer values continue to work as before (Python `int` is a subtype of `float`).
+- **`_ChartAspectSetting.orb` type mismatch** — same fix for the internal chart aspect settings TypedDict, aligning it with the rest of the codebase which already uses `float` for orb values (`AspectModel.orbit`, `axis_orb_limit`, `active_orbs`, `get_orb()`).
+
+### Breaking Changes
+
+None — `int` values are accepted by `float` fields. All default orb values remain integers. Existing code that passes integer orbs is unaffected.
+
 ## 6.0.0a27
 
 _2026-04-20_
