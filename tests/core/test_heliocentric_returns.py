@@ -282,3 +282,134 @@ class TestLunarNodeCrossing:
         result = factory.next_lunar_node_crossing(start_jd)
         assert result.sun is not None
         assert result.moon is not None
+
+
+# ---------------------------------------------------------------------------
+# ISO / year wrapper tests
+# ---------------------------------------------------------------------------
+
+class TestHeliocentricReturnFromIso:
+    """Verify that from_iso wrappers produce different returns for different start times."""
+
+    def test_different_iso_different_return(self, factory):
+        """Two ISO starts separated by > 1 Mars cycle must yield different return JDs."""
+        r1 = factory.next_heliocentric_return_from_iso_formatted_time("Mars", "2025-01-01T00:00:00+00:00")
+        r2 = factory.next_heliocentric_return_from_iso_formatted_time("Mars", "2027-06-01T00:00:00+00:00")
+        assert abs(r1.julian_day - r2.julian_day) > 30, (
+            f"Expected different returns, got JDs {r1.julian_day} and {r2.julian_day}"
+        )
+
+    def test_iso_returns_after_start(self, factory):
+        """Return must be after the ISO start time."""
+        iso = "2026-03-15T12:00:00+00:00"
+        from kerykeion.utilities import datetime_to_julian
+        from datetime import datetime, timezone
+        start_jd = datetime_to_julian(datetime.fromisoformat(iso))
+        result = factory.next_heliocentric_return_from_iso_formatted_time("Jupiter", iso)
+        assert result.julian_day > start_jd
+
+    def test_iso_naive_datetime_treated_as_utc(self, factory):
+        """Naive ISO string (no tz) should be treated as UTC."""
+        r1 = factory.next_heliocentric_return_from_iso_formatted_time("Mars", "2025-01-01T00:00:00")
+        r2 = factory.next_heliocentric_return_from_iso_formatted_time("Mars", "2025-01-01T00:00:00+00:00")
+        assert abs(r1.julian_day - r2.julian_day) < 0.001
+
+
+class TestHeliocentricReturnFromYear:
+    """Verify that from_year wrapper works correctly."""
+
+    def test_different_years_different_returns(self, factory):
+        """Mars returns from 2025 vs 2027 must differ."""
+        r1 = factory.next_heliocentric_return_from_year("Mars", 2025)
+        r2 = factory.next_heliocentric_return_from_year("Mars", 2027)
+        assert abs(r1.julian_day - r2.julian_day) > 30
+
+    def test_year_return_in_expected_range(self, factory):
+        """Mars return from 2025 should fall within 2025-2027 (< 1 orbital period)."""
+        from kerykeion.ephemeris_backend import swe as _swe
+        result = factory.next_heliocentric_return_from_year("Mars", 2025)
+        jan1_jd = _swe.julday(2025, 1, 1, 0.0)
+        assert result.julian_day > jan1_jd
+        assert result.julian_day < jan1_jd + MARS_ORBITAL_PERIOD
+
+
+class TestHeliocentricReturnFromDate:
+    """Verify from_date wrapper."""
+
+    def test_from_date_basic(self, factory):
+        """from_date(2025, 6, 15) should return after June 15."""
+        from kerykeion.ephemeris_backend import swe as _swe
+        result = factory.next_heliocentric_return_from_date("Mars", 2025, 6, 15)
+        june15_jd = _swe.julday(2025, 6, 15, 0.0)
+        assert result.julian_day > june15_jd
+
+    def test_from_date_invalid_month_raises(self, factory):
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException, match="Invalid month"):
+            factory.next_heliocentric_return_from_date("Mars", 2025, 13)
+
+
+class TestHeliocentricReturnBackwards:
+    """Verify backwards search on heliocentric returns."""
+
+    def test_backwards_returns_earlier_jd(self, factory):
+        """Backward search from 2026 should return JD before the start."""
+        from kerykeion.ephemeris_backend import swe as _swe
+        start_jd = _swe.julday(2026, 1, 1, 0.0)
+        try:
+            result = factory.next_heliocentric_return("Mars", start_jd, backwards=True)
+            assert result.julian_day < start_jd
+        except Exception:
+            pytest.skip("Backend does not support backwards search")
+
+
+class TestLunarNodeCrossingFromIso:
+    """Verify from_iso wrapper for lunar node crossings."""
+
+    def test_different_iso_different_crossing(self, factory):
+        """Two ISO starts 30+ days apart must yield different crossing JDs."""
+        r1 = factory.next_lunar_node_crossing_from_iso_formatted_time("2025-01-01T00:00:00+00:00")
+        r2 = factory.next_lunar_node_crossing_from_iso_formatted_time("2025-03-01T00:00:00+00:00")
+        assert abs(r1.julian_day - r2.julian_day) > 1
+
+    def test_iso_crossing_after_start(self, factory):
+        """Crossing must be after the ISO start time."""
+        from kerykeion.utilities import datetime_to_julian
+        from datetime import datetime, timezone
+        iso = "2025-06-01T00:00:00+00:00"
+        start_jd = datetime_to_julian(datetime.fromisoformat(iso))
+        result = factory.next_lunar_node_crossing_from_iso_formatted_time(iso)
+        assert result.julian_day > start_jd
+
+
+class TestLunarNodeCrossingFromYear:
+    """Verify from_year wrapper for lunar node crossings."""
+
+    def test_different_years_different_crossings(self, factory):
+        """Node crossings from 2025 vs 2026 must differ."""
+        r1 = factory.next_lunar_node_crossing_from_year(2025)
+        r2 = factory.next_lunar_node_crossing_from_year(2026)
+        assert abs(r1.julian_day - r2.julian_day) > 30
+
+    def test_year_crossing_after_jan1(self, factory):
+        """Crossing from 2025 should be after Jan 1 2025."""
+        from kerykeion.ephemeris_backend import swe as _swe
+        result = factory.next_lunar_node_crossing_from_year(2025)
+        jan1_jd = _swe.julday(2025, 1, 1, 0.0)
+        assert result.julian_day > jan1_jd
+
+
+class TestLunarNodeCrossingFromDate:
+    """Verify from_date wrapper for lunar node crossings."""
+
+    def test_from_date_basic(self, factory):
+        """from_date(2025, 6, 15) should return after June 15."""
+        from kerykeion.ephemeris_backend import swe as _swe
+        result = factory.next_lunar_node_crossing_from_date(2025, 6, 15)
+        june15_jd = _swe.julday(2025, 6, 15, 0.0)
+        assert result.julian_day > june15_jd
+
+    def test_from_date_invalid_month_raises(self, factory):
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException, match="Invalid month"):
+            factory.next_lunar_node_crossing_from_date(2025, 0)

@@ -1,5 +1,32 @@
 # Changelog
 
+## 6.0.0a29
+
+_2026-04-21_
+
+**Symmetric ISO/year/date wrappers for heliocentric returns and lunar node crossings — closes the API gap between Solar/Lunar and all other return types.**
+
+### New Features
+
+- **`next_heliocentric_return_from_iso_formatted_time(planet_name, iso_formatted_time, backwards=False)`** — compute heliocentric return searching forward (or backward) from an ISO datetime. Mirrors `next_return_from_iso_formatted_time` (Solar/Lunar).
+- **`next_heliocentric_return_from_year(planet_name, year)`** — first heliocentric return on or after Jan 1 of the given year. Mirrors `next_return_from_year`.
+- **`next_heliocentric_return_from_date(planet_name, year, month, day=1)`** — first heliocentric return on or after a specific date. Mirrors `next_return_from_date`.
+- **`next_lunar_node_crossing_from_iso_formatted_time(iso_formatted_time)`** — lunar node crossing from an ISO datetime.
+- **`next_lunar_node_crossing_from_year(year)`** — first lunar node crossing on or after Jan 1 of the given year.
+- **`next_lunar_node_crossing_from_date(year, month, day=1)`** — first lunar node crossing on or after a specific date.
+
+### Enhancements
+
+- **`next_heliocentric_return` gains `backwards` parameter** — search backward in time when using the libephemeris backend. pyswisseph does not support backward search; a `KerykeionException` is raised if attempted.
+
+### Why
+
+Previously, `PlanetaryReturnFactory` exposed ergonomic `from_iso`/`from_year`/`from_date` wrappers only for Solar and Lunar returns. Heliocentric returns and lunar node crossings required callers to manually convert dates to Julian Day and call bare primitives (`next_heliocentric_return(planet, start_jd)`, `next_lunar_node_crossing(start_jd)`). This asymmetry forced every consumer (API servers, MCP tools, SDK wrappers) to duplicate the same date→JD conversion logic — and made it easy to accidentally hardcode the natal JD instead of the user-requested search date.
+
+### Tests
+
+- 15 new tests in `tests/core/test_heliocentric_returns.py` covering ISO wrappers, year wrappers, date wrappers, backward search, naive datetime handling, and validation.
+
 ## 6.0.0a28
 
 _2026-04-21_

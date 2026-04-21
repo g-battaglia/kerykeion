@@ -743,6 +743,7 @@ class PlanetaryReturnFactory:
         self,
         planet_name: str,
         start_jd: float,
+        backwards: bool = False,
     ) -> PlanetReturnModel:
         """Find when a planet returns to its natal heliocentric longitude.
 
@@ -752,6 +753,8 @@ class PlanetaryReturnFactory:
         Args:
             planet_name: Planet name (e.g. "Mars", "Jupiter", "Saturn").
             start_jd: Julian Day to start searching from.
+            backwards: If True, search backward in time. Requires the
+                libephemeris backend; pyswisseph does not support this.
 
         Returns:
             PlanetReturnModel for the heliocentric return chart.
@@ -769,7 +772,15 @@ class PlanetaryReturnFactory:
         natal_lon = natal_data[0][0]
 
         # Find when it returns to that longitude
-        return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, swe.FLG_SWIEPH)
+        if backwards:
+            try:
+                return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, swe.FLG_SWIEPH, backwards=True)
+            except TypeError:
+                raise KerykeionException(
+                    "Backward heliocentric search requires the libephemeris backend."
+                )
+        else:
+            return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, swe.FLG_SWIEPH)
 
         swe.close()
 
@@ -800,6 +811,152 @@ class PlanetaryReturnFactory:
         return_model = self._build_return_chart(crossing_jd, "Lunar_Node_Crossing")
         return return_model
 
+    # ── ISO / year convenience wrappers (heliocentric + node crossing) ───────
+
+    def next_heliocentric_return_from_iso_formatted_time(
+        self,
+        planet_name: str,
+        iso_formatted_time: str,
+        backwards: bool = False,
+    ) -> PlanetReturnModel:
+        """Heliocentric return searching forward (or backward) from an ISO datetime.
+
+        Mirrors :meth:`next_return_from_iso_formatted_time` (Solar/Lunar).
+
+        Args:
+            planet_name: Planet name (e.g. "Mars", "Jupiter", "Saturn").
+            iso_formatted_time: ISO 8601 datetime string to start from.
+            backwards: Search backward instead of forward.
+
+        Returns:
+            PlanetReturnModel for the heliocentric return chart.
+        """
+        dt = datetime.fromisoformat(iso_formatted_time)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return self.next_heliocentric_return(
+            planet_name=planet_name,
+            start_jd=datetime_to_julian(dt),
+            backwards=backwards,
+        )
+
+    def next_heliocentric_return_from_year(
+        self,
+        planet_name: str,
+        year: int,
+    ) -> PlanetReturnModel:
+        """First heliocentric return on or after Jan 1 of *year* (UTC).
+
+        Mirrors :meth:`next_return_from_year` (Solar/Lunar).
+
+        Args:
+            planet_name: Planet name (e.g. "Mars", "Jupiter", "Saturn").
+            year: Calendar year to start searching from.
+
+        Returns:
+            PlanetReturnModel for the heliocentric return chart.
+        """
+        start = datetime(year, 1, 1, 0, 0, tzinfo=timezone.utc)
+        return self.next_heliocentric_return(
+            planet_name=planet_name,
+            start_jd=datetime_to_julian(start),
+        )
+
+    def next_heliocentric_return_from_date(
+        self,
+        planet_name: str,
+        year: int,
+        month: int,
+        day: int = 1,
+    ) -> PlanetReturnModel:
+        """First heliocentric return on or after a specific date (UTC).
+
+        Mirrors :meth:`next_return_from_date` (Solar/Lunar).
+
+        Args:
+            planet_name: Planet name (e.g. "Mars", "Jupiter", "Saturn").
+            year: Calendar year.
+            month: Month (1-12).
+            day: Day of month (default 1).
+
+        Returns:
+            PlanetReturnModel for the heliocentric return chart.
+        """
+        if month < 1 or month > 12:
+            raise KerykeionException(f"Invalid month {month}. Month must be between 1 and 12.")
+        max_day = calendar.monthrange(year, month)[1]
+        if day < 1 or day > max_day:
+            raise KerykeionException(f"Invalid day {day} for {year}-{month:02d}. Day must be between 1 and {max_day}.")
+        start = datetime(year, month, day, 0, 0, tzinfo=timezone.utc)
+        return self.next_heliocentric_return(
+            planet_name=planet_name,
+            start_jd=datetime_to_julian(start),
+        )
+
+    def next_lunar_node_crossing_from_iso_formatted_time(
+        self,
+        iso_formatted_time: str,
+    ) -> PlanetReturnModel:
+        """Lunar node crossing searching forward from an ISO datetime.
+
+        Mirrors :meth:`next_return_from_iso_formatted_time` (Solar/Lunar).
+
+        Args:
+            iso_formatted_time: ISO 8601 datetime string to start from.
+
+        Returns:
+            PlanetReturnModel for the node crossing chart.
+        """
+        dt = datetime.fromisoformat(iso_formatted_time)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return self.next_lunar_node_crossing(start_jd=datetime_to_julian(dt))
+
+    def next_lunar_node_crossing_from_year(
+        self,
+        year: int,
+    ) -> PlanetReturnModel:
+        """First lunar node crossing on or after Jan 1 of *year* (UTC).
+
+        Mirrors :meth:`next_return_from_year` (Solar/Lunar).
+
+        Args:
+            year: Calendar year to start searching from.
+
+        Returns:
+            PlanetReturnModel for the node crossing chart.
+        """
+        start = datetime(year, 1, 1, 0, 0, tzinfo=timezone.utc)
+        return self.next_lunar_node_crossing(start_jd=datetime_to_julian(start))
+
+    def next_lunar_node_crossing_from_date(
+        self,
+        year: int,
+        month: int,
+        day: int = 1,
+    ) -> PlanetReturnModel:
+        """First lunar node crossing on or after a specific date (UTC).
+
+        Mirrors :meth:`next_return_from_date` (Solar/Lunar).
+
+        Args:
+            year: Calendar year.
+            month: Month (1-12).
+            day: Day of month (default 1).
+
+        Returns:
+            PlanetReturnModel for the node crossing chart.
+        """
+        if month < 1 or month > 12:
+            raise KerykeionException(f"Invalid month {month}. Month must be between 1 and 12.")
+        max_day = calendar.monthrange(year, month)[1]
+        if day < 1 or day > max_day:
+            raise KerykeionException(f"Invalid day {day} for {year}-{month:02d}. Day must be between 1 and {max_day}.")
+        start = datetime(year, month, day, 0, 0, tzinfo=timezone.utc)
+        return self.next_lunar_node_crossing(start_jd=datetime_to_julian(start))
+
+    # ── Internal helpers ─────────────────────────────────────────────────────
+
     def _build_return_chart(self, return_jd: float, return_type: str) -> PlanetReturnModel:
         """Build a return chart at the given Julian Day."""
         return_dt = julian_to_datetime(return_jd)
@@ -814,6 +971,7 @@ class PlanetaryReturnFactory:
             city=self.city,
             nation=self.nation,
             online=False,
+            altitude=self.altitude,
             zodiac_type=self.subject.zodiac_type,
             sidereal_mode=self.subject.sidereal_mode,
             houses_system_identifier=self.subject.houses_system_identifier,
