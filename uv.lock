@@ -455,7 +455,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a29"
+version = "6.0.0a30"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -496,8 +496,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "libephemeris", specifier = "==1.0.0a15" },
-    { name = "libephemeris", marker = "extra == 'all'", specifier = ">=1.0.0a13" },
+    { name = "libephemeris", editable = "../libephemeris" },
+    { name = "libephemeris", marker = "extra == 'all'", editable = "../libephemeris" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'all'", specifier = ">=2.10.3.1" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -546,8 +546,8 @@ wheels = [
 
 [[package]]
 name = "libephemeris"
-version = "1.0.0a15"
-source = { registry = "https://pypi.org/simple" }
+version = "1.1.0"
+source = { editable = "../libephemeris" }
 dependencies = [
     { name = "astroquery" },
     { name = "certifi" },
@@ -557,10 +557,44 @@ dependencies = [
     { name = "skyfield-data" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ed/4d/98cdcd2547844dde56d58093332fc58d721ea74258a92e02c1b0578fd67e/libephemeris-1.0.0a15.tar.gz", hash = "sha256:acb307e2c701f9db09c9343fd76edc03eafa0c7a5ea72247ff0e94c6149afd07", size = 12397822, upload-time = "2026-04-02T21:30:53.133Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/76/082105903fedd9c1a46cfe3d07ff13ad19d330c047578a08e02f3fe72de4/libephemeris-1.0.0a15-py3-none-any.whl", hash = "sha256:9a522a9a8d0e54afd88692918b5ad5b8f6307b64613750607aceda3190b2f8d7", size = 12442799, upload-time = "2026-04-02T21:30:49.437Z" },
+
+[package.metadata]
+requires-dist = [
+    { name = "assist", marker = "extra == 'all'", specifier = ">=1.1.0" },
+    { name = "assist", marker = "extra == 'nbody'", specifier = ">=1.1.0" },
+    { name = "astropy", marker = "extra == 'all'", specifier = ">=5.0.0" },
+    { name = "astropy", marker = "extra == 'dev'", specifier = ">=5.0.0" },
+    { name = "astropy", marker = "extra == 'stars'", specifier = ">=5.0.0" },
+    { name = "astroquery", specifier = ">=0.4.7" },
+    { name = "black", marker = "extra == 'dev'", specifier = ">=25.1.0" },
+    { name = "build", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+    { name = "certifi" },
+    { name = "click", specifier = ">=8.0" },
+    { name = "ebooklib", marker = "extra == 'dev'", specifier = ">=0.20" },
+    { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "markdown", marker = "extra == 'dev'", specifier = ">=3.7" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+    { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=2.0.0" },
+    { name = "poethepoet", marker = "extra == 'dev'", specifier = ">=0.37.0,<0.38.0" },
+    { name = "pyerfa", specifier = ">=2.0.0" },
+    { name = "pyswisseph", marker = "extra == 'dev'", specifier = ">=2.10.3.2" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0,<9.0.0" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "pytest-sugar", marker = "extra == 'dev'", specifier = ">=1.1.1" },
+    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.5.0" },
+    { name = "pyyaml", marker = "extra == 'dev'", specifier = ">=6.0" },
+    { name = "rebound", marker = "extra == 'all'", specifier = ">=4.0.0" },
+    { name = "rebound", marker = "extra == 'nbody'", specifier = ">=4.0.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.14.6" },
+    { name = "skyfield", specifier = ">=1.54" },
+    { name = "skyfield-data", specifier = ">=7.0.0" },
+    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=7.0.0" },
+    { name = "sphinx-rtd-theme", marker = "extra == 'docs'", specifier = ">=2.0.0" },
+    { name = "spiceypy", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "twine", marker = "extra == 'dev'", specifier = ">=5.0.0" },
+    { name = "zstandard", specifier = ">=0.22.0" },
 ]
+provides-extras = ["stars", "nbody", "all", "dev", "docs"]
 
 [[package]]
 name = "librt"

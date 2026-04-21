@@ -404,7 +404,7 @@ class PlanetaryReturnFactory:
             self.tz_str = self.city_data["timezonestr"]
 
     def next_return_from_iso_formatted_time(
-        self, iso_formatted_time: str, return_type: ReturnType
+        self, iso_formatted_time: str, return_type: ReturnType, backwards: bool = False
     ) -> PlanetReturnModel:
         """
         Calculate the next planetary return occurring after a specified ISO-formatted datetime.
@@ -507,19 +507,43 @@ class PlanetaryReturnFactory:
                 raise KerykeionException(
                     "Sun position is required for Solar return but is not available in the subject."
                 )
-            return_julian_date = swe.solcross_ut(
-                self.subject.sun.abs_pos,
-                julian_day,
-            )
+            if backwards:
+                try:
+                    return_julian_date = swe.solcross_ut(
+                        self.subject.sun.abs_pos,
+                        julian_day,
+                        backwards=True,
+                    )
+                except TypeError:
+                    raise KerykeionException(
+                        "Backward Solar return search requires the libephemeris backend."
+                    )
+            else:
+                return_julian_date = swe.solcross_ut(
+                    self.subject.sun.abs_pos,
+                    julian_day,
+                )
         elif return_type == "Lunar":
             if self.subject.moon is None:
                 raise KerykeionException(
                     "Moon position is required for Lunar return but is not available in the subject."
                 )
-            return_julian_date = swe.mooncross_ut(
-                self.subject.moon.abs_pos,
-                julian_day,
-            )
+            if backwards:
+                try:
+                    return_julian_date = swe.mooncross_ut(
+                        self.subject.moon.abs_pos,
+                        julian_day,
+                        backwards=True,
+                    )
+                except TypeError:
+                    raise KerykeionException(
+                        "Backward Lunar return search requires the libephemeris backend."
+                    )
+            else:
+                return_julian_date = swe.mooncross_ut(
+                    self.subject.moon.abs_pos,
+                    julian_day,
+                )
         else:
             raise KerykeionException(f"Invalid return type {return_type}. Use 'Solar' or 'Lunar'.")
 
@@ -651,7 +675,7 @@ class PlanetaryReturnFactory:
         return self.next_return_from_date(year, 1, 1, return_type=return_type)
 
     def next_return_from_date(
-        self, year: int, month: int, day: int = 1, *, return_type: ReturnType
+        self, year: int, month: int, day: int = 1, *, return_type: ReturnType, backwards: bool = False
     ) -> PlanetReturnModel:
         """
         Calculate the first planetary return occurring on or after a specified date.
@@ -713,7 +737,7 @@ class PlanetaryReturnFactory:
         start_date = datetime(year, month, day, 0, 0, tzinfo=timezone.utc)
 
         # Get the return using the existing method
-        return self.next_return_from_iso_formatted_time(start_date.isoformat(), return_type)
+        return self.next_return_from_iso_formatted_time(start_date.isoformat(), return_type, backwards=backwards)
 
     def next_return_from_month_and_year(self, year: int, month: int, return_type: ReturnType) -> PlanetReturnModel:
         """
@@ -791,6 +815,7 @@ class PlanetaryReturnFactory:
     def next_lunar_node_crossing(
         self,
         start_jd: float,
+        backwards: bool = False,
     ) -> PlanetReturnModel:
         """Find the next moment when the Moon crosses its own node.
 
@@ -799,12 +824,23 @@ class PlanetaryReturnFactory:
 
         Args:
             start_jd: Julian Day to start searching from.
+            backwards: If True, search backward in time. Requires the
+                libephemeris backend; pyswisseph does not support this.
 
         Returns:
             PlanetReturnModel for the node crossing chart.
         """
         swe.set_ephe_path(EPHE_DATA_PATH)
-        result = swe.mooncross_node_ut(start_jd, swe.FLG_SWIEPH)
+        if backwards:
+            try:
+                result = swe.mooncross_node_ut(start_jd, swe.FLG_SWIEPH, backwards=True)
+            except TypeError:
+                swe.close()
+                raise KerykeionException(
+                    "Backward lunar node crossing search requires the libephemeris backend."
+                )
+        else:
+            result = swe.mooncross_node_ut(start_jd, swe.FLG_SWIEPH)
         crossing_jd = result[0]
         swe.close()
 
@@ -868,6 +904,7 @@ class PlanetaryReturnFactory:
         year: int,
         month: int,
         day: int = 1,
+        backwards: bool = False,
     ) -> PlanetReturnModel:
         """First heliocentric return on or after a specific date (UTC).
 
@@ -878,6 +915,7 @@ class PlanetaryReturnFactory:
             year: Calendar year.
             month: Month (1-12).
             day: Day of month (default 1).
+            backwards: Search backward instead of forward.
 
         Returns:
             PlanetReturnModel for the heliocentric return chart.
@@ -891,18 +929,21 @@ class PlanetaryReturnFactory:
         return self.next_heliocentric_return(
             planet_name=planet_name,
             start_jd=datetime_to_julian(start),
+            backwards=backwards,
         )
 
     def next_lunar_node_crossing_from_iso_formatted_time(
         self,
         iso_formatted_time: str,
+        backwards: bool = False,
     ) -> PlanetReturnModel:
-        """Lunar node crossing searching forward from an ISO datetime.
+        """Lunar node crossing searching forward (or backward) from an ISO datetime.
 
         Mirrors :meth:`next_return_from_iso_formatted_time` (Solar/Lunar).
 
         Args:
             iso_formatted_time: ISO 8601 datetime string to start from.
+            backwards: Search backward instead of forward.
 
         Returns:
             PlanetReturnModel for the node crossing chart.
@@ -910,7 +951,10 @@ class PlanetaryReturnFactory:
         dt = datetime.fromisoformat(iso_formatted_time)
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return self.next_lunar_node_crossing(start_jd=datetime_to_julian(dt))
+        return self.next_lunar_node_crossing(
+            start_jd=datetime_to_julian(dt),
+            backwards=backwards,
+        )
 
     def next_lunar_node_crossing_from_year(
         self,
@@ -934,6 +978,7 @@ class PlanetaryReturnFactory:
         year: int,
         month: int,
         day: int = 1,
+        backwards: bool = False,
     ) -> PlanetReturnModel:
         """First lunar node crossing on or after a specific date (UTC).
 
@@ -943,6 +988,7 @@ class PlanetaryReturnFactory:
             year: Calendar year.
             month: Month (1-12).
             day: Day of month (default 1).
+            backwards: Search backward instead of forward.
 
         Returns:
             PlanetReturnModel for the node crossing chart.
@@ -953,7 +999,10 @@ class PlanetaryReturnFactory:
         if day < 1 or day > max_day:
             raise KerykeionException(f"Invalid day {day} for {year}-{month:02d}. Day must be between 1 and {max_day}.")
         start = datetime(year, month, day, 0, 0, tzinfo=timezone.utc)
-        return self.next_lunar_node_crossing(start_jd=datetime_to_julian(start))
+        return self.next_lunar_node_crossing(
+            start_jd=datetime_to_julian(start),
+            backwards=backwards,
+        )
 
     # ── Internal helpers ─────────────────────────────────────────────────────
 

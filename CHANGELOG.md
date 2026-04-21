@@ -1,5 +1,64 @@
 # Changelog
 
+## 6.0.0a30
+
+_2026-04-21_
+
+**Backward planetary-return search — `next_return_from_iso_formatted_time` / `next_return_from_date` / `next_lunar_node_crossing*` now accept `backwards=True`, matching the existing heliocentric API.**
+
+### New Features
+
+- **`backwards: bool = False` on all planetary-return entry points.** When
+  `True`, the factory calls into libephemeris' new backward-capable crossing
+  primitives and returns the most recent *past* return (or node crossing)
+  instead of the next upcoming one. Added to:
+  - `PlanetaryReturnFactory.next_return_from_iso_formatted_time(iso, return_type, backwards=False)`
+  - `PlanetaryReturnFactory.next_return_from_date(year, month, day, return_type, backwards=False)`
+  - `PlanetaryReturnFactory.next_lunar_node_crossing(julian_day, backwards=False)`
+  - `PlanetaryReturnFactory.next_lunar_node_crossing_from_iso_formatted_time(iso, backwards=False)`
+  - `PlanetaryReturnFactory.next_lunar_node_crossing_from_date(year, month, day, backwards=False)`
+  - `PlanetaryReturnFactory.next_heliocentric_return_from_date(planet, year, month, day, backwards=False)`
+
+### Backend Requirements
+
+Backward search relies on libephemeris `>= 1.1.0`, which added the `backwards`
+flag to `swe_solcross_ut`, `swe_mooncross_ut`, and `swe_mooncross_node_ut`.
+When kerykeion is running on **pyswisseph** (fallback backend), attempting
+backward search raises `KerykeionException` with a clear message directing
+the caller to install libephemeris.
+
+### Why
+
+Consumers of return charts (API servers, SDKs, UIs) always want symmetric
+navigation — "previous solar return" is as common as "next". Without a native
+backward flag, callers had to fake it by seeding the search one mean cycle
+before the target date, which fails near cycle boundaries (lunar node mean
+motion varies ±1 day per half-cycle; lunar mean motion ±0.1 d). This is the
+library-level counterpart to libephemeris 1.1.0's backward crossing support.
+
+### Tests
+
+- 12 new tests in `tests/core/test_planetary_return_backwards.py`:
+  - `TestSolarBackwards` — single-step backward, one-cycle boundary invariant,
+    date-wrapper round-trip.
+  - `TestLunarBackwards` — single-step backward, sidereal-month boundary.
+  - `TestLunarNodeCrossingBackwards` — single-step, half-nodal-month boundary,
+    date-wrapper round-trip.
+  - `TestHeliocentricBackwards` — Jupiter one-cycle (4200–4500 day) boundary.
+  - `TestSwissephFallback` — simulates pyswisseph backend via `unittest.mock`,
+    asserts `KerykeionException` with `libephemeris` in the message for each
+    of the three backward-capable entry points.
+
+### Dependencies
+
+- Bumped primary pin: `libephemeris == 1.1.0` (was `== 1.0.0a15`).
+- Bumped `all` extra: `libephemeris >= 1.1.0` (was `>= 1.0.0a13`).
+
+### Compatibility
+
+Fully backward-compatible. `backwards=False` is the default everywhere;
+existing code paths are unchanged.
+
 ## 6.0.0a29
 
 _2026-04-21_
