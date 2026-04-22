@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.0.0a31
+
+_2026-04-22_
+
+**Bugfixes (backported from v5.12.8):**
+
+- **Modern chart decluttering order:** Fixed a bug where planets in a tight cluster on `style="modern"` charts could be pushed past their neighbours, violating true zodiacal order (e.g. Neptune at 5° Aquarius rendered after Uranus at 17° Aquarius). The collision-resolution algorithm in `_resolve_planet_collisions` was rewritten from a 5-pass iterative push (vulnerable to wraparound overshoots) to a single-pass largest-gap linearization that is monotonic by construction: planets are cut at the largest gap in their true zodiacal angles and walked forward once with `display_angle = max(desired_linear, prev_linear + sep)`. Order is preserved and `min_separation` is respected without iterative refinement. Reproduced by any dense stellium (≥3 planets within ~8°); regression covered by `tests/core/test_modern_decluttering.py`.
+
 ## 6.0.0a30
 
 _2026-04-21_
@@ -607,6 +615,10 @@ All activated via `AstrologicalSubjectFactory.from_birth_data()` keyword argumen
 ## 5.12.0
 
 _2026-03-18_
+
+**Bugfixes:**
+
+- **Modern chart decluttering order (v5.12.8):** Fixed a bug where planets in a tight cluster on `style="modern"` charts could be pushed past their neighbours, violating true zodiacal order (e.g. Neptune at 5° Aquarius rendered after Uranus at 17° Aquarius). The collision-resolution algorithm in `_resolve_planet_collisions` was rewritten from a 5-pass iterative push (vulnerable to wraparound overshoots) to a single-pass largest-gap linearization that is monotonic by construction: planets are cut at the largest gap in their true zodiacal angles and walked forward once with `display_angle = max(desired_linear, prev_linear + sep)`. Order is preserved and `min_separation` is respected without iterative refinement. Reproduced by any dense stellium (≥3 planets within ~8°); regression covered by `tests/core/test_modern_decluttering.py`.
 
 **New Features:**
 

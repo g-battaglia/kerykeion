@@ -619,53 +619,49 @@ def _resolve_planet_collisions(
     max_possible_separation = 320.0 / len(planets_with_angles)
     sep = min(min_separation, max_possible_separation)
 
-    # Sort by original angle and assign initial display angles
+    # Sort by true zodiacal angle. This order is the invariant we must preserve.
     sorted_planets = sorted(planets_with_angles, key=lambda p: p["angle"])
     n = len(sorted_planets)
-    for p in sorted_planets:
-        p["display_angle"] = p["angle"]
+
+    if n == 1:
+        sorted_planets[0]["display_angle"] = sorted_planets[0]["angle"]
+        return sorted_planets
 
     # ── Spreading algorithm ─────────────────────────────────────────────
-    # We run multiple passes.  Each pass:
-    #   1. Sort all planets by their current display_angle.
-    #   2. Find the largest gap — this is where we "cut" the circle into
-    #      a linear sequence so forward pushing cascades into empty space.
-    #   3. Walk forward from the planet after the gap, pushing each planet
-    #      that is too close to the previous one.
-    for _pass in range(5):
-        changed = False
+    # We work in an "unwrapped" linear coordinate along the circle.
+    # The largest gap in the ORIGINAL (true) angles is where we cut the
+    # circle: starting from the planet right after that cut, every other
+    # planet has a strictly forward zodiacal distance from it (0 < d < 360).
+    #
+    # Walking forward from the start planet, each planet's linear position
+    # is either its true distance from the start (when that is already far
+    # enough from its predecessor) or `prev_linear + sep` (when the cluster
+    # is tighter than `sep`). This construction is monotonic by definition,
+    # so zodiacal order is preserved and `sep` is respected without any
+    # iterative refinement.
+    best_gap = -1.0
+    best_gap_pos = 0
+    for k in range(n):
+        k_next = (k + 1) % n
+        gap = _normalize_angle(sorted_planets[k_next]["angle"] - sorted_planets[k]["angle"])
+        if gap > best_gap:
+            best_gap = gap
+            best_gap_pos = k
 
-        # Sort indices by current display angle
-        indices = sorted(range(n), key=lambda i: sorted_planets[i]["display_angle"])
+    start_k = (best_gap_pos + 1) % n
+    base_angle = sorted_planets[start_k]["angle"]
 
-        # Find the largest gap in display order
-        best_gap = -1.0
-        best_gap_pos = 0
-        for k in range(n):
-            k_next = (k + 1) % n
-            gap = _normalize_angle(
-                sorted_planets[indices[k_next]]["display_angle"] - sorted_planets[indices[k]]["display_angle"]
-            )
-            if gap > best_gap:
-                best_gap = gap
-                best_gap_pos = k
+    prev_linear = base_angle
+    sorted_planets[start_k]["display_angle"] = _normalize_angle(base_angle)
 
-        # Walk forward starting after the largest gap
-        start_k = (best_gap_pos + 1) % n
-        walk = [(start_k + j) % n for j in range(n)]
-
-        for j in range(1, n):
-            prev_i = indices[walk[j - 1]]
-            curr_i = indices[walk[j]]
-            prev_a = sorted_planets[prev_i]["display_angle"]
-            curr_a = sorted_planets[curr_i]["display_angle"]
-            diff = _normalize_angle(curr_a - prev_a)
-            if diff < sep:
-                sorted_planets[curr_i]["display_angle"] = _normalize_angle(prev_a + sep)
-                changed = True
-
-        if not changed:
-            break
+    for j in range(1, n):
+        curr_k = (start_k + j) % n
+        # True forward distance from the start planet along the circle
+        forward_from_start = _normalize_angle(sorted_planets[curr_k]["angle"] - base_angle)
+        desired_linear = base_angle + forward_from_start
+        linear = max(desired_linear, prev_linear + sep)
+        sorted_planets[curr_k]["display_angle"] = _normalize_angle(linear)
+        prev_linear = linear
 
     return sorted_planets
 
