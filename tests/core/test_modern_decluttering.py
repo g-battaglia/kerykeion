@@ -10,8 +10,6 @@ See: kerykeion/charts/draw_modern.py::_resolve_planet_collisions
 
 from __future__ import annotations
 
-import math
-
 import pytest
 
 from kerykeion.charts.draw_modern import (
