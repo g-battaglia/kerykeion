@@ -49,7 +49,7 @@ Quito Subject — Natal Chart Report
 | Mean South Lunar Node | Leo ♌️ | 9.69°    | +0.0530°/d   | +17.83° | R    | Eleventh House |
 | True South Lunar Node | Leo ♌️ | 8.12°    | -0.0104°/d   | +18.24° | -    | Eleventh House |
 | Mean Lilith           | Sco ♏️ | 24.97°   | +0.1120°/d   | -23.83° | -    | Third House    |
-| True Lilith           | Sag ♐️ | 19.21°   | +0.7874°/d   | -26.89° | -    | Third House    |
+| True Lilith           | Sag ♐️ | 19.21°   | +0.7878°/d   | -26.89° | -    | Third House    |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Seventh House  |
 | Chiron                | Can ♋️ | 16.08°   | +0.1013°/d   | +16.25° | -    | Tenth House    |
 | Pholus                | Can ♋️ | 3.09°    | +0.1368°/d   | +13.47° | -    | Tenth House    |

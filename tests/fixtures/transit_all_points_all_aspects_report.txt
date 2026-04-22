@@ -74,7 +74,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Mean South Lunar Node | Leo ♌️ | 7.79°    | +0.0529°/d   | +18.32° | R    | Ninth House    |
 | True South Lunar Node | Leo ♌️ | 7.26°    | +0.0090°/d   | +18.46° | R    | Ninth House    |
 | Mean Lilith           | Sco ♏️ | 28.99°   | +0.1119°/d   | -24.62° | -    | First House    |
-| True Lilith           | Sag ♐️ | 18.03°   | -1.4433°/d   | -26.89° | R    | Second House   |
+| True Lilith           | Sag ♐️ | 18.03°   | -1.4431°/d   | -26.89° | R    | Second House   |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Fifth House    |
 | Chiron                | Can ♋️ | 19.88°   | +0.1071°/d   | +15.79° | -    | Ninth House    |
 | Pholus                | Can ♋️ | 7.99°    | +0.1329°/d   | +13.79° | -    | Eighth House   |
@@ -91,13 +91,13 @@ Sample Natal Subject — Transit 1980-12-08
 | Quaoar                | Sco ♏️ | 24.08°   | -0.0062°/d   | -13.09° | R    | First House    |
 | Regulus               | Leo ♌️ | 29.70°   | +0.0000°/d   | +12.01° | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0000°/d   | -11.11° | -    | Twelfth House  |
-| Aldebaran             | Gem ♊️ | 9.66°    | +0.0002°/d   | +16.49° | -    | Eighth House   |
+| Aldebaran             | Gem ♊️ | 9.66°    | +0.0001°/d   | +16.49° | -    | Eighth House   |
 | Antares               | Sag ♐️ | 9.64°    | +0.0000°/d   | -26.41° | -    | Second House   |
 | Sirius                | Can ♋️ | 13.95°   | +0.0001°/d   | -16.70° | -    | Ninth House    |
 | Fomalhaut             | Pis ♓️ | 3.74°    | +0.0001°/d   | -29.67° | -    | Fourth House   |
 | Algol                 | Tau ♉️ | 26.04°   | +0.0002°/d   | +40.92° | -    | Seventh House  |
 | Betelgeuse            | Gem ♊️ | 28.62°   | +0.0001°/d   | +7.41°  | -    | Eighth House   |
-| Canopus               | Can ♋️ | 14.81°   | +0.0002°/d   | -52.69° | -    | Ninth House    |
+| Canopus               | Can ♋️ | 14.81°   | +0.0001°/d   | -52.69° | -    | Ninth House    |
 | Procyon               | Can ♋️ | 25.65°   | +0.0001°/d   | +5.25°  | -    | Ninth House    |
 | Arcturus              | Lib ♎️ | 24.11°   | -0.0000°/d   | +19.23° | -    | Twelfth House  |
 | Pollux                | Can ♋️ | 23.08°   | +0.0001°/d   | +28.05° | -    | Ninth House    |
@@ -165,7 +165,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Fomalhaut             | Pis ♓️ | 3.59°    | -0.0000°/d   | -29.73° | -    | Sixth House    |
 | Algol                 | Tau ♉️ | 25.90°   | +0.0000°/d   | +40.88° | -    | Ninth House    |
 | Betelgeuse            | Gem ♊️ | 28.49°   | +0.0001°/d   | +7.40°  | -    | Tenth House    |
-| Canopus               | Can ♋️ | 14.71°   | +0.0003°/d   | -52.68° | -    | Eleventh House |
+| Canopus               | Can ♋️ | 14.71°   | +0.0002°/d   | -52.68° | -    | Eleventh House |
 | Procyon               | Can ♋️ | 25.52°   | +0.0001°/d   | +5.27°  | -    | Eleventh House |
 | Arcturus              | Lib ♎️ | 23.96°   | +0.0002°/d   | +19.28° | -    | Second House   |
 | Pollux                | Can ♋️ | 22.95°   | +0.0001°/d   | +28.07° | -    | Eleventh House |

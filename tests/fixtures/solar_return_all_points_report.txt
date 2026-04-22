@@ -48,7 +48,7 @@ Sample Natal Subject Solar Return — Solar Return 1991
 | Mean South Lunar Node | Can ♋️ | 18.45°   | +0.0529°/d   | +22.17° | R    | Seventh House |
 | True South Lunar Node | Can ♋️ | 18.94°   | -0.0212°/d   | +22.10° | -    | Seventh House |
 | Mean Lilith           | Cap ♑️ | 9.64°    | +0.1108°/d   | -23.88° | -    | Twelfth House |
-| True Lilith           | Cap ♑️ | 1.02°    | +1.6082°/d   | -25.07° | -    | Twelfth House |
+| True Lilith           | Cap ♑️ | 1.02°    | +1.6083°/d   | -25.07° | -    | Twelfth House |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Second House  |
 | Chiron                | Leo ♌️ | 0.02°    | +0.1160°/d   | +13.98° | -    | Seventh House |
 | Pholus                | Can ♋️ | 22.39°   | +0.1390°/d   | +18.51° | -    | Seventh House |

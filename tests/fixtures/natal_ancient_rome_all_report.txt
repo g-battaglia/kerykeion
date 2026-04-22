@@ -49,26 +49,26 @@ Ancient Rome Subject — Natal Chart Report
 | Mean South Lunar Node | Pis ♓️ | 3.57°    | +0.0530°/d   | -10.30° | R    | Twelfth House  |
 | True South Lunar Node | Pis ♓️ | 1.89°    | +0.0080°/d   | -10.91° | R    | Eleventh House |
 | Mean Lilith           | Pis ♓️ | 20.08°   | +0.1109°/d   | -5.31°  | -    | Twelfth House  |
-| True Lilith           | Pis ♓️ | 25.69°   | -1.5063°/d   | -3.64°  | R    | Twelfth House  |
+| True Lilith           | Pis ♓️ | 25.69°   | -1.5050°/d   | -3.64°  | R    | Twelfth House  |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Twelfth House  |
 | Regulus               | Leo ♌️ | 3.52°    | +0.0001°/d   | +19.94° | -    | Fifth House    |
 | Spica                 | Vir ♍️ | 27.43°   | +0.0001°/d   | -0.73°  | -    | Sixth House    |
-| Aldebaran             | Tau ♉️ | 13.33°   | -0.0001°/d   | +10.66° | -    | First House    |
+| Aldebaran             | Tau ♉️ | 13.33°   | -0.0000°/d   | +10.66° | -    | First House    |
 | Antares               | Sco ♏️ | 13.34°   | +0.0001°/d   | -20.11° | -    | Seventh House  |
 | Sirius                | Gem ♊️ | 17.99°   | -0.0000°/d   | -15.91° | -    | Second House   |
-| Fomalhaut             | Aqu ♒️ | 7.20°    | +0.0000°/d   | -38.70° | -    | Eleventh House |
+| Fomalhaut             | Aqu ♒️ | 7.20°    | -0.0000°/d   | -38.70° | -    | Eleventh House |
 | Algol                 | Ari ♈️ | 29.79°   | -0.0001°/d   | +32.08° | -    | First House    |
-| Betelgeuse            | Gem ♊️ | 2.31°    | -0.0001°/d   | +4.85°  | -    | Second House   |
-| Canopus               | Gem ♊️ | 18.79°   | -0.0002°/d   | -52.58° | -    | Second House   |
-| Procyon               | Gem ♊️ | 29.68°   | -0.0000°/d   | +8.04°  | -    | Third House    |
+| Betelgeuse            | Gem ♊️ | 2.31°    | -0.0000°/d   | +4.85°  | -    | Second House   |
+| Canopus               | Gem ♊️ | 18.79°   | -0.0001°/d   | -52.58° | -    | Second House   |
+| Procyon               | Gem ♊️ | 29.68°   | +0.0000°/d   | +8.04°  | -    | Third House    |
 | Arcturus              | Vir ♍️ | 27.81°   | +0.0002°/d   | +29.92° | -    | Sixth House    |
-| Pollux                | Gem ♊️ | 27.10°   | -0.0000°/d   | +30.18° | -    | Third House    |
-| Deneb                 | Aqu ♒️ | 9.28°    | -0.0000°/d   | +39.63° | -    | Eleventh House |
+| Pollux                | Gem ♊️ | 27.10°   | +0.0000°/d   | +30.18° | -    | Third House    |
+| Deneb                 | Aqu ♒️ | 9.28°    | -0.0001°/d   | +39.63° | -    | Eleventh House |
 | Altair                | Cap ♑️ | 5.05°    | +0.0001°/d   | +5.78°  | -    | Ninth House    |
 | Rigel                 | Tau ♉️ | 20.37°   | -0.0001°/d   | -12.28° | -    | First House    |
-| Achernar              | Aqu ♒️ | 18.42°   | -0.0000°/d   | -67.43° | -    | Eleventh House |
-| Capella               | Tau ♉️ | 25.42°   | -0.0001°/d   | +41.32° | -    | Second House   |
-| Vega                  | Sag ♐️ | 18.74°   | +0.0002°/d   | +38.42° | -    | Eighth House   |
+| Achernar              | Aqu ♒️ | 18.42°   | -0.0001°/d   | -67.43° | -    | Eleventh House |
+| Capella               | Tau ♉️ | 25.42°   | -0.0000°/d   | +41.32° | -    | Second House   |
+| Vega                  | Sag ♐️ | 18.74°   | +0.0001°/d   | +38.42° | -    | Eighth House   |
 | Alcyone               | Tau ♉️ | 3.57°    | -0.0001°/d   | +16.45° | -    | First House    |
 | Alphecca              | Lib ♎️ | 15.58°   | +0.0002°/d   | +34.41° | -    | Sixth House    |
 | Algorab               | Vir ♍️ | 17.15°   | +0.0001°/d   | -5.93°  | -    | Sixth House    |

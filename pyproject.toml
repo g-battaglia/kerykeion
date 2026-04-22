@@ -47,7 +47,7 @@ classifiers = [
 ]
 requires-python = ">=3.9"
 dependencies = [
-    "pyswisseph>=2.10.3.1",
+    "pyswisseph>=2.10.3.2",
     "pydantic>=2.5",
     "scour>=0.38.2",
     "requests-cache>=1.2.1",

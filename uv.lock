@@ -490,7 +490,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "pydantic", specifier = ">=2.5" },
-    { name = "pyswisseph", specifier = ">=2.10.3.1" },
+    { name = "pyswisseph", specifier = ">=2.10.3.2" },
     { name = "pytz", specifier = ">=2024.2" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "requests-cache", specifier = ">=1.2.1" },

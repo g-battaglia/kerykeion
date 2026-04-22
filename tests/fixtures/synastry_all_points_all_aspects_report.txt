@@ -74,7 +74,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Mean South Lunar Node | Leo ♌️ | 7.79°    | +0.0529°/d   | +18.32° | R    | Ninth House    |
 | True South Lunar Node | Leo ♌️ | 7.26°    | +0.0090°/d   | +18.46° | R    | Ninth House    |
 | Mean Lilith           | Sco ♏️ | 28.99°   | +0.1119°/d   | -24.62° | -    | First House    |
-| True Lilith           | Sag ♐️ | 18.03°   | -1.4433°/d   | -26.89° | R    | Second House   |
+| True Lilith           | Sag ♐️ | 18.03°   | -1.4431°/d   | -26.89° | R    | Second House   |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Fifth House    |
 | Chiron                | Can ♋️ | 19.88°   | +0.1071°/d   | +15.79° | -    | Ninth House    |
 | Pholus                | Can ♋️ | 7.99°    | +0.1329°/d   | +13.79° | -    | Eighth House   |
@@ -91,13 +91,13 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Quaoar                | Sco ♏️ | 24.08°   | -0.0062°/d   | -13.09° | R    | First House    |
 | Regulus               | Leo ♌️ | 29.70°   | +0.0000°/d   | +12.01° | -    | Tenth House    |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0000°/d   | -11.11° | -    | Twelfth House  |
-| Aldebaran             | Gem ♊️ | 9.66°    | +0.0002°/d   | +16.49° | -    | Eighth House   |
+| Aldebaran             | Gem ♊️ | 9.66°    | +0.0001°/d   | +16.49° | -    | Eighth House   |
 | Antares               | Sag ♐️ | 9.64°    | +0.0000°/d   | -26.41° | -    | Second House   |
 | Sirius                | Can ♋️ | 13.95°   | +0.0001°/d   | -16.70° | -    | Ninth House    |
 | Fomalhaut             | Pis ♓️ | 3.74°    | +0.0001°/d   | -29.67° | -    | Fourth House   |
 | Algol                 | Tau ♉️ | 26.04°   | +0.0002°/d   | +40.92° | -    | Seventh House  |
 | Betelgeuse            | Gem ♊️ | 28.62°   | +0.0001°/d   | +7.41°  | -    | Eighth House   |
-| Canopus               | Can ♋️ | 14.81°   | +0.0002°/d   | -52.69° | -    | Ninth House    |
+| Canopus               | Can ♋️ | 14.81°   | +0.0001°/d   | -52.69° | -    | Ninth House    |
 | Procyon               | Can ♋️ | 25.65°   | +0.0001°/d   | +5.25°  | -    | Ninth House    |
 | Arcturus              | Lib ♎️ | 24.11°   | -0.0000°/d   | +19.23° | -    | Twelfth House  |
 | Pollux                | Can ♋️ | 23.08°   | +0.0001°/d   | +28.05° | -    | Ninth House    |
@@ -142,7 +142,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Mean South Lunar Node | Vir ♍️ | 8.34°    | +0.0529°/d   | +8.45°  | R    | Eleventh House |
 | True South Lunar Node | Vir ♍️ | 7.80°    | +0.0059°/d   | +8.65°  | R    | Eleventh House |
 | Mean Lilith           | Gem ♊️ | 2.52°    | +0.1121°/d   | +25.69° | -    | Eighth House   |
-| True Lilith           | Gem ♊️ | 10.86°   | +2.3723°/d   | +27.30° | -    | Ninth House    |
+| True Lilith           | Gem ♊️ | 10.86°   | +2.3722°/d   | +27.30° | -    | Ninth House    |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Sixth House    |
 | Chiron                | Tau ♉️ | 23.74°   | +0.0192°/d   | +15.49° | -    | Eighth House   |
 | Pholus                | Cap ♑️ | 8.20°    | +0.0251°/d   | -13.72° | -    | Third House    |
@@ -157,24 +157,24 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Ixion                 | Vir ♍️ | 29.22°   | -0.0161°/d   | +17.70° | R    | Twelfth House  |
 | Orcus                 | Tau ♉️ | 27.79°   | +0.0050°/d   | +29.46° | -    | Eighth House   |
 | Quaoar                | Vir ♍️ | 16.77°   | -0.0182°/d   | +2.44°  | R    | Twelfth House  |
-| Regulus               | Leo ♌️ | 28.91°   | +0.0001°/d   | +12.29° | -    | Eleventh House |
-| Spica                 | Lib ♎️ | 22.91°   | +0.0002°/d   | -10.82° | -    | First House    |
+| Regulus               | Leo ♌️ | 28.91°   | +0.0000°/d   | +12.29° | -    | Eleventh House |
+| Spica                 | Lib ♎️ | 22.91°   | +0.0001°/d   | -10.82° | -    | First House    |
 | Aldebaran             | Gem ♊️ | 8.86°    | -0.0000°/d   | +16.38° | -    | Ninth House    |
 | Antares               | Sag ♐️ | 8.83°    | +0.0002°/d   | -26.29° | -    | Third House    |
 | Sirius                | Can ♋️ | 13.17°   | -0.0000°/d   | -16.62° | -    | Tenth House    |
 | Fomalhaut             | Pis ♓️ | 2.91°    | +0.0001°/d   | -29.98° | -    | Fifth House    |
 | Algol                 | Tau ♉️ | 25.24°   | -0.0000°/d   | +40.70° | -    | Eighth House   |
 | Betelgeuse            | Gem ♊️ | 27.83°   | -0.0000°/d   | +7.40°  | -    | Ninth House    |
-| Canopus               | Can ♋️ | 14.06°   | -0.0002°/d   | -52.66° | -    | Tenth House    |
-| Procyon               | Can ♋️ | 24.87°   | +0.0000°/d   | +5.40°  | -    | Tenth House    |
-| Arcturus              | Lib ♎️ | 23.31°   | +0.0002°/d   | +19.52° | -    | First House    |
-| Pollux                | Can ♋️ | 22.30°   | +0.0000°/d   | +28.19° | -    | Tenth House    |
+| Canopus               | Can ♋️ | 14.06°   | -0.0003°/d   | -52.66° | -    | Tenth House    |
+| Procyon               | Can ♋️ | 24.87°   | -0.0000°/d   | +5.40°  | -    | Tenth House    |
+| Arcturus              | Lib ♎️ | 23.31°   | +0.0001°/d   | +19.52° | -    | First House    |
+| Pollux                | Can ♋️ | 22.30°   | -0.0000°/d   | +28.19° | -    | Tenth House    |
 | Deneb                 | Pis ♓️ | 4.40°    | +0.0001°/d   | +45.04° | -    | Fifth House    |
-| Altair                | Aqu ♒️ | 0.83°    | +0.0001°/d   | +8.69°  | -    | Fourth House   |
+| Altair                | Aqu ♒️ | 0.83°    | +0.0002°/d   | +8.69°  | -    | Fourth House   |
 | Rigel                 | Gem ♊️ | 15.90°   | -0.0000°/d   | -8.28°  | -    | Ninth House    |
-| Achernar              | Pis ♓️ | 14.35°   | +0.0000°/d   | -57.58° | -    | Sixth House    |
+| Achernar              | Pis ♓️ | 14.35°   | +0.0001°/d   | -57.58° | -    | Sixth House    |
 | Capella               | Gem ♊️ | 20.93°   | -0.0000°/d   | +45.94° | -    | Ninth House    |
-| Vega                  | Cap ♑️ | 14.37°   | +0.0002°/d   | +38.71° | -    | Fourth House   |
+| Vega                  | Cap ♑️ | 14.37°   | +0.0003°/d   | +38.71° | -    | Fourth House   |
 | Alcyone               | Tau ♉️ | 29.06°   | -0.0000°/d   | +23.90° | -    | Eighth House   |
 | Alphecca              | Sco ♏️ | 11.36°   | +0.0002°/d   | +26.93° | -    | Second House   |
 | Algorab               | Lib ♎️ | 12.53°   | +0.0001°/d   | -16.15° | -    | First House    |
@@ -243,10 +243,10 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 36.325966850828735 | 36.3%      |
-| Fixed    | 36.18784530386741  | 36.2%      |
-| Mutable  | 27.48618784530387  | 27.5%      |
-| Total    | 100.00000000000003 | 100%       |
+| Cardinal | 36.32596685082872  | 36.3%      |
+| Fixed    | 36.1878453038674   | 36.2%      |
+| Mutable  | 27.486187845303867 | 27.5%      |
+| Total    | 100.0              | 100%       |
 +----------+--------------------+------------+
 
 +Sample Natal Subject points in Yoko Ono houses+---------------------+---------------------+------+--------+

@@ -49,7 +49,7 @@ Future 2050 Subject — Natal Chart Report
 | Mean South Lunar Node | Tau ♉️ | 17.38°   | +0.0530°/d   | +17.02° | R    | Seventh House  |
 | True South Lunar Node | Tau ♉️ | 18.28°   | +0.2073°/d   | +17.27° | R    | Seventh House  |
 | Mean Lilith           | Vir ♍️ | 10.24°   | +0.1119°/d   | +3.33°  | -    | Eleventh House |
-| True Lilith           | Vir ♍️ | 11.79°   | +1.2935°/d   | +2.87°  | -    | Eleventh House |
+| True Lilith           | Vir ♍️ | 11.79°   | +1.2934°/d   | +2.87°  | -    | Eleventh House |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Fifth House    |
 | Chiron                | Sag ♐️ | 5.76°    | -0.0272°/d   | -16.50° | R    | Second House   |
 | Pholus                | Aqu ♒️ | 11.94°   | -0.0286°/d   | -22.36° | R    | Fourth House   |
@@ -72,7 +72,7 @@ Future 2050 Subject — Natal Chart Report
 | Fomalhaut             | Pis ♓️ | 4.58°    | +0.0001°/d   | -29.35° | -    | Fifth House    |
 | Algol                 | Tau ♉️ | 26.87°   | +0.0001°/d   | +41.14° | -    | Eighth House   |
 | Betelgeuse            | Gem ♊️ | 29.46°   | +0.0001°/d   | +7.41°  | -    | Ninth House    |
-| Canopus               | Can ♋️ | 15.64°   | +0.0000°/d   | -52.73° | -    | Ninth House    |
+| Canopus               | Can ♋️ | 15.64°   | +0.0001°/d   | -52.73° | -    | Ninth House    |
 | Procyon               | Can ♋️ | 26.48°   | +0.0000°/d   | +5.09°  | -    | Ninth House    |
 | Arcturus              | Lib ♎️ | 24.94°   | -0.0001°/d   | +18.92° | -    | Twelfth House  |
 | Pollux                | Can ♋️ | 23.91°   | +0.0000°/d   | +27.90° | -    | Ninth House    |

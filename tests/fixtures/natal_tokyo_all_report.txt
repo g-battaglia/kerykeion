@@ -49,7 +49,7 @@ Tokyo Subject — Natal Chart Report
 | Mean South Lunar Node | Leo ♌️ | 9.72°    | +0.0530°/d   | +17.82° | R    | Eleventh House |
 | True South Lunar Node | Leo ♌️ | 8.11°    | -0.0184°/d   | +18.24° | -    | Eleventh House |
 | Mean Lilith           | Sco ♏️ | 24.91°   | +0.1120°/d   | -23.81° | -    | Second House   |
-| True Lilith           | Sag ♐️ | 18.52°   | +1.5731°/d   | -26.87° | -    | Third House    |
+| True Lilith           | Sag ♐️ | 18.52°   | +1.5733°/d   | -26.87° | -    | Third House    |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Seventh House  |
 | Chiron                | Can ♋️ | 16.02°   | +0.1011°/d   | +16.26° | -    | Tenth House    |
 | Pholus                | Can ♋️ | 3.01°    | +0.1367°/d   | +13.46° | -    | Tenth House    |
@@ -647,7 +647,7 @@ Tokyo Subject — Natal Chart Report
 | True Lilith           | opposition ☍                  | Aldebaran             | 8.86° | Separating ← |
 | True Lilith           | conjunction ☌                 | Antares               | 8.88° | Separating ← |
 | True Lilith           | sextile ⚹                     | Arcturus              | 5.59° | Applying →   |
-| True Lilith           | opposition ☍                  | Rigel                 | 1.82° | Separating ← |
+| True Lilith           | opposition ☍                  | Rigel                 | 1.83° | Separating ← |
 | True Lilith           | square □                      | Achernar              | 3.34° | Separating ← |
 | True Lilith           | opposition ☍                  | Capella               | 3.20° | Applying →   |
 | True Lilith           | sextile ⚹                     | Algorab               | 5.19° | Separating ← |

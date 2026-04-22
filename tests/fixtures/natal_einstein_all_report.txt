@@ -49,7 +49,7 @@ Einstein Subject — Natal Chart Report
 | Mean South Lunar Node | Leo ♌️ | 1.48°    | +0.0529°/d   | +19.84° | R    | Second House   |
 | True South Lunar Node | Leo ♌️ | 2.73°    | +0.0209°/d   | +19.56° | R    | Second House   |
 | Mean Lilith           | Ari ♈️ | 27.98°   | +0.1121°/d   | +15.55° | -    | Eleventh House |
-| True Lilith           | Ari ♈️ | 1.65°    | -0.8054°/d   | +4.69°  | R    | Tenth House    |
+| True Lilith           | Ari ♈️ | 1.65°    | -0.8049°/d   | +4.69°  | R    | Tenth House    |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Tenth House    |
 | Chiron                | Tau ♉️ | 5.54°    | +0.0525°/d   | +12.39° | -    | Eleventh House |
 | Pholus                | Aqu ♒️ | 27.09°   | +0.0403°/d   | -23.59° | -    | Ninth House    |
@@ -64,29 +64,29 @@ Einstein Subject — Natal Chart Report
 | Ixion                 | Can ♋️ | 26.14°   | -0.0105°/d   | +35.67° | R    | Second House   |
 | Orcus                 | Cap ♑️ | 29.36°   | +0.0245°/d   | -9.78°  | -    | Eighth House   |
 | Quaoar                | Can ♋️ | 9.96°    | -0.0035°/d   | +15.06° | R    | First House    |
-| Regulus               | Leo ♌️ | 28.16°   | -0.0000°/d   | +12.55° | -    | Third House    |
-| Spica                 | Lib ♎️ | 22.16°   | +0.0001°/d   | -10.53° | -    | Fifth House    |
+| Regulus               | Leo ♌️ | 28.16°   | +0.0001°/d   | +12.55° | -    | Third House    |
+| Spica                 | Lib ♎️ | 22.16°   | +0.0002°/d   | -10.53° | -    | Fifth House    |
 | Aldebaran             | Gem ♊️ | 8.10°    | -0.0000°/d   | +16.27° | -    | Twelfth House  |
-| Antares               | Sag ♐️ | 8.08°    | +0.0001°/d   | -26.16° | -    | Sixth House    |
-| Sirius                | Can ♋️ | 12.42°   | -0.0001°/d   | -16.55° | -    | First House    |
+| Antares               | Sag ♐️ | 8.08°    | +0.0002°/d   | -26.16° | -    | Sixth House    |
+| Sirius                | Can ♋️ | 12.42°   | -0.0000°/d   | -16.55° | -    | First House    |
 | Fomalhaut             | Pis ♓️ | 2.16°    | +0.0001°/d   | -30.26° | -    | Ninth House    |
-| Algol                 | Tau ♉️ | 24.48°   | -0.0000°/d   | +40.49° | -    | Eleventh House |
+| Algol                 | Tau ♉️ | 24.48°   | -0.0001°/d   | +40.49° | -    | Eleventh House |
 | Betelgeuse            | Gem ♊️ | 27.07°   | -0.0000°/d   | +7.38°  | -    | Twelfth House  |
-| Canopus               | Can ♋️ | 13.30°   | -0.0004°/d   | -52.63° | -    | First House    |
-| Procyon               | Can ♋️ | 24.13°   | -0.0001°/d   | +5.53°  | -    | First House    |
-| Arcturus              | Lib ♎️ | 22.56°   | +0.0001°/d   | +19.81° | -    | Fifth House    |
+| Canopus               | Can ♋️ | 13.30°   | -0.0002°/d   | -52.63° | -    | First House    |
+| Procyon               | Can ♋️ | 24.13°   | -0.0000°/d   | +5.53°  | -    | First House    |
+| Arcturus              | Lib ♎️ | 22.56°   | +0.0002°/d   | +19.81° | -    | Fifth House    |
 | Pollux                | Can ♋️ | 21.56°   | -0.0000°/d   | +28.32° | -    | First House    |
-| Deneb                 | Pis ♓️ | 3.66°    | +0.0002°/d   | +44.85° | -    | Ninth House    |
-| Altair                | Aqu ♒️ | 0.07°    | +0.0002°/d   | +8.55°  | -    | Eighth House   |
-| Rigel                 | Gem ♊️ | 15.14°   | -0.0000°/d   | -8.34°  | -    | Twelfth House  |
-| Achernar              | Pis ♓️ | 13.59°   | +0.0002°/d   | -57.85° | -    | Tenth House    |
+| Deneb                 | Pis ♓️ | 3.66°    | +0.0001°/d   | +44.85° | -    | Ninth House    |
+| Altair                | Aqu ♒️ | 0.07°    | +0.0001°/d   | +8.55°  | -    | Eighth House   |
+| Rigel                 | Gem ♊️ | 15.14°   | -0.0001°/d   | -8.34°  | -    | Twelfth House  |
+| Achernar              | Pis ♓️ | 13.59°   | -0.0000°/d   | -57.85° | -    | Tenth House    |
 | Capella               | Gem ♊️ | 20.17°   | -0.0000°/d   | +45.88° | -    | Twelfth House  |
-| Vega                  | Cap ♑️ | 13.62°   | +0.0003°/d   | +38.67° | -    | Seventh House  |
+| Vega                  | Cap ♑️ | 13.62°   | +0.0002°/d   | +38.67° | -    | Seventh House  |
 | Alcyone               | Tau ♉️ | 28.31°   | -0.0000°/d   | +23.73° | -    | Eleventh House |
-| Alphecca              | Sco ♏️ | 10.60°   | +0.0001°/d   | +27.12° | -    | Fifth House    |
-| Algorab               | Lib ♎️ | 11.78°   | +0.0000°/d   | -15.85° | -    | Fourth House   |
-| Deneb Algedi          | Aqu ♒️ | 21.85°   | +0.0002°/d   | -16.68° | -    | Ninth House    |
-| Alkaid                | Vir ♍️ | 25.24°   | -0.0000°/d   | +49.91° | -    | Fourth House   |
+| Alphecca              | Sco ♏️ | 10.60°   | +0.0002°/d   | +27.12° | -    | Fifth House    |
+| Algorab               | Lib ♎️ | 11.78°   | +0.0001°/d   | -15.85° | -    | Fourth House   |
+| Deneb Algedi          | Aqu ♒️ | 21.85°   | +0.0001°/d   | -16.68° | -    | Ninth House    |
+| Alkaid                | Vir ♍️ | 25.24°   | +0.0001°/d   | +49.91° | -    | Fourth House   |
 | Pars Fortunae         | Pis ♓️ | 29.82°   | N/A          | N/A     | -    | Tenth House    |
 | Pars Spiritus         | Lib ♎️ | 18.02°   | N/A          | N/A     | -    | Fifth House    |
 | Pars Amoris           | Leo ♌️ | 2.40°    | N/A          | N/A     | -    | Second House   |

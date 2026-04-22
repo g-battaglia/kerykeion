@@ -49,7 +49,7 @@ Buenos Aires Subject — Natal Chart Report
 | Mean South Lunar Node | Leo ♌️ | 9.69°    | +0.0530°/d   | +17.83° | R    | Twelfth House  |
 | True South Lunar Node | Leo ♌️ | 8.12°    | -0.0118°/d   | +18.24° | -    | Twelfth House  |
 | Mean Lilith           | Sco ♏️ | 24.97°   | +0.1120°/d   | -23.82° | -    | Third House    |
-| True Lilith           | Sag ♐️ | 19.14°   | +0.9016°/d   | -26.89° | -    | Fourth House   |
+| True Lilith           | Sag ♐️ | 19.14°   | +0.9015°/d   | -26.89° | -    | Fourth House   |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Seventh House  |
 | Chiron                | Can ♋️ | 16.07°   | +0.1013°/d   | +16.25° | -    | Eleventh House |
 | Pholus                | Can ♋️ | 3.07°    | +0.1368°/d   | +13.47° | -    | Tenth House    |
@@ -67,7 +67,7 @@ Buenos Aires Subject — Natal Chart Report
 | Regulus               | Leo ♌️ | 29.70°   | -0.0001°/d   | +12.01° | -    | Twelfth House  |
 | Spica                 | Lib ♎️ | 23.71°   | -0.0001°/d   | -11.11° | -    | Second House   |
 | Aldebaran             | Gem ♊️ | 9.65°    | +0.0000°/d   | +16.49° | -    | Ninth House    |
-| Antares               | Sag ♐️ | 9.64°    | -0.0000°/d   | -26.41° | -    | Third House    |
+| Antares               | Sag ♐️ | 9.64°    | +0.0000°/d   | -26.41° | -    | Third House    |
 | Sirius                | Can ♋️ | 13.95°   | -0.0000°/d   | -16.70° | -    | Eleventh House |
 | Fomalhaut             | Pis ♓️ | 3.73°    | +0.0001°/d   | -29.67° | -    | Seventh House  |
 | Algol                 | Tau ♉️ | 26.03°   | +0.0001°/d   | +40.92° | -    | Ninth House    |
