@@ -120,14 +120,14 @@ Sample Natal Subject — Natal Chart Report
 +----------------+---------+
 | Aspect         | Orb (°) |
 +----------------+---------+
-| conjunction    | 8       |
-| semi-sextile   | 2       |
-| semi-square    | 2       |
-| sextile        | 4       |
-| square         | 5       |
-| trine          | 7       |
-| sesquiquadrate | 2       |
-| opposition     | 8       |
+| conjunction    | 8.0     |
+| semi-sextile   | 2.0     |
+| semi-square    | 2.0     |
+| sextile        | 4.0     |
+| square         | 5.0     |
+| trine          | 7.0     |
+| sesquiquadrate | 2.0     |
+| opposition     | 8.0     |
 +----------------+---------+
 
 +Aspects----------------+-------------------------------+-----------------------+-------+--------------+

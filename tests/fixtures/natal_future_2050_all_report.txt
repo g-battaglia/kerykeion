@@ -236,17 +236,17 @@ Future 2050 Subject — Natal Chart Report
 +----------------+---------+
 | Aspect         | Orb (°) |
 +----------------+---------+
-| conjunction    | 10      |
-| opposition     | 10      |
-| trine          | 8       |
-| sextile        | 6       |
-| square         | 5       |
-| quintile       | 1       |
-| semi-sextile   | 1       |
-| semi-square    | 1       |
-| sesquiquadrate | 1       |
-| biquintile     | 1       |
-| quincunx       | 1       |
+| conjunction    | 10.0    |
+| opposition     | 10.0    |
+| trine          | 8.0     |
+| sextile        | 6.0     |
+| square         | 5.0     |
+| quintile       | 1.0     |
+| semi-sextile   | 1.0     |
+| semi-square    | 1.0     |
+| sesquiquadrate | 1.0     |
+| biquintile     | 1.0     |
+| quincunx       | 1.0     |
 +----------------+---------+
 
 +Aspects----------------+-------------------------------+-----------------------+-------+--------------+

@@ -265,12 +265,12 @@ Johnny Depp — Transit 1940-10-09
 +-------------+---------+
 | Aspect      | Orb (°) |
 +-------------+---------+
-| conjunction | 10      |
-| opposition  | 10      |
-| trine       | 8       |
-| sextile     | 6       |
-| square      | 5       |
-| quintile    | 1       |
+| conjunction | 10.0    |
+| opposition  | 10.0    |
+| trine       | 8.0     |
+| sextile     | 6.0     |
+| square      | 5.0     |
+| quintile    | 1.0     |
 +-------------+---------+
 
 +Aspects----------------+-------------+---------------+-----------------------+-------------+-------+--------------+
