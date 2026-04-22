@@ -4,6 +4,10 @@
 
 _2026-03-18_
 
+**Bugfixes:**
+
+- **Modern chart decluttering order (v5.12.8):** Fixed a bug where planets in a tight cluster on `style="modern"` charts could be pushed past their neighbours, violating true zodiacal order (e.g. Neptune at 5° Aquarius rendered after Uranus at 17° Aquarius). The collision-resolution algorithm in `_resolve_planet_collisions` was rewritten from a 5-pass iterative push (vulnerable to wraparound overshoots) to a single-pass largest-gap linearization that is monotonic by construction: planets are cut at the largest gap in their true zodiacal angles and walked forward once with `display_angle = max(desired_linear, prev_linear + sep)`. Order is preserved and `min_separation` is respected without iterative refinement. Reproduced by any dense stellium (≥3 planets within ~8°); regression covered by `tests/core/test_modern_decluttering.py`.
+
 **New Features:**
 
 - **Retrograde indicator on classic wheel (v5.12.7):** The ℞ (retrograde) symbol is now rendered next to retrograde planet glyphs directly on the classic style chart wheel. Previously, retrograde status was only visible in the sidebar grid and in modern style charts. The symbol appears at the bottom-right foot of each retrograde planet glyph on both inner-ring (natal) and outer-ring (transit/synastry) planets. A `kr:retrograde="true"` attribute is also added to the planet group elements for programmatic consumers.
