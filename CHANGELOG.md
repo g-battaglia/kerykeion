@@ -1,5 +1,33 @@
 # Changelog
 
+## 6.0.0a33
+
+_2026-04-24_
+
+### New Features
+
+- **`kr:cx` / `kr:cy` now emitted on modern-style ChartPoints too.** The
+  modern path in `draw_modern._draw_single_planet_in_ring` wraps each
+  planet/angle in a `<g>` rotated around the chart center via
+  `rotate(-display_angle, CENTER, CENTER)`. The emitted center applies
+  that rotation to the pre-rotation glyph position `(CENTER, glyph_y)`,
+  producing the true post-rotation coordinates in chart SVG root space.
+
+### Why
+
+6.0.0a32 added `kr:cx` / `kr:cy` only on the classic path. Frontends that
+need a single code path for hit-detection (tooltip, click-to-focus) across
+both styles therefore still had to parse the modern transform chain. This
+release closes the gap: both styles now expose the glyph center uniformly
+as two attributes on the ChartPoint `<g>`, and the consumer converts them
+to viewport pixels with a single `getScreenCTM()` / `getCTM().inverse()`
+call — no style-specific logic required.
+
+### Backward compatibility
+
+Additive only. Existing consumers that ignore the attributes are unaffected;
+the classic path is unchanged.
+
 ## 6.0.0a32
 
 _2026-04-24_
