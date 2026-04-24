@@ -1,5 +1,31 @@
 # Changelog
 
+## 6.0.0a34
+
+_2026-04-24_
+
+### New Features
+
+- **Sign-full highlight overlay on modern `ZodiacSign`.** Each modern
+  ZodiacSign now contains a second hidden `<path kr:highlight="sign-full">`
+  that is a full pie slice from the chart center to the outer zodiac
+  boundary. Transparent and non-interactive by default; frontends toggle
+  its visibility through CSS to render a classic-style full-wedge focus
+  highlight. The visible outer annular wedge is unchanged.
+
+### Why
+
+In the modern style the visible zodiac wedge is a thin outer ring
+(~4 units on a 100-unit viewBox), so frontends that highlight a focused
+sign can only tint that narrow band. The classic style paints a full
+pie-slice wedge, producing a much stronger visual emphasis. The overlay
+bridges the gap without altering the default modern appearance.
+
+### Backward compatibility
+
+Additive only. No existing attribute is removed or renamed, the visible
+geometry is byte-identical, and pointer interactions are unchanged.
+
 ## 6.0.0a33
 
 _2026-04-24_
