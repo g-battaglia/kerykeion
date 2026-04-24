@@ -350,6 +350,25 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
             f'fill="{color}" style="fill-opacity: {COLOR_ZODIAC_BG_OPACITY}" />\n'
         )
 
+        # Highlight overlay — a full pie slice from chart center to the outer
+        # zodiac boundary, invisible by default. Frontends can make it visible
+        # via CSS (e.g. .chart-focused > [kr:highlight='sign-full']) to give
+        # the modern ZodiacSign the same visual impact as the classic wedge
+        # when a sign is focused. `pointer-events: none` so it never steals
+        # clicks from the planet ring / aspect core sitting above it.
+        cx1 = CENTER + R_ZODIAC_BG_OUTER * math.cos(a_start_rad)
+        cy1 = CENTER + R_ZODIAC_BG_OUTER * math.sin(a_start_rad)
+        cx2 = CENTER + R_ZODIAC_BG_OUTER * math.cos(a_end_rad)
+        cy2 = CENTER + R_ZODIAC_BG_OUTER * math.sin(a_end_rad)
+        out += (
+            f'  <path kr:highlight="sign-full" d="'
+            f"M {CENTER},{CENTER} "
+            f"L {cx1:.6f},{cy1:.6f} "
+            f"A {R_ZODIAC_BG_OUTER},{R_ZODIAC_BG_OUTER} 0 0,0 {cx2:.6f},{cy2:.6f} "
+            f'Z" '
+            f'fill="{color}" fill-opacity="0" pointer-events="none" />\n'
+        )
+
         # Draw the zodiac glyph centered in the wedge
         # The group is already rotated by -90°. Each glyph is placed via
         # rotate(-mid_angle) which points it to the correct angular position,
