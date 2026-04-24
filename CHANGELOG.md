@@ -1,5 +1,40 @@
 # Changelog
 
+## 6.0.0a32
+
+_2026-04-24_
+
+### New Features
+
+- **`kr:cx` / `kr:cy` attributes on every `<g kr:node="ChartPoint">`** — the
+  exact glyph-center coordinates in chart SVG root coords, emitted by both
+  the single-chart path (`_generate_point_svg`) and the transit-chart
+  inline path in `draw_planets`. Pure addition of two attribute writes
+  per point; no geometric impact on rendered output.
+
+### Why
+
+Frontends that layer interactivity on top of kerykeion SVG (tooltips,
+click-to-focus, hit-testing) need the rendered glyph center to
+disambiguate overlapping symbols in dense clusters. Measuring it via DOM
+APIs is unreliable: our `<symbol>` definitions omit `viewBox`, so
+`getBoundingClientRect` / `getBBox` on `<use>` returns 0×0 or an
+implementation-defined value across browsers. Parsing the `<g>` transform
+chain works for modern style but diverges from classic, which wraps the
+symbol with `translate(-12, -12)` and places `<use x=X y=Y>` — making the
+two styles structurally incompatible for a single consumer.
+
+Emitting the coordinates explicitly sidesteps all of that: the consumer
+reads two attributes, applies the root SVG's `getScreenCTM()`, and
+obtains the exact viewport-space glyph center. The values are already
+computed by the drawing code before it writes the markup, so the cost on
+the generator side is zero.
+
+### Backward compatibility
+
+Additive only: no existing attribute is removed, renamed, or semantically
+changed. Older consumers that ignore `kr:cx` / `kr:cy` keep working.
+
 ## 6.0.0a31
 
 _2026-04-22_
