@@ -957,10 +957,26 @@ def _draw_single_planet_in_ring(
     retro_attr = ' kr:retrograde="true"' if is_retro else ""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
 
+    # kr:cx / kr:cy — glyph center in chart SVG root coords (post-rotation).
+    # The ChartPoint applies `rotate(-display_angle, CENTER, CENTER)` to its
+    # content; the glyph itself sits at (CENTER, glyph_y) in the ChartPoint's
+    # pre-rotation local coords. Rotating (0, glyph_y - CENTER) by
+    # -display_angle (SVG convention) and translating back by (CENTER, CENTER)
+    # gives:
+    #   cx = CENTER + dy * sin(display_angle)
+    #   cy = CENTER + dy * cos(display_angle)
+    # Emitted so frontend hit-detection can read the exact glyph center
+    # regardless of chart style or symbol viewBox quirks.
+    angle_rad = math.radians(display_angle)
+    dy = glyph_y - CENTER
+    glyph_cx = CENTER + dy * math.sin(angle_rad)
+    glyph_cy = CENTER + dy * math.cos(angle_rad)
+
     out = (
         f'<g kr:node="ChartPoint" kr:house="{point.house}" '
         f'kr:sign="{sign}" kr:absoluteposition="{point.abs_pos}" '
         f'kr:signposition="{point.position}" kr:slug="{planet_id}"{retro_attr}{horoscope_attr} '
+        f'kr:cx="{glyph_cx}" kr:cy="{glyph_cy}" '
         f'transform="rotate(-{display_angle:.6f} {CENTER} {CENTER})">\n'
     )
 
