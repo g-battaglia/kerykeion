@@ -761,10 +761,18 @@ def _generate_point_svg(
     gauq = getattr(point_details, "gauquelin_sector", None)
     gauq_attr = f' kr:gauquelinsector="{gauq}"' if gauq is not None else ""
 
+    # kr:cx / kr:cy — the rendered glyph center in chart SVG root coordinates.
+    # Emitted so frontend hit-detection can use an exact center without having
+    # to measure the symbol's <use> (whose bbox depends on the referenced
+    # <symbol>, which has no intrinsic viewBox). `x` and `y` passed into this
+    # function are already the intended glyph center in root coords — the
+    # translate(-12*scale, -12*scale) on the wrapping <g> cancels the half-
+    # offset that the symbol's own coordinate system imposes.
     parts: list[str] = [
         f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
         f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',
         f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr}{horoscope_attr}{gauq_attr} ',
+        f'kr:cx="{x}" kr:cy="{y}" ',
         f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
         f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />',
     ]
@@ -1072,6 +1080,11 @@ def _draw_secondary_points(
         if celestial_points is not None and point_idx < len(celestial_points):
             cp = celestial_points[point_idx]
             kr_attrs += f' kr:house="{cp.house}" kr:sign="{cp.sign}" kr:absoluteposition="{cp.abs_pos}" kr:signposition="{cp.position}"'
+        # kr:cx / kr:cy — glyph center in chart SVG root coordinates, matching
+        # _generate_point_svg. The outer translate(-6,-6) plus inner scale(0.5)
+        # and pre-doubled use x/y place the symbol center exactly at
+        # (point_x, point_y) in root coords.
+        kr_attrs += f' kr:cx="{point_x}" kr:cy="{point_y}"'
         point_svg = (
             f'<g {kr_attrs}{retro_attr} class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
             f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{point_name}" />'
