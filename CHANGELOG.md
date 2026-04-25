@@ -1,5 +1,25 @@
 # Changelog
 
+## 6.0.0a35
+
+_2026-04-25_
+
+### Bugfix
+
+- **Modern HouseSector no longer overlaps the zodiac ring.** The
+  click-only HouseSector overlay was drawn out to `R_CUSP_OUTER=50`,
+  identical to the zodiac background's outer edge, and it covered the
+  entire 4-unit zodiac annulus (`R_ZODIAC_BG_INNER=46` to 50). Frontends
+  that walked `elementsFromPoint` and resolved HouseSector before
+  ZodiacSign therefore swallowed every click on a zodiac sign as a
+  click on the underlying house. With the zodiac background ring
+  active, HouseSector now stops at `R_ZODIAC_BG_INNER`. Without the
+  zodiac ring, the original full-radius behaviour is preserved.
+
+Affects both the main horoscope path and the synastry / dual-chart
+path. No change to the visible geometry — HouseSector is invisible by
+default; this only adjusts the clickable region.
+
 ## 6.0.0a34
 
 _2026-04-24_
