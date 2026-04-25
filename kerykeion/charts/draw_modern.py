@@ -1520,7 +1520,12 @@ def draw_modern_horoscope(
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut, gauquelin_cusps=gauquelin_cusps)
     else:
         out += _draw_house_ring(houses, seventh_house_degree_ut)
-    out += _draw_house_sectors_modern(houses, seventh_house_degree_ut)
+    # House sectors are click-only overlays; clip them to the inner edge of
+    # the zodiac background ring when the zodiac is drawn, so a click on a
+    # zodiac sign isn't intercepted by the house sector underneath. Falls
+    # back to R_CUSP_OUTER when no zodiac ring is rendered.
+    house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
+    out += _draw_house_sectors_modern(houses, seventh_house_degree_ut, outer_r=house_sector_outer_r)
     out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut)
 
     if show_zodiac_background_ring:
@@ -1671,8 +1676,11 @@ def draw_modern_dual_horoscope(
     )
 
     # ─── HOUSE SECTORS (transparent, for interactive highlighting) ───
+    # Clip outer radius to the zodiac inner boundary when the zodiac ring is
+    # drawn, so clicks on a zodiac sign aren't swallowed by the house sector.
+    syn_house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
     out += _draw_house_sectors_modern(
-        houses_1, seventh_house_degree_ut, inner_r=SYN_R_HOUSE_INNER, outer_r=R_CUSP_OUTER
+        houses_1, seventh_house_degree_ut, inner_r=SYN_R_HOUSE_INNER, outer_r=syn_house_sector_outer_r
     )
 
     # ─── ASPECT CORE (cross-chart aspects) ──────────────────────────
