@@ -2424,10 +2424,11 @@ class ChartDrawer:  # type: ignore[no-redef]
                     cusp_block_width = 160.0 * 2.0
                     extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
 
-        if self.chart_type == "Transit":
+        if self.chart_type in ("Transit", "Progression"):
             if self.show_house_position_comparison or self.show_cusp_position_comparison:
+                point_label = "Progressed Point" if self.chart_type == "Progression" else "Transit Point"
                 transit_columns = [
-                    self._translate("transit_point", "Transit Point"),
+                    self._translate("transit_point", point_label),
                     self._translate("house_position", "Natal House"),
                 ]
                 transit_grid_width = self._estimate_house_comparison_grid_width(

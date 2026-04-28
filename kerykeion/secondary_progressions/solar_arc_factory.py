@@ -169,7 +169,6 @@ class SolarArcFactory:
         progressed = SecondaryProgressionFactory.compute(
             natal_subject,
             target_iso_utc_datetime=target_utc.strftime("%Y-%m-%dT%H:%M:%S.000Z") if target_utc else None,
-            target_year=None if target_utc else None,
         )
         if progressed.sun is None:
             raise KerykeionException("Progressed subject is missing the Sun — cannot compute solar arc.")

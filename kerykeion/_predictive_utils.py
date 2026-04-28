@@ -25,7 +25,11 @@ def gather_active_points(
     candidate_names: Iterable[str] = DEFAULT_PREDICTIVE_POINTS if active_points is None else active_points
 
     gathered: List[tuple[str, float]] = []
+    seen: set[str] = set()
     for name in candidate_names:
+        if name in seen:
+            continue
+        seen.add(name)
         attr = name.lower()
         point: Optional[KerykeionPointModel] = getattr(subject, attr, None)
         if point is None:

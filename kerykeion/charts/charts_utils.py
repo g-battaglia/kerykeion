@@ -1789,7 +1789,7 @@ def draw_main_planet_grid(
     svg_output = f'<g transform="translate({x_position},{y_position})">'
 
     # Add title only for specific chart types
-    if chart_type in ("Synastry", "Transit", "DualReturnChart"):
+    if chart_type in _DOUBLE_CHART_TYPES:
         svg_output += (
             f'<g transform="translate(0, {HEADER_Y})">'
             f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
