@@ -146,7 +146,7 @@ class SecondaryProgressionFactory:
         if target_year is not None:
             try:
                 target_utc = datetime(target_year, 1, 1, tzinfo=timezone.utc)
-            except (ValueError, OverflowError) as exc:
+            except (ValueError, OverflowError, TypeError) as exc:
                 raise KerykeionException(
                     f"Invalid `target_year`: {target_year!r}"
                 ) from exc

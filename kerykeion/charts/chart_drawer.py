@@ -751,6 +751,18 @@ class TransitChartRenderer(BaseChartRenderer):
         """Title for the aspect list panel. Override in subclasses for custom labels."""
         return f"{self.drawer.first_obj.name} - {self._translate('transit_aspects', 'Transit Aspects')}"
 
+    def _outer_wheel_label(self) -> str:
+        """Label for the outer wheel in planet grids. Override for custom labels."""
+        return self._translate("transit", "Transit")
+
+    def _comparison_return_point_label(self) -> str:
+        """Label for the outer-wheel points in house comparison grids."""
+        return self._translate("transit_point", "Transit Point")
+
+    def _comparison_cusp_label(self) -> str:
+        """Label for the outer-wheel cusps in cusp comparison grids."""
+        return self._translate("transit_cusp", "Transit Cusp")
+
     def setup_aspects(self, template_dict: dict) -> None:
         """Set up aspect list or grid for dual-wheel chart."""
         d = self.drawer
@@ -892,9 +904,8 @@ class TransitChartRenderer(BaseChartRenderer):
 
         # Planet grids with wheel labels
         first_label = d._truncate_name(d.first_obj.name)
-        transit_label = self._translate("transit", "Transit")
         first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
-        second_grid_title = f"{transit_label} ({self._translate('outer_wheel', 'Outer Wheel')})"
+        second_grid_title = f"{self._outer_wheel_label()} ({self._translate('outer_wheel', 'Outer Wheel')})"
 
         template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
             planets_and_houses_grid_title="",
@@ -939,7 +950,7 @@ class TransitChartRenderer(BaseChartRenderer):
                 house_position_comparison_label=self._translate(
                     "house_position_comparison", "House Position Comparison"
                 ),
-                return_point_label=self._translate("transit_point", "Transit Point"),
+                return_point_label=self._comparison_return_point_label(),
                 natal_house_label=self._translate("house_position", "Natal House"),
                 x_position=d._TRANSIT_HOUSE_COMPARISON_X,
             )
@@ -952,7 +963,7 @@ class TransitChartRenderer(BaseChartRenderer):
                 celestial_point_language=d._language_model.celestial_points,
                 cusps_owner_subject_number=2,
                 cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
-                owner_cusp_label=self._translate("transit_cusp", "Transit Cusp"),
+                owner_cusp_label=self._comparison_cusp_label(),
                 projected_house_label=self._translate("natal_house", "Natal House"),
                 x_position=cusp_x,
                 y_position=0,
@@ -966,7 +977,7 @@ class ProgressionChartRenderer(TransitChartRenderer):
     """Renderer for Secondary Progression charts.
 
     Reuses the Transit dual-wheel layout (natal inner, progressed outer)
-    but overrides labels so the SVG reads "Progression" instead of "Transit".
+    via label hooks — no duplicated rendering logic.
     """
 
     def get_comparison_point_label(self) -> str:
@@ -974,6 +985,15 @@ class ProgressionChartRenderer(TransitChartRenderer):
 
     def _aspect_list_title(self) -> str:
         return f"{self.drawer.first_obj.name} - {self._translate('progression_aspects', 'Progression Aspects')}"
+
+    def _outer_wheel_label(self) -> str:
+        return self._translate("progression", "Progression")
+
+    def _comparison_return_point_label(self) -> str:
+        return self._translate("progressed_point", "Progressed Point")
+
+    def _comparison_cusp_label(self) -> str:
+        return self._translate("progressed_cusp", "Progressed Cusp")
 
     def setup_info_sections(self, template_dict: dict) -> None:
         super().setup_info_sections(template_dict)
@@ -990,85 +1010,6 @@ class ProgressionChartRenderer(TransitChartRenderer):
                     prefix=f"{self._translate('progression', 'Progression')} ",
                     key_lunation="bottom_left_3", key_phase="bottom_left_4",
                 )
-
-    def setup_grids(self, template_dict: dict) -> None:
-        d = self.drawer
-        first_houses = self._get_houses_list(d.first_obj)
-        second_houses = self._get_houses_list(d.second_obj)
-
-        d._setup_main_houses_grid(template_dict, first_houses)
-        template_dict["makeSecondaryHousesGrid"] = ""
-        d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
-        d._setup_house_sectors(template_dict, first_houses, second_houses)
-        template_dict["makeGauquelinSectors"] = ""
-        d._setup_dual_wheel_planets(template_dict)
-
-        first_label = d._truncate_name(d.first_obj.name)
-        prog_label = self._translate("progression", "Progression")
-        first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
-        second_grid_title = f"{prog_label} ({self._translate('outer_wheel', 'Outer Wheel')})"
-
-        template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
-            planets_and_houses_grid_title="",
-            subject_name=first_grid_title,
-            available_kerykeion_celestial_points=d.available_kerykeion_celestial_points,
-            chart_type=d.chart_type,
-            text_color=d.chart_colors_settings["paper_0"],
-            celestial_point_language=d._language_model.celestial_points,
-        )
-        template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
-            planets_and_houses_grid_title="",
-            second_subject_name=second_grid_title,
-            second_subject_available_kerykeion_celestial_points=d.second_subject_celestial_points,
-            chart_type=d.chart_type,
-            text_color=d.chart_colors_settings["paper_0"],
-            celestial_point_language=d._language_model.celestial_points,
-        )
-
-    def setup_house_comparison(self, template_dict: dict) -> None:
-        d = self.drawer
-
-        if not (d.show_house_position_comparison or d.show_cusp_position_comparison):
-            template_dict["makeHouseComparisonGrid"] = ""
-            return
-
-        house_comparison_factory = HouseComparisonFactory(
-            first_subject=d.first_obj,
-            second_subject=d.second_obj,
-            active_points=d.active_points,
-        )
-        house_comparison = house_comparison_factory.get_house_comparison()
-        house_comparison_svg = ""
-
-        if d.show_house_position_comparison:
-            house_comparison_svg = draw_single_house_comparison_grid(
-                house_comparison,
-                celestial_point_language=d._language_model.celestial_points,
-                active_points=d.active_points,
-                points_owner_subject_number=2,
-                house_position_comparison_label=self._translate(
-                    "house_position_comparison", "House Position Comparison"
-                ),
-                return_point_label=self._translate("progressed_point", "Progressed Point"),
-                natal_house_label=self._translate("house_position", "Natal House"),
-                x_position=d._TRANSIT_HOUSE_COMPARISON_X,
-            )
-
-        if d.show_cusp_position_comparison:
-            cusp_x = 1180 if d.show_house_position_comparison else 980
-            cusp_grid = draw_single_cusp_comparison_grid(
-                house_comparison,
-                celestial_point_language=d._language_model.celestial_points,
-                cusps_owner_subject_number=2,
-                cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
-                owner_cusp_label=self._translate("progressed_cusp", "Progressed Cusp"),
-                projected_house_label=self._translate("natal_house", "Natal House"),
-                x_position=cusp_x,
-                y_position=0,
-            )
-            house_comparison_svg += cusp_grid
-
-        template_dict["makeHouseComparisonGrid"] = house_comparison_svg
 
 
 class SynastryChartRenderer(BaseChartRenderer):
@@ -4253,9 +4194,10 @@ class ChartDrawer:  # type: ignore[no-redef]
                 return f"{truncated_name} - {lunar_label} {month_year}"
 
         elif self.chart_type == "Progression":
+            prog_label = self._translate("progression", "Progression")
             name1 = self._truncate_name(self.first_obj.name)
             name2 = self._truncate_name(self.second_obj.name) if self.second_obj else ""  # type: ignore
-            return f"{name1} — {name2}"
+            return f"{prog_label}: {name1} — {name2}"
 
         # Fallback for unknown chart types
         return self._truncate_name(self.first_obj.name)

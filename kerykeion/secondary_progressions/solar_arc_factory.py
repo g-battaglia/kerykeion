@@ -48,7 +48,7 @@ def _parse_target_utc(
     if target_year is not None:
         try:
             return datetime(target_year, 1, 1, tzinfo=timezone.utc)
-        except (ValueError, OverflowError) as exc:
+        except (ValueError, OverflowError, TypeError) as exc:
             raise KerykeionException(
                 f"Invalid `target_year`: {target_year!r}"
             ) from exc
