@@ -293,7 +293,7 @@ def _select_planet_grid_thresholds(chart_type: ChartType, num_points: int = 0) -
     """
     Return column thresholds for the planet grids based on chart type and point count.
 
-    For double-wheel charts (Synastry, Transit, DualReturnChart), returns very high
+    For double-wheel charts (Synastry, Transit, DualReturnChart, Progression), returns very high
     thresholds to effectively disable multi-column layout.
 
     For single-wheel charts with many active points (> 20), computes balanced

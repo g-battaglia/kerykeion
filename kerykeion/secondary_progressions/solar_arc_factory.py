@@ -52,7 +52,7 @@ def _parse_target_utc(
             raise KerykeionException(
                 f"Invalid `target_year`: {target_year!r}"
             ) from exc
-    if target_iso_utc_datetime:
+    if target_iso_utc_datetime is not None:
         try:
             iso = target_iso_utc_datetime.replace("Z", "+00:00")
             dt = datetime.fromisoformat(iso)

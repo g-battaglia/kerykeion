@@ -481,7 +481,7 @@ class TestChartDrawerBasic:
         data = ChartDataFactory.create_progression_chart_data(self.subject, progressed)
         chart = ChartDrawer(data)
         assert chart.chart_type == "Progression"
-        assert hasattr(chart, "second_obj")
+        assert chart.second_obj is not None
 
     def test_progression_chart_svg_generation(self):
         progressed = SecondaryProgressionFactory.compute(self.subject, target_year=2000)

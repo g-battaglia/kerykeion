@@ -1046,7 +1046,7 @@ def to_context(
         return house_comparison_to_context(model)
     elif isinstance(model, SolarArcSubjectModel):
         return solar_arc_to_context(model)
-    elif isinstance(model, list) and model and all(isinstance(item, MidpointModel) for item in model):
+    elif isinstance(model, list) and all(isinstance(item, MidpointModel) for item in model):
         return midpoints_to_context(model)
     else:
         raise TypeError(

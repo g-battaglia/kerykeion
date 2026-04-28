@@ -2364,7 +2364,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         Charts with <= _RIGHT_PANEL_POINTS_THRESHOLD points keep the standard
         bottom-anchored layout so that default charts remain unchanged.
         """
-        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart", "Progression"):
+        if not self._renderer.is_dual_wheel():
             return False
         return self._count_active_planets() > self._RIGHT_PANEL_POINTS_THRESHOLD
 
@@ -2702,7 +2702,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self.double_chart_aspect_grid_type != "list":
             return
 
-        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart", "Progression"):
+        if not self._renderer.is_dual_wheel():
             return
 
         # In right-panel mode the aspect list starts near the top of the SVG
