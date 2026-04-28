@@ -1053,7 +1053,7 @@ def draw_third_circle(
     - str: The SVG element as a string.
     """
     if chart_type in _DOUBLE_CHART_TYPES:
-        # For Synastry and Transit charts, use a fixed radius adjustment of 160
+        # For double-wheel charts, use a fixed radius adjustment of 160
         return f'<circle cx="{radius}" cy="{radius}" r="{radius - 160}" style="fill: {fill_color}; fill-opacity:.8; stroke: {stroke_color}; stroke-width: 1px" />'
 
     else:
