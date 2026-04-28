@@ -137,6 +137,12 @@ class ChartDataFactory:
         if chart_type == "SingleReturnChart" and not isinstance(first_subject, PlanetReturnModel):
             raise KerykeionException("First subject must be a PlanetReturnModel for SingleReturnChart charts.")
 
+        if chart_type == "Progression":
+            if not isinstance(first_subject, AstrologicalSubjectModel):
+                raise KerykeionException("First subject must be an AstrologicalSubjectModel for Progression charts.")
+            if not isinstance(second_subject, AstrologicalSubjectModel):
+                raise KerykeionException("Second subject must be an AstrologicalSubjectModel for Progression charts.")
+
         # Determine active points
         if not active_points:
             effective_active_points = first_subject.active_points

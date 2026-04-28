@@ -143,7 +143,12 @@ class SecondaryProgressionFactory:
             )
 
         if target_year is not None:
-            target_utc = datetime(target_year, 1, 1, tzinfo=timezone.utc)
+            try:
+                target_utc = datetime(target_year, 1, 1, tzinfo=timezone.utc)
+            except (ValueError, OverflowError) as exc:
+                raise KerykeionException(
+                    f"Invalid `target_year`: {target_year!r}"
+                ) from exc
         else:
             try:
                 iso = (target_iso_utc_datetime or "").replace("Z", "+00:00")

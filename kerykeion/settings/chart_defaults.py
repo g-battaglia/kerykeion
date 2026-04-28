@@ -693,6 +693,7 @@ DEFAULT_CHART_ASPECTS_SETTINGS: Final[list[_ChartAspectSetting]] = [
 ]
 
 
+#: Default active points for predictive factories (midpoints, solar arcs, etc.).
 DEFAULT_PREDICTIVE_POINTS: Final[tuple[str, ...]] = (
     "Sun",
     "Moon",
@@ -711,7 +712,6 @@ DEFAULT_PREDICTIVE_POINTS: Final[tuple[str, ...]] = (
     "Ascendant",
     "Medium_Coeli",
 )
-"""Default active points for predictive factories (midpoints, solar arcs, etc.)."""
 
 
 __all__ = [

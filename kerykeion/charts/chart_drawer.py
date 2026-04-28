@@ -2465,7 +2465,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             # Secondary planet grid
             extents.append(910 + 80)
 
-        if self.chart_type == "Synastry":
+        if self.chart_type in ("Synastry", "DualReturnChart"):
             # Secondary houses grid
             extents.append(1015 + 120)
 
@@ -3094,7 +3094,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             secondary_planet_grid_right = 910 + 80
             extents.append(secondary_planet_grid_right)
 
-            if self.chart_type == "Synastry":
+            if self.chart_type in ("Synastry", "DualReturnChart"):
                 # Secondary houses grid default x ~ 1015
                 secondary_houses_grid_right = 1015 + 120
                 extents.append(secondary_houses_grid_right)

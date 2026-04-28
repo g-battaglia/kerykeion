@@ -317,3 +317,18 @@ def test_solar_arc_iso_target():
         compute_aspects=False,
     )
     assert solar_arc.target_iso_utc_datetime == "2030-06-15T12:00:00.000Z"
+
+
+def test_solar_arc_error_both_targets():
+    with pytest.raises(KerykeionException, match="exactly one"):
+        SolarArcFactory.compute(
+            _subject(),
+            target_iso_utc_datetime="2030-01-01T00:00:00Z",
+            target_year=2030,
+            compute_aspects=False,
+        )
+
+
+def test_solar_arc_error_no_target():
+    with pytest.raises(KerykeionException, match="one of"):
+        SolarArcFactory.compute(_subject(), compute_aspects=False)
