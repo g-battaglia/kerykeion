@@ -1423,3 +1423,40 @@ class TestHouseComparisonContext:
         solar_return = factory.next_return_from_date(2024, 9, 1, return_type="Solar")
         result = astrological_subject_to_context(solar_return)
         assert '<return_info type="Solar"' in result
+
+    def test_solar_arc_to_context(self, _subjects):
+        from kerykeion.context_serializer import solar_arc_to_context, to_context
+        from kerykeion.secondary_progressions import SolarArcFactory
+
+        s1, _ = _subjects
+        sa = SolarArcFactory.compute(s1, target_iso_utc_datetime="2026-04-28T00:00:00Z")
+        result = solar_arc_to_context(sa)
+        assert "<solar_arc_analysis " in result
+        assert "<directed_points " in result
+        assert "<directed_natal_aspects " in result
+        assert "</solar_arc_analysis>" in result
+        # Also via dispatcher
+        result2 = to_context(sa)
+        assert result == result2
+
+    def test_midpoints_to_context(self, _subjects):
+        from kerykeion.context_serializer import midpoints_to_context, to_context
+        from kerykeion.midpoints import MidpointFactory
+
+        s1, _ = _subjects
+        midpoints = MidpointFactory.compute(s1)
+        result = midpoints_to_context(midpoints)
+        assert "<midpoints_analysis " in result
+        assert "</midpoints_analysis>" in result
+        assert "<midpoint " in result
+        # Also via dispatcher
+        result2 = to_context(midpoints)
+        assert result == result2
+
+    def test_midpoints_to_context_empty(self):
+        from kerykeion.context_serializer import midpoints_to_context, to_context
+
+        result = midpoints_to_context([])
+        assert 'count="0"' in result
+        result2 = to_context([])
+        assert result == result2

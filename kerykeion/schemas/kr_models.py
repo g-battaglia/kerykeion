@@ -1176,7 +1176,7 @@ class DualChartDataModel(SubscriptableBaseModel):
     """
 
     # Chart identification
-    chart_type: Literal["Transit", "Synastry", "DualReturnChart"]
+    chart_type: Literal["Transit", "Synastry", "DualReturnChart", "Progression"]
 
     # Dual chart subjects
     first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]

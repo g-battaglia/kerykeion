@@ -34,6 +34,7 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.charts.charts_utils import makeLunarPhase
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.secondary_progressions import SecondaryProgressionFactory
 from kerykeion.schemas import KerykeionException
 
 
@@ -474,6 +475,22 @@ class TestChartDrawerBasic:
         chart.second_obj.lunar_phase = None  # type: ignore[attr-defined]
         template_dict = chart._create_template_dictionary()
         assert template_dict["makeLunarPhase"] == ""
+
+    def test_progression_chart_drawer(self):
+        progressed = SecondaryProgressionFactory.compute(self.subject, target_year=2000)
+        data = ChartDataFactory.create_progression_chart_data(self.subject, progressed)
+        chart = ChartDrawer(data)
+        assert chart.chart_type == "Progression"
+        assert hasattr(chart, "second_obj")
+
+    def test_progression_chart_svg_generation(self):
+        progressed = SecondaryProgressionFactory.compute(self.subject, target_year=2000)
+        data = ChartDataFactory.create_progression_chart_data(self.subject, progressed)
+        chart = ChartDrawer(data, theme="classic")
+        svg = chart.generate_svg_string()
+        assert len(svg) > 1000
+        assert "<svg" in svg
+        assert "Progression" in svg or "Progressed" in svg or chart.first_obj.name in svg
 
     def test_synastry_chart_drawer(self):
         data = ChartDataFactory.create_synastry_chart_data(self.subject, self.subject2)
@@ -1137,6 +1154,40 @@ class TestTransitChart:
         data = ChartDataFactory.create_transit_chart_data(john, paul)
         svg = ChartDrawer(data, custom_title="Transit Analysis 2024").generate_svg_string()
         compare_chart_svg("John Lennon - Custom Title Transit - Transit Chart.svg", svg)
+
+
+# =============================================================================
+# 4b. TestProgressionChart
+# =============================================================================
+
+
+class TestProgressionChart:
+    """Golden-file regression for secondary progression charts."""
+
+    def _progression_data(self):
+        john = _make_john()
+        progressed = SecondaryProgressionFactory.compute(john, target_year=2000)
+        return ChartDataFactory.create_progression_chart_data(john, progressed)
+
+    def test_progression_chart(self):
+        data = self._progression_data()
+        svg = ChartDrawer(data).generate_svg_string()
+        compare_chart_svg("John Lennon - Progression Chart.svg", svg)
+
+    def test_progression_chart_modern(self):
+        data = self._progression_data()
+        svg = ChartDrawer(data, style="modern").generate_svg_string()
+        compare_chart_svg("John Lennon - Progression Chart - Modern.svg", svg)
+
+    def test_progression_chart_dark_theme(self):
+        data = self._progression_data()
+        svg = ChartDrawer(data, theme="dark").generate_svg_string()
+        compare_chart_svg("John Lennon - Dark Theme - Progression Chart.svg", svg)
+
+    def test_progression_chart_table_grid(self):
+        data = self._progression_data()
+        svg = ChartDrawer(data, double_chart_aspect_grid_type="table").generate_svg_string()
+        compare_chart_svg("John Lennon - Progression Chart - Table Grid.svg", svg)
 
 
 # =============================================================================
@@ -3188,6 +3239,26 @@ class TestSvgWellformedness:
         data = ChartDataFactory.create_return_chart_data(self.john, lunar)
         svg = self._get_drawer(data).generate_svg_string(minify=True)
         self._assert_wellformed(svg)
+
+    # ── Progression (dual-wheel) ──────────────────────────────────────────
+
+    def test_progression_normal_is_valid_xml(self):
+        progressed = SecondaryProgressionFactory.compute(self.john, target_year=2000)
+        data = ChartDataFactory.create_progression_chart_data(self.john, progressed)
+        svg = self._get_drawer(data).generate_svg_string()
+        self._assert_wellformed(svg)
+
+    def test_progression_minified_is_valid_xml(self):
+        progressed = SecondaryProgressionFactory.compute(self.john, target_year=2000)
+        data = ChartDataFactory.create_progression_chart_data(self.john, progressed)
+        svg = self._get_drawer(data).generate_svg_string(minify=True)
+        self._assert_wellformed(svg)
+
+    def test_progression_minified_no_css_vars_is_valid_xml(self):
+        progressed = SecondaryProgressionFactory.compute(self.john, target_year=2000)
+        data = ChartDataFactory.create_progression_chart_data(self.john, progressed)
+        svg = self._get_drawer(data).generate_svg_string(minify=True, remove_css_variables=True)
+        self._assert_wellformed(svg, expect_css_variables=False)
 
     # ── Partial views (wheel-only, aspect-grid-only) ─────────────────────
 

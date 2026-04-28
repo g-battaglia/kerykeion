@@ -1483,6 +1483,7 @@ CHART_RENDERERS: dict[str, type[BaseChartRenderer]] = {
     "Synastry": SynastryChartRenderer,
     "SingleReturnChart": SingleReturnChartRenderer,
     "DualReturnChart": DualReturnChartRenderer,
+    "Progression": TransitChartRenderer,
 }
 
 
@@ -2140,7 +2141,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             Number of pixels to shift grids rightward (0 if no shift needed).
         """
-        if self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
+        if self.chart_type in ("Synastry", "Transit", "DualReturnChart", "Progression"):
             return 0
 
         from kerykeion.charts.charts_utils import (
@@ -2232,7 +2233,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         Charts with <= _RIGHT_PANEL_POINTS_THRESHOLD points keep the standard
         bottom-anchored layout so that default charts remain unchanged.
         """
-        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart"):
+        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart", "Progression"):
             return False
         return self._count_active_planets() > self._RIGHT_PANEL_POINTS_THRESHOLD
 
@@ -2256,7 +2257,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Main houses grid
         extents.append(750 + grid_shift + 120)
 
-        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self.chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
             # Secondary planet grid
             extents.append(910 + 80)
 
@@ -2446,8 +2447,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             "DualReturnChart": self._DEFAULT_ULTRA_WIDE_WIDTH,
         }
 
-        if self.chart_type == "Transit":
-            # Transit width depends on aspect grid display type
+        if self.chart_type in ("Transit", "Progression"):
+            # Transit/Progression width depends on aspect grid display type
             if self.double_chart_aspect_grid_type == "table":
                 return self._DEFAULT_FULL_WIDTH_WITH_TABLE
             return self._DEFAULT_FULL_WIDTH
@@ -2506,7 +2507,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # planet grids that grow vertically at ~15px per row. They share the same
         # height/offset logic which accounts for right-panel mode and the taller
         # row spacing. Single-wheel charts fall through to the generic logic below.
-        if self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
+        if self.chart_type in ("Synastry", "Transit", "DualReturnChart", "Progression"):
             self._apply_synastry_height_adjustment(
                 active_points_count=active_points_count,
                 offsets=offsets,
@@ -2583,7 +2584,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self.double_chart_aspect_grid_type != "list":
             return
 
-        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart"):
+        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart", "Progression"):
             return
 
         # In right-panel mode the aspect list starts near the top of the SVG
@@ -2827,7 +2828,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         n = max(len([p for p in self.available_planets_setting if p.get("is_active")]), 1)
 
-        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self.chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
             # Full NxN grid
             left = (x0 - box) - margin
             top = (y0 - box * n) - margin
@@ -2882,7 +2883,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             aspect_grid_right = 560 + grid_shift + 14 * n_active
             extents.append(aspect_grid_right)
 
-        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self.chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
             # Double-chart aspects placement
             if self._is_right_panel_mode():
                 # Right-panel mode: aspect list/grid starts after left content
@@ -3228,8 +3229,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 location_name = self.first_obj.city or "Unknown"
                 latitude = self.first_obj.lat or 0.0
                 longitude = self.first_obj.lng or 0.0
-        elif self.chart_type in ("Transit", "DualReturnChart") and self.second_obj:
-            # Use location from the second subject (transit/return)
+        elif self.chart_type in ("Transit", "DualReturnChart", "Progression") and self.second_obj:
+            # Use location from the second subject (transit/return/progressed)
             location_name = self.second_obj.city or "Unknown"
             latitude = self.second_obj.lat or 0.0
             longitude = self.second_obj.lng or 0.0
@@ -3492,7 +3493,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         - Subject 1 (horoscope="0"): inner area (r-72 to r-160)
         - Subject 2 (horoscope="1"): outer area (r-36 to r-72), oriented using Subject 1's wheel
         """
-        is_dual = second_houses_list is not None and self.chart_type in ("Transit", "Synastry", "DualReturnChart")
+        is_dual = second_houses_list is not None and self.chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression")
         sectors = draw_house_sectors(
             r=self.main_radius,
             houses_list=houses_list,
@@ -4097,6 +4098,11 @@ class ChartDrawer:  # type: ignore[no-redef]
                 lunar_label = self._translate("lunar_return", "Lunar")
                 return f"{truncated_name} - {lunar_label} {month_year}"
 
+        elif self.chart_type == "Progression":
+            name1 = self._truncate_name(self.first_obj.name)
+            name2 = self._truncate_name(self.second_obj.name) if self.second_obj else ""  # type: ignore
+            return f"{name1} — {name2}"
+
         # Fallback for unknown chart types
         return self._truncate_name(self.first_obj.name)
 
@@ -4262,7 +4268,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         houses_list = get_houses_list(self.first_obj)
         aspects_dicts = [a.model_dump() if hasattr(a, "model_dump") else dict(a) for a in self.aspects_list]
 
-        if self.second_obj is not None and self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self.second_obj is not None and self.chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
             return draw_modern_dual_horoscope(
                 planets_1=self.available_kerykeion_celestial_points,
                 houses_1=houses_list,
@@ -4597,7 +4603,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         template_dict = self._create_template_dictionary()
 
-        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self.chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
             aspects_grid = draw_transit_aspect_grid(
                 self.chart_colors_settings["paper_0"],
                 self.available_planets_setting,

@@ -65,6 +65,14 @@ from .relocated_chart_factory import RelocatedChartFactory
 from .fixed_stars import FixedStarDiscoveryFactory
 from .primary_directions import PrimaryDirectionsFactory
 from .astro_cartography import AstroCartographyFactory
+from .midpoints import MidpointFactory, MidpointModel, MidpointAspectModel
+from .secondary_progressions import (
+    SecondaryProgressionFactory,
+    SolarArcFactory,
+    SolarArcDirectedAspect,
+    SolarArcSubjectModel,
+    SolarArcDirectedPoint,
+)
 
 # =============================================================================
 # ANALYSIS FACTORIES
@@ -125,6 +133,14 @@ __all__ = [
     "FixedStarDiscoveryFactory",
     "PrimaryDirectionsFactory",
     "AstroCartographyFactory",
+    "MidpointFactory",
+    "MidpointModel",
+    "MidpointAspectModel",
+    "SecondaryProgressionFactory",
+    "SolarArcFactory",
+    "SolarArcDirectedAspect",
+    "SolarArcDirectedPoint",
+    "SolarArcSubjectModel",
     # Analysis Factories
     "AspectsFactory",
     "RelationshipScoreFactory",

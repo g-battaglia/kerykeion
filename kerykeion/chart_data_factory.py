@@ -125,7 +125,7 @@ class ChartDataFactory:
         """
 
         # Validate chart type requirements
-        if chart_type in ["Transit", "Synastry", "DualReturnChart"] and not second_subject:
+        if chart_type in ["Transit", "Synastry", "DualReturnChart", "Progression"] and not second_subject:
             raise KerykeionException(f"Second subject is required for {chart_type} charts.")
 
         if chart_type == "Composite" and not isinstance(first_subject, CompositeSubjectModel):
@@ -175,6 +175,9 @@ class ChartDataFactory:
             elif chart_type == "DualReturnChart":
                 first_subject_is_fixed = True  # Natal chart is fixed
                 second_subject_is_fixed = False  # Return chart is moving (like transits)
+            elif chart_type == "Progression":
+                first_subject_is_fixed = True  # Natal chart is fixed
+                second_subject_is_fixed = False  # Progressed chart is moving
 
             aspects_model = AspectsFactory.dual_chart_aspects(
                 first_subject,
@@ -188,7 +191,7 @@ class ChartDataFactory:
 
         # Calculate house comparison for dual charts
         house_comparison = None
-        if second_subject and include_house_comparison and chart_type in ["Transit", "Synastry", "DualReturnChart"]:
+        if second_subject and include_house_comparison and chart_type in ["Transit", "Synastry", "DualReturnChart", "Progression"]:
             if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(
                 second_subject, (AstrologicalSubjectModel, PlanetReturnModel)
             ):
@@ -333,7 +336,7 @@ class ChartDataFactory:
             if second_subject is None:
                 raise KerykeionException(f"Second subject is required for {chart_type} charts.")
             return DualChartDataModel(
-                chart_type=cast(Literal["Transit", "Synastry", "DualReturnChart"], chart_type),
+                chart_type=cast(Literal["Transit", "Synastry", "DualReturnChart", "Progression"], chart_type),
                 first_subject=first_subject,
                 second_subject=second_subject,
                 aspects=cast(DualChartAspectsModel, aspects_model).aspects,
@@ -548,6 +551,50 @@ class ChartDataFactory:
             chart_type="SingleReturnChart",
             active_points=active_points,
             active_aspects=active_aspects,
+            distribution_method=distribution_method,
+            custom_distribution_weights=custom_distribution_weights,
+        )
+
+    @staticmethod
+    def create_progression_chart_data(
+        natal_subject: AstrologicalSubjectModel,
+        progressed_subject: AstrologicalSubjectModel,
+        active_points: Optional[list[AstrologicalPoint]] = None,
+        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        include_house_comparison: bool = True,
+        *,
+        axis_orb_limit: Optional[float] = None,
+        distribution_method: ElementQualityDistributionMethod = "weighted",
+        custom_distribution_weights: Optional[Mapping[str, float]] = None,
+    ) -> ChartDataModel:
+        """
+        Convenience method for creating secondary progression chart data.
+
+        Produces a dual-wheel chart with the natal chart as the inner ring
+        and the day-for-a-year progressed chart as the outer ring.
+
+        Args:
+            natal_subject: The natal AstrologicalSubjectModel (inner ring).
+            progressed_subject: The progressed AstrologicalSubjectModel (outer ring),
+                typically from ``SecondaryProgressionFactory.compute()``.
+            active_points: Points to include in calculations.
+            active_aspects: Aspect types and orbs to use.
+            include_house_comparison: Whether to include house overlay analysis.
+            axis_orb_limit: Optional orb limit for axis aspects.
+            distribution_method: Strategy for element/modality weighting.
+            custom_distribution_weights: Optional overrides for distribution weights.
+
+        Returns:
+            ChartDataModel: Dual-wheel progression chart data.
+        """
+        return ChartDataFactory.create_chart_data(
+            first_subject=natal_subject,
+            second_subject=progressed_subject,
+            chart_type="Progression",
+            active_points=active_points,
+            active_aspects=active_aspects,
+            include_house_comparison=include_house_comparison,
+            axis_orb_limit=axis_orb_limit,
             distribution_method=distribution_method,
             custom_distribution_weights=custom_distribution_weights,
         )

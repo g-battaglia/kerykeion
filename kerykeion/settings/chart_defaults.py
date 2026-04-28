@@ -693,8 +693,30 @@ DEFAULT_CHART_ASPECTS_SETTINGS: Final[list[_ChartAspectSetting]] = [
 ]
 
 
+DEFAULT_PREDICTIVE_POINTS: Final[tuple[str, ...]] = (
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    "True_North_Lunar_Node",
+    "True_South_Lunar_Node",
+    "Chiron",
+    "Mean_Lilith",
+    "Ascendant",
+    "Medium_Coeli",
+)
+"""Default active points for predictive factories (midpoints, solar arcs, etc.)."""
+
+
 __all__ = [
     "DEFAULT_CHART_COLORS",
     "DEFAULT_CELESTIAL_POINTS_SETTINGS",
     "DEFAULT_CHART_ASPECTS_SETTINGS",
+    "DEFAULT_PREDICTIVE_POINTS",
 ]
