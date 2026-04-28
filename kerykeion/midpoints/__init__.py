@@ -14,4 +14,4 @@ from .midpoint_factory import (
     MidpointAspectModel,
 )
 
-__all__ = ["MidpointFactory", "MidpointModel", "MidpointAspectModel"]
+__all__ = ["MidpointAspectModel", "MidpointFactory", "MidpointModel"]

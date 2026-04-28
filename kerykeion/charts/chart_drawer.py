@@ -2868,8 +2868,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 if self.double_chart_aspect_grid_type == "table"
                 else self._DEFAULT_FULL_WIDTH
             )
-        elif self.chart_type == "Transit":
-            # Transit charts already use the compact width unless the aspect grid table is requested.
+        elif self.chart_type in ("Transit", "Progression"):
             self.width = (
                 self._DEFAULT_FULL_WIDTH_WITH_TABLE
                 if self.double_chart_aspect_grid_type == "table"
@@ -3067,11 +3066,12 @@ class ChartDrawer:  # type: ignore[no-redef]
                         cusp_block_right = max_house_comparison_right + 50.0 + cusp_block_width + extra_cusp_margin
                         extents.append(cusp_block_right)
 
-            if self.chart_type == "Transit":
+            if self.chart_type in ("Transit", "Progression"):
                 # House comparison grid at x ~ 1030
                 if self.show_house_position_comparison or self.show_cusp_position_comparison:
+                    point_label = "Progressed Point" if self.chart_type == "Progression" else "Transit Point"
                     transit_columns = [
-                        self._translate("transit_point", "Transit Point"),
+                        self._translate("transit_point", point_label),
                         self._translate("house_position", "Natal House"),
                     ]
                     transit_grid_width = self._estimate_house_comparison_grid_width(
@@ -3292,7 +3292,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             return max(int(baseline), self._DEFAULT_SYNASTRY_WIDTH // 2)
         if self.chart_type == "DualReturnChart":
             return max(int(baseline), self._DEFAULT_ULTRA_WIDE_WIDTH // 2)
-        if self.chart_type == "Transit":
+        if self.chart_type in ("Transit", "Progression"):
             return max(int(baseline), 450)
         return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
 

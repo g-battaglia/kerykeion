@@ -18,8 +18,8 @@ from .solar_arc_factory import (
 
 __all__ = [
     "SecondaryProgressionFactory",
-    "SolarArcFactory",
     "SolarArcDirectedAspect",
     "SolarArcDirectedPoint",
+    "SolarArcFactory",
     "SolarArcSubjectModel",
 ]
