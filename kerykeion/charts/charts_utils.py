@@ -1259,11 +1259,10 @@ def draw_houses_cusps_and_text_number(
             parts.append("</g>")
 
         # Adjust dropin based on chart type and external view
-        dropin_map = {"Transit": 84, "Synastry": 84, "DualReturnChart": 84, "Progression": 84}
         if external_view:
             dropin = 100
         else:
-            dropin = dropin_map.get(chart_type, 48)
+            dropin = 84 if chart_type in _DOUBLE_CHART_TYPES else 48
         xtext = sliceToX(0, (r - dropin), text_offset) + dropin
         ytext = sliceToY(0, (r - dropin), text_offset) + dropin
 

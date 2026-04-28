@@ -41,8 +41,17 @@ def _parse_target_utc(
     target_year: Optional[int],
 ) -> Optional[datetime]:
     """Parse target input into a UTC datetime, or return None if neither is given."""
+    if target_iso_utc_datetime is not None and target_year is not None:
+        raise KerykeionException(
+            "Pass exactly one of `target_iso_utc_datetime` or `target_year`."
+        )
     if target_year is not None:
-        return datetime(target_year, 1, 1, tzinfo=timezone.utc)
+        try:
+            return datetime(target_year, 1, 1, tzinfo=timezone.utc)
+        except (ValueError, OverflowError) as exc:
+            raise KerykeionException(
+                f"Invalid `target_year`: {target_year!r}"
+            ) from exc
     if target_iso_utc_datetime:
         try:
             iso = target_iso_utc_datetime.replace("Z", "+00:00")

@@ -1001,7 +1001,7 @@ class ProgressionChartRenderer(TransitChartRenderer):
                 builder = InfoSectionBuilder(d)
                 builder.build_lunar_phase_info(
                     template_dict, d.second_obj,
-                    prefix=f"{self._translate('Progression', 'Progression')} ",
+                    prefix=f"{self._translate('progression', 'Progression')} ",
                     key_lunation="bottom_left_3", key_phase="bottom_left_4",
                 )
 

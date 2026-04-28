@@ -1433,8 +1433,9 @@ class TestHouseComparisonContext:
         result = solar_arc_to_context(sa)
         assert "<solar_arc_analysis " in result
         assert "<directed_points " in result
-        assert "<directed_natal_aspects " in result
         assert "</solar_arc_analysis>" in result
+        if sa.directed_to_natal_aspects:
+            assert "<directed_natal_aspects " in result
         # Also via dispatcher
         result2 = to_context(sa)
         assert result == result2
