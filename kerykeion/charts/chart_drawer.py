@@ -747,12 +747,16 @@ class TransitChartRenderer(BaseChartRenderer):
         """Set up transit-style circles with outer ring."""
         self.drawer._setup_transit_circles(template_dict)
 
+    def _aspect_list_title(self) -> str:
+        """Title for the aspect list panel. Override in subclasses for custom labels."""
+        return f"{self.drawer.first_obj.name} - {self._translate('transit_aspects', 'Transit Aspects')}"
+
     def setup_aspects(self, template_dict: dict) -> None:
         """Set up aspect list or grid for dual-wheel chart."""
         d = self.drawer
 
         if d.double_chart_aspect_grid_type == "list":
-            title = f"{d.first_obj.name} - {self._translate('transit_aspects', 'Transit Aspects')}"
+            title = self._aspect_list_title()
             template_dict["makeAspectGrid"] = ""
 
             if d._is_right_panel_mode():
@@ -968,26 +972,8 @@ class ProgressionChartRenderer(TransitChartRenderer):
     def get_comparison_point_label(self) -> str:
         return self._translate("progressed_point", "Progressed Point")
 
-    def setup_aspects(self, template_dict: dict) -> None:
-        """Reuse Transit aspect rendering but with progression-specific title."""
-        super().setup_aspects(template_dict)
-        d = self.drawer
-        prog_label = self._translate("progression_aspects", "Progression Aspects")
-        title = f"{d.first_obj.name} - {prog_label}"
-        if d.double_chart_aspect_grid_type == "list":
-            if d._is_right_panel_mode():
-                rp = d._get_right_panel_aspect_params()
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                    title, d.aspects_list, d.planets_settings, d.aspects_settings,
-                    aspects_per_column=rp["aspects_per_column"], column_width=rp["column_width"],
-                    line_height=rp["line_height"], chart_height=d.height,
-                    x_offset=rp["x_offset"], y_offset=rp["y_offset"],
-                )
-            else:
-                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
-                    title, d.aspects_list, d.planets_settings, d.aspects_settings,
-                    chart_height=d.height,
-                )
+    def _aspect_list_title(self) -> str:
+        return f"{self.drawer.first_obj.name} - {self._translate('progression_aspects', 'Progression Aspects')}"
 
     def setup_info_sections(self, template_dict: dict) -> None:
         super().setup_info_sections(template_dict)

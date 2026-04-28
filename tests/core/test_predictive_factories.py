@@ -213,7 +213,7 @@ def test_secondary_progression_sun_advances_roughly_1_deg_per_year():
 
 
 def test_secondary_progression_error_both_targets():
-    with pytest.raises(KerykeionException, match="exactly one"):
+    with pytest.raises(KerykeionException, match="at most one|exactly one"):
         SecondaryProgressionFactory.compute(
             _subject(),
             target_iso_utc_datetime="2026-01-01T00:00:00Z",
@@ -320,7 +320,7 @@ def test_solar_arc_iso_target():
 
 
 def test_solar_arc_error_both_targets():
-    with pytest.raises(KerykeionException, match="exactly one"):
+    with pytest.raises(KerykeionException, match="at most one|exactly one"):
         SolarArcFactory.compute(
             _subject(),
             target_iso_utc_datetime="2030-01-01T00:00:00Z",

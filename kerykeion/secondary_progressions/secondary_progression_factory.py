@@ -70,9 +70,10 @@ class SecondaryProgressionFactory:
 
         try:
             local_tz = ZoneInfo(natal.tz_str or "UTC")
+            second = int(getattr(natal, "second", 0) or 0)
             local_dt = datetime(
                 natal.year, natal.month, natal.day, natal.hour, natal.minute,
-                tzinfo=local_tz,
+                second, tzinfo=local_tz,
             )
             return local_dt.astimezone(timezone.utc)
         except Exception as exc:  # pragma: no cover - defensive

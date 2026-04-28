@@ -100,6 +100,9 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
   - [Lilith Variants & Priapus Points](#lilith-variants--priapus-points)
   - [Transit Exactness & Refinement](#transit-exactness--refinement)
   - [Primary Directions (Placidus Semi-Arc)](#primary-directions-placidus-semi-arc)
+  - [Secondary Progressions (Day-for-a-Year)](#secondary-progressions-day-for-a-year)
+  - [Solar Arc Directions](#solar-arc-directions)
+  - [Midpoints (Cosmobiology / 90° Dial)](#midpoints-cosmobiology--90-dial)
   - [Astro-Cartography (ACG)](#astro-cartography-acg)
 - [Documentation](#documentation)
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
@@ -1970,6 +1973,89 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 directions = PrimaryDirectionsFactory.compute(subject, max_years=30)
 for d in directions[:5]:
     print(f"{d.promissor} {d.aspect} {d.significator}: {d.direction_years:.1f} years")
+```
+
+### Secondary Progressions (Day-for-a-Year)
+
+The day-for-a-year technique maps each day after birth to one year of life.
+The progressed chart is a real ephemeris snapshot, returned as a standard
+`AstrologicalSubjectModel` — so every downstream tool (aspects, dignities,
+chart drawer) works transparently.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, SecondaryProgressionFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+progressed = SecondaryProgressionFactory.compute(natal, target_year=2026)
+
+# Inspect progressed positions
+print(f"Progressed Sun: {progressed.sun.sign} {progressed.sun.position:.2f}°")
+print(f"Progressed Moon: {progressed.moon.sign} {progressed.moon.position:.2f}°")
+
+# Generate a biwheel SVG (natal inner ring, progressed outer ring)
+data = ChartDataFactory.create_progression_chart_data(natal, progressed)
+drawer = ChartDrawer(data)
+drawer.save_svg()
+```
+
+The biwheel shows the natal chart on the inner ring and progressed positions
+on the outer ring. Astrologers read it by looking for contacts between the
+two rings: when a progressed planet (outer) reaches a conjunction, square,
+or trine to a natal planet (inner), it signals a symbolic theme active for
+roughly one year. Sign ingresses (a progressed planet changing zodiac sign)
+mark longer-term shifts in how that planetary energy is expressed.
+
+### Solar Arc Directions
+
+Solar arc takes the progressed Sun's forward motion and applies it
+uniformly to every natal point. The result is a structured model with
+directed positions and directed-to-natal aspect contacts.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, SolarArcFactory
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+result = SolarArcFactory.compute(natal, target_year=2026)
+
+print(f"Solar arc: {result.solar_arc:.2f}°")
+for dp in result.directed_points[:5]:
+    ingress = " (sign changed)" if dp.sign_changed else ""
+    print(f"  {dp.name}: {dp.directed_sign} {dp.directed_position:.2f}°{ingress}")
+
+for asp in result.directed_to_natal_aspects[:5]:
+    print(f"  {asp.directed_point} {asp.aspect} {asp.natal_point} (orb {asp.orb:.2f}°)")
+```
+
+### Midpoints (Cosmobiology / 90° Dial)
+
+Computes every pairwise midpoint of the active points, with the 90° dial
+position used by cosmobiology and Uranian astrology, plus optional
+aspect-to-midpoint detection (third-point activations).
+
+```python
+from kerykeion import AstrologicalSubjectFactory, MidpointFactory
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+midpoints = MidpointFactory.compute(natal, aspect_orb=1.0)
+
+for m in midpoints[:5]:
+    activations = ", ".join(
+        f"{a.point_name} {a.aspect} ({a.orb:.2f}°)" for a in m.aspects_to_midpoint
+    )
+    print(f"{m.point_a}/{m.point_b}: {m.midpoint_sign} {m.midpoint_position:.2f}° "
+          f"(90° dial: {m.midpoint_modulus_90:.2f}°)"
+          f"{' — activated by: ' + activations if activations else ''}")
 ```
 
 ### Astro-Cartography (ACG)

@@ -43,7 +43,7 @@ def _parse_target_utc(
     """Parse target input into a UTC datetime, or return None if neither is given."""
     if target_iso_utc_datetime is not None and target_year is not None:
         raise KerykeionException(
-            "Pass exactly one of `target_iso_utc_datetime` or `target_year`."
+            "Pass at most one of `target_iso_utc_datetime` or `target_year`, not both."
         )
     if target_year is not None:
         try:
@@ -79,7 +79,7 @@ def _forward_arc_diff(target: float, source: float) -> float:
 
 def _is_near_zero_arc(arc: float, orb: float) -> bool:
     """Return ``True`` when a forward arc is within ``orb`` of 0°/360°."""
-    return min(arc, 360.0 - arc) < orb
+    return min(arc, 360.0 - arc) <= orb
 
 
 class SolarArcDirectedPoint(BaseModel):
