@@ -919,6 +919,102 @@ class TransitChartRenderer(BaseChartRenderer):
         template_dict["makeHouseComparisonGrid"] = house_comparison_svg
 
 
+class ProgressionChartRenderer(TransitChartRenderer):
+    """Renderer for Secondary Progression charts.
+
+    Reuses the Transit dual-wheel layout (natal inner, progressed outer)
+    but overrides labels so the SVG reads "Progression" instead of "Transit".
+    """
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        super().setup_info_sections(template_dict)
+        d = self.drawer
+        if d.second_obj is not None:
+            prog_dt = ""
+            if getattr(d.second_obj, "iso_formatted_local_datetime", None) is not None:
+                prog_dt = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
+            template_dict["top_left_3"] = f"{self._translate('chart_info_progression_label', 'Progression')}: {prog_dt}"
+
+    def setup_grids(self, template_dict: dict) -> None:
+        d = self.drawer
+        first_houses = self._get_houses_list(d.first_obj)
+        second_houses = self._get_houses_list(d.second_obj)
+
+        d._setup_main_houses_grid(template_dict, first_houses)
+        template_dict["makeSecondaryHousesGrid"] = ""
+        d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+        d._setup_house_sectors(template_dict, first_houses, second_houses)
+        template_dict["makeGauquelinSectors"] = ""
+        d._setup_dual_wheel_planets(template_dict)
+
+        first_label = d._truncate_name(d.first_obj.name)
+        prog_label = self._translate("progression", "Progression")
+        first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
+        second_grid_title = f"{prog_label} ({self._translate('outer_wheel', 'Outer Wheel')})"
+
+        template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
+            planets_and_houses_grid_title="",
+            subject_name=first_grid_title,
+            available_kerykeion_celestial_points=d.available_kerykeion_celestial_points,
+            chart_type=d.chart_type,
+            text_color=d.chart_colors_settings["paper_0"],
+            celestial_point_language=d._language_model.celestial_points,
+        )
+        template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
+            planets_and_houses_grid_title="",
+            second_subject_name=second_grid_title,
+            second_subject_available_kerykeion_celestial_points=d.second_subject_celestial_points,
+            chart_type=d.chart_type,
+            text_color=d.chart_colors_settings["paper_0"],
+            celestial_point_language=d._language_model.celestial_points,
+        )
+
+    def setup_house_comparison(self, template_dict: dict) -> None:
+        d = self.drawer
+
+        if not (d.show_house_position_comparison or d.show_cusp_position_comparison):
+            template_dict["makeHouseComparisonGrid"] = ""
+            return
+
+        house_comparison_factory = HouseComparisonFactory(
+            first_subject=d.first_obj,
+            second_subject=d.second_obj,
+            active_points=d.active_points,
+        )
+        house_comparison = house_comparison_factory.get_house_comparison()
+        house_comparison_svg = ""
+
+        if d.show_house_position_comparison:
+            house_comparison_svg = draw_single_house_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                active_points=d.active_points,
+                points_owner_subject_number=2,
+                house_position_comparison_label=self._translate(
+                    "house_position_comparison", "House Position Comparison"
+                ),
+                return_point_label=self._translate("progressed_point", "Progressed Point"),
+                natal_house_label=self._translate("house_position", "Natal House"),
+                x_position=d._TRANSIT_HOUSE_COMPARISON_X,
+            )
+
+        if d.show_cusp_position_comparison:
+            cusp_x = 1180 if d.show_house_position_comparison else 980
+            cusp_grid = draw_single_cusp_comparison_grid(
+                house_comparison,
+                celestial_point_language=d._language_model.celestial_points,
+                cusps_owner_subject_number=2,
+                cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
+                owner_cusp_label=self._translate("progressed_cusp", "Progressed Cusp"),
+                projected_house_label=self._translate("natal_house", "Natal House"),
+                x_position=cusp_x,
+                y_position=0,
+            )
+            house_comparison_svg += cusp_grid
+
+        template_dict["makeHouseComparisonGrid"] = house_comparison_svg
+
+
 class SynastryChartRenderer(BaseChartRenderer):
     """Renderer for Synastry charts.
 
@@ -1483,7 +1579,7 @@ CHART_RENDERERS: dict[str, type[BaseChartRenderer]] = {
     "Synastry": SynastryChartRenderer,
     "SingleReturnChart": SingleReturnChartRenderer,
     "DualReturnChart": DualReturnChartRenderer,
-    "Progression": TransitChartRenderer,
+    "Progression": ProgressionChartRenderer,
 }
 
 

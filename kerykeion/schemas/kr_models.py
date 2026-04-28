@@ -1160,10 +1160,11 @@ class DualChartDataModel(SubscriptableBaseModel):
     Supported chart types:
     - Transit: Natal chart with current planetary transits
     - Synastry: Relationship compatibility between two people
-    - Return: Natal chart with planetary return comparison
+    - DualReturnChart: Natal chart with planetary return comparison
+    - Progression: Natal chart with secondary progression comparison
 
     Attributes:
-        chart_type: Type of dual chart (Transit, Synastry, Return)
+        chart_type: Type of dual chart (Transit, Synastry, DualReturnChart, Progression)
         first_subject: Primary astrological subject (natal, base chart)
         second_subject: Secondary astrological subject (transit, partner, return)
         aspects: Inter-chart aspects between the two subjects

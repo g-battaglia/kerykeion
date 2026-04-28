@@ -1454,9 +1454,8 @@ class TestHouseComparisonContext:
         assert result == result2
 
     def test_midpoints_to_context_empty(self):
-        from kerykeion.context_serializer import midpoints_to_context, to_context
+        from kerykeion.context_serializer import midpoints_to_context
 
         result = midpoints_to_context([])
         assert 'count="0"' in result
-        result2 = to_context([])
-        assert result == result2
+        assert 'activated="0"' in result

@@ -145,8 +145,13 @@ class SecondaryProgressionFactory:
         if target_year is not None:
             target_utc = datetime(target_year, 1, 1, tzinfo=timezone.utc)
         else:
-            iso = (target_iso_utc_datetime or "").replace("Z", "+00:00")
-            target_utc = datetime.fromisoformat(iso)
+            try:
+                iso = (target_iso_utc_datetime or "").replace("Z", "+00:00")
+                target_utc = datetime.fromisoformat(iso)
+            except ValueError as exc:
+                raise KerykeionException(
+                    f"Invalid `target_iso_utc_datetime`: {target_iso_utc_datetime!r}"
+                ) from exc
             if target_utc.tzinfo is None:
                 target_utc = target_utc.replace(tzinfo=timezone.utc)
             else:
@@ -184,4 +189,6 @@ class SecondaryProgressionFactory:
             altitude=getattr(natal_subject, "altitude", None),
             active_points=natal_subject.active_points,
             calculate_lunar_phase=True,
+            custom_ayanamsa_t0=getattr(natal_subject, "custom_ayanamsa_t0", None),
+            custom_ayanamsa_ayan_t0=getattr(natal_subject, "custom_ayanamsa_ayan_t0", None),
         )

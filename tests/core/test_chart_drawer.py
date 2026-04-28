@@ -490,7 +490,7 @@ class TestChartDrawerBasic:
         svg = chart.generate_svg_string()
         assert len(svg) > 1000
         assert "<svg" in svg
-        assert "Progression" in svg or "Progressed" in svg or chart.first_obj.name in svg
+        assert "Progression" in svg
 
     def test_synastry_chart_drawer(self):
         data = ChartDataFactory.create_synastry_chart_data(self.subject, self.subject2)

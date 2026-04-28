@@ -33,7 +33,8 @@ namespace.
   `SecondaryProgressionFactory` returns a standard
   `AstrologicalSubjectModel`, so `ChartDataFactory.create_progression_chart_data(natal, progressed)`
   produces a biwheel with natal (inner) and progressed (outer) exactly
-  like Transit charts. `ChartDrawer` renders it with the Transit layout.
+  like Transit charts. `ChartDrawer` renders it via a dedicated
+  `ProgressionChartRenderer` with progression-specific labels.
 - **Context serializer**: `solar_arc_to_context()` transforms a
   `SolarArcSubjectModel` into XML, `midpoints_to_context()` transforms
   a `list[MidpointModel]` into XML. Both are callable via the

@@ -240,7 +240,7 @@ def test_solar_arc_defaults_direct_lunar_nodes():
 def test_solar_arc_target_year_reports_requested_target_datetime():
     solar_arc = SolarArcFactory.compute(_subject(), target_year=2030, compute_aspects=False)
 
-    assert solar_arc.target_iso_utc_datetime == "2030-01-01T00:00:00Z"
+    assert solar_arc.target_iso_utc_datetime == "2030-01-01T00:00:00.000Z"
 
 
 def test_solar_arc_preserves_inter_point_geometry():
@@ -316,4 +316,4 @@ def test_solar_arc_iso_target():
         target_iso_utc_datetime="2030-06-15T12:00:00Z",
         compute_aspects=False,
     )
-    assert solar_arc.target_iso_utc_datetime == "2030-06-15T12:00:00Z"
+    assert solar_arc.target_iso_utc_datetime == "2030-06-15T12:00:00.000Z"

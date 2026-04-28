@@ -22,6 +22,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import List, Optional, Sequence
 
 from pydantic import BaseModel, Field
@@ -199,10 +200,22 @@ class SolarArcFactory:
                             )
                         )
 
-        if target_iso_utc_datetime:
-            result_target_iso = target_iso_utc_datetime
-        elif target_year is not None:
-            result_target_iso = f"{target_year:04d}-01-01T00:00:00Z"
+        if target_iso_utc_datetime or target_year is not None:
+            if target_year is not None:
+                target_utc = datetime(target_year, 1, 1, tzinfo=timezone.utc)
+            else:
+                try:
+                    iso = (target_iso_utc_datetime or "").replace("Z", "+00:00")
+                    target_utc = datetime.fromisoformat(iso)
+                except ValueError as exc:
+                    raise KerykeionException(
+                        f"Invalid `target_iso_utc_datetime`: {target_iso_utc_datetime!r}"
+                    ) from exc
+                if target_utc.tzinfo is None:
+                    target_utc = target_utc.replace(tzinfo=timezone.utc)
+                else:
+                    target_utc = target_utc.astimezone(timezone.utc)
+            result_target_iso = target_utc.strftime("%Y-%m-%dT%H:%M:%S.000Z")
         else:
             result_target_iso = ""
 
