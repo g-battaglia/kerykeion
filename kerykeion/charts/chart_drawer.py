@@ -449,7 +449,11 @@ class BaseChartRenderer:
         return False
 
     def get_comparison_point_label(self) -> str:
-        """Translation key + default for the outer-wheel point label in comparison grids."""
+        """Label for the outer-wheel points in house comparison grids."""
+        return ""
+
+    def get_comparison_cusp_label(self) -> str:
+        """Label for the outer-wheel cusps in cusp comparison grids."""
         return ""
 
     def get_width_without_comparison(self) -> float:
@@ -742,6 +746,9 @@ class TransitChartRenderer(BaseChartRenderer):
 
     def get_comparison_point_label(self) -> str:
         return self._translate("transit_point", "Transit Point")
+
+    def get_comparison_cusp_label(self) -> str:
+        return self._comparison_cusp_label()
 
     def setup_circles(self, template_dict: dict) -> None:
         """Set up transit-style circles with outer ring."""
@@ -2431,7 +2438,12 @@ class ChartDrawer:  # type: ignore[no-redef]
                     cusp_block_width = 160.0 * 2.0
                     extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
 
-        comparison_label = self._renderer.get_comparison_point_label()
+        comparison_point_label = self._renderer.get_comparison_point_label()
+        comparison_cusp_label = self._renderer.get_comparison_cusp_label()
+        comparison_label = max(
+            filter(None, [comparison_point_label, comparison_cusp_label]),
+            key=len, default=""
+        )
         if comparison_label:
             if self.show_house_position_comparison or self.show_cusp_position_comparison:
                 transit_columns = [
@@ -3076,7 +3088,12 @@ class ChartDrawer:  # type: ignore[no-redef]
                         cusp_block_right = max_house_comparison_right + 50.0 + cusp_block_width + extra_cusp_margin
                         extents.append(cusp_block_right)
 
-            comparison_label = self._renderer.get_comparison_point_label()
+            comparison_point_label = self._renderer.get_comparison_point_label()
+            comparison_cusp_label = self._renderer.get_comparison_cusp_label()
+            comparison_label = max(
+                filter(None, [comparison_point_label, comparison_cusp_label]),
+                key=len, default=""
+            )
             if comparison_label:
                 if self.show_house_position_comparison or self.show_cusp_position_comparison:
                     transit_columns = [
