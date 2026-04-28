@@ -570,7 +570,7 @@ def draw_zodiac_slice(
     # pie slices
     offset = 360 - seventh_house_degree_ut
     # check transit
-    if chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
+    if chart_type in _DOUBLE_CHART_TYPES:
         dropin: Union[int, float] = 0
     else:
         dropin = c1
@@ -579,7 +579,7 @@ def draw_zodiac_slice(
     # symbols
     offset = offset + 15
     # check transit
-    if chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
+    if chart_type in _DOUBLE_CHART_TYPES:
         dropin = 54
     else:
         dropin = 18 + c1
@@ -628,7 +628,7 @@ def draw_house_sectors(
 
     # All chart circles are visually centered at (r, r) in SVG coordinates.
     # The visual radii match the <circle> elements drawn by draw_first_circle etc.
-    if chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
+    if chart_type in _DOUBLE_CHART_TYPES:
         outer_visual_r = r - (outer_r_offset if outer_r_offset is not None else 72)
         inner_visual_r = r - (inner_r_offset if inner_r_offset is not None else 160)
     else:
@@ -981,7 +981,7 @@ def draw_first_circle(
     Raises:
         KerykeionException: If c1 is None for single-wheel charts.
     """
-    if chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
+    if chart_type in _DOUBLE_CHART_TYPES:
         return f'<circle cx="{r}" cy="{r}" r="{r - 36}" style="fill: none; stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.4;" />'
     else:
         if c1 is None:
@@ -1026,7 +1026,7 @@ def draw_second_circle(
         str: The SVG path of the second circle.
     """
 
-    if chart_type in ("Transit", "Synastry", "DualReturnChart", "Progression"):
+    if chart_type in _DOUBLE_CHART_TYPES:
         return f'<circle cx="{r}" cy="{r}" r="{r - 72}" style="fill: {fill_color}; fill-opacity:.4; stroke: {stroke_color}; stroke-opacity:.4; stroke-width: 1px" />'
 
     else:
@@ -1052,7 +1052,7 @@ def draw_third_circle(
     Returns:
     - str: The SVG element as a string.
     """
-    if chart_type in {"Synastry", "Transit", "DualReturnChart", "Progression"}:
+    if chart_type in _DOUBLE_CHART_TYPES:
         # For Synastry and Transit charts, use a fixed radius adjustment of 160
         return f'<circle cx="{radius}" cy="{radius}" r="{radius - 160}" style="fill: {fill_color}; fill-opacity:.8; stroke: {stroke_color}; stroke-width: 1px" />'
 
@@ -1195,7 +1195,7 @@ def draw_houses_cusps_and_text_number(
     for i in range(xr):
         # Determine offsets based on chart type
         dropin, roff, t_roff = (
-            (160, 72, 36) if chart_type in ["Transit", "Synastry", "DualReturnChart", "Progression"] else (c3, c1, False)
+            (160, 72, 36) if chart_type in _DOUBLE_CHART_TYPES else (c3, c1, False)
         )
 
         # Calculate the offset for the current house cusp
@@ -1218,7 +1218,7 @@ def draw_houses_cusps_and_text_number(
             i, standard_house_cusp_color
         )
 
-        if chart_type in ["Transit", "Synastry", "DualReturnChart", "Progression"]:
+        if chart_type in _DOUBLE_CHART_TYPES:
             if second_subject_houses_list is None or transit_house_cusp_color is None:
                 raise KerykeionException("second_subject_houses_list_ut or transit_house_cusp_color is None")
 

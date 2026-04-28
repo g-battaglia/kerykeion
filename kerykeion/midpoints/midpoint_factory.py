@@ -138,7 +138,7 @@ class MidpointFactory:
         if len(gathered) < 2:
             return []
 
-        aspect_settings = build_aspect_settings(orb=aspect_orb, aspect_filter=aspects)
+        aspect_settings = build_aspect_settings(orb=aspect_orb, aspect_filter=aspects) if compute_aspects else None
 
         results: List[MidpointModel] = []
         for i in range(len(gathered)):

@@ -36,6 +36,27 @@ from kerykeion._predictive_utils import gather_active_points, build_aspect_setti
 from .secondary_progression_factory import SecondaryProgressionFactory
 
 
+def _parse_target_utc(
+    target_iso_utc_datetime: Optional[str],
+    target_year: Optional[int],
+) -> Optional[datetime]:
+    """Parse target input into a UTC datetime, or return None if neither is given."""
+    if target_year is not None:
+        return datetime(target_year, 1, 1, tzinfo=timezone.utc)
+    if target_iso_utc_datetime:
+        try:
+            iso = target_iso_utc_datetime.replace("Z", "+00:00")
+            dt = datetime.fromisoformat(iso)
+        except ValueError as exc:
+            raise KerykeionException(
+                f"Invalid `target_iso_utc_datetime`: {target_iso_utc_datetime!r}"
+            ) from exc
+        if dt.tzinfo is None:
+            return dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc)
+    return None
+
+
 def _normalise_long(longitude: float) -> float:
     return longitude % 360.0
 
@@ -143,10 +164,12 @@ class SolarArcFactory:
         if natal_subject.sun is None:
             raise KerykeionException("Natal subject is missing the Sun — cannot compute solar arc.")
 
+        target_utc = _parse_target_utc(target_iso_utc_datetime, target_year)
+
         progressed = SecondaryProgressionFactory.compute(
             natal_subject,
-            target_iso_utc_datetime=target_iso_utc_datetime,
-            target_year=target_year,
+            target_iso_utc_datetime=target_utc.strftime("%Y-%m-%dT%H:%M:%S.000Z") if target_utc else None,
+            target_year=None if target_utc else None,
         )
         if progressed.sun is None:
             raise KerykeionException("Progressed subject is missing the Sun — cannot compute solar arc.")
@@ -177,9 +200,6 @@ class SolarArcFactory:
             aspect_settings = build_aspect_settings(aspect_orb, aspects)
             for d in directed_points:
                 for natal_name, natal_pos in gathered:
-                    # Skip near-trivial self-conjunction when the arc is
-                    # smaller than the detection orb, including wraparound
-                    # cases where the forward arc is just shy of 360°.
                     if natal_name == d.name and _is_near_zero_arc(solar_arc, aspect_orb):
                         continue
                     outcome = get_aspect_from_two_points(
@@ -200,24 +220,7 @@ class SolarArcFactory:
                             )
                         )
 
-        if target_iso_utc_datetime or target_year is not None:
-            if target_year is not None:
-                target_utc = datetime(target_year, 1, 1, tzinfo=timezone.utc)
-            else:
-                try:
-                    iso = (target_iso_utc_datetime or "").replace("Z", "+00:00")
-                    target_utc = datetime.fromisoformat(iso)
-                except ValueError as exc:
-                    raise KerykeionException(
-                        f"Invalid `target_iso_utc_datetime`: {target_iso_utc_datetime!r}"
-                    ) from exc
-                if target_utc.tzinfo is None:
-                    target_utc = target_utc.replace(tzinfo=timezone.utc)
-                else:
-                    target_utc = target_utc.astimezone(timezone.utc)
-            result_target_iso = target_utc.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-        else:
-            result_target_iso = ""
+        result_target_iso = target_utc.strftime("%Y-%m-%dT%H:%M:%S.000Z") if target_utc else ""
 
         return SolarArcSubjectModel(
             natal_name=natal_subject.name,

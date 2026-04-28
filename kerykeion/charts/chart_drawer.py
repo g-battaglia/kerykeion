@@ -926,6 +926,27 @@ class ProgressionChartRenderer(TransitChartRenderer):
     but overrides labels so the SVG reads "Progression" instead of "Transit".
     """
 
+    def setup_aspects(self, template_dict: dict) -> None:
+        """Reuse Transit aspect rendering but with progression-specific title."""
+        super().setup_aspects(template_dict)
+        d = self.drawer
+        prog_label = self._translate("progression_aspects", "Progression Aspects")
+        title = f"{d.first_obj.name} - {prog_label}"
+        if d.double_chart_aspect_grid_type == "list":
+            if d._is_right_panel_mode():
+                rp = d._get_right_panel_aspect_params()
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title, d.aspects_list, d.planets_settings, d.aspects_settings,
+                    aspects_per_column=rp["aspects_per_column"], column_width=rp["column_width"],
+                    line_height=rp["line_height"], chart_height=d.height,
+                    x_offset=rp["x_offset"], y_offset=rp["y_offset"],
+                )
+            else:
+                template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_list(
+                    title, d.aspects_list, d.planets_settings, d.aspects_settings,
+                    chart_height=d.height,
+                )
+
     def setup_info_sections(self, template_dict: dict) -> None:
         super().setup_info_sections(template_dict)
         d = self.drawer
@@ -934,6 +955,13 @@ class ProgressionChartRenderer(TransitChartRenderer):
             if getattr(d.second_obj, "iso_formatted_local_datetime", None) is not None:
                 prog_dt = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
             template_dict["top_left_3"] = f"{self._translate('chart_info_progression_label', 'Progression')}: {prog_dt}"
+            if hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
+                builder = InfoSectionBuilder(d)
+                builder.build_lunar_phase_info(
+                    template_dict, d.second_obj,
+                    prefix=f"{self._translate('Progression', 'Progression')} ",
+                    key_lunation="bottom_left_3", key_phase="bottom_left_4",
+                )
 
     def setup_grids(self, template_dict: dict) -> None:
         d = self.drawer
