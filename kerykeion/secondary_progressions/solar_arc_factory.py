@@ -159,8 +159,10 @@ class SolarArcFactory:
                 Mutually exclusive with ``target_year``.
             target_year: Convenience: target year (Jan 1 at 00:00 UTC).
                 Mutually exclusive with ``target_iso_utc_datetime``.
-            active_points: Names of the natal points to direct. Defaults
-                to :data:`DEFAULT_PREDICTIVE_POINTS`.
+            active_points: Names of the natal points to direct (the
+                "moving" side). Aspect detection checks these directed
+                points against ALL natal points. Defaults to
+                :data:`DEFAULT_PREDICTIVE_POINTS`.
             compute_aspects: If ``True`` (default), also compute the list
                 of directed-to-natal aspect contacts.
             aspect_orb: Orb in degrees for aspect detection.
@@ -184,10 +186,11 @@ class SolarArcFactory:
 
         solar_arc = _forward_arc_diff(progressed.sun.abs_pos, natal_subject.sun.abs_pos)
 
-        gathered = gather_active_points(natal_subject, active_points)
+        directed_sources = gather_active_points(natal_subject, active_points)
+        natal_targets = gather_active_points(natal_subject, None)
 
         directed_points: List[SolarArcDirectedPoint] = []
-        for name, natal_pos in gathered:
+        for name, natal_pos in directed_sources:
             directed_pos = _normalise_long(natal_pos + solar_arc)
             natal_sign_idx = int(natal_pos // 30) % 12
             directed_sign_idx = int(directed_pos // 30) % 12
@@ -207,7 +210,7 @@ class SolarArcFactory:
         if compute_aspects:
             aspect_settings = build_aspect_settings(aspect_orb, aspects)
             for d in directed_points:
-                for natal_name, natal_pos in gathered:
+                for natal_name, natal_pos in natal_targets:
                     if natal_name == d.name and _is_near_zero_arc(solar_arc, aspect_orb):
                         continue
                     outcome = get_aspect_from_two_points(

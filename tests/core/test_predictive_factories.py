@@ -275,6 +275,22 @@ def test_solar_arc_no_aspects_when_disabled():
     assert len(solar_arc.directed_to_natal_aspects) == 0
 
 
+def test_solar_arc_filtered_sources_full_natal_targets():
+    """active_points filters directed sources but aspects check the full natal chart."""
+    solar_arc = SolarArcFactory.compute(
+        _subject(),
+        target_year=2030,
+        active_points=["Sun"],
+        compute_aspects=True,
+        aspect_orb=2.0,
+    )
+    assert len(solar_arc.directed_points) == 1
+    assert solar_arc.directed_points[0].name == "Sun"
+    natal_targets_hit = {asp.natal_point for asp in solar_arc.directed_to_natal_aspects}
+    assert all(asp.directed_point == "Sun" for asp in solar_arc.directed_to_natal_aspects)
+    assert len(natal_targets_hit - {"Sun"}) > 0, "Should find aspects to natal points beyond Sun"
+
+
 def test_solar_arc_empty_active_points_return_no_points_or_aspects():
     solar_arc = SolarArcFactory.compute(
         _subject(),
