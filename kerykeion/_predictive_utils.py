@@ -31,8 +31,8 @@ def gather_active_points(
         if attr in seen:
             continue
         seen.add(attr)
-        point: Optional[KerykeionPointModel] = getattr(subject, attr, None)
-        if point is None:
+        point = getattr(subject, attr, None)
+        if not isinstance(point, KerykeionPointModel):
             continue
         gathered.append((point.name, point.abs_pos))
     return gathered

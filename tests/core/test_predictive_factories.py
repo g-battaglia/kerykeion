@@ -64,9 +64,13 @@ def test_midpoint_defaults_include_lunar_nodes():
 
 
 def test_midpoint_pair_count():
-    """16 default points → C(16, 2) = 120 unordered pairs."""
+    """Default points → C(n, 2) unordered pairs."""
+    from math import comb
+    from kerykeion.settings.chart_defaults import DEFAULT_PREDICTIVE_POINTS
+
     midpoints = MidpointFactory.compute(_subject(), compute_aspects=False)
-    assert len(midpoints) == 120
+    n = len({name.lower() for name in DEFAULT_PREDICTIVE_POINTS})
+    assert len(midpoints) == comb(n, 2)
 
 
 def test_midpoint_shorter_arc_same_point():
