@@ -1676,8 +1676,6 @@ print(overview.model_dump_json(exclude_none=True, indent=2))
 
 **[Astrologer Studio](https://www.astrologerstudio.com/)** is professional online astrology software built on the Kerykeion engine — chart generation, client management, transit tracking, and AI-powered insights.
 
-*(If you have built a project using Kerykeion, feel free to submit a PR to add it to this list.)*
-
 ## Development
 
 Clone the repository or download the ZIP via the GitHub interface.
