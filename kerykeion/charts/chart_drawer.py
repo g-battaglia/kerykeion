@@ -2390,7 +2390,6 @@ class ChartDrawer:  # type: ignore[no-redef]
         Used to determine where the right-panel aspect list should start.
         Returns the X coordinate in the SVG coordinate system (before viewBox halving).
         """
-        n_active = max(self._count_active_planets(), 1)
         grid_shift = getattr(self, "_grid_x_shift", 0)
 
         extents: list[float] = []

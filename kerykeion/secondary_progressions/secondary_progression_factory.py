@@ -28,7 +28,7 @@ from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import swe
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
-from kerykeion.utilities import datetime_to_julian, format_ancient_iso
+from kerykeion.utilities import datetime_to_julian
 
 DAYS_PER_TROPICAL_YEAR = 365.25
 
@@ -210,8 +210,8 @@ class SecondaryProgressionFactory:
         year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
             jd, swe.JUL_CAL
         )
-        decimal_hour = hour + minute / 60.0 + seconds / 3600.0
-        return format_ancient_iso(year, month, day, decimal_hour, 0.0)
+        year_label = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
+        return f"{year_label}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}+00:00"
 
     @staticmethod
     def _jd_to_date_label(jd: float) -> str:

@@ -21,7 +21,6 @@ from kerykeion.charts.draw_planets import (
     _calculate_text_rotation,
     _calculate_indicator_adjustments,
     _apply_group_adjustments,
-    _handle_two_point_group,
     _handle_multi_point_group,
     PLANET_GROUPING_THRESHOLD,
     INDICATOR_GROUPING_THRESHOLD,
@@ -769,6 +768,19 @@ class TestEdgeCases:
                 main_subject_first_house_degree_ut=FIRST_HOUSE_DEG,
                 main_subject_seventh_house_degree_ut=SEVENTH_HOUSE_DEG,
                 chart_type="Synastry",
+            )
+
+    def test_progression_without_secondary_raises(self):
+        """Progression chart without secondary points raises KerykeionException."""
+        with pytest.raises(KerykeionException, match="Secondary celestial points are required for Progression"):
+            draw_planets(
+                radius=RADIUS,
+                available_kerykeion_celestial_points=_mock_points(),
+                available_planets_setting=_mock_settings(),
+                third_circle_radius=THIRD_CIRCLE_RADIUS,
+                main_subject_first_house_degree_ut=FIRST_HOUSE_DEG,
+                main_subject_seventh_house_degree_ut=SEVENTH_HOUSE_DEG,
+                chart_type="Progression",
             )
 
     def test_single_return_chart_without_secondary_does_not_raise(self):

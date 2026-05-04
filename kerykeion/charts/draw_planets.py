@@ -14,7 +14,13 @@ Main responsibilities:
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from kerykeion.charts.charts_utils import degreeDiff, sliceToX, sliceToY, convert_decimal_to_degree_string
+from kerykeion.charts.charts_utils import (
+    DOUBLE_CHART_TYPES,
+    degreeDiff,
+    sliceToX,
+    sliceToY,
+    convert_decimal_to_degree_string,
+)
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
 from kerykeion.schemas.kr_literals import Houses
 import logging
@@ -40,8 +46,9 @@ DUAL_CHART_ANGLE_RADIUS = 76  # Radius for chart angles in dual charts
 DUAL_CHART_PLANET_RADIUS_A = 110  # Alternate planet radius in dual charts
 DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
 
-# Chart types that display two subjects
-from kerykeion.charts.charts_utils import DOUBLE_CHART_TYPES as DUAL_CHART_TYPES
+# Chart types that can display two subjects.
+DUAL_CHART_TYPES = DOUBLE_CHART_TYPES
+REQUIRED_SECONDARY_CHART_TYPES: tuple[ChartType, ...] = ("Transit", "Synastry", "Progression")
 
 
 # =============================================================================
@@ -79,7 +86,7 @@ def draw_planets(
         main_subject_seventh_house_degree_ut: Seventh house cusp degree (Descendant).
         chart_type: Type of chart (Natal, Transit, Synastry, Return, etc.).
         second_subject_available_kerykeion_celestial_points: Points for second subject
-            (required for Transit, Synastry, Return charts).
+            (required for Transit, Synastry, Progression charts).
         external_view: If True, render planets on outer ring with connecting lines.
         first_circle_radius: Radius of the outer zodiac ring.
         second_circle_radius: Radius of the middle circle.
@@ -242,7 +249,7 @@ def _validate_dual_chart_inputs(
     secondary_points: Union[list[KerykeionPointModel], None],
 ) -> None:
     """Validate that dual charts have the required secondary points."""
-    if chart_type in DUAL_CHART_TYPES and secondary_points is None:
+    if chart_type in REQUIRED_SECONDARY_CHART_TYPES and secondary_points is None:
         raise KerykeionException(f"Secondary celestial points are required for {chart_type} charts")
 
 

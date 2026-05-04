@@ -274,6 +274,15 @@ def test_secondary_progression_ce_subject_bce_target_year_is_computable():
     assert progressed.julian_day < _subject().julian_day
 
 
+def test_secondary_progression_bce_iso_round_trips_seconds():
+    target_jd = SecondaryProgressionFactory._target_to_jd(
+        "-0460-01-01T00:00:13Z",
+        None,
+    )
+
+    assert SecondaryProgressionFactory._jd_to_utc_iso(target_jd) == "-0460-01-01T00:00:13+00:00"
+
+
 def test_secondary_progression_error_both_targets():
     with pytest.raises(KerykeionException, match=r"at most one|exactly one"):
         SecondaryProgressionFactory.compute(
@@ -415,6 +424,16 @@ def test_solar_arc_iso_target():
         compute_aspects=False,
     )
     assert solar_arc.target_iso_utc_datetime == "2030-06-15T12:00:00.000000Z"
+
+
+def test_solar_arc_bce_iso_target_preserves_seconds():
+    solar_arc = SolarArcFactory.compute(
+        _bce_subject(),
+        target_iso_utc_datetime="-0460-01-01T00:00:13Z",
+        compute_aspects=False,
+    )
+
+    assert solar_arc.target_iso_utc_datetime == "-0460-01-01T00:00:13+00:00"
 
 
 def test_solar_arc_error_both_targets():
