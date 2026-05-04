@@ -428,6 +428,11 @@ class ReportGenerator:
                 base_title = f"{self._primary_subject.name} — Solar Return Comparison {year or ''}".strip()
             else:
                 base_title = f"{self._primary_subject.name} — Lunar Return Comparison {year or ''}".strip()
+        elif self.chart_type == "Progression":
+            date_str = self._format_date_iso(
+                self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
+            )
+            base_title = f"{self._primary_subject.name} — Secondary Progression {date_str}".strip()
         else:
             base_title = f"{self._primary_subject.name} — Chart Report"
 
@@ -450,6 +455,8 @@ class ReportGenerator:
             return "First Subject", "Second Subject"
         if self.chart_type == "DualReturnChart":
             return "Natal Subject", "Return Subject"
+        if self.chart_type == "Progression":
+            return "Natal Subject", "Progressed Subject"
         return "Primary Subject", "Secondary Subject"
 
     def _subject_data_report(self, subject: SubjectLike, label: str) -> str:

@@ -1,5 +1,50 @@
 # Changelog
 
+## 6.0.0a36
+
+_2026-04-28_
+
+### New Features
+
+Phase 2 predictive astrology — three new factories that complete the core
+predictive toolkit (joining the existing `PrimaryDirectionsFactory`):
+
+- **`MidpointFactory`** — computes every pairwise midpoint of an
+  `AstrologicalSubjectModel`, plus the 90° dial position used by
+  cosmobiology and Uranian/Hamburg-school astrology, plus optional
+  aspect-to-midpoint detection (third-point activations) with
+  configurable orb. Pure math, no ephemeris calls.
+- **`SecondaryProgressionFactory`** — computes the day-for-a-year
+  progressed chart for any target moment, returning a regular
+  `AstrologicalSubjectModel` so every downstream tool (aspects,
+  dignities, chart drawer) keeps working transparently. All natal
+  settings (zodiac type, sidereal mode, house system, perspective,
+  active points, altitude, location, timezone) are reused.
+- **`SolarArcFactory`** — derives the solar arc from the progressed
+  Sun and applies it uniformly to every active natal point, returning
+  a structured `SolarArcSubjectModel` with directed positions, sign
+  ingresses, and directed-to-natal aspect contacts.
+
+All three factories are exported from the top-level `kerykeion`
+namespace.
+
+- **`"Progression"` chart type** — new dual-wheel chart type in
+  `ChartType`, `ChartDataFactory`, `ChartDrawer`, and `charts_utils`.
+  `SecondaryProgressionFactory` returns a standard
+  `AstrologicalSubjectModel`, so `ChartDataFactory.create_progression_chart_data(natal, progressed)`
+  produces a biwheel with natal (inner) and progressed (outer) exactly
+  like Transit charts. `ChartDrawer` renders it via a dedicated
+  `ProgressionChartRenderer` with progression-specific labels.
+- **Context serializer**: `solar_arc_to_context()` transforms a
+  `SolarArcSubjectModel` into XML, `midpoints_to_context()` transforms
+  a `list[MidpointModel]` into XML. Both are callable via the
+  `to_context()` dispatcher.
+
+### Backward compatibility
+
+Additive only. No existing class or attribute is removed, renamed, or
+semantically changed.
+
 ## 6.0.0a35
 
 _2026-04-25_

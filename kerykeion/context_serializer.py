@@ -12,6 +12,8 @@ of astrological data in semantic XML format.
 Optional/None fields are omitted from the output rather than rendered as empty.
 """
 
+from __future__ import annotations
+
 from typing import Union
 from xml.sax.saxutils import escape, quoteattr
 from kerykeion.schemas.kr_models import (
@@ -31,6 +33,8 @@ from kerykeion.schemas.kr_models import (
     HouseComparisonModel,
     MoonPhaseOverviewModel,
 )
+from kerykeion.secondary_progressions import SolarArcSubjectModel
+from kerykeion.midpoints import MidpointModel
 
 
 # Mapping from abbreviated sign names to full names
@@ -910,6 +914,64 @@ def moon_phase_overview_to_context(overview: MoonPhaseOverviewModel) -> str:
 
 
 # ============================================================================
+# Predictive-Astrology Model Converters
+# ============================================================================
+
+
+def solar_arc_to_context(model: SolarArcSubjectModel) -> str:
+    """Transform a :class:`SolarArcSubjectModel` into an XML
+    ``<solar_arc_analysis>`` element.
+
+    Includes the solar-arc value, all directed-point positions, and every
+    directed-to-natal aspect.
+    """
+    lines = [_o("solar_arc_analysis",
+                natal=model.natal_name,
+                target=model.target_iso_utc_datetime,
+                arc=f"{model.solar_arc:.4f}")]
+
+    if model.directed_points:
+        lines.append(f"  {_o('directed_points', count=str(len(model.directed_points)))}")
+        for dp in model.directed_points:
+            lines.append(f"    {_sc('point', name=dp.name, natal_sign=dp.natal_sign, directed_sign=dp.directed_sign, natal_pos=f'{dp.natal_abs_pos:.2f}', directed_pos=f'{dp.directed_abs_pos:.2f}', position=f'{dp.directed_position:.2f}', sign_changed=str(dp.sign_changed).lower())}")
+        lines.append(f"  {_c('directed_points')}")
+
+    if model.directed_to_natal_aspects:
+        lines.append(f"  {_o('directed_natal_aspects', count=str(len(model.directed_to_natal_aspects)))}")
+        for a in model.directed_to_natal_aspects:
+            lines.append(f"    {_sc('aspect', directed=a.directed_point, natal=a.natal_point, type=a.aspect, degrees=str(a.aspect_degrees), orb=f'{a.orb:.2f}')}")
+        lines.append(f"  {_c('directed_natal_aspects')}")
+
+    lines.append(_c("solar_arc_analysis"))
+    return "\n".join(lines)
+
+
+def midpoints_to_context(midpoints: list[MidpointModel]) -> str:
+    """Transform a list of :class:`MidpointModel` into an XML
+    ``<midpoints_analysis>`` element.
+
+    Includes pair, longitude, sign/position, 90° modulus, and any
+    third-point activations for each midpoint.
+    """
+    activated = [m for m in midpoints if m.aspects_to_midpoint]
+    lines = [_o("midpoints_analysis",
+                count=str(len(midpoints)),
+                activated=str(len(activated)))]
+
+    for m in midpoints:
+        if m.aspects_to_midpoint:
+            lines.append(f"  {_o('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=f'{m.midpoint_abs_pos:.2f}', sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=f'{m.midpoint_position:.2f}', modulus_90=f'{m.midpoint_modulus_90:.2f}')}")
+            for act in m.aspects_to_midpoint:
+                lines.append(f"    {_sc('activation', point=act.point_name, aspect=act.aspect, degrees=str(act.aspect_degrees), orb=f'{act.orb:.2f}')}")
+            lines.append(f"  {_c('midpoint')}")
+        else:
+            lines.append(f"  {_sc('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=f'{m.midpoint_abs_pos:.2f}', sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=f'{m.midpoint_position:.2f}', modulus_90=f'{m.midpoint_modulus_90:.2f}')}")
+
+    lines.append(_c("midpoints_analysis"))
+    return "\n".join(lines)
+
+
+# ============================================================================
 # Main Dispatcher
 # ============================================================================
 
@@ -931,6 +993,8 @@ def to_context(
         PointInHouseModel,
         HouseComparisonModel,
         MoonPhaseOverviewModel,
+        SolarArcSubjectModel,
+        list[MidpointModel],
     ],
 ) -> str:
     """
@@ -980,6 +1044,10 @@ def to_context(
         return point_in_house_to_context(model)
     elif isinstance(model, HouseComparisonModel):
         return house_comparison_to_context(model)
+    elif isinstance(model, SolarArcSubjectModel):
+        return solar_arc_to_context(model)
+    elif isinstance(model, list) and all(isinstance(item, MidpointModel) for item in model):
+        return midpoints_to_context(model)
     else:
         raise TypeError(
             f"Unsupported model type: {type(model).__name__}. "
@@ -988,7 +1056,8 @@ def to_context(
             f"AspectModel, SingleChartDataModel, DualChartDataModel, "
             f"ElementDistributionModel, QualityDistributionModel, "
             f"TransitMomentModel, TransitsTimeRangeModel, "
-            f"PointInHouseModel, HouseComparisonModel, MoonPhaseOverviewModel"
+            f"PointInHouseModel, HouseComparisonModel, MoonPhaseOverviewModel, "
+            f"SolarArcSubjectModel, list[MidpointModel]"
         )
 
 
@@ -1007,6 +1076,8 @@ __all__ = [
     "transit_moment_to_context",
     "transits_time_range_to_context",
     "moon_phase_overview_to_context",
+    "solar_arc_to_context",
+    "midpoints_to_context",
 ]
 
 

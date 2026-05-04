@@ -23,7 +23,7 @@ from pathlib import Path
 
 import pytest
 
-from kerykeion import AstrologicalSubjectFactory
+from kerykeion import AstrologicalSubjectFactory, SecondaryProgressionFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.utilities import format_ancient_iso, format_iso_display, extract_year_from_iso
@@ -420,6 +420,33 @@ class TestBCEChartSVG:
             pytest.skip("Baseline not found.")
 
         data = ChartDataFactory.create_synastry_chart_data(subj_500bc, subj_200bc)
+        svg = ChartDrawer(data).generate_svg_string()
+        baseline = baseline_path.read_text()
+
+        svg_lines = svg.strip().splitlines()
+        baseline_lines = baseline.strip().splitlines()
+        assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
+
+    def test_progression_chart_svg(self, subj_500bc):
+        """Progression chart SVG can be generated for a BCE subject."""
+        progressed = SecondaryProgressionFactory.compute(subj_500bc, target_year=-460)
+        data = ChartDataFactory.create_progression_chart_data(subj_500bc, progressed)
+        chart = ChartDrawer(data)
+        svg = chart.generate_svg_string()
+
+        assert len(svg) > 0
+        assert "<svg" in svg
+        assert "</svg>" in svg
+        assert "Ancient Greece 500BC" in svg
+
+    def test_progression_chart_baseline(self, subj_500bc):
+        """Progression chart SVG matches the golden baseline (if available)."""
+        baseline_path = SVG_DIR / "Ancient Greece 500BC - Progression Chart.svg"
+        if not baseline_path.exists():
+            pytest.skip("Baseline not found. Run test generation first.")
+
+        progressed = SecondaryProgressionFactory.compute(subj_500bc, target_year=-460)
+        data = ChartDataFactory.create_progression_chart_data(subj_500bc, progressed)
         svg = ChartDrawer(data).generate_svg_string()
         baseline = baseline_path.read_text()
 

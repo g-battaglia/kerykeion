@@ -21,21 +21,21 @@
 
 Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts, including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
 
-The main goal of this project is to provide high-precision astrological calculations through a clean, data-driven approach, making them accessible and programmable.
+The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.
 
-Kerykeion also serves as the engine behind the hosted [Astrologer API](https://www.kerykeion.net/astrologer-api), and it integrates seamlessly with LLM and AI applications.
+Kerykeion also integrates seamlessly with LLM and AI applications.
 
-## Astrology API
+## **Web API**
 
-If you are building a commercial application, a SaaS, or prefer to keep the codebase closed-source, consider the hosted **[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)** on RapidAPI.
+If you want to use Kerykeion in a web application or for commercial or _closed-source_ purposes, you can try the dedicated web API:
 
-Your app consumes Kerykeion as an external service rather than importing the AGPL library directly — no server setup, no copyleft concerns. Subscribing directly supports the ongoing development of this open-source project.
+**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
 
-**[Full API Documentation](https://www.kerykeion.net/astrologer-api)**
+It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
 
 ## Table of Contents
 
-- [**Astrology API**](#astrology-api)
+- [**Web API**](#web-api)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -100,6 +100,9 @@ Your app consumes Kerykeion as an external service rather than importing the AGP
   - [Lilith Variants & Priapus Points](#lilith-variants--priapus-points)
   - [Transit Exactness & Refinement](#transit-exactness--refinement)
   - [Primary Directions (Placidus Semi-Arc)](#primary-directions-placidus-semi-arc)
+  - [Secondary Progressions (Day-for-a-Year)](#secondary-progressions-day-for-a-year)
+  - [Solar Arc Directions](#solar-arc-directions)
+  - [Midpoints (Cosmobiology / 90° Dial)](#midpoints-cosmobiology--90-dial)
   - [Astro-Cartography (ACG)](#astro-cartography-acg)
 - [Documentation](#documentation)
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
@@ -1972,6 +1975,91 @@ for d in directions[:5]:
     print(f"{d.promissor} {d.aspect} {d.significator}: {d.direction_years:.1f} years")
 ```
 
+### Secondary Progressions (Day-for-a-Year)
+
+The day-for-a-year technique maps each day after birth to one year of life.
+The progressed chart is a real ephemeris snapshot, returned as a standard
+`AstrologicalSubjectModel` — so every downstream tool (aspects, dignities,
+chart drawer) works transparently.
+
+```python
+from pathlib import Path
+
+from kerykeion import AstrologicalSubjectFactory, SecondaryProgressionFactory
+from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+progressed = SecondaryProgressionFactory.compute(natal, target_year=2026)
+
+# Inspect progressed positions
+print(f"Progressed Sun: {progressed.sun.sign} {progressed.sun.position:.2f}°")
+print(f"Progressed Moon: {progressed.moon.sign} {progressed.moon.position:.2f}°")
+
+# Generate a biwheel SVG (natal inner ring, progressed outer ring)
+data = ChartDataFactory.create_progression_chart_data(natal, progressed)
+drawer = ChartDrawer(data)
+drawer.save_svg(output_path=Path("charts_output"), filename="progression-biwheel")
+```
+
+The biwheel shows the natal chart on the inner ring and progressed positions
+on the outer ring. Astrologers read it by looking for contacts between the
+two rings: when a progressed planet (outer) reaches a conjunction, square,
+or trine to a natal planet (inner), it signals a symbolic theme active for
+roughly one year. Sign ingresses (a progressed planet changing zodiac sign)
+mark longer-term shifts in how that planetary energy is expressed.
+
+### Solar Arc Directions
+
+Solar arc takes the progressed Sun's forward motion and applies it
+uniformly to every natal point. The result is a structured model with
+directed positions and directed-to-natal aspect contacts.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, SolarArcFactory
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+result = SolarArcFactory.compute(natal, target_year=2026)
+
+print(f"Solar arc: {result.solar_arc:.2f}°")
+for dp in result.directed_points[:5]:
+    ingress = " (sign changed)" if dp.sign_changed else ""
+    print(f"  {dp.name}: {dp.directed_sign} {dp.directed_position:.2f}°{ingress}")
+
+for asp in result.directed_to_natal_aspects[:5]:
+    print(f"  {asp.directed_point} {asp.aspect} {asp.natal_point} (orb {asp.orb:.2f}°)")
+```
+
+### Midpoints (Cosmobiology / 90° Dial)
+
+Computes every pairwise midpoint of the active points, with the 90° dial
+position used by cosmobiology and Uranian astrology, plus optional
+aspect-to-midpoint detection (third-point activations).
+
+```python
+from kerykeion import AstrologicalSubjectFactory, MidpointFactory
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1985, 4, 15, 8, 30,
+    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+)
+midpoints = MidpointFactory.compute(natal, aspect_orb=1.0)
+
+for m in midpoints[:5]:
+    activations = ", ".join(
+        f"{a.point_name} {a.aspect} ({a.orb:.2f}°)" for a in m.aspects_to_midpoint
+    )
+    print(f"{m.point_a}/{m.point_b}: {m.midpoint_sign} {m.midpoint_position:.2f}° "
+          f"(90° dial: {m.midpoint_modulus_90:.2f}°)"
+          f"{' — activated by: ' + activations if activations else ''}")
+```
+
 ### Astro-Cartography (ACG)
 
 Compute MC, IC, ASC, DSC planetary lines on the world map.
@@ -1999,9 +2087,7 @@ for line in lines[:5]:
 
 ## Projects built with Kerykeion
 
-**[Astrologer Studio](https://www.astrologerstudio.com/)** is professional online astrology software built on the Kerykeion engine — chart generation, client management, transit tracking, and AI-powered insights.
-
-*(If you have built a project using Kerykeion, feel free to submit a PR to add it to this list.)*
+**[AstrologerStudio](https://www.astrologerstudio.com/)** is a cloud-based astrology app built on top of Kerykeion.
 
 ## Development
 
@@ -2023,9 +2109,11 @@ For commercial or closed-source applications, consider using the paid [Astrologe
 
 This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
 
-As a rule of thumb, if you import this library directly into a project, that project should be open-sourced under a compatible license.
+As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the paid [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe), which is AGPL-3.0 compliant and also helps support the project.
 
-Alternatively, if the source code must remain private, consider the hosted **[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)**. Since it functions as an external third-party service, consuming its REST endpoints does *not* require the calling application to be open-source.
+Since the Astrologer API is an external third-party service, using it does _not_ require your code to be open-source.
+
+_This is not legal advice — see the [LICENSE](LICENSE) file and consult legal counsel for guidance._
 
 ## Contributing
 
