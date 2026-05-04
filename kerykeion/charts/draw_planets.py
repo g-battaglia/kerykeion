@@ -41,7 +41,7 @@ DUAL_CHART_PLANET_RADIUS_A = 110  # Alternate planet radius in dual charts
 DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
 
 # Chart types that display two subjects
-DUAL_CHART_TYPES = ("Transit", "Synastry", "DualReturnChart")
+DUAL_CHART_TYPES = ("Transit", "Synastry", "DualReturnChart", "Progression")
 
 
 # =============================================================================

@@ -1866,10 +1866,11 @@ def draw_secondary_planet_grid(
     svg_output = f'<g transform="translate({x_position},{y_position})">'
 
     # Title content and its relative x offset
+    _transit_like = chart_type in ("Transit", "Progression")
     header_text = (
-        second_subject_name if chart_type == "Transit" else f"{planets_and_houses_grid_title} {second_subject_name}"
+        second_subject_name if _transit_like else f"{planets_and_houses_grid_title} {second_subject_name}"
     )
-    header_x_offset = -50 if chart_type == "Transit" else 0
+    header_x_offset = -50 if _transit_like else 0
 
     svg_output += (
         f'<g transform="translate({header_x_offset}, {HEADER_Y})">'

@@ -152,9 +152,11 @@ class SecondaryProgressionFactory:
                 ) from exc
         else:
             try:
-                iso = (target_iso_utc_datetime or "").replace("Z", "+00:00")
+                if not isinstance(target_iso_utc_datetime, str):
+                    raise TypeError(f"expected str, got {type(target_iso_utc_datetime).__name__}")
+                iso = target_iso_utc_datetime.replace("Z", "+00:00")
                 target_utc = datetime.fromisoformat(iso)
-            except ValueError as exc:
+            except (ValueError, TypeError) as exc:
                 raise KerykeionException(
                     f"Invalid `target_iso_utc_datetime`: {target_iso_utc_datetime!r}"
                 ) from exc

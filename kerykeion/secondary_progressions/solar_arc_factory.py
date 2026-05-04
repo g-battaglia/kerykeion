@@ -54,9 +54,11 @@ def _parse_target_utc(
             ) from exc
     if target_iso_utc_datetime is not None:
         try:
+            if not isinstance(target_iso_utc_datetime, str):
+                raise TypeError(f"expected str, got {type(target_iso_utc_datetime).__name__}")
             iso = target_iso_utc_datetime.replace("Z", "+00:00")
             dt = datetime.fromisoformat(iso)
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
             raise KerykeionException(
                 f"Invalid `target_iso_utc_datetime`: {target_iso_utc_datetime!r}"
             ) from exc
