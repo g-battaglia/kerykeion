@@ -1164,10 +1164,13 @@ class TestTransitChart:
 class TestProgressionChart:
     """Golden-file regression for secondary progression charts."""
 
+    @classmethod
+    def setup_class(cls):
+        cls.john = _make_john()
+        cls.progressed_2000 = SecondaryProgressionFactory.compute(cls.john, target_year=2000)
+
     def _progression_data(self):
-        john = _make_john()
-        progressed = SecondaryProgressionFactory.compute(john, target_year=2000)
-        return ChartDataFactory.create_progression_chart_data(john, progressed)
+        return ChartDataFactory.create_progression_chart_data(self.john, self.progressed_2000)
 
     def test_progression_chart(self):
         data = self._progression_data()
@@ -3129,6 +3132,7 @@ class TestSvgWellformedness:
     def setup_class(cls):
         cls.john = _make_john("SVG Validation")
         cls.paul = _make_paul("SVG Validation")
+        cls.progressed_2000 = SecondaryProgressionFactory.compute(cls.john, target_year=2000)
 
     # -- helpers --------------------------------------------------------------
 
@@ -3243,20 +3247,17 @@ class TestSvgWellformedness:
     # ── Progression (dual-wheel) ──────────────────────────────────────────
 
     def test_progression_normal_is_valid_xml(self):
-        progressed = SecondaryProgressionFactory.compute(self.john, target_year=2000)
-        data = ChartDataFactory.create_progression_chart_data(self.john, progressed)
+        data = ChartDataFactory.create_progression_chart_data(self.john, self.progressed_2000)
         svg = self._get_drawer(data).generate_svg_string()
         self._assert_wellformed(svg)
 
     def test_progression_minified_is_valid_xml(self):
-        progressed = SecondaryProgressionFactory.compute(self.john, target_year=2000)
-        data = ChartDataFactory.create_progression_chart_data(self.john, progressed)
+        data = ChartDataFactory.create_progression_chart_data(self.john, self.progressed_2000)
         svg = self._get_drawer(data).generate_svg_string(minify=True)
         self._assert_wellformed(svg)
 
     def test_progression_minified_no_css_vars_is_valid_xml(self):
-        progressed = SecondaryProgressionFactory.compute(self.john, target_year=2000)
-        data = ChartDataFactory.create_progression_chart_data(self.john, progressed)
+        data = ChartDataFactory.create_progression_chart_data(self.john, self.progressed_2000)
         svg = self._get_drawer(data).generate_svg_string(minify=True, remove_css_variables=True)
         self._assert_wellformed(svg, expect_css_variables=False)
 

@@ -2002,7 +2002,9 @@ print(f"Progressed Moon: {progressed.moon.sign} {progressed.moon.position:.2f}°
 # Generate a biwheel SVG (natal inner ring, progressed outer ring)
 data = ChartDataFactory.create_progression_chart_data(natal, progressed)
 drawer = ChartDrawer(data)
-drawer.save_svg(output_path=Path("charts_output"), filename="progression-biwheel")
+output_dir = Path("charts_output")
+output_dir.mkdir(parents=True, exist_ok=True)
+drawer.save_svg(output_path=output_dir, filename="progression-biwheel")
 ```
 
 The biwheel shows the natal chart on the inner ring and progressed positions
