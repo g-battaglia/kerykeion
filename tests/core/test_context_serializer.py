@@ -1462,7 +1462,8 @@ class TestHouseComparisonContext:
         assert 'activated="0"' in result
 
     def test_to_context_empty_list_is_valid_midpoints(self):
-        from kerykeion.context_serializer import to_context
+        from kerykeion.context_serializer import midpoints_to_context, to_context
 
         result = to_context([])
-        assert 'count="0"' in result
+        assert "<midpoints_analysis " in result
+        assert result == midpoints_to_context([])

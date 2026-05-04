@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from typing import Iterable, List, Optional, Sequence
 
+from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS, DEFAULT_PREDICTIVE_POINTS
 
@@ -40,6 +41,8 @@ def gather_active_points(
 
 def build_aspect_settings(orb: float, aspect_filter: Optional[Sequence[str]]) -> list[dict]:
     """Materialise an aspects-settings list with a uniform orb override."""
+    if orb < 0:
+        raise KerykeionException("`aspect_orb` must be >= 0.")
     settings: list[dict] = []
     for aspect in DEFAULT_CHART_ASPECTS_SETTINGS:
         name = aspect["name"]  # type: ignore[index]

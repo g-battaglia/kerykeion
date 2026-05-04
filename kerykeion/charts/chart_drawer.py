@@ -987,6 +987,15 @@ class ProgressionChartRenderer(TransitChartRenderer):
     via label hooks — no duplicated rendering logic.
     """
 
+    def __init__(self, drawer: "ChartDrawer"):
+        super().__init__(drawer)
+        if not isinstance(drawer.first_obj, AstrologicalSubjectModel) or not isinstance(
+            drawer.second_obj, AstrologicalSubjectModel
+        ):
+            raise KerykeionException(
+                "Progression charts require AstrologicalSubjectModel subjects."
+            )
+
     def get_comparison_point_label(self) -> str:
         return self._translate("progressed_point", "Progressed Point")
 

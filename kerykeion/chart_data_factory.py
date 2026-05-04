@@ -55,6 +55,7 @@ from kerykeion.utilities import find_common_active_points, distribute_percentage
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.charts.charts_utils import (
+    _DOUBLE_CHART_TYPES,
     ElementQualityDistributionMethod,
     calculate_element_points,
     calculate_quality_points,
@@ -125,7 +126,7 @@ class ChartDataFactory:
         """
 
         # Validate chart type requirements
-        if chart_type in ["Transit", "Synastry", "DualReturnChart", "Progression"] and not second_subject:
+        if chart_type in _DOUBLE_CHART_TYPES and not second_subject:
             raise KerykeionException(f"Second subject is required for {chart_type} charts.")
 
         if chart_type == "Composite" and not isinstance(first_subject, CompositeSubjectModel):
@@ -197,7 +198,7 @@ class ChartDataFactory:
 
         # Calculate house comparison for dual charts
         house_comparison = None
-        if second_subject and include_house_comparison and chart_type in ["Transit", "Synastry", "DualReturnChart", "Progression"]:
+        if second_subject and include_house_comparison and chart_type in _DOUBLE_CHART_TYPES:
             if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(
                 second_subject, (AstrologicalSubjectModel, PlanetReturnModel)
             ):
