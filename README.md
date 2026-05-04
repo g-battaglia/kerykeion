@@ -21,21 +21,21 @@
 
 Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts, including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
 
-The main goal of this project is to offer a clean, data-driven approach to astrology, making it accessible and programmable.
+The main goal of this project is to provide high-precision astrological calculations through a clean, data-driven approach, making them accessible and programmable.
 
-Kerykeion also integrates seamlessly with LLM and AI applications.
+Kerykeion also serves as the engine behind the hosted [Astrologer API](https://www.kerykeion.net/astrologer-api), and it integrates seamlessly with LLM and AI applications.
 
-## **Web API**
+## Astrology API
 
-If you want to use Kerykeion in a web application or for commercial or _closed-source_ purposes, you can try the dedicated web API:
+If you are building a commercial application, a SaaS, or prefer to keep the codebase closed-source, consider the hosted **[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)** on RapidAPI.
 
-**[AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer/pricing)**
+Your app consumes Kerykeion as an external service rather than importing the AGPL library directly — no server setup, no copyleft concerns. Subscribing directly supports the ongoing development of this open-source project.
 
-It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly supports this project.
+**[Full API Documentation](https://www.kerykeion.net/astrologer-api)**
 
 ## Table of Contents
 
-- [**Web API**](#web-api)
+- [**Astrology API**](#astrology-api)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -1999,7 +1999,9 @@ for line in lines[:5]:
 
 ## Projects built with Kerykeion
 
-**[AstrologerStudio](https://www.astrologerstudio.com/)** is a cloud-based astrology app built on top of Kerykeion.
+**[Astrologer Studio](https://www.astrologerstudio.com/)** is professional online astrology software built on the Kerykeion engine — chart generation, client management, transit tracking, and AI-powered insights.
+
+*(If you have built a project using Kerykeion, feel free to submit a PR to add it to this list.)*
 
 ## Development
 
@@ -2021,9 +2023,9 @@ For commercial or closed-source applications, consider using the paid [Astrologe
 
 This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
 
-As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the paid [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe), which is AGPL-3.0 compliant and also helps support the project.
+As a rule of thumb, if you import this library directly into a project, that project should be open-sourced under a compatible license.
 
-Since the Astrologer API is an external third-party service, using it does _not_ require your code to be open-source.
+Alternatively, if the source code must remain private, consider the hosted **[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)**. Since it functions as an external third-party service, consuming its REST endpoints does *not* require the calling application to be open-source.
 
 ## Contributing
 
