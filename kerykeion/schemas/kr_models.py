@@ -29,7 +29,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from typing import Union, Optional, Literal
 from typing_extensions import TypedDict
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from kerykeion.schemas.kr_literals import AspectName
 
 from kerykeion.schemas import (
@@ -529,6 +529,24 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         default=None,
         description="Ayanamsa offset in degrees for sidereal charts (tropical 0 Aries minus sidereal 0 Aries). None for tropical charts.",
     )
+    custom_ayanamsa_t0: Optional[float] = Field(
+        default=None,
+        description="Reference epoch (Julian Day) for USER sidereal mode. None unless sidereal_mode is USER.",
+    )
+    custom_ayanamsa_ayan_t0: Optional[float] = Field(
+        default=None,
+        description="Ayanamsa value in degrees at the reference epoch for USER sidereal mode. None unless sidereal_mode is USER.",
+    )
+
+    @model_validator(mode="after")
+    def _validate_user_ayanamsa(self) -> "AstrologicalBaseModel":
+        if self.sidereal_mode == "USER":
+            if self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None:
+                raise ValueError(
+                    "custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0 are both required "
+                    "when sidereal_mode is 'USER'."
+                )
+        return self
 
     # Common celestial points
     # Main planets (all optional to support selective calculations)
@@ -1160,10 +1178,11 @@ class DualChartDataModel(SubscriptableBaseModel):
     Supported chart types:
     - Transit: Natal chart with current planetary transits
     - Synastry: Relationship compatibility between two people
-    - Return: Natal chart with planetary return comparison
+    - DualReturnChart: Natal chart with planetary return comparison
+    - Progression: Natal chart with secondary progression comparison
 
     Attributes:
-        chart_type: Type of dual chart (Transit, Synastry, Return)
+        chart_type: Type of dual chart (Transit, Synastry, DualReturnChart, Progression)
         first_subject: Primary astrological subject (natal, base chart)
         second_subject: Secondary astrological subject (transit, partner, return)
         aspects: Inter-chart aspects between the two subjects
@@ -1176,7 +1195,7 @@ class DualChartDataModel(SubscriptableBaseModel):
     """
 
     # Chart identification
-    chart_type: Literal["Transit", "Synastry", "DualReturnChart"]
+    chart_type: Literal["Transit", "Synastry", "DualReturnChart", "Progression"]
 
     # Dual chart subjects
     first_subject: Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]

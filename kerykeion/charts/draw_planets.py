@@ -41,7 +41,7 @@ DUAL_CHART_PLANET_RADIUS_A = 110  # Alternate planet radius in dual charts
 DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
 
 # Chart types that display two subjects
-DUAL_CHART_TYPES = ("Transit", "Synastry", "DualReturnChart")
+from kerykeion.charts.charts_utils import DOUBLE_CHART_TYPES as DUAL_CHART_TYPES
 
 
 # =============================================================================
@@ -242,12 +242,8 @@ def _validate_dual_chart_inputs(
     secondary_points: Union[list[KerykeionPointModel], None],
 ) -> None:
     """Validate that dual charts have the required secondary points."""
-    error_messages = {
-        "Transit": "Secondary celestial points are required for Transit charts",
-        "Synastry": "Secondary celestial points are required for Synastry charts",
-    }
-    if chart_type in error_messages and secondary_points is None:
-        raise KerykeionException(error_messages[chart_type])
+    if chart_type in DUAL_CHART_TYPES and not secondary_points:
+        raise KerykeionException(f"Secondary celestial points are required for {chart_type} charts")
 
 
 # =============================================================================
