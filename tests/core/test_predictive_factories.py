@@ -283,6 +283,20 @@ def test_secondary_progression_bce_iso_round_trips_seconds():
     assert SecondaryProgressionFactory._jd_to_utc_iso(target_jd) == "-0460-01-01T00:00:13+00:00"
 
 
+def test_secondary_progression_rejects_naive_target_iso():
+    with pytest.raises(KerykeionException, match="explicit UTC offset"):
+        SecondaryProgressionFactory.compute(
+            _subject(),
+            target_iso_utc_datetime="2026-04-25T00:00:00",
+        )
+
+
+def test_secondary_progression_large_ce_target_year_formats_without_datetime():
+    target_jd = SecondaryProgressionFactory._target_to_jd(None, 10000)
+
+    assert SecondaryProgressionFactory._jd_to_utc_iso(target_jd) == "10000-01-01T00:00:00.000000Z"
+
+
 def test_secondary_progression_error_both_targets():
     with pytest.raises(KerykeionException, match=r"at most one|exactly one"):
         SecondaryProgressionFactory.compute(
@@ -312,6 +326,12 @@ def test_solar_arc_target_year_reports_requested_target_datetime():
     solar_arc = SolarArcFactory.compute(_subject(), target_year=2030, compute_aspects=False)
 
     assert solar_arc.target_iso_utc_datetime == "2030-01-01T00:00:00.000000Z"
+
+
+def test_solar_arc_large_ce_target_year_reports_requested_target_datetime():
+    solar_arc = SolarArcFactory.compute(_subject(), target_year=10000, compute_aspects=False)
+
+    assert solar_arc.target_iso_utc_datetime == "10000-01-01T00:00:00.000000Z"
 
 
 def test_solar_arc_preserves_inter_point_geometry():

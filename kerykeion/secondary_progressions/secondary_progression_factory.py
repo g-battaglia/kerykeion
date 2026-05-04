@@ -133,8 +133,7 @@ class SecondaryProgressionFactory:
             try:
                 if target_year < 1:
                     return swe.julday(target_year, 1, 1, 0.0, swe.JUL_CAL)
-                target_utc = datetime(target_year, 1, 1, tzinfo=timezone.utc)
-                return datetime_to_julian(target_utc)
+                return swe.julday(target_year, 1, 1, 0.0, swe.GREG_CAL)
             except (ValueError, OverflowError, TypeError) as exc:
                 raise KerykeionException(
                     f"Invalid `target_year`: {target_year!r}"
@@ -156,9 +155,10 @@ class SecondaryProgressionFactory:
             ) from exc
 
         if target_utc.tzinfo is None:
-            target_utc = target_utc.replace(tzinfo=timezone.utc)
-        else:
-            target_utc = target_utc.astimezone(timezone.utc)
+            raise KerykeionException(
+                "`target_iso_utc_datetime` must include `Z` or an explicit UTC offset."
+            )
+        target_utc = target_utc.astimezone(timezone.utc)
         return datetime_to_julian(target_utc)
 
     @staticmethod
@@ -196,6 +196,10 @@ class SecondaryProgressionFactory:
         year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
             jd, swe.GREG_CAL
         )
+        if not (1 <= year <= 9999):
+            raise KerykeionException(
+                f"Julian Day {jd!r} is outside Python datetime's supported year range."
+            )
         return datetime(year, month, day, hour, minute, seconds, tzinfo=timezone.utc)
 
     @staticmethod
@@ -203,6 +207,11 @@ class SecondaryProgressionFactory:
         """Format a Julian Day UT as a UTC ISO timestamp."""
         gregorian_year, _, _, _ = swe.revjul(jd, swe.GREG_CAL)
         if int(gregorian_year) >= 1:
+            year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
+                jd, swe.GREG_CAL
+            )
+            if year > 9999:
+                return f"{year:04d}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}.000000Z"
             return SecondaryProgressionFactory._jd_to_utc_datetime(jd).isoformat(
                 timespec="microseconds"
             ).replace("+00:00", "Z")
