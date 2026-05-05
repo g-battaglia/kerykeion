@@ -60,9 +60,9 @@ def test_predictive_factories_are_in_top_level_all():
 
 def test_midpoint_defaults_include_lunar_nodes():
     midpoints = MidpointFactory.compute(_subject(), compute_aspects=False)
-    pairs = {(midpoint.point_a, midpoint.point_b) for midpoint in midpoints}
+    pairs = {frozenset((midpoint.point_a, midpoint.point_b)) for midpoint in midpoints}
 
-    assert ("True_North_Lunar_Node", "True_South_Lunar_Node") in pairs
+    assert frozenset(("True_North_Lunar_Node", "True_South_Lunar_Node")) in pairs
     assert any("True_North_Lunar_Node" in pair for pair in pairs)
     assert any("True_South_Lunar_Node" in pair for pair in pairs)
 
@@ -280,7 +280,7 @@ def test_secondary_progression_bce_iso_round_trips_seconds():
         None,
     )
 
-    assert SecondaryProgressionFactory._jd_to_utc_iso(target_jd) == "-0460-01-01T00:00:13+00:00"
+    assert SecondaryProgressionFactory._jd_to_utc_iso(target_jd) == "-0460-01-01T00:00:13.000000Z"
 
 
 def test_secondary_progression_rejects_naive_target_iso():
@@ -294,7 +294,7 @@ def test_secondary_progression_rejects_naive_target_iso():
 def test_secondary_progression_large_ce_target_year_formats_without_datetime():
     target_jd = SecondaryProgressionFactory._target_to_jd(None, 10000)
 
-    assert SecondaryProgressionFactory._jd_to_utc_iso(target_jd) == "10000-01-01T00:00:00.000000Z"
+    assert SecondaryProgressionFactory._jd_to_utc_iso(target_jd) == "+10000-01-01T00:00:00.000000Z"
 
 
 def test_secondary_progression_error_both_targets():
@@ -331,7 +331,7 @@ def test_solar_arc_target_year_reports_requested_target_datetime():
 def test_solar_arc_large_ce_target_year_reports_requested_target_datetime():
     solar_arc = SolarArcFactory.compute(_subject(), target_year=10000, compute_aspects=False)
 
-    assert solar_arc.target_iso_utc_datetime == "10000-01-01T00:00:00.000000Z"
+    assert solar_arc.target_iso_utc_datetime == "+10000-01-01T00:00:00.000000Z"
 
 
 def test_solar_arc_preserves_inter_point_geometry():
@@ -424,7 +424,7 @@ def test_solar_arc_bce_subject():
     solar_arc = SolarArcFactory.compute(natal, target_year=-460, compute_aspects=False)
 
     assert solar_arc.solar_arc > 0
-    assert solar_arc.target_iso_utc_datetime == "-0460-01-01T00:00:00+00:00"
+    assert solar_arc.target_iso_utc_datetime == "-0460-01-01T00:00:00.000000Z"
 
 
 def test_solar_arc_uses_forward_progressed_sun_delta_beyond_180_degrees():
@@ -453,7 +453,7 @@ def test_solar_arc_bce_iso_target_preserves_seconds():
         compute_aspects=False,
     )
 
-    assert solar_arc.target_iso_utc_datetime == "-0460-01-01T00:00:13+00:00"
+    assert solar_arc.target_iso_utc_datetime == "-0460-01-01T00:00:13.000000Z"
 
 
 def test_solar_arc_error_both_targets():

@@ -211,7 +211,7 @@ class SecondaryProgressionFactory:
                 jd, swe.GREG_CAL
             )
             if year > 9999:
-                return f"{year:04d}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}.000000Z"
+                return f"+{year:05d}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}.000000Z"
             return SecondaryProgressionFactory._jd_to_utc_datetime(jd).isoformat(
                 timespec="microseconds"
             ).replace("+00:00", "Z")
@@ -220,7 +220,7 @@ class SecondaryProgressionFactory:
             jd, swe.JUL_CAL
         )
         year_label = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
-        return f"{year_label}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}+00:00"
+        return f"{year_label}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}.000000Z"
 
     @staticmethod
     def _jd_to_date_label(jd: float) -> str:

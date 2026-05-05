@@ -143,9 +143,9 @@ class SolarArcFactory:
         """
         if natal_subject.sun is None:
             raise KerykeionException("Natal subject is missing the Sun — cannot compute solar arc.")
-        if target_iso_utc_datetime is None and target_year is None:
+        if (target_iso_utc_datetime is None) == (target_year is None):
             raise KerykeionException(
-                "Pass one of `target_iso_utc_datetime` or `target_year`."
+                "Pass exactly one of `target_iso_utc_datetime` or `target_year`."
             )
 
         target_jd = SecondaryProgressionFactory._target_to_jd(

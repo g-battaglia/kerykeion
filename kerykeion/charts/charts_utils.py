@@ -1223,7 +1223,9 @@ def draw_houses_cusps_and_text_number(
 
         if chart_type in DOUBLE_CHART_TYPES:
             if second_subject_houses_list is None or transit_house_cusp_color is None:
-                raise KerykeionException("second_subject_houses_list or house_cusp_color is None for dual-wheel chart")
+                raise KerykeionException(
+                    "second_subject_houses_list or transit_house_cusp_color is None for dual-wheel chart"
+                )
 
             # Calculate the offset for the second subject's house cusp
             zeropoint = 360 - first_subject_houses_list[6].abs_pos
