@@ -1,12 +1,18 @@
 import re
 
 _DMS_PATTERN = re.compile(r"(\d+)°(\d+)'(\d+)'")
+_NON_VISUAL_KR_ATTR_PATTERN = re.compile(r"\s+kr:c[xy]=(['\"])[^'\"]*\1")
 
 
 def _dms_to_decimal(match: re.Match) -> str:
     """Convert a DMS string like 23°33'39' to its decimal-degree equivalent."""
     d, m, s = int(match.group(1)), int(match.group(2)), int(match.group(3))
     return f"{d + m / 60 + s / 3600:.6f}"
+
+
+def _strip_non_visual_metadata_attrs(svg_line: str) -> str:
+    """Remove metadata-only attributes that do not affect rendered SVG geometry."""
+    return _NON_VISUAL_KR_ATTR_PATTERN.sub("", svg_line)
 
 
 def compare_svg_lines(expected_line: str, actual_line: str, rel_tol: float = 1e-10, abs_tol: float = 1e-10) -> None:
@@ -23,6 +29,9 @@ def compare_svg_lines(expected_line: str, actual_line: str, rel_tol: float = 1e-
         rel_tol (float): Relative tolerance for numerical comparison.
         abs_tol (float): Absolute tolerance for numerical comparison.
     """
+    expected_line = _strip_non_visual_metadata_attrs(expected_line)
+    actual_line = _strip_non_visual_metadata_attrs(actual_line)
+
     # Collapse DMS triplets into single decimal-degree values
     expected_processed = _DMS_PATTERN.sub(_dms_to_decimal, expected_line)
     actual_processed = _DMS_PATTERN.sub(_dms_to_decimal, actual_line)

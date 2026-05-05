@@ -14,6 +14,9 @@ ZodiacType: TypeAlias = Literal["Tropical", "Sidereal"]
 Sign: TypeAlias = Literal["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
 """Literal type for Zodiac Signs"""
 
+SIGN_CODES: tuple[Sign, ...] = ("Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis")
+"""Ordered tuple of the 12 three-letter zodiac sign codes (Aries → Pisces)."""
+
 
 SignNumbers: TypeAlias = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 """Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pis (11)"""
@@ -179,7 +182,7 @@ Quality: TypeAlias = Literal["Cardinal", "Fixed", "Mutable"]
 """Literal type for Qualities"""
 
 
-ChartType: TypeAlias = Literal["Natal", "Synastry", "Transit", "Composite", "DualReturnChart", "SingleReturnChart"]
+ChartType: TypeAlias = Literal["Natal", "Synastry", "Transit", "Composite", "DualReturnChart", "SingleReturnChart", "Progression"]
 """Literal type for Chart Types"""
 
 

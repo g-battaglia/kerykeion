@@ -1,5 +1,60 @@
 # Changelog
 
+## 6.0.0a36
+
+_2026-04-28_
+
+### New Features
+
+Predictive astrology factories — three new factories that complete the
+core predictive toolkit (joining the existing `PrimaryDirectionsFactory`):
+
+- **`MidpointFactory`** — computes every pairwise midpoint of an
+  `AstrologicalSubjectModel`, plus the 90° dial position used by
+  cosmobiology and Uranian/Hamburg-school astrology, plus optional
+  aspect-to-midpoint detection (third-point activations) with
+  configurable orb. Pure math, no ephemeris calls.
+- **`SecondaryProgressionFactory`** — computes the day-for-a-year
+  progressed chart for any target moment, returning a regular
+  `AstrologicalSubjectModel` so every downstream tool (aspects,
+  dignities, chart drawer) keeps working transparently. All natal
+  settings (zodiac type, sidereal mode, house system, perspective,
+  active points, altitude, location, timezone) are reused.
+  Supports BCE natal subjects and BCE targets via Julian Day arithmetic.
+- **`SolarArcFactory`** — derives the solar arc from the progressed
+  Sun and applies it uniformly to every active natal point, returning
+  a structured `SolarArcSubjectModel` with directed positions, sign
+  ingresses, and directed-to-natal aspect contacts. Natal targets for
+  aspect detection use the subject's own `active_points` (not hardcoded
+  defaults), so extra points (Vertex, asteroids, etc.) are included.
+
+All three factories are exported from the top-level `kerykeion`
+namespace.
+
+- **`"Progression"` chart type** — new dual-wheel chart type in
+  `ChartType`, `ChartDataFactory`, `ChartDrawer`, and `charts_utils`.
+  `ChartDataFactory.create_progression_chart_data(natal, progressed)`
+  produces a biwheel with natal (inner) and progressed (outer).
+  `ChartDrawer` renders it via a dedicated `ProgressionChartRenderer`
+  with progression-specific labels.
+- **Context serializer**: `solar_arc_to_context()` transforms a
+  `SolarArcSubjectModel` into XML, `midpoints_to_context()` transforms
+  a `list[MidpointModel]` into XML. Both are callable via the
+  `to_context()` dispatcher.
+- **Custom ayanamsa persistence**: `custom_ayanamsa_t0` and
+  `custom_ayanamsa_ayan_t0` are now stored on `AstrologicalBaseModel`
+  and propagated through secondary progressions and solar arcs.
+  A Pydantic `model_validator` enforces pair integrity (both or neither).
+- **`DOUBLE_CHART_TYPES` centralized**: the dual-chart type tuple is
+  now defined once in `charts_utils.py` and imported by
+  `draw_planets.py` and `chart_data_factory.py`.
+
+### Backward compatibility
+
+Additive only. No existing class or attribute is removed, renamed, or
+semantically changed. The new `custom_ayanamsa_*` fields default to
+`None` and do not affect existing models.
+
 ## 6.0.0a35
 
 _2026-04-25_

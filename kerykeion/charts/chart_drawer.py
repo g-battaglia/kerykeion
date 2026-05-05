@@ -433,6 +433,34 @@ class BaseChartRenderer:
         template_dict["makeHouseComparisonGrid"] = ""
 
     # -------------------------------------------------------------------------
+    # SIZING METHODS (override to customize width/height per chart type)
+    # -------------------------------------------------------------------------
+
+    def get_initial_width(self) -> float:
+        """Return the default chart width for this chart type."""
+        return self.drawer._DEFAULT_NATAL_WIDTH
+
+    def get_minimum_width(self, wheel_right: float) -> int:
+        """Return the baseline minimum width to prevent compression."""
+        return max(int(wheel_right), self.drawer._DEFAULT_NATAL_WIDTH)
+
+    def is_dual_wheel(self) -> bool:
+        """Whether this chart type uses dual-wheel (biwheel) layout."""
+        return False
+
+    def get_comparison_point_label(self) -> str:
+        """Label for the outer-wheel points in house comparison grids."""
+        return ""
+
+    def get_comparison_cusp_label(self) -> str:
+        """Label for the outer-wheel cusps in cusp comparison grids."""
+        return ""
+
+    def get_width_without_comparison(self) -> float:
+        """Width to use when house comparison grids are hidden. Defaults to initial width."""
+        return self.get_initial_width()
+
+    # -------------------------------------------------------------------------
     # SHARED HELPER METHODS
     # -------------------------------------------------------------------------
     # These methods provide common functionality used by multiple renderers.
@@ -704,16 +732,50 @@ class TransitChartRenderer(BaseChartRenderer):
     Dual-wheel chart showing natal (inner) vs transit (outer) positions.
     """
 
+    def get_initial_width(self) -> float:
+        d = self.drawer
+        if d.double_chart_aspect_grid_type == "table":
+            return d._DEFAULT_FULL_WIDTH_WITH_TABLE
+        return d._DEFAULT_FULL_WIDTH
+
+    def get_minimum_width(self, wheel_right: float) -> int:
+        return max(int(wheel_right), 450)
+
+    def is_dual_wheel(self) -> bool:
+        return True
+
+    def get_comparison_point_label(self) -> str:
+        return self._translate("transit_point", "Transit Point")
+
+    def get_comparison_cusp_label(self) -> str:
+        return self._comparison_cusp_label()
+
     def setup_circles(self, template_dict: dict) -> None:
         """Set up transit-style circles with outer ring."""
         self.drawer._setup_transit_circles(template_dict)
+
+    def _aspect_list_title(self) -> str:
+        """Title for the aspect list panel. Override in subclasses for custom labels."""
+        return f"{self.drawer.first_obj.name} - {self._translate('transit_aspects', 'Transit Aspects')}"
+
+    def _outer_wheel_label(self) -> str:
+        """Label for the outer wheel in planet grids. Override for custom labels."""
+        return self._translate("transit", "Transit")
+
+    def _comparison_return_point_label(self) -> str:
+        """Label for the outer-wheel points in house comparison grids."""
+        return self._translate("transit_point", "Transit Point")
+
+    def _comparison_cusp_label(self) -> str:
+        """Label for the outer-wheel cusps in cusp comparison grids."""
+        return self._translate("transit_cusp", "Transit Cusp")
 
     def setup_aspects(self, template_dict: dict) -> None:
         """Set up aspect list or grid for dual-wheel chart."""
         d = self.drawer
 
         if d.double_chart_aspect_grid_type == "list":
-            title = f"{d.first_obj.name} - {self._translate('transit_aspects', 'Transit Aspects')}"
+            title = self._aspect_list_title()
             template_dict["makeAspectGrid"] = ""
 
             if d._is_right_panel_mode():
@@ -849,9 +911,8 @@ class TransitChartRenderer(BaseChartRenderer):
 
         # Planet grids with wheel labels
         first_label = d._truncate_name(d.first_obj.name)
-        transit_label = self._translate("transit", "Transit")
         first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
-        second_grid_title = f"{transit_label} ({self._translate('outer_wheel', 'Outer Wheel')})"
+        second_grid_title = f"{self._outer_wheel_label()} ({self._translate('outer_wheel', 'Outer Wheel')})"
 
         template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
             planets_and_houses_grid_title="",
@@ -896,7 +957,7 @@ class TransitChartRenderer(BaseChartRenderer):
                 house_position_comparison_label=self._translate(
                     "house_position_comparison", "House Position Comparison"
                 ),
-                return_point_label=self._translate("transit_point", "Transit Point"),
+                return_point_label=self._comparison_return_point_label(),
                 natal_house_label=self._translate("house_position", "Natal House"),
                 x_position=d._TRANSIT_HOUSE_COMPARISON_X,
             )
@@ -909,7 +970,7 @@ class TransitChartRenderer(BaseChartRenderer):
                 celestial_point_language=d._language_model.celestial_points,
                 cusps_owner_subject_number=2,
                 cusp_position_comparison_label=self._translate("cusp_position_comparison", "Cusp Position Comparison"),
-                owner_cusp_label=self._translate("transit_cusp", "Transit Cusp"),
+                owner_cusp_label=self._comparison_cusp_label(),
                 projected_house_label=self._translate("natal_house", "Natal House"),
                 x_position=cusp_x,
                 y_position=0,
@@ -919,11 +980,74 @@ class TransitChartRenderer(BaseChartRenderer):
         template_dict["makeHouseComparisonGrid"] = house_comparison_svg
 
 
+class ProgressionChartRenderer(TransitChartRenderer):
+    """Renderer for Secondary Progression charts.
+
+    Reuses the Transit dual-wheel layout (natal inner, progressed outer)
+    via label hooks — no duplicated rendering logic.
+    """
+
+    def __init__(self, drawer: "ChartDrawer"):
+        super().__init__(drawer)
+        if not isinstance(drawer.first_obj, AstrologicalSubjectModel) or not isinstance(
+            drawer.second_obj, AstrologicalSubjectModel
+        ):
+            raise KerykeionException(
+                "Progression charts require AstrologicalSubjectModel subjects."
+            )
+
+    def get_comparison_point_label(self) -> str:
+        return self._translate("progressed_point", "Progressed Point")
+
+    def _aspect_list_title(self) -> str:
+        return f"{self.drawer.first_obj.name} - {self._translate('progression_aspects', 'Progression Aspects')}"
+
+    def _outer_wheel_label(self) -> str:
+        return self._translate("progression", "Progression")
+
+    def _comparison_return_point_label(self) -> str:
+        return self._translate("progressed_point", "Progressed Point")
+
+    def _comparison_cusp_label(self) -> str:
+        return self._translate("progressed_cusp", "Progressed Cusp")
+
+    def setup_info_sections(self, template_dict: dict) -> None:
+        super().setup_info_sections(template_dict)
+        d = self.drawer
+        if d.second_obj is not None:
+            prog_dt = ""
+            if getattr(d.second_obj, "iso_formatted_local_datetime", None) is not None:
+                prog_dt = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
+            template_dict["top_left_3"] = f"{self._translate('chart_info_progression_label', 'Progression')}: {prog_dt}"
+            if hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
+                builder = InfoSectionBuilder(d)
+                builder.build_lunar_phase_info(
+                    template_dict, d.second_obj,
+                    prefix=f"{self._translate('progression', 'Progression')} ",
+                    key_lunation="bottom_left_3", key_phase="bottom_left_4",
+                )
+
+
 class SynastryChartRenderer(BaseChartRenderer):
     """Renderer for Synastry charts.
 
     Dual-wheel chart comparing two birth charts.
     """
+
+    def get_initial_width(self) -> float:
+        return self.drawer._DEFAULT_SYNASTRY_WIDTH
+
+    def get_minimum_width(self, wheel_right: float) -> int:
+        return max(int(wheel_right), self.drawer._DEFAULT_SYNASTRY_WIDTH // 2)
+
+    def is_dual_wheel(self) -> bool:
+        return True
+
+    def get_comparison_point_label(self) -> str:
+        return ""
+
+    def get_width_without_comparison(self) -> float:
+        return self.drawer._DEFAULT_FULL_WIDTH
 
     def setup_circles(self, template_dict: dict) -> None:
         """Set up transit-style circles for dual-wheel display."""
@@ -1227,6 +1351,24 @@ class DualReturnChartRenderer(BaseChartRenderer):
     Dual-wheel chart showing natal (inner) vs return (outer) positions.
     """
 
+    def get_initial_width(self) -> float:
+        return self.drawer._DEFAULT_ULTRA_WIDE_WIDTH
+
+    def get_minimum_width(self, wheel_right: float) -> int:
+        return max(int(wheel_right), self.drawer._DEFAULT_ULTRA_WIDE_WIDTH // 2)
+
+    def is_dual_wheel(self) -> bool:
+        return True
+
+    def get_comparison_point_label(self) -> str:
+        return ""
+
+    def get_width_without_comparison(self) -> float:
+        d = self.drawer
+        if d.double_chart_aspect_grid_type == "table":
+            return d._DEFAULT_FULL_WIDTH_WITH_TABLE
+        return d._DEFAULT_FULL_WIDTH
+
     def setup_circles(self, template_dict: dict) -> None:
         """Set up transit-style circles for dual-wheel display."""
         self.drawer._setup_transit_circles(template_dict)
@@ -1483,6 +1625,7 @@ CHART_RENDERERS: dict[str, type[BaseChartRenderer]] = {
     "Synastry": SynastryChartRenderer,
     "SingleReturnChart": SingleReturnChartRenderer,
     "DualReturnChart": DualReturnChartRenderer,
+    "Progression": ProgressionChartRenderer,
 }
 
 
@@ -1916,6 +2059,11 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._configure_active_celestial_points()
 
         # =====================================================================
+        # STEP 4b: Create renderer (needed by sizing methods)
+        # =====================================================================
+        self._renderer = get_chart_renderer(self.chart_type, self)
+
+        # =====================================================================
         # STEP 5: Configure chart dimensions and geometry
         # =====================================================================
         # Set up width, height, circle radii, and other geometric properties
@@ -2140,7 +2288,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             Number of pixels to shift grids rightward (0 if no shift needed).
         """
-        if self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
+        if self._renderer.is_dual_wheel():
             return 0
 
         from kerykeion.charts.charts_utils import (
@@ -2232,7 +2380,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         Charts with <= _RIGHT_PANEL_POINTS_THRESHOLD points keep the standard
         bottom-anchored layout so that default charts remain unchanged.
         """
-        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart"):
+        if not self._renderer.is_dual_wheel():
             return False
         return self._count_active_planets() > self._RIGHT_PANEL_POINTS_THRESHOLD
 
@@ -2242,7 +2390,6 @@ class ChartDrawer:  # type: ignore[no-redef]
         Used to determine where the right-panel aspect list should start.
         Returns the X coordinate in the SVG coordinate system (before viewBox halving).
         """
-        n_active = max(self._count_active_planets(), 1)
         grid_shift = getattr(self, "_grid_x_shift", 0)
 
         extents: list[float] = []
@@ -2256,14 +2403,15 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Main houses grid
         extents.append(750 + grid_shift + 120)
 
-        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self._renderer.is_dual_wheel():
             # Secondary planet grid
             extents.append(910 + 80)
 
-        if self.chart_type == "Synastry":
+        if self.chart_type in ("Synastry", "DualReturnChart"):
             # Secondary houses grid
             extents.append(1015 + 120)
 
+        if self.chart_type == "Synastry":
             if self.show_house_position_comparison or self.show_cusp_position_comparison:
                 point_column_label = self._translate("point", "Point")
                 first_subject_label = self._truncate_name(self.first_obj.name, 8, "…", True)  # type: ignore[union-attr]
@@ -2299,10 +2447,16 @@ class ChartDrawer:  # type: ignore[no-redef]
                     cusp_block_width = 160.0 * 2.0
                     extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
 
-        if self.chart_type == "Transit":
+        comparison_point_label = self._renderer.get_comparison_point_label()
+        comparison_cusp_label = self._renderer.get_comparison_cusp_label()
+        comparison_label = max(
+            filter(None, [comparison_point_label, comparison_cusp_label]),
+            key=len, default=""
+        )
+        if comparison_label:
             if self.show_house_position_comparison or self.show_cusp_position_comparison:
                 transit_columns = [
-                    self._translate("transit_point", "Transit Point"),
+                    comparison_label,
                     self._translate("house_position", "Natal House"),
                 ]
                 transit_grid_width = self._estimate_house_comparison_grid_width(
@@ -2438,21 +2592,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             float: The width in pixels for the SVG canvas.
         """
-        width_map = {
-            "Natal": self._DEFAULT_NATAL_WIDTH,
-            "Composite": self._DEFAULT_NATAL_WIDTH,
-            "SingleReturnChart": self._DEFAULT_NATAL_WIDTH,
-            "Synastry": self._DEFAULT_SYNASTRY_WIDTH,
-            "DualReturnChart": self._DEFAULT_ULTRA_WIDE_WIDTH,
-        }
-
-        if self.chart_type == "Transit":
-            # Transit width depends on aspect grid display type
-            if self.double_chart_aspect_grid_type == "table":
-                return self._DEFAULT_FULL_WIDTH_WITH_TABLE
-            return self._DEFAULT_FULL_WIDTH
-
-        return width_map.get(self.chart_type, self._DEFAULT_FULL_WIDTH)
+        return self._renderer.get_initial_width()
 
     def _setup_circle_radii(self) -> None:
         """Configure the three concentric circle radii based on chart type and view mode.
@@ -2506,7 +2646,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # planet grids that grow vertically at ~15px per row. They share the same
         # height/offset logic which accounts for right-panel mode and the taller
         # row spacing. Single-wheel charts fall through to the generic logic below.
-        if self.chart_type in ("Synastry", "Transit", "DualReturnChart"):
+        if self._renderer.is_dual_wheel():
             self._apply_synastry_height_adjustment(
                 active_points_count=active_points_count,
                 offsets=offsets,
@@ -2583,7 +2723,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self.double_chart_aspect_grid_type != "list":
             return
 
-        if self.chart_type not in ("Synastry", "Transit", "DualReturnChart"):
+        if not self._renderer.is_dual_wheel():
             return
 
         # In right-panel mode the aspect list starts near the top of the SVG
@@ -2763,21 +2903,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self.show_house_position_comparison or self.show_cusp_position_comparison:
             return
 
-        if self.chart_type == "Synastry":
-            self.width = self._DEFAULT_FULL_WIDTH
-        elif self.chart_type == "DualReturnChart":
-            self.width = (
-                self._DEFAULT_FULL_WIDTH_WITH_TABLE
-                if self.double_chart_aspect_grid_type == "table"
-                else self._DEFAULT_FULL_WIDTH
-            )
-        elif self.chart_type == "Transit":
-            # Transit charts already use the compact width unless the aspect grid table is requested.
-            self.width = (
-                self._DEFAULT_FULL_WIDTH_WITH_TABLE
-                if self.double_chart_aspect_grid_type == "table"
-                else self._DEFAULT_FULL_WIDTH
-            )
+        if self._renderer.is_dual_wheel():
+            self.width = self._renderer.get_width_without_comparison()
 
     def _dynamic_viewbox(self) -> str:
         """Return the viewBox string based on current width/height with vertical padding."""
@@ -2827,7 +2954,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         n = max(len([p for p in self.available_planets_setting if p.get("is_active")]), 1)
 
-        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self._renderer.is_dual_wheel():
             # Full NxN grid
             left = (x0 - box) - margin
             top = (y0 - box * n) - margin
@@ -2882,7 +3009,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             aspect_grid_right = 560 + grid_shift + 14 * n_active
             extents.append(aspect_grid_right)
 
-        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self._renderer.is_dual_wheel():
             # Double-chart aspects placement
             if self._is_right_panel_mode():
                 # Right-panel mode: aspect list/grid starts after left content
@@ -2915,10 +3042,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             secondary_planet_grid_right = 910 + 80
             extents.append(secondary_planet_grid_right)
 
-            if self.chart_type == "Synastry":
+            if self.chart_type in ("Synastry", "DualReturnChart"):
                 # Secondary houses grid default x ~ 1015
                 secondary_houses_grid_right = 1015 + 120
                 extents.append(secondary_houses_grid_right)
+
+            if self.chart_type == "Synastry":
                 if (
                     self.show_house_position_comparison or self.show_cusp_position_comparison
                 ) and self.second_obj is not None:
@@ -2953,9 +3082,6 @@ class ChartDrawer:  # type: ignore[no-redef]
                     extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
 
                     if self.show_cusp_position_comparison:
-                        # Cusp comparison block positioned to the right of both point grids.
-                        # In Synastry we render two cusp grids side by side; reserve
-                        # enough horizontal space for both tables plus a small gap.
                         max_house_comparison_right = max(
                             first_house_comparison_grid_right,
                             second_house_comparison_grid_right,
@@ -2963,18 +3089,20 @@ class ChartDrawer:  # type: ignore[no-redef]
                         cusp_grid_width = 160.0
                         inter_cusp_gap = 0.0
                         cusp_block_width = (cusp_grid_width * 2.0) + inter_cusp_gap
-                        # Place cusp block slightly to the right of the house comparison tables
-                        # and ensure the overall SVG width comfortably contains it, including
-                        # the rightmost text of the second cusp table.
                         extra_cusp_margin = 45.0
                         cusp_block_right = max_house_comparison_right + 50.0 + cusp_block_width + extra_cusp_margin
                         extents.append(cusp_block_right)
 
-            if self.chart_type == "Transit":
-                # House comparison grid at x ~ 1030
+            comparison_point_label = self._renderer.get_comparison_point_label()
+            comparison_cusp_label = self._renderer.get_comparison_cusp_label()
+            comparison_label = max(
+                filter(None, [comparison_point_label, comparison_cusp_label]),
+                key=len, default=""
+            )
+            if comparison_label:
                 if self.show_house_position_comparison or self.show_cusp_position_comparison:
                     transit_columns = [
-                        self._translate("transit_point", "Transit Point"),
+                        comparison_label,
                         self._translate("house_position", "Natal House"),
                     ]
                     transit_grid_width = self._estimate_house_comparison_grid_width(
@@ -3186,18 +3314,8 @@ class ChartDrawer:  # type: ignore[no-redef]
 
     def _minimum_width_for_chart_type(self) -> int:
         """Baseline width to avoid compressing core groups too tightly."""
-        wheel_right = 100 + (2 * self.main_radius)
-        baseline = wheel_right + self._padding
-
-        if self.chart_type in ("Natal", "Composite", "SingleReturnChart"):
-            return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
-        if self.chart_type == "Synastry":
-            return max(int(baseline), self._DEFAULT_SYNASTRY_WIDTH // 2)
-        if self.chart_type == "DualReturnChart":
-            return max(int(baseline), self._DEFAULT_ULTRA_WIDE_WIDTH // 2)
-        if self.chart_type == "Transit":
-            return max(int(baseline), 450)
-        return max(int(baseline), self._DEFAULT_NATAL_WIDTH)
+        wheel_right = 100 + (2 * self.main_radius) + self._padding
+        return self._renderer.get_minimum_width(wheel_right)
 
     def _update_width_to_content(self) -> None:
         """Resize the chart width so the farthest element fits comfortably."""
@@ -3228,8 +3346,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 location_name = self.first_obj.city or "Unknown"
                 latitude = self.first_obj.lat or 0.0
                 longitude = self.first_obj.lng or 0.0
-        elif self.chart_type in ("Transit", "DualReturnChart") and self.second_obj:
-            # Use location from the second subject (transit/return)
+        elif self.chart_type in ("Transit", "DualReturnChart", "Progression") and self.second_obj:
+            # Use location from the second subject (transit/return/progressed)
             location_name = self.second_obj.city or "Unknown"
             latitude = self.second_obj.lat or 0.0
             longitude = self.second_obj.lng or 0.0
@@ -3492,7 +3610,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         - Subject 1 (horoscope="0"): inner area (r-72 to r-160)
         - Subject 2 (horoscope="1"): outer area (r-36 to r-72), oriented using Subject 1's wheel
         """
-        is_dual = second_houses_list is not None and self.chart_type in ("Transit", "Synastry", "DualReturnChart")
+        is_dual = second_houses_list is not None and self._renderer.is_dual_wheel()
         sectors = draw_house_sectors(
             r=self.main_radius,
             houses_list=houses_list,
@@ -4097,6 +4215,12 @@ class ChartDrawer:  # type: ignore[no-redef]
                 lunar_label = self._translate("lunar_return", "Lunar")
                 return f"{truncated_name} - {lunar_label} {month_year}"
 
+        elif self.chart_type == "Progression":
+            prog_label = self._translate("progression", "Progression")
+            name1 = self._truncate_name(self.first_obj.name)
+            name2 = self._truncate_name(self.second_obj.name) if self.second_obj else ""  # type: ignore
+            return f"{prog_label}: {name1} — {name2}"
+
         # Fallback for unknown chart types
         return self._truncate_name(self.first_obj.name)
 
@@ -4240,8 +4364,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # ------------------------------- #
         # Delegate to the appropriate renderer based on chart type.
         # This uses the Strategy Pattern to separate chart-specific logic.
-        renderer = get_chart_renderer(self.chart_type, self)
-        renderer.render(template_dict)
+        self._renderer.render(template_dict)
 
         return ChartTemplateModel(**template_dict)
 
@@ -4262,7 +4385,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         houses_list = get_houses_list(self.first_obj)
         aspects_dicts = [a.model_dump() if hasattr(a, "model_dump") else dict(a) for a in self.aspects_list]
 
-        if self.second_obj is not None and self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self.second_obj is not None and self._renderer.is_dual_wheel():
             return draw_modern_dual_horoscope(
                 planets_1=self.available_kerykeion_celestial_points,
                 houses_1=houses_list,
@@ -4597,7 +4720,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         template_dict = self._create_template_dictionary()
 
-        if self.chart_type in ("Transit", "Synastry", "DualReturnChart"):
+        if self._renderer.is_dual_wheel():
             aspects_grid = draw_transit_aspect_grid(
                 self.chart_colors_settings["paper_0"],
                 self.available_planets_setting,

@@ -808,6 +808,9 @@ class AstrologicalSubjectFactory:
         calc_data["sidereal_mode"] = config.sidereal_mode
         calc_data["houses_system_identifier"] = config.houses_system_identifier
         calc_data["perspective_type"] = config.perspective_type
+        if config.sidereal_mode == "USER":
+            calc_data["custom_ayanamsa_t0"] = config.custom_ayanamsa_t0
+            calc_data["custom_ayanamsa_ayan_t0"] = config.custom_ayanamsa_ayan_t0
 
         # Set up geonames username if needed
         if geonames_username is None and online and (lat is None or lng is None or not tz_str):
