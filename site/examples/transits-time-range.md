@@ -1,5 +1,6 @@
 ---
 title: 'Transits Time Range'
+description: 'Calculate all transit aspects over a time period. Python examples for transit forecasting with Kerykeion.'
 tags: ['examples', 'transits', 'forecasting', 'time-range', 'kerykeion']
 order: 18
 ---

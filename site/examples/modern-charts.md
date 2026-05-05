@@ -1,5 +1,6 @@
 ---
 title: 'Modern Charts'
+description: 'Render modern concentric-ring astrology charts with Kerykeion. Natal, synastry, transit, and wheel-only examples.'
 tags: ['examples', 'charts', 'modern', 'svg', 'kerykeion']
 order: 15
 ---

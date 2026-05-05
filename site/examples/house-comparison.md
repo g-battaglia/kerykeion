@@ -1,5 +1,6 @@
 ---
 title: 'House Comparison'
+description: 'Bidirectional house overlay analysis between two subjects. Python synastry house comparison examples.'
 tags: ['examples', 'house comparison', 'synastry', 'overlay', 'kerykeion']
 order: 19
 ---

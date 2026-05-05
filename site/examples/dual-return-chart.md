@@ -1,5 +1,6 @@
 ---
 title: 'Dual Return Chart'
+description: 'Create solar and lunar return dual-wheel charts with Kerykeion. Python examples with house comparison tables.'
 tags: ['examples', 'charts', 'returns', 'dual', 'kerykeion']
 order: 5
 ---

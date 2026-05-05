@@ -1,5 +1,6 @@
 ---
 title: 'Chart Language'
+description: 'Set chart language and localization in Kerykeion. Multi-language SVG natal, synastry, and transit chart examples.'
 tags: ['examples', 'charts', 'language', 'i18n', 'kerykeion']
 order: 12
 ---

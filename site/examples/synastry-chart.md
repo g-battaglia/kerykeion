@@ -1,5 +1,6 @@
 ---
 title: 'Synastry Chart'
+description: 'Create synastry charts comparing two subjects. Python examples for relationship chart SVG rendering with Kerykeion.'
 tags: ['examples', 'charts', 'synastry', 'relationships', 'kerykeion']
 order: 4
 ---

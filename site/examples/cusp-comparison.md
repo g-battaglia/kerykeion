@@ -1,5 +1,6 @@
 ---
 title: 'Cusp Comparison Grids'
+description: 'Generate cusp comparison grids for synastry and transit charts with Python. House cusp overlay analysis examples.'
 tags: ['examples', 'charts', 'houses', 'cusps', 'synastry', 'kerykeion']
 order: 13
 ---

@@ -1,5 +1,6 @@
 ---
 title: 'Active Points'
+description: 'Configure 63 celestial points in Kerykeion: asteroids, TNOs, Arabic parts, and custom presets with Python examples.'
 tags: ['examples', 'points', 'asteroids', 'tno', 'arabic parts', 'kerykeion']
 order: 16
 ---

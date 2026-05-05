@@ -1,5 +1,6 @@
 ---
 title: 'Report'
+description: 'Generate text-based astrological reports with Kerykeion ReportGenerator. Python natal chart summary examples.'
 tags: ['examples', 'reports', 'cli', 'kerykeion']
 order: 14
 ---

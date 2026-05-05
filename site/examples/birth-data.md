@@ -1,5 +1,6 @@
 ---
 title: 'Birth Data'
+description: 'Create astrological subjects from birth data with Python. Offline and GeoNames-based calculation examples.'
 tags: ['examples', 'subjects', 'birth data', 'kerykeion', 'python']
 order: 2
 ---

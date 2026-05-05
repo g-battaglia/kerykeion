@@ -1,5 +1,6 @@
 ---
 title: 'Perspective Type'
+description: 'Switch between geocentric, heliocentric, and topocentric perspectives. Python examples for all astronomical viewpoints.'
 tags: ['examples', 'charts', 'perspective', 'heliocentric', 'kerykeion']
 order: 8
 ---

@@ -1,5 +1,6 @@
 ---
 title: 'Minimalist Charts & Aspect Table'
+description: 'Render wheel-only natal charts and standalone aspect grid tables. Minimalist Python chart examples.'
 tags: ['examples', 'charts', 'minimal', 'wheel', 'aspects', 'kerykeion']
 order: 10
 ---

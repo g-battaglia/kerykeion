@@ -1,5 +1,6 @@
 ---
 title: 'Moon Phase Details'
+description: 'Calculate moon phase, illumination, eclipses, and next-phase data. Python examples with MoonPhaseDetailsFactory.'
 tags: ['examples', 'moon', 'lunar', 'phases', 'eclipses', 'kerykeion']
 order: 15
 ---

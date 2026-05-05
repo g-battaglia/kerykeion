@@ -1,5 +1,6 @@
 ---
 title: 'Ephemeris Data'
+description: 'Generate time-series planetary positions with EphemerisDataFactory. Python ephemeris table and tracking examples.'
 tags: ['examples', 'ephemeris', 'time-series', 'planetary positions', 'kerykeion']
 order: 17
 ---

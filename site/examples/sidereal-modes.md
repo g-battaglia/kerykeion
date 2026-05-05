@@ -1,5 +1,6 @@
 ---
 title: 'Sidereal Modes'
+description: 'Use 48 sidereal ayanamsa modes: Lahiri, Fagan-Bradley, and more. Python sidereal zodiac calculation examples.'
 tags: ['examples', 'sidereal', 'charts', 'zodiac', 'kerykeion']
 order: 9
 ---

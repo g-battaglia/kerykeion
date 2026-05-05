@@ -1,5 +1,6 @@
 ---
 title: 'Theming'
+description: 'Customize chart themes in Kerykeion: Classic, Dark, Light, and High Contrast styles with CSS variable examples.'
 tags: ['examples', 'charts', 'theming', 'css', 'kerykeion']
 order: 11
 ---

@@ -1,5 +1,6 @@
 ---
 title: 'Houses Systems'
+description: 'Compare all 23 house systems in Kerykeion: Placidus, Whole Sign, Koch, and more with Python examples.'
 tags: ['examples', 'houses', 'systems', 'charts', 'kerykeion']
 order: 7
 ---

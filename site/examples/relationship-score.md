@@ -1,5 +1,6 @@
 ---
 title: 'Relationship Score'
+description: 'Calculate relationship compatibility scores using the Ciro Discepolo method. Python synastry scoring examples.'
 tags: ['examples', 'relationships', 'synastry', 'scores', 'kerykeion']
 order: 6
 ---
