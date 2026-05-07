@@ -39,7 +39,7 @@ def _parse_star_names_from_catalog(catalog_path: str) -> tuple[str, ...]:
                 if name:
                     names.append(name)
     except Exception as e:
-        logger.warning(f"Could not parse star catalog: {e}")
+        logger.warning(f"Could not parse star catalog {catalog_path}: {e}")
     return tuple(names)
 
 
@@ -143,6 +143,9 @@ class FixedStarDiscoveryFactory:
         The active backend determines the catalog source. The Swiss Ephemeris
         backend reads ``sefstars.txt``; libephemeris uses its own native catalog.
         """
+        if orb < 0:
+            raise ValueError(f"orb must be >= 0, got {orb}")
+
         if BACKEND_NAME == "swisseph":
             return FixedStarDiscoveryFactory._find_prominent_stars_swisseph(subject, orb=orb, catalog_path=catalog_path)
         if BACKEND_NAME == "libephemeris":
@@ -196,7 +199,8 @@ class FixedStarDiscoveryFactory:
                     pos_eq = swe.fixstar_ut(star_name, jd, scan_iflag | swe.FLG_EQUATORIAL)[0]
                     try:
                         star_mag = swe.fixstar2_mag(star_name)[0]
-                    except Exception:
+                    except Exception as e:
+                        logger.debug(f"No magnitude for {star_name}: {e}")
                         star_mag = None
 
                     prominent.append(
@@ -210,7 +214,8 @@ class FixedStarDiscoveryFactory:
                             discovery_orb=nearest[1],
                         )
                     )
-                except Exception:
+                except Exception as e:
+                    logger.debug(f"Skipping star {star_name}: {e}")
                     continue
         finally:
             swe.close()
@@ -267,7 +272,8 @@ class FixedStarDiscoveryFactory:
                 try:
                     pos_ecl = swe.fixstar_ut(star_name, jd, base_iflag | swe.FLG_SPEED)[0]
                     pos_eq = swe.fixstar_ut(star_name, jd, base_iflag | swe.FLG_EQUATORIAL)[0]
-                except Exception:
+                except Exception as e:
+                    logger.debug(f"Skipping star {star_name}: {e}")
                     continue
 
                 prominent.append(
