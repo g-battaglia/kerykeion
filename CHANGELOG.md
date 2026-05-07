@@ -1,5 +1,33 @@
 # Changelog
 
+## 6.0.0a37
+
+_2026-05-08_
+
+### New Features
+
+- **Backend-specific fixed-star discovery.** `FixedStarDiscoveryFactory` now
+  dispatches explicitly by ephemeris backend: `swisseph` scans the Swiss
+  Ephemeris `sefstars.txt` catalog, while `libephemeris` uses the native
+  `list_fixed_stars()` / `batch_fixstars_ut()` APIs and never reads Swiss
+  catalog files.
+- **Fixed-star discovery metadata.** Discovery results now carry optional
+  `near_point`, `orb`, `aspect`, `longitude`, `latitude`, and `degree` fields
+  on `KerykeionPointModel`, matching the API shape expected by UI consumers.
+
+### Performance
+
+- Swiss discovery now scans candidate positions without `FLG_SPEED` and only
+  computes speed, declination, and magnitude for stars that actually fall within
+  the requested conjunction orb.
+- The libephemeris path uses ordered batch calculation for the native catalog.
+
+### Backward compatibility
+
+Additive only. Existing fixed-star point fields remain unchanged. Catalog size
+and specific discovery results may differ by backend because each backend now
+uses its own catalog source intentionally.
+
 ## 6.0.0a36
 
 _2026-04-28_

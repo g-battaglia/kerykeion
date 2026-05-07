@@ -3,15 +3,25 @@
 
 import pytest
 from kerykeion import AstrologicalSubjectFactory, FixedStarDiscoveryFactory
+from kerykeion.ephemeris_backend import BACKEND_NAME
 
 
 @pytest.fixture(scope="module")
 def subject_default_stars():
     """Subject with default active_points including some fixed stars."""
     return AstrologicalSubjectFactory.from_birth_data(
-        "Stars Default", 1990, 6, 15, 14, 30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        "Stars Default",
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
     )
 
 
@@ -19,9 +29,18 @@ def subject_default_stars():
 def subject_extra_stars():
     """Subject with extra dynamic fixed stars beyond the default 23."""
     return AstrologicalSubjectFactory.from_birth_data(
-        "Stars Extra", 1990, 6, 15, 14, 30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        "Stars Extra",
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
         active_fixed_stars=["Galactic Center", "Polaris", "Castor"],
     )
 
@@ -30,10 +49,20 @@ def subject_extra_stars():
 def subject_all_stars():
     """Subject with all default active_points (includes 23 hardcoded stars)."""
     from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+
     return AstrologicalSubjectFactory.from_birth_data(
-        "Stars All", 1990, 6, 15, 14, 30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        "Stars All",
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
         active_points=ALL_ACTIVE_POINTS,
     )
 
@@ -66,10 +95,9 @@ class TestDynamicFixedStars:
     def test_extra_stars_in_list(self, subject_extra_stars):
         """Extra dynamic stars should appear in the fixed_stars list."""
         star_names = [s.name for s in subject_extra_stars.fixed_stars]
-        # At least one of the requested extras should be found
-        # (Galactic Center is guaranteed to be in sefstars.txt)
-        assert any("Galactic" in name or "Polaris" in name or "Castor" in name
-                    for name in star_names), (
+        # At least one of the requested extras should be found. swisseph can use
+        # Galactic Center from sefstars.txt; libephemeris uses its native catalog.
+        assert any("Galactic" in name or "Polaris" in name or "Castor" in name for name in star_names), (
             f"None of the extra stars found. Got: {star_names}"
         )
 
@@ -85,13 +113,21 @@ class TestDynamicFixedStars:
         assert subject_all_stars.spica is not None
         assert 0 <= subject_all_stars.regulus.abs_pos < 360
 
-
     def test_nonexistent_star_silently_skipped(self):
         """Non-existent star names should not crash, just be silently skipped."""
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Nonexistent Star", 1990, 6, 15, 14, 30,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            "Nonexistent Star",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
             active_fixed_stars=["NonExistentStarXYZ123", "AnotherFakeStar"],
         )
         # Should not crash; fake stars are simply not in the list
@@ -101,25 +137,81 @@ class TestDynamicFixedStars:
 class TestFixedStarEdgeCases:
     """Test edge-case branches in FixedStarDiscoveryFactory and helpers."""
 
-    def test_empty_catalog_returns_empty(self, subject_all_stars):
-        """If no star names parsed from catalog, should return []."""
+    def test_dispatches_to_swisseph_backend(self, subject_all_stars):
+        """swisseph backend must use the Swiss-specific discovery path."""
         from unittest.mock import patch
+
+        with (
+            patch("kerykeion.fixed_stars.discovery_factory.BACKEND_NAME", "swisseph"),
+            patch.object(
+                FixedStarDiscoveryFactory,
+                "_find_prominent_stars_swisseph",
+                return_value=["swiss"],
+            ) as swiss_path,
+            patch.object(FixedStarDiscoveryFactory, "_find_prominent_stars_libephemeris") as lib_path,
+        ):
+            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
+
+        assert result == ["swiss"]
+        swiss_path.assert_called_once()
+        lib_path.assert_not_called()
+
+    def test_dispatches_to_libephemeris_backend(self, subject_all_stars):
+        """libephemeris backend must use the libephemeris-specific discovery path."""
+        from unittest.mock import patch
+
+        with (
+            patch("kerykeion.fixed_stars.discovery_factory.BACKEND_NAME", "libephemeris"),
+            patch.object(FixedStarDiscoveryFactory, "_find_prominent_stars_swisseph") as swiss_path,
+            patch.object(
+                FixedStarDiscoveryFactory,
+                "_find_prominent_stars_libephemeris",
+                return_value=["lib"],
+            ) as lib_path,
+        ):
+            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
+
+        assert result == ["lib"]
+        lib_path.assert_called_once()
+        swiss_path.assert_not_called()
+
+    def test_libephemeris_backend_does_not_parse_swiss_catalog(self, subject_all_stars):
+        """libephemeris fixed-star discovery must not read sefstars.txt."""
+        if BACKEND_NAME != "libephemeris":
+            pytest.skip("libephemeris-specific behavior")
+
+        from unittest.mock import patch
+
         with patch(
             "kerykeion.fixed_stars.discovery_factory._parse_star_names_from_catalog",
-            return_value=[],
+            side_effect=AssertionError("sefstars.txt must not be used by libephemeris"),
         ):
+            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
+        assert isinstance(result, list)
+
+    def test_empty_catalog_returns_empty(self, subject_all_stars):
+        """If the backend catalog is empty, discovery should return []."""
+        from unittest.mock import patch
+
+        if BACKEND_NAME == "swisseph":
+            target = "kerykeion.fixed_stars.discovery_factory._parse_star_names_from_catalog"
+        else:
+            target = "kerykeion.fixed_stars.discovery_factory.swe.list_fixed_stars"
+        with patch(target, return_value=[]):
             result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
             assert result == []
 
     def test_parse_catalog_exception_returns_empty(self):
-        """_parse_star_names_from_catalog should return [] on file read error."""
+        """_parse_star_names_from_catalog should return empty tuple on file read error."""
         from kerykeion.fixed_stars.discovery_factory import _parse_star_names_from_catalog
+
         result = _parse_star_names_from_catalog("/nonexistent/path/sefstars.txt")
-        assert result == []
+        assert result == ()
 
     def test_empty_planet_positions_returns_empty(self):
         """If subject has no active points with abs_pos, should return []."""
-        from unittest.mock import patch, MagicMock
+        from unittest.mock import MagicMock
+
         mock_subject = MagicMock()
         mock_subject.active_points = []
         mock_subject.julian_day = 2451545.0
@@ -128,9 +220,10 @@ class TestFixedStarEdgeCases:
 
     def test_fixstar2_mag_exception_gives_none(self, subject_all_stars):
         """If swe.fixstar2_mag raises, magnitude should be None for that star."""
+        if BACKEND_NAME != "swisseph":
+            pytest.skip("fixstar2_mag enrichment is Swiss-specific in discovery")
+
         from unittest.mock import patch
-        from kerykeion.ephemeris_backend import swe
-        original = swe.fixstar2_mag
 
         def fail_mag(name):
             raise RuntimeError("No magnitude data")
@@ -165,23 +258,24 @@ class TestFixedStarEdgeCases:
 class TestFixedStarDiscovery:
     def test_find_prominent_stars(self, subject_all_stars):
         """Auto-discovery should find stars conjunct natal planets."""
-        prominent = FixedStarDiscoveryFactory.find_prominent_stars(
-            subject_all_stars, orb=2.0
-        )
+        prominent = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
         assert isinstance(prominent, list)
-        # With a 2-degree orb and 10+ planets, we should find at least a few stars
-        # (there are ~1000 stars spread across 360 degrees)
+        # With a 2-degree orb and 10+ points, each backend catalog should find
+        # at least one conjunction.
         assert len(prominent) >= 1, "A 2-degree orb with 10+ natal points should discover at least one star"
 
     def test_prominent_stars_have_positions(self, subject_all_stars):
         """Prominent stars should have full position data."""
-        prominent = FixedStarDiscoveryFactory.find_prominent_stars(
-            subject_all_stars, orb=2.0
-        )
+        prominent = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
         for star in prominent:
             assert 0 <= star.abs_pos < 360
             assert star.sign is not None
             assert star.retrograde is False
+            assert star.near_point is not None
+            assert star.orb is not None
+            assert star.aspect == "conjunction"
+            assert star.longitude == star.abs_pos
+            assert star.degree == star.position
 
     def test_tight_orb_fewer_stars(self, subject_all_stars):
         """Tighter orb should find fewer or equal stars."""
@@ -191,9 +285,7 @@ class TestFixedStarDiscovery:
 
     def test_sorted_by_magnitude(self, subject_all_stars):
         """Results should be sorted by magnitude (brightest first)."""
-        prominent = FixedStarDiscoveryFactory.find_prominent_stars(
-            subject_all_stars, orb=3.0
-        )
+        prominent = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=3.0)
         mags = [s.magnitude for s in prominent if s.magnitude is not None]
         assert len(mags) >= 2, "A 3-degree orb should discover at least 2 stars with magnitude data"
         assert mags == sorted(mags), "Stars should be sorted by magnitude (brightest first)"
