@@ -15,7 +15,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from functools import lru_cache
 import logging
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, swe
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
@@ -137,7 +137,7 @@ class FixedStarDiscoveryFactory:
         orb: float = 1.0,
         *,
         catalog_path: Optional[str] = None,
-    ) -> List[KerykeionPointModel]:
+    ) -> list[KerykeionPointModel]:
         """Find fixed stars conjunct natal planets.
 
         The active backend determines the catalog source. The Swiss Ephemeris
@@ -146,6 +146,8 @@ class FixedStarDiscoveryFactory:
         if BACKEND_NAME == "swisseph":
             return FixedStarDiscoveryFactory._find_prominent_stars_swisseph(subject, orb=orb, catalog_path=catalog_path)
         if BACKEND_NAME == "libephemeris":
+            if catalog_path is not None:
+                logger.warning("catalog_path is ignored with the libephemeris backend (uses its own native catalog)")
             return FixedStarDiscoveryFactory._find_prominent_stars_libephemeris(subject, orb=orb)
         raise RuntimeError(f"Unsupported ephemeris backend for fixed-star discovery: {BACKEND_NAME}")
 
@@ -155,7 +157,7 @@ class FixedStarDiscoveryFactory:
         orb: float = 1.0,
         *,
         catalog_path: Optional[str] = None,
-    ) -> List[KerykeionPointModel]:
+    ) -> list[KerykeionPointModel]:
         """Swiss Ephemeris implementation backed by sefstars.txt."""
         if catalog_path is None:
             catalog_path = str(Path(EPHE_DATA_PATH) / "sefstars.txt")
@@ -171,16 +173,16 @@ class FixedStarDiscoveryFactory:
 
         houses_degree_ut = _collect_house_cusps(subject)
         swe.set_ephe_path(EPHE_DATA_PATH)
-        base_iflag = swe.FLG_SWIEPH
+        scan_iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
         jd = subject.julian_day
 
-        prominent: List[KerykeionPointModel] = []
+        prominent: list[KerykeionPointModel] = []
         seen_positions: set[float] = set()
         try:
             for star_name in star_names:
                 try:
-                    pos_scan = swe.fixstar_ut(star_name, jd, base_iflag)[0]
-                    star_deg = pos_scan[0]
+                    pos_ecl = swe.fixstar_ut(star_name, jd, scan_iflag)[0]
+                    star_deg = pos_ecl[0]
 
                     nearest = _nearest_conjunction(star_deg, planet_positions, orb)
                     if nearest is None:
@@ -191,8 +193,7 @@ class FixedStarDiscoveryFactory:
                         continue
                     seen_positions.add(rounded_pos)
 
-                    pos_ecl = swe.fixstar_ut(star_name, jd, base_iflag | swe.FLG_SPEED)[0]
-                    pos_eq = swe.fixstar_ut(star_name, jd, base_iflag | swe.FLG_EQUATORIAL)[0]
+                    pos_eq = swe.fixstar_ut(star_name, jd, scan_iflag | swe.FLG_EQUATORIAL)[0]
                     try:
                         star_mag = swe.fixstar2_mag(star_name)[0]
                     except Exception:
@@ -221,7 +222,7 @@ class FixedStarDiscoveryFactory:
     def _find_prominent_stars_libephemeris(
         subject: AstrologicalSubjectModel,
         orb: float = 1.0,
-    ) -> List[KerykeionPointModel]:
+    ) -> list[KerykeionPointModel]:
         """libephemeris implementation backed by its native catalog/API."""
         planet_positions = _collect_planet_positions(subject)
         if not planet_positions:
@@ -242,7 +243,7 @@ class FixedStarDiscoveryFactory:
         jd = subject.julian_day
         star_names = tuple(star.name for star in catalog)
 
-        prominent: List[KerykeionPointModel] = []
+        prominent: list[KerykeionPointModel] = []
         seen_positions: set[float] = set()
         try:
             scanned_positions = batch_fixstars_ut(star_names, jd, base_iflag, skip_errors=True)
