@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 @lru_cache(maxsize=8)
 def _parse_star_names_from_catalog(catalog_path: str) -> tuple[str, ...]:
-    """Parse primary star names from a Swiss Ephemeris sefstars.txt file."""
+    """Parse primary star names from a sefstars.txt file (swisseph backend only)."""
     names: list[str] = []
     try:
         with open(catalog_path, "r", encoding="utf-8", errors="replace") as f:
