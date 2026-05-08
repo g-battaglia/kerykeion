@@ -401,6 +401,18 @@ class KerykeionPointModel(SubscriptableBaseModel):
     magnitude: Optional[float] = Field(
         default=None, description="Apparent visual magnitude (fixed stars only). Lower = brighter."
     )
+    near_point: Optional[str] = Field(default=None, description="Nearest chart point for fixed-star discovery results.")
+    orb: Optional[float] = Field(
+        default=None, description="Orb from the nearest chart point in fixed-star discovery results."
+    )
+    aspect: Optional[str] = Field(default=None, description="Aspect name for discovery results, usually 'conjunction'.")
+    longitude: Optional[float] = Field(
+        default=None, description="Ecliptic longitude for discovery consumers. Mirrors abs_pos."
+    )
+    latitude: Optional[float] = Field(default=None, description="Ecliptic latitude for fixed-star discovery results.")
+    degree: Optional[float] = Field(
+        default=None, description="Degree within sign for discovery consumers. Mirrors position."
+    )
     # Essential Dignities (v6.0)
     decan_number: Optional[int] = Field(
         default=None, description="Decan number (1-3) within the sign, each spanning 10 degrees."
@@ -543,15 +555,12 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         if self.sidereal_mode == "USER":
             if self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None:
                 raise ValueError(
-                    "custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0 are both required "
-                    "when sidereal_mode is 'USER'."
+                    "custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0 are both required when sidereal_mode is 'USER'."
                 )
         has_t0 = self.custom_ayanamsa_t0 is not None
         has_ayan = self.custom_ayanamsa_ayan_t0 is not None
         if has_t0 != has_ayan:
-            raise ValueError(
-                "custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0 must be both set or both None."
-            )
+            raise ValueError("custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0 must be both set or both None.")
         return self
 
     # Common celestial points
