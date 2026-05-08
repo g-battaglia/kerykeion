@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a37"
+version = "6.0.0a38"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]

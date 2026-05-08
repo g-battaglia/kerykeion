@@ -1,5 +1,25 @@
 # Changelog
 
+## 6.0.0a38
+
+_2026-05-08_
+
+### Performance
+
+- **Remove import-time LEB reader opening.** `ephemeris_backend.py` no longer
+  calls `get_leb_reader()` at import time to detect the LEB format. This
+  avoided opening four companion mmap files (~855 MB for extended tier) just
+  to log a single format string at startup.
+
+### Dependencies
+
+- Update `libephemeris` to 1.3.0 (lazy mmap, selective `warm()` preloading).
+
+### Backward compatibility
+
+No API changes. Startup logging still reports mode and tier but no longer
+includes the format field (LEB1/LEB2).
+
 ## 6.0.0a37
 
 _2026-05-08_

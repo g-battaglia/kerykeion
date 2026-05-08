@@ -1,19 +1,17 @@
 # Release Notes
 
-## 6.0.0a37 — 2026-05-08
+## 6.0.0a38 — 2026-05-08
 
-Kerykeion 6.0.0a37 separates fixed-star discovery by ephemeris backend.
+Kerykeion 6.0.0a38 reduces startup memory by removing the import-time
+LEB reader opening.
 
 Highlights:
 
-- `swisseph` continues to use the Swiss Ephemeris `sefstars.txt` catalog.
-- `libephemeris` now uses its native fixed-star catalog and batch API; it never
-  reads Swiss catalog files.
-- Discovery output includes optional `near_point`, `orb`, `aspect`, `longitude`,
-  `latitude`, and `degree` metadata for API/UI consumers.
-- Swiss discovery avoids calculating fixed-star speed during the full catalog
-  scan and only enriches matching stars.
+- `ephemeris_backend.py` no longer calls `get_leb_reader()` at import time.
+  Previously this opened four companion mmap files just to log the format
+  string (LEB1/LEB2), causing unnecessary memory allocation before any
+  calculation.
+- Updated `libephemeris` dependency to 1.3.0, which removes global
+  `madvise(MADV_WILLNEED)` and adds selective mmap preloading via `warm()`.
 
-This alpha is backward-compatible for existing point fields. Backend catalogs are
-intentionally independent, so exact discovery result sets can differ between
-`swisseph` and `libephemeris`.
+No API changes. Backward-compatible.
