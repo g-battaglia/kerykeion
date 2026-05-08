@@ -181,16 +181,6 @@ if BACKEND_NAME == "libephemeris":
     _mode = _backend_module.get_calc_mode()
     _tier = _backend_module.get_precision_tier()
     _parts = [f"mode={_mode}", f"tier={_tier}"]
-    if _mode in ("leb", "auto"):
-        _reader = _backend_module.state.get_leb_reader()
-        if _reader is not None:
-            _cls = type(_reader).__name__
-            if "Composite" in _cls:
-                _inner = type(_reader._readers[0]).__name__ if _reader._readers else "?"
-            else:
-                _inner = _cls
-            _fmt = "LEB2" if "LEB2" in _inner else "LEB1"
-            _parts.append(f"format={_fmt}")
     logger.info(
         "kerykeion ephemeris: libephemeris %s (%s)",
         _backend_module.__version__,
