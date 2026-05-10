@@ -8,9 +8,9 @@ supporting two mutually exclusive backends:
 
 - **libephemeris**: Pure-Python drop-in replacement using NASA JPL DE440/DE441
   via Skyfield. No C compiler needed; works everywhere Python runs.
-  Licensed under AGPL-3.0 by the Kerykeion project — safe for dual-licensing.
+  Licensed under AGPL-3.0 by the Kerykeion project.
 - **swisseph** (``pyswisseph``): The traditional Swiss Ephemeris C library bindings.
-  Requires compilation; fastest option for supported platforms. GPL-licensed.
+  Requires compilation. Licensed under AGPL-3.0 by Astrodienst AG.
 
 Installation
 ------------
@@ -102,7 +102,7 @@ if _forced_backend:
         ) from None
     logger.info("Kerykeion ephemeris backend forced via KERYKEION_BACKEND: %s", BACKEND_NAME)
 else:
-    # Auto-detect: try libephemeris first (our own backend, license-independent),
+    # Auto-detect: try libephemeris first (our own backend),
     # then fall back to swisseph (third-party, AGPL-3.0 by Astrodienst AG).
     for _candidate in ("libephemeris", "swisseph"):
         try:
@@ -117,7 +117,7 @@ else:
             "Kerykeion requires an ephemeris backend but neither 'libephemeris' nor "
             "'pyswisseph' is installed.\n\n"
             "Install one of:\n"
-            "  pip install libephemeris     # Pure Python, license-independent (default)\n"
+            "  pip install libephemeris     # Pure Python (default)\n"
             "  pip install pyswisseph       # Swiss Ephemeris C bindings (AGPL-3.0)\n"
         )
 
@@ -211,7 +211,7 @@ elif BACKEND_NAME == "swisseph":
     logger.warning(
         "kerykeion ephemeris: pyswisseph (Swiss Ephemeris by Astrodienst AG, AGPL-3.0). "
         "This is third-party code with AGPL network-disclosure obligations. "
-        "Install libephemeris for a license-independent backend."
+        "Install libephemeris for the default backend."
     )
 
 __all__ = ["swe", "BACKEND_NAME", "EPHE_DATA_PATH"]

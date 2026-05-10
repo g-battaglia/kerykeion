@@ -9,8 +9,8 @@ API so **no application code needs to change** when switching.
 
 | Backend | Package | License | Notes |
 |---------|---------|---------|-------|
-| **libephemeris** (default) | `libephemeris` | AGPL-3.0 | Pure Python. Uses NASA JPL DE440/DE441 via Skyfield. No C compiler needed. Owned by the Kerykeion project -- safe for dual-licensing. |
-| **swisseph** | `pyswisseph` | AGPL-3.0 | C bindings to the Swiss Ephemeris library. Fastest option. AGPL license imposes network-disclosure obligations. |
+| **libephemeris** (default) | `libephemeris` | AGPL-3.0 | Pure Python. Uses NASA JPL DE440/DE441 via Skyfield. No C compiler needed. Owned by the Kerykeion project. |
+| **swisseph** | `pyswisseph` | AGPL-3.0 | C bindings to the Swiss Ephemeris library by Astrodienst AG. If you use this backend, the Swiss Ephemeris AGPL-3.0 license applies. |
 
 ## Installation
 
@@ -135,14 +135,12 @@ to offer **dual licensing** (AGPL-3.0 + commercial):
 
 - **libephemeris** is owned by the Kerykeion project and licensed under
   AGPL-3.0. It can be relicensed commercially without third-party approval.
-- **swisseph** (Swiss Ephemeris) is licensed under AGPL-3.0 by Astrodienst.
-  Code that links to swisseph inherits the AGPL, which imposes
-  network-disclosure obligations.
+- **swisseph** (Swiss Ephemeris) is licensed under AGPL-3.0 by Astrodienst AG.
+  If you use this backend, the Swiss Ephemeris license terms apply to
+  those components.
 
-By defaulting to libephemeris and making swisseph opt-in (`pip install
-kerykeion[swiss]`), the base Kerykeion package is free of third-party AGPL
-dependencies. Users who install the `[swiss]` extra do so knowingly and
-accept the AGPL terms of Astrodienst AG.
+Users who install the `[swiss]` extra do so knowingly and accept the
+AGPL-3.0 terms of Astrodienst AG for the Swiss Ephemeris components.
 
 ## Testing
 

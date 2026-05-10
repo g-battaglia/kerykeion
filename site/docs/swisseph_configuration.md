@@ -2,21 +2,19 @@
 
 Kerykeion uses **libephemeris** (pure Python) as its default ephemeris backend.
 The Swiss Ephemeris C library (**pyswisseph**) is available as an optional
-alternative for users who need maximum calculation speed.
+alternative backend.
 
 > **Note:** Swiss Ephemeris data files are **not bundled** with Kerykeion.
 > You must download them separately if you use the swisseph backend.
 
 ## When to use Swiss Ephemeris
 
-- **Maximum speed**: swisseph's C implementation is faster than libephemeris
-  for high-throughput workloads (batch calculations, time-range scans).
 - **Existing workflows**: you already have `.se1` files and a swisseph setup.
 - **Specific features**: some legacy swisseph-only features not yet ported to
   libephemeris.
 
 For most users, **libephemeris is recommended** — it works out of the box with
-no C compiler, no external data files, and no GPL license obligations.
+no C compiler and no external data files.
 
 ## Installation
 
@@ -147,18 +145,15 @@ This provides:
 
 A warning is logged at startup when this fallback is active.
 
-## License implications
+## License
 
-**pyswisseph** is licensed under **AGPL-3.0** by Astrodienst AG. If you
-distribute software that links against pyswisseph, you must comply with
-the AGPL-3.0 terms (source code disclosure, copyleft).
+**pyswisseph** and the Swiss Ephemeris data files are licensed under
+**AGPL-3.0** by Astrodienst AG. If you use the swisseph backend, the
+Swiss Ephemeris license terms apply to those components.
 
-**Kerykeion itself** is licensed under AGPL-3.0. When installed without
-`pyswisseph` (i.e., using libephemeris only), there are no additional GPL
-obligations beyond the AGPL-3.0 terms of Kerykeion itself.
-
-If you need a closed-source deployment, use the default libephemeris backend
-or consider the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe).
+**Kerykeion itself** is licensed under AGPL-3.0 by the Kerykeion project.
+When installed without `pyswisseph` (i.e., using libephemeris only),
+only Kerykeion's own AGPL-3.0 license applies.
 
 ## Comparison with libephemeris
 
