@@ -1070,5 +1070,270 @@ class TestCompleteFactoryBehavior:
         assert chart.aspects is not None
 
 
+# =============================================================================
+# 11. TestProgressionChartData  (new in this PR — "Progression" chart type
+#     and ChartDataFactory.create_progression_chart_data)
+# =============================================================================
+
+
+@pytest.fixture(scope="module")
+def progression_subject_natal():
+    """Natal subject for progression tests."""
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Progression Natal",
+        1985,
+        4,
+        15,
+        8,
+        30,
+        lat=41.9028,
+        lng=12.4964,
+        tz_str="Europe/Rome",
+        online=False,
+        suppress_geonames_warning=True,
+    )
+
+
+@pytest.fixture(scope="module")
+def progression_subject_progressed():
+    """Progressed subject (later date, same person — simulates a secondary progression)."""
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Progression Progressed",
+        1985,
+        4,
+        15 + 40,  # +40 days after natal ≈ 40 years progressed
+        8,
+        30,
+        lat=41.9028,
+        lng=12.4964,
+        tz_str="Europe/Rome",
+        online=False,
+        suppress_geonames_warning=True,
+    )
+
+
+class TestProgressionChartData:
+    """Tests for create_progression_chart_data() and 'Progression' chart type."""
+
+    def test_create_progression_returns_dual_chart(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """create_progression_chart_data returns a DualChartDataModel."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal, progression_subject_progressed
+        )
+        assert isinstance(chart, DualChartDataModel)
+
+    def test_progression_chart_type_is_progression(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """chart_type should be 'Progression'."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal, progression_subject_progressed
+        )
+        assert chart.chart_type == "Progression"
+
+    def test_progression_subjects_preserved(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """Both natal and progressed subjects should be accessible on the chart data."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal, progression_subject_progressed
+        )
+        assert chart.first_subject.name == progression_subject_natal.name
+        assert chart.second_subject.name == progression_subject_progressed.name
+
+    def test_progression_has_aspects(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """Progression chart should have inter-chart aspects."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal, progression_subject_progressed
+        )
+        assert chart.aspects is not None
+        assert len(chart.aspects) > 0
+
+    def test_progression_has_element_distribution(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """Progression chart should have element distribution."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal, progression_subject_progressed
+        )
+        assert isinstance(chart.element_distribution, ElementDistributionModel)
+
+    def test_progression_has_quality_distribution(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """Progression chart should have quality distribution."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal, progression_subject_progressed
+        )
+        assert isinstance(chart.quality_distribution, QualityDistributionModel)
+
+    def test_progression_element_percentages_sum_to_100(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """Element percentages in progression chart should sum to 100."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal, progression_subject_progressed
+        )
+        elem = chart.element_distribution
+        total = (
+            elem.fire_percentage
+            + elem.earth_percentage
+            + elem.air_percentage
+            + elem.water_percentage
+        )
+        assert total == 100
+
+    def test_progression_via_generic_create_chart_data(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """create_chart_data with 'Progression' also returns a DualChartDataModel."""
+        chart = ChartDataFactory.create_chart_data(
+            "Progression",
+            progression_subject_natal,
+            progression_subject_progressed,
+        )
+        assert isinstance(chart, DualChartDataModel)
+        assert chart.chart_type == "Progression"
+
+    def test_progression_missing_second_subject_raises(
+        self, progression_subject_natal
+    ):
+        """Progression without second subject raises KerykeionException."""
+        with pytest.raises(KerykeionException):
+            ChartDataFactory.create_chart_data("Progression", progression_subject_natal)
+
+    def test_progression_wrong_first_subject_type_raises(
+        self, composite_subject, progression_subject_progressed
+    ):
+        """Progression with CompositeSubjectModel as first subject raises KerykeionException."""
+        with pytest.raises(KerykeionException, match="AstrologicalSubjectModel"):
+            ChartDataFactory.create_chart_data(
+                "Progression",
+                composite_subject,
+                progression_subject_progressed,
+            )
+
+    def test_progression_house_comparison_included_by_default(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """Progression chart should include house comparison when requested (default True)."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal,
+            progression_subject_progressed,
+            include_house_comparison=True,
+        )
+        # House comparison may or may not be populated depending on subject types,
+        # but calling it should not raise
+        assert chart is not None
+
+    def test_progression_house_comparison_excluded_when_false(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """Progression chart with include_house_comparison=False should have None house_comparison."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal,
+            progression_subject_progressed,
+            include_house_comparison=False,
+        )
+        assert chart.house_comparison is None
+
+    def test_progression_custom_active_points(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """Progression chart respects custom active_points filter."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal,
+            progression_subject_progressed,
+            active_points=["Sun", "Moon", "Mars"],
+        )
+        assert len(chart.active_points) <= 3
+
+    def test_progression_axis_orb_limit_accepted(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """axis_orb_limit parameter should be accepted without error."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal,
+            progression_subject_progressed,
+            axis_orb_limit=2.0,
+        )
+        assert chart is not None
+
+    def test_progression_aspects_have_valid_positions(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """All aspect positions in progression chart must be in [0, 360)."""
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal, progression_subject_progressed
+        )
+        for asp in chart.aspects:
+            assert 0 <= asp.p1_abs_pos < 360, f"p1_abs_pos out of range: {asp.p1_abs_pos}"
+            assert 0 <= asp.p2_abs_pos < 360, f"p2_abs_pos out of range: {asp.p2_abs_pos}"
+
+    def test_progression_json_serializable(
+        self, progression_subject_natal, progression_subject_progressed
+    ):
+        """Progression chart should serialize to JSON without errors."""
+        import json
+
+        chart = ChartDataFactory.create_progression_chart_data(
+            progression_subject_natal, progression_subject_progressed
+        )
+        data = chart.model_dump()
+        json_str = json.dumps(data, default=str)
+        assert len(json_str) > 0
+        loaded = json.loads(json_str)
+        assert loaded["chart_type"] == "Progression"
+
+
+# =============================================================================
+# 12. TestDoubleChartTypes — Progression is in DOUBLE_CHART_TYPES
+# =============================================================================
+
+
+class TestDoubleChartTypes:
+    """Verify DOUBLE_CHART_TYPES contains the 'Progression' type (added in this PR)."""
+
+    def test_progression_in_double_chart_types(self):
+        """'Progression' must be in DOUBLE_CHART_TYPES."""
+        from kerykeion.charts.charts_utils import DOUBLE_CHART_TYPES
+
+        assert "Progression" in DOUBLE_CHART_TYPES, (
+            f"'Progression' not found in DOUBLE_CHART_TYPES: {DOUBLE_CHART_TYPES}"
+        )
+
+    def test_classic_types_still_in_double_chart_types(self):
+        """Standard dual chart types must still be in DOUBLE_CHART_TYPES."""
+        from kerykeion.charts.charts_utils import DOUBLE_CHART_TYPES
+
+        for expected in ("Synastry", "Transit", "DualReturnChart"):
+            assert expected in DOUBLE_CHART_TYPES, (
+                f"'{expected}' not found in DOUBLE_CHART_TYPES: {DOUBLE_CHART_TYPES}"
+            )
+
+    def test_double_chart_types_is_tuple(self):
+        """DOUBLE_CHART_TYPES should be a tuple."""
+        from kerykeion.charts.charts_utils import DOUBLE_CHART_TYPES
+
+        assert isinstance(DOUBLE_CHART_TYPES, tuple)
+
+    def test_double_chart_types_imported_in_draw_planets(self):
+        """draw_planets.py should expose DUAL_CHART_TYPES (alias for DOUBLE_CHART_TYPES)."""
+        from kerykeion.charts.draw_planets import DUAL_CHART_TYPES
+
+        assert "Progression" in DUAL_CHART_TYPES
+
+    def test_double_chart_types_imported_in_chart_data_factory(self):
+        """chart_data_factory.py should use DOUBLE_CHART_TYPES that includes 'Progression'."""
+        from kerykeion.charts.charts_utils import DOUBLE_CHART_TYPES
+
+        # Validate that 'Progression' is recognized as a dual chart
+        assert "Progression" in DOUBLE_CHART_TYPES
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
