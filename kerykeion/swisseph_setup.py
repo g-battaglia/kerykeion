@@ -1,8 +1,8 @@
 """Swiss Ephemeris data setup utility.
 
 Downloads the Swiss Ephemeris data files needed for the swisseph backend.
-These files are NOT bundled with Kerykeion to avoid inheriting the AGPL-3.0
-license of Swiss Ephemeris (Astrodienst AG).
+These files are licensed under AGPL-3.0 by Astrodienst AG. If you use them,
+the Swiss Ephemeris license terms apply to those files (not Kerykeion's).
 
 Usage::
 

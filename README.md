@@ -2103,7 +2103,7 @@ pip install -e ".[dev]"
 
 ## Using the Swiss Ephemeris Backend (Optional)
 
-Kerykeion uses **libephemeris** by default (no external data files needed). If you need the Swiss Ephemeris C backend for maximum speed, install the optional extra and run the setup utility:
+Kerykeion uses **libephemeris** by default (no external data files needed). If you want to use the Swiss Ephemeris C backend instead, install the optional extra and run the setup utility:
 
 ```bash
 pip install kerykeion[swiss]
