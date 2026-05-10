@@ -1,5 +1,55 @@
 # Changelog
 
+## 6.0.0a40
+
+_2026-05-10_
+
+### Improvements
+
+- **Clean ephemeris data packaging.** Swiss Ephemeris data files (`.se1`,
+  `sefstars.txt`) are no longer shipped inside the wheel. The default backend
+  (`libephemeris`) manages its own data internally and never needed them.
+  Users who opt into the `swisseph` backend can download the data files
+  separately via the new setup utility (see below).
+
+- **New `swisseph_setup` utility.** Run `python -m kerykeion.swisseph_setup`
+  to download Swiss Ephemeris data files with an interactive license
+  confirmation (AGPL-3.0, Astrodienst AG). Supports `--yes` for CI,
+  `--target` for custom paths, and `--skip-asteroids`.
+
+- **Backend-aware `EPHE_DATA_PATH`.** The default ephemeris path is now
+  resolved per-backend instead of pointing to a fixed directory. When using
+  swisseph without `KERYKEION_EPHE_PATH`, a warning is logged explaining
+  the Moshier analytical fallback. When a user-provided path lacks `.se1`
+  files, a validation warning is emitted.
+
+- **Fix license classifier.** The PyPI classifier now correctly says
+  AGPL-3.0, matching the `license` field and the LICENSE file.
+
+### Documentation
+
+- New [Swiss Ephemeris Configuration](site/docs/swisseph_configuration.md)
+  guide covering installation, data setup, and license terms.
+- Updated README with Swiss Ephemeris backend section.
+- Updated `ephemeris_backend.md` and `backend_precision_comparison.md` docs.
+
+### Backward compatibility
+
+`EPHE_DATA_PATH` now defaults to `""` instead of a package-internal path.
+All factory modules already pass this to `swe.set_ephe_path()`, which handles
+the empty string correctly for both backends. Code that imports
+`EPHE_DATA_PATH` and constructs file paths from it (e.g.
+`Path(EPHE_DATA_PATH) / "sefstars.txt"`) should use `KERYKEION_EPHE_PATH`
+instead.
+
+## 6.0.0a39
+
+_2026-05-08_
+
+### Dependencies
+
+- Update `libephemeris` to 1.4.0 (`cool` + `release_data_cache`).
+
 ## 6.0.0a38
 
 _2026-05-08_
