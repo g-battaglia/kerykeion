@@ -152,6 +152,17 @@ _user_ephe_path = os.environ.get("KERYKEION_EPHE_PATH", "").strip()
 
 if _user_ephe_path:
     EPHE_DATA_PATH: str = _user_ephe_path
+    if BACKEND_NAME == "swisseph":
+        try:
+            _has_se1 = any(f.lower().endswith(".se1") for f in os.listdir(EPHE_DATA_PATH))
+        except OSError:
+            _has_se1 = False
+        if not _has_se1:
+            logger.warning(
+                "KERYKEION_EPHE_PATH=%r does not contain readable .se1 files. "
+                "swisseph may fall back to Moshier analytical ephemeris.",
+                EPHE_DATA_PATH,
+            )
 elif BACKEND_NAME == "swisseph":
     EPHE_DATA_PATH = ""
     logger.warning(
