@@ -108,8 +108,8 @@ class TestACGSweRegressions:
         The factory uses the same formula, so the MC line's longitude should
         match within 1 degree.
         """
-        ephe_path = str(Path(__file__).resolve().parent.parent.parent / "kerykeion" / "sweph")
-        swe.set_ephe_path(ephe_path)
+        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        swe.set_ephe_path(EPHE_DATA_PATH)
 
         jd = acg_subject.julian_day
         iflag = swe.FLG_SWIEPH | swe.FLG_SPEED

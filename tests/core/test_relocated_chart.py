@@ -60,7 +60,8 @@ class TestRelocatedSweReference:
         from kerykeion.ephemeris_backend import swe
         from pathlib import Path
 
-        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        swe.set_ephe_path(EPHE_DATA_PATH)
 
         new_lat = 40.7128
         new_lng = -74.006
@@ -95,7 +96,8 @@ class TestRelocatedSweReference:
         from kerykeion.ephemeris_backend import swe
         from pathlib import Path
 
-        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        swe.set_ephe_path(EPHE_DATA_PATH)
 
         new_lat = 35.6895
         new_lng = 139.6917

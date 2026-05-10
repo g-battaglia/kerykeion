@@ -15,7 +15,7 @@ Classes:
     OccultationModel: Pydantic model describing a single occultation event.
 
 Example:
-    >>> import swisseph as swe
+    >>> from kerykeion.ephemeris_backend import swe
     >>> from kerykeion.occultations import OccultationFactory
     >>>
     >>> jd = swe.julday(2024, 1, 1, 0.0)

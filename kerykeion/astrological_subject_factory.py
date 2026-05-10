@@ -139,7 +139,7 @@ FIXED_STARS: List[AstrologicalPoint] = [
     "Alkaid",  # eta Ursae Majoris, mag 1.86 -- Behenian star, tip of Great Bear's tail
 ]
 
-# Mapping from AstrologicalPoint names to Swiss Ephemeris sefstars.txt names
+# Mapping from AstrologicalPoint names to ephemeris backend fixed-star names
 # Only entries where the names differ (e.g. underscores vs spaces) need to be listed.
 FIXED_STAR_SWE_NAMES: Dict[str, str] = {
     "Deneb_Algedi": "Deneb Algedi",
@@ -249,7 +249,7 @@ def ephemeris_context(
         precession model.
 
     Args:
-        ephe_path: Path containing Swiss Ephemeris data files.
+        ephe_path: Path to ephemeris data files (configured via KERYKEION_EPHE_PATH).
         config: Validated chart configuration.
         lng: Observer longitude (used for topocentric charts).
         lat: Observer latitude (used for topocentric charts).

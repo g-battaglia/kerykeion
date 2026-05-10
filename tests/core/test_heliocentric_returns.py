@@ -11,7 +11,7 @@ Verifies the core invariants:
 - return_type field is set correctly on every result.
 """
 
-from pathlib import Path
+
 
 import pytest
 from kerykeion.ephemeris_backend import swe
@@ -23,7 +23,7 @@ from kerykeion import AstrologicalSubjectFactory, PlanetaryReturnFactory
 # Helpers
 # ---------------------------------------------------------------------------
 
-EPHE_PATH = str(Path(__file__).resolve().parent.parent.parent / "kerykeion" / "sweph")
+from kerykeion.ephemeris_backend import EPHE_DATA_PATH as EPHE_PATH
 
 # Approximate synodic / sidereal orbital periods in days (generous upper bounds).
 MARS_ORBITAL_PERIOD = 687      # ~1.88 years

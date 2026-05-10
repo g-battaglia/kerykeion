@@ -6,11 +6,10 @@ and morning/evening star status calculations via swe.pheno_ut().
 """
 
 import pytest
-from kerykeion.ephemeris_backend import swe
-from pathlib import Path
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 from kerykeion import AstrologicalSubjectFactory, PlanetaryPhenomenaFactory
 
-_EPHE_PATH = str(Path(__file__).parent.parent.parent / "kerykeion" / "sweph")
+_EPHE_PATH = EPHE_DATA_PATH
 
 
 @pytest.fixture(scope="module")

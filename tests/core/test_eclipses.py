@@ -2,11 +2,10 @@
 """Tests for the Eclipse Factory module."""
 
 import pytest
-from kerykeion.ephemeris_backend import swe
-from pathlib import Path
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 from kerykeion.eclipses import EclipseFactory
 
-_EPHE_PATH = str(Path(__file__).parent.parent.parent / "kerykeion" / "sweph")
+_EPHE_PATH = EPHE_DATA_PATH
 
 
 class TestGlobalSearch:

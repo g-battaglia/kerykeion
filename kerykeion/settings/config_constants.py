@@ -374,7 +374,7 @@ The full list of points is available in the `schemas.kr_literals.AstrologicalPoi
 # FIXED STAR PRESETS (v6.0)
 # =============================================================================
 # Use these with the `active_fixed_stars` parameter of AstrologicalSubjectFactory.
-# Names must match entries in the Swiss Ephemeris sefstars.txt catalog.
+# Names must match entries in the ephemeris backend's fixed-star catalog.
 
 ROYAL_FIXED_STARS: list[str] = [
     "Aldebaran",

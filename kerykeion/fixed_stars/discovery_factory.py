@@ -5,7 +5,8 @@ Fixed Star Discovery Factory (v6.0)
 Finds fixed stars conjunct natal points within a configurable orb.
 
 The implementation is backend-specific by design:
-- swisseph scans the Swiss Ephemeris ``sefstars.txt`` catalog.
+- swisseph scans the ``sefstars.txt`` catalog (user must provide this file
+  via ``KERYKEION_EPHE_PATH``).
 - libephemeris uses its native fixed-star catalog/API and never reads
   ``sefstars.txt``.
 

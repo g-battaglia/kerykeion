@@ -126,7 +126,8 @@ class TestDavisonSweReference:
         from kerykeion.ephemeris_backend import swe
         from pathlib import Path
 
-        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        swe.set_ephe_path(EPHE_DATA_PATH)
 
         s1, s2 = subjects
         factory = CompositeSubjectFactory(s1, s2)
@@ -145,7 +146,8 @@ class TestDavisonSweReference:
         from kerykeion.ephemeris_backend import swe
         from pathlib import Path
 
-        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        swe.set_ephe_path(EPHE_DATA_PATH)
 
         s1, s2 = subjects
         factory = CompositeSubjectFactory(s1, s2)

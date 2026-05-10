@@ -179,4 +179,4 @@ standard astrological work, **both backends produce equivalent results**.
 Choose based on your constraints:
 
 - **libephemeris** (default): no C compiler, AGPL-3.0, pure Python, more accurate barycentric
-- **swisseph**: fastest option (C), GPL-2.0, broader minor-body coverage on ancient dates
+- **swisseph**: fastest option (C), AGPL-3.0, broader minor-body coverage on ancient dates

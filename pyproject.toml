@@ -29,7 +29,7 @@ classifiers = [
     "Intended Audience :: Information Technology",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.12",
@@ -72,6 +72,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]
+exclude = ["kerykeion/sweph/**"]
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -112,7 +113,7 @@ omit = [
     "*/tests/*",
     "*/test_*",
     "*/__pycache__/*",
-    "*/sweph/*",  # Swiss Ephemeris library files
+
     "setup.py",
     "**/draw_planets_legacy.py",  # Legacy code, not used
     "kerykeion/charts/draw_planets_legacy.py",  # Legacy code, not used

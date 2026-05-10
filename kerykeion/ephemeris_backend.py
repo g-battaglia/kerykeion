@@ -138,21 +138,31 @@ else:
 swe = _backend_module
 
 # ---------------------------------------------------------------------------
-# Ephemeris data path (shared by both backends)
+# Ephemeris data path
 # ---------------------------------------------------------------------------
-# Default: the ``kerykeion/sweph/`` directory bundled with the package.
-# Override via ``KERYKEION_EPHE_PATH`` environment variable, e.g.:
+# Override via ``KERYKEION_EPHE_PATH`` environment variable:
 #
-#     KERYKEION_EPHE_PATH=/Volumes/Data/libephemeris python my_script.py
+#     KERYKEION_EPHE_PATH=/path/to/ephe python my_script.py
 #
-# All factories call ``swe.set_ephe_path(EPHE_DATA_PATH)`` at init time.
+# - libephemeris: manages its own data (~/.libephemeris/leb/); path is a no-op.
+# - swisseph: needs .se1 files; without KERYKEION_EPHE_PATH, falls back to
+#   its built-in Moshier analytical ephemeris (lower precision).
 
-from pathlib import Path as _Path
+_user_ephe_path = os.environ.get("KERYKEION_EPHE_PATH", "").strip()
 
-_default_ephe_path = str(_Path(__file__).parent.absolute() / "sweph")
-EPHE_DATA_PATH: str = os.environ.get("KERYKEION_EPHE_PATH", _default_ephe_path).strip()
+if _user_ephe_path:
+    EPHE_DATA_PATH: str = _user_ephe_path
+elif BACKEND_NAME == "swisseph":
+    EPHE_DATA_PATH = ""
+    logger.warning(
+        "KERYKEION_EPHE_PATH not set. swisseph will use its internal Moshier "
+        "analytical ephemeris (lower precision). Set KERYKEION_EPHE_PATH to a "
+        "directory containing .se1 files for full precision."
+    )
+else:
+    EPHE_DATA_PATH = ""
 
-logger.debug("Ephemeris data path: %s", EPHE_DATA_PATH)
+logger.debug("Ephemeris data path: %r", EPHE_DATA_PATH)
 
 # ---------------------------------------------------------------------------
 # libephemeris: enforce .leb binary ephemeris mode

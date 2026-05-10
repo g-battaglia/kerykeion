@@ -1355,7 +1355,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 
 **📖 Full list of supported house systems: [HouseSystemIdentifier Schema](https://www.kerykeion.net/content/docs/schemas#housesystemidentifier)**
 
-All house systems available in the Swiss Ephemeris are supported, including Gauquelin Sectors (see [Gauquelin Sectors](#gauquelin-sectors) below).
+All house systems available in the ephemeris backend are supported, including Gauquelin Sectors (see [Gauquelin Sectors](#gauquelin-sectors) below).
 
 ## Perspective Type
 
@@ -1584,7 +1584,7 @@ print(johnny.model_dump_json(indent=2))
 
 ## Moon Phase Details
 
-The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, and apparent solar position. All timings use Swiss Ephemeris for ~1 second precision.
+The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, and apparent solar position. All timings use the ephemeris backend for ~1 second precision.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory, ReportGenerator
@@ -1786,7 +1786,7 @@ Find when a planet first becomes visible or disappears in twilight.
 from kerykeion import HeliacalFactory
 
 factory = HeliacalFactory()
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 jd = swe.julday(2025, 1, 1, 0.0)
 event = factory.next_heliacal_rising(jd, "Venus", geopos=(12.5, 41.9, 0))
 print(f"Venus heliacal rising: {event.datestamp}")
@@ -1798,7 +1798,7 @@ Find lunar occultations of planets.
 
 ```python
 from kerykeion import OccultationFactory
-import swisseph as swe
+from kerykeion.ephemeris_backend import swe
 
 factory = OccultationFactory()
 jd = swe.julday(2025, 1, 1, 0.0)

@@ -149,7 +149,8 @@ class TestUranianSweReference:
         from kerykeion.ephemeris_backend import swe
         from pathlib import Path
 
-        swe.set_ephe_path(str(Path(__file__).parents[2] / "kerykeion" / "sweph"))
+        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        swe.set_ephe_path(EPHE_DATA_PATH)
 
         jd = subject_with_uranian.julian_day
         iflag = swe.FLG_SWIEPH | swe.FLG_SPEED

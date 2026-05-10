@@ -10,7 +10,7 @@ API so **no application code needs to change** when switching.
 | Backend | Package | License | Notes |
 |---------|---------|---------|-------|
 | **libephemeris** (default) | `libephemeris` | AGPL-3.0 | Pure Python. Uses NASA JPL DE440/DE441 via Skyfield. No C compiler needed. Owned by the Kerykeion project -- safe for dual-licensing. |
-| **swisseph** | `pyswisseph` | GPL-2.0 | C bindings to the Swiss Ephemeris library. Fastest option. GPL license restricts commercial redistribution. |
+| **swisseph** | `pyswisseph` | AGPL-3.0 | C bindings to the Swiss Ephemeris library. Fastest option. AGPL license imposes network-disclosure obligations. |
 
 ## Installation
 
@@ -42,16 +42,21 @@ KERYKEION_BACKEND=libephemeris python my_script.py
 ### `KERYKEION_EPHE_PATH`
 
 Override the directory where ephemeris data files are loaded from.
-Default: the `kerykeion/sweph/` directory bundled with the package.
+Default: empty string (libephemeris manages its own data internally via
+`~/.libephemeris/leb/`; swisseph falls back to its built-in Moshier
+analytical ephemeris).
 
 ```bash
-# Use a custom data directory (SPK files, star catalogs, etc.)
-KERYKEION_EPHE_PATH=/Volumes/Data/libephemeris python my_script.py
+# For swisseph: point to a directory containing .se1 files
+KERYKEION_EPHE_PATH=/path/to/se1/files python my_script.py
+
+# For libephemeris: typically not needed (uses ~/.libephemeris/leb/)
+KERYKEION_EPHE_PATH=/path/to/custom/data python my_script.py
 ```
 
 Both backends call `swe.set_ephe_path(EPHE_DATA_PATH)` at init time.
-For swisseph this points to `.se1` files; for libephemeris it scans
-for `.bsp` (SPK) files in the directory.
+For swisseph this points to `.se1` files; for libephemeris the call is
+a no-op (it manages its own data directory internally).
 
 ### `KERYKEION_LEB_MODE`
 
@@ -130,13 +135,14 @@ to offer **dual licensing** (AGPL-3.0 + commercial):
 
 - **libephemeris** is owned by the Kerykeion project and licensed under
   AGPL-3.0. It can be relicensed commercially without third-party approval.
-- **swisseph** (Swiss Ephemeris) is licensed under GPL-2.0 by Astrodienst.
-  Code that links to swisseph inherits the GPL, which prevents commercial
-  redistribution without a separate Swiss Ephemeris commercial license.
+- **swisseph** (Swiss Ephemeris) is licensed under AGPL-3.0 by Astrodienst.
+  Code that links to swisseph inherits the AGPL, which imposes
+  network-disclosure obligations.
 
 By defaulting to libephemeris and making swisseph opt-in (`pip install
-kerykeion[swiss]`), the base Kerykeion package is free of GPL dependencies.
-Users who install the `[swiss]` extra do so knowingly and accept the GPL terms.
+kerykeion[swiss]`), the base Kerykeion package is free of third-party AGPL
+dependencies. Users who install the `[swiss]` extra do so knowingly and
+accept the AGPL terms of Astrodienst AG.
 
 ## Testing
 

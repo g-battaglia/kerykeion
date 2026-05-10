@@ -347,8 +347,8 @@ class TestSpeculumSweRegressions:
 
     def test_sun_ra_dec_matches_swe(self, lennon):
         """Sun RA and declination from speculum must match swe.calc_ut equatorial coords."""
-        ephe_path = str(Path(__file__).resolve().parent.parent.parent / "kerykeion" / "sweph")
-        swe.set_ephe_path(ephe_path)
+        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        swe.set_ephe_path(EPHE_DATA_PATH)
 
         jd = lennon.julian_day
         eq = swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)
@@ -368,8 +368,8 @@ class TestSpeculumSweRegressions:
 
     def test_ramc_matches_swe_sidtime(self, lennon):
         """RAMC must equal (swe.sidtime(jd) * 15 + lng) mod 360."""
-        ephe_path = str(Path(__file__).resolve().parent.parent.parent / "kerykeion" / "sweph")
-        swe.set_ephe_path(ephe_path)
+        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        swe.set_ephe_path(EPHE_DATA_PATH)
 
         jd = lennon.julian_day
         expected_ramc = (swe.sidtime(jd) * 15.0 + lennon.lng) % 360

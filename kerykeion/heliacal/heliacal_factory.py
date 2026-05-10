@@ -102,8 +102,8 @@ class HeliacalFactory:
     Parameters
     ----------
     ephe_path : str or None
-        Path to the Swiss Ephemeris data directory.  Defaults to the
-        ``kerykeion/sweph`` directory shipped with the library.
+        Path to the ephemeris data directory.  Defaults to the path
+        configured via ``KERYKEION_EPHE_PATH`` (or empty string).
     """
 
     def __init__(self, ephe_path: Optional[str] = None) -> None:

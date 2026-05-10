@@ -1,3 +1,5 @@
+# Developer-only utility. Requires: pip install pyswisseph
+# Not included in the kerykeion package distribution.
 import swisseph as swe
 import inspect
 from pathlib import Path
