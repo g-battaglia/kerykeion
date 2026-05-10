@@ -123,10 +123,7 @@ class TestDavisonSweReference:
 
     def test_davison_sun_matches_swe_at_midpoint_jd(self, subjects):
         """Davison Sun longitude must match swe.calc_ut(midpoint_jd, SUN)."""
-        from kerykeion.ephemeris_backend import swe
-        from pathlib import Path
-
-        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
         swe.set_ephe_path(EPHE_DATA_PATH)
 
         s1, s2 = subjects
@@ -143,10 +140,7 @@ class TestDavisonSweReference:
 
     def test_davison_moon_matches_swe_at_midpoint_jd(self, subjects):
         """Davison Moon longitude must match swe.calc_ut(midpoint_jd, MOON)."""
-        from kerykeion.ephemeris_backend import swe
-        from pathlib import Path
-
-        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
         swe.set_ephe_path(EPHE_DATA_PATH)
 
         s1, s2 = subjects

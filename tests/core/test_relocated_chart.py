@@ -57,10 +57,7 @@ class TestRelocatedSweReference:
 
     def test_relocated_asc_mc_match_swe(self, natal):
         """Factory relocated ASC and MC must match raw swe.houses_armc()."""
-        from kerykeion.ephemeris_backend import swe
-        from pathlib import Path
-
-        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
         swe.set_ephe_path(EPHE_DATA_PATH)
 
         new_lat = 40.7128
@@ -93,10 +90,7 @@ class TestRelocatedSweReference:
 
     def test_relocated_tokyo_asc_mc_match_swe(self, natal):
         """Same check for Tokyo to ensure generalisation across locations."""
-        from kerykeion.ephemeris_backend import swe
-        from pathlib import Path
-
-        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
         swe.set_ephe_path(EPHE_DATA_PATH)
 
         new_lat = 35.6895

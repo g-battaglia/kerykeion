@@ -146,10 +146,7 @@ class TestUranianSweReference:
     ])
     def test_uranian_longitude_matches_swe(self, subject_with_uranian, attr, swe_id):
         """Factory Uranian abs_pos must match swe.calc_ut() longitude."""
-        from kerykeion.ephemeris_backend import swe
-        from pathlib import Path
-
-        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
+        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
         swe.set_ephe_path(EPHE_DATA_PATH)
 
         jd = subject_with_uranian.julian_day

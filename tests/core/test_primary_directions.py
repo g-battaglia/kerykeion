@@ -4,7 +4,6 @@
 import math
 import pytest
 from kerykeion.ephemeris_backend import swe
-from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, PrimaryDirectionsFactory
 
 
