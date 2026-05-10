@@ -2101,6 +2101,24 @@ cd kerykeion
 pip install -e ".[dev]"
 ```
 
+## Using the Swiss Ephemeris Backend (Optional)
+
+Kerykeion uses **libephemeris** by default (no external data files needed). If you need the Swiss Ephemeris C backend for maximum speed, install the optional extra and run the setup utility:
+
+```bash
+pip install kerykeion[swiss]
+python -m kerykeion.swisseph_setup
+```
+
+The setup utility downloads the required data files from the official Swiss Ephemeris repository (AGPL-3.0, Astrodienst AG) and asks for license confirmation. Then set the environment variables:
+
+```bash
+export KERYKEION_BACKEND=swisseph
+export KERYKEION_EPHE_PATH=~/.kerykeion/sweph
+```
+
+For the full configuration guide, see [Swiss Ephemeris Configuration](site/docs/swisseph_configuration.md).
+
 ## Integrating Kerykeion into Your Project
 
 If you would like to incorporate Kerykeion's astrological features into your application, please reach out via [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request). Whether you need custom features, support, or specialized consulting, I am happy to discuss potential collaborations.

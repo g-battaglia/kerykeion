@@ -28,32 +28,65 @@ pip install kerykeion[swiss]
 pip install pyswisseph
 ```
 
-## Obtaining ephemeris data files
+## Automatic setup (recommended)
 
-Swiss Ephemeris requires binary `.se1` data files for full-precision
-calculations. Without them, swisseph falls back to its built-in **Moshier
-analytical ephemeris** (lower precision, but functional).
+Kerykeion includes a setup utility that downloads the required data files
+and shows the license terms:
 
-Download the files from the official Astrodienst FTP server:
-
+```bash
+python -m kerykeion.swisseph_setup
 ```
-https://www.astro.com/ftp/swisseph/ephe/
+
+This downloads the main ephemeris files (planets, Moon, asteroids, fixed
+stars) from the official Swiss Ephemeris GitHub repository. The utility
+will show the AGPL-3.0 license notice and ask for confirmation.
+
+Options:
+
+```bash
+# Non-interactive (for CI/scripts)
+python -m kerykeion.swisseph_setup --yes
+
+# Custom install directory
+python -m kerykeion.swisseph_setup --target /path/to/data
+
+# Skip TNO/dwarf planet files
+python -m kerykeion.swisseph_setup --skip-asteroids
 ```
+
+Default install location: `~/.kerykeion/sweph/`
+
+### TNO/dwarf planet files
+
+TNO ephemeris files (Eris, Sedna, Haumea, Makemake, etc.) are not
+available from GitHub. The setup utility will show instructions for
+downloading them manually from the official Astrodienst Dropbox.
+Without these files, planets and fixed stars work normally.
+
+## Manual setup
+
+If you prefer to download files manually:
 
 ### Minimum recommended files
 
-| File | Description |
-|------|-------------|
-| `seas_18.se1` | Main planetary ephemeris (asteroids, ~1800–2400 CE) |
-| `semo_18.se1` | Moon ephemeris |
-| `sepl_18.se1` | Planetary ephemeris (Sun, planets) |
+| File | Source | Description |
+|------|--------|-------------|
+| `seas_18.se1` | [GitHub](https://github.com/aloistr/swisseph/tree/master/ephe) | Main asteroid ephemeris (~1800-2400 CE) |
+| `semo_18.se1` | [GitHub](https://github.com/aloistr/swisseph/tree/master/ephe) | Moon ephemeris |
+| `sepl_18.se1` | [GitHub](https://github.com/aloistr/swisseph/tree/master/ephe) | Planetary ephemeris (Sun, planets) |
+| `sefstars.txt` | [GitHub](https://github.com/aloistr/swisseph/tree/master/ephe) | Fixed star catalog |
 
-### Optional files
+### Optional files (TNOs)
 
-| File / Directory | Description |
-|------------------|-------------|
-| `sefstars.txt` | Fixed star catalog (required for `FixedStarDiscoveryFactory` with swisseph) |
-| `ast*/se*.se1` | Asteroid ephemeris files (Chiron, Ceres, Pholus, TNOs, etc.) |
+| File | Source | Description |
+|------|--------|-------------|
+| `ast136/s136199s.se1` | [Astrodienst Dropbox](https://www.dropbox.com/scl/fo/y3naz62gy6f6qfrhquu7u/h?rlkey=ejltdhb262zglm7eo6yfj2940&dl=0) | Eris |
+| `ast136/s136108s.se1` | Astrodienst Dropbox | Haumea |
+| `ast136/s136472s.se1` | Astrodienst Dropbox | Makemake |
+| `ast90/se90377s.se1` | Astrodienst Dropbox | Sedna |
+| `ast90/se90482s.se1` | Astrodienst Dropbox | Orcus |
+| `ast50/se50000s.se1` | Astrodienst Dropbox | Quaoar |
+| `ast28/se28978s.se1` | Astrodienst Dropbox | Ixion |
 
 ## Configuration
 
@@ -62,7 +95,7 @@ https://www.astro.com/ftp/swisseph/ephe/
 Point `KERYKEION_EPHE_PATH` to the directory containing your `.se1` files:
 
 ```bash
-export KERYKEION_EPHE_PATH=/path/to/your/se1/files
+export KERYKEION_EPHE_PATH=~/.kerykeion/sweph
 ```
 
 ### 2. Force the swisseph backend
@@ -77,7 +110,7 @@ export KERYKEION_BACKEND=swisseph
 ### 3. Run your script
 
 ```bash
-KERYKEION_BACKEND=swisseph KERYKEION_EPHE_PATH=/path/to/se1 python my_script.py
+KERYKEION_BACKEND=swisseph KERYKEION_EPHE_PATH=~/.kerykeion/sweph python my_script.py
 ```
 
 ## Verifying the configuration
