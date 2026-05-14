@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.0.0a41
+
+_2026-05-14_
+
+### Fixes
+
+- **Updated `libephemeris` to 1.6.0.** Fixes critical LEB fast-path bugs
+  that caused `lun_occult_when_loc()` to crash with `NameError` and
+  heliacal calculations to fail with `TypeError` after `close()`.
+
+### Backward compatibility
+
+No API changes. Fully backward-compatible.
+
 ## 6.0.0a40
 
 _2026-05-10_

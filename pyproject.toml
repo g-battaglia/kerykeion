@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a40"
+version = "6.0.0a41"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -45,7 +45,7 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "libephemeris==1.4.0",
+    "libephemeris==1.6.0",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",

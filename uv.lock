@@ -455,7 +455,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a38"
+version = "6.0.0a40"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -546,7 +546,7 @@ wheels = [
 
 [[package]]
 name = "libephemeris"
-version = "1.4.0"
+version = "1.6.0"
 source = { editable = "../libephemeris" }
 dependencies = [
     { name = "astroquery" },

@@ -1,5 +1,20 @@
 # Release Notes
 
+## 6.0.0a41 — 2026-05-14
+
+Updated `libephemeris` to 1.6.0 with critical LEB fast-path bug fixes.
+
+Highlights:
+
+- `lun_occult_when_loc()` no longer crashes in LEB mode (was
+  `NameError: ts`).
+- Heliacal calculations no longer fail after `close()` (was
+  `TypeError` on closed mmap).
+- `set_leb_file()` and `clear_caches()` now properly clean up stale
+  LEB reader state.
+
+No API changes. Backward-compatible.
+
 ## 6.0.0a40 — 2026-05-10
 
 Clean ephemeris packaging and new Swiss Ephemeris setup utility.
