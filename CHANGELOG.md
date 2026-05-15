@@ -1,5 +1,22 @@
 # Changelog
 
+## 6.0.0a42
+
+_2026-05-15_
+
+### Dependencies
+
+- **Updated `libephemeris` to 2.0.0.** The upstream library simplified
+  its public API by removing legacy prefixed aliases. The canonical
+  bare-name API used by kerykeion (`calc_ut`, `houses`, `SUN`,
+  `FLG_SPEED`, …) is unchanged — no code changes required.
+  Also adds a new `libephemeris.contrib` submodule with extended
+  astrology helpers (zodiac, nakshatra, aspect constants and functions).
+
+### Backward compatibility
+
+No API changes. Fully backward-compatible.
+
 ## 6.0.0a41
 
 _2026-05-14_
