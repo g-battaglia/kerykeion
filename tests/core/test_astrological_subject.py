@@ -1417,13 +1417,14 @@ class TestFixedStars:
             lat=51.5074,
             tz_str="Etc/GMT",
             online=False,
-            active_points=["Regulus"],
+            active_fixed_stars=["Regulus"],
             suppress_geonames_warning=True,
         )
 
-        assert hasattr(subject, "regulus")
-        assert subject.regulus.name == "Regulus"
-        assert subject.regulus.retrograde is False  # Fixed stars are never retrograde
+        regulus = subject.find_fixed_star("Regulus")
+        assert regulus is not None
+        assert regulus.name == "Regulus"
+        assert regulus.retrograde is False  # Fixed stars are never retrograde
 
     def test_spica_calculation(self):
         """Test Spica (fixed star) calculation."""
@@ -1438,13 +1439,14 @@ class TestFixedStars:
             lat=51.5074,
             tz_str="Etc/GMT",
             online=False,
-            active_points=["Spica"],
+            active_fixed_stars=["Spica"],
             suppress_geonames_warning=True,
         )
 
-        assert hasattr(subject, "spica")
-        assert subject.spica.name == "Spica"
-        assert subject.spica.retrograde is False
+        spica = subject.find_fixed_star("Spica")
+        assert spica is not None
+        assert spica.name == "Spica"
+        assert spica.retrograde is False
 
 
 class TestNightChartCalculations:
@@ -1872,7 +1874,7 @@ class TestAllDwarfPlanetsAndFixedStars:
         # Others will fail gracefully with warnings
 
     def test_all_fixed_stars_attempt(self):
-        """Test fixed stars to trigger their exception handling."""
+        """v7: stars are populated via active_fixed_stars and accessed via find_fixed_star."""
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Fixed Stars",
             1990,
@@ -1884,13 +1886,14 @@ class TestAllDwarfPlanetsAndFixedStars:
             lat=51.5074,
             tz_str="Etc/GMT",
             online=False,
-            active_points=["Regulus", "Spica", "Sun"],
+            active_points=["Sun"],
+            active_fixed_stars=["Regulus", "Spica"],
             suppress_geonames_warning=True,
         )
 
-        assert hasattr(subject, "sun")
-        assert hasattr(subject, "regulus")
-        assert hasattr(subject, "spica")
+        assert subject.sun is not None
+        assert subject.find_fixed_star("Regulus") is not None
+        assert subject.find_fixed_star("Spica") is not None
 
     def test_vertex_calculation_with_exception_mock(self):
         """Test Vertex exception handling (line 1836-1841)."""
@@ -2017,24 +2020,24 @@ class TestAllDwarfPlanetsAndFixedStars:
             lat=51.5074,
             tz_str="Etc/GMT",
             online=False,
-            active_points=["Regulus", "Spica", "Sun"],
+            active_points=["Sun"],
+            active_fixed_stars=["Regulus", "Spica"],
             suppress_geonames_warning=True,
         )
 
-        # All fixed stars should be present with real calculations
-        assert hasattr(subject, "sun")
+        # Sun (planet) reaches the model as a typed field
         assert subject.sun is not None
 
-        assert hasattr(subject, "regulus")
-        assert subject.regulus is not None
-        assert hasattr(subject.regulus, "abs_pos")
-        assert not subject.regulus.retrograde  # Fixed stars are never retrograde
+        # Fixed stars (v7) live in the unified array, accessed via find_fixed_star
+        regulus = subject.find_fixed_star("Regulus")
+        assert regulus is not None
+        assert hasattr(regulus, "abs_pos")
+        assert not regulus.retrograde  # Fixed stars are never retrograde
 
-        assert hasattr(subject, "spica")
-        assert subject.spica is not None
-        assert hasattr(subject.spica, "abs_pos")
-        assert not subject.spica.retrograde
-        # Vertex and Anti_Vertex removed from active_points due to error
+        spica = subject.find_fixed_star("Spica")
+        assert spica is not None
+        assert hasattr(spica, "abs_pos")
+        assert not spica.retrograde
 
 
 # =============================================================================

@@ -104,17 +104,35 @@ class AspectsFactory:
             >>> print(f"Found {len(chart_aspects.aspects)} aspects")
         """
         # Initialize settings and configurations
-        celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
+        # v7: extend celestial_points with synthetic settings for any dynamic
+        # catalog fixed star carried on subject.fixed_stars, so aspects engine
+        # can iterate them just like planets.
+        from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
+
+        celestial_points = list(DEFAULT_CELESTIAL_POINTS_SETTINGS)
+        dynamic_star_names = [
+            getattr(s, "name", None) for s in getattr(subject, "fixed_stars", None) or []
+        ]
+        dynamic_star_names = [n for n in dynamic_star_names if n]
+        if dynamic_star_names:
+            celestial_points = celestial_points + build_dynamic_fixed_star_settings(
+                dynamic_star_names, existing_settings=celestial_points
+            )
         aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
         # Set active aspects with default fallback
         active_aspects_resolved = active_aspects if active_aspects is not None else DEFAULT_ACTIVE_ASPECTS
 
-        # Determine active points to use
+        # Determine active points to use. v7: extend with star names so the
+        # aspects loop iterates them; subject.fixed_stars stars are not in
+        # subject.active_points by design.
+        subject_active = list(subject.active_points) + [
+            n for n in dynamic_star_names if n not in subject.active_points
+        ]
         if active_points is None:
-            active_points_resolved = subject.active_points
+            active_points_resolved = subject_active
         else:
             active_points_resolved = find_common_active_points(
-                subject.active_points,
+                subject_active,
                 active_points,
             )
 
@@ -169,24 +187,47 @@ class AspectsFactory:
             >>> synastry = AspectsFactory.dual_chart_aspects(john, jane)
             >>> print(f"Found {len(synastry.aspects)} aspects")
         """
-        # Initialize settings and configurations
-        celestial_points = DEFAULT_CELESTIAL_POINTS_SETTINGS
+        # Initialize settings and configurations (v7: include dynamic star settings)
+        from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
+
+        celestial_points = list(DEFAULT_CELESTIAL_POINTS_SETTINGS)
+        dynamic_star_names: list[str] = []
+        for subj in (first_subject, second_subject):
+            for s in getattr(subj, "fixed_stars", None) or []:
+                star_name = getattr(s, "name", None)
+                if star_name and star_name not in dynamic_star_names:
+                    dynamic_star_names.append(star_name)
+        if dynamic_star_names:
+            celestial_points = celestial_points + build_dynamic_fixed_star_settings(
+                dynamic_star_names, existing_settings=celestial_points
+            )
         aspects_settings = DEFAULT_CHART_ASPECTS_SETTINGS
         # Set active aspects with default fallback
         active_aspects_resolved = active_aspects if active_aspects is not None else DEFAULT_ACTIVE_ASPECTS
 
+        # v7: extend each subject's active_points with its fixed_stars names so
+        # the dual-chart aspects engine iterates them as first-class points.
+        first_subject_active = list(first_subject.active_points) + [
+            getattr(s, "name", None) for s in getattr(first_subject, "fixed_stars", None) or []
+        ]
+        first_subject_active = [n for n in first_subject_active if n]
+        second_subject_active = list(second_subject.active_points) + [
+            getattr(s, "name", None) for s in getattr(second_subject, "fixed_stars", None) or []
+        ]
+        second_subject_active = [n for n in second_subject_active if n]
+
         # Determine active points to use - find common points between both subjects
         if active_points is None:
-            active_points_resolved = first_subject.active_points
+            active_points_resolved = first_subject_active
         else:
             active_points_resolved = find_common_active_points(
-                first_subject.active_points,
+                first_subject_active,
                 active_points,
             )
 
         # Further filter with second subject's active points
         active_points_resolved = find_common_active_points(
-            second_subject.active_points,
+            second_subject_active,
             active_points_resolved,
         )
 

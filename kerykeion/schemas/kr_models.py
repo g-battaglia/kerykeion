@@ -506,13 +506,12 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
             selected sidereal mode. ``None`` for tropical charts. Added in v5.12.
         active_points: List of celestial points included in calculations.
 
-    Fixed Stars (v5.12 -- expanded from 2 to 23):
-        regulus, spica, aldebaran, antares, sirius, fomalhaut, algol,
-        betelgeuse, canopus, procyon, arcturus, pollux, deneb, altair,
-        rigel, achernar, capella, vega, alcyone, alphecca, algorab,
-        deneb_algedi, alkaid.
-        Each is ``Optional[KerykeionPointModel]``, defaulting to ``None``
-        unless the star is included in ``active_points``.
+    Fixed Stars (v7 -- unified array):
+        All fixed stars (any name from the libephemeris catalog) live in
+        ``fixed_stars: list[KerykeionPointModel]``. No more typed per-star
+        fields. Use ``subject.find_fixed_star("Regulus")`` for lookup by name.
+        Stars are populated when their names are passed via the
+        ``active_fixed_stars`` parameter to ``AstrologicalSubjectFactory``.
     """
 
     # Common identification data
@@ -625,39 +624,13 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     vulkanus: Optional[KerykeionPointModel] = None
     poseidon: Optional[KerykeionPointModel] = None
 
-    # Fixed Stars
-    regulus: Optional[KerykeionPointModel] = None
-    spica: Optional[KerykeionPointModel] = None
-    aldebaran: Optional[KerykeionPointModel] = None
-    antares: Optional[KerykeionPointModel] = None
-    sirius: Optional[KerykeionPointModel] = None
-    fomalhaut: Optional[KerykeionPointModel] = None
-    algol: Optional[KerykeionPointModel] = None
-    betelgeuse: Optional[KerykeionPointModel] = None
-    canopus: Optional[KerykeionPointModel] = None
-    procyon: Optional[KerykeionPointModel] = None
-    arcturus: Optional[KerykeionPointModel] = None
-    pollux: Optional[KerykeionPointModel] = None
-    deneb: Optional[KerykeionPointModel] = None
-    altair: Optional[KerykeionPointModel] = None
-    rigel: Optional[KerykeionPointModel] = None
-    achernar: Optional[KerykeionPointModel] = None
-    capella: Optional[KerykeionPointModel] = None
-    vega: Optional[KerykeionPointModel] = None
-    alcyone: Optional[KerykeionPointModel] = None
-    alphecca: Optional[KerykeionPointModel] = None
-    algorab: Optional[KerykeionPointModel] = None
-    deneb_algedi: Optional[KerykeionPointModel] = None
-    alkaid: Optional[KerykeionPointModel] = None
-
-    # Dynamic Fixed Stars (v6.0)
-    # Unified list of ALL calculated fixed stars (both default 23 and user-specified extras).
-    # Replaces the need to access stars by individual field name for iteration.
+    # Fixed Stars (v7 -- unified array, source: libephemeris catalog)
+    # All fixed stars live here. Use ``find_fixed_star(name)`` for lookup.
     fixed_stars: list[KerykeionPointModel] = Field(
         default_factory=list,
-        description="List of all calculated fixed stars. Includes both default stars "
-        "(from active_points) and extra dynamic stars (from active_fixed_stars parameter). "
-        "Added in v6.0.",
+        description="All calculated fixed stars (any name from the libephemeris catalog "
+        "passed via the ``active_fixed_stars`` parameter). Use ``find_fixed_star(name)`` "
+        "for case-insensitive lookup by IAU name or slug.",
     )
 
     # Arabic Parts
@@ -713,6 +686,19 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         description="Nutation and obliquity parameters for the chart moment. "
         "Populated when calculate_nutation=True. Added in v6.0.",
     )
+
+    def find_fixed_star(self, name: str) -> Optional[KerykeionPointModel]:
+        """Case-insensitive lookup in ``fixed_stars`` by IAU name or slug.
+
+        Slug matching is normalized: spaces, dashes and underscores are
+        interchangeable, casing is ignored. Returns ``None`` if no match.
+        """
+        target = name.strip().lower().replace(" ", "_").replace("-", "_")
+        for star in self.fixed_stars:
+            star_slug = (star.name or "").strip().lower().replace(" ", "_").replace("-", "_")
+            if star_slug == target:
+                return star
+        return None
 
 
 class AstrologicalSubjectModel(AstrologicalBaseModel):

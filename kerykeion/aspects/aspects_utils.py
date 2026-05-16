@@ -217,8 +217,30 @@ def get_active_points_list(
     if active_points is None:
         active_points = []
     point_list = []
+
+    # v7: build a lookup for catalog fixed stars (they are no longer
+    # subject attributes; they live in subject.fixed_stars array).
+    star_lookup: dict = {}
+    for star in getattr(subject, "fixed_stars", None) or []:
+        star_name = getattr(star, "name", None)
+        if not star_name:
+            continue
+        slug = star_name.strip().lower().replace(" ", "_").replace("-", "_")
+        star_lookup[slug] = star
+
     for planet in celestial_points:
-        if planet["name"] in active_points:
-            point_list.append(subject[planet["name"].lower()])
+        if planet["name"] not in active_points:
+            continue
+        key = planet["name"].lower()
+        point = None
+        try:
+            point = subject[key]
+        except (AttributeError, KeyError):
+            point = None
+        if point is None:
+            slug = planet["name"].strip().lower().replace(" ", "_").replace("-", "_")
+            point = star_lookup.get(slug)
+        if point is not None:
+            point_list.append(point)
 
     return point_list

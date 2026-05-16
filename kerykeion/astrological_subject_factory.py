@@ -107,43 +107,19 @@ TNO_PLANETS: Dict[AstrologicalPoint, int] = {
     "Quaoar": 50000,
 }
 
-# Fixed stars -- 23 total (expanded in v5.12 from 2)
-# Includes all 15 Behenian stars plus 8 other bright stars.
-# Names must match Swiss Ephemeris swe.fixstar_ut() identifiers exactly
-# (or have an entry in FIXED_STAR_SWE_NAMES for name mapping).
-FIXED_STARS: List[AstrologicalPoint] = [
-    # Pre-existing (v5.11)
-    "Regulus",  # alpha Leonis, mag 1.35 -- Royal Star, Watcher of the North
-    "Spica",  # alpha Virginis, mag 0.97
-    # Added in v5.12
-    "Aldebaran",  # alpha Tauri, mag 0.87 -- Royal Star, Watcher of the East
-    "Antares",  # alpha Scorpii, mag 1.06 -- Royal Star, Watcher of the West
-    "Sirius",  # alpha Canis Majoris, mag -1.46 -- brightest star in the sky
-    "Fomalhaut",  # alpha Piscis Austrini, mag 1.16 -- Royal Star, Watcher of the South
-    "Algol",  # beta Persei, mag 2.12 -- eclipsing binary, traditionally malefic
-    "Betelgeuse",  # alpha Orionis, mag 0.42 -- red supergiant
-    "Canopus",  # alpha Carinae, mag -0.74 -- second brightest star
-    "Procyon",  # alpha Canis Minoris, mag 0.34
-    "Arcturus",  # alpha Bootis, mag -0.05
-    "Pollux",  # beta Geminorum, mag 1.14
-    "Deneb",  # alpha Cygni, mag 1.25
-    "Altair",  # alpha Aquilae, mag 0.76
-    "Rigel",  # beta Orionis, mag 0.13
-    "Achernar",  # alpha Eridani, mag 0.46
-    "Capella",  # alpha Aurigae, mag 0.08
-    "Vega",  # alpha Lyrae, mag 0.03 -- Behenian star, former pole star
-    "Alcyone",  # eta Tauri, mag 2.87 -- Behenian star, brightest Pleiad
-    "Alphecca",  # alpha Coronae Borealis, mag 2.22 -- Behenian star, Gemma
-    "Algorab",  # delta Corvi, mag 2.94 -- Behenian star
-    "Deneb_Algedi",  # delta Capricorni, mag 2.83 -- Behenian star, tail of the goat
-    "Alkaid",  # eta Ursae Majoris, mag 1.86 -- Behenian star, tip of Great Bear's tail
-]
-
-# Mapping from AstrologicalPoint names to ephemeris backend fixed-star names
-# Only entries where the names differ (e.g. underscores vs spaces) need to be listed.
-FIXED_STAR_SWE_NAMES: Dict[str, str] = {
-    "Deneb_Algedi": "Deneb Algedi",
-}
+# Fixed stars (v7): single unified channel.
+#
+# Stars are no longer hardcoded here. The authoritative catalog lives in
+# ``libephemeris`` (``libephemeris.fixed_stars.list_fixed_stars``) and is
+# exposed via ``kerykeion.fixed_stars.catalog.FixedStarCatalog``. Callers
+# select which stars to compute by passing names to ``active_fixed_stars``
+# on ``AstrologicalSubjectFactory``; ``active_points`` no longer accepts
+# star names.
+#
+# Backend name mapping: underscores in caller-provided slugs are converted
+# to spaces before the ephemeris lookup (e.g. ``Deneb_Algedi`` →
+# ``Deneb Algedi``). Catalog entries from libephemeris already provide the
+# canonical name and slug forms.
 
 # Declarative mapping of geometrically opposite point pairs.
 # Each derived point is computed as primary.abs_pos + 180 (mod 360).
@@ -2121,13 +2097,13 @@ class AstrologicalSubjectFactory:
                         active_points.remove(tno_name)
 
         # =============================================================================
-        # FIXED STARS (default 23 + dynamic extras via active_fixed_stars)
+        # FIXED STARS (v7: unified channel via active_fixed_stars)
         # =============================================================================
-        # Fixed stars use different calculation method (swe.fixstar_ut).
-        # v6.0: Stars are also collected into the `fixed_stars` list on the model.
+        # All fixed stars are populated from config.active_fixed_stars (forwarded
+        # here as data["_active_fixed_stars"]). Result lives in subject.fixed_stars.
+        # active_points is NOT a channel for stars anymore.
         fixed_stars_list: list = []
 
-        # Helper to calculate a single fixed star and return the point model (or None)
         def _calc_fixed_star(star_name: str, swe_name: str) -> "KerykeionPointModel | None":
             try:
                 pos_ecl = swe.fixstar_ut(swe_name, julian_day, iflag)[0]
@@ -2154,24 +2130,13 @@ class AstrologicalSubjectFactory:
                 logging.warning(f"Could not calculate {star_name} ({swe_name}) position: {e}")
                 return None
 
-        # --- Default 23 stars (controlled by active_points) ---
-        for star_name in FIXED_STARS:
-            if should_calculate(star_name):
-                swe_name = FIXED_STAR_SWE_NAMES.get(star_name, star_name)
-                point = _calc_fixed_star(star_name, swe_name)
-                if point is not None:
-                    data[star_name.lower()] = point
-                    calculated_planets.append(star_name)
-                    fixed_stars_list.append(point)
-                elif star_name in active_points:
-                    active_points.remove(star_name)
-
-        # --- Extra dynamic stars (controlled by config.active_fixed_stars, v6.0) ---
-        extra_fixed_stars = data.get("_active_fixed_stars") or []
-        already_calculated = {s.lower() for s in FIXED_STARS if s.lower() in data}
-        for star_name in extra_fixed_stars:
-            if star_name.lower() in already_calculated:
-                continue  # Already calculated as a default star
+        requested_fixed_stars = data.get("_active_fixed_stars") or []
+        seen_star_slugs: set[str] = set()
+        for star_name in requested_fixed_stars:
+            slug = star_name.strip().lower().replace(" ", "_").replace("-", "_")
+            if not slug or slug in seen_star_slugs:
+                continue
+            seen_star_slugs.add(slug)
             swe_name = star_name.replace("_", " ")
             point = _calc_fixed_star(star_name, swe_name)
             if point is not None:

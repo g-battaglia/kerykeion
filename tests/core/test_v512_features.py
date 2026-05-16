@@ -42,6 +42,17 @@ def _make_subject(**kwargs):
     return AstrologicalSubjectFactory.from_birth_data(**defaults)
 
 
+def _get_star(subject, name: str):
+    """v7 helper: lookup a fixed star via find_fixed_star (unified array).
+
+    Returns the star model (and asserts presence) so tests can assert on
+    attributes without nested ``is not None`` checks.
+    """
+    star = subject.find_fixed_star(name)
+    assert star is not None, f"Star {name} not found in subject.fixed_stars"
+    return star
+
+
 # =====================================================================
 # 1. 5.12.1 — House cusp speeds
 # =====================================================================
@@ -165,27 +176,25 @@ class TestExpandedFixedStars:
 
     @pytest.fixture(autouse=True)
     def _setup(self):
-        self.subject = _make_subject(active_points=ALL_ACTIVE_POINTS)
+        self.subject = _make_subject(active_points=ALL_ACTIVE_POINTS, active_fixed_stars=ALL_FIXED_STARS)
 
     @pytest.mark.parametrize("star_name", NEW_FIXED_STARS)
     def test_new_star_exists_on_subject(self, star_name):
-        """Each new fixed star must be present on the subject model."""
-        attr = star_name.lower()
-        assert hasattr(self.subject, attr), f"Subject has no attribute '{attr}'"
-        star = getattr(self.subject, attr)
-        assert star is not None, f"{star_name} is None on subject"
+        """v7: each fixed star must be present in subject.fixed_stars."""
+        star = self.subject.find_fixed_star(star_name)
+        assert star is not None, f"{star_name} not found in subject.fixed_stars"
 
     @pytest.mark.parametrize("star_name", ALL_FIXED_STARS)
     def test_star_has_valid_position(self, star_name):
         """Each star must have abs_pos in 0–360 range."""
-        star = getattr(self.subject, star_name.lower())
+        star = _get_star(self.subject, star_name)
         assert star is not None, f"{star_name} is None"
         assert 0 <= star.abs_pos < 360, f"{star_name} abs_pos {star.abs_pos} out of range"
 
     @pytest.mark.parametrize("star_name", ALL_FIXED_STARS)
     def test_star_has_sign(self, star_name):
         """Each star must be assigned a zodiac sign."""
-        star = getattr(self.subject, star_name.lower())
+        star = _get_star(self.subject, star_name)
         assert star.sign is not None
         assert star.sign in [
             "Ari",
@@ -205,20 +214,20 @@ class TestExpandedFixedStars:
     @pytest.mark.parametrize("star_name", ALL_FIXED_STARS)
     def test_star_is_never_retrograde(self, star_name):
         """Fixed stars must never be retrograde."""
-        star = getattr(self.subject, star_name.lower())
+        star = _get_star(self.subject, star_name)
         assert star.retrograde is False
 
     @pytest.mark.parametrize("star_name", ALL_FIXED_STARS)
     def test_star_has_house(self, star_name):
         """Each star must be assigned to a house."""
-        star = getattr(self.subject, star_name.lower())
+        star = _get_star(self.subject, star_name)
         assert star.house is not None
         assert isinstance(star.house, (int, str))
 
     @pytest.mark.parametrize("star_name", ALL_FIXED_STARS)
     def test_star_name_matches(self, star_name):
         """The .name field must match the star name."""
-        star = getattr(self.subject, star_name.lower())
+        star = _get_star(self.subject, star_name)
         assert star.name == star_name
 
 
@@ -227,37 +236,37 @@ class TestFixedStarMagnitude:
 
     @pytest.fixture(autouse=True)
     def _setup(self):
-        self.subject = _make_subject(active_points=ALL_ACTIVE_POINTS)
+        self.subject = _make_subject(active_points=ALL_ACTIVE_POINTS, active_fixed_stars=ALL_FIXED_STARS)
 
     @pytest.mark.parametrize("star_name", ALL_FIXED_STARS)
     def test_star_has_magnitude(self, star_name):
         """Each fixed star must have a non-None magnitude."""
-        star = getattr(self.subject, star_name.lower())
+        star = _get_star(self.subject, star_name)
         assert star.magnitude is not None, f"{star_name} has no magnitude"
         assert isinstance(star.magnitude, float), f"{star_name} magnitude is not float"
 
     def test_sirius_is_brightest(self):
         """Sirius (mag ~-1.46) should have the lowest (brightest) magnitude."""
-        sirius_mag = self.subject.sirius.magnitude
+        sirius_mag = _get_star(self.subject, "Sirius").magnitude
         assert sirius_mag < 0, f"Sirius magnitude {sirius_mag} should be negative (brightest star)"
 
     def test_algorab_is_dimmest_of_set(self):
         """Algorab (mag ~+2.94) should be the dimmest star in our set."""
-        algorab_mag = self.subject.algorab.magnitude
+        algorab_mag = _get_star(self.subject, "Algorab").magnitude
         for star_name in ALL_FIXED_STARS:
             if star_name == "Algorab":
                 continue
-            other_mag = getattr(self.subject, star_name.lower()).magnitude
+            other_mag = _get_star(self.subject, star_name).magnitude
             assert algorab_mag >= other_mag, f"Algorab ({algorab_mag}) should be dimmer than {star_name} ({other_mag})"
 
     def test_known_magnitudes_approximate(self):
         """Spot-check a few well-known stellar magnitudes."""
         # These are approximate visual magnitudes; allow generous tolerance
-        assert self.subject.sirius.magnitude == pytest.approx(-1.46, abs=0.2)
-        assert self.subject.canopus.magnitude == pytest.approx(-0.74, abs=0.2)
-        assert self.subject.arcturus.magnitude == pytest.approx(-0.05, abs=0.2)
-        assert self.subject.rigel.magnitude == pytest.approx(0.13, abs=0.3)
-        assert self.subject.aldebaran.magnitude == pytest.approx(0.86, abs=0.2)
+        assert _get_star(self.subject, "Sirius").magnitude == pytest.approx(-1.46, abs=0.2)
+        assert _get_star(self.subject, "Canopus").magnitude == pytest.approx(-0.74, abs=0.2)
+        assert _get_star(self.subject, "Arcturus").magnitude == pytest.approx(-0.05, abs=0.2)
+        assert _get_star(self.subject, "Rigel").magnitude == pytest.approx(0.13, abs=0.3)
+        assert _get_star(self.subject, "Aldebaran").magnitude == pytest.approx(0.86, abs=0.2)
 
     def test_planet_magnitude_is_none(self):
         """Planets should have magnitude=None (it's a star-only field)."""
@@ -271,12 +280,12 @@ class TestFixedStarDeclination:
 
     @pytest.fixture(autouse=True)
     def _setup(self):
-        self.subject = _make_subject(active_points=ALL_ACTIVE_POINTS)
+        self.subject = _make_subject(active_points=ALL_ACTIVE_POINTS, active_fixed_stars=ALL_FIXED_STARS)
 
     @pytest.mark.parametrize("star_name", ALL_FIXED_STARS)
     def test_star_has_declination(self, star_name):
         """Each fixed star must have a non-None declination."""
-        star = getattr(self.subject, star_name.lower())
+        star = _get_star(self.subject, star_name)
         assert star.declination is not None, f"{star_name} has no declination"
         assert isinstance(star.declination, float), f"{star_name} declination is not float"
         assert -90 <= star.declination <= 90, f"{star_name} declination {star.declination} out of range"

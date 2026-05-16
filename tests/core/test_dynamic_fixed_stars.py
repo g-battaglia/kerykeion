@@ -47,8 +47,8 @@ def subject_extra_stars():
 
 @pytest.fixture(scope="module")
 def subject_all_stars():
-    """Subject with all default active_points (includes 23 hardcoded stars)."""
-    from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+    """Subject with the full ``DEFAULT_FIXED_STARS`` preset enabled."""
+    from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, DEFAULT_FIXED_STARS
 
     return AstrologicalSubjectFactory.from_birth_data(
         "Stars All",
@@ -64,6 +64,7 @@ def subject_all_stars():
         nation="IT",
         online=False,
         active_points=ALL_ACTIVE_POINTS,
+        active_fixed_stars=list(DEFAULT_FIXED_STARS),
     )
 
 
@@ -107,11 +108,16 @@ class TestDynamicFixedStars:
             assert 0 <= star.abs_pos < 360
             assert star.sign is not None
 
-    def test_default_named_fields_still_work(self, subject_all_stars):
-        """Default hardcoded star fields should still be populated."""
-        assert subject_all_stars.regulus is not None
-        assert subject_all_stars.spica is not None
-        assert 0 <= subject_all_stars.regulus.abs_pos < 360
+    def test_find_fixed_star_lookup(self, subject_all_stars):
+        """v7: stars are accessed via subject.find_fixed_star (unified array)."""
+        regulus = subject_all_stars.find_fixed_star("Regulus")
+        spica = subject_all_stars.find_fixed_star("Spica")
+        assert regulus is not None
+        assert spica is not None
+        assert 0 <= regulus.abs_pos < 360
+        # Case- and separator-insensitive
+        assert subject_all_stars.find_fixed_star("REGULUS") is regulus
+        assert subject_all_stars.find_fixed_star("deneb_algedi") is not None
 
     def test_nonexistent_star_silently_skipped(self):
         """Non-existent star names should not crash, just be silently skipped."""
@@ -137,76 +143,22 @@ class TestDynamicFixedStars:
 class TestFixedStarEdgeCases:
     """Test edge-case branches in FixedStarDiscoveryFactory and helpers."""
 
-    def test_dispatches_to_swisseph_backend(self, subject_all_stars):
-        """swisseph backend must use the Swiss-specific discovery path."""
-        from unittest.mock import patch
-
-        with (
-            patch("kerykeion.fixed_stars.discovery_factory.BACKEND_NAME", "swisseph"),
-            patch.object(
-                FixedStarDiscoveryFactory,
-                "_find_prominent_stars_swisseph",
-                return_value=["swiss"],
-            ) as swiss_path,
-            patch.object(FixedStarDiscoveryFactory, "_find_prominent_stars_libephemeris") as lib_path,
-        ):
-            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
-
-        assert result == ["swiss"]
-        swiss_path.assert_called_once()
-        lib_path.assert_not_called()
-
-    def test_dispatches_to_libephemeris_backend(self, subject_all_stars):
-        """libephemeris backend must use the libephemeris-specific discovery path."""
-        from unittest.mock import patch
-
-        with (
-            patch("kerykeion.fixed_stars.discovery_factory.BACKEND_NAME", "libephemeris"),
-            patch.object(FixedStarDiscoveryFactory, "_find_prominent_stars_swisseph") as swiss_path,
-            patch.object(
-                FixedStarDiscoveryFactory,
-                "_find_prominent_stars_libephemeris",
-                return_value=["lib"],
-            ) as lib_path,
-        ):
-            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
-
-        assert result == ["lib"]
-        lib_path.assert_called_once()
-        swiss_path.assert_not_called()
-
-    def test_libephemeris_backend_does_not_parse_swiss_catalog(self, subject_all_stars):
-        """libephemeris fixed-star discovery must not read sefstars.txt."""
-        if BACKEND_NAME != "libephemeris":
-            pytest.skip("libephemeris-specific behavior")
-
+    def test_catalog_source_is_libephemeris(self, subject_all_stars):
+        """v7: discovery sources its catalog exclusively from libephemeris (no sefstars.txt)."""
         from unittest.mock import patch
 
         with patch(
-            "kerykeion.fixed_stars.discovery_factory._parse_star_names_from_catalog",
-            side_effect=AssertionError("sefstars.txt must not be used by libephemeris"),
+            "kerykeion.fixed_stars.discovery_factory.FixedStarCatalog.list_all",
+            return_value=[],
         ):
             result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
-        assert isinstance(result, list)
+        assert result == []
 
-    def test_empty_catalog_returns_empty(self, subject_all_stars):
-        """If the backend catalog is empty, discovery should return []."""
-        from unittest.mock import patch
+    def test_no_sefstars_parser_present(self):
+        """v7: the legacy ``_parse_star_names_from_catalog`` helper is gone."""
+        from kerykeion.fixed_stars import discovery_factory as df
 
-        if BACKEND_NAME == "swisseph":
-            target = "kerykeion.fixed_stars.discovery_factory._parse_star_names_from_catalog"
-        else:
-            target = "kerykeion.fixed_stars.discovery_factory.swe.list_fixed_stars"
-        with patch(target, return_value=[]):
-            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
-            assert result == []
-
-    def test_parse_catalog_exception_returns_empty(self):
-        """_parse_star_names_from_catalog should return empty tuple on file read error."""
-        from kerykeion.fixed_stars.discovery_factory import _parse_star_names_from_catalog
-
-        result = _parse_star_names_from_catalog("/nonexistent/path/sefstars.txt")
-        assert result == ()
+        assert not hasattr(df, "_parse_star_names_from_catalog")
 
     def test_empty_planet_positions_returns_empty(self):
         """If subject has no active points with abs_pos, should return []."""
@@ -217,22 +169,6 @@ class TestFixedStarEdgeCases:
         mock_subject.julian_day = 2451545.0
         result = FixedStarDiscoveryFactory.find_prominent_stars(mock_subject, orb=2.0)
         assert result == []
-
-    def test_fixstar2_mag_exception_gives_none(self, subject_all_stars):
-        """If swe.fixstar2_mag raises, magnitude should be None for that star."""
-        if BACKEND_NAME != "swisseph":
-            pytest.skip("fixstar2_mag enrichment is Swiss-specific in discovery")
-
-        from unittest.mock import patch
-
-        def fail_mag(name):
-            raise RuntimeError("No magnitude data")
-
-        with patch("kerykeion.fixed_stars.discovery_factory.swe.fixstar2_mag", side_effect=fail_mag):
-            result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
-            # Stars should still be returned, but with magnitude=None
-            for star in result:
-                assert star.magnitude is None
 
     def test_fixstar_ut_exception_skips_star(self, subject_all_stars):
         """If swe.fixstar_ut raises for some stars, those stars are silently skipped."""

@@ -2211,8 +2211,35 @@ class ChartDrawer:  # type: ignore[no-redef]
                 body["is_active"] = True
                 self.available_planets_setting.append(body)
 
-        # Warn about potential crowding with many active points
-        active_points_count = len(self.available_planets_setting)
+        # v7: extend settings with dynamic catalog fixed stars from subject.fixed_stars.
+        # These stars are NOT in active_points (active_points only carries
+        # planets/asteroids/angular points/etc); they live as KerykeionPointModel
+        # entries inside subject.fixed_stars and must always render when present.
+        from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
+
+        dynamic_star_names: list[str] = []
+        for subj in (self.first_obj, self.second_obj):
+            if subj is None:
+                continue
+            for star in getattr(subj, "fixed_stars", None) or []:
+                star_name = getattr(star, "name", None)
+                if star_name and star_name not in dynamic_star_names:
+                    dynamic_star_names.append(star_name)
+
+        if dynamic_star_names:
+            extra_star_settings = build_dynamic_fixed_star_settings(
+                dynamic_star_names,
+                existing_settings=self.planets_settings,
+            )
+            for setting in extra_star_settings:
+                setting["is_active"] = True
+            self.planets_settings.extend(extra_star_settings)
+            self.available_planets_setting.extend(extra_star_settings)
+
+        # Warn about potential crowding with many active points (planets only;
+        # fixed stars are excluded from the crowding heuristic since they have
+        # their own visibility filter).
+        active_points_count = len(self.available_planets_setting) - len(dynamic_star_names)
         if active_points_count > 24:
             logger.warning(
                 "ChartDrawer detected %s active celestial points; rendering may look crowded beyond 24.",
@@ -2885,13 +2912,30 @@ class ChartDrawer:  # type: ignore[no-redef]
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         point_attribute_names: list[str],
     ) -> list[KerykeionPointModel]:
-        """Collect ordered active celestial points for a subject."""
+        """Collect ordered active celestial points for a subject.
+
+        Looks up points by attribute name first; for fixed stars (v7 unified
+        array, not subject attributes) falls back to ``subject.fixed_stars``
+        lookup by case/separator-insensitive name match.
+        """
+
+        # Build a quick lookup over subject.fixed_stars by normalized slug
+        star_lookup: dict[str, KerykeionPointModel] = {}
+        for star in getattr(subject, "fixed_stars", None) or []:
+            star_name = getattr(star, "name", None)
+            if not star_name:
+                continue
+            slug = star_name.strip().lower().replace(" ", "_").replace("-", "_")
+            star_lookup[slug] = star
 
         collected: list[KerykeionPointModel] = []
 
         for raw_name in point_attribute_names:
             attr_name = raw_name if hasattr(subject, raw_name) else raw_name.lower()
             point = getattr(subject, attr_name, None)
+            if point is None:
+                slug = raw_name.strip().lower().replace(" ", "_").replace("-", "_")
+                point = star_lookup.get(slug)
             if point is None:
                 continue
             collected.append(point)

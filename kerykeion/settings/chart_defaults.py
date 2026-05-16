@@ -693,6 +693,56 @@ DEFAULT_CHART_ASPECTS_SETTINGS: Final[list[_ChartAspectSetting]] = [
 ]
 
 
+# =============================================================================
+# Dynamic fixed-star settings (v7)
+# =============================================================================
+# Catalog fixed stars passed via ``active_fixed_stars`` may not have a dedicated
+# entry in ``DEFAULT_CELESTIAL_POINTS_SETTINGS``. The chart drawer extends
+# its settings list at runtime with synthetic entries produced here, so any
+# star from the libephemeris catalog can render on the wheel with a fallback
+# glyph and a default color.
+
+DYNAMIC_FIXED_STAR_SETTING_ID_BASE: Final[int] = 1000
+"""Base ID for synthetic fixed-star settings. Chosen well above the highest
+static ID in DEFAULT_CELESTIAL_POINTS_SETTINGS (~75)."""
+
+
+DEFAULT_FIXED_STAR_COLOR: Final[str] = "var(--kerykeion-chart-color-fixed-star-default, #d4a053)"
+"""Fallback color for dynamic fixed stars without a dedicated CSS variable."""
+
+
+def build_dynamic_fixed_star_settings(
+    star_names: "list[str]",
+    existing_settings: "list | tuple",
+) -> "list[_CelestialPointSetting]":
+    """Build per-star ``_CelestialPointSetting`` entries for dynamic catalog stars.
+
+    Skips names that already appear in ``existing_settings`` (e.g. the 23
+    hardcoded entries) so they keep their dedicated colors and labels.
+
+    Args:
+        star_names: Catalog star names (IAU canonical, with spaces). The
+            resulting setting uses the same string for both ``name`` and
+            ``label`` and tags ``glyph_id="FixedStar"`` for the generic glyph.
+        existing_settings: Current celestial-point settings list; entries
+            with matching names are skipped.
+    """
+    existing_names = {body.get("name") for body in existing_settings}
+    extras: list[_CelestialPointSetting] = []
+    for i, name in enumerate(star_names):
+        if name in existing_names:
+            continue
+        entry: _CelestialPointSetting = {
+            "id": DYNAMIC_FIXED_STAR_SETTING_ID_BASE + i,
+            "name": name,
+            "color": DEFAULT_FIXED_STAR_COLOR,
+            "element_points": 0,
+            "label": name.replace("_", " "),
+        }
+        extras.append(entry)
+    return extras
+
+
 #: Default active points for predictive factories (midpoints, solar arcs, etc.).
 DEFAULT_PREDICTIVE_POINTS: Final[tuple[str, ...]] = (
     "Sun",
@@ -719,4 +769,7 @@ __all__ = [
     "DEFAULT_CELESTIAL_POINTS_SETTINGS",
     "DEFAULT_CHART_ASPECTS_SETTINGS",
     "DEFAULT_PREDICTIVE_POINTS",
+    "DYNAMIC_FIXED_STAR_SETTING_ID_BASE",
+    "DEFAULT_FIXED_STAR_COLOR",
+    "build_dynamic_fixed_star_settings",
 ]
