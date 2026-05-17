@@ -2227,6 +2227,10 @@ class ChartDrawer:  # type: ignore[no-redef]
                     dynamic_star_names.append(star_name)
 
         if dynamic_star_names:
+            # Catalog stars without a static setting → generated on the fly
+            # with glyph_id="FixedStar" (build_dynamic_fixed_star_settings skips
+            # names that already have a dedicated entry, so the hardcoded 23
+            # keep their dedicated colors).
             extra_star_settings = build_dynamic_fixed_star_settings(
                 dynamic_star_names,
                 existing_settings=self.planets_settings,
@@ -2235,6 +2239,20 @@ class ChartDrawer:  # type: ignore[no-redef]
                 setting["is_active"] = True
             self.planets_settings.extend(extra_star_settings)
             self.available_planets_setting.extend(extra_star_settings)
+
+            # Stars with an existing static setting (e.g. Regulus, Sirius) are
+            # not in active_points (the v7 channel is separate) but must still
+            # render. Activate them here so the wheel iterates them.
+            extra_names_set = {s["name"] for s in extra_star_settings}
+            already_active_names = {s["name"] for s in self.available_planets_setting}
+            for star_name in dynamic_star_names:
+                if star_name in extra_names_set or star_name in already_active_names:
+                    continue
+                for body in self.planets_settings:
+                    if body["name"] == star_name:
+                        body["is_active"] = True
+                        self.available_planets_setting.append(body)
+                        break
 
         # Warn about potential crowding with many active points (planets only;
         # fixed stars are excluded from the crowding heuristic since they have

@@ -678,8 +678,13 @@ class TestChartsUtilsInternalFunctions:
             Descendant="Descendant",
             Imum_Coeli="Imum Coeli",
         )
-        with pytest.raises(KerykeionException):
-            get_decoded_kerykeion_celestial_point_name("NonExistentPoint", lang_model)
+        # v7: unknown points no longer raise — they fall back to a slugified
+        # version of the input so catalog fixed stars (Vindemiatrix, Polaris,
+        # etc.) can render without a language entry.
+        result = get_decoded_kerykeion_celestial_point_name("Vindemiatrix", lang_model)
+        assert result == "Vindemiatrix"
+        result = get_decoded_kerykeion_celestial_point_name("Asellus_Australis", lang_model)
+        assert result == "Asellus Australis"
 
 
 class TestPlanetGridLayout:

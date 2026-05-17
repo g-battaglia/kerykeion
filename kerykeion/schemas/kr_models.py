@@ -947,7 +947,13 @@ class SingleChartAspectsModel(SubscriptableBaseModel):
     aspects: list[AspectModel] = Field(
         description="List of calculated aspects within the chart, filtered based on orb settings."
     )
-    active_points: list[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
+    # v7: stars from the libephemeris catalog are not part of the AstrologicalPoint
+    # Literal (it would explode to thousands of entries). They appear here as
+    # plain strings — the planet validation literal is widened to accept either.
+    active_points: list[Union[AstrologicalPoint, str]] = Field(
+        description="List of active points used in the calculation. Planets/asteroids/etc. "
+        "use the AstrologicalPoint literal; catalog fixed stars use plain strings.",
+    )
     active_aspects: list["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 
 
@@ -970,7 +976,10 @@ class DualChartAspectsModel(SubscriptableBaseModel):
     aspects: list[AspectModel] = Field(
         description="List of calculated aspects between the two charts, filtered based on orb settings."
     )
-    active_points: list[AstrologicalPoint] = Field(description="List of active points used in the calculation.")
+    # v7: see SingleChartAspectsModel.active_points — catalog fixed stars are plain strings.
+    active_points: list[Union[AstrologicalPoint, str]] = Field(
+        description="List of active points used in the calculation. Catalog fixed stars use plain strings.",
+    )
     active_aspects: list["ActiveAspect"] = Field(description="List of active aspects with their orb settings.")
 
 

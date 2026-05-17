@@ -393,8 +393,10 @@ def get_decoded_kerykeion_celestial_point_name(
 
     if input_planet_name in language_keys:
         return celestial_point_language[input_planet_name]
-    else:
-        raise KerykeionException(f"Celestial point {input_planet_name} not found in language model.")
+    # v7: catalog fixed stars are not in the translations table. Fall back to the
+    # caller-provided slug with underscores replaced by spaces — labels remain
+    # readable on the chart wheel without polluting the language model.
+    return input_planet_name.replace("_", " ")
 
 
 # =============================================================================
@@ -1113,8 +1115,10 @@ def draw_aspect_grid(
         parts.append(
             f'<rect kr:node="AspectsGridRect" x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
         )
+        # v7: catalog stars fall back to the generic #FixedStar symbol.
+        glyph_a = planet_a.get("glyph_id") or planet_a["name"]
         parts.append(
-            f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{planet_a["name"]}" />'
+            f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{glyph_a}" />'
         )
 
         # Update the starting coordinates for the next box
@@ -1398,8 +1402,18 @@ def draw_transit_aspect_list(
 
             inner_path += f'<g transform="translate({horizontal_position},{vertical_position})">'
 
+            # v7: catalog fixed stars don't ship a dedicated <symbol id="X">;
+            # resolve glyph id once per point — known names render with their
+            # own glyph, unknown names fall back to "FixedStar". This helper
+            # tolerates both the language model (Pydantic) and a settings list
+            # accepted by the function signature.
+            from kerykeion.settings.chart_defaults import resolve_glyph_id
+
+            def _aspect_glyph(point_name: str) -> str:
+                return resolve_glyph_id(point_name)
+
             # First planet symbol
-            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p1"]]["name"]}" />'
+            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{_aspect_glyph(aspect["p1"])}" />'
 
             # Aspect symbol
             aspect_name = aspect["aspect"]
@@ -1408,7 +1422,7 @@ def draw_transit_aspect_list(
 
             # Second planet symbol
             inner_path += '<g transform="translate(30,0)">'
-            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{celestial_point_language[aspect["p2"]]["name"]}" />'
+            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{_aspect_glyph(aspect["p2"])}" />'
             inner_path += "</g>"
 
             # Difference in degrees
@@ -1813,10 +1827,13 @@ def draw_main_planet_grid(
             celestial_point_language,
         )
 
+        # v7: catalog stars without dedicated symbols fall back to #FixedStar.
+        from kerykeion.settings.chart_defaults import resolve_glyph_id
+        planet_glyph = resolve_glyph_id(planet["name"])
         svg_output += (
             f'<g transform="translate({offset},{BASE_Y + line_height})">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{decoded_name}</text>'
-            f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet["name"]}" /></g>'
+            f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet_glyph}" /></g>'
             f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
             f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{planet["sign"]}" /></g>'
         )

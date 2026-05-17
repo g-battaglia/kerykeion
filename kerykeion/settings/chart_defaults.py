@@ -22,9 +22,14 @@ class _CelestialPointSettingRequired(TypedDict):
 
 
 class _CelestialPointSetting(_CelestialPointSettingRequired, total=False):
-    """Celestial point settings with optional is_active field."""
+    """Celestial point settings with optional is_active and glyph_id fields."""
 
     is_active: bool
+    # v7: when set, the SVG renderer uses this as the symbol reference
+    # (xlink:href="#{glyph_id}") instead of the point name. Used to make
+    # catalog fixed stars fall back to the generic "#FixedStar" symbol when
+    # the template doesn't ship a per-star <symbol>.
+    glyph_id: str
 
 
 class _ChartAspectSettingRequired(TypedDict):
@@ -711,6 +716,47 @@ DEFAULT_FIXED_STAR_COLOR: Final[str] = "var(--kerykeion-chart-color-fixed-star-d
 """Fallback color for dynamic fixed stars without a dedicated CSS variable."""
 
 
+#: Names that ship with their own ``<symbol id="...">`` in the SVG templates.
+#: Anything not in this set falls back to the generic ``#FixedStar`` glyph.
+KNOWN_GLYPH_NAMES: Final[frozenset[str]] = frozenset({
+    # Planets
+    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
+    "Uranus", "Neptune", "Pluto",
+    # Lunar nodes
+    "Mean_North_Lunar_Node", "True_North_Lunar_Node",
+    "Mean_South_Lunar_Node", "True_South_Lunar_Node",
+    # Centaurs / Lilith / minor bodies
+    "Chiron", "Pholus", "Mean_Lilith", "True_Lilith", "Earth",
+    # Asteroids
+    "Ceres", "Pallas", "Juno", "Vesta",
+    # TNOs
+    "Eris", "Sedna", "Haumea", "Makemake", "Ixion", "Orcus", "Quaoar",
+    # Hardcoded fixed stars with dedicated glyphs
+    "Regulus", "Spica", "Aldebaran", "Antares", "Sirius", "Fomalhaut",
+    "Algol", "Betelgeuse", "Canopus", "Procyon", "Arcturus", "Pollux",
+    "Deneb", "Altair", "Rigel", "Achernar", "Capella", "Vega",
+    "Alcyone", "Alphecca", "Algorab", "Deneb_Algedi", "Alkaid",
+    # Arabic parts
+    "Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei",
+    # Axes / extras
+    "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
+    "Vertex", "Anti_Vertex", "East_Point",
+    # Uranian hypotheticals
+    "Cupido", "Hades", "Zeus", "Kronos", "Apollon", "Admetos",
+    "Vulkanus", "Poseidon",
+})
+
+
+def resolve_glyph_id(name: str) -> str:
+    """Resolve the SVG ``<symbol>`` id for a given point name.
+
+    Returns the name itself for known glyphs, or ``"FixedStar"`` as a
+    catch-all for catalog fixed stars (and any other future dynamic point)
+    that doesn't ship a dedicated symbol in the templates.
+    """
+    return name if name in KNOWN_GLYPH_NAMES else "FixedStar"
+
+
 def build_dynamic_fixed_star_settings(
     star_names: "list[str]",
     existing_settings: "list | tuple",
@@ -738,6 +784,7 @@ def build_dynamic_fixed_star_settings(
             "color": DEFAULT_FIXED_STAR_COLOR,
             "element_points": 0,
             "label": name.replace("_", " "),
+            "glyph_id": "FixedStar",
         }
         extras.append(entry)
     return extras
@@ -772,4 +819,6 @@ __all__ = [
     "DYNAMIC_FIXED_STAR_SETTING_ID_BASE",
     "DEFAULT_FIXED_STAR_COLOR",
     "build_dynamic_fixed_star_settings",
+    "KNOWN_GLYPH_NAMES",
+    "resolve_glyph_id",
 ]

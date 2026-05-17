@@ -135,6 +135,12 @@ class AspectsFactory:
                 subject_active,
                 active_points,
             )
+            # v7: catalog fixed stars carried on the subject always participate
+            # in aspect calculation, even when the caller restricted active_points
+            # to planets only — they are a different conceptual channel.
+            for name in dynamic_star_names:
+                if name not in active_points_resolved:
+                    active_points_resolved.append(name)
 
         return AspectsFactory._create_single_chart_aspects_model(
             subject,
@@ -230,6 +236,12 @@ class AspectsFactory:
             second_subject_active,
             active_points_resolved,
         )
+
+        # v7: catalog fixed stars from either subject always participate
+        # (separate channel, not gated by active_points).
+        for name in dynamic_star_names:
+            if name not in active_points_resolved:
+                active_points_resolved.append(name)
 
         return AspectsFactory._create_dual_chart_aspects_model(
             first_subject,

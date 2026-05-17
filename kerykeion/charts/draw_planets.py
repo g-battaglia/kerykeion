@@ -180,6 +180,10 @@ def draw_planets(
         point_details = available_kerykeion_celestial_points[point_idx]
         # In dual charts, main subject is horoscope "0"
         h_id = "0" if chart_type in DUAL_CHART_TYPES else None
+        # v7: dynamic catalog fixed stars carry a ``glyph_id`` setting pointing
+        # to a generic ``#FixedStar`` symbol (their per-star <symbol> doesn't
+        # exist in the template). Other points fall back to their own slug.
+        glyph_id = available_planets_setting[point_idx].get("glyph_id")
         output += _generate_point_svg(
             point_details,
             point_x,
@@ -187,6 +191,7 @@ def draw_planets(
             scale_factor,
             available_planets_setting[point_idx]["name"],
             horoscope_id=h_id,
+            glyph_id=glyph_id,
         )
 
     # -------------------------------------------------------------------------
@@ -740,6 +745,7 @@ def _generate_point_svg(
     scale: float,
     point_name: str,
     horoscope_id: Union[str, None] = None,
+    glyph_id: Union[str, None] = None,
 ) -> str:
     """
     Generate SVG markup for a celestial point.
@@ -777,7 +783,7 @@ def _generate_point_svg(
         f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr}{horoscope_attr}{gauq_attr} ',
         f'kr:cx="{x}" kr:cy="{y}" ',
         f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
-        f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />',
+        f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{glyph_id or point_name}" />',
     ]
 
     if is_retrograde:
@@ -1079,6 +1085,8 @@ def _draw_secondary_points(
 
         # Build point symbol with kr: metadata (matching _generate_point_svg attributes)
         point_name = points_settings[point_idx]["name"]
+        # v7: catalog fixed stars fall back to the generic FixedStar symbol.
+        point_glyph = points_settings[point_idx].get("glyph_id") or point_name
         kr_attrs = f'kr:node="ChartPoint" kr:slug="{point_name}" kr:horoscope="1"'
         if celestial_points is not None and point_idx < len(celestial_points):
             cp = celestial_points[point_idx]
@@ -1090,7 +1098,7 @@ def _draw_secondary_points(
         kr_attrs += f' kr:cx="{point_x}" kr:cy="{point_y}"'
         point_svg = (
             f'<g {kr_attrs}{retro_attr} class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
-            f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{point_name}" />'
+            f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{point_glyph}" />'
         )
         if is_retrograde:
             # Same offset logic as _generate_point_svg: bottom-right foot of the glyph.

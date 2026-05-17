@@ -517,6 +517,14 @@
                 </g>
             </g>
         </symbol>
+        <symbol id="FixedStar">
+            <g transform="translate(2,2)">
+                <g transform="scale(2)">
+                    <path d="M6 1 L7 5 L11 5.5 L8 8 L9 11.5 L6 9.5 L3 11.5 L4 8 L1 5.5 L5 5 Z"
+                        style="fill: none; stroke: var(--kerykeion-chart-color-fixed-star-default, #d4a053); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4;" />
+                </g>
+            </g>
+        </symbol>
         <symbol id="Spica">
             <g transform="translate(-2,2)">
                 <g transform="scale(3.5)">
