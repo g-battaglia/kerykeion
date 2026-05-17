@@ -2142,6 +2142,23 @@ class AstrologicalSubjectFactory:
             if point is not None:
                 fixed_stars_list.append(point)
 
+        # v7: emit a single actionable warning when nothing could be calculated
+        # on the swisseph backend — almost always caused by a missing
+        # ``sefstars.txt`` in KERYKEION_EPHE_PATH. The fix is documented in
+        # site/docs/swisseph_configuration.md (section "Fixed Stars Catalog").
+        if requested_fixed_stars and not fixed_stars_list and BACKEND_NAME == "swisseph":
+            logging.warning(
+                "No fixed stars could be calculated with the swisseph backend. "
+                "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "
+                "is not bundled with kerykeion due to licensing. Download it "
+                "from https://github.com/aloistr/swisseph/tree/master/ephe "
+                "and place it in KERYKEION_EPHE_PATH (currently: %s). "
+                "Alternatively, use the libephemeris backend "
+                "(KERYKEION_BACKEND=libephemeris) which ships its own "
+                "catalog. See site/docs/swisseph_configuration.md for details.",
+                EPHE_DATA_PATH or "<unset>",
+            )
+
         data["fixed_stars"] = fixed_stars_list
 
         # =============================================================================

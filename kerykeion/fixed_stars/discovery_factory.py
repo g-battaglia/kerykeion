@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import logging
 
-from kerykeion.ephemeris_backend import EPHE_DATA_PATH, swe
+from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, swe
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
@@ -177,6 +177,20 @@ class FixedStarDiscoveryFactory:
         finally:
             reset = getattr(swe, "reset_session", None) or swe.close
             reset()
+
+        # v7: emit a single actionable warning when nothing was returned on
+        # the swisseph backend — almost always means sefstars.txt is missing
+        # from KERYKEION_EPHE_PATH. See site/docs/swisseph_configuration.md.
+        if not prominent and BACKEND_NAME == "swisseph":
+            logger.warning(
+                "FixedStarDiscoveryFactory found no stars on the swisseph backend. "
+                "The catalog file 'sefstars.txt' is not bundled with kerykeion due "
+                "to licensing. Download it from "
+                "https://github.com/aloistr/swisseph/tree/master/ephe and place it "
+                "in KERYKEION_EPHE_PATH (%s). Alternatively use "
+                "KERYKEION_BACKEND=libephemeris (ships its own catalog).",
+                EPHE_DATA_PATH or "<unset>",
+            )
 
         prominent.sort(key=lambda p: p.magnitude if p.magnitude is not None else 99)
         return prominent

@@ -123,14 +123,81 @@ print(f"Data path: {EPHE_DATA_PATH}")
 # Data path: /path/to/your/se1/files
 ```
 
-## Fixed star discovery
+## Fixed Stars Catalog (`sefstars.txt`)
 
-When using the swisseph backend, `FixedStarDiscoveryFactory` reads the
-`sefstars.txt` catalog from the directory specified by `KERYKEION_EPHE_PATH`.
-If the file is not present, the discovery returns an empty list (no crash).
+> **Important — required for any fixed-star feature on the swisseph backend.**
 
-With the libephemeris backend, the factory uses its own native catalog and
-does not need `sefstars.txt`.
+Fixed-star functionality on the swisseph backend depends on the
+`sefstars.txt` data file, which is **not bundled with kerykeion** (it is
+distributed under the Swiss Ephemeris license by Astrodienst, which we
+cannot redistribute). You must download it yourself.
+
+Affected features (all require `sefstars.txt` when `KERYKEION_BACKEND=swisseph`):
+
+| Feature | Effect when file is missing |
+|---------|-----------------------------|
+| `AstrologicalSubjectFactory.from_birth_data(..., active_fixed_stars=[...])` | `subject.fixed_stars` ends up empty; warning logged. |
+| `FixedStarDiscoveryFactory.find_prominent_stars(subject)` | Returns `[]`; warning logged. |
+| `subject.find_fixed_star(name)` | Returns `None` (the underlying array is empty). |
+| Chart wheel rendering of stars passed via `active_fixed_stars` | The stars are simply absent from the SVG. |
+
+### Where to get the file
+
+Download `sefstars.txt` from the official Swiss Ephemeris repository:
+
+[https://github.com/aloistr/swisseph/tree/master/ephe](https://github.com/aloistr/swisseph/tree/master/ephe)
+
+The automatic setup utility (`python -m kerykeion.swisseph_setup`) already
+downloads this file alongside the planetary ephemerides — using it is the
+shortest path. If you do the setup manually, place the file in the
+directory pointed to by `KERYKEION_EPHE_PATH`:
+
+```bash
+# Example: download to the default location
+mkdir -p ~/.kerykeion/sweph
+curl -L -o ~/.kerykeion/sweph/sefstars.txt \
+  https://raw.githubusercontent.com/aloistr/swisseph/master/ephe/sefstars.txt
+export KERYKEION_EPHE_PATH=~/.kerykeion/sweph
+```
+
+### License
+
+`sefstars.txt` is part of the Swiss Ephemeris distribution and is
+licensed under **AGPL-3.0 by Astrodienst AG**. If you ship a product that
+includes this file, the Swiss Ephemeris license terms apply to that
+component — see <https://www.astro.com/swisseph/swephinfo_e.htm>.
+
+### Diagnostic warning
+
+When fixed-star calculations on the swisseph backend produce zero stars,
+kerykeion logs a single warning at WARNING level:
+
+```
+No fixed stars could be calculated with the swisseph backend. The Swiss
+Ephemeris fixed-star catalog file ('sefstars.txt') is not bundled with
+kerykeion due to licensing. Download it from
+https://github.com/aloistr/swisseph/tree/master/ephe and place it in
+KERYKEION_EPHE_PATH (currently: /path/to/sweph). Alternatively, use the
+libephemeris backend (KERYKEION_BACKEND=libephemeris) which ships its
+own catalog. See site/docs/swisseph_configuration.md for details.
+```
+
+### Quick alternative
+
+If you don't have a specific reason to use swisseph for fixed stars, the
+**libephemeris backend ships a 116-star catalog built-in** (Hipparcos +
+IAU WGSN, AGPL-3.0 owned by the kerykeion project) and does not require
+any external data file:
+
+```bash
+export KERYKEION_BACKEND=libephemeris  # default; no setup needed
+```
+
+The list of available stars on either backend is exposed by
+`kerykeion.fixed_stars.FixedStarCatalog.list_all()` (note: this accessor
+reads from libephemeris regardless of the active backend, so the names
+are usable on both backends as long as the corresponding ephemeris data
+is available).
 
 ## Fallback behavior (no .se1 files)
 

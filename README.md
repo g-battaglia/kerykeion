@@ -2119,6 +2119,13 @@ export KERYKEION_EPHE_PATH=~/.kerykeion/sweph
 
 For the full configuration guide, see [Swiss Ephemeris Configuration](site/docs/swisseph_configuration.md).
 
+> **Fixed stars on swisseph**: the fixed-star catalog file `sefstars.txt` is
+> required for any fixed-star feature when using the swisseph backend, and is
+> not bundled with kerykeion (Swiss Ephemeris license belongs to Astrodienst).
+> The setup utility above downloads it automatically; for the manual procedure
+> and a diagnostic warning reference, see the
+> [Fixed Stars Catalog section of the configuration guide](site/docs/swisseph_configuration.md#fixed-stars-catalog-sefstarstxt).
+
 ## Integrating Kerykeion into Your Project
 
 If you would like to incorporate Kerykeion's astrological features into your application, please reach out via [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request). Whether you need custom features, support, or specialized consulting, I am happy to discuss potential collaborations.
