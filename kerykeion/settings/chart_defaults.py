@@ -576,6 +576,8 @@ KNOWN_GLYPH_NAMES: Final[frozenset[str]] = frozenset({
     # hardcoded ones. The unified ``<symbol id="FixedStar">`` ships in every
     # SVG template; colors are controlled by the single CSS variable
     # ``--kerykeion-chart-color-fixed-star-default``.
+    # Synthetic midpoint glyph (single shared symbol)
+    "Midpoint",
     # Arabic parts
     "Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei",
     # Axes / extras
@@ -630,6 +632,45 @@ def build_dynamic_fixed_star_settings(
     return extras
 
 
+#: Numeric ID base for dynamic midpoint settings (avoid collision with planets
+#: at 0-99 and dynamic fixed stars at 1000+).
+DYNAMIC_MIDPOINT_SETTING_ID_BASE: Final[int] = 2000
+
+#: Fallback color for midpoint glyphs rendered on the wheel.
+DEFAULT_MIDPOINT_COLOR: Final[str] = "var(--kerykeion-chart-color-midpoint-default, #b58bff)"
+
+
+def build_dynamic_midpoint_settings(
+    midpoint_names: "list[str]",
+    existing_settings: "list | tuple",
+) -> "list[_CelestialPointSetting]":
+    """Build per-midpoint ``_CelestialPointSetting`` entries.
+
+    Args:
+        midpoint_names: Synthetic point names like ``"Sun_Moon_Midpoint"``.
+            The label drops the trailing "Midpoint" and replaces underscores
+            with slashes (``"Sun/Moon"``) so the chart legend stays compact.
+        existing_settings: Current celestial-point settings list; entries
+            with matching names are skipped to avoid duplicates.
+    """
+    existing_names = {body.get("name") for body in existing_settings}
+    extras: list[_CelestialPointSetting] = []
+    for i, name in enumerate(midpoint_names):
+        if name in existing_names:
+            continue
+        label = name.removesuffix("_Midpoint").replace("_", "/")
+        entry: _CelestialPointSetting = {
+            "id": DYNAMIC_MIDPOINT_SETTING_ID_BASE + i,
+            "name": name,
+            "color": DEFAULT_MIDPOINT_COLOR,
+            "element_points": 0,
+            "label": label,
+            "glyph_id": "Midpoint",
+        }
+        extras.append(entry)
+    return extras
+
+
 #: Default active points for predictive factories (midpoints, solar arcs, etc.).
 DEFAULT_PREDICTIVE_POINTS: Final[tuple[str, ...]] = (
     "Sun",
@@ -657,6 +698,9 @@ __all__ = [
     "DEFAULT_CHART_ASPECTS_SETTINGS",
     "DEFAULT_PREDICTIVE_POINTS",
     "DYNAMIC_FIXED_STAR_SETTING_ID_BASE",
+    "DYNAMIC_MIDPOINT_SETTING_ID_BASE",
+    "DEFAULT_MIDPOINT_COLOR",
+    "build_dynamic_midpoint_settings",
     "DEFAULT_FIXED_STAR_COLOR",
     "build_dynamic_fixed_star_settings",
     "KNOWN_GLYPH_NAMES",

@@ -517,6 +517,18 @@
                 </g>
             </g>
         </symbol>
+        <symbol id="Midpoint">
+            <!-- Cosmobiology / Uranian midpoint marker: small ring around a dot,
+                 distinct from planet glyphs and fixed stars. -->
+            <g transform="translate(2,2)">
+                <g transform="scale(2)">
+                    <circle cx="6" cy="6" r="4.5"
+                        style="fill: none; stroke: var(--kerykeion-chart-color-midpoint-default, #b58bff); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4;" />
+                    <circle cx="6" cy="6" r="1.2"
+                        style="fill: var(--kerykeion-chart-color-midpoint-default, #b58bff); stroke: none;" />
+                </g>
+            </g>
+        </symbol>
         <!-- Fixed Stars (v5.12 additions) -->
         <symbol id="Anti_Vertex">
             <g transform="translate(0,1)">

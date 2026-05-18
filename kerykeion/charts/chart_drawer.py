@@ -2240,6 +2240,30 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.planets_settings.extend(extra_star_settings)
             self.available_planets_setting.extend(extra_star_settings)
 
+        # v6.1: same dynamic-channel mechanism for user-selected midpoints.
+        # Midpoints live in subject.active_midpoints (separate from
+        # active_points just like fixed_stars).
+        from kerykeion.settings.chart_defaults import build_dynamic_midpoint_settings
+
+        dynamic_midpoint_names: list[str] = []
+        for subj in (self.first_obj, self.second_obj):
+            if subj is None:
+                continue
+            for mp in getattr(subj, "active_midpoints", None) or []:
+                mp_name = getattr(mp, "name", None)
+                if mp_name and mp_name not in dynamic_midpoint_names:
+                    dynamic_midpoint_names.append(mp_name)
+
+        if dynamic_midpoint_names:
+            extra_midpoint_settings = build_dynamic_midpoint_settings(
+                dynamic_midpoint_names,
+                existing_settings=self.planets_settings,
+            )
+            for setting in extra_midpoint_settings:
+                setting["is_active"] = True
+            self.planets_settings.extend(extra_midpoint_settings)
+            self.available_planets_setting.extend(extra_midpoint_settings)
+
             # Stars with an existing static setting (e.g. Regulus, Sirius) are
             # not in active_points (the v6 channel is separate) but must still
             # render. Activate them here so the wheel iterates them.
@@ -2961,6 +2985,16 @@ class ChartDrawer:  # type: ignore[no-redef]
             slug = star_name.strip().lower().replace(" ", "_").replace("-", "_")
             star_lookup[slug] = star
 
+        # Same idea for active midpoints (live as a separate array, not as
+        # attributes on the subject).
+        midpoint_lookup: dict[str, KerykeionPointModel] = {}
+        for mp in getattr(subject, "active_midpoints", None) or []:
+            mp_name = getattr(mp, "name", None)
+            if not mp_name:
+                continue
+            slug = mp_name.strip().lower().replace(" ", "_").replace("-", "_")
+            midpoint_lookup[slug] = mp
+
         collected: list[KerykeionPointModel] = []
 
         for raw_name in point_attribute_names:
@@ -2968,7 +3002,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             point = getattr(subject, attr_name, None)
             if point is None:
                 slug = raw_name.strip().lower().replace(" ", "_").replace("-", "_")
-                point = star_lookup.get(slug)
+                point = star_lookup.get(slug) or midpoint_lookup.get(slug)
             if point is None:
                 continue
             collected.append(point)

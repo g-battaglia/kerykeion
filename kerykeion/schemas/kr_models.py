@@ -633,6 +633,18 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         "for case-insensitive lookup by IAU name or slug.",
     )
 
+    # Active Midpoints (v6 -- sensitive points selected by the user)
+    # Pairwise midpoints requested via the ``active_midpoints`` parameter
+    # (e.g. ``["Sun_Moon", "Sun_Mercury"]``) materialize here as
+    # KerykeionPointModel entries with ``point_type='Midpoint'`` so the
+    # chart drawer can render them like any other active point.
+    active_midpoints: list[KerykeionPointModel] = Field(
+        default_factory=list,
+        description="Pairwise midpoints requested via the ``active_midpoints`` parameter. "
+        "Each entry is a synthetic point on the shorter arc between two natal points; "
+        "``point_type='Midpoint'`` and ``name`` follows the ``A_B_Midpoint`` convention.",
+    )
+
     # Arabic Parts
     pars_fortunae: Optional[KerykeionPointModel] = None
     pars_spiritus: Optional[KerykeionPointModel] = None

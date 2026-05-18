@@ -27,8 +27,9 @@ from pydantic import BaseModel, Field
 
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
 from kerykeion.schemas.kr_literals import SIGN_CODES
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings
+from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house
 
 
 class MidpointAspectModel(BaseModel):
@@ -183,3 +184,88 @@ class MidpointFactory:
                     )
                 )
         return results
+
+    @staticmethod
+    def compute_active_midpoint_points(
+        subject: AstrologicalSubjectModel,
+        pair_names: Sequence[str],
+    ) -> List[KerykeionPointModel]:
+        """Materialize midpoints requested by name as :class:`KerykeionPointModel`
+        entries so the chart drawer can render them like ordinary active points.
+
+        Args:
+            subject: The natal subject the midpoints are computed against.
+            pair_names: Pair identifiers in the ``"A_B"`` form, where ``A`` and
+                ``B`` are canonical active-point names (e.g. ``"Sun_Moon"``,
+                ``"Mercury_Venus"``, ``"Sun_True_North_Lunar_Node"``).
+
+        Returns:
+            One :class:`KerykeionPointModel` per resolved pair, with
+            ``name='A_B_Midpoint'``, ``point_type='Midpoint'`` and sign/element/
+            quality/house derived from the midpoint longitude on the shorter
+            arc. Unknown pairs are silently skipped.
+        """
+        if not pair_names:
+            return []
+
+        # Resolve point names → absolute longitudes using the subject's own
+        # active_points so the lookup stays consistent with the chart.
+        gathered = dict(gather_active_points(subject, subject.active_points))
+
+        # Build the natal house cusp list once for house assignment.
+        house_field_names = (
+            "first_house", "second_house", "third_house", "fourth_house",
+            "fifth_house", "sixth_house", "seventh_house", "eighth_house",
+            "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+        )
+        houses_degree_ut: list[float] = []
+        for field in house_field_names:
+            cusp = getattr(subject, field, None)
+            if cusp is not None:
+                houses_degree_ut.append(cusp.abs_pos)
+
+        points: List[KerykeionPointModel] = []
+        for raw in pair_names:
+            # The pair key is "<name_a>_<name_b>", but the canonical point
+            # names themselves can contain underscores (e.g.
+            # "True_North_Lunar_Node"). Split greedily on every "_" and try
+            # the resulting (prefix, suffix) splits until both sides resolve.
+            tokens = raw.split("_")
+            name_a: str | None = None
+            name_b: str | None = None
+            for split in range(1, len(tokens)):
+                candidate_a = "_".join(tokens[:split])
+                candidate_b = "_".join(tokens[split:])
+                if candidate_a in gathered and candidate_b in gathered:
+                    name_a, name_b = candidate_a, candidate_b
+                    break
+            if name_a is None or name_b is None:
+                continue
+
+            midpoint_long = MidpointFactory._shorter_arc_midpoint(gathered[name_a], gathered[name_b])
+            sign_idx = int(midpoint_long // 30) % 12
+            zodiac = _ZODIAC_SIGNS[sign_idx]
+
+            house = None
+            if len(houses_degree_ut) == 12:
+                try:
+                    house = get_planet_house(midpoint_long, houses_degree_ut)
+                except ValueError:
+                    house = None
+
+            points.append(
+                KerykeionPointModel(
+                    name=f"{name_a}_{name_b}_Midpoint",
+                    quality=zodiac.quality,
+                    element=zodiac.element,
+                    sign=zodiac.sign,
+                    sign_num=sign_idx,
+                    position=midpoint_long - sign_idx * 30.0,
+                    abs_pos=midpoint_long,
+                    emoji=zodiac.emoji,
+                    point_type="Midpoint",
+                    house=house,
+                    retrograde=False,
+                )
+            )
+        return points

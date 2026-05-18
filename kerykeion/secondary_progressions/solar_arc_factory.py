@@ -31,8 +31,16 @@ from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings
+from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house
 
 from .secondary_progression_factory import SecondaryProgressionFactory
+
+
+_HOUSE_FIELD_NAMES: tuple[str, ...] = (
+    "first_house", "second_house", "third_house", "fourth_house",
+    "fifth_house", "sixth_house", "seventh_house", "eighth_house",
+    "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+)
 
 
 def _normalise_long(longitude: float) -> float:
@@ -216,3 +224,83 @@ class SolarArcFactory:
             directed_points=directed_points,
             directed_to_natal_aspects=directed_to_natal,
         )
+
+    # Names of point fields whose abs_pos must be shifted by the solar arc
+    # when building a directed AstrologicalSubjectModel. Angles and houses
+    # are intentionally left in place (the natal frame is preserved).
+    _DIRECTABLE_FIELDS = (
+        "sun", "moon", "mercury", "venus", "mars",
+        "jupiter", "saturn", "uranus", "neptune", "pluto",
+        "chiron", "earth", "pholus",
+        "mean_lilith", "true_lilith", "interpolated_lilith",
+        "mean_priapus", "true_priapus",
+        "interpolated_perigee", "white_moon",
+        "ceres", "pallas", "juno", "vesta",
+        "eris", "sedna", "haumea", "makemake", "ixion", "orcus", "quaoar",
+        "cupido", "hades", "zeus", "kronos", "apollon", "admetos", "vulkanus", "poseidon",
+        "mean_north_lunar_node", "true_north_lunar_node",
+        "mean_south_lunar_node", "true_south_lunar_node",
+        "pars_fortunae", "pars_spiritus", "pars_amoris", "pars_fidei",
+        "vertex", "anti_vertex",
+    )
+
+    @staticmethod
+    def compute_directed_subject(
+        natal_subject: AstrologicalSubjectModel,
+        *,
+        target_iso_utc_datetime: Optional[str] = None,
+        target_year: Optional[int] = None,
+    ) -> AstrologicalSubjectModel:
+        """Return a copy of ``natal_subject`` with every directable point
+        shifted forward by the solar arc.
+
+        Houses and the four angles (Asc/MC/Desc/IC) are left at their natal
+        positions — the solar arc preserves the natal frame and only moves
+        the planets and sensitive points. This is what you want for a
+        biwheel rendering: inner ring = natal, outer ring = directed.
+        """
+        result = SolarArcFactory.compute(
+            natal_subject,
+            target_iso_utc_datetime=target_iso_utc_datetime,
+            target_year=target_year,
+            compute_aspects=False,
+        )
+        arc = result.solar_arc
+
+        directed = natal_subject.model_copy(deep=True)
+        directed.name = f"{natal_subject.name} (directed)"
+
+        # House cusps stay on the natal frame — used to recompute house
+        # placement for each directed point.
+        houses_degree_ut: list[float] = []
+        for house_field in _HOUSE_FIELD_NAMES:
+            cusp = getattr(directed, house_field, None)
+            if cusp is not None:
+                houses_degree_ut.append(cusp.abs_pos)
+
+        for field_name in SolarArcFactory._DIRECTABLE_FIELDS:
+            point = getattr(directed, field_name, None)
+            if point is None:
+                continue
+            new_abs = _normalise_long(point.abs_pos + arc)
+            sign_idx = int(new_abs // 30) % 12
+            zodiac = _ZODIAC_SIGNS[sign_idx]
+
+            point.abs_pos = new_abs
+            point.sign = SIGN_CODES[sign_idx]
+            point.sign_num = sign_idx
+            point.position = new_abs - sign_idx * 30.0
+            # Recompute sign-derived metadata so downstream consumers
+            # (ChartDrawer, AI prompts, PDF exports) stay consistent
+            # when a directed point crosses signs.
+            point.quality = zodiac.quality
+            point.element = zodiac.element
+            point.emoji = zodiac.emoji
+            if len(houses_degree_ut) == 12:
+                try:
+                    point.house = get_planet_house(new_abs, houses_degree_ut)
+                except ValueError:
+                    # Leave the natal house value rather than crash
+                    pass
+
+        return directed
