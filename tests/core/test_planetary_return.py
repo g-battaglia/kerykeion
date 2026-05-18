@@ -845,3 +845,82 @@ class TestPlanetaryReturnOnlineMode:
         # Default online should be True
         factory = PlanetaryReturnFactory(subject, city="Rome", nation="IT")
         assert factory.online is True
+
+
+class TestPlanetaryReturnV6FlagPropagation:
+    """Regression: 6.0.0a44 → a45 — return charts ignored v6 calc flags."""
+
+    def _make_natal(self, **kwargs):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Test V6 Return",
+            1993,
+            6,
+            10,
+            12,
+            15,
+            lat=45.41317,
+            lng=10.39799,
+            tz_str="Europe/Rome",
+            city="Montichiari",
+            nation="IT",
+            online=False,
+            suppress_geonames_warning=True,
+            **kwargs,
+        )
+
+    def _make_factory(self, natal, **kwargs):
+        return PlanetaryReturnFactory(
+            natal,
+            online=False,
+            city="Montichiari",
+            nation="IT",
+            lng=10.39799,
+            lat=45.41317,
+            tz_str="Europe/Rome",
+            **kwargs,
+        )
+
+    def test_solar_return_propagates_active_fixed_stars(self):
+        natal = self._make_natal(active_fixed_stars=["Betelgeuse", "Vindemiatrix"])
+        factory = self._make_factory(natal, active_fixed_stars=["Betelgeuse", "Vindemiatrix"])
+        return_subj = factory.next_return_from_year(2026, "Solar")
+        names = {s.name for s in return_subj.fixed_stars}
+        assert "Betelgeuse" in names
+        assert "Vindemiatrix" in names
+
+    def test_solar_return_propagates_calculate_dignities(self):
+        natal = self._make_natal(calculate_dignities=True)
+        factory = self._make_factory(natal, calculate_dignities=True)
+        return_subj = factory.next_return_from_year(2026, "Solar")
+        # Every classical planet should carry an essential_dignity value
+        # (Peregrine for un-dignified placements, never None when the flag
+        # is set).
+        assert return_subj.sun.essential_dignity is not None
+        assert return_subj.moon.essential_dignity is not None
+
+    def test_solar_return_dual_wheel_renders_without_indexerror(self):
+        """Regression for the IndexError in _calculate_secondary_indicator_adjustments
+        when the return subject's collected point count differs from
+        active_points length."""
+        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.charts.chart_drawer import ChartDrawer
+
+        natal = self._make_natal(active_fixed_stars=["Betelgeuse"])
+        factory = self._make_factory(natal, active_fixed_stars=["Betelgeuse"])
+        return_subj = factory.next_return_from_year(2026, "Solar")
+        data = ChartDataFactory.create_return_chart_data(natal, return_subj)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string()
+        assert len(svg) > 0
+        assert "<svg" in svg
+        # Betelgeuse should be referenced in the chart (kr:slug on the wheel)
+        assert "Betelgeuse" in svg
+
+    def test_factory_defaults_keep_legacy_behaviour(self):
+        """Caller that doesn't opt into v6 flags should not see any fixed
+        star or dignity computed on the return — preserving pre-a45 behaviour
+        for downstream consumers that haven't migrated yet."""
+        natal = self._make_natal()
+        factory = self._make_factory(natal)
+        return_subj = factory.next_return_from_year(2026, "Solar")
+        assert return_subj.fixed_stars == []
+        assert return_subj.sun.essential_dignity is None

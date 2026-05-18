@@ -65,6 +65,7 @@ def draw_planets(
     main_subject_seventh_house_degree_ut: Union[int, float],
     chart_type: ChartType,
     second_subject_available_kerykeion_celestial_points: Union[list[KerykeionPointModel], None] = None,
+    second_subject_available_planets_setting: Union[Sequence[Mapping[str, Any]], None] = None,
     external_view: bool = False,
     first_circle_radius: Union[int, float, None] = None,
     second_circle_radius: Union[int, float, None] = None,
@@ -216,6 +217,16 @@ def draw_planets(
         if show_degree_indicators:
             # Secondary/outer points (transit planets)
             if secondary_points_abs_positions and secondary_points_rel_positions:
+                # v6: use the per-second-subject settings list if provided so
+                # the iteration aligns with the actual collected points. Falls
+                # back to the shared ``available_planets_setting`` to keep
+                # legacy callers working (single-subject + transit charts where
+                # the second subject mirrors the primary settings).
+                secondary_settings = (
+                    second_subject_available_planets_setting
+                    if second_subject_available_planets_setting is not None
+                    else available_planets_setting
+                )
                 output = _draw_secondary_points(
                     output,
                     radius,
@@ -223,7 +234,7 @@ def draw_planets(
                     main_subject_seventh_house_degree_ut,
                     secondary_points_abs_positions,
                     secondary_points_rel_positions,
-                    available_planets_setting,
+                    secondary_settings,
                     chart_type,
                     transit_ring_exclude_points,
                     adjusted_offset,
@@ -535,9 +546,14 @@ def _calculate_indicator_adjustments(
     position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
     exclude_points = exclude_points or []
 
-    # Build position-to-index mapping (excluding filtered points)
+    # Build position-to-index mapping (excluding filtered points).
+    # v6 safety net: bound to the shorter of the two lists so an upstream
+    # mismatch (e.g. a return subject with fewer collected points than
+    # active_points settings) can't trigger an IndexError. Callers are
+    # expected to pass aligned lists; this guard is purely defensive.
     position_index_map = {}
-    for i in range(len(points_settings)):
+    n = min(len(points_settings), len(points_abs_positions))
+    for i in range(n):
         if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
             continue
         position_index_map[points_abs_positions[i]] = i
@@ -662,9 +678,14 @@ def _calculate_secondary_indicator_adjustments(
     position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
     exclude_points = exclude_points or []
 
-    # Build position-to-index mapping (excluding filtered points)
+    # Build position-to-index mapping (excluding filtered points).
+    # v6 safety net: bound to the shorter of the two lists so an upstream
+    # mismatch (e.g. a return subject with fewer collected points than
+    # active_points settings) can't trigger an IndexError. Callers are
+    # expected to pass aligned lists; this guard is purely defensive.
     position_index_map = {}
-    for i in range(len(points_settings)):
+    n = min(len(points_settings), len(points_abs_positions))
+    for i in range(n):
         if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
             continue
         position_index_map[points_abs_positions[i]] = i

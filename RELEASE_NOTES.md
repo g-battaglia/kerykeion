@@ -1,5 +1,29 @@
 # Release Notes
 
+## 6.0.0a45 — 2026-05-18
+
+Bugfix release for dual-wheel return charts + v6 flag propagation.
+
+**Fixed**
+
+- `IndexError` in dual solar/lunar return wheel rendering when the return
+  subject collected fewer points than `active_points`. `ChartDrawer` now
+  keeps a per-second-subject settings list aligned to the actual collected
+  points; `_calculate_secondary_indicator_adjustments` / `_draw_secondary_points`
+  add a defensive `min(len, len)` bound as a safety net.
+- `PlanetaryReturnFactory` now propagates the six v6 calc kwargs to the
+  return subject: `active_fixed_stars`, `calculate_dignities`,
+  `calculate_nakshatra`, `calculate_gauquelin`, `calculate_nutation`,
+  `calculate_local_space`. Previously the return chart silently dropped
+  these enrichments even when the natal subject was built with them.
+- `AstrologicalSubjectFactory.from_iso_utc_time` now accepts the same six
+  v6 kwargs and forwards them to `from_birth_data`.
+
+**Backward compatible**
+
+Defaults preserve pre-`a45` behaviour: a caller that doesn't opt into the
+v6 flags continues to get a bare return chart.
+
 ## 6.0.0a44 — 2026-05-18
 
 Regression fix + visual unification for fixed stars.

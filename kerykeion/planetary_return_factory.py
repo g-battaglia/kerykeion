@@ -74,7 +74,7 @@ import logging
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
 
 from datetime import datetime, timezone
-from typing import Union
+from typing import List, Union
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.fetch_geonames import FetchGeonames
@@ -221,6 +221,18 @@ class PlanetaryReturnFactory:
         altitude: Union[float, int, None] = None,
         custom_ayanamsa_t0: Union[float, None] = None,
         custom_ayanamsa_ayan_t0: Union[float, None] = None,
+        # v6: v6 calc flags propagated to the return subject so that the
+        # return chart computes the same enrichments as the natal (fixed
+        # stars, dignities, nakshatra, gauquelin sectors, nutation, local
+        # space). Without these, the return falls back to the bare
+        # planetary positions even when the user requested otherwise on
+        # the natal request.
+        active_fixed_stars: Union[List[str], None] = None,
+        calculate_dignities: bool = False,
+        calculate_nakshatra: bool = False,
+        calculate_gauquelin: bool = False,
+        calculate_nutation: bool = False,
+        calculate_local_space: bool = False,
     ):
         """
         Initialize a PlanetaryReturnFactory instance with location and configuration settings.
@@ -324,6 +336,13 @@ class PlanetaryReturnFactory:
         self.altitude = altitude
         self.custom_ayanamsa_t0 = custom_ayanamsa_t0
         self.custom_ayanamsa_ayan_t0 = custom_ayanamsa_ayan_t0
+        # v6 calc flags forwarded to the return subject
+        self.active_fixed_stars = active_fixed_stars
+        self.calculate_dignities = calculate_dignities
+        self.calculate_nakshatra = calculate_nakshatra
+        self.calculate_gauquelin = calculate_gauquelin
+        self.calculate_nutation = calculate_nutation
+        self.calculate_local_space = calculate_local_space
 
         # Validate USER sidereal mode requires both custom ayanamsa values
         if subject.sidereal_mode == "USER" and (custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None):
@@ -552,6 +571,9 @@ class PlanetaryReturnFactory:
 
         # Build kwargs, propagating the source subject's zodiac/sidereal settings
         # so that return charts use the same astrological configuration.
+        # v6: also propagate the v6 calc flags configured on this factory so
+        # that the return subject computes the same enrichments as the natal
+        # (fixed stars, dignities, nakshatra, gauquelin, nutation, local space).
         return_kwargs: dict = dict(
             name=self.subject.name,
             iso_utc_time=return_date_utc.isoformat(),
@@ -567,6 +589,12 @@ class PlanetaryReturnFactory:
             sidereal_mode=self.subject.sidereal_mode,
             houses_system_identifier=self.subject.houses_system_identifier,
             perspective_type=self.subject.perspective_type,
+            active_fixed_stars=self.active_fixed_stars,
+            calculate_dignities=self.calculate_dignities,
+            calculate_nakshatra=self.calculate_nakshatra,
+            calculate_gauquelin=self.calculate_gauquelin,
+            calculate_nutation=self.calculate_nutation,
+            calculate_local_space=self.calculate_local_space,
         )
         # Propagate USER-mode custom ayanamsa parameters if present on the factory
         if self.custom_ayanamsa_t0 is not None:
@@ -1030,6 +1058,14 @@ class PlanetaryReturnFactory:
             houses_system_identifier=self.subject.houses_system_identifier,
             perspective_type=self.subject.perspective_type,
             active_points=list(self.subject.active_points),
+            # v6: forward the calc flags configured on this factory (set
+            # explicitly by the caller in v6 mode; default-False otherwise).
+            active_fixed_stars=self.active_fixed_stars,
+            calculate_dignities=self.calculate_dignities,
+            calculate_nakshatra=self.calculate_nakshatra,
+            calculate_gauquelin=self.calculate_gauquelin,
+            calculate_nutation=self.calculate_nutation,
+            calculate_local_space=self.calculate_local_space,
         )
 
         # Propagate USER-mode custom ayanamsa parameters if present

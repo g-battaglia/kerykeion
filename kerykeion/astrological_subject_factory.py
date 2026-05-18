@@ -1059,6 +1059,15 @@ class AstrologicalSubjectFactory:
         suppress_geonames_warning: bool = False,
         custom_ayanamsa_t0: Optional[float] = None,
         custom_ayanamsa_ayan_t0: Optional[float] = None,
+        # v6 calc flags — forwarded to from_birth_data so the resulting
+        # subject computes the same enrichments. Default-False / None keeps
+        # legacy callers (no v6 setup) unchanged.
+        active_fixed_stars: Optional[List[str]] = None,
+        calculate_dignities: bool = False,
+        calculate_nakshatra: bool = False,
+        calculate_gauquelin: bool = False,
+        calculate_nutation: bool = False,
+        calculate_local_space: bool = False,
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject from an ISO formatted UTC timestamp.
@@ -1193,6 +1202,12 @@ class AstrologicalSubjectFactory:
             suppress_geonames_warning=suppress_geonames_warning,
             custom_ayanamsa_t0=custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
+            active_fixed_stars=active_fixed_stars,
+            calculate_dignities=calculate_dignities,
+            calculate_nakshatra=calculate_nakshatra,
+            calculate_gauquelin=calculate_gauquelin,
+            calculate_nutation=calculate_nutation,
+            calculate_local_space=calculate_local_space,
         )
 
     @classmethod

@@ -2274,11 +2274,26 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Collect points for secondary subject (dual-wheel charts only)
         # These appear on the outer wheel in Transit, Synastry, and DualReturnChart
         self.second_subject_celestial_points: list[KerykeionPointModel] = []
+        self.second_subject_available_planets_setting: list[dict[Any, Any]] = []
         if self.second_obj is not None:
             self.second_subject_celestial_points = self._collect_subject_points(
                 self.second_obj,
                 available_celestial_points_names,
             )
+            # v6: align the secondary settings list to the points that the
+            # second subject actually populated. If the natal subject has all
+            # 9 active_points but the return subject only computed 7 of them
+            # (e.g. an angle could not be derived for the new location), the
+            # downstream drawing code would iterate len(settings)=9 against
+            # positions=7 and IndexError. Filtering the settings here keeps
+            # the two lists symmetric.
+            second_collected_names = {
+                p.name for p in self.second_subject_celestial_points if p is not None
+            }
+            self.second_subject_available_planets_setting = [
+                body for body in self.available_planets_setting
+                if body["name"] in second_collected_names
+            ]
 
     def _configure_dimensions_and_geometry(self, chart_data: "ChartDataModel") -> None:
         """
@@ -3810,6 +3825,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             available_kerykeion_celestial_points=self.available_kerykeion_celestial_points,
             available_planets_setting=self.available_planets_setting,
             second_subject_available_kerykeion_celestial_points=self.second_subject_celestial_points,
+            second_subject_available_planets_setting=self.second_subject_available_planets_setting,
             radius=self.main_radius,
             main_subject_first_house_degree_ut=self.first_obj.first_house.abs_pos,
             main_subject_seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,

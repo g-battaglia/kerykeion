@@ -1,5 +1,53 @@
 # Changelog
 
+## 6.0.0a45
+
+_2026-05-18_
+
+### Fixed (regression introduced in 6.0.0a44)
+
+- **`IndexError: list index out of range` in dual-wheel return charts**
+  (`POST /api/v6/chart/solar-return` with `wheel_type: "dual"`).
+  `_calculate_secondary_indicator_adjustments` and `_draw_secondary_points`
+  iterated `range(len(points_settings))` against
+  `points_abs_positions` of a different length and crashed. Two-pronged
+  fix:
+  - **Structural**: `ChartDrawer` now keeps a per-second-subject settings
+    list (`second_subject_available_planets_setting`) aligned to the
+    points actually collected from the second subject, and propagates it
+    to `draw_planets()` via a new `secondary_planets_setting` keyword.
+    The rendering of the outer ring uses this filtered list so settings
+    and positions stay symmetric.
+  - **Defensive safety net**: the two affected loops are bounded by
+    `min(len(settings), len(positions))` so any future mismatch (custom
+    subject classes, partial typed-field population) degrades gracefully
+    instead of raising.
+
+### Fixed (silent bug, also pre-existing)
+
+- **`PlanetaryReturnFactory` did not propagate v6 calc flags** from the
+  natal subject to the return subject. Even if the request asked for
+  `active_fixed_stars: ["Betelgeuse"]` on the natal, the resulting solar
+  or lunar return would compute none of them — and similarly for
+  `calculate_dignities` / `calculate_nakshatra` / `calculate_gauquelin` /
+  `calculate_nutation` / `calculate_local_space`. All six v6 calc kwargs
+  are now accepted by `PlanetaryReturnFactory.__init__` and forwarded
+  into both return-subject builders. `AstrologicalSubjectFactory.from_iso_utc_time`
+  also accepts the same six kwargs and forwards them to `from_birth_data`.
+  Defaults keep the legacy behaviour: a caller that doesn't set the
+  flags continues to get a bare return chart, no behavioural change.
+
+### Tests
+
+- New regression class `TestPlanetaryReturnV6FlagPropagation` in
+  `tests/core/test_planetary_return.py` covering:
+  - `active_fixed_stars` propagation
+  - `calculate_dignities` propagation
+  - dual-wheel render without IndexError
+  - default-False legacy behaviour
+
+Total: 9104 pass, 69 skipped (+4 vs `6.0.0a44`).
+
 ## 6.0.0a44
 
 _2026-05-18_
