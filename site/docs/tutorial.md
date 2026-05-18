@@ -21,7 +21,7 @@ This tutorial walks you through building a complete astrology application using 
 
 ## Prerequisites
 
-- Python 3.9 or higher
+- Python 3.12 or higher
 - Basic Python knowledge
 - No astrology knowledge required (we'll explain concepts as we go)
 

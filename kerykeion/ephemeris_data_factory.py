@@ -340,27 +340,23 @@ class EphemerisDataFactory:
         """
         Generate ephemeris data as complete AstrologicalSubject instances.
 
-        This method creates fully-featured AstrologicalSubject objects for each date in the
-        configured time series, providing access to all astrological calculation methods
-        and properties. Unlike the dictionary-based approach of get_ephemeris_data(),
-        this method returns objects with the complete Kerykeion API available.
+        This method creates fully-featured AstrologicalSubjectModel instances for each
+        date in the configured time series. Unlike the dictionary-based approach of
+        get_ephemeris_data(), this method returns Pydantic models with attribute access
+        to all computed positions.
 
-        Each AstrologicalSubject instance represents a complete astrological chart for
-        the specified moment, location, and calculation settings. This allows direct
-        access to methods like get_sun(), get_all_points(), draw_chart(), calculate
-        aspects, and all other astrological analysis features.
+        Args:
+            as_model: Unused parameter retained for backward compatibility. Ignored.
 
         Returns:
-            list[AstrologicalSubjectModel]: A list of AstrologicalSubject instances.
-                Each element represents one calculated moment in time with full
-                astrological chart data and methods available.
+            list[AstrologicalSubjectModel]: A list of subject model instances.
+                Each element represents one calculated moment in time.
 
                 Each subject contains:
-                - All planetary and astrological point positions
-                - Complete house system calculations
-                - Chart drawing capabilities
-                - Aspect calculation methods
-                - Access to all Kerykeion astrological features
+                - All planetary and astrological point positions (e.g., ``subject.sun.sign``)
+                - Complete house system calculations (e.g., ``subject.first_house.sign``)
+                - Lunar phase data
+                - JSON serialization via Pydantic
 
         Examples:
             Basic usage for accessing individual chart features:
@@ -368,20 +364,17 @@ class EphemerisDataFactory:
             >>> factory = EphemerisDataFactory(start_date, end_date)
             >>> subjects = factory.get_ephemeris_data_as_astrological_subjects()
             >>>
-            >>> # Access specific planetary data
-            >>> sun_data = subjects[0].get_sun()
-            >>> moon_data = subjects[0].get_moon()
+            >>> # Access planetary data via attributes
+            >>> sun_sign = subjects[0].sun.sign
+            >>> moon_abs_pos = subjects[0].moon.abs_pos
             >>>
-            >>> # Get all astrological points
-            >>> all_points = subjects[0].get_all_points()
-            >>>
-            >>> # Generate chart visualization
-            >>> chart_svg = subjects[0].draw_chart()
+            >>> # Access house cusps
+            >>> asc_sign = subjects[0].first_house.sign
 
             Batch processing for analysis:
 
             >>> subjects = factory.get_ephemeris_data_as_astrological_subjects()
-            >>> sun_positions = [subj.sun['abs_pos'] for subj in subjects if subj.sun]
+            >>> sun_positions = [subj.sun.abs_pos for subj in subjects]
             >>> # Analyze sun position changes over time
 
         Use Cases:

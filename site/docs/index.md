@@ -1,6 +1,6 @@
 ---
 title: 'Kerykeion Documentation'
-description: 'Kerykeion is a Python library for astrology. Compute planetary positions, detect aspects, generate SVG charts, calculate synastry scores, and integrate with AI/LLMs. Powered by the Swiss Ephemeris.'
+description: 'Kerykeion is a Python library for astrology. Compute planetary positions, detect aspects, generate SVG charts, calculate synastry scores, and integrate with AI/LLMs. Powered by libephemeris (with optional Swiss Ephemeris backend).'
 category: 'Getting Started'
 tags: ['docs', 'kerykeion', 'python', 'astrology', 'getting-started']
 order: 1
@@ -8,7 +8,7 @@ order: 1
 
 # Kerykeion Documentation
 
-**Kerykeion** is a production-grade Python library for computational astrology. It provides high-precision planetary and house position calculations (via the Swiss Ephemeris), aspect detection, relationship scoring, transit forecasting, and professional SVG chart generation -- all with a clean, factory-based API and Pydantic models.
+**Kerykeion** is a production-grade Python library for computational astrology. It provides high-precision planetary and house position calculations (via libephemeris, with optional Swiss Ephemeris backend), aspect detection, relationship scoring, transit forecasting, and professional SVG chart generation -- all with a clean, factory-based API and Pydantic models.
 
 ### What you can do with Kerykeion
 
@@ -27,7 +27,7 @@ order: 1
 pip install kerykeion
 ```
 
-Requires **Python 3.9** or higher.
+Requires **Python 3.12** or higher.
 
 ## Quick Start
 
@@ -72,7 +72,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 
 -   **[Complete Tutorial](/content/docs/tutorial)**: Build a full astrology application from scratch (recommended starting point).
 -   **[Astrologer API](/content/docs/astrologer-api)**: Production-ready REST API for commercial projects.
--   **[Migration Guide (v4 to v5)](/content/docs/migration)**: Step-by-step migration instructions for existing users.
+-   **[Migration Guide (v4/v5 to v6)](/content/docs/migration)**: Step-by-step migration instructions for existing users.
 -   **[Troubleshooting & FAQ](/content/docs/faq)**: Common issues and solutions.
 -   **[Glossary](/content/docs/glossary)**: Astrological terms explained for developers.
 
@@ -97,6 +97,21 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[Moon Phase Details Factory](/content/docs/moon_phase_details_factory)**: Rich lunar phase context with illumination, upcoming phases, eclipses, and sun info.
 -   **[Transits Time Range Factory](/content/docs/transits_time_range_factory)**: Tracking transit aspects over a date range.
 -   **[Ephemeris Data Factory](/content/docs/ephemeris_data_factory)**: Generating time-series planetary position data.
+-   **Secondary Progressions**: Day-for-a-year progressions via `SecondaryProgressionFactory`.
+-   **Solar Arc Directions**: Solar arc directed charts via `SolarArcFactory`.
+-   **Primary Directions**: Placidus semi-arc method via `PrimaryDirectionsFactory`.
+
+## Advanced Calculations
+
+-   **Eclipses**: Solar and lunar eclipse search via `EclipseFactory`.
+-   **Planetary Phenomena**: Elongations, stations, retrogrades via `PlanetaryPhenomenaFactory`.
+-   **Planetary Nodes & Apsides**: Orbital nodes via `PlanetaryNodesFactory`.
+-   **Heliacal Risings & Settings**: Visibility phenomena via `HeliacalFactory`.
+-   **Occultations**: Lunar occultation search via `OccultationFactory`.
+-   **Relocated Charts**: Chart relocation via `RelocatedChartFactory`.
+-   **Fixed Star Discovery**: Dynamic star conjunctions via `FixedStarDiscoveryFactory`.
+-   **Astro-Cartography**: ACG lines via `AstroCartographyFactory`.
+-   **Midpoints**: Cosmobiology 90° dial via `MidpointFactory`.
 
 ## Reference
 
@@ -108,7 +123,8 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[Settings](/content/docs/settings)**: Global configuration, translation utilities, and presets.
 -   **[Chart Internals](/content/docs/chart_internals)**: Low-level SVG rendering functions (advanced).
 -   **[Fetch Geonames](/content/docs/fetch_geonames)**: GeoNames API integration for location resolution.
--   **[Legacy API](/content/docs/legacy)**: Backward compatibility layer for v4 users.
+-   **[Ephemeris Backend](/content/docs/ephemeris_backend)**: Backend configuration (libephemeris vs Swiss Ephemeris).
+-   **[Legacy API](/content/docs/legacy)**: Migration info for v4/v5 users (removed in v6).
 
 ## Integration
 

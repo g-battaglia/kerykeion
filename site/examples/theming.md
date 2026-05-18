@@ -19,7 +19,7 @@ The theming functionality allows you to customize the look and feel of your astr
 
 ### Applying a Theme
 
-To apply a theme to your astrological chart in v5, pass the `theme` parameter to `ChartDrawer`. Example with the "Dark" theme:
+To apply a theme to your astrological chart, pass the `theme` parameter to `ChartDrawer`. Example with the "Dark" theme:
 
 ```python
 from pathlib import Path

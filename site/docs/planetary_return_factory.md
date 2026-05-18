@@ -28,7 +28,7 @@ A **Planetary Return** occurs when a transiting planet returns to the exact degr
 - Forecasts the emotional climate for the coming month
 - Useful for timing short-term events and emotional cycles
 
-> Kerykeion currently supports **Solar** and **Lunar** returns. Other planetary return types (Mercury, Venus, Mars, Jupiter, Saturn) are not yet implemented.
+> Kerykeion supports **Solar**, **Lunar**, **Heliocentric**, and **Lunar Node Crossing** returns.
 
 ## Usage
 

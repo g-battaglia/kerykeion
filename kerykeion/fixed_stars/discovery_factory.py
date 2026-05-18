@@ -122,7 +122,11 @@ class FixedStarDiscoveryFactory:
         subject: AstrologicalSubjectModel,
         orb: float = 1.0,
     ) -> list[KerykeionPointModel]:
-        """Find fixed stars conjunct natal planets within ``orb`` degrees."""
+        """Find fixed stars conjunct natal planets within ``orb`` degrees.
+
+        Returns a list of KerykeionPointModel sorted by magnitude (brightest first).
+        Only stars that are within ``orb`` degrees of any natal planet are included.
+        """
         if orb < 0:
             raise ValueError(f"orb must be >= 0, got {orb}")
 

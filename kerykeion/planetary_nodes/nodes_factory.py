@@ -65,7 +65,15 @@ class PlanetaryNodesCollectionModel(SubscriptableBaseModel):
 
 
 class PlanetaryNodesFactory:
-    """Calculate planetary nodes and apsides."""
+    """Calculate planetary nodes and apsides for any planet.
+
+    Computes ascending/descending nodes and perihelion/aphelion
+    in both mean and osculating modes.
+
+    Example:
+        >>> from kerykeion import PlanetaryNodesFactory
+        >>> results = PlanetaryNodesFactory.from_subject(subject, method="mean")
+    """
 
     @staticmethod
     def from_subject(
@@ -108,6 +116,7 @@ class PlanetaryNodesFactory:
         method: str,
         planets: Optional[List[str]],
     ) -> PlanetaryNodesCollectionModel:
+        """Compute nodes/apsides for all requested planets at a given Julian Day."""
         swe.set_ephe_path(_EPHE_PATH)
         iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
         nodbit = NODBIT_MEAN if method == "mean" else NODBIT_OSCU

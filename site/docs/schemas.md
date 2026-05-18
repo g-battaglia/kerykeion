@@ -344,8 +344,6 @@ Quality/modality distribution in a chart.
 
 Aspects within a single chart (Natal, Composite, Return).
 
-_Alias:_ `NatalAspectsModel`
-
 | Field | Type | Description |
 | :--------------- | :------------------------- | :-------------------------- |
 | `subject` | Subject Model | The chart subject (`AstrologicalSubjectModel`, `CompositeSubjectModel`, or `PlanetReturnModel`). |
@@ -356,8 +354,6 @@ _Alias:_ `NatalAspectsModel`
 ### DualChartAspectsModel
 
 Aspects between two charts (Synastry, Transit).
-
-_Alias:_ `SynastryAspectsModel`
 
 | Field | Type | Description |
 | :--------------- | :------------------------- | :-------------------- |
@@ -471,10 +467,6 @@ Comprehensive literal for all supported celestial points.
 
 **Axial Cusps (Angles):**
 `"Ascendant"`, `"Medium_Coeli"` (MC/Midheaven), `"Descendant"`, `"Imum_Coeli"` (IC)
-
-### AxialCusps (Angles)
-
-_Deprecated alias for `AstrologicalPoint`. Will be removed in v6.0 -- use `AstrologicalPoint` instead._
 
 ---
 

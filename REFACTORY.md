@@ -1,6 +1,6 @@
 # Kerykeion v6 — Piano di Refactoring e Ottimizzazione
 
-> **Versione:** 6.0.0a24 | **Branch:** `alpha/v6` | **Data analisi:** 2026-04-16
+> **Versione:** 6.0.0a42 | **Branch:** `alpha/v6` | **Data analisi originale:** 2026-04-16 | **Ultimo aggiornamento:** 2026-05-17
 >
 > **Principio guida:** Nessun breaking change, nessuna regressione su edge case.
 > Ogni modifica deve produrre output identico al precedente.
@@ -12,8 +12,8 @@
   semantics dei flag, ordine dei risultati o comportamento documentato.
 - **Output stabile**: dove esistono fixture/golden file, l'output deve restare identico. Le baseline non
   vanno rigenerate per "far passare" un refactor; prima si spiega il delta, poi eventualmente si decide.
-- **Nessuna rimozione di dipendenze o path pubblici** senza una necessita' esplicita. In particolare,
-  `scour` **non va rimosso**: il piano assume continuita' tramite fork compatibile.
+- **Nessuna rimozione di dipendenze o path pubblici** senza una necessita' esplicita.
+  (Nota: `scour` e' stato sostituito da `svg-polish` in v6.0.0a26.)
 - **Le ottimizzazioni numeriche non sono "safe" solo perche' matematicamente plausibili**: devono essere
   validate anche su codepath sidereal, topocentric, heliocentric, planetocentric e date storiche.
 - **Le ottimizzazioni di performance non devono peggiorare la leggibilita' strutturale**: si preferiscono

@@ -6,7 +6,7 @@ Welcome to Kerykeion! This guide will help you set up your development environme
 
 Before you begin, ensure you have the following installed:
 
-- **Python 3.9 or higher** - Check with `python --version`
+- **Python 3.12 or higher** - Check with `python --version`
 - **Git** - For cloning the repository
 - **uv** - Ultra-fast Python package manager (replaces pip/poetry)
 
@@ -41,37 +41,54 @@ If you don't have uv installed, follow the installation instructions at the offi
 Kerykeion uses [poethepoet](https://github.com/nat-n/poethepoet) as a task runner. All tasks are defined in `pyproject.toml`.
 
 ### Running Tests
+
+Tests are organized in 4 tiers (each tier includes the previous):
+
 ```bash
-# Run all tests
-uv run poe test
+# Core tests (fastest, ~1750+ tests, excludes heavy parametrized suites)
+uv run poe test:core
 
-# Run tests without output capture (useful for debugging)
-uv run poe test-no-capture
+# Base tier (DE440s range: 1849-2150)
+uv run poe test:base
 
-# Run tests excluding chart generation tests
-uv run poe test-nocharts
+# Medium tier (DE440 range: 1550-2650)
+uv run poe test:medium
+
+# Extended tier (DE441 full range)
+uv run poe test:extended
+
+# All tests including online (GeoNames API)
+uv run poe test:all
+
+# Run with coverage
+uv run poe test:core:cov
 
 # Run specific test file
-uv run pytest tests/test_astrological_subject.py
+uv run pytest tests/core/test_aspects.py
 
-# Run tests with coverage
-uv run pytest --cov=kerykeion
+# Run tests with verbose output (useful for debugging)
+uv run pytest tests/core/test_aspects.py -s -vvv
 ```
 
 ### Code Quality
 ```bash
-# Format code with Black
+# Format code with Ruff
 uv run poe format
 
 # Format all code (including tests)
 uv run poe format:all
 
-# Type checking with MyPy
-uv run poe analize
+# Lint with Ruff
+uv run poe lint
 
-# Lint with specific tools
-uv run black --check kerykeion/
-uv run mypy kerykeion/
+# Type checking with Pyright
+uv run poe typecheck
+
+# Type checking with MyPy
+uv run poe analyze
+
+# Run all quality checks (lint + typecheck)
+uv run poe quality
 ```
 
 ### Documentation
@@ -87,18 +104,44 @@ uv run poe docs
 
 ```
 kerykeion/
-├── kerykeion/                 # Main package
-│   ├── __init__.py
-│   ├── aspects/               # Astrological aspects
-│   ├── charts/                # Chart generation
-│   ├── schemas/              # Type definitions
-│   ├── settings/              # Configuration
-│   └── ...
-├── tests/                     # Test suite
-├── examples/                  # Usage examples
-├── docs/                      # Generated documentation
-├── pyproject.toml            # Project configuration
-├── uv.lock                   # Dependency lock file
+├── kerykeion/                       # Main package
+│   ├── __init__.py                  # Public API exports
+│   ├── astrological_subject_factory.py  # Core subject creation
+│   ├── chart_data_factory.py        # Chart data computation
+│   ├── composite_subject_factory.py # Composite/Davison charts
+│   ├── ephemeris_backend.py         # Backend abstraction (libephemeris/swisseph)
+│   ├── ephemeris_data_factory.py    # Time-series ephemeris
+│   ├── planetary_return_factory.py  # Solar/Lunar returns
+│   ├── relationship_score_factory.py # Compatibility scoring
+│   ├── relocated_chart_factory.py   # Relocated charts
+│   ├── transits_time_range_factory.py # Transit tracking
+│   ├── context_serializer.py        # AI/LLM XML export
+│   ├── report.py                    # Text reports
+│   ├── utilities.py                 # Zodiac math helpers
+│   ├── aspects/                     # Aspect detection
+│   ├── astro_cartography/           # ACG lines
+│   ├── charts/                      # SVG chart rendering
+│   ├── dignities/                   # Essential dignities
+│   ├── eclipses/                    # Eclipse search
+│   ├── fixed_stars/                 # Dynamic star discovery
+│   ├── heliacal/                    # Heliacal risings/settings
+│   ├── house_comparison/            # Synastry house overlay
+│   ├── midpoints/                   # Cosmobiology midpoints
+│   ├── moon_phase_details/          # Lunar phase context
+│   ├── occultations/                # Lunar occultations
+│   ├── planetary_nodes/             # Nodes & apsides
+│   ├── planetary_phenomena/         # Elongation/station/etc
+│   ├── primary_directions/          # Placidus semi-arc
+│   ├── schemas/                     # Pydantic models & types
+│   ├── secondary_progressions/      # Progressions & solar arc
+│   ├── settings/                    # Configuration & constants
+│   └── vedic/                       # Nakshatra support
+├── tests/core/                      # Test suite (59+ files)
+├── examples/                        # Usage examples
+├── site/docs/                       # Documentation source (markdown)
+├── release_notes/                   # Per-version release notes
+├── pyproject.toml                   # Project configuration
+├── uv.lock                          # Dependency lock file
 └── README.md
 ```
 
@@ -137,11 +180,11 @@ uv add --group test pytest-benchmark
 3. **Test your changes**
    ```bash
    # Run tests
-   uv run poe test
+   uv run poe test:core
    
    # Check code style
    uv run poe format
-   uv run poe analize
+   uv run poe analyze
    ```
 
 4. **Commit and push**
@@ -191,7 +234,7 @@ uv run pytest tests/test_specific.py -s -vvv
 
 ## 📊 Code Style Guidelines
 
-- **Line length**: 120 characters (configured in Black)
+- **Line length**: 120 characters (configured in Ruff)
 - **Type hints**: Required for public APIs
 - **Docstrings**: Use Google style for all public functions
 - **Testing**: Aim for >90% code coverage

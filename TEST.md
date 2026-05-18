@@ -2,7 +2,7 @@
 
 ## Overview
 
-Kerykeion's test suite lives in `tests/core/` with **27 test files** and parallel execution via `pytest-xdist` (`-n 8`).
+Kerykeion's test suite lives in `tests/core/` with **56 test files** and parallel execution via `pytest-xdist` (`-n 8`).
 
 Tests are run through **4 hierarchical tiers** (`core < base < medium < extended`).
 
@@ -12,7 +12,7 @@ Tests are run through **4 hierarchical tiers** (`core < base < medium < extended
 
 ```bash
 # Test — 4 tiers, each includes everything from the previous one
-poe test:core         # ~1,750 tests — every module, no exhaustive matrix
+poe test:core         # ~2,684 tests — every module, no exhaustive matrix
 poe test:base         # ~6,300 tests — adds exhaustive matrix (DE440s, 1849-2150)
 poe test:medium       # ~7,000 tests — adds DE440 subjects (1550-2650)
 poe test:extended     # ~7,900 tests — all subjects, full ephemeris range
@@ -35,9 +35,9 @@ poe regenerate:all        # All of the above
 
 ## What Each Tier Tests
 
-### `test:core` (~1,750 tests, ~10s)
+### `test:core` (~2,684 tests, ~10s)
 
-Runs **22 of the 27 test files** — one per module/concern. This tier exercises **every code path** in Kerykeion: subject creation, chart drawing, aspects, reports, composite subjects, planetary returns, ephemeris data, transits, relationship scores, context serialization, settings, utilities, backward compatibility, Arabic parts, house comparison, moon phases, and geonames.
+Runs **51 of the 56 test files** — one per module/concern. This tier exercises **every code path** in Kerykeion: subject creation, chart drawing, aspects, reports, composite subjects, planetary returns, ephemeris data, transits, relationship scores, context serialization, settings, utilities, Arabic parts, house comparison, moon phases, geonames, eclipses, heliacal, occultations, planetary phenomena, primary directions, secondary progressions, midpoints, astro-cartography, and more.
 
 It **excludes** the 5 exhaustive matrix files that generate thousands of parametrized combinations:
 
@@ -53,7 +53,7 @@ Use `test:core` for fast local development feedback.
 
 ### `test:base` (~6,300 tests, ~30s)
 
-Includes **all 27 test files** (core + the 5 matrix files above), but restricts temporal subjects to the **DE440s ephemeris** range (1849-2150, 11 subjects). This is the recommended CI tier — it catches regressions across the full matrix without requiring extended ephemeris files.
+Includes **all 56 test files** (core + the 5 matrix files above), but restricts temporal subjects to the **DE440s ephemeris** range (1849-2150, 11 subjects). This is the recommended CI tier — it catches regressions across the full matrix without requiring extended ephemeris files.
 
 ### `test:medium` (~7,000 tests, ~30s)
 
@@ -70,7 +70,7 @@ Runs everything with **all 24 temporal subjects** spanning from 100 AD to 2650 A
 ```
 tests/
 ├── conftest.py              # Tier filtering, parametrized fixtures, session subjects
-├── core/                    # All 27 test files
+├── core/                    # All 56 test files
 │   ├── conftest.py          # Session fixtures, SVG/report comparison helpers
 │   ├── test_arabic_parts.py
 │   ├── test_aspects.py
@@ -141,7 +141,7 @@ Latitude diversity from 66S to 66N:
 
 - **House Systems (23):** Placidus, Koch, Whole Sign, Equal, Campanus, Regiomontanus, Porphyry, Morinus, Alcabitius, Carter, Horizon, Sunshine, etc.
 - **Sidereal Modes (20):** Lahiri, Fagan-Bradley, DeLuce, J2000, Raman, Ushashashi, Krishnamurti, Hipparchos, etc.
-- **Perspective Types (4):** Apparent Geocentric, True Geocentric, Heliocentric, Topocentric
+- **Perspective Types (11):** Apparent Geocentric, True Geocentric, Heliocentric, Topocentric, Barycentric, Selenocentric, Mercurycentric, Venuscentric, Marscentric, Jupitercentric, Saturncentric
 - **Synastry Pairs (6):** john_lennon + yoko_ono, john_lennon + paul_mccartney, etc.
 
 ---
@@ -193,9 +193,7 @@ Latitude diversity from 66S to 66N:
 
 ### Backward Compatibility
 
-| File | Tests | What it covers |
-|------|-------|----------------|
-| `test_backward_compatibility.py` | 66 | Legacy `AstrologicalSubject` wrapper, `KerykeionChartSVG` wrapper, `NatalAspects`/`SynastryAspects` wrappers, `kr_types` module aliases, deprecation warnings, migration path examples, `disable_chiron` params, zodiac type normalization, settings file param warnings, custom active aspects, legacy chart type validation, `SubscriptableBaseModel` operations, ISO datetime parsing with Z suffix, active aspects passthrough |
+> **Note:** `test_backward_compatibility.py` was removed in v6 along with the backward compatibility layer (`backword.py`). Legacy class aliases no longer exist.
 
 ### Context Serializer
 
@@ -229,6 +227,41 @@ Latitude diversity from 66S to 66N:
 | `test_house_comparison.py` | 7 | Cusps/points in reciprocal houses, limited active points, HouseComparisonFactory end-to-end, malformed data handling |
 | `test_moon_phase_details_factory_mocked.py` | 35 | Moon phase details factory with mocked Swiss Ephemeris, phase identification, illumination, upcoming phases, eclipses, integration test |
 | `test_moon_phase_historical_verification.py` | 18 | 2,042-case historical moon phase verification |
+| `test_v512_features.py` | — | Regression tests for v5.12 features (house cusp speeds, expanded fixed stars, sidereal modes, ayanamsa value) |
+
+### v6 Advanced Features
+
+| File | What it covers |
+|------|----------------|
+| `test_astro_cartography.py` | AstroCartographyFactory ACG line computation |
+| `test_backend_comparison.py` | libephemeris vs swisseph results comparison |
+| `test_barycentric.py` | Barycentric perspective calculations |
+| `test_bce_dates.py` | BCE/negative year date handling |
+| `test_davison_composite.py` | Davison composite chart method |
+| `test_dignities.py` | Essential dignities scoring |
+| `test_dynamic_fixed_stars.py` | FixedStarDiscoveryFactory and catalog |
+| `test_eclipses.py` | EclipseFactory solar/lunar eclipse search |
+| `test_ephemeris_backend_path.py` | EPHE_DATA_PATH resolution per backend |
+| `test_gauquelin.py` | Gauquelin 36-sector calculation |
+| `test_heliacal.py` | HeliacalFactory risings/settings |
+| `test_heliocentric_returns.py` | Heliocentric planetary returns |
+| `test_lilith_variants.py` | True/Mean/Interpolated Lilith and Priapus |
+| `test_local_space.py` | Azimuth & altitude calculations |
+| `test_modern_decluttering.py` | Modern chart style declutter logic |
+| `test_nakshatra.py` | Vedic nakshatra calculation |
+| `test_nutation.py` | Nutation model computation |
+| `test_occultations.py` | OccultationFactory lunar occultations |
+| `test_oob_and_declination_aspects.py` | Out-of-bounds and declination aspects |
+| `test_planetary_nodes.py` | PlanetaryNodesFactory nodes/apsides |
+| `test_planetary_phenomena.py` | PlanetaryPhenomenaFactory elongation/phase |
+| `test_planetary_return_backwards.py` | Backward-looking return searches |
+| `test_planetocentric.py` | Planetocentric perspective calculations |
+| `test_predictive_factories.py` | SecondaryProgressionFactory, SolarArcFactory, MidpointFactory |
+| `test_primary_directions.py` | PrimaryDirectionsFactory Placidus semi-arc |
+| `test_relocated_chart.py` | RelocatedChartFactory house recalculation |
+| `test_transit_exactness.py` | Transit event detection precision |
+| `test_transit_refinement.py` | Bisection refinement for exact moments |
+| `test_uranian_planets.py` | 8 Hamburg School hypothetical points |
 
 ---
 

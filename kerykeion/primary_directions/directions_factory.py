@@ -202,7 +202,7 @@ class PrimaryDirectionsFactory:
         ramc: float,
         geo_lat: float,
     ) -> List[SpeculumEntry]:
-        """Build the speculum for all direction points."""
+        """Build the speculum (RA, declination, semi-arc) for all direction points."""
         from kerykeion.astrological_subject_factory import STANDARD_PLANETS
 
         entries: List[SpeculumEntry] = []

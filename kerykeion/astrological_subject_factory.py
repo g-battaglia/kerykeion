@@ -528,7 +528,7 @@ class AstrologicalSubjectFactory:
         - Asteroids: Ceres, Pallas, Juno, Vesta
         - Centaurs: Chiron, Pholus
         - Trans-Neptunian Objects: Eris, Sedna, Haumea, Makemake, Ixion, Orcus, Quaoar
-        - Fixed Stars: 23 stars including all 15 Behenian stars, Royal Stars, and navigational stars
+        - Fixed Stars: Dynamically loaded from FixedStarCatalog (configurable via active_fixed_stars)
         - Arabic Parts: Pars Fortunae, Pars Spiritus, Pars Amoris, Pars Fidei
         - Special Points: Vertex, Anti-Vertex, Earth (for heliocentric charts)
         - House Cusps: All 12 houses with configurable house systems
@@ -537,7 +537,7 @@ class AstrologicalSubjectFactory:
     Supported Features:
         - Multiple zodiac systems (Tropical/Sidereal with various ayanamshas)
         - Multiple house systems (Placidus, Koch, Equal, Whole Sign, etc.)
-        - Multiple coordinate perspectives (Geocentric, Heliocentric, Topocentric)
+        - Multiple coordinate perspectives (Geocentric, Heliocentric, Topocentric, Barycentric, Planetocentric)
         - Automatic timezone and coordinate resolution via GeoNames API
         - Lunar phase calculations
         - Day/night chart detection for Arabic parts
@@ -677,6 +677,21 @@ class AstrologicalSubjectFactory:
             suppress_geonames_warning (bool, optional): If True, suppresses the warning
                 message when using the default GeoNames username. Useful for testing
                 or automated processes. Defaults to False.
+            calculate_dignities (bool, optional): If True, computes essential dignity
+                scores (domicile, exaltation, triplicity, term, face) for each planet.
+                Defaults to False.
+            calculate_nakshatra (bool, optional): If True, computes Vedic nakshatra,
+                pada, and dasha lord for each point. Defaults to False.
+            calculate_gauquelin (bool, optional): If True, computes Gauquelin sector
+                (1-36) for each point. Defaults to False.
+            calculate_nutation (bool, optional): If True, computes nutation in
+                longitude and obliquity. Defaults to False.
+            calculate_local_space (bool, optional): If True, computes azimuth and
+                altitude for each point. Defaults to False.
+            active_fixed_stars (Optional[List[str]], optional): List of fixed star
+                names to compute (e.g., ["Regulus", "Aldebaran"]). Access results
+                via ``subject.fixed_stars`` or ``subject.find_fixed_star(name)``.
+                Defaults to None (no stars computed).
 
         Returns:
             AstrologicalSubjectModel: Complete astrological subject with calculated

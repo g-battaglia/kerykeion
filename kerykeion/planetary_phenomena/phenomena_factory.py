@@ -47,7 +47,15 @@ _INFERIOR_PLANETS = {"Mercury", "Venus"}
 
 
 class PlanetaryPhenomenaFactory:
-    """Calculate observational phenomena for planets."""
+    """Calculate observational phenomena for planets.
+
+    Computes elongation, illumination fraction, phase angle, apparent
+    diameter/magnitude, and morning/evening star status.
+
+    Example:
+        >>> from kerykeion import PlanetaryPhenomenaFactory
+        >>> results = PlanetaryPhenomenaFactory.from_subject(subject)
+    """
 
     @staticmethod
     def from_subject(
@@ -95,7 +103,7 @@ class PlanetaryPhenomenaFactory:
         iso_datetime: str,
         planets: Optional[List[str]] = None,
     ) -> PlanetaryPhenomenaCollectionModel:
-        """Internal calculation method."""
+        """Compute elongation, illumination, and visibility for each planet."""
         swe.set_ephe_path(_EPHE_PATH)
         iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 

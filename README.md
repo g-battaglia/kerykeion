@@ -114,7 +114,7 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 
 ## Installation
 
-Kerykeion requires **Python 3.9** or higher.
+Kerykeion requires **Python 3.12** or higher.
 
 ```bash
 pip3 install kerykeion
@@ -152,7 +152,7 @@ print("Chart saved to", (output_dir / "example-natal.svg").resolve())
 
 This script shows the recommended workflow:
 
-1. Create an `AstrologicalSubject` with explicit coordinates and timezone (offline mode).
+1. Create an astrological subject via `AstrologicalSubjectFactory` with explicit coordinates and timezone (offline mode).
 2. Build a `ChartDataModel` through `ChartDataFactory`.
 3. Render the SVG via `ChartDrawer`, saving it to a controlled folder (`charts_output`).
 
@@ -1402,7 +1402,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
   </tr>
 </table>
 
-Kerykeion provides several chart themes: **Classic** (default), **Dark**, **Light**, and **Black & White** (optimized for monochrome printing). Each is available in both **classic** and **modern** chart styles.
+Kerykeion provides 6 chart themes: **Classic** (default), **Dark**, **Dark High Contrast**, **Light**, **Black & White** (optimized for monochrome printing), and **Strawberry**. Each is available in both **classic** and **modern** chart styles.
 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables.
 
@@ -1943,17 +1943,23 @@ print(f"Mean Priapus: {subject.mean_priapus.abs_pos:.4f}")
 Bisection refinement for sub-step precision on exact transit moments.
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, TransitsTimeRangeFactory
+from datetime import datetime
+from kerykeion import AstrologicalSubjectFactory, TransitsTimeRangeFactory, EphemerisDataFactory
 
 natal = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1985, 4, 15, 8, 30,
     lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
 )
-transit = AstrologicalSubjectFactory.from_birth_data(
-    "Now", 2025, 6, 1, 12, 0,
-    lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
+
+# Generate ephemeris points for the transit period
+ephemeris = EphemerisDataFactory(
+    start_datetime=datetime(2025, 6, 1),
+    end_datetime=datetime(2025, 7, 1),
+    lng=11.25, lat=43.77, tz_str="Europe/Rome",
 )
-factory = TransitsTimeRangeFactory(natal, transit)
+points = ephemeris.get_ephemeris_data_as_astrological_subjects()
+
+factory = TransitsTimeRangeFactory(natal, points)
 events = factory.get_transit_events(refine_exact_moments=True)
 for ev in events.events[:3]:
     print(f"{ev.p1_name} {ev.aspect} {ev.p2_name}: {ev.exact_moment} (orb {ev.min_orb:.4f})")
@@ -2098,7 +2104,7 @@ Clone the repository or download the ZIP via the GitHub interface.
 ```bash
 git clone https://github.com/g-battaglia/kerykeion.git
 cd kerykeion
-pip install -e ".[dev]"
+uv sync --dev
 ```
 
 ## Using the Swiss Ephemeris Backend (Optional)

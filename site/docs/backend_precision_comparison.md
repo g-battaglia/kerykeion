@@ -1,3 +1,11 @@
+---
+title: 'Backend Precision Comparison'
+category: 'Reference'
+description: 'Numerical precision differences between swisseph and libephemeris backends.'
+tags: ['docs', 'backend', 'precision', 'comparison']
+order: 21
+---
+
 # Backend Precision Comparison: swisseph vs libephemeris
 
 Kerykeion supports two ephemeris backends that are **functionally equivalent**

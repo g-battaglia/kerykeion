@@ -105,7 +105,7 @@ RelationshipScoreModel(
 - This implementation is based on the Ciro Discepolo method. Additional details can be found [here](http://www.cirodiscepolo.it/Articoli/Discepoloele.htm).
 - Logging is available for debugging purposes, with detailed messages during aspect evaluations.
 
-This class integrates seamlessly with Kerykeion v5 factories and models.
+This class integrates seamlessly with Kerykeion factories and models.
 
 ---
 

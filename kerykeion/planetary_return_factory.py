@@ -29,7 +29,7 @@ Classes:
     PlanetaryReturnFactory: Main factory class for calculating planetary returns
 
 Dependencies:
-    - swisseph: Swiss Ephemeris library for astronomical calculations
+    - kerykeion.ephemeris_backend: Ephemeris calculations (libephemeris or swisseph)
     - kerykeion.AstrologicalSubjectFactory: For creating complete chart data
     - kerykeion.fetch_geonames: For online location data retrieval
     - kerykeion.utilities: For date/time conversions and astronomical functions
@@ -589,6 +589,10 @@ class PlanetaryReturnFactory:
     def next_return_from_year(self, year: int, return_type: ReturnType) -> PlanetReturnModel:
         """
         Calculate the planetary return occurring within a specified year.
+
+        .. deprecated::
+            Use ``next_return_from_date()`` instead. This method emits a
+            DeprecationWarning and delegates to ``next_return_from_date(year, 1, 1, ...)``.
 
         This is a convenience method that finds the first planetary return (Solar or Lunar)
         that occurs in the given calendar year. It automatically searches from January 1st

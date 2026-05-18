@@ -22,7 +22,7 @@ def get_aspect_from_two_points(
     Utility function to calculate the aspects between two points.
 
     Args:
-        aspects_settings (dict): Dictionary containing aspect settings.
+        aspects_settings (list[dict]): List of aspect setting dictionaries.
         point_one (Union[float, int]): First point.
         point_two (Union[float, int]): Second point.
 

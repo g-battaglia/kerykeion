@@ -1,5 +1,5 @@
-"""
-This is part of Kerykeion (C) 2025 Giacomo Battaglia
+"""SVG chart rendering for Kerykeion (natal, synastry, transit, composite, return)."""
 
-This modules contains the charts logic for the Kerykeion project.
-"""
+from .chart_drawer import ChartDrawer
+
+__all__ = ["ChartDrawer"]

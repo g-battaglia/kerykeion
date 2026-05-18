@@ -157,6 +157,7 @@ def download_swisseph_data(target: Path, *, skip_asteroids: bool = False) -> dic
 
 
 def main() -> None:
+    """CLI entry point: download Swiss Ephemeris data files with license confirmation."""
     parser = argparse.ArgumentParser(
         description="Download Swiss Ephemeris data files for the swisseph backend.",
     )

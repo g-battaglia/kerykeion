@@ -436,7 +436,7 @@ def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     Get the emoji representation of a lunar phase.
 
     Args:
-        phase: The lunar phase number (0-28)
+        phase: The lunar phase number (1-28)
 
     Returns:
         The corresponding emoji for the lunar phase
@@ -453,7 +453,7 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     Get the name of a lunar phase from its numerical value.
 
     Args:
-        phase: The lunar phase number (0-28)
+        phase: The lunar phase number (1-28)
 
     Returns:
         The corresponding name for the lunar phase

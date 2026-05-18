@@ -902,6 +902,8 @@ class ScoreBreakdownItemModel(SubscriptableBaseModel):
 
 
 class RelationshipScoreModel(SubscriptableBaseModel):
+    """Compatibility score result with breakdown and aspect details."""
+
     score_value: int
     score_description: RelationshipScoreDescription
     is_destiny_sign: bool
@@ -913,6 +915,8 @@ class RelationshipScoreModel(SubscriptableBaseModel):
 
 
 class ActiveAspect(TypedDict):
+    """Configuration for an active aspect type (name + orb in degrees)."""
+
     name: AspectName
     orb: float
 

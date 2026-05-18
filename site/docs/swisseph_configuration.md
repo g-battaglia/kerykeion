@@ -1,3 +1,11 @@
+---
+title: 'Swiss Ephemeris Configuration'
+category: 'Reference'
+description: 'Setup guide for the optional Swiss Ephemeris (pyswisseph) backend.'
+tags: ['docs', 'swisseph', 'backend', 'configuration']
+order: 22
+---
+
 # Swiss Ephemeris Backend Configuration
 
 Kerykeion uses **libephemeris** (pure Python) as its default ephemeris backend.

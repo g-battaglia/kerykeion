@@ -41,7 +41,14 @@ def get_translations(
     language: Optional[str] = None,
     language_dict: Optional[Mapping[str, Any]] = None,
 ) -> T:
-    """Fetch a translation by key, falling back to English when missing."""
+    """Fetch a translation by dot-separated key, falling back to English when missing.
+
+    Args:
+        value: Dot-separated key path (e.g., "planets.Sun").
+        default: Value returned if key is missing in both language and English.
+        language: Two-letter language code (e.g., "IT", "FR"). Ignored if language_dict is set.
+        language_dict: Explicit language mapping to use instead of the built-in settings.
+    """
     primary = _select_language(language_dict, language)
     result = _deep_get(primary, value)
     if result is _SENTINEL:
@@ -51,6 +58,7 @@ def get_translations(
 
 
 def _select_language(language_dict: Optional[Mapping[str, Any]], language: Optional[str]) -> Mapping[str, Any]:
+    """Resolve the language mapping: explicit dict > language code > English fallback."""
     if language_dict is not None:
         return language_dict
     fallback = LANGUAGE_SETTINGS.get("EN", {})

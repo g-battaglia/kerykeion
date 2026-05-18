@@ -2,7 +2,7 @@
 """
 Backward compatibility module for chart_template_model.
 
-DEPRECATED: This module will be removed in Kerykeion v6.0.
+DEPRECATED: This module is deprecated and will be removed in a future release.
 Please update your imports:
     OLD: from kerykeion.kr_types.chart_template_model import ...
     NEW: from kerykeion.schemas.chart_template_model import ...

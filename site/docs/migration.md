@@ -152,17 +152,14 @@ In active_points lists:
 
 ### 6. Type Aliases
 
-The `Planet` and `AxialCusps` types are now unified:
+The `Planet` and `AxialCusps` types were unified into `AstrologicalPoint`:
 
 ```python
-# v4
-from kerykeion.kr_types.kr_literals import Planet, AxialCusps
+# v4 (removed in v6)
+# from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 
-# v5 (recommended)
+# v6 (correct)
 from kerykeion.schemas.kr_literals import AstrologicalPoint
-
-# v5 (aliases still available for transition)
-from kerykeion.schemas import Planet, AxialCusps  # Aliases
 ```
 
 ### 7. Removed Parameters
@@ -173,25 +170,17 @@ from kerykeion.schemas import Planet, AxialCusps  # Aliases
 | `disable_chiron_and_lilith` | Removed | Use `active_points` to exclude |
 | `new_settings_file` | Removed | Use `language_pack` parameter |
 
-## Backward Compatibility Layer
+## Backward Compatibility Layer (Removed in v6)
 
-For gradual migration, v5 includes a compatibility layer in `kerykeion.backword`:
+v5 included a compatibility layer in `kerykeion.backword` that allowed gradual migration. **This layer has been removed in v6.0.**
 
 ```python
-# These still work but emit DeprecationWarning
-from kerykeion import AstrologicalSubject, KerykeionChartSVG, NatalAspects
-
-subject = AstrologicalSubject(
-    "John", 1990, 1, 1, 12, 0,
-    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
-    online=False
-)
-
-# Old node properties still work via wrapper
-print(subject.mean_node)  # Maps to mean_north_lunar_node
+# v5 ONLY (no longer works in v6):
+# from kerykeion import AstrologicalSubject, KerykeionChartSVG, NatalAspects
+# These imports now raise ImportError in v6.
 ```
 
-> **Warning:** The backward compatibility layer will be **removed in v6.0**. Plan to migrate your code before then.
+> **Warning:** The backward compatibility layer has been **removed in v6.0**. The legacy imports (`AstrologicalSubject`, `KerykeionChartSVG`, `NatalAspects`, `SynastryAspects`) will raise `ImportError`. Use the factory-based API shown above.
 
 ## Step-by-Step Migration
 
@@ -295,8 +284,8 @@ echo "Migration complete. Review changes before committing."
 
 | Version | Status |
 |:--------|:-------|
-| **v5.x** | Current - Backward compatibility available |
-| **v6.0** | Future - All deprecated items will be removed |
+| **v5.x** | Legacy - Backward compatibility was available |
+| **v6.0** | Current - All deprecated items have been removed |
 
 ## Getting Help
 

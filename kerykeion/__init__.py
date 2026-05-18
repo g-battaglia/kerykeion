@@ -39,7 +39,7 @@ Main Classes
 
 .. include:: ../README.md
 
-This is part of Kerykeion (C) 2025 Giacomo Battaglia
+This is part of Kerykeion (C) 2025-2026 Giacomo Battaglia
 """
 
 # =============================================================================

@@ -2,7 +2,7 @@
 """
 Backward compatibility module for settings_models.
 
-DEPRECATED: This module will be removed in Kerykeion v6.0.
+DEPRECATED: This module is deprecated and will be removed in a future release.
 Please update your imports:
     OLD: from kerykeion.kr_types.settings_models import ...
     NEW: from kerykeion.schemas.settings_models import ...

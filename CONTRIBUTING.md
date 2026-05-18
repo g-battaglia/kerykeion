@@ -11,10 +11,10 @@ Thank you for your interest in contributing to Kerykeion! Contributions of all k
    cd kerykeion
    ```
 
-2. Install the development dependencies:
+2. Install the development dependencies (requires [uv](https://docs.astral.sh/uv/)):
 
    ```bash
-   pip install -e ".[dev]"
+   uv sync --dev
    ```
 
 3. Create a new branch for your changes:

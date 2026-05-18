@@ -1,3 +1,5 @@
+"""Global configuration, chart defaults, and translation utilities."""
+
 from kerykeion.schemas import KerykeionSettingsModel
 from .chart_defaults import (
     DEFAULT_CHART_COLORS,

@@ -2,7 +2,7 @@
 """
 Backward compatibility module for kerykeion_exception.
 
-DEPRECATED: This module will be removed in Kerykeion v6.0.
+DEPRECATED: This module is deprecated and will be removed in a future release.
 Please update your imports:
     OLD: from kerykeion.kr_types.kerykeion_exception import ...
     NEW: from kerykeion.schemas.kerykeion_exception import ...

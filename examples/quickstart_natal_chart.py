@@ -1,4 +1,4 @@
-"""Quickstart example for Kerykeion v5: natal chart calculation and SVG export."""
+"""Quickstart example for Kerykeion: natal chart calculation and SVG export."""
 
 from pathlib import Path
 

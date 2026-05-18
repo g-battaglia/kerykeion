@@ -106,7 +106,16 @@ class EclipseSearchResultModel(SubscriptableBaseModel):
 
 
 class EclipseFactory:
-    """Find upcoming solar and lunar eclipses."""
+    """Find upcoming solar and lunar eclipses visible globally or from a specific location.
+
+    Provides two search modes:
+    - ``search_from_location()``: finds eclipses visible from given coordinates.
+    - ``search_global()``: finds eclipses regardless of observer position.
+
+    Example:
+        >>> from kerykeion import EclipseFactory
+        >>> results = EclipseFactory.search_from_location(lat=41.90, lng=12.49)
+    """
 
     @staticmethod
     def search_from_location(
@@ -169,6 +178,7 @@ class EclipseFactory:
 
     @staticmethod
     def _find_solar_local(start_jd: float, geopos: tuple, count: int) -> List[SolarEclipseModel]:
+        """Search for solar eclipses visible from a geographic position."""
         results = []
         jd = start_jd
         for _ in range(count):
@@ -193,6 +203,7 @@ class EclipseFactory:
 
     @staticmethod
     def _find_solar_global(start_jd: float, count: int) -> List[SolarEclipseModel]:
+        """Search for solar eclipses globally (any location on Earth)."""
         results = []
         jd = start_jd
         for _ in range(count):
@@ -216,6 +227,7 @@ class EclipseFactory:
 
     @staticmethod
     def _find_lunar_local(start_jd: float, geopos: tuple, count: int) -> List[LunarEclipseModel]:
+        """Search for lunar eclipses visible from a geographic position."""
         results = []
         jd = start_jd
         for _ in range(count):
@@ -239,6 +251,7 @@ class EclipseFactory:
 
     @staticmethod
     def _find_lunar_global(start_jd: float, count: int) -> List[LunarEclipseModel]:
+        """Search for lunar eclipses globally."""
         results = []
         jd = start_jd
         for _ in range(count):

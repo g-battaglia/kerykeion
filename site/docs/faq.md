@@ -270,16 +270,16 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
-### Using Deprecated v4 API Without Knowing It
+### Using Removed v4 API
 
-If you see `DeprecationWarning` messages, you're using the legacy API:
+If you see `ImportError: cannot import name 'AstrologicalSubject'`, you're using the old v4 API that was removed in v6:
 
 ```python
-# Deprecated (works but shows warning)
-from kerykeion import AstrologicalSubject
-subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
+# REMOVED in v6 (raises ImportError):
+# from kerykeion import AstrologicalSubject
+# subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
 
-# Modern (recommended)
+# v6 API (correct):
 from kerykeion import AstrologicalSubjectFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 1990, 1, 1, 12, 0,
@@ -288,7 +288,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
-See the [Migration Guide](/content/docs/migration) for full migration instructions.
+See the [Migration Guide](/content/docs/migration) and [Legacy API](/content/docs/legacy) for details.
 
 ---
 

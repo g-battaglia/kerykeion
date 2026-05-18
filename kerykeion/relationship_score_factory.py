@@ -155,7 +155,7 @@ class RelationshipScoreFactory:
         Processes an aspect and adds points to the total score.
 
         Args:
-            aspect (dict): Aspect data containing planetary positions and geometry
+            aspect (AspectModel): Aspect data (subscriptable Pydantic model)
             points (int): Points to add to the total score
             rule (str): Rule identifier for the breakdown
             description (str): Human-readable description for the breakdown

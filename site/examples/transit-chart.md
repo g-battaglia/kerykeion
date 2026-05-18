@@ -11,7 +11,7 @@ The Transit Chart functionality allows you to analyze the transits of celestial 
 
 ## Creating a Transit Chart
 
-To create a Transit Chart in v5, create two subjects (one for the natal chart, one for the transit snapshot), build the chart data via `ChartDataFactory`, then render with `ChartDrawer`.
+To create a Transit Chart, create two subjects (one for the natal chart, one for the transit snapshot), build the chart data via `ChartDataFactory`, then render with `ChartDrawer`.
 
 ```python
 from pathlib import Path

@@ -6,7 +6,7 @@ order: 4
 
 # Synastry Chart
 
-To create a Synastry Chart in v5, create two subjects with `AstrologicalSubjectFactory`, build a synastry `ChartDataModel` via `ChartDataFactory`, then render with `ChartDrawer`.
+To create a Synastry Chart, create two subjects with `AstrologicalSubjectFactory`, build a synastry `ChartDataModel` via `ChartDataFactory`, then render with `ChartDrawer`.
 
 Here is an example:
 

@@ -1,3 +1,11 @@
+---
+title: 'Ephemeris Backend'
+category: 'Reference'
+description: 'Configuration and comparison of libephemeris and Swiss Ephemeris backends.'
+tags: ['docs', 'backend', 'ephemeris', 'libephemeris', 'swisseph']
+order: 20
+---
+
 # Ephemeris Backend
 
 Kerykeion supports two interchangeable ephemeris backends. All astrological

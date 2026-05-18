@@ -227,7 +227,7 @@ The period after the Moon makes its last major aspect in a sign and before it en
 ### Progressed Chart
 A forecasting technique where each day after birth corresponds to one year of life (secondary progressions). For example, the planetary positions 30 days after birth represent the progressed chart for age 30.
 
-> **Note:** Kerykeion does not currently implement progressions. For progressed charts, calculate the date offset manually and create an `AstrologicalSubjectFactory` for that date.
+> **Note:** Kerykeion implements secondary progressions via `SecondaryProgressionFactory` and solar arc directions via `SolarArcFactory`. Both are available from `from kerykeion import SecondaryProgressionFactory, SolarArcFactory`.
 
 ---
 

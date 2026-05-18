@@ -6,9 +6,9 @@ order: 2
 
 # Birth Data
 
-Use `AstrologicalSubjectFactory` to create an `AstrologicalSubjectModel` from birth data. This model is the foundation for all calculations and chart rendering in Kerykeion v5.
+Use `AstrologicalSubjectFactory` to create an `AstrologicalSubjectModel` from birth data. This model is the foundation for all calculations and chart rendering in Kerykeion.
 
-## Creating a Subject (v5)
+## Creating a Subject
 
 Create a subject offline by specifying longitude, latitude, and timezone, or enable online lookup with GeoNames credentials. The factory validates inputs and computes all celestial points and houses.
 

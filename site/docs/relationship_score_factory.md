@@ -30,7 +30,7 @@ This numerical approach is useful for:
 
 ## Basic Usage
 
-To calculate a score, create two `AstrologicalSubject` instances (one for each partner) and pass them to the factory.
+To calculate a score, create two astrological subjects via `AstrologicalSubjectFactory` (one for each partner) and pass them to the factory.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory

@@ -65,6 +65,7 @@ class FixedStarCatalog:
 
     @staticmethod
     def count() -> int:
+        """Return the number of stars in the catalog."""
         return len(_load_catalog())
 
     @staticmethod
@@ -78,4 +79,5 @@ class FixedStarCatalog:
 
     @staticmethod
     def known_slugs() -> frozenset[str]:
+        """Return all slug identifiers available in the catalog."""
         return frozenset(entry.slug for entry in _load_catalog())

@@ -2,7 +2,7 @@
 """
 Backward compatibility module for Kerykeion v4.x imports.
 
-DEPRECATED: This module will be removed in Kerykeion v6.0.
+DEPRECATED: This module is scheduled for removal in a future release.
 Please update your imports:
     OLD: from kerykeion.kr_types import ...
     NEW: from kerykeion.schemas import ...
@@ -12,7 +12,7 @@ import warnings
 
 # Issue deprecation warning when this module is imported
 warnings.warn(
-    "The 'kerykeion.kr_types' module is deprecated and will be removed in v6.0. "
+    "The 'kerykeion.kr_types' module is deprecated and will be removed in a future release. "
     "Please update your imports to use 'kerykeion.schemas' instead.",
     DeprecationWarning,
     stacklevel=2,

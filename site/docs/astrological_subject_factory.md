@@ -58,7 +58,7 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`    | "Tropical" or "Sidereal".                                              |
 | `sidereal_mode`            | `Optional[SiderealMode]` | `None`          | Ayanamsha mode (e.g., "LAHIRI"). Required if `zodiac_type="Sidereal"`. |
 | `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`           | House system code (e.g., "P" for Placidus, "W" for Whole Sign).        |
-| `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | `"Apparent Geocentric"`, `"True Geocentric"`, `"Heliocentric"`, or `"Topocentric"`. |
+| `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | 11 options including Geocentric, Heliocentric, Topocentric, Barycentric, and Planetocentric variants. |
 | `active_points`            | `Optional[List[str]]`    | `None`          | List of points to calculate. If `None`, uses `DEFAULT_ACTIVE_POINTS` (18 points).  |
 | `is_dst`                   | `Optional[bool]`         | `None`          | Explicitly set DST for ambiguous times (see [FAQ](/content/docs/faq)).              |
 | `cache_expire_after_days`  | `int`                    | `30`            | Days to cache online location lookups.                                              |
@@ -67,6 +67,12 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `suppress_geonames_warning`| `bool`                   | `False`         | Suppress the warning about using the default shared GeoNames username. Keyword-only.|
 | `custom_ayanamsa_t0`      | `Optional[float]`        | `None`          | Reference epoch (Julian Day) for USER sidereal mode.                                |
 | `custom_ayanamsa_ayan_t0` | `Optional[float]`        | `None`          | Ayanamsa offset in degrees at the reference epoch. Required with USER.              |
+| `calculate_dignities`      | `bool`                   | `False`         | Compute essential dignity scores for each planet.                                    |
+| `calculate_nakshatra`      | `bool`                   | `False`         | Compute Vedic nakshatra, pada, and dasha lord for each point.                       |
+| `calculate_gauquelin`      | `bool`                   | `False`         | Compute Gauquelin sector (1-36) for each point.                                     |
+| `calculate_nutation`       | `bool`                   | `False`         | Compute nutation in longitude and obliquity.                                        |
+| `calculate_local_space`    | `bool`                   | `False`         | Compute azimuth and altitude for each point.                                        |
+| `active_fixed_stars`       | `Optional[List[str]]`    | `None`          | Fixed star names to compute (e.g., `["Regulus"]`). Access via `find_fixed_star()`.  |
 
 ### 2. `from_iso_utc_time`
 
@@ -174,6 +180,9 @@ Use `position` for display purposes and `abs_pos` for calculations (aspect detec
 - **True Geocentric**: Earth-centered, geometric position only.
 - **Heliocentric**: Sun-centered. Earth becomes a planet.
 - **Topocentric**: Observer-centered (surface of Earth), accounts for parallax.
+- **Barycentric**: Solar system barycenter.
+- **Selenocentric**: Moon-centered.
+- **Mercurycentric**, **Venuscentric**, **Marscentric**, **Jupitercentric**, **Saturncentric**: Planet-centered.
 
 ## Performance & Optimization
 

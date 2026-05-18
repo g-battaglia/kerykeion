@@ -55,7 +55,7 @@ ephemeris_factory = EphemerisDataFactory(
     tz_str=natal_subject.tz_str
 )
 
-# Get ephemeris as a list of AstrologicalSubject objects
+# Get ephemeris as a list of AstrologicalSubjectModel objects
 ephemeris_data = ephemeris_factory.get_ephemeris_data_as_astrological_subjects()
 
 # 3. Calculate Transits

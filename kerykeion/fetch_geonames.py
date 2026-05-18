@@ -228,6 +228,7 @@ class FetchGeonames:
         return city_data_without_tz
 
     def __get_contry_data(self, city_name: str, country_code: str) -> dict[str, str]:
+        """Backward-compat shim for typo in method name. Delegates to __get_country_data."""
         return self.__get_country_data(city_name, country_code)
 
     def get_serialized_data(self) -> dict[str, str]:
