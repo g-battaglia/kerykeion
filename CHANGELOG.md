@@ -1,5 +1,68 @@
 # Changelog
 
+## 6.0.0a44
+
+_2026-05-18_
+
+### Fixed (regression)
+
+- **Catalog fixed stars not participating in aspects.** After `6.0.0a43`,
+  fixed stars passed via `active_fixed_stars` that weren't in the legacy
+  `DEFAULT_CELESTIAL_POINTS_SETTINGS` (i.e. anything beyond the 23
+  traditionally hardcoded names) were silently excluded from aspect
+  calculation. The root cause was that
+  `AspectsFactory._calculate_single_chart_aspects` and
+  `_calculate_dual_chart_aspects` called `get_active_points_list(...)`
+  without forwarding the extended `celestial_points` list built by
+  `single_chart_aspects` / `dual_chart_aspects`. The internal lookup
+  loop in `get_active_points_list` therefore iterated only over the
+  default settings and the per-subject `fixed_stars` fallback was never
+  reached. Same bug applied to
+  `single_chart_declination_aspects` / `dual_chart_declination_aspects`
+  (parallel / contra-parallel aspects).
+- New regression test class `TestCatalogStarsParticipateInAspects` in
+  `tests/core/test_dynamic_fixed_stars.py`.
+
+### Visual — unified fixed-star glyph
+
+- **All fixed stars now render with a single generic glyph**
+  `<symbol id="FixedStar">`. The 23 per-star dedicated symbols (Regulus,
+  Spica, Aldebaran, ...) have been removed from `chart.xml`,
+  `wheel_only.xml`, `modern_wheel.xml`, and `aspect_grid_only.xml`. The
+  generic glyph is a 5-point star colored via the single CSS variable
+  `--kerykeion-chart-color-fixed-star-default`.
+- The 23 per-star CSS variables (`--kerykeion-chart-color-regulus`, …)
+  have been removed from all six themes (`classic`, `dark`,
+  `dark-high-contrast`, `light`, `strawberry`, `black-and-white`).
+  A single `--kerykeion-chart-color-fixed-star-default` per theme
+  replaces them.
+- The 23 hardcoded entries have been removed from
+  `DEFAULT_CELESTIAL_POINTS_SETTINGS`; all fixed-star settings are now
+  generated dynamically by `build_dynamic_fixed_star_settings`.
+- `KNOWN_GLYPH_NAMES` no longer lists fixed stars: `resolve_glyph_id`
+  returns `"FixedStar"` for every star name.
+
+This concludes the fixed-stars architectural cleanup started in
+`6.0.0a43` — there is no longer any asymmetry between "hardcoded" and
+"catalog" stars at any layer (data, calculation, rendering).
+
+### Breaking — visual / CSS
+
+- Custom themes that override `--kerykeion-chart-color-regulus` (or any
+  other per-star variable) must migrate to overriding the single
+  `--kerykeion-chart-color-fixed-star-default`. Per-star color
+  customization via CSS is no longer supported.
+- SVG output: `xlink:href="#Regulus"` (and the other 22 per-star
+  references) replaced by `xlink:href="#FixedStar"`. `kr:slug="Regulus"`
+  is preserved on the wrapping `<g>` for tracking/styling by external
+  consumers.
+
+### Tests
+
+- All chart SVG baselines (`tests/data/svg/*.svg`) regenerated to match
+  the new unified glyph. 9100 tests pass (+2 new regression tests for
+  catalog star aspects).
+
 ## 6.0.0a43
 
 _2026-05-18_

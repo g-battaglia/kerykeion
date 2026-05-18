@@ -1,5 +1,38 @@
 # Release Notes
 
+## 6.0.0a44 — 2026-05-18
+
+Regression fix + visual unification for fixed stars.
+
+**Fixed (regression)**
+
+Catalog fixed stars (any name outside the legacy 23 hardcoded) were
+silently excluded from aspect calculation in `6.0.0a43`. The extended
+`celestial_points` list was not propagated from `single_chart_aspects` /
+`dual_chart_aspects` down to `get_active_points_list`. Same bug applied
+to declination aspects. Fixed across 6 call sites in
+`aspects_factory.py`. Regression test added.
+
+**Visual — unified fixed-star glyph**
+
+All fixed stars now render with a single generic
+`<symbol id="FixedStar">` (5-point star, colored via the
+`--kerykeion-chart-color-fixed-star-default` CSS variable). The 23
+per-star dedicated symbols and CSS variables (Regulus, Spica, Aldebaran,
+…) have been removed across templates, themes, and settings. The
+fixed-star architectural cleanup started in `6.0.0a43` is now complete:
+no asymmetry between "hardcoded" and "catalog" stars at any layer.
+
+**Breaking (visual / CSS)**
+
+- Custom themes overriding `--kerykeion-chart-color-regulus` etc. must
+  migrate to `--kerykeion-chart-color-fixed-star-default`.
+- SVG references `xlink:href="#Regulus"` (and the 22 others) replaced
+  by `xlink:href="#FixedStar"`. `kr:slug="Regulus"` preserved on the
+  wrapping `<g>`.
+
+All chart SVG baselines regenerated. 9100 tests pass.
+
 ## 6.0.0a43 — 2026-05-18
 
 Fixed-star subsystem refactor — single unified channel via the libephemeris

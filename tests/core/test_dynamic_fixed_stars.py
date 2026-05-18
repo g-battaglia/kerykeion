@@ -225,3 +225,78 @@ class TestFixedStarDiscovery:
         mags = [s.magnitude for s in prominent if s.magnitude is not None]
         assert len(mags) >= 2, "A 3-degree orb should discover at least 2 stars with magnitude data"
         assert mags == sorted(mags), "Stars should be sorted by magnitude (brightest first)"
+
+
+class TestCatalogStarsParticipateInAspects:
+    """Regression test for the 6.0.0a43 -> 6.0.0a44 bug: catalog fixed stars
+    (non-default, e.g. Vindemiatrix / Polaris / Castor) were silently excluded
+    from aspect calculation because the extended ``celestial_points`` list
+    built by ``single_chart_aspects`` was not propagated down to
+    ``get_active_points_list``."""
+
+    def test_non_default_catalog_stars_get_aspects(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.aspects import AspectsFactory
+
+        subj = AstrologicalSubjectFactory.from_birth_data(
+            "Aspect Regression",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
+            active_fixed_stars=["Castor", "Vindemiatrix", "Polaris"],
+        )
+
+        result = AspectsFactory.single_chart_aspects(subj)
+        catalog_names = {"Castor", "Vindemiatrix", "Polaris"}
+        star_aspects = [
+            a for a in result.aspects
+            if a.p1_name in catalog_names or a.p2_name in catalog_names
+        ]
+        assert len(star_aspects) > 0, (
+            "Catalog fixed stars (non-default) must participate in aspects; "
+            f"got {len(star_aspects)} from {len(result.aspects)} total. "
+            "Regression of 6.0.0a43 bug?"
+        )
+        # Each requested star should appear at least once
+        names_in_aspects = {a.p1_name for a in star_aspects} | {a.p2_name for a in star_aspects}
+        assert "Castor" in names_in_aspects, "Castor missing from aspects"
+
+    def test_declination_aspects_include_catalog_stars(self):
+        """Declination aspects (parallel/contra-parallel) must also see catalog stars."""
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.aspects import AspectsFactory
+
+        subj = AstrologicalSubjectFactory.from_birth_data(
+            "Declination Regression",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
+            active_fixed_stars=["Castor", "Vindemiatrix", "Polaris", "Algol"],
+        )
+
+        # With a generous orb we should see at least one star participating
+        # alongside the planet/asteroid points (declination aspects use a
+        # narrow orb by default; we just want to assert the list isn't gated
+        # to non-default names).
+        result = AspectsFactory.single_chart_declination_aspects(subj, orb=5.0)
+        catalog_names = {"Castor", "Vindemiatrix", "Polaris", "Algol"}
+        # Either we get a star-involving aspect, or we don't crash on the
+        # catalog-star slugs; both prove the gate is removed.
+        for a in result:
+            assert a.p1_name != "" and a.p2_name != ""

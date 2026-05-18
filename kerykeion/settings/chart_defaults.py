@@ -328,20 +328,6 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
         "label": "Quaoar",
     },
     {
-        "id": 34,
-        "name": "Regulus",
-        "color": "var(--kerykeion-chart-color-regulus)",
-        "element_points": 0,
-        "label": "Regulus",
-    },
-    {
-        "id": 35,
-        "name": "Spica",
-        "color": "var(--kerykeion-chart-color-spica)",
-        "element_points": 0,
-        "label": "Spica",
-    },
-    {
         "id": 36,
         "name": "Pars_Fortunae",
         "color": "var(--kerykeion-chart-color-pars-fortunae)",
@@ -384,153 +370,6 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
         "label": "Anti_Vertex",
     },
     # Fixed Stars (v5.12 additions -- IDs 42-56)
-    {
-        "id": 42,
-        "name": "Aldebaran",
-        "color": "var(--kerykeion-chart-color-aldebaran)",
-        "element_points": 0,
-        "label": "Aldebaran",
-    },
-    {
-        "id": 43,
-        "name": "Antares",
-        "color": "var(--kerykeion-chart-color-antares)",
-        "element_points": 0,
-        "label": "Antares",
-    },
-    {
-        "id": 44,
-        "name": "Sirius",
-        "color": "var(--kerykeion-chart-color-sirius)",
-        "element_points": 0,
-        "label": "Sirius",
-    },
-    {
-        "id": 45,
-        "name": "Fomalhaut",
-        "color": "var(--kerykeion-chart-color-fomalhaut)",
-        "element_points": 0,
-        "label": "Fomalhaut",
-    },
-    {
-        "id": 46,
-        "name": "Algol",
-        "color": "var(--kerykeion-chart-color-algol)",
-        "element_points": 0,
-        "label": "Algol",
-    },
-    {
-        "id": 47,
-        "name": "Betelgeuse",
-        "color": "var(--kerykeion-chart-color-betelgeuse)",
-        "element_points": 0,
-        "label": "Betelgeuse",
-    },
-    {
-        "id": 48,
-        "name": "Canopus",
-        "color": "var(--kerykeion-chart-color-canopus)",
-        "element_points": 0,
-        "label": "Canopus",
-    },
-    {
-        "id": 49,
-        "name": "Procyon",
-        "color": "var(--kerykeion-chart-color-procyon)",
-        "element_points": 0,
-        "label": "Procyon",
-    },
-    {
-        "id": 50,
-        "name": "Arcturus",
-        "color": "var(--kerykeion-chart-color-arcturus)",
-        "element_points": 0,
-        "label": "Arcturus",
-    },
-    {
-        "id": 51,
-        "name": "Pollux",
-        "color": "var(--kerykeion-chart-color-pollux)",
-        "element_points": 0,
-        "label": "Pollux",
-    },
-    {
-        "id": 52,
-        "name": "Deneb",
-        "color": "var(--kerykeion-chart-color-deneb)",
-        "element_points": 0,
-        "label": "Deneb",
-    },
-    {
-        "id": 53,
-        "name": "Altair",
-        "color": "var(--kerykeion-chart-color-altair)",
-        "element_points": 0,
-        "label": "Altair",
-    },
-    {
-        "id": 54,
-        "name": "Rigel",
-        "color": "var(--kerykeion-chart-color-rigel)",
-        "element_points": 0,
-        "label": "Rigel",
-    },
-    {
-        "id": 55,
-        "name": "Achernar",
-        "color": "var(--kerykeion-chart-color-achernar)",
-        "element_points": 0,
-        "label": "Achernar",
-    },
-    {
-        "id": 56,
-        "name": "Capella",
-        "color": "var(--kerykeion-chart-color-capella)",
-        "element_points": 0,
-        "label": "Capella",
-    },
-    {
-        "id": 57,
-        "name": "Vega",
-        "color": "var(--kerykeion-chart-color-vega)",
-        "element_points": 0,
-        "label": "Vega",
-    },
-    {
-        "id": 58,
-        "name": "Alcyone",
-        "color": "var(--kerykeion-chart-color-alcyone)",
-        "element_points": 0,
-        "label": "Alcyone",
-    },
-    {
-        "id": 59,
-        "name": "Alphecca",
-        "color": "var(--kerykeion-chart-color-alphecca)",
-        "element_points": 0,
-        "label": "Alphecca",
-    },
-    {
-        "id": 60,
-        "name": "Algorab",
-        "color": "var(--kerykeion-chart-color-algorab)",
-        "element_points": 0,
-        "label": "Algorab",
-    },
-    {
-        "id": 61,
-        "name": "Deneb_Algedi",
-        "color": "var(--kerykeion-chart-color-deneb_algedi)",
-        "element_points": 0,
-        "label": "Deneb Algedi",
-    },
-    {
-        "id": 62,
-        "name": "Alkaid",
-        "color": "var(--kerykeion-chart-color-alkaid)",
-        "element_points": 0,
-        "label": "Alkaid",
-    },
     # Lilith/Priapus variants (v6.0)
     {
         "id": 63,
@@ -731,11 +570,12 @@ KNOWN_GLYPH_NAMES: Final[frozenset[str]] = frozenset({
     "Ceres", "Pallas", "Juno", "Vesta",
     # TNOs
     "Eris", "Sedna", "Haumea", "Makemake", "Ixion", "Orcus", "Quaoar",
-    # Hardcoded fixed stars with dedicated glyphs
-    "Regulus", "Spica", "Aldebaran", "Antares", "Sirius", "Fomalhaut",
-    "Algol", "Betelgeuse", "Canopus", "Procyon", "Arcturus", "Pollux",
-    "Deneb", "Altair", "Rigel", "Achernar", "Capella", "Vega",
-    "Alcyone", "Alphecca", "Algorab", "Deneb_Algedi", "Alkaid",
+    # Fixed stars: no per-star dedicated glyphs anymore (v6.0.0a44).
+    # ``resolve_glyph_id`` returns "FixedStar" for any name not in this set,
+    # which now matches every fixed star — including the 23 traditionally
+    # hardcoded ones. The unified ``<symbol id="FixedStar">`` ships in every
+    # SVG template; colors are controlled by the single CSS variable
+    # ``--kerykeion-chart-color-fixed-star-default``.
     # Arabic parts
     "Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei",
     # Axes / extras

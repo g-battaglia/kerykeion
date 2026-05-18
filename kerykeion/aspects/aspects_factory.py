@@ -355,7 +355,11 @@ class AspectsFactory:
         Returns:
             List of all calculated AspectModel instances
         """
-        active_points_list = get_active_points_list(subject, active_points)
+        # v6: pass the (already-extended) celestial_points so that catalog
+        # fixed stars on subject.fixed_stars are reachable by the lookup loop
+        # in get_active_points_list; without this, they fall back to the
+        # DEFAULT_CELESTIAL_POINTS_SETTINGS and never get iterated.
+        active_points_list = get_active_points_list(subject, active_points, celestial_points=celestial_points)
 
         # Update aspects settings with active aspects orbs
         filtered_settings = AspectsFactory._update_aspect_settings(aspects_settings, active_aspects)
@@ -471,8 +475,9 @@ class AspectsFactory:
             List[AspectModel]: Complete list of all calculated aspect instances
         """
         # Get active points lists for both subjects
-        first_active_points_list = get_active_points_list(first_subject, active_points)
-        second_active_points_list = get_active_points_list(second_subject, active_points)
+        # v6: see single_chart_aspects note — pass extended celestial_points.
+        first_active_points_list = get_active_points_list(first_subject, active_points, celestial_points=celestial_points)
+        second_active_points_list = get_active_points_list(second_subject, active_points, celestial_points=celestial_points)
 
         # Create a lookup dictionary for planet IDs to optimize performance
         planet_id_lookup = {planet["name"]: planet["id"] for planet in celestial_points}
@@ -684,8 +689,24 @@ class AspectsFactory:
         Returns:
             List of AspectModel with aspect="parallel" or aspect="contra_parallel".
         """
+        # v6: extend points_to_use and celestial_points with subject.fixed_stars
+        # so catalog stars participate in parallel/contra-parallel aspects too.
+        from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
+
         points_to_use = active_points if active_points is not None else subject.active_points
-        points_list = get_active_points_list(subject, points_to_use)
+        dynamic_star_names = [
+            getattr(s, "name", None) for s in getattr(subject, "fixed_stars", None) or []
+        ]
+        dynamic_star_names = [n for n in dynamic_star_names if n]
+        celestial_points = list(DEFAULT_CELESTIAL_POINTS_SETTINGS)
+        if dynamic_star_names:
+            celestial_points = celestial_points + build_dynamic_fixed_star_settings(
+                dynamic_star_names, existing_settings=celestial_points
+            )
+            points_to_use = list(points_to_use) + [
+                n for n in dynamic_star_names if n not in points_to_use
+            ]
+        points_list = get_active_points_list(subject, points_to_use, celestial_points=celestial_points)
 
         return AspectsFactory._compute_declination_aspects(
             points_list, points_list, subject.name, subject.name, orb, single_chart=True
@@ -711,10 +732,27 @@ class AspectsFactory:
         Returns:
             List of AspectModel with aspect="parallel" or aspect="contra_parallel".
         """
+        # v6: extend points + celestial_points with both subjects' fixed_stars
+        # so catalog stars participate in parallel/contra-parallel aspects.
+        from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
+
         pts1 = active_points if active_points is not None else first_subject.active_points
         pts2 = active_points if active_points is not None else second_subject.active_points
-        list1 = get_active_points_list(first_subject, pts1)
-        list2 = get_active_points_list(second_subject, pts2)
+        dynamic_star_names: list[str] = []
+        for subj in (first_subject, second_subject):
+            for s in getattr(subj, "fixed_stars", None) or []:
+                star_name = getattr(s, "name", None)
+                if star_name and star_name not in dynamic_star_names:
+                    dynamic_star_names.append(star_name)
+        celestial_points = list(DEFAULT_CELESTIAL_POINTS_SETTINGS)
+        if dynamic_star_names:
+            celestial_points = celestial_points + build_dynamic_fixed_star_settings(
+                dynamic_star_names, existing_settings=celestial_points
+            )
+            pts1 = list(pts1) + [n for n in dynamic_star_names if n not in pts1]
+            pts2 = list(pts2) + [n for n in dynamic_star_names if n not in pts2]
+        list1 = get_active_points_list(first_subject, pts1, celestial_points=celestial_points)
+        list2 = get_active_points_list(second_subject, pts2, celestial_points=celestial_points)
 
         return AspectsFactory._compute_declination_aspects(
             list1, list2, first_subject.name, second_subject.name, orb, single_chart=False

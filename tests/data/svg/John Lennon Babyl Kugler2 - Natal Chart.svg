@@ -131,28 +131,6 @@
     --kerykeion-chart-color-admetos: var(--kerykeion-color-accent);
     --kerykeion-chart-color-vulkanus: var(--kerykeion-color-primary);
     --kerykeion-chart-color-poseidon: var(--kerykeion-color-secondary);
-    --kerykeion-chart-color-regulus: #ffd700;
-    --kerykeion-chart-color-spica: #87ceeb;
-    --kerykeion-chart-color-aldebaran: #ff6347;
-    --kerykeion-chart-color-antares: #dc143c;
-    --kerykeion-chart-color-sirius: #4a78c7;
-    --kerykeion-chart-color-fomalhaut: #dda0dd;
-    --kerykeion-chart-color-algol: #8b0000;
-    --kerykeion-chart-color-betelgeuse: #ff4500;
-    --kerykeion-chart-color-canopus: #b89a00;
-    --kerykeion-chart-color-procyon: #c4a000;
-    --kerykeion-chart-color-arcturus: #ff8c00;
-    --kerykeion-chart-color-pollux: #e07050;
-    --kerykeion-chart-color-deneb: #6a8db5;
-    --kerykeion-chart-color-altair: #4d9eac;
-    --kerykeion-chart-color-rigel: #7ec8e3;
-    --kerykeion-chart-color-achernar: #6495ed;
-    --kerykeion-chart-color-capella: #cc8800;
-    --kerykeion-chart-color-vega: #6a5acd;
-    --kerykeion-chart-color-alcyone: #9370db;
-    --kerykeion-chart-color-alphecca: #20b2aa;
-    --kerykeion-chart-color-algorab: #2f4f4f;
-    --kerykeion-chart-color-deneb_algedi: #5f9ea0;
     --kerykeion-chart-color-anti-vertex: #4b0082;
 
     /* Arab Parts */
@@ -180,6 +158,8 @@
 
     /* Other */
     --kerykeion-chart-color-house-number: #f00;
+    --kerykeion-chart-color-fixed-star-default: #d4a053;
+
 }
 
     </style>
@@ -305,7 +285,7 @@
 
             <!-- Planets -->
             <g kr:node='Planets_Wheel'>
-                <g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='19.107893446638258' kr:signposition='19.107893446638258' kr:slug='Saturn' kr:retrograde='true' transform='translate(-12.0,-12.0) scale(1.0)'><use x='104.63115723324906' y='294.6925626387232' xlink:href='#Saturn' /><g transform='translate(126.63115723324906,312.6925626387232) scale(0.55)'><use xlink:href='#retrograde' /></g></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='19.584757481005866' kr:signposition='19.584757481005866' kr:slug='Jupiter' kr:retrograde='true' transform='translate(-12.0,-12.0) scale(1.0)'><use x='90.80018831433827' y='312.76961036698685' xlink:href='#Jupiter' /><g transform='translate(112.80018831433827,330.76961036698685) scale(0.55)'><use xlink:href='#retrograde' /></g></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='31.444889508854843' kr:signposition='1.4448895088548426' kr:slug='Uranus' kr:retrograde='true' transform='translate(-12.0,-12.0) scale(1.0)'><use x='121.8835188212577' y='325.81664683470115' xlink:href='#Uranus' /><g transform='translate(143.8835188212577,343.81664683470115) scale(0.55)'><use xlink:href='#retrograde' /></g></g><g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Gem' kr:absoluteposition='72.96457031351076' kr:signposition='12.964570313510762' kr:slug='Imum_Coeli' transform='translate(-12.0,-12.0) scale(1.0)'><use x='202.65812497891844' y='401.74543075434906' xlink:href='#Imum_Coeli' /></g><g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Can' kr:absoluteposition='96.46109070171497' kr:signposition='6.461090701714966' kr:slug='Chiron' transform='translate(-12.0,-12.0) scale(1.0)'><use x='267.85811332497553' y='383.3175687833589' xlink:href='#Chiron' /></g><g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Can' kr:absoluteposition='100.08094894419341' kr:signposition='10.080948944193409' kr:slug='Pluto' transform='translate(-12.0,-12.0) scale(1.0)'><use x='282.9639614870184' y='400.3436871639853' xlink:href='#Pluto' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Leo' kr:absoluteposition='129.1082907608233' kr:signposition='9.108290760823309' kr:slug='Venus' transform='translate(-12.0,-12.0) scale(1.0)'><use x='341.4201220870136' y='345.02361084944306' xlink:href='#Venus' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='151.92299329529962' kr:signposition='1.9229932952996194' kr:slug='Neptune' transform='translate(-12.0,-12.0) scale(1.0)'><use x='391.6485459686717' y='307.5182827505828' xlink:href='#Neptune' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='158.55540452325113' kr:signposition='8.555404523251127' kr:slug='Mars' transform='translate(-12.0,-12.0) scale(1.0)'><use x='379.6204943706032' y='282.68626888951957' xlink:href='#Mars' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='166.91712110217435' kr:signposition='16.91712110217435' kr:slug='True_North_Lunar_Node' transform='translate(-12.0,-12.0) scale(1.0)'><use x='403.9562645387929' y='265.96812119667834' xlink:href='#True_North_Lunar_Node' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='172.16076766828945' kr:signposition='22.160767668289452' kr:slug='Sun' transform='translate(-12.0,-12.0) scale(1.0)'><use x='385.79991207416776' y='247.64104961146978' xlink:href='#Sun' /></g><g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Vir' kr:absoluteposition='175.6403579437606' kr:signposition='25.64035794376059' kr:slug='Descendant' transform='translate(-12.0,-12.0) scale(1.0)'><use x='406.0' y='240.0' xlink:href='#Descendant' /></g><g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Lib' kr:absoluteposition='194.4511059561385' kr:signposition='14.451105956138491' kr:slug='Mercury' transform='translate(-12.0,-12.0) scale(1.0)'><use x='378.04571203750027' y='192.46704944925511' xlink:href='#Mercury' /></g><g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Sag' kr:absoluteposition='252.9645703135108' kr:signposition='12.96457031351079' kr:slug='Medium_Coeli' transform='translate(-12.0,-12.0) scale(1.0)'><use x='277.3418750210816' y='78.25456924565096' xlink:href='#Medium_Coeli' /></g><g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Cap' kr:absoluteposition='279.4394986108796' kr:signposition='9.439498610879582' kr:slug='Moon' transform='translate(-12.0,-12.0) scale(1.0)'><use x='204.6794032424485' y='98.33682396370452' xlink:href='#Moon' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Pis' kr:absoluteposition='346.91712110217435' kr:signposition='16.91712110217435' kr:slug='True_South_Lunar_Node' transform='translate(-12.0,-12.0) scale(1.0)'><use x='77.62749827818826' y='205.48665932425195' xlink:href='#True_South_Lunar_Node' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Pis' kr:absoluteposition='349.26515691275955' kr:signposition='19.26515691275955' kr:slug='Mean_Lilith' transform='translate(-12.0,-12.0) scale(1.0)'><use x='94.7998032762321' y='224.73884436292255' xlink:href='#Mean_Lilith' /></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Pis' kr:absoluteposition='355.6403579437606' kr:signposition='25.64035794376059' kr:slug='Ascendant' transform='translate(-12.0,-12.0) scale(1.0)'><use x='74.0' y='239.99999999999997' xlink:href='#Ascendant' /></g><g kr:node='Indicator' kr:slug='Sun'><line class='planet-degree-line' x1='483.5501815141943' y1='254.8090878990905' x2='475.56492966126996' y2='254.32354403354657' style='stroke: var(--kerykeion-chart-color-sun); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(489.53912040388764,255.17324579824844)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-sun); font-size: 10px;'>22°</text></g></g><g kr:node='Indicator' kr:slug='Moon'><line class='planet-degree-line' x1='181.8013902795053' y1='3.042362801699216' x2='183.70954141788218' y2='10.811465660659898' style='stroke: var(--kerykeion-chart-color-moon); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(180.37027692572264,-2.7844643425212947)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-moon); font-size: 10px;'>9°</text></g></g><g kr:node='Indicator' kr:slug='Mercury'><line class='planet-degree-line' x1='470.96766481296766' y1='161.32384217029528' x2='463.39495449123103' y2='163.90338832864626' style='stroke: var(--kerykeion-chart-color-mercury); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(476.6471975542702,159.38918255153203)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mercury); font-size: 10px;'>14°</text></g></g><g kr:node='Indicator' kr:slug='Venus'><line class='planet-degree-line' x1='407.8594320194303' y1='417.0853214755934' x2='402.355844084367' y2='411.27924536163954' style='stroke: var(--kerykeion-chart-color-venus); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(411.9871229707278,421.43987856105883)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-venus); font-size: 10px;'>9°</text></g></g><g kr:node='Indicator' kr:slug='Mars'><line class='planet-degree-line' x1='473.23232891247375' y1='311.68459213850394' x2='465.5853673087861' y2='309.3342776421596' style='stroke: var(--kerykeion-chart-color-mars); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(478.96755011523953,313.44732801076225)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mars); font-size: 10px;'>8°</text></g></g><g kr:node='Indicator' kr:slug='Jupiter'><line class='planet-degree-line' x1='16.998706073103197' y1='339.02738463137246' x2='24.310223906771945' y2='335.7805851352619' style='stroke: var(--kerykeion-chart-color-jupiter); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(14.249341983104078,347.4087538561849)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-jupiter); font-size: 10px;'>19°</text></g></g><g kr:node='Indicator' kr:slug='Saturn'><line class='planet-degree-line' x1='16.182249351123488' y1='337.1679705174361' x2='23.52053625764403' y2='333.9821354185038' style='stroke: var(--kerykeion-chart-color-saturn); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(8.151009388198691,333.52029486848755)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-saturn); font-size: 10px;'>19°</text></g></g><g kr:node='Indicator' kr:slug='Uranus'><line class='planet-degree-line' x1='42.11171737972972' y1='382.7453242722858' x2='48.599857793509074' y2='378.06514970598136' style='stroke: var(--kerykeion-chart-color-uranus); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(37.24561206939521,386.25545519701416)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-uranus); font-size: 10px;'>1°</text></g></g><g kr:node='Indicator' kr:slug='Neptune'><line class='planet-degree-line' x1='463.391938817844' y1='338.14296546979136' x2='456.0676129549638' y2='334.92516332324084' style='stroke: var(--kerykeion-chart-color-neptune); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(468.8851832150041,340.55631707970423)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-neptune); font-size: 10px;'>1°</text></g></g><g kr:node='Indicator' kr:slug='Pluto'><line class='planet-degree-line' x1='300.8477474527394' y1='476.2912432358162' x2='298.8527393395348' y2='468.54398935923206' style='stroke: var(--kerykeion-chart-color-pluto); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(302.3440035376428,482.1016836432543)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-pluto); font-size: 10px;'>10°</text></g></g><g kr:node='Indicator' kr:slug='True_North_Lunar_Node'><line class='planet-degree-line' x1='481.17752030609904' y1='277.0054549897876' x2='473.27006062393184' y2='275.79216138356503' style='stroke: var(--kerykeion-chart-color-true-node); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(487.1081150677244,277.9154251944545)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-true-node); font-size: 10px;'>16°</text></g></g><g kr:node='Indicator' kr:slug='Chiron'><line class='planet-degree-line' x1='285.807766452124' y1='479.66152910441775' x2='284.30587247008714' y2='471.8037740518139' style='stroke: var(--kerykeion-chart-color-chiron); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(286.93418693865164,485.5548453938706)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-chiron); font-size: 10px;'>6°</text></g></g><g kr:node='Indicator' kr:slug='Ascendant'><line class='planet-degree-line' x1='-4.0' y1='239.99999999999997' x2='4.0' y2='239.99999999999997' style='stroke: var(--kerykeion-chart-color-first-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-10.0,239.99999999999997)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-first-house); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='Medium_Coeli'><line class='planet-degree-line' x1='293.5418808505485' y1='1.9469239959591134' x2='291.7864093472519' y2='9.751942881337502' style='stroke: var(--kerykeion-chart-color-tenth-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(294.85848447802107,-3.9068401680746785)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-tenth-house); font-size: 10px;'>12°</text></g></g><g kr:node='Indicator' kr:slug='Descendant'><line class='planet-degree-line' x1='484.0' y1='240.00000000000006' x2='476.0' y2='240.00000000000006' style='stroke: var(--kerykeion-chart-color-seventh-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(490.0,240.00000000000006)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-seventh-house); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='Imum_Coeli'><line class='planet-degree-line' x1='186.45811914945136' y1='478.0530760040408' x2='188.21359065274805' y2='470.2480571186625' style='stroke: var(--kerykeion-chart-color-fourth-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(185.14151552197887,483.9068401680746)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-fourth-house); font-size: 10px;'>12°</text></g></g><g kr:node='Indicator' kr:slug='Mean_Lilith'><line class='planet-degree-line' x1='-2.4911216816813018' y1='212.9065338954199' x2='5.459406898045954' y2='213.7948442595045' style='stroke: var(--kerykeion-chart-color-mean-lilith); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-9.095543332308017,218.7535816669664)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mean-lilith); font-size: 10px;'>19°</text></g></g><g kr:node='Indicator' kr:slug='True_South_Lunar_Node'><line class='planet-degree-line' x1='-1.1775203060990402' y1='202.99454501021253' x2='6.729939376068142' y2='204.20783861643508' style='stroke: var(--kerykeion-chart-color-true-node); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-6.030927162967316,195.62903112021695)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-true-node); font-size: 10px;'>16°</text></g></g>
+                <g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='19.107893446638258' kr:signposition='19.107893446638258' kr:slug='Saturn' kr:retrograde='true' kr:cx='104.63115723324906' kr:cy='294.6925626387232' transform='translate(-12.0,-12.0) scale(1.0)'><use x='104.63115723324906' y='294.6925626387232' xlink:href='#Saturn' /><g transform='translate(126.63115723324906,312.6925626387232) scale(0.55)'><use xlink:href='#retrograde' /></g></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='19.584757481005866' kr:signposition='19.584757481005866' kr:slug='Jupiter' kr:retrograde='true' kr:cx='90.80018831433827' kr:cy='312.76961036698685' transform='translate(-12.0,-12.0) scale(1.0)'><use x='90.80018831433827' y='312.76961036698685' xlink:href='#Jupiter' /><g transform='translate(112.80018831433827,330.76961036698685) scale(0.55)'><use xlink:href='#retrograde' /></g></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='31.444889508854843' kr:signposition='1.4448895088548426' kr:slug='Uranus' kr:retrograde='true' kr:cx='121.8835188212577' kr:cy='325.81664683470115' transform='translate(-12.0,-12.0) scale(1.0)'><use x='121.8835188212577' y='325.81664683470115' xlink:href='#Uranus' /><g transform='translate(143.8835188212577,343.81664683470115) scale(0.55)'><use xlink:href='#retrograde' /></g></g><g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Gem' kr:absoluteposition='72.96457031351076' kr:signposition='12.964570313510762' kr:slug='Imum_Coeli' kr:cx='202.65812497891844' kr:cy='401.74543075434906' transform='translate(-12.0,-12.0) scale(1.0)'><use x='202.65812497891844' y='401.74543075434906' xlink:href='#Imum_Coeli' /></g><g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Can' kr:absoluteposition='96.46109070171497' kr:signposition='6.461090701714966' kr:slug='Chiron' kr:cx='267.85811332497553' kr:cy='383.3175687833589' transform='translate(-12.0,-12.0) scale(1.0)'><use x='267.85811332497553' y='383.3175687833589' xlink:href='#Chiron' /></g><g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Can' kr:absoluteposition='100.08094894419341' kr:signposition='10.080948944193409' kr:slug='Pluto' kr:cx='282.9639614870184' kr:cy='400.3436871639853' transform='translate(-12.0,-12.0) scale(1.0)'><use x='282.9639614870184' y='400.3436871639853' xlink:href='#Pluto' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Leo' kr:absoluteposition='129.1082907608233' kr:signposition='9.108290760823309' kr:slug='Venus' kr:cx='341.4201220870136' kr:cy='345.02361084944306' transform='translate(-12.0,-12.0) scale(1.0)'><use x='341.4201220870136' y='345.02361084944306' xlink:href='#Venus' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='151.92299329529962' kr:signposition='1.9229932952996194' kr:slug='Neptune' kr:cx='391.6485459686717' kr:cy='307.5182827505828' transform='translate(-12.0,-12.0) scale(1.0)'><use x='391.6485459686717' y='307.5182827505828' xlink:href='#Neptune' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='158.55540452325113' kr:signposition='8.555404523251127' kr:slug='Mars' kr:cx='379.6204943706032' kr:cy='282.68626888951957' transform='translate(-12.0,-12.0) scale(1.0)'><use x='379.6204943706032' y='282.68626888951957' xlink:href='#Mars' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='166.91712110217435' kr:signposition='16.91712110217435' kr:slug='True_North_Lunar_Node' kr:cx='403.9562645387929' kr:cy='265.96812119667834' transform='translate(-12.0,-12.0) scale(1.0)'><use x='403.9562645387929' y='265.96812119667834' xlink:href='#True_North_Lunar_Node' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='172.16076766828945' kr:signposition='22.160767668289452' kr:slug='Sun' kr:cx='385.79991207416776' kr:cy='247.64104961146978' transform='translate(-12.0,-12.0) scale(1.0)'><use x='385.79991207416776' y='247.64104961146978' xlink:href='#Sun' /></g><g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Vir' kr:absoluteposition='175.6403579437606' kr:signposition='25.64035794376059' kr:slug='Descendant' kr:cx='406.0' kr:cy='240.0' transform='translate(-12.0,-12.0) scale(1.0)'><use x='406.0' y='240.0' xlink:href='#Descendant' /></g><g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Lib' kr:absoluteposition='194.4511059561385' kr:signposition='14.451105956138491' kr:slug='Mercury' kr:cx='378.04571203750027' kr:cy='192.46704944925511' transform='translate(-12.0,-12.0) scale(1.0)'><use x='378.04571203750027' y='192.46704944925511' xlink:href='#Mercury' /></g><g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Sag' kr:absoluteposition='252.9645703135108' kr:signposition='12.96457031351079' kr:slug='Medium_Coeli' kr:cx='277.3418750210816' kr:cy='78.25456924565096' transform='translate(-12.0,-12.0) scale(1.0)'><use x='277.3418750210816' y='78.25456924565096' xlink:href='#Medium_Coeli' /></g><g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Cap' kr:absoluteposition='279.4394986108796' kr:signposition='9.439498610879582' kr:slug='Moon' kr:cx='204.6794032424485' kr:cy='98.33682396370452' transform='translate(-12.0,-12.0) scale(1.0)'><use x='204.6794032424485' y='98.33682396370452' xlink:href='#Moon' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Pis' kr:absoluteposition='346.91712110217435' kr:signposition='16.91712110217435' kr:slug='True_South_Lunar_Node' kr:cx='77.62749827818826' kr:cy='205.48665932425195' transform='translate(-12.0,-12.0) scale(1.0)'><use x='77.62749827818826' y='205.48665932425195' xlink:href='#True_South_Lunar_Node' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Pis' kr:absoluteposition='349.26515691275955' kr:signposition='19.26515691275955' kr:slug='Mean_Lilith' kr:cx='94.7998032762321' kr:cy='224.73884436292255' transform='translate(-12.0,-12.0) scale(1.0)'><use x='94.7998032762321' y='224.73884436292255' xlink:href='#Mean_Lilith' /></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Pis' kr:absoluteposition='355.6403579437606' kr:signposition='25.64035794376059' kr:slug='Ascendant' kr:cx='74.0' kr:cy='239.99999999999997' transform='translate(-12.0,-12.0) scale(1.0)'><use x='74.0' y='239.99999999999997' xlink:href='#Ascendant' /></g><g kr:node='Indicator' kr:slug='Sun'><line class='planet-degree-line' x1='483.5501815141943' y1='254.8090878990905' x2='475.56492966126996' y2='254.32354403354657' style='stroke: var(--kerykeion-chart-color-sun); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(489.53912040388764,255.17324579824844)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-sun); font-size: 10px;'>22°</text></g></g><g kr:node='Indicator' kr:slug='Moon'><line class='planet-degree-line' x1='181.8013902795053' y1='3.042362801699216' x2='183.70954141788218' y2='10.811465660659898' style='stroke: var(--kerykeion-chart-color-moon); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(180.37027692572264,-2.7844643425212947)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-moon); font-size: 10px;'>9°</text></g></g><g kr:node='Indicator' kr:slug='Mercury'><line class='planet-degree-line' x1='470.96766481296766' y1='161.32384217029528' x2='463.39495449123103' y2='163.90338832864626' style='stroke: var(--kerykeion-chart-color-mercury); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(476.6471975542702,159.38918255153203)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mercury); font-size: 10px;'>14°</text></g></g><g kr:node='Indicator' kr:slug='Venus'><line class='planet-degree-line' x1='407.8594320194303' y1='417.0853214755934' x2='402.355844084367' y2='411.27924536163954' style='stroke: var(--kerykeion-chart-color-venus); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(411.9871229707278,421.43987856105883)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-venus); font-size: 10px;'>9°</text></g></g><g kr:node='Indicator' kr:slug='Mars'><line class='planet-degree-line' x1='473.23232891247375' y1='311.68459213850394' x2='465.5853673087861' y2='309.3342776421596' style='stroke: var(--kerykeion-chart-color-mars); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(478.96755011523953,313.44732801076225)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mars); font-size: 10px;'>8°</text></g></g><g kr:node='Indicator' kr:slug='Jupiter'><line class='planet-degree-line' x1='16.998706073103197' y1='339.02738463137246' x2='24.310223906771945' y2='335.7805851352619' style='stroke: var(--kerykeion-chart-color-jupiter); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(14.249341983104078,347.4087538561849)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-jupiter); font-size: 10px;'>19°</text></g></g><g kr:node='Indicator' kr:slug='Saturn'><line class='planet-degree-line' x1='16.182249351123488' y1='337.1679705174361' x2='23.52053625764403' y2='333.9821354185038' style='stroke: var(--kerykeion-chart-color-saturn); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(8.151009388198691,333.52029486848755)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-saturn); font-size: 10px;'>19°</text></g></g><g kr:node='Indicator' kr:slug='Uranus'><line class='planet-degree-line' x1='42.11171737972972' y1='382.7453242722858' x2='48.599857793509074' y2='378.06514970598136' style='stroke: var(--kerykeion-chart-color-uranus); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(37.24561206939521,386.25545519701416)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-uranus); font-size: 10px;'>1°</text></g></g><g kr:node='Indicator' kr:slug='Neptune'><line class='planet-degree-line' x1='463.391938817844' y1='338.14296546979136' x2='456.0676129549638' y2='334.92516332324084' style='stroke: var(--kerykeion-chart-color-neptune); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(468.8851832150041,340.55631707970423)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-neptune); font-size: 10px;'>1°</text></g></g><g kr:node='Indicator' kr:slug='Pluto'><line class='planet-degree-line' x1='300.8477474527394' y1='476.2912432358162' x2='298.8527393395348' y2='468.54398935923206' style='stroke: var(--kerykeion-chart-color-pluto); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(302.3440035376428,482.1016836432543)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-pluto); font-size: 10px;'>10°</text></g></g><g kr:node='Indicator' kr:slug='True_North_Lunar_Node'><line class='planet-degree-line' x1='481.17752030609904' y1='277.0054549897876' x2='473.27006062393184' y2='275.79216138356503' style='stroke: var(--kerykeion-chart-color-true-node); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(487.1081150677244,277.9154251944545)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-true-node); font-size: 10px;'>16°</text></g></g><g kr:node='Indicator' kr:slug='Chiron'><line class='planet-degree-line' x1='285.807766452124' y1='479.66152910441775' x2='284.30587247008714' y2='471.8037740518139' style='stroke: var(--kerykeion-chart-color-chiron); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(286.93418693865164,485.5548453938706)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-chiron); font-size: 10px;'>6°</text></g></g><g kr:node='Indicator' kr:slug='Ascendant'><line class='planet-degree-line' x1='-4.0' y1='239.99999999999997' x2='4.0' y2='239.99999999999997' style='stroke: var(--kerykeion-chart-color-first-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-10.0,239.99999999999997)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-first-house); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='Medium_Coeli'><line class='planet-degree-line' x1='293.5418808505485' y1='1.9469239959591134' x2='291.7864093472519' y2='9.751942881337502' style='stroke: var(--kerykeion-chart-color-tenth-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(294.85848447802107,-3.9068401680746785)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-tenth-house); font-size: 10px;'>12°</text></g></g><g kr:node='Indicator' kr:slug='Descendant'><line class='planet-degree-line' x1='484.0' y1='240.00000000000006' x2='476.0' y2='240.00000000000006' style='stroke: var(--kerykeion-chart-color-seventh-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(490.0,240.00000000000006)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-seventh-house); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='Imum_Coeli'><line class='planet-degree-line' x1='186.45811914945136' y1='478.0530760040408' x2='188.21359065274805' y2='470.2480571186625' style='stroke: var(--kerykeion-chart-color-fourth-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(185.14151552197887,483.9068401680746)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-fourth-house); font-size: 10px;'>12°</text></g></g><g kr:node='Indicator' kr:slug='Mean_Lilith'><line class='planet-degree-line' x1='-2.4911216816813018' y1='212.9065338954199' x2='5.459406898045954' y2='213.7948442595045' style='stroke: var(--kerykeion-chart-color-mean-lilith); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-9.095543332308017,218.7535816669664)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mean-lilith); font-size: 10px;'>19°</text></g></g><g kr:node='Indicator' kr:slug='True_South_Lunar_Node'><line class='planet-degree-line' x1='-1.1775203060990402' y1='202.99454501021253' x2='6.729939376068142' y2='204.20783861643508' style='stroke: var(--kerykeion-chart-color-true-node); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-6.030927162967316,195.62903112021695)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-true-node); font-size: 10px;'>16°</text></g></g>
             </g>
 
             <!-- Aspects -->
@@ -686,189 +666,15 @@
                 </g>
             </g>
         </symbol>
-        <symbol id='Regulus'>
+        <symbol id='FixedStar'>
             <g transform='translate(2,2)'>
                 <g transform='scale(2)'>
-                    <path d='M1 1.5 3.5 4 6 1.5 8.5 4 11 1.5v8H1Zm0 5h10'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-regulus); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Spica'>
-            <g transform='translate(-2,2)'>
-                <g transform='scale(3.5)'>
-                    <g transform='translate(0.6,0)'>
-                        <g transform='scale(0.75,1)'>
-                            <path
-                                d='m 2.009590,1.200000 c -0.197756,0.000000 -0.360117,0.161892 -0.360117,0.359649 0.000000,0.197756 0.162361,0.360118 0.360117,0.360118 0.110261,0.000000 0.209386,-0.050561 0.275625,-0.129493 0.409661,0.248850 0.685430,0.694577 0.685430,1.209727 0.000000,0.515094 -0.275284,0.961201 -0.684844,1.209961 -0.066240,-0.079298 -0.165653,-0.130194 -0.276211,-0.130194 -0.197756,0.000000 -0.360117,0.162362 -0.360117,0.360116 0.000000,0.197756 0.162361,0.360118 0.360117,0.360118 0.197757,0.000000 0.360118,-0.162362 0.360118,-0.360118 0.000000,-0.023416 -0.002456,-0.046223 -0.006799,-0.068437 0.445321,-0.264525 0.753555,-0.734663 0.784336,-1.281444 h 0.906562 c 0.030782,0.546780 0.339016,1.016919 0.784336,1.281444 -0.004343,0.022224 -0.006796,0.045021 -0.006796,0.068437 0.000000,0.197756 0.162361,0.360118 0.360117,0.360118 0.197756,0.000000 0.360117,-0.162362 0.360117,-0.360118 0.000000,-0.197754 -0.162361,-0.360116 -0.360117,-0.360116 -0.110558,0.000000 -0.209972,0.050897 -0.276211,0.130194 -0.385485,-0.234137 -0.651605,-0.643131 -0.681563,-1.119959 h 5.408555 c 0.040371,0.154638 0.181495,0.270117 0.348164,0.270117 0.197757,0.000000 0.360117,-0.162362 0.360117,-0.360118 0.000000,-0.197756 -0.162361,-0.360118 -0.360117,-0.360118 -0.166669,0.000000 -0.307793,0.115479 -0.348164,0.270119 H 4.233692 c 0.030029,-0.476810 0.296579,-0.885514 0.682148,-1.119728 0.066239,0.078932 0.165364,0.129493 0.275625,0.129493 0.197756,0.000000 0.360117,-0.162362 0.360117,-0.360118 0.000000,-0.197756 -0.162361,-0.359649 -0.360117,-0.359649 -0.197756,0.000000 -0.360117,0.161892 -0.360117,0.359649 0.000000,0.023580 0.002513,0.046549 0.006914,0.068907 -0.445384,0.264529 -0.753662,0.734634 -0.784453,1.281446 h -0.906563 c -0.030791,-0.546812 -0.339070,-1.016917 -0.784453,-1.281446 0.004402,-0.022360 0.006914,-0.045327 0.006914,-0.068907 0.000000,-0.197756 -0.162361,-0.359649 -0.360118,-0.359649 z m 0.000000,0.179766 c 0.100477,0.000000 0.180235,0.079404 0.180235,0.179882 0.000000,0.100478 -0.079757,0.180234 -0.180235,0.180234 -0.100477,0.000000 -0.179882,-0.079756 -0.179882,-0.180234 0.000000,-0.100478 0.079405,-0.179882 0.179882,-0.179882 z m 3.181875,0.000000 c 0.100477,0.000000 0.179883,0.079404 0.179883,0.179882 0.000000,0.100478 -0.079406,0.180234 -0.179883,0.180234 -0.100477,0.000000 -0.180234,-0.079756 -0.180234,-0.180234 0.000000,-0.100478 0.079757,-0.179882 0.180234,-0.179882 z m 4.798945,1.440352 c 0.100477,0.000000 0.179883,0.079404 0.179883,0.179882 0.000000,0.100478 -0.079406,0.179766 -0.179883,0.179766 -0.100477,0.000000 -0.179766,-0.079288 -0.179766,-0.179766 0.000000,-0.100478 0.079288,-0.179882 0.179766,-0.179882 z m -7.980820,1.439531 c 0.100477,0.000000 0.180235,0.079756 0.180235,0.180234 0.000000,0.100480 -0.079757,0.179884 -0.180235,0.179884 -0.100477,0.000000 -0.179882,-0.079404 -0.179882,-0.179884 0.000000,-0.100478 0.079405,-0.180234 0.179882,-0.180234 z m 3.181875,0.000000 c 0.100477,0.000000 0.179883,0.079756 0.179883,0.180234 0.000000,0.100480 -0.079406,0.179884 -0.179883,0.179884 -0.100477,0.000000 -0.180234,-0.079404 -0.180234,-0.179884 0.000000,-0.100478 0.079757,-0.180234 0.180234,-0.180234 z'
-                                style='fill: none; stroke: var(--kerykeion-chart-color-spica); stroke-width: 1px; stroke-linecap: round; stroke-miterlimit: 10; stroke-dasharray: none; vector-effect: non-scaling-stroke'
-                            />
-                        </g>
-                    </g>
+                    <path d='M6 1 L7 5 L11 5.5 L8 8 L9 11.5 L6 9.5 L3 11.5 L4 8 L1 5.5 L5 5 Z'
+                        style='fill: none; stroke: var(--kerykeion-chart-color-fixed-star-default, #d4a053); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4;' />
                 </g>
             </g>
         </symbol>
         <!-- Fixed Stars (v5.12 additions) -->
-        <symbol id='Aldebaran'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M2 3 L6 8 L10 3 M6 9.5 A0.8 0.8 0 1 0 6.01 9.5'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-aldebaran); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Antares'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M6 2 L2 6 L6 10 L10 6 Z M6 4 L4 6 L6 8 L8 6 Z'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-antares); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Sirius'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M6 1 L7.2 4.5 L11 5 L8 7 L9 11 L6 8.5 L3 11 L4 7 L1 5 L4.8 4.5 Z'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-sirius); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Fomalhaut'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M2 4 Q6 11 10 4 M6 2 A1.2 1.2 0 1 0 6.01 2'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-fomalhaut); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Algol'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M6 2 A4 4 0 1 0 6.01 2 Z M6 1 V11 M1 6 H11'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-algol); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Betelgeuse'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M4 1 L8 1 L11 4 L11 8 L8 11 L4 11 L1 8 L1 4 Z'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-betelgeuse); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Canopus'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M6 1 L10 9 L2 9 Z M6 5.5 A1 1 0 1 0 6.01 5.5'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-canopus); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Procyon'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M6 2 L9 6 L6 10 L3 6 Z'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-procyon); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Arcturus'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M6 1 L10 10 H2 Z M6 4 L8 9 H4 Z'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-arcturus); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Pollux'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M4 4 A2 2 0 1 0 4.01 4 M8 4 A2 2 0 1 0 8.01 4 M4 8 H8'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-pollux); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Deneb'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M2 2 Q6 5 10 2 Q7 6 10 10 Q6 7 2 10 Q5 6 2 2 Z'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-deneb); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Altair'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M1 8 L6 2 L11 8 M3 7 L6 4 L9 7'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-altair); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Rigel'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M3 1 H9 V4 H7 V11 H5 V4 H3 Z'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-rigel); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Achernar'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M1 6 Q3 2 5.5 6 Q8 10 11 6'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-achernar); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Capella'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M3 10 Q1 5 6 2 Q11 5 9 10 M6 6 A1.2 1.2 0 1 0 6.01 6'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-capella); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Vega'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M6 1 L3 4 L3 11 M6 1 L9 4 L9 11 M3 7 L9 7'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-vega); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Alcyone'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M6 3 A0.8 0.8 0 1 0 6.01 3 M4 5.5 A0.8 0.8 0 1 0 4.01 5.5 M8 5.5 A0.8 0.8 0 1 0 8.01 5.5 M5 8 A0.8 0.8 0 1 0 5.01 8 M7.5 8 A0.8 0.8 0 1 0 7.51 8'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-alcyone); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Alphecca'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M2 8 Q2 2 6 2 Q10 2 10 8 M6 2 L6 4'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-alphecca); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Algorab'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M2 3 L6 6 L10 3 M6 6 L6 10 M4 8 L6 10 L8 8'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-algorab); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
-        <symbol id='Deneb_Algedi'>
-            <g transform='translate(2,2)'>
-                <g transform='scale(2)'>
-                    <path d='M3 3 Q6 1 9 3 Q11 6 9 9 Q6 11 3 9'
-                        style='fill: none; stroke: var(--kerykeion-chart-color-deneb_algedi); stroke-width: 1px; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1' />
-                </g>
-            </g>
-        </symbol>
         <symbol id='Anti_Vertex'>
             <g transform='translate(0,1)'>
                 <g transform='scale(2)'>
