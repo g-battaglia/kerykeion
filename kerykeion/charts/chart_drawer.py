@@ -2240,9 +2240,9 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.planets_settings.extend(extra_star_settings)
             self.available_planets_setting.extend(extra_star_settings)
 
-        # v6.1: same dynamic-channel mechanism for user-selected midpoints.
-        # Midpoints live in subject.active_midpoints (separate from
-        # active_points just like fixed_stars).
+        # User-selected midpoints share the dynamic-channel mechanism
+        # with fixed_stars: they live in subject.active_midpoints and the
+        # drawer materialises a synthetic celestial-point setting for each.
         from kerykeion.settings.chart_defaults import build_dynamic_midpoint_settings
 
         dynamic_midpoint_names: list[str] = []
