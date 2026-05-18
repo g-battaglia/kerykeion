@@ -1,5 +1,37 @@
 # Release Notes
 
+## 6.0.0a43 — 2026-05-18
+
+Fixed-star subsystem refactor — single unified channel via the libephemeris
+catalog (single source of truth, 116 stars today, scales to thousands).
+
+**Breaking changes** (alpha — accepted):
+
+- `subject.regulus` / `subject.spica` / the other 21 typed star fields are
+  removed. Use `subject.find_fixed_star("Regulus")` or iterate
+  `subject.fixed_stars` (`list[KerykeionPointModel]`).
+- `active_points=["Regulus", ...]` no longer triggers star calculation.
+  Pass star names to the new keyword argument
+  `active_fixed_stars=["Regulus", ...]` on the factory constructors.
+- `FixedStarDiscoveryFactory.find_prominent_stars()` no longer accepts
+  the `catalog_path` keyword (the catalog is now read exclusively from
+  libephemeris, regardless of the active backend).
+
+Highlights:
+
+- Stars now participate in aspect calculations natively without needing
+  to be listed in `active_points`.
+- New `kerykeion.fixed_stars.FixedStarCatalog` exposes the libephemeris
+  catalog (`list_all`, `find`, `known_slugs`).
+- Chart wheel SVG renders catalog stars via a new generic
+  `<symbol id="FixedStar">` glyph (colored via the
+  `--kerykeion-chart-color-fixed-star-default` CSS variable). The 23
+  traditional stars keep their dedicated glyphs.
+- swisseph backend: `sefstars.txt` is required for fixed-star calculation
+  and is not bundled (licensed by Astrodienst). Missing-file scenarios
+  now emit a single actionable WARNING. See
+  [site/docs/swisseph_configuration.md](site/docs/swisseph_configuration.md#fixed-stars-catalog-sefstarstxt).
+
 ## 6.0.0a42 — 2026-05-15
 
 Updated `libephemeris` to 2.0.0.

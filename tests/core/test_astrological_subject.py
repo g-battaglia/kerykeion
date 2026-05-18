@@ -1874,7 +1874,7 @@ class TestAllDwarfPlanetsAndFixedStars:
         # Others will fail gracefully with warnings
 
     def test_all_fixed_stars_attempt(self):
-        """v7: stars are populated via active_fixed_stars and accessed via find_fixed_star."""
+        """v6: stars are populated via active_fixed_stars and accessed via find_fixed_star."""
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Fixed Stars",
             1990,
@@ -2028,7 +2028,7 @@ class TestAllDwarfPlanetsAndFixedStars:
         # Sun (planet) reaches the model as a typed field
         assert subject.sun is not None
 
-        # Fixed stars (v7) live in the unified array, accessed via find_fixed_star
+        # Fixed stars (v6) live in the unified array, accessed via find_fixed_star
         regulus = subject.find_fixed_star("Regulus")
         assert regulus is not None
         assert hasattr(regulus, "abs_pos")

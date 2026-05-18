@@ -180,7 +180,7 @@ def draw_planets(
         point_details = available_kerykeion_celestial_points[point_idx]
         # In dual charts, main subject is horoscope "0"
         h_id = "0" if chart_type in DUAL_CHART_TYPES else None
-        # v7: dynamic catalog fixed stars carry a ``glyph_id`` setting pointing
+        # v6: dynamic catalog fixed stars carry a ``glyph_id`` setting pointing
         # to a generic ``#FixedStar`` symbol (their per-star <symbol> doesn't
         # exist in the template). Other points fall back to their own slug.
         glyph_id = available_planets_setting[point_idx].get("glyph_id")
@@ -1085,7 +1085,7 @@ def _draw_secondary_points(
 
         # Build point symbol with kr: metadata (matching _generate_point_svg attributes)
         point_name = points_settings[point_idx]["name"]
-        # v7: catalog fixed stars fall back to the generic FixedStar symbol.
+        # v6: catalog fixed stars fall back to the generic FixedStar symbol.
         point_glyph = points_settings[point_idx].get("glyph_id") or point_name
         kr_attrs = f'kr:node="ChartPoint" kr:slug="{point_name}" kr:horoscope="1"'
         if celestial_points is not None and point_idx < len(celestial_points):

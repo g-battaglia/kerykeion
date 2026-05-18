@@ -218,7 +218,7 @@ def get_active_points_list(
         active_points = []
     point_list = []
 
-    # v7: build a lookup for catalog fixed stars (they are no longer
+    # v6: build a lookup for catalog fixed stars (they are no longer
     # subject attributes; they live in subject.fixed_stars array).
     star_lookup: dict = {}
     for star in getattr(subject, "fixed_stars", None) or []:

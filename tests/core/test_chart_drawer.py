@@ -712,7 +712,7 @@ class TestNatalChart:
         svg = ChartDrawer(data).generate_svg_string()
         compare_chart_svg("Kanye - Natal Chart.svg", svg)
 
-    @pytest.mark.skip(reason="v7: snapshot needs regeneration after fixed-stars channel split (active_points no longer includes the 23 hardcoded stars)")
+    @pytest.mark.skip(reason="v6: snapshot needs regeneration after fixed-stars channel split (active_points no longer includes the 23 hardcoded stars)")
     def test_all_active_points_natal_chart(self):
         from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 
@@ -2090,7 +2090,7 @@ class TestOutputToFile:
 
 
 _V7_SKIP_REASON = (
-    "v7: snapshot needs regeneration after fixed-stars channel split "
+    "v6: snapshot needs regeneration after fixed-stars channel split "
     "(active_points no longer includes the 23 hardcoded stars; stars live "
     "in subject.fixed_stars array)"
 )

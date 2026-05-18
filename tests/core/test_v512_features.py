@@ -43,7 +43,7 @@ def _make_subject(**kwargs):
 
 
 def _get_star(subject, name: str):
-    """v7 helper: lookup a fixed star via find_fixed_star (unified array).
+    """v6 helper: lookup a fixed star via find_fixed_star (unified array).
 
     Returns the star model (and asserts presence) so tests can assert on
     attributes without nested ``is not None`` checks.
@@ -180,7 +180,7 @@ class TestExpandedFixedStars:
 
     @pytest.mark.parametrize("star_name", NEW_FIXED_STARS)
     def test_new_star_exists_on_subject(self, star_name):
-        """v7: each fixed star must be present in subject.fixed_stars."""
+        """v6: each fixed star must be present in subject.fixed_stars."""
         star = self.subject.find_fixed_star(star_name)
         assert star is not None, f"{star_name} not found in subject.fixed_stars"
 

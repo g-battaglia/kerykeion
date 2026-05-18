@@ -312,7 +312,7 @@ ALL_ACTIVE_POINTS: list[AstrologicalPoint] = [
     "Ixion",
     "Orcus",
     "Quaoar",
-    # Fixed Stars (v7): no longer included in DEFAULT_ACTIVE_POINTS.
+    # Fixed Stars (v6): no longer included in DEFAULT_ACTIVE_POINTS.
     # Stars are activated separately via the ``active_fixed_stars`` parameter
     # of AstrologicalSubjectFactory. See ROYAL_FIXED_STARS, BEHENIAN_FIXED_STARS,
     # and DEFAULT_FIXED_STARS below for ready-made presets.

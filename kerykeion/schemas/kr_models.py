@@ -506,7 +506,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
             selected sidereal mode. ``None`` for tropical charts. Added in v5.12.
         active_points: List of celestial points included in calculations.
 
-    Fixed Stars (v7 -- unified array):
+    Fixed Stars (v6 -- unified array):
         All fixed stars (any name from the libephemeris catalog) live in
         ``fixed_stars: list[KerykeionPointModel]``. No more typed per-star
         fields. Use ``subject.find_fixed_star("Regulus")`` for lookup by name.
@@ -624,7 +624,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     vulkanus: Optional[KerykeionPointModel] = None
     poseidon: Optional[KerykeionPointModel] = None
 
-    # Fixed Stars (v7 -- unified array, source: libephemeris catalog)
+    # Fixed Stars (v6 -- unified array, source: libephemeris catalog)
     # All fixed stars live here. Use ``find_fixed_star(name)`` for lookup.
     fixed_stars: list[KerykeionPointModel] = Field(
         default_factory=list,
@@ -951,7 +951,7 @@ class SingleChartAspectsModel(SubscriptableBaseModel):
     aspects: list[AspectModel] = Field(
         description="List of calculated aspects within the chart, filtered based on orb settings."
     )
-    # v7: stars from the libephemeris catalog are not part of the AstrologicalPoint
+    # v6: stars from the libephemeris catalog are not part of the AstrologicalPoint
     # Literal (it would explode to thousands of entries). They appear here as
     # plain strings — the planet validation literal is widened to accept either.
     active_points: list[Union[AstrologicalPoint, str]] = Field(
@@ -980,7 +980,7 @@ class DualChartAspectsModel(SubscriptableBaseModel):
     aspects: list[AspectModel] = Field(
         description="List of calculated aspects between the two charts, filtered based on orb settings."
     )
-    # v7: see SingleChartAspectsModel.active_points — catalog fixed stars are plain strings.
+    # v6: see SingleChartAspectsModel.active_points — catalog fixed stars are plain strings.
     active_points: list[Union[AstrologicalPoint, str]] = Field(
         description="List of active points used in the calculation. Catalog fixed stars use plain strings.",
     )

@@ -25,7 +25,7 @@ class _CelestialPointSetting(_CelestialPointSettingRequired, total=False):
     """Celestial point settings with optional is_active and glyph_id fields."""
 
     is_active: bool
-    # v7: when set, the SVG renderer uses this as the symbol reference
+    # v6: when set, the SVG renderer uses this as the symbol reference
     # (xlink:href="#{glyph_id}") instead of the point name. Used to make
     # catalog fixed stars fall back to the generic "#FixedStar" symbol when
     # the template doesn't ship a per-star <symbol>.
@@ -699,7 +699,7 @@ DEFAULT_CHART_ASPECTS_SETTINGS: Final[list[_ChartAspectSetting]] = [
 
 
 # =============================================================================
-# Dynamic fixed-star settings (v7)
+# Dynamic fixed-star settings (v6)
 # =============================================================================
 # Catalog fixed stars passed via ``active_fixed_stars`` may not have a dedicated
 # entry in ``DEFAULT_CELESTIAL_POINTS_SETTINGS``. The chart drawer extends

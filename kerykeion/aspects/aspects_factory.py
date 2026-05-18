@@ -104,7 +104,7 @@ class AspectsFactory:
             >>> print(f"Found {len(chart_aspects.aspects)} aspects")
         """
         # Initialize settings and configurations
-        # v7: extend celestial_points with synthetic settings for any dynamic
+        # v6: extend celestial_points with synthetic settings for any dynamic
         # catalog fixed star carried on subject.fixed_stars, so aspects engine
         # can iterate them just like planets.
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
@@ -122,7 +122,7 @@ class AspectsFactory:
         # Set active aspects with default fallback
         active_aspects_resolved = active_aspects if active_aspects is not None else DEFAULT_ACTIVE_ASPECTS
 
-        # Determine active points to use. v7: extend with star names so the
+        # Determine active points to use. v6: extend with star names so the
         # aspects loop iterates them; subject.fixed_stars stars are not in
         # subject.active_points by design.
         subject_active = list(subject.active_points) + [
@@ -135,7 +135,7 @@ class AspectsFactory:
                 subject_active,
                 active_points,
             )
-            # v7: catalog fixed stars carried on the subject always participate
+            # v6: catalog fixed stars carried on the subject always participate
             # in aspect calculation, even when the caller restricted active_points
             # to planets only — they are a different conceptual channel.
             for name in dynamic_star_names:
@@ -193,7 +193,7 @@ class AspectsFactory:
             >>> synastry = AspectsFactory.dual_chart_aspects(john, jane)
             >>> print(f"Found {len(synastry.aspects)} aspects")
         """
-        # Initialize settings and configurations (v7: include dynamic star settings)
+        # Initialize settings and configurations (v6: include dynamic star settings)
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
 
         celestial_points = list(DEFAULT_CELESTIAL_POINTS_SETTINGS)
@@ -211,7 +211,7 @@ class AspectsFactory:
         # Set active aspects with default fallback
         active_aspects_resolved = active_aspects if active_aspects is not None else DEFAULT_ACTIVE_ASPECTS
 
-        # v7: extend each subject's active_points with its fixed_stars names so
+        # v6: extend each subject's active_points with its fixed_stars names so
         # the dual-chart aspects engine iterates them as first-class points.
         first_subject_active = list(first_subject.active_points) + [
             getattr(s, "name", None) for s in getattr(first_subject, "fixed_stars", None) or []
@@ -237,7 +237,7 @@ class AspectsFactory:
             active_points_resolved,
         )
 
-        # v7: catalog fixed stars from either subject always participate
+        # v6: catalog fixed stars from either subject always participate
         # (separate channel, not gated by active_points).
         for name in dynamic_star_names:
             if name not in active_points_resolved:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Fixed Star Discovery Factory (v7)
+Fixed Star Discovery Factory (v6)
 
 Finds fixed stars conjunct natal points within a configurable orb.
 
@@ -114,7 +114,7 @@ def _build_discovery_point(
 class FixedStarDiscoveryFactory:
     """Factory for discovering fixed-star conjunctions in a chart.
 
-    Catalog source is ``libephemeris`` (single source of truth, v7).
+    Catalog source is ``libephemeris`` (single source of truth, v6).
     """
 
     @staticmethod
@@ -182,7 +182,7 @@ class FixedStarDiscoveryFactory:
             reset = getattr(swe, "reset_session", None) or swe.close
             reset()
 
-        # v7: emit a single actionable warning when nothing was returned on
+        # v6: emit a single actionable warning when nothing was returned on
         # the swisseph backend — almost always means sefstars.txt is missing
         # from KERYKEION_EPHE_PATH. See site/docs/swisseph_configuration.md.
         if not prominent and BACKEND_NAME == "swisseph":

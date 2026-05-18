@@ -109,7 +109,7 @@ class TestDynamicFixedStars:
             assert star.sign is not None
 
     def test_find_fixed_star_lookup(self, subject_all_stars):
-        """v7: stars are accessed via subject.find_fixed_star (unified array)."""
+        """v6: stars are accessed via subject.find_fixed_star (unified array)."""
         regulus = subject_all_stars.find_fixed_star("Regulus")
         spica = subject_all_stars.find_fixed_star("Spica")
         assert regulus is not None
@@ -144,7 +144,7 @@ class TestFixedStarEdgeCases:
     """Test edge-case branches in FixedStarDiscoveryFactory and helpers."""
 
     def test_catalog_source_is_libephemeris(self, subject_all_stars):
-        """v7: discovery sources its catalog exclusively from libephemeris (no sefstars.txt)."""
+        """v6: discovery sources its catalog exclusively from libephemeris (no sefstars.txt)."""
         from unittest.mock import patch
 
         with patch(
@@ -155,7 +155,7 @@ class TestFixedStarEdgeCases:
         assert result == []
 
     def test_no_sefstars_parser_present(self):
-        """v7: the legacy ``_parse_star_names_from_catalog`` helper is gone."""
+        """v6: the legacy ``_parse_star_names_from_catalog`` helper is gone."""
         from kerykeion.fixed_stars import discovery_factory as df
 
         assert not hasattr(df, "_parse_star_names_from_catalog")

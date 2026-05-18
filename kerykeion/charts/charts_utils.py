@@ -393,7 +393,7 @@ def get_decoded_kerykeion_celestial_point_name(
 
     if input_planet_name in language_keys:
         return celestial_point_language[input_planet_name]
-    # v7: catalog fixed stars are not in the translations table. Fall back to the
+    # v6: catalog fixed stars are not in the translations table. Fall back to the
     # caller-provided slug with underscores replaced by spaces — labels remain
     # readable on the chart wheel without polluting the language model.
     return input_planet_name.replace("_", " ")
@@ -1115,7 +1115,7 @@ def draw_aspect_grid(
         parts.append(
             f'<rect kr:node="AspectsGridRect" x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
         )
-        # v7: catalog stars fall back to the generic #FixedStar symbol.
+        # v6: catalog stars fall back to the generic #FixedStar symbol.
         glyph_a = planet_a.get("glyph_id") or planet_a["name"]
         parts.append(
             f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{glyph_a}" />'
@@ -1402,7 +1402,7 @@ def draw_transit_aspect_list(
 
             inner_path += f'<g transform="translate({horizontal_position},{vertical_position})">'
 
-            # v7: catalog fixed stars don't ship a dedicated <symbol id="X">;
+            # v6: catalog fixed stars don't ship a dedicated <symbol id="X">;
             # resolve glyph id once per point — known names render with their
             # own glyph, unknown names fall back to "FixedStar". This helper
             # tolerates both the language model (Pydantic) and a settings list
@@ -1827,7 +1827,7 @@ def draw_main_planet_grid(
             celestial_point_language,
         )
 
-        # v7: catalog stars without dedicated symbols fall back to #FixedStar.
+        # v6: catalog stars without dedicated symbols fall back to #FixedStar.
         from kerykeion.settings.chart_defaults import resolve_glyph_id
         planet_glyph = resolve_glyph_id(planet["name"])
         svg_output += (

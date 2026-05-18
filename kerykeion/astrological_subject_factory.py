@@ -107,7 +107,7 @@ TNO_PLANETS: Dict[AstrologicalPoint, int] = {
     "Quaoar": 50000,
 }
 
-# Fixed stars (v7): single unified channel.
+# Fixed stars (v6): single unified channel.
 #
 # Stars are no longer hardcoded here. The authoritative catalog lives in
 # ``libephemeris`` (``libephemeris.fixed_stars.list_fixed_stars``) and is
@@ -2112,7 +2112,7 @@ class AstrologicalSubjectFactory:
                         active_points.remove(tno_name)
 
         # =============================================================================
-        # FIXED STARS (v7: unified channel via active_fixed_stars)
+        # FIXED STARS (v6: unified channel via active_fixed_stars)
         # =============================================================================
         # All fixed stars are populated from config.active_fixed_stars (forwarded
         # here as data["_active_fixed_stars"]). Result lives in subject.fixed_stars.
@@ -2157,7 +2157,7 @@ class AstrologicalSubjectFactory:
             if point is not None:
                 fixed_stars_list.append(point)
 
-        # v7: emit a single actionable warning when nothing could be calculated
+        # v6: emit a single actionable warning when nothing could be calculated
         # on the swisseph backend — almost always caused by a missing
         # ``sefstars.txt`` in KERYKEION_EPHE_PATH. The fix is documented in
         # site/docs/swisseph_configuration.md (section "Fixed Stars Catalog").

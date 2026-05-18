@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Fixed Stars module (v7)
+Fixed Stars module (v6)
 
 Exposes:
 - ``FixedStarCatalog``: read-only accessor over the libephemeris star catalog.

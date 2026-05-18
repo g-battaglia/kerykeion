@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Fixed Star Catalog (v7)
+Fixed Star Catalog (v6)
 
 Single source of truth for the fixed-star catalog used across kerykeion.
 Wraps ``libephemeris.fixed_stars.list_fixed_stars()`` and exposes a

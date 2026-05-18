@@ -2211,7 +2211,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 body["is_active"] = True
                 self.available_planets_setting.append(body)
 
-        # v7: extend settings with dynamic catalog fixed stars from subject.fixed_stars.
+        # v6: extend settings with dynamic catalog fixed stars from subject.fixed_stars.
         # These stars are NOT in active_points (active_points only carries
         # planets/asteroids/angular points/etc); they live as KerykeionPointModel
         # entries inside subject.fixed_stars and must always render when present.
@@ -2241,7 +2241,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.available_planets_setting.extend(extra_star_settings)
 
             # Stars with an existing static setting (e.g. Regulus, Sirius) are
-            # not in active_points (the v7 channel is separate) but must still
+            # not in active_points (the v6 channel is separate) but must still
             # render. Activate them here so the wheel iterates them.
             extra_names_set = {s["name"] for s in extra_star_settings}
             already_active_names = {s["name"] for s in self.available_planets_setting}
@@ -2932,7 +2932,7 @@ class ChartDrawer:  # type: ignore[no-redef]
     ) -> list[KerykeionPointModel]:
         """Collect ordered active celestial points for a subject.
 
-        Looks up points by attribute name first; for fixed stars (v7 unified
+        Looks up points by attribute name first; for fixed stars (v6 unified
         array, not subject attributes) falls back to ``subject.fixed_stars``
         lookup by case/separator-insensitive name match.
         """

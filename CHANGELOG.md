@@ -1,5 +1,77 @@
 # Changelog
 
+## 6.0.0a43
+
+_2026-05-18_
+
+### Fixed Stars — unified channel (breaking)
+
+The fixed-star subsystem has been refactored to scale beyond the historical
+23 hardcoded stars and to live entirely on the libephemeris catalog as the
+single source of truth.
+
+- **Subject model**: the 23 typed star fields (`subject.regulus`,
+  `subject.spica`, …) have been **removed**. All fixed stars now live in
+  `subject.fixed_stars: list[KerykeionPointModel]`. Lookup by name is
+  available via the new `subject.find_fixed_star(name)` helper
+  (case- and separator-insensitive: `"Deneb Algedi"`, `"deneb_algedi"`,
+  `"DENEB-ALGEDI"` all resolve identically).
+- **Calculation channel**: `active_points` no longer accepts star names.
+  Use the dedicated `active_fixed_stars: list[str]` parameter on
+  `AstrologicalSubjectFactory.from_birth_data()` (and the other
+  constructors). No automatic defaults — callers opt in to specific stars.
+- **Catalog discovery**: new `kerykeion.fixed_stars.FixedStarCatalog`
+  wraps `libephemeris.fixed_stars.list_fixed_stars()` (116 entries today).
+  Exposes `list_all()`, `find(name)`, `known_slugs()`.
+- **Aspect engine**: `AspectsFactory.single_chart_aspects` and
+  `dual_chart_aspects` automatically iterate `subject.fixed_stars` —
+  catalog stars participate in aspect calculations without needing to be
+  in `active_points`. `SingleChartAspectsModel.active_points` and
+  `DualChartAspectsModel.active_points` are now
+  `list[Union[AstrologicalPoint, str]]` to accept catalog star slugs.
+- **Chart wheel rendering**: catalog stars without a dedicated SVG
+  `<symbol>` fall back to the new generic `<symbol id="FixedStar">`
+  (5-point star, colored via
+  `var(--kerykeion-chart-color-fixed-star-default, #d4a053)`).
+  Added to `chart.xml`, `wheel_only.xml`, `modern_wheel.xml`. Glyph
+  resolution centralized in `chart_defaults.resolve_glyph_id(name)` /
+  `KNOWN_GLYPH_NAMES`.
+- **`FixedStarDiscoveryFactory`**: catalog source is now exclusively
+  libephemeris. The previous swisseph-backed path
+  (`_find_prominent_stars_swisseph`) and the `sefstars.txt` parser have
+  been removed.
+
+### swisseph backend — `sefstars.txt` requirement
+
+Fixed-star calculation on the swisseph backend depends on
+`swe.fixstar_ut`, which reads from `sefstars.txt`. That file is
+distributed under the Swiss Ephemeris license (Astrodienst AG) and is
+**not bundled with kerykeion** — users must download it manually into
+`KERYKEION_EPHE_PATH`. When star calculation produces zero results on
+swisseph, kerykeion now emits a single actionable WARNING with the
+download URL and the libephemeris alternative. See
+[site/docs/swisseph_configuration.md](site/docs/swisseph_configuration.md#fixed-stars-catalog-sefstarstxt)
+for the full procedure.
+
+### Backward compatibility
+
+**Breaking changes** (alpha — accepted):
+
+- `subject.regulus`, `subject.spica`, and the other 21 typed star fields
+  have been removed. Migrate to
+  `subject.find_fixed_star("Regulus")` or iterate `subject.fixed_stars`.
+- `active_points=["Regulus", ...]` no longer triggers calculation for
+  star names. Pass star names to `active_fixed_stars=[...]` instead.
+- `FixedStarDiscoveryFactory.find_prominent_stars()` no longer accepts
+  the `catalog_path` keyword argument (libephemeris-only now).
+
+### Tests
+
+- Updated tests that used the removed typed fields to use
+  `find_fixed_star()` / `fixed_stars[]` iteration.
+- 16 chart-drawer snapshot tests are marked `@pytest.mark.skip` pending
+  regeneration with the new fixed-stars rendering pipeline.
+
 ## 6.0.0a42
 
 _2026-05-15_
