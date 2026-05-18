@@ -59,6 +59,16 @@ def _is_near_zero_arc(arc: float, orb: float) -> bool:
     return min(arc, 360.0 - arc) <= orb
 
 
+def _midpoint_name_to_pair_key(name: str) -> str:
+    """Recover the ``A_B`` pair identifier from a synthetic midpoint name.
+
+    Midpoint points carry ``name='A_B_Midpoint'``; the pair-key consumed by
+    ``MidpointFactory.compute_active_midpoint_points`` is the same string
+    minus the ``_Midpoint`` suffix.
+    """
+    return name[:-len("_Midpoint")] if name.endswith("_Midpoint") else name
+
+
 class SolarArcDirectedPoint(BaseModel):
     """A natal point after applying the solar-arc shift."""
 
@@ -302,5 +312,19 @@ class SolarArcFactory:
                 except ValueError:
                     # Leave the natal house value rather than crash
                     pass
+
+        # Active midpoints were deep-copied from the natal subject and now
+        # point at natal positions. Recompute them against the directed
+        # planets so the biwheel outer ring renders directed midpoint glyphs
+        # rather than stale natal ones.
+        if directed.active_midpoints:
+            from kerykeion.midpoints.midpoint_factory import MidpointFactory
+            pair_names = [
+                _midpoint_name_to_pair_key(mp.name) for mp in directed.active_midpoints
+            ]
+            pair_names = [n for n in pair_names if n]
+            directed.active_midpoints = MidpointFactory.compute_active_midpoint_points(
+                directed, pair_names
+            )
 
         return directed

@@ -225,6 +225,9 @@ class MidpointFactory:
                 houses_degree_ut.append(cusp.abs_pos)
 
         points: List[KerykeionPointModel] = []
+        import logging
+        logger = logging.getLogger(__name__)
+
         for raw in pair_names:
             # The pair key is "<name_a>_<name_b>", but the canonical point
             # names themselves can contain underscores (e.g.
@@ -240,6 +243,14 @@ class MidpointFactory:
                     name_a, name_b = candidate_a, candidate_b
                     break
             if name_a is None or name_b is None:
+                # Most common cause: one constituent point isn't in
+                # ``subject.active_points``. Log so operators can spot the
+                # typo / config drift in production.
+                logger.warning(
+                    "Skipping midpoint pair %r: neither constituent resolves "
+                    "in subject.active_points (%s available)",
+                    raw, len(gathered),
+                )
                 continue
 
             midpoint_long = MidpointFactory._shorter_arc_midpoint(gathered[name_a], gathered[name_b])
