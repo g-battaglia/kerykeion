@@ -2240,6 +2240,20 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.planets_settings.extend(extra_star_settings)
             self.available_planets_setting.extend(extra_star_settings)
 
+            # Stars with an existing static setting (e.g. Regulus, Sirius) are
+            # not in active_points (the v6 channel is separate) but must still
+            # render. Activate them here so the wheel iterates them.
+            extra_names_set = {s["name"] for s in extra_star_settings}
+            already_active_names = {s["name"] for s in self.available_planets_setting}
+            for star_name in dynamic_star_names:
+                if star_name in extra_names_set or star_name in already_active_names:
+                    continue
+                for body in self.planets_settings:
+                    if body["name"] == star_name:
+                        body["is_active"] = True
+                        self.available_planets_setting.append(body)
+                        break
+
         # User-selected midpoints share the dynamic-channel mechanism
         # with fixed_stars: they live in subject.active_midpoints and the
         # drawer materialises a synthetic celestial-point setting for each.
@@ -2263,20 +2277,6 @@ class ChartDrawer:  # type: ignore[no-redef]
                 setting["is_active"] = True
             self.planets_settings.extend(extra_midpoint_settings)
             self.available_planets_setting.extend(extra_midpoint_settings)
-
-            # Stars with an existing static setting (e.g. Regulus, Sirius) are
-            # not in active_points (the v6 channel is separate) but must still
-            # render. Activate them here so the wheel iterates them.
-            extra_names_set = {s["name"] for s in extra_star_settings}
-            already_active_names = {s["name"] for s in self.available_planets_setting}
-            for star_name in dynamic_star_names:
-                if star_name in extra_names_set or star_name in already_active_names:
-                    continue
-                for body in self.planets_settings:
-                    if body["name"] == star_name:
-                        body["is_active"] = True
-                        self.available_planets_setting.append(body)
-                        break
 
         # Warn about potential crowding with many active points (planets only;
         # fixed stars are excluded from the crowding heuristic since they have
