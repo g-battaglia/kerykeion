@@ -924,6 +924,15 @@ class TestOrbAdjustmentResolver:
         adj = {"Sun": 1.5}
         assert resolve_pair_orb_adjustment("Sun", "Mars", adj, strategy="none") == 0.0
 
+    def test_unknown_strategy_raises(self):
+        """A misspelled strategy must fail fast, not silently return 0.0."""
+        import pytest as _pytest
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Sun": 1.5}
+        with _pytest.raises(ValueError, match="Unknown orb adjustment strategy"):
+            resolve_pair_orb_adjustment("Sun", "Mars", adj, strategy="maxexplicit")  # type: ignore[arg-type]
+
     def test_sum_strategy(self):
         from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
 

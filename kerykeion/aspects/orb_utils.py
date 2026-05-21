@@ -52,6 +52,10 @@ def resolve_pair_orb_adjustment(
     Returns:
         The orb adjustment in degrees to add to the aspect's base orb.
         ``0.0`` when no point in the pair is configured.
+
+    Raises:
+        ValueError: If ``strategy`` is not a recognised
+            :data:`OrbAdjustmentStrategy` value.
     """
     if not point_orb_adjustments or strategy == "none":
         return 0.0
@@ -72,4 +76,9 @@ def resolve_pair_orb_adjustment(
     if strategy == "sum":
         return sum(values)
 
-    return 0.0
+    # Fail fast on a misspelled strategy rather than silently returning 0.0,
+    # which would quietly disable the orb adjustment and yield wrong aspects.
+    raise ValueError(
+        f"Unknown orb adjustment strategy: {strategy!r}. "
+        "Expected one of: 'max_explicit', 'min_explicit', 'sum', 'none'."
+    )
