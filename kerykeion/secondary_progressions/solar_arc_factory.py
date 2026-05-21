@@ -22,11 +22,12 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from typing import List, Optional, Sequence
+from typing import List, Mapping, Optional, Sequence
 
 from pydantic import BaseModel, Field
 
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
@@ -137,6 +138,8 @@ class SolarArcFactory:
         compute_aspects: bool = True,
         aspect_orb: float = 3.0,
         aspects: Optional[Sequence[str]] = None,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> SolarArcSubjectModel:
         """Compute the solar arc and directed-to-natal aspect picture.
 
@@ -154,6 +157,11 @@ class SolarArcFactory:
                 of directed-to-natal aspect contacts.
             aspect_orb: Orb in degrees for aspect detection.
             aspects: Optional whitelist of aspect names to detect.
+            point_orb_adjustments: Optional per-point orb adjustment table.
+                ``None`` (default) means no adjustment — solar arc uses a
+                flat, tight orb regardless of which point is involved.
+            point_orb_adjustment_strategy: How to combine the two points'
+                adjustments when a table is supplied (default ``"max_explicit"``).
 
         Returns:
             A :class:`SolarArcSubjectModel` describing the arc and every
@@ -208,10 +216,17 @@ class SolarArcFactory:
                 for natal_name, natal_pos in natal_targets:
                     if natal_name == d.name and _is_near_zero_arc(solar_arc, aspect_orb):
                         continue
+                    extra_orb = resolve_pair_orb_adjustment(
+                        d.name,
+                        natal_name,
+                        point_orb_adjustments,
+                        point_orb_adjustment_strategy,
+                    )
                     outcome = get_aspect_from_two_points(
                         aspects_settings=aspect_settings,
                         point_one=d.directed_abs_pos,
                         point_two=natal_pos,
+                        extra_orb=extra_orb,
                     )
                     if outcome.get("verdict"):
                         directed_to_natal.append(

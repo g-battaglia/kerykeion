@@ -860,3 +860,134 @@ class TestAxisOrbFilter:
     def test_axis_orb_none_disables_filter(self, _subject):
         aspects = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=None)
         assert aspects is not None
+
+
+# ============================================================================
+# Per-point orb adjustments (luminary bonus + custom orbs)
+# ============================================================================
+
+
+class TestOrbAdjustmentResolver:
+    """Unit tests for the resolve_pair_orb_adjustment() strategy resolver."""
+
+    def test_luminary_bonus_widens_sun_pair(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Sun": 1.5, "Moon": 1.5}
+        assert resolve_pair_orb_adjustment("Sun", "Mars", adj) == 1.5
+
+    def test_luminary_bonus_widens_moon_pair(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Sun": 1.5, "Moon": 1.5}
+        assert resolve_pair_orb_adjustment("Jupiter", "Moon", adj) == 1.5
+
+    def test_no_bonus_for_unconfigured_pair(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Sun": 1.5, "Moon": 1.5}
+        assert resolve_pair_orb_adjustment("Mars", "Saturn", adj) == 0.0
+
+    def test_negative_adjustment_applies_when_only_one_point_configured(self):
+        """The critical case: max() over defaulted values would wrongly give 0.0."""
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Pluto": -2.0}
+        # Only Pluto is explicit → -2.0 wins; a naive max(-2.0, 0.0) would give 0.0
+        assert resolve_pair_orb_adjustment("Pluto", "Saturn", adj) == -2.0
+
+    def test_negative_adjustment_both_points_configured(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Pluto": -2.0, "Neptune": -2.0}
+        assert resolve_pair_orb_adjustment("Pluto", "Neptune", adj) == -2.0
+
+    def test_mixed_positive_negative_max_explicit(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Sun": 1.5, "Pluto": -2.0}
+        assert resolve_pair_orb_adjustment("Sun", "Pluto", adj) == 1.5
+
+    def test_none_table_returns_zero(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        assert resolve_pair_orb_adjustment("Sun", "Mars", None) == 0.0
+
+    def test_empty_table_returns_zero(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        assert resolve_pair_orb_adjustment("Sun", "Mars", {}) == 0.0
+
+    def test_none_strategy_disables_adjustment(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Sun": 1.5}
+        assert resolve_pair_orb_adjustment("Sun", "Mars", adj, strategy="none") == 0.0
+
+    def test_sum_strategy(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Sun": 1.5, "Moon": 1.0}
+        assert resolve_pair_orb_adjustment("Sun", "Moon", adj, strategy="sum") == 2.5
+
+    def test_min_explicit_strategy(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Sun": 1.5, "Pluto": -2.0}
+        assert resolve_pair_orb_adjustment("Sun", "Pluto", adj, strategy="min_explicit") == -2.0
+
+
+class TestPointOrbAdjustmentsIntegration:
+    """Integration: point_orb_adjustments threaded through AspectsFactory."""
+
+    @pytest.fixture()
+    def _subject(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Orb Test", 1990, 6, 15, 12, 0,
+            lat=41.9, lng=12.5, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+
+    def test_empty_adjustments_match_legacy_behavior(self, _subject):
+        """No adjustments → identical aspect set to the pre-feature behavior."""
+        legacy = AspectsFactory.single_chart_aspects(_subject)
+        explicit_empty = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={}
+        )
+        assert len(legacy.aspects) == len(explicit_empty.aspects)
+
+    def test_luminary_bonus_adds_aspects(self, _subject):
+        """Sun/Moon +1.5° should never reduce, and usually increase, the count."""
+        base = AspectsFactory.single_chart_aspects(_subject)
+        widened = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={"Sun": 1.5, "Moon": 1.5}
+        )
+        assert len(widened.aspects) >= len(base.aspects)
+
+    def test_negative_adjustment_tightens(self, _subject):
+        """A negative adjustment must not increase the aspect count."""
+        base = AspectsFactory.single_chart_aspects(_subject)
+        tightened = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={"Pluto": -3.0, "Neptune": -3.0, "Uranus": -3.0}
+        )
+        assert len(tightened.aspects) <= len(base.aspects)
+
+    def test_effective_orb_clamped_to_zero(self, _subject):
+        """An adjustment more negative than every base orb yields no crash."""
+        result = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={"Sun": -100.0, "Moon": -100.0}
+        )
+        # No Sun/Moon aspect should survive a -100° adjustment.
+        for a in result.aspects:
+            assert "Sun" not in (a.p1_name, a.p2_name)
+            assert "Moon" not in (a.p1_name, a.p2_name)
+
+    def test_chart_data_natal_applies_luminary_bonus(self, _subject):
+        """create_natal_chart_data defaults to the luminary bonus."""
+        from kerykeion.chart_data_factory import ChartDataFactory
+
+        with_bonus = ChartDataFactory.create_natal_chart_data(_subject)
+        without = ChartDataFactory.create_natal_chart_data(
+            _subject, point_orb_adjustments={}
+        )
+        assert len(with_bonus.aspects) >= len(without.aspects)

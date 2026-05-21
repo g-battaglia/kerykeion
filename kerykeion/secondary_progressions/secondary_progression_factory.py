@@ -22,12 +22,13 @@ from __future__ import annotations
 
 import re
 from datetime import datetime, timezone
-from typing import List, Optional, Sequence
+from typing import List, Mapping, Optional, Sequence
 
 from pydantic import BaseModel, Field
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
 from kerykeion.ephemeris_backend import swe
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
@@ -370,6 +371,8 @@ class SecondaryProgressionFactory:
         compute_aspects: bool = True,
         aspect_orb: float = 3.0,
         aspects: Optional[Sequence[str]] = None,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> SecondaryProgressionsResult:
         """Build the progressed chart with optional progressed-to-natal aspects.
 
@@ -389,6 +392,11 @@ class SecondaryProgressionFactory:
             aspect_orb: Orb in degrees for cross-aspect detection (default 3.0,
                 matching Astro-Seek).
             aspects: Optional whitelist of aspect names to detect.
+            point_orb_adjustments: Optional per-point orb adjustment table.
+                ``None`` (default) means no adjustment — progressions use a
+                flat, tight orb regardless of which point is involved.
+            point_orb_adjustment_strategy: How to combine the two points'
+                adjustments when a table is supplied (default ``"max_explicit"``).
 
         Returns:
             A :class:`SecondaryProgressionsResult` with the progressed subject
@@ -419,10 +427,17 @@ class SecondaryProgressionFactory:
 
             for prog_name, prog_pos in progressed_points:
                 for natal_name, natal_pos in natal_targets:
+                    extra_orb = resolve_pair_orb_adjustment(
+                        prog_name,
+                        natal_name,
+                        point_orb_adjustments,
+                        point_orb_adjustment_strategy,
+                    )
                     outcome = get_aspect_from_two_points(
                         aspects_settings=aspect_settings,
                         point_one=prog_pos,
                         point_two=natal_pos,
+                        extra_orb=extra_orb,
                     )
                     if outcome.get("verdict"):
                         progressed_to_natal.append(

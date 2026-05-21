@@ -456,6 +456,27 @@ Astro-Seek default for transit and progression chart wheels.
 """
 
 
+DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS: dict[str, float] = {
+    "Sun": 1.5,
+    "Moon": 1.5,
+}
+"""
+Per-point orb adjustment for natal/relationship charts (Astro-Seek standard).
+Added to the aspect base orb when a point is involved in the aspect. The
+luminaries (Sun, Moon) get +1.5°: with the 6° major-aspect base orb, a
+Sun/Moon major aspect resolves to 7.5° — matching Astro-Seek's luminary rule.
+Combined per pair via :func:`kerykeion.aspects.orb_utils.resolve_pair_orb_adjustment`.
+"""
+
+
+NO_POINT_ORB_ADJUSTMENTS: dict[str, float] = {}
+"""
+Empty per-point orb adjustment table — used by predictive charts (transits,
+returns, progressions, solar arcs) where a flat, tight orb applies uniformly
+to every point regardless of whether it is a luminary.
+"""
+
+
 ALL_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "conjunction", "orb": 6},
     {"name": "opposition", "orb": 6},

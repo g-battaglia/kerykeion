@@ -692,10 +692,13 @@ class TestExactRegressionScores:
         )
 
     def test_john_lennon_yoko_ono_exact_score(self, john_lennon, yoko_ono):
-        """Regression: John Lennon & Yoko Ono score = 12, 'Important'."""
+        """Regression: John Lennon & Yoko Ono score = 8, 'Medium'.
+
+        Computed with Discepolo's own orb set (DISCEPOLO_SCORE_ACTIVE_ASPECTS).
+        """
         score = RelationshipScoreFactory(john_lennon, yoko_ono).get_relationship_score()
-        assert score.score_value == 12
-        assert score.score_description == "Important"
+        assert score.score_value == 8
+        assert score.score_description == "Medium"
 
     def test_freud_jung_exact_score(self, freud, jung):
         """Regression: Freud & Jung score = 32, 'Rare Exceptional'."""
@@ -710,10 +713,13 @@ class TestExactRegressionScores:
         assert score.score_description == "Exceptional"
 
     def test_dario_franca_exact_score(self, dario_fo, franca_rame):
-        """Regression: Dario Fo & Franca Rame score = 13, 'Important'."""
+        """Regression: Dario Fo & Franca Rame score = 9, 'Medium'.
+
+        Computed with Discepolo's own orb set (DISCEPOLO_SCORE_ACTIVE_ASPECTS).
+        """
         score = RelationshipScoreFactory(dario_fo, franca_rame).get_relationship_score()
-        assert score.score_value == 13
-        assert score.score_description == "Important"
+        assert score.score_value == 9
+        assert score.score_description == "Medium"
 
 
 if __name__ == "__main__":
