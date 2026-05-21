@@ -8,7 +8,11 @@ plus the result Pydantic model :class:`SolarArcSubjectModel`.
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from .secondary_progression_factory import SecondaryProgressionFactory
+from .secondary_progression_factory import (
+    ProgressedToNatalAspect,
+    SecondaryProgressionFactory,
+    SecondaryProgressionsResult,
+)
 from .solar_arc_factory import (
     SolarArcDirectedAspect,
     SolarArcDirectedPoint,
@@ -17,7 +21,9 @@ from .solar_arc_factory import (
 )
 
 __all__ = [
+    "ProgressedToNatalAspect",
     "SecondaryProgressionFactory",
+    "SecondaryProgressionsResult",
     "SolarArcDirectedAspect",
     "SolarArcDirectedPoint",
     "SolarArcFactory",

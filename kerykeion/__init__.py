@@ -67,7 +67,9 @@ from .primary_directions import PrimaryDirectionsFactory
 from .astro_cartography import AstroCartographyFactory
 from .midpoints import MidpointFactory, MidpointModel, MidpointAspectModel
 from .secondary_progressions import (
+    ProgressedToNatalAspect,
     SecondaryProgressionFactory,
+    SecondaryProgressionsResult,
     SolarArcFactory,
     SolarArcDirectedAspect,
     SolarArcSubjectModel,
@@ -136,7 +138,9 @@ __all__ = [
     "MidpointFactory",
     "MidpointModel",
     "MidpointAspectModel",
+    "ProgressedToNatalAspect",
     "SecondaryProgressionFactory",
+    "SecondaryProgressionsResult",
     "SolarArcFactory",
     "SolarArcDirectedAspect",
     "SolarArcDirectedPoint",

@@ -445,6 +445,20 @@ Default list of active aspects in the aspects calculations.
 The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
 """
 
+PREDICTIVE_ACTIVE_ASPECTS: list[ActiveAspect] = [
+    {"name": "conjunction", "orb": 3},
+    {"name": "opposition", "orb": 3},
+    {"name": "trine", "orb": 3},
+    {"name": "sextile", "orb": 3},
+    {"name": "square", "orb": 3},
+]
+"""
+Active aspects for predictive techniques (secondary progressions, solar arcs).
+Uses the five Ptolemaic aspects with a tight 3-degree orb (Astro-Seek default).
+Overridable by passing a custom ``active_aspects`` list to chart data factories.
+"""
+
+
 ALL_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "conjunction", "orb": 10},
     {"name": "opposition", "orb": 10},

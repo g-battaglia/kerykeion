@@ -43,7 +43,9 @@ def test_predictive_factories_are_in_top_level_all():
         "MidpointFactory",
         "MidpointModel",
         "MidpointAspectModel",
+        "ProgressedToNatalAspect",
         "SecondaryProgressionFactory",
+        "SecondaryProgressionsResult",
         "SolarArcFactory",
         "SolarArcDirectedAspect",
         "SolarArcDirectedPoint",
@@ -369,7 +371,7 @@ def test_solar_arc_filtered_sources_full_natal_targets():
         target_year=2030,
         active_points=["Sun"],
         compute_aspects=True,
-        aspect_orb=2.0,
+        aspect_orb=5.0,
     )
     assert len(solar_arc.directed_points) == 1
     assert solar_arc.directed_points[0].name == "Sun"
@@ -560,6 +562,130 @@ def test_solar_arc_with_user_sidereal():
 
 
 # ─── Solar arc natal targets use subject's active_points ─────────────
+
+
+# ─── SecondaryProgressionFactory.compute_full() ─────────────────────
+
+
+def test_compute_full_returns_result_model():
+    result = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+    )
+    assert isinstance(result, kerykeion.SecondaryProgressionsResult)
+    assert result.natal_name == "Predictive Test"
+    assert result.target_iso_utc_datetime == "2026-01-01T00:00:00.000000Z"
+    assert result.ephemeris_iso_utc_datetime is not None
+    assert result.progressed_subject.sun is not None
+
+
+def test_compute_full_ephemeris_date_is_near_birth():
+    """The ephemeris date should be ~36 days after birth for a 36-year progression."""
+    result = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+    )
+    # Born 1990-06-15, progressed ~35.5 years → ephemeris date ~35.5 days after birth → ~July 1990
+    assert result.ephemeris_iso_utc_datetime.startswith("1990-07")
+
+
+def test_compute_full_default_aspects_are_ptolemaic():
+    """Default: only 5 Ptolemaic aspects (no quintile, semi-sextile, etc.)."""
+    result = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+    )
+    aspect_names = {a.aspect for a in result.progressed_to_natal_aspects}
+    ptolemaic = {"conjunction", "opposition", "trine", "sextile", "square"}
+    assert aspect_names <= ptolemaic, f"Non-Ptolemaic aspects found: {aspect_names - ptolemaic}"
+
+
+def test_compute_full_all_aspects_when_explicit():
+    """Passing all aspect names should return more hits than Ptolemaic only."""
+    all_names = [
+        "conjunction", "opposition", "trine", "sextile", "square",
+        "quintile", "semi-sextile", "semi-square", "sesquiquadrate",
+        "biquintile", "quincunx",
+    ]
+    result_ptolemaic = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+    )
+    result_all = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        aspects=all_names,
+    )
+    assert len(result_all.progressed_to_natal_aspects) > len(result_ptolemaic.progressed_to_natal_aspects)
+
+
+def test_compute_full_configurable_orb():
+    """Tighter orb should yield fewer aspects."""
+    result_3 = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=3.0,
+    )
+    result_1 = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=1.0,
+    )
+    assert len(result_1.progressed_to_natal_aspects) < len(result_3.progressed_to_natal_aspects)
+
+
+def test_compute_full_no_aspects_when_disabled():
+    result = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", compute_aspects=False,
+    )
+    assert result.progressed_to_natal_aspects == []
+    assert result.progressed_subject.sun is not None
+
+
+def test_compute_full_skips_trivial_self_conjunctions():
+    """Young subject: progressed positions close to natal → self-pair skipped."""
+    natal = _subject()
+    result = SecondaryProgressionFactory.compute_full(
+        natal, target_year=1991, aspect_orb=3.0,
+    )
+    for a in result.progressed_to_natal_aspects:
+        if a.progressed_point == a.natal_point and a.aspect == "conjunction":
+            assert a.orb >= 3.0, "Should skip trivial self-conjunctions within orb"
+
+
+def test_compute_full_custom_active_points():
+    result = SecondaryProgressionFactory.compute_full(
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        active_points=["Sun", "Moon"],
+    )
+    progressed_names = {a.progressed_point for a in result.progressed_to_natal_aspects}
+    assert progressed_names <= {"Sun", "Moon"}
+
+
+# ─── compute_full baselines ─────────────────────────────────────────
+
+
+def test_baseline_compute_full_ce_progression():
+    """Regression baseline: CE compute_full (Rome, 1990-06-15) → 2026."""
+    result = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+    )
+    assert result.progressed_subject.sun.abs_pos == pytest.approx(118.06, abs=0.1)
+    assert result.progressed_subject.moon.abs_pos == pytest.approx(103.91, abs=0.5)
+    assert result.ephemeris_iso_utc_datetime.startswith("1990-07-21")
+    assert len(result.progressed_to_natal_aspects) == 35
+
+
+def test_baseline_compute_full_tight_orb():
+    """Regression baseline: 1° orb yields exactly 8 aspects."""
+    result = SecondaryProgressionFactory.compute_full(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=1.0,
+    )
+    assert len(result.progressed_to_natal_aspects) == 8
+
+
+def test_baseline_solar_arc_ptolemaic_default():
+    """Regression baseline: SA with 3° Ptolemaic default."""
+    sa = SolarArcFactory.compute(
+        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+    )
+    assert sa.solar_arc == pytest.approx(33.91, abs=0.1)
+    assert len(sa.directed_to_natal_aspects) == 37
+    aspect_names = {a.aspect for a in sa.directed_to_natal_aspects}
+    ptolemaic = {"conjunction", "opposition", "trine", "sextile", "square"}
+    assert aspect_names <= ptolemaic
 
 
 def test_solar_arc_natal_targets_include_extra_active_points():

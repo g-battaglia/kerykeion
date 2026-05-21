@@ -30,7 +30,7 @@ from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
-from kerykeion._predictive_utils import gather_active_points, build_aspect_settings
+from kerykeion._predictive_utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
 from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house
 
 from .secondary_progression_factory import SecondaryProgressionFactory
@@ -135,7 +135,7 @@ class SolarArcFactory:
         target_year: Optional[int] = None,
         active_points: Optional[Sequence[str]] = None,
         compute_aspects: bool = True,
-        aspect_orb: float = 1.0,
+        aspect_orb: float = 3.0,
         aspects: Optional[Sequence[str]] = None,
     ) -> SolarArcSubjectModel:
         """Compute the solar arc and directed-to-natal aspect picture.
@@ -202,7 +202,8 @@ class SolarArcFactory:
 
         directed_to_natal: List[SolarArcDirectedAspect] = []
         if compute_aspects:
-            aspect_settings = build_aspect_settings(aspect_orb, aspects)
+            effective_aspects = aspects if aspects is not None else PTOLEMAIC_ASPECTS
+            aspect_settings = build_aspect_settings(aspect_orb, effective_aspects)
             for d in directed_points:
                 for natal_name, natal_pos in natal_targets:
                     if natal_name == d.name and _is_near_zero_arc(solar_arc, aspect_orb):
