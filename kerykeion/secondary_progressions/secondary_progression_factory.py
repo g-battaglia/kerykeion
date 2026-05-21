@@ -419,12 +419,6 @@ class SecondaryProgressionFactory:
 
             for prog_name, prog_pos in progressed_points:
                 for natal_name, natal_pos in natal_targets:
-                    if prog_name == natal_name:
-                        dist = abs(prog_pos - natal_pos)
-                        if dist > 180:
-                            dist = 360.0 - dist
-                        if dist < aspect_orb:
-                            continue
                     outcome = get_aspect_from_two_points(
                         aspects_settings=aspect_settings,
                         point_one=prog_pos,

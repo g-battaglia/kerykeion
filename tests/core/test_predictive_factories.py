@@ -633,15 +633,15 @@ def test_compute_full_no_aspects_when_disabled():
     assert result.progressed_subject.sun is not None
 
 
-def test_compute_full_skips_trivial_self_conjunctions():
-    """Young subject: progressed positions close to natal → self-pair skipped."""
+def test_compute_full_includes_self_conjunctions():
+    """SP self-conjunctions are meaningful (each planet moves at its own rate)."""
     natal = _subject()
     result = SecondaryProgressionFactory.compute_full(
-        natal, target_year=1991, aspect_orb=3.0,
+        natal, target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=3.0,
     )
-    for a in result.progressed_to_natal_aspects:
-        if a.progressed_point == a.natal_point and a.aspect == "conjunction":
-            assert a.orb >= 3.0, "Should skip trivial self-conjunctions within orb"
+    self_conjs = [a for a in result.progressed_to_natal_aspects
+                  if a.progressed_point == a.natal_point and a.aspect == "conjunction"]
+    assert len(self_conjs) > 0, "Should include self-conjunctions (e.g. Saturn conj Saturn)"
 
 
 def test_compute_full_custom_active_points():
@@ -665,15 +665,15 @@ def test_baseline_compute_full_ce_progression():
     assert result.progressed_subject.sun.abs_pos == pytest.approx(118.06, abs=0.1)
     assert result.progressed_subject.moon.abs_pos == pytest.approx(103.91, abs=0.5)
     assert result.ephemeris_iso_utc_datetime.startswith("1990-07-21")
-    assert len(result.progressed_to_natal_aspects) == 35
+    assert len(result.progressed_to_natal_aspects) == 41
 
 
 def test_baseline_compute_full_tight_orb():
-    """Regression baseline: 1° orb yields exactly 8 aspects."""
+    """Regression baseline: 1° orb yields exactly 12 aspects."""
     result = SecondaryProgressionFactory.compute_full(
         _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=1.0,
     )
-    assert len(result.progressed_to_natal_aspects) == 8
+    assert len(result.progressed_to_natal_aspects) == 12
 
 
 def test_baseline_solar_arc_ptolemaic_default():
@@ -683,6 +683,85 @@ def test_baseline_solar_arc_ptolemaic_default():
     )
     assert sa.solar_arc == pytest.approx(33.91, abs=0.1)
     assert len(sa.directed_to_natal_aspects) == 37
+    aspect_names = {a.aspect for a in sa.directed_to_natal_aspects}
+    ptolemaic = {"conjunction", "opposition", "trine", "sextile", "square"}
+    assert aspect_names <= ptolemaic
+
+
+# ─── Astro-Seek cross-validation baselines (12 SP, 12 SA) ───────────
+
+
+_ASTROSEEK_EPHEMERIS = {
+    # name: (year, month, day, hour, minute) — from Astro-Seek live site (UT)
+    "Rome1990": (1990, 7, 21, 1, 38),
+    "Milan1985": (1985, 5, 1, 2, 2),
+    "London1975": (1976, 2, 13, 4, 15),
+    "NYC1960": (1960, 9, 8, 13, 50),
+    "Tokyo1988": (1988, 12, 18, 5, 31),
+    "Sydney2000": (2000, 1, 26, 13, 4),
+    "Berlin1945": (1945, 7, 28, 1, 39),
+    "Paris1968": (1968, 6, 27, 21, 35),
+    "Mumbai1955": (1955, 10, 24, 12, 41),
+    "BA1982": (1982, 8, 12, 6, 12),
+    "Cairo1970": (1970, 5, 9, 22, 13),
+    "Moscow1991": (1992, 1, 28, 22, 26),
+}
+
+_ASTROSEEK_SUBJECTS = [
+    ("Rome1990", 1990, 6, 15, 14, 30, 41.9, 12.5, "Europe/Rome"),
+    ("Milan1985", 1985, 3, 21, 8, 15, 45.46, 9.19, "Europe/Rome"),
+    ("London1975", 1975, 12, 25, 3, 45, 51.51, -0.13, "Europe/London"),
+    ("NYC1960", 1960, 7, 4, 22, 0, 40.71, -74.01, "America/New_York"),
+    ("Tokyo1988", 1988, 11, 11, 11, 11, 35.68, 139.77, "Asia/Tokyo"),
+    ("Sydney2000", 2000, 1, 1, 0, 0, -33.87, 151.21, "Australia/Sydney"),
+    ("Berlin1945", 1945, 5, 8, 12, 0, 52.52, 13.41, "Europe/Berlin"),
+    ("Paris1968", 1968, 5, 1, 6, 30, 48.86, 2.35, "Europe/Paris"),
+    ("Mumbai1955", 1955, 8, 15, 9, 0, 19.08, 72.88, "Asia/Kolkata"),
+    ("BA1982", 1982, 6, 29, 15, 0, -34.60, -58.38, "America/Argentina/Buenos_Aires"),
+    ("Cairo1970", 1970, 3, 15, 5, 0, 30.04, 31.24, "Africa/Cairo"),
+    ("Moscow1991", 1991, 12, 25, 23, 59, 55.76, 37.62, "Europe/Moscow"),
+]
+
+
+@pytest.mark.parametrize(
+    "name,yr,mo,dy,hr,mn,lat,lng,tz",
+    _ASTROSEEK_SUBJECTS,
+    ids=[s[0] for s in _ASTROSEEK_SUBJECTS],
+)
+def test_astroseek_ephemeris_date(name, yr, mo, dy, hr, mn, lat, lng, tz):
+    """Ephemeris date must match Astro-Seek within 3 minutes (180s)."""
+    from datetime import datetime, timezone
+
+    natal = AstrologicalSubjectFactory.from_birth_data(
+        name, yr, mo, dy, hr, mn, lng=lng, lat=lat, tz_str=tz, online=False,
+    )
+    result = SecondaryProgressionFactory.compute_full(
+        natal, target_iso_utc_datetime="2026-01-01T00:00:00Z",
+    )
+    our_dt = datetime.fromisoformat(
+        result.ephemeris_iso_utc_datetime.replace("Z", "+00:00")
+    )
+    as_y, as_mo, as_d, as_h, as_mn = _ASTROSEEK_EPHEMERIS[name]
+    as_dt = datetime(as_y, as_mo, as_d, as_h, as_mn, tzinfo=timezone.utc)
+    diff = abs((our_dt - as_dt).total_seconds())
+    assert diff < 180, f"Ephemeris date off by {diff:.0f}s (>180s): ours={our_dt} vs AstroSeek={as_dt}"
+
+
+@pytest.mark.parametrize(
+    "name,yr,mo,dy,hr,mn,lat,lng,tz",
+    _ASTROSEEK_SUBJECTS,
+    ids=[s[0] for s in _ASTROSEEK_SUBJECTS],
+)
+def test_astroseek_solar_arc_positive(name, yr, mo, dy, hr, mn, lat, lng, tz):
+    """Solar arc for a future target must be positive."""
+    natal = AstrologicalSubjectFactory.from_birth_data(
+        name, yr, mo, dy, hr, mn, lng=lng, lat=lat, tz_str=tz, online=False,
+    )
+    sa = SolarArcFactory.compute(
+        natal, target_iso_utc_datetime="2026-01-01T00:00:00Z",
+    )
+    assert sa.solar_arc > 0
+    assert len(sa.directed_to_natal_aspects) >= 0
     aspect_names = {a.aspect for a in sa.directed_to_natal_aspects}
     ptolemaic = {"conjunction", "opposition", "trine", "sextile", "square"}
     assert aspect_names <= ptolemaic
