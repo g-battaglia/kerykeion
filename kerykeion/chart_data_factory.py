@@ -52,7 +52,7 @@ from kerykeion.schemas.kr_literals import (
     AstrologicalPoint,
 )
 from kerykeion.utilities import find_common_active_points, distribute_percentages_to_100
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, PREDICTIVE_ACTIVE_ASPECTS
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.charts.charts_utils import (
     DOUBLE_CHART_TYPES,
@@ -431,7 +431,7 @@ class ChartDataFactory:
         natal_subject: AstrologicalSubjectModel,
         transit_subject: AstrologicalSubjectModel,
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: list[ActiveAspect] = PREDICTIVE_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
         *,
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -567,7 +567,7 @@ class ChartDataFactory:
         natal_subject: AstrologicalSubjectModel,
         progressed_subject: AstrologicalSubjectModel,
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: list[ActiveAspect] = PREDICTIVE_ACTIVE_ASPECTS,
         include_house_comparison: bool = True,
         *,
         axis_orb_limit: Optional[float] = None,

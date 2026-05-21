@@ -428,21 +428,18 @@ Use these alongside DEFAULT_ACTIVE_POINTS for Uranian astrology work.
 
 
 DEFAULT_ACTIVE_ASPECTS: list[ActiveAspect] = [
-    {"name": "conjunction", "orb": 10},
-    {"name": "opposition", "orb": 10},
-    {"name": "trine", "orb": 8},
-    {"name": "sextile", "orb": 6},
-    {"name": "square", "orb": 5},
-    {"name": "quintile", "orb": 1},
-    # {"name": "semi-sextile", "orb": 1},
-    # {"name": "semi-square", "orb": 1},
-    # {"name": "sesquiquadrate", "orb": 1},
-    # {"name": "biquintile", "orb": 1},
-    # {"name": "quincunx", "orb": 1},
+    {"name": "conjunction", "orb": 6},
+    {"name": "opposition", "orb": 6},
+    {"name": "trine", "orb": 6},
+    {"name": "sextile", "orb": 5},
+    {"name": "square", "orb": 6},
+    {"name": "quintile", "orb": 2},
 ]
 """
-Default list of active aspects in the aspects calculations.
-The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
+Default active aspects for natal and synastry charts (Astro-Seek standard).
+Base orb 6° for the four major aspects, 5° for sextile, 2° for quintile.
+Astro-Seek adds +1.5° when a luminary is involved; use 8° orbs if you need
+that behaviour without per-planet logic.
 """
 
 PREDICTIVE_ACTIVE_ASPECTS: list[ActiveAspect] = [
@@ -453,28 +450,28 @@ PREDICTIVE_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "square", "orb": 3},
 ]
 """
-Active aspects for predictive techniques (secondary progressions, solar arcs).
-Uses the five Ptolemaic aspects with a tight 3-degree orb (Astro-Seek default).
-Overridable by passing a custom ``active_aspects`` list to chart data factories.
+Active aspects for predictive/dual-chart techniques (transits, secondary
+progressions, solar arcs). Five Ptolemaic aspects at 3° orb — the
+Astro-Seek default for transit and progression chart wheels.
 """
 
 
 ALL_ACTIVE_ASPECTS: list[ActiveAspect] = [
-    {"name": "conjunction", "orb": 10},
-    {"name": "opposition", "orb": 10},
-    {"name": "trine", "orb": 8},
-    {"name": "sextile", "orb": 6},
-    {"name": "square", "orb": 5},
-    {"name": "quintile", "orb": 1},
-    {"name": "semi-sextile", "orb": 1},
-    {"name": "semi-square", "orb": 1},
-    {"name": "sesquiquadrate", "orb": 1},
-    {"name": "biquintile", "orb": 1},
-    {"name": "quincunx", "orb": 1},
+    {"name": "conjunction", "orb": 6},
+    {"name": "opposition", "orb": 6},
+    {"name": "trine", "orb": 6},
+    {"name": "sextile", "orb": 5},
+    {"name": "square", "orb": 6},
+    {"name": "quintile", "orb": 2},
+    {"name": "semi-sextile", "orb": 2},
+    {"name": "semi-square", "orb": 2},
+    {"name": "sesquiquadrate", "orb": 2},
+    {"name": "biquintile", "orb": 2},
+    {"name": "quincunx", "orb": 2},
 ]
 """
-Full list of active aspects in the charts or aspects calculations.
-The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
+Full list of active aspects including minors (Astro-Seek standard).
+Major: 6°, sextile: 5°, all minors: 2°.
 """
 
 DISCEPOLO_SCORE_ACTIVE_ASPECTS: list[ActiveAspect] = [
