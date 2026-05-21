@@ -15,7 +15,7 @@ from kerykeion import AstrologicalSubjectFactory
 from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, PREDICTIVE_ACTIVE_ASPECTS
 
 
 # ---------------------------------------------------------------------------
@@ -73,7 +73,8 @@ class TestBasicInitialization:
         assert factory.natal_chart == natal_subject
         assert factory.ephemeris_data_points == ephemeris_subjects
         assert factory.active_points == DEFAULT_ACTIVE_POINTS
-        assert factory.active_aspects == DEFAULT_ACTIVE_ASPECTS
+        # Transits default to the tight predictive orbs, not the wide natal set.
+        assert factory.active_aspects == PREDICTIVE_ACTIVE_ASPECTS
         assert factory.settings_file is None
 
     def test_custom_active_points(self, natal_subject, ephemeris_subjects):

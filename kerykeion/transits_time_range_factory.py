@@ -63,7 +63,10 @@ from kerykeion.aspects import AspectsFactory
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import ActiveAspect, TransitEventModel, TransitEventsTimeRangeModel, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.schemas.settings_models import KerykeionSettingsModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import (
+    DEFAULT_ACTIVE_POINTS,
+    PREDICTIVE_ACTIVE_ASPECTS,
+)
 from pathlib import Path
 
 
@@ -92,7 +95,7 @@ class TransitsTimeRangeFactory:
             Defaults to DEFAULT_ACTIVE_POINTS.
         active_aspects (List[ActiveAspect], optional): List of aspect types to
             calculate (e.g., conjunction, opposition, trine, square, sextile).
-            Defaults to DEFAULT_ACTIVE_ASPECTS.
+            Defaults to PREDICTIVE_ACTIVE_ASPECTS (tight 3° predictive orbs).
         settings_file (Union[Path, KerykeionSettingsModel, dict, None], optional):
             Configuration settings for calculations. Can be a file path, settings
             model, dictionary, or None for defaults. Defaults to None.
@@ -138,8 +141,8 @@ class TransitsTimeRangeFactory:
         self,
         natal_chart: AstrologicalSubjectModel,
         ephemeris_data_points: List[AstrologicalSubjectModel],
-        active_points: List[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS,
-        active_aspects: List[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_points: Optional[List[AstrologicalPoint]] = None,
+        active_aspects: Optional[List[ActiveAspect]] = None,
         settings_file: Union[Path, KerykeionSettingsModel, dict, None] = None,
         *,
         axis_orb_limit: Optional[float] = None,
@@ -163,7 +166,7 @@ class TransitsTimeRangeFactory:
                 analyzed for aspects. Defaults to DEFAULT_ACTIVE_POINTS.
             active_aspects (List[ActiveAspect], optional): Types of angular relationships
                 to calculate between natal and transiting positions. Defaults to
-                DEFAULT_ACTIVE_ASPECTS.
+                PREDICTIVE_ACTIVE_ASPECTS (tight 3° predictive orbs).
             settings_file (Union[Path, KerykeionSettingsModel, dict, None], optional):
                 Configuration settings for orb tolerances, calculation methods, and
                 other parameters. Defaults to None (uses system defaults).
@@ -177,8 +180,12 @@ class TransitsTimeRangeFactory:
         """
         self.natal_chart = natal_chart
         self.ephemeris_data_points = ephemeris_data_points
-        self.active_points = active_points
-        self.active_aspects = active_aspects
+        self.active_points = active_points if active_points is not None else DEFAULT_ACTIVE_POINTS
+        # Transits are a predictive technique — default to the tight 3°
+        # Ptolemaic orbs, not the wide natal orbs.
+        self.active_aspects = (
+            active_aspects if active_aspects is not None else PREDICTIVE_ACTIVE_ASPECTS
+        )
         self.settings_file = settings_file
         self.axis_orb_limit = axis_orb_limit
 
