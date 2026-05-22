@@ -22,6 +22,7 @@ import math
 from typing import Optional
 
 from kerykeion.schemas.kr_models import KerykeionPointModel
+from kerykeion.settings.chart_defaults import resolve_glyph_id
 
 
 # =============================================================================
@@ -969,9 +970,8 @@ def _draw_single_planet_in_ring(
     is_retro = point.retrograde is True
     fill_color = COLOR_RETROGRADE if is_retro else color
 
-    # Use point.name directly - it matches the SVG symbol IDs in the template
-    # e.g. "Sun", "Moon", "Mercury", "Mean_Lilith", etc.
-    planet_id = point.name
+    point_slug = point.name
+    planet_id = point_slug if point.point_type == "House" else resolve_glyph_id(point_slug)
 
     retro_attr = ' kr:retrograde="true"' if is_retro else ""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
@@ -994,7 +994,7 @@ def _draw_single_planet_in_ring(
     out = (
         f'<g kr:node="ChartPoint" kr:house="{point.house}" '
         f'kr:sign="{sign}" kr:absoluteposition="{point.abs_pos}" '
-        f'kr:signposition="{point.position}" kr:slug="{planet_id}"{retro_attr}{horoscope_attr} '
+        f'kr:signposition="{point.position}" kr:slug="{point_slug}"{retro_attr}{horoscope_attr} '
         f'kr:cx="{glyph_cx}" kr:cy="{glyph_cy}" '
         f'transform="rotate(-{display_angle:.6f} {CENTER} {CENTER})">\n'
     )
@@ -1003,7 +1003,7 @@ def _draw_single_planet_in_ring(
     planet_scale = planet_scale_base * GLYPH_SCALE_MAP.get(planet_id, 1.0)
     out += (
         f'  <g transform="translate({CENTER} {glyph_y}) rotate({counter_rotation:.6f}) scale({planet_scale}) translate(-14 -14)">\n'
-        f'    <use xlink:href="#{planet_id}" kr:slug="{planet_id}" kr:node="Glyph" fill="{fill_color}" />\n'
+        f'    <use xlink:href="#{planet_id}" kr:slug="{point_slug}" kr:node="Glyph" fill="{fill_color}" />\n'
         f"  </g>\n"
     )
 

@@ -1921,6 +1921,7 @@ class ChartDrawer:  # type: ignore[no-redef]
     planets_settings: list[dict[Any, Any]]
     aspects_settings: list[dict[Any, Any]]
     available_planets_setting: List[dict[Any, Any]]
+    all_available_planets_setting: List[dict[Any, Any]]
     height: float
     location: str
     geolat: float
@@ -2278,22 +2279,42 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.planets_settings.extend(extra_midpoint_settings)
             self.available_planets_setting.extend(extra_midpoint_settings)
 
+        # This list is the union of renderable settings across both subjects.
+        # Keep it available for lookups, but scope the per-subject settings below
+        # to the points actually collected for that subject; dual charts may have
+        # dynamic stars or midpoints on only one side.
+        all_available_planets_setting = list(self.available_planets_setting)
+
+        # Collect KerykeionPointModel objects for the primary subject
+        available_celestial_points_names = [
+            body["name"].lower() for body in all_available_planets_setting
+        ]
+        self.available_kerykeion_celestial_points = self._collect_subject_points(
+            self.first_obj,
+            available_celestial_points_names,
+        )
+        first_collected_names = {
+            p.name for p in self.available_kerykeion_celestial_points if p is not None
+        }
+        self.available_planets_setting = [
+            body for body in all_available_planets_setting
+            if body["name"] in first_collected_names
+        ]
+        self.all_available_planets_setting = all_available_planets_setting
+
         # Warn about potential crowding with many active points (planets only;
         # fixed stars are excluded from the crowding heuristic since they have
         # their own visibility filter).
-        active_points_count = len(self.available_planets_setting) - len(dynamic_star_names)
+        active_dynamic_star_names = {
+            body["name"] for body in self.available_planets_setting
+            if body["name"] in dynamic_star_names
+        }
+        active_points_count = len(self.available_planets_setting) - len(active_dynamic_star_names)
         if active_points_count > 24:
             logger.warning(
                 "ChartDrawer detected %s active celestial points; rendering may look crowded beyond 24.",
                 active_points_count,
             )
-
-        # Collect KerykeionPointModel objects for the primary subject
-        available_celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
-        self.available_kerykeion_celestial_points = self._collect_subject_points(
-            self.first_obj,
-            available_celestial_points_names,
-        )
 
         # Collect points for secondary subject (dual-wheel charts only)
         # These appear on the outer wheel in Transit, Synastry, and DualReturnChart
@@ -2315,7 +2336,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 p.name for p in self.second_subject_celestial_points if p is not None
             }
             self.second_subject_available_planets_setting = [
-                body for body in self.available_planets_setting
+                body for body in all_available_planets_setting
                 if body["name"] in second_collected_names
             ]
 
@@ -4504,7 +4525,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 planets_2=self.second_subject_celestial_points,
                 aspects_list=aspects_dicts,
                 seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                planets_settings=self.available_planets_setting,
+                planets_settings=self.all_available_planets_setting,
                 aspects_settings=self.aspects_settings,
                 chart_type=self.chart_type,
                 show_zodiac_background_ring=show_zodiac_background_ring,

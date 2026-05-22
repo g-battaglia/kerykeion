@@ -516,6 +516,40 @@ class TestChartDrawerBasic:
         assert first_points["Sun"] == chart.first_obj.sun.abs_pos
         assert second_points["Sun"] != first_points["Sun"]
 
+    def test_dual_chart_scopes_midpoint_settings_per_subject(self):
+        from kerykeion.midpoints import MidpointFactory
+
+        first_subject = copy.deepcopy(self.subject)
+        second_subject = copy.deepcopy(self.subject2)
+        second_subject.active_midpoints = MidpointFactory.compute_active_midpoint_points(
+            second_subject,
+            ["Sun_Moon"],
+        )
+
+        data = ChartDataFactory.create_synastry_chart_data(first_subject, second_subject)
+        chart = ChartDrawer(data)
+
+        first_setting_names = {p["name"] for p in chart.available_planets_setting}
+        second_setting_names = {p["name"] for p in chart.second_subject_available_planets_setting}
+
+        assert "Sun_Moon_Midpoint" not in first_setting_names
+        assert "Sun_Moon_Midpoint" in second_setting_names
+
+        classic_svg = chart.generate_svg_string()
+        assert "xlink:href='#Midpoint'" in classic_svg
+        assert "xlink:href='#Sun_Moon_Midpoint'" not in classic_svg
+
+        modern_svg = ChartDrawer(data, style="modern").generate_svg_string()
+        assert "xlink:href='#Midpoint'" in modern_svg
+        assert "xlink:href='#Sun_Moon_Midpoint'" not in modern_svg
+
+    def test_pair_midpoint_names_resolve_to_midpoint_glyph(self):
+        from kerykeion.settings.chart_defaults import resolve_glyph_id
+
+        assert resolve_glyph_id("Midpoint") == "Midpoint"
+        assert resolve_glyph_id("Sun_Moon_Midpoint") == "Midpoint"
+        assert resolve_glyph_id("True_North_Lunar_Node_Moon_Midpoint") == "Midpoint"
+
     def test_chart_drawer_viewbox_settings_per_type(self):
         natal_chart = ChartDrawer(ChartDataFactory.create_natal_chart_data(self.subject))
         assert natal_chart.chart_type == "Natal"

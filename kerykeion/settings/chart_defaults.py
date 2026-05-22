@@ -27,8 +27,8 @@ class _CelestialPointSetting(_CelestialPointSettingRequired, total=False):
     is_active: bool
     # v6: when set, the SVG renderer uses this as the symbol reference
     # (xlink:href="#{glyph_id}") instead of the point name. Used to make
-    # catalog fixed stars fall back to the generic "#FixedStar" symbol when
-    # the template doesn't ship a per-star <symbol>.
+    # dynamic points fall back to their generic symbol when the template
+    # doesn't ship a per-point <symbol>.
     glyph_id: str
 
 
@@ -592,10 +592,15 @@ KNOWN_GLYPH_NAMES: Final[frozenset[str]] = frozenset({
 def resolve_glyph_id(name: str) -> str:
     """Resolve the SVG ``<symbol>`` id for a given point name.
 
-    Returns the name itself for known glyphs, or ``"FixedStar"`` as a
-    catch-all for catalog fixed stars (and any other future dynamic point)
-    that doesn't ship a dedicated symbol in the templates.
+    Pair-specific midpoint names share the generic ``"Midpoint"`` glyph.
+    Other known glyphs return the name itself; unknown names fall back to
+    ``"FixedStar"`` for catalog fixed stars and future dynamic points that
+    don't ship a dedicated symbol in the templates.
     """
+    if not isinstance(name, str):
+        return str(name)
+    if name == "Midpoint" or name.endswith("_Midpoint"):
+        return "Midpoint"
     return name if name in KNOWN_GLYPH_NAMES else "FixedStar"
 
 
