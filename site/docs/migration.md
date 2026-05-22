@@ -1,18 +1,18 @@
 ---
-title: 'Migration Guide v4 to v5'
-description: 'Step-by-step instructions to migrate your code from Kerykeion v4 to v5'
+title: 'Migration Guide (v4/v5 to v6)'
+description: 'Step-by-step instructions to migrate your code from Kerykeion v4/v5 to v6'
 category: 'Getting Started'
-tags: ['docs', 'migration', 'v4', 'v5', 'upgrade']
+tags: ['docs', 'migration', 'v4', 'v5', 'v6', 'upgrade']
 order: 2
 ---
 
-# Migration Guide: v4 to v5
+# Migration Guide: v4/v5 to v6
 
-This guide provides comprehensive instructions for migrating your code from Kerykeion v4 to v5. The v5 release introduces a new factory-based architecture that provides better separation of concerns, improved type safety, and more flexibility.
+This guide provides comprehensive instructions for migrating your code from Kerykeion v4 or v5 to v6. The v5 release introduced a factory-based architecture; v6 removes the v4 backward compatibility layer entirely and adds advanced calculation modules.
 
 ## Quick Reference
 
-| v4 (Deprecated) | v5 (Current) |
+| v4 (Removed in v6) | v6 (Current) |
 |:----------------|:-------------|
 | `AstrologicalSubject()` | `AstrologicalSubjectFactory.from_birth_data()` |
 | `KerykeionChartSVG()` | `ChartDataFactory` + `ChartDrawer` |
@@ -36,7 +36,7 @@ subject = AstrologicalSubject(
 )
 ```
 
-**v5 (Current):**
+**v6 (Current):**
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
@@ -63,7 +63,7 @@ chart = KerykeionChartSVG(subject)
 chart.makeSVG()
 ```
 
-**v5 (Current):**
+**v6 (Current):**
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
@@ -105,7 +105,7 @@ for aspect in natal_aspects.relevant_aspects:
     print(aspect)
 ```
 
-**v5 (Current):**
+**v6 (Current):**
 ```python
 from kerykeion import AspectsFactory
 

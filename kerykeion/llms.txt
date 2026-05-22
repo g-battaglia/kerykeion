@@ -393,12 +393,15 @@ transits = ChartDataFactory.create_transit_chart_data(natal, now)
 ### Available Points
 
 Planets: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto
-Nodes: Mean_Node, True_Node, Mean_South_Node, True_South_Node
+Nodes: True_North_Lunar_Node, True_South_Lunar_Node, Mean_North_Lunar_Node, Mean_South_Lunar_Node
 Asteroids: Ceres, Pallas, Juno, Vesta, Chiron
 Angles: Ascendant, Medium_Coeli, Descendant, Imum_Coeli
 Arabic Parts: Pars_Fortunae, Pars_Spiritus, Pars_Amoris, Pars_Fidei
-Fixed Stars: Regulus, Spica
-Others: Mean_Lilith, True_Lilith, Earth, Vertex, Anti_Vertex
+Fixed Stars: Regulus, Spica, Sirius, Aldebaran, Antares, Fomalhaut, Algol, + 16 more (23 total)
+TNOs: Eris, Sedna, Makemake, Haumea, Quaoar, Orcus, Gonggong, Ixion
+Uranian: Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon
+Lilith variants: Mean_Lilith, True_Lilith, Interpolated_Lilith, Mean_Priapus, True_Priapus
+Others: Earth, Vertex, Anti_Vertex
 
 ### Aspect Types
 
@@ -511,10 +514,10 @@ ai_xml = to_context(chart_data)
 
 ## Dependencies
 
--   **Swiss Ephemeris**: Core astronomical calculations
+-   **libephemeris** (default) or **Swiss Ephemeris** (optional): Core astronomical calculations
 -   **pytz**: Timezone handling
 -   **GeoNames API**: Optional online location lookup (requires username)
--   **Python 3.8+**: Minimum version
+-   **Python 3.12+**: Minimum version
 
 ## Environment Variables
 
@@ -534,9 +537,21 @@ export KERYKEION_GEONAMES_USERNAME="your_username"  # For online mode
 | Returns          | `PlanetaryReturnFactory`       | Planet type      |
 | SVG Chart        | `ChartDrawer`                  | chart_data       |
 | AI XML           | `to_context()`                 | Any model        |
+| Progressions     | `SecondaryProgressionFactory`  | Target date      |
+| Solar Arc        | `SolarArcFactory`              | Target date      |
+| Primary Dir.     | `PrimaryDirectionsFactory`     | Max years        |
+| Midpoints        | `MidpointFactory`              | Subject          |
+| Eclipses         | `EclipseFactory`               | Start year       |
+| Phenomena        | `PlanetaryPhenomenaFactory`    | Subject          |
+| Nodes/Apsides    | `PlanetaryNodesFactory`        | Subject/JD       |
+| Heliacal         | `HeliacalFactory`              | JD + geopos      |
+| Occultations     | `OccultationFactory`           | JD + planet      |
+| Relocated Chart  | `RelocatedChartFactory`        | Subject + coords |
+| Star Discovery   | `FixedStarDiscoveryFactory`    | Subject + orb    |
+| ACG Lines        | `AstroCartographyFactory`      | Subject          |
 
 ---
 
-**Version**: Kerykeion 5.x+  
-**Documentation**: https://github.com/g-battaglia/kerykeion  
+**Version**: Kerykeion 6.x
+**Documentation**: https://www.kerykeion.net/content/docs/
 **License**: AGPL-3.0

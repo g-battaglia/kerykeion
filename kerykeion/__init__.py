@@ -11,6 +11,9 @@ Kerykeion is a comprehensive astrology library that provides tools for:
 - **Planetary Returns**: Compute solar and lunar return charts
 - **Transit Analysis**: Track planetary transits over time ranges
 - **Composite Charts**: Generate midpoint composite charts
+- **Predictive Techniques**: Secondary progressions, solar arc, primary directions, midpoints
+- **Advanced Astronomy**: Eclipses, heliacal events, occultations, planetary phenomena
+- **Astro-Cartography**: Planetary angular lines across the globe
 
 Quick Start
 -----------
@@ -36,6 +39,12 @@ Main Classes
 - CompositeSubjectFactory: Create composite charts
 - PlanetaryReturnFactory: Calculate solar/lunar returns
 - TransitsTimeRangeFactory: Track transits over time
+- SecondaryProgressionFactory: Day-for-a-year progressions
+- SolarArcFactory: Solar arc directions
+- PrimaryDirectionsFactory: Placidus semi-arc primary directions
+- MidpointFactory: Cosmobiology midpoint analysis
+- EclipseFactory: Solar and lunar eclipse search
+- AstroCartographyFactory: ACG planetary lines
 
 .. include:: ../README.md
 

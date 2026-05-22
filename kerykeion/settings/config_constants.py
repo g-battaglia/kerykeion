@@ -436,10 +436,11 @@ DEFAULT_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "quintile", "orb": 2},
 ]
 """
-Default active aspects for natal and synastry charts (Astro-Seek standard).
-Base orb 6° for the four major aspects, 5° for sextile, 2° for quintile.
-Astro-Seek adds +1.5° when a luminary is involved; use 8° orbs if you need
-that behaviour without per-planet logic.
+Default active aspects for natal and synastry charts.
+Base orb 6° for the four major aspects, 5° for sextile, 2° for quintile —
+the orb values used by mainstream online astrology calculators. Luminary
+widening is applied separately via point orb adjustments; use 8° orbs if you
+need that behaviour without per-planet logic.
 """
 
 PREDICTIVE_ACTIVE_ASPECTS: list[ActiveAspect] = [
@@ -451,8 +452,8 @@ PREDICTIVE_ACTIVE_ASPECTS: list[ActiveAspect] = [
 ]
 """
 Active aspects for predictive/dual-chart techniques (transits, secondary
-progressions, solar arcs). Five Ptolemaic aspects at 3° orb — the
-Astro-Seek default for transit and progression chart wheels.
+progressions, solar arcs). Five Ptolemaic aspects at a tight 3° orb — the
+conventional default for transit and progression chart wheels.
 """
 
 
@@ -461,10 +462,10 @@ DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS: dict[str, float] = {
     "Moon": 1.5,
 }
 """
-Per-point orb adjustment for natal/relationship charts (Astro-Seek standard).
+Per-point orb adjustment for natal/relationship charts.
 Added to the aspect base orb when a point is involved in the aspect. The
 luminaries (Sun, Moon) get +1.5°: with the 6° major-aspect base orb, a
-Sun/Moon major aspect resolves to 7.5° — matching Astro-Seek's luminary rule.
+Sun/Moon major aspect resolves to 7.5° — the classic luminary-widening rule.
 Combined per pair via :func:`kerykeion.aspects.orb_utils.resolve_pair_orb_adjustment`.
 """
 
@@ -491,7 +492,7 @@ ALL_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "quincunx", "orb": 2},
 ]
 """
-Full list of active aspects including minors (Astro-Seek standard).
+Full list of active aspects including minors.
 Major: 6°, sextile: 5°, all minors: 2°.
 """
 

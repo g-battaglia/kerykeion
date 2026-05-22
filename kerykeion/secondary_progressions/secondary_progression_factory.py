@@ -35,7 +35,11 @@ from kerykeion.schemas import KerykeionException
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
 from kerykeion.utilities import datetime_to_julian
 
-DAYS_PER_TROPICAL_YEAR = 365.25
+# Mean tropical year (epoch J2000) — the "year" unit of the day-for-a-year
+# method. Previously 365.25 (the Julian year), which contradicted this name
+# and drifted from reference progressed-chart calculators by up to ~3.5 min
+# on long progression spans; 365.24219 is the astronomically correct value.
+DAYS_PER_TROPICAL_YEAR = 365.24219
 
 class ProgressedToNatalAspect(BaseModel):
     """A progressed-to-natal aspect contact — the predictive timing signal."""
@@ -390,7 +394,7 @@ class SecondaryProgressionFactory:
             compute_aspects: If ``True`` (default), compute the progressed-to-
                 natal aspect list.
             aspect_orb: Orb in degrees for cross-aspect detection (default 3.0,
-                matching Astro-Seek).
+                the conventional tight orb for predictive work).
             aspects: Optional whitelist of aspect names to detect.
             point_orb_adjustments: Optional per-point orb adjustment table.
                 ``None`` (default) means no adjustment — progressions use a

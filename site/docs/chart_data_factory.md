@@ -168,7 +168,30 @@ single_return_data = ChartDataFactory.create_single_wheel_return_chart_data(sola
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 
-### 7. `create_chart_data` (Generic)
+### 7. `create_progression_chart_data`
+
+Creates a dual-wheel secondary progression chart (natal inner ring + progressed outer ring).
+
+```python
+from kerykeion import SecondaryProgressionFactory
+
+progressed = SecondaryProgressionFactory.compute(subject, target_year=2026)
+progression_data = ChartDataFactory.create_progression_chart_data(subject, progressed)
+```
+
+#### Parameters
+
+| Parameter                    | Type                       | Default      | Description                                                                   |
+| :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
+| `natal_subject`              | `AstrologicalSubjectModel` | **Required** | The natal subject (inner ring).                                               |
+| `progressed_subject`         | `AstrologicalSubjectModel` | **Required** | Progressed subject from `SecondaryProgressionFactory.compute()`.              |
+| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays between natal and progressed.                        |
+| `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
+| `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
+
+### 8. `create_chart_data` (Generic)
 
 The underlying generic method that all convenience methods delegate to. Use this when you need full control over the chart type.
 

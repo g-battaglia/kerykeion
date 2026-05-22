@@ -1,6 +1,6 @@
 ---
 title: 'Active Points Reference'
-description: 'Complete reference for all 63 celestial points available in Kerykeion: planets, asteroids, TNOs, Arabic parts, fixed stars, and special points.'
+description: 'Complete reference for all 53+ celestial points available in Kerykeion: planets, asteroids, TNOs, Arabic parts, fixed stars, and special points.'
 category: 'Reference'
 tags: ['docs', 'points', 'planets', 'asteroids', 'configuration', 'kerykeion']
 order: 14
@@ -8,7 +8,7 @@ order: 14
 
 # Active Points Reference
 
-Kerykeion supports **63 celestial points** that can be individually enabled or disabled via the `active_points` parameter. This page documents every available point and the preset configurations.
+Kerykeion supports **53+ celestial points** that can be individually enabled or disabled via the `active_points` parameter. This page documents every available point and the preset configurations.
 
 ## Available Points
 
@@ -53,13 +53,16 @@ The four angles of the chart. These are always recommended to keep active.
 | `Descendant` | Setting point, the western horizon |
 | `Imum_Coeli` | Nadir, the lowest point |
 
-### Other Points (5)
+### Other Points (8)
 
 | Point | Description |
 | :---- | :---------- |
 | `Chiron` | The "wounded healer" asteroid/comet |
 | `Mean_Lilith` | Mean Black Moon Lilith (lunar apogee, averaged) |
 | `True_Lilith` | True (oscillating) Black Moon Lilith |
+| `Interpolated_Lilith` | Interpolated Black Moon Lilith (smoothed between mean and true) |
+| `Mean_Priapus` | Mean Priapus (anti-Lilith, lunar perigee, averaged) |
+| `True_Priapus` | True (oscillating) Priapus |
 | `Earth` | Useful for heliocentric charts |
 | `Pholus` | Centaur object associated with catalytic events |
 
@@ -73,6 +76,21 @@ The four major asteroids in the main belt.
 | `Pallas` | Wisdom, strategy, creative intelligence |
 | `Juno` | Partnership, commitment, marriage |
 | `Vesta` | Devotion, focus, sacred service |
+
+### Uranian / Hamburg School Planets (8)
+
+Eight hypothetical trans-Neptunian points used in Uranian astrology. Pass them in `active_points` to include.
+
+| Point | Description |
+| :---- | :---------- |
+| `Cupido` | Relationships, family, art, social connections |
+| `Hades` | Hidden things, the past, degradation, research |
+| `Zeus` | Directed energy, leadership, machinery, fire |
+| `Kronos` | Authority, government, expertise, height |
+| `Apollon` | Expansion, commerce, science, peace |
+| `Admetos` | Depth, stagnation, concentration, beginnings/endings |
+| `Vulkanus` | Mighty force, intensity, power |
+| `Poseidon` | Idealism, spirituality, enlightenment, illusion |
 
 ### Trans-Neptunian Objects (7)
 
@@ -143,12 +161,14 @@ Calculated points based on the formula involving the Ascendant, Sun, and other b
 | `Pars_Amoris` | Asc + Venus - Sun | Asc + Sun - Venus |
 | `Pars_Fidei` | Asc + Mercury - Moon | Asc + Moon - Mercury |
 
-### Special Points (2)
+### Special Points (4)
 
 | Point | Description |
 | :---- | :---------- |
 | `Vertex` | A fated point on the western side of the chart |
 | `Anti_Vertex` | The point opposite the Vertex |
+| `Interpolated_Perigee` | Interpolated lunar perigee point |
+| `White_Moon` | Selena / White Moon (hypothetical point) |
 
 ## Preset Configurations
 
@@ -181,7 +201,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 ```
 
-### `ALL_ACTIVE_POINTS` (63 points)
+### `ALL_ACTIVE_POINTS` (53 points)
 
 Every available point enabled. Useful for research or comprehensive analysis.
 
@@ -196,7 +216,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 
 ## Custom Configuration
 
-You can build your own list by combining any of the 63 available point names:
+You can build your own list by combining any of the available point names:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory

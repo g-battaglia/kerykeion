@@ -409,7 +409,7 @@ class ChartDataFactory:
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
             point_orb_adjustments: Per-point orb adjustment table. ``None`` uses
-                the natal default (Sun/Moon +1.5°, Astro-Seek luminary rule);
+                the natal default (Sun/Moon +1.5°, the luminary-widening rule);
                 pass ``{}`` to disable.
             point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
@@ -499,7 +499,7 @@ class ChartDataFactory:
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
             point_orb_adjustments: Per-point orb adjustment table. ``None`` means
-                no adjustment — transits use a flat tight orb (Astro-Seek default).
+                no adjustment — transits use a flat tight orb by convention.
             point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
             custom_distribution_weights: Optional overrides for distribution weights
@@ -579,10 +579,10 @@ class ChartDataFactory:
             return_subject: Planetary return subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use. Defaults to the
-                predictive set (3° orb) — Astro-Seek's return-chart default.
+                predictive set (3° orb) — the conventional return-chart default.
             include_house_comparison: Whether to include house comparison
             point_orb_adjustments: Per-point orb adjustment table. ``None`` means
-                no adjustment — returns use a flat tight orb (Astro-Seek default).
+                no adjustment — returns use a flat tight orb by convention.
             point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
             custom_distribution_weights: Optional overrides for distribution weights
@@ -621,9 +621,9 @@ class ChartDataFactory:
             return_subject: Planetary return subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use. Defaults to the
-                predictive set (3° orb) — Astro-Seek's return-chart default.
+                predictive set (3° orb) — the conventional return-chart default.
             point_orb_adjustments: Per-point orb adjustment table. ``None`` means
-                no adjustment — returns use a flat tight orb (Astro-Seek default).
+                no adjustment — returns use a flat tight orb by convention.
             point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
             custom_distribution_weights: Optional overrides for distribution weights

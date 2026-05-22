@@ -379,7 +379,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     online=False
 )
 
-# Use the ALL_ACTIVE_POINTS preset (63 points including fixed stars, TNOs, etc.)
+# Use the ALL_ACTIVE_POINTS preset (53 points including TNOs, Uranian, etc.)
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
     active_points=ALL_ACTIVE_POINTS,
@@ -510,44 +510,39 @@ else:
     print(f"Moon in {subject.moon.sign} is NOT void-of-course")
 ```
 
-### Calculate Age Progressions (Secondary)
+### Secondary Progressions
+
+Use the dedicated `SecondaryProgressionFactory` for accurate day-for-a-year progressions with progressed-to-natal aspect detection:
 
 ```python
-from datetime import date, timedelta
-from kerykeion import AstrologicalSubjectFactory
+from kerykeion import AstrologicalSubjectFactory, SecondaryProgressionFactory
 
-def calculate_progressed_chart(natal_subject, target_date):
-    """
-    Calculate secondary progressions (1 day = 1 year).
-    """
-    birth_date = date(natal_subject.year, natal_subject.month, natal_subject.day)
-    years_elapsed = (target_date - birth_date).days / 365.25
-    
-    # Progressed date: birth + days equal to years lived
-    progressed_date = birth_date + timedelta(days=years_elapsed)
-    
-    progressed = AstrologicalSubjectFactory.from_birth_data(
-        f"{natal_subject.name} (Progressed to {target_date})",
-        progressed_date.year, progressed_date.month, progressed_date.day,
-        natal_subject.hour, natal_subject.minute,
-        lng=natal_subject.lng, lat=natal_subject.lat,
-        tz_str=natal_subject.tz_str, online=False
-    )
-    
-    return progressed
-
-# Example
 natal = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1990, 7, 15, 10, 30,
     lng=-0.1276, lat=51.5074, tz_str="Europe/London",
     online=False
 )
 
-progressed = calculate_progressed_chart(natal, date(2024, 7, 15))
+# Simple: get the progressed subject
+progressed = SecondaryProgressionFactory.compute(
+    natal,
+    target_iso_utc_datetime="2026-07-15T00:00:00Z",
+)
 
-print(f"Natal Sun: {natal.sun.sign} {natal.sun.position:.2f}°")
-print(f"Progressed Sun: {progressed.sun.sign} {progressed.sun.position:.2f}°")
+print(f"Natal Sun: {natal.sun.sign} {natal.sun.position:.2f}")
+print(f"Progressed Sun: {progressed.sun.sign} {progressed.sun.position:.2f}")
+
+# Full: get progressed-to-natal aspects
+result = SecondaryProgressionFactory.compute_full(
+    natal,
+    target_iso_utc_datetime="2026-07-15T00:00:00Z",
+)
+
+for asp in result.progressed_to_natal_aspects:
+    print(f"P.{asp.progressed_point} {asp.aspect} N.{asp.natal_point} (orb: {asp.orb:.2f})")
 ```
+
+See [Secondary Progressions](/content/docs/secondary_progressions_factory) and [Solar Arc Directions](/content/docs/solar_arc_factory) for full documentation.
 
 ---
 

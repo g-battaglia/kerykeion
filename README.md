@@ -1750,6 +1750,8 @@ for ecl in result.lunar_eclipses:
     print(f"Lunar: {ecl.datestamp} ({ecl.type})")
 ```
 
+**📖 Full documentation: [Eclipse Factory](https://www.kerykeion.net/content/docs/eclipse_factory)**
+
 ### Planetary Phenomena
 
 Phase angle, elongation, apparent magnitude, and morning/evening star status.
@@ -1766,6 +1768,8 @@ venus = phenom["Venus"]
 print(f"Venus elongation: {venus.elongation:.2f}, magnitude: {venus.apparent_magnitude:.2f}")
 ```
 
+**📖 Full documentation: [Planetary Phenomena Factory](https://www.kerykeion.net/content/docs/planetary_phenomena_factory)**
+
 ### Planetary Nodes & Apsides
 
 Ascending/descending node and perihelion/aphelion positions.
@@ -1777,6 +1781,8 @@ nodes = PlanetaryNodesFactory.from_julian_day(2451545.0, planets=["Mars", "Jupit
 for entry in nodes:
     print(f"{entry.planet}: ascending node {entry.ascending_node_longitude:.2f}")
 ```
+
+**📖 Full documentation: [Planetary Nodes & Apsides](https://www.kerykeion.net/content/docs/planetary_nodes_factory)**
 
 ### Heliacal Risings & Settings
 
@@ -1792,6 +1798,8 @@ event = factory.next_heliacal_rising(jd, "Venus", geopos=(12.5, 41.9, 0))
 print(f"Venus heliacal rising: {event.datestamp}")
 ```
 
+**📖 Full documentation: [Heliacal Risings & Settings](https://www.kerykeion.net/content/docs/heliacal_factory)**
+
 ### Occultation Search
 
 Find lunar occultations of planets.
@@ -1806,6 +1814,8 @@ events = factory.search_global(jd, swe.VENUS, count=3)
 for occ in events:
     print(f"{occ.planet_name} occultation: {occ.datestamp} ({occ.type})")
 ```
+
+**📖 Full documentation: [Occultation Factory](https://www.kerykeion.net/content/docs/occultation_factory)**
 
 ### Davison Composite Chart
 
@@ -1839,6 +1849,8 @@ relocated = RelocatedChartFactory.relocate(subject, new_lng=139.69, new_lat=35.6
 print(f"Original ASC: {subject.first_house.abs_pos:.2f}")
 print(f"Tokyo ASC: {relocated.first_house.abs_pos:.2f}")
 ```
+
+**📖 Full documentation: [Relocated Chart Factory](https://www.kerykeion.net/content/docs/relocated_chart_factory)**
 
 ### Declination & Out-of-Bounds Detection
 
@@ -1895,6 +1907,8 @@ stars = FixedStarDiscoveryFactory.find_prominent_stars(subject, orb=2.0)
 for star in stars:
     print(f"{star.name} at {star.longitude:.2f} (mag {star.magnitude:.1f})")
 ```
+
+**📖 Full documentation: [Fixed Star Discovery](https://www.kerykeion.net/content/docs/fixed_star_discovery_factory)**
 
 ### Gauquelin Sectors
 
@@ -1981,6 +1995,8 @@ for d in directions[:5]:
     print(f"{d.promissor} {d.aspect} {d.significator}: {d.direction_years:.1f} years")
 ```
 
+**📖 Full documentation: [Primary Directions](https://www.kerykeion.net/content/docs/primary_directions_factory)**
+
 ### Secondary Progressions (Day-for-a-Year)
 
 The day-for-a-year technique maps each day after birth to one year of life.
@@ -2013,6 +2029,8 @@ output_dir.mkdir(parents=True, exist_ok=True)
 drawer.save_svg(output_path=output_dir, filename="progression-biwheel")
 ```
 
+**📖 Full documentation: [Secondary Progressions](https://www.kerykeion.net/content/docs/secondary_progressions_factory)**
+
 The biwheel shows the natal chart on the inner ring and progressed positions
 on the outer ring. Astrologers read it by looking for contacts between the
 two rings: when a progressed planet (outer) reaches a conjunction, square,
@@ -2044,6 +2062,8 @@ for asp in result.directed_to_natal_aspects[:5]:
     print(f"  {asp.directed_point} {asp.aspect} {asp.natal_point} (orb {asp.orb:.2f}°)")
 ```
 
+**📖 Full documentation: [Solar Arc Directions](https://www.kerykeion.net/content/docs/solar_arc_factory)**
+
 ### Midpoints (Cosmobiology / 90° Dial)
 
 Computes every pairwise midpoint of the active points, with the 90° dial
@@ -2068,6 +2088,8 @@ for m in midpoints[:5]:
           f"{' — activated by: ' + activations if activations else ''}")
 ```
 
+**📖 Full documentation: [Midpoints](https://www.kerykeion.net/content/docs/midpoint_factory)**
+
 ### Astro-Cartography (ACG)
 
 Compute MC, IC, ASC, DSC planetary lines on the world map.
@@ -2083,6 +2105,8 @@ lines = AstroCartographyFactory.compute(subject)
 for line in lines[:5]:
     print(f"{line.planet} {line.line_type}: {len(line.points)} points")
 ```
+
+**📖 Full documentation: [Astro-Cartography](https://www.kerykeion.net/content/docs/astro_cartography_factory)**
 
 ## Documentation
 

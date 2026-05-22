@@ -29,14 +29,20 @@ When customizing `active_points`, you can use any of the following string identi
 -   `Neptune`
 -   `Pluto`
 
-### Lunar Nodes & Lilith
+### Lunar Nodes
 
 -   `Mean_North_Lunar_Node`
 -   `True_North_Lunar_Node`
 -   `Mean_South_Lunar_Node`
 -   `True_South_Lunar_Node`
--   `Mean_Lilith`
--   `True_Lilith`
+
+### Lilith & Priapus Variants
+
+-   `Mean_Lilith` (mean Black Moon Lilith, lunar apogee averaged)
+-   `True_Lilith` (oscillating Black Moon Lilith)
+-   `Interpolated_Lilith` (interpolated, smoothed between mean and true)
+-   `Mean_Priapus` (mean anti-Lilith, lunar perigee averaged)
+-   `True_Priapus` (oscillating anti-Lilith)
 
 ### Angles
 
@@ -65,6 +71,25 @@ When customizing `active_points`, you can use any of the following string identi
 -   `Ixion`
 -   `Orcus`
 -   `Quaoar`
+
+### Uranian / Hamburg School (8)
+
+-   `Cupido` (relationships, family, art)
+-   `Hades` (hidden things, the past, research)
+-   `Zeus` (directed energy, leadership, fire)
+-   `Kronos` (authority, expertise, height)
+-   `Apollon` (expansion, commerce, science)
+-   `Admetos` (depth, concentration, beginnings/endings)
+-   `Vulkanus` (mighty force, intensity, power)
+-   `Poseidon` (idealism, spirituality, enlightenment)
+
+### Special Points
+
+-   `Earth` (meaningful in heliocentric perspective)
+-   `Vertex`
+-   `Anti_Vertex`
+-   `Interpolated_Perigee`
+-   `White_Moon` (Selena)
 
 ### Arabic Parts
 
@@ -146,13 +171,11 @@ Classical planets only plus nodes: Sun, Moon, Mercury, Venus, Mars, Jupiter, Sat
 
 ### `ALL_ACTIVE_POINTS`
 
-Every point listed above plus `Earth` (63 total).
-
-> **Note:** `Earth` is only meaningful in Heliocentric perspective. It is included in `ALL_ACTIVE_POINTS` but omitted from the category lists above.
+Every point listed above (53 total). Dynamic fixed stars found via `FixedStarDiscoveryFactory` are added separately and are not part of this preset.
 
 ### `DEFAULT_ACTIVE_ASPECTS`
 
-Conjunction (orb: 10), Opposition (orb: 10), Trine (orb: 8), Sextile (orb: 6), Square (orb: 5), Quintile (orb: 1).
+Conjunction (orb: 6), Opposition (orb: 6), Trine (orb: 6), Square (orb: 6), Sextile (orb: 5), Quintile (orb: 2). Luminary widening (+1.5° for Sun/Moon) is applied separately via per-point orb adjustments.
 
 ### `ALL_ACTIVE_ASPECTS`
 
