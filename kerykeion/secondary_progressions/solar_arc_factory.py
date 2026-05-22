@@ -32,16 +32,9 @@ from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
-from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house
+from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house, HOUSE_FIELD_NAMES
 
 from .secondary_progression_factory import SecondaryProgressionFactory
-
-
-_HOUSE_FIELD_NAMES: tuple[str, ...] = (
-    "first_house", "second_house", "third_house", "fourth_house",
-    "fifth_house", "sixth_house", "seventh_house", "eighth_house",
-    "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
-)
 
 
 def _normalise_long(longitude: float) -> float:
@@ -299,7 +292,7 @@ class SolarArcFactory:
         # House cusps stay on the natal frame — used to recompute house
         # placement for each directed point.
         houses_degree_ut: list[float] = []
-        for house_field in _HOUSE_FIELD_NAMES:
+        for house_field in HOUSE_FIELD_NAMES:
             cusp = getattr(directed, house_field, None)
             if cusp is not None:
                 houses_degree_ut.append(cusp.abs_pos)

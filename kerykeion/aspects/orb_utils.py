@@ -60,21 +60,22 @@ def resolve_pair_orb_adjustment(
     if not point_orb_adjustments or strategy == "none":
         return 0.0
 
-    values = [
-        point_orb_adjustments[name]
-        for name in (first_name, second_name)
-        if name in point_orb_adjustments
-    ]
+    v1 = point_orb_adjustments.get(first_name)
+    v2 = point_orb_adjustments.get(second_name)
 
-    if not values:
+    if v1 is None and v2 is None:
         return 0.0
 
     if strategy == "max_explicit":
-        return max(values)
+        if v1 is not None and v2 is not None:
+            return v1 if v1 > v2 else v2
+        return v1 if v1 is not None else v2  # type: ignore[return-value]
     if strategy == "min_explicit":
-        return min(values)
+        if v1 is not None and v2 is not None:
+            return v1 if v1 < v2 else v2
+        return v1 if v1 is not None else v2  # type: ignore[return-value]
     if strategy == "sum":
-        return sum(values)
+        return (v1 or 0.0) + (v2 or 0.0)
 
     # Fail fast on a misspelled strategy rather than silently returning 0.0,
     # which would quietly disable the orb adjustment and yield wrong aspects.

@@ -29,7 +29,7 @@ from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
 from kerykeion.schemas.kr_literals import SIGN_CODES
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings
-from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house
+from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house, HOUSE_FIELD_NAMES
 
 
 class MidpointAspectModel(BaseModel):
@@ -213,13 +213,8 @@ class MidpointFactory:
         gathered = dict(gather_active_points(subject, subject.active_points))
 
         # Build the natal house cusp list once for house assignment.
-        house_field_names = (
-            "first_house", "second_house", "third_house", "fourth_house",
-            "fifth_house", "sixth_house", "seventh_house", "eighth_house",
-            "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
-        )
         houses_degree_ut: list[float] = []
-        for field in house_field_names:
+        for field in HOUSE_FIELD_NAMES:
             cusp = getattr(subject, field, None)
             if cusp is not None:
                 houses_degree_ut.append(cusp.abs_pos)

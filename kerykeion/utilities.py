@@ -64,6 +64,12 @@ _POLAR_LATITUDE_LIMIT = 66.0
 # module-private alias is preserved here for backward compatibility.
 _POINT_NUMBER_MAP: dict[str, int] = _POINT_NUMBER_MAP_IMPORT
 
+HOUSE_FIELD_NAMES: tuple[str, ...] = (
+    "first_house", "second_house", "third_house", "fourth_house",
+    "fifth_house", "sixth_house", "seventh_house", "eighth_house",
+    "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+)
+
 # Zodiac sign properties lookup table
 _ZODIAC_SIGNS: dict[int, ZodiacSignModel] = {
     0: ZodiacSignModel(sign="Ari", quality="Cardinal", element="Fire", emoji="♈️", sign_num=0),

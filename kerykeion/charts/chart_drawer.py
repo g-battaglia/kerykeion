@@ -2260,14 +2260,15 @@ class ChartDrawer:  # type: ignore[no-redef]
         # drawer materialises a synthetic celestial-point setting for each.
         from kerykeion.settings.chart_defaults import build_dynamic_midpoint_settings
 
-        dynamic_midpoint_names: list[str] = []
+        _seen_midpoints: dict[str, None] = {}
         for subj in (self.first_obj, self.second_obj):
             if subj is None:
                 continue
             for mp in getattr(subj, "active_midpoints", None) or []:
                 mp_name = getattr(mp, "name", None)
-                if mp_name and mp_name not in dynamic_midpoint_names:
-                    dynamic_midpoint_names.append(mp_name)
+                if mp_name:
+                    _seen_midpoints[mp_name] = None
+        dynamic_midpoint_names: list[str] = list(_seen_midpoints)
 
         if dynamic_midpoint_names:
             extra_midpoint_settings = build_dynamic_midpoint_settings(
