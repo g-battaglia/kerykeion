@@ -102,22 +102,20 @@ Sample Natal Subject — Natal Chart Report
 +-------------+---------+
 | Aspect      | Orb (°) |
 +-------------+---------+
-| conjunction | 10.0    |
-| opposition  | 10.0    |
-| trine       | 8.0     |
-| sextile     | 6.0     |
-| square      | 5.0     |
-| quintile    | 1.0     |
+| conjunction | 6.0     |
+| opposition  | 6.0     |
+| trine       | 6.0     |
+| sextile     | 5.0     |
+| square      | 6.0     |
 +-------------+---------+
 
 +Aspects--+---------------+-----------------------+-------+--------------+
 | Point 1 | Aspect        | Point 2               | Orb   | Movement     |
 +---------+---------------+-----------------------+-------+--------------+
 | Sun     | conjunction ☌ | Moon                  | 7.33° | Applying →   |
+| Sun     | square □      | Mars                  | 7.42° | Applying →   |
 | Sun     | conjunction ☌ | Jupiter               | 4.63° | Separating ← |
 | Sun     | opposition ☍  | Saturn                | 7.03° | Separating ← |
-| Sun     | opposition ☍  | True North Lunar Node | 8.72° | Applying →   |
-| Sun     | conjunction ☌ | True South Lunar Node | 8.72° | Applying →   |
 | Moon    | conjunction ☌ | Jupiter               | 2.70° | Applying →   |
 | Moon    | opposition ☍  | Saturn                | 0.31° | Applying →   |
 | Venus   | sextile ⚹     | Mars                  | 4.26° | Applying →   |

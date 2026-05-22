@@ -144,12 +144,11 @@ Sample Natal Subject & Yoko Ono — Composite Report
 +-------------+---------+
 | Aspect      | Orb (°) |
 +-------------+---------+
-| conjunction | 10.0    |
-| opposition  | 10.0    |
-| trine       | 8.0     |
-| sextile     | 6.0     |
-| square      | 5.0     |
-| quintile    | 1.0     |
+| conjunction | 6.0     |
+| opposition  | 6.0     |
+| trine       | 6.0     |
+| sextile     | 5.0     |
+| square      | 6.0     |
 +-------------+---------+
 
 +Aspects--+---------------+-----------------------+-------+----------+
@@ -158,7 +157,10 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Sun     | sextile ⚹     | Mars                  | 3.41° | Static = |
 | Moon    | trine △       | Mercury               | 3.42° | Static = |
 | Moon    | trine △       | Saturn                | 0.54° | Static = |
+| Mercury | square □      | Jupiter               | 5.45° | Static = |
 | Mercury | trine △       | Saturn                | 2.88° | Static = |
+| Mercury | square □      | True North Lunar Node | 5.22° | Static = |
+| Mercury | square □      | True South Lunar Node | 5.22° | Static = |
 | Venus   | trine △       | Jupiter               | 0.44° | Static = |
 | Venus   | sextile ⚹     | True North Lunar Node | 0.21° | Static = |
 | Venus   | trine △       | True South Lunar Node | 0.21° | Static = |

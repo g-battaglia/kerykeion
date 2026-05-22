@@ -756,8 +756,16 @@ class TestAspectMovementNonStandard:
         assert result == "Separating"
 
     def test_quintile_in_natal_data(self, johnny_depp):
-        """Johnny Depp natal chart contains quintile aspects."""
-        result = AspectsFactory.single_chart_aspects(johnny_depp)
+        """Johnny Depp natal chart contains quintile aspects when explicitly enabled."""
+        aspects_with_quintile = [
+            {"name": "conjunction", "orb": 6},
+            {"name": "opposition", "orb": 6},
+            {"name": "trine", "orb": 6},
+            {"name": "sextile", "orb": 5},
+            {"name": "square", "orb": 6},
+            {"name": "quintile", "orb": 2},
+        ]
+        result = AspectsFactory.single_chart_aspects(johnny_depp, active_aspects=aspects_with_quintile)
         quintiles = [a for a in result.aspects if a.aspect == "quintile"]
         assert len(quintiles) >= 1, "Expected at least one quintile in Johnny Depp natal"
         names = {(q.p1_name, q.p2_name) for q in quintiles}

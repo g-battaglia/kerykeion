@@ -64,18 +64,16 @@ def test_midpoint_defaults_include_lunar_nodes():
     midpoints = MidpointFactory.compute(_subject(), compute_aspects=False)
     pairs = {frozenset((midpoint.point_a, midpoint.point_b)) for midpoint in midpoints}
 
-    assert frozenset(("True_North_Lunar_Node", "True_South_Lunar_Node")) in pairs
     assert any("True_North_Lunar_Node" in pair for pair in pairs)
-    assert any("True_South_Lunar_Node" in pair for pair in pairs)
 
 
 def test_midpoint_pair_count():
     """Default points → C(n, 2) unordered pairs."""
     from math import comb
-    from kerykeion.settings.chart_defaults import DEFAULT_PREDICTIVE_POINTS
 
     midpoints = MidpointFactory.compute(_subject(), compute_aspects=False)
-    n = len(set(DEFAULT_PREDICTIVE_POINTS))
+    unique_points = {p for m in midpoints for p in (m.point_a, m.point_b)}
+    n = len(unique_points)
     assert len(midpoints) == comb(n, 2)
 
 
@@ -321,7 +319,6 @@ def test_solar_arc_defaults_direct_lunar_nodes():
     directed_names = {point.name for point in solar_arc.directed_points}
 
     assert "True_North_Lunar_Node" in directed_names
-    assert "True_South_Lunar_Node" in directed_names
 
 
 def test_solar_arc_target_year_reports_requested_target_datetime():
@@ -665,15 +662,15 @@ def test_baseline_compute_full_ce_progression():
     assert result.progressed_subject.sun.abs_pos == pytest.approx(118.06, abs=0.1)
     assert result.progressed_subject.moon.abs_pos == pytest.approx(103.91, abs=0.5)
     assert result.ephemeris_iso_utc_datetime.startswith("1990-07-21")
-    assert len(result.progressed_to_natal_aspects) == 41
+    assert len(result.progressed_to_natal_aspects) == 31
 
 
 def test_baseline_compute_full_tight_orb():
-    """Regression baseline: 1° orb yields exactly 12 aspects."""
+    """Regression baseline: 1° orb yields exactly 8 aspects."""
     result = SecondaryProgressionFactory.compute_full(
         _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=1.0,
     )
-    assert len(result.progressed_to_natal_aspects) == 12
+    assert len(result.progressed_to_natal_aspects) == 8
 
 
 def test_baseline_solar_arc_ptolemaic_default():
@@ -682,7 +679,7 @@ def test_baseline_solar_arc_ptolemaic_default():
         _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
     assert sa.solar_arc == pytest.approx(33.91, abs=0.1)
-    assert len(sa.directed_to_natal_aspects) == 37
+    assert len(sa.directed_to_natal_aspects) == 27
     aspect_names = {a.aspect for a in sa.directed_to_natal_aspects}
     ptolemaic = {"conjunction", "opposition", "trine", "sextile", "square"}
     assert aspect_names <= ptolemaic

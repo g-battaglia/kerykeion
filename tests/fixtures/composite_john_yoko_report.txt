@@ -16,7 +16,7 @@ John Lennon & Yoko Ono — Composite Report
 | Zodiac Type         | Tropical            |
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
-| Active Points Count | 18                  |
+| Active Points Count | 14                  |
 +---------------------+---------------------+
 
 +Composite – First Subject — Birth Data----------+
@@ -41,7 +41,7 @@ John Lennon & Yoko Ono — Composite Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2429912.229167      |
-| Active Points Count | 18                  |
+| Active Points Count | 14                  |
 +---------------------+---------------------+
 
 +Composite – Second Subject — Birth Data---------+
@@ -66,7 +66,7 @@ John Lennon & Yoko Ono — Composite Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2427121.979167      |
-| Active Points Count | 18                  |
+| Active Points Count | 14                  |
 +---------------------+---------------------+
 
 +Composite Chart Celestial Points-+----------+-------+-------+------+----------------+
@@ -74,8 +74,6 @@ John Lennon & Yoko Ono — Composite Report
 +-----------------------+---------+----------+-------+-------+------+----------------+
 | Ascendant             | Can ♋️ | 14.06°   | N/A   | N/A   | -    | First House    |
 | Medium Coeli          | Lib ♎️ | 8.18°    | N/A   | N/A   | -    | Fourth House   |
-| Descendant            | Cap ♑️ | 14.06°   | N/A   | N/A   | -    | Seventh House  |
-| Imum Coeli            | Ari ♈️ | 8.18°    | N/A   | N/A   | -    | Tenth House    |
 | Sun                   | Sag ♐️ | 22.82°   | N/A   | N/A   | -    | Sixth House    |
 | Moon                  | Cap ♑️ | 7.34°    | N/A   | N/A   | -    | Sixth House    |
 | Mercury               | Cap ♑️ | 8.22°    | N/A   | N/A   | -    | Sixth House    |
@@ -88,8 +86,6 @@ John Lennon & Yoko Ono — Composite Report
 | Pluto                 | Can ♋️ | 27.91°   | N/A   | N/A   | -    | First House    |
 | True North Lunar Node | Sag ♐️ | 24.41°   | N/A   | N/A   | -    | Sixth House    |
 | Chiron                | Gem ♊️ | 27.15°   | N/A   | N/A   | -    | Twelfth House  |
-| Mean Lilith           | Tau ♉️ | 7.94°    | N/A   | N/A   | -    | Eleventh House |
-| True South Lunar Node | Gem ♊️ | 24.41°   | N/A   | N/A   | -    | Twelfth House  |
 +-----------------------+---------+----------+-------+-------+------+----------------+
 
 +Composite Chart Houses (Placidus)----+-------------------+
@@ -120,20 +116,20 @@ John Lennon & Yoko Ono — Composite Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 4.0   | 19.4%      |
-| Earth 🌍 | 8.0   | 38.8%      |
-| Air 💨   | 2.6   | 12.6%      |
-| Water 💧 | 6.0   | 29.1%      |
-| Total    | 20.6  | 100%       |
+| Fire 🔥  | 2.5   | 15.1%      |
+| Earth 🌍 | 6.0   | 36.1%      |
+| Air 💨   | 2.1   | 12.7%      |
+| Water 💧 | 6.0   | 36.1%      |
+| Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 11.5  | 55.8%      |
-| Fixed    | 2.5   | 12.1%      |
-| Mutable  | 6.6   | 32.0%      |
-| Total    | 20.6  | 100%       |
+| Cardinal | 8.5   | 51.2%      |
+| Fixed    | 2.0   | 12.0%      |
+| Mutable  | 6.1   | 36.7%      |
+| Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Active Celestial Points-----+
@@ -141,33 +137,28 @@ John Lennon & Yoko Ono — Composite Report
 +----+-----------------------+
 | 1  | Ascendant             |
 | 2  | Chiron                |
-| 3  | Descendant            |
-| 4  | Imum_Coeli            |
-| 5  | Jupiter               |
-| 6  | Mars                  |
-| 7  | Mean_Lilith           |
-| 8  | Medium_Coeli          |
-| 9  | Mercury               |
-| 10 | Moon                  |
-| 11 | Neptune               |
-| 12 | Pluto                 |
-| 13 | Saturn                |
-| 14 | Sun                   |
-| 15 | True_North_Lunar_Node |
-| 16 | True_South_Lunar_Node |
-| 17 | Uranus                |
-| 18 | Venus                 |
+| 3  | Jupiter               |
+| 4  | Mars                  |
+| 5  | Medium_Coeli          |
+| 6  | Mercury               |
+| 7  | Moon                  |
+| 8  | Neptune               |
+| 9  | Pluto                 |
+| 10 | Saturn                |
+| 11 | Sun                   |
+| 12 | True_North_Lunar_Node |
+| 13 | Uranus                |
+| 14 | Venus                 |
 +----+-----------------------+
 
 +-------------+---------+
 | Aspect      | Orb (°) |
 +-------------+---------+
-| conjunction | 10.0    |
-| opposition  | 10.0    |
-| trine       | 8.0     |
-| sextile     | 6.0     |
-| square      | 5.0     |
-| quintile    | 1.0     |
+| conjunction | 6.0     |
+| opposition  | 6.0     |
+| trine       | 6.0     |
+| sextile     | 5.0     |
+| square      | 6.0     |
 +-------------+---------+
 
 +Aspects----------------+---------------+-----------------------+-------+----------+
@@ -175,49 +166,29 @@ John Lennon & Yoko Ono — Composite Report
 +-----------------------+---------------+-----------------------+-------+----------+
 | Sun                   | square □      | Mars                  | 1.07° | Static = |
 | Sun                   | square □      | Saturn                | 3.65° | Static = |
+| Sun                   | square □      | Neptune               | 5.27° | Static = |
 | Sun                   | conjunction ☌ | True North Lunar Node | 1.59° | Static = |
 | Sun                   | opposition ☍  | Chiron                | 4.33° | Static = |
-| Sun                   | opposition ☍  | True South Lunar Node | 1.59° | Static = |
 | Moon                  | conjunction ☌ | Mercury               | 0.89° | Static = |
-| Moon                  | opposition ☍  | Jupiter               | 9.86° | Static = |
 | Moon                  | trine △       | Uranus                | 0.71° | Static = |
 | Moon                  | opposition ☍  | Ascendant             | 6.72° | Static = |
 | Moon                  | square □      | Medium Coeli          | 0.84° | Static = |
-| Moon                  | conjunction ☌ | Descendant            | 6.72° | Static = |
-| Moon                  | square □      | Imum Coeli            | 0.84° | Static = |
-| Moon                  | trine △       | Mean Lilith           | 0.61° | Static = |
-| Mercury               | opposition ☍  | Jupiter               | 8.97° | Static = |
 | Mercury               | trine △       | Uranus                | 0.17° | Static = |
 | Mercury               | opposition ☍  | Ascendant             | 5.84° | Static = |
 | Mercury               | square □      | Medium Coeli          | 0.04° | Static = |
-| Mercury               | conjunction ☌ | Descendant            | 5.84° | Static = |
-| Mercury               | square □      | Imum Coeli            | 0.04° | Static = |
-| Mercury               | trine △       | Mean Lilith           | 0.28° | Static = |
 | Venus                 | sextile ⚹     | Mars                  | 0.39° | Static = |
-| Venus                 | trine △       | Jupiter               | 6.31° | Static = |
 | Venus                 | trine △       | Saturn                | 2.98° | Static = |
-| Venus                 | sextile ⚹     | Neptune               | 5.95° | Static = |
 | Venus                 | trine △       | Pluto                 | 4.41° | Static = |
 | Mars                  | opposition ☍  | Saturn                | 2.58° | Static = |
-| Mars                  | conjunction ☌ | Neptune               | 6.34° | Static = |
 | Mars                  | sextile ⚹     | Pluto                 | 4.01° | Static = |
 | Mars                  | square □      | True North Lunar Node | 0.52° | Static = |
 | Mars                  | square □      | Chiron                | 3.26° | Static = |
-| Mars                  | square □      | True South Lunar Node | 0.52° | Static = |
 | Jupiter               | sextile ⚹     | Neptune               | 0.36° | Static = |
 | Jupiter               | conjunction ☌ | Ascendant             | 3.13° | Static = |
-| Jupiter               | opposition ☍  | Descendant            | 3.13° | Static = |
-| Saturn                | opposition ☍  | Neptune               | 8.92° | Static = |
 | Saturn                | trine △       | Pluto                 | 1.43° | Static = |
 | Saturn                | square □      | True North Lunar Node | 2.06° | Static = |
 | Saturn                | square □      | Chiron                | 0.68° | Static = |
-| Saturn                | quintile Q    | Descendant            | 0.41° | Static = |
-| Saturn                | square □      | True South Lunar Node | 2.06° | Static = |
-| Uranus                | trine △       | Descendant            | 6.01° | Static = |
-| Uranus                | conjunction ☌ | Mean Lilith           | 0.11° | Static = |
 | Neptune               | sextile ⚹     | Ascendant             | 3.49° | Static = |
-| Neptune               | trine △       | Descendant            | 3.49° | Static = |
 | True North Lunar Node | opposition ☍  | Chiron                | 2.74° | Static = |
-| Chiron                | conjunction ☌ | True South Lunar Node | 2.74° | Static = |
-| Descendant            | trine △       | Mean Lilith           | 6.12° | Static = |
+| Ascendant             | square □      | Medium Coeli          | 5.88° | Static = |
 +-----------------------+---------------+-----------------------+-------+----------+

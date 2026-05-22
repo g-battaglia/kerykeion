@@ -1613,10 +1613,10 @@ _POINTS_CONTENT_PRESETS = [
     ),
     pytest.param(
         DEFAULT_ACTIVE_POINTS,
-        18,
-        ["Sun", "Moon", "Chiron", "Mean Lilith", "Ascendant"],
-        ["Ceres", "Eris", "Vertex"],
-        id="default_18pts",
+        14,
+        ["Sun", "Moon", "Chiron", "Ascendant"],
+        ["Ceres", "Eris", "Vertex", "Mean Lilith", "Descendant"],
+        id="default_14pts",
     ),
     pytest.param(
         ALL_ACTIVE_POINTS,
@@ -1714,10 +1714,10 @@ class TestActivePointsContentValidation:
 _ASPECTS_CONTENT_PRESETS = [
     pytest.param(
         DEFAULT_ACTIVE_ASPECTS,
-        6,
-        {"conjunction", "opposition", "trine", "sextile", "square", "quintile"},
-        {"semi-sextile", "semi-square", "sesquiquadrate", "biquintile", "quincunx"},
-        id="default_6asp",
+        5,
+        {"conjunction", "opposition", "trine", "sextile", "square"},
+        {"quintile", "semi-sextile", "semi-square", "sesquiquadrate", "biquintile", "quincunx"},
+        id="default_5asp",
     ),
     pytest.param(
         ALL_ACTIVE_ASPECTS,

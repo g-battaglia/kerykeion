@@ -24,7 +24,7 @@ Sample Natal Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 18                  |
+| Active Points Count | 14                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+---------------+
@@ -32,8 +32,6 @@ Sample Natal Subject — Natal Chart Report
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 | Ascendant             | Sco ♏️ | 5.82°    | +245.7251°/d | N/A     | -    | First House   |
 | Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House   |
-| Descendant            | Tau ♉️ | 5.82°    | +245.7251°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Aqu ♒️ | 19.91°   | +367.6409°/d | N/A     | -    | Fourth House  |
 | Sun                   | Can ♋️ | 28.54°   | +0.9550°/d   | +20.45° | -    | Ninth House   |
 | Moon                  | Can ♋️ | 21.21°   | +14.4025°/d  | +23.21° | -    | Ninth House   |
 | Mercury               | Leo ♌️ | 17.61°   | +1.6908°/d   | +16.88° | -    | Ninth House   |
@@ -45,9 +43,7 @@ Sample Natal Subject — Natal Chart Report
 | Neptune               | Cap ♑️ | 12.76°   | -0.0258°/d   | -21.96° | R    | Third House   |
 | Pluto                 | Sco ♏️ | 14.97°   | -0.0025°/d   | -1.42°  | R    | First House   |
 | True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d   | -18.46° | R    | Third House   |
-| Mean Lilith           | Sco ♏️ | 28.99°   | +0.1119°/d   | -24.62° | -    | First House   |
 | Chiron                | Can ♋️ | 19.88°   | +0.1070°/d   | +15.79° | -    | Ninth House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0080°/d   | +18.46° | R    | Ninth House   |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 
 +Natal Houses (Placidus)---+----------+-------------------+
@@ -78,20 +74,20 @@ Sample Natal Subject — Natal Chart Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 3.5   | 17.0%      |
-| Earth 🌍 | 5.0   | 24.3%      |
-| Air 💨   | 2.0   | 9.7%       |
-| Water 💧 | 10.1  | 49.0%      |
-| Total    | 20.6  | 100%       |
+| Fire 🔥  | 3.0   | 18.1%      |
+| Earth 🌍 | 3.5   | 21.1%      |
+| Air 💨   | 0.5   | 3.0%       |
+| Water 💧 | 9.6   | 57.8%      |
+| Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 9.1   | 44.2%      |
-| Fixed    | 11.5  | 55.8%      |
+| Cardinal | 9.1   | 54.8%      |
+| Fixed    | 7.5   | 45.2%      |
 | Mutable  | 0.0   | 0.0%       |
-| Total    | 20.6  | 100%       |
+| Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Active Celestial Points-----+
@@ -108,13 +104,9 @@ Sample Natal Subject — Natal Chart Report
 | 9  | Neptune               |
 | 10 | Pluto                 |
 | 11 | True_North_Lunar_Node |
-| 12 | Mean_Lilith           |
-| 13 | Chiron                |
-| 14 | Descendant            |
-| 15 | Imum_Coeli            |
-| 16 | True_South_Lunar_Node |
-| 17 | Ascendant             |
-| 18 | Medium_Coeli          |
+| 12 | Chiron                |
+| 13 | Ascendant             |
+| 14 | Medium_Coeli          |
 +----+-----------------------+
 
 +----------------+---------+
@@ -134,18 +126,20 @@ Sample Natal Subject — Natal Chart Report
 | Point 1               | Aspect                        | Point 2               | Orb   | Movement     |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+
 | Sun                   | conjunction ☌                 | Moon                  | 7.33° | Applying →   |
+| Sun                   | semi-sextile semi-sextile     | Venus                 | 3.17° | Separating ← |
 | Sun                   | conjunction ☌                 | Jupiter               | 4.63° | Separating ← |
 | Sun                   | opposition ☍                  | Saturn                | 7.03° | Separating ← |
-| Sun                   | trine △                       | Mean Lilith           | 0.45° | Applying →   |
+| Sun                   | opposition ☍                  | True North Lunar Node | 8.72° | Applying →   |
+| Sun                   | conjunction ☌                 | Chiron                | 8.66° | Separating ← |
 | Moon                  | conjunction ☌                 | Jupiter               | 2.70° | Applying →   |
 | Moon                  | opposition ☍                  | Saturn                | 0.31° | Applying →   |
+| Moon                  | opposition ☍                  | Neptune               | 8.45° | Separating ← |
 | Moon                  | trine △                       | Pluto                 | 6.23° | Separating ← |
 | Moon                  | conjunction ☌                 | Chiron                | 1.33° | Separating ← |
 | Moon                  | semi-sextile semi-sextile     | Medium Coeli          | 1.29° | Applying →   |
 | Mercury               | semi-square semi-square       | Venus                 | 0.90° | Separating ← |
 | Mercury               | square □                      | Pluto                 | 2.63° | Separating ← |
 | Mercury               | conjunction ☌                 | Medium Coeli          | 2.31° | Separating ← |
-| Mercury               | opposition ☍                  | Imum Coeli            | 2.31° | Separating ← |
 | Venus                 | opposition ☍                  | Uranus                | 5.03° | Applying →   |
 | Venus                 | sesquiquadrate sesquiquadrate | Pluto                 | 1.73° | Separating ← |
 | Venus                 | trine △                       | Ascendant             | 4.11° | Separating ← |
@@ -153,29 +147,17 @@ Sample Natal Subject — Natal Chart Report
 | Mars                  | trine △                       | Neptune               | 6.79° | Applying →   |
 | Mars                  | square □                      | True North Lunar Node | 1.30° | Applying →   |
 | Mars                  | opposition ☍                  | Ascendant             | 0.15° | Applying →   |
-| Mars                  | conjunction ☌                 | Descendant            | 0.15° | Applying →   |
-| Mars                  | square □                      | True South Lunar Node | 1.30° | Applying →   |
 | Jupiter               | opposition ☍                  | Saturn                | 2.40° | Separating ← |
 | Jupiter               | conjunction ☌                 | Chiron                | 4.03° | Separating ← |
-| Jupiter               | trine △                       | Mean Lilith           | 5.08° | Applying →   |
 | Saturn                | opposition ☍                  | Chiron                | 1.64° | Applying →   |
-| Saturn                | semi-sextile semi-sextile     | Imum Coeli            | 1.60° | Applying →   |
 | Uranus                | conjunction ☌                 | Neptune               | 6.02° | Separating ← |
 | Uranus                | semi-sextile semi-sextile     | True North Lunar Node | 0.53° | Separating ← |
 | Uranus                | sextile ⚹                     | Ascendant             | 0.92° | Applying →   |
 | Uranus                | sesquiquadrate sesquiquadrate | Medium Coeli          | 1.82° | Applying →   |
-| Uranus                | trine △                       | Descendant            | 0.92° | Applying →   |
-| Uranus                | semi-square semi-square       | Imum Coeli            | 1.82° | Applying →   |
 | Neptune               | sextile ⚹                     | Pluto                 | 2.21° | Separating ← |
 | Neptune               | opposition ☍                  | Chiron                | 7.12° | Separating ← |
-| Neptune               | trine △                       | Descendant            | 6.94° | Applying →   |
-| Neptune               | semi-square semi-square       | Mean Lilith           | 1.23° | Separating ← |
 | Pluto                 | trine △                       | Chiron                | 4.91° | Separating ← |
 | Pluto                 | square □                      | Medium Coeli          | 4.94° | Separating ← |
-| Pluto                 | square □                      | Imum Coeli            | 4.94° | Separating ← |
 | True North Lunar Node | square □                      | Ascendant             | 1.44° | Applying →   |
-| True North Lunar Node | square □                      | Descendant            | 1.44° | Applying →   |
 | Chiron                | semi-sextile semi-sextile     | Medium Coeli          | 0.03° | Separating ← |
-| Ascendant             | square □                      | True South Lunar Node | 1.44° | Applying →   |
-| Descendant            | square □                      | True South Lunar Node | 1.44° | Applying →   |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+

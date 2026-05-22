@@ -689,9 +689,7 @@ DEFAULT_PREDICTIVE_POINTS: Final[tuple[str, ...]] = (
     "Neptune",
     "Pluto",
     "True_North_Lunar_Node",
-    "True_South_Lunar_Node",
     "Chiron",
-    "Mean_Lilith",
     "Ascendant",
     "Medium_Coeli",
 )

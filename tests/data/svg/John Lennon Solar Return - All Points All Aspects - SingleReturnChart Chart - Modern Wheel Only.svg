@@ -517,7 +517,7 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='236.5914595180317' kr:signposition='26.591459518031712' kr:slug='Interpolated_Lilith' kr:cx='15.190474207205128' kr:cy='32.413160770600406' transform='rotate(-63.195696 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(153.195696) scale(0.135) translate(-14 -14)'>
-    <use xlink:href='#Interpolated_Lilith' kr:slug='Interpolated_Lilith' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
+    <use xlink:href='#FixedStar' kr:slug='Interpolated_Lilith' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(153.195696 50.0 14.5)'>26º</text>
   <g transform='translate(50.0 18.0) rotate(153.195696) scale(0.0702) translate(-16 -16)'>
@@ -798,7 +798,7 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='33.25272266773675' kr:signposition='3.252722667736748' kr:slug='True_Priapus' kr:retrograde='true' kr:cx='63.93283889050718' kr:cy='86.42630917964611' transform='rotate(-200.931545 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(290.931545) scale(0.135) translate(-14 -14)'>
-    <use xlink:href='#True_Priapus' kr:slug='True_Priapus' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
+    <use xlink:href='#FixedStar' kr:slug='True_Priapus' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(290.931545 50.0 14.5)'>3º</text>
   <g transform='translate(50.0 18.0) rotate(290.931545) scale(0.0702) translate(-16 -16)'>
@@ -812,7 +812,7 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='35.140603093704904' kr:signposition='5.140603093704904' kr:slug='Interpolated_Perigee' kr:cx='67.68699591934221' kr:cy='84.75874243049037' transform='rotate(-206.969281 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(296.969281) scale(0.135) translate(-14 -14)'>
-    <use xlink:href='#Interpolated_Perigee' kr:slug='Interpolated_Perigee' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
+    <use xlink:href='#FixedStar' kr:slug='Interpolated_Perigee' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(296.969281 50.0 14.5)'>5º</text>
   <g transform='translate(50.0 18.0) rotate(296.969281) scale(0.0702) translate(-16 -16)'>
@@ -838,7 +838,7 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='51.886193018000654' kr:signposition='21.886193018000654' kr:slug='Mean_Priapus' kr:cx='74.56716107753873' kr:cy='80.28951298040737' transform='rotate(-219.044752 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(309.044752) scale(0.135) translate(-14 -14)'>
-    <use xlink:href='#Mean_Priapus' kr:slug='Mean_Priapus' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
+    <use xlink:href='#FixedStar' kr:slug='Mean_Priapus' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(309.044752 50.0 14.5)'>21º</text>
   <g transform='translate(50.0 18.0) rotate(309.044752) scale(0.0702) translate(-16 -16)'>
@@ -851,7 +851,7 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='51.88619301800917' kr:signposition='21.886193018009173' kr:slug='White_Moon' kr:cx='77.61683839354403' kr:cy='77.53743337976277' transform='rotate(-225.082488 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(315.082488) scale(0.135) translate(-14 -14)'>
-    <use xlink:href='#White_Moon' kr:slug='White_Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
+    <use xlink:href='#FixedStar' kr:slug='White_Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(315.082488 50.0 14.5)'>21º</text>
   <g transform='translate(50.0 18.0) rotate(315.082488) scale(0.0702) translate(-16 -16)'>

@@ -24,7 +24,7 @@ Johnny Depp — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2438189.708333      |
-| Active Points Count | 18                  |
+| Active Points Count | 14                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -32,8 +32,6 @@ Johnny Depp — Natal Chart Report
 +-----------------------+---------+----------+--------------+---------+------+----------------+
 | Ascendant             | Aqu ♒️ | 20.70°   | +507.7874°/d | N/A     | -    | First House    |
 | Medium Coeli          | Sag ♐️ | 6.59°    | +341.0211°/d | N/A     | -    | Tenth House    |
-| Descendant            | Leo ♌️ | 20.70°   | +507.7874°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Gem ♊️ | 6.59°    | +341.0211°/d | N/A     | -    | Fourth House   |
 | Sun                   | Gem ♊️ | 17.66°   | +0.9559°/d   | +22.87° | -    | Fourth House   |
 | Moon                  | Cap ♑️ | 8.74°    | +12.4799°/d  | -22.08° | -    | Eleventh House |
 | Mercury               | Tau ♉️ | 25.00°   | +0.6817°/d   | +15.27° | -    | Third House    |
@@ -45,9 +43,7 @@ Johnny Depp — Natal Chart Report
 | Neptune               | Sco ♏️ | 13.42°   | -0.0213°/d   | -14.13° | R    | Ninth House    |
 | Pluto                 | Vir ♍️ | 9.63°    | +0.0095°/d   | +20.46° | -    | Seventh House  |
 | True North Lunar Node | Can ♋️ | 20.64°   | -0.0232°/d   | +21.86° | R    | Fifth House    |
-| Mean Lilith           | Sco ♏️ | 5.57°    | +0.1120°/d   | -8.65°  | -    | Eighth House   |
 | Chiron                | Pis ♓️ | 14.87°   | +0.0084°/d   | -1.23°  | -    | First House    |
-| True South Lunar Node | Cap ♑️ | 20.64°   | +0.0232°/d   | -21.86° | R    | Eleventh House |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
 
 +Natal Houses (Placidus)---+----------+-------------------+
@@ -78,20 +74,20 @@ Johnny Depp — Natal Chart Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 4.0   | 19.4%      |
-| Earth 🌍 | 8.0   | 38.8%      |
-| Air 💨   | 6.5   | 31.6%      |
-| Water 💧 | 2.1   | 10.2%      |
-| Total    | 20.6  | 100%       |
+| Fire 🔥  | 2.5   | 15.1%      |
+| Earth 🌍 | 7.5   | 45.2%      |
+| Air 💨   | 5.0   | 30.1%      |
+| Water 💧 | 1.6   | 9.6%       |
+| Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 4.0   | 19.4%      |
-| Fixed    | 8.5   | 41.3%      |
-| Mutable  | 8.1   | 39.3%      |
-| Total    | 20.6  | 100%       |
+| Cardinal | 3.5   | 21.1%      |
+| Fixed    | 6.5   | 39.2%      |
+| Mutable  | 6.6   | 39.8%      |
+| Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Active Celestial Points-----+
@@ -108,24 +104,19 @@ Johnny Depp — Natal Chart Report
 | 9  | Neptune               |
 | 10 | Pluto                 |
 | 11 | True_North_Lunar_Node |
-| 12 | Mean_Lilith           |
-| 13 | Chiron                |
-| 14 | Descendant            |
-| 15 | Imum_Coeli            |
-| 16 | True_South_Lunar_Node |
-| 17 | Ascendant             |
-| 18 | Medium_Coeli          |
+| 12 | Chiron                |
+| 13 | Ascendant             |
+| 14 | Medium_Coeli          |
 +----+-----------------------+
 
 +-------------+---------+
 | Aspect      | Orb (°) |
 +-------------+---------+
-| conjunction | 10.0    |
-| opposition  | 10.0    |
-| trine       | 8.0     |
-| sextile     | 6.0     |
-| square      | 5.0     |
-| quintile    | 1.0     |
+| conjunction | 6.0     |
+| opposition  | 6.0     |
+| trine       | 6.0     |
+| sextile     | 5.0     |
+| square      | 6.0     |
 +-------------+---------+
 
 +Aspects----------------+---------------+-----------------------+-------+--------------+
@@ -135,45 +126,27 @@ Johnny Depp — Natal Chart Report
 | Sun                   | trine △       | Saturn                | 5.42° | Applying →   |
 | Sun                   | square □      | Chiron                | 2.79° | Separating ← |
 | Sun                   | trine △       | Ascendant             | 3.04° | Separating ← |
-| Sun                   | sextile ⚹     | Descendant            | 3.04° | Separating ← |
 | Moon                  | trine △       | Mars                  | 5.73° | Separating ← |
+| Moon                  | square □      | Jupiter               | 5.17° | Applying →   |
 | Moon                  | trine △       | Uranus                | 7.17° | Separating ← |
 | Moon                  | sextile ⚹     | Neptune               | 4.68° | Applying →   |
 | Moon                  | trine △       | Pluto                 | 0.89° | Applying →   |
-| Moon                  | sextile ⚹     | Mean Lilith           | 3.17° | Separating ← |
+| Moon                  | sextile ⚹     | Chiron                | 6.13° | Applying →   |
 | Mercury               | conjunction ☌ | Venus                 | 0.60° | Separating ← |
 | Mercury               | square □      | Saturn                | 1.92° | Separating ← |
 | Mercury               | sextile ⚹     | True North Lunar Node | 4.36° | Separating ← |
 | Mercury               | square □      | Ascendant             | 4.31° | Applying →   |
-| Mercury               | square □      | Descendant            | 4.31° | Applying →   |
-| Mercury               | trine △       | True South Lunar Node | 4.36° | Separating ← |
 | Venus                 | square □      | Saturn                | 2.52° | Separating ← |
+| Venus                 | square □      | Uranus                | 5.96° | Applying →   |
 | Venus                 | sextile ⚹     | True North Lunar Node | 4.96° | Separating ← |
 | Venus                 | square □      | Ascendant             | 4.91° | Applying →   |
-| Venus                 | square □      | Descendant            | 4.91° | Applying →   |
-| Venus                 | trine △       | True South Lunar Node | 4.96° | Separating ← |
-| Mars                  | opposition ☍  | Saturn                | 9.93° | Separating ← |
 | Mars                  | conjunction ☌ | Uranus                | 1.45° | Separating ← |
-| Mars                  | conjunction ☌ | Pluto                 | 6.61° | Applying →   |
 | Mars                  | square □      | Medium Coeli          | 3.58° | Separating ← |
-| Mars                  | square □      | Imum Coeli            | 3.58° | Separating ← |
-| Mars                  | sextile ⚹     | Mean Lilith           | 2.56° | Applying →   |
-| Jupiter               | trine △       | Medium Coeli          | 7.32° | Applying →   |
-| Jupiter               | trine △       | Descendant            | 6.79° | Separating ← |
-| Saturn                | opposition ☍  | Uranus                | 8.48° | Separating ← |
 | Saturn                | conjunction ☌ | Ascendant             | 2.39° | Applying →   |
-| Saturn                | opposition ☍  | Descendant            | 2.39° | Applying →   |
-| Uranus                | quintile Q    | Neptune               | 0.14° | Separating ← |
-| Uranus                | conjunction ☌ | Pluto                 | 8.06° | Applying →   |
-| Uranus                | sextile ⚹     | Mean Lilith           | 4.01° | Separating ← |
+| Uranus                | square □      | Medium Coeli          | 5.02° | Separating ← |
 | Neptune               | sextile ⚹     | Pluto                 | 3.80° | Applying →   |
-| Neptune               | trine △       | True North Lunar Node | 7.22° | Applying →   |
 | Neptune               | trine △       | Chiron                | 1.45° | Separating ← |
-| Neptune               | conjunction ☌ | Mean Lilith           | 7.85° | Applying →   |
 | Pluto                 | opposition ☍  | Chiron                | 5.25° | Applying →   |
 | Pluto                 | square □      | Medium Coeli          | 3.04° | Applying →   |
-| Pluto                 | square □      | Imum Coeli            | 3.04° | Applying →   |
-| Pluto                 | sextile ⚹     | Mean Lilith           | 4.05° | Applying →   |
 | True North Lunar Node | trine △       | Chiron                | 5.77° | Applying →   |
-| Chiron                | sextile ⚹     | True South Lunar Node | 5.77° | Separating ← |
 +-----------------------+---------------+-----------------------+-------+--------------+

@@ -24,7 +24,7 @@ Johnny Depp — Subject Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2438189.708333      |
-| Active Points Count | 18                  |
+| Active Points Count | 14                  |
 +---------------------+---------------------+
 
 +Celestial Points-------+---------+----------+--------------+---------+------+----------------+
@@ -32,8 +32,6 @@ Johnny Depp — Subject Report
 +-----------------------+---------+----------+--------------+---------+------+----------------+
 | Ascendant             | Aqu ♒️ | 20.70°   | +507.7874°/d | N/A     | -    | First House    |
 | Medium Coeli          | Sag ♐️ | 6.59°    | +341.0211°/d | N/A     | -    | Tenth House    |
-| Descendant            | Leo ♌️ | 20.70°   | +507.7874°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Gem ♊️ | 6.59°    | +341.0211°/d | N/A     | -    | Fourth House   |
 | Sun                   | Gem ♊️ | 17.66°   | +0.9559°/d   | +22.87° | -    | Fourth House   |
 | Moon                  | Cap ♑️ | 8.74°    | +12.4799°/d  | -22.08° | -    | Eleventh House |
 | Mercury               | Tau ♉️ | 25.00°   | +0.6817°/d   | +15.27° | -    | Third House    |
@@ -45,9 +43,7 @@ Johnny Depp — Subject Report
 | Neptune               | Sco ♏️ | 13.42°   | -0.0213°/d   | -14.13° | R    | Ninth House    |
 | Pluto                 | Vir ♍️ | 9.63°    | +0.0095°/d   | +20.46° | -    | Seventh House  |
 | True North Lunar Node | Can ♋️ | 20.64°   | -0.0232°/d   | +21.86° | R    | Fifth House    |
-| Mean Lilith           | Sco ♏️ | 5.57°    | +0.1120°/d   | -8.65°  | -    | Eighth House   |
 | Chiron                | Pis ♓️ | 14.87°   | +0.0084°/d   | -1.23°  | -    | First House    |
-| True South Lunar Node | Cap ♑️ | 20.64°   | +0.0232°/d   | -21.86° | R    | Eleventh House |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
 
 +Houses (Placidus)---------+----------+-------------------+

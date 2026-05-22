@@ -220,38 +220,25 @@ Sample Natal Subject — Transit 1980-12-08
 +-------------+---------+
 | Aspect      | Orb (°) |
 +-------------+---------+
-| conjunction | 10.0    |
-| opposition  | 10.0    |
-| trine       | 8.0     |
-| sextile     | 6.0     |
-| square      | 5.0     |
-| quintile    | 1.0     |
+| conjunction | 3.0     |
+| opposition  | 3.0     |
+| trine       | 3.0     |
+| sextile     | 3.0     |
+| square      | 3.0     |
 +-------------+---------+
 
-+Aspects----------------+----------------------+---------------+-----------------------+--------------+-------+--------------+
-| Point 1               | Owner 1              | Aspect        | Point 2               | Owner 2      | Orb   | Movement     |
-+-----------------------+----------------------+---------------+-----------------------+--------------+-------+--------------+
-| Sun                   | Sample Natal Subject | trine △       | Mercury               | 1980 Transit | 6.55° | Separating ← |
-| Moon                  | Sample Natal Subject | trine △       | Venus                 | 1980 Transit | 2.53° | Applying →   |
-| Moon                  | Sample Natal Subject | opposition ☍  | Mars                  | 1980 Transit | 8.15° | Applying →   |
-| Mercury               | Sample Natal Subject | trine △       | Sun                   | 1980 Transit | 0.37° | Applying →   |
-| Mercury               | Sample Natal Subject | square □      | Venus                 | 1980 Transit | 1.07° | Separating ← |
-| Mercury               | Sample Natal Subject | conjunction ☌ | True North Lunar Node | 1980 Transit | 5.45° | Separating ← |
-| Mercury               | Sample Natal Subject | opposition ☍  | True South Lunar Node | 1980 Transit | 5.45° | Applying →   |
-| Venus                 | Sample Natal Subject | opposition ☍  | Moon                  | 1980 Transit | 3.35° | Separating ← |
-| Mars                  | Sample Natal Subject | trine △       | Moon                  | 1980 Transit | 0.91° | Applying →   |
-| Mars                  | Sample Natal Subject | trine △       | Mars                  | 1980 Transit | 7.09° | Separating ← |
-| Jupiter               | Sample Natal Subject | trine △       | Venus                 | 1980 Transit | 5.24° | Applying →   |
-| Saturn                | Sample Natal Subject | sextile ⚹     | Venus                 | 1980 Transit | 2.84° | Applying →   |
-| Saturn                | Sample Natal Subject | conjunction ☌ | Mars                  | 1980 Transit | 8.46° | Applying →   |
-| True North Lunar Node | Sample Natal Subject | sextile ⚹     | Mercury               | 1980 Transit | 2.18° | Applying →   |
-| True North Lunar Node | Sample Natal Subject | trine △       | Jupiter               | 1980 Transit | 0.10° | Applying →   |
-| True North Lunar Node | Sample Natal Subject | trine △       | Saturn                | 1980 Transit | 1.08° | Separating ← |
-| True North Lunar Node | Sample Natal Subject | opposition ☍  | True North Lunar Node | 1980 Transit | 4.90° | Applying →   |
-| True North Lunar Node | Sample Natal Subject | conjunction ☌ | True South Lunar Node | 1980 Transit | 4.90° | Separating ← |
-| True South Lunar Node | Sample Natal Subject | trine △       | Mercury               | 1980 Transit | 2.18° | Applying →   |
-| True South Lunar Node | Sample Natal Subject | sextile ⚹     | Jupiter               | 1980 Transit | 0.10° | Applying →   |
-| True South Lunar Node | Sample Natal Subject | sextile ⚹     | Saturn                | 1980 Transit | 1.08° | Separating ← |
-| True South Lunar Node | Sample Natal Subject | conjunction ☌ | True North Lunar Node | 1980 Transit | 4.90° | Applying →   |
-| True South Lunar Node | Sample Natal Subject | opposition ☍  | True South Lunar Node | 1980 Transit | 4.90° | Separating ← |
-+-----------------------+----------------------+---------------+-----------------------+--------------+-------+--------------+
++Aspects----------------+----------------------+-----------+---------+--------------+-------+--------------+
+| Point 1               | Owner 1              | Aspect    | Point 2 | Owner 2      | Orb   | Movement     |
++-----------------------+----------------------+-----------+---------+--------------+-------+--------------+
+| Moon                  | Sample Natal Subject | trine △   | Venus   | 1980 Transit | 2.53° | Applying →   |
+| Mercury               | Sample Natal Subject | trine △   | Sun     | 1980 Transit | 0.37° | Applying →   |
+| Mercury               | Sample Natal Subject | square □  | Venus   | 1980 Transit | 1.07° | Separating ← |
+| Mars                  | Sample Natal Subject | trine △   | Moon    | 1980 Transit | 0.91° | Applying →   |
+| Saturn                | Sample Natal Subject | sextile ⚹ | Venus   | 1980 Transit | 2.84° | Applying →   |
+| True North Lunar Node | Sample Natal Subject | sextile ⚹ | Mercury | 1980 Transit | 2.18° | Applying →   |
+| True North Lunar Node | Sample Natal Subject | trine △   | Jupiter | 1980 Transit | 0.10° | Applying →   |
+| True North Lunar Node | Sample Natal Subject | trine △   | Saturn  | 1980 Transit | 1.08° | Separating ← |
+| True South Lunar Node | Sample Natal Subject | trine △   | Mercury | 1980 Transit | 2.18° | Applying →   |
+| True South Lunar Node | Sample Natal Subject | sextile ⚹ | Jupiter | 1980 Transit | 0.10° | Applying →   |
+| True South Lunar Node | Sample Natal Subject | sextile ⚹ | Saturn  | 1980 Transit | 1.08° | Separating ← |
++-----------------------+----------------------+-----------+---------+--------------+-------+--------------+

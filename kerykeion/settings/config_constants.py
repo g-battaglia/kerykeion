@@ -219,9 +219,9 @@ DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
     # "Mean_North_Lunar_Node",
     "True_North_Lunar_Node",
     # "Mean_South_Lunar_Node",
-    "True_South_Lunar_Node",
+    # "True_South_Lunar_Node",
     "Chiron",
-    "Mean_Lilith",
+    # "Mean_Lilith",
     # "True_Lilith",
     # "Earth",
     # "Pholus",
@@ -262,8 +262,8 @@ DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
     # "Alkaid",
     "Ascendant",
     "Medium_Coeli",
-    "Descendant",
-    "Imum_Coeli",
+    # "Descendant",
+    # "Imum_Coeli",
     # "Vertex",
     # "Anti_Vertex",
     # "Pars_Fortunae",
@@ -433,7 +433,6 @@ DEFAULT_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "trine", "orb": 6},
     {"name": "sextile", "orb": 5},
     {"name": "square", "orb": 6},
-    {"name": "quintile", "orb": 2},
 ]
 """
 Default active aspects for natal and synastry charts.
