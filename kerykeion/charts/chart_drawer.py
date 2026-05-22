@@ -2280,6 +2280,17 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.planets_settings.extend(extra_midpoint_settings)
             self.available_planets_setting.extend(extra_midpoint_settings)
 
+            extra_names = {s["name"] for s in extra_midpoint_settings}
+            active_names = {s["name"] for s in self.available_planets_setting}
+            for mp_name in dynamic_midpoint_names:
+                if mp_name in extra_names or mp_name in active_names:
+                    continue
+                for body in self.planets_settings:
+                    if body["name"] == mp_name:
+                        body["is_active"] = True
+                        self.available_planets_setting.append(body)
+                        break
+
         # This list is the union of renderable settings across both subjects.
         # Keep it available for lookups, but scope the per-subject settings below
         # to the points actually collected for that subject; dual charts may have
@@ -2477,7 +2488,13 @@ class ChartDrawer:  # type: ignore[no-redef]
 
     def _count_active_planets(self) -> int:
         """Return number of active celestial points in the current chart."""
-        return len([p for p in self.available_planets_setting if p.get("is_active")])
+        primary = sum(1 for p in self.available_planets_setting if p.get("is_active"))
+        if self.second_obj is None:
+            return primary
+        secondary = sum(
+            1 for p in self.second_subject_available_planets_setting if p.get("is_active")
+        )
+        return max(primary, secondary)
 
     def _is_right_panel_mode(self) -> bool:
         """Whether the aspect list/grid should be placed in a right-side panel.

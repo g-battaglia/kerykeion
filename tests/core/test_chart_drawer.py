@@ -536,12 +536,14 @@ class TestChartDrawerBasic:
         assert "Sun_Moon_Midpoint" in second_setting_names
 
         classic_svg = chart.generate_svg_string()
-        assert "xlink:href='#Midpoint'" in classic_svg
+        assert "xlink:href='#Midpoint'" in classic_svg or 'xlink:href="#Midpoint"' in classic_svg
         assert "xlink:href='#Sun_Moon_Midpoint'" not in classic_svg
+        assert 'xlink:href="#Sun_Moon_Midpoint"' not in classic_svg
 
         modern_svg = ChartDrawer(data, style="modern").generate_svg_string()
-        assert "xlink:href='#Midpoint'" in modern_svg
+        assert "xlink:href='#Midpoint'" in modern_svg or 'xlink:href="#Midpoint"' in modern_svg
         assert "xlink:href='#Sun_Moon_Midpoint'" not in modern_svg
+        assert 'xlink:href="#Sun_Moon_Midpoint"' not in modern_svg
 
     def test_pair_midpoint_names_resolve_to_midpoint_glyph(self):
         from kerykeion.settings.chart_defaults import resolve_glyph_id

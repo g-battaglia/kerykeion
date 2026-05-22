@@ -180,11 +180,11 @@ class TransitsTimeRangeFactory:
         """
         self.natal_chart = natal_chart
         self.ephemeris_data_points = ephemeris_data_points
-        self.active_points = active_points if active_points is not None else DEFAULT_ACTIVE_POINTS
+        self.active_points = list(active_points) if active_points is not None else list(DEFAULT_ACTIVE_POINTS)
         # Transits are a predictive technique — default to the tight 3°
         # Ptolemaic orbs, not the wide natal orbs.
         self.active_aspects = (
-            active_aspects if active_aspects is not None else PREDICTIVE_ACTIVE_ASPECTS
+            [dict(a) for a in active_aspects] if active_aspects is not None else [dict(a) for a in PREDICTIVE_ACTIVE_ASPECTS]
         )
         self.settings_file = settings_file
         self.axis_orb_limit = axis_orb_limit
