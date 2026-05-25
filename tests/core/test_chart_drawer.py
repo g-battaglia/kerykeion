@@ -34,6 +34,7 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.charts.charts_utils import makeLunarPhase
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.schemas.kr_models import KerykeionPointModel
 from kerykeion.secondary_progressions import SecondaryProgressionFactory
 from kerykeion.schemas import KerykeionException
 
@@ -1967,6 +1968,58 @@ class TestPartialViews:
         assert set(data.active_points) == set(ALL_ACTIVE_POINTS)
         svg = ChartDrawer(data).generate_aspect_grid_only_svg_string()
         compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Aspect Grid Only.svg", svg)
+
+    def test_dual_table_aspect_grid_keeps_second_subject_only_fixed_star(self):
+        john = copy.deepcopy(_make_john("Second Subject Star", active_points=["Sun"]))
+        paul = copy.deepcopy(_make_paul("Second Subject Star", active_points=["Sun"]))
+        sun = john.sun
+        paul.fixed_stars.append(
+            KerykeionPointModel(
+                name="Synthetic Star",
+                quality=sun.quality,
+                element=sun.element,
+                sign=sun.sign,
+                sign_num=sun.sign_num,
+                position=sun.position,
+                abs_pos=sun.abs_pos,
+                emoji="",
+                point_type="AstrologicalPoint",
+                retrograde=False,
+                speed=0.0,
+            )
+        )
+
+        data = ChartDataFactory.create_synastry_chart_data(
+            john,
+            paul,
+            active_points=["Sun"],
+            active_aspects=[{"name": "conjunction", "orb": 1}],
+            include_house_comparison=False,
+            include_relationship_score=False,
+        )
+        assert any(aspect.p2_name == "Synthetic Star" for aspect in data.aspects)
+
+        chart = ChartDrawer(data, double_chart_aspect_grid_type="table")
+        assert "Synthetic Star" not in {body["name"] for body in chart.available_planets_setting}
+        assert "Synthetic Star" in {body["name"] for body in chart.all_available_planets_setting}
+
+        full_chart_grid = chart._create_template_dictionary()["makeDoubleChartAspectList"]
+        grid_only_svg = chart.generate_aspect_grid_only_svg_string()
+
+        # The grid-only SVG is post-processed (double quotes → single quotes), so
+        # match both quote styles to keep the assertion robust.
+        star_ref = re.compile(r"""xlink:href=['"]#FixedStar['"]""")
+        orb_ref = re.compile(r"""xlink:href=['"]#orb0['"]""")
+
+        # With the fix both axes of the NxN grid include the second-subject-only
+        # star: draw_transit_aspect_grid emits the glyph once on the bottom header
+        # row and once on the left header column, so exactly 2 references.
+        assert len(star_ref.findall(full_chart_grid)) == 2
+        assert len(star_ref.findall(grid_only_svg)) == 2
+        # And the conjunction between Sun (subject A) and Synthetic Star (subject B)
+        # must land in a grid cell.
+        assert orb_ref.search(full_chart_grid) is not None
+        assert orb_ref.search(grid_only_svg) is not None
 
 
 # =============================================================================

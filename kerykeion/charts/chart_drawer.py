@@ -805,12 +805,12 @@ class TransitChartRenderer(BaseChartRenderer):
             if d._is_right_panel_mode():
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                n_active = max(d._count_active_planets(), 1)
+                n_active = max(d._count_aspect_grid_planets(), 1)
                 grid_size = 14 * n_active
                 grid_y = int(rp["y_offset"] + grid_size + 30)
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     grid_x,
                     grid_y,
@@ -818,7 +818,7 @@ class TransitChartRenderer(BaseChartRenderer):
             else:
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     600,
                     520,
@@ -1090,7 +1090,7 @@ class SynastryChartRenderer(BaseChartRenderer):
                 # grid (the header row); data cells grow UPWARD from there.
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                n_active = max(d._count_active_planets(), 1)
+                n_active = max(d._count_aspect_grid_planets(), 1)
                 box_size = 14
                 grid_total_h = (n_active + 1) * box_size
                 # Place grid so its top aligns near the chart title
@@ -1100,7 +1100,7 @@ class SynastryChartRenderer(BaseChartRenderer):
                 grid_y = int(target_top - aspect_list_y + grid_total_h)
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     grid_x,
                     grid_y,
@@ -1108,7 +1108,7 @@ class SynastryChartRenderer(BaseChartRenderer):
             else:
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     550,
                     450,
@@ -1410,7 +1410,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
             if d._is_right_panel_mode():
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                n_active = max(d._count_active_planets(), 1)
+                n_active = max(d._count_aspect_grid_planets(), 1)
                 box_size = 14
                 grid_total_h = (n_active + 1) * box_size
                 aspect_list_y = d._vertical_offsets["aspect_list"]
@@ -1419,7 +1419,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
                 grid_y = int(target_top - aspect_list_y + grid_total_h)
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     grid_x,
                     grid_y,
@@ -1427,7 +1427,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
             else:
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     550,
                     450,
@@ -2496,6 +2496,16 @@ class ChartDrawer:  # type: ignore[no-redef]
         )
         return max(primary, secondary)
 
+    def _get_aspect_grid_planets_setting(self) -> list[dict[Any, Any]]:
+        """Return the settings list used to draw aspect grids."""
+        if self._renderer.is_dual_wheel():
+            return self.all_available_planets_setting
+        return self.available_planets_setting
+
+    def _count_aspect_grid_planets(self) -> int:
+        """Return number of active points that need rows/columns in an aspect grid."""
+        return sum(1 for p in self._get_aspect_grid_planets_setting() if p.get("is_active"))
+
     def _is_right_panel_mode(self) -> bool:
         """Whether the aspect list/grid should be placed in a right-side panel.
 
@@ -2505,6 +2515,11 @@ class ChartDrawer:  # type: ignore[no-redef]
         """
         if not self._renderer.is_dual_wheel():
             return False
+        # "table" draws an NxN grid sized on the union of both subjects, so the
+        # decision uses the union count. "list" anchors against the taller of the
+        # two per-subject columns, so max(primary, secondary) is the right metric.
+        if self.double_chart_aspect_grid_type == "table":
+            return self._count_aspect_grid_planets() > self._RIGHT_PANEL_POINTS_THRESHOLD
         return self._count_active_planets() > self._RIGHT_PANEL_POINTS_THRESHOLD
 
     def _estimate_left_content_right_edge(self) -> float:
@@ -3102,7 +3117,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         y0 = 250
         box = 14
 
-        n = max(len([p for p in self.available_planets_setting if p.get("is_active")]), 1)
+        n = max(self._count_aspect_grid_planets(), 1)
 
         if self._renderer.is_dual_wheel():
             # Full NxN grid
@@ -3132,7 +3147,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         wheel_right = 100 + (2 * self.main_radius)
         extents: list[float] = [wheel_right]
 
-        n_active = max(self._count_active_planets(), 1)
+        n_active = max(self._count_aspect_grid_planets(), 1)
 
         # Common grids present on many chart types
         # Apply grid shift when multi-column layout would overlap the wheel
@@ -3715,7 +3730,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict["makeAspectGrid"] = ""
             template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                 self.chart_colors_settings["paper_0"],
-                self.available_planets_setting,
+                self._get_aspect_grid_planets_setting(),
                 self.aspects_list,
                 600,
                 520,
@@ -4874,7 +4889,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self._renderer.is_dual_wheel():
             aspects_grid = draw_transit_aspect_grid(
                 self.chart_colors_settings["paper_0"],
-                self.available_planets_setting,
+                self._get_aspect_grid_planets_setting(),
                 self.aspects_list,
             )
         else:
