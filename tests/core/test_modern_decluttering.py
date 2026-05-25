@@ -309,7 +309,14 @@ def test_modern_chart_2000_02_26_neptune_order():
     from kerykeion import AstrologicalSubjectFactory
     from kerykeion.chart_data_factory import ChartDataFactory
     from kerykeion.charts.chart_drawer import ChartDrawer
+    from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
+    # The decluttering regression on the 2000-02-26 stellium relies on
+    # True_South_Lunar_Node being rendered. It was dropped from defaults in
+    # 6.0.0a46 (alignment with reference standard), so we opt back in here
+    # at both factory layers (the subject must compute it, and the chart data
+    # must propagate it).
+    active = DEFAULT_ACTIVE_POINTS + ["True_South_Lunar_Node"]
     subject = AstrologicalSubjectFactory.from_birth_data(
         "Decluttering Repro 2000",
         2000,
@@ -322,8 +329,9 @@ def test_modern_chart_2000_02_26_neptune_order():
         tz_str="UTC",
         online=False,
         suppress_geonames_warning=True,
+        active_points=active,
     )
-    chart_data = ChartDataFactory.create_natal_chart_data(subject)
+    chart_data = ChartDataFactory.create_natal_chart_data(subject, active_points=active)
     svg = ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(style="modern")
 
     # Each planet is rendered as:
