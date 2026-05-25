@@ -1,5 +1,18 @@
 # Release Notes
 
+## 6.0.0a47 — 2026-05-25
+
+Minor public-API addition.
+
+**Added**
+
+- **`PTOLEMAIC_ASPECTS` re-exported from package root.** The canonical
+  Ptolemaic aspect set (conjunction, sextile, square, trine, opposition) is
+  now importable directly as `from kerykeion import PTOLEMAIC_ASPECTS`
+  without reaching into the private `_predictive_utils` module.
+
+**Backward compatible** — no existing imports break.
+
 ## 6.0.0a46 — 2026-05-25
 
 Feature release: orb system overhaul + active midpoints + secondary

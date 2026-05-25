@@ -118,6 +118,7 @@ from .schemas.kr_models import (
 # =============================================================================
 from .settings import KerykeionSettingsModel
 from .context_serializer import to_context
+from ._predictive_utils import PTOLEMAIC_ASPECTS
 
 # =============================================================================
 # EPHEMERIS BACKEND
@@ -174,6 +175,7 @@ __all__ = [
     # Settings and Utilities
     "KerykeionSettingsModel",
     "to_context",
+    "PTOLEMAIC_ASPECTS",
     # Ephemeris Backend
     "BACKEND_NAME",
 ]

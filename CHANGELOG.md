@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.0.0a47
+
+_2026-05-25_
+
+Minor public-API addition.
+
+### Added
+
+- **`PTOLEMAIC_ASPECTS` re-exported from package root.**
+  `from kerykeion import PTOLEMAIC_ASPECTS` now works without reaching into
+  the private `_predictive_utils` module. Added to both the import block and
+  `__all__`.
+
+---
+
 ## 6.0.0a46
 
 _2026-05-25_
