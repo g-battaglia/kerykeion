@@ -1,5 +1,159 @@
 # Changelog
 
+## 6.0.0a46
+
+_2026-05-25_
+
+Large feature release: **orb system overhaul** (Astro-Seek-aligned defaults +
+per-point adjustments), **active midpoints** as a first-class rendering
+channel, **secondary progressions** improvements, plus a batch of dual-wheel
+rendering fixes.
+
+### Added
+
+- **Per-point orb adjustments** (`kerykeion/aspects/orb_utils.py`). New
+  `OrbAdjustmentStrategy` (`"max_explicit"` | `"min_explicit"` | `"sum"` |
+  `"none"`) and `resolve_pair_orb_adjustment()` for combining a per-point
+  adjustment table into a single additive orb for a pair. Only *explicitly*
+  configured points are considered before aggregation, so negative
+  adjustments work as expected: `{"Pluto": -2.0}` on (Pluto, Saturn) yields
+  -2.0, not `max(-2.0, 0.0) = 0`.
+  - Threaded through `get_aspect_from_two_points(..., extra_orb=0.0)`
+    (effective orb clamped `>= 0`), `AspectsFactory.single_chart_aspects()`
+    / `dual_chart_aspects()`, `ChartDataFactory.create_chart_data()` + all
+    7 convenience methods, `SecondaryProgressionFactory.compute_full()`,
+    `SolarArcFactory.compute()`.
+  - Per-chart-type defaults: natal / synastry / composite use the luminary
+    bonus (`DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` = Sun/Moon +1.5°); transit,
+    progression and returns use `NO_POINT_ORB_ADJUSTMENTS` (flat tight orb).
+
+- **Active midpoints as a dynamic rendering channel.** New
+  `subject.active_midpoints` (mirrors the `fixed_stars` channel): midpoints
+  requested by name (e.g. `["Sun_Moon"]`) materialise as
+  `KerykeionPointModel` entries with `point_type='Midpoint'` and render on
+  the chart wheel.
+  - `MidpointFactory.compute_active_midpoint_points(subject, pair_names)`
+    resolves `"A_B"` pair identifiers (greedy split, supports multi-token
+    names like `True_North_Lunar_Node`) and produces fully-populated points
+    with sign/quality/element/emoji and a natal-house assignment.
+  - New `Midpoint` `<symbol>` (small ring + dot, visually distinct from
+    planet and fixed-star marks) in all 4 templates (`chart.xml`,
+    `modern_wheel.xml`, `wheel_only.xml`, `aspect_grid_only.xml`) +
+    `build_dynamic_midpoint_settings()` for dynamic glyph ID resolution.
+  - `ChartDrawer` collects `subject.active_midpoints` alongside fixed
+    stars, with per-subject scoping (each chart can carry its own midpoint
+    configuration) and dynamic glyph IDs.
+
+- **`SecondaryProgressionFactory.compute_full()`**. Returns a full result
+  model including progressed-to-natal aspects. Default aspect set switched
+  to the Ptolemaic five.
+
+- **`SolarArcFactory.compute_directed_subject()`**. Generates a directed
+  subject; quality / element / emoji / house are recomputed when a directed
+  point crosses a sign or house (previously inherited from natal, producing
+  inconsistent `KerykeionPointModel` for downstream rendering / AI / PDF
+  consumers).
+
+- **Astro-Seek-aligned default orbs** for natal, synastry, transit, and
+  composite charts. New `PREDICTIVE_ACTIVE_ASPECTS` (3° flat) used for
+  transit / progression / return charts. Default sets refined per chart
+  type and threaded through `create_chart_data` + transit factory.
+
+### Changed (breaking — alpha channel)
+
+- **`DEFAULT_ACTIVE_POINTS`: 18 → 14.** Removed `Descendant`, `Imum_Coeli`,
+  `True_South_Lunar_Node`, `Mean_Lilith`. Opposite points (which are
+  deterministic from their counterpart) are still computed and available on
+  the subject model, but only included in `active_points` when explicitly
+  requested by the caller. To retain previous behaviour, pass them
+  explicitly:
+  ```python
+  active_points=DEFAULT_ACTIVE_POINTS + [
+      "Descendant", "Imum_Coeli", "True_South_Lunar_Node", "Mean_Lilith",
+  ]
+  ```
+
+- **`DEFAULT_ACTIVE_ASPECTS`: 6 → 5.** Removed quintile (Ptolemaic only).
+- **`DEFAULT_PREDICTIVE_POINTS`: 16 → 14.** Removed South Node + Lilith.
+
+- **Default orb values changed across all chart types** to match Astro-Seek
+  reference. **Aspect counts for any pre-existing chart will differ from
+  6.0.0a45.** Snapshot/baseline tests that compare aspect lists must be
+  regenerated. Affected baselines in this repo have been updated
+  (`natal`: 43 aspects, `synastry`: 96 aspects, return baselines, etc.).
+
+- **Unknown `point_orb_adjustment_strategy` now raises `ValueError`.**
+  Previously the resolver silently returned `0.0` when handed an unknown
+  strategy name, masking typos. Callers passing arbitrary strings must now
+  pick from the four registered names.
+
+- **`RelationshipScoreFactory` now passes `DISCEPOLO_SCORE_ACTIVE_ASPECTS`
+  explicitly.** The Discepolo affinity score previously tracked the
+  chart-display default orbs implicitly; the score is now a stable, fixed
+  methodology independent of orb configuration. Regression baselines
+  updated (Lennon/Ono: 8, Dario/Franca: 9).
+
+### Fixed
+
+- **Dual-wheel aspect grid (table mode) missed second-subject-only points.**
+  Fixed stars or active midpoints that existed only on the outer wheel were
+  dropped from the NxN grid and aspects targeting them landed in nonexistent
+  cells. `ChartDrawer` now exposes `_get_aspect_grid_planets_setting()` /
+  `_count_aspect_grid_planets()` which return the union of both subjects in
+  dual-wheel mode; `_is_right_panel_mode()` branches on grid type (table =
+  union count, list = per-subject max). Wired into every renderer call site,
+  `_setup_dual_chart_aspects`, the grid-only export, `_grid_only_viewbox`,
+  and `_estimate_required_width_full`. Regression test
+  `test_dual_table_aspect_grid_keeps_second_subject_only_fixed_star`.
+
+- **Secondary progression self-conjunction filter removed.** Natal ↔
+  progressed-same-point conjunctions (e.g. natal Sun → progressed Sun) were
+  incorrectly skipped; they're meaningful and now appear in results.
+
+- **Solar arc directed subject** now recomputes `active_midpoints`
+  (previously stale on rotation) + actionable logging on inconsistencies.
+
+- **Midpoint glyph rendering** — visual redesign + `UnboundLocalError` in
+  `ChartDrawer` when a midpoint settings row was looked up by a renamed
+  slug.
+
+- **Chart-type-aware orb defaults** now honored by `create_chart_data` and
+  the transit factory (previously some entry points fell back to the
+  natal-shaped table for predictive charts).
+
+### Docs
+
+- Added 12 missing v6 factory pages: `astro_cartography_factory.md`,
+  `eclipse_factory.md`, `fixed_star_discovery_factory.md`,
+  `heliacal_factory.md`, `midpoint_factory.md`, `occultation_factory.md`,
+  `planetary_nodes_factory.md`, `planetary_phenomena_factory.md`,
+  `primary_directions_factory.md`, `relocated_chart_factory.md`,
+  `secondary_progressions_factory.md`, `solar_arc_factory.md`. Plus
+  comprehensive cross-cutting docs improvements (FAQ, glossary, examples).
+
+### Tests
+
+- New `tests/core/test_reference_validation.py` — Astro-Seek
+  cross-validation suite (catches orb / default drift against the
+  reference).
+- `test_modern_chart_2000_02_26_neptune_order` updated to explicitly opt
+  back into `True_South_Lunar_Node` (the regression target it validates)
+  via `active_points` on both subject and chart data factories, since the
+  point is no longer a default.
+- 16 new unit tests in `tests/core/test_orb_utils.py` covering the
+  per-point adjustment strategies (max/min/sum/none, negative adjustments,
+  axis-orb interaction).
+- SVG + aspect golden baselines regenerated across the suite for the new
+  default orbs.
+
+### Internal
+
+- Micro-optimised orb resolution (hot path on large active-points lists).
+- Deduplicated midpoint name generation.
+- Extracted `HOUSE_FIELD_NAMES` constant (was inlined in multiple sites).
+
+Total: **10034 pass, 69 skipped** (+930 vs `6.0.0a45`).
+
 ## 6.0.0a45
 
 _2026-05-18_

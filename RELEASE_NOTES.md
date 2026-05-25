@@ -1,5 +1,87 @@
 # Release Notes
 
+## 6.0.0a46 — 2026-05-25
+
+Feature release: orb system overhaul + active midpoints + secondary
+progressions improvements + dual-wheel rendering fixes.
+
+**Added**
+
+- **Per-point orb adjustments.** New `kerykeion.aspects.orb_utils` module
+  with four combination strategies (`max_explicit` / `min_explicit` / `sum`
+  / `none`) and a `point_orb_adjustments` parameter threaded through every
+  aspect factory and `ChartDataFactory` method. Natal / synastry / composite
+  pick up a default luminary bonus (Sun & Moon +1.5°, matching Astro-Seek).
+  Transit / progression / returns stay on a flat tight orb. Negative
+  adjustments per point work as expected (only explicitly configured points
+  are considered before aggregation).
+- **Active midpoints** as a dynamic rendering channel on
+  `subject.active_midpoints`. Pass pair names (`["Sun_Moon",
+  "Venus_Mars", ...]`) and they materialise as `KerykeionPointModel`
+  entries with `point_type='Midpoint'`, get rendered as sensitive points on
+  the wheel (new `<symbol id="Midpoint">` in all four SVG templates,
+  per-subject scoping, dynamic glyph IDs).
+- **`SecondaryProgressionFactory.compute_full()`** — full result model
+  including progressed-to-natal aspects; default aspect set switched to
+  the Ptolemaic five.
+- **`SolarArcFactory.compute_directed_subject()`** — directed subject with
+  quality / element / emoji / house recomputed when a directed point
+  crosses a sign or house (previously inherited from natal).
+- **Astro-Seek-aligned default orbs** across natal, synastry, transit,
+  composite. New `PREDICTIVE_ACTIVE_ASPECTS` (3° flat) for transit /
+  progression / returns.
+
+**Changed (breaking — alpha channel)**
+
+- `DEFAULT_ACTIVE_POINTS`: **18 → 14**. Removed `Descendant`, `Imum_Coeli`,
+  `True_South_Lunar_Node`, `Mean_Lilith`. Opposite points are still
+  computed on the subject model but no longer in the default `active_points`
+  list — pass them explicitly to opt back in.
+- `DEFAULT_ACTIVE_ASPECTS`: **6 → 5** (Ptolemaic only — quintile dropped).
+- `DEFAULT_PREDICTIVE_POINTS`: **16 → 14** (South Node + Lilith dropped).
+- **Default orbs changed across all chart types.** Aspect counts for any
+  pre-existing chart will differ from `6.0.0a45`. Snapshot/baseline tests
+  that compare aspect lists must be regenerated.
+- **Unknown `point_orb_adjustment_strategy` now raises `ValueError`**
+  (previously silently returned `0.0`, masking typos).
+- **`RelationshipScoreFactory`** now passes `DISCEPOLO_SCORE_ACTIVE_ASPECTS`
+  explicitly — the Discepolo affinity score is now a stable methodology
+  independent of chart-display orb configuration. Baselines updated
+  (Lennon/Ono: 8, Dario/Franca: 9).
+
+**Fixed**
+
+- Dual-wheel aspect grid in `table` mode dropped points active only on the
+  second subject (e.g. a fixed star or active midpoint on the outer wheel),
+  and aspects targeting them landed in nonexistent cells. `ChartDrawer`
+  now sizes and draws the NxN grid against the union of both subjects.
+- Secondary progression self-conjunction filter removed (natal ↔
+  progressed-same-point conjunctions are meaningful and now appear).
+- Solar arc directed subject recomputes `active_midpoints` (previously
+  stale on rotation).
+- Midpoint glyph visual redesign + `UnboundLocalError` in the chart drawer
+  when a midpoint settings row was looked up by a renamed slug.
+- `create_chart_data` + transit factory now honor chart-type-specific orb
+  defaults (some entry points fell back to the natal-shaped table for
+  predictive charts).
+
+**Docs**
+
+12 missing v6 factory pages added (astro-cartography, eclipse, fixed-star
+discovery, heliacal, midpoint, occultation, planetary nodes, planetary
+phenomena, primary directions, relocated chart, secondary progressions,
+solar arc) plus comprehensive FAQ / glossary / examples updates.
+
+**Migration notes**
+
+- Regenerate any locally-pinned aspect baselines.
+- If your code passes `active_points` and relied on opposite points being
+  in the default, opt them back in explicitly.
+- Validate any string passed as `point_orb_adjustment_strategy` against
+  the four registered names.
+
+10034 tests pass.
+
 ## 6.0.0a45 — 2026-05-18
 
 Bugfix release for dual-wheel return charts + v6 flag propagation.
