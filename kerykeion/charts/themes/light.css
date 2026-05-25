@@ -185,5 +185,6 @@
     /* Houses Numbers */
     --kerykeion-chart-color-house-number: var(--kerykeion-color-base-content);
     --kerykeion-chart-color-fixed-star-default: #b07a30;
+    --kerykeion-chart-color-midpoint-default: #7a4fb5;
 
 }

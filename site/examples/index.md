@@ -39,6 +39,29 @@ Practical, self-contained examples covering all major Kerykeion features.
 -   **[Ephemeris Data](/content/examples/ephemeris-data)**: Generating planetary position time-series.
 -   **[Transits Time Range](/content/examples/transits-time-range)**: Calculating transits over a period.
 -   **[House Comparison](/content/examples/house-comparison)**: Bidirectional house overlay analysis.
+-   **[Moon Phase Details](/content/examples/moon-phase-details)**: Rich lunar phase context with illumination and eclipses.
+
+## Predictive Techniques
+
+For advanced predictive methods, see the full documentation:
+
+-   **[Secondary Progressions](/content/docs/secondary_progressions_factory)**: Day-for-a-year progressed charts.
+-   **[Solar Arc Directions](/content/docs/solar_arc_factory)**: Uniform solar arc applied to all natal points.
+-   **[Primary Directions](/content/docs/primary_directions_factory)**: Placidus semi-arc classical method.
+-   **[Midpoints](/content/docs/midpoint_factory)**: Cosmobiology 90-degree dial analysis.
+
+## Advanced Calculations
+
+For observational and specialized astronomical features, see the full documentation:
+
+-   **[Eclipse Factory](/content/docs/eclipse_factory)**: Solar and lunar eclipse search.
+-   **[Planetary Phenomena](/content/docs/planetary_phenomena_factory)**: Elongation, magnitude, morning/evening star.
+-   **[Planetary Nodes](/content/docs/planetary_nodes_factory)**: Orbital nodes and apsides.
+-   **[Heliacal Events](/content/docs/heliacal_factory)**: First/last visibility of planets.
+-   **[Occultations](/content/docs/occultation_factory)**: Lunar occultation events.
+-   **[Relocated Charts](/content/docs/relocated_chart_factory)**: Chart relocation.
+-   **[Fixed Star Discovery](/content/docs/fixed_star_discovery_factory)**: Dynamic star conjunction detection.
+-   **[Astro-Cartography](/content/docs/astro_cartography_factory)**: ACG planetary lines.
 
 ---
 

@@ -74,6 +74,14 @@ Detailed information about a celestial body or house cusp.
 | `speed`      | `float \| None`                   | Daily motion in degrees/day                  |
 | `declination`| `float \| None`                   | Equatorial declination in degrees            |
 | `magnitude`  | `float \| None`                   | Apparent visual magnitude (fixed stars only) |
+| `is_out_of_bounds` | `bool \| None`             | True if declination exceeds the Sun's maximum (~23.44°) |
+| `essential_dignity` | `str \| None`              | Ptolemaic dignity (Domicile, Exaltation, etc.). Requires `calculate_dignities=True` |
+| `nakshatra`  | `str \| None`                     | Vedic lunar mansion name. Requires `calculate_nakshatra=True` |
+| `nakshatra_pada` | `int \| None`                 | Nakshatra pada/quarter (1-4). Requires `calculate_nakshatra=True` |
+| `nakshatra_lord` | `str \| None`                 | Vimsottari Dasha lord planet. Requires `calculate_nakshatra=True` |
+| `gauquelin_sector` | `float \| None`             | Gauquelin 36-sector position. Requires `calculate_gauquelin=True` |
+| `azimuth`    | `float \| None`                   | Azimuth angle in degrees. Requires `calculate_local_space=True` |
+| `altitude_above_horizon` | `float \| None`       | Altitude above horizon. Requires `calculate_local_space=True` |
 
 ### SingleChartDataModel
 
@@ -369,6 +377,42 @@ Type alias: `Union[SingleChartDataModel, DualChartDataModel]`. Represents any ch
 
 ---
 
+## V6 Advanced Models
+
+These models are returned by the v6 advanced calculation factories. Each factory's documentation page has the full field reference.
+
+### Predictive Models
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `SecondaryProgressionsResult` | [`SecondaryProgressionFactory`](/content/docs/secondary_progressions_factory) | Progressed subject + progressed-to-natal aspects |
+| `ProgressedToNatalAspect` | `SecondaryProgressionFactory` | A single progressed-to-natal aspect contact |
+| `SolarArcSubjectModel` | [`SolarArcFactory`](/content/docs/solar_arc_factory) | Solar arc, directed points, directed-to-natal aspects |
+| `SolarArcDirectedPoint` | `SolarArcFactory` | A natal point after applying the solar-arc shift |
+| `SolarArcDirectedAspect` | `SolarArcFactory` | A directed-to-natal aspect |
+| `PrimaryDirectionModel` | [`PrimaryDirectionsFactory`](/content/docs/primary_directions_factory) | A single primary direction result (arc, years) |
+| `SpeculumEntry` | `PrimaryDirectionsFactory` | Speculum coordinate table entry |
+| `MidpointModel` | [`MidpointFactory`](/content/docs/midpoint_factory) | Midpoint of two points + aspect activations |
+| `MidpointAspectModel` | `MidpointFactory` | An aspect formed between a midpoint and a third point |
+
+### Astronomical Models
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `EclipseSearchResultModel` | [`EclipseFactory`](/content/docs/eclipse_factory) | Container for solar + lunar eclipse search results |
+| `SolarEclipseModel` | `EclipseFactory` | A single solar eclipse event |
+| `LunarEclipseModel` | `EclipseFactory` | A single lunar eclipse event |
+| `PlanetaryPhenomenaCollectionModel` | [`PlanetaryPhenomenaFactory`](/content/docs/planetary_phenomena_factory) | Collection of planetary phenomena |
+| `PlanetaryPhenomenaModel` | `PlanetaryPhenomenaFactory` | Phenomena for a single planet |
+| `PlanetaryNodesCollectionModel` | [`PlanetaryNodesFactory`](/content/docs/planetary_nodes_factory) | Collection of orbital nodes/apsides |
+| `PlanetaryNodeModel` | `PlanetaryNodesFactory` | Nodes and apsides for one planet |
+| `HeliacalEventModel` | [`HeliacalFactory`](/content/docs/heliacal_factory) | A single heliacal visibility event |
+| `OccultationModel` | [`OccultationFactory`](/content/docs/occultation_factory) | A single lunar occultation event |
+| `ACGLine` | [`AstroCartographyFactory`](/content/docs/astro_cartography_factory) | A planetary line on the ACG map |
+| `ACGLinePoint` | `AstroCartographyFactory` | A geographic coordinate on an ACG line |
+
+---
+
 ## Literals & Constants (`kr_literals`)
 
 Import from: `kerykeion.schemas.kr_literals`
@@ -451,7 +495,10 @@ Comprehensive literal for all supported celestial points.
 `"Mean_North_Lunar_Node"`, `"True_North_Lunar_Node"`, `"Mean_South_Lunar_Node"`, `"True_South_Lunar_Node"`
 
 **Special Points:**
-`"Chiron"`, `"Mean_Lilith"`, `"True_Lilith"`, `"Earth"`, `"Pholus"`, `"Vertex"`, `"Anti_Vertex"`
+`"Chiron"`, `"Mean_Lilith"`, `"True_Lilith"`, `"Interpolated_Lilith"`, `"Mean_Priapus"`, `"True_Priapus"`, `"Earth"`, `"Pholus"`, `"Vertex"`, `"Anti_Vertex"`, `"Interpolated_Perigee"`, `"White_Moon"`
+
+**Uranian / Hamburg School:**
+`"Cupido"`, `"Hades"`, `"Zeus"`, `"Kronos"`, `"Apollon"`, `"Admetos"`, `"Vulkanus"`, `"Poseidon"`
 
 **Asteroids:**
 `"Ceres"`, `"Pallas"`, `"Juno"`, `"Vesta"`

@@ -14,6 +14,10 @@ from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS, DEFAULT_PREDICTIVE_POINTS
 
+PTOLEMAIC_ASPECTS: tuple[str, ...] = (
+    "conjunction", "opposition", "trine", "sextile", "square",
+)
+
 
 def gather_active_points(
     subject: AstrologicalSubjectModel,

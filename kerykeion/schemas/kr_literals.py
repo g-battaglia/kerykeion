@@ -186,7 +186,7 @@ ChartType: TypeAlias = Literal["Natal", "Synastry", "Transit", "Composite", "Dua
 """Literal type for Chart Types"""
 
 
-PointType: TypeAlias = Literal["AstrologicalPoint", "House"]
+PointType: TypeAlias = Literal["AstrologicalPoint", "House", "Midpoint"]
 """Literal type for Point Types"""
 
 

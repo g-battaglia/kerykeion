@@ -24,7 +24,7 @@ John Lennon — Subject Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2429912.229167      |
-| Active Points Count | 18                  |
+| Active Points Count | 14                  |
 +---------------------+---------------------+
 
 +Celestial Points-------+---------+----------+--------------+---------+------+----------------+
@@ -32,8 +32,6 @@ John Lennon — Subject Report
 +-----------------------+---------+----------+--------------+---------+------+----------------+
 | Ascendant             | Ari ♈️ | 19.71°   | +886.9308°/d | N/A     | -    | First House    |
 | Medium Coeli          | Cap ♑️ | 7.06°    | +332.1254°/d | N/A     | -    | Tenth House    |
-| Descendant            | Lib ♎️ | 19.71°   | +886.9308°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Can ♋️ | 7.06°    | +332.1254°/d | N/A     | -    | Fourth House   |
 | Sun                   | Lib ♎️ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
 | Moon                  | Aqu ♒️ | 3.55°    | +12.5279°/d  | -14.60° | -    | Eleventh House |
 | Mercury               | Sco ♏️ | 8.56°    | +1.3193°/d   | -16.23° | -    | Seventh House  |
@@ -45,9 +43,7 @@ John Lennon — Subject Report
 | Neptune               | Vir ♍️ | 26.03°   | +0.0353°/d   | +2.68°  | -    | Sixth House    |
 | Pluto                 | Leo ♌️ | 4.19°    | +0.0112°/d   | +23.12° | -    | Fifth House    |
 | True North Lunar Node | Lib ♎️ | 11.02°   | +0.0059°/d   | -4.36°  | -    | Sixth House    |
-| Mean Lilith           | Ari ♈️ | 13.37°   | +0.1107°/d   | +5.05°  | -    | Twelfth House  |
 | Chiron                | Leo ♌️ | 0.57°    | +0.0528°/d   | +13.41° | -    | Fifth House    |
-| True South Lunar Node | Ari ♈️ | 11.02°   | -0.0059°/d   | +4.36°  | -    | Twelfth House  |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
 
 +Houses (Placidus)---------+----------+-------------------+

@@ -33,6 +33,7 @@ from kerykeion.schemas.settings_models import (
     KerykeionLanguageCelestialPointModel,
     KerykeionSettingsCelestialPointModel,
 )
+from kerykeion.settings.chart_defaults import resolve_glyph_id
 
 # =============================================================================
 # TYPE ALIASES
@@ -40,6 +41,20 @@ from kerykeion.schemas.settings_models import (
 
 ElementQualityDistributionMethod = Literal["pure_count", "weighted"]
 """Supported strategies for calculating element and modality distributions."""
+
+
+def _resolve_point_glyph_id(
+    point_name: object,
+    point_setting: Mapping[str, object] | None = None,
+) -> str:
+    """Resolve the SVG symbol id for a point or settings row."""
+    if point_setting is not None:
+        glyph_id = point_setting.get("glyph_id")
+        if isinstance(glyph_id, str) and glyph_id:
+            return glyph_id
+    if not isinstance(point_name, str):
+        return str(point_name)
+    return resolve_glyph_id(point_name)
 
 
 # =============================================================================
@@ -1115,8 +1130,8 @@ def draw_aspect_grid(
         parts.append(
             f'<rect kr:node="AspectsGridRect" x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
         )
-        # v6: catalog stars fall back to the generic #FixedStar symbol.
-        glyph_a = planet_a.get("glyph_id") or planet_a["name"]
+        # v6: dynamic points fall back to their shared generic symbols.
+        glyph_a = _resolve_point_glyph_id(planet_a["name"], planet_a)
         parts.append(
             f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{glyph_a}" />'
         )
@@ -1402,18 +1417,11 @@ def draw_transit_aspect_list(
 
             inner_path += f'<g transform="translate({horizontal_position},{vertical_position})">'
 
-            # v6: catalog fixed stars don't ship a dedicated <symbol id="X">;
-            # resolve glyph id once per point — known names render with their
-            # own glyph, unknown names fall back to "FixedStar". This helper
-            # tolerates both the language model (Pydantic) and a settings list
-            # accepted by the function signature.
-            from kerykeion.settings.chart_defaults import resolve_glyph_id
-
-            def _aspect_glyph(point_name: str) -> str:
-                return resolve_glyph_id(point_name)
+            p1_glyph = _resolve_point_glyph_id(aspect["p1_name"])
+            p2_glyph = _resolve_point_glyph_id(aspect["p2_name"])
 
             # First planet symbol
-            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{_aspect_glyph(aspect["p1"])}" />'
+            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{p1_glyph}" />'
 
             # Aspect symbol
             aspect_name = aspect["aspect"]
@@ -1422,7 +1430,7 @@ def draw_transit_aspect_list(
 
             # Second planet symbol
             inner_path += '<g transform="translate(30,0)">'
-            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{_aspect_glyph(aspect["p2"])}" />'
+            inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{p2_glyph}" />'
             inner_path += "</g>"
 
             # Difference in degrees
@@ -1827,9 +1835,8 @@ def draw_main_planet_grid(
             celestial_point_language,
         )
 
-        # v6: catalog stars without dedicated symbols fall back to #FixedStar.
-        from kerykeion.settings.chart_defaults import resolve_glyph_id
-        planet_glyph = resolve_glyph_id(planet["name"])
+        # v6: dynamic points without dedicated symbols fall back to shared glyphs.
+        planet_glyph = _resolve_point_glyph_id(planet["name"])
         svg_output += (
             f'<g transform="translate({offset},{BASE_Y + line_height})">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{decoded_name}</text>'
@@ -1916,10 +1923,11 @@ def draw_secondary_planet_grid(
             t_planet["name"],
             celestial_point_language,
         )
+        t_planet_glyph = _resolve_point_glyph_id(t_planet["name"])
         svg_output += (
             f'<g transform="translate({offset},{BASE_Y + line_height})">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_name}</text>'
-            f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet["name"]}" /></g>'
+            f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet_glyph}" /></g>'
             f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
             f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
         )
@@ -1980,18 +1988,20 @@ def draw_transit_aspect_grid(
     # Reverse the list of active planets for the first iteration
     reversed_planets = active_planets[::-1]
     for index, planet_a in enumerate(reversed_planets):
+        planet_glyph = _resolve_point_glyph_id(planet_a["name"], planet_a)
         # Draw the grid box for the planet
         svg_output += f'<rect x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
-        svg_output += f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{planet_a["name"]}" />'
+        svg_output += f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{planet_glyph}" />'
         x_start += box_size
 
     x_start = x_indent - box_size
     y_start = y_indent - box_size
 
     for index, planet_a in enumerate(reversed_planets):
+        planet_glyph = _resolve_point_glyph_id(planet_a["name"], planet_a)
         # Draw the grid box for the planet
         svg_output += f'<rect x="{x_start}" y="{y_start}" width="{box_size}" height="{box_size}" style="{style}"/>'
-        svg_output += f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{planet_a["name"]}" />'
+        svg_output += f'<use transform="scale(0.4)" x="{(x_start + 2) * 2.5}" y="{(y_start + 1) * 2.5}" xlink:href="#{planet_glyph}" />'
         y_start -= box_size
 
     x_start = x_indent
@@ -2268,10 +2278,11 @@ def draw_house_comparison_grid(
     for name, point_data in all_points_by_name.items():
         native_house = point_data.get("native_house", "-")
         secondary_house = point_data.get("secondary_house", "-")
+        point_glyph = _resolve_point_glyph_id(name)
 
         svg_output += (
             f'<g transform="translate(0,{line_increment})">'
-            f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{name}" /></g>'
+            f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{point_glyph}" /></g>'
             f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)}</text>'
             f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
             f'<text text-anchor="start" x="140" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
@@ -2347,10 +2358,11 @@ def draw_single_house_comparison_grid(
     # Display all points organized by name
     for name, point_data in all_points_by_name.items():
         house = point_data.get("house", "-")
+        point_glyph = _resolve_point_glyph_id(name)
 
         svg_output += (
             f'<g transform="translate(0,{line_increment})">'
-            f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{name}" /></g>'
+            f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{point_glyph}" /></g>'
             f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)}</text>'
             f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{house}</text>'
             f"</g>"

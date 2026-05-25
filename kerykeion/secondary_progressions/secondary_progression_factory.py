@@ -22,15 +22,51 @@ from __future__ import annotations
 
 import re
 from datetime import datetime, timezone
-from typing import Optional
+from typing import List, Mapping, Optional, Sequence
+
+from pydantic import BaseModel, Field
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
 from kerykeion.ephemeris_backend import swe
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
+from kerykeion._predictive_utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
 from kerykeion.utilities import datetime_to_julian
 
-DAYS_PER_TROPICAL_YEAR = 365.25
+# Mean tropical year (epoch J2000) — the "year" unit of the day-for-a-year
+# method. Previously 365.25 (the Julian year), which contradicted this name
+# and drifted from reference progressed-chart calculators by up to ~3.5 min
+# on long progression spans; 365.24219 is the astronomically correct value.
+DAYS_PER_TROPICAL_YEAR = 365.24219
+
+class ProgressedToNatalAspect(BaseModel):
+    """A progressed-to-natal aspect contact — the predictive timing signal."""
+
+    progressed_point: str = Field(description="Name of the progressed (moving) point.")
+    natal_point: str = Field(description="Name of the natal (receiving) point.")
+    progressed_abs_pos: float
+    natal_abs_pos: float
+    aspect: str
+    aspect_degrees: int
+    orb: float
+
+
+class SecondaryProgressionsResult(BaseModel):
+    """Full secondary progressions result: progressed subject + cross-aspects."""
+
+    natal_name: str
+    target_iso_utc_datetime: str = Field(description="Target moment — the real-world date requested (ISO UTC).")
+    ephemeris_iso_utc_datetime: str = Field(
+        description=(
+            "Ephemeris date — the actual date looked up in the ephemeris. "
+            "E.g. for a subject born 1990-01-01 progressed to 2026, this "
+            "is ~36 days after birth: 1990-02-06."
+        )
+    )
+    progressed_subject: AstrologicalSubjectModel
+    progressed_to_natal_aspects: List[ProgressedToNatalAspect] = Field(default_factory=list)
 
 _ANCIENT_ISO_RE = re.compile(
     r"^(?P<year>[+-]?\d{4,})-(?P<month>\d{2})-(?P<day>\d{2})"
@@ -326,4 +362,104 @@ class SecondaryProgressionFactory:
             minute=minute,
             seconds=seconds,
             **common_kwargs,
+        )
+
+    @staticmethod
+    def compute_full(
+        natal_subject: AstrologicalSubjectModel,
+        *,
+        target_iso_utc_datetime: Optional[str] = None,
+        target_year: Optional[int] = None,
+        progressed_subject_name: Optional[str] = None,
+        active_points: Optional[Sequence[str]] = None,
+        compute_aspects: bool = True,
+        aspect_orb: float = 3.0,
+        aspects: Optional[Sequence[str]] = None,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
+    ) -> SecondaryProgressionsResult:
+        """Build the progressed chart with optional progressed-to-natal aspects.
+
+        Wraps :meth:`compute` and adds cross-chart aspect detection, following
+        the same pattern as :meth:`SolarArcFactory.compute`.
+
+        Args:
+            natal_subject: Fully-built natal subject.
+            target_iso_utc_datetime: ISO-8601 UTC target timestamp.
+            target_year: Convenience target year (Jan 1 00:00 UTC).
+            progressed_subject_name: Optional name override for the progressed
+                subject.
+            active_points: Points to include in aspect detection.
+                Defaults to :data:`DEFAULT_PREDICTIVE_POINTS`.
+            compute_aspects: If ``True`` (default), compute the progressed-to-
+                natal aspect list.
+            aspect_orb: Orb in degrees for cross-aspect detection (default 3.0,
+                the conventional tight orb for predictive work).
+            aspects: Optional whitelist of aspect names to detect.
+            point_orb_adjustments: Optional per-point orb adjustment table.
+                ``None`` (default) means no adjustment — progressions use a
+                flat, tight orb regardless of which point is involved.
+            point_orb_adjustment_strategy: How to combine the two points'
+                adjustments when a table is supplied (default ``"max_explicit"``).
+
+        Returns:
+            A :class:`SecondaryProgressionsResult` with the progressed subject
+            and (optionally) the cross-aspect contacts.
+        """
+        progressed = SecondaryProgressionFactory.compute(
+            natal_subject,
+            target_iso_utc_datetime=target_iso_utc_datetime,
+            target_year=target_year,
+            progressed_subject_name=progressed_subject_name,
+        )
+
+        natal_jd = SecondaryProgressionFactory._natal_jd(natal_subject)
+        target_jd = SecondaryProgressionFactory._target_to_jd(
+            target_iso_utc_datetime, target_year
+        )
+        progressed_jd = SecondaryProgressionFactory._progressed_jd(natal_jd, target_jd)
+
+        result_target_iso = SecondaryProgressionFactory._jd_to_utc_iso(target_jd)
+        ephemeris_iso = SecondaryProgressionFactory._jd_to_utc_iso(progressed_jd)
+
+        progressed_to_natal: List[ProgressedToNatalAspect] = []
+        if compute_aspects:
+            progressed_points = gather_active_points(progressed, active_points)
+            natal_targets = gather_active_points(natal_subject, natal_subject.active_points)
+            effective_aspects = aspects if aspects is not None else PTOLEMAIC_ASPECTS
+            aspect_settings = build_aspect_settings(aspect_orb, effective_aspects)
+
+            for prog_name, prog_pos in progressed_points:
+                for natal_name, natal_pos in natal_targets:
+                    extra_orb = resolve_pair_orb_adjustment(
+                        prog_name,
+                        natal_name,
+                        point_orb_adjustments,
+                        point_orb_adjustment_strategy,
+                    )
+                    outcome = get_aspect_from_two_points(
+                        aspects_settings=aspect_settings,
+                        point_one=prog_pos,
+                        point_two=natal_pos,
+                        extra_orb=extra_orb,
+                    )
+                    if outcome.get("verdict"):
+                        progressed_to_natal.append(
+                            ProgressedToNatalAspect(
+                                progressed_point=prog_name,
+                                natal_point=natal_name,
+                                progressed_abs_pos=prog_pos,
+                                natal_abs_pos=natal_pos,
+                                aspect=outcome["name"],
+                                aspect_degrees=outcome["aspect_degrees"],
+                                orb=outcome["orbit"],
+                            )
+                        )
+
+        return SecondaryProgressionsResult(
+            natal_name=natal_subject.name,
+            target_iso_utc_datetime=result_target_iso,
+            ephemeris_iso_utc_datetime=ephemeris_iso,
+            progressed_subject=progressed,
+            progressed_to_natal_aspects=progressed_to_natal,
         )

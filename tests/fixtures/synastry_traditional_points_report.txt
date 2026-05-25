@@ -228,35 +228,29 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +-------------+---------+
 | Aspect      | Orb (°) |
 +-------------+---------+
-| conjunction | 10.0    |
-| opposition  | 10.0    |
-| trine       | 8.0     |
-| sextile     | 6.0     |
-| square      | 5.0     |
-| quintile    | 1.0     |
+| conjunction | 6.0     |
+| opposition  | 6.0     |
+| trine       | 6.0     |
+| sextile     | 5.0     |
+| square      | 6.0     |
 +-------------+---------+
 
 +Aspects----------------+----------------------+---------------+-----------------------+----------+-------+----------+
 | Point 1               | Owner 1              | Aspect        | Point 2               | Owner 2  | Orb   | Movement |
 +-----------------------+----------------------+---------------+-----------------------+----------+-------+----------+
+| Moon                  | Sample Natal Subject | sextile ⚹     | Mars                  | Yoko Ono | 6.08° | Static = |
 | Moon                  | Sample Natal Subject | sextile ⚹     | Jupiter               | Yoko Ono | 0.51° | Static = |
 | Mercury               | Sample Natal Subject | trine △       | Moon                  | Yoko Ono | 6.48° | Static = |
 | Mercury               | Sample Natal Subject | opposition ☍  | Venus                 | Yoko Ono | 3.82° | Static = |
-| Mercury               | Sample Natal Subject | opposition ☍  | Saturn                | Yoko Ono | 7.87° | Static = |
 | Venus                 | Sample Natal Subject | trine △       | Sun                   | Yoko Ono | 2.33° | Static = |
-| Venus                 | Sample Natal Subject | trine △       | Mercury               | Yoko Ono | 6.18° | Static = |
-| Venus                 | Sample Natal Subject | trine △       | True North Lunar Node | Yoko Ono | 6.09° | Static = |
 | Mars                  | Sample Natal Subject | sextile ⚹     | Mercury               | Yoko Ono | 1.92° | Static = |
 | Mars                  | Sample Natal Subject | square □      | Saturn                | Yoko Ono | 3.77° | Static = |
 | Mars                  | Sample Natal Subject | sextile ⚹     | True North Lunar Node | Yoko Ono | 1.83° | Static = |
 | Mars                  | Sample Natal Subject | trine △       | True South Lunar Node | Yoko Ono | 1.83° | Static = |
 | Jupiter               | Sample Natal Subject | sextile ⚹     | Jupiter               | Yoko Ono | 3.22° | Static = |
-| Saturn                | Sample Natal Subject | trine △       | Mars                  | Yoko Ono | 6.39° | Static = |
 | Saturn                | Sample Natal Subject | trine △       | Jupiter               | Yoko Ono | 0.82° | Static = |
 | True North Lunar Node | Sample Natal Subject | sextile ⚹     | Moon                  | Yoko Ono | 3.86° | Static = |
-| True North Lunar Node | Sample Natal Subject | conjunction ☌ | Venus                 | Yoko Ono | 6.52° | Static = |
 | True North Lunar Node | Sample Natal Subject | conjunction ☌ | Saturn                | Yoko Ono | 2.47° | Static = |
 | True South Lunar Node | Sample Natal Subject | trine △       | Moon                  | Yoko Ono | 3.86° | Static = |
-| True South Lunar Node | Sample Natal Subject | opposition ☍  | Venus                 | Yoko Ono | 6.52° | Static = |
 | True South Lunar Node | Sample Natal Subject | opposition ☍  | Saturn                | Yoko Ono | 2.47° | Static = |
 +-----------------------+----------------------+---------------+-----------------------+----------+-------+----------+

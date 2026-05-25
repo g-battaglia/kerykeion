@@ -104,6 +104,24 @@ The `get_transit_moments()` method returns a specialized object simplifying acce
 | `settings_file` | `Path`, `KerykeionSettingsModel`, `dict`, or `None` | `None` | Custom orb/calculation settings. |
 | `axis_orb_limit` | `float` | `None` | Stricter orb for angles (Asc, MC). |
 
+## Transit Events with Exact Moment Refinement (v6)
+
+The `get_transit_events()` method provides a higher-level interface that groups transit aspects into discrete events and optionally refines exact moments via bisection for sub-step precision.
+
+```python
+events = transit_factory.get_transit_events(refine_exact_moments=True)
+
+for ev in events.events[:5]:
+    print(f"{ev.p1_name} {ev.aspect} {ev.p2_name}: {ev.exact_moment} (orb {ev.min_orb:.4f})")
+```
+
+| Parameter              | Type  | Default | Description                                          |
+| :--------------------- | :---- | :------ | :--------------------------------------------------- |
+| `refine_exact_moments` | bool  | False   | Use bisection to find sub-step exact transit moments  |
+| `refinement_iterations`| int   | 12      | Number of bisection iterations (higher = more precise)|
+
+When `refine_exact_moments=True`, the factory performs a binary search between the two ephemeris steps that bracket the minimum orb, yielding a much more precise `exact_moment` timestamp.
+
 ## Configuration Tips
 
 - **Step Size**: Use larger steps (e.g., `step=7` days) for long-term outer planet transit searches (Jupiter/Saturn) to save performance.

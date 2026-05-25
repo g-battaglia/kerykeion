@@ -90,19 +90,19 @@ Kerykeion calculates both major and minor aspects. Orbs can be customized.
 
 | Aspect             | Angle | Default Orb | Active by Default | Type  |
 | :----------------- | :---- | :---------- | :---------------- | :---- |
-| **Conjunction**    | 0°    | 10°         | Yes               | Major |
-| **Opposition**     | 180°  | 10°         | Yes               | Major |
-| **Trine**          | 120°  | 8°          | Yes               | Major |
-| **Sextile**        | 60°   | 6°          | Yes               | Major |
-| **Square**         | 90°   | 5°          | Yes               | Major |
-| **Quintile**       | 72°   | 1°          | Yes               | Minor |
-| **Semi-sextile**   | 30°   | 1°          | No                | Minor |
-| **Semi-square**    | 45°   | 1°          | No                | Minor |
-| **Sesquiquadrate** | 135°  | 1°          | No                | Minor |
-| **Biquintile**     | 144°  | 1°          | No                | Minor |
-| **Quincunx**       | 150°  | 1°          | No                | Minor |
+| **Conjunction**    | 0°    | 6°          | Yes               | Major |
+| **Opposition**     | 180°  | 6°          | Yes               | Major |
+| **Trine**          | 120°  | 6°          | Yes               | Major |
+| **Square**         | 90°   | 6°          | Yes               | Major |
+| **Sextile**        | 60°   | 5°          | Yes               | Major |
+| **Quintile**       | 72°   | 2°          | Yes               | Minor |
+| **Semi-sextile**   | 30°   | 2°          | No                | Minor |
+| **Semi-square**    | 45°   | 2°          | No                | Minor |
+| **Sesquiquadrate** | 135°  | 2°          | No                | Minor |
+| **Biquintile**     | 144°  | 2°          | No                | Minor |
+| **Quincunx**       | 150°  | 2°          | No                | Minor |
 
-> The orb values shown above are the defaults from `ALL_ACTIVE_ASPECTS`. The `DEFAULT_ACTIVE_ASPECTS` preset includes only the first 6 aspects (Conjunction through Quintile). To enable all 11 aspects, pass `active_aspects=ALL_ACTIVE_ASPECTS` from `kerykeion.settings.config_constants`.
+> The orb values shown above are the base orbs from `DEFAULT_ACTIVE_ASPECTS` / `ALL_ACTIVE_ASPECTS`. Luminary widening (+1.5° for Sun/Moon) is applied separately via per-point orb adjustments, bringing Sun/Moon major aspects to an effective ~7.5° orb. The `DEFAULT_ACTIVE_ASPECTS` preset includes only the first 6 aspects (Conjunction through Quintile). To enable all 11 aspects, pass `active_aspects=ALL_ACTIVE_ASPECTS` from `kerykeion.settings.config_constants`.
 
 ### Filtering Options
 
@@ -153,6 +153,40 @@ The factory returns a `SingleChartAspectsModel` (for single charts) or `DualChar
 - `orbit`: The exact orb (absolute deviation from exact aspect, always non-negative).
 - `aspect_degrees`: The theoretical angle (e.g., 120 for trine).
 - `aspect_movement`: `"Applying"`, `"Separating"`, or `"Static"`.
+
+## Declination Aspects
+
+In addition to ecliptic (longitude) aspects, `AspectsFactory` supports **declination-based aspects**. Two points form a **parallel** when their declinations are within orb degrees of each other (both north or both south). A **contra-parallel** occurs when their declinations are equal in magnitude but opposite in sign.
+
+### `single_chart_declination_aspects`
+
+```python
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+
+dec_aspects = AspectsFactory.single_chart_declination_aspects(subject, orb=1.0)
+
+for asp in dec_aspects:
+    print(f"{asp.p1_name} {asp.aspect} {asp.p2_name} (orb: {asp.orbit:.2f})")
+```
+
+| Parameter       | Type         | Default | Description                                    |
+| :-------------- | :----------- | :------ | :--------------------------------------------- |
+| `subject`       | Subject      | --      | The astrological subject                       |
+| `orb`           | float        | 1.0     | Maximum orb in degrees                         |
+| `active_points` | List or None | None    | Points to include (defaults to subject's list) |
+
+### `dual_chart_declination_aspects`
+
+```python
+dec_synastry = AspectsFactory.dual_chart_declination_aspects(subject_a, subject_b, orb=1.0)
+```
+
+Returns `List[AspectModel]` with `aspect="parallel"` or `aspect="contra_parallel"`.
 
 ## Aspect Utilities
 

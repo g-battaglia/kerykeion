@@ -164,27 +164,32 @@ Ancient Rome Subject — Natal Chart Report
 +----------------+---------+
 | Aspect         | Orb (°) |
 +----------------+---------+
-| conjunction    | 10.0    |
-| opposition     | 10.0    |
-| trine          | 8.0     |
-| sextile        | 6.0     |
-| square         | 5.0     |
-| quintile       | 1.0     |
-| semi-sextile   | 1.0     |
-| semi-square    | 1.0     |
-| sesquiquadrate | 1.0     |
-| biquintile     | 1.0     |
-| quincunx       | 1.0     |
+| conjunction    | 6.0     |
+| opposition     | 6.0     |
+| trine          | 6.0     |
+| sextile        | 5.0     |
+| square         | 6.0     |
+| quintile       | 2.0     |
+| semi-sextile   | 2.0     |
+| semi-square    | 2.0     |
+| sesquiquadrate | 2.0     |
+| biquintile     | 2.0     |
+| quincunx       | 2.0     |
 +----------------+---------+
 
 +Aspects----------------+-------------------------------+-----------------------+-------+--------------+
 | Point 1               | Aspect                        | Point 2               | Orb   | Movement     |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+
-| Sun                   | conjunction ☌                 | Mars                  | 9.68° | Separating ← |
+| Sun                   | semi-square semi-square       | Moon                  | 1.58° | Separating ← |
+| Sun                   | quintile Q                    | Saturn                | 2.72° | Applying →   |
 | Sun                   | sextile ⚹                     | Pluto                 | 3.59° | Applying →   |
+| Sun                   | square □                      | Ascendant             | 7.19° | Separating ← |
 | Sun                   | conjunction ☌                 | Medium Coeli          | 2.00° | Applying →   |
+| Sun                   | square □                      | Descendant            | 7.19° | Separating ← |
 | Sun                   | opposition ☍                  | Imum Coeli            | 2.00° | Applying →   |
+| Sun                   | quintile Q                    | True Lilith           | 1.88° | Applying →   |
 | Sun                   | biquintile biquintile         | Pars Fortunae         | 0.23° | Separating ← |
+| Sun                   | sesquiquadrate sesquiquadrate | Pars Amoris           | 1.32° | Applying →   |
 | Sun                   | opposition ☍                  | Pars Fidei            | 3.84° | Applying →   |
 | Sun                   | square □                      | Vertex                | 3.97° | Separating ← |
 | Sun                   | square □                      | Anti Vertex           | 3.97° | Separating ← |
@@ -193,6 +198,7 @@ Ancient Rome Subject — Natal Chart Report
 | Sun                   | conjunction ☌                 | Hades                 | 4.47° | Separating ← |
 | Sun                   | sesquiquadrate sesquiquadrate | Zeus                  | 0.61° | Applying →   |
 | Sun                   | trine △                       | Kronos                | 2.67° | Separating ← |
+| Sun                   | quintile Q                    | Admetos               | 3.36° | Separating ← |
 | Sun                   | sextile ⚹                     | Poseidon              | 5.77° | Applying →   |
 | Moon                  | conjunction ☌                 | Venus                 | 7.45° | Separating ← |
 | Moon                  | sextile ⚹                     | Mars                  | 3.75° | Applying →   |
@@ -204,58 +210,71 @@ Ancient Rome Subject — Natal Chart Report
 | Moon                  | opposition ☍                  | True North Lunar Node | 3.49° | Applying →   |
 | Moon                  | conjunction ☌                 | Mean South Lunar Node | 5.16° | Applying →   |
 | Moon                  | conjunction ☌                 | True South Lunar Node | 3.49° | Applying →   |
+| Moon                  | semi-sextile semi-sextile     | True Lilith           | 2.70° | Separating ← |
+| Moon                  | semi-sextile semi-sextile     | Earth                 | 1.59° | Applying →   |
+| Moon                  | square □                      | Pars Fortunae         | 7.19° | Applying →   |
 | Moon                  | conjunction ☌                 | Pars Spiritus         | 4.03° | Applying →   |
 | Moon                  | square □                      | Pars Amoris           | 0.26° | Separating ← |
+| Moon                  | sesquiquadrate sesquiquadrate | Pars Fidei            | 2.26° | Applying →   |
+| Moon                  | biquintile biquintile         | Vertex                | 3.45° | Applying →   |
+| Moon                  | quincunx ⚻                    | True Priapus          | 2.70° | Separating ← |
 | Moon                  | sextile ⚹                     | Interpolated Perigee  | 0.02° | Separating ← |
 | Moon                  | sesquiquadrate sesquiquadrate | Cupido                | 0.88° | Applying →   |
 | Moon                  | square □                      | Zeus                  | 0.97° | Separating ← |
 | Moon                  | square □                      | Apollon               | 3.90° | Applying →   |
 | Moon                  | quincunx ⚻                    | Vulkanus              | 0.06° | Applying →   |
-| Mercury               | conjunction ☌                 | Jupiter               | 6.43° | Applying →   |
-| Mercury               | trine △                       | Uranus                | 7.57° | Applying →   |
+| Mercury               | semi-sextile semi-sextile     | Venus                 | 1.81° | Separating ← |
 | Mercury               | square □                      | Ascendant             | 3.75° | Applying →   |
 | Mercury               | square □                      | Descendant            | 3.75° | Applying →   |
 | Mercury               | sextile ⚹                     | Mean Lilith           | 2.69° | Separating ← |
 | Mercury               | sextile ⚹                     | True Lilith           | 2.94° | Applying →   |
 | Mercury               | trine △                       | Pars Amoris           | 5.38° | Applying →   |
-| Mercury               | opposition ☍                  | Pars Fidei            | 7.10° | Separating ← |
 | Mercury               | sextile ⚹                     | Interpolated Lilith   | 0.33° | Applying →   |
 | Mercury               | trine △                       | Mean Priapus          | 2.69° | Separating ← |
 | Mercury               | trine △                       | True Priapus          | 2.94° | Applying →   |
+| Mercury               | square □                      | Interpolated Perigee  | 5.62° | Applying →   |
 | Mercury               | trine △                       | White Moon            | 2.69° | Separating ← |
-| Mercury               | opposition ☍                  | Cupido                | 8.49° | Separating ← |
 | Mercury               | trine △                       | Zeus                  | 4.67° | Applying →   |
+| Mercury               | sesquiquadrate sesquiquadrate | Kronos                | 1.39° | Applying →   |
 | Mercury               | sextile ⚹                     | Admetos               | 2.30° | Separating ← |
 | Mercury               | opposition ☍                  | Vulkanus              | 5.70° | Applying →   |
-| Mercury               | sextile ⚹                     | Poseidon              | 5.17° | Separating ← |
 | Venus                 | trine △                       | Neptune               | 5.87° | Applying →   |
 | Venus                 | sextile ⚹                     | Ascendant             | 1.94° | Applying →   |
 | Venus                 | trine △                       | Descendant            | 1.94° | Applying →   |
 | Venus                 | semi-sextile semi-sextile     | Mean Lilith           | 0.88° | Separating ← |
 | Venus                 | biquintile biquintile         | Pars Fidei            | 0.71° | Applying →   |
+| Venus                 | sesquiquadrate sesquiquadrate | Vertex                | 1.90° | Applying →   |
+| Venus                 | semi-square semi-square       | Anti Vertex           | 1.90° | Applying →   |
 | Venus                 | quincunx ⚻                    | Mean Priapus          | 0.88° | Separating ← |
+| Venus                 | biquintile biquintile         | True Priapus          | 1.25° | Separating ← |
 | Venus                 | quincunx ⚻                    | White Moon            | 0.88° | Separating ← |
 | Venus                 | biquintile biquintile         | Cupido                | 0.68° | Separating ← |
+| Venus                 | semi-square semi-square       | Hades                 | 1.40° | Applying →   |
 | Venus                 | semi-sextile semi-sextile     | Admetos               | 0.49° | Separating ← |
 | Mars                  | sextile ⚹                     | Saturn                | 0.39° | Applying →   |
+| Mars                  | quincunx ⚻                    | Uranus                | 1.82° | Separating ← |
 | Mars                  | opposition ☍                  | Neptune               | 5.32° | Separating ← |
+| Mars                  | quintile Q                    | Pluto                 | 1.26° | Applying →   |
 | Mars                  | trine △                       | Mean North Lunar Node | 1.41° | Applying →   |
 | Mars                  | trine △                       | True North Lunar Node | 0.26° | Separating ← |
-| Mars                  | conjunction ☌                 | Medium Coeli          | 7.68° | Separating ← |
-| Mars                  | opposition ☍                  | Imum Coeli            | 7.68° | Separating ← |
+| Mars                  | quintile Q                    | Descendant            | 1.14° | Applying →   |
 | Mars                  | sextile ⚹                     | Mean South Lunar Node | 1.41° | Applying →   |
 | Mars                  | sextile ⚹                     | True South Lunar Node | 0.26° | Separating ← |
 | Mars                  | square □                      | Earth                 | 2.15° | Separating ← |
 | Mars                  | sextile ⚹                     | Pars Spiritus         | 0.29° | Applying →   |
+| Mars                  | biquintile biquintile         | Pars Amoris           | 2.00° | Applying →   |
+| Mars                  | square □                      | Vertex                | 5.70° | Applying →   |
+| Mars                  | square □                      | Anti Vertex           | 5.70° | Applying →   |
 | Mars                  | trine △                       | Interpolated Perigee  | 3.77° | Separating ← |
 | Mars                  | conjunction ☌                 | Hades                 | 5.21° | Applying →   |
-| Mars                  | trine △                       | Kronos                | 7.00° | Applying →   |
+| Mars                  | biquintile biquintile         | Zeus                  | 1.29° | Applying →   |
 | Mars                  | quincunx ⚻                    | Apollon               | 0.16° | Applying →   |
 | Jupiter               | square □                      | Saturn                | 3.35° | Applying →   |
 | Jupiter               | trine △                       | Uranus                | 1.14° | Applying →   |
+| Jupiter               | semi-square semi-square       | Pluto                 | 1.22° | Applying →   |
+| Jupiter               | biquintile biquintile         | Mean North Lunar Node | 1.63° | Separating ← |
 | Jupiter               | sextile ⚹                     | True Lilith           | 3.49° | Separating ← |
 | Jupiter               | sextile ⚹                     | Earth                 | 0.80° | Applying →   |
-| Jupiter               | trine △                       | Pars Fortunae         | 6.40° | Applying →   |
 | Jupiter               | trine △                       | Pars Amoris           | 1.05° | Separating ← |
 | Jupiter               | trine △                       | True Priapus          | 3.49° | Separating ← |
 | Jupiter               | square □                      | Interpolated Perigee  | 0.81° | Separating ← |
@@ -265,7 +284,6 @@ Ancient Rome Subject — Natal Chart Report
 | Saturn                | trine △                       | Neptune               | 5.72° | Separating ← |
 | Saturn                | sextile ⚹                     | Mean North Lunar Node | 1.02° | Applying →   |
 | Saturn                | sextile ⚹                     | True North Lunar Node | 0.65° | Separating ← |
-| Saturn                | trine △                       | Imum Coeli            | 7.29° | Separating ← |
 | Saturn                | trine △                       | Mean South Lunar Node | 1.02° | Applying →   |
 | Saturn                | trine △                       | True South Lunar Node | 0.65° | Separating ← |
 | Saturn                | biquintile biquintile         | True Lilith           | 0.84° | Separating ← |
@@ -277,6 +295,7 @@ Ancient Rome Subject — Natal Chart Report
 | Saturn                | sesquiquadrate sesquiquadrate | Poseidon              | 0.05° | Applying →   |
 | Uranus                | square □                      | Mean North Lunar Node | 3.23° | Applying →   |
 | Uranus                | square □                      | True North Lunar Node | 1.56° | Separating ← |
+| Uranus                | quintile Q                    | Mean Lilith           | 1.74° | Separating ← |
 | Uranus                | square □                      | Mean South Lunar Node | 3.23° | Separating ← |
 | Uranus                | square □                      | True South Lunar Node | 1.56° | Separating ← |
 | Uranus                | sextile ⚹                     | True Lilith           | 4.63° | Separating ← |
@@ -285,86 +304,102 @@ Ancient Rome Subject — Natal Chart Report
 | Uranus                | square □                      | Pars Spiritus         | 2.10° | Separating ← |
 | Uranus                | conjunction ☌                 | Pars Amoris           | 2.19° | Applying →   |
 | Uranus                | semi-square semi-square       | Pars Fidei            | 0.33° | Separating ← |
-| Uranus                | trine △                       | Vertex                | 7.52° | Separating ← |
 | Uranus                | trine △                       | True Priapus          | 4.63° | Separating ← |
+| Uranus                | semi-sextile semi-sextile     | Interpolated Perigee  | 1.95° | Separating ← |
+| Uranus                | semi-square semi-square       | Cupido                | 1.06° | Applying →   |
+| Uranus                | biquintile biquintile         | Hades                 | 1.03° | Separating ← |
 | Uranus                | conjunction ☌                 | Zeus                  | 2.90° | Applying →   |
 | Uranus                | conjunction ☌                 | Apollon               | 1.97° | Separating ← |
 | Uranus                | sextile ⚹                     | Vulkanus              | 1.87° | Applying →   |
 | Uranus                | quintile Q                    | Poseidon              | 0.74° | Applying →   |
-| Neptune               | sextile ⚹                     | True North Lunar Node | 5.07° | Separating ← |
-| Neptune               | trine △                       | Descendant            | 7.81° | Applying →   |
-| Neptune               | trine △                       | Mean South Lunar Node | 6.74° | Separating ← |
 | Neptune               | trine △                       | True South Lunar Node | 5.07° | Separating ← |
 | Neptune               | square □                      | True Lilith           | 1.12° | Separating ← |
 | Neptune               | square □                      | Earth                 | 3.17° | Separating ← |
 | Neptune               | trine △                       | Pars Spiritus         | 5.61° | Separating ← |
+| Neptune               | semi-sextile semi-sextile     | Pars Amoris           | 1.32° | Separating ← |
 | Neptune               | square □                      | Interpolated Lilith   | 3.73° | Applying →   |
 | Neptune               | square □                      | True Priapus          | 1.12° | Separating ← |
 | Neptune               | sextile ⚹                     | Interpolated Perigee  | 1.56° | Applying →   |
 | Neptune               | semi-sextile semi-sextile     | Zeus                  | 0.61° | Separating ← |
 | Neptune               | quintile Q                    | Kronos                | 0.33° | Separating ← |
-| Pluto                 | sextile ⚹                     | Medium Coeli          | 5.59° | Applying →   |
+| Neptune               | semi-sextile semi-sextile     | Vulkanus              | 1.64° | Separating ← |
 | Pluto                 | trine △                       | Imum Coeli            | 5.59° | Applying →   |
 | Pluto                 | conjunction ☌                 | Mean Lilith           | 4.66° | Separating ← |
 | Pluto                 | quintile Q                    | Pars Amoris           | 0.73° | Applying →   |
 | Pluto                 | trine △                       | Pars Fidei            | 0.25° | Applying →   |
-| Pluto                 | conjunction ☌                 | Interpolated Lilith   | 7.68° | Separating ← |
 | Pluto                 | opposition ☍                  | Mean Priapus          | 4.66° | Separating ← |
 | Pluto                 | opposition ☍                  | White Moon            | 4.66° | Separating ← |
 | Pluto                 | trine △                       | Cupido                | 1.13° | Separating ← |
 | Pluto                 | quintile Q                    | Zeus                  | 0.02° | Applying →   |
-| Pluto                 | opposition ☍                  | Kronos                | 6.26° | Separating ← |
 | Pluto                 | conjunction ☌                 | Admetos               | 5.06° | Applying →   |
+| Pluto                 | sesquiquadrate sesquiquadrate | Vulkanus              | 1.95° | Separating ← |
 | Pluto                 | conjunction ☌                 | Poseidon              | 2.18° | Applying →   |
 | Mean North Lunar Node | conjunction ☌                 | True North Lunar Node | 1.67° | Applying →   |
 | Mean North Lunar Node | sesquiquadrate sesquiquadrate | Ascendant             | 0.45° | Separating ← |
-| Mean North Lunar Node | trine △                       | Medium Coeli          | 6.26° | Separating ← |
 | Mean North Lunar Node | semi-square semi-square       | Descendant            | 0.45° | Separating ← |
 | Mean North Lunar Node | opposition ☍                  | True South Lunar Node | 1.67° | Applying →   |
 | Mean North Lunar Node | square □                      | Pars Fortunae         | 2.03° | Separating ← |
 | Mean North Lunar Node | opposition ☍                  | Pars Spiritus         | 1.13° | Applying →   |
+| Mean North Lunar Node | square □                      | Pars Amoris           | 5.42° | Applying →   |
+| Mean North Lunar Node | biquintile biquintile         | Anti Vertex           | 1.71° | Applying →   |
 | Mean North Lunar Node | trine △                       | Interpolated Perigee  | 5.18° | Separating ← |
 | Mean North Lunar Node | trine △                       | Hades                 | 3.80° | Separating ← |
 | Mean North Lunar Node | conjunction ☌                 | Kronos                | 5.59° | Separating ← |
 | Mean North Lunar Node | square □                      | Apollon               | 1.26° | Applying →   |
-| True North Lunar Node | trine △                       | Medium Coeli          | 7.94° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Mean South Lunar Node | 1.67° | Separating ← |
+| True North Lunar Node | quincunx ⚻                    | Earth                 | 1.90° | Applying →   |
 | True North Lunar Node | square □                      | Pars Fortunae         | 3.70° | Separating ← |
 | True North Lunar Node | opposition ☍                  | Pars Spiritus         | 0.54° | Separating ← |
 | True North Lunar Node | square □                      | Pars Amoris           | 3.75° | Applying →   |
+| True North Lunar Node | semi-square semi-square       | Pars Fidei            | 1.23° | Applying →   |
 | True North Lunar Node | biquintile biquintile         | Anti Vertex           | 0.04° | Applying →   |
 | True North Lunar Node | trine △                       | Interpolated Perigee  | 3.51° | Separating ← |
 | True North Lunar Node | trine △                       | Hades                 | 5.47° | Separating ← |
 | True North Lunar Node | square □                      | Zeus                  | 4.46° | Separating ← |
-| True North Lunar Node | conjunction ☌                 | Kronos                | 7.26° | Separating ← |
 | True North Lunar Node | square □                      | Apollon               | 0.41° | Applying →   |
+| Ascendant             | semi-sextile semi-sextile     | Mean Lilith           | 1.06° | Applying →   |
 | Ascendant             | semi-square semi-square       | Mean South Lunar Node | 0.45° | Separating ← |
+| Ascendant             | semi-square semi-square       | Pars Fortunae         | 1.58° | Applying →   |
+| Ascendant             | semi-square semi-square       | Pars Spiritus         | 1.58° | Separating ← |
 | Ascendant             | square □                      | Pars Fidei            | 3.35° | Separating ← |
-| Ascendant             | conjunction ☌                 | Interpolated Perigee  | 9.37° | Applying →   |
+| Ascendant             | quincunx ⚻                    | Mean Priapus          | 1.06° | Applying →   |
+| Ascendant             | quincunx ⚻                    | White Moon            | 1.06° | Applying →   |
 | Ascendant             | square □                      | Cupido                | 4.73° | Separating ← |
+| Ascendant             | semi-square semi-square       | Apollon               | 1.71° | Separating ← |
+| Ascendant             | semi-sextile semi-sextile     | Admetos               | 1.45° | Applying →   |
+| Ascendant             | semi-sextile semi-sextile     | Poseidon              | 1.42° | Separating ← |
+| Medium Coeli          | quintile Q                    | Mean Lilith           | 1.76° | Separating ← |
+| Medium Coeli          | biquintile biquintile         | Pars Fortunae         | 1.76° | Applying →   |
 | Medium Coeli          | opposition ☍                  | Pars Fidei            | 5.84° | Applying →   |
 | Medium Coeli          | square □                      | Vertex                | 1.97° | Separating ← |
 | Medium Coeli          | square □                      | Anti Vertex           | 1.97° | Separating ← |
+| Medium Coeli          | quintile Q                    | Interpolated Lilith   | 1.27° | Applying →   |
 | Medium Coeli          | opposition ☍                  | Cupido                | 4.45° | Applying →   |
 | Medium Coeli          | conjunction ☌                 | Hades                 | 2.47° | Separating ← |
 | Medium Coeli          | trine △                       | Kronos                | 0.68° | Separating ← |
+| Medium Coeli          | biquintile biquintile         | Apollon               | 1.52° | Separating ← |
+| Medium Coeli          | quintile Q                    | Admetos               | 1.36° | Separating ← |
+| Descendant            | quincunx ⚻                    | Mean Lilith           | 1.06° | Applying →   |
 | Descendant            | sesquiquadrate sesquiquadrate | Mean South Lunar Node | 0.45° | Separating ← |
+| Descendant            | sesquiquadrate sesquiquadrate | Pars Fortunae         | 1.58° | Applying →   |
+| Descendant            | sesquiquadrate sesquiquadrate | Pars Spiritus         | 1.58° | Separating ← |
 | Descendant            | square □                      | Pars Fidei            | 3.35° | Separating ← |
-| Descendant            | opposition ☍                  | Interpolated Perigee  | 9.37° | Applying →   |
+| Descendant            | semi-sextile semi-sextile     | Mean Priapus          | 1.06° | Applying →   |
+| Descendant            | semi-sextile semi-sextile     | White Moon            | 1.06° | Applying →   |
 | Descendant            | square □                      | Cupido                | 4.73° | Separating ← |
-| Imum Coeli            | trine △                       | Mean South Lunar Node | 6.26° | Separating ← |
-| Imum Coeli            | trine △                       | True South Lunar Node | 7.94° | Separating ← |
-| Imum Coeli            | trine △                       | Pars Spiritus         | 7.39° | Separating ← |
+| Descendant            | sesquiquadrate sesquiquadrate | Apollon               | 1.71° | Separating ← |
+| Descendant            | quincunx ⚻                    | Admetos               | 1.45° | Applying →   |
+| Descendant            | quincunx ⚻                    | Poseidon              | 1.42° | Separating ← |
 | Imum Coeli            | conjunction ☌                 | Pars Fidei            | 5.84° | Applying →   |
 | Imum Coeli            | square □                      | Vertex                | 1.97° | Separating ← |
 | Imum Coeli            | square □                      | Anti Vertex           | 1.97° | Separating ← |
+| Imum Coeli            | quintile Q                    | Mean Priapus          | 1.76° | Separating ← |
 | Imum Coeli            | quintile Q                    | Interpolated Perigee  | 0.55° | Applying →   |
+| Imum Coeli            | quintile Q                    | White Moon            | 1.76° | Separating ← |
 | Imum Coeli            | conjunction ☌                 | Cupido                | 4.45° | Applying →   |
 | Imum Coeli            | opposition ☍                  | Hades                 | 2.47° | Separating ← |
 | Imum Coeli            | sextile ⚹                     | Kronos                | 0.68° | Separating ← |
-| Imum Coeli            | trine △                       | Poseidon              | 7.76° | Applying →   |
 | Mean Lilith           | conjunction ☌                 | True Lilith           | 5.63° | Applying →   |
-| Mean Lilith           | conjunction ☌                 | Earth                 | 9.92° | Applying →   |
 | Mean Lilith           | trine △                       | Pars Fidei            | 4.41° | Separating ← |
 | Mean Lilith           | conjunction ☌                 | Interpolated Lilith   | 3.02° | Separating ← |
 | Mean Lilith           | opposition ☍                  | Mean Priapus          | 0.00° | Static =     |
@@ -378,19 +413,20 @@ Ancient Rome Subject — Natal Chart Report
 | Mean South Lunar Node | conjunction ☌                 | True South Lunar Node | 1.67° | Separating ← |
 | Mean South Lunar Node | square □                      | Pars Fortunae         | 2.03° | Applying →   |
 | Mean South Lunar Node | conjunction ☌                 | Pars Spiritus         | 1.13° | Separating ← |
-| Mean South Lunar Node | sextile ⚹                     | Interpolated Perigee  | 5.18° | Separating ← |
+| Mean South Lunar Node | square □                      | Pars Amoris           | 5.42° | Separating ← |
+| Mean South Lunar Node | biquintile biquintile         | Vertex                | 1.71° | Separating ← |
 | Mean South Lunar Node | sextile ⚹                     | Hades                 | 3.80° | Applying →   |
 | Mean South Lunar Node | opposition ☍                  | Kronos                | 5.59° | Applying →   |
 | Mean South Lunar Node | square □                      | Apollon               | 1.26° | Separating ← |
 | Mean South Lunar Node | biquintile biquintile         | Vulkanus              | 0.90° | Applying →   |
+| True South Lunar Node | semi-sextile semi-sextile     | Earth                 | 1.90° | Separating ← |
 | True South Lunar Node | square □                      | Pars Fortunae         | 3.70° | Applying →   |
 | True South Lunar Node | conjunction ☌                 | Pars Spiritus         | 0.54° | Applying →   |
 | True South Lunar Node | square □                      | Pars Amoris           | 3.75° | Separating ← |
+| True South Lunar Node | sesquiquadrate sesquiquadrate | Pars Fidei            | 1.23° | Separating ← |
 | True South Lunar Node | biquintile biquintile         | Vertex                | 0.04° | Separating ← |
 | True South Lunar Node | sextile ⚹                     | Interpolated Perigee  | 3.51° | Separating ← |
-| True South Lunar Node | sextile ⚹                     | Hades                 | 5.47° | Separating ← |
 | True South Lunar Node | square □                      | Zeus                  | 4.46° | Separating ← |
-| True South Lunar Node | opposition ☍                  | Kronos                | 7.26° | Applying →   |
 | True South Lunar Node | square □                      | Apollon               | 0.41° | Applying →   |
 | True Lilith           | conjunction ☌                 | Earth                 | 4.29° | Separating ← |
 | True Lilith           | sextile ⚹                     | Pars Amoris           | 2.44° | Separating ← |
@@ -401,52 +437,46 @@ Ancient Rome Subject — Natal Chart Report
 | True Lilith           | sextile ⚹                     | Zeus                  | 1.73° | Separating ← |
 | True Lilith           | conjunction ☌                 | Admetos               | 5.24° | Applying →   |
 | True Lilith           | trine △                       | Vulkanus              | 2.76° | Separating ← |
-| True Lilith           | conjunction ☌                 | Poseidon              | 8.11° | Applying →   |
-| Earth                 | sextile ⚹                     | Pars Fortunae         | 5.59° | Static =     |
 | Earth                 | sextile ⚹                     | Pars Amoris           | 1.85° | Static =     |
-| Earth                 | opposition ☍                  | Vertex                | 7.86° | Static =     |
-| Earth                 | conjunction ☌                 | Anti Vertex           | 7.86° | Static =     |
-| Earth                 | conjunction ☌                 | Interpolated Lilith   | 6.90° | Applying →   |
-| Earth                 | opposition ☍                  | Mean Priapus          | 9.92° | Applying →   |
 | Earth                 | opposition ☍                  | True Priapus          | 4.29° | Separating ← |
-| Earth                 | opposition ☍                  | White Moon            | 9.92° | Applying →   |
+| Earth                 | semi-sextile semi-sextile     | Interpolated Perigee  | 1.61° | Separating ← |
 | Earth                 | sextile ⚹                     | Zeus                  | 2.56° | Separating ← |
 | Earth                 | sextile ⚹                     | Apollon               | 2.31° | Applying →   |
-| Earth                 | conjunction ☌                 | Admetos               | 9.53° | Applying →   |
 | Earth                 | trine △                       | Vulkanus              | 1.53° | Separating ← |
 | Pars Fortunae         | square □                      | Pars Spiritus         | 3.16° | Static =     |
-| Pars Fortunae         | conjunction ☌                 | Pars Amoris           | 7.45° | Static =     |
 | Pars Fortunae         | trine △                       | Vertex                | 2.26° | Static =     |
 | Pars Fortunae         | sextile ⚹                     | Anti Vertex           | 2.26° | Static =     |
 | Pars Fortunae         | quintile Q                    | Interpolated Lilith   | 0.50° | Applying →   |
-| Pars Fortunae         | conjunction ☌                 | Zeus                  | 8.15° | Separating ← |
+| Pars Fortunae         | quincunx ⚻                    | Hades                 | 1.77° | Separating ← |
 | Pars Fortunae         | square □                      | Kronos                | 3.56° | Applying →   |
 | Pars Fortunae         | conjunction ☌                 | Apollon               | 3.29° | Separating ← |
 | Pars Spiritus         | square □                      | Pars Amoris           | 4.29° | Static =     |
+| Pars Spiritus         | sesquiquadrate sesquiquadrate | Pars Fidei            | 1.77° | Static =     |
 | Pars Spiritus         | biquintile biquintile         | Vertex                | 0.58° | Static =     |
 | Pars Spiritus         | sextile ⚹                     | Interpolated Perigee  | 4.05° | Separating ← |
 | Pars Spiritus         | sextile ⚹                     | Hades                 | 4.92° | Separating ← |
 | Pars Spiritus         | square □                      | Zeus                  | 5.00° | Separating ← |
-| Pars Spiritus         | opposition ☍                  | Kronos                | 6.72° | Applying →   |
 | Pars Spiritus         | square □                      | Apollon               | 0.13° | Separating ← |
-| Pars Amoris           | sextile ⚹                     | Interpolated Lilith   | 5.05° | Applying →   |
 | Pars Amoris           | trine △                       | True Priapus          | 2.44° | Separating ← |
 | Pars Amoris           | semi-sextile semi-sextile     | Interpolated Perigee  | 0.24° | Applying →   |
+| Pars Amoris           | semi-square semi-square       | Cupido                | 1.13° | Applying →   |
 | Pars Amoris           | conjunction ☌                 | Zeus                  | 0.71° | Separating ← |
 | Pars Amoris           | conjunction ☌                 | Apollon               | 4.16° | Applying →   |
 | Pars Amoris           | sextile ⚹                     | Vulkanus              | 0.32° | Applying →   |
-| Pars Fidei            | trine △                       | Interpolated Lilith   | 7.43° | Separating ← |
+| Pars Amoris           | quintile Q                    | Poseidon              | 1.45° | Separating ← |
 | Pars Fidei            | sextile ⚹                     | Mean Priapus          | 4.41° | Separating ← |
+| Pars Fidei            | quintile Q                    | True Priapus          | 1.96° | Separating ← |
 | Pars Fidei            | sextile ⚹                     | White Moon            | 4.41° | Separating ← |
 | Pars Fidei            | conjunction ☌                 | Cupido                | 1.39° | Separating ← |
-| Pars Fidei            | opposition ☍                  | Hades                 | 8.31° | Applying →   |
+| Pars Fidei            | semi-square semi-square       | Apollon               | 1.64° | Applying →   |
 | Pars Fidei            | trine △                       | Admetos               | 4.80° | Separating ← |
 | Pars Fidei            | trine △                       | Poseidon              | 1.92° | Separating ← |
 | Vertex                | opposition ☍                  | Anti Vertex           | 0.00° | Static =     |
 | Vertex                | square □                      | Hades                 | 0.49° | Applying →   |
+| Vertex                | semi-sextile semi-sextile     | Kronos                | 1.30° | Applying →   |
 | Vertex                | trine △                       | Apollon               | 5.55° | Separating ← |
 | Anti Vertex           | square □                      | Hades                 | 0.49° | Applying →   |
-| Anti Vertex           | sextile ⚹                     | Apollon               | 5.55° | Separating ← |
+| Anti Vertex           | quincunx ⚻                    | Kronos                | 1.30° | Applying →   |
 | Interpolated Lilith   | opposition ☍                  | Mean Priapus          | 3.02° | Separating ← |
 | Interpolated Lilith   | opposition ☍                  | True Priapus          | 2.61° | Applying →   |
 | Interpolated Lilith   | opposition ☍                  | White Moon            | 3.02° | Separating ← |
@@ -456,34 +486,26 @@ Ancient Rome Subject — Natal Chart Report
 | Interpolated Lilith   | conjunction ☌                 | Poseidon              | 5.50° | Separating ← |
 | Mean Priapus          | conjunction ☌                 | True Priapus          | 5.63° | Applying →   |
 | Mean Priapus          | conjunction ☌                 | White Moon            | 0.00° | Static =     |
-| Mean Priapus          | sextile ⚹                     | Cupido                | 5.79° | Separating ← |
-| Mean Priapus          | trine △                       | Zeus                  | 7.36° | Applying →   |
 | Mean Priapus          | opposition ☍                  | Admetos               | 0.40° | Applying →   |
 | Mean Priapus          | opposition ☍                  | Poseidon              | 2.48° | Separating ← |
 | True Priapus          | conjunction ☌                 | White Moon            | 5.63° | Applying →   |
 | True Priapus          | quintile Q                    | Cupido                | 0.57° | Separating ← |
 | True Priapus          | trine △                       | Zeus                  | 1.73° | Separating ← |
-| True Priapus          | trine △                       | Apollon               | 6.60° | Separating ← |
 | True Priapus          | opposition ☍                  | Admetos               | 5.24° | Applying →   |
 | True Priapus          | sextile ⚹                     | Vulkanus              | 2.76° | Separating ← |
-| True Priapus          | opposition ☍                  | Poseidon              | 8.11° | Applying →   |
 | Interpolated Perigee  | semi-sextile semi-sextile     | Zeus                  | 0.95° | Applying →   |
 | Interpolated Perigee  | square □                      | Vulkanus              | 0.08° | Separating ← |
-| White Moon            | sextile ⚹                     | Cupido                | 5.79° | Separating ← |
-| White Moon            | trine △                       | Zeus                  | 7.36° | Applying →   |
 | White Moon            | opposition ☍                  | Admetos               | 0.40° | Applying →   |
 | White Moon            | opposition ☍                  | Poseidon              | 2.48° | Separating ← |
-| Cupido                | opposition ☍                  | Hades                 | 6.92° | Applying →   |
-| Cupido                | sextile ⚹                     | Kronos                | 5.13° | Applying →   |
-| Cupido                | trine △                       | Admetos               | 6.19° | Separating ← |
+| Cupido                | semi-square semi-square       | Zeus                  | 1.84° | Applying →   |
 | Cupido                | trine △                       | Poseidon              | 3.31° | Separating ← |
 | Hades                 | trine △                       | Kronos                | 1.79° | Applying →   |
 | Hades                 | biquintile biquintile         | Apollon               | 0.95° | Applying →   |
+| Hades                 | quintile Q                    | Admetos               | 1.11° | Applying →   |
+| Hades                 | quintile Q                    | Poseidon              | 1.77° | Separating ← |
 | Zeus                  | conjunction ☌                 | Apollon               | 4.87° | Static =     |
 | Zeus                  | sextile ⚹                     | Vulkanus              | 1.03° | Static =     |
-| Kronos                | opposition ☍                  | Poseidon              | 8.44° | Separating ← |
 | Apollon               | quintile Q                    | Admetos               | 0.16° | Separating ← |
 | Apollon               | sextile ⚹                     | Vulkanus              | 3.84° | Separating ← |
-| Admetos               | trine △                       | Vulkanus              | 8.00° | Applying →   |
 | Admetos               | conjunction ☌                 | Poseidon              | 2.88° | Static =     |
 +-----------------------+-------------------------------+-----------------------+-------+--------------+

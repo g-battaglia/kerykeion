@@ -529,6 +529,15 @@ Now that you've completed the tutorial, explore:
 - [House Systems](/content/examples/houses-systems) - All 23 house systems
 - [Sidereal Modes](/content/examples/sidereal-modes) - Vedic astrology support
 
+### Advanced & Predictive Techniques
+
+- [Secondary Progressions](/content/docs/secondary_progressions_factory) - Day-for-a-year progressed charts
+- [Solar Arc Directions](/content/docs/solar_arc_factory) - Uniform solar arc applied to all natal points
+- [Primary Directions](/content/docs/primary_directions_factory) - Placidus semi-arc classical method
+- [Midpoints](/content/docs/midpoint_factory) - Cosmobiology 90-degree dial analysis
+- [Eclipse Factory](/content/docs/eclipse_factory) - Solar and lunar eclipse search
+- [Astro-Cartography](/content/docs/astro_cartography_factory) - ACG planetary lines
+
 ---
 
 > **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)

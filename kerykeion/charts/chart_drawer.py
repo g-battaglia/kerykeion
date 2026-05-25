@@ -805,12 +805,12 @@ class TransitChartRenderer(BaseChartRenderer):
             if d._is_right_panel_mode():
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                n_active = max(d._count_active_planets(), 1)
+                n_active = max(d._count_aspect_grid_planets(), 1)
                 grid_size = 14 * n_active
                 grid_y = int(rp["y_offset"] + grid_size + 30)
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     grid_x,
                     grid_y,
@@ -818,7 +818,7 @@ class TransitChartRenderer(BaseChartRenderer):
             else:
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     600,
                     520,
@@ -1090,7 +1090,7 @@ class SynastryChartRenderer(BaseChartRenderer):
                 # grid (the header row); data cells grow UPWARD from there.
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                n_active = max(d._count_active_planets(), 1)
+                n_active = max(d._count_aspect_grid_planets(), 1)
                 box_size = 14
                 grid_total_h = (n_active + 1) * box_size
                 # Place grid so its top aligns near the chart title
@@ -1100,7 +1100,7 @@ class SynastryChartRenderer(BaseChartRenderer):
                 grid_y = int(target_top - aspect_list_y + grid_total_h)
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     grid_x,
                     grid_y,
@@ -1108,7 +1108,7 @@ class SynastryChartRenderer(BaseChartRenderer):
             else:
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     550,
                     450,
@@ -1410,7 +1410,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
             if d._is_right_panel_mode():
                 rp = d._get_right_panel_aspect_params()
                 grid_x = rp["x_offset"]
-                n_active = max(d._count_active_planets(), 1)
+                n_active = max(d._count_aspect_grid_planets(), 1)
                 box_size = 14
                 grid_total_h = (n_active + 1) * box_size
                 aspect_list_y = d._vertical_offsets["aspect_list"]
@@ -1419,7 +1419,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
                 grid_y = int(target_top - aspect_list_y + grid_total_h)
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     grid_x,
                     grid_y,
@@ -1427,7 +1427,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
             else:
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
-                    d.available_planets_setting,
+                    d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
                     550,
                     450,
@@ -1921,6 +1921,7 @@ class ChartDrawer:  # type: ignore[no-redef]
     planets_settings: list[dict[Any, Any]]
     aspects_settings: list[dict[Any, Any]]
     available_planets_setting: List[dict[Any, Any]]
+    all_available_planets_setting: List[dict[Any, Any]]
     height: float
     location: str
     geolat: float
@@ -2254,22 +2255,78 @@ class ChartDrawer:  # type: ignore[no-redef]
                         self.available_planets_setting.append(body)
                         break
 
+        # User-selected midpoints share the dynamic-channel mechanism
+        # with fixed_stars: they live in subject.active_midpoints and the
+        # drawer materialises a synthetic celestial-point setting for each.
+        from kerykeion.settings.chart_defaults import build_dynamic_midpoint_settings
+
+        _seen_midpoints: dict[str, None] = {}
+        for subj in (self.first_obj, self.second_obj):
+            if subj is None:
+                continue
+            for mp in getattr(subj, "active_midpoints", None) or []:
+                mp_name = getattr(mp, "name", None)
+                if mp_name:
+                    _seen_midpoints[mp_name] = None
+        dynamic_midpoint_names: list[str] = list(_seen_midpoints)
+
+        if dynamic_midpoint_names:
+            extra_midpoint_settings = build_dynamic_midpoint_settings(
+                dynamic_midpoint_names,
+                existing_settings=self.planets_settings,
+            )
+            for setting in extra_midpoint_settings:
+                setting["is_active"] = True
+            self.planets_settings.extend(extra_midpoint_settings)
+            self.available_planets_setting.extend(extra_midpoint_settings)
+
+            extra_names = {s["name"] for s in extra_midpoint_settings}
+            active_names = {s["name"] for s in self.available_planets_setting}
+            for mp_name in dynamic_midpoint_names:
+                if mp_name in extra_names or mp_name in active_names:
+                    continue
+                for body in self.planets_settings:
+                    if body["name"] == mp_name:
+                        body["is_active"] = True
+                        self.available_planets_setting.append(body)
+                        break
+
+        # This list is the union of renderable settings across both subjects.
+        # Keep it available for lookups, but scope the per-subject settings below
+        # to the points actually collected for that subject; dual charts may have
+        # dynamic stars or midpoints on only one side.
+        all_available_planets_setting = list(self.available_planets_setting)
+
+        # Collect KerykeionPointModel objects for the primary subject
+        available_celestial_points_names = [
+            body["name"].lower() for body in all_available_planets_setting
+        ]
+        self.available_kerykeion_celestial_points = self._collect_subject_points(
+            self.first_obj,
+            available_celestial_points_names,
+        )
+        first_collected_names = {
+            p.name for p in self.available_kerykeion_celestial_points if p is not None
+        }
+        self.available_planets_setting = [
+            body for body in all_available_planets_setting
+            if body["name"] in first_collected_names
+        ]
+        self.all_available_planets_setting = all_available_planets_setting
+
         # Warn about potential crowding with many active points (planets only;
         # fixed stars are excluded from the crowding heuristic since they have
         # their own visibility filter).
-        active_points_count = len(self.available_planets_setting) - len(dynamic_star_names)
+        active_dynamic_star_names = {
+            body["name"] for body in self.available_planets_setting
+            if body["name"] in dynamic_star_names
+        }
+        active_points_count = len(self.available_planets_setting) - len(active_dynamic_star_names)
         if active_points_count > 24:
             logger.warning(
                 "ChartDrawer detected %s active celestial points; rendering may look crowded beyond 24.",
                 active_points_count,
             )
-
-        # Collect KerykeionPointModel objects for the primary subject
-        available_celestial_points_names = [body["name"].lower() for body in self.available_planets_setting]
-        self.available_kerykeion_celestial_points = self._collect_subject_points(
-            self.first_obj,
-            available_celestial_points_names,
-        )
 
         # Collect points for secondary subject (dual-wheel charts only)
         # These appear on the outer wheel in Transit, Synastry, and DualReturnChart
@@ -2291,7 +2348,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 p.name for p in self.second_subject_celestial_points if p is not None
             }
             self.second_subject_available_planets_setting = [
-                body for body in self.available_planets_setting
+                body for body in all_available_planets_setting
                 if body["name"] in second_collected_names
             ]
 
@@ -2431,7 +2488,23 @@ class ChartDrawer:  # type: ignore[no-redef]
 
     def _count_active_planets(self) -> int:
         """Return number of active celestial points in the current chart."""
-        return len([p for p in self.available_planets_setting if p.get("is_active")])
+        primary = sum(1 for p in self.available_planets_setting if p.get("is_active"))
+        if self.second_obj is None:
+            return primary
+        secondary = sum(
+            1 for p in self.second_subject_available_planets_setting if p.get("is_active")
+        )
+        return max(primary, secondary)
+
+    def _get_aspect_grid_planets_setting(self) -> list[dict[Any, Any]]:
+        """Return the settings list used to draw aspect grids."""
+        if self._renderer.is_dual_wheel():
+            return self.all_available_planets_setting
+        return self.available_planets_setting
+
+    def _count_aspect_grid_planets(self) -> int:
+        """Return number of active points that need rows/columns in an aspect grid."""
+        return sum(1 for p in self._get_aspect_grid_planets_setting() if p.get("is_active"))
 
     def _is_right_panel_mode(self) -> bool:
         """Whether the aspect list/grid should be placed in a right-side panel.
@@ -2442,6 +2515,11 @@ class ChartDrawer:  # type: ignore[no-redef]
         """
         if not self._renderer.is_dual_wheel():
             return False
+        # "table" draws an NxN grid sized on the union of both subjects, so the
+        # decision uses the union count. "list" anchors against the taller of the
+        # two per-subject columns, so max(primary, secondary) is the right metric.
+        if self.double_chart_aspect_grid_type == "table":
+            return self._count_aspect_grid_planets() > self._RIGHT_PANEL_POINTS_THRESHOLD
         return self._count_active_planets() > self._RIGHT_PANEL_POINTS_THRESHOLD
 
     def _estimate_left_content_right_edge(self) -> float:
@@ -2961,6 +3039,16 @@ class ChartDrawer:  # type: ignore[no-redef]
             slug = star_name.strip().lower().replace(" ", "_").replace("-", "_")
             star_lookup[slug] = star
 
+        # Same idea for active midpoints (live as a separate array, not as
+        # attributes on the subject).
+        midpoint_lookup: dict[str, KerykeionPointModel] = {}
+        for mp in getattr(subject, "active_midpoints", None) or []:
+            mp_name = getattr(mp, "name", None)
+            if not mp_name:
+                continue
+            slug = mp_name.strip().lower().replace(" ", "_").replace("-", "_")
+            midpoint_lookup[slug] = mp
+
         collected: list[KerykeionPointModel] = []
 
         for raw_name in point_attribute_names:
@@ -2968,7 +3056,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             point = getattr(subject, attr_name, None)
             if point is None:
                 slug = raw_name.strip().lower().replace(" ", "_").replace("-", "_")
-                point = star_lookup.get(slug)
+                point = star_lookup.get(slug) or midpoint_lookup.get(slug)
             if point is None:
                 continue
             collected.append(point)
@@ -3029,7 +3117,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         y0 = 250
         box = 14
 
-        n = max(len([p for p in self.available_planets_setting if p.get("is_active")]), 1)
+        n = max(self._count_aspect_grid_planets(), 1)
 
         if self._renderer.is_dual_wheel():
             # Full NxN grid
@@ -3059,7 +3147,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         wheel_right = 100 + (2 * self.main_radius)
         extents: list[float] = [wheel_right]
 
-        n_active = max(self._count_active_planets(), 1)
+        n_active = max(self._count_aspect_grid_planets(), 1)
 
         # Common grids present on many chart types
         # Apply grid shift when multi-column layout would overlap the wheel
@@ -3642,7 +3730,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict["makeAspectGrid"] = ""
             template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                 self.chart_colors_settings["paper_0"],
-                self.available_planets_setting,
+                self._get_aspect_grid_planets_setting(),
                 self.aspects_list,
                 600,
                 520,
@@ -4470,7 +4558,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 planets_2=self.second_subject_celestial_points,
                 aspects_list=aspects_dicts,
                 seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
-                planets_settings=self.available_planets_setting,
+                planets_settings=self.all_available_planets_setting,
                 aspects_settings=self.aspects_settings,
                 chart_type=self.chart_type,
                 show_zodiac_background_ring=show_zodiac_background_ring,
@@ -4801,7 +4889,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self._renderer.is_dual_wheel():
             aspects_grid = draw_transit_aspect_grid(
                 self.chart_colors_settings["paper_0"],
-                self.available_planets_setting,
+                self._get_aspect_grid_planets_setting(),
                 self.aspects_list,
             )
         else:

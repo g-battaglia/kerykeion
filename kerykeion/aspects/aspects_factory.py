@@ -12,6 +12,7 @@ from kerykeion.aspects.aspects_utils import (
     get_active_points_list,
     calculate_aspect_movement,
 )
+from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     AspectModel,
@@ -76,6 +77,8 @@ class AspectsFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
         axis_orb_limit: Optional[float] = None,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> SingleChartAspectsModel:
         """
         Create aspects analysis for a single astrological chart.
@@ -94,6 +97,11 @@ class AspectsFactory:
             active_points: List of points to include in calculations
             active_aspects: List of aspects with their orb settings
             axis_orb_limit: Optional orb threshold applied to chart axes; when None, no special axis filter
+            point_orb_adjustments: Optional per-point orb adjustment table (e.g.
+                ``{"Sun": 1.5, "Moon": 1.5}``); widens/tightens the base orb when
+                a configured point is involved in the aspect
+            point_orb_adjustment_strategy: How to combine the two points'
+                adjustments (default ``"max_explicit"``)
 
         Returns:
             SingleChartAspectsModel containing all calculated aspects data
@@ -149,6 +157,8 @@ class AspectsFactory:
             aspects_settings,
             axis_orb_limit,
             celestial_points,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
         )
 
     @staticmethod
@@ -161,6 +171,8 @@ class AspectsFactory:
         axis_orb_limit: Optional[float] = None,
         first_subject_is_fixed: bool = False,
         second_subject_is_fixed: bool = False,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> DualChartAspectsModel:
         """
         Create aspects analysis between two astrological charts.
@@ -182,6 +194,9 @@ class AspectsFactory:
             active_aspects: Optional list of aspect types with their orb settings.
                            If None, uses default aspect configuration.
             axis_orb_limit: Optional orb threshold for chart axes (applied to single chart calculations only)
+            point_orb_adjustments: Optional per-point orb adjustment table
+            point_orb_adjustment_strategy: How to combine the two points'
+                adjustments (default ``"max_explicit"``)
 
         Returns:
             DualChartAspectsModel: Complete model containing all calculated aspects data,
@@ -253,6 +268,8 @@ class AspectsFactory:
             celestial_points,
             first_subject_is_fixed=first_subject_is_fixed,
             second_subject_is_fixed=second_subject_is_fixed,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
         )
 
     @staticmethod
@@ -263,6 +280,8 @@ class AspectsFactory:
         aspects_settings: Sequence[Mapping[str, Any]],
         axis_orb_limit: Optional[float],
         celestial_points: Sequence[Mapping[str, Any]],
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> SingleChartAspectsModel:
         """
         Create the complete single chart aspects model with all calculations.
@@ -271,7 +290,13 @@ class AspectsFactory:
             SingleChartAspectsModel containing filtered aspects data
         """
         all_aspects = AspectsFactory._calculate_single_chart_aspects(
-            subject, active_points_resolved, active_aspects_resolved, aspects_settings, celestial_points
+            subject,
+            active_points_resolved,
+            active_aspects_resolved,
+            aspects_settings,
+            celestial_points,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
         )
         filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
@@ -297,6 +322,8 @@ class AspectsFactory:
         celestial_points: Sequence[Mapping[str, Any]],
         first_subject_is_fixed: bool,
         second_subject_is_fixed: bool,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> DualChartAspectsModel:
         """
         Create the complete dual chart aspects model with all calculations.
@@ -322,6 +349,8 @@ class AspectsFactory:
             celestial_points,
             first_subject_is_fixed=first_subject_is_fixed,
             second_subject_is_fixed=second_subject_is_fixed,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
         )
         filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
@@ -344,6 +373,8 @@ class AspectsFactory:
         active_aspects: List[ActiveAspect],
         aspects_settings: Sequence[Mapping[str, Any]],
         celestial_points: Sequence[Mapping[str, Any]],
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> List[AspectModel]:
         """
         Calculate all aspects within a single chart.
@@ -397,7 +428,15 @@ class AspectsFactory:
                     continue
 
                 second_abs_pos = second_point["abs_pos"]
-                aspect = get_aspect_from_two_points(filtered_settings, first_abs_pos, second_abs_pos)
+                extra_orb = resolve_pair_orb_adjustment(
+                    first_name,
+                    second_name,
+                    point_orb_adjustments,
+                    point_orb_adjustment_strategy,
+                )
+                aspect = get_aspect_from_two_points(
+                    filtered_settings, first_abs_pos, second_abs_pos, extra_orb=extra_orb
+                )
 
                 if aspect["verdict"]:
                     # Get planet IDs using lookup dictionary for better performance
@@ -454,6 +493,8 @@ class AspectsFactory:
         celestial_points: Sequence[Mapping[str, Any]],
         first_subject_is_fixed: bool,
         second_subject_is_fixed: bool,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> List[AspectModel]:
         """
         Calculate all aspects between two charts.
@@ -487,18 +528,26 @@ class AspectsFactory:
 
         all_aspects_list = []
         for first in range(len(first_active_points_list)):
+            # Read the point name before the inner loop so the orb resolver
+            # can use it (the name was previously read only after the verdict).
+            first_name = first_active_points_list[first]["name"]
             # Generate aspects list between all points of first and second subjects
             for second in range(len(second_active_points_list)):
+                second_name = second_active_points_list[second]["name"]
+                extra_orb = resolve_pair_orb_adjustment(
+                    first_name,
+                    second_name,
+                    point_orb_adjustments,
+                    point_orb_adjustment_strategy,
+                )
                 aspect = get_aspect_from_two_points(
                     filtered_settings,
                     first_active_points_list[first]["abs_pos"],
                     second_active_points_list[second]["abs_pos"],
+                    extra_orb=extra_orb,
                 )
 
                 if aspect["verdict"]:
-                    first_name = first_active_points_list[first]["name"]
-                    second_name = second_active_points_list[second]["name"]
-
                     # Get planet IDs using lookup dictionary for better performance
                     first_planet_id = planet_id_lookup.get(first_name, 0)
                     second_planet_id = planet_id_lookup.get(second_name, 0)

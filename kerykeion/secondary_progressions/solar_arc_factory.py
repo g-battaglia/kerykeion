@@ -22,15 +22,17 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from typing import List, Optional, Sequence
+from typing import List, Mapping, Optional, Sequence
 
 from pydantic import BaseModel, Field
 
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
-from kerykeion._predictive_utils import gather_active_points, build_aspect_settings
+from kerykeion._predictive_utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
+from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house, HOUSE_FIELD_NAMES
 
 from .secondary_progression_factory import SecondaryProgressionFactory
 
@@ -49,6 +51,16 @@ def _forward_arc_diff(target: float, source: float) -> float:
 def _is_near_zero_arc(arc: float, orb: float) -> bool:
     """Return ``True`` when a forward arc is within ``orb`` of 0°/360°."""
     return min(arc, 360.0 - arc) <= orb
+
+
+def _midpoint_name_to_pair_key(name: str) -> str:
+    """Recover the ``A_B`` pair identifier from a synthetic midpoint name.
+
+    Midpoint points carry ``name='A_B_Midpoint'``; the pair-key consumed by
+    ``MidpointFactory.compute_active_midpoint_points`` is the same string
+    minus the ``_Midpoint`` suffix.
+    """
+    return name[:-len("_Midpoint")] if name.endswith("_Midpoint") else name
 
 
 class SolarArcDirectedPoint(BaseModel):
@@ -117,8 +129,10 @@ class SolarArcFactory:
         target_year: Optional[int] = None,
         active_points: Optional[Sequence[str]] = None,
         compute_aspects: bool = True,
-        aspect_orb: float = 1.0,
+        aspect_orb: float = 3.0,
         aspects: Optional[Sequence[str]] = None,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> SolarArcSubjectModel:
         """Compute the solar arc and directed-to-natal aspect picture.
 
@@ -136,6 +150,11 @@ class SolarArcFactory:
                 of directed-to-natal aspect contacts.
             aspect_orb: Orb in degrees for aspect detection.
             aspects: Optional whitelist of aspect names to detect.
+            point_orb_adjustments: Optional per-point orb adjustment table.
+                ``None`` (default) means no adjustment — solar arc uses a
+                flat, tight orb regardless of which point is involved.
+            point_orb_adjustment_strategy: How to combine the two points'
+                adjustments when a table is supplied (default ``"max_explicit"``).
 
         Returns:
             A :class:`SolarArcSubjectModel` describing the arc and every
@@ -184,15 +203,23 @@ class SolarArcFactory:
 
         directed_to_natal: List[SolarArcDirectedAspect] = []
         if compute_aspects:
-            aspect_settings = build_aspect_settings(aspect_orb, aspects)
+            effective_aspects = aspects if aspects is not None else PTOLEMAIC_ASPECTS
+            aspect_settings = build_aspect_settings(aspect_orb, effective_aspects)
             for d in directed_points:
                 for natal_name, natal_pos in natal_targets:
                     if natal_name == d.name and _is_near_zero_arc(solar_arc, aspect_orb):
                         continue
+                    extra_orb = resolve_pair_orb_adjustment(
+                        d.name,
+                        natal_name,
+                        point_orb_adjustments,
+                        point_orb_adjustment_strategy,
+                    )
                     outcome = get_aspect_from_two_points(
                         aspects_settings=aspect_settings,
                         point_one=d.directed_abs_pos,
                         point_two=natal_pos,
+                        extra_orb=extra_orb,
                     )
                     if outcome.get("verdict"):
                         directed_to_natal.append(
@@ -216,3 +243,97 @@ class SolarArcFactory:
             directed_points=directed_points,
             directed_to_natal_aspects=directed_to_natal,
         )
+
+    # Names of point fields whose abs_pos must be shifted by the solar arc
+    # when building a directed AstrologicalSubjectModel. Angles and houses
+    # are intentionally left in place (the natal frame is preserved).
+    _DIRECTABLE_FIELDS = (
+        "sun", "moon", "mercury", "venus", "mars",
+        "jupiter", "saturn", "uranus", "neptune", "pluto",
+        "chiron", "earth", "pholus",
+        "mean_lilith", "true_lilith", "interpolated_lilith",
+        "mean_priapus", "true_priapus",
+        "interpolated_perigee", "white_moon",
+        "ceres", "pallas", "juno", "vesta",
+        "eris", "sedna", "haumea", "makemake", "ixion", "orcus", "quaoar",
+        "cupido", "hades", "zeus", "kronos", "apollon", "admetos", "vulkanus", "poseidon",
+        "mean_north_lunar_node", "true_north_lunar_node",
+        "mean_south_lunar_node", "true_south_lunar_node",
+        "pars_fortunae", "pars_spiritus", "pars_amoris", "pars_fidei",
+        "vertex", "anti_vertex",
+    )
+
+    @staticmethod
+    def compute_directed_subject(
+        natal_subject: AstrologicalSubjectModel,
+        *,
+        target_iso_utc_datetime: Optional[str] = None,
+        target_year: Optional[int] = None,
+    ) -> AstrologicalSubjectModel:
+        """Return a copy of ``natal_subject`` with every directable point
+        shifted forward by the solar arc.
+
+        Houses and the four angles (Asc/MC/Desc/IC) are left at their natal
+        positions — the solar arc preserves the natal frame and only moves
+        the planets and sensitive points. This is what you want for a
+        biwheel rendering: inner ring = natal, outer ring = directed.
+        """
+        result = SolarArcFactory.compute(
+            natal_subject,
+            target_iso_utc_datetime=target_iso_utc_datetime,
+            target_year=target_year,
+            compute_aspects=False,
+        )
+        arc = result.solar_arc
+
+        directed = natal_subject.model_copy(deep=True)
+        directed.name = f"{natal_subject.name} (directed)"
+
+        # House cusps stay on the natal frame — used to recompute house
+        # placement for each directed point.
+        houses_degree_ut: list[float] = []
+        for house_field in HOUSE_FIELD_NAMES:
+            cusp = getattr(directed, house_field, None)
+            if cusp is not None:
+                houses_degree_ut.append(cusp.abs_pos)
+
+        for field_name in SolarArcFactory._DIRECTABLE_FIELDS:
+            point = getattr(directed, field_name, None)
+            if point is None:
+                continue
+            new_abs = _normalise_long(point.abs_pos + arc)
+            sign_idx = int(new_abs // 30) % 12
+            zodiac = _ZODIAC_SIGNS[sign_idx]
+
+            point.abs_pos = new_abs
+            point.sign = SIGN_CODES[sign_idx]
+            point.sign_num = sign_idx
+            point.position = new_abs - sign_idx * 30.0
+            # Recompute sign-derived metadata so downstream consumers
+            # (ChartDrawer, AI prompts, PDF exports) stay consistent
+            # when a directed point crosses signs.
+            point.quality = zodiac.quality
+            point.element = zodiac.element
+            point.emoji = zodiac.emoji
+            if len(houses_degree_ut) == 12:
+                try:
+                    point.house = get_planet_house(new_abs, houses_degree_ut)
+                except ValueError:
+                    # Leave the natal house value rather than crash
+                    pass
+
+        # Active midpoints were deep-copied from the natal subject and now
+        # point at natal positions. Recompute them against the directed
+        # planets so the biwheel outer ring renders directed midpoint glyphs
+        # rather than stale natal ones.
+        if directed.active_midpoints:
+            from kerykeion.midpoints.midpoint_factory import MidpointFactory
+            pair_names = [
+                _midpoint_name_to_pair_key(mp.name) for mp in directed.active_midpoints
+            ]
+            pair_names = [n for n in pair_names if n]
+            directed.active_midpoints = MidpointFactory.compute_active_midpoint_points(
+                directed, pair_names
+            )
+
+        return directed

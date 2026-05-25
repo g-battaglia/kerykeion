@@ -46,6 +46,7 @@ import logging
 from typing import Optional
 
 from kerykeion.aspects import AspectsFactory
+from kerykeion.settings.config_constants import DISCEPOLO_SCORE_ACTIVE_ASPECTS
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     RelationshipScoreAspectModel,
@@ -119,9 +120,14 @@ class RelationshipScoreFactory:
         self.is_destiny_sign = False
         self.relationship_score_aspects: list[RelationshipScoreAspectModel] = []
         self.score_breakdown: list[ScoreBreakdownItemModel] = []
+        # Use Discepolo's own orb set — the affinity score is a fixed
+        # methodology and must not drift when chart-display default orbs
+        # change. Without this, dual_chart_aspects() falls back to
+        # DEFAULT_ACTIVE_ASPECTS, coupling the score to UI orb settings.
         self._synastry_aspects = AspectsFactory.dual_chart_aspects(
             self.first_subject,
             self.second_subject,
+            active_aspects=DISCEPOLO_SCORE_ACTIVE_ASPECTS,
             axis_orb_limit=axis_orb_limit,
             first_subject_is_fixed=True,
             second_subject_is_fixed=True,

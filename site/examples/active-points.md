@@ -6,7 +6,7 @@ order: 16
 
 # Active Points
 
-Kerykeion supports 63 celestial points that can be individually enabled or disabled. This page shows practical examples.
+Kerykeion supports 53+ celestial points that can be individually enabled or disabled. This page shows practical examples.
 
 For the full reference of all available points, see [Active Points Reference](/content/docs/active_points).
 
@@ -117,7 +117,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
     active_points=ALL_ACTIVE_POINTS,
 )
 
-# Generate a chart with all 63 points
+# Generate a chart with all 53 points
 chart = ChartDrawer(chart_data=chart_data)
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)

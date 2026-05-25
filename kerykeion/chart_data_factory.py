@@ -52,7 +52,13 @@ from kerykeion.schemas.kr_literals import (
     AstrologicalPoint,
 )
 from kerykeion.utilities import find_common_active_points, distribute_percentages_to_100
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import (
+    DEFAULT_ACTIVE_ASPECTS,
+    PREDICTIVE_ACTIVE_ASPECTS,
+    DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS,
+    NO_POINT_ORB_ADJUSTMENTS,
+)
+from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.charts.charts_utils import (
     DOUBLE_CHART_TYPES,
@@ -89,17 +95,25 @@ class ChartDataFactory:
         >>> print(f"Relationship score: {synastry_data.relationship_score.score_value}")
     """
 
+    # Chart types analysed like a natal chart — they get the wider natal
+    # aspect orbs and the luminary orb bonus. Every other chart type
+    # (transit, progression, returns) is predictive: tight flat orbs, no
+    # luminary bonus. Single source of truth for the per-chart-type defaults.
+    _NATAL_FAMILY_CHART_TYPES = frozenset({"Natal", "Synastry", "Composite"})
+
     @staticmethod
     def create_chart_data(
         chart_type: ChartType,
         first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         second_subject: Optional[Union[AstrologicalSubjectModel, PlanetReturnModel]] = None,
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: Optional[list[ActiveAspect]] = None,
         include_house_comparison: bool = True,
         include_relationship_score: bool = False,
         *,
         axis_orb_limit: Optional[float] = None,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
@@ -111,10 +125,19 @@ class ChartDataFactory:
             first_subject: Primary astrological subject
             second_subject: Secondary subject (required for dual charts)
             active_points: Points to include in calculations (defaults to first_subject.active_points)
-            active_aspects: Aspect types and orbs to use
+            active_aspects: Aspect types and orbs to use. When ``None``, the
+                per-chart-type default applies — natal/synastry/composite use
+                ``DEFAULT_ACTIVE_ASPECTS``, every other type uses the tight
+                ``PREDICTIVE_ACTIVE_ASPECTS``.
             include_house_comparison: Whether to include house comparison for dual charts
             include_relationship_score: Whether to include relationship scoring for synastry
             axis_orb_limit: Optional orb threshold for chart axes (applies only to single chart aspects)
+            point_orb_adjustments: Optional per-point orb adjustment table (e.g.
+                ``{"Sun": 1.5, "Moon": 1.5}``). When ``None``, the per-chart-type
+                default applies — natal/synastry/composite use
+                ``DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS``, every other type uses none.
+            point_orb_adjustment_strategy: How to combine the two points'
+                adjustments (default ``"max_explicit"``)
             distribution_method: Strategy for element/modality weighting ("pure_count" or "weighted")
             custom_distribution_weights: Optional overrides for the distribution weights
 
@@ -124,6 +147,14 @@ class ChartDataFactory:
         Raises:
             KerykeionException: If chart type requirements are not met
         """
+        # Resolve per-chart-type defaults when the caller did not specify them.
+        is_natal_family = chart_type in ChartDataFactory._NATAL_FAMILY_CHART_TYPES
+        if active_aspects is None:
+            active_aspects = DEFAULT_ACTIVE_ASPECTS if is_natal_family else PREDICTIVE_ACTIVE_ASPECTS
+        if point_orb_adjustments is None:
+            point_orb_adjustments = (
+                DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS if is_natal_family else NO_POINT_ORB_ADJUSTMENTS
+            )
 
         # Validate chart type requirements
         if chart_type in DOUBLE_CHART_TYPES and not second_subject:
@@ -163,6 +194,8 @@ class ChartDataFactory:
                 active_points=effective_active_points,
                 active_aspects=active_aspects,
                 axis_orb_limit=axis_orb_limit,
+                point_orb_adjustments=point_orb_adjustments,
+                point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             )
         else:
             # Dual chart aspects - second_subject is guaranteed to exist here due to validation above
@@ -194,6 +227,8 @@ class ChartDataFactory:
                 axis_orb_limit=axis_orb_limit,
                 first_subject_is_fixed=first_subject_is_fixed,
                 second_subject_is_fixed=second_subject_is_fixed,
+                point_orb_adjustments=point_orb_adjustments,
+                point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             )
 
         # Calculate house comparison for dual charts
@@ -359,8 +394,10 @@ class ChartDataFactory:
     def create_natal_chart_data(
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: Optional[list[ActiveAspect]] = None,
         *,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
@@ -371,6 +408,10 @@ class ChartDataFactory:
             subject: Astrological subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
+            point_orb_adjustments: Per-point orb adjustment table. ``None`` uses
+                the natal default (Sun/Moon +1.5°, the luminary-widening rule);
+                pass ``{}`` to disable.
+            point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
             custom_distribution_weights: Optional overrides for distribution weights
 
@@ -382,6 +423,8 @@ class ChartDataFactory:
             chart_type="Natal",
             active_points=active_points,
             active_aspects=active_aspects,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
             custom_distribution_weights=custom_distribution_weights,
         )
@@ -391,10 +434,12 @@ class ChartDataFactory:
         first_subject: AstrologicalSubjectModel,
         second_subject: AstrologicalSubjectModel,
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: Optional[list[ActiveAspect]] = None,
         include_house_comparison: bool = True,
         include_relationship_score: bool = True,
         *,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
@@ -408,6 +453,9 @@ class ChartDataFactory:
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
             include_relationship_score: Whether to include relationship scoring
+            point_orb_adjustments: Per-point orb adjustment table. ``None`` uses
+                the natal default (Sun/Moon +1.5°); pass ``{}`` to disable.
+            point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
             custom_distribution_weights: Optional overrides for distribution weights
 
@@ -422,6 +470,8 @@ class ChartDataFactory:
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
             include_relationship_score=include_relationship_score,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
             custom_distribution_weights=custom_distribution_weights,
         )
@@ -431,9 +481,11 @@ class ChartDataFactory:
         natal_subject: AstrologicalSubjectModel,
         transit_subject: AstrologicalSubjectModel,
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: Optional[list[ActiveAspect]] = None,
         include_house_comparison: bool = True,
         *,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
@@ -446,6 +498,9 @@ class ChartDataFactory:
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
+            point_orb_adjustments: Per-point orb adjustment table. ``None`` means
+                no adjustment — transits use a flat tight orb by convention.
+            point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
             custom_distribution_weights: Optional overrides for distribution weights
 
@@ -459,6 +514,8 @@ class ChartDataFactory:
             active_points=active_points,
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
             custom_distribution_weights=custom_distribution_weights,
         )
@@ -467,8 +524,10 @@ class ChartDataFactory:
     def create_composite_chart_data(
         composite_subject: CompositeSubjectModel,
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: Optional[list[ActiveAspect]] = None,
         *,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
@@ -479,6 +538,9 @@ class ChartDataFactory:
             composite_subject: Composite astrological subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
+            point_orb_adjustments: Per-point orb adjustment table. ``None`` uses
+                the natal default (Sun/Moon +1.5°); pass ``{}`` to disable.
+            point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
             custom_distribution_weights: Optional overrides for distribution weights
 
@@ -490,6 +552,8 @@ class ChartDataFactory:
             chart_type="Composite",
             active_points=active_points,
             active_aspects=active_aspects,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
             custom_distribution_weights=custom_distribution_weights,
         )
@@ -499,9 +563,11 @@ class ChartDataFactory:
         natal_subject: AstrologicalSubjectModel,
         return_subject: PlanetReturnModel,
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: Optional[list[ActiveAspect]] = None,
         include_house_comparison: bool = True,
         *,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
@@ -512,8 +578,12 @@ class ChartDataFactory:
             natal_subject: Natal astrological subject
             return_subject: Planetary return subject
             active_points: Points to include in calculations
-            active_aspects: Aspect types and orbs to use
+            active_aspects: Aspect types and orbs to use. Defaults to the
+                predictive set (3° orb) — the conventional return-chart default.
             include_house_comparison: Whether to include house comparison
+            point_orb_adjustments: Per-point orb adjustment table. ``None`` means
+                no adjustment — returns use a flat tight orb by convention.
+            point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
             custom_distribution_weights: Optional overrides for distribution weights
 
@@ -527,6 +597,8 @@ class ChartDataFactory:
             active_points=active_points,
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
             custom_distribution_weights=custom_distribution_weights,
         )
@@ -535,8 +607,10 @@ class ChartDataFactory:
     def create_single_wheel_return_chart_data(
         return_subject: PlanetReturnModel,
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: Optional[list[ActiveAspect]] = None,
         *,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
@@ -546,7 +620,11 @@ class ChartDataFactory:
         Args:
             return_subject: Planetary return subject
             active_points: Points to include in calculations
-            active_aspects: Aspect types and orbs to use
+            active_aspects: Aspect types and orbs to use. Defaults to the
+                predictive set (3° orb) — the conventional return-chart default.
+            point_orb_adjustments: Per-point orb adjustment table. ``None`` means
+                no adjustment — returns use a flat tight orb by convention.
+            point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting
             custom_distribution_weights: Optional overrides for distribution weights
 
@@ -558,6 +636,8 @@ class ChartDataFactory:
             chart_type="SingleReturnChart",
             active_points=active_points,
             active_aspects=active_aspects,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
             custom_distribution_weights=custom_distribution_weights,
         )
@@ -567,10 +647,12 @@ class ChartDataFactory:
         natal_subject: AstrologicalSubjectModel,
         progressed_subject: AstrologicalSubjectModel,
         active_points: Optional[list[AstrologicalPoint]] = None,
-        active_aspects: list[ActiveAspect] = DEFAULT_ACTIVE_ASPECTS,
+        active_aspects: Optional[list[ActiveAspect]] = None,
         include_house_comparison: bool = True,
         *,
         axis_orb_limit: Optional[float] = None,
+        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
     ) -> ChartDataModel:
@@ -588,6 +670,9 @@ class ChartDataFactory:
             active_aspects: Aspect types and orbs to use.
             include_house_comparison: Whether to include house overlay analysis.
             axis_orb_limit: Optional orb limit for axis aspects.
+            point_orb_adjustments: Per-point orb adjustment table. ``None`` means
+                no adjustment — progressions use a flat tight orb.
+            point_orb_adjustment_strategy: How to combine the two points' adjustments
             distribution_method: Strategy for element/modality weighting.
             custom_distribution_weights: Optional overrides for distribution weights.
 
@@ -602,6 +687,8 @@ class ChartDataFactory:
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
             axis_orb_limit=axis_orb_limit,
+            point_orb_adjustments=point_orb_adjustments,
+            point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
             custom_distribution_weights=custom_distribution_weights,
         )

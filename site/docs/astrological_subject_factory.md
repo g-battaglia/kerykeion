@@ -109,6 +109,12 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 | `custom_ayanamsa_t0`       | `Optional[float]`        | `None`                  | Julian Day epoch for custom ayanamsa (requires `sidereal_mode="USER"`). |
 | `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`                  | Ayanamsa degrees at epoch (requires `sidereal_mode="USER"`).           |
 | `geonames_username`        | `str`                    | `"century.boy"`         | GeoNames API username.                                                 |
+| `calculate_dignities`      | `bool`                   | `False`                 | Calculate essential dignities for each point.                          |
+| `calculate_nakshatra`      | `bool`                   | `False`                 | Calculate Vedic Nakshatra/Pada/Dasha lord.                             |
+| `calculate_gauquelin`      | `bool`                   | `False`                 | Calculate Gauquelin 36-sector positions.                               |
+| `calculate_nutation`       | `bool`                   | `False`                 | Include true/mean obliquity and nutation data.                         |
+| `calculate_local_space`    | `bool`                   | `False`                 | Calculate azimuth and altitude for each point.                         |
+| `active_fixed_stars`       | `Optional[List[str]]`    | `None`                  | Additional fixed stars to compute beyond the built-in 23.              |
 
 Creates a subject for the current moment ("Now"), useful for Horary astrology or transits. Uses the system clock -- does **not** accept `year`/`month`/`day`/`hour`/`minute` parameters.
 
@@ -183,6 +189,53 @@ Use `position` for display purposes and `abs_pos` for calculations (aspect detec
 - **Barycentric**: Solar system barycenter.
 - **Selenocentric**: Moon-centered.
 - **Mercurycentric**, **Venuscentric**, **Marscentric**, **Jupitercentric**, **Saturncentric**: Planet-centered.
+
+## V6 Optional Enrichments
+
+These opt-in features add extra data to the subject model. All are disabled by default and have zero overhead when not enabled.
+
+### Essential Dignities (`calculate_dignities=True`)
+
+Adds `essential_dignity` field to each point (Domicile, Exaltation, Detriment, Fall, Term, Peregrine).
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    ..., calculate_dignities=True
+)
+print(subject.sun.essential_dignity)  # e.g. "Domicile"
+```
+
+### Vedic Nakshatras (`calculate_nakshatra=True`)
+
+Adds `nakshatra`, `nakshatra_pada`, and `nakshatra_lord` fields. Best used with `zodiac_type="Sidereal"`.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    ..., zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+    calculate_nakshatra=True
+)
+print(f"{subject.moon.nakshatra}, pada {subject.moon.nakshatra_pada}")
+```
+
+### Gauquelin Sectors (`calculate_gauquelin=True`)
+
+Adds `gauquelin_sector` field (1-36) to each point, plus `gauquelin_sector_cusps` on the subject.
+
+### Nutation (`calculate_nutation=True`)
+
+Adds `subject.nutation` with `true_obliquity`, `mean_obliquity`, `nutation_in_longitude`, and `nutation_in_obliquity`.
+
+### Local Space (`calculate_local_space=True`)
+
+Adds `azimuth` and `altitude_above_horizon` fields for each point. Useful for astro-locality work.
+
+### Declination & Out-of-Bounds
+
+Always computed. Access via `subject.sun.declination` and `subject.sun.is_out_of_bounds`. A planet is out-of-bounds when its declination exceeds the Sun's maximum (~23.44°).
+
+### Lilith Variants & Priapus
+
+Enable via `active_points`: `"Interpolated_Lilith"`, `"Mean_Priapus"`, `"True_Priapus"`. These complement the default `Mean_Lilith` and `True_Lilith`.
 
 ## Performance & Optimization
 

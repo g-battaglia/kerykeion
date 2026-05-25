@@ -97,26 +97,26 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[Moon Phase Details Factory](/content/docs/moon_phase_details_factory)**: Rich lunar phase context with illumination, upcoming phases, eclipses, and sun info.
 -   **[Transits Time Range Factory](/content/docs/transits_time_range_factory)**: Tracking transit aspects over a date range.
 -   **[Ephemeris Data Factory](/content/docs/ephemeris_data_factory)**: Generating time-series planetary position data.
--   **Secondary Progressions**: Day-for-a-year progressions via `SecondaryProgressionFactory`.
--   **Solar Arc Directions**: Solar arc directed charts via `SolarArcFactory`.
--   **Primary Directions**: Placidus semi-arc method via `PrimaryDirectionsFactory`.
+-   **[Secondary Progressions](/content/docs/secondary_progressions_factory)**: Day-for-a-year progressions via `SecondaryProgressionFactory`.
+-   **[Solar Arc Directions](/content/docs/solar_arc_factory)**: Solar arc directed charts via `SolarArcFactory`.
+-   **[Primary Directions](/content/docs/primary_directions_factory)**: Placidus semi-arc method via `PrimaryDirectionsFactory`.
 
 ## Advanced Calculations
 
--   **Eclipses**: Solar and lunar eclipse search via `EclipseFactory`.
--   **Planetary Phenomena**: Elongations, stations, retrogrades via `PlanetaryPhenomenaFactory`.
--   **Planetary Nodes & Apsides**: Orbital nodes via `PlanetaryNodesFactory`.
--   **Heliacal Risings & Settings**: Visibility phenomena via `HeliacalFactory`.
--   **Occultations**: Lunar occultation search via `OccultationFactory`.
--   **Relocated Charts**: Chart relocation via `RelocatedChartFactory`.
--   **Fixed Star Discovery**: Dynamic star conjunctions via `FixedStarDiscoveryFactory`.
--   **Astro-Cartography**: ACG lines via `AstroCartographyFactory`.
--   **Midpoints**: Cosmobiology 90° dial via `MidpointFactory`.
+-   **[Eclipse Factory](/content/docs/eclipse_factory)**: Solar and lunar eclipse search (global or location-specific).
+-   **[Planetary Phenomena](/content/docs/planetary_phenomena_factory)**: Elongation, phase, magnitude, morning/evening star status.
+-   **[Planetary Nodes & Apsides](/content/docs/planetary_nodes_factory)**: Ascending/descending nodes and perihelion/aphelion.
+-   **[Heliacal Risings & Settings](/content/docs/heliacal_factory)**: First/last visibility of planets relative to the Sun.
+-   **[Occultation Factory](/content/docs/occultation_factory)**: Lunar occultation search (global or location-specific).
+-   **[Relocated Charts](/content/docs/relocated_chart_factory)**: Chart relocation preserving planetary positions.
+-   **[Fixed Star Discovery](/content/docs/fixed_star_discovery_factory)**: Dynamic fixed star conjunction detection.
+-   **[Astro-Cartography](/content/docs/astro_cartography_factory)**: ACG planetary angular lines across the globe.
+-   **[Midpoints](/content/docs/midpoint_factory)**: Cosmobiology 90° dial midpoint analysis with aspect activations.
 
 ## Reference
 
 -   **[Types & Schemas](/content/docs/schemas)**: Complete Pydantic model and type reference.
--   **[Active Points](/content/docs/active_points)**: Reference for all 63 celestial points and preset configurations.
+-   **[Active Points](/content/docs/active_points)**: Reference for all 53+ celestial points and preset configurations.
 -   **[Cookbook](/content/docs/cookbook)**: Practical recipes and code snippets for common tasks.
 -   **[Constants](/content/docs/constants)**: Exhaustive lists of points, aspects, and preset constants.
 -   **[Utilities](/content/docs/utilities)**: Helper functions for zodiac math, Julian Day, and SVG processing.

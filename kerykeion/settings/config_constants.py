@@ -219,9 +219,9 @@ DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
     # "Mean_North_Lunar_Node",
     "True_North_Lunar_Node",
     # "Mean_South_Lunar_Node",
-    "True_South_Lunar_Node",
+    # "True_South_Lunar_Node",
     "Chiron",
-    "Mean_Lilith",
+    # "Mean_Lilith",
     # "True_Lilith",
     # "Earth",
     # "Pholus",
@@ -262,8 +262,8 @@ DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
     # "Alkaid",
     "Ascendant",
     "Medium_Coeli",
-    "Descendant",
-    "Imum_Coeli",
+    # "Descendant",
+    # "Imum_Coeli",
     # "Vertex",
     # "Anti_Vertex",
     # "Pars_Fortunae",
@@ -428,39 +428,71 @@ Use these alongside DEFAULT_ACTIVE_POINTS for Uranian astrology work.
 
 
 DEFAULT_ACTIVE_ASPECTS: list[ActiveAspect] = [
-    {"name": "conjunction", "orb": 10},
-    {"name": "opposition", "orb": 10},
-    {"name": "trine", "orb": 8},
-    {"name": "sextile", "orb": 6},
-    {"name": "square", "orb": 5},
-    {"name": "quintile", "orb": 1},
-    # {"name": "semi-sextile", "orb": 1},
-    # {"name": "semi-square", "orb": 1},
-    # {"name": "sesquiquadrate", "orb": 1},
-    # {"name": "biquintile", "orb": 1},
-    # {"name": "quincunx", "orb": 1},
+    {"name": "conjunction", "orb": 6},
+    {"name": "opposition", "orb": 6},
+    {"name": "trine", "orb": 6},
+    {"name": "sextile", "orb": 5},
+    {"name": "square", "orb": 6},
 ]
 """
-Default list of active aspects in the aspects calculations.
-The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
+Default active aspects for natal and synastry charts.
+Base orb 6° for the four major aspects, 5° for sextile, 2° for quintile —
+the orb values used by mainstream online astrology calculators. Luminary
+widening is applied separately via point orb adjustments; use 8° orbs if you
+need that behaviour without per-planet logic.
 """
 
-ALL_ACTIVE_ASPECTS: list[ActiveAspect] = [
-    {"name": "conjunction", "orb": 10},
-    {"name": "opposition", "orb": 10},
-    {"name": "trine", "orb": 8},
-    {"name": "sextile", "orb": 6},
-    {"name": "square", "orb": 5},
-    {"name": "quintile", "orb": 1},
-    {"name": "semi-sextile", "orb": 1},
-    {"name": "semi-square", "orb": 1},
-    {"name": "sesquiquadrate", "orb": 1},
-    {"name": "biquintile", "orb": 1},
-    {"name": "quincunx", "orb": 1},
+PREDICTIVE_ACTIVE_ASPECTS: list[ActiveAspect] = [
+    {"name": "conjunction", "orb": 3},
+    {"name": "opposition", "orb": 3},
+    {"name": "trine", "orb": 3},
+    {"name": "sextile", "orb": 3},
+    {"name": "square", "orb": 3},
 ]
 """
-Full list of active aspects in the charts or aspects calculations.
-The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
+Active aspects for predictive/dual-chart techniques (transits, secondary
+progressions, solar arcs). Five Ptolemaic aspects at a tight 3° orb — the
+conventional default for transit and progression chart wheels.
+"""
+
+
+DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS: dict[str, float] = {
+    "Sun": 1.5,
+    "Moon": 1.5,
+}
+"""
+Per-point orb adjustment for natal/relationship charts.
+Added to the aspect base orb when a point is involved in the aspect. The
+luminaries (Sun, Moon) get +1.5°: with the 6° major-aspect base orb, a
+Sun/Moon major aspect resolves to 7.5° — the classic luminary-widening rule.
+Combined per pair via :func:`kerykeion.aspects.orb_utils.resolve_pair_orb_adjustment`.
+"""
+
+
+NO_POINT_ORB_ADJUSTMENTS: dict[str, float] = {}
+"""
+Empty per-point orb adjustment table — used by predictive charts (transits,
+returns, progressions, solar arcs) where a flat, tight orb applies uniformly
+to every point regardless of whether it is a luminary.
+"""
+
+
+ALL_ACTIVE_ASPECTS: list[ActiveAspect] = [
+    {"name": "conjunction", "orb": 6},
+    {"name": "opposition", "orb": 6},
+    {"name": "trine", "orb": 6},
+    {"name": "sextile", "orb": 5},
+    {"name": "square", "orb": 6},
+    {"name": "quintile", "orb": 2},
+    {"name": "semi-sextile", "orb": 2},
+    {"name": "semi-square", "orb": 2},
+    {"name": "sesquiquadrate", "orb": 2},
+    {"name": "biquintile", "orb": 2},
+    {"name": "quincunx", "orb": 2},
+]
+"""
+Full list of active aspects including minors.
+Major: 6°, sextile: 5°, all minors: 2°.
 """
 
 DISCEPOLO_SCORE_ACTIVE_ASPECTS: list[ActiveAspect] = [

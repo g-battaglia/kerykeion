@@ -429,6 +429,20 @@
                 </g>
             </g>
         </symbol>
+        <symbol id="Midpoint">
+            <g transform="translate(2,2)">
+                <g transform="scale(2)">
+                    <line x1="2" y1="6" x2="10" y2="6"
+                        style="fill: none; stroke: var(--kerykeion-chart-color-midpoint-default, #b58bff); stroke-width: 1px; stroke-linecap: round;" />
+                    <circle cx="2" cy="6" r="1.4"
+                        style="fill: var(--kerykeion-chart-color-midpoint-default, #b58bff); stroke: none;" />
+                    <circle cx="10" cy="6" r="1.4"
+                        style="fill: var(--kerykeion-chart-color-midpoint-default, #b58bff); stroke: none;" />
+                    <circle cx="6" cy="6" r="2.0"
+                        style="fill: none; stroke: var(--kerykeion-chart-color-midpoint-default, #b58bff); stroke-width: 1.2px;" />
+                </g>
+            </g>
+        </symbol>
         <!-- Fixed Stars (v5.12 additions) -->
         <symbol id="Anti_Vertex">
             <g transform="translate(0,1)">

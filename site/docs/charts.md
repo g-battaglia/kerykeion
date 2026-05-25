@@ -249,12 +249,19 @@ drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 
 **Public Methods:**
 
-- `save_svg(output_path, filename) -> None` -- Save the full chart (wheel + aspect grid) as an SVG file.
-- `generate_svg_string() -> str`
-- `generate_wheel_only_svg_string() -> str`
-- `generate_aspect_grid_only_svg_string() -> str`
-- `save_wheel_only_svg_file(output_path, filename)`
-- `save_aspect_grid_only_svg_file(output_path, filename)`
+All render/save methods accept two optional keyword arguments:
+
+| Parameter              | Type   | Default | Description                                                  |
+| :--------------------- | :----- | :------ | :----------------------------------------------------------- |
+| `minify`               | `bool` | `False` | Minify the SVG output (remove whitespace/comments).          |
+| `remove_css_variables`  | `bool` | `False` | Inline all CSS variables for broader SVG viewer compatibility. |
+
+- `save_svg(output_path, filename, *, minify, remove_css_variables) -> None`
+- `generate_svg_string(*, minify, remove_css_variables) -> str`
+- `generate_wheel_only_svg_string(*, minify, remove_css_variables) -> str`
+- `generate_aspect_grid_only_svg_string(*, minify, remove_css_variables) -> str`
+- `save_wheel_only_svg_file(output_path, filename, *, minify, remove_css_variables)`
+- `save_aspect_grid_only_svg_file(output_path, filename, *, minify, remove_css_variables)`
 
 ## Helper Functions (`charts_utils`)
 

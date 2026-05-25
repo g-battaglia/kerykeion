@@ -229,6 +229,41 @@ A forecasting technique where each day after birth corresponds to one year of li
 
 > **Note:** Kerykeion implements secondary progressions via `SecondaryProgressionFactory` and solar arc directions via `SolarArcFactory`. Both are available from `from kerykeion import SecondaryProgressionFactory, SolarArcFactory`.
 
+### Midpoint
+The zodiacal longitude exactly halfway between two planets on the shorter arc. Central to cosmobiology (Ebertin) and Uranian/Hamburg-school astrology. When a third planet sits on a midpoint, it "activates" the pair.
+
+> **In Kerykeion:** Use `MidpointFactory.compute(subject)` to calculate all pairwise midpoints with aspect activations.
+
+### Primary Directions
+The oldest predictive technique in Western astrology. Measures the arc a promissor planet travels along the equator to reach the position of a significator. Each degree of arc equals approximately one year of life (Ptolemy's key).
+
+> **In Kerykeion:** Use `PrimaryDirectionsFactory.compute(subject, max_years=80)`.
+
+### Heliacal Rising
+The first morning a celestial body becomes visible above the eastern horizon just before sunrise after a period of invisibility (hidden by the Sun's glare). Heliacal settings are the opposite: the last evening visibility before the body disappears into the Sun's glare.
+
+> **In Kerykeion:** Use `HeliacalFactory().next_heliacal_rising(jd, planet, geopos)`.
+
+### Occultation
+An event where the Moon passes in front of a planet or star as seen from Earth, temporarily hiding it from view. Similar to an eclipse, but involving a body other than the Sun.
+
+> **In Kerykeion:** Use `OccultationFactory().search_global(jd, planet_id)`.
+
+### Astro-Cartography (ACG)
+A mapping technique showing where each planet's angular lines (ASC, DSC, MC, IC) fall across the globe. Used for relocation astrology: living near a planet's line activates its themes.
+
+> **In Kerykeion:** Use `AstroCartographyFactory.compute(subject)`.
+
+### Eclipse
+The alignment of Sun, Moon, and Earth. Solar eclipses occur at New Moon (Moon between Sun and Earth); lunar eclipses at Full Moon (Earth between Sun and Moon). Eclipses near natal points are considered powerful triggers.
+
+> **In Kerykeion:** Use `EclipseFactory.search_global()` or `EclipseFactory.search_from_location()`.
+
+### Parallel / Contra-Parallel
+Declination-based aspects. A parallel is when two planets have the same declination (both north or both south of the equator); a contra-parallel is when they have equal declination but opposite signs (one north, one south). Parallels act like conjunctions, contra-parallels like oppositions.
+
+> **In Kerykeion:** Use `AspectsFactory.single_chart_declination_aspects(subject)`.
+
 ---
 
 ## Chart Types

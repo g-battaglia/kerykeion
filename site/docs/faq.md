@@ -340,6 +340,66 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
+### How do I compute secondary progressions?
+
+Use the dedicated `SecondaryProgressionFactory`:
+
+```python
+from kerykeion import AstrologicalSubjectFactory, SecondaryProgressionFactory
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 6, 15, 14, 30,
+    lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
+)
+
+# Simple: get the progressed chart as a standard subject
+progressed = SecondaryProgressionFactory.compute(natal, target_year=2026)
+
+# Full: get the progressed chart + progressed-to-natal aspects
+result = SecondaryProgressionFactory.compute_full(
+    natal, target_iso_utc_datetime="2026-06-15T00:00:00Z"
+)
+```
+
+See the full [Secondary Progressions](/content/docs/secondary_progressions_factory) documentation.
+
+### How do I find eclipses?
+
+```python
+from kerykeion import EclipseFactory
+
+# Global search
+results = EclipseFactory.search_global(start_year=2025, count=5)
+
+# Location-specific search
+results = EclipseFactory.search_from_location(lat=41.9, lng=12.5, start_year=2025)
+```
+
+See the full [Eclipse Factory](/content/docs/eclipse_factory) documentation.
+
+### How do I generate astro-cartography lines?
+
+```python
+from kerykeion import AstrologicalSubjectFactory, AstroCartographyFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(...)
+lines = AstroCartographyFactory.compute(subject, step=2)
+```
+
+See the full [Astro-Cartography](/content/docs/astro_cartography_factory) documentation.
+
+### How do I relocate a chart to a different city?
+
+```python
+from kerykeion import RelocatedChartFactory
+
+relocated = RelocatedChartFactory.relocate(
+    natal_subject, new_lat=40.71, new_lng=-74.00, new_city="New York"
+)
+```
+
+Planetary positions stay the same; only houses and angles change. See [Relocated Charts](/content/docs/relocated_chart_factory).
+
 ---
 
 ## Getting More Help

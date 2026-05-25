@@ -23,6 +23,7 @@ from kerykeion.charts.charts_utils import (
 )
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
 from kerykeion.schemas.kr_literals import Houses
+from kerykeion.settings.chart_defaults import resolve_glyph_id
 import logging
 from typing import Union, get_args, Optional, Sequence, Mapping, Any
 
@@ -798,13 +799,16 @@ def _generate_point_svg(
     # function are already the intended glyph center in root coords — the
     # translate(-12*scale, -12*scale) on the wrapping <g> cancels the half-
     # offset that the symbol's own coordinate system imposes.
+    glyph_ref = glyph_id or (
+        point_name if point_details.point_type == "House" else resolve_glyph_id(point_name)
+    )
     parts: list[str] = [
         f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
         f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',
         f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr}{horoscope_attr}{gauq_attr} ',
         f'kr:cx="{x}" kr:cy="{y}" ',
         f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
-        f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{glyph_id or point_name}" />',
+        f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{glyph_ref}" />',
     ]
 
     if is_retrograde:
@@ -1106,8 +1110,19 @@ def _draw_secondary_points(
 
         # Build point symbol with kr: metadata (matching _generate_point_svg attributes)
         point_name = points_settings[point_idx]["name"]
-        # v6: catalog fixed stars fall back to the generic FixedStar symbol.
-        point_glyph = points_settings[point_idx].get("glyph_id") or point_name
+        # v6: dynamic points fall back to their shared generic symbols.
+        point_glyph = points_settings[point_idx].get("glyph_id")
+        if not point_glyph:
+            point_details = (
+                celestial_points[point_idx]
+                if celestial_points is not None and point_idx < len(celestial_points)
+                else None
+            )
+            point_glyph = (
+                point_name
+                if point_details is not None and point_details.point_type == "House"
+                else resolve_glyph_id(point_name)
+            )
         kr_attrs = f'kr:node="ChartPoint" kr:slug="{point_name}" kr:horoscope="1"'
         if celestial_points is not None and point_idx < len(celestial_points):
             cp = celestial_points[point_idx]

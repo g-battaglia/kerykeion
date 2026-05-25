@@ -1742,9 +1742,6 @@ class AstrologicalSubjectFactory:
         should_calculate = partial(AstrologicalSubjectFactory._should_calculate, active_points=active_points)
 
         for derived_name, config in OPPOSITE_PAIRS.items():
-            if not should_calculate(derived_name):
-                continue
-
             primary_key = config["primary"].lower()
             if primary_key not in data:
                 continue
@@ -1771,7 +1768,8 @@ class AstrologicalSubjectFactory:
             point.retrograde = primary.retrograde if primary.retrograde is not None else False
 
             data[derived_name.lower()] = point
-            calculated_planets.append(derived_name)
+            if should_calculate(derived_name):
+                calculated_planets.append(derived_name)
 
     @staticmethod
     def _ensure_point_calculated(

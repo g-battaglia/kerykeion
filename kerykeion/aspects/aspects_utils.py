@@ -17,6 +17,7 @@ def get_aspect_from_two_points(
     aspects_settings: list[dict],
     point_one: Union[float, int],
     point_two: Union[float, int],
+    extra_orb: float = 0.0,
 ):
     """
     Utility function to calculate the aspects between two points.
@@ -25,16 +26,21 @@ def get_aspect_from_two_points(
         aspects_settings (list[dict]): List of aspect setting dictionaries.
         point_one (Union[float, int]): First point.
         point_two (Union[float, int]): Second point.
+        extra_orb (float): Additive orb adjustment in degrees applied to every
+            aspect's base orb (e.g. a luminary widening). Defaults to ``0.0``.
+            The effective orb is clamped to ``>= 0.0``.
 
     Returns:
-        dict: Dictionary containing the aspect details.
+        dict: Dictionary containing the aspect details. The ``orbit`` field
+        always reports the actual distance from exactness, not the tolerance
+        window — ``extra_orb`` only widens which aspects qualify.
     """
     distance = abs(difdeg2n(point_one, point_two))
     diff = abs(point_one - point_two)
 
     for aspect in aspects_settings:
         aspect_degree = aspect["degree"]  # type: ignore
-        aspect_orb = aspect["orb"]  # type: ignore
+        aspect_orb = max(0.0, aspect["orb"] + extra_orb)  # type: ignore
 
         if (aspect_degree - aspect_orb) <= distance <= (aspect_degree + aspect_orb):
             name = aspect["name"]  # type: ignore

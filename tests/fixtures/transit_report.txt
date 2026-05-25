@@ -24,7 +24,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 18                  |
+| Active Points Count | 14                  |
 +---------------------+---------------------+
 
 +Transit Subject — Birth Data--------------------+
@@ -49,7 +49,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2444582.659722      |
-| Active Points Count | 18                  |
+| Active Points Count | 14                  |
 +---------------------+---------------------+
 
 +Natal Subject Celestial Points---+----------+--------------+---------+------+---------------+
@@ -57,8 +57,6 @@ Sample Natal Subject — Transit 1980-12-08
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 | Ascendant             | Sco ♏️ | 5.82°    | +245.7251°/d | N/A     | -    | First House   |
 | Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House   |
-| Descendant            | Tau ♉️ | 5.82°    | +245.7251°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Aqu ♒️ | 19.91°   | +367.6409°/d | N/A     | -    | Fourth House  |
 | Sun                   | Can ♋️ | 28.54°   | +0.9550°/d   | +20.45° | -    | Ninth House   |
 | Moon                  | Can ♋️ | 21.21°   | +14.4025°/d  | +23.21° | -    | Ninth House   |
 | Mercury               | Leo ♌️ | 17.61°   | +1.6908°/d   | +16.88° | -    | Ninth House   |
@@ -70,9 +68,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Neptune               | Cap ♑️ | 12.76°   | -0.0258°/d   | -21.96° | R    | Third House   |
 | Pluto                 | Sco ♏️ | 14.97°   | -0.0025°/d   | -1.42°  | R    | First House   |
 | True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d   | -18.46° | R    | Third House   |
-| Mean Lilith           | Sco ♏️ | 28.99°   | +0.1119°/d   | -24.62° | -    | First House   |
 | Chiron                | Can ♋️ | 19.88°   | +0.1070°/d   | +15.79° | -    | Ninth House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0080°/d   | +18.46° | R    | Ninth House   |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 
 +Transit Subject Celestial Points-+----------+--------------+---------+------+---------------+
@@ -80,8 +76,6 @@ Sample Natal Subject — Transit 1980-12-08
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 | Ascendant             | Vir ♍️ | 7.47°    | +284.2972°/d | N/A     | -    | First House   |
 | Medium Coeli          | Gem ♊️ | 3.56°    | +343.5425°/d | N/A     | -    | Tenth House   |
-| Descendant            | Pis ♓️ | 7.47°    | +284.2972°/d | N/A     | -    | Seventh House |
-| Imum Coeli            | Sag ♐️ | 3.56°    | +343.5425°/d | N/A     | -    | Fourth House  |
 | Sun                   | Sag ♐️ | 17.24°   | +1.0164°/d   | -22.83° | -    | Fourth House  |
 | Moon                  | Cap ♑️ | 5.06°    | +12.6288°/d  | -20.27° | -    | Fourth House  |
 | Mercury               | Sag ♐️ | 5.09°    | +1.5319°/d   | -20.71° | -    | Fourth House  |
@@ -93,9 +87,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Neptune               | Sag ♐️ | 22.20°   | +0.0376°/d   | -21.91° | -    | Fourth House  |
 | Pluto                 | Lib ♎️ | 23.66°   | +0.0269°/d   | +6.46°  | -    | Second House  |
 | True North Lunar Node | Leo ♌️ | 12.16°   | -0.1140°/d   | +17.15° | R    | Twelfth House |
-| Mean Lilith           | Lib ♎️ | 27.66°   | +0.1120°/d   | -6.02°  | -    | Second House  |
 | Chiron                | Tau ♉️ | 14.36°   | -0.0403°/d   | +14.10° | R    | Ninth House   |
-| True South Lunar Node | Aqu ♒️ | 12.16°   | +0.1140°/d   | -17.15° | R    | Sixth House   |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
 
 +Natal Subject Houses (Placidus)------+-------------------+
@@ -143,20 +135,20 @@ Sample Natal Subject — Transit 1980-12-08
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 3.5   | 17.0%      |
-| Earth 🌍 | 5.0   | 24.3%      |
-| Air 💨   | 2.0   | 9.7%       |
-| Water 💧 | 10.1  | 49.0%      |
-| Total    | 20.6  | 100%       |
+| Fire 🔥  | 3.0   | 18.1%      |
+| Earth 🌍 | 3.5   | 21.1%      |
+| Air 💨   | 0.5   | 3.0%       |
+| Water 💧 | 9.6   | 57.8%      |
+| Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 9.1   | 44.2%      |
-| Fixed    | 11.5  | 55.8%      |
+| Cardinal | 9.1   | 54.8%      |
+| Fixed    | 7.5   | 45.2%      |
 | Mutable  | 0.0   | 0.0%       |
-| Total    | 20.6  | 100%       |
+| Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Sample Natal Subject points in 1980 Transit houses----------------+---------------------+------+--------+
@@ -173,11 +165,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Sample Natal Subject – Neptune               | 3 (Third_House)   | 5 (Fifth_House)     | Cap  | 12.76° |
 | Sample Natal Subject – Pluto                 | 1 (First_House)   | 3 (Third_House)     | Sco  | 14.97° |
 | Sample Natal Subject – True North Lunar Node | 3 (Third_House)   | 5 (Fifth_House)     | Aqu  | 7.26°  |
-| Sample Natal Subject – Mean Lilith           | 1 (First_House)   | 3 (Third_House)     | Sco  | 28.99° |
 | Sample Natal Subject – Chiron                | 9 (Ninth_House)   | 11 (Eleventh_House) | Can  | 19.88° |
-| Sample Natal Subject – Descendant            | 7 (Seventh_House) | 9 (Ninth_House)     | Tau  | 5.82°  |
-| Sample Natal Subject – Imum Coeli            | 4 (Fourth_House)  | 6 (Sixth_House)     | Aqu  | 19.91° |
-| Sample Natal Subject – True South Lunar Node | 9 (Ninth_House)   | 11 (Eleventh_House) | Leo  | 7.26°  |
 | Sample Natal Subject – Ascendant             | 1 (First_House)   | 3 (Third_House)     | Sco  | 5.82°  |
 | Sample Natal Subject – Medium Coeli          | 10 (Tenth_House)  | 12 (Twelfth_House)  | Leo  | 19.91° |
 +----------------------------------------------+-------------------+---------------------+------+--------+
@@ -196,11 +184,7 @@ Sample Natal Subject — Transit 1980-12-08
 | 1980 Transit – Neptune               | 4 (Fourth_House)   | 2 (Second_House)    | Sag  | 22.20° |
 | 1980 Transit – Pluto                 | 2 (Second_House)   | 12 (Twelfth_House)  | Lib  | 23.66° |
 | 1980 Transit – True North Lunar Node | 12 (Twelfth_House) | 9 (Ninth_House)     | Leo  | 12.16° |
-| 1980 Transit – Mean Lilith           | 2 (Second_House)   | 12 (Twelfth_House)  | Lib  | 27.66° |
 | 1980 Transit – Chiron                | 9 (Ninth_House)    | 7 (Seventh_House)   | Tau  | 14.36° |
-| 1980 Transit – Descendant            | 7 (Seventh_House)  | 4 (Fourth_House)    | Pis  | 7.47°  |
-| 1980 Transit – Imum Coeli            | 4 (Fourth_House)   | 1 (First_House)     | Sag  | 3.56°  |
-| 1980 Transit – True South Lunar Node | 6 (Sixth_House)    | 3 (Third_House)     | Aqu  | 12.16° |
 | 1980 Transit – Ascendant             | 1 (First_House)    | 10 (Tenth_House)    | Vir  | 7.47°  |
 | 1980 Transit – Medium Coeli          | 10 (Tenth_House)   | 7 (Seventh_House)   | Gem  | 3.56°  |
 +--------------------------------------+--------------------+---------------------+------+--------+
@@ -244,139 +228,59 @@ Sample Natal Subject — Transit 1980-12-08
 +----+-----------------------+
 | 1  | Ascendant             |
 | 2  | Chiron                |
-| 3  | Descendant            |
-| 4  | Imum_Coeli            |
-| 5  | Jupiter               |
-| 6  | Mars                  |
-| 7  | Mean_Lilith           |
-| 8  | Medium_Coeli          |
-| 9  | Mercury               |
-| 10 | Moon                  |
-| 11 | Neptune               |
-| 12 | Pluto                 |
-| 13 | Saturn                |
-| 14 | Sun                   |
-| 15 | True_North_Lunar_Node |
-| 16 | True_South_Lunar_Node |
-| 17 | Uranus                |
-| 18 | Venus                 |
+| 3  | Jupiter               |
+| 4  | Mars                  |
+| 5  | Medium_Coeli          |
+| 6  | Mercury               |
+| 7  | Moon                  |
+| 8  | Neptune               |
+| 9  | Pluto                 |
+| 10 | Saturn                |
+| 11 | Sun                   |
+| 12 | True_North_Lunar_Node |
+| 13 | Uranus                |
+| 14 | Venus                 |
 +----+-----------------------+
 
 +-------------+---------+
 | Aspect      | Orb (°) |
 +-------------+---------+
-| conjunction | 10.0    |
-| opposition  | 10.0    |
-| trine       | 8.0     |
-| sextile     | 6.0     |
-| square      | 5.0     |
-| quintile    | 1.0     |
+| conjunction | 3.0     |
+| opposition  | 3.0     |
+| trine       | 3.0     |
+| sextile     | 3.0     |
+| square      | 3.0     |
 +-------------+---------+
 
 +Aspects----------------+----------------------+---------------+-----------------------+--------------+-------+--------------+
 | Point 1               | Owner 1              | Aspect        | Point 2               | Owner 2      | Orb   | Movement     |
 +-----------------------+----------------------+---------------+-----------------------+--------------+-------+--------------+
-| Sun                   | Sample Natal Subject | trine △       | Mercury               | 1980 Transit | 6.55° | Separating ← |
 | Sun                   | Sample Natal Subject | trine △       | Uranus                | 1980 Transit | 1.39° | Applying →   |
-| Sun                   | Sample Natal Subject | square □      | Pluto                 | 1980 Transit | 4.88° | Applying →   |
-| Sun                   | Sample Natal Subject | sextile ⚹     | Medium Coeli          | 1980 Transit | 5.01° | Separating ← |
-| Sun                   | Sample Natal Subject | trine △       | Imum Coeli            | 1980 Transit | 5.01° | Separating ← |
-| Sun                   | Sample Natal Subject | square □      | Mean Lilith           | 1980 Transit | 0.88° | Applying →   |
 | Moon                  | Sample Natal Subject | trine △       | Venus                 | 1980 Transit | 2.53° | Applying →   |
-| Moon                  | Sample Natal Subject | opposition ☍  | Mars                  | 1980 Transit | 8.15° | Applying →   |
-| Moon                  | Sample Natal Subject | trine △       | Uranus                | 1980 Transit | 5.94° | Separating ← |
 | Moon                  | Sample Natal Subject | square □      | Pluto                 | 1980 Transit | 2.45° | Separating ← |
 | Mercury               | Sample Natal Subject | trine △       | Sun                   | 1980 Transit | 0.37° | Applying →   |
 | Mercury               | Sample Natal Subject | square □      | Venus                 | 1980 Transit | 1.07° | Separating ← |
-| Mercury               | Sample Natal Subject | trine △       | Neptune               | 1980 Transit | 4.59° | Separating ← |
-| Mercury               | Sample Natal Subject | conjunction ☌ | True North Lunar Node | 1980 Transit | 5.45° | Separating ← |
-| Mercury               | Sample Natal Subject | square □      | Chiron                | 1980 Transit | 3.25° | Separating ← |
-| Mercury               | Sample Natal Subject | opposition ☍  | True South Lunar Node | 1980 Transit | 5.45° | Applying →   |
-| Venus                 | Sample Natal Subject | opposition ☍  | Moon                  | 1980 Transit | 3.35° | Separating ← |
-| Venus                 | Sample Natal Subject | opposition ☍  | Neptune               | 1980 Transit | 9.51° | Applying →   |
-| Venus                 | Sample Natal Subject | sextile ⚹     | Ascendant             | 1980 Transit | 5.76° | Separating ← |
-| Venus                 | Sample Natal Subject | trine △       | Descendant            | 1980 Transit | 5.76° | Separating ← |
-| Venus                 | Sample Natal Subject | trine △       | Mean Lilith           | 1980 Transit | 4.05° | Applying →   |
 | Mars                  | Sample Natal Subject | trine △       | Moon                  | 1980 Transit | 0.91° | Applying →   |
-| Mars                  | Sample Natal Subject | trine △       | Mars                  | 1980 Transit | 7.09° | Separating ← |
-| Mars                  | Sample Natal Subject | conjunction ☌ | Chiron                | 1980 Transit | 8.40° | Applying →   |
 | Mars                  | Sample Natal Subject | trine △       | Ascendant             | 1980 Transit | 1.50° | Separating ← |
-| Mars                  | Sample Natal Subject | sextile ⚹     | Descendant            | 1980 Transit | 1.50° | Separating ← |
-| Mars                  | Sample Natal Subject | opposition ☍  | Mean Lilith           | 1980 Transit | 8.31° | Applying →   |
-| Jupiter               | Sample Natal Subject | trine △       | Venus                 | 1980 Transit | 5.24° | Applying →   |
-| Jupiter               | Sample Natal Subject | trine △       | Uranus                | 1980 Transit | 3.24° | Separating ← |
 | Jupiter               | Sample Natal Subject | square □      | Pluto                 | 1980 Transit | 0.25° | Applying →   |
-| Jupiter               | Sample Natal Subject | square □      | Mean Lilith           | 1980 Transit | 3.75° | Separating ← |
 | Saturn                | Sample Natal Subject | sextile ⚹     | Venus                 | 1980 Transit | 2.84° | Applying →   |
-| Saturn                | Sample Natal Subject | conjunction ☌ | Mars                  | 1980 Transit | 8.46° | Applying →   |
-| Saturn                | Sample Natal Subject | sextile ⚹     | Uranus                | 1980 Transit | 5.64° | Separating ← |
 | Saturn                | Sample Natal Subject | square □      | Pluto                 | 1980 Transit | 2.15° | Separating ← |
-| Saturn                | Sample Natal Subject | trine △       | Chiron                | 1980 Transit | 7.15° | Separating ← |
 | Uranus                | Sample Natal Subject | conjunction ☌ | Moon                  | 1980 Transit | 1.68° | Applying →   |
-| Uranus                | Sample Natal Subject | conjunction ☌ | Mars                  | 1980 Transit | 6.32° | Separating ← |
 | Uranus                | Sample Natal Subject | square □      | Jupiter               | 1980 Transit | 0.42° | Separating ← |
 | Uranus                | Sample Natal Subject | square □      | Saturn                | 1980 Transit | 1.61° | Separating ← |
-| Uranus                | Sample Natal Subject | trine △       | Chiron                | 1980 Transit | 7.62° | Applying →   |
 | Uranus                | Sample Natal Subject | trine △       | Ascendant             | 1980 Transit | 0.73° | Separating ← |
-| Uranus                | Sample Natal Subject | sextile ⚹     | Descendant            | 1980 Transit | 0.73° | Separating ← |
-| Neptune               | Sample Natal Subject | conjunction ☌ | Moon                  | 1980 Transit | 7.70° | Applying →   |
-| Neptune               | Sample Natal Subject | sextile ⚹     | Venus                 | 1980 Transit | 5.91° | Separating ← |
 | Neptune               | Sample Natal Subject | conjunction ☌ | Mars                  | 1980 Transit | 0.30° | Separating ← |
-| Neptune               | Sample Natal Subject | square □      | Saturn                | 1980 Transit | 4.42° | Applying →   |
 | Neptune               | Sample Natal Subject | trine △       | Chiron                | 1980 Transit | 1.60° | Applying →   |
-| Neptune               | Sample Natal Subject | trine △       | Ascendant             | 1980 Transit | 5.29° | Applying →   |
-| Neptune               | Sample Natal Subject | sextile ⚹     | Descendant            | 1980 Transit | 5.29° | Applying →   |
-| Pluto                 | Sample Natal Subject | conjunction ☌ | Venus                 | 1980 Transit | 3.70° | Separating ← |
 | Pluto                 | Sample Natal Subject | sextile ⚹     | Mars                  | 1980 Transit | 1.92° | Applying →   |
 | Pluto                 | Sample Natal Subject | square □      | True North Lunar Node | 1980 Transit | 2.81° | Separating ← |
 | Pluto                 | Sample Natal Subject | opposition ☍  | Chiron                | 1980 Transit | 0.61° | Separating ← |
-| Pluto                 | Sample Natal Subject | trine △       | Descendant            | 1980 Transit | 7.50° | Applying →   |
-| Pluto                 | Sample Natal Subject | square □      | True South Lunar Node | 1980 Transit | 2.81° | Applying →   |
 | True North Lunar Node | Sample Natal Subject | sextile ⚹     | Mercury               | 1980 Transit | 2.18° | Applying →   |
 | True North Lunar Node | Sample Natal Subject | trine △       | Jupiter               | 1980 Transit | 0.10° | Applying →   |
 | True North Lunar Node | Sample Natal Subject | trine △       | Saturn                | 1980 Transit | 1.08° | Separating ← |
-| True North Lunar Node | Sample Natal Subject | opposition ☍  | True North Lunar Node | 1980 Transit | 4.90° | Applying →   |
-| True North Lunar Node | Sample Natal Subject | trine △       | Medium Coeli          | 1980 Transit | 3.71° | Applying →   |
-| True North Lunar Node | Sample Natal Subject | sextile ⚹     | Imum Coeli            | 1980 Transit | 3.71° | Applying →   |
-| True North Lunar Node | Sample Natal Subject | conjunction ☌ | True South Lunar Node | 1980 Transit | 4.90° | Separating ← |
 | Chiron                | Sample Natal Subject | trine △       | Venus                 | 1980 Transit | 1.21° | Applying →   |
-| Chiron                | Sample Natal Subject | opposition ☍  | Mars                  | 1980 Transit | 6.82° | Applying →   |
-| Chiron                | Sample Natal Subject | trine △       | Uranus                | 1980 Transit | 7.27° | Separating ← |
-| Chiron                | Sample Natal Subject | square □      | Pluto                 | 1980 Transit | 3.78° | Separating ← |
-| Chiron                | Sample Natal Subject | sextile ⚹     | Chiron                | 1980 Transit | 5.52° | Separating ← |
 | Ascendant             | Sample Natal Subject | sextile ⚹     | Moon                  | 1980 Transit | 0.76° | Applying →   |
-| Ascendant             | Sample Natal Subject | opposition ☍  | Chiron                | 1980 Transit | 8.54° | Applying →   |
 | Ascendant             | Sample Natal Subject | sextile ⚹     | Ascendant             | 1980 Transit | 1.65° | Static =     |
-| Ascendant             | Sample Natal Subject | trine △       | Descendant            | 1980 Transit | 1.65° | Static =     |
-| Ascendant             | Sample Natal Subject | conjunction ☌ | Mean Lilith           | 1980 Transit | 8.16° | Applying →   |
 | Medium Coeli          | Sample Natal Subject | trine △       | Sun                   | 1980 Transit | 2.68° | Applying →   |
 | Medium Coeli          | Sample Natal Subject | square □      | Venus                 | 1980 Transit | 1.24° | Applying →   |
 | Medium Coeli          | Sample Natal Subject | trine △       | Neptune               | 1980 Transit | 2.28° | Separating ← |
-| Medium Coeli          | Sample Natal Subject | sextile ⚹     | Pluto                 | 1980 Transit | 3.75° | Separating ← |
-| Medium Coeli          | Sample Natal Subject | conjunction ☌ | True North Lunar Node | 1980 Transit | 7.75° | Separating ← |
-| Medium Coeli          | Sample Natal Subject | opposition ☍  | True South Lunar Node | 1980 Transit | 7.75° | Applying →   |
-| Descendant            | Sample Natal Subject | trine △       | Moon                  | 1980 Transit | 0.76° | Applying →   |
-| Descendant            | Sample Natal Subject | trine △       | Mars                  | 1980 Transit | 7.24° | Separating ← |
-| Descendant            | Sample Natal Subject | conjunction ☌ | Chiron                | 1980 Transit | 8.54° | Applying →   |
-| Descendant            | Sample Natal Subject | trine △       | Ascendant             | 1980 Transit | 1.65° | Static =     |
-| Descendant            | Sample Natal Subject | sextile ⚹     | Descendant            | 1980 Transit | 1.65° | Static =     |
-| Descendant            | Sample Natal Subject | opposition ☍  | Mean Lilith           | 1980 Transit | 8.16° | Applying →   |
-| Imum Coeli            | Sample Natal Subject | sextile ⚹     | Sun                   | 1980 Transit | 2.68° | Applying →   |
-| Imum Coeli            | Sample Natal Subject | square □      | Venus                 | 1980 Transit | 1.24° | Applying →   |
-| Imum Coeli            | Sample Natal Subject | sextile ⚹     | Neptune               | 1980 Transit | 2.28° | Separating ← |
-| Imum Coeli            | Sample Natal Subject | trine △       | Pluto                 | 1980 Transit | 3.75° | Separating ← |
-| Imum Coeli            | Sample Natal Subject | opposition ☍  | True North Lunar Node | 1980 Transit | 7.75° | Separating ← |
-| Imum Coeli            | Sample Natal Subject | trine △       | Mean Lilith           | 1980 Transit | 7.74° | Separating ← |
-| Imum Coeli            | Sample Natal Subject | conjunction ☌ | True South Lunar Node | 1980 Transit | 7.75° | Applying →   |
-| Mean Lilith           | Sample Natal Subject | conjunction ☌ | Mercury               | 1980 Transit | 6.10° | Separating ← |
-| Mean Lilith           | Sample Natal Subject | conjunction ☌ | Uranus                | 1980 Transit | 1.84° | Applying →   |
-| Mean Lilith           | Sample Natal Subject | opposition ☍  | Medium Coeli          | 1980 Transit | 4.57° | Separating ← |
-| Mean Lilith           | Sample Natal Subject | conjunction ☌ | Imum Coeli            | 1980 Transit | 4.57° | Separating ← |
-| True South Lunar Node | Sample Natal Subject | trine △       | Mercury               | 1980 Transit | 2.18° | Applying →   |
-| True South Lunar Node | Sample Natal Subject | sextile ⚹     | Jupiter               | 1980 Transit | 0.10° | Applying →   |
-| True South Lunar Node | Sample Natal Subject | sextile ⚹     | Saturn                | 1980 Transit | 1.08° | Separating ← |
-| True South Lunar Node | Sample Natal Subject | conjunction ☌ | True North Lunar Node | 1980 Transit | 4.90° | Applying →   |
-| True South Lunar Node | Sample Natal Subject | sextile ⚹     | Medium Coeli          | 1980 Transit | 3.71° | Applying →   |
-| True South Lunar Node | Sample Natal Subject | trine △       | Imum Coeli            | 1980 Transit | 3.71° | Applying →   |
-| True South Lunar Node | Sample Natal Subject | opposition ☍  | True South Lunar Node | 1980 Transit | 4.90° | Separating ← |
 +-----------------------+----------------------+---------------+-----------------------+--------------+-------+--------------+
