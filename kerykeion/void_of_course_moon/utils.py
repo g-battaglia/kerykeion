@@ -150,6 +150,10 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
         body_id = _BODY_ID[planet]
         body_lon, body_speed = _lon_speed(jd0, body_id, iflag)
         relative_speed = moon_speed - body_speed
+        # Mercury can rarely outpace the Moon in ecliptic longitude near
+        # greatest elongation; when that happens the linear seed assumption
+        # breaks down.  In practice this never flips a VOC result because
+        # Mercury's overtake lasts only hours within a ~2.5-day sign transit.
         if relative_speed <= 0:
             continue
         separation0 = difdeg2n(moon_lon, body_lon)
@@ -162,7 +166,10 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
                     refined = _aspect_perfection_jd(guess_jd, body_id, target, iflag)
                     if refined is None:
                         continue
-                    # In-sign window: loose at entry (~86 s, absorbs entry_jd jitter), tight at ingress (drops only the cusp instant).
+                    # In-sign window.  entry_jd tolerance is wide (1e-3 JD ≈ 86 s)
+                    # because the backward Newton seed overshoots more; ingress_jd
+                    # tolerance is tight (1e-6 JD ≈ 0.09 s) because the forward
+                    # seed converges closely — we only need to exclude the cusp instant.
                     if entry_jd - 1e-3 <= refined < ingress_jd - 1e-6:
                         events.append(AspectEvent(planet, aspect_name, degrees, julian_day_to_utc(refined)))
 

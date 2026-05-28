@@ -139,6 +139,10 @@ def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
 
     Returns:
         ``(is_polar_day, is_polar_night)``.
+
+    Note:
+        This function mutates global ephemeris state (``set_ephe_path``,
+        ``calc_ut``). The caller must hold :data:`EPHEMERIS_LOCK`.
     """
     iflag = configure_ephemeris_path()
     # Equatorial coordinates: [right_ascension, declination, distance, ...].
