@@ -53,6 +53,13 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
     and the polarity/hemisphere/quadrant categories are not part of this
     technique and stay empty.
 
+    Note:
+        The technique is traditionally **tropical**. For a sidereal subject the
+        dignities are tallied on the sidereal signs the points fall in: this is
+        internally consistent and deterministic, but departs from classical
+        (tropical) practice, so a sidereal Almuten should be read with that in
+        mind.
+
     Example:
         >>> from kerykeion import AstrologicalSubjectFactory, DominantsFactory
         >>> subject = AstrologicalSubjectFactory.from_birth_data(

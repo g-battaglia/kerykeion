@@ -218,7 +218,7 @@ class ModernDominantStrategy(BaseDominantStrategy):
         aspects_model = AspectsFactory.single_chart_aspects(
             subject,
             active_points=planet_names + list(_ANGLE_NAMES),
-            active_aspects=DOMINANT_ASPECTS,  # type: ignore[arg-type]
+            active_aspects=DOMINANT_ASPECTS,
         )
 
         for aspect in aspects_model.aspects:

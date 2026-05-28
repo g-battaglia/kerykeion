@@ -26,6 +26,7 @@ from __future__ import annotations
 from typing import Dict, List, Tuple
 
 from kerykeion.schemas.kr_literals import Element, Quality, Sign
+from kerykeion.schemas.kr_models import ActiveAspect
 
 # =============================================================================
 # ZODIAC: SIGN INDEX -> ELEMENT / QUALITY (Title-case)
@@ -199,7 +200,7 @@ ASPECT_STRENGTH: Dict[int, float] = {
 #: for the modern method. Orbs are deliberately generous because we are
 #: measuring overall *activity*, not drawing a chart. Each orb is also the
 #: denominator of the orb-exactitude term (tighter aspect ⇒ larger weight).
-DOMINANT_ASPECTS: List[Dict[str, object]] = [
+DOMINANT_ASPECTS: List[ActiveAspect] = [
     {"name": "conjunction", "orb": 10.0},
     {"name": "opposition", "orb": 10.0},
     {"name": "trine", "orb": 8.0},

@@ -15,6 +15,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
@@ -27,6 +28,8 @@ from kerykeion.ephemeris_backend import EPHEMERIS_LOCK, swe
 from kerykeion.moon_phase_details.utils import configure_ephemeris_path
 from kerykeion.schemas.kr_literals import SIGN_CODES, Element, Quality, Sign
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
+
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # SMALL VALUE OBJECTS
@@ -365,8 +368,13 @@ def prenatal_syzygy(subject: AstrologicalSubjectModel) -> Optional[SyzygyInfo]:
 
             syzygy_jd = (low + high) / 2.0
             sun_lon, moon_lon = _sun_moon_longitudes(syzygy_jd)
-    except (RuntimeError, AttributeError, TypeError, IndexError):
-        # Ephemeris gap / backend hiccup: the Almuten simply drops this place.
+    except Exception as exc:
+        # Any ephemeris failure (e.g. an out-of-range date raising the backend's
+        # range error — which is NOT a RuntimeError) is non-fatal here: the
+        # prenatal syzygy is an optional hylegiacal place, so we log and let the
+        # Almuten drop it rather than propagate. Deliberately backend-agnostic
+        # (libephemeris and swisseph raise different exception types).
+        logger.debug("Prenatal syzygy skipped (ephemeris unavailable): %s", exc)
         return None
 
     is_diurnal = bool(getattr(subject, "is_diurnal", True))

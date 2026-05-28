@@ -318,14 +318,37 @@ def test_syzygy_gap_degrades_gracefully(john_lennon, monkeypatch):
     """An ephemeris failure drops the syzygy place without crashing the Almuten."""
     import kerykeion.dominants.utils as utils_module
 
+    # Use a non-RuntimeError, non-builtin exception to mirror the backend's real
+    # out-of-range error (libephemeris raises EphemerisRangeError — a plain
+    # Exception subclass, not a RuntimeError): the catch must be backend-agnostic.
+    class _SimulatedRangeError(Exception):
+        pass
+
     def _boom(_julian_day):
-        raise RuntimeError("simulated ephemeris gap")
+        raise _SimulatedRangeError("simulated out-of-range date")
 
     monkeypatch.setattr(utils_module, "_sun_moon_longitudes", _boom)
     assert prenatal_syzygy(john_lennon) is None
 
     # The Almuten still resolves over the remaining four places.
     result = DominantsFactory.from_subject(john_lennon, strategy="almuten_figuris")
+    assert result.dominant_planet in _CLASSICAL
+
+
+def test_prenatal_syzygy_full_moon(yoko_ono):
+    """A waning chart resolves to a Full-Moon prenatal syzygy (the other branch).
+
+    Yoko Ono is born after a Full Moon and at night, so the syzygy degree is
+    taken from the Moon (the luminary above the horizon at birth). This anchors
+    the 'Full' branch and the nocturnal sect choice, which the New-Moon Lennon
+    fixture does not exercise.
+    """
+    syzygy = prenatal_syzygy(yoko_ono)
+    assert syzygy is not None
+    assert syzygy.kind == "Full"
+    assert 0.0 <= syzygy.degree < 360.0
+    # The Almuten still resolves to a valid classical planet using the Full place.
+    result = DominantsFactory.from_subject(yoko_ono, strategy="almuten_figuris")
     assert result.dominant_planet in _CLASSICAL
 
 

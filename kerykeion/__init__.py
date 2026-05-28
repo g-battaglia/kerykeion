@@ -124,6 +124,7 @@ from .schemas.kr_models import (
     DominantScoreModel,
     DominantBreakdownItemModel,
 )
+from .schemas.kr_literals import DominantMethod
 
 # =============================================================================
 # SETTINGS AND UTILITIES
@@ -198,6 +199,7 @@ __all__ = [
     "DominantsModel",
     "DominantScoreModel",
     "DominantBreakdownItemModel",
+    "DominantMethod",
     # Settings and Utilities
     "KerykeionSettingsModel",
     "to_context",
