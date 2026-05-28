@@ -363,7 +363,9 @@ class SunTimesModel(SubscriptableBaseModel):
     or polar night the Sun may not provide a complete sunrise -> sunset pair, so
     ``solar_noon`` and ``day_length`` are ``None`` and the matching
     ``is_polar_day`` / ``is_polar_night`` flag is set. On transition dates,
-    ``sunrise`` or ``sunset`` can be present independently.
+    ``sunrise`` or ``sunset`` can be present independently, and a paired
+    ``sunset`` may fall on the following civil date (so ``day_length`` can
+    exceed 24 hours) when daylight spans local midnight at high latitudes.
 
     Attributes:
         date: Civil date (``YYYY-MM-DD``) in the requested timezone.

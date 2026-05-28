@@ -1,5 +1,42 @@
 # Changelog
 
+## 6.0.0a48
+
+_2026-05-28_
+
+New **timing factories** built directly on the ephemeris backend
+(`swe.rise_trans` / `swe.calc_ut`) — no full `AstrologicalSubject` is
+constructed, so they are lightweight and backend-neutral (libephemeris or
+swisseph).
+
+### Added
+
+- **`SunTimesFactory`** (`kerykeion/sun_times/`). Sunrise / sunset / solar-noon
+  / day-length for a civil date at a location, with apparent upper-limb
+  refraction and polar day/night detection. Backed by the new `SunTimesModel`.
+- **`PlanetaryHoursFactory`** (`kerykeion/planetary_hours/`). The 24 unequal
+  Chaldean planetary hours (twelve day + twelve night), seeded by the weekday's
+  day-ruler and cycling the descending Chaldean order; moments before sunrise
+  resolve to the previous planetary day. Backed by `PlanetaryHourModel` /
+  `PlanetaryHoursModel`.
+- **`VoidOfCourseMoonFactory`** (`kerykeion/void_of_course_moon/`). The
+  classical void-of-course Moon: last exact Ptolemaic aspect to a traditional
+  planet before sign ingress, via analytic seeding + Newton refinement on real
+  longitudes (no brute-force scan). Geocentric; supports tropical **and**
+  sidereal. Backed by `VoidOfCourseAspectModel` / `VoidOfCourseMoonModel`.
+- New literals `ClassicalPlanet`, `VocTargetPlanet`, `VocAspectName` and the
+  five models above, all re-exported from the package root.
+
+### Changed
+
+- **Thread-safe ephemeris access.** A process-wide `EPHEMERIS_LOCK` (re-entrant)
+  now guards the mutable Swiss Ephemeris state (ephemeris path, sidereal mode,
+  reset/close) for the new factories and for `AstrologicalSubjectFactory`'s
+  `ephemeris_context`, so concurrent tropical and sidereal calculations no
+  longer corrupt one another.
+
+---
+
 ## 6.0.0a47
 
 _2026-05-25_

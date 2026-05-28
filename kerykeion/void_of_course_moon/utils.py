@@ -103,7 +103,12 @@ def _moon_crossing_jd(jd0: float, target_longitude: float, guess_days: float, if
 
 
 def _aspect_perfection_jd(jd_guess: float, body_id: int, signed_target: float, iflag: int) -> Optional[float]:
-    """Newton-refine the Julian Day where Moon-body separation equals ``signed_target``."""
+    """Newton-refine the Julian Day where Moon-body separation equals ``signed_target``.
+
+    Returns ``None`` if the iteration does not reach ``signed_target`` within
+    ``_ANGLE_EPSILON`` after ``_MAX_ITERATIONS`` (or the relative speed degenerates),
+    so a non-converged iterate is never accepted as an exact aspect instant.
+    """
     jd = jd_guess
     for _ in range(_MAX_ITERATIONS):
         moon_lon, moon_speed = _lon_speed(jd, swe.MOON, iflag)
@@ -114,9 +119,9 @@ def _aspect_perfection_jd(jd_guess: float, body_id: int, signed_target: float, i
         if abs(relative_speed) < 1e-10:
             return None
         if abs(error) < _ANGLE_EPSILON:
-            break
+            return jd
         jd -= error / relative_speed
-    return jd
+    return None
 
 
 def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResult:
@@ -150,10 +155,10 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
         body_id = _BODY_ID[planet]
         body_lon, body_speed = _lon_speed(jd0, body_id, iflag)
         relative_speed = moon_speed - body_speed
-        # Mercury can rarely outpace the Moon in ecliptic longitude near
-        # greatest elongation; when that happens the linear seed assumption
-        # breaks down.  In practice this never flips a VOC result because
-        # Mercury's overtake lasts only hours within a ~2.5-day sign transit.
+        # Defensive guard only: with real ephemerides the Moon (>= ~11.8 deg/day,
+        # even at apogee) always outpaces every VOC body (Mercury peaks near
+        # ~2 deg/day geocentrically), so this branch is not expected to trigger.
+        # It protects the linear seed below from a non-positive relative speed.
         if relative_speed <= 0:
             continue
         separation0 = difdeg2n(moon_lon, body_lon)

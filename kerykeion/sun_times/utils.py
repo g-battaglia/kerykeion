@@ -194,6 +194,11 @@ def compute_sun_events(
             sunset_jd = None
 
         if sunrise_jd is not None and sunset_jd is not None and sunset_jd <= sunrise_jd:
+            # The only set inside the civil day precedes sunrise (the Sun was still
+            # up at local midnight): pair sunrise with its actual following sunset.
+            # This paired sunset is deliberately NOT re-bounded to the civil day, so
+            # on high-latitude transition days it can fall on the next civil date and
+            # make day_length exceed 24h — the correct continuous daylight span here.
             _, paired_sunset_jd = compute_sun_rise_set_swe(sunrise_jd + 1e-6, latitude, longitude)
             sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
 
