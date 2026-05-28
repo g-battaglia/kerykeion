@@ -12,6 +12,7 @@ from kerykeion.aspects.aspects_utils import difdeg2n
 from kerykeion.ephemeris_backend import swe
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES
+from kerykeion.schemas.kr_models import VoidOfCourseAspectModel
 from kerykeion.utilities import datetime_to_julian
 from kerykeion.void_of_course_moon.utils import _BODY_ID
 
@@ -89,6 +90,31 @@ def test_sidereal_shifts_sign():
 def test_sidereal_requires_mode():
     with pytest.raises(KerykeionException):
         VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 9, 0, tz_str="Europe/Rome", zodiac_type="Sidereal")
+
+
+def test_sidereal_user_requires_custom_parameters():
+    with pytest.raises(KerykeionException):
+        VoidOfCourseMoonFactory.from_datetime(
+            2026, 6, 1, 9, 0, tz_str="Europe/Rome", zodiac_type="Sidereal", sidereal_mode="USER"
+        )
+
+
+def test_late_aspect_near_ingress_is_not_dropped():
+    voc = VoidOfCourseMoonFactory.from_datetime(2020, 2, 1, 12, 0, tz_str="UTC")
+    assert voc.last_aspect is not None
+    assert voc.last_aspect.planet == "Mercury"
+    assert voc.last_aspect.aspect == "square"
+    expected = datetime(2020, 2, 3, 11, 27, tzinfo=timezone.utc)
+    assert abs((voc.last_aspect.exact_time - expected).total_seconds()) < 120
+    assert voc.void_start == voc.last_aspect.exact_time
+
+
+def test_voc_aspect_model_rejects_out_of_domain_values():
+    exact_time = datetime(2026, 5, 28, tzinfo=timezone.utc)
+    with pytest.raises(ValueError):
+        VoidOfCourseAspectModel(planet="Moon", aspect="square", aspect_degrees=90.0, exact_time=exact_time)
+    with pytest.raises(ValueError):
+        VoidOfCourseAspectModel(planet="Mercury", aspect="square", aspect_degrees=60.0, exact_time=exact_time)
 
 
 def test_invalid_timezone_raises():

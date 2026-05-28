@@ -25,14 +25,14 @@ from typing import Optional
 
 from kerykeion.aspects.aspects_utils import difdeg2n
 from kerykeion.ephemeris_backend import swe
-from kerykeion.schemas.kr_literals import ClassicalPlanet
+from kerykeion.schemas.kr_literals import VocAspectName, VocTargetPlanet
 from kerykeion.utilities import datetime_to_julian, julian_to_datetime
 
 # Traditional aspecting bodies (the Moon itself is excluded).
-VOC_BODIES: tuple[ClassicalPlanet, ...] = ("Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn")
+VOC_BODIES: tuple[VocTargetPlanet, ...] = ("Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn")
 
 # The five Ptolemaic (major) aspects considered for perfection: (name, degrees).
-PTOLEMAIC_ASPECTS: tuple[tuple[str, float], ...] = (
+PTOLEMAIC_ASPECTS: tuple[tuple[VocAspectName, float], ...] = (
     ("conjunction", 0.0),
     ("sextile", 60.0),
     ("square", 90.0),
@@ -63,8 +63,8 @@ _MEAN_LUNAR_SPEED = 13.176
 class AspectEvent:
     """An exact aspect the Moon perfects to another body, with its UTC moment."""
 
-    planet: ClassicalPlanet
-    aspect: str
+    planet: VocTargetPlanet
+    aspect: VocAspectName
     degrees: float
     exact_time: datetime
 
@@ -107,7 +107,7 @@ def _moon_crossing_jd(jd0: float, target_longitude: float, guess_days: float, if
 
 
 def _aspect_perfection_jd(jd_guess: float, body_id: int, signed_target: float, iflag: int) -> Optional[float]:
-    """Newton-refine the Julian Day where Moon−body separation equals ``signed_target``."""
+    """Newton-refine the Julian Day where Moon-body separation equals ``signed_target``."""
     jd = jd_guess
     for _ in range(_MAX_ITERATIONS):
         moon_lon, moon_speed = _lon_speed(jd, swe.MOON, iflag)
@@ -163,8 +163,6 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
                 delta = target - separation0
                 for wrap in (-1, 0, 1):
                     guess_jd = jd0 + (delta + 360.0 * wrap) / relative_speed
-                    if not (entry_jd - 0.02 <= guess_jd <= ingress_jd + 0.02):
-                        continue
                     refined = _aspect_perfection_jd(guess_jd, body_id, target, iflag)
                     if refined is None:
                         continue

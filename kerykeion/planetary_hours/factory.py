@@ -13,8 +13,7 @@ from kerykeion.schemas.kr_models import PlanetaryHoursModel
 from kerykeion.sun_times.utils import compute_sun_events, localize_datetime, resolve_timezone
 
 _POLAR_MESSAGE = (
-    "Planetary hours are undefined when the Sun does not rise and set "
-    "(polar day/night) at this location and date."
+    "Planetary hours are undefined when the Sun does not rise and set (polar day/night) at this location and date."
 )
 
 
@@ -66,7 +65,7 @@ class PlanetaryHoursFactory:
         Compute the planetary hours for the planetary day containing a moment.
 
         Args:
-            year: Civil year (astronomical numbering: 0 = 1 BCE).
+            year: Gregorian civil year (1-9999 CE).
             month: Civil month (1-12).
             day: Civil day (1-31).
             hour: Hour of day (0-23) in ``tz_str``.
@@ -87,11 +86,13 @@ class PlanetaryHoursFactory:
         moment_utc = localize_datetime(year, month, day, hour, minute, tz=tz).astimezone(timezone.utc)
 
         today = compute_sun_events(year, month, day, latitude, longitude, tz)
-        if today.sunrise is None or today.sunset is None:
+        if today.sunrise is None:
             raise KerykeionException(_POLAR_MESSAGE)
 
         if moment_utc >= today.sunrise:
             # The moment is within today's planetary day (sunrise → next sunrise).
+            if today.sunset is None:
+                raise KerykeionException(_POLAR_MESSAGE)
             tomorrow = date(year, month, day) + timedelta(days=1)
             next_events = compute_sun_events(tomorrow.year, tomorrow.month, tomorrow.day, latitude, longitude, tz)
             if next_events.sunrise is None:

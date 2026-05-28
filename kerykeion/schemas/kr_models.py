@@ -31,7 +31,7 @@ from datetime import datetime, timedelta
 from typing import Union, Optional, Literal
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field, model_validator
-from kerykeion.schemas.kr_literals import AspectName, ClassicalPlanet
+from kerykeion.schemas.kr_literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
 
 from kerykeion.schemas import (
     LunarPhaseEmoji,
@@ -360,9 +360,10 @@ class SunTimesModel(SubscriptableBaseModel):
     Sunrise, sunset, solar noon and day length for a civil date at a location.
 
     All instants are timezone-aware ``datetime`` objects in UTC. During polar day
-    or polar night the Sun never crosses the horizon, so ``sunrise``, ``sunset``,
+    or polar night the Sun may not provide a complete sunrise -> sunset pair, so
     ``solar_noon`` and ``day_length`` are ``None`` and the matching
-    ``is_polar_day`` / ``is_polar_night`` flag is set instead.
+    ``is_polar_day`` / ``is_polar_night`` flag is set. On transition dates,
+    ``sunrise`` or ``sunset`` can be present independently.
 
     Attributes:
         date: Civil date (``YYYY-MM-DD``) in the requested timezone.
@@ -371,8 +372,8 @@ class SunTimesModel(SubscriptableBaseModel):
         longitude: Observer longitude in degrees (east positive).
         sunrise: Moment of sunrise (upper limb, atmospheric refraction applied), or ``None``.
         sunset: Moment of sunset (upper limb, atmospheric refraction applied), or ``None``.
-        solar_noon: Midpoint between sunrise and sunset, or ``None``.
-        day_length: Duration from sunrise to sunset, or ``None``.
+        solar_noon: Midpoint between a paired sunrise and later sunset, or ``None``.
+        day_length: Duration from sunrise to a later paired sunset, or ``None``.
         is_polar_day: ``True`` when the Sun stays above the horizon all day.
         is_polar_night: ``True`` when the Sun stays below the horizon all day.
     """
@@ -446,6 +447,15 @@ class PlanetaryHoursModel(SubscriptableBaseModel):
     hours: list[PlanetaryHourModel] = Field(default_factory=list)
 
 
+_VOC_ASPECT_DEGREES: dict[VocAspectName, float] = {
+    "conjunction": 0.0,
+    "sextile": 60.0,
+    "square": 90.0,
+    "trine": 120.0,
+    "opposition": 180.0,
+}
+
+
 class VoidOfCourseAspectModel(SubscriptableBaseModel):
     """
     An exact Ptolemaic aspect the Moon perfects to another body.
@@ -457,10 +467,17 @@ class VoidOfCourseAspectModel(SubscriptableBaseModel):
         exact_time: Moment the aspect perfects, timezone-aware UTC datetime.
     """
 
-    planet: ClassicalPlanet
-    aspect: AspectName
+    planet: VocTargetPlanet
+    aspect: VocAspectName
     aspect_degrees: float
     exact_time: datetime
+
+    @model_validator(mode="after")
+    def _validate_voc_aspect_degrees(self) -> "VoidOfCourseAspectModel":
+        expected_degrees = _VOC_ASPECT_DEGREES[self.aspect]
+        if self.aspect_degrees != expected_degrees:
+            raise ValueError(f"aspect_degrees must be {expected_degrees:g} for {self.aspect!r}.")
+        return self
 
 
 class VoidOfCourseMoonModel(SubscriptableBaseModel):

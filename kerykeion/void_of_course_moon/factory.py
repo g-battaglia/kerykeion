@@ -8,7 +8,7 @@ from __future__ import annotations
 from datetime import timezone
 from typing import Optional
 
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import EPHEMERIS_LOCK, swe
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES, SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import VoidOfCourseAspectModel, VoidOfCourseMoonModel
@@ -30,6 +30,10 @@ def _resolve_iflag(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode
     if zodiac_type == "Sidereal":
         if sidereal_mode is None:
             raise KerykeionException("sidereal_mode is required when zodiac_type='Sidereal'.")
+        if sidereal_mode == "USER":
+            raise KerykeionException(
+                "sidereal_mode='USER' requires custom ayanamsha parameters, which VoidOfCourseMoonFactory does not accept."
+            )
         try:
             swe.set_sid_mode(getattr(swe, f"SIDM_{sidereal_mode}"))
         except AttributeError as exc:
@@ -44,7 +48,7 @@ def _to_aspect_model(event: Optional[AspectEvent]) -> Optional[VoidOfCourseAspec
         return None
     return VoidOfCourseAspectModel(
         planet=event.planet,
-        aspect=event.aspect,  # type: ignore[arg-type]
+        aspect=event.aspect,
         aspect_degrees=event.degrees,
         exact_time=event.exact_time,
     )
@@ -96,7 +100,7 @@ class VoidOfCourseMoonFactory:
         Compute the void-of-course Moon state for a moment.
 
         Args:
-            year: Civil year (astronomical numbering: 0 = 1 BCE).
+            year: Gregorian civil year (1-9999 CE).
             month: Civil month (1-12).
             day: Civil day (1-31).
             hour: Hour of day (0-23) in ``tz_str``.
@@ -115,9 +119,14 @@ class VoidOfCourseMoonFactory:
         """
         tz = resolve_timezone(tz_str)
         moment_utc = localize_datetime(year, month, day, hour, minute, tz=tz).astimezone(timezone.utc)
-        iflag = _resolve_iflag(zodiac_type, sidereal_mode)
-
-        result = compute_void_of_course(moment_utc, iflag)
+        with EPHEMERIS_LOCK:
+            iflag = _resolve_iflag(zodiac_type, sidereal_mode)
+            try:
+                result = compute_void_of_course(moment_utc, iflag)
+            finally:
+                if zodiac_type == "Sidereal":
+                    reset = getattr(swe, "reset_session", None) or swe.close
+                    reset()
 
         return VoidOfCourseMoonModel(
             is_void_of_course=result.is_void_of_course,

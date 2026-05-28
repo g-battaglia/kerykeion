@@ -34,6 +34,8 @@ __all__ = [
     "Sign",
     "SignNumbers",
     "AspectMovementType",
+    "VocAspectName",
+    "VocTargetPlanet",
     "Houses",
     "HouseNumbers",
     "AstrologicalPoint",

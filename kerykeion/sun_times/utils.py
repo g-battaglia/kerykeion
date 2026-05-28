@@ -19,6 +19,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 import pytz
+from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
 
 from kerykeion.ephemeris_backend import swe
 from kerykeion.moon_phase_details.utils import (
@@ -29,12 +30,16 @@ from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.utilities import datetime_to_julian, julian_to_datetime
 
 
+_APPARENT_UPPER_LIMB_HORIZON_DEGREES = -0.833
+
+
 @dataclass(frozen=True)
 class SunEvents:
     """Raw sun-event results for a single civil day at one location.
 
-    All instants are timezone-aware UTC ``datetime`` objects, or ``None`` when
-    the Sun does not cross the horizon (polar day/night).
+    Instants are timezone-aware UTC ``datetime`` objects when present. On polar
+    and boundary days, sunrise or sunset can be missing independently; derived
+    solar noon and day length require a sunrise paired with a later sunset.
     """
 
     sunrise: Optional[datetime]
@@ -90,7 +95,10 @@ def localize_datetime(
             f"Invalid or unsupported date/time ({year:04d}-{month:02d}-{day:02d} "
             f"{hour:02d}:{minute:02d}): {exc}. Supported civil years are 1-9999 CE."
         ) from exc
-    return tz.localize(naive)
+    try:
+        return tz.localize(naive, is_dst=None)
+    except (AmbiguousTimeError, NonExistentTimeError) as exc:
+        raise KerykeionException(f"Invalid or ambiguous local time {naive!s} in timezone {tz.zone!r}: {exc}") from exc
 
 
 def local_midnight_julian_day(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> float:
@@ -115,9 +123,9 @@ def julian_day_to_utc(jd: float) -> datetime:
 def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     """Classify a no-rise/no-set day as polar day or polar night.
 
-    Uses the sunrise hour-angle identity ``cos H = -tan(lat) * tan(decl)``:
-    when ``cos H < -1`` the Sun never sets (midnight sun); when ``cos H > 1`` it
-    never rises (polar night).
+    Uses the same apparent upper-limb horizon convention as Swiss Ephemeris
+    rise/set searches. Refraction and the Sun's semidiameter put the apparent
+    sunrise/sunset threshold near -0.833 degrees for the Sun's center.
 
     Args:
         jd_noon: Julian Day (UT) near local solar noon — used to read the Sun's
@@ -130,11 +138,20 @@ def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     iflag = configure_ephemeris_path()
     # Equatorial coordinates: [right_ascension, declination, distance, ...].
     declination = swe.calc_ut(jd_noon, swe.SUN, iflag | swe.FLG_EQUATORIAL)[0][1]
-    cos_hour_angle = -math.tan(math.radians(latitude)) * math.tan(math.radians(declination))
+    horizon = math.radians(_APPARENT_UPPER_LIMB_HORIZON_DEGREES)
+    lat = math.radians(latitude)
+    decl = math.radians(declination)
+    denominator = math.cos(lat) * math.cos(decl)
+    if abs(denominator) < 1e-12:
+        return latitude * declination > 0, latitude * declination < 0
+
+    cos_hour_angle = (math.sin(horizon) - math.sin(lat) * math.sin(decl)) / denominator
     return cos_hour_angle < -1.0, cos_hour_angle > 1.0
 
 
-def compute_sun_events(year: int, month: int, day: int, latitude: float, longitude: float, tz: pytz.BaseTzInfo) -> SunEvents:
+def compute_sun_events(
+    year: int, month: int, day: int, latitude: float, longitude: float, tz: pytz.BaseTzInfo
+) -> SunEvents:
     """Compute sunrise, sunset, solar noon, day length and polar flags.
 
     Args:
@@ -150,9 +167,15 @@ def compute_sun_events(year: int, month: int, day: int, latitude: float, longitu
     jd_midnight = local_midnight_julian_day(year, month, day, tz)
     sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, latitude, longitude)
 
+    if sunrise_jd is not None and sunset_jd is not None and sunset_jd <= sunrise_jd:
+        _, paired_sunset_jd = compute_sun_rise_set_swe(sunrise_jd + 1e-6, latitude, longitude)
+        sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
+
     if sunrise_jd is None or sunset_jd is None:
         is_polar_day, is_polar_night = _polar_state(jd_midnight + 0.5, latitude)
-        return SunEvents(None, None, None, None, is_polar_day, is_polar_night)
+        sunrise = julian_day_to_utc(sunrise_jd) if sunrise_jd is not None else None
+        sunset = julian_day_to_utc(sunset_jd) if sunset_jd is not None else None
+        return SunEvents(sunrise, sunset, None, None, is_polar_day, is_polar_night)
 
     sunrise = julian_day_to_utc(sunrise_jd)
     sunset = julian_day_to_utc(sunset_jd)

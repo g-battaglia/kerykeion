@@ -68,6 +68,7 @@ from __future__ import annotations
 import importlib
 import logging
 import os
+from threading import RLock
 import types
 from typing import Optional
 
@@ -88,8 +89,7 @@ _forced_backend = os.environ.get("KERYKEION_BACKEND", "").strip().lower()
 if _forced_backend:
     if _forced_backend not in _VALID_BACKENDS:
         raise ValueError(
-            f"KERYKEION_BACKEND={_forced_backend!r} is not valid. "
-            f"Choose one of: {', '.join(_VALID_BACKENDS)}"
+            f"KERYKEION_BACKEND={_forced_backend!r} is not valid. Choose one of: {', '.join(_VALID_BACKENDS)}"
         )
     try:
         _backend_module = importlib.import_module(_forced_backend)
@@ -136,6 +136,11 @@ else:
 # and no compatibility shims are required.
 
 swe = _backend_module
+
+# Swiss Ephemeris keeps mutable process-global state for sidereal mode,
+# topocentric coordinates, and reset/close operations. Code that mutates that
+# state must hold this lock until the dependent calculations have completed.
+EPHEMERIS_LOCK = RLock()
 
 # ---------------------------------------------------------------------------
 # Ephemeris data path
@@ -214,4 +219,4 @@ elif BACKEND_NAME == "swisseph":
         "Install libephemeris for the default backend."
     )
 
-__all__ = ["swe", "BACKEND_NAME", "EPHE_DATA_PATH"]
+__all__ = ["swe", "BACKEND_NAME", "EPHE_DATA_PATH", "EPHEMERIS_LOCK"]

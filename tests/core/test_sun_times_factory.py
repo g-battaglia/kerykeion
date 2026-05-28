@@ -36,6 +36,20 @@ def test_polar_day():
     assert s.sunrise is None and s.sunset is None and s.day_length is None
 
 
+def test_high_latitude_transition_pairs_sunset_after_sunrise():
+    s = SunTimesFactory.from_date(2026, 5, 17, **TROMSO)
+    assert s.sunrise is not None and s.sunset is not None
+    assert s.sunrise < s.sunset
+    assert s.day_length == s.sunset - s.sunrise
+
+
+def test_polar_boundary_uses_apparent_horizon_flags():
+    s = SunTimesFactory.from_date(2026, 5, 19, **TROMSO)
+    assert s.is_polar_day is True
+    assert s.is_polar_night is False
+    assert s.sunrise is None and s.sunset is None
+
+
 def test_polar_night():
     s = SunTimesFactory.from_date(2026, 12, 21, **TROMSO)
     assert s.is_polar_night is True

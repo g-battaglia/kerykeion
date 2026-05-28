@@ -56,6 +56,23 @@ def test_polar_day_raises():
         PlanetaryHoursFactory.from_datetime(2026, 6, 21, 12, 0, **TROMSO)
 
 
+def test_high_latitude_transition_day_does_not_build_negative_hours():
+    ph = PlanetaryHoursFactory.from_datetime(2026, 5, 17, 12, 0, **TROMSO)
+    assert ph.sunrise < ph.sunset < ph.next_sunrise
+    assert ph.hours[0].start == ph.sunrise
+    assert ph.hours[-1].end == ph.next_sunrise
+
+
+def test_nonexistent_local_time_raises():
+    with pytest.raises(KerykeionException):
+        PlanetaryHoursFactory.from_datetime(2026, 3, 29, 2, 30, **ROME)
+
+
+def test_ambiguous_local_time_raises():
+    with pytest.raises(KerykeionException):
+        PlanetaryHoursFactory.from_datetime(2026, 10, 25, 2, 30, **ROME)
+
+
 def test_invalid_timezone_raises():
     with pytest.raises(KerykeionException):
         PlanetaryHoursFactory.from_datetime(2026, 5, 28, 12, 0, latitude=0.0, longitude=0.0, tz_str="Not/AZone")

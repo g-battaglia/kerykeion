@@ -17,8 +17,8 @@ class SunTimesFactory:
     ephemeris backend's rise/set routine directly (with atmospheric refraction)
     rather than building a full astrological subject, so it is fast and has no
     geolocation dependency. Times are returned as timezone-aware UTC datetimes;
-    on polar day or polar night the rise/set fields are ``None`` and the matching
-    polar flag is set.
+    on polar day/night or transition dates the derived ``solar_noon`` and
+    ``day_length`` are ``None`` unless a sunrise can be paired with a later sunset.
 
     Example:
         >>> from kerykeion import SunTimesFactory
@@ -49,7 +49,7 @@ class SunTimesFactory:
         Compute sun times for a civil date at a location.
 
         Args:
-            year: Civil year (astronomical numbering: 0 = 1 BCE, -1 = 2 BCE).
+            year: Gregorian civil year (1-9999 CE).
             month: Civil month (1-12).
             day: Civil day (1-31).
             latitude: Observer latitude in degrees, north positive (-90 to 90).
@@ -60,7 +60,7 @@ class SunTimesFactory:
             SunTimesModel: sunrise, sunset, solar noon, day length and polar flags.
 
         Raises:
-            KerykeionException: If ``tz_str`` is not a valid IANA timezone.
+            KerykeionException: If ``tz_str`` is invalid or the civil date is unsupported.
         """
         tz = resolve_timezone(tz_str)
         events = compute_sun_events(year, month, day, latitude, longitude, tz)
