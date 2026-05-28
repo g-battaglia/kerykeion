@@ -27,10 +27,11 @@ access to fields while maintaining Pydantic validation.
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
+from datetime import datetime, timedelta
 from typing import Union, Optional, Literal
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field, model_validator
-from kerykeion.schemas.kr_literals import AspectName
+from kerykeion.schemas.kr_literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
 
 from kerykeion.schemas import (
     LunarPhaseEmoji,
@@ -344,6 +345,174 @@ class MoonPhaseOverviewModel(SubscriptableBaseModel):
     sun: Optional[MoonPhaseSunInfoModel] = None
     moon: MoonPhaseMoonSummaryModel
     location: Optional[MoonPhaseLocationModel] = None
+
+
+# ---------------------------------------------------------------------------
+# Sun times · planetary (Chaldean) hours · void-of-course Moon
+# ---------------------------------------------------------------------------
+# Models backing SunTimesFactory, PlanetaryHoursFactory and
+# VoidOfCourseMoonFactory. All instants are timezone-aware UTC ``datetime``
+# objects (so consumers can localise freely); durations are ``timedelta``.
+
+
+class SunTimesModel(SubscriptableBaseModel):
+    """
+    Sunrise, sunset, solar noon and day length for a civil date at a location.
+
+    All instants are timezone-aware ``datetime`` objects in UTC. During polar day
+    or polar night the Sun may not provide a complete sunrise -> sunset pair, so
+    ``solar_noon`` and ``day_length`` are ``None`` and the matching
+    ``is_polar_day`` / ``is_polar_night`` flag is set. On transition dates,
+    ``sunrise`` or ``sunset`` can be present independently, and a paired
+    ``sunset`` may fall on the following civil date (so ``day_length`` can
+    exceed 24 hours) when daylight spans local midnight at high latitudes.
+
+    Attributes:
+        date: Civil date (``YYYY-MM-DD``) in the requested timezone.
+        timezone: IANA timezone identifier the date is anchored to.
+        latitude: Observer latitude in degrees (north positive).
+        longitude: Observer longitude in degrees (east positive).
+        sunrise: Moment of sunrise (upper limb, atmospheric refraction applied), or ``None``.
+        sunset: Moment of sunset (upper limb, atmospheric refraction applied), or ``None``.
+        solar_noon: Midpoint between a paired sunrise and later sunset, or ``None``.
+        day_length: Duration from sunrise to a later paired sunset, or ``None``.
+        is_polar_day: ``True`` when the Sun stays above the horizon all day.
+        is_polar_night: ``True`` when the Sun stays below the horizon all day.
+    """
+
+    date: str
+    timezone: str
+    latitude: float
+    longitude: float
+    sunrise: Optional[datetime] = None
+    sunset: Optional[datetime] = None
+    solar_noon: Optional[datetime] = None
+    day_length: Optional[timedelta] = None
+    is_polar_day: bool = False
+    is_polar_night: bool = False
+
+
+class PlanetaryHourModel(SubscriptableBaseModel):
+    """
+    A single planetary hour within the day's 24-hour Chaldean sequence.
+
+    Attributes:
+        index: 1-based position in the sequence (1-24).
+        ruler: Classical planet ruling the hour.
+        is_diurnal: ``True`` for the 12 day hours (sunrise→sunset), ``False`` for
+            the 12 night hours (sunset→next sunrise).
+        start: Hour start, timezone-aware UTC datetime.
+        end: Hour end, timezone-aware UTC datetime.
+    """
+
+    index: int
+    ruler: ClassicalPlanet
+    is_diurnal: bool
+    start: datetime
+    end: datetime
+
+
+class PlanetaryHoursModel(SubscriptableBaseModel):
+    """
+    The planetary (Chaldean) hours for the planetary day containing a moment.
+
+    Day and night are split at true sunrise/sunset: the twelve day hours divide
+    sunrise→sunset and the twelve night hours divide sunset→next sunrise, so the
+    hours are generally unequal in length. The first hour of the day is ruled by
+    the planet of the weekday; the remaining hours follow the descending Chaldean
+    order (Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon), cycling.
+
+    Attributes:
+        date: Civil date of the planetary day's sunrise, in the requested timezone.
+        timezone: IANA timezone identifier.
+        latitude: Observer latitude in degrees.
+        longitude: Observer longitude in degrees.
+        day_ruler: Planet ruling the whole planetary day (determined by weekday).
+        current_index: 1-based index of the hour containing the requested moment.
+        current_ruler: Ruler of the hour containing the requested moment.
+        sunrise: Sunrise opening the day hours (UTC).
+        sunset: Sunset dividing day and night hours (UTC).
+        next_sunrise: Sunrise closing the night hours (UTC).
+        hours: All 24 planetary hours in chronological order.
+    """
+
+    date: str
+    timezone: str
+    latitude: float
+    longitude: float
+    day_ruler: ClassicalPlanet
+    current_index: int
+    current_ruler: ClassicalPlanet
+    sunrise: datetime
+    sunset: datetime
+    next_sunrise: datetime
+    hours: list[PlanetaryHourModel] = Field(default_factory=list)
+
+
+_VOC_ASPECT_DEGREES: dict[VocAspectName, float] = {
+    "conjunction": 0.0,
+    "sextile": 60.0,
+    "square": 90.0,
+    "trine": 120.0,
+    "opposition": 180.0,
+}
+
+
+class VoidOfCourseAspectModel(SubscriptableBaseModel):
+    """
+    An exact Ptolemaic aspect the Moon perfects to another body.
+
+    Attributes:
+        planet: The body the Moon aspects (Sun, Mercury, Venus, Mars, Jupiter, Saturn).
+        aspect: Aspect name (conjunction, sextile, square, trine, opposition).
+        aspect_degrees: The aspect's exact angle in degrees (0, 60, 90, 120, 180).
+        exact_time: Moment the aspect perfects, timezone-aware UTC datetime.
+    """
+
+    planet: VocTargetPlanet
+    aspect: VocAspectName
+    aspect_degrees: float
+    exact_time: datetime
+
+    @model_validator(mode="after")
+    def _validate_voc_aspect_degrees(self) -> "VoidOfCourseAspectModel":
+        expected_degrees = _VOC_ASPECT_DEGREES[self.aspect]
+        if self.aspect_degrees != expected_degrees:
+            raise ValueError(f"aspect_degrees must be {expected_degrees:g} for {self.aspect!r}.")
+        return self
+
+
+class VoidOfCourseMoonModel(SubscriptableBaseModel):
+    """
+    Void-of-course state of the Moon at a given moment.
+
+    The Moon is *void of course* from the instant it perfects its last exact
+    Ptolemaic aspect to a traditional planet while in its current sign, until it
+    ingresses into the next sign. Because it depends only on geocentric ecliptic
+    longitudes, the result is independent of the observer's location.
+
+    Attributes:
+        is_void_of_course: ``True`` if the queried moment lies in the void window.
+        moon_sign: The sign the Moon currently occupies.
+        next_sign: The sign the Moon ingresses into next.
+        ingress: Moment the Moon enters ``next_sign`` (UTC); equals ``void_end``.
+        void_start: Start of the void window — the Moon's last in-sign aspect, or
+            the sign-entry moment if the Moon makes no aspect during the sign.
+        void_end: End of the void window, equal to ``ingress``.
+        last_aspect: The last exact aspect before ingress, or ``None`` when the
+            Moon makes no aspect while in the sign.
+        next_aspect: The Moon's next exact aspect still within the current sign,
+            or ``None`` when the Moon is already void of course.
+    """
+
+    is_void_of_course: bool
+    moon_sign: Sign
+    next_sign: Sign
+    ingress: datetime
+    void_start: datetime
+    void_end: datetime
+    last_aspect: Optional[VoidOfCourseAspectModel] = None
+    next_aspect: Optional[VoidOfCourseAspectModel] = None
 
 
 class KerykeionPointModel(SubscriptableBaseModel):

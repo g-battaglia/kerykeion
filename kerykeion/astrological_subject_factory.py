@@ -31,7 +31,7 @@ License: AGPL-3.0
 """
 
 import pytz
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, BACKEND_NAME
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, BACKEND_NAME, EPHEMERIS_LOCK
 import logging
 import math
 from datetime import datetime
@@ -234,33 +234,31 @@ def ephemeris_context(
     Yields:
         int: iflag to be passed to swe.calc_ut / swe.fixstar_ut.
     """
-    swe.set_ephe_path(ephe_path)
-    iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
-
-    topo_used = False
-
-    # Perspective configuration
-    if config.perspective_type == "True Geocentric":
-        iflag |= swe.FLG_TRUEPOS
-    elif config.perspective_type == "Heliocentric":
-        iflag |= swe.FLG_HELCTR
-    elif config.perspective_type == "Topocentric":
-        iflag |= swe.FLG_TOPOCTR
-        swe.set_topo(lng, lat, alt or 0.0)
-        topo_used = True
-    elif config.perspective_type == "Barycentric":
-        iflag |= swe.FLG_BARYCTR
-
-    # Sidereal configuration
-    if config.zodiac_type == "Sidereal":
-        iflag |= swe.FLG_SIDEREAL
-        if config.sidereal_mode == "USER":
-            # User-defined ayanamsa: requires t0 (reference epoch) and ayan_t0 (value at t0)
-            swe.set_sid_mode(swe.SIDM_USER, config.custom_ayanamsa_t0, config.custom_ayanamsa_ayan_t0)
-        else:
-            swe.set_sid_mode(getattr(swe, f"SIDM_{config.sidereal_mode}"))
-
+    EPHEMERIS_LOCK.acquire()
     try:
+        swe.set_ephe_path(ephe_path)
+        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+
+        # Perspective configuration
+        if config.perspective_type == "True Geocentric":
+            iflag |= swe.FLG_TRUEPOS
+        elif config.perspective_type == "Heliocentric":
+            iflag |= swe.FLG_HELCTR
+        elif config.perspective_type == "Topocentric":
+            iflag |= swe.FLG_TOPOCTR
+            swe.set_topo(lng, lat, alt or 0.0)
+        elif config.perspective_type == "Barycentric":
+            iflag |= swe.FLG_BARYCTR
+
+        # Sidereal configuration
+        if config.zodiac_type == "Sidereal":
+            iflag |= swe.FLG_SIDEREAL
+            if config.sidereal_mode == "USER":
+                # User-defined ayanamsa: requires t0 (reference epoch) and ayan_t0 (value at t0)
+                swe.set_sid_mode(swe.SIDM_USER, config.custom_ayanamsa_t0, config.custom_ayanamsa_ayan_t0)
+            else:
+                swe.set_sid_mode(getattr(swe, f"SIDM_{config.sidereal_mode}"))
+
         yield iflag
     finally:
         # Reset per-calculation state (topo, sidereal, angles) without
@@ -269,8 +267,11 @@ def ephemeris_context(
         # consecutive calculations for dramatically better performance.
         # Falls back to close() for backends without reset_session()
         # (e.g. pyswisseph).
-        _reset = getattr(swe, "reset_session", None) or swe.close
-        _reset()
+        try:
+            _reset = getattr(swe, "reset_session", None) or swe.close
+            _reset()
+        finally:
+            EPHEMERIS_LOCK.release()
 
 
 @dataclass

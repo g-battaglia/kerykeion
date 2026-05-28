@@ -1686,6 +1686,50 @@ print(overview.model_dump_json(exclude_none=True, indent=2))
 
 **📖 Examples: [Moon Phase Details Examples](https://www.kerykeion.net/content/examples/moon-phase-details)**
 
+## Timing Factories
+
+Three lightweight, subject-free factories built directly on the ephemeris backend (no full `AstrologicalSubject` is constructed). Times are returned as timezone-aware UTC datetimes.
+
+### Sun Times
+
+`SunTimesFactory` returns sunrise / sunset / solar-noon / day-length for a civil date at a location (apparent upper-limb refraction), with polar day/night detection.
+
+```python
+from kerykeion import SunTimesFactory
+
+sun = SunTimesFactory.from_date(
+    2026, 5, 28, latitude=41.9028, longitude=12.4964, tz_str="Europe/Rome"
+)
+print(sun.sunrise, sun.sunset, sun.day_length)
+```
+
+### Planetary Hours
+
+`PlanetaryHoursFactory` computes the 24 unequal Chaldean planetary hours (twelve day + twelve night) for the planetary day containing a moment. Moments before sunrise resolve to the previous planetary day.
+
+```python
+from kerykeion import PlanetaryHoursFactory
+
+hours = PlanetaryHoursFactory.from_datetime(
+    2026, 5, 28, 11, 30, latitude=41.9028, longitude=12.4964, tz_str="Europe/Rome"
+)
+print(hours.day_ruler, hours.current_ruler)
+for hour in hours.hours[:3]:
+    print(hour.index, hour.ruler, hour.start, hour.end)
+```
+
+### Void of Course Moon
+
+`VoidOfCourseMoonFactory` resolves the classical void-of-course Moon — the last exact Ptolemaic aspect to a traditional planet before sign ingress. It is geocentric (no location needed) and supports both the tropical and sidereal zodiacs.
+
+```python
+from kerykeion import VoidOfCourseMoonFactory
+
+voc = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 9, 0, tz_str="Europe/Rome")
+print(voc.is_void_of_course, voc.moon_sign, "->", voc.next_sign)
+print(voc.last_aspect, voc.next_aspect, voc.ingress)
+```
+
 ## V6 Advanced Features
 
 Kerykeion v6 adds a suite of advanced astronomical and astrological calculation modules. All v6 features are optional opt-in — existing code works unchanged.

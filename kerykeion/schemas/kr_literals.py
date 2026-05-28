@@ -18,6 +18,23 @@ SIGN_CODES: tuple[Sign, ...] = ("Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib",
 """Ordered tuple of the 12 three-letter zodiac sign codes (Aries → Pisces)."""
 
 
+ClassicalPlanet: TypeAlias = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
+"""The seven classical (visible) planets.
+
+These are the bodies used by traditional timing techniques such as the planetary
+(Chaldean) hours and the classical void-of-course Moon. Their descending Chaldean
+speed order is Saturn → Jupiter → Mars → Sun → Venus → Mercury → Moon.
+"""
+
+
+VocTargetPlanet: TypeAlias = Literal["Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
+"""Traditional planets the Moon can aspect before becoming void of course."""
+
+
+VocAspectName: TypeAlias = Literal["conjunction", "sextile", "square", "trine", "opposition"]
+"""Ptolemaic aspects considered by the void-of-course Moon algorithm."""
+
+
 SignNumbers: TypeAlias = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 """Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pis (11)"""
 
@@ -182,7 +199,9 @@ Quality: TypeAlias = Literal["Cardinal", "Fixed", "Mutable"]
 """Literal type for Qualities"""
 
 
-ChartType: TypeAlias = Literal["Natal", "Synastry", "Transit", "Composite", "DualReturnChart", "SingleReturnChart", "Progression"]
+ChartType: TypeAlias = Literal[
+    "Natal", "Synastry", "Transit", "Composite", "DualReturnChart", "SingleReturnChart", "Progression"
+]
 """Literal type for Chart Types"""
 
 
