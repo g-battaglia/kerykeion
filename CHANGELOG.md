@@ -2,7 +2,7 @@
 
 ## 6.0.0a49
 
-_2026-05-28_
+_2026-05-29_
 
 New **dominants calculator** — the dominant planet, sign, element, modality and
 house of a chart — offering several interchangeable calculation "schools" behind
@@ -40,6 +40,8 @@ a Strategy pattern, plus a first-class custom-strategy extension point.
   distribution helpers, the aspect engine, and the rulership data. The prenatal
   Syzygy is found with a self-contained, bracketed bisection over the Sun–Moon
   elongation and accesses the ephemeris under `EPHEMERIS_LOCK`.
+- The prenatal Syzygy degrades gracefully on any ephemeris failure (e.g. an
+  out-of-range date): the place is skipped rather than propagating the error.
 
 ---
 
