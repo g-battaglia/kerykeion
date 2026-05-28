@@ -68,9 +68,10 @@ def test_nonexistent_local_time_raises():
         PlanetaryHoursFactory.from_datetime(2026, 3, 29, 2, 30, **ROME)
 
 
-def test_ambiguous_local_time_raises():
-    with pytest.raises(KerykeionException):
-        PlanetaryHoursFactory.from_datetime(2026, 10, 25, 2, 30, **ROME)
+def test_ambiguous_local_time_resolves_to_standard_time():
+    # During DST fall-back 02:30 exists twice; we default to standard time.
+    ph = PlanetaryHoursFactory.from_datetime(2026, 10, 25, 2, 30, **ROME)
+    assert len(ph.hours) == 24
 
 
 def test_invalid_timezone_raises():

@@ -21,7 +21,7 @@ from typing import Optional
 import pytz
 from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
 
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import EPHEMERIS_LOCK, swe
 from kerykeion.moon_phase_details.utils import (
     compute_sun_rise_set_swe,
     configure_ephemeris_path,
@@ -97,8 +97,13 @@ def localize_datetime(
         ) from exc
     try:
         return tz.localize(naive, is_dst=None)
-    except (AmbiguousTimeError, NonExistentTimeError) as exc:
-        raise KerykeionException(f"Invalid or ambiguous local time {naive!s} in timezone {tz.zone!r}: {exc}") from exc
+    except AmbiguousTimeError:
+        # DST fall-back: the same wall-clock time exists twice. Default to the
+        # standard-time (post-transition) interpretation so the caller always
+        # gets a deterministic result without needing an extra parameter.
+        return tz.localize(naive, is_dst=False)
+    except NonExistentTimeError as exc:
+        raise KerykeionException(f"Non-existent local time {naive!s} in timezone {tz.zone!r}: {exc}") from exc
 
 
 def local_midnight_julian_day(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> float:
@@ -174,41 +179,37 @@ def compute_sun_events(
         next_day = date(year, month, day) + timedelta(days=1)
         jd_next_midnight = local_midnight_julian_day(next_day.year, next_day.month, next_day.day, tz)
     except OverflowError:
-        # Last representable civil day: the exact next local midnight is unrepresentable.
         jd_next_midnight = jd_midnight + 1.0
 
-    sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, latitude, longitude)
+    with EPHEMERIS_LOCK:
+        sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, latitude, longitude)
 
-    # rise_trans searches forward with no upper bound, so on polar-edge days it can
-    # return the *next* civil day's rise/set. Discard anything at or past the next
-    # local midnight before pairing a later sunset, so we never report another day's
-    # sun times; a genuine polar day then falls through to the polar branch below.
-    if sunrise_jd is not None and sunrise_jd >= jd_next_midnight:
-        sunrise_jd = None
-    if sunset_jd is not None and sunset_jd >= jd_next_midnight:
-        sunset_jd = None
+        if sunrise_jd is not None and sunrise_jd >= jd_next_midnight:
+            sunrise_jd = None
+        if sunset_jd is not None and sunset_jd >= jd_next_midnight:
+            sunset_jd = None
 
-    if sunrise_jd is not None and sunset_jd is not None and sunset_jd <= sunrise_jd:
-        _, paired_sunset_jd = compute_sun_rise_set_swe(sunrise_jd + 1e-6, latitude, longitude)
-        sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
+        if sunrise_jd is not None and sunset_jd is not None and sunset_jd <= sunrise_jd:
+            _, paired_sunset_jd = compute_sun_rise_set_swe(sunrise_jd + 1e-6, latitude, longitude)
+            sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
 
-    if sunrise_jd is None or sunset_jd is None:
-        try:
-            is_polar_day, is_polar_night = _polar_state(jd_midnight + 0.5, latitude)
-        except Exception as exc:
-            raise KerykeionException(
-                f"The ephemeris backend failed to evaluate the Sun for {year:04d}-{month:02d}-{day:02d} "
-                f"at latitude {latitude}: {exc}."
-            ) from exc
-        if sunrise_jd is None and sunset_jd is None and not (is_polar_day or is_polar_night):
-            raise KerykeionException(
-                f"The ephemeris backend returned no sunrise or sunset for {year:04d}-{month:02d}-{day:02d} "
-                f"at ({latitude}, {longitude}) and the geometry is not polar; the date or location may be "
-                f"outside the backend's supported rise/set range."
-            )
-        sunrise = julian_day_to_utc(sunrise_jd) if sunrise_jd is not None else None
-        sunset = julian_day_to_utc(sunset_jd) if sunset_jd is not None else None
-        return SunEvents(sunrise, sunset, None, None, is_polar_day, is_polar_night)
+        if sunrise_jd is None or sunset_jd is None:
+            try:
+                is_polar_day, is_polar_night = _polar_state(jd_midnight + 0.5, latitude)
+            except Exception as exc:
+                raise KerykeionException(
+                    f"The ephemeris backend failed to evaluate the Sun for {year:04d}-{month:02d}-{day:02d} "
+                    f"at latitude {latitude}: {exc}."
+                ) from exc
+            if sunrise_jd is None and sunset_jd is None and not (is_polar_day or is_polar_night):
+                raise KerykeionException(
+                    f"The ephemeris backend returned no sunrise or sunset for {year:04d}-{month:02d}-{day:02d} "
+                    f"at ({latitude}, {longitude}) and the geometry is not polar; the date or location may be "
+                    f"outside the backend's supported rise/set range."
+                )
+            sunrise = julian_day_to_utc(sunrise_jd) if sunrise_jd is not None else None
+            sunset = julian_day_to_utc(sunset_jd) if sunset_jd is not None else None
+            return SunEvents(sunrise, sunset, None, None, is_polar_day, is_polar_night)
 
     sunrise = julian_day_to_utc(sunrise_jd)
     sunset = julian_day_to_utc(sunset_jd)

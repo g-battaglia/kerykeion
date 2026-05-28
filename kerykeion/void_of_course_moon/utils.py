@@ -20,13 +20,14 @@ lookups — no full astrological subject is ever built.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional
 
 from kerykeion.aspects.aspects_utils import difdeg2n
 from kerykeion.ephemeris_backend import swe
 from kerykeion.schemas.kr_literals import VocAspectName, VocTargetPlanet
-from kerykeion.utilities import datetime_to_julian, julian_to_datetime
+from kerykeion.sun_times.utils import julian_day_to_utc
+from kerykeion.utilities import datetime_to_julian
 
 # Traditional aspecting bodies (the Moon itself is excluded).
 VOC_BODIES: tuple[VocTargetPlanet, ...] = ("Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn")
@@ -89,11 +90,6 @@ def _lon_speed(jd: float, body_id: int, iflag: int) -> tuple[float, float]:
     return values[0], values[3]
 
 
-def _jd_to_utc(jd: float) -> datetime:
-    """Convert a Julian Day (UT) to a timezone-aware UTC ``datetime``."""
-    return julian_to_datetime(jd).replace(tzinfo=timezone.utc)
-
-
 def _moon_crossing_jd(jd0: float, target_longitude: float, guess_days: float, iflag: int) -> float:
     """Newton-refine the Julian Day at which the Moon reaches ``target_longitude``."""
     jd = jd0 + guess_days
@@ -115,7 +111,7 @@ def _aspect_perfection_jd(jd_guess: float, body_id: int, signed_target: float, i
         separation = difdeg2n(moon_lon, body_lon)
         error = difdeg2n(separation, signed_target)
         relative_speed = moon_speed - body_speed
-        if relative_speed <= 0:
+        if abs(relative_speed) < 1e-10:
             return None
         if abs(error) < _ANGLE_EPSILON:
             break
@@ -168,7 +164,7 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
                         continue
                     # In-sign window: loose at entry (~86 s, absorbs entry_jd jitter), tight at ingress (drops only the cusp instant).
                     if entry_jd - 1e-3 <= refined < ingress_jd - 1e-6:
-                        events.append(AspectEvent(planet, aspect_name, degrees, _jd_to_utc(refined)))
+                        events.append(AspectEvent(planet, aspect_name, degrees, julian_day_to_utc(refined)))
 
     # Deduplicate events that converged from multiple seeds (one per planet/aspect/minute).
     unique: dict[tuple[str, str, int], AspectEvent] = {}
@@ -177,14 +173,14 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
         unique.setdefault(key, event)
     ordered = sorted(unique.values(), key=lambda e: e.exact_time)
 
-    ingress_dt = _jd_to_utc(ingress_jd)
+    ingress_dt = julian_day_to_utc(ingress_jd)
 
     if ordered:
         last_aspect = ordered[-1]
         void_start = last_aspect.exact_time
     else:
         last_aspect = None
-        void_start = _jd_to_utc(entry_jd)
+        void_start = julian_day_to_utc(entry_jd)
 
     # Void now iff the last in-sign aspect has already perfected by `moment_utc`.
     is_void = void_start <= moment_utc
