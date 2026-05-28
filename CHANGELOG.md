@@ -1,5 +1,48 @@
 # Changelog
 
+## 6.0.0a49
+
+_2026-05-28_
+
+New **dominants calculator** — the dominant planet, sign, element, modality and
+house of a chart — offering several interchangeable calculation "schools" behind
+a Strategy pattern, plus a first-class custom-strategy extension point.
+
+### Added
+
+- **`DominantsFactory`** (`kerykeion/dominants/`). Computes a chart's dominants
+  via `DominantsFactory.from_subject(subject, strategy=...)` (or the
+  `from_birth_data` convenience), returning the new fixed-shape `DominantsModel`.
+- Three built-in schools, selectable by name (the new `DominantMethod` literal):
+  - **`"modern"`** — modern weighted method (Astrotheme-style): planetary
+    strength from angularity, aspect activity, a mild essential-dignity
+    bonus/penalty and rulership bonuses, from which the dominant signs, houses,
+    elements, modes, polarity, hemispheres and quadrants are derived.
+    Speed and retrogradation are excluded by design.
+  - **`"almuten_figuris"`** — the traditional Lord of the Geniture: essential
+    dignities tallied for every classical planet over the five hylegiacal places
+    (Sun, Moon, Ascendant, Part of Fortune and the prenatal Syzygy), with an
+    optional accidental-dignity layer (house placement, weekday ruler).
+  - **`"elemental"`** — simple elemental/modal balance, reusing the library's
+    `calculate_element_points` / `calculate_quality_points` helpers.
+- **Custom schools via the Strategy pattern.** `DominantStrategy` (a
+  `runtime_checkable` Protocol) plus the optional `BaseDominantStrategy` base
+  (shared ranking / percentage / winner machinery) let callers plug in their own
+  school with no registration step.
+- New `DominantMethod` literal and the `DominantsModel`, `DominantScoreModel` and
+  `DominantBreakdownItemModel` models, all re-exported from the package root and
+  verified `get_type_hints`-resolvable for runtime (FastAPI) introspection.
+
+### Notes
+
+- The dominants engine reuses existing building blocks rather than duplicating
+  them: the Ptolemaic dignity tables (`kerykeion.dignities`), the element/quality
+  distribution helpers, the aspect engine, and the rulership data. The prenatal
+  Syzygy is found with a self-contained, bracketed bisection over the Sun–Moon
+  elongation and accesses the ephemeris under `EPHEMERIS_LOCK`.
+
+---
+
 ## 6.0.0a48
 
 _2026-05-28_

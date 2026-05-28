@@ -51,7 +51,7 @@ from kerykeion.schemas import (
     PerspectiveType,
     AspectMovementType,
 )
-from kerykeion.schemas.kr_literals import ReturnType
+from kerykeion.schemas.kr_literals import ReturnType, DominantMethod
 
 # Type alias for any astrological subject model (birth chart, composite, or return)
 AnySubjectModel = Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
@@ -1449,3 +1449,120 @@ class PlanetaryPhenomenaCollectionModel(SubscriptableBaseModel):
     iso_datetime: str = Field(description="ISO 8601 formatted datetime")
     julian_day: float = Field(description="Julian Day number")
     phenomena: list[PlanetaryPhenomenaModel] = Field(description="Phenomena for each planet")
+
+
+# =============================================================================
+# DOMINANTS MODELS (v6.0)
+# =============================================================================
+# Public result types for the dominants calculator (see kerykeion.dominants).
+# The shape is intentionally FIXED and school-agnostic: every category is always
+# present so the type stays stable for runtime introspection (FastAPI /
+# typing.get_type_hints). A school that does not compute a given category leaves
+# its list empty and the matching ``dominant_*`` winner ``None``.
+
+
+class DominantScoreModel(SubscriptableBaseModel):
+    """A single ranked entry within one dominant category.
+
+    The dominants calculator expresses every category (planets, signs, elements,
+    modes, houses, polarities, hemispheres, quadrants) as a list of these scored
+    entries, ordered from strongest to weakest. The representation is identical
+    regardless of the calculation school, so consumers can render any category
+    uniformly.
+
+    Attributes:
+        name: Identifier of the scored item within its category. The vocabulary
+            depends on the category, e.g. a planet/point name ("Sun"), a sign
+            code ("Ari"), an element ("Fire"), a mode ("Cardinal"), a house
+            ("First_House"), a polarity ("Yang"/"Yin"), a hemisphere
+            ("North"/"South"/"East"/"West") or a quadrant ("First_Quadrant").
+        score: Raw, school-specific strength. Values are only comparable within
+            the same category of the same result, because different schools use
+            different scales.
+        percentage: Share of the category total, normalized so a category's
+            values sum to approximately 100. Convenient for display.
+        rank: 1-based position within the category, where ``1`` is the most
+            dominant. Ties are broken deterministically by each school.
+        is_dominant: ``True`` when the entry qualifies as a dominant of its
+            category (within the top-N and/or above the school's threshold).
+    """
+
+    name: str
+    score: float
+    percentage: float
+    rank: int
+    is_dominant: bool
+
+
+class DominantBreakdownItemModel(SubscriptableBaseModel):
+    """One transparency line explaining how a score was accumulated.
+
+    Breakdown items are only populated when the caller asks for them
+    (``include_score_breakdown=True``); they let a user audit *why* a planet or
+    sign scored as it did. For the Almuten Figuris they also carry the
+    per-place / per-dignity detail (``category="place"``).
+
+    Attributes:
+        category: The scoring dimension the item belongs to (e.g. "angularity",
+            "aspect", "dignity", "rulership", "place").
+        target: The item the points were awarded to (e.g. a planet name).
+        rule: The specific rule that fired (e.g. "conjunction Ascendant",
+            "Domicile", "ruler of MC").
+        points: Signed points contributed by this rule.
+        detail: Optional human-readable context (e.g. "orb 1.2°", "Sun place").
+    """
+
+    category: str
+    target: str
+    rule: str
+    points: float
+    detail: Optional[str] = None
+
+
+class DominantsModel(SubscriptableBaseModel):
+    """Result of a dominants calculation, in a fixed, school-agnostic shape.
+
+    Every category is always present so the public type is stable for runtime
+    introspection: a school that does not compute a given category simply leaves
+    its list empty and the matching ``dominant_*`` winner ``None``. This lets one
+    response schema serve every built-in school and any user-supplied custom
+    strategy.
+
+    Attributes:
+        strategy_name: Human-readable name of the strategy that produced the
+            result (e.g. "modern", "almuten_figuris", or a custom strategy's
+            ``name``).
+        method: The built-in method identifier, or ``None`` when a custom
+            strategy was used.
+        planets: Ranked planetary/point dominants.
+        signs: Ranked sign dominants.
+        elements: Ranked element dominants (Fire/Earth/Air/Water).
+        qualities: Ranked mode/quality dominants (Cardinal/Fixed/Mutable).
+        houses: Ranked house dominants.
+        polarities: Ranked polarity dominants (Yang/Yin).
+        hemispheres: Ranked hemisphere dominants (North/South/East/West).
+        quadrants: Ranked quadrant dominants.
+        dominant_planet: Convenience winner of ``planets`` (or ``None``).
+        dominant_sign: Convenience winner of ``signs`` (or ``None``).
+        dominant_element: Convenience winner of ``elements`` (or ``None``).
+        dominant_quality: Convenience winner of ``qualities`` (or ``None``).
+        dominant_house: Convenience winner of ``houses`` (or ``None``).
+        score_breakdown: Optional audit trail of how the scores were earned.
+    """
+
+    strategy_name: str
+    method: Optional[DominantMethod] = None
+    planets: list[DominantScoreModel] = Field(default_factory=list)
+    signs: list[DominantScoreModel] = Field(default_factory=list)
+    elements: list[DominantScoreModel] = Field(default_factory=list)
+    qualities: list[DominantScoreModel] = Field(default_factory=list)
+    houses: list[DominantScoreModel] = Field(default_factory=list)
+    polarities: list[DominantScoreModel] = Field(default_factory=list)
+    hemispheres: list[DominantScoreModel] = Field(default_factory=list)
+    quadrants: list[DominantScoreModel] = Field(default_factory=list)
+    dominant_planet: Optional[str] = None
+    dominant_sign: Optional[Sign] = None
+    dominant_element: Optional[Element] = None
+    dominant_quality: Optional[Quality] = None
+    dominant_house: Optional[Houses] = None
+    score_breakdown: list[DominantBreakdownItemModel] = Field(default_factory=list)
