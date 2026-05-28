@@ -441,3 +441,25 @@ north/south of the equator and are added in v6.0.
 
 ReturnType: TypeAlias = Literal["Lunar", "Solar", "Heliocentric", "Lunar_Node_Crossing"]
 """Literal type for Return Types"""
+
+
+DominantMethod: TypeAlias = Literal["modern", "almuten_figuris", "elemental"]
+"""Literal type for the built-in dominant-calculation schools (methods).
+
+Each value selects a different, citable astrological "school" for computing the
+dominants of a chart. A custom strategy may be supplied instead of one of these
+names (see ``DominantsFactory``), in which case the resulting model reports
+``method=None``.
+
+Values:
+    - "modern": Modern weighted method (Astrotheme-style). Planetary strength is
+      accumulated from angularity, aspect activity, essential dignity and
+      rulership bonuses; the dominant signs, houses, elements, modes, polarity,
+      hemispheres and quadrants are then derived from those planetary scores.
+    - "almuten_figuris": Traditional/medieval "Lord of the Geniture". Essential
+      dignities are tallied for every classical planet over the five hylegiacal
+      places (Sun, Moon, Ascendant, Part of Fortune, prenatal Syzygy); the
+      planet with the highest total is the Almuten Figuris.
+    - "elemental": Simple elemental and modal balance, by weighted or pure count
+      of the chart's points.
+"""

@@ -94,6 +94,7 @@ from .secondary_progressions import (
 from .aspects import AspectsFactory
 from .relationship_score_factory import RelationshipScoreFactory
 from .house_comparison.house_comparison_factory import HouseComparisonFactory
+from .dominants import DominantsFactory, DominantStrategy, BaseDominantStrategy
 
 # =============================================================================
 # VISUALIZATION
@@ -119,6 +120,9 @@ from .schemas.kr_models import (
     PlanetaryHoursModel,
     VoidOfCourseAspectModel,
     VoidOfCourseMoonModel,
+    DominantsModel,
+    DominantScoreModel,
+    DominantBreakdownItemModel,
 )
 
 # =============================================================================
@@ -170,6 +174,9 @@ __all__ = [
     "AspectsFactory",
     "RelationshipScoreFactory",
     "HouseComparisonFactory",
+    "DominantsFactory",
+    "DominantStrategy",
+    "BaseDominantStrategy",
     # Visualization
     "ChartDrawer",
     "ReportGenerator",
@@ -188,6 +195,9 @@ __all__ = [
     "PlanetaryHoursModel",
     "VoidOfCourseAspectModel",
     "VoidOfCourseMoonModel",
+    "DominantsModel",
+    "DominantScoreModel",
+    "DominantBreakdownItemModel",
     # Settings and Utilities
     "KerykeionSettingsModel",
     "to_context",

@@ -32,6 +32,7 @@ from .kr_literals import (
     CompositeChartType,
     AspectName,
     ReturnType,
+    DominantMethod,
 )
 from .kr_models import (
     SubscriptableBaseModel,
@@ -52,6 +53,9 @@ from .kr_models import (
     ActiveAspect,
     TransitMomentModel,
     TransitsTimeRangeModel,
+    DominantScoreModel,
+    DominantBreakdownItemModel,
+    DominantsModel,
 )
 from .chart_template_model import ChartTemplateModel
 from .settings_models import KerykeionSettingsModel
@@ -90,6 +94,7 @@ __all__ = [
     "CompositeChartType",
     "AspectName",
     "ReturnType",
+    "DominantMethod",
     # Main Model Classes (from kr_models)
     "SubscriptableBaseModel",
     "LunarPhaseModel",
@@ -109,4 +114,7 @@ __all__ = [
     "NutationObliquityModel",
     "TransitMomentModel",
     "TransitsTimeRangeModel",
+    "DominantScoreModel",
+    "DominantBreakdownItemModel",
+    "DominantsModel",
 ]
