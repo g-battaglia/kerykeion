@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+import kerykeion.sun_times.utils as sun_times_utils
 from kerykeion import SunTimesFactory
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 
@@ -74,3 +75,37 @@ def test_bce_year_raises_clean_exception():
 def test_invalid_timezone_raises():
     with pytest.raises(KerykeionException):
         SunTimesFactory.from_date(2026, 5, 28, latitude=0.0, longitude=0.0, tz_str="Not/AZone")
+
+
+def test_polar_edge_does_not_return_next_day_events():
+    # Regression: rise_trans searches forward with no upper bound, so on a polar-edge
+    # date it returns the *next* civil day's rise/set. Those out-of-day events must be
+    # discarded so the day is reported as polar, not as a day whose sun rises/sets on a
+    # later date. Tromsø 2026-07-25 is still inside the midnight-sun season (polar day).
+    s = SunTimesFactory.from_date(2026, 7, 25, **TROMSO)
+    assert s.is_polar_day is True
+    assert s.is_polar_night is False
+    assert s.sunrise is None and s.sunset is None
+    assert s.solar_noon is None and s.day_length is None
+
+
+def test_no_events_but_not_polar_raises(monkeypatch):
+    # Regression: when the backend cannot produce rise/set (returns (None, None)) yet
+    # the geometry is not polar (here, the equator), the factory must raise a clean
+    # KerykeionException rather than return an impossible "no sun, not polar" model.
+    monkeypatch.setattr(sun_times_utils, "compute_sun_rise_set_swe", lambda *a, **k: (None, None))
+    with pytest.raises(KerykeionException):
+        SunTimesFactory.from_date(2026, 3, 20, latitude=0.0, longitude=0.0, tz_str="UTC")
+
+
+def test_polar_state_backend_failure_raises(monkeypatch):
+    # Regression: a raw backend error while classifying polar day/night must surface as
+    # a KerykeionException, not leak as a low-level ephemeris error.
+    monkeypatch.setattr(sun_times_utils, "compute_sun_rise_set_swe", lambda *a, **k: (None, None))
+
+    def _raise(*a, **k):
+        raise RuntimeError("ephemeris out of range")
+
+    monkeypatch.setattr(sun_times_utils, "_polar_state", _raise)
+    with pytest.raises(KerykeionException):
+        SunTimesFactory.from_date(2026, 6, 21, **TROMSO)

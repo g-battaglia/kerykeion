@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
 import pytz
@@ -163,16 +163,49 @@ def compute_sun_events(
     Returns:
         A :class:`SunEvents` with timezone-aware UTC instants (or ``None`` on
         polar day/night, in which case the relevant flag is set).
+
+    Raises:
+        KerykeionException: If the backend cannot evaluate the Sun, or returns no
+            rise/set while the geometry is not polar (e.g. a date/location outside
+            the backend's supported rise/set range).
     """
     jd_midnight = local_midnight_julian_day(year, month, day, tz)
+    try:
+        next_day = date(year, month, day) + timedelta(days=1)
+        jd_next_midnight = local_midnight_julian_day(next_day.year, next_day.month, next_day.day, tz)
+    except OverflowError:
+        # Last representable civil day: the exact next local midnight is unrepresentable.
+        jd_next_midnight = jd_midnight + 1.0
+
     sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, latitude, longitude)
+
+    # rise_trans searches forward with no upper bound, so on polar-edge days it can
+    # return the *next* civil day's rise/set. Discard anything at or past the next
+    # local midnight before pairing a later sunset, so we never report another day's
+    # sun times; a genuine polar day then falls through to the polar branch below.
+    if sunrise_jd is not None and sunrise_jd >= jd_next_midnight:
+        sunrise_jd = None
+    if sunset_jd is not None and sunset_jd >= jd_next_midnight:
+        sunset_jd = None
 
     if sunrise_jd is not None and sunset_jd is not None and sunset_jd <= sunrise_jd:
         _, paired_sunset_jd = compute_sun_rise_set_swe(sunrise_jd + 1e-6, latitude, longitude)
         sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
 
     if sunrise_jd is None or sunset_jd is None:
-        is_polar_day, is_polar_night = _polar_state(jd_midnight + 0.5, latitude)
+        try:
+            is_polar_day, is_polar_night = _polar_state(jd_midnight + 0.5, latitude)
+        except Exception as exc:
+            raise KerykeionException(
+                f"The ephemeris backend failed to evaluate the Sun for {year:04d}-{month:02d}-{day:02d} "
+                f"at latitude {latitude}: {exc}."
+            ) from exc
+        if sunrise_jd is None and sunset_jd is None and not (is_polar_day or is_polar_night):
+            raise KerykeionException(
+                f"The ephemeris backend returned no sunrise or sunset for {year:04d}-{month:02d}-{day:02d} "
+                f"at ({latitude}, {longitude}) and the geometry is not polar; the date or location may be "
+                f"outside the backend's supported rise/set range."
+            )
         sunrise = julian_day_to_utc(sunrise_jd) if sunrise_jd is not None else None
         sunset = julian_day_to_utc(sunset_jd) if sunset_jd is not None else None
         return SunEvents(sunrise, sunset, None, None, is_polar_day, is_polar_night)
