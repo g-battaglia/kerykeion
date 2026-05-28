@@ -109,7 +109,13 @@ class PlanetaryHoursFactory:
         # The planetary day is named by the civil (local) date of its sunrise.
         day_date = sunrise.astimezone(tz).date()
         day_ruler = weekday_ruler(day_date)
-        hours = build_hours(sunrise, sunset, next_sunrise, day_ruler)
+        # On degenerate high-latitude transition days the bounding instants may
+        # not be strictly increasing; surface that as a KerykeionException rather
+        # than letting build_hours' raw ValueError escape.
+        try:
+            hours = build_hours(sunrise, sunset, next_sunrise, day_ruler)
+        except ValueError as exc:
+            raise KerykeionException(_POLAR_MESSAGE) from exc
 
         current = next((h for h in hours if h.start <= moment_utc < h.end), hours[-1])
 

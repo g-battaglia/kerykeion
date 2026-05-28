@@ -166,6 +166,7 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
                     refined = _aspect_perfection_jd(guess_jd, body_id, target, iflag)
                     if refined is None:
                         continue
+                    # In-sign window: loose at entry (~86 s, absorbs entry_jd jitter), tight at ingress (drops only the cusp instant).
                     if entry_jd - 1e-3 <= refined < ingress_jd - 1e-6:
                         events.append(AspectEvent(planet, aspect_name, degrees, _jd_to_utc(refined)))
 

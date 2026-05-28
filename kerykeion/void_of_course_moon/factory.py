@@ -9,6 +9,7 @@ from datetime import timezone
 from typing import Optional
 
 from kerykeion.ephemeris_backend import EPHEMERIS_LOCK, swe
+from kerykeion.moon_phase_details.utils import configure_ephemeris_path
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES, SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import VoidOfCourseAspectModel, VoidOfCourseMoonModel
@@ -19,6 +20,9 @@ from kerykeion.void_of_course_moon.utils import AspectEvent, compute_void_of_cou
 def _resolve_iflag(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> int:
     """Build the ephemeris calculation flags for the requested zodiac.
 
+    Also configures the ephemeris path (idempotently) so the engine is
+    self-contained rather than relying on another module having set it.
+
     Raises:
         KerykeionException: For an unknown ``zodiac_type``/``sidereal_mode``, or a
             missing ``sidereal_mode`` when a sidereal zodiac is requested.
@@ -26,7 +30,7 @@ def _resolve_iflag(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode
     if zodiac_type not in ("Tropical", "Sidereal"):
         raise KerykeionException(f"Unknown zodiac_type: {zodiac_type!r} (expected 'Tropical' or 'Sidereal').")
 
-    iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+    iflag = configure_ephemeris_path() | swe.FLG_SPEED
     if zodiac_type == "Sidereal":
         if sidereal_mode is None:
             raise KerykeionException("sidereal_mode is required when zodiac_type='Sidereal'.")
