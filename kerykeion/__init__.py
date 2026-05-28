@@ -61,6 +61,9 @@ from .chart_data_factory import ChartDataFactory
 from .ephemeris_data_factory import EphemerisDataFactory
 from .transits_time_range_factory import TransitsTimeRangeFactory
 from .moon_phase_details import MoonPhaseDetailsFactory
+from .sun_times import SunTimesFactory
+from .planetary_hours import PlanetaryHoursFactory
+from .void_of_course_moon import VoidOfCourseMoonFactory
 
 # =============================================================================
 # STANDALONE FACTORIES
@@ -111,6 +114,11 @@ from .schemas.kr_models import (
     QualityDistributionModel,
     HouseComparisonModel,
     PlanetReturnModel,
+    SunTimesModel,
+    PlanetaryHourModel,
+    PlanetaryHoursModel,
+    VoidOfCourseAspectModel,
+    VoidOfCourseMoonModel,
 )
 
 # =============================================================================
@@ -135,6 +143,9 @@ __all__ = [
     "EphemerisDataFactory",
     "TransitsTimeRangeFactory",
     "MoonPhaseDetailsFactory",
+    "SunTimesFactory",
+    "PlanetaryHoursFactory",
+    "VoidOfCourseMoonFactory",
     # Standalone Factories
     "PlanetaryPhenomenaFactory",
     "EclipseFactory",
@@ -172,6 +183,11 @@ __all__ = [
     "HouseComparisonModel",
     "PlanetReturnModel",
     "MoonPhaseOverviewModel",
+    "SunTimesModel",
+    "PlanetaryHourModel",
+    "PlanetaryHoursModel",
+    "VoidOfCourseAspectModel",
+    "VoidOfCourseMoonModel",
     # Settings and Utilities
     "KerykeionSettingsModel",
     "to_context",

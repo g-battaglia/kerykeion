@@ -1,0 +1,161 @@
+# -*- coding: utf-8 -*-
+"""
+Low-level sun-event helpers for :class:`SunTimesFactory`.
+
+The heavy astronomical work — locating sunrise and sunset with atmospheric
+refraction — is delegated to the well-tested
+:func:`kerykeion.moon_phase_details.utils.compute_sun_rise_set_swe`, which calls
+the active ephemeris backend's ``rise_trans`` routine. This module adds the thin
+layer on top: timezone/Julian-Day bookkeeping, solar noon, day length, and the
+polar day / polar night discriminator. No full astrological subject is built, so
+the computation is cheap (two ``rise_trans`` calls plus one position lookup).
+"""
+
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
+from typing import Optional
+
+import pytz
+
+from kerykeion.ephemeris_backend import swe
+from kerykeion.moon_phase_details.utils import (
+    compute_sun_rise_set_swe,
+    configure_ephemeris_path,
+)
+from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.utilities import datetime_to_julian, julian_to_datetime
+
+
+@dataclass(frozen=True)
+class SunEvents:
+    """Raw sun-event results for a single civil day at one location.
+
+    All instants are timezone-aware UTC ``datetime`` objects, or ``None`` when
+    the Sun does not cross the horizon (polar day/night).
+    """
+
+    sunrise: Optional[datetime]
+    sunset: Optional[datetime]
+    solar_noon: Optional[datetime]
+    day_length: Optional[timedelta]
+    is_polar_day: bool
+    is_polar_night: bool
+
+
+def resolve_timezone(tz_str: str) -> pytz.BaseTzInfo:
+    """Resolve an IANA timezone string, raising ``KerykeionException`` if invalid.
+
+    Args:
+        tz_str: IANA timezone identifier (e.g. ``"Europe/Rome"``).
+
+    Returns:
+        The corresponding ``pytz`` timezone object.
+
+    Raises:
+        KerykeionException: If ``tz_str`` is not a known IANA timezone.
+    """
+    try:
+        return pytz.timezone(tz_str)
+    except pytz.UnknownTimeZoneError as exc:
+        raise KerykeionException(f"Unknown timezone: {tz_str!r}") from exc
+
+
+def localize_datetime(
+    year: int,
+    month: int,
+    day: int,
+    hour: int = 0,
+    minute: int = 0,
+    second: int = 0,
+    *,
+    tz: pytz.BaseTzInfo,
+) -> datetime:
+    """Build a timezone-aware local ``datetime``, validating the inputs.
+
+    These timing factories are anchored to civil (IANA) timezones, so they operate
+    on the years Python's ``datetime`` can represent (1-9999 CE). Out-of-range
+    years and impossible dates (e.g. 30 February) are reported as a clean
+    ``KerykeionException`` rather than a raw ``ValueError``.
+
+    Raises:
+        KerykeionException: If the date/time is invalid or the year is unsupported.
+    """
+    try:
+        naive = datetime(int(year), int(month), int(day), int(hour), int(minute), int(second))
+    except (ValueError, OverflowError) as exc:
+        raise KerykeionException(
+            f"Invalid or unsupported date/time ({year:04d}-{month:02d}-{day:02d} "
+            f"{hour:02d}:{minute:02d}): {exc}. Supported civil years are 1-9999 CE."
+        ) from exc
+    return tz.localize(naive)
+
+
+def local_midnight_julian_day(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> float:
+    """Julian Day (UT) of local civil midnight for the given date and timezone.
+
+    ``rise_trans`` searches for the next rise/set *after* this instant, so seeding
+    it with local midnight yields that civil day's sunrise and sunset.
+
+    Note:
+        ``datetime_to_julian`` reads the datetime's wall-clock fields and ignores
+        ``tzinfo``, so the local midnight is converted to UTC first.
+    """
+    utc_midnight = localize_datetime(year, month, day, tz=tz).astimezone(pytz.utc)
+    return datetime_to_julian(utc_midnight)
+
+
+def julian_day_to_utc(jd: float) -> datetime:
+    """Convert a Julian Day (UT) to a timezone-aware UTC ``datetime``."""
+    return julian_to_datetime(jd).replace(tzinfo=timezone.utc)
+
+
+def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
+    """Classify a no-rise/no-set day as polar day or polar night.
+
+    Uses the sunrise hour-angle identity ``cos H = -tan(lat) * tan(decl)``:
+    when ``cos H < -1`` the Sun never sets (midnight sun); when ``cos H > 1`` it
+    never rises (polar night).
+
+    Args:
+        jd_noon: Julian Day (UT) near local solar noon — used to read the Sun's
+            declination for the day.
+        latitude: Observer latitude in degrees.
+
+    Returns:
+        ``(is_polar_day, is_polar_night)``.
+    """
+    iflag = configure_ephemeris_path()
+    # Equatorial coordinates: [right_ascension, declination, distance, ...].
+    declination = swe.calc_ut(jd_noon, swe.SUN, iflag | swe.FLG_EQUATORIAL)[0][1]
+    cos_hour_angle = -math.tan(math.radians(latitude)) * math.tan(math.radians(declination))
+    return cos_hour_angle < -1.0, cos_hour_angle > 1.0
+
+
+def compute_sun_events(year: int, month: int, day: int, latitude: float, longitude: float, tz: pytz.BaseTzInfo) -> SunEvents:
+    """Compute sunrise, sunset, solar noon, day length and polar flags.
+
+    Args:
+        year, month, day: Civil date in the supplied timezone.
+        latitude: Observer latitude in degrees (north positive).
+        longitude: Observer longitude in degrees (east positive).
+        tz: Resolved ``pytz`` timezone the civil date is anchored to.
+
+    Returns:
+        A :class:`SunEvents` with timezone-aware UTC instants (or ``None`` on
+        polar day/night, in which case the relevant flag is set).
+    """
+    jd_midnight = local_midnight_julian_day(year, month, day, tz)
+    sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, latitude, longitude)
+
+    if sunrise_jd is None or sunset_jd is None:
+        is_polar_day, is_polar_night = _polar_state(jd_midnight + 0.5, latitude)
+        return SunEvents(None, None, None, None, is_polar_day, is_polar_night)
+
+    sunrise = julian_day_to_utc(sunrise_jd)
+    sunset = julian_day_to_utc(sunset_jd)
+    day_length = sunset - sunrise
+    solar_noon = sunrise + day_length / 2
+    return SunEvents(sunrise, sunset, solar_noon, day_length, False, False)
