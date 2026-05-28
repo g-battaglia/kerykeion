@@ -26,6 +26,10 @@ def _resolve_iflag(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode
     Raises:
         KerykeionException: For an unknown ``zodiac_type``/``sidereal_mode``, or a
             missing ``sidereal_mode`` when a sidereal zodiac is requested.
+
+    Note:
+        This function mutates global ephemeris state (``set_ephe_path``,
+        ``set_sid_mode``). The caller must hold :data:`EPHEMERIS_LOCK`.
     """
     if zodiac_type not in ("Tropical", "Sidereal"):
         raise KerykeionException(f"Unknown zodiac_type: {zodiac_type!r} (expected 'Tropical' or 'Sidereal').")

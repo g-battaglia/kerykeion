@@ -34,6 +34,7 @@ __all__ = [
     "Sign",
     "SignNumbers",
     "AspectMovementType",
+    "ClassicalPlanet",
     "VocAspectName",
     "VocTargetPlanet",
     "Houses",
