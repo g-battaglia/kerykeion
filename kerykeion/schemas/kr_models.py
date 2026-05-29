@@ -510,8 +510,10 @@ class VoidOfCourseMoonModel(SubscriptableBaseModel):
         void_end: End of the void window, equal to ``ingress``.
         last_aspect: The last exact aspect before ingress, or ``None`` when the
             Moon makes no aspect while in the sign.
-        next_aspect: The Moon's next exact aspect still within the current sign,
-            or ``None`` when the Moon is already void of course.
+        next_aspect: The Moon's first exact aspect *after* it ingresses into
+            ``next_sign`` — the aspect that ends the void-of-course lull. In
+            practice always present; ``None`` only in the degenerate case the Moon
+            makes no aspect at all while traversing the next sign.
     """
 
     is_void_of_course: bool

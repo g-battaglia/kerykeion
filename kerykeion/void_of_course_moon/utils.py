@@ -124,6 +124,60 @@ def _aspect_perfection_jd(jd_guess: float, body_id: int, signed_target: float, i
     return None
 
 
+def _aspects_in_window(
+    jd_ref: float,
+    win_start_jd: float,
+    win_end_jd: float,
+    iflag: int,
+    *,
+    start_tol: float = 1e-3,
+    end_tol: float = 1e-6,
+) -> list[AspectEvent]:
+    """Every exact Moon→VOC-body aspect perfecting within ``[win_start, win_end)``.
+
+    ``jd_ref`` seeds the linear approximation, so it must lie inside (or very near)
+    the window for the analytic seeds to land in range. ``start_tol``/``end_tol``
+    widen or tighten each boundary: the in-sign scan keeps the entry side wide (the
+    backward Newton seed overshoots, ~86 s) and the cusp side tight; the next-sign
+    scan tightens the entry side too so the shared cusp aspect is not double-counted.
+    The returned list is deduplicated and ordered by ``exact_time``.
+    """
+    moon_lon, moon_speed = _lon_speed(jd_ref, swe.MOON, iflag)
+    if moon_speed <= 0:  # defensive: the Moon never goes retrograde in longitude
+        moon_speed = _MEAN_LUNAR_SPEED
+
+    events: list[AspectEvent] = []
+    for planet in VOC_BODIES:
+        body_id = _BODY_ID[planet]
+        body_lon, body_speed = _lon_speed(jd_ref, body_id, iflag)
+        relative_speed = moon_speed - body_speed
+        # Defensive guard only: with real ephemerides the Moon (>= ~11.8 deg/day,
+        # even at apogee) always outpaces every VOC body (Mercury peaks near
+        # ~2 deg/day geocentrically), so this branch is not expected to trigger.
+        # It protects the linear seed below from a non-positive relative speed.
+        if relative_speed <= 0:
+            continue
+        separation0 = difdeg2n(moon_lon, body_lon)
+        for aspect_name, degrees in PTOLEMAIC_ASPECTS:
+            signed_targets = (degrees,) if degrees in (0.0, 180.0) else (degrees, -degrees)
+            for target in signed_targets:
+                delta = target - separation0
+                for wrap in (-1, 0, 1):
+                    guess_jd = jd_ref + (delta + 360.0 * wrap) / relative_speed
+                    refined = _aspect_perfection_jd(guess_jd, body_id, target, iflag)
+                    if refined is None:
+                        continue
+                    if win_start_jd - start_tol <= refined < win_end_jd - end_tol:
+                        events.append(AspectEvent(planet, aspect_name, degrees, julian_day_to_utc(refined)))
+
+    # Deduplicate events that converged from multiple seeds (one per planet/aspect/minute).
+    unique: dict[tuple[str, str, int], AspectEvent] = {}
+    for event in events:
+        key = (event.planet, event.aspect, round(datetime_to_julian(event.exact_time) * 1440))
+        unique.setdefault(key, event)
+    return sorted(unique.values(), key=lambda e: e.exact_time)
+
+
 def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResult:
     """
     Compute the Moon's void-of-course state at a UTC instant.
@@ -149,46 +203,13 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
     ingress_jd = _moon_crossing_jd(jd0, sign_ceiling % 360.0, (sign_ceiling - moon_lon) / moon_speed, iflag)
     entry_jd = _moon_crossing_jd(jd0, sign_floor, (sign_floor - moon_lon) / moon_speed, iflag)
 
-    # Enumerate every exact aspect the Moon perfects while inside the current sign.
-    events: list[AspectEvent] = []
-    for planet in VOC_BODIES:
-        body_id = _BODY_ID[planet]
-        body_lon, body_speed = _lon_speed(jd0, body_id, iflag)
-        relative_speed = moon_speed - body_speed
-        # Defensive guard only: with real ephemerides the Moon (>= ~11.8 deg/day,
-        # even at apogee) always outpaces every VOC body (Mercury peaks near
-        # ~2 deg/day geocentrically), so this branch is not expected to trigger.
-        # It protects the linear seed below from a non-positive relative speed.
-        if relative_speed <= 0:
-            continue
-        separation0 = difdeg2n(moon_lon, body_lon)
-        for aspect_name, degrees in PTOLEMAIC_ASPECTS:
-            signed_targets = (degrees,) if degrees in (0.0, 180.0) else (degrees, -degrees)
-            for target in signed_targets:
-                delta = target - separation0
-                for wrap in (-1, 0, 1):
-                    guess_jd = jd0 + (delta + 360.0 * wrap) / relative_speed
-                    refined = _aspect_perfection_jd(guess_jd, body_id, target, iflag)
-                    if refined is None:
-                        continue
-                    # In-sign window.  entry_jd tolerance is wide (1e-3 JD ≈ 86 s)
-                    # because the backward Newton seed overshoots more; ingress_jd
-                    # tolerance is tight (1e-6 JD ≈ 0.09 s) because the forward
-                    # seed converges closely — we only need to exclude the cusp instant.
-                    if entry_jd - 1e-3 <= refined < ingress_jd - 1e-6:
-                        events.append(AspectEvent(planet, aspect_name, degrees, julian_day_to_utc(refined)))
-
-    # Deduplicate events that converged from multiple seeds (one per planet/aspect/minute).
-    unique: dict[tuple[str, str, int], AspectEvent] = {}
-    for event in events:
-        key = (event.planet, event.aspect, round(datetime_to_julian(event.exact_time) * 1440))
-        unique.setdefault(key, event)
-    ordered = sorted(unique.values(), key=lambda e: e.exact_time)
+    # Aspects the Moon perfects while inside the current sign — these frame the void.
+    current = _aspects_in_window(jd0, entry_jd, ingress_jd, iflag)
 
     ingress_dt = julian_day_to_utc(ingress_jd)
 
-    if ordered:
-        last_aspect = ordered[-1]
+    if current:
+        last_aspect = current[-1]
         void_start = last_aspect.exact_time
     else:
         last_aspect = None
@@ -196,8 +217,18 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
 
     # Void now iff the last in-sign aspect has already perfected by `moment_utc`.
     is_void = void_start <= moment_utc
-    future = [e for e in ordered if e.exact_time > moment_utc]
-    next_aspect = future[0] if future else None
+
+    # `next_aspect` is the first exact aspect the Moon makes AFTER it ingresses into
+    # the next sign — the aspect that ends the void-of-course lull. It must be sought
+    # in the *next* sign, never reused from the current-sign list (doing so collapses
+    # it onto `last_aspect` whenever the query precedes that aspect). Seed from the
+    # midpoint of the next sign so the linear approximation lands inside the window.
+    next_ingress_jd = _moon_crossing_jd(
+        ingress_jd, (sign_ceiling + 30.0) % 360.0, 30.0 / moon_speed, iflag
+    )
+    jd_ref_next = (ingress_jd + next_ingress_jd) / 2.0
+    following = _aspects_in_window(jd_ref_next, ingress_jd, next_ingress_jd, iflag, start_tol=1e-6)
+    next_aspect = following[0] if following else None
 
     return VoidOfCourseResult(
         is_void_of_course=is_void,

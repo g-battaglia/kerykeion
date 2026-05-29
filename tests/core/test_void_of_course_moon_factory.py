@@ -42,7 +42,14 @@ def test_known_not_void():
     assert voc.is_void_of_course is False
     moment = _rome_moment_utc(2026, 5, 28, 12, 0)
     assert voc.next_aspect is not None
-    assert voc.next_aspect.exact_time > moment
+    # next_aspect is the first aspect in the *next* sign — strictly after the
+    # ingress, and never a duplicate of the last in-sign aspect.
+    assert voc.next_aspect.exact_time > voc.ingress
+    assert voc.last_aspect is not None
+    assert (voc.next_aspect.planet, voc.next_aspect.exact_time) != (
+        voc.last_aspect.planet,
+        voc.last_aspect.exact_time,
+    )
     assert voc.void_start > moment
 
 
@@ -52,8 +59,33 @@ def test_known_void():
     assert voc.moon_sign == "Sag"
     assert voc.next_sign == "Cap"
     assert voc.is_void_of_course is True
-    assert voc.next_aspect is None
+    # Even while void, next_aspect reports the first aspect in the next sign (Cap) —
+    # the moment the void lull ends — rather than None.
+    assert voc.next_aspect is not None
+    assert voc.next_aspect.exact_time > voc.ingress
     assert voc.void_start <= _rome_moment_utc(2026, 6, 1, 9, 0)
+
+
+def test_next_aspect_is_first_in_next_sign():
+    # Regression: next_aspect used to be drawn from the *current* sign's aspect list,
+    # so querying before the last in-sign aspect collapsed it onto last_aspect
+    # (the Jupiter trine in Scorpio). It must instead be the first aspect the Moon
+    # makes after ingressing into the next sign.
+    voc = VoidOfCourseMoonFactory.from_datetime(2026, 5, 29, 12, 0, tz_str="Europe/Rome")
+    assert voc.moon_sign == "Sco"
+    assert voc.last_aspect is not None
+    assert voc.next_aspect is not None
+    # Distinct event, strictly after the ingress.
+    assert voc.next_aspect.exact_time > voc.ingress
+    assert (voc.next_aspect.planet, voc.next_aspect.aspect, voc.next_aspect.exact_time) != (
+        voc.last_aspect.planet,
+        voc.last_aspect.aspect,
+        voc.last_aspect.exact_time,
+    )
+    # next_aspect is geometrically inside the next sign.
+    jd = datetime_to_julian(voc.next_aspect.exact_time)
+    moon = swe.calc_ut(jd, swe.MOON, _IFLAG)[0][0]
+    assert int(moon // 30) % 12 == SIGN_CODES.index(voc.next_sign)
 
 
 def test_last_aspect_is_exact():
@@ -85,6 +117,16 @@ def test_sidereal_shifts_sign():
     # The Lahiri ayanamsha (~24°) pulls the Moon back into the previous sign.
     assert sidereal.moon_sign in SIGN_CODES
     assert sidereal.moon_sign != tropical.moon_sign
+    # The next-sign next_aspect semantics hold under a sidereal zodiac too: the
+    # second scan runs with FLG_SIDEREAL, so next_aspect lands after the ingress
+    # and stays distinct from last_aspect.
+    assert sidereal.next_aspect is not None
+    assert sidereal.next_aspect.exact_time > sidereal.ingress
+    if sidereal.last_aspect is not None:
+        assert (sidereal.next_aspect.planet, sidereal.next_aspect.exact_time) != (
+            sidereal.last_aspect.planet,
+            sidereal.last_aspect.exact_time,
+        )
 
 
 def test_sidereal_requires_mode():

@@ -1,5 +1,29 @@
 # Changelog
 
+## 6.0.0a51
+
+_2026-05-29_
+
+Fix the Void-of-Course Moon's `next_aspect`: it is now the Moon's first exact
+aspect *after* the sign ingress (the aspect that ends the void lull), instead of
+being re-picked from the current sign — which made it duplicate `last_aspect`
+whenever the queried moment fell before the last in-sign aspect.
+
+### Fixed
+
+- **`VoidOfCourseMoonModel.next_aspect`** — `compute_void_of_course` now scans the
+  *next* sign for `next_aspect` (a second `_aspects_in_window` pass between the
+  ingress and the following cusp), so it is always a distinct event from
+  `last_aspect`. Previously both were drawn from the current sign's aspect list,
+  so `next_aspect` duplicated `last_aspect` when the queried moment preceded the
+  last in-sign aspect.
+
+### Changed
+
+- **`next_aspect` semantics** — it now reports the first aspect in the next sign
+  (no longer `None` while the Moon is void). The field stays `Optional` with the
+  same type; `last_aspect`, the void window and `is_void_of_course` are unchanged.
+
 ## 6.0.0a50
 
 _2026-05-29_
