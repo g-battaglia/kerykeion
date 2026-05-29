@@ -109,3 +109,86 @@ def test_polar_state_backend_failure_raises(monkeypatch):
     monkeypatch.setattr(sun_times_utils, "_polar_state", _raise)
     with pytest.raises(KerykeionException):
         SunTimesFactory.from_date(2026, 6, 21, **TROMSO)
+
+
+def test_twilight_ordering_rome():
+    # Civil/nautical/astronomical dawn precede sunrise (deepest depression first),
+    # and the dusks follow sunset in the mirror order — a strictly increasing run.
+    s = SunTimesFactory.from_date(2026, 5, 28, **ROME)
+    sequence = [
+        s.astronomical_dawn,
+        s.nautical_dawn,
+        s.civil_dawn,
+        s.sunrise,
+        s.sunset,
+        s.civil_dusk,
+        s.nautical_dusk,
+        s.astronomical_dusk,
+    ]
+    assert all(moment is not None for moment in sequence)
+    assert all(earlier < later for earlier, later in zip(sequence, sequence[1:]))
+    # Twilight instants are timezone-aware UTC, like the rest of the model.
+    assert s.civil_dawn.utcoffset().total_seconds() == 0
+
+
+def test_twilight_none_on_polar_day():
+    # On polar day the Sun never crosses any depression angle, so every twilight
+    # boundary is None (matching the None sunrise/sunset).
+    s = SunTimesFactory.from_date(2026, 6, 21, **TROMSO)
+    assert s.is_polar_day is True
+    assert s.civil_dawn is None and s.civil_dusk is None
+    assert s.nautical_dawn is None and s.nautical_dusk is None
+    assert s.astronomical_dawn is None and s.astronomical_dusk is None
+
+
+def test_twilight_partial_high_latitude():
+    # London at the summer solstice has no astronomical night (the Sun never sinks
+    # to -18 degrees), so astronomical dawn/dusk are None while civil and nautical
+    # twilight still occur. The day is not polar.
+    s = SunTimesFactory.from_date(2026, 6, 21, latitude=51.5074, longitude=-0.1278, tz_str="Europe/London")
+    assert not s.is_polar_day and not s.is_polar_night
+    assert s.civil_dawn is not None and s.civil_dusk is not None
+    assert s.nautical_dawn is not None and s.nautical_dusk is not None
+    assert s.astronomical_dawn is None and s.astronomical_dusk is None
+    # Deeper twilight begins earlier in the morning.
+    assert s.nautical_dawn < s.civil_dawn
+
+
+def test_twilight_extreme_latitude_does_not_raise():
+    # Deep in the Arctic on polar day the backend can refuse a twilight crossing
+    # (circumpolar at the depression angle); the factory must degrade to None
+    # rather than propagate a backend error.
+    s = SunTimesFactory.from_date(2026, 6, 21, latitude=78.22, longitude=15.65, tz_str="Arctic/Longyearbyen")
+    assert s.is_polar_day is True
+    assert s.civil_dawn is None and s.nautical_dawn is None and s.astronomical_dawn is None
+    assert s.civil_dusk is None and s.nautical_dusk is None and s.astronomical_dusk is None
+
+
+def test_twilight_dusk_crosses_midnight_high_latitude():
+    # Near the solstice at ~43-48N the astronomical "night" falls in the small hours,
+    # so the evening dusk lands on the next civil date. Searching dusk from local noon
+    # keeps it the evening crossing (dawn < dusk, ~a full day after dawn); a
+    # midnight-anchored search would instead return a pre-dawn value (dusk < dawn).
+    import pytz
+
+    s = SunTimesFactory.from_date(2026, 6, 21, latitude=48.0, longitude=2.35, tz_str="Europe/Paris")
+    assert s.astronomical_dawn is not None and s.astronomical_dusk is not None
+    assert s.astronomical_dawn < s.astronomical_dusk
+    assert (s.astronomical_dusk - s.astronomical_dawn).total_seconds() > 12 * 3600
+    assert s.sunset < s.civil_dusk < s.nautical_dusk < s.astronomical_dusk
+    # The evening astronomical dusk spills past local midnight onto the next date.
+    paris = pytz.timezone("Europe/Paris")
+    assert s.astronomical_dusk.astimezone(paris).date() > s.sunset.astimezone(paris).date()
+
+
+def test_twilight_during_polar_night():
+    # Polar night is not the same as no twilight: at Svalbard in midwinter the Sun
+    # still climbs above the deeper depression angles around local noon, so nautical
+    # and astronomical twilight exist even though sunrise/sunset (and the shallower
+    # civil twilight) are None.
+    s = SunTimesFactory.from_date(2026, 12, 21, latitude=78.22, longitude=15.65, tz_str="Arctic/Longyearbyen")
+    assert s.is_polar_night is True
+    assert s.sunrise is None and s.sunset is None
+    assert s.civil_dawn is None and s.civil_dusk is None
+    assert s.nautical_dawn is not None and s.nautical_dusk is not None
+    assert s.astronomical_dawn is not None and s.astronomical_dusk is not None

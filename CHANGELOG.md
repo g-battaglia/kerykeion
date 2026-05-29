@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.0.0a50
+
+_2026-05-29_
+
+`SunTimesFactory` now also reports civil, nautical and astronomical twilight.
+
+### Added
+
+- **Twilight on `SunTimesModel`** — six new optional fields: `civil_dawn` /
+  `civil_dusk` (Sun at -6°), `nautical_dawn` / `nautical_dusk` (-12°) and
+  `astronomical_dawn` / `astronomical_dusk` (-18°). Computed by
+  `compute_twilight_events` via the active ephemeris backend's `rise_trans`
+  twilight bits (geometric, no refraction); each is `None` when that twilight
+  does not occur on the civil day (polar / high-latitude geometry).
+
 ## 6.0.0a49
 
 _2026-05-29_

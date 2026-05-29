@@ -6,7 +6,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from __future__ import annotations
 
 from kerykeion.schemas.kr_models import SunTimesModel
-from kerykeion.sun_times.utils import compute_sun_events, resolve_timezone
+from kerykeion.sun_times.utils import compute_sun_events, compute_twilight_events, resolve_timezone
 
 
 class SunTimesFactory:
@@ -57,13 +57,15 @@ class SunTimesFactory:
             tz_str: IANA timezone identifier the civil date is anchored to.
 
         Returns:
-            SunTimesModel: sunrise, sunset, solar noon, day length and polar flags.
+            SunTimesModel: sunrise, sunset, solar noon, day length, polar flags
+            and civil/nautical/astronomical twilight.
 
         Raises:
             KerykeionException: If ``tz_str`` is invalid or the civil date is unsupported.
         """
         tz = resolve_timezone(tz_str)
         events = compute_sun_events(year, month, day, latitude, longitude, tz)
+        twilight = compute_twilight_events(year, month, day, latitude, longitude, tz)
 
         return SunTimesModel(
             date=f"{year:04d}-{month:02d}-{day:02d}",
@@ -76,4 +78,10 @@ class SunTimesFactory:
             day_length=events.day_length,
             is_polar_day=events.is_polar_day,
             is_polar_night=events.is_polar_night,
+            civil_dawn=twilight.civil_dawn,
+            civil_dusk=twilight.civil_dusk,
+            nautical_dawn=twilight.nautical_dawn,
+            nautical_dusk=twilight.nautical_dusk,
+            astronomical_dawn=twilight.astronomical_dawn,
+            astronomical_dusk=twilight.astronomical_dusk,
         )

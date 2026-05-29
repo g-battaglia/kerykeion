@@ -378,6 +378,9 @@ class SunTimesModel(SubscriptableBaseModel):
         day_length: Duration from sunrise to a later paired sunset, or ``None``.
         is_polar_day: ``True`` when the Sun stays above the horizon all day.
         is_polar_night: ``True`` when the Sun stays below the horizon all day.
+        civil_dawn / civil_dusk: Sun at -6 degrees (morning / evening), or ``None``.
+        nautical_dawn / nautical_dusk: Sun at -12 degrees, or ``None``.
+        astronomical_dawn / astronomical_dusk: Sun at -18 degrees, or ``None``.
     """
 
     date: str
@@ -390,6 +393,12 @@ class SunTimesModel(SubscriptableBaseModel):
     day_length: Optional[timedelta] = None
     is_polar_day: bool = False
     is_polar_night: bool = False
+    civil_dawn: Optional[datetime] = None
+    civil_dusk: Optional[datetime] = None
+    nautical_dawn: Optional[datetime] = None
+    nautical_dusk: Optional[datetime] = None
+    astronomical_dawn: Optional[datetime] = None
+    astronomical_dusk: Optional[datetime] = None
 
 
 class PlanetaryHourModel(SubscriptableBaseModel):
