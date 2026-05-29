@@ -57,7 +57,8 @@ class SunTimesFactory:
             tz_str: IANA timezone identifier the civil date is anchored to.
 
         Returns:
-            SunTimesModel: sunrise, sunset, solar noon, day length and polar flags.
+            SunTimesModel: sunrise, sunset, solar noon, day length, polar flags
+            and civil/nautical/astronomical twilight.
 
         Raises:
             KerykeionException: If ``tz_str`` is invalid or the civil date is unsupported.

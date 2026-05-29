@@ -6,13 +6,16 @@ The heavy astronomical work — locating sunrise and sunset with atmospheric
 refraction — is delegated to the well-tested
 :func:`kerykeion.moon_phase_details.utils.compute_sun_rise_set_swe`, which calls
 the active ephemeris backend's ``rise_trans`` routine. This module adds the thin
-layer on top: timezone/Julian-Day bookkeeping, solar noon, day length, and the
-polar day / polar night discriminator. No full astrological subject is built, so
-the computation is cheap (two ``rise_trans`` calls plus one position lookup).
+layer on top: timezone/Julian-Day bookkeeping, solar noon, day length, the polar
+day / polar night discriminator, and civil/nautical/astronomical twilight. No
+full astrological subject is built, so the computation stays cheap: two
+``rise_trans`` calls for sunrise/sunset (plus one position lookup) and up to six
+more for the twilight crossings.
 """
 
 from __future__ import annotations
 
+import logging
 import math
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
@@ -29,6 +32,7 @@ from kerykeion.moon_phase_details.utils import (
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.utilities import datetime_to_julian, julian_to_datetime
 
+logger = logging.getLogger(__name__)
 
 _APPARENT_UPPER_LIMB_HORIZON_DEGREES = -0.833
 
@@ -144,6 +148,21 @@ def julian_day_to_utc(jd: float) -> datetime:
     return julian_to_datetime(jd).replace(tzinfo=timezone.utc)
 
 
+def _civil_day_bounds(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> tuple[float, float]:
+    """Julian Days (UT) of the local midnights opening and closing the civil day.
+
+    Returns ``(jd_midnight, jd_next_midnight)``; the upper bound falls back to
+    ``jd_midnight + 1`` when the following date overflows the supported range.
+    """
+    jd_midnight = local_midnight_julian_day(year, month, day, tz)
+    try:
+        next_day = date(year, month, day) + timedelta(days=1)
+        jd_next_midnight = local_midnight_julian_day(next_day.year, next_day.month, next_day.day, tz)
+    except OverflowError:
+        jd_next_midnight = jd_midnight + 1.0
+    return jd_midnight, jd_next_midnight
+
+
 def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     """Classify a no-rise/no-set day as polar day or polar night.
 
@@ -197,12 +216,7 @@ def compute_sun_events(
             rise/set while the geometry is not polar (e.g. a date/location outside
             the backend's supported rise/set range).
     """
-    jd_midnight = local_midnight_julian_day(year, month, day, tz)
-    try:
-        next_day = date(year, month, day) + timedelta(days=1)
-        jd_next_midnight = local_midnight_julian_day(next_day.year, next_day.month, next_day.day, tz)
-    except OverflowError:
-        jd_next_midnight = jd_midnight + 1.0
+    jd_midnight, jd_next_midnight = _civil_day_bounds(year, month, day, tz)
 
     with EPHEMERIS_LOCK:
         sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, latitude, longitude)
@@ -262,10 +276,13 @@ def _next_event_jd(
     """
     try:
         result = swe.rise_trans(jd_start, swe.SUN, rsmi, geopos, atpress=0.0, attemp=0.0, flags=iflag)
-    except (RuntimeError, AttributeError, TypeError, IndexError, ValueError, OverflowError):
-        # Circumpolar / edge geometry: the backend may raise instead of returning a
-        # no-event status. A missing twilight crossing is normal at high latitudes,
-        # so degrade to None rather than failing the whole sun-times computation.
+    except RuntimeError as exc:
+        # Expected at high latitudes: circumpolar at the depression angle (the Sun
+        # never reaches it). A missing twilight crossing is normal, so degrade to None.
+        logger.debug("Twilight rise/set unavailable (expected for polar geometry): %s", exc)
+        return None
+    except (AttributeError, TypeError, IndexError, ValueError, OverflowError) as exc:  # pragma: no cover
+        logger.error("Unexpected error in twilight rise/set calculation: %s", exc, exc_info=True)
         return None
     if not isinstance(result, tuple) or len(result) < 2:
         return None
@@ -283,9 +300,11 @@ def compute_twilight_events(
     """Compute civil, nautical and astronomical dawn/dusk for a civil day.
 
     Dawn is the morning crossing (Sun ascending to the depression angle) and dusk
-    the evening crossing (descending past it), at -6 / -12 / -18 degrees. Results
-    are timezone-aware UTC instants bounded to the requested civil day, or ``None``
-    when the twilight does not occur that day (polar / high-latitude geometry).
+    the evening crossing (descending past it), at -6 / -12 / -18 degrees. Dawn is
+    sought from local midnight, dusk from local noon so it is the evening crossing;
+    an evening dusk can therefore land in the small hours of the next civil date
+    (as the paired sunset can). Each instant is a timezone-aware UTC ``datetime``,
+    or ``None`` when that twilight does not occur (polar / high-latitude geometry).
 
     Args:
         year, month, day: Civil date in the supplied timezone.
@@ -297,12 +316,7 @@ def compute_twilight_events(
         A :class:`TwilightEvents` with the six dawn/dusk instants (each ``None``
         when the corresponding twilight does not occur on the civil day).
     """
-    jd_midnight = local_midnight_julian_day(year, month, day, tz)
-    try:
-        next_day = date(year, month, day) + timedelta(days=1)
-        jd_next_midnight = local_midnight_julian_day(next_day.year, next_day.month, next_day.day, tz)
-    except OverflowError:
-        jd_next_midnight = jd_midnight + 1.0
+    jd_midnight, jd_next_midnight = _civil_day_bounds(year, month, day, tz)
 
     # Backend flag shims (libephemeris exposes these; swisseph uses the SE_ prefix).
     calc_rise = getattr(swe, "CALC_RISE", getattr(swe, "SE_CALC_RISE", 1))
@@ -315,17 +329,27 @@ def compute_twilight_events(
     with EPHEMERIS_LOCK:
         iflag = configure_ephemeris_path()
 
-        def event(rsmi: int) -> Optional[datetime]:
+        jd_noon = jd_midnight + 0.5
+
+        def dawn(rsmi: int) -> Optional[datetime]:
+            # Morning ascending crossing, within the civil day.
             jd = _next_event_jd(jd_midnight, geopos, rsmi, iflag)
-            if jd is None or jd >= jd_next_midnight:
-                return None
-            return julian_day_to_utc(jd)
+            return julian_day_to_utc(jd) if jd is not None and jd < jd_next_midnight else None
+
+        def dusk(rsmi: int) -> Optional[datetime]:
+            # Evening descending crossing: searching from local noon makes the first
+            # descent found the evening one (not a pre-dawn small-hours crossing). Like
+            # the paired sunset it may fall in the small hours of the next civil date,
+            # so the bound runs to the following local noon (rejecting far-future
+            # crossings during polar day).
+            jd = _next_event_jd(jd_noon, geopos, rsmi, iflag)
+            return julian_day_to_utc(jd) if jd is not None and jd < jd_next_midnight + 0.5 else None
 
         return TwilightEvents(
-            civil_dawn=event(calc_rise | civil_bit),
-            civil_dusk=event(calc_set | civil_bit),
-            nautical_dawn=event(calc_rise | nautic_bit),
-            nautical_dusk=event(calc_set | nautic_bit),
-            astronomical_dawn=event(calc_rise | astro_bit),
-            astronomical_dusk=event(calc_set | astro_bit),
+            civil_dawn=dawn(calc_rise | civil_bit),
+            civil_dusk=dusk(calc_set | civil_bit),
+            nautical_dawn=dawn(calc_rise | nautic_bit),
+            nautical_dusk=dusk(calc_set | nautic_bit),
+            astronomical_dawn=dawn(calc_rise | astro_bit),
+            astronomical_dusk=dusk(calc_set | astro_bit),
         )
