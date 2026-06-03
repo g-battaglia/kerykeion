@@ -18,7 +18,7 @@ Swiss Ephemeris / libephemeris functions used (via ``compute_lunar_phase_jd``):
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
@@ -53,6 +53,32 @@ _SEARCH_ADVANCE_DAYS = 15.0
 
 # Hard cap on iterations per phase as a runaway guard (≈ enough for millennia).
 _MAX_ITERATIONS = 200_000
+
+# Max angular error (deg) for a solver hit to count as a real phase. A genuine
+# hit converges to <0.001°; a degenerate echo of the search start is degrees off.
+_PHASE_ANGLE_TOL = 0.01
+
+
+def _to_utc_naive(dt: datetime) -> datetime:
+    """Normalize an offset-aware datetime to naive UTC.
+
+    ``datetime_to_julian`` reads the wall-clock fields and ignores tzinfo, and
+    the lunation range is documented as UTC, so an aware input must be converted
+    rather than silently treated as if its local wall-clock were UTC.
+    """
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    return dt
+
+
+def _phase_angle_error(jd: float, target_angle: float) -> float:
+    """Absolute error (deg) between the actual Sun-Moon separation at ``jd`` and
+    ``target_angle``. Used to reject degenerate ``compute_lunar_phase_jd`` echoes
+    that return the search start instead of a real syzygy."""
+    sun = float(swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH)[0][0]) % 360.0
+    moon = float(swe.calc_ut(jd, swe.MOON, swe.FLG_SWIEPH)[0][0]) % 360.0
+    diff = (moon - sun - target_angle) % 360.0
+    return min(diff, 360.0 - diff)
 
 
 def _jd_to_iso(jd: float) -> str:
@@ -117,8 +143,8 @@ class LunationFinderFactory:
             end_date: ISO date or datetime, e.g. ``"2026-12-31"``.
             phases: Optional subset of ``new``/``first_quarter``/``full``/``last_quarter``.
         """
-        start_dt = datetime.fromisoformat(start_date)
-        end_dt = datetime.fromisoformat(end_date)
+        start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
+        end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
         # A date-only end_date means "through the end of that UTC day"; without
         # this it resolves to midnight and drops any lunation later that day.
         if "T" not in end_date and " " not in end_date:
@@ -162,7 +188,11 @@ class LunationFinderFactory:
                     hit = compute_lunar_phase_jd(jd, angle, forward=True)
                     if hit is None or hit > end_jd:
                         break
-                    lunations.append(LunationFinderFactory._build(phase_name, hit))
+                    # compute_lunar_phase_jd can echo its own start (a tiny step
+                    # past jd) when called just after a phase, reporting an event
+                    # whose true angle is not the target. Record only genuine hits.
+                    if _phase_angle_error(hit, angle) <= _PHASE_ANGLE_TOL:
+                        lunations.append(LunationFinderFactory._build(phase_name, hit))
                     jd = hit + _SEARCH_ADVANCE_DAYS
 
             lunations.sort(key=lambda lun: lun.julian_day)

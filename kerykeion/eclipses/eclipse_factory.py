@@ -283,7 +283,9 @@ class EclipseFactory:
                     sun_altitude=round(attr[5], 4) if len(attr) > 5 else None,
                     **_zodiac_fields(max_jd, swe.SUN, "Sun"),
                     **_saros_inex(max_jd, "solar"),
-                    **_solar_gamma_duration(max_jd),
+                    # gamma / duration are global central-line properties; max_jd
+                    # here is the observer's local maximum, so they are omitted
+                    # (the global search reports them from the global maximum).
                 ))
                 jd = max_jd + 10  # Skip ahead
             except Exception as e:

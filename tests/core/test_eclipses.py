@@ -57,6 +57,17 @@ class TestLocalSearch:
         )
         assert len(result.solar_eclipses) > 0
 
+    def test_local_solar_omits_global_gamma_duration(self):
+        # gamma and central duration are global central-line properties; local
+        # results (max_jd = observer maximum) must not carry them.
+        result = EclipseFactory.search_from_location(
+            lat=41.9, lng=12.5, start_year=2020, count=3
+        )
+        assert result.solar_eclipses
+        for e in result.solar_eclipses:
+            assert e.gamma is None
+            assert e.duration_minutes is None
+
     def test_finds_local_lunar_eclipses(self):
         result = EclipseFactory.search_from_location(
             lat=41.9, lng=12.5, start_year=2020, count=3

@@ -55,6 +55,23 @@ class TestLunationsRange:
         # ~1 full day (end-of-day), not 0 as a bare midnight end_date would give.
         assert 0.99 < span <= 1.0
 
+    def test_no_phantom_lunation_at_range_start(self):
+        # A range beginning just after a new moon (12 Aug 2026) must not report a
+        # phantom new moon echoed at the range start.
+        res = LunationFinderFactory.from_iso_range(
+            "2026-08-13", "2026-08-13", phases=["new"]
+        )
+        assert res.lunations == []
+
+    def test_offset_aware_input_normalized_to_utc(self):
+        from datetime import datetime
+        from kerykeion.lunations.lunation_factory import _to_utc_naive
+
+        # +02:00 wall-clock midnight is 22:00 UTC on the previous day.
+        naive = _to_utc_naive(datetime.fromisoformat("2026-01-01T00:00:00+02:00"))
+        assert naive.tzinfo is None
+        assert (naive.year, naive.month, naive.day, naive.hour) == (2025, 12, 31, 22)
+
 
 class TestLunationGeometry:
     """Sun/Moon geometry at each phase."""
