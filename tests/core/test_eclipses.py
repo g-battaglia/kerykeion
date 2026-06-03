@@ -246,3 +246,53 @@ class TestSweRegressionEclipses:
         assert abs(factory_lunar_max_jd - swe_lunar_max_jd) < 0.01, (
             f"Factory lunar JD {factory_lunar_max_jd} != swe JD {swe_lunar_max_jd}"
         )
+
+
+class TestEclipseEnrichment:
+    """Zodiac position + catalogued series/geometry enrichment fields."""
+
+    def test_solar_has_zodiac_position(self):
+        result = EclipseFactory.search_global(start_year=2026, count=2)
+        ecl = result.solar_eclipses[0]
+        assert ecl.sign is not None
+        assert 0 <= ecl.sign_num <= 11
+        assert 0.0 <= ecl.degree < 30.0
+        assert 0.0 <= ecl.ecliptic_longitude < 360.0
+
+    def test_lunar_has_zodiac_position(self):
+        result = EclipseFactory.search_global(start_year=2026, count=2)
+        ecl = result.lunar_eclipses[0]
+        assert ecl.sign is not None
+        assert 0 <= ecl.sign_num <= 11
+
+    def test_aug_2026_total_solar_in_leo(self):
+        """The 12 Aug 2026 total solar eclipse falls at ~20 deg Leo, Saros 126."""
+        result = EclipseFactory.search_global(start_year=2026, count=2)
+        totals = [e for e in result.solar_eclipses if e.type == "total"]
+        assert totals, "expected a total solar eclipse in 2026"
+        ecl = totals[0]
+        assert ecl.sign == "Leo"
+        assert 19.0 <= ecl.degree <= 21.0
+        if hasattr(swe, "get_saros_number"):
+            assert ecl.saros == 126
+
+    def test_solar_gamma_and_duration_when_available(self):
+        result = EclipseFactory.search_global(start_year=2026, count=2)
+        central = [e for e in result.solar_eclipses if e.type in ("total", "annular")]
+        assert central
+        ecl = central[0]
+        if hasattr(swe, "sol_eclipse_max_time"):
+            assert ecl.gamma is not None
+            assert -1.6 < ecl.gamma < 1.6
+        if hasattr(swe, "calc_solar_eclipse_duration"):
+            # Central eclipses have a positive duration; partial -> None.
+            assert ecl.duration_minutes is None or ecl.duration_minutes > 0
+
+    def test_swisseph_guard_returns_none(self):
+        """When libephemeris extensions are absent, series fields stay empty."""
+        from unittest.mock import patch
+        from kerykeion.eclipses import eclipse_factory as ef
+
+        with patch.object(ef.swe, "get_saros_number", None), \
+             patch.object(ef.swe, "get_inex_number", None):
+            assert ef._saros_inex(2451545.0, "solar") == {}
