@@ -70,6 +70,7 @@ from .void_of_course_moon import VoidOfCourseMoonFactory
 # =============================================================================
 from .planetary_phenomena import PlanetaryPhenomenaFactory
 from .eclipses import EclipseFactory
+from .lunations import LunationFinderFactory, LunationModel, LunationsCollectionModel
 from .planetary_nodes import PlanetaryNodesFactory
 from .heliacal import HeliacalFactory
 from .occultations import OccultationFactory
@@ -154,6 +155,9 @@ __all__ = [
     # Standalone Factories
     "PlanetaryPhenomenaFactory",
     "EclipseFactory",
+    "LunationFinderFactory",
+    "LunationModel",
+    "LunationsCollectionModel",
     "PlanetaryNodesFactory",
     "HeliacalFactory",
     "OccultationFactory",

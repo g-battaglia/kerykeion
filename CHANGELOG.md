@@ -1,5 +1,37 @@
 # Changelog
 
+## 6.0.0a52
+
+_2026-06-03_
+
+Adds a lunation-calendar finder and enriches eclipse search with zodiac
+position plus Saros/Inex/gamma/duration metadata. Raises the libephemeris
+floor to 2.0.2.
+
+### Added
+
+- **`LunationFinderFactory`** (`kerykeion.lunations`) — finds New Moon, First
+  Quarter, Full Moon and Last Quarter across a date or Julian-Day range
+  (`from_iso_range` / `from_julian_day`) via `compute_lunar_phase_jd`, iterating
+  each phase independently at a half-synodic step so the binary-search solver
+  never degenerates on adjacent phases. Returns a `LunationsCollectionModel`
+  whose items carry the phase name, UTC timestamp, Julian Day and the Sun/Moon
+  `KerykeionPointModel`. Re-exported from the package root
+  (`LunationFinderFactory`, `LunationModel`, `LunationsCollectionModel`).
+- **Eclipse zodiac + physical metadata** — `SolarEclipseModel` /
+  `LunarEclipseModel` gain optional `ecliptic_longitude`, `sign`, `sign_num`
+  and `degree` of the luminary at maximum, plus `saros` / `inex` (and, for
+  solar eclipses, `gamma` and `duration_minutes`). The values come from the
+  libephemeris extensions, guarded with `hasattr`, so they are `None` on the
+  swisseph backend — additive and backward compatible.
+
+### Changed
+
+- **`libephemeris` pinned to `==2.0.2`** — picks up the fix for global
+  lunar-occultation search under the `extended` (DE441) precision tier
+  (`lun_occult_when_glob` previously clamped post-1969 searches to the DE441
+  segment split and returned no events).
+
 ## 6.0.0a51
 
 _2026-05-29_
