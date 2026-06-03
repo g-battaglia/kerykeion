@@ -39,6 +39,22 @@ class TestLunationsRange:
         assert all(lun.phase == "new" for lun in res.lunations)
         assert 11 <= len(res.lunations) <= 13
 
+    def test_unknown_phase_raises(self):
+        import pytest
+
+        with pytest.raises(ValueError):
+            LunationFinderFactory.from_iso_range(
+                "2026-01-01", "2026-12-31", phases=["full", "waxing"]
+            )
+
+    def test_date_only_end_covers_full_day(self):
+        # A date-only end_date must span through the end of that UTC day, not
+        # stop at midnight (which would drop a lunation later on the last day).
+        res = LunationFinderFactory.from_iso_range("2026-01-01", "2026-01-01")
+        span = res.end_jd - res.start_jd
+        # ~1 full day (end-of-day), not 0 as a bare midnight end_date would give.
+        assert 0.99 < span <= 1.0
+
 
 class TestLunationGeometry:
     """Sun/Moon geometry at each phase."""

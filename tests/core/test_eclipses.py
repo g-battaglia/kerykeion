@@ -293,6 +293,6 @@ class TestEclipseEnrichment:
         from unittest.mock import patch
         from kerykeion.eclipses import eclipse_factory as ef
 
-        with patch.object(ef.swe, "get_saros_number", None), \
-             patch.object(ef.swe, "get_inex_number", None):
+        with patch.object(ef.swe, "get_saros_number", None, create=True), \
+             patch.object(ef.swe, "get_inex_number", None, create=True):
             assert ef._saros_inex(2451545.0, "solar") == {}

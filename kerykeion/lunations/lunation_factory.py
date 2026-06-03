@@ -117,8 +117,14 @@ class LunationFinderFactory:
             end_date: ISO date or datetime, e.g. ``"2026-12-31"``.
             phases: Optional subset of ``new``/``first_quarter``/``full``/``last_quarter``.
         """
-        start_jd = datetime_to_julian(datetime.fromisoformat(start_date))
-        end_jd = datetime_to_julian(datetime.fromisoformat(end_date))
+        start_dt = datetime.fromisoformat(start_date)
+        end_dt = datetime.fromisoformat(end_date)
+        # A date-only end_date means "through the end of that UTC day"; without
+        # this it resolves to midnight and drops any lunation later that day.
+        if "T" not in end_date and " " not in end_date:
+            end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
+        start_jd = datetime_to_julian(start_dt)
+        end_jd = datetime_to_julian(end_dt)
         return LunationFinderFactory.from_julian_day(start_jd, end_jd, phases)
 
     @staticmethod
@@ -137,7 +143,10 @@ class LunationFinderFactory:
         swe.set_ephe_path(_EPHE_PATH)
 
         if phases:
-            targets = {k: v for k, v in _PHASE_ANGLES.items() if k in phases}
+            invalid = sorted(set(phases) - set(_PHASE_ANGLES))
+            if invalid:
+                raise ValueError(f"Unknown phase names: {', '.join(invalid)}")
+            targets = {k: _PHASE_ANGLES[k] for k in phases}
         else:
             targets = dict(_PHASE_ANGLES)
 
