@@ -96,6 +96,7 @@ from .aspects import AspectsFactory
 from .relationship_score_factory import RelationshipScoreFactory
 from .house_comparison.house_comparison_factory import HouseComparisonFactory
 from .dominants import DominantsFactory, DominantStrategy, BaseDominantStrategy
+from .zodiacal_releasing import ZodiacalReleasingFactory
 
 # =============================================================================
 # VISUALIZATION
@@ -124,6 +125,8 @@ from .schemas.kr_models import (
     DominantsModel,
     DominantScoreModel,
     DominantBreakdownItemModel,
+    ZodiacalReleasingModel,
+    ZRPeriodModel,
 )
 from .schemas.kr_literals import DominantMethod
 
@@ -182,6 +185,7 @@ __all__ = [
     "DominantsFactory",
     "DominantStrategy",
     "BaseDominantStrategy",
+    "ZodiacalReleasingFactory",
     # Visualization
     "ChartDrawer",
     "ReportGenerator",
@@ -203,6 +207,8 @@ __all__ = [
     "DominantsModel",
     "DominantScoreModel",
     "DominantBreakdownItemModel",
+    "ZodiacalReleasingModel",
+    "ZRPeriodModel",
     "DominantMethod",
     # Settings and Utilities
     "KerykeionSettingsModel",

@@ -1577,3 +1577,56 @@ class DominantsModel(SubscriptableBaseModel):
     dominant_quality: Optional[Quality] = None
     dominant_house: Optional[Houses] = None
     score_breakdown: list[DominantBreakdownItemModel] = Field(default_factory=list)
+
+
+class ZRPeriodModel(SubscriptableBaseModel):
+    """One zodiacal-releasing period at a given level of subdivision.
+
+    Periods nest: an L1 (years) period contains L2 (months) sub-periods, each of
+    which may contain L3 sub-periods, and so on. Deeper levels are only populated
+    along the period that contains the requested target date, to keep the tree
+    bounded.
+
+    Attributes:
+        sign: Three-letter sign code ruling the period.
+        ruler: Traditional (domicile) ruler of the sign.
+        level: Subdivision level (1 = years, 2 = months, 3 = days, …).
+        start: Start date (ISO ``YYYY-MM-DD``).
+        end: End date (ISO ``YYYY-MM-DD``).
+        years: Nominal length in years at this level (the sign's general years
+            divided by ``12 ** (level - 1)``).
+        is_angular: ``True`` when the sign is angular from the lot (1st/4th/7th/
+            10th) — the peak periods.
+        is_loosing_the_bond: ``True`` when this period begins after a "loosing of
+            the bond" jump to the opposite sign.
+        subperiods: Nested sub-periods one level deeper (possibly empty).
+    """
+
+    sign: Sign
+    ruler: Optional[str] = None
+    level: int
+    start: str
+    end: str
+    years: float
+    is_angular: bool = False
+    is_loosing_the_bond: bool = False
+    subperiods: "list[ZRPeriodModel]" = Field(default_factory=list)
+
+
+class ZodiacalReleasingModel(SubscriptableBaseModel):
+    """Result of a zodiacal-releasing calculation from a lot.
+
+    Attributes:
+        lot: The lot the release is measured from ("fortune" or "spirit").
+        lot_sign: Sign of the lot — the first L1 period starts here.
+        lot_degree: Absolute longitude of the lot in the subject's zodiac.
+        periods: The top-level (L1) periods, each with nested sub-periods.
+        current_path: The chain of periods containing the target date, from L1
+            down to the deepest computed level (empty when no target date given).
+    """
+
+    lot: str
+    lot_sign: Sign
+    lot_degree: float
+    periods: list[ZRPeriodModel] = Field(default_factory=list)
+    current_path: list[ZRPeriodModel] = Field(default_factory=list)
