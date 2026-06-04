@@ -109,16 +109,22 @@ def _build_level(
     levels: int,
     target_dt: Optional[datetime],
     lot_sign: int,
-    life_cap_days: float,
-) -> List[ZRPeriodModel]:
+) -> "tuple[List[ZRPeriodModel], List[ZRPeriodModel]]":
     """Build the periods filling one parent span at ``level``.
 
-    ``duration_days`` is ``None`` for L1 (filled up to ``life_cap_days``);
-    otherwise periods are produced until the parent span is filled, truncating
-    the last one. Children are expanded for every L2 period, but for L3+ only
-    along the period that contains ``target_dt`` — keeping the tree bounded.
+    ``duration_days`` bounds the span to fill — for L1 it is the life cap, so the
+    L1 horizon is honoured up front rather than overshot by a full sign period.
+    The last period is truncated to fit. Children are expanded for every L2
+    period, but for L3+ only along the period that contains ``target_dt`` —
+    keeping the tree bounded.
+
+    Returns ``(periods, current_path)``. The current path is computed here from
+    the exact cursor datetimes (not the day-truncated display strings), so a
+    target falling on a boundary date for a non-midnight birth still resolves to
+    the period the deeper levels were actually built under.
     """
     periods: List[ZRPeriodModel] = []
+    current_path: List[ZRPeriodModel] = []
     unit_days = TROPICAL_YEAR_DAYS / (12 ** (level - 1))
     cursor = start_dt
     produced = 0.0
@@ -126,64 +132,41 @@ def _build_level(
     for sign_num, is_lob in _lob_sequence(start_sign):
         sign = SIGN_CODES[sign_num]
         full = GENERAL_YEARS[sign] * unit_days
-        if duration_days is None:
-            dur = full
-        else:
-            dur = min(full, duration_days - produced)
-        if dur <= 0:
+        dur = min(full, duration_days - produced)
+        if dur <= 1e-9:
             break
 
         end = cursor + timedelta(days=dur)
         contains_target = target_dt is not None and cursor <= target_dt < end
 
         children: List[ZRPeriodModel] = []
+        child_path: List[ZRPeriodModel] = []
         if level < levels and (level < 2 or contains_target):
-            children = _build_level(
-                sign_num, cursor, dur, level + 1, levels, target_dt, lot_sign, life_cap_days
+            children, child_path = _build_level(
+                sign_num, cursor, dur, level + 1, levels, target_dt, lot_sign
             )
 
-        periods.append(
-            ZRPeriodModel(
-                sign=sign,
-                ruler=TRADITIONAL_RULERS[sign],
-                level=level,
-                start=cursor.date().isoformat(),
-                end=end.date().isoformat(),
-                years=GENERAL_YEARS[sign] / (12 ** (level - 1)),
-                is_angular=((sign_num - lot_sign) % 12) in (0, 3, 6, 9),
-                is_loosing_the_bond=is_lob,
-                subperiods=children,
-            )
+        period = ZRPeriodModel(
+            sign=sign,
+            ruler=TRADITIONAL_RULERS[sign],
+            level=level,
+            start=cursor.date().isoformat(),
+            end=end.date().isoformat(),
+            years=GENERAL_YEARS[sign] / (12 ** (level - 1)),
+            is_angular=((sign_num - lot_sign) % 12) in (0, 3, 6, 9),
+            is_loosing_the_bond=is_lob,
+            subperiods=children,
         )
+        periods.append(period)
+        if contains_target:
+            current_path = [period, *child_path]
 
         cursor = end
         produced += dur
-        if duration_days is None:
-            if (cursor - start_dt).days >= life_cap_days:
-                break
-        elif produced >= duration_days - 1e-6:
+        if produced >= duration_days - 1e-6:
             break
 
-    return periods
-
-
-def _current_path(periods: List[ZRPeriodModel], target_dt: datetime) -> List[ZRPeriodModel]:
-    """Walk the tree to collect the periods containing ``target_dt``, L1 → deepest."""
-    path: List[ZRPeriodModel] = []
-    nodes = periods
-    while nodes:
-        match = None
-        for p in nodes:
-            start = datetime.fromisoformat(p.start)
-            end = datetime.fromisoformat(p.end)
-            if start <= target_dt < end:
-                match = p
-                break
-        if match is None:
-            break
-        path.append(match)
-        nodes = match.subperiods
-    return path
+    return periods, current_path
 
 
 class ZodiacalReleasingFactory:
@@ -259,6 +242,13 @@ class ZodiacalReleasingFactory:
                 raise KerykeionException(
                     f"Invalid target_date {target_date!r} (expected ISO YYYY-MM-DD)."
                 ) from exc
+            # Birth datetimes are naive; a timezone-aware target would raise a raw
+            # TypeError in the date math below. Reject it with a clear message.
+            if target_dt.tzinfo is not None:
+                raise KerykeionException(
+                    f"target_date {target_date!r} must be timezone-naive "
+                    "(pass a bare ISO date, e.g. '2026-06-04')."
+                )
 
         # Extend the L1 timeline far enough to cover the target date plus a margin.
         life_cap_days = life_cap_years * TROPICAL_YEAR_DAYS
@@ -266,11 +256,12 @@ class ZodiacalReleasingFactory:
             span = (target_dt - birth_dt).days + 10 * TROPICAL_YEAR_DAYS
             life_cap_days = max(life_cap_days, span)
 
-        periods = _build_level(
-            lot_sign_num, birth_dt, None, 1, levels, target_dt, lot_sign_num, life_cap_days
+        # L1 fills exactly the life cap (the last period is truncated to it), so
+        # the documented horizon is honoured instead of overshot. The current
+        # path is returned alongside, computed from exact datetimes.
+        periods, current_path = _build_level(
+            lot_sign_num, birth_dt, life_cap_days, 1, levels, target_dt, lot_sign_num
         )
-
-        current_path = _current_path(periods, target_dt) if target_dt is not None else []
 
         return ZodiacalReleasingModel(
             lot=lot,

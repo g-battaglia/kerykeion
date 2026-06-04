@@ -108,3 +108,30 @@ def test_levels_are_bounded_off_path(john_lennon):
     current_l1 = zr.current_path[0]
     l2_with_children = [s for s in current_l1.subperiods if s.subperiods]
     assert l2_with_children, "current L1 should contain at least one L2 with L3 children"
+
+
+def test_life_cap_is_honored(john_lennon):
+    """A small life_cap_years bounds the L1 horizon (last period truncated)."""
+    cap_years = 5
+    zr = ZodiacalReleasingFactory.from_subject(
+        john_lennon, lot="fortune", levels=1, life_cap_years=cap_years
+    )
+    total = _days(zr.periods[0].start, zr.periods[-1].end)
+    assert total <= cap_years * TROPICAL_YEAR_DAYS + 1
+
+
+def test_timezone_aware_target_raises(john_lennon):
+    """A timezone-aware target_date is rejected with KerykeionException, not TypeError."""
+    with pytest.raises(KerykeionException):
+        ZodiacalReleasingFactory.from_subject(
+            john_lennon, lot="fortune", target_date="2026-06-04T00:00:00+02:00"
+        )
+
+
+def test_current_path_is_internally_consistent(john_lennon):
+    """Each step of the current path is a real child of the previous one."""
+    zr = ZodiacalReleasingFactory.from_subject(
+        john_lennon, lot="fortune", levels=3, target_date="2000-01-01"
+    )
+    for parent, child in pairwise(zr.current_path):
+        assert child in parent.subperiods
