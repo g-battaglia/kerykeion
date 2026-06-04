@@ -12,6 +12,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from datetime import datetime
+from itertools import pairwise
 
 import pytest
 from pytest import approx
@@ -23,7 +24,7 @@ from kerykeion.zodiacal_releasing.factory import GENERAL_YEARS, TROPICAL_YEAR_DA
 pytestmark = pytest.mark.core
 
 
-def _days(start: str, end: str) -> float:
+def _days(start: str, end: str) -> int:
     return (datetime.fromisoformat(end) - datetime.fromisoformat(start)).days
 
 
@@ -41,7 +42,7 @@ def test_l1_contiguous_and_correct_lengths(john_lennon):
     periods = zr.periods
     assert len(periods) >= 2
 
-    for prev, nxt in zip(periods, periods[1:]):
+    for prev, nxt in pairwise(periods):
         assert prev.end == nxt.start  # contiguous
 
     # First (non-truncated) period spans its general years.

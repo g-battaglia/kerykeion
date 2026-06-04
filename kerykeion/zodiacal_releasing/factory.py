@@ -73,7 +73,7 @@ def _lot_degree(subject: AstrologicalSubjectModel, lot: LotName) -> Optional[flo
     ascendant, sun, moon = subject.ascendant, subject.sun, subject.moon
     if ascendant is None or sun is None or moon is None:
         return None
-    if bool(getattr(subject, "is_diurnal", True)):
+    if getattr(subject, "is_diurnal", True):
         degree = ascendant.abs_pos + sun.abs_pos - moon.abs_pos
     else:
         degree = ascendant.abs_pos + moon.abs_pos - sun.abs_pos
