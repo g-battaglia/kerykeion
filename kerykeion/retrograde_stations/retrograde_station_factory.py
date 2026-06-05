@@ -81,15 +81,16 @@ def _to_utc_naive(dt: datetime) -> datetime:
 
 
 def _jd_to_iso(jd: float) -> str:
-    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds."""
-    try:
-        dt = julian_to_datetime(jd)
-        return (
-            f"{dt.year:04d}-{dt.month:02d}-{dt.day:02d}"
-            f"T{dt.hour:02d}:{dt.minute:02d}:{dt.second:02d}Z"
-        )
-    except Exception:  # pragma: no cover - defensive
-        return ""
+    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
+
+    Lets conversion errors propagate rather than emitting an empty ``iso_utc``
+    that would look valid to downstream consumers.
+    """
+    dt = julian_to_datetime(jd)
+    return (
+        f"{dt.year:04d}-{dt.month:02d}-{dt.day:02d}"
+        f"T{dt.hour:02d}:{dt.minute:02d}:{dt.second:02d}Z"
+    )
 
 
 def _speed(jd: float, body: int) -> float:
@@ -243,11 +244,15 @@ class RetrogradeStationFactory:
         while jd < end_jd:
             jd_next = min(jd + _SAMPLE_STEP_DAYS, end_jd)
             next_speed = _speed(jd_next, body)
-            # Strictly opposite signs => the speed passed through zero in between.
-            if prev_speed * next_speed < 0.0:
-                jd_station = _bisect_station(body, jd, jd_next)
+            # A sign change in speed brackets a station; an endpoint speed of
+            # exactly 0.0 is the station itself. Claim a boundary zero on next
+            # (not prev) so a zero shared by two intervals is counted once.
+            crossed = prev_speed * next_speed < 0.0
+            endpoint_zero = next_speed == 0.0 and prev_speed != 0.0
+            if crossed or endpoint_zero:
+                jd_station = jd_next if endpoint_zero else _bisect_station(body, jd, jd_next)
                 # Direct -> retrograde is a retrograde station (SR); the reverse
-                # is a direct station (SD).
+                # is a direct station (SD). prev_speed is non-zero in both branches.
                 station_type = "SR" if prev_speed > 0.0 else "SD"
                 found.append(RetrogradeStationFactory._build(name, station_type, jd_station))
             prev_speed = next_speed

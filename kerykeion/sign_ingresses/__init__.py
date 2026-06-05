@@ -8,7 +8,7 @@ from .sign_ingress_factory import (
 )
 
 __all__ = [
-    "SignIngressFactory",
     "IngressModel",
     "SignIngressesCollectionModel",
+    "SignIngressFactory",
 ]

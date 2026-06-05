@@ -78,15 +78,16 @@ def _to_utc_naive(dt: datetime) -> datetime:
 
 
 def _jd_to_iso(jd: float) -> str:
-    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds."""
-    try:
-        dt = julian_to_datetime(jd)
-        return (
-            f"{dt.year:04d}-{dt.month:02d}-{dt.day:02d}"
-            f"T{dt.hour:02d}:{dt.minute:02d}:{dt.second:02d}Z"
-        )
-    except Exception:  # pragma: no cover - defensive
-        return ""
+    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
+
+    Lets conversion errors propagate rather than emitting an empty ``iso_utc``
+    that would look valid to downstream consumers.
+    """
+    dt = julian_to_datetime(jd)
+    return (
+        f"{dt.year:04d}-{dt.month:02d}-{dt.day:02d}"
+        f"T{dt.hour:02d}:{dt.minute:02d}:{dt.second:02d}Z"
+    )
 
 
 def _ang_diff(a: float, b: float) -> float:

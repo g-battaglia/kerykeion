@@ -9,6 +9,6 @@ from .retrograde_station_factory import (
 
 __all__ = [
     "RetrogradeStationFactory",
-    "StationModel",
     "RetrogradeStationsCollectionModel",
+    "StationModel",
 ]
