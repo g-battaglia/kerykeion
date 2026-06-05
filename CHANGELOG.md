@@ -1,5 +1,37 @@
 # Changelog
 
+## 6.0.0a54
+
+_2026-06-05_
+
+Adds two sky-event finders: planetary retrograde/direct stations and zodiac
+sign ingresses, each scanning a date or Julian-Day range.
+
+### Added
+
+- **`RetrogradeStationFactory`** (`kerykeion.retrograde_stations`) — finds
+  planetary retrograde and direct stations (the moments a planet's apparent
+  longitudinal motion reverses) across a date or Julian-Day range
+  (`from_iso_range` / `from_julian_day`). Backend-agnostic: samples the
+  `swe.calc_ut` longitudinal speed and bisects each sign change to the zero
+  crossing, like `LunationFinderFactory`. Returns a
+  `RetrogradeStationsCollectionModel` whose `StationModel` items carry the
+  planet, station type (`SR`/`SD`), UTC timestamp, Julian Day and zodiac
+  position. The Sun and Moon are excluded (they never station). Re-exported from
+  the package root (`RetrogradeStationFactory`, `StationModel`,
+  `RetrogradeStationsCollectionModel`).
+- **`SignIngressFactory`** (`kerykeion.sign_ingresses`) — finds zodiac sign
+  ingresses (a body crossing a 30° boundary) across a date or Julian-Day range.
+  Its `IngressModel` items carry the planet, from/to signs, a retrograde flag for
+  re-entries, UTC timestamp and Julian Day. Detects multiple crossings within a
+  single sampling interval (a retrograde re-entry near a station) via a recursive
+  midpoint probe. The Moon is opt-in. Re-exported from the package root
+  (`SignIngressFactory`, `IngressModel`, `SignIngressesCollectionModel`).
+
+Both validate against known anchors (the 2026 Mercury retrograde windows, the
+solar equinoxes/solstices, and the 2023–2024 Pluto Capricorn↔Aquarius ingress
+dance) and support BCE ranges via `from_julian_day`.
+
 ## 6.0.0a52
 
 _2026-06-03_
