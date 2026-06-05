@@ -23,7 +23,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, EPHEMERIS_LOCK
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
@@ -63,8 +63,9 @@ _SAMPLE_STEP_DAYS = 0.5
 # Bisection iterations: each halving of a 0.5-day bracket reaches sub-second
 # precision well before 40 steps.
 _BISECTION_ITERS = 40
-# Runaway guard (≈ 270 years at the default step).
-_MAX_SAMPLES = 200_000
+# Backstop on samples per scan (~2700 years at the default step). Ranges that
+# would exceed it are rejected explicitly rather than silently truncated.
+_MAX_SAMPLES = 2_000_000
 
 
 def _to_utc_naive(dt: datetime) -> datetime:
@@ -109,6 +110,16 @@ def _bisect_station(body: int, a: float, b: float) -> float:
         else:
             a, sa = mid, sm
     return (a + b) / 2.0
+
+
+def _ensure_scannable(start_jd: float, end_jd: float) -> None:
+    """Reject ranges too long to scan, so a caller never receives a silently
+    truncated result whose ``end_jd`` still claims the full requested range."""
+    if (end_jd - start_jd) / _SAMPLE_STEP_DAYS > _MAX_SAMPLES:
+        raise ValueError(
+            f"Date range too large to scan at the current resolution "
+            f"(> {_MAX_SAMPLES} samples). Narrow the date range."
+        )
 
 
 # =============================================================================
@@ -187,7 +198,8 @@ class RetrogradeStationFactory:
             end_jd: Julian Day (UT) range end.
             planets: Optional subset of planet names. Defaults to Mercury..Pluto.
         """
-        if planets:
+        # None = default set; an explicit empty list = scan nothing.
+        if planets is not None:
             invalid = sorted(set(planets) - set(_PLANET_IDS))
             if invalid:
                 raise ValueError(
@@ -198,17 +210,22 @@ class RetrogradeStationFactory:
         else:
             bodies = list(_STATION_PLANETS)
 
-        swe.set_ephe_path(_EPHE_PATH)
         stations: List[StationModel] = []
-
-        if end_jd > start_jd:
-            for name, body in bodies:
-                stations.extend(
-                    RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd)
-                )
+        if end_jd > start_jd and bodies:
+            _ensure_scannable(start_jd, end_jd)
+            # Hold the lock across the whole scan: set_ephe_path / calc_ut / close
+            # mutate process-global backend state shared with chart calculations.
+            with EPHEMERIS_LOCK:
+                swe.set_ephe_path(_EPHE_PATH)
+                try:
+                    for name, body in bodies:
+                        stations.extend(
+                            RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd)
+                        )
+                finally:
+                    swe.close()
             stations.sort(key=lambda s: s.julian_day)
 
-        swe.close()
         return RetrogradeStationsCollectionModel(
             start_jd=start_jd,
             end_jd=end_jd,
@@ -223,8 +240,7 @@ class RetrogradeStationFactory:
         found: List[StationModel] = []
         jd = start_jd
         prev_speed = _speed(jd, body)
-        samples = 0
-        while jd < end_jd and samples < _MAX_SAMPLES:
+        while jd < end_jd:
             jd_next = min(jd + _SAMPLE_STEP_DAYS, end_jd)
             next_speed = _speed(jd_next, body)
             # Strictly opposite signs => the speed passed through zero in between.
@@ -236,7 +252,6 @@ class RetrogradeStationFactory:
                 found.append(RetrogradeStationFactory._build(name, station_type, jd_station))
             prev_speed = next_speed
             jd = jd_next
-            samples += 1
         return found
 
     @staticmethod

@@ -23,7 +23,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, EPHEMERIS_LOCK
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
@@ -60,8 +60,14 @@ _PLANET_IDS["Moon"] = swe.MOON
 # (30°) is never jumped; slower bodies have ample margin.
 _SAMPLE_STEP_DAYS = 0.5
 _BISECTION_ITERS = 40
-# Runaway guard (≈ 270 years at the default step).
-_MAX_SAMPLES = 200_000
+# Backstop on samples per scan (~2700 years at the default step). Ranges that
+# would exceed it are rejected explicitly rather than silently truncated.
+_MAX_SAMPLES = 2_000_000
+# A planet can cross a boundary, station, and cross back within one sampling
+# interval (both endpoints in the same sign). When the midpoint reveals a hidden
+# sign, the interval is subdivided down to this resolution to catch both hits.
+_MIN_SEGMENT_DAYS = 1.0 / 96.0  # 15 minutes
+_MAX_SUBDIVISION_DEPTH = 8
 
 
 def _to_utc_naive(dt: datetime) -> datetime:
@@ -113,6 +119,16 @@ def _bisect_ingress(body: int, a: float, b: float, boundary: float) -> float:
         else:
             a, fa = mid, fm
     return (a + b) / 2.0
+
+
+def _ensure_scannable(start_jd: float, end_jd: float) -> None:
+    """Reject ranges too long to scan, so a caller never receives a silently
+    truncated result whose ``end_jd`` still claims the full requested range."""
+    if (end_jd - start_jd) / _SAMPLE_STEP_DAYS > _MAX_SAMPLES:
+        raise ValueError(
+            f"Date range too large to scan at the current resolution "
+            f"(> {_MAX_SAMPLES} samples). Narrow the date range."
+        )
 
 
 # =============================================================================
@@ -192,7 +208,8 @@ class SignIngressFactory:
             end_jd: Julian Day (UT) range end.
             planets: Optional subset of planet names. Defaults to Sun..Pluto.
         """
-        if planets:
+        # None = default set; an explicit empty list = scan nothing.
+        if planets is not None:
             invalid = sorted(set(planets) - set(_PLANET_IDS))
             if invalid:
                 raise ValueError(
@@ -203,17 +220,22 @@ class SignIngressFactory:
         else:
             bodies = list(_INGRESS_PLANETS)
 
-        swe.set_ephe_path(_EPHE_PATH)
         ingresses: List[IngressModel] = []
-
-        if end_jd > start_jd:
-            for name, body in bodies:
-                ingresses.extend(
-                    SignIngressFactory._scan_planet(name, body, start_jd, end_jd)
-                )
+        if end_jd > start_jd and bodies:
+            _ensure_scannable(start_jd, end_jd)
+            # Hold the lock across the whole scan: set_ephe_path / calc_ut / close
+            # mutate process-global backend state shared with chart calculations.
+            with EPHEMERIS_LOCK:
+                swe.set_ephe_path(_EPHE_PATH)
+                try:
+                    for name, body in bodies:
+                        ingresses.extend(
+                            SignIngressFactory._scan_planet(name, body, start_jd, end_jd)
+                        )
+                finally:
+                    swe.close()
             ingresses.sort(key=lambda i: i.julian_day)
 
-        swe.close()
         return SignIngressesCollectionModel(
             start_jd=start_jd,
             end_jd=end_jd,
@@ -224,32 +246,62 @@ class SignIngressFactory:
     def _scan_planet(
         name: str, body: int, start_jd: float, end_jd: float
     ) -> List[IngressModel]:
-        """Walk the range for one planet, bisecting each sign-index change."""
+        """Walk the range for one planet, emitting every sign-boundary crossing."""
         found: List[IngressModel] = []
         jd = start_jd
-        prev_lon = _lon(jd, body)
-        prev_sign = int(prev_lon // 30)
-        samples = 0
-        while jd < end_jd and samples < _MAX_SAMPLES:
+        prev_sign = int(_lon(jd, body) // 30)
+        while jd < end_jd:
             jd_next = min(jd + _SAMPLE_STEP_DAYS, end_jd)
-            cur_lon = _lon(jd_next, body)
-            cur_sign = int(cur_lon // 30)
-            if cur_sign != prev_sign:
-                # Direction over the step decides which boundary was crossed:
-                # forward (delta>0) crosses the top of prev_sign, retrograde the
-                # bottom. The half-day step guarantees a single boundary here.
-                retro = _ang_diff(cur_lon, prev_lon) < 0.0
-                boundary = ((prev_sign * 30) if retro else ((prev_sign + 1) * 30)) % 360.0
-                jd_ingress = _bisect_ingress(body, jd, jd_next, boundary)
-                found.append(
-                    SignIngressFactory._build(
-                        name, jd_ingress, prev_sign, cur_sign, retro, boundary
-                    )
-                )
-            prev_lon, prev_sign = cur_lon, cur_sign
+            cur_sign = int(_lon(jd_next, body) // 30)
+            SignIngressFactory._emit_segment(name, body, jd, prev_sign, jd_next, cur_sign, found, 0)
+            prev_sign = cur_sign
             jd = jd_next
-            samples += 1
         return found
+
+    @staticmethod
+    def _emit_segment(
+        name: str,
+        body: int,
+        a: float,
+        sign_a: int,
+        b: float,
+        sign_b: int,
+        found: List[IngressModel],
+        depth: int,
+    ) -> None:
+        """Emit ingresses within ``[a, b]``, subdividing to catch crossings the
+        endpoints hide (a forward + retrograde re-crossing inside one interval)."""
+        if sign_a == sign_b:
+            # Equal endpoints can still hide a there-and-back excursion across a
+            # boundary near a station. Probe the midpoint; if it sits in another
+            # sign, two crossings are hidden here — recurse into both halves.
+            if depth >= _MAX_SUBDIVISION_DEPTH or (b - a) <= _MIN_SEGMENT_DAYS:
+                return
+            mid = (a + b) / 2.0
+            sign_mid = int(_lon(mid, body) // 30)
+            if sign_mid != sign_a:
+                SignIngressFactory._emit_segment(name, body, a, sign_a, mid, sign_mid, found, depth + 1)
+                SignIngressFactory._emit_segment(name, body, mid, sign_mid, b, sign_b, found, depth + 1)
+            return
+
+        diff = (sign_b - sign_a) % 12
+        if diff != 1 and diff != 11 and depth < _MAX_SUBDIVISION_DEPTH and (b - a) > _MIN_SEGMENT_DAYS:
+            # More than one boundary between the endpoints (a fast body, or a
+            # multi-crossing interval): split so each half resolves one boundary.
+            mid = (a + b) / 2.0
+            sign_mid = int(_lon(mid, body) // 30)
+            SignIngressFactory._emit_segment(name, body, a, sign_a, mid, sign_mid, found, depth + 1)
+            SignIngressFactory._emit_segment(name, body, mid, sign_mid, b, sign_b, found, depth + 1)
+            return
+
+        # Adjacent signs: a single boundary. diff==1 is forward (top of sign_a),
+        # diff==11 is retrograde (bottom of sign_a).
+        retro = diff == 11
+        boundary = ((sign_a * 30) if retro else ((sign_a + 1) * 30)) % 360.0
+        jd_ingress = _bisect_ingress(body, a, b, boundary)
+        found.append(
+            SignIngressFactory._build(name, jd_ingress, sign_a, sign_b, retro, boundary)
+        )
 
     @staticmethod
     def _build(

@@ -73,6 +73,16 @@ class TestStationApi:
         res = RetrogradeStationFactory.from_julian_day(start, start)
         assert res.stations == []
 
+    def test_empty_planet_list_returns_nothing(self):
+        # An explicit empty list means "scan nothing", not "scan the defaults".
+        res = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", [])
+        assert res.stations == []
+
+    def test_oversized_range_raises(self):
+        # A range too long to scan is rejected, never silently truncated.
+        with pytest.raises(ValueError):
+            RetrogradeStationFactory.from_iso_range("0001-01-01", "3000-01-01")
+
     def test_from_julian_day(self):
         start = datetime_to_julian(datetime(2026, 1, 1))
         end = datetime_to_julian(datetime(2026, 12, 31))

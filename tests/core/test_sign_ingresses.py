@@ -59,6 +59,19 @@ class TestRetrogradeIngresses:
         assert last.iso_utc.startswith("2024-11-19")
         assert last.sign == "Aqu" and not last.retrograde
 
+    def test_double_crossing_within_one_interval(self):
+        # Mercury crossed into Aquarius ~04:20 UTC and retrograded back into
+        # Capricorn ~11:59 UTC on 1970-01-04 — both inside a single sampling
+        # interval. Endpoint-only detection misses both; the midpoint probe
+        # recovers them.
+        res = SignIngressFactory.from_iso_range("1970-01-03", "1970-01-06", ["Mercury"])
+        assert len(res.ingresses) == 2
+        first, second = res.ingresses
+        assert first.from_sign == "Cap" and first.sign == "Aqu" and not first.retrograde
+        assert second.from_sign == "Aqu" and second.sign == "Cap" and second.retrograde
+        assert first.iso_utc.startswith("1970-01-04")
+        assert second.iso_utc.startswith("1970-01-04")
+
 
 class TestIngressApi:
     """Factory entry points, defaults, and validation."""
@@ -85,6 +98,16 @@ class TestIngressApi:
         start = datetime_to_julian(datetime(2026, 1, 1))
         res = SignIngressFactory.from_julian_day(start, start)
         assert res.ingresses == []
+
+    def test_empty_planet_list_returns_nothing(self):
+        # An explicit empty list means "scan nothing", not "scan the defaults".
+        res = SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", [])
+        assert res.ingresses == []
+
+    def test_oversized_range_raises(self):
+        # A range too long to scan is rejected, never silently truncated.
+        with pytest.raises(ValueError):
+            SignIngressFactory.from_iso_range("0001-01-01", "3000-01-01")
 
     def test_from_julian_day(self):
         start = datetime_to_julian(datetime(2026, 1, 1))
