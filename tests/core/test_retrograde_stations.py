@@ -83,6 +83,21 @@ class TestStationApi:
         with pytest.raises(ValueError):
             RetrogradeStationFactory.from_iso_range("0001-01-01", "3000-01-01")
 
+    def test_bce_range_via_julian_day(self):
+        # The BCE range must not crash on JD->ISO conversion (datetime caps at
+        # year 1). Mercury stations in 100 BCE; just assert it runs and formats.
+        from kerykeion.ephemeris_backend import swe
+
+        jd0 = swe.julday(-100, 1, 1, 0.0)
+        jd1 = swe.julday(-100, 12, 31, 23.9)
+        res = RetrogradeStationFactory.from_julian_day(jd0, jd1, ["Mercury"])
+        assert all(s.iso_utc.startswith("-0100-") for s in res.stations)
+
+    def test_duplicate_planets_deduplicated(self):
+        once = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", ["Mercury"]).stations
+        twice = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", ["Mercury", "Mercury"]).stations
+        assert len(once) == len(twice)
+
     def test_from_julian_day(self):
         start = datetime_to_julian(datetime(2026, 1, 1))
         end = datetime_to_julian(datetime(2026, 12, 31))

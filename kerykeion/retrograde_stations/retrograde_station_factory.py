@@ -29,7 +29,6 @@ from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
     datetime_to_julian,
     get_kerykeion_point_from_degree,
-    julian_to_datetime,
 )
 from pydantic import Field
 
@@ -83,14 +82,16 @@ def _to_utc_naive(dt: datetime) -> datetime:
 def _jd_to_iso(jd: float) -> str:
     """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
 
-    Lets conversion errors propagate rather than emitting an empty ``iso_utc``
-    that would look valid to downstream consumers.
+    Uses ``swe.revjul`` rather than Python ``datetime`` (limited to years
+    1..9999) so the BCE range Kerykeion supports formats correctly, with an
+    extended-year sign for negative years.
     """
-    dt = julian_to_datetime(jd)
-    return (
-        f"{dt.year:04d}-{dt.month:02d}-{dt.day:02d}"
-        f"T{dt.hour:02d}:{dt.minute:02d}:{dt.second:02d}Z"
-    )
+    year, month, day, hour_frac = swe.revjul(jd)
+    secs = min(int(hour_frac * 3600 + 0.5), 86399)  # nearest second, no 24:00 carry
+    hours, rem = divmod(secs, 3600)
+    minutes, seconds = divmod(rem, 60)
+    year_str = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
+    return f"{year_str}-{month:02d}-{day:02d}T{hours:02d}:{minutes:02d}:{seconds:02d}Z"
 
 
 def _speed(jd: float, body: int) -> float:
@@ -179,8 +180,9 @@ class RetrogradeStationFactory:
         start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
         end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
         # A date-only end_date means "through the end of that UTC day"; without
-        # this it resolves to midnight and drops any station later that day.
-        if "T" not in end_date and " " not in end_date:
+        # this it resolves to midnight and drops any station later that day. Check
+        # for both T/t (fromisoformat accepts a lowercase 't') and a space.
+        if "T" not in end_date and "t" not in end_date and " " not in end_date:
             end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         start_jd = datetime_to_julian(start_dt)
         end_jd = datetime_to_julian(end_dt)
@@ -207,7 +209,9 @@ class RetrogradeStationFactory:
                     f"Unknown or non-stationing planets: {', '.join(invalid)}. "
                     f"Valid: {', '.join(_PLANET_IDS)}"
                 )
-            bodies = [(name, _PLANET_IDS[name]) for name in planets]
+            # Deduplicate (preserve order): duplicates would repeat the scan and
+            # emit every event multiple times.
+            bodies = [(name, _PLANET_IDS[name]) for name in dict.fromkeys(planets)]
         else:
             bodies = list(_STATION_PLANETS)
 

@@ -109,6 +109,29 @@ class TestIngressApi:
         with pytest.raises(ValueError):
             SignIngressFactory.from_iso_range("0001-01-01", "3000-01-01")
 
+    def test_bce_range_via_julian_day(self):
+        # The BCE range Kerykeion supports must not crash on JD->ISO conversion
+        # (Python datetime caps at year 1). Year -100 has 12 solar ingresses.
+        from kerykeion.ephemeris_backend import swe
+
+        jd0 = swe.julday(-100, 1, 1, 0.0)
+        jd1 = swe.julday(-100, 12, 31, 23.9)
+        res = SignIngressFactory.from_julian_day(jd0, jd1, ["Sun"])
+        assert len(res.ingresses) == 12
+        assert res.ingresses[0].iso_utc.startswith("-0100-")
+
+    def test_lowercase_t_end_not_extended(self):
+        # fromisoformat accepts a lowercase 't'; it must be read as a datetime,
+        # not widened to end-of-day. The Sun enters Aries 2026-03-20T14:45Z, so a
+        # 't00:00:00' end on that day must exclude it.
+        res = SignIngressFactory.from_iso_range("2026-03-19", "2026-03-20t00:00:00", ["Sun"])
+        assert all(x.sign != "Ari" for x in res.ingresses)
+
+    def test_duplicate_planets_deduplicated(self):
+        once = SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Sun"]).ingresses
+        twice = SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Sun", "Sun"]).ingresses
+        assert len(once) == len(twice)
+
     def test_from_julian_day(self):
         start = datetime_to_julian(datetime(2026, 1, 1))
         end = datetime_to_julian(datetime(2026, 12, 31))
