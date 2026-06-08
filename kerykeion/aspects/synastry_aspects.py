@@ -121,4 +121,4 @@ if __name__ == "__main__":
     synastry_aspects = SynastryAspects(john, yoko)
 
     # All aspects as a list of dictionaries
-    print([aspect.dict() for aspect in synastry_aspects.all_aspects])
+    print([aspect.model_dump() for aspect in synastry_aspects.all_aspects])

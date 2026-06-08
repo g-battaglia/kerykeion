@@ -48,17 +48,17 @@ scour = "^0.38.2"
 requests-cache = "^1.2.1"
 requests = "^2.32.3"
 simple-ascii-tables = "^1.0.0"
-pytz = "^2024.2"
+pytz = ">=2024.2"
 typing-extensions = "^4.12.2"
 
 [tool.poetry.scripts]
 create-docs = "scripts.docs:main"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.2.0"
-mypy = "^0.991"
-black = "^24.4.2"
-pdoc = "^14.5.0"
+pytest = "^8.0"
+mypy = "^1.15"
+black = "^25.1"
+pdoc = "^15.0"
 types-requests = "^2.28.11.7"
 types-pytz = "^2022.7.0.0"
 poethepoet = "^0.19.0"
