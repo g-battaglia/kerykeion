@@ -2,40 +2,66 @@
 """
 Primary Directions Factory (v6.0)
 
-Implements Placidus semi-arc primary directions — the most widely used
-method in classical/traditional astrology for predicting life events.
+Implements Placidus semi-arc primary directions ("under the pole" variant) —
+the most widely used method in classical/traditional astrology for predicting
+life events. Formulas follow the standard recipe as documented in
+M. Gansten, "Primary Directions: Astrology's Old Master Technique".
 
 Algorithm:
-    1. Convert each planet's ecliptic position to equatorial (RA, Dec)
-    2. Compute the semi-arc (diurnal or nocturnal) for each planet
-    3. Compute the meridian distance (RA - RAMC or RAMC + 180 - RA)
-    4. Compute the pole of the significator (house cusp latitude)
-    5. Compute oblique ascension of promissor under the significator's pole
-    6. The arc of direction = OA(promissor under sig's pole) - OA(significator)
-    7. Convert arc to years using the rate key (Ptolemy: 1 degree = 1 year)
+    1. Convert each point's position to true equatorial coordinates (RA, Dec).
+    2. Compute the ascensional difference at the birth latitude:
+           AD_phi = asin(tan(dec) * tan(geo_lat))
+       and from it the diurnal/nocturnal semi-arcs:
+           DSA = 90 + AD_phi,  NSA = 90 - AD_phi
+    3. Compute the meridian distance (MD) from the nearer meridian: from the
+       MC when the point is above the horizon (|MD_MC| <= DSA), from the IC
+       otherwise.
+    4. Compute the pole of the significator ("under the pole" recipe):
+           AD_P = (MD / SA) * AD_phi      # proportional ascensional difference
+           pole = atan(sin(AD_P) / tan(dec))
+       A point on the meridian (MD ~ 0) has pole 0 — directions to the MC/IC
+       are pure right-ascension arcs.
+    5. Build each promissor's aspect points on the ECLIPTIC: longitude
+       lambda_promissor +/- aspect with latitude 0, converted to RA/Dec
+       through the obliquity.
+    6. Take the oblique ascension (eastern significators) or oblique
+       descension (western significators) of the aspect point under the
+       significator's pole:
+           OA = RA - AD,  OD = RA + AD,  AD = asin(tan(dec) * tan(pole))
+    7. Arc of direction:
+           direct   = (OA_promissor - OA_significator) mod 360
+           converse = 360 - direct
+       Both are reported as separate entries (``is_converse`` marker).
+    8. Convert the arc to years using the rate key (Ptolemy: 1 deg = 1 year,
+       Naibod: 0.98564 deg = 1 year).
 
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
-from typing import List, Optional, Literal
+from kerykeion.ephemeris_backend import swe, ephemeris_session
+from typing import List, Optional, Literal, Tuple
 from pydantic import BaseModel, Field
 
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+
+# MD (in degrees of RA) below which a point is treated as being on the meridian.
+_ON_MERIDIAN_TOLERANCE = 1e-6
 
 
 class SpeculumEntry(BaseModel):
     """Speculum (coordinate table) entry for a single celestial point."""
     name: str
-    ecliptic_longitude: float = Field(description="Ecliptic longitude (0-360)")
+    ecliptic_longitude: float = Field(description="Ecliptic longitude (0-360), in the subject's zodiac")
     right_ascension: float = Field(description="Right Ascension in degrees (0-360)")
     declination: float = Field(description="Declination in degrees (-90 to +90)")
-    meridian_distance: float = Field(description="MD = angular distance from MC in RA degrees")
-    semi_arc: float = Field(description="Semi-arc (diurnal or nocturnal) in degrees")
-    is_above_horizon: bool = Field(description="True if planet is above the horizon")
-    pole: float = Field(description="Pole of the house position (Placidus)")
-    oblique_ascension: float = Field(description="Oblique ascension under own pole")
+    meridian_distance: float = Field(description="MD = signed angular distance from MC in RA degrees (-180 to 180)")
+    semi_arc: float = Field(description="Semi-arc (diurnal if above horizon, nocturnal if below) in degrees")
+    is_above_horizon: bool = Field(description="True if the point is above the horizon (|MD| <= DSA)")
+    pole: float = Field(description="Placidian pole of the point ('under the pole' recipe)")
+    oblique_ascension: float = Field(
+        description="Oblique ascension (eastern hemisphere) or oblique descension (western) under own pole"
+    )
 
 
 class PrimaryDirectionModel(BaseModel):
@@ -46,6 +72,10 @@ class PrimaryDirectionModel(BaseModel):
     arc: float = Field(description="Arc of direction in degrees of RA")
     direction_years: float = Field(description="Equivalent years using the selected rate key")
     rate_key: str = Field(description="Rate key used (ptolemy or naibod)")
+    is_converse: bool = Field(
+        default=False,
+        description="False for direct directions (with primary motion), True for converse (against it)",
+    )
 
 
 class PrimaryDirectionsFactory:
@@ -92,88 +122,108 @@ class PrimaryDirectionsFactory:
             aspects: List of aspect names to compute. Defaults to all major aspects.
 
         Returns:
-            List of PrimaryDirectionModel sorted by direction_years.
+            List of PrimaryDirectionModel sorted by direction_years. Both
+            direct and converse directions are included, distinguished by the
+            ``is_converse`` field. For sextile, square and trine, both the
+            dexter and sinister aspect points (lambda - aspect and
+            lambda + aspect) are directed.
         """
         if aspects is None:
             aspects = list(PrimaryDirectionsFactory.ASPECT_ANGLES.keys())
 
         rate = 1.0 if rate_key == "ptolemy" else 0.98564
 
-        # Setup ephemeris
-        ephe_path = EPHE_DATA_PATH
-        swe.set_ephe_path(ephe_path)
-
         jd = subject.julian_day
         lat = subject.lat
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 
-        # Get obliquity
-        obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+        with ephemeris_session() as iflag:
+            # True obliquity of the ecliptic
+            obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
 
-        # Get RAMC (Right Ascension of the Medium Coeli)
-        # Local sidereal time = Greenwich sidereal time + observer longitude
-        ramc = (swe.sidtime(jd) * 15.0 + subject.lng) % 360
+            # RAMC (Right Ascension of the Medium Coeli):
+            # local sidereal time = Greenwich sidereal time + observer longitude
+            ramc = (swe.sidtime(jd) * 15.0 + subject.lng) % 360
 
-        # Build speculum
-        speculum = PrimaryDirectionsFactory._build_speculum(
-            subject, jd, iflag, obliquity, ramc, lat
-        )
-
-        swe.close()
+            # Build speculum
+            speculum = PrimaryDirectionsFactory._build_speculum(
+                subject, jd, iflag, obliquity, ramc, lat
+            )
 
         if not speculum:
             return []
 
+        # Aspect points live on the ecliptic. For sidereal charts abs_pos is a
+        # sidereal longitude; the equatorial conversion below needs the
+        # tropical longitude, so add the ayanamsa back (None for tropical).
+        ayanamsa = getattr(subject, "ayanamsa_value", None) or 0.0
+
         # Compute directions
         directions: List[PrimaryDirectionModel] = []
-        max_arc = max_years * rate
 
         speculum_dict = {s.name: s for s in speculum}
 
         for sig_name, sig in speculum_dict.items():
+            # Eastern hemisphere (rising side): MD >= 0; significators in the
+            # east are directed by oblique ascension, in the west by oblique
+            # descension. On the meridian pole = 0 and AD = 0, so OA == OD.
+            sig_is_eastern = sig.meridian_distance >= 0
+
             for prom_name, prom in speculum_dict.items():
                 if sig_name == prom_name:
                     continue
+
+                prom_lambda_tropical = (prom.ecliptic_longitude + ayanamsa) % 360
 
                 for aspect_name in aspects:
                     aspect_angle = PrimaryDirectionsFactory.ASPECT_ANGLES.get(aspect_name)
                     if aspect_angle is None:
                         continue
 
-                    # Compute OA of promissor's aspect point under significator's pole
-                    prom_ra_aspected = (prom.right_ascension + aspect_angle) % 360
+                    # Aspect points are ecliptic: lambda +/- aspect, latitude 0.
+                    # 0 and 180 are their own mirror; the others have a dexter
+                    # and a sinister point.
+                    if aspect_angle in (0, 180):
+                        offsets = (aspect_angle,)
+                    else:
+                        offsets = (aspect_angle, -aspect_angle)
 
-                    # Oblique ascension under significator's pole
-                    try:
-                        oa_prom = PrimaryDirectionsFactory._oblique_ascension(
-                            prom_ra_aspected, prom.declination, sig.pole, obliquity
-                        )
-                    except Exception:
-                        continue
+                    for offset in offsets:
+                        aspect_lambda = (prom_lambda_tropical + offset) % 360
 
-                    # Arc = OA(promissor under sig pole) - OA(significator)
-                    # Direct arc (clockwise) and converse arc (counterclockwise)
-                    raw_arc = oa_prom - sig.oblique_ascension
+                        try:
+                            ra_asp, dec_asp = PrimaryDirectionsFactory._ecliptic_to_equatorial(
+                                aspect_lambda, obliquity
+                            )
+                            # OA/OD of the aspect point under the significator's pole
+                            if sig_is_eastern:
+                                oa_prom = PrimaryDirectionsFactory._oblique_ascension(
+                                    ra_asp, dec_asp, sig.pole
+                                )
+                            else:
+                                oa_prom = PrimaryDirectionsFactory._oblique_descension(
+                                    ra_asp, dec_asp, sig.pole
+                                )
+                        except Exception:
+                            continue
 
-                    # Normalize to [0, 360)
-                    arc = raw_arc % 360
-                    # Primary directions use both direct and converse arcs.
-                    # We report the smaller of the two arcs as the "active" direction.
-                    if arc > 180:
-                        arc = 360 - arc
+                        # Direct arc: the promissor is carried by primary motion
+                        # (increasing RAMC) onto the significator's place.
+                        arc_direct = (oa_prom - sig.oblique_ascension) % 360
+                        # Converse arc: motion against the diurnal rotation.
+                        arc_converse = (360.0 - arc_direct) % 360
 
-                    # Convert to years
-                    years = arc / rate
-
-                    if 0.1 < years <= max_years:
-                        directions.append(PrimaryDirectionModel(
-                            promissor=prom_name,
-                            significator=sig_name,
-                            aspect=aspect_name,
-                            arc=round(arc, 4),
-                            direction_years=round(years, 2),
-                            rate_key=rate_key,
-                        ))
+                        for arc, is_converse in ((arc_direct, False), (arc_converse, True)):
+                            years = arc / rate
+                            if 0.1 < years <= max_years:
+                                directions.append(PrimaryDirectionModel(
+                                    promissor=prom_name,
+                                    significator=sig_name,
+                                    aspect=aspect_name,
+                                    arc=round(arc, 4),
+                                    direction_years=round(years, 2),
+                                    rate_key=rate_key,
+                                    is_converse=is_converse,
+                                ))
 
         directions.sort(key=lambda d: d.direction_years)
         return directions
@@ -181,16 +231,13 @@ class PrimaryDirectionsFactory:
     @staticmethod
     def compute_speculum(subject: AstrologicalSubjectModel) -> List[SpeculumEntry]:
         """Compute and return the speculum (coordinate table) for a chart."""
-        ephe_path = EPHE_DATA_PATH
-        swe.set_ephe_path(ephe_path)
         jd = subject.julian_day
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
-        obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
-        ramc = (swe.sidtime(jd) * 15.0 + subject.lng) % 360
-        speculum = PrimaryDirectionsFactory._build_speculum(
-            subject, jd, iflag, obliquity, ramc, subject.lat
-        )
-        swe.close()
+        with ephemeris_session() as iflag:
+            obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+            ramc = (swe.sidtime(jd) * 15.0 + subject.lng) % 360
+            speculum = PrimaryDirectionsFactory._build_speculum(
+                subject, jd, iflag, obliquity, ramc, subject.lat
+            )
         return speculum
 
     @staticmethod
@@ -202,11 +249,20 @@ class PrimaryDirectionsFactory:
         ramc: float,
         geo_lat: float,
     ) -> List[SpeculumEntry]:
-        """Build the speculum (RA, declination, semi-arc) for all direction points."""
+        """Build the speculum (RA, declination, semi-arc, pole, OA/OD) for all
+        direction points.
+
+        Must be called inside an :func:`ephemeris_session` (``iflag`` is the
+        session flag).
+        """
         from kerykeion.astrological_subject_factory import STANDARD_PLANETS
 
         entries: List[SpeculumEntry] = []
         lat_rad = math.radians(geo_lat)
+
+        # For sidereal charts abs_pos is sidereal; the ecliptic->equatorial
+        # fallback below requires tropical longitudes.
+        ayanamsa = getattr(subject, "ayanamsa_value", None) or 0.0
 
         for point_name in PrimaryDirectionsFactory.DIRECTION_POINTS:
             point = getattr(subject, point_name.lower(), None)
@@ -214,11 +270,13 @@ class PrimaryDirectionsFactory:
                 continue
 
             ecl_lon = point.abs_pos
-            dec = point.declination if point.declination is not None else 0.0
+            ecl_lon_tropical = (ecl_lon + ayanamsa) % 360
+            dec: Optional[float] = point.declination
 
-            # Compute RA from equatorial coordinates via Swiss Ephemeris
+            # Compute RA from equatorial coordinates via Swiss Ephemeris.
             # This is more accurate than converting from ecliptic, as it accounts
             # for the planet's ecliptic latitude (important for Moon, asteroids).
+            ra: Optional[float] = None
             planet_id = STANDARD_PLANETS.get(point_name)
             if planet_id is not None:
                 try:
@@ -226,59 +284,60 @@ class PrimaryDirectionsFactory:
                     ra = eq_coords[0]  # RA in degrees
                     dec = eq_coords[1]  # Dec in degrees (more precise)
                 except Exception:
-                    # Fallback: compute from ecliptic (zero ecliptic latitude approximation)
-                    eps_rad = math.radians(obliquity)
-                    ecl_rad = math.radians(ecl_lon)
-                    ra = math.degrees(math.atan2(
-                        math.sin(ecl_rad) * math.cos(eps_rad),
-                        math.cos(ecl_rad)
-                    )) % 360
-            else:
-                # For non-standard points (ASC, MC), compute from ecliptic longitude
-                eps_rad = math.radians(obliquity)
-                ecl_rad = math.radians(ecl_lon)
-                ra = math.degrees(math.atan2(
-                    math.sin(ecl_rad) * math.cos(eps_rad),
-                    math.cos(ecl_rad)
-                )) % 360
+                    ra = None
 
-            # Meridian distance: angular distance from MC in RA
+            if ra is None:
+                # ASC/MC (exact: they lie on the ecliptic, latitude 0) and
+                # planetary fallback (zero ecliptic latitude approximation).
+                ra, dec_from_ecliptic = PrimaryDirectionsFactory._ecliptic_to_equatorial(
+                    ecl_lon_tropical, obliquity
+                )
+                if dec is None:
+                    dec = dec_from_ecliptic
+
+            # Meridian distance: signed angular distance from MC in RA, [-180, 180]
             md = ra - ramc
             if md > 180:
                 md -= 360
             elif md < -180:
                 md += 360
 
-            # Determine if above horizon
-            is_above = -90 < md < 90  # Simplified: within 90 deg of MC
-
-            # Semi-arc (Placidus)
+            # Ascensional difference at the birth latitude and semi-arcs:
+            #   AD_phi = asin(tan(dec) * tan(lat)); DSA = 90 + AD_phi; NSA = 90 - AD_phi
             dec_rad = math.radians(dec)
-            try:
-                # Diurnal semi-arc = acos(-tan(dec) * tan(lat))
-                cos_sa = -math.tan(dec_rad) * math.tan(lat_rad)
-                cos_sa = max(-1.0, min(1.0, cos_sa))  # Clamp for polar
-                dsa = math.degrees(math.acos(cos_sa))
-            except (ValueError, ZeroDivisionError):
-                dsa = 90.0  # Fallback for circumpolar/never-rise
+            sin_ad_phi = math.tan(dec_rad) * math.tan(lat_rad)
+            sin_ad_phi = max(-1.0, min(1.0, sin_ad_phi))  # Clamp for circumpolar
+            ad_phi = math.degrees(math.asin(sin_ad_phi))
+            dsa = 90.0 + ad_phi  # Diurnal semi-arc
+            nsa = 90.0 - ad_phi  # Nocturnal semi-arc
 
-            nsa = 180 - dsa  # Nocturnal semi-arc
-            semi_arc = dsa if is_above else nsa
+            # Above the horizon iff the meridian distance from the MC does not
+            # exceed the diurnal semi-arc. (A plain |MD| < 90 test ignores
+            # declination and misclassifies points near the horizon.)
+            is_above = abs(md) <= dsa
 
-            # Pole (Placidus house pole)
-            if abs(md) < 0.001:
-                pole = geo_lat  # On MC/IC
+            if is_above:
+                semi_arc = dsa
+                md_for_pole = abs(md)  # MD from the MC
             else:
-                try:
-                    sa = dsa if is_above else nsa
-                    pole_sin = math.sin(lat_rad) * math.sin(math.radians(abs(md))) / math.sin(math.radians(sa))
-                    pole_sin = max(-1.0, min(1.0, pole_sin))
-                    pole = math.degrees(math.asin(pole_sin))
-                except (ValueError, ZeroDivisionError):
-                    pole = 0.0
+                semi_arc = nsa
+                md_for_pole = 180.0 - abs(md)  # MD from the IC
 
-            # Oblique ascension under own pole
-            oa = PrimaryDirectionsFactory._oblique_ascension(ra, dec, pole, obliquity)
+            # Placidian pole ("under the pole" recipe). Points on the meridian
+            # have pole 0: directions to the MC/IC are pure RA arcs.
+            try:
+                pole = PrimaryDirectionsFactory._placidian_pole(
+                    md_for_pole, semi_arc, dec, geo_lat
+                )
+            except (ValueError, ZeroDivisionError):
+                pole = 0.0
+
+            # Oblique ascension (eastern hemisphere) or descension (western)
+            # under the point's own pole.
+            if md >= 0:
+                oa = PrimaryDirectionsFactory._oblique_ascension(ra, dec, pole)
+            else:
+                oa = PrimaryDirectionsFactory._oblique_descension(ra, dec, pole)
 
             entries.append(SpeculumEntry(
                 name=point_name,
@@ -295,20 +354,92 @@ class PrimaryDirectionsFactory:
         return entries
 
     @staticmethod
-    def _oblique_ascension(ra: float, dec: float, pole: float, obliquity: float) -> float:
-        """Compute oblique ascension of a point under a given pole.
+    def _placidian_pole(md: float, semi_arc: float, dec: float, geo_lat: float) -> float:
+        """Compute the Placidian pole of a point ("under the pole" recipe).
 
-        OA = RA - ascensional_difference
-        ascensional_difference = asin(tan(dec) * tan(pole))
+        Standard formulas (Gansten):
+            AD_phi = asin(tan(dec) * tan(geo_lat))   # AD at the birth latitude
+            AD_P   = (MD / SA) * AD_phi              # proportional AD under the pole
+            pole   = atan(sin(AD_P) / tan(dec))      # pole of the point
+
+        Args:
+            md: Absolute meridian distance from the nearer meridian (MC if the
+                point is above the horizon, IC if below), in degrees of RA.
+            semi_arc: The matching semi-arc (diurnal/nocturnal) in degrees.
+            dec: Declination of the point in degrees.
+            geo_lat: Geographic latitude of the birthplace in degrees.
+
+        Returns:
+            The pole in degrees. A point on the meridian (MD ~ 0) has pole 0
+            (directions to the MC/IC are pure RA arcs); a point on the horizon
+            (MD = SA) has pole equal to the geographic latitude.
         """
+        if abs(md) < _ON_MERIDIAN_TOLERANCE:
+            return 0.0
+        if semi_arc <= _ON_MERIDIAN_TOLERANCE:
+            # Degenerate circumpolar case (semi-arc collapsed to zero).
+            return 0.0
+
+        ratio = min(abs(md) / semi_arc, 1.0)
+
         dec_rad = math.radians(dec)
-        pole_rad = math.radians(pole)
+        lat_rad = math.radians(geo_lat)
 
+        sin_ad_phi = math.tan(dec_rad) * math.tan(lat_rad)
+        sin_ad_phi = max(-1.0, min(1.0, sin_ad_phi))  # Clamp for circumpolar
+        ad_phi = math.asin(sin_ad_phi)  # radians
+        ad_p = ratio * ad_phi  # proportional AD, radians
+
+        tan_dec = math.tan(dec_rad)
+        if abs(tan_dec) < 1e-12:
+            # Continuous limit for dec -> 0:
+            # pole = atan(sin(ratio * tan(dec) * tan(lat)) / tan(dec)) -> atan(ratio * tan(lat))
+            return math.degrees(math.atan(ratio * math.tan(lat_rad)))
+
+        return math.degrees(math.atan(math.sin(ad_p) / tan_dec))
+
+    @staticmethod
+    def _ecliptic_to_equatorial(ecl_lon: float, obliquity: float) -> Tuple[float, float]:
+        """Convert an ecliptic point with zero latitude to equatorial coordinates.
+
+            dec = asin(sin(eps) * sin(lambda))
+            RA  = atan2(sin(lambda) * cos(eps), cos(lambda))
+
+        Args:
+            ecl_lon: TROPICAL ecliptic longitude in degrees.
+            obliquity: Obliquity of the ecliptic in degrees.
+
+        Returns:
+            (right_ascension, declination) in degrees, RA normalized to [0, 360).
+        """
+        lon_rad = math.radians(ecl_lon % 360)
+        eps_rad = math.radians(obliquity)
+        dec = math.degrees(math.asin(math.sin(eps_rad) * math.sin(lon_rad)))
+        ra = math.degrees(math.atan2(
+            math.sin(lon_rad) * math.cos(eps_rad),
+            math.cos(lon_rad)
+        )) % 360
+        return ra, dec
+
+    @staticmethod
+    def _ascensional_difference(dec: float, pole: float) -> float:
+        """Ascensional difference of a point under a given pole, in degrees.
+
+        AD = asin(tan(dec) * tan(pole)), clamped for circumpolar combinations.
+        """
         try:
-            ad_sin = math.tan(dec_rad) * math.tan(pole_rad)
+            ad_sin = math.tan(math.radians(dec)) * math.tan(math.radians(pole))
             ad_sin = max(-1.0, min(1.0, ad_sin))
-            ad = math.degrees(math.asin(ad_sin))
+            return math.degrees(math.asin(ad_sin))
         except (ValueError, ZeroDivisionError):
-            ad = 0.0
+            return 0.0
 
-        return (ra - ad) % 360
+    @staticmethod
+    def _oblique_ascension(ra: float, dec: float, pole: float) -> float:
+        """Oblique ascension of a point under a given pole: OA = RA - AD."""
+        return (ra - PrimaryDirectionsFactory._ascensional_difference(dec, pole)) % 360
+
+    @staticmethod
+    def _oblique_descension(ra: float, dec: float, pole: float) -> float:
+        """Oblique descension of a point under a given pole: OD = RA + AD."""
+        return (ra + PrimaryDirectionsFactory._ascensional_difference(dec, pole)) % 360

@@ -4,7 +4,8 @@ Pure domain helpers for the dominants calculator.
 ==================================================
 
 These functions are deliberately free of any Pydantic model construction and of
-any I/O beyond the (locked) ephemeris call needed for the prenatal syzygy. They
+any I/O beyond the (session-managed) ephemeris call needed for the prenatal
+syzygy. They
 turn a computed :class:`AstrologicalSubjectModel` into the small primitives the
 strategies need — angle degrees, house cusps, the list of scoring planets, a
 zodiacal breakdown of an arbitrary degree, rulership lookups and the prenatal
@@ -24,8 +25,7 @@ from kerykeion.dominants.data import (
     SIGN_NUM_TO_ELEMENT,
     SIGN_NUM_TO_QUALITY,
 )
-from kerykeion.ephemeris_backend import EPHEMERIS_LOCK, swe
-from kerykeion.moon_phase_details.utils import configure_ephemeris_path
+from kerykeion.ephemeris_backend import ephemeris_session, swe
 from kerykeion.schemas.kr_literals import SIGN_CODES, Element, Quality, Sign
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 
@@ -298,13 +298,14 @@ def _wrap_180(angle: float) -> float:
     return (angle + 180.0) % 360.0 - 180.0
 
 
-def _sun_moon_longitudes(julian_day: float) -> tuple[float, float]:
+def _sun_moon_longitudes(julian_day: float, iflag: int = swe.FLG_SWIEPH) -> tuple[float, float]:
     """Return the (Sun, Moon) tropical ecliptic longitudes at a Julian Day.
 
-    The caller must hold :data:`EPHEMERIS_LOCK`.
+    The caller must be inside an :func:`ephemeris_session` (which serializes
+    access and configures the ephemeris path).
     """
-    sun = float(swe.calc_ut(julian_day, swe.SUN, swe.FLG_SWIEPH)[0][0])
-    moon = float(swe.calc_ut(julian_day, swe.MOON, swe.FLG_SWIEPH)[0][0])
+    sun = float(swe.calc_ut(julian_day, swe.SUN, iflag)[0][0])
+    moon = float(swe.calc_ut(julian_day, swe.MOON, iflag)[0][0])
     return sun, moon
 
 
@@ -323,8 +324,9 @@ def prenatal_syzygy(subject: AstrologicalSubjectModel) -> Optional[SyzygyInfo]:
     Sun for a day chart, the Moon for a night chart. The result is expressed in
     the subject's own zodiac so sign lookups are consistent for sidereal charts.
 
-    All ephemeris access is guarded by :data:`EPHEMERIS_LOCK`, which the backend
-    requires for its mutable global state.
+    All ephemeris access happens inside a single (tropical)
+    :func:`ephemeris_session`, which serializes the backend's mutable global
+    state and resets it on exit.
 
     Args:
         subject: The chart to read (must carry a ``julian_day``).
@@ -338,10 +340,8 @@ def prenatal_syzygy(subject: AstrologicalSubjectModel) -> Optional[SyzygyInfo]:
         return None
 
     try:
-        with EPHEMERIS_LOCK:
-            configure_ephemeris_path()
-
-            sun_birth, moon_birth = _sun_moon_longitudes(birth_jd)
+        with ephemeris_session() as iflag:
+            sun_birth, moon_birth = _sun_moon_longitudes(birth_jd, iflag)
             elongation = (moon_birth - sun_birth) % 360.0
 
             # Waxing (elongation < 180°) ⇒ the last syzygy was a New Moon;
@@ -357,7 +357,7 @@ def prenatal_syzygy(subject: AstrologicalSubjectModel) -> Optional[SyzygyInfo]:
 
             for _ in range(60):
                 mid = (low + high) / 2.0
-                sun_mid, moon_mid = _sun_moon_longitudes(mid)
+                sun_mid, moon_mid = _sun_moon_longitudes(mid, iflag)
                 offset = _wrap_180((moon_mid - sun_mid) - target)
                 if offset < 0.0:
                     low = mid  # syzygy is later than mid
@@ -367,7 +367,7 @@ def prenatal_syzygy(subject: AstrologicalSubjectModel) -> Optional[SyzygyInfo]:
                     break
 
             syzygy_jd = (low + high) / 2.0
-            sun_lon, moon_lon = _sun_moon_longitudes(syzygy_jd)
+            sun_lon, moon_lon = _sun_moon_longitudes(syzygy_jd, iflag)
     except Exception as exc:
         # Any ephemeris failure (e.g. an out-of-range date raising the backend's
         # range error — which is NOT a RuntimeError) is non-fatal here: the

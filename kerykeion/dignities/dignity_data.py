@@ -99,7 +99,12 @@ TRIPLICITY_RULERS: Dict[str, Dict[str, str]] = {
 }
 
 # =========================================================================
-# EGYPTIAN TERMS (Bounds) — Ptolemy's version
+# EGYPTIAN TERMS (Bounds)
+# These are the EGYPTIAN bounds — the set transmitted by Dorotheus/Valens
+# and the standard table in traditional practice (Lilly prints it too).
+# They are NOT Ptolemy's Tetrabiblos variant, which differs in several
+# segments (e.g. Aries: Venus ends at 14°, Saturn holds 26°–30°). The data
+# below is correct as-is; do not "fix" it against the Tetrabiblos.
 # Each sign is divided into 5 unequal segments ruled by a planet.
 # Score: +2
 # =========================================================================

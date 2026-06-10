@@ -108,7 +108,7 @@ def _build_level(
     level: int,
     levels: int,
     target_dt: Optional[datetime],
-    lot_sign: int,
+    fortune_sign: int,
 ) -> "tuple[List[ZRPeriodModel], List[ZRPeriodModel]]":
     """Build the periods filling one parent span at ``level``.
 
@@ -117,6 +117,10 @@ def _build_level(
     The last period is truncated to fit. Children are expanded for every L2
     period, but for L3+ only along the period that contains ``target_dt`` —
     keeping the tree bounded.
+
+    ``fortune_sign`` is the sign index of the natal Lot of Fortune: peak
+    (angular) periods are always counted 1st/4th/7th/10th from Fortune,
+    whichever lot is being released (Valens; Brennan, "Hellenistic Astrology").
 
     Returns ``(periods, current_path)``. The current path is computed here from
     the exact cursor datetimes (not the day-truncated display strings), so a
@@ -143,7 +147,7 @@ def _build_level(
         child_path: List[ZRPeriodModel] = []
         if level < levels and (level < 2 or contains_target):
             children, child_path = _build_level(
-                sign_num, cursor, dur, level + 1, levels, target_dt, lot_sign
+                sign_num, cursor, dur, level + 1, levels, target_dt, fortune_sign
             )
 
         period = ZRPeriodModel(
@@ -153,7 +157,7 @@ def _build_level(
             start=cursor.date().isoformat(),
             end=end.date().isoformat(),
             years=GENERAL_YEARS[sign] / (12 ** (level - 1)),
-            is_angular=((sign_num - lot_sign) % 12) in (0, 3, 6, 9),
+            is_angular=((sign_num - fortune_sign) % 12) in (0, 3, 6, 9),
             is_loosing_the_bond=is_lob,
             subperiods=children,
         )
@@ -227,6 +231,19 @@ class ZodiacalReleasingFactory:
             )
         lot_sign_num = int(degree % 360.0 // 30)
 
+        # Peak (angular) periods are counted from the natal Lot of FORTUNE
+        # regardless of which lot is being released (Valens; Brennan,
+        # "Hellenistic Astrology"). part_of_fortune_degree prefers the
+        # subject's own pars_fortunae and otherwise applies the sect-aware
+        # formula (day: Asc + Moon - Sun; night: Asc + Sun - Moon).
+        fortune_degree = degree if lot == "fortune" else part_of_fortune_degree(subject)
+        if fortune_degree is None:
+            raise KerykeionException(
+                "Cannot compute the Lot of Fortune (the angularity reference for "
+                "peak periods): the Ascendant, Sun or Moon is unavailable."
+            )
+        fortune_sign_num = int(fortune_degree % 360.0 // 30)
+
         try:
             birth_dt = datetime(
                 subject.year, subject.month, subject.day, subject.hour, subject.minute
@@ -260,7 +277,7 @@ class ZodiacalReleasingFactory:
         # the documented horizon is honoured instead of overshot. The current
         # path is returned alongside, computed from exact datetimes.
         periods, current_path = _build_level(
-            lot_sign_num, birth_dt, life_cap_days, 1, levels, target_dt, lot_sign_num
+            lot_sign_num, birth_dt, life_cap_days, 1, levels, target_dt, fortune_sign_num
         )
 
         return ZodiacalReleasingModel(

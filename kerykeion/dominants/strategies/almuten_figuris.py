@@ -23,6 +23,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
 from kerykeion.dignities.dignity_data import DOMICILE_RULERS, EXALTATION_TABLE, TRIPLICITY_RULERS
@@ -198,10 +199,26 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
                     BreakdownItem("accidental", planet, "house placement", float(house_points), point.house)
                 )
 
-        # Weekday (day) ruler. Weekday index: 0 = Sunday … 6 = Saturday.
-        julian_day = getattr(subject, "julian_day", None)
-        if julian_day is not None:
-            weekday_index = (int(julian_day + 0.5) + 1) % 7
+        # Weekday (day) ruler. The traditional day ruler follows the LOCAL
+        # civil date at the birthplace, not the UT date (the UT-based Julian
+        # Day flips the weekday at UT midnight, mislabelling evening births in
+        # eastern timezones and early-morning births in western ones). The JD
+        # method remains as a fallback for charts whose local date fields
+        # cannot form a ``datetime`` (e.g. BCE years).
+        # Weekday index: 0 = Sunday … 6 = Saturday.
+        weekday_index: Optional[int] = None
+        try:
+            local_date = datetime(int(subject.year), int(subject.month), int(subject.day))
+        except (TypeError, ValueError, AttributeError):
+            local_date = None
+        if local_date is not None:
+            # Python's weekday() is Monday=0 … Sunday=6; shift to Sunday=0.
+            weekday_index = (local_date.weekday() + 1) % 7
+        else:
+            julian_day = getattr(subject, "julian_day", None)
+            if julian_day is not None:
+                weekday_index = (int(julian_day + 0.5) + 1) % 7
+        if weekday_index is not None:
             day_ruler = WEEKDAY_RULERS[weekday_index]
             accidental[day_ruler] += ALMUTEN_DAY_RULER_BONUS
             breakdown.append(BreakdownItem("accidental", day_ruler, "day ruler", ALMUTEN_DAY_RULER_BONUS))
