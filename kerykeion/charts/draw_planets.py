@@ -121,10 +121,16 @@ def draw_planets(
         secondary_points_rel_positions = [p.position for p in second_subject_available_kerykeion_celestial_points]
 
     # -------------------------------------------------------------------------
-    # 3. Build position-to-index mapping and sort for ordered processing
+    # 3. Build position/index pairs and sort for ordered processing
     # -------------------------------------------------------------------------
-    position_index_map = {main_points_abs_positions[i]: i for i in range(len(available_planets_setting))}
-    sorted_positions = sorted(position_index_map.keys())
+    # A list of (abs_pos, index) tuples is used instead of a {abs_pos: index}
+    # dict so that two points sharing the exact same absolute position (e.g.
+    # an exact conjunction) are both kept and rendered.
+    sorted_position_entries = sorted(
+        (main_points_abs_positions[i], i) for i in range(len(available_planets_setting))
+    )
+    sorted_positions = [entry[0] for entry in sorted_position_entries]
+    sorted_point_indices = [entry[1] for entry in sorted_position_entries]
 
     # -------------------------------------------------------------------------
     # 4. Calculate position adjustments to prevent overlapping
@@ -132,7 +138,7 @@ def draw_planets(
     position_adjustments = _calculate_planet_adjustments(
         main_points_abs_positions,
         available_planets_setting,
-        position_index_map,
+        sorted_point_indices,
         sorted_positions,
     )
 
@@ -141,7 +147,7 @@ def draw_planets(
     # -------------------------------------------------------------------------
     adjusted_offset = 0.0
     for position_idx, abs_position in enumerate(sorted_positions):
-        point_idx = position_index_map[abs_position]
+        point_idx = sorted_point_indices[position_idx]
 
         # Determine radius based on chart type and point type
         point_radius = _determine_point_radius(point_idx, chart_type, bool(position_idx % 2), external_view)
@@ -278,7 +284,7 @@ def _validate_dual_chart_inputs(
 def _calculate_planet_adjustments(
     points_abs_positions: Sequence[Any],
     points_settings: Sequence[Mapping[str, Any]],
-    position_index_map: dict,
+    sorted_point_indices: Sequence[int],
     sorted_positions: Sequence[Any],
 ) -> list[float]:
     """
@@ -290,20 +296,20 @@ def _calculate_planet_adjustments(
     Args:
         points_abs_positions: Absolute positions of all points.
         points_settings: Settings for all points.
-        position_index_map: Mapping of position to point index.
+        sorted_point_indices: Point indices aligned with ``sorted_positions``.
         sorted_positions: Positions sorted in ascending order.
 
     Returns:
         List of adjustment values (in degrees) for each position.
     """
-    planets_by_position: list[Optional[list[Union[int, float]]]] = [None] * len(position_index_map)
+    planets_by_position: list[Optional[list[Union[int, float]]]] = [None] * len(sorted_point_indices)
     point_groups: list[list[list[Union[int, float, str]]]] = []
     position_adjustments: list[float] = [0.0] * len(points_settings)
     is_group_open = False
 
     # Build position data and identify groups
     for position_idx, abs_position in enumerate(sorted_positions):
-        point_idx = position_index_map[abs_position]
+        point_idx = sorted_point_indices[position_idx]
 
         # Calculate distances to adjacent points
         if len(sorted_positions) == 1:
@@ -312,7 +318,7 @@ def _calculate_planet_adjustments(
             distance_to_next = 360.0
         else:
             prev_pos, next_pos = _get_adjacent_positions(
-                position_idx, sorted_positions, position_index_map, points_abs_positions
+                position_idx, sorted_positions, sorted_point_indices, points_abs_positions
             )
             distance_to_prev = degreeDiff(prev_pos, points_abs_positions[point_idx])
             distance_to_next = degreeDiff(next_pos, points_abs_positions[point_idx])
@@ -358,20 +364,20 @@ def _calculate_planet_adjustments(
 def _get_adjacent_positions(
     position_idx: int,
     sorted_positions: Sequence[Any],
-    position_index_map: dict,
+    sorted_point_indices: Sequence[int],
     points_abs_positions: Sequence[Any],
 ) -> tuple[float, float]:
     """Get the absolute positions of adjacent points (with wraparound)."""
     total = len(sorted_positions)
     if position_idx == 0:
-        prev_idx = position_index_map[sorted_positions[-1]]
-        next_idx = position_index_map[sorted_positions[1]]
+        prev_idx = sorted_point_indices[-1]
+        next_idx = sorted_point_indices[1]
     elif position_idx == total - 1:
-        prev_idx = position_index_map[sorted_positions[position_idx - 1]]
-        next_idx = position_index_map[sorted_positions[0]]
+        prev_idx = sorted_point_indices[position_idx - 1]
+        next_idx = sorted_point_indices[0]
     else:
-        prev_idx = position_index_map[sorted_positions[position_idx - 1]]
-        next_idx = position_index_map[sorted_positions[position_idx + 1]]
+        prev_idx = sorted_point_indices[position_idx - 1]
+        next_idx = sorted_point_indices[position_idx + 1]
 
     return points_abs_positions[prev_idx], points_abs_positions[next_idx]
 
@@ -547,28 +553,30 @@ def _calculate_indicator_adjustments(
     position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
     exclude_points = exclude_points or []
 
-    # Build position-to-index mapping (excluding filtered points).
+    # Build sorted (position, index) pairs (excluding filtered points). A list
+    # of tuples is used instead of a {abs_pos: index} dict so points sharing
+    # the exact same absolute position are all kept.
     # v6 safety net: bound to the shorter of the two lists so an upstream
     # mismatch (e.g. a return subject with fewer collected points than
     # active_points settings) can't trigger an IndexError. Callers are
     # expected to pass aligned lists; this guard is purely defensive.
-    position_index_map = {}
     n = min(len(points_settings), len(points_abs_positions))
-    for i in range(n):
-        if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
-            continue
-        position_index_map[points_abs_positions[i]] = i
-
-    sorted_positions = sorted(position_index_map.keys())
+    sorted_point_indices = [
+        index
+        for _, index in sorted(
+            (points_abs_positions[i], i)
+            for i in range(n)
+            if not (chart_type == "Transit" and points_settings[i]["name"] in exclude_points)
+        )
+    ]
 
     # Identify groups of close points
     point_groups: list[list[int]] = []
     in_group = False
 
-    for pos_idx, abs_position in enumerate(sorted_positions):
-        point_a_idx = position_index_map[abs_position]
-        point_b_idx = position_index_map[
-            sorted_positions[0] if pos_idx == len(sorted_positions) - 1 else sorted_positions[pos_idx + 1]
+    for pos_idx, point_a_idx in enumerate(sorted_point_indices):
+        point_b_idx = sorted_point_indices[
+            0 if pos_idx == len(sorted_point_indices) - 1 else pos_idx + 1
         ]
 
         distance = degreeDiff(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
@@ -679,28 +687,30 @@ def _calculate_secondary_indicator_adjustments(
     position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
     exclude_points = exclude_points or []
 
-    # Build position-to-index mapping (excluding filtered points).
+    # Build sorted (position, index) pairs (excluding filtered points). A list
+    # of tuples is used instead of a {abs_pos: index} dict so points sharing
+    # the exact same absolute position are all kept.
     # v6 safety net: bound to the shorter of the two lists so an upstream
     # mismatch (e.g. a return subject with fewer collected points than
     # active_points settings) can't trigger an IndexError. Callers are
     # expected to pass aligned lists; this guard is purely defensive.
-    position_index_map = {}
     n = min(len(points_settings), len(points_abs_positions))
-    for i in range(n):
-        if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
-            continue
-        position_index_map[points_abs_positions[i]] = i
-
-    sorted_positions = sorted(position_index_map.keys())
+    sorted_point_indices = [
+        index
+        for _, index in sorted(
+            (points_abs_positions[i], i)
+            for i in range(n)
+            if not (chart_type == "Transit" and points_settings[i]["name"] in exclude_points)
+        )
+    ]
 
     # Identify groups of close points
     point_groups: list[list[int]] = []
     in_group = False
 
-    for pos_idx, abs_position in enumerate(sorted_positions):
-        point_a_idx = position_index_map[abs_position]
-        point_b_idx = position_index_map[
-            sorted_positions[0] if pos_idx == len(sorted_positions) - 1 else sorted_positions[pos_idx + 1]
+    for pos_idx, point_a_idx in enumerate(sorted_point_indices):
+        point_b_idx = sorted_point_indices[
+            0 if pos_idx == len(sorted_point_indices) - 1 else pos_idx + 1
         ]
 
         distance = degreeDiff(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
@@ -1062,22 +1072,24 @@ def _draw_secondary_points(
         points_abs_positions, points_settings, chart_type, exclude_points
     )
 
-    # Build position map (excluding houses for Transit)
-    position_index_map = {}
-    for i in range(len(points_settings)):
-        if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
-            continue
-        position_index_map[points_abs_positions[i]] = i
+    # Build sorted (position, index) pairs (excluding houses for Transit).
+    # A list of tuples is used instead of a {abs_pos: index} dict so points
+    # sharing the exact same absolute position are all rendered.
+    sorted_point_indices = [
+        index
+        for _, index in sorted(
+            (points_abs_positions[i], i)
+            for i in range(len(points_settings))
+            if not (chart_type == "Transit" and points_settings[i]["name"] in exclude_points)
+        )
+    ]
 
-    sorted_positions = sorted(position_index_map.keys())
     zero_point = 360 - seventh_house_degree
     alternate_position = False
     point_idx = 0
 
     # Draw each secondary point
-    for abs_position in sorted_positions:
-        point_idx = position_index_map[abs_position]
-
+    for point_idx in sorted_point_indices:
         if chart_type == "Transit" and points_settings[point_idx]["name"] in exclude_points:
             continue
 

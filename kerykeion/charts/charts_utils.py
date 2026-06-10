@@ -18,6 +18,7 @@ The module is organized in the following sections:
 import datetime
 import math
 from typing import Literal, Mapping, Optional, Sequence, Union
+from xml.sax.saxutils import escape as _xml_escape
 
 from kerykeion.schemas import ChartType, KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
@@ -41,6 +42,25 @@ from kerykeion.settings.chart_defaults import resolve_glyph_id
 
 ElementQualityDistributionMethod = Literal["pure_count", "weighted"]
 """Supported strategies for calculating element and modality distributions."""
+
+# Entities for quote characters, complementing the default &, <, > escaping.
+_XML_TEXT_ENTITIES = {'"': "&quot;", "'": "&apos;"}
+
+
+def escape_svg_text(value: object) -> str:
+    """Escape a plain-text value for safe embedding in SVG markup.
+
+    Converts ``&``, ``<``, ``>`` and single/double quotes to their XML
+    entities so user-supplied strings (subject names, cities, custom titles)
+    cannot break the SVG structure or inject markup.
+
+    Args:
+        value: The value to escape; non-strings are converted with ``str()``.
+
+    Returns:
+        The escaped string, safe for use as XML text content or attribute value.
+    """
+    return _xml_escape(str(value), _XML_TEXT_ENTITIES)
 
 
 def _resolve_point_glyph_id(
@@ -1440,7 +1460,7 @@ def draw_transit_aspect_list(
 
     out = f'<g transform="translate({translate_x},{translate_y})">'
     out += (
-        f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{grid_title}:</text>'
+        f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{escape_svg_text(grid_title)}:</text>'
     )
     out += inner_path
     out += "</g>"
@@ -1818,7 +1838,7 @@ def draw_main_planet_grid(
     if chart_type in DOUBLE_CHART_TYPES:
         svg_output += (
             f'<g transform="translate(0, {HEADER_Y})">'
-            f'<text style="fill:{text_color}; font-size: 14px;">{planets_and_houses_grid_title} {subject_name}</text>'
+            f'<text style="fill:{text_color}; font-size: 14px;">{escape_svg_text(planets_and_houses_grid_title)} {escape_svg_text(subject_name)}</text>'
             f"</g>"
         )
 
@@ -1903,7 +1923,7 @@ def draw_secondary_planet_grid(
 
     svg_output += (
         f'<g transform="translate({header_x_offset}, {HEADER_Y})">'
-        f'<text style="fill:{text_color}; font-size: 14px;">{header_text}</text>'
+        f'<text style="fill:{text_color}; font-size: 14px;">{escape_svg_text(header_text)}</text>'
         f"</g>"
     )
 
@@ -1985,6 +2005,13 @@ def draw_transit_aspect_grid(
     # Filter active planets
     active_planets = [planet for planet in available_planets if planet["is_active"]]
 
+    # Index aspects by (p1, p2) pair for O(1) lookup per grid cell instead of
+    # scanning the whole aspect list for every cell. The key is ordered:
+    # p1 belongs to the first subject (rows), p2 to the second (columns).
+    aspects_by_pair: dict = {}
+    for aspect in aspects:
+        aspects_by_pair.setdefault((aspect["p1"], aspect["p2"]), []).append(aspect)
+
     # Reverse the list of active planets for the first iteration
     reversed_planets = active_planets[::-1]
     for index, planet_a in enumerate(reversed_planets):
@@ -2028,9 +2055,8 @@ def draw_transit_aspect_grid(
             x_aspect += box_size
 
             # Check for aspects between the planets
-            for aspect in aspects:
-                if aspect["p1"] == planet_a["id"] and aspect["p2"] == planet_b["id"]:
-                    svg_output += f'<use  x="{x_aspect - box_size + 1}" y="{y_aspect + 1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
+            for aspect in aspects_by_pair.get((planet_a["id"], planet_b["id"]), ()):
+                svg_output += f'<use  x="{x_aspect - box_size + 1}" y="{y_aspect + 1}" xlink:href="#orb{aspect["aspect_degrees"]}" />'
 
     return svg_output
 
@@ -2249,15 +2275,15 @@ def draw_house_comparison_grid(
     svg_output = f'<g transform="translate({x_position},{y_position})">'
 
     # Add title
-    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{house_position_comparison_label}</text>'
+    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{escape_svg_text(house_position_comparison_label)}</text>'
 
     # Add column headers
     line_increment = 10
     svg_output += (
         f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{return_point_label}</text>'
-        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{return_label}</text>'
-        f'<text text-anchor="start" x="132" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{radix_label}</text>'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
+        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_label)}</text>'
+        f'<text text-anchor="start" x="132" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(radix_label)}</text>'
         f"</g>"
     )
     line_increment += 15
@@ -2335,14 +2361,14 @@ def draw_single_house_comparison_grid(
     svg_output = f'<g transform="translate({x_position},{y_position})">'
 
     # Add title
-    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{house_position_comparison_label}</text>'
+    svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{escape_svg_text(house_position_comparison_label)}</text>'
 
     # Add column headers
     line_increment = 10
     svg_output += (
         f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{return_point_label}</text>'
-        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{natal_house_label}</text>'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
+        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(natal_house_label)}</text>'
         f"</g>"
     )
     line_increment += 15

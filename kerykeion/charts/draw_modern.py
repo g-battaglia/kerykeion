@@ -384,7 +384,7 @@ def _draw_zodiac_background_ring(seventh_house_degree_ut: float) -> str:
             f"    </g>\n"
             f"  </g>\n"
         )
-        out += f"  </g>\n"  # close ZodiacSign group
+        out += "  </g>\n"  # close ZodiacSign group
 
     # Border circles at the inner and outer edges of the zodiac ring
     out += (
@@ -1325,7 +1325,7 @@ ASPECT_DEGREE_MAP = {
     "quincunx": 150,
     "semi-sextile": 30,
     "quintile": 72,
-    "bi-quintile": 144,
+    "biquintile": 144,
 }
 
 

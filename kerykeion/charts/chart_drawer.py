@@ -73,6 +73,7 @@ from kerykeion.charts.charts_utils import (
     draw_secondary_house_grid,
     draw_main_planet_grid,
     draw_secondary_planet_grid,
+    escape_svg_text,
     format_location_string,
     format_datetime_with_timezone,
     draw_house_sectors,
@@ -105,6 +106,25 @@ def _load_cached_file(path: str) -> str:
     """Read a file from disk and cache the result for subsequent calls."""
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
         return f.read()
+
+
+# Template fields that hold user-controlled plain text (subject names, cities,
+# custom titles). They are XML-escaped in _create_template_dictionary before
+# substitution; all other fields are either numeric or trusted SVG fragments.
+_PLAIN_TEXT_TEMPLATE_FIELDS = (
+    "stringTitle",
+    "top_left_0",
+    "top_left_1",
+    "top_left_2",
+    "top_left_3",
+    "top_left_4",
+    "top_left_5",
+    "bottom_left_0",
+    "bottom_left_1",
+    "bottom_left_2",
+    "bottom_left_3",
+    "bottom_left_4",
+)
 
 
 # =============================================================================
@@ -4223,10 +4243,10 @@ class ChartDrawer:  # type: ignore[no-redef]
                     exc,
                 )
 
-            template = template.replace('"', "'")
-            template = re.sub(r"\s+", " ", template)
-            template = re.sub(r">\s+<", "><", template)
-            template = template.strip()
+                template = template.replace('"', "'")
+                template = re.sub(r"\s+", " ", template)
+                template = re.sub(r">\s+<", "><", template)
+                template = template.strip()
         else:
             template = template.replace('"', "'")
 
@@ -4532,6 +4552,19 @@ class ChartDrawer:  # type: ignore[no-redef]
         # This uses the Strategy Pattern to separate chart-specific logic.
         self._renderer.render(template_dict)
 
+        # ---------------------------------------------------------------------
+        # SECURITY: Escape user-controlled plain-text fields
+        # ---------------------------------------------------------------------
+        # These fields carry user-supplied strings (subject names, cities,
+        # custom titles) and are substituted into the SVG template as text
+        # content. Escape them here — at the single point where they enter the
+        # template model — so markup in a name cannot break the XML or inject
+        # script. SVG fragment fields (makePlanets, grids, ...) are NOT escaped:
+        # they contain legitimate markup and escape user text at draw time.
+        for text_field in _PLAIN_TEXT_TEMPLATE_FIELDS:
+            if text_field in template_dict:
+                template_dict[text_field] = escape_svg_text(template_dict[text_field])
+
         return ChartTemplateModel(**template_dict)
 
     def _generate_modern_content(
@@ -4692,6 +4725,29 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         return f"{self.first_obj.name} - {chart_type_name} Chart{suffix}"
 
+    @staticmethod
+    def _sanitize_output_basename(name: str) -> str:
+        """
+        Sanitize a filename (without extension) for safe use as a basename.
+
+        Subject names and custom filenames are user-controlled and may contain
+        path separators or traversal sequences. This replaces path separators,
+        null bytes, ".." sequences and leading dots with underscores so the
+        resulting name cannot escape the output directory or hide the file.
+
+        Args:
+            name (str): The raw filename without extension.
+
+        Returns:
+            str: The sanitized basename.
+        """
+        sanitized = name.replace("\x00", "_").replace("/", "_").replace("\\", "_")
+        while ".." in sanitized:
+            sanitized = sanitized.replace("..", "_")
+        # Replace leading dots (hidden files / relative tricks) with underscores
+        sanitized = re.sub(r"^\.+", lambda match: "_" * len(match.group()), sanitized)
+        return sanitized or "_"
+
     def _write_svg_to_disk(
         self,
         content: str,
@@ -4702,6 +4758,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         """
         Write SVG content to disk and return the path.
 
+        The basename is sanitized and the final path is verified to stay inside
+        the output directory, so user-controlled names cannot traverse paths.
+
         Args:
             content (str): The SVG content to write.
             output_path (str, Path, or None): Directory path. Defaults to home directory.
@@ -4710,14 +4769,29 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         Returns:
             Path: The path where the file was saved.
+
+        Raises:
+            KerykeionException: If the resolved path escapes the output directory.
         """
         output_directory = Path(output_path) if output_path is not None else Path.home()
 
         if filename is not None:
-            chartname = output_directory / f"{filename}.svg"
+            base_name = filename
         else:
-            default_name = self._get_default_filename_suffix(default_suffix)
-            chartname = output_directory / f"{default_name}.svg"
+            base_name = self._get_default_filename_suffix(default_suffix)
+
+        chartname = output_directory / f"{self._sanitize_output_basename(str(base_name))}.svg"
+
+        # Defense in depth: ensure the resolved target stays inside the
+        # resolved output directory (covers symlinks and exotic inputs).
+        resolved_directory = output_directory.resolve()
+        resolved_chartname = chartname.resolve()
+        try:
+            resolved_chartname.relative_to(resolved_directory)
+        except ValueError:
+            raise KerykeionException(
+                f"Refusing to write SVG outside the output directory: {resolved_chartname} is not inside {resolved_directory}."
+            )
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(content)
