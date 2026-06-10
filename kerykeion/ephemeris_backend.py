@@ -68,9 +68,10 @@ from __future__ import annotations
 import importlib
 import logging
 import os
+from contextlib import contextmanager
 from threading import RLock
 import types
-from typing import Optional
+from typing import Iterator, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -94,12 +95,19 @@ if _forced_backend:
     try:
         _backend_module = importlib.import_module(_forced_backend)
         BACKEND_NAME = _forced_backend
-    except ImportError:
+    except ImportError as _exc:
+        if isinstance(_exc, ModuleNotFoundError) and _exc.name == _forced_backend:
+            # The backend package itself is genuinely not installed.
+            raise ImportError(
+                f"KERYKEION_BACKEND={_forced_backend!r} but the package is not installed.\n\n"
+                f"Install it with:\n"
+                f"  pip install {'pyswisseph' if _forced_backend == 'swisseph' else 'libephemeris'}\n"
+            ) from None
+        # Installed but broken (e.g. a failing transitive dependency):
+        # keep the real cause in the chain.
         raise ImportError(
-            f"KERYKEION_BACKEND={_forced_backend!r} but the package is not installed.\n\n"
-            f"Install it with:\n"
-            f"  pip install {'pyswisseph' if _forced_backend == 'swisseph' else 'libephemeris'}\n"
-        ) from None
+            f"KERYKEION_BACKEND={_forced_backend!r} is installed but failed to import: {_exc}"
+        ) from _exc
     logger.info("Kerykeion ephemeris backend forced via KERYKEION_BACKEND: %s", BACKEND_NAME)
 else:
     # Auto-detect: try libephemeris first (our own backend),
@@ -109,7 +117,16 @@ else:
             _backend_module = importlib.import_module(_candidate)
             BACKEND_NAME = _candidate
             break
-        except ImportError:
+        except ImportError as _exc:
+            if isinstance(_exc, ModuleNotFoundError) and _exc.name == _candidate:
+                continue  # genuinely not installed — try the next backend
+            # Installed but broken: switching engines silently would change
+            # results, so make the fallback visible.
+            logger.warning(
+                "Ephemeris backend %r is installed but failed to import (%s); trying next backend.",
+                _candidate,
+                _exc,
+            )
             continue
 
     if _backend_module is None:
@@ -194,10 +211,12 @@ logger.debug("Ephemeris data path: %r", EPHE_DATA_PATH)
 # found — this is intentional: we want a clear failure rather than a
 # silent fallback to Skyfield (which would require downloading DE440).
 
+_PINNED_LEB_MODE: Optional[str] = None
+
 if BACKEND_NAME == "libephemeris":
-    _leb_mode = os.environ.get("KERYKEION_LEB_MODE", "leb").strip().lower()
-    _backend_module.set_calc_mode(_leb_mode)
-    logger.debug("libephemeris calc mode set to: %s", _leb_mode)
+    _PINNED_LEB_MODE = os.environ.get("KERYKEION_LEB_MODE", "leb").strip().lower()
+    _backend_module.set_calc_mode(_PINNED_LEB_MODE)
+    logger.debug("libephemeris calc mode set to: %s", _PINNED_LEB_MODE)
 
 # ---------------------------------------------------------------------------
 # Startup log: backend identity, version, and format
@@ -219,4 +238,133 @@ elif BACKEND_NAME == "swisseph":
         "Install libephemeris for the default backend."
     )
 
-__all__ = ["swe", "BACKEND_NAME", "EPHE_DATA_PATH", "EPHEMERIS_LOCK"]
+# ---------------------------------------------------------------------------
+# Shared ephemeris session management
+# ---------------------------------------------------------------------------
+
+
+def reset_ephemeris_session() -> None:
+    """Reset per-calculation ephemeris state without degrading the backend.
+
+    Uses ``reset_session()`` when the backend provides it (libephemeris),
+    which clears sidereal mode, topocentric coordinates and per-call flags
+    while keeping the LEB reader, Skyfield timescale and SPK kernels alive.
+    Falls back to ``close()`` on backends without ``reset_session()``
+    (pyswisseph).
+
+    Both reset paths clear the libephemeris calculation mode, so the mode
+    pinned at import time (``KERYKEION_LEB_MODE``, default ``"leb"``) is
+    re-applied afterwards — otherwise a single reset would silently re-enable
+    the Skyfield auto-fallback this module explicitly disables.
+
+    Callers must hold ``EPHEMERIS_LOCK``. Never call ``swe.close()``
+    directly; use this function (or ``ephemeris_session``) instead.
+    """
+    _reset = getattr(swe, "reset_session", None) or swe.close
+    try:
+        _reset()
+    finally:
+        # Re-pin the calc mode even if the reset itself raised — a session
+        # left in "auto" mode would silently re-enable the Skyfield fallback.
+        if BACKEND_NAME == "libephemeris" and _PINNED_LEB_MODE is not None:
+            swe.set_calc_mode(_PINNED_LEB_MODE)
+
+
+@contextmanager
+def ephemeris_session(
+    *,
+    zodiac_type: Optional[str] = None,
+    sidereal_mode: Optional[str] = None,
+    custom_ayanamsa_t0: Optional[float] = None,
+    custom_ayanamsa_ayan_t0: Optional[float] = None,
+    perspective_type: Optional[str] = None,
+    topo: Optional[Tuple[float, float, float]] = None,
+    ephe_path: Optional[str] = None,
+) -> Iterator[int]:
+    """Serialized, self-cleaning ephemeris calculation session.
+
+    This is the single supported way for kerykeion code to touch the
+    process-global ephemeris state (``set_ephe_path``, ``set_sid_mode``,
+    ``set_topo``). It acquires ``EPHEMERIS_LOCK``, applies the requested
+    configuration, yields the ``iflag`` to pass to ``swe.calc_ut``-style
+    functions, and on exit resets the session via
+    :func:`reset_ephemeris_session` and releases the lock.
+
+    Args:
+        zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. When sidereal,
+            ``FLG_SIDEREAL`` is OR-ed into the yielded iflag and the sidereal
+            mode is configured on the backend.
+        sidereal_mode: Named ayanamsa (e.g. ``"LAHIRI"``) or ``"USER"``.
+            Defaults to ``"FAGAN_BRADLEY"`` when ``zodiac_type`` is sidereal.
+        custom_ayanamsa_t0: Reference epoch (JD) for ``sidereal_mode="USER"``.
+        custom_ayanamsa_ayan_t0: Ayanamsa value (degrees) at ``t0`` for
+            ``sidereal_mode="USER"``.
+        perspective_type: One of ``"Apparent Geocentric"`` (default),
+            ``"True Geocentric"``, ``"Heliocentric"``, ``"Topocentric"``,
+            ``"Barycentric"``.
+        topo: ``(lng, lat, altitude_m)`` observer tuple, required when
+            ``perspective_type="Topocentric"``.
+        ephe_path: Ephemeris data path; defaults to ``EPHE_DATA_PATH``.
+
+    Yields:
+        int: Base iflag (``FLG_SWIEPH | FLG_SPEED`` plus perspective/sidereal
+        flags). OR in additional flags (e.g. ``FLG_EQUATORIAL``) as needed.
+
+    Usage::
+
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with ephemeris_session(zodiac_type=subject.zodiac_type,
+                               sidereal_mode=subject.sidereal_mode) as iflag:
+            lon = swe.calc_ut(jd, swe.SUN, iflag)[0][0]
+
+    Notes:
+        - ``EPHEMERIS_LOCK`` is re-entrant, but keep sessions as narrow as
+          possible and do NOT build :class:`AstrologicalSubjectFactory`
+          subjects (or call other factories) inside a session: the inner
+          calculation's cleanup resets the sidereal/topo state configured by
+          the outer session. Exit the session first, then build subjects.
+        - ``sidereal_mode="USER"`` raises ``ValueError`` when the custom
+          ayanamsa parameters are missing.
+    """
+    with EPHEMERIS_LOCK:
+        try:
+            swe.set_ephe_path(EPHE_DATA_PATH if ephe_path is None else ephe_path)
+            iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+
+            if perspective_type == "True Geocentric":
+                iflag |= swe.FLG_TRUEPOS
+            elif perspective_type == "Heliocentric":
+                iflag |= swe.FLG_HELCTR
+            elif perspective_type == "Barycentric":
+                iflag |= swe.FLG_BARYCTR
+            elif perspective_type == "Topocentric":
+                iflag |= swe.FLG_TOPOCTR
+                if topo is None:
+                    raise ValueError("perspective_type='Topocentric' requires the topo=(lng, lat, alt) argument")
+                swe.set_topo(topo[0], topo[1], topo[2] or 0.0)
+
+            if zodiac_type == "Sidereal":
+                iflag |= swe.FLG_SIDEREAL
+                if sidereal_mode == "USER":
+                    if custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None:
+                        raise ValueError(
+                            "sidereal_mode='USER' requires custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0"
+                        )
+                    swe.set_sid_mode(swe.SIDM_USER, custom_ayanamsa_t0, custom_ayanamsa_ayan_t0)
+                else:
+                    swe.set_sid_mode(getattr(swe, f"SIDM_{sidereal_mode or 'FAGAN_BRADLEY'}"))
+
+            yield iflag
+        finally:
+            reset_ephemeris_session()
+
+
+__all__ = [
+    "swe",
+    "BACKEND_NAME",
+    "EPHE_DATA_PATH",
+    "EPHEMERIS_LOCK",
+    "ephemeris_session",
+    "reset_ephemeris_session",
+]

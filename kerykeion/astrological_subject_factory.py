@@ -31,10 +31,10 @@ License: AGPL-3.0
 """
 
 import pytz
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, BACKEND_NAME, EPHEMERIS_LOCK
+from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, BACKEND_NAME, ephemeris_session
 import logging
 import math
-from datetime import datetime
+from datetime import datetime, timezone
 from os import getenv
 from pathlib import Path
 from typing import Optional, List, Dict, Any, get_args
@@ -121,6 +121,20 @@ TNO_PLANETS: Dict[AstrologicalPoint, int] = {
 # ``Deneb Algedi``). Catalog entries from libephemeris already provide the
 # canonical name and slug forms.
 
+# v5-era fixed-star names that were accepted via ``active_points``. Kept only
+# as the redirect fallback for when the libephemeris star catalog is
+# unavailable (e.g. a swisseph-only install): star names must still be
+# redirected to ``active_fixed_stars`` there, or downstream consumers doing
+# ``subject[point.lower()]`` would hit KeyError on never-calculated points.
+_LEGACY_ACTIVE_POINT_STAR_NAMES = frozenset(
+    {
+        "Regulus", "Spica", "Aldebaran", "Antares", "Sirius", "Fomalhaut",
+        "Algol", "Betelgeuse", "Canopus", "Procyon", "Arcturus", "Pollux",
+        "Deneb", "Altair", "Rigel", "Achernar", "Capella", "Vega",
+        "Alcyone", "Alphecca", "Algorab", "Deneb_Algedi", "Alkaid",
+    }
+)
+
 # Declarative mapping of geometrically opposite point pairs.
 # Each derived point is computed as primary.abs_pos + 180 (mod 360).
 # negate_speed/negate_dec control whether speed and declination are negated.
@@ -128,8 +142,11 @@ OPPOSITE_PAIRS: Dict[AstrologicalPoint, Dict[str, Any]] = {
     "Descendant": {"primary": "Ascendant", "negate_speed": False, "negate_dec": False},
     "Imum_Coeli": {"primary": "Medium_Coeli", "negate_speed": False, "negate_dec": False},
     "Anti_Vertex": {"primary": "Vertex", "negate_speed": False, "negate_dec": False},
-    "Mean_South_Lunar_Node": {"primary": "Mean_North_Lunar_Node", "negate_speed": True, "negate_dec": True},
-    "True_South_Lunar_Node": {"primary": "True_North_Lunar_Node", "negate_speed": True, "negate_dec": True},
+    # South nodes are rigidly 180° from the north nodes, so they share the
+    # SAME angular velocity (negating it would invert applying/separating
+    # verdicts in aspect movement); declination IS mirrored.
+    "Mean_South_Lunar_Node": {"primary": "Mean_North_Lunar_Node", "negate_speed": False, "negate_dec": True},
+    "True_South_Lunar_Node": {"primary": "True_North_Lunar_Node", "negate_speed": False, "negate_dec": True},
     "Mean_Priapus": {"primary": "Mean_Lilith", "negate_speed": False, "negate_dec": True},
     "True_Priapus": {"primary": "True_Lilith", "negate_speed": False, "negate_dec": True},
 }
@@ -234,44 +251,19 @@ def ephemeris_context(
     Yields:
         int: iflag to be passed to swe.calc_ut / swe.fixstar_ut.
     """
-    EPHEMERIS_LOCK.acquire()
-    try:
-        swe.set_ephe_path(ephe_path)
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
-
-        # Perspective configuration
-        if config.perspective_type == "True Geocentric":
-            iflag |= swe.FLG_TRUEPOS
-        elif config.perspective_type == "Heliocentric":
-            iflag |= swe.FLG_HELCTR
-        elif config.perspective_type == "Topocentric":
-            iflag |= swe.FLG_TOPOCTR
-            swe.set_topo(lng, lat, alt or 0.0)
-        elif config.perspective_type == "Barycentric":
-            iflag |= swe.FLG_BARYCTR
-
-        # Sidereal configuration
-        if config.zodiac_type == "Sidereal":
-            iflag |= swe.FLG_SIDEREAL
-            if config.sidereal_mode == "USER":
-                # User-defined ayanamsa: requires t0 (reference epoch) and ayan_t0 (value at t0)
-                swe.set_sid_mode(swe.SIDM_USER, config.custom_ayanamsa_t0, config.custom_ayanamsa_ayan_t0)
-            else:
-                swe.set_sid_mode(getattr(swe, f"SIDM_{config.sidereal_mode}"))
-
+    # Delegates to the shared ephemeris_session, which serializes access via
+    # EPHEMERIS_LOCK, resets per-calculation state on exit without closing
+    # file handles, and re-applies the pinned libephemeris calc mode.
+    with ephemeris_session(
+        zodiac_type=config.zodiac_type,
+        sidereal_mode=config.sidereal_mode,
+        custom_ayanamsa_t0=config.custom_ayanamsa_t0,
+        custom_ayanamsa_ayan_t0=config.custom_ayanamsa_ayan_t0,
+        perspective_type=config.perspective_type,
+        topo=(lng, lat, alt or 0.0) if config.perspective_type == "Topocentric" else None,
+        ephe_path=ephe_path,
+    ) as iflag:
         yield iflag
-    finally:
-        # Reset per-calculation state (topo, sidereal, angles) without
-        # closing file handles or clearing LRU caches. This keeps the
-        # LEB reader, Skyfield timescale, and SPK kernels alive across
-        # consecutive calculations for dramatically better performance.
-        # Falls back to close() for backends without reset_session()
-        # (e.g. pyswisseph).
-        try:
-            _reset = getattr(swe, "reset_session", None) or swe.close
-            _reset()
-        finally:
-            EPHEMERIS_LOCK.release()
 
 
 @dataclass
@@ -776,6 +768,42 @@ class AstrologicalSubjectFactory:
             active_points_list: List[AstrologicalPoint] = list(DEFAULT_ACTIVE_POINTS)
         else:
             active_points_list = list(active_points)
+            # v6: ``active_points`` is no longer a channel for fixed stars.
+            # Star names that v5 accepted here (e.g. "Regulus", "Spica") are
+            # redirected to the ``active_fixed_stars`` channel — with a
+            # warning — instead of being silently dropped, so type-valid
+            # v5-style requests keep producing the stars they asked for.
+            try:
+                from kerykeion.fixed_stars.catalog import FixedStarCatalog
+
+                _star_names = [p for p in active_points_list if FixedStarCatalog.find(p) is not None]
+            except Exception:
+                # Star catalog unavailable (e.g. swisseph-only install): fall
+                # back to the v5-era star list so type-valid star names are
+                # still redirected rather than lingering as never-calculated
+                # points (downstream KeyError).
+                _star_names = [p for p in active_points_list if p in _LEGACY_ACTIVE_POINT_STAR_NAMES]
+            if _star_names:
+                logging.warning(
+                    "active_points no longer accepts fixed star names %s; "
+                    "redirecting them to active_fixed_stars. Pass stars via "
+                    "the active_fixed_stars parameter instead.",
+                    _star_names,
+                )
+                active_points_list = [p for p in active_points_list if p not in _star_names]
+                if not active_points_list:
+                    logging.warning(
+                        "active_points contained only fixed star names; the "
+                        "remaining regular-points list is empty, which is "
+                        "treated as 'no filter' (ALL points are calculated). "
+                        "Pass an explicit list of regular points to restrict "
+                        "the chart."
+                    )
+                _merged_stars: List[str] = list(active_fixed_stars) if active_fixed_stars else []
+                for _star in _star_names:
+                    if _star not in _merged_stars:
+                        _merged_stars.append(_star)
+                active_fixed_stars = _merged_stars
 
         calc_data["active_points"] = active_points_list
 
@@ -1154,6 +1182,11 @@ class AstrologicalSubjectFactory:
         """
         # Parse the ISO time
         dt = datetime.fromisoformat(iso_utc_time.replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            # Offset-less timestamps are documented as UTC. Without this,
+            # astimezone() below would interpret them in the HOST machine's
+            # timezone, making results host-dependent.
+            dt = dt.replace(tzinfo=timezone.utc)
 
         # Get location data if online mode is enabled
         if online:
@@ -1231,6 +1264,15 @@ class AstrologicalSubjectFactory:
         suppress_geonames_warning: bool = False,
         custom_ayanamsa_t0: Optional[float] = None,
         custom_ayanamsa_ayan_t0: Optional[float] = None,
+        altitude: Optional[float] = None,
+        # v6 calc flags — forwarded to from_birth_data so that a "now"
+        # subject computes the same enrichments as a natal one.
+        active_fixed_stars: Optional[List[str]] = None,
+        calculate_dignities: bool = False,
+        calculate_nakshatra: bool = False,
+        calculate_gauquelin: bool = False,
+        calculate_nutation: bool = False,
+        calculate_local_space: bool = False,
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject for the current moment in time.
@@ -1341,6 +1383,13 @@ class AstrologicalSubjectFactory:
             suppress_geonames_warning=suppress_geonames_warning,
             custom_ayanamsa_t0=custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
+            altitude=altitude,
+            active_fixed_stars=active_fixed_stars,
+            calculate_dignities=calculate_dignities,
+            calculate_nakshatra=calculate_nakshatra,
+            calculate_gauquelin=calculate_gauquelin,
+            calculate_nutation=calculate_nutation,
+            calculate_local_space=calculate_local_space,
         )
 
     @staticmethod
@@ -1659,9 +1708,11 @@ class AstrologicalSubjectFactory:
             - Sign, degree, and minute components
 
         Error Handling:
-            If Swiss Ephemeris calculation fails (e.g., for distant asteroids outside
-            ephemeris range), the method logs the error and removes the object from
-            active_points to prevent cascade failures.
+            If Swiss Ephemeris calculation fails for an optional body (e.g., a distant
+            asteroid outside ephemeris range), the method logs the error and removes
+            the object from active_points to prevent cascade failures. Failures on the
+            luminaries (Sun, Moon) raise KerykeionException instead: a subject without
+            them is unusable, so out-of-range dates fail loudly rather than silently.
 
         Note:
             The method uses the Swiss Ephemeris calc_ut function which returns position
@@ -1705,6 +1756,17 @@ class AstrologicalSubjectFactory:
             calculated_planets.append(planet_name)
 
         except Exception as e:
+            # Graceful degradation is intended for optional bodies (asteroids,
+            # TNOs, Chiron...) whose ephemeris coverage is narrower than the
+            # planets'. The luminaries are different: a chart without Sun or
+            # Moon is unusable (lunar phase, sect, houses interpretation), so
+            # a failure there — typically an out-of-range date for the loaded
+            # ephemeris — must surface instead of yielding a gutted subject.
+            if planet_name in ("Sun", "Moon"):
+                raise KerykeionException(
+                    f"Cannot calculate {planet_name} for JD {julian_day}: {e}. "
+                    "The date is likely outside the range covered by the loaded ephemeris data."
+                ) from e
             logging.error(f"Error calculating {planet_name}: {e}")
             if planet_name in active_points:
                 active_points.remove(planet_name)
@@ -2000,11 +2062,12 @@ class AstrologicalSubjectFactory:
                 - Ixion, Orcus, Quaoar
 
             Fixed Stars:
-                - 23 stars (expanded in v5.12 from 2): Regulus, Spica,
-                  Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse,
-                  Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel,
-                  Achernar, Capella, Vega, Alcyone, Alphecca, Algorab,
-                  Deneb Algedi, Alkaid
+                - v6: requested via the ``active_fixed_stars`` parameter (NOT
+                  ``active_points``); the catalog comes from libephemeris via
+                  ``kerykeion.fixed_stars.catalog.FixedStarCatalog``. Star
+                  names passed to ``active_points`` are redirected to
+                  ``active_fixed_stars`` with a warning. Results live in
+                  ``subject.fixed_stars``.
                 - Includes apparent visual magnitude via ``swe.fixstar2_mag``
                 - Includes equatorial declination via ``FLG_EQUATORIAL``
                 - Includes ecliptic speed (precession drift, ~50 arcsec/yr)
@@ -2415,8 +2478,6 @@ if __name__ == "__main__":
         "Ixion",
         "Orcus",
         "Quaoar",
-        "Regulus",
-        "Spica",
         "Pars_Fortunae",
         "Pars_Spiritus",
         "Pars_Amoris",
@@ -2428,7 +2489,11 @@ if __name__ == "__main__":
         "Descendant",
         "Imum_Coeli",
     ]
-    subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject", active_points=new_active_points)
+    subject = AstrologicalSubjectFactory.from_current_time(
+        name="Test Subject",
+        active_points=new_active_points,
+        active_fixed_stars=["Regulus", "Spica"],
+    )
     print(subject.sun)
     print(subject.pars_amoris)
     print(subject.eris)

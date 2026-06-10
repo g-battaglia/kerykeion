@@ -36,7 +36,7 @@ from typing import Union, Optional, get_args, cast
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 logger = getLogger(__name__)
@@ -667,12 +667,22 @@ def datetime_to_julian(dt: datetime) -> float:
     """
     Convert a Python datetime object to Julian Day Number.
 
+    The datetime is interpreted in the proleptic Gregorian calendar (the
+    calendar Python's ``datetime`` uses), matching ``julian_to_datetime``
+    so the two functions round-trip for all representable dates.
+
+    Timezone-aware datetimes are converted to UTC first; naive datetimes
+    are assumed to already be in UT.
+
     Args:
         dt: The datetime object to convert
 
     Returns:
         The corresponding Julian Day Number (JD) as a float
     """
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+
     year = dt.year
     month = dt.month
     day = dt.day
@@ -700,22 +710,32 @@ def julian_to_datetime(jd: float) -> datetime:
     """
     Convert a Julian Day Number to a Python datetime object.
 
+    The result is expressed in the proleptic Gregorian calendar — the
+    calendar Python's ``datetime`` natively uses — for ALL dates, including
+    those before the 1582 Gregorian reform. This makes the function the
+    exact inverse of ``datetime_to_julian``; the historical Julian-calendar
+    branch used previously broke the round trip by ~10 days for
+    pre-1582 dates.
+
     Args:
         jd: Julian Day Number as a float
 
     Returns:
-        The corresponding datetime object
+        The corresponding datetime object (proleptic Gregorian, UT)
+
+    Raises:
+        ValueError: For JDs before year 1 CE (datetime cannot represent
+            BCE dates; use the ephemeris backend's ``revjul`` for those).
     """
     jd_plus = jd + 0.5
 
     Z = int(jd_plus)
     F = jd_plus - Z
 
-    if Z < 2299161:
-        A = Z
-    else:
-        alpha = int((Z - 1867216.25) / 36524.25)
-        A = Z + 1 + alpha - int(alpha / 4)
+    # math.floor (not int()) so the century correction also holds for early
+    # CE dates, where these intermediates are negative.
+    alpha = math.floor((Z - 1867216.25) / 36524.25)
+    A = Z + 1 + alpha - math.floor(alpha / 4)
 
     B = A + 1524
     C = int((B - 122.1) / 365.25)

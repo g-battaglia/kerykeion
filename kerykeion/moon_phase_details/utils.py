@@ -52,8 +52,6 @@ AU_KM = getattr(swe, "AUNIT", 149597870.7)
 STANDARD_ATMOSPHERIC_PRESSURE_HPA = 1013.25  # hectopascals (sea level)
 STANDARD_TEMPERATURE_CELSIUS = 15.0  # degrees Celsius
 
-# Global cache for ephemeris configuration
-_EPHEMERIS_CONFIG = None
 
 
 def safe_parse_iso_datetime(value: Optional[str]) -> datetime:
@@ -120,19 +118,21 @@ def configure_ephemeris_path() -> int:
     """
     Configure Swiss Ephemeris path and base flags for calculations.
 
-    This function is idempotent - it sets the ephemeris path only once
-    on first call and caches the result, improving performance for
-    subsequent calls.
+    The path is (re-)applied on every call: ``set_ephe_path`` is cheap and
+    idempotent on both backends, while a once-only cache would silently
+    leave the path unset after any session reset elsewhere in the process
+    (``reset_session()``/``close()`` clear it), causing a fallback to
+    default data discovery — or, on pyswisseph, to the low-precision
+    Moshier ephemeris.
+
+    Prefer ``kerykeion.ephemeris_backend.ephemeris_session`` for new code;
+    it handles path setup, locking, and cleanup in one place.
 
     Returns:
         int: Base iflag (FLG_SWIEPH) to be used in swe.calc_ut-style functions.
     """
-    global _EPHEMERIS_CONFIG
-    if _EPHEMERIS_CONFIG is None:
-        ephe_path = EPHE_DATA_PATH
-        swe.set_ephe_path(ephe_path)
-        _EPHEMERIS_CONFIG = swe.FLG_SWIEPH
-    return _EPHEMERIS_CONFIG
+    swe.set_ephe_path(EPHE_DATA_PATH)
+    return swe.FLG_SWIEPH
 
 
 def _extract_eclipse_result(result: object) -> Optional[tuple[int, float]]:

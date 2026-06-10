@@ -58,6 +58,7 @@ from kerykeion.moon_phase_details.utils import (
     compute_lunar_phase_jd,
     compute_sun_position,
 )
+from kerykeion.ephemeris_backend import ephemeris_session
 from kerykeion.utilities import datetime_to_julian, julian_to_datetime
 
 
@@ -171,10 +172,11 @@ def _build_major_phase_window(
     Returns:
         MoonPhaseMajorPhaseWindowModel with precise last/next occurrences.
     """
-    # Calculate next phase occurrence
-    next_jd = compute_lunar_phase_jd(base_jd, target_angle, forward=True)
-    # Calculate last phase occurrence
-    last_jd = compute_lunar_phase_jd(base_jd, target_angle, forward=False)
+    # Calculate the surrounding occurrences inside a serialized session
+    # (the solver mutates the global ephemeris path).
+    with ephemeris_session():
+        next_jd = compute_lunar_phase_jd(base_jd, target_angle, forward=True)
+        last_jd = compute_lunar_phase_jd(base_jd, target_angle, forward=False)
 
     if next_jd is None or last_jd is None:
         # Fallback to None if calculation fails
@@ -263,8 +265,10 @@ def _compute_sun_times(
     midnight_utc = midnight_local.astimezone(timezone.utc)
     jd_midnight = datetime_to_julian(midnight_utc)
 
-    # Compute both sunrise and sunset using Swiss Ephemeris
-    sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, lat, lng)
+    # Compute both sunrise and sunset using Swiss Ephemeris, inside a
+    # serialized session (the helper mutates the global ephemeris path).
+    with ephemeris_session():
+        sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, lat, lng)
 
     if sunrise_jd is None or sunset_jd is None:
         return None
@@ -294,7 +298,8 @@ def _compute_sun_position(
     dt_utc = _get_utc_datetime(subject)
     jd_ut = datetime_to_julian(dt_utc)
 
-    return compute_sun_position(jd_ut, lat, lng)
+    with ephemeris_session():
+        return compute_sun_position(jd_ut, lat, lng)
 
 
 def _compute_next_solar_eclipse(
@@ -306,7 +311,8 @@ def _compute_next_solar_eclipse(
     base_dt = _get_utc_datetime(subject)
     jd_start = datetime_to_julian(base_dt)
 
-    result = compute_next_solar_eclipse_jd(jd_start)
+    with ephemeris_session():
+        result = compute_next_solar_eclipse_jd(jd_start)
     if result is None:
         return None
 
@@ -330,7 +336,8 @@ def _compute_next_lunar_eclipse(
     base_dt = _get_utc_datetime(subject)
     jd_start = datetime_to_julian(base_dt)
 
-    result = compute_next_lunar_eclipse_jd(jd_start)
+    with ephemeris_session():
+        result = compute_next_lunar_eclipse_jd(jd_start)
     if result is None:
         return None
 
