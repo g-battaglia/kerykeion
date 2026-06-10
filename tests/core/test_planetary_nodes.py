@@ -2,10 +2,8 @@
 """Tests for the Planetary Nodes & Apsides factory."""
 
 import pytest
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, PlanetaryNodesFactory
-
-_EPHE_PATH = EPHE_DATA_PATH
 
 
 @pytest.fixture(scope="module")
@@ -74,16 +72,14 @@ class TestSweRegressionNodes:
     def test_mars_ascending_node_matches_swe(self):
         """Factory Mars ascending node longitude should match swe.nod_aps_ut."""
         jd_j2000 = 2451545.0
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
         NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
 
-        swe.set_ephe_path(_EPHE_PATH)
-        swe_result = swe.nod_aps_ut(jd_j2000, swe.MARS, iflag, NODBIT_MEAN)
-        swe_asc_lon = swe_result[0][0] % 360
-        swe_desc_lon = swe_result[1][0] % 360
-        swe_peri_lon = swe_result[2][0] % 360
-        swe_aph_lon = swe_result[3][0] % 360
-        swe.close()
+        with ephemeris_session() as iflag:
+            swe_result = swe.nod_aps_ut(jd_j2000, swe.MARS, iflag, NODBIT_MEAN)
+            swe_asc_lon = swe_result[0][0] % 360
+            swe_desc_lon = swe_result[1][0] % 360
+            swe_peri_lon = swe_result[2][0] % 360
+            swe_aph_lon = swe_result[3][0] % 360
 
         factory_result = PlanetaryNodesFactory.from_julian_day(
             jd_j2000, method="mean", planets=["Mars"]
@@ -107,13 +103,11 @@ class TestSweRegressionNodes:
     def test_jupiter_ascending_node_matches_swe(self):
         """Factory Jupiter ascending node longitude should match swe.nod_aps_ut."""
         jd_j2000 = 2451545.0
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
         NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
 
-        swe.set_ephe_path(_EPHE_PATH)
-        swe_result = swe.nod_aps_ut(jd_j2000, swe.JUPITER, iflag, NODBIT_MEAN)
-        swe_asc_lon = swe_result[0][0] % 360
-        swe.close()
+        with ephemeris_session() as iflag:
+            swe_result = swe.nod_aps_ut(jd_j2000, swe.JUPITER, iflag, NODBIT_MEAN)
+            swe_asc_lon = swe_result[0][0] % 360
 
         factory_result = PlanetaryNodesFactory.from_julian_day(
             jd_j2000, method="mean", planets=["Jupiter"]
@@ -124,3 +118,38 @@ class TestSweRegressionNodes:
         assert abs(jupiter.ascending_node.abs_pos - swe_asc_lon) < 0.01, (
             f"Jupiter asc node: factory={jupiter.ascending_node.abs_pos} swe={swe_asc_lon}"
         )
+
+
+class TestSiderealFrameConsistency:
+    """v6 pre-beta fix: nodes from a sidereal subject must be in the subject's
+    own zodiac frame (previously tropical longitudes were attached to sidereal
+    charts, mislabelling the signs)."""
+
+    def test_lahiri_nodes_differ_from_tropical_by_ayanamsa(self):
+        """LAHIRI vs tropical subject at the same instant: node longitudes
+        differ by exactly the chart ayanamsa (mod 360)."""
+        birth = dict(
+            year=2000, month=1, day=1, hour=12, minute=0,
+            lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False,
+        )
+        tropical = AstrologicalSubjectFactory.from_birth_data("Nodes Tropical", **birth)
+        sidereal = AstrologicalSubjectFactory.from_birth_data(
+            "Nodes Lahiri", **birth, zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        assert sidereal.ayanamsa_value is not None
+        ayanamsa = sidereal.ayanamsa_value
+
+        trop_nodes = PlanetaryNodesFactory.from_subject(tropical, planets=["Mars", "Jupiter"])
+        sid_nodes = PlanetaryNodesFactory.from_subject(sidereal, planets=["Mars", "Jupiter"])
+
+        for trop, sid in zip(trop_nodes.nodes, sid_nodes.nodes):
+            assert trop.planet_name == sid.planet_name
+            for attr in ("ascending_node", "descending_node", "perihelion", "aphelion"):
+                trop_lon = getattr(trop, attr).abs_pos
+                sid_lon = getattr(sid, attr).abs_pos
+                diff = (trop_lon - sid_lon) % 360.0
+                assert diff == pytest.approx(ayanamsa, abs=0.01), (
+                    f"{trop.planet_name} {attr}: tropical={trop_lon} sidereal={sid_lon} "
+                    f"diff={diff} expected ayanamsa={ayanamsa}"
+                )

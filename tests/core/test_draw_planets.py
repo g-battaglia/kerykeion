@@ -572,9 +572,10 @@ class TestGrouping:
             _make_setting(2, "Mars"),
         ]
         abs_positions = [p.abs_pos for p in pts]
-        pos_map = {abs_positions[i]: i for i in range(len(stgs))}
-        sorted_pos = sorted(pos_map.keys())
-        adjustments = _calculate_planet_adjustments(abs_positions, stgs, pos_map, sorted_pos)
+        sorted_entries = sorted((abs_positions[i], i) for i in range(len(stgs)))
+        sorted_pos = [entry[0] for entry in sorted_entries]
+        sorted_indices = [entry[1] for entry in sorted_entries]
+        adjustments = _calculate_planet_adjustments(abs_positions, stgs, sorted_indices, sorted_pos)
         assert all(adj == 0.0 for adj in adjustments)
 
     def test_apply_group_adjustments_two(self):

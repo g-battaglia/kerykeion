@@ -58,6 +58,45 @@ def test_polar_night():
     assert s.sunrise is None and s.sunset is None
 
 
+def test_dst_spring_forward_midnight_gap_sao_paulo():
+    # Regression: on 2018-11-04 America/Sao_Paulo clocks jumped straight from
+    # 00:00 to 01:00, so the civil midnight used internally to anchor the day
+    # does not exist. The factory must resolve the gap forward instead of
+    # raising NonExistentTimeError, and still return a sane sunrise/sunset.
+    import pytz
+
+    s = SunTimesFactory.from_date(
+        2018, 11, 4, latitude=-23.5505, longitude=-46.6333, tz_str="America/Sao_Paulo"
+    )
+    assert s.sunrise is not None and s.sunset is not None
+    assert s.sunrise < s.solar_noon < s.sunset
+    sp = pytz.timezone("America/Sao_Paulo")
+    sunrise_local = s.sunrise.astimezone(sp)
+    assert sunrise_local.date().isoformat() == "2018-11-04"
+    assert 5 <= sunrise_local.hour <= 7  # ~06:18 local (DST)
+    # Early-November day at -23.5 deg latitude lasts ~13 h.
+    hours = s.day_length.total_seconds() / 3600
+    assert 12.0 < hours < 14.0
+
+
+def test_dst_spring_forward_midnight_gap_santiago():
+    # Regression: 2022-09-11 America/Santiago also jumps 00:00 -> 01:00.
+    import pytz
+
+    s = SunTimesFactory.from_date(
+        2022, 9, 11, latitude=-33.4489, longitude=-70.6693, tz_str="America/Santiago"
+    )
+    assert s.sunrise is not None and s.sunset is not None
+    assert s.sunrise < s.solar_noon < s.sunset
+    scl = pytz.timezone("America/Santiago")
+    sunrise_local = s.sunrise.astimezone(scl)
+    assert sunrise_local.date().isoformat() == "2022-09-11"
+    assert 6 <= sunrise_local.hour <= 9  # ~07:47 local (DST starts this day)
+    # Mid-September day at -33.4 deg latitude lasts ~11.5-12.5 h.
+    hours = s.day_length.total_seconds() / 3600
+    assert 11.0 < hours < 13.0
+
+
 def test_historical_date_supported():
     # The factory works across the full civil range; 1700 is comfortably in range.
     s = SunTimesFactory.from_date(1700, 3, 15, **ROME)

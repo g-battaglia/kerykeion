@@ -83,6 +83,20 @@ class TestLoadLanguageSettings:
         languages = load_language_settings({"language_settings": {"PT": {"info": "Informações"}}})
         assert languages["PT"]["info"] == "Informações"
 
+    def test_returns_independent_copy(self):
+        """Mutating a returned mapping must not poison later calls (shared cache)."""
+        first = load_language_settings()
+        original_info = first["EN"]["info"]
+        first["EN"]["info"] = "MUTATED"
+        first["XX"] = {"info": "injected"}
+
+        second = load_language_settings()
+        assert second is not first
+        # Nested containers must be independent too (deep copy, not shallow).
+        assert second["EN"] is not first["EN"]
+        assert second["EN"]["info"] == original_info
+        assert "XX" not in second
+
 
 # =============================================================================
 # TestGetTranslations

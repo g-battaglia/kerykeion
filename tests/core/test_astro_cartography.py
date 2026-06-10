@@ -3,7 +3,7 @@
 
 import math
 import pytest
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, AstroCartographyFactory
 
 
@@ -107,18 +107,18 @@ class TestACGSweRegressions:
         The factory uses the same formula, so the MC line's longitude should
         match within 1 degree.
         """
-        from kerykeion.ephemeris_backend import EPHE_DATA_PATH
-        swe.set_ephe_path(EPHE_DATA_PATH)
-
         jd = acg_subject.julian_day
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 
-        # Get obliquity
-        obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+        with ephemeris_session() as iflag:
+            # Get obliquity
+            obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
 
-        # Get Sun ecliptic longitude
-        sun_ecl = swe.calc_ut(jd, swe.SUN, iflag)[0]
-        sun_ecl_lon = sun_ecl[0]
+            # Get Sun ecliptic longitude
+            sun_ecl = swe.calc_ut(jd, swe.SUN, iflag)[0]
+            sun_ecl_lon = sun_ecl[0]
+
+            # Greenwich apparent sidereal time
+            gst_hours = swe.sidtime(jd)
 
         # Convert to RA (zero ecliptic latitude approximation, same as factory)
         ecl_rad = math.radians(sun_ecl_lon)
@@ -128,10 +128,6 @@ class TestACGSweRegressions:
             math.cos(ecl_rad),
         )
         sun_ra = math.degrees(ra_rad) % 360
-
-        # Greenwich apparent sidereal time
-        gst_hours = swe.sidtime(jd)
-        swe.close()
 
         # Expected MC geographic longitude
         expected_mc_lng = (sun_ra - gst_hours * 15.0) % 360
@@ -149,3 +145,45 @@ class TestACGSweRegressions:
             f"Sun MC line longitude mismatch: factory={factory_mc_lng}, "
             f"expected={expected_mc_lng}"
         )
+
+
+class TestACGSiderealFrameConsistency:
+    """v6 pre-beta fix: ACG lines are physical (horizon/meridian crossings) and
+    must not depend on the zodiac convention. Previously sidereal abs_pos was
+    fed straight into tropical RA / houses_armc math, shifting every line by
+    the ayanamsa."""
+
+    def test_sidereal_acg_lines_identical_to_tropical(self):
+        """LAHIRI vs tropical subject at the same instant: identical geography."""
+        birth = dict(
+            year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        tropical = AstrologicalSubjectFactory.from_birth_data("ACG Tropical", **birth)
+        sidereal = AstrologicalSubjectFactory.from_birth_data(
+            "ACG Lahiri", **birth, zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        assert sidereal.ayanamsa_value is not None and sidereal.ayanamsa_value > 20.0
+
+        trop_lines = AstroCartographyFactory.compute(tropical, step=5, planets=["Sun", "Moon"])
+        sid_lines = AstroCartographyFactory.compute(sidereal, step=5, planets=["Sun", "Moon"])
+
+        def by_key(lines):
+            return {(l.planet, l.line_type): l for l in lines}
+
+        trop_map, sid_map = by_key(trop_lines), by_key(sid_lines)
+        assert set(trop_map) == set(sid_map)
+
+        for key, trop_line in trop_map.items():
+            sid_line = sid_map[key]
+            if key[1] in ("MC", "IC"):
+                # Vertical lines: the single geographic longitude must match.
+                assert sid_line.points[0].longitude == pytest.approx(
+                    trop_line.points[0].longitude, abs=0.01
+                ), f"{key}: sidereal MC/IC longitude diverges from tropical"
+            else:
+                # ASC/DSC scans share the same grid: identical point sets.
+                trop_pts = {(p.longitude, p.latitude) for p in trop_line.points}
+                sid_pts = {(p.longitude, p.latitude) for p in sid_line.points}
+                assert sid_pts == trop_pts, f"{key}: sidereal line geography diverges"

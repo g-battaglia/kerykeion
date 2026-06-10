@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 """Tests for the Relocated Chart factory."""
 
+from datetime import datetime
+
 import pytest
 from kerykeion import AstrologicalSubjectFactory, RelocatedChartFactory
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+
+
+def _angular_diff(a: float, b: float) -> float:
+    diff = abs(a - b) % 360.0
+    return min(diff, 360.0 - diff)
 
 
 @pytest.fixture(scope="module")
@@ -11,6 +19,29 @@ def natal():
         "Test Subject", 1990, 6, 15, 14, 30,
         lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
         city="Rome", nation="IT", online=False,
+    )
+
+
+@pytest.fixture(scope="module")
+def sidereal_natal():
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Sidereal Subject", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
+        zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+    )
+
+
+@pytest.fixture(scope="module")
+def natal_with_derived_points():
+    """Natal with Vertex / Anti-Vertex / Arabic parts active."""
+    extra = ["Vertex", "Anti_Vertex", "Pars_Fortunae", "Pars_Spiritus"]
+    points = list(DEFAULT_ACTIVE_POINTS) + [p for p in extra if p not in DEFAULT_ACTIVE_POINTS]
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Derived Points Subject", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
+        active_points=points,
     )
 
 
@@ -112,3 +143,114 @@ class TestRelocatedSweReference:
 
         assert relocated.ascendant.abs_pos == pytest.approx(expected_asc, abs=0.01)
         assert relocated.medium_coeli.abs_pos == pytest.approx(expected_mc, abs=0.01)
+
+
+class TestRelocatedSiderealIdentity:
+    """v6 regression: houses_armc returns TROPICAL cusps — sidereal charts
+    must be shifted by the ayanamsa, otherwise relocating a sidereal chart to
+    its own birthplace moves the ASC by ~24°."""
+
+    def test_tropical_identity(self, natal):
+        relocated = RelocatedChartFactory.relocate(natal, new_lat=natal.lat, new_lng=natal.lng)
+        assert _angular_diff(relocated.ascendant.abs_pos, natal.ascendant.abs_pos) < 1e-6
+
+    def test_sidereal_identity(self, sidereal_natal):
+        relocated = RelocatedChartFactory.relocate(
+            sidereal_natal, new_lat=sidereal_natal.lat, new_lng=sidereal_natal.lng
+        )
+        assert _angular_diff(relocated.ascendant.abs_pos, sidereal_natal.ascendant.abs_pos) < 1e-6, (
+            "Relocating a sidereal chart to its birthplace must keep the natal ASC "
+            "(ayanamsa not subtracted from houses_armc output)"
+        )
+
+    def test_sidereal_identity_all_cusps(self, sidereal_natal):
+        relocated = RelocatedChartFactory.relocate(
+            sidereal_natal, new_lat=sidereal_natal.lat, new_lng=sidereal_natal.lng
+        )
+        for attr in ["first_house", "fourth_house", "seventh_house", "tenth_house",
+                     "medium_coeli", "descendant", "imum_coeli"]:
+            natal_pos = getattr(sidereal_natal, attr).abs_pos
+            relocated_pos = getattr(relocated, attr).abs_pos
+            assert _angular_diff(relocated_pos, natal_pos) < 1e-5, f"{attr} moved on identity relocation"
+
+    def test_sidereal_offset_matches_ayanamsa(self, natal, sidereal_natal):
+        """Sidereal relocated ASC = tropical relocated ASC - ayanamsa."""
+        tropical = RelocatedChartFactory.relocate(natal, new_lat=40.7128, new_lng=-74.006)
+        sidereal = RelocatedChartFactory.relocate(sidereal_natal, new_lat=40.7128, new_lng=-74.006)
+        assert sidereal_natal.ayanamsa_value is not None
+        expected = (tropical.ascendant.abs_pos - sidereal_natal.ayanamsa_value) % 360.0
+        assert _angular_diff(sidereal.ascendant.abs_pos, expected) < 1e-5
+
+
+class TestRelocatedDerivedPoints:
+    """v6: Vertex/Anti-Vertex, Arabic parts, axis houses and the local
+    datetime are location-dependent and must be refreshed on relocation."""
+
+    def test_vertex_identity(self, natal_with_derived_points):
+        subj = natal_with_derived_points
+        relocated = RelocatedChartFactory.relocate(subj, new_lat=subj.lat, new_lng=subj.lng)
+        assert _angular_diff(relocated.vertex.abs_pos, subj.vertex.abs_pos) < 1e-4
+        assert _angular_diff(relocated.anti_vertex.abs_pos, subj.anti_vertex.abs_pos) < 1e-4
+
+    def test_vertex_changes_on_relocation(self, natal_with_derived_points):
+        subj = natal_with_derived_points
+        relocated = RelocatedChartFactory.relocate(subj, new_lat=40.7128, new_lng=-74.006, new_city="New York")
+        assert _angular_diff(relocated.vertex.abs_pos, subj.vertex.abs_pos) > 1.0, (
+            "Vertex is location-dependent: it must move with the relocation"
+        )
+        # Anti-Vertex stays opposite the Vertex
+        assert _angular_diff(relocated.anti_vertex.abs_pos, (relocated.vertex.abs_pos + 180.0) % 360.0) < 1e-9
+
+    def test_arabic_parts_identity(self, natal_with_derived_points):
+        subj = natal_with_derived_points
+        relocated = RelocatedChartFactory.relocate(subj, new_lat=subj.lat, new_lng=subj.lng)
+        assert _angular_diff(relocated.pars_fortunae.abs_pos, subj.pars_fortunae.abs_pos) < 1e-4
+        assert _angular_diff(relocated.pars_spiritus.abs_pos, subj.pars_spiritus.abs_pos) < 1e-4
+
+    def test_arabic_parts_follow_new_ascendant(self, natal_with_derived_points):
+        """Pars Fortunae uses the ASC: it must be recomputed for the new location."""
+        subj = natal_with_derived_points
+        relocated = RelocatedChartFactory.relocate(subj, new_lat=40.7128, new_lng=-74.006, new_city="New York")
+        assert _angular_diff(relocated.pars_fortunae.abs_pos, subj.pars_fortunae.abs_pos) > 1.0
+
+        # Verify the day/night formula with the recomputed sect:
+        asc = relocated.ascendant.abs_pos
+        sun = relocated.sun.abs_pos
+        moon = relocated.moon.abs_pos
+        if relocated.is_diurnal:
+            expected = (asc + moon - sun) % 360.0
+        else:
+            expected = (asc + sun - moon) % 360.0
+        assert _angular_diff(relocated.pars_fortunae.abs_pos, expected) < 1e-9
+
+    def test_sect_recomputed_for_new_location(self, natal_with_derived_points):
+        """14:30 local in Rome is day; the same instant in Tokyo (21:30 local) is night."""
+        subj = natal_with_derived_points
+        assert subj.is_diurnal is True
+        relocated = RelocatedChartFactory.relocate(
+            subj, new_lat=35.6895, new_lng=139.6917, new_city="Tokyo", new_tz_str="Asia/Tokyo"
+        )
+        assert relocated.is_diurnal is False, (
+            "Sun below the horizon in Tokyo at the same UT instant: sect must flip"
+        )
+
+    def test_axes_have_house_populated(self, natal_with_derived_points):
+        subj = natal_with_derived_points
+        relocated = RelocatedChartFactory.relocate(subj, new_lat=40.7128, new_lng=-74.006, new_city="New York")
+        for attr in ["ascendant", "medium_coeli", "descendant", "imum_coeli", "vertex", "anti_vertex"]:
+            point = getattr(relocated, attr)
+            assert point.house is not None, f"{attr} missing house assignment after relocation"
+
+    def test_local_datetime_recomputed_with_new_tz(self, natal):
+        relocated = RelocatedChartFactory.relocate(
+            natal, new_lat=40.7128, new_lng=-74.006, new_city="New York", new_tz_str="America/New_York"
+        )
+        natal_local = datetime.fromisoformat(natal.iso_formatted_local_datetime)
+        relocated_local = datetime.fromisoformat(relocated.iso_formatted_local_datetime)
+        # Same UTC instant, different wall-clock representation
+        assert relocated_local.utcoffset() != natal_local.utcoffset()
+        assert relocated_local.astimezone(natal_local.tzinfo) == natal_local
+
+    def test_local_datetime_kept_without_new_tz(self, natal):
+        relocated = RelocatedChartFactory.relocate(natal, new_lat=40.7128, new_lng=-74.006, new_city="New York")
+        assert relocated.iso_formatted_local_datetime == natal.iso_formatted_local_datetime

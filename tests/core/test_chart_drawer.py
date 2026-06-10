@@ -3491,3 +3491,256 @@ class TestCssVariablesContract:
         assert minified_var_count >= default_var_count * 0.5, (
             f"Minification stripped too many CSS variables: default={default_var_count}, minified={minified_var_count}"
         )
+
+
+# =============================================================================
+# PRE-BETA SECURITY & RENDERING REGRESSIONS
+# =============================================================================
+
+
+def _make_unsafe_named_subject(name, city="Rome", nation="IT"):
+    """Create an offline subject with an arbitrary (potentially unsafe) name."""
+    return AstrologicalSubjectFactory.from_birth_data(
+        name=name,
+        year=1990,
+        month=6,
+        day=15,
+        hour=12,
+        minute=0,
+        city=city,
+        nation=nation,
+        lng=12.5,
+        lat=41.9,
+        tz_str="Europe/Rome",
+        online=False,
+        suppress_geonames_warning=True,
+    )
+
+
+class TestSvgXmlEscaping:
+    """User-controlled strings (names, cities, titles) must be XML-escaped.
+
+    Regression tests for the template-substitution injection: a subject named
+    ``<script>alert(1)</script>`` used to be substituted verbatim into the SVG,
+    producing invalid XML and an XSS vector for inline-served SVGs.
+    """
+
+    UNSAFE_NAME = "<script>\"&'Test"
+
+    def test_natal_with_markup_in_name_is_valid_xml(self):
+        from xml.etree import ElementTree
+
+        subject = _make_unsafe_named_subject(self.UNSAFE_NAME, city="Ro<me>&City")
+        data = ChartDataFactory.create_natal_chart_data(subject)
+        svg = ChartDrawer(data).generate_svg_string()
+
+        ElementTree.fromstring(svg)  # must parse despite the hostile name
+        assert "<script>" not in svg, "Raw markup from the subject name must not reach the SVG"
+        assert "&lt;script&gt;" in svg, "The subject name must appear in escaped form"
+
+    def test_synastry_with_markup_in_names_is_valid_xml(self):
+        from xml.etree import ElementTree
+
+        first = _make_unsafe_named_subject(self.UNSAFE_NAME)
+        second = _make_unsafe_named_subject("B<b>&'\"Partner")
+        data = ChartDataFactory.create_synastry_chart_data(first, second)
+        svg = ChartDrawer(data).generate_svg_string()
+
+        ElementTree.fromstring(svg)
+        assert "<script>" not in svg
+        assert "<b>" not in svg
+        assert "&lt;script&gt;" in svg
+        assert "&lt;b&gt;" in svg
+
+    def test_custom_title_with_markup_is_escaped(self):
+        from xml.etree import ElementTree
+
+        john = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(john)
+        svg = ChartDrawer(data).generate_svg_string(custom_title="<script>alert(1)</script>\"&")
+
+        ElementTree.fromstring(svg)
+        assert "<script>" not in svg
+        assert "&lt;script&gt;" in svg
+
+
+class TestSvgOutputPathSafety:
+    """Filenames and subject names must not traverse outside the output directory."""
+
+    def test_filename_traversal_is_sanitized(self, tmp_path):
+        john = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(john)
+        drawer = ChartDrawer(data)
+
+        drawer.save_svg(output_path=str(tmp_path), filename="../escape")
+
+        assert not (tmp_path.parent / "escape.svg").exists(), "File must not be written outside the output directory"
+        saved_files = list(tmp_path.glob("*.svg"))
+        assert len(saved_files) == 1, "The sanitized file must be written inside the output directory"
+        assert saved_files[0].resolve().is_relative_to(tmp_path.resolve())
+
+    def test_subject_name_with_path_separators_is_sanitized(self, tmp_path):
+        subject = _make_unsafe_named_subject("Evil/../../Name")
+        data = ChartDataFactory.create_natal_chart_data(subject)
+        drawer = ChartDrawer(data)
+
+        # Default filename embeds the subject name; must neither crash nor escape.
+        drawer.save_svg(output_path=str(tmp_path))
+
+        saved_files = list(tmp_path.glob("*.svg"))
+        assert len(saved_files) == 1
+        assert saved_files[0].resolve().is_relative_to(tmp_path.resolve())
+        assert "/" not in saved_files[0].name
+        assert ".." not in saved_files[0].name
+
+    def test_sanitize_output_basename(self):
+        sanitize = ChartDrawer._sanitize_output_basename
+        assert sanitize("../escape") == "__escape"
+        assert sanitize("a/b\\c") == "a_b_c"
+        assert sanitize(".hidden") == "_hidden"
+        assert sanitize("nul\x00l") == "nul_l"
+        assert sanitize("...") == "_."
+        assert sanitize("") == "_"
+        assert sanitize("John Lennon - Natal Chart") == "John Lennon - Natal Chart"
+
+
+class TestConjunctPlanetGlyphs:
+    """Two points sharing the exact same absolute position must both render."""
+
+    def test_identical_abs_pos_renders_both_glyphs(self):
+        subject = _make_unsafe_named_subject("Exact Conjunction")
+        data = copy.deepcopy(ChartDataFactory.create_natal_chart_data(subject))
+        # Force an exact (bit-identical) conjunction between Sun and Moon.
+        data.subject.moon.abs_pos = data.subject.sun.abs_pos
+
+        svg = ChartDrawer(data).generate_svg_string()
+
+        assert "kr:slug='Sun'" in svg, "Sun glyph must render despite the exact conjunction"
+        assert "kr:slug='Moon'" in svg, "Moon glyph must render despite the exact conjunction"
+
+
+class TestTransitAspectGridIndex:
+    """The dual-chart aspect grid must render every aspect for each (p1, p2) pair."""
+
+    def test_all_aspects_per_pair_are_rendered_in_order(self):
+        from kerykeion.charts.charts_utils import draw_transit_aspect_grid
+
+        planets = [
+            {"id": 0, "name": "Sun", "is_active": True},
+            {"id": 1, "name": "Moon", "is_active": True},
+        ]
+        aspects = [
+            {"p1": 0, "p2": 1, "aspect_degrees": 120},
+            {"p1": 0, "p2": 1, "aspect_degrees": 60},  # second aspect on the same pair
+            {"p1": 1, "p2": 0, "aspect_degrees": 90},  # reversed pair is a distinct key
+        ]
+
+        svg = draw_transit_aspect_grid("#000000", planets, aspects, x_indent=50, y_indent=250)
+
+        assert '#orb120' in svg
+        assert '#orb60' in svg
+        assert '#orb90' in svg
+        # Aspects of the same pair must keep their input order (behavior parity
+        # with the previous full-scan implementation).
+        assert svg.index("#orb120") < svg.index("#orb60")
+
+    def test_inactive_planets_are_excluded(self):
+        from kerykeion.charts.charts_utils import draw_transit_aspect_grid
+
+        planets = [
+            {"id": 0, "name": "Sun", "is_active": True},
+            {"id": 1, "name": "Moon", "is_active": False},
+        ]
+        aspects = [{"p1": 0, "p2": 1, "aspect_degrees": 120}]
+
+        svg = draw_transit_aspect_grid("#000000", planets, aspects)
+
+        assert "#orb120" not in svg, "Aspects of inactive planets must not render"
+
+
+class TestModernAspectDegreeMap:
+    """The modern wheel aspect glyph map must use canonical aspect names."""
+
+    def test_default_aspect_names_all_have_glyph_mappings(self):
+        from kerykeion.charts.draw_modern import ASPECT_DEGREE_MAP
+        from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
+
+        for setting in DEFAULT_CHART_ASPECTS_SETTINGS:
+            assert ASPECT_DEGREE_MAP.get(setting["name"]) == setting["degree"], (
+                f"Aspect {setting['name']!r} must map to orb{setting['degree']} in ASPECT_DEGREE_MAP"
+            )
+
+    def test_biquintile_uses_canonical_spelling(self):
+        from kerykeion.charts.draw_modern import ASPECT_DEGREE_MAP
+
+        assert ASPECT_DEGREE_MAP.get("biquintile") == 144
+        assert "bi-quintile" not in ASPECT_DEGREE_MAP
+
+
+class TestClassicThemeBasePalette:
+    """classic.css must define the base palette variables its Uranian colors use."""
+
+    THEMES_DIR = Path(__file__).parent.parent.parent / "kerykeion" / "charts" / "themes"
+
+    def test_base_palette_variables_are_defined(self):
+        css = (self.THEMES_DIR / "classic.css").read_text(encoding="utf-8")
+        for variable in (
+            "--kerykeion-color-primary:",
+            "--kerykeion-color-secondary:",
+            "--kerykeion-color-accent:",
+            "--kerykeion-color-warning:",
+        ):
+            assert variable in css, f"classic.css must define {variable.rstrip(':')}"
+
+    def test_uranian_planet_colors_resolve_when_inlined(self):
+        """With remove_css_variables=True the Uranian colors used to inline to ``fill:;``."""
+        from kerykeion.utilities import inline_css_variables_in_svg
+
+        css = (self.THEMES_DIR / "classic.css").read_text(encoding="utf-8")
+        svg = (
+            f"<svg><style>{css}</style>"
+            '<g style="fill: var(--kerykeion-chart-color-cupido)"/>'
+            '<g style="fill: var(--kerykeion-chart-color-hades)"/>'
+            '<g style="fill: var(--kerykeion-chart-color-zeus)"/>'
+            '<g style="fill: var(--kerykeion-chart-color-kronos)"/>'
+            "</svg>"
+        )
+
+        inlined = inline_css_variables_in_svg(svg)
+
+        assert "var(--" not in inlined
+        assert "fill:;" not in inlined and "fill: ;" not in inlined, (
+            "Uranian planet colors must resolve to concrete values, not empty fills"
+        )
+        assert len(re.findall(r"fill:\s*#[0-9a-fA-F]{3,8}", inlined)) == 4
+
+
+class TestMinifyFallbackScope:
+    """String-based minification must only run when the SVG optimizer fails."""
+
+    def test_successful_optimization_skips_string_fallback(self):
+        john = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(john)
+        svg = ChartDrawer(data).generate_svg_string(minify=True)
+
+        # The string fallback rewrites every double quote to a single quote;
+        # optimizer output keeps double-quoted attributes.
+        assert '"' in svg, "Optimizer output must not be mangled by the string-based fallback"
+
+    def test_string_fallback_applies_when_optimizer_fails(self, monkeypatch):
+        import kerykeion.charts.chart_drawer as chart_drawer_module
+
+        def _boom(_svg):
+            raise RuntimeError("forced optimizer failure")
+
+        monkeypatch.setattr(chart_drawer_module, "_svg_polish_optimize", _boom)
+
+        john = _make_john()
+        data = ChartDataFactory.create_natal_chart_data(john)
+        svg = ChartDrawer(data).generate_svg_string(minify=True)
+
+        from tests.core.conftest import assert_svg_wellformed
+
+        assert_svg_wellformed(svg)
+        assert '"' not in svg, "Fallback minification must rewrite double quotes"
+        assert "\n" not in svg, "Fallback minification must collapse whitespace"

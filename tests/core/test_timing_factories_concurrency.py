@@ -11,7 +11,13 @@ from __future__ import annotations
 
 import threading
 
-from kerykeion import SunTimesFactory, VoidOfCourseMoonFactory
+from kerykeion import (
+    EclipseFactory,
+    LunationFinderFactory,
+    SignIngressFactory,
+    SunTimesFactory,
+    VoidOfCourseMoonFactory,
+)
 
 ROME = dict(latitude=41.9028, longitude=12.4964, tz_str="Europe/Rome")
 
@@ -39,6 +45,51 @@ def test_tropical_and_sidereal_do_not_corrupt_each_other_under_threads():
                     errors.append(f"tropical corrupted: {trop.moon_sign}")
                 if sid.moon_sign != base_sid.moon_sign or sid.ingress != base_sid.ingress:
                     errors.append(f"sidereal corrupted: {sid.moon_sign}")
+        except Exception as exc:  # pragma: no cover - any raise is a failure
+            errors.append(repr(exc))
+
+    threads = [threading.Thread(target=worker) for _ in range(8)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert not errors, errors
+
+
+def test_event_scan_factories_match_single_threaded_baselines_under_threads():
+    """Lunation, eclipse and ingress scans hold the ephemeris lock across many
+    backend calls; run them on many threads interleaved with sidereal work and
+    assert every thread reproduces the single-threaded baseline exactly — i.e.
+    no concurrent session (sidereal mode, path reset) bleeds into a scan."""
+    base_lun = LunationFinderFactory.from_iso_range("2026-06-01", "2026-06-30").model_dump()
+    base_ecl = EclipseFactory.search_global(start_year=2026, count=2).model_dump()
+    base_ing = SignIngressFactory.from_iso_range(
+        "2026-06-01", "2026-06-30", planets=["Sun", "Mars"]
+    ).model_dump()
+
+    errors: list[str] = []
+
+    def worker() -> None:
+        try:
+            for _ in range(3):
+                # Sidereal work creates real contention: it mutates the global
+                # sidereal mode inside its own session.
+                VoidOfCourseMoonFactory.from_datetime(
+                    2026, 6, 1, 9, 0, tz_str="Europe/Rome",
+                    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+                )
+                lun = LunationFinderFactory.from_iso_range("2026-06-01", "2026-06-30").model_dump()
+                ecl = EclipseFactory.search_global(start_year=2026, count=2).model_dump()
+                ing = SignIngressFactory.from_iso_range(
+                    "2026-06-01", "2026-06-30", planets=["Sun", "Mars"]
+                ).model_dump()
+                if lun != base_lun:
+                    errors.append("lunations diverged from single-threaded baseline")
+                if ecl != base_ecl:
+                    errors.append("eclipses diverged from single-threaded baseline")
+                if ing != base_ing:
+                    errors.append("ingresses diverged from single-threaded baseline")
         except Exception as exc:  # pragma: no cover - any raise is a failure
             errors.append(repr(exc))
 

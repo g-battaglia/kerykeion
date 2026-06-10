@@ -3,7 +3,10 @@
 
 from datetime import datetime
 
+import pytest
+
 from kerykeion.lunations import LunationFinderFactory
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.utilities import datetime_to_julian
 
 
@@ -40,12 +43,15 @@ class TestLunationsRange:
         assert 11 <= len(res.lunations) <= 13
 
     def test_unknown_phase_raises(self):
-        import pytest
-
         with pytest.raises(ValueError):
             LunationFinderFactory.from_iso_range(
                 "2026-01-01", "2026-12-31", phases=["full", "waxing"]
             )
+
+    def test_oversized_range_raises(self):
+        # A range too long to scan is rejected upfront, never silently truncated.
+        with pytest.raises(ValueError):
+            LunationFinderFactory.from_julian_day(2451545.0, 2451545.0 + 3.1e6)
 
     def test_date_only_end_covers_full_day(self):
         # A date-only end_date must span through the end of that UTC day, not
@@ -54,6 +60,16 @@ class TestLunationsRange:
         span = res.end_jd - res.start_jd
         # ~1 full day (end-of-day), not 0 as a bare midnight end_date would give.
         assert 0.99 < span <= 1.0
+
+    def test_lowercase_t_end_datetime_not_widened(self):
+        # Lowercase "t" is a valid ISO 8601 separator: an end_date carrying an
+        # explicit time must be honored exactly, never widened to end-of-day.
+        res = LunationFinderFactory.from_iso_range("2026-03-01", "2026-03-20t00:00:00")
+        assert res.end_jd == datetime_to_julian(datetime(2026, 3, 20))
+        upper = LunationFinderFactory.from_iso_range("2026-03-01", "2026-03-20T00:00:00")
+        assert res.end_jd == upper.end_jd
+        # And every reported lunation respects that exact boundary.
+        assert all(lun.julian_day <= res.end_jd for lun in res.lunations)
 
     def test_no_phantom_lunation_at_range_start(self):
         # A range beginning just after a new moon (12 Aug 2026) must not report a
@@ -125,3 +141,48 @@ class TestLunationApi:
         assert res.lunations
         assert res.start_jd == start
         assert res.end_jd == end
+
+
+class TestLunationFormatter:
+    """The revjul-based ISO formatter must handle the BCE range."""
+
+    def test_jd_to_iso_bce_year(self):
+        # BCE years format with a signed 4-digit extended year and real seconds
+        # (datetime caps at year 1, so revjul is used instead).
+        from kerykeion.ephemeris_backend import swe
+        from kerykeion.lunations.lunation_factory import _jd_to_iso
+
+        jd = swe.julday(-44, 3, 15, 12.0)
+        assert _jd_to_iso(jd) == "-0044-03-15T12:00:00Z"
+
+    def test_jd_to_iso_ce_year(self):
+        from kerykeion.ephemeris_backend import swe
+        from kerykeion.lunations.lunation_factory import _jd_to_iso
+
+        jd = swe.julday(2026, 8, 12, 17.0 + 30.0 / 60.0 + 42.0 / 3600.0)
+        assert _jd_to_iso(jd) == "2026-08-12T17:30:42Z"
+
+
+class TestLunationTruncationContract:
+    """A backend failure mid-scan must raise, never silently truncate."""
+
+    def test_backend_failure_raises(self, monkeypatch):
+        # compute_lunar_phase_jd swallows backend RuntimeErrors and returns
+        # None; the factory must surface that as KerykeionException instead of
+        # returning an empty/partial result claiming the full range.
+        import kerykeion.lunations.lunation_factory as lf
+
+        monkeypatch.setattr(lf, "compute_lunar_phase_jd", lambda *a, **k: None)
+        with pytest.raises(KerykeionException, match="ephemeris"):
+            LunationFinderFactory.from_julian_day(2461041.5, 2461141.5, phases=["full"])
+
+    def test_mid_scan_failure_raises_not_truncates(self, monkeypatch):
+        # First solver call succeeds, second fails (e.g. the scan walked past
+        # the ephemeris range edge): the events already found must NOT be
+        # returned as if they covered the whole requested range.
+        import kerykeion.lunations.lunation_factory as lf
+
+        hits = iter([2461042.0, None])
+        monkeypatch.setattr(lf, "compute_lunar_phase_jd", lambda *a, **k: next(hits))
+        with pytest.raises(KerykeionException, match="full"):
+            LunationFinderFactory.from_julian_day(2461041.5, 2461141.5, phases=["full"])

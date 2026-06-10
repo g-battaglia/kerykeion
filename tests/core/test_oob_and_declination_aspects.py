@@ -195,3 +195,93 @@ class TestDeclinationAspects:
                         f"Contra-parallel between {a.p1_name} (dec={p1.declination:.2f}) and "
                         f"{a.p2_name} (dec={p2.declination:.2f}) but signs are same"
                     )
+
+
+class TestDeclinationArtifactFiltering:
+    """Geometric opposite pairs and star-star pairs are skipped in declination aspects.
+
+    Derived opposite points (node axes, Lilith/Priapus, ...) carry exactly
+    mirrored declinations by construction, so without filtering they would
+    report a permanent 0.0-orb contra-parallel in every chart.
+    """
+
+    @pytest.fixture(scope="class")
+    def all_points_subject(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+
+        return AstrologicalSubjectFactory.from_birth_data(
+            "All Points Declination", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+
+    def test_derived_pair_declinations_are_mirrored(self, all_points_subject):
+        """Guard against vacuous passes: Lilith/Priapus declinations mirror exactly."""
+        lilith = all_points_subject.mean_lilith
+        priapus = all_points_subject.mean_priapus
+        assert lilith.declination is not None and priapus.declination is not None
+        assert lilith.declination == pytest.approx(-priapus.declination, abs=1e-9)
+
+    def test_no_contra_parallel_for_derived_pairs(self, all_points_subject):
+        """No parallel/contra-parallel between a derived point and its primary."""
+        from kerykeion.astrological_subject_factory import OPPOSITE_PAIRS
+
+        aspects = AspectsFactory.single_chart_declination_aspects(all_points_subject, orb=5.0)
+        for derived, config in OPPOSITE_PAIRS.items():
+            pair = {derived, config["primary"]}
+            offenders = [a for a in aspects if {a.p1_name, a.p2_name} == pair]
+            assert offenders == [], (
+                f"Artifact declination aspect for locked pair {pair}: "
+                f"{[(a.aspect, a.orbit) for a in offenders]}"
+            )
+
+    def test_cross_chart_opposite_name_pairs_are_kept(self, all_points_subject):
+        """The opposite-pair skip is same-chart only.
+
+        In synastry/transits the two charts' points are independent — one
+        chart's Ascendant parallel the other's Descendant (or node axes,
+        Lilith/Priapus across charts) is a real aspect, exactly as in the
+        longitudinal dual path.
+        """
+        from kerykeion.aspects.aspects_factory import GEOMETRIC_OPPOSITE_PAIRS
+
+        other = AstrologicalSubjectFactory.from_birth_data(
+            "Other Declination", 1985, 3, 10, 14, 30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            active_points=list(all_points_subject.active_points),
+        )
+        # Wide orb so geometry cannot make this vacuous: with 90° every
+        # |dec_a ± dec_b| qualifies, so each locked pair MUST appear unless
+        # it is being (wrongly) skipped cross-chart.
+        aspects = AspectsFactory.dual_chart_declination_aspects(all_points_subject, other, orb=90.0)
+        found_pairs = {frozenset((a.p1_name, a.p2_name)) for a in aspects}
+        missing = [
+            pair for pair in GEOMETRIC_OPPOSITE_PAIRS
+            if all(
+                getattr(all_points_subject, name.lower(), None) is not None
+                and getattr(all_points_subject, name.lower()).declination is not None
+                for name in pair
+            )
+            and pair not in found_pairs
+        ]
+        assert missing == [], f"Cross-chart opposite-name pairs wrongly skipped: {missing}"
+
+    def test_no_star_star_declination_aspects(self):
+        """Star-star parallels are constants across charts — skipped."""
+        from kerykeion.settings.config_constants import DEFAULT_FIXED_STARS
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Stars Declination", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            active_fixed_stars=list(DEFAULT_FIXED_STARS),
+        )
+        stars = {star.name for star in subject.fixed_stars}
+        assert stars, "Sanity check: subject should carry calculated fixed stars"
+        aspects = AspectsFactory.single_chart_declination_aspects(subject, orb=1.0)
+        star_star = [a for a in aspects if a.p1_name in stars and a.p2_name in stars]
+        assert star_star == [], (
+            f"Unexpected star-star declination aspects: {[(a.p1_name, a.p2_name) for a in star_star]}"
+        )

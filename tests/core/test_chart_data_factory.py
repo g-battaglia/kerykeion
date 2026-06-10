@@ -680,6 +680,20 @@ class TestFactoryParameterValidation:
         with pytest.raises((ValueError, KerykeionException)):
             ChartDataFactory.create_chart_data("InvalidType", johnny_depp)
 
+    def test_dual_return_requires_planet_return_model(self, johnny_depp, john_lennon):
+        """v6: DualReturnChart with a plain AstrologicalSubjectModel second
+        subject raises a clear KerykeionException (the guard previously
+        checked the non-existent 'Return' chart type and never fired)."""
+        with pytest.raises(KerykeionException) as exc_info:
+            ChartDataFactory.create_chart_data("DualReturnChart", johnny_depp, john_lennon)
+
+        assert "PlanetReturnModel" in str(exc_info.value)
+
+    def test_dual_return_with_planet_return_model_succeeds(self, johnny_depp, return_subject):
+        """The guard must not reject the legitimate PlanetReturnModel input."""
+        chart = ChartDataFactory.create_chart_data("DualReturnChart", johnny_depp, return_subject)
+        assert chart.chart_type == "DualReturnChart"
+
     def test_custom_active_points(self, johnny_depp):
         """Chart with fewer active points has correspondingly fewer aspects."""
         custom_points = ["Sun", "Moon", "Mercury", "Venus", "Mars"]

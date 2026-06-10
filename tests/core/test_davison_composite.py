@@ -70,6 +70,65 @@ class TestDavisonComposite:
         assert davison.composite_chart_type == "Davison"
 
 
+class TestDavisonUserSiderealMode:
+    """v6: Davison charts with sidereal_mode='USER' need the custom ayanamsa."""
+
+    @pytest.fixture(scope="class")
+    def user_sidereal_subjects(self):
+        kwargs = dict(
+            online=False,
+            zodiac_type="Sidereal",
+            sidereal_mode="USER",
+            custom_ayanamsa_t0=2451545.0,
+            custom_ayanamsa_ayan_t0=23.85,
+        )
+        s1 = AstrologicalSubjectFactory.from_birth_data(
+            "User One", 1940, 10, 9, 18, 30,
+            lng=-2.9916, lat=53.4084, tz_str="Europe/London",
+            city="Liverpool", nation="GB", **kwargs,
+        )
+        s2 = AstrologicalSubjectFactory.from_birth_data(
+            "User Two", 1933, 2, 18, 20, 30,
+            lng=139.6917, lat=35.6895, tz_str="Asia/Tokyo",
+            city="Tokyo", nation="JP", **kwargs,
+        )
+        return s1, s2
+
+    def test_user_mode_without_ayanamsa_raises(self, user_sidereal_subjects):
+        from kerykeion.schemas import KerykeionException
+
+        s1, s2 = user_sidereal_subjects
+        factory = CompositeSubjectFactory(s1, s2)
+        with pytest.raises(KerykeionException, match="custom_ayanamsa"):
+            factory.get_davison_composite_subject_model()
+
+    def test_user_mode_with_ayanamsa_succeeds(self, user_sidereal_subjects):
+        s1, s2 = user_sidereal_subjects
+        factory = CompositeSubjectFactory(s1, s2)
+        davison = factory.get_davison_composite_subject_model(
+            custom_ayanamsa_t0=2451545.0,
+            custom_ayanamsa_ayan_t0=23.85,
+        )
+        assert davison.composite_chart_type == "Davison"
+        assert davison.zodiac_type == "Sidereal"
+        assert davison.sidereal_mode == "USER"
+        assert davison.sun is not None
+
+    def test_user_mode_ayanamsa_actually_applied(self, subjects, user_sidereal_subjects):
+        """The USER ayanamsa must shift the Davison positions vs tropical."""
+        s1, s2 = subjects
+        tropical_davison = CompositeSubjectFactory(s1, s2).get_davison_composite_subject_model()
+
+        u1, u2 = user_sidereal_subjects
+        user_davison = CompositeSubjectFactory(u1, u2).get_davison_composite_subject_model(
+            custom_ayanamsa_t0=2451545.0,
+            custom_ayanamsa_ayan_t0=23.85,
+        )
+        diff = (tropical_davison.sun.abs_pos - user_davison.sun.abs_pos) % 360.0
+        # Ayanamsa near the 1937 midpoint epoch with this USER definition is ~23°
+        assert 20.0 < diff < 28.0, f"Expected an ayanamsa-sized shift, got {diff}°"
+
+
 class TestCompositeSubjectDunderMethods:
     """Test __str__, __repr__, __eq__, __ne__, __hash__ on CompositeSubjectFactory."""
 

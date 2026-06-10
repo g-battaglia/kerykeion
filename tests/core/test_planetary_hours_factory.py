@@ -68,6 +68,24 @@ def test_nonexistent_local_time_raises():
         PlanetaryHoursFactory.from_datetime(2026, 3, 29, 2, 30, **ROME)
 
 
+def test_dst_spring_forward_midnight_gap_sao_paulo():
+    # Regression: on 2018-11-04 America/Sao_Paulo clocks jump straight from
+    # 00:00 to 01:00, so the civil midnights the sun-times helpers construct
+    # internally do not exist. The factory must resolve those gaps forward
+    # (not raise) while a user-supplied noon — a perfectly valid wall time —
+    # yields the full planetary-hour table.
+    ph = PlanetaryHoursFactory.from_datetime(
+        2018, 11, 4, 12, 0, latitude=-23.5505, longitude=-46.6333, tz_str="America/Sao_Paulo"
+    )
+    # 2018-11-04 is a Sunday -> day ruled by the Sun.
+    assert ph.date == "2018-11-04"
+    assert ph.day_ruler == "Sun"
+    assert len(ph.hours) == 24
+    assert ph.sunrise < ph.sunset < ph.next_sunrise
+    # Noon falls in a day hour of the requested civil date.
+    assert ph.hours[ph.current_index - 1].is_diurnal is True
+
+
 def test_ambiguous_local_time_resolves_to_standard_time():
     # During DST fall-back 02:30 exists twice; we default to standard time.
     ph = PlanetaryHoursFactory.from_datetime(2026, 10, 25, 2, 30, **ROME)

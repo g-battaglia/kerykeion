@@ -6,10 +6,8 @@ and morning/evening star status calculations via swe.pheno_ut().
 """
 
 import pytest
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, PlanetaryPhenomenaFactory
-
-_EPHE_PATH = EPHE_DATA_PATH
 
 
 @pytest.fixture(scope="module")
@@ -203,16 +201,14 @@ class TestSweRegressionPhenomena:
     def test_venus_phenomena_at_j2000_matches_swe(self):
         """Factory Venus phenomena at J2000.0 should match swe.pheno_ut directly."""
         jd_j2000 = 2451545.0
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 
-        swe.set_ephe_path(_EPHE_PATH)
-        swe_result = swe.pheno_ut(jd_j2000, swe.VENUS, iflag)
+        with ephemeris_session() as iflag:
+            swe_result = swe.pheno_ut(jd_j2000, swe.VENUS, iflag)
         swe_phase_angle = swe_result[0]
         swe_phase = swe_result[1]
         swe_elongation = swe_result[2]
         swe_apparent_diameter = swe_result[3]
         swe_apparent_magnitude = swe_result[4]
-        swe.close()
 
         factory_result = PlanetaryPhenomenaFactory.from_julian_day(
             jd_j2000, planets=["Venus"]
@@ -239,13 +235,11 @@ class TestSweRegressionPhenomena:
     def test_mars_phenomena_at_j2000_matches_swe(self):
         """Factory Mars phenomena at J2000.0 should match swe.pheno_ut directly."""
         jd_j2000 = 2451545.0
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
 
-        swe.set_ephe_path(_EPHE_PATH)
-        swe_result = swe.pheno_ut(jd_j2000, swe.MARS, iflag)
+        with ephemeris_session() as iflag:
+            swe_result = swe.pheno_ut(jd_j2000, swe.MARS, iflag)
         swe_phase_angle = swe_result[0]
         swe_elongation = swe_result[2]
-        swe.close()
 
         factory_result = PlanetaryPhenomenaFactory.from_julian_day(
             jd_j2000, planets=["Mars"]

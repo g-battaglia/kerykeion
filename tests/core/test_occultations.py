@@ -6,7 +6,7 @@ well-formed OccultationModel results using the Swiss Ephemeris.
 """
 
 import pytest
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.occultations import OccultationFactory, OccultationModel
 
@@ -178,11 +178,13 @@ class TestSweReference:
     def test_venus_global_first_result_matches_swe(self, factory, start_jd):
         results = _global_search(factory, start_jd, swe.VENUS, 1)
         assert len(results) >= 1
-        _retflags, tret = swe.lun_occult_when_glob(start_jd, swe.VENUS, swe.FLG_SWIEPH, 0, False)
+        with ephemeris_session():
+            _retflags, tret = swe.lun_occult_when_glob(start_jd, swe.VENUS, swe.FLG_SWIEPH, 0, False)
         assert results[0].maximum_jd == pytest.approx(tret[0], abs=0.01)
 
     def test_saturn_global_first_result_matches_swe(self, factory, start_jd):
         results = _global_search(factory, start_jd, swe.SATURN, 1)
         assert len(results) >= 1
-        _retflags, tret = swe.lun_occult_when_glob(start_jd, swe.SATURN, swe.FLG_SWIEPH, 0, False)
+        with ephemeris_session():
+            _retflags, tret = swe.lun_occult_when_glob(start_jd, swe.SATURN, swe.FLG_SWIEPH, 0, False)
         assert results[0].maximum_jd == pytest.approx(tret[0], abs=0.01)

@@ -6,7 +6,7 @@ triplicity, Egyptian terms, Chaldean decans, detriment, and fall.
 """
 
 import pytest
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.dignities.dignity_factory import calculate_essential_dignity
 from kerykeion.dignities.dignity_data import (
@@ -241,10 +241,6 @@ class TestDignitySwissEphRegression:
     ELEMENTS = ["Fire", "Earth", "Air", "Water", "Fire", "Earth",
                 "Air", "Water", "Fire", "Earth", "Air", "Water"]
 
-    @classmethod
-    def setup_class(cls):
-        swe.set_ephe_path("")
-
     @staticmethod
     def _sign_and_position(abs_lon: float):
         """Return (sign_abbrev, element, degree_in_sign) from absolute longitude."""
@@ -263,7 +259,8 @@ class TestDignitySwissEphRegression:
         """
         jd = swe.julday(2000, 8, 1, 12.0)
         assert abs(jd - 2451758.0) < 1e-6
-        sun_lon = swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH)[0][0]
+        with ephemeris_session() as iflag:
+            sun_lon = swe.calc_ut(jd, swe.SUN, iflag)[0][0]
 
         sign, element, pos_in_sign = self._sign_and_position(sun_lon)
         assert sign == "Leo", f"Expected Leo, got {sign} at {sun_lon:.4f} deg"
@@ -280,7 +277,8 @@ class TestDignitySwissEphRegression:
         """
         jd = swe.julday(2000, 1, 19, 12.0)
         assert abs(jd - 2451563.0) < 1e-6
-        moon_lon = swe.calc_ut(jd, swe.MOON, swe.FLG_SWIEPH)[0][0]
+        with ephemeris_session() as iflag:
+            moon_lon = swe.calc_ut(jd, swe.MOON, iflag)[0][0]
 
         sign, element, pos_in_sign = self._sign_and_position(moon_lon)
         assert sign == "Can", f"Expected Can, got {sign} at {moon_lon:.4f} deg"
@@ -297,7 +295,8 @@ class TestDignitySwissEphRegression:
         """
         jd = swe.julday(2020, 3, 20, 12.0)
         assert abs(jd - 2458929.0) < 1e-6
-        mars_lon = swe.calc_ut(jd, swe.MARS, swe.FLG_SWIEPH)[0][0]
+        with ephemeris_session() as iflag:
+            mars_lon = swe.calc_ut(jd, swe.MARS, iflag)[0][0]
 
         sign, element, pos_in_sign = self._sign_and_position(mars_lon)
         assert sign == "Cap", f"Expected Cap, got {sign} at {mars_lon:.4f} deg"

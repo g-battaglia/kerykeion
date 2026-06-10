@@ -227,6 +227,50 @@ class TestFixedStarDiscovery:
         assert mags == sorted(mags), "Stars should be sorted by magnitude (brightest first)"
 
 
+class TestFixedStarSiderealFrameConsistency:
+    """v6 pre-beta fix: star discovery must run in the subject's zodiac frame.
+
+    Previously tropical fixstar longitudes were compared against (possibly
+    sidereal) natal abs_pos, shifting every conjunction check by the ayanamsa.
+    Conjunctions are frame-invariant (star and planet shift together), so a
+    LAHIRI chart must discover stars at longitudes exactly one ayanamsa below
+    the tropical chart's."""
+
+    def test_lahiri_discovery_matches_tropical_minus_ayanamsa(self):
+        birth = dict(
+            year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        tropical = AstrologicalSubjectFactory.from_birth_data("Stars Tropical", **birth)
+        sidereal = AstrologicalSubjectFactory.from_birth_data(
+            "Stars Lahiri", **birth, zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        assert sidereal.ayanamsa_value is not None
+        ayanamsa = sidereal.ayanamsa_value
+
+        trop_stars = {s.name: s for s in FixedStarDiscoveryFactory.find_prominent_stars(tropical, orb=2.0)}
+        sid_stars = {s.name: s for s in FixedStarDiscoveryFactory.find_prominent_stars(sidereal, orb=2.0)}
+
+        common = set(trop_stars) & set(sid_stars)
+        assert common, (
+            "Conjunctions are frame-invariant: the sidereal chart should discover "
+            f"(at least some of) the same stars. tropical={sorted(trop_stars)} "
+            f"sidereal={sorted(sid_stars)}"
+        )
+        for name in common:
+            diff = (trop_stars[name].abs_pos - sid_stars[name].abs_pos) % 360.0
+            assert diff == pytest.approx(ayanamsa, abs=0.01), (
+                f"{name}: tropical={trop_stars[name].abs_pos} sidereal={sid_stars[name].abs_pos} "
+                f"diff={diff} expected ayanamsa={ayanamsa}"
+            )
+            # Declination is physical and must be identical in both frames.
+            if trop_stars[name].declination is not None and sid_stars[name].declination is not None:
+                assert sid_stars[name].declination == pytest.approx(
+                    trop_stars[name].declination, abs=1e-6
+                )
+
+
 class TestCatalogStarsParticipateInAspects:
     """Regression test for the 6.0.0a43 -> 6.0.0a44 bug: catalog fixed stars
     (non-default, e.g. Vindemiatrix / Polaris / Castor) were silently excluded

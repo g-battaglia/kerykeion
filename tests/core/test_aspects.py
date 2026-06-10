@@ -10,6 +10,8 @@ Consolidates all casistiche from:
 Uses session-scoped conftest fixtures: johnny_depp, john_lennon, yoko_ono, paul_mccartney.
 """
 
+import logging
+
 import pytest
 from pytest import approx
 
@@ -1008,3 +1010,174 @@ class TestPointOrbAdjustmentsIntegration:
             _subject, point_orb_adjustments={}
         )
         assert len(with_bonus.aspects) >= len(without.aspects)
+
+
+# =============================================================================
+# Regression tests — geometric opposite pairs, fixed stars, unknown aspects
+# =============================================================================
+
+
+class TestGeometricOppositePairFiltering:
+    """Derived opposite points (primary + 180°) must not aspect their primary.
+
+    Pairs such as Vertex/Anti_Vertex or Mean_Lilith/Mean_Priapus are rigidly
+    locked at 180°: without filtering they would always report an artifact
+    0.0-orb opposition in every single chart.
+    """
+
+    @pytest.fixture(scope="class")
+    def all_points_subject(self):
+        from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+
+        return AstrologicalSubjectFactory.from_birth_data(
+            "All Points", 1990, 6, 15, 12, 0,
+            lat=41.9, lng=12.5, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=ALL_ACTIVE_POINTS,
+        )
+
+    def test_derived_pairs_are_active(self, all_points_subject):
+        """Guard against vacuous passes: both halves of each pair are in the chart."""
+        for pair in (
+            ("Vertex", "Anti_Vertex"),
+            ("Mean_Lilith", "Mean_Priapus"),
+            ("True_Lilith", "True_Priapus"),
+        ):
+            for name in pair:
+                assert name in all_points_subject.active_points
+
+    def test_no_longitudinal_aspect_between_derived_pairs(self, all_points_subject):
+        """No opposition (or any other aspect) between a derived point and its primary."""
+        from kerykeion.astrological_subject_factory import OPPOSITE_PAIRS
+
+        aspects = AspectsFactory.single_chart_aspects(all_points_subject).aspects
+        for derived, config in OPPOSITE_PAIRS.items():
+            pair = {derived, config["primary"]}
+            offenders = [a for a in aspects if {a.p1_name, a.p2_name} == pair]
+            assert offenders == [], (
+                f"Artifact aspect reported for geometrically locked pair {pair}: "
+                f"{[(a.aspect, a.orbit) for a in offenders]}"
+            )
+
+    def test_cross_pair_aspects_still_allowed(self, all_points_subject):
+        """Filtering targets only the locked pairs, not the points themselves."""
+        aspects = AspectsFactory.single_chart_aspects(all_points_subject).aspects
+        derived_points = {"Anti_Vertex", "Mean_Priapus", "True_Priapus", "Descendant", "Imum_Coeli"}
+        involving_derived = [
+            a for a in aspects if a.p1_name in derived_points or a.p2_name in derived_points
+        ]
+        assert involving_derived, "Derived points should still aspect unrelated points"
+
+
+class TestFixedStarAspectFiltering:
+    """Catalog fixed stars: star-planet aspects flow, star-star pairs are skipped."""
+
+    @pytest.fixture(scope="class")
+    def star_subject(self):
+        from kerykeion.settings.config_constants import DEFAULT_FIXED_STARS
+
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Star One", 1990, 6, 15, 12, 0,
+            lat=41.9, lng=12.5, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_fixed_stars=list(DEFAULT_FIXED_STARS),
+        )
+
+    @pytest.fixture(scope="class")
+    def second_star_subject(self):
+        from kerykeion.settings.config_constants import DEFAULT_FIXED_STARS
+
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Star Two", 1985, 3, 10, 8, 30,
+            lat=48.85, lng=2.35, tz_str="Europe/Paris",
+            online=False, suppress_geonames_warning=True,
+            active_fixed_stars=list(DEFAULT_FIXED_STARS),
+        )
+
+    @staticmethod
+    def _star_names(subject):
+        return {star.name for star in subject.fixed_stars}
+
+    def test_star_planet_aspects_present_with_default_points(self, star_subject):
+        """With default active_points, catalog stars aspect planets automatically."""
+        stars = self._star_names(star_subject)
+        assert stars, "Sanity check: subject should carry calculated fixed stars"
+        aspects = AspectsFactory.single_chart_aspects(star_subject).aspects
+        star_planet = [a for a in aspects if (a.p1_name in stars) != (a.p2_name in stars)]
+        assert star_planet, "Expected star-planet aspects with default active_points"
+
+    def test_no_star_star_aspects_single_chart(self, star_subject):
+        """Star-star aspects (e.g. Spica-Arcturus conjunction) are constants — skipped."""
+        stars = self._star_names(star_subject)
+        aspects = AspectsFactory.single_chart_aspects(star_subject).aspects
+        star_star = [a for a in aspects if a.p1_name in stars and a.p2_name in stars]
+        assert star_star == [], f"Unexpected star-star aspects: {[(a.p1_name, a.p2_name) for a in star_star]}"
+
+    def test_explicit_active_points_keeps_star_channel(self, star_subject):
+        """Stars are a separate channel (per-subject opt-in via active_fixed_stars):
+        an explicit active_points list restricts the regular points, but the
+        subject's own stars still aspect them — only star–star pairs are dropped.
+        This mirrors the dual-wheel second-subject-only star behavior."""
+        stars = self._star_names(star_subject)
+        aspects = AspectsFactory.single_chart_aspects(
+            star_subject, active_points=["Sun", "Moon"]
+        ).aspects
+        non_star = {"Sun", "Moon"}
+        for a in aspects:
+            assert a.p1_name in non_star | stars and a.p2_name in non_star | stars
+            # never star–star
+            assert not (a.p1_name in stars and a.p2_name in stars)
+        # the star channel is alive: at least the points loop included the stars
+        # (an actual star aspect depends on geometry, so assert no planet beyond
+        # the requested two appears rather than requiring a star hit)
+        planet_names = {a.p1_name for a in aspects} | {a.p2_name for a in aspects}
+        assert planet_names - stars <= non_star
+
+    def test_dual_chart_no_star_star_aspects(self, star_subject, second_star_subject):
+        """Cross-chart same-star pairs (e.g. Regulus-Regulus) must not appear."""
+        stars = self._star_names(star_subject) | self._star_names(second_star_subject)
+        aspects = AspectsFactory.dual_chart_aspects(star_subject, second_star_subject).aspects
+        star_star = [a for a in aspects if a.p1_name in stars and a.p2_name in stars]
+        assert star_star == [], f"Unexpected star-star aspects: {[(a.p1_name, a.p2_name) for a in star_star]}"
+        assert not any(a.p1_name == "Regulus" and a.p2_name == "Regulus" for a in aspects)
+        # Star-planet cross-chart aspects must still flow.
+        star_planet = [a for a in aspects if (a.p1_name in stars) != (a.p2_name in stars)]
+        assert star_planet, "Expected cross-chart star-planet aspects"
+
+
+class TestUnknownActiveAspectWarning:
+    """Active aspect names with no settings entry are dropped with a warning."""
+
+    def test_declination_names_warn_and_point_to_declination_methods(self, johnny_depp, caplog):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.aspects_factory"):
+            AspectsFactory.single_chart_aspects(
+                johnny_depp,
+                active_aspects=[
+                    {"name": "conjunction", "orb": 6},
+                    {"name": "parallel", "orb": 1},
+                    {"name": "contra_parallel", "orb": 1},
+                ],
+            )
+        assert "parallel" in caplog.text
+        assert "single_chart_declination_aspects" in caplog.text
+
+    def test_unknown_aspect_name_warns(self, caplog):
+        from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.aspects_factory"):
+            filtered = AspectsFactory._update_aspect_settings(
+                DEFAULT_CHART_ASPECTS_SETTINGS,
+                [{"name": "conjunction", "orb": 6}, {"name": "not_a_real_aspect", "orb": 3}],
+            )
+        assert "not_a_real_aspect" in caplog.text
+        # The unknown name is dropped, the known one survives.
+        assert [s["name"] for s in filtered] == ["conjunction"]
+
+    def test_known_aspects_do_not_warn(self, johnny_depp, caplog):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.aspects_factory"):
+            AspectsFactory.single_chart_aspects(
+                johnny_depp,
+                active_aspects=[{"name": "conjunction", "orb": 6}, {"name": "trine", "orb": 6}],
+            )
+        factory_records = [r for r in caplog.records if r.name == "kerykeion.aspects.aspects_factory"]
+        assert factory_records == []

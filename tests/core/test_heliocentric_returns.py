@@ -158,6 +158,24 @@ class TestPlanetaryReturnValidation:
         with pytest.raises(KerykeionException, match="Unknown planet"):
             factory.next_heliocentric_return("NonExistentPlanet", start_jd)
 
+    def test_sun_heliocentric_raises(self, factory, start_jd):
+        """The Sun has no heliocentric longitude — must raise a clear error."""
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException, match="undefined"):
+            factory.next_heliocentric_return("Sun", start_jd)
+
+    def test_moon_heliocentric_raises(self, factory, start_jd):
+        """The Moon's heliocentric longitude tracks Earth — must raise a clear error."""
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException, match="undefined"):
+            factory.next_heliocentric_return("Moon", start_jd)
+
+    def test_sun_heliocentric_raises_via_iso_wrapper(self, factory):
+        """The guard must also cover the ISO convenience wrapper."""
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException, match="undefined"):
+            factory.next_heliocentric_return_from_iso_formatted_time("Sun", "2025-01-01T00:00:00+00:00")
+
     def test_user_sidereal_without_custom_ayanamsa_raises(self, subject):
         """USER sidereal mode without custom ayanamsa params should raise."""
         from kerykeion.schemas import KerykeionException

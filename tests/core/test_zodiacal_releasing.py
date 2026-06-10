@@ -91,6 +91,36 @@ def test_spirit_lot_differs(john_lennon):
     assert spirit.lot_sign != fortune.lot_sign
 
 
+def test_spirit_release_peaks_are_fortune_relative(john_lennon):
+    """Releasing from Spirit, peak (angular) periods still count from FORTUNE.
+
+    Valens counts the 1st/4th/7th/10th places from the natal Lot of Fortune
+    whichever lot is being released. Lennon is a night chart: Fortune ~2° Cap,
+    Spirit ~6° Leo. Leo is angular from Spirit but NOT from Fortune, so a
+    Spirit-relative implementation would flag the opening Leo period as a peak;
+    the correct (Fortune-relative) flags mark Cap/Ari/Can/Lib instead.
+    """
+    zr = ZodiacalReleasingFactory.from_subject(john_lennon, lot="spirit", levels=2)
+    assert zr.lot_sign == "Leo"
+    assert zr.periods[0].sign == "Leo"
+
+    fortune_angular = {"Cap", "Ari", "Can", "Lib"}  # 1/4/7/10 from Capricorn
+    for period in zr.periods:
+        assert period.is_angular == (period.sign in fortune_angular), (
+            f"L1 {period.sign}: is_angular={period.is_angular} must follow Fortune (Cap), "
+            "not the released lot (Leo)"
+        )
+        for sub in period.subperiods:
+            assert sub.is_angular == (sub.sign in fortune_angular), (
+                f"L2 {sub.sign}: is_angular={sub.is_angular} must follow Fortune (Cap)"
+            )
+
+    # The lot's own opening period is explicitly NOT a peak (it would be, were
+    # angularity Spirit-relative), while the Fortune sign itself is.
+    assert zr.periods[0].is_angular is False
+    assert any(p.is_angular and p.sign == "Cap" for p in zr.periods)
+
+
 def test_unknown_lot_raises(john_lennon):
     with pytest.raises(KerykeionException):
         ZodiacalReleasingFactory.from_subject(john_lennon, lot="ascendant")  # type: ignore[arg-type]

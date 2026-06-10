@@ -324,7 +324,7 @@ def test_syzygy_gap_degrades_gracefully(john_lennon, monkeypatch):
     class _SimulatedRangeError(Exception):
         pass
 
-    def _boom(_julian_day):
+    def _boom(_julian_day, _iflag=None):
         raise _SimulatedRangeError("simulated out-of-range date")
 
     monkeypatch.setattr(utils_module, "_sun_moon_longitudes", _boom)

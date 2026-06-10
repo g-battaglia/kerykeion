@@ -135,7 +135,7 @@ def john_lennon():
     """
     Standard John Lennon subject - PRIMARY TEST SUBJECT.
 
-    Birth data: October 9, 1940, 18:30, Liverpool, GB
+    Birth data: October 9, 1940, 18:30, Liverpool, GB (53.4084, -2.9916)
     Used as the reference subject throughout the test suite.
     """
     return AstrologicalSubjectFactory.from_birth_data(
@@ -145,8 +145,10 @@ def john_lennon():
         9,
         18,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         suppress_geonames_warning=True,
     )
 
@@ -156,7 +158,7 @@ def paul_mccartney():
     """
     Standard Paul McCartney subject.
 
-    Birth data: June 18, 1942, 15:30, Liverpool, GB
+    Birth data: June 18, 1942, 15:30, Liverpool, GB (53.4084, -2.9916)
     Used for synastry testing with John Lennon.
     """
     return AstrologicalSubjectFactory.from_birth_data(
@@ -166,8 +168,10 @@ def paul_mccartney():
         18,
         15,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         suppress_geonames_warning=True,
     )
 
@@ -177,7 +181,7 @@ def johnny_depp():
     """
     Standard Johnny Depp subject - LEGACY TEST SUBJECT.
 
-    Birth data: June 9, 1963, 00:00, Owensboro, US
+    Birth data: June 9, 1963, 00:00, Owensboro, US (37.7742, -87.1133)
     Used for backward compatibility with existing test data.
     """
     return AstrologicalSubjectFactory.from_birth_data(
@@ -187,8 +191,10 @@ def johnny_depp():
         9,
         0,
         0,
-        "Owensboro",
-        "US",
+        lat=37.7742,
+        lng=-87.1133,
+        tz_str="America/Chicago",
+        online=False,
         suppress_geonames_warning=True,
     )
 
@@ -303,8 +309,10 @@ def subject_with_house_system(house_system, john_lennon):
         9,
         18,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         houses_system_identifier=house_system,
         suppress_geonames_warning=True,
     )
@@ -333,8 +341,10 @@ def sidereal_subject(sidereal_mode):
         9,
         18,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         zodiac_type="Sidereal",
         sidereal_mode=sidereal_mode,
         suppress_geonames_warning=True,
@@ -364,8 +374,10 @@ def subject_with_perspective(perspective_type):
         9,
         18,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         perspective_type=perspective_type,
         suppress_geonames_warning=True,
     )

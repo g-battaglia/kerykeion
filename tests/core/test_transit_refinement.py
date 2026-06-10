@@ -60,28 +60,43 @@ class TestTransitRefinement:
         assert refined_events is not None
         assert isinstance(refined_events.events, list)
 
+    @staticmethod
+    def _paired_events(unrefined_events, refined_events):
+        """Pair refined/unrefined events per (p1, p2, aspect) key, in order.
+
+        The same (p1, p2, aspect) triple legitimately occurs several times in
+        the range (one event per pass since the v6 per-run splitting), so the
+        events must be matched pairwise in chronological order, not via a
+        last-one-wins dict.
+        """
+        from collections import defaultdict
+
+        unref_by_key = defaultdict(list)
+        for e in unrefined_events.events:
+            unref_by_key[(e.p1_name, e.p2_name, e.aspect)].append(e)
+        ref_by_key = defaultdict(list)
+        for e in refined_events.events:
+            ref_by_key[(e.p1_name, e.p2_name, e.aspect)].append(e)
+
+        pairs = []
+        for key, ref_list in ref_by_key.items():
+            unref_list = unref_by_key.get(key, [])
+            # Runs are identical between the two passes (splitting happens
+            # before refinement), so events correspond one-to-one in order.
+            assert len(unref_list) == len(ref_list), f"Event count mismatch for {key}"
+            pairs.extend(zip(unref_list, ref_list))
+        return pairs
+
     def test_refined_events_have_smaller_orb(self, unrefined_events, refined_events):
         """Refined events should have orbs <= unrefined orbs (or very close)."""
-        unrefined = unrefined_events
-        refined = refined_events
+        pairs = self._paired_events(unrefined_events, refined_events)
 
-        # Build lookup by (p1, p2, aspect)
-        unrefined_lookup = {
-            (e.p1_name, e.p2_name, e.aspect): e.min_orb
-            for e in unrefined.events
-        }
-
-        improved_count = 0
-        for event in refined.events:
-            key = (event.p1_name, event.p2_name, event.aspect)
-            if key in unrefined_lookup:
-                if event.min_orb <= unrefined_lookup[key] + 0.001:
-                    improved_count += 1
+        improved_count = sum(1 for unref, ref in pairs if ref.min_orb <= unref.min_orb + 0.001)
 
         # Most events should have equal or better orb after refinement
-        if len(refined.events) > 0:
-            assert improved_count / len(refined.events) >= 0.8, (
-                f"Only {improved_count}/{len(refined.events)} events improved"
+        if pairs:
+            assert improved_count / len(pairs) >= 0.8, (
+                f"Only {improved_count}/{len(pairs)} events improved"
             )
 
     def test_refined_exact_moment_differs(self, unrefined_events, refined_events):
@@ -92,58 +107,35 @@ class TestTransitRefinement:
         This test verifies that refinement actually changes at least one event,
         so the test would fail if the refinement code were a no-op.
         """
-        unrefined = unrefined_events
-        refined = refined_events
+        pairs = self._paired_events(unrefined_events, refined_events)
 
-        unrefined_lookup = {
-            (e.p1_name, e.p2_name, e.aspect): e
-            for e in unrefined.events
-        }
+        different_count = sum(
+            1
+            for unref, ref in pairs
+            if ref.exact_moment != unref.exact_moment or ref.min_orb < unref.min_orb
+        )
 
-        different_count = 0
-        comparable_count = 0
-        for event in refined.events:
-            key = (event.p1_name, event.p2_name, event.aspect)
-            unref = unrefined_lookup.get(key)
-            if unref is None:
-                continue
-            comparable_count += 1
-            if event.exact_moment != unref.exact_moment or event.min_orb < unref.min_orb:
-                different_count += 1
-
-        assert comparable_count > 0, "No comparable events found"
+        assert pairs, "No comparable events found"
         # The critical assertion: refinement must actually change some events.
         # With 30 days of daily steps, there should be several events with
         # bracketing steps eligible for bisection refinement.
         assert different_count > 0, (
-            f"Refinement was a no-op: {comparable_count} comparable events but "
+            f"Refinement was a no-op: {len(pairs)} comparable events but "
             f"none had a different exact_moment or improved orb"
         )
 
     def test_refined_orb_not_worse_than_unrefined(self, unrefined_events, refined_events):
         """For matched events, the refined orb should be <= the unrefined orb."""
-        unrefined = unrefined_events
-        refined = refined_events
+        pairs = self._paired_events(unrefined_events, refined_events)
 
-        unrefined_lookup = {
-            (e.p1_name, e.p2_name, e.aspect): e
-            for e in unrefined.events
-        }
-
-        checked = 0
-        for event in refined.events:
-            key = (event.p1_name, event.p2_name, event.aspect)
-            unref = unrefined_lookup.get(key)
-            if unref is None:
-                continue
+        for unref, ref in pairs:
             # Allow a tiny floating-point tolerance (1e-6 degrees ~ 0.004 arcsec)
-            assert event.min_orb <= unref.min_orb + 1e-6, (
-                f"Refined orb ({event.min_orb}) is worse than unrefined "
-                f"({unref.min_orb}) for {key}"
+            assert ref.min_orb <= unref.min_orb + 1e-6, (
+                f"Refined orb ({ref.min_orb}) is worse than unrefined "
+                f"({unref.min_orb}) for ({ref.p1_name}, {ref.p2_name}, {ref.aspect})"
             )
-            checked += 1
 
-        assert checked > 0, "No comparable events to check orbs"
+        assert pairs, "No comparable events to check orbs"
 
     def test_refined_exact_moment_within_event_window(self, refined_events):
         """The refined exact_moment must fall between applying_start and separating_end."""
@@ -276,3 +268,93 @@ class TestRefineExactMomentEdgeCases:
                 right_date_str="2025-01-03T00:00:00",
             )
             assert result is None
+
+    def test_refine_skipped_for_non_geocentric_perspective(self):
+        """Non-geocentric natal charts keep the coarse values (no refinement)."""
+        helio_natal = AstrologicalSubjectFactory.from_birth_data(
+            "Helio Test", 1990, 1, 1, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            perspective_type="Heliocentric",
+        )
+        factory = TransitsTimeRangeFactory(natal_chart=helio_natal, ephemeris_data_points=[])
+        result = factory._refine_exact_moment(
+            p1_name="Mars",
+            p2_name="Mars",
+            aspect_name="conjunction",
+            left_date_str="2025-01-01T00:00:00",
+            right_date_str="2025-01-03T00:00:00",
+        )
+        assert result is None
+
+
+class TestSiderealRefinement:
+    """v6 regression: refinement must run in the natal chart's zodiac.
+
+    Before the fix, the bisection compared the SIDEREAL natal position with a
+    TROPICAL calc_ut longitude (~24° apart for LAHIRI) and overwrote the
+    correct coarse minimum with garbage.
+    """
+
+    @pytest.fixture(scope="class")
+    def sidereal_factory(self):
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "Sidereal Transit Test", 1990, 1, 1, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+        )
+        start = datetime(2025, 1, 1)
+        ephemeris = EphemerisDataFactory(
+            start_datetime=start,
+            end_datetime=start + timedelta(days=15),
+            step_type="days",
+            step=1,
+            lat=natal.lat,
+            lng=natal.lng,
+            tz_str=natal.tz_str,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        return TransitsTimeRangeFactory(
+            natal_chart=natal,
+            ephemeris_data_points=ephemeris.get_ephemeris_data_as_astrological_subjects(),
+        )
+
+    def test_sidereal_refined_orbs_not_worse(self, sidereal_factory):
+        """Refined orbs must never be worse than the coarse ones (sidereal natal)."""
+        from collections import defaultdict
+
+        unrefined = sidereal_factory.get_transit_events(refine_exact_moments=False)
+        refined = sidereal_factory.get_transit_events(refine_exact_moments=True)
+
+        unref_by_key = defaultdict(list)
+        for e in unrefined.events:
+            unref_by_key[(e.p1_name, e.p2_name, e.aspect)].append(e)
+        ref_by_key = defaultdict(list)
+        for e in refined.events:
+            ref_by_key[(e.p1_name, e.p2_name, e.aspect)].append(e)
+
+        checked = 0
+        for key, ref_list in ref_by_key.items():
+            unref_list = unref_by_key.get(key, [])
+            assert len(unref_list) == len(ref_list), f"Event count mismatch for {key}"
+            for unref, ref in zip(unref_list, ref_list):
+                assert ref.min_orb <= unref.min_orb + 1e-6, (
+                    f"Sidereal refinement degraded {key}: {ref.min_orb} > {unref.min_orb}"
+                )
+                checked += 1
+
+        assert checked > 0, "No sidereal events to compare"
+
+    def test_sidereal_refinement_improves_some_event(self, sidereal_factory):
+        """Refinement must still be effective (not silently skipped) for sidereal charts."""
+        unrefined = sidereal_factory.get_transit_events(refine_exact_moments=False)
+        refined = sidereal_factory.get_transit_events(refine_exact_moments=True)
+
+        unref_orbs = sorted(e.min_orb for e in unrefined.events)
+        ref_orbs = sorted(e.min_orb for e in refined.events)
+        assert len(unref_orbs) == len(ref_orbs)
+        assert any(r < u - 1e-9 for r, u in zip(ref_orbs, unref_orbs)), (
+            "No sidereal event improved after refinement — refinement appears to be a no-op"
+        )

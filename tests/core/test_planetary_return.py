@@ -783,6 +783,101 @@ class TestAdditionalIntegration:
         assert diff < 0.1
 
 
+# ===========================================================================
+# Sidereal returns (v6 regression)
+# ===========================================================================
+
+
+class TestSiderealReturns:
+    """v6 regression: the crossing search must run in the natal zodiac.
+
+    Before the fix, solcross_ut/mooncross_ut received the SIDEREAL natal
+    abs_pos but searched TROPICAL longitudes, landing solar returns ~25 days
+    off (the ayanamsa divided by the Sun's daily motion).
+    """
+
+    @pytest.fixture(scope="class")
+    def sidereal_subject(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Sidereal Return Test",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lat=ROME_LAT,
+            lng=ROME_LNG,
+            tz_str=ROME_TZ,
+            online=False,
+            suppress_geonames_warning=True,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+
+    @pytest.fixture(scope="class")
+    def sidereal_factory(self, sidereal_subject):
+        return PlanetaryReturnFactory(
+            sidereal_subject,
+            lat=ROME_LAT,
+            lng=ROME_LNG,
+            tz_str=ROME_TZ,
+            online=False,
+        )
+
+    def test_sidereal_solar_return_sun_matches_natal(self, sidereal_factory, sidereal_subject):
+        """Return Sun abs_pos (sidereal) must equal the natal Sun within 1e-3°."""
+        result = sidereal_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        diff = _angular_diff(result.sun.abs_pos, sidereal_subject.sun.abs_pos)
+        assert diff < 1e-3, (
+            f"Sidereal solar return Sun {result.sun.abs_pos}° differs from natal "
+            f"{sidereal_subject.sun.abs_pos}° by {diff}° — crossing searched in the wrong zodiac"
+        )
+
+    def test_sidereal_solar_return_near_birthday(self, sidereal_factory):
+        """The sidereal return is ~1 day per 72 years from the birthday, not ~25 days off."""
+        result = sidereal_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        return_dt = datetime.fromisoformat(result.iso_formatted_utc_datetime)
+        birthday = datetime(2024, 6, 15, tzinfo=timezone.utc)
+        assert abs((return_dt - birthday).days) <= 3, (
+            f"Sidereal solar return on {return_dt.date()} is too far from the birthday"
+        )
+
+    def test_sidereal_lunar_return_moon_matches_natal(self, sidereal_factory, sidereal_subject):
+        result = sidereal_factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+        diff = _angular_diff(result.moon.abs_pos, sidereal_subject.moon.abs_pos)
+        assert diff < 1e-3, (
+            f"Sidereal lunar return Moon {result.moon.abs_pos}° differs from natal "
+            f"{sidereal_subject.moon.abs_pos}° by {diff}°"
+        )
+
+    def test_sidereal_return_chart_is_sidereal(self, sidereal_factory):
+        result = sidereal_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        assert result.zodiac_type == "Sidereal"
+        assert result.sidereal_mode == "LAHIRI"
+
+
+# ===========================================================================
+# Timezone-aware ISO entry points (v6 regression)
+# ===========================================================================
+
+
+class TestAwareIsoEntryPoint:
+    """Offset-aware ISO datetimes must be normalised to UTC before the search."""
+
+    def test_offset_aware_iso_equals_utc_equivalent(self, johnny_depp):
+        """'...T10:30:00+05:00' must give the same return as '...T05:30:00Z'."""
+        factory = PlanetaryReturnFactory(
+            johnny_depp,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            online=False,
+        )
+        with_offset = factory.next_return_from_iso_formatted_time("2024-01-01T10:30:00+05:00", "Lunar")
+        utc_equiv = factory.next_return_from_iso_formatted_time("2024-01-01T05:30:00+00:00", "Lunar")
+        assert with_offset.julian_day == approx(utc_equiv.julian_day, abs=1e-8)
+
+
 # =============================================================================
 # DEPRECATED API + ONLINE MODE (from edge_cases + factories)
 # =============================================================================
