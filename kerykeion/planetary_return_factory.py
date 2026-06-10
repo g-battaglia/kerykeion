@@ -71,7 +71,7 @@ License: AGPL-3.0
 import calendar
 import logging
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from datetime import datetime, timezone
 from typing import List, Union
@@ -520,51 +520,67 @@ class PlanetaryReturnFactory:
         date = datetime.fromisoformat(iso_formatted_time)
         julian_day = datetime_to_julian(date)
 
+        # The natal abs_pos values are expressed in the subject's zodiac
+        # (tropical OR sidereal). The crossing search must run with the same
+        # zodiac configuration, otherwise a sidereal natal position would be
+        # searched against tropical longitudes (~ayanamsa/degree-per-day off,
+        # i.e. ~25 days for a solar return with LAHIRI). ephemeris_session
+        # configures the sidereal mode and yields the matching iflag.
         return_julian_date = None
-        if return_type == "Solar":
-            if self.subject.sun is None:
-                raise KerykeionException(
-                    "Sun position is required for Solar return but is not available in the subject."
-                )
-            if backwards:
-                try:
+        with ephemeris_session(
+            zodiac_type=self.subject.zodiac_type,
+            sidereal_mode=self.subject.sidereal_mode,
+            custom_ayanamsa_t0=self.custom_ayanamsa_t0,
+            custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
+        ) as iflag:
+            if return_type == "Solar":
+                if self.subject.sun is None:
+                    raise KerykeionException(
+                        "Sun position is required for Solar return but is not available in the subject."
+                    )
+                if backwards:
+                    try:
+                        return_julian_date = swe.solcross_ut(
+                            self.subject.sun.abs_pos,
+                            julian_day,
+                            iflag,
+                            backwards=True,
+                        )
+                    except TypeError:
+                        raise KerykeionException(
+                            "Backward Solar return search requires the libephemeris backend."
+                        )
+                else:
                     return_julian_date = swe.solcross_ut(
                         self.subject.sun.abs_pos,
                         julian_day,
-                        backwards=True,
+                        iflag,
                     )
-                except TypeError:
+            elif return_type == "Lunar":
+                if self.subject.moon is None:
                     raise KerykeionException(
-                        "Backward Solar return search requires the libephemeris backend."
+                        "Moon position is required for Lunar return but is not available in the subject."
                     )
-            else:
-                return_julian_date = swe.solcross_ut(
-                    self.subject.sun.abs_pos,
-                    julian_day,
-                )
-        elif return_type == "Lunar":
-            if self.subject.moon is None:
-                raise KerykeionException(
-                    "Moon position is required for Lunar return but is not available in the subject."
-                )
-            if backwards:
-                try:
+                if backwards:
+                    try:
+                        return_julian_date = swe.mooncross_ut(
+                            self.subject.moon.abs_pos,
+                            julian_day,
+                            iflag,
+                            backwards=True,
+                        )
+                    except TypeError:
+                        raise KerykeionException(
+                            "Backward Lunar return search requires the libephemeris backend."
+                        )
+                else:
                     return_julian_date = swe.mooncross_ut(
                         self.subject.moon.abs_pos,
                         julian_day,
-                        backwards=True,
-                    )
-                except TypeError:
-                    raise KerykeionException(
-                        "Backward Lunar return search requires the libephemeris backend."
+                        iflag,
                     )
             else:
-                return_julian_date = swe.mooncross_ut(
-                    self.subject.moon.abs_pos,
-                    julian_day,
-                )
-        else:
-            raise KerykeionException(f"Invalid return type {return_type}. Use 'Solar' or 'Lunar'.")
+                raise KerykeionException(f"Invalid return type {return_type}. Use 'Solar' or 'Lunar'.")
 
         return_date_utc = julian_to_datetime(return_julian_date)
         return_date_utc = return_date_utc.replace(tzinfo=timezone.utc)
@@ -821,26 +837,44 @@ class PlanetaryReturnFactory:
         if planet_id is None:
             raise KerykeionException(f"Unknown planet for heliocentric return: {planet_name}")
 
-        swe.set_ephe_path(EPHE_DATA_PATH)
+        # The Sun has no heliocentric longitude (it IS the origin) and the
+        # Moon's heliocentric longitude is just Earth's orbit — neither is a
+        # meaningful heliocentric return target.
+        if planet_name in ("Sun", "Moon"):
+            raise KerykeionException(
+                f"Heliocentric returns are undefined for {planet_name}: the Sun is the "
+                "heliocentric origin and the Moon's heliocentric longitude tracks Earth's orbit. "
+                "Use 'Solar' or 'Lunar' geocentric returns instead."
+            )
 
-        # Get natal heliocentric longitude
-        natal_data = swe.calc_ut(self.subject.julian_day, planet_id, swe.FLG_SWIEPH | swe.FLG_HELCTR)
-        natal_lon = natal_data[0][0]
+        # Run both the natal lookup and the crossing search with the
+        # subject's zodiac configuration so sidereal subjects are searched in
+        # sidereal heliocentric longitude (matching the natal value).
+        with ephemeris_session(
+            zodiac_type=self.subject.zodiac_type,
+            sidereal_mode=self.subject.sidereal_mode,
+            custom_ayanamsa_t0=self.custom_ayanamsa_t0,
+            custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
+        ) as iflag:
+            helio_iflag = iflag | swe.FLG_HELCTR
 
-        # Find when it returns to that longitude
-        if backwards:
-            try:
-                return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, swe.FLG_SWIEPH, backwards=True)
-            except TypeError:
-                raise KerykeionException(
-                    "Backward heliocentric search requires the libephemeris backend."
-                )
-        else:
-            return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, swe.FLG_SWIEPH)
+            # Get natal heliocentric longitude
+            natal_data = swe.calc_ut(self.subject.julian_day, planet_id, helio_iflag)
+            natal_lon = natal_data[0][0]
 
-        swe.close()
+            # Find when it returns to that longitude
+            if backwards:
+                try:
+                    return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, helio_iflag, backwards=True)
+                except TypeError:
+                    raise KerykeionException(
+                        "Backward heliocentric search requires the libephemeris backend."
+                    )
+            else:
+                return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, helio_iflag)
 
-        # Build return chart at that moment
+        # Build return chart at that moment (outside the session: subject
+        # construction manages its own ephemeris state).
         return_model = self._build_return_chart(return_jd, "Heliocentric")
         return return_model
 
@@ -862,19 +896,19 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the node crossing chart.
         """
-        swe.set_ephe_path(EPHE_DATA_PATH)
-        if backwards:
-            try:
-                result = swe.mooncross_node_ut(start_jd, swe.FLG_SWIEPH, backwards=True)
-            except TypeError:
-                swe.close()
-                raise KerykeionException(
-                    "Backward lunar node crossing search requires the libephemeris backend."
-                )
-        else:
-            result = swe.mooncross_node_ut(start_jd, swe.FLG_SWIEPH)
-        crossing_jd = result[0]
-        swe.close()
+        # Node crossings (Moon latitude = 0) are zodiac-independent, but the
+        # session still serializes ephemeris state and provides the base iflag.
+        with ephemeris_session() as iflag:
+            if backwards:
+                try:
+                    result = swe.mooncross_node_ut(start_jd, iflag, backwards=True)
+                except TypeError:
+                    raise KerykeionException(
+                        "Backward lunar node crossing search requires the libephemeris backend."
+                    )
+            else:
+                result = swe.mooncross_node_ut(start_jd, iflag)
+            crossing_jd = result[0]
 
         return_model = self._build_return_chart(crossing_jd, "Lunar_Node_Crossing")
         return return_model

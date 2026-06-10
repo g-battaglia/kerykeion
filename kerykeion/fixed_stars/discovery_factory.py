@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import logging
 
-from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, swe
+from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, swe
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
@@ -124,6 +124,13 @@ class FixedStarDiscoveryFactory:
     ) -> list[KerykeionPointModel]:
         """Find fixed stars conjunct natal planets within ``orb`` degrees.
 
+        Star longitudes are computed in the subject's own zodiac frame (the
+        ephemeris session is opened with the subject's zodiac configuration),
+        so the conjunction comparison against the natal ``abs_pos`` values is
+        frame-consistent for sidereal charts too. Equatorial data (declination)
+        is fetched without the sidereal flag: it is physical and independent of
+        the zodiac convention.
+
         Returns a list of KerykeionPointModel sorted by magnitude (brightest first).
         Only stars that are within ``orb`` degrees of any natal planet are included.
         """
@@ -139,13 +146,16 @@ class FixedStarDiscoveryFactory:
             return []
 
         houses_degree_ut = _collect_house_cusps(subject)
-        swe.set_ephe_path(EPHE_DATA_PATH)
-        scan_iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
         jd = subject.julian_day
 
         prominent: list[KerykeionPointModel] = []
         seen_positions: set[float] = set()
-        try:
+        with ephemeris_session(
+            zodiac_type=getattr(subject, "zodiac_type", None),
+            sidereal_mode=getattr(subject, "sidereal_mode", None),
+            custom_ayanamsa_t0=getattr(subject, "custom_ayanamsa_t0", None),
+            custom_ayanamsa_ayan_t0=getattr(subject, "custom_ayanamsa_ayan_t0", None),
+        ) as scan_iflag:
             for entry in catalog:
                 star_name = entry.name
                 try:
@@ -161,7 +171,10 @@ class FixedStarDiscoveryFactory:
                         continue
                     seen_positions.add(rounded_pos)
 
-                    pos_eq = swe.fixstar_ut(star_name, jd, scan_iflag | swe.FLG_EQUATORIAL)[0]
+                    # Declination is zodiac-independent; drop FLG_SIDEREAL so the
+                    # equatorial fetch is identical for tropical and sidereal charts.
+                    eq_iflag = (scan_iflag & ~swe.FLG_SIDEREAL) | swe.FLG_EQUATORIAL
+                    pos_eq = swe.fixstar_ut(star_name, jd, eq_iflag)[0]
                     star_mag = entry.magnitude
 
                     prominent.append(
@@ -178,9 +191,6 @@ class FixedStarDiscoveryFactory:
                 except Exception as e:
                     logger.debug(f"Skipping star {star_name}: {e}")
                     continue
-        finally:
-            reset = getattr(swe, "reset_session", None) or swe.close
-            reset()
 
         # v6: emit a single actionable warning when nothing was returned on
         # the swisseph backend — almost always means sefstars.txt is missing

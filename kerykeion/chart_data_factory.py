@@ -163,8 +163,11 @@ class ChartDataFactory:
         if chart_type == "Composite" and not isinstance(first_subject, CompositeSubjectModel):
             raise KerykeionException("First subject must be a CompositeSubjectModel for Composite charts.")
 
-        if chart_type == "Return" and not isinstance(second_subject, PlanetReturnModel):
-            raise KerykeionException("Second subject must be a PlanetReturnModel for Return charts.")
+        if chart_type == "DualReturnChart" and not isinstance(second_subject, PlanetReturnModel):
+            raise KerykeionException(
+                "Second subject must be a PlanetReturnModel for DualReturnChart charts. "
+                "Build it with PlanetaryReturnFactory (e.g. next_return_from_date)."
+            )
 
         if chart_type == "SingleReturnChart" and not isinstance(first_subject, PlanetReturnModel):
             raise KerykeionException("First subject must be a PlanetReturnModel for SingleReturnChart charts.")

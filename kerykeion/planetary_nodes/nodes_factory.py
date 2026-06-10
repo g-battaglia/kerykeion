@@ -16,7 +16,7 @@ from __future__ import annotations
 import logging
 from typing import Dict, List, Optional
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -27,8 +27,6 @@ from kerykeion.utilities import get_kerykeion_point_from_degree
 from pydantic import Field
 
 logger = logging.getLogger(__name__)
-
-_EPHE_PATH = EPHE_DATA_PATH
 
 NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
 NODBIT_OSCU = getattr(swe, "NODBIT_OSCU", 2)
@@ -83,6 +81,10 @@ class PlanetaryNodesFactory:
     ) -> PlanetaryNodesCollectionModel:
         """Calculate nodes from an existing astrological subject.
 
+        The node/apsis longitudes (and the sign metadata derived from them)
+        are computed in the subject's own zodiac frame: a sidereal subject
+        gets sidereal node longitudes, consistent with the rest of its chart.
+
         Args:
             subject: An astrological subject.
             method: "mean" or "osculating".
@@ -93,6 +95,10 @@ class PlanetaryNodesFactory:
             iso_datetime=subject.iso_formatted_utc_datetime,
             method=method,
             planets=planets,
+            zodiac_type=getattr(subject, "zodiac_type", None),
+            sidereal_mode=getattr(subject, "sidereal_mode", None),
+            custom_ayanamsa_t0=getattr(subject, "custom_ayanamsa_t0", None),
+            custom_ayanamsa_ayan_t0=getattr(subject, "custom_ayanamsa_ayan_t0", None),
         )
 
     @staticmethod
@@ -101,7 +107,7 @@ class PlanetaryNodesFactory:
         method: str = "mean",
         planets: Optional[List[str]] = None,
     ) -> PlanetaryNodesCollectionModel:
-        """Calculate nodes from a Julian Day number."""
+        """Calculate nodes from a Julian Day number (tropical zodiac)."""
         return PlanetaryNodesFactory._calculate(
             julian_day=julian_day,
             iso_datetime="",
@@ -115,10 +121,20 @@ class PlanetaryNodesFactory:
         iso_datetime: str,
         method: str,
         planets: Optional[List[str]],
+        zodiac_type: Optional[str] = None,
+        sidereal_mode: Optional[str] = None,
+        custom_ayanamsa_t0: Optional[float] = None,
+        custom_ayanamsa_ayan_t0: Optional[float] = None,
     ) -> PlanetaryNodesCollectionModel:
-        """Compute nodes/apsides for all requested planets at a given Julian Day."""
-        swe.set_ephe_path(_EPHE_PATH)
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        """Compute nodes/apsides for all requested planets at a given Julian Day.
+
+        The ephemeris session is configured with the requested zodiac. The
+        node/apsis longitudes themselves are always computed tropically
+        (``FLG_SIDEREAL`` is masked out of the ``nod_aps_ut`` call — not every
+        backend applies it there) and rotated into the sidereal frame by
+        subtracting the session's ayanamsa, which is deterministic on both
+        backends.
+        """
         nodbit = NODBIT_MEAN if method == "mean" else NODBIT_OSCU
 
         target_planets = _NODE_PLANETS if planets is None else {
@@ -127,35 +143,45 @@ class PlanetaryNodesFactory:
 
         node_results: List[PlanetaryNodeModel] = []
 
-        for name, planet_id in target_planets.items():
-            try:
-                result = swe.nod_aps_ut(julian_day, planet_id, iflag, nodbit)
-                # result is a tuple of 4 elements, each a 6-element array:
-                # [0] ascending node, [1] descending node, [2] perihelion, [3] aphelion
-                asc_lon = result[0][0] % 360
-                desc_lon = result[1][0] % 360
-                peri_lon = result[2][0] % 360
-                aph_lon = result[3][0] % 360
+        with ephemeris_session(
+            zodiac_type=zodiac_type,
+            sidereal_mode=sidereal_mode,
+            custom_ayanamsa_t0=custom_ayanamsa_t0,
+            custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
+        ) as iflag:
+            ayanamsa = 0.0
+            if iflag & swe.FLG_SIDEREAL:
+                ayanamsa = float(swe.get_ayanamsa_ex_ut(julian_day, iflag)[1])
+            calc_iflag = iflag & ~swe.FLG_SIDEREAL
 
-                node_results.append(PlanetaryNodeModel(
-                    planet_name=name,
-                    ascending_node=get_kerykeion_point_from_degree(
-                        asc_lon, name, "AstrologicalPoint"
-                    ),
-                    descending_node=get_kerykeion_point_from_degree(
-                        desc_lon, name, "AstrologicalPoint"
-                    ),
-                    perihelion=get_kerykeion_point_from_degree(
-                        peri_lon, name, "AstrologicalPoint"
-                    ),
-                    aphelion=get_kerykeion_point_from_degree(
-                        aph_lon, name, "AstrologicalPoint"
-                    ),
-                ))
-            except Exception as e:
-                logger.warning(f"Could not calculate nodes for {name}: {e}")
+            for name, planet_id in target_planets.items():
+                try:
+                    result = swe.nod_aps_ut(julian_day, planet_id, calc_iflag, nodbit)
+                    # result is a tuple of 4 elements, each a 6-element array:
+                    # [0] ascending node, [1] descending node, [2] perihelion, [3] aphelion
+                    asc_lon = (result[0][0] - ayanamsa) % 360
+                    desc_lon = (result[1][0] - ayanamsa) % 360
+                    peri_lon = (result[2][0] - ayanamsa) % 360
+                    aph_lon = (result[3][0] - ayanamsa) % 360
 
-        swe.close()
+                    node_results.append(PlanetaryNodeModel(
+                        planet_name=name,
+                        ascending_node=get_kerykeion_point_from_degree(
+                            asc_lon, name, "AstrologicalPoint"
+                        ),
+                        descending_node=get_kerykeion_point_from_degree(
+                            desc_lon, name, "AstrologicalPoint"
+                        ),
+                        perihelion=get_kerykeion_point_from_degree(
+                            peri_lon, name, "AstrologicalPoint"
+                        ),
+                        aphelion=get_kerykeion_point_from_degree(
+                            aph_lon, name, "AstrologicalPoint"
+                        ),
+                    ))
+                except Exception as e:
+                    logger.warning(f"Could not calculate nodes for {name}: {e}")
+
         return PlanetaryNodesCollectionModel(
             iso_datetime=iso_datetime,
             julian_day=julian_day,

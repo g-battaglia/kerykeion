@@ -17,7 +17,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 from typing import List, Optional, Dict, Literal
 from pydantic import BaseModel, Field
 
@@ -66,6 +66,13 @@ class AstroCartographyFactory:
         """
         Compute ACG lines for a natal chart.
 
+        ACG lines are physical: they mark where a planet sits on the local
+        horizon or meridian, which does not depend on the zodiac convention.
+        Sidereal subjects are therefore rotated back to tropical longitudes
+        (``abs_pos + ayanamsa_value``) before the equatorial math, so a
+        tropical and a sidereal chart of the same instant produce identical
+        geographic lines.
+
         Args:
             subject: The natal chart subject.
             step: Longitude/latitude scanning step in degrees (default 1.0).
@@ -80,25 +87,23 @@ class AstroCartographyFactory:
         if planets is None:
             planets = AstroCartographyFactory.PLANETS
 
-        ephe_path = EPHE_DATA_PATH
-        swe.set_ephe_path(ephe_path)
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
-
         jd = subject.julian_day
 
-        # Get obliquity and sidereal time
-        obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
-        gst_hours = swe.sidtime(jd)  # Greenwich sidereal time in hours
+        # Get planet ecliptic longitudes from the subject, expressed in the
+        # TROPICAL frame: the RA conversion below and the (tropical) cusps
+        # returned by swe.houses_armc both live there. For sidereal charts the
+        # stored abs_pos is sidereal, so add the chart's ayanamsa back.
+        ayanamsa = 0.0
+        if getattr(subject, "zodiac_type", "Tropical") == "Sidereal":
+            ayanamsa = float(getattr(subject, "ayanamsa_value", None) or 0.0)
 
-        # Get planet ecliptic longitudes from the subject
         planet_positions: Dict[str, float] = {}
         for pname in planets:
             point = getattr(subject, pname.lower(), None)
             if point is not None:
-                planet_positions[pname] = point.abs_pos
+                planet_positions[pname] = (point.abs_pos + ayanamsa) % 360.0
 
         if not planet_positions:
-            swe.close()
             return []
 
         # Angular tolerance for matching planet to ASC/DSC (independent of scan step)
@@ -110,81 +115,84 @@ class AstroCartographyFactory:
         mc_lines: Dict[str, ACGLine] = {}
         ic_lines: Dict[str, ACGLine] = {}
 
-        for pname, ecl_lon in planet_positions.items():
-            # Convert ecliptic longitude to RA
-            ecl_rad = math.radians(ecl_lon)
-            eps_rad = math.radians(obliquity)
-            ra_rad = math.atan2(
-                math.sin(ecl_rad) * math.cos(eps_rad),
-                math.cos(ecl_rad)
-            )
-            ra_deg = math.degrees(ra_rad) % 360
-
-            # MC line: geographic longitude where planet is on MC
-            mc_geo_lng = (ra_deg - gst_hours * 15.0) % 360
-            if mc_geo_lng > 180:
-                mc_geo_lng -= 360
-
-            # IC is 180 degrees from MC
-            ic_geo_lng = mc_geo_lng + 180 if mc_geo_lng < 0 else mc_geo_lng - 180
-
-            # MC/IC lines are vertical (same lng, range of latitudes)
-            lat_min, lat_max = lat_range
-            mc_points = [
-                ACGLinePoint(longitude=round(mc_geo_lng, 4), latitude=lat)
-                for lat in range(int(lat_min), int(lat_max) + 1, max(1, int(step)))
-            ]
-            ic_points = [
-                ACGLinePoint(longitude=round(ic_geo_lng, 4), latitude=lat)
-                for lat in range(int(lat_min), int(lat_max) + 1, max(1, int(step)))
-            ]
-
-            mc_lines[pname] = ACGLine(planet=pname, line_type="MC", points=mc_points)
-            ic_lines[pname] = ACGLine(planet=pname, line_type="IC", points=ic_points)
-
         # ASC/DSC lines: where the planet rises/sets at each longitude
         # For each longitude, compute ARMC, then find latitude where planet is on ASC
         asc_lines: Dict[str, List[ACGLinePoint]] = {p: [] for p in planet_positions}
         dsc_lines: Dict[str, List[ACGLinePoint]] = {p: [] for p in planet_positions}
 
-        lng = -180.0
-        while lng <= 180.0:
-            # Local sidereal time -> ARMC
-            armc = (gst_hours * 15.0 + lng) % 360
+        with ephemeris_session() as iflag:
+            # Get obliquity and sidereal time
+            obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+            gst_hours = swe.sidtime(jd)  # Greenwich sidereal time in hours
 
-            # For each latitude in range, compute houses and check ASC/DSC
-            lat = float(lat_range[0])
-            while lat <= lat_range[1]:
-                try:
-                    cusps, ascmc = swe.houses_armc(armc, lat, obliquity, b"P")
-                    asc_deg = ascmc[0]
-                    dsc_deg = (asc_deg + 180) % 360
+            for pname, ecl_lon in planet_positions.items():
+                # Convert (tropical) ecliptic longitude to RA
+                ecl_rad = math.radians(ecl_lon)
+                eps_rad = math.radians(obliquity)
+                ra_rad = math.atan2(
+                    math.sin(ecl_rad) * math.cos(eps_rad),
+                    math.cos(ecl_rad)
+                )
+                ra_deg = math.degrees(ra_rad) % 360
 
-                    for pname, plon in planet_positions.items():
-                        # Check ASC proximity
-                        asc_diff = abs(plon - asc_deg)
-                        if asc_diff > 180:
-                            asc_diff = 360 - asc_diff
-                        if asc_diff <= match_tol:
-                            asc_lines[pname].append(
-                                ACGLinePoint(longitude=round(lng, 4), latitude=round(lat, 4))
-                            )
+                # MC line: geographic longitude where planet is on MC
+                mc_geo_lng = (ra_deg - gst_hours * 15.0) % 360
+                if mc_geo_lng > 180:
+                    mc_geo_lng -= 360
 
-                        # Check DSC proximity
-                        dsc_diff = abs(plon - dsc_deg)
-                        if dsc_diff > 180:
-                            dsc_diff = 360 - dsc_diff
-                        if dsc_diff <= match_tol:
-                            dsc_lines[pname].append(
-                                ACGLinePoint(longitude=round(lng, 4), latitude=round(lat, 4))
-                            )
-                except Exception:
-                    pass
+                # IC is 180 degrees from MC
+                ic_geo_lng = mc_geo_lng + 180 if mc_geo_lng < 0 else mc_geo_lng - 180
 
-                lat += step
-            lng += step
+                # MC/IC lines are vertical (same lng, range of latitudes)
+                lat_min, lat_max = lat_range
+                mc_points = [
+                    ACGLinePoint(longitude=round(mc_geo_lng, 4), latitude=lat)
+                    for lat in range(int(lat_min), int(lat_max) + 1, max(1, int(step)))
+                ]
+                ic_points = [
+                    ACGLinePoint(longitude=round(ic_geo_lng, 4), latitude=lat)
+                    for lat in range(int(lat_min), int(lat_max) + 1, max(1, int(step)))
+                ]
 
-        swe.close()
+                mc_lines[pname] = ACGLine(planet=pname, line_type="MC", points=mc_points)
+                ic_lines[pname] = ACGLine(planet=pname, line_type="IC", points=ic_points)
+
+            lng = -180.0
+            while lng <= 180.0:
+                # Local sidereal time -> ARMC
+                armc = (gst_hours * 15.0 + lng) % 360
+
+                # For each latitude in range, compute houses and check ASC/DSC
+                lat = float(lat_range[0])
+                while lat <= lat_range[1]:
+                    try:
+                        cusps, ascmc = swe.houses_armc(armc, lat, obliquity, b"P")
+                        asc_deg = ascmc[0]
+                        dsc_deg = (asc_deg + 180) % 360
+
+                        for pname, plon in planet_positions.items():
+                            # Check ASC proximity
+                            asc_diff = abs(plon - asc_deg)
+                            if asc_diff > 180:
+                                asc_diff = 360 - asc_diff
+                            if asc_diff <= match_tol:
+                                asc_lines[pname].append(
+                                    ACGLinePoint(longitude=round(lng, 4), latitude=round(lat, 4))
+                                )
+
+                            # Check DSC proximity
+                            dsc_diff = abs(plon - dsc_deg)
+                            if dsc_diff > 180:
+                                dsc_diff = 360 - dsc_diff
+                            if dsc_diff <= match_tol:
+                                dsc_lines[pname].append(
+                                    ACGLinePoint(longitude=round(lng, 4), latitude=round(lat, 4))
+                                )
+                    except Exception:
+                        pass
+
+                    lat += step
+                lng += step
 
         # Assemble results
         result: List[ACGLine] = []

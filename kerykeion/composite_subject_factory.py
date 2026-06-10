@@ -362,7 +362,12 @@ class CompositeSubjectFactory:
 
         return CompositeSubjectModel(**self.__dict__)
 
-    def get_davison_composite_subject_model(self) -> CompositeSubjectModel:
+    def get_davison_composite_subject_model(
+        self,
+        *,
+        custom_ayanamsa_t0: Union[float, None] = None,
+        custom_ayanamsa_ayan_t0: Union[float, None] = None,
+    ) -> CompositeSubjectModel:
         """Generate a Davison composite chart.
 
         A Davison chart calculates the midpoint in **time** and **space**
@@ -373,9 +378,23 @@ class CompositeSubjectFactory:
         the Davison chart is a real chart with valid astronomical positions
         that actually occurred at the computed date and location.
 
+        Args:
+            custom_ayanamsa_t0: Reference epoch (Julian Day) for the custom
+                ayanamsa. Required when the subjects use ``sidereal_mode="USER"``.
+            custom_ayanamsa_ayan_t0: Ayanamsa value (degrees) at ``t0``.
+                Required when the subjects use ``sidereal_mode="USER"``.
+
         Returns:
             CompositeSubjectModel with composite_chart_type="Davison".
         """
+        # The Davison chart is recomputed from scratch — USER sidereal mode
+        # needs the custom ayanamsa definition to cast it.
+        if self.sidereal_mode == "USER" and (custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None):
+            raise KerykeionException(
+                "get_davison_composite_subject_model requires both custom_ayanamsa_t0 and "
+                "custom_ayanamsa_ayan_t0 when sidereal_mode='USER'."
+            )
+
         s1 = self.first_subject
         s2 = self.second_subject
 
@@ -386,13 +405,21 @@ class CompositeSubjectFactory:
         mid_lat = (s1.lat + s2.lat) / 2.0
         mid_lng = circular_mean(s1.lng + 180.0, s2.lng + 180.0) - 180.0
 
-        # Convert midpoint JD to date components (UTC)
+        # Convert midpoint JD to date components (UTC), explicitly in the
+        # Gregorian calendar to match the proleptic-Gregorian datetimes used
+        # everywhere else in kerykeion.
         from kerykeion.ephemeris_backend import swe
 
-        year, month, day, hour_frac = swe.revjul(mid_jd)
+        year, month, day, hour_frac = swe.revjul(mid_jd, getattr(swe, "GREG_CAL", 1))
         hour = int(hour_frac)
         minute = int((hour_frac - hour) * 60)
         seconds = int(((hour_frac - hour) * 60 - minute) * 60)
+
+        extra_kwargs: dict = {}
+        if custom_ayanamsa_t0 is not None:
+            extra_kwargs["custom_ayanamsa_t0"] = custom_ayanamsa_t0
+        if custom_ayanamsa_ayan_t0 is not None:
+            extra_kwargs["custom_ayanamsa_ayan_t0"] = custom_ayanamsa_ayan_t0
 
         # Cast a real natal chart at the midpoint moment/location.
         # swe.revjul returns UTC, so use Etc/GMT to avoid double-conversion.
@@ -415,6 +442,7 @@ class CompositeSubjectFactory:
             houses_system_identifier=self.houses_system_identifier,
             perspective_type=self.perspective_type,
             active_points=self.active_points,
+            **extra_kwargs,
         )
 
         # Build composite model from the Davison chart data

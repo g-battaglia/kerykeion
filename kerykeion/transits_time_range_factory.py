@@ -17,6 +17,16 @@ The module generates comprehensive transit data by analyzing the angular relatio
 between transiting celestial bodies and natal chart positions, creating timestamped
 records of when specific geometric configurations occur.
 
+Sampling resolution:
+    Transit detection is sample-based: an aspect is only seen if at least one
+    ephemeris step falls inside its orb window. Fast movers — above all the
+    Moon (~13.2°/day) — stay within a tight 3° predictive orb for only a few
+    hours, so daily sampling can skip entire lunar aspects or merge distinct
+    passes. As a rule of thumb the step should not exceed half the in-orb
+    window of the fastest active point (orb / speed); for the Moon with a 3°
+    orb that means steps of ~5 hours or less. A ``logging.warning`` is
+    emitted when the configured ephemeris step exceeds this threshold.
+
 Classes:
     TransitsTimeRangeFactory: Main factory class for generating transit data
 
@@ -55,8 +65,10 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
+import logging
+
 from typing import Union, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
@@ -68,6 +80,23 @@ from kerykeion.settings.config_constants import (
     PREDICTIVE_ACTIVE_ASPECTS,
 )
 from pathlib import Path
+
+# Typical mean daily motion (degrees/day) of the transiting bodies, used to
+# detect undersampling (steps larger than half the in-orb window of the
+# fastest active point). Static values are enough for an order-of-magnitude
+# check; the Moon dominates in practice.
+_TYPICAL_DAILY_MOTION_DEGREES: dict[str, float] = {
+    "Moon": 13.2,
+    "Mercury": 1.4,
+    "Venus": 1.2,
+    "Sun": 1.0,
+    "Mars": 0.52,
+    "Jupiter": 0.083,
+    "Saturn": 0.033,
+    "Uranus": 0.012,
+    "Neptune": 0.006,
+    "Pluto": 0.004,
+}
 
 
 class TransitsTimeRangeFactory:
@@ -189,6 +218,72 @@ class TransitsTimeRangeFactory:
         self.settings_file = settings_file
         self.axis_orb_limit = axis_orb_limit
 
+    def _sampling_step_days(self) -> Optional[float]:
+        """Return the smallest positive gap (in days) between ephemeris samples.
+
+        Returns None when fewer than two data points are available.
+        """
+        if len(self.ephemeris_data_points) < 2:
+            return None
+        try:
+            dates = [datetime.fromisoformat(p.iso_formatted_utc_datetime) for p in self.ephemeris_data_points]
+        except (TypeError, ValueError):
+            return None
+        gaps = [
+            (later - earlier).total_seconds() / 86400.0
+            for earlier, later in zip(dates, dates[1:])
+            if (later - earlier).total_seconds() > 0
+        ]
+        return min(gaps) if gaps else None
+
+    def _warn_if_undersampled(self) -> None:
+        """Warn when the ephemeris step risks skipping fast-moving aspects.
+
+        An aspect with orb ``o`` on a point moving ``v`` degrees/day stays in
+        orb for ``2*o/v`` days. If the sampling step exceeds half that window
+        (``o/v``), whole passes can fall between samples — for the Moon
+        (~13.2°/day) with a 3° orb that is anything coarser than ~5.5 hours.
+        """
+        step_days = self._sampling_step_days()
+        if step_days is None:
+            return
+
+        fastest_speed = max(
+            (
+                _TYPICAL_DAILY_MOTION_DEGREES[point]
+                for point in self.active_points
+                if point in _TYPICAL_DAILY_MOTION_DEGREES
+            ),
+            default=None,
+        )
+        if fastest_speed is None:
+            return
+
+        # Size the window with the TIGHTEST configured orb: it has the
+        # shortest in-orb window, so it is the first aspect the sampling
+        # step starts missing.
+        min_orb = min((float(a["orb"]) for a in self.active_aspects if float(a["orb"]) > 0), default=0.0)
+        if min_orb <= 0:
+            return
+
+        half_window_days = min_orb / fastest_speed
+        if step_days > half_window_days:
+            fastest_point = max(
+                (p for p in self.active_points if p in _TYPICAL_DAILY_MOTION_DEGREES),
+                key=lambda p: _TYPICAL_DAILY_MOTION_DEGREES[p],
+            )
+            logging.warning(
+                "Transit sampling step (%.2f days) exceeds half the in-orb window "
+                "(%.2f days) of the fastest active point (%s, ~%.1f°/day at the "
+                "tightest %.1f° orb). Fast aspects may be missed or merged; use a "
+                "finer ephemeris step (e.g. hours instead of days).",
+                step_days,
+                half_window_days,
+                fastest_point,
+                _TYPICAL_DAILY_MOTION_DEGREES[fastest_point],
+                min_orb,
+            )
+
     def get_transit_moments(self) -> TransitsTimeRangeModel:
         """
         Calculate and generate transit data for all configured time points.
@@ -245,6 +340,8 @@ class TransitsTimeRangeFactory:
             TransitsTimeRangeModel: Complete transit dataset structure
             AspectsFactory: Underlying aspect calculation engine
         """
+        self._warn_if_undersampled()
+
         transit_moments = []
 
         for ephemeris_point in self.ephemeris_data_points:
@@ -286,10 +383,18 @@ class TransitsTimeRangeFactory:
         Algorithm:
             1. Get all transit moments via get_transit_moments()
             2. Track each unique (p1, p2, aspect) combination
-            3. Group consecutive occurrences into events
-            4. Find the moment with minimum orb as the "exact" moment
-            5. Calculate orb rate of change at exact moment
+            3. Split each track into separate events whenever the in-orb
+               samples are not consecutive (gap > ~1.5x the sampling step),
+               so recurring aspects (e.g. monthly lunar conjunctions or the
+               multiple passes of a retrograde transit) yield one event per
+               pass instead of one merged event
+            4. Find the moment with minimum orb as the "exact" moment of each event
+            5. Calculate orb rate of change at exact moment (degrees/day)
             6. (Optional) Refine exact_moment via bisection for sub-step precision
+
+        Events truncated by the analysed range report ``applying_start`` /
+        ``separating_end`` as ``None``: the applying phase (or the separating
+        phase) happened outside the sampled window, so its boundary is unknown.
 
         Args:
             refine_exact_moments: If True, uses bisection between the two
@@ -316,55 +421,122 @@ class TransitsTimeRangeFactory:
                     active_tracks[key] = []
                 active_tracks[key].append((moment.date, asp.orbit, asp.aspect_movement))
 
-        # Convert tracks to events
+        # Range edges (used to flag truncated events) and sampling step
+        # (used to split a track into separate per-pass events).
+        first_moment_date = transit_data.transits[0].date if transit_data.transits else None
+        last_moment_date = transit_data.transits[-1].date if transit_data.transits else None
+        step_days = self._sampling_step_days()
+
+        # Convert tracks to events (one event per consecutive in-orb run)
         events: list[TransitEventModel] = []
 
         for (p1, p2, aspect_name), track in active_tracks.items():
             if not track:
                 continue
 
-            # Find minimum orb moment (exact)
-            min_orb_idx = min(range(len(track)), key=lambda i: track[i][1])
-            exact_date = track[min_orb_idx][0]
-            min_orb = track[min_orb_idx][1]
+            for run in self._split_track_into_runs(track, step_days):
+                # Find minimum orb moment (exact)
+                min_orb_idx = min(range(len(run)), key=lambda i: run[i][1])
+                exact_date = run[min_orb_idx][0]
+                min_orb = run[min_orb_idx][1]
 
-            # Bisection refinement (v6.0): refine exact_moment between bracketing steps
-            if refine_exact_moments and min_orb_idx > 0 and min_orb_idx < len(track) - 1:
-                refined = self._refine_exact_moment(
-                    p1_name=p1,
-                    p2_name=p2,
-                    aspect_name=aspect_name,
-                    left_date_str=track[min_orb_idx - 1][0],
-                    right_date_str=track[min_orb_idx + 1][0],
-                    iterations=refinement_iterations,
+                # Estimate orb rate after the exact moment (degrees per day),
+                # from the coarse samples (before any refinement).
+                orb_rate = None
+                if min_orb_idx < len(run) - 1:
+                    after_date, orb_after, _ = run[min_orb_idx + 1]
+                    try:
+                        dt_days = (
+                            datetime.fromisoformat(after_date) - datetime.fromisoformat(exact_date)
+                        ).total_seconds() / 86400.0
+                    except ValueError:
+                        dt_days = 0.0
+                    if dt_days > 0:
+                        orb_rate = round((orb_after - min_orb) / dt_days, 6)
+
+                # Bisection refinement (v6.0): refine exact_moment between
+                # bracketing steps. With tight orbs and fast bodies (Moon at
+                # multi-hour steps) a run often has only 1-3 samples and the
+                # minimum sits at a run EDGE — bracket one sampling step
+                # beyond the edge in that case, otherwise the very events
+                # that need refinement most would silently keep coarse values.
+                if refine_exact_moments and step_days:
+                    # Never extend past the analysed range itself: for an
+                    # event truncated at the range edge the orb is monotonic
+                    # there (the true exact lies outside the window), and the
+                    # trisection would converge onto the artificial bracket
+                    # edge — fabricating an exact_moment outside [start, end].
+                    # At a range edge the bracket bound is the edge sample
+                    # itself: in-range minima still refine, truncated events
+                    # honestly converge to the range boundary.
+                    if min_orb_idx > 0:
+                        left_bracket = run[min_orb_idx - 1][0]
+                    elif run[0][0] == first_moment_date:
+                        left_bracket = run[0][0]
+                    else:
+                        try:
+                            left_bracket = (
+                                datetime.fromisoformat(run[0][0]) - timedelta(days=step_days)
+                            ).isoformat()
+                        except ValueError:
+                            left_bracket = None
+                    if min_orb_idx < len(run) - 1:
+                        right_bracket = run[min_orb_idx + 1][0]
+                    elif run[-1][0] == last_moment_date:
+                        right_bracket = run[-1][0]
+                    else:
+                        try:
+                            right_bracket = (
+                                datetime.fromisoformat(run[-1][0]) + timedelta(days=step_days)
+                            ).isoformat()
+                        except ValueError:
+                            right_bracket = None
+                    if left_bracket is not None and right_bracket is not None:
+                        refined = self._refine_exact_moment(
+                            p1_name=p1,
+                            p2_name=p2,
+                            aspect_name=aspect_name,
+                            left_date_str=left_bracket,
+                            right_date_str=right_bracket,
+                            iterations=refinement_iterations,
+                        )
+                        # Accept only genuine improvements: for an event
+                        # truncated at the range edge the orb is monotonic and
+                        # the bisection midpoints can never land exactly on
+                        # the edge sample, so the "refined" orb comes back
+                        # marginally worse — keep the coarse values then.
+                        if refined is not None and refined[1] < min_orb:
+                            exact_date, min_orb = refined
+
+                # Event edges. None when the event is truncated by the range:
+                # a run that starts on the first sample (or whose first in-orb
+                # sample is already Separating) never showed its applying
+                # phase; symmetrically for the separating side.
+                first_date, _, first_movement = run[0]
+                last_date, _, last_movement = run[-1]
+                applying_start = (
+                    first_date
+                    if first_date != first_moment_date and first_movement != "Separating"
+                    else None
                 )
-                if refined is not None:
-                    exact_date, min_orb = refined
-
-            # First and last dates
-            applying_start = track[0][0] if len(track) > 1 else None
-            separating_end = track[-1][0] if len(track) > 1 else None
-
-            # Estimate orb rate at exact moment
-            orb_rate = None
-            if min_orb_idx > 0 and min_orb_idx < len(track) - 1:
-                orb_before = track[min_orb_idx - 1][1]
-                orb_after = track[min_orb_idx + 1][1]
-                # Simple difference (degrees per step)
-                orb_rate = round(orb_after - orb_before, 6)
-
-            events.append(
-                TransitEventModel(
-                    p1_name=p1,
-                    p2_name=p2,
-                    aspect=aspect_name,
-                    applying_start=applying_start,
-                    exact_moment=exact_date,
-                    separating_end=separating_end,
-                    min_orb=round(min_orb, 6),
-                    orb_rate=orb_rate,
+                separating_end = (
+                    last_date
+                    if last_date != last_moment_date and last_movement != "Applying"
+                    else None
                 )
-            )
+
+                events.append(
+                    TransitEventModel(
+                        p1_name=p1,
+                        p2_name=p2,
+                        aspect=aspect_name,
+                        applying_start=applying_start,
+                        exact_moment=exact_date,
+                        separating_end=separating_end,
+                        min_orb=round(min_orb, 6),
+                        orb_rate=orb_rate,
+                    )
+                )
 
         # Sort by exact_moment
         events.sort(key=lambda e: e.exact_moment)
@@ -373,6 +545,42 @@ class TransitsTimeRangeFactory:
             events=events,
             subject=self.natal_chart,
         )
+
+    @staticmethod
+    def _split_track_into_runs(
+        track: "list[tuple[str, float, str]]",
+        step_days: Optional[float],
+    ) -> "list[list[tuple[str, float, str]]]":
+        """Split a (date, orb, movement) track into consecutive in-orb runs.
+
+        A track keyed only by (p1, p2, aspect) merges every recurrence of the
+        aspect in the range (e.g. ~13 lunar conjunctions per year, or the
+        triple pass of a retrograde transit). Whenever two successive in-orb
+        samples are separated by more than ~1.5x the sampling step, the aspect
+        left orb in between, so a new run (event) starts there.
+        """
+        if not track:
+            return []
+        if step_days is None or step_days <= 0:
+            return [list(track)]
+
+        gap_threshold_seconds = 1.5 * step_days * 86400.0
+        runs: list[list[tuple[str, float, str]]] = []
+        current_run = [track[0]]
+        for previous, current in zip(track, track[1:]):
+            try:
+                gap_seconds = (
+                    datetime.fromisoformat(current[0]) - datetime.fromisoformat(previous[0])
+                ).total_seconds()
+            except ValueError:
+                gap_seconds = 0.0
+            if gap_seconds > gap_threshold_seconds:
+                runs.append(current_run)
+                current_run = [current]
+            else:
+                current_run.append(current)
+        runs.append(current_run)
+        return runs
 
     def _refine_exact_moment(
         self,
@@ -399,11 +607,25 @@ class TransitsTimeRangeFactory:
 
         Returns:
             Tuple of (refined_iso_datetime, refined_orb) or None if refinement fails.
+
+        Notes:
+            The natal positions are expressed in the natal chart's zodiac and
+            perspective, so the bisection MUST recompute the transiting
+            position with a matching configuration (``ephemeris_session`` with
+            the natal sidereal mode). Refinement is skipped (returning None,
+            keeping the coarse values) for non-geocentric perspectives, where
+            a plain ``calc_ut`` would not reproduce the ephemeris positions.
         """
-        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+        from kerykeion.ephemeris_backend import swe, ephemeris_session
         from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
         from kerykeion.utilities import datetime_to_julian
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
+
+        # Non-geocentric perspectives (Heliocentric, Topocentric, Barycentric,
+        # planetocentric...) need observer state this refinement does not
+        # replicate — keep the coarse sample values instead of degrading them.
+        if self.natal_chart.perspective_type not in ("Apparent Geocentric", "True Geocentric"):
+            return None
 
         try:
             left_dt = datetime.fromisoformat(left_date_str)
@@ -442,61 +664,65 @@ class TransitsTimeRangeFactory:
                     aspect_settings[0]["orb"] = aa["orb"]
                     break
 
-            ephe_path = EPHE_DATA_PATH
-            swe.set_ephe_path(ephe_path)
-            iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
-
             from kerykeion.aspects.aspects_utils import difdeg2n
 
             best_date = left_dt
             best_orb = 999.0
 
-            for _ in range(iterations):
-                mid_dt = left_dt + (right_dt - left_dt) / 2
+            # Match the natal chart's zodiac configuration so the recomputed
+            # transiting longitudes are comparable with the natal abs_pos
+            # (sidereal vs sidereal, tropical vs tropical).
+            with ephemeris_session(
+                zodiac_type=self.natal_chart.zodiac_type,
+                sidereal_mode=self.natal_chart.sidereal_mode,
+                custom_ayanamsa_t0=self.natal_chart.custom_ayanamsa_t0,
+                custom_ayanamsa_ayan_t0=self.natal_chart.custom_ayanamsa_ayan_t0,
+                perspective_type=self.natal_chart.perspective_type,
+            ) as iflag:
+                for _ in range(iterations):
+                    mid_dt = left_dt + (right_dt - left_dt) / 2
 
-                # Calculate transit planet position at midpoint
-                jd_mid = datetime_to_julian(mid_dt)
-                try:
-                    calc = swe.calc_ut(jd_mid, planet_id, iflag)[0]
-                except Exception:
-                    return None
+                    # Calculate transit planet position at midpoint
+                    jd_mid = datetime_to_julian(mid_dt)
+                    try:
+                        calc = swe.calc_ut(jd_mid, planet_id, iflag)[0]
+                    except Exception:
+                        return None
 
-                transit_pos = calc[0]
+                    transit_pos = calc[0]
 
-                # Evaluate aspect orb at midpoint
-                aspect_result = get_aspect_from_two_points(aspect_settings, transit_pos, natal_pos)
-                if aspect_result["verdict"]:
-                    mid_orb = aspect_result["orbit"]
-                else:
-                    # If aspect not in range at midpoint, use raw angular distance
-                    mid_orb = abs(abs(difdeg2n(transit_pos, natal_pos)) - aspect_settings[0]["degree"])
+                    # Evaluate aspect orb at midpoint
+                    aspect_result = get_aspect_from_two_points(aspect_settings, transit_pos, natal_pos)
+                    if aspect_result["verdict"]:
+                        mid_orb = aspect_result["orbit"]
+                    else:
+                        # If aspect not in range at midpoint, use raw angular distance
+                        mid_orb = abs(abs(difdeg2n(transit_pos, natal_pos)) - aspect_settings[0]["degree"])
 
-                if mid_orb < best_orb:
-                    best_orb = mid_orb
-                    best_date = mid_dt
+                    if mid_orb < best_orb:
+                        best_orb = mid_orb
+                        best_date = mid_dt
 
-                # Evaluate both halves: compute orb at quarter points
-                q1_dt = left_dt + (mid_dt - left_dt) / 2
-                q3_dt = mid_dt + (right_dt - mid_dt) / 2
+                    # Evaluate both halves: compute orb at quarter points
+                    q1_dt = left_dt + (mid_dt - left_dt) / 2
+                    q3_dt = mid_dt + (right_dt - mid_dt) / 2
 
-                jd_q1 = datetime_to_julian(q1_dt)
-                jd_q3 = datetime_to_julian(q3_dt)
-                try:
-                    pos_q1 = swe.calc_ut(jd_q1, planet_id, iflag)[0][0]
-                    pos_q3 = swe.calc_ut(jd_q3, planet_id, iflag)[0][0]
-                except Exception:
-                    return None
+                    jd_q1 = datetime_to_julian(q1_dt)
+                    jd_q3 = datetime_to_julian(q3_dt)
+                    try:
+                        pos_q1 = swe.calc_ut(jd_q1, planet_id, iflag)[0][0]
+                        pos_q3 = swe.calc_ut(jd_q3, planet_id, iflag)[0][0]
+                    except Exception:
+                        return None
 
-                orb_q1 = abs(abs(difdeg2n(pos_q1, natal_pos)) - aspect_settings[0]["degree"])
-                orb_q3 = abs(abs(difdeg2n(pos_q3, natal_pos)) - aspect_settings[0]["degree"])
+                    orb_q1 = abs(abs(difdeg2n(pos_q1, natal_pos)) - aspect_settings[0]["degree"])
+                    orb_q3 = abs(abs(difdeg2n(pos_q3, natal_pos)) - aspect_settings[0]["degree"])
 
-                # Narrow to the half containing the minimum
-                if orb_q1 < orb_q3:
-                    right_dt = mid_dt
-                else:
-                    left_dt = mid_dt
-
-            swe.close()
+                    # Narrow to the half containing the minimum
+                    if orb_q1 < orb_q3:
+                        right_dt = mid_dt
+                    else:
+                        left_dt = mid_dt
 
             return (best_date.isoformat(), round(best_orb, 6))
 
@@ -515,12 +741,14 @@ if __name__ == "__main__":
     start_date = datetime.now()
     end_date = datetime.now() + timedelta(days=30)
 
-    # Create ephemeris data for the specified time period
+    # Create ephemeris data for the specified time period.
+    # 4-hour steps keep the Moon (~13.2°/day) safely sampled within the tight
+    # 3° predictive orb window (in-orb half-window ≈ 5.5 hours).
     ephemeris_factory = EphemerisDataFactory(
         start_datetime=start_date,
         end_datetime=end_date,
-        step_type="days",
-        step=1,
+        step_type="hours",
+        step=4,
         lat=person.lat,
         lng=person.lng,
         tz_str=person.tz_str,
