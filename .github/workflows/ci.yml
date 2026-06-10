@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - alpha/v6
+  pull_request:
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      # Base tier, offline only. BCE / ancient-date / historical tests are
+      # excluded: they need the full-range DE441 kernel, while the kernel
+      # bundled with the libephemeris wheel (de440) covers 1550-2650 only.
+      - name: Run tests
+        run: uv run pytest tests/ --tier=base -m "not online" -k "not bce and not ancient_rome and not historical_date"
+
+  build:
+    name: Build and smoke-import wheel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Smoke-import built wheel in isolated environment
+        run: uv run --isolated --no-project --with dist/*.whl python -c "import kerykeion; print(kerykeion.__name__)"

@@ -2159,7 +2159,7 @@ for line in lines[:5]:
 - **Examples Gallery**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
 - **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
 - **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
-- **Migration Guide (v4 → v5)**: [Migration Guide](https://www.kerykeion.net/content/docs/migration)
+- **Migration Guide (v4/v5 to v6)**: [Migration Guide](https://www.kerykeion.net/content/docs/migration)
 
 ## Projects built with Kerykeion
 

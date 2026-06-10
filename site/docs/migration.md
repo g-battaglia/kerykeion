@@ -162,6 +162,8 @@ The `Planet` and `AxialCusps` types were unified into `AstrologicalPoint`:
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 ```
 
+The v5 model aliases `NatalAspectsModel` and `SynastryAspectsModel` were also removed — use `SingleChartAspectsModel` and `DualChartAspectsModel` instead.
+
 ### 7. Removed Parameters
 
 | Parameter | Status | Replacement |

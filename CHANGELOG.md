@@ -1,5 +1,75 @@
 # Changelog
 
+## 6.0.0a55 (unreleased)
+
+_unreleased_
+
+Pre-beta stabilization pass: process-wide thread safety for ephemeris access,
+sidereal-zodiac correctness across every search and refinement path, aspect and
+SVG-rendering fixes, hardened event finders, and packaging/CI cleanup.
+
+### Fixed
+
+- **Sidereal correctness** — planetary returns (the crossing search now runs in
+  the subject's zodiac frame), transit refinement, relocation house cusps,
+  fixed-star discovery, astrocartography and planetary nodes all honor the
+  active sidereal mode instead of mixing tropical longitudes into sidereal
+  charts.
+- **Aspects** — the South Node's speed is no longer negated, fixing
+  applying/separating classification; geometric opposite pairs
+  (Vertex/Anti-Vertex, Lilith/Priapus) and star–star pairs no longer emit fake
+  aspects, on both the longitude and the declination paths.
+- **Charts** — user-provided strings are XML-escaped in SVG output (XSS / parse
+  fix); chart filenames are sanitized; exactly-conjunct planets no longer lose
+  a glyph (previously one of two points at the same degree was silently
+  dropped); biquintile aspects get their glyph in the modern wheel (the icon
+  map used a hyphenated key); the classic theme defines its base palette
+  variables, so Uranian-planet colors no longer inline to empty `fill` values;
+  SVG minification keeps the optimizer's output intact and applies the
+  string-based quote/whitespace fallback only when the optimizer fails.
+- **Transits** — `get_transit_events` splits recurring/retrograde passes into
+  separate events instead of merging them; under-sampled fast bodies now emit a
+  warning.
+- **Primary directions** — corrected Placidian pole computation, ecliptic
+  aspect-point conversion and the horizon test; directions are labeled
+  direct/converse.
+- **Events** — DST-gap midnights are resolved for sun times and planetary
+  hours; eclipse/lunation backend errors now raise instead of silently
+  truncating the scan; BCE timestamps fixed; lunation range parsing accepts
+  lowercase-`t` ISO strings.
+- **Zodiacal releasing** — peak periods are measured from the Lot of Fortune
+  for all released lots.
+- **Core** — an out-of-range Sun or Moon raises `KerykeionException` instead of
+  silently degrading the subject (note: bulk scans such as
+  `EphemerisDataFactory` ranges now fail loudly at the first out-of-range step
+  rather than yielding partially gutted subjects); Julian conversions use the
+  proleptic Gregorian calendar (pre-1582 dates round-trip); star names passed
+  to `active_points` redirect to `active_fixed_stars` with a warning;
+  `from_current_time` gains the v6 calc flags and an altitude parameter;
+  offset-less ISO timestamps are treated as UTC.
+
+### Changed
+
+- **Thread safety** — a shared `ephemeris_session` context manager in
+  `kerykeion.ephemeris_backend` now serializes ephemeris access for all
+  factories; `swe.close()` is never called directly, and the pinned
+  libephemeris calc mode survives session resets.
+
+### Changed (breaking — alpha channel)
+
+- **`NatalAspectsModel` / `SynastryAspectsModel` removed** (retroactive note:
+  these v5 aliases of `SingleChartAspectsModel` / `DualChartAspectsModel` were
+  dropped earlier in the v6 alpha line without a changelog entry). Use
+  `SingleChartAspectsModel` / `DualChartAspectsModel` instead.
+
+### Packaging
+
+- **`libephemeris` installed from PyPI** — the local-path `[tool.uv.sources]`
+  entry is gone and the pin is relaxed to `>=2.0.2,<3.0.0`.
+- **CI workflow added** (`.github/workflows/ci.yml`) — uv-based offline
+  base-tier test matrix on Python 3.12 / 3.13 / 3.14, plus a wheel build and
+  isolated smoke-import job.
+
 ## 6.0.0a54
 
 _2026-06-05_

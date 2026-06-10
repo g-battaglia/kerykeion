@@ -455,7 +455,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a52"
+version = "6.0.0a54"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -470,7 +470,6 @@ dependencies = [
 
 [package.optional-dependencies]
 all = [
-    { name = "libephemeris" },
     { name = "pyswisseph" },
 ]
 swiss = [
@@ -496,8 +495,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "libephemeris", editable = "../libephemeris" },
-    { name = "libephemeris", marker = "extra == 'all'", editable = "../libephemeris" },
+    { name = "libephemeris", specifier = ">=2.0.2,<3.0.0" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'all'", specifier = ">=2.10.3.1" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -547,7 +545,7 @@ wheels = [
 [[package]]
 name = "libephemeris"
 version = "2.0.2"
-source = { editable = "../libephemeris" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astroquery" },
     { name = "certifi" },
@@ -557,44 +555,10 @@ dependencies = [
     { name = "skyfield-data" },
     { name = "zstandard" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "assist", marker = "extra == 'all'", specifier = ">=1.1.0" },
-    { name = "assist", marker = "extra == 'nbody'", specifier = ">=1.1.0" },
-    { name = "astropy", marker = "extra == 'all'", specifier = ">=5.0.0" },
-    { name = "astropy", marker = "extra == 'dev'", specifier = ">=5.0.0" },
-    { name = "astropy", marker = "extra == 'stars'", specifier = ">=5.0.0" },
-    { name = "astroquery", specifier = ">=0.4.7" },
-    { name = "black", marker = "extra == 'dev'", specifier = ">=25.1.0" },
-    { name = "build", marker = "extra == 'dev'", specifier = ">=1.0.0" },
-    { name = "certifi" },
-    { name = "click", specifier = ">=8.0" },
-    { name = "ebooklib", marker = "extra == 'dev'", specifier = ">=0.20" },
-    { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "markdown", marker = "extra == 'dev'", specifier = ">=3.7" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
-    { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=2.0.0" },
-    { name = "poethepoet", marker = "extra == 'dev'", specifier = ">=0.37.0,<0.38.0" },
-    { name = "pyerfa", specifier = ">=2.0.0" },
-    { name = "pyswisseph", marker = "extra == 'dev'", specifier = ">=2.10.3.2" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0,<9.0.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "pytest-sugar", marker = "extra == 'dev'", specifier = ">=1.1.1" },
-    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.5.0" },
-    { name = "pyyaml", marker = "extra == 'dev'", specifier = ">=6.0" },
-    { name = "rebound", marker = "extra == 'all'", specifier = ">=4.0.0" },
-    { name = "rebound", marker = "extra == 'nbody'", specifier = ">=4.0.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.14.6" },
-    { name = "skyfield", specifier = ">=1.54" },
-    { name = "skyfield-data", specifier = ">=7.0.0" },
-    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=7.0.0" },
-    { name = "sphinx-rtd-theme", marker = "extra == 'docs'", specifier = ">=2.0.0" },
-    { name = "spiceypy", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "twine", marker = "extra == 'dev'", specifier = ">=5.0.0" },
-    { name = "zstandard", specifier = ">=0.22.0" },
+sdist = { url = "https://files.pythonhosted.org/packages/fe/24/eaf9fc29f9a0b5b0f2934b56c5c119db81d913d45dabbbab41e79550e65e/libephemeris-2.0.2.tar.gz", hash = "sha256:eb2b961a0f3691388b4d6f02c42a71d98375033f59545c90d4e1ba48a235a647", size = 12424831, upload-time = "2026-06-03T12:57:00.584Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2d/1a/f5a26cee3f1d1cf3185453616e7255b69db07936a895cbb34810401ad88b/libephemeris-2.0.2-py3-none-any.whl", hash = "sha256:f2be3c4fc8a418bcfac397cf4823e4982433b9b5e845610193dd9d8d04d7e30d", size = 12472200, upload-time = "2026-06-03T12:56:56.894Z" },
 ]
-provides-extras = ["stars", "nbody", "all", "dev", "docs"]
 
 [[package]]
 name = "librt"
