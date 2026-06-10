@@ -6,7 +6,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 import logging
 from typing import Any, Mapping, Sequence, Union, List, Optional
 
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, OPPOSITE_PAIRS
 from kerykeion.aspects.aspects_utils import (
     get_aspect_from_two_points,
     get_active_points_list,
@@ -39,6 +39,17 @@ AXES_LIST = [
     "Descendant",
     "Imum_Coeli",
 ]
+
+# Geometrically locked opposite pairs, derived from the subject factory's
+# OPPOSITE_PAIRS mapping (each derived point is rigidly primary + 180°).
+# Within a single chart, any longitudinal aspect between such a pair is an
+# artifact (a permanent 0.0-orb opposition), and their shared/mirrored
+# declinations likewise produce a permanent parallel or contra-parallel —
+# so both calculation paths skip these pairs. Cross-chart pairs (synastry,
+# transits, ...) remain meaningful and are NOT skipped.
+GEOMETRIC_OPPOSITE_PAIRS: frozenset = frozenset(
+    frozenset((derived, config["primary"])) for derived, config in OPPOSITE_PAIRS.items()
+)
 
 
 class AspectsFactory:
@@ -106,6 +117,17 @@ class AspectsFactory:
         Returns:
             SingleChartAspectsModel containing all calculated aspects data
 
+        Note:
+            Luminary orbs differ between entry points: this method applies NO
+            per-point orb widening by default (``point_orb_adjustments=None``),
+            while ``ChartDataFactory`` natal-family charts (natal, synastry,
+            composite) default to ``DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS``
+            (Sun/Moon +1.5°). The same chart can therefore yield different
+            aspect lists depending on the entry point. To reproduce
+            ``ChartDataFactory`` output, pass
+            ``point_orb_adjustments=DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS``
+            (from ``kerykeion.settings.config_constants``).
+
         Example:
             >>> johnny = AstrologicalSubjectFactory.from_birth_data("Johnny", 1963, 6, 9, 0, 0, "Owensboro", "US")
             >>> chart_aspects = AspectsFactory.single_chart_aspects(johnny)
@@ -137,18 +159,18 @@ class AspectsFactory:
             n for n in dynamic_star_names if n not in subject.active_points
         ]
         if active_points is None:
+            # Default: catalog fixed stars carried on the subject participate
+            # automatically (subject_active already includes them above).
             active_points_resolved = subject_active
         else:
+            # The caller's restriction governs the regular points channel.
+            # Stars are a separate channel — opted into per-subject via
+            # active_fixed_stars at construction — so the subject's own stars
+            # always participate; star–star pairs are skipped downstream.
             active_points_resolved = find_common_active_points(
                 subject_active,
-                active_points,
+                list(active_points) + [n for n in dynamic_star_names if n not in active_points],
             )
-            # v6: catalog fixed stars carried on the subject always participate
-            # in aspect calculation, even when the caller restricted active_points
-            # to planets only — they are a different conceptual channel.
-            for name in dynamic_star_names:
-                if name not in active_points_resolved:
-                    active_points_resolved.append(name)
 
         return AspectsFactory._create_single_chart_aspects_model(
             subject,
@@ -159,6 +181,7 @@ class AspectsFactory:
             celestial_points,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
+            star_names=frozenset(dynamic_star_names),
         )
 
     @staticmethod
@@ -201,6 +224,17 @@ class AspectsFactory:
         Returns:
             DualChartAspectsModel: Complete model containing all calculated aspects data,
                                   including both comprehensive and filtered relevant aspects.
+
+        Note:
+            Luminary orbs differ between entry points: this method applies NO
+            per-point orb widening by default (``point_orb_adjustments=None``),
+            while ``ChartDataFactory`` natal-family charts (natal, synastry,
+            composite) default to ``DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS``
+            (Sun/Moon +1.5°). The same chart pair can therefore yield different
+            aspect lists depending on the entry point. To reproduce
+            ``ChartDataFactory`` output, pass
+            ``point_orb_adjustments=DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS``
+            (from ``kerykeion.settings.config_constants``).
 
         Example:
             >>> john = AstrologicalSubjectFactory.from_birth_data("John", 1990, 1, 1, 12, 0, "London", "GB")
@@ -252,8 +286,11 @@ class AspectsFactory:
             active_points_resolved,
         )
 
-        # v6: catalog fixed stars from either subject always participate
-        # (separate channel, not gated by active_points).
+        # v6: catalog fixed stars from either subject participate regardless of
+        # the active_points restriction (re-append the union after the
+        # intersections). Stars are a separate channel — opted into per-subject
+        # via active_fixed_stars at construction — and star–star pairs are
+        # skipped downstream, so only star–planet aspects emerge.
         for name in dynamic_star_names:
             if name not in active_points_resolved:
                 active_points_resolved.append(name)
@@ -270,6 +307,7 @@ class AspectsFactory:
             second_subject_is_fixed=second_subject_is_fixed,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
+            star_names=frozenset(dynamic_star_names),
         )
 
     @staticmethod
@@ -282,6 +320,7 @@ class AspectsFactory:
         celestial_points: Sequence[Mapping[str, Any]],
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
+        star_names: frozenset = frozenset(),
     ) -> SingleChartAspectsModel:
         """
         Create the complete single chart aspects model with all calculations.
@@ -297,6 +336,7 @@ class AspectsFactory:
             celestial_points,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
+            star_names=star_names,
         )
         filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
@@ -324,6 +364,7 @@ class AspectsFactory:
         second_subject_is_fixed: bool,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
+        star_names: frozenset = frozenset(),
     ) -> DualChartAspectsModel:
         """
         Create the complete dual chart aspects model with all calculations.
@@ -336,6 +377,7 @@ class AspectsFactory:
             aspects_settings: Chart aspect configuration settings
             axis_orb_limit: Orb threshold for chart axes
             celestial_points: Celestial points configuration
+            star_names: Names of catalog fixed stars (star-star pairs are skipped)
 
         Returns:
             DualChartAspectsModel: Complete model containing filtered aspects data
@@ -351,6 +393,7 @@ class AspectsFactory:
             second_subject_is_fixed=second_subject_is_fixed,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
+            star_names=star_names,
         )
         filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
@@ -375,6 +418,7 @@ class AspectsFactory:
         celestial_points: Sequence[Mapping[str, Any]],
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
+        star_names: frozenset = frozenset(),
     ) -> List[AspectModel]:
         """
         Calculate all aspects within a single chart.
@@ -398,18 +442,6 @@ class AspectsFactory:
         # Create a lookup dictionary for planet IDs to optimize performance
         planet_id_lookup = {planet["name"]: planet["id"] for planet in celestial_points}
 
-        # Define opposite pairs that should be skipped for single chart aspects
-        opposite_pairs = {
-            ("Ascendant", "Descendant"),
-            ("Descendant", "Ascendant"),
-            ("Medium_Coeli", "Imum_Coeli"),
-            ("Imum_Coeli", "Medium_Coeli"),
-            ("True_North_Lunar_Node", "True_South_Lunar_Node"),
-            ("Mean_North_Lunar_Node", "Mean_South_Lunar_Node"),
-            ("True_South_Lunar_Node", "True_North_Lunar_Node"),
-            ("Mean_South_Lunar_Node", "Mean_North_Lunar_Node"),
-        }
-
         all_aspects_list = []
         n_points = len(active_points_list)
 
@@ -418,13 +450,22 @@ class AspectsFactory:
             first_abs_pos = first_point["abs_pos"]
             first_speed = first_point.get("speed") or 0.0
             first_in_axes = first_name in AXES_LIST
+            first_is_star = first_name in star_names
             # Generate aspects list without repetitions (single chart - same chart)
             for second_idx in range(first_idx + 1, n_points):
                 second_point = active_points_list[second_idx]
                 second_name = second_point["name"]
 
-                # Skip predefined opposite pairs (AC/DC, MC/IC, North/South nodes)
-                if (first_name, second_name) in opposite_pairs:
+                # Skip geometrically locked opposite pairs (AC/DC, MC/IC,
+                # N/S nodes, Vertex/Anti-Vertex, Lilith/Priapus): the derived
+                # point sits at primary + 180° by construction, so the pair
+                # would always report a fake 0.0-orb opposition.
+                if frozenset((first_name, second_name)) in GEOMETRIC_OPPOSITE_PAIRS:
+                    continue
+
+                # Skip star-star pairs: fixed stars are mutually static, so
+                # any aspect between two stars is identical in every chart.
+                if first_is_star and second_name in star_names:
                     continue
 
                 second_abs_pos = second_point["abs_pos"]
@@ -495,6 +536,7 @@ class AspectsFactory:
         second_subject_is_fixed: bool,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
+        star_names: frozenset = frozenset(),
     ) -> List[AspectModel]:
         """
         Calculate all aspects between two charts.
@@ -511,6 +553,7 @@ class AspectsFactory:
             active_aspects: List of aspect types with their orb settings
             aspects_settings: Base aspect configuration settings
             celestial_points: Celestial points configuration with IDs
+            star_names: Names of catalog fixed stars (star-star pairs are skipped)
 
         Returns:
             List[AspectModel]: Complete list of all calculated aspect instances
@@ -531,9 +574,18 @@ class AspectsFactory:
             # Read the point name before the inner loop so the orb resolver
             # can use it (the name was previously read only after the verdict).
             first_name = first_active_points_list[first]["name"]
+            first_is_star = first_name in star_names
             # Generate aspects list between all points of first and second subjects
             for second in range(len(second_active_points_list)):
                 second_name = second_active_points_list[second]["name"]
+
+                # Skip star-star pairs: fixed stars are mutually static, so a
+                # cross-chart star-star aspect carries no information (the
+                # worst case being same-name pairs like Regulus-Regulus at
+                # precession-drift orb in every synastry/transit chart).
+                if first_is_star and second_name in star_names:
+                    continue
+
                 extra_orb = resolve_pair_orb_adjustment(
                     first_name,
                     second_name,
@@ -625,6 +677,27 @@ class AspectsFactory:
                 aspect_setting_copy = dict(aspect_setting)  # Don't modify original
                 aspect_setting_copy["orb"] = orb
                 filtered_settings.append(aspect_setting_copy)
+
+        # Warn about active aspect names that have no matching settings entry:
+        # they would otherwise be silently dropped from the calculation.
+        known_names = {aspect_setting["name"] for aspect_setting in aspects_settings}
+        unknown_names = [name for name in active_orbs if name not in known_names]
+        if unknown_names:
+            declination_names = [n for n in unknown_names if n in ("parallel", "contra_parallel")]
+            if declination_names:
+                logger.warning(
+                    "Declination aspects %s are not handled by the longitudinal aspect "
+                    "methods and were ignored; use single_chart_declination_aspects() / "
+                    "dual_chart_declination_aspects() instead.",
+                    declination_names,
+                )
+            other_names = [n for n in unknown_names if n not in declination_names]
+            if other_names:
+                logger.warning(
+                    "Unknown active aspect names %s are not present in the chart aspect "
+                    "settings and were ignored.",
+                    other_names,
+                )
         return filtered_settings
 
     @staticmethod
@@ -740,6 +813,9 @@ class AspectsFactory:
         """
         # v6: extend points_to_use and celestial_points with subject.fixed_stars
         # so catalog stars participate in parallel/contra-parallel aspects too.
+        # As in the longitudinal methods, stars are a separate channel and
+        # always participate (the active_points restriction governs only the
+        # regular points); star–star pairs are skipped downstream.
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
 
         points_to_use = active_points if active_points is not None else subject.active_points
@@ -752,13 +828,24 @@ class AspectsFactory:
             celestial_points = celestial_points + build_dynamic_fixed_star_settings(
                 dynamic_star_names, existing_settings=celestial_points
             )
+            # Stars are a separate channel (per-subject opt-in via
+            # active_fixed_stars); they participate regardless of the
+            # active_points restriction. Star–star pairs are skipped in
+            # _compute_declination_aspects.
             points_to_use = list(points_to_use) + [
                 n for n in dynamic_star_names if n not in points_to_use
             ]
         points_list = get_active_points_list(subject, points_to_use, celestial_points=celestial_points)
 
         return AspectsFactory._compute_declination_aspects(
-            points_list, points_list, subject.name, subject.name, orb, single_chart=True
+            points_list,
+            points_list,
+            subject.name,
+            subject.name,
+            orb,
+            single_chart=True,
+            celestial_points=celestial_points,
+            star_names=frozenset(dynamic_star_names),
         )
 
     @staticmethod
@@ -804,7 +891,14 @@ class AspectsFactory:
         list2 = get_active_points_list(second_subject, pts2, celestial_points=celestial_points)
 
         return AspectsFactory._compute_declination_aspects(
-            list1, list2, first_subject.name, second_subject.name, orb, single_chart=False
+            list1,
+            list2,
+            first_subject.name,
+            second_subject.name,
+            orb,
+            single_chart=False,
+            celestial_points=celestial_points,
+            star_names=frozenset(dynamic_star_names),
         )
 
     @staticmethod
@@ -816,12 +910,22 @@ class AspectsFactory:
         orb: float,
         *,
         single_chart: bool,
+        celestial_points: Optional[list] = None,
+        star_names: frozenset = frozenset(),
     ) -> List[AspectModel]:
         """
         Core declination aspect computation shared by single and dual chart methods.
+
+        Args:
+            celestial_points: Extended settings list (including dynamic fixed-star
+                entries) used for p1/p2 id lookup; defaults to the static settings.
+            star_names: Names of catalog fixed stars. Star–star pairs are skipped:
+                stars are mutually static, so any star–star parallel is identical
+                in every chart and carries no information.
         """
         aspects: List[AspectModel] = []
-        planet_id_lookup = {p["name"]: p["id"] for p in DEFAULT_CELESTIAL_POINTS_SETTINGS}
+        id_source = celestial_points if celestial_points is not None else DEFAULT_CELESTIAL_POINTS_SETTINGS
+        planet_id_lookup = {p["name"]: p["id"] for p in id_source}
 
         for i, pa in enumerate(points_a):
             start_j = i + 1 if single_chart else 0
@@ -835,6 +939,20 @@ class AspectsFactory:
 
                 name_a = pa["name"] if isinstance(pa, dict) else pa.name
                 name_b = pb["name"] if isinstance(pb, dict) else pb.name
+
+                # Geometrically derived opposite pairs (Vertex/Anti-Vertex,
+                # node axes, Lilith/Priapus) have rigidly mirrored declinations:
+                # their contra-parallel is a construction artifact, not an
+                # aspect. Same-chart only — cross-chart pairs (synastry,
+                # transits) are independent points and remain meaningful.
+                if single_chart and frozenset((name_a, name_b)) in GEOMETRIC_OPPOSITE_PAIRS:
+                    continue
+
+                # Star–star pairs: fixed stars barely move relative to each
+                # other, so these "aspects" are constants across all charts.
+                if name_a in star_names and name_b in star_names:
+                    continue
+
                 abs_pos_a = pa["abs_pos"] if isinstance(pa, dict) else pa.abs_pos
                 abs_pos_b = pb["abs_pos"] if isinstance(pb, dict) else pb.abs_pos
 

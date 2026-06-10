@@ -14,19 +14,24 @@ T = TypeVar("T")
 
 _SENTINEL = object()
 
-# Cache for the common case (no overrides) — avoids a deepcopy of the entire
-# LANGUAGE_SETTINGS dict on every ChartDrawer construction.
+# Cache for the common case (no overrides). A fresh deepcopy of the cache is
+# returned on every call so callers can mutate the result freely without
+# poisoning the shared defaults used by later charts.
 _DEFAULT_LANG_CACHE: dict[str, dict[str, Any]] | None = None
 
 
 def load_language_settings(overrides: Optional[Mapping[str, Any]] = None) -> dict[str, dict[str, Any]]:
-    """Return the available language settings merged with optional overrides."""
+    """Return the available language settings merged with optional overrides.
+
+    The returned dict is always an independent copy: mutating it never
+    affects the module-level defaults or subsequent calls.
+    """
     global _DEFAULT_LANG_CACHE
 
     if not overrides:
         if _DEFAULT_LANG_CACHE is None:
             _DEFAULT_LANG_CACHE = deepcopy(LANGUAGE_SETTINGS)
-        return _DEFAULT_LANG_CACHE
+        return deepcopy(_DEFAULT_LANG_CACHE)
 
     languages = deepcopy(LANGUAGE_SETTINGS)
     data = overrides.get("language_settings", overrides)

@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import shutil
 import sys
 import urllib.error
 import urllib.request
@@ -96,31 +97,43 @@ _LICENSE_WARNING = """\
 _DEFAULT_TARGET = Path.home() / ".kerykeion" / "sweph"
 
 
-def _download_file(url: str, dest: Path) -> bool:
+def _download_file(url: str, dest: Path) -> str:
+    """Download *url* to *dest*.
+
+    Returns ``"downloaded"``, ``"exists"`` (already present) or ``"failed"``.
+    The download goes to a temporary ``.part`` file first and is renamed into
+    place only on success, so an interrupted download never leaves a
+    truncated file behind.
+    """
     if dest.exists() and dest.stat().st_size > 0:
         print(f"  skip (exists): {dest.name}")
-        return True
+        return "exists"
+    tmp_dest = dest.with_name(dest.name + ".part")
     try:
         print(f"  downloading:   {dest.name} ... ", end="", flush=True)
-        urllib.request.urlretrieve(url, dest)
+        with urllib.request.urlopen(url, timeout=30) as response:
+            with open(tmp_dest, "wb") as out_file:
+                shutil.copyfileobj(response, out_file)
+        tmp_dest.replace(dest)
         size_kb = dest.stat().st_size / 1024
         print(f"OK ({size_kb:.0f} KB)")
-        return True
+        return "downloaded"
     except (urllib.error.URLError, urllib.error.HTTPError, OSError) as exc:
         print(f"FAILED ({exc})")
-        if dest.exists():
-            dest.unlink()
-        return False
+        if tmp_dest.exists():
+            tmp_dest.unlink()
+        return "failed"
 
 
 def download_swisseph_data(target: Path, *, skip_asteroids: bool = False) -> dict:
     """Download Swiss Ephemeris data files to *target*.
 
-    Returns a dict with 'main' and 'asteroids' lists of downloaded file paths,
-    and 'failed' list of files that could not be downloaded.
+    Returns a dict with 'main' and 'asteroids' lists of newly downloaded file
+    paths, an 'existing' list of files that were already present, and a
+    'failed' list of files that could not be downloaded.
     """
     target.mkdir(parents=True, exist_ok=True)
-    result: dict = {"main": [], "asteroids": [], "failed": []}
+    result: dict = {"main": [], "asteroids": [], "existing": [], "failed": []}
 
     print(f"\nTarget directory: {target}\n")
 
@@ -128,8 +141,11 @@ def download_swisseph_data(target: Path, *, skip_asteroids: bool = False) -> dic
     for name in _MAIN_FILES:
         dest = target / name
         url = f"{_GITHUB_BASE}/{name}"
-        if _download_file(url, dest):
+        status = _download_file(url, dest)
+        if status == "downloaded":
             result["main"].append(str(dest))
+        elif status == "exists":
+            result["existing"].append(str(dest))
         else:
             result["failed"].append(name)
 
@@ -143,7 +159,7 @@ def download_swisseph_data(target: Path, *, skip_asteroids: bool = False) -> dic
         dest = target / subdir / name
         if dest.exists() and dest.stat().st_size > 0:
             existing.append(f"{subdir}/{name}")
-            result["asteroids"].append(str(dest))
+            result["existing"].append(str(dest))
     if existing:
         for f in existing:
             print(f"  found:         {f}")
@@ -193,15 +209,16 @@ def main() -> None:
 
     result = download_swisseph_data(args.target, skip_asteroids=args.skip_asteroids)
 
-    main_ok = len(result["main"])
-    ast_ok = len(result["asteroids"])
+    downloaded = len(result["main"]) + len(result["asteroids"])
+    existing = len(result["existing"])
     failed = len(result["failed"])
 
     print(f"\n{'='*60}")
-    print(f"Downloaded: {main_ok} main files, {ast_ok} asteroid files")
+    print(f"Downloaded:     {downloaded} files")
+    print(f"Found existing: {existing} files")
     if failed:
-        print(f"Failed:     {failed} files")
-    print(f"Location:   {args.target}")
+        print(f"Failed:         {failed} files")
+    print(f"Location:       {args.target}")
 
     print("\nTo use the swisseph backend, set these environment variables:\n")
     print("  export KERYKEION_BACKEND=swisseph")

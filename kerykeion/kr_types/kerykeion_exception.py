@@ -11,7 +11,7 @@ Please update your imports:
 import warnings
 
 warnings.warn(
-    "The 'kerykeion.kr_types.kerykeion_exception' module is deprecated and will be removed in v6.0. "
+    "The 'kerykeion.kr_types.kerykeion_exception' module is deprecated and will be removed in a future release. "
     "Please update your imports to use 'kerykeion.schemas.kerykeion_exception' instead.",
     DeprecationWarning,
     stacklevel=2,

@@ -436,7 +436,7 @@ DEFAULT_ACTIVE_ASPECTS: list[ActiveAspect] = [
 ]
 """
 Default active aspects for natal and synastry charts.
-Base orb 6° for the four major aspects, 5° for sextile, 2° for quintile —
+Base orb 6° for the four major aspects, 5° for sextile —
 the orb values used by mainstream online astrology calculators. Luminary
 widening is applied separately via point orb adjustments; use 8° orbs if you
 need that behaviour without per-planet logic.

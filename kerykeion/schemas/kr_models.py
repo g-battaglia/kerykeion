@@ -814,13 +814,15 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     )
 
     # Active Midpoints (v6 -- sensitive points selected by the user)
-    # Pairwise midpoints requested via the ``active_midpoints`` parameter
-    # (e.g. ``["Sun_Moon", "Sun_Mercury"]``) materialize here as
-    # KerykeionPointModel entries with ``point_type='Midpoint'`` so the
-    # chart drawer can render them like any other active point.
+    # Populated via the MidpointFactory workflow:
+    #   ``MidpointFactory.compute_active_midpoint_points(subject, ["Sun_Moon", ...])``
+    # then assigned to this field. The entries are KerykeionPointModel
+    # objects with ``point_type='Midpoint'`` so the chart drawer can render
+    # them like any other active point.
     active_midpoints: list[KerykeionPointModel] = Field(
         default_factory=list,
-        description="Pairwise midpoints requested via the ``active_midpoints`` parameter. "
+        description="Pairwise midpoints computed via "
+        "``MidpointFactory.compute_active_midpoint_points`` and assigned to the subject. "
         "Each entry is a synthetic point on the shorter arc between two natal points; "
         "``point_type='Midpoint'`` and ``name`` follows the ``A_B_Midpoint`` convention.",
     )
@@ -970,11 +972,14 @@ class PlanetReturnModel(AstrologicalBaseModel):
     returns (monthly) are the most commonly used.
 
     Attributes:
-        return_type: Type of return - 'Solar' or 'Lunar'.
+        return_type: Type of return - 'Solar', 'Lunar', 'Heliocentric' or
+            'Lunar_Node_Crossing'.
     """
 
     # Specific return data
-    return_type: ReturnType = Field(description="Type of return: Solar or Lunar")
+    return_type: ReturnType = Field(
+        description="Type of return: Solar, Lunar, Heliocentric or Lunar_Node_Crossing"
+    )
 
 
 class EphemerisDictModel(SubscriptableBaseModel):
@@ -1202,12 +1207,22 @@ class TransitEventModel(SubscriptableBaseModel):
     p1_name: str = Field(description="Transit planet name")
     p2_name: str = Field(description="Natal planet name")
     aspect: str = Field(description="Aspect name (e.g. 'conjunction')")
-    applying_start: Optional[str] = Field(default=None, description="ISO datetime when aspect starts applying")
+    applying_start: Optional[str] = Field(
+        default=None,
+        description="ISO datetime of the first in-orb sample. None when the applying phase "
+        "falls outside the analysed range (event truncated at the range start).",
+    )
     exact_moment: str = Field(description="ISO datetime of closest approach (minimum orb)")
-    separating_end: Optional[str] = Field(default=None, description="ISO datetime when aspect finishes separating")
+    separating_end: Optional[str] = Field(
+        default=None,
+        description="ISO datetime of the last in-orb sample. None when the separating phase "
+        "falls outside the analysed range (event truncated at the range end).",
+    )
     min_orb: float = Field(description="Minimum orb reached at exact_moment (degrees)")
     orb_rate: Optional[float] = Field(
-        default=None, description="Rate of orb change at exact moment (degrees per 2 steps)"
+        default=None,
+        description="Rate of orb change right after the exact moment (degrees per day). "
+        "None when the exact moment is the last in-orb sample.",
     )
 
 
@@ -1595,8 +1610,10 @@ class ZRPeriodModel(SubscriptableBaseModel):
         end: End date (ISO ``YYYY-MM-DD``).
         years: Nominal length in years at this level (the sign's general years
             divided by ``12 ** (level - 1)``).
-        is_angular: ``True`` when the sign is angular from the lot (1st/4th/7th/
-            10th) — the peak periods.
+        is_angular: ``True`` when the sign is angular from the natal Lot of
+            Fortune (1st/4th/7th/10th from Fortune) — the peak periods. Per
+            Hellenistic doctrine the angularity reference is Fortune for every
+            released lot, including Spirit.
         is_loosing_the_bond: ``True`` when this period begins after a "loosing of
             the bond" jump to the opposite sign.
         subperiods: Nested sub-periods one level deeper (possibly empty).
