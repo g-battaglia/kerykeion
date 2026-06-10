@@ -23,7 +23,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, EPHEMERIS_LOCK
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
@@ -33,8 +33,6 @@ from kerykeion.utilities import (
 from pydantic import Field
 
 logger = logging.getLogger(__name__)
-
-_EPHE_PATH = EPHE_DATA_PATH
 
 # Default set: Sun..Pluto. The Moon is opt-in — ~13 ingresses/month is noise for
 # most use cases — but accepted when explicitly requested. Names match
@@ -228,17 +226,14 @@ class SignIngressFactory:
         ingresses: List[IngressModel] = []
         if end_jd > start_jd and bodies:
             _ensure_scannable(start_jd, end_jd)
-            # Hold the lock across the whole scan: set_ephe_path / calc_ut / close
-            # mutate process-global backend state shared with chart calculations.
-            with EPHEMERIS_LOCK:
-                swe.set_ephe_path(_EPHE_PATH)
-                try:
-                    for name, body in bodies:
-                        ingresses.extend(
-                            SignIngressFactory._scan_planet(name, body, start_jd, end_jd)
-                        )
-                finally:
-                    swe.close()
+            # The session holds the ephemeris lock across the whole scan (calc_ut
+            # reads process-global backend state shared with chart calculations)
+            # and resets that state on exit without degrading the backend.
+            with ephemeris_session():
+                for name, body in bodies:
+                    ingresses.extend(
+                        SignIngressFactory._scan_planet(name, body, start_jd, end_jd)
+                    )
             ingresses.sort(key=lambda i: i.julian_day)
 
         return SignIngressesCollectionModel(

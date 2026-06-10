@@ -16,15 +16,20 @@ from __future__ import annotations
 import logging
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import get_kerykeion_point_from_degree
 from pydantic import Field
 
 logger = logging.getLogger(__name__)
 
-_EPHE_PATH = EPHE_DATA_PATH
+# Backstop on events per type per search. Each event is found with a single
+# backend call, so this still allows centuries of coverage; absurd requests are
+# rejected upfront (like the range factories' ``_ensure_scannable``) rather
+# than left to fail mid-scan or silently truncate.
+_MAX_COUNT = 1_000
 
 # Eclipse type constants (handle SE_ prefix variance across pyswisseph builds)
 ECL_TOTAL = getattr(swe, "SE_ECL_TOTAL", getattr(swe, "ECL_TOTAL", 4))
@@ -35,14 +40,44 @@ ECL_ANNULAR_TOTAL = getattr(swe, "SE_ECL_ANNULAR_TOTAL", getattr(swe, "ECL_ANNUL
 
 
 def _jd_to_iso(jd: float) -> str:
-    """Convert Julian Day to ISO 8601 string."""
-    try:
-        year, month, day, hour_frac = swe.revjul(jd)
-        hours = int(hour_frac)
-        minutes = int((hour_frac - hours) * 60)
-        return f"{year:04d}-{month:02d}-{day:02d}T{hours:02d}:{minutes:02d}:00Z"
-    except Exception:
-        return ""
+    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
+
+    Uses ``swe.revjul`` rather than Python ``datetime`` (limited to years
+    1..9999) so the BCE range Kerykeion supports formats correctly, with an
+    extended-year sign for negative years.
+    """
+    year, month, day, hour_frac = swe.revjul(jd)
+    secs = min(int(hour_frac * 3600 + 0.5), 86399)  # nearest second, no 24:00 carry
+    hours, rem = divmod(secs, 3600)
+    minutes, seconds = divmod(rem, 60)
+    year_str = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
+    return f"{year_str}-{month:02d}-{day:02d}T{hours:02d}:{minutes:02d}:{seconds:02d}Z"
+
+
+def _ensure_scannable(count: int) -> None:
+    """Reject absurd event counts upfront, so a caller never receives a
+    silently truncated result and never waits on a scan that cannot finish."""
+    if count > _MAX_COUNT:
+        raise ValueError(
+            f"count too large (> {_MAX_COUNT} events per eclipse type). "
+            f"Request fewer events per search."
+        )
+
+
+def _search_failure(kind: str, jd: float, exc: Exception) -> KerykeionException:
+    """Build the exception raised when the backend fails mid-scan.
+
+    A failing eclipse primitive call must abort the search: logging and
+    returning the events found so far would silently truncate a result that
+    still claims full coverage. The most common cause is a search that walked
+    past the edge of the available ephemeris data.
+    """
+    return KerykeionException(
+        f"{kind} eclipse search failed at JD {jd:.5f}: {exc}. "
+        f"This usually means the search reached a date outside the available "
+        f"ephemeris range; use a start_year/count combination covered by the "
+        f"installed ephemeris data."
+    )
 
 
 def _classify_solar_eclipse(retflags: int) -> str:
@@ -147,8 +182,8 @@ class SolarEclipseModel(SubscriptableBaseModel):
     type: str = Field(description="Eclipse type: total, annular, partial, annular-total")
     maximum_jd: float = Field(description="Julian Day of maximum eclipse")
     datestamp: str = Field(description="ISO 8601 formatted datetime of maximum")
-    magnitude: float = Field(description="Fraction of solar diameter covered")
-    obscuration: float = Field(description="Fraction of solar disk area covered")
+    magnitude: Optional[float] = Field(default=None, description="Fraction of solar diameter covered; None for global searches, populated for local searches")
+    obscuration: Optional[float] = Field(default=None, description="Fraction of solar disk area covered; None for global searches, populated for local searches")
     sun_altitude: Optional[float] = Field(default=None, description="Sun altitude at maximum (degrees)")
     # Zodiac position of the eclipse (Sun/Moon conjunction longitude at maximum).
     ecliptic_longitude: Optional[float] = Field(default=None, description="Ecliptic longitude at maximum (0-360)")
@@ -221,15 +256,25 @@ class EclipseFactory:
 
         Returns:
             EclipseSearchResultModel with solar and lunar eclipses.
+
+        Raises:
+            KerykeionException: If the ephemeris backend fails mid-search (most
+                often a date outside the available ephemeris range); the search
+                never returns silently truncated results.
+            ValueError: If ``count`` exceeds the supported maximum.
         """
-        swe.set_ephe_path(_EPHE_PATH)
+        _ensure_scannable(count)
         geopos = (lng, lat, 0.0)
         start_jd = swe.julday(start_year, 1, 1, 0.0)
 
-        solar_eclipses = EclipseFactory._find_solar_local(start_jd, geopos, count)
-        lunar_eclipses = EclipseFactory._find_lunar_local(start_jd, geopos, count)
+        # The session holds the ephemeris lock across the whole scan (the
+        # eclipse primitives read process-global backend state shared with
+        # chart calculations) and resets that state on exit without degrading
+        # the backend.
+        with ephemeris_session():
+            solar_eclipses = EclipseFactory._find_solar_local(start_jd, geopos, count)
+            lunar_eclipses = EclipseFactory._find_lunar_local(start_jd, geopos, count)
 
-        swe.close()
         return EclipseSearchResultModel(
             solar_eclipses=solar_eclipses,
             lunar_eclipses=lunar_eclipses,
@@ -249,15 +294,23 @@ class EclipseFactory:
             count: Number of each type to find.
 
         Returns:
-            EclipseSearchResultModel with solar and lunar eclipses.
+            EclipseSearchResultModel with solar and lunar eclipses. Global
+            results carry ``magnitude``/``obscuration`` as ``None`` (they are
+            observer-dependent quantities; use a local search to obtain them).
+
+        Raises:
+            KerykeionException: If the ephemeris backend fails mid-search (most
+                often a date outside the available ephemeris range); the search
+                never returns silently truncated results.
+            ValueError: If ``count`` exceeds the supported maximum.
         """
-        swe.set_ephe_path(_EPHE_PATH)
+        _ensure_scannable(count)
         start_jd = swe.julday(start_year, 1, 1, 0.0)
 
-        solar_eclipses = EclipseFactory._find_solar_global(start_jd, count)
-        lunar_eclipses = EclipseFactory._find_lunar_global(start_jd, count)
+        with ephemeris_session():
+            solar_eclipses = EclipseFactory._find_solar_global(start_jd, count)
+            lunar_eclipses = EclipseFactory._find_lunar_global(start_jd, count)
 
-        swe.close()
         return EclipseSearchResultModel(
             solar_eclipses=solar_eclipses,
             lunar_eclipses=lunar_eclipses,
@@ -271,26 +324,28 @@ class EclipseFactory:
         for _ in range(count):
             try:
                 retflags, tret, attr = swe.sol_eclipse_when_loc(jd, geopos, swe.FLG_SWIEPH)
-                if tret[0] == 0.0:
-                    break
-                max_jd = tret[0]
-                results.append(SolarEclipseModel(
-                    type=_classify_solar_eclipse(retflags),
-                    maximum_jd=max_jd,
-                    datestamp=_jd_to_iso(max_jd),
-                    magnitude=round(attr[0], 6) if len(attr) > 0 else 0.0,
-                    obscuration=round(attr[2], 6) if len(attr) > 2 else 0.0,
-                    sun_altitude=round(attr[5], 4) if len(attr) > 5 else None,
-                    **_zodiac_fields(max_jd, swe.SUN, "Sun"),
-                    **_saros_inex(max_jd, "solar"),
-                    # gamma / duration are global central-line properties; max_jd
-                    # here is the observer's local maximum, so they are omitted
-                    # (the global search reports them from the global maximum).
-                ))
-                jd = max_jd + 10  # Skip ahead
-            except Exception as e:
-                logger.warning(f"Solar eclipse search error: {e}")
+            except Exception as exc:
+                raise _search_failure("Local solar", jd, exc) from exc
+            if tret[0] == 0.0:
+                # Defensive: both backends raise instead of returning a zero JD
+                # when no further eclipse exists; kept as a belt-and-braces
+                # guard against a pathological zero result.
                 break
+            max_jd = tret[0]
+            results.append(SolarEclipseModel(
+                type=_classify_solar_eclipse(retflags),
+                maximum_jd=max_jd,
+                datestamp=_jd_to_iso(max_jd),
+                magnitude=round(attr[0], 6) if len(attr) > 0 else None,
+                obscuration=round(attr[2], 6) if len(attr) > 2 else None,
+                sun_altitude=round(attr[5], 4) if len(attr) > 5 else None,
+                **_zodiac_fields(max_jd, swe.SUN, "Sun"),
+                **_saros_inex(max_jd, "solar"),
+                # gamma / duration are global central-line properties; max_jd
+                # here is the observer's local maximum, so they are omitted
+                # (the global search reports them from the global maximum).
+            ))
+            jd = max_jd + 10  # Skip ahead
         return results
 
     @staticmethod
@@ -301,23 +356,26 @@ class EclipseFactory:
         for _ in range(count):
             try:
                 retflags, tret = swe.sol_eclipse_when_glob(jd, swe.FLG_SWIEPH)
-                if tret[0] == 0.0:
-                    break
-                max_jd = tret[0]
-                results.append(SolarEclipseModel(
-                    type=_classify_solar_eclipse(retflags),
-                    maximum_jd=max_jd,
-                    datestamp=_jd_to_iso(max_jd),
-                    magnitude=0.0,
-                    obscuration=0.0,
-                    **_zodiac_fields(max_jd, swe.SUN, "Sun"),
-                    **_saros_inex(max_jd, "solar"),
-                    **_solar_gamma_duration(max_jd),
-                ))
-                jd = max_jd + 10
-            except Exception as e:
-                logger.warning(f"Global solar eclipse search error: {e}")
+            except Exception as exc:
+                raise _search_failure("Global solar", jd, exc) from exc
+            if tret[0] == 0.0:
+                # Defensive: both backends raise instead of returning a zero JD
+                # when no further eclipse exists; kept as a belt-and-braces
+                # guard against a pathological zero result.
                 break
+            max_jd = tret[0]
+            results.append(SolarEclipseModel(
+                type=_classify_solar_eclipse(retflags),
+                maximum_jd=max_jd,
+                datestamp=_jd_to_iso(max_jd),
+                # magnitude/obscuration are observer-dependent: None in global mode.
+                magnitude=None,
+                obscuration=None,
+                **_zodiac_fields(max_jd, swe.SUN, "Sun"),
+                **_saros_inex(max_jd, "solar"),
+                **_solar_gamma_duration(max_jd),
+            ))
+            jd = max_jd + 10
         return results
 
     @staticmethod
@@ -328,22 +386,24 @@ class EclipseFactory:
         for _ in range(count):
             try:
                 retflags, tret, attr = swe.lun_eclipse_when_loc(jd, geopos, swe.FLG_SWIEPH)
-                if tret[0] == 0.0:
-                    break
-                max_jd = tret[0]
-                results.append(LunarEclipseModel(
-                    type=_classify_lunar_eclipse(retflags),
-                    maximum_jd=max_jd,
-                    datestamp=_jd_to_iso(max_jd),
-                    magnitude_umbral=round(attr[0], 6) if len(attr) > 0 else None,
-                    magnitude_penumbral=round(attr[1], 6) if len(attr) > 1 else None,
-                    **_zodiac_fields(max_jd, swe.MOON, "Moon"),
-                    **_saros_inex(max_jd, "lunar"),
-                ))
-                jd = max_jd + 10
-            except Exception as e:
-                logger.warning(f"Lunar eclipse search error: {e}")
+            except Exception as exc:
+                raise _search_failure("Local lunar", jd, exc) from exc
+            if tret[0] == 0.0:
+                # Defensive: both backends raise instead of returning a zero JD
+                # when no further eclipse exists; kept as a belt-and-braces
+                # guard against a pathological zero result.
                 break
+            max_jd = tret[0]
+            results.append(LunarEclipseModel(
+                type=_classify_lunar_eclipse(retflags),
+                maximum_jd=max_jd,
+                datestamp=_jd_to_iso(max_jd),
+                magnitude_umbral=round(attr[0], 6) if len(attr) > 0 else None,
+                magnitude_penumbral=round(attr[1], 6) if len(attr) > 1 else None,
+                **_zodiac_fields(max_jd, swe.MOON, "Moon"),
+                **_saros_inex(max_jd, "lunar"),
+            ))
+            jd = max_jd + 10
         return results
 
     @staticmethod
@@ -354,18 +414,20 @@ class EclipseFactory:
         for _ in range(count):
             try:
                 retflags, tret = swe.lun_eclipse_when(jd, swe.FLG_SWIEPH, 0)
-                if tret[0] == 0.0:
-                    break
-                max_jd = tret[0]
-                results.append(LunarEclipseModel(
-                    type=_classify_lunar_eclipse(retflags),
-                    maximum_jd=max_jd,
-                    datestamp=_jd_to_iso(max_jd),
-                    **_zodiac_fields(max_jd, swe.MOON, "Moon"),
-                    **_saros_inex(max_jd, "lunar"),
-                ))
-                jd = max_jd + 10
-            except Exception as e:
-                logger.warning(f"Global lunar eclipse search error: {e}")
+            except Exception as exc:
+                raise _search_failure("Global lunar", jd, exc) from exc
+            if tret[0] == 0.0:
+                # Defensive: both backends raise instead of returning a zero JD
+                # when no further eclipse exists; kept as a belt-and-braces
+                # guard against a pathological zero result.
                 break
+            max_jd = tret[0]
+            results.append(LunarEclipseModel(
+                type=_classify_lunar_eclipse(retflags),
+                maximum_jd=max_jd,
+                datestamp=_jd_to_iso(max_jd),
+                **_zodiac_fields(max_jd, swe.MOON, "Moon"),
+                **_saros_inex(max_jd, "lunar"),
+            ))
+            jd = max_jd + 10
         return results

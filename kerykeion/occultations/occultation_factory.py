@@ -30,15 +30,12 @@ License: AGPL-3.0
 """
 
 import logging
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from pydantic import Field
 from typing import List
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
-
-# Set ephemeris path at module load
-swe.set_ephe_path(EPHE_DATA_PATH)
 
 logger = logging.getLogger(__name__)
 
@@ -136,38 +133,38 @@ class OccultationFactory:
         results: List[OccultationModel] = []
         cursor = julian_day
 
-        for _ in range(count):
-            try:
-                retflags, tret = swe.lun_occult_when_glob(
-                    cursor,
-                    planet_id,
-                    swe.FLG_SWIEPH,
-                    0,
-                    False,
-                )
-            except Exception:
-                logger.warning(
-                    "swe.lun_occult_when_glob raised an exception; stopping search.",
-                    exc_info=True,
-                )
-                break
+        with ephemeris_session():
+            for _ in range(count):
+                try:
+                    retflags, tret = swe.lun_occult_when_glob(
+                        cursor,
+                        planet_id,
+                        swe.FLG_SWIEPH,
+                        0,
+                        False,
+                    )
+                except Exception:
+                    logger.warning(
+                        "swe.lun_occult_when_glob raised an exception; stopping search.",
+                        exc_info=True,
+                    )
+                    break
 
-            if retflags == 0 or tret[0] == 0.0:
-                break
+                if retflags == 0 or tret[0] == 0.0:
+                    break
 
-            max_jd = tret[0]
-            results.append(
-                OccultationModel(
-                    planet_name=planet_name,
-                    type=_classify_occultation(retflags),
-                    maximum_jd=max_jd,
-                    datestamp=_jd_to_iso(max_jd),
+                max_jd = tret[0]
+                results.append(
+                    OccultationModel(
+                        planet_name=planet_name,
+                        type=_classify_occultation(retflags),
+                        maximum_jd=max_jd,
+                        datestamp=_jd_to_iso(max_jd),
+                    )
                 )
-            )
-            # Advance past this event for the next iteration.
-            cursor = max_jd + 1.0
+                # Advance past this event for the next iteration.
+                cursor = max_jd + 1.0
 
-        swe.close()
         return results
 
     # ------------------------------------------------------------------
@@ -202,36 +199,36 @@ class OccultationFactory:
         results: List[OccultationModel] = []
         cursor = julian_day
 
-        for _ in range(count):
-            try:
-                retflags, tret, _attr = swe.lun_occult_when_loc(
-                    cursor,
-                    planet_id,
-                    geopos,
-                    swe.FLG_SWIEPH,
-                    False,
-                )
-            except Exception:
-                logger.warning(
-                    "swe.lun_occult_when_loc raised an exception; stopping search.",
-                    exc_info=True,
-                )
-                break
+        with ephemeris_session():
+            for _ in range(count):
+                try:
+                    retflags, tret, _attr = swe.lun_occult_when_loc(
+                        cursor,
+                        planet_id,
+                        geopos,
+                        swe.FLG_SWIEPH,
+                        False,
+                    )
+                except Exception:
+                    logger.warning(
+                        "swe.lun_occult_when_loc raised an exception; stopping search.",
+                        exc_info=True,
+                    )
+                    break
 
-            if retflags == 0 or tret[0] == 0.0:
-                break
+                if retflags == 0 or tret[0] == 0.0:
+                    break
 
-            max_jd = tret[0]
-            results.append(
-                OccultationModel(
-                    planet_name=planet_name,
-                    type=_classify_occultation(retflags),
-                    maximum_jd=max_jd,
-                    datestamp=_jd_to_iso(max_jd),
+                max_jd = tret[0]
+                results.append(
+                    OccultationModel(
+                        planet_name=planet_name,
+                        type=_classify_occultation(retflags),
+                        maximum_jd=max_jd,
+                        datestamp=_jd_to_iso(max_jd),
+                    )
                 )
-            )
-            # Advance past this event for the next iteration.
-            cursor = max_jd + 1.0
+                # Advance past this event for the next iteration.
+                cursor = max_jd + 1.0
 
-        swe.close()
         return results

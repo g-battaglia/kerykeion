@@ -8,8 +8,7 @@ from __future__ import annotations
 from datetime import timezone
 from typing import Optional
 
-from kerykeion.ephemeris_backend import EPHEMERIS_LOCK, swe
-from kerykeion.moon_phase_details.utils import configure_ephemeris_path
+from kerykeion.ephemeris_backend import ephemeris_session, swe
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES, SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import VoidOfCourseAspectModel, VoidOfCourseMoonModel
@@ -17,24 +16,20 @@ from kerykeion.sun_times.utils import localize_datetime, resolve_timezone
 from kerykeion.void_of_course_moon.utils import AspectEvent, compute_void_of_course
 
 
-def _resolve_iflag(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> int:
-    """Build the ephemeris calculation flags for the requested zodiac.
+def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> None:
+    """Validate the zodiac configuration before opening an ephemeris session.
 
-    Also configures the ephemeris path (idempotently) so the engine is
-    self-contained rather than relying on another module having set it.
+    Pure validation — no global ephemeris state is touched here; the session
+    itself configures path and sidereal mode from the validated values.
 
     Raises:
-        KerykeionException: For an unknown ``zodiac_type``/``sidereal_mode``, or a
-            missing ``sidereal_mode`` when a sidereal zodiac is requested.
-
-    Note:
-        This function mutates global ephemeris state (``set_ephe_path``,
-        ``set_sid_mode``). The caller must hold :data:`EPHEMERIS_LOCK`.
+        KerykeionException: For an unknown ``zodiac_type``/``sidereal_mode``, a
+            missing ``sidereal_mode`` when a sidereal zodiac is requested, or the
+            unsupported ``"USER"`` mode.
     """
     if zodiac_type not in ("Tropical", "Sidereal"):
         raise KerykeionException(f"Unknown zodiac_type: {zodiac_type!r} (expected 'Tropical' or 'Sidereal').")
 
-    iflag = configure_ephemeris_path() | swe.FLG_SPEED
     if zodiac_type == "Sidereal":
         if sidereal_mode is None:
             raise KerykeionException("sidereal_mode is required when zodiac_type='Sidereal'.")
@@ -42,12 +37,8 @@ def _resolve_iflag(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode
             raise KerykeionException(
                 "sidereal_mode='USER' requires custom ayanamsha parameters, which VoidOfCourseMoonFactory does not accept."
             )
-        try:
-            swe.set_sid_mode(getattr(swe, f"SIDM_{sidereal_mode}"))
-        except AttributeError as exc:
-            raise KerykeionException(f"Unknown sidereal_mode: {sidereal_mode!r}.") from exc
-        iflag |= swe.FLG_SIDEREAL
-    return iflag
+        if not hasattr(swe, f"SIDM_{sidereal_mode}"):
+            raise KerykeionException(f"Unknown sidereal_mode: {sidereal_mode!r}.")
 
 
 def _to_aspect_model(event: Optional[AspectEvent]) -> Optional[VoidOfCourseAspectModel]:
@@ -127,14 +118,13 @@ class VoidOfCourseMoonFactory:
         """
         tz = resolve_timezone(tz_str)
         moment_utc = localize_datetime(year, month, day, hour, minute, tz=tz).astimezone(timezone.utc)
-        with EPHEMERIS_LOCK:
-            iflag = _resolve_iflag(zodiac_type, sidereal_mode)
-            try:
-                result = compute_void_of_course(moment_utc, iflag)
-            finally:
-                if zodiac_type == "Sidereal":
-                    reset = getattr(swe, "reset_session", None) or swe.close
-                    reset()
+        _validate_zodiac(zodiac_type, sidereal_mode)
+        # The session serializes access to the process-global backend state
+        # (path + sidereal mode) and resets it on exit without degrading the
+        # pinned calculation mode; its iflag already includes FLG_SPEED (plus
+        # FLG_SIDEREAL for sidereal zodiacs).
+        with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
+            result = compute_void_of_course(moment_utc, iflag)
 
         return VoidOfCourseMoonModel(
             is_void_of_course=result.is_void_of_course,

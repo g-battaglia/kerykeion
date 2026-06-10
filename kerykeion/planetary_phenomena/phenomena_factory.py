@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -26,8 +26,6 @@ from kerykeion.schemas.kr_models import (
 )
 
 logger = logging.getLogger(__name__)
-
-_EPHE_PATH = EPHE_DATA_PATH
 
 # Planets for which phenomena are meaningful (not fixed stars, nodes, etc.)
 _PHENOMENA_PLANETS = {
@@ -104,67 +102,63 @@ class PlanetaryPhenomenaFactory:
         planets: Optional[List[str]] = None,
     ) -> PlanetaryPhenomenaCollectionModel:
         """Compute elongation, illumination, and visibility for each planet."""
-        swe.set_ephe_path(_EPHE_PATH)
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
-
         if planets is None:
             target_planets = dict(_PHENOMENA_PLANETS)
         else:
             target_planets = {k: v for k, v in _PHENOMENA_PLANETS.items() if k in planets}
 
-        # Get Sun longitude for morning/evening star determination
-        try:
-            sun_data = swe.calc_ut(julian_day, swe.SUN, iflag)
-            sun_lon = sun_data[0][0]
-        except Exception:
-            sun_lon = None
-
         phenomena_list: List[PlanetaryPhenomenaModel] = []
 
-        for name, planet_id in target_planets.items():
+        with ephemeris_session() as iflag:
+            # Get Sun longitude for morning/evening star determination
             try:
-                result = swe.pheno_ut(julian_day, planet_id, iflag)
-                phase_angle = result[0]
-                phase = result[1]
-                elongation = result[2]
-                apparent_diameter = result[3]
-                apparent_magnitude = result[4]
+                sun_data = swe.calc_ut(julian_day, swe.SUN, iflag)
+                sun_lon = sun_data[0][0]
+            except Exception:
+                sun_lon = None
 
-                # Morning/evening star for Mercury and Venus
-                is_morning = None
-                is_evening = None
-                if name in _INFERIOR_PLANETS and sun_lon is not None:
-                    try:
-                        planet_data = swe.calc_ut(julian_day, planet_id, iflag)
-                        planet_lon = planet_data[0][0]
-                        # Normalized difference
-                        diff = (planet_lon - sun_lon) % 360
-                        if diff > 180:
-                            # Planet is west of Sun -> rises before Sun -> morning star
-                            is_morning = True
-                            is_evening = False
-                        else:
-                            is_morning = False
-                            is_evening = True
-                    except Exception:
-                        pass
+            for name, planet_id in target_planets.items():
+                try:
+                    result = swe.pheno_ut(julian_day, planet_id, iflag)
+                    phase_angle = result[0]
+                    phase = result[1]
+                    elongation = result[2]
+                    apparent_diameter = result[3]
+                    apparent_magnitude = result[4]
 
-                phenomena_list.append(
-                    PlanetaryPhenomenaModel(
-                        name=name,
-                        phase_angle=round(phase_angle, 6),
-                        phase=round(phase, 6),
-                        elongation=round(elongation, 6),
-                        apparent_diameter=round(apparent_diameter, 8),
-                        apparent_magnitude=round(apparent_magnitude, 4),
-                        is_morning_star=is_morning,
-                        is_evening_star=is_evening,
+                    # Morning/evening star for Mercury and Venus
+                    is_morning = None
+                    is_evening = None
+                    if name in _INFERIOR_PLANETS and sun_lon is not None:
+                        try:
+                            planet_data = swe.calc_ut(julian_day, planet_id, iflag)
+                            planet_lon = planet_data[0][0]
+                            # Normalized difference
+                            diff = (planet_lon - sun_lon) % 360
+                            if diff > 180:
+                                # Planet is west of Sun -> rises before Sun -> morning star
+                                is_morning = True
+                                is_evening = False
+                            else:
+                                is_morning = False
+                                is_evening = True
+                        except Exception:
+                            pass
+
+                    phenomena_list.append(
+                        PlanetaryPhenomenaModel(
+                            name=name,
+                            phase_angle=round(phase_angle, 6),
+                            phase=round(phase, 6),
+                            elongation=round(elongation, 6),
+                            apparent_diameter=round(apparent_diameter, 8),
+                            apparent_magnitude=round(apparent_magnitude, 4),
+                            is_morning_star=is_morning,
+                            is_evening_star=is_evening,
+                        )
                     )
-                )
-            except Exception as e:
-                logger.warning(f"Could not calculate phenomena for {name}: {e}")
-
-        swe.close()
+                except Exception as e:
+                    logger.warning(f"Could not calculate phenomena for {name}: {e}")
 
         return PlanetaryPhenomenaCollectionModel(
             iso_datetime=iso_datetime,

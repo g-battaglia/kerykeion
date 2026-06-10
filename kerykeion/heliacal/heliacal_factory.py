@@ -20,7 +20,7 @@ from __future__ import annotations
 import logging
 from typing import List, Optional, Sequence, Tuple
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
@@ -103,13 +103,13 @@ class HeliacalFactory:
     ----------
     ephe_path : str or None
         Path to the ephemeris data directory.  Defaults to the path
-        configured via ``KERYKEION_EPHE_PATH`` (or empty string).
+        configured via ``KERYKEION_EPHE_PATH`` (or empty string). The path
+        is applied per calculation via ``ephemeris_session`` rather than
+        mutating global state at construction time.
     """
 
     def __init__(self, ephe_path: Optional[str] = None) -> None:
-        if ephe_path is None:
-            ephe_path = EPHE_DATA_PATH
-        swe.set_ephe_path(ephe_path)
+        self._ephe_path = ephe_path
 
     # ------------------------------------------------------------------ #
     #  Public API                                                         #
@@ -144,15 +144,15 @@ class HeliacalFactory:
         -------
         HeliacalEventModel
         """
-        result = self._find_event(
-            julian_day=julian_day,
-            planet_name_or_star=planet_name_or_star,
-            geopos=geopos,
-            event_type=HELIACAL_RISING,
-            atmo=atmo,
-            observer=observer,
-        )
-        swe.close()
+        with ephemeris_session(ephe_path=self._ephe_path):
+            result = self._find_event(
+                julian_day=julian_day,
+                planet_name_or_star=planet_name_or_star,
+                geopos=geopos,
+                event_type=HELIACAL_RISING,
+                atmo=atmo,
+                observer=observer,
+            )
         return result
 
     def search_events(
@@ -198,32 +198,32 @@ class HeliacalFactory:
 
         events: List[HeliacalEventModel] = []
 
-        for planet in planets:
-            for etype in event_types:
-                # Skip event types that only apply to inner planets
-                if etype in (EVENING_FIRST, MORNING_LAST) and planet not in INNER_PLANETS:
-                    continue
-                try:
-                    event = self._find_event(
-                        julian_day=julian_day,
-                        planet_name_or_star=planet,
-                        geopos=geopos,
-                        event_type=etype,
-                        atmo=atmo,
-                        observer=observer,
-                    )
-                    events.append(event)
-                except Exception as exc:
-                    logger.debug(
-                        "Skipping %s %s: %s",
-                        planet,
-                        EVENT_TYPE_LABELS.get(etype, etype),
-                        exc,
-                    )
+        with ephemeris_session(ephe_path=self._ephe_path):
+            for planet in planets:
+                for etype in event_types:
+                    # Skip event types that only apply to inner planets
+                    if etype in (EVENING_FIRST, MORNING_LAST) and planet not in INNER_PLANETS:
+                        continue
+                    try:
+                        event = self._find_event(
+                            julian_day=julian_day,
+                            planet_name_or_star=planet,
+                            geopos=geopos,
+                            event_type=etype,
+                            atmo=atmo,
+                            observer=observer,
+                        )
+                        events.append(event)
+                    except Exception as exc:
+                        logger.debug(
+                            "Skipping %s %s: %s",
+                            planet,
+                            EVENT_TYPE_LABELS.get(etype, etype),
+                            exc,
+                        )
 
         # Sort chronologically and trim to *count*.
         events.sort(key=lambda e: e.julian_day)
-        swe.close()
         return events[:count]
 
     # ------------------------------------------------------------------ #
@@ -239,7 +239,11 @@ class HeliacalFactory:
         atmo: Optional[Tuple[float, float, float, float]],
         observer: Optional[Tuple[float, float, float, float, float, float]],
     ) -> HeliacalEventModel:
-        """Low-level wrapper around ``swe.heliacal_ut``."""
+        """Low-level wrapper around ``swe.heliacal_ut``.
+
+        Must be called inside an :func:`ephemeris_session` (the public entry
+        points open one).
+        """
         if atmo is None:
             atmo = DEFAULT_ATMO
         if observer is None:

@@ -24,7 +24,7 @@ from typing import Optional
 import pytz
 from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
 
-from kerykeion.ephemeris_backend import EPHEMERIS_LOCK, swe
+from kerykeion.ephemeris_backend import ephemeris_session, swe
 from kerykeion.moon_phase_details.utils import (
     compute_sun_rise_set_swe,
     configure_ephemeris_path,
@@ -129,17 +129,55 @@ def localize_datetime(
         raise KerykeionException(f"Non-existent local time {naive!s} in timezone {tz.zone!r}: {exc}") from exc
 
 
+def _localize_civil_midnight(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> datetime:
+    """Timezone-aware first instant of a civil day, resolving DST gaps forward.
+
+    Unlike :func:`localize_datetime` — used for *user-supplied* clock times, where
+    a nonexistent time is a caller error worth raising — an internally constructed
+    midnight that falls in a DST spring-forward gap (e.g. America/Sao_Paulo
+    2018-11-04, America/Santiago 2022-09-11, Africa/Cairo 2023-04-28, where clocks
+    jump straight from 00:00 to 01:00) is not an error: the civil day exists and
+    simply begins at the end of the gap. Resolve such midnights forward to that
+    first existing instant instead of rejecting a perfectly valid date.
+
+    Raises:
+        KerykeionException: If the date is invalid or the year is unsupported.
+    """
+    try:
+        naive = datetime(int(year), int(month), int(day))
+    except (ValueError, OverflowError) as exc:
+        raise KerykeionException(
+            f"Invalid or unsupported date ({year:04d}-{month:02d}-{day:02d}): {exc}. "
+            f"Supported civil years are 1-9999 CE."
+        ) from exc
+    try:
+        return tz.localize(naive, is_dst=None)
+    except AmbiguousTimeError:
+        # DST fall-back: midnight exists twice. Like localize_datetime, default to
+        # the standard-time (post-transition) interpretation.
+        return tz.localize(naive, is_dst=False)
+    except NonExistentTimeError:
+        # Spring-forward gap at midnight. Of the two possible interpretations the
+        # later UTC instant is the one that lands *after* the gap (the pre-gap
+        # offset overshoots forward when normalized), i.e. the day's real start.
+        return max(
+            tz.normalize(tz.localize(naive, is_dst=False)),
+            tz.normalize(tz.localize(naive, is_dst=True)),
+        )
+
+
 def local_midnight_julian_day(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> float:
-    """Julian Day (UT) of local civil midnight for the given date and timezone.
+    """Julian Day (UT) of the start of the local civil day for a date and timezone.
 
     ``rise_trans`` searches for the next rise/set *after* this instant, so seeding
-    it with local midnight yields that civil day's sunrise and sunset.
+    it with local midnight yields that civil day's sunrise and sunset. When local
+    midnight does not exist (a DST spring-forward gap at 00:00) the civil day's
+    actual first instant — the end of the gap — is used instead.
 
     Note:
-        ``datetime_to_julian`` reads the datetime's wall-clock fields and ignores
-        ``tzinfo``, so the local midnight is converted to UTC first.
+        The local midnight is converted to UTC before the Julian Day conversion.
     """
-    utc_midnight = localize_datetime(year, month, day, tz=tz).astimezone(pytz.utc)
+    utc_midnight = _localize_civil_midnight(year, month, day, tz).astimezone(pytz.utc)
     return datetime_to_julian(utc_midnight)
 
 
@@ -180,7 +218,8 @@ def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
 
     Note:
         This function mutates global ephemeris state (``set_ephe_path``,
-        ``calc_ut``). The caller must hold :data:`EPHEMERIS_LOCK`.
+        ``calc_ut``). The caller must invoke it inside an
+        :func:`~kerykeion.ephemeris_backend.ephemeris_session`.
     """
     iflag = configure_ephemeris_path()
     # Equatorial coordinates: [right_ascension, declination, distance, ...].
@@ -218,7 +257,9 @@ def compute_sun_events(
     """
     jd_midnight, jd_next_midnight = _civil_day_bounds(year, month, day, tz)
 
-    with EPHEMERIS_LOCK:
+    # The session serializes access to the process-global backend state and
+    # resets it on exit without degrading the pinned calculation mode.
+    with ephemeris_session():
         sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, latitude, longitude)
 
         if sunrise_jd is not None and sunrise_jd >= jd_next_midnight:
@@ -271,8 +312,8 @@ def _next_event_jd(
     result is accepted; circumpolar / no-event results map to ``None``.
 
     Note:
-        Mutates global ephemeris state via the backend; the caller must hold
-        :data:`EPHEMERIS_LOCK`.
+        Mutates global ephemeris state via the backend; the caller must invoke it
+        inside an :func:`~kerykeion.ephemeris_backend.ephemeris_session`.
     """
     try:
         result = swe.rise_trans(jd_start, swe.SUN, rsmi, geopos, atpress=0.0, attemp=0.0, flags=iflag)
@@ -326,7 +367,10 @@ def compute_twilight_events(
     astro_bit = getattr(swe, "BIT_ASTRO_TWILIGHT", 4096)
     geopos = (float(longitude), float(latitude), 0.0)
 
-    with EPHEMERIS_LOCK:
+    # The session serializes access to the process-global backend state and
+    # resets it on exit without degrading the pinned calculation mode. The base
+    # flags for rise_trans stay FLG_SWIEPH, as configure_ephemeris_path yields.
+    with ephemeris_session():
         iflag = configure_ephemeris_path()
 
         jd_noon = jd_midnight + 0.5

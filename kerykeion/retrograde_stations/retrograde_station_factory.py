@@ -23,7 +23,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, EPHEMERIS_LOCK
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
@@ -33,8 +33,6 @@ from kerykeion.utilities import (
 from pydantic import Field
 
 logger = logging.getLogger(__name__)
-
-_EPHE_PATH = EPHE_DATA_PATH
 
 # Geocentric speed flag: the [3] element of calc_ut's first tuple is the
 # longitudinal speed in degrees/day (negative when retrograde).
@@ -218,17 +216,14 @@ class RetrogradeStationFactory:
         stations: List[StationModel] = []
         if end_jd > start_jd and bodies:
             _ensure_scannable(start_jd, end_jd)
-            # Hold the lock across the whole scan: set_ephe_path / calc_ut / close
-            # mutate process-global backend state shared with chart calculations.
-            with EPHEMERIS_LOCK:
-                swe.set_ephe_path(_EPHE_PATH)
-                try:
-                    for name, body in bodies:
-                        stations.extend(
-                            RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd)
-                        )
-                finally:
-                    swe.close()
+            # The session holds the ephemeris lock across the whole scan (calc_ut
+            # reads process-global backend state shared with chart calculations)
+            # and resets that state on exit without degrading the backend.
+            with ephemeris_session():
+                for name, body in bodies:
+                    stations.extend(
+                        RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd)
+                    )
             stations.sort(key=lambda s: s.julian_day)
 
         return RetrogradeStationsCollectionModel(

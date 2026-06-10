@@ -21,20 +21,18 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.moon_phase_details.utils import compute_lunar_phase_jd
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import KerykeionPointModel, SubscriptableBaseModel
 from kerykeion.utilities import (
     datetime_to_julian,
     get_kerykeion_point_from_degree,
-    julian_to_datetime,
 )
 from pydantic import Field
 
 logger = logging.getLogger(__name__)
-
-_EPHE_PATH = EPHE_DATA_PATH
 
 # Phase name -> Sun-Moon ecliptic separation angle (degrees).
 _PHASE_ANGLES = {
@@ -82,15 +80,28 @@ def _phase_angle_error(jd: float, target_angle: float) -> float:
 
 
 def _jd_to_iso(jd: float) -> str:
-    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds."""
-    try:
-        dt = julian_to_datetime(jd)
-        return (
-            f"{dt.year:04d}-{dt.month:02d}-{dt.day:02d}"
-            f"T{dt.hour:02d}:{dt.minute:02d}:{dt.second:02d}Z"
+    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
+
+    Uses ``swe.revjul`` rather than Python ``datetime`` (limited to years
+    1..9999) so the BCE range Kerykeion supports formats correctly, with an
+    extended-year sign for negative years.
+    """
+    year, month, day, hour_frac = swe.revjul(jd)
+    secs = min(int(hour_frac * 3600 + 0.5), 86399)  # nearest second, no 24:00 carry
+    hours, rem = divmod(secs, 3600)
+    minutes, seconds = divmod(rem, 60)
+    year_str = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
+    return f"{year_str}-{month:02d}-{day:02d}T{hours:02d}:{minutes:02d}:{seconds:02d}Z"
+
+
+def _ensure_scannable(start_jd: float, end_jd: float) -> None:
+    """Reject ranges too long to scan, so a caller never receives a silently
+    truncated result whose ``end_jd`` still claims the full requested range."""
+    if (end_jd - start_jd) / _SEARCH_ADVANCE_DAYS > _MAX_ITERATIONS:
+        raise ValueError(
+            f"Date range too large to scan at the current resolution "
+            f"(> {_MAX_ITERATIONS} search steps per phase). Narrow the date range."
         )
-    except Exception:  # pragma: no cover - defensive
-        return ""
 
 
 # =============================================================================
@@ -147,7 +158,9 @@ class LunationFinderFactory:
         end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
         # A date-only end_date means "through the end of that UTC day"; without
         # this it resolves to midnight and drops any lunation later that day.
-        if "T" not in end_date and " " not in end_date:
+        # Lowercase "t" is a valid ISO 8601 separator too — a full datetime
+        # must never be widened.
+        if "T" not in end_date and "t" not in end_date and " " not in end_date:
             end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         start_jd = datetime_to_julian(start_dt)
         end_jd = datetime_to_julian(end_dt)
@@ -165,9 +178,14 @@ class LunationFinderFactory:
             start_jd: Julian Day (UT) range start.
             end_jd: Julian Day (UT) range end.
             phases: Optional subset of phase names. Defaults to all four.
-        """
-        swe.set_ephe_path(_EPHE_PATH)
 
+        Raises:
+            KerykeionException: If the ephemeris backend fails mid-scan (most
+                often a date outside the available ephemeris range); the scan
+                never returns silently truncated results.
+            ValueError: If a phase name is unknown or the range is too large
+                to scan.
+        """
         if phases:
             invalid = sorted(set(phases) - set(_PHASE_ANGLES))
             if invalid:
@@ -179,25 +197,53 @@ class LunationFinderFactory:
         lunations: List[LunationModel] = []
 
         if targets and end_jd > start_jd:
+            _ensure_scannable(start_jd, end_jd)
             # Iterate each phase independently. Stepping by half a synodic month
             # after each hit keeps the search base clear of the just-found event
             # (avoiding solver degeneracy) without skipping the next occurrence.
-            for phase_name, angle in targets.items():
-                jd = start_jd
-                for _ in range(_MAX_ITERATIONS):
-                    hit = compute_lunar_phase_jd(jd, angle, forward=True)
-                    if hit is None or hit > end_jd:
-                        break
-                    # compute_lunar_phase_jd can echo its own start (a tiny step
-                    # past jd) when called just after a phase, reporting an event
-                    # whose true angle is not the target. Record only genuine hits.
-                    if _phase_angle_error(hit, angle) <= _PHASE_ANGLE_TOL:
-                        lunations.append(LunationFinderFactory._build(phase_name, hit))
-                    jd = hit + _SEARCH_ADVANCE_DAYS
+            with ephemeris_session():
+                for phase_name, angle in targets.items():
+                    jd = start_jd
+                    for _ in range(_MAX_ITERATIONS):
+                        try:
+                            hit = compute_lunar_phase_jd(jd, angle, forward=True)
+                        except Exception as exc:
+                            # The helper swallows RuntimeError into None, but
+                            # range errors (libephemeris EphemerisRangeError,
+                            # swisseph.Error) propagate raw — normalize them to
+                            # the documented exception type.
+                            raise KerykeionException(
+                                f"Lunar phase search ('{phase_name}') failed at "
+                                f"JD {jd:.5f}: {exc}. This usually means the date "
+                                f"falls outside the available ephemeris range; "
+                                f"narrow the date range."
+                            ) from exc
+                        if hit is None:
+                            # A lunar phase always recurs within the solver's
+                            # 30-day window, so None never means "no more
+                            # events": it is the helper swallowing a backend
+                            # error (e.g. the scan walked past the edge of the
+                            # ephemeris data). Surface it instead of silently
+                            # truncating a result that still claims the full
+                            # requested range.
+                            raise KerykeionException(
+                                f"Lunar phase search ('{phase_name}') failed at "
+                                f"JD {jd:.5f}: the ephemeris backend could not "
+                                f"compute Sun/Moon positions. This usually means "
+                                f"the date falls outside the available ephemeris "
+                                f"range; narrow the date range."
+                            )
+                        if hit > end_jd:
+                            break
+                        # compute_lunar_phase_jd can echo its own start (a tiny step
+                        # past jd) when called just after a phase, reporting an event
+                        # whose true angle is not the target. Record only genuine hits.
+                        if _phase_angle_error(hit, angle) <= _PHASE_ANGLE_TOL:
+                            lunations.append(LunationFinderFactory._build(phase_name, hit))
+                        jd = hit + _SEARCH_ADVANCE_DAYS
 
             lunations.sort(key=lambda lun: lun.julian_day)
 
-        swe.close()
         return LunationsCollectionModel(
             start_jd=start_jd,
             end_jd=end_jd,
