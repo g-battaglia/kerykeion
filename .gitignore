@@ -53,6 +53,7 @@ request_cache
 Pipfile
 .mypy_cache
 charts_output/
+examples/output/
 
 # Coverage reports
 htmlcov/
