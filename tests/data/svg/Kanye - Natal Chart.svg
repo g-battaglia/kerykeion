@@ -24,6 +24,25 @@
     --kerykeion-color-accent: #6f0766;
     --kerykeion-color-warning: #984b00;
 
+    /* -------- */
+    /* General */
+    /* ------- */
+    --kerykeion-color-black: #000000;
+    --kerykeion-color-white: #ffffff;
+
+    --kerykeion-color-neutral-content: #000000;
+    --kerykeion-color-base-content: #000000;
+    --kerykeion-color-neutral: #333333;
+    --kerykeion-color-base-100: #ffffff;
+    --kerykeion-color-info: #06537f;
+    --kerykeion-color-info-content: #ffffff;
+    --kerykeion-color-success: #36d100;
+    --kerykeion-color-error: #dc0000;
+
+    /* Zodiac */
+    --kerykeion-color-base-200: #f4f4f5;
+    --kerykeion-color-base-300: #e4e4e7;
+
     /* Modern Chart */
     --kerykeion-modern-planet-ring: #f4f4f5;
     --kerykeion-modern-planet-ring-outer: #e8e8ed;
