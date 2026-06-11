@@ -44,7 +44,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from pprint import pformat
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 # Add project root to path
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -287,8 +287,14 @@ def write_fixture_file(
     data: Dict[str, Any],
     description: str,
     regenerate_command: str,
+    imports: Sequence[str] = (),
 ) -> None:
-    """Write a fixture file with standard header."""
+    """Write a fixture file with standard header.
+
+    ``imports`` lines are emitted after the docstring so fixtures whose data
+    embeds model reprs (e.g. ``KerykeionPointModel(...)``) stay importable.
+    """
+    imports_block = "\n".join(imports) + "\n\n" if imports else ""
     content = f'''"""
 {description}
 
@@ -298,7 +304,7 @@ DO NOT EDIT MANUALLY - regenerate using: python scripts/regenerate_all.py {regen
 Total entries: {len(data)}
 """
 
-{variable_name} = {pformat(data, width=100, sort_dicts=True)}
+{imports_block}{variable_name} = {pformat(data, width=100, sort_dicts=True)}
 '''
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(content)
@@ -1013,6 +1019,7 @@ def regenerate_ephemeris() -> None:
         ephemeris_data,
         "Expected ephemeris data for various time ranges.",
         "--ephemeris",
+        imports=("from kerykeion.schemas.kr_models import KerykeionPointModel",),
     )
 
 

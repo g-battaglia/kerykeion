@@ -180,7 +180,6 @@ class TestPlanetaryReturnValidation:
         """USER sidereal mode without custom ayanamsa params should raise."""
         from kerykeion.schemas import KerykeionException
         # Create a subject with sidereal_mode = "USER"
-        from unittest.mock import patch
         user_subject = subject.model_copy()
         user_subject.sidereal_mode = "USER"
         with pytest.raises(KerykeionException, match="custom_ayanamsa"):
@@ -321,7 +320,7 @@ class TestHeliocentricReturnFromIso:
         """Return must be after the ISO start time."""
         iso = "2026-03-15T12:00:00+00:00"
         from kerykeion.utilities import datetime_to_julian
-        from datetime import datetime, timezone
+        from datetime import datetime
         start_jd = datetime_to_julian(datetime.fromisoformat(iso))
         result = factory.next_heliocentric_return_from_iso_formatted_time("Jupiter", iso)
         assert result.julian_day > start_jd
@@ -393,7 +392,7 @@ class TestLunarNodeCrossingFromIso:
     def test_iso_crossing_after_start(self, factory):
         """Crossing must be after the ISO start time."""
         from kerykeion.utilities import datetime_to_julian
-        from datetime import datetime, timezone
+        from datetime import datetime
         iso = "2025-06-01T00:00:00+00:00"
         start_jd = datetime_to_julian(datetime.fromisoformat(iso))
         result = factory.next_lunar_node_crossing_from_iso_formatted_time(iso)

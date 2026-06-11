@@ -17,7 +17,7 @@ from itertools import pairwise
 import pytest
 from pytest import approx
 
-from kerykeion import AstrologicalSubjectFactory, ZodiacalReleasingFactory
+from kerykeion import ZodiacalReleasingFactory
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.zodiacal_releasing.factory import GENERAL_YEARS, TROPICAL_YEAR_DAYS
 

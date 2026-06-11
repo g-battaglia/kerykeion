@@ -8,7 +8,6 @@ Default output: tests/data/v6_gallery/
 """
 
 import sys
-import os
 from pathlib import Path
 
 # Add project root to path

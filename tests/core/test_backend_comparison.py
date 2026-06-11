@@ -17,7 +17,6 @@ Run with::
 """
 
 import importlib
-import math
 
 import pytest
 

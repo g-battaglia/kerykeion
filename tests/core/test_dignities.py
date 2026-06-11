@@ -11,7 +11,6 @@ from kerykeion import AstrologicalSubjectFactory
 from kerykeion.dignities.dignity_factory import calculate_essential_dignity
 from kerykeion.dignities.dignity_data import (
     DOMICILE_RULERS,
-    EXALTATION_TABLE,
     FALL_TABLE,
     DETRIMENT_RULERS,
     EGYPTIAN_TERMS,
@@ -40,8 +39,8 @@ class TestDignityData:
             assert sign in EGYPTIAN_TERMS
             terms = EGYPTIAN_TERMS[sign]
             assert len(terms) == 5, f"Sign {sign} should have 5 terms"
-            assert terms[0][1] == 0, f"First term should start at 0"
-            assert terms[-1][2] == 30, f"Last term should end at 30"
+            assert terms[0][1] == 0, "First term should start at 0"
+            assert terms[-1][2] == 30, "Last term should end at 30"
 
     def test_chaldean_decans_cover_all_signs(self):
         signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
@@ -163,7 +162,7 @@ class TestDignityHelperEdgeCases:
         # but is NOT in detriment in Aries (DETRIMENT_RULERS["Ari"] should not include Saturn)
         # Let's pick a case: Moon is in fall in Scorpio (FALL_TABLE["Sco"] == "Moon")
         # and Moon is NOT in detriment in Scorpio
-        from kerykeion.dignities.dignity_data import FALL_TABLE, DETRIMENT_RULERS
+        from kerykeion.dignities.dignity_data import DETRIMENT_RULERS
         # Find a planet that is in fall but not in detriment for a sign
         for sign, fall_planet in FALL_TABLE.items():
             if fall_planet and fall_planet not in DETRIMENT_RULERS.get(sign, []):

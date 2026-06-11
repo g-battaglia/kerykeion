@@ -32,8 +32,6 @@ from tests.data.test_subjects_matrix import (
     SIDEREAL_MODES,
     PERSPECTIVE_TYPES,
     CORE_PLANETS,
-    LUNAR_NODES,
-    ANGLES,
     HOUSES,
     get_primary_test_subjects,
 )
@@ -501,7 +499,7 @@ class TestTemporalCoverage:
             assert 0 <= subject.sun.abs_pos < 360
             assert 0 <= subject.moon.abs_pos < 360
 
-        except Exception as e:
+        except Exception:
             # Some ancient dates may not be supported by ephemeris
             if subject_data["year"] < -3000 or subject_data["year"] > 3000:
                 pytest.skip(f"Date outside ephemeris range: {subject_data['year']}")

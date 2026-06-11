@@ -10,10 +10,9 @@ model vs dict output, edge cases, and chronological ordering.
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytest
-from pytest import approx
 
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 

@@ -30,7 +30,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, Dict, List, get_args
+from typing import Any, List, get_args
 
 import pytest
 

@@ -3,7 +3,6 @@
 
 import pytest
 from kerykeion import AstrologicalSubjectFactory, FixedStarDiscoveryFactory
-from kerykeion.ephemeris_backend import BACKEND_NAME
 
 
 @pytest.fixture(scope="module")
@@ -339,7 +338,6 @@ class TestCatalogStarsParticipateInAspects:
         # narrow orb by default; we just want to assert the list isn't gated
         # to non-default names).
         result = AspectsFactory.single_chart_declination_aspects(subj, orb=5.0)
-        catalog_names = {"Castor", "Vindemiatrix", "Polaris", "Algol"}
         # Either we get a star-involving aspect, or we don't crash on the
         # catalog-star slugs; both prove the gate is removed.
         for a in result:

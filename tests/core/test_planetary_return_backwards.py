@@ -14,7 +14,6 @@ message pointing at the backend limitation.
 
 from __future__ import annotations
 
-import os
 import pytest
 from datetime import datetime, timezone
 from unittest.mock import patch

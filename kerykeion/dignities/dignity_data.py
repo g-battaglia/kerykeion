@@ -52,7 +52,7 @@ DETRIMENT_RULERS: Dict[str, List[str]] = {
 # EXALTATION — planet is exalted in a specific sign (with traditional degree)
 # Score: +4
 # =========================================================================
-EXALTATION_TABLE: Dict[str, Tuple[str, Optional[int]]] = {
+EXALTATION_TABLE: Dict[str, Tuple[Optional[str], Optional[int]]] = {
     # sign -> (planet, exact_degree_or_None)
     "Ari": ("Sun", 19),
     "Tau": ("Moon", 3),

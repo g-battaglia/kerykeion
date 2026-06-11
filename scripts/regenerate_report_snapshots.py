@@ -137,7 +137,6 @@ def main():
     johnny = _johnny_depp()
     john = _john_lennon()
     yoko = _yoko_ono()
-    paul = _paul_mccartney()
 
     # --- Natal reports ---
     print("\n[Natal Reports]")

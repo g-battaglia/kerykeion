@@ -26,7 +26,7 @@ class TestACGComputation:
     def test_mc_ic_lines_present(self, subject):
         """MC and IC lines should be present for each planet."""
         lines = AstroCartographyFactory.compute(subject, step=5, planets=["Sun", "Moon"])
-        line_types = [(l.planet, l.line_type) for l in lines]
+        line_types = [(line.planet, line.line_type) for line in lines]
         assert ("Sun", "MC") in line_types
         assert ("Sun", "IC") in line_types
         assert ("Moon", "MC") in line_types
@@ -35,14 +35,14 @@ class TestACGComputation:
     def test_asc_dsc_lines_present(self, subject):
         """ASC and/or DSC lines should be present for at least some planets."""
         lines = AstroCartographyFactory.compute(subject, step=5)
-        has_asc = any(l.line_type == "ASC" for l in lines)
-        has_dsc = any(l.line_type == "DSC" for l in lines)
+        has_asc = any(line.line_type == "ASC" for line in lines)
+        has_dsc = any(line.line_type == "DSC" for line in lines)
         assert has_asc or has_dsc, "Should have at least some ASC or DSC lines"
 
     def test_mc_line_is_vertical(self, subject):
         """MC lines should be vertical (same longitude, different latitudes)."""
         lines = AstroCartographyFactory.compute(subject, step=5, planets=["Sun"])
-        mc_lines = [l for l in lines if l.line_type == "MC"]
+        mc_lines = [line for line in lines if line.line_type == "MC"]
         assert len(mc_lines) > 0
         mc = mc_lines[0]
         lngs = set(p.longitude for p in mc.points)
@@ -75,8 +75,8 @@ class TestACGComputation:
         fine = AstroCartographyFactory.compute(subject, step=2, planets=["Sun"])
 
         # MC lines should have more points with finer step
-        coarse_mc = [l for l in coarse if l.line_type == "MC"][0]
-        fine_mc = [l for l in fine if l.line_type == "MC"][0]
+        coarse_mc = [line for line in coarse if line.line_type == "MC"][0]
+        fine_mc = [line for line in fine if line.line_type == "MC"][0]
         assert len(fine_mc.points) >= len(coarse_mc.points)
 
 
@@ -149,7 +149,7 @@ class TestACGSweRegressions:
 
         # Get factory result
         lines = AstroCartographyFactory.compute(acg_subject, step=1, planets=["Sun"])
-        sun_mc = next(l for l in lines if l.planet == "Sun" and l.line_type == "MC")
+        sun_mc = next(line for line in lines if line.planet == "Sun" and line.line_type == "MC")
 
         # MC line is vertical, so all points share the same longitude
         factory_mc_lng = sun_mc.points[0].longitude
@@ -202,7 +202,7 @@ class TestACGInMundoLines:
         )
 
         lines = AstroCartographyFactory.compute(acg_subject, step=1, planets=[planet])
-        mc = next(l for l in lines if l.planet == planet and l.line_type == "MC")
+        mc = next(line for line in lines if line.planet == planet and line.line_type == "MC")
         assert mc.points[0].longitude == pytest.approx(expected, abs=0.01), (
             f"{planet} MC line is not on the true-RA meridian"
         )
@@ -212,7 +212,7 @@ class TestACGInMundoLines:
         geometric altitude (swe.azalt) must be ~0."""
         jd = acg_subject.julian_day
         lines = AstroCartographyFactory.compute(acg_subject, step=1, planets=["Sun"])
-        sun_asc = next(l for l in lines if l.planet == "Sun" and l.line_type == "ASC")
+        sun_asc = next(line for line in lines if line.planet == "Sun" and line.line_type == "ASC")
         point = next(p for p in sun_asc.points if p.latitude == 40.0)
 
         with ephemeris_session() as iflag:
@@ -236,7 +236,7 @@ class TestACGInMundoLines:
         also sample the -180/+180 meridian twice)."""
         lines = AstroCartographyFactory.compute(acg_subject, step=5, planets=["Sun"])
         for line_type in ("ASC", "DSC"):
-            line = next(l for l in lines if l.line_type == line_type)
+            line = next(line for line in lines if line.line_type == line_type)
             latitudes = [p.latitude for p in line.points]
             assert len(latitudes) == len(set(latitudes)), f"duplicate latitude on {line_type}"
 
@@ -264,7 +264,7 @@ class TestACGSiderealFrameConsistency:
         sid_lines = AstroCartographyFactory.compute(sidereal, step=5, planets=["Sun", "Moon"])
 
         def by_key(lines):
-            return {(l.planet, l.line_type): l for l in lines}
+            return {(line.planet, line.line_type): line for line in lines}
 
         trop_map, sid_map = by_key(trop_lines), by_key(sid_lines)
         assert set(trop_map) == set(sid_map)

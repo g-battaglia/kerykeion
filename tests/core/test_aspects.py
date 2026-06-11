@@ -770,7 +770,6 @@ class TestAspectMovementNonStandard:
         result = AspectsFactory.single_chart_aspects(johnny_depp, active_aspects=aspects_with_quintile)
         quintiles = [a for a in result.aspects if a.aspect == "quintile"]
         assert len(quintiles) >= 1, "Expected at least one quintile in Johnny Depp natal"
-        names = {(q.p1_name, q.p2_name) for q in quintiles}
         assert any(q.aspect_degrees == 72 for q in quintiles)
 
 

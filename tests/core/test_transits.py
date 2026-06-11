@@ -8,7 +8,6 @@ empty data paths, and full integration pipeline.
 
 import logging
 from datetime import datetime, timedelta
-from pathlib import Path
 
 import pytest
 

@@ -226,7 +226,7 @@ class TestPrimaryDirectionEdgeCases:
 
     def test_speculum_point_none_skipped(self):
         """If a direction point doesn't exist on the subject, it's skipped."""
-        from unittest.mock import patch, MagicMock
+        from unittest.mock import patch
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Test", 1990, 1, 1, 12, 0,

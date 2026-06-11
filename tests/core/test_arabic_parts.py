@@ -17,7 +17,7 @@ Covers:
 
 import math
 import logging
-from unittest.mock import patch, patch as _patch
+from unittest.mock import patch
 
 import pytest
 from pytest import approx
@@ -510,12 +510,6 @@ class TestAllPartsTogether:
 
     def test_all_four_parts_have_distinct_positions(self, day_subject):
         """All four parts should (in general) have different positions."""
-        positions = {
-            day_subject.pars_fortunae.abs_pos,
-            day_subject.pars_spiritus.abs_pos,
-            day_subject.pars_amoris.abs_pos,
-            day_subject.pars_fidei.abs_pos,
-        }
         # At minimum, Fortunae and Fidei should differ (completely different inputs)
         assert day_subject.pars_fortunae.abs_pos != approx(day_subject.pars_fidei.abs_pos, abs=0.01)
 

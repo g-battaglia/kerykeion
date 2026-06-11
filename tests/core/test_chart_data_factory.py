@@ -30,10 +30,9 @@ from kerykeion import (
     ElementDistributionModel,
     QualityDistributionModel,
 )
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException, AstrologicalSubjectModel
-from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.utilities import find_common_active_points
 

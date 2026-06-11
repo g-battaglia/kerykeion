@@ -77,7 +77,6 @@ class TestNextHeliacalRising:
 
     def test_custom_atmospheric_parameters(self, factory: HeliacalFactory):
         """Explicit default atmo produces the same result as implicit defaults."""
-        atmo = (DEFAULT_PRESSURE, DEFAULT_TEMPERATURE, DEFAULT_HUMIDITY, DEFAULT_EXTINCTION)
         default_event = _cached_rising(factory, "Venus")
         # Reuse Venus cache: explicit defaults == implicit defaults,
         # so this verifies the API accepts atmo without an extra ~15s call.

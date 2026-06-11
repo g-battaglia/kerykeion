@@ -6,7 +6,6 @@ Integrates all cases from tests/settings/test_settings.py plus
 settings-related edge cases from tests/edge_cases/test_edge_cases.py.
 """
 
-from copy import deepcopy
 
 import pytest
 

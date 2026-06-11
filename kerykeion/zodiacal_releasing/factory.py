@@ -104,7 +104,7 @@ def _lob_sequence(start: int) -> Iterator[tuple[int, bool]]:
 def _build_level(
     start_sign: int,
     start_dt: datetime,
-    duration_days: Optional[float],
+    duration_days: float,
     level: int,
     levels: int,
     target_dt: Optional[datetime],

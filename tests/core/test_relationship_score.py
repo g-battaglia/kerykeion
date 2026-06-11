@@ -14,7 +14,6 @@ from kerykeion import AstrologicalSubjectFactory
 from kerykeion.relationship_score_factory import (
     RelationshipScoreFactory,
     DESTINY_SIGN_POINTS,
-    HIGH_PRECISION_ORBIT_THRESHOLD,
     MAJOR_ASPECT_POINTS_HIGH_PRECISION,
     MAJOR_ASPECT_POINTS_STANDARD,
     MINOR_ASPECT_POINTS,

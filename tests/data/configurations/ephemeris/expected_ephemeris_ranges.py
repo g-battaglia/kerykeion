@@ -7,6 +7,8 @@ DO NOT EDIT MANUALLY - regenerate using: python scripts/regenerate_all.py --ephe
 Total entries: 3
 """
 
+from kerykeion.schemas.kr_models import KerykeionPointModel
+
 EXPECTED_EPHEMERIS_RANGES = {'daily_2023_jan': {'first_point': {'date': '2023-01-01T00:00:00',
                                     'houses': [KerykeionPointModel(name='First_House', quality='Cardinal', element='Air', sign='Lib', sign_num=6, position=7.235750525672529, abs_pos=187.23575052567253, emoji='♎️', point_type='House', house=None, retrograde=None, speed=254.41828711013156, declination=None, magnitude=None, near_point=None, orb=None, aspect=None, longitude=None, latitude=None, degree=None, decan_number=None, decan_ruler=None, term_ruler=None, essential_dignity=None, dignity_score=None, nakshatra=None, nakshatra_number=None, nakshatra_pada=None, nakshatra_lord=None, gauquelin_sector=None, azimuth=None, altitude_above_horizon=None, is_out_of_bounds=None),
                                                KerykeionPointModel(name='Second_House', quality='Fixed', element='Water', sign='Sco', sign_num=7, position=1.957851724794864, abs_pos=211.95785172479486, emoji='♏️', point_type='House', house=None, retrograde=None, speed=283.20980185244025, declination=None, magnitude=None, near_point=None, orb=None, aspect=None, longitude=None, latitude=None, degree=None, decan_number=None, decan_ruler=None, term_ruler=None, essential_dignity=None, dignity_score=None, nakshatra=None, nakshatra_number=None, nakshatra_pada=None, nakshatra_lord=None, gauquelin_sector=None, azimuth=None, altitude_above_horizon=None, is_out_of_bounds=None),

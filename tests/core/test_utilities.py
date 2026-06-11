@@ -652,7 +652,6 @@ class TestChartsUtilsInternalFunctions:
     def test_get_decoded_celestial_point_unknown_raises(self):
         from kerykeion.charts.charts_utils import get_decoded_kerykeion_celestial_point_name
         from kerykeion.schemas.settings_models import KerykeionLanguageCelestialPointModel
-        from kerykeion.schemas import KerykeionException
 
         lang_model = KerykeionLanguageCelestialPointModel(
             Sun="Sun",
