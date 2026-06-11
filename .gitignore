@@ -54,6 +54,7 @@ Pipfile
 .mypy_cache
 charts_output/
 examples/output/
+/charts/
 
 # Coverage reports
 htmlcov/
