@@ -294,6 +294,10 @@ cmd = "python scripts/benchmark.py"
 help = "Run performance benchmarks (subject creation, aspects, SVG rendering)"
 
 # Utilities
+[tool.poe.tasks."build:smoke"]
+shell = "rm -rf dist && uv build && uv run --isolated --no-project --with dist/*.whl python -c \"import kerykeion; print('wheel import OK:', kerykeion.__name__)\""
+help = "Build sdist+wheel and smoke-import the wheel in an isolated environment (pre-publish check)"
+
 [tool.poe.tasks.clean]
 cmd = "rm -rf dist build *.egg-info htmlcov .coverage .coverage.* coverage.xml .pytest_cache .mypy_cache .ruff_cache"
 help = "Clean build artifacts and caches"
