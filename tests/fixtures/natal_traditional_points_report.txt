@@ -38,7 +38,7 @@ Sample Natal Subject — Natal Chart Report
 | Jupiter               | Can ♋️ | 23.91°   | +0.2239°/d  | +21.56° | -    | Ninth House   |
 | Saturn                | Cap ♑️ | 21.52°   | -0.0733°/d  | -21.66° | R    | Third House   |
 | True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d  | -18.46° | R    | Third House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0080°/d  | +18.46° | R    | Ninth House   |
+| True South Lunar Node | Leo ♌️ | 7.26°    | -0.0080°/d  | +18.46° | R    | Ninth House   |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
 
 +Natal Houses (Placidus)---+----------+-------------------+

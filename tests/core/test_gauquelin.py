@@ -168,3 +168,56 @@ class TestGauquelinSVG:
         svg = (tmp_path / "no_gauq_hit_areas.svg").read_text()
 
         assert "GauquelinSector" not in svg
+
+
+class TestGauquelinBackendCallShape:
+    """v6 regression: pyswisseph's gauquelin_sector signature is
+    (tjdut, body, starname, method, geopos, ...) while libephemeris's is
+    (tjdut, body, method, geopos, ...). The libephemeris-style 4-arg call on
+    pyswisseph put the method int in the starname slot, raising TypeError and
+    silently forcing the geometric fallback for every planet. The swisseph
+    branch is exercised here with a fake (pyswisseph is not installed in the
+    libephemeris test environment)."""
+
+    _BIRTH = dict(
+        year=1990, month=6, day=15, hour=14, minute=30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
+        calculate_gauquelin=True, suppress_geonames_warning=True,
+    )
+
+    def _run_with_fake_backend(self, monkeypatch, backend_name):
+        import kerykeion.astrological_subject_factory as asf
+
+        calls = []
+
+        def fake_gauquelin_sector(*args, **kwargs):
+            calls.append((args, kwargs))
+            return 7.5
+
+        monkeypatch.setattr(asf, "BACKEND_NAME", backend_name)
+        monkeypatch.setattr(asf.swe, "gauquelin_sector", fake_gauquelin_sector)
+
+        subject = AstrologicalSubjectFactory.from_birth_data("Backend Shape", **self._BIRTH)
+        return subject, calls
+
+    @pytest.mark.parametrize("backend_name", ["swisseph", "libephemeris"])
+    def test_gauquelin_sector_call_shape_is_backend_uniform(self, monkeypatch, backend_name):
+        """Both backends share (tjdut, body, method, geopos, ...): pyswisseph
+        >= 2.10.3.1 (the pinned floor) has no starname parameter — the 5-arg
+        starname form existed only in pre-2.10 releases, and passing a string
+        in the int method slot raises TypeError, silently forcing the
+        geometric fallback for every planet."""
+        subject, calls = self._run_with_fake_backend(monkeypatch, backend_name)
+
+        assert calls, "gauquelin_sector was never attempted"
+        for args, kwargs in calls:
+            assert len(args) == 4, (
+                f"call must be (tjdut, body, method, geopos), got {args}"
+            )
+            assert isinstance(args[1], int)  # body id
+            assert args[2] == 0  # method
+            assert len(args[3]) == 3  # geopos triple
+
+        # The backend sector value must flow through (no geometric fallback)
+        assert subject.sun.gauquelin_sector == 7.5

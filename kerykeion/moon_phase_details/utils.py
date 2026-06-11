@@ -351,8 +351,8 @@ def compute_lunar_phase_jd(
     Compute exact Julian Day when Sun-Moon longitudinal angle reaches target value.
 
     Uses binary search with Swiss Ephemeris for maximum precision (~1 second),
-    replacing the mean synodic month approximation. The search is constrained
-    to ±30 days from jd_start to ensure convergence.
+    replacing the mean synodic month approximation. The bracketing walk covers
+    up to ±31 days from jd_start, enough for any same-phase spacing.
 
     Args:
         jd_start: Starting Julian Day in Universal Time (UT).
@@ -362,11 +362,12 @@ def compute_lunar_phase_jd(
                 - 90° = First Quarter (Moon 90° east of Sun)
                 - 180° = Full Moon (Moon opposite Sun)
                 - 270° = Last Quarter (Moon 90° west of Sun)
-        forward: If True, search forward in time; if False, search backward.
+        forward: If True, find the first occurrence after jd_start; if False,
+            find the most recent occurrence at or before jd_start.
 
     Returns:
         Julian Day (UT) when the phase angle is reached with ~1 second precision,
-        or None if calculation fails or phase is not found within ±30 day search window.
+        or None if calculation fails or phase is not found within the ±31 day search window.
 
     Examples:
         >>> # Find next Full Moon after Jan 1, 2025
@@ -384,18 +385,48 @@ def compute_lunar_phase_jd(
         # Normalize target angle to [0, 360)
         target_angle = target_angle % 360.0
 
-        # Search range: ±30 days is sufficient to find any lunar phase.
-        # Synodic month varies between ~29.27 and ~29.83 days (extremes).
+        # Search range: the daily bracketing walk below covers search_range + 1
+        # = 31 days, enough for any spacing between consecutive same-phase
+        # instants: new/full repeat within ~29.27-29.83 days, and quarter
+        # phases stretch slightly wider (measured max 29.93 days over
+        # 1990-2045) because the lunar anomaly affects them more strongly.
         # Mean synodic month: 29.530588853 days (Chapront ELP 2000-82B)
         # Source: https://eclipse.gsfc.nasa.gov/SEhelp/moonorbit.html
         search_range = 30.0
 
-        if forward:
-            jd_min = jd_start
-            jd_max = jd_start + search_range
-        else:
-            jd_min = jd_start - search_range
-            jd_max = jd_start
+        def _signed_diff(jd: float) -> float:
+            # Sun-Moon separation minus target, normalized to [-180, 180) so the
+            # sought instant is an upward zero crossing (the separation grows
+            # monotonically at ~12.2°/day).
+            sun_pos = swe.calc_ut(jd, swe.SUN, iflag)[0]
+            moon_pos = swe.calc_ut(jd, swe.MOON, iflag)[0]
+            angle = (float(moon_pos[0]) - float(sun_pos[0])) % 360.0
+            return (angle - target_angle + 180.0) % 360.0 - 180.0
+
+        # The normalized diff is a sawtooth: it rises through zero exactly at
+        # the sought instants and jumps from +180 to -180 once per synodic
+        # month. Plain bisection over a 30-day window is unreliable on such a
+        # shape — depending on where the wrap falls it can converge on the
+        # wrap itself (the opposite phase) or collapse onto a window edge.
+        # So first bracket the nearest genuine crossing in the requested
+        # direction with daily samples (a real crossing is a ~12° rise
+        # between samples, unlike the ~360° jump at the wrap), then bisect
+        # inside that one-day bracket.
+        step = 1.0 if forward else -1.0
+        prev_jd = jd_start
+        prev_diff = _signed_diff(prev_jd)
+        bracket = None
+        for day in range(1, int(search_range) + 2):
+            cur_jd = jd_start + step * float(day)
+            cur_diff = _signed_diff(cur_jd)
+            earlier_diff, later_diff = (prev_diff, cur_diff) if forward else (cur_diff, prev_diff)
+            if earlier_diff < 0.0 <= later_diff:
+                bracket = (min(prev_jd, cur_jd), max(prev_jd, cur_jd))
+                break
+            prev_jd, prev_diff = cur_jd, cur_diff
+        if bracket is None:
+            return None
+        jd_min, jd_max = bracket
 
         # Binary search convergence criteria:
         # - Tolerance: 1 second = 1/86400 day (sufficient for astronomical applications)
@@ -406,27 +437,15 @@ def compute_lunar_phase_jd(
 
         for _ in range(max_iterations):
             jd_mid = (jd_min + jd_max) / 2.0
+            diff = _signed_diff(jd_mid)
 
-            # Get Sun and Moon positions
-            sun_pos = swe.calc_ut(jd_mid, swe.SUN, iflag)[0]
-            moon_pos = swe.calc_ut(jd_mid, swe.MOON, iflag)[0]
-
-            # Calculate Sun-Moon angle
-            sun_lon = float(sun_pos[0])
-            moon_lon = float(moon_pos[0])
-            angle = (moon_lon - sun_lon) % 360.0
-
-            # Normalize angular difference to [-180, 180) to handle angle wrapping.
-            # Example: if angle=10° and target=350°, diff should be 20° (not -340°)
-            diff = (angle - target_angle + 180.0) % 360.0 - 180.0
-
-            # Binary search logic:
-            # - Forward search: if Moon hasn't reached target (diff < 0), advance time
-            # - Backward search: if Moon is past target (diff > 0), go back in time
-            if (forward and diff < 0) or (not forward and diff > 0):
-                jd_min = jd_mid  # Target phase occurs later in time
+            # The target instant is an upward zero crossing of diff: below the
+            # target → it lies later, at/above → it lies at or earlier. The
+            # backward case was bracketed above, so the same rule applies.
+            if diff < 0:
+                jd_min = jd_mid
             else:
-                jd_max = jd_mid  # Target phase occurs earlier in time
+                jd_max = jd_mid
 
             # Check if range is small enough
             if abs(jd_max - jd_min) < tolerance:

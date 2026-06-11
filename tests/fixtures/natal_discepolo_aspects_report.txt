@@ -122,42 +122,42 @@ Sample Natal Subject — Natal Chart Report
 | opposition     | 8.0     |
 +----------------+---------+
 
-+Aspects----------------+-------------------------------+-----------------------+-------+--------------+
-| Point 1               | Aspect                        | Point 2               | Orb   | Movement     |
-+-----------------------+-------------------------------+-----------------------+-------+--------------+
-| Sun                   | conjunction ☌                 | Moon                  | 7.33° | Applying →   |
-| Sun                   | semi-sextile semi-sextile     | Venus                 | 3.17° | Separating ← |
-| Sun                   | conjunction ☌                 | Jupiter               | 4.63° | Separating ← |
-| Sun                   | opposition ☍                  | Saturn                | 7.03° | Separating ← |
-| Sun                   | opposition ☍                  | True North Lunar Node | 8.72° | Applying →   |
-| Sun                   | conjunction ☌                 | Chiron                | 8.66° | Separating ← |
-| Moon                  | conjunction ☌                 | Jupiter               | 2.70° | Applying →   |
-| Moon                  | opposition ☍                  | Saturn                | 0.31° | Applying →   |
-| Moon                  | opposition ☍                  | Neptune               | 8.45° | Separating ← |
-| Moon                  | trine △                       | Pluto                 | 6.23° | Separating ← |
-| Moon                  | conjunction ☌                 | Chiron                | 1.33° | Separating ← |
-| Moon                  | semi-sextile semi-sextile     | Medium Coeli          | 1.29° | Applying →   |
-| Mercury               | semi-square semi-square       | Venus                 | 0.90° | Separating ← |
-| Mercury               | square □                      | Pluto                 | 2.63° | Separating ← |
-| Mercury               | conjunction ☌                 | Medium Coeli          | 2.31° | Separating ← |
-| Venus                 | opposition ☍                  | Uranus                | 5.03° | Applying →   |
-| Venus                 | sesquiquadrate sesquiquadrate | Pluto                 | 1.73° | Separating ← |
-| Venus                 | trine △                       | Ascendant             | 4.11° | Separating ← |
-| Mars                  | trine △                       | Uranus                | 0.77° | Applying →   |
-| Mars                  | trine △                       | Neptune               | 6.79° | Applying →   |
-| Mars                  | square □                      | True North Lunar Node | 1.30° | Applying →   |
-| Mars                  | opposition ☍                  | Ascendant             | 0.15° | Applying →   |
-| Jupiter               | opposition ☍                  | Saturn                | 2.40° | Separating ← |
-| Jupiter               | conjunction ☌                 | Chiron                | 4.03° | Separating ← |
-| Saturn                | opposition ☍                  | Chiron                | 1.64° | Applying →   |
-| Uranus                | conjunction ☌                 | Neptune               | 6.02° | Separating ← |
-| Uranus                | semi-sextile semi-sextile     | True North Lunar Node | 0.53° | Separating ← |
-| Uranus                | sextile ⚹                     | Ascendant             | 0.92° | Applying →   |
-| Uranus                | sesquiquadrate sesquiquadrate | Medium Coeli          | 1.82° | Applying →   |
-| Neptune               | sextile ⚹                     | Pluto                 | 2.21° | Separating ← |
-| Neptune               | opposition ☍                  | Chiron                | 7.12° | Separating ← |
-| Pluto                 | trine △                       | Chiron                | 4.91° | Separating ← |
-| Pluto                 | square □                      | Medium Coeli          | 4.94° | Separating ← |
-| True North Lunar Node | square □                      | Ascendant             | 1.44° | Applying →   |
-| Chiron                | semi-sextile semi-sextile     | Medium Coeli          | 0.03° | Separating ← |
-+-----------------------+-------------------------------+-----------------------+-------+--------------+
++Aspects----------------+------------------+-----------------------+-------+--------------+
+| Point 1               | Aspect           | Point 2               | Orb   | Movement     |
++-----------------------+------------------+-----------------------+-------+--------------+
+| Sun                   | conjunction ☌    | Moon                  | 7.33° | Applying →   |
+| Sun                   | semi-sextile ⚺   | Venus                 | 3.17° | Separating ← |
+| Sun                   | conjunction ☌    | Jupiter               | 4.63° | Separating ← |
+| Sun                   | opposition ☍     | Saturn                | 7.03° | Separating ← |
+| Sun                   | opposition ☍     | True North Lunar Node | 8.72° | Applying →   |
+| Sun                   | conjunction ☌    | Chiron                | 8.66° | Separating ← |
+| Moon                  | conjunction ☌    | Jupiter               | 2.70° | Applying →   |
+| Moon                  | opposition ☍     | Saturn                | 0.31° | Applying →   |
+| Moon                  | opposition ☍     | Neptune               | 8.45° | Separating ← |
+| Moon                  | trine △          | Pluto                 | 6.23° | Separating ← |
+| Moon                  | conjunction ☌    | Chiron                | 1.33° | Separating ← |
+| Moon                  | semi-sextile ⚺   | Medium Coeli          | 1.29° | Applying →   |
+| Mercury               | semi-square ∠    | Venus                 | 0.90° | Separating ← |
+| Mercury               | square □         | Pluto                 | 2.63° | Separating ← |
+| Mercury               | conjunction ☌    | Medium Coeli          | 2.31° | Separating ← |
+| Venus                 | opposition ☍     | Uranus                | 5.03° | Applying →   |
+| Venus                 | sesquiquadrate ⚼ | Pluto                 | 1.73° | Separating ← |
+| Venus                 | trine △          | Ascendant             | 4.11° | Separating ← |
+| Mars                  | trine △          | Uranus                | 0.77° | Applying →   |
+| Mars                  | trine △          | Neptune               | 6.79° | Applying →   |
+| Mars                  | square □         | True North Lunar Node | 1.30° | Applying →   |
+| Mars                  | opposition ☍     | Ascendant             | 0.15° | Applying →   |
+| Jupiter               | opposition ☍     | Saturn                | 2.40° | Separating ← |
+| Jupiter               | conjunction ☌    | Chiron                | 4.03° | Separating ← |
+| Saturn                | opposition ☍     | Chiron                | 1.64° | Applying →   |
+| Uranus                | conjunction ☌    | Neptune               | 6.02° | Separating ← |
+| Uranus                | semi-sextile ⚺   | True North Lunar Node | 0.53° | Separating ← |
+| Uranus                | sextile ⚹        | Ascendant             | 0.92° | Applying →   |
+| Uranus                | sesquiquadrate ⚼ | Medium Coeli          | 1.82° | Applying →   |
+| Neptune               | sextile ⚹        | Pluto                 | 2.21° | Separating ← |
+| Neptune               | opposition ☍     | Chiron                | 7.12° | Separating ← |
+| Pluto                 | trine △          | Chiron                | 4.91° | Separating ← |
+| Pluto                 | square □         | Medium Coeli          | 4.94° | Separating ← |
+| True North Lunar Node | square □         | Ascendant             | 1.44° | Applying →   |
+| Chiron                | semi-sextile ⚺   | Medium Coeli          | 0.03° | Separating ← |
++-----------------------+------------------+-----------------------+-------+--------------+

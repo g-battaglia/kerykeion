@@ -655,45 +655,60 @@ def regenerate_dual_return_all_points_all_aspects():
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # --- Original snapshots ---
-    regenerate_report()
-    regenerate_synastry_report()
-    regenerate_transit_report()
-    regenerate_composite_report()
-    regenerate_solar_return_report()
-    regenerate_dual_return_report()
+    # Each step runs independently: a single failure (typically an
+    # ephemeris-range error on short-range local kernels, e.g. the
+    # ancient-Rome snapshot needing the full DE441) must not silently
+    # abort the steps after it — that is exactly how the all-points
+    # baselines once went stale without anyone noticing.
+    _STEPS = [
+        # --- Original snapshots ---
+        regenerate_report,
+        regenerate_synastry_report,
+        regenerate_transit_report,
+        regenerate_composite_report,
+        regenerate_solar_return_report,
+        regenerate_dual_return_report,
+        # --- Extended: active points presets (natal, Liverpool) ---
+        regenerate_natal_traditional_points,
+        regenerate_natal_all_points,
+        regenerate_natal_all_points_all_aspects,
+        # --- Extended: active aspects presets (natal, Liverpool) ---
+        regenerate_natal_all_aspects,
+        regenerate_natal_discepolo_aspects,
+        # --- Extended: geographic diversity (natal, ALL+ALL) ---
+        regenerate_natal_tokyo,
+        regenerate_natal_buenos_aires,
+        regenerate_natal_quito,
+        # --- Extended: temporal diversity (natal, ALL+ALL) ---
+        regenerate_natal_ancient_rome,
+        regenerate_natal_einstein,
+        regenerate_natal_future_2050,
+        # --- Extended: synastry ---
+        regenerate_synastry_traditional_points,
+        regenerate_synastry_all_points_all_aspects,
+        # --- Extended: transit ---
+        regenerate_transit_traditional_points,
+        regenerate_transit_all_points_all_aspects,
+        # --- Extended: composite ---
+        regenerate_composite_traditional_points,
+        regenerate_composite_all_points_all_aspects,
+        # --- Extended: return ---
+        regenerate_solar_return_all_points,
+        regenerate_dual_return_all_points_all_aspects,
+    ]
 
-    # --- Extended: active points presets (natal, Liverpool) ---
-    regenerate_natal_traditional_points()
-    regenerate_natal_all_points()
-    regenerate_natal_all_points_all_aspects()
+    failed = []
+    for step in _STEPS:
+        try:
+            step()
+        except Exception as exc:
+            failed.append((step.__name__, exc))
+            print(f"!! {step.__name__} FAILED: {exc}")
 
-    # --- Extended: active aspects presets (natal, Liverpool) ---
-    regenerate_natal_all_aspects()
-    regenerate_natal_discepolo_aspects()
-
-    # --- Extended: geographic diversity (natal, ALL+ALL) ---
-    regenerate_natal_tokyo()
-    regenerate_natal_buenos_aires()
-    regenerate_natal_quito()
-
-    # --- Extended: temporal diversity (natal, ALL+ALL) ---
-    regenerate_natal_ancient_rome()
-    regenerate_natal_einstein()
-    regenerate_natal_future_2050()
-
-    # --- Extended: synastry ---
-    regenerate_synastry_traditional_points()
-    regenerate_synastry_all_points_all_aspects()
-
-    # --- Extended: transit ---
-    regenerate_transit_traditional_points()
-    regenerate_transit_all_points_all_aspects()
-
-    # --- Extended: composite ---
-    regenerate_composite_traditional_points()
-    regenerate_composite_all_points_all_aspects()
-
-    # --- Extended: return ---
-    regenerate_solar_return_all_points()
-    regenerate_dual_return_all_points_all_aspects()
+    if failed:
+        print(f"\n{len(failed)}/{len(_STEPS)} steps failed — those fixtures were NOT regenerated:")
+        for name, exc in failed:
+            print(f"  - {name}: {type(exc).__name__}")
+        print("(On short-range local kernels the ancient-Rome step is expected to fail; "
+              "regenerate it on a machine with the full DE441 kernel.)")
+        raise SystemExit(1)

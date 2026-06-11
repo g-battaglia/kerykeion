@@ -30,16 +30,18 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, Dict, List
+from typing import Any, Dict, List, get_args
 
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.report import ReportGenerator
+from kerykeion.report import ASPECT_SYMBOLS, ReportGenerator
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.midpoints import MidpointFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
+from kerykeion.schemas.kr_literals import AspectName
 from kerykeion.schemas.kr_models import (
     MoonPhaseOverviewModel,
     MoonPhaseMoonSummaryModel,
@@ -58,41 +60,49 @@ from kerykeion.settings.config_constants import (
 FIXTURES_DIR = Path("tests/fixtures")
 
 
-def _assert_report_match(captured: str, expected_with_newline: str, abs_tol: float = 10.0) -> None:
-    """Compare report text allowing small numeric differences between backends.
+def _assert_report_match(captured: str, expected_with_newline: str, abs_tol: float = 0.01) -> None:
+    """Compare report text against its fixture, strictly.
 
-    Numbers in the report (positions, degrees, speeds) may differ slightly
-    between swisseph and libephemeris.  This helper extracts all numbers from
-    each line and compares them within *abs_tol* while requiring non-numeric
-    text to be identical.
-
-    When line counts differ (e.g. different aspect sets across backends,
-    or missing points for historical dates), the comparison is skipped —
-    only a minimal sanity check is performed.
+    The non-numeric skeleton of every line must match exactly; numbers
+    (positions, degrees, speeds) are compared within *abs_tol*, which only
+    absorbs display-rounding flips of the last printed decimals across
+    backend/kernel builds. Structural drift — different line counts, a
+    different aspect set, renamed points — must FAIL: the previous lenient
+    version (skip on line-count mismatch, skip on skeleton mismatch, 10.0°
+    tolerance) let the all-points fixtures go stale through three real code
+    changes without a single test noticing. If a legitimate code change
+    alters the output, regenerate the fixtures with
+    scripts/regenerate_test_output.py instead of loosening this helper.
     """
     number_re = re.compile(r"-?\d+(?:\.\d+)?")
     captured_lines = captured.splitlines()
     expected_lines = expected_with_newline.splitlines()
     if len(captured_lines) != len(expected_lines):
-        # Cross-backend tolerance: line counts may differ significantly
-        # (e.g. ancient dates with fewer points in libephemeris).
-        # Just verify the report is non-empty.
-        assert len(captured_lines) > 5, (
-            f"Report too short: {len(captured_lines)} lines"
+        first_diff = next(
+            (
+                f"first divergent line {i + 1}:\n  got:  {c}\n  exp:  {e}"
+                for i, (c, e) in enumerate(zip(captured_lines, expected_lines))
+                if c != e
+            ),
+            "lines diverge only past the shorter report",
         )
-        return
+        raise AssertionError(
+            f"Report line count mismatch: got {len(captured_lines)}, expected "
+            f"{len(expected_lines)} — the fixture is stale or the generator "
+            f"changed; regenerate via scripts/regenerate_test_output.py. "
+            f"{first_diff}"
+        )
     for i, (cap, exp) in enumerate(zip(captured_lines, expected_lines)):
-        cap_nums = [float(x) for x in number_re.findall(cap)]
-        exp_nums = [float(x) for x in number_re.findall(exp)]
-        # Check non-numeric skeleton first — if it differs the line
-        # represents different content (e.g. different aspect pair due
-        # to cross-backend position shifts).  Skip silently.
         cap_text = number_re.sub("NUM", cap)
         exp_text = number_re.sub("NUM", exp)
-        if cap_text != exp_text:
-            continue
-        if len(cap_nums) != len(exp_nums):
-            continue
+        assert cap_text == exp_text, (
+            f"Line {i + 1} content differs:\n  got:  {cap}\n  exp:  {exp}"
+        )
+        cap_nums = [float(x) for x in number_re.findall(cap)]
+        exp_nums = [float(x) for x in number_re.findall(exp)]
+        assert len(cap_nums) == len(exp_nums), (
+            f"Line {i + 1} number count differs:\n  got:  {cap}\n  exp:  {exp}"
+        )
         for j, (cn, en) in enumerate(zip(cap_nums, exp_nums)):
             assert abs(cn - en) <= abs_tol, (
                 f"Line {i + 1}, number #{j + 1}: {cn} vs {en} "
@@ -124,7 +134,7 @@ _RE_JULIAN_DAY = re.compile(r"\d+\.\d{6}")
 _RE_DATE = re.compile(r"\d{2}/\d{2}/")
 _RE_RETROGRADE_COL = re.compile(r"\|\s*([R-])\s*\|")
 
-_ASPECT_SYMBOLS = {"☌", "☍", "△", "□", "⚹", "⚻", "∠", "⚼", "Q"}
+_ASPECT_SYMBOLS = {"☌", "☍", "△", "□", "⚹", "⚻", "⚺", "∠", "⚼", "Q", "bQ", "∥", "⋕"}
 _MOVEMENT_SYMBOLS = {"→", "←", "="}
 
 # ---------------------------------------------------------------------------
@@ -1596,6 +1606,125 @@ class TestReportContentFormatting:
 
     def test_julian_day_format(self) -> None:
         assert _RE_JULIAN_DAY.search(self.text), "No Julian Day with 6 decimal places"
+
+
+# =====================================================================
+# 11b. TestAspectSymbolMapping
+# =====================================================================
+
+
+class TestAspectSymbolMapping:
+    """ASPECT_SYMBOLS keys must mirror AspectName so aspect cells never duplicate.
+
+    Regression: ``semisquare``/``sesquisquare`` keys didn't match the real
+    ``semi-square``/``sesquiquadrate`` aspect names and several minor aspects
+    had no entry, so the fallback echoed the aspect name and the report
+    rendered cells like ``semi-square semi-square``.
+    """
+
+    def test_symbols_cover_aspect_names_exactly(self) -> None:
+        assert set(ASPECT_SYMBOLS) == set(get_args(AspectName))
+
+    def test_minor_aspects_render_glyph_not_duplicated_name(self) -> None:
+        subject = _snapshot_subject(active_points=ALL_ACTIVE_POINTS)
+        chart = ChartDataFactory.create_natal_chart_data(
+            subject,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        text = ReportGenerator(chart).generate_report()
+
+        for name in get_args(AspectName):
+            assert f"{name} {name}" not in text, f"Duplicated aspect cell for {name!r}"
+        corrected_cells = [f"{name} {symbol}" for name, symbol in ASPECT_SYMBOLS.items()]
+        assert any(cell in text for cell in corrected_cells), (
+            "No 'name glyph' aspect cell found in the aspects table"
+        )
+
+    def test_unknown_aspect_name_never_duplicates(self, john_lennon) -> None:
+        """Aspects missing from ASPECT_SYMBOLS render the bare name, not name twice."""
+        chart = ChartDataFactory.create_natal_chart_data(john_lennon)
+        generator = ReportGenerator(chart)
+        generator._chart_data = SimpleNamespace(
+            aspects=[
+                SimpleNamespace(
+                    aspect="exotic-aspect",
+                    p1_name="Sun",
+                    p2_name="Moon",
+                    orbit=1.0,
+                    aspect_movement="Static",
+                )
+            ]
+        )
+        text = generator._aspects_report(max_aspects=None)
+        assert "exotic-aspect exotic-aspect" not in text
+        assert "exotic-aspect" in text
+
+
+# =====================================================================
+# 11c. TestFixedStarsAndMidpointsReport
+# =====================================================================
+
+
+class TestFixedStarsAndMidpointsReport:
+    """The v6 ``fixed_stars`` / ``active_midpoints`` arrays must surface in reports."""
+
+    @staticmethod
+    def _star_subject():
+        return _make_offline_subject(
+            "Fixed Star Subject",
+            1990,
+            7,
+            21,
+            14,
+            45,
+            lat=53.4084,
+            lng=-2.9916,
+            tz_str="Europe/London",
+            active_fixed_stars=["Regulus", "Spica"],
+        )
+
+    @staticmethod
+    def _plain_subject(name: str = "Plain Subject"):
+        return _make_offline_subject(
+            name,
+            1990,
+            7,
+            21,
+            14,
+            45,
+            lat=53.4084,
+            lng=-2.9916,
+            tz_str="Europe/London",
+        )
+
+    def test_subject_report_includes_fixed_stars(self) -> None:
+        text = ReportGenerator(self._star_subject()).generate_report()
+        assert "Fixed Stars" in text
+        assert "Regulus" in text
+        assert "Spica" in text
+
+    def test_chart_report_includes_fixed_stars(self) -> None:
+        chart = ChartDataFactory.create_natal_chart_data(self._star_subject())
+        text = ReportGenerator(chart).generate_report()
+        assert "Natal Fixed Stars" in text
+        assert "Regulus" in text
+        assert "Spica" in text
+
+    def test_subject_report_includes_active_midpoints(self) -> None:
+        subject = self._plain_subject("Midpoint Subject")
+        subject.active_midpoints = MidpointFactory.compute_active_midpoint_points(
+            subject,
+            ["Sun_Moon"],
+        )
+        text = ReportGenerator(subject).generate_report()
+        assert "Midpoints" in text
+        assert "Sun Moon Midpoint" in text
+
+    def test_default_report_has_no_star_or_midpoint_sections(self) -> None:
+        text = ReportGenerator(self._plain_subject()).generate_report()
+        assert "Fixed Stars" not in text
+        assert "Regulus" not in text
+        assert "Midpoint" not in text
 
 
 # =====================================================================

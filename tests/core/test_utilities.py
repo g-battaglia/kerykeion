@@ -235,9 +235,49 @@ class TestCircularMean:
 
     def test_wraparound_near_zero(self):
         result = circular_mean(350, 10)
-        assert 0 <= result <= 360
+        assert 0 <= result < 360
         # Expect result near 0/360
         assert result < 10 or result > 350
+
+    def test_wraparound_returns_zero_not_360(self):
+        """Float rounding of 360 - 4.6e-15 used to return exactly 360.0,
+        which get_kerykeion_point_from_degree rejects (degree >= 360)."""
+        result = circular_mean(350.0, 10.0)
+        assert result == 0.0
+
+    def test_result_always_below_360(self):
+        for first, second in [(350.0, 10.0), (359.9, 0.1), (355.5, 4.5), (180.0, 180.0)]:
+            result = circular_mean(first, second)
+            assert 0.0 <= result < 360.0
+
+    def test_antipodal_tie_break_is_deterministic(self):
+        """Exactly antipodal inputs have no unique mean; the tie-break is
+        the plain average of the normalized positions."""
+        assert circular_mean(10.0, 190.0) == 100.0
+        assert circular_mean(190.0, 10.0) == 100.0
+        assert circular_mean(0.0, 180.0) == 90.0
+
+    def test_antipodal_matches_midpoint_factory_convention(self):
+        from kerykeion.midpoints.midpoint_factory import MidpointFactory
+
+        for first, second in [(10.0, 190.0), (0.0, 180.0), (350.0, 170.0)]:
+            assert circular_mean(first, second) == MidpointFactory._shorter_arc_midpoint(first, second)
+
+    def test_near_antipodal_stays_on_regular_path(self):
+        """Inputs just shy of antipodal must not snap to the tie-break."""
+        result = circular_mean(10.0, 189.999999)
+        assert math.isclose(result, 99.9999995, abs_tol=1e-5)
+
+    def test_mean_feeds_get_kerykeion_point_from_degree(self):
+        """Mirror-symmetric positions around 0° Aries (the composite-chart
+        crash case): the mean must be accepted by the point builder."""
+        for first, second in [(350.0, 10.0), (359.9, 0.1), (355.5, 4.5)]:
+            point = get_kerykeion_point_from_degree(
+                circular_mean(first, second), "Sun", "AstrologicalPoint"
+            )
+            # Circular distance from 0° Aries (float noise may land the mean
+            # on either side of the 0°/360° seam).
+            assert min(point.abs_pos, 360.0 - point.abs_pos) < 1e-6
 
 
 # =============================================================================

@@ -4,6 +4,15 @@
 import pytest
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, PlanetaryNodesFactory
+from kerykeion.schemas import KerykeionException
+
+# The full default set: every supported planet, Moon through Pluto. The Sun
+# is deliberately absent — it has no geocentric orbital nodes/apsides and the
+# ephemeris would only return all-zero placeholders for it.
+_DEFAULT_NODE_PLANETS = {
+    "Moon", "Mercury", "Venus", "Mars", "Jupiter",
+    "Saturn", "Uranus", "Neptune", "Pluto",
+}
 
 
 @pytest.fixture(scope="module")
@@ -18,7 +27,7 @@ def subject():
 class TestNodesFromSubject:
     def test_all_planets_returned(self, subject):
         result = PlanetaryNodesFactory.from_subject(subject)
-        assert len(result.nodes) >= 8  # At least Sun through Pluto
+        assert {n.planet_name for n in result.nodes} == _DEFAULT_NODE_PLANETS
 
     def test_method_stored(self, subject):
         result = PlanetaryNodesFactory.from_subject(subject, method="mean")
@@ -27,7 +36,7 @@ class TestNodesFromSubject:
     def test_osculating_method(self, subject):
         result = PlanetaryNodesFactory.from_subject(subject, method="osculating")
         assert result.method == "osculating"
-        assert len(result.nodes) >= 8
+        assert {n.planet_name for n in result.nodes} == _DEFAULT_NODE_PLANETS
 
     def test_node_has_valid_position(self, subject):
         result = PlanetaryNodesFactory.from_subject(subject)
@@ -49,7 +58,7 @@ class TestNodesFromSubject:
 class TestNodesFromJulianDay:
     def test_j2000_epoch(self):
         result = PlanetaryNodesFactory.from_julian_day(2451545.0)
-        assert len(result.nodes) >= 8
+        assert {n.planet_name for n in result.nodes} == _DEFAULT_NODE_PLANETS
         assert result.julian_day == 2451545.0
 
 
@@ -64,6 +73,27 @@ class TestNodesFiltering:
         assert len(result.nodes) == 2
         names = {n.planet_name for n in result.nodes}
         assert names == {"Mars", "Saturn"}
+
+
+class TestSunExcluded:
+    """v6 pre-beta fix: the Sun has no geocentric orbital nodes/apsides.
+
+    ``nod_aps_ut`` returns all zeros for it, so it used to surface as a junk
+    node model with every point at 0° Aries. It is now excluded from the
+    defaults, and an explicit request raises instead of returning fake data.
+    """
+
+    def test_default_call_excludes_sun(self, subject):
+        result = PlanetaryNodesFactory.from_subject(subject)
+        assert "Sun" not in {n.planet_name for n in result.nodes}
+
+    def test_explicit_sun_request_raises_from_subject(self, subject):
+        with pytest.raises(KerykeionException, match="Sun has no geocentric"):
+            PlanetaryNodesFactory.from_subject(subject, planets=["Sun"])
+
+    def test_explicit_sun_request_raises_from_julian_day(self):
+        with pytest.raises(KerykeionException, match="Sun has no geocentric"):
+            PlanetaryNodesFactory.from_julian_day(2451545.0, planets=["Sun", "Mars"])
 
 
 class TestSweRegressionNodes:

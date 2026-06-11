@@ -80,11 +80,46 @@ class TestACGComputation:
         assert len(fine_mc.points) >= len(coarse_mc.points)
 
 
+def _true_equatorial(jd, planet_id):
+    """True equatorial RA/declination (degrees), sidereal flag stripped."""
+    with ephemeris_session() as iflag:
+        eq_iflag = (iflag & ~swe.FLG_SIDEREAL) | swe.FLG_EQUATORIAL
+        pos = swe.calc_ut(jd, planet_id, eq_iflag)[0]
+        return pos[0], pos[1]
+
+
+def _expected_mc_lng(jd, planet_id):
+    """In-mundo MC line geographic longitude: wrap(true RA - GST)."""
+    ra_deg, _ = _true_equatorial(jd, planet_id)
+    with ephemeris_session():
+        gst_deg = swe.sidtime(jd) * 15.0
+    mc_lng = (ra_deg - gst_deg) % 360
+    if mc_lng > 180:
+        mc_lng -= 360
+    return mc_lng
+
+
+def _zodiacal_mc_lng(jd, planet_id):
+    """MC longitude from the OLD beta=0 zodiacal projection (pre-v6-fix)."""
+    with ephemeris_session() as iflag:
+        obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+        ecl_lon = swe.calc_ut(jd, planet_id, iflag)[0][0]
+        gst_deg = swe.sidtime(jd) * 15.0
+    ecl_rad = math.radians(ecl_lon)
+    eps_rad = math.radians(obliquity)
+    ra_rad = math.atan2(math.sin(ecl_rad) * math.cos(eps_rad), math.cos(ecl_rad))
+    mc_lng = (math.degrees(ra_rad) % 360 - gst_deg) % 360
+    if mc_lng > 180:
+        mc_lng -= 360
+    return mc_lng
+
+
 class TestACGSweRegressions:
     """Known-value regression tests using Swiss Ephemeris as reference source.
 
-    Verifies that the Sun MC line longitude produced by AstroCartographyFactory
-    matches the value derived directly from swe.sidtime and swe.calc_ut.
+    Verifies that MC line longitudes produced by AstroCartographyFactory
+    match values derived directly from swe.sidtime and swe.calc_ut
+    (FLG_EQUATORIAL), i.e. the in-mundo culmination meridian.
     """
 
     @pytest.fixture(scope="class")
@@ -100,39 +135,17 @@ class TestACGSweRegressions:
 
         The Sun's MC line falls at the geographic longitude where the Sun
         culminates (transits the local meridian).  From swe:
-            Sun RA (ecliptic->equatorial, zero ecliptic latitude approx)
+            Sun true RA (swe.calc_ut with FLG_EQUATORIAL)
             GAST = swe.sidtime(jd) in hours
             mc_geo_lng = (sun_RA - GAST * 15) mod 360, shifted to [-180,180]
 
-        The factory uses the same formula, so the MC line's longitude should
-        match within 1 degree.
+        v6 in-mundo fix: the factory now uses the body's true equatorial RA
+        (not the beta=0 zodiacal projection), so the match is exact. For the
+        Sun (ecliptic latitude ~0) both methods agree within ~0.001 degrees,
+        so this also pins backward compatibility for the Sun line.
         """
         jd = acg_subject.julian_day
-
-        with ephemeris_session() as iflag:
-            # Get obliquity
-            obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
-
-            # Get Sun ecliptic longitude
-            sun_ecl = swe.calc_ut(jd, swe.SUN, iflag)[0]
-            sun_ecl_lon = sun_ecl[0]
-
-            # Greenwich apparent sidereal time
-            gst_hours = swe.sidtime(jd)
-
-        # Convert to RA (zero ecliptic latitude approximation, same as factory)
-        ecl_rad = math.radians(sun_ecl_lon)
-        eps_rad = math.radians(obliquity)
-        ra_rad = math.atan2(
-            math.sin(ecl_rad) * math.cos(eps_rad),
-            math.cos(ecl_rad),
-        )
-        sun_ra = math.degrees(ra_rad) % 360
-
-        # Expected MC geographic longitude
-        expected_mc_lng = (sun_ra - gst_hours * 15.0) % 360
-        if expected_mc_lng > 180:
-            expected_mc_lng -= 360
+        expected_mc_lng = _expected_mc_lng(jd, swe.SUN)
 
         # Get factory result
         lines = AstroCartographyFactory.compute(acg_subject, step=1, planets=["Sun"])
@@ -141,10 +154,91 @@ class TestACGSweRegressions:
         # MC line is vertical, so all points share the same longitude
         factory_mc_lng = sun_mc.points[0].longitude
 
-        assert abs(factory_mc_lng - expected_mc_lng) < 1.0, (
+        assert abs(factory_mc_lng - expected_mc_lng) < 0.01, (
             f"Sun MC line longitude mismatch: factory={factory_mc_lng}, "
             f"expected={expected_mc_lng}"
         )
+
+
+class TestACGInMundoLines:
+    """v6 pre-beta fix: ACG lines are computed in mundo from TRUE equatorial
+    coordinates. Previously RA was derived from the ecliptic longitude at
+    latitude beta=0, which shifted the lines of bodies with nonzero ecliptic
+    latitude (measured: ~4.6 deg for Pluto, ~1.2 deg for the Moon on the
+    1990-06-15 fixture date) away from reference maps (Jim Lewis / astro.com).
+    """
+
+    @pytest.fixture(scope="class")
+    def acg_subject(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "ACG In Mundo", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+
+    @pytest.mark.parametrize(
+        "planet,planet_id,min_shift",
+        [
+            # Pluto ecliptic latitude ~ +15.85 deg on this date -> ~4.56 deg shift
+            ("Pluto", swe.PLUTO, 4.0),
+            # Moon ecliptic latitude ~ +3.15 deg on this date -> ~1.22 deg shift
+            ("Moon", swe.MOON, 1.0),
+        ],
+    )
+    def test_mc_line_uses_true_ra(self, acg_subject, planet, planet_id, min_shift):
+        """MC line must sit on the true-RA culmination meridian, not on the
+        zodiacal (beta=0) projection the pre-fix code used."""
+        jd = acg_subject.julian_day
+        expected = _expected_mc_lng(jd, planet_id)
+        zodiacal = _zodiacal_mc_lng(jd, planet_id)
+
+        # The two methods must actually diverge here, otherwise the test
+        # would not discriminate (guards the fixture date).
+        diff = abs(expected - zodiacal)
+        if diff > 180:
+            diff = 360 - diff
+        assert diff > min_shift, (
+            f"{planet}: fixture no longer discriminative ({diff=:.4f})"
+        )
+
+        lines = AstroCartographyFactory.compute(acg_subject, step=1, planets=[planet])
+        mc = next(l for l in lines if l.planet == planet and l.line_type == "MC")
+        assert mc.points[0].longitude == pytest.approx(expected, abs=0.01), (
+            f"{planet} MC line is not on the true-RA meridian"
+        )
+
+    def test_sun_rising_line_point_is_on_horizon(self, acg_subject):
+        """Independent cross-check: at a point of the Sun ASC line the Sun's
+        geometric altitude (swe.azalt) must be ~0."""
+        jd = acg_subject.julian_day
+        lines = AstroCartographyFactory.compute(acg_subject, step=1, planets=["Sun"])
+        sun_asc = next(l for l in lines if l.planet == "Sun" and l.line_type == "ASC")
+        point = next(p for p in sun_asc.points if p.latitude == 40.0)
+
+        with ephemeris_session() as iflag:
+            eq_iflag = (iflag & ~swe.FLG_SIDEREAL) | swe.FLG_EQUATORIAL
+            ra, dec, dist = swe.calc_ut(jd, swe.SUN, eq_iflag)[0][:3]
+            azimuth, true_alt = swe.azalt(
+                jd, swe.EQU2HOR, (point.longitude, point.latitude, 0.0),
+                0.0, 0.0, (ra, dec, dist),
+            )[:2]
+
+        assert abs(true_alt) <= 0.2, (
+            f"Sun not on geometric horizon at ASC line point: alt={true_alt}"
+        )
+        # Rising side: azimuth east of the meridian (swe convention: from
+        # south, clockwise -> east is 180..360).
+        assert 180.0 < azimuth < 360.0, f"ASC point is not on the rising side: az={azimuth}"
+
+    def test_asc_dsc_one_point_per_latitude(self, acg_subject):
+        """The horizon equation is solved exactly: each scanned latitude
+        contributes at most one ASC and one DSC point (the pre-fix scan could
+        also sample the -180/+180 meridian twice)."""
+        lines = AstroCartographyFactory.compute(acg_subject, step=5, planets=["Sun"])
+        for line_type in ("ASC", "DSC"):
+            line = next(l for l in lines if l.line_type == line_type)
+            latitudes = [p.latitude for p in line.points]
+            assert len(latitudes) == len(set(latitudes)), f"duplicate latitude on {line_type}"
 
 
 class TestACGSiderealFrameConsistency:

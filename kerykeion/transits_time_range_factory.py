@@ -163,7 +163,9 @@ class TransitsTimeRangeFactory:
     Note:
         - Calculation time scales with the number of ephemeris data points
         - More active points and aspects increase computational requirements
-        - The natal chart's coordinate system should match the ephemeris data
+        - The natal chart's coordinate system should match the ephemeris data:
+          a mismatch in zodiac_type / sidereal_mode / perspective_type is
+          detected at construction time and reported via ``logging.warning``
     """
 
     def __init__(
@@ -203,7 +205,10 @@ class TransitsTimeRangeFactory:
                 chart axes applied during aspect calculations.
 
         Note:
-            - All ephemeris data points should use the same coordinate system as the natal chart
+            - All ephemeris data points should use the same coordinate system as
+              the natal chart: a ``logging.warning`` is emitted when the points'
+              frame metadata (zodiac_type / sidereal_mode / perspective_type)
+              differs from the natal chart's
             - The order of ephemeris_data_points determines the chronological sequence
             - Settings affect orb tolerances and calculation precision
         """
@@ -217,6 +222,45 @@ class TransitsTimeRangeFactory:
         )
         self.settings_file = settings_file
         self.axis_orb_limit = axis_orb_limit
+        self._warn_if_frame_mismatch()
+
+    def _warn_if_frame_mismatch(self) -> None:
+        """Warn when the natal chart and the ephemeris series disagree on frame.
+
+        Aspects are computed by directly comparing longitudes, so the two
+        sides must share the same reference frame. A Sidereal natal chart
+        matched against a Tropical ephemeris series (or vice versa) silently
+        yields cross-frame aspects offset by the ayanamsha (~24°), and a
+        perspective mismatch (e.g. heliocentric vs geocentric) is equally
+        meaningless — the exact-moment refinement, which always recomputes in
+        the natal frame, would then disagree with the coarse track. The frame
+        is read from the models' metadata (``zodiac_type`` /
+        ``sidereal_mode`` / ``perspective_type``).
+        """
+        natal_frame = (
+            getattr(self.natal_chart, "zodiac_type", None),
+            getattr(self.natal_chart, "sidereal_mode", None),
+            getattr(self.natal_chart, "perspective_type", None),
+        )
+        for point in self.ephemeris_data_points:
+            point_frame = (
+                getattr(point, "zodiac_type", None),
+                getattr(point, "sidereal_mode", None),
+                getattr(point, "perspective_type", None),
+            )
+            if point_frame != natal_frame:
+                logging.warning(
+                    "Natal chart and ephemeris data points use different calculation "
+                    "frames (natal: zodiac_type=%s, sidereal_mode=%s, "
+                    "perspective_type=%s; ephemeris: zodiac_type=%s, sidereal_mode=%s, "
+                    "perspective_type=%s). Cross-frame aspects are offset by the frame "
+                    "difference (a sidereal/tropical mismatch shifts every aspect by "
+                    "the ayanamsha, ~24°) — rebuild the ephemeris series with the "
+                    "natal chart's settings.",
+                    *natal_frame,
+                    *point_frame,
+                )
+                return
 
     def _sampling_step_days(self) -> Optional[float]:
         """Return the smallest positive gap (in days) between ephemeris samples.

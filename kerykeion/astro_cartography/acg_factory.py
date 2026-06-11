@@ -7,11 +7,15 @@ across the globe for a given birth moment. The output is a set of
 geographic line coordinates that can be plotted on a map.
 
 Algorithm:
-    For a fixed Julian Day, iterate across longitudes (-180 to +180).
-    At each longitude, recalculate house cusps using swe.houses_armc()
-    and check which planet is closest to each angle (ASC, MC, DSC, IC).
-    When a planet's ecliptic longitude matches an angle cusp within
-    tolerance, record that longitude as a point on the planet's line.
+    For a fixed Julian Day, fetch each body's TRUE equatorial
+    coordinates (right ascension alpha, declination delta) and the
+    Greenwich sidereal time (GST). The body culminates where local
+    sidereal time equals alpha, so the MC line is the meridian at
+    geographic longitude wrap(alpha - GST) and the IC line is its
+    antimeridian. For ASC/DSC, scan geographic latitudes phi and solve
+    the horizon equation cos H = -tan(phi) * tan(delta) for the hour
+    angle H; rising (H = -H0) and setting (H = +H0) then give the
+    geographic longitudes wrap(alpha -/+ H0 - GST) directly.
 
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
@@ -35,6 +39,29 @@ class ACGLine(BaseModel):
     planet: str = Field(description="Planet name")
     line_type: Literal["ASC", "DSC", "MC", "IC"] = Field(description="Angular line type")
     points: List[ACGLinePoint] = Field(description="Geographic coordinates of the line")
+
+
+# Swiss Ephemeris body ids for the supported ACG planets.
+_ACG_PLANET_IDS: Dict[str, int] = {
+    "Sun": swe.SUN,
+    "Moon": swe.MOON,
+    "Mercury": swe.MERCURY,
+    "Venus": swe.VENUS,
+    "Mars": swe.MARS,
+    "Jupiter": swe.JUPITER,
+    "Saturn": swe.SATURN,
+    "Uranus": swe.URANUS,
+    "Neptune": swe.NEPTUNE,
+    "Pluto": swe.PLUTO,
+}
+
+
+def _wrap180(degrees: float) -> float:
+    """Wrap an angle in degrees to the (-180, +180] geographic range."""
+    wrapped = degrees % 360.0
+    if wrapped > 180.0:
+        wrapped -= 360.0
+    return wrapped
 
 
 class AstroCartographyFactory:
@@ -66,18 +93,31 @@ class AstroCartographyFactory:
         """
         Compute ACG lines for a natal chart.
 
-        ACG lines are physical: they mark where a planet sits on the local
-        horizon or meridian, which does not depend on the zodiac convention.
-        Sidereal subjects are therefore rotated back to tropical longitudes
-        (``abs_pos + ayanamsa_value``) before the equatorial math, so a
-        tropical and a sidereal chart of the same instant produce identical
-        geographic lines.
+        Lines are computed in mundo, from each body's TRUE equatorial
+        coordinates (right ascension and declination): they mark where the
+        body physically sits on the local meridian or geometric horizon,
+        which does not depend on the zodiac convention. A tropical and a
+        sidereal chart of the same instant therefore produce identical
+        geographic lines, and bodies with nonzero ecliptic latitude (Moon,
+        Pluto, ...) land where reference ACG maps (Jim Lewis / astro.com)
+        draw them rather than where their zodiacal degree would project.
+
+        MC/IC lines are the meridians where the body culminates
+        (geographic longitude = RA - GST) and anti-culminates. ASC/DSC
+        lines solve, per scanned latitude, the horizon equation
+        ``cos H = -tan(lat) * tan(declination)``; latitudes where the body
+        is circumpolar (or never rises) have no line point. Atmospheric
+        refraction is ignored: the lines use the geometric horizon, which
+        is also the Jim Lewis convention (refracted rise/set lines would
+        sit slightly differently).
 
         Args:
             subject: The natal chart subject.
-            step: Longitude/latitude scanning step in degrees (default 1.0).
-            tolerance: Angular tolerance for ASC/DSC matching in degrees.
-                Defaults to step/2 if not specified. Independent of step.
+            step: Latitude scanning step in degrees for the line points
+                (default 1.0).
+            tolerance: Unused since v6 (the horizon equation is solved
+                exactly, so there is no proximity matching). Accepted for
+                backward compatibility.
             lat_range: Latitude range to compute (default -66 to +66, avoids polar).
             planets: List of planet names. Defaults to Sun through Pluto.
 
@@ -89,62 +129,41 @@ class AstroCartographyFactory:
 
         jd = subject.julian_day
 
-        # Get planet ecliptic longitudes from the subject, expressed in the
-        # TROPICAL frame: the RA conversion below and the (tropical) cusps
-        # returned by swe.houses_armc both live there. For sidereal charts the
-        # stored abs_pos is sidereal, so add the chart's ayanamsa back.
-        ayanamsa = 0.0
-        if getattr(subject, "zodiac_type", "Tropical") == "Sidereal":
-            ayanamsa = float(getattr(subject, "ayanamsa_value", None) or 0.0)
-
-        planet_positions: Dict[str, float] = {}
-        for pname in planets:
-            point = getattr(subject, pname.lower(), None)
-            if point is not None:
-                planet_positions[pname] = (point.abs_pos + ayanamsa) % 360.0
-
-        if not planet_positions:
+        # Keep only planets that are both supported and present on the
+        # subject (mirrors the subject's active points selection).
+        selected = [
+            pname for pname in planets
+            if pname in _ACG_PLANET_IDS and getattr(subject, pname.lower(), None) is not None
+        ]
+        if not selected:
             return []
 
-        # Angular tolerance for matching planet to ASC/DSC (independent of scan step)
-        match_tol = tolerance if tolerance is not None else step / 2.0
-
-        # MC/IC lines: where the planet crosses the meridian
-        # MC longitude = planet_RA - GAST (in degrees)
-        # These are vertical lines (constant geographic longitude, all latitudes)
         mc_lines: Dict[str, ACGLine] = {}
         ic_lines: Dict[str, ACGLine] = {}
-
-        # ASC/DSC lines: where the planet rises/sets at each longitude
-        # For each longitude, compute ARMC, then find latitude where planet is on ASC
-        asc_lines: Dict[str, List[ACGLinePoint]] = {p: [] for p in planet_positions}
-        dsc_lines: Dict[str, List[ACGLinePoint]] = {p: [] for p in planet_positions}
+        asc_lines: Dict[str, List[ACGLinePoint]] = {p: [] for p in selected}
+        dsc_lines: Dict[str, List[ACGLinePoint]] = {p: [] for p in selected}
 
         with ephemeris_session() as iflag:
-            # Get obliquity and sidereal time
-            obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
-            gst_hours = swe.sidtime(jd)  # Greenwich sidereal time in hours
+            # Greenwich (apparent) sidereal time in degrees; swe.calc_ut with
+            # FLG_EQUATORIAL returns apparent RA/declination of date, so the
+            # two are mutually consistent.
+            gst_deg = swe.sidtime(jd) * 15.0
 
-            for pname, ecl_lon in planet_positions.items():
-                # Convert (tropical) ecliptic longitude to RA
-                ecl_rad = math.radians(ecl_lon)
-                eps_rad = math.radians(obliquity)
-                ra_rad = math.atan2(
-                    math.sin(ecl_rad) * math.cos(eps_rad),
-                    math.cos(ecl_rad)
-                )
-                ra_deg = math.degrees(ra_rad) % 360
+            # Equatorial coordinates are zodiac-independent; drop FLG_SIDEREAL
+            # so the fetch is identical for tropical and sidereal charts.
+            eq_iflag = (iflag & ~swe.FLG_SIDEREAL) | swe.FLG_EQUATORIAL
 
-                # MC line: geographic longitude where planet is on MC
-                mc_geo_lng = (ra_deg - gst_hours * 15.0) % 360
-                if mc_geo_lng > 180:
-                    mc_geo_lng -= 360
+            lat_min, lat_max = lat_range
+            for pname in selected:
+                eq_pos = swe.calc_ut(jd, _ACG_PLANET_IDS[pname], eq_iflag)[0]
+                ra_deg, dec_deg = eq_pos[0], eq_pos[1]
 
-                # IC is 180 degrees from MC
-                ic_geo_lng = mc_geo_lng + 180 if mc_geo_lng < 0 else mc_geo_lng - 180
+                # MC line: the body culminates where LST == RA, i.e. at
+                # geographic longitude RA - GST. IC is the antimeridian.
+                mc_geo_lng = _wrap180(ra_deg - gst_deg)
+                ic_geo_lng = _wrap180(mc_geo_lng + 180.0)
 
                 # MC/IC lines are vertical (same lng, range of latitudes)
-                lat_min, lat_max = lat_range
                 mc_points = [
                     ACGLinePoint(longitude=round(mc_geo_lng, 4), latitude=lat)
                     for lat in range(int(lat_min), int(lat_max) + 1, max(1, int(step)))
@@ -157,46 +176,29 @@ class AstroCartographyFactory:
                 mc_lines[pname] = ACGLine(planet=pname, line_type="MC", points=mc_points)
                 ic_lines[pname] = ACGLine(planet=pname, line_type="IC", points=ic_points)
 
-            lng = -180.0
-            while lng <= 180.0:
-                # Local sidereal time -> ARMC
-                armc = (gst_hours * 15.0 + lng) % 360
-
-                # For each latitude in range, compute houses and check ASC/DSC
-                lat = float(lat_range[0])
-                while lat <= lat_range[1]:
-                    try:
-                        cusps, ascmc = swe.houses_armc(armc, lat, obliquity, b"P")
-                        asc_deg = ascmc[0]
-                        dsc_deg = (asc_deg + 180) % 360
-
-                        for pname, plon in planet_positions.items():
-                            # Check ASC proximity
-                            asc_diff = abs(plon - asc_deg)
-                            if asc_diff > 180:
-                                asc_diff = 360 - asc_diff
-                            if asc_diff <= match_tol:
-                                asc_lines[pname].append(
-                                    ACGLinePoint(longitude=round(lng, 4), latitude=round(lat, 4))
-                                )
-
-                            # Check DSC proximity
-                            dsc_diff = abs(plon - dsc_deg)
-                            if dsc_diff > 180:
-                                dsc_diff = 360 - dsc_diff
-                            if dsc_diff <= match_tol:
-                                dsc_lines[pname].append(
-                                    ACGLinePoint(longitude=round(lng, 4), latitude=round(lat, 4))
-                                )
-                    except Exception:
-                        pass
-
+                # ASC/DSC lines: for each latitude, the body is on the
+                # geometric horizon when cos H = -tan(lat) * tan(dec). No
+                # solution means circumpolar / never rises at that latitude.
+                dec_rad = math.radians(dec_deg)
+                lat = float(lat_min)
+                while lat <= lat_max:
+                    cos_h0 = -math.tan(math.radians(lat)) * math.tan(dec_rad)
+                    if abs(cos_h0) <= 1.0:
+                        h0_deg = math.degrees(math.acos(cos_h0))  # in [0, 180]
+                        # Rising: hour angle -H0; setting: +H0.
+                        rise_lng = _wrap180(ra_deg - h0_deg - gst_deg)
+                        set_lng = _wrap180(ra_deg + h0_deg - gst_deg)
+                        asc_lines[pname].append(
+                            ACGLinePoint(longitude=round(rise_lng, 4), latitude=round(lat, 4))
+                        )
+                        dsc_lines[pname].append(
+                            ACGLinePoint(longitude=round(set_lng, 4), latitude=round(lat, 4))
+                        )
                     lat += step
-                lng += step
 
         # Assemble results
         result: List[ACGLine] = []
-        for pname in planet_positions:
+        for pname in selected:
             result.append(mc_lines[pname])
             result.append(ic_lines[pname])
             if asc_lines[pname]:

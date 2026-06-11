@@ -344,3 +344,65 @@ class TestEclipseEnrichment:
         with patch.object(ef.swe, "get_saros_number", None, create=True), \
              patch.object(ef.swe, "get_inex_number", None, create=True):
             assert ef._saros_inex(2451545.0, "solar") == {}
+
+    def test_non_positive_saros_inex_treated_as_missing(self):
+        """libephemeris returns 0 when an eclipse is absent from its catalog
+        tables (e.g. the 2027-02-06 annular, canonically Saros 131); a
+        non-positive number must become None, never a plausible-looking
+        series value."""
+        from unittest.mock import patch
+        from kerykeion.eclipses import eclipse_factory as ef
+
+        with patch.object(ef.swe, "get_saros_number", lambda jd, kind: 0, create=True), \
+             patch.object(ef.swe, "get_inex_number", lambda jd, kind: -3, create=True):
+            assert ef._saros_inex(2451545.0, "solar") == {}
+
+    def test_positive_saros_pass_through_inex_never_trusted(self):
+        """Real (positive) saros numbers are forwarded unchanged; inex is NOT
+        populated even when get_inex_number returns a positive value, because
+        libephemeris <= 2.0.2 nearest-matches a handful of reference eclipses
+        with no residual threshold (every 2026-2027 eclipse reports inex 50,
+        mathematically impossible for consecutive eclipses)."""
+        from unittest.mock import patch
+        from kerykeion.eclipses import eclipse_factory as ef
+
+        with patch.object(ef.swe, "get_saros_number", lambda jd, kind: 126, create=True), \
+             patch.object(ef.swe, "get_inex_number", lambda jd, kind: 50, create=True):
+            assert ef._saros_inex(2451545.0, "solar") == {"saros": 126}
+
+    def test_saros_inex_never_zero_in_results(self):
+        """A search window covering the 2027-02-06 annular (missing from the
+        libephemeris saros tables) must report saros=None for it, not 0; inex
+        is reserved (always None) until upstream provides trustworthy data."""
+        result = EclipseFactory.search_global(start_year=2026, count=4)
+        for ecl in result.solar_eclipses + result.lunar_eclipses:
+            assert ecl.saros is None or ecl.saros > 0
+            assert ecl.inex is None
+
+    def test_global_lunar_magnitudes_populated(self):
+        """Lunar magnitudes are observer-independent, so global searches must
+        report them (the 2025-03-14 total lunar eclipse has umbral magnitude
+        ~1.178 and penumbral ~2.26)."""
+        result = EclipseFactory.search_global(start_year=2025, count=1)
+        assert result.lunar_eclipses
+        ecl = result.lunar_eclipses[0]
+        assert ecl.type == "total"
+        assert ecl.magnitude_umbral == pytest.approx(1.178, abs=0.01)
+        assert ecl.magnitude_penumbral == pytest.approx(2.262, abs=0.01)
+
+    def test_global_lunar_magnitudes_all_events(self):
+        """Every global lunar result carries both magnitudes; penumbral
+        eclipses have a non-positive umbral magnitude (the Moon misses the
+        umbra; observed 0.0 on both backends, negative also acceptable)."""
+        # 2026 count=4 includes the 2027-02-20 and 2027-07-18 penumbrals.
+        result = EclipseFactory.search_global(start_year=2026, count=4)
+        assert result.lunar_eclipses
+        assert any(e.type == "penumbral" for e in result.lunar_eclipses)
+        for ecl in result.lunar_eclipses:
+            assert ecl.magnitude_umbral is not None
+            assert ecl.magnitude_penumbral is not None
+            assert ecl.magnitude_penumbral > 0
+            if ecl.type == "penumbral":
+                assert ecl.magnitude_umbral <= 0
+            else:
+                assert ecl.magnitude_umbral > 0

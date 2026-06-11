@@ -22,6 +22,7 @@ from kerykeion.schemas.kr_models import (
 from kerykeion.settings.config_constants import AXIAL_POINTS, LUNAR_NODES, MAIN_PLANETS
 
 
+# Keys must match the ``AspectName`` literal values in kerykeion.schemas.kr_literals.
 ASPECT_SYMBOLS = {
     "conjunction": "☌",
     "opposition": "☍",
@@ -29,9 +30,13 @@ ASPECT_SYMBOLS = {
     "square": "□",
     "sextile": "⚹",
     "quincunx": "⚻",
-    "semisquare": "∠",
-    "sesquisquare": "⚼",
+    "semi-sextile": "⚺",
+    "semi-square": "∠",
+    "sesquiquadrate": "⚼",
     "quintile": "Q",
+    "biquintile": "bQ",
+    "parallel": "∥",
+    "contra_parallel": "⋕",
 }
 
 MOVEMENT_SYMBOLS = {
@@ -179,6 +184,8 @@ class ReportGenerator:
         sections = [
             self._subject_data_report(self._primary_subject, "Astrological Subject"),
             self._celestial_points_report(self._primary_subject, "Celestial Points"),
+            self._fixed_stars_report(self._primary_subject, "Fixed Stars"),
+            self._midpoints_report(self._primary_subject, "Midpoints"),
             self._houses_report(self._primary_subject, "Houses"),
             self._lunar_phase_report(self._primary_subject),
         ]
@@ -324,6 +331,8 @@ class ReportGenerator:
                 self._celestial_points_report(
                     self._primary_subject, f"{self._primary_subject_label()} Celestial Points"
                 ),
+                self._fixed_stars_report(self._primary_subject, f"{self._primary_subject_label()} Fixed Stars"),
+                self._midpoints_report(self._primary_subject, f"{self._primary_subject_label()} Midpoints"),
                 self._houses_report(self._primary_subject, f"{self._primary_subject_label()} Houses"),
                 self._lunar_phase_report(self._primary_subject),
                 self._elements_report(),
@@ -352,6 +361,8 @@ class ReportGenerator:
         sections.extend(
             [
                 self._celestial_points_report(self._primary_subject, f"{primary_label} Celestial Points"),
+                self._fixed_stars_report(self._primary_subject, f"{primary_label} Fixed Stars"),
+                self._midpoints_report(self._primary_subject, f"{primary_label} Midpoints"),
             ]
         )
 
@@ -359,6 +370,8 @@ class ReportGenerator:
             sections.append(
                 self._celestial_points_report(self._secondary_subject, f"{secondary_label} Celestial Points")
             )
+            sections.append(self._fixed_stars_report(self._secondary_subject, f"{secondary_label} Fixed Stars"))
+            sections.append(self._midpoints_report(self._secondary_subject, f"{secondary_label} Midpoints"))
 
         sections.append(self._houses_report(self._primary_subject, f"{primary_label} Houses"))
 
@@ -542,8 +555,11 @@ class ReportGenerator:
             sorted_points.extend(grouped_points.get(name, []))
         sorted_points.extend(remaining_points)
 
+        return self._points_table(sorted_points, title)
+
+    def _points_table(self, points: Sequence[KerykeionPointModel], title: str) -> str:
         celestial_data: list[list[str]] = [["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]]
-        for point in sorted_points:
+        for point in points:
             speed_str = f"{point.speed:+.4f}°/d" if point.speed is not None else "N/A"
             decl_str = f"{point.declination:+.2f}°" if point.declination is not None else "N/A"
             ret_str = "R" if point.retrograde else "-"
@@ -561,6 +577,20 @@ class ReportGenerator:
             )
 
         return AsciiTable(celestial_data, title=title).table
+
+    def _fixed_stars_report(self, subject: SubjectLike, title: str) -> str:
+        """Render the v6 ``subject.fixed_stars`` array; empty string when no star is active."""
+        stars = list(getattr(subject, "fixed_stars", None) or [])
+        if not stars:
+            return ""
+        return self._points_table(stars, title)
+
+    def _midpoints_report(self, subject: SubjectLike, title: str) -> str:
+        """Render the v6 ``subject.active_midpoints`` array; empty string when none are active."""
+        midpoints = list(getattr(subject, "active_midpoints", None) or [])
+        if not midpoints:
+            return ""
+        return self._points_table(midpoints, title)
 
     def _collect_celestial_points(self, subject: SubjectLike) -> list[KerykeionPointModel]:
         if isinstance(subject, AstrologicalSubjectModel):
@@ -698,7 +728,7 @@ class ReportGenerator:
         aspects_table: list[list[str]] = [table_header]
         for aspect in aspects_list:
             aspect_name = str(aspect.aspect)
-            symbol = ASPECT_SYMBOLS.get(aspect_name.lower(), aspect_name)
+            symbol = ASPECT_SYMBOLS.get(aspect_name.lower(), "")
             movement_symbol = MOVEMENT_SYMBOLS.get(aspect.aspect_movement, "")
             movement = f"{aspect.aspect_movement} {movement_symbol}".strip()
 
@@ -707,7 +737,7 @@ class ReportGenerator:
                     [
                         _humanize(aspect.p1_name),
                         aspect.p1_owner,
-                        f"{aspect.aspect} {symbol}",
+                        f"{aspect.aspect} {symbol}".strip(),
                         _humanize(aspect.p2_name),
                         aspect.p2_owner,
                         f"{aspect.orbit:.2f}°",
@@ -718,7 +748,7 @@ class ReportGenerator:
                 aspects_table.append(
                     [
                         _humanize(aspect.p1_name),
-                        f"{aspect.aspect} {symbol}",
+                        f"{aspect.aspect} {symbol}".strip(),
                         _humanize(aspect.p2_name),
                         f"{aspect.orbit:.2f}°",
                         movement,

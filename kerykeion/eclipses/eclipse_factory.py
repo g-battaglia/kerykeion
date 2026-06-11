@@ -126,24 +126,31 @@ def _zodiac_fields(jd: float, body: int, name: str) -> dict:
 
 
 def _saros_inex(jd: float, kind: str) -> dict:
-    """Saros/Inex series numbers (libephemeris extensions; hasattr-guarded).
+    """Saros series number (libephemeris extension; hasattr-guarded).
 
-    Returns an empty dict on the swisseph backend (functions absent) so the
-    extra fields simply stay ``None``.
+    Returns an empty dict on the swisseph backend (function absent) so the
+    extra fields simply stay ``None``. libephemeris returns 0 when the eclipse
+    is missing from its catalog tables; a non-positive number is therefore
+    "not catalogued", never a real series, and must not be forwarded as a
+    plausible-looking value.
+
+    The ``inex`` field is deliberately NOT populated: libephemeris (<= 2.0.2)
+    ``get_inex_number`` matches the nearest of a handful of reference eclipses
+    with no residual threshold (unlike its saros twin), so it returns a
+    plausible-looking constant for arbitrary eclipses instead of failing —
+    verified: every eclipse in 2026-2027 reports inex 50 with residuals of
+    hundreds of days. Until upstream applies a residual cutoff, None is the
+    only honest value.
     """
     out: dict = {}
     saros_fn = getattr(swe, "get_saros_number", None)
     if saros_fn is not None:
         try:
-            out["saros"] = int(saros_fn(jd, kind))
+            saros = int(saros_fn(jd, kind))
+            if saros > 0:
+                out["saros"] = saros
         except Exception as exc:  # pragma: no cover - defensive
             logger.debug("Saros lookup failed: %s", exc)
-    inex_fn = getattr(swe, "get_inex_number", None)
-    if inex_fn is not None:
-        try:
-            out["inex"] = int(inex_fn(jd, kind))
-        except Exception as exc:  # pragma: no cover - defensive
-            logger.debug("Inex lookup failed: %s", exc)
     return out
 
 
@@ -151,8 +158,11 @@ def _solar_gamma_duration(jd: float) -> dict:
     """Solar gamma + central-phase duration (libephemeris extensions; guarded).
 
     ``sol_eclipse_max_time`` returns ``(jd_max, gamma)`` in global mode (gamma in
-    Earth radii); ``calc_solar_eclipse_duration`` returns the totality/annularity
-    duration in minutes (0.0 for partial eclipses).
+    Earth radii); ``calc_solar_eclipse_duration`` returns the duration of the
+    central (total/annular) phase across the Earth's surface in minutes -- the
+    global span of the central shadow path from first to last contact with
+    Earth, NOT the totality duration at any single place (which is only a few
+    minutes). 0.0 for partial eclipses.
     """
     out: dict = {}
     gamma_fn = getattr(swe, "sol_eclipse_max_time", None)
@@ -169,6 +179,31 @@ def _solar_gamma_duration(jd: float) -> dict:
             out["duration_minutes"] = round(minutes, 4) if minutes > 0 else None
         except Exception as exc:  # pragma: no cover - defensive
             logger.debug("Duration lookup failed: %s", exc)
+    return out
+
+
+def _lunar_magnitudes(jd: float) -> dict:
+    """Umbral/penumbral magnitudes at a lunar eclipse maximum (guarded).
+
+    Unlike solar magnitude/obscuration, lunar eclipse magnitudes are
+    observer-independent (the Moon either is or is not inside Earth's shadow),
+    so a global search can report them too. ``swe.lun_eclipse_how`` (standard
+    on both backends) is evaluated at the global maximum; the geographic
+    position only affects the local-visibility attributes, not the magnitudes
+    in ``attr[0]``/``attr[1]``, so a dummy geopos is sufficient.
+    """
+    out: dict = {}
+    how_fn = getattr(swe, "lun_eclipse_how", None)
+    if how_fn is None:  # pragma: no cover - both backends expose it
+        return out
+    try:
+        _, attr = how_fn(jd, (0.0, 0.0, 0.0), swe.FLG_SWIEPH)
+        if len(attr) > 0:
+            out["magnitude_umbral"] = round(float(attr[0]), 6)
+        if len(attr) > 1:
+            out["magnitude_penumbral"] = round(float(attr[1]), 6)
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.debug("Lunar magnitude lookup failed: %s", exc)
     return out
 
 
@@ -191,10 +226,10 @@ class SolarEclipseModel(SubscriptableBaseModel):
     sign_num: Optional[int] = Field(default=None, description="Zodiac sign number (0=Aries)")
     degree: Optional[float] = Field(default=None, description="Degree within the sign (0-30)")
     # Catalogued series + geometry (libephemeris extensions; None on swisseph backend).
-    saros: Optional[int] = Field(default=None, description="Saros series number")
-    inex: Optional[int] = Field(default=None, description="Inex series number")
+    saros: Optional[int] = Field(default=None, description="Saros series number (None on the swisseph backend or when the eclipse is absent from the catalog tables)")
+    inex: Optional[int] = Field(default=None, description="Inex series number. Currently always None: libephemeris <= 2.0.2 get_inex_number lacks a residual threshold and returns nearest-series values for arbitrary eclipses; the field is reserved until a trustworthy source is available")
     gamma: Optional[float] = Field(default=None, description="Gamma: shadow-axis distance from Earth's centre (Earth radii)")
-    duration_minutes: Optional[float] = Field(default=None, description="Central (total/annular) duration in minutes; None if partial")
+    duration_minutes: Optional[float] = Field(default=None, description="Duration of the central (total/annular) phase across the Earth's surface in minutes (global central-path span, not the local totality duration at one place); None if partial")
 
 
 class LunarEclipseModel(SubscriptableBaseModel):
@@ -202,16 +237,16 @@ class LunarEclipseModel(SubscriptableBaseModel):
     type: str = Field(description="Eclipse type: total, partial, penumbral")
     maximum_jd: float = Field(description="Julian Day of maximum eclipse")
     datestamp: str = Field(description="ISO 8601 formatted datetime of maximum")
-    magnitude_umbral: Optional[float] = Field(default=None, description="Umbral magnitude")
-    magnitude_penumbral: Optional[float] = Field(default=None, description="Penumbral magnitude")
+    magnitude_umbral: Optional[float] = Field(default=None, description="Umbral magnitude at maximum_jd, populated in both global and local searches (lunar magnitudes are observer-independent; non-positive when the Moon misses the umbra, i.e. penumbral eclipses)")
+    magnitude_penumbral: Optional[float] = Field(default=None, description="Penumbral magnitude at maximum_jd, populated in both global and local searches (lunar magnitudes are observer-independent)")
     # Zodiac position of the eclipse (Moon longitude / Full Moon point at maximum).
     ecliptic_longitude: Optional[float] = Field(default=None, description="Ecliptic longitude at maximum (0-360)")
     sign: Optional[str] = Field(default=None, description="Zodiac sign of the eclipse")
     sign_num: Optional[int] = Field(default=None, description="Zodiac sign number (0=Aries)")
     degree: Optional[float] = Field(default=None, description="Degree within the sign (0-30)")
     # Catalogued series (libephemeris extensions; None on swisseph backend).
-    saros: Optional[int] = Field(default=None, description="Saros series number")
-    inex: Optional[int] = Field(default=None, description="Inex series number")
+    saros: Optional[int] = Field(default=None, description="Saros series number (None on the swisseph backend or when the eclipse is absent from the catalog tables)")
+    inex: Optional[int] = Field(default=None, description="Inex series number. Currently always None: libephemeris <= 2.0.2 get_inex_number lacks a residual threshold and returns nearest-series values for arbitrary eclipses; the field is reserved until a trustworthy source is available")
 
 
 class EclipseSearchResultModel(SubscriptableBaseModel):
@@ -295,8 +330,10 @@ class EclipseFactory:
 
         Returns:
             EclipseSearchResultModel with solar and lunar eclipses. Global
-            results carry ``magnitude``/``obscuration`` as ``None`` (they are
-            observer-dependent quantities; use a local search to obtain them).
+            solar results carry ``magnitude``/``obscuration`` as ``None`` (they
+            are observer-dependent quantities; use a local search to obtain
+            them). Lunar magnitudes are observer-independent and are populated
+            in global results too.
 
         Raises:
             KerykeionException: If the ephemeris backend fails mid-search (most
@@ -426,6 +463,9 @@ class EclipseFactory:
                 type=_classify_lunar_eclipse(retflags),
                 maximum_jd=max_jd,
                 datestamp=_jd_to_iso(max_jd),
+                # Lunar magnitudes are observer-independent, so (unlike the
+                # solar fields) they are populated in global mode too.
+                **_lunar_magnitudes(max_jd),
                 **_zodiac_fields(max_jd, swe.MOON, "Moon"),
                 **_saros_inex(max_jd, "lunar"),
             ))

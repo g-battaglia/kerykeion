@@ -220,6 +220,7 @@ class MidpointFactory:
                 houses_degree_ut.append(cusp.abs_pos)
 
         points: List[KerykeionPointModel] = []
+        emitted_pairs: set[frozenset[str]] = set()
         import logging
         logger = logging.getLogger(__name__)
 
@@ -242,11 +243,22 @@ class MidpointFactory:
                 # ``subject.active_points``. Log so operators can spot the
                 # typo / config drift in production.
                 logger.warning(
-                    "Skipping midpoint pair %r: neither constituent resolves "
-                    "in subject.active_points (%s available)",
+                    "Skipping midpoint pair %r: could not split it into two "
+                    "point names that both resolve in subject.active_points "
+                    "(%s available)",
                     raw, len(gathered),
                 )
                 continue
+
+            # Canonicalize on the unordered pair so an exact duplicate or a
+            # reversed "B_A" twin doesn't materialize a second point at the
+            # same longitude (the drawer dedups by name only, so duplicates
+            # would render as overlapping glyphs). First occurrence wins.
+            pair_key = frozenset((name_a, name_b))
+            if pair_key in emitted_pairs:
+                logger.debug("Skipping duplicate midpoint pair %r: already emitted", raw)
+                continue
+            emitted_pairs.add(pair_key)
 
             midpoint_long = MidpointFactory._shorter_arc_midpoint(gathered[name_a], gathered[name_b])
             sign_idx = int(midpoint_long // 30) % 12

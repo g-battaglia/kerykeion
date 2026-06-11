@@ -57,6 +57,16 @@ def resolve_pair_orb_adjustment(
         ValueError: If ``strategy`` is not a recognised
             :data:`OrbAdjustmentStrategy` value.
     """
+    # Fail fast on a misspelled strategy rather than silently returning 0.0,
+    # which would quietly disable the orb adjustment and yield wrong aspects.
+    # Validated *before* any early return so the error surfaces even when the
+    # table is empty or the pair is unconfigured.
+    if strategy not in ("max_explicit", "min_explicit", "sum", "none"):
+        raise ValueError(
+            f"Unknown orb adjustment strategy: {strategy!r}. "
+            "Expected one of: 'max_explicit', 'min_explicit', 'sum', 'none'."
+        )
+
     if not point_orb_adjustments or strategy == "none":
         return 0.0
 
@@ -74,12 +84,6 @@ def resolve_pair_orb_adjustment(
         if v1 is not None and v2 is not None:
             return v1 if v1 < v2 else v2
         return v1 if v1 is not None else v2  # type: ignore[return-value]
-    if strategy == "sum":
-        return (v1 or 0.0) + (v2 or 0.0)
 
-    # Fail fast on a misspelled strategy rather than silently returning 0.0,
-    # which would quietly disable the orb adjustment and yield wrong aspects.
-    raise ValueError(
-        f"Unknown orb adjustment strategy: {strategy!r}. "
-        "Expected one of: 'max_explicit', 'min_explicit', 'sum', 'none'."
-    )
+    # strategy == "sum" (the only remaining value after the check above)
+    return (v1 or 0.0) + (v2 or 0.0)

@@ -9,6 +9,7 @@ import pytest
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.occultations import OccultationFactory, OccultationModel
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 
 
 # ---------------------------------------------------------------------------
@@ -126,11 +127,32 @@ class TestClassifyOccultation:
         assert _classify_occultation(0) == "Unknown"
 
 
+class TestJdToIso:
+    """_jd_to_iso must match the eclipse/lunation/station/ingress formatters."""
+
+    def test_jd_to_iso_bce_year(self):
+        """BCE Julian Days must format with a signed 4-digit extended year and
+        real seconds, e.g. -0044-03-15T12:00:00Z (not the old '-44-...')."""
+        from kerykeion.occultations.occultation_factory import _jd_to_iso
+
+        jd = swe.julday(-44, 3, 15, 12.0)
+        assert _jd_to_iso(jd) == "-0044-03-15T12:00:00Z"
+
+    def test_jd_to_iso_ce_year_with_seconds(self):
+        """CE formatting keeps the unsigned year and rounds to the nearest
+        second instead of truncating."""
+        from kerykeion.occultations.occultation_factory import _jd_to_iso
+
+        jd = swe.julday(2026, 8, 12, 17.0 + 30.0 / 60.0 + 42.0 / 3600.0)
+        assert _jd_to_iso(jd) == "2026-08-12T17:30:42Z"
+
+
 class TestOccultationBreakAndErrorPaths:
     """Test break-on-zero and exception paths in the search methods."""
 
     def test_global_retflags_zero_breaks(self, factory, start_jd):
-        """search_global should return empty list when retflags == 0."""
+        """search_global should return empty list when retflags == 0
+        ("no further occultation" is a legitimate terminal result)."""
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
@@ -140,18 +162,33 @@ class TestOccultationBreakAndErrorPaths:
             results = factory.search_global(start_jd, swe.VENUS, count=3)
             assert results == []
 
-    def test_global_exception_breaks(self, factory, start_jd):
-        """search_global should stop on exception from swe.lun_occult_when_glob."""
+    def test_global_backend_failure_raises(self, factory, start_jd):
+        """A backend failure must abort the search as KerykeionException
+        (with the failing JD), never silently return partial results."""
         from unittest.mock import patch
         with patch(
             "kerykeion.occultations.occultation_factory.swe.lun_occult_when_glob",
             side_effect=RuntimeError("swe failure"),
         ):
-            results = factory.search_global(start_jd, swe.VENUS, count=3)
-            assert results == []
+            with pytest.raises(KerykeionException, match="ephemeris range"):
+                factory.search_global(start_jd, swe.VENUS, count=3)
+
+    def test_global_mid_scan_failure_raises_not_truncates(self, factory, start_jd):
+        """If the backend fails after some events were already found (e.g. the
+        scan walked past the ephemeris range edge), the whole search must raise
+        rather than return a truncated list claiming full coverage."""
+        from unittest.mock import patch
+        good = (4, [start_jd + 5.0] + [0.0] * 9)  # 4 = ECL_TOTAL
+        with patch(
+            "kerykeion.occultations.occultation_factory.swe.lun_occult_when_glob",
+            side_effect=[good, RuntimeError("jd outside ephemeris range")],
+        ):
+            with pytest.raises(KerykeionException, match=r"JD "):
+                factory.search_global(start_jd, swe.VENUS, count=3)
 
     def test_local_retflags_zero_breaks(self, factory, start_jd):
-        """search_local should return empty list when retflags == 0."""
+        """search_local should return empty list when retflags == 0
+        ("no further occultation" is a legitimate terminal result)."""
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
@@ -161,15 +198,22 @@ class TestOccultationBreakAndErrorPaths:
             results = factory.search_local(start_jd, swe.VENUS, lat=41.9, lng=12.5, count=3)
             assert results == []
 
-    def test_local_exception_breaks(self, factory, start_jd):
-        """search_local should stop on exception from swe.lun_occult_when_loc."""
+    def test_local_backend_failure_raises(self, factory, start_jd):
+        """A backend failure must abort the search as KerykeionException."""
         from unittest.mock import patch
         with patch(
             "kerykeion.occultations.occultation_factory.swe.lun_occult_when_loc",
             side_effect=RuntimeError("swe failure"),
         ):
-            results = factory.search_local(start_jd, swe.VENUS, lat=41.9, lng=12.5, count=3)
-            assert results == []
+            with pytest.raises(KerykeionException, match="ephemeris range"):
+                factory.search_local(start_jd, swe.VENUS, lat=41.9, lng=12.5, count=3)
+
+    def test_count_too_large_rejected_upfront(self, factory, start_jd):
+        """Absurd counts are rejected upfront, never silently truncated."""
+        with pytest.raises(ValueError):
+            factory.search_global(start_jd, swe.VENUS, count=1_001)
+        with pytest.raises(ValueError):
+            factory.search_local(start_jd, swe.VENUS, lat=41.9, lng=12.5, count=1_001)
 
 
 class TestSweReference:

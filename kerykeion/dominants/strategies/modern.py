@@ -15,8 +15,10 @@ A planet's score = angularity + aspect activity + essential dignity + rulership:
    by orb exactitude (tighter = stronger), and by a static "speed tier" so a
    slow Neptune-Pluto aspect counts far less than a fast Moon-Mars one; aspects
    to an angle are emphasised.
-3. **Essential dignity** — a deliberately mild bonus/penalty for domicile,
-   exaltation, detriment or fall (kept small so it never distorts the result).
+3. **Essential dignity** — a deliberately mild bonus for the planet's highest
+   dignity, with detriment/fall penalties applied additively so a minor
+   dignity (term, face, triplicity) never masks a debility (kept small so it
+   never distorts the result).
 4. **Rulership** — a bonus for ruling the Ascendant (largest), the MC, the Sun
    sign and the Moon sign.
 
@@ -32,6 +34,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
+from kerykeion.dignities.dignity_data import DETRIMENT_RULERS, FALL_TABLE
 from kerykeion.dignities.dignity_factory import calculate_essential_dignity
 from kerykeion.dominants.base import BaseDominantStrategy, BreakdownItem, Category, DominantsConfig
 from kerykeion.dominants.data import (
@@ -262,16 +265,39 @@ class ModernDominantStrategy(BaseDominantStrategy):
         breakdown: List[BreakdownItem],
         include_breakdown: bool,
     ) -> Dict[str, float]:
-        """Apply a small bonus/penalty for each planet's essential dignity."""
+        """Apply a small bonus/penalty for each planet's essential dignity.
+
+        The planet's *highest* dignity supplies the bonus, and the detriment/
+        fall penalties are applied additively on top (straight from the
+        dignity tables). Dignities and debilities are independent, so a minor
+        dignity must never mask a debility: Mars at 28° Libra sits in its own
+        Egyptian term AND in detriment, scoring 0.25 - 1.00 = -0.75 — not the
+        bare +0.25 the "Term" label alone would suggest.
+        """
         is_diurnal = bool(getattr(subject, "is_diurnal", True))
         scores: Dict[str, float] = {}
         for point in planets:
             result = calculate_essential_dignity(point.name, point.sign, point.element, point.position, is_diurnal)
             label = result.get("essential_dignity")
-            bonus = DIGNITY_BONUS.get(label, 0.0) if label else 0.0
-            scores[point.name] = bonus
-            if include_breakdown and bonus:
-                breakdown.append(BreakdownItem("dignity", point.name, str(label), bonus, point.sign))
+            if label is None:  # non-classical body: no essential dignity
+                scores[point.name] = 0.0
+                continue
+            # Bonus of the highest dignity. The dignity factory relabels a
+            # dignity-less debilitated planet as Detriment/Fall — skip those
+            # labels here, the additive penalties below already cover them.
+            components: List[tuple[str, float]] = []
+            if label not in ("Detriment", "Fall"):
+                label_bonus = DIGNITY_BONUS.get(label, 0.0)
+                if label_bonus:
+                    components.append((label, label_bonus))
+            if point.name in DETRIMENT_RULERS.get(point.sign, []):
+                components.append(("Detriment", DIGNITY_BONUS["Detriment"]))
+            if FALL_TABLE.get(point.sign) == point.name:
+                components.append(("Fall", DIGNITY_BONUS["Fall"]))
+            scores[point.name] = sum(value for _, value in components)
+            if include_breakdown:
+                for component_label, value in components:
+                    breakdown.append(BreakdownItem("dignity", point.name, component_label, value, point.sign))
         return scores
 
     # -- parameter 4: rulership --------------------------------------------

@@ -7,6 +7,11 @@ For each planet, computes:
 - Perihelion: closest point to the Sun
 - Aphelion: farthest point from the Sun
 
+The Sun is NOT supported: it has no geocentric orbital nodes or apsides
+(the ephemeris returns all-zero placeholders for it), so it is excluded
+from the defaults and an explicit request for it raises a
+:class:`KerykeionException`.
+
 Swiss Ephemeris function: swe.nod_aps_ut(jd_ut, planet, iflag, method)
 Methods: NODBIT_MEAN (mean elements), NODBIT_OSCU (osculating/instantaneous)
 """
@@ -18,6 +23,7 @@ from typing import Dict, List, Optional
 
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 
+from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     KerykeionPointModel,
@@ -31,8 +37,9 @@ logger = logging.getLogger(__name__)
 NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
 NODBIT_OSCU = getattr(swe, "NODBIT_OSCU", 2)
 
+# The Sun is deliberately absent: nod_aps_ut has no geocentric solar
+# nodes/apsides to return and yields all-zero placeholders for it.
 _NODE_PLANETS: Dict[str, int] = {
-    "Sun": swe.SUN,
     "Moon": swe.MOON,
     "Mercury": swe.MERCURY,
     "Venus": swe.VENUS,
@@ -63,7 +70,7 @@ class PlanetaryNodesCollectionModel(SubscriptableBaseModel):
 
 
 class PlanetaryNodesFactory:
-    """Calculate planetary nodes and apsides for any planet.
+    """Calculate planetary nodes and apsides for any planet (except the Sun).
 
     Computes ascending/descending nodes and perihelion/aphelion
     in both mean and osculating modes.
@@ -88,7 +95,10 @@ class PlanetaryNodesFactory:
         Args:
             subject: An astrological subject.
             method: "mean" or "osculating".
-            planets: Optional list of planet names. Defaults to all.
+            planets: Optional list of planet names. Defaults to all
+                supported planets (Moon through Pluto). Requesting "Sun"
+                raises a :class:`KerykeionException` — the Sun has no
+                geocentric nodes or apsides.
         """
         return PlanetaryNodesFactory._calculate(
             julian_day=subject.julian_day,
@@ -136,6 +146,13 @@ class PlanetaryNodesFactory:
         backends.
         """
         nodbit = NODBIT_MEAN if method == "mean" else NODBIT_OSCU
+
+        if planets is not None and "Sun" in planets:
+            raise KerykeionException(
+                "The Sun has no geocentric orbital nodes or apsides (the ephemeris "
+                "returns all-zero placeholders for it). Remove 'Sun' from the "
+                "requested planets."
+            )
 
         target_planets = _NODE_PLANETS if planets is None else {
             k: v for k, v in _NODE_PLANETS.items() if k in planets

@@ -1102,6 +1102,44 @@ class TestTimeZoneEdgeCases:
         )
         assert subject.hour == 2
 
+    def test_from_iso_utc_time_dst_fold_constructs_both_sides(self):
+        """v6 regression: from_iso_utc_time must not raise "Ambiguous time"
+        for UTC instants whose local wall time falls inside the DST fall-back
+        fold. Europe/Rome, 2024-10-27: 02:30 wall time occurs twice — as CEST
+        (00:30Z) and as CET (01:30Z). The factory must derive is_dst from the
+        unambiguous UTC->local conversion and round-trip both instants to
+        their distinct original UTC julian days."""
+        common = dict(
+            city="Rome",
+            nation="IT",
+            tz_str="Europe/Rome",
+            online=False,
+            lng=12.4964,
+            lat=41.9028,
+            suppress_geonames_warning=True,
+        )
+        first = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Fold CEST", "2024-10-27T00:30:00Z", **common
+        )
+        second = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Fold CET", "2024-10-27T01:30:00Z", **common
+        )
+
+        # Both UTC instants map to the same ambiguous local wall time...
+        assert (first.hour, first.minute) == (2, 30)
+        assert (second.hour, second.minute) == (2, 30)
+        assert first.iso_formatted_local_datetime.startswith("2024-10-27T02:30:00")
+        assert second.iso_formatted_local_datetime.startswith("2024-10-27T02:30:00")
+        assert first.iso_formatted_local_datetime.endswith("+02:00")  # CEST (DST side)
+        assert second.iso_formatted_local_datetime.endswith("+01:00")  # CET (standard side)
+
+        # ...but must round-trip to the two distinct original UTC instants.
+        assert first.iso_formatted_utc_datetime.startswith("2024-10-27T00:30:00")
+        assert second.iso_formatted_utc_datetime.startswith("2024-10-27T01:30:00")
+        assert first.julian_day == approx(2460610.5208333335, abs=1e-8)
+        assert second.julian_day == approx(2460610.5625, abs=1e-8)
+        assert second.julian_day - first.julian_day == approx(1.0 / 24.0, abs=1e-8)
+
 
 class TestSiderealModeValidation:
     """Test sidereal mode validation (line 215)."""
@@ -1224,6 +1262,150 @@ class TestExceptionHandlingInPlanetCalculation:
         assert hasattr(subject, "sun")
         assert hasattr(subject, "moon")
         # Eris is not calculated due to missing ephemeris file
+
+    def test_auto_activated_luminary_backend_error_raises_kerykeion_exception(self, monkeypatch):
+        """v6 regression: when an Arabic part auto-activates Sun/Moon and the
+        backend cannot compute them, _ensure_point_calculated must apply the
+        same typed-error policy as _calculate_single_planet and raise
+        KerykeionException — not leak the raw backend exception (e.g.
+        libephemeris.EphemerisRangeError). The backend gap is simulated with
+        monkeypatch: extreme years are in range on a full DE441 install."""
+        from kerykeion.ephemeris_backend import swe
+        from kerykeion.schemas import KerykeionException
+
+        real_calc_ut = swe.calc_ut
+
+        def fake_calc_ut(jd, ipl, flags):
+            if ipl == 0:  # Sun: simulate an ephemeris-range gap in the backend
+                raise RuntimeError("jd outside ephemeris range")
+            return real_calc_ut(jd, ipl, flags)
+
+        monkeypatch.setattr(swe, "calc_ut", fake_calc_ut)
+
+        # Pars_Fortunae auto-activates Ascendant, Sun and Moon; with Sun absent
+        # from active_points the Sun is computed via _ensure_point_calculated.
+        with pytest.raises(KerykeionException, match="Sun"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "Range Gap Luminary",
+                1990,
+                6,
+                15,
+                12,
+                0,
+                lng=0.0,
+                lat=51.5074,
+                tz_str="Etc/GMT",
+                online=False,
+                active_points=["Pars_Fortunae"],
+                suppress_geonames_warning=True,
+            )
+
+    def test_auto_activated_optional_point_backend_error_degrades_gracefully(self, monkeypatch):
+        """Auto-activated NON-luminary prerequisites (e.g. Venus for
+        Pars_Amoris) must degrade gracefully on backend errors: the dependent
+        Arabic part is skipped and no raw backend exception escapes."""
+        from kerykeion.ephemeris_backend import swe
+        from kerykeion.astrological_subject_factory import STANDARD_PLANETS
+
+        venus_id = STANDARD_PLANETS["Venus"]
+        real_calc_ut = swe.calc_ut
+
+        def fake_calc_ut(jd, ipl, flags):
+            if ipl == venus_id:  # simulate a backend gap for Venus only
+                raise RuntimeError("jd outside ephemeris range")
+            return real_calc_ut(jd, ipl, flags)
+
+        monkeypatch.setattr(swe, "calc_ut", fake_calc_ut)
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Range Gap Optional",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            active_points=["Sun", "Moon", "Pars_Amoris"],
+            suppress_geonames_warning=True,
+        )
+
+        assert subject.sun is not None
+        assert subject.venus is None
+        assert subject.pars_amoris is None
+        assert "Venus" not in subject.active_points
+        assert "Pars_Amoris" not in subject.active_points
+
+
+class TestEnrichmentSessionContainment:
+    """v6 regression: the optional enrichments (Gauquelin sectors, local
+    space, OOB obliquity, nutation) call swe.* functions, so they must run
+    INSIDE the factory's ephemeris session — under EPHEMERIS_LOCK with the
+    session's ephemeris path configured — never after the session reset."""
+
+    def test_enrichment_swe_calls_run_before_session_reset(self, monkeypatch):
+        import kerykeion.ephemeris_backend as eb
+
+        events = []
+
+        real_reset = eb.reset_ephemeris_session
+        real_azalt = eb.swe.azalt
+        real_gauquelin = eb.swe.gauquelin_sector
+        real_calc_ut = eb.swe.calc_ut
+        ecl_nut = eb.swe.ECL_NUT
+
+        def tracking_reset():
+            events.append("session_reset")
+            real_reset()
+
+        def tracking_azalt(*args, **kwargs):
+            events.append("azalt")
+            return real_azalt(*args, **kwargs)
+
+        def tracking_gauquelin(*args, **kwargs):
+            events.append("gauquelin_sector")
+            return real_gauquelin(*args, **kwargs)
+
+        def tracking_calc_ut(jd, ipl, flags):
+            if ipl == ecl_nut:  # OOB obliquity + nutation calls
+                events.append("calc_ut_ecl_nut")
+            return real_calc_ut(jd, ipl, flags)
+
+        # ephemeris_session resolves reset_ephemeris_session from its module
+        # globals at exit time, so patching the module attribute intercepts
+        # the session teardown.
+        monkeypatch.setattr(eb, "reset_ephemeris_session", tracking_reset)
+        monkeypatch.setattr(eb.swe, "azalt", tracking_azalt)
+        monkeypatch.setattr(eb.swe, "gauquelin_sector", tracking_gauquelin)
+        monkeypatch.setattr(eb.swe, "calc_ut", tracking_calc_ut)
+
+        AstrologicalSubjectFactory.from_birth_data(
+            "Session Containment",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            online=False,
+            calculate_gauquelin=True,
+            calculate_local_space=True,
+            calculate_nutation=True,
+            suppress_geonames_warning=True,
+        )
+
+        assert "azalt" in events
+        assert "gauquelin_sector" in events
+        assert "calc_ut_ecl_nut" in events
+        assert "session_reset" in events
+
+        first_reset = events.index("session_reset")
+        escaped = [e for e in events[first_reset:] if e != "session_reset"]
+        assert not escaped, f"swe enrichment calls escaped the ephemeris session: {escaped}"
 
 
 class TestArabicParts:

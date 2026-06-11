@@ -25,6 +25,7 @@ from typing import List, Optional
 
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
     datetime_to_julian,
@@ -96,7 +97,17 @@ def _ang_diff(a: float, b: float) -> float:
 
 def _lon(jd: float, body: int) -> float:
     """Ecliptic longitude (deg, 0-360) of ``body`` at ``jd``."""
-    return float(swe.calc_ut(jd, body, swe.FLG_SWIEPH)[0][0]) % 360.0
+    try:
+        return float(swe.calc_ut(jd, body, swe.FLG_SWIEPH)[0][0]) % 360.0
+    except Exception as exc:
+        # Range errors (libephemeris EphemerisRangeError, swisseph.Error)
+        # propagate raw from calc_ut — normalize them to the documented
+        # exception type, like the lunation factory does.
+        raise KerykeionException(
+            f"Sign ingress search failed at JD {jd:.5f}: {exc}. This usually "
+            f"means the date falls outside the available ephemeris range; "
+            f"narrow the date range."
+        ) from exc
 
 
 def _sign_name(sign_num: int) -> str:
@@ -208,6 +219,13 @@ class SignIngressFactory:
             start_jd: Julian Day (UT) range start.
             end_jd: Julian Day (UT) range end.
             planets: Optional subset of planet names. Defaults to Sun..Pluto.
+
+        Raises:
+            KerykeionException: If the ephemeris backend fails mid-scan (most
+                often a date outside the available ephemeris range); the scan
+                never returns silently truncated results.
+            ValueError: If a planet name is unknown or the range is too large
+                to scan.
         """
         # None = default set; an explicit empty list = scan nothing.
         if planets is not None:

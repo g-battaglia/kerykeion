@@ -25,7 +25,7 @@ keywords = [
     "astronomical algorithms"
 ]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
@@ -339,7 +339,7 @@ exclude = [
     "*.egg-info"
 ]
 typeCheckingMode = "basic"
-pythonVersion = "3.9"
+pythonVersion = "3.12"
 pythonPlatform = "All"
 venvPath = "."
 venv = ".venv"

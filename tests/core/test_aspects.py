@@ -943,6 +943,25 @@ class TestOrbAdjustmentResolver:
         with _pytest.raises(ValueError, match="Unknown orb adjustment strategy"):
             resolve_pair_orb_adjustment("Sun", "Mars", adj, strategy="maxexplicit")  # type: ignore[arg-type]
 
+    def test_unknown_strategy_raises_with_empty_or_none_table(self):
+        """Validation must run before the empty-table early return."""
+        import pytest as _pytest
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        with _pytest.raises(ValueError, match="Unknown orb adjustment strategy"):
+            resolve_pair_orb_adjustment("Sun", "Mars", {}, strategy="bogus")  # type: ignore[arg-type]
+        with _pytest.raises(ValueError, match="Unknown orb adjustment strategy"):
+            resolve_pair_orb_adjustment("Sun", "Mars", None, strategy="bogus")  # type: ignore[arg-type]
+
+    def test_unknown_strategy_raises_with_unconfigured_pair(self):
+        """Validation must run before the both-points-unconfigured early return."""
+        import pytest as _pytest
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        adj = {"Sun": 1.5}
+        with _pytest.raises(ValueError, match="Unknown orb adjustment strategy"):
+            resolve_pair_orb_adjustment("Mars", "Venus", adj, strategy="bogus")  # type: ignore[arg-type]
+
     def test_sum_strategy(self):
         from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
 

@@ -15,6 +15,11 @@ parts (with the day/night formula re-selected from the Sun's altitude at the
 new location), and the local ISO datetime when a new timezone is provided.
 For sidereal subjects the tropical ``houses_armc`` output is shifted by the
 subject's ayanamsa so the relocated cusps stay in the natal zodiac.
+
+Per-point local-space / Gauquelin enrichments (``azimuth``,
+``altitude_above_horizon``, ``gauquelin_sector``) and the subject-level
+``gauquelin_sector_cusps`` are also location-dependent but are NOT recomputed
+for the new location: they are reset to ``None`` on the relocated subject.
 """
 
 from __future__ import annotations
@@ -169,6 +174,18 @@ class RelocatedChartFactory:
 
         # Copy original subject data and override houses + angles
         relocated_data = subject.model_dump()
+
+        # Per-point local-space / Gauquelin enrichments and the Gauquelin
+        # sector cusps were computed for the NATAL location and are not
+        # recomputed here: null them rather than carrying stale values that
+        # silently describe the wrong horizon.
+        for point_data in relocated_data.values():
+            if isinstance(point_data, dict):
+                for location_dependent_field in ("azimuth", "altitude_above_horizon", "gauquelin_sector"):
+                    if location_dependent_field in point_data:
+                        point_data[location_dependent_field] = None
+        relocated_data["gauquelin_sector_cusps"] = None
+
         relocated_data.update(house_data)
         relocated_data["city"] = new_city
         relocated_data["nation"] = new_nation or subject.nation
@@ -186,13 +203,51 @@ class RelocatedChartFactory:
             if utc_dt.tzinfo is None:
                 utc_dt = utc_dt.replace(tzinfo=timezone.utc)
             relocated_data["iso_formatted_local_datetime"] = utc_dt.astimezone(pytz.timezone(new_tz_str)).isoformat()
+            # The weekday follows the local calendar date, which can change
+            # across timezones for the same UTC instant.
+            from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory as _ASF
+
+            _ASF._calculate_day_of_week(relocated_data)
 
         # Sect (day/night) depends on the observer's horizon: recompute it for
         # the new location so the Arabic part formulas pick the right branch.
         from kerykeion.astrological_subject_factory import ARABIC_PARTS_CONFIG, AstrologicalSubjectFactory
 
-        is_diurnal = AstrologicalSubjectFactory._compute_is_diurnal(jd, new_lat, new_lng, 0.0)
+        # _compute_is_diurnal calls swe.* (tropical geocentric Sun + azalt), so
+        # it must run inside an ephemeris session — same lock/path contract as
+        # the subject factory, which computes sect inside its own session. A
+        # plain session is enough: _compute_is_diurnal builds its own flags.
+        with ephemeris_session():
+            is_diurnal = AstrologicalSubjectFactory._compute_is_diurnal(
+                jd, new_lat, new_lng, getattr(subject, "altitude", None) or 0.0
+            )
         relocated_data["is_diurnal"] = is_diurnal
+
+        # Essential dignities depend on sect (the triplicity ruler flips
+        # between day and night charts): recompute them with the relocated
+        # sect so the model stays internally consistent when relocation flips
+        # is_diurnal. Only do this when the natal subject carried dignity data
+        # (the enrichment is opt-in).
+        if any(
+            isinstance(p, dict) and p.get("essential_dignity") is not None
+            for p in relocated_data.values()
+        ):
+            from kerykeion.dignities import calculate_essential_dignity
+
+            for point_data in relocated_data.values():
+                if not (isinstance(point_data, dict) and "essential_dignity" in point_data):
+                    continue
+                if point_data.get("abs_pos") is None or point_data.get("name") is None:
+                    continue
+                point_data.update(
+                    calculate_essential_dignity(
+                        planet_name=point_data["name"],
+                        sign=point_data["sign"],
+                        element=point_data["element"],
+                        position=point_data["position"],
+                        is_diurnal=is_diurnal,
+                    )
+                )
 
         # Recompute the Ascendant-derived Arabic parts with the relocated ASC
         # and the recomputed sect (planet positions are unchanged).
@@ -237,5 +292,11 @@ class RelocatedChartFactory:
             if point is not None and isinstance(point, dict) and "abs_pos" in point:
                 new_house = get_planet_house(point["abs_pos"], houses_degree_ut)
                 point["house"] = new_house
+
+        # Fixed stars keep their zodiacal positions but live outside
+        # active_points: reassign their houses against the relocated cusps too.
+        for star_data in relocated_data.get("fixed_stars") or []:
+            if isinstance(star_data, dict) and star_data.get("abs_pos") is not None:
+                star_data["house"] = get_planet_house(star_data["abs_pos"], houses_degree_ut)
 
         return AstrologicalSubjectModel(**relocated_data)

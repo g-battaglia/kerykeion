@@ -3552,6 +3552,27 @@ class TestSvgXmlEscaping:
         assert "&lt;script&gt;" in svg
         assert "&lt;b&gt;" in svg
 
+    def test_synastry_cusp_comparison_with_markup_in_name_is_valid_xml(self):
+        """Regression: the cusp comparison grid embeds the first word of each
+        subject name in its column headers (``draw_cusp_comparison_grid`` was
+        the one sink missed by the escaping pass); a name containing ``&``
+        used to produce unparseable XML when the grid was enabled.
+        """
+        from xml.etree import ElementTree
+
+        first = _make_unsafe_named_subject("A&B rest")
+        second = _make_unsafe_named_subject("C<d> Partner")
+        data = ChartDataFactory.create_synastry_chart_data(first, second)
+        svg = ChartDrawer(
+            data,
+            show_house_position_comparison=False,
+            show_cusp_position_comparison=True,
+        ).generate_svg_string()
+
+        ElementTree.fromstring(svg)  # must parse despite the hostile names
+        assert "<d>" not in svg, "Raw markup from the subject name must not reach the cusp grid"
+        assert "A&amp;B" in svg, "The subject name must appear in escaped form"
+
     def test_custom_title_with_markup_is_escaped(self):
         from xml.etree import ElementTree
 

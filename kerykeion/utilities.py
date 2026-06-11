@@ -506,21 +506,35 @@ def circular_mean(first_position: Union[int, float], second_position: Union[int,
     This method correctly handles positions that cross the 0°/360° boundary,
     avoiding errors that occur with simple arithmetic means.
 
+    Exactly antipodal positions (180° apart) have no unique circular mean;
+    they are resolved deterministically as the plain average of the
+    normalized positions, ``((a + b) / 2) % 360`` — the same convention used
+    by ``MidpointFactory._shorter_arc_midpoint``.
+
     Args:
         first_position: First angular position in degrees (0-360)
         second_position: Second angular position in degrees (0-360)
 
     Returns:
-        The circular mean position in degrees (0-360)
+        The circular mean position in degrees, always in the range [0, 360)
     """
     x = (math.cos(math.radians(first_position)) + math.cos(math.radians(second_position))) / 2
     y = (math.sin(math.radians(first_position)) + math.sin(math.radians(second_position))) / 2
+
+    # Antipodal positions cancel out to a (near-)zero resultant vector, so
+    # atan2 would return floating-point noise. Tie-break deterministically.
+    if math.hypot(x, y) < 1e-12:
+        return (((first_position % 360.0) + (second_position % 360.0)) / 2.0) % 360.0
+
     mean_position = math.degrees(math.atan2(y, x))
 
     if mean_position < 0:
         mean_position += 360
 
-    return mean_position
+    # Float rounding can push the result to exactly 360.0 (e.g. 350° and 10°
+    # yield 360 - 4.6e-15, which rounds to 360.0); normalize back to [0, 360)
+    # so downstream consumers such as get_kerykeion_point_from_degree accept it.
+    return mean_position % 360.0
 
 
 def circular_sort(degrees: list[Union[int, float]]) -> list[Union[int, float]]:

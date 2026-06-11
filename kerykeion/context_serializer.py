@@ -465,6 +465,26 @@ def astrological_subject_to_context(
         lines.extend(axes_lines)
         lines.append(f"  {_c('axes')}")
 
+    # Fixed stars (v6 unified array — present only when requested on the subject)
+    star_lines = []
+    for star in getattr(subject, "fixed_stars", None) or []:
+        star_lines.append(f"    {kerykeion_point_to_context(star)}")
+
+    if star_lines:
+        lines.append(f"  {_o('fixed_stars')}")
+        lines.extend(star_lines)
+        lines.append(f"  {_c('fixed_stars')}")
+
+    # Active midpoints (v6 — present only when computed via MidpointFactory)
+    midpoint_lines = []
+    for midpoint in getattr(subject, "active_midpoints", None) or []:
+        midpoint_lines.append(f"    {kerykeion_point_to_context(midpoint)}")
+
+    if midpoint_lines:
+        lines.append(f"  {_o('active_midpoints')}")
+        lines.extend(midpoint_lines)
+        lines.append(f"  {_c('active_midpoints')}")
+
     # House cusps
     house_names = [
         "first_house",

@@ -17,6 +17,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import json
 import typing
+from types import SimpleNamespace
 
 import pytest
 from pytest import approx
@@ -132,6 +133,81 @@ def test_modern_angularity_falloff():
     # Exactly on the IC (weight 0.5) → 4.0 * 0.5 = 2.0.
     on_ic = {"Ascendant": None, "Medium_Coeli": None, "Descendant": None, "Imum_Coeli": 100.0}
     assert ModernDominantStrategy._angularity_scores([point], on_ic, [], False)["Mars"] == approx(2.0)
+
+
+def _modern_dignity(point_name: str, abs_degree: float, *, is_diurnal: bool = True) -> float:
+    """Run the modern dignity scorer on a single synthetic point."""
+    subject = SimpleNamespace(is_diurnal=is_diurnal)
+    point = get_kerykeion_point_from_degree(abs_degree, point_name, "AstrologicalPoint")
+    return ModernDominantStrategy._dignity_scores(subject, [point], [], False)[point_name]
+
+
+def test_modern_dignity_term_never_masks_detriment():
+    """A planet in its own term while in detriment scores 0.25 - 1.00 = -0.75.
+
+    These are exactly the degree windows where the single "highest dignity"
+    label used to hide the debility and award a bare +0.25:
+        - Mars 28-30° Libra: own Egyptian term, detriment in Libra.
+        - Venus 7-11° Scorpio: own term, detriment (checked in a NIGHT chart
+          so Venus's Water *day*-triplicity rulership stays out of the way).
+        - Saturn 26-30° Cancer: own term, detriment.
+        - Mercury 17-21° Sagittarius: own term, detriment.
+    """
+    assert _modern_dignity("Mars", 180 + 28.5) == approx(0.25 - 1.00)
+    assert _modern_dignity("Venus", 210 + 8.0, is_diurnal=False) == approx(0.25 - 1.00)
+    assert _modern_dignity("Saturn", 90 + 27.0) == approx(0.25 - 1.00)
+    assert _modern_dignity("Mercury", 240 + 18.0) == approx(0.25 - 1.00)
+
+
+def test_modern_dignity_triplicity_never_masks_debility():
+    """A triplicity rulership earns +0.40 but never hides detriment/fall.
+
+    Venus at 8° Scorpio in a DAY chart is the Dorothean day ruler of Water
+    (label "Triplicity", outranking its own term) yet still in detriment:
+    0.40 - 1.00 = -0.60 (previously the masked +0.40). The Moon at 3°
+    Capricorn in a NIGHT chart rules the Earth triplicity while in detriment:
+    0.40 - 1.00 = -0.60.
+    """
+    assert _modern_dignity("Venus", 210 + 8.0, is_diurnal=True) == approx(0.40 - 1.00)
+    assert _modern_dignity("Moon", 270 + 3.0, is_diurnal=False) == approx(0.40 - 1.00)
+
+
+def test_modern_dignity_double_debility_is_additive():
+    """Mercury in Pisces is in BOTH detriment (opposite Gemini) and fall
+    (opposite its Virgo exaltation), so both documented penalties apply.
+
+    At 17° Pisces it also sits in its own term: 0.25 - 1.00 - 0.75 = -1.50
+    (previously the masked +0.25). At 5° Pisces it holds no dignity at all:
+    -1.00 - 0.75 = -1.75 (previously -1.00, since the single "Detriment"
+    label could only carry one of the two debilities).
+    """
+    assert _modern_dignity("Mercury", 330 + 17.0) == approx(0.25 - 1.00 - 0.75)
+    assert _modern_dignity("Mercury", 330 + 5.0) == approx(-1.00 - 0.75)
+
+
+def test_modern_dignity_unmasked_cases_unchanged():
+    """Plain dignities/debilities keep their documented values.
+
+    Mars at 5° Aries: domicile, no debility → +1.00. The Sun at 10° Libra
+    (day chart): fall, no dignity (the 6-14° term is Mercury's, decan 2 is
+    Saturn's, the Air day-triplicity is Saturn's) → -0.75. Uranus is not a
+    classical planet, so it carries no essential dignity anywhere → 0.0.
+    """
+    assert _modern_dignity("Mars", 0 + 5.0) == approx(1.00)
+    assert _modern_dignity("Sun", 180 + 10.0) == approx(-0.75)
+    assert _modern_dignity("Uranus", 210 + 8.0) == approx(0.0)
+
+
+def test_modern_dignity_breakdown_lists_each_component():
+    """With the audit trail on, dignity and debility appear as separate lines."""
+    subject = SimpleNamespace(is_diurnal=True)
+    point = get_kerykeion_point_from_degree(180 + 28.5, "Mars", "AstrologicalPoint")
+    breakdown = []
+    scores = ModernDominantStrategy._dignity_scores(subject, [point], breakdown, True)
+
+    assert scores["Mars"] == approx(-0.75)
+    contributions = {(item.rule, item.points) for item in breakdown if item.target == "Mars"}
+    assert contributions == {("Term", 0.25), ("Detriment", -1.00)}
 
 
 def test_modern_mars_dominant_for_aries_rising(john_lennon):

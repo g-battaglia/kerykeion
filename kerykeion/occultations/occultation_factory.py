@@ -35,9 +35,16 @@ from kerykeion.ephemeris_backend import swe, ephemeris_session
 from pydantic import Field
 from typing import List
 
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 logger = logging.getLogger(__name__)
+
+# Backstop on events per search. Each event is found with a single backend
+# call, so this still allows centuries of coverage; absurd requests are
+# rejected upfront (like the eclipse factory's ``_ensure_scannable``) rather
+# than left to fail mid-scan or silently truncate.
+_MAX_COUNT = 1_000
 
 # ---------------------------------------------------------------------------
 # Occultation type flag-to-label mapping
@@ -59,13 +66,44 @@ def _classify_occultation(retflags: int) -> str:
 
 
 def _jd_to_iso(jd: float) -> str:
-    """Convert a Julian Day to an ISO-8601 UTC timestamp string."""
+    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
+
+    Uses ``swe.revjul`` rather than Python ``datetime`` (limited to years
+    1..9999) so the BCE range Kerykeion supports formats correctly, with an
+    extended-year sign for negative years.
+    """
     year, month, day, hour_frac = swe.revjul(jd)
-    hh = int(hour_frac)
-    rest = (hour_frac - hh) * 60
-    mm = int(rest)
-    ss = int((rest - mm) * 60)
-    return f"{year:04d}-{month:02d}-{day:02d}T{hh:02d}:{mm:02d}:{ss:02d}Z"
+    secs = min(int(hour_frac * 3600 + 0.5), 86399)  # nearest second, no 24:00 carry
+    hours, rem = divmod(secs, 3600)
+    minutes, seconds = divmod(rem, 60)
+    year_str = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
+    return f"{year_str}-{month:02d}-{day:02d}T{hours:02d}:{minutes:02d}:{seconds:02d}Z"
+
+
+def _ensure_scannable(count: int) -> None:
+    """Reject absurd event counts upfront, so a caller never receives a
+    silently truncated result and never waits on a scan that cannot finish."""
+    if count > _MAX_COUNT:
+        raise ValueError(
+            f"count too large (> {_MAX_COUNT} events per search). "
+            f"Request fewer events per search."
+        )
+
+
+def _search_failure(kind: str, jd: float, exc: Exception) -> KerykeionException:
+    """Build the exception raised when the backend fails mid-scan.
+
+    A failing occultation primitive call must abort the search: logging and
+    returning the events found so far would silently truncate a result that
+    still claims full coverage. The most common cause is a search that walked
+    past the edge of the available ephemeris data.
+    """
+    return KerykeionException(
+        f"{kind} occultation search failed at JD {jd:.5f}: {exc}. "
+        f"This usually means the search reached a date outside the available "
+        f"ephemeris range; use a julian_day/count combination covered by the "
+        f"installed ephemeris data."
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -128,7 +166,14 @@ class OccultationFactory:
 
         Returns:
             A list of :class:`OccultationModel` instances ordered by date.
+
+        Raises:
+            KerykeionException: If the ephemeris backend fails mid-search (most
+                often a date outside the available ephemeris range); the search
+                never returns silently truncated results.
+            ValueError: If ``count`` exceeds the supported maximum.
         """
+        _ensure_scannable(count)
         planet_name = swe.get_planet_name(planet_id)
         results: List[OccultationModel] = []
         cursor = julian_day
@@ -143,14 +188,12 @@ class OccultationFactory:
                         0,
                         False,
                     )
-                except Exception:
-                    logger.warning(
-                        "swe.lun_occult_when_glob raised an exception; stopping search.",
-                        exc_info=True,
-                    )
-                    break
+                except Exception as exc:
+                    raise _search_failure("Global", cursor, exc) from exc
 
                 if retflags == 0 or tret[0] == 0.0:
+                    # retflags == 0 means "no further occultation of this
+                    # body" -- a legitimate terminal result, not an error.
                     break
 
                 max_jd = tret[0]
@@ -193,7 +236,14 @@ class OccultationFactory:
 
         Returns:
             A list of :class:`OccultationModel` instances ordered by date.
+
+        Raises:
+            KerykeionException: If the ephemeris backend fails mid-search (most
+                often a date outside the available ephemeris range); the search
+                never returns silently truncated results.
+            ValueError: If ``count`` exceeds the supported maximum.
         """
+        _ensure_scannable(count)
         planet_name = swe.get_planet_name(planet_id)
         geopos = (lng, lat, 0.0)  # (longitude, latitude, altitude)
         results: List[OccultationModel] = []
@@ -209,14 +259,12 @@ class OccultationFactory:
                         swe.FLG_SWIEPH,
                         False,
                     )
-                except Exception:
-                    logger.warning(
-                        "swe.lun_occult_when_loc raised an exception; stopping search.",
-                        exc_info=True,
-                    )
-                    break
+                except Exception as exc:
+                    raise _search_failure("Local", cursor, exc) from exc
 
                 if retflags == 0 or tret[0] == 0.0:
+                    # retflags == 0 means "no further occultation of this
+                    # body" -- a legitimate terminal result, not an error.
                     break
 
                 max_jd = tret[0]

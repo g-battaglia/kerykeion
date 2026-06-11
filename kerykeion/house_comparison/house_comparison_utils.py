@@ -124,8 +124,12 @@ def calculate_cusps_in_reciprocal_houses(
     # Extract house cusp degrees for projection calculation
     house_subject_cusps = [house.abs_pos for house in house_subject_houses]
 
-    # Iterate through each house cusp of the cusp_subject
-    for cusp in cusp_subject_houses:
+    # Iterate through each house cusp of the cusp_subject.
+    # get_houses_list returns the cusps in order (First_House .. Twelfth_House),
+    # so the cusp's own house number is its position in that list. Parsing the
+    # number out of the cusp name is unreliable: the canonical names carry no
+    # digits ("First_House", not "House 1").
+    for cusp_index, cusp in enumerate(cusp_subject_houses, start=1):
         # Get the cusp's absolute position
         point_degree = cusp.abs_pos
 
@@ -137,20 +141,8 @@ def calculate_cusps_in_reciprocal_houses(
             # Skip if cusp doesn't fall within any house (shouldn't happen with valid data)
             continue
 
-        # Get the cusp's original house information
-        try:
-            # Extract house number from cusp name (e.g., "House 1" -> 1)
-            if " " in cusp.name:
-                cusp_house_number = int(cusp.name.split()[1])
-            else:
-                # Fallback: try to extract digits from the name
-                import re
-
-                numbers = re.findall(r"\d+", cusp.name)
-                cusp_house_number = int(numbers[0]) if numbers else 1
-        except (IndexError, ValueError):
-            # Fallback to sequential numbering if parsing fails
-            cusp_house_number = cusp_subject_houses.index(cusp) + 1
+        # The cusp's original house number is simply its ordinal position
+        cusp_house_number = cusp_index
 
         # Create PointInHouseModel for this cusp
         cusp_in_house = PointInHouseModel(

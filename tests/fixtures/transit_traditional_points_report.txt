@@ -63,7 +63,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Jupiter               | Can ♋️ | 23.91°   | +0.2239°/d  | +21.56° | -    | Ninth House   |
 | Saturn                | Cap ♑️ | 21.52°   | -0.0733°/d  | -21.66° | R    | Third House   |
 | True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d  | -18.46° | R    | Third House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0080°/d  | +18.46° | R    | Ninth House   |
+| True South Lunar Node | Leo ♌️ | 7.26°    | -0.0080°/d  | +18.46° | R    | Ninth House   |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
 
 +Transit Subject Celestial Points-+----------+-------------+---------+------+---------------+
@@ -77,7 +77,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Jupiter               | Lib ♎️ | 7.16°    | +0.1300°/d  | -1.73°  | -    | Second House  |
 | Saturn                | Lib ♎️ | 8.35°    | +0.0682°/d  | -1.24°  | -    | Second House  |
 | True North Lunar Node | Leo ♌️ | 12.16°   | -0.1140°/d  | +17.15° | R    | Twelfth House |
-| True South Lunar Node | Aqu ♒️ | 12.16°   | +0.1140°/d  | -17.15° | R    | Sixth House   |
+| True South Lunar Node | Aqu ♒️ | 12.16°   | -0.1140°/d  | -17.15° | R    | Sixth House   |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
 
 +Natal Subject Houses (Placidus)------+-------------------+

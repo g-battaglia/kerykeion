@@ -98,6 +98,20 @@ class SecondaryProgressionFactory:
     (i.e. the moment ``birth_date + delta_years_in_days``), so every
     downstream tool (aspects, dignities, chart drawer) keeps working
     transparently.
+
+    Progressed angles convention (Asc/MC/houses):
+        This factory casts a complete chart for the progressed instant at the
+        natal location — the **"Q2 / daily houses"** convention. The
+        progressed MC is therefore the actual MC of the sky on the ephemeris
+        date, sweeping a full ~360° per year of life, and the Ascendant and
+        house cusps move with it. This differs from the mainstream default of
+        astro.com and Astro-Seek, which keep the *solar-arc-advanced* MC
+        (natal MC + the Sun's progressed arc, ~1°/year) and derive the
+        Ascendant/houses from that slow-moving MC. Progressed **planet**
+        positions are identical under both conventions; only the angles and
+        house cusps (and anything derived from them, such as house
+        placements) differ — so the progressed Asc/MC reported here will not
+        match astro.com's default output.
     """
 
     @staticmethod
@@ -304,6 +318,14 @@ class SecondaryProgressionFactory:
             KerykeionException: If neither ``target_iso_utc_datetime`` nor
                 ``target_year`` is supplied, or if both are supplied, or
                 if the natal subject is missing critical data.
+
+        Note:
+            Angles and house cusps follow the "Q2 / daily houses" convention:
+            they are the real angles of the sky at the progressed instant
+            (progressed MC ≈ 360°/year), NOT the solar-arc-advanced angles
+            (~1°/year) that astro.com / Astro-Seek report by default.
+            Progressed planet positions are unaffected by this choice. See
+            the class docstring for details.
         """
         natal_jd = SecondaryProgressionFactory._natal_jd(natal_subject)
         target_jd = SecondaryProgressionFactory._target_to_jd(
@@ -381,7 +403,10 @@ class SecondaryProgressionFactory:
         """Build the progressed chart with optional progressed-to-natal aspects.
 
         Wraps :meth:`compute` and adds cross-chart aspect detection, following
-        the same pattern as :meth:`SolarArcFactory.compute`.
+        the same pattern as :meth:`SolarArcFactory.compute`. The progressed
+        angles follow the same "Q2 / daily houses" convention as
+        :meth:`compute` (progressed MC ≈ 360°/year, unlike astro.com's
+        solar-arc-advanced default — see the class docstring).
 
         Args:
             natal_subject: Fully-built natal subject.

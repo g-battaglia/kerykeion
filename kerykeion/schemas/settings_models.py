@@ -366,6 +366,26 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
         title="House Position Comparison",
         description="The house position comparison label in the chart, in the language",
     )
+    cusp_position_comparison: str = Field(
+        default="Cusp Position Comparison",
+        title="Cusp Position Comparison",
+        description="The cusp position comparison label in the chart, in the language",
+    )
+    transit_cusp: str = Field(
+        default="Transit Cusp",
+        title="Transit Cusp",
+        description="The transit cusp label in the chart, in the language",
+    )
+    return_cusp: str = Field(
+        default="Return Cusp",
+        title="Return Cusp",
+        description="The return cusp label in the chart, in the language",
+    )
+    house: str = Field(
+        default="House",
+        title="House",
+        description="The house label in the chart, in the language",
+    )
     return_point: str = Field(title="Return Point", description="The return point label in the chart, in the language")
     natal: str = Field(title="Natal", description="The natal label in the chart, in the language")
     perspective_type: str = Field(

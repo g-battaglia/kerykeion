@@ -183,6 +183,32 @@ def test_midpoint_empty_aspects_disables_aspect_detection():
     assert all(len(m.aspects_to_midpoint) == 0 for m in midpoints)
 
 
+def test_active_midpoint_points_deduplicates_pairs():
+    """Exact duplicates and reversed "B_A" twins collapse to one point.
+
+    Without dedup, ["Sun_Moon", "Moon_Sun", "Sun_Moon"] materialized three
+    point models at the same longitude (overlapping glyphs in the drawer).
+    """
+    points = MidpointFactory.compute_active_midpoint_points(
+        _subject(),
+        ["Sun_Moon", "Moon_Sun", "Sun_Moon"],
+    )
+    assert len(points) == 1
+    # First occurrence wins, so the name keeps the "Sun_Moon" order.
+    assert points[0].name == "Sun_Moon_Midpoint"
+    assert points[0].point_type == "Midpoint"
+
+
+def test_active_midpoint_points_skips_unresolvable_pair():
+    """A pair that can't be split into two resolvable names is skipped, not fatal."""
+    points = MidpointFactory.compute_active_midpoint_points(
+        _subject(),
+        ["Sun_Bogus", "Sun_Moon"],
+    )
+    assert len(points) == 1
+    assert points[0].name == "Sun_Moon_Midpoint"
+
+
 # ─── SecondaryProgressionFactory ──────────────────────────────────────
 
 

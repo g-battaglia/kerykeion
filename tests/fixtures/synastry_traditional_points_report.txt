@@ -63,7 +63,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Jupiter               | Can ♋️ | 23.91°   | +0.2239°/d  | +21.56° | -    | Ninth House   |
 | Saturn                | Cap ♑️ | 21.52°   | -0.0733°/d  | -21.66° | R    | Third House   |
 | True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d  | -18.46° | R    | Third House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0080°/d  | +18.46° | R    | Ninth House   |
+| True South Lunar Node | Leo ♌️ | 7.26°    | -0.0080°/d  | +18.46° | R    | Ninth House   |
 +-----------------------+---------+----------+-------------+---------+------+---------------+
 
 +Second Subject Celestial Points--+----------+-------------+---------+------+----------------+
@@ -77,7 +77,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Jupiter               | Vir ♍️ | 20.70°   | -0.1139°/d  | +5.03°  | R    | Twelfth House  |
 | Saturn                | Aqu ♒️ | 9.74°    | +0.1149°/d  | -18.38° | -    | Fourth House   |
 | True North Lunar Node | Pis ♓️ | 7.80°    | -0.0063°/d  | -8.65°  | R    | Fifth House    |
-| True South Lunar Node | Vir ♍️ | 7.80°    | +0.0063°/d  | +8.65°  | R    | Eleventh House |
+| True South Lunar Node | Vir ♍️ | 7.80°    | -0.0063°/d  | +8.65°  | R    | Eleventh House |
 +-----------------------+---------+----------+-------------+---------+------+----------------+
 
 +First Subject Houses (Placidus)------+-------------------+

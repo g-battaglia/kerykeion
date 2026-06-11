@@ -11,7 +11,9 @@ from copy import deepcopy
 import pytest
 
 from kerykeion.settings.kerykeion_settings import load_settings_mapping, _deep_merge
+from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 from kerykeion.settings.translations import load_language_settings, get_translations
+from kerykeion.schemas.settings_models import KerykeionLanguageModel
 
 
 # =============================================================================
@@ -213,3 +215,79 @@ class TestDeepMerge:
         merged = _deep_merge(base, overrides)
         assert merged["l1"]["l2"]["l3"]["val"] == "replaced"
         assert merged["l1"]["l2"]["l3"]["keep"] is True
+
+
+# =============================================================================
+# TestKerykeionLanguageModelRoundTrip
+# =============================================================================
+
+
+class TestKerykeionLanguageModelRoundTrip:
+    """The Pydantic language model must not silently drop render-time keys.
+
+    Regression: ``cusp_position_comparison``, ``transit_cusp``, ``return_cusp``
+    and ``house`` were missing from ``KerykeionLanguageModel``, so the
+    ``KerykeionLanguageModel(**base_data).model_dump()`` round-trip in
+    ``ChartDrawer._load_language_settings`` stripped them (Pydantic ignores
+    extra keys) and every locale rendered the hardcoded English defaults.
+    """
+
+    RENDER_TIME_KEYS = ("cusp_position_comparison", "transit_cusp", "return_cusp", "house")
+
+    def test_all_shipped_languages_are_covered(self):
+        expected = {"EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"}
+        assert expected <= set(LANGUAGE_SETTINGS)
+
+    @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
+    def test_round_trip_retains_render_time_keys(self, language):
+        source = LANGUAGE_SETTINGS[language]
+        dumped = KerykeionLanguageModel(**source).model_dump()
+        for key in self.RENDER_TIME_KEYS:
+            assert key in source, f"{language} is missing the {key!r} translation"
+            assert dumped[key] == source[key], (
+                f"{language}: {key!r} lost in model_dump() round-trip "
+                f"(expected {source[key]!r}, got {dumped.get(key)!r})"
+            )
+
+    def test_transit_chart_svg_uses_localized_cusp_label(self):
+        """End-to-end: a DE transit chart renders 'Transit-Cusp', not the English default."""
+        from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+        from kerykeion.charts.chart_drawer import ChartDrawer
+
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "DE Natal",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=13.4050,
+            lat=52.5200,
+            tz_str="Europe/Berlin",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        transit = AstrologicalSubjectFactory.from_birth_data(
+            "DE Transit",
+            2024,
+            3,
+            20,
+            12,
+            0,
+            lng=13.4050,
+            lat=52.5200,
+            tz_str="Europe/Berlin",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        data = ChartDataFactory.create_transit_chart_data(natal, transit)
+        svg = ChartDrawer(
+            data,
+            chart_language="DE",
+            show_cusp_position_comparison=True,
+        ).generate_svg_string()
+
+        assert LANGUAGE_SETTINGS["DE"]["transit_cusp"] == "Transit-Cusp"
+        assert "Transit-Cusp" in svg
+        # The localized table heading must replace the English fallback too.
+        assert LANGUAGE_SETTINGS["DE"]["cusp_position_comparison"] in svg

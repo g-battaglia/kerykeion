@@ -1472,3 +1472,79 @@ class TestMidpointsToContext:
         result = to_context([])
         assert "<midpoints_analysis " in result
         assert result == midpoints_to_context([])
+
+
+class TestFixedStarsAndMidpointsInSubjectContext:
+    """The v6 ``fixed_stars`` / ``active_midpoints`` arrays must appear in subject XML."""
+
+    def setup_class(self):
+        self.star_subject = AstrologicalSubjectFactory.from_birth_data(
+            "Star Context Subject",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            suppress_geonames_warning=True,
+            active_fixed_stars=["Regulus", "Spica"],
+        )
+        self.plain_subject = AstrologicalSubjectFactory.from_birth_data(
+            "Plain Context Subject",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+
+    def test_fixed_stars_block_present(self):
+        context = to_context(self.star_subject)
+        assert "<fixed_stars>" in context
+        assert "</fixed_stars>" in context
+        assert 'name="Regulus"' in context
+        assert 'name="Spica"' in context
+
+    def test_fixed_stars_present_in_chart_data_context(self):
+        chart_data = ChartDataFactory.create_natal_chart_data(self.star_subject)
+        context = to_context(chart_data)
+        assert "<fixed_stars>" in context
+        assert 'name="Regulus"' in context
+
+    def test_active_midpoints_block_present(self):
+        from kerykeion.midpoints import MidpointFactory
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Midpoint Context Subject",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        subject.active_midpoints = MidpointFactory.compute_active_midpoint_points(
+            subject,
+            ["Sun_Moon"],
+        )
+        context = to_context(subject)
+        assert "<active_midpoints>" in context
+        assert "</active_midpoints>" in context
+        assert 'name="Sun_Moon_Midpoint"' in context
+
+    def test_default_subject_has_no_star_or_midpoint_blocks(self):
+        context = to_context(self.plain_subject)
+        assert "fixed_stars" not in context
+        assert "active_midpoints" not in context

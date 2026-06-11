@@ -252,3 +252,57 @@ class TestNakshatraSwissEphRegression:
         assert result["nakshatra_lord"] == exp_lord, (
             f"[{label}] lord = {result['nakshatra_lord']}, expected {exp_lord}"
         )
+
+
+class TestNakshatraTropicalWarning:
+    """v6: nakshatras are defined on the SIDEREAL zodiac. Enabling them on a
+    tropical chart must emit one warning per subject construction (values are
+    still computed for backward compatibility); sidereal charts stay silent."""
+
+    _BIRTH = dict(
+        year=1990, month=1, day=1, hour=12, minute=0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
+        suppress_geonames_warning=True,
+    )
+
+    @staticmethod
+    def _nakshatra_warnings(caplog):
+        return [
+            r
+            for r in caplog.records
+            if r.levelname == "WARNING"
+            and "nakshatra" in r.getMessage().lower()
+            and "sidereal" in r.getMessage().lower()
+        ]
+
+    def test_warning_fires_for_tropical_chart(self, caplog):
+        import logging
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.astrological_subject_factory"):
+            subject = AstrologicalSubjectFactory.from_birth_data(
+                "Tropical Nakshatra", calculate_nakshatra=True, **self._BIRTH
+            )
+
+        warnings = self._nakshatra_warnings(caplog)
+        assert warnings, "expected a warning when calculate_nakshatra=True on a tropical chart"
+        assert len(warnings) == 1, "the warning must fire once per subject construction, not per point"
+        # Values are still computed as-is (backward compatibility, no value change)
+        assert subject.sun.nakshatra is not None
+        assert subject.moon.nakshatra is not None
+
+    def test_no_warning_for_sidereal_chart(self, caplog):
+        import logging
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.astrological_subject_factory"):
+            subject = AstrologicalSubjectFactory.from_birth_data(
+                "Sidereal Nakshatra",
+                calculate_nakshatra=True,
+                zodiac_type="Sidereal",
+                sidereal_mode="LAHIRI",
+                **self._BIRTH,
+            )
+
+        warnings = self._nakshatra_warnings(caplog)
+        assert not warnings, f"unexpected nakshatra warning on a sidereal chart: {warnings}"
+        assert subject.sun.nakshatra is not None

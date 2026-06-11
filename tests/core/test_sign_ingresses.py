@@ -3,6 +3,7 @@
 
 import pytest
 
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.sign_ingresses import SignIngressFactory
 from kerykeion.utilities import datetime_to_julian
 from datetime import datetime
@@ -138,3 +139,40 @@ class TestIngressApi:
         res = SignIngressFactory.from_julian_day(start, end, ["Sun"])
         assert len(res.ingresses) == 12
         assert res.start_jd == start and res.end_jd == end
+
+
+class TestIngressErrorContract:
+    """Backend failures mid-scan must surface as KerykeionException, matching
+    the lunation factory's contract — never propagate raw backend errors and
+    never return silently truncated results."""
+
+    def test_backend_failure_raises_kerykeion_exception(self, monkeypatch):
+        # Simulate the backend rejecting a date (as a raw libephemeris
+        # EphemerisRangeError / swisseph.Error would) instead of using extreme
+        # years: the local dev kernel range differs from production DE441.
+        import kerykeion.sign_ingresses.sign_ingress_factory as sif
+
+        def failing_calc_ut(jd, body, flags):
+            raise RuntimeError(f"jd {jd} outside ephemeris range")
+
+        monkeypatch.setattr(sif.swe, "calc_ut", failing_calc_ut)
+        with pytest.raises(KerykeionException, match="narrow the date range"):
+            SignIngressFactory.from_iso_range("2026-01-01", "2026-01-10", ["Sun"])
+
+    def test_mid_scan_failure_raises_not_truncates(self, monkeypatch):
+        # First samples succeed, then the scan walks past the range edge: the
+        # whole search must raise rather than return partial ingresses claiming
+        # full coverage.
+        import kerykeion.sign_ingresses.sign_ingress_factory as sif
+
+        calls = {"n": 0}
+
+        def flaky_calc_ut(jd, body, flags):
+            calls["n"] += 1
+            if calls["n"] > 3:
+                raise RuntimeError(f"jd {jd} outside ephemeris range")
+            return ((15.0, 0.0, 1.0, 1.0, 0.0, 0.0), 0)
+
+        monkeypatch.setattr(sif.swe, "calc_ut", flaky_calc_ut)
+        with pytest.raises(KerykeionException, match=r"failed at JD "):
+            SignIngressFactory.from_iso_range("2026-01-01", "2026-01-10", ["Sun"])

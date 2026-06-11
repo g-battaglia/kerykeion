@@ -521,17 +521,45 @@ class PlanetaryReturnFactory:
         julian_day = datetime_to_julian(date)
 
         # The natal abs_pos values are expressed in the subject's zodiac
-        # (tropical OR sidereal). The crossing search must run with the same
-        # zodiac configuration, otherwise a sidereal natal position would be
+        # (tropical OR sidereal) AND perspective (apparent/true geocentric,
+        # topocentric...). The crossing search must run with the same
+        # configuration, otherwise a sidereal natal position would be
         # searched against tropical longitudes (~ayanamsa/degree-per-day off,
-        # i.e. ~25 days for a solar return with LAHIRI). ephemeris_session
-        # configures the sidereal mode and yields the matching iflag.
+        # i.e. ~25 days for a solar return with LAHIRI), and e.g. a
+        # "True Geocentric" natal Sun would be searched against apparent
+        # longitudes (~aberration off, ~8 minutes for a solar return).
+        # ephemeris_session configures sidereal mode and perspective and
+        # yields the matching iflag.
+        perspective_type = self.subject.perspective_type
+        if perspective_type == "Heliocentric":
+            raise KerykeionException(
+                "Solar and Lunar returns search geocentric crossings, which never match a natal "
+                "subject computed with perspective_type='Heliocentric'. Use next_heliocentric_return() "
+                "(or its from_date/from_iso wrappers) for heliocentric returns."
+            )
+        if perspective_type not in ("Apparent Geocentric", "True Geocentric", "Topocentric"):
+            raise KerykeionException(
+                f"Planetary returns are not supported for natal subjects with "
+                f"perspective_type='{perspective_type}'. Supported perspectives are "
+                "'Apparent Geocentric', 'True Geocentric' and 'Topocentric'."
+            )
+
+        # A topocentric natal frame is topocentric at the NATAL location, so
+        # the crossing search needs the natal coordinates. The subject model
+        # does not store altitude; 0.0 matches the factory default used when
+        # the natal chart was computed without an explicit altitude.
+        topo = None
+        if perspective_type == "Topocentric":
+            topo = (self.subject.lng, self.subject.lat, 0.0)
+
         return_julian_date = None
         with ephemeris_session(
             zodiac_type=self.subject.zodiac_type,
             sidereal_mode=self.subject.sidereal_mode,
             custom_ayanamsa_t0=self.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
+            perspective_type=perspective_type,
+            topo=topo,
         ) as iflag:
             if return_type == "Solar":
                 if self.subject.sun is None:

@@ -6,6 +6,7 @@ and adds additional coverage for initialization, transit moments, custom configu
 empty data paths, and full integration pipeline.
 """
 
+import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -250,7 +251,85 @@ class TestEmptyDataPath:
 
 
 # ===========================================================================
-# 5. TestTransitIntegration
+# 5. TestFrameConsistencyWarning
+# ===========================================================================
+
+
+class TestFrameConsistencyWarning:
+    """v6 pre-beta fix: a zodiac/perspective frame mismatch between the natal
+    chart and the ephemeris series must be reported at construction time
+    (cross-frame aspects are silently ~ayanamsha off otherwise)."""
+
+    def test_sidereal_natal_with_tropical_ephemeris_warns(self, ephemeris_subjects, caplog):
+        """Sidereal natal vs (default) tropical ephemeris series → warning."""
+        sidereal_natal = AstrologicalSubjectFactory.from_birth_data(
+            "Johnny Depp Sidereal",
+            1963,
+            6,
+            9,
+            0,
+            0,
+            lat=37.7742,
+            lng=-87.1133,
+            tz_str="America/Chicago",
+            online=False,
+            suppress_geonames_warning=True,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(sidereal_natal, ephemeris_subjects)
+        assert "different calculation frames" in caplog.text
+
+    def test_matched_tropical_frames_do_not_warn(self, natal_subject, ephemeris_subjects, caplog):
+        """Tropical natal vs tropical ephemeris series → no frame warning."""
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal_subject, ephemeris_subjects)
+        assert "different calculation frames" not in caplog.text
+
+    def test_matched_sidereal_frames_do_not_warn(self, natal_subject, caplog):
+        """Sidereal natal vs same-mode sidereal series → no frame warning."""
+        sidereal_natal = AstrologicalSubjectFactory.from_birth_data(
+            "Johnny Depp Sidereal",
+            1963,
+            6,
+            9,
+            0,
+            0,
+            lat=37.7742,
+            lng=-87.1133,
+            tz_str="America/Chicago",
+            online=False,
+            suppress_geonames_warning=True,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        start = datetime(2024, 1, 1, 12, 0)
+        sidereal_ephemeris = EphemerisDataFactory(
+            start_datetime=start,
+            end_datetime=start + timedelta(days=2),
+            step_type="days",
+            step=1,
+            lat=natal_subject.lat,
+            lng=natal_subject.lng,
+            tz_str=natal_subject.tz_str,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        ).get_ephemeris_data_as_astrological_subjects()
+
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(sidereal_natal, sidereal_ephemeris)
+        assert "different calculation frames" not in caplog.text
+
+    def test_empty_ephemeris_does_not_warn(self, natal_subject, caplog):
+        """No data points → nothing to compare, no frame warning."""
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal_subject, [])
+        assert "different calculation frames" not in caplog.text
+
+
+# ===========================================================================
+# 6. TestTransitIntegration
 # ===========================================================================
 
 

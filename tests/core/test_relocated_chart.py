@@ -254,3 +254,68 @@ class TestRelocatedDerivedPoints:
     def test_local_datetime_kept_without_new_tz(self, natal):
         relocated = RelocatedChartFactory.relocate(natal, new_lat=40.7128, new_lng=-74.006, new_city="New York")
         assert relocated.iso_formatted_local_datetime == natal.iso_formatted_local_datetime
+
+
+class TestRelocatedStaleLocationFields:
+    """v6: per-point local-space/Gauquelin enrichments and the Gauquelin
+    sector cusps were computed for the NATAL horizon; relocation must null
+    them (honest "not computed") instead of carrying stale natal values."""
+
+    @pytest.fixture(scope="class")
+    def enriched_natal(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Enriched Subject", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            calculate_gauquelin=True, calculate_local_space=True,
+        )
+
+    def test_natal_has_location_dependent_enrichments(self, enriched_natal):
+        """Sanity check: the natal subject actually carries the enrichments."""
+        assert enriched_natal.sun.gauquelin_sector is not None
+        assert enriched_natal.sun.azimuth is not None
+        assert enriched_natal.sun.altitude_above_horizon is not None
+        assert enriched_natal.gauquelin_sector_cusps is not None
+
+    def test_location_dependent_fields_nulled_on_relocation(self, enriched_natal):
+        relocated = RelocatedChartFactory.relocate(
+            enriched_natal, new_lat=40.7128, new_lng=-74.006, new_city="New York"
+        )
+        for attr in ["sun", "moon", "mercury", "venus", "mars", "ascendant", "first_house"]:
+            point = getattr(relocated, attr)
+            assert point.gauquelin_sector is None, f"{attr} carries a stale natal gauquelin_sector"
+            assert point.azimuth is None, f"{attr} carries a stale natal azimuth"
+            assert point.altitude_above_horizon is None, (
+                f"{attr} carries a stale natal altitude_above_horizon"
+            )
+        assert relocated.gauquelin_sector_cusps is None
+
+    def test_relocated_sect_swe_calls_run_inside_session(self, enriched_natal, monkeypatch):
+        """_compute_is_diurnal calls swe.* (Sun position + azalt): relocation
+        must wrap it in an ephemeris session, so no tracked swe call may run
+        after the last session reset."""
+        import kerykeion.ephemeris_backend as eb
+
+        events = []
+        real_reset = eb.reset_ephemeris_session
+        real_azalt = eb.swe.azalt
+
+        def tracking_reset():
+            events.append("session_reset")
+            real_reset()
+
+        def tracking_azalt(*args, **kwargs):
+            events.append("azalt")
+            return real_azalt(*args, **kwargs)
+
+        monkeypatch.setattr(eb, "reset_ephemeris_session", tracking_reset)
+        monkeypatch.setattr(eb.swe, "azalt", tracking_azalt)
+
+        RelocatedChartFactory.relocate(
+            enriched_natal, new_lat=35.6895, new_lng=139.6917, new_city="Tokyo"
+        )
+
+        assert "azalt" in events, "sect recomputation (azalt) was never invoked"
+        assert events[-1] == "session_reset", (
+            f"swe calls escaped the ephemeris session during relocation: {events}"
+        )

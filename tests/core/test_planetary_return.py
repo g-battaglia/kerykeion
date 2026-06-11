@@ -857,6 +857,122 @@ class TestSiderealReturns:
 
 
 # ===========================================================================
+# Perspective-aware returns (v6 regression)
+# ===========================================================================
+
+
+class TestReturnPerspectivePropagation:
+    """v6 regression: the crossing search must run in the natal perspective.
+
+    Before the fix, the search session propagated the natal zodiac but NOT
+    the natal perspective, so a "True Geocentric" natal Sun was searched
+    against apparent-geocentric longitudes (return Sun ~0.0056° off, the
+    annual aberration, i.e. ~8 minutes early) and a "Topocentric" natal Moon
+    against geocentric longitudes (~0.319° off, the lunar parallax, i.e.
+    ~35 minutes off).
+    """
+
+    def _make_subject(self, perspective_type):
+        return AstrologicalSubjectFactory.from_birth_data(
+            f"{perspective_type} Return Test",
+            1990,
+            6,
+            15,
+            12,
+            30,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            online=False,
+            suppress_geonames_warning=True,
+            perspective_type=perspective_type,
+        )
+
+    def _make_factory(self, subject):
+        return PlanetaryReturnFactory(
+            subject,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            online=False,
+        )
+
+    def test_true_geocentric_solar_return_sun_matches_natal(self):
+        """Return Sun (True Geocentric) must equal the natal Sun within 1e-3°.
+
+        Pre-fix error was ~0.0056° (the aberration of light).
+        """
+        subject = self._make_subject("True Geocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        assert result.perspective_type == "True Geocentric"
+        diff = _angular_diff(result.sun.abs_pos, subject.sun.abs_pos)
+        assert diff < 1e-3, (
+            f"True Geocentric solar return Sun {result.sun.abs_pos}° differs from natal "
+            f"{subject.sun.abs_pos}° by {diff}° — crossing searched in the wrong perspective"
+        )
+
+    def test_true_geocentric_lunar_return_moon_matches_natal(self):
+        subject = self._make_subject("True Geocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+        diff = _angular_diff(result.moon.abs_pos, subject.moon.abs_pos)
+        assert diff < 1e-3, (
+            f"True Geocentric lunar return Moon {result.moon.abs_pos}° differs from natal "
+            f"{subject.moon.abs_pos}° by {diff}°"
+        )
+
+    def test_topocentric_lunar_return_moon_matches_natal(self):
+        """Return Moon (Topocentric, return cast at the natal location) must
+        equal the natal Moon within 1e-3°.
+
+        Pre-fix error was ~0.319° (the lunar parallax at the natal latitude).
+        """
+        subject = self._make_subject("Topocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+        assert result.perspective_type == "Topocentric"
+        diff = _angular_diff(result.moon.abs_pos, subject.moon.abs_pos)
+        assert diff < 1e-3, (
+            f"Topocentric lunar return Moon {result.moon.abs_pos}° differs from natal "
+            f"{subject.moon.abs_pos}° by {diff}° — crossing searched without the natal topo frame"
+        )
+
+    def test_topocentric_solar_return_sun_matches_natal(self):
+        subject = self._make_subject("Topocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        diff = _angular_diff(result.sun.abs_pos, subject.sun.abs_pos)
+        assert diff < 1e-3, (
+            f"Topocentric solar return Sun {result.sun.abs_pos}° differs from natal "
+            f"{subject.sun.abs_pos}° by {diff}°"
+        )
+
+    def test_heliocentric_natal_raises_pointing_to_heliocentric_api(self):
+        """A heliocentric natal has no geocentric crossing target — loud error."""
+        subject = self._make_subject("Heliocentric")
+        factory = self._make_factory(subject)
+        with pytest.raises(KerykeionException, match="next_heliocentric_return"):
+            factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        with pytest.raises(KerykeionException, match="next_heliocentric_return"):
+            factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+
+    def test_heliocentric_natal_still_supports_heliocentric_returns(self):
+        """The same factory must keep working through the heliocentric API."""
+        subject = self._make_subject("Heliocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_heliocentric_return_from_year("Mars", 2024)
+        assert result.return_type == "Heliocentric"
+
+    def test_unsupported_perspective_raises(self):
+        """Perspectives the search cannot reproduce (e.g. Barycentric) raise."""
+        subject = self._make_subject("Barycentric")
+        factory = self._make_factory(subject)
+        with pytest.raises(KerykeionException, match="Barycentric"):
+            factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+
+
+# ===========================================================================
 # Timezone-aware ISO entry points (v6 regression)
 # ===========================================================================
 

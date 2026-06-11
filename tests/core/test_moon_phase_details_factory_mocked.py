@@ -51,15 +51,16 @@ from kerykeion.schemas.kr_models import (
 # Julian Day for 1993-10-10 12:12:00 UTC (reference moment)
 _REF_JD = 2449271.00833
 
-# Julian Days for surrounding phase events (realistic values for Oct 1993)
-_LAST_NEW_MOON_JD = 2449261.28738  # Sep 30, 1993 ~18:53 UTC
-_NEXT_NEW_MOON_JD = 2449276.98328  # Oct 15, 1993 ~11:35 UTC
-_LAST_FIRST_QUARTER_JD = 2449269.31616  # Oct 8, 1993 ~19:35 UTC
-_NEXT_FIRST_QUARTER_JD = 2449282.86945  # Oct 22, 1993 ~08:52 UTC
-_LAST_FULL_MOON_JD = 2449247.63213  # Sep 16, 1993 ~03:10 UTC
+# Julian Days for surrounding phase events (true ephemeris values for Oct 1993,
+# matching what compute_lunar_phase_jd returns around _REF_JD)
+_LAST_NEW_MOON_JD = 2449246.63215  # Sep 16, 1993 ~03:10 UTC
+_NEXT_NEW_MOON_JD = 2449275.98330  # Oct 15, 1993 ~11:35 UTC
+_LAST_FIRST_QUARTER_JD = 2449253.31394  # Sep 22, 1993 ~19:32 UTC
+_NEXT_FIRST_QUARTER_JD = 2449282.86947  # Oct 22, 1993 ~08:52 UTC
+_LAST_FULL_MOON_JD = 2449261.28738  # Sep 30, 1993 ~18:53 UTC
 _NEXT_FULL_MOON_JD = 2449291.02613  # Oct 30, 1993 ~12:37 UTC
-_LAST_QUARTER_LAST_JD = 2449253.31394  # Sep 22, 1993 ~19:32 UTC
-_LAST_QUARTER_NEXT_JD = 2449299.77491  # Nov 7, 1993 ~06:35 UTC
+_LAST_QUARTER_LAST_JD = 2449269.31621  # Oct 8, 1993 ~19:35 UTC
+_LAST_QUARTER_NEXT_JD = 2449298.77488  # Nov 7, 1993 ~06:35 UTC
 
 # Eclipse Julian Days
 _LUNAR_ECLIPSE_JD = 2449320.76813  # Nov 29, 1993
@@ -300,9 +301,11 @@ class TestFactoryFromSubjectMocked:
         subject = _make_mock_subject()
         overview = MoonPhaseDetailsFactory.from_subject(subject)
 
-        # Age should be roughly 10 days (Oct 10 - Sep 30)
+        # Age = _REF_JD - _LAST_NEW_MOON_JD: Oct 10 11:12 UTC - Sep 16 03:10
+        # ≈ 24.33 days, consistent with the mocked 290.65° waning-crescent
+        # phase angle.
         assert overview.moon.age_days is not None
-        assert 9 <= overview.moon.age_days <= 11
+        assert 24 <= overview.moon.age_days <= 25
 
     def test_zodiac_info(self) -> None:
         subject = _make_mock_subject(sun_sign="Lib", moon_sign="Leo")

@@ -1541,7 +1541,7 @@ def draw_main_house_grid(
         cusp_number = f"&#160;&#160;{i + 1}" if i < 9 else str(i + 1)
         svg_output += (
             f'<g transform="translate(0,{line_increment})">'
-            f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{house_cusp_generale_name_label} {cusp_number}:</text>'
+            f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(house_cusp_generale_name_label)} {cusp_number}:</text>'
             f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{house["sign"]}" /></g>'
             f'<text x="53" style="fill:{text_color}; font-size: 10px;"> {convert_decimal_to_degree_string(house["position"])}</text>'
             f"</g>"
@@ -1579,7 +1579,7 @@ def draw_secondary_house_grid(
         cusp_number = f"&#160;&#160;{i + 1}" if i < 9 else str(i + 1)
         svg_output += (
             f'<g transform="translate(0,{line_increment})">'
-            f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{house_cusp_generale_name_label} {cusp_number}:</text>'
+            f'<text text-anchor="end" x="40" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(house_cusp_generale_name_label)} {cusp_number}:</text>'
             f'<g transform="translate(40,-8)"><use transform="scale(0.3)" xlink:href="#{house["sign"]}" /></g>'
             f'<text x="53" style="fill:{text_color}; font-size: 10px;"> {convert_decimal_to_degree_string(house["position"])}</text>'
             f"</g>"
@@ -1768,7 +1768,7 @@ def draw_gauquelin_unified_grid(
 
         svg += f'<g transform="translate({offset},{y})">'
         # Planet name (right-aligned)
-        svg += f'<text text-anchor="end" x="{COL_NAME_END}" style="fill:{text_color}; font-size:{fs}px;">{name}</text>'
+        svg += f'<text text-anchor="end" x="{COL_NAME_END}" style="fill:{text_color}; font-size:{fs}px;">{escape_svg_text(name)}</text>'
         # Sign glyph
         svg += (
             f'<g transform="translate({COL_SIGN},-{glyph_y})">'
@@ -1859,7 +1859,7 @@ def draw_main_planet_grid(
         planet_glyph = _resolve_point_glyph_id(planet["name"])
         svg_output += (
             f'<g transform="translate({offset},{BASE_Y + line_height})">'
-            f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{decoded_name}</text>'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(decoded_name)}</text>'
             f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet_glyph}" /></g>'
             f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
             f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{planet["sign"]}" /></g>'
@@ -1946,7 +1946,7 @@ def draw_secondary_planet_grid(
         t_planet_glyph = _resolve_point_glyph_id(t_planet["name"])
         svg_output += (
             f'<g transform="translate({offset},{BASE_Y + line_height})">'
-            f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{second_decoded_name}</text>'
+            f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(second_decoded_name)}</text>'
             f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet_glyph}" /></g>'
             f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
             f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
@@ -2309,7 +2309,7 @@ def draw_house_comparison_grid(
         svg_output += (
             f'<g transform="translate(0,{line_increment})">'
             f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{point_glyph}" /></g>'
-            f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)}</text>'
+            f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(get_decoded_kerykeion_celestial_point_name(name, celestial_point_language))}</text>'
             f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
             f'<text text-anchor="start" x="140" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
             f"</g>"
@@ -2389,7 +2389,7 @@ def draw_single_house_comparison_grid(
         svg_output += (
             f'<g transform="translate(0,{line_increment})">'
             f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{point_glyph}" /></g>'
-            f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)}</text>'
+            f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(get_decoded_kerykeion_celestial_point_name(name, celestial_point_language))}</text>'
             f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{house}</text>'
             f"</g>"
         )
@@ -2440,15 +2440,15 @@ def draw_cusp_comparison_grid(
 
     svg_output = (
         f'<g transform="translate({x_position},{y_position})">'
-        f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 12px; font-weight: bold;">{cusp_position_comparison_label}</text>'
+        f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 12px; font-weight: bold;">{escape_svg_text(cusp_position_comparison_label)}</text>'
     )
 
     # Add column headers with the same vertical spacing pattern as draw_house_comparison_grid
     line_increment = 10
     svg_output += (
         f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{owner_cusp_label}</text>'
-        f'<text text-anchor="start" x="70" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{projected_house_label}</text>'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(owner_cusp_label)}</text>'
+        f'<text text-anchor="start" x="70" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(projected_house_label)}</text>'
         f"</g>"
     )
     line_increment += 15
@@ -2464,7 +2464,7 @@ def draw_cusp_comparison_grid(
 
         svg_output += (
             f'<g transform="translate(0,{line_increment})">'
-            f'<text text-anchor="start" x="0" style="fill:{text_color}; font-size: 10px;">{owner_house_display}</text>'
+            f'<text text-anchor="start" x="0" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(owner_house_display)}</text>'
             f'<text text-anchor="start" x="70" style="fill:{text_color}; font-size: 10px;">{projected_house_display}</text>'
             f"</g>"
         )

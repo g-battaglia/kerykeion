@@ -253,6 +253,14 @@ PLANET_SPEED_TIER_DEFAULT: float = 0.30
 # Astrotheme applies only a small bonus/penalty for dignity so it never
 # distorts the result. We therefore map the dignity *label* to a small value
 # instead of using the raw Ptolemaic score (which ranges -5..+5).
+#
+# Application (see ``ModernDominantStrategy._dignity_scores``): the planet's
+# HIGHEST dignity supplies the bonus, while the Detriment/Fall penalties are
+# applied ADDITIVELY on top of it whenever the debility holds. Dignities and
+# debilities are independent, so a minor dignity never masks a debility:
+# Mars at 28° Libra (own Egyptian term, in detriment) scores 0.25 - 1.00 =
+# -0.75, and Mercury at 17° Pisces (own term, in detriment AND fall) scores
+# 0.25 - 1.00 - 0.75 = -1.50.
 
 #: Mild bonus/penalty by essential-dignity label.
 DIGNITY_BONUS: Dict[str, float] = {

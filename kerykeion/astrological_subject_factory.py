@@ -674,7 +674,12 @@ class AstrologicalSubjectFactory:
                 scores (domicile, exaltation, triplicity, term, face) for each planet.
                 Defaults to False.
             calculate_nakshatra (bool, optional): If True, computes Vedic nakshatra,
-                pada, and dasha lord for each point. Defaults to False.
+                pada, and dasha lord for each point. Nakshatras are defined on the
+                SIDEREAL zodiac: with a Tropical (or any non-sidereal) chart the
+                values are derived from tropical longitudes, which are offset from
+                the sidereal ones by the ayanamsa (~24 degrees, about two
+                nakshatras), and a warning is logged. Use zodiac_type='Sidereal'
+                for astronomically meaningful nakshatras. Defaults to False.
             calculate_gauquelin (bool, optional): If True, computes Gauquelin sector
                 (1-36) for each point. Defaults to False.
             calculate_nutation (bool, optional): If True, computes nutation in
@@ -922,146 +927,189 @@ class AstrologicalSubjectFactory:
             else:
                 calc_data["ayanamsa_value"] = None
 
-        AstrologicalSubjectFactory._calculate_day_of_week(calc_data)
+            AstrologicalSubjectFactory._calculate_day_of_week(calc_data)
 
-        # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
-        if calculate_lunar_phase and "moon" in calc_data and "sun" in calc_data:
-            calc_data["lunar_phase"] = calculate_moon_phase(
-                calc_data["moon"].abs_pos,  # type: ignore[attr-defined,union-attr]
-                calc_data["sun"].abs_pos,  # type: ignore[attr-defined,union-attr]
-            )
-        else:
-            calc_data["lunar_phase"] = None
-
-        # =====================================================================
-        # Optional per-point calculations (dignities, nakshatras, gauquelin,
-        # local space, OOB).  We collect all updates per point into a single
-        # dict, then apply ONE model_copy() at the end to avoid creating
-        # intermediate Pydantic models for each individual update.
-        # =====================================================================
-
-        # Build a list of point keys once — avoids iterating all calc_data
-        # keys (which include non-point entries like name, year, etc.) in
-        # every optional calculation loop.
-        point_keys = [k for k, v in calc_data.items() if isinstance(v, KerykeionPointModel)]
-        point_updates: Dict[str, Dict[str, Any]] = {k: {} for k in point_keys}
-
-        # Calculate essential dignities (optional)
-        if config.calculate_dignities:
-            from kerykeion.dignities import calculate_essential_dignity
-
-            is_diurnal = calc_data.get("is_diurnal", True)
-            for pk in point_keys:
-                point = calc_data[pk]
-                dignity_data = calculate_essential_dignity(
-                    planet_name=point.name,
-                    sign=point.sign,
-                    element=point.element,
-                    position=point.position,
-                    is_diurnal=is_diurnal,
+            # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
+            if calculate_lunar_phase and "moon" in calc_data and "sun" in calc_data:
+                calc_data["lunar_phase"] = calculate_moon_phase(
+                    calc_data["moon"].abs_pos,  # type: ignore[attr-defined,union-attr]
+                    calc_data["sun"].abs_pos,  # type: ignore[attr-defined,union-attr]
                 )
-                if dignity_data["essential_dignity"] is not None:
-                    point_updates[pk].update(dignity_data)
+            else:
+                calc_data["lunar_phase"] = None
 
-        # Calculate Nakshatras (optional)
-        if config.calculate_nakshatra:
-            from kerykeion.vedic import calculate_nakshatra as calc_nak
+            # =====================================================================
+            # Optional per-point calculations (dignities, nakshatras, gauquelin,
+            # local space, OOB).  We collect all updates per point into a single
+            # dict, then apply ONE model_copy() at the end to avoid creating
+            # intermediate Pydantic models for each individual update.
+            #
+            # This whole section runs INSIDE the ephemeris_context block: the
+            # Gauquelin, local-space, OOB-obliquity and nutation enrichments
+            # call swe.* functions, which must execute under EPHEMERIS_LOCK
+            # with the session's ephemeris path still configured (after the
+            # session exits, the swisseph backend falls back to default-path
+            # data and concurrent threads may reconfigure global state).
+            # =====================================================================
 
-            for pk in point_keys:
-                point = calc_data[pk]
-                nak_data = calc_nak(point.abs_pos)
-                point_updates[pk].update(nak_data)
+            # Build a list of point keys once — avoids iterating all calc_data
+            # keys (which include non-point entries like name, year, etc.) in
+            # every optional calculation loop.
+            point_keys = [k for k, v in calc_data.items() if isinstance(v, KerykeionPointModel)]
+            point_updates: Dict[str, Dict[str, Any]] = {k: {} for k in point_keys}
 
-        # Calculate Gauquelin sectors (optional) — for ALL celestial points
-        if config.calculate_gauquelin and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
-            geopos = [calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0]
-            jd = calc_data["julian_day"]
+            # Calculate essential dignities (optional)
+            if config.calculate_dignities:
+                from kerykeion.dignities import calculate_essential_dignity
 
-            # Get ASC degree for geometric fallback
-            asc_degree = calc_data.get("ascendant")
-            asc_abs = asc_degree.abs_pos if asc_degree else 0.0
+                is_diurnal = calc_data.get("is_diurnal", True)
+                for pk in point_keys:
+                    point = calc_data[pk]
+                    dignity_data = calculate_essential_dignity(
+                        planet_name=point.name,
+                        sign=point.sign,
+                        element=point.element,
+                        position=point.position,
+                        is_diurnal=is_diurnal,
+                    )
+                    if dignity_data["essential_dignity"] is not None:
+                        point_updates[pk].update(dignity_data)
 
-            for pk in point_keys:
-                point = calc_data[pk]
-                sector = None
+            # Calculate Nakshatras (optional)
+            if config.calculate_nakshatra:
+                from kerykeion.vedic import calculate_nakshatra as calc_nak
 
-                # Try swe.gauquelin_sector for planets with known SwissEph IDs
-                pid = STANDARD_PLANETS.get(point.name)
-                if pid is not None:
-                    try:
-                        sector = swe.gauquelin_sector(jd, pid, 0, geopos)
-                    except Exception:
-                        pass
+                if config.zodiac_type != "Sidereal":
+                    # Nakshatras are defined on the sidereal zodiac. Feeding
+                    # tropical longitudes shifts every result by the ayanamsa
+                    # (~24 deg, about two nakshatras). Values are still
+                    # computed as-is for backward compatibility; warn once per
+                    # subject construction.
+                    logger.warning(
+                        "calculate_nakshatra=True with zodiac_type=%r: nakshatras are "
+                        "defined on the sidereal zodiac, but this chart's longitudes are "
+                        "not sidereal, so nakshatra/pada/lord values will be offset by "
+                        "the ayanamsa (~24 deg, about two nakshatras). Use "
+                        "zodiac_type='Sidereal' for astronomically meaningful nakshatras.",
+                        config.zodiac_type,
+                    )
 
-                # Fallback: compute sector geometrically from longitude relative to ASC
-                if sector is None:
-                    diff = (asc_abs - point.abs_pos) % 360.0
-                    sector = (diff / 10.0) + 1.0
-                    if sector >= 37.0:
-                        sector -= 36.0
+                for pk in point_keys:
+                    point = calc_data[pk]
+                    nak_data = calc_nak(point.abs_pos)
+                    point_updates[pk].update(nak_data)
 
-                point_updates[pk]["gauquelin_sector"] = round(sector, 4)
+            # Calculate Gauquelin sectors (optional) — for ALL celestial points
+            if config.calculate_gauquelin and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
+                geopos = [calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0]
+                jd = calc_data["julian_day"]
 
-            # Compute the 36 Gauquelin sector cusps (zodiacal longitudes)
-            try:
-                lat_geo = geopos[1]
-                lon_geo = geopos[0]
-                cusps_g = swe.houses_ex2(jd, lat_geo, lon_geo, ord("G"))
-                calc_data["gauquelin_sector_cusps"] = [round(c, 4) for c in cusps_g[0]]
-            except Exception:
-                pass
+                # Get ASC degree for geometric fallback
+                asc_degree = calc_data.get("ascendant")
+                asc_abs = asc_degree.abs_pos if asc_degree else 0.0
 
-        # Calculate Local Space (azimuth/altitude) for all celestial points (v6.0)
-        if config.calculate_local_space and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
-            ls_geopos = (calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0)
-            ls_jd = calc_data["julian_day"]
-            for pk in point_keys:
-                point = calc_data[pk]
+                for pk in point_keys:
+                    point = calc_data[pk]
+                    sector = None
+
+                    # Try swe.gauquelin_sector for planets with known SwissEph IDs
+                    pid = STANDARD_PLANETS.get(point.name)
+                    if pid is not None:
+                        try:
+                            # Both backends share the signature
+                            # (tjdut, body, method, geopos, ...) and return a
+                            # plain float: pyswisseph >= 2.10.3.1 (the pinned
+                            # floor) parses "dOiO|ddi" with no starname slot
+                            # (the 5-arg starname form existed only in pre-2.10
+                            # releases), and libephemeris mirrors it.
+                            sector = swe.gauquelin_sector(jd, pid, 0, geopos)
+                        except Exception:
+                            pass
+
+                    # Fallback: compute sector geometrically from longitude relative to ASC
+                    if sector is None:
+                        diff = (asc_abs - point.abs_pos) % 360.0
+                        sector = (diff / 10.0) + 1.0
+                        if sector >= 37.0:
+                            sector -= 36.0
+
+                    point_updates[pk]["gauquelin_sector"] = round(sector, 4)
+
+                # Compute the 36 Gauquelin sector cusps (zodiacal longitudes)
                 try:
-                    ecl_coords = (point.abs_pos, 0.0, 1.0)
-                    azalt_result = swe.azalt(ls_jd, swe.ECL2HOR, ls_geopos, 0, 0, ecl_coords)
-                    point_updates[pk]["azimuth"] = round(azalt_result[0], 4)
-                    point_updates[pk]["altitude_above_horizon"] = round(azalt_result[1], 4)
-                except Exception as e:
-                    logger.debug("Could not compute azalt for %s: %s", pk, e)
+                    lat_geo = geopos[1]
+                    lon_geo = geopos[0]
+                    # hsys as a 1-byte char: pyswisseph rejects a plain int
+                    # (ord("G")) for hsys; libephemeris accepts both forms.
+                    # Pass the session iflag so sidereal/topocentric charts get
+                    # cusps in the same frame as their points (mirrors the main
+                    # houses_ex2 call) instead of always-tropical longitudes.
+                    cusps_g = swe.houses_ex2(jd, lat_geo, lon_geo, b"G", iflag)
+                    calc_data["gauquelin_sector_cusps"] = [round(c, 4) for c in cusps_g[0]]
+                except Exception:
+                    pass
 
-        # Calculate Out-of-Bounds status for all celestial points (v6.0)
-        # A planet is OOB when |declination| > true obliquity of the ecliptic (~23.44 deg).
-        # The obliquity varies over millennia (22.1 - 24.5 deg) so we use the true value
-        # for the chart's epoch, not a hardcoded constant.
-        true_obliquity = None
-        try:
-            nut_data = swe.calc_ut(calc_data["julian_day"], swe.ECL_NUT, swe.FLG_SWIEPH)[0]
-            true_obliquity = nut_data[0]
-        except Exception as e:
-            logging.warning(f"Could not compute obliquity for OOB detection: {e}")
+            # Calculate Local Space (azimuth/altitude) for all celestial points (v6.0)
+            if config.calculate_local_space and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
+                ls_geopos = (calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0)
+                ls_jd = calc_data["julian_day"]
+                # azalt(ECL2HOR) expects TROPICAL ecliptic-of-date longitudes.
+                # A sidereal abs_pos describes a point ~ayanamsa (24 deg) away
+                # from the physical body, so shift back to tropical before
+                # projecting onto the local horizon.
+                ls_ayanamsa = calc_data.get("ayanamsa_value") if config.zodiac_type == "Sidereal" else 0.0
+                if ls_ayanamsa is None:
+                    logger.debug(
+                        "Skipping local space: sidereal chart without a computed ayanamsa value"
+                    )
+                else:
+                    for pk in point_keys:
+                        point = calc_data[pk]
+                        try:
+                            ecl_coords = ((point.abs_pos + ls_ayanamsa) % 360.0, 0.0, 1.0)
+                            azalt_result = swe.azalt(ls_jd, swe.ECL2HOR, ls_geopos, 0, 0, ecl_coords)
+                            point_updates[pk]["azimuth"] = round(azalt_result[0], 4)
+                            point_updates[pk]["altitude_above_horizon"] = round(azalt_result[1], 4)
+                        except Exception as e:
+                            logger.debug("Could not compute azalt for %s: %s", pk, e)
 
-        if true_obliquity is not None:
-            for pk in point_keys:
-                point = calc_data[pk]
-                if point.declination is not None:
-                    point_updates[pk]["is_out_of_bounds"] = abs(point.declination) > true_obliquity
-
-        # Apply all accumulated updates with a single model_copy per point
-        for pk in point_keys:
-            if point_updates[pk]:
-                calc_data[pk] = calc_data[pk].model_copy(update=point_updates[pk])
-
-        # Calculate Nutation/Obliquity parameters (optional, v6.0)
-        if config.calculate_nutation:
-            from kerykeion.schemas.kr_models import NutationObliquityModel
-
+            # Calculate Out-of-Bounds status for all celestial points (v6.0)
+            # A planet is OOB when |declination| > true obliquity of the ecliptic (~23.44 deg).
+            # The obliquity varies over millennia (22.1 - 24.5 deg) so we use the true value
+            # for the chart's epoch, not a hardcoded constant.
+            true_obliquity = None
             try:
-                nut_raw = swe.calc_ut(calc_data["julian_day"], swe.ECL_NUT, swe.FLG_SWIEPH)[0]
-                calc_data["nutation"] = NutationObliquityModel(
-                    true_obliquity=nut_raw[0],
-                    mean_obliquity=nut_raw[1],
-                    nutation_longitude=nut_raw[2],
-                    nutation_obliquity=nut_raw[3],
-                )
+                nut_data = swe.calc_ut(calc_data["julian_day"], swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+                true_obliquity = nut_data[0]
             except Exception as e:
-                logging.warning(f"Could not compute nutation parameters: {e}")
-                calc_data["nutation"] = None
+                logging.warning(f"Could not compute obliquity for OOB detection: {e}")
+
+            if true_obliquity is not None:
+                for pk in point_keys:
+                    point = calc_data[pk]
+                    if point.declination is not None:
+                        point_updates[pk]["is_out_of_bounds"] = abs(point.declination) > true_obliquity
+
+            # Apply all accumulated updates with a single model_copy per point
+            for pk in point_keys:
+                if point_updates[pk]:
+                    calc_data[pk] = calc_data[pk].model_copy(update=point_updates[pk])
+
+            # Calculate Nutation/Obliquity parameters (optional, v6.0)
+            if config.calculate_nutation:
+                from kerykeion.schemas.kr_models import NutationObliquityModel
+
+                try:
+                    nut_raw = swe.calc_ut(calc_data["julian_day"], swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+                    calc_data["nutation"] = NutationObliquityModel(
+                        true_obliquity=nut_raw[0],
+                        mean_obliquity=nut_raw[1],
+                        nutation_longitude=nut_raw[2],
+                        nutation_obliquity=nut_raw[3],
+                    )
+                except Exception as e:
+                    logging.warning(f"Could not compute nutation parameters: {e}")
+                    calc_data["nutation"] = None
 
         # Create and return the AstrologicalSubjectModel
         return AstrologicalSubjectModel(**calc_data)
@@ -1176,7 +1224,10 @@ class AstrologicalSubjectFactory:
 
         Note:
             - The method assumes the input timestamp is in UTC
-            - Local time conversion respects DST rules for the target timezone
+            - Local time conversion respects DST rules for the target timezone;
+              UTC instants whose local wall time falls inside a DST fall-back
+              fold are disambiguated automatically (the fold side is derived
+              from the UTC instant itself, which is never ambiguous)
             - Milliseconds in the timestamp are supported but truncated to seconds
             - When online=True, the city/nation parameters override lng/lat
         """
@@ -1210,8 +1261,15 @@ class AstrologicalSubjectFactory:
         local_time = pytz.timezone(tz_str)
         local_datetime = dt.astimezone(local_time)
 
+        # The local wall time may be ambiguous (DST fall-back fold) even
+        # though the source UTC instant is not. Derive the fold side from the
+        # unambiguous conversion above and pass it down: without is_dst,
+        # from_birth_data re-localizes the wall time with is_dst=None and
+        # raises "Ambiguous time" for instants inside the fold.
+        is_dst = bool(local_datetime.dst())
+
         # Create the subject with local time
-        return cls.from_birth_data(
+        subject = cls.from_birth_data(
             name=name,
             year=local_datetime.year,
             month=local_datetime.month,
@@ -1219,6 +1277,7 @@ class AstrologicalSubjectFactory:
             hour=local_datetime.hour,
             minute=local_datetime.minute,
             seconds=local_datetime.second,
+            is_dst=is_dst,
             city=city,
             nation=nation,
             lng=lng,
@@ -1243,6 +1302,22 @@ class AstrologicalSubjectFactory:
             calculate_nutation=calculate_nutation,
             calculate_local_space=calculate_local_space,
         )
+
+        # Round-trip guard: pytz's boolean is_dst cannot disambiguate
+        # historical double-DST folds (e.g. UK/Ireland 1941-1947, where both
+        # fold occurrences are DST — 1h vs 2h), so the re-localization above
+        # can land on the wrong side, a whole hour off. The source instant is
+        # exact, so verify it survived; failing loudly beats a silent hour.
+        expected_jd = datetime_to_julian(dt.replace(microsecond=0))
+        if abs(subject.julian_day - expected_jd) > 2.0 / 86400.0:
+            raise KerykeionException(
+                f"Cannot represent {iso_utc_time} in {tz_str}: the local wall "
+                f"time falls in a fold where both occurrences observe DST "
+                f"(double summer time), which the boolean is_dst flag cannot "
+                f"disambiguate. Build the subject with from_birth_data using "
+                f"an unambiguous local wall time instead."
+            )
+        return subject
 
     @classmethod
     def from_current_time(
@@ -1357,7 +1432,19 @@ class AstrologicalSubjectFactory:
             - System clock accuracy affects precision; ensure accurate system time
             - Time zone detection is automatic when using online location lookup
         """
-        now = datetime.now()
+        if tz_str:
+            # Render the current instant in the target timezone: interpreting
+            # the system clock's wall time in tz_str would shift the chart by
+            # the offset between the two zones, and a system wall time inside
+            # a DST fall-back fold would raise "Ambiguous time". The current
+            # instant itself is never ambiguous.
+            now = datetime.now(timezone.utc).astimezone(pytz.timezone(tz_str))
+            is_dst: Optional[bool] = bool(now.dst())
+        else:
+            # Timezone resolved downstream (online geonames lookup): forward
+            # the system wall clock as before.
+            now = datetime.now()
+            is_dst = None
 
         return cls.from_birth_data(
             name=name,
@@ -1367,6 +1454,7 @@ class AstrologicalSubjectFactory:
             hour=now.hour,
             minute=now.minute,
             seconds=now.second,
+            is_dst=is_dst,
             city=city,
             nation=nation,
             lng=lng,
@@ -1424,8 +1512,28 @@ class AstrologicalSubjectFactory:
             During DST transitions, times may be ambiguous (fall back) or non-existent
             (spring forward). The method raises an exception for ambiguous times unless
             the is_dst parameter is explicitly set to True or False.
+
+        Calendar asymmetry (year < 1 vs 1-1582 CE):
+            The two code paths interpret the input date in DIFFERENT calendars:
+
+            - ``year < 1`` (BCE, astronomical numbering): handled by
+              ``_calculate_time_conversions_bce`` which uses the **Julian
+              calendar** (``swe.julday(..., JUL_CAL)``).
+            - ``year >= 1``: handled here via Python ``datetime`` and
+              ``datetime_to_julian``, which use the **proleptic Gregorian
+              calendar** — including the years 1-1582 CE, when the Julian
+              calendar was the one in civil use.
+
+            Callers holding historical Julian-calendar dates between 1 CE and
+            15 Oct 1582 (i.e. virtually all recorded dates from that era) must
+            convert them to proleptic Gregorian BEFORE calling this factory,
+            otherwise the computed Julian Day will be offset by the calendar
+            difference (up to ~10 days near 1582, ~0 days near 200 CE).
         """
-        # BCE dates: bypass datetime/pytz (Python datetime doesn't support year < 1)
+        # BCE dates: bypass datetime/pytz (Python datetime doesn't support year < 1).
+        # NOTE the calendar asymmetry documented above: this branch switches
+        # from the proleptic Gregorian calendar (used for year >= 1) to the
+        # Julian calendar (used for year < 1).
         if data["year"] < 1:
             AstrologicalSubjectFactory._calculate_time_conversions_bce(data, location)
             return
@@ -1471,7 +1579,12 @@ class AstrologicalSubjectFactory:
         longitude, east-positive).
 
         **Calendar:** all dates with ``year < 1`` predate the Gregorian reform
-        (15 Oct 1582), so the Julian calendar (``JUL_CAL``) is used.
+        (15 Oct 1582), so the Julian calendar (``JUL_CAL``) is used. This is
+        deliberately asymmetric with the ``year >= 1`` path, which goes through
+        Python ``datetime`` / ``datetime_to_julian`` and therefore interprets
+        dates — including 1-1582 CE — in the **proleptic Gregorian** calendar.
+        Historical Julian-calendar dates from 1 CE onward must be converted to
+        proleptic Gregorian by the caller before being passed in.
 
         **Year convention:** astronomical year numbering — year 0 = 1 BCE,
         year −1 = 2 BCE, year −2 = 3 BCE, etc.
@@ -1724,8 +1837,11 @@ class AstrologicalSubjectFactory:
             if center_body_id is not None and planet_id != center_body_id:
                 # Planetocentric: calculate position as seen from another planet
                 try:
-                    planet_calc = swe.calc_pctr(julian_day, planet_id, center_body_id, iflag)[0]
-                    planet_eq = swe.calc_pctr(julian_day, planet_id, center_body_id, iflag | swe.FLG_EQUATORIAL)[0]
+                    # Unlike calc_ut, calc_pctr takes a TT/ET julian day on
+                    # both backends: convert the UT day with delta-T first.
+                    julian_day_tt = julian_day + swe.deltat(julian_day)
+                    planet_calc = swe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag)[0]
+                    planet_eq = swe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag | swe.FLG_EQUATORIAL)[0]
                 except Exception:
                     # Fallback to geocentric if planetary ephemeris not available
                     planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
@@ -1882,9 +1998,25 @@ class AstrologicalSubjectFactory:
         # For planets, use STANDARD_PLANETS mapping
         if point in STANDARD_PLANETS:
             planet_id = STANDARD_PLANETS[point]
-            planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
-            # Get declination from equatorial coordinates (matching _calculate_single_planet)
-            planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+            try:
+                planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
+                # Get declination from equatorial coordinates (matching _calculate_single_planet)
+                planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+            except Exception as e:
+                # Same typed-error policy as _calculate_single_planet: raw
+                # backend exceptions (e.g. out-of-ephemeris-range dates) must
+                # not leak to callers. Luminaries fail loudly; other auto-
+                # activated prerequisites degrade gracefully — the dependent
+                # Arabic part is then skipped by its missing-dependency check.
+                if point in ("Sun", "Moon"):
+                    raise KerykeionException(
+                        f"Cannot calculate {point} for JD {julian_day}: {e}. "
+                        "The date is likely outside the range covered by the loaded ephemeris data."
+                    ) from e
+                logging.error(f"Error calculating {point}: {e}")
+                if point in active_points:
+                    active_points.remove(point)
+                return
             declination = planet_eq[1]
             data[point_key] = get_kerykeion_point_from_degree(
                 planet_calc[0],

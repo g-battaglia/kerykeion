@@ -4,6 +4,7 @@
 import pytest
 
 from kerykeion.retrograde_stations import RetrogradeStationFactory
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.utilities import datetime_to_julian
 from datetime import datetime
 
@@ -104,3 +105,44 @@ class TestStationApi:
         res = RetrogradeStationFactory.from_julian_day(start, end, ["Mercury"])
         assert len(res.stations) == 6
         assert res.start_jd == start and res.end_jd == end
+
+
+class TestStationErrorContract:
+    """Backend failures mid-scan must surface as KerykeionException, matching
+    the lunation factory's contract — never propagate raw backend errors and
+    never return silently truncated results."""
+
+    def test_backend_failure_raises_kerykeion_exception(self, monkeypatch):
+        # Simulate the backend rejecting a date (as a raw libephemeris
+        # EphemerisRangeError / swisseph.Error would) instead of using extreme
+        # years: the local dev kernel range differs from production DE441.
+        import kerykeion.retrograde_stations.retrograde_station_factory as rsf
+
+        def failing_calc_ut(jd, body, flags):
+            raise RuntimeError(f"jd {jd} outside ephemeris range")
+
+        monkeypatch.setattr(rsf.swe, "calc_ut", failing_calc_ut)
+        with pytest.raises(KerykeionException, match="narrow the date range"):
+            RetrogradeStationFactory.from_iso_range(
+                "2026-01-01", "2026-01-10", ["Mercury"]
+            )
+
+    def test_mid_scan_failure_raises_not_truncates(self, monkeypatch):
+        # First samples succeed, then the scan walks past the range edge: the
+        # whole search must raise rather than return partial stations claiming
+        # full coverage.
+        import kerykeion.retrograde_stations.retrograde_station_factory as rsf
+
+        calls = {"n": 0}
+
+        def flaky_calc_ut(jd, body, flags):
+            calls["n"] += 1
+            if calls["n"] > 3:
+                raise RuntimeError(f"jd {jd} outside ephemeris range")
+            return ((10.0, 0.0, 1.0, 1.0, 0.0, 0.0), 0)
+
+        monkeypatch.setattr(rsf.swe, "calc_ut", flaky_calc_ut)
+        with pytest.raises(KerykeionException, match=r"failed at JD "):
+            RetrogradeStationFactory.from_iso_range(
+                "2026-01-01", "2026-01-10", ["Mercury"]
+            )
