@@ -67,7 +67,7 @@ License: AGPL-3.0
 
 import logging
 
-from typing import Any, Dict, Union, List, Optional, cast
+from typing import Union, List, Optional, cast
 from datetime import datetime, timedelta
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
@@ -418,7 +418,7 @@ class TransitsTimeRangeFactory:
         )
 
     def get_transit_events(
-        self, *, refine_exact_moments: bool = False, refinement_iterations: int = 12
+        self, *, refine_exact_moments: bool = False, refinement_iterations: int = 21
     ) -> TransitEventsTimeRangeModel:
         """Group transit moments into discrete transit events.
 
@@ -436,19 +436,20 @@ class TransitsTimeRangeFactory:
                pass instead of one merged event
             4. Find the moment with minimum orb as the "exact" moment of each event
             5. Calculate orb rate of change at exact moment (degrees/day)
-            6. (Optional) Refine exact_moment via bisection for sub-step precision
+            6. (Optional) Refine exact_moment via ternary search for sub-step precision
 
         Events truncated by the analysed range report ``applying_start`` /
         ``separating_end`` as ``None``: the applying phase (or the separating
         phase) happened outside the sampled window, so its boundary is unknown.
 
         Args:
-            refine_exact_moments: If True, uses bisection between the two
-                ephemeris steps bracketing the minimum orb to refine the
-                exact moment to sub-minute precision. Each iteration halves
-                the uncertainty interval. Added in v6.0.
-            refinement_iterations: Number of bisection iterations (default 12,
-                giving ~1-second precision for daily steps). Added in v6.0.
+            refine_exact_moments: If True, uses a ternary search between the
+                two ephemeris steps bracketing the minimum orb to refine the
+                exact moment to sub-minute precision. Each iteration shrinks
+                the uncertainty interval to two-thirds. Added in v6.0.
+            refinement_iterations: Number of ternary-search iterations
+                (default 21, equivalent to 12 exact halvings — sub-minute
+                precision for daily steps). Added in v6.0.
 
         Returns:
             TransitEventsTimeRangeModel with sorted transit events.
@@ -500,7 +501,7 @@ class TransitsTimeRangeFactory:
                     if dt_days > 0:
                         orb_rate = round((orb_after - min_orb) / dt_days, 6)
 
-                # Bisection refinement (v6.0): refine exact_moment between
+                # Ternary-search refinement (v6.0): refine exact_moment between
                 # bracketing steps. With tight orbs and fast bodies (Moon at
                 # multi-hour steps) a run often has only 1-3 samples and the
                 # minimum sits at a run EDGE — bracket one sampling step
@@ -548,9 +549,9 @@ class TransitsTimeRangeFactory:
                         )
                         # Accept only genuine improvements: for an event
                         # truncated at the range edge the orb is monotonic and
-                        # the bisection midpoints can never land exactly on
-                        # the edge sample, so the "refined" orb comes back
-                        # marginally worse — keep the coarse values then.
+                        # the probe points can never land exactly on the edge
+                        # sample, so the "refined" orb comes back marginally
+                        # worse — keep the coarse values then.
                         if refined is not None and refined[1] < min_orb:
                             exact_date, min_orb = refined
 
@@ -635,13 +636,20 @@ class TransitsTimeRangeFactory:
         aspect_name: str,
         left_date_str: str,
         right_date_str: str,
-        iterations: int = 12,
+        iterations: int = 21,
     ) -> "tuple[str, float] | None":
-        """Bisect the interval [left, right] to find the sub-step exact moment.
+        """Ternary-search the interval [left, right] for the sub-step exact moment.
 
-        At each iteration, calculates the transiting planet's position at the
-        midpoint and evaluates the aspect orb. The half with the smaller orb
-        is kept, halving the uncertainty each time.
+        At each iteration, evaluates the aspect orb at two probe points placed
+        1/3 and 2/3 of the way through the current interval. For a unimodal
+        orb curve the minimum can never lie beyond the worse probe, so that
+        outer third is discarded, shrinking the interval to 2/3 each time.
+
+        (Comparing probes and then cutting at the *midpoint* — as a naive
+        bisection would — is NOT safe here: with an asymmetric orb curve,
+        e.g. near a station where the transiting body's speed changes across
+        the bracket, the minimum can sit just past the midpoint on the
+        discarded side.)
 
         Args:
             p1_name: Transit planet name.
@@ -649,7 +657,10 @@ class TransitsTimeRangeFactory:
             aspect_name: Aspect being refined (e.g. "conjunction").
             left_date_str: ISO datetime of the step before minimum orb.
             right_date_str: ISO datetime of the step after minimum orb.
-            iterations: Number of bisection steps.
+            iterations: Number of ternary-search steps. Each step keeps 2/3
+                of the interval, so 21 steps shrink it by (2/3)**21 ~ 1/4990
+                — at least the precision of 12 exact halvings (sub-minute
+                for daily sampling steps).
 
         Returns:
             Tuple of (refined_iso_datetime, refined_orb) or None if refinement fails.
@@ -663,7 +674,7 @@ class TransitsTimeRangeFactory:
             a plain ``calc_ut`` would not reproduce the ephemeris positions.
         """
         from kerykeion.ephemeris_backend import swe, ephemeris_session
-        from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+        from kerykeion.aspects.aspects_utils import difdeg2n
         from kerykeion.utilities import datetime_to_julian
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
 
@@ -696,24 +707,18 @@ class TransitsTimeRangeFactory:
             if planet_id is None:
                 return None
 
-            # Build the aspect settings filter for the target aspect
+            # Resolve the target angle of the aspect being refined. The orb
+            # window is irrelevant here: the objective below is the plain
+            # angular deviation from exactness, which is exactly what
+            # get_aspect_from_two_points reports as ``orbit`` for in-orb
+            # positions — so no per-aspect orb settings are needed.
             matching_setting = next(
                 (s for s in DEFAULT_CHART_ASPECTS_SETTINGS if s["name"] == aspect_name),
                 None,
             )
             if matching_setting is None:
                 return None
-            # get_aspect_from_two_points takes plain dicts; a TypedDict is one at runtime.
-            aspect_settings: List[Dict[str, Any]] = [cast(Dict[str, Any], matching_setting)]
-
-            # Resolve matching active_aspect orb
-            for aa in self.active_aspects:
-                if aa["name"] == aspect_name:
-                    aspect_settings = [dict(matching_setting)]
-                    aspect_settings[0]["orb"] = aa["orb"]
-                    break
-
-            from kerykeion.aspects.aspects_utils import difdeg2n
+            target_degree = float(matching_setting["degree"])
 
             best_date = left_dt
             best_orb = 999.0
@@ -728,50 +733,44 @@ class TransitsTimeRangeFactory:
                 custom_ayanamsa_ayan_t0=self.natal_chart.custom_ayanamsa_ayan_t0,
                 perspective_type=self.natal_chart.perspective_type,
             ) as iflag:
+                def orb_at(moment: datetime) -> float:
+                    """Angular deviation from exactness at ``moment``, in degrees."""
+                    position = swe.calc_ut(datetime_to_julian(moment), planet_id, iflag)[0][0]
+                    return abs(abs(difdeg2n(position, natal_pos)) - target_degree)
+
                 for _ in range(iterations):
-                    mid_dt = left_dt + (right_dt - left_dt) / 2
+                    third = (right_dt - left_dt) / 3
+                    m1_dt = left_dt + third
+                    m2_dt = right_dt - third
 
-                    # Calculate transit planet position at midpoint
-                    jd_mid = datetime_to_julian(mid_dt)
                     try:
-                        calc = swe.calc_ut(jd_mid, planet_id, iflag)[0]
+                        m1_orb = orb_at(m1_dt)
+                        m2_orb = orb_at(m2_dt)
                     except Exception:
                         return None
 
-                    transit_pos = calc[0]
+                    if m1_orb < best_orb:
+                        best_orb, best_date = m1_orb, m1_dt
+                    if m2_orb < best_orb:
+                        best_orb, best_date = m2_orb, m2_dt
 
-                    # Evaluate aspect orb at midpoint
-                    aspect_result = get_aspect_from_two_points(aspect_settings, transit_pos, natal_pos)
-                    if aspect_result["verdict"]:
-                        mid_orb = aspect_result["orbit"]
+                    # Unimodal elimination: the minimum can never lie beyond
+                    # the worse probe, so drop that outer third.
+                    if m1_orb < m2_orb:
+                        right_dt = m2_dt
                     else:
-                        # If aspect not in range at midpoint, use raw angular distance
-                        mid_orb = abs(abs(difdeg2n(transit_pos, natal_pos)) - aspect_settings[0]["degree"])
+                        left_dt = m1_dt
 
-                    if mid_orb < best_orb:
-                        best_orb = mid_orb
-                        best_date = mid_dt
-
-                    # Evaluate both halves: compute orb at quarter points
-                    q1_dt = left_dt + (mid_dt - left_dt) / 2
-                    q3_dt = mid_dt + (right_dt - mid_dt) / 2
-
-                    jd_q1 = datetime_to_julian(q1_dt)
-                    jd_q3 = datetime_to_julian(q3_dt)
-                    try:
-                        pos_q1 = swe.calc_ut(jd_q1, planet_id, iflag)[0][0]
-                        pos_q3 = swe.calc_ut(jd_q3, planet_id, iflag)[0][0]
-                    except Exception:
-                        return None
-
-                    orb_q1 = abs(abs(difdeg2n(pos_q1, natal_pos)) - aspect_settings[0]["degree"])
-                    orb_q3 = abs(abs(difdeg2n(pos_q3, natal_pos)) - aspect_settings[0]["degree"])
-
-                    # Narrow to the half containing the minimum
-                    if orb_q1 < orb_q3:
-                        right_dt = mid_dt
-                    else:
-                        left_dt = mid_dt
+                # One last sample at the centre of the converged bracket: for
+                # a unimodal curve it is at most half the final bracket away
+                # from the true minimum, tightening the best probe seen.
+                mid_dt = left_dt + (right_dt - left_dt) / 2
+                try:
+                    mid_orb = orb_at(mid_dt)
+                except Exception:
+                    return None
+                if mid_orb < best_orb:
+                    best_orb, best_date = mid_orb, mid_dt
 
             return (best_date.isoformat(), round(best_orb, 6))
 

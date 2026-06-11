@@ -1842,8 +1842,18 @@ class AstrologicalSubjectFactory:
                     julian_day_tt = julian_day + swe.deltat(julian_day)
                     planet_calc = swe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag)[0]
                     planet_eq = swe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag | swe.FLG_EQUATORIAL)[0]
-                except Exception:
-                    # Fallback to geocentric if planetary ephemeris not available
+                except Exception as e:
+                    # Fallback to geocentric if planetary ephemeris not available.
+                    # Never silently: the caller asked for a planetocentric
+                    # perspective, so a geocentric substitute is wrong data
+                    # unless the user is told about it.
+                    logging.warning(
+                        "Planetocentric calculation failed for %s (center body ID %s); "
+                        "falling back to geocentric position. Error: %s",
+                        planet_name,
+                        center_body_id,
+                        e,
+                    )
                     planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
                     planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
             else:
@@ -2477,7 +2487,8 @@ class AstrologicalSubjectFactory:
                     data["white_moon"].retrograde = ml_calc[3] < 0
                     calculated_planets.append("White_Moon")
                     # Re-add to active_points if it was removed by _calculate_single_planet
-                    if "White_Moon" not in active_points and active_points:
+                    # (also when the removal emptied the list — the fallback succeeded).
+                    if "White_Moon" not in active_points:
                         active_points.append("White_Moon")
                 except Exception:
                     logging.warning(

@@ -22,8 +22,9 @@ hardening pass (below).
   (pass `--tier=extended` to force-run everything); forcing
   `KERYKEION_BACKEND=swisseph` without `.se1` data files now exits upfront
   with download instructions instead of failing hundreds of golden tests.
-- **`poe build:smoke`** — builds sdist+wheel and smoke-imports the wheel in an
-  isolated environment (pre-publish check).
+- **`poe build:smoke`** — builds sdist+wheel, then imports the wheel and
+  renders a natal chart offline in an isolated environment, so missing
+  packaged data files (templates, themes) are caught before publishing.
 
 ### Changed (beta hardening)
 
@@ -50,12 +51,20 @@ hardening pass (below).
   a glyph (previously one of two points at the same degree was silently
   dropped); biquintile aspects get their glyph in the modern wheel (the icon
   map used a hyphenated key); the classic theme defines its base palette
-  variables, so Uranian-planet colors no longer inline to empty `fill` values;
+  variables, so Uranian-planet colors no longer inline to empty `fill` values,
+  and now also the shared General tokens (`neutral-content`, `base-*`,
+  `info`/`success`/`error`, `black`/`white`) every other theme defines — the
+  house/cusp comparison-grid text referenced an undefined variable in the
+  default theme (empty `fill` when CSS variables are inlined);
   SVG minification keeps the optimizer's output intact and applies the
   string-based quote/whitespace fallback only when the optimizer fails.
 - **Transits** — `get_transit_events` splits recurring/retrograde passes into
   separate events instead of merging them; under-sampled fast bodies now emit a
-  warning.
+  warning; exact-moment refinement uses a true ternary search — the previous
+  quartile probing could discard the actual minimum on asymmetric orb curves
+  (e.g. near a station) and converge to a slightly wrong moment — and
+  `refinement_iterations` now defaults to 21 ternary steps (precision ≥ the
+  previously documented 12 halvings).
 - **Primary directions** — corrected Placidian pole computation, ecliptic
   aspect-point conversion and the horizon test; directions are labeled
   direct/converse.
@@ -72,7 +81,10 @@ hardening pass (below).
   proleptic Gregorian calendar (pre-1582 dates round-trip); star names passed
   to `active_points` redirect to `active_fixed_stars` with a warning;
   `from_current_time` gains the v6 calc flags and an altitude parameter;
-  offset-less ISO timestamps are treated as UTC.
+  offset-less ISO timestamps are treated as UTC; a failed planetocentric
+  calculation logs a warning before falling back to geocentric positions
+  instead of substituting them silently; the swisseph White Moon fallback
+  re-activates the point even when it was the only active point requested.
 
 ### Changed
 
@@ -80,6 +92,13 @@ hardening pass (below).
   `kerykeion.ephemeris_backend` now serializes ephemeris access for all
   factories; `swe.close()` is never called directly, and the pinned
   libephemeris calc mode survives session resets.
+- **SVG test baselines re-generated** — the committed baselines predated the
+  XML-escape and base-palette fixes above, which silently downgraded their
+  comparisons to the lenient line-count path; regenerating restores strict
+  per-line comparison. `regenerate:svg` now skips its out-of-kernel 1500 CE
+  subject (keeping that baseline stale, like the extended script's ancient
+  subjects) instead of aborting, so regeneration completes on short ephemeris
+  kernels.
 
 ### Changed (breaking — alpha channel)
 
@@ -92,6 +111,10 @@ hardening pass (below).
 
 - **`libephemeris` installed from PyPI** — the local-path `[tool.uv.sources]`
   entry is gone and the pin is relaxed to `>=2.0.2,<3.0.0`.
+- **`MANIFEST.in` removed** — dead config under hatchling (which ignores it);
+  sdist contents are governed by `[tool.hatch.build.targets.sdist]`. Wheel and
+  sdist were inspected to confirm all data files (templates, themes,
+  `llms.txt`) ship.
 - **No hosted CI** — a GitHub Actions workflow briefly added during the alpha
   line was removed before release; verification is local (`poe check`, tiered
   `pytest`, `poe build:smoke`).

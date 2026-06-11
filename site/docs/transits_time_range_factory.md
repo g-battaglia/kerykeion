@@ -106,7 +106,7 @@ The `get_transit_moments()` method returns a specialized object simplifying acce
 
 ## Transit Events with Exact Moment Refinement (v6)
 
-The `get_transit_events()` method provides a higher-level interface that groups transit aspects into discrete events and optionally refines exact moments via bisection for sub-step precision.
+The `get_transit_events()` method provides a higher-level interface that groups transit aspects into discrete events and optionally refines exact moments via ternary search for sub-step precision.
 
 ```python
 events = transit_factory.get_transit_events(refine_exact_moments=True)
@@ -117,10 +117,10 @@ for ev in events.events[:5]:
 
 | Parameter              | Type  | Default | Description                                          |
 | :--------------------- | :---- | :------ | :--------------------------------------------------- |
-| `refine_exact_moments` | bool  | False   | Use bisection to find sub-step exact transit moments  |
-| `refinement_iterations`| int   | 12      | Number of bisection iterations (higher = more precise)|
+| `refine_exact_moments` | bool  | False   | Use ternary search to find sub-step exact transit moments |
+| `refinement_iterations`| int   | 21      | Number of ternary-search iterations (higher = more precise)|
 
-When `refine_exact_moments=True`, the factory performs a binary search between the two ephemeris steps that bracket the minimum orb, yielding a much more precise `exact_moment` timestamp.
+When `refine_exact_moments=True`, the factory performs a ternary search between the two ephemeris steps that bracket the minimum orb, yielding a much more precise `exact_moment` timestamp.
 
 ## Configuration Tips
 

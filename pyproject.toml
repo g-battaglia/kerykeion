@@ -76,7 +76,6 @@ include = [
     "/README.md",
     "/LICENSE",
     "/pyproject.toml",
-    "/MANIFEST.in",
 ]
 
 # MyPy Static Analysis
@@ -295,8 +294,8 @@ help = "Run performance benchmarks (subject creation, aspects, SVG rendering)"
 
 # Utilities
 [tool.poe.tasks."build:smoke"]
-shell = "rm -rf dist && uv build && uv run --isolated --no-project --with dist/*.whl python -c \"import kerykeion; print('wheel import OK:', kerykeion.__name__)\""
-help = "Build sdist+wheel and smoke-import the wheel in an isolated environment (pre-publish check)"
+shell = "rm -rf dist && uv build && uv run --isolated --no-project --with dist/*.whl python scripts/build_smoke_check.py"
+help = "Build sdist+wheel, then import the wheel and render a chart in an isolated environment, so missing packaged data files (templates, themes) are caught before publishing"
 
 [tool.poe.tasks.clean]
 cmd = "rm -rf dist build *.egg-info htmlcov .coverage .coverage.* coverage.xml .pytest_cache .mypy_cache .ruff_cache"

@@ -247,17 +247,17 @@ class TestRefineExactMomentEdgeCases:
         # Should return a result (or None if Eris is not found), but shouldn't crash
         assert result is None or isinstance(result, tuple)
 
-    def test_refine_quarter_point_exception_returns_none(self, transit_factory):
-        """If swe.calc_ut raises during quarter-point evaluation, should return None."""
+    def test_refine_probe_point_exception_returns_none(self, transit_factory):
+        """If swe.calc_ut raises during a probe-point evaluation, should return None."""
         original_calc_ut = _swe_module.calc_ut
         call_count = [0]
 
         def mock_calc_ut(jd, planet_id, iflag):
             call_count[0] += 1
-            # Let the first call (midpoint) succeed, fail on subsequent (quarter points)
+            # Let the first call (first probe) succeed, fail on subsequent probes
             if call_count[0] <= 1:
                 return original_calc_ut(jd, planet_id, iflag)
-            raise RuntimeError("Mock quarter-point failure")
+            raise RuntimeError("Mock probe-point failure")
 
         with patch.object(_swe_module, "calc_ut", side_effect=mock_calc_ut):
             result = transit_factory._refine_exact_moment(

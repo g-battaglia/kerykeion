@@ -3710,6 +3710,22 @@ class TestClassicThemeBasePalette:
             "--kerykeion-color-secondary:",
             "--kerykeion-color-accent:",
             "--kerykeion-color-warning:",
+            # General tokens shared by every theme. The comparison grids
+            # default their text fill to neutral-content, so a missing
+            # definition inlines to invalid ``fill:;`` (same failure mode
+            # as the Uranian colors above).
+            "--kerykeion-color-black:",
+            "--kerykeion-color-white:",
+            "--kerykeion-color-neutral:",
+            "--kerykeion-color-neutral-content:",
+            "--kerykeion-color-base-100:",
+            "--kerykeion-color-base-200:",
+            "--kerykeion-color-base-300:",
+            "--kerykeion-color-base-content:",
+            "--kerykeion-color-info:",
+            "--kerykeion-color-info-content:",
+            "--kerykeion-color-success:",
+            "--kerykeion-color-error:",
         ):
             assert variable in css, f"classic.css must define {variable.rstrip(':')}"
 

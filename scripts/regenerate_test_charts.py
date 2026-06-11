@@ -2245,13 +2245,20 @@ antarctic_chart_data = ChartDataFactory.create_natal_chart_data(antarctic_subjec
 antarctic_chart = ChartDrawer(antarctic_chart_data)
 antarctic_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
-# Historical date (1500)
-historical_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Historical Subject", 1500, 3, 15, 12, 0, "Florence", "IT", suppress_geonames_warning=True
-)
-historical_chart_data = ChartDataFactory.create_natal_chart_data(historical_subject)
-historical_chart = ChartDrawer(historical_chart_data)
-historical_chart.save_svg(output_path=OUTPUT_DIR_STR)
+# Historical date (1500) — outside short ephemeris kernels (needs DE441-range
+# data); skip with a notice instead of aborting the whole regeneration, the
+# same way regenerate_test_charts_extended.py handles its ancient subjects.
+# The corresponding test (test_historical_date) auto-skips on short kernels,
+# so a stale baseline is harmless there.
+try:
+    historical_subject = AstrologicalSubjectFactory.from_birth_data(
+        "Historical Subject", 1500, 3, 15, 12, 0, "Florence", "IT", suppress_geonames_warning=True
+    )
+    historical_chart_data = ChartDataFactory.create_natal_chart_data(historical_subject)
+    historical_chart = ChartDrawer(historical_chart_data)
+    historical_chart.save_svg(output_path=OUTPUT_DIR_STR)
+except Exception as e:
+    print(f"  ERROR generating Historical Subject (baseline kept stale): {e}")
 
 # Future date (2100)
 future_subject = AstrologicalSubjectFactory.from_birth_data(
