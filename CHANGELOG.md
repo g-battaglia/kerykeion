@@ -1,12 +1,38 @@
 # Changelog
 
-## 6.0.0a55 (unreleased)
+## 6.0.0b1
 
-_unreleased_
+_2026-06-11_
 
-Pre-beta stabilization pass: process-wide thread safety for ephemeris access,
-sidereal-zodiac correctness across every search and refinement path, aspect and
-SVG-rendering fixes, hardened event finders, and packaging/CI cleanup.
+First beta. Pre-beta stabilization pass: process-wide thread safety for
+ephemeris access, sidereal-zodiac correctness across every search and
+refinement path, aspect and SVG-rendering fixes, hardened event finders,
+packaging cleanup — followed by a three-round pre-beta review with a final
+hardening pass (below).
+
+### Added (beta hardening)
+
+- **v5 migration errors** — importing the removed v5 entry points
+  (`AstrologicalSubject`, `KerykeionChartSVG`, `NatalAspects`,
+  `SynastryAspects`) now raises an `ImportError` naming the v6 replacement and
+  the migration guide; `ChartDrawer` rejects non-`ChartDataFactory` input with
+  the two-step example instead of an opaque pydantic `AttributeError`.
+- **Ephemeris tier auto-detection** — a plain `pytest` run probes the loaded
+  kernel and skips out-of-range tests with explicit reasons instead of failing
+  (pass `--tier=extended` to force-run everything); forcing
+  `KERYKEION_BACKEND=swisseph` without `.se1` data files now exits upfront
+  with download instructions instead of failing hundreds of golden tests.
+- **`poe build:smoke`** — builds sdist+wheel and smoke-imports the wheel in an
+  isolated environment (pre-publish check).
+
+### Changed (beta hardening)
+
+- **Quality gates green** — mypy (103 source files), pyright and ruff all pass;
+  annotation-only fixes, no behavior changes.
+- **README** — all 68 embedded code snippets now validated against the real
+  API (six were stale: fixed-star access via `active_fixed_stars` +
+  `find_fixed_star()`, planetary-phenomena/nodes iteration, field renames
+  `nutation_longitude` and `altitude_above_horizon`).
 
 ### Fixed
 
@@ -66,9 +92,9 @@ SVG-rendering fixes, hardened event finders, and packaging/CI cleanup.
 
 - **`libephemeris` installed from PyPI** — the local-path `[tool.uv.sources]`
   entry is gone and the pin is relaxed to `>=2.0.2,<3.0.0`.
-- **CI workflow added** (`.github/workflows/ci.yml`) — uv-based offline
-  base-tier test matrix on Python 3.12 / 3.13 / 3.14, plus a wheel build and
-  isolated smoke-import job.
+- **No hosted CI** — a GitHub Actions workflow briefly added during the alpha
+  line was removed before release; verification is local (`poe check`, tiered
+  `pytest`, `poe build:smoke`).
 
 ## 6.0.0a54
 

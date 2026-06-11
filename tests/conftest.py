@@ -23,6 +23,8 @@ Tier filtering:
     (requires the full-range DE441 kernel).
 """
 
+import os
+
 import pytest
 from typing import Dict, Any
 
@@ -59,6 +61,32 @@ def pytest_addoption(parser):
         choices=["base", "medium", "extended"],
         help="Run only tests for the specified ephemeris tier (cumulative)",
     )
+
+
+def pytest_sessionstart(session):
+    """Fail fast when the suite is forced onto swisseph without SE data files.
+
+    Golden values are generated against full-precision JPL ephemeris; on the
+    Moshier fallback (no ``.se1`` files) hundreds of tests fail with confusing
+    precision and availability errors. Exit upfront with the fix instead.
+    """
+    from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH
+
+    if BACKEND_NAME != "swisseph":
+        return
+    try:
+        has_se1 = any(f.lower().endswith(".se1") for f in os.listdir(EPHE_DATA_PATH))
+    except OSError:
+        has_se1 = False
+    if not has_se1:
+        pytest.exit(
+            "KERYKEION_BACKEND=swisseph needs Swiss Ephemeris data files (.se1); "
+            "the built-in Moshier fallback fails the golden-value tests.\n"
+            "Download them and point the suite at them:\n"
+            "    python -m kerykeion.swisseph_setup\n"
+            "    KERYKEION_EPHE_PATH=~/.kerykeion/sweph uv run poe test:swe",
+            returncode=4,
+        )
 
 
 def _detect_ephemeris_tier() -> str:
