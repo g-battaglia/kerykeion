@@ -3397,30 +3397,26 @@ built-in strings:</p>
 
 <p>Kerykeion includes <strong>23 fixed stars</strong> — the 2 original stars (Regulus, Spica) plus 21 new stars added in v5.12, completing all 15 Behenian stars of the medieval/Hermetic tradition plus 8 additional bright stars. The set includes the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each star provides ecliptic longitude, daily motion (<code>speed</code>), equatorial <code>declination</code>, and apparent visual <code>magnitude</code>.</p>
 
-<p>Fixed stars are computed for every subject but are <strong>inactive by default</strong> in charts and aspect calculations. To include them, pass their names in <code>active_points</code>:</p>
+<p>Fixed stars are <strong>opt-in</strong>: pass the names you want to <code>active_fixed_stars</code> when building the subject. Stars requested this way are computed into <code>subject.fixed_stars</code> and participate automatically in chart rendering and aspect calculations.</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubjectFactory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion.chart_data_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChartDataFactory</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion.settings.config_constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ACTIVE_POINTS</span>
 
 <span class="n">subject</span> <span class="o">=</span> <span class="n"><a href="#AstrologicalSubjectFactory.from_birth_data">AstrologicalSubjectFactory.from_birth_data</a></span><span class="p">(</span>
     <span class="s2">&quot;John Lennon&quot;</span><span class="p">,</span> <span class="mi">1940</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span>
     <span class="n">lng</span><span class="o">=-</span><span class="mf">2.9833</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="mf">53.4</span><span class="p">,</span> <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;Europe/London&quot;</span><span class="p">,</span> <span class="n">online</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">active_fixed_stars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Sirius&quot;</span><span class="p">,</span> <span class="s2">&quot;Regulus&quot;</span><span class="p">,</span> <span class="s2">&quot;Aldebaran&quot;</span><span class="p">,</span> <span class="s2">&quot;Antares&quot;</span><span class="p">,</span> <span class="s2">&quot;Fomalhaut&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 
-<span class="c1"># Access fixed star data directly</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">subject</span><span class="o">.</span><span class="n">sirius</span><span class="o">.</span><span class="n">abs_pos</span><span class="p">)</span>        <span class="c1"># Ecliptic longitude</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">subject</span><span class="o">.</span><span class="n">sirius</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>      <span class="c1"># -1.44</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">subject</span><span class="o">.</span><span class="n">sirius</span><span class="o">.</span><span class="n">declination</span><span class="p">)</span>    <span class="c1"># Equatorial declination</span>
+<span class="c1"># Access fixed star data</span>
+<span class="n">sirius</span> <span class="o">=</span> <span class="n">subject</span><span class="o">.</span><span class="n">find_fixed_star</span><span class="p">(</span><span class="s2">&quot;Sirius&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sirius</span><span class="o">.</span><span class="n">abs_pos</span><span class="p">)</span>        <span class="c1"># Ecliptic longitude</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sirius</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>      <span class="c1"># -1.44</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sirius</span><span class="o">.</span><span class="n">declination</span><span class="p">)</span>    <span class="c1"># Equatorial declination</span>
 
-<span class="c1"># Include fixed stars in chart rendering</span>
-<span class="n">chart_data</span> <span class="o">=</span> <span class="n"><a href="#ChartDataFactory.create_natal_chart_data">ChartDataFactory.create_natal_chart_data</a></span><span class="p">(</span>
-    <span class="n">subject</span><span class="p">,</span>
-    <span class="n">active_points</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">DEFAULT_ACTIVE_POINTS</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span>
-        <span class="s2">&quot;Sirius&quot;</span><span class="p">,</span> <span class="s2">&quot;Regulus&quot;</span><span class="p">,</span> <span class="s2">&quot;Aldebaran&quot;</span><span class="p">,</span> <span class="s2">&quot;Antares&quot;</span><span class="p">,</span> <span class="s2">&quot;Fomalhaut&quot;</span><span class="p">,</span>
-    <span class="p">],</span>
-<span class="p">)</span>
+<span class="c1"># The requested stars are rendered and aspected automatically</span>
+<span class="n">chart_data</span> <span class="o">=</span> <span class="n"><a href="#ChartDataFactory.create_natal_chart_data">ChartDataFactory.create_natal_chart_data</a></span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
 </code></pre>
 </div>
 
@@ -3522,7 +3518,14 @@ Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
 <p>You can also get the full model as JSON:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">overview</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">AstrologicalSubjectFactory</span><span class="p">,</span> <span class="n">MoonPhaseDetailsFactory</span>
+
+<span class="n">subject</span> <span class="o">=</span> <span class="n"><a href="#AstrologicalSubjectFactory.from_birth_data">AstrologicalSubjectFactory.from_birth_data</a></span><span class="p">(</span>
+    <span class="s2">&quot;Example&quot;</span><span class="p">,</span> <span class="mi">2025</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span>
+    <span class="n">lng</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="mf">51.48</span><span class="p">,</span> <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;Etc/GMT&quot;</span><span class="p">,</span> <span class="n">online</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">overview</span> <span class="o">=</span> <span class="n"><a href="#MoonPhaseDetailsFactory.from_subject">MoonPhaseDetailsFactory.from_subject</a></span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">overview</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </code></pre>
 </div>
 
@@ -3686,7 +3689,7 @@ Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
     <span class="n">lng</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;Etc/GMT&quot;</span><span class="p">,</span> <span class="n">online</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">phenom</span> <span class="o">=</span> <span class="n"><a href="#PlanetaryPhenomenaFactory.from_subject">PlanetaryPhenomenaFactory.from_subject</a></span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
-<span class="n">venus</span> <span class="o">=</span> <span class="n">phenom</span><span class="p">[</span><span class="s2">&quot;Venus&quot;</span><span class="p">]</span>
+<span class="n">venus</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">phenom</span><span class="o">.</span><span class="n">phenomena</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Venus&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Venus elongation: </span><span class="si">{</span><span class="n">venus</span><span class="o">.</span><span class="n">elongation</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, magnitude: </span><span class="si">{</span><span class="n">venus</span><span class="o">.</span><span class="n">apparent_magnitude</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre>
 </div>
@@ -3701,8 +3704,8 @@ Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
 <pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kerykeion</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlanetaryNodesFactory</span>
 
 <span class="n">nodes</span> <span class="o">=</span> <span class="n"><a href="#PlanetaryNodesFactory.from_julian_day">PlanetaryNodesFactory.from_julian_day</a></span><span class="p">(</span><span class="mf">2451545.0</span><span class="p">,</span> <span class="n">planets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Mars&quot;</span><span class="p">,</span> <span class="s2">&quot;Jupiter&quot;</span><span class="p">])</span>
-<span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">planet</span><span class="si">}</span><span class="s2">: ascending node </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">ascending_node_longitude</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">nodes</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">planet_name</span><span class="si">}</span><span class="s2">: ascending node </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">ascending_node</span><span class="o">.</span><span class="n">abs_pos</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre>
 </div>
 
@@ -3819,7 +3822,7 @@ Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
     <span class="n">calculate_nutation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;True obliquity: </span><span class="si">{</span><span class="n">subject</span><span class="o">.</span><span class="n">nutation</span><span class="o">.</span><span class="n">true_obliquity</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nutation in longitude: </span><span class="si">{</span><span class="n">subject</span><span class="o">.</span><span class="n">nutation</span><span class="o">.</span><span class="n">nutation_in_longitude</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nutation in longitude: </span><span class="si">{</span><span class="n">subject</span><span class="o">.</span><span class="n">nutation</span><span class="o">.</span><span class="n">nutation_longitude</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre>
 </div>
 
@@ -3867,7 +3870,7 @@ Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
     <span class="n">lng</span><span class="o">=</span><span class="mf">11.25</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="mf">43.77</span><span class="p">,</span> <span class="n">tz_str</span><span class="o">=</span><span class="s2">&quot;Europe/Rome&quot;</span><span class="p">,</span> <span class="n">online</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">calculate_local_space</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sun azimuth: </span><span class="si">{</span><span class="n">subject</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">azimuth</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, altitude: </span><span class="si">{</span><span class="n">subject</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">altitude</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sun azimuth: </span><span class="si">{</span><span class="n">subject</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">azimuth</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, altitude: </span><span class="si">{</span><span class="n">subject</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">altitude_above_horizon</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre>
 </div>
 
@@ -26332,7 +26335,7 @@ numerical compatibility scores with categorical descriptions.</p>
                             <div id="RelationshipScoreFactory.MAJOR_ASPECTS" class="classattr">
                                 <div class="attr variable">
             <span class="name">MAJOR_ASPECTS</span>        =
-<span class="default_value">{&#39;sextile&#39;, &#39;conjunction&#39;, &#39;opposition&#39;, &#39;trine&#39;, &#39;square&#39;}</span>
+<span class="default_value">{&#39;opposition&#39;, &#39;conjunction&#39;, &#39;square&#39;, &#39;trine&#39;, &#39;sextile&#39;}</span>
 
         
     </div>

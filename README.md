@@ -1532,30 +1532,26 @@ chart.save_svg(output_path=output_dir, filename="johnny-depp-custom-points")
 
 Kerykeion includes **23 fixed stars** — the 2 original stars (Regulus, Spica) plus 21 new stars added in v5.12, completing all 15 Behenian stars of the medieval/Hermetic tradition plus 8 additional bright stars. The set includes the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each star provides ecliptic longitude, daily motion (`speed`), equatorial `declination`, and apparent visual `magnitude`.
 
-Fixed stars are computed for every subject but are **inactive by default** in charts and aspect calculations. To include them, pass their names in `active_points`:
+Fixed stars are **opt-in**: pass the names you want to `active_fixed_stars` when building the subject. Stars requested this way are computed into `subject.fixed_stars` and participate automatically in chart rendering and aspect calculations.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
     lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
+    active_fixed_stars=["Sirius", "Regulus", "Aldebaran", "Antares", "Fomalhaut"],
 )
 
-# Access fixed star data directly
-print(subject.sirius.abs_pos)        # Ecliptic longitude
-print(subject.sirius.magnitude)      # -1.44
-print(subject.sirius.declination)    # Equatorial declination
+# Access fixed star data
+sirius = subject.find_fixed_star("Sirius")
+print(sirius.abs_pos)        # Ecliptic longitude
+print(sirius.magnitude)      # -1.44
+print(sirius.declination)    # Equatorial declination
 
-# Include fixed stars in chart rendering
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
-    active_points=list(DEFAULT_ACTIVE_POINTS) + [
-        "Sirius", "Regulus", "Aldebaran", "Antares", "Fomalhaut",
-    ],
-)
+# The requested stars are rendered and aspected automatically
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
 ```
 
 Available fixed stars: Regulus, Spica, Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi, Alkaid.
@@ -1653,6 +1649,13 @@ Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
 You can also get the full model as JSON:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 2025, 4, 1, 6, 51,
+    lng=0, lat=51.48, tz_str="Etc/GMT", online=False,
+)
+overview = MoonPhaseDetailsFactory.from_subject(subject)
 print(overview.model_dump_json(exclude_none=True, indent=2))
 ```
 
@@ -1808,7 +1811,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     lng=0, lat=0, tz_str="Etc/GMT", online=False,
 )
 phenom = PlanetaryPhenomenaFactory.from_subject(subject)
-venus = phenom["Venus"]
+venus = next(p for p in phenom.phenomena if p.name == "Venus")
 print(f"Venus elongation: {venus.elongation:.2f}, magnitude: {venus.apparent_magnitude:.2f}")
 ```
 
@@ -1822,8 +1825,8 @@ Ascending/descending node and perihelion/aphelion positions.
 from kerykeion import PlanetaryNodesFactory
 
 nodes = PlanetaryNodesFactory.from_julian_day(2451545.0, planets=["Mars", "Jupiter"])
-for entry in nodes:
-    print(f"{entry.planet}: ascending node {entry.ascending_node_longitude:.2f}")
+for entry in nodes.nodes:
+    print(f"{entry.planet_name}: ascending node {entry.ascending_node.abs_pos:.2f}")
 ```
 
 **📖 Full documentation: [Planetary Nodes & Apsides](https://www.kerykeion.net/content/docs/planetary_nodes_factory)**
@@ -1933,7 +1936,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     calculate_nutation=True,
 )
 print(f"True obliquity: {subject.nutation.true_obliquity:.4f}")
-print(f"Nutation in longitude: {subject.nutation.nutation_in_longitude:.6f}")
+print(f"Nutation in longitude: {subject.nutation.nutation_longitude:.6f}")
 ```
 
 ### Dynamic Fixed Star Discovery
@@ -1978,7 +1981,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
     calculate_local_space=True,
 )
-print(f"Sun azimuth: {subject.sun.azimuth:.2f}, altitude: {subject.sun.altitude:.2f}")
+print(f"Sun azimuth: {subject.sun.azimuth:.2f}, altitude: {subject.sun.altitude_above_horizon:.2f}")
 ```
 
 ### Lilith Variants & Priapus Points
