@@ -4,7 +4,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import logging
-from typing import Any, Mapping, Sequence, Union, List, Optional
+from typing import Any, Callable, Mapping, Sequence, Union, List, Optional, cast
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, OPPOSITE_PAIRS
 from kerykeion.aspects.aspects_utils import (
@@ -27,6 +27,7 @@ from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
 from kerykeion.settings.chart_defaults import (
     DEFAULT_CELESTIAL_POINTS_SETTINGS,
     DEFAULT_CHART_ASPECTS_SETTINGS,
+    _CelestialPointSetting,
 )
 from kerykeion.utilities import find_common_active_points
 
@@ -49,6 +50,15 @@ AXES_LIST = [
 # transits, ...) remain meaningful and are NOT skipped.
 GEOMETRIC_OPPOSITE_PAIRS: frozenset = frozenset(
     frozenset((derived, config["primary"])) for derived, config in OPPOSITE_PAIRS.items()
+)
+
+# `find_common_active_points` is annotated for AstrologicalPoint literals only,
+# but the v6 fixed-star channel mixes plain catalog star names (str) into the
+# active-point lists handled here. View the helper through a str-widened
+# signature; runtime behavior is unchanged (pure set intersection + sort).
+_find_common_point_names = cast(
+    Callable[[Sequence[str], Sequence[str]], List[Union[AstrologicalPoint, str]]],
+    find_common_active_points,
 )
 
 
@@ -140,10 +150,10 @@ class AspectsFactory:
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
 
         celestial_points = list(DEFAULT_CELESTIAL_POINTS_SETTINGS)
-        dynamic_star_names = [
+        raw_star_names = [
             getattr(s, "name", None) for s in getattr(subject, "fixed_stars", None) or []
         ]
-        dynamic_star_names = [n for n in dynamic_star_names if n]
+        dynamic_star_names: List[str] = [n for n in raw_star_names if n]
         if dynamic_star_names:
             celestial_points = celestial_points + build_dynamic_fixed_star_settings(
                 dynamic_star_names, existing_settings=celestial_points
@@ -155,7 +165,7 @@ class AspectsFactory:
         # Determine active points to use. v6: extend with star names so the
         # aspects loop iterates them; subject.fixed_stars stars are not in
         # subject.active_points by design.
-        subject_active = list(subject.active_points) + [
+        subject_active: List[Union[AstrologicalPoint, str]] = list(subject.active_points) + [
             n for n in dynamic_star_names if n not in subject.active_points
         ]
         if active_points is None:
@@ -167,7 +177,7 @@ class AspectsFactory:
             # Stars are a separate channel — opted into per-subject via
             # active_fixed_stars at construction — so the subject's own stars
             # always participate; star–star pairs are skipped downstream.
-            active_points_resolved = find_common_active_points(
+            active_points_resolved = _find_common_point_names(
                 subject_active,
                 list(active_points) + [n for n in dynamic_star_names if n not in active_points],
             )
@@ -262,26 +272,26 @@ class AspectsFactory:
 
         # v6: extend each subject's active_points with its fixed_stars names so
         # the dual-chart aspects engine iterates them as first-class points.
-        first_subject_active = list(first_subject.active_points) + [
+        first_subject_raw = list(first_subject.active_points) + [
             getattr(s, "name", None) for s in getattr(first_subject, "fixed_stars", None) or []
         ]
-        first_subject_active = [n for n in first_subject_active if n]
-        second_subject_active = list(second_subject.active_points) + [
+        first_subject_active: List[Union[AstrologicalPoint, str]] = [n for n in first_subject_raw if n]
+        second_subject_raw = list(second_subject.active_points) + [
             getattr(s, "name", None) for s in getattr(second_subject, "fixed_stars", None) or []
         ]
-        second_subject_active = [n for n in second_subject_active if n]
+        second_subject_active: List[Union[AstrologicalPoint, str]] = [n for n in second_subject_raw if n]
 
         # Determine active points to use - find common points between both subjects
         if active_points is None:
             active_points_resolved = first_subject_active
         else:
-            active_points_resolved = find_common_active_points(
+            active_points_resolved = _find_common_point_names(
                 first_subject_active,
                 active_points,
             )
 
         # Further filter with second subject's active points
-        active_points_resolved = find_common_active_points(
+        active_points_resolved = _find_common_point_names(
             second_subject_active,
             active_points_resolved,
         )
@@ -313,11 +323,11 @@ class AspectsFactory:
     @staticmethod
     def _create_single_chart_aspects_model(
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        active_points_resolved: List[AstrologicalPoint],
+        active_points_resolved: List[Union[AstrologicalPoint, str]],
         active_aspects_resolved: List[ActiveAspect],
         aspects_settings: Sequence[Mapping[str, Any]],
         axis_orb_limit: Optional[float],
-        celestial_points: Sequence[Mapping[str, Any]],
+        celestial_points: List[_CelestialPointSetting],
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         star_names: frozenset = frozenset(),
@@ -355,11 +365,11 @@ class AspectsFactory:
     def _create_dual_chart_aspects_model(
         first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         second_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        active_points_resolved: List[AstrologicalPoint],
+        active_points_resolved: List[Union[AstrologicalPoint, str]],
         active_aspects_resolved: List[ActiveAspect],
         aspects_settings: Sequence[Mapping[str, Any]],
         axis_orb_limit: Optional[float],
-        celestial_points: Sequence[Mapping[str, Any]],
+        celestial_points: List[_CelestialPointSetting],
         first_subject_is_fixed: bool,
         second_subject_is_fixed: bool,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
@@ -412,10 +422,10 @@ class AspectsFactory:
     @staticmethod
     def _calculate_single_chart_aspects(
         subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        active_points: List[AstrologicalPoint],
+        active_points: List[Union[AstrologicalPoint, str]],
         active_aspects: List[ActiveAspect],
         aspects_settings: Sequence[Mapping[str, Any]],
-        celestial_points: Sequence[Mapping[str, Any]],
+        celestial_points: List[_CelestialPointSetting],
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         star_names: frozenset = frozenset(),
@@ -528,10 +538,10 @@ class AspectsFactory:
     def _calculate_dual_chart_aspects(
         first_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
         second_subject: Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel],
-        active_points: List[AstrologicalPoint],
+        active_points: List[Union[AstrologicalPoint, str]],
         active_aspects: List[ActiveAspect],
         aspects_settings: Sequence[Mapping[str, Any]],
-        celestial_points: Sequence[Mapping[str, Any]],
+        celestial_points: List[_CelestialPointSetting],
         first_subject_is_fixed: bool,
         second_subject_is_fixed: bool,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
@@ -818,11 +828,15 @@ class AspectsFactory:
         # regular points); star–star pairs are skipped downstream.
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
 
-        points_to_use = active_points if active_points is not None else subject.active_points
-        dynamic_star_names = [
+        # Widened element type: plain catalog star names (str) may be appended below.
+        points_to_use = cast(
+            "List[Union[AstrologicalPoint, str]]",
+            active_points if active_points is not None else subject.active_points,
+        )
+        raw_star_names = [
             getattr(s, "name", None) for s in getattr(subject, "fixed_stars", None) or []
         ]
-        dynamic_star_names = [n for n in dynamic_star_names if n]
+        dynamic_star_names: List[str] = [n for n in raw_star_names if n]
         celestial_points = list(DEFAULT_CELESTIAL_POINTS_SETTINGS)
         if dynamic_star_names:
             celestial_points = celestial_points + build_dynamic_fixed_star_settings(
@@ -872,8 +886,15 @@ class AspectsFactory:
         # so catalog stars participate in parallel/contra-parallel aspects.
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
 
-        pts1 = active_points if active_points is not None else first_subject.active_points
-        pts2 = active_points if active_points is not None else second_subject.active_points
+        # Widened element type: plain catalog star names (str) may be appended below.
+        pts1 = cast(
+            "List[Union[AstrologicalPoint, str]]",
+            active_points if active_points is not None else first_subject.active_points,
+        )
+        pts2 = cast(
+            "List[Union[AstrologicalPoint, str]]",
+            active_points if active_points is not None else second_subject.active_points,
+        )
         dynamic_star_names: list[str] = []
         for subj in (first_subject, second_subject):
             for s in getattr(subj, "fixed_stars", None) or []:

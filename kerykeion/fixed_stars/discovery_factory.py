@@ -17,9 +17,11 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from __future__ import annotations
 
 import logging
+from typing import cast
 
 from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, swe
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
 
@@ -93,7 +95,8 @@ def _build_discovery_point(
 
     point = get_kerykeion_point_from_degree(
         star_deg,
-        star_name,
+        # Catalog star names are an open set; the model accepts them at runtime.
+        cast(AstrologicalPoint, star_name),
         point_type="AstrologicalPoint",
         speed=star_speed,
         declination=star_dec,

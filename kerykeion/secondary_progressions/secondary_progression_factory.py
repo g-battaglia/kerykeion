@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import re
 from datetime import datetime, timezone
-from typing import List, Mapping, Optional, Sequence
+from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 from pydantic import BaseModel, Field
 
@@ -343,7 +343,8 @@ class SecondaryProgressionFactory:
             )
 
         progressed_year_gregorian, _, _, _ = swe.revjul(progressed_jd, swe.GREG_CAL)
-        common_kwargs = dict(
+        # Heterogeneous keyword bundle forwarded via ** to the factory entry points.
+        common_kwargs: Dict[str, Any] = dict(
             name=progressed_subject_name,
             city=natal_subject.city or "Natal Location",
             nation=natal_subject.nation or "",

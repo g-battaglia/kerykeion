@@ -27,10 +27,10 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Literal, Optional, Protocol, runtime_checkable
+from typing import Dict, List, Literal, Optional, Protocol, cast, runtime_checkable
 
 from kerykeion.dominants.data import DOMINANT_PLANET_COUNT
-from kerykeion.schemas.kr_literals import DominantMethod
+from kerykeion.schemas.kr_literals import DominantMethod, Element, Houses, Quality, Sign
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     DominantBreakdownItemModel,
@@ -272,9 +272,12 @@ class BaseDominantStrategy:
             hemispheres=ranked["hemispheres"],
             quadrants=ranked["quadrants"],
             dominant_planet=self._winner(ranked["planets"]),
-            dominant_sign=self._winner(ranked["signs"]),
-            dominant_element=self._winner(ranked["elements"]),
-            dominant_quality=self._winner(ranked["qualities"]),
-            dominant_house=self._winner(ranked["houses"]),
+            # _winner returns the winning entry's plain-str name; for the
+            # literal-typed fields the names are by construction members of the
+            # literal (and Pydantic re-validates them at model construction).
+            dominant_sign=cast(Optional[Sign], self._winner(ranked["signs"])),
+            dominant_element=cast(Optional[Element], self._winner(ranked["elements"])),
+            dominant_quality=cast(Optional[Quality], self._winner(ranked["qualities"])),
+            dominant_house=cast(Optional[Houses], self._winner(ranked["houses"])),
             score_breakdown=breakdown_models,
         )

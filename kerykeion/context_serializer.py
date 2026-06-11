@@ -888,27 +888,27 @@ def moon_phase_overview_to_context(overview: MoonPhaseOverviewModel) -> str:
             lines.append(f"    {_el('day_length', sun.day_length)}")
 
         if sun.position is not None:
-            pos = sun.position
+            sun_pos = sun.position
             sp_attrs: dict = {}
-            if pos.altitude is not None:
-                sp_attrs["altitude"] = f"{pos.altitude:.2f}"
-            if pos.azimuth is not None:
-                sp_attrs["azimuth"] = f"{pos.azimuth:.2f}"
-            if pos.distance is not None:
-                sp_attrs["distance"] = f"{pos.distance:.2f}"
+            if sun_pos.altitude is not None:
+                sp_attrs["altitude"] = f"{sun_pos.altitude:.2f}"
+            if sun_pos.azimuth is not None:
+                sp_attrs["azimuth"] = f"{sun_pos.azimuth:.2f}"
+            if sun_pos.distance is not None:
+                sp_attrs["distance"] = f"{sun_pos.distance:.2f}"
             lines.append(f"    {_sc('position', **sp_attrs)}")
 
         if sun.next_solar_eclipse is not None:
-            ecl = sun.next_solar_eclipse
+            solar_ecl = sun.next_solar_eclipse
             se_attrs: dict = {}
-            if ecl.timestamp is not None:
-                se_attrs["timestamp"] = str(ecl.timestamp)
-            if ecl.datestamp is not None:
-                se_attrs["datestamp"] = ecl.datestamp
-            if ecl.type is not None:
-                se_attrs["type"] = ecl.type
-            if ecl.visibility_regions is not None:
-                se_attrs["visibility_regions"] = ecl.visibility_regions
+            if solar_ecl.timestamp is not None:
+                se_attrs["timestamp"] = str(solar_ecl.timestamp)
+            if solar_ecl.datestamp is not None:
+                se_attrs["datestamp"] = solar_ecl.datestamp
+            if solar_ecl.type is not None:
+                se_attrs["type"] = solar_ecl.type
+            if solar_ecl.visibility_regions is not None:
+                se_attrs["visibility_regions"] = solar_ecl.visibility_regions
             lines.append(f"    {_sc('next_solar_eclipse', **se_attrs)}")
 
         lines.append(f"  {_c('sun')}")

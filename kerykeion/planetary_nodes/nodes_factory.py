@@ -24,6 +24,7 @@ from typing import Dict, List, Optional
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.schemas import KerykeionException
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     KerykeionPointModel,
@@ -39,7 +40,7 @@ NODBIT_OSCU = getattr(swe, "NODBIT_OSCU", 2)
 
 # The Sun is deliberately absent: nod_aps_ut has no geocentric solar
 # nodes/apsides to return and yields all-zero placeholders for it.
-_NODE_PLANETS: Dict[str, int] = {
+_NODE_PLANETS: Dict[AstrologicalPoint, int] = {
     "Moon": swe.MOON,
     "Mercury": swe.MERCURY,
     "Venus": swe.VENUS,

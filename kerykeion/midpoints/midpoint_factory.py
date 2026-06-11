@@ -21,12 +21,12 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, cast
 
 from pydantic import BaseModel, Field
 
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
-from kerykeion.schemas.kr_literals import SIGN_CODES
+from kerykeion.schemas.kr_literals import SIGN_CODES, SignNumbers
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings
 from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house, HOUSE_FIELD_NAMES
@@ -155,7 +155,8 @@ class MidpointFactory:
                         if name_other in (name_a, name_b):
                             continue
                         outcome = get_aspect_from_two_points(
-                            aspects_settings=aspect_settings,
+                            # aspect_settings is always built when compute_aspects is true
+                            aspects_settings=cast(List[dict], aspect_settings),
                             point_one=midpoint_long,
                             point_two=pos_other,
                         )
@@ -277,7 +278,7 @@ class MidpointFactory:
                     quality=zodiac.quality,
                     element=zodiac.element,
                     sign=zodiac.sign,
-                    sign_num=sign_idx,
+                    sign_num=cast(SignNumbers, sign_idx),  # int(...) % 12 is always 0-11
                     position=midpoint_long - sign_idx * 30.0,
                     abs_pos=midpoint_long,
                     emoji=zodiac.emoji,

@@ -74,7 +74,7 @@ import logging
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from datetime import datetime, timezone
-from typing import List, Union
+from typing import List, Union, cast
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.fetch_geonames import FetchGeonames
@@ -85,7 +85,7 @@ from kerykeion.astrological_subject_factory import (
     DEFAULT_GEONAMES_USERNAME,
 )
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.schemas.kr_literals import ReturnType
+from kerykeion.schemas.kr_literals import AstrologicalPoint, ReturnType
 from kerykeion.schemas.kr_models import PlanetReturnModel, AstrologicalSubjectModel
 
 
@@ -861,7 +861,8 @@ class PlanetaryReturnFactory:
         """
         from kerykeion.astrological_subject_factory import STANDARD_PLANETS
 
-        planet_id = STANDARD_PLANETS.get(planet_name)
+        # The public parameter stays `str`; unknown names fall through to the explicit raise below.
+        planet_id = STANDARD_PLANETS.get(cast(AstrologicalPoint, planet_name))
         if planet_id is None:
             raise KerykeionException(f"Unknown planet for heliocentric return: {planet_name}")
 

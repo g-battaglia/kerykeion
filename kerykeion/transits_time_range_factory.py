@@ -67,7 +67,7 @@ License: AGPL-3.0
 
 import logging
 
-from typing import Union, List, Optional
+from typing import Any, Dict, Union, List, Optional, cast
 from datetime import datetime, timedelta
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
@@ -217,8 +217,10 @@ class TransitsTimeRangeFactory:
         self.active_points = list(active_points) if active_points is not None else list(DEFAULT_ACTIVE_POINTS)
         # Transits are a predictive technique — default to the tight 3°
         # Ptolemaic orbs, not the wide natal orbs.
-        self.active_aspects = (
-            [dict(a) for a in active_aspects] if active_aspects is not None else [dict(a) for a in PREDICTIVE_ACTIVE_ASPECTS]
+        # The dict(...) copies keep callers' TypedDicts unshared; cast restores the ActiveAspect type.
+        self.active_aspects: List[ActiveAspect] = cast(
+            List[ActiveAspect],
+            [dict(a) for a in active_aspects] if active_aspects is not None else [dict(a) for a in PREDICTIVE_ACTIVE_ASPECTS],
         )
         self.settings_file = settings_file
         self.axis_orb_limit = axis_orb_limit
@@ -684,9 +686,11 @@ class TransitsTimeRangeFactory:
             # Determine the transit planet's Swiss Ephemeris ID
             from kerykeion.astrological_subject_factory import STANDARD_PLANETS, TNO_PLANETS
 
-            planet_id = STANDARD_PLANETS.get(p1_name)
+            # Transit point names come from aspect results, which use the AstrologicalPoint vocabulary.
+            transit_point_name = cast(AstrologicalPoint, p1_name)
+            planet_id = STANDARD_PLANETS.get(transit_point_name)
             if planet_id is None:
-                tno_num = TNO_PLANETS.get(p1_name)
+                tno_num = TNO_PLANETS.get(transit_point_name)
                 if tno_num is not None:
                     planet_id = swe.AST_OFFSET + tno_num
             if planet_id is None:
@@ -699,7 +703,8 @@ class TransitsTimeRangeFactory:
             )
             if matching_setting is None:
                 return None
-            aspect_settings = [matching_setting]
+            # get_aspect_from_two_points takes plain dicts; a TypedDict is one at runtime.
+            aspect_settings: List[Dict[str, Any]] = [cast(Dict[str, Any], matching_setting)]
 
             # Resolve matching active_aspect orb
             for aa in self.active_aspects:

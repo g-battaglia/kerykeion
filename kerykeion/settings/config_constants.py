@@ -14,6 +14,8 @@ Using these constants instead of magic strings/numbers improves maintainability
 and reduces the risk of typos.
 """
 
+from typing import cast
+
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import ActiveAspect
 
@@ -560,7 +562,9 @@ Used for `swe.calc_ut()` calls where the planet identifier is a native SE code.
 """
 
 POINT_NUMBER_MAP: dict[str, int] = {
-    **STANDARD_PLANETS,
+    # The Literal keys of STANDARD_PLANETS are plain strings at runtime; widen
+    # them for this str-keyed public map.
+    **cast("dict[str, int]", STANDARD_PLANETS),
     # Extra points without Swiss Ephemeris IDs
     "Mean_South_Lunar_Node": 1000,
     "True_South_Lunar_Node": 1100,

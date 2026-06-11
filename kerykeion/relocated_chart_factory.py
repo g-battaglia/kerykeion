@@ -30,6 +30,7 @@ from typing import Optional
 
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 
+from kerykeion.schemas.kr_literals import AstrologicalPoint, Houses
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.settings.config_constants import AXIAL_POINTS
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
@@ -127,7 +128,7 @@ class RelocatedChartFactory:
             "eleventh_house",
             "twelfth_house",
         ]
-        houses_list = [
+        houses_list: list[Houses] = [
             "First_House",
             "Second_House",
             "Third_House",
@@ -150,7 +151,7 @@ class RelocatedChartFactory:
         desc_deg = (asc_deg + 180) % 360
         ic_deg = (mc_deg + 180) % 360
 
-        axis_degrees = {
+        axis_degrees: dict[str, tuple[AstrologicalPoint, float]] = {
             "ascendant": ("Ascendant", asc_deg),
             "medium_coeli": ("Medium_Coeli", mc_deg),
             "descendant": ("Descendant", desc_deg),
@@ -256,16 +257,19 @@ class RelocatedChartFactory:
             if relocated_data.get(part_field) is None:
                 continue
 
-            positions = []
+            # `collected_positions` aliases the same list; `positions` doubles as the
+            # None marker for missing prerequisites (mypy cannot narrow it in the loop).
+            collected_positions: list[float] = []
+            positions: Optional[list[float]] = collected_positions
             for required_point in part_config["required"]:
                 if required_point == "Ascendant":
-                    positions.append(asc_deg)
+                    collected_positions.append(asc_deg)
                     continue
                 required_data = relocated_data.get(required_point.lower())
                 if required_data is None:
                     positions = None
                     break
-                positions.append(required_data["abs_pos"])
+                collected_positions.append(required_data["abs_pos"])
             if positions is None:
                 continue
 
@@ -288,10 +292,10 @@ class RelocatedChartFactory:
             if point_name in _AXIAL_POINTS_SET:
                 continue
             field_name = point_name.lower()
-            point = relocated_data.get(field_name)
-            if point is not None and isinstance(point, dict) and "abs_pos" in point:
-                new_house = get_planet_house(point["abs_pos"], houses_degree_ut)
-                point["house"] = new_house
+            planet_data = relocated_data.get(field_name)
+            if planet_data is not None and isinstance(planet_data, dict) and "abs_pos" in planet_data:
+                new_house = get_planet_house(planet_data["abs_pos"], houses_degree_ut)
+                planet_data["house"] = new_house
 
         # Fixed stars keep their zodiacal positions but live outside
         # active_points: reassign their houses against the relocated cusps too.

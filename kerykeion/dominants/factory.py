@@ -24,7 +24,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from kerykeion.dominants.base import DistributionMethod, DominantsConfig, DominantStrategy
 from kerykeion.dominants.strategies import (
@@ -121,7 +121,7 @@ class DominantsFactory:
         custom_weights: Optional[Dict[str, float]] = None,
         include_accidental_dignities: bool = False,
         include_score_breakdown: bool = False,
-        **subject_kwargs: object,
+        **subject_kwargs: Any,
     ) -> DominantsModel:
         """Build a subject from birth data, then compute its dominants.
 

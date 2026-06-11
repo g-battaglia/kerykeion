@@ -19,6 +19,7 @@ from typing import List, Optional
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import get_kerykeion_point_from_degree
 from pydantic import Field
@@ -104,7 +105,7 @@ def _classify_lunar_eclipse(retflags: int) -> str:
     return "unknown"
 
 
-def _zodiac_fields(jd: float, body: int, name: str) -> dict:
+def _zodiac_fields(jd: float, body: int, name: AstrologicalPoint) -> dict:
     """Ecliptic sign/degree of a luminary at the eclipse maximum.
 
     Backend-agnostic (uses ``swe.calc_ut``). For a solar eclipse the eclipse

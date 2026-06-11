@@ -32,7 +32,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, cast
 
 from kerykeion.dignities.dignity_data import DETRIMENT_RULERS, FALL_TABLE
 from kerykeion.dignities.dignity_factory import calculate_essential_dignity
@@ -60,6 +60,7 @@ from kerykeion.dominants.data import (
     RULER_BONUS_SUN_SIGN,
 )
 from kerykeion.dominants.utils import angle_degrees, rulers_inverse, scoring_planets
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, DominantsModel, KerykeionPointModel
 from kerykeion.utilities import get_house_number
 
@@ -220,7 +221,9 @@ class ModernDominantStrategy(BaseDominantStrategy):
 
         aspects_model = AspectsFactory.single_chart_aspects(
             subject,
-            active_points=planet_names + list(_ANGLE_NAMES),
+            # The names come from the subject's own points plus the four angles,
+            # so they are valid AstrologicalPoint literals at runtime.
+            active_points=cast(List[AstrologicalPoint], planet_names + list(_ANGLE_NAMES)),
             active_aspects=DOMINANT_ASPECTS,
         )
 

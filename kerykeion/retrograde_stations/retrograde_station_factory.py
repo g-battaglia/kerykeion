@@ -21,11 +21,12 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import List, Optional, cast
 
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
     datetime_to_julian,
@@ -290,7 +291,8 @@ class RetrogradeStationFactory:
                 f"means the date falls outside the available ephemeris range; "
                 f"narrow the date range."
             ) from exc
-        point = get_kerykeion_point_from_degree(lon, name, "AstrologicalPoint")
+        # name is validated against _PLANET_IDS upstream, so it is a known point name.
+        point = get_kerykeion_point_from_degree(lon, cast(AstrologicalPoint, name), "AstrologicalPoint")
         return StationModel(
             planet=name,
             station_type=station_type,

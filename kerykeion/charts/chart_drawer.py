@@ -9,7 +9,7 @@ from functools import lru_cache
 from math import ceil
 from pathlib import Path
 from string import Template
-from typing import Any, Mapping, Optional, Sequence, Union, get_args
+from typing import Any, Mapping, Optional, Sequence, Union, cast, get_args
 
 # Sentinel object used to distinguish "parameter not passed" from an explicit value
 # in render methods (generate_svg_string, save_svg, etc.).  When the user omits
@@ -2271,9 +2271,14 @@ class ChartDrawer:  # type: ignore[no-redef]
             # with glyph_id="FixedStar" (build_dynamic_fixed_star_settings skips
             # names that already have a dedicated entry, so the hardcoded 23
             # keep their dedicated colors).
-            extra_star_settings = build_dynamic_fixed_star_settings(
-                dynamic_star_names,
-                existing_settings=self.planets_settings,
+            # The dynamic entries are plain dicts at runtime (TypedDict); widen
+            # them to match the list[dict] settings containers they extend.
+            extra_star_settings = cast(
+                "list[dict[Any, Any]]",
+                build_dynamic_fixed_star_settings(
+                    dynamic_star_names,
+                    existing_settings=self.planets_settings,
+                ),
             )
             for setting in extra_star_settings:
                 setting["is_active"] = True
@@ -2310,9 +2315,13 @@ class ChartDrawer:  # type: ignore[no-redef]
         dynamic_midpoint_names: list[str] = list(_seen_midpoints)
 
         if dynamic_midpoint_names:
-            extra_midpoint_settings = build_dynamic_midpoint_settings(
-                dynamic_midpoint_names,
-                existing_settings=self.planets_settings,
+            # Same runtime dict widening as for the dynamic fixed stars above.
+            extra_midpoint_settings = cast(
+                "list[dict[Any, Any]]",
+                build_dynamic_midpoint_settings(
+                    dynamic_midpoint_names,
+                    existing_settings=self.planets_settings,
+                ),
             )
             for setting in extra_midpoint_settings:
                 setting["is_active"] = True
@@ -4295,7 +4304,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             for i, sign in enumerate(signs)
         )
 
-    def _draw_all_aspects_lines(self, r, ar):
+    def _draw_all_aspects_lines(self, r: float, ar: float) -> str:
         """
         Render SVG lines for all aspects in the chart.
 
@@ -4672,9 +4681,12 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         Returns:
         """
-        effective_style = style if style is not _UNSET else self._style
+        # ``is not _UNSET`` cannot narrow the ``object``-typed kwargs, so explicit
+        # values are cast to the documented parameter types (the style value is
+        # re-validated by _validate_chart_style right below).
+        effective_style = cast("KerykeionChartStyle", style) if style is not _UNSET else self._style
         effective_ring = (
-            show_zodiac_background_ring
+            cast(bool, show_zodiac_background_ring)
             if show_zodiac_background_ring is not _UNSET
             else self._show_zodiac_background_ring
         )
@@ -4887,9 +4899,12 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             str: SVG markup for the chart wheel only.
         """
-        effective_style = style if style is not _UNSET else self._style
+        # ``is not _UNSET`` cannot narrow the ``object``-typed kwargs, so explicit
+        # values are cast to the documented parameter types (the style value is
+        # re-validated by _validate_chart_style right below).
+        effective_style = cast("KerykeionChartStyle", style) if style is not _UNSET else self._style
         effective_ring = (
-            show_zodiac_background_ring
+            cast(bool, show_zodiac_background_ring)
             if show_zodiac_background_ring is not _UNSET
             else self._show_zodiac_background_ring
         )

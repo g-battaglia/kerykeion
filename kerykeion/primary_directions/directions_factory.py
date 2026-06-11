@@ -40,9 +40,10 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import math
 from kerykeion.ephemeris_backend import swe, ephemeris_session
-from typing import List, Optional, Literal, Tuple
+from typing import List, Optional, Literal, Tuple, cast
 from pydantic import BaseModel, Field
 
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 
 # MD (in degrees of RA) below which a point is treated as being on the meridian.
@@ -182,6 +183,7 @@ class PrimaryDirectionsFactory:
                     # Aspect points are ecliptic: lambda +/- aspect, latitude 0.
                     # 0 and 180 are their own mirror; the others have a dexter
                     # and a sinister point.
+                    offsets: Tuple[int, ...]
                     if aspect_angle in (0, 180):
                         offsets = (aspect_angle,)
                     else:
@@ -277,7 +279,8 @@ class PrimaryDirectionsFactory:
             # This is more accurate than converting from ecliptic, as it accounts
             # for the planet's ecliptic latitude (important for Moon, asteroids).
             ra: Optional[float] = None
-            planet_id = STANDARD_PLANETS.get(point_name)
+            # DIRECTION_POINTS entries are all valid AstrologicalPoint names.
+            planet_id = STANDARD_PLANETS.get(cast(AstrologicalPoint, point_name))
             if planet_id is not None:
                 try:
                     eq_coords = swe.calc_ut(jd, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
@@ -286,12 +289,14 @@ class PrimaryDirectionsFactory:
                 except Exception:
                     ra = None
 
-            if ra is None:
+            if ra is None or dec is None:
                 # ASC/MC (exact: they lie on the ecliptic, latitude 0) and
                 # planetary fallback (zero ecliptic latitude approximation).
-                ra, dec_from_ecliptic = PrimaryDirectionsFactory._ecliptic_to_equatorial(
+                ra_from_ecliptic, dec_from_ecliptic = PrimaryDirectionsFactory._ecliptic_to_equatorial(
                     ecl_lon_tropical, obliquity
                 )
+                if ra is None:
+                    ra = ra_from_ecliptic
                 if dec is None:
                     dec = dec_from_ecliptic
 

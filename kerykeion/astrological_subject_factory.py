@@ -37,7 +37,7 @@ import math
 from datetime import datetime, timezone
 from os import getenv
 from pathlib import Path
-from typing import Optional, List, Dict, Any, get_args
+from typing import Optional, List, Dict, Any, cast, get_args
 from dataclasses import dataclass, field
 from contextlib import contextmanager
 from functools import partial
@@ -1711,7 +1711,7 @@ class AstrologicalSubjectFactory:
         data["_houses_degree_ut"] = cusps
 
         # House configuration: (attribute_name, house_name)
-        HOUSE_CONFIG = [
+        HOUSE_CONFIG: list[tuple[str, Houses]] = [
             ("first_house", "First_House"),
             ("second_house", "Second_House"),
             ("third_house", "Third_House"),
@@ -2341,7 +2341,8 @@ class AstrologicalSubjectFactory:
                     star_mag = None
                 point = get_kerykeion_point_from_degree(
                     star_deg,
-                    star_name,
+                    # Requested star names are an open set; the model accepts them at runtime.
+                    cast(AstrologicalPoint, star_name),
                     point_type=point_type,
                     speed=star_speed,
                     declination=star_dec,

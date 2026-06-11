@@ -434,7 +434,9 @@ def _draw_cusp_ring(
 
         # Determine if a full zodiac sign boundary falls in this house
         # Place sign glyph at the house cusp
-        sign_abbrev = house.sign
+        # (typed str: the intercepted-signs pass below reuses the variable with
+        # plain-str ids from _ZODIAC_SIGN_IDS)
+        sign_abbrev: str = house.sign
         degrees = int(house.position)
         minutes = int((house.position - degrees) * 60)
 
@@ -1363,7 +1365,9 @@ def _draw_aspect_core(
     aspect_scale = 0.37
 
     # Track rendered icon positions to avoid overlapping icons of the same aspect type
-    rendered_icon_positions: list[tuple[float, float, str]] = []
+    # Third element is the aspect's degrees: an int from ASPECT_DEGREE_MAP, or
+    # "" when the aspect name is unknown.
+    rendered_icon_positions: list[tuple[float, float, int | str]] = []
     icon_collision_threshold = 8.0  # minimum distance between same-type icons
 
     for aspect in aspects_list:

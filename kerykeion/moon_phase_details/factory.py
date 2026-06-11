@@ -33,6 +33,7 @@ from typing import Optional
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
+    KerykeionPointModel,
     LunarPhaseModel,
     MoonPhaseOverviewModel,
     MoonPhaseMoonSummaryModel,
@@ -59,6 +60,7 @@ from kerykeion.moon_phase_details.utils import (
     compute_sun_position,
 )
 from kerykeion.ephemeris_backend import ephemeris_session
+from kerykeion.schemas.kr_literals import LunarPhaseEmoji, LunarPhaseName
 from kerykeion.utilities import datetime_to_julian, julian_to_datetime
 
 
@@ -358,7 +360,7 @@ def _compute_lunar_phase_metrics(
     moon: object,
     base_dt: datetime,
     upcoming_phases: MoonPhaseUpcomingPhasesModel,
-) -> tuple[float, str, str, str, str, str, int, str, MoonPhaseIlluminationDetailsModel]:
+) -> tuple[float, LunarPhaseName, LunarPhaseEmoji, str, str, str, int, str, MoonPhaseIlluminationDetailsModel]:
     """
     Compute lunar phase metrics including phase fraction, illumination, and age.
 
@@ -431,8 +433,8 @@ def _compute_lunar_phase_metrics(
 
 
 def _build_moon_zodiac_info(
-    sun: object,
-    moon: object,
+    sun: Optional[KerykeionPointModel],
+    moon: Optional[KerykeionPointModel],
 ) -> Optional[MoonPhaseZodiacModel]:
     """
     Build zodiac information block for Sun and Moon signs.
@@ -533,8 +535,8 @@ class MoonPhaseDetailsFactory:
 
         # Initialize all fields as None
         phase: Optional[float] = None
-        phase_name = None
-        emoji = None
+        phase_name: Optional[LunarPhaseName] = None
+        emoji: Optional[LunarPhaseEmoji] = None
         stage: Optional[str] = None
         major_phase: Optional[str] = None
         illumination_str: Optional[str] = None

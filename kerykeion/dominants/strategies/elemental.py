@@ -16,7 +16,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict, List, cast
 
 from kerykeion.dominants.base import BaseDominantStrategy, BreakdownItem, Category, DominantsConfig
 from kerykeion.dominants.data import (
@@ -25,6 +25,12 @@ from kerykeion.dominants.data import (
     QUALITY_LOWER_TO_TITLE,
 )
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, DominantsModel
+
+if TYPE_CHECKING:
+    from typing import Sequence
+
+    from kerykeion.schemas.kr_literals import Element
+    from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 
 
 class ElementalBalanceStrategy(BaseDominantStrategy):
@@ -68,30 +74,35 @@ class ElementalBalanceStrategy(BaseDominantStrategy):
 
         point_names: List[str] = list(config.active_points) if config.active_points else list(subject.active_points)
 
+        # ``planets_settings`` is kept by the helpers for API compatibility only
+        # (unused), so the TypedDict-based defaults are safe to pass here.
+        planets_settings = cast("Sequence[KerykeionSettingsCelestialPointModel]", DEFAULT_CELESTIAL_POINTS_SETTINGS)
+
         # Raw totals come back keyed lowercase (e.g. "fire"); we relabel them to
         # the Title-case Element/Quality literals the public model expects.
         element_totals = calculate_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            planets_settings,
             point_names,
             subject,
             method=config.distribution_method,
             custom_weights=config.custom_weights,
         )
         quality_totals = calculate_quality_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            planets_settings,
             point_names,
             subject,
             method=config.distribution_method,
             custom_weights=config.custom_weights,
         )
 
-        elements = {ELEMENT_LOWER_TO_TITLE[key]: value for key, value in element_totals.items()}
-        qualities = {QUALITY_LOWER_TO_TITLE[key]: value for key, value in quality_totals.items()}
+        elements: Dict[str, float] = {ELEMENT_LOWER_TO_TITLE[key]: value for key, value in element_totals.items()}
+        qualities: Dict[str, float] = {QUALITY_LOWER_TO_TITLE[key]: value for key, value in quality_totals.items()}
 
-        # Polarity: Fire+Air = Yang, Earth+Water = Yin.
+        # Polarity: Fire+Air = Yang, Earth+Water = Yin. The keys of ``elements``
+        # are exactly the Title-case Element literals built just above.
         polarities: Dict[str, float] = {"Yang": 0.0, "Yin": 0.0}
         for element, value in elements.items():
-            polarities[POLARITY_BY_ELEMENT[element]] += value
+            polarities[POLARITY_BY_ELEMENT[cast("Element", element)]] += value
 
         categories = {
             "elements": Category(scores=elements, dominant=_top_keys(elements, 1)),
