@@ -36,6 +36,8 @@ from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     CompositeSubjectModel,
     PlanetReturnModel,
+    SingleChartDataModel,
+    DualChartDataModel,
 )
 from kerykeion.schemas.settings_models import (
     KerykeionLanguageModel,
@@ -2195,6 +2197,23 @@ class ChartDrawer:  # type: ignore[no-redef]
         Args:
             chart_data: Pre-computed chart data from ChartDataFactory.
         """
+        if not isinstance(chart_data, (SingleChartDataModel, DualChartDataModel)):
+            received = type(chart_data).__name__
+            hint = ""
+            if isinstance(chart_data, (AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel)):
+                hint = (
+                    " In v5, KerykeionChartSVG was built directly from a subject;"
+                    " in v6, compute the chart data first."
+                )
+            raise KerykeionException(
+                f"ChartDrawer expects chart data from ChartDataFactory "
+                f"(SingleChartDataModel or DualChartDataModel), got {received}.{hint}\n"
+                "Example:\n"
+                "    chart_data = ChartDataFactory.create_natal_chart_data(subject)\n"
+                "    svg = ChartDrawer(chart_data).generate_svg_string()\n"
+                "Migration guide: https://www.kerykeion.net/content/docs/migration"
+            )
+
         # Store reference to the full chart data
         self.chart_data = chart_data
         self.chart_type = chart_data.chart_type

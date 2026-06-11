@@ -233,3 +233,41 @@ __all__ = [
     # Ephemeris Backend
     "BACKEND_NAME",
 ]
+
+
+# =============================================================================
+# REMOVED v5 API — helpful migration errors (PEP 562)
+# =============================================================================
+_MIGRATION_GUIDE_URL = "https://www.kerykeion.net/content/docs/migration"
+
+_V5_REMOVED_NAMES = {
+    "AstrologicalSubject": (
+        "'AstrologicalSubject' was removed in v6. Use the factory instead:\n"
+        "    from kerykeion import AstrologicalSubjectFactory\n"
+        "    subject = AstrologicalSubjectFactory.from_birth_data(...)"
+    ),
+    "KerykeionChartSVG": (
+        "'KerykeionChartSVG' was removed in v6. Compute chart data first, then draw it:\n"
+        "    from kerykeion import ChartDataFactory, ChartDrawer\n"
+        "    chart_data = ChartDataFactory.create_natal_chart_data(subject)\n"
+        "    svg = ChartDrawer(chart_data).generate_svg_string()"
+    ),
+    "NatalAspects": (
+        "'NatalAspects' was removed in v6. Use AspectsFactory instead:\n"
+        "    from kerykeion import AspectsFactory\n"
+        "    aspects = AspectsFactory.single_chart_aspects(subject)"
+    ),
+    "SynastryAspects": (
+        "'SynastryAspects' was removed in v6. Use AspectsFactory instead:\n"
+        "    from kerykeion import AspectsFactory\n"
+        "    aspects = AspectsFactory.dual_chart_aspects(first_subject, second_subject)"
+    ),
+}
+
+
+def __getattr__(name: str):
+    # ImportError (not AttributeError) so that `from kerykeion import AstrologicalSubject`
+    # surfaces this message verbatim instead of Python's generic "cannot import name".
+    if name in _V5_REMOVED_NAMES:
+        raise ImportError(f"{_V5_REMOVED_NAMES[name]}\nMigration guide: {_MIGRATION_GUIDE_URL}")
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
