@@ -26,8 +26,13 @@ Thank you for your interest in contributing to Kerykeion! Contributions of all k
 4. Make your changes, add tests if applicable, and ensure the test suite passes:
 
    ```bash
-   pytest
+   uv run pytest
    ```
+
+   The suite auto-detects the range of the installed ephemeris kernel and
+   skips tests that need a wider one, so a plain run is green out of the box.
+   With the full-range DE441 kernel installed you can force everything with
+   `uv run pytest --tier=extended`.
 
 5. Push your branch and open a Pull Request against the `main` branch.
 

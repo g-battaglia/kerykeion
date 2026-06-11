@@ -15,10 +15,16 @@ Tier filtering:
     pytest tests/ --tier=base     # DE440s: 1849-2150 (11 subjects)
     pytest tests/ --tier=medium   # DE440: 1550-2650 (16 subjects, cumulative)
     pytest tests/ --tier=extended # DE441: full range (25 subjects, cumulative)
+
+    Without --tier, the tier is auto-detected by probing the loaded ephemeris,
+    so a plain ``pytest`` run is green on any kernel: out-of-range temporal
+    subjects and the BCE/ancient-date test modules are skipped (with reasons)
+    instead of failing. Pass --tier=extended explicitly to force-run everything
+    (requires the full-range DE441 kernel).
 """
 
 import pytest
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
@@ -36,8 +42,6 @@ from tests.data.test_subjects_matrix import (
     ANGLES,
     HOUSES,
     ALL_POINTS,
-    get_subject_by_id,
-    get_primary_test_subjects,
     get_subjects_for_tier,
 )
 
@@ -57,22 +61,62 @@ def pytest_addoption(parser):
     )
 
 
+def _detect_ephemeris_tier() -> str:
+    """Probe the loaded ephemeris and return the widest tier it can serve.
+
+    Computes the Sun at probe dates chosen inside one tier's range but outside
+    the next narrower one: year 1000 is covered only by DE441 (extended),
+    year 1700 by DE440 (medium) but not DE440s (base, 1849+).
+    """
+    from kerykeion.ephemeris_backend import swe, ephemeris_session
+
+    def _sun_computes(year: int) -> bool:
+        try:
+            with ephemeris_session() as iflag:
+                swe.calc_ut(swe.julday(year, 1, 1, 12.0), 0, iflag)
+            return True
+        except Exception:
+            return False
+
+    if _sun_computes(1000):
+        return "extended"
+    if _sun_computes(1700):
+        return "medium"
+    return "base"
+
+
+# Test modules/ids that need the full-range (extended) kernel but are not
+# parametrized with temporal-subject ids, so the tier filter below cannot
+# catch them by subject. Matched as substrings of the lowercased node id.
+_EXTENDED_ONLY_NODE_PATTERNS = ("bce", "ancient_rome", "historical_date")
+
+
 def pytest_collection_modifyitems(config, items):
     tier = config.getoption("--tier")
-    if tier is None:
-        return
+    auto_detected = tier is None
+    if auto_detected:
+        tier = _detect_ephemeris_tier()
 
     allowed_ids = set(get_subjects_for_tier(tier).keys())
 
     # Build full set of all temporal subject IDs for checking
     all_subject_ids = {s["id"] for s in TEMPORAL_SUBJECTS}
 
-    skip = pytest.mark.skip(reason=f"Subject not in tier '{tier}'")
+    detected_note = " (auto-detected from the loaded ephemeris)" if auto_detected else ""
+    skip_subject = pytest.mark.skip(reason=f"Subject not in tier '{tier}'{detected_note}")
+    skip_range = pytest.mark.skip(
+        reason=f"Requires the full-range (extended) ephemeris kernel; current tier is '{tier}'{detected_note}"
+    )
     for item in items:
         node_id = item.nodeid
+        if tier != "extended":
+            node_id_lower = node_id.lower()
+            if any(pattern in node_id_lower for pattern in _EXTENDED_ONLY_NODE_PATTERNS):
+                item.add_marker(skip_range)
+                continue
         for subject_id in all_subject_ids:
             if subject_id in node_id and subject_id not in allowed_ids:
-                item.add_marker(skip)
+                item.add_marker(skip_subject)
                 break
 
 
