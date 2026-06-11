@@ -43,12 +43,12 @@ def test_predictive_factories_are_in_top_level_all():
         "MidpointFactory",
         "MidpointModel",
         "MidpointAspectModel",
-        "ProgressedToNatalAspect",
+        "ProgressedToNatalAspectModel",
         "SecondaryProgressionFactory",
-        "SecondaryProgressionsResult",
+        "SecondaryProgressionsResultModel",
         "SolarArcFactory",
-        "SolarArcDirectedAspect",
-        "SolarArcDirectedPoint",
+        "SolarArcDirectedAspectModel",
+        "SolarArcDirectedPointModel",
         "SolarArcSubjectModel",
     }
 
@@ -594,7 +594,7 @@ def test_compute_full_returns_result_model():
     result = SecondaryProgressionFactory.compute_full(
         _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
-    assert isinstance(result, kerykeion.SecondaryProgressionsResult)
+    assert isinstance(result, kerykeion.SecondaryProgressionsResultModel)
     assert result.natal_name == "Predictive Test"
     assert result.target_iso_utc_datetime == "2026-01-01T00:00:00.000000Z"
     assert result.ephemeris_iso_utc_datetime is not None

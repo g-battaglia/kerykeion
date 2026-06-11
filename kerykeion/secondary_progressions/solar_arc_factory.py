@@ -63,7 +63,7 @@ def _midpoint_name_to_pair_key(name: str) -> str:
     return name[:-len("_Midpoint")] if name.endswith("_Midpoint") else name
 
 
-class SolarArcDirectedPoint(BaseModel):
+class SolarArcDirectedPointModel(BaseModel):
     """A natal point after applying the solar-arc shift."""
 
     name: str = Field(description="Name of the natal point (Sun, Moon, Mercury, ...).")
@@ -75,7 +75,7 @@ class SolarArcDirectedPoint(BaseModel):
     sign_changed: bool = Field(description="True if the directed position is in a different sign than the natal one.")
 
 
-class SolarArcDirectedAspect(BaseModel):
+class SolarArcDirectedAspectModel(BaseModel):
     """A directed-to-natal aspect — the actionable timing signal."""
 
     directed_point: str = Field(description="Name of the directed (moving) point.")
@@ -93,8 +93,8 @@ class SolarArcSubjectModel(BaseModel):
     natal_name: str
     target_iso_utc_datetime: str
     solar_arc: float = Field(description="Solar arc in degrees (forward, range [0, 360)).")
-    directed_points: List[SolarArcDirectedPoint] = Field(default_factory=list)
-    directed_to_natal_aspects: List[SolarArcDirectedAspect] = Field(default_factory=list)
+    directed_points: List[SolarArcDirectedPointModel] = Field(default_factory=list)
+    directed_to_natal_aspects: List[SolarArcDirectedAspectModel] = Field(default_factory=list)
 
 
 class SolarArcFactory:
@@ -184,13 +184,13 @@ class SolarArcFactory:
         directed_sources = gather_active_points(natal_subject, active_points)
         natal_targets = gather_active_points(natal_subject, natal_subject.active_points)
 
-        directed_points: List[SolarArcDirectedPoint] = []
+        directed_points: List[SolarArcDirectedPointModel] = []
         for name, natal_pos in directed_sources:
             directed_pos = _normalise_long(natal_pos + solar_arc)
             natal_sign_idx = int(natal_pos // 30) % 12
             directed_sign_idx = int(directed_pos // 30) % 12
             directed_points.append(
-                SolarArcDirectedPoint(
+                SolarArcDirectedPointModel(
                     name=name,
                     natal_abs_pos=natal_pos,
                     directed_abs_pos=directed_pos,
@@ -201,7 +201,7 @@ class SolarArcFactory:
                 )
             )
 
-        directed_to_natal: List[SolarArcDirectedAspect] = []
+        directed_to_natal: List[SolarArcDirectedAspectModel] = []
         if compute_aspects:
             effective_aspects = aspects if aspects is not None else PTOLEMAIC_ASPECTS
             aspect_settings = build_aspect_settings(aspect_orb, effective_aspects)
@@ -223,7 +223,7 @@ class SolarArcFactory:
                     )
                     if outcome.get("verdict"):
                         directed_to_natal.append(
-                            SolarArcDirectedAspect(
+                            SolarArcDirectedAspectModel(
                                 directed_point=d.name,
                                 natal_point=natal_name,
                                 directed_abs_pos=d.directed_abs_pos,
@@ -337,3 +337,15 @@ class SolarArcFactory:
             )
 
         return directed
+
+
+# Deprecated pre-6.0.0b1 names. TODO remove in 6.0.0 stable.
+from kerykeion._deprecation import deprecated_alias_getattr  # noqa: E402
+
+__getattr__ = deprecated_alias_getattr(
+    __name__,
+    {
+        "SolarArcDirectedAspect": SolarArcDirectedAspectModel,
+        "SolarArcDirectedPoint": SolarArcDirectedPointModel,
+    },
+)

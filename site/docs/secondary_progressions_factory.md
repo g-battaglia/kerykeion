@@ -49,7 +49,7 @@ Provide either `target_iso_utc_datetime` or `target_year`, not both.
 
 ### `compute_full(natal_subject, *, ...)`
 
-Returns a `SecondaryProgressionsResult` with the progressed subject **plus** progressed-to-natal aspects.
+Returns a `SecondaryProgressionsResultModel` with the progressed subject **plus** progressed-to-natal aspects.
 
 | Parameter                      | Type              | Default         | Description                                        |
 | :----------------------------- | :---------------- | :-------------- | :------------------------------------------------- |
@@ -76,7 +76,7 @@ for asp in result.progressed_to_natal_aspects:
 
 ## Data Models
 
-### `SecondaryProgressionsResult`
+### `SecondaryProgressionsResultModel`
 
 | Field                          | Type                          | Description                                  |
 | :----------------------------- | :---------------------------- | :------------------------------------------- |
@@ -84,9 +84,9 @@ for asp in result.progressed_to_natal_aspects:
 | `target_iso_utc_datetime`      | str                           | The real-world date requested                |
 | `ephemeris_iso_utc_datetime`   | str                           | The actual ephemeris date looked up           |
 | `progressed_subject`           | AstrologicalSubjectModel      | The full progressed chart                    |
-| `progressed_to_natal_aspects`  | List[ProgressedToNatalAspect] | Cross-chart aspects                          |
+| `progressed_to_natal_aspects`  | List[ProgressedToNatalAspectModel] | Cross-chart aspects                          |
 
-### `ProgressedToNatalAspect`
+### `ProgressedToNatalAspectModel`
 
 | Field              | Type  | Description                                |
 | :----------------- | :---- | :----------------------------------------- |

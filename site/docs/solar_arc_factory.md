@@ -61,10 +61,10 @@ Returns a `SolarArcSubjectModel` with the solar arc, directed points, and direct
 | `natal_name`                | str                           | Name of the natal subject               |
 | `target_iso_utc_datetime`   | str                           | The target real-world date              |
 | `solar_arc`                 | float                         | Solar arc in degrees (0-360)            |
-| `directed_points`           | List[SolarArcDirectedPoint]   | All directed positions                  |
-| `directed_to_natal_aspects` | List[SolarArcDirectedAspect]  | Active directed-to-natal aspects        |
+| `directed_points`           | List[SolarArcDirectedPointModel]   | All directed positions                  |
+| `directed_to_natal_aspects` | List[SolarArcDirectedAspectModel]  | Active directed-to-natal aspects        |
 
-### `SolarArcDirectedPoint`
+### `SolarArcDirectedPointModel`
 
 | Field              | Type  | Description                                          |
 | :----------------- | :---- | :--------------------------------------------------- |
@@ -76,7 +76,7 @@ Returns a `SolarArcSubjectModel` with the solar arc, directed points, and direct
 | `directed_position`| float | Position within the directed sign (0-30)             |
 | `sign_changed`     | bool  | True if the directed position is in a different sign |
 
-### `SolarArcDirectedAspect`
+### `SolarArcDirectedAspectModel`
 
 | Field              | Type  | Description                                |
 | :----------------- | :---- | :----------------------------------------- |

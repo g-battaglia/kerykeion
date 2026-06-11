@@ -8,6 +8,6 @@ coordinates for astro-cartography / astrolocality mapping.
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from .acg_factory import AstroCartographyFactory
+from .acg_factory import ACGLineModel, ACGLinePointModel, AstroCartographyFactory
 
-__all__ = ["AstroCartographyFactory"]
+__all__ = ["AstroCartographyFactory", "ACGLineModel", "ACGLinePointModel"]

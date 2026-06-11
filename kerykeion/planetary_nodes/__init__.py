@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Planetary nodes and apsides module."""
 
-from .nodes_factory import PlanetaryNodesFactory
+from .nodes_factory import PlanetaryNodeModel, PlanetaryNodesCollectionModel, PlanetaryNodesFactory
 
-__all__ = ["PlanetaryNodesFactory"]
+__all__ = ["PlanetaryNodesFactory", "PlanetaryNodeModel", "PlanetaryNodesCollectionModel"]

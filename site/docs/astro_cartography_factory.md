@@ -44,19 +44,19 @@ Compute ACG lines for a natal chart.
 | `lat_range` | tuple                    | (-66, 66)  | Latitude range to compute (avoids polar instability)     |
 | `planets`   | List[str] or None        | None       | Planet names (defaults to Sun through Pluto)             |
 
-**Returns:** `List[ACGLine]` -- one per planet per line type.
+**Returns:** `List[ACGLineModel]` -- one per planet per line type.
 
 ## Data Models
 
-### `ACGLine`
+### `ACGLineModel`
 
 | Field       | Type                                  | Description                              |
 | :---------- | :------------------------------------ | :--------------------------------------- |
 | `planet`    | str                                   | Planet name                              |
 | `line_type` | Literal["ASC", "DSC", "MC", "IC"]     | Angular line type                        |
-| `points`    | List[ACGLinePoint]                    | Geographic coordinates of the line       |
+| `points`    | List[ACGLinePointModel]                    | Geographic coordinates of the line       |
 
-### `ACGLinePoint`
+### `ACGLinePointModel`
 
 | Field       | Type  | Description                              |
 | :---------- | :---- | :--------------------------------------- |

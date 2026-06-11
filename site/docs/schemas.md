@@ -385,13 +385,13 @@ These models are returned by the v6 advanced calculation factories. Each factory
 
 | Model | Factory | Description |
 | :---- | :------ | :---------- |
-| `SecondaryProgressionsResult` | [`SecondaryProgressionFactory`](/content/docs/secondary_progressions_factory) | Progressed subject + progressed-to-natal aspects |
-| `ProgressedToNatalAspect` | `SecondaryProgressionFactory` | A single progressed-to-natal aspect contact |
+| `SecondaryProgressionsResultModel` | [`SecondaryProgressionFactory`](/content/docs/secondary_progressions_factory) | Progressed subject + progressed-to-natal aspects |
+| `ProgressedToNatalAspectModel` | `SecondaryProgressionFactory` | A single progressed-to-natal aspect contact |
 | `SolarArcSubjectModel` | [`SolarArcFactory`](/content/docs/solar_arc_factory) | Solar arc, directed points, directed-to-natal aspects |
-| `SolarArcDirectedPoint` | `SolarArcFactory` | A natal point after applying the solar-arc shift |
-| `SolarArcDirectedAspect` | `SolarArcFactory` | A directed-to-natal aspect |
+| `SolarArcDirectedPointModel` | `SolarArcFactory` | A natal point after applying the solar-arc shift |
+| `SolarArcDirectedAspectModel` | `SolarArcFactory` | A directed-to-natal aspect |
 | `PrimaryDirectionModel` | [`PrimaryDirectionsFactory`](/content/docs/primary_directions_factory) | A single primary direction result (arc, years) |
-| `SpeculumEntry` | `PrimaryDirectionsFactory` | Speculum coordinate table entry |
+| `SpeculumEntryModel` | `PrimaryDirectionsFactory` | Speculum coordinate table entry |
 | `MidpointModel` | [`MidpointFactory`](/content/docs/midpoint_factory) | Midpoint of two points + aspect activations |
 | `MidpointAspectModel` | `MidpointFactory` | An aspect formed between a midpoint and a third point |
 
@@ -408,8 +408,8 @@ These models are returned by the v6 advanced calculation factories. Each factory
 | `PlanetaryNodeModel` | `PlanetaryNodesFactory` | Nodes and apsides for one planet |
 | `HeliacalEventModel` | [`HeliacalFactory`](/content/docs/heliacal_factory) | A single heliacal visibility event |
 | `OccultationModel` | [`OccultationFactory`](/content/docs/occultation_factory) | A single lunar occultation event |
-| `ACGLine` | [`AstroCartographyFactory`](/content/docs/astro_cartography_factory) | A planetary line on the ACG map |
-| `ACGLinePoint` | `AstroCartographyFactory` | A geographic coordinate on an ACG line |
+| `ACGLineModel` | [`AstroCartographyFactory`](/content/docs/astro_cartography_factory) | A planetary line on the ACG map |
+| `ACGLinePointModel` | `AstroCartographyFactory` | A geographic coordinate on an ACG line |
 
 ---
 

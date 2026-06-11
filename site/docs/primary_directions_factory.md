@@ -69,7 +69,7 @@ Compute primary directions for a natal chart.
 | `direction_years` | float | Equivalent years using the selected rate key      |
 | `rate_key`        | str   | Rate key used (ptolemy or naibod)                 |
 
-### `SpeculumEntry`
+### `SpeculumEntryModel`
 
 The speculum (coordinate table) for each point can be retrieved separately:
 

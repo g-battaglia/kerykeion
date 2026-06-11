@@ -28,17 +28,17 @@ from pydantic import BaseModel, Field
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 
 
-class ACGLinePoint(BaseModel):
+class ACGLinePointModel(BaseModel):
     """A single point on a planetary line."""
     longitude: float = Field(description="Geographic longitude (-180 to +180)")
     latitude: float = Field(description="Geographic latitude (-90 to +90)")
 
 
-class ACGLine(BaseModel):
+class ACGLineModel(BaseModel):
     """A planetary line on the astro-cartography map."""
     planet: str = Field(description="Planet name")
     line_type: Literal["ASC", "DSC", "MC", "IC"] = Field(description="Angular line type")
-    points: List[ACGLinePoint] = Field(description="Geographic coordinates of the line")
+    points: List[ACGLinePointModel] = Field(description="Geographic coordinates of the line")
 
 
 # Swiss Ephemeris body ids for the supported ACG planets.
@@ -89,7 +89,7 @@ class AstroCartographyFactory:
         tolerance: Optional[float] = None,
         lat_range: tuple = (-66, 66),
         planets: Optional[List[str]] = None,
-    ) -> List[ACGLine]:
+    ) -> List[ACGLineModel]:
         """
         Compute ACG lines for a natal chart.
 
@@ -122,7 +122,7 @@ class AstroCartographyFactory:
             planets: List of planet names. Defaults to Sun through Pluto.
 
         Returns:
-            List of ACGLine objects, one per planet per line type.
+            List of ACGLineModel objects, one per planet per line type.
         """
         if planets is None:
             planets = AstroCartographyFactory.PLANETS
@@ -138,10 +138,10 @@ class AstroCartographyFactory:
         if not selected:
             return []
 
-        mc_lines: Dict[str, ACGLine] = {}
-        ic_lines: Dict[str, ACGLine] = {}
-        asc_lines: Dict[str, List[ACGLinePoint]] = {p: [] for p in selected}
-        dsc_lines: Dict[str, List[ACGLinePoint]] = {p: [] for p in selected}
+        mc_lines: Dict[str, ACGLineModel] = {}
+        ic_lines: Dict[str, ACGLineModel] = {}
+        asc_lines: Dict[str, List[ACGLinePointModel]] = {p: [] for p in selected}
+        dsc_lines: Dict[str, List[ACGLinePointModel]] = {p: [] for p in selected}
 
         with ephemeris_session() as iflag:
             # Greenwich (apparent) sidereal time in degrees; swe.calc_ut with
@@ -165,16 +165,16 @@ class AstroCartographyFactory:
 
                 # MC/IC lines are vertical (same lng, range of latitudes)
                 mc_points = [
-                    ACGLinePoint(longitude=round(mc_geo_lng, 4), latitude=lat)
+                    ACGLinePointModel(longitude=round(mc_geo_lng, 4), latitude=lat)
                     for lat in range(int(lat_min), int(lat_max) + 1, max(1, int(step)))
                 ]
                 ic_points = [
-                    ACGLinePoint(longitude=round(ic_geo_lng, 4), latitude=lat)
+                    ACGLinePointModel(longitude=round(ic_geo_lng, 4), latitude=lat)
                     for lat in range(int(lat_min), int(lat_max) + 1, max(1, int(step)))
                 ]
 
-                mc_lines[pname] = ACGLine(planet=pname, line_type="MC", points=mc_points)
-                ic_lines[pname] = ACGLine(planet=pname, line_type="IC", points=ic_points)
+                mc_lines[pname] = ACGLineModel(planet=pname, line_type="MC", points=mc_points)
+                ic_lines[pname] = ACGLineModel(planet=pname, line_type="IC", points=ic_points)
 
                 # ASC/DSC lines: for each latitude, the body is on the
                 # geometric horizon when cos H = -tan(lat) * tan(dec). No
@@ -189,21 +189,33 @@ class AstroCartographyFactory:
                         rise_lng = _wrap180(ra_deg - h0_deg - gst_deg)
                         set_lng = _wrap180(ra_deg + h0_deg - gst_deg)
                         asc_lines[pname].append(
-                            ACGLinePoint(longitude=round(rise_lng, 4), latitude=round(lat, 4))
+                            ACGLinePointModel(longitude=round(rise_lng, 4), latitude=round(lat, 4))
                         )
                         dsc_lines[pname].append(
-                            ACGLinePoint(longitude=round(set_lng, 4), latitude=round(lat, 4))
+                            ACGLinePointModel(longitude=round(set_lng, 4), latitude=round(lat, 4))
                         )
                     lat += step
 
         # Assemble results
-        result: List[ACGLine] = []
+        result: List[ACGLineModel] = []
         for pname in selected:
             result.append(mc_lines[pname])
             result.append(ic_lines[pname])
             if asc_lines[pname]:
-                result.append(ACGLine(planet=pname, line_type="ASC", points=asc_lines[pname]))
+                result.append(ACGLineModel(planet=pname, line_type="ASC", points=asc_lines[pname]))
             if dsc_lines[pname]:
-                result.append(ACGLine(planet=pname, line_type="DSC", points=dsc_lines[pname]))
+                result.append(ACGLineModel(planet=pname, line_type="DSC", points=dsc_lines[pname]))
 
         return result
+
+
+# Deprecated pre-6.0.0b1 names. TODO remove in 6.0.0 stable.
+from kerykeion._deprecation import deprecated_alias_getattr  # noqa: E402
+
+__getattr__ = deprecated_alias_getattr(
+    __name__,
+    {
+        "ACGLine": ACGLineModel,
+        "ACGLinePoint": ACGLinePointModel,
+    },
+)

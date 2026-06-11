@@ -41,7 +41,7 @@ from kerykeion.utilities import datetime_to_julian
 # on long progression spans; 365.24219 is the astronomically correct value.
 DAYS_PER_TROPICAL_YEAR = 365.24219
 
-class ProgressedToNatalAspect(BaseModel):
+class ProgressedToNatalAspectModel(BaseModel):
     """A progressed-to-natal aspect contact — the predictive timing signal."""
 
     progressed_point: str = Field(description="Name of the progressed (moving) point.")
@@ -53,7 +53,7 @@ class ProgressedToNatalAspect(BaseModel):
     orb: float
 
 
-class SecondaryProgressionsResult(BaseModel):
+class SecondaryProgressionsResultModel(BaseModel):
     """Full secondary progressions result: progressed subject + cross-aspects."""
 
     natal_name: str
@@ -66,7 +66,7 @@ class SecondaryProgressionsResult(BaseModel):
         )
     )
     progressed_subject: AstrologicalSubjectModel
-    progressed_to_natal_aspects: List[ProgressedToNatalAspect] = Field(default_factory=list)
+    progressed_to_natal_aspects: List[ProgressedToNatalAspectModel] = Field(default_factory=list)
 
 _ANCIENT_ISO_RE = re.compile(
     r"^(?P<year>[+-]?\d{4,})-(?P<month>\d{2})-(?P<day>\d{2})"
@@ -400,7 +400,7 @@ class SecondaryProgressionFactory:
         aspects: Optional[Sequence[str]] = None,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
-    ) -> SecondaryProgressionsResult:
+    ) -> SecondaryProgressionsResultModel:
         """Build the progressed chart with optional progressed-to-natal aspects.
 
         Wraps :meth:`compute` and adds cross-chart aspect detection, following
@@ -429,7 +429,7 @@ class SecondaryProgressionFactory:
                 adjustments when a table is supplied (default ``"max_explicit"``).
 
         Returns:
-            A :class:`SecondaryProgressionsResult` with the progressed subject
+            A :class:`SecondaryProgressionsResultModel` with the progressed subject
             and (optionally) the cross-aspect contacts.
         """
         progressed = SecondaryProgressionFactory.compute(
@@ -448,7 +448,7 @@ class SecondaryProgressionFactory:
         result_target_iso = SecondaryProgressionFactory._jd_to_utc_iso(target_jd)
         ephemeris_iso = SecondaryProgressionFactory._jd_to_utc_iso(progressed_jd)
 
-        progressed_to_natal: List[ProgressedToNatalAspect] = []
+        progressed_to_natal: List[ProgressedToNatalAspectModel] = []
         if compute_aspects:
             progressed_points = gather_active_points(progressed, active_points)
             natal_targets = gather_active_points(natal_subject, natal_subject.active_points)
@@ -471,7 +471,7 @@ class SecondaryProgressionFactory:
                     )
                     if outcome.get("verdict"):
                         progressed_to_natal.append(
-                            ProgressedToNatalAspect(
+                            ProgressedToNatalAspectModel(
                                 progressed_point=prog_name,
                                 natal_point=natal_name,
                                 progressed_abs_pos=prog_pos,
@@ -482,10 +482,22 @@ class SecondaryProgressionFactory:
                             )
                         )
 
-        return SecondaryProgressionsResult(
+        return SecondaryProgressionsResultModel(
             natal_name=natal_subject.name,
             target_iso_utc_datetime=result_target_iso,
             ephemeris_iso_utc_datetime=ephemeris_iso,
             progressed_subject=progressed,
             progressed_to_natal_aspects=progressed_to_natal,
         )
+
+
+# Deprecated pre-6.0.0b1 names. TODO remove in 6.0.0 stable.
+from kerykeion._deprecation import deprecated_alias_getattr  # noqa: E402
+
+__getattr__ = deprecated_alias_getattr(
+    __name__,
+    {
+        "ProgressedToNatalAspect": ProgressedToNatalAspectModel,
+        "SecondaryProgressionsResult": SecondaryProgressionsResultModel,
+    },
+)

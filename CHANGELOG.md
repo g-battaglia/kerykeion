@@ -7,10 +7,24 @@ _2026-06-11_
 First beta. Pre-beta stabilization pass: process-wide thread safety for
 ephemeris access, sidereal-zodiac correctness across every search and
 refinement path, aspect and SVG-rendering fixes, hardened event finders,
-packaging cleanup — followed by a three-round pre-beta review with a final
+packaging cleanup — followed by a five-round pre-beta review with a final
 hardening pass (below).
 
 ### Added (beta hardening)
+
+- **Public model export parity** — every public Pydantic model (87) is now
+  importable from `kerykeion.schemas`, the canonical home the `kr_types`
+  deprecation message points to (37 were previously reachable only from the
+  deprecated path or deep module paths). Feature subpackages (`eclipses`,
+  `astro_cartography`, `primary_directions`, `planetary_nodes`) now export
+  their result models, and top-level `kerykeion` exports every model returned
+  by a public factory (`AstrologicalSubjectModel`, `TransitEventsTimeRangeModel`,
+  `SolarEclipseModel`, ...). A new regression test
+  (`tests/core/test_public_api_surface.py`) locks the policy: schemas parity,
+  subpackage exports, factory-return exports, `typing.get_type_hints` on every
+  public model, and `*Model` naming.
+- **`kerykeion.__version__`** — the installed package version, read from
+  package metadata at import time.
 
 - **v5 migration errors** — importing the removed v5 entry points
   (`AstrologicalSubject`, `KerykeionChartSVG`, `NatalAspects`,
@@ -28,6 +42,17 @@ hardening pass (below).
 
 ### Changed (beta hardening)
 
+- **Model naming normalized to `*Model`** — eight new-in-v6 classes renamed
+  for consistency with the rest of the public models:
+  `SecondaryProgressionsResult` → `SecondaryProgressionsResultModel`,
+  `ProgressedToNatalAspect` → `ProgressedToNatalAspectModel`,
+  `SolarArcDirectedAspect` → `SolarArcDirectedAspectModel`,
+  `SolarArcDirectedPoint` → `SolarArcDirectedPointModel`,
+  `ACGLine` → `ACGLineModel`, `ACGLinePoint` → `ACGLinePointModel`,
+  `SpeculumEntry` → `SpeculumEntryModel`,
+  `FixedStarMetadata` → `FixedStarMetadataModel`. The old names keep working
+  as deprecated aliases (emitting `DeprecationWarning`) and will be removed in
+  6.0.0 stable.
 - **Quality gates green** — mypy (103 source files), pyright and ruff all pass;
   annotation-only fixes, no behavior changes.
 - **README** — all 68 embedded code snippets now validated against the real

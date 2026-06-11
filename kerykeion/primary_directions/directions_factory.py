@@ -50,7 +50,7 @@ from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 _ON_MERIDIAN_TOLERANCE = 1e-6
 
 
-class SpeculumEntry(BaseModel):
+class SpeculumEntryModel(BaseModel):
     """Speculum (coordinate table) entry for a single celestial point."""
     name: str
     ecliptic_longitude: float = Field(description="Ecliptic longitude (0-360), in the subject's zodiac")
@@ -231,7 +231,7 @@ class PrimaryDirectionsFactory:
         return directions
 
     @staticmethod
-    def compute_speculum(subject: AstrologicalSubjectModel) -> List[SpeculumEntry]:
+    def compute_speculum(subject: AstrologicalSubjectModel) -> List[SpeculumEntryModel]:
         """Compute and return the speculum (coordinate table) for a chart."""
         jd = subject.julian_day
         with ephemeris_session() as iflag:
@@ -250,7 +250,7 @@ class PrimaryDirectionsFactory:
         obliquity: float,
         ramc: float,
         geo_lat: float,
-    ) -> List[SpeculumEntry]:
+    ) -> List[SpeculumEntryModel]:
         """Build the speculum (RA, declination, semi-arc, pole, OA/OD) for all
         direction points.
 
@@ -259,7 +259,7 @@ class PrimaryDirectionsFactory:
         """
         from kerykeion.astrological_subject_factory import STANDARD_PLANETS
 
-        entries: List[SpeculumEntry] = []
+        entries: List[SpeculumEntryModel] = []
         lat_rad = math.radians(geo_lat)
 
         # For sidereal charts abs_pos is sidereal; the ecliptic->equatorial
@@ -344,7 +344,7 @@ class PrimaryDirectionsFactory:
             else:
                 oa = PrimaryDirectionsFactory._oblique_descension(ra, dec, pole)
 
-            entries.append(SpeculumEntry(
+            entries.append(SpeculumEntryModel(
                 name=point_name,
                 ecliptic_longitude=round(ecl_lon, 4),
                 right_ascension=round(ra, 4),
@@ -448,3 +448,9 @@ class PrimaryDirectionsFactory:
     def _oblique_descension(ra: float, dec: float, pole: float) -> float:
         """Oblique descension of a point under a given pole: OD = RA + AD."""
         return (ra + PrimaryDirectionsFactory._ascensional_difference(dec, pole)) % 360
+
+
+# Deprecated pre-6.0.0b1 name. TODO remove in 6.0.0 stable.
+from kerykeion._deprecation import deprecated_alias_getattr  # noqa: E402
+
+__getattr__ = deprecated_alias_getattr(__name__, {"SpeculumEntry": SpeculumEntryModel})

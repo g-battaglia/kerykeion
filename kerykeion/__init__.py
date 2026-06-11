@@ -51,6 +51,14 @@ Main Classes
 This is part of Kerykeion (C) 2025-2026 Giacomo Battaglia
 """
 
+from importlib.metadata import PackageNotFoundError as _PackageNotFoundError
+from importlib.metadata import version as _package_version
+
+try:
+    __version__ = _package_version("kerykeion")
+except _PackageNotFoundError:  # running from a source tree without installation
+    __version__ = "0.0.0"
+
 # =============================================================================
 # CORE FACTORIES
 # =============================================================================
@@ -69,7 +77,12 @@ from .void_of_course_moon import VoidOfCourseMoonFactory
 # STANDALONE FACTORIES
 # =============================================================================
 from .planetary_phenomena import PlanetaryPhenomenaFactory
-from .eclipses import EclipseFactory
+from .eclipses import (
+    EclipseFactory,
+    EclipseSearchResultModel,
+    LunarEclipseModel,
+    SolarEclipseModel,
+)
 from .lunations import LunationFinderFactory, LunationModel, LunationsCollectionModel
 from .retrograde_stations import (
     RetrogradeStationFactory,
@@ -81,22 +94,22 @@ from .sign_ingresses import (
     IngressModel,
     SignIngressesCollectionModel,
 )
-from .planetary_nodes import PlanetaryNodesFactory
-from .heliacal import HeliacalFactory
-from .occultations import OccultationFactory
+from .planetary_nodes import PlanetaryNodesFactory, PlanetaryNodeModel, PlanetaryNodesCollectionModel
+from .heliacal import HeliacalFactory, HeliacalEventModel
+from .occultations import OccultationFactory, OccultationModel
 from .relocated_chart_factory import RelocatedChartFactory
-from .fixed_stars import FixedStarDiscoveryFactory
-from .primary_directions import PrimaryDirectionsFactory
-from .astro_cartography import AstroCartographyFactory
+from .fixed_stars import FixedStarDiscoveryFactory, FixedStarMetadataModel
+from .primary_directions import PrimaryDirectionsFactory, PrimaryDirectionModel, SpeculumEntryModel
+from .astro_cartography import AstroCartographyFactory, ACGLineModel, ACGLinePointModel
 from .midpoints import MidpointFactory, MidpointModel, MidpointAspectModel
 from .secondary_progressions import (
-    ProgressedToNatalAspect,
+    ProgressedToNatalAspectModel,
     SecondaryProgressionFactory,
-    SecondaryProgressionsResult,
+    SecondaryProgressionsResultModel,
     SolarArcFactory,
-    SolarArcDirectedAspect,
+    SolarArcDirectedAspectModel,
     SolarArcSubjectModel,
-    SolarArcDirectedPoint,
+    SolarArcDirectedPointModel,
 )
 
 # =============================================================================
@@ -119,14 +132,25 @@ from .report import ReportGenerator
 # =============================================================================
 from .schemas import KerykeionException
 from .schemas.kr_models import (
+    AstrologicalSubjectModel,
+    CompositeSubjectModel,
+    KerykeionPointModel,
+    AspectModel,
     MoonPhaseOverviewModel,
     ChartDataModel,
     SingleChartDataModel,
     DualChartDataModel,
+    SingleChartAspectsModel,
+    DualChartAspectsModel,
     ElementDistributionModel,
     QualityDistributionModel,
     HouseComparisonModel,
     PlanetReturnModel,
+    TransitEventModel,
+    TransitEventsTimeRangeModel,
+    TransitsTimeRangeModel,
+    PlanetaryPhenomenaModel,
+    PlanetaryPhenomenaCollectionModel,
     SunTimesModel,
     PlanetaryHourModel,
     PlanetaryHoursModel,
@@ -168,6 +192,9 @@ __all__ = [
     # Standalone Factories
     "PlanetaryPhenomenaFactory",
     "EclipseFactory",
+    "EclipseSearchResultModel",
+    "SolarEclipseModel",
+    "LunarEclipseModel",
     "LunationFinderFactory",
     "LunationModel",
     "LunationsCollectionModel",
@@ -178,21 +205,30 @@ __all__ = [
     "IngressModel",
     "SignIngressesCollectionModel",
     "PlanetaryNodesFactory",
+    "PlanetaryNodeModel",
+    "PlanetaryNodesCollectionModel",
     "HeliacalFactory",
+    "HeliacalEventModel",
     "OccultationFactory",
+    "OccultationModel",
     "RelocatedChartFactory",
     "FixedStarDiscoveryFactory",
+    "FixedStarMetadataModel",
     "PrimaryDirectionsFactory",
+    "PrimaryDirectionModel",
+    "SpeculumEntryModel",
     "AstroCartographyFactory",
+    "ACGLineModel",
+    "ACGLinePointModel",
     "MidpointFactory",
     "MidpointModel",
     "MidpointAspectModel",
-    "ProgressedToNatalAspect",
+    "ProgressedToNatalAspectModel",
     "SecondaryProgressionFactory",
-    "SecondaryProgressionsResult",
+    "SecondaryProgressionsResultModel",
     "SolarArcFactory",
-    "SolarArcDirectedAspect",
-    "SolarArcDirectedPoint",
+    "SolarArcDirectedAspectModel",
+    "SolarArcDirectedPointModel",
     "SolarArcSubjectModel",
     # Analysis Factories
     "AspectsFactory",
@@ -207,13 +243,24 @@ __all__ = [
     "ReportGenerator",
     # Data Models
     "KerykeionException",
+    "AstrologicalSubjectModel",
+    "CompositeSubjectModel",
+    "KerykeionPointModel",
+    "AspectModel",
     "ChartDataModel",
     "SingleChartDataModel",
     "DualChartDataModel",
+    "SingleChartAspectsModel",
+    "DualChartAspectsModel",
     "ElementDistributionModel",
     "QualityDistributionModel",
     "HouseComparisonModel",
     "PlanetReturnModel",
+    "TransitEventModel",
+    "TransitEventsTimeRangeModel",
+    "TransitsTimeRangeModel",
+    "PlanetaryPhenomenaModel",
+    "PlanetaryPhenomenaCollectionModel",
     "MoonPhaseOverviewModel",
     "SunTimesModel",
     "PlanetaryHourModel",
@@ -265,9 +312,29 @@ _V5_REMOVED_NAMES = {
 }
 
 
+# Deprecated pre-6.0.0b1 model names. TODO remove in 6.0.0 stable.
+_RENAMED_IN_V6_BETA = {
+    "ProgressedToNatalAspect": ProgressedToNatalAspectModel,
+    "SecondaryProgressionsResult": SecondaryProgressionsResultModel,
+    "SolarArcDirectedAspect": SolarArcDirectedAspectModel,
+    "SolarArcDirectedPoint": SolarArcDirectedPointModel,
+}
+
+
 def __getattr__(name: str):
     # ImportError (not AttributeError) so that `from kerykeion import AstrologicalSubject`
     # surfaces this message verbatim instead of Python's generic "cannot import name".
     if name in _V5_REMOVED_NAMES:
         raise ImportError(f"{_V5_REMOVED_NAMES[name]}\nMigration guide: {_MIGRATION_GUIDE_URL}")
+    if name in _RENAMED_IN_V6_BETA:
+        import warnings
+
+        replacement = _RENAMED_IN_V6_BETA[name]
+        warnings.warn(
+            f"'kerykeion.{name}' is deprecated, use '{replacement.__name__}' instead. "
+            "This alias will be removed in kerykeion 6.0.0 stable.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return replacement
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

@@ -20,7 +20,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
-class FixedStarMetadata(BaseModel):
+class FixedStarMetadataModel(BaseModel):
     """Metadata for a single fixed star entry from the catalog."""
 
     name: str = Field(description="IAU canonical name (e.g. 'Vindemiatrix', 'Deneb Algedi').")
@@ -38,13 +38,13 @@ def _to_slug(name: str) -> str:
 
 
 @lru_cache(maxsize=1)
-def _load_catalog() -> tuple[FixedStarMetadata, ...]:
+def _load_catalog() -> tuple[FixedStarMetadataModel, ...]:
     """Load and cache the libephemeris catalog as metadata tuples."""
     from libephemeris.fixed_stars import list_fixed_stars
 
     entries = list_fixed_stars()
     return tuple(
-        FixedStarMetadata(
+        FixedStarMetadataModel(
             name=e.name,
             slug=_to_slug(e.name),
             hip_number=getattr(e, "hip_number", None),
@@ -59,7 +59,7 @@ class FixedStarCatalog:
     """Read-only accessor over the libephemeris fixed-star catalog."""
 
     @staticmethod
-    def list_all() -> list[FixedStarMetadata]:
+    def list_all() -> list[FixedStarMetadataModel]:
         """Return the full catalog as a list (a fresh shallow copy each call)."""
         return list(_load_catalog())
 
@@ -69,7 +69,7 @@ class FixedStarCatalog:
         return len(_load_catalog())
 
     @staticmethod
-    def find(name: str) -> Optional[FixedStarMetadata]:
+    def find(name: str) -> Optional[FixedStarMetadataModel]:
         """Look up by IAU name or slug, case-insensitive, ``-``/``_``/space-insensitive."""
         target = _to_slug(name).lower()
         for entry in _load_catalog():
@@ -81,3 +81,9 @@ class FixedStarCatalog:
     def known_slugs() -> frozenset[str]:
         """Return all slug identifiers available in the catalog."""
         return frozenset(entry.slug for entry in _load_catalog())
+
+
+# Deprecated pre-6.0.0b1 name. TODO remove in 6.0.0 stable.
+from kerykeion._deprecation import deprecated_alias_getattr  # noqa: E402
+
+__getattr__ = deprecated_alias_getattr(__name__, {"FixedStarMetadata": FixedStarMetadataModel})
