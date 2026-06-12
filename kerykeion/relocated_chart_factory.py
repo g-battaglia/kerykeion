@@ -203,7 +203,14 @@ class RelocatedChartFactory:
             utc_dt = datetime.fromisoformat(subject.iso_formatted_utc_datetime)
             if utc_dt.tzinfo is None:
                 utc_dt = utc_dt.replace(tzinfo=timezone.utc)
-            relocated_data["iso_formatted_local_datetime"] = utc_dt.astimezone(pytz.timezone(new_tz_str)).isoformat()
+            relocated_local_dt = utc_dt.astimezone(pytz.timezone(new_tz_str))
+            relocated_data["iso_formatted_local_datetime"] = relocated_local_dt.isoformat()
+            relocated_data["year"] = relocated_local_dt.year
+            relocated_data["month"] = relocated_local_dt.month
+            relocated_data["day"] = relocated_local_dt.day
+            relocated_data["hour"] = relocated_local_dt.hour
+            relocated_data["minute"] = relocated_local_dt.minute
+            relocated_data["seconds"] = relocated_local_dt.second
             # The weekday follows the local calendar date, which can change
             # across timezones for the same UTC instant.
             from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory as _ASF

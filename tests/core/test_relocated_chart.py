@@ -251,6 +251,37 @@ class TestRelocatedDerivedPoints:
         assert relocated_local.utcoffset() != natal_local.utcoffset()
         assert relocated_local.astimezone(natal_local.tzinfo) == natal_local
 
+    def test_local_date_fields_recomputed_with_new_tz_boundary(self):
+        natal = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Timezone Boundary Subject",
+            "2024-01-01T23:30:15Z",
+            lng=0.0,
+            lat=51.5,
+            tz_str="Etc/GMT",
+            city="Greenwich",
+            nation="GB",
+            online=False,
+        )
+        relocated = RelocatedChartFactory.relocate(
+            natal,
+            new_lat=35.6895,
+            new_lng=139.6917,
+            new_city="Tokyo",
+            new_nation="JP",
+            new_tz_str="Asia/Tokyo",
+        )
+        relocated_local = datetime.fromisoformat(relocated.iso_formatted_local_datetime)
+
+        assert relocated.iso_formatted_local_datetime.startswith("2024-01-02T08:30:15")
+        assert (relocated.year, relocated.month, relocated.day, relocated.hour, relocated.minute) == (
+            relocated_local.year,
+            relocated_local.month,
+            relocated_local.day,
+            relocated_local.hour,
+            relocated_local.minute,
+        )
+        assert relocated.day_of_week == "Tuesday"
+
     def test_local_datetime_kept_without_new_tz(self, natal):
         relocated = RelocatedChartFactory.relocate(natal, new_lat=40.7128, new_lng=-74.006, new_city="New York")
         assert relocated.iso_formatted_local_datetime == natal.iso_formatted_local_datetime
