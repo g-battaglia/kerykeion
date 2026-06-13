@@ -406,3 +406,33 @@ class TestEclipseEnrichment:
                 assert ecl.magnitude_umbral <= 0
             else:
                 assert ecl.magnitude_umbral > 0
+
+
+@pytest.mark.parametrize(
+    "module_path",
+    [
+        "kerykeion.eclipses.eclipse_factory",
+        "kerykeion.lunations.lunation_factory",
+        "kerykeion.occultations.occultation_factory",
+    ],
+)
+def test_jd_to_iso_rolls_over_midnight(module_path):
+    """A time rounding up to 24:00:00 must roll over to 00:00:00 of the next
+    calendar day (carrying the month/year boundary) instead of clamping to
+    23:59:59 of the same day. The three private ``_jd_to_iso`` helpers share
+    this logic, so all three are checked."""
+    import importlib
+
+    _jd_to_iso = importlib.import_module(module_path)._jd_to_iso
+
+    # 2020-01-31 23:59:59.8 UT → rounds to next-day midnight, across the month
+    # (and is a leap year, exercising the day/month carry).
+    jd = swe.julday(2020, 2, 1, 0.0) - (0.2 / 86400.0)
+    assert _jd_to_iso(jd) == "2020-02-01T00:00:00Z"
+
+    # A year boundary too: 2019-12-31 23:59:59.9 UT → 2020-01-01T00:00:00Z.
+    jd_year = swe.julday(2020, 1, 1, 0.0) - (0.1 / 86400.0)
+    assert _jd_to_iso(jd_year) == "2020-01-01T00:00:00Z"
+
+    # A normal mid-day time is unaffected.
+    assert _jd_to_iso(swe.julday(2020, 6, 15, 12.5)) == "2020-06-15T12:30:00Z"

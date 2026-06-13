@@ -350,3 +350,86 @@ class TestRelocatedStaleLocationFields:
         assert events[-1] == "session_reset", (
             f"swe calls escaped the ephemeris session during relocation: {events}"
         )
+
+
+class TestRelocatedLocalDatetimeRecompute:
+    """Unit tests for ``_recompute_local_datetime_fields``, the pure helper that
+    rebuilds the local calendar fields for a new timezone. The BCE path cannot
+    be exercised through the full ``relocate()`` flow with the short-range dev
+    ephemeris kernel, so the helper is tested directly (its only ephemeris call,
+    ``swe.revjul``, is pure calendar arithmetic and needs no kernel data)."""
+
+    def test_negative_year_subject_uses_lmt_path_without_crashing(self):
+        # NOTE: deliberately avoids the substring the conftest tier filter uses
+        # to gate extended-kernel tests — this helper only does pure calendar
+        # arithmetic (swe.revjul/julday) and needs no ephemeris data, so it must
+        # run on every tier.
+        from kerykeion.ephemeris_backend import swe
+        from kerykeion.utilities import format_ancient_iso
+
+        # Astronomical year -500. Treat this as the stored UT instant.
+        jd_ut = swe.julday(-500, 3, 21, 12.0, swe.JUL_CAL)
+        iso_utc = format_ancient_iso(-500, 3, 21, 12.0, 0.0)
+
+        # The very string a BCE subject stores is unparseable by fromisoformat —
+        # this is exactly the crash the BCE branch avoids.
+        with pytest.raises(ValueError):
+            datetime.fromisoformat(iso_utc)
+
+        new_lng = 139.6917  # Tokyo
+        data: dict = {}
+        RelocatedChartFactory._recompute_local_datetime_fields(
+            data,
+            year=-500,
+            julian_day=jd_ut,
+            new_lng=new_lng,
+            new_tz_str="Asia/Tokyo",
+            iso_utc=iso_utc,
+        )
+
+        lmt_offset = new_lng / 15.0
+        ey, em, ed, edh = swe.revjul(jd_ut + lmt_offset / 24.0, swe.JUL_CAL)
+        assert data["iso_formatted_local_datetime"] == format_ancient_iso(
+            int(ey), int(em), int(ed), edh, lmt_offset
+        )
+        assert data["iso_formatted_local_datetime"].startswith("-0500-")
+        assert (data["year"], data["month"], data["day"]) == (int(ey), int(em), int(ed))
+
+        # Integer h/m/s fields stay consistent with the ISO local string.
+        eh = int(edh)
+        erem = (edh - eh) * 60
+        emin = int(erem)
+        esec = int((erem - emin) * 60)
+        assert (data["hour"], data["minute"], data["seconds"]) == (eh, emin, esec)
+
+    def test_ce_subject_matches_pytz(self):
+        import pytz
+
+        iso_utc = "2024-01-01T23:30:15+00:00"
+        data: dict = {}
+        RelocatedChartFactory._recompute_local_datetime_fields(
+            data,
+            year=2024,
+            julian_day=0.0,  # unused on the CE path
+            new_lng=139.6917,
+            new_tz_str="Asia/Tokyo",
+            iso_utc=iso_utc,
+        )
+
+        expected = datetime.fromisoformat(iso_utc).astimezone(pytz.timezone("Asia/Tokyo"))
+        assert data["iso_formatted_local_datetime"] == expected.isoformat()
+        assert (
+            data["year"],
+            data["month"],
+            data["day"],
+            data["hour"],
+            data["minute"],
+            data["seconds"],
+        ) == (
+            expected.year,
+            expected.month,
+            expected.day,
+            expected.hour,
+            expected.minute,
+            expected.second,
+        )

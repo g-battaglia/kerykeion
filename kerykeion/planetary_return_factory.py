@@ -879,6 +879,16 @@ class PlanetaryReturnFactory:
         # Run both the natal lookup and the crossing search with the
         # subject's zodiac configuration so sidereal subjects are searched in
         # sidereal heliocentric longitude (matching the natal value).
+        #
+        # NOTE: unlike ``nod_aps_ut`` (see nodes_factory, which masks
+        # FLG_SIDEREAL out and subtracts the ayanamsa manually because the
+        # backend does not apply it there), both ``calc_ut`` and
+        # ``helio_cross_ut`` honor FLG_SIDEREAL directly — the crossing search
+        # tracks the drifting ayanamsa, so the returned moment is the true
+        # sidereal return (verified by
+        # test_planetary_return::test_heliocentric_return_sidereal_honors_frame).
+        # Do NOT "fix" this by masking the flag; that would yield the tropical
+        # return instead.
         with ephemeris_session(
             zodiac_type=self.subject.zodiac_type,
             sidereal_mode=self.subject.sidereal_mode,

@@ -411,9 +411,15 @@ class CompositeSubjectFactory:
         from kerykeion.ephemeris_backend import swe
 
         year, month, day, hour_frac = swe.revjul(mid_jd, getattr(swe, "GREG_CAL", 1))
-        hour = int(hour_frac)
-        minute = int((hour_frac - hour) * 60)
-        seconds = int(((hour_frac - hour) * 60 - minute) * 60)
+        # Round the midpoint instant to the nearest whole second (rather than
+        # truncating, which dropped up to ~1s), carrying any minute/hour/day
+        # overflow via revjul so we never emit a 60-second field.
+        total_secs = int(hour_frac * 3600 + 0.5)
+        if total_secs >= 86400:
+            year, month, day, _ = swe.revjul(mid_jd + 0.5 / 86400.0, getattr(swe, "GREG_CAL", 1))
+            total_secs = 0
+        hour, rem = divmod(total_secs, 3600)
+        minute, seconds = divmod(rem, 60)
 
         extra_kwargs: dict = {}
         if custom_ayanamsa_t0 is not None:

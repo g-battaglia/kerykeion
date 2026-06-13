@@ -73,7 +73,13 @@ def _jd_to_iso(jd: float) -> str:
     extended-year sign for negative years.
     """
     year, month, day, hour_frac = swe.revjul(jd)
-    secs = min(int(hour_frac * 3600 + 0.5), 86399)  # nearest second, no 24:00 carry
+    secs = int(hour_frac * 3600 + 0.5)  # nearest second
+    if secs >= 86400:
+        # Rounds up to 24:00:00 — roll over to 00:00:00 of the next calendar
+        # day (carrying month/year boundaries via revjul) rather than clamping
+        # to 23:59:59 of the same day.
+        year, month, day, _ = swe.revjul(jd + 0.5 / 86400.0)
+        secs = 0
     hours, rem = divmod(secs, 3600)
     minutes, seconds = divmod(rem, 60)
     year_str = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"

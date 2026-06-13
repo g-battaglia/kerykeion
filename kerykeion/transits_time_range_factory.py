@@ -225,6 +225,37 @@ class TransitsTimeRangeFactory:
         self.settings_file = settings_file
         self.axis_orb_limit = axis_orb_limit
         self._warn_if_frame_mismatch()
+        self._warn_if_unordered()
+
+    def _warn_if_unordered(self) -> None:
+        """Warn when the ephemeris series is not in chronological order.
+
+        Edge/truncation detection in ``get_transit_moments`` keys off
+        ``transits[0]`` / ``transits[-1]`` as the first/last sampled instants,
+        which is only valid when ``ephemeris_data_points`` are chronologically
+        non-decreasing (a documented precondition). Out-of-order input would
+        silently mis-flag truncation and the refinement bracket extension, so
+        surface it loudly. Unparseable timestamps (e.g. BCE extended-year
+        strings) are skipped rather than treated as a violation.
+        """
+        prev = None
+        for point in self.ephemeris_data_points:
+            try:
+                current = datetime.fromisoformat(point.iso_formatted_utc_datetime)
+            except (TypeError, ValueError):
+                prev = None  # can't compare across an unparseable boundary
+                continue
+            if prev is not None and current < prev:
+                logging.warning(
+                    "ephemeris_data_points are not in chronological order "
+                    "(found %s after %s). Transit edge detection and exact-moment "
+                    "refinement assume a non-decreasing time series; reorder the "
+                    "points or rebuild the series with a forward time range.",
+                    current.isoformat(),
+                    prev.isoformat(),
+                )
+                return
+            prev = current
 
     def _warn_if_frame_mismatch(self) -> None:
         """Warn when the natal chart and the ephemeris series disagree on frame.

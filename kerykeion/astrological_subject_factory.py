@@ -1368,7 +1368,13 @@ class AstrologicalSubjectFactory:
             lat (float, optional): Latitude in decimal degrees. If not provided
                 and online=True, fetched from GeoNames API.
             tz_str (str, optional): IANA timezone identifier. If not provided
-                and online=True, fetched from GeoNames API.
+                and online=True, fetched from GeoNames API. Note: passing
+                ``tz_str`` together with ``online=True`` and a ``city`` is
+                contradictory — the current instant is read in ``tz_str``, but
+                the GeoNames lookup may resolve the city to a different zone,
+                leaving the wall-clock time inconsistent with the resolved
+                location. Supply a full offline location (lng/lat/tz_str) or
+                rely entirely on the online lookup.
             geonames_username (str, optional): GeoNames API username for location
                 lookup. Required when online=True and location is not fully specified.
             online (bool, optional): Whether to fetch location data online.

@@ -17,6 +17,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from kerykeion.charts.charts_utils import (
     DOUBLE_CHART_TYPES,
     degreeDiff,
+    escape_svg_text,
     sliceToX,
     sliceToY,
     convert_decimal_to_degree_string,
@@ -815,7 +816,7 @@ def _generate_point_svg(
     parts: list[str] = [
         f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
         f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',
-        f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr}{horoscope_attr}{gauq_attr} ',
+        f'kr:signposition="{point_details["position"]}" kr:slug="{escape_svg_text(point_details["name"])}"{retro_attr}{horoscope_attr}{gauq_attr} ',
         f'kr:cx="{x}" kr:cy="{y}" ',
         f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
         f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{glyph_ref}" />',
@@ -876,7 +877,7 @@ def _draw_external_natal_lines(
 
     return (
         output
-        + f'<g kr:node="ConnectingLine" kr:slug="{point_name}">'
+        + f'<g kr:node="ConnectingLine" kr:slug="{escape_svg_text(point_name)}">'
         + f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
         + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
         + f'<line x1="{x2}" y1="{y2}" x2="{x3}" y2="{y3}" '
@@ -950,7 +951,7 @@ def _draw_primary_point_indicators(
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         point_slug = points_settings[point_idx]["name"]
         parts.append(
-            f'<g kr:node="Indicator" kr:slug="{point_slug}">'
+            f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_slug)}">'
             f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
             f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
             f'<g transform="translate({deg_x},{deg_y})">'
@@ -1018,7 +1019,7 @@ def _draw_inner_point_indicators(
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         point_slug = points_settings[point_idx]["name"]
         parts.append(
-            f'<g kr:node="Indicator" kr:slug="{point_slug}">'
+            f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_slug)}">'
             f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
             f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
             f'<g transform="translate({deg_x},{deg_y})">'
@@ -1135,7 +1136,7 @@ def _draw_secondary_points(
                 if point_details is not None and point_details.point_type == "House"
                 else resolve_glyph_id(point_name)
             )
-        kr_attrs = f'kr:node="ChartPoint" kr:slug="{point_name}" kr:horoscope="1"'
+        kr_attrs = f'kr:node="ChartPoint" kr:slug="{escape_svg_text(point_name)}" kr:horoscope="1"'
         if celestial_points is not None and point_idx < len(celestial_points):
             cp = celestial_points[point_idx]
             kr_attrs += f' kr:house="{cp.house}" kr:sign="{cp.sign}" kr:absoluteposition="{cp.abs_pos}" kr:signposition="{cp.position}"'

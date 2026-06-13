@@ -353,7 +353,15 @@ def ephemeris_session(
                         )
                     swe.set_sid_mode(swe.SIDM_USER, custom_ayanamsa_t0, custom_ayanamsa_ayan_t0)
                 else:
-                    swe.set_sid_mode(getattr(swe, f"SIDM_{sidereal_mode or 'FAGAN_BRADLEY'}"))
+                    sidm_name = f"SIDM_{sidereal_mode or 'FAGAN_BRADLEY'}"
+                    try:
+                        sidm_const = getattr(swe, sidm_name)
+                    except AttributeError:
+                        raise ValueError(
+                            f"Unknown sidereal_mode {sidereal_mode!r}: the ephemeris backend "
+                            f"has no ayanamsa constant {sidm_name!r}."
+                        ) from None
+                    swe.set_sid_mode(sidm_const)
 
             yield iflag
         finally:

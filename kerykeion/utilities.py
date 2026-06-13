@@ -775,6 +775,15 @@ def julian_to_datetime(jd: float) -> datetime:
     else:
         year = C - 4715
 
+    if year < 1:
+        # Explicit guard so the documented contract holds with a clear message,
+        # rather than relying on datetime()'s terse "year 0 is out of range".
+        raise ValueError(
+            f"julian_to_datetime cannot represent JD {jd} (proleptic year {year} < 1 CE): "
+            "Python's datetime has no BCE support. Use the ephemeris backend's "
+            "revjul for BCE dates."
+        )
+
     return datetime(year, month, day_int, hours, minutes, seconds, microseconds)
 
 

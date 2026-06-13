@@ -21,6 +21,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 import math
 from typing import Optional
 
+from kerykeion.charts.charts_utils import escape_svg_text
 from kerykeion.schemas.kr_models import KerykeionPointModel
 from kerykeion.settings.chart_defaults import resolve_glyph_id
 
@@ -452,7 +453,7 @@ def _draw_cusp_ring(
         parts.append(
             f'  <g kr:node="Cusp" kr:absoluteposition="{house.abs_pos}" '
             f'kr:signposition="{house.position}" kr:sign="{sign_abbrev}" '
-            f'kr:slug="{house.name}" '
+            f'kr:slug="{escape_svg_text(house.name)}" '
             f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})">\n'
         )
 
@@ -717,7 +718,7 @@ def _draw_indicator_line(
     if arc_radius is None:
         arc_radius = R_PLANET_OUTER - 1  # 42.5
 
-    slug_attr = f' kr:slug="{planet_slug}"' if planet_slug else ""
+    slug_attr = f' kr:slug="{escape_svg_text(planet_slug)}"' if planet_slug else ""
     out = f'<g kr:node="Indicator"{slug_attr} transform="rotate(-{real_angle:.6f} {CENTER} {CENTER})">\n'
 
     angle_diff = _normalize_angle(display_angle - real_angle)
@@ -996,7 +997,7 @@ def _draw_single_planet_in_ring(
     out = (
         f'<g kr:node="ChartPoint" kr:house="{point.house}" '
         f'kr:sign="{sign}" kr:absoluteposition="{point.abs_pos}" '
-        f'kr:signposition="{point.position}" kr:slug="{point_slug}"{retro_attr}{horoscope_attr} '
+        f'kr:signposition="{point.position}" kr:slug="{escape_svg_text(point_slug)}"{retro_attr}{horoscope_attr} '
         f'kr:cx="{glyph_cx}" kr:cy="{glyph_cy}" '
         f'transform="rotate(-{display_angle:.6f} {CENTER} {CENTER})">\n'
     )
@@ -1005,7 +1006,7 @@ def _draw_single_planet_in_ring(
     planet_scale = planet_scale_base * GLYPH_SCALE_MAP.get(planet_id, 1.0)
     out += (
         f'  <g transform="translate({CENTER} {glyph_y}) rotate({counter_rotation:.6f}) scale({planet_scale}) translate(-14 -14)">\n'
-        f'    <use xlink:href="#{planet_id}" kr:slug="{point_slug}" kr:node="Glyph" fill="{fill_color}" />\n'
+        f'    <use xlink:href="#{planet_id}" kr:slug="{escape_svg_text(point_slug)}" kr:node="Glyph" fill="{fill_color}" />\n'
         f"  </g>\n"
     )
 

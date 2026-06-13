@@ -971,6 +971,58 @@ class TestReturnPerspectivePropagation:
         with pytest.raises(KerykeionException, match="Barycentric"):
             factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
+    def test_heliocentric_return_sidereal_honors_frame(self):
+        """A sidereal subject's heliocentric return must land where the planet's
+        SIDEREAL heliocentric longitude equals the natal one — not the tropical
+        one. Regression guard: ``helio_cross_ut`` honors FLG_SIDEREAL (unlike
+        ``nod_aps_ut``), so masking the flag out would search a tropical
+        crossing and land ~24° (the ayanamsa) off."""
+        from kerykeion.ephemeris_backend import swe, ephemeris_session
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Sidereal Helio Return",
+            1990,
+            6,
+            15,
+            12,
+            30,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            online=False,
+            suppress_geonames_warning=True,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        factory = PlanetaryReturnFactory(
+            subject,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            city="New York",
+            nation="US",
+            online=False,
+        )
+        result = factory.next_heliocentric_return_from_year("Jupiter", 2001)
+        assert result.return_type == "Heliocentric"
+
+        # _build_return_chart casts a geocentric chart, so recompute the
+        # heliocentric longitude at the natal/return instants ourselves.
+        planet_id = swe.JUPITER
+        with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as iflag:
+            helio = iflag | swe.FLG_HELCTR
+            natal_sid = swe.calc_ut(subject.julian_day, planet_id, helio)[0][0]
+            ret_sid = swe.calc_ut(result.julian_day, planet_id, helio)[0][0]
+            ret_trop = swe.calc_ut(result.julian_day, planet_id, helio & ~swe.FLG_SIDEREAL)[0][0]
+
+        # The return moment reproduces the natal SIDEREAL heliocentric longitude.
+        assert _angular_diff(ret_sid, natal_sid) < 1e-2, (
+            f"sidereal helio return off by {_angular_diff(ret_sid, natal_sid)}°"
+        )
+        # And it is genuinely sidereal: the tropical longitude there differs by
+        # the ayanamsa (~24°), so a flag-masking 'fix' would have been ~24° off.
+        assert _angular_diff(ret_trop, natal_sid) > 1.0
+
 
 # ===========================================================================
 # Timezone-aware ISO entry points (v6 regression)

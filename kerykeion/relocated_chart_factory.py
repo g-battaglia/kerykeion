@@ -33,13 +33,70 @@ from kerykeion.ephemeris_backend import swe, ephemeris_session
 from kerykeion.schemas.kr_literals import AstrologicalPoint, Houses
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.settings.config_constants import AXIAL_POINTS
-from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
+from kerykeion.utilities import format_ancient_iso, get_kerykeion_point_from_degree, get_planet_house
 
 _AXIAL_POINTS_SET: frozenset[str] = frozenset(AXIAL_POINTS)
 
 
 class RelocatedChartFactory:
     """Create a relocated chart from an existing natal chart."""
+
+    @staticmethod
+    def _recompute_local_datetime_fields(
+        relocated_data: dict,
+        *,
+        year: int,
+        julian_day: float,
+        new_lng: float,
+        new_tz_str: str,
+        iso_utc: str,
+    ) -> None:
+        """Recompute the local calendar fields for a new timezone in place.
+
+        The UTC instant is unchanged; only its local representation moves.
+        Updates ``relocated_data`` with ``year``/``month``/``day``/``hour``/
+        ``minute``/``seconds`` and ``iso_formatted_local_datetime`` so they stay
+        mutually consistent.
+
+        BCE subjects (``year < 1``) store extended-year ISO strings (e.g.
+        ``"-0500-03-21T..."``) that ``datetime.fromisoformat`` cannot parse and
+        ``pytz`` cannot localise, so they take the subject factory's ancient
+        path: derive local time from the (unchanged) UT Julian Day using the new
+        longitude's Local Mean Time offset (named timezones are anachronistic
+        for BCE). The h/m/s split matches ``format_ancient_iso`` so the integer
+        fields and the ISO string agree.
+        """
+        if year < 1:
+            lmt_offset_hours = new_lng / 15.0
+            jd_local = julian_day + lmt_offset_hours / 24.0
+            loc_year, loc_month, loc_day, loc_dec_hour = swe.revjul(jd_local, swe.JUL_CAL)
+            loc_hour = int(loc_dec_hour)
+            loc_rem = (loc_dec_hour - loc_hour) * 60
+            loc_minute = int(loc_rem)
+            loc_seconds = int((loc_rem - loc_minute) * 60)
+            relocated_data["year"] = int(loc_year)
+            relocated_data["month"] = int(loc_month)
+            relocated_data["day"] = int(loc_day)
+            relocated_data["hour"] = loc_hour
+            relocated_data["minute"] = loc_minute
+            relocated_data["seconds"] = loc_seconds
+            relocated_data["iso_formatted_local_datetime"] = format_ancient_iso(
+                int(loc_year), int(loc_month), int(loc_day), loc_dec_hour, lmt_offset_hours
+            )
+        else:
+            import pytz
+
+            utc_dt = datetime.fromisoformat(iso_utc)
+            if utc_dt.tzinfo is None:
+                utc_dt = utc_dt.replace(tzinfo=timezone.utc)
+            local_dt = utc_dt.astimezone(pytz.timezone(new_tz_str))
+            relocated_data["iso_formatted_local_datetime"] = local_dt.isoformat()
+            relocated_data["year"] = local_dt.year
+            relocated_data["month"] = local_dt.month
+            relocated_data["day"] = local_dt.day
+            relocated_data["hour"] = local_dt.hour
+            relocated_data["minute"] = local_dt.minute
+            relocated_data["seconds"] = local_dt.second
 
     @staticmethod
     def relocate(
@@ -198,19 +255,14 @@ class RelocatedChartFactory:
         # Recompute the local ISO datetime for the new timezone (the UTC
         # moment is unchanged — only its local representation moves).
         if new_tz_str:
-            import pytz
-
-            utc_dt = datetime.fromisoformat(subject.iso_formatted_utc_datetime)
-            if utc_dt.tzinfo is None:
-                utc_dt = utc_dt.replace(tzinfo=timezone.utc)
-            relocated_local_dt = utc_dt.astimezone(pytz.timezone(new_tz_str))
-            relocated_data["iso_formatted_local_datetime"] = relocated_local_dt.isoformat()
-            relocated_data["year"] = relocated_local_dt.year
-            relocated_data["month"] = relocated_local_dt.month
-            relocated_data["day"] = relocated_local_dt.day
-            relocated_data["hour"] = relocated_local_dt.hour
-            relocated_data["minute"] = relocated_local_dt.minute
-            relocated_data["seconds"] = relocated_local_dt.second
+            RelocatedChartFactory._recompute_local_datetime_fields(
+                relocated_data,
+                year=subject.year,
+                julian_day=jd,
+                new_lng=new_lng,
+                new_tz_str=new_tz_str,
+                iso_utc=subject.iso_formatted_utc_datetime,
+            )
             # The weekday follows the local calendar date, which can change
             # across timezones for the same UTC instant.
             from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory as _ASF
