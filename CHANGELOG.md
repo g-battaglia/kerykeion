@@ -12,17 +12,17 @@
   any `from kerykeion.ephemeris_backend import swe` import to `ephe`. The
   internal helper `compute_sun_rise_set_swe` is likewise `compute_sun_rise_set_ephe`.
 
-## 6.0.0b1
+## 6.0.0a55
 
 _2026-06-11_
 
-First beta. Pre-beta stabilization pass: process-wide thread safety for
+Stabilization pass: process-wide thread safety for
 ephemeris access, sidereal-zodiac correctness across every search and
 refinement path, aspect and SVG-rendering fixes, hardened event finders,
-packaging cleanup — followed by a five-round pre-beta review with a final
+packaging cleanup — followed by a five-round review with a final
 hardening pass (below).
 
-### Added (beta hardening)
+### Added (hardening)
 
 - **Public model export parity** — every public Pydantic model (87) is now
   importable from `kerykeion.schemas`, the canonical home the `kr_types`
@@ -52,7 +52,7 @@ hardening pass (below).
   renders a natal chart offline in an isolated environment, so missing
   packaged data files (templates, themes) are caught before publishing.
 
-### Changed (beta hardening)
+### Changed (hardening)
 
 - **Model naming normalized to `*Model`** — eight new-in-v6 classes renamed
   for consistency with the rest of the public models:
