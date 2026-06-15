@@ -268,7 +268,7 @@ cmd = "python scripts/regenerate_all.py --positions --subjects"
 help = "Regenerate expected positions and subjects (tests/data/expected_positions.py, expected_astrological_subjects.py)"
 
 [tool.poe.tasks."regenerate:aspects"]
-sequence = ["regenerate:aspects:natal", "regenerate:aspects:synastry", "regenerate:aspects:matrix"]
+sequence = ["regenerate:aspects:natal", "regenerate:aspects:synastry"]
 help = "Regenerate all expected aspects (tests/data/expected_*_aspects.py)"
 
 [tool.poe.tasks."regenerate:aspects:natal"]
@@ -276,9 +276,6 @@ cmd = "python scripts/regenerate_expected_aspects.py"
 
 [tool.poe.tasks."regenerate:aspects:synastry"]
 cmd = "python scripts/regenerate_synastry_aspects.py"
-
-[tool.poe.tasks."regenerate:aspects:matrix"]
-cmd = "python scripts/regenerate_all.py --aspects"
 
 [tool.poe.tasks."regenerate:configurations"]
 cmd = "python scripts/regenerate_all.py --configurations"

@@ -9,7 +9,7 @@ It provides coverage for:
 - All sidereal modes (20)
 - Multiple synastry pairs
 
-Generated data for these subjects is stored in expected_positions.py and expected_aspects.py.
+Generated data for these subjects is stored in expected_positions.py and expected_arabic_parts.py.
 
 Usage:
     from tests.data.test_subjects_matrix import TEMPORAL_SUBJECTS, GEOGRAPHIC_SUBJECTS
