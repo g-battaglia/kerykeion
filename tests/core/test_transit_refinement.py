@@ -78,6 +78,13 @@ class TestTransitRefinement:
         for e in refined_events.events:
             ref_by_key[(e.p1_name, e.p2_name, e.aspect)].append(e)
 
+        # Iterating only ref keys would silently ignore any key present in just
+        # one pass; require the two passes to expose the exact same aspect keys.
+        assert set(unref_by_key.keys()) == set(ref_by_key.keys()), (
+            "Refined and unrefined passes produced different aspect keys: "
+            f"{set(unref_by_key.keys()) ^ set(ref_by_key.keys())}"
+        )
+
         pairs = []
         for key, ref_list in ref_by_key.items():
             unref_list = unref_by_key.get(key, [])

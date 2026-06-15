@@ -135,6 +135,27 @@ def _make_synthetic_factory(natal_chart, samples):
     return factory, dates
 
 
+def _make_factory_with_dates(natal_chart, date_strings, samples):
+    """Like _make_synthetic_factory but with explicit (possibly non-uniform) dates.
+
+    ``date_strings`` is the ISO timestamp of each sample index; ``samples`` maps
+    index -> list of (p1, p2, aspect, orbit, movement) in-orb aspects there.
+    """
+    moments = [
+        TransitMomentModel(
+            date=date_strings[i],
+            aspects=[_make_aspect(*entry) for entry in samples.get(i, [])],
+        )
+        for i in range(len(date_strings))
+    ]
+    fake_points = [SimpleNamespace(iso_formatted_utc_datetime=d) for d in date_strings]
+    factory = TransitsTimeRangeFactory(natal_chart=natal_chart, ephemeris_data_points=fake_points)
+    factory.get_transit_moments = lambda: TransitsTimeRangeModel(  # type: ignore[method-assign]
+        transits=moments, subject=natal_chart, dates=date_strings
+    )
+    return factory
+
+
 class TestTransitEventSplitting:
     """Regression tests: tracks keyed (p1, p2, aspect) must split per pass."""
 
@@ -289,3 +310,84 @@ class TestUndersamplingWarning:
         assert "sampling step" not in caplog.text, (
             "Slow movers within orb for weeks must not trigger the warning at daily steps"
         )
+
+
+class TestNonUniformCadence:
+    """A non-uniform series must not be treated as if sampled at its densest
+    interval (regression for the ``min(gaps)`` cadence estimate).
+
+    Splitting/bracketing use the median gap (typical cadence) and the
+    undersampling warning uses the max gap (coarsest interval), so one tight
+    pair amid otherwise daily samples neither over-splits a single pass nor
+    silences the warning about the daily remainder.
+    """
+
+    @staticmethod
+    def _non_uniform_dates():
+        # One tight 1-hour pair (indices 0-1), then a daily cadence (indices 2+).
+        base = datetime(2025, 1, 1)
+        dates = [
+            base.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+            (base + timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+        ]
+        dates += [
+            (base + timedelta(hours=1, days=i)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+            for i in range(1, 7)
+        ]
+        return dates
+
+    def test_representative_step_is_median_not_min(self, transit_factory):
+        factory = _make_factory_with_dates(transit_factory.natal_chart, self._non_uniform_dates(), {})
+        gaps = factory._sampling_gaps_days()
+        assert min(gaps) == pytest.approx(1 / 24, rel=1e-3), "the tight pair is one hour apart"
+        assert factory._representative_step_days() == pytest.approx(1.0, rel=1e-3), (
+            "median cadence must be the bulk daily step, not the densest hourly gap"
+        )
+
+    def test_single_daily_pass_is_one_event(self, transit_factory):
+        """A daily-sampled in-orb pass stays one event even though a tight pair
+        elsewhere makes ``min(gaps)`` an hour (would over-split before the fix)."""
+        samples = {
+            3: [("Moon", "Sun", "conjunction", 2.0, "Applying")],
+            4: [("Moon", "Sun", "conjunction", 0.5, "Applying")],
+            5: [("Moon", "Sun", "conjunction", 1.5, "Separating")],
+            7: [],
+        }
+        factory = _make_factory_with_dates(transit_factory.natal_chart, self._non_uniform_dates(), samples)
+        moon_sun = [
+            e for e in factory.get_transit_events().events
+            if (e.p1_name, e.p2_name, e.aspect) == ("Moon", "Sun", "conjunction")
+        ]
+        assert len(moon_sun) == 1, (
+            "Three adjacent daily in-orb samples are one pass; a tight pair "
+            f"elsewhere must not drive the split threshold. Got {len(moon_sun)} events."
+        )
+
+    def test_warning_uses_coarsest_gap(self, transit_factory, caplog):
+        """The undersampling warning fires on the daily remainder (max gap)
+        despite one tightly-spaced pair."""
+        factory = _make_factory_with_dates(transit_factory.natal_chart, self._non_uniform_dates(), {})
+        with caplog.at_level(logging.WARNING):
+            factory._warn_if_undersampled()
+        assert "sampling step" in caplog.text, (
+            "A daily coarsest gap with the Moon active must warn even when one pair is hourly"
+        )
+
+    def test_fully_dense_series_does_not_warn(self, transit_factory, caplog):
+        """When every gap is sub-window (hourly), no undersampling warning."""
+        base = datetime(2025, 1, 1)
+        dates = [(base + timedelta(hours=i)).strftime("%Y-%m-%dT%H:%M:%S+00:00") for i in range(8)]
+        factory = _make_factory_with_dates(transit_factory.natal_chart, dates, {})
+        with caplog.at_level(logging.WARNING):
+            factory._warn_if_undersampled()
+        assert "sampling step" not in caplog.text
+
+    def test_uniform_series_statistics_coincide(self, transit_factory):
+        """Guard: on a uniform series min == median == max, so the new code is a
+        no-op there and golden snapshots are unaffected."""
+        base = datetime(2025, 1, 1)
+        dates = [(base + timedelta(days=i)).strftime("%Y-%m-%dT%H:%M:%S+00:00") for i in range(8)]
+        factory = _make_factory_with_dates(transit_factory.natal_chart, dates, {})
+        gaps = factory._sampling_gaps_days()
+        assert min(gaps) == pytest.approx(max(gaps))
+        assert factory._representative_step_days() == pytest.approx(max(gaps))

@@ -274,44 +274,83 @@ class TransitsTimeRangeFactory:
             getattr(self.natal_chart, "zodiac_type", None),
             getattr(self.natal_chart, "sidereal_mode", None),
             getattr(self.natal_chart, "perspective_type", None),
+            # A USER sidereal mode is only fully specified by its custom
+            # ayanamsha epoch/offset: two charts both "USER" but with different
+            # custom_ayanamsa values are different frames and must not compare equal.
+            getattr(self.natal_chart, "custom_ayanamsa_t0", None),
+            getattr(self.natal_chart, "custom_ayanamsa_ayan_t0", None),
         )
         for point in self.ephemeris_data_points:
             point_frame = (
                 getattr(point, "zodiac_type", None),
                 getattr(point, "sidereal_mode", None),
                 getattr(point, "perspective_type", None),
+                getattr(point, "custom_ayanamsa_t0", None),
+                getattr(point, "custom_ayanamsa_ayan_t0", None),
             )
             if point_frame != natal_frame:
                 logging.warning(
                     "Natal chart and ephemeris data points use different calculation "
                     "frames (natal: zodiac_type=%s, sidereal_mode=%s, "
-                    "perspective_type=%s; ephemeris: zodiac_type=%s, sidereal_mode=%s, "
-                    "perspective_type=%s). Cross-frame aspects are offset by the frame "
-                    "difference (a sidereal/tropical mismatch shifts every aspect by "
-                    "the ayanamsha, ~24°) — rebuild the ephemeris series with the "
-                    "natal chart's settings.",
+                    "perspective_type=%s, custom_ayanamsa_t0=%s, custom_ayanamsa_ayan_t0=%s; "
+                    "ephemeris: zodiac_type=%s, sidereal_mode=%s, perspective_type=%s, "
+                    "custom_ayanamsa_t0=%s, custom_ayanamsa_ayan_t0=%s). Cross-frame "
+                    "aspects are offset by the frame difference (a sidereal/tropical "
+                    "mismatch shifts every aspect by the ayanamsha, ~24°) — rebuild the "
+                    "ephemeris series with the natal chart's settings.",
                     *natal_frame,
                     *point_frame,
                 )
                 return
 
-    def _sampling_step_days(self) -> Optional[float]:
-        """Return the smallest positive gap (in days) between ephemeris samples.
+    def _sampling_gaps_days(self) -> "list[float]":
+        """Return the positive gaps (in days) between consecutive ephemeris samples.
 
-        Returns None when fewer than two data points are available.
+        This is the raw spacing of the series; each caller reduces it to the
+        statistic that fits its job (the typical cadence for event splitting,
+        the coarsest gap for the undersampling warning). Parsing the ISO
+        timestamps is the dominant cost here and happens exactly once per call,
+        so the two callers together do the same amount of work as the previous
+        single ``_sampling_step_days`` did. Returns an empty list when fewer
+        than two parseable data points are available.
         """
         if len(self.ephemeris_data_points) < 2:
-            return None
+            return []
         try:
             dates = [datetime.fromisoformat(p.iso_formatted_utc_datetime) for p in self.ephemeris_data_points]
         except (TypeError, ValueError):
-            return None
-        gaps = [
+            return []
+        return [
             (later - earlier).total_seconds() / 86400.0
             for earlier, later in zip(dates, dates[1:])
             if (later - earlier).total_seconds() > 0
         ]
-        return min(gaps) if gaps else None
+
+    def _representative_step_days(self) -> Optional[float]:
+        """Return the *typical* sample spacing (the median gap, in days).
+
+        Used to split a single aspect track into per-pass events and to size
+        the refinement brackets. Taking the median — rather than the smallest
+        gap — is deliberate: on a non-uniform series (e.g. one tight hourly
+        pair amid otherwise daily samples) the minimum would report the densest
+        interval, and ``_split_track_into_runs`` would then treat every ordinary
+        daily step as a between-pass gap (it exceeds ``1.5 * min_gap``) and
+        shatter a single transit pass into many phantom events. The median
+        tracks the bulk cadence of the series and stays robust to a few outlier
+        gaps in either direction. On a uniform series median == min == max, so
+        behaviour (and every golden snapshot) is unchanged. Returns None when
+        fewer than two samples are available.
+        """
+        gaps = self._sampling_gaps_days()
+        if not gaps:
+            return None
+        # Single O(n log n) sort over the gaps (n-1 floats); negligible next to
+        # the timestamp parsing already done in _sampling_gaps_days.
+        ordered = sorted(gaps)
+        mid = len(ordered) // 2
+        if len(ordered) % 2:
+            return ordered[mid]
+        return (ordered[mid - 1] + ordered[mid]) / 2.0
 
     def _warn_if_undersampled(self) -> None:
         """Warn when the ephemeris step risks skipping fast-moving aspects.
@@ -320,10 +359,18 @@ class TransitsTimeRangeFactory:
         orb for ``2*o/v`` days. If the sampling step exceeds half that window
         (``o/v``), whole passes can fall between samples — for the Moon
         (~13.2°/day) with a 3° orb that is anything coarser than ~5.5 hours.
+
+        Undersampling is measured against the *coarsest* gap (``max``), not the
+        typical cadence: it is a property of the widest hole in the series,
+        since that is where a whole fast pass can fall between two samples. On a
+        non-uniform series a single dense patch must not mask the sparse
+        remainder — using the smallest gap (the previous behaviour) would wrongly
+        silence the warning whenever any one pair happened to be tightly spaced.
         """
-        step_days = self._sampling_step_days()
-        if step_days is None:
+        gaps = self._sampling_gaps_days()
+        if not gaps:
             return
+        step_days = max(gaps)
 
         fastest_speed = max(
             (
@@ -503,7 +550,9 @@ class TransitsTimeRangeFactory:
         # (used to split a track into separate per-pass events).
         first_moment_date = transit_data.transits[0].date if transit_data.transits else None
         last_moment_date = transit_data.transits[-1].date if transit_data.transits else None
-        step_days = self._sampling_step_days()
+        # The TYPICAL cadence (median gap), so a non-uniform series does not
+        # over-split: see _representative_step_days and _split_track_into_runs.
+        step_days = self._representative_step_days()
 
         # Convert tracks to events (one event per consecutive in-orb run)
         events: list[TransitEventModel] = []
@@ -636,6 +685,11 @@ class TransitsTimeRangeFactory:
         triple pass of a retrograde transit). Whenever two successive in-orb
         samples are separated by more than ~1.5x the sampling step, the aspect
         left orb in between, so a new run (event) starts there.
+
+        ``step_days`` here is the *representative* (median) cadence of the
+        series, not its smallest gap — so an occasional tight pair in a
+        non-uniform series does not drag the threshold down and split a single
+        in-orb run into spurious per-sample events.
         """
         if not track:
             return []
