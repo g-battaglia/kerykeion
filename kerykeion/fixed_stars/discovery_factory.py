@@ -6,7 +6,7 @@ Finds fixed stars conjunct natal points within a configurable orb.
 
 The catalog is sourced from ``libephemeris`` (``list_fixed_stars()``);
 ``sefstars.txt`` is NOT used for licensing reasons. Position calculations
-still go through the active ephemeris backend (``swe.fixstar_ut``), which
+still go through the active ephemeris backend (``ephe.fixstar_ut``), which
 on libephemeris uses its own internal data and on swisseph requires a
 locally-installed ``sefstars.txt`` (only relevant for users who manage
 their own catalog).
@@ -19,7 +19,7 @@ from __future__ import annotations
 import logging
 from typing import cast
 
-from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, swe
+from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, ephe
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
@@ -162,7 +162,7 @@ class FixedStarDiscoveryFactory:
             for entry in catalog:
                 star_name = entry.name
                 try:
-                    pos_ecl = swe.fixstar_ut(star_name, jd, scan_iflag)[0]
+                    pos_ecl = ephe.fixstar_ut(star_name, jd, scan_iflag)[0]
                     star_deg = pos_ecl[0]
 
                     nearest = _nearest_conjunction(star_deg, planet_positions, orb)
@@ -176,8 +176,8 @@ class FixedStarDiscoveryFactory:
 
                     # Declination is zodiac-independent; drop FLG_SIDEREAL so the
                     # equatorial fetch is identical for tropical and sidereal charts.
-                    eq_iflag = (scan_iflag & ~swe.FLG_SIDEREAL) | swe.FLG_EQUATORIAL
-                    pos_eq = swe.fixstar_ut(star_name, jd, eq_iflag)[0]
+                    eq_iflag = (scan_iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
+                    pos_eq = ephe.fixstar_ut(star_name, jd, eq_iflag)[0]
                     star_mag = entry.magnitude
 
                     prominent.append(

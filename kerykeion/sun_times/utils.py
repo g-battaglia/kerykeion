@@ -4,7 +4,7 @@ Low-level sun-event helpers for :class:`SunTimesFactory`.
 
 The heavy astronomical work — locating sunrise and sunset with atmospheric
 refraction — is delegated to the well-tested
-:func:`kerykeion.moon_phase_details.utils.compute_sun_rise_set_swe`, which calls
+:func:`kerykeion.moon_phase_details.utils.compute_sun_rise_set_ephe`, which calls
 the active ephemeris backend's ``rise_trans`` routine. This module adds the thin
 layer on top: timezone/Julian-Day bookkeeping, solar noon, day length, the polar
 day / polar night discriminator, and civil/nautical/astronomical twilight. No
@@ -24,9 +24,9 @@ from typing import Optional
 import pytz
 from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
 
-from kerykeion.ephemeris_backend import ephemeris_session, swe
+from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion.moon_phase_details.utils import (
-    compute_sun_rise_set_swe,
+    compute_sun_rise_set_ephe,
     configure_ephemeris_path,
 )
 from kerykeion.schemas.kerykeion_exception import KerykeionException
@@ -223,7 +223,7 @@ def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     """
     iflag = configure_ephemeris_path()
     # Equatorial coordinates: [right_ascension, declination, distance, ...].
-    declination = swe.calc_ut(jd_noon, swe.SUN, iflag | swe.FLG_EQUATORIAL)[0][1]
+    declination = ephe.calc_ut(jd_noon, ephe.SUN, iflag | ephe.FLG_EQUATORIAL)[0][1]
     horizon = math.radians(_APPARENT_UPPER_LIMB_HORIZON_DEGREES)
     lat = math.radians(latitude)
     decl = math.radians(declination)
@@ -260,7 +260,7 @@ def compute_sun_events(
     # The session serializes access to the process-global backend state and
     # resets it on exit without degrading the pinned calculation mode.
     with ephemeris_session():
-        sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, latitude, longitude)
+        sunrise_jd, sunset_jd = compute_sun_rise_set_ephe(jd_midnight, latitude, longitude)
 
         if sunrise_jd is not None and sunrise_jd >= jd_next_midnight:
             sunrise_jd = None
@@ -273,7 +273,7 @@ def compute_sun_events(
             # This paired sunset is deliberately NOT re-bounded to the civil day, so
             # on high-latitude transition days it can fall on the next civil date and
             # make day_length exceed 24h — the correct continuous daylight span here.
-            _, paired_sunset_jd = compute_sun_rise_set_swe(sunrise_jd + 1e-6, latitude, longitude)
+            _, paired_sunset_jd = compute_sun_rise_set_ephe(sunrise_jd + 1e-6, latitude, longitude)
             sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
 
         if sunrise_jd is None or sunset_jd is None:
@@ -316,7 +316,7 @@ def _next_event_jd(
         inside an :func:`~kerykeion.ephemeris_backend.ephemeris_session`.
     """
     try:
-        result = swe.rise_trans(jd_start, swe.SUN, rsmi, geopos, atpress=0.0, attemp=0.0, flags=iflag)
+        result = ephe.rise_trans(jd_start, ephe.SUN, rsmi, geopos, atpress=0.0, attemp=0.0, flags=iflag)
     except RuntimeError as exc:
         # Expected at high latitudes: circumpolar at the depression angle (the Sun
         # never reaches it). A missing twilight crossing is normal, so degrade to None.
@@ -360,11 +360,11 @@ def compute_twilight_events(
     jd_midnight, jd_next_midnight = _civil_day_bounds(year, month, day, tz)
 
     # Backend flag shims (libephemeris exposes these; swisseph uses the SE_ prefix).
-    calc_rise = getattr(swe, "CALC_RISE", getattr(swe, "SE_CALC_RISE", 1))
-    calc_set = getattr(swe, "CALC_SET", getattr(swe, "SE_CALC_SET", 2))
-    civil_bit = getattr(swe, "BIT_CIVIL_TWILIGHT", 1024)
-    nautic_bit = getattr(swe, "BIT_NAUTIC_TWILIGHT", 2048)
-    astro_bit = getattr(swe, "BIT_ASTRO_TWILIGHT", 4096)
+    calc_rise = getattr(ephe, "CALC_RISE", getattr(ephe, "SE_CALC_RISE", 1))
+    calc_set = getattr(ephe, "CALC_SET", getattr(ephe, "SE_CALC_SET", 2))
+    civil_bit = getattr(ephe, "BIT_CIVIL_TWILIGHT", 1024)
+    nautic_bit = getattr(ephe, "BIT_NAUTIC_TWILIGHT", 2048)
+    astro_bit = getattr(ephe, "BIT_ASTRO_TWILIGHT", 4096)
     geopos = (float(longitude), float(latitude), 0.0)
 
     # The session serializes access to the process-global backend state and

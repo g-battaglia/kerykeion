@@ -25,7 +25,7 @@ import logging
 import math
 from datetime import datetime, timezone
 from typing import Optional
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -35,16 +35,16 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 # Different swisseph builds expose eclipse flags with or without the SE_ prefix.
-ECL_TOTAL = getattr(swe, "SE_ECL_TOTAL", getattr(swe, "ECL_TOTAL", 0))
-ECL_ANNULAR_TOTAL = getattr(swe, "SE_ECL_ANNULAR_TOTAL", getattr(swe, "ECL_ANNULAR_TOTAL", 0))
-ECL_ANNULAR = getattr(swe, "SE_ECL_ANNULAR", getattr(swe, "ECL_ANNULAR", 0))
-ECL_PARTIAL = getattr(swe, "SE_ECL_PARTIAL", getattr(swe, "ECL_PARTIAL", 0))
-ECL_PENUMBRAL = getattr(swe, "SE_ECL_PENUMBRAL", getattr(swe, "ECL_PENUMBRAL", 0))
+ECL_TOTAL = getattr(ephe, "SE_ECL_TOTAL", getattr(ephe, "ECL_TOTAL", 0))
+ECL_ANNULAR_TOTAL = getattr(ephe, "SE_ECL_ANNULAR_TOTAL", getattr(ephe, "ECL_ANNULAR_TOTAL", 0))
+ECL_ANNULAR = getattr(ephe, "SE_ECL_ANNULAR", getattr(ephe, "ECL_ANNULAR", 0))
+ECL_PARTIAL = getattr(ephe, "SE_ECL_PARTIAL", getattr(ephe, "ECL_PARTIAL", 0))
+ECL_PENUMBRAL = getattr(ephe, "SE_ECL_PENUMBRAL", getattr(ephe, "ECL_PENUMBRAL", 0))
 
 # Distance unit conversion: Astronomical Unit to kilometers.
 # IAU 2012 nominal value: 1 AU = 149,597,870.700 km exactly
 # Source: https://www.iau.org/static/resolutions/IAU2012_English.pdf
-AU_KM = getattr(swe, "AUNIT", 149597870.7)
+AU_KM = getattr(ephe, "AUNIT", 149597870.7)
 
 # Standard meteorological conditions at sea level for atmospheric refraction calculations
 # Used by Swiss Ephemeris rise/set routines to compute apparent horizon
@@ -129,10 +129,10 @@ def configure_ephemeris_path() -> int:
     it handles path setup, locking, and cleanup in one place.
 
     Returns:
-        int: Base iflag (FLG_SWIEPH) to be used in swe.calc_ut-style functions.
+        int: Base iflag (FLG_SWIEPH) to be used in ephe.calc_ut-style functions.
     """
-    swe.set_ephe_path(EPHE_DATA_PATH)
-    return swe.FLG_SWIEPH
+    ephe.set_ephe_path(EPHE_DATA_PATH)
+    return ephe.FLG_SWIEPH
 
 
 def _extract_eclipse_result(result: object) -> Optional[tuple[int, float]]:
@@ -143,7 +143,7 @@ def _extract_eclipse_result(result: object) -> Optional[tuple[int, float]]:
     where tret is a tuple of floats with tret[0] being the Julian Day of the eclipse.
 
     Args:
-        result: Raw result from swe.sol_eclipse_when_glob or swe.lun_eclipse_when.
+        result: Raw result from ephe.sol_eclipse_when_glob or ephe.lun_eclipse_when.
 
     Returns:
         Optional[tuple[int, float]]: (retflag, eclipse_jd) or None if extraction fails.
@@ -185,7 +185,7 @@ def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]
     """
     try:
         iflag = configure_ephemeris_path()
-        result = swe.sol_eclipse_when_glob(jd_start, iflag)
+        result = ephe.sol_eclipse_when_glob(jd_start, iflag)
     except RuntimeError as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Solar eclipse calculation failed (expected): %s", exc)
@@ -223,7 +223,7 @@ def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]
     """
     try:
         iflag = configure_ephemeris_path()
-        result = swe.lun_eclipse_when(jd_start, iflag)
+        result = ephe.lun_eclipse_when(jd_start, iflag)
     except RuntimeError as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Lunar eclipse calculation failed (expected): %s", exc)
@@ -236,13 +236,13 @@ def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]
     return _extract_eclipse_result(result)
 
 
-def compute_sun_rise_set_swe(
+def compute_sun_rise_set_ephe(
     jd_midnight: float,
     latitude: float,
     longitude: float,
 ) -> tuple[Optional[float], Optional[float]]:
     """
-    Compute precise sunrise and sunset times using Swiss Ephemeris `swe.rise_trans`.
+    Compute precise sunrise and sunset times using Swiss Ephemeris `ephe.rise_trans`.
 
     This helper delegates the heavy lifting to Swiss Ephemeris' dedicated
     rise/transit routines, avoiding any custom numerical search logic.
@@ -270,12 +270,12 @@ def compute_sun_rise_set_swe(
         attemp = STANDARD_TEMPERATURE_CELSIUS
 
         # Compatibility shims for rise/set calculation flags
-        CALC_RISE = getattr(swe, "CALC_RISE", getattr(swe, "SE_CALC_RISE", 1))
-        CALC_SET = getattr(swe, "CALC_SET", getattr(swe, "SE_CALC_SET", 2))
+        CALC_RISE = getattr(ephe, "CALC_RISE", getattr(ephe, "SE_CALC_RISE", 1))
+        CALC_SET = getattr(ephe, "CALC_SET", getattr(ephe, "SE_CALC_SET", 2))
 
         def _extract_event_time(result: object) -> Optional[float]:
             """
-            Extract the primary event time (JD) from `swe.rise_trans` result.
+            Extract the primary event time (JD) from `ephe.rise_trans` result.
 
             According to the Python wrapper documentation, the result is:
 
@@ -306,9 +306,9 @@ def compute_sun_rise_set_swe(
             return float(tret[0])
 
         # Sunrise (next rise after jd_midnight)
-        sunrise_result = swe.rise_trans(
+        sunrise_result = ephe.rise_trans(
             jd_midnight,
-            swe.SUN,
+            ephe.SUN,
             CALC_RISE,
             geopos,
             atpress=atpress,
@@ -317,9 +317,9 @@ def compute_sun_rise_set_swe(
         )
 
         # Sunset (next set after jd_midnight)
-        sunset_result = swe.rise_trans(
+        sunset_result = ephe.rise_trans(
             jd_midnight,
-            swe.SUN,
+            ephe.SUN,
             CALC_SET,
             geopos,
             atpress=atpress,
@@ -380,7 +380,7 @@ def compute_lunar_phase_jd(
     """
     try:
         configure_ephemeris_path()
-        iflag = swe.FLG_SWIEPH
+        iflag = ephe.FLG_SWIEPH
 
         # Normalize target angle to [0, 360)
         target_angle = target_angle % 360.0
@@ -398,8 +398,8 @@ def compute_lunar_phase_jd(
             # Sun-Moon separation minus target, normalized to [-180, 180) so the
             # sought instant is an upward zero crossing (the separation grows
             # monotonically at ~12.2°/day).
-            sun_pos = swe.calc_ut(jd, swe.SUN, iflag)[0]
-            moon_pos = swe.calc_ut(jd, swe.MOON, iflag)[0]
+            sun_pos = ephe.calc_ut(jd, ephe.SUN, iflag)[0]
+            moon_pos = ephe.calc_ut(jd, ephe.MOON, iflag)[0]
             angle = (float(moon_pos[0]) - float(sun_pos[0])) % 360.0
             return (angle - target_angle + 180.0) % 360.0 - 180.0
 
@@ -546,11 +546,11 @@ def compute_sun_position(
     """
     try:
         configure_ephemeris_path()
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
-        sun_calc = swe.calc_ut(jd_ut, swe.SUN, iflag)[0]
+        iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
+        sun_calc = ephe.calc_ut(jd_ut, ephe.SUN, iflag)[0]
         distance_km = float(sun_calc[2]) * AU_KM
 
-        sun_eq = swe.calc_ut(jd_ut, swe.SUN, iflag | swe.FLG_EQUATORIAL)[0]
+        sun_eq = ephe.calc_ut(jd_ut, ephe.SUN, iflag | ephe.FLG_EQUATORIAL)[0]
         ra_deg = float(sun_eq[0])
         dec_deg = float(sun_eq[1])
 
@@ -574,7 +574,7 @@ __all__ = [
     "configure_ephemeris_path",
     "compute_next_solar_eclipse_jd",
     "compute_next_lunar_eclipse_jd",
-    "compute_sun_rise_set_swe",
+    "compute_sun_rise_set_ephe",
     "compute_lunar_phase_jd",
     "greenwich_mean_sidereal_time",
     "equatorial_to_horizontal",

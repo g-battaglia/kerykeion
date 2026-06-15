@@ -131,7 +131,7 @@ class TestUranianPlanetsSVG:
 
 
 class TestUranianSweReference:
-    """Compare factory Uranian planet positions with direct swe.calc_ut() calls."""
+    """Compare factory Uranian planet positions with direct ephe.calc_ut() calls."""
 
     URANIAN_SWE_IDS = {
         "cupido": 40,
@@ -145,20 +145,20 @@ class TestUranianSweReference:
         ("poseidon", 47),
     ])
     def test_uranian_longitude_matches_swe(self, subject_with_uranian, attr, swe_id):
-        """Factory Uranian abs_pos must match swe.calc_ut() longitude."""
-        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
-        swe.set_ephe_path(EPHE_DATA_PATH)
+        """Factory Uranian abs_pos must match ephe.calc_ut() longitude."""
+        from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+        ephe.set_ephe_path(EPHE_DATA_PATH)
 
         jd = subject_with_uranian.julian_day
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
 
-        expected_lng = swe.calc_ut(jd, swe_id, iflag)[0][0]
+        expected_lng = ephe.calc_ut(jd, swe_id, iflag)[0][0]
 
         point = getattr(subject_with_uranian, attr)
         assert point is not None, f"{attr} should be calculated"
         # Tolerance of 1° accommodates differences between the factory's
         # internal calculation (which may apply tropical/sidereal offsets or
-        # use different ephemeris flags) and a raw swe.calc_ut() call.
+        # use different ephemeris flags) and a raw ephe.calc_ut() call.
         assert point.abs_pos == pytest.approx(expected_lng, abs=1.0), (
-            f"{attr} abs_pos {point.abs_pos} != swe longitude {expected_lng}"
+            f"{attr} abs_pos {point.abs_pos} != ephe longitude {expected_lng}"
         )

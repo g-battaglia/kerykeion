@@ -30,7 +30,7 @@ from kerykeion import (
     SecondaryProgressionFactory,
     SolarArcFactory,
 )
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion.secondary_progressions.secondary_progression_factory import (
     DAYS_PER_TROPICAL_YEAR,
 )
@@ -216,7 +216,7 @@ def test_reference_day_for_year_formula(row):
     natal = _natal_for(row)
     sp = SecondaryProgressionFactory.compute_full(natal, target_iso_utc_datetime=_target_iso(row))
     ty, tm, td = (int(x) for x in row[9].split("-"))
-    target_jd = swe.julday(ty, tm, td, 0.0)
+    target_jd = ephe.julday(ty, tm, td, 0.0)
     expected = natal.julian_day + (target_jd - natal.julian_day) / DAYS_PER_TROPICAL_YEAR
     assert sp.progressed_subject.julian_day == pytest.approx(expected, abs=2e-3)
 

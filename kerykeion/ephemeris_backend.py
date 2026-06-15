@@ -44,12 +44,12 @@ Usage
 All kerykeion internals import from this module instead of importing
 ``swisseph`` or ``libephemeris`` directly::
 
-    from kerykeion.ephemeris_backend import swe
+    from kerykeion.ephemeris_backend import ephe
 
-    swe.calc_ut(jd, planet_id, flags)
-    swe.houses_ex2(jd, lat, lon, hsys, flags)
+    ephe.calc_ut(jd, planet_id, flags)
+    ephe.houses_ex2(jd, lat, lon, hsys, flags)
 
-The ``swe`` object exposes the same API regardless of which backend is active.
+The ``ephe`` object exposes the same API regardless of which backend is active.
 
 Detecting the active backend
 ----------------------------
@@ -142,17 +142,17 @@ else:
 
 
 # ---------------------------------------------------------------------------
-# Public API: the `swe` object
+# Public API: the `ephe` object
 # ---------------------------------------------------------------------------
 # All kerykeion modules import this single object:
 #
-#     from kerykeion.ephemeris_backend import swe
+#     from kerykeion.ephemeris_backend import ephe
 #
 # It is the actual backend module (swisseph or libephemeris).
 # As of libephemeris >= 1.0.0a1, both backends are fully API-compatible
 # and no compatibility shims are required.
 
-swe = _backend_module
+ephe = _backend_module
 
 # Swiss Ephemeris keeps mutable process-global state for sidereal mode,
 # topocentric coordinates, and reset/close operations. Code that mutates that
@@ -257,17 +257,17 @@ def reset_ephemeris_session() -> None:
     re-applied afterwards — otherwise a single reset would silently re-enable
     the Skyfield auto-fallback this module explicitly disables.
 
-    Callers must hold ``EPHEMERIS_LOCK``. Never call ``swe.close()``
+    Callers must hold ``EPHEMERIS_LOCK``. Never call ``ephe.close()``
     directly; use this function (or ``ephemeris_session``) instead.
     """
-    _reset = getattr(swe, "reset_session", None) or swe.close
+    _reset = getattr(ephe, "reset_session", None) or ephe.close
     try:
         _reset()
     finally:
         # Re-pin the calc mode even if the reset itself raised — a session
         # left in "auto" mode would silently re-enable the Skyfield fallback.
         if BACKEND_NAME == "libephemeris" and _PINNED_LEB_MODE is not None:
-            swe.set_calc_mode(_PINNED_LEB_MODE)
+            ephe.set_calc_mode(_PINNED_LEB_MODE)
 
 
 @contextmanager
@@ -286,7 +286,7 @@ def ephemeris_session(
     This is the single supported way for kerykeion code to touch the
     process-global ephemeris state (``set_ephe_path``, ``set_sid_mode``,
     ``set_topo``). It acquires ``EPHEMERIS_LOCK``, applies the requested
-    configuration, yields the ``iflag`` to pass to ``swe.calc_ut``-style
+    configuration, yields the ``iflag`` to pass to ``ephe.calc_ut``-style
     functions, and on exit resets the session via
     :func:`reset_ephemeris_session` and releases the lock.
 
@@ -316,7 +316,7 @@ def ephemeris_session(
 
         with ephemeris_session(zodiac_type=subject.zodiac_type,
                                sidereal_mode=subject.sidereal_mode) as iflag:
-            lon = swe.calc_ut(jd, swe.SUN, iflag)[0][0]
+            lon = ephe.calc_ut(jd, ephe.SUN, iflag)[0][0]
 
     Notes:
         - ``EPHEMERIS_LOCK`` is re-entrant, but keep sessions as narrow as
@@ -329,39 +329,39 @@ def ephemeris_session(
     """
     with EPHEMERIS_LOCK:
         try:
-            swe.set_ephe_path(EPHE_DATA_PATH if ephe_path is None else ephe_path)
-            iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+            ephe.set_ephe_path(EPHE_DATA_PATH if ephe_path is None else ephe_path)
+            iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
 
             if perspective_type == "True Geocentric":
-                iflag |= swe.FLG_TRUEPOS
+                iflag |= ephe.FLG_TRUEPOS
             elif perspective_type == "Heliocentric":
-                iflag |= swe.FLG_HELCTR
+                iflag |= ephe.FLG_HELCTR
             elif perspective_type == "Barycentric":
-                iflag |= swe.FLG_BARYCTR
+                iflag |= ephe.FLG_BARYCTR
             elif perspective_type == "Topocentric":
-                iflag |= swe.FLG_TOPOCTR
+                iflag |= ephe.FLG_TOPOCTR
                 if topo is None:
                     raise ValueError("perspective_type='Topocentric' requires the topo=(lng, lat, alt) argument")
-                swe.set_topo(topo[0], topo[1], topo[2] or 0.0)
+                ephe.set_topo(topo[0], topo[1], topo[2] or 0.0)
 
             if zodiac_type == "Sidereal":
-                iflag |= swe.FLG_SIDEREAL
+                iflag |= ephe.FLG_SIDEREAL
                 if sidereal_mode == "USER":
                     if custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None:
                         raise ValueError(
                             "sidereal_mode='USER' requires custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0"
                         )
-                    swe.set_sid_mode(swe.SIDM_USER, custom_ayanamsa_t0, custom_ayanamsa_ayan_t0)
+                    ephe.set_sid_mode(ephe.SIDM_USER, custom_ayanamsa_t0, custom_ayanamsa_ayan_t0)
                 else:
                     sidm_name = f"SIDM_{sidereal_mode or 'FAGAN_BRADLEY'}"
                     try:
-                        sidm_const = getattr(swe, sidm_name)
+                        sidm_const = getattr(ephe, sidm_name)
                     except AttributeError:
                         raise ValueError(
                             f"Unknown sidereal_mode {sidereal_mode!r}: the ephemeris backend "
                             f"has no ayanamsa constant {sidm_name!r}."
                         ) from None
-                    swe.set_sid_mode(sidm_const)
+                    ephe.set_sid_mode(sidm_const)
 
             yield iflag
         finally:
@@ -369,7 +369,7 @@ def ephemeris_session(
 
 
 __all__ = [
-    "swe",
+    "ephe",
     "BACKEND_NAME",
     "EPHE_DATA_PATH",
     "EPHEMERIS_LOCK",

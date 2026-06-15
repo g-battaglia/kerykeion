@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Changed (breaking)
+
+- **Ephemeris backend handle renamed `swe` → `ephe`** — the unified backend
+  object exposed by `kerykeion.ephemeris_backend` is now `ephe`
+  (`from kerykeion.ephemeris_backend import ephe`). The old `swe` name is
+  removed with no alias: it implied Swiss Ephemeris is the engine, but
+  libephemeris is the primary backend and swisseph is a legacy fallback. Update
+  any `from kerykeion.ephemeris_backend import swe` import to `ephe`. The
+  internal helper `compute_sun_rise_set_swe` is likewise `compute_sun_rise_set_ephe`.
+
 ## 6.0.0b1
 
 _2026-06-11_

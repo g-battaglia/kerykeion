@@ -2,7 +2,7 @@
 """Tests for Out-of-Bounds detection and declination aspects (parallels/contra-parallels)."""
 
 import pytest
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
 
@@ -64,32 +64,32 @@ class TestOutOfBounds:
                 )
 
     def test_sun_declination_matches_swe_reference(self, john_lennon):
-        """Sun declination must match swe.calc_ut with FLG_EQUATORIAL within 0.001 deg."""
+        """Sun declination must match ephe.calc_ut with FLG_EQUATORIAL within 0.001 deg."""
         jd = john_lennon.julian_day
-        swe.set_ephe_path("")
-        sun_eq = swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)[0]
+        ephe.set_ephe_path("")
+        sun_eq = ephe.calc_ut(jd, ephe.SUN, ephe.FLG_SWIEPH | ephe.FLG_EQUATORIAL)[0]
         expected_dec = sun_eq[1]
         assert abs(john_lennon.sun.declination - expected_dec) < 0.001, (
             f"Sun declination {john_lennon.sun.declination} != "
-            f"swe reference {expected_dec}"
+            f"ephe reference {expected_dec}"
         )
 
     def test_moon_declination_matches_swe_reference(self, john_lennon):
-        """Moon declination must match swe.calc_ut with FLG_EQUATORIAL within 0.001 deg."""
+        """Moon declination must match ephe.calc_ut with FLG_EQUATORIAL within 0.001 deg."""
         jd = john_lennon.julian_day
-        swe.set_ephe_path("")
-        moon_eq = swe.calc_ut(jd, swe.MOON, swe.FLG_SWIEPH | swe.FLG_EQUATORIAL)[0]
+        ephe.set_ephe_path("")
+        moon_eq = ephe.calc_ut(jd, ephe.MOON, ephe.FLG_SWIEPH | ephe.FLG_EQUATORIAL)[0]
         expected_dec = moon_eq[1]
         assert abs(john_lennon.moon.declination - expected_dec) < 0.001, (
             f"Moon declination {john_lennon.moon.declination} != "
-            f"swe reference {expected_dec}"
+            f"ephe reference {expected_dec}"
         )
 
     def test_oob_flag_consistent_with_obliquity(self, john_lennon):
-        """is_out_of_bounds must equal abs(declination) > true obliquity from swe."""
+        """is_out_of_bounds must equal abs(declination) > true obliquity from ephe."""
         jd = john_lennon.julian_day
-        swe.set_ephe_path("")
-        nut_data = swe.calc_ut(jd, swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+        ephe.set_ephe_path("")
+        nut_data = ephe.calc_ut(jd, ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
         true_obliquity = nut_data[0]
 
         for name in ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]:

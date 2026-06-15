@@ -9,7 +9,7 @@ import pytz
 
 from kerykeion import VoidOfCourseMoonFactory
 from kerykeion.aspects.aspects_utils import difdeg2n
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES
 from kerykeion.schemas.kr_models import VoidOfCourseAspectModel
@@ -17,7 +17,7 @@ from kerykeion.utilities import datetime_to_julian
 from kerykeion.void_of_course_moon.utils import _BODY_ID
 
 ASPECT_DEGREES = {0.0, 60.0, 90.0, 120.0, 180.0}
-_IFLAG = swe.FLG_SWIEPH | swe.FLG_SPEED
+_IFLAG = ephe.FLG_SWIEPH | ephe.FLG_SPEED
 
 
 def _rome_moment_utc(y, mo, d, h, mi):
@@ -84,7 +84,7 @@ def test_next_aspect_is_first_in_next_sign():
     )
     # next_aspect is geometrically inside the next sign.
     jd = datetime_to_julian(voc.next_aspect.exact_time)
-    moon = swe.calc_ut(jd, swe.MOON, _IFLAG)[0][0]
+    moon = ephe.calc_ut(jd, ephe.MOON, _IFLAG)[0][0]
     assert int(moon // 30) % 12 == SIGN_CODES.index(voc.next_sign)
 
 
@@ -96,15 +96,15 @@ def test_last_aspect_is_exact():
     assert last.aspect_degrees in ASPECT_DEGREES
     # Re-evaluate the geometry at the reported instant: separation must equal the aspect.
     jd = datetime_to_julian(last.exact_time)
-    moon = swe.calc_ut(jd, swe.MOON, _IFLAG)[0][0]
-    other = swe.calc_ut(jd, _BODY_ID[last.planet], _IFLAG)[0][0]
+    moon = ephe.calc_ut(jd, ephe.MOON, _IFLAG)[0][0]
+    other = ephe.calc_ut(jd, _BODY_ID[last.planet], _IFLAG)[0][0]
     assert abs(abs(difdeg2n(moon, other)) - last.aspect_degrees) < 0.1
 
 
 def test_ingress_on_sign_boundary():
     voc = VoidOfCourseMoonFactory.from_datetime(2026, 5, 28, 12, 0, tz_str="Europe/Rome")
     jd = datetime_to_julian(voc.ingress)
-    moon = swe.calc_ut(jd, swe.MOON, _IFLAG)[0][0]
+    moon = ephe.calc_ut(jd, ephe.MOON, _IFLAG)[0][0]
     distance_to_cusp = min(moon % 30.0, 30.0 - (moon % 30.0))
     assert distance_to_cusp < 0.05
 

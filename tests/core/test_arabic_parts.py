@@ -2,9 +2,9 @@
 
 Covers:
 - Formula correctness for all four parts (Fortunae, Spiritus, Amoris, Fidei)
-- Day/night chart detection via Sun altitude (swe.azalt)
+- Day/night chart detection via Sun altitude (ephe.azalt)
 - Day/night formula symmetry (Fortunae day = Spiritus night and vice versa)
-- Fallback to house-based detection when swe.azalt fails
+- Fallback to house-based detection when ephe.azalt fails
 - Warning when Sun position is unavailable
 - Result properties (range, house, sign, retrograde)
 - Auto-activation of required prerequisite points
@@ -23,7 +23,7 @@ import pytest
 from pytest import approx
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.ephemeris_backend import swe as _swe_module
+from kerykeion.ephemeris_backend import ephe as _swe_module
 
 
 # ---------------------------------------------------------------------------
@@ -345,10 +345,10 @@ class TestDayNightDetection:
 
 
 class TestFallbackPaths:
-    """Test the fallback logic in _compute_is_diurnal when swe.azalt or swe.calc_ut fails."""
+    """Test the fallback logic in _compute_is_diurnal when ephe.azalt or ephe.calc_ut fails."""
 
     def test_azalt_failure_defaults_to_diurnal(self, caplog):
-        """If swe.azalt raises, default to diurnal."""
+        """If ephe.azalt raises, default to diurnal."""
 
         def mock_azalt(*args, **kwargs):
             raise RuntimeError("Mock azalt failure")
@@ -403,7 +403,7 @@ class TestFallbackPaths:
                 )
 
     def test_compute_is_diurnal_direct_defensive_path(self, caplog):
-        """Test _compute_is_diurnal fallback when swe.calc_ut fails."""
+        """Test _compute_is_diurnal fallback when ephe.calc_ut fails."""
 
         def mock_calc_ut(*args, **kwargs):
             raise RuntimeError("Mock calc_ut failure")

@@ -5,7 +5,7 @@ import pytest
 from datetime import datetime, timedelta
 from unittest.mock import patch
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.ephemeris_backend import swe as _swe_module
+from kerykeion.ephemeris_backend import ephe as _swe_module
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
 from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
 
@@ -226,10 +226,10 @@ class TestRefineExactMomentEdgeCases:
         assert result is None
 
     def test_refine_calc_ut_exception_returns_none(self, transit_factory):
-        """If swe.calc_ut raises during refinement, should return None."""
+        """If ephe.calc_ut raises during refinement, should return None."""
         with patch.object(
             _swe_module, "calc_ut",
-            side_effect=RuntimeError("Mock swe failure"),
+            side_effect=RuntimeError("Mock ephe failure"),
         ):
             result = transit_factory._refine_exact_moment(
                 p1_name="Sun",
@@ -255,7 +255,7 @@ class TestRefineExactMomentEdgeCases:
         assert result is None or isinstance(result, tuple)
 
     def test_refine_probe_point_exception_returns_none(self, transit_factory):
-        """If swe.calc_ut raises during a probe-point evaluation, should return None."""
+        """If ephe.calc_ut raises during a probe-point evaluation, should return None."""
         original_calc_ut = _swe_module.calc_ut
         call_count = [0]
 

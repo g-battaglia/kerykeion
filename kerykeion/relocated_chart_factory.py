@@ -7,7 +7,7 @@ geographic location. This is equivalent to asking: "If I had been born at
 the same Universal Time but in a different city, which houses would my
 planets fall in?"
 
-Swiss Ephemeris function: ``swe.houses_armc(armc, lat, eps, hsys)``
+Swiss Ephemeris function: ``ephe.houses_armc(armc, lat, eps, hsys)``
 
 Location-dependent derived points are recomputed as well: the Vertex /
 Anti-Vertex (from the same ``houses_armc`` call), the Ascendant-based Arabic
@@ -28,7 +28,7 @@ import math
 from datetime import datetime, timezone
 from typing import Optional
 
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from kerykeion.schemas.kr_literals import AstrologicalPoint, Houses
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
@@ -69,7 +69,7 @@ class RelocatedChartFactory:
         if year < 1:
             lmt_offset_hours = new_lng / 15.0
             jd_local = julian_day + lmt_offset_hours / 24.0
-            loc_year, loc_month, loc_day, loc_dec_hour = swe.revjul(jd_local, swe.JUL_CAL)
+            loc_year, loc_month, loc_day, loc_dec_hour = ephe.revjul(jd_local, ephe.JUL_CAL)
             loc_hour = int(loc_dec_hour)
             loc_rem = (loc_dec_hour - loc_hour) * 60
             loc_minute = int(loc_rem)
@@ -139,16 +139,16 @@ class RelocatedChartFactory:
             custom_ayanamsa_ayan_t0=subject.custom_ayanamsa_ayan_t0,
         ) as _iflag:
             # Get obliquity of ecliptic (zodiac-independent)
-            eps = swe.calc_ut(jd, swe.ECL_NUT, swe.FLG_SWIEPH | swe.FLG_SPEED)[0][0]
+            eps = ephe.calc_ut(jd, ephe.ECL_NUT, ephe.FLG_SWIEPH | ephe.FLG_SPEED)[0][0]
 
             # Get ARMC (sidereal time at Greenwich in degrees) from original JD
-            armc_hours = swe.sidtime(jd)  # Greenwich sidereal time in hours
+            armc_hours = ephe.sidtime(jd)  # Greenwich sidereal time in hours
             # Adjust for new longitude: local sidereal time = GST + lng/15
             local_st_hours = armc_hours + new_lng / 15.0
             armc_degrees = (local_st_hours * 15.0) % 360.0
 
             # Calculate new houses for the new location (tropical output)
-            cusps, ascmc = swe.houses_armc(armc_degrees, new_lat, eps, hsys)
+            cusps, ascmc = ephe.houses_armc(armc_degrees, new_lat, eps, hsys)
 
             # Sidereal charts: shift the tropical cusps/angles by the ayanamsa.
             # Use the subject's stored ayanamsa_value: it was computed alongside
@@ -159,7 +159,7 @@ class RelocatedChartFactory:
             if is_sidereal:
                 ayanamsa = subject.ayanamsa_value
                 if ayanamsa is None:
-                    ayanamsa = swe.get_ayanamsa_ex_ut(jd, swe.FLG_SWIEPH)[1]
+                    ayanamsa = ephe.get_ayanamsa_ex_ut(jd, ephe.FLG_SWIEPH)[1]
             else:
                 ayanamsa = 0.0
 
@@ -273,7 +273,7 @@ class RelocatedChartFactory:
         # the new location so the Arabic part formulas pick the right branch.
         from kerykeion.astrological_subject_factory import ARABIC_PARTS_CONFIG, AstrologicalSubjectFactory
 
-        # _compute_is_diurnal calls swe.* (tropical geocentric Sun + azalt), so
+        # _compute_is_diurnal calls ephe.* (tropical geocentric Sun + azalt), so
         # it must run inside an ephemeris session — same lock/path contract as
         # the subject factory, which computes sect inside its own session. A
         # plain session is enough: _compute_is_diurnal builds its own flags.

@@ -12,7 +12,7 @@ The Sun is NOT supported: it has no geocentric orbital nodes or apsides
 from the defaults and an explicit request for it raises a
 :class:`KerykeionException`.
 
-Swiss Ephemeris function: swe.nod_aps_ut(jd_ut, planet, iflag, method)
+Swiss Ephemeris function: ephe.nod_aps_ut(jd_ut, planet, iflag, method)
 Methods: NODBIT_MEAN (mean elements), NODBIT_OSCU (osculating/instantaneous)
 """
 
@@ -21,7 +21,7 @@ from __future__ import annotations
 import logging
 from typing import Dict, List, Optional
 
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
@@ -35,21 +35,21 @@ from pydantic import Field
 
 logger = logging.getLogger(__name__)
 
-NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
-NODBIT_OSCU = getattr(swe, "NODBIT_OSCU", 2)
+NODBIT_MEAN = getattr(ephe, "NODBIT_MEAN", 1)
+NODBIT_OSCU = getattr(ephe, "NODBIT_OSCU", 2)
 
 # The Sun is deliberately absent: nod_aps_ut has no geocentric solar
 # nodes/apsides to return and yields all-zero placeholders for it.
 _NODE_PLANETS: Dict[AstrologicalPoint, int] = {
-    "Moon": swe.MOON,
-    "Mercury": swe.MERCURY,
-    "Venus": swe.VENUS,
-    "Mars": swe.MARS,
-    "Jupiter": swe.JUPITER,
-    "Saturn": swe.SATURN,
-    "Uranus": swe.URANUS,
-    "Neptune": swe.NEPTUNE,
-    "Pluto": swe.PLUTO,
+    "Moon": ephe.MOON,
+    "Mercury": ephe.MERCURY,
+    "Venus": ephe.VENUS,
+    "Mars": ephe.MARS,
+    "Jupiter": ephe.JUPITER,
+    "Saturn": ephe.SATURN,
+    "Uranus": ephe.URANUS,
+    "Neptune": ephe.NEPTUNE,
+    "Pluto": ephe.PLUTO,
 }
 
 
@@ -168,13 +168,13 @@ class PlanetaryNodesFactory:
             custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
         ) as iflag:
             ayanamsa = 0.0
-            if iflag & swe.FLG_SIDEREAL:
-                ayanamsa = float(swe.get_ayanamsa_ex_ut(julian_day, iflag)[1])
-            calc_iflag = iflag & ~swe.FLG_SIDEREAL
+            if iflag & ephe.FLG_SIDEREAL:
+                ayanamsa = float(ephe.get_ayanamsa_ex_ut(julian_day, iflag)[1])
+            calc_iflag = iflag & ~ephe.FLG_SIDEREAL
 
             for name, planet_id in target_planets.items():
                 try:
-                    result = swe.nod_aps_ut(julian_day, planet_id, calc_iflag, nodbit)
+                    result = ephe.nod_aps_ut(julian_day, planet_id, calc_iflag, nodbit)
                     # result is a tuple of 4 elements, each a 6-element array:
                     # [0] ascending node, [1] descending node, [2] perihelion, [3] aphelion
                     asc_lon = (result[0][0] - ayanamsa) % 360

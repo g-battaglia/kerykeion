@@ -2,7 +2,7 @@
 """Tests for the Nutation/Obliquity model."""
 
 import pytest
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion import AstrologicalSubjectFactory
 
 
@@ -67,14 +67,14 @@ class TestNutationModel:
 
 
 class TestNutationSwissEphRegression:
-    """Known-value regression tests using Swiss Ephemeris (swe) as the reference.
+    """Known-value regression tests using Swiss Ephemeris (ephe) as the reference.
 
-    At J2000.0 (JD 2451545.0 = 2000-01-01 12:00 UTC), swe.calc_ut with
+    At J2000.0 (JD 2451545.0 = 2000-01-01 12:00 UTC), ephe.calc_ut with
     ECL_NUT returns well-known nutation/obliquity values that serve as a
     stable reference for regression testing.
     """
 
-    # Reference values from swe.calc_ut(2451545.0, swe.ECL_NUT, swe.FLG_SWIEPH)
+    # Reference values from ephe.calc_ut(2451545.0, ephe.ECL_NUT, ephe.FLG_SWIEPH)
     J2000_JD = 2451545.0
     SWE_TRUE_OBLIQUITY = 23.4376767161
     SWE_MEAN_OBLIQUITY = 23.4392794439
@@ -83,33 +83,33 @@ class TestNutationSwissEphRegression:
 
     @classmethod
     def setup_class(cls):
-        swe.set_ephe_path("")
+        ephe.set_ephe_path("")
 
     def test_swe_ecl_nut_j2000_true_obliquity(self):
-        """True obliquity at J2000.0 should be ~23.4377 deg per swe."""
-        nut = swe.calc_ut(self.J2000_JD, swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+        """True obliquity at J2000.0 should be ~23.4377 deg per ephe."""
+        nut = ephe.calc_ut(self.J2000_JD, ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
         assert abs(nut[0] - self.SWE_TRUE_OBLIQUITY) < 1e-6
 
     def test_swe_ecl_nut_j2000_mean_obliquity(self):
-        """Mean obliquity at J2000.0 should be ~23.4393 deg per swe."""
-        nut = swe.calc_ut(self.J2000_JD, swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+        """Mean obliquity at J2000.0 should be ~23.4393 deg per ephe."""
+        nut = ephe.calc_ut(self.J2000_JD, ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
         assert abs(nut[1] - self.SWE_MEAN_OBLIQUITY) < 1e-6
 
     def test_swe_ecl_nut_j2000_nutation_longitude(self):
-        """Nutation in longitude at J2000.0 should be ~-0.00387 deg per swe."""
-        nut = swe.calc_ut(self.J2000_JD, swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+        """Nutation in longitude at J2000.0 should be ~-0.00387 deg per ephe."""
+        nut = ephe.calc_ut(self.J2000_JD, ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
         assert abs(nut[2] - self.SWE_NUT_LONGITUDE) < 1e-6
 
     def test_swe_ecl_nut_j2000_nutation_obliquity(self):
-        """Nutation in obliquity at J2000.0 should be ~-0.00160 deg per swe."""
-        nut = swe.calc_ut(self.J2000_JD, swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+        """Nutation in obliquity at J2000.0 should be ~-0.00160 deg per ephe."""
+        nut = ephe.calc_ut(self.J2000_JD, ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
         assert abs(nut[3] - self.SWE_NUT_OBLIQUITY) < 1e-6
 
     def test_subject_nutation_matches_swe_at_j2000(self):
-        """AstrologicalSubjectFactory nutation at J2000.0 must match swe reference.
+        """AstrologicalSubjectFactory nutation at J2000.0 must match ephe reference.
 
         Creates a subject for 2000-01-01 12:00 UTC (JD 2451545.0) and verifies
-        its nutation model fields against the swe.calc_ut ECL_NUT output.
+        its nutation model fields against the ephe.calc_ut ECL_NUT output.
         """
         subject = AstrologicalSubjectFactory.from_birth_data(
             "J2000 Nutation Regression", 2000, 1, 1, 12, 0,
@@ -123,7 +123,7 @@ class TestNutationSwissEphRegression:
             f"JD mismatch: {subject.julian_day} vs {self.J2000_JD}"
         )
 
-        # Compare each field against the swe reference with tight tolerance
+        # Compare each field against the ephe reference with tight tolerance
         assert abs(subject.nutation.true_obliquity - self.SWE_TRUE_OBLIQUITY) < 1e-4, (
             f"true_obliquity: {subject.nutation.true_obliquity} vs {self.SWE_TRUE_OBLIQUITY}"
         )

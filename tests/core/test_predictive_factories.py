@@ -12,7 +12,7 @@ from kerykeion import (
     SecondaryProgressionFactory,
     SolarArcFactory,
 )
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas import KerykeionException
 from kerykeion.secondary_progressions.secondary_progression_factory import DAYS_PER_TROPICAL_YEAR
 
@@ -261,7 +261,7 @@ def test_secondary_progression_bce_subject():
 
     progressed = SecondaryProgressionFactory.compute(natal, target_year=-460)
 
-    target_jd = swe.julday(-460, 1, 1, 0.0, swe.JUL_CAL)
+    target_jd = ephe.julday(-460, 1, 1, 0.0, ephe.JUL_CAL)
     expected_jd = natal.julian_day + (
         (target_jd - natal.julian_day) / DAYS_PER_TROPICAL_YEAR
     )

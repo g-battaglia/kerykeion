@@ -29,7 +29,7 @@ from pydantic import BaseModel, Field
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
 from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
@@ -157,9 +157,9 @@ class SecondaryProgressionFactory:
             utc_offset_hours = sign * (offset_hours + offset_minutes / 60.0)
 
         decimal_hour = hour + minute / 60.0 + second / 3600.0
-        calendar_flag = swe.JUL_CAL if year < 1 else swe.GREG_CAL
-        local_jd = swe.julday(year, month, day, decimal_hour, calendar_flag)
-        parsed_year, parsed_month, parsed_day, _ = swe.revjul(local_jd, calendar_flag)
+        calendar_flag = ephe.JUL_CAL if year < 1 else ephe.GREG_CAL
+        local_jd = ephe.julday(year, month, day, decimal_hour, calendar_flag)
+        parsed_year, parsed_month, parsed_day, _ = ephe.revjul(local_jd, calendar_flag)
         if (int(parsed_year), int(parsed_month), int(parsed_day)) != (year, month, day):
             raise ValueError(f"Invalid ancient ISO date: {iso_datetime!r}")
         return local_jd - utc_offset_hours / 24.0
@@ -182,8 +182,8 @@ class SecondaryProgressionFactory:
         if target_year is not None:
             try:
                 if target_year < 1:
-                    return swe.julday(target_year, 1, 1, 0.0, swe.JUL_CAL)
-                return swe.julday(target_year, 1, 1, 0.0, swe.GREG_CAL)
+                    return ephe.julday(target_year, 1, 1, 0.0, ephe.JUL_CAL)
+                return ephe.julday(target_year, 1, 1, 0.0, ephe.GREG_CAL)
             except (ValueError, OverflowError, TypeError) as exc:
                 raise KerykeionException(
                     f"Invalid `target_year`: {target_year!r}"
@@ -228,11 +228,11 @@ class SecondaryProgressionFactory:
     @staticmethod
     def _jd_to_components(jd: float, calendar_flag: int) -> tuple[int, int, int, int, int, int]:
         """Convert a JD to integer date/time components in the requested calendar."""
-        year, month, day, decimal_hour = swe.revjul(jd, calendar_flag)
+        year, month, day, decimal_hour = ephe.revjul(jd, calendar_flag)
         total_seconds = int(round(decimal_hour * 3600.0))
         if total_seconds >= 86400:
-            next_midnight = swe.julday(int(year), int(month), int(day), 0.0, calendar_flag) + 1.0
-            year, month, day, _ = swe.revjul(next_midnight, calendar_flag)
+            next_midnight = ephe.julday(int(year), int(month), int(day), 0.0, calendar_flag) + 1.0
+            year, month, day, _ = ephe.revjul(next_midnight, calendar_flag)
             total_seconds = 0
 
         hour = total_seconds // 3600
@@ -244,7 +244,7 @@ class SecondaryProgressionFactory:
     def _jd_to_utc_datetime(jd: float) -> datetime:
         """Convert a CE Julian Day UT to an aware UTC ``datetime``."""
         year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
-            jd, swe.GREG_CAL
+            jd, ephe.GREG_CAL
         )
         if not (1 <= year <= 9999):
             raise KerykeionException(
@@ -255,10 +255,10 @@ class SecondaryProgressionFactory:
     @staticmethod
     def _jd_to_utc_iso(jd: float) -> str:
         """Format a Julian Day UT as a UTC ISO timestamp."""
-        gregorian_year, _, _, _ = swe.revjul(jd, swe.GREG_CAL)
+        gregorian_year, _, _, _ = ephe.revjul(jd, ephe.GREG_CAL)
         if int(gregorian_year) >= 1:
             year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
-                jd, swe.GREG_CAL
+                jd, ephe.GREG_CAL
             )
             if year > 9999:
                 return f"+{year:05d}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}.000000Z"
@@ -267,7 +267,7 @@ class SecondaryProgressionFactory:
             ).replace("+00:00", "Z")
 
         year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
-            jd, swe.JUL_CAL
+            jd, ephe.JUL_CAL
         )
         year_label = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
         return f"{year_label}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}.000000Z"
@@ -275,8 +275,8 @@ class SecondaryProgressionFactory:
     @staticmethod
     def _jd_to_date_label(jd: float) -> str:
         """Format a target JD as a calendar date label."""
-        gregorian_year, _, _, _ = swe.revjul(jd, swe.GREG_CAL)
-        calendar_flag = swe.GREG_CAL if int(gregorian_year) >= 1 else swe.JUL_CAL
+        gregorian_year, _, _, _ = ephe.revjul(jd, ephe.GREG_CAL)
+        calendar_flag = ephe.GREG_CAL if int(gregorian_year) >= 1 else ephe.JUL_CAL
         year, month, day, _, _, _ = SecondaryProgressionFactory._jd_to_components(
             jd, calendar_flag
         )
@@ -342,7 +342,7 @@ class SecondaryProgressionFactory:
                 "Natal subject is missing longitude/latitude — cannot progress."
             )
 
-        progressed_year_gregorian, _, _, _ = swe.revjul(progressed_jd, swe.GREG_CAL)
+        progressed_year_gregorian, _, _, _ = ephe.revjul(progressed_jd, ephe.GREG_CAL)
         # Heterogeneous keyword bundle forwarded via ** to the factory entry points.
         common_kwargs: Dict[str, Any] = dict(
             name=progressed_subject_name,
@@ -375,7 +375,7 @@ class SecondaryProgressionFactory:
         lmt_offset_hours = natal_subject.lng / 15.0
         progressed_lmt_jd = progressed_jd + lmt_offset_hours / 24.0
         year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
-            progressed_lmt_jd, swe.JUL_CAL
+            progressed_lmt_jd, ephe.JUL_CAL
         )
         return AstrologicalSubjectFactory.from_birth_data(
             year=year,

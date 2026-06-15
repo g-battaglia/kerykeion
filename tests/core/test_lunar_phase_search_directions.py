@@ -19,7 +19,7 @@ from kerykeion.moon_phase_details.utils import (
     compute_lunar_phase_jd,
     configure_ephemeris_path,
 )
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion.utilities import datetime_to_julian
 
 # Spacing of consecutive same-phase instants. New-moon-to-new-moon spans
@@ -45,9 +45,9 @@ _REFERENCE_DATES = (
 
 def _phase_angle(jd: float) -> float:
     configure_ephemeris_path()
-    iflag = swe.FLG_SWIEPH
-    sun = swe.calc_ut(jd, swe.SUN, iflag)[0]
-    moon = swe.calc_ut(jd, swe.MOON, iflag)[0]
+    iflag = ephe.FLG_SWIEPH
+    sun = ephe.calc_ut(jd, ephe.SUN, iflag)[0]
+    moon = ephe.calc_ut(jd, ephe.MOON, iflag)[0]
     return (float(moon[0]) - float(sun[0])) % 360.0
 
 

@@ -149,17 +149,17 @@ class TestLunationFormatter:
     def test_jd_to_iso_bce_year(self):
         # BCE years format with a signed 4-digit extended year and real seconds
         # (datetime caps at year 1, so revjul is used instead).
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
         from kerykeion.lunations.lunation_factory import _jd_to_iso
 
-        jd = swe.julday(-44, 3, 15, 12.0)
+        jd = ephe.julday(-44, 3, 15, 12.0)
         assert _jd_to_iso(jd) == "-0044-03-15T12:00:00Z"
 
     def test_jd_to_iso_ce_year(self):
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
         from kerykeion.lunations.lunation_factory import _jd_to_iso
 
-        jd = swe.julday(2026, 8, 12, 17.0 + 30.0 / 60.0 + 42.0 / 3600.0)
+        jd = ephe.julday(2026, 8, 12, 17.0 + 30.0 / 60.0 + 42.0 / 3600.0)
         assert _jd_to_iso(jd) == "2026-08-12T17:30:42Z"
 
 

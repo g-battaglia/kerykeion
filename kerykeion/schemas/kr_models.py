@@ -552,12 +552,12 @@ class KerykeionPointModel(SubscriptableBaseModel):
             is the slow drift due to precession (~50 arcsec/year). Added in v5.12.
         declination: Declination in degrees north (+) or south (-) of the
             celestial equator, computed from equatorial coordinates via
-            ``swe.calc_ut`` with ``FLG_EQUATORIAL``. Useful for parallel and
+            ``ephe.calc_ut`` with ``FLG_EQUATORIAL``. Useful for parallel and
             contra-parallel aspects. Added in v5.12.
         magnitude: Apparent visual magnitude of fixed stars (lower = brighter;
             e.g. Sirius = -1.46, Regulus = 1.35). Only populated for fixed
             star points; ``None`` for planets and calculated points. Retrieved
-            via ``swe.fixstar2_mag``. Added in v5.12.
+            via ``ephe.fixstar2_mag``. Added in v5.12.
     """
 
     name: Union[AstrologicalPoint, Houses, str]
@@ -644,7 +644,7 @@ class NutationObliquityModel(SubscriptableBaseModel):
     Nutation and obliquity parameters for a given moment.
 
     These values describe the orientation of Earth's axis and its
-    short-period oscillations, computed via ``swe.calc_ut(jd, swe.ECL_NUT)``.
+    short-period oscillations, computed via ``ephe.calc_ut(jd, ephe.ECL_NUT)``.
 
     Added in v6.0.
     """
@@ -1452,7 +1452,7 @@ ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]
 class PlanetaryPhenomenaModel(SubscriptableBaseModel):
     """Observational phenomena for a single planet at a specific moment.
 
-    Data comes from Swiss Ephemeris ``swe.pheno_ut()``.
+    Data comes from Swiss Ephemeris ``ephe.pheno_ut()``.
     """
 
     name: str = Field(description="Planet name")

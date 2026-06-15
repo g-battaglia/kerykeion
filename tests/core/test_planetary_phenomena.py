@@ -2,11 +2,11 @@
 """Tests for the Planetary Phenomena factory.
 
 Validates phase angle, elongation, illumination, apparent magnitude,
-and morning/evening star status calculations via swe.pheno_ut().
+and morning/evening star status calculations via ephe.pheno_ut().
 """
 
 import pytest
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, PlanetaryPhenomenaFactory
 
 
@@ -112,17 +112,17 @@ class TestPhenomenaEdgeCases:
     """Test edge-case branches in the phenomena factory."""
 
     def test_sun_calc_failure_gives_none_morning_evening(self):
-        """If swe.calc_ut for the Sun fails, morning/evening star should be None."""
+        """If ephe.calc_ut for the Sun fails, morning/evening star should be None."""
         from unittest.mock import patch
 
-        original_calc_ut = swe.calc_ut
+        original_calc_ut = ephe.calc_ut
 
         def mock_calc_ut(jd, planet_id, iflag):
-            if planet_id == swe.SUN:
+            if planet_id == ephe.SUN:
                 raise RuntimeError("Mock Sun failure")
             return original_calc_ut(jd, planet_id, iflag)
 
-        with patch("kerykeion.planetary_phenomena.phenomena_factory.swe.calc_ut", side_effect=mock_calc_ut):
+        with patch("kerykeion.planetary_phenomena.phenomena_factory.ephe.calc_ut", side_effect=mock_calc_ut):
             result = PlanetaryPhenomenaFactory.from_julian_day(2451545.0, planets=["Venus"])
             assert len(result.phenomena) == 1
             # Without Sun longitude, morning/evening cannot be determined
@@ -130,17 +130,17 @@ class TestPhenomenaEdgeCases:
             assert result.phenomena[0].is_evening_star is None
 
     def test_pheno_ut_exception_skips_planet(self):
-        """If swe.pheno_ut raises for a planet, that planet should be skipped."""
+        """If ephe.pheno_ut raises for a planet, that planet should be skipped."""
         from unittest.mock import patch
 
-        original_pheno_ut = swe.pheno_ut
+        original_pheno_ut = ephe.pheno_ut
 
         def mock_pheno_ut(jd, planet_id, iflag):
-            if planet_id == swe.MARS:
+            if planet_id == ephe.MARS:
                 raise RuntimeError("Mock pheno failure")
             return original_pheno_ut(jd, planet_id, iflag)
 
-        with patch("kerykeion.planetary_phenomena.phenomena_factory.swe.pheno_ut", side_effect=mock_pheno_ut):
+        with patch("kerykeion.planetary_phenomena.phenomena_factory.ephe.pheno_ut", side_effect=mock_pheno_ut):
             result = PlanetaryPhenomenaFactory.from_julian_day(2451545.0)
             names = [p.name for p in result.phenomena]
             assert "Mars" not in names
@@ -163,7 +163,7 @@ class TestPhenomenaEdgeCases:
         assert venus2.is_morning_star is not None or venus2.is_evening_star is not None
 
     def test_planet_calc_failure_in_morning_evening_gives_none(self):
-        """If swe.calc_ut fails for the planet's position in the morning/evening block,
+        """If ephe.calc_ut fails for the planet's position in the morning/evening block,
         is_morning_star and is_evening_star should remain None.
 
         The code flow is:
@@ -174,11 +174,11 @@ class TestPhenomenaEdgeCases:
         """
         from unittest.mock import patch
 
-        original_calc_ut = swe.calc_ut
+        original_calc_ut = ephe.calc_ut
         venus_calc_count = [0]
 
         def mock_calc_ut(jd, planet_id, iflag):
-            if planet_id == swe.VENUS:
+            if planet_id == ephe.VENUS:
                 venus_calc_count[0] += 1
                 # The 2nd call for Venus is the position calc inside morning/evening block
                 # (1st call is the Sun, then pheno_ut internally may call, then our position calc)
@@ -186,7 +186,7 @@ class TestPhenomenaEdgeCases:
                     raise RuntimeError("Mock Venus position failure")
             return original_calc_ut(jd, planet_id, iflag)
 
-        with patch("kerykeion.planetary_phenomena.phenomena_factory.swe.calc_ut", side_effect=mock_calc_ut):
+        with patch("kerykeion.planetary_phenomena.phenomena_factory.ephe.calc_ut", side_effect=mock_calc_ut):
             result = PlanetaryPhenomenaFactory.from_julian_day(2451545.0, planets=["Venus"])
             if len(result.phenomena) > 0:
                 venus = result.phenomena[0]
@@ -199,11 +199,11 @@ class TestSweRegressionPhenomena:
     """Regression tests: verify factory results match raw Swiss Ephemeris calls."""
 
     def test_venus_phenomena_at_j2000_matches_swe(self):
-        """Factory Venus phenomena at J2000.0 should match swe.pheno_ut directly."""
+        """Factory Venus phenomena at J2000.0 should match ephe.pheno_ut directly."""
         jd_j2000 = 2451545.0
 
         with ephemeris_session() as iflag:
-            swe_result = swe.pheno_ut(jd_j2000, swe.VENUS, iflag)
+            swe_result = ephe.pheno_ut(jd_j2000, ephe.VENUS, iflag)
         swe_phase_angle = swe_result[0]
         swe_phase = swe_result[1]
         swe_elongation = swe_result[2]
@@ -217,27 +217,27 @@ class TestSweRegressionPhenomena:
         venus = factory_result.phenomena[0]
 
         assert abs(venus.phase_angle - swe_phase_angle) < 0.001, (
-            f"phase_angle: factory={venus.phase_angle} swe={swe_phase_angle}"
+            f"phase_angle: factory={venus.phase_angle} ephe={swe_phase_angle}"
         )
         assert abs(venus.phase - swe_phase) < 0.001, (
-            f"phase: factory={venus.phase} swe={swe_phase}"
+            f"phase: factory={venus.phase} ephe={swe_phase}"
         )
         assert abs(venus.elongation - swe_elongation) < 0.001, (
-            f"elongation: factory={venus.elongation} swe={swe_elongation}"
+            f"elongation: factory={venus.elongation} ephe={swe_elongation}"
         )
         assert abs(venus.apparent_diameter - swe_apparent_diameter) < 0.0001, (
-            f"apparent_diameter: factory={venus.apparent_diameter} swe={swe_apparent_diameter}"
+            f"apparent_diameter: factory={venus.apparent_diameter} ephe={swe_apparent_diameter}"
         )
         assert abs(venus.apparent_magnitude - swe_apparent_magnitude) < 0.01, (
-            f"apparent_magnitude: factory={venus.apparent_magnitude} swe={swe_apparent_magnitude}"
+            f"apparent_magnitude: factory={venus.apparent_magnitude} ephe={swe_apparent_magnitude}"
         )
 
     def test_mars_phenomena_at_j2000_matches_swe(self):
-        """Factory Mars phenomena at J2000.0 should match swe.pheno_ut directly."""
+        """Factory Mars phenomena at J2000.0 should match ephe.pheno_ut directly."""
         jd_j2000 = 2451545.0
 
         with ephemeris_session() as iflag:
-            swe_result = swe.pheno_ut(jd_j2000, swe.MARS, iflag)
+            swe_result = ephe.pheno_ut(jd_j2000, ephe.MARS, iflag)
         swe_phase_angle = swe_result[0]
         swe_elongation = swe_result[2]
 
@@ -248,8 +248,8 @@ class TestSweRegressionPhenomena:
         mars = factory_result.phenomena[0]
 
         assert abs(mars.phase_angle - swe_phase_angle) < 0.001, (
-            f"phase_angle: factory={mars.phase_angle} swe={swe_phase_angle}"
+            f"phase_angle: factory={mars.phase_angle} ephe={swe_phase_angle}"
         )
         assert abs(mars.elongation - swe_elongation) < 0.001, (
-            f"elongation: factory={mars.elongation} swe={swe_elongation}"
+            f"elongation: factory={mars.elongation} ephe={swe_elongation}"
         )

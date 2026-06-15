@@ -84,7 +84,7 @@ def pytest_sessionstart(session):
             "the built-in Moshier fallback fails the golden-value tests.\n"
             "Download them and point the suite at them:\n"
             "    python -m kerykeion.swisseph_setup\n"
-            "    KERYKEION_EPHE_PATH=~/.kerykeion/sweph uv run poe test:swe",
+            "    KERYKEION_EPHE_PATH=~/.kerykeion/sweph uv run poe test:ephe",
             returncode=4,
         )
 
@@ -96,14 +96,14 @@ def _detect_ephemeris_tier() -> str:
     the next narrower one: year 1000 is covered only by DE441 (extended),
     year 1700 by DE440 (medium) but not DE440s (base, 1849+).
     """
-    from kerykeion.ephemeris_backend import swe, ephemeris_session
+    from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
     def _sun_computes(year: int) -> bool:
         # The primary (libephemeris) backend raises for out-of-range dates, so a
         # bare success/raise cleanly distinguishes whether the date is served.
         try:
             with ephemeris_session() as iflag:
-                swe.calc_ut(swe.julday(year, 1, 1, 12.0), 0, iflag)
+                ephe.calc_ut(ephe.julday(year, 1, 1, 12.0), 0, iflag)
             return True
         except Exception:
             return False

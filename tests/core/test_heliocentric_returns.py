@@ -14,7 +14,7 @@ Verifies the core invariants:
 
 
 import pytest
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 
 from kerykeion import AstrologicalSubjectFactory, PlanetaryReturnFactory
 
@@ -38,9 +38,9 @@ def _angular_distance(a: float, b: float) -> float:
 
 def _helio_longitude(jd: float, planet_id: int) -> float:
     """Compute heliocentric ecliptic longitude at a given Julian Day."""
-    swe.set_ephe_path(EPHE_PATH)
-    data = swe.calc_ut(jd, planet_id, swe.FLG_SWIEPH | swe.FLG_HELCTR)
-    swe.close()
+    ephe.set_ephe_path(EPHE_PATH)
+    data = ephe.calc_ut(jd, planet_id, ephe.FLG_SWIEPH | ephe.FLG_HELCTR)
+    ephe.close()
     return data[0][0]
 
 
@@ -67,7 +67,7 @@ def factory(subject):
 
 @pytest.fixture(scope="module")
 def start_jd():
-    return swe.julday(2025, 1, 1, 0.0)
+    return ephe.julday(2025, 1, 1, 0.0)
 
 
 # ---------------------------------------------------------------------------
@@ -200,7 +200,7 @@ class TestPlanetaryReturnValidation:
         factory_obj.custom_ayanamsa_ayan_t0 = 23.5
 
         # Call _build_return_chart to exercise the propagation path
-        result = factory_obj._build_return_chart(swe.julday(2025, 6, 15, 12.0), "Solar")
+        result = factory_obj._build_return_chart(ephe.julday(2025, 6, 15, 12.0), "Solar")
         assert result is not None
         assert result.return_type == "Solar"
 
@@ -255,9 +255,9 @@ class TestLunarNodeCrossing:
         result = factory.next_lunar_node_crossing(start_jd)
 
         # Compute the True Node longitude at the crossing moment
-        swe.set_ephe_path(EPHE_PATH)
-        true_node_data = swe.calc_ut(result.julian_day, 11, swe.FLG_SWIEPH)  # True Node = 11
-        swe.close()
+        ephe.set_ephe_path(EPHE_PATH)
+        true_node_data = ephe.calc_ut(result.julian_day, 11, ephe.FLG_SWIEPH)  # True Node = 11
+        ephe.close()
         node_lon = true_node_data[0][0]
 
         # Moon longitude from the return chart
@@ -343,9 +343,9 @@ class TestHeliocentricReturnFromYear:
 
     def test_year_return_in_expected_range(self, factory):
         """Mars return from 2025 should fall within 2025-2027 (< 1 orbital period)."""
-        from kerykeion.ephemeris_backend import swe as _swe
+        from kerykeion.ephemeris_backend import ephe as _ephe
         result = factory.next_heliocentric_return_from_year("Mars", 2025)
-        jan1_jd = _swe.julday(2025, 1, 1, 0.0)
+        jan1_jd = _ephe.julday(2025, 1, 1, 0.0)
         assert result.julian_day > jan1_jd
         assert result.julian_day < jan1_jd + MARS_ORBITAL_PERIOD
 
@@ -355,9 +355,9 @@ class TestHeliocentricReturnFromDate:
 
     def test_from_date_basic(self, factory):
         """from_date(2025, 6, 15) should return after June 15."""
-        from kerykeion.ephemeris_backend import swe as _swe
+        from kerykeion.ephemeris_backend import ephe as _ephe
         result = factory.next_heliocentric_return_from_date("Mars", 2025, 6, 15)
-        june15_jd = _swe.julday(2025, 6, 15, 0.0)
+        june15_jd = _ephe.julday(2025, 6, 15, 0.0)
         assert result.julian_day > june15_jd
 
     def test_from_date_invalid_month_raises(self, factory):
@@ -371,8 +371,8 @@ class TestHeliocentricReturnBackwards:
 
     def test_backwards_returns_earlier_jd(self, factory):
         """Backward search from 2026 should return JD before the start."""
-        from kerykeion.ephemeris_backend import swe as _swe
-        start_jd = _swe.julday(2026, 1, 1, 0.0)
+        from kerykeion.ephemeris_backend import ephe as _ephe
+        start_jd = _ephe.julday(2026, 1, 1, 0.0)
         try:
             result = factory.next_heliocentric_return("Mars", start_jd, backwards=True)
             assert result.julian_day < start_jd
@@ -410,9 +410,9 @@ class TestLunarNodeCrossingFromYear:
 
     def test_year_crossing_after_jan1(self, factory):
         """Crossing from 2025 should be after Jan 1 2025."""
-        from kerykeion.ephemeris_backend import swe as _swe
+        from kerykeion.ephemeris_backend import ephe as _ephe
         result = factory.next_lunar_node_crossing_from_year(2025)
-        jan1_jd = _swe.julday(2025, 1, 1, 0.0)
+        jan1_jd = _ephe.julday(2025, 1, 1, 0.0)
         assert result.julian_day > jan1_jd
 
 
@@ -421,9 +421,9 @@ class TestLunarNodeCrossingFromDate:
 
     def test_from_date_basic(self, factory):
         """from_date(2025, 6, 15) should return after June 15."""
-        from kerykeion.ephemeris_backend import swe as _swe
+        from kerykeion.ephemeris_backend import ephe as _ephe
         result = factory.next_lunar_node_crossing_from_date(2025, 6, 15)
-        june15_jd = _swe.julday(2025, 6, 15, 0.0)
+        june15_jd = _ephe.julday(2025, 6, 15, 0.0)
         assert result.julian_day > june15_jd
 
     def test_from_date_invalid_month_raises(self, factory):

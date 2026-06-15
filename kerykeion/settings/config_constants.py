@@ -558,7 +558,7 @@ STANDARD_PLANETS: dict[AstrologicalPoint, int] = {
 }
 """
 Standard planets with direct Swiss Ephemeris IDs (0-22, 40-47).
-Used for `swe.calc_ut()` calls where the planet identifier is a native SE code.
+Used for `ephe.calc_ut()` calls where the planet identifier is a native SE code.
 """
 
 POINT_NUMBER_MAP: dict[str, int] = {

@@ -3,9 +3,9 @@
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from kerykeion.ephemeris_backend import swe as _swe
+from kerykeion.ephemeris_backend import ephe as _ephe
 
-difdeg2n = _swe.difdeg2n
+difdeg2n = _ephe.difdeg2n
 from typing import Optional, Union
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.schemas.kr_literals import AspectMovementType

@@ -2,7 +2,7 @@
 """Tests for the Planetary Nodes & Apsides factory."""
 
 import pytest
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, PlanetaryNodesFactory
 from kerykeion.schemas import KerykeionException
 
@@ -100,12 +100,12 @@ class TestSweRegressionNodes:
     """Regression tests: verify factory results match raw Swiss Ephemeris calls."""
 
     def test_mars_ascending_node_matches_swe(self):
-        """Factory Mars ascending node longitude should match swe.nod_aps_ut."""
+        """Factory Mars ascending node longitude should match ephe.nod_aps_ut."""
         jd_j2000 = 2451545.0
-        NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
+        NODBIT_MEAN = getattr(ephe, "NODBIT_MEAN", 1)
 
         with ephemeris_session() as iflag:
-            swe_result = swe.nod_aps_ut(jd_j2000, swe.MARS, iflag, NODBIT_MEAN)
+            swe_result = ephe.nod_aps_ut(jd_j2000, ephe.MARS, iflag, NODBIT_MEAN)
             swe_asc_lon = swe_result[0][0] % 360
             swe_desc_lon = swe_result[1][0] % 360
             swe_peri_lon = swe_result[2][0] % 360
@@ -118,25 +118,25 @@ class TestSweRegressionNodes:
         mars = factory_result.nodes[0]
 
         assert abs(mars.ascending_node.abs_pos - swe_asc_lon) < 0.01, (
-            f"asc node: factory={mars.ascending_node.abs_pos} swe={swe_asc_lon}"
+            f"asc node: factory={mars.ascending_node.abs_pos} ephe={swe_asc_lon}"
         )
         assert abs(mars.descending_node.abs_pos - swe_desc_lon) < 0.01, (
-            f"desc node: factory={mars.descending_node.abs_pos} swe={swe_desc_lon}"
+            f"desc node: factory={mars.descending_node.abs_pos} ephe={swe_desc_lon}"
         )
         assert abs(mars.perihelion.abs_pos - swe_peri_lon) < 0.01, (
-            f"perihelion: factory={mars.perihelion.abs_pos} swe={swe_peri_lon}"
+            f"perihelion: factory={mars.perihelion.abs_pos} ephe={swe_peri_lon}"
         )
         assert abs(mars.aphelion.abs_pos - swe_aph_lon) < 0.01, (
-            f"aphelion: factory={mars.aphelion.abs_pos} swe={swe_aph_lon}"
+            f"aphelion: factory={mars.aphelion.abs_pos} ephe={swe_aph_lon}"
         )
 
     def test_jupiter_ascending_node_matches_swe(self):
-        """Factory Jupiter ascending node longitude should match swe.nod_aps_ut."""
+        """Factory Jupiter ascending node longitude should match ephe.nod_aps_ut."""
         jd_j2000 = 2451545.0
-        NODBIT_MEAN = getattr(swe, "NODBIT_MEAN", 1)
+        NODBIT_MEAN = getattr(ephe, "NODBIT_MEAN", 1)
 
         with ephemeris_session() as iflag:
-            swe_result = swe.nod_aps_ut(jd_j2000, swe.JUPITER, iflag, NODBIT_MEAN)
+            swe_result = ephe.nod_aps_ut(jd_j2000, ephe.JUPITER, iflag, NODBIT_MEAN)
             swe_asc_lon = swe_result[0][0] % 360
 
         factory_result = PlanetaryNodesFactory.from_julian_day(
@@ -146,7 +146,7 @@ class TestSweRegressionNodes:
         jupiter = factory_result.nodes[0]
 
         assert abs(jupiter.ascending_node.abs_pos - swe_asc_lon) < 0.01, (
-            f"Jupiter asc node: factory={jupiter.ascending_node.abs_pos} swe={swe_asc_lon}"
+            f"Jupiter asc node: factory={jupiter.ascending_node.abs_pos} ephe={swe_asc_lon}"
         )
 
 

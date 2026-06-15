@@ -31,7 +31,7 @@ License: AGPL-3.0
 """
 
 import pytz
-from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, BACKEND_NAME, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH, BACKEND_NAME, ephemeris_session
 import logging
 import math
 from datetime import datetime, timezone, timedelta
@@ -153,12 +153,12 @@ OPPOSITE_PAIRS: Dict[AstrologicalPoint, Dict[str, Any]] = {
 
 # Planetocentric center body mapping (used for planetocentric perspectives)
 _PLANETOCENTRIC_CENTERS: Dict[str, int] = {
-    "Selenocentric": swe.MOON,
-    "Mercurycentric": swe.MERCURY,
-    "Venuscentric": swe.VENUS,
-    "Marscentric": swe.MARS,
-    "Jupitercentric": swe.JUPITER,
-    "Saturncentric": swe.SATURN,
+    "Selenocentric": ephe.MOON,
+    "Mercurycentric": ephe.MERCURY,
+    "Venuscentric": ephe.VENUS,
+    "Marscentric": ephe.MARS,
+    "Jupitercentric": ephe.JUPITER,
+    "Saturncentric": ephe.SATURN,
 }
 
 # Arabic Parts configuration: (name, required_points, formula_type)
@@ -231,7 +231,7 @@ def ephemeris_context(
 
     Sidereal Mode Handling (v5.12):
         Named modes (e.g. ``LAHIRI``, ``FAGAN_BRADLEY``) are resolved via
-        ``getattr(swe, f"SIDM_{mode}")`` -- each named mode encodes its own
+        ``getattr(ephe, f"SIDM_{mode}")`` -- each named mode encodes its own
         reference epoch and ayanamsa value internally.
 
         The ``USER`` mode requires two additional parameters on the config:
@@ -249,7 +249,7 @@ def ephemeris_context(
         alt: Observer altitude (meters) for topocentric charts.
 
     Yields:
-        int: iflag to be passed to swe.calc_ut / swe.fixstar_ut.
+        int: iflag to be passed to ephe.calc_ut / ephe.fixstar_ut.
     """
     # Delegates to the shared ephemeris_session, which serializes access via
     # EPHEMERIS_LOCK, resets per-calculation state on exit without closing
@@ -904,7 +904,7 @@ class AstrologicalSubjectFactory:
         ) as iflag:
             calc_data["_iflag"] = iflag
             # House system name (previously set in _setup_ephemeris)
-            calc_data["houses_system_name"] = swe.house_name(config.houses_system_identifier.encode("ascii"))
+            calc_data["houses_system_name"] = ephe.house_name(config.houses_system_identifier.encode("ascii"))
             calculated_axial_cusps = AstrologicalSubjectFactory._calculate_houses(calc_data, active_points_list)
 
             # Compute sect (diurnal/nocturnal) BEFORE calculating planets
@@ -927,7 +927,7 @@ class AstrologicalSubjectFactory:
             # Calculate ayanamsa value for sidereal charts (v5.12.4)
             if config.zodiac_type == "Sidereal":
                 try:
-                    ayan_result = swe.get_ayanamsa_ex_ut(calc_data["julian_day"], iflag)
+                    ayan_result = ephe.get_ayanamsa_ex_ut(calc_data["julian_day"], iflag)
                     calc_data["ayanamsa_value"] = ayan_result[1]
                 except Exception as e:
                     logging.warning(f"Could not calculate ayanamsa value: {e}")
@@ -954,7 +954,7 @@ class AstrologicalSubjectFactory:
             #
             # This whole section runs INSIDE the ephemeris_context block: the
             # Gauquelin, local-space, OOB-obliquity and nutation enrichments
-            # call swe.* functions, which must execute under EPHEMERIS_LOCK
+            # call ephe.* functions, which must execute under EPHEMERIS_LOCK
             # with the session's ephemeris path still configured (after the
             # session exits, the swisseph backend falls back to default-path
             # data and concurrent threads may reconfigure global state).
@@ -1020,7 +1020,7 @@ class AstrologicalSubjectFactory:
                     point = calc_data[pk]
                     sector = None
 
-                    # Try swe.gauquelin_sector for planets with known SwissEph IDs
+                    # Try ephe.gauquelin_sector for planets with known SwissEph IDs
                     pid = STANDARD_PLANETS.get(point.name)
                     if pid is not None:
                         try:
@@ -1030,7 +1030,7 @@ class AstrologicalSubjectFactory:
                             # floor) parses "dOiO|ddi" with no starname slot
                             # (the 5-arg starname form existed only in pre-2.10
                             # releases), and libephemeris mirrors it.
-                            sector = swe.gauquelin_sector(jd, pid, 0, geopos)
+                            sector = ephe.gauquelin_sector(jd, pid, 0, geopos)
                         except Exception:
                             pass
 
@@ -1052,7 +1052,7 @@ class AstrologicalSubjectFactory:
                     # Pass the session iflag so sidereal/topocentric charts get
                     # cusps in the same frame as their points (mirrors the main
                     # houses_ex2 call) instead of always-tropical longitudes.
-                    cusps_g = swe.houses_ex2(jd, lat_geo, lon_geo, b"G", iflag)
+                    cusps_g = ephe.houses_ex2(jd, lat_geo, lon_geo, b"G", iflag)
                     calc_data["gauquelin_sector_cusps"] = [round(c, 4) for c in cusps_g[0]]
                 except Exception:
                     pass
@@ -1075,7 +1075,7 @@ class AstrologicalSubjectFactory:
                         point = calc_data[pk]
                         try:
                             ecl_coords = ((point.abs_pos + ls_ayanamsa) % 360.0, 0.0, 1.0)
-                            azalt_result = swe.azalt(ls_jd, swe.ECL2HOR, ls_geopos, 0, 0, ecl_coords)
+                            azalt_result = ephe.azalt(ls_jd, ephe.ECL2HOR, ls_geopos, 0, 0, ecl_coords)
                             point_updates[pk]["azimuth"] = round(azalt_result[0], 4)
                             point_updates[pk]["altitude_above_horizon"] = round(azalt_result[1], 4)
                         except Exception as e:
@@ -1087,7 +1087,7 @@ class AstrologicalSubjectFactory:
             # for the chart's epoch, not a hardcoded constant.
             true_obliquity = None
             try:
-                nut_data = swe.calc_ut(calc_data["julian_day"], swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+                nut_data = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
                 true_obliquity = nut_data[0]
             except Exception as e:
                 logging.warning(f"Could not compute obliquity for OOB detection: {e}")
@@ -1108,7 +1108,7 @@ class AstrologicalSubjectFactory:
                 from kerykeion.schemas.kr_models import NutationObliquityModel
 
                 try:
-                    nut_raw = swe.calc_ut(calc_data["julian_day"], swe.ECL_NUT, swe.FLG_SWIEPH)[0]
+                    nut_raw = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
                     calc_data["nutation"] = NutationObliquityModel(
                         true_obliquity=nut_raw[0],
                         mean_obliquity=nut_raw[1],
@@ -1549,7 +1549,7 @@ class AstrologicalSubjectFactory:
 
             - ``year < 1`` (BCE, astronomical numbering): handled by
               ``_calculate_time_conversions_bce`` which uses the **Julian
-              calendar** (``swe.julday(..., JUL_CAL)``).
+              calendar** (``ephe.julday(..., JUL_CAL)``).
             - ``year >= 1``: handled here via Python ``datetime`` and
               ``datetime_to_julian``, which use the **proleptic Gregorian
               calendar** — including the years 1-1582 CE, when the Julian
@@ -1668,10 +1668,10 @@ class AstrologicalSubjectFactory:
         # All BCE dates predate the Gregorian reform — use Julian calendar
         # Note: swisseph uses `JUL_CAL`, libephemeris exposes both `JUL_CAL`
         # and `SE_JUL_CAL`.  Using `JUL_CAL` for cross-backend compatibility.
-        cal_flag = swe.JUL_CAL
+        cal_flag = ephe.JUL_CAL
 
         # Compute Julian Day for the input time (treated as local solar time)
-        jd_local = swe.julday(year, month, day, decimal_hour, cal_flag)
+        jd_local = ephe.julday(year, month, day, decimal_hour, cal_flag)
 
         # Local Mean Time offset: 1 hour per 15° of longitude (east = ahead of UT)
         lmt_offset_hours = location.lng / 15.0
@@ -1685,7 +1685,7 @@ class AstrologicalSubjectFactory:
         data["iso_formatted_local_datetime"] = format_ancient_iso(year, month, day, decimal_hour, lmt_offset_hours)
 
         # UTC datetime: derived from the UT Julian Day
-        ut_year, ut_month, ut_day, ut_dec_hour = swe.revjul(jd_ut, cal_flag)
+        ut_year, ut_month, ut_day, ut_dec_hour = ephe.revjul(jd_ut, cal_flag)
         data["iso_formatted_utc_datetime"] = format_ancient_iso(
             int(ut_year), int(ut_month), int(ut_day), ut_dec_hour, 0.0
         )
@@ -1707,7 +1707,7 @@ class AstrologicalSubjectFactory:
         included in the active_points list for performance optimization.
 
         v5.12 Change -- House Cusp Speeds:
-            Uses ``swe.houses_ex2()`` instead of ``swe.houses_ex()`` to obtain cusp
+            Uses ``ephe.houses_ex2()`` instead of ``ephe.houses_ex()`` to obtain cusp
             velocities (degrees/day). The ``speed`` field on each house cusp and
             angular point now contains the real rate at which that cusp moves along
             the ecliptic per day, driven by diurnal rotation and the chart's
@@ -1757,7 +1757,7 @@ class AstrologicalSubjectFactory:
 
         # Calculate houses using the calculated flags (handles both Sidereal and Topocentric)
         # houses_ex2 returns cusp speeds and ascmc speeds in addition to the standard output
-        cusps, ascmc, cusps_speed, ascmc_speed = swe.houses_ex2(
+        cusps, ascmc, cusps_speed, ascmc_speed = ephe.houses_ex2(
             tjdut=data["julian_day"],
             lat=data["lat"],
             lon=data["lng"],
@@ -1897,9 +1897,9 @@ class AstrologicalSubjectFactory:
                 try:
                     # Unlike calc_ut, calc_pctr takes a TT/ET julian day on
                     # both backends: convert the UT day with delta-T first.
-                    julian_day_tt = julian_day + swe.deltat(julian_day)
-                    planet_calc = swe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag)[0]
-                    planet_eq = swe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag | swe.FLG_EQUATORIAL)[0]
+                    julian_day_tt = julian_day + ephe.deltat(julian_day)
+                    planet_calc = ephe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag)[0]
+                    planet_eq = ephe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag | ephe.FLG_EQUATORIAL)[0]
                 except Exception as e:
                     # Fallback to geocentric if planetary ephemeris not available.
                     # Never silently: the caller asked for a planetocentric
@@ -1912,11 +1912,11 @@ class AstrologicalSubjectFactory:
                         center_body_id,
                         e,
                     )
-                    planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
-                    planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+                    planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
+                    planet_eq = ephe.calc_ut(julian_day, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
             else:
-                planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
-                planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+                planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
+                planet_eq = ephe.calc_ut(julian_day, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
 
             # Get declination from equatorial coordinates
             declination = planet_eq[1]  # Declination from equatorial coordinates
@@ -2049,7 +2049,7 @@ class AstrologicalSubjectFactory:
 
         # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            _, ascmc, _, ascmc_speed = swe.houses_ex2(
+            _, ascmc, _, ascmc_speed = ephe.houses_ex2(
                 tjdut=data["julian_day"],
                 lat=data["lat"],
                 lon=data["lng"],
@@ -2067,9 +2067,9 @@ class AstrologicalSubjectFactory:
         if point in STANDARD_PLANETS:
             planet_id = STANDARD_PLANETS[point]
             try:
-                planet_calc = swe.calc_ut(julian_day, planet_id, iflag)[0]
+                planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
                 # Get declination from equatorial coordinates (matching _calculate_single_planet)
-                planet_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+                planet_eq = ephe.calc_ut(julian_day, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
             except Exception as e:
                 # Same typed-error policy as _calculate_single_planet: raw
                 # backend exceptions (e.g. out-of-ephemeris-range dates) must
@@ -2124,14 +2124,14 @@ class AstrologicalSubjectFactory:
             bool: True if diurnal (Sun above horizon), False if nocturnal
         """
         try:
-            sun_tropical_flags = swe.FLG_SWIEPH | swe.FLG_SPEED
-            sun_calc = swe.calc_ut(julian_day, 0, sun_tropical_flags)[0]
+            sun_tropical_flags = ephe.FLG_SWIEPH | ephe.FLG_SPEED
+            sun_calc = ephe.calc_ut(julian_day, 0, sun_tropical_flags)[0]
             sun_lon = sun_calc[0]
             sun_lat = 0.0
 
             geopos = (lng, lat, altitude or 0)
             sun_ecl = (sun_lon, sun_lat, 1.0)
-            azalt = swe.azalt(julian_day, swe.ECL2HOR, geopos, 0, 0, sun_ecl)
+            azalt = ephe.azalt(julian_day, ephe.ECL2HOR, geopos, 0, 0, sun_ecl)
 
             return azalt[1] >= 0
 
@@ -2268,7 +2268,7 @@ class AstrologicalSubjectFactory:
                   names passed to ``active_points`` are redirected to
                   ``active_fixed_stars`` with a warning. Results live in
                   ``subject.fixed_stars``.
-                - Includes apparent visual magnitude via ``swe.fixstar2_mag``
+                - Includes apparent visual magnitude via ``ephe.fixstar2_mag``
                 - Includes equatorial declination via ``FLG_EQUATORIAL``
                 - Includes ecliptic speed (precession drift, ~50 arcsec/yr)
 
@@ -2329,7 +2329,7 @@ class AstrologicalSubjectFactory:
         _trace_token = None
         if BACKEND_NAME == "libephemeris":
             try:
-                _trace_token = swe.start_tracing()
+                _trace_token = ephe.start_tracing()
             except AttributeError:
                 pass  # libephemeris version without tracing support
 
@@ -2338,7 +2338,7 @@ class AstrologicalSubjectFactory:
         # =============================================================================
         # All standard planets (Sun through Poseidon, plus Interpolated_Lilith and
         # Interpolated_Perigee via SE_INTP_APOG/SE_INTP_PERG) use the same
-        # calculation pattern via swe.calc_ut().
+        # calculation pattern via ephe.calc_ut().
         # South lunar nodes, Priapus, Descendant, IC, and Anti-Vertex are handled
         # declaratively by _calculate_opposite_points() via OPPOSITE_PAIRS.
         for planet_name, planet_id in STANDARD_PLANETS.items():
@@ -2361,7 +2361,7 @@ class AstrologicalSubjectFactory:
                     node_key = planet_name.lower()
                     if node_key in data:
                         # Calculate declination using equatorial coordinates
-                        node_eq = swe.calc_ut(julian_day, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+                        node_eq = ephe.calc_ut(julian_day, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
                         data[node_key].declination = node_eq[1]
 
         # =============================================================================
@@ -2374,7 +2374,7 @@ class AstrologicalSubjectFactory:
                     AstrologicalSubjectFactory._calculate_single_planet(
                         data,
                         tno_name,
-                        swe.AST_OFFSET + asteroid_num,
+                        ephe.AST_OFFSET + asteroid_num,
                         julian_day,
                         iflag,
                         houses_degree_ut,
@@ -2398,13 +2398,13 @@ class AstrologicalSubjectFactory:
 
         def _calc_fixed_star(star_name: str, swe_name: str) -> "KerykeionPointModel | None":
             try:
-                pos_ecl = swe.fixstar_ut(swe_name, julian_day, iflag)[0]
+                pos_ecl = ephe.fixstar_ut(swe_name, julian_day, iflag)[0]
                 star_deg = pos_ecl[0]
                 star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
-                pos_eq = swe.fixstar_ut(swe_name, julian_day, iflag | swe.FLG_EQUATORIAL)[0]
+                pos_eq = ephe.fixstar_ut(swe_name, julian_day, iflag | ephe.FLG_EQUATORIAL)[0]
                 star_dec = pos_eq[1] if len(pos_eq) > 1 else None
                 try:
-                    star_mag = swe.fixstar2_mag(swe_name)[0]
+                    star_mag = ephe.fixstar2_mag(swe_name)[0]
                 except Exception:
                     star_mag = None
                 point = get_kerykeion_point_from_degree(
@@ -2479,7 +2479,7 @@ class AstrologicalSubjectFactory:
         if should_calculate("Vertex") or should_calculate("Anti_Vertex"):
             try:
                 # Vertex is at ascmc[3] in Swiss Ephemeris
-                _, ascmc = swe.houses_ex(
+                _, ascmc = ephe.houses_ex(
                     tjdut=data["julian_day"],
                     lat=data["lat"],
                     lon=data["lng"],
@@ -2531,8 +2531,8 @@ class AstrologicalSubjectFactory:
                 # Compute Mean Lilith locally (body ID 12) without storing it in data,
                 # to avoid leaking an unrequested point into the public model.
                 try:
-                    ml_calc = swe.calc_ut(julian_day, 12, iflag)[0]
-                    ml_eq = swe.calc_ut(julian_day, 12, iflag | swe.FLG_EQUATORIAL)[0]
+                    ml_calc = ephe.calc_ut(julian_day, 12, iflag)[0]
+                    ml_eq = ephe.calc_ut(julian_day, 12, iflag | ephe.FLG_EQUATORIAL)[0]
                     wm_deg = math.fmod(ml_calc[0] + 180, 360)
                     data["white_moon"] = get_kerykeion_point_from_degree(
                         wm_deg,
@@ -2579,7 +2579,7 @@ class AstrologicalSubjectFactory:
         # ---------------------------------------------------------------------
         if BACKEND_NAME == "libephemeris" and _trace_token is not None:
             try:
-                trace_map = swe.get_trace_results()  # {body_id: "LEB", ...}
+                trace_map = ephe.get_trace_results()  # {body_id: "LEB", ...}
             except AttributeError:
                 trace_map = {}
             # Reset the tracing token
@@ -2591,7 +2591,7 @@ class AstrologicalSubjectFactory:
                 # Build reverse map: body_id -> planet_name
                 _id_to_name: Dict[int, str] = {v: k for k, v in STANDARD_PLANETS.items()}
                 for tname, tnum in TNO_PLANETS.items():
-                    _id_to_name[swe.AST_OFFSET + tnum] = tname
+                    _id_to_name[ephe.AST_OFFSET + tnum] = tname
                 _id_to_name[56] = "White_Moon"
 
                 trace_order: Dict[str, int] = {}

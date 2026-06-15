@@ -6,7 +6,7 @@ triplicity, Egyptian terms, Chaldean decans, detriment, and fall.
 """
 
 import pytest
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.dignities.dignity_factory import calculate_essential_dignity
 from kerykeion.dignities.dignity_data import (
@@ -228,9 +228,9 @@ class TestDignityIntegration:
 
 
 class TestDignitySwissEphRegression:
-    """Known-value regression tests using Swiss Ephemeris (swe) as reference.
+    """Known-value regression tests using Swiss Ephemeris (ephe) as reference.
 
-    Each test computes a planet's ecliptic longitude via swe.calc_ut, derives
+    Each test computes a planet's ecliptic longitude via ephe.calc_ut, derives
     the zodiac sign and degree-within-sign, then verifies that
     calculate_essential_dignity returns the correct Ptolemaic dignity.
     """
@@ -253,13 +253,13 @@ class TestDignitySwissEphRegression:
     def test_sun_in_leo_domicile_swe(self):
         """Sun on 2000-08-01 12:00 UTC is in Leo (~129.5 deg) -> Domicile.
 
-        Reference: swe.calc_ut(2451758.0, swe.SUN, swe.FLG_SWIEPH)
+        Reference: ephe.calc_ut(2451758.0, ephe.SUN, ephe.FLG_SWIEPH)
         Sun rules Leo in the Ptolemaic domicile table.
         """
-        jd = swe.julday(2000, 8, 1, 12.0)
+        jd = ephe.julday(2000, 8, 1, 12.0)
         assert abs(jd - 2451758.0) < 1e-6
         with ephemeris_session() as iflag:
-            sun_lon = swe.calc_ut(jd, swe.SUN, iflag)[0][0]
+            sun_lon = ephe.calc_ut(jd, ephe.SUN, iflag)[0][0]
 
         sign, element, pos_in_sign = self._sign_and_position(sun_lon)
         assert sign == "Leo", f"Expected Leo, got {sign} at {sun_lon:.4f} deg"
@@ -271,13 +271,13 @@ class TestDignitySwissEphRegression:
     def test_moon_in_cancer_domicile_swe(self):
         """Moon on 2000-01-19 12:00 UTC is in Cancer (~95.0 deg) -> Domicile.
 
-        Reference: swe.calc_ut(2451563.0, swe.MOON, swe.FLG_SWIEPH)
+        Reference: ephe.calc_ut(2451563.0, ephe.MOON, ephe.FLG_SWIEPH)
         Moon rules Cancer in the Ptolemaic domicile table.
         """
-        jd = swe.julday(2000, 1, 19, 12.0)
+        jd = ephe.julday(2000, 1, 19, 12.0)
         assert abs(jd - 2451563.0) < 1e-6
         with ephemeris_session() as iflag:
-            moon_lon = swe.calc_ut(jd, swe.MOON, iflag)[0][0]
+            moon_lon = ephe.calc_ut(jd, ephe.MOON, iflag)[0][0]
 
         sign, element, pos_in_sign = self._sign_and_position(moon_lon)
         assert sign == "Can", f"Expected Can, got {sign} at {moon_lon:.4f} deg"
@@ -289,13 +289,13 @@ class TestDignitySwissEphRegression:
     def test_mars_in_capricorn_exaltation_swe(self):
         """Mars on 2020-03-20 12:00 UTC is in Capricorn (~292.8 deg) -> Exaltation.
 
-        Reference: swe.calc_ut(2458929.0, swe.MARS, swe.FLG_SWIEPH)
+        Reference: ephe.calc_ut(2458929.0, ephe.MARS, ephe.FLG_SWIEPH)
         Mars is exalted in Capricorn at 28 deg in the Ptolemaic table.
         """
-        jd = swe.julday(2020, 3, 20, 12.0)
+        jd = ephe.julday(2020, 3, 20, 12.0)
         assert abs(jd - 2458929.0) < 1e-6
         with ephemeris_session() as iflag:
-            mars_lon = swe.calc_ut(jd, swe.MARS, iflag)[0][0]
+            mars_lon = ephe.calc_ut(jd, ephe.MARS, iflag)[0][0]
 
         sign, element, pos_in_sign = self._sign_and_position(mars_lon)
         assert sign == "Cap", f"Expected Cap, got {sign} at {mars_lon:.4f} deg"

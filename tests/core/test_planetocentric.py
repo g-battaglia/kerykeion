@@ -275,23 +275,23 @@ class TestAllPositionsValid:
 # 6. Timescale: calc_pctr takes TT/ET, not UT
 # ---------------------------------------------------------------------------
 class TestCalcPctrTimescale:
-    """v6 regression: swe.calc_pctr takes a TT/ET julian day on both backends.
+    """v6 regression: ephe.calc_pctr takes a TT/ET julian day on both backends.
 
     Passing the raw UT julian day slips every planetocentric position by
     delta-T (~64 s in 2000, i.e. up to ~0.01 deg for the Moon).
     """
 
     def test_calc_pctr_receives_tt_julian_day(self, monkeypatch):
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
 
         received = []
-        real_calc_pctr = swe.calc_pctr
+        real_calc_pctr = ephe.calc_pctr
 
         def spy_calc_pctr(tjdet, planet, center, flags):
             received.append(tjdet)
             return real_calc_pctr(tjdet, planet, center, flags)
 
-        monkeypatch.setattr(swe, "calc_pctr", spy_calc_pctr)
+        monkeypatch.setattr(ephe, "calc_pctr", spy_calc_pctr)
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "TT Timescale Check", **_BIRTH_KWARGS, perspective_type="Marscentric",
@@ -299,7 +299,7 @@ class TestCalcPctrTimescale:
 
         assert received, "calc_pctr was never called for a planetocentric chart"
         jd_ut = subject.julian_day
-        expected_tt = jd_ut + swe.deltat(jd_ut)
+        expected_tt = jd_ut + ephe.deltat(jd_ut)
         for tjdet in received:
             assert tjdet == pytest.approx(expected_tt, abs=1e-9), (
                 f"calc_pctr received {tjdet!r}, expected UT+deltaT {expected_tt!r}"

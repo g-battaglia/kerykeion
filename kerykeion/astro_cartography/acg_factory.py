@@ -21,7 +21,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from typing import List, Optional, Dict, Literal
 from pydantic import BaseModel, Field
 
@@ -44,16 +44,16 @@ class ACGLineModel(BaseModel):
 
 # Swiss Ephemeris body ids for the supported ACG planets.
 _ACG_PLANET_IDS: Dict[str, int] = {
-    "Sun": swe.SUN,
-    "Moon": swe.MOON,
-    "Mercury": swe.MERCURY,
-    "Venus": swe.VENUS,
-    "Mars": swe.MARS,
-    "Jupiter": swe.JUPITER,
-    "Saturn": swe.SATURN,
-    "Uranus": swe.URANUS,
-    "Neptune": swe.NEPTUNE,
-    "Pluto": swe.PLUTO,
+    "Sun": ephe.SUN,
+    "Moon": ephe.MOON,
+    "Mercury": ephe.MERCURY,
+    "Venus": ephe.VENUS,
+    "Mars": ephe.MARS,
+    "Jupiter": ephe.JUPITER,
+    "Saturn": ephe.SATURN,
+    "Uranus": ephe.URANUS,
+    "Neptune": ephe.NEPTUNE,
+    "Pluto": ephe.PLUTO,
 }
 
 
@@ -153,14 +153,14 @@ class AstroCartographyFactory:
         dsc_lines: Dict[str, List[ACGLinePointModel]] = {p: [] for p in selected}
 
         with ephemeris_session() as iflag:
-            # Greenwich (apparent) sidereal time in degrees; swe.calc_ut with
+            # Greenwich (apparent) sidereal time in degrees; ephe.calc_ut with
             # FLG_EQUATORIAL returns apparent RA/declination of date, so the
             # two are mutually consistent.
-            gst_deg = swe.sidtime(jd) * 15.0
+            gst_deg = ephe.sidtime(jd) * 15.0
 
             # Equatorial coordinates are zodiac-independent; drop FLG_SIDEREAL
             # so the fetch is identical for tropical and sidereal charts.
-            eq_iflag = (iflag & ~swe.FLG_SIDEREAL) | swe.FLG_EQUATORIAL
+            eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
 
             lat_min, lat_max = lat_range
             # One shared float latitude grid for every line type. Previously
@@ -176,7 +176,7 @@ class AstroCartographyFactory:
                 lat += step
 
             for pname in selected:
-                eq_pos = swe.calc_ut(jd, _ACG_PLANET_IDS[pname], eq_iflag)[0]
+                eq_pos = ephe.calc_ut(jd, _ACG_PLANET_IDS[pname], eq_iflag)[0]
                 ra_deg, dec_deg = eq_pos[0], eq_pos[1]
 
                 # MC line: the body culminates where LST == RA, i.e. at

@@ -40,7 +40,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import math
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from typing import List, Optional, Literal, Tuple, cast
 from pydantic import BaseModel, Field
 
@@ -142,11 +142,11 @@ class PrimaryDirectionsFactory:
 
         with ephemeris_session() as iflag:
             # True obliquity of the ecliptic
-            obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+            obliquity = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
 
             # RAMC (Right Ascension of the Medium Coeli):
             # local sidereal time = Greenwich sidereal time + observer longitude
-            ramc = (swe.sidtime(jd) * 15.0 + subject.lng) % 360
+            ramc = (ephe.sidtime(jd) * 15.0 + subject.lng) % 360
 
             # Build speculum
             speculum = PrimaryDirectionsFactory._build_speculum(
@@ -248,8 +248,8 @@ class PrimaryDirectionsFactory:
         """Compute and return the speculum (coordinate table) for a chart."""
         jd = subject.julian_day
         with ephemeris_session() as iflag:
-            obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
-            ramc = (swe.sidtime(jd) * 15.0 + subject.lng) % 360
+            obliquity = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
+            ramc = (ephe.sidtime(jd) * 15.0 + subject.lng) % 360
             speculum = PrimaryDirectionsFactory._build_speculum(
                 subject, jd, iflag, obliquity, ramc, subject.lat
             )
@@ -296,7 +296,7 @@ class PrimaryDirectionsFactory:
             planet_id = STANDARD_PLANETS.get(cast(AstrologicalPoint, point_name))
             if planet_id is not None:
                 try:
-                    eq_coords = swe.calc_ut(jd, planet_id, iflag | swe.FLG_EQUATORIAL)[0]
+                    eq_coords = ephe.calc_ut(jd, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
                     ra = eq_coords[0]  # RA in degrees
                     dec = eq_coords[1]  # Dec in degrees (more precise)
                 except Exception:

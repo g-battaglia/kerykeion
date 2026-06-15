@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Calculate planetary phenomena (elongation, phase, magnitude, etc.).
 
-Uses Swiss Ephemeris ``swe.pheno_ut()`` which returns:
+Uses Swiss Ephemeris ``ephe.pheno_ut()`` which returns:
     [0] phase angle (degrees)
     [1] phase (illuminated fraction, 0-1)
     [2] elongation (degrees from Sun)
@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -29,15 +29,15 @@ logger = logging.getLogger(__name__)
 
 # Planets for which phenomena are meaningful (not fixed stars, nodes, etc.)
 _PHENOMENA_PLANETS = {
-    "Moon": swe.MOON,
-    "Mercury": swe.MERCURY,
-    "Venus": swe.VENUS,
-    "Mars": swe.MARS,
-    "Jupiter": swe.JUPITER,
-    "Saturn": swe.SATURN,
-    "Uranus": swe.URANUS,
-    "Neptune": swe.NEPTUNE,
-    "Pluto": swe.PLUTO,
+    "Moon": ephe.MOON,
+    "Mercury": ephe.MERCURY,
+    "Venus": ephe.VENUS,
+    "Mars": ephe.MARS,
+    "Jupiter": ephe.JUPITER,
+    "Saturn": ephe.SATURN,
+    "Uranus": ephe.URANUS,
+    "Neptune": ephe.NEPTUNE,
+    "Pluto": ephe.PLUTO,
 }
 
 # Planets that can be morning/evening stars
@@ -112,14 +112,14 @@ class PlanetaryPhenomenaFactory:
         with ephemeris_session() as iflag:
             # Get Sun longitude for morning/evening star determination
             try:
-                sun_data = swe.calc_ut(julian_day, swe.SUN, iflag)
+                sun_data = ephe.calc_ut(julian_day, ephe.SUN, iflag)
                 sun_lon = sun_data[0][0]
             except Exception:
                 sun_lon = None
 
             for name, planet_id in target_planets.items():
                 try:
-                    result = swe.pheno_ut(julian_day, planet_id, iflag)
+                    result = ephe.pheno_ut(julian_day, planet_id, iflag)
                     phase_angle = result[0]
                     phase = result[1]
                     elongation = result[2]
@@ -131,7 +131,7 @@ class PlanetaryPhenomenaFactory:
                     is_evening = None
                     if name in _INFERIOR_PLANETS and sun_lon is not None:
                         try:
-                            planet_data = swe.calc_ut(julian_day, planet_id, iflag)
+                            planet_data = ephe.calc_ut(julian_day, planet_id, iflag)
                             planet_lon = planet_data[0][0]
                             # Normalized difference
                             diff = (planet_lon - sun_lon) % 360

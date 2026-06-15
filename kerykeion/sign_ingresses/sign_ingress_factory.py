@@ -8,13 +8,13 @@ real ingress and is reported.
 
 ``cross_ut`` (libephemeris) targets a fixed longitude directly, but it is absent
 on the swisseph backend, so — like ``LunationFinderFactory`` — this stays
-backend-agnostic: it samples longitude via ``swe.calc_ut`` across the range and,
+backend-agnostic: it samples longitude via ``ephe.calc_ut`` across the range and,
 whenever the sign index changes between two samples, bisects to the exact 30°
 crossing. The half-day step keeps even the Moon (~13°/day) below one sign per
 step, so no boundary is skipped.
 
 Swiss Ephemeris / libephemeris functions used:
-    - swe.calc_ut(jd, planet_id, FLG_SWIEPH)
+    - ephe.calc_ut(jd, planet_id, FLG_SWIEPH)
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
@@ -39,20 +39,20 @@ logger = logging.getLogger(__name__)
 # most use cases — but accepted when explicitly requested. Names match
 # kerykeion's AstrologicalPoint vocabulary.
 _INGRESS_PLANETS: List[tuple[str, int]] = [
-    ("Sun", swe.SUN),
-    ("Mercury", swe.MERCURY),
-    ("Venus", swe.VENUS),
-    ("Mars", swe.MARS),
-    ("Jupiter", swe.JUPITER),
-    ("Saturn", swe.SATURN),
-    ("Uranus", swe.URANUS),
-    ("Neptune", swe.NEPTUNE),
-    ("Pluto", swe.PLUTO),
+    ("Sun", ephe.SUN),
+    ("Mercury", ephe.MERCURY),
+    ("Venus", ephe.VENUS),
+    ("Mars", ephe.MARS),
+    ("Jupiter", ephe.JUPITER),
+    ("Saturn", ephe.SATURN),
+    ("Uranus", ephe.URANUS),
+    ("Neptune", ephe.NEPTUNE),
+    ("Pluto", ephe.PLUTO),
 ]
 
 # Valid request vocabulary includes the Moon (opt-in).
 _PLANET_IDS = {name: pid for name, pid in _INGRESS_PLANETS}
-_PLANET_IDS["Moon"] = swe.MOON
+_PLANET_IDS["Moon"] = ephe.MOON
 
 # Sampling step (days). The Moon (~13°/day) advances < 7° per half-day, so a sign
 # (30°) is never jumped; slower bodies have ample margin.
@@ -78,11 +78,11 @@ def _to_utc_naive(dt: datetime) -> datetime:
 def _jd_to_iso(jd: float) -> str:
     """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
 
-    Uses ``swe.revjul`` rather than Python ``datetime`` (limited to years
+    Uses ``ephe.revjul`` rather than Python ``datetime`` (limited to years
     1..9999) so the BCE range Kerykeion supports formats correctly, with an
     extended-year sign for negative years.
     """
-    year, month, day, hour_frac = swe.revjul(jd)
+    year, month, day, hour_frac = ephe.revjul(jd)
     secs = min(int(hour_frac * 3600 + 0.5), 86399)  # nearest second, no 24:00 carry
     hours, rem = divmod(secs, 3600)
     minutes, seconds = divmod(rem, 60)
@@ -98,7 +98,7 @@ def _ang_diff(a: float, b: float) -> float:
 def _lon(jd: float, body: int) -> float:
     """Ecliptic longitude (deg, 0-360) of ``body`` at ``jd``."""
     try:
-        return float(swe.calc_ut(jd, body, swe.FLG_SWIEPH)[0][0]) % 360.0
+        return float(ephe.calc_ut(jd, body, ephe.FLG_SWIEPH)[0][0]) % 360.0
     except Exception as exc:
         # Range errors (libephemeris EphemerisRangeError, swisseph.Error)
         # propagate raw from calc_ut — normalize them to the documented

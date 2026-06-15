@@ -758,7 +758,7 @@ class TransitsTimeRangeFactory:
             keeping the coarse values) for non-geocentric perspectives, where
             a plain ``calc_ut`` would not reproduce the ephemeris positions.
         """
-        from kerykeion.ephemeris_backend import swe, ephemeris_session
+        from kerykeion.ephemeris_backend import ephe, ephemeris_session
         from kerykeion.aspects.aspects_utils import difdeg2n
         from kerykeion.utilities import datetime_to_julian
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -788,7 +788,7 @@ class TransitsTimeRangeFactory:
             if planet_id is None:
                 tno_num = TNO_PLANETS.get(transit_point_name)
                 if tno_num is not None:
-                    planet_id = swe.AST_OFFSET + tno_num
+                    planet_id = ephe.AST_OFFSET + tno_num
             if planet_id is None:
                 return None
 
@@ -820,7 +820,7 @@ class TransitsTimeRangeFactory:
             ) as iflag:
                 def orb_at(moment: datetime) -> float:
                     """Angular deviation from exactness at ``moment``, in degrees."""
-                    position = swe.calc_ut(datetime_to_julian(moment), planet_id, iflag)[0][0]
+                    position = ephe.calc_ut(datetime_to_julian(moment), planet_id, iflag)[0][0]
                     return abs(abs(difdeg2n(position, natal_pos)) - target_degree)
 
                 for _ in range(iterations):

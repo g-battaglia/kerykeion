@@ -1839,8 +1839,8 @@ Find when a planet first becomes visible or disappears in twilight.
 from kerykeion import HeliacalFactory
 
 factory = HeliacalFactory()
-from kerykeion.ephemeris_backend import swe
-jd = swe.julday(2025, 1, 1, 0.0)
+from kerykeion.ephemeris_backend import ephe
+jd = ephe.julday(2025, 1, 1, 0.0)
 event = factory.next_heliacal_rising(jd, "Venus", geopos=(12.5, 41.9, 0))
 print(f"Venus heliacal rising: {event.datestamp}")
 ```
@@ -1853,11 +1853,11 @@ Find lunar occultations of planets.
 
 ```python
 from kerykeion import OccultationFactory
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 
 factory = OccultationFactory()
-jd = swe.julday(2025, 1, 1, 0.0)
-events = factory.search_global(jd, swe.VENUS, count=3)
+jd = ephe.julday(2025, 1, 1, 0.0)
+events = factory.search_global(jd, ephe.VENUS, count=3)
 for occ in events:
     print(f"{occ.planet_name} occultation: {occ.datestamp} ({occ.type})")
 ```

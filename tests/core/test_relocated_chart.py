@@ -84,60 +84,60 @@ class TestRelocatedChart:
 
 
 class TestRelocatedSweReference:
-    """Compare factory relocated ASC/MC with direct swe.houses_armc() output."""
+    """Compare factory relocated ASC/MC with direct ephe.houses_armc() output."""
 
     def test_relocated_asc_mc_match_swe(self, natal):
-        """Factory relocated ASC and MC must match raw swe.houses_armc()."""
-        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
-        swe.set_ephe_path(EPHE_DATA_PATH)
+        """Factory relocated ASC and MC must match raw ephe.houses_armc()."""
+        from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+        ephe.set_ephe_path(EPHE_DATA_PATH)
 
         new_lat = 40.7128
         new_lng = -74.006
         relocated = RelocatedChartFactory.relocate(natal, new_lat=new_lat, new_lng=new_lng, new_city="New York")
 
         jd = natal.julian_day
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
         hsys = natal.houses_system_identifier.encode("ascii")
 
         # Obliquity of ecliptic
-        eps = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+        eps = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
 
         # ARMC for new location (same logic as factory)
-        armc_hours = swe.sidtime(jd)
+        armc_hours = ephe.sidtime(jd)
         local_st_hours = armc_hours + new_lng / 15.0
         armc_degrees = (local_st_hours * 15.0) % 360.0
 
-        # Direct swe.houses_armc call
-        cusps, ascmc = swe.houses_armc(armc_degrees, new_lat, eps, hsys)
+        # Direct ephe.houses_armc call
+        cusps, ascmc = ephe.houses_armc(armc_degrees, new_lat, eps, hsys)
         expected_asc = ascmc[0] % 360
         expected_mc = ascmc[1] % 360
 
         assert relocated.ascendant.abs_pos == pytest.approx(expected_asc, abs=0.01), (
-            f"Relocated ASC {relocated.ascendant.abs_pos} != swe ASC {expected_asc}"
+            f"Relocated ASC {relocated.ascendant.abs_pos} != ephe ASC {expected_asc}"
         )
         assert relocated.medium_coeli.abs_pos == pytest.approx(expected_mc, abs=0.01), (
-            f"Relocated MC {relocated.medium_coeli.abs_pos} != swe MC {expected_mc}"
+            f"Relocated MC {relocated.medium_coeli.abs_pos} != ephe MC {expected_mc}"
         )
 
     def test_relocated_tokyo_asc_mc_match_swe(self, natal):
         """Same check for Tokyo to ensure generalisation across locations."""
-        from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH
-        swe.set_ephe_path(EPHE_DATA_PATH)
+        from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+        ephe.set_ephe_path(EPHE_DATA_PATH)
 
         new_lat = 35.6895
         new_lng = 139.6917
         relocated = RelocatedChartFactory.relocate(natal, new_lat=new_lat, new_lng=new_lng, new_city="Tokyo")
 
         jd = natal.julian_day
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
+        iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
         hsys = natal.houses_system_identifier.encode("ascii")
 
-        eps = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
-        armc_hours = swe.sidtime(jd)
+        eps = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
+        armc_hours = ephe.sidtime(jd)
         local_st_hours = armc_hours + new_lng / 15.0
         armc_degrees = (local_st_hours * 15.0) % 360.0
 
-        cusps, ascmc = swe.houses_armc(armc_degrees, new_lat, eps, hsys)
+        cusps, ascmc = ephe.houses_armc(armc_degrees, new_lat, eps, hsys)
         expected_asc = ascmc[0] % 360
         expected_mc = ascmc[1] % 360
 
@@ -322,14 +322,14 @@ class TestRelocatedStaleLocationFields:
         assert relocated.gauquelin_sector_cusps is None
 
     def test_relocated_sect_swe_calls_run_inside_session(self, enriched_natal, monkeypatch):
-        """_compute_is_diurnal calls swe.* (Sun position + azalt): relocation
-        must wrap it in an ephemeris session, so no tracked swe call may run
+        """_compute_is_diurnal calls ephe.* (Sun position + azalt): relocation
+        must wrap it in an ephemeris session, so no tracked ephe call may run
         after the last session reset."""
         import kerykeion.ephemeris_backend as eb
 
         events = []
         real_reset = eb.reset_ephemeris_session
-        real_azalt = eb.swe.azalt
+        real_azalt = eb.ephe.azalt
 
         def tracking_reset():
             events.append("session_reset")
@@ -340,7 +340,7 @@ class TestRelocatedStaleLocationFields:
             return real_azalt(*args, **kwargs)
 
         monkeypatch.setattr(eb, "reset_ephemeris_session", tracking_reset)
-        monkeypatch.setattr(eb.swe, "azalt", tracking_azalt)
+        monkeypatch.setattr(eb.ephe, "azalt", tracking_azalt)
 
         RelocatedChartFactory.relocate(
             enriched_natal, new_lat=35.6895, new_lng=139.6917, new_city="Tokyo"
@@ -348,7 +348,7 @@ class TestRelocatedStaleLocationFields:
 
         assert "azalt" in events, "sect recomputation (azalt) was never invoked"
         assert events[-1] == "session_reset", (
-            f"swe calls escaped the ephemeris session during relocation: {events}"
+            f"ephe calls escaped the ephemeris session during relocation: {events}"
         )
 
 
@@ -357,18 +357,18 @@ class TestRelocatedLocalDatetimeRecompute:
     rebuilds the local calendar fields for a new timezone. The BCE path cannot
     be exercised through the full ``relocate()`` flow with the short-range dev
     ephemeris kernel, so the helper is tested directly (its only ephemeris call,
-    ``swe.revjul``, is pure calendar arithmetic and needs no kernel data)."""
+    ``ephe.revjul``, is pure calendar arithmetic and needs no kernel data)."""
 
     def test_negative_year_subject_uses_lmt_path_without_crashing(self):
         # NOTE: deliberately avoids the substring the conftest tier filter uses
         # to gate extended-kernel tests — this helper only does pure calendar
-        # arithmetic (swe.revjul/julday) and needs no ephemeris data, so it must
+        # arithmetic (ephe.revjul/julday) and needs no ephemeris data, so it must
         # run on every tier.
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
         from kerykeion.utilities import format_ancient_iso
 
         # Astronomical year -500. Treat this as the stored UT instant.
-        jd_ut = swe.julday(-500, 3, 21, 12.0, swe.JUL_CAL)
+        jd_ut = ephe.julday(-500, 3, 21, 12.0, ephe.JUL_CAL)
         iso_utc = format_ancient_iso(-500, 3, 21, 12.0, 0.0)
 
         # The very string a BCE subject stores is unparseable by fromisoformat —
@@ -388,7 +388,7 @@ class TestRelocatedLocalDatetimeRecompute:
         )
 
         lmt_offset = new_lng / 15.0
-        ey, em, ed, edh = swe.revjul(jd_ut + lmt_offset / 24.0, swe.JUL_CAL)
+        ey, em, ed, edh = ephe.revjul(jd_ut + lmt_offset / 24.0, ephe.JUL_CAL)
         assert data["iso_formatted_local_datetime"] == format_ancient_iso(
             int(ey), int(em), int(ed), edh, lmt_offset
         )

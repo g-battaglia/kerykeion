@@ -113,10 +113,10 @@ class TestIngressApi:
     def test_bce_range_via_julian_day(self):
         # The BCE range Kerykeion supports must not crash on JD->ISO conversion
         # (Python datetime caps at year 1). Year -100 has 12 solar ingresses.
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
 
-        jd0 = swe.julday(-100, 1, 1, 0.0)
-        jd1 = swe.julday(-100, 12, 31, 23.9)
+        jd0 = ephe.julday(-100, 1, 1, 0.0)
+        jd1 = ephe.julday(-100, 12, 31, 23.9)
         res = SignIngressFactory.from_julian_day(jd0, jd1, ["Sun"])
         assert len(res.ingresses) == 12
         assert res.ingresses[0].iso_utc.startswith("-0100-")
@@ -155,7 +155,7 @@ class TestIngressErrorContract:
         def failing_calc_ut(jd, body, flags):
             raise RuntimeError(f"jd {jd} outside ephemeris range")
 
-        monkeypatch.setattr(sif.swe, "calc_ut", failing_calc_ut)
+        monkeypatch.setattr(sif.ephe, "calc_ut", failing_calc_ut)
         with pytest.raises(KerykeionException, match="narrow the date range"):
             SignIngressFactory.from_iso_range("2026-01-01", "2026-01-10", ["Sun"])
 
@@ -173,6 +173,6 @@ class TestIngressErrorContract:
                 raise RuntimeError(f"jd {jd} outside ephemeris range")
             return ((15.0, 0.0, 1.0, 1.0, 0.0, 0.0), 0)
 
-        monkeypatch.setattr(sif.swe, "calc_ut", flaky_calc_ut)
+        monkeypatch.setattr(sif.ephe, "calc_ut", flaky_calc_ut)
         with pytest.raises(KerykeionException, match=r"failed at JD "):
             SignIngressFactory.from_iso_range("2026-01-01", "2026-01-10", ["Sun"])

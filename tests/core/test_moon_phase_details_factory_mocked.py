@@ -2,7 +2,7 @@
 Mocked unit tests for MoonPhaseDetailsFactory.
 
 These tests mock the Swiss Ephemeris utility layer so the factory logic can be
-verified without ephemeris data files or real swe calls. This isolates the
+verified without ephemeris data files or real ephe calls. This isolates the
 factory's orchestration, model assembly, and edge-case handling.
 
 Mocking strategy:
@@ -11,7 +11,7 @@ Mocking strategy:
         - compute_lunar_phase_jd
         - compute_next_solar_eclipse_jd
         - compute_next_lunar_eclipse_jd
-        - compute_sun_rise_set_swe
+        - compute_sun_rise_set_ephe
         - compute_sun_position
 """
 
@@ -241,7 +241,7 @@ class TestBuildMoonZodiacInfo:
 
 
 class TestFactoryFromSubjectMocked:
-    """Test MoonPhaseDetailsFactory.from_subject with mocked swe utilities."""
+    """Test MoonPhaseDetailsFactory.from_subject with mocked ephe utilities."""
 
     @pytest.fixture(autouse=True)
     def _patch_swe(self):
@@ -251,7 +251,7 @@ class TestFactoryFromSubjectMocked:
             patch(f"{_FACTORY}.compute_lunar_phase_jd", side_effect=_side_effect_lunar_phase_jd),
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=(16, _SOLAR_ECLIPSE_JD)),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=(4, _LUNAR_ECLIPSE_JD)),
-            patch(f"{_FACTORY}.compute_sun_rise_set_swe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
+            patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(31.25, 169.67, 149_200_000.0)),
         ):
             yield
@@ -384,7 +384,7 @@ class TestFactoryFromSubjectMocked:
 
 
 class TestFactoryEdgeCasesNullReturns:
-    """Test factory gracefully handles None returns from swe utilities."""
+    """Test factory gracefully handles None returns from ephe utilities."""
 
     def test_no_lunar_phase_on_subject(self) -> None:
         """Subject without lunar_phase should produce minimal moon summary."""
@@ -393,7 +393,7 @@ class TestFactoryEdgeCasesNullReturns:
         with (
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=None),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=None),
-            patch(f"{_FACTORY}.compute_sun_rise_set_swe", return_value=(None, None)),
+            patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(None, None)),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(None, None, None)),
         ):
             overview = MoonPhaseDetailsFactory.from_subject(subject)
@@ -411,7 +411,7 @@ class TestFactoryEdgeCasesNullReturns:
             patch(f"{_FACTORY}.compute_lunar_phase_jd", side_effect=_side_effect_lunar_phase_jd),
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=None),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=None),
-            patch(f"{_FACTORY}.compute_sun_rise_set_swe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
+            patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(31.25, 169.67, 149_200_000.0)),
         ):
             overview = MoonPhaseDetailsFactory.from_subject(subject)
@@ -427,7 +427,7 @@ class TestFactoryEdgeCasesNullReturns:
             patch(f"{_FACTORY}.compute_lunar_phase_jd", side_effect=_side_effect_lunar_phase_jd),
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=(4, _SOLAR_ECLIPSE_JD)),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=(1, _LUNAR_ECLIPSE_JD)),
-            patch(f"{_FACTORY}.compute_sun_rise_set_swe", return_value=(None, None)),
+            patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(None, None)),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(None, None, None)),
         ):
             overview = MoonPhaseDetailsFactory.from_subject(subject)
@@ -446,7 +446,7 @@ class TestFactoryEdgeCasesNullReturns:
             patch(f"{_FACTORY}.compute_lunar_phase_jd", return_value=None),
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=None),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=None),
-            patch(f"{_FACTORY}.compute_sun_rise_set_swe", return_value=(None, None)),
+            patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(None, None)),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(None, None, None)),
         ):
             overview = MoonPhaseDetailsFactory.from_subject(subject)
@@ -469,7 +469,7 @@ class TestFactoryEdgeCasesNullReturns:
             patch(f"{_FACTORY}.compute_lunar_phase_jd", side_effect=_side_effect_lunar_phase_jd),
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=None),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=(1, _LUNAR_ECLIPSE_JD)),
-            patch(f"{_FACTORY}.compute_sun_rise_set_swe", return_value=(None, None)),
+            patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(None, None)),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(None, None, None)),
         ):
             overview = MoonPhaseDetailsFactory.from_subject(subject)
@@ -492,7 +492,7 @@ class TestPhaseAngleBoundaries:
             patch(f"{_FACTORY}.compute_lunar_phase_jd", side_effect=_side_effect_lunar_phase_jd),
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=None),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=None),
-            patch(f"{_FACTORY}.compute_sun_rise_set_swe", return_value=(None, None)),
+            patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(None, None)),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(None, None, None)),
         ):
             yield

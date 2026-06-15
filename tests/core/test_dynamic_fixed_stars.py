@@ -170,11 +170,11 @@ class TestFixedStarEdgeCases:
         assert result == []
 
     def test_fixstar_ut_exception_skips_star(self, subject_all_stars):
-        """If swe.fixstar_ut raises for some stars, those stars are silently skipped."""
+        """If ephe.fixstar_ut raises for some stars, those stars are silently skipped."""
         from unittest.mock import patch
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
 
-        original_fixstar_ut = swe.fixstar_ut
+        original_fixstar_ut = ephe.fixstar_ut
         call_count = [0]
 
         def mock_fixstar_ut(name, jd, iflag):
@@ -184,7 +184,7 @@ class TestFixedStarEdgeCases:
                 raise RuntimeError("Mock fixstar failure")
             return original_fixstar_ut(name, jd, iflag)
 
-        with patch("kerykeion.fixed_stars.discovery_factory.swe.fixstar_ut", side_effect=mock_fixstar_ut):
+        with patch("kerykeion.fixed_stars.discovery_factory.ephe.fixstar_ut", side_effect=mock_fixstar_ut):
             result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
             assert isinstance(result, list)
             # Should still find some stars (the ones that didn't fail)

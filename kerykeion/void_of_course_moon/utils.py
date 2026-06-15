@@ -13,7 +13,7 @@ the Moon is by far the fastest classical body, so its ecliptic longitude relativ
 to any other planet increases monotonically across a single sign (~2-2.5 days).
 That lets us seed each event analytically (assuming locally linear motion) and
 then refine it to arc-second precision with a couple of Newton iterations against
-real ``swe.calc_ut`` longitudes. The cost is a few dozen single-body position
+real ``ephe.calc_ut`` longitudes. The cost is a few dozen single-body position
 lookups — no full astrological subject is ever built.
 """
 
@@ -24,7 +24,7 @@ from datetime import datetime
 from typing import Optional
 
 from kerykeion.aspects.aspects_utils import difdeg2n
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas.kr_literals import VocAspectName, VocTargetPlanet
 from kerykeion.sun_times.utils import julian_day_to_utc
 from kerykeion.utilities import datetime_to_julian
@@ -42,13 +42,13 @@ PTOLEMAIC_ASPECTS: tuple[tuple[VocAspectName, float], ...] = (
 )
 
 _BODY_ID: dict[str, int] = {
-    "Sun": swe.SUN,
-    "Moon": swe.MOON,
-    "Mercury": swe.MERCURY,
-    "Venus": swe.VENUS,
-    "Mars": swe.MARS,
-    "Jupiter": swe.JUPITER,
-    "Saturn": swe.SATURN,
+    "Sun": ephe.SUN,
+    "Moon": ephe.MOON,
+    "Mercury": ephe.MERCURY,
+    "Venus": ephe.VENUS,
+    "Mars": ephe.MARS,
+    "Jupiter": ephe.JUPITER,
+    "Saturn": ephe.SATURN,
 }
 
 # Newton convergence threshold in degrees (~1e-5° ≈ 0.6 s of Moon travel) and the
@@ -86,7 +86,7 @@ class VoidOfCourseResult:
 
 def _lon_speed(jd: float, body_id: int, iflag: int) -> tuple[float, float]:
     """Return ``(ecliptic_longitude, longitude_speed_deg_per_day)`` at a Julian Day."""
-    values = swe.calc_ut(jd, body_id, iflag)[0]
+    values = ephe.calc_ut(jd, body_id, iflag)[0]
     return values[0], values[3]
 
 
@@ -94,7 +94,7 @@ def _moon_crossing_jd(jd0: float, target_longitude: float, guess_days: float, if
     """Newton-refine the Julian Day at which the Moon reaches ``target_longitude``."""
     jd = jd0 + guess_days
     for _ in range(_MAX_ITERATIONS):
-        longitude, speed = _lon_speed(jd, swe.MOON, iflag)
+        longitude, speed = _lon_speed(jd, ephe.MOON, iflag)
         error = difdeg2n(longitude, target_longitude)  # signed degrees, 0 at crossing
         if not speed or abs(error) < _ANGLE_EPSILON:
             break
@@ -111,7 +111,7 @@ def _aspect_perfection_jd(jd_guess: float, body_id: int, signed_target: float, i
     """
     jd = jd_guess
     for _ in range(_MAX_ITERATIONS):
-        moon_lon, moon_speed = _lon_speed(jd, swe.MOON, iflag)
+        moon_lon, moon_speed = _lon_speed(jd, ephe.MOON, iflag)
         body_lon, body_speed = _lon_speed(jd, body_id, iflag)
         separation = difdeg2n(moon_lon, body_lon)
         error = difdeg2n(separation, signed_target)
@@ -142,7 +142,7 @@ def _aspects_in_window(
     scan tightens the entry side too so the shared cusp aspect is not double-counted.
     The returned list is deduplicated and ordered by ``exact_time``.
     """
-    moon_lon, moon_speed = _lon_speed(jd_ref, swe.MOON, iflag)
+    moon_lon, moon_speed = _lon_speed(jd_ref, ephe.MOON, iflag)
     if moon_speed <= 0:  # defensive: the Moon never goes retrograde in longitude
         moon_speed = _MEAN_LUNAR_SPEED
 
@@ -184,15 +184,15 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
 
     Args:
         moment_utc: The moment to evaluate, as a timezone-aware UTC ``datetime``.
-        iflag: Ephemeris calculation flags (``swe.FLG_SWIEPH | swe.FLG_SPEED``,
-            plus ``swe.FLG_SIDEREAL`` for sidereal zodiacs; the sidereal mode must
-            already be configured via ``swe.set_sid_mode``).
+        iflag: Ephemeris calculation flags (``ephe.FLG_SWIEPH | ephe.FLG_SPEED``,
+            plus ``ephe.FLG_SIDEREAL`` for sidereal zodiacs; the sidereal mode must
+            already be configured via ``ephe.set_sid_mode``).
 
     Returns:
         VoidOfCourseResult: ingress, void window, and the framing aspects.
     """
     jd0 = datetime_to_julian(moment_utc)
-    moon_lon, moon_speed = _lon_speed(jd0, swe.MOON, iflag)
+    moon_lon, moon_speed = _lon_speed(jd0, ephe.MOON, iflag)
     if moon_speed <= 0:  # defensive: the Moon never goes retrograde in longitude
         moon_speed = _MEAN_LUNAR_SPEED
 

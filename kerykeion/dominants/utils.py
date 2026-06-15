@@ -25,7 +25,7 @@ from kerykeion.dominants.data import (
     SIGN_NUM_TO_ELEMENT,
     SIGN_NUM_TO_QUALITY,
 )
-from kerykeion.ephemeris_backend import ephemeris_session, swe
+from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion.schemas.kr_literals import SIGN_CODES, Element, Quality, Sign
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 
@@ -265,7 +265,7 @@ def to_subject_zodiac(tropical_degree: float, subject: AstrologicalSubjectModel)
     longitude with the sign boundaries the subject actually uses.
 
     Args:
-        tropical_degree: A raw tropical longitude (e.g. from ``swe.calc_ut``).
+        tropical_degree: A raw tropical longitude (e.g. from ``ephe.calc_ut``).
         subject: The chart whose zodiac frame to match.
 
     Returns:
@@ -298,14 +298,14 @@ def _wrap_180(angle: float) -> float:
     return (angle + 180.0) % 360.0 - 180.0
 
 
-def _sun_moon_longitudes(julian_day: float, iflag: int = swe.FLG_SWIEPH) -> tuple[float, float]:
+def _sun_moon_longitudes(julian_day: float, iflag: int = ephe.FLG_SWIEPH) -> tuple[float, float]:
     """Return the (Sun, Moon) tropical ecliptic longitudes at a Julian Day.
 
     The caller must be inside an :func:`ephemeris_session` (which serializes
     access and configures the ephemeris path).
     """
-    sun = float(swe.calc_ut(julian_day, swe.SUN, iflag)[0][0])
-    moon = float(swe.calc_ut(julian_day, swe.MOON, iflag)[0][0])
+    sun = float(ephe.calc_ut(julian_day, ephe.SUN, iflag)[0][0])
+    moon = float(ephe.calc_ut(julian_day, ephe.MOON, iflag)[0][0])
     return sun, moon
 
 

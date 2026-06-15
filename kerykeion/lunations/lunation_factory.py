@@ -12,7 +12,7 @@ and advance just past it, so consecutive lunations (~7.4 days apart) are never
 skipped regardless of the solver's internal search window.
 
 Swiss Ephemeris / libephemeris functions used (via ``compute_lunar_phase_jd``):
-    - swe.calc_ut(jd, swe.SUN/swe.MOON, flags)
+    - ephe.calc_ut(jd, ephe.SUN/ephe.MOON, flags)
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from kerykeion.moon_phase_details.utils import compute_lunar_phase_jd
 from kerykeion.schemas.kerykeion_exception import KerykeionException
@@ -73,8 +73,8 @@ def _phase_angle_error(jd: float, target_angle: float) -> float:
     """Absolute error (deg) between the actual Sun-Moon separation at ``jd`` and
     ``target_angle``. Used to reject degenerate ``compute_lunar_phase_jd`` echoes
     that return the search start instead of a real syzygy."""
-    sun = float(swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH)[0][0]) % 360.0
-    moon = float(swe.calc_ut(jd, swe.MOON, swe.FLG_SWIEPH)[0][0]) % 360.0
+    sun = float(ephe.calc_ut(jd, ephe.SUN, ephe.FLG_SWIEPH)[0][0]) % 360.0
+    moon = float(ephe.calc_ut(jd, ephe.MOON, ephe.FLG_SWIEPH)[0][0]) % 360.0
     diff = (moon - sun - target_angle) % 360.0
     return min(diff, 360.0 - diff)
 
@@ -82,17 +82,17 @@ def _phase_angle_error(jd: float, target_angle: float) -> float:
 def _jd_to_iso(jd: float) -> str:
     """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
 
-    Uses ``swe.revjul`` rather than Python ``datetime`` (limited to years
+    Uses ``ephe.revjul`` rather than Python ``datetime`` (limited to years
     1..9999) so the BCE range Kerykeion supports formats correctly, with an
     extended-year sign for negative years.
     """
-    year, month, day, hour_frac = swe.revjul(jd)
+    year, month, day, hour_frac = ephe.revjul(jd)
     secs = int(hour_frac * 3600 + 0.5)  # nearest second
     if secs >= 86400:
         # Rounds up to 24:00:00 — roll over to 00:00:00 of the next calendar
         # day (carrying month/year boundaries via revjul) rather than clamping
         # to 23:59:59 of the same day.
-        year, month, day, _ = swe.revjul(jd + 0.5 / 86400.0)
+        year, month, day, _ = ephe.revjul(jd + 0.5 / 86400.0)
         secs = 0
     hours, rem = divmod(secs, 3600)
     minutes, seconds = divmod(rem, 60)
@@ -259,9 +259,9 @@ class LunationFinderFactory:
     @staticmethod
     def _build(phase_name: str, jd: float) -> LunationModel:
         """Build a LunationModel with Sun/Moon positions at the exact phase JD."""
-        iflag = swe.FLG_SWIEPH
-        sun_lon = float(swe.calc_ut(jd, swe.SUN, iflag)[0][0]) % 360.0
-        moon_lon = float(swe.calc_ut(jd, swe.MOON, iflag)[0][0]) % 360.0
+        iflag = ephe.FLG_SWIEPH
+        sun_lon = float(ephe.calc_ut(jd, ephe.SUN, iflag)[0][0]) % 360.0
+        moon_lon = float(ephe.calc_ut(jd, ephe.MOON, iflag)[0][0]) % 360.0
         return LunationModel(
             phase=phase_name,
             julian_day=jd,

@@ -20,7 +20,7 @@ _UNSET: Any = object()
 # Module directory for resolving template/theme paths
 _MODULE_DIR = Path(__file__).parent
 
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from svg_polish import optimize as _svg_polish_optimize
 
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
@@ -3636,7 +3636,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             return f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
         else:
             mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
-            mode_name = swe.get_ayanamsa_name(getattr(swe, mode_const))
+            mode_name = ephe.get_ayanamsa_name(getattr(ephe, mode_const))
             return f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
     # =========================================================================

@@ -2,12 +2,12 @@
 """
 Tests for the HeliacalFactory module.
 
-Verifies heliacal rising/setting calculations using swe.heliacal_ut()
+Verifies heliacal rising/setting calculations using ephe.heliacal_ut()
 with default atmospheric parameters.
 """
 
 import pytest
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 
 pytestmark = pytest.mark.xdist_group(name="heliacal")
 
@@ -27,7 +27,7 @@ from kerykeion.heliacal.heliacal_factory import (
 # Fixtures -------------------------------------------------------------------
 
 ROME_GEOPOS = (12.4964, 41.9028, 50.0)  # lng, lat, altitude
-START_JD = swe.julday(2026, 3, 26, 0)   # 2026-03-26 00:00 UT
+START_JD = ephe.julday(2026, 3, 26, 0)   # 2026-03-26 00:00 UT
 
 
 @pytest.fixture(scope="module")

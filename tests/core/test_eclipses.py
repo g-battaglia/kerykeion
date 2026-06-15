@@ -2,7 +2,7 @@
 """Tests for the Eclipse Factory module."""
 
 import pytest
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.eclipses import EclipseFactory
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 
@@ -140,14 +140,14 @@ class TestClassifyHelpers:
         real seconds, e.g. -0044-03-15T12:00:00Z (not the old '-044-...')."""
         from kerykeion.eclipses.eclipse_factory import _jd_to_iso
 
-        jd = swe.julday(-44, 3, 15, 12.0)
+        jd = ephe.julday(-44, 3, 15, 12.0)
         assert _jd_to_iso(jd) == "-0044-03-15T12:00:00Z"
 
     def test_jd_to_iso_ce_year_with_seconds(self):
         """CE formatting keeps the unsigned year and includes real seconds."""
         from kerykeion.eclipses.eclipse_factory import _jd_to_iso
 
-        jd = swe.julday(2026, 8, 12, 17.0 + 30.0 / 60.0 + 42.0 / 3600.0)
+        jd = ephe.julday(2026, 8, 12, 17.0 + 30.0 / 60.0 + 42.0 / 3600.0)
         assert _jd_to_iso(jd) == "2026-08-12T17:30:42Z"
 
 
@@ -160,7 +160,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.eclipses.eclipse_factory.swe.sol_eclipse_when_loc",
+            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_loc",
             return_value=(0, zero_tret, [0.0] * 10),
         ):
             result = EclipseFactory._find_solar_local(2451545.0, (12.0, 41.0, 0.0), 3)
@@ -172,8 +172,8 @@ class TestEclipseSearchBreakAndErrorPaths:
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
         with patch(
-            "kerykeion.eclipses.eclipse_factory.swe.sol_eclipse_when_loc",
-            side_effect=RuntimeError("swe failure"),
+            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_loc",
+            side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match=r"JD 2451545\."):
                 EclipseFactory._find_solar_local(2451545.0, (12.0, 41.0, 0.0), 3)
@@ -184,7 +184,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.eclipses.eclipse_factory.swe.sol_eclipse_when_glob",
+            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_glob",
             return_value=(0, zero_tret),
         ):
             result = EclipseFactory._find_solar_global(2451545.0, 3)
@@ -195,8 +195,8 @@ class TestEclipseSearchBreakAndErrorPaths:
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
         with patch(
-            "kerykeion.eclipses.eclipse_factory.swe.sol_eclipse_when_glob",
-            side_effect=RuntimeError("swe failure"),
+            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_glob",
+            side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match="ephemeris range"):
                 EclipseFactory._find_solar_global(2451545.0, 3)
@@ -209,7 +209,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         from unittest.mock import patch
         good = (ECL_TOTAL, [2451550.0] + [0.0] * 9)
         with patch(
-            "kerykeion.eclipses.eclipse_factory.swe.sol_eclipse_when_glob",
+            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_glob",
             side_effect=[good, RuntimeError("jd 2451560 outside ephemeris range")],
         ):
             with pytest.raises(KerykeionException, match=r"JD 2451560\."):
@@ -221,7 +221,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.eclipses.eclipse_factory.swe.lun_eclipse_when_loc",
+            "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when_loc",
             return_value=(0, zero_tret, [0.0] * 10),
         ):
             result = EclipseFactory._find_lunar_local(2451545.0, (12.0, 41.0, 0.0), 3)
@@ -232,8 +232,8 @@ class TestEclipseSearchBreakAndErrorPaths:
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
         with patch(
-            "kerykeion.eclipses.eclipse_factory.swe.lun_eclipse_when_loc",
-            side_effect=RuntimeError("swe failure"),
+            "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when_loc",
+            side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match=r"JD 2451545\."):
                 EclipseFactory._find_lunar_local(2451545.0, (12.0, 41.0, 0.0), 3)
@@ -244,7 +244,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.eclipses.eclipse_factory.swe.lun_eclipse_when",
+            "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when",
             return_value=(0, zero_tret),
         ):
             result = EclipseFactory._find_lunar_global(2451545.0, 3)
@@ -255,8 +255,8 @@ class TestEclipseSearchBreakAndErrorPaths:
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
         with patch(
-            "kerykeion.eclipses.eclipse_factory.swe.lun_eclipse_when",
-            side_effect=RuntimeError("swe failure"),
+            "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when",
+            side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match="ephemeris range"):
                 EclipseFactory._find_lunar_global(2451545.0, 3)
@@ -266,10 +266,10 @@ class TestSweRegressionEclipses:
     """Regression tests: verify factory results match raw Swiss Ephemeris calls."""
 
     def test_solar_eclipse_jd_matches_swe(self):
-        """Factory solar eclipse maximum_jd should match swe.sol_eclipse_when_glob."""
+        """Factory solar eclipse maximum_jd should match ephe.sol_eclipse_when_glob."""
         with ephemeris_session():
-            jd_2024 = swe.julday(2024, 1, 1, 0.0)
-            _retflags, tret = swe.sol_eclipse_when_glob(jd_2024, swe.FLG_SWIEPH)
+            jd_2024 = ephe.julday(2024, 1, 1, 0.0)
+            _retflags, tret = ephe.sol_eclipse_when_glob(jd_2024, ephe.FLG_SWIEPH)
             swe_solar_max_jd = tret[0]
 
         result = EclipseFactory.search_global(start_year=2024, count=1)
@@ -277,14 +277,14 @@ class TestSweRegressionEclipses:
         factory_solar_max_jd = result.solar_eclipses[0].maximum_jd
 
         assert abs(factory_solar_max_jd - swe_solar_max_jd) < 0.01, (
-            f"Factory solar JD {factory_solar_max_jd} != swe JD {swe_solar_max_jd}"
+            f"Factory solar JD {factory_solar_max_jd} != ephe JD {swe_solar_max_jd}"
         )
 
     def test_lunar_eclipse_jd_matches_swe(self):
-        """Factory lunar eclipse maximum_jd should match swe.lun_eclipse_when."""
+        """Factory lunar eclipse maximum_jd should match ephe.lun_eclipse_when."""
         with ephemeris_session():
-            jd_2024 = swe.julday(2024, 1, 1, 0.0)
-            _retflags, tret = swe.lun_eclipse_when(jd_2024, swe.FLG_SWIEPH, 0)
+            jd_2024 = ephe.julday(2024, 1, 1, 0.0)
+            _retflags, tret = ephe.lun_eclipse_when(jd_2024, ephe.FLG_SWIEPH, 0)
             swe_lunar_max_jd = tret[0]
 
         result = EclipseFactory.search_global(start_year=2024, count=1)
@@ -292,7 +292,7 @@ class TestSweRegressionEclipses:
         factory_lunar_max_jd = result.lunar_eclipses[0].maximum_jd
 
         assert abs(factory_lunar_max_jd - swe_lunar_max_jd) < 0.01, (
-            f"Factory lunar JD {factory_lunar_max_jd} != swe JD {swe_lunar_max_jd}"
+            f"Factory lunar JD {factory_lunar_max_jd} != ephe JD {swe_lunar_max_jd}"
         )
 
 
@@ -321,7 +321,7 @@ class TestEclipseEnrichment:
         ecl = totals[0]
         assert ecl.sign == "Leo"
         assert 19.0 <= ecl.degree <= 21.0
-        if hasattr(swe, "get_saros_number"):
+        if hasattr(ephe, "get_saros_number"):
             assert ecl.saros == 126
 
     def test_solar_gamma_and_duration_when_available(self):
@@ -329,10 +329,10 @@ class TestEclipseEnrichment:
         central = [e for e in result.solar_eclipses if e.type in ("total", "annular")]
         assert central
         ecl = central[0]
-        if hasattr(swe, "sol_eclipse_max_time"):
+        if hasattr(ephe, "sol_eclipse_max_time"):
             assert ecl.gamma is not None
             assert -1.6 < ecl.gamma < 1.6
-        if hasattr(swe, "calc_solar_eclipse_duration"):
+        if hasattr(ephe, "calc_solar_eclipse_duration"):
             # Central eclipses have a positive duration; partial -> None.
             assert ecl.duration_minutes is None or ecl.duration_minutes > 0
 
@@ -341,8 +341,8 @@ class TestEclipseEnrichment:
         from unittest.mock import patch
         from kerykeion.eclipses import eclipse_factory as ef
 
-        with patch.object(ef.swe, "get_saros_number", None, create=True), \
-             patch.object(ef.swe, "get_inex_number", None, create=True):
+        with patch.object(ef.ephe, "get_saros_number", None, create=True), \
+             patch.object(ef.ephe, "get_inex_number", None, create=True):
             assert ef._saros_inex(2451545.0, "solar") == {}
 
     def test_non_positive_saros_inex_treated_as_missing(self):
@@ -353,8 +353,8 @@ class TestEclipseEnrichment:
         from unittest.mock import patch
         from kerykeion.eclipses import eclipse_factory as ef
 
-        with patch.object(ef.swe, "get_saros_number", lambda jd, kind: 0, create=True), \
-             patch.object(ef.swe, "get_inex_number", lambda jd, kind: -3, create=True):
+        with patch.object(ef.ephe, "get_saros_number", lambda jd, kind: 0, create=True), \
+             patch.object(ef.ephe, "get_inex_number", lambda jd, kind: -3, create=True):
             assert ef._saros_inex(2451545.0, "solar") == {}
 
     def test_positive_saros_pass_through_inex_never_trusted(self):
@@ -366,8 +366,8 @@ class TestEclipseEnrichment:
         from unittest.mock import patch
         from kerykeion.eclipses import eclipse_factory as ef
 
-        with patch.object(ef.swe, "get_saros_number", lambda jd, kind: 126, create=True), \
-             patch.object(ef.swe, "get_inex_number", lambda jd, kind: 50, create=True):
+        with patch.object(ef.ephe, "get_saros_number", lambda jd, kind: 126, create=True), \
+             patch.object(ef.ephe, "get_inex_number", lambda jd, kind: 50, create=True):
             assert ef._saros_inex(2451545.0, "solar") == {"saros": 126}
 
     def test_saros_inex_never_zero_in_results(self):
@@ -427,12 +427,12 @@ def test_jd_to_iso_rolls_over_midnight(module_path):
 
     # 2020-01-31 23:59:59.8 UT → rounds to next-day midnight, across the month
     # (and is a leap year, exercising the day/month carry).
-    jd = swe.julday(2020, 2, 1, 0.0) - (0.2 / 86400.0)
+    jd = ephe.julday(2020, 2, 1, 0.0) - (0.2 / 86400.0)
     assert _jd_to_iso(jd) == "2020-02-01T00:00:00Z"
 
     # A year boundary too: 2019-12-31 23:59:59.9 UT → 2020-01-01T00:00:00Z.
-    jd_year = swe.julday(2020, 1, 1, 0.0) - (0.1 / 86400.0)
+    jd_year = ephe.julday(2020, 1, 1, 0.0) - (0.1 / 86400.0)
     assert _jd_to_iso(jd_year) == "2020-01-01T00:00:00Z"
 
     # A normal mid-day time is unaffected.
-    assert _jd_to_iso(swe.julday(2020, 6, 15, 12.5)) == "2020-06-15T12:30:00Z"
+    assert _jd_to_iso(ephe.julday(2020, 6, 15, 12.5)) == "2020-06-15T12:30:00Z"

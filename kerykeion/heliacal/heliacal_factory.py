@@ -4,7 +4,7 @@ Heliacal Risings and Settings Factory
 ======================================
 
 Calculates heliacal events (first/last visibility of planets and stars
-relative to the Sun) using the Swiss Ephemeris ``swe.heliacal_ut()``
+relative to the Sun) using the Swiss Ephemeris ``ephe.heliacal_ut()``
 function.
 
 A heliacal rising is the first morning a celestial body becomes visible
@@ -20,17 +20,17 @@ from __future__ import annotations
 import logging
 from typing import List, Optional, Sequence, Tuple
 
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 logger = logging.getLogger(__name__)
 
 # ---- Event-type constants (mirrors Swiss Ephemeris) ----
-HELIACAL_RISING: int = swe.HELIACAL_RISING    # 1 - morning first
-HELIACAL_SETTING: int = swe.HELIACAL_SETTING  # 2 - evening last
-EVENING_FIRST: int = swe.EVENING_FIRST        # 3
-MORNING_LAST: int = swe.MORNING_LAST          # 4
+HELIACAL_RISING: int = ephe.HELIACAL_RISING    # 1 - morning first
+HELIACAL_SETTING: int = ephe.HELIACAL_SETTING  # 2 - evening last
+EVENING_FIRST: int = ephe.EVENING_FIRST        # 3
+MORNING_LAST: int = ephe.MORNING_LAST          # 4
 
 EVENT_TYPE_LABELS = {
     HELIACAL_RISING: "heliacal_rising",
@@ -61,7 +61,7 @@ DEFAULT_OBSERVER: Tuple[float, float, float, float, float, float] = (
     0.0,   # optical transmission
 )
 
-# Planets supported by swe.heliacal_ut
+# Planets supported by ephe.heliacal_ut
 PLANETS = ("Mercury", "Venus", "Mars", "Jupiter", "Saturn")
 
 # Inner planets support all four event types; outer planets only rising/setting.
@@ -245,7 +245,7 @@ class HeliacalFactory:
         atmo: Optional[Tuple[float, float, float, float]],
         observer: Optional[Tuple[float, float, float, float, float, float]],
     ) -> HeliacalEventModel:
-        """Low-level wrapper around ``swe.heliacal_ut``.
+        """Low-level wrapper around ``ephe.heliacal_ut``.
 
         Must be called inside an :func:`ephemeris_session` (the public entry
         points open one).
@@ -255,7 +255,7 @@ class HeliacalFactory:
         if observer is None:
             observer = DEFAULT_OBSERVER
 
-        dret = swe.heliacal_ut(
+        dret = ephe.heliacal_ut(
             julian_day,
             geopos,
             atmo,
@@ -268,7 +268,7 @@ class HeliacalFactory:
         result_jd = dret[0]  # start of visibility
 
         # Convert Julian Day to a calendar date for the datestamp.
-        year, month, day, _hour = swe.revjul(result_jd)
+        year, month, day, _hour = ephe.revjul(result_jd)
         datestamp = f"{int(year):04d}-{int(month):02d}-{int(day):02d}"
 
         return HeliacalEventModel(

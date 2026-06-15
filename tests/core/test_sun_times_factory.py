@@ -132,7 +132,7 @@ def test_no_events_but_not_polar_raises(monkeypatch):
     # Regression: when the backend cannot produce rise/set (returns (None, None)) yet
     # the geometry is not polar (here, the equator), the factory must raise a clean
     # KerykeionException rather than return an impossible "no sun, not polar" model.
-    monkeypatch.setattr(sun_times_utils, "compute_sun_rise_set_swe", lambda *a, **k: (None, None))
+    monkeypatch.setattr(sun_times_utils, "compute_sun_rise_set_ephe", lambda *a, **k: (None, None))
     with pytest.raises(KerykeionException):
         SunTimesFactory.from_date(2026, 3, 20, latitude=0.0, longitude=0.0, tz_str="UTC")
 
@@ -140,7 +140,7 @@ def test_no_events_but_not_polar_raises(monkeypatch):
 def test_polar_state_backend_failure_raises(monkeypatch):
     # Regression: a raw backend error while classifying polar day/night must surface as
     # a KerykeionException, not leak as a low-level ephemeris error.
-    monkeypatch.setattr(sun_times_utils, "compute_sun_rise_set_swe", lambda *a, **k: (None, None))
+    monkeypatch.setattr(sun_times_utils, "compute_sun_rise_set_ephe", lambda *a, **k: (None, None))
 
     def _raise(*a, **k):
         raise RuntimeError("ephemeris out of range")

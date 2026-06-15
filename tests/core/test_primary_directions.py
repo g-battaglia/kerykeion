@@ -3,7 +3,7 @@
 
 import math
 import pytest
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, PrimaryDirectionsFactory
 
 
@@ -194,17 +194,17 @@ class TestPrimaryDirectionEdgeCases:
                 assert isinstance(directions, list)
 
     def test_speculum_calc_ut_fallback(self, subject):
-        """If swe.calc_ut with FLG_EQUATORIAL fails, speculum should use ecliptic fallback."""
+        """If ephe.calc_ut with FLG_EQUATORIAL fails, speculum should use ecliptic fallback."""
         from unittest.mock import patch
 
-        original_calc_ut = swe.calc_ut
+        original_calc_ut = ephe.calc_ut
 
         def failing_eq_calc_ut(jd, planet_id, iflag):
-            if iflag & swe.FLG_EQUATORIAL:
+            if iflag & ephe.FLG_EQUATORIAL:
                 raise RuntimeError("Mock equatorial failure")
             return original_calc_ut(jd, planet_id, iflag)
 
-        with patch("kerykeion.primary_directions.directions_factory.swe.calc_ut", side_effect=failing_eq_calc_ut):
+        with patch("kerykeion.primary_directions.directions_factory.ephe.calc_ut", side_effect=failing_eq_calc_ut):
             speculum = PrimaryDirectionsFactory.compute_speculum(subject)
             # Should still return entries (using ecliptic fallback for RA)
             assert len(speculum) > 0
@@ -318,7 +318,7 @@ class TestPrimaryDirectionEdgeCases:
 class TestSpeculumSweRegressions:
     """Known-value regression tests using Swiss Ephemeris as reference source.
 
-    These tests call swe functions directly to obtain reference values, then
+    These tests call ephe functions directly to obtain reference values, then
     verify that PrimaryDirectionsFactory.compute_speculum produces matching
     results.  The subject is John Lennon (1940-10-09 18:30, Liverpool).
     """
@@ -332,11 +332,11 @@ class TestSpeculumSweRegressions:
         )
 
     def test_sun_ra_dec_matches_swe(self, lennon):
-        """Sun RA and declination from speculum must match swe.calc_ut equatorial coords."""
-        # v6: raw swe.set_ephe_path/swe.close are forbidden; use ephemeris_session.
+        """Sun RA and declination from speculum must match ephe.calc_ut equatorial coords."""
+        # v6: raw ephe.set_ephe_path/ephe.close are forbidden; use ephemeris_session.
         jd = lennon.julian_day
         with ephemeris_session() as iflag:
-            eq = swe.calc_ut(jd, swe.SUN, iflag | swe.FLG_EQUATORIAL)
+            eq = ephe.calc_ut(jd, ephe.SUN, iflag | ephe.FLG_EQUATORIAL)
             swe_ra = eq[0][0]
             swe_dec = eq[0][1]
 
@@ -344,18 +344,18 @@ class TestSpeculumSweRegressions:
         sun_entry = next(e for e in speculum if e.name == "Sun")
 
         assert abs(sun_entry.right_ascension - swe_ra) < 0.01, (
-            f"Sun RA mismatch: speculum={sun_entry.right_ascension}, swe={swe_ra}"
+            f"Sun RA mismatch: speculum={sun_entry.right_ascension}, ephe={swe_ra}"
         )
         assert abs(sun_entry.declination - swe_dec) < 0.01, (
-            f"Sun Dec mismatch: speculum={sun_entry.declination}, swe={swe_dec}"
+            f"Sun Dec mismatch: speculum={sun_entry.declination}, ephe={swe_dec}"
         )
 
     def test_ramc_matches_swe_sidtime(self, lennon):
-        """RAMC must equal (swe.sidtime(jd) * 15 + lng) mod 360."""
-        # v6: raw swe.set_ephe_path/swe.close are forbidden; use ephemeris_session.
+        """RAMC must equal (ephe.sidtime(jd) * 15 + lng) mod 360."""
+        # v6: raw ephe.set_ephe_path/ephe.close are forbidden; use ephemeris_session.
         jd = lennon.julian_day
         with ephemeris_session():
-            expected_ramc = (swe.sidtime(jd) * 15.0 + lennon.lng) % 360
+            expected_ramc = (ephe.sidtime(jd) * 15.0 + lennon.lng) % 360
 
         # The speculum does not directly expose RAMC, but we can verify it
         # through the MC entry: MC's meridian distance should be ~0 because
@@ -467,7 +467,7 @@ class TestKnownValues:
         """Direct and converse Sun-conjunction-MC arcs match the independent math."""
         jd = modern_subject.julian_day
         with ephemeris_session() as iflag:
-            eps = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
+            eps = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
 
         def ra_of(lam):
             return math.degrees(math.atan2(

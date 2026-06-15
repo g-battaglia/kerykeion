@@ -2,7 +2,7 @@
 """Tests for the Gauquelin sectors feature."""
 
 import pytest
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 
@@ -57,36 +57,36 @@ class TestGauquelinCalculation:
         assert 1 <= sun_sector <= 36
 
     def test_sun_sector_matches_swe_reference(self, subject_with_gauquelin):
-        """Sun Gauquelin sector must match a direct swe.gauquelin_sector call within 0.01."""
+        """Sun Gauquelin sector must match a direct ephe.gauquelin_sector call within 0.01."""
         jd = subject_with_gauquelin.julian_day
         geopos = [
             subject_with_gauquelin.lng,
             subject_with_gauquelin.lat,
             0.0,
         ]
-        swe.set_ephe_path("")
-        # Sun = swe planet ID 0, method 0 (with latitude)
-        expected_sector = swe.gauquelin_sector(jd, 0, 0, geopos)
+        ephe.set_ephe_path("")
+        # Sun = ephe planet ID 0, method 0 (with latitude)
+        expected_sector = ephe.gauquelin_sector(jd, 0, 0, geopos)
         assert abs(subject_with_gauquelin.sun.gauquelin_sector - expected_sector) < 0.01, (
             f"Sun sector {subject_with_gauquelin.sun.gauquelin_sector} != "
-            f"swe reference {expected_sector}"
+            f"ephe reference {expected_sector}"
         )
 
     def test_multiple_planets_match_swe_reference(self, subject_with_gauquelin):
-        """Moon and Mars Gauquelin sectors must match direct swe calls within 0.01."""
+        """Moon and Mars Gauquelin sectors must match direct ephe calls within 0.01."""
         jd = subject_with_gauquelin.julian_day
         geopos = [
             subject_with_gauquelin.lng,
             subject_with_gauquelin.lat,
             0.0,
         ]
-        swe.set_ephe_path("")
+        ephe.set_ephe_path("")
         planet_ids = {"moon": 1, "mars": 4}
         for attr, pid in planet_ids.items():
             point = getattr(subject_with_gauquelin, attr)
-            expected = swe.gauquelin_sector(jd, pid, 0, geopos)
+            expected = ephe.gauquelin_sector(jd, pid, 0, geopos)
             assert abs(point.gauquelin_sector - expected) < 0.01, (
-                f"{attr} sector {point.gauquelin_sector} != swe reference {expected}"
+                f"{attr} sector {point.gauquelin_sector} != ephe reference {expected}"
             )
 
 
@@ -196,7 +196,7 @@ class TestGauquelinBackendCallShape:
             return 7.5
 
         monkeypatch.setattr(asf, "BACKEND_NAME", backend_name)
-        monkeypatch.setattr(asf.swe, "gauquelin_sector", fake_gauquelin_sector)
+        monkeypatch.setattr(asf.ephe, "gauquelin_sector", fake_gauquelin_sector)
 
         subject = AstrologicalSubjectFactory.from_birth_data("Backend Shape", **self._BIRTH)
         return subject, calls

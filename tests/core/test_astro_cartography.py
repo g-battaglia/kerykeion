@@ -3,7 +3,7 @@
 
 import math
 import pytest
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, AstroCartographyFactory
 
 
@@ -83,8 +83,8 @@ class TestACGComputation:
 def _true_equatorial(jd, planet_id):
     """True equatorial RA/declination (degrees), sidereal flag stripped."""
     with ephemeris_session() as iflag:
-        eq_iflag = (iflag & ~swe.FLG_SIDEREAL) | swe.FLG_EQUATORIAL
-        pos = swe.calc_ut(jd, planet_id, eq_iflag)[0]
+        eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
+        pos = ephe.calc_ut(jd, planet_id, eq_iflag)[0]
         return pos[0], pos[1]
 
 
@@ -92,7 +92,7 @@ def _expected_mc_lng(jd, planet_id):
     """In-mundo MC line geographic longitude: wrap(true RA - GST)."""
     ra_deg, _ = _true_equatorial(jd, planet_id)
     with ephemeris_session():
-        gst_deg = swe.sidtime(jd) * 15.0
+        gst_deg = ephe.sidtime(jd) * 15.0
     mc_lng = (ra_deg - gst_deg) % 360
     if mc_lng > 180:
         mc_lng -= 360
@@ -102,9 +102,9 @@ def _expected_mc_lng(jd, planet_id):
 def _zodiacal_mc_lng(jd, planet_id):
     """MC longitude from the OLD beta=0 zodiacal projection (pre-v6-fix)."""
     with ephemeris_session() as iflag:
-        obliquity = swe.calc_ut(jd, swe.ECL_NUT, iflag)[0][0]
-        ecl_lon = swe.calc_ut(jd, planet_id, iflag)[0][0]
-        gst_deg = swe.sidtime(jd) * 15.0
+        obliquity = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
+        ecl_lon = ephe.calc_ut(jd, planet_id, iflag)[0][0]
+        gst_deg = ephe.sidtime(jd) * 15.0
     ecl_rad = math.radians(ecl_lon)
     eps_rad = math.radians(obliquity)
     ra_rad = math.atan2(math.sin(ecl_rad) * math.cos(eps_rad), math.cos(ecl_rad))
@@ -118,7 +118,7 @@ class TestACGSweRegressions:
     """Known-value regression tests using Swiss Ephemeris as reference source.
 
     Verifies that MC line longitudes produced by AstroCartographyFactory
-    match values derived directly from swe.sidtime and swe.calc_ut
+    match values derived directly from ephe.sidtime and ephe.calc_ut
     (FLG_EQUATORIAL), i.e. the in-mundo culmination meridian.
     """
 
@@ -131,12 +131,12 @@ class TestACGSweRegressions:
         )
 
     def test_sun_mc_line_longitude_matches_swe(self, acg_subject):
-        """Sun MC line longitude must match the value derived from swe directly.
+        """Sun MC line longitude must match the value derived from ephe directly.
 
         The Sun's MC line falls at the geographic longitude where the Sun
-        culminates (transits the local meridian).  From swe:
-            Sun true RA (swe.calc_ut with FLG_EQUATORIAL)
-            GAST = swe.sidtime(jd) in hours
+        culminates (transits the local meridian).  From ephe:
+            Sun true RA (ephe.calc_ut with FLG_EQUATORIAL)
+            GAST = ephe.sidtime(jd) in hours
             mc_geo_lng = (sun_RA - GAST * 15) mod 360, shifted to [-180,180]
 
         v6 in-mundo fix: the factory now uses the body's true equatorial RA
@@ -145,7 +145,7 @@ class TestACGSweRegressions:
         so this also pins backward compatibility for the Sun line.
         """
         jd = acg_subject.julian_day
-        expected_mc_lng = _expected_mc_lng(jd, swe.SUN)
+        expected_mc_lng = _expected_mc_lng(jd, ephe.SUN)
 
         # Get factory result
         lines = AstroCartographyFactory.compute(acg_subject, step=1, planets=["Sun"])
@@ -180,9 +180,9 @@ class TestACGInMundoLines:
         "planet,planet_id,min_shift",
         [
             # Pluto ecliptic latitude ~ +15.85 deg on this date -> ~4.56 deg shift
-            ("Pluto", swe.PLUTO, 4.0),
+            ("Pluto", ephe.PLUTO, 4.0),
             # Moon ecliptic latitude ~ +3.15 deg on this date -> ~1.22 deg shift
-            ("Moon", swe.MOON, 1.0),
+            ("Moon", ephe.MOON, 1.0),
         ],
     )
     def test_mc_line_uses_true_ra(self, acg_subject, planet, planet_id, min_shift):
@@ -209,24 +209,24 @@ class TestACGInMundoLines:
 
     def test_sun_rising_line_point_is_on_horizon(self, acg_subject):
         """Independent cross-check: at a point of the Sun ASC line the Sun's
-        geometric altitude (swe.azalt) must be ~0."""
+        geometric altitude (ephe.azalt) must be ~0."""
         jd = acg_subject.julian_day
         lines = AstroCartographyFactory.compute(acg_subject, step=1, planets=["Sun"])
         sun_asc = next(line for line in lines if line.planet == "Sun" and line.line_type == "ASC")
         point = next(p for p in sun_asc.points if p.latitude == 40.0)
 
         with ephemeris_session() as iflag:
-            eq_iflag = (iflag & ~swe.FLG_SIDEREAL) | swe.FLG_EQUATORIAL
-            ra, dec, dist = swe.calc_ut(jd, swe.SUN, eq_iflag)[0][:3]
-            azimuth, true_alt = swe.azalt(
-                jd, swe.EQU2HOR, (point.longitude, point.latitude, 0.0),
+            eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
+            ra, dec, dist = ephe.calc_ut(jd, ephe.SUN, eq_iflag)[0][:3]
+            azimuth, true_alt = ephe.azalt(
+                jd, ephe.EQU2HOR, (point.longitude, point.latitude, 0.0),
                 0.0, 0.0, (ra, dec, dist),
             )[:2]
 
         assert abs(true_alt) <= 0.2, (
             f"Sun not on geometric horizon at ASC line point: alt={true_alt}"
         )
-        # Rising side: azimuth east of the meridian (swe convention: from
+        # Rising side: azimuth east of the meridian (ephe convention: from
         # south, clockwise -> east is 180..360).
         assert 180.0 < azimuth < 360.0, f"ASC point is not on the rising side: az={azimuth}"
 

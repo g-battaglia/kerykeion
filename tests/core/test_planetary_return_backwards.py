@@ -192,22 +192,22 @@ class TestHeliocentricBackwards:
 class TestSwissephFallback:
     """When pyswisseph is the backend, backward methods must raise cleanly.
 
-    We simulate the fallback by patching ``swe.solcross_ut`` /
-    ``swe.mooncross_ut`` / ``swe.mooncross_node_ut`` so calling them with
+    We simulate the fallback by patching ``ephe.solcross_ut`` /
+    ``ephe.mooncross_ut`` / ``ephe.mooncross_node_ut`` so calling them with
     ``backwards=True`` raises ``TypeError`` (what pyswisseph does).
     """
 
     def test_solar_backwards_raises_on_swisseph(self, factory):
         import kerykeion.planetary_return_factory as prf
 
-        original = prf.swe.solcross_ut
+        original = prf.ephe.solcross_ut
 
         def fake_solcross(*args, **kwargs):
             if "backwards" in kwargs:
                 raise TypeError("pyswisseph solcross_ut() got an unexpected keyword argument 'backwards'")
             return original(*args, **kwargs)
 
-        with patch.object(prf.swe, "solcross_ut", side_effect=fake_solcross):
+        with patch.object(prf.ephe, "solcross_ut", side_effect=fake_solcross):
             with pytest.raises(KerykeionException, match="libephemeris"):
                 factory.next_return_from_iso_formatted_time(
                     "2025-12-31T00:00:00+00:00", "Solar", backwards=True
@@ -216,14 +216,14 @@ class TestSwissephFallback:
     def test_lunar_backwards_raises_on_swisseph(self, factory):
         import kerykeion.planetary_return_factory as prf
 
-        original = prf.swe.mooncross_ut
+        original = prf.ephe.mooncross_ut
 
         def fake_mooncross(*args, **kwargs):
             if "backwards" in kwargs:
                 raise TypeError("pyswisseph mooncross_ut() got an unexpected keyword argument 'backwards'")
             return original(*args, **kwargs)
 
-        with patch.object(prf.swe, "mooncross_ut", side_effect=fake_mooncross):
+        with patch.object(prf.ephe, "mooncross_ut", side_effect=fake_mooncross):
             with pytest.raises(KerykeionException, match="libephemeris"):
                 factory.next_return_from_iso_formatted_time(
                     "2024-06-01T00:00:00+00:00", "Lunar", backwards=True
@@ -232,14 +232,14 @@ class TestSwissephFallback:
     def test_node_crossing_backwards_raises_on_swisseph(self, factory):
         import kerykeion.planetary_return_factory as prf
 
-        original = prf.swe.mooncross_node_ut
+        original = prf.ephe.mooncross_node_ut
 
         def fake_node(*args, **kwargs):
             if "backwards" in kwargs:
                 raise TypeError("pyswisseph mooncross_node_ut() got an unexpected keyword argument 'backwards'")
             return original(*args, **kwargs)
 
-        with patch.object(prf.swe, "mooncross_node_ut", side_effect=fake_node):
+        with patch.object(prf.ephe, "mooncross_node_ut", side_effect=fake_node):
             with pytest.raises(KerykeionException, match="libephemeris"):
                 factory.next_lunar_node_crossing_from_iso_formatted_time(
                     "2024-06-15T00:00:00+00:00", backwards=True

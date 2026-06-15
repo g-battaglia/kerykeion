@@ -6,8 +6,8 @@ This module provides the OccultationFactory class for searching lunar
 occultations -- events where the Moon passes in front of a planet or star
 as seen from Earth.
 
-It wraps the Swiss Ephemeris functions ``swe.lun_occult_when_glob`` (global
-search) and ``swe.lun_occult_when_loc`` (location-specific search) and
+It wraps the Swiss Ephemeris functions ``ephe.lun_occult_when_glob`` (global
+search) and ``ephe.lun_occult_when_loc`` (location-specific search) and
 returns structured Pydantic models.
 
 Classes:
@@ -15,12 +15,12 @@ Classes:
     OccultationModel: Pydantic model describing a single occultation event.
 
 Example:
-    >>> from kerykeion.ephemeris_backend import swe
+    >>> from kerykeion.ephemeris_backend import ephe
     >>> from kerykeion.occultations import OccultationFactory
     >>>
-    >>> jd = swe.julday(2024, 1, 1, 0.0)
+    >>> jd = ephe.julday(2024, 1, 1, 0.0)
     >>> factory = OccultationFactory()
-    >>> results = factory.search_global(jd, swe.VENUS, count=3)
+    >>> results = factory.search_global(jd, ephe.VENUS, count=3)
     >>> for occ in results:
     ...     print(occ.planet_name, occ.type, occ.datestamp)
 
@@ -30,7 +30,7 @@ License: AGPL-3.0
 """
 
 import logging
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from pydantic import Field
 from typing import List
@@ -51,9 +51,9 @@ _MAX_COUNT = 1_000
 # ---------------------------------------------------------------------------
 
 _ECL_TYPE_LABELS = {
-    getattr(swe, "ECL_TOTAL", 4): "Total",
-    getattr(swe, "ECL_ANNULAR", 8): "Annular",
-    getattr(swe, "ECL_PARTIAL", 16): "Partial",
+    getattr(ephe, "ECL_TOTAL", 4): "Total",
+    getattr(ephe, "ECL_ANNULAR", 8): "Annular",
+    getattr(ephe, "ECL_PARTIAL", 16): "Partial",
 }
 
 
@@ -68,17 +68,17 @@ def _classify_occultation(retflags: int) -> str:
 def _jd_to_iso(jd: float) -> str:
     """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
 
-    Uses ``swe.revjul`` rather than Python ``datetime`` (limited to years
+    Uses ``ephe.revjul`` rather than Python ``datetime`` (limited to years
     1..9999) so the BCE range Kerykeion supports formats correctly, with an
     extended-year sign for negative years.
     """
-    year, month, day, hour_frac = swe.revjul(jd)
+    year, month, day, hour_frac = ephe.revjul(jd)
     secs = int(hour_frac * 3600 + 0.5)  # nearest second
     if secs >= 86400:
         # Rounds up to 24:00:00 — roll over to 00:00:00 of the next calendar
         # day (carrying month/year boundaries via revjul) rather than clamping
         # to 23:59:59 of the same day.
-        year, month, day, _ = swe.revjul(jd + 0.5 / 86400.0)
+        year, month, day, _ = ephe.revjul(jd + 0.5 / 86400.0)
         secs = 0
     hours, rem = divmod(secs, 3600)
     minutes, seconds = divmod(rem, 60)
@@ -147,7 +147,7 @@ class OccultationFactory:
     Example::
 
         factory = OccultationFactory()
-        events = factory.search_global(jd_start, swe.SATURN, count=5)
+        events = factory.search_global(jd_start, ephe.SATURN, count=5)
     """
 
     # ------------------------------------------------------------------
@@ -167,7 +167,7 @@ class OccultationFactory:
 
         Args:
             julian_day: Starting Julian Day (UT) for the search.
-            planet_id: Swiss Ephemeris planet identifier (e.g. ``swe.VENUS``).
+            planet_id: Swiss Ephemeris planet identifier (e.g. ``ephe.VENUS``).
             count: Number of events to return. Defaults to ``5``.
 
         Returns:
@@ -180,17 +180,17 @@ class OccultationFactory:
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
-        planet_name = swe.get_planet_name(planet_id)
+        planet_name = ephe.get_planet_name(planet_id)
         results: List[OccultationModel] = []
         cursor = julian_day
 
         with ephemeris_session():
             for _ in range(count):
                 try:
-                    retflags, tret = swe.lun_occult_when_glob(
+                    retflags, tret = ephe.lun_occult_when_glob(
                         cursor,
                         planet_id,
-                        swe.FLG_SWIEPH,
+                        ephe.FLG_SWIEPH,
                         0,
                         False,
                     )
@@ -235,7 +235,7 @@ class OccultationFactory:
 
         Args:
             julian_day: Starting Julian Day (UT) for the search.
-            planet_id: Swiss Ephemeris planet identifier (e.g. ``swe.MARS``).
+            planet_id: Swiss Ephemeris planet identifier (e.g. ``ephe.MARS``).
             lat: Geographic latitude (northern positive).
             lng: Geographic longitude (eastern positive).
             count: Number of events to return. Defaults to ``5``.
@@ -250,7 +250,7 @@ class OccultationFactory:
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
-        planet_name = swe.get_planet_name(planet_id)
+        planet_name = ephe.get_planet_name(planet_id)
         geopos = (lng, lat, 0.0)  # (longitude, latitude, altitude)
         results: List[OccultationModel] = []
         cursor = julian_day
@@ -258,11 +258,11 @@ class OccultationFactory:
         with ephemeris_session():
             for _ in range(count):
                 try:
-                    retflags, tret, _attr = swe.lun_occult_when_loc(
+                    retflags, tret, _attr = ephe.lun_occult_when_loc(
                         cursor,
                         planet_id,
                         geopos,
-                        swe.FLG_SWIEPH,
+                        ephe.FLG_SWIEPH,
                         False,
                     )
                 except Exception as exc:

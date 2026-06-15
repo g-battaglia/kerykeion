@@ -55,7 +55,7 @@ from kerykeion.moon_phase_details.utils import (
     describe_lunar_eclipse_type,
     compute_next_solar_eclipse_jd,
     compute_next_lunar_eclipse_jd,
-    compute_sun_rise_set_swe,
+    compute_sun_rise_set_ephe,
     compute_lunar_phase_jd,
     compute_sun_position,
 )
@@ -221,7 +221,7 @@ def _compute_sun_times(
     """
     Compute precise sunrise and sunset local datetimes using Swiss Ephemeris.
 
-    Uses Swiss Ephemeris `swe.rise_trans` (via `compute_sun_rise_set_swe`)
+    Uses Swiss Ephemeris `ephe.rise_trans` (via `compute_sun_rise_set_ephe`)
     to obtain sunrise and sunset for the subject's local civil day.
     """
     lat = subject.lat
@@ -270,7 +270,7 @@ def _compute_sun_times(
     # Compute both sunrise and sunset using Swiss Ephemeris, inside a
     # serialized session (the helper mutates the global ephemeris path).
     with ephemeris_session():
-        sunrise_jd, sunset_jd = compute_sun_rise_set_swe(jd_midnight, lat, lng)
+        sunrise_jd, sunset_jd = compute_sun_rise_set_ephe(jd_midnight, lat, lng)
 
     if sunrise_jd is None or sunset_jd is None:
         return None

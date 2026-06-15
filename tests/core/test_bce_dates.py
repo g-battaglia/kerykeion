@@ -5,7 +5,7 @@ BCE Date Support Tests
 Comprehensive tests for dates before 1 AD (year < 1 in astronomical numbering).
 Covers:
 - Subject creation with negative years and year zero
-- Julian Day calculation via swe.julday (both backends)
+- Julian Day calculation via ephe.julday (both backends)
 - Local Mean Time (LMT) offset from longitude
 - ISO 8601 extended year formatting
 - Day of week from Julian Day
@@ -539,7 +539,7 @@ class TestBCEBackendComparison:
 
         # Tolerance: 0.1° for ancient dates (Meeus polynomials vs full ephemeris)
         assert lib_sun == pytest.approx(swe_sun, abs=0.1), (
-            f"{subject_id}: lib Sun={lib_sun:.4f}°, swe Sun={swe_sun:.4f}°"
+            f"{subject_id}: lib Sun={lib_sun:.4f}°, ephe Sun={swe_sun:.4f}°"
         )
 
     @pytest.mark.parametrize("subject_id", list(BCE_SUBJECTS.keys()), ids=lambda s: s)
@@ -549,7 +549,7 @@ class TestBCEBackendComparison:
         decimal_hour = data["hour"] + data["minute"] / 60.0
         cal_flag = 0  # SE_JUL_CAL
 
-        for backend, name in [(_libephemeris, "lib"), (_swisseph, "swe")]:
+        for backend, name in [(_libephemeris, "lib"), (_swisseph, "ephe")]:
             jd = backend.julday(data["year"], data["month"], data["day"], decimal_hour, cal_flag)
             y, m, d, h = backend.revjul(jd, cal_flag)
             assert int(y) == data["year"], f"{name}: year {y} != {data['year']}"

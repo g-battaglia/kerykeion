@@ -1344,17 +1344,17 @@ class TestExceptionHandlingInPlanetCalculation:
         KerykeionException — not leak the raw backend exception (e.g.
         libephemeris.EphemerisRangeError). The backend gap is simulated with
         monkeypatch: extreme years are in range on a full DE441 install."""
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
         from kerykeion.schemas import KerykeionException
 
-        real_calc_ut = swe.calc_ut
+        real_calc_ut = ephe.calc_ut
 
         def fake_calc_ut(jd, ipl, flags):
             if ipl == 0:  # Sun: simulate an ephemeris-range gap in the backend
                 raise RuntimeError("jd outside ephemeris range")
             return real_calc_ut(jd, ipl, flags)
 
-        monkeypatch.setattr(swe, "calc_ut", fake_calc_ut)
+        monkeypatch.setattr(ephe, "calc_ut", fake_calc_ut)
 
         # Pars_Fortunae auto-activates Ascendant, Sun and Moon; with Sun absent
         # from active_points the Sun is computed via _ensure_point_calculated.
@@ -1378,18 +1378,18 @@ class TestExceptionHandlingInPlanetCalculation:
         """Auto-activated NON-luminary prerequisites (e.g. Venus for
         Pars_Amoris) must degrade gracefully on backend errors: the dependent
         Arabic part is skipped and no raw backend exception escapes."""
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
         from kerykeion.astrological_subject_factory import STANDARD_PLANETS
 
         venus_id = STANDARD_PLANETS["Venus"]
-        real_calc_ut = swe.calc_ut
+        real_calc_ut = ephe.calc_ut
 
         def fake_calc_ut(jd, ipl, flags):
             if ipl == venus_id:  # simulate a backend gap for Venus only
                 raise RuntimeError("jd outside ephemeris range")
             return real_calc_ut(jd, ipl, flags)
 
-        monkeypatch.setattr(swe, "calc_ut", fake_calc_ut)
+        monkeypatch.setattr(ephe, "calc_ut", fake_calc_ut)
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Range Gap Optional",
@@ -1415,7 +1415,7 @@ class TestExceptionHandlingInPlanetCalculation:
 
 class TestEnrichmentSessionContainment:
     """v6 regression: the optional enrichments (Gauquelin sectors, local
-    space, OOB obliquity, nutation) call swe.* functions, so they must run
+    space, OOB obliquity, nutation) call ephe.* functions, so they must run
     INSIDE the factory's ephemeris session — under EPHEMERIS_LOCK with the
     session's ephemeris path configured — never after the session reset."""
 
@@ -1425,10 +1425,10 @@ class TestEnrichmentSessionContainment:
         events = []
 
         real_reset = eb.reset_ephemeris_session
-        real_azalt = eb.swe.azalt
-        real_gauquelin = eb.swe.gauquelin_sector
-        real_calc_ut = eb.swe.calc_ut
-        ecl_nut = eb.swe.ECL_NUT
+        real_azalt = eb.ephe.azalt
+        real_gauquelin = eb.ephe.gauquelin_sector
+        real_calc_ut = eb.ephe.calc_ut
+        ecl_nut = eb.ephe.ECL_NUT
 
         def tracking_reset():
             events.append("session_reset")
@@ -1451,9 +1451,9 @@ class TestEnrichmentSessionContainment:
         # globals at exit time, so patching the module attribute intercepts
         # the session teardown.
         monkeypatch.setattr(eb, "reset_ephemeris_session", tracking_reset)
-        monkeypatch.setattr(eb.swe, "azalt", tracking_azalt)
-        monkeypatch.setattr(eb.swe, "gauquelin_sector", tracking_gauquelin)
-        monkeypatch.setattr(eb.swe, "calc_ut", tracking_calc_ut)
+        monkeypatch.setattr(eb.ephe, "azalt", tracking_azalt)
+        monkeypatch.setattr(eb.ephe, "gauquelin_sector", tracking_gauquelin)
+        monkeypatch.setattr(eb.ephe, "calc_ut", tracking_calc_ut)
 
         AstrologicalSubjectFactory.from_birth_data(
             "Session Containment",
@@ -1479,7 +1479,7 @@ class TestEnrichmentSessionContainment:
 
         first_reset = events.index("session_reset")
         escaped = [e for e in events[first_reset:] if e != "session_reset"]
-        assert not escaped, f"swe enrichment calls escaped the ephemeris session: {escaped}"
+        assert not escaped, f"ephe enrichment calls escaped the ephemeris session: {escaped}"
 
 
 class TestArabicParts:
@@ -1773,10 +1773,10 @@ class TestMockErrorConditions:
     def test_planet_calculation_error_handling(self):
         """Test error handling when planet calculation fails (lines 1184-1187)."""
         from unittest.mock import patch
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
 
-        # Mock swe.calc_ut to raise an exception for a specific planet
-        original_calc = swe.calc_ut
+        # Mock ephe.calc_ut to raise an exception for a specific planet
+        original_calc = ephe.calc_ut
 
         def mock_calc_ut(jd, planet_num, flags):
             # Raise exception for Mercury (planet 2)
@@ -1784,7 +1784,7 @@ class TestMockErrorConditions:
                 raise Exception("Mock ephemeris error")
             return original_calc(jd, planet_num, flags)
 
-        with patch("kerykeion.ephemeris_backend.swe.calc_ut", side_effect=mock_calc_ut):
+        with patch("kerykeion.ephemeris_backend.ephe.calc_ut", side_effect=mock_calc_ut):
             # This should handle the error gracefully
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Error Test",
@@ -2154,11 +2154,11 @@ class TestAllDwarfPlanetsAndFixedStars:
     def test_vertex_calculation_with_exception_mock(self):
         """Test Vertex exception handling (line 1836-1841)."""
         from unittest.mock import patch
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
 
         # First create subject normally to ensure houses work
         # Then mock only the Vertex calculation part
-        original_houses = swe.houses_ex
+        original_houses = ephe.houses_ex
 
         def conditional_mock(*args, **kwargs):
             # Check if this is being called with 'V' house system (for Vertex)
@@ -2166,7 +2166,7 @@ class TestAllDwarfPlanetsAndFixedStars:
                 raise Exception("Mock vertex error")
             return original_houses(*args, **kwargs)
 
-        with patch("kerykeion.ephemeris_backend.swe.houses_ex", side_effect=conditional_mock):
+        with patch("kerykeion.ephemeris_backend.ephe.houses_ex", side_effect=conditional_mock):
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Vertex Error",
                 1990,

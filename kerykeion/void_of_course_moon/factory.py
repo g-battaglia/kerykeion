@@ -8,7 +8,7 @@ from __future__ import annotations
 from datetime import timezone
 from typing import Optional
 
-from kerykeion.ephemeris_backend import ephemeris_session, swe
+from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES, SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import VoidOfCourseAspectModel, VoidOfCourseMoonModel
@@ -37,7 +37,7 @@ def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMo
             raise KerykeionException(
                 "sidereal_mode='USER' requires custom ayanamsha parameters, which VoidOfCourseMoonFactory does not accept."
             )
-        if not hasattr(swe, f"SIDM_{sidereal_mode}"):
+        if not hasattr(ephe, f"SIDM_{sidereal_mode}"):
             raise KerykeionException(f"Unknown sidereal_mode: {sidereal_mode!r}.")
 
 

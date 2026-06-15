@@ -87,10 +87,10 @@ class TestStationApi:
     def test_bce_range_via_julian_day(self):
         # The BCE range must not crash on JD->ISO conversion (datetime caps at
         # year 1). Mercury stations in 100 BCE; just assert it runs and formats.
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
 
-        jd0 = swe.julday(-100, 1, 1, 0.0)
-        jd1 = swe.julday(-100, 12, 31, 23.9)
+        jd0 = ephe.julday(-100, 1, 1, 0.0)
+        jd1 = ephe.julday(-100, 12, 31, 23.9)
         res = RetrogradeStationFactory.from_julian_day(jd0, jd1, ["Mercury"])
         assert all(s.iso_utc.startswith("-0100-") for s in res.stations)
 
@@ -121,7 +121,7 @@ class TestStationErrorContract:
         def failing_calc_ut(jd, body, flags):
             raise RuntimeError(f"jd {jd} outside ephemeris range")
 
-        monkeypatch.setattr(rsf.swe, "calc_ut", failing_calc_ut)
+        monkeypatch.setattr(rsf.ephe, "calc_ut", failing_calc_ut)
         with pytest.raises(KerykeionException, match="narrow the date range"):
             RetrogradeStationFactory.from_iso_range(
                 "2026-01-01", "2026-01-10", ["Mercury"]
@@ -141,7 +141,7 @@ class TestStationErrorContract:
                 raise RuntimeError(f"jd {jd} outside ephemeris range")
             return ((10.0, 0.0, 1.0, 1.0, 0.0, 0.0), 0)
 
-        monkeypatch.setattr(rsf.swe, "calc_ut", flaky_calc_ut)
+        monkeypatch.setattr(rsf.ephe, "calc_ut", flaky_calc_ut)
         with pytest.raises(KerykeionException, match=r"failed at JD "):
             RetrogradeStationFactory.from_iso_range(
                 "2026-01-01", "2026-01-10", ["Mercury"]

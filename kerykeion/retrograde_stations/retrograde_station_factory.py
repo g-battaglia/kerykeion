@@ -9,12 +9,12 @@ through zero.
 There is no station primitive shared by both ephemeris backends
 (``find_station_ut`` is a libephemeris extension, absent on swisseph), so — like
 ``LunationFinderFactory`` — this stays backend-agnostic: it samples the
-longitudinal speed via ``swe.calc_ut(..., FLG_SPEED)`` across the range and, on
+longitudinal speed via ``ephe.calc_ut(..., FLG_SPEED)`` across the range and, on
 every sign change of that speed, bisects to the zero crossing. Speed sign changes
 are weeks apart even for Mercury, so a coarse sample step never skips one.
 
 Swiss Ephemeris / libephemeris functions used:
-    - swe.calc_ut(jd, planet_id, FLG_SWIEPH | FLG_SPEED)
+    - ephe.calc_ut(jd, planet_id, FLG_SWIEPH | FLG_SPEED)
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional, cast
 
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
@@ -38,20 +38,20 @@ logger = logging.getLogger(__name__)
 
 # Geocentric speed flag: the [3] element of calc_ut's first tuple is the
 # longitudinal speed in degrees/day (negative when retrograde).
-_SPEED_FLAGS = swe.FLG_SWIEPH | swe.FLG_SPEED
+_SPEED_FLAGS = ephe.FLG_SWIEPH | ephe.FLG_SPEED
 
 # The Sun and Moon never station (they are always direct from Earth), so the
 # default set is the seven non-luminary classical/modern planets. Names match
 # kerykeion's AstrologicalPoint vocabulary.
 _STATION_PLANETS: List[tuple[str, int]] = [
-    ("Mercury", swe.MERCURY),
-    ("Venus", swe.VENUS),
-    ("Mars", swe.MARS),
-    ("Jupiter", swe.JUPITER),
-    ("Saturn", swe.SATURN),
-    ("Uranus", swe.URANUS),
-    ("Neptune", swe.NEPTUNE),
-    ("Pluto", swe.PLUTO),
+    ("Mercury", ephe.MERCURY),
+    ("Venus", ephe.VENUS),
+    ("Mars", ephe.MARS),
+    ("Jupiter", ephe.JUPITER),
+    ("Saturn", ephe.SATURN),
+    ("Uranus", ephe.URANUS),
+    ("Neptune", ephe.NEPTUNE),
+    ("Pluto", ephe.PLUTO),
 ]
 
 _PLANET_IDS = {name: pid for name, pid in _STATION_PLANETS}
@@ -82,11 +82,11 @@ def _to_utc_naive(dt: datetime) -> datetime:
 def _jd_to_iso(jd: float) -> str:
     """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
 
-    Uses ``swe.revjul`` rather than Python ``datetime`` (limited to years
+    Uses ``ephe.revjul`` rather than Python ``datetime`` (limited to years
     1..9999) so the BCE range Kerykeion supports formats correctly, with an
     extended-year sign for negative years.
     """
-    year, month, day, hour_frac = swe.revjul(jd)
+    year, month, day, hour_frac = ephe.revjul(jd)
     secs = min(int(hour_frac * 3600 + 0.5), 86399)  # nearest second, no 24:00 carry
     hours, rem = divmod(secs, 3600)
     minutes, seconds = divmod(rem, 60)
@@ -97,7 +97,7 @@ def _jd_to_iso(jd: float) -> str:
 def _speed(jd: float, body: int) -> float:
     """Longitudinal speed (deg/day) of ``body`` at ``jd``; negative = retrograde."""
     try:
-        return float(swe.calc_ut(jd, body, _SPEED_FLAGS)[0][3])
+        return float(ephe.calc_ut(jd, body, _SPEED_FLAGS)[0][3])
     except Exception as exc:
         # Range errors (libephemeris EphemerisRangeError, swisseph.Error)
         # propagate raw from calc_ut — normalize them to the documented
@@ -281,7 +281,7 @@ class RetrogradeStationFactory:
     def _build(name: str, station_type: str, jd: float) -> StationModel:
         """Build a StationModel with the zodiac position at the station JD."""
         try:
-            lon = float(swe.calc_ut(jd, _PLANET_IDS[name], swe.FLG_SWIEPH)[0][0]) % 360.0
+            lon = float(ephe.calc_ut(jd, _PLANET_IDS[name], ephe.FLG_SWIEPH)[0][0]) % 360.0
         except Exception as exc:
             # Same normalization as _speed: the station JD lies inside a
             # bracket whose endpoints already computed, so this is practically

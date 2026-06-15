@@ -977,7 +977,7 @@ class TestReturnPerspectivePropagation:
         one. Regression guard: ``helio_cross_ut`` honors FLG_SIDEREAL (unlike
         ``nod_aps_ut``), so masking the flag out would search a tropical
         crossing and land ~24° (the ayanamsa) off."""
-        from kerykeion.ephemeris_backend import swe, ephemeris_session
+        from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Sidereal Helio Return",
@@ -1008,12 +1008,12 @@ class TestReturnPerspectivePropagation:
 
         # _build_return_chart casts a geocentric chart, so recompute the
         # heliocentric longitude at the natal/return instants ourselves.
-        planet_id = swe.JUPITER
+        planet_id = ephe.JUPITER
         with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as iflag:
-            helio = iflag | swe.FLG_HELCTR
-            natal_sid = swe.calc_ut(subject.julian_day, planet_id, helio)[0][0]
-            ret_sid = swe.calc_ut(result.julian_day, planet_id, helio)[0][0]
-            ret_trop = swe.calc_ut(result.julian_day, planet_id, helio & ~swe.FLG_SIDEREAL)[0][0]
+            helio = iflag | ephe.FLG_HELCTR
+            natal_sid = ephe.calc_ut(subject.julian_day, planet_id, helio)[0][0]
+            ret_sid = ephe.calc_ut(result.julian_day, planet_id, helio)[0][0]
+            ret_trop = ephe.calc_ut(result.julian_day, planet_id, helio & ~ephe.FLG_SIDEREAL)[0][0]
 
         # The return moment reproduces the natal SIDEREAL heliocentric longitude.
         assert _angular_diff(ret_sid, natal_sid) < 1e-2, (

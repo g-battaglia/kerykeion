@@ -71,7 +71,7 @@ License: AGPL-3.0
 import calendar
 import logging
 
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from datetime import datetime, timezone
 from typing import List, Union, cast
@@ -568,7 +568,7 @@ class PlanetaryReturnFactory:
                     )
                 if backwards:
                     try:
-                        return_julian_date = swe.solcross_ut(
+                        return_julian_date = ephe.solcross_ut(
                             self.subject.sun.abs_pos,
                             julian_day,
                             iflag,
@@ -579,7 +579,7 @@ class PlanetaryReturnFactory:
                             "Backward Solar return search requires the libephemeris backend."
                         )
                 else:
-                    return_julian_date = swe.solcross_ut(
+                    return_julian_date = ephe.solcross_ut(
                         self.subject.sun.abs_pos,
                         julian_day,
                         iflag,
@@ -591,7 +591,7 @@ class PlanetaryReturnFactory:
                     )
                 if backwards:
                     try:
-                        return_julian_date = swe.mooncross_ut(
+                        return_julian_date = ephe.mooncross_ut(
                             self.subject.moon.abs_pos,
                             julian_day,
                             iflag,
@@ -602,7 +602,7 @@ class PlanetaryReturnFactory:
                             "Backward Lunar return search requires the libephemeris backend."
                         )
                 else:
-                    return_julian_date = swe.mooncross_ut(
+                    return_julian_date = ephe.mooncross_ut(
                         self.subject.moon.abs_pos,
                         julian_day,
                         iflag,
@@ -847,7 +847,7 @@ class PlanetaryReturnFactory:
     ) -> PlanetReturnModel:
         """Find when a planet returns to its natal heliocentric longitude.
 
-        Uses ``swe.helio_cross_ut()`` to find the exact moment a planet
+        Uses ``ephe.helio_cross_ut()`` to find the exact moment a planet
         returns to its natal heliocentric position.
 
         Args:
@@ -895,22 +895,22 @@ class PlanetaryReturnFactory:
             custom_ayanamsa_t0=self.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
         ) as iflag:
-            helio_iflag = iflag | swe.FLG_HELCTR
+            helio_iflag = iflag | ephe.FLG_HELCTR
 
             # Get natal heliocentric longitude
-            natal_data = swe.calc_ut(self.subject.julian_day, planet_id, helio_iflag)
+            natal_data = ephe.calc_ut(self.subject.julian_day, planet_id, helio_iflag)
             natal_lon = natal_data[0][0]
 
             # Find when it returns to that longitude
             if backwards:
                 try:
-                    return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, helio_iflag, backwards=True)
+                    return_jd = ephe.helio_cross_ut(planet_id, natal_lon, start_jd, helio_iflag, backwards=True)
                 except TypeError:
                     raise KerykeionException(
                         "Backward heliocentric search requires the libephemeris backend."
                     )
             else:
-                return_jd = swe.helio_cross_ut(planet_id, natal_lon, start_jd, helio_iflag)
+                return_jd = ephe.helio_cross_ut(planet_id, natal_lon, start_jd, helio_iflag)
 
         # Build return chart at that moment (outside the session: subject
         # construction manages its own ephemeris state).
@@ -924,7 +924,7 @@ class PlanetaryReturnFactory:
     ) -> PlanetReturnModel:
         """Find the next moment when the Moon crosses its own node.
 
-        Uses ``swe.mooncross_node_ut()`` to find when the Moon's
+        Uses ``ephe.mooncross_node_ut()`` to find when the Moon's
         ecliptic latitude reaches zero (crossing the node).
 
         Args:
@@ -940,13 +940,13 @@ class PlanetaryReturnFactory:
         with ephemeris_session() as iflag:
             if backwards:
                 try:
-                    result = swe.mooncross_node_ut(start_jd, iflag, backwards=True)
+                    result = ephe.mooncross_node_ut(start_jd, iflag, backwards=True)
                 except TypeError:
                     raise KerykeionException(
                         "Backward lunar node crossing search requires the libephemeris backend."
                     )
             else:
-                result = swe.mooncross_node_ut(start_jd, iflag)
+                result = ephe.mooncross_node_ut(start_jd, iflag)
             crossing_jd = result[0]
 
         return_model = self._build_return_chart(crossing_jd, "Lunar_Node_Crossing")

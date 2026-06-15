@@ -2,10 +2,10 @@
 """Find upcoming solar and lunar eclipses, optionally for a specific location.
 
 Swiss Ephemeris functions used:
-    - swe.sol_eclipse_when_loc(tjdut, geopos, flags, backwards)
-    - swe.sol_eclipse_when_glob(tjdut, flags, ecl_type, backwards)
-    - swe.lun_eclipse_when(tjdut, flags, ecl_type, backwards)
-    - swe.lun_eclipse_when_loc(tjdut, geopos, flags, backwards)
+    - ephe.sol_eclipse_when_loc(tjdut, geopos, flags, backwards)
+    - ephe.sol_eclipse_when_glob(tjdut, flags, ecl_type, backwards)
+    - ephe.lun_eclipse_when(tjdut, flags, ecl_type, backwards)
+    - ephe.lun_eclipse_when_loc(tjdut, geopos, flags, backwards)
 
 Eclipse type bit flags (pyswisseph uses both SE_ prefix and non-prefix):
     ECL_TOTAL, ECL_ANNULAR, ECL_PARTIAL, ECL_PENUMBRAL
@@ -16,7 +16,7 @@ from __future__ import annotations
 import logging
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import swe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
@@ -33,27 +33,27 @@ logger = logging.getLogger(__name__)
 _MAX_COUNT = 1_000
 
 # Eclipse type constants (handle SE_ prefix variance across pyswisseph builds)
-ECL_TOTAL = getattr(swe, "SE_ECL_TOTAL", getattr(swe, "ECL_TOTAL", 4))
-ECL_ANNULAR = getattr(swe, "SE_ECL_ANNULAR", getattr(swe, "ECL_ANNULAR", 8))
-ECL_PARTIAL = getattr(swe, "SE_ECL_PARTIAL", getattr(swe, "ECL_PARTIAL", 16))
-ECL_PENUMBRAL = getattr(swe, "SE_ECL_PENUMBRAL", getattr(swe, "ECL_PENUMBRAL", 64))
-ECL_ANNULAR_TOTAL = getattr(swe, "SE_ECL_ANNULAR_TOTAL", getattr(swe, "ECL_ANNULAR_TOTAL", 32))
+ECL_TOTAL = getattr(ephe, "SE_ECL_TOTAL", getattr(ephe, "ECL_TOTAL", 4))
+ECL_ANNULAR = getattr(ephe, "SE_ECL_ANNULAR", getattr(ephe, "ECL_ANNULAR", 8))
+ECL_PARTIAL = getattr(ephe, "SE_ECL_PARTIAL", getattr(ephe, "ECL_PARTIAL", 16))
+ECL_PENUMBRAL = getattr(ephe, "SE_ECL_PENUMBRAL", getattr(ephe, "ECL_PENUMBRAL", 64))
+ECL_ANNULAR_TOTAL = getattr(ephe, "SE_ECL_ANNULAR_TOTAL", getattr(ephe, "ECL_ANNULAR_TOTAL", 32))
 
 
 def _jd_to_iso(jd: float) -> str:
     """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
 
-    Uses ``swe.revjul`` rather than Python ``datetime`` (limited to years
+    Uses ``ephe.revjul`` rather than Python ``datetime`` (limited to years
     1..9999) so the BCE range Kerykeion supports formats correctly, with an
     extended-year sign for negative years.
     """
-    year, month, day, hour_frac = swe.revjul(jd)
+    year, month, day, hour_frac = ephe.revjul(jd)
     secs = int(hour_frac * 3600 + 0.5)  # nearest second
     if secs >= 86400:
         # Rounds up to 24:00:00 — roll over to 00:00:00 of the next calendar
         # day (carrying month/year boundaries via revjul) rather than clamping
         # to 23:59:59 of the same day.
-        year, month, day, _ = swe.revjul(jd + 0.5 / 86400.0)
+        year, month, day, _ = ephe.revjul(jd + 0.5 / 86400.0)
         secs = 0
     hours, rem = divmod(secs, 3600)
     minutes, seconds = divmod(rem, 60)
@@ -114,12 +114,12 @@ def _classify_lunar_eclipse(retflags: int) -> str:
 def _zodiac_fields(jd: float, body: int, name: AstrologicalPoint) -> dict:
     """Ecliptic sign/degree of a luminary at the eclipse maximum.
 
-    Backend-agnostic (uses ``swe.calc_ut``). For a solar eclipse the eclipse
+    Backend-agnostic (uses ``ephe.calc_ut``). For a solar eclipse the eclipse
     degree is the Sun/Moon conjunction longitude; for a lunar eclipse it is the
     Moon's longitude (the Full Moon point).
     """
     try:
-        lon = float(swe.calc_ut(jd, body, swe.FLG_SWIEPH)[0][0]) % 360.0
+        lon = float(ephe.calc_ut(jd, body, ephe.FLG_SWIEPH)[0][0]) % 360.0
         point = get_kerykeion_point_from_degree(lon, name, "AstrologicalPoint")
         return {
             "ecliptic_longitude": round(lon, 6),
@@ -150,7 +150,7 @@ def _saros_inex(jd: float, kind: str) -> dict:
     only honest value.
     """
     out: dict = {}
-    saros_fn = getattr(swe, "get_saros_number", None)
+    saros_fn = getattr(ephe, "get_saros_number", None)
     if saros_fn is not None:
         try:
             saros = int(saros_fn(jd, kind))
@@ -172,14 +172,14 @@ def _solar_gamma_duration(jd: float) -> dict:
     minutes). 0.0 for partial eclipses.
     """
     out: dict = {}
-    gamma_fn = getattr(swe, "sol_eclipse_max_time", None)
+    gamma_fn = getattr(ephe, "sol_eclipse_max_time", None)
     if gamma_fn is not None:
         try:
             _, gamma = gamma_fn(jd)
             out["gamma"] = round(float(gamma), 6)
         except Exception as exc:  # pragma: no cover - defensive
             logger.debug("Gamma lookup failed: %s", exc)
-    dur_fn = getattr(swe, "calc_solar_eclipse_duration", None)
+    dur_fn = getattr(ephe, "calc_solar_eclipse_duration", None)
     if dur_fn is not None:
         try:
             minutes = float(dur_fn(jd))
@@ -194,17 +194,17 @@ def _lunar_magnitudes(jd: float) -> dict:
 
     Unlike solar magnitude/obscuration, lunar eclipse magnitudes are
     observer-independent (the Moon either is or is not inside Earth's shadow),
-    so a global search can report them too. ``swe.lun_eclipse_how`` (standard
+    so a global search can report them too. ``ephe.lun_eclipse_how`` (standard
     on both backends) is evaluated at the global maximum; the geographic
     position only affects the local-visibility attributes, not the magnitudes
     in ``attr[0]``/``attr[1]``, so a dummy geopos is sufficient.
     """
     out: dict = {}
-    how_fn = getattr(swe, "lun_eclipse_how", None)
+    how_fn = getattr(ephe, "lun_eclipse_how", None)
     if how_fn is None:  # pragma: no cover - both backends expose it
         return out
     try:
-        _, attr = how_fn(jd, (0.0, 0.0, 0.0), swe.FLG_SWIEPH)
+        _, attr = how_fn(jd, (0.0, 0.0, 0.0), ephe.FLG_SWIEPH)
         if len(attr) > 0:
             out["magnitude_umbral"] = round(float(attr[0]), 6)
         if len(attr) > 1:
@@ -307,7 +307,7 @@ class EclipseFactory:
         """
         _ensure_scannable(count)
         geopos = (lng, lat, 0.0)
-        start_jd = swe.julday(start_year, 1, 1, 0.0)
+        start_jd = ephe.julday(start_year, 1, 1, 0.0)
 
         # The session holds the ephemeris lock across the whole scan (the
         # eclipse primitives read process-global backend state shared with
@@ -349,7 +349,7 @@ class EclipseFactory:
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
-        start_jd = swe.julday(start_year, 1, 1, 0.0)
+        start_jd = ephe.julday(start_year, 1, 1, 0.0)
 
         with ephemeris_session():
             solar_eclipses = EclipseFactory._find_solar_global(start_jd, count)
@@ -367,7 +367,7 @@ class EclipseFactory:
         jd = start_jd
         for _ in range(count):
             try:
-                retflags, tret, attr = swe.sol_eclipse_when_loc(jd, geopos, swe.FLG_SWIEPH)
+                retflags, tret, attr = ephe.sol_eclipse_when_loc(jd, geopos, ephe.FLG_SWIEPH)
             except Exception as exc:
                 raise _search_failure("Local solar", jd, exc) from exc
             if tret[0] == 0.0:
@@ -383,7 +383,7 @@ class EclipseFactory:
                 magnitude=round(attr[0], 6) if len(attr) > 0 else None,
                 obscuration=round(attr[2], 6) if len(attr) > 2 else None,
                 sun_altitude=round(attr[5], 4) if len(attr) > 5 else None,
-                **_zodiac_fields(max_jd, swe.SUN, "Sun"),
+                **_zodiac_fields(max_jd, ephe.SUN, "Sun"),
                 **_saros_inex(max_jd, "solar"),
                 # gamma / duration are global central-line properties; max_jd
                 # here is the observer's local maximum, so they are omitted
@@ -399,7 +399,7 @@ class EclipseFactory:
         jd = start_jd
         for _ in range(count):
             try:
-                retflags, tret = swe.sol_eclipse_when_glob(jd, swe.FLG_SWIEPH)
+                retflags, tret = ephe.sol_eclipse_when_glob(jd, ephe.FLG_SWIEPH)
             except Exception as exc:
                 raise _search_failure("Global solar", jd, exc) from exc
             if tret[0] == 0.0:
@@ -415,7 +415,7 @@ class EclipseFactory:
                 # magnitude/obscuration are observer-dependent: None in global mode.
                 magnitude=None,
                 obscuration=None,
-                **_zodiac_fields(max_jd, swe.SUN, "Sun"),
+                **_zodiac_fields(max_jd, ephe.SUN, "Sun"),
                 **_saros_inex(max_jd, "solar"),
                 **_solar_gamma_duration(max_jd),
             ))
@@ -429,7 +429,7 @@ class EclipseFactory:
         jd = start_jd
         for _ in range(count):
             try:
-                retflags, tret, attr = swe.lun_eclipse_when_loc(jd, geopos, swe.FLG_SWIEPH)
+                retflags, tret, attr = ephe.lun_eclipse_when_loc(jd, geopos, ephe.FLG_SWIEPH)
             except Exception as exc:
                 raise _search_failure("Local lunar", jd, exc) from exc
             if tret[0] == 0.0:
@@ -444,7 +444,7 @@ class EclipseFactory:
                 datestamp=_jd_to_iso(max_jd),
                 magnitude_umbral=round(attr[0], 6) if len(attr) > 0 else None,
                 magnitude_penumbral=round(attr[1], 6) if len(attr) > 1 else None,
-                **_zodiac_fields(max_jd, swe.MOON, "Moon"),
+                **_zodiac_fields(max_jd, ephe.MOON, "Moon"),
                 **_saros_inex(max_jd, "lunar"),
             ))
             jd = max_jd + 10
@@ -457,7 +457,7 @@ class EclipseFactory:
         jd = start_jd
         for _ in range(count):
             try:
-                retflags, tret = swe.lun_eclipse_when(jd, swe.FLG_SWIEPH, 0)
+                retflags, tret = ephe.lun_eclipse_when(jd, ephe.FLG_SWIEPH, 0)
             except Exception as exc:
                 raise _search_failure("Global lunar", jd, exc) from exc
             if tret[0] == 0.0:
@@ -473,7 +473,7 @@ class EclipseFactory:
                 # Lunar magnitudes are observer-independent, so (unlike the
                 # solar fields) they are populated in global mode too.
                 **_lunar_magnitudes(max_jd),
-                **_zodiac_fields(max_jd, swe.MOON, "Moon"),
+                **_zodiac_fields(max_jd, ephe.MOON, "Moon"),
                 **_saros_inex(max_jd, "lunar"),
             ))
             jd = max_jd + 10

@@ -408,15 +408,15 @@ class CompositeSubjectFactory:
         # Convert midpoint JD to date components (UTC), explicitly in the
         # Gregorian calendar to match the proleptic-Gregorian datetimes used
         # everywhere else in kerykeion.
-        from kerykeion.ephemeris_backend import swe
+        from kerykeion.ephemeris_backend import ephe
 
-        year, month, day, hour_frac = swe.revjul(mid_jd, getattr(swe, "GREG_CAL", 1))
+        year, month, day, hour_frac = ephe.revjul(mid_jd, getattr(ephe, "GREG_CAL", 1))
         # Round the midpoint instant to the nearest whole second (rather than
         # truncating, which dropped up to ~1s), carrying any minute/hour/day
         # overflow via revjul so we never emit a 60-second field.
         total_secs = int(hour_frac * 3600 + 0.5)
         if total_secs >= 86400:
-            year, month, day, _ = swe.revjul(mid_jd + 0.5 / 86400.0, getattr(swe, "GREG_CAL", 1))
+            year, month, day, _ = ephe.revjul(mid_jd + 0.5 / 86400.0, getattr(ephe, "GREG_CAL", 1))
             total_secs = 0
         hour, rem = divmod(total_secs, 3600)
         minute, seconds = divmod(rem, 60)
@@ -428,7 +428,7 @@ class CompositeSubjectFactory:
             extra_kwargs["custom_ayanamsa_ayan_t0"] = custom_ayanamsa_ayan_t0
 
         # Cast a real natal chart at the midpoint moment/location.
-        # swe.revjul returns UTC, so use Etc/GMT to avoid double-conversion.
+        # ephe.revjul returns UTC, so use Etc/GMT to avoid double-conversion.
         davison_subject = AstrologicalSubjectFactory.from_birth_data(
             name=self.name,
             year=year,

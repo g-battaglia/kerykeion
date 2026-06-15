@@ -6,7 +6,7 @@ Vimsottari Dasha lord assignments.
 """
 
 import pytest
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.vedic.nakshatra_utils import calculate_nakshatra
 from kerykeion.vedic.nakshatra_data import NAKSHATRAS, NAKSHATRA_SPAN, PADA_SPAN
@@ -189,17 +189,17 @@ class TestNakshatraSwissEphRegression:
     """Known-value regression tests using Swiss Ephemeris sidereal positions.
 
     For each test date, the Moon's sidereal longitude is computed via
-    swe.calc_ut with FLG_SIDEREAL + LAHIRI ayanamsa.  The expected nakshatra
+    ephe.calc_ut with FLG_SIDEREAL + LAHIRI ayanamsa.  The expected nakshatra
     number is derived manually as int(sidereal_pos / (360/27)) + 1.
     Then calculate_nakshatra is called and the results must match.
     """
 
     @classmethod
     def setup_class(cls):
-        swe.set_ephe_path("")
+        ephe.set_ephe_path("")
 
     # (year, month, day, hour, label, expected_nakshatra_name, expected_number)
-    # Values pre-computed with swe.calc_ut + LAHIRI
+    # Values pre-computed with ephe.calc_ut + LAHIRI
     TEST_DATES = [
         (2000, 1, 1, 12.0, "J2000.0",
          199.470553, "Swati", 15, 4, "Rahu"),
@@ -218,17 +218,17 @@ class TestNakshatraSwissEphRegression:
         self, year, month, day, hour, label,
         expected_sid_pos, exp_name, exp_num, exp_pada, exp_lord,
     ):
-        """Verify nakshatra from swe sidereal Moon position matches calculate_nakshatra."""
-        jd = swe.julday(year, month, day, hour)
+        """Verify nakshatra from ephe sidereal Moon position matches calculate_nakshatra."""
+        jd = ephe.julday(year, month, day, hour)
 
         # Compute sidereal Moon longitude using LAHIRI ayanamsa
-        swe.set_sid_mode(swe.SIDM_LAHIRI)
-        moon_sid = swe.calc_ut(jd, swe.MOON, swe.FLG_SWIEPH | swe.FLG_SIDEREAL)
+        ephe.set_sid_mode(ephe.SIDM_LAHIRI)
+        moon_sid = ephe.calc_ut(jd, ephe.MOON, ephe.FLG_SWIEPH | ephe.FLG_SIDEREAL)
         sid_pos = moon_sid[0][0]
 
-        # Verify swe gives the expected sidereal position (within 0.01 deg)
+        # Verify ephe gives the expected sidereal position (within 0.01 deg)
         assert abs(sid_pos - expected_sid_pos) < 0.01, (
-            f"[{label}] swe sidereal Moon = {sid_pos:.6f}, expected ~{expected_sid_pos:.6f}"
+            f"[{label}] ephe sidereal Moon = {sid_pos:.6f}, expected ~{expected_sid_pos:.6f}"
         )
 
         # Manually compute expected nakshatra index
