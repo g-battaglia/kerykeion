@@ -52,7 +52,11 @@ def test_tropical_and_sidereal_do_not_corrupt_each_other_under_threads():
     for thread in threads:
         thread.start()
     for thread in threads:
-        thread.join()
+        thread.join(timeout=120)
+    # A thread still alive after the timeout means a deadlock/hang in the shared
+    # ephemeris session — fail loudly instead of blocking the suite forever.
+    still_alive = [t for t in threads if t.is_alive()]
+    assert not still_alive, f"{len(still_alive)} worker thread(s) did not finish within the timeout"
 
     assert not errors, errors
 
@@ -97,6 +101,10 @@ def test_event_scan_factories_match_single_threaded_baselines_under_threads():
     for thread in threads:
         thread.start()
     for thread in threads:
-        thread.join()
+        thread.join(timeout=120)
+    # A thread still alive after the timeout means a deadlock/hang in the shared
+    # ephemeris session — fail loudly instead of blocking the suite forever.
+    still_alive = [t for t in threads if t.is_alive()]
+    assert not still_alive, f"{len(still_alive)} worker thread(s) did not finish within the timeout"
 
     assert not errors, errors

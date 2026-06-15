@@ -1653,7 +1653,7 @@ from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Example", 2025, 4, 1, 6, 51,
-    lng=0, lat=51.48, tz_str="Etc/GMT", online=False,
+    lng=-0.1276, lat=51.5074, tz_str="Etc/GMT", online=False,
 )
 overview = MoonPhaseDetailsFactory.from_subject(subject)
 print(overview.model_dump_json(exclude_none=True, indent=2))

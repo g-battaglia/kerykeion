@@ -173,6 +173,9 @@ class TestSiderealFrameConsistency:
         trop_nodes = PlanetaryNodesFactory.from_subject(tropical, planets=["Mars", "Jupiter"])
         sid_nodes = PlanetaryNodesFactory.from_subject(sidereal, planets=["Mars", "Jupiter"])
 
+        # zip() would silently drop the tail if the two factories returned a
+        # different number of nodes — assert parity so the comparison is total.
+        assert len(trop_nodes.nodes) == len(sid_nodes.nodes)
         for trop, sid in zip(trop_nodes.nodes, sid_nodes.nodes):
             assert trop.planet_name == sid.planet_name
             for attr in ("ascending_node", "descending_node", "perihelion", "aphelion"):

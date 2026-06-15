@@ -75,8 +75,8 @@ class TestACGComputation:
         fine = AstroCartographyFactory.compute(subject, step=2, planets=["Sun"])
 
         # MC lines should have more points with finer step
-        coarse_mc = [line for line in coarse if line.line_type == "MC"][0]
-        fine_mc = [line for line in fine if line.line_type == "MC"][0]
+        coarse_mc = next(line for line in coarse if line.line_type == "MC")
+        fine_mc = next(line for line in fine if line.line_type == "MC")
         assert len(fine_mc.points) >= len(coarse_mc.points)
 
 

@@ -124,7 +124,10 @@ def test_factory_return_models_are_top_level_exports():
             function = inspect.unwrap(getattr(member, "__func__", member))
             try:
                 hints = typing.get_type_hints(function)
-            except Exception:
+            except (NameError, TypeError):
+                # Unresolved forward ref / un-hintable callable: skip this member
+                # but let any other (unexpected) error surface as a real failure
+                # rather than silently hiding an API regression.
                 continue
             if "return" in hints:
                 _models_in_annotation(hints["return"], referenced)

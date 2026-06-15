@@ -572,7 +572,7 @@ class TestGrouping:
             _make_setting(2, "Mars"),
         ]
         abs_positions = [p.abs_pos for p in pts]
-        sorted_entries = sorted((abs_positions[i], i) for i in range(len(stgs)))
+        sorted_entries = sorted((abs_positions[i], i) for i in range(len(abs_positions)))
         sorted_pos = [entry[0] for entry in sorted_entries]
         sorted_indices = [entry[1] for entry in sorted_entries]
         adjustments = _calculate_planet_adjustments(abs_positions, stgs, sorted_indices, sorted_pos)
