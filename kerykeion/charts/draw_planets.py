@@ -1076,11 +1076,15 @@ def _draw_secondary_points(
     # Build sorted (position, index) pairs (excluding houses for Transit).
     # A list of tuples is used instead of a {abs_pos: index} dict so points
     # sharing the exact same absolute position are all rendered.
+    # Bound the scan to the shortest of the three parallel lists: every index
+    # in sorted_point_indices is later used to look up all three, so an index
+    # valid for points_settings but not for the positions lists would raise.
+    n = min(len(points_settings), len(points_abs_positions), len(points_rel_positions))
     sorted_point_indices = [
         index
         for _, index in sorted(
             (points_abs_positions[i], i)
-            for i in range(len(points_settings))
+            for i in range(n)
             if not (chart_type == "Transit" and points_settings[i]["name"] in exclude_points)
         )
     ]

@@ -126,6 +126,18 @@ _PLAIN_TEXT_TEMPLATE_FIELDS = (
     "bottom_left_2",
     "bottom_left_3",
     "bottom_left_4",
+    # Element/quality labels are language-pack text (translated names +
+    # percentages). Escape them too so a custom or translated pack containing
+    # markup-significant characters cannot break the XML.
+    "elements_string",
+    "fire_string",
+    "earth_string",
+    "air_string",
+    "water_string",
+    "qualities_string",
+    "cardinal_string",
+    "fixed_string",
+    "mutable_string",
 )
 
 
@@ -4822,7 +4834,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         except ValueError:
             raise KerykeionException(
                 f"Refusing to write SVG outside the output directory: {resolved_chartname} is not inside {resolved_directory}."
-            )
+            ) from None
 
         with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
             output_file.write(content)

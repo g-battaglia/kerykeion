@@ -24,6 +24,7 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.charts.charts_utils import makeLunarPhase
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.schemas import KerykeionException
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 
 # Set output directory for all chart SVGs
@@ -2257,7 +2258,11 @@ try:
     historical_chart_data = ChartDataFactory.create_natal_chart_data(historical_subject)
     historical_chart = ChartDrawer(historical_chart_data)
     historical_chart.save_svg(output_path=OUTPUT_DIR_STR)
-except Exception as e:
+except KerykeionException as e:
+    # Out-of-range dates fail loudly with KerykeionException (the luminaries
+    # cannot be computed on a short kernel) — that is the expected skip. Any
+    # other exception is a real regeneration bug and must not be masked into a
+    # stale baseline, so it propagates.
     print(f"  ERROR generating Historical Subject (baseline kept stale): {e}")
 
 # Future date (2100)

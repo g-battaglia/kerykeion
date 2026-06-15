@@ -99,6 +99,8 @@ def _detect_ephemeris_tier() -> str:
     from kerykeion.ephemeris_backend import swe, ephemeris_session
 
     def _sun_computes(year: int) -> bool:
+        # The primary (libephemeris) backend raises for out-of-range dates, so a
+        # bare success/raise cleanly distinguishes whether the date is served.
         try:
             with ephemeris_session() as iflag:
                 swe.calc_ut(swe.julday(year, 1, 1, 12.0), 0, iflag)

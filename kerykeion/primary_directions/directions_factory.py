@@ -38,6 +38,7 @@ Algorithm:
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
+import logging
 import math
 from kerykeion.ephemeris_backend import swe, ephemeris_session
 from typing import List, Optional, Literal, Tuple, cast
@@ -45,6 +46,8 @@ from pydantic import BaseModel, Field
 
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+
+logger = logging.getLogger(__name__)
 
 # MD (in degrees of RA) below which a point is treated as being on the meridian.
 _ON_MERIDIAN_TOLERANCE = 1e-6
@@ -205,7 +208,17 @@ class PrimaryDirectionsFactory:
                                 oa_prom = PrimaryDirectionsFactory._oblique_descension(
                                     ra_asp, dec_asp, sig.pole
                                 )
-                        except Exception:
+                        except (ValueError, ArithmeticError) as exc:
+                            # A degenerate geometry (math-domain / division error)
+                            # means this aspect point has no valid arc here — skip
+                            # it, but log so the omission is observable rather than
+                            # silent. Anything else is a bug and must propagate.
+                            logger.debug(
+                                "Skipping aspect point lambda=%.4f for significator %s: %s",
+                                aspect_lambda,
+                                getattr(sig, "name", sig),
+                                exc,
+                            )
                             continue
 
                         # Direct arc: the promissor is carried by primary motion

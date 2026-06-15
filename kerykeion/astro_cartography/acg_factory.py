@@ -26,6 +26,7 @@ from typing import List, Optional, Dict, Literal
 from pydantic import BaseModel, Field
 
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+from kerykeion.schemas import KerykeionException
 
 
 class ACGLinePointModel(BaseModel):
@@ -127,6 +128,14 @@ class AstroCartographyFactory:
         if planets is None:
             planets = AstroCartographyFactory.PLANETS
 
+        # A non-positive step never advances the latitude scan: the ASC/DSC
+        # ``while lat <= lat_max: lat += step`` loop would spin forever. Reject
+        # it up front rather than hang.
+        if step <= 0:
+            raise KerykeionException(
+                f"step must be a positive number of degrees, got {step!r}."
+            )
+
         jd = subject.julian_day
 
         # Keep only planets that are both supported and present on the
@@ -154,6 +163,18 @@ class AstroCartographyFactory:
             eq_iflag = (iflag & ~swe.FLG_SIDEREAL) | swe.FLG_EQUATORIAL
 
             lat_min, lat_max = lat_range
+            # One shared float latitude grid for every line type. Previously
+            # MC/IC built their grid with range(int(lat_min), ..., max(1, int(step)))
+            # — silently coercing a fractional step to an integer (and to >= 1) —
+            # while ASC/DSC scanned the true float step, so the two families of
+            # lines disagreed on their latitude samples. Build the grid once, in
+            # floats, and reuse it everywhere so all lines share the same scan.
+            latitudes: List[float] = []
+            lat = float(lat_min)
+            while lat <= lat_max:
+                latitudes.append(round(lat, 4))
+                lat += step
+
             for pname in selected:
                 eq_pos = swe.calc_ut(jd, _ACG_PLANET_IDS[pname], eq_iflag)[0]
                 ra_deg, dec_deg = eq_pos[0], eq_pos[1]
@@ -163,14 +184,14 @@ class AstroCartographyFactory:
                 mc_geo_lng = _wrap180(ra_deg - gst_deg)
                 ic_geo_lng = _wrap180(mc_geo_lng + 180.0)
 
-                # MC/IC lines are vertical (same lng, range of latitudes)
+                # MC/IC lines are vertical (same lng, full latitude grid)
                 mc_points = [
                     ACGLinePointModel(longitude=round(mc_geo_lng, 4), latitude=lat)
-                    for lat in range(int(lat_min), int(lat_max) + 1, max(1, int(step)))
+                    for lat in latitudes
                 ]
                 ic_points = [
                     ACGLinePointModel(longitude=round(ic_geo_lng, 4), latitude=lat)
-                    for lat in range(int(lat_min), int(lat_max) + 1, max(1, int(step)))
+                    for lat in latitudes
                 ]
 
                 mc_lines[pname] = ACGLineModel(planet=pname, line_type="MC", points=mc_points)
@@ -180,8 +201,7 @@ class AstroCartographyFactory:
                 # geometric horizon when cos H = -tan(lat) * tan(dec). No
                 # solution means circumpolar / never rises at that latitude.
                 dec_rad = math.radians(dec_deg)
-                lat = float(lat_min)
-                while lat <= lat_max:
+                for lat in latitudes:
                     cos_h0 = -math.tan(math.radians(lat)) * math.tan(dec_rad)
                     if abs(cos_h0) <= 1.0:
                         h0_deg = math.degrees(math.acos(cos_h0))  # in [0, 180]
@@ -189,12 +209,11 @@ class AstroCartographyFactory:
                         rise_lng = _wrap180(ra_deg - h0_deg - gst_deg)
                         set_lng = _wrap180(ra_deg + h0_deg - gst_deg)
                         asc_lines[pname].append(
-                            ACGLinePointModel(longitude=round(rise_lng, 4), latitude=round(lat, 4))
+                            ACGLinePointModel(longitude=round(rise_lng, 4), latitude=lat)
                         )
                         dsc_lines[pname].append(
-                            ACGLinePointModel(longitude=round(set_lng, 4), latitude=round(lat, 4))
+                            ACGLinePointModel(longitude=round(set_lng, 4), latitude=lat)
                         )
-                    lat += step
 
         # Assemble results
         result: List[ACGLineModel] = []

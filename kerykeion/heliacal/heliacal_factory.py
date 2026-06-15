@@ -214,7 +214,13 @@ class HeliacalFactory:
                             observer=observer,
                         )
                         events.append(event)
-                    except Exception as exc:
+                    except ValueError as exc:
+                        # The ephemeris backend raises ValueError when this event
+                        # simply has no solution in the search window (e.g. the
+                        # planet is not visible) — an expected skip, not a failure.
+                        # Narrower than a blanket ``except Exception`` so a genuine
+                        # bug (TypeError, KeyError, ...) propagates instead of being
+                        # silently swallowed into a partial result.
                         logger.debug(
                             "Skipping %s %s: %s",
                             planet,
