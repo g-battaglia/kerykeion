@@ -2134,10 +2134,17 @@ def format_datetime_with_timezone(iso_datetime_string: str) -> str:
         return f"{year_str}-{month_day} {hm} [{tz_part}]"
 
     dt = datetime.datetime.fromisoformat(iso_datetime_string)
-    custom_format = dt.strftime("%Y-%m-%d %H:%M [%z]")
-    custom_format = custom_format[:-3] + ":" + custom_format[-3:]
-
-    return custom_format
+    # Format the UTC offset as [±HH:MM]. Derive it from utcoffset() rather than
+    # slicing strftime("%z"): %z emits "+HHMMSS" for sub-minute offsets (e.g.
+    # longitude-based LMT like +00:39:58), which the old colon-insertion mangled
+    # into "+0039:58". Rounding to the minute keeps the label clean and matches
+    # the historical [+HH:MM] convention. (The chart calculation still uses the
+    # full-precision offset; only this label is minute-rounded.)
+    offset = dt.utcoffset() or datetime.timedelta(0)
+    total_minutes = round(offset.total_seconds() / 60)
+    sign = "-" if total_minutes < 0 else "+"
+    hours, minutes = divmod(abs(total_minutes), 60)
+    return f"{dt.strftime('%Y-%m-%d %H:%M')} [{sign}{hours:02d}:{minutes:02d}]"
 
 
 # =============================================================================

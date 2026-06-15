@@ -34,7 +34,7 @@ import pytz
 from kerykeion.ephemeris_backend import swe, EPHE_DATA_PATH, BACKEND_NAME, ephemeris_session
 import logging
 import math
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from os import getenv
 from pathlib import Path
 from typing import Optional, List, Dict, Any, cast, get_args
@@ -1562,6 +1562,20 @@ class AstrologicalSubjectFactory:
                 "Non-existent time error! The time does not exist due to DST transition (spring forward). "
                 "Please specify a valid time."
             )
+
+        # Pre-standardization births: the IANA zone falls back to its initial
+        # "LMT" record, whose offset is the Local Mean Time of the zone's
+        # *reference meridian* (e.g. Berlin for Europe/Berlin), not the birth
+        # city's. astro.com and other ephemerides use the birth location's own
+        # longitude-based LMT. Mirror _calculate_time_conversions_bce and derive
+        # the offset from the birth longitude so historical Asc/MC line up.
+        if local_datetime.tzname() == "LMT" and location.lng is not None:
+            # Exact longitude-based LMT (15° = 1 h, east = ahead of UT), rounded
+            # to the whole second to match how pytz emits LMT offsets (e.g.
+            # +00:53:28) and keep the ISO offset standards-compliant. The
+            # sub-second remainder is astronomically irrelevant (<0.3" of arc).
+            lmt_offset = timedelta(seconds=round(location.lng / 15.0 * 3600))
+            local_datetime = naive_datetime.replace(tzinfo=timezone(lmt_offset))
 
         # Store formatted times
         utc_datetime = local_datetime.astimezone(pytz.utc)

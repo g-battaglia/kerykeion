@@ -1140,6 +1140,49 @@ class TestTimeZoneEdgeCases:
         assert second.julian_day == approx(2460610.5625, abs=1e-8)
         assert second.julian_day - first.julian_day == approx(1.0 / 24.0, abs=1e-8)
 
+    def test_pre_standardization_uses_birth_longitude_lmt(self):
+        """Pre-standardization births (IANA zone still in its 'LMT' period) must
+        derive UTC from the *birth longitude*'s Local Mean Time, not the zone's
+        reference meridian. Einstein (1879-03-14 11:30, Ulm 9.99 E, tz
+        Europe/Berlin): astro.com uses Ulm's longitude (+00:39:58 -> 10:50 UTC),
+        not Berlin's meridian (+00:53 -> 10:37). Asserts only the time
+        conversion, so it is independent of the ephemeris kernel (DE440/DE441)."""
+        einstein = AstrologicalSubjectFactory.from_birth_data(
+            "Einstein", 1879, 3, 14, 11, 30,
+            city="Ulm", nation="DE", lng=9.9916, lat=48.3984,
+            tz_str="Europe/Berlin", online=False, suppress_geonames_warning=True,
+        )
+        assert einstein.iso_formatted_utc_datetime.startswith("1879-03-14T10:50:02")
+        assert einstein.iso_formatted_local_datetime.endswith("+00:39:58")
+
+    def test_lmt_offset_follows_longitude_not_zone_meridian(self):
+        """Same IANA zone, different birth longitudes -> different LMT offsets.
+        Berlin (13.4 E) and Ulm (9.99 E) both use tz Europe/Berlin, but a
+        pre-standardization birth must resolve to each city's own solar time."""
+        common = dict(
+            year=1879, month=3, day=14, hour=11, minute=30,
+            nation="DE", tz_str="Europe/Berlin", online=False,
+            lat=50.0, suppress_geonames_warning=True,
+        )
+        berlin = AstrologicalSubjectFactory.from_birth_data("B", city="Berlin", lng=13.4, **common)
+        ulm = AstrologicalSubjectFactory.from_birth_data("U", city="Ulm", lng=9.9916, **common)
+        assert berlin.iso_formatted_local_datetime.endswith("+00:53:36")
+        assert ulm.iso_formatted_local_datetime.endswith("+00:39:58")
+        # Same clock time, different solar longitudes -> different UTC instants.
+        assert berlin.iso_formatted_utc_datetime != ulm.iso_formatted_utc_datetime
+
+    def test_modern_date_unaffected_by_longitude_lmt(self):
+        """Modern births (standardized time, zone NOT in its 'LMT' period) must
+        be unchanged: UTC comes from the IANA zone offset, not longitude/15."""
+        modern = AstrologicalSubjectFactory.from_birth_data(
+            "Modern", 1990, 1, 15, 14, 30,
+            city="Sydney", nation="AU", lng=151.2073, lat=-33.8678,
+            tz_str="Australia/Sydney", online=False, suppress_geonames_warning=True,
+        )
+        # AEDT (+11:00) applied as a whole-hour zone offset, not longitude-based.
+        assert modern.iso_formatted_local_datetime.endswith("+11:00")
+        assert modern.iso_formatted_utc_datetime.startswith("1990-01-15T03:30:00")
+
 
 class TestSiderealModeValidation:
     """Test sidereal mode validation (line 215)."""
