@@ -890,6 +890,9 @@ class AstrologicalSubjectFactory:
 
         # Calculate time conversions
         AstrologicalSubjectFactory._calculate_time_conversions(calc_data, location)
+        # Clean up the transient LMT offset now that it has been consumed, so it
+        # is not carried into AstrologicalSubjectModel (mirrors _active_fixed_stars).
+        calc_data.pop("lmt_offset_seconds", None)
         # Initialize Swiss Ephemeris and calculate houses and planets with context manager
         ephe_path = EPHE_DATA_PATH
         with ephemeris_context(
