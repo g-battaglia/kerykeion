@@ -1198,6 +1198,22 @@ class TestTimeZoneEdgeCases:
         assert s.iso_formatted_local_datetime.startswith("1879-03-14T11:30:00")
         assert s.iso_formatted_local_datetime.endswith("+00:39:58")
 
+    def test_from_iso_utc_time_lmt_transition_boundary_round_trips(self):
+        """A UTC instant in the LMT period whose birth-longitude wall time lands
+        just past the IANA LMT->standard transition must still round-trip.
+        Africa/Nairobi leaves LMT ~1908-05-01; UTC 1908-04-30T21:20Z (still LMT)
+        maps to local 1908-05-01T00:07:36 at lng 41.9 — i.e. past the boundary.
+        The offset is passed explicitly so from_birth_data does not re-localize
+        that wall time as the post-transition +02:30 zone (which broke the
+        round-trip guard before the fix)."""
+        s = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Nairobi LMT", "1908-04-30T21:20:00+00:00",
+            city="Nairobi", nation="KE", lng=41.9, lat=0.0,
+            tz_str="Africa/Nairobi", online=False, suppress_geonames_warning=True,
+        )
+        assert s.iso_formatted_utc_datetime.startswith("1908-04-30T21:20:00")
+        assert s.iso_formatted_local_datetime.endswith("+02:47:36")
+
 
 class TestSiderealModeValidation:
     """Test sidereal mode validation (line 215)."""

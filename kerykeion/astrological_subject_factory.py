@@ -602,6 +602,7 @@ class AstrologicalSubjectFactory:
         *,
         seconds: int = 0,
         suppress_geonames_warning: bool = False,
+        _lmt_offset_seconds: Optional[int] = None,
     ) -> AstrologicalSubjectModel:
         """
         Create an astrological subject from standard birth or event data.
@@ -882,6 +883,10 @@ class AstrologicalSubjectFactory:
         calc_data["minute"] = minute
         calc_data["seconds"] = seconds
         calc_data["is_dst"] = is_dst
+        # Internal: pre-resolved LMT offset (seconds) supplied by from_iso_utc_time
+        # so the time conversion does not re-detect LMT from a wall time that may
+        # sit on the wrong side of an IANA LMT->standard transition boundary.
+        calc_data["lmt_offset_seconds"] = _lmt_offset_seconds
 
         # Calculate time conversions
         AstrologicalSubjectFactory._calculate_time_conversions(calc_data, location)
@@ -1275,9 +1280,13 @@ class AstrologicalSubjectFactory:
         # to the original UTC instant instead of being double-interpreted (which
         # would shift the instant by the longitude delta and trip the round-trip
         # guard below). No DST exists in the LMT era, so is_dst is irrelevant.
+        # The offset is passed to from_birth_data explicitly (_lmt_offset_seconds)
+        # so it is applied directly rather than re-detected from a wall time that
+        # may land past the IANA LMT->standard transition boundary.
+        lmt_offset_seconds: Optional[int] = None
         if local_datetime.tzname() == "LMT" and lng is not None:
-            lmt_offset = timedelta(seconds=round(lng / 15.0 * 3600))
-            local_datetime = dt.astimezone(timezone(lmt_offset))
+            lmt_offset_seconds = round(lng / 15.0 * 3600)
+            local_datetime = dt.astimezone(timezone(timedelta(seconds=lmt_offset_seconds)))
             is_dst = False
 
         # Create the subject with local time
@@ -1313,6 +1322,7 @@ class AstrologicalSubjectFactory:
             calculate_gauquelin=calculate_gauquelin,
             calculate_nutation=calculate_nutation,
             calculate_local_space=calculate_local_space,
+            _lmt_offset_seconds=lmt_offset_seconds,
         )
 
         # Round-trip guard: pytz's boolean is_dst cannot disambiguate
@@ -1557,11 +1567,24 @@ class AstrologicalSubjectFactory:
             return
 
         # Convert local time to UTC
-        local_timezone = pytz.timezone(location.tz_str)
         naive_datetime = datetime(
             data["year"], data["month"], data["day"], data["hour"], data["minute"], data["seconds"]
         )
 
+        # Explicit LMT offset supplied by from_iso_utc_time (which already
+        # resolved the zone period from the unambiguous UTC instant). Apply it
+        # directly and bypass pytz, so a wall time sitting just past an IANA
+        # LMT->standard transition cannot be re-localized to the wrong period.
+        lmt_offset_seconds = data.get("lmt_offset_seconds")
+        if lmt_offset_seconds is not None:
+            local_datetime = naive_datetime.replace(tzinfo=timezone(timedelta(seconds=lmt_offset_seconds)))
+            utc_datetime = local_datetime.astimezone(pytz.utc)
+            data["iso_formatted_utc_datetime"] = utc_datetime.isoformat()
+            data["iso_formatted_local_datetime"] = local_datetime.isoformat()
+            data["julian_day"] = datetime_to_julian(utc_datetime)
+            return
+
+        local_timezone = pytz.timezone(location.tz_str)
         try:
             local_datetime = local_timezone.localize(naive_datetime, is_dst=data.get("is_dst"))
         except pytz.exceptions.AmbiguousTimeError:
