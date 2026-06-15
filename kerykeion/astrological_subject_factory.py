@@ -1268,6 +1268,18 @@ class AstrologicalSubjectFactory:
         # raises "Ambiguous time" for instants inside the fold.
         is_dst = bool(local_datetime.dst())
 
+        # Pre-standardization dates: pytz resolves to the zone's reference-
+        # meridian LMT, but from_birth_data re-derives the offset from the birth
+        # longitude (see _calculate_time_conversions). Convert UTC->local using
+        # the same longitude-based LMT here so the wall time we extract maps back
+        # to the original UTC instant instead of being double-interpreted (which
+        # would shift the instant by the longitude delta and trip the round-trip
+        # guard below). No DST exists in the LMT era, so is_dst is irrelevant.
+        if local_datetime.tzname() == "LMT" and lng is not None:
+            lmt_offset = timedelta(seconds=round(lng / 15.0 * 3600))
+            local_datetime = dt.astimezone(timezone(lmt_offset))
+            is_dst = False
+
         # Create the subject with local time
         subject = cls.from_birth_data(
             name=name,

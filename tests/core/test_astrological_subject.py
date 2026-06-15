@@ -1183,6 +1183,21 @@ class TestTimeZoneEdgeCases:
         assert modern.iso_formatted_local_datetime.endswith("+11:00")
         assert modern.iso_formatted_utc_datetime.startswith("1990-01-15T03:30:00")
 
+    def test_from_iso_utc_time_pre_standardization_round_trips(self):
+        """from_iso_utc_time must round-trip a pre-standardization UTC instant.
+        UTC->local has to use the same birth-longitude LMT as from_birth_data,
+        otherwise the wall time is double-interpreted (zone meridian then
+        longitude) and the round-trip guard rejects the ~13-min shift. Einstein:
+        UTC 10:50:02 -> Ulm local 11:30:00 (+00:39:58) -> back to UTC 10:50:02."""
+        s = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Einstein UTC", "1879-03-14T10:50:02+00:00",
+            city="Ulm", nation="DE", lng=9.9916, lat=48.3984,
+            tz_str="Europe/Berlin", online=False, suppress_geonames_warning=True,
+        )
+        assert s.iso_formatted_utc_datetime.startswith("1879-03-14T10:50:02")
+        assert s.iso_formatted_local_datetime.startswith("1879-03-14T11:30:00")
+        assert s.iso_formatted_local_datetime.endswith("+00:39:58")
+
 
 class TestSiderealModeValidation:
     """Test sidereal mode validation (line 215)."""
