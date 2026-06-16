@@ -35,7 +35,7 @@ Moon Phase Overview — Sun, 10 Oct 1993 11:12:00 +0000
 +Next Lunar Eclipse-----------------------+
 | Field | Value                           |
 +-------+---------------------------------+
-| Date  | Mon, 29 Nov 1993 06:26:05 +0000 |
+| Date  | Mon, 29 Nov 1993 06:26:07 +0000 |
 | Type  | Total Lunar Eclipse             |
 +-------+---------------------------------+
 

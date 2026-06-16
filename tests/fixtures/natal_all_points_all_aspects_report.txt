@@ -77,7 +77,7 @@ Sample Natal Subject — Natal Chart Report
 | Pars Amoris           | Lib ♎️ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Tau ♉️ | 8.22°    | N/A          | N/A     | -    | Seventh House  |
 | Vertex                | Gem ♊️ | 11.46°   | N/A          | N/A     | -    | Eighth House   |
-| White Moon            | Tau ♉️ | 28.99°   | +0.1119°/d   | +19.94° | -    | Seventh House  |
+| White Moon            | Can ♋️ | 26.26°   | +0.1408°/d   | +20.90° | -    | Ninth House    |
 | Anti Vertex           | Sag ♐️ | 11.46°   | N/A          | N/A     | -    | Second House   |
 | Mean South Lunar Node | Leo ♌️ | 7.79°    | -0.0530°/d   | +18.32° | R    | Ninth House    |
 | True South Lunar Node | Leo ♌️ | 7.26°    | -0.0080°/d   | +18.46° | R    | Ninth House    |
@@ -114,17 +114,17 @@ Sample Natal Subject — Natal Chart Report
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
 | Fire 🔥  | 6.699999999999999  | 18.3%      |
-| Earth 🌍 | 9.0                | 24.5%      |
+| Earth 🌍 | 7.999999999999999  | 21.8%      |
 | Air 💨   | 7.3999999999999995 | 20.2%      |
-| Water 💧 | 13.600000000000003 | 37.1%      |
+| Water 💧 | 14.600000000000003 | 39.8%      |
 | Total    | 36.7               | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 12.700000000000005 | 34.6%      |
-| Fixed    | 18.900000000000006 | 51.5%      |
+| Cardinal | 13.700000000000005 | 37.3%      |
+| Fixed    | 17.900000000000006 | 48.8%      |
 | Mutable  | 5.1                | 13.9%      |
 | Total    | 36.70000000000001  | 100%       |
 +----------+--------------------+------------+
@@ -225,7 +225,7 @@ Sample Natal Subject — Natal Chart Report
 | Sun                   | sesquiquadrate ⚼ | Anti Vertex           | 2.08° | Separating ← |
 | Sun                   | trine △          | Interpolated Lilith   | 3.12° | Separating ← |
 | Sun                   | sextile ⚹        | Mean Priapus          | 0.45° | Applying →   |
-| Sun                   | sextile ⚹        | White Moon            | 0.45° | Applying →   |
+| Sun                   | conjunction ☌    | White Moon            | 2.29° | Separating ← |
 | Sun                   | sextile ⚹        | Zeus                  | 2.51° | Separating ← |
 | Sun                   | quintile Q       | Apollon               | 3.28° | Applying →   |
 | Sun                   | quintile Q       | Admetos               | 1.59° | Separating ← |
@@ -251,6 +251,7 @@ Sample Natal Subject — Natal Chart Report
 | Moon                  | trine △          | Interpolated Lilith   | 4.21° | Applying →   |
 | Moon                  | semi-sextile ⚺   | True Priapus          | 3.19° | Separating ← |
 | Moon                  | semi-sextile ⚺   | Interpolated Perigee  | 0.10° | Applying →   |
+| Moon                  | conjunction ☌    | White Moon            | 5.05° | Applying →   |
 | Moon                  | trine △          | Cupido                | 2.60° | Separating ← |
 | Moon                  | sextile ⚹        | Zeus                  | 4.82° | Applying →   |
 | Moon                  | semi-sextile ⚺   | Kronos                | 0.69° | Applying →   |
@@ -324,6 +325,7 @@ Sample Natal Subject — Natal Chart Report
 | Jupiter               | trine △          | Quaoar                | 0.16° | Applying →   |
 | Jupiter               | square □         | Pars Fortunae         | 4.58° | Applying →   |
 | Jupiter               | trine △          | Interpolated Lilith   | 1.51° | Applying →   |
+| Jupiter               | conjunction ☌    | White Moon            | 2.35° | Applying →   |
 | Jupiter               | trine △          | Cupido                | 5.30° | Separating ← |
 | Jupiter               | semi-square ∠    | Hades                 | 1.01° | Applying →   |
 | Jupiter               | sextile ⚹        | Zeus                  | 2.12° | Applying →   |
@@ -339,6 +341,7 @@ Sample Natal Subject — Natal Chart Report
 | Saturn                | sextile ⚹        | Quaoar                | 2.56° | Separating ← |
 | Saturn                | sextile ⚹        | Interpolated Lilith   | 3.91° | Separating ← |
 | Saturn                | quincunx ⚻       | Interpolated Perigee  | 0.21° | Applying →   |
+| Saturn                | opposition ☍     | White Moon            | 4.74° | Separating ← |
 | Saturn                | sextile ⚹        | Cupido                | 2.90° | Applying →   |
 | Saturn                | trine △          | Zeus                  | 4.51° | Separating ← |
 | Saturn                | quincunx ⚻       | Kronos                | 0.38° | Separating ← |
@@ -361,7 +364,6 @@ Sample Natal Subject — Natal Chart Report
 | Uranus                | square □         | Pars Amoris           | 2.25° | Separating ← |
 | Uranus                | trine △          | Pars Fidei            | 1.48° | Separating ← |
 | Uranus                | biquintile bQ    | Mean Priapus          | 1.75° | Applying →   |
-| Uranus                | biquintile bQ    | White Moon            | 1.75° | Applying →   |
 | Neptune               | sextile ⚹        | Pluto                 | 2.21° | Separating ← |
 | Neptune               | biquintile bQ    | Medium Coeli          | 1.15° | Separating ← |
 | Neptune               | semi-square ∠    | Mean Lilith           | 1.23° | Separating ← |
@@ -379,7 +381,6 @@ Sample Natal Subject — Natal Chart Report
 | Neptune               | quincunx ⚻       | Vertex                | 1.30° | Applying →   |
 | Neptune               | semi-sextile ⚺   | Anti Vertex           | 1.30° | Applying →   |
 | Neptune               | sesquiquadrate ⚼ | Mean Priapus          | 1.23° | Separating ← |
-| Neptune               | sesquiquadrate ⚼ | White Moon            | 1.23° | Separating ← |
 | Neptune               | square □         | Apollon               | 1.06° | Separating ← |
 | Neptune               | trine △          | Admetos               | 2.19° | Separating ← |
 | Neptune               | opposition ☍     | Vulkanus              | 2.58° | Separating ← |
@@ -511,7 +512,7 @@ Sample Natal Subject — Natal Chart Report
 | Mean Lilith           | conjunction ☌    | Quaoar                | 4.91° | Separating ← |
 | Mean Lilith           | semi-sextile ⚺   | Pars Fortunae         | 0.50° | Separating ← |
 | Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 3.57° | Applying →   |
-| Mean Lilith           | opposition ☍     | White Moon            | 0.00° | Static =     |
+| Mean Lilith           | trine △          | White Moon            | 2.73° | Applying →   |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 2.96° | Separating ← |
 | Mean Lilith           | semi-square ∠    | Apollon               | 0.17° | Separating ← |
 | Mean Lilith           | sesquiquadrate ⚼ | Vulkanus              | 1.35° | Applying →   |
@@ -560,7 +561,7 @@ Sample Natal Subject — Natal Chart Report
 | Earth                 | quintile Q       | Vertex                | 0.54° | Static =     |
 | Earth                 | trine △          | Interpolated Lilith   | 4.58° | Applying →   |
 | Earth                 | sextile ⚹        | Mean Priapus          | 1.01° | Applying →   |
-| Earth                 | sextile ⚹        | White Moon            | 1.01° | Applying →   |
+| Earth                 | trine △          | White Moon            | 3.74° | Applying →   |
 | Earth                 | opposition ☍     | Zeus                  | 3.97° | Applying →   |
 | Earth                 | semi-square ∠    | Admetos               | 0.04° | Applying →   |
 | Earth                 | quincunx ⚻       | Poseidon              | 1.32° | Applying →   |
@@ -648,20 +649,20 @@ Sample Natal Subject — Natal Chart Report
 | Haumea                | sextile ⚹        | Interpolated Lilith   | 0.90° | Applying →   |
 | Haumea                | trine △          | Mean Priapus          | 2.67° | Separating ← |
 | Haumea                | square □         | Interpolated Perigee  | 5.01° | Applying →   |
-| Haumea                | trine △          | White Moon            | 2.67° | Separating ← |
+| Haumea                | sextile ⚹        | White Moon            | 0.07° | Applying →   |
 | Haumea                | conjunction ☌    | Zeus                  | 0.29° | Separating ← |
 | Haumea                | square □         | Kronos                | 4.43° | Static =     |
 | Haumea                | quintile Q       | Vulkanus              | 1.02° | Static =     |
 | Makemake              | trine △          | Pars Fidei            | 3.72° | Applying →   |
 | Makemake              | square □         | Mean Priapus          | 5.51° | Applying →   |
 | Makemake              | quintile Q       | Interpolated Perigee  | 1.19° | Applying →   |
-| Makemake              | square □         | White Moon            | 5.51° | Applying →   |
 | Makemake              | square □         | Hades                 | 5.42° | Applying →   |
 | Makemake              | quintile Q       | Kronos                | 0.60° | Separating ← |
 | Ixion                 | conjunction ☌    | Quaoar                | 1.37° | Static =     |
 | Ixion                 | semi-square ∠    | Pars Amoris           | 1.28° | Separating ← |
 | Ixion                 | conjunction ☌    | Interpolated Lilith   | 2.72° | Separating ← |
 | Ixion                 | quincunx ⚻       | Interpolated Perigee  | 1.39° | Applying →   |
+| Ixion                 | trine △          | White Moon            | 3.55° | Separating ← |
 | Ixion                 | conjunction ☌    | Cupido                | 4.09° | Applying →   |
 | Ixion                 | sextile ⚹        | Zeus                  | 3.33° | Separating ← |
 | Ixion                 | quincunx ⚻       | Kronos                | 0.81° | Applying →   |
@@ -671,7 +672,6 @@ Sample Natal Subject — Natal Chart Report
 | Orcus                 | sextile ⚹        | Vertex                | 0.63° | Applying →   |
 | Orcus                 | trine △          | Anti Vertex           | 0.63° | Applying →   |
 | Orcus                 | quintile Q       | Mean Priapus          | 0.15° | Separating ← |
-| Orcus                 | quintile Q       | White Moon            | 0.15° | Separating ← |
 | Orcus                 | sextile ⚹        | Hades                 | 0.92° | Separating ← |
 | Orcus                 | semi-square ∠    | Zeus                  | 0.19° | Applying →   |
 | Orcus                 | sextile ⚹        | Apollon               | 2.98° | Applying →   |
@@ -679,11 +679,11 @@ Sample Natal Subject — Natal Chart Report
 | Quaoar                | semi-square ∠    | Pars Amoris           | 0.09° | Applying →   |
 | Quaoar                | conjunction ☌    | Interpolated Lilith   | 1.35° | Separating ← |
 | Quaoar                | opposition ☍     | Mean Priapus          | 4.91° | Separating ← |
-| Quaoar                | opposition ☍     | White Moon            | 4.91° | Separating ← |
+| Quaoar                | trine △          | White Moon            | 2.18° | Separating ← |
 | Quaoar                | conjunction ☌    | Cupido                | 5.46° | Applying →   |
 | Quaoar                | sextile ⚹        | Zeus                  | 1.95° | Separating ← |
 | Pars Fortunae         | quincunx ⚻       | Mean Priapus          | 0.50° | Separating ← |
-| Pars Fortunae         | quincunx ⚻       | White Moon            | 0.50° | Separating ← |
+| Pars Fortunae         | square □         | White Moon            | 2.23° | Applying →   |
 | Pars Fortunae         | conjunction ☌    | Poseidon              | 0.19° | Separating ← |
 | Pars Spiritus         | opposition ☍     | Pars Fidei            | 4.94° | Static =     |
 | Pars Spiritus         | quincunx ⚻       | Vertex                | 1.69° | Static =     |
@@ -697,20 +697,23 @@ Sample Natal Subject — Natal Chart Report
 | Pars Amoris           | trine △          | Vertex                | 2.48° | Static =     |
 | Pars Amoris           | sextile ⚹        | Anti Vertex           | 2.48° | Static =     |
 | Pars Amoris           | semi-square ∠    | Interpolated Lilith   | 1.44° | Separating ← |
+| Pars Amoris           | quintile Q       | White Moon            | 0.73° | Applying →   |
 | Pars Amoris           | trine △          | Hades                 | 0.93° | Separating ← |
 | Pars Amoris           | conjunction ☌    | Apollon               | 4.83° | Separating ← |
 | Pars Amoris           | biquintile bQ    | Admetos               | 0.03° | Applying →   |
 | Pars Fidei            | semi-square ∠    | Interpolated Perigee  | 1.91° | Applying →   |
 | Pars Fidei            | semi-sextile ⚺   | Hades                 | 1.70° | Separating ← |
 | Pars Fidei            | semi-square ∠    | Kronos                | 1.32° | Applying →   |
+| Vertex                | semi-square ∠    | White Moon            | 0.21° | Applying →   |
 | Vertex                | conjunction ☌    | Hades                 | 1.54° | Applying →   |
 | Vertex                | trine △          | Apollon               | 2.36° | Separating ← |
+| Anti Vertex           | sesquiquadrate ⚼ | White Moon            | 0.21° | Applying →   |
 | Anti Vertex           | opposition ☍     | Hades                 | 1.54° | Applying →   |
 | Anti Vertex           | sextile ⚹        | Apollon               | 2.36° | Separating ← |
 | Interpolated Lilith   | opposition ☍     | Mean Priapus          | 3.57° | Applying →   |
-| Interpolated Lilith   | opposition ☍     | White Moon            | 3.57° | Applying →   |
+| Interpolated Lilith   | trine △          | White Moon            | 0.83° | Applying →   |
 | Interpolated Lilith   | sextile ⚹        | Zeus                  | 0.61° | Applying →   |
-| Mean Priapus          | conjunction ☌    | White Moon            | 0.00° | Static =     |
+| Mean Priapus          | sextile ⚹        | White Moon            | 2.73° | Applying →   |
 | Mean Priapus          | trine △          | Zeus                  | 2.96° | Separating ← |
 | Mean Priapus          | sesquiquadrate ⚼ | Apollon               | 0.17° | Separating ← |
 | Mean Priapus          | semi-square ∠    | Vulkanus              | 1.35° | Applying →   |
@@ -721,10 +724,10 @@ Sample Natal Subject — Natal Chart Report
 | True Priapus          | trine △          | Apollon               | 4.19° | Applying →   |
 | Interpolated Perigee  | square □         | Zeus                  | 4.72° | Applying →   |
 | Interpolated Perigee  | conjunction ☌    | Kronos                | 0.59° | Applying →   |
-| White Moon            | trine △          | Zeus                  | 2.96° | Separating ← |
-| White Moon            | sesquiquadrate ⚼ | Apollon               | 0.17° | Separating ← |
-| White Moon            | semi-square ∠    | Vulkanus              | 1.35° | Applying →   |
-| White Moon            | quincunx ⚻       | Poseidon              | 0.31° | Separating ← |
+| White Moon            | semi-square ∠    | Hades                 | 1.34° | Separating ← |
+| White Moon            | sextile ⚹        | Zeus                  | 0.23° | Separating ← |
+| White Moon            | quintile Q       | Admetos               | 0.70° | Applying →   |
+| White Moon            | square □         | Poseidon              | 2.42° | Applying →   |
 | Cupido                | opposition ☍     | Admetos               | 3.66° | Applying →   |
 | Cupido                | trine △          | Vulkanus              | 3.27° | Applying →   |
 | Hades                 | trine △          | Apollon               | 3.90° | Applying →   |

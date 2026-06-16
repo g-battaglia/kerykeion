@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 6.0.0a56
+
+_2026-06-16_
+
+Rebased on **libephemeris 3** (`3.0.0a3`), the first major release of the
+ephemeris backend. The dependency pin moves from `>=2.0.2,<3.0.0` to
+`==3.0.0a3`. Two backend behaviour changes propagate into chart output; the
+affected report and SVG golden fixtures were regenerated.
+
 ### Changed (breaking)
 
 - **Ephemeris backend handle renamed `swe` → `ephe`** — the unified backend
@@ -11,6 +20,29 @@
   libephemeris is the primary backend and swisseph is a legacy fallback. Update
   any `from kerykeion.ephemeris_backend import swe` import to `ephe`. The
   internal helper `compute_sun_rise_set_swe` is likewise `compute_sun_rise_set_ephe`.
+
+### Changed
+
+- **Dependency: libephemeris `2.x` → `3.0.0a3`** — bumped to the new major
+  series and pinned exactly while it is in alpha. libephemeris 3 ships the
+  four-backend architecture (Skyfield, the LEB fast path, JPL Horizons, and an
+  adaptive `auto` mode) behind the same `calc_ut()` interface; core planetary
+  positions are unchanged within tolerance.
+
+### Changed (ephemeris output)
+
+- **White Moon / Selena repositioned** — libephemeris 3 computes Selena
+  (body 56) on a ~7-year period (≈ `+0.1408°/d`) instead of the previous
+  ~8.8-year period (≈ `+0.1120°/d`), shifting the point by up to a full sign in
+  every chart that includes it. White Moon is part of `ALL_ACTIVE_POINTS` (not
+  the default point set), so default charts are unaffected; all-points reports
+  and SVGs change their White Moon placement, element/quality distribution, and
+  aspect list.
+- **Out-of-SPK-range bodies fall back to a Keplerian approximation** — for dates
+  outside the SPK kernel coverage (≈ 1900–2100), asteroids and TNOs that were
+  previously dropped now return a degraded two-body position (~1–2°) instead of
+  raising, so historical and far-future all-points charts list more points
+  (e.g. the 1879 Einstein natal report grows from 45 to 53 active points).
 
 ## 6.0.0a55
 

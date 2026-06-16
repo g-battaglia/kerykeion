@@ -24,7 +24,7 @@ Einstein Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2407422.951424      |
-| Active Points Count | 45                  |
+| Active Points Count | 53                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -50,6 +50,7 @@ Einstein Subject — Natal Chart Report
 | True Lilith           | Ari ♈️ | 1.62°    | -0.7974°/d   | +4.68°  | R    | Tenth House    |
 | Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Tenth House    |
 | Chiron                | Tau ♉️ | 5.54°    | +0.0525°/d   | +12.39° | -    | Eleventh House |
+| Pholus                | Aqu ♒️ | 27.08°   | +0.0403°/d   | -23.59° | -    | Ninth House    |
 | Ceres                 | Tau ♉️ | 17.33°   | +0.3513°/d   | +14.54° | -    | Eleventh House |
 | Pallas                | Ari ♈️ | 10.04°   | +0.3948°/d   | -6.61°  | -    | Tenth House    |
 | Juno                  | Ari ♈️ | 25.46°   | +0.5684°/d   | +3.06°  | -    | Eleventh House |
@@ -64,12 +65,19 @@ Einstein Subject — Natal Chart Report
 | Admetos               | Pis ♓️ | 9.38°    | +0.0145°/d   | -8.06°  | -    | Ninth House    |
 | Vulkanus              | Tau ♉️ | 14.01°   | +0.0094°/d   | +16.05° | -    | Eleventh House |
 | Poseidon              | Vir ♍️ | 5.23°    | -0.0101°/d   | +9.60°  | R    | Third House    |
+| Eris                  | Pis ♓️ | 14.85°   | +0.0146°/d   | -38.50° | -    | Tenth House    |
+| Sedna                 | Ari ♈️ | 2.88°    | +0.0075°/d   | -5.94°  | -    | Tenth House    |
+| Haumea                | Tau ♉️ | 24.37°   | +0.0188°/d   | -5.91°  | -    | Eleventh House |
+| Makemake              | Ari ♈️ | 13.83°   | +0.0311°/d   | -18.23° | -    | Tenth House    |
+| Ixion                 | Can ♋️ | 26.13°   | -0.0104°/d   | +35.67° | R    | First House    |
+| Orcus                 | Cap ♑️ | 29.37°   | +0.0243°/d   | -9.77°  | -    | Eighth House   |
+| Quaoar                | Can ♋️ | 9.96°    | -0.0034°/d   | +15.06° | R    | Twelfth House  |
 | Pars Fortunae         | Ari ♈️ | 2.67°    | N/A          | N/A     | -    | Tenth House    |
 | Pars Spiritus         | Lib ♎️ | 20.63°   | N/A          | N/A     | -    | Fifth House    |
 | Pars Amoris           | Leo ♌️ | 5.12°    | N/A          | N/A     | -    | Second House   |
 | Pars Fidei            | Gem ♊️ | 4.94°    | N/A          | N/A     | -    | Twelfth House  |
 | Vertex                | Sco ♏️ | 27.91°   | N/A          | N/A     | -    | Fifth House    |
-| White Moon            | Lib ♎️ | 27.98°   | +0.1121°/d   | -10.76° | -    | Fifth House    |
+| White Moon            | Leo ♌️ | 28.85°   | +0.1408°/d   | +11.88° | -    | Third House    |
 | Anti Vertex           | Tau ♉️ | 27.91°   | N/A          | N/A     | -    | Eleventh House |
 | Mean South Lunar Node | Leo ♌️ | 1.48°    | -0.0530°/d   | +19.84° | R    | Second House   |
 | True South Lunar Node | Leo ♌️ | 2.73°    | -0.0193°/d   | +19.56° | R    | Second House   |
@@ -105,20 +113,20 @@ Einstein Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 11.100000000000003 | 32.4%      |
-| Earth 🌍 | 9.0                | 26.2%      |
-| Air 💨   | 7.2                | 21.0%      |
-| Water 💧 | 7.0                | 20.4%      |
-| Total    | 34.3               | 100%       |
+| Fire 🔥  | 12.700000000000005 | 34.6%      |
+| Earth 🌍 | 9.600000000000001  | 26.2%      |
+| Air 💨   | 6.499999999999999  | 17.7%      |
+| Water 💧 | 7.8999999999999995 | 21.5%      |
+| Total    | 36.7               | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 16.3               | 47.5%      |
-| Fixed    | 8.700000000000001  | 25.4%      |
-| Mutable  | 9.300000000000002  | 27.1%      |
-| Total    | 34.300000000000004 | 100%       |
+| Cardinal | 16.800000000000008 | 45.8%      |
+| Fixed    | 10.3               | 28.1%      |
+| Mutable  | 9.600000000000003  | 26.2%      |
+| Total    | 36.70000000000001  | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -140,35 +148,43 @@ Einstein Subject — Natal Chart Report
 | 14 | True_Lilith           |
 | 15 | Earth                 |
 | 16 | Chiron                |
-| 17 | Ceres                 |
-| 18 | Pallas                |
-| 19 | Juno                  |
-| 20 | Vesta                 |
-| 21 | Interpolated_Lilith   |
-| 22 | Interpolated_Perigee  |
-| 23 | Cupido                |
-| 24 | Hades                 |
-| 25 | Zeus                  |
-| 26 | Kronos                |
-| 27 | Apollon               |
-| 28 | Admetos               |
-| 29 | Vulkanus              |
-| 30 | Poseidon              |
-| 31 | Pars_Fortunae         |
-| 32 | Pars_Spiritus         |
-| 33 | Pars_Amoris           |
-| 34 | Pars_Fidei            |
-| 35 | Vertex                |
-| 36 | White_Moon            |
-| 37 | Descendant            |
-| 38 | Imum_Coeli            |
-| 39 | Anti_Vertex           |
-| 40 | Mean_South_Lunar_Node |
-| 41 | True_South_Lunar_Node |
-| 42 | Mean_Priapus          |
-| 43 | True_Priapus          |
-| 44 | Ascendant             |
-| 45 | Medium_Coeli          |
+| 17 | Pholus                |
+| 18 | Ceres                 |
+| 19 | Pallas                |
+| 20 | Juno                  |
+| 21 | Vesta                 |
+| 22 | Interpolated_Lilith   |
+| 23 | Interpolated_Perigee  |
+| 24 | Cupido                |
+| 25 | Hades                 |
+| 26 | Zeus                  |
+| 27 | Kronos                |
+| 28 | Apollon               |
+| 29 | Admetos               |
+| 30 | Vulkanus              |
+| 31 | Poseidon              |
+| 32 | Eris                  |
+| 33 | Sedna                 |
+| 34 | Haumea                |
+| 35 | Makemake              |
+| 36 | Ixion                 |
+| 37 | Orcus                 |
+| 38 | Quaoar                |
+| 39 | Pars_Fortunae         |
+| 40 | Pars_Spiritus         |
+| 41 | Pars_Amoris           |
+| 42 | Pars_Fidei            |
+| 43 | Vertex                |
+| 44 | White_Moon            |
+| 45 | Descendant            |
+| 46 | Imum_Coeli            |
+| 47 | Anti_Vertex           |
+| 48 | Mean_South_Lunar_Node |
+| 49 | True_South_Lunar_Node |
+| 50 | Mean_Priapus          |
+| 51 | True_Priapus          |
+| 52 | Ascendant             |
+| 53 | Medium_Coeli          |
 +----+-----------------------+
 
 +----------------+---------+
@@ -198,13 +214,15 @@ Einstein Subject — Natal Chart Report
 | Sun                   | conjunction ☌    | Earth                 | 6.49° | Applying →   |
 | Sun                   | sextile ⚹        | Ceres                 | 6.18° | Separating ← |
 | Sun                   | semi-sextile ⚺   | Juno                  | 1.95° | Applying →   |
+| Sun                   | sextile ⚹        | Haumea                | 0.86° | Applying →   |
+| Sun                   | trine △          | Ixion                 | 2.63° | Applying →   |
+| Sun                   | sextile ⚹        | Orcus                 | 5.86° | Applying →   |
 | Sun                   | quincunx ⚻       | Pars Spiritus         | 2.88° | Separating ← |
 | Sun                   | sesquiquadrate ⚼ | Pars Amoris           | 3.38° | Separating ← |
 | Sun                   | quintile Q       | Pars Fidei            | 0.57° | Separating ← |
 | Sun                   | trine △          | Vertex                | 4.40° | Applying →   |
 | Sun                   | sextile ⚹        | Anti Vertex           | 4.40° | Applying →   |
 | Sun                   | biquintile bQ    | Mean Priapus          | 1.53° | Separating ← |
-| Sun                   | biquintile bQ    | White Moon            | 1.53° | Separating ← |
 | Sun                   | square □         | Zeus                  | 3.05° | Applying →   |
 | Moon                  | trine △          | Venus                 | 2.46° | Applying →   |
 | Moon                  | semi-square ∠    | Mars                  | 2.61° | Separating ← |
@@ -220,13 +238,17 @@ Einstein Subject — Natal Chart Report
 | Moon                  | sesquiquadrate ⚼ | Mean Lilith           | 1.55° | Separating ← |
 | Moon                  | sesquiquadrate ⚼ | Mean South Lunar Node | 1.95° | Applying →   |
 | Moon                  | sesquiquadrate ⚼ | True South Lunar Node | 3.21° | Applying →   |
+| Moon                  | quintile Q       | Pholus                | 0.56° | Applying →   |
 | Moon                  | quincunx ⚻       | Ceres                 | 2.81° | Applying →   |
 | Moon                  | trine △          | Pallas                | 4.49° | Separating ← |
+| Moon                  | square □         | Eris                  | 0.33° | Applying →   |
+| Moon                  | trine △          | Makemake              | 0.69° | Separating ← |
+| Moon                  | sesquiquadrate ⚼ | Ixion                 | 3.39° | Separating ← |
+| Moon                  | semi-square ∠    | Orcus                 | 0.16° | Separating ← |
 | Moon                  | sextile ⚹        | Pars Spiritus         | 6.10° | Applying →   |
 | Moon                  | semi-square ∠    | Mean Priapus          | 1.55° | Separating ← |
 | Moon                  | quintile Q       | True Priapus          | 0.90° | Separating ← |
 | Moon                  | sextile ⚹        | Interpolated Perigee  | 2.76° | Separating ← |
-| Moon                  | semi-square ∠    | White Moon            | 1.55° | Separating ← |
 | Moon                  | opposition ☍     | Cupido                | 0.67° | Applying →   |
 | Moon                  | sextile ⚹        | Hades                 | 2.30° | Applying →   |
 | Moon                  | square □         | Admetos               | 5.14° | Separating ← |
@@ -240,12 +262,15 @@ Einstein Subject — Natal Chart Report
 | Mercury               | conjunction ☌    | True Lilith           | 1.52° | Separating ← |
 | Mercury               | conjunction ☌    | Earth                 | 3.14° | Separating ← |
 | Mercury               | semi-square ∠    | Ceres                 | 0.81° | Separating ← |
+| Mercury               | conjunction ☌    | Sedna                 | 0.26° | Separating ← |
+| Mercury               | sextile ⚹        | Orcus                 | 3.78° | Separating ← |
 | Mercury               | conjunction ☌    | Pars Fortunae         | 0.48° | Separating ← |
 | Mercury               | trine △          | Pars Amoris           | 1.98° | Applying →   |
 | Mercury               | sextile ⚹        | Pars Fidei            | 1.80° | Applying →   |
 | Mercury               | trine △          | Vertex                | 5.24° | Separating ← |
 | Mercury               | semi-sextile ⚺   | Interpolated Lilith   | 0.07° | Separating ← |
 | Mercury               | opposition ☍     | True Priapus          | 1.52° | Separating ← |
+| Mercury               | biquintile bQ    | White Moon            | 1.70° | Applying →   |
 | Mercury               | quintile Q       | Cupido                | 0.05° | Applying →   |
 | Mercury               | semi-square ∠    | Hades                 | 1.32° | Separating ← |
 | Mercury               | conjunction ☌    | Kronos                | 0.12° | Applying →   |
@@ -255,6 +280,7 @@ Einstein Subject — Natal Chart Report
 | Venus                 | square □         | Descendant            | 5.34° | Applying →   |
 | Venus                 | biquintile bQ    | Imum Coeli            | 1.85° | Separating ← |
 | Venus                 | semi-sextile ⚺   | Ceres                 | 0.35° | Applying →   |
+| Venus                 | conjunction ☌    | Makemake              | 3.15° | Separating ← |
 | Venus                 | opposition ☍     | Pars Spiritus         | 3.64° | Applying →   |
 | Venus                 | opposition ☍     | Interpolated Perigee  | 5.22° | Separating ← |
 | Venus                 | sextile ⚹        | Cupido                | 1.79° | Separating ← |
@@ -271,13 +297,17 @@ Einstein Subject — Natal Chart Report
 | Mars                  | opposition ☍     | True South Lunar Node | 5.82° | Applying →   |
 | Mars                  | sextile ⚹        | True Lilith           | 4.71° | Applying →   |
 | Mars                  | sextile ⚹        | Earth                 | 3.09° | Applying →   |
+| Mars                  | semi-sextile ⚺   | Pholus                | 0.17° | Applying →   |
 | Mars                  | quintile Q       | Pallas                | 1.12° | Applying →   |
 | Mars                  | square □         | Juno                  | 1.45° | Separating ← |
+| Mars                  | trine △          | Haumea                | 2.54° | Separating ← |
+| Mars                  | opposition ☍     | Ixion                 | 0.78° | Separating ← |
+| Mars                  | conjunction ☌    | Orcus                 | 2.45° | Applying →   |
 | Mars                  | sextile ⚹        | Vertex                | 0.99° | Applying →   |
 | Mars                  | trine △          | Anti Vertex           | 0.99° | Applying →   |
 | Mars                  | square □         | Mean Priapus          | 1.06° | Applying →   |
 | Mars                  | trine △          | True Priapus          | 4.71° | Applying →   |
-| Mars                  | square □         | White Moon            | 1.06° | Applying →   |
+| Mars                  | quincunx ⚻       | White Moon            | 1.93° | Applying →   |
 | Mars                  | quincunx ⚻       | Zeus                  | 0.36° | Separating ← |
 | Jupiter               | opposition ☍     | Uranus                | 3.80° | Applying →   |
 | Jupiter               | quintile Q       | Neptune               | 1.61° | Separating ← |
@@ -285,13 +315,18 @@ Einstein Subject — Natal Chart Report
 | Jupiter               | sesquiquadrate ⚼ | Ascendant             | 0.84° | Applying →   |
 | Jupiter               | semi-square ∠    | Descendant            | 0.84° | Applying →   |
 | Jupiter               | sextile ⚹        | Mean Lilith           | 0.49° | Applying →   |
+| Jupiter               | conjunction ☌    | Pholus                | 0.40° | Separating ← |
 | Jupiter               | sextile ⚹        | Juno                  | 2.02° | Applying →   |
+| Jupiter               | square □         | Haumea                | 3.11° | Separating ← |
+| Jupiter               | semi-square ∠    | Makemake              | 1.35° | Applying →   |
+| Jupiter               | quincunx ⚻       | Ixion                 | 1.35° | Separating ← |
+| Jupiter               | semi-sextile ⚺   | Orcus                 | 1.88° | Applying →   |
 | Jupiter               | square □         | Vertex                | 0.42° | Applying →   |
 | Jupiter               | square □         | Anti Vertex           | 0.42° | Applying →   |
 | Jupiter               | trine △          | Mean Priapus          | 0.49° | Applying →   |
 | Jupiter               | biquintile bQ    | True Priapus          | 1.86° | Separating ← |
 | Jupiter               | sesquiquadrate ⚼ | Interpolated Perigee  | 0.72° | Applying →   |
-| Jupiter               | trine △          | White Moon            | 0.49° | Applying →   |
+| Jupiter               | opposition ☍     | White Moon            | 1.36° | Applying →   |
 | Jupiter               | trine △          | Zeus                  | 0.93° | Separating ← |
 | Saturn                | sextile ⚹        | Mean North Lunar Node | 2.71° | Separating ← |
 | Saturn                | sextile ⚹        | True North Lunar Node | 1.46° | Separating ← |
@@ -303,11 +338,15 @@ Einstein Subject — Natal Chart Report
 | Saturn                | semi-square ∠    | Ceres                 | 1.86° | Applying →   |
 | Saturn                | conjunction ☌    | Pallas                | 5.85° | Separating ← |
 | Saturn                | square □         | Vesta                 | 5.57° | Static =     |
+| Saturn                | conjunction ☌    | Sedna                 | 1.31° | Separating ← |
+| Saturn                | sextile ⚹        | Orcus                 | 4.82° | Separating ← |
+| Saturn                | square □         | Quaoar                | 5.77° | Applying →   |
 | Saturn                | conjunction ☌    | Pars Fortunae         | 1.52° | Separating ← |
 | Saturn                | trine △          | Pars Amoris           | 0.93° | Applying →   |
 | Saturn                | sextile ⚹        | Pars Fidei            | 0.75° | Applying →   |
 | Saturn                | semi-sextile ⚺   | Interpolated Lilith   | 1.11° | Separating ← |
 | Saturn                | opposition ☍     | True Priapus          | 2.57° | Separating ← |
+| Saturn                | biquintile bQ    | White Moon            | 0.66° | Separating ← |
 | Saturn                | quintile Q       | Cupido                | 0.99° | Separating ← |
 | Saturn                | conjunction ☌    | Kronos                | 0.93° | Separating ← |
 | Saturn                | trine △          | Apollon               | 0.26° | Applying →   |
@@ -320,7 +359,10 @@ Einstein Subject — Natal Chart Report
 | Uranus                | semi-sextile ⚺   | True South Lunar Node | 1.44° | Separating ← |
 | Uranus                | quincunx ⚻       | True Lilith           | 0.34° | Applying →   |
 | Uranus                | quincunx ⚻       | Earth                 | 1.29° | Applying →   |
+| Uranus                | opposition ☍     | Pholus                | 4.20° | Applying →   |
 | Uranus                | trine △          | Juno                  | 5.83° | Applying →   |
+| Uranus                | quincunx ⚻       | Sedna                 | 1.59° | Separating ← |
+| Uranus                | quincunx ⚻       | Orcus                 | 1.92° | Applying →   |
 | Uranus                | quincunx ⚻       | Pars Fortunae         | 1.38° | Separating ← |
 | Uranus                | square □         | Pars Fidei            | 3.65° | Separating ← |
 | Uranus                | square □         | Vertex                | 3.38° | Applying →   |
@@ -328,7 +370,7 @@ Einstein Subject — Natal Chart Report
 | Uranus                | trine △          | Interpolated Lilith   | 1.79° | Separating ← |
 | Uranus                | sextile ⚹        | Mean Priapus          | 3.31° | Applying →   |
 | Uranus                | semi-sextile ⚺   | True Priapus          | 0.34° | Applying →   |
-| Uranus                | sextile ⚹        | White Moon            | 3.31° | Applying →   |
+| Uranus                | conjunction ☌    | White Moon            | 2.44° | Applying →   |
 | Uranus                | sextile ⚹        | Zeus                  | 4.73° | Applying →   |
 | Uranus                | quincunx ⚻       | Kronos                | 1.97° | Separating ← |
 | Uranus                | conjunction ☌    | Poseidon              | 3.94° | Separating ← |
@@ -339,7 +381,9 @@ Einstein Subject — Natal Chart Report
 | Neptune               | trine △          | Descendant            | 3.78° | Separating ← |
 | Neptune               | trine △          | Imum Coeli            | 4.97° | Separating ← |
 | Neptune               | square □         | True South Lunar Node | 5.14° | Separating ← |
+| Neptune               | quintile Q       | Pholus                | 1.21° | Separating ← |
 | Neptune               | sextile ⚹        | Vesta                 | 1.89° | Separating ← |
+| Neptune               | sextile ⚹        | Quaoar                | 2.08° | Applying →   |
 | Neptune               | square □         | Pars Amoris           | 2.75° | Separating ← |
 | Neptune               | conjunction ☌    | Interpolated Lilith   | 4.80° | Applying →   |
 | Neptune               | biquintile bQ    | True Priapus          | 0.25° | Separating ← |
@@ -349,13 +393,19 @@ Einstein Subject — Natal Chart Report
 | Pluto                 | semi-square ∠    | Ascendant             | 1.92° | Separating ← |
 | Pluto                 | quintile Q       | Medium Coeli          | 0.11° | Separating ← |
 | Pluto                 | sesquiquadrate ⚼ | Descendant            | 1.92° | Separating ← |
+| Pluto                 | square □         | Pholus                | 2.36° | Separating ← |
 | Pluto                 | semi-square ∠    | Pallas                | 0.31° | Separating ← |
 | Pluto                 | semi-sextile ⚺   | Juno                  | 0.74° | Separating ← |
 | Pluto                 | semi-square ∠    | Vesta                 | 0.03° | Separating ← |
+| Pluto                 | conjunction ☌    | Haumea                | 0.35° | Applying →   |
+| Pluto                 | sextile ⚹        | Ixion                 | 1.41° | Applying →   |
+| Pluto                 | trine △          | Orcus                 | 4.64° | Separating ← |
+| Pluto                 | semi-square ∠    | Quaoar                | 0.23° | Applying →   |
 | Pluto                 | biquintile bQ    | Pars Spiritus         | 1.90° | Applying →   |
 | Pluto                 | quintile Q       | Pars Amoris           | 1.60° | Separating ← |
 | Pluto                 | opposition ☍     | Vertex                | 3.18° | Applying →   |
 | Pluto                 | conjunction ☌    | Anti Vertex           | 3.18° | Applying →   |
+| Pluto                 | square □         | White Moon            | 4.12° | Separating ← |
 | Pluto                 | semi-sextile ⚺   | Zeus                  | 1.83° | Applying →   |
 | Mean North Lunar Node | conjunction ☌    | True North Lunar Node | 1.25° | Separating ← |
 | Mean North Lunar Node | square □         | Chiron                | 4.06° | Separating ← |
@@ -363,6 +413,11 @@ Einstein Subject — Natal Chart Report
 | Mean North Lunar Node | opposition ☍     | True South Lunar Node | 1.25° | Separating ← |
 | Mean North Lunar Node | sextile ⚹        | True Lilith           | 0.14° | Applying →   |
 | Mean North Lunar Node | sextile ⚹        | Earth                 | 1.48° | Applying →   |
+| Mean North Lunar Node | semi-square ∠    | Eris                  | 1.63° | Applying →   |
+| Mean North Lunar Node | sextile ⚹        | Sedna                 | 1.40° | Separating ← |
+| Mean North Lunar Node | quintile Q       | Makemake              | 0.35° | Separating ← |
+| Mean North Lunar Node | opposition ☍     | Ixion                 | 5.35° | Applying →   |
+| Mean North Lunar Node | conjunction ☌    | Orcus                 | 2.12° | Applying →   |
 | Mean North Lunar Node | sextile ⚹        | Pars Fortunae         | 1.19° | Separating ← |
 | Mean North Lunar Node | opposition ☍     | Pars Amoris           | 3.64° | Separating ← |
 | Mean North Lunar Node | trine △          | Pars Fidei            | 3.46° | Separating ← |
@@ -371,7 +426,6 @@ Einstein Subject — Natal Chart Report
 | Mean North Lunar Node | square □         | Interpolated Lilith   | 1.60° | Separating ← |
 | Mean North Lunar Node | square □         | Mean Priapus          | 3.50° | Applying →   |
 | Mean North Lunar Node | trine △          | True Priapus          | 0.14° | Applying →   |
-| Mean North Lunar Node | square □         | White Moon            | 3.50° | Applying →   |
 | Mean North Lunar Node | sesquiquadrate ⚼ | Cupido                | 1.28° | Applying →   |
 | Mean North Lunar Node | biquintile bQ    | Zeus                  | 1.07° | Separating ← |
 | Mean North Lunar Node | sextile ⚹        | Kronos                | 1.78° | Separating ← |
@@ -381,6 +435,9 @@ Einstein Subject — Natal Chart Report
 | True North Lunar Node | opposition ☍     | Mean South Lunar Node | 1.25° | Separating ← |
 | True North Lunar Node | sextile ⚹        | True Lilith           | 1.11° | Separating ← |
 | True North Lunar Node | sextile ⚹        | Earth                 | 2.73° | Applying →   |
+| True North Lunar Node | sextile ⚹        | Sedna                 | 0.15° | Separating ← |
+| True North Lunar Node | quintile Q       | Makemake              | 0.90° | Applying →   |
+| True North Lunar Node | conjunction ☌    | Orcus                 | 3.37° | Applying →   |
 | True North Lunar Node | sextile ⚹        | Pars Fortunae         | 0.07° | Applying →   |
 | True North Lunar Node | opposition ☍     | Pars Amoris           | 2.39° | Separating ← |
 | True North Lunar Node | trine △          | Pars Fidei            | 2.21° | Separating ← |
@@ -389,13 +446,13 @@ Einstein Subject — Natal Chart Report
 | True North Lunar Node | square □         | Interpolated Lilith   | 0.34° | Separating ← |
 | True North Lunar Node | square □         | Mean Priapus          | 4.75° | Applying →   |
 | True North Lunar Node | trine △          | True Priapus          | 1.11° | Separating ← |
-| True North Lunar Node | square □         | White Moon            | 4.75° | Applying →   |
 | True North Lunar Node | biquintile bQ    | Zeus                  | 0.18° | Applying →   |
 | True North Lunar Node | sextile ⚹        | Kronos                | 0.53° | Separating ← |
 | True North Lunar Node | opposition ☍     | Apollon               | 1.72° | Separating ← |
 | Chiron                | square □         | Mean South Lunar Node | 4.06° | Separating ← |
 | Chiron                | square □         | True South Lunar Node | 2.81° | Separating ← |
 | Chiron                | sextile ⚹        | Vesta                 | 4.21° | Separating ← |
+| Chiron                | sextile ⚹        | Quaoar                | 4.41° | Applying →   |
 | Chiron                | square □         | Pars Amoris           | 0.42° | Separating ← |
 | Chiron                | semi-sextile ⚺   | Pars Fidei            | 0.60° | Separating ← |
 | Chiron                | conjunction ☌    | Interpolated Lilith   | 2.47° | Applying →   |
@@ -405,8 +462,12 @@ Einstein Subject — Natal Chart Report
 | Ascendant             | trine △          | Medium Coeli          | 1.19° | Static =     |
 | Ascendant             | sextile ⚹        | Imum Coeli            | 1.19° | Static =     |
 | Ascendant             | quintile Q       | Mean Lilith           | 1.67° | Separating ← |
+| Ascendant             | sesquiquadrate ⚼ | Pholus                | 0.44° | Applying →   |
 | Ascendant             | square □         | Pallas                | 1.61° | Separating ← |
 | Ascendant             | conjunction ☌    | Vesta                 | 1.89° | Separating ← |
+| Ascendant             | trine △          | Eris                  | 3.20° | Applying →   |
+| Ascendant             | square □         | Makemake              | 2.18° | Applying →   |
+| Ascendant             | conjunction ☌    | Quaoar                | 1.69° | Separating ← |
 | Ascendant             | sesquiquadrate ⚼ | Vertex                | 1.26° | Applying →   |
 | Ascendant             | semi-square ∠    | Anti Vertex           | 1.26° | Applying →   |
 | Ascendant             | square □         | Interpolated Perigee  | 0.12° | Separating ← |
@@ -417,48 +478,69 @@ Einstein Subject — Natal Chart Report
 | Medium Coeli          | semi-square ∠    | Mean Lilith           | 0.14° | Separating ← |
 | Medium Coeli          | sextile ⚹        | Ceres                 | 4.49° | Applying →   |
 | Medium Coeli          | trine △          | Vesta                 | 3.08° | Separating ← |
+| Medium Coeli          | conjunction ☌    | Eris                  | 2.01° | Applying →   |
+| Medium Coeli          | quintile Q       | Haumea                | 0.47° | Separating ← |
+| Medium Coeli          | semi-sextile ⚺   | Makemake              | 0.99° | Applying →   |
+| Medium Coeli          | sesquiquadrate ⚼ | Ixion                 | 1.71° | Separating ← |
+| Medium Coeli          | semi-square ∠    | Orcus                 | 1.53° | Applying →   |
+| Medium Coeli          | trine △          | Quaoar                | 2.88° | Separating ← |
 | Medium Coeli          | biquintile bQ    | Pars Spiritus         | 1.79° | Applying →   |
 | Medium Coeli          | biquintile bQ    | Pars Amoris           | 1.72° | Separating ← |
 | Medium Coeli          | sesquiquadrate ⚼ | Mean Priapus          | 0.14° | Separating ← |
 | Medium Coeli          | quincunx ⚻       | Interpolated Perigee  | 1.08° | Separating ← |
-| Medium Coeli          | sesquiquadrate ⚼ | White Moon            | 0.14° | Separating ← |
 | Medium Coeli          | square □         | Cupido                | 2.36° | Applying →   |
 | Medium Coeli          | conjunction ☌    | Admetos               | 3.46° | Separating ← |
 | Medium Coeli          | sextile ⚹        | Vulkanus              | 1.17° | Applying →   |
 | Descendant            | trine △          | Imum Coeli            | 1.19° | Static =     |
+| Descendant            | semi-square ∠    | Pholus                | 0.44° | Applying →   |
 | Descendant            | trine △          | Ceres                 | 5.68° | Applying →   |
 | Descendant            | square □         | Pallas                | 1.61° | Separating ← |
 | Descendant            | opposition ☍     | Vesta                 | 1.89° | Separating ← |
+| Descendant            | sextile ⚹        | Eris                  | 3.20° | Applying →   |
+| Descendant            | square □         | Makemake              | 2.18° | Applying →   |
+| Descendant            | opposition ☍     | Quaoar                | 1.69° | Separating ← |
 | Descendant            | biquintile bQ    | Pars Fidei            | 0.71° | Separating ← |
 | Descendant            | semi-square ∠    | Vertex                | 1.26° | Applying →   |
 | Descendant            | sesquiquadrate ⚼ | Anti Vertex           | 1.26° | Applying →   |
 | Descendant            | quintile Q       | Mean Priapus          | 1.67° | Separating ← |
 | Descendant            | square □         | Interpolated Perigee  | 0.12° | Separating ← |
-| Descendant            | quintile Q       | White Moon            | 1.67° | Separating ← |
 | Descendant            | sextile ⚹        | Admetos               | 2.27° | Separating ← |
 | Descendant            | trine △          | Vulkanus              | 2.36° | Applying →   |
 | Imum Coeli            | sesquiquadrate ⚼ | Mean Lilith           | 0.14° | Separating ← |
 | Imum Coeli            | trine △          | Ceres                 | 4.49° | Applying →   |
 | Imum Coeli            | sextile ⚹        | Vesta                 | 3.08° | Separating ← |
+| Imum Coeli            | opposition ☍     | Eris                  | 2.01° | Applying →   |
+| Imum Coeli            | quincunx ⚻       | Makemake              | 0.99° | Applying →   |
+| Imum Coeli            | semi-square ∠    | Ixion                 | 1.71° | Separating ← |
+| Imum Coeli            | sesquiquadrate ⚼ | Orcus                 | 1.53° | Applying →   |
+| Imum Coeli            | sextile ⚹        | Quaoar                | 2.88° | Separating ← |
 | Imum Coeli            | semi-square ∠    | Mean Priapus          | 0.14° | Separating ← |
 | Imum Coeli            | semi-sextile ⚺   | Interpolated Perigee  | 1.08° | Separating ← |
-| Imum Coeli            | semi-square ∠    | White Moon            | 0.14° | Separating ← |
 | Imum Coeli            | square □         | Cupido                | 2.36° | Applying →   |
 | Imum Coeli            | opposition ☍     | Admetos               | 3.46° | Separating ← |
 | Imum Coeli            | trine △          | Vulkanus              | 1.17° | Applying →   |
 | Mean Lilith           | square □         | Mean South Lunar Node | 3.50° | Applying →   |
 | Mean Lilith           | square □         | True South Lunar Node | 4.75° | Applying →   |
+| Mean Lilith           | sextile ⚹        | Pholus                | 0.89° | Separating ← |
 | Mean Lilith           | conjunction ☌    | Juno                  | 2.51° | Applying →   |
 | Mean Lilith           | quintile Q       | Vesta                 | 0.22° | Applying →   |
+| Mean Lilith           | semi-square ∠    | Eris                  | 1.88° | Applying →   |
+| Mean Lilith           | square □         | Ixion                 | 1.84° | Separating ← |
+| Mean Lilith           | square □         | Orcus                 | 1.39° | Applying →   |
+| Mean Lilith           | quintile Q       | Quaoar                | 0.02° | Separating ← |
 | Mean Lilith           | quincunx ⚻       | Vertex                | 0.07° | Separating ← |
 | Mean Lilith           | semi-sextile ⚺   | Anti Vertex           | 0.07° | Separating ← |
 | Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 5.10° | Applying →   |
-| Mean Lilith           | opposition ☍     | White Moon            | 0.00° | Static =     |
+| Mean Lilith           | trine △          | White Moon            | 0.87° | Separating ← |
 | Mean Lilith           | quintile Q       | Hades                 | 0.85° | Applying →   |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 1.42° | Separating ← |
 | Mean South Lunar Node | conjunction ☌    | True South Lunar Node | 1.25° | Separating ← |
 | Mean South Lunar Node | trine △          | True Lilith           | 0.14° | Applying →   |
 | Mean South Lunar Node | trine △          | Earth                 | 1.48° | Applying →   |
+| Mean South Lunar Node | sesquiquadrate ⚼ | Eris                  | 1.63° | Applying →   |
+| Mean South Lunar Node | trine △          | Sedna                 | 1.40° | Separating ← |
+| Mean South Lunar Node | conjunction ☌    | Ixion                 | 5.35° | Applying →   |
+| Mean South Lunar Node | opposition ☍     | Orcus                 | 2.12° | Applying →   |
 | Mean South Lunar Node | trine △          | Pars Fortunae         | 1.19° | Separating ← |
 | Mean South Lunar Node | conjunction ☌    | Pars Amoris           | 3.64° | Separating ← |
 | Mean South Lunar Node | sextile ⚹        | Pars Fidei            | 3.46° | Separating ← |
@@ -468,13 +550,14 @@ Einstein Subject — Natal Chart Report
 | Mean South Lunar Node | square □         | Mean Priapus          | 3.50° | Applying →   |
 | Mean South Lunar Node | sextile ⚹        | True Priapus          | 0.14° | Applying →   |
 | Mean South Lunar Node | quintile Q       | Interpolated Perigee  | 1.72° | Applying →   |
-| Mean South Lunar Node | square □         | White Moon            | 3.50° | Applying →   |
 | Mean South Lunar Node | semi-square ∠    | Cupido                | 1.28° | Applying →   |
 | Mean South Lunar Node | trine △          | Kronos                | 1.78° | Separating ← |
 | Mean South Lunar Node | conjunction ☌    | Apollon               | 2.97° | Separating ← |
 | Mean South Lunar Node | biquintile bQ    | Admetos               | 1.90° | Separating ← |
 | True South Lunar Node | trine △          | True Lilith           | 1.11° | Separating ← |
 | True South Lunar Node | trine △          | Earth                 | 2.73° | Applying →   |
+| True South Lunar Node | trine △          | Sedna                 | 0.15° | Separating ← |
+| True South Lunar Node | opposition ☍     | Orcus                 | 3.37° | Applying →   |
 | True South Lunar Node | trine △          | Pars Fortunae         | 0.07° | Applying →   |
 | True South Lunar Node | conjunction ☌    | Pars Amoris           | 2.39° | Separating ← |
 | True South Lunar Node | sextile ⚹        | Pars Fidei            | 2.21° | Separating ← |
@@ -483,12 +566,14 @@ Einstein Subject — Natal Chart Report
 | True South Lunar Node | square □         | Interpolated Lilith   | 0.34° | Separating ← |
 | True South Lunar Node | square □         | Mean Priapus          | 4.75° | Applying →   |
 | True South Lunar Node | sextile ⚹        | True Priapus          | 1.11° | Separating ← |
-| True South Lunar Node | square □         | White Moon            | 4.75° | Applying →   |
 | True South Lunar Node | trine △          | Kronos                | 0.53° | Separating ← |
 | True South Lunar Node | conjunction ☌    | Apollon               | 1.72° | Separating ← |
 | True South Lunar Node | biquintile bQ    | Admetos               | 0.65° | Separating ← |
 | True Lilith           | conjunction ☌    | Earth                 | 1.62° | Applying →   |
 | True Lilith           | semi-square ∠    | Ceres                 | 0.71° | Separating ← |
+| True Lilith           | conjunction ☌    | Sedna                 | 1.25° | Separating ← |
+| True Lilith           | trine △          | Ixion                 | 5.49° | Applying →   |
+| True Lilith           | sextile ⚹        | Orcus                 | 2.26° | Applying →   |
 | True Lilith           | conjunction ☌    | Pars Fortunae         | 1.04° | Separating ← |
 | True Lilith           | trine △          | Pars Amoris           | 3.50° | Separating ← |
 | True Lilith           | sextile ⚹        | Pars Fidei            | 3.32° | Separating ← |
@@ -500,17 +585,34 @@ Einstein Subject — Natal Chart Report
 | True Lilith           | square □         | Zeus                  | 5.07° | Applying →   |
 | True Lilith           | conjunction ☌    | Kronos                | 1.64° | Separating ← |
 | True Lilith           | trine △          | Apollon               | 2.82° | Separating ← |
+| Earth                 | conjunction ☌    | Sedna                 | 2.88° | Separating ← |
+| Earth                 | trine △          | Ixion                 | 3.87° | Separating ← |
+| Earth                 | sextile ⚹        | Orcus                 | 0.63° | Applying →   |
 | Earth                 | conjunction ☌    | Pars Fortunae         | 2.67° | Static =     |
 | Earth                 | trine △          | Pars Amoris           | 5.12° | Static =     |
 | Earth                 | sextile ⚹        | Pars Fidei            | 4.94° | Static =     |
 | Earth                 | trine △          | Vertex                | 2.09° | Static =     |
 | Earth                 | sextile ⚹        | Anti Vertex           | 2.09° | Static =     |
 | Earth                 | opposition ☍     | True Priapus          | 1.62° | Applying →   |
+| Earth                 | quincunx ⚻       | White Moon            | 1.15° | Applying →   |
 | Earth                 | semi-square ∠    | Hades                 | 1.82° | Separating ← |
 | Earth                 | square □         | Zeus                  | 3.44° | Static =     |
 | Earth                 | conjunction ☌    | Kronos                | 3.26° | Separating ← |
 | Earth                 | trine △          | Apollon               | 4.45° | Applying →   |
 | Earth                 | semi-square ∠    | Vulkanus              | 0.99° | Applying →   |
+| Pholus                | sextile ⚹        | Juno                  | 1.62° | Applying →   |
+| Pholus                | square □         | Haumea                | 2.71° | Separating ← |
+| Pholus                | semi-square ∠    | Makemake              | 1.75° | Applying →   |
+| Pholus                | quincunx ⚻       | Ixion                 | 0.95° | Separating ← |
+| Pholus                | square □         | Vertex                | 0.82° | Applying →   |
+| Pholus                | square □         | Anti Vertex           | 0.82° | Applying →   |
+| Pholus                | trine △          | Mean Priapus          | 0.89° | Separating ← |
+| Pholus                | biquintile bQ    | True Priapus          | 1.46° | Separating ← |
+| Pholus                | sesquiquadrate ⚼ | Interpolated Perigee  | 0.32° | Applying →   |
+| Pholus                | opposition ☍     | White Moon            | 1.76° | Separating ← |
+| Pholus                | trine △          | Zeus                  | 0.53° | Separating ← |
+| Ceres                 | sextile ⚹        | Eris                  | 2.48° | Separating ← |
+| Ceres                 | semi-square ∠    | Sedna                 | 0.55° | Applying →   |
 | Ceres                 | semi-square ∠    | Pars Fortunae         | 0.33° | Applying →   |
 | Ceres                 | sesquiquadrate ⚼ | True Priapus          | 0.71° | Separating ← |
 | Ceres                 | biquintile bQ    | Interpolated Perigee  | 0.43° | Separating ← |
@@ -518,21 +620,98 @@ Einstein Subject — Natal Chart Report
 | Ceres                 | semi-square ∠    | Kronos                | 0.93° | Applying →   |
 | Ceres                 | conjunction ☌    | Vulkanus              | 3.32° | Separating ← |
 | Pallas                | square □         | Vesta                 | 0.28° | Separating ← |
+| Pallas                | semi-square ∠    | Haumea                | 0.67° | Separating ← |
+| Pallas                | conjunction ☌    | Makemake              | 3.79° | Applying →   |
+| Pallas                | quintile Q       | Orcus                 | 1.33° | Applying →   |
+| Pallas                | square □         | Quaoar                | 0.08° | Separating ← |
 | Pallas                | trine △          | Pars Amoris           | 4.91° | Separating ← |
 | Pallas                | opposition ☍     | Interpolated Perigee  | 1.73° | Separating ← |
 | Pallas                | trine △          | Apollon               | 5.59° | Separating ← |
 | Pallas                | semi-sextile ⚺   | Admetos               | 0.66° | Separating ← |
 | Pallas                | biquintile bQ    | Poseidon              | 1.19° | Applying →   |
+| Juno                  | semi-sextile ⚺   | Haumea                | 1.09° | Separating ← |
+| Juno                  | square □         | Ixion                 | 0.67° | Applying →   |
+| Juno                  | square □         | Orcus                 | 3.90° | Applying →   |
 | Juno                  | opposition ☍     | Pars Spiritus         | 4.83° | Separating ← |
 | Juno                  | opposition ☍     | Mean Priapus          | 2.51° | Applying →   |
-| Juno                  | opposition ☍     | White Moon            | 2.51° | Applying →   |
+| Juno                  | trine △          | White Moon            | 3.39° | Applying →   |
 | Juno                  | sextile ⚹        | Zeus                  | 1.09° | Applying →   |
 | Juno                  | semi-square ∠    | Admetos               | 1.08° | Separating ← |
+| Vesta                 | trine △          | Eris                  | 5.09° | Applying →   |
+| Vesta                 | semi-square ∠    | Haumea                | 0.39° | Separating ← |
+| Vesta                 | square □         | Makemake              | 4.07° | Applying →   |
+| Vesta                 | conjunction ☌    | Quaoar                | 0.20° | Applying →   |
 | Vesta                 | square □         | Interpolated Perigee  | 2.01° | Separating ← |
 | Vesta                 | biquintile bQ    | Hades                 | 1.07° | Applying →   |
 | Vesta                 | trine △          | Admetos               | 0.38° | Separating ← |
 | Vesta                 | sextile ⚹        | Vulkanus              | 4.25° | Applying →   |
 | Vesta                 | sextile ⚹        | Poseidon              | 4.53° | Separating ← |
+| Eris                  | semi-sextile ⚺   | Makemake              | 1.02° | Applying →   |
+| Eris                  | semi-square ∠    | Orcus                 | 0.49° | Applying →   |
+| Eris                  | trine △          | Quaoar                | 4.90° | Separating ← |
+| Eris                  | biquintile bQ    | Pars Spiritus         | 0.22° | Separating ← |
+| Eris                  | quintile Q       | Anti Vertex           | 1.05° | Applying →   |
+| Eris                  | sesquiquadrate ⚼ | Mean Priapus          | 1.88° | Applying →   |
+| Eris                  | square □         | Cupido                | 0.34° | Applying →   |
+| Eris                  | semi-sextile ⚺   | Hades                 | 1.97° | Separating ← |
+| Eris                  | conjunction ☌    | Admetos               | 5.47° | Static =     |
+| Eris                  | sextile ⚹        | Vulkanus              | 0.84° | Separating ← |
+| Sedna                 | sextile ⚹        | Orcus                 | 3.51° | Applying →   |
+| Sedna                 | conjunction ☌    | Pars Fortunae         | 0.21° | Separating ← |
+| Sedna                 | trine △          | Pars Amoris           | 2.25° | Applying →   |
+| Sedna                 | sextile ⚹        | Pars Fidei            | 2.06° | Applying →   |
+| Sedna                 | trine △          | Vertex                | 4.97° | Separating ← |
+| Sedna                 | sextile ⚹        | Anti Vertex           | 4.97° | Separating ← |
+| Sedna                 | semi-sextile ⚺   | Interpolated Lilith   | 0.20° | Separating ← |
+| Sedna                 | opposition ☍     | True Priapus          | 1.25° | Separating ← |
+| Sedna                 | biquintile bQ    | White Moon            | 1.97° | Separating ← |
+| Sedna                 | quintile Q       | Cupido                | 0.32° | Static =     |
+| Sedna                 | semi-square ∠    | Hades                 | 1.06° | Applying →   |
+| Sedna                 | conjunction ☌    | Kronos                | 0.38° | Separating ← |
+| Sedna                 | trine △          | Apollon               | 1.57° | Applying →   |
+| Haumea                | sextile ⚹        | Ixion                 | 1.76° | Applying →   |
+| Haumea                | trine △          | Orcus                 | 4.99° | Separating ← |
+| Haumea                | semi-square ∠    | Quaoar                | 0.59° | Applying →   |
+| Haumea                | quintile Q       | Pars Amoris           | 1.25° | Separating ← |
+| Haumea                | opposition ☍     | Vertex                | 3.53° | Applying →   |
+| Haumea                | conjunction ☌    | Anti Vertex           | 3.53° | Applying →   |
+| Haumea                | square □         | White Moon            | 4.48° | Separating ← |
+| Haumea                | quintile Q       | Apollon               | 1.92° | Separating ← |
+| Makemake              | square □         | Quaoar                | 3.87° | Separating ← |
+| Makemake              | sesquiquadrate ⚼ | Vertex                | 0.93° | Separating ← |
+| Makemake              | semi-square ∠    | Anti Vertex           | 0.93° | Separating ← |
+| Makemake              | opposition ☍     | Interpolated Perigee  | 2.07° | Applying →   |
+| Makemake              | sesquiquadrate ⚼ | White Moon            | 0.02° | Separating ← |
+| Makemake              | sextile ⚹        | Cupido                | 1.37° | Applying →   |
+| Makemake              | sextile ⚹        | Hades                 | 2.99° | Applying →   |
+| Makemake              | quintile Q       | Zeus                  | 0.72° | Applying →   |
+| Makemake              | semi-sextile ⚺   | Vulkanus              | 0.18° | Applying →   |
+| Ixion                 | opposition ☍     | Orcus                 | 3.23° | Separating ← |
+| Ixion                 | square □         | Pars Spiritus         | 5.50° | Applying →   |
+| Ixion                 | trine △          | Vertex                | 1.77° | Separating ← |
+| Ixion                 | sextile ⚹        | Anti Vertex           | 1.77° | Separating ← |
+| Ixion                 | square □         | Mean Priapus          | 1.84° | Separating ← |
+| Ixion                 | semi-sextile ⚺   | Zeus                  | 0.42° | Separating ← |
+| Ixion                 | sesquiquadrate ⚼ | Admetos               | 1.75° | Applying →   |
+| Ixion                 | quintile Q       | Vulkanus              | 0.12° | Applying →   |
+| Orcus                 | sextile ⚹        | Pars Fortunae         | 3.30° | Applying →   |
+| Orcus                 | opposition ☍     | Pars Amoris           | 5.76° | Applying →   |
+| Orcus                 | trine △          | Pars Fidei            | 5.58° | Applying →   |
+| Orcus                 | sextile ⚹        | Vertex                | 1.46° | Separating ← |
+| Orcus                 | trine △          | Anti Vertex           | 1.46° | Separating ← |
+| Orcus                 | square □         | Interpolated Lilith   | 3.71° | Separating ← |
+| Orcus                 | square □         | Mean Priapus          | 1.39° | Applying →   |
+| Orcus                 | trine △          | True Priapus          | 2.26° | Applying →   |
+| Orcus                 | quincunx ⚻       | White Moon            | 0.52° | Applying →   |
+| Orcus                 | sesquiquadrate ⚼ | Cupido                | 0.83° | Applying →   |
+| Orcus                 | sextile ⚹        | Kronos                | 3.90° | Applying →   |
+| Orcus                 | opposition ☍     | Apollon               | 5.08° | Applying →   |
+| Orcus                 | biquintile bQ    | Poseidon              | 0.14° | Separating ← |
+| Quaoar                | square □         | Interpolated Perigee  | 1.81° | Separating ← |
+| Quaoar                | biquintile bQ    | Hades                 | 0.87° | Separating ← |
+| Quaoar                | trine △          | Admetos               | 0.57° | Applying →   |
+| Quaoar                | sextile ⚹        | Vulkanus              | 4.06° | Separating ← |
+| Quaoar                | sextile ⚹        | Poseidon              | 4.73° | Separating ← |
 | Pars Fortunae         | trine △          | Pars Amoris           | 2.46° | Static =     |
 | Pars Fortunae         | sextile ⚹        | Pars Fidei            | 2.28° | Static =     |
 | Pars Fortunae         | trine △          | Vertex                | 4.76° | Static =     |
@@ -559,7 +738,6 @@ Einstein Subject — Natal Chart Report
 | Pars Fidei            | semi-sextile ⚺   | Interpolated Lilith   | 1.87° | Applying →   |
 | Pars Fidei            | biquintile bQ    | Mean Priapus          | 0.97° | Applying →   |
 | Pars Fidei            | trine △          | True Priapus          | 3.32° | Separating ← |
-| Pars Fidei            | biquintile bQ    | White Moon            | 0.97° | Applying →   |
 | Pars Fidei            | sextile ⚹        | Kronos                | 1.68° | Applying →   |
 | Pars Fidei            | sextile ⚹        | Apollon               | 0.49° | Separating ← |
 | Pars Fidei            | square □         | Admetos               | 4.44° | Separating ← |
@@ -567,21 +745,21 @@ Einstein Subject — Natal Chart Report
 | Vertex                | semi-sextile ⚺   | Mean Priapus          | 0.07° | Separating ← |
 | Vertex                | sextile ⚹        | True Priapus          | 3.72° | Applying →   |
 | Vertex                | semi-square ∠    | Interpolated Perigee  | 1.14° | Applying →   |
-| Vertex                | semi-sextile ⚺   | White Moon            | 0.07° | Separating ← |
+| Vertex                | square □         | White Moon            | 0.94° | Separating ← |
 | Vertex                | quincunx ⚻       | Zeus                  | 1.35° | Static =     |
 | Vertex                | trine △          | Kronos                | 5.35° | Separating ← |
 | Anti Vertex           | quincunx ⚻       | Mean Priapus          | 0.07° | Separating ← |
 | Anti Vertex           | trine △          | True Priapus          | 3.72° | Applying →   |
 | Anti Vertex           | sesquiquadrate ⚼ | Interpolated Perigee  | 1.14° | Applying →   |
-| Anti Vertex           | quincunx ⚻       | White Moon            | 0.07° | Separating ← |
+| Anti Vertex           | square □         | White Moon            | 0.94° | Separating ← |
 | Anti Vertex           | semi-sextile ⚺   | Zeus                  | 1.35° | Static =     |
 | Interpolated Lilith   | opposition ☍     | Mean Priapus          | 5.10° | Applying →   |
 | Interpolated Lilith   | quincunx ⚻       | True Priapus          | 1.45° | Separating ← |
-| Interpolated Lilith   | opposition ☍     | White Moon            | 5.10° | Applying →   |
+| Interpolated Lilith   | trine △          | White Moon            | 4.23° | Applying →   |
 | Interpolated Lilith   | semi-sextile ⚺   | Kronos                | 0.18° | Applying →   |
 | Interpolated Lilith   | square □         | Apollon               | 1.37° | Applying →   |
 | Interpolated Lilith   | trine △          | Poseidon              | 2.15° | Applying →   |
-| Mean Priapus          | conjunction ☌    | White Moon            | 0.00° | Static =     |
+| Mean Priapus          | sextile ⚹        | White Moon            | 0.87° | Separating ← |
 | Mean Priapus          | trine △          | Zeus                  | 1.42° | Separating ← |
 | True Priapus          | sesquiquadrate ⚼ | Hades                 | 0.20° | Separating ← |
 | True Priapus          | square □         | Zeus                  | 5.07° | Applying →   |
@@ -589,7 +767,9 @@ Einstein Subject — Natal Chart Report
 | True Priapus          | sextile ⚹        | Apollon               | 2.82° | Separating ← |
 | Interpolated Perigee  | trine △          | Cupido                | 3.43° | Applying →   |
 | Interpolated Perigee  | trine △          | Hades                 | 5.06° | Applying →   |
-| White Moon            | trine △          | Zeus                  | 1.42° | Separating ← |
+| White Moon            | quintile Q       | Cupido                | 1.65° | Separating ← |
+| White Moon            | sextile ⚹        | Zeus                  | 2.29° | Separating ← |
+| White Moon            | biquintile bQ    | Kronos                | 1.59° | Separating ← |
 | Cupido                | trine △          | Hades                 | 1.63° | Separating ← |
 | Cupido                | quintile Q       | Kronos                | 0.06° | Separating ← |
 | Cupido                | square □         | Admetos               | 5.81° | Applying →   |
