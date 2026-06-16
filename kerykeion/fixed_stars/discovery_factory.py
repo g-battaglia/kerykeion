@@ -152,7 +152,7 @@ class FixedStarDiscoveryFactory:
         jd = subject.julian_day
 
         prominent: list[KerykeionPointModel] = []
-        seen_positions: set[float] = set()
+        seen_names: set[str] = set()
         with ephemeris_session(
             zodiac_type=getattr(subject, "zodiac_type", None),
             sidereal_mode=getattr(subject, "sidereal_mode", None),
@@ -161,6 +161,17 @@ class FixedStarDiscoveryFactory:
         ) as scan_iflag:
             for entry in catalog:
                 star_name = entry.name
+                # Each catalog entry is a physically distinct star (unique by
+                # name/hip_number), so we dedupe by identity only — guarding
+                # against duplicate catalog entries, NOT by position. Two
+                # different stars sharing a rounded ecliptic longitude (e.g.
+                # Beta Scuti and Nunki, ~0.005° apart) must both be reported;
+                # a position-based dedupe would silently drop the second one,
+                # which after libephemeris 3.0's 1447-star catalog suppressed
+                # bright/important stars in favour of fainter catalog neighbours.
+                if star_name in seen_names:
+                    continue
+                seen_names.add(star_name)
                 try:
                     pos_ecl = ephe.fixstar_ut(star_name, jd, scan_iflag)[0]
                     star_deg = pos_ecl[0]
@@ -168,11 +179,6 @@ class FixedStarDiscoveryFactory:
                     nearest = _nearest_conjunction(star_deg, planet_positions, orb)
                     if nearest is None:
                         continue
-
-                    rounded_pos = round(star_deg, 2)
-                    if rounded_pos in seen_positions:
-                        continue
-                    seen_positions.add(rounded_pos)
 
                     # Declination is zodiac-independent; drop FLG_SIDEREAL so the
                     # equatorial fetch is identical for tropical and sidereal charts.

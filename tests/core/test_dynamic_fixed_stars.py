@@ -225,6 +225,19 @@ class TestFixedStarDiscovery:
         assert len(mags) >= 2, "A 3-degree orb should discover at least 2 stars with magnitude data"
         assert mags == sorted(mags), "Stars should be sorted by magnitude (brightest first)"
 
+    def test_close_longitude_stars_not_position_deduplicated(self, subject_default_stars):
+        """Regression (a57): physically distinct stars sharing a rounded ecliptic
+        longitude must both be discovered. The old ``round(deg, 2)`` position dedupe
+        dropped the second star in catalog order regardless of magnitude, so after
+        libephemeris 3.0's 1447-star catalog bright stars were suppressed by fainter
+        neighbours — e.g. Nunki (sigma Sgr, mag 2.02) lost to Beta Scuti (mag 4.22),
+        both rounding to 282.26 deg. Nunki sits at orb ~1.46 here and must appear."""
+        names = {
+            s.name
+            for s in FixedStarDiscoveryFactory.find_prominent_stars(subject_default_stars, orb=2.0)
+        }
+        assert "Nunki" in names, f"Nunki should be discovered within orb 2.0; got {sorted(names)}"
+
 
 class TestFixedStarSiderealFrameConsistency:
     """v6 pre-beta fix: star discovery must run in the subject's zodiac frame.

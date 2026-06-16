@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+## 6.0.0a57
+
+_2026-06-16_
+
+### Fixed
+
+- **Fixed-star discovery no longer drops bright stars to a position collision** —
+  `FixedStarDiscoveryFactory.find_prominent_stars` deduplicated candidates by
+  ecliptic longitude rounded to two decimals (`round(deg, 2)`). With the small
+  curated catalog this was harmless, but libephemeris 3's 1447-star catalog packs
+  many physically distinct stars within 0.01° of longitude, so the second star in
+  catalog order was silently discarded — and catalog order is not magnitude order.
+  This suppressed astrologically relevant bright stars in favour of faint
+  neighbours (e.g. Nunki, σ Sgr mag 2.02, lost to Beta Scuti mag 4.22, both at
+  282.26°). Deduplication is now by star identity (`entry.name`) instead of
+  position, so every distinct star within orb is reported. Discovery results grow
+  accordingly (more conjunct stars returned for a given orb).
+
 ## 6.0.0a56
 
 _2026-06-16_
