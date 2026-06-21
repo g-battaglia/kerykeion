@@ -2359,14 +2359,6 @@ class AstrologicalSubjectFactory:
                     center_body_id=center_body_id,
                 )
 
-                # Special handling for lunar nodes: ensure declination is set
-                if planet_name in ("Mean_North_Lunar_Node", "True_North_Lunar_Node"):
-                    node_key = planet_name.lower()
-                    if node_key in data:
-                        # Calculate declination using equatorial coordinates
-                        node_eq = ephe.calc_ut(julian_day, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
-                        data[node_key].declination = node_eq[1]
-
         # =============================================================================
         # TRANS-NEPTUNIAN OBJECTS (using centralized mapping)
         # =============================================================================

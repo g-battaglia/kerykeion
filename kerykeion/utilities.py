@@ -299,11 +299,20 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
     Raises:
         ValueError: If the planet's position doesn't fall within any house range
     """
+    # Span-agnostic arc containment: identical to is_point_between for spans <= 180°,
+    # but also handles non-quadrant systems (e.g. 'H' Horizon) whose cusps can span
+    # more than 180°, which is_point_between rejects. is_point_between's public
+    # contract is left untouched (it is only used here).
+    target = planet_degree % 360
     for i in range(len(_HOUSE_NAMES_TUPLE)):
-        start_degree = houses_degree_ut_list[i]
-        end_degree = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
-
-        if is_point_between(start_degree, end_degree, planet_degree):
+        start = houses_degree_ut_list[i] % 360
+        end = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)] % 360
+        span = (end - start) % 360
+        if math.isclose(target, start, rel_tol=1e-9, abs_tol=1e-12):
+            return _HOUSE_NAMES_TUPLE[i]
+        if math.isclose(target, end, rel_tol=1e-9, abs_tol=1e-12):
+            continue
+        if (target - start) % 360 < span:
             return _HOUSE_NAMES_TUPLE[i]
 
     raise ValueError(f"Error in house calculation, planet: {planet_degree}, houses: {houses_degree_ut_list}")

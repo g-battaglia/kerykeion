@@ -209,7 +209,7 @@ def main() -> None:
 
     result = download_swisseph_data(args.target, skip_asteroids=args.skip_asteroids)
 
-    downloaded = len(result["main"]) + len(result["asteroids"])
+    downloaded = len(result["main"])  # result["asteroids"] is never populated with downloads
     existing = len(result["existing"])
     failed = len(result["failed"])
 

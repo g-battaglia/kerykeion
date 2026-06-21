@@ -68,7 +68,10 @@ class HouseComparisonFactory:
         """
         self.first_subject = first_subject
         self.second_subject = second_subject
-        self.active_points = active_points
+        # Copy-on-store: active_points defaults to the shared module-level
+        # DEFAULT_ACTIVE_POINTS list; copy it so an instance can never mutate the
+        # shared default (matches the convention in AstrologicalSubjectFactory).
+        self.active_points = list(active_points)
 
     def get_house_comparison(self) -> "HouseComparisonModel":
         """
