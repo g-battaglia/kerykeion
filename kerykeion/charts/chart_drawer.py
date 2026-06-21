@@ -3635,7 +3635,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self.first_obj.zodiac_type == "Tropical":
             return f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
         else:
-            mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
+            mode_const = "SIDM_" + (self.first_obj.sidereal_mode or "FAGAN_BRADLEY")  # type: ignore
             mode_name = ephe.get_ayanamsa_name(getattr(ephe, mode_const))
             return f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
