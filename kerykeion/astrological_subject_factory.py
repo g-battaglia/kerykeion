@@ -2531,34 +2531,20 @@ class AstrologicalSubjectFactory:
                 active_points,
                 center_body_id=center_body_id,
             )
-            # Fallback: if backend doesn't support ID 56, derive from Mean Lilith + 180
+            # If the backend does not natively support White Moon / Selena (body ID
+            # 56), do NOT fabricate a value: Mean Lilith + 180° is the Priapus point
+            # (the lunar-apogee antipode), NOT Selena, so emitting it would be an
+            # astronomically incorrect value silently mislabelled as White_Moon.
+            # _calculate_single_planet already drops the point from active_points when
+            # the native calc fails; just ensure it is removed and warn.
             if "white_moon" not in data:
-                # Compute Mean Lilith locally (body ID 12) without storing it in data,
-                # to avoid leaking an unrequested point into the public model.
-                try:
-                    ml_calc = ephe.calc_ut(julian_day, 12, iflag)[0]
-                    ml_eq = ephe.calc_ut(julian_day, 12, iflag | ephe.FLG_EQUATORIAL)[0]
-                    wm_deg = math.fmod(ml_calc[0] + 180, 360)
-                    data["white_moon"] = get_kerykeion_point_from_degree(
-                        wm_deg,
-                        "White_Moon",
-                        point_type=point_type,
-                        speed=ml_calc[3],
-                        declination=-ml_eq[1],
-                    )
-                    data["white_moon"].house = get_planet_house(wm_deg, houses_degree_ut)
-                    data["white_moon"].retrograde = ml_calc[3] < 0
-                    calculated_planets.append("White_Moon")
-                    # Re-add to active_points if it was removed by _calculate_single_planet
-                    # (also when the removal emptied the list — the fallback succeeded).
-                    if "White_Moon" not in active_points:
-                        active_points.append("White_Moon")
-                except Exception:
-                    logging.warning(
-                        "Could not calculate White_Moon: no backend support and Mean_Lilith computation failed"
-                    )
-                    if "White_Moon" in active_points:
-                        active_points.remove("White_Moon")
+                logging.warning(
+                    "White_Moon/Selena (body ID 56) is not supported by this ephemeris "
+                    "backend; skipping it instead of substituting an incorrect value "
+                    "(Mean Lilith + 180° is Priapus, not Selena)."
+                )
+                if "White_Moon" in active_points:
+                    active_points.remove("White_Moon")
 
         # =============================================================================
         # OPPOSITE / DERIVED POINTS (declarative, via OPPOSITE_PAIRS)
