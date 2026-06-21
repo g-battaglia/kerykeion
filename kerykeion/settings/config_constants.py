@@ -165,7 +165,7 @@ HOUSE_SYSTEM_CAMPANUS: str = "C"
 HOUSE_SYSTEM_REGIOMONTANUS: str = "R"
 """Regiomontanus house system."""
 
-HOUSE_SYSTEM_EQUAL: str = "E"
+HOUSE_SYSTEM_EQUAL: str = "A"
 """Equal house system (from Ascendant)."""
 
 HOUSE_SYSTEM_MORINUS: str = "M"

@@ -712,7 +712,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
     # Common configuration
     zodiac_type: ZodiacType
-    sidereal_mode: Optional[SiderealMode]
+    sidereal_mode: Optional[SiderealMode] = None
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
     perspective_type: PerspectiveType
@@ -1193,8 +1193,8 @@ class TransitsTimeRangeModel(SubscriptableBaseModel):
     """
 
     transits: list[TransitMomentModel] = Field(description="List of transit moments.")
-    subject: Optional[AstrologicalSubjectModel] = Field(description="Astrological subject data.")
-    dates: Optional[list[str]] = Field(description="ISO 8601 formatted dates of all transit moments.")
+    subject: Optional[AstrologicalSubjectModel] = Field(default=None, description="Astrological subject data.")
+    dates: Optional[list[str]] = Field(default=None, description="ISO 8601 formatted dates of all transit moments.")
 
 
 class TransitEventModel(SubscriptableBaseModel):
