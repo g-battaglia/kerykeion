@@ -214,7 +214,12 @@ logger.debug("Ephemeris data path: %r", EPHE_DATA_PATH)
 _PINNED_LEB_MODE: Optional[str] = None
 
 if BACKEND_NAME == "libephemeris":
+    _VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
     _PINNED_LEB_MODE = os.environ.get("KERYKEION_LEB_MODE", "leb").strip().lower()
+    if _PINNED_LEB_MODE not in _VALID_LEB_MODES:
+        raise ValueError(
+            f"Invalid KERYKEION_LEB_MODE={_PINNED_LEB_MODE!r}. Must be one of {_VALID_LEB_MODES}."
+        )
     _backend_module.set_calc_mode(_PINNED_LEB_MODE)
     logger.debug("libephemeris calc mode set to: %s", _PINNED_LEB_MODE)
 

@@ -913,7 +913,7 @@ class AstrologicalSubjectFactory:
                 julian_day=calc_data["julian_day"],
                 lat=calc_data["lat"],
                 lng=calc_data["lng"],
-                altitude=calc_data.get("altitude") or 0,
+                altitude=calc_data.get("altitude") or 0.0,
             )
 
             # Pass dynamic fixed stars config to _calculate_planets via calc_data
@@ -1086,6 +1086,7 @@ class AstrologicalSubjectFactory:
             # The obliquity varies over millennia (22.1 - 24.5 deg) so we use the true value
             # for the chart's epoch, not a hardcoded constant.
             true_obliquity = None
+            nut_data = None
             try:
                 nut_data = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
                 true_obliquity = nut_data[0]
@@ -1108,7 +1109,9 @@ class AstrologicalSubjectFactory:
                 from kerykeion.schemas.kr_models import NutationObliquityModel
 
                 try:
-                    nut_raw = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
+                    # Reuse the ECL_NUT result already fetched for OOB detection; only
+                    # recompute if that call failed (nut_data is None).
+                    nut_raw = nut_data if nut_data is not None else ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
                     calc_data["nutation"] = NutationObliquityModel(
                         true_obliquity=nut_raw[0],
                         mean_obliquity=nut_raw[1],

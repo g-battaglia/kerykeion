@@ -213,6 +213,8 @@ class CompositeSubjectFactory:
         Returns:
             bool: True if both subjects and chart name are identical.
         """
+        if not isinstance(other, CompositeSubjectFactory):
+            return NotImplemented
         return (
             self.first_subject == other.first_subject
             and self.second_subject == other.second_subject
