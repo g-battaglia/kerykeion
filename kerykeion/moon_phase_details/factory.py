@@ -236,12 +236,14 @@ def _compute_sun_times(
         import pytz
 
         tzinfo = pytz.timezone(tz_str)
-    except RuntimeError as exc:
-        # Expected error: polar regions, ephemeris unavailable, etc.
-        logger.debug("Sun times calculation failed (expected for polar regions): %s", exc)
-        return None
     except (ImportError, AttributeError) as exc:  # pragma: no cover - defensive
         logger.error("Error importing pytz: %s. Cannot compute sunrise/sunset.", exc)
+        return None
+    except pytz.UnknownTimeZoneError as exc:
+        # Expected error: the subject's tz_str is not a known IANA timezone.
+        # (pytz.UnknownTimeZoneError subclasses KeyError, NOT RuntimeError, so the
+        # previous `except RuntimeError` never caught it.)
+        logger.debug("Unknown timezone '%s': %s. Cannot compute sunrise/sunset.", tz_str, exc)
         return None
     except Exception as exc:  # pragma: no cover - defensive
         logger.error(
@@ -356,8 +358,6 @@ def _compute_next_lunar_eclipse(
 
 def _compute_lunar_phase_metrics(
     lunar_phase: LunarPhaseModel,
-    sun: object,
-    moon: object,
     base_dt: datetime,
     upcoming_phases: MoonPhaseUpcomingPhasesModel,
 ) -> tuple[float, LunarPhaseName, LunarPhaseEmoji, str, str, str, int, str, MoonPhaseIlluminationDetailsModel]:
@@ -366,8 +366,6 @@ def _compute_lunar_phase_metrics(
 
     Args:
         lunar_phase: Lunar phase model from subject.
-        sun: Sun planetary data.
-        moon: Moon planetary data.
         base_dt: Current datetime in UTC.
         upcoming_phases: Model with last/next occurrences of major phases.
 
@@ -564,7 +562,7 @@ class MoonPhaseDetailsFactory:
                 age_days,
                 lunar_cycle_str,
                 illumination_details,
-            ) = _compute_lunar_phase_metrics(lunar_phase, sun, moon, base_dt, upcoming_phases)
+            ) = _compute_lunar_phase_metrics(lunar_phase, base_dt, upcoming_phases)
 
             # Build detailed moon information
             detailed = MoonPhaseMoonDetailedModel(

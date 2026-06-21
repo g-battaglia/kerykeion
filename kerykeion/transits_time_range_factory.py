@@ -767,6 +767,11 @@ class TransitsTimeRangeFactory:
         # planetocentric...) need observer state this refinement does not
         # replicate — keep the coarse sample values instead of degrading them.
         if self.natal_chart.perspective_type not in ("Apparent Geocentric", "True Geocentric"):
+            logging.info(
+                "Exact-moment refinement skipped for perspective_type=%r "
+                "(only Apparent/True Geocentric supported); keeping coarse sample values.",
+                self.natal_chart.perspective_type,
+            )
             return None
 
         try:

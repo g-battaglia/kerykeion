@@ -170,10 +170,13 @@ def _aspects_in_window(
                     if win_start_jd - start_tol <= refined < win_end_jd - end_tol:
                         events.append(AspectEvent(planet, aspect_name, degrees, julian_day_to_utc(refined)))
 
-    # Deduplicate events that converged from multiple seeds (one per planet/aspect/minute).
-    unique: dict[tuple[str, str, int], AspectEvent] = {}
+    # Deduplicate events that converged from multiple seeds. Within one sign the
+    # Moon's separation from each body is monotonic, so a given (planet, aspect)
+    # perfects at most once — dedup on that identity, not on a rounded instant
+    # (a minute bucket could split one event whose seeds straddle a minute boundary).
+    unique: dict[tuple[str, str], AspectEvent] = {}
     for event in events:
-        key = (event.planet, event.aspect, round(datetime_to_julian(event.exact_time) * 1440))
+        key = (event.planet, event.aspect)
         unique.setdefault(key, event)
     return sorted(unique.values(), key=lambda e: e.exact_time)
 

@@ -566,53 +566,43 @@ class TestComputeLunarPhaseMetrics:
 
     def test_returns_correct_tuple_length(self) -> None:
         lunar = self._make_lunar_phase()
-        sun = SimpleNamespace(sign="Lib")
-        moon = SimpleNamespace(sign="Leo")
         base_dt = datetime(1993, 10, 10, 11, 12, 0, tzinfo=timezone.utc)
         upcoming = self._make_upcoming_phases()
 
-        result = _compute_lunar_phase_metrics(lunar, sun, moon, base_dt, upcoming)
+        result = _compute_lunar_phase_metrics(lunar, base_dt, upcoming)
         assert len(result) == 9
 
     def test_phase_fraction(self) -> None:
         lunar = self._make_lunar_phase(degrees=180.0)
-        sun = SimpleNamespace(sign="Lib")
-        moon = SimpleNamespace(sign="Leo")
         base_dt = datetime(1993, 10, 10, 11, 12, 0, tzinfo=timezone.utc)
         upcoming = self._make_upcoming_phases()
 
-        phase, *_ = _compute_lunar_phase_metrics(lunar, sun, moon, base_dt, upcoming)
+        phase, *_ = _compute_lunar_phase_metrics(lunar, base_dt, upcoming)
         assert phase == pytest.approx(0.5)
 
     def test_waning_stage(self) -> None:
         lunar = self._make_lunar_phase(degrees=200.0)
-        sun = SimpleNamespace(sign="Lib")
-        moon = SimpleNamespace(sign="Leo")
         base_dt = datetime(1993, 10, 10, 11, 12, 0, tzinfo=timezone.utc)
         upcoming = self._make_upcoming_phases()
 
-        _, _, _, stage, *_ = _compute_lunar_phase_metrics(lunar, sun, moon, base_dt, upcoming)
+        _, _, _, stage, *_ = _compute_lunar_phase_metrics(lunar, base_dt, upcoming)
         assert stage == "waning"
 
     def test_waxing_stage(self) -> None:
         lunar = self._make_lunar_phase(degrees=90.0)
-        sun = SimpleNamespace(sign="Lib")
-        moon = SimpleNamespace(sign="Leo")
         base_dt = datetime(1993, 10, 10, 11, 12, 0, tzinfo=timezone.utc)
         upcoming = self._make_upcoming_phases()
 
-        _, _, _, stage, *_ = _compute_lunar_phase_metrics(lunar, sun, moon, base_dt, upcoming)
+        _, _, _, stage, *_ = _compute_lunar_phase_metrics(lunar, base_dt, upcoming)
         assert stage == "waxing"
 
     def test_illumination_details_model(self) -> None:
         degrees = 120.0
         lunar = self._make_lunar_phase(degrees=degrees)
-        sun = SimpleNamespace(sign="Lib")
-        moon = SimpleNamespace(sign="Leo")
         base_dt = datetime(1993, 10, 10, 11, 12, 0, tzinfo=timezone.utc)
         upcoming = self._make_upcoming_phases()
 
-        *_, illumination_details = _compute_lunar_phase_metrics(lunar, sun, moon, base_dt, upcoming)
+        *_, illumination_details = _compute_lunar_phase_metrics(lunar, base_dt, upcoming)
         assert isinstance(illumination_details, MoonPhaseIlluminationDetailsModel)
         expected = 0.5 * (1.0 - math.cos(math.radians(degrees)))
         assert illumination_details.visible_fraction == pytest.approx(expected)
