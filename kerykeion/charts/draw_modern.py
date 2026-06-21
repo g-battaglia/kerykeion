@@ -1414,9 +1414,9 @@ def _draw_aspect_core(
 
         # Aspect group with scale transform and metadata
         out += (
-            f'<g kr:node="Aspect" kr:aspectname="{aspect_name}" '
-            f'kr:to="{p1_name}" kr:tooriginaldegrees="{p1_abs}" '
-            f'kr:from="{p2_name}" kr:fromoriginaldegrees="{p2_abs}" '
+            f'<g kr:node="Aspect" kr:aspectname="{escape_svg_text(aspect_name)}" '
+            f'kr:to="{escape_svg_text(p1_name)}" kr:tooriginaldegrees="{p1_abs}" '
+            f'kr:from="{escape_svg_text(p2_name)}" kr:fromoriginaldegrees="{p2_abs}" '
             f'kr:orb="{orb}" kr:aspectdegrees="{a_degrees}" '
             f'kr:planetsdiff="{diff}" kr:aspectmovement="{movement}" '
             f'transform="translate({CENTER} {CENTER}) scale({aspect_scale}) '

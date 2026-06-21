@@ -487,7 +487,9 @@ def degreeSum(a: Union[int, float], b: Union[int, float]) -> float:
     Returns:
         float: normalized sum of a and b in the range [0, 360)
     """
-    return math.fmod(a + b, 360) if (a + b) % 360 != 0 else 0.0
+    # Use Python's % (not math.fmod) so the result is always in [0, 360) even for
+    # negative inputs (math.fmod keeps the dividend's sign, breaking the contract).
+    return (a + b) % 360.0
 
 
 def normalizeDegree(angle: Union[int, float]) -> float:
@@ -870,7 +872,7 @@ def draw_aspect_line(
                 rendered_icon_positions.append((mid_x, mid_y, current_aspect_degrees))
 
     return (
-        f'<g kr:node="Aspect" kr:aspectname="{aspect["aspect"]}" kr:to="{aspect["p1_name"]}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{aspect["p2_name"]}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}" kr:orb="{aspect["orbit"]}" kr:aspectdegrees="{aspect["aspect_degrees"]}" kr:planetsdiff="{aspect["diff"]}" kr:aspectmovement="{aspect["aspect_movement"]}">'
+        f'<g kr:node="Aspect" kr:aspectname="{escape_svg_text(aspect["aspect"])}" kr:to="{escape_svg_text(aspect["p1_name"])}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{escape_svg_text(aspect["p2_name"])}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}" kr:orb="{aspect["orbit"]}" kr:aspectdegrees="{aspect["aspect_degrees"]}" kr:planetsdiff="{aspect["diff"]}" kr:aspectmovement="{aspect["aspect_movement"]}">'
         f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
         f"{aspect_icon_svg}"
         f"</g>"
@@ -904,7 +906,7 @@ def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", 
         return f"{degrees}°"
     elif format_type == "2":
         return f"{degrees}°{minutes:02d}'"
-    elif format_type == "3":
+    else:  # format_type == "3" (default) — always return a str matching the annotation
         return f"{degrees}°{minutes:02d}'{seconds:02d}\""
 
 
