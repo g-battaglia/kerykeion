@@ -104,7 +104,10 @@ def _assert_report_match(captured: str, expected_with_newline: str, abs_tol: flo
             f"Line {i + 1} number count differs:\n  got:  {cap}\n  exp:  {exp}"
         )
         for j, (cn, en) in enumerate(zip(cap_nums, exp_nums)):
-            assert abs(cn - en) <= abs_tol, (
+            # Add a tiny epsilon so an exact last-decimal flip (e.g. 1.64 vs 1.65,
+            # whose float difference is 0.0100000000000000009) stays within the
+            # intended 0.01 tolerance instead of failing on representation noise.
+            assert abs(cn - en) <= abs_tol + 1e-9, (
                 f"Line {i + 1}, number #{j + 1}: {cn} vs {en} "
                 f"(diff {abs(cn - en):.6f}, tol {abs_tol})\n  got:  {cap}\n  exp:  {exp}"
             )

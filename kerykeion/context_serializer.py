@@ -107,7 +107,7 @@ def _el(tag: str, text, **kwargs) -> str:
 def _serialize_active_config(chart_data, lines: list[str]) -> None:
     """Append active_points and active_aspects serialization to *lines*."""
     lines.append(f"  {_el('active_points', ', '.join(chart_data.active_points))}")
-    active_aspects_str = ", ".join([f"{a['name']} ({a['orb']})" for a in chart_data.active_aspects])
+    active_aspects_str = ", ".join([f"{a.get('name', '')} ({a.get('orb')})" for a in chart_data.active_aspects])
     lines.append(f"  {_el('active_aspects', active_aspects_str)}")
 
 
@@ -257,8 +257,11 @@ def point_in_house_to_context(point_in_house: PointInHouseModel) -> str:
 
     if point_in_house.point_owner_house_name:
         attrs["owner_house"] = point_in_house.point_owner_house_name
+    if point_in_house.point_owner_house_number is not None:
+        attrs["owner_house_number"] = str(point_in_house.point_owner_house_number)
 
     attrs["projected_house"] = point_in_house.projected_house_name
+    attrs["projected_house_number"] = str(point_in_house.projected_house_number)
     attrs["projected_house_owner"] = point_in_house.projected_house_owner_name
 
     return _sc("point_in_house", **attrs)

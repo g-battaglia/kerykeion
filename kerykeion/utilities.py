@@ -656,10 +656,14 @@ def format_ancient_iso(year: int, month: int, day: int, decimal_hour: float, utc
     Returns:
         ISO 8601 formatted string with extended year.
     """
-    h = int(decimal_hour)
-    remainder = (decimal_hour - h) * 60
-    m = int(remainder)
-    s = int((remainder - m) * 60)
+    # Round to the nearest second rather than truncating each component: the BCE
+    # path feeds a float from ephe.revjul (e.g. 11.166906667... h) that is almost
+    # never an exact integer, so truncating lost up to ~1 second. Clamp the rare
+    # float-noise rollover to 23:59:59 (day arithmetic is the caller's concern).
+    total_seconds = min(round(decimal_hour * 3600), 86399)
+    h = total_seconds // 3600
+    m = (total_seconds % 3600) // 60
+    s = total_seconds % 60
 
     # ISO 8601 extended year: negative sign for years <= 0
     year_str = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
