@@ -242,6 +242,12 @@ class MoonPhaseUpcomingPhasesModel(SubscriptableBaseModel):
 class MoonPhaseIlluminationDetailsModel(SubscriptableBaseModel):
     """
     Numeric illumination details for the Moon at the given moment.
+
+    Note:
+        ``phase_angle`` holds the Sun–Moon **elongation** (the geocentric
+        Sun–Earth–Moon separation: ~0° at New Moon, ~180° at Full Moon), not the
+        astronomical phase angle (Sun–Moon–Earth, which is ~180° − elongation).
+        ``visible_fraction`` is computed correctly from this elongation.
     """
 
     percentage: Optional[float] = None

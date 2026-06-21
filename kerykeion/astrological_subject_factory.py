@@ -1034,8 +1034,18 @@ class AstrologicalSubjectFactory:
                         except Exception:
                             pass
 
-                    # Fallback: compute sector geometrically from longitude relative to ASC
+                    # Fallback for points without a SwissEph body id (axial cusps,
+                    # South Nodes, White Moon, TNOs): an ECLIPTIC APPROXIMATION that
+                    # divides the circle from the ASC into 36 sectors. This is NOT the
+                    # true diurnal Gauquelin sector (which depends on RA/declination,
+                    # geographic latitude and local sidereal time); the two coincide
+                    # only on the ecliptic near the equator.
                     if sector is None:
+                        logging.debug(
+                            "Gauquelin sector for %r computed via geometric ecliptic "
+                            "approximation (no SwissEph body id); not the true diurnal sector.",
+                            point.name,
+                        )
                         diff = (asc_abs - point.abs_pos) % 360.0
                         sector = (diff / 10.0) + 1.0
                         if sector >= 37.0:

@@ -226,7 +226,12 @@ class AspectsFactory:
                           If None, uses common points between both subjects.
             active_aspects: Optional list of aspect types with their orb settings.
                            If None, uses default aspect configuration.
-            axis_orb_limit: Optional orb threshold for chart axes (applied to single chart calculations only)
+            axis_orb_limit: Optional orb threshold for chart axes. NOTE: this is
+                applied to single-chart calculations only; it is a deliberate no-op
+                for dual-chart (synastry/transit) aspects, where whether to tighten
+                orbs to the axes is a debated doctrinal choice. The parameter is
+                accepted on the dual-chart signature for API symmetry but does not
+                filter dual-chart aspects.
             point_orb_adjustments: Optional per-point orb adjustment table
             point_orb_adjustment_strategy: How to combine the two points'
                 adjustments (default ``"max_explicit"``)
