@@ -36,7 +36,7 @@ from typing import Union, Optional, get_args, cast
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 
 logger = getLogger(__name__)
@@ -773,10 +773,6 @@ def julian_to_datetime(jd: float) -> datetime:
     day_int = int(day)
 
     day_frac = day - day_int
-    hours = int(day_frac * 24)
-    minutes = int((day_frac * 24 - hours) * 60)
-    seconds = int((day_frac * 24 * 60 - hours * 60 - minutes) * 60)
-    microseconds = int(((day_frac * 24 * 60 - hours * 60 - minutes) * 60 - seconds) * 1000000)
 
     if E < 14:
         month = E - 1
@@ -797,7 +793,10 @@ def julian_to_datetime(jd: float) -> datetime:
             "revjul for BCE dates."
         )
 
-    return datetime(year, month, day_int, hours, minutes, seconds, microseconds)
+    # Build from the integer date plus the day fraction so seconds/microseconds
+    # carries normalize automatically (avoids a latent seconds==60 ValueError from
+    # independent int() truncation of each component).
+    return datetime(year, month, day_int) + timedelta(days=day_frac)
 
 
 # =============================================================================

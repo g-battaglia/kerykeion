@@ -69,19 +69,19 @@ Sample Natal Subject — Natal Chart Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 2.0   | 17.4%      |
-| Earth 🌍 | 2.5   | 21.7%      |
-| Air 💨   | 0.5   | 4.3%       |
-| Water 💧 | 6.5   | 56.5%      |
+| Fire 🔥  | 2.0   | 17%        |
+| Earth 🌍 | 2.5   | 22%        |
+| Air 💨   | 0.5   | 4%         |
+| Water 💧 | 6.5   | 57%        |
 | Total    | 11.5  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 7.5   | 65.2%      |
-| Fixed    | 4.0   | 34.8%      |
-| Mutable  | 0.0   | 0.0%       |
+| Cardinal | 7.5   | 65%        |
+| Fixed    | 4.0   | 35%        |
+| Mutable  | 0.0   | 0%         |
 | Total    | 11.5  | 100%       |
 +----------+-------+------------+
 

@@ -311,11 +311,13 @@ def _extract_percentages(text: str, section: str) -> List[float]:
             in_section = True
             continue
         if in_section:
-            m = re.search(r"(\d+\.\d)%", line)
-            if m:
-                pcts.append(float(m.group(1)))
+            # Break before parsing so the "Total 100%" row is not counted (the
+            # integer-percentage regex would otherwise capture its 100%).
             if "Total" in line:
                 break
+            m = re.search(r"(\d+(?:\.\d)?)%", line)
+            if m:
+                pcts.append(float(m.group(1)))
     return pcts
 
 

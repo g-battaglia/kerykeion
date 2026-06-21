@@ -134,19 +134,19 @@ Johnny Depp — Solar Return Comparison 2024
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 2.5   | 15.1%      |
-| Earth 🌍 | 7.5   | 45.2%      |
-| Air 💨   | 5.0   | 30.1%      |
-| Water 💧 | 1.6   | 9.6%       |
+| Fire 🔥  | 2.5   | 15%        |
+| Earth 🌍 | 7.5   | 45%        |
+| Air 💨   | 5.0   | 30%        |
+| Water 💧 | 1.6   | 10%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 3.5   | 21.1%      |
-| Fixed    | 6.5   | 39.2%      |
-| Mutable  | 6.6   | 39.8%      |
+| Cardinal | 3.5   | 21%        |
+| Fixed    | 6.5   | 39%        |
+| Mutable  | 6.6   | 40%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
