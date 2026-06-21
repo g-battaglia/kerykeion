@@ -22,6 +22,10 @@ logger = getLogger(__name__)
 DEFAULT_GEONAMES_CACHE_NAME = Path("cache") / "kerykeion_geonames_cache"
 GEONAMES_CACHE_ENV_VAR = "KERYKEION_GEONAMES_CACHE_NAME"
 
+# (connect, read) timeout in seconds for GeoNames HTTP calls. Without a timeout a
+# slow/hung endpoint would block the calling thread indefinitely (resource exhaustion).
+DEFAULT_GEONAMES_TIMEOUT = (3.05, 10)
+
 # GeoNames error codes that represent transient errors and should NOT be cached.
 # These errors are temporary (rate limits, timeouts, server issues) and will resolve
 # on retry, so caching them would "poison" the cache with error responses.
@@ -63,8 +67,9 @@ def _should_cache_geonames_response(response: Response) -> bool:
                 )
                 return False
         return True
-    except (ValueError, JSONDecodeError):
-        # If we can't parse the response, don't cache it
+    except (ValueError, JSONDecodeError, AttributeError, TypeError):
+        # If we can't parse the response (or 'status' is not a dict / data is a
+        # scalar), don't cache it.
         return False
 
 
@@ -93,7 +98,7 @@ class FetchGeonames:
         city_name: str,
         country_code: str,
         username: str = "century.boy",
-        cache_expire_after_days=30,
+        cache_expire_after_days: int = 30,
         cache_name: Optional[Union[str, Path]] = None,
     ):
         self.session = CachedSession(
@@ -148,10 +153,12 @@ class FetchGeonames:
         params = {"lat": lat, "lng": lon, "username": self.username}
 
         prepared_request = Request("GET", self.timezone_url, params=params).prepare()
-        logger.debug("GeoNames timezone lookup url=%s", prepared_request.url)
+        # Log the endpoint only — prepared_request.url carries the GeoNames username
+        # (an API credential) as a query param; never write it to the logs.
+        logger.debug("GeoNames timezone lookup endpoint=%s", self.timezone_url)
 
         try:
-            response = self.session.send(prepared_request)
+            response = self.session.send(prepared_request, timeout=DEFAULT_GEONAMES_TIMEOUT)
             response_json = response.json()
 
         except RequestException as e:
@@ -197,13 +204,18 @@ class FetchGeonames:
         }
 
         prepared_request = Request("GET", self.base_url, params=params).prepare()
-        logger.debug("GeoNames search url=%s", prepared_request.url)
+        # Log the endpoint only — prepared_request.url carries the GeoNames username
+        # (an API credential) as a query param; never write it to the logs.
+        logger.debug("GeoNames search endpoint=%s", self.base_url)
 
         try:
-            response = self.session.send(prepared_request)
+            response = self.session.send(prepared_request, timeout=DEFAULT_GEONAMES_TIMEOUT)
             response.raise_for_status()
             response_json = response.json()
-            logger.debug("GeoNames search response: %s", response_json)
+            logger.debug(
+                "GeoNames search returned %d result(s)",
+                len(response_json.get("geonames") or []) if isinstance(response_json, dict) else 0,
+            )
 
         except RequestException as e:
             logger.error("GeoNames search network error for %s: %s", self.base_url, e)
