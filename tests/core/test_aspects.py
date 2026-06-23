@@ -862,13 +862,73 @@ class TestAxisOrbFilter:
             suppress_geonames_warning=True,
         )
 
-    def test_strict_axis_orb_filters(self, _subject):
-        aspects = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=1.0)
-        assert aspects is not None
+    @pytest.fixture()
+    def _subject2(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Test2",
+            1985,
+            3,
+            20,
+            8,
+            30,
+            lat=45.4,
+            lng=9.2,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+
+    @staticmethod
+    def _split_axis(aspects):
+        from kerykeion.aspects.aspects_factory import AXES_LIST
+
+        axis = [a for a in aspects if a.p1_name in AXES_LIST or a.p2_name in AXES_LIST]
+        non_axis = [a for a in aspects if a.p1_name not in AXES_LIST and a.p2_name not in AXES_LIST]
+        return axis, non_axis
+
+    def test_strict_axis_orb_filters_single_chart(self, _subject):
+        """A strict axis_orb_limit drops wide axis aspects but leaves the rest intact."""
+        unfiltered = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=None).aspects
+        axis_aspects, _ = self._split_axis(unfiltered)
+        assert axis_aspects, "expected the chart to contain axis aspects"
+
+        limit = max(abs(a.orbit) for a in axis_aspects)  # drops at least the widest
+        filtered = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=limit).aspects
+        filtered_axis, filtered_non_axis = self._split_axis(filtered)
+
+        assert len(filtered_axis) < len(axis_aspects)
+        assert all(abs(a.orbit) < limit for a in filtered_axis)
+        # Non-axis aspects are untouched by the axis filter.
+        _, unfiltered_non_axis = self._split_axis(unfiltered)
+        assert filtered_non_axis == unfiltered_non_axis
 
     def test_axis_orb_none_disables_filter(self, _subject):
         aspects = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=None)
         assert aspects is not None
+
+    def test_axis_orb_filters_dual_chart(self, _subject, _subject2):
+        """axis_orb_limit now also filters dual-chart (synastry) aspects (was a no-op)."""
+        active_points = [
+            "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
+            "Ascendant", "Medium_Coeli",
+        ]
+        unfiltered = AspectsFactory.dual_chart_aspects(
+            _subject, _subject2, active_points=active_points
+        ).aspects
+        axis_aspects, unfiltered_non_axis = self._split_axis(unfiltered)
+        assert axis_aspects, "expected the synastry to contain axis aspects"
+
+        limit = max(abs(a.orbit) for a in axis_aspects)
+        filtered = AspectsFactory.dual_chart_aspects(
+            _subject, _subject2, active_points=active_points, axis_orb_limit=limit
+        ).aspects
+        filtered_axis, filtered_non_axis = self._split_axis(filtered)
+
+        # Previously this was a deliberate no-op; the widest axis aspect must now be gone.
+        assert len(filtered_axis) < len(axis_aspects)
+        assert all(abs(a.orbit) < limit for a in filtered_axis)
+        # Non-axis aspects remain identical with and without the limit.
+        assert filtered_non_axis == unfiltered_non_axis
 
 
 # ============================================================================
