@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+### Changed (breaking)
+
+- **`MoonPhaseSunInfoModel` sun-timing fields are now native date/time types** —
+  `sunrise` and `sunset` change from an integer epoch timestamp to a
+  timezone-aware `datetime`; `solar_noon` changes from `str` to `datetime`; and
+  `day_length` changes from `str` to `timedelta`. The two convenience string
+  fields `sunrise_timestamp` and `sunset_timestamp` (previously `"HH:MM"`
+  strings) are removed with no alias. The serialized JSON shape changes
+  accordingly (ISO-8601 datetimes/duration instead of integers/strings).
+  Migration: derive the old `"HH:MM"` value via `sun.sunrise.strftime("%H:%M")`
+  instead of reading `sun.sunrise_timestamp`, and treat `sun.sunrise` as a
+  `datetime` rather than an epoch integer. `get_type_hints()` on the public API
+  is unaffected.
+- **`axis_orb_limit` now also filters dual-chart aspects** — previously the
+  axis-specific orb limit was applied to single-chart aspects only and was a
+  documented no-op for synastry/transit/composite (dual-chart) calculations.
+  It is now applied uniformly: when a non-`None` `axis_orb_limit` is passed to
+  `AspectsFactory.dual_chart_aspects` (and through `TransitsTimeRangeFactory`
+  and `RelationshipScoreFactory`), aspects involving a chart axis
+  (Ascendant, Medium_Coeli, Descendant, Imum_Coeli) on either subject are kept
+  only when their orb is below the limit. Callers that previously relied on the
+  value being ignored for dual charts will see fewer axis aspects (and, for
+  relationship scoring, possibly a different score). The default remains `None`
+  (no axis filtering), so callers that never set `axis_orb_limit` are unaffected.
+
 ## 6.0.0a57
 
 _2026-06-16_

@@ -290,3 +290,38 @@ class TestKerykeionLanguageModelRoundTrip:
         assert "Transit-Cusp" in svg
         # The localized table heading must replace the English fallback too.
         assert LANGUAGE_SETTINGS["DE"]["cusp_position_comparison"] in svg
+
+
+# =============================================================================
+# TestTranslationCompleteness
+# =============================================================================
+
+
+def _flatten_keys(mapping: dict, prefix: str = "") -> set:
+    """Collect every (nested) key path of a translation mapping."""
+    keys = set()
+    for key, value in mapping.items():
+        path = f"{prefix}.{key}" if prefix else key
+        keys.add(path)
+        if isinstance(value, dict):
+            keys |= _flatten_keys(value, path)
+    return keys
+
+
+class TestTranslationCompleteness:
+    """Every language block must expose exactly the same key set as EN.
+
+    Guards against the leak where a celestial point or chart label missing from
+    a non-EN block falls back to the English/Latin default on localized output.
+    """
+
+    def test_every_language_matches_en_key_set(self):
+        en_keys = _flatten_keys(LANGUAGE_SETTINGS["EN"])
+        for language, block in LANGUAGE_SETTINGS.items():
+            if language == "EN":
+                continue
+            lang_keys = _flatten_keys(block)
+            missing = en_keys - lang_keys
+            extra = lang_keys - en_keys
+            assert not missing, f"{language} is missing translation keys: {sorted(missing)}"
+            assert not extra, f"{language} has keys not present in EN: {sorted(extra)}"
