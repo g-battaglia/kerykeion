@@ -33,7 +33,12 @@ from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.schemas.kr_literals import AstrologicalPoint, Houses
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.settings.config_constants import AXIAL_POINTS
-from kerykeion.utilities import format_ancient_iso, get_kerykeion_point_from_degree, get_planet_house
+from kerykeion.utilities import (
+    format_ancient_iso,
+    get_kerykeion_point_from_degree,
+    get_planet_house,
+    _next_proleptic_julian_day,
+)
 
 _AXIAL_POINTS_SET: frozenset[str] = frozenset(AXIAL_POINTS)
 
@@ -70,18 +75,26 @@ class RelocatedChartFactory:
             lmt_offset_hours = new_lng / 15.0
             jd_local = julian_day + lmt_offset_hours / 24.0
             loc_year, loc_month, loc_day, loc_dec_hour = ephe.revjul(jd_local, ephe.JUL_CAL)
-            loc_hour = int(loc_dec_hour)
-            loc_rem = (loc_dec_hour - loc_hour) * 60
-            loc_minute = int(loc_rem)
-            loc_seconds = int((loc_rem - loc_minute) * 60)
-            relocated_data["year"] = int(loc_year)
-            relocated_data["month"] = int(loc_month)
-            relocated_data["day"] = int(loc_day)
-            relocated_data["hour"] = loc_hour
-            relocated_data["minute"] = loc_minute
-            relocated_data["seconds"] = loc_seconds
+            loc_year, loc_month, loc_day = int(loc_year), int(loc_month), int(loc_day)
+            # Derive the integer h/m/s with the SAME round-to-nearest-second and
+            # day-carry that format_ancient_iso applies internally, so the integer
+            # fields and the ISO string stay consistent (int() truncation would
+            # otherwise lag the rounded string by up to ~1s near a boundary).
+            # NOTE: format_ancient_iso performs its own carry, so it must receive
+            # the ORIGINAL (un-carried) date; only the stored integer fields advance.
+            total_seconds = round(loc_dec_hour * 3600)
+            field_year, field_month, field_day = loc_year, loc_month, loc_day
+            if total_seconds >= 86400:
+                total_seconds -= 86400
+                field_year, field_month, field_day = _next_proleptic_julian_day(loc_year, loc_month, loc_day)
+            relocated_data["year"] = field_year
+            relocated_data["month"] = field_month
+            relocated_data["day"] = field_day
+            relocated_data["hour"] = total_seconds // 3600
+            relocated_data["minute"] = (total_seconds % 3600) // 60
+            relocated_data["seconds"] = total_seconds % 60
             relocated_data["iso_formatted_local_datetime"] = format_ancient_iso(
-                int(loc_year), int(loc_month), int(loc_day), loc_dec_hour, lmt_offset_hours
+                loc_year, loc_month, loc_day, loc_dec_hour, lmt_offset_hours
             )
         else:
             import pytz
