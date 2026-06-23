@@ -159,6 +159,7 @@ from .schemas.kr_models import (
     DominantsModel,
     DominantScoreModel,
     DominantBreakdownItemModel,
+    TriplicityLordsModel,
     ZodiacalReleasingModel,
     ZRPeriodModel,
 )
@@ -268,6 +269,7 @@ __all__ = [
     "VoidOfCourseAspectModel",
     "VoidOfCourseMoonModel",
     "DominantsModel",
+    "TriplicityLordsModel",
     "DominantScoreModel",
     "DominantBreakdownItemModel",
     "ZodiacalReleasingModel",

@@ -1600,6 +1600,33 @@ class DominantsModel(SubscriptableBaseModel):
     score_breakdown: list[DominantBreakdownItemModel] = Field(default_factory=list)
 
 
+class TriplicityLordsModel(SubscriptableBaseModel):
+    """The three Dorothean triplicity lords of an element, ordered by sect.
+
+    In the Dorothean (Persian/Hellenistic) triplicity scheme each element has
+    three rulers: a diurnal lord, a nocturnal lord, and a participating lord
+    that operates in both sects. For a given chart sect the in-sect lord is the
+    ``primary``, the out-of-sect lord is the ``secondary``, and ``participating``
+    supports throughout. This is the rulership set for the classical
+    triplicity-lords technique (e.g. dividing a topic into thirds of time); it
+    is distinct from the Ptolemaic essential-dignity score, which awards +3 to
+    the in-sect (``primary``) lord only.
+
+    Attributes:
+        element: The triplicity element (Fire/Earth/Air/Water).
+        sect: ``"day"`` or ``"night"`` — the sect used to order the lords.
+        primary: In-sect triplicity lord (first lord).
+        secondary: Out-of-sect triplicity lord (second lord).
+        participating: Participating lord (third lord, active in both sects).
+    """
+
+    element: Element
+    sect: Literal["day", "night"]
+    primary: str
+    secondary: str
+    participating: str
+
+
 class ZRPeriodModel(SubscriptableBaseModel):
     """One zodiacal-releasing period at a given level of subdivision.
 

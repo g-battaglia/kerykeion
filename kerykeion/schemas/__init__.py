@@ -67,6 +67,7 @@ from .kr_models import (
     DominantScoreModel,
     DominantBreakdownItemModel,
     DominantsModel,
+    TriplicityLordsModel,
     # Chart data
     ChartDataModel,
     SingleChartDataModel,
@@ -255,6 +256,7 @@ __all__ = [
     "DominantScoreModel",
     "DominantBreakdownItemModel",
     "DominantsModel",
+    "TriplicityLordsModel",
     # Chart data (from kr_models)
     "ChartDataModel",
     "SingleChartDataModel",
