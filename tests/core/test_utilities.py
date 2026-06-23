@@ -868,6 +868,17 @@ class TestConvertDecimalToDegreeString:
                 assert "'60\"" not in out
                 assert "60'" not in out
 
+    def test_negative_inputs_consistent_and_not_malformed(self):
+        """Regression: a negative value (e.g. a southern declination) must not
+        produce a malformed negative-minute field like "-5°-30'", and all three
+        formats must agree on the floored representation."""
+        assert convert_decimal_to_degree_string(-5.5, "1") == "-6°"
+        assert convert_decimal_to_degree_string(-5.5, "2") == "-6°30'"
+        assert convert_decimal_to_degree_string(-5.5, "3") == "-6°30'00\""
+        for fmt in ("1", "2", "3"):
+            out = convert_decimal_to_degree_string(-5.5, fmt)
+            assert "-30" not in out, f"format {fmt} emitted a malformed negative field: {out}"
+
 
 # =============================================================================
 # TestFormatTimedeltaHhmm

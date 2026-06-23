@@ -557,6 +557,20 @@ class TransitsTimeRangeFactory:
         # over-split: see _representative_step_days and _split_track_into_runs.
         step_days = self._representative_step_days()
 
+        # Whether sub-step refinement is possible depends only on the natal
+        # chart's (immutable) perspective_type, so resolve it once here rather
+        # than re-checking — and logging — inside the per-event refinement loop.
+        supports_refinement = self.natal_chart.perspective_type in (
+            "Apparent Geocentric",
+            "True Geocentric",
+        )
+        if refine_exact_moments and not supports_refinement:
+            logging.info(
+                "Exact-moment refinement skipped for perspective_type=%r "
+                "(only Apparent/True Geocentric supported); keeping coarse sample values.",
+                self.natal_chart.perspective_type,
+            )
+
         # Convert tracks to events (one event per consecutive in-orb run)
         events: list[TransitEventModel] = []
 
@@ -590,7 +604,7 @@ class TransitsTimeRangeFactory:
                 # minimum sits at a run EDGE — bracket one sampling step
                 # beyond the edge in that case, otherwise the very events
                 # that need refinement most would silently keep coarse values.
-                if refine_exact_moments and step_days:
+                if refine_exact_moments and supports_refinement and step_days:
                     # Never extend past the analysed range itself: for an
                     # event truncated at the range edge the orb is monotonic
                     # there (the true exact lies outside the window), and the
@@ -769,12 +783,9 @@ class TransitsTimeRangeFactory:
         # Non-geocentric perspectives (Heliocentric, Topocentric, Barycentric,
         # planetocentric...) need observer state this refinement does not
         # replicate — keep the coarse sample values instead of degrading them.
+        # The caller (get_transit_events) already gates on this and logs once;
+        # this stays as a silent defensive guard for any direct caller.
         if self.natal_chart.perspective_type not in ("Apparent Geocentric", "True Geocentric"):
-            logging.info(
-                "Exact-moment refinement skipped for perspective_type=%r "
-                "(only Apparent/True Geocentric supported); keeping coarse sample values.",
-                self.natal_chart.perspective_type,
-            )
             return None
 
         try:

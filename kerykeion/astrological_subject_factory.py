@@ -137,18 +137,25 @@ _LEGACY_ACTIVE_POINT_STAR_NAMES = frozenset(
 
 # Declarative mapping of geometrically opposite point pairs.
 # Each derived point is computed as primary.abs_pos + 180 (mod 360).
-# negate_speed/negate_dec control whether speed and declination are negated.
+# negate_speed/negate_dec/negate_lat control whether speed, declination and
+# ecliptic latitude are mirrored. The diametrically opposite point on the
+# celestial sphere has ecliptic latitude −β, so an off-ecliptic primary
+# (Lilith reaches ±5°) must hand its antipode the negated latitude; axes,
+# the vertex and the nodes all lie on the ecliptic (latitude None/0) so the
+# flag is a no-op for them.
 OPPOSITE_PAIRS: Dict[AstrologicalPoint, Dict[str, Any]] = {
-    "Descendant": {"primary": "Ascendant", "negate_speed": False, "negate_dec": False},
-    "Imum_Coeli": {"primary": "Medium_Coeli", "negate_speed": False, "negate_dec": False},
-    "Anti_Vertex": {"primary": "Vertex", "negate_speed": False, "negate_dec": False},
+    "Descendant": {"primary": "Ascendant", "negate_speed": False, "negate_dec": False, "negate_lat": False},
+    "Imum_Coeli": {"primary": "Medium_Coeli", "negate_speed": False, "negate_dec": False, "negate_lat": False},
+    "Anti_Vertex": {"primary": "Vertex", "negate_speed": False, "negate_dec": False, "negate_lat": False},
     # South nodes are rigidly 180° from the north nodes, so they share the
     # SAME angular velocity (negating it would invert applying/separating
     # verdicts in aspect movement); declination IS mirrored.
-    "Mean_South_Lunar_Node": {"primary": "Mean_North_Lunar_Node", "negate_speed": False, "negate_dec": True},
-    "True_South_Lunar_Node": {"primary": "True_North_Lunar_Node", "negate_speed": False, "negate_dec": True},
-    "Mean_Priapus": {"primary": "Mean_Lilith", "negate_speed": False, "negate_dec": True},
-    "True_Priapus": {"primary": "True_Lilith", "negate_speed": False, "negate_dec": True},
+    "Mean_South_Lunar_Node": {"primary": "Mean_North_Lunar_Node", "negate_speed": False, "negate_dec": True, "negate_lat": False},
+    "True_South_Lunar_Node": {"primary": "True_North_Lunar_Node", "negate_speed": False, "negate_dec": True, "negate_lat": False},
+    # Priapus is the true antipode of the off-ecliptic Lilith: mirror both
+    # declination and ecliptic latitude so local-space projection uses ∓β.
+    "Mean_Priapus": {"primary": "Mean_Lilith", "negate_speed": False, "negate_dec": True, "negate_lat": True},
+    "True_Priapus": {"primary": "True_Lilith", "negate_speed": False, "negate_dec": True, "negate_lat": True},
 }
 
 # Planetocentric center body mapping (used for planetocentric perspectives)
@@ -2024,12 +2031,20 @@ class AstrologicalSubjectFactory:
             if primary.declination is not None:
                 dec = -primary.declination if config["negate_dec"] else primary.declination
 
+            # Mirror the primary's ecliptic latitude onto its antipode so
+            # off-ecliptic derived points (Priapus) project onto the local
+            # horizon with their true ∓β instead of falling back to 0.0.
+            ecl_lat = None
+            if primary.ecliptic_latitude is not None:
+                ecl_lat = -primary.ecliptic_latitude if config["negate_lat"] else primary.ecliptic_latitude
+
             point = get_kerykeion_point_from_degree(
                 deg,
                 derived_name,
                 point_type=point_type,
                 speed=speed,
                 declination=dec,
+                ecliptic_latitude=ecl_lat,
             )
             point.house = get_planet_house(deg, houses_degree_ut)
             point.retrograde = primary.retrograde if primary.retrograde is not None else False

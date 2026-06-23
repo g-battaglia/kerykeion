@@ -35,10 +35,13 @@ def get_triplicity_lords(element: Element, is_diurnal: bool) -> TriplicityLordsM
     """
     rulers = TRIPLICITY_RULERS[element]
     sect = "day" if is_diurnal else "night"
+    # Derive the out-of-sect lord from the single source of truth (`sect`) so the
+    # two cannot drift if the sect convention ever changes.
+    other_sect = "night" if sect == "day" else "day"
     return TriplicityLordsModel(
         element=element,
         sect=sect,
         primary=rulers[sect],
-        secondary=rulers["night" if is_diurnal else "day"],
+        secondary=rulers[other_sect],
         participating=rulers["participating"],
     )

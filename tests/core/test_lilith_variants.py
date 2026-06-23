@@ -204,3 +204,59 @@ class TestLilithSweReference:
         if diff > 180:
             diff = 360 - diff
         assert diff < 0.001, f"True Priapus {actual_priapus} != ephe True Lilith+180 ({expected_priapus})"
+
+
+class TestPriapusEclipticLatitude:
+    """Priapus is the true antipode of the off-ecliptic Lilith, so it must carry
+    the negated ecliptic latitude (otherwise local-space projection would fall
+    back to a flat 0.0 and disagree with the primary)."""
+
+    @pytest.fixture(scope="class")
+    def subject_local_space(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Priapus LocalSpace",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
+            active_points=LILITH_POINTS,
+            calculate_local_space=True,
+        )
+
+    def test_mean_priapus_latitude_is_negated_lilith(self, subject_local_space):
+        lil = subject_local_space.mean_lilith
+        pri = subject_local_space.mean_priapus
+        assert lil.ecliptic_latitude is not None
+        assert pri.ecliptic_latitude is not None
+        # Lilith reaches several degrees off the ecliptic — make sure the test
+        # is meaningful and not comparing two near-zero values.
+        assert abs(lil.ecliptic_latitude) > 1.0
+        assert abs(pri.ecliptic_latitude - (-lil.ecliptic_latitude)) < 1e-9
+
+    def test_true_priapus_latitude_is_negated_lilith(self, subject_local_space):
+        lil = subject_local_space.true_lilith
+        pri = subject_local_space.true_priapus
+        assert lil.ecliptic_latitude is not None
+        assert pri.ecliptic_latitude is not None
+        assert abs(pri.ecliptic_latitude - (-lil.ecliptic_latitude)) < 1e-9
+
+    def test_priapus_local_space_uses_true_latitude(self, subject_local_space):
+        """Priapus' local-space altitude must match an ephe.azalt call using its
+        true (negated-Lilith) latitude, not the old flat 0.0 projection."""
+        pri = subject_local_space.mean_priapus
+        if pri.ecliptic_latitude is None or abs(pri.ecliptic_latitude) <= 1.0:
+            pytest.skip("Priapus latitude too small to distinguish from flat 0")
+        jd = subject_local_space.julian_day
+        geopos = (subject_local_space.lng, subject_local_space.lat, 0.0)
+        ephe.set_ephe_path("")
+        true_proj = ephe.azalt(jd, ephe.ECL2HOR, geopos, 0, 0, (pri.abs_pos, pri.ecliptic_latitude, 1.0))
+        flat_proj = ephe.azalt(jd, ephe.ECL2HOR, geopos, 0, 0, (pri.abs_pos, 0.0, 1.0))
+        assert abs(pri.altitude_above_horizon - true_proj[1]) < 0.01
+        assert abs(true_proj[1] - flat_proj[1]) > 0.01

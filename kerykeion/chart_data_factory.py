@@ -131,7 +131,11 @@ class ChartDataFactory:
                 ``PREDICTIVE_ACTIVE_ASPECTS``.
             include_house_comparison: Whether to include house comparison for dual charts
             include_relationship_score: Whether to include relationship scoring for synastry
-            axis_orb_limit: Optional orb threshold for chart axes (applies only to single chart aspects)
+            axis_orb_limit: Optional orb threshold for chart axes (Ascendant,
+                Medium_Coeli, Descendant, Imum_Coeli). When set, aspects involving
+                an axis are kept only if their orb is below this limit; the tighter
+                orb is applied uniformly to both single-chart and dual-chart
+                (synastry/transit) aspects. ``None`` (default) disables it.
             point_orb_adjustments: Optional per-point orb adjustment table (e.g.
                 ``{"Sun": 1.5, "Moon": 1.5}``). When ``None``, the per-chart-type
                 default applies — natal/synastry/composite use
