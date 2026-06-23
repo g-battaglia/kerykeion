@@ -1084,7 +1084,13 @@ class AstrologicalSubjectFactory:
                     for pk in point_keys:
                         point = calc_data[pk]
                         try:
-                            ecl_coords = ((point.abs_pos + ls_ayanamsa) % 360.0, 0.0, 1.0)
+                            # Use the body's true ecliptic latitude so off-ecliptic
+                            # bodies (Moon, Pluto, asteroids) project onto the local
+                            # horizon correctly. Points on the ecliptic (axes, houses,
+                            # lots) carry None and fall back to 0.0. Ayanamsa shifts
+                            # longitude only, so latitude is used unchanged.
+                            ecl_lat = point.ecliptic_latitude or 0.0
+                            ecl_coords = ((point.abs_pos + ls_ayanamsa) % 360.0, ecl_lat, 1.0)
                             azalt_result = ephe.azalt(ls_jd, ephe.ECL2HOR, ls_geopos, 0, 0, ecl_coords)
                             point_updates[pk]["azimuth"] = round(azalt_result[0], 4)
                             point_updates[pk]["altitude_above_horizon"] = round(azalt_result[1], 4)
@@ -1941,6 +1947,7 @@ class AstrologicalSubjectFactory:
                 point_type=point_type,
                 speed=planet_calc[3],
                 declination=declination,
+                ecliptic_latitude=planet_calc[1],
             )
 
             # Calculate house position
@@ -2105,6 +2112,7 @@ class AstrologicalSubjectFactory:
                 point_type=point_type,
                 speed=planet_calc[3],
                 declination=declination,
+                ecliptic_latitude=planet_calc[1],
             )
             data[point_key].house = get_planet_house(planet_calc[0], houses_degree_ut)
             data[point_key].retrograde = planet_calc[3] < 0

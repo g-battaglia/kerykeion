@@ -592,6 +592,12 @@ class KerykeionPointModel(SubscriptableBaseModel):
     declination: Optional[float] = Field(
         default=None, description="Declination in degrees north (+) or south (-) of the celestial equator."
     )
+    ecliptic_latitude: Optional[float] = Field(
+        default=None,
+        description="Ecliptic latitude in degrees north (+) or south (-) of the ecliptic plane. "
+        "The body's true distance off the ecliptic (the Sun is ~0; the Moon reaches ±5°, Pluto ±17°). "
+        "Populated for planets and bodies; used for accurate local-space azimuth/altitude. Added in v6.0.",
+    )
     magnitude: Optional[float] = Field(
         default=None, description="Apparent visual magnitude (fixed stars only). Lower = brighter."
     )
