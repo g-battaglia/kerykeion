@@ -3797,6 +3797,23 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
         template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
 
+    def _axis_cusp_colors(self) -> tuple[str, str, str, str]:
+        """Resolve the (ASC, MC, DSC, IC) cusp colors by point name.
+
+        Looks the axis colors up by name in ``planets_settings`` rather than by
+        fixed position, so custom ``celestial_points_settings`` (different order
+        or length) cannot raise ``IndexError`` or assign the wrong color. Falls
+        back to the standard radix cusp color when an axis is missing.
+        """
+        fallback = self.chart_colors_settings["houses_radix_line"]
+        color_by_name = {p.get("name"): p.get("color", fallback) for p in self.planets_settings}
+        return (
+            color_by_name.get("Ascendant", fallback),
+            color_by_name.get("Medium_Coeli", fallback),
+            color_by_name.get("Descendant", fallback),
+            color_by_name.get("Imum_Coeli", fallback),
+        )
+
     def _setup_single_wheel_houses(self, template_dict: dict, houses_list: list) -> None:
         """
         Populate template_dict with house cusp drawing for single-wheel charts.
@@ -3812,14 +3829,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict: Dictionary to populate with house SVG elements.
             houses_list: List of house data from the subject.
         """
+        asc_color, mc_color, dsc_color, ic_color = self._axis_cusp_colors()
         template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
             r=self.main_radius,
             first_subject_houses_list=houses_list,
             standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-            first_house_color=self.planets_settings[13]["color"],  # ASC color
-            tenth_house_color=self.planets_settings[14]["color"],  # MC color
-            seventh_house_color=self.planets_settings[15]["color"],  # DSC color
-            fourth_house_color=self.planets_settings[16]["color"],  # IC color
+            first_house_color=asc_color,  # ASC color
+            tenth_house_color=mc_color,  # MC color
+            seventh_house_color=dsc_color,  # DSC color
+            fourth_house_color=ic_color,  # IC color
             c1=self.first_circle_radius,  # Outer boundary for cusp lines
             c3=self.third_circle_radius,  # Inner boundary for cusp lines
             chart_type=self.chart_type,
@@ -3922,14 +3940,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             first_houses_list: List of house data from the primary subject.
             second_houses_list: List of house data from the secondary subject.
         """
+        asc_color, mc_color, dsc_color, ic_color = self._axis_cusp_colors()
         template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
             r=self.main_radius,
             first_subject_houses_list=first_houses_list,
             standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-            first_house_color=self.planets_settings[13]["color"],  # ASC color
-            tenth_house_color=self.planets_settings[14]["color"],  # MC color
-            seventh_house_color=self.planets_settings[15]["color"],  # DSC color
-            fourth_house_color=self.planets_settings[16]["color"],  # IC color
+            first_house_color=asc_color,  # ASC color
+            tenth_house_color=mc_color,  # MC color
+            seventh_house_color=dsc_color,  # DSC color
+            fourth_house_color=ic_color,  # IC color
             c1=self.first_circle_radius,  # Outer boundary for cusp lines
             c3=self.third_circle_radius,  # Inner boundary for cusp lines
             chart_type=self.chart_type,

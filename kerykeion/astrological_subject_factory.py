@@ -2521,10 +2521,11 @@ class AstrologicalSubjectFactory:
                     active_points.remove("Anti_Vertex")
 
         # =============================================================================
-        # WHITE MOON / SELENA (SE_WHITE_MOON = 56, with fallback)
+        # WHITE MOON / SELENA (SE_WHITE_MOON = 56)
         # =============================================================================
-        # White Moon is natively supported by libephemeris (body ID 56).
-        # On swisseph, we fall back to Mean Lilith + 180 (same as Mean Priapus).
+        # White Moon is natively supported by libephemeris (body ID 56). Backends
+        # without native support skip this point rather than fabricating Priapus
+        # (Mean Lilith + 180°) as Selena.
         if should_calculate("White_Moon"):
             # Attempt native backend calculation (body ID 56)
             AstrologicalSubjectFactory._calculate_single_planet(

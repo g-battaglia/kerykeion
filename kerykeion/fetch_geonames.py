@@ -57,6 +57,11 @@ def _should_cache_geonames_response(response: Response) -> bool:
     """
     try:
         data = response.json()
+        if not isinstance(data, dict):
+            # Lists, strings and other scalars are never valid GeoNames payloads;
+            # they pass the "status" check below silently, so reject them here to
+            # avoid caching malformed responses until expiry.
+            return False
         if "status" in data:
             error_code = data["status"].get("value", 0)
             if error_code in TRANSIENT_GEONAMES_ERROR_CODES:

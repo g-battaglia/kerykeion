@@ -1636,9 +1636,9 @@ class TriplicityLordsModel(SubscriptableBaseModel):
 
     element: Element
     sect: Literal["day", "night"]
-    primary: str
-    secondary: str
-    participating: str
+    primary: ClassicalPlanet
+    secondary: ClassicalPlanet
+    participating: ClassicalPlanet
 
 
 class ZRPeriodModel(SubscriptableBaseModel):
