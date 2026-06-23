@@ -5,6 +5,8 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 Test suite for context_serializer module (XML output)
 """
 
+from datetime import datetime, timedelta, timezone
+
 import pytest
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.context_serializer import (
@@ -826,18 +828,16 @@ class TestMoonPhaseOverviewToContext:
             datestamp="Thu, 10 Oct 1993 12:12:00 +0000",
             moon=MoonPhaseMoonSummaryModel(phase=0.5),
             sun=MoonPhaseSunInfoModel(
-                sunrise=1696921080,
-                sunrise_timestamp="06:58",
-                sunset=1696960680,
-                sunset_timestamp="17:58",
-                day_length="11h 00m",
+                sunrise=datetime(2023, 10, 10, 6, 58, tzinfo=timezone.utc),
+                sunset=datetime(2023, 10, 10, 17, 58, tzinfo=timezone.utc),
+                day_length=timedelta(hours=11),
             ),
         )
         context = moon_phase_overview_to_context(overview)
         assert "<sun>" in context
         assert "</sun>" in context
-        assert "<sunrise>" in context
-        assert "<day_length>11h 00m</day_length>" in context
+        assert "<sunrise>2023-10-10T06:58:00+00:00</sunrise>" in context
+        assert "<day_length>11:00:00</day_length>" in context
 
     def test_overview_with_location(self):
         """Test MoonPhaseOverviewModel with location info."""
@@ -1173,7 +1173,7 @@ class TestMoonPhaseOverviewToContext:
             datestamp="Thu, 10 Oct 1993 12:12:00 +0000",
             moon=MoonPhaseMoonSummaryModel(phase=0.5),
             sun=MoonPhaseSunInfoModel(
-                solar_noon="12:30",
+                solar_noon=datetime(2023, 10, 10, 12, 30, tzinfo=timezone.utc),
                 position=MoonPhaseSunPositionModel(
                     altitude=45.00,
                     azimuth=180.00,
@@ -1188,7 +1188,7 @@ class TestMoonPhaseOverviewToContext:
             ),
         )
         context = moon_phase_overview_to_context(overview)
-        assert "<solar_noon>12:30</solar_noon>" in context
+        assert "<solar_noon>2023-10-10T12:30:00+00:00</solar_noon>" in context
         assert "<position " in context
         assert 'altitude="45.00"' in context
         assert "<next_solar_eclipse " in context

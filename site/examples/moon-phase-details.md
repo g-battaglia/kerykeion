@@ -96,9 +96,10 @@ if overview.sun and overview.sun.next_solar_eclipse:
 if overview.sun:
     sun = overview.sun
 
-    print(f"Sunrise:    {sun.sunrise_timestamp}")
-    print(f"Sunset:     {sun.sunset_timestamp}")
-    print(f"Solar Noon: {sun.solar_noon}")
+    # sunrise/sunset/solar_noon are timezone-aware datetime objects; day_length is a timedelta
+    print(f"Sunrise:    {sun.sunrise:%H:%M}")
+    print(f"Sunset:     {sun.sunset:%H:%M}")
+    print(f"Solar Noon: {sun.solar_noon:%H:%M}")
     print(f"Day Length: {sun.day_length}")
 
     if sun.position:

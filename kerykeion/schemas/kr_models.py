@@ -129,16 +129,24 @@ class MoonPhaseSunInfoModel(SubscriptableBaseModel):
     """
     Summary information about the Sun for the lunar phase context.
 
-    All fields are optional and can be incrementally populated as more
-    advanced calculations become available.
+    ``sunrise``, ``sunset`` and ``solar_noon`` are timezone-aware ``datetime``
+    objects; ``day_length`` is a ``timedelta``. All fields are optional and are
+    populated as available — e.g. during polar day/night a full sunrise→sunset
+    pair may be missing, leaving ``solar_noon`` and ``day_length`` as ``None``.
+
+    Attributes:
+        sunrise: Moment of sunrise, or ``None``.
+        sunset: Moment of sunset, or ``None``.
+        solar_noon: Midpoint between sunrise and sunset, or ``None``.
+        day_length: Duration from sunrise to sunset, or ``None``.
+        position: Apparent solar position (altitude/azimuth/distance).
+        next_solar_eclipse: Next global solar eclipse, if computed.
     """
 
-    sunrise: Optional[int] = None
-    sunrise_timestamp: Optional[str] = None
-    sunset: Optional[int] = None
-    sunset_timestamp: Optional[str] = None
-    solar_noon: Optional[str] = None
-    day_length: Optional[str] = None
+    sunrise: Optional[datetime] = None
+    sunset: Optional[datetime] = None
+    solar_noon: Optional[datetime] = None
+    day_length: Optional[timedelta] = None
     position: Optional[MoonPhaseSunPositionModel] = None
     next_solar_eclipse: Optional[MoonPhaseSolarEclipseModel] = None
 

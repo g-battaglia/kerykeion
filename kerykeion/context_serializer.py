@@ -878,17 +878,13 @@ def moon_phase_overview_to_context(overview: MoonPhaseOverviewModel) -> str:
         lines.append(f"  {_o('sun')}")
 
         if sun.sunrise is not None:
-            lines.append(f"    {_el('sunrise', str(sun.sunrise))}")
-        if sun.sunrise_timestamp is not None:
-            lines.append(f"    {_el('sunrise_timestamp', sun.sunrise_timestamp)}")
+            lines.append(f"    {_el('sunrise', sun.sunrise.isoformat())}")
         if sun.sunset is not None:
-            lines.append(f"    {_el('sunset', str(sun.sunset))}")
-        if sun.sunset_timestamp is not None:
-            lines.append(f"    {_el('sunset_timestamp', sun.sunset_timestamp)}")
+            lines.append(f"    {_el('sunset', sun.sunset.isoformat())}")
         if sun.solar_noon is not None:
-            lines.append(f"    {_el('solar_noon', sun.solar_noon)}")
+            lines.append(f"    {_el('solar_noon', sun.solar_noon.isoformat())}")
         if sun.day_length is not None:
-            lines.append(f"    {_el('day_length', sun.day_length)}")
+            lines.append(f"    {_el('day_length', str(sun.day_length))}")
 
         if sun.position is not None:
             sun_pos = sun.position

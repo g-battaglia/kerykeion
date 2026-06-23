@@ -1081,8 +1081,6 @@ def test_factory_sun_info(y, m, d, h, mi):
     # At Greenwich, sunrise/sunset should always exist (not polar)
     assert overview.sun.sunrise is not None, "sunrise is None"
     assert overview.sun.sunset is not None, "sunset is None"
-    assert overview.sun.sunrise_timestamp is not None
-    assert overview.sun.sunset_timestamp is not None
     assert overview.sun.sunrise < overview.sun.sunset, (
         f"sunrise ({overview.sun.sunrise}) >= sunset ({overview.sun.sunset})"
     )

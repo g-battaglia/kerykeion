@@ -112,8 +112,9 @@ if moon.next_lunar_eclipse:
 # Sun info
 if overview.sun:
     sun = overview.sun
-    print(f"Sunrise: {sun.sunrise_timestamp}")
-    print(f"Sunset: {sun.sunset_timestamp}")
+    # sunrise/sunset are timezone-aware datetime objects; day_length is a timedelta
+    print(f"Sunrise: {sun.sunrise:%H:%M}")
+    print(f"Sunset: {sun.sunset:%H:%M}")
     print(f"Day length: {sun.day_length}")
     if sun.position:
         print(f"Sun altitude: {sun.position.altitude:.2f}°")

@@ -341,10 +341,13 @@ class TestFactoryFromSubjectMocked:
         overview = MoonPhaseDetailsFactory.from_subject(subject)
 
         assert overview.sun is not None
-        assert overview.sun.sunrise_timestamp is not None
-        assert overview.sun.sunset_timestamp is not None
+        assert overview.sun.sunrise is not None
+        assert overview.sun.sunset is not None
         assert overview.sun.solar_noon is not None
         assert overview.sun.day_length is not None
+        # Solar noon sits between sunrise and sunset; day length is their span.
+        assert overview.sun.sunrise < overview.sun.solar_noon < overview.sun.sunset
+        assert overview.sun.day_length == overview.sun.sunset - overview.sun.sunrise
 
     def test_sun_position_populated(self) -> None:
         subject = _make_mock_subject()
@@ -432,8 +435,8 @@ class TestFactoryEdgeCasesNullReturns:
         ):
             overview = MoonPhaseDetailsFactory.from_subject(subject)
 
-        assert overview.sun.sunrise_timestamp is None
-        assert overview.sun.sunset_timestamp is None
+        assert overview.sun.sunrise is None
+        assert overview.sun.sunset is None
         assert overview.sun.solar_noon is None
         assert overview.sun.day_length is None
         assert overview.sun.position is None

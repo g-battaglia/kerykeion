@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import logging
 import math
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from kerykeion.schemas.kr_models import (
@@ -605,12 +605,10 @@ class MoonPhaseDetailsFactory:
         """
         next_solar = _compute_next_solar_eclipse(subject)
 
-        sunrise_ts: Optional[int] = None
-        sunrise_str: Optional[str] = None
-        sunset_ts: Optional[int] = None
-        sunset_str: Optional[str] = None
-        solar_noon_str: Optional[str] = None
-        day_length_str: Optional[str] = None
+        sunrise_local: Optional[datetime] = None
+        sunset_local: Optional[datetime] = None
+        solar_noon_local: Optional[datetime] = None
+        day_length: Optional[timedelta] = None
         position: Optional[MoonPhaseSunPositionModel] = None
 
         # Sunrise / Sunset, solar noon, day length
@@ -618,23 +616,9 @@ class MoonPhaseDetailsFactory:
             sun_times = _compute_sun_times(subject)
             if sun_times is not None:
                 sunrise_local, sunset_local = sun_times
-
-                sunrise_ts = int(sunrise_local.timestamp())
-                sunrise_str = sunrise_local.strftime("%H:%M")
-
-                sunset_ts = int(sunset_local.timestamp())
-                sunset_str = sunset_local.strftime("%H:%M")
-
-                # Solar noon as midpoint between sunrise and sunset
+                # Solar noon as the midpoint between sunrise and sunset.
                 solar_noon_local = sunrise_local + (sunset_local - sunrise_local) / 2
-                solar_noon_str = solar_noon_local.strftime("%H:%M")
-
-                # Day length in H:MM
-                delta = sunset_local - sunrise_local
-                total_minutes = int(round(delta.total_seconds() / 60))
-                hours = total_minutes // 60
-                minutes = total_minutes % 60
-                day_length_str = f"{hours}:{minutes:02d}"
+                day_length = sunset_local - sunrise_local
         except RuntimeError as exc:
             # Expected error: polar regions, ephemeris unavailable, etc.
             logger.debug("Sunrise/sunset calculation failed (expected): %s", exc)
@@ -657,12 +641,10 @@ class MoonPhaseDetailsFactory:
             logger.error("Unexpected error calculating Sun position: %s", exc, exc_info=True)
 
         return MoonPhaseSunInfoModel(
-            sunrise=sunrise_ts,
-            sunrise_timestamp=sunrise_str,
-            sunset=sunset_ts,
-            sunset_timestamp=sunset_str,
-            solar_noon=solar_noon_str,
-            day_length=day_length_str,
+            sunrise=sunrise_local,
+            sunset=sunset_local,
+            solar_noon=solar_noon_local,
+            day_length=day_length,
             position=position,
             next_solar_eclipse=next_solar,
         )

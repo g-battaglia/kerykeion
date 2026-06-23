@@ -28,6 +28,7 @@ Covers:
 from __future__ import annotations
 
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, List, get_args
@@ -875,8 +876,8 @@ class TestMoonPhaseOverviewReport:
             datestamp="Fri, 08 Oct 1993 13:20:00 +0000",
             moon=MoonPhaseMoonSummaryModel(),
             sun=MoonPhaseSunInfoModel(
-                sunrise_timestamp="07:15",
-                sunset_timestamp="18:18",
+                sunrise=datetime(1993, 10, 8, 7, 15, tzinfo=timezone.utc),
+                sunset=datetime(1993, 10, 8, 18, 18, tzinfo=timezone.utc),
             ),
         )
         text = ReportGenerator(model).generate_report()

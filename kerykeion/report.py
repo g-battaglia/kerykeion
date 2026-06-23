@@ -263,14 +263,15 @@ class ReportGenerator:
         sun = overview.sun
         if sun is not None:
             sun_data: list[list[str]] = [["Field", "Value"]]
-            if sun.sunrise_timestamp is not None:
-                sun_data.append(["Sunrise", sun.sunrise_timestamp])
-            if sun.sunset_timestamp is not None:
-                sun_data.append(["Sunset", sun.sunset_timestamp])
+            if sun.sunrise is not None:
+                sun_data.append(["Sunrise", sun.sunrise.strftime("%H:%M")])
+            if sun.sunset is not None:
+                sun_data.append(["Sunset", sun.sunset.strftime("%H:%M")])
             if sun.solar_noon is not None:
-                sun_data.append(["Solar Noon", sun.solar_noon])
+                sun_data.append(["Solar Noon", sun.solar_noon.strftime("%H:%M")])
             if sun.day_length is not None:
-                sun_data.append(["Day Length", sun.day_length])
+                _dl_minutes = int(round(sun.day_length.total_seconds() / 60))
+                sun_data.append(["Day Length", f"{_dl_minutes // 60}:{_dl_minutes % 60:02d}"])
             if sun.position is not None:
                 if sun.position.altitude is not None:
                     sun_data.append(["Sun Altitude", f"{sun.position.altitude:.2f}°"])
