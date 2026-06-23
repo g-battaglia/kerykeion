@@ -217,9 +217,13 @@ class FetchGeonames:
             response = self.session.send(prepared_request, timeout=DEFAULT_GEONAMES_TIMEOUT)
             response.raise_for_status()
             response_json = response.json()
+            # Guard len() against a malformed payload where "geonames" is not a list
+            # (e.g. a scalar): logger args are evaluated eagerly, and a TypeError here
+            # would escape the RequestException/JSONDecodeError handlers below.
+            geonames = response_json.get("geonames") if isinstance(response_json, dict) else None
             logger.debug(
                 "GeoNames search returned %d result(s)",
-                len(response_json.get("geonames") or []) if isinstance(response_json, dict) else 0,
+                len(geonames) if isinstance(geonames, list) else 0,
             )
 
         except RequestException as e:

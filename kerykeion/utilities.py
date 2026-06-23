@@ -686,8 +686,10 @@ def format_ancient_iso(year: int, month: int, day: int, decimal_hour: float, utc
     else:
         sign = "+" if utc_offset_hours >= 0 else "-"
         abs_off = abs(utc_offset_hours)
-        oh = int(abs_off)
-        om = int(round((abs_off - oh) * 60))
+        # Carry a rounded-up 60 into the hour (e.g. 0.99333 h -> 00:60 -> 01:00):
+        # rounding minutes independently of hours could otherwise emit ":60",
+        # which is not a valid ISO 8601 offset field (minutes must be 0-59).
+        oh, om = divmod(round(abs_off * 60), 60)
         offset_str = f"{sign}{oh:02d}:{om:02d}"
 
     return f"{year_str}-{month:02d}-{day:02d}T{h:02d}:{m:02d}:{s:02d}{offset_str}"

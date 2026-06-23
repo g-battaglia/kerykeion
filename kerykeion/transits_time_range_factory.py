@@ -128,8 +128,11 @@ class TransitsTimeRangeFactory:
         settings_file (Union[Path, KerykeionSettingsModel, dict, None], optional):
             Configuration settings for calculations. Can be a file path, settings
             model, dictionary, or None for defaults. Defaults to None.
-        axis_orb_limit (float | None, optional): Optional orb threshold applied to chart axes
-            during single-chart aspect calculations. Dual-chart calculations ignore this value.
+        axis_orb_limit (float | None, optional): Optional orb threshold for aspects that
+            involve a chart axis (Ascendant/Medium_Coeli). Transit aspects are computed via
+            the dual-chart path, so when this is set, transit-to-axis aspects whose orb is
+            greater than or equal to the threshold are discarded. ``None`` (the default)
+            disables axis-specific filtering.
 
     Attributes:
         natal_chart: The reference natal chart for transit calculations.
@@ -137,7 +140,7 @@ class TransitsTimeRangeFactory:
         active_points: Celestial bodies included in calculations.
         active_aspects: Aspect types considered for analysis.
         settings_file: Configuration settings for the calculations.
-        axis_orb_limit: Optional orb override used when calculating single-chart aspects.
+        axis_orb_limit: Optional orb threshold for transit aspects involving a chart axis; see the constructor argument.
 
     Examples:
         Basic transit calculation:
