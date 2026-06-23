@@ -10,6 +10,7 @@ essential-dignity *score*, which credits only the in-sect lord with +3 — see
 
 from __future__ import annotations
 
+from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import Element
 from kerykeion.schemas.kr_models import TriplicityLordsModel
 
@@ -31,9 +32,14 @@ def get_triplicity_lords(element: Element, is_diurnal: bool) -> TriplicityLordsM
         ``participating`` (active in both sects).
 
     Raises:
-        KeyError: If ``element`` is not one of the four classical elements.
+        KerykeionException: If ``element`` is not one of the four classical elements.
     """
-    rulers = TRIPLICITY_RULERS[element]
+    try:
+        rulers = TRIPLICITY_RULERS[element]
+    except KeyError as exc:
+        raise KerykeionException(
+            f"Invalid triplicity element: {element!r}. Expected one of {sorted(TRIPLICITY_RULERS)}."
+        ) from exc
     sect = "day" if is_diurnal else "night"
     # Derive the out-of-sect lord from the single source of truth (`sect`) so the
     # two cannot drift if the sect convention ever changes.

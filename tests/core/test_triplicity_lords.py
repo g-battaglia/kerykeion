@@ -7,7 +7,7 @@ ephemeris backend.
 
 import pytest
 
-from kerykeion import TriplicityLordsModel
+from kerykeion import KerykeionException, TriplicityLordsModel
 from kerykeion.dignities import get_triplicity_lords
 from kerykeion.dignities.dignity_data import TRIPLICITY_RULERS
 
@@ -58,5 +58,5 @@ class TestTriplicityLords:
             assert day.participating == night.participating
 
     def test_invalid_element_raises(self):
-        with pytest.raises(KeyError):
+        with pytest.raises(KerykeionException):
             get_triplicity_lords("Spirit", is_diurnal=True)  # type: ignore[arg-type]
