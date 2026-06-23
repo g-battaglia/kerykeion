@@ -6,7 +6,12 @@ from typing import Optional, Sequence, Union, Literal
 
 from simple_ascii_tables import AsciiTable
 
-from kerykeion.utilities import get_available_astrological_points_list, get_houses_list, format_iso_display
+from kerykeion.utilities import (
+    get_available_astrological_points_list,
+    get_houses_list,
+    format_iso_display,
+    format_timedelta_hhmm,
+)
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     ChartDataModel,
@@ -270,8 +275,7 @@ class ReportGenerator:
             if sun.solar_noon is not None:
                 sun_data.append(["Solar Noon", sun.solar_noon.strftime("%H:%M")])
             if sun.day_length is not None:
-                _dl_minutes = int(round(sun.day_length.total_seconds() / 60))
-                sun_data.append(["Day Length", f"{_dl_minutes // 60}:{_dl_minutes % 60:02d}"])
+                sun_data.append(["Day Length", format_timedelta_hhmm(sun.day_length)])
             if sun.position is not None:
                 if sun.position.altitude is not None:
                     sun_data.append(["Sun Altitude", f"{sun.position.altitude:.2f}°"])

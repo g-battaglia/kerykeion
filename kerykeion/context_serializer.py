@@ -35,6 +35,7 @@ from kerykeion.schemas.kr_models import (
 )
 from kerykeion.secondary_progressions import SolarArcSubjectModel
 from kerykeion.midpoints import MidpointModel
+from kerykeion.utilities import format_timedelta_hhmm
 
 
 # Mapping from abbreviated sign names to full names
@@ -107,7 +108,13 @@ def _el(tag: str, text, **kwargs) -> str:
 def _serialize_active_config(chart_data, lines: list[str]) -> None:
     """Append active_points and active_aspects serialization to *lines*."""
     lines.append(f"  {_el('active_points', ', '.join(chart_data.active_points))}")
-    active_aspects_str = ", ".join([f"{a.get('name', '')} ({a.get('orb')})" for a in chart_data.active_aspects])
+    # Drop the "(orb)" suffix when orb is absent rather than rendering the literal
+    # string "None"; omit nameless entries entirely.
+    active_aspects_str = ", ".join(
+        f"{a.get('name', '')} ({a['orb']})" if a.get("orb") is not None else a.get("name", "")
+        for a in chart_data.active_aspects
+        if a.get("name")
+    )
     lines.append(f"  {_el('active_aspects', active_aspects_str)}")
 
 
@@ -884,7 +891,7 @@ def moon_phase_overview_to_context(overview: MoonPhaseOverviewModel) -> str:
         if sun.solar_noon is not None:
             lines.append(f"    {_el('solar_noon', sun.solar_noon.isoformat())}")
         if sun.day_length is not None:
-            lines.append(f"    {_el('day_length', str(sun.day_length))}")
+            lines.append(f"    {_el('day_length', format_timedelta_hhmm(sun.day_length))}")
 
         if sun.position is not None:
             sun_pos = sun.position

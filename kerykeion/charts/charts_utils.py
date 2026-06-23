@@ -896,10 +896,10 @@ def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", 
     # Ensure the input is a float
     dec = float(dec)
 
-    # Calculate degrees, minutes, and seconds
+    # Degrees / minutes truncate (floor) the displayed unit, matching the
+    # historical behaviour of the "1" and "2" formats.
     degrees = int(dec)
     minutes = int((dec - degrees) * 60)
-    seconds = int(round((dec - degrees - minutes / 60) * 3600))
 
     # Format the output based on the specified type
     if format_type == "1":
@@ -907,7 +907,13 @@ def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", 
     elif format_type == "2":
         return f"{degrees}°{minutes:02d}'"
     else:  # format_type == "3" (default) — always return a str matching the annotation
-        return f"{degrees}°{minutes:02d}'{seconds:02d}\""
+        # Round to the nearest second and carry any overflow up through minutes
+        # and degrees via divmod, so the result can never contain an invalid
+        # 60" (e.g. 10.99997° -> "11°00'00\"" instead of "10°59'60\"").
+        total_seconds = round(dec * 3600)
+        d, rem = divmod(total_seconds, 3600)
+        m, s = divmod(rem, 60)
+        return f"{d}°{m:02d}'{s:02d}\""
 
 
 # =============================================================================
