@@ -2724,8 +2724,8 @@ def _classic_gauquelin_mid_offset(
     """Compute the offset midpoint of Gauquelin sector i (0-indexed) for the classic chart."""
     a = offsets[i]
     b = offsets[(i + 1) % 36]
-    span = (a - b) % 360
-    return (b + span / 2) % 360
+    span = (b - a) % 360
+    return (a + span / 2) % 360
 
 
 def draw_gauquelin_sectors(
