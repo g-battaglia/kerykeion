@@ -130,14 +130,17 @@ class MoonPhaseSunInfoModel(SubscriptableBaseModel):
     Summary information about the Sun for the lunar phase context.
 
     ``sunrise``, ``sunset`` and ``solar_noon`` are timezone-aware ``datetime``
-    objects; ``day_length`` is a ``timedelta``. All fields are optional and are
-    populated as available — e.g. during polar day/night a full sunrise→sunset
-    pair may be missing, leaving ``solar_noon`` and ``day_length`` as ``None``.
+    objects in the subject's **local** timezone (the moon-phase context is
+    presented for the subject's civil day); ``day_length`` is a ``timedelta``.
+    This differs from :class:`SunTimesModel`, whose instants are in UTC. All
+    fields are optional and are populated as available — e.g. during polar
+    day/night a full sunrise→sunset pair may be missing, leaving ``solar_noon``
+    and ``day_length`` as ``None``.
 
     Attributes:
-        sunrise: Moment of sunrise, or ``None``.
-        sunset: Moment of sunset, or ``None``.
-        solar_noon: Midpoint between sunrise and sunset, or ``None``.
+        sunrise: Moment of sunrise (subject-local), or ``None``.
+        sunset: Moment of sunset (subject-local), or ``None``.
+        solar_noon: Midpoint between sunrise and sunset (subject-local), or ``None``.
         day_length: Duration from sunrise to sunset, or ``None``.
         position: Apparent solar position (altitude/azimuth/distance).
         next_solar_eclipse: Next global solar eclipse, if computed.

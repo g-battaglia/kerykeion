@@ -96,9 +96,13 @@ def get_translations(
     """
     primary = _select_language(language_dict, language)
     result = _deep_get(primary, value)
-    if result is _SENTINEL and fallback_dict is not None:
+    # Treat a literal None in the primary the same as "missing" so it falls
+    # through to the fallback chain. This preserves the precedence of the old
+    # two-call ChartDrawer path (a None selected-language label deferred to the
+    # English fallback rather than rendering the caller's bare default).
+    if (result is _SENTINEL or result is None) and fallback_dict is not None:
         result = _deep_get(fallback_dict, value)
-    if result is _SENTINEL:
+    if result is _SENTINEL or result is None:
         fallback = LANGUAGE_SETTINGS.get("EN", {})
         result = _deep_get(fallback, value)
     return default if result is _SENTINEL or result is None else result  # type: ignore[return-value]

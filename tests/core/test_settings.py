@@ -231,6 +231,23 @@ class TestGetTranslations:
             == "default"
         )
 
+    def test_none_in_primary_falls_through_to_fallback_dict(self):
+        # A key present-but-None in the primary must be treated as "missing" and
+        # defer to the explicit fallback_dict, not short-circuit to the default arg.
+        primary = {"transit": None}
+        fallback = {"transit": "Dal fallback"}
+        assert (
+            get_translations("transit", "default", language_dict=primary, fallback_dict=fallback)
+            == "Dal fallback"
+        )
+
+    def test_none_in_primary_falls_through_to_en_defaults(self):
+        # When neither the primary nor the fallback_dict provide the key (primary
+        # is None, fallback_dict absent), a known key still resolves via the
+        # built-in English defaults rather than returning the bare default arg.
+        primary = {"info": None}
+        assert get_translations("info", "default", language_dict=primary) == "Info"
+
 
 # =============================================================================
 # TestDeepMerge
