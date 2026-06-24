@@ -45,7 +45,7 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "libephemeris==3.0.0a5",
+    "libephemeris==3.0.0a6",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",

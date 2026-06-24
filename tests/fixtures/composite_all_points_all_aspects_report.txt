@@ -88,21 +88,21 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pluto                 | Vir ♍️ | 18.30°   | N/A   | N/A   | -    | Eleventh House |
 | Mean North Lunar Node | Aqu ♒️ | 23.06°   | N/A   | N/A   | -    | Fourth House   |
 | True North Lunar Node | Aqu ♒️ | 22.53°   | N/A   | N/A   | -    | Fourth House   |
-| Admetos               | Ari ♈️ | 26.40°   | N/A   | N/A   | -    | Seventh House  |
+| Admetos               | Ari ♈️ | 27.57°   | N/A   | N/A   | -    | Seventh House  |
 | Anti Vertex           | Sco ♏️ | 19.11°   | N/A   | N/A   | -    | First House    |
-| Apollon               | Vir ♍️ | 26.50°   | N/A   | N/A   | -    | Eleventh House |
+| Apollon               | Vir ♍️ | 26.35°   | N/A   | N/A   | -    | Eleventh House |
 | Ceres                 | Tau ♉️ | 22.10°   | N/A   | N/A   | -    | Eighth House   |
 | Chiron                | Gem ♊️ | 21.81°   | N/A   | N/A   | -    | Eighth House   |
-| Cupido                | Lib ♎️ | 9.83°    | N/A   | N/A   | -    | Twelfth House  |
+| Cupido                | Lib ♎️ | 9.65°    | N/A   | N/A   | -    | Twelfth House  |
 | Earth                 | Ari ♈️ | 0.00°    | N/A   | N/A   | -    | Sixth House    |
 | Eris                  | Ari ♈️ | 9.82°    | N/A   | N/A   | -    | Sixth House    |
-| Hades                 | Tau ♉️ | 8.88°    | N/A   | N/A   | -    | Seventh House  |
+| Hades                 | Tau ♉️ | 10.06°   | N/A   | N/A   | -    | Seventh House  |
 | Haumea                | Vir ♍️ | 0.67°    | N/A   | N/A   | -    | Tenth House    |
-| Interpolated Lilith   | Leo ♌️ | 28.85°   | N/A   | N/A   | -    | Tenth House    |
-| Interpolated Perigee  | Vir ♍️ | 14.85°   | N/A   | N/A   | -    | Eleventh House |
+| Interpolated Lilith   | Leo ♌️ | 28.91°   | N/A   | N/A   | -    | Tenth House    |
+| Interpolated Perigee  | Vir ♍️ | 15.84°   | N/A   | N/A   | -    | Eleventh House |
 | Ixion                 | Lib ♎️ | 25.96°   | N/A   | N/A   | -    | First House    |
 | Juno                  | Sco ♏️ | 7.97°    | N/A   | N/A   | -    | First House    |
-| Kronos                | Gem ♊️ | 0.15°    | N/A   | N/A   | -    | Eighth House   |
+| Kronos                | Gem ♊️ | 1.11°    | N/A   | N/A   | -    | Eighth House   |
 | Makemake              | Leo ♌️ | 2.66°    | N/A   | N/A   | -    | Tenth House    |
 | Mean Lilith           | Vir ♍️ | 0.75°    | N/A   | N/A   | -    | Tenth House    |
 | Mean Priapus          | Pis ♓️ | 0.75°    | N/A   | N/A   | -    | Fourth House   |
@@ -114,7 +114,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pars Fortunae         | Sco ♏️ | 27.58°   | N/A   | N/A   | -    | Second House   |
 | Pars Spiritus         | Vir ♍️ | 16.66°   | N/A   | N/A   | -    | Eleventh House |
 | Pholus                | Ari ♈️ | 8.09°    | N/A   | N/A   | -    | Sixth House    |
-| Poseidon              | Lib ♎️ | 15.38°   | N/A   | N/A   | -    | Twelfth House  |
+| Poseidon              | Lib ♎️ | 15.30°   | N/A   | N/A   | -    | Twelfth House  |
 | Quaoar                | Lib ♎️ | 20.42°   | N/A   | N/A   | -    | Twelfth House  |
 | Sedna                 | Ari ♈️ | 29.37°   | N/A   | N/A   | -    | Seventh House  |
 | True Lilith           | Pis ♓️ | 14.42°   | N/A   | N/A   | -    | Fifth House    |
@@ -122,9 +122,9 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | True South Lunar Node | Leo ♌️ | 22.53°   | N/A   | N/A   | -    | Tenth House    |
 | Vertex                | Tau ♉️ | 19.11°   | N/A   | N/A   | -    | Seventh House  |
 | Vesta                 | Tau ♉️ | 22.69°   | N/A   | N/A   | -    | Eighth House   |
-| Vulkanus              | Gem ♊️ | 28.63°   | N/A   | N/A   | -    | Ninth House    |
+| Vulkanus              | Gem ♊️ | 29.28°   | N/A   | N/A   | -    | Ninth House    |
 | White Moon            | Gem ♊️ | 19.58°   | N/A   | N/A   | -    | Eighth House   |
-| Zeus                  | Vir ♍️ | 3.33°    | N/A   | N/A   | -    | Eleventh House |
+| Zeus                  | Vir ♍️ | 3.25°    | N/A   | N/A   | -    | Eleventh House |
 +-----------------------+---------+----------+-------+-------+------+----------------+
 
 +Composite Chart Houses (Placidus)----+-------------------+
@@ -263,12 +263,12 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Sun                   | opposition ☍     | Anti Vertex           | 5.15° | Static = |
 | Sun                   | quintile Q       | Mean Priapus          | 1.21° | Static = |
 | Sun                   | trine △          | True Priapus          | 0.46° | Static = |
-| Sun                   | trine △          | Interpolated Perigee  | 0.89° | Static = |
-| Sun                   | biquintile bQ    | Cupido                | 1.87° | Static = |
-| Sun                   | conjunction ☌    | Hades                 | 5.08° | Static = |
-| Sun                   | sesquiquadrate ⚼ | Apollon               | 2.47° | Static = |
-| Sun                   | semi-square ∠    | Vulkanus              | 0.33° | Static = |
-| Sun                   | quincunx ⚻       | Poseidon              | 1.42° | Static = |
+| Sun                   | trine △          | Interpolated Perigee  | 1.88° | Static = |
+| Sun                   | biquintile bQ    | Cupido                | 1.68° | Static = |
+| Sun                   | conjunction ☌    | Hades                 | 3.90° | Static = |
+| Sun                   | sesquiquadrate ⚼ | Apollon               | 2.61° | Static = |
+| Sun                   | semi-square ∠    | Vulkanus              | 0.32° | Static = |
+| Sun                   | quincunx ⚻       | Poseidon              | 1.34° | Static = |
 | Moon                  | trine △          | Mercury               | 3.42° | Static = |
 | Moon                  | trine △          | Saturn                | 0.54° | Static = |
 | Moon                  | biquintile bQ    | Uranus                | 3.47° | Static = |
@@ -288,13 +288,13 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Moon                  | sesquiquadrate ⚼ | Pars Fidei            | 2.37° | Static = |
 | Moon                  | sesquiquadrate ⚼ | Vertex                | 2.94° | Static = |
 | Moon                  | semi-square ∠    | Anti Vertex           | 2.94° | Static = |
-| Moon                  | semi-sextile ⚺   | Interpolated Lilith   | 2.32° | Static = |
+| Moon                  | semi-sextile ⚺   | Interpolated Lilith   | 2.26° | Static = |
 | Moon                  | quincunx ⚻       | Mean Priapus          | 0.42° | Static = |
-| Moon                  | biquintile bQ    | Hades                 | 1.71° | Static = |
-| Moon                  | semi-sextile ⚺   | Zeus                  | 2.16° | Static = |
-| Moon                  | trine △          | Kronos                | 1.02° | Static = |
-| Moon                  | conjunction ☌    | Apollon               | 4.67° | Static = |
-| Moon                  | square □         | Vulkanus              | 2.54° | Static = |
+| Moon                  | biquintile bQ    | Hades                 | 2.90° | Static = |
+| Moon                  | semi-sextile ⚺   | Zeus                  | 2.08° | Static = |
+| Moon                  | trine △          | Kronos                | 0.06° | Static = |
+| Moon                  | conjunction ☌    | Apollon               | 4.82° | Static = |
+| Moon                  | square □         | Vulkanus              | 1.89° | Static = |
 | Mercury               | square □         | Jupiter               | 5.45° | Static = |
 | Mercury               | trine △          | Saturn                | 2.88° | Static = |
 | Mercury               | square □         | Uranus                | 0.89° | Static = |
@@ -317,13 +317,13 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mercury               | biquintile bQ    | Quaoar                | 1.33° | Static = |
 | Mercury               | opposition ☍     | Pars Fortunae         | 0.17° | Static = |
 | Mercury               | trine △          | Pars Amoris           | 3.15° | Static = |
-| Mercury               | square □         | Interpolated Lilith   | 1.10° | Static = |
+| Mercury               | square □         | Interpolated Lilith   | 1.16° | Static = |
 | Mercury               | square □         | Mean Priapus          | 3.00° | Static = |
-| Mercury               | square □         | Zeus                  | 5.58° | Static = |
-| Mercury               | conjunction ☌    | Kronos                | 2.40° | Static = |
-| Mercury               | trine △          | Apollon               | 1.25° | Static = |
-| Mercury               | semi-sextile ⚺   | Admetos               | 1.35° | Static = |
-| Mercury               | semi-sextile ⚺   | Vulkanus              | 0.88° | Static = |
+| Mercury               | square □         | Zeus                  | 5.50° | Static = |
+| Mercury               | conjunction ☌    | Kronos                | 3.36° | Static = |
+| Mercury               | trine △          | Apollon               | 1.40° | Static = |
+| Mercury               | semi-sextile ⚺   | Admetos               | 0.18° | Static = |
+| Mercury               | semi-sextile ⚺   | Vulkanus              | 1.53° | Static = |
 | Venus                 | trine △          | Jupiter               | 0.44° | Static = |
 | Venus                 | biquintile bQ    | Pluto                 | 1.55° | Static = |
 | Venus                 | sextile ⚹        | Mean North Lunar Node | 0.32° | Static = |
@@ -341,9 +341,9 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Venus                 | opposition ☍     | Quaoar                | 2.32° | Static = |
 | Venus                 | biquintile bQ    | Pars Fortunae         | 1.17° | Static = |
 | Venus                 | biquintile bQ    | Pars Spiritus         | 0.09° | Static = |
-| Venus                 | biquintile bQ    | Interpolated Perigee  | 1.90° | Static = |
+| Venus                 | biquintile bQ    | Interpolated Perigee  | 0.91° | Static = |
 | Venus                 | sextile ⚹        | White Moon            | 3.16° | Static = |
-| Venus                 | conjunction ☌    | Admetos               | 3.65° | Static = |
+| Venus                 | conjunction ☌    | Admetos               | 4.82° | Static = |
 | Mars                  | trine △          | Neptune               | 0.37° | Static = |
 | Mars                  | trine △          | True Lilith           | 3.87° | Static = |
 | Mars                  | square □         | Pholus                | 2.45° | Static = |
@@ -352,10 +352,10 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mars                  | quintile Q       | Sedna                 | 0.82° | Static = |
 | Mars                  | sextile ⚹        | Pars Fidei            | 3.25° | Static = |
 | Mars                  | sextile ⚹        | True Priapus          | 3.87° | Static = |
-| Mars                  | sextile ⚹        | Interpolated Perigee  | 4.30° | Static = |
-| Mars                  | square □         | Cupido                | 0.72° | Static = |
-| Mars                  | sextile ⚹        | Hades                 | 1.67° | Static = |
-| Mars                  | square □         | Poseidon              | 4.84° | Static = |
+| Mars                  | square □         | Cupido                | 0.90° | Static = |
+| Mars                  | sextile ⚹        | Hades                 | 0.48° | Static = |
+| Mars                  | quintile Q       | Admetos               | 0.98° | Static = |
+| Mars                  | square □         | Poseidon              | 4.76° | Static = |
 | Jupiter               | opposition ☍     | Mean North Lunar Node | 0.76° | Static = |
 | Jupiter               | opposition ☍     | True North Lunar Node | 0.23° | Static = |
 | Jupiter               | sextile ⚹        | Chiron                | 0.50° | Static = |
@@ -374,7 +374,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Jupiter               | square □         | Vertex                | 3.20° | Static = |
 | Jupiter               | square □         | Anti Vertex           | 3.20° | Static = |
 | Jupiter               | sextile ⚹        | White Moon            | 2.72° | Static = |
-| Jupiter               | trine △          | Admetos               | 4.09° | Static = |
+| Jupiter               | trine △          | Admetos               | 5.26° | Static = |
 | Saturn                | semi-sextile ⚺   | Uranus                | 1.98° | Static = |
 | Saturn                | opposition ☍     | Medium Coeli          | 1.02° | Static = |
 | Saturn                | conjunction ☌    | Imum Coeli            | 1.02° | Static = |
@@ -389,14 +389,14 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Saturn                | sesquiquadrate ⚼ | Pars Spiritus         | 1.03° | Static = |
 | Saturn                | trine △          | Pars Amoris           | 0.28° | Static = |
 | Saturn                | quintile Q       | Anti Vertex           | 0.48° | Static = |
-| Saturn                | quincunx ⚻       | Interpolated Lilith   | 1.78° | Static = |
+| Saturn                | quincunx ⚻       | Interpolated Lilith   | 1.72° | Static = |
 | Saturn                | semi-sextile ⚺   | Mean Priapus          | 0.13° | Static = |
 | Saturn                | sesquiquadrate ⚼ | True Priapus          | 1.21° | Static = |
-| Saturn                | sesquiquadrate ⚼ | Interpolated Perigee  | 0.78° | Static = |
-| Saturn                | trine △          | Kronos                | 0.47° | Static = |
-| Saturn                | trine △          | Apollon               | 4.13° | Static = |
-| Saturn                | square □         | Admetos               | 4.23° | Static = |
-| Saturn                | quincunx ⚻       | Vulkanus              | 1.99° | Static = |
+| Saturn                | sesquiquadrate ⚼ | Interpolated Perigee  | 0.21° | Static = |
+| Saturn                | trine △          | Kronos                | 0.48° | Static = |
+| Saturn                | trine △          | Apollon               | 4.27° | Static = |
+| Saturn                | square □         | Admetos               | 3.06° | Static = |
+| Saturn                | quincunx ⚻       | Vulkanus              | 1.35° | Static = |
 | Uranus                | conjunction ☌    | Mean North Lunar Node | 5.58° | Static = |
 | Uranus                | quincunx ⚻       | Medium Coeli          | 0.97° | Static = |
 | Uranus                | semi-sextile ⚺   | Imum Coeli            | 0.97° | Static = |
@@ -410,26 +410,26 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Uranus                | trine △          | Ixion                 | 2.68° | Static = |
 | Uranus                | trine △          | Orcus                 | 5.67° | Static = |
 | Uranus                | square □         | Pars Fortunae         | 1.07° | Static = |
-| Uranus                | opposition ☍     | Interpolated Lilith   | 0.20° | Static = |
+| Uranus                | opposition ☍     | Interpolated Lilith   | 0.27° | Static = |
 | Uranus                | conjunction ☌    | Mean Priapus          | 2.11° | Static = |
-| Uranus                | quintile Q       | Hades                 | 1.76° | Static = |
-| Uranus                | opposition ☍     | Zeus                  | 4.69° | Static = |
-| Uranus                | square □         | Kronos                | 1.51° | Static = |
-| Uranus                | sextile ⚹        | Admetos               | 2.25° | Static = |
-| Uranus                | trine △          | Vulkanus              | 0.01° | Static = |
-| Uranus                | sesquiquadrate ⚼ | Poseidon              | 1.74° | Static = |
+| Uranus                | quintile Q       | Hades                 | 0.58° | Static = |
+| Uranus                | opposition ☍     | Zeus                  | 4.61° | Static = |
+| Uranus                | square □         | Kronos                | 2.47° | Static = |
+| Uranus                | sextile ⚹        | Admetos               | 1.08° | Static = |
+| Uranus                | trine △          | Vulkanus              | 0.63° | Static = |
+| Uranus                | sesquiquadrate ⚼ | Poseidon              | 1.66° | Static = |
 | Neptune               | quintile Q       | Mean Lilith           | 1.83° | Static = |
 | Neptune               | trine △          | True Lilith           | 3.50° | Static = |
 | Neptune               | conjunction ☌    | Juno                  | 2.95° | Static = |
 | Neptune               | quincunx ⚻       | Eris                  | 1.10° | Static = |
 | Neptune               | quintile Q       | Haumea                | 1.75° | Static = |
 | Neptune               | opposition ☍     | Pars Fidei            | 2.88° | Static = |
-| Neptune               | quintile Q       | Interpolated Lilith   | 0.07° | Static = |
+| Neptune               | quintile Q       | Interpolated Lilith   | 0.01° | Static = |
 | Neptune               | sextile ⚹        | True Priapus          | 3.50° | Static = |
-| Neptune               | sextile ⚹        | Interpolated Perigee  | 3.93° | Static = |
-| Neptune               | semi-sextile ⚺   | Cupido                | 1.09° | Static = |
-| Neptune               | opposition ☍     | Hades                 | 2.04° | Static = |
-| Neptune               | semi-square ∠    | Apollon               | 0.58° | Static = |
+| Neptune               | sextile ⚹        | Interpolated Perigee  | 4.92° | Static = |
+| Neptune               | semi-sextile ⚺   | Cupido                | 1.27° | Static = |
+| Neptune               | opposition ☍     | Hades                 | 0.85° | Static = |
+| Neptune               | semi-square ∠    | Apollon               | 0.43° | Static = |
 | Pluto                 | square □         | Chiron                | 3.51° | Static = |
 | Pluto                 | opposition ☍     | True Lilith           | 3.88° | Static = |
 | Pluto                 | trine △          | Ceres                 | 3.80° | Static = |
@@ -442,7 +442,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pluto                 | trine △          | Vertex                | 0.81° | Static = |
 | Pluto                 | sextile ⚹        | Anti Vertex           | 0.81° | Static = |
 | Pluto                 | conjunction ☌    | True Priapus          | 3.88° | Static = |
-| Pluto                 | conjunction ☌    | Interpolated Perigee  | 3.45° | Static = |
+| Pluto                 | conjunction ☌    | Interpolated Perigee  | 2.46° | Static = |
 | Pluto                 | square □         | White Moon            | 1.28° | Static = |
 | Mean North Lunar Node | conjunction ☌    | True North Lunar Node | 0.53° | Static = |
 | Mean North Lunar Node | trine △          | Chiron                | 1.26° | Static = |
@@ -460,11 +460,10 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean North Lunar Node | biquintile bQ    | Pars Amoris           | 1.84° | Static = |
 | Mean North Lunar Node | square □         | Vertex                | 3.96° | Static = |
 | Mean North Lunar Node | square □         | Anti Vertex           | 3.96° | Static = |
-| Mean North Lunar Node | opposition ☍     | Interpolated Lilith   | 5.78° | Static = |
+| Mean North Lunar Node | opposition ☍     | Interpolated Lilith   | 5.85° | Static = |
 | Mean North Lunar Node | trine △          | White Moon            | 3.48° | Static = |
-| Mean North Lunar Node | sesquiquadrate ⚼ | Cupido                | 1.76° | Static = |
-| Mean North Lunar Node | sextile ⚹        | Admetos               | 3.33° | Static = |
-| Mean North Lunar Node | trine △          | Vulkanus              | 5.57° | Static = |
+| Mean North Lunar Node | sesquiquadrate ⚼ | Cupido                | 1.58° | Static = |
+| Mean North Lunar Node | sextile ⚹        | Admetos               | 4.50° | Static = |
 | True North Lunar Node | trine △          | Chiron                | 0.72° | Static = |
 | True North Lunar Node | trine △          | Ascendant             | 0.42° | Static = |
 | True North Lunar Node | sextile ⚹        | Descendant            | 0.42° | Static = |
@@ -479,7 +478,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | True North Lunar Node | square □         | Vertex                | 3.42° | Static = |
 | True North Lunar Node | square □         | Anti Vertex           | 3.42° | Static = |
 | True North Lunar Node | trine △          | White Moon            | 2.95° | Static = |
-| True North Lunar Node | sextile ⚹        | Admetos               | 3.86° | Static = |
 | Chiron                | trine △          | Ascendant             | 0.31° | Static = |
 | Chiron                | sextile ⚹        | Descendant            | 0.31° | Static = |
 | Chiron                | biquintile bQ    | Imum Coeli            | 1.80° | Static = |
@@ -494,10 +492,10 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Chiron                | trine △          | Ixion                 | 4.15° | Static = |
 | Chiron                | trine △          | Quaoar                | 1.39° | Static = |
 | Chiron                | square □         | Pars Spiritus         | 5.15° | Static = |
+| Chiron                | square □         | Interpolated Perigee  | 5.97° | Static = |
 | Chiron                | conjunction ☌    | White Moon            | 2.22° | Static = |
-| Chiron                | quintile Q       | Zeus                  | 0.48° | Static = |
-| Chiron                | square □         | Apollon               | 4.69° | Static = |
-| Chiron                | sextile ⚹        | Admetos               | 4.59° | Static = |
+| Chiron                | quintile Q       | Zeus                  | 0.56° | Static = |
+| Chiron                | square □         | Apollon               | 4.55° | Static = |
 | Ascendant             | sextile ⚹        | Mean South Lunar Node | 0.95° | Static = |
 | Ascendant             | sextile ⚹        | True South Lunar Node | 0.42° | Static = |
 | Ascendant             | biquintile bQ    | True Lilith           | 1.70° | Static = |
@@ -507,7 +505,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Ascendant             | conjunction ☌    | Ixion                 | 3.84° | Static = |
 | Ascendant             | conjunction ☌    | Quaoar                | 1.70° | Static = |
 | Ascendant             | trine △          | White Moon            | 2.53° | Static = |
-| Ascendant             | opposition ☍     | Admetos               | 4.28° | Static = |
+| Ascendant             | opposition ☍     | Admetos               | 5.45° | Static = |
 | Medium Coeli          | semi-sextile ⚺   | Mean Lilith           | 1.14° | Static = |
 | Medium Coeli          | sesquiquadrate ⚼ | True Lilith           | 0.19° | Static = |
 | Medium Coeli          | trine △          | Earth                 | 0.39° | Static = |
@@ -519,15 +517,15 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Medium Coeli          | trine △          | Pars Fortunae         | 2.03° | Static = |
 | Medium Coeli          | sextile ⚹        | Pars Amoris           | 1.29° | Static = |
 | Medium Coeli          | quintile Q       | Vertex                | 1.50° | Static = |
-| Medium Coeli          | semi-sextile ⚺   | Interpolated Lilith   | 0.76° | Static = |
+| Medium Coeli          | semi-sextile ⚺   | Interpolated Lilith   | 0.70° | Static = |
 | Medium Coeli          | quincunx ⚻       | Mean Priapus          | 1.14° | Static = |
 | Medium Coeli          | semi-square ∠    | True Priapus          | 0.19° | Static = |
-| Medium Coeli          | semi-square ∠    | Interpolated Perigee  | 0.24° | Static = |
-| Medium Coeli          | quintile Q       | Cupido                | 1.78° | Static = |
-| Medium Coeli          | sextile ⚹        | Kronos                | 0.54° | Static = |
-| Medium Coeli          | sextile ⚹        | Apollon               | 3.11° | Static = |
-| Medium Coeli          | square □         | Admetos               | 3.21° | Static = |
-| Medium Coeli          | semi-sextile ⚺   | Vulkanus              | 0.98° | Static = |
+| Medium Coeli          | semi-square ∠    | Interpolated Perigee  | 1.23° | Static = |
+| Medium Coeli          | quintile Q       | Cupido                | 1.96° | Static = |
+| Medium Coeli          | sextile ⚹        | Kronos                | 1.50° | Static = |
+| Medium Coeli          | sextile ⚹        | Apollon               | 3.26° | Static = |
+| Medium Coeli          | square □         | Admetos               | 2.04° | Static = |
+| Medium Coeli          | semi-sextile ⚺   | Vulkanus              | 0.33° | Static = |
 | Descendant            | trine △          | Mean South Lunar Node | 0.95° | Static = |
 | Descendant            | trine △          | True South Lunar Node | 0.42° | Static = |
 | Descendant            | semi-sextile ⚺   | Ceres                 | 0.01° | Static = |
@@ -539,9 +537,9 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Descendant            | biquintile bQ    | Pars Fortunae         | 0.54° | Static = |
 | Descendant            | biquintile bQ    | Pars Spiritus         | 0.54° | Static = |
 | Descendant            | biquintile bQ    | True Priapus          | 1.70° | Static = |
-| Descendant            | biquintile bQ    | Interpolated Perigee  | 1.27° | Static = |
+| Descendant            | biquintile bQ    | Interpolated Perigee  | 0.28° | Static = |
 | Descendant            | sextile ⚹        | White Moon            | 2.53° | Static = |
-| Descendant            | conjunction ☌    | Admetos               | 4.28° | Static = |
+| Descendant            | conjunction ☌    | Admetos               | 5.45° | Static = |
 | Imum Coeli            | quincunx ⚻       | Mean Lilith           | 1.14° | Static = |
 | Imum Coeli            | semi-square ∠    | True Lilith           | 0.19° | Static = |
 | Imum Coeli            | sextile ⚹        | Earth                 | 0.39° | Static = |
@@ -554,14 +552,14 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Imum Coeli            | sextile ⚹        | Pars Fortunae         | 2.03° | Static = |
 | Imum Coeli            | trine △          | Pars Amoris           | 1.29° | Static = |
 | Imum Coeli            | quintile Q       | Anti Vertex           | 1.50° | Static = |
-| Imum Coeli            | quincunx ⚻       | Interpolated Lilith   | 0.76° | Static = |
+| Imum Coeli            | quincunx ⚻       | Interpolated Lilith   | 0.70° | Static = |
 | Imum Coeli            | semi-sextile ⚺   | Mean Priapus          | 1.14° | Static = |
 | Imum Coeli            | sesquiquadrate ⚼ | True Priapus          | 0.19° | Static = |
-| Imum Coeli            | sesquiquadrate ⚼ | Interpolated Perigee  | 0.24° | Static = |
-| Imum Coeli            | trine △          | Kronos                | 0.54° | Static = |
-| Imum Coeli            | trine △          | Apollon               | 3.11° | Static = |
-| Imum Coeli            | square □         | Admetos               | 3.21° | Static = |
-| Imum Coeli            | quincunx ⚻       | Vulkanus              | 0.98° | Static = |
+| Imum Coeli            | sesquiquadrate ⚼ | Interpolated Perigee  | 1.23° | Static = |
+| Imum Coeli            | trine △          | Kronos                | 1.50° | Static = |
+| Imum Coeli            | trine △          | Apollon               | 3.26° | Static = |
+| Imum Coeli            | square □         | Admetos               | 2.04° | Static = |
+| Imum Coeli            | quincunx ⚻       | Vulkanus              | 0.33° | Static = |
 | Mean Lilith           | quincunx ⚻       | Earth                 | 0.75° | Static = |
 | Mean Lilith           | biquintile bQ    | Pholus                | 1.34° | Static = |
 | Mean Lilith           | trine △          | Sedna                 | 1.39° | Static = |
@@ -571,13 +569,13 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean Lilith           | sextile ⚹        | Orcus                 | 3.56° | Static = |
 | Mean Lilith           | square □         | Pars Fortunae         | 3.18° | Static = |
 | Mean Lilith           | semi-sextile ⚺   | Pars Amoris           | 0.15° | Static = |
-| Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 1.91° | Static = |
+| Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 1.84° | Static = |
 | Mean Lilith           | quintile Q       | White Moon            | 0.83° | Static = |
-| Mean Lilith           | conjunction ☌    | Zeus                  | 2.58° | Static = |
-| Mean Lilith           | square □         | Kronos                | 0.60° | Static = |
-| Mean Lilith           | trine △          | Admetos               | 4.36° | Static = |
-| Mean Lilith           | sextile ⚹        | Vulkanus              | 2.12° | Static = |
-| Mean Lilith           | semi-square ∠    | Poseidon              | 0.37° | Static = |
+| Mean Lilith           | conjunction ☌    | Zeus                  | 2.50° | Static = |
+| Mean Lilith           | square □         | Kronos                | 0.36° | Static = |
+| Mean Lilith           | trine △          | Admetos               | 3.19° | Static = |
+| Mean Lilith           | sextile ⚹        | Vulkanus              | 1.48° | Static = |
+| Mean Lilith           | semi-square ∠    | Poseidon              | 0.45° | Static = |
 | Mean South Lunar Node | conjunction ☌    | True South Lunar Node | 0.53° | Static = |
 | Mean South Lunar Node | biquintile bQ    | Earth                 | 0.94° | Static = |
 | Mean South Lunar Node | sesquiquadrate ⚼ | Pholus                | 0.03° | Static = |
@@ -590,10 +588,10 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean South Lunar Node | square □         | Pars Fortunae         | 4.51° | Static = |
 | Mean South Lunar Node | square □         | Vertex                | 3.96° | Static = |
 | Mean South Lunar Node | square □         | Anti Vertex           | 3.96° | Static = |
-| Mean South Lunar Node | conjunction ☌    | Interpolated Lilith   | 5.78° | Static = |
+| Mean South Lunar Node | conjunction ☌    | Interpolated Lilith   | 5.85° | Static = |
 | Mean South Lunar Node | sextile ⚹        | White Moon            | 3.48° | Static = |
-| Mean South Lunar Node | semi-square ∠    | Cupido                | 1.76° | Static = |
-| Mean South Lunar Node | trine △          | Admetos               | 3.33° | Static = |
+| Mean South Lunar Node | semi-square ∠    | Cupido                | 1.58° | Static = |
+| Mean South Lunar Node | trine △          | Admetos               | 4.50° | Static = |
 | True South Lunar Node | biquintile bQ    | Earth                 | 1.47° | Static = |
 | True South Lunar Node | sesquiquadrate ⚼ | Pholus                | 0.56° | Static = |
 | True South Lunar Node | square □         | Ceres                 | 0.43° | Static = |
@@ -605,16 +603,18 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | True South Lunar Node | square □         | Vertex                | 3.42° | Static = |
 | True South Lunar Node | square □         | Anti Vertex           | 3.42° | Static = |
 | True South Lunar Node | sextile ⚹        | White Moon            | 2.95° | Static = |
-| True South Lunar Node | trine △          | Admetos               | 3.86° | Static = |
+| True South Lunar Node | trine △          | Admetos               | 5.03° | Static = |
 | True Lilith           | semi-square ∠    | Sedna                 | 0.06° | Static = |
 | True Lilith           | biquintile bQ    | Quaoar                | 0.00° | Static = |
 | True Lilith           | opposition ☍     | Pars Spiritus         | 2.24° | Static = |
 | True Lilith           | sextile ⚹        | Pars Fidei            | 0.63° | Static = |
 | True Lilith           | sextile ⚹        | Vertex                | 4.69° | Static = |
 | True Lilith           | trine △          | Anti Vertex           | 4.69° | Static = |
-| True Lilith           | opposition ☍     | Interpolated Perigee  | 0.43° | Static = |
+| True Lilith           | opposition ☍     | Interpolated Perigee  | 1.42° | Static = |
 | True Lilith           | square □         | White Moon            | 5.16° | Static = |
-| True Lilith           | quincunx ⚻       | Poseidon              | 0.96° | Static = |
+| True Lilith           | sextile ⚹        | Hades                 | 4.36° | Static = |
+| True Lilith           | semi-square ∠    | Admetos               | 1.86° | Static = |
+| True Lilith           | quincunx ⚻       | Poseidon              | 0.88° | Static = |
 | Earth                 | biquintile bQ    | Juno                  | 1.97° | Static = |
 | Earth                 | semi-sextile ⚺   | Sedna                 | 0.63° | Static = |
 | Earth                 | quincunx ⚻       | Haumea                | 0.67° | Static = |
@@ -623,11 +623,11 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Earth                 | trine △          | Pars Fortunae         | 2.42° | Static = |
 | Earth                 | opposition ☍     | Pars Amoris           | 0.90° | Static = |
 | Earth                 | semi-square ∠    | Pars Fidei            | 1.21° | Static = |
-| Earth                 | quincunx ⚻       | Interpolated Lilith   | 1.15° | Static = |
+| Earth                 | quincunx ⚻       | Interpolated Lilith   | 1.09° | Static = |
 | Earth                 | semi-sextile ⚺   | Mean Priapus          | 0.75° | Static = |
-| Earth                 | sextile ⚹        | Kronos                | 0.15° | Static = |
-| Earth                 | opposition ☍     | Apollon               | 3.50° | Static = |
-| Earth                 | square □         | Vulkanus              | 1.37° | Static = |
+| Earth                 | sextile ⚹        | Kronos                | 1.11° | Static = |
+| Earth                 | opposition ☍     | Apollon               | 3.65° | Static = |
+| Earth                 | square □         | Vulkanus              | 0.72° | Static = |
 | Pholus                | semi-square ∠    | Ceres                 | 0.99° | Static = |
 | Pholus                | quincunx ⚻       | Juno                  | 0.13° | Static = |
 | Pholus                | semi-square ∠    | Vesta                 | 0.41° | Static = |
@@ -636,9 +636,9 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pholus                | trine △          | Makemake              | 5.44° | Static = |
 | Pholus                | square □         | Orcus                 | 3.78° | Static = |
 | Pholus                | quintile Q       | White Moon            | 0.51° | Static = |
-| Pholus                | opposition ☍     | Cupido                | 1.73° | Static = |
-| Pholus                | semi-sextile ⚺   | Hades                 | 0.79° | Static = |
-| Pholus                | biquintile bQ    | Zeus                  | 1.24° | Static = |
+| Pholus                | opposition ☍     | Cupido                | 1.55° | Static = |
+| Pholus                | semi-sextile ⚺   | Hades                 | 1.97° | Static = |
+| Pholus                | biquintile bQ    | Zeus                  | 1.16° | Static = |
 | Ceres                 | semi-sextile ⚺   | Pallas                | 1.75° | Static = |
 | Ceres                 | conjunction ☌    | Vesta                 | 0.59° | Static = |
 | Ceres                 | quintile Q       | Makemake              | 1.45° | Static = |
@@ -647,80 +647,82 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Ceres                 | trine △          | Pars Spiritus         | 5.44° | Static = |
 | Ceres                 | conjunction ☌    | Vertex                | 2.99° | Static = |
 | Ceres                 | opposition ☍     | Anti Vertex           | 2.99° | Static = |
-| Ceres                 | trine △          | Apollon               | 4.39° | Static = |
-| Ceres                 | biquintile bQ    | Poseidon              | 0.72° | Static = |
+| Ceres                 | trine △          | Apollon               | 4.25° | Static = |
+| Ceres                 | biquintile bQ    | Poseidon              | 0.80° | Static = |
 | Pallas                | semi-sextile ⚺   | Vesta                 | 1.16° | Static = |
 | Pallas                | conjunction ☌    | Sedna                 | 5.52° | Static = |
 | Pallas                | opposition ☍     | Ixion                 | 2.11° | Static = |
 | Pallas                | quintile Q       | Orcus                 | 1.54° | Static = |
 | Pallas                | opposition ☍     | Quaoar                | 3.43° | Static = |
 | Pallas                | biquintile bQ    | Pars Spiritus         | 1.19° | Static = |
-| Pallas                | trine △          | Interpolated Lilith   | 5.00° | Static = |
+| Pallas                | trine △          | Interpolated Lilith   | 5.06° | Static = |
 | Pallas                | sextile ⚹        | White Moon            | 4.27° | Static = |
-| Pallas                | conjunction ☌    | Admetos               | 2.55° | Static = |
-| Pallas                | sextile ⚹        | Vulkanus              | 4.78° | Static = |
+| Pallas                | conjunction ☌    | Admetos               | 3.72° | Static = |
 | Juno                  | quincunx ⚻       | Eris                  | 1.86° | Static = |
 | Juno                  | square □         | Makemake              | 5.31° | Static = |
 | Juno                  | trine △          | Orcus                 | 3.65° | Static = |
 | Juno                  | opposition ☍     | Pars Fidei            | 5.83° | Static = |
-| Juno                  | semi-sextile ⚺   | Cupido                | 1.86° | Static = |
-| Juno                  | opposition ☍     | Hades                 | 0.91° | Static = |
-| Juno                  | sextile ⚹        | Zeus                  | 4.63° | Static = |
+| Juno                  | semi-sextile ⚺   | Cupido                | 1.68° | Static = |
+| Juno                  | opposition ☍     | Hades                 | 2.10° | Static = |
+| Juno                  | sextile ⚹        | Zeus                  | 4.72° | Static = |
 | Vesta                 | opposition ☍     | Pars Fortunae         | 4.89° | Static = |
 | Vesta                 | conjunction ☌    | Vertex                | 3.58° | Static = |
 | Vesta                 | opposition ☍     | Anti Vertex           | 3.58° | Static = |
-| Vesta                 | trine △          | Apollon               | 3.81° | Static = |
-| Vesta                 | biquintile bQ    | Poseidon              | 1.31° | Static = |
+| Vesta                 | sesquiquadrate ⚼ | Cupido                | 1.96° | Static = |
+| Vesta                 | trine △          | Apollon               | 3.66° | Static = |
+| Vesta                 | biquintile bQ    | Poseidon              | 1.39° | Static = |
 | Eris                  | square □         | Orcus                 | 5.51° | Static = |
-| Eris                  | opposition ☍     | Cupido                | 0.00° | Static = |
-| Eris                  | semi-sextile ⚺   | Hades                 | 0.94° | Static = |
-| Eris                  | biquintile bQ    | Zeus                  | 0.49° | Static = |
-| Eris                  | opposition ☍     | Poseidon              | 5.56° | Static = |
+| Eris                  | opposition ☍     | Cupido                | 0.18° | Static = |
+| Eris                  | semi-sextile ⚺   | Hades                 | 0.24° | Static = |
+| Eris                  | biquintile bQ    | Zeus                  | 0.57° | Static = |
+| Eris                  | opposition ☍     | Poseidon              | 5.48° | Static = |
 | Sedna                 | trine △          | Haumea                | 1.31° | Static = |
 | Sedna                 | square □         | Makemake              | 3.29° | Static = |
 | Sedna                 | opposition ☍     | Ixion                 | 3.40° | Static = |
 | Sedna                 | sextile ⚹        | Orcus                 | 4.95° | Static = |
 | Sedna                 | quincunx ⚻       | Pars Fortunae         | 1.79° | Static = |
 | Sedna                 | quincunx ⚻       | Pars Amoris           | 1.54° | Static = |
-| Sedna                 | trine △          | Interpolated Lilith   | 0.52° | Static = |
+| Sedna                 | trine △          | Interpolated Lilith   | 0.45° | Static = |
 | Sedna                 | sextile ⚹        | Mean Priapus          | 1.39° | Static = |
 | Sedna                 | sesquiquadrate ⚼ | True Priapus          | 0.06° | Static = |
-| Sedna                 | sesquiquadrate ⚼ | Interpolated Perigee  | 0.48° | Static = |
-| Sedna                 | trine △          | Zeus                  | 3.97° | Static = |
-| Sedna                 | semi-sextile ⚺   | Kronos                | 0.79° | Static = |
-| Sedna                 | conjunction ☌    | Admetos               | 2.97° | Static = |
-| Sedna                 | sextile ⚹        | Vulkanus              | 0.73° | Static = |
+| Sedna                 | sesquiquadrate ⚼ | Interpolated Perigee  | 1.47° | Static = |
+| Sedna                 | trine △          | Zeus                  | 3.88° | Static = |
+| Sedna                 | semi-sextile ⚺   | Kronos                | 1.74° | Static = |
+| Sedna                 | conjunction ☌    | Admetos               | 1.80° | Static = |
+| Sedna                 | sextile ⚹        | Vulkanus              | 0.09° | Static = |
 | Haumea                | semi-sextile ⚺   | Makemake              | 1.98° | Static = |
 | Haumea                | sextile ⚹        | Ixion                 | 4.71° | Static = |
 | Haumea                | sextile ⚹        | Orcus                 | 3.64° | Static = |
 | Haumea                | square □         | Pars Fortunae         | 3.10° | Static = |
 | Haumea                | semi-sextile ⚺   | Pars Amoris           | 0.23° | Static = |
-| Haumea                | conjunction ☌    | Interpolated Lilith   | 1.82° | Static = |
+| Haumea                | conjunction ☌    | Interpolated Lilith   | 1.76° | Static = |
 | Haumea                | opposition ☍     | Mean Priapus          | 0.08° | Static = |
 | Haumea                | quintile Q       | White Moon            | 0.91° | Static = |
-| Haumea                | conjunction ☌    | Zeus                  | 2.66° | Static = |
-| Haumea                | square □         | Kronos                | 0.52° | Static = |
-| Haumea                | trine △          | Admetos               | 4.27° | Static = |
-| Haumea                | sextile ⚹        | Vulkanus              | 2.04° | Static = |
-| Haumea                | semi-square ∠    | Poseidon              | 0.29° | Static = |
+| Haumea                | conjunction ☌    | Zeus                  | 2.58° | Static = |
+| Haumea                | square □         | Kronos                | 0.44° | Static = |
+| Haumea                | trine △          | Admetos               | 3.11° | Static = |
+| Haumea                | sextile ⚹        | Vulkanus              | 1.39° | Static = |
+| Haumea                | semi-square ∠    | Poseidon              | 0.37° | Static = |
 | Makemake              | semi-sextile ⚺   | Orcus                 | 1.66° | Static = |
 | Makemake              | trine △          | Pars Fortunae         | 5.08° | Static = |
 | Makemake              | semi-square ∠    | Pars Spiritus         | 1.00° | Static = |
 | Makemake              | sextile ⚹        | Pars Amoris           | 1.75° | Static = |
 | Makemake              | quintile Q       | Vertex                | 1.55° | Static = |
 | Makemake              | quincunx ⚻       | Mean Priapus          | 1.90° | Static = |
+| Makemake              | semi-square ∠    | Interpolated Perigee  | 1.82° | Static = |
 | Makemake              | semi-square ∠    | White Moon            | 1.93° | Static = |
-| Makemake              | semi-sextile ⚺   | Zeus                  | 0.68° | Static = |
-| Makemake              | sextile ⚹        | Kronos                | 2.50° | Static = |
-| Makemake              | quintile Q       | Poseidon              | 0.73° | Static = |
+| Makemake              | semi-sextile ⚺   | Zeus                  | 0.59° | Static = |
+| Makemake              | sextile ⚹        | Kronos                | 1.55° | Static = |
+| Makemake              | square □         | Admetos               | 5.09° | Static = |
+| Makemake              | quintile Q       | Poseidon              | 0.65° | Static = |
 | Ixion                 | conjunction ☌    | Quaoar                | 5.54° | Static = |
 | Ixion                 | semi-sextile ⚺   | Pars Fortunae         | 1.61° | Static = |
-| Ixion                 | sextile ⚹        | Interpolated Lilith   | 2.89° | Static = |
+| Ixion                 | sextile ⚹        | Interpolated Lilith   | 2.95° | Static = |
 | Ixion                 | trine △          | Mean Priapus          | 4.79° | Static = |
-| Ixion                 | biquintile bQ    | Kronos                | 1.81° | Static = |
-| Ixion                 | semi-sextile ⚺   | Apollon               | 0.53° | Static = |
-| Ixion                 | opposition ☍     | Admetos               | 0.44° | Static = |
-| Ixion                 | trine △          | Vulkanus              | 2.67° | Static = |
+| Ixion                 | biquintile bQ    | Kronos                | 0.85° | Static = |
+| Ixion                 | semi-sextile ⚺   | Apollon               | 0.39° | Static = |
+| Ixion                 | opposition ☍     | Admetos               | 1.60° | Static = |
+| Ixion                 | trine △          | Vulkanus              | 3.32° | Static = |
 | Orcus                 | biquintile bQ    | Pars Fortunae         | 0.74° | Static = |
 | Orcus                 | quintile Q       | Pars Spiritus         | 0.35° | Static = |
 | Orcus                 | square □         | Pars Amoris           | 3.41° | Static = |
@@ -728,82 +730,83 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Orcus                 | sesquiquadrate ⚼ | Anti Vertex           | 0.20° | Static = |
 | Orcus                 | trine △          | Mean Priapus          | 3.56° | Static = |
 | Orcus                 | quintile Q       | True Priapus          | 1.89° | Static = |
-| Orcus                 | quintile Q       | Interpolated Perigee  | 1.46° | Static = |
-| Orcus                 | square □         | Cupido                | 5.52° | Static = |
-| Orcus                 | sextile ⚹        | Hades                 | 4.57° | Static = |
-| Orcus                 | sextile ⚹        | Zeus                  | 0.98° | Static = |
-| Orcus                 | conjunction ☌    | Vulkanus              | 5.68° | Static = |
+| Orcus                 | quintile Q       | Interpolated Perigee  | 0.47° | Static = |
+| Orcus                 | square □         | Cupido                | 5.33° | Static = |
+| Orcus                 | sextile ⚹        | Zeus                  | 1.06° | Static = |
+| Orcus                 | conjunction ☌    | Vulkanus              | 5.03° | Static = |
 | Quaoar                | quincunx ⚻       | Vertex                | 1.31° | Static = |
 | Quaoar                | semi-sextile ⚺   | Anti Vertex           | 1.31° | Static = |
 | Quaoar                | trine △          | White Moon            | 0.84° | Static = |
-| Quaoar                | opposition ☍     | Admetos               | 5.98° | Static = |
-| Quaoar                | conjunction ☌    | Poseidon              | 5.04° | Static = |
+| Quaoar                | conjunction ☌    | Poseidon              | 5.12° | Static = |
 | Pars Fortunae         | quintile Q       | Pars Spiritus         | 1.08° | Static = |
 | Pars Fortunae         | sextile ⚹        | Pars Amoris           | 3.33° | Static = |
-| Pars Fortunae         | square □         | Interpolated Lilith   | 1.27° | Static = |
+| Pars Fortunae         | square □         | Interpolated Lilith   | 1.34° | Static = |
 | Pars Fortunae         | square □         | Mean Priapus          | 3.18° | Static = |
 | Pars Fortunae         | quintile Q       | True Priapus          | 1.15° | Static = |
-| Pars Fortunae         | quintile Q       | Interpolated Perigee  | 0.73° | Static = |
-| Pars Fortunae         | square □         | Zeus                  | 5.76° | Static = |
-| Pars Fortunae         | opposition ☍     | Kronos                | 2.58° | Static = |
-| Pars Fortunae         | sextile ⚹        | Apollon               | 1.08° | Static = |
-| Pars Fortunae         | quincunx ⚻       | Admetos               | 1.18° | Static = |
-| Pars Fortunae         | quincunx ⚻       | Vulkanus              | 1.06° | Static = |
+| Pars Fortunae         | quintile Q       | Interpolated Perigee  | 0.26° | Static = |
+| Pars Fortunae         | square □         | Zeus                  | 5.67° | Static = |
+| Pars Fortunae         | opposition ☍     | Kronos                | 3.53° | Static = |
+| Pars Fortunae         | sextile ⚹        | Apollon               | 1.22° | Static = |
+| Pars Fortunae         | quincunx ⚻       | Admetos               | 0.01° | Static = |
+| Pars Fortunae         | quincunx ⚻       | Vulkanus              | 1.70° | Static = |
 | Pars Spiritus         | trine △          | Pars Fidei            | 2.86° | Static = |
 | Pars Spiritus         | trine △          | Vertex                | 2.45° | Static = |
 | Pars Spiritus         | sextile ⚹        | Anti Vertex           | 2.45° | Static = |
 | Pars Spiritus         | conjunction ☌    | True Priapus          | 2.24° | Static = |
-| Pars Spiritus         | conjunction ☌    | Interpolated Perigee  | 1.81° | Static = |
+| Pars Spiritus         | conjunction ☌    | Interpolated Perigee  | 0.82° | Static = |
 | Pars Spiritus         | square □         | White Moon            | 2.92° | Static = |
-| Pars Spiritus         | semi-sextile ⚺   | Poseidon              | 1.28° | Static = |
+| Pars Spiritus         | semi-sextile ⚺   | Poseidon              | 1.36° | Static = |
+| Pars Amoris           | semi-sextile ⚺   | Interpolated Lilith   | 1.99° | Static = |
 | Pars Amoris           | quincunx ⚻       | Mean Priapus          | 0.15° | Static = |
-| Pars Amoris           | biquintile bQ    | Hades                 | 1.98° | Static = |
-| Pars Amoris           | trine △          | Kronos                | 0.75° | Static = |
-| Pars Amoris           | conjunction ☌    | Apollon               | 4.41° | Static = |
-| Pars Amoris           | square □         | Vulkanus              | 2.27° | Static = |
+| Pars Amoris           | trine △          | Kronos                | 0.21° | Static = |
+| Pars Amoris           | conjunction ☌    | Apollon               | 4.55° | Static = |
+| Pars Amoris           | square □         | Vulkanus              | 1.63° | Static = |
 | Pars Fidei            | conjunction ☌    | Vertex                | 5.31° | Static = |
 | Pars Fidei            | opposition ☍     | Anti Vertex           | 5.31° | Static = |
 | Pars Fidei            | quintile Q       | Mean Priapus          | 1.04° | Static = |
 | Pars Fidei            | trine △          | True Priapus          | 0.63° | Static = |
-| Pars Fidei            | trine △          | Interpolated Perigee  | 1.05° | Static = |
-| Pars Fidei            | conjunction ☌    | Hades                 | 4.91° | Static = |
-| Pars Fidei            | semi-square ∠    | Vulkanus              | 0.16° | Static = |
-| Pars Fidei            | quincunx ⚻       | Poseidon              | 1.59° | Static = |
+| Pars Fidei            | trine △          | Interpolated Perigee  | 2.04° | Static = |
+| Pars Fidei            | biquintile bQ    | Cupido                | 1.85° | Static = |
+| Pars Fidei            | conjunction ☌    | Hades                 | 3.73° | Static = |
+| Pars Fidei            | semi-square ∠    | Vulkanus              | 0.48° | Static = |
+| Pars Fidei            | quincunx ⚻       | Poseidon              | 1.51° | Static = |
 | Vertex                | trine △          | True Priapus          | 4.69° | Static = |
-| Vertex                | trine △          | Interpolated Perigee  | 4.26° | Static = |
+| Vertex                | trine △          | Interpolated Perigee  | 3.27° | Static = |
 | Vertex                | semi-sextile ⚺   | White Moon            | 0.48° | Static = |
 | Anti Vertex           | sextile ⚹        | True Priapus          | 4.69° | Static = |
-| Anti Vertex           | sextile ⚹        | Interpolated Perigee  | 4.26° | Static = |
+| Anti Vertex           | sextile ⚹        | Interpolated Perigee  | 3.27° | Static = |
 | Anti Vertex           | quincunx ⚻       | White Moon            | 0.48° | Static = |
-| Interpolated Lilith   | opposition ☍     | Mean Priapus          | 1.91° | Static = |
-| Interpolated Lilith   | conjunction ☌    | Zeus                  | 4.49° | Static = |
-| Interpolated Lilith   | square □         | Kronos                | 1.30° | Static = |
-| Interpolated Lilith   | trine △          | Admetos               | 2.45° | Static = |
-| Interpolated Lilith   | sextile ⚹        | Vulkanus              | 0.22° | Static = |
-| Interpolated Lilith   | semi-square ∠    | Poseidon              | 1.54° | Static = |
-| Mean Priapus          | opposition ☍     | Zeus                  | 2.58° | Static = |
-| Mean Priapus          | square □         | Kronos                | 0.60° | Static = |
-| Mean Priapus          | sextile ⚹        | Admetos               | 4.36° | Static = |
-| Mean Priapus          | trine △          | Vulkanus              | 2.12° | Static = |
-| Mean Priapus          | sesquiquadrate ⚼ | Poseidon              | 0.37° | Static = |
-| True Priapus          | conjunction ☌    | Interpolated Perigee  | 0.43° | Static = |
+| Interpolated Lilith   | opposition ☍     | Mean Priapus          | 1.84° | Static = |
+| Interpolated Lilith   | conjunction ☌    | Zeus                  | 4.34° | Static = |
+| Interpolated Lilith   | square □         | Kronos                | 2.20° | Static = |
+| Interpolated Lilith   | trine △          | Admetos               | 1.35° | Static = |
+| Interpolated Lilith   | sextile ⚹        | Vulkanus              | 0.37° | Static = |
+| Interpolated Lilith   | semi-square ∠    | Poseidon              | 1.39° | Static = |
+| Mean Priapus          | opposition ☍     | Zeus                  | 2.50° | Static = |
+| Mean Priapus          | square □         | Kronos                | 0.36° | Static = |
+| Mean Priapus          | sextile ⚹        | Admetos               | 3.19° | Static = |
+| Mean Priapus          | trine △          | Vulkanus              | 1.48° | Static = |
+| Mean Priapus          | sesquiquadrate ⚼ | Poseidon              | 0.45° | Static = |
+| True Priapus          | conjunction ☌    | Interpolated Perigee  | 1.42° | Static = |
 | True Priapus          | square □         | White Moon            | 5.16° | Static = |
-| True Priapus          | trine △          | Hades                 | 5.54° | Static = |
-| True Priapus          | semi-sextile ⚺   | Poseidon              | 0.96° | Static = |
-| Interpolated Perigee  | square □         | White Moon            | 4.74° | Static = |
-| Interpolated Perigee  | trine △          | Hades                 | 5.97° | Static = |
-| Interpolated Perigee  | semi-sextile ⚺   | Poseidon              | 0.53° | Static = |
-| White Moon            | quintile Q       | Zeus                  | 1.75° | Static = |
-| White Moon            | trine △          | Poseidon              | 4.20° | Static = |
-| Cupido                | quincunx ⚻       | Hades                 | 0.95° | Static = |
-| Cupido                | conjunction ☌    | Poseidon              | 5.56° | Static = |
-| Hades                 | trine △          | Zeus                  | 5.55° | Static = |
-| Zeus                  | square □         | Kronos                | 3.18° | Static = |
-| Zeus                  | sextile ⚹        | Vulkanus              | 4.70° | Static = |
-| Kronos                | trine △          | Apollon               | 3.66° | Static = |
-| Kronos                | semi-sextile ⚺   | Vulkanus              | 1.52° | Static = |
-| Kronos                | sesquiquadrate ⚼ | Poseidon              | 0.23° | Static = |
-| Apollon               | quincunx ⚻       | Admetos               | 0.10° | Static = |
-| Apollon               | square □         | Vulkanus              | 2.14° | Static = |
-| Admetos               | sextile ⚹        | Vulkanus              | 2.23° | Static = |
+| True Priapus          | trine △          | Hades                 | 4.36° | Static = |
+| True Priapus          | sesquiquadrate ⚼ | Admetos               | 1.86° | Static = |
+| True Priapus          | semi-sextile ⚺   | Poseidon              | 0.88° | Static = |
+| Interpolated Perigee  | square □         | White Moon            | 3.75° | Static = |
+| Interpolated Perigee  | trine △          | Hades                 | 5.77° | Static = |
+| Interpolated Perigee  | semi-sextile ⚺   | Poseidon              | 0.54° | Static = |
+| White Moon            | quintile Q       | Zeus                  | 1.67° | Static = |
+| White Moon            | trine △          | Poseidon              | 4.28° | Static = |
+| Cupido                | quincunx ⚻       | Hades                 | 0.42° | Static = |
+| Cupido                | conjunction ☌    | Poseidon              | 5.66° | Static = |
+| Hades                 | sesquiquadrate ⚼ | Apollon               | 1.29° | Static = |
+| Zeus                  | square □         | Kronos                | 2.14° | Static = |
+| Zeus                  | trine △          | Admetos               | 5.68° | Static = |
+| Zeus                  | sextile ⚹        | Vulkanus              | 3.97° | Static = |
+| Kronos                | trine △          | Apollon               | 4.76° | Static = |
+| Kronos                | semi-sextile ⚺   | Vulkanus              | 1.83° | Static = |
+| Kronos                | sesquiquadrate ⚼ | Poseidon              | 0.81° | Static = |
+| Apollon               | quincunx ⚻       | Admetos               | 1.21° | Static = |
+| Apollon               | square □         | Vulkanus              | 2.92° | Static = |
+| Admetos               | sextile ⚹        | Vulkanus              | 1.71° | Static = |
 +-----------------------+------------------+-----------------------+-------+----------+
