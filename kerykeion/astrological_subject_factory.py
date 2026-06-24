@@ -2430,6 +2430,11 @@ class AstrologicalSubjectFactory:
             try:
                 pos_ecl = ephe.fixstar_ut(swe_name, julian_day, iflag)[0]
                 star_deg = pos_ecl[0]
+                # Many bright stars sit far off the ecliptic (e.g. Algol ~+22.4°);
+                # carry their true ecliptic latitude so the public field is
+                # populated and local-space azimuth/altitude is accurate, the
+                # same way planets and derived antipodes already do.
+                star_ecl_lat = pos_ecl[1] if len(pos_ecl) > 1 else None
                 star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
                 pos_eq = ephe.fixstar_ut(swe_name, julian_day, iflag | ephe.FLG_EQUATORIAL)[0]
                 star_dec = pos_eq[1] if len(pos_eq) > 1 else None
@@ -2444,6 +2449,7 @@ class AstrologicalSubjectFactory:
                     point_type=point_type,
                     speed=star_speed,
                     declination=star_dec,
+                    ecliptic_latitude=star_ecl_lat,
                     magnitude=star_mag,
                 )
                 point.house = get_planet_house(star_deg, houses_degree_ut)
