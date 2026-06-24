@@ -67,6 +67,7 @@ from kerykeion.utilities import (
 )
 from kerykeion.settings.config_constants import (
     DEFAULT_ACTIVE_POINTS,
+    DEFAULT_SIDEREAL_MODE,
     STANDARD_PLANETS as _STANDARD_PLANETS_CANONICAL,
 )
 
@@ -75,7 +76,8 @@ logger = logging.getLogger(__name__)
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 GEONAMES_USERNAME_ENV_VAR = "KERYKEION_GEONAMES_USERNAME"
-DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
+# DEFAULT_SIDEREAL_MODE is imported from config_constants (single source of truth);
+# re-exported here for backward compatibility with existing imports.
 DEFAULT_HOUSES_SYSTEM_IDENTIFIER: HousesSystemIdentifier = "P"
 DEFAULT_ZODIAC_TYPE: ZodiacType = "Tropical"
 DEFAULT_PERSPECTIVE_TYPE: PerspectiveType = "Apparent Geocentric"

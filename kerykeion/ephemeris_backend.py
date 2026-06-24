@@ -358,7 +358,11 @@ def ephemeris_session(
                         )
                     ephe.set_sid_mode(ephe.SIDM_USER, custom_ayanamsa_t0, custom_ayanamsa_ayan_t0)
                 else:
-                    sidm_name = f"SIDM_{sidereal_mode or 'FAGAN_BRADLEY'}"
+                    # Defensive fallback for raw callers that bypass the model
+                    # validator/factory; DEFAULT_SIDEREAL_MODE is the shared default.
+                    from kerykeion.settings.config_constants import DEFAULT_SIDEREAL_MODE
+
+                    sidm_name = f"SIDM_{sidereal_mode or DEFAULT_SIDEREAL_MODE}"
                     try:
                         sidm_const = getattr(ephe, sidm_name)
                     except AttributeError:

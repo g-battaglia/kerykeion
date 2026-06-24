@@ -49,7 +49,7 @@ from kerykeion.schemas.kr_literals import (
     AstrologicalPoint,
 )
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
-from kerykeion.settings.translations import get_translations, load_language_settings
+from kerykeion.settings.translations import get_translations, load_language_pair
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice,
     convert_latitude_coordinate_to_string,
@@ -3605,13 +3605,13 @@ class ChartDrawer:  # type: ignore[no-redef]
     ) -> None:
         """Resolve language models for the requested chart language."""
         overrides = {self.chart_language: dict(language_pack)} if language_pack else None
-        languages = load_language_settings(overrides)  # type: ignore[arg-type]
+        # Materialize only the selected language + English fallback, not the whole
+        # ~10-language table (load_language_pair avoids the full-table deepcopy).
+        base_data, fallback_data = load_language_pair(self.chart_language, overrides)  # type: ignore[arg-type]
 
-        fallback_data = languages.get("EN")
-        if fallback_data is None:
+        if not fallback_data:
             raise KerykeionException("English translations are missing from LANGUAGE_SETTINGS.")
 
-        base_data = languages.get(self.chart_language, fallback_data)
         selected_model = KerykeionLanguageModel(**base_data)
         fallback_model = KerykeionLanguageModel(**fallback_data)
 
@@ -3622,8 +3622,16 @@ class ChartDrawer:  # type: ignore[no-redef]
         self.language_settings = self._language_dict  # Backward compatibility
 
     def _translate(self, key: str, default: Any) -> Any:
-        fallback_value = get_translations(key, default, language_dict=self._fallback_language_dict)
-        return get_translations(key, fallback_value, language_dict=self._language_dict)
+        # Resolve against the selected language, then the (English) fallback model
+        # dump, in a single pass — get_translations consults fallback_dict before
+        # its built-in English defaults, preserving the previous two-call precedence
+        # while avoiding the redundant second call and dotted-key split per label.
+        return get_translations(
+            key,
+            default,
+            language_dict=self._language_dict,
+            fallback_dict=self._fallback_language_dict,
+        )
 
     def _get_zodiac_info(self) -> str:
         """
@@ -3635,7 +3643,10 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self.first_obj.zodiac_type == "Tropical":
             return f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
         else:
-            mode_const = "SIDM_" + (self.first_obj.sidereal_mode or "FAGAN_BRADLEY")  # type: ignore
+            # A sidereal subject always carries a concrete sidereal_mode (enforced by
+            # the AstrologicalBaseModel validator), so the displayed ayanamsa reflects
+            # the mode actually used for the positions — no fallback needed.
+            mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore[operator]
             mode_name = ephe.get_ayanamsa_name(getattr(ephe, mode_const))
             return f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
 

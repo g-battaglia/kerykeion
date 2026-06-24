@@ -751,6 +751,12 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
     @model_validator(mode="after")
     def _validate_user_ayanamsa(self) -> "AstrologicalBaseModel":
+        if self.zodiac_type == "Sidereal" and self.sidereal_mode is None:
+            # Enforce the invariant in the model rather than masking it at display
+            # time: a sidereal chart must declare the ayanamsa used for its
+            # positions. The factory auto-defaults this, so only direct/manual
+            # construction (the ambiguous case) is rejected.
+            raise ValueError("sidereal_mode is required when zodiac_type='Sidereal'.")
         if self.sidereal_mode == "USER":
             if self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None:
                 raise ValueError(
