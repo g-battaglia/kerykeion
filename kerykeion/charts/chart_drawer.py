@@ -48,7 +48,7 @@ from kerykeion.schemas.kr_literals import (
     KerykeionChartLanguage,
     AstrologicalPoint,
 )
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.config_constants import AXIAL_POINTS, DEFAULT_ACTIVE_POINTS
 from kerykeion.settings.translations import get_translations, load_language_pair
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice,
@@ -3828,19 +3828,20 @@ class ChartDrawer:  # type: ignore[no-redef]
         back to the standard radix cusp color when an axis is missing.
         """
         fallback = self.chart_colors_settings["houses_radix_line"]
-        # `axis_names` is the single source of truth for both the filter and the
-        # returned order. Collect only the four axis colors by name (not the
-        # whole ~40-entry planets_settings list) — this runs once per chart
-        # render. Use `or fallback` (not get's default) so an entry that
-        # explicitly carries color=None (or "") still resolves to the standard
-        # cusp color instead of emitting an invalid `stroke:None` into the SVG.
-        axis_names = ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")
+        # ``AXIAL_POINTS`` (config_constants) is the codebase-wide single source
+        # of truth for the four angles, in ASC/MC/DSC/IC order — reuse it for
+        # both the filter and the returned order. Collect only the four axis
+        # colors by name (not the whole ~40-entry planets_settings list) — this
+        # runs once per chart render. Use `or fallback` (not get's default) so an
+        # entry that explicitly carries color=None (or "") still resolves to the
+        # standard cusp color instead of emitting an invalid `stroke:None` into
+        # the SVG.
         color_by_name = {
             name: (p.get("color") or fallback)
             for p in self.planets_settings
-            if (name := p.get("name")) in axis_names
+            if (name := p.get("name")) in AXIAL_POINTS
         }
-        return tuple(color_by_name.get(name, fallback) for name in axis_names)  # type: ignore[return-value]
+        return tuple(color_by_name.get(name, fallback) for name in AXIAL_POINTS)  # type: ignore[return-value]
 
     def _setup_single_wheel_houses(self, template_dict: dict, houses_list: list) -> None:
         """
