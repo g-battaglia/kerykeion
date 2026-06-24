@@ -6,7 +6,12 @@ from typing import Optional, Sequence, Union, Literal
 
 from simple_ascii_tables import AsciiTable
 
-from kerykeion.utilities import get_available_astrological_points_list, get_houses_list, format_iso_display
+from kerykeion.utilities import (
+    get_available_astrological_points_list,
+    get_houses_list,
+    format_iso_display,
+    format_timedelta_hhmm,
+)
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     ChartDataModel,
@@ -263,14 +268,14 @@ class ReportGenerator:
         sun = overview.sun
         if sun is not None:
             sun_data: list[list[str]] = [["Field", "Value"]]
-            if sun.sunrise_timestamp is not None:
-                sun_data.append(["Sunrise", sun.sunrise_timestamp])
-            if sun.sunset_timestamp is not None:
-                sun_data.append(["Sunset", sun.sunset_timestamp])
+            if sun.sunrise is not None:
+                sun_data.append(["Sunrise", sun.sunrise.strftime("%H:%M")])
+            if sun.sunset is not None:
+                sun_data.append(["Sunset", sun.sunset.strftime("%H:%M")])
             if sun.solar_noon is not None:
-                sun_data.append(["Solar Noon", sun.solar_noon])
+                sun_data.append(["Solar Noon", sun.solar_noon.strftime("%H:%M")])
             if sun.day_length is not None:
-                sun_data.append(["Day Length", sun.day_length])
+                sun_data.append(["Day Length", format_timedelta_hhmm(sun.day_length)])
             if sun.position is not None:
                 if sun.position.altitude is not None:
                     sun_data.append(["Sun Altitude", f"{sun.position.altitude:.2f}°"])
@@ -558,23 +563,31 @@ class ReportGenerator:
         return self._points_table(sorted_points, title)
 
     def _points_table(self, points: Sequence[KerykeionPointModel], title: str) -> str:
-        celestial_data: list[list[str]] = [["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]]
+        # Show a magnitude column only when at least one point carries a magnitude
+        # (fixed stars). Planet/midpoint tables keep their original 7-column layout.
+        show_mag = any(getattr(point, "magnitude", None) is not None for point in points)
+        header = ["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]
+        if show_mag:
+            header.insert(3, "Mag.")
+        celestial_data: list[list[str]] = [header]
         for point in points:
             speed_str = f"{point.speed:+.4f}°/d" if point.speed is not None else "N/A"
             decl_str = f"{point.declination:+.2f}°" if point.declination is not None else "N/A"
             ret_str = "R" if point.retrograde else "-"
             house_str = _humanize(point.house) if point.house else "-"
-            celestial_data.append(
-                [
-                    _humanize(point.name),
-                    f"{point.sign} {point.emoji}",
-                    f"{point.position:.2f}°",
-                    speed_str,
-                    decl_str,
-                    ret_str,
-                    house_str,
-                ]
-            )
+            row = [
+                _humanize(point.name),
+                f"{point.sign} {point.emoji}",
+                f"{point.position:.2f}°",
+                speed_str,
+                decl_str,
+                ret_str,
+                house_str,
+            ]
+            if show_mag:
+                mag = getattr(point, "magnitude", None)
+                row.insert(3, f"{mag:+.2f}" if mag is not None else "N/A")
+            celestial_data.append(row)
 
         return AsciiTable(celestial_data, title=title).table
 
@@ -657,10 +670,10 @@ class ReportGenerator:
 
         element_data = [
             ["Element", "Count", "Percentage"],
-            ["Fire 🔥", elem.fire, f"{(elem.fire / total * 100):.1f}%"],
-            ["Earth 🌍", elem.earth, f"{(elem.earth / total * 100):.1f}%"],
-            ["Air 💨", elem.air, f"{(elem.air / total * 100):.1f}%"],
-            ["Water 💧", elem.water, f"{(elem.water / total * 100):.1f}%"],
+            ["Fire 🔥", elem.fire, f"{elem.fire_percentage}%"],
+            ["Earth 🌍", elem.earth, f"{elem.earth_percentage}%"],
+            ["Air 💨", elem.air, f"{elem.air_percentage}%"],
+            ["Water 💧", elem.water, f"{elem.water_percentage}%"],
             ["Total", total, "100%"],
         ]
         return AsciiTable(element_data, title="Element Distribution").table
@@ -676,9 +689,9 @@ class ReportGenerator:
 
         quality_data = [
             ["Quality", "Count", "Percentage"],
-            ["Cardinal", qual.cardinal, f"{(qual.cardinal / total * 100):.1f}%"],
-            ["Fixed", qual.fixed, f"{(qual.fixed / total * 100):.1f}%"],
-            ["Mutable", qual.mutable, f"{(qual.mutable / total * 100):.1f}%"],
+            ["Cardinal", qual.cardinal, f"{qual.cardinal_percentage}%"],
+            ["Fixed", qual.fixed, f"{qual.fixed_percentage}%"],
+            ["Mutable", qual.mutable, f"{qual.mutable_percentage}%"],
             ["Total", total, "100%"],
         ]
         return AsciiTable(quality_data, title="Quality Distribution").table

@@ -16,7 +16,7 @@ and reduces the risk of typos.
 
 from typing import cast
 
-from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode
 from kerykeion.schemas.kr_models import ActiveAspect
 
 
@@ -29,6 +29,13 @@ ZODIAC_TYPE_TROPICAL: str = "Tropical"
 
 ZODIAC_TYPE_SIDEREAL: str = "Sidereal"
 """Vedic/Eastern zodiac based on fixed star positions."""
+
+DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
+"""Default ayanamsa applied when a sidereal chart omits ``sidereal_mode``.
+
+Single source of truth for the sidereal default, shared by the subject factory
+and the ephemeris backend so the displayed ayanamsa always matches the one used
+to compute positions."""
 
 
 # =============================================================================
@@ -165,7 +172,7 @@ HOUSE_SYSTEM_CAMPANUS: str = "C"
 HOUSE_SYSTEM_REGIOMONTANUS: str = "R"
 """Regiomontanus house system."""
 
-HOUSE_SYSTEM_EQUAL: str = "E"
+HOUSE_SYSTEM_EQUAL: str = "A"
 """Equal house system (from Ascendant)."""
 
 HOUSE_SYSTEM_MORINUS: str = "M"

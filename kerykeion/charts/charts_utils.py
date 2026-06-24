@@ -487,7 +487,9 @@ def degreeSum(a: Union[int, float], b: Union[int, float]) -> float:
     Returns:
         float: normalized sum of a and b in the range [0, 360)
     """
-    return math.fmod(a + b, 360) if (a + b) % 360 != 0 else 0.0
+    # Use Python's % (not math.fmod) so the result is always in [0, 360) even for
+    # negative inputs (math.fmod keeps the dividend's sign, breaking the contract).
+    return (a + b) % 360.0
 
 
 def normalizeDegree(angle: Union[int, float]) -> float:
@@ -870,7 +872,7 @@ def draw_aspect_line(
                 rendered_icon_positions.append((mid_x, mid_y, current_aspect_degrees))
 
     return (
-        f'<g kr:node="Aspect" kr:aspectname="{aspect["aspect"]}" kr:to="{aspect["p1_name"]}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{aspect["p2_name"]}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}" kr:orb="{aspect["orbit"]}" kr:aspectdegrees="{aspect["aspect_degrees"]}" kr:planetsdiff="{aspect["diff"]}" kr:aspectmovement="{aspect["aspect_movement"]}">'
+        f'<g kr:node="Aspect" kr:aspectname="{escape_svg_text(aspect["aspect"])}" kr:to="{escape_svg_text(aspect["p1_name"])}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{escape_svg_text(aspect["p2_name"])}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}" kr:orb="{aspect["orbit"]}" kr:aspectdegrees="{aspect["aspect_degrees"]}" kr:planetsdiff="{aspect["diff"]}" kr:aspectmovement="{aspect["aspect_movement"]}">'
         f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
         f"{aspect_icon_svg}"
         f"</g>"
@@ -894,18 +896,24 @@ def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", 
     # Ensure the input is a float
     dec = float(dec)
 
-    # Calculate degrees, minutes, and seconds
-    degrees = int(dec)
-    minutes = int((dec - degrees) * 60)
-    seconds = int(round((dec - degrees - minutes / 60) * 3600))
-
-    # Format the output based on the specified type
+    # All three formats floor (toward negative infinity) the displayed unit via math.floor/divmod.
+    # Flooring is consistent across formats (a within-sign 29.9999° reads "29°" in
+    # format "1" and "29°59'59\"" in format "3", never an out-of-sign "30°00'00\""),
+    # avoids the malformed negative fields int() produced ("-5°-30'", a truncation
+    # toward zero), and never emits an out-of-range 60' or 60".
     if format_type == "1":
-        return f"{degrees}°"
+        return f"{math.floor(dec)}°"
     elif format_type == "2":
+        degrees, minutes = divmod(math.floor(dec * 60), 60)
         return f"{degrees}°{minutes:02d}'"
-    elif format_type == "3":
-        return f"{degrees}°{minutes:02d}'{seconds:02d}\""
+    else:  # format_type == "3" (default) — always return a str matching the annotation
+        # Floor to the second and carry via divmod, so the result can never contain
+        # an invalid 60" nor overshoot the sign boundary (e.g. 29.9999° ->
+        # "29°59'59\"", not "30°00'00\"").
+        total_seconds = math.floor(dec * 3600)
+        d, rem = divmod(total_seconds, 3600)
+        m, s = divmod(rem, 60)
+        return f"{d}°{m:02d}'{s:02d}\""
 
 
 # =============================================================================
@@ -2722,8 +2730,8 @@ def _classic_gauquelin_mid_offset(
     """Compute the offset midpoint of Gauquelin sector i (0-indexed) for the classic chart."""
     a = offsets[i]
     b = offsets[(i + 1) % 36]
-    span = (a - b) % 360
-    return (b + span / 2) % 360
+    span = (b - a) % 360
+    return (a + span / 2) % 360
 
 
 def draw_gauquelin_sectors(

@@ -36,7 +36,7 @@ from typing import Union, Optional, get_args, cast
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 
 logger = getLogger(__name__)
@@ -203,6 +203,7 @@ def get_kerykeion_point_from_degree(
     speed: Optional[float] = None,
     declination: Optional[float] = None,
     magnitude: Optional[float] = None,
+    ecliptic_latitude: Optional[float] = None,
 ) -> KerykeionPointModel:
     """
     Create a KerykeionPointModel from a degree position.
@@ -214,6 +215,7 @@ def get_kerykeion_point_from_degree(
         speed: The velocity/speed of the celestial point in degrees per day (optional)
         declination: The declination of the celestial point in degrees (optional)
         magnitude: The apparent visual magnitude for fixed stars (optional)
+        ecliptic_latitude: The ecliptic latitude of the body in degrees (optional)
 
     Returns:
         A KerykeionPointModel with calculated zodiac sign, position, and properties
@@ -245,6 +247,7 @@ def get_kerykeion_point_from_degree(
         speed=speed,
         declination=declination,
         magnitude=magnitude,
+        ecliptic_latitude=ecliptic_latitude,
     )
 
 
@@ -254,28 +257,39 @@ def get_kerykeion_point_from_degree(
 
 
 def is_point_between(
-    start_angle: Union[int, float], end_angle: Union[int, float], candidate: Union[int, float]
+    start_angle: Union[int, float],
+    end_angle: Union[int, float],
+    candidate: Union[int, float],
+    *,
+    allow_reflex: bool = False,
 ) -> bool:
     """
     Check if a candidate angle lies on the clockwise arc from start to end angle.
+
+    The arc is start-inclusive and end-exclusive: a candidate exactly on
+    ``start`` belongs to the arc, one exactly on ``end`` does not.
 
     Args:
         start_angle: Starting angle in degrees
         end_angle: Ending angle in degrees
         candidate: Angle to check
+        allow_reflex: When False (default) a span exceeding 180° is rejected with
+            a ``KerykeionException`` (quadrant house systems never produce one).
+            Set True to accept reflex arcs (> 180°), as needed by non-quadrant
+            house systems (e.g. 'H' Horizon) whose cusps can span more than 180°.
 
     Returns:
         True if candidate is on the clockwise arc from start to end
 
     Raises:
-        KerykeionException: If the arc exceeds 180°
+        KerykeionException: If the arc exceeds 180° and ``allow_reflex`` is False
     """
     start = start_angle % 360
     end = end_angle % 360
     target = candidate % 360
     span = (end - start) % 360
 
-    if span > 180:
+    if span > 180 and not allow_reflex:
         raise KerykeionException(f"The angle between start and end point is not allowed to exceed 180°, yet is: {span}")
     if math.isclose(target, start, rel_tol=1e-9, abs_tol=1e-12):
         return True
@@ -299,11 +313,14 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
     Raises:
         ValueError: If the planet's position doesn't fall within any house range
     """
+    # Reuse the shared arc-containment primitive with allow_reflex=True so
+    # non-quadrant systems (e.g. 'H' Horizon) whose cusps can span more than 180°
+    # are handled too. The start-inclusive / end-exclusive contract makes a planet
+    # exactly on a cusp fall into the house that cusp opens.
     for i in range(len(_HOUSE_NAMES_TUPLE)):
-        start_degree = houses_degree_ut_list[i]
-        end_degree = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
-
-        if is_point_between(start_degree, end_degree, planet_degree):
+        start = houses_degree_ut_list[i]
+        end = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
+        if is_point_between(start, end, planet_degree, allow_reflex=True):
             return _HOUSE_NAMES_TUPLE[i]
 
     raise ValueError(f"Error in house calculation, planet: {planet_degree}, houses: {houses_degree_ut_list}")
@@ -640,6 +657,91 @@ def extract_year_from_iso(iso_datetime_string: str) -> int:
     return datetime.fromisoformat(iso_datetime_string).year
 
 
+def format_timedelta_hhmm(td: timedelta) -> str:
+    """Render a duration as ``H:MM`` (rounded to whole minutes).
+
+    Shared by the report and LLM-context serializers so both surfaces display a
+    duration (e.g. the Sun's day length) in the same ``H:MM`` form rather than
+    diverging into ``str(timedelta)`` (``H:MM:SS``).
+    """
+    # Half-up rounding to whole minutes (callers always pass non-negative
+    # durations); avoids round()'s ties-to-even, which would render e.g. 0:30 as
+    # 0:00 and 2:30 as 0:02.
+    total_minutes = int(td.total_seconds() + 30) // 60
+    return f"{total_minutes // 60}:{total_minutes % 60:02d}"
+
+
+def _next_proleptic_julian_day(year: int, month: int, day: int) -> tuple[int, int, int]:
+    """Return the calendar date one day after ``(year, month, day)``.
+
+    Uses proleptic Julian-calendar rules (leap year when ``year % 4 == 0`` in
+    astronomical numbering, where year 0 = 1 BCE), matching the ``JUL_CAL`` the
+    BCE code path feeds into :func:`format_ancient_iso`. Crossing year 0 → 1 is
+    the correct 1 BCE → 1 CE astronomical transition.
+    """
+    is_leap = (year % 4) == 0
+    month_lengths = [31, 29 if is_leap else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    day += 1
+    if day > month_lengths[month - 1]:
+        day = 1
+        month += 1
+        if month > 12:
+            month = 1
+            year += 1
+    return year, month, day
+
+
+def _split_decimal_hour_with_carry(
+    year: int, month: int, day: int, decimal_hour: float
+) -> tuple[int, int, int, int, int, int]:
+    """Decompose ``decimal_hour`` into integer ``(year, month, day, h, m, s)``.
+
+    Rounds to the nearest second (the BCE path feeds a float from ``ephe.revjul``
+    that is almost never an exact integer, so truncating each component lost up to
+    ~1 second) and carries a value within ~0.5 s of midnight (rounds to 86400)
+    into the next proleptic-Julian day, so the result can never contain an invalid
+    24:00:00 or a misdated 23:59:59.
+
+    Shared by :func:`format_ancient_iso` and the BCE branch of
+    ``RelocatedChartFactory`` so the stored integer h/m/s fields and the ISO
+    string can never drift apart at a second boundary.
+    """
+    total_seconds = round(decimal_hour * 3600)
+    if total_seconds >= 86400:
+        total_seconds -= 86400
+        year, month, day = _next_proleptic_julian_day(year, month, day)
+    return year, month, day, total_seconds // 3600, (total_seconds % 3600) // 60, total_seconds % 60
+
+
+def _assemble_ancient_iso(
+    year: int, month: int, day: int, hour: int, minute: int, second: int, utc_offset_hours: float
+) -> str:
+    """Assemble an ISO 8601 extended-year string from already-split integer fields.
+
+    Shared by :func:`format_ancient_iso` and the BCE branch of
+    ``RelocatedChartFactory`` so a date already decomposed by
+    :func:`_split_decimal_hour_with_carry` is not split a second time. The h/m/s
+    values are taken verbatim — no rounding or carry happens here, so callers must
+    pass fields that already encode any midnight rollover.
+    """
+    # ISO 8601 extended year: negative sign for years <= 0
+    year_str = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
+
+    # UTC offset string
+    if utc_offset_hours == 0.0:
+        offset_str = "+00:00"
+    else:
+        sign = "+" if utc_offset_hours >= 0 else "-"
+        abs_off = abs(utc_offset_hours)
+        # Carry a rounded-up 60 into the hour (e.g. 0.99333 h -> 00:60 -> 01:00):
+        # rounding minutes independently of hours could otherwise emit ":60",
+        # which is not a valid ISO 8601 offset field (minutes must be 0-59).
+        oh, om = divmod(round(abs_off * 60), 60)
+        offset_str = f"{sign}{oh:02d}:{om:02d}"
+
+    return f"{year_str}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{second:02d}{offset_str}"
+
+
 def format_ancient_iso(year: int, month: int, day: int, decimal_hour: float, utc_offset_hours: float) -> str:
     """Format a date with potentially negative year as an ISO 8601 extended-year string.
 
@@ -656,25 +758,10 @@ def format_ancient_iso(year: int, month: int, day: int, decimal_hour: float, utc
     Returns:
         ISO 8601 formatted string with extended year.
     """
-    h = int(decimal_hour)
-    remainder = (decimal_hour - h) * 60
-    m = int(remainder)
-    s = int((remainder - m) * 60)
-
-    # ISO 8601 extended year: negative sign for years <= 0
-    year_str = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
-
-    # UTC offset string
-    if utc_offset_hours == 0.0:
-        offset_str = "+00:00"
-    else:
-        sign = "+" if utc_offset_hours >= 0 else "-"
-        abs_off = abs(utc_offset_hours)
-        oh = int(abs_off)
-        om = int(round((abs_off - oh) * 60))
-        offset_str = f"{sign}{oh:02d}:{om:02d}"
-
-    return f"{year_str}-{month:02d}-{day:02d}T{h:02d}:{m:02d}:{s:02d}{offset_str}"
+    # Round to the nearest second (with midnight day-carry) via the shared helper
+    # so this and the BCE branch of RelocatedChartFactory decompose identically.
+    year, month, day, h, m, s = _split_decimal_hour_with_carry(year, month, day, decimal_hour)
+    return _assemble_ancient_iso(year, month, day, h, m, s, utc_offset_hours)
 
 
 def datetime_to_julian(dt: datetime) -> float:
@@ -760,10 +847,6 @@ def julian_to_datetime(jd: float) -> datetime:
     day_int = int(day)
 
     day_frac = day - day_int
-    hours = int(day_frac * 24)
-    minutes = int((day_frac * 24 - hours) * 60)
-    seconds = int((day_frac * 24 * 60 - hours * 60 - minutes) * 60)
-    microseconds = int(((day_frac * 24 * 60 - hours * 60 - minutes) * 60 - seconds) * 1000000)
 
     if E < 14:
         month = E - 1
@@ -784,7 +867,10 @@ def julian_to_datetime(jd: float) -> datetime:
             "revjul for BCE dates."
         )
 
-    return datetime(year, month, day_int, hours, minutes, seconds, microseconds)
+    # Build from the integer date plus the day fraction so seconds/microseconds
+    # carries normalize automatically (avoids a latent seconds==60 ValueError from
+    # independent int() truncation of each component).
+    return datetime(year, month, day_int) + timedelta(days=day_frac)
 
 
 # =============================================================================

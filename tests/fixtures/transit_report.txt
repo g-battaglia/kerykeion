@@ -135,19 +135,19 @@ Sample Natal Subject — Transit 1980-12-08
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 3.0   | 18.1%      |
-| Earth 🌍 | 3.5   | 21.1%      |
-| Air 💨   | 0.5   | 3.0%       |
-| Water 💧 | 9.6   | 57.8%      |
+| Fire 🔥  | 3.0   | 18%        |
+| Earth 🌍 | 3.5   | 21%        |
+| Air 💨   | 0.5   | 3%         |
+| Water 💧 | 9.6   | 58%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 9.1   | 54.8%      |
-| Fixed    | 7.5   | 45.2%      |
-| Mutable  | 0.0   | 0.0%       |
+| Cardinal | 9.1   | 55%        |
+| Fixed    | 7.5   | 45%        |
+| Mutable  | 0.0   | 0%         |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 

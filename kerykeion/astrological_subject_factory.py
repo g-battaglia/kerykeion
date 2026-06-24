@@ -67,6 +67,7 @@ from kerykeion.utilities import (
 )
 from kerykeion.settings.config_constants import (
     DEFAULT_ACTIVE_POINTS,
+    DEFAULT_SIDEREAL_MODE,
     STANDARD_PLANETS as _STANDARD_PLANETS_CANONICAL,
 )
 
@@ -75,7 +76,8 @@ logger = logging.getLogger(__name__)
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 GEONAMES_USERNAME_ENV_VAR = "KERYKEION_GEONAMES_USERNAME"
-DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
+# DEFAULT_SIDEREAL_MODE is imported from config_constants (single source of truth);
+# re-exported here for backward compatibility with existing imports.
 DEFAULT_HOUSES_SYSTEM_IDENTIFIER: HousesSystemIdentifier = "P"
 DEFAULT_ZODIAC_TYPE: ZodiacType = "Tropical"
 DEFAULT_PERSPECTIVE_TYPE: PerspectiveType = "Apparent Geocentric"
@@ -137,18 +139,25 @@ _LEGACY_ACTIVE_POINT_STAR_NAMES = frozenset(
 
 # Declarative mapping of geometrically opposite point pairs.
 # Each derived point is computed as primary.abs_pos + 180 (mod 360).
-# negate_speed/negate_dec control whether speed and declination are negated.
+# negate_speed/negate_dec/negate_lat control whether speed, declination and
+# ecliptic latitude are mirrored. The diametrically opposite point on the
+# celestial sphere has ecliptic latitude −β, so an off-ecliptic primary
+# (Lilith reaches ±5°) must hand its antipode the negated latitude; axes,
+# the vertex and the nodes all lie on the ecliptic (latitude None/0) so the
+# flag is a no-op for them.
 OPPOSITE_PAIRS: Dict[AstrologicalPoint, Dict[str, Any]] = {
-    "Descendant": {"primary": "Ascendant", "negate_speed": False, "negate_dec": False},
-    "Imum_Coeli": {"primary": "Medium_Coeli", "negate_speed": False, "negate_dec": False},
-    "Anti_Vertex": {"primary": "Vertex", "negate_speed": False, "negate_dec": False},
+    "Descendant": {"primary": "Ascendant", "negate_speed": False, "negate_dec": False, "negate_lat": False},
+    "Imum_Coeli": {"primary": "Medium_Coeli", "negate_speed": False, "negate_dec": False, "negate_lat": False},
+    "Anti_Vertex": {"primary": "Vertex", "negate_speed": False, "negate_dec": False, "negate_lat": False},
     # South nodes are rigidly 180° from the north nodes, so they share the
     # SAME angular velocity (negating it would invert applying/separating
     # verdicts in aspect movement); declination IS mirrored.
-    "Mean_South_Lunar_Node": {"primary": "Mean_North_Lunar_Node", "negate_speed": False, "negate_dec": True},
-    "True_South_Lunar_Node": {"primary": "True_North_Lunar_Node", "negate_speed": False, "negate_dec": True},
-    "Mean_Priapus": {"primary": "Mean_Lilith", "negate_speed": False, "negate_dec": True},
-    "True_Priapus": {"primary": "True_Lilith", "negate_speed": False, "negate_dec": True},
+    "Mean_South_Lunar_Node": {"primary": "Mean_North_Lunar_Node", "negate_speed": False, "negate_dec": True, "negate_lat": False},
+    "True_South_Lunar_Node": {"primary": "True_North_Lunar_Node", "negate_speed": False, "negate_dec": True, "negate_lat": False},
+    # Priapus is the true antipode of the off-ecliptic Lilith: mirror both
+    # declination and ecliptic latitude so local-space projection uses ∓β.
+    "Mean_Priapus": {"primary": "Mean_Lilith", "negate_speed": False, "negate_dec": True, "negate_lat": True},
+    "True_Priapus": {"primary": "True_Lilith", "negate_speed": False, "negate_dec": True, "negate_lat": True},
 }
 
 # Planetocentric center body mapping (used for planetocentric perspectives)
@@ -639,7 +648,7 @@ class AstrologicalSubjectFactory:
             sidereal_mode (SiderealMode, optional): Sidereal calculation mode (e.g.,
                 'FAGAN_BRADLEY', 'LAHIRI'). Only used with zodiac_type='Sidereal'.
             houses_system_identifier (HousesSystemIdentifier, optional): House system
-                for cusp calculations (e.g., 'P'=Placidus, 'K'=Koch, 'E'=Equal).
+                for cusp calculations (e.g., 'P'=Placidus, 'K'=Koch, 'A'=Equal).
                 Defaults to 'P' (Placidus).
             perspective_type (PerspectiveType, optional): Calculation perspective:
                 - 'Apparent Geocentric': Standard geocentric with light-time correction
@@ -913,7 +922,7 @@ class AstrologicalSubjectFactory:
                 julian_day=calc_data["julian_day"],
                 lat=calc_data["lat"],
                 lng=calc_data["lng"],
-                altitude=calc_data.get("altitude") or 0,
+                altitude=calc_data.get("altitude") or 0.0,
             )
 
             # Pass dynamic fixed stars config to _calculate_planets via calc_data
@@ -1034,8 +1043,18 @@ class AstrologicalSubjectFactory:
                         except Exception:
                             pass
 
-                    # Fallback: compute sector geometrically from longitude relative to ASC
+                    # Fallback for points without a SwissEph body id (axial cusps,
+                    # South Nodes, White Moon, TNOs): an ECLIPTIC APPROXIMATION that
+                    # divides the circle from the ASC into 36 sectors. This is NOT the
+                    # true diurnal Gauquelin sector (which depends on RA/declination,
+                    # geographic latitude and local sidereal time); the two coincide
+                    # only on the ecliptic near the equator.
                     if sector is None:
+                        logging.debug(
+                            "Gauquelin sector for %r computed via geometric ecliptic "
+                            "approximation (no SwissEph body id); not the true diurnal sector.",
+                            point.name,
+                        )
                         diff = (asc_abs - point.abs_pos) % 360.0
                         sector = (diff / 10.0) + 1.0
                         if sector >= 37.0:
@@ -1074,7 +1093,13 @@ class AstrologicalSubjectFactory:
                     for pk in point_keys:
                         point = calc_data[pk]
                         try:
-                            ecl_coords = ((point.abs_pos + ls_ayanamsa) % 360.0, 0.0, 1.0)
+                            # Use the body's true ecliptic latitude so off-ecliptic
+                            # bodies (Moon, Pluto, asteroids) project onto the local
+                            # horizon correctly. Points on the ecliptic (axes, houses,
+                            # lots) carry None and fall back to 0.0. Ayanamsa shifts
+                            # longitude only, so latitude is used unchanged.
+                            ecl_lat = point.ecliptic_latitude or 0.0
+                            ecl_coords = ((point.abs_pos + ls_ayanamsa) % 360.0, ecl_lat, 1.0)
                             azalt_result = ephe.azalt(ls_jd, ephe.ECL2HOR, ls_geopos, 0, 0, ecl_coords)
                             point_updates[pk]["azimuth"] = round(azalt_result[0], 4)
                             point_updates[pk]["altitude_above_horizon"] = round(azalt_result[1], 4)
@@ -1086,6 +1111,7 @@ class AstrologicalSubjectFactory:
             # The obliquity varies over millennia (22.1 - 24.5 deg) so we use the true value
             # for the chart's epoch, not a hardcoded constant.
             true_obliquity = None
+            nut_data = None
             try:
                 nut_data = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
                 true_obliquity = nut_data[0]
@@ -1108,7 +1134,9 @@ class AstrologicalSubjectFactory:
                 from kerykeion.schemas.kr_models import NutationObliquityModel
 
                 try:
-                    nut_raw = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
+                    # Reuse the ECL_NUT result already fetched for OOB detection; only
+                    # recompute if that call failed (nut_data is None).
+                    nut_raw = nut_data if nut_data is not None else ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
                     calc_data["nutation"] = NutationObliquityModel(
                         true_obliquity=nut_raw[0],
                         mean_obliquity=nut_raw[1],
@@ -1928,6 +1956,7 @@ class AstrologicalSubjectFactory:
                 point_type=point_type,
                 speed=planet_calc[3],
                 declination=declination,
+                ecliptic_latitude=planet_calc[1],
             )
 
             # Calculate house position
@@ -2004,12 +2033,20 @@ class AstrologicalSubjectFactory:
             if primary.declination is not None:
                 dec = -primary.declination if config["negate_dec"] else primary.declination
 
+            # Mirror the primary's ecliptic latitude onto its antipode so
+            # off-ecliptic derived points (Priapus) project onto the local
+            # horizon with their true ∓β instead of falling back to 0.0.
+            ecl_lat = None
+            if primary.ecliptic_latitude is not None:
+                ecl_lat = -primary.ecliptic_latitude if config["negate_lat"] else primary.ecliptic_latitude
+
             point = get_kerykeion_point_from_degree(
                 deg,
                 derived_name,
                 point_type=point_type,
                 speed=speed,
                 declination=dec,
+                ecliptic_latitude=ecl_lat,
             )
             point.house = get_planet_house(deg, houses_degree_ut)
             point.retrograde = primary.retrograde if primary.retrograde is not None else False
@@ -2092,6 +2129,7 @@ class AstrologicalSubjectFactory:
                 point_type=point_type,
                 speed=planet_calc[3],
                 declination=declination,
+                ecliptic_latitude=planet_calc[1],
             )
             data[point_key].house = get_planet_house(planet_calc[0], houses_degree_ut)
             data[point_key].retrograde = planet_calc[3] < 0
@@ -2356,14 +2394,6 @@ class AstrologicalSubjectFactory:
                     center_body_id=center_body_id,
                 )
 
-                # Special handling for lunar nodes: ensure declination is set
-                if planet_name in ("Mean_North_Lunar_Node", "True_North_Lunar_Node"):
-                    node_key = planet_name.lower()
-                    if node_key in data:
-                        # Calculate declination using equatorial coordinates
-                        node_eq = ephe.calc_ut(julian_day, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
-                        data[node_key].declination = node_eq[1]
-
         # =============================================================================
         # TRANS-NEPTUNIAN OBJECTS (using centralized mapping)
         # =============================================================================
@@ -2400,6 +2430,11 @@ class AstrologicalSubjectFactory:
             try:
                 pos_ecl = ephe.fixstar_ut(swe_name, julian_day, iflag)[0]
                 star_deg = pos_ecl[0]
+                # Many bright stars sit far off the ecliptic (e.g. Algol ~+22.4°);
+                # carry their true ecliptic latitude so the public field is
+                # populated and local-space azimuth/altitude is accurate, the
+                # same way planets and derived antipodes already do.
+                star_ecl_lat = pos_ecl[1] if len(pos_ecl) > 1 else None
                 star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
                 pos_eq = ephe.fixstar_ut(swe_name, julian_day, iflag | ephe.FLG_EQUATORIAL)[0]
                 star_dec = pos_eq[1] if len(pos_eq) > 1 else None
@@ -2414,6 +2449,7 @@ class AstrologicalSubjectFactory:
                     point_type=point_type,
                     speed=star_speed,
                     declination=star_dec,
+                    ecliptic_latitude=star_ecl_lat,
                     magnitude=star_mag,
                 )
                 point.house = get_planet_house(star_deg, houses_degree_ut)
@@ -2508,10 +2544,11 @@ class AstrologicalSubjectFactory:
                     active_points.remove("Anti_Vertex")
 
         # =============================================================================
-        # WHITE MOON / SELENA (SE_WHITE_MOON = 56, with fallback)
+        # WHITE MOON / SELENA (SE_WHITE_MOON = 56)
         # =============================================================================
-        # White Moon is natively supported by libephemeris (body ID 56).
-        # On swisseph, we fall back to Mean Lilith + 180 (same as Mean Priapus).
+        # White Moon is natively supported by libephemeris (body ID 56). Backends
+        # without native support skip this point rather than fabricating Priapus
+        # (Mean Lilith + 180°) as Selena.
         if should_calculate("White_Moon"):
             # Attempt native backend calculation (body ID 56)
             AstrologicalSubjectFactory._calculate_single_planet(
@@ -2526,34 +2563,20 @@ class AstrologicalSubjectFactory:
                 active_points,
                 center_body_id=center_body_id,
             )
-            # Fallback: if backend doesn't support ID 56, derive from Mean Lilith + 180
+            # If the backend does not natively support White Moon / Selena (body ID
+            # 56), do NOT fabricate a value: Mean Lilith + 180° is the Priapus point
+            # (the lunar-apogee antipode), NOT Selena, so emitting it would be an
+            # astronomically incorrect value silently mislabelled as White_Moon.
+            # _calculate_single_planet already drops the point from active_points when
+            # the native calc fails; just ensure it is removed and warn.
             if "white_moon" not in data:
-                # Compute Mean Lilith locally (body ID 12) without storing it in data,
-                # to avoid leaking an unrequested point into the public model.
-                try:
-                    ml_calc = ephe.calc_ut(julian_day, 12, iflag)[0]
-                    ml_eq = ephe.calc_ut(julian_day, 12, iflag | ephe.FLG_EQUATORIAL)[0]
-                    wm_deg = math.fmod(ml_calc[0] + 180, 360)
-                    data["white_moon"] = get_kerykeion_point_from_degree(
-                        wm_deg,
-                        "White_Moon",
-                        point_type=point_type,
-                        speed=ml_calc[3],
-                        declination=-ml_eq[1],
-                    )
-                    data["white_moon"].house = get_planet_house(wm_deg, houses_degree_ut)
-                    data["white_moon"].retrograde = ml_calc[3] < 0
-                    calculated_planets.append("White_Moon")
-                    # Re-add to active_points if it was removed by _calculate_single_planet
-                    # (also when the removal emptied the list — the fallback succeeded).
-                    if "White_Moon" not in active_points:
-                        active_points.append("White_Moon")
-                except Exception:
-                    logging.warning(
-                        "Could not calculate White_Moon: no backend support and Mean_Lilith computation failed"
-                    )
-                    if "White_Moon" in active_points:
-                        active_points.remove("White_Moon")
+                logging.warning(
+                    "White_Moon/Selena (body ID 56) is not supported by this ephemeris "
+                    "backend; skipping it instead of substituting an incorrect value "
+                    "(Mean Lilith + 180° is Priapus, not Selena)."
+                )
+                if "White_Moon" in active_points:
+                    active_points.remove("White_Moon")
 
         # =============================================================================
         # OPPOSITE / DERIVED POINTS (declarative, via OPPOSITE_PAIRS)

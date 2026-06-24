@@ -33,7 +33,10 @@ from kerykeion.utilities import (
     normalize_zodiac_type,
     get_house_name,
     get_house_number,
+    format_ancient_iso,
+    format_timedelta_hhmm,
 )
+from kerykeion.charts.charts_utils import convert_decimal_to_degree_string
 
 
 # =============================================================================
@@ -143,6 +146,12 @@ class TestIsPointBetween:
         with pytest.raises(KerykeionException):
             is_point_between(0, 200, 50)
 
+    def test_reflex_span_allowed_with_flag(self):
+        """allow_reflex=True accepts arcs > 180° instead of raising."""
+        # 0 -> 200 is a 200° clockwise arc; 50 lies on it, 250 does not.
+        assert is_point_between(0, 200, 50, allow_reflex=True) is True
+        assert is_point_between(0, 200, 250, allow_reflex=True) is False
+
     def test_floating_point_boundary_regression(self):
         """Regression: planet longitude nearly equal to cusp due to float rounding.
 
@@ -219,6 +228,20 @@ class TestGetPlanetHouse:
         ]
         result = get_planet_house(planet, houses)
         assert result == "Seventh_House"
+
+    def test_non_quadrant_wide_span_house(self):
+        """Non-quadrant systems can have cusps spanning > 180°; the planet must
+        still resolve via the reflex-aware arc containment instead of raising."""
+        # First house spans 200° (0 -> 200), the rest are crammed into 200..360.
+        houses = [0, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300]
+        assert get_planet_house(100, houses) == "First_House"
+        assert get_planet_house(205, houses) == "Second_House"
+
+    def test_planet_exactly_on_cusp_is_start_inclusive(self):
+        """A planet exactly on a cusp falls into the house that cusp opens."""
+        houses = [i * 30 for i in range(12)]
+        assert get_planet_house(30, houses) == "Second_House"
+        assert get_planet_house(0, houses) == "First_House"
 
 
 # =============================================================================
@@ -814,3 +837,92 @@ class TestInlineCssEdgeCases:
         svg = '<rect fill="var(--unknown-color)" />'
         result = inline_css_variables_in_svg(svg)
         assert 'fill=""' in result or "var" not in result
+
+
+# =============================================================================
+# TestConvertDecimalToDegreeString
+# =============================================================================
+
+
+class TestConvertDecimalToDegreeString:
+    """Tests for convert_decimal_to_degree_string (charts_utils)."""
+
+    def test_basic_dms(self):
+        assert convert_decimal_to_degree_string(10.5, "3") == "10°30'00\""
+
+    def test_degree_and_minute_formats_floor(self):
+        assert convert_decimal_to_degree_string(10.99, "1") == "10°"
+        assert convert_decimal_to_degree_string(10.99, "2") == "10°59'"
+
+    def test_format_three_floors_without_overshooting(self):
+        """Format "3" floors to the second: it never emits an invalid 60\" and
+        never overshoots the sign boundary (consistent with format "1"/"2")."""
+        # Just under a whole degree: floors down, no carry into the next degree.
+        result = convert_decimal_to_degree_string(10.99997, "3")
+        assert result == "10°59'59\""
+        assert "60\"" not in result
+
+    def test_format_three_stays_within_sign_at_boundary(self):
+        """A within-sign position just below 30° must read "29°59'59\"", not the
+        out-of-sign "30°00'00\"" the old rounding produced — and must agree with
+        format "1" which floors to "29°"."""
+        assert convert_decimal_to_degree_string(29.9999, "3") == "29°59'59\""
+        assert convert_decimal_to_degree_string(29.9999, "1") == "29°"
+
+    def test_no_invalid_sixty_across_sampled_boundaries(self):
+        for deg in (9, 14, 29, 59):
+            for frac in (0.99997, 0.999999):
+                out = convert_decimal_to_degree_string(deg + frac, "3")
+                assert "'60\"" not in out
+                assert "60'" not in out
+
+    def test_negative_inputs_consistent_and_not_malformed(self):
+        """Regression: a negative value (e.g. a southern declination) must not
+        produce a malformed negative-minute field like "-5°-30'", and all three
+        formats must agree on the floored representation."""
+        assert convert_decimal_to_degree_string(-5.5, "1") == "-6°"
+        assert convert_decimal_to_degree_string(-5.5, "2") == "-6°30'"
+        assert convert_decimal_to_degree_string(-5.5, "3") == "-6°30'00\""
+        for fmt in ("1", "2", "3"):
+            out = convert_decimal_to_degree_string(-5.5, fmt)
+            assert "-30" not in out, f"format {fmt} emitted a malformed negative field: {out}"
+
+
+# =============================================================================
+# TestFormatTimedeltaHhmm
+# =============================================================================
+
+
+class TestFormatTimedeltaHhmm:
+    """Tests for format_timedelta_hhmm."""
+
+    def test_rounds_to_whole_minutes(self):
+        from datetime import timedelta
+
+        assert format_timedelta_hhmm(timedelta(hours=11, minutes=30, seconds=40)) == "11:31"
+        assert format_timedelta_hhmm(timedelta(hours=8, minutes=5)) == "8:05"
+        assert format_timedelta_hhmm(timedelta(hours=0, minutes=0)) == "0:00"
+
+
+# =============================================================================
+# TestFormatAncientIso
+# =============================================================================
+
+
+class TestFormatAncientIso:
+    """Tests for format_ancient_iso, focused on the midnight-rollover carry."""
+
+    def test_midnight_rollover_carries_to_next_day(self):
+        """A decimal hour within float-noise of 24:00:00 must roll to 00:00:00
+        of the following day, not clamp to 23:59:59 of the same day."""
+        result = format_ancient_iso(-500, 3, 21, 23.9999999, 0.0)
+        assert result == "-0500-03-22T00:00:00+00:00"
+
+    def test_month_boundary_rollover(self):
+        """Rollover across a month boundary increments the month."""
+        result = format_ancient_iso(-44, 1, 31, 23.9999999, 0.0)
+        assert result.startswith("-0044-02-01T00:00:00")
+
+    def test_no_rollover_for_normal_hour(self):
+        result = format_ancient_iso(-500, 3, 21, 11.5, 0.0)
+        assert result == "-0500-03-21T11:30:00+00:00"

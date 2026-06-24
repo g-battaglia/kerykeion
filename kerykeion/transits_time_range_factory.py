@@ -128,8 +128,11 @@ class TransitsTimeRangeFactory:
         settings_file (Union[Path, KerykeionSettingsModel, dict, None], optional):
             Configuration settings for calculations. Can be a file path, settings
             model, dictionary, or None for defaults. Defaults to None.
-        axis_orb_limit (float | None, optional): Optional orb threshold applied to chart axes
-            during single-chart aspect calculations. Dual-chart calculations ignore this value.
+        axis_orb_limit (float | None, optional): Optional orb threshold for aspects that
+            involve a chart axis (Ascendant/Descendant/Medium_Coeli/Imum_Coeli). Transit aspects are computed via
+            the dual-chart path, so when this is set, transit-to-axis aspects whose orb is
+            greater than or equal to the threshold are discarded. ``None`` (the default)
+            disables axis-specific filtering.
 
     Attributes:
         natal_chart: The reference natal chart for transit calculations.
@@ -137,7 +140,8 @@ class TransitsTimeRangeFactory:
         active_points: Celestial bodies included in calculations.
         active_aspects: Aspect types considered for analysis.
         settings_file: Configuration settings for the calculations.
-        axis_orb_limit: Optional orb override used when calculating single-chart aspects.
+        axis_orb_limit: Optional orb threshold for transit aspects involving a chart axis
+            (Ascendant/Descendant/Medium_Coeli/Imum_Coeli); see the constructor argument.
 
     Examples:
         Basic transit calculation:
@@ -554,6 +558,20 @@ class TransitsTimeRangeFactory:
         # over-split: see _representative_step_days and _split_track_into_runs.
         step_days = self._representative_step_days()
 
+        # Whether sub-step refinement is possible depends only on the natal
+        # chart's (immutable) perspective_type, so resolve it once here rather
+        # than re-checking — and logging — inside the per-event refinement loop.
+        supports_refinement = self.natal_chart.perspective_type in (
+            "Apparent Geocentric",
+            "True Geocentric",
+        )
+        if refine_exact_moments and not supports_refinement:
+            logging.info(
+                "Exact-moment refinement skipped for perspective_type=%r "
+                "(only Apparent/True Geocentric supported); keeping coarse sample values.",
+                self.natal_chart.perspective_type,
+            )
+
         # Convert tracks to events (one event per consecutive in-orb run)
         events: list[TransitEventModel] = []
 
@@ -587,7 +605,7 @@ class TransitsTimeRangeFactory:
                 # minimum sits at a run EDGE — bracket one sampling step
                 # beyond the edge in that case, otherwise the very events
                 # that need refinement most would silently keep coarse values.
-                if refine_exact_moments and step_days:
+                if refine_exact_moments and supports_refinement and step_days:
                     # Never extend past the analysed range itself: for an
                     # event truncated at the range edge the orb is monotonic
                     # there (the true exact lies outside the window), and the
@@ -766,6 +784,8 @@ class TransitsTimeRangeFactory:
         # Non-geocentric perspectives (Heliocentric, Topocentric, Barycentric,
         # planetocentric...) need observer state this refinement does not
         # replicate — keep the coarse sample values instead of degrading them.
+        # The caller (get_transit_events) already gates on this and logs once;
+        # this stays as a silent defensive guard for any direct caller.
         if self.natal_chart.perspective_type not in ("Apparent Geocentric", "True Geocentric"):
             return None
 

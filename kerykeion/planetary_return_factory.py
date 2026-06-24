@@ -448,6 +448,8 @@ class PlanetaryReturnFactory:
             return_type (ReturnType): Type of planetary return to calculate.
                 Must be either "Solar" for Sun returns or "Lunar" for Moon returns.
                 This determines which planet's return cycle to compute.
+            backwards (bool): If True, search backward in time for the previous
+                return instead of forward. Defaults to False.
 
         Returns:
             PlanetReturnModel: A comprehensive Pydantic model containing complete
@@ -772,6 +774,8 @@ class PlanetaryReturnFactory:
                 specified month (1-28/29/30/31 depending on month). Defaults to 1.
             return_type (ReturnType): The type of planetary return to calculate.
                 Must be either "Solar" for Sun returns or "Lunar" for Moon returns.
+            backwards (bool): If True, search backward in time for the previous
+                return instead of forward. Defaults to False.
 
         Returns:
             PlanetReturnModel: Comprehensive return chart data for the first return
@@ -1142,9 +1146,9 @@ class PlanetaryReturnFactory:
         )
 
         # Propagate USER-mode custom ayanamsa parameters if present
-        if hasattr(self, "custom_ayanamsa_t0") and self.custom_ayanamsa_t0 is not None:
+        if self.custom_ayanamsa_t0 is not None:
             return_kwargs["custom_ayanamsa_t0"] = self.custom_ayanamsa_t0
-        if hasattr(self, "custom_ayanamsa_ayan_t0") and self.custom_ayanamsa_ayan_t0 is not None:
+        if self.custom_ayanamsa_ayan_t0 is not None:
             return_kwargs["custom_ayanamsa_ayan_t0"] = self.custom_ayanamsa_ayan_t0
 
         return_subject = AstrologicalSubjectFactory.from_iso_utc_time(**return_kwargs)

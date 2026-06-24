@@ -74,19 +74,19 @@ Yoko Ono — Natal Chart Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 2.5   | 15.1%      |
-| Earth 🌍 | 3.6   | 21.7%      |
-| Air 💨   | 6.5   | 39.2%      |
-| Water 💧 | 4.0   | 24.1%      |
+| Fire 🔥  | 2.5   | 15%        |
+| Earth 🌍 | 3.6   | 22%        |
+| Air 💨   | 6.5   | 39%        |
+| Water 💧 | 4.0   | 24%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 4.5   | 27.1%      |
-| Fixed    | 5.1   | 30.7%      |
-| Mutable  | 7.0   | 42.2%      |
+| Cardinal | 4.5   | 27%        |
+| Fixed    | 5.1   | 31%        |
+| Mutable  | 7.0   | 42%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 

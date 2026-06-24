@@ -30,7 +30,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from datetime import datetime, timedelta
 from typing import Union, Optional, Literal
 from typing_extensions import TypedDict
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from kerykeion.schemas.kr_literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
 
 from kerykeion.schemas import (
@@ -129,18 +129,41 @@ class MoonPhaseSunInfoModel(SubscriptableBaseModel):
     """
     Summary information about the Sun for the lunar phase context.
 
-    All fields are optional and can be incrementally populated as more
-    advanced calculations become available.
+    ``sunrise``, ``sunset`` and ``solar_noon`` are timezone-aware ``datetime``
+    objects in the subject's **local** timezone (the moon-phase context is
+    presented for the subject's civil day); ``day_length`` is a ``timedelta``.
+    This differs from :class:`SunTimesModel`, whose instants are in UTC. All
+    fields are optional and are populated as available — e.g. during polar
+    day/night a full sunrise→sunset pair may be missing, leaving ``solar_noon``
+    and ``day_length`` as ``None``.
+
+    Attributes:
+        sunrise: Moment of sunrise (subject-local), or ``None``.
+        sunset: Moment of sunset (subject-local), or ``None``.
+        solar_noon: Midpoint between sunrise and sunset (subject-local), or ``None``.
+        day_length: Duration from sunrise to sunset, or ``None``.
+        position: Apparent solar position (altitude/azimuth/distance).
+        next_solar_eclipse: Next global solar eclipse, if computed.
     """
 
-    sunrise: Optional[int] = None
-    sunrise_timestamp: Optional[str] = None
-    sunset: Optional[int] = None
-    sunset_timestamp: Optional[str] = None
-    solar_noon: Optional[str] = None
-    day_length: Optional[str] = None
+    sunrise: Optional[datetime] = None
+    sunset: Optional[datetime] = None
+    solar_noon: Optional[datetime] = None
+    day_length: Optional[timedelta] = None
     position: Optional[MoonPhaseSunPositionModel] = None
     next_solar_eclipse: Optional[MoonPhaseSolarEclipseModel] = None
+
+    @field_validator("sunrise", "sunset", "solar_noon")
+    @classmethod
+    def _require_aware(cls, v: Optional[datetime]) -> Optional[datetime]:
+        """Enforce the documented timezone-aware (subject-local) contract.
+
+        The annotation stays ``Optional[datetime]`` so ``get_type_hints()`` /
+        FastAPI schema introspection is unaffected; only naive values are rejected.
+        """
+        if v is not None and v.tzinfo is None:
+            raise ValueError("sun times must be timezone-aware datetimes")
+        return v
 
 
 class MoonPhaseZodiacModel(SubscriptableBaseModel):
@@ -242,6 +265,12 @@ class MoonPhaseUpcomingPhasesModel(SubscriptableBaseModel):
 class MoonPhaseIlluminationDetailsModel(SubscriptableBaseModel):
     """
     Numeric illumination details for the Moon at the given moment.
+
+    Note:
+        ``phase_angle`` holds the Sun–Moon **elongation** (the geocentric
+        Sun–Earth–Moon separation: ~0° at New Moon, ~180° at Full Moon), not the
+        astronomical phase angle (Sun–Moon–Earth, which is ~180° − elongation).
+        ``visible_fraction`` is computed correctly from this elongation.
     """
 
     percentage: Optional[float] = None
@@ -578,6 +607,12 @@ class KerykeionPointModel(SubscriptableBaseModel):
     declination: Optional[float] = Field(
         default=None, description="Declination in degrees north (+) or south (-) of the celestial equator."
     )
+    ecliptic_latitude: Optional[float] = Field(
+        default=None,
+        description="Ecliptic latitude in degrees north (+) or south (-) of the ecliptic plane. "
+        "The body's true distance off the ecliptic (the Sun is ~0; the Moon reaches ±5°, Pluto ±17°). "
+        "Populated for planets and bodies; used for accurate local-space azimuth/altitude. Added in v6.0.",
+    )
     magnitude: Optional[float] = Field(
         default=None, description="Apparent visual magnitude (fixed stars only). Lower = brighter."
     )
@@ -712,7 +747,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
     # Common configuration
     zodiac_type: ZodiacType
-    sidereal_mode: Optional[SiderealMode]
+    sidereal_mode: Optional[SiderealMode] = None
     houses_system_identifier: HousesSystemIdentifier
     houses_system_name: str
     perspective_type: PerspectiveType
@@ -731,6 +766,12 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
     @model_validator(mode="after")
     def _validate_user_ayanamsa(self) -> "AstrologicalBaseModel":
+        if self.zodiac_type == "Sidereal" and self.sidereal_mode is None:
+            # Enforce the invariant in the model rather than masking it at display
+            # time: a sidereal chart must declare the ayanamsa used for its
+            # positions. The factory auto-defaults this, so only direct/manual
+            # construction (the ambiguous case) is rejected.
+            raise ValueError("sidereal_mode is required when zodiac_type='Sidereal'.")
         if self.sidereal_mode == "USER":
             if self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None:
                 raise ValueError(
@@ -1193,8 +1234,8 @@ class TransitsTimeRangeModel(SubscriptableBaseModel):
     """
 
     transits: list[TransitMomentModel] = Field(description="List of transit moments.")
-    subject: Optional[AstrologicalSubjectModel] = Field(description="Astrological subject data.")
-    dates: Optional[list[str]] = Field(description="ISO 8601 formatted dates of all transit moments.")
+    subject: Optional[AstrologicalSubjectModel] = Field(default=None, description="Astrological subject data.")
+    dates: Optional[list[str]] = Field(default=None, description="ISO 8601 formatted dates of all transit moments.")
 
 
 class TransitEventModel(SubscriptableBaseModel):
@@ -1592,6 +1633,33 @@ class DominantsModel(SubscriptableBaseModel):
     dominant_quality: Optional[Quality] = None
     dominant_house: Optional[Houses] = None
     score_breakdown: list[DominantBreakdownItemModel] = Field(default_factory=list)
+
+
+class TriplicityLordsModel(SubscriptableBaseModel):
+    """The three Dorothean triplicity lords of an element, ordered by sect.
+
+    In the Dorothean (Persian/Hellenistic) triplicity scheme each element has
+    three rulers: a diurnal lord, a nocturnal lord, and a participating lord
+    that operates in both sects. For a given chart sect the in-sect lord is the
+    ``primary``, the out-of-sect lord is the ``secondary``, and ``participating``
+    supports throughout. This is the rulership set for the classical
+    triplicity-lords technique (e.g. dividing a topic into thirds of time); it
+    is distinct from the Ptolemaic essential-dignity score, which awards +3 to
+    the in-sect (``primary``) lord only.
+
+    Attributes:
+        element: The triplicity element (Fire/Earth/Air/Water).
+        sect: ``"day"`` or ``"night"`` — the sect used to order the lords.
+        primary: In-sect triplicity lord (first lord).
+        secondary: Out-of-sect triplicity lord (second lord).
+        participating: Participating lord (third lord, active in both sects).
+    """
+
+    element: Element
+    sect: Literal["day", "night"]
+    primary: ClassicalPlanet
+    secondary: ClassicalPlanet
+    participating: ClassicalPlanet
 
 
 class ZRPeriodModel(SubscriptableBaseModel):

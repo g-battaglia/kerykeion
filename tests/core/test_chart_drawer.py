@@ -371,6 +371,24 @@ class TestChartDrawerBasic:
                 assert chart.color_style_tag.strip() != ""
                 assert "--kerykeion-chart-color-paper-0" in chart.color_style_tag
 
+    def test_axis_cusp_colors_coalesces_none_and_missing(self):
+        """A custom axis entry with color=None (or a missing entry) must resolve
+        to the radix fallback, never to None (which would emit `stroke:None`)."""
+        chart = ChartDrawer(self.chart_data)
+        fallback = chart.chart_colors_settings["houses_radix_line"]
+        chart.planets_settings = [
+            {"name": "Ascendant", "color": None},          # explicit None -> fallback
+            {"name": "Medium_Coeli"},                        # missing color -> fallback
+            {"name": "Descendant", "color": "#123456"},     # valid -> kept
+            # Imum_Coeli absent entirely -> fallback
+        ]
+        asc, mc, dsc, ic = chart._axis_cusp_colors()
+        assert asc == fallback
+        assert mc == fallback
+        assert dsc == "#123456"
+        assert ic == fallback
+        assert None not in (asc, mc, dsc, ic)
+
     def test_chart_data_extraction(self):
         chart = ChartDrawer(self.chart_data)
         assert chart.chart_type is not None

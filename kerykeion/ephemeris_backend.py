@@ -214,7 +214,12 @@ logger.debug("Ephemeris data path: %r", EPHE_DATA_PATH)
 _PINNED_LEB_MODE: Optional[str] = None
 
 if BACKEND_NAME == "libephemeris":
+    _VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
     _PINNED_LEB_MODE = os.environ.get("KERYKEION_LEB_MODE", "leb").strip().lower()
+    if _PINNED_LEB_MODE not in _VALID_LEB_MODES:
+        raise ValueError(
+            f"Invalid KERYKEION_LEB_MODE={_PINNED_LEB_MODE!r}. Must be one of {_VALID_LEB_MODES}."
+        )
     _backend_module.set_calc_mode(_PINNED_LEB_MODE)
     logger.debug("libephemeris calc mode set to: %s", _PINNED_LEB_MODE)
 
@@ -294,8 +299,10 @@ def ephemeris_session(
         zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. When sidereal,
             ``FLG_SIDEREAL`` is OR-ed into the yielded iflag and the sidereal
             mode is configured on the backend.
-        sidereal_mode: Named ayanamsa (e.g. ``"LAHIRI"``) or ``"USER"``.
-            Defaults to ``"FAGAN_BRADLEY"`` when ``zodiac_type`` is sidereal.
+        sidereal_mode: Named ayanamsa (e.g. ``"LAHIRI"``) or ``"USER"``. Raw
+            callers that leave it unset fall back to the shared
+            ``DEFAULT_SIDEREAL_MODE`` (currently ``"FAGAN_BRADLEY"``) when
+            ``zodiac_type`` is sidereal.
         custom_ayanamsa_t0: Reference epoch (JD) for ``sidereal_mode="USER"``.
         custom_ayanamsa_ayan_t0: Ayanamsa value (degrees) at ``t0`` for
             ``sidereal_mode="USER"``.
@@ -353,7 +360,11 @@ def ephemeris_session(
                         )
                     ephe.set_sid_mode(ephe.SIDM_USER, custom_ayanamsa_t0, custom_ayanamsa_ayan_t0)
                 else:
-                    sidm_name = f"SIDM_{sidereal_mode or 'FAGAN_BRADLEY'}"
+                    # Defensive fallback for raw callers that bypass the model
+                    # validator/factory; DEFAULT_SIDEREAL_MODE is the shared default.
+                    from kerykeion.settings.config_constants import DEFAULT_SIDEREAL_MODE
+
+                    sidm_name = f"SIDM_{sidereal_mode or DEFAULT_SIDEREAL_MODE}"
                     try:
                         sidm_const = getattr(ephe, sidm_name)
                     except AttributeError:

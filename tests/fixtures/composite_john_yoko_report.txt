@@ -116,19 +116,19 @@ John Lennon & Yoko Ono — Composite Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 2.5   | 15.1%      |
-| Earth 🌍 | 6.0   | 36.1%      |
-| Air 💨   | 2.1   | 12.7%      |
-| Water 💧 | 6.0   | 36.1%      |
+| Fire 🔥  | 2.5   | 15%        |
+| Earth 🌍 | 6.0   | 36%        |
+| Air 💨   | 2.1   | 13%        |
+| Water 💧 | 6.0   | 36%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 8.5   | 51.2%      |
-| Fixed    | 2.0   | 12.0%      |
-| Mutable  | 6.1   | 36.7%      |
+| Cardinal | 8.5   | 51%        |
+| Fixed    | 2.0   | 12%        |
+| Mutable  | 6.1   | 37%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 

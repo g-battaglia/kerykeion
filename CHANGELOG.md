@@ -1,6 +1,66 @@
 # Changelog
 
-## Unreleased
+## 6.0.0a59
+
+_2026-06-24_
+
+### Changed (breaking)
+
+- **`MoonPhaseSunInfoModel` sun-timing fields are now native date/time types** —
+  `sunrise` and `sunset` change from an integer epoch timestamp to a
+  timezone-aware `datetime`; `solar_noon` changes from `str` to `datetime`; and
+  `day_length` changes from `str` to `timedelta`. The two convenience string
+  fields `sunrise_timestamp` and `sunset_timestamp` (previously `"HH:MM"`
+  strings) are removed with no alias. The serialized JSON shape changes
+  accordingly (ISO-8601 datetimes/duration instead of integers/strings).
+  Migration: derive the old `"HH:MM"` value via `sun.sunrise.strftime("%H:%M")`
+  instead of reading `sun.sunrise_timestamp`, and treat `sun.sunrise` as a
+  `datetime` rather than an epoch integer. `get_type_hints()` on the public API
+  is unaffected.
+- **`axis_orb_limit` now also filters dual-chart aspects** — previously the
+  axis-specific orb limit was applied to single-chart aspects only and was a
+  documented no-op for synastry/transit/composite (dual-chart) calculations.
+  It is now applied uniformly: when a non-`None` `axis_orb_limit` is passed to
+  `AspectsFactory.dual_chart_aspects` (and through `TransitsTimeRangeFactory`
+  and `RelationshipScoreFactory`), aspects involving a chart axis
+  (Ascendant, Medium_Coeli, Descendant, Imum_Coeli) on either subject are kept
+  only when their orb is below the limit. Callers that previously relied on the
+  value being ignored for dual charts will see fewer axis aspects (and, for
+  relationship scoring, possibly a different score). The default remains `None`
+  (no axis filtering), so callers that never set `axis_orb_limit` are unaffected.
+
+### Fixed
+
+_Follow-up pass addressing the CodeRabbit review on PR #224._
+
+- **`house_position` chart label was a duplicate of `natal_house`** — the new
+  `house_position` field (the "house position" comparison-grid column header for
+  transit/return charts) shipped with the `natal_house` value ("Natal House" and
+  its translations) in all 10 languages, the model default, and the three
+  `chart_drawer` fallbacks. It now renders the correct, distinct label
+  ("House Position", "Posizione in casa", "Position en maison", "宫位", …). The
+  affected English golden SVG fixtures were updated accordingly.
+- **`MoonPhaseSunInfoModel.solar_noon` could carry the wrong local offset on
+  DST-transition days** — the midpoint was computed with raw `pytz` arithmetic,
+  which keeps sunrise's offset; the instant was correct but the serialized
+  wall-clock offset could be off by the DST shift. The midpoint is now
+  normalized back through the timezone.
+- **`format_timedelta_hhmm` used banker's rounding** — exact half-minute
+  durations (e.g. `0:30`) rounded to the nearest *even* minute. It now rounds
+  half-up, so report and LLM-context durations are consistent at the boundary.
+- **`AspectsFactory` axis filtering rejects non-positive `axis_orb_limit`** — a
+  `0` or negative value silently dropped every axis aspect; it now raises
+  `ValueError`.
+- **`MoonPhaseSunInfoModel` enforces timezone-aware sun times** — `sunrise`,
+  `sunset` and `solar_noon` now reject naive `datetime` values via a validator,
+  matching the documented local-time contract. The field annotations are
+  unchanged, so `get_type_hints()` on the public API is unaffected.
+
+### Documentation
+
+- `ephemeris_session()` now documents the shared `DEFAULT_SIDEREAL_MODE` fallback
+  instead of a hardcoded `"FAGAN_BRADLEY"`; the `TransitsTimeRangeFactory`
+  `axis_orb_limit` docstrings now list all four axial points.
 
 ## 6.0.0a57
 

@@ -407,6 +407,61 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
         title="Chart Info Transit Label",
         description="Short label for transit information panels",
     )
+    point: str = Field(
+        default="Point",
+        title="Point",
+        description="The generic celestial point label in the chart, in the language",
+    )
+    transit: str = Field(
+        default="Transit",
+        title="Transit",
+        description="The transit label (single word) in the chart, in the language",
+    )
+    transit_point: str = Field(
+        default="Transit Point",
+        title="Transit Point",
+        description="The transit point label in the chart, in the language",
+    )
+    natal_house: str = Field(
+        default="Natal House",
+        title="Natal House",
+        description="The natal house label in the chart, in the language",
+    )
+    house_position: str = Field(
+        default="House Position",
+        title="House Position",
+        description="The natal house position label in the chart, in the language",
+    )
+    synastry_chart: str = Field(
+        default="Synastry",
+        title="Synastry Chart",
+        description="The synastry chart label in the chart, in the language",
+    )
+    progression: str = Field(
+        default="Progression",
+        title="Progression",
+        description="The progression label in the chart, in the language",
+    )
+    progression_aspects: str = Field(
+        default="Progression Aspects",
+        title="Progression Aspects",
+        description="The progression aspects label in the chart, in the language",
+    )
+    progressed_cusp: str = Field(
+        default="Progressed Cusp",
+        title="Progressed Cusp",
+        description="The progressed cusp label in the chart, in the language",
+    )
+    progressed_point: str = Field(
+        default="Progressed Point",
+        title="Progressed Point",
+        description="The progressed point label in the chart, in the language",
+    )
+    chart_info_progression_label: str = Field(
+        default="Progression",
+        title="Chart Info Progression Label",
+        description="Short label for progression information panels",
+    )
     weekdays: Optional[dict[str, str]] = Field(
         default=None, title="Weekdays", description="Mapping of English weekday names to localized names"
     )

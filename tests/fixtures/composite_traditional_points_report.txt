@@ -111,19 +111,19 @@ Sample Natal Subject & Yoko Ono — Composite Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 3.0   | 26.1%      |
-| Earth 🌍 | 3.5   | 30.4%      |
-| Air 💨   | 3.5   | 30.4%      |
-| Water 💧 | 1.5   | 13.0%      |
+| Fire 🔥  | 3.0   | 26%        |
+| Earth 🌍 | 3.5   | 31%        |
+| Air 💨   | 3.5   | 30%        |
+| Water 💧 | 1.5   | 13%        |
 | Total    | 11.5  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 5.0   | 43.5%      |
-| Fixed    | 6.5   | 56.5%      |
-| Mutable  | 0.0   | 0.0%       |
+| Cardinal | 5.0   | 43%        |
+| Fixed    | 6.5   | 57%        |
+| Mutable  | 0.0   | 0%         |
 | Total    | 11.5  | 100%       |
 +----------+-------+------------+
 

@@ -284,6 +284,14 @@ class TestAncientISOFormat:
         result = format_ancient_iso(-100, 6, 15, 12.0, -5.0)
         assert "-05:00" in result
 
+    def test_offset_minutes_carry_into_hour(self):
+        """A fractional offset that rounds to 60 minutes must carry into the hour,
+        never emit an invalid ':60' offset field (minutes must be 0-59)."""
+        # lng 14.9 / 15 = 0.99333 h -> 59.6 min -> rounds to 60 -> must become +01:00
+        result = format_ancient_iso(-500, 3, 21, 12.0, 14.9 / 15.0)
+        assert result.endswith("+01:00")
+        assert ":60" not in result
+
     def test_decimal_hour(self):
         result = format_ancient_iso(-200, 6, 21, 14.5, 0.0)
         assert "T14:30:00" in result

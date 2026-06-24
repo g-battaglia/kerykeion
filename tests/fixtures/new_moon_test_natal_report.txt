@@ -74,19 +74,19 @@ New Moon - Test — Natal Chart Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 2.1   | 12.7%      |
-| Earth 🌍 | 2.5   | 15.1%      |
-| Air 💨   | 2.0   | 12.0%      |
-| Water 💧 | 10.0  | 60.2%      |
+| Fire 🔥  | 2.1   | 13%        |
+| Earth 🌍 | 2.5   | 15%        |
+| Air 💨   | 2.0   | 12%        |
+| Water 💧 | 10.0  | 60%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 1.6   | 9.6%       |
-| Fixed    | 8.0   | 48.2%      |
-| Mutable  | 7.0   | 42.2%      |
+| Cardinal | 1.6   | 10%        |
+| Fixed    | 8.0   | 48%        |
+| Mutable  | 7.0   | 42%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 

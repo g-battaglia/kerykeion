@@ -4,6 +4,29 @@
 import pytest
 from kerykeion.ephemeris_backend import ephe
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+from kerykeion.charts.charts_utils import _classic_gauquelin_mid_offset
+
+
+class TestClassicGauquelinMidOffset:
+    """The sector-number label sits at the midpoint of two consecutive sector
+    boundaries, not 180° opposite to it (the pre-fix formula was reflected)."""
+
+    def test_midpoint_is_between_consecutive_offsets(self):
+        offsets = [i * 10.0 for i in range(36)]
+        # Sector 0 spans 0°..10° -> label at 5°, not 185°.
+        assert _classic_gauquelin_mid_offset(offsets, 0) == pytest.approx(5.0)
+        # Sector 17 spans 170°..180° -> label at 175°.
+        assert _classic_gauquelin_mid_offset(offsets, 17) == pytest.approx(175.0)
+
+    def test_midpoint_wraps_across_zero(self):
+        offsets = [i * 10.0 for i in range(36)]
+        # Last sector spans 350°..360°(=0°); midpoint is 355°.
+        assert _classic_gauquelin_mid_offset(offsets, 35) == pytest.approx(355.0)
+
+    def test_midpoint_handles_unequal_spacing(self):
+        offsets = [i * 10.0 for i in range(36)]
+        offsets[1] = 4.0  # sector 0 now spans 0°..4°
+        assert _classic_gauquelin_mid_offset(offsets, 0) == pytest.approx(2.0)
 
 
 @pytest.fixture(scope="module")

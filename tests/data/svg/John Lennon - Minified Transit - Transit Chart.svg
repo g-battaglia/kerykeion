@@ -1406,7 +1406,7 @@
      <text y="-15" fill="var(--kerykeion-color-neutral-content)" font-size="14px">House Position Comparison</text>
      <g transform="translate(0,10)" fill="var(--kerykeion-color-neutral-content)" font-size="10px" font-weight="bold">
       <text>Transit Point</text>
-      <text x="77">Natal House</text>
+      <text x="77">House Position</text>
      </g>
      <g transform="translate(0,25)">
       <g transform="translate(0,-9)">

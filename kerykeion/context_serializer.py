@@ -35,6 +35,7 @@ from kerykeion.schemas.kr_models import (
 )
 from kerykeion.secondary_progressions import SolarArcSubjectModel
 from kerykeion.midpoints import MidpointModel
+from kerykeion.utilities import format_timedelta_hhmm
 
 
 # Mapping from abbreviated sign names to full names
@@ -107,7 +108,14 @@ def _el(tag: str, text, **kwargs) -> str:
 def _serialize_active_config(chart_data, lines: list[str]) -> None:
     """Append active_points and active_aspects serialization to *lines*."""
     lines.append(f"  {_el('active_points', ', '.join(chart_data.active_points))}")
-    active_aspects_str = ", ".join([f"{a['name']} ({a['orb']})" for a in chart_data.active_aspects])
+    # Drop the "(orb)" suffix when orb is absent rather than rendering the literal
+    # string "None"; omit nameless entries entirely. The `if a.get("name")` filter
+    # guarantees a truthy name in the body, so index directly instead of re-defaulting.
+    active_aspects_str = ", ".join(
+        f"{a['name']} ({a['orb']})" if a.get("orb") is not None else a["name"]
+        for a in chart_data.active_aspects
+        if a.get("name")
+    )
     lines.append(f"  {_el('active_aspects', active_aspects_str)}")
 
 
@@ -257,8 +265,11 @@ def point_in_house_to_context(point_in_house: PointInHouseModel) -> str:
 
     if point_in_house.point_owner_house_name:
         attrs["owner_house"] = point_in_house.point_owner_house_name
+    if point_in_house.point_owner_house_number is not None:
+        attrs["owner_house_number"] = str(point_in_house.point_owner_house_number)
 
     attrs["projected_house"] = point_in_house.projected_house_name
+    attrs["projected_house_number"] = str(point_in_house.projected_house_number)
     attrs["projected_house_owner"] = point_in_house.projected_house_owner_name
 
     return _sc("point_in_house", **attrs)
@@ -875,17 +886,13 @@ def moon_phase_overview_to_context(overview: MoonPhaseOverviewModel) -> str:
         lines.append(f"  {_o('sun')}")
 
         if sun.sunrise is not None:
-            lines.append(f"    {_el('sunrise', str(sun.sunrise))}")
-        if sun.sunrise_timestamp is not None:
-            lines.append(f"    {_el('sunrise_timestamp', sun.sunrise_timestamp)}")
+            lines.append(f"    {_el('sunrise', sun.sunrise.isoformat())}")
         if sun.sunset is not None:
-            lines.append(f"    {_el('sunset', str(sun.sunset))}")
-        if sun.sunset_timestamp is not None:
-            lines.append(f"    {_el('sunset_timestamp', sun.sunset_timestamp)}")
+            lines.append(f"    {_el('sunset', sun.sunset.isoformat())}")
         if sun.solar_noon is not None:
-            lines.append(f"    {_el('solar_noon', sun.solar_noon)}")
+            lines.append(f"    {_el('solar_noon', sun.solar_noon.isoformat())}")
         if sun.day_length is not None:
-            lines.append(f"    {_el('day_length', sun.day_length)}")
+            lines.append(f"    {_el('day_length', format_timedelta_hhmm(sun.day_length))}")
 
         if sun.position is not None:
             sun_pos = sun.position

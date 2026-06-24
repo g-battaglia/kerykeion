@@ -23,7 +23,7 @@ from kerykeion.schemas.kr_models import (
     DualChartAspectsModel,
 )
 from kerykeion.schemas.kr_literals import AstrologicalPoint, AspectMovementType
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, AXIAL_POINTS
 from kerykeion.settings.chart_defaults import (
     DEFAULT_CELESTIAL_POINTS_SETTINGS,
     DEFAULT_CHART_ASPECTS_SETTINGS,
@@ -33,13 +33,9 @@ from kerykeion.utilities import find_common_active_points
 
 logger = logging.getLogger(__name__)
 
-# Axes constants for orb filtering
-AXES_LIST = [
-    "Ascendant",
-    "Medium_Coeli",
-    "Descendant",
-    "Imum_Coeli",
-]
+# Axes used for orb filtering. Alias the codebase-wide single source of truth
+# (AXIAL_POINTS) so the axis set can never drift from the rest of the package.
+AXES_LIST = AXIAL_POINTS
 
 # Geometrically locked opposite pairs, derived from the subject factory's
 # OPPOSITE_PAIRS mapping (each derived point is rigidly primary + 180°).
@@ -226,7 +222,12 @@ class AspectsFactory:
                           If None, uses common points between both subjects.
             active_aspects: Optional list of aspect types with their orb settings.
                            If None, uses default aspect configuration.
-            axis_orb_limit: Optional orb threshold for chart axes (applied to single chart calculations only)
+            axis_orb_limit: Optional orb threshold for chart axes (Ascendant,
+                Medium_Coeli, Descendant, Imum_Coeli). When set, aspects involving
+                an axis are kept only if their orb is below this limit. The angles
+                are time-sensitive points, so the tighter orb is applied uniformly
+                to both single-chart and dual-chart (synastry/transit) aspects.
+                When ``None`` (default) no axis-specific filtering is performed.
             point_orb_adjustments: Optional per-point orb adjustment table
             point_orb_adjustment_strategy: How to combine the two points'
                 adjustments (default ``"max_explicit"``)
@@ -351,7 +352,6 @@ class AspectsFactory:
         filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
             axis_orb_limit,
-            apply_axis_orb_filter=axis_orb_limit is not None,
         )
 
         return SingleChartAspectsModel(
@@ -408,7 +408,6 @@ class AspectsFactory:
         filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
             axis_orb_limit,
-            apply_axis_orb_filter=False,
         )
 
         return DualChartAspectsModel(
@@ -714,8 +713,6 @@ class AspectsFactory:
     def _filter_relevant_aspects(
         all_aspects: List[AspectModel],
         axis_orb_limit: Optional[float],
-        *,
-        apply_axis_orb_filter: bool,
     ) -> List[AspectModel]:
         """
         Filter aspects based on orb thresholds for axes and comprehensive criteria.
@@ -725,8 +722,8 @@ class AspectsFactory:
 
         Args:
             all_aspects: Complete list of calculated aspects
-            axis_orb_limit: Optional orb threshold for axes aspects
-            apply_axis_orb_filter: Whether to apply the axis-specific orb filtering logic
+            axis_orb_limit: Optional orb threshold for axes aspects; when None, no
+                axis-specific filtering is applied and all aspects are returned.
 
         Returns:
             Filtered list of relevant aspects
@@ -735,8 +732,11 @@ class AspectsFactory:
 
         relevant_aspects = []
 
-        if not apply_axis_orb_filter or axis_orb_limit is None:
+        if axis_orb_limit is None:
             return list(all_aspects)
+
+        if axis_orb_limit <= 0:
+            raise ValueError("axis_orb_limit must be a positive number when provided")
 
         for aspect in all_aspects:
             # Check if aspect involves any of the chart axes and apply stricter orb limits

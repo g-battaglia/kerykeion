@@ -200,6 +200,15 @@ class PlanetaryNodesFactory:
                 except Exception as e:
                     logger.warning(f"Could not calculate nodes for {name}: {e}")
 
+        # Tolerate individual-planet failures, but surface the all-failed case
+        # (otherwise an empty result is indistinguishable from a valid "no nodes").
+        if target_planets and not node_results:
+            raise KerykeionException(
+                "Failed to calculate planetary nodes for all requested planets "
+                f"({', '.join(target_planets)}); the ephemeris backend may have "
+                "changed or be unavailable. See logs for per-planet errors."
+            )
+
         return PlanetaryNodesCollectionModel(
             iso_datetime=iso_datetime,
             julian_day=julian_day,

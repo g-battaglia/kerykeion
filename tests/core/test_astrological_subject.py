@@ -1230,6 +1230,35 @@ class TestSiderealModeValidation:
                 sidereal_mode="INVALID_MODE",  # type: ignore
             )
 
+    def test_model_rejects_sidereal_without_mode(self):
+        """The model validator enforces Sidereal => a concrete sidereal_mode.
+
+        Factory-built subjects always carry a mode; this guards direct/manual
+        model construction (the previously-masked ambiguous case).
+        """
+        from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+        from pydantic import ValidationError
+        import pytest
+
+        subj = AstrologicalSubjectFactory.from_birth_data(
+            "Sidereal Validator",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        data = subj.model_dump()
+        data["sidereal_mode"] = None
+        with pytest.raises(ValidationError, match="sidereal_mode is required"):
+            AstrologicalSubjectModel.model_validate(data)
+
 
 class TestAdditionalPlanets:
     """Test additional planets and points that require special ephemeris files."""

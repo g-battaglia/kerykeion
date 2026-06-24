@@ -1666,10 +1666,10 @@ print(overview.model_dump_json(exclude_none=True, indent=2))
   "timestamp": 1743490260,
   "datestamp": "Tue, 01 Apr 2025 06:51:00 +0000",
   "sun": {
-    "sunrise_timestamp": "06:35",
-    "sunset_timestamp": "19:34",
-    "solar_noon": "13:04",
-    "day_length": "12:59",
+    "sunrise": "2025-04-01T06:35:00Z",
+    "sunset": "2025-04-01T19:34:00Z",
+    "solar_noon": "2025-04-01T13:04:00Z",
+    "day_length": "PT12H59M",
     "next_solar_eclipse": { "type": "Partial Solar Eclipse", "...": "..." }
   },
   "moon": {

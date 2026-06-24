@@ -33,7 +33,12 @@ from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.schemas.kr_literals import AstrologicalPoint, Houses
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.settings.config_constants import AXIAL_POINTS
-from kerykeion.utilities import format_ancient_iso, get_kerykeion_point_from_degree, get_planet_house
+from kerykeion.utilities import (
+    get_kerykeion_point_from_degree,
+    get_planet_house,
+    _assemble_ancient_iso,
+    _split_decimal_hour_with_carry,
+)
 
 _AXIAL_POINTS_SET: frozenset[str] = frozenset(AXIAL_POINTS)
 
@@ -70,18 +75,24 @@ class RelocatedChartFactory:
             lmt_offset_hours = new_lng / 15.0
             jd_local = julian_day + lmt_offset_hours / 24.0
             loc_year, loc_month, loc_day, loc_dec_hour = ephe.revjul(jd_local, ephe.JUL_CAL)
-            loc_hour = int(loc_dec_hour)
-            loc_rem = (loc_dec_hour - loc_hour) * 60
-            loc_minute = int(loc_rem)
-            loc_seconds = int((loc_rem - loc_minute) * 60)
-            relocated_data["year"] = int(loc_year)
-            relocated_data["month"] = int(loc_month)
-            relocated_data["day"] = int(loc_day)
-            relocated_data["hour"] = loc_hour
-            relocated_data["minute"] = loc_minute
-            relocated_data["seconds"] = loc_seconds
-            relocated_data["iso_formatted_local_datetime"] = format_ancient_iso(
-                int(loc_year), int(loc_month), int(loc_day), loc_dec_hour, lmt_offset_hours
+            loc_year, loc_month, loc_day = int(loc_year), int(loc_month), int(loc_day)
+            # Decompose the integer h/m/s ONCE with the shared helper (rounds to the
+            # nearest second and carries any midnight rollover into the next
+            # proleptic-Julian day), then assemble the ISO string from those same
+            # fields. Sourcing both the stored fields and the ISO string from a
+            # single split means they can never drift apart at a second boundary
+            # (int() truncation would otherwise lag the rounded string by up to ~1s).
+            field_year, field_month, field_day, field_hour, field_minute, field_seconds = (
+                _split_decimal_hour_with_carry(loc_year, loc_month, loc_day, loc_dec_hour)
+            )
+            relocated_data["year"] = field_year
+            relocated_data["month"] = field_month
+            relocated_data["day"] = field_day
+            relocated_data["hour"] = field_hour
+            relocated_data["minute"] = field_minute
+            relocated_data["seconds"] = field_seconds
+            relocated_data["iso_formatted_local_datetime"] = _assemble_ancient_iso(
+                field_year, field_month, field_day, field_hour, field_minute, field_seconds, lmt_offset_hours
             )
         else:
             import pytz

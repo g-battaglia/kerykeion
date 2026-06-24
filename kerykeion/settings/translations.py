@@ -39,12 +39,48 @@ def load_language_settings(overrides: Optional[Mapping[str, Any]] = None) -> dic
     return languages
 
 
+def load_language_pair(
+    language: str,
+    overrides: Optional[Mapping[str, Any]] = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Return ``(selected_language_data, english_fallback_data)`` for one chart.
+
+    Unlike :func:`load_language_settings` (which deep-copies the whole ~10-language
+    table on every call), this materializes only the two language blocks a chart
+    actually needs — the requested ``language`` and the English fallback. In the
+    common no-override case it returns direct references into ``LANGUAGE_SETTINGS``:
+    the caller feeds them to a Pydantic model that copies on construction and never
+    mutates the input, so no defensive copy is needed. Only an override path
+    deep-copies (via :func:`_deep_merge`) the single block being merged.
+
+    The override shape and merge semantics match :func:`load_language_settings`
+    (overrides keyed by language code, optionally wrapped under ``language_settings``).
+    """
+    en: dict[str, Any] = LANGUAGE_SETTINGS.get("EN", {})
+    selected: Optional[dict[str, Any]] = LANGUAGE_SETTINGS.get(language)
+
+    if overrides:
+        data = overrides.get("language_settings", overrides)
+        en_override = data.get("EN")
+        if en_override:
+            en = _deep_merge(en, en_override)
+        selected_override = data.get(language)
+        if selected_override is not None:
+            base = selected if selected is not None else {}
+            selected = _deep_merge(base, selected_override)
+
+    if selected is None:
+        selected = en
+    return selected, en
+
+
 def get_translations(
     value: str,
     default: T,
     *,
     language: Optional[str] = None,
     language_dict: Optional[Mapping[str, Any]] = None,
+    fallback_dict: Optional[Mapping[str, Any]] = None,
 ) -> T:
     """Fetch a translation by dot-separated key, falling back to English when missing.
 
@@ -53,10 +89,20 @@ def get_translations(
         default: Value returned if key is missing in both language and English.
         language: Two-letter language code (e.g., "IT", "FR"). Ignored if language_dict is set.
         language_dict: Explicit language mapping to use instead of the built-in settings.
+        fallback_dict: Explicit fallback mapping consulted before the built-in English
+            defaults. Lets a caller resolve a key against a primary and a (normalized)
+            fallback language in a single call — e.g. ``ChartDrawer`` passes its
+            selected-language and English model dumps — instead of two stacked calls.
     """
     primary = _select_language(language_dict, language)
     result = _deep_get(primary, value)
-    if result is _SENTINEL:
+    # Treat a literal None in the primary the same as "missing" so it falls
+    # through to the fallback chain. This preserves the precedence of the old
+    # two-call ChartDrawer path (a None selected-language label deferred to the
+    # English fallback rather than rendering the caller's bare default).
+    if (result is _SENTINEL or result is None) and fallback_dict is not None:
+        result = _deep_get(fallback_dict, value)
+    if result is _SENTINEL or result is None:
         fallback = LANGUAGE_SETTINGS.get("EN", {})
         result = _deep_get(fallback, value)
     return default if result is _SENTINEL or result is None else result  # type: ignore[return-value]
@@ -95,4 +141,4 @@ def _deep_get(mapping: Mapping[str, Any], dotted_key: str):
     return current
 
 
-__all__ = ["get_translations", "load_language_settings"]
+__all__ = ["get_translations", "load_language_pair", "load_language_settings"]

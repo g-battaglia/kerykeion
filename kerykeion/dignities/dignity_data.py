@@ -87,8 +87,14 @@ FALL_TABLE: Dict[str, Optional[str]] = {
 }
 
 # =========================================================================
-# TRIPLICITY RULERS — by element, day/night sect
-# Dorothean system (most widely used). Score: +3
+# TRIPLICITY RULERS — Dorothean three-lord scheme, by element
+# Each element has a diurnal, a nocturnal and a participating lord. In the
+# Ptolemaic essential-dignity / Almuten Figuris SCORE only the in-sect lord
+# scores +3 (day lord for a day chart, night lord for a night chart) — see
+# ``_compute_dignity`` and the Almuten Figuris strategy. The "participating"
+# lord does NOT contribute to that score; it is retained for the classical
+# triplicity-lords technique, exposed via
+# ``kerykeion.dignities.get_triplicity_lords()``.
 # =========================================================================
 TRIPLICITY_RULERS: Dict[str, Dict[str, str]] = {
     # element -> {"day": planet, "night": planet, "participating": planet}

@@ -76,6 +76,22 @@ class TestGeonamesMocked:
             result = fetcher.get_serialized_data()
             assert result == {}
 
+    def test_malformed_geonames_scalar_does_not_raise(self):
+        """A payload whose 'geonames' is a scalar (not a list) must not raise a
+        TypeError from the debug-log len(): logger args are evaluated eagerly and
+        such a TypeError would escape the network/JSON handlers. Expect {} instead."""
+        with patch("kerykeion.fetch_geonames.CachedSession") as mock_session:
+            response = Mock()
+            response.raise_for_status = Mock()
+            response.json = Mock(return_value={"geonames": 5})
+            mock_session_instance = Mock()
+            mock_session_instance.send.return_value = response
+            mock_session.return_value = mock_session_instance
+
+            fetcher = FetchGeonames("TestCity", "TS", username="test_user")
+            result = fetcher.get_serialized_data()
+            assert result == {}
+
     def test_custom_cache_name(self, monkeypatch):
         """Custom cache_name is forwarded to CachedSession."""
         session_mock = Mock()

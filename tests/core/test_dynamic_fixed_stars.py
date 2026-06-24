@@ -90,6 +90,18 @@ class TestFixedStarsList:
         with_dec = [s for s in subject_all_stars.fixed_stars if s.declination is not None]
         assert len(with_dec) > 0
 
+    def test_fixed_stars_have_ecliptic_latitude(self, subject_all_stars):
+        """Fixed stars carry their true ecliptic latitude (not a flat 0.0).
+
+        Many bright stars sit far off the ecliptic, so the field must be
+        populated for accurate local-space azimuth/altitude — the same as
+        planets and derived antipodes.
+        """
+        with_lat = [s for s in subject_all_stars.fixed_stars if s.ecliptic_latitude is not None]
+        assert len(with_lat) > 0, "No fixed star carries an ecliptic_latitude value"
+        off_ecliptic = [s for s in with_lat if abs(s.ecliptic_latitude) > 1.0]
+        assert off_ecliptic, "Expected at least one off-ecliptic star with a true ecliptic latitude"
+
 
 class TestDynamicFixedStars:
     def test_extra_stars_in_list(self, subject_extra_stars):

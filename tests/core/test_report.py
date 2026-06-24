@@ -28,6 +28,7 @@ Covers:
 from __future__ import annotations
 
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, List, get_args
@@ -104,7 +105,10 @@ def _assert_report_match(captured: str, expected_with_newline: str, abs_tol: flo
             f"Line {i + 1} number count differs:\n  got:  {cap}\n  exp:  {exp}"
         )
         for j, (cn, en) in enumerate(zip(cap_nums, exp_nums)):
-            assert abs(cn - en) <= abs_tol, (
+            # Add a tiny epsilon so an exact last-decimal flip (e.g. 1.64 vs 1.65,
+            # whose float difference is 0.0100000000000000009) stays within the
+            # intended 0.01 tolerance instead of failing on representation noise.
+            assert abs(cn - en) <= abs_tol + 1e-9, (
                 f"Line {i + 1}, number #{j + 1}: {cn} vs {en} "
                 f"(diff {abs(cn - en):.6f}, tol {abs_tol})\n  got:  {cap}\n  exp:  {exp}"
             )
@@ -308,11 +312,13 @@ def _extract_percentages(text: str, section: str) -> List[float]:
             in_section = True
             continue
         if in_section:
-            m = re.search(r"(\d+\.\d)%", line)
-            if m:
-                pcts.append(float(m.group(1)))
+            # Break before parsing so the "Total 100%" row is not counted (the
+            # integer-percentage regex would otherwise capture its 100%).
             if "Total" in line:
                 break
+            m = re.search(r"(\d+(?:\.\d+)?)%", line)
+            if m:
+                pcts.append(float(m.group(1)))
     return pcts
 
 
@@ -870,8 +876,8 @@ class TestMoonPhaseOverviewReport:
             datestamp="Fri, 08 Oct 1993 13:20:00 +0000",
             moon=MoonPhaseMoonSummaryModel(),
             sun=MoonPhaseSunInfoModel(
-                sunrise_timestamp="07:15",
-                sunset_timestamp="18:18",
+                sunrise=datetime(1993, 10, 8, 7, 15, tzinfo=timezone.utc),
+                sunset=datetime(1993, 10, 8, 18, 18, tzinfo=timezone.utc),
             ),
         )
         text = ReportGenerator(model).generate_report()

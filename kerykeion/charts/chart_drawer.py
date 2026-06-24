@@ -48,8 +48,8 @@ from kerykeion.schemas.kr_literals import (
     KerykeionChartLanguage,
     AstrologicalPoint,
 )
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
-from kerykeion.settings.translations import get_translations, load_language_settings
+from kerykeion.settings.config_constants import AXIAL_POINTS, DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.translations import get_translations, load_language_pair
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice,
     convert_latitude_coordinate_to_string,
@@ -992,7 +992,7 @@ class TransitChartRenderer(BaseChartRenderer):
                     "house_position_comparison", "House Position Comparison"
                 ),
                 return_point_label=self._comparison_return_point_label(),
-                natal_house_label=self._translate("house_position", "Natal House"),
+                natal_house_label=self._translate("house_position", "House Position"),
                 x_position=d._TRANSIT_HOUSE_COMPARISON_X,
             )
 
@@ -2655,7 +2655,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             if self.show_house_position_comparison or self.show_cusp_position_comparison:
                 transit_columns = [
                     comparison_label,
-                    self._translate("house_position", "Natal House"),
+                    self._translate("house_position", "House Position"),
                 ]
                 transit_grid_width = self._estimate_house_comparison_grid_width(
                     column_labels=transit_columns,
@@ -3328,7 +3328,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 if self.show_house_position_comparison or self.show_cusp_position_comparison:
                     transit_columns = [
                         comparison_label,
-                        self._translate("house_position", "Natal House"),
+                        self._translate("house_position", "House Position"),
                     ]
                     transit_grid_width = self._estimate_house_comparison_grid_width(
                         column_labels=transit_columns,
@@ -3605,25 +3605,44 @@ class ChartDrawer:  # type: ignore[no-redef]
     ) -> None:
         """Resolve language models for the requested chart language."""
         overrides = {self.chart_language: dict(language_pack)} if language_pack else None
-        languages = load_language_settings(overrides)  # type: ignore[arg-type]
+        # Materialize only the selected language + English fallback, not the whole
+        # ~10-language table (load_language_pair avoids the full-table deepcopy).
+        base_data, fallback_data = load_language_pair(self.chart_language, overrides)  # type: ignore[arg-type]
 
-        fallback_data = languages.get("EN")
-        if fallback_data is None:
+        if not fallback_data:
             raise KerykeionException("English translations are missing from LANGUAGE_SETTINGS.")
 
-        base_data = languages.get(self.chart_language, fallback_data)
         selected_model = KerykeionLanguageModel(**base_data)
-        fallback_model = KerykeionLanguageModel(**fallback_data)
+        if base_data is fallback_data:
+            # The common EN / unknown-language case: load_language_pair returns the
+            # same English dict for both selected and fallback. Build the model and
+            # dump it once instead of twice — get_translations consults the shared
+            # dict for both primary and fallback, so reusing the object is safe.
+            fallback_model = selected_model
+            selected_dump = selected_model.model_dump()
+            fallback_dump = selected_dump
+        else:
+            fallback_model = KerykeionLanguageModel(**fallback_data)
+            selected_dump = selected_model.model_dump()
+            fallback_dump = fallback_model.model_dump()
 
         self._fallback_language_model = fallback_model
         self._language_model = selected_model
-        self._fallback_language_dict = fallback_model.model_dump()
-        self._language_dict = selected_model.model_dump()
+        self._fallback_language_dict = fallback_dump
+        self._language_dict = selected_dump
         self.language_settings = self._language_dict  # Backward compatibility
 
     def _translate(self, key: str, default: Any) -> Any:
-        fallback_value = get_translations(key, default, language_dict=self._fallback_language_dict)
-        return get_translations(key, fallback_value, language_dict=self._language_dict)
+        # Resolve against the selected language, then the (English) fallback model
+        # dump, in a single pass — get_translations consults fallback_dict before
+        # its built-in English defaults, preserving the previous two-call precedence
+        # while avoiding the redundant second call and dotted-key split per label.
+        return get_translations(
+            key,
+            default,
+            language_dict=self._language_dict,
+            fallback_dict=self._fallback_language_dict,
+        )
 
     def _get_zodiac_info(self) -> str:
         """
@@ -3635,7 +3654,10 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self.first_obj.zodiac_type == "Tropical":
             return f"{self._translate('zodiac', 'Zodiac')}: {self._translate('tropical', 'Tropical')}"
         else:
-            mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore
+            # A sidereal subject always carries a concrete sidereal_mode (enforced by
+            # the AstrologicalBaseModel validator), so the displayed ayanamsa reflects
+            # the mode actually used for the positions — no fallback needed.
+            mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore[operator]
             mode_name = ephe.get_ayanamsa_name(getattr(ephe, mode_const))
             return f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
 
@@ -3797,6 +3819,30 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
         template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
 
+    def _axis_cusp_colors(self) -> tuple[str, str, str, str]:
+        """Resolve the (ASC, MC, DSC, IC) cusp colors by point name.
+
+        Looks the axis colors up by name in ``planets_settings`` rather than by
+        fixed position, so custom ``celestial_points_settings`` (different order
+        or length) cannot raise ``IndexError`` or assign the wrong color. Falls
+        back to the standard radix cusp color when an axis is missing.
+        """
+        fallback = self.chart_colors_settings["houses_radix_line"]
+        # ``AXIAL_POINTS`` (config_constants) is the codebase-wide single source
+        # of truth for the four angles, in ASC/MC/DSC/IC order — reuse it for
+        # both the filter and the returned order. Collect only the four axis
+        # colors by name (not the whole ~40-entry planets_settings list) — this
+        # runs once per chart render. Use `or fallback` (not get's default) so an
+        # entry that explicitly carries color=None (or "") still resolves to the
+        # standard cusp color instead of emitting an invalid `stroke:None` into
+        # the SVG.
+        color_by_name = {
+            name: (p.get("color") or fallback)
+            for p in self.planets_settings
+            if (name := p.get("name")) in AXIAL_POINTS
+        }
+        return tuple(color_by_name.get(name, fallback) for name in AXIAL_POINTS)  # type: ignore[return-value]
+
     def _setup_single_wheel_houses(self, template_dict: dict, houses_list: list) -> None:
         """
         Populate template_dict with house cusp drawing for single-wheel charts.
@@ -3812,14 +3858,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict: Dictionary to populate with house SVG elements.
             houses_list: List of house data from the subject.
         """
+        asc_color, mc_color, dsc_color, ic_color = self._axis_cusp_colors()
         template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
             r=self.main_radius,
             first_subject_houses_list=houses_list,
             standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-            first_house_color=self.planets_settings[12]["color"],  # ASC color
-            tenth_house_color=self.planets_settings[13]["color"],  # MC color
-            seventh_house_color=self.planets_settings[14]["color"],  # DSC color
-            fourth_house_color=self.planets_settings[15]["color"],  # IC color
+            first_house_color=asc_color,  # ASC color
+            tenth_house_color=mc_color,  # MC color
+            seventh_house_color=dsc_color,  # DSC color
+            fourth_house_color=ic_color,  # IC color
             c1=self.first_circle_radius,  # Outer boundary for cusp lines
             c3=self.third_circle_radius,  # Inner boundary for cusp lines
             chart_type=self.chart_type,
@@ -3922,14 +3969,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             first_houses_list: List of house data from the primary subject.
             second_houses_list: List of house data from the secondary subject.
         """
+        asc_color, mc_color, dsc_color, ic_color = self._axis_cusp_colors()
         template_dict["makeHouses"] = draw_houses_cusps_and_text_number(
             r=self.main_radius,
             first_subject_houses_list=first_houses_list,
             standard_house_cusp_color=self.chart_colors_settings["houses_radix_line"],
-            first_house_color=self.planets_settings[12]["color"],  # ASC color
-            tenth_house_color=self.planets_settings[13]["color"],  # MC color
-            seventh_house_color=self.planets_settings[14]["color"],  # DSC color
-            fourth_house_color=self.planets_settings[15]["color"],  # IC color
+            first_house_color=asc_color,  # ASC color
+            tenth_house_color=mc_color,  # MC color
+            seventh_house_color=dsc_color,  # DSC color
+            fourth_house_color=ic_color,  # IC color
             c1=self.first_circle_radius,  # Outer boundary for cusp lines
             c3=self.third_circle_radius,  # Inner boundary for cusp lines
             chart_type=self.chart_type,

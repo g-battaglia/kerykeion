@@ -26,49 +26,9 @@ from kerykeion.schemas.kr_models import *  # noqa: F401, F403
 from kerykeion.schemas.settings_models import *  # noqa: F401, F403
 from kerykeion.schemas.chart_template_model import *  # noqa: F401, F403
 
-__all__ = [
-    # Re-export from schemas
-    "KerykeionException",
-    # kr_literals
-    "ZodiacType",
-    "Sign",
-    "SignNumbers",
-    "AspectMovementType",
-    "ClassicalPlanet",
-    "VocAspectName",
-    "VocTargetPlanet",
-    "Houses",
-    "HouseNumbers",
-    "AstrologicalPoint",
-    "Element",
-    "Quality",
-    "ChartType",
-    "PointType",
-    "LunarPhaseEmoji",
-    "LunarPhaseName",
-    "SiderealMode",
-    "HousesSystemIdentifier",
-    "PerspectiveType",
-    "SignsEmoji",
-    "KerykeionChartTheme",
-    "KerykeionChartLanguage",
-    "RelationshipScoreDescription",
-    "CompositeChartType",
-    "AspectName",
-    # kr_models
-    "AstrologicalSubjectModel",
-    "CompositeSubjectModel",
-    "KerykeionPointModel",
-    "AspectModel",
-    "ActiveAspect",
-    "SingleChartAspectsModel",
-    "DualChartAspectsModel",
-    "ElementDistributionModel",
-    "QualityDistributionModel",
-    "SingleChartDataModel",
-    "DualChartDataModel",
-    # settings_models
-    "KerykeionSettingsModel",
-    # chart_template_model
-    "ChartTemplateModel",
-]
+# Delegate __all__ to the canonical list so this deprecated shim can never drift
+# out of sync with kerykeion.schemas (the previous hardcoded list silently omitted
+# many newer public symbols from `from kerykeion.kr_types import *`).
+from kerykeion import schemas as _schemas
+
+__all__ = list(_schemas.__all__)

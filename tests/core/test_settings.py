@@ -11,7 +11,7 @@ import pytest
 
 from kerykeion.settings.kerykeion_settings import load_settings_mapping, _deep_merge
 from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
-from kerykeion.settings.translations import load_language_settings, get_translations
+from kerykeion.settings.translations import load_language_settings, load_language_pair, get_translations
 from kerykeion.schemas.settings_models import KerykeionLanguageModel
 
 
@@ -100,6 +100,50 @@ class TestLoadLanguageSettings:
 
 
 # =============================================================================
+# TestLoadLanguagePair
+# =============================================================================
+
+
+class TestLoadLanguagePair:
+    """Tests for load_language_pair (focused selected+EN accessor)."""
+
+    def test_returns_selected_and_en(self):
+        selected, en = load_language_pair("IT")
+        assert en["info"] == "Info"
+        assert selected["info"] == LANGUAGE_SETTINGS["IT"]["info"]
+
+    def test_en_request_returns_en_for_both(self):
+        selected, en = load_language_pair("EN")
+        assert selected["info"] == "Info"
+        assert en["info"] == "Info"
+
+    def test_missing_language_falls_back_to_en(self):
+        selected, en = load_language_pair("ZZ")  # not a shipped language
+        assert selected is en
+        assert selected["info"] == "Info"
+
+    def test_override_applies_to_selected_only(self):
+        overrides = {"IT": {"info": "Informazioni custom"}}
+        selected, en = load_language_pair("IT", overrides)
+        assert selected["info"] == "Informazioni custom"
+        # English fallback is untouched by an IT override.
+        assert en["info"] == "Info"
+        # Non-overridden IT keys are preserved from the base block.
+        assert selected["birth_chart"] == LANGUAGE_SETTINGS["IT"]["birth_chart"]
+
+    def test_override_does_not_mutate_shared_table(self):
+        original = LANGUAGE_SETTINGS["IT"]["info"]
+        selected, _ = load_language_pair("IT", {"IT": {"info": "Mutato"}})
+        assert selected["info"] == "Mutato"
+        assert LANGUAGE_SETTINGS["IT"]["info"] == original
+
+    def test_language_settings_wrapper_unwrapped(self):
+        overrides = {"language_settings": {"IT": {"info": "Avvolto"}}}
+        selected, _ = load_language_pair("IT", overrides)
+        assert selected["info"] == "Avvolto"
+
+
+# =============================================================================
 # TestGetTranslations
 # =============================================================================
 
@@ -159,6 +203,50 @@ class TestGetTranslations:
         # When neither language nor language_dict is provided, defaults to EN
         result = get_translations("info", "fallback")
         assert result == "Info"
+
+    def test_fallback_dict_consulted_before_en_defaults(self):
+        # Key missing in the primary dict but present in the explicit fallback_dict:
+        # the fallback_dict wins over the built-in EN defaults and the default arg.
+        primary = {"info": "Solo primario"}
+        fallback = {"transit": "Dal fallback"}
+        assert (
+            get_translations("transit", "default", language_dict=primary, fallback_dict=fallback)
+            == "Dal fallback"
+        )
+
+    def test_fallback_dict_primary_takes_precedence(self):
+        # When the key exists in the primary dict, fallback_dict is never consulted.
+        primary = {"info": "Primario"}
+        fallback = {"info": "Fallback"}
+        assert get_translations("info", "default", language_dict=primary, fallback_dict=fallback) == "Primario"
+
+    def test_fallback_dict_falls_through_to_en_then_default(self):
+        # Key absent in both primary and fallback_dict: known EN key still resolves
+        # via the built-in English defaults; an unknown key returns the default arg.
+        primary = {"x": "1"}
+        fallback = {"y": "2"}
+        assert get_translations("info", "default", language_dict=primary, fallback_dict=fallback) == "Info"
+        assert (
+            get_translations("totally_unknown_key_xyz", "default", language_dict=primary, fallback_dict=fallback)
+            == "default"
+        )
+
+    def test_none_in_primary_falls_through_to_fallback_dict(self):
+        # A key present-but-None in the primary must be treated as "missing" and
+        # defer to the explicit fallback_dict, not short-circuit to the default arg.
+        primary = {"transit": None}
+        fallback = {"transit": "Dal fallback"}
+        assert (
+            get_translations("transit", "default", language_dict=primary, fallback_dict=fallback)
+            == "Dal fallback"
+        )
+
+    def test_none_in_primary_falls_through_to_en_defaults(self):
+        # When neither the primary nor the fallback_dict provide the key (primary
+        # is None, fallback_dict absent), a known key still resolves via the
+        # built-in English defaults rather than returning the bare default arg.
+        primary = {"info": None}
+        assert get_translations("info", "default", language_dict=primary) == "Info"
 
 
 # =============================================================================
@@ -290,3 +378,38 @@ class TestKerykeionLanguageModelRoundTrip:
         assert "Transit-Cusp" in svg
         # The localized table heading must replace the English fallback too.
         assert LANGUAGE_SETTINGS["DE"]["cusp_position_comparison"] in svg
+
+
+# =============================================================================
+# TestTranslationCompleteness
+# =============================================================================
+
+
+def _flatten_keys(mapping: dict, prefix: str = "") -> set:
+    """Collect every (nested) key path of a translation mapping."""
+    keys = set()
+    for key, value in mapping.items():
+        path = f"{prefix}.{key}" if prefix else key
+        keys.add(path)
+        if isinstance(value, dict):
+            keys |= _flatten_keys(value, path)
+    return keys
+
+
+class TestTranslationCompleteness:
+    """Every language block must expose exactly the same key set as EN.
+
+    Guards against the leak where a celestial point or chart label missing from
+    a non-EN block falls back to the English/Latin default on localized output.
+    """
+
+    def test_every_language_matches_en_key_set(self):
+        en_keys = _flatten_keys(LANGUAGE_SETTINGS["EN"])
+        for language, block in LANGUAGE_SETTINGS.items():
+            if language == "EN":
+                continue
+            lang_keys = _flatten_keys(block)
+            missing = en_keys - lang_keys
+            extra = lang_keys - en_keys
+            assert not missing, f"{language} is missing translation keys: {sorted(missing)}"
+            assert not extra, f"{language} has keys not present in EN: {sorted(extra)}"

@@ -395,12 +395,44 @@ class TestRelocatedLocalDatetimeRecompute:
         assert data["iso_formatted_local_datetime"].startswith("-0500-")
         assert (data["year"], data["month"], data["day"]) == (int(ey), int(em), int(ed))
 
-        # Integer h/m/s fields stay consistent with the ISO local string.
-        eh = int(edh)
-        erem = (edh - eh) * 60
-        emin = int(erem)
-        esec = int((erem - emin) * 60)
-        assert (data["hour"], data["minute"], data["seconds"]) == (eh, emin, esec)
+        # Integer h/m/s fields stay consistent with the ISO local string. The
+        # time component is derived the same way format_ancient_iso renders it
+        # (round to nearest second, carry overflow), so parse it back out of the
+        # produced string and compare — this is the invariant the docstring
+        # promises ("the integer fields and the ISO string agree").
+        iso_local = data["iso_formatted_local_datetime"]
+        date_part, time_part = iso_local[: iso_local.index("T")], iso_local[iso_local.index("T") + 1 :]
+        hh, mm, ss = (int(x) for x in time_part[:8].split(":"))
+        assert (data["hour"], data["minute"], data["seconds"]) == (hh, mm, ss)
+        assert date_part == f"-{abs(data['year']):04d}-{data['month']:02d}-{data['day']:02d}"
+
+    def test_negative_year_local_fields_round_and_carry_at_midnight_boundary(self):
+        # A loc_dec_hour within ~0.5s of midnight must round up to 86400 and carry
+        # into the next day for BOTH the integer fields and the ISO string, so the
+        # two never disagree (the int()-truncation bug rendered 23:59:59 of the
+        # wrong day while format_ancient_iso emitted 00:00:00 of the next day).
+        from unittest.mock import patch
+
+        new_lng = 0.0  # LMT offset 0 -> local == the revjul value we mock
+        data: dict = {}
+        # Mock revjul to return a value 0.4s before midnight of -0500-03-21.
+        with patch(
+            "kerykeion.relocated_chart_factory.ephe.revjul",
+            return_value=(-500.0, 3.0, 21.0, 23.999888888),
+        ):
+            RelocatedChartFactory._recompute_local_datetime_fields(
+                data,
+                year=-500,
+                julian_day=0.0,
+                new_lng=new_lng,
+                new_tz_str="UTC",
+                iso_utc="-0500-03-21T00:00:00+00:00",
+            )
+
+        # Carries to 00:00:00 of -0500-03-22; integer fields match the ISO string.
+        assert (data["hour"], data["minute"], data["seconds"]) == (0, 0, 0)
+        assert (data["year"], data["month"], data["day"]) == (-500, 3, 22)
+        assert data["iso_formatted_local_datetime"].startswith("-0500-03-22T00:00:00")
 
     def test_ce_subject_matches_pytz(self):
         import pytz
