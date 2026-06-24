@@ -3613,12 +3613,23 @@ class ChartDrawer:  # type: ignore[no-redef]
             raise KerykeionException("English translations are missing from LANGUAGE_SETTINGS.")
 
         selected_model = KerykeionLanguageModel(**base_data)
-        fallback_model = KerykeionLanguageModel(**fallback_data)
+        if base_data is fallback_data:
+            # The common EN / unknown-language case: load_language_pair returns the
+            # same English dict for both selected and fallback. Build the model and
+            # dump it once instead of twice — get_translations consults the shared
+            # dict for both primary and fallback, so reusing the object is safe.
+            fallback_model = selected_model
+            selected_dump = selected_model.model_dump()
+            fallback_dump = selected_dump
+        else:
+            fallback_model = KerykeionLanguageModel(**fallback_data)
+            selected_dump = selected_model.model_dump()
+            fallback_dump = fallback_model.model_dump()
 
         self._fallback_language_model = fallback_model
         self._language_model = selected_model
-        self._fallback_language_dict = fallback_model.model_dump()
-        self._language_dict = selected_model.model_dump()
+        self._fallback_language_dict = fallback_dump
+        self._language_dict = selected_dump
         self.language_settings = self._language_dict  # Backward compatibility
 
     def _translate(self, key: str, default: Any) -> Any:

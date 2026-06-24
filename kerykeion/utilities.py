@@ -710,6 +710,35 @@ def _split_decimal_hour_with_carry(
     return year, month, day, total_seconds // 3600, (total_seconds % 3600) // 60, total_seconds % 60
 
 
+def _assemble_ancient_iso(
+    year: int, month: int, day: int, hour: int, minute: int, second: int, utc_offset_hours: float
+) -> str:
+    """Assemble an ISO 8601 extended-year string from already-split integer fields.
+
+    Shared by :func:`format_ancient_iso` and the BCE branch of
+    ``RelocatedChartFactory`` so a date already decomposed by
+    :func:`_split_decimal_hour_with_carry` is not split a second time. The h/m/s
+    values are taken verbatim — no rounding or carry happens here, so callers must
+    pass fields that already encode any midnight rollover.
+    """
+    # ISO 8601 extended year: negative sign for years <= 0
+    year_str = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
+
+    # UTC offset string
+    if utc_offset_hours == 0.0:
+        offset_str = "+00:00"
+    else:
+        sign = "+" if utc_offset_hours >= 0 else "-"
+        abs_off = abs(utc_offset_hours)
+        # Carry a rounded-up 60 into the hour (e.g. 0.99333 h -> 00:60 -> 01:00):
+        # rounding minutes independently of hours could otherwise emit ":60",
+        # which is not a valid ISO 8601 offset field (minutes must be 0-59).
+        oh, om = divmod(round(abs_off * 60), 60)
+        offset_str = f"{sign}{oh:02d}:{om:02d}"
+
+    return f"{year_str}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{second:02d}{offset_str}"
+
+
 def format_ancient_iso(year: int, month: int, day: int, decimal_hour: float, utc_offset_hours: float) -> str:
     """Format a date with potentially negative year as an ISO 8601 extended-year string.
 
@@ -729,23 +758,7 @@ def format_ancient_iso(year: int, month: int, day: int, decimal_hour: float, utc
     # Round to the nearest second (with midnight day-carry) via the shared helper
     # so this and the BCE branch of RelocatedChartFactory decompose identically.
     year, month, day, h, m, s = _split_decimal_hour_with_carry(year, month, day, decimal_hour)
-
-    # ISO 8601 extended year: negative sign for years <= 0
-    year_str = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
-
-    # UTC offset string
-    if utc_offset_hours == 0.0:
-        offset_str = "+00:00"
-    else:
-        sign = "+" if utc_offset_hours >= 0 else "-"
-        abs_off = abs(utc_offset_hours)
-        # Carry a rounded-up 60 into the hour (e.g. 0.99333 h -> 00:60 -> 01:00):
-        # rounding minutes independently of hours could otherwise emit ":60",
-        # which is not a valid ISO 8601 offset field (minutes must be 0-59).
-        oh, om = divmod(round(abs_off * 60), 60)
-        offset_str = f"{sign}{oh:02d}:{om:02d}"
-
-    return f"{year_str}-{month:02d}-{day:02d}T{h:02d}:{m:02d}:{s:02d}{offset_str}"
+    return _assemble_ancient_iso(year, month, day, h, m, s, utc_offset_hours)
 
 
 def datetime_to_julian(dt: datetime) -> float:
