@@ -55,8 +55,8 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +First Subject Celestial Points---+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Sco ♏️ | 5.82°    | +245.7251°/d | N/A     | -    | First House   |
-| Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House   |
+| Ascendant             | Sco ♏️ | 5.82°    | +245.7237°/d | N/A     | -    | First House   |
+| Medium Coeli          | Leo ♌️ | 19.91°   | +367.6390°/d | N/A     | -    | Tenth House   |
 | Sun                   | Can ♋️ | 28.54°   | +0.9550°/d   | +20.45° | -    | Ninth House   |
 | Moon                  | Can ♋️ | 21.21°   | +14.4025°/d  | +23.21° | -    | Ninth House   |
 | Mercury               | Leo ♌️ | 17.61°   | +1.6908°/d   | +16.88° | -    | Ninth House   |
@@ -74,8 +74,8 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +Second Subject Celestial Points--+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Lib ♎️ | 8.41°    | +299.6097°/d | N/A     | -    | First House    |
-| Medium Coeli          | Can ♋️ | 9.31°    | +332.7998°/d | N/A     | -    | Tenth House    |
+| Ascendant             | Lib ♎️ | 8.41°    | +299.6081°/d | N/A     | -    | First House    |
+| Medium Coeli          | Can ♋️ | 9.31°    | +332.7977°/d | N/A     | -    | Tenth House    |
 | Sun                   | Aqu ♒️ | 29.38°   | +1.0085°/d   | -11.70° | -    | Fifth House    |
 | Moon                  | Sag ♐️ | 11.13°   | +14.2197°/d  | -27.33° | -    | Third House    |
 | Mercury               | Pis ♓️ | 7.89°    | +1.8559°/d   | -9.86°  | -    | Fifth House    |

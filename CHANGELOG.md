@@ -1,5 +1,30 @@
 # Changelog
 
+## 6.0.0a60
+
+_2026-06-24_
+
+### Changed
+
+- **Bumped `libephemeris` pin to `3.0.0a5`** and **regenerated all golden
+  baselines on the full-range DE441 extended kernel (±8000+).** Positions, SVG
+  charts, report fixtures and configuration goldens now reflect DE441 across the
+  whole supported range, so ancient/far-future subjects (e.g. 500 BCE, 3000 CE)
+  are computed accurately instead of falling back at the short-range kernel edge.
+  Modern charts are unchanged beyond sub-arcsecond ephemeris-version drift
+  (libephemeris a4→a5, ≤ ~3.5″ on far-future points only).
+  Verified vs Swiss Ephemeris: at matched ΔT the engines agree to < 0.1″ on all
+  bodies; the remaining far-epoch differences are the ΔT-extrapolation model
+  (documented in libephemeris, benign). Full suite on the extended kernel:
+  10617 passed · 0 failed.
+
+### Fixed
+
+- `test_ancient_rome_has_fewer_points_due_to_ephemeris` is now kernel-aware: the
+  "fewer points due to ephemeris" behaviour only holds on the short-range default
+  kernel; with the full-range kernel the ancient TNOs are computable, so the test
+  skips (with reason) instead of failing.
+
 ## 6.0.0a59
 
 _2026-06-24_

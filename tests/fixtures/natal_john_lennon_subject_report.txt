@@ -30,8 +30,8 @@ John Lennon — Subject Report
 +Celestial Points-------+---------+----------+--------------+---------+------+----------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Ari ♈️ | 19.71°   | +886.9308°/d | N/A     | -    | First House    |
-| Medium Coeli          | Cap ♑️ | 7.06°    | +332.1254°/d | N/A     | -    | Tenth House    |
+| Ascendant             | Ari ♈️ | 19.71°   | +886.9394°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑️ | 7.06°    | +332.1233°/d | N/A     | -    | Tenth House    |
 | Sun                   | Lib ♎️ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
 | Moon                  | Aqu ♒️ | 3.55°    | +12.5279°/d  | -14.60° | -    | Eleventh House |
 | Mercury               | Sco ♏️ | 8.56°    | +1.3193°/d   | -16.23° | -    | Seventh House  |

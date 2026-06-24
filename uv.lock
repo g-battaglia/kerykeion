@@ -455,7 +455,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a59"
+version = "6.0.0a60"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -495,7 +495,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "libephemeris", specifier = "==3.0.0a4" },
+    { name = "libephemeris", specifier = "==3.0.0a5" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'all'", specifier = ">=2.10.3.1" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -544,7 +544,7 @@ wheels = [
 
 [[package]]
 name = "libephemeris"
-version = "3.0.0a4"
+version = "3.0.0a5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astroquery" },
@@ -555,9 +555,9 @@ dependencies = [
     { name = "skyfield-data" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b6/87/fd2cc1900952fc9f4dce7352ba98b5d663950faadbeb16a986a94e98fc61/libephemeris-3.0.0a4.tar.gz", hash = "sha256:5cc6ef528c8d798255db25ecdefc601873d5734bc254a751df9bb96481308957", size = 12508965, upload-time = "2026-06-17T11:33:19.885Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d9/46/fd9b597e656e1db54c5bf06d372e9bc81930dcb2cb314b0e6997e2ebfd7a/libephemeris-3.0.0a5.tar.gz", hash = "sha256:b995e2943200cb61b934fd1f9dce59f4027270a486c1fe70de13e4993f0c711f", size = 12525318, upload-time = "2026-06-24T17:32:48.939Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/3c/93a6eb33614d26ccead50c21841a4fc034b25947d4b0ad27ecf908769942/libephemeris-3.0.0a4-py3-none-any.whl", hash = "sha256:21010f3401cbbbae94c004f6ddcbb92e6fc1397a2700b77d8a24ea6adcebfa2a", size = 12551231, upload-time = "2026-06-17T11:32:32.524Z" },
+    { url = "https://files.pythonhosted.org/packages/30/03/0207d6d8426100e305a6fe174be75c00d11a808aae698f3db949ce92fc0a/libephemeris-3.0.0a5-py3-none-any.whl", hash = "sha256:8457cbe217e01dc43674f47133e4a780b0da5422f733e1c046627baffa5317f3", size = 12568470, upload-time = "2026-06-24T17:32:44.704Z" },
 ]
 
 [[package]]

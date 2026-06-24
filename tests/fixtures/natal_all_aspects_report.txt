@@ -30,8 +30,8 @@ Sample Natal Subject — Natal Chart Report
 +Natal Celestial Points-+---------+----------+--------------+---------+------+---------------+
 | Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
 +-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Sco ♏️ | 5.82°    | +245.7251°/d | N/A     | -    | First House   |
-| Medium Coeli          | Leo ♌️ | 19.91°   | +367.6409°/d | N/A     | -    | Tenth House   |
+| Ascendant             | Sco ♏️ | 5.82°    | +245.7237°/d | N/A     | -    | First House   |
+| Medium Coeli          | Leo ♌️ | 19.91°   | +367.6390°/d | N/A     | -    | Tenth House   |
 | Sun                   | Can ♋️ | 28.54°   | +0.9550°/d   | +20.45° | -    | Ninth House   |
 | Moon                  | Can ♋️ | 21.21°   | +14.4025°/d  | +23.21° | -    | Ninth House   |
 | Mercury               | Leo ♌️ | 17.61°   | +1.6908°/d   | +16.88° | -    | Ninth House   |

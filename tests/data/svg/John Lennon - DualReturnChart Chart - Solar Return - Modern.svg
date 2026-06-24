@@ -484,7 +484,7 @@
 <line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.6' transform='rotate(-257.324212 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-275.566944 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-302.358654 50.0 50.0)'/>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='25.253746235240136' kr:signposition='25.253746235240136' kr:slug='Chiron' kr:retrograde='true' kr:horoscope='1' kr:cx='46.06535299653931' kr:cy='9.189234839834747' transform='rotate(-5.506979 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='25.253746237785343' kr:signposition='25.253746237785343' kr:slug='Chiron' kr:retrograde='true' kr:horoscope='1' kr:cx='46.065352994726354' kr:cy='9.18923484000954' transform='rotate(-5.506979 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(95.506979) scale(0.10925) translate(-14 -14)'>
     <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -498,7 +498,7 @@
 <g kr:node='Indicator' kr:slug='Chiron' transform='rotate(-5.506979 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='46.4924499047502' kr:signposition='16.492449904750202' kr:slug='Moon' kr:horoscope='1' kr:cx='31.548722661402444' kr:cy='13.386472929064098' transform='rotate(-26.745683 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='46.49245031761669' kr:signposition='16.492450317616687' kr:slug='Moon' kr:horoscope='1' kr:cx='31.54872239756978' kr:cy='13.386473062021778' transform='rotate(-26.745683 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(116.745683) scale(0.115) translate(-14 -14)'>
     <use xlink:href='#Moon' kr:slug='Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-moon)' />
   </g>
@@ -511,21 +511,21 @@
 <g kr:node='Indicator' kr:slug='Moon' transform='rotate(-26.745683 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eighth_House' kr:sign='Gem' kr:absoluteposition='61.01733446447025' kr:signposition='1.0173344644702524' kr:slug='Uranus' kr:retrograde='true' kr:horoscope='1' kr:cx='22.955757966821096' kr:cy='19.184273936010538' transform='rotate(-41.270567 50.0 50.0)'>
-  <g transform='translate(50.0 9.0) rotate(131.270567) scale(0.10925) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Eighth_House' kr:sign='Gem' kr:absoluteposition='61.01733517634549' kr:signposition='1.0173351763454903' kr:slug='Uranus' kr:retrograde='true' kr:horoscope='1' kr:cx='22.955757583949072' kr:cy='19.184274272023515' transform='rotate(-41.270568 50.0 50.0)'>
+  <g transform='translate(50.0 9.0) rotate(131.270568) scale(0.10925) translate(-14 -14)'>
     <use xlink:href='#Uranus' kr:slug='Uranus' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(131.270567 50.0 12.0)'>1º</text>
-  <g transform='translate(50.0 14.5) rotate(131.270567) scale(0.0558) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(131.270568 50.0 12.0)'>1º</text>
+  <g transform='translate(50.0 14.5) rotate(131.270568) scale(0.0558) translate(-16 -16)'>
     <use xlink:href='#Gem' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(131.270567 50.0 16.5)'>1'</text>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='18.5' font-size='1.2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(131.270567 50.0 18.5)'>RX</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(131.270568 50.0 16.5)'>1'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='18.5' font-size='1.2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(131.270568 50.0 18.5)'>RX</text>
 </g>
-<g kr:node='Indicator' kr:slug='Uranus' transform='rotate(-41.270567 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Uranus' transform='rotate(-41.270568 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Can' kr:absoluteposition='113.39317904772776' kr:signposition='23.393179047727756' kr:slug='Jupiter' kr:horoscope='1' kr:cx='9.08300293901437' kr:cy='52.607556617083' transform='rotate(-93.646412 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Can' kr:absoluteposition='113.39317903811055' kr:signposition='23.393179038110546' kr:slug='Jupiter' kr:horoscope='1' kr:cx='9.083002938576684' kr:cy='52.60755661021499' transform='rotate(-93.646412 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(183.646412) scale(0.10925) translate(-14 -14)'>
     <use xlink:href='#Jupiter' kr:slug='Jupiter' kr:node='Glyph' fill='var(--kerykeion-chart-color-jupiter)' />
   </g>
@@ -551,7 +551,7 @@
 <g kr:node='Indicator' kr:slug='Medium_Coeli' transform='rotate(-105.859422 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Vir' kr:absoluteposition='174.33110860336984' kr:signposition='24.33110860336984' kr:slug='Venus' kr:horoscope='1' kr:cx='32.403538335101814' kr:cy='87.03193941553383' transform='rotate(-154.584342 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Vir' kr:absoluteposition='174.33110860216044' kr:signposition='24.33110860216044' kr:slug='Venus' kr:horoscope='1' kr:cx='32.403538334320146' kr:cy='87.03193941516241' transform='rotate(-154.584342 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(244.584342) scale(0.115) translate(-14 -14)'>
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='var(--kerykeion-chart-color-venus)' />
   </g>
@@ -564,7 +564,7 @@
 <g kr:node='Indicator' kr:slug='Venus' transform='rotate(-154.584342 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='196.267887414393' kr:signposition='16.267887414392987' kr:slug='Sun' kr:horoscope='1' kr:cx='47.51209524633054' kr:cy='90.9244466051365' transform='rotate(-176.521120 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='196.26788741317955' kr:signposition='16.26788741317955' kr:slug='Sun' kr:horoscope='1' kr:cx='47.51209524546378' kr:cy='90.9244466050838' transform='rotate(-176.521120 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(266.521120) scale(0.12650000000000003) translate(-14 -14)'>
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='var(--kerykeion-chart-color-sun)' />
   </g>
@@ -577,7 +577,7 @@
 <g kr:node='Indicator' kr:slug='Sun' transform='rotate(-176.521120 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='206.047314203289' kr:signposition='26.047314203289005' kr:slug='Ascendant' kr:horoscope='1' kr:cx='54.65634768483994' kr:cy='90.73473243115616' transform='rotate(-186.521120 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='206.047314203289' kr:signposition='26.047314203289005' kr:slug='Ascendant' kr:horoscope='1' kr:cx='54.6563476839772' kr:cy='90.73473243125478' transform='rotate(-186.521120 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(276.521120) scale(0.10925) translate(-14 -14)'>
     <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='var(--kerykeion-chart-color-first-house)' />
   </g>
@@ -590,7 +590,7 @@
 <g kr:node='Indicator' kr:slug='Ascendant' transform='rotate(-186.300547 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Sco' kr:absoluteposition='213.90388345718347' kr:signposition='3.9038834571834684' kr:slug='Mercury' kr:horoscope='1' kr:cx='61.65911935517109' kr:cy='89.30731402502434' transform='rotate(-196.521120 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Sco' kr:absoluteposition='213.90388345562314' kr:signposition='3.903883455623145' kr:slug='Mercury' kr:horoscope='1' kr:cx='61.659119354338586' kr:cy='89.30731402527127' transform='rotate(-196.521120 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(286.521120) scale(0.115) translate(-14 -14)'>
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>
@@ -601,9 +601,9 @@
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='var(--kerykeion-chart-color-mercury)' font-weight='500' transform='rotate(286.521120 50.0 16.5)'>54'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Mercury' transform='rotate(-194.157116 50.0 50.0)'>
-  <path d='M 50.0 20.5 l 0 -0.7 A 30.2 30.2 0 0 0 48.7543119969 19.8257019734 L 48.7254384339 19.1262977145' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 20.5 l 0 -0.7 A 30.2 30.2 0 0 0 48.7543119967 19.8257019734 L 48.7254384337 19.1262977145' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Sco' kr:absoluteposition='221.55958159342495' kr:signposition='11.559581593424952' kr:slug='Mars' kr:horoscope='1' kr:cx='68.30763458369444' kr:cy='86.68556277270277' transform='rotate(-206.521120 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Sco' kr:absoluteposition='221.55958159201646' kr:signposition='11.559581592016457' kr:slug='Mars' kr:horoscope='1' kr:cx='68.30763458291746' kr:cy='86.68556277309051' transform='rotate(-206.521120 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(296.521120) scale(0.10925) translate(-14 -14)'>
     <use xlink:href='#Mars' kr:slug='Mars' kr:node='Glyph' fill='var(--kerykeion-chart-color-mars)' />
   </g>
@@ -614,9 +614,9 @@
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(296.521120 50.0 16.5)'>33'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Mars' transform='rotate(-201.812815 50.0 50.0)'>
-  <path d='M 50.0 20.5 l 0 -0.7 A 30.2 30.2 0 0 0 47.5210938761 19.9019099538 L 47.4636357872 19.2042721050' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 20.5 l 0 -0.7 A 30.2 30.2 0 0 0 47.5210938760 19.9019099538 L 47.4636357871 19.2042721051' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Third_House' kr:sign='Aqu' kr:absoluteposition='301.37244479871254' kr:signposition='1.3724447987125359' kr:slug='Pluto' kr:retrograde='true' kr:horoscope='1' kr:cx='90.1588864774824' kr:cy='41.737806774912514' transform='rotate(-281.625678 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Third_House' kr:sign='Aqu' kr:absoluteposition='301.3724447982019' kr:signposition='1.3724447982019115' kr:slug='Pluto' kr:retrograde='true' kr:horoscope='1' kr:cx='90.15888647755602' kr:cy='41.737806775270414' transform='rotate(-281.625678 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(371.625678) scale(0.115) translate(-14 -14)'>
     <use xlink:href='#Pluto' kr:slug='Pluto' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -630,7 +630,7 @@
 <g kr:node='Indicator' kr:slug='Pluto' transform='rotate(-281.625678 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Pis' kr:absoluteposition='348.1037476428897' kr:signposition='18.103747642889687' kr:slug='True_North_Lunar_Node' kr:retrograde='true' kr:horoscope='1' kr:cx='71.50963570902971' kr:cy='15.095335961152216' transform='rotate(-328.356981 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Pis' kr:absoluteposition='348.10374764392293' kr:signposition='18.10374764392293' kr:slug='True_North_Lunar_Node' kr:retrograde='true' kr:horoscope='1' kr:cx='71.50963570840027' kr:cy='15.095335960764324' transform='rotate(-328.356981 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(418.356981) scale(0.10925) translate(-14 -14)'>
     <use xlink:href='#True_North_Lunar_Node' kr:slug='True_North_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -644,7 +644,7 @@
 <g kr:node='Indicator' kr:slug='True_North_Lunar_Node' transform='rotate(-328.356981 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Pis' kr:absoluteposition='357.14715888883984' kr:signposition='27.14715888883984' kr:slug='Saturn' kr:retrograde='true' kr:horoscope='1' kr:cx='65.12172470829836' kr:cy='11.890507195103758' transform='rotate(-338.356981 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Pis' kr:absoluteposition='357.1471583121761' kr:signposition='27.14715831217609' kr:slug='Saturn' kr:retrograde='true' kr:horoscope='1' kr:cx='65.12172470761111' kr:cy='11.890507194831052' transform='rotate(-338.356981 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(428.356981) scale(0.10925) translate(-14 -14)'>
     <use xlink:href='#Saturn' kr:slug='Saturn' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -655,10 +655,10 @@
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(428.356981 50.0 16.5)'>8'</text>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='18.5' font-size='1.2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(428.356981 50.0 18.5)'>RX</text>
 </g>
-<g kr:node='Indicator' kr:slug='Saturn' transform='rotate(-337.400392 50.0 50.0)'>
-  <path d='M 50.0 20.5 l 0 -0.7 A 30.2 30.2 0 0 0 49.4958155988 19.8042089342 L 49.4841292054 19.1043064923' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+<g kr:node='Indicator' kr:slug='Saturn' transform='rotate(-337.400391 50.0 50.0)'>
+  <path d='M 50.0 20.5 l 0 -0.7 A 30.2 30.2 0 0 0 49.4958152943 19.8042089393 L 49.4841288939 19.1043064975' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Ari' kr:absoluteposition='0.3272641091117937' kr:signposition='0.3272641091117937' kr:slug='Neptune' kr:retrograde='true' kr:horoscope='1' kr:cx='58.27434775426728' kr:cy='9.843616083598214' transform='rotate(-348.356981 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Ari' kr:absoluteposition='0.3272641101080914' kr:signposition='0.3272641101080914' kr:slug='Neptune' kr:retrograde='true' kr:horoscope='1' kr:cx='58.27434775354311' kr:cy='9.843616083449' transform='rotate(-348.356981 50.0 50.0)'>
   <g transform='translate(50.0 9.0) rotate(438.356981) scale(0.10925) translate(-14 -14)'>
     <use xlink:href='#Neptune' kr:slug='Neptune' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -700,49 +700,49 @@
 <g kr:node='Indicator' kr:slug='Ascendant' transform='rotate(-0.000000 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='43.215020130719445' kr:signposition='13.215020130719445' kr:slug='Saturn' kr:retrograde='true' kr:horoscope='0' kr:cx='39.04837594112314' kr:cy='24.774775908368436' transform='rotate(-23.468253 50.0 50.0)'>
-  <g transform='translate(50.0 22.5) rotate(113.468253) scale(0.09025) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='43.21501948227801' kr:signposition='13.21501948227801' kr:slug='Saturn' kr:retrograde='true' kr:horoscope='0' kr:cx='39.04837622660804' kr:cy='24.77477578442411' transform='rotate(-23.468252 50.0 50.0)'>
+  <g transform='translate(50.0 22.5) rotate(113.468252) scale(0.09025) translate(-14 -14)'>
     <use xlink:href='#Saturn' kr:slug='Saturn' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(113.468253 50.0 25.0)'>13º</text>
-  <g transform='translate(50.0 27.5) rotate(113.468253) scale(0.0558) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(113.468252 50.0 25.0)'>13º</text>
+  <g transform='translate(50.0 27.5) rotate(113.468252) scale(0.0558) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(113.468253 50.0 29.5)'>12'</text>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.5' font-size='1.2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(113.468253 50.0 31.5)'>RX</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(113.468252 50.0 29.5)'>12'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.5' font-size='1.2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(113.468252 50.0 31.5)'>RX</text>
 </g>
-<g kr:node='Indicator' kr:slug='Saturn' transform='rotate(-23.468253 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Saturn' transform='rotate(-23.468252 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='43.691884163900795' kr:signposition='13.691884163900795' kr:slug='Jupiter' kr:retrograde='true' kr:horoscope='0' kr:cx='34.83444152399127' kr:cy='27.05973330340818' transform='rotate(-33.468253 50.0 50.0)'>
-  <g transform='translate(50.0 22.5) rotate(123.468253) scale(0.09025) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='43.69188414518579' kr:signposition='13.691884145185789' kr:slug='Jupiter' kr:retrograde='true' kr:horoscope='0' kr:cx='34.83444178361631' kr:cy='27.059733131772916' transform='rotate(-33.468252 50.0 50.0)'>
+  <g transform='translate(50.0 22.5) rotate(123.468252) scale(0.09025) translate(-14 -14)'>
     <use xlink:href='#Jupiter' kr:slug='Jupiter' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(123.468253 50.0 25.0)'>13º</text>
-  <g transform='translate(50.0 27.5) rotate(123.468253) scale(0.0558) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(123.468252 50.0 25.0)'>13º</text>
+  <g transform='translate(50.0 27.5) rotate(123.468252) scale(0.0558) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(123.468253 50.0 29.5)'>41'</text>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.5' font-size='1.2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(123.468253 50.0 31.5)'>RX</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(123.468252 50.0 29.5)'>41'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.5' font-size='1.2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(123.468252 50.0 31.5)'>RX</text>
 </g>
 <g kr:node='Indicator' kr:slug='Jupiter' transform='rotate(-23.945117 50.0 50.0)'>
-  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 45.2351594240 21.5968963970 L 45.3509715213 22.2872496095' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 45.2351597362 21.5968963446 L 45.3509718259 22.2872495584' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='55.55201627283177' kr:signposition='25.55201627283177' kr:slug='Uranus' kr:retrograde='true' kr:horoscope='0' kr:cx='31.081304927010056' kr:cy='30.04171909368881' transform='rotate(-43.468253 50.0 50.0)'>
-  <g transform='translate(50.0 22.5) rotate(133.468253) scale(0.09025) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='55.55201627519783' kr:signposition='25.55201627519783' kr:slug='Uranus' kr:retrograde='true' kr:horoscope='0' kr:cx='31.08130515288666' kr:cy='30.04171887957765' transform='rotate(-43.468252 50.0 50.0)'>
+  <g transform='translate(50.0 22.5) rotate(133.468252) scale(0.09025) translate(-14 -14)'>
     <use xlink:href='#Uranus' kr:slug='Uranus' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(133.468253 50.0 25.0)'>25º</text>
-  <g transform='translate(50.0 27.5) rotate(133.468253) scale(0.0558) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(133.468252 50.0 25.0)'>25º</text>
+  <g transform='translate(50.0 27.5) rotate(133.468252) scale(0.0558) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(133.468253 50.0 29.5)'>33'</text>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.5' font-size='1.2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(133.468253 50.0 31.5)'>RX</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(133.468252 50.0 29.5)'>33'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.5' font-size='1.2' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(133.468252 50.0 31.5)'>RX</text>
 </g>
 <g kr:node='Indicator' kr:slug='Uranus' transform='rotate(-35.805249 50.0 50.0)'>
-  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 46.1596272734 21.4571981522 L 46.2529696661 22.1509468083' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 46.1596275976 21.4571981086 L 46.2529699824 22.1509467657' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='120.56821737880962' kr:signposition='0.5682173788096208' kr:slug='Chiron' kr:horoscope='0' kr:cx='22.989031663451165' kr:cy='55.16309882938108' transform='rotate(-100.821450 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='120.56821737336598' kr:signposition='0.5682173733659823' kr:slug='Chiron' kr:horoscope='0' kr:cx='22.989031662960624' kr:cy='55.16309882681479' transform='rotate(-100.821450 50.0 50.0)'>
   <g transform='translate(50.0 22.5) rotate(190.821450) scale(0.09025) translate(-14 -14)'>
     <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='var(--kerykeion-chart-color-chiron)' />
   </g>
@@ -755,7 +755,7 @@
 <g kr:node='Indicator' kr:slug='Chiron' transform='rotate(-100.821450 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='124.18807957975115' kr:signposition='4.188079579751147' kr:slug='Pluto' kr:horoscope='0' kr:cx='24.295951668635727' kr:cy='59.775065185403605' transform='rotate(-110.821450 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='124.18807957843816' kr:signposition='4.188079578438163' kr:slug='Pluto' kr:horoscope='0' kr:cx='24.29595166770701' kr:cy='59.775065182961484' transform='rotate(-110.821450 50.0 50.0)'>
   <g transform='translate(50.0 22.5) rotate(200.821450) scale(0.095) translate(-14 -14)'>
     <use xlink:href='#Pluto' kr:slug='Pluto' kr:node='Glyph' fill='var(--kerykeion-chart-color-pluto)' />
   </g>
@@ -766,9 +766,9 @@
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-chart-color-pluto)' font-weight='500' transform='rotate(200.821450 50.0 29.5)'>11'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Pluto' transform='rotate(-104.441312 50.0 50.0)'>
-  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 46.7996165562 21.3783727609 L 46.8774036538 22.0740373119' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 46.7996165583 21.3783727607 L 46.8774036558 22.0740373116' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='153.21541744298582' kr:signposition='3.2154174429858244' kr:slug='Venus' kr:horoscope='0' kr:cx='30.04185028410412' kr:cy='68.91883347138204' transform='rotate(-133.468650 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='153.2154174488381' kr:signposition='3.21541744883811' kr:slug='Venus' kr:horoscope='0' kr:cx='30.04185028603652' kr:cy='68.91883347342059' transform='rotate(-133.468650 50.0 50.0)'>
   <g transform='translate(50.0 22.5) rotate(223.468650) scale(0.095) translate(-14 -14)'>
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='var(--kerykeion-chart-color-venus)' />
   </g>
@@ -781,59 +781,59 @@
 <g kr:node='Indicator' kr:slug='Venus' transform='rotate(-133.468650 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='176.03011997848986' kr:signposition='26.030119978489864' kr:slug='Neptune' kr:horoscope='0' kr:cx='38.93912042785285' kr:cy='75.17750867521363' transform='rotate(-156.283353 50.0 50.0)'>
-  <g transform='translate(50.0 22.5) rotate(246.283353) scale(0.09025) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='176.03011913095156' kr:signposition='26.03011913095156' kr:slug='Neptune' kr:horoscope='0' kr:cx='38.939120055418734' kr:cy='75.17750851159741' transform='rotate(-156.283352 50.0 50.0)'>
+  <g transform='translate(50.0 22.5) rotate(246.283352) scale(0.09025) translate(-14 -14)'>
     <use xlink:href='#Neptune' kr:slug='Neptune' kr:node='Glyph' fill='var(--kerykeion-chart-color-neptune)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(246.283353 50.0 25.0)'>26º</text>
-  <g transform='translate(50.0 27.5) rotate(246.283353) scale(0.0558) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(246.283352 50.0 25.0)'>26º</text>
+  <g transform='translate(50.0 27.5) rotate(246.283352) scale(0.0558) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-neptune)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(246.283353 50.0 29.5)'>1'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(246.283352 50.0 29.5)'>1'</text>
 </g>
-<g kr:node='Indicator' kr:slug='Neptune' transform='rotate(-156.283353 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Neptune' transform='rotate(-156.283352 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='182.66253120621738' kr:signposition='2.6625312062173805' kr:slug='Mars' kr:horoscope='0' kr:cx='43.47918854185931' kr:cy='76.71570732597925' transform='rotate(-166.283353 50.0 50.0)'>
-  <g transform='translate(50.0 22.5) rotate(256.283353) scale(0.09025) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='182.66253120641784' kr:signposition='2.662531206417839' kr:slug='Mars' kr:horoscope='0' kr:cx='43.47918814667165' kr:cy='76.71570722952123' transform='rotate(-166.283352 50.0 50.0)'>
+  <g transform='translate(50.0 22.5) rotate(256.283352) scale(0.09025) translate(-14 -14)'>
     <use xlink:href='#Mars' kr:slug='Mars' kr:node='Glyph' fill='var(--kerykeion-chart-color-mars)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(256.283353 50.0 25.0)'>2º</text>
-  <g transform='translate(50.0 27.5) rotate(256.283353) scale(0.0558) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(256.283352 50.0 25.0)'>2º</text>
+  <g transform='translate(50.0 27.5) rotate(256.283352) scale(0.0558) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-mars)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(256.283353 50.0 29.5)'>39'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(256.283352 50.0 29.5)'>39'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Mars' transform='rotate(-162.915764 50.0 50.0)'>
-  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 48.3082396973 21.2497313564 L 48.3493588713 21.9485226082' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 48.3082401227 21.2497313314 L 48.3493592864 21.9485225837' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='191.02424780770417' kr:signposition='11.024247807704171' kr:slug='True_North_Lunar_Node' kr:horoscope='0' kr:cx='48.217388212331564' kr:cy='77.44216272844517' transform='rotate(-176.283353 50.0 50.0)'>
-  <g transform='translate(50.0 22.5) rotate(266.283353) scale(0.09025) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='191.02424780866983' kr:signposition='11.024247808669827' kr:slug='True_North_Lunar_Node' kr:horoscope='0' kr:cx='48.21738780639793' kr:cy='77.44216270207619' transform='rotate(-176.283352 50.0 50.0)'>
+  <g transform='translate(50.0 22.5) rotate(266.283352) scale(0.09025) translate(-14 -14)'>
     <use xlink:href='#True_North_Lunar_Node' kr:slug='True_North_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(266.283353 50.0 25.0)'>11º</text>
-  <g transform='translate(50.0 27.5) rotate(266.283353) scale(0.0558) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(266.283352 50.0 25.0)'>11º</text>
+  <g transform='translate(50.0 27.5) rotate(266.283352) scale(0.0558) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(266.283353 50.0 29.5)'>1'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(266.283352 50.0 29.5)'>1'</text>
 </g>
 <g kr:node='Indicator' kr:slug='True_North_Lunar_Node' transform='rotate(-171.277481 50.0 50.0)'>
-  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 47.4869741791 21.3098501011 L 47.5480546678 22.0071801333' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 47.4869746040 21.3098500638 L 47.5480550823 22.0071800970' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943502904' kr:signposition='16.26789435029039' kr:slug='Sun' kr:horoscope='0' kr:cx='53.00975163992703' kr:cy='77.33480190281168' transform='rotate(-186.283353 50.0 50.0)'>
-  <g transform='translate(50.0 22.5) rotate(276.283353) scale(0.10450000000000001) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.26789434684903' kr:signposition='16.267894346849033' kr:slug='Sun' kr:horoscope='0' kr:cx='53.009751235581525' kr:cy='77.33480194733292' transform='rotate(-186.283352 50.0 50.0)'>
+  <g transform='translate(50.0 22.5) rotate(276.283352) scale(0.10450000000000001) translate(-14 -14)'>
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='var(--kerykeion-chart-color-sun)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(276.283353 50.0 25.0)'>16º</text>
-  <g transform='translate(50.0 27.5) rotate(276.283353) scale(0.0558) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(276.283352 50.0 25.0)'>16º</text>
+  <g transform='translate(50.0 27.5) rotate(276.283352) scale(0.0558) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-sun)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(276.283353 50.0 29.5)'>16'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(276.283352 50.0 29.5)'>16'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Sun' transform='rotate(-176.521127 50.0 50.0)'>
-  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 45.1166778912 21.6170268439 L 45.2353697480 22.3068907748' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 0 45.1166783093 21.6170267719 L 45.2353701560 22.3068907046' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Sco' kr:absoluteposition='218.5582326360511' kr:signposition='8.558232636051088' kr:slug='Mercury' kr:horoscope='0' kr:cx='58.86751591563127' kr:cy='76.03108068225417' transform='rotate(-198.811466 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Sco' kr:absoluteposition='218.55823263468363' kr:signposition='8.558232634683634' kr:slug='Mercury' kr:horoscope='0' kr:cx='58.867515915009996' kr:cy='76.03108068246581' transform='rotate(-198.811466 50.0 50.0)'>
   <g transform='translate(50.0 22.5) rotate(288.811466) scale(0.095) translate(-14 -14)'>
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>
@@ -859,7 +859,7 @@
 <g kr:node='Indicator' kr:slug='Medium_Coeli' transform='rotate(-257.324212 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Aqu' kr:absoluteposition='303.5466251863088' kr:signposition='3.546625186308802' kr:slug='Moon' kr:horoscope='0' kr:cx='76.7062089437008' kr:cy='43.44039605956313' transform='rotate(-283.799858 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Aqu' kr:absoluteposition='303.54662528557185' kr:signposition='3.5466252855718494' kr:slug='Moon' kr:horoscope='0' kr:cx='76.70620893233652' kr:cy='43.44039601329551' transform='rotate(-283.799858 50.0 50.0)'>
   <g transform='translate(50.0 22.5) rotate(373.799858) scale(0.095) translate(-14 -14)'>
     <use xlink:href='#Moon' kr:slug='Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-moon)' />
   </g>
@@ -914,136 +914,136 @@
 <g kr:node='HouseSector' kr:house='12'><path d='M 88.856861,25.380001 A 46.0,46.0 0 0,0 50.000000,4.000000 L 50.000000,37.500000 A 12.5,12.5 0 0,1 60.558930,43.309783 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
 <g kr:node='AspectCore'>
 <path d='M 37.5,50.0 A 12.5,12.5 0 1,1 62.5,50.0 A 12.5,12.5 0 1,1 37.5,50.0 Z' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' fill-rule='evenodd'/>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Sun' kr:tooriginaldegrees='196.2678943502904' kr:from='Sun' kr:fromoriginaldegrees='196.267887414393' kr:orb='6.935897403081981e-06' kr:aspectdegrees='0' kr:planetsdiff='6.935897403081981e-06' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Sun' kr:tooriginaldegrees='196.26789434684903' kr:from='Sun' kr:fromoriginaldegrees='196.26788741317955' kr:orb='6.93366948212315e-06' kr:aspectdegrees='0' kr:planetsdiff='6.93366948212315e-06' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='47.949984' y1='83.721528' x2='47.949980' y2='83.721528' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
   <g transform='translate(47.949982 83.721528) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb0' fill='var(--kerykeion-chart-color-conjunction)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Moon' kr:tooriginaldegrees='303.5466251863088' kr:from='Mercury' kr:fromoriginaldegrees='213.90388345718347' kr:orb='0.35725827087466655' kr:aspectdegrees='90' kr:planetsdiff='89.64274172912533' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='82.808610' y1='41.941519' x2='58.262896' y2='82.757726' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Moon' kr:tooriginaldegrees='303.54662528557185' kr:from='Mercury' kr:fromoriginaldegrees='213.90388345562314' kr:orb='0.35725817005129556' kr:aspectdegrees='90' kr:planetsdiff='89.6427418299487' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='82.808610' y1='41.941518' x2='58.262896' y2='82.757726' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
   <g transform='translate(70.535753 62.349622) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb90' fill='var(--kerykeion-chart-color-square)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Moon' kr:tooriginaldegrees='303.5466251863088' kr:from='Uranus' kr:fromoriginaldegrees='61.01733446447025' kr:orb='2.5292907218385494' kr:aspectdegrees='120' kr:planetsdiff='242.52929072183855' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='82.808610' y1='41.941519' x2='27.715687' y2='24.608004' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Moon' kr:tooriginaldegrees='303.54662528557185' kr:from='Uranus' kr:fromoriginaldegrees='61.01733517634549' kr:orb='2.529290109226366' kr:aspectdegrees='120' kr:planetsdiff='242.52929010922637' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='82.808610' y1='41.941518' x2='27.715687' y2='24.608005' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
   <g transform='translate(55.262149 33.274761) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb120' fill='var(--kerykeion-chart-color-trine)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Moon' kr:tooriginaldegrees='303.5466251863088' kr:from='Pluto' kr:fromoriginaldegrees='301.37244479871254' kr:orb='2.174180387596266' kr:aspectdegrees='0' kr:planetsdiff='2.174180387596266' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='82.808610' y1='41.941519' x2='83.090711' y2='43.191996' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Moon' kr:tooriginaldegrees='303.54662528557185' kr:from='Pluto' kr:fromoriginaldegrees='301.3724447982019' kr:orb='2.174180487369938' kr:aspectdegrees='0' kr:planetsdiff='2.174180487369938' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='82.808610' y1='41.941518' x2='83.090711' y2='43.191996' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
   <g transform='translate(82.949661 42.566757) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb0' fill='var(--kerykeion-chart-color-conjunction)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Moon' kr:tooriginaldegrees='303.5466251863088' kr:from='Medium_Coeli' kr:fromoriginaldegrees='125.60618867622031' kr:orb='2.059563489911511' kr:aspectdegrees='180' kr:planetsdiff='177.9404365100885' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='82.808610' y1='41.941519' x2='17.502193' y2='59.232366' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Moon' kr:tooriginaldegrees='303.54662528557185' kr:from='Medium_Coeli' kr:fromoriginaldegrees='125.60618867622031' kr:orb='2.0595633906484636' kr:aspectdegrees='180' kr:planetsdiff='177.94043660935154' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='82.808610' y1='41.941518' x2='17.502193' y2='59.232366' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
   <g transform='translate(50.155402 50.586942) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb180' fill='var(--kerykeion-chart-color-opposition)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Mercury' kr:tooriginaldegrees='218.5582326360511' kr:from='Medium_Coeli' kr:fromoriginaldegrees='125.60618867622031' kr:orb='2.9520439598307746' kr:aspectdegrees='90' kr:planetsdiff='92.95204395983077' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Mercury' kr:tooriginaldegrees='218.55823263468363' kr:from='Medium_Coeli' kr:fromoriginaldegrees='125.60618867622031' kr:orb='2.952043958463321' kr:aspectdegrees='90' kr:planetsdiff='92.95204395846332' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='60.893754' y1='81.979215' x2='17.502193' y2='59.232366' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
   <g transform='translate(39.197973 70.605790) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb90' fill='var(--kerykeion-chart-color-square)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Venus' kr:tooriginaldegrees='153.21541744298582' kr:from='Mercury' kr:fromoriginaldegrees='213.90388345718347' kr:orb='0.6884660141976156' kr:aspectdegrees='60' kr:planetsdiff='60.688466014197644' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Venus' kr:tooriginaldegrees='153.2154174488381' kr:from='Mercury' kr:fromoriginaldegrees='213.90388345562314' kr:orb='0.6884660067850064' kr:aspectdegrees='60' kr:planetsdiff='60.688466006785035' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='25.481389' y1='73.241810' x2='58.262896' y2='82.757726' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
   <g transform='translate(41.872142 77.999768) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb60' fill='var(--kerykeion-chart-color-sextile)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Venus' kr:tooriginaldegrees='153.21541744298582' kr:from='Uranus' kr:fromoriginaldegrees='61.01733446447025' kr:orb='2.198082978515572' kr:aspectdegrees='90' kr:planetsdiff='92.19808297851557' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='25.481389' y1='73.241810' x2='27.715687' y2='24.608004' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Venus' kr:tooriginaldegrees='153.2154174488381' kr:from='Uranus' kr:fromoriginaldegrees='61.01733517634549' kr:orb='2.198082272492627' kr:aspectdegrees='90' kr:planetsdiff='92.19808227249263' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='25.481389' y1='73.241810' x2='27.715687' y2='24.608005' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
   <g transform='translate(26.598538 48.924907) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb90' fill='var(--kerykeion-chart-color-square)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Mars' kr:tooriginaldegrees='182.66253120621738' kr:from='Uranus' kr:fromoriginaldegrees='61.01733446447025' kr:orb='1.645196741747128' kr:aspectdegrees='120' kr:planetsdiff='121.64519674174713' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='40.075090' y1='82.293036' x2='27.715687' y2='24.608004' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
-  <g transform='translate(33.895389 53.450520) rotate(90) scale(0.45) translate(-5 -5)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Mars' kr:tooriginaldegrees='182.66253120641784' kr:from='Uranus' kr:fromoriginaldegrees='61.01733517634549' kr:orb='1.6451960300723556' kr:aspectdegrees='120' kr:planetsdiff='121.64519603007236' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='40.075090' y1='82.293036' x2='27.715687' y2='24.608005' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
+  <g transform='translate(33.895388 53.450520) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb120' fill='var(--kerykeion-chart-color-trine)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mars' kr:tooriginaldegrees='182.66253120621738' kr:from='Neptune' kr:fromoriginaldegrees='0.3272641091117937' kr:orb='2.3352670971056' kr:aspectdegrees='180' kr:planetsdiff='182.3352670971056' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mars' kr:tooriginaldegrees='182.66253120641784' kr:from='Neptune' kr:fromoriginaldegrees='0.3272641101080914' kr:orb='2.3352670963097353' kr:aspectdegrees='180' kr:planetsdiff='182.33526709630974' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='40.075090' y1='82.293036' x2='61.232506' y2='18.138191' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Mars' kr:tooriginaldegrees='182.66253120621738' kr:from='Pluto' kr:fromoriginaldegrees='301.37244479871254' kr:orb='1.2900864075048446' kr:aspectdegrees='120' kr:planetsdiff='118.70991359249516' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Mars' kr:tooriginaldegrees='182.66253120641784' kr:from='Pluto' kr:fromoriginaldegrees='301.3724447982019' kr:orb='1.2900864082159273' kr:aspectdegrees='120' kr:planetsdiff='118.70991359178407' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='40.075090' y1='82.293036' x2='83.090711' y2='43.191996' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
   <g transform='translate(61.582900 62.742516) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb120' fill='var(--kerykeion-chart-color-trine)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mars' kr:tooriginaldegrees='182.66253120621738' kr:from='Medium_Coeli' kr:fromoriginaldegrees='125.60618867622031' kr:orb='2.9436574700029325' kr:aspectdegrees='60' kr:planetsdiff='57.05634252999707' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mars' kr:tooriginaldegrees='182.66253120641784' kr:from='Medium_Coeli' kr:fromoriginaldegrees='125.60618867622031' kr:orb='2.9436574698024742' kr:aspectdegrees='60' kr:planetsdiff='57.056342530197526' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='40.075090' y1='82.293036' x2='17.502193' y2='59.232366' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
   <g transform='translate(28.788641 70.762701) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb60' fill='var(--kerykeion-chart-color-sextile)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Jupiter' kr:tooriginaldegrees='43.691884163900795' kr:from='Moon' kr:fromoriginaldegrees='46.4924499047502' kr:orb='2.800565740849379' kr:aspectdegrees='0' kr:planetsdiff='2.8005657408494073' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Jupiter' kr:tooriginaldegrees='43.69188414518579' kr:from='Moon' kr:fromoriginaldegrees='46.49245031761669' kr:orb='2.8005661724308766' kr:aspectdegrees='0' kr:planetsdiff='2.800566172430898' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='36.288467' y1='19.123830' x2='34.796245' y2='19.830647' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
   <g transform='translate(35.542356 19.477238) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb0' fill='var(--kerykeion-chart-color-conjunction)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Jupiter' kr:tooriginaldegrees='43.691884163900795' kr:from='Mars' kr:fromoriginaldegrees='221.55958159342495' kr:orb='2.1323025704758436' kr:aspectdegrees='180' kr:planetsdiff='177.86769742952416' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Jupiter' kr:tooriginaldegrees='43.69188414518579' kr:from='Mars' kr:fromoriginaldegrees='221.55958159201646' kr:orb='2.1323025531693247' kr:aspectdegrees='180' kr:planetsdiff='177.86769744683068' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='36.288467' y1='19.123830' x2='62.553226' y2='81.364958' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Saturn' kr:tooriginaldegrees='43.215020130719445' kr:from='Mars' kr:fromoriginaldegrees='221.55958159342495' kr:orb='1.6554385372944864' kr:aspectdegrees='180' kr:planetsdiff='178.3445614627055' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='36.545916' y1='19.010781' x2='62.553226' y2='81.364958' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Saturn' kr:tooriginaldegrees='43.21501948227801' kr:from='Mars' kr:fromoriginaldegrees='221.55958159201646' kr:orb='1.6554378902615667' kr:aspectdegrees='180' kr:planetsdiff='178.34456210973843' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='36.545917' y1='19.010781' x2='62.553226' y2='81.364958' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Uranus' kr:tooriginaldegrees='55.55201627283177' kr:from='Venus' kr:fromoriginaldegrees='174.33110860336984' kr:orb='1.2209076694619228' kr:aspectdegrees='120' kr:planetsdiff='118.77909233053808' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Uranus' kr:tooriginaldegrees='55.55201627519783' kr:from='Venus' kr:fromoriginaldegrees='174.33110860216044' kr:orb='1.2209076730374022' kr:aspectdegrees='120' kr:planetsdiff='118.77909232696261' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='30.235406' y1='22.601006' x2='35.500608' y2='80.514123' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Uranus' kr:tooriginaldegrees='55.55201627283177' kr:from='Jupiter' kr:fromoriginaldegrees='113.39317904772776' kr:orb='2.158837225104037' kr:aspectdegrees='60' kr:planetsdiff='57.841162774895984' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Uranus' kr:tooriginaldegrees='55.55201627519783' kr:from='Jupiter' kr:fromoriginaldegrees='113.39317903811055' kr:orb='2.158837237087255' kr:aspectdegrees='60' kr:planetsdiff='57.84116276291272' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='30.235406' y1='22.601006' x2='16.284610' y2='52.148613' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
   <g transform='translate(23.260008 37.374809) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb60' fill='var(--kerykeion-chart-color-sextile)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Uranus' kr:tooriginaldegrees='55.55201627283177' kr:from='Saturn' kr:fromoriginaldegrees='357.14715888883984' kr:orb='1.5951426160080473' kr:aspectdegrees='60' kr:planetsdiff='301.59514261600805' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Uranus' kr:tooriginaldegrees='55.55201627519783' kr:from='Saturn' kr:fromoriginaldegrees='357.1471583121761' kr:orb='1.5951420369782454' kr:aspectdegrees='60' kr:planetsdiff='301.59514203697825' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='30.235406' y1='22.601006' x2='62.982737' y2='18.810377' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
-  <g transform='translate(46.609071 20.705691) rotate(90) scale(0.45) translate(-5 -5)'>
+  <g transform='translate(46.609072 20.705691) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb60' fill='var(--kerykeion-chart-color-sextile)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Neptune' kr:tooriginaldegrees='176.03011997848986' kr:from='Venus' kr:fromoriginaldegrees='174.33110860336984' kr:orb='1.6990113751200226' kr:aspectdegrees='0' kr:planetsdiff='1.6990113751200226' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='36.411696' y1='80.930600' x2='35.500608' y2='80.514123' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
-  <g transform='translate(35.956152 80.722362) rotate(90) scale(0.45) translate(-5 -5)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Neptune' kr:tooriginaldegrees='176.03011913095156' kr:from='Venus' kr:fromoriginaldegrees='174.33110860216044' kr:orb='1.6990105287911206' kr:aspectdegrees='0' kr:planetsdiff='1.6990105287911206' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='36.411695' y1='80.930600' x2='35.500608' y2='80.514123' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
+  <g transform='translate(35.956152 80.722361) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb0' fill='var(--kerykeion-chart-color-conjunction)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Neptune' kr:tooriginaldegrees='176.03011997848986' kr:from='Jupiter' kr:fromoriginaldegrees='113.39317904772776' kr:orb='2.6369409307621083' kr:aspectdegrees='60' kr:planetsdiff='62.63694093076211' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='36.411696' y1='80.930600' x2='16.284610' y2='52.148613' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Neptune' kr:tooriginaldegrees='176.03011913095156' kr:from='Jupiter' kr:fromoriginaldegrees='113.39317903811055' kr:orb='2.636940092841016' kr:aspectdegrees='60' kr:planetsdiff='62.636940092841016' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='36.411695' y1='80.930600' x2='16.284610' y2='52.148613' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Neptune' kr:tooriginaldegrees='176.03011997848986' kr:from='Saturn' kr:fromoriginaldegrees='357.14715888883984' kr:orb='1.1170389103499758' kr:aspectdegrees='180' kr:planetsdiff='181.11703891034998' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='36.411696' y1='80.930600' x2='62.982737' y2='18.810377' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Neptune' kr:tooriginaldegrees='176.03011913095156' kr:from='Saturn' kr:fromoriginaldegrees='357.1471583121761' kr:orb='1.117039181224527' kr:aspectdegrees='180' kr:planetsdiff='181.11703918122453' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='36.411695' y1='80.930600' x2='62.982737' y2='18.810377' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Pluto' kr:tooriginaldegrees='124.18807957975115' kr:from='Mercury' kr:fromoriginaldegrees='213.90388345718347' kr:orb='0.28419612256766413' kr:aspectdegrees='90' kr:planetsdiff='89.71580387743232' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Pluto' kr:tooriginaldegrees='124.18807957843816' kr:from='Mercury' kr:fromoriginaldegrees='213.90388345562314' kr:orb='0.2841961228150467' kr:aspectdegrees='90' kr:planetsdiff='89.71580387718498' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='17.283662' y1='58.425277' x2='58.262896' y2='82.757726' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Pluto' kr:tooriginaldegrees='124.18807957975115' kr:from='Pluto' kr:fromoriginaldegrees='301.37244479871254' kr:orb='2.815634781038625' kr:aspectdegrees='180' kr:planetsdiff='177.18436521896137' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Pluto' kr:tooriginaldegrees='124.18807957843816' kr:from='Pluto' kr:fromoriginaldegrees='301.3724447982019' kr:orb='2.815634780236252' kr:aspectdegrees='180' kr:planetsdiff='177.18436521976375' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='17.283662' y1='58.425277' x2='83.090711' y2='43.191996' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Pluto' kr:tooriginaldegrees='124.18807957975115' kr:from='Medium_Coeli' kr:fromoriginaldegrees='125.60618867622031' kr:orb='1.418109096469152' kr:aspectdegrees='0' kr:planetsdiff='1.4181090964691663' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Pluto' kr:tooriginaldegrees='124.18807957843816' kr:from='Medium_Coeli' kr:fromoriginaldegrees='125.60618867622031' kr:orb='1.4181090977821214' kr:aspectdegrees='0' kr:planetsdiff='1.4181090977821498' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='17.283662' y1='58.425277' x2='17.502193' y2='59.232366' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
   <g transform='translate(17.392928 58.828821) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb0' fill='var(--kerykeion-chart-color-conjunction)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Chiron' kr:tooriginaldegrees='120.56821737880962' kr:from='Uranus' kr:fromoriginaldegrees='61.01733446447025' kr:orb='0.4491170856606317' kr:aspectdegrees='60' kr:planetsdiff='59.55088291433937' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='16.816992' y1='56.342873' x2='27.715687' y2='24.608004' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Chiron' kr:tooriginaldegrees='120.56821737336598' kr:from='Uranus' kr:fromoriginaldegrees='61.01733517634549' kr:orb='0.449117802979508' kr:aspectdegrees='60' kr:planetsdiff='59.55088219702049' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+  <line x1='16.816992' y1='56.342873' x2='27.715687' y2='24.608005' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Chiron' kr:tooriginaldegrees='120.56821737880962' kr:from='Neptune' kr:fromoriginaldegrees='0.3272641091117937' kr:orb='0.24095326969782604' kr:aspectdegrees='120' kr:planetsdiff='120.24095326969783' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Chiron' kr:tooriginaldegrees='120.56821737336598' kr:from='Neptune' kr:fromoriginaldegrees='0.3272641101080914' kr:orb='0.240953263257893' kr:aspectdegrees='120' kr:planetsdiff='120.2409532632579' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='16.816992' y1='56.342873' x2='61.232506' y2='18.138191' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
   <g transform='translate(39.024749 37.240532) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb120' fill='var(--kerykeion-chart-color-trine)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Chiron' kr:tooriginaldegrees='120.56821737880962' kr:from='Pluto' kr:fromoriginaldegrees='301.37244479871254' kr:orb='0.8042274199029293' kr:aspectdegrees='180' kr:planetsdiff='180.80422741990293' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Chiron' kr:tooriginaldegrees='120.56821737336598' kr:from='Pluto' kr:fromoriginaldegrees='301.3724447982019' kr:orb='0.8042274248359149' kr:aspectdegrees='180' kr:planetsdiff='180.80422742483591' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='16.816992' y1='56.342873' x2='83.090711' y2='43.191996' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
 </g>
