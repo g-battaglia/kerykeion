@@ -837,6 +837,7 @@ class TestMoonPhaseOverviewToContext:
         assert "<sun>" in context
         assert "</sun>" in context
         assert "<sunrise>2023-10-10T06:58:00+00:00</sunrise>" in context
+        assert "<sunset>2023-10-10T17:58:00+00:00</sunset>" in context
         # day_length renders as H:MM (shared format_timedelta_hhmm), consistent
         # with the report surface — not str(timedelta)'s H:MM:SS.
         assert "<day_length>11:00</day_length>" in context

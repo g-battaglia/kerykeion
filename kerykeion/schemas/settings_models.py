@@ -428,7 +428,7 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
         description="The natal house label in the chart, in the language",
     )
     house_position: str = Field(
-        default="Natal House",
+        default="House Position",
         title="House Position",
         description="The natal house position label in the chart, in the language",
     )

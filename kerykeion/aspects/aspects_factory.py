@@ -735,6 +735,9 @@ class AspectsFactory:
         if axis_orb_limit is None:
             return list(all_aspects)
 
+        if axis_orb_limit <= 0:
+            raise ValueError("axis_orb_limit must be a positive number when provided")
+
         for aspect in all_aspects:
             # Check if aspect involves any of the chart axes and apply stricter orb limits
             aspect_involves_axes = aspect.p1_name in AXES_LIST or aspect.p2_name in AXES_LIST

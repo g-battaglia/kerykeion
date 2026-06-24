@@ -664,7 +664,10 @@ def format_timedelta_hhmm(td: timedelta) -> str:
     duration (e.g. the Sun's day length) in the same ``H:MM`` form rather than
     diverging into ``str(timedelta)`` (``H:MM:SS``).
     """
-    total_minutes = int(round(td.total_seconds() / 60))
+    # Half-up rounding to whole minutes (callers always pass non-negative
+    # durations); avoids round()'s ties-to-even, which would render e.g. 0:30 as
+    # 0:00 and 2:30 as 0:02.
+    total_minutes = int(td.total_seconds() + 30) // 60
     return f"{total_minutes // 60}:{total_minutes % 60:02d}"
 
 

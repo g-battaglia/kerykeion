@@ -903,8 +903,13 @@ class TestAxisOrbFilter:
         assert filtered_non_axis == unfiltered_non_axis
 
     def test_axis_orb_none_disables_filter(self, _subject):
-        aspects = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=None)
-        assert aspects is not None
+        unfiltered = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=None).aspects
+        axis_aspects, _ = self._split_axis(unfiltered)
+        assert axis_aspects, "expected the subject to contain axis aspects"
+        # A finite limit at/below the widest axis orb drops some; None keeps all.
+        limit = max(abs(a.orbit) for a in axis_aspects)
+        filtered = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=limit).aspects
+        assert len(filtered) < len(unfiltered)
 
     def test_axis_orb_filters_dual_chart(self, _subject, _subject2):
         """axis_orb_limit now also filters dual-chart (synastry) aspects (was a no-op)."""

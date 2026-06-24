@@ -299,8 +299,10 @@ def ephemeris_session(
         zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. When sidereal,
             ``FLG_SIDEREAL`` is OR-ed into the yielded iflag and the sidereal
             mode is configured on the backend.
-        sidereal_mode: Named ayanamsa (e.g. ``"LAHIRI"``) or ``"USER"``.
-            Defaults to ``"FAGAN_BRADLEY"`` when ``zodiac_type`` is sidereal.
+        sidereal_mode: Named ayanamsa (e.g. ``"LAHIRI"``) or ``"USER"``. Raw
+            callers that leave it unset fall back to the shared
+            ``DEFAULT_SIDEREAL_MODE`` (currently ``"FAGAN_BRADLEY"``) when
+            ``zodiac_type`` is sidereal.
         custom_ayanamsa_t0: Reference epoch (JD) for ``sidereal_mode="USER"``.
         custom_ayanamsa_ayan_t0: Ayanamsa value (degrees) at ``t0`` for
             ``sidereal_mode="USER"``.

@@ -896,7 +896,7 @@ def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", 
     # Ensure the input is a float
     dec = float(dec)
 
-    # All three formats floor (toward −∞) the displayed unit via math.floor/divmod.
+    # All three formats floor (toward negative infinity) the displayed unit via math.floor/divmod.
     # Flooring is consistent across formats (a within-sign 29.9999° reads "29°" in
     # format "1" and "29°59'59\"" in format "3", never an out-of-sign "30°00'00\""),
     # avoids the malformed negative fields int() produced ("-5°-30'", a truncation

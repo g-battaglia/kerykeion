@@ -617,7 +617,16 @@ class MoonPhaseDetailsFactory:
             if sun_times is not None:
                 sunrise_local, sunset_local = sun_times
                 # Solar noon as the midpoint between sunrise and sunset.
-                solar_noon_local = sunrise_local + (sunset_local - sunrise_local) / 2
+                midpoint = sunrise_local + (sunset_local - sunrise_local) / 2
+                # pytz keeps sunrise's offset across arithmetic; normalize so
+                # solar_noon carries the correct local offset on DST-transition days
+                # (the instant is already correct, only the wall-clock representation
+                # could otherwise be off). hasattr guards non-pytz tzinfo defensively.
+                solar_noon_local = (
+                    sunrise_local.tzinfo.normalize(midpoint)
+                    if hasattr(sunrise_local.tzinfo, "normalize")
+                    else midpoint
+                )
                 day_length = sunset_local - sunrise_local
         except RuntimeError as exc:
             # Expected error: polar regions, ephemeris unavailable, etc.

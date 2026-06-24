@@ -30,7 +30,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from datetime import datetime, timedelta
 from typing import Union, Optional, Literal
 from typing_extensions import TypedDict
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from kerykeion.schemas.kr_literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
 
 from kerykeion.schemas import (
@@ -152,6 +152,18 @@ class MoonPhaseSunInfoModel(SubscriptableBaseModel):
     day_length: Optional[timedelta] = None
     position: Optional[MoonPhaseSunPositionModel] = None
     next_solar_eclipse: Optional[MoonPhaseSolarEclipseModel] = None
+
+    @field_validator("sunrise", "sunset", "solar_noon")
+    @classmethod
+    def _require_aware(cls, v: Optional[datetime]) -> Optional[datetime]:
+        """Enforce the documented timezone-aware (subject-local) contract.
+
+        The annotation stays ``Optional[datetime]`` so ``get_type_hints()`` /
+        FastAPI schema introspection is unaffected; only naive values are rejected.
+        """
+        if v is not None and v.tzinfo is None:
+            raise ValueError("sun times must be timezone-aware datetimes")
+        return v
 
 
 class MoonPhaseZodiacModel(SubscriptableBaseModel):

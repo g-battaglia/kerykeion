@@ -992,7 +992,7 @@ class TransitChartRenderer(BaseChartRenderer):
                     "house_position_comparison", "House Position Comparison"
                 ),
                 return_point_label=self._comparison_return_point_label(),
-                natal_house_label=self._translate("house_position", "Natal House"),
+                natal_house_label=self._translate("house_position", "House Position"),
                 x_position=d._TRANSIT_HOUSE_COMPARISON_X,
             )
 
@@ -2655,7 +2655,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             if self.show_house_position_comparison or self.show_cusp_position_comparison:
                 transit_columns = [
                     comparison_label,
-                    self._translate("house_position", "Natal House"),
+                    self._translate("house_position", "House Position"),
                 ]
                 transit_grid_width = self._estimate_house_comparison_grid_width(
                     column_labels=transit_columns,
@@ -3328,7 +3328,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 if self.show_house_position_comparison or self.show_cusp_position_comparison:
                     transit_columns = [
                         comparison_label,
-                        self._translate("house_position", "Natal House"),
+                        self._translate("house_position", "House Position"),
                     ]
                     transit_grid_width = self._estimate_house_comparison_grid_width(
                         column_labels=transit_columns,
