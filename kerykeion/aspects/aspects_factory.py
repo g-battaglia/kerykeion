@@ -23,7 +23,7 @@ from kerykeion.schemas.kr_models import (
     DualChartAspectsModel,
 )
 from kerykeion.schemas.kr_literals import AstrologicalPoint, AspectMovementType
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, AXIAL_POINTS
 from kerykeion.settings.chart_defaults import (
     DEFAULT_CELESTIAL_POINTS_SETTINGS,
     DEFAULT_CHART_ASPECTS_SETTINGS,
@@ -33,13 +33,9 @@ from kerykeion.utilities import find_common_active_points
 
 logger = logging.getLogger(__name__)
 
-# Axes constants for orb filtering
-AXES_LIST = [
-    "Ascendant",
-    "Medium_Coeli",
-    "Descendant",
-    "Imum_Coeli",
-]
+# Axes used for orb filtering. Alias the codebase-wide single source of truth
+# (AXIAL_POINTS) so the axis set can never drift from the rest of the package.
+AXES_LIST = AXIAL_POINTS
 
 # Geometrically locked opposite pairs, derived from the subject factory's
 # OPPOSITE_PAIRS mapping (each derived point is rigidly primary + 180°).
