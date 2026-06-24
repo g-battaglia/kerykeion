@@ -356,7 +356,6 @@ class AspectsFactory:
         filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
             axis_orb_limit,
-            apply_axis_orb_filter=axis_orb_limit is not None,
         )
 
         return SingleChartAspectsModel(
@@ -413,7 +412,6 @@ class AspectsFactory:
         filtered_aspects = AspectsFactory._filter_relevant_aspects(
             all_aspects,
             axis_orb_limit,
-            apply_axis_orb_filter=axis_orb_limit is not None,
         )
 
         return DualChartAspectsModel(
@@ -719,8 +717,6 @@ class AspectsFactory:
     def _filter_relevant_aspects(
         all_aspects: List[AspectModel],
         axis_orb_limit: Optional[float],
-        *,
-        apply_axis_orb_filter: bool,
     ) -> List[AspectModel]:
         """
         Filter aspects based on orb thresholds for axes and comprehensive criteria.
@@ -730,8 +726,8 @@ class AspectsFactory:
 
         Args:
             all_aspects: Complete list of calculated aspects
-            axis_orb_limit: Optional orb threshold for axes aspects
-            apply_axis_orb_filter: Whether to apply the axis-specific orb filtering logic
+            axis_orb_limit: Optional orb threshold for axes aspects; when None, no
+                axis-specific filtering is applied and all aspects are returned.
 
         Returns:
             Filtered list of relevant aspects
@@ -740,7 +736,7 @@ class AspectsFactory:
 
         relevant_aspects = []
 
-        if not apply_axis_orb_filter or axis_orb_limit is None:
+        if axis_orb_limit is None:
             return list(all_aspects)
 
         for aspect in all_aspects:
