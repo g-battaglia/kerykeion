@@ -3806,10 +3806,17 @@ class ChartDrawer:  # type: ignore[no-redef]
         back to the standard radix cusp color when an axis is missing.
         """
         fallback = self.chart_colors_settings["houses_radix_line"]
-        # Use `or fallback` (not get's default) so an entry that explicitly carries
+        # Collect only the four axis colors by name (not the whole ~40-entry
+        # planets_settings list) — this runs once per chart render. Use
+        # `or fallback` (not get's default) so an entry that explicitly carries
         # color=None (or "") still resolves to the standard cusp color instead of
         # emitting an invalid `stroke:None` into the SVG.
-        color_by_name = {p.get("name"): (p.get("color") or fallback) for p in self.planets_settings}
+        _axis_names = ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")
+        color_by_name = {
+            name: (p.get("color") or fallback)
+            for p in self.planets_settings
+            if (name := p.get("name")) in _axis_names
+        }
         return (
             color_by_name.get("Ascendant", fallback),
             color_by_name.get("Medium_Coeli", fallback),

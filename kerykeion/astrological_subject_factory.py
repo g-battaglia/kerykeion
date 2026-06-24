@@ -646,7 +646,7 @@ class AstrologicalSubjectFactory:
             sidereal_mode (SiderealMode, optional): Sidereal calculation mode (e.g.,
                 'FAGAN_BRADLEY', 'LAHIRI'). Only used with zodiac_type='Sidereal'.
             houses_system_identifier (HousesSystemIdentifier, optional): House system
-                for cusp calculations (e.g., 'P'=Placidus, 'K'=Koch, 'E'=Equal).
+                for cusp calculations (e.g., 'P'=Placidus, 'K'=Koch, 'A'=Equal).
                 Defaults to 'P' (Placidus).
             perspective_type (PerspectiveType, optional): Calculation perspective:
                 - 'Apparent Geocentric': Standard geocentric with light-time correction
