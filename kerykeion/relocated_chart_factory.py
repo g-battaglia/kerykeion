@@ -37,7 +37,7 @@ from kerykeion.utilities import (
     format_ancient_iso,
     get_kerykeion_point_from_degree,
     get_planet_house,
-    _next_proleptic_julian_day,
+    _split_decimal_hour_with_carry,
 )
 
 _AXIAL_POINTS_SET: frozenset[str] = frozenset(AXIAL_POINTS)
@@ -76,23 +76,21 @@ class RelocatedChartFactory:
             jd_local = julian_day + lmt_offset_hours / 24.0
             loc_year, loc_month, loc_day, loc_dec_hour = ephe.revjul(jd_local, ephe.JUL_CAL)
             loc_year, loc_month, loc_day = int(loc_year), int(loc_month), int(loc_day)
-            # Derive the integer h/m/s with the SAME round-to-nearest-second and
-            # day-carry that format_ancient_iso applies internally, so the integer
-            # fields and the ISO string stay consistent (int() truncation would
+            # Decompose the integer h/m/s with the SAME shared helper that
+            # format_ancient_iso uses, so the stored fields and the ISO string can
+            # never drift apart at a second boundary (int() truncation would
             # otherwise lag the rounded string by up to ~1s near a boundary).
             # NOTE: format_ancient_iso performs its own carry, so it must receive
             # the ORIGINAL (un-carried) date; only the stored integer fields advance.
-            total_seconds = round(loc_dec_hour * 3600)
-            field_year, field_month, field_day = loc_year, loc_month, loc_day
-            if total_seconds >= 86400:
-                total_seconds -= 86400
-                field_year, field_month, field_day = _next_proleptic_julian_day(loc_year, loc_month, loc_day)
+            field_year, field_month, field_day, field_hour, field_minute, field_seconds = (
+                _split_decimal_hour_with_carry(loc_year, loc_month, loc_day, loc_dec_hour)
+            )
             relocated_data["year"] = field_year
             relocated_data["month"] = field_month
             relocated_data["day"] = field_day
-            relocated_data["hour"] = total_seconds // 3600
-            relocated_data["minute"] = (total_seconds % 3600) // 60
-            relocated_data["seconds"] = total_seconds % 60
+            relocated_data["hour"] = field_hour
+            relocated_data["minute"] = field_minute
+            relocated_data["seconds"] = field_seconds
             relocated_data["iso_formatted_local_datetime"] = format_ancient_iso(
                 loc_year, loc_month, loc_day, loc_dec_hour, lmt_offset_hours
             )

@@ -688,6 +688,28 @@ def _next_proleptic_julian_day(year: int, month: int, day: int) -> tuple[int, in
     return year, month, day
 
 
+def _split_decimal_hour_with_carry(
+    year: int, month: int, day: int, decimal_hour: float
+) -> tuple[int, int, int, int, int, int]:
+    """Decompose ``decimal_hour`` into integer ``(year, month, day, h, m, s)``.
+
+    Rounds to the nearest second (the BCE path feeds a float from ``ephe.revjul``
+    that is almost never an exact integer, so truncating each component lost up to
+    ~1 second) and carries a value within ~0.5 s of midnight (rounds to 86400)
+    into the next proleptic-Julian day, so the result can never contain an invalid
+    24:00:00 or a misdated 23:59:59.
+
+    Shared by :func:`format_ancient_iso` and the BCE branch of
+    ``RelocatedChartFactory`` so the stored integer h/m/s fields and the ISO
+    string can never drift apart at a second boundary.
+    """
+    total_seconds = round(decimal_hour * 3600)
+    if total_seconds >= 86400:
+        total_seconds -= 86400
+        year, month, day = _next_proleptic_julian_day(year, month, day)
+    return year, month, day, total_seconds // 3600, (total_seconds % 3600) // 60, total_seconds % 60
+
+
 def format_ancient_iso(year: int, month: int, day: int, decimal_hour: float, utc_offset_hours: float) -> str:
     """Format a date with potentially negative year as an ISO 8601 extended-year string.
 
@@ -704,19 +726,9 @@ def format_ancient_iso(year: int, month: int, day: int, decimal_hour: float, utc
     Returns:
         ISO 8601 formatted string with extended year.
     """
-    # Round to the nearest second rather than truncating each component: the BCE
-    # path feeds a float from ephe.revjul (e.g. 11.166906667... h) that is almost
-    # never an exact integer, so truncating lost up to ~1 second. A value within
-    # ~0.5 s of midnight rounds to 86400 (24:00:00); carry it into the next day so
-    # we emit 00:00:00 of the following date instead of an invalid hour or a
-    # misdated 23:59:59.
-    total_seconds = round(decimal_hour * 3600)
-    if total_seconds >= 86400:
-        total_seconds -= 86400
-        year, month, day = _next_proleptic_julian_day(year, month, day)
-    h = total_seconds // 3600
-    m = (total_seconds % 3600) // 60
-    s = total_seconds % 60
+    # Round to the nearest second (with midnight day-carry) via the shared helper
+    # so this and the BCE branch of RelocatedChartFactory decompose identically.
+    year, month, day, h, m, s = _split_decimal_hour_with_carry(year, month, day, decimal_hour)
 
     # ISO 8601 extended year: negative sign for years <= 0
     year_str = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
