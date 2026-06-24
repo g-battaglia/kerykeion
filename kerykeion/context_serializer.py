@@ -109,9 +109,10 @@ def _serialize_active_config(chart_data, lines: list[str]) -> None:
     """Append active_points and active_aspects serialization to *lines*."""
     lines.append(f"  {_el('active_points', ', '.join(chart_data.active_points))}")
     # Drop the "(orb)" suffix when orb is absent rather than rendering the literal
-    # string "None"; omit nameless entries entirely.
+    # string "None"; omit nameless entries entirely. The `if a.get("name")` filter
+    # guarantees a truthy name in the body, so index directly instead of re-defaulting.
     active_aspects_str = ", ".join(
-        f"{a.get('name', '')} ({a['orb']})" if a.get("orb") is not None else a.get("name", "")
+        f"{a['name']} ({a['orb']})" if a.get("orb") is not None else a["name"]
         for a in chart_data.active_aspects
         if a.get("name")
     )
