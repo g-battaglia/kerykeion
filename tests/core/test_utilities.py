@@ -854,12 +854,20 @@ class TestConvertDecimalToDegreeString:
         assert convert_decimal_to_degree_string(10.99, "1") == "10°"
         assert convert_decimal_to_degree_string(10.99, "2") == "10°59'"
 
-    def test_seconds_never_sixty_carries_up(self):
-        """Regression: rounding seconds to 60 must carry into minutes/degrees
-        instead of emitting an invalid 60\"."""
+    def test_format_three_floors_without_overshooting(self):
+        """Format "3" floors to the second: it never emits an invalid 60\" and
+        never overshoots the sign boundary (consistent with format "1"/"2")."""
+        # Just under a whole degree: floors down, no carry into the next degree.
         result = convert_decimal_to_degree_string(10.99997, "3")
-        assert result == "11°00'00\""
+        assert result == "10°59'59\""
         assert "60\"" not in result
+
+    def test_format_three_stays_within_sign_at_boundary(self):
+        """A within-sign position just below 30° must read "29°59'59\"", not the
+        out-of-sign "30°00'00\"" the old rounding produced — and must agree with
+        format "1" which floors to "29°"."""
+        assert convert_decimal_to_degree_string(29.9999, "3") == "29°59'59\""
+        assert convert_decimal_to_degree_string(29.9999, "1") == "29°"
 
     def test_no_invalid_sixty_across_sampled_boundaries(self):
         for deg in (9, 14, 29, 59):

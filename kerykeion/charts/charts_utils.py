@@ -896,20 +896,21 @@ def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", 
     # Ensure the input is a float
     dec = float(dec)
 
-    # Formats "1" and "2" floor (toward −∞) the displayed unit via math.floor/
-    # divmod; format "3" rounds to the nearest second and carries overflow. All
-    # three avoid the malformed negative fields int() produced ("-5°-30'", a
-    # truncation toward zero) and never emit an out-of-range minute/second.
+    # All three formats floor (toward −∞) the displayed unit via math.floor/divmod.
+    # Flooring is consistent across formats (a within-sign 29.9999° reads "29°" in
+    # format "1" and "29°59'59\"" in format "3", never an out-of-sign "30°00'00\""),
+    # avoids the malformed negative fields int() produced ("-5°-30'", a truncation
+    # toward zero), and never emits an out-of-range 60' or 60".
     if format_type == "1":
         return f"{math.floor(dec)}°"
     elif format_type == "2":
         degrees, minutes = divmod(math.floor(dec * 60), 60)
         return f"{degrees}°{minutes:02d}'"
     else:  # format_type == "3" (default) — always return a str matching the annotation
-        # Round to the nearest second and carry any overflow up through minutes
-        # and degrees via divmod, so the result can never contain an invalid
-        # 60" (e.g. 10.99997° -> "11°00'00\"" instead of "10°59'60\"").
-        total_seconds = round(dec * 3600)
+        # Floor to the second and carry via divmod, so the result can never contain
+        # an invalid 60" nor overshoot the sign boundary (e.g. 29.9999° ->
+        # "29°59'59\"", not "30°00'00\"").
+        total_seconds = math.floor(dec * 3600)
         d, rem = divmod(total_seconds, 3600)
         m, s = divmod(rem, 60)
         return f"{d}°{m:02d}'{s:02d}\""
