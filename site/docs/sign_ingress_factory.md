@@ -46,11 +46,23 @@ Same as above with Julian Day (UT) bounds. **Raises** `KerykeionException` if th
 
 ### `SignIngressesCollectionModel`
 
-| Field       | Type | Description                          |
-| :---------- | :--- | :---------------------------------- |
-| `ingresses` | list | Chronologically ordered ingresses.  |
+| Field       | Type | Description                        |
+| :---------- | :--- | :--------------------------------- |
+| `ingresses` | list | Chronologically ordered ingresses. |
 
-Each ingress item exposes `iso_utc` (ISO 8601 UTC datetime of the exact ingress), `planet`, and `sign` (the sign being entered).
+Each ingress item has:
+
+| Field                | Type  | Description                                          |
+| :------------------- | :---- | :-------------------------------------------------- |
+| `planet`             | str   | Planet making the ingress.                          |
+| `sign`               | str   | Sign being entered.                                 |
+| `from_sign`          | str   | Sign being left.                                    |
+| `sign_num`           | int   | Index of the entered sign (0–11).                   |
+| `from_sign_num`      | int   | Index of the previous sign (0–11).                  |
+| `retrograde`         | bool  | Whether the planet was retrograde at the ingress.   |
+| `iso_utc`            | str   | ISO 8601 UTC datetime of the exact ingress.         |
+| `julian_day`         | float | Julian Day (UT) of the ingress.                     |
+| `ecliptic_longitude` | float | Absolute ecliptic longitude (0–360) at the ingress. |
 
 ---
 

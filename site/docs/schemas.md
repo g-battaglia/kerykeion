@@ -781,10 +781,12 @@ Supported language codes for chart labels.
 
 Types of planetary returns supported.
 
-| Value     | Description                                           |
-| :-------- | :---------------------------------------------------- |
-| `"Solar"` | Sun returns to natal position; annual birthday chart. |
-| `"Lunar"` | Moon returns to natal position; monthly cycle chart.  |
+| Value                   | Description                                                              |
+| :---------------------- | :--------------------------------------------------------------------- |
+| `"Solar"`               | Sun returns to natal position; annual birthday chart.                  |
+| `"Lunar"`               | Moon returns to natal position; monthly cycle chart.                   |
+| `"Heliocentric"`        | A planet returns to its natal heliocentric longitude (not Sun/Moon).   |
+| `"Lunar_Node_Crossing"` | The Moon crosses its own node (ecliptic latitude = 0).                 |
 
 ---
 

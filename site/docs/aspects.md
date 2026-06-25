@@ -142,6 +142,24 @@ Apply stricter orbs when angles (Ascendant, MC) are involved.
 aspects = AspectsFactory.single_chart_aspects(subject, axis_orb_limit=2.0)
 ```
 
+#### Per-point Orbs (`point_orb_adjustments`)
+
+Widen or tighten the orb for specific points (for example, give the luminaries a
+larger orb). `point_orb_adjustments` maps a point name to an orb value, and
+`point_orb_adjustment_strategy` (default `"max_explicit"`) controls how the two
+endpoints' adjustments combine.
+
+```python
+# Give the Sun and Moon a wider 10° orb; all other points keep their defaults.
+aspects = AspectsFactory.single_chart_aspects(
+    subject,
+    point_orb_adjustments={"Sun": 10.0, "Moon": 10.0},
+)
+```
+
+A built-in preset, `DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` (luminary widening), is
+available in `kerykeion.settings.config_constants`.
+
 ## Return Data Structure
 
 The factory returns a `SingleChartAspectsModel` (for single charts) or `DualChartAspectsModel` (for dual charts) containing a list of `AspectModel` objects.

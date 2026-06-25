@@ -175,7 +175,7 @@ Every point listed above (53 total). Dynamic fixed stars found via `FixedStarDis
 
 ### `DEFAULT_ACTIVE_ASPECTS`
 
-Conjunction (orb: 6), Opposition (orb: 6), Trine (orb: 6), Square (orb: 6), Sextile (orb: 5), Quintile (orb: 2). Luminary widening (+1.5° for Sun/Moon) is applied separately via per-point orb adjustments.
+Conjunction (orb: 6), Opposition (orb: 6), Trine (orb: 6), Square (orb: 6), Sextile (orb: 5). Luminary widening (+1.5° for Sun/Moon) is applied separately via per-point orb adjustments.
 
 ### `ALL_ACTIVE_ASPECTS`
 

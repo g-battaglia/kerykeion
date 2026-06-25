@@ -8,7 +8,7 @@ order: 49
 
 # Occultation Factory
 
-The `OccultationFactory` searches for **lunar occultations** -- events where the Moon passes in front of a planet or star as seen from Earth. It wraps the Swiss Ephemeris functions for both global and location-specific searches.
+The `OccultationFactory` searches for **lunar occultations** -- events where the Moon passes in front of a planet or star as seen from Earth. It wraps the ephemeris backend's occultation functions (libephemeris by default) for both global and location-specific searches.
 
 ## Basic Usage
 
@@ -35,7 +35,7 @@ Find occultations visible from anywhere on Earth.
 | Parameter    | Type  | Default | Description                                      |
 | :----------- | :---- | :------ | :----------------------------------------------- |
 | `julian_day` | float | --      | Starting Julian Day (UT) for the search          |
-| `planet_id`  | int   | --      | Swiss Ephemeris planet identifier (e.g. `swe.VENUS`) |
+| `planet_id`  | int   | --      | Planet identifier (swe-style constant, e.g. `swe.VENUS`) |
 | `count`      | int   | 5       | Number of events to return                       |
 
 **Returns:** `List[OccultationModel]`
@@ -47,7 +47,7 @@ Find occultations visible from a specific location.
 | Parameter    | Type  | Default | Description                                      |
 | :----------- | :---- | :------ | :----------------------------------------------- |
 | `julian_day` | float | --      | Starting Julian Day (UT) for the search          |
-| `planet_id`  | int   | --      | Swiss Ephemeris planet identifier                |
+| `planet_id`  | int   | --      | Planet identifier (swe-style constant)           |
 | `lat`        | float | --      | Geographic latitude (north positive)             |
 | `lng`        | float | --      | Geographic longitude (east positive)             |
 | `count`      | int   | 5       | Number of events to return                       |

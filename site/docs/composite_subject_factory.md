@@ -8,7 +8,7 @@ order: 7
 
 # Composite Subject Factory
 
-The `CompositeSubjectFactory` creates a new astrological subject representing the relationship between two people using the **Midpoint Method**. The resulting chart represents the relationship itself as a third entity.
+The `CompositeSubjectFactory` creates a new astrological subject representing the relationship between two people, using either the **Midpoint Method** (averaging the two charts' positions) or the **Davison Method** (the time-space midpoint, cast as a real chart). The resulting chart represents the relationship itself as a third entity.
 
 ## What Is a Composite Chart?
 
@@ -103,11 +103,25 @@ KerykeionException: Both subjects must have the same houses system name
 KerykeionException: Both subjects must have the same perspective type
 ```
 
+## Davison Composite (Time-Space Midpoint)
+
+The **Davison** method is fundamentally different from the midpoint composite: instead of averaging the two charts' planetary positions, it averages the two birth **moments** (in time) and the two **locations** (in space), then casts a *real* natal chart for that derived date and place. The result therefore has valid astronomical positions that actually occurred — it is a real chart, not an averaged abstraction.
+
+```python
+# Using the `composite_factory` from the Basic Usage example above:
+davison = composite_factory.get_davison_composite_subject_model()
+
+print(davison.composite_chart_type)               # "Davison"
+print(davison.sun.sign, f"{davison.sun.abs_pos:.2f}°")
+```
+
+When the input subjects use `sidereal_mode="USER"`, pass `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` to `get_davison_composite_subject_model()` so the Davison chart is built with the same ayanamsa. The return value is a `CompositeSubjectModel` with `composite_chart_type="Davison"`.
+
 ## Methodology
 
-- **Midpoints**: Positions are calculated as the shortest arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°).
-- **House Cusps**: House cusps are also calculated by midpoint.
-- **Active Points**: Only points present in _both_ input subjects are included in the composite.
+- **Midpoint method**: Positions are calculated as the shortest-arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°); house cusps are also taken by midpoint. Only points present in _both_ input subjects are included.
+- **Davison method**: The two birth moments (Julian Day) and the two locations (lat/lng) are averaged, then a standard natal chart is cast for that derived moment and place.
+- **Active Points**: For the midpoint composite, only points present in _both_ input subjects are included.
 
 ---
 

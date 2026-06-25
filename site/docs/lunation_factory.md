@@ -46,11 +46,19 @@ Same as above but with Julian Day (UT) bounds. **Raises** `KerykeionException` i
 
 ### `LunationsCollectionModel`
 
-| Field        | Type   | Description                       |
-| :----------- | :----- | :------------------------------- |
+| Field        | Type   | Description                        |
+| :----------- | :----- | :-------------------------------- |
 | `lunations`  | list   | Chronologically ordered lunations. |
 
-Each lunation item exposes `iso_utc` (ISO 8601 UTC datetime of the exact phase) and `phase`.
+Each lunation item has:
+
+| Field        | Type  | Description                                             |
+| :----------- | :---- | :----------------------------------------------------- |
+| `phase`      | str   | `new` / `first_quarter` / `full` / `last_quarter`.    |
+| `iso_utc`    | str   | ISO 8601 UTC datetime of the exact phase.             |
+| `julian_day` | float | Julian Day (UT) of the exact phase.                   |
+| `sun`        | object | Sun position (sign + longitude) at the lunation.     |
+| `moon`       | object | Moon position (sign + longitude) at the lunation.    |
 
 ---
 

@@ -1212,15 +1212,26 @@ print(dual_chart_result.aspects[0])
 **Advanced Usage with Custom Settings:**
 
 ```python
-# You can also customize aspect calculations with custom orb settings
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
-# Modify aspect settings if needed
-custom_aspects = DEFAULT_ACTIVE_ASPECTS.copy()
-# ... modify as needed
+subject = AstrologicalSubjectFactory.from_birth_data("Jane", 1990, 6, 15, 12, 0, "Rome", "IT")
 
-# The factory automatically uses the configured settings for orb calculations
-# and filters aspects based on relevance and orb thresholds
+# Custom aspect set with explicit per-aspect orbs (a list of {name, orb} dicts):
+custom_aspects = [
+    {"name": "conjunction", "orb": 3},
+    {"name": "opposition", "orb": 3},
+    {"name": "trine", "orb": 3},
+    {"name": "square", "orb": 3},
+    {"name": "sextile", "orb": 2},
+]
+aspects = AspectsFactory.single_chart_aspects(subject, active_aspects=custom_aspects)
+
+# Tighten the orb when an angle (Asc/MC) is involved, or widen specific points:
+aspects = AspectsFactory.single_chart_aspects(
+    subject,
+    axis_orb_limit=2.0,
+    point_orb_adjustments={"Sun": 10.0, "Moon": 10.0},
+)
 ```
 
 **📖 Configuration options: [Settings Documentation](https://www.kerykeion.net/content/docs/settings)**
@@ -1731,7 +1742,7 @@ print(overview.model_dump_json(exclude_none=True, indent=2))
 
 ## Timing Factories
 
-Three lightweight, subject-free factories built directly on the ephemeris backend (no full `AstrologicalSubject` is constructed). Times are returned as timezone-aware UTC datetimes.
+Six lightweight factories that work directly from dates/locations (no full `AstrologicalSubject` is constructed). Times are returned as timezone-aware UTC datetimes.
 
 ### Sun Times
 
@@ -1790,14 +1801,14 @@ fulls = LunationFinderFactory.from_iso_range("2026-01-01", "2026-12-31", phases=
 
 ### Retrograde Stations
 
-`RetrogradeStationFactory` finds planetary stations (retrograde / direct turning points) in a date range (Mercury–Pluto by default).
+`RetrogradeStationFactory` finds planetary stations (retrograde and direct turning points) in a date range (Mercury–Pluto by default).
 
 ```python
 from kerykeion import RetrogradeStationFactory
 
 result = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31")
 for station in result.stations:
-    print(station.iso_utc, station.planet, station.station_type)  # station_type: retrograde / direct
+    print(station.iso_utc, station.planet, station.station_type)  # station_type: 'SR' (turns retrograde) / 'SD' (turns direct)
 ```
 
 ### Sign Ingresses

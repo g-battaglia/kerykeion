@@ -22,6 +22,22 @@
   migration stub to "v4/v5 → v6", reduced `RELEASE_NOTES.md` to a pointer at this
   changelog, marked `REFACTORY.md` as an internal/historical note, and expanded the
   `AstrologicalBaseModel` docstring to describe the computed celestial/house fields.
+- **Second documentation review — expansion & corrections** (docs only). Documented
+  the `PlanetaryReturnFactory` **heliocentric returns** and **lunar-node crossings**
+  (8 entrypoints the page previously advertised but did not cover) and added
+  `Heliocentric` / `Lunar_Node_Crossing` to the `ReturnType` reference; documented the
+  **Davison** time-space composite on the Composite Subject Factory page and
+  `SolarArcFactory.compute_directed_subject` (biwheel-ready directed chart); added
+  per-point custom-orb docs (`point_orb_adjustments`) and a runnable custom-aspects
+  README example; documented `DominantsFactory.available_methods()`. Filled out the
+  result-model field tables for the Lunation/Retrograde/Sign-ingress finders and the
+  Dominants/Zodiacal-Releasing models. Fixed regressions from the first pass:
+  `station_type` values are **`"SR"`/`"SD"`** (not "retrograde"/"direct"), removed the
+  leftover Quintile from the default-aspect listing in `constants.md`/`settings.md`,
+  and corrected the README "Timing Factories" count (six, not three). Reframed
+  remaining "Swiss Ephemeris"-as-engine wording (eclipse/occultation/planetary-return)
+  to backend-neutral, and surfaced the Swiss Ephemeris configuration page in the docs
+  nav.
 
 ## 6.0.0a60
 

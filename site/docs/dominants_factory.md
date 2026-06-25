@@ -61,6 +61,10 @@ Compute the dominants of an already-calculated subject.
 
 A thin convenience over `from_subject` that first builds the subject from birth data (extra keyword args such as `lat`, `lng`, `tz_str`, `city`, `nation`, `online` are forwarded to `AstrologicalSubjectFactory`).
 
+### `available_methods()`
+
+Returns the sorted list of built-in strategy identifiers: `["almuten_figuris", "elemental", "modern"]`. Useful for building selectors or validating user input.
+
 ## Data Model
 
 ### `DominantsModel`
@@ -73,11 +77,18 @@ A thin convenience over `from_subject` that first builds the subject from birth 
 | `signs`             | list            | Ranked sign dominants.                                  |
 | `elements`          | list            | Ranked element dominants (Fire/Earth/Air/Water).        |
 | `qualities`         | list            | Ranked mode/quality dominants (Cardinal/Fixed/Mutable). |
+| `houses`            | list            | Ranked house dominants.                                 |
+| `polarities`        | list            | Ranked polarity dominants (Yang/Yin, i.e. masculine/feminine). |
+| `hemispheres`       | list            | Ranked hemisphere dominants (N/S, E/W).                 |
+| `quadrants`         | list            | Ranked quadrant dominants.                              |
 | `dominant_planet`   | str or None     | Convenience winner of `planets`.                        |
 | `dominant_sign`     | str or None     | Convenience winner of `signs`.                          |
 | `dominant_element`  | str or None     | Convenience winner of `elements`.                       |
 | `dominant_quality`  | str or None     | Convenience winner of `qualities`.                      |
+| `dominant_house`    | str or None     | Convenience winner of `houses`.                         |
 | `score_breakdown`   | list or None    | Per-rule audit trail (when `include_score_breakdown=True`). |
+
+A school only populates the categories it computes (e.g. the `elemental` school leaves `planets`/`houses` empty); uncomputed categories are simply absent/empty.
 
 ---
 

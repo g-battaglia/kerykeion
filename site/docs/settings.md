@@ -46,7 +46,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 
 | Constant                         | Description                                                      |
 | :------------------------------- | :--------------------------------------------------------------- |
-| `DEFAULT_ACTIVE_ASPECTS`         | Core aspects (conj, opp, trine, sextile, square) plus quintile     |
+| `DEFAULT_ACTIVE_ASPECTS`         | Core aspects (conj, opp, trine, sextile, square)     |
 | `ALL_ACTIVE_ASPECTS`             | Includes minor aspects (semi-sextile, quincunx, etc.)            |
 | `DISCEPOLO_SCORE_ACTIVE_ASPECTS` | Orbs per Ciro Discepolo scoring methodology                      |
 

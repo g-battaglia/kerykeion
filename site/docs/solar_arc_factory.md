@@ -52,6 +52,24 @@ Returns a `SolarArcSubjectModel` with the solar arc, directed points, and direct
 | `aspect_orb`               | float             | 3.0             | Orb in degrees for aspect detection            |
 | `aspects`                  | Sequence[str] or None | None        | Whitelist of aspect names                      |
 
+### `compute_directed_subject(natal_subject, *, target_iso_utc_datetime=None, target_year=None)`
+
+Returns a copy of `natal_subject` with every directable point advanced by the solar arc, while the houses and the four angles (Asc/MC/Desc/IC) stay on the natal frame. This is the form you want for a **biwheel** rendering: inner ring = natal, outer ring = directed.
+
+```python
+directed = SolarArcFactory.compute_directed_subject(natal_subject, target_year=2030)
+print(directed.name)            # "<name> (directed)"
+print(directed.sun.sign, f"{directed.sun.abs_pos:.2f}°")
+```
+
+| Parameter                  | Type                     | Default | Description                                  |
+| :------------------------- | :----------------------- | :------ | :------------------------------------------- |
+| `natal_subject`            | AstrologicalSubjectModel | —       | The natal chart                              |
+| `target_iso_utc_datetime`  | str or None              | None    | Target moment in ISO UTC format             |
+| `target_year`              | int or None              | None    | Shorthand: direct to January 1 of this year |
+
+**Returns:** `AstrologicalSubjectModel` (the directed chart, named `"<name> (directed)"`).
+
 ## Data Models
 
 ### `SolarArcSubjectModel`

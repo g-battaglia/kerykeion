@@ -17,7 +17,7 @@ from kerykeion import RetrogradeStationFactory
 
 result = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31")
 for station in result.stations:
-    print(station.iso_utc, station.planet, station.station_type)  # station_type: retrograde / direct
+    print(station.iso_utc, station.planet, station.station_type)  # station_type: 'SR' (turns retrograde) / 'SD' (turns direct)
 ```
 
 Restrict to specific planets:
@@ -46,11 +46,22 @@ Same as above with Julian Day (UT) bounds. **Raises** `KerykeionException` if th
 
 ### `RetrogradeStationsCollectionModel`
 
-| Field      | Type | Description                          |
-| :--------- | :--- | :---------------------------------- |
-| `stations` | list | Chronologically ordered stations.   |
+| Field      | Type | Description                        |
+| :--------- | :--- | :--------------------------------- |
+| `stations` | list | Chronologically ordered stations.  |
 
-Each station item exposes `iso_utc` (ISO 8601 UTC datetime of the exact station), `planet`, and `station_type` (`retrograde` / `direct`).
+Each station item has:
+
+| Field                | Type  | Description                                          |
+| :------------------- | :---- | :-------------------------------------------------- |
+| `planet`             | str   | Planet that stationed.                              |
+| `station_type`       | str   | `"SR"` (turns retrograde) or `"SD"` (turns direct). |
+| `iso_utc`            | str   | ISO 8601 UTC datetime of the exact station.         |
+| `julian_day`         | float | Julian Day (UT) of the station.                     |
+| `sign`               | str   | Zodiac sign at the station.                          |
+| `sign_num`           | int   | Sign index (0–11).                                  |
+| `degree`             | float | Degree within the sign (0–30).                      |
+| `ecliptic_longitude` | float | Absolute ecliptic longitude (0–360).                |
 
 ---
 

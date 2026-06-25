@@ -50,9 +50,11 @@ Build the zodiacal-releasing periods for a subject.
 
 | Field        | Type                  | Description                                            |
 | :----------- | :-------------------- | :---------------------------------------------------- |
-| `lot`        | str                   | The Lot released from (`"fortune"` / `"spirit"`).     |
-| `lot_sign`   | str                   | Sign of the Lot (the L1 starting sign).               |
-| `periods`    | list[`ZRPeriodModel`] | The top-level (L1) periods, each with nested levels.  |
+| `lot`          | str                   | The Lot released from (`"fortune"` / `"spirit"`).   |
+| `lot_sign`     | str                   | Sign of the Lot (the L1 starting sign).             |
+| `lot_degree`   | float                 | Absolute longitude of the Lot in the subject's zodiac. |
+| `periods`      | list[`ZRPeriodModel`] | The top-level (L1) periods, each with nested levels. |
+| `current_path` | list[`ZRPeriodModel`] | The chain of active periods (L1→Ln) at `target_date`, when one was supplied. |
 
 ### `ZRPeriodModel`
 

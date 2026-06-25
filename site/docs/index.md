@@ -129,6 +129,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[Chart Internals](/content/docs/chart_internals)**: Low-level SVG rendering functions (advanced).
 -   **[Fetch Geonames](/content/docs/fetch_geonames)**: GeoNames API integration for location resolution.
 -   **[Ephemeris Backend](/content/docs/ephemeris_backend)**: Backend configuration (libephemeris vs Swiss Ephemeris).
+-   **[Swiss Ephemeris Configuration](/content/docs/swisseph_configuration)**: Optional Swiss Ephemeris backend setup, fixed-star catalog, and precision notes.
 -   **[Legacy API](/content/docs/legacy)**: Migration info for v4/v5 users (removed in v6).
 
 ## Integration

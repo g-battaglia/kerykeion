@@ -8,7 +8,7 @@ order: 11
 
 # Planetary Return Factory
 
-The `PlanetaryReturnFactory` calculates the precise moment when a planet returns to its natal position (e.g., Solar Returns). It uses Swiss Ephemeris for high-precision timing.
+The `PlanetaryReturnFactory` calculates the precise moment when a planet returns to its natal position (e.g., Solar Returns). It uses the configured ephemeris backend (libephemeris by default, Swiss Ephemeris optional) for high-precision timing.
 
 ## What Are Planetary Returns?
 
@@ -110,8 +110,33 @@ print(f"Return ayanamsa: {solar_return.ayanamsa_value:.4f}°")
 
 - `"Solar"` (Sun) -- Yearly forecast.
 - `"Lunar"` (Moon) -- Monthly forecast.
+- `"Heliocentric"` -- when a planet returns to its natal *heliocentric* longitude (see below).
+- `"Lunar_Node_Crossing"` -- when the Moon crosses its own node (latitude = 0; see below).
 
-> **Note:** The `return_type` parameter is case-sensitive. Use exactly `"Solar"` or `"Lunar"`.
+> **Note:** `return_type` values are case-sensitive (e.g. exactly `"Solar"`).
+
+## Heliocentric Returns
+
+`next_heliocentric_return(planet_name, start_jd, backwards=False)` finds when a planet returns to its natal **heliocentric** longitude (via `helio_cross_ut`). The Sun and Moon are not valid targets — the Sun is the heliocentric origin and the Moon's heliocentric longitude tracks Earth's orbit — and raise `KerykeionException`. `backwards=True` requires the libephemeris backend (pyswisseph cannot search backward).
+
+```python
+# Using the `return_factory` from the example above:
+helio = return_factory.next_heliocentric_return_from_year("Jupiter", 2026)
+print(helio.iso_formatted_utc_datetime)
+```
+
+Convenience wrappers mirror the Solar/Lunar ones: `next_heliocentric_return_from_year(planet_name, year)`, `next_heliocentric_return_from_date(...)`, `next_heliocentric_return_from_iso_formatted_time(...)`.
+
+## Lunar Node Crossings
+
+`next_lunar_node_crossing(start_jd, backwards=False)` finds the next moment the Moon crosses its own node (ecliptic latitude = 0; via `mooncross_node_ut`). It is zodiac-independent. `backwards=True` requires the libephemeris backend.
+
+```python
+crossing = return_factory.next_lunar_node_crossing_from_year(2026)
+print(crossing.iso_formatted_utc_datetime)
+```
+
+Convenience wrappers: `next_lunar_node_crossing_from_year(year)`, `next_lunar_node_crossing_from_date(...)`, `next_lunar_node_crossing_from_iso_formatted_time(...)`.
 
 ## Constructor Parameters
 

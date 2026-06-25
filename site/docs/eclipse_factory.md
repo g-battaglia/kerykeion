@@ -1,6 +1,6 @@
 ---
 title: 'Eclipse Factory'
-description: 'Search for upcoming solar and lunar eclipses, globally or from a specific location, using the Swiss Ephemeris eclipse algorithms.'
+description: 'Search for upcoming solar and lunar eclipses, globally or from a specific location, using the ephemeris backend's eclipse algorithms (libephemeris by default).'
 category: 'Advanced Calculations'
 tags: ['docs', 'eclipses', 'solar', 'lunar', 'kerykeion']
 order: 40
@@ -8,7 +8,7 @@ order: 40
 
 # Eclipse Factory
 
-The `EclipseFactory` searches for upcoming solar and lunar eclipses using the Swiss Ephemeris eclipse algorithms. It supports both **global** searches (eclipses visible from anywhere on Earth) and **location-specific** searches (eclipses visible from given coordinates).
+The `EclipseFactory` searches for upcoming solar and lunar eclipses using the ephemeris backend's eclipse algorithms (libephemeris by default). It supports both **global** searches (eclipses visible from anywhere on Earth) and **location-specific** searches (eclipses visible from given coordinates).
 
 ## Basic Usage
 
