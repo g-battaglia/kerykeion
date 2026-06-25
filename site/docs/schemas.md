@@ -699,6 +699,13 @@ Defines the viewpoint for calculations.
 | `"True Geocentric"`     | Earth-centered, without light-time correction.                                             |
 | `"Heliocentric"`        | Sun-centered. Used for some esoteric techniques.                                           |
 | `"Topocentric"`         | Observer's exact location on Earth's surface. Most accurate for Moon position.             |
+| `"Selenocentric"`       | Moon-centered.                                                                              |
+| `"Mercurycentric"`      | Mercury-centered.                                                                          |
+| `"Venuscentric"`        | Venus-centered.                                                                            |
+| `"Marscentric"`         | Mars-centered.                                                                             |
+| `"Jupitercentric"`      | Jupiter-centered.                                                                          |
+| `"Saturncentric"`       | Saturn-centered.                                                                           |
+| `"Barycentric"`         | Centered on the Solar System barycenter.                                                   |
 
 ---
 

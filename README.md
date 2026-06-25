@@ -70,13 +70,15 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
   - [Quick Example](#quick-example)
 - [Example: Retrieving Aspects](#example-retrieving-aspects)
 - [Relationship Score](#relationship-score)
+- [House Comparison (Synastry Overlay)](#house-comparison-synastry-overlay)
 - [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
 - [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
 - [House Systems](#house-systems)
 - [Perspective Type](#perspective-type)
 - [Themes](#themes)
 - [Alternative Initialization](#alternative-initialization)
-- [Lunar Nodes (Rahu \\& Ketu)](#lunar-nodes-rahu--ketu)
+- [Arabic Parts (Lots)](#arabic-parts-lots)
+- [Lunar Nodes (Rahu \& Ketu)](#lunar-nodes-rahu--ketu)
 - [Fixed Stars](#fixed-stars)
 - [JSON Support](#json-support)
 - [Moon Phase Details](#moon-phase-details)
@@ -104,6 +106,8 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
   - [Solar Arc Directions](#solar-arc-directions)
   - [Midpoints (Cosmobiology / 90° Dial)](#midpoints-cosmobiology--90-dial)
   - [Astro-Cartography (ACG)](#astro-cartography-acg)
+  - [Chart Dominants](#chart-dominants)
+  - [Zodiacal Releasing (Aphesis)](#zodiacal-releasing-aphesis)
 - [Documentation](#documentation)
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Development](#development)
@@ -1257,6 +1261,22 @@ print(f"Description: {result.score_description}")
 
 **📖 Factory documentation: [RelationshipScoreFactory](https://www.kerykeion.net/content/docs/relationship_score_factory)**
 
+## House Comparison (Synastry Overlay)
+
+`HouseComparisonFactory` performs a bidirectional house overlay: it reports where each subject's points fall within the *other* subject's houses — a core synastry technique. It also accepts planetary-return subjects.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, HouseComparisonFactory
+
+person_a = AstrologicalSubjectFactory.from_birth_data("Person A", 1990, 5, 15, 10, 30, "Rome", "IT")
+person_b = AstrologicalSubjectFactory.from_birth_data("Person B", 1992, 8, 23, 14, 45, "Milan", "IT")
+
+comparison = HouseComparisonFactory(person_a, person_b).get_house_comparison()
+for placement in comparison.first_points_in_second_houses:
+    print(placement)  # A's points located in B's houses
+# comparison.second_points_in_first_houses -> B's points in A's houses
+```
+
 ## Element & Quality Distribution Strategies
 
 `ChartDataFactory` now offers two strategies for calculating element and modality totals. The default `"weighted"` mode leans on a curated map that emphasises core factors (for example `sun`, `moon`, and `ascendant` weight 2.0, angles such as `medium_coeli` 1.5, personal planets 1.5, social planets 1.0, outers 0.5, and minor bodies 0.3–0.8). Provide `distribution_method="pure_count"` when you want every active point to contribute equally.
@@ -1465,6 +1485,26 @@ If you prefer automatic geocoding, set `online=True` and provide your GeoNames c
 
 **📖 All initialization options: [AstrologicalSubjectFactory Documentation](https://www.kerykeion.net/content/docs/astrological_subject_factory)**
 
+## Arabic Parts (Lots)
+
+Kerykeion computes the four classical Arabic Parts (Hellenistic *Lots*) as activatable points. Add them to `active_points` to include them in a chart and its aspects:
+
+- **`Pars_Fortunae`** — Part of Fortune (Lot of Fortune; sect-aware: day = Asc + Moon − Sun, night = Asc + Sun − Moon)
+- **`Pars_Spiritus`** — Part of Spirit
+- **`Pars_Amoris`** — Part of Eros / Love
+- **`Pars_Fidei`** — Part of Faith / Necessity
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Jane", 1990, 6, 15, 12, 0, "Rome", "IT",
+    active_points=DEFAULT_ACTIVE_POINTS + ["Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei"],
+)
+print(subject.pars_fortunae.sign, subject.pars_fortunae.position)
+```
+
 ## Lunar Nodes (Rahu & Ketu)
 
 Kerykeion supports both **True** and **Mean** Lunar Nodes:
@@ -1547,7 +1587,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 # Access fixed star data
 sirius = subject.find_fixed_star("Sirius")
 print(sirius.abs_pos)        # Ecliptic longitude
-print(sirius.magnitude)      # -1.44
+print(sirius.magnitude)      # -1.46
 print(sirius.declination)    # Equatorial declination
 
 # The requested stars are rendered and aspected automatically
@@ -1731,6 +1771,45 @@ from kerykeion import VoidOfCourseMoonFactory
 voc = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 9, 0, tz_str="Europe/Rome")
 print(voc.is_void_of_course, voc.moon_sign, "->", voc.next_sign)
 print(voc.last_aspect, voc.next_aspect, voc.ingress)
+```
+
+### Lunation Finder
+
+`LunationFinderFactory` finds the New, First-Quarter, Full and Last-Quarter Moons in a date range (ISO dates, treated as UTC). It is geocentric — no location needed.
+
+```python
+from kerykeion import LunationFinderFactory
+
+result = LunationFinderFactory.from_iso_range("2026-01-01", "2026-12-31")
+for lunation in result.lunations:
+    print(lunation.iso_utc, lunation.phase)  # phase: new / first_quarter / full / last_quarter
+
+# Only full moons:
+fulls = LunationFinderFactory.from_iso_range("2026-01-01", "2026-12-31", phases=["full"])
+```
+
+### Retrograde Stations
+
+`RetrogradeStationFactory` finds planetary stations (retrograde / direct turning points) in a date range (Mercury–Pluto by default).
+
+```python
+from kerykeion import RetrogradeStationFactory
+
+result = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31")
+for station in result.stations:
+    print(station.iso_utc, station.planet, station.station_type)  # station_type: retrograde / direct
+```
+
+### Sign Ingresses
+
+`SignIngressFactory` finds the moments planets cross from one zodiac sign into the next (Sun–Pluto by default; pass `planets=["Moon"]` to include the fast-moving Moon).
+
+```python
+from kerykeion import SignIngressFactory
+
+result = SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31")
+for ingress in result.ingresses:
+    print(ingress.iso_utc, ingress.planet, "->", ingress.sign)
 ```
 
 ## V6 Advanced Features
@@ -2155,6 +2234,35 @@ for line in lines[:5]:
 
 **📖 Full documentation: [Astro-Cartography](https://www.kerykeion.net/content/docs/astro_cartography_factory)**
 
+### Chart Dominants
+
+`DominantsFactory` computes a chart's dominant planet / sign / element / quality using a chosen scoring school: `"modern"` (default), `"almuten_figuris"` (the traditional "Lord of the Geniture"), or `"elemental"`. Custom schools (the `DominantStrategy` protocol) and per-point `custom_weights` are also supported.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, DominantsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data("John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB")
+
+dominants = DominantsFactory.from_subject(subject, strategy="modern")
+print(dominants.dominant_planet, dominants.dominant_sign)
+print(dominants.dominant_element, dominants.dominant_quality)
+
+# Traditional Almuten Figuris, with a per-rule audit trail:
+almuten = DominantsFactory.from_subject(subject, strategy="almuten_figuris", include_score_breakdown=True)
+```
+
+### Zodiacal Releasing (Aphesis)
+
+`ZodiacalReleasingFactory` computes the Hellenistic time-lord technique of zodiacal releasing (aphesis) from the Lot of Fortune or Spirit, unfolding nested periods (levels L1–L4) with the "loosing of the bond" jumps and peak/angular markers. Requires a known birth time.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, ZodiacalReleasingFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data("Jane", 1990, 6, 15, 12, 0, "Rome", "IT")
+zr = ZodiacalReleasingFactory.from_subject(subject, lot="fortune", levels=2, target_date="2026-06-04")
+print(zr.lot_sign, len(zr.periods), "top-level periods")
+```
+
 ## Documentation
 
 - **Main Website**: [kerykeion.net](https://www.kerykeion.net)
@@ -2194,14 +2302,14 @@ export KERYKEION_BACKEND=swisseph
 export KERYKEION_EPHE_PATH=~/.kerykeion/sweph
 ```
 
-For the full configuration guide, see [Swiss Ephemeris Configuration](site/docs/swisseph_configuration.md).
+For the full configuration guide, see [Swiss Ephemeris Configuration](https://github.com/g-battaglia/kerykeion/blob/alpha/v6/site/docs/swisseph_configuration.md).
 
 > **Fixed stars on swisseph**: the fixed-star catalog file `sefstars.txt` is
 > required for any fixed-star feature when using the swisseph backend, and is
 > not bundled with kerykeion (Swiss Ephemeris license belongs to Astrodienst).
 > The setup utility above downloads it automatically; for the manual procedure
 > and a diagnostic warning reference, see the
-> [Fixed Stars Catalog section of the configuration guide](site/docs/swisseph_configuration.md#fixed-stars-catalog-sefstarstxt).
+> [Fixed Stars Catalog section of the configuration guide](https://github.com/g-battaglia/kerykeion/blob/alpha/v6/site/docs/swisseph_configuration.md#fixed-stars-catalog-sefstarstxt).
 
 ## Integrating Kerykeion into Your Project
 

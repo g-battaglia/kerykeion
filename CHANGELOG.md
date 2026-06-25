@@ -1,18 +1,41 @@
 # Changelog
 
+## [Unreleased]
+
+### Documentation
+
+- **Documentation completeness, accuracy & navigation pass** (no code or public-API
+  changes — only docs and one model docstring). Documented previously-undocumented
+  public features in the README and the `site/docs/` set: chart **Dominants**
+  (`DominantsFactory`), **Zodiacal Releasing / aphesis** (`ZodiacalReleasingFactory`),
+  the date-range event finders **Lunation / Retrograde-station / Sign-ingress**
+  (`LunationFinderFactory`, `RetrogradeStationFactory`, `SignIngressFactory`),
+  **House Comparison** (`HouseComparisonFactory`) and the **Arabic Parts / Lots**
+  (`Pars_Fortunae`/`Pars_Spiritus`/`Pars_Amoris`/`Pars_Fidei`); added five new
+  `site/docs/` pages and README sections + TOC entries. Corrected stale figures to
+  match the code: `DEFAULT_ACTIVE_POINTS` is **14 points** (not 18), the default
+  aspect set is the **five majors** (Quintile is not active by default),
+  `PerspectiveType` has **11 values**, and the libephemeris pin in the a60 note is
+  `3.0.0a6`. Reframed the backend wording to "libephemeris by default, optional
+  Swiss Ephemeris", fixed broken README links and a TOC ampersand, removed CI
+  references (no-CI policy) from `TEST.md`/`DEVELOPMENT.md`, retitled the root
+  migration stub to "v4/v5 → v6", reduced `RELEASE_NOTES.md` to a pointer at this
+  changelog, marked `REFACTORY.md` as an internal/historical note, and expanded the
+  `AstrologicalBaseModel` docstring to describe the computed celestial/house fields.
+
 ## 6.0.0a60
 
 _2026-06-24_
 
 ### Changed
 
-- **Bumped `libephemeris` pin to `3.0.0a5`** and **regenerated all golden
+- **Bumped `libephemeris` pin to `3.0.0a6`** and **regenerated all golden
   baselines on the full-range DE441 extended kernel (±8000+).** Positions, SVG
   charts, report fixtures and configuration goldens now reflect DE441 across the
   whole supported range, so ancient/far-future subjects (e.g. 500 BCE, 3000 CE)
   are computed accurately instead of falling back at the short-range kernel edge.
   Modern charts are unchanged beyond sub-arcsecond ephemeris-version drift
-  (libephemeris a4→a5, ≤ ~3.5″ on far-future points only).
+  (libephemeris a4→a6, ≤ ~3.5″ on far-future points only).
   Verified vs Swiss Ephemeris: at matched ΔT the engines agree to < 0.1″ on all
   bodies; the remaining far-epoch differences are the ΔT-extrapolation model
   (documented in libephemeris, benign). Full suite on the extended kernel:

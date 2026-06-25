@@ -174,11 +174,11 @@ Calculated points based on the formula involving the Ascendant, Sun, and other b
 
 Kerykeion provides three preset lists you can import and use directly.
 
-### `DEFAULT_ACTIVE_POINTS` (18 points)
+### `DEFAULT_ACTIVE_POINTS` (14 points)
 
 The default configuration used when no `active_points` parameter is specified.
 
-Includes: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, True_North_Lunar_Node, True_South_Lunar_Node, Chiron, Mean_Lilith, Ascendant, Medium_Coeli, Descendant, Imum_Coeli.
+Includes: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, True_North_Lunar_Node, Chiron, Ascendant, Medium_Coeli.
 
 ### `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS` (9 points)
 

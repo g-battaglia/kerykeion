@@ -18,7 +18,7 @@ Import from: `kerykeion.settings.config_constants`
 
 | Constant                               | Description                                                        |
 | :------------------------------------- | :----------------------------------------------------------------- |
-| `DEFAULT_ACTIVE_POINTS`                | Standard points: Sun, Moon, planets, True Lunar Nodes, Chiron, Lilith, 4 angles (18 points) |
+| `DEFAULT_ACTIVE_POINTS`                | Standard points: Sun, Moon, the planets, the True North Node, Chiron, plus Asc & MC (14 points) |
 | `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS`  | Classical planets (Sun-Saturn) + True Lunar Nodes (9 points)       |
 | `ALL_ACTIVE_POINTS`                    | Complete list including asteroids, TNOs, Arabic parts, fixed stars |
 

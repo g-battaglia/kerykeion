@@ -85,11 +85,12 @@ For more examples, see the [Examples Gallery](/content/examples/).
 
 ## Analysis
 
--   **[Aspects](/content/docs/aspects)**: Calculating angular relationships between planets (11 aspect types, configurable orbs).
+-   **[Aspects](/content/docs/aspects)**: Calculating angular relationships between planets (11 ecliptic aspect types plus declination parallels, configurable orbs).
 -   **[Composite Subject Factory](/content/docs/composite_subject_factory)**: Creating midpoint composite charts for relationships.
 -   **[Relationship Score Factory](/content/docs/relationship_score_factory)**: Quantitative compatibility scoring (Ciro Discepolo method).
 -   **[House Comparison](/content/docs/house_comparison)**: Bidirectional synastry house overlay analysis.
 -   **[Element & Quality Distribution](/content/docs/element_quality_distribution)**: Analyzing element (Fire/Earth/Air/Water) and quality (Cardinal/Fixed/Mutable) balance.
+-   **[Chart Dominants](/content/docs/dominants_factory)**: Dominant planet/sign/element/quality via modern, Almuten Figuris, or elemental schools.
 
 ## Forecasting
 
@@ -100,6 +101,10 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[Secondary Progressions](/content/docs/secondary_progressions_factory)**: Day-for-a-year progressions via `SecondaryProgressionFactory`.
 -   **[Solar Arc Directions](/content/docs/solar_arc_factory)**: Solar arc directed charts via `SolarArcFactory`.
 -   **[Primary Directions](/content/docs/primary_directions_factory)**: Placidus semi-arc method via `PrimaryDirectionsFactory`.
+-   **[Zodiacal Releasing](/content/docs/zodiacal_releasing_factory)**: Hellenistic aphesis time-lord periods from the Lot of Fortune or Spirit.
+-   **[Lunation Finder](/content/docs/lunation_factory)**: New/First-Quarter/Full/Last-Quarter Moons over a date range.
+-   **[Retrograde Stations](/content/docs/retrograde_station_factory)**: Planetary retrograde/direct stations over a date range.
+-   **[Sign Ingresses](/content/docs/sign_ingress_factory)**: Planet sign-change moments over a date range.
 
 ## Advanced Calculations
 

@@ -721,6 +721,19 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
             selected sidereal mode. ``None`` for tropical charts. Added in v5.12.
         active_points: List of celestial points included in calculations.
 
+    Celestial & house fields:
+        Concrete subjects (``AstrologicalSubjectModel``, ``CompositeSubjectModel``,
+        ``PlanetReturnModel``) add the computed chart points, each a
+        :class:`KerykeionPointModel`: the planets and luminaries
+        (``sun`` … ``pluto``), the chart axes (``ascendant``, ``medium_coeli``,
+        ``descendant``, ``imum_coeli``), the lunar nodes and apogees
+        (``mean_node`` / ``true_node`` and their south counterparts,
+        ``mean_lilith`` / ``true_lilith``), ``chiron``, the Arabic Parts / lots
+        (``pars_fortunae``, ``pars_spiritus``, ``pars_amoris``, ``pars_fidei``),
+        and the twelve houses (``first_house`` … ``twelfth_house``). Which of these
+        are populated is governed by ``active_points`` (and ``active_fixed_stars``
+        for the ``fixed_stars`` array below).
+
     Fixed Stars (v6 -- unified array):
         All fixed stars (any name from the libephemeris catalog) live in
         ``fixed_stars: list[KerykeionPointModel]``. No more typed per-star

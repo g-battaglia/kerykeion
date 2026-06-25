@@ -95,14 +95,14 @@ Kerykeion calculates both major and minor aspects. Orbs can be customized.
 | **Trine**          | 120°  | 6°          | Yes               | Major |
 | **Square**         | 90°   | 6°          | Yes               | Major |
 | **Sextile**        | 60°   | 5°          | Yes               | Major |
-| **Quintile**       | 72°   | 2°          | Yes               | Minor |
+| **Quintile**       | 72°   | 2°          | No                | Minor |
 | **Semi-sextile**   | 30°   | 2°          | No                | Minor |
 | **Semi-square**    | 45°   | 2°          | No                | Minor |
 | **Sesquiquadrate** | 135°  | 2°          | No                | Minor |
 | **Biquintile**     | 144°  | 2°          | No                | Minor |
 | **Quincunx**       | 150°  | 2°          | No                | Minor |
 
-> The orb values shown above are the base orbs from `DEFAULT_ACTIVE_ASPECTS` / `ALL_ACTIVE_ASPECTS`. Luminary widening (+1.5° for Sun/Moon) is applied separately via per-point orb adjustments, bringing Sun/Moon major aspects to an effective ~7.5° orb. The `DEFAULT_ACTIVE_ASPECTS` preset includes only the first 6 aspects (Conjunction through Quintile). To enable all 11 aspects, pass `active_aspects=ALL_ACTIVE_ASPECTS` from `kerykeion.settings.config_constants`.
+> The orb values shown above are the base orbs from `DEFAULT_ACTIVE_ASPECTS` / `ALL_ACTIVE_ASPECTS`. Luminary widening (+1.5° for Sun/Moon) is applied separately via per-point orb adjustments, bringing Sun/Moon major aspects to an effective ~7.5° orb. The `DEFAULT_ACTIVE_ASPECTS` preset includes only the five major aspects (conjunction, sextile, square, trine, opposition). To enable all 11 aspects, pass `active_aspects=ALL_ACTIVE_ASPECTS` from `kerykeion.settings.config_constants`.
 
 ### Filtering Options
 

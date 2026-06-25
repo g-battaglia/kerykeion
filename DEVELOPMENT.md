@@ -196,7 +196,7 @@ uv add --group test pytest-benchmark
 
 5. **Create a Pull Request**
    - Go to GitHub and create a PR
-   - Ensure all CI checks pass
+   - Run the quality checks locally (`poe quality`, `poe test:core`) before opening the PR
 
 ## 🐛 Debugging
 

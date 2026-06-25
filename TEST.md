@@ -53,7 +53,7 @@ Use `test:core` for fast local development feedback.
 
 ### `test:base` (~6,300 tests, ~30s)
 
-Includes **all 56 test files** (core + the 5 matrix files above), but restricts temporal subjects to the **DE440s ephemeris** range (1849-2150, 11 subjects). This is the recommended CI tier — it catches regressions across the full matrix without requiring extended ephemeris files.
+Includes **all 56 test files** (core + the 5 matrix files above), but restricts temporal subjects to the **DE440s ephemeris** range (1849-2150, 11 subjects). This is the recommended local-validation tier — it catches regressions across the full matrix without requiring extended ephemeris files.
 
 ### `test:medium` (~7,000 tests, ~30s)
 
@@ -296,7 +296,7 @@ Report golden files live in `tests/fixtures/` (36 `.txt` files). The `assert_rep
 
 2. **Parallel-safe.** No shared mutable state between tests. Session-scoped fixtures create immutable subjects. Tests are distributed across 8 workers by default.
 
-3. **Tiered ephemeris.** Historical and future test subjects are stratified by the JPL ephemeris file required. CI can run `test:base` for fast validation and `test:extended` for full coverage.
+3. **Tiered ephemeris.** Historical and future test subjects are stratified by the JPL ephemeris file required. Run `test:base` for fast validation and `test:extended` for full coverage.
 
 4. **Graceful skip on missing baselines.** SVG golden-file tests skip (not fail) when the expected baseline doesn't exist, allowing new chart types to be added without immediately generating baselines.
 

@@ -12,7 +12,7 @@ The `AstrologicalSubjectFactory` is the central mechanism in Kerykeion for creat
 
 ## Key Features
 
-- **Precision**: Uses the Swiss Ephemeris (via `pyswisseph`) for high-accuracy calculations.
+- **Precision**: Uses libephemeris by default (full DE441 range via NASA JPL, no external data files), with an optional Swiss Ephemeris (`pyswisseph`) backend.
 - **Flexibility**: Supports Tropical/Sidereal zodiacs, multiple House systems (Placidus, Whole Sign, etc.), and various coordinate (Geocentric/Heliocentric) perspectives.
 - **Optimization**: The `active_points` argument allows you to calculate only what you need, saving resources.
 - **Online/Offline**: Can resolve locations automatically via GeoNames (Online) or accept raw coordinates (Offline).
@@ -59,7 +59,7 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `sidereal_mode`            | `Optional[SiderealMode]` | `None`          | Ayanamsha mode (e.g., "LAHIRI"). Required if `zodiac_type="Sidereal"`. |
 | `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`           | House system code (e.g., "P" for Placidus, "W" for Whole Sign).        |
 | `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | 11 options including Geocentric, Heliocentric, Topocentric, Barycentric, and Planetocentric variants. |
-| `active_points`            | `Optional[List[str]]`    | `None`          | List of points to calculate. If `None`, uses `DEFAULT_ACTIVE_POINTS` (18 points).  |
+| `active_points`            | `Optional[List[str]]`    | `None`          | List of points to calculate. If `None`, uses `DEFAULT_ACTIVE_POINTS` (14 points).  |
 | `is_dst`                   | `Optional[bool]`         | `None`          | Explicitly set DST for ambiguous times (see [FAQ](/content/docs/faq)).              |
 | `cache_expire_after_days`  | `int`                    | `30`            | Days to cache online location lookups.                                              |
 | `calculate_lunar_phase`    | `bool`                   | `True`          | Whether to calculate lunar phase details.                                           |

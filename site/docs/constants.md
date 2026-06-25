@@ -163,7 +163,7 @@ These lists are available for quick configuration.
 
 ### `DEFAULT_ACTIVE_POINTS`
 
-Main planets, Chiron, Mean Lilith, Nodes, and Angles (18 points).
+Main planets, Chiron, the True North Node, and the Asc/MC angles (14 points).
 
 ### `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS`
 

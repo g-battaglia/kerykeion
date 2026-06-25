@@ -1,5 +1,9 @@
 # Kerykeion v6 — Piano di Refactoring e Ottimizzazione
 
+> ⚠️ **Internal/historical dev note.** This is an early-v6-alpha refactoring plan
+> kept for historical context (the work it describes has shipped); it is **not**
+> user-facing documentation. See [CHANGELOG.md](CHANGELOG.md) for the current state.
+
 > **Versione:** 6.0.0a42 | **Branch:** `alpha/v6` | **Data analisi originale:** 2026-04-16 | **Ultimo aggiornamento:** 2026-05-17
 >
 > **Principio guida:** Nessun breaking change, nessuna regressione su edge case.
