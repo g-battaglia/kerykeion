@@ -5,11 +5,16 @@ Created and maintained by:
 
   Giacomo Battaglia <kerykeion.astrology@gmail.com>
 
-Copyright in the project is held by the maintainer. Under the Contributor
-License Agreement (see CONTRIBUTING.md), contributors assign the copyright in
-their contributions to the maintainer; this centralized ownership is what
-enables the project's dual-licensing model. Assignment does not remove
-authorship credit, which is preserved here and in the Git history.
+Copyright in the project is held by the maintainer. Contributions made under
+the Contributor License Agreement (see CONTRIBUTING.md) are assigned to the
+maintainer; once a contributor agrees to the CLA it covers their past,
+present, and future contributions, and this centralized ownership is what
+enables the project's dual-licensing model. The CLA and its bot check were
+introduced on 2026-02-24; contributions predating it, or by contributors who
+have not (yet) agreed to it, remain available to the project under their
+original inbound license (AGPL-3.0) unless a separate assignment is on record.
+Assignment does not remove authorship credit, which is preserved here and in
+the Git history.
 
 With thanks to the contributors (alphabetical):
 
@@ -26,6 +31,7 @@ With thanks to the contributors (alphabetical):
   fkostadinov
   gaycodegal
   jack
+  nasik
   ourania-entoli
   paracosm17
   tomshaffner
