@@ -70,11 +70,19 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]
 
+# Ship the third-party notices with the wheel: the templates embed glyph outlines
+# derived from Noto Sans Symbols 2 (SIL OFL 1.1), whose license must accompany them.
+[tool.hatch.build.targets.wheel.force-include]
+"NOTICE" = "kerykeion/NOTICE"
+"licenses/NotoSansSymbols2-OFL.txt" = "kerykeion/licenses/NotoSansSymbols2-OFL.txt"
+
 [tool.hatch.build.targets.sdist]
 include = [
     "/kerykeion",
     "/README.md",
     "/LICENSE",
+    "/NOTICE",
+    "/licenses",
     "/pyproject.toml",
 ]
 
@@ -353,6 +361,7 @@ reportGeneralTypeIssues = "none"
 [dependency-groups]
 dev = [
     "coverage>=7.6.0",
+    "fonttools>=4.50",  # used by scripts/build_chart_glyphs.py to extract glyph outlines
     "mypy>=1.17.1",
     "pdoc>=15.0.4",
     "poethepoet>=0.36.0",

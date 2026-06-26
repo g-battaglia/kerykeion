@@ -81,6 +81,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[Astrological Subject Factory](/content/docs/astrological_subject_factory)**: Creating astrological subjects from birth data, ISO timestamps, or current time.
 -   **[Chart Data Factory](/content/docs/chart_data_factory)**: Calculating structured chart data for natal, synastry, transit, composite, and return charts.
 -   **[Charts Module](/content/docs/charts)**: Rendering professional SVG charts with `ChartDrawer`.
+-   **[Chart Glyphs](/content/docs/chart-glyphs)**: Visual reference for every glyph rendered in charts (planets, points, signs, aspects).
 -   **[Report Module](/content/docs/report)**: Generating human-readable text reports.
 
 ## Analysis
