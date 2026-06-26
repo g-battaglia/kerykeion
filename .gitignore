@@ -82,3 +82,6 @@ sync-docs.sh
 .env
 .opencode/
 /task/
+
+# Build-time font cache for scripts/build_chart_glyphs.py (not redistributed)
+scripts/.glyph-cache/
