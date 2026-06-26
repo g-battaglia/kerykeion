@@ -66,9 +66,11 @@ def fetch_font(key: str) -> "Font":
     if dest.exists() and _sha256(dest) != sha:
         dest.unlink()
     if not dest.exists():
+        if not url.startswith("https://"):
+            raise ValueError(f"refusing non-HTTPS font URL for {key}: {url!r}")
         print(f"  downloading {key} …")
         tmp = dest.with_suffix(".ttf.part")
-        urllib.request.urlretrieve(url, tmp)
+        urllib.request.urlretrieve(url, tmp)  # noqa: S310 - scheme checked above
         got = _sha256(tmp)
         if got != sha:
             tmp.unlink(missing_ok=True)

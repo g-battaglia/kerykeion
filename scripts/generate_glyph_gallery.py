@@ -21,7 +21,12 @@ TPL = ROOT / "kerykeion/charts/templates/chart.xml"
 
 defs = TPL.read_text(encoding="utf-8")
 defs = defs[defs.index("GLYPHS:BEGIN"):defs.index("GLYPHS:END")]
-SYM = dict(re.findall(r'<symbol id="([^"]+)">(.*?)</symbol>', defs, re.S))
+_matches = re.findall(r'<symbol id="([^"]+)">(.*?)</symbol>', defs, re.S)
+_ids = [sid for sid, _ in _matches]
+_dupes = sorted({sid for sid in _ids if _ids.count(sid) > 1})
+if _dupes:
+    raise ValueError(f"duplicate glyph ids in {TPL}: {', '.join(_dupes)}")
+SYM = dict(_matches)
 
 SIGNS = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
 
