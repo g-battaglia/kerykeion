@@ -21,7 +21,7 @@ from pathlib import Path
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.charts.charts_utils import makeLunarPhase
+from kerykeion.charts.charts_utils import make_lunar_phase
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException
@@ -39,7 +39,7 @@ def regenerate_lunar_phase_reference_sheet() -> None:
     icon_groups: list[str] = []
 
     for index, angle in enumerate(phase_angles):
-        icon_svg = makeLunarPhase(angle, 0.0)
+        icon_svg = make_lunar_phase(angle, 0.0)
         unique_clip_id = f"moonPhaseCutOffCircle{index}"
         icon_svg = icon_svg.replace("moonPhaseCutOffCircle", unique_clip_id)
 

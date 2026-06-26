@@ -439,45 +439,40 @@ def get_decoded_kerykeion_celestial_point_name(
 # =============================================================================
 
 
-def decHourJoin(inH: int, inM: int, inS: int) -> float:
-    """
-    Convert hours, minutes, and seconds to decimal hours.
+def hms_to_decimal_hours(hours: int, minutes: int, seconds: int) -> float:
+    """Combine an hours/minutes/seconds triple into a single decimal-hour value.
 
     Args:
-        inH: Hours component.
-        inM: Minutes component.
-        inS: Seconds component.
+        hours: Whole hours.
+        minutes: Minutes component (0-59).
+        seconds: Seconds component (0-59).
 
     Returns:
-        Time as decimal hours.
-
-    Example:
-        >>> decHourJoin(12, 30, 0)
-        12.5
+        The time expressed as decimal hours (e.g. ``12:30:00`` -> ``12.5``).
     """
-
-    dh = float(inH)
-    dm = float(inM) / 60
-    ds = float(inS) / 3600
-    output = dh + dm + ds
-    return output
+    return hours + minutes / 60 + seconds / 3600
 
 
-def degreeDiff(a: Union[int, float], b: Union[int, float]) -> float:
-    """Calculate the smallest difference between two angles in degrees.
+def degree_difference(a: Union[int, float], b: Union[int, float]) -> float:
+    """Return the smallest absolute separation between two angles, in degrees.
+
+    The result is symmetric and always lies in ``[0, 180]``; angles on opposite
+    sides of the 0°/360° wrap-around (e.g. 350° and 10°) are handled correctly.
 
     Args:
-        a (int | float): first angle in degrees
-        b (int | float): second angle in degrees
+        a: First angle in degrees.
+        b: Second angle in degrees.
 
     Returns:
-        float: smallest difference between a and b (0 to 180 degrees)
+        The shortest angular distance between ``a`` and ``b`` (0 to 180).
     """
-    diff = math.fmod(abs(a - b), 360)  # Assicura che il valore sia in [0, 360)
-    return min(diff, 360 - diff)  # Prende l'angolo più piccolo tra i due possibili
+    # Reduce the raw gap into [0, 360), then take whichever way around the
+    # circle is shorter.
+    gap = math.fmod(abs(a - b), 360)
+    return min(gap, 360 - gap)
 
 
-def degreeSum(a: Union[int, float], b: Union[int, float]) -> float:
+def degree_sum(a: Union[int, float], b: Union[int, float]) -> float:
     """Calculate the sum of two angles in degrees, normalized to [0, 360).
 
     Args:
@@ -492,7 +487,7 @@ def degreeSum(a: Union[int, float], b: Union[int, float]) -> float:
     return (a + b) % 360.0
 
 
-def normalizeDegree(angle: Union[int, float]) -> float:
+def normalize_degree(angle: Union[int, float]) -> float:
     """Normalize an angle to the range [0, 360).
 
     Args:
@@ -504,26 +499,24 @@ def normalizeDegree(angle: Union[int, float]) -> float:
     return angle % 360 if angle % 360 != 0 else 0.0
 
 
-def offsetToTz(datetime_offset: Union[datetime.timedelta, None]) -> float:
-    """Convert datetime offset to float in hours.
+def timedelta_to_decimal_hours(datetime_offset: Union[datetime.timedelta, None]) -> float:
+    """Express a UTC offset, given as a ``timedelta``, in decimal hours.
 
     Args:
-        - datetime_offset (datetime.timedelta): datetime offset
+        datetime_offset: The offset to convert (e.g. ``timedelta(hours=2)``).
 
     Returns:
-        - float: offset in hours
-    """
+        The offset in decimal hours (e.g. ``+02:00`` -> ``2.0``).
 
+    Raises:
+        KerykeionException: If ``datetime_offset`` is ``None``.
+    """
     if datetime_offset is None:
         raise KerykeionException("datetime_offset is None")
 
-    # days to hours
-    dh = float(datetime_offset.days * 24)
-    # seconds to hours
-    sh = float(datetime_offset.seconds / 3600.0)
-    # total hours
-    output = dh + sh
-    return output
+    # A timedelta stores whole days and leftover seconds separately; convert each
+    # to hours and add them.
+    return datetime_offset.days * 24 + datetime_offset.seconds / 3600
 
 
 # =============================================================================
@@ -531,50 +524,44 @@ def offsetToTz(datetime_offset: Union[datetime.timedelta, None]) -> float:
 # =============================================================================
 
 
-def sliceToX(slice: Union[int, float], radius: Union[int, float], offset: Union[int, float]) -> float:
+def wheel_x(sign_index: Union[int, float], radius: Union[int, float], offset: Union[int, float]) -> float:
     """
-    Calculate the x-coordinate of a point on a circle.
+    Project a wheel position onto its horizontal (x) screen coordinate.
 
-    Used for positioning elements on the zodiac wheel.
+    Each ``sign_index`` step advances the position by one 30° sector; ``offset``
+    rotates the whole wheel. The origin is shifted by ``radius`` so the returned
+    value is always non-negative (the wheel's left edge sits at x=0).
 
     Args:
-        slice: Slice index (0-11 for zodiac signs, represents 30° segments).
+        sign_index: Sector index (0-11), where each unit equals 30°.
         radius: Circle radius in pixels.
         offset: Angular offset in degrees.
 
     Returns:
         X-coordinate on the circle.
-
-    Example:
-        >>> sliceToX(3, 5, 45)
-        2.5000000000000018
     """
-    plus = (math.pi * offset) / 180
-    radial = ((math.pi / 6) * slice) + plus
-    return radius * (math.cos(radial) + 1)
+    angle = (math.pi / 6) * sign_index + (math.pi * offset) / 180
+    return radius * (1 + math.cos(angle))
 
 
-def sliceToY(slice: Union[int, float], r: Union[int, float], offset: Union[int, float]) -> float:
+def wheel_y(sign_index: Union[int, float], radius: Union[int, float], offset: Union[int, float]) -> float:
     """
-    Calculate the y-coordinate of a point on a circle.
+    Project a wheel position onto its vertical (y) screen coordinate.
 
-    Used for positioning elements on the zodiac wheel.
+    Mirrors :func:`wheel_x` for the vertical axis. The sine term is negated so
+    the result follows the SVG convention (y grows downward), and the origin is
+    shifted by ``radius`` so the value is non-negative (top edge at y=0).
 
     Args:
-        slice: Slice index (0-11 for zodiac signs, represents 30° segments).
-        r: Circle radius in pixels.
+        sign_index: Sector index (0-11), where each unit equals 30°.
+        radius: Circle radius in pixels.
         offset: Angular offset in degrees.
 
     Returns:
         Y-coordinate on the circle.
-
-    Example:
-        >>> sliceToY(3, 5, 45)
-        -4.330127018922194
     """
-    plus = (math.pi * offset) / 180
-    radial = ((math.pi / 6) * slice) + plus
-    return r * ((math.sin(radial) / -1) + 1)
+    angle = (math.pi / 6) * sign_index + (math.pi * offset) / 180
+    return radius * (1 - math.sin(angle))
 
 
 # =============================================================================
@@ -616,18 +603,20 @@ def draw_zodiac_slice(
         dropin: Union[int, float] = 0
     else:
         dropin = c1
-    slice = f'<path d="M{str(r)},{str(r)} L{str(dropin + sliceToX(num, r - dropin, offset))},{str(dropin + sliceToY(num, r - dropin, offset))} A{str(r - dropin)},{str(r - dropin)} 0 0,0 {str(dropin + sliceToX(num + 1, r - dropin, offset))},{str(dropin + sliceToY(num + 1, r - dropin, offset))} z" style="{style}"/>'
+    slice_path = f'<path d="M{str(r)},{str(r)} L{str(dropin + wheel_x(num, r - dropin, offset))},{str(dropin + wheel_y(num, r - dropin, offset))} A{str(r - dropin)},{str(r - dropin)} 0 0,0 {str(dropin + wheel_x(num + 1, r - dropin, offset))},{str(dropin + wheel_y(num + 1, r - dropin, offset))} z" style="{style}"/>'
 
-    # symbols
+    # symbols: nudge the angle by 15° to centre the glyph within its 30° sector.
     offset = offset + 15
-    # check transit
+    # ``dropin`` is a fixed inward radial inset (px) calibrated to the wheel
+    # geometry; the translate(-16,-16) recentres the 32px glyph viewBox on its
+    # anchor point. These are functional layout offsets, not creative values.
     if chart_type in DOUBLE_CHART_TYPES:
         dropin = 54
     else:
         dropin = 18 + c1
-    sign = f'<g transform="translate(-16,-16)"><use x="{str(dropin + sliceToX(num, r - dropin, offset))}" y="{str(dropin + sliceToY(num, r - dropin, offset))}" xlink:href="#{type}" /></g>'
+    sign = f'<g transform="translate(-16,-16)"><use x="{str(dropin + wheel_x(num, r - dropin, offset))}" y="{str(dropin + wheel_y(num, r - dropin, offset))}" xlink:href="#{type}" /></g>'
 
-    return f'<g kr:node="ZodiacSign" kr:sign="{type}" kr:signnumber="{num}">' + slice + sign + "</g>"
+    return f'<g kr:node="ZodiacSign" kr:sign="{type}" kr:signnumber="{num}">' + slice_path + sign + "</g>"
 
 
 def draw_house_sectors(
@@ -685,20 +674,20 @@ def draw_house_sectors(
         offset_start = -seventh_house_abs + houses_list[i].abs_pos
         offset_end = -seventh_house_abs + houses_list[next_i].abs_pos
 
-        # Use sliceToX/Y (which has built-in +1 centering) + dropin offset.
+        # Use wheel_x/Y (which has built-in +1 centering) + dropin offset.
         # This matches the cusp line coordinate system exactly.
         outer_dropin = r - outer_visual_r  # = c1 for natal, 72 for transit
         inner_dropin = r - inner_visual_r  # = c3 for natal, 160 for transit
 
-        ox1 = sliceToX(0, outer_visual_r, offset_start) + outer_dropin
-        oy1 = sliceToY(0, outer_visual_r, offset_start) + outer_dropin
-        ox2 = sliceToX(0, outer_visual_r, offset_end) + outer_dropin
-        oy2 = sliceToY(0, outer_visual_r, offset_end) + outer_dropin
+        ox1 = wheel_x(0, outer_visual_r, offset_start) + outer_dropin
+        oy1 = wheel_y(0, outer_visual_r, offset_start) + outer_dropin
+        ox2 = wheel_x(0, outer_visual_r, offset_end) + outer_dropin
+        oy2 = wheel_y(0, outer_visual_r, offset_end) + outer_dropin
 
-        ix1 = sliceToX(0, inner_visual_r, offset_start) + inner_dropin
-        iy1 = sliceToY(0, inner_visual_r, offset_start) + inner_dropin
-        ix2 = sliceToX(0, inner_visual_r, offset_end) + inner_dropin
-        iy2 = sliceToY(0, inner_visual_r, offset_end) + inner_dropin
+        ix1 = wheel_x(0, inner_visual_r, offset_start) + inner_dropin
+        iy1 = wheel_y(0, inner_visual_r, offset_start) + inner_dropin
+        ix2 = wheel_x(0, inner_visual_r, offset_end) + inner_dropin
+        iy2 = wheel_y(0, inner_visual_r, offset_end) + inner_dropin
 
         span = (houses_list[next_i].abs_pos - houses_list[i].abs_pos) % 360
         large_arc = 1 if span > 180 else 0
@@ -815,13 +804,13 @@ def draw_aspect_line(
     if isinstance(aspect, dict):
         aspect = AspectModel(**aspect)
 
-    first_offset = (int(seventh_house_degree_ut) / -1) + int(aspect["p1_abs_pos"])
-    x1 = sliceToX(0, ar, first_offset) + (r - ar)
-    y1 = sliceToY(0, ar, first_offset) + (r - ar)
+    first_offset = -int(seventh_house_degree_ut) + int(aspect["p1_abs_pos"])
+    x1 = wheel_x(0, ar, first_offset) + (r - ar)
+    y1 = wheel_y(0, ar, first_offset) + (r - ar)
 
-    second_offset = (int(seventh_house_degree_ut) / -1) + int(aspect["p2_abs_pos"])
-    x2 = sliceToX(0, ar, second_offset) + (r - ar)
-    y2 = sliceToY(0, ar, second_offset) + (r - ar)
+    second_offset = -int(seventh_house_degree_ut) + int(aspect["p2_abs_pos"])
+    x2 = wheel_x(0, ar, second_offset) + (r - ar)
+    y2 = wheel_y(0, ar, second_offset) + (r - ar)
 
     # Build the aspect icon SVG element if enabled
     aspect_icon_svg = ""
@@ -836,11 +825,11 @@ def draw_aspect_line(
             avg_cos = (math.cos(p1_rad) + math.cos(p2_rad)) / 2
             avg_pos = math.degrees(math.atan2(avg_sin, avg_cos)) % 360
 
-            offset = (int(seventh_house_degree_ut) / -1) + avg_pos
+            offset = -int(seventh_house_degree_ut) + avg_pos
             # Place at radius ar + 4 pixels outward
             icon_radius = ar + 4
-            mid_x = sliceToX(0, icon_radius, offset) + (r - icon_radius)
-            mid_y = sliceToY(0, icon_radius, offset) + (r - icon_radius)
+            mid_x = wheel_x(0, icon_radius, offset) + (r - icon_radius)
+            mid_y = wheel_y(0, icon_radius, offset) + (r - icon_radius)
         else:
             # For other aspects, use the midpoint of the line
             mid_x = (x1 + x2) / 2
@@ -941,10 +930,10 @@ def draw_transit_ring_degree_steps(r: Union[int, float], seventh_house_degree_ut
             offset = offset + 360.0
         elif offset > 360:
             offset = offset - 360.0
-        x1 = sliceToX(0, r, offset)
-        y1 = sliceToY(0, r, offset)
-        x2 = sliceToX(0, r + 2, offset) - 2
-        y2 = sliceToY(0, r + 2, offset) - 2
+        x1 = wheel_x(0, r, offset)
+        y1 = wheel_y(0, r, offset)
+        x2 = wheel_x(0, r + 2, offset) - 2
+        y2 = wheel_y(0, r + 2, offset) - 2
         out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: #F00; stroke-width: 1px; stroke-opacity:.9;"/>'
     out += "</g>"
 
@@ -975,10 +964,10 @@ def draw_degree_ring(
             offset = offset + 360.0
         elif offset > 360:
             offset = offset - 360.0
-        x1 = sliceToX(0, r - c1, offset) + c1
-        y1 = sliceToY(0, r - c1, offset) + c1
-        x2 = sliceToX(0, r + 2 - c1, offset) - 2 + c1
-        y2 = sliceToY(0, r + 2 - c1, offset) - 2 + c1
+        x1 = wheel_x(0, r - c1, offset) + c1
+        y1 = wheel_y(0, r - c1, offset) + c1
+        x2 = wheel_x(0, r + 2 - c1, offset) - 2 + c1
+        y2 = wheel_y(0, r + 2 - c1, offset) - 2 + c1
 
         out += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {stroke_color}; stroke-width: 1px; stroke-opacity:.9;"/>'
     out += "</g>"
@@ -1249,18 +1238,18 @@ def draw_houses_cusps_and_text_number(
         )
 
         # Calculate the offset for the current house cusp
-        offset = (int(first_subject_houses_list[int(xr / 2)].abs_pos) / -1) + int(first_subject_houses_list[i].abs_pos)
+        offset = -int(first_subject_houses_list[int(xr / 2)].abs_pos) + int(first_subject_houses_list[i].abs_pos)
 
         # Calculate the coordinates for the house cusp lines
-        x1 = sliceToX(0, (r - dropin), offset) + dropin
-        y1 = sliceToY(0, (r - dropin), offset) + dropin
-        x2 = sliceToX(0, r - roff, offset) + roff
-        y2 = sliceToY(0, r - roff, offset) + roff
+        x1 = wheel_x(0, (r - dropin), offset) + dropin
+        y1 = wheel_y(0, (r - dropin), offset) + dropin
+        x2 = wheel_x(0, r - roff, offset) + roff
+        y2 = wheel_y(0, r - roff, offset) + roff
 
         # Calculate the text offset for the house number
         next_index = (i + 1) % xr
         text_offset = offset + int(
-            degreeDiff(first_subject_houses_list[next_index].abs_pos, first_subject_houses_list[i].abs_pos) / 2
+            degree_difference(first_subject_houses_list[next_index].abs_pos, first_subject_houses_list[i].abs_pos) / 2
         )
 
         # Determine the line color based on the house index
@@ -1279,18 +1268,18 @@ def draw_houses_cusps_and_text_number(
             t_offset = (zeropoint + second_subject_houses_list[i].abs_pos) % 360
 
             # Calculate the coordinates for the second subject's house cusp lines
-            t_x1 = sliceToX(0, (r - t_roff), t_offset) + t_roff
-            t_y1 = sliceToY(0, (r - t_roff), t_offset) + t_roff
-            t_x2 = sliceToX(0, r, t_offset)
-            t_y2 = sliceToY(0, r, t_offset)
+            t_x1 = wheel_x(0, (r - t_roff), t_offset) + t_roff
+            t_y1 = wheel_y(0, (r - t_roff), t_offset) + t_roff
+            t_x2 = wheel_x(0, r, t_offset)
+            t_y2 = wheel_y(0, r, t_offset)
 
             # Calculate the text offset for the second subject's house number
             t_text_offset = t_offset + int(
-                degreeDiff(second_subject_houses_list[next_index].abs_pos, second_subject_houses_list[i].abs_pos) / 2
+                degree_difference(second_subject_houses_list[next_index].abs_pos, second_subject_houses_list[i].abs_pos) / 2
             )
             t_linecolor = linecolor if i in [0, 9, 6, 3] else transit_house_cusp_color
-            xtext = sliceToX(0, (r - 8), t_text_offset) + 8
-            ytext = sliceToY(0, (r - 8), t_text_offset) + 8
+            xtext = wheel_x(0, (r - 8), t_text_offset) + 8
+            ytext = wheel_y(0, (r - 8), t_text_offset) + 8
 
             # Add the house number text for the second subject
             fill_opacity = "0" if chart_type == "Transit" else ".4"
@@ -1315,8 +1304,8 @@ def draw_houses_cusps_and_text_number(
             dropin = 100
         else:
             dropin = 84 if chart_type in DOUBLE_CHART_TYPES else 48
-        xtext = sliceToX(0, (r - dropin), text_offset) + dropin
-        ytext = sliceToY(0, (r - dropin), text_offset) + dropin
+        xtext = wheel_x(0, (r - dropin), text_offset) + dropin
+        ytext = wheel_y(0, (r - dropin), text_offset) + dropin
 
         # Add the house cusp line for the first subject
         parts.append(
@@ -2538,16 +2527,21 @@ def draw_single_cusp_comparison_grid(
 # =============================================================================
 
 
-def makeLunarPhase(degrees_between_sun_and_moon: float, latitude: float) -> str:
-    """
-    Generate SVG representation of lunar phase.
+def make_lunar_phase(degrees_between_sun_and_moon: float, latitude: float) -> str:
+    """Build the SVG fragment that renders the Moon's illuminated phase.
 
-    Parameters:
-    - degrees_between_sun_and_moon (float): Angle between sun and moon in degrees
-    - latitude (float): Observer's latitude (no longer used, kept for backward compatibility)
+    The phase geometry is derived purely from the Sun-Moon elongation; the
+    terminator is drawn as an ellipse whose width tracks the illuminated
+    fraction.
+
+    Args:
+        degrees_between_sun_and_moon: Sun-Moon elongation in degrees (0 = new
+            moon, 180 = full moon).
+        latitude: Observer's latitude. Unused; retained for backward
+            compatibility with older call sites.
 
     Returns:
-    - str: SVG representation of lunar phase
+        An SVG string drawing the Moon disc with its bright/shadow regions.
     """
     params = calculate_moon_phase_chart_params(degrees_between_sun_and_moon)
 
@@ -2770,10 +2764,10 @@ def draw_gauquelin_sectors(
     for i in range(36):
         offset = offsets[i]
 
-        x1 = sliceToX(0, (r - outer_r), offset) + outer_r
-        y1 = sliceToY(0, (r - outer_r), offset) + outer_r
-        x2 = sliceToX(0, r - inner_r, offset) + inner_r
-        y2 = sliceToY(0, r - inner_r, offset) + inner_r
+        x1 = wheel_x(0, (r - outer_r), offset) + outer_r
+        y1 = wheel_y(0, (r - outer_r), offset) + outer_r
+        x2 = wheel_x(0, r - inner_r, offset) + inner_r
+        y2 = wheel_y(0, r - inner_r, offset) + inner_r
 
         is_quadrant = i % 9 == 0
         if is_quadrant:
@@ -2791,8 +2785,8 @@ def draw_gauquelin_sectors(
 
         mid_offset = _classic_gauquelin_mid_offset(offsets, i)
         text_r_factor = (r - inner_r) + (inner_r - outer_r) * 0.5
-        tx = sliceToX(0, text_r_factor, mid_offset) + (r - text_r_factor)
-        ty = sliceToY(0, text_r_factor, mid_offset) + (r - text_r_factor)
+        tx = wheel_x(0, text_r_factor, mid_offset) + (r - text_r_factor)
+        ty = wheel_y(0, text_r_factor, mid_offset) + (r - text_r_factor)
         sector_num = i + 1
 
         font_size = 8 if is_quadrant else 6
@@ -2848,14 +2842,14 @@ def draw_gauquelin_sector_hit_areas(
         offset_start = offsets[i]
         offset_end = offsets[(i + 1) % 36]
 
-        ox1 = sliceToX(0, outer_visual_r, offset_start) + outer_dropin
-        oy1 = sliceToY(0, outer_visual_r, offset_start) + outer_dropin
-        ox2 = sliceToX(0, outer_visual_r, offset_end) + outer_dropin
-        oy2 = sliceToY(0, outer_visual_r, offset_end) + outer_dropin
-        ix1 = sliceToX(0, inner_visual_r, offset_start) + inner_dropin
-        iy1 = sliceToY(0, inner_visual_r, offset_start) + inner_dropin
-        ix2 = sliceToX(0, inner_visual_r, offset_end) + inner_dropin
-        iy2 = sliceToY(0, inner_visual_r, offset_end) + inner_dropin
+        ox1 = wheel_x(0, outer_visual_r, offset_start) + outer_dropin
+        oy1 = wheel_y(0, outer_visual_r, offset_start) + outer_dropin
+        ox2 = wheel_x(0, outer_visual_r, offset_end) + outer_dropin
+        oy2 = wheel_y(0, outer_visual_r, offset_end) + outer_dropin
+        ix1 = wheel_x(0, inner_visual_r, offset_start) + inner_dropin
+        iy1 = wheel_y(0, inner_visual_r, offset_start) + inner_dropin
+        ix2 = wheel_x(0, inner_visual_r, offset_end) + inner_dropin
+        iy2 = wheel_y(0, inner_visual_r, offset_end) + inner_dropin
 
         d = (
             f"M {ox1},{oy1} "

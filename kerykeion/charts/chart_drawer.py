@@ -70,7 +70,7 @@ from kerykeion.charts.charts_utils import (
     draw_single_house_comparison_grid,
     draw_cusp_comparison_grid,
     draw_single_cusp_comparison_grid,
-    makeLunarPhase,
+    make_lunar_phase,
     draw_main_house_grid,
     draw_secondary_house_grid,
     draw_main_planet_grid,
@@ -923,7 +923,7 @@ class TransitChartRenderer(BaseChartRenderer):
 
         # Moon phase visualization from transit subject
         if d.second_obj is not None and getattr(d.second_obj, "lunar_phase", None):
-            template_dict["makeLunarPhase"] = makeLunarPhase(
+            template_dict["makeLunarPhase"] = make_lunar_phase(
                 d.second_obj.lunar_phase["degrees_between_s_m"],  # type: ignore[index]
                 d.geolat,
             )
@@ -4044,7 +4044,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             latitude: Geographic latitude for moon phase calculation.
         """
         if subject.lunar_phase is not None:
-            template_dict["makeLunarPhase"] = makeLunarPhase(subject.lunar_phase["degrees_between_s_m"], latitude)
+            template_dict["makeLunarPhase"] = make_lunar_phase(subject.lunar_phase["degrees_between_s_m"], latitude)
         else:
             template_dict["makeLunarPhase"] = ""
 
