@@ -663,7 +663,7 @@ class TestChartsUtilsInternalFunctions:
     def test_offset_to_tz_none_raises(self):
         from kerykeion.charts.charts_utils import timedelta_to_decimal_hours
 
-        with pytest.raises(Exception):
+        with pytest.raises(KerykeionException):
             timedelta_to_decimal_hours(None)
 
     def test_offset_to_tz_valid(self):

@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING (alpha):** the chart geometry/time helpers in
+  `kerykeion.charts.charts_utils` were renamed to PEP8 `snake_case` with **no
+  compatibility aliases**: `sliceToX`→`wheel_x`, `sliceToY`→`wheel_y`,
+  `decHourJoin`→`hms_to_decimal_hours`, `offsetToTz`→`timedelta_to_decimal_hours`,
+  `degreeDiff`→`degree_difference`, `degreeSum`→`degree_sum`,
+  `normalizeDegree`→`normalize_degree`, `makeLunarPhase`→`make_lunar_phase`. Code
+  importing the old names directly must update its imports. Pure refactor —
+  numerically identical output. The template-dict key `"makeLunarPhase"` is
+  intentionally left unchanged.
+
 ### Documentation
 
 - **Documentation completeness, accuracy & navigation pass** (no code or public-API
