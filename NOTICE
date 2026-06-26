@@ -46,3 +46,27 @@ fonts themselves are not redistributed by this project.
    (conjunction, opposition, square, trine, sextile, semi-sextile, semi-square,
    sesquiquadrate, quintile, biquintile, quincunx). The Ascendant / MC /
    Descendant / Imum Coeli markers are plain text labels.
+
+--------------------------------------------------------------------------------
+Runtime dependencies (installed from PyPI, not bundled in this package)
+--------------------------------------------------------------------------------
+
+Kerykeion installs the following packages at runtime. They are NOT vendored
+into this package; their licenses are listed here as a courtesy.
+
+  libephemeris         AGPL-3.0-only — default ephemeris backend; dual-licensed,
+                       a commercial grant is available from the same maintainer
+  pydantic             MIT
+  svg-polish           Apache-2.0 (maintained by the same author)
+  requests             Apache-2.0
+  requests-cache       BSD-2-Clause
+  simple-ascii-tables  MIT (maintained by the same author)
+  pytz                 MIT
+  typing-extensions    PSF-2.0
+  certifi (transitive) MPL-2.0
+
+Optional Swiss Ephemeris backend — only with the `swiss` / `all` extras, never
+installed or used on the default path:
+
+  pyswisseph           Swiss Ephemeris by Astrodienst AG — AGPL-3.0, or a
+                       separate commercial license obtained from Astrodienst.
