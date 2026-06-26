@@ -16,10 +16,10 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from kerykeion.charts.charts_utils import (
     DOUBLE_CHART_TYPES,
-    degreeDiff,
+    degree_difference,
     escape_svg_text,
-    sliceToX,
-    sliceToY,
+    wheel_x,
+    wheel_y,
     convert_decimal_to_degree_string,
 )
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
@@ -166,8 +166,8 @@ def draw_planets(
         )
 
         # Calculate coordinates
-        point_x = sliceToX(0, radius - point_radius, adjusted_offset) + point_radius
-        point_y = sliceToY(0, radius - point_radius, adjusted_offset) + point_radius
+        point_x = wheel_x(0, radius - point_radius, adjusted_offset) + point_radius
+        point_y = wheel_y(0, radius - point_radius, adjusted_offset) + point_radius
 
         # Determine scale factor
         scale_factor = 0.8 if chart_type in DUAL_CHART_TYPES or external_view else 1.0
@@ -321,8 +321,8 @@ def _calculate_planet_adjustments(
             prev_pos, next_pos = _get_adjacent_positions(
                 position_idx, sorted_positions, sorted_point_indices, points_abs_positions
             )
-            distance_to_prev = degreeDiff(prev_pos, points_abs_positions[point_idx])
-            distance_to_next = degreeDiff(next_pos, points_abs_positions[point_idx])
+            distance_to_prev = degree_difference(prev_pos, points_abs_positions[point_idx])
+            distance_to_next = degree_difference(next_pos, points_abs_positions[point_idx])
 
         planets_by_position[position_idx] = [point_idx, distance_to_prev, distance_to_next]
         label = points_settings[point_idx]["label"]
@@ -580,7 +580,7 @@ def _calculate_indicator_adjustments(
             0 if pos_idx == len(sorted_point_indices) - 1 else pos_idx + 1
         ]
 
-        distance = degreeDiff(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
+        distance = degree_difference(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
 
         if distance <= INDICATOR_GROUPING_THRESHOLD:
             if in_group:
@@ -714,7 +714,7 @@ def _calculate_secondary_indicator_adjustments(
             0 if pos_idx == len(sorted_point_indices) - 1 else pos_idx + 1
         ]
 
-        distance = degreeDiff(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
+        distance = degree_difference(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
 
         if distance <= INDICATOR_GROUPING_THRESHOLD:
             if in_group:
@@ -866,14 +866,14 @@ def _draw_external_natal_lines(
         Updated SVG output with added lines.
     """
     # First line: from chart edge to intermediate position
-    x1 = sliceToX(0, radius - third_circle_radius, true_offset) + third_circle_radius
-    y1 = sliceToY(0, radius - third_circle_radius, true_offset) + third_circle_radius
-    x2 = sliceToX(0, radius - point_radius - 30, true_offset) + point_radius + 30
-    y2 = sliceToY(0, radius - point_radius - 30, true_offset) + point_radius + 30
+    x1 = wheel_x(0, radius - third_circle_radius, true_offset) + third_circle_radius
+    y1 = wheel_y(0, radius - third_circle_radius, true_offset) + third_circle_radius
+    x2 = wheel_x(0, radius - point_radius - 30, true_offset) + point_radius + 30
+    y2 = wheel_y(0, radius - point_radius - 30, true_offset) + point_radius + 30
 
     # Second line: from intermediate to final adjusted position
-    x3 = sliceToX(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
-    y3 = sliceToY(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
+    x3 = wheel_x(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
+    y3 = wheel_y(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
 
     return (
         output
@@ -934,10 +934,10 @@ def _draw_primary_point_indicators(
             point_offset -= 360
 
         # Draw radial indicator line
-        x1 = sliceToX(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
-        y1 = sliceToY(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
-        x2 = sliceToX(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
-        y2 = sliceToY(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
+        x1 = wheel_x(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
+        y1 = wheel_y(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
+        x2 = wheel_x(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
+        y2 = wheel_y(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
 
         point_color = points_settings[point_idx]["color"]
 
@@ -945,8 +945,8 @@ def _draw_primary_point_indicators(
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
         text_radius = first_circle_radius - 10.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_x = wheel_x(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = wheel_y(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         point_slug = points_settings[point_idx]["name"]
@@ -1002,10 +1002,10 @@ def _draw_inner_point_indicators(
             point_offset -= 360
 
         # Draw radial line at inner boundary
-        x1 = sliceToX(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
-        y1 = sliceToY(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
-        x2 = sliceToX(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
-        y2 = sliceToY(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
+        x1 = wheel_x(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
+        y1 = wheel_y(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
+        x2 = wheel_x(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
+        y2 = wheel_y(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
 
         point_color = points_settings[point_idx]["color"]
 
@@ -1013,8 +1013,8 @@ def _draw_inner_point_indicators(
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
         text_radius = NATAL_INDICATOR_OFFSET + 5.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_x = wheel_x(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = wheel_y(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         point_slug = points_settings[point_idx]["name"]
@@ -1115,8 +1115,8 @@ def _draw_secondary_points(
             point_offset -= 360
 
         # Draw point symbol
-        point_x = sliceToX(0, radius - point_radius, point_offset) + point_radius
-        point_y = sliceToY(0, radius - point_radius, point_offset) + point_radius
+        point_x = wheel_x(0, radius - point_radius, point_offset) + point_radius
+        point_y = wheel_y(0, radius - point_radius, point_offset) + point_radius
         is_retrograde = (
             celestial_points is not None
             and point_idx < len(celestial_points)
@@ -1164,17 +1164,17 @@ def _draw_secondary_points(
         point_svg += "</g></g>"
 
         # Draw indicator line
-        x1 = sliceToX(0, radius + 3, point_offset) - 3
-        y1 = sliceToY(0, radius + 3, point_offset) - 3
-        x2 = sliceToX(0, radius - 3, point_offset) + 3
-        y2 = sliceToY(0, radius - 3, point_offset) + 3
+        x1 = wheel_x(0, radius + 3, point_offset) - 3
+        y1 = wheel_y(0, radius + 3, point_offset) - 3
+        x2 = wheel_x(0, radius - 3, point_offset) + 3
+        y2 = wheel_y(0, radius - 3, point_offset) + 3
 
         # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
         text_radius = -9.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_x = wheel_x(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = wheel_y(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         output += (
@@ -1188,18 +1188,18 @@ def _draw_secondary_points(
 
     # Draw connecting lines for the main reference point
     dropin = 36 if chart_type in DUAL_CHART_TYPES else 0
-    x1 = sliceToX(0, radius - (dropin + 3), main_offset) + (dropin + 3)
-    y1 = sliceToY(0, radius - (dropin + 3), main_offset) + (dropin + 3)
-    x2 = sliceToX(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-    y2 = sliceToY(0, radius - (dropin - 3), main_offset) + (dropin - 3)
+    x1 = wheel_x(0, radius - (dropin + 3), main_offset) + (dropin + 3)
+    y1 = wheel_y(0, radius - (dropin + 3), main_offset) + (dropin + 3)
+    x2 = wheel_x(0, radius - (dropin - 3), main_offset) + (dropin - 3)
+    y2 = wheel_y(0, radius - (dropin - 3), main_offset) + (dropin - 3)
     point_color = points_settings[point_idx]["color"]
 
     # Second connecting line segment
     dropin2 = 160 if chart_type in DUAL_CHART_TYPES else 120
-    x3 = sliceToX(0, radius - dropin2, main_offset) + dropin2
-    y3 = sliceToY(0, radius - dropin2, main_offset) + dropin2
-    x4 = sliceToX(0, radius - (dropin2 - 3), main_offset) + (dropin2 - 3)
-    y4 = sliceToY(0, radius - (dropin2 - 3), main_offset) + (dropin2 - 3)
+    x3 = wheel_x(0, radius - dropin2, main_offset) + dropin2
+    y3 = wheel_y(0, radius - dropin2, main_offset) + dropin2
+    x4 = wheel_x(0, radius - (dropin2 - 3), main_offset) + (dropin2 - 3)
+    y4 = wheel_y(0, radius - (dropin2 - 3), main_offset) + (dropin2 - 3)
 
     output += (
         f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '

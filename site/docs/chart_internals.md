@@ -54,11 +54,11 @@ These functions return SVG string elements.
 | `convert_decimal_to_degree_string(dec)`            | Converts a float degree (e.g., 12.5) to a string (e.g., "12° 30'"). |
 | `convert_longitude_coordinate_to_string(lng)`      | Converts a longitude coordinate to a readable string.               |
 | `convert_latitude_coordinate_to_string(lat)`       | Converts a latitude coordinate to a readable string.                |
-| `decHourJoin(h, m, s)`                             | Combines hours, minutes, seconds into a decimal hour.               |
+| `hms_to_decimal_hours(hours, minutes, seconds)`    | Combines hours, minutes, seconds into a decimal hour.               |
 | `format_datetime_with_timezone(dt, tz)`            | Formats a datetime object with timezone info.                       |
 | `format_location_string(location, max_length=35)` | Truncates a location string to fit within a max length. |
 | `get_decoded_kerykeion_celestial_point_name(name)` | Decodes internal point names to human names.                        |
-| `offsetToTz(datetime_offset)`                      | Converts a `timedelta` offset to a float in hours.                  |
+| `timedelta_to_decimal_hours(datetime_offset)`      | Converts a `timedelta` offset to a float in hours.                  |
 
 ---
 

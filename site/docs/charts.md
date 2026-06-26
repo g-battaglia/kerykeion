@@ -269,18 +269,18 @@ Import from: `kerykeion.charts.charts_utils`
 
 Utility functions used in SVG generation that can be helpful for custom rendering logic.
 
-| Function                     | Description                                        |
-| :--------------------------- | :------------------------------------------------- |
-| `degreeDiff(a, b)`           | Smallest difference between two angles (0-180°).   |
-| `degreeSum(a, b)`            | Sum of two angles normalized to 0-360°.            |
-| `normalizeDegree(angle)`     | Constrains any angle to 0-360° range.              |
-| `sliceToX(slice, r, offset)` | Calculates X coordinate for a circle slice (1-12). |
-| `sliceToY(slice, r, offset)` | Calculates Y coordinate for a circle slice (1-12). |
+| Function                              | Description                                        |
+| :------------------------------------ | :------------------------------------------------- |
+| `degree_difference(a, b)`             | Smallest difference between two angles (0-180°).   |
+| `degree_sum(a, b)`                    | Sum of two angles normalized to 0-360°.            |
+| `normalize_degree(angle)`             | Constrains any angle to 0-360° range.              |
+| `wheel_x(sign_index, radius, offset)` | Calculates X coordinate for a circle slice (1-12). |
+| `wheel_y(sign_index, radius, offset)` | Calculates Y coordinate for a circle slice (1-12). |
 
 ```python
-from kerykeion.charts.charts_utils import degreeDiff
+from kerykeion.charts.charts_utils import degree_difference
 
-diff = degreeDiff(350, 10) # Returns 20.0
+diff = degree_difference(350, 10) # Returns 20.0
 ```
 
 ---

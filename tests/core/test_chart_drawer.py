@@ -31,7 +31,7 @@ from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import BACKEND_NAME
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.charts.charts_utils import makeLunarPhase
+from kerykeion.charts.charts_utils import make_lunar_phase
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.schemas.kr_models import KerykeionPointModel
@@ -484,7 +484,7 @@ class TestChartDrawerBasic:
         assert chart.second_obj is not None
         transit_phase = chart.second_obj.lunar_phase
         assert transit_phase is not None
-        expected_svg = makeLunarPhase(transit_phase["degrees_between_s_m"], chart.geolat)
+        expected_svg = make_lunar_phase(transit_phase["degrees_between_s_m"], chart.geolat)
         assert template_dict["makeLunarPhase"] == expected_svg
 
     def test_transit_chart_without_transit_phase_shows_blank(self):

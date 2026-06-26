@@ -641,36 +641,36 @@ class TestChartsUtilsInternalFunctions:
     """Tests for internal functions in charts_utils module."""
 
     def test_degree_sum_exact_360(self):
-        from kerykeion.charts.charts_utils import degreeSum
+        from kerykeion.charts.charts_utils import degree_sum
 
-        assert degreeSum(180, 180) == 0.0
+        assert degree_sum(180, 180) == 0.0
 
     def test_normalize_degree_360(self):
-        from kerykeion.charts.charts_utils import normalizeDegree
+        from kerykeion.charts.charts_utils import normalize_degree
 
-        assert normalizeDegree(360) == 0.0
+        assert normalize_degree(360) == 0.0
 
     def test_normalize_degree_negative(self):
-        from kerykeion.charts.charts_utils import normalizeDegree
+        from kerykeion.charts.charts_utils import normalize_degree
 
-        assert normalizeDegree(-90) == 270.0
+        assert normalize_degree(-90) == 270.0
 
     def test_dec_hour_join(self):
-        from kerykeion.charts.charts_utils import decHourJoin
+        from kerykeion.charts.charts_utils import hms_to_decimal_hours
 
-        assert decHourJoin(12, 30, 0) == pytest.approx(12.5, abs=0.001)
+        assert hms_to_decimal_hours(12, 30, 0) == pytest.approx(12.5, abs=0.001)
 
     def test_offset_to_tz_none_raises(self):
-        from kerykeion.charts.charts_utils import offsetToTz
+        from kerykeion.charts.charts_utils import timedelta_to_decimal_hours
 
-        with pytest.raises(Exception):
-            offsetToTz(None)
+        with pytest.raises(KerykeionException):
+            timedelta_to_decimal_hours(None)
 
     def test_offset_to_tz_valid(self):
         from datetime import timedelta
-        from kerykeion.charts.charts_utils import offsetToTz
+        from kerykeion.charts.charts_utils import timedelta_to_decimal_hours
 
-        assert offsetToTz(timedelta(hours=2)) == 2.0
+        assert timedelta_to_decimal_hours(timedelta(hours=2)) == 2.0
 
     def test_get_decoded_celestial_point_unknown_raises(self):
         from kerykeion.charts.charts_utils import get_decoded_kerykeion_celestial_point_name
