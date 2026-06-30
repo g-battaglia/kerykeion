@@ -733,6 +733,32 @@ class TestFactoryParameterValidation:
         assert len(limited.aspects) <= len(full.aspects)
         assert len(limited.active_points) <= len(full.active_points)
 
+    def test_axis_orb_limit_forwarded_natal(self, johnny_depp):
+        """The natal convenience method must forward ``axis_orb_limit`` so that
+        axis-involving aspects beyond the threshold are dropped. Regression
+        guard against the parameter being a silent no-op."""
+        axes = {"Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"}
+        full = ChartDataFactory.create_natal_chart_data(johnny_depp)
+        tight = ChartDataFactory.create_natal_chart_data(johnny_depp, axis_orb_limit=0.5)
+
+        assert len(tight.aspects) <= len(full.aspects)
+        # Every surviving aspect that touches an axis must respect the tight limit.
+        for asp in tight.aspects:
+            if asp.p1_name in axes or asp.p2_name in axes:
+                assert abs(asp.orbit) <= 0.5 + 1e-9
+
+    def test_axis_orb_limit_forwarded_synastry(self, johnny_depp, john_lennon):
+        """The synastry convenience method must forward ``axis_orb_limit`` (it
+        affects both the dual-chart aspects and the relationship score)."""
+        axes = {"Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"}
+        full = ChartDataFactory.create_synastry_chart_data(johnny_depp, john_lennon)
+        tight = ChartDataFactory.create_synastry_chart_data(johnny_depp, john_lennon, axis_orb_limit=0.5)
+
+        assert len(tight.aspects) <= len(full.aspects)
+        for asp in tight.aspects:
+            if asp.p1_name in axes or asp.p2_name in axes:
+                assert abs(asp.orbit) <= 0.5 + 1e-9
+
     def test_selective_synastry_features(self, johnny_depp, john_lennon):
         """Toggling house_comparison and relationship_score flags works."""
         full = ChartDataFactory.create_synastry_chart_data(

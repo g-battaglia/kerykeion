@@ -403,6 +403,7 @@ class ChartDataFactory:
         active_points: Optional[list[AstrologicalPoint]] = None,
         active_aspects: Optional[list[ActiveAspect]] = None,
         *,
+        axis_orb_limit: Optional[float] = None,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -415,6 +416,8 @@ class ChartDataFactory:
             subject: Astrological subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
+            axis_orb_limit: Optional orb threshold for chart axes (Ascendant,
+                Medium_Coeli, Descendant, Imum_Coeli). ``None`` (default) disables it.
             point_orb_adjustments: Per-point orb adjustment table. ``None`` uses
                 the natal default (Sun/Moon +1.5°, the luminary-widening rule);
                 pass ``{}`` to disable.
@@ -430,6 +433,7 @@ class ChartDataFactory:
             chart_type="Natal",
             active_points=active_points,
             active_aspects=active_aspects,
+            axis_orb_limit=axis_orb_limit,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
@@ -445,6 +449,7 @@ class ChartDataFactory:
         include_house_comparison: bool = True,
         include_relationship_score: bool = True,
         *,
+        axis_orb_limit: Optional[float] = None,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -460,6 +465,9 @@ class ChartDataFactory:
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
             include_relationship_score: Whether to include relationship scoring
+            axis_orb_limit: Optional orb threshold for chart axes (Ascendant,
+                Medium_Coeli, Descendant, Imum_Coeli). Applied to dual-chart
+                aspects and the relationship score. ``None`` (default) disables it.
             point_orb_adjustments: Per-point orb adjustment table. ``None`` uses
                 the natal default (Sun/Moon +1.5°); pass ``{}`` to disable.
             point_orb_adjustment_strategy: How to combine the two points' adjustments
@@ -477,6 +485,7 @@ class ChartDataFactory:
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
             include_relationship_score=include_relationship_score,
+            axis_orb_limit=axis_orb_limit,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
@@ -491,6 +500,7 @@ class ChartDataFactory:
         active_aspects: Optional[list[ActiveAspect]] = None,
         include_house_comparison: bool = True,
         *,
+        axis_orb_limit: Optional[float] = None,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -505,6 +515,8 @@ class ChartDataFactory:
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
             include_house_comparison: Whether to include house comparison
+            axis_orb_limit: Optional orb threshold for chart axes (Ascendant,
+                Medium_Coeli, Descendant, Imum_Coeli). ``None`` (default) disables it.
             point_orb_adjustments: Per-point orb adjustment table. ``None`` means
                 no adjustment — transits use a flat tight orb by convention.
             point_orb_adjustment_strategy: How to combine the two points' adjustments
@@ -521,6 +533,7 @@ class ChartDataFactory:
             active_points=active_points,
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
+            axis_orb_limit=axis_orb_limit,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
@@ -533,6 +546,7 @@ class ChartDataFactory:
         active_points: Optional[list[AstrologicalPoint]] = None,
         active_aspects: Optional[list[ActiveAspect]] = None,
         *,
+        axis_orb_limit: Optional[float] = None,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -545,6 +559,8 @@ class ChartDataFactory:
             composite_subject: Composite astrological subject
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use
+            axis_orb_limit: Optional orb threshold for chart axes (Ascendant,
+                Medium_Coeli, Descendant, Imum_Coeli). ``None`` (default) disables it.
             point_orb_adjustments: Per-point orb adjustment table. ``None`` uses
                 the natal default (Sun/Moon +1.5°); pass ``{}`` to disable.
             point_orb_adjustment_strategy: How to combine the two points' adjustments
@@ -559,6 +575,7 @@ class ChartDataFactory:
             chart_type="Composite",
             active_points=active_points,
             active_aspects=active_aspects,
+            axis_orb_limit=axis_orb_limit,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
@@ -573,6 +590,7 @@ class ChartDataFactory:
         active_aspects: Optional[list[ActiveAspect]] = None,
         include_house_comparison: bool = True,
         *,
+        axis_orb_limit: Optional[float] = None,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -588,6 +606,8 @@ class ChartDataFactory:
             active_aspects: Aspect types and orbs to use. Defaults to the
                 predictive set (3° orb) — the conventional return-chart default.
             include_house_comparison: Whether to include house comparison
+            axis_orb_limit: Optional orb threshold for chart axes (Ascendant,
+                Medium_Coeli, Descendant, Imum_Coeli). ``None`` (default) disables it.
             point_orb_adjustments: Per-point orb adjustment table. ``None`` means
                 no adjustment — returns use a flat tight orb by convention.
             point_orb_adjustment_strategy: How to combine the two points' adjustments
@@ -604,6 +624,7 @@ class ChartDataFactory:
             active_points=active_points,
             active_aspects=active_aspects,
             include_house_comparison=include_house_comparison,
+            axis_orb_limit=axis_orb_limit,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
@@ -616,6 +637,7 @@ class ChartDataFactory:
         active_points: Optional[list[AstrologicalPoint]] = None,
         active_aspects: Optional[list[ActiveAspect]] = None,
         *,
+        axis_orb_limit: Optional[float] = None,
         point_orb_adjustments: Optional[Mapping[str, float]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
@@ -629,6 +651,8 @@ class ChartDataFactory:
             active_points: Points to include in calculations
             active_aspects: Aspect types and orbs to use. Defaults to the
                 predictive set (3° orb) — the conventional return-chart default.
+            axis_orb_limit: Optional orb threshold for chart axes (Ascendant,
+                Medium_Coeli, Descendant, Imum_Coeli). ``None`` (default) disables it.
             point_orb_adjustments: Per-point orb adjustment table. ``None`` means
                 no adjustment — returns use a flat tight orb by convention.
             point_orb_adjustment_strategy: How to combine the two points' adjustments
@@ -643,6 +667,7 @@ class ChartDataFactory:
             chart_type="SingleReturnChart",
             active_points=active_points,
             active_aspects=active_aspects,
+            axis_orb_limit=axis_orb_limit,
             point_orb_adjustments=point_orb_adjustments,
             point_orb_adjustment_strategy=point_orb_adjustment_strategy,
             distribution_method=distribution_method,
