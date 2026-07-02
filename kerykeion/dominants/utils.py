@@ -28,6 +28,7 @@ from kerykeion.dominants.data import (
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion.schemas.kr_literals import SIGN_CODES, Element, Quality, Sign
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
+from kerykeion.utilities import wrap_180
 
 logger = logging.getLogger(__name__)
 
@@ -293,11 +294,6 @@ _SYNODIC_MONTH: float = 29.530588853
 _MEAN_DAILY_ELONGATION: float = 360.0 / _SYNODIC_MONTH
 
 
-def _wrap_180(angle: float) -> float:
-    """Wrap an angle into the signed range ``[-180, 180)``."""
-    return (angle + 180.0) % 360.0 - 180.0
-
-
 def _sun_moon_longitudes(julian_day: float, iflag: int = ephe.FLG_SWIEPH) -> tuple[float, float]:
     """Return the (Sun, Moon) tropical ecliptic longitudes at a Julian Day.
 
@@ -358,7 +354,7 @@ def prenatal_syzygy(subject: AstrologicalSubjectModel) -> Optional[SyzygyInfo]:
             for _ in range(60):
                 mid = (low + high) / 2.0
                 sun_mid, moon_mid = _sun_moon_longitudes(mid, iflag)
-                offset = _wrap_180((moon_mid - sun_mid) - target)
+                offset = wrap_180((moon_mid - sun_mid) - target)
                 if offset < 0.0:
                     low = mid  # syzygy is later than mid
                 else:

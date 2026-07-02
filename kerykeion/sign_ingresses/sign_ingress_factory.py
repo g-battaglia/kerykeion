@@ -10,8 +10,8 @@ real ingress and is reported.
 on the swisseph backend, so — like ``LunationFinderFactory`` — this stays
 backend-agnostic: it samples longitude via ``ephe.calc_ut`` across the range and,
 whenever the sign index changes between two samples, bisects to the exact 30°
-crossing. The half-day step keeps even the Moon (~13°/day) below one sign per
-step, so no boundary is skipped.
+crossing. The per-planet step (see ``_PLANET_STEP_DAYS``) keeps every body well
+below one sign per step, so no boundary is skipped.
 
 Swiss Ephemeris / libephemeris functions used:
     - ephe.calc_ut(jd, planet_id, FLG_SWIEPH)
@@ -24,12 +24,15 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.settings.config_constants import POINT_NUMBER_MAP
+from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
     datetime_to_julian,
     get_kerykeion_point_from_degree,
+    wrap_180,
 )
 from pydantic import Field
 
@@ -39,15 +42,8 @@ logger = logging.getLogger(__name__)
 # most use cases — but accepted when explicitly requested. Names match
 # kerykeion's AstrologicalPoint vocabulary.
 _INGRESS_PLANETS: List[tuple[str, int]] = [
-    ("Sun", ephe.SUN),
-    ("Mercury", ephe.MERCURY),
-    ("Venus", ephe.VENUS),
-    ("Mars", ephe.MARS),
-    ("Jupiter", ephe.JUPITER),
-    ("Saturn", ephe.SATURN),
-    ("Uranus", ephe.URANUS),
-    ("Neptune", ephe.NEPTUNE),
-    ("Pluto", ephe.PLUTO),
+    (name, POINT_NUMBER_MAP[name])
+    for name in ("Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto")
 ]
 
 # Valid request vocabulary includes the Moon (opt-in).
@@ -97,24 +93,10 @@ def _to_utc_naive(dt: datetime) -> datetime:
     return dt
 
 
-def _jd_to_iso(jd: float) -> str:
-    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
-
-    Uses ``ephe.revjul`` rather than Python ``datetime`` (limited to years
-    1..9999) so the BCE range Kerykeion supports formats correctly, with an
-    extended-year sign for negative years.
-    """
-    year, month, day, hour_frac = ephe.revjul(jd)
-    secs = min(int(hour_frac * 3600 + 0.5), 86399)  # nearest second, no 24:00 carry
-    hours, rem = divmod(secs, 3600)
-    minutes, seconds = divmod(rem, 60)
-    year_str = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
-    return f"{year_str}-{month:02d}-{day:02d}T{hours:02d}:{minutes:02d}:{seconds:02d}Z"
-
 
 def _ang_diff(a: float, b: float) -> float:
-    """Signed smallest angular difference ``a - b`` in ``(-180, 180]``."""
-    return ((a - b + 180.0) % 360.0) - 180.0
+    """Signed smallest angular difference ``a - b`` in ``[-180, 180)``."""
+    return wrap_180(a - b)
 
 
 def _lon(jd: float, body: int) -> float:

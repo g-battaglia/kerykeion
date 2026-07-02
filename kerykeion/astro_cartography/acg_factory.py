@@ -22,11 +22,13 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import math
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from typing import List, Optional, Dict, Literal
 from pydantic import BaseModel, Field
 
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
+from kerykeion.utilities import wrap_180
 
 
 class ACGLinePointModel(BaseModel):
@@ -42,27 +44,11 @@ class ACGLineModel(BaseModel):
     points: List[ACGLinePointModel] = Field(description="Geographic coordinates of the line")
 
 
-# Swiss Ephemeris body ids for the supported ACG planets.
+# Swiss Ephemeris body ids for the supported ACG planets (shared map).
 _ACG_PLANET_IDS: Dict[str, int] = {
-    "Sun": ephe.SUN,
-    "Moon": ephe.MOON,
-    "Mercury": ephe.MERCURY,
-    "Venus": ephe.VENUS,
-    "Mars": ephe.MARS,
-    "Jupiter": ephe.JUPITER,
-    "Saturn": ephe.SATURN,
-    "Uranus": ephe.URANUS,
-    "Neptune": ephe.NEPTUNE,
-    "Pluto": ephe.PLUTO,
+    name: POINT_NUMBER_MAP[name]
+    for name in ("Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto")
 }
-
-
-def _wrap180(degrees: float) -> float:
-    """Wrap an angle in degrees to the (-180, +180] geographic range."""
-    wrapped = degrees % 360.0
-    if wrapped > 180.0:
-        wrapped -= 360.0
-    return wrapped
 
 
 class AstroCartographyFactory:
@@ -181,8 +167,8 @@ class AstroCartographyFactory:
 
                 # MC line: the body culminates where LST == RA, i.e. at
                 # geographic longitude RA - GST. IC is the antimeridian.
-                mc_geo_lng = _wrap180(ra_deg - gst_deg)
-                ic_geo_lng = _wrap180(mc_geo_lng + 180.0)
+                mc_geo_lng = wrap_180(ra_deg - gst_deg)
+                ic_geo_lng = wrap_180(mc_geo_lng + 180.0)
 
                 # MC/IC lines are vertical (same lng, full latitude grid)
                 mc_points = [
@@ -206,8 +192,8 @@ class AstroCartographyFactory:
                     if abs(cos_h0) <= 1.0:
                         h0_deg = math.degrees(math.acos(cos_h0))  # in [0, 180]
                         # Rising: hour angle -H0; setting: +H0.
-                        rise_lng = _wrap180(ra_deg - h0_deg - gst_deg)
-                        set_lng = _wrap180(ra_deg + h0_deg - gst_deg)
+                        rise_lng = wrap_180(ra_deg - h0_deg - gst_deg)
+                        set_lng = wrap_180(ra_deg + h0_deg - gst_deg)
                         asc_lines[pname].append(
                             ACGLinePointModel(longitude=round(rise_lng, 4), latitude=lat)
                         )

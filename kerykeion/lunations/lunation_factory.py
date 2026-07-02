@@ -22,6 +22,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
 
 from kerykeion.moon_phase_details.utils import compute_lunar_phase_jd
 from kerykeion.schemas.kerykeion_exception import KerykeionException
@@ -78,26 +79,6 @@ def _phase_angle_error(jd: float, target_angle: float) -> float:
     diff = (moon - sun - target_angle) % 360.0
     return min(diff, 360.0 - diff)
 
-
-def _jd_to_iso(jd: float) -> str:
-    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
-
-    Uses ``ephe.revjul`` rather than Python ``datetime`` (limited to years
-    1..9999) so the BCE range Kerykeion supports formats correctly, with an
-    extended-year sign for negative years.
-    """
-    year, month, day, hour_frac = ephe.revjul(jd)
-    secs = int(hour_frac * 3600 + 0.5)  # nearest second
-    if secs >= 86400:
-        # Rounds up to 24:00:00 — roll over to 00:00:00 of the next calendar
-        # day (carrying month/year boundaries via revjul) rather than clamping
-        # to 23:59:59 of the same day.
-        year, month, day, _ = ephe.revjul(jd + 0.5 / 86400.0)
-        secs = 0
-    hours, rem = divmod(secs, 3600)
-    minutes, seconds = divmod(rem, 60)
-    year_str = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
-    return f"{year_str}-{month:02d}-{day:02d}T{hours:02d}:{minutes:02d}:{seconds:02d}Z"
 
 
 def _ensure_scannable(start_jd: float, end_jd: float) -> None:

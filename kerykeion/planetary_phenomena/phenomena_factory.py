@@ -18,6 +18,7 @@ import logging
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -29,15 +30,8 @@ logger = logging.getLogger(__name__)
 
 # Planets for which phenomena are meaningful (not fixed stars, nodes, etc.)
 _PHENOMENA_PLANETS = {
-    "Moon": ephe.MOON,
-    "Mercury": ephe.MERCURY,
-    "Venus": ephe.VENUS,
-    "Mars": ephe.MARS,
-    "Jupiter": ephe.JUPITER,
-    "Saturn": ephe.SATURN,
-    "Uranus": ephe.URANUS,
-    "Neptune": ephe.NEPTUNE,
-    "Pluto": ephe.PLUTO,
+    name: POINT_NUMBER_MAP[name]
+    for name in ("Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto")
 }
 
 # Planets that can be morning/evening stars

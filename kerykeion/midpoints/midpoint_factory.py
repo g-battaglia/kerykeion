@@ -29,7 +29,7 @@ from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
 from kerykeion.schemas.kr_literals import SIGN_CODES, SignNumbers
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings
-from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house, HOUSE_FIELD_NAMES
+from kerykeion.utilities import _ZODIAC_SIGNS, circular_mean, get_planet_house, HOUSE_FIELD_NAMES
 
 
 class MidpointAspectModel(BaseModel):
@@ -83,22 +83,13 @@ class MidpointFactory:
     @staticmethod
     def _shorter_arc_midpoint(a: float, b: float) -> float:
         """Return the midpoint of the *shorter* great-circle arc between
-        two zodiacal longitudes (0-360°).
+        two zodiacal longitudes (0-360°) — the convention used by all
+        serious midpoint literature (Ebertin, Witte, et al.).
 
-        For pairs separated by less than 180° the midpoint is simply
-        ``(a + b) / 2``. For pairs separated by more than 180° the
-        ``(a + b) / 2`` formula returns the *longer* arc midpoint — we
-        rotate it by 180° to land on the shorter arc instead, which is
-        the convention used by all serious midpoint literature
-        (Ebertin, Witte, et al.).
+        Delegates to :func:`kerykeion.utilities.circular_mean`, which
+        implements the same convention (including the antipodal tie-break).
         """
-        a_n = a % 360.0
-        b_n = b % 360.0
-        diff = abs(a_n - b_n)
-        midpoint = (a_n + b_n) / 2.0
-        if diff > 180.0:
-            midpoint = (midpoint + 180.0) % 360.0
-        return midpoint % 360.0
+        return circular_mean(a, b)
 
     @staticmethod
     def _sign_and_position(longitude: float) -> tuple[str, float]:

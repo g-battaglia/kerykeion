@@ -25,6 +25,7 @@ from typing import Optional
 
 from kerykeion.aspects.aspects_utils import difdeg2n
 from kerykeion.ephemeris_backend import ephe
+from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from kerykeion.schemas.kr_literals import VocAspectName, VocTargetPlanet
 from kerykeion.sun_times.utils import julian_day_to_utc
 from kerykeion.utilities import datetime_to_julian
@@ -41,15 +42,9 @@ PTOLEMAIC_ASPECTS: tuple[tuple[VocAspectName, float], ...] = (
     ("opposition", 180.0),
 )
 
-_BODY_ID: dict[str, int] = {
-    "Sun": ephe.SUN,
-    "Moon": ephe.MOON,
-    "Mercury": ephe.MERCURY,
-    "Venus": ephe.VENUS,
-    "Mars": ephe.MARS,
-    "Jupiter": ephe.JUPITER,
-    "Saturn": ephe.SATURN,
-}
+# VoC aspects use the classical seven bodies only; ids from the shared map.
+_VOC_BODIES = ("Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn")
+_BODY_ID: dict[str, int] = {name: POINT_NUMBER_MAP[name] for name in _VOC_BODIES}
 
 # Newton convergence threshold in degrees (~1e-5° ≈ 0.6 s of Moon travel) and the
 # maximum iterations; convergence is quadratic so a handful always suffices.

@@ -26,6 +26,7 @@ import math
 from datetime import datetime, timezone
 from typing import Optional
 from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+from kerykeion.utilities import wrap_180
 
 logger = logging.getLogger(__name__)
 
@@ -401,7 +402,7 @@ def compute_lunar_phase_jd(
             sun_pos = ephe.calc_ut(jd, ephe.SUN, iflag)[0]
             moon_pos = ephe.calc_ut(jd, ephe.MOON, iflag)[0]
             angle = (float(moon_pos[0]) - float(sun_pos[0])) % 360.0
-            return (angle - target_angle + 180.0) % 360.0 - 180.0
+            return wrap_180(angle - target_angle)
 
         # The normalized diff is a sawtooth: it rises through zero exactly at
         # the sought instants and jumps from +180 to -180 once per synodic

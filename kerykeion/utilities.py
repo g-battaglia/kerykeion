@@ -516,6 +516,16 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
 # =============================================================================
 
 
+def wrap_180(angle: Union[int, float]) -> float:
+    """Wrap an angle in degrees into the signed range ``[-180, 180)``.
+
+    Useful both for signed angular differences (``wrap_180(a - b)``) and for
+    normalizing geographic longitudes; exactly 180° maps to -180° (the same
+    meridian/separation).
+    """
+    return (angle + 180.0) % 360.0 - 180.0
+
+
 def circular_mean(first_position: Union[int, float], second_position: Union[int, float]) -> float:
     """
     Calculate the circular mean of two angular positions.
@@ -525,8 +535,9 @@ def circular_mean(first_position: Union[int, float], second_position: Union[int,
 
     Exactly antipodal positions (180° apart) have no unique circular mean;
     they are resolved deterministically as the plain average of the
-    normalized positions, ``((a + b) / 2) % 360`` — the same convention used
-    by ``MidpointFactory._shorter_arc_midpoint``.
+    normalized positions, ``((a + b) / 2) % 360``. This is the shorter-arc
+    midpoint convention of the midpoint literature (Ebertin, Witte), and
+    ``MidpointFactory._shorter_arc_midpoint`` delegates here.
 
     Args:
         first_position: First angular position in degrees (0-360)
