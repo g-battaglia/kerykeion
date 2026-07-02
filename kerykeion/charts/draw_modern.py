@@ -774,7 +774,8 @@ def _draw_gauquelin_division_lines(
         if gauquelin_cusps is not None:
             angle = _zodiac_to_wheel_angle(gauquelin_cusps[i], seventh_house_degree_ut)
         else:
-            angle = i * 10.0
+            # Descending fallback: ASC at wheel angle 0, diurnal direction.
+            angle = (360.0 - i * 10.0) % 360.0
         is_angular = i % 9 == 0
         stroke_w = ANGULAR_STROKE_WIDTH if is_angular else NORMAL_STROKE_WIDTH
 
@@ -782,7 +783,7 @@ def _draw_gauquelin_division_lines(
             f'<line x1="{CENTER}" y1="{line_outer_y}" '
             f'x2="{CENTER}" y2="{line_inner_y}" '
             f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
-            f'transform="rotate({angle:.6f} {CENTER} {CENTER})"/>\n'
+            f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
         )
     return out
 
@@ -1122,7 +1123,8 @@ def _draw_gauquelin_cusp_ring(
     if gauquelin_cusps is not None:
         cusps_wheel = [_zodiac_to_wheel_angle(c, seventh_house_degree_ut) for c in gauquelin_cusps]
     else:
-        cusps_wheel = [i * 10.0 for i in range(36)]
+        # Descending fallback: ASC at wheel angle 0, diurnal direction.
+        cusps_wheel = [(360.0 - i * 10.0) % 360.0 for i in range(36)]
 
     for i in range(36):
         angle = cusps_wheel[i]
@@ -1134,10 +1136,11 @@ def _draw_gauquelin_cusp_ring(
             f'<line x1="{CENTER}" y1="{CENTER - ring_outer}" '
             f'x2="{CENTER}" y2="{CENTER - ring_inner}" '
             f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
-            f'transform="rotate({angle:.6f} {CENTER} {CENTER})"/>\n'
+            f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 
         # Sector number text — rotate to midpoint of sector, counter-rotate text
+        # (rotations sum to +90 to cancel the global rotate(-90) wheel group).
         mid_angle = _gauquelin_sector_mid_angle(cusps_wheel, i)
         fs = 2.5 if is_angular else 1.8
         fw = "bold" if is_angular else "normal"
@@ -1145,8 +1148,8 @@ def _draw_gauquelin_cusp_ring(
             f'<text x="{CENTER}" y="{CENTER - text_r}" '
             f'font-size="{fs}" fill="{COLOR_TEXT}" font-weight="{fw}" '
             f'text-anchor="middle" dominant-baseline="central" '
-            f'transform="rotate({mid_angle:.6f} {CENTER} {CENTER}) '
-            f'rotate({90 - mid_angle:.6f} {CENTER} {CENTER - text_r})">'
+            f'transform="rotate(-{mid_angle:.6f} {CENTER} {CENTER}) '
+            f'rotate({90 + mid_angle:.6f} {CENTER} {CENTER - text_r})">'
             f"{i + 1}</text>\n"
         )
 
@@ -1171,7 +1174,8 @@ def _draw_gauquelin_house_ring(
         if gauquelin_cusps is not None:
             angle = _zodiac_to_wheel_angle(gauquelin_cusps[i], seventh_house_degree_ut)
         else:
-            angle = i * 10.0
+            # Descending fallback: ASC at wheel angle 0, diurnal direction.
+            angle = (360.0 - i * 10.0) % 360.0
         is_angular = i % 9 == 0
         stroke_w = 0.5 if is_angular else 0.15
 
@@ -1179,7 +1183,7 @@ def _draw_gauquelin_house_ring(
             f'<line x1="{CENTER}" y1="{CENTER - R_HOUSE_OUTER}" '
             f'x2="{CENTER}" y2="{CENTER - R_HOUSE_INNER}" '
             f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
-            f'transform="rotate({angle:.6f} {CENTER} {CENTER})"/>\n'
+            f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 
     return out

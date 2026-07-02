@@ -2721,11 +2721,16 @@ def _classic_gauquelin_mid_offset(
     offsets: list[float],
     i: int,
 ) -> float:
-    """Compute the offset midpoint of Gauquelin sector i (0-indexed) for the classic chart."""
+    """Compute the offset midpoint of Gauquelin sector i (0-indexed) for the classic chart.
+
+    Gauquelin cusps are numbered in the diurnal (clockwise) direction, so
+    consecutive offsets DESCEND; the midpoint must be taken on the a→b
+    descending arc or every label lands in the diametrically opposite sector.
+    """
     a = offsets[i]
     b = offsets[(i + 1) % 36]
-    span = (b - a) % 360
-    return (a + span / 2) % 360
+    span = (a - b) % 360
+    return (b + span / 2) % 360
 
 
 def draw_gauquelin_sectors(
@@ -2759,7 +2764,9 @@ def draw_gauquelin_sectors(
     if gauquelin_cusps is not None:
         offsets = [(-seventh_house_degree_ut) + c for c in gauquelin_cusps]
     else:
-        offsets = [(-seventh_house_degree_ut) + i * 10.0 for i in range(36)]
+        # Equal 10° pseudo-cusps anchored at the ASC (offset -180 = screen
+        # left), descending in the diurnal direction like real cusps.
+        offsets = [-180.0 - i * 10.0 for i in range(36)]
 
     for i in range(36):
         offset = offsets[i]
@@ -2833,7 +2840,8 @@ def draw_gauquelin_sector_hit_areas(
     if gauquelin_cusps is not None:
         offsets = [(-seventh_house_degree_ut) + c for c in gauquelin_cusps]
     else:
-        offsets = [(-seventh_house_degree_ut) + i * 10.0 for i in range(36)]
+        # Same ASC-anchored descending fallback as draw_gauquelin_sectors.
+        offsets = [-180.0 - i * 10.0 for i in range(36)]
 
     output = ""
 
@@ -2851,11 +2859,13 @@ def draw_gauquelin_sector_hit_areas(
         ix2 = wheel_x(0, inner_visual_r, offset_end) + inner_dropin
         iy2 = wheel_y(0, inner_visual_r, offset_end) + inner_dropin
 
+        # Sweep flags for DESCENDING cusps: start→end runs clockwise on
+        # screen (the 12-house version traverses the opposite way).
         d = (
             f"M {ox1},{oy1} "
-            f"A {outer_visual_r},{outer_visual_r} 0 0,0 {ox2},{oy2} "
+            f"A {outer_visual_r},{outer_visual_r} 0 0,1 {ox2},{oy2} "
             f"L {ix2},{iy2} "
-            f"A {inner_visual_r},{inner_visual_r} 0 0,1 {ix1},{iy1} Z"
+            f"A {inner_visual_r},{inner_visual_r} 0 0,0 {ix1},{iy1} Z"
         )
 
         output += (

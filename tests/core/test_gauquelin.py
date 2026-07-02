@@ -1,32 +1,159 @@
 # -*- coding: utf-8 -*-
 """Tests for the Gauquelin sectors feature."""
 
+import re
+
 import pytest
 from kerykeion.ephemeris_backend import ephe
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
-from kerykeion.charts.charts_utils import _classic_gauquelin_mid_offset
+from kerykeion.charts.charts_utils import (
+    _classic_gauquelin_mid_offset,
+    draw_gauquelin_sectors,
+    wheel_x,
+    wheel_y,
+)
+from kerykeion.charts.draw_modern import (
+    _draw_gauquelin_cusp_ring,
+    _gauquelin_sector_mid_angle,
+)
 
 
 class TestClassicGauquelinMidOffset:
-    """The sector-number label sits at the midpoint of two consecutive sector
-    boundaries, not 180° opposite to it (the pre-fix formula was reflected)."""
+    """Gauquelin cusps DESCEND in zodiacal longitude (diurnal numbering from
+    the ASC): the label midpoint must be taken on the descending a→b arc, or
+    every label lands 180° away in the opposite sector (the pre-fix formula
+    assumed ascending cusps)."""
 
     def test_midpoint_is_between_consecutive_offsets(self):
-        offsets = [i * 10.0 for i in range(36)]
-        # Sector 0 spans 0°..10° -> label at 5°, not 185°.
-        assert _classic_gauquelin_mid_offset(offsets, 0) == pytest.approx(5.0)
-        # Sector 17 spans 170°..180° -> label at 175°.
-        assert _classic_gauquelin_mid_offset(offsets, 17) == pytest.approx(175.0)
+        offsets = [(-i * 10.0) % 360 for i in range(36)]
+        # Sector 0 spans 0°..350° descending -> label at 355°, not 175°.
+        assert _classic_gauquelin_mid_offset(offsets, 0) == pytest.approx(355.0)
+        # Sector 17 spans 190°..180° descending -> label at 185°.
+        assert _classic_gauquelin_mid_offset(offsets, 17) == pytest.approx(185.0)
 
     def test_midpoint_wraps_across_zero(self):
-        offsets = [i * 10.0 for i in range(36)]
-        # Last sector spans 350°..360°(=0°); midpoint is 355°.
-        assert _classic_gauquelin_mid_offset(offsets, 35) == pytest.approx(355.0)
+        offsets = [(-i * 10.0) % 360 for i in range(36)]
+        # Last sector spans 10°..0° descending; midpoint is 5°.
+        assert _classic_gauquelin_mid_offset(offsets, 35) == pytest.approx(5.0)
 
     def test_midpoint_handles_unequal_spacing(self):
-        offsets = [i * 10.0 for i in range(36)]
-        offsets[1] = 4.0  # sector 0 now spans 0°..4°
-        assert _classic_gauquelin_mid_offset(offsets, 0) == pytest.approx(2.0)
+        offsets = [(-i * 10.0) % 360 for i in range(36)]
+        offsets[1] = 356.0  # sector 0 now spans 0°..356° descending (4° wide)
+        assert _classic_gauquelin_mid_offset(offsets, 0) == pytest.approx(358.0)
+
+    def test_midpoint_lies_inside_sector_for_real_cusps(self, subject_with_gauquelin):
+        """With real houses_ex2('G') cusps, every label midpoint must sit on
+        the short descending arc between its two boundaries."""
+        cusps = subject_with_gauquelin.gauquelin_sector_cusps
+        assert cusps is not None and len(cusps) == 36
+        seventh = subject_with_gauquelin.seventh_house.abs_pos
+        offsets = [(-seventh) + c for c in cusps]
+        for i in range(36):
+            a = offsets[i] % 360
+            b = offsets[(i + 1) % 36] % 360
+            mid = _classic_gauquelin_mid_offset(offsets, i)
+            span = (a - b) % 360
+            pos = (a - mid) % 360
+            assert span < 180, f"sector {i}: cusps not descending (span={span})"
+            assert 0 < pos < span, (
+                f"sector {i}: label at {mid} outside descending arc {a}→{b}"
+            )
+
+
+class TestModernGauquelinGeometry:
+    """Rotation-sign and fallback invariants for the modern drawer."""
+
+    _DESC_CUSPS_WHEEL = [(360.0 - i * 10.0) % 360.0 for i in range(36)]
+
+    def test_mid_angle_descending(self):
+        assert _gauquelin_sector_mid_angle(self._DESC_CUSPS_WHEEL, 0) == pytest.approx(355.0)
+        assert _gauquelin_sector_mid_angle(self._DESC_CUSPS_WHEEL, 35) == pytest.approx(5.0)
+
+    def test_text_transform_rotations_sum_to_90(self):
+        """Label transform must be rotate(-mid) then rotate(90 + mid): the sum
+        (+90) cancels the global rotate(-90) wheel group so text is upright,
+        while the first rotate places it at the (negated) wheel angle."""
+        svg = _draw_gauquelin_cusp_ring(0.0, gauquelin_cusps=None)
+        pairs = re.findall(
+            r'transform="rotate\((-?[\d.]+) [\d.]+ [\d.]+\) '
+            r"rotate\((-?[\d.]+) [\d.]+ -?[\d.]+\)\"",
+            svg,
+        )
+        assert len(pairs) == 36
+        for first, second in pairs:
+            assert float(first) + float(second) == pytest.approx(90.0)
+            assert float(first) <= 0  # placement rotation is negated
+
+    def test_division_lines_use_negative_rotation(self):
+        """Gauquelin lines must rotate with the same sign convention as houses
+        and planets (rotate(-angle)); positive rotation mirrors the overlay."""
+        svg = _draw_gauquelin_cusp_ring(0.0, gauquelin_cusps=self._DESC_CUSPS_WHEEL)
+        line_rotations = re.findall(r'<line [^>]*transform="rotate\((-?[\d.]+)', svg)
+        assert len(line_rotations) == 36
+        # Descending wheel-angle cusps i>=1 are all positive -> all rotations negative.
+        assert all(float(rot) <= 0 for rot in line_rotations)
+        assert "rotate(-350.000000" in svg  # boundary i=1
+
+    def test_asc_boundary_matches_house_rotation(self, subject_with_gauquelin):
+        """gauquelin_sector_cusps[0] is the ASC, so the sector-1 boundary must
+        rotate exactly like the first-house division line (same wheel angle,
+        same sign) in the same modern SVG."""
+        chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
+        drawer = ChartDrawer(chart_data=chart_data, theme="dark")
+        svg = drawer.generate_svg_string(style="modern")
+
+        cusps = subject_with_gauquelin.gauquelin_sector_cusps
+        asc = subject_with_gauquelin.ascendant.abs_pos
+        assert cusps[0] == pytest.approx(asc, abs=1e-3)  # model rounds to 4 decimals
+
+        rotations = [float(m) for m in re.findall(r'rotate\((-?[\d.]+) 50', svg)]
+        seventh = subject_with_gauquelin.seventh_house.abs_pos
+        asc_wheel = (cusps[0] - seventh + 180) % 360
+        assert any(abs(rot - (-asc_wheel)) < 1e-3 for rot in rotations), (
+            f"no element rotated at -{asc_wheel} (ASC wheel angle) found"
+        )
+        # The mirrored (positive) rotation must NOT be present for the ASC.
+        if asc_wheel > 1e-3:
+            assert not any(abs(rot - asc_wheel) < 1e-3 for rot in rotations), (
+                "found positively-rotated element at the ASC wheel angle (mirrored overlay)"
+            )
+
+
+class TestClassicGauquelinFallback:
+    """Without real cusps the fallback grid must stay ASC-anchored (offset
+    -180 = screen left) and descend in the diurnal direction."""
+
+    def test_first_fallback_line_at_asc(self):
+        r, inner_r, outer_r = 240.0, 56.0, 84.0
+        svg = draw_gauquelin_sectors(r, inner_r, outer_r, 123.456, gauquelin_cusps=None)
+        first_line = re.search(r'<line x1="(-?[\d.]+)" y1="(-?[\d.]+)"', svg)
+        assert first_line is not None
+        expected_x = wheel_x(0, (r - outer_r), -180.0) + outer_r
+        expected_y = wheel_y(0, (r - outer_r), -180.0) + outer_r
+        assert float(first_line.group(1)) == pytest.approx(expected_x, abs=0.01)
+        assert float(first_line.group(2)) == pytest.approx(expected_y, abs=0.01)
+
+
+class TestGauquelinHitAreaSweep:
+    """Descending cusps traverse clockwise on screen: the wedge arcs need
+    sweep flag 1 on the outer arc (and 0 on the inner return arc), or the
+    click regions render as mirrored-center lens shapes."""
+
+    def test_hit_area_arc_sweep_flags(self, subject_with_gauquelin, tmp_path):
+        chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
+        drawer = ChartDrawer(chart_data=chart_data, theme="light")
+        drawer.save_svg(output_path=str(tmp_path), filename="gauq_sweep")
+        svg = (tmp_path / "gauq_sweep.svg").read_text()
+
+        wedge_paths = re.findall(
+            r'kr:node="GauquelinSector"[^>]*><path d="([^"]+)"', svg
+        ) or re.findall(r"kr:node='GauquelinSector'[^>]*><path d='([^']+)'", svg)
+        assert len(wedge_paths) == 36
+        for d in wedge_paths:
+            arcs = re.findall(r"A [\d.]+,[\d.]+ 0 (\d),(\d)", d)
+            assert len(arcs) == 2, f"wedge path should have 2 arcs: {d}"
+            assert arcs[0] == ("0", "1"), f"outer arc must sweep clockwise: {d}"
+            assert arcs[1] == ("0", "0"), f"inner arc must sweep back: {d}"
 
 
 @pytest.fixture(scope="module")
