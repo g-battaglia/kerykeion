@@ -31,6 +31,39 @@
   `python -m kerykeion.swisseph_setup` (`~/.kerykeion/sweph`)** before falling
   back to Moshier — previously the downloaded files were silently ignored unless
   the env var was also exported (dropping Chiron and fixed stars).
+- Ante-CE `day_of_week` is computed from the local-mean-time date (like the
+  CE path) instead of the UT julian day; heliacal BCE datestamps format as
+  `-0049`, not `-049`; heliocentric-return and node-crossing charts keep the
+  solver's sub-second precision instead of flooring to the second.
+- The five v6 Lilith/Priapus/apse points (`Interpolated_Lilith`,
+  `Mean_Priapus`, `True_Priapus`, `Interpolated_Perigee`, `White_Moon`) render
+  with **dedicated glyphs** in all chart styles instead of the generic
+  fixed-star symbol, and the latter two weigh 0.5 (not the 1.0 fallback) in
+  element/quality distributions.
+- **Fixed stars count toward element/quality distributions again** (weight 0.2
+  for the traditional stars): v6 moved stars to `subject.fixed_stars`, which
+  made the star weight-table entries unreachable.
+- `DualReturnChart` without secondary points now raises `KerykeionException`
+  like every other dual chart type instead of silently rendering a bi-wheel
+  with the outer return wheel missing.
+
+### Performance
+
+- **Sign-ingress and retrograde-station scans are ~8-10x faster** with
+  identical results: sampling steps are sized per planet from station
+  acceleration (Mercury keeps the half-day step; the Pluto tier moves to 7
+  days) and bisection stops at the output's 1-second granularity instead of
+  40 fixed iterations. Verified event-identical (timestamps within 10 ms)
+  against the previous implementation on a 1980–2100 full-planet scan.
+
+### Internal
+
+- Consolidated duplicated helpers ahead of the API freeze: one shared
+  `jd_to_iso_utc` (was five private copies with two divergent day-boundary
+  behaviors), one `utilities.wrap_180` (was four wrap-to-±180 variants with
+  two boundary conventions), planet-name→ephemeris-id maps derived from the
+  canonical `POINT_NUMBER_MAP`, and `MidpointFactory._shorter_arc_midpoint`
+  delegating to `utilities.circular_mean`.
 
 ### Removed
 
