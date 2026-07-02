@@ -167,31 +167,49 @@ EPHEMERIS_LOCK = RLock()
 #     KERYKEION_EPHE_PATH=/path/to/ephe python my_script.py
 #
 # - libephemeris: manages its own data (~/.libephemeris/leb/); path is a no-op.
-# - swisseph: needs .se1 files; without KERYKEION_EPHE_PATH, falls back to
-#   its built-in Moshier analytical ephemeris (lower precision).
+# - swisseph: needs .se1 files; without KERYKEION_EPHE_PATH, the default
+#   download directory of ``python -m kerykeion.swisseph_setup`` is
+#   auto-detected, then swisseph falls back to its built-in Moshier
+#   analytical ephemeris (lower precision).
+
+# Default target of `python -m kerykeion.swisseph_setup` (single source of
+# truth: the setup script imports this constant).
+DEFAULT_SWEPH_DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), ".kerykeion", "sweph")
+
+
+def _dir_has_sweph_data(path: str) -> bool:
+    try:
+        return any(f.lower().endswith(".se1") for f in os.listdir(path))
+    except OSError:
+        return False
+
 
 _user_ephe_path = os.environ.get("KERYKEION_EPHE_PATH", "").strip()
 
 if _user_ephe_path:
     EPHE_DATA_PATH: str = _user_ephe_path
-    if BACKEND_NAME == "swisseph":
-        try:
-            _has_se1 = any(f.lower().endswith(".se1") for f in os.listdir(EPHE_DATA_PATH))
-        except OSError:
-            _has_se1 = False
-        if not _has_se1:
-            logger.warning(
-                "KERYKEION_EPHE_PATH=%r does not contain readable .se1 files. "
-                "swisseph may fall back to Moshier analytical ephemeris.",
-                EPHE_DATA_PATH,
-            )
+    if BACKEND_NAME == "swisseph" and not _dir_has_sweph_data(EPHE_DATA_PATH):
+        logger.warning(
+            "KERYKEION_EPHE_PATH=%r does not contain readable .se1 files. "
+            "swisseph may fall back to Moshier analytical ephemeris.",
+            EPHE_DATA_PATH,
+        )
 elif BACKEND_NAME == "swisseph":
-    EPHE_DATA_PATH = ""
-    logger.warning(
-        "KERYKEION_EPHE_PATH not set. swisseph will use its internal Moshier "
-        "analytical ephemeris (lower precision). Set KERYKEION_EPHE_PATH to a "
-        "directory containing .se1 files for full precision."
-    )
+    if _dir_has_sweph_data(DEFAULT_SWEPH_DOWNLOAD_DIR):
+        EPHE_DATA_PATH = DEFAULT_SWEPH_DOWNLOAD_DIR
+        logger.info(
+            "Using Swiss Ephemeris data auto-detected in %s (set "
+            "KERYKEION_EPHE_PATH to override).",
+            DEFAULT_SWEPH_DOWNLOAD_DIR,
+        )
+    else:
+        EPHE_DATA_PATH = ""
+        logger.warning(
+            "KERYKEION_EPHE_PATH not set. swisseph will use its internal Moshier "
+            "analytical ephemeris (lower precision). Run "
+            "`python -m kerykeion.swisseph_setup` to download the data files, or "
+            "set KERYKEION_EPHE_PATH to a directory containing .se1 files."
+        )
 else:
     EPHE_DATA_PATH = ""
 

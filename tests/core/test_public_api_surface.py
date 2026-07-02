@@ -56,8 +56,9 @@ def _collect_public_models() -> dict[str, type]:
 
 PUBLIC_MODELS = _collect_public_models()
 
-RENAMED_IN_V6_BETA = {
-    # old name -> (import surface, new name)
+# Pre-6.0.0b1 aliases removed in 6.0.0 stable (as their DeprecationWarning
+# promised): old name -> (import surface, new name).
+REMOVED_PRE_B1_ALIASES = {
     "ProgressedToNatalAspect": ("kerykeion", "ProgressedToNatalAspectModel"),
     "SecondaryProgressionsResult": ("kerykeion", "SecondaryProgressionsResultModel"),
     "SolarArcDirectedAspect": ("kerykeion", "SolarArcDirectedAspectModel"),
@@ -158,17 +159,14 @@ def test_top_level_all_attributes_exist():
     assert not missing, f"kerykeion.__all__ names without an attribute: {missing}"
 
 
-@pytest.mark.parametrize("old_name", sorted(RENAMED_IN_V6_BETA))
-def test_renamed_models_warn_and_alias_to_new_class(old_name):
-    """Rule 6 — pre-b1 names emit DeprecationWarning and return the new class."""
-    surface, new_name = RENAMED_IN_V6_BETA[old_name]
+@pytest.mark.parametrize("old_name", sorted(REMOVED_PRE_B1_ALIASES))
+def test_removed_pre_b1_aliases_raise(old_name):
+    """Rule 6 — pre-b1 alias names are gone in 6.0.0 stable: plain
+    AttributeError (or the v5 ImportError path for kerykeion itself),
+    while the new *Model name still resolves."""
+    surface, new_name = REMOVED_PRE_B1_ALIASES[old_name]
     module = importlib.import_module(surface)
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
-        aliased = getattr(module, old_name)
-    assert aliased is PUBLIC_MODELS[new_name]
-    assert any(issubclass(w.category, DeprecationWarning) for w in caught), (
-        f"accessing {surface}.{old_name} did not emit DeprecationWarning"
-    )
-    # The alias is intentionally NOT advertised.
+    with pytest.raises((AttributeError, ImportError)):
+        getattr(module, old_name)
+    assert getattr(module, new_name) is PUBLIC_MODELS[new_name]
     assert old_name not in getattr(module, "__all__", ())

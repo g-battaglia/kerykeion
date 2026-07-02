@@ -119,3 +119,51 @@ class TestSwissephPathValidation:
             cwd=str(KERYKEION_ROOT),
         )
         assert "does not contain readable .se1 files" not in result.stderr
+
+
+class TestSwephAutoDetect:
+    """Without KERYKEION_EPHE_PATH, the swisseph backend auto-detects the
+    default download directory of `python -m kerykeion.swisseph_setup`
+    (~/.kerykeion/sweph) when it contains .se1 files."""
+
+    @pytest.fixture
+    def _require_swisseph(self):
+        try:
+            import swisseph  # noqa: F401
+        except ImportError:
+            pytest.skip("pyswisseph not installed")
+
+    def _fake_home(self, tmp_path, with_se1: bool) -> Path:
+        sweph_dir = tmp_path / ".kerykeion" / "sweph"
+        sweph_dir.mkdir(parents=True)
+        if with_se1:
+            (sweph_dir / "seas_18.se1").write_bytes(b"\x00")
+        return tmp_path
+
+    def test_auto_detects_default_download_dir(self, tmp_path, _require_swisseph):
+        home = self._fake_home(tmp_path, with_se1=True)
+        info = _run_backend_probe({"KERYKEION_BACKEND": "swisseph", "HOME": str(home)})
+        assert info["ephe_path"] == str(home / ".kerykeion" / "sweph")
+
+    def test_env_var_takes_precedence_over_auto_detect(self, tmp_path, _require_swisseph):
+        home = self._fake_home(tmp_path, with_se1=True)
+        explicit = tmp_path / "explicit"
+        explicit.mkdir()
+        (explicit / "sepl_18.se1").write_bytes(b"\x00")
+        info = _run_backend_probe({
+            "KERYKEION_BACKEND": "swisseph",
+            "KERYKEION_EPHE_PATH": str(explicit),
+            "HOME": str(home),
+        })
+        assert info["ephe_path"] == str(explicit)
+
+    def test_empty_download_dir_falls_back_to_moshier(self, tmp_path, _require_swisseph):
+        home = self._fake_home(tmp_path, with_se1=False)
+        info = _run_backend_probe({"KERYKEION_BACKEND": "swisseph", "HOME": str(home)})
+        assert info["ephe_path"] == ""
+
+    def test_setup_script_targets_the_autodetected_dir(self):
+        from kerykeion.ephemeris_backend import DEFAULT_SWEPH_DOWNLOAD_DIR
+        from kerykeion.swisseph_setup import _DEFAULT_TARGET
+
+        assert str(_DEFAULT_TARGET) == DEFAULT_SWEPH_DOWNLOAD_DIR

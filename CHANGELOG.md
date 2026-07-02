@@ -2,7 +2,58 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **`PlanetaryNodesFactory` passed `method`/`flags` to `nod_aps_ut` in swapped
+  positions**, so every `method="mean"` request silently returned *osculating*
+  nodes/apsides on both backends (Moon mean ascending node came back ~123.95°
+  instead of ~125.04° at J2000). The regression test made the same swapped call
+  and agreed on the wrong answer; a new test locks `mean != osculating`.
+- **Gauquelin sector rendering assumed ascending cusps** while `houses_ex2(b'G')`
+  returns *descending* (diurnal) ones: classic sector labels landed exactly 180°
+  away in the opposite sector, the classic fallback grid was anchored at 0° Aries
+  instead of the ASC, the clickable sector wedges rendered as mirrored-center
+  lens shapes, and the modern overlay rotated with `rotate(+angle)` (mirror image
+  of every other chart element). All drawers now share the descending,
+  ASC-anchored convention.
+- **BCE Davison composites were cast days away from the true time midpoint**
+  (~74 h at year −100, lng 30E): the midpoint JD was decomposed proleptic-Gregorian
+  while the BCE birth path re-encodes components in the Julian calendar with a
+  longitude-LMT offset. Ante-CE midpoints now decompose as the exact inverse of
+  that path (round-trip < 1 s).
+- **Planetocentric charts stored the center body's geocentric position under a
+  planetocentric label** (e.g. a Marscentric chart carried the geocentric Mars in
+  aspects and houses). The center body is now excluded from the active points
+  with a warning, including via Arabic-Part prerequisite auto-activation;
+  `lunar_phase` is `None` for Selenocentric subjects.
+- With `KERYKEION_BACKEND=swisseph` and no `KERYKEION_EPHE_PATH`, the backend now
+  **auto-detects the default download directory of
+  `python -m kerykeion.swisseph_setup` (`~/.kerykeion/sweph`)** before falling
+  back to Moshier — previously the downloaded files were silently ignored unless
+  the env var was also exported (dropping Chiron and fixed stars).
+
+### Removed
+
+- **The deprecated pre-6.0.0b1 alias names were removed**, as their
+  `DeprecationWarning` promised ("removed in kerykeion 6.0.0 stable"):
+  `ProgressedToNatalAspect`, `SecondaryProgressionsResult`,
+  `SolarArcDirectedAspect`, `SolarArcDirectedPoint` (from `kerykeion`),
+  `ACGLine`, `ACGLinePoint` (astro_cartography), `SpeculumEntry`
+  (primary_directions) and `FixedStarMetadata` (fixed_stars), together with the
+  internal `kerykeion._deprecation` helper. Use the corresponding `*Model` names.
+
 ### Changed
+
+- **`libephemeris` dependency relaxed from the exact `==3.0.0rc1` pin to
+  `>=3.0.0rc1,<4`** so the stable release does not conflict with other
+  constraints; the README now documents the bundled data range (1849–2150,
+  DE440s) and how to install the wider `medium`/`extended` tiers.
+- `next_return_from_year`'s deprecation message now states the removal target
+  (kerykeion 7.0.0), consistent with the package's other deprecations.
+- Note for feature-detection code: accessing removed v5 names such as
+  `kerykeion.AstrologicalSubject` raises `ImportError` with migration guidance —
+  this also applies to `hasattr()`/`getattr(..., default)`; use
+  `try/except ImportError` instead.
 
 - **BREAKING (alpha):** the chart geometry/time helpers in
   `kerykeion.charts.charts_utils` were renamed to PEP8 `snake_case` with **no

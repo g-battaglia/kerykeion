@@ -82,8 +82,3 @@ class FixedStarCatalog:
         """Return all slug identifiers available in the catalog."""
         return frozenset(entry.slug for entry in _load_catalog())
 
-
-# Deprecated pre-6.0.0b1 name. TODO remove in 6.0.0 stable.
-from kerykeion._deprecation import deprecated_alias_getattr  # noqa: E402
-
-__getattr__ = deprecated_alias_getattr(__name__, {"FixedStarMetadata": FixedStarMetadataModel})

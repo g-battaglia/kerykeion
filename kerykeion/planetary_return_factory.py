@@ -748,7 +748,10 @@ class PlanetaryReturnFactory:
         import warnings
 
         warnings.warn(
-            "next_return_from_year is deprecated, use next_return_from_date instead", DeprecationWarning, stacklevel=2
+            "next_return_from_year is deprecated and will be removed in kerykeion 7.0.0; "
+            "use next_return_from_date instead",
+            DeprecationWarning,
+            stacklevel=2,
         )
         return self.next_return_from_date(year, 1, 1, return_type=return_type)
 

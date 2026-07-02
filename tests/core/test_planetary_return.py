@@ -1146,7 +1146,7 @@ class TestPlanetaryReturnV6FlagPropagation:
     def test_solar_return_propagates_active_fixed_stars(self):
         natal = self._make_natal(active_fixed_stars=["Betelgeuse", "Vindemiatrix"])
         factory = self._make_factory(natal, active_fixed_stars=["Betelgeuse", "Vindemiatrix"])
-        return_subj = factory.next_return_from_year(2026, "Solar")
+        return_subj = factory.next_return_from_date(2026, 1, 1, return_type="Solar")
         names = {s.name for s in return_subj.fixed_stars}
         assert "Betelgeuse" in names
         assert "Vindemiatrix" in names
@@ -1154,7 +1154,7 @@ class TestPlanetaryReturnV6FlagPropagation:
     def test_solar_return_propagates_calculate_dignities(self):
         natal = self._make_natal(calculate_dignities=True)
         factory = self._make_factory(natal, calculate_dignities=True)
-        return_subj = factory.next_return_from_year(2026, "Solar")
+        return_subj = factory.next_return_from_date(2026, 1, 1, return_type="Solar")
         # Every classical planet should carry an essential_dignity value
         # (Peregrine for un-dignified placements, never None when the flag
         # is set).
@@ -1170,7 +1170,7 @@ class TestPlanetaryReturnV6FlagPropagation:
 
         natal = self._make_natal(active_fixed_stars=["Betelgeuse"])
         factory = self._make_factory(natal, active_fixed_stars=["Betelgeuse"])
-        return_subj = factory.next_return_from_year(2026, "Solar")
+        return_subj = factory.next_return_from_date(2026, 1, 1, return_type="Solar")
         data = ChartDataFactory.create_return_chart_data(natal, return_subj)
         svg = ChartDrawer(data).generate_wheel_only_svg_string()
         assert len(svg) > 0
@@ -1184,6 +1184,6 @@ class TestPlanetaryReturnV6FlagPropagation:
         for downstream consumers that haven't migrated yet."""
         natal = self._make_natal()
         factory = self._make_factory(natal)
-        return_subj = factory.next_return_from_year(2026, "Solar")
+        return_subj = factory.next_return_from_date(2026, 1, 1, return_type="Solar")
         assert return_subj.fixed_stars == []
         assert return_subj.sun.essential_dignity is None

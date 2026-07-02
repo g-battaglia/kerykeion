@@ -30,16 +30,3 @@ __all__ = [
     "SolarArcFactory",
     "SolarArcSubjectModel",
 ]
-
-# Deprecated pre-6.0.0b1 names. TODO remove in 6.0.0 stable.
-from kerykeion._deprecation import deprecated_alias_getattr  # noqa: E402
-
-__getattr__ = deprecated_alias_getattr(
-    __name__,
-    {
-        "ProgressedToNatalAspect": ProgressedToNatalAspectModel,
-        "SecondaryProgressionsResult": SecondaryProgressionsResultModel,
-        "SolarArcDirectedAspect": SolarArcDirectedAspectModel,
-        "SolarArcDirectedPoint": SolarArcDirectedPointModel,
-    },
-)

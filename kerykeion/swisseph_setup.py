@@ -26,6 +26,9 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+# Single source of truth for the directory ephemeris_backend auto-detects.
+from kerykeion.ephemeris_backend import DEFAULT_SWEPH_DOWNLOAD_DIR
+
 logger = logging.getLogger(__name__)
 
 _GITHUB_BASE = "https://raw.githubusercontent.com/aloistr/swisseph/master/ephe"
@@ -94,7 +97,7 @@ _LICENSE_WARNING = """\
 ╚══════════════════════════════════════════════════════════════════════╝
 """
 
-_DEFAULT_TARGET = Path.home() / ".kerykeion" / "sweph"
+_DEFAULT_TARGET = Path(DEFAULT_SWEPH_DOWNLOAD_DIR)
 
 
 def _download_file(url: str, dest: Path) -> str:
@@ -220,9 +223,14 @@ def main() -> None:
         print(f"Failed:         {failed} files")
     print(f"Location:       {args.target}")
 
-    print("\nTo use the swisseph backend, set these environment variables:\n")
+    print("\nTo use the swisseph backend, set this environment variable:\n")
     print("  export KERYKEION_BACKEND=swisseph")
-    print(f"  export KERYKEION_EPHE_PATH={args.target}")
+    if Path(args.target) == _DEFAULT_TARGET:
+        print("\nThe data directory is auto-detected (default location); set")
+        print(f"  export KERYKEION_EPHE_PATH={args.target}")
+        print("only to override it.")
+    else:
+        print(f"  export KERYKEION_EPHE_PATH={args.target}")
     print()
 
 

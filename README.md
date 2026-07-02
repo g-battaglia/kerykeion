@@ -126,6 +126,16 @@ pip3 install kerykeion
 
 For more installation options and environment setup, see the [Getting Started guide](https://www.kerykeion.net/content/docs/).
 
+> **Note — supported date range.** The default ephemeris data bundled with a
+> fresh install covers the years **1849–2150** (JPL DE440s). Charts outside
+> that range raise a `KerykeionException` until you install a wider data tier:
+>
+> ```python
+> import libephemeris
+> libephemeris.download_leb_for_tier("medium")    # 1550–2650
+> libephemeris.download_leb_for_tier("extended")  # full range, incl. BCE dates
+> ```
+
 ## Quick Start
 
 ```python

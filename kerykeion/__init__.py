@@ -314,29 +314,11 @@ _V5_REMOVED_NAMES = {
 }
 
 
-# Deprecated pre-6.0.0b1 model names. TODO remove in 6.0.0 stable.
-_RENAMED_IN_V6_BETA = {
-    "ProgressedToNatalAspect": ProgressedToNatalAspectModel,
-    "SecondaryProgressionsResult": SecondaryProgressionsResultModel,
-    "SolarArcDirectedAspect": SolarArcDirectedAspectModel,
-    "SolarArcDirectedPoint": SolarArcDirectedPointModel,
-}
-
-
 def __getattr__(name: str):
     # ImportError (not AttributeError) so that `from kerykeion import AstrologicalSubject`
     # surfaces this message verbatim instead of Python's generic "cannot import name".
+    # Trade-off: hasattr()/getattr(..., default) also raise for these names —
+    # feature-detect with try/except ImportError instead.
     if name in _V5_REMOVED_NAMES:
         raise ImportError(f"{_V5_REMOVED_NAMES[name]}\nMigration guide: {_MIGRATION_GUIDE_URL}")
-    if name in _RENAMED_IN_V6_BETA:
-        import warnings
-
-        replacement = _RENAMED_IN_V6_BETA[name]
-        warnings.warn(
-            f"'kerykeion.{name}' is deprecated, use '{replacement.__name__}' instead. "
-            "This alias will be removed in kerykeion 6.0.0 stable.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return replacement
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

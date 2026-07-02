@@ -462,8 +462,3 @@ class PrimaryDirectionsFactory:
         """Oblique descension of a point under a given pole: OD = RA + AD."""
         return (ra + PrimaryDirectionsFactory._ascensional_difference(dec, pole)) % 360
 
-
-# Deprecated pre-6.0.0b1 name. TODO remove in 6.0.0 stable.
-from kerykeion._deprecation import deprecated_alias_getattr  # noqa: E402
-
-__getattr__ = deprecated_alias_getattr(__name__, {"SpeculumEntry": SpeculumEntryModel})
