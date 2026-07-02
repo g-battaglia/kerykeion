@@ -57,11 +57,12 @@ _STATION_PLANETS: List[tuple[str, int]] = [
 _PLANET_IDS = {name: pid for name, pid in _STATION_PLANETS}
 
 # Sampling step (days). Stations of the same planet are ≥ ~3 weeks apart (even
-# Mercury), so half-day sampling never brackets two stations in one step.
-_SAMPLE_STEP_DAYS = 0.5
-# Bisection iterations: each halving of a 0.5-day bracket reaches sub-second
-# precision well before 40 steps.
-_BISECTION_ITERS = 40
+# Mercury), so a week-long step still never brackets two stations — the speed
+# sign changes at most once per interval and bisection finds the unique zero.
+_SAMPLE_STEP_DAYS = 7.0
+# Bisection to sub-millisecond on a 7-day bracket — the ISO output is rounded
+# to the second, so further halvings buy nothing.
+_BISECTION_ITERS = 30
 # Backstop on samples per scan (~2700 years at the default step). Ranges that
 # would exceed it are rejected explicitly rather than silently truncated.
 _MAX_SAMPLES = 2_000_000

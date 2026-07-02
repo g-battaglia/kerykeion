@@ -80,9 +80,10 @@ class TestStationApi:
         assert res.stations == []
 
     def test_oversized_range_raises(self):
-        # A range too long to scan is rejected, never silently truncated.
+        # A range too long to scan (> _MAX_SAMPLES at the current step) is
+        # rejected up front, never silently truncated.
         with pytest.raises(ValueError):
-            RetrogradeStationFactory.from_iso_range("0001-01-01", "3000-01-01")
+            RetrogradeStationFactory.from_julian_day(0.0, 20_000_000.0)
 
     def test_bce_range_via_julian_day(self):
         # The BCE range must not crash on JD->ISO conversion (datetime caps at
@@ -137,7 +138,7 @@ class TestStationErrorContract:
 
         def flaky_calc_ut(jd, body, flags):
             calls["n"] += 1
-            if calls["n"] > 3:
+            if calls["n"] > 1:
                 raise RuntimeError(f"jd {jd} outside ephemeris range")
             return ((10.0, 0.0, 1.0, 1.0, 0.0, 0.0), 0)
 

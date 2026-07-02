@@ -313,10 +313,10 @@ class TransitsTimeRangeFactory:
         This is the raw spacing of the series; each caller reduces it to the
         statistic that fits its job (the typical cadence for event splitting,
         the coarsest gap for the undersampling warning). Parsing the ISO
-        timestamps is the dominant cost here and happens exactly once per call,
-        so the two callers together do the same amount of work as the previous
-        single ``_sampling_step_days`` did. Returns an empty list when fewer
-        than two parseable data points are available.
+        timestamps is the dominant cost here and repeats on every call — a few
+        ms against the per-point aspect math; a cached parse would be the next
+        step if this ever shows up in a profile. Returns an empty list when
+        fewer than two parseable data points are available.
         """
         if len(self.ephemeris_data_points) < 2:
             return []

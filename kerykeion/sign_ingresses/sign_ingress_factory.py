@@ -54,11 +54,33 @@ _INGRESS_PLANETS: List[tuple[str, int]] = [
 _PLANET_IDS = {name: pid for name, pid in _INGRESS_PLANETS}
 _PLANET_IDS["Moon"] = ephe.MOON
 
-# Sampling step (days). The Moon (~13°/day) advances < 7° per half-day, so a sign
-# (30°) is never jumped; slower bodies have ample margin.
+# Sampling step (days), sized per planet. Two constraints: (a) never jump a
+# whole sign at peak speed (trivially satisfied — even Mercury moves < 7°/step),
+# and (b) never outrun a there-and-back boundary excursion near a station: an
+# excursion penetrating δ degrees past a boundary lasts ~2*sqrt(2δ/accel), so
+# with step ≤ that duration a sampled endpoint lands inside the excursion and
+# the sign change is seen directly. The steps below keep the guaranteed-catch
+# penetration threshold at or below the old uniform half-day step's (~0.003°
+# for Mercury): slower bodies accelerate away from stations far more gently, so
+# their excursions last days-to-weeks and tolerate much coarser sampling.
+# Unlisted bodies fall back to the Moon-safe half-day step.
 _SAMPLE_STEP_DAYS = 0.5
-_BISECTION_ITERS = 40
-# Backstop on samples per scan (~2700 years at the default step). Ranges that
+_PLANET_STEP_DAYS = {
+    "Moon": 0.5,      # ~13°/day, never retrograde excursions but fast
+    "Sun": 3.0,       # ~1°/day, never retrogrades
+    "Mercury": 0.5,   # station accel ~0.1°/day² — excursions can last hours
+    "Venus": 1.0,     # station accel ~0.02°/day²
+    "Mars": 2.0,      # station accel ~0.007°/day²
+    "Jupiter": 4.0,   # station accel ~0.0025°/day²
+    "Saturn": 5.0,    # station accel ~0.0011°/day²
+    "Uranus": 7.0,    # station accel ~0.0006°/day²
+    "Neptune": 7.0,
+    "Pluto": 7.0,
+}
+# Bisection to ~0.02 s on the widest (30-day) bracket — the ISO output is
+# rounded to the second, so further halvings buy nothing.
+_BISECTION_ITERS = 27
+# Backstop on samples per scan (~2700 years at the fallback step). Ranges that
 # would exceed it are rejected explicitly rather than silently truncated.
 _MAX_SAMPLES = 2_000_000
 # A planet can cross a boundary, station, and cross back within one sampling
@@ -266,10 +288,11 @@ class SignIngressFactory:
     ) -> List[IngressModel]:
         """Walk the range for one planet, emitting every sign-boundary crossing."""
         found: List[IngressModel] = []
+        step = _PLANET_STEP_DAYS.get(name, _SAMPLE_STEP_DAYS)
         jd = start_jd
         prev_sign = int(_lon(jd, body) // 30)
         while jd < end_jd:
-            jd_next = min(jd + _SAMPLE_STEP_DAYS, end_jd)
+            jd_next = min(jd + step, end_jd)
             cur_sign = int(_lon(jd_next, body) // 30)
             SignIngressFactory._emit_segment(name, body, jd, prev_sign, jd_next, cur_sign, found, 0)
             prev_sign = cur_sign
