@@ -54,6 +54,7 @@ from kerykeion.schemas.kr_models import (
     ScoreBreakdownItemModel,
 )
 from kerykeion.schemas.kr_literals import RelationshipScoreDescription
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 
 # Scoring constants
 DESTINY_SIGN_POINTS = 5
@@ -334,6 +335,15 @@ class RelationshipScoreFactory:
             RelationshipScoreModel: Score object containing numerical value, description,
                 destiny sign status, contributing aspects, and subject data.
         """
+        # The Discepolo method is defined on Sun (destiny sign) and luminary
+        # aspects: subjects built without the Sun cannot be scored — fail with
+        # the documented exception type instead of a NoneType TypeError.
+        if self.first_subject.sun is None or self.second_subject.sun is None:
+            raise KerykeionException(
+                "RelationshipScoreFactory requires both subjects to include the "
+                "Sun in their active_points."
+            )
+
         # Reset state to ensure reentrancy
         self.score_value = 0
         self.is_destiny_sign = False

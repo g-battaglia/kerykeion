@@ -274,6 +274,15 @@ def _compute_sun_times(
     with ephemeris_session():
         sunrise_jd, sunset_jd = compute_sun_rise_set_ephe(jd_midnight, lat, lng)
 
+        if sunrise_jd is not None and sunset_jd is not None and sunset_jd <= sunrise_jd:
+            # Midnight-sun transition days: the only set after local midnight
+            # precedes the sunrise (the Sun was still up at 00:00). Pair the
+            # sunrise with its actual following sunset — same handling as
+            # sun_times.utils — or day_length goes negative and solar_noon
+            # lands at solar midnight.
+            _, paired_sunset_jd = compute_sun_rise_set_ephe(sunrise_jd + 1e-6, lat, lng)
+            sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
+
     if sunrise_jd is None or sunset_jd is None:
         return None
 

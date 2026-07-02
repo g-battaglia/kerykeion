@@ -34,6 +34,7 @@ from kerykeion.schemas.kr_literals import AstrologicalPoint, Houses
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.settings.config_constants import AXIAL_POINTS
 from kerykeion.utilities import (
+    check_and_adjust_polar_latitude,
     get_kerykeion_point_from_degree,
     get_planet_house,
     _assemble_ancient_iso,
@@ -138,6 +139,11 @@ class RelocatedChartFactory:
         jd = subject.julian_day
         hsys = subject.houses_system_identifier.encode("ascii")
         is_sidereal = subject.zodiac_type == "Sidereal"
+
+        # Same polar clamp as the natal path (quadrant house systems raise
+        # PolarCircleError past ~66 deg): relocating to lat 78 must behave
+        # like a natal chart cast there, not crash.
+        new_lat = check_and_adjust_polar_latitude(new_lat)
 
         # houses_armc works in tropical longitudes. For sidereal subjects the
         # session configures the subject's ayanamsa so get_ayanamsa_ut()

@@ -2574,7 +2574,8 @@ def make_lunar_phase(degrees_between_sun_and_moon: float, latitude: float) -> st
     params = calculate_moon_phase_chart_params(degrees_between_sun_and_moon)
 
     phase_angle = params["phase_angle"]
-    illuminated_fraction = 1.0 - params["illuminated_fraction"]
+    # NOTE: this is the DARK fraction (1 - illuminated).
+    dark_fraction = 1.0 - params["illuminated_fraction"]
     shadow_ellipse_rx = abs(params["shadow_ellipse_rx"])
 
     radius = 10.0
@@ -2586,16 +2587,19 @@ def make_lunar_phase(degrees_between_sun_and_moon: float, latitude: float) -> st
 
     is_waxing = phase_angle < 180.0
 
-    if illuminated_fraction <= 1e-6:
-        base_fill = shadow_color
-        overlay_path = ""
-        overlay_fill = ""
-    elif 1.0 - illuminated_fraction <= 1e-6:
+    if dark_fraction <= 1e-6:
+        # Exact full moon: fully bright disc (was inverted to all-shadow,
+        # a hard discontinuity against the ~179.9 deg rendering).
         base_fill = bright_color
         overlay_path = ""
         overlay_fill = ""
+    elif 1.0 - dark_fraction <= 1e-6:
+        # Exact new moon: fully dark disc.
+        base_fill = shadow_color
+        overlay_path = ""
+        overlay_fill = ""
     else:
-        is_lit_major = illuminated_fraction >= 0.5
+        is_lit_major = dark_fraction >= 0.5
         if is_lit_major:
             base_fill = bright_color
             overlay_fill = shadow_color

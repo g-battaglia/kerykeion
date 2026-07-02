@@ -4578,6 +4578,12 @@ class ChartDrawer:  # type: ignore[no-redef]
         # ---------------------------------------------------------------------
         # COLORS: Aspect orb colors (keyed by degree)
         # ---------------------------------------------------------------------
+        # Seed every degree from the defaults first: ChartTemplateModel
+        # declares all orb_color_* fields as required, so a caller-reduced
+        # aspects_settings (documented constructor option) would otherwise
+        # fail template validation on every render.
+        for aspect in DEFAULT_CHART_ASPECTS_SETTINGS:
+            template_dict[f"orb_color_{aspect['degree']}"] = aspect["color"]
         for aspect in self.aspects_settings:
             template_dict[f"orb_color_{aspect['degree']}"] = aspect["color"]
 

@@ -208,3 +208,11 @@ class TestSiderealFrameConsistency:
                     f"{trop.planet_name} {attr}: tropical={trop_lon} sidereal={sid_lon} "
                     f"diff={diff} expected ayanamsa={ayanamsa}"
                 )
+
+
+class TestMethodValidation:
+    def test_invalid_method_raises(self):
+        # 'Mean' (wrong case) silently selected osculating nodes while the
+        # model echoed the caller's label.
+        with pytest.raises(KerykeionException, match="Invalid nodes method"):
+            PlanetaryNodesFactory.from_julian_day(2451545.0, method="Mean", planets=["Moon"])

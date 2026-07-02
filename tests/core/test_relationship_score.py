@@ -723,3 +723,22 @@ class TestExactRegressionScores:
 
 if __name__ == "__main__":
     pytest.main(["-vv", __file__])
+
+
+class TestMissingSunGuard:
+    def test_subjects_without_sun_raise_kerykeion_exception(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.relationship_score_factory import RelationshipScoreFactory
+        from kerykeion.schemas import KerykeionException
+        import pytest
+
+        kwargs = dict(
+            year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Moon", "Venus", "Mars"],
+        )
+        s1 = AstrologicalSubjectFactory.from_birth_data(name="No Sun A", **kwargs)
+        s2 = AstrologicalSubjectFactory.from_birth_data(name="No Sun B", **kwargs)
+        with pytest.raises(KerykeionException, match="Sun"):
+            RelationshipScoreFactory(s1, s2).get_relationship_score()

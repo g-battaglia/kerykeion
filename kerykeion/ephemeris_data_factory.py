@@ -66,6 +66,8 @@ from kerykeion.schemas import (
     ZodiacType,
 )
 from datetime import datetime, timedelta
+
+import pytz
 from typing import Any, Literal, Optional
 import logging
 
@@ -197,11 +199,26 @@ class EphemerisDataFactory:
         self.max_hours = max_hours
         self.max_minutes = max_minutes
 
+        # Step the series in UTC: stepping naive wall-clock datetimes and
+        # localizing each with a fixed is_dst duplicated (spring-forward) or
+        # shifted samples across DST transitions, producing a non-monotonic
+        # UTC series that corrupts downstream transit-event detection. is_dst
+        # only disambiguates a naive start/end inside a fall-back fold.
+        _tz = pytz.timezone(self.tz_str)
+
+        def _to_utc(dt: datetime) -> datetime:
+            if dt.tzinfo is None:
+                return _tz.localize(dt, is_dst=self.is_dst).astimezone(pytz.utc)
+            return dt.astimezone(pytz.utc)
+
+        _start_utc = _to_utc(self.start_datetime)
+        _end_utc = _to_utc(self.end_datetime)
+
         self.dates_list = []
         if self.step_type == "days":
             self.dates_list = [
-                self.start_datetime + timedelta(days=i * self.step)
-                for i in range((self.end_datetime - self.start_datetime).days // self.step + 1)
+                _start_utc + timedelta(days=i * self.step)
+                for i in range((_end_utc - _start_utc).days // self.step + 1)
             ]
             if max_days and (len(self.dates_list) > max_days):
                 raise ValueError(
@@ -209,9 +226,9 @@ class EphemerisDataFactory:
                 )
 
         elif self.step_type == "hours":
-            hours_diff = (self.end_datetime - self.start_datetime).total_seconds() / 3600
+            hours_diff = (_end_utc - _start_utc).total_seconds() / 3600
             self.dates_list = [
-                self.start_datetime + timedelta(hours=i * self.step) for i in range(int(hours_diff) // self.step + 1)
+                _start_utc + timedelta(hours=i * self.step) for i in range(int(hours_diff) // self.step + 1)
             ]
             if max_hours and (len(self.dates_list) > max_hours):
                 raise ValueError(
@@ -219,9 +236,9 @@ class EphemerisDataFactory:
                 )
 
         elif self.step_type == "minutes":
-            minutes_diff = (self.end_datetime - self.start_datetime).total_seconds() / 60
+            minutes_diff = (_end_utc - _start_utc).total_seconds() / 60
             self.dates_list = [
-                self.start_datetime + timedelta(minutes=i * self.step)
+                _start_utc + timedelta(minutes=i * self.step)
                 for i in range(int(minutes_diff) // self.step + 1)
             ]
             if max_minutes and (len(self.dates_list) > max_minutes):
@@ -240,13 +257,22 @@ class EphemerisDataFactory:
 
     def _create_subject_for_date(self, date: datetime) -> AstrologicalSubjectModel:
         """Create an AstrologicalSubject for a given date using the factory's settings."""
+        if date.tzinfo is not None:
+            # UTC-stepped series: render the instant in the target timezone
+            # and derive the fold side from the unambiguous UTC instant.
+            local_date = date.astimezone(pytz.timezone(self.tz_str))
+            is_dst = bool(local_date.dst())
+        else:
+            # Naive input (e.g. a hand-built dates_list): previous behavior.
+            local_date = date
+            is_dst = self.is_dst
         return AstrologicalSubjectFactory.from_birth_data(
-            year=date.year,
-            month=date.month,
-            day=date.day,
-            hour=date.hour,
-            minute=date.minute,
-            seconds=date.second,
+            year=local_date.year,
+            month=local_date.month,
+            day=local_date.day,
+            hour=local_date.hour,
+            minute=local_date.minute,
+            seconds=local_date.second,
             lng=self.lng,
             lat=self.lat,
             tz_str=self.tz_str,
@@ -257,7 +283,7 @@ class EphemerisDataFactory:
             sidereal_mode=self.sidereal_mode,
             houses_system_identifier=self.houses_system_identifier,
             perspective_type=self.perspective_type,
-            is_dst=self.is_dst,
+            is_dst=is_dst,
             custom_ayanamsa_t0=self.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
         )

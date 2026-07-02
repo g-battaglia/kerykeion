@@ -465,3 +465,19 @@ class TestRelocatedLocalDatetimeRecompute:
             expected.minute,
             expected.second,
         )
+
+
+class TestPolarRelocation:
+    def test_relocation_to_polar_latitude_clamps_like_natal(self):
+        # Placidus raises PolarCircleError past ~66 deg; the natal path clamps,
+        # the relocation must too instead of crashing.
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "Polar Move", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        relocated = RelocatedChartFactory.relocate(natal, new_lat=78.2, new_lng=15.6)
+        assert relocated.first_house is not None

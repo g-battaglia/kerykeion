@@ -146,6 +146,12 @@ class PlanetaryNodesFactory:
         subtracting the session's ayanamsa, which is deterministic on both
         backends.
         """
+        if method not in ("mean", "osculating"):
+            # Without this, any other string (e.g. "Mean") silently selected
+            # the osculating branch while the model echoed the caller's label.
+            raise KerykeionException(
+                f"Invalid nodes method {method!r}: expected 'mean' or 'osculating'."
+            )
         nodbit = NODBIT_MEAN if method == "mean" else NODBIT_OSCU
 
         if planets is not None and "Sun" in planets:

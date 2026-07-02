@@ -27,6 +27,13 @@ from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 logger = logging.getLogger(__name__)
 
+# Backend-specific "no event in the search window" errors: libephemeris (and
+# the jd<=0 guard in _find_event) raise ValueError; pyswisseph raises its own
+# swisseph.Error, which does NOT subclass ValueError.
+_NO_EVENT_ERRORS: tuple = tuple(
+    {ValueError, getattr(ephe, "Error", ValueError)}
+)
+
 # ---- Event-type constants (mirrors Swiss Ephemeris) ----
 HELIACAL_RISING: int = ephe.HELIACAL_RISING    # 1 - morning first
 HELIACAL_SETTING: int = ephe.HELIACAL_SETTING  # 2 - evening last
@@ -215,13 +222,15 @@ class HeliacalFactory:
                             observer=observer,
                         )
                         events.append(event)
-                    except ValueError as exc:
-                        # The ephemeris backend raises ValueError when this event
-                        # simply has no solution in the search window (e.g. the
-                        # planet is not visible) — an expected skip, not a failure.
-                        # Narrower than a blanket ``except Exception`` so a genuine
-                        # bug (TypeError, KeyError, ...) propagates instead of being
-                        # silently swallowed into a partial result.
+                    except _NO_EVENT_ERRORS as exc:
+                        # "No solution in the search window" is an expected
+                        # skip, not a failure. libephemeris raises ValueError;
+                        # pyswisseph raises swisseph.Error ('no heliacal date
+                        # found within N synodic periods') — both must skip the
+                        # combination instead of aborting the whole scan.
+                        # Narrower than a blanket ``except Exception`` so a
+                        # genuine bug (TypeError, KeyError, ...) propagates
+                        # instead of being silently swallowed.
                         logger.debug(
                             "Skipping %s %s: %s",
                             planet,
@@ -267,6 +276,15 @@ class HeliacalFactory:
         )
 
         result_jd = dret[0]  # start of visibility
+
+        if result_jd <= 0.0:
+            # libephemeris signals "no event found" by returning jd 0.0 rather
+            # than raising: without this guard the scan emits fake events dated
+            # -4713-11-24 that sort first in the results.
+            raise ValueError(
+                f"No heliacal event found for {planet_name_or_star} "
+                f"(event type {event_type}) in the search window."
+            )
 
         # Date part of the shared ISO formatter (split on "T", not [:10]:
         # a leading BCE minus sign would be truncated by a fixed slice).
