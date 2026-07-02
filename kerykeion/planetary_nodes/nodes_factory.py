@@ -12,7 +12,7 @@ The Sun is NOT supported: it has no geocentric orbital nodes or apsides
 from the defaults and an explicit request for it raises a
 :class:`KerykeionException`.
 
-Swiss Ephemeris function: ephe.nod_aps_ut(jd_ut, planet, iflag, method)
+Swiss Ephemeris function: ephe.nod_aps_ut(jd_ut, planet, method, iflag)
 Methods: NODBIT_MEAN (mean elements), NODBIT_OSCU (osculating/instantaneous)
 """
 
@@ -174,7 +174,10 @@ class PlanetaryNodesFactory:
 
             for name, planet_id in target_planets.items():
                 try:
-                    result = ephe.nod_aps_ut(julian_day, planet_id, calc_iflag, nodbit)
+                    # Signature on both backends is (jd_ut, planet, method, flags):
+                    # passing flags third would be read as `method`, silently
+                    # turning every "mean" request into osculating values.
+                    result = ephe.nod_aps_ut(julian_day, planet_id, nodbit, calc_iflag)
                     # result is a tuple of 4 elements, each a 6-element array:
                     # [0] ascending node, [1] descending node, [2] perihelion, [3] aphelion
                     asc_lon = (result[0][0] - ayanamsa) % 360

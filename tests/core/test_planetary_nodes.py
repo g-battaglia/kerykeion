@@ -105,7 +105,7 @@ class TestSweRegressionNodes:
         NODBIT_MEAN = getattr(ephe, "NODBIT_MEAN", 1)
 
         with ephemeris_session() as iflag:
-            swe_result = ephe.nod_aps_ut(jd_j2000, ephe.MARS, iflag, NODBIT_MEAN)
+            swe_result = ephe.nod_aps_ut(jd_j2000, ephe.MARS, NODBIT_MEAN, iflag)
             swe_asc_lon = swe_result[0][0] % 360
             swe_desc_lon = swe_result[1][0] % 360
             swe_peri_lon = swe_result[2][0] % 360
@@ -136,7 +136,7 @@ class TestSweRegressionNodes:
         NODBIT_MEAN = getattr(ephe, "NODBIT_MEAN", 1)
 
         with ephemeris_session() as iflag:
-            swe_result = ephe.nod_aps_ut(jd_j2000, ephe.JUPITER, iflag, NODBIT_MEAN)
+            swe_result = ephe.nod_aps_ut(jd_j2000, ephe.JUPITER, NODBIT_MEAN, iflag)
             swe_asc_lon = swe_result[0][0] % 360
 
         factory_result = PlanetaryNodesFactory.from_julian_day(
@@ -148,6 +148,28 @@ class TestSweRegressionNodes:
         assert abs(jupiter.ascending_node.abs_pos - swe_asc_lon) < 0.01, (
             f"Jupiter asc node: factory={jupiter.ascending_node.abs_pos} ephe={swe_asc_lon}"
         )
+
+    def test_moon_mean_differs_from_osculating(self):
+        """`method="mean"` and `method="osculating"` must return different lunar
+        nodes (~1 deg apart at J2000). Guards against the swapped nod_aps_ut
+        argument order that made every "mean" request silently osculating."""
+        jd_j2000 = 2451545.0
+
+        mean = PlanetaryNodesFactory.from_julian_day(
+            jd_j2000, method="mean", planets=["Moon"]
+        ).nodes[0]
+        oscu = PlanetaryNodesFactory.from_julian_day(
+            jd_j2000, method="osculating", planets=["Moon"]
+        ).nodes[0]
+
+        delta = abs(mean.ascending_node.abs_pos - oscu.ascending_node.abs_pos)
+        delta = min(delta, 360 - delta)
+        assert 0.1 < delta < 5.0, (
+            f"mean ({mean.ascending_node.abs_pos}) and osculating "
+            f"({oscu.ascending_node.abs_pos}) lunar nodes should differ by ~1 deg"
+        )
+        # Known value: mean lunar ascending node at J2000 is ~125.04 deg.
+        assert mean.ascending_node.abs_pos == pytest.approx(125.04, abs=0.1)
 
 
 class TestSiderealFrameConsistency:
