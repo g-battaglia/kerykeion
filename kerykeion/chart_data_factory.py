@@ -291,6 +291,7 @@ class ChartDataFactory:
                     second_subject,
                     method=distribution_method,
                     custom_weights=custom_distribution_weights,
+                    include_fixed_stars=True,
                 )
                 quality_totals = calculate_synastry_quality_points(
                     available_planets_setting,
@@ -299,6 +300,7 @@ class ChartDataFactory:
                     second_subject,
                     method=distribution_method,
                     custom_weights=custom_distribution_weights,
+                    include_fixed_stars=True,
                 )
             else:
                 # Fallback to single chart calculation for incompatible types

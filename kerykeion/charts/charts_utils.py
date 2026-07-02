@@ -2215,6 +2215,7 @@ def calculate_synastry_element_points(
     *,
     method: ElementQualityDistributionMethod = "weighted",
     custom_weights: Optional[Mapping[str, float]] = None,
+    include_fixed_stars: bool = False,
 ) -> dict[str, float]:
     """
     Calculate combined element percentages for a synastry chart.
@@ -2226,6 +2227,9 @@ def calculate_synastry_element_points(
         subject2: Second astrological subject.
         method: Calculation strategy (pure_count or weighted).
         custom_weights: Optional overrides for point weights.
+        include_fixed_stars: Also count each subject's active fixed stars
+            (weight 0.2 unless overridden); off by default so the totals cover
+            exactly the named points.
 
     Returns:
         Dictionary with element percentages summing to 100.
@@ -2240,6 +2244,7 @@ def calculate_synastry_element_points(
         _ELEMENT_KEYS,
         weight_lookup,
         fallback_weight,
+        include_fixed_stars=include_fixed_stars,
     )
     subject2_totals = _calculate_distribution_for_subject(
         subject2,
@@ -2248,6 +2253,7 @@ def calculate_synastry_element_points(
         _ELEMENT_KEYS,
         weight_lookup,
         fallback_weight,
+        include_fixed_stars=include_fixed_stars,
     )
 
     combined_totals = {key: subject1_totals[key] + subject2_totals[key] for key in _ELEMENT_KEYS}
@@ -2695,6 +2701,7 @@ def calculate_synastry_quality_points(
     *,
     method: ElementQualityDistributionMethod = "weighted",
     custom_weights: Optional[Mapping[str, float]] = None,
+    include_fixed_stars: bool = False,
 ) -> dict[str, float]:
     """
     Calculate combined modality percentages for a synastry chart.
@@ -2706,6 +2713,9 @@ def calculate_synastry_quality_points(
         subject2: Second astrological subject.
         method: Calculation strategy (pure_count or weighted).
         custom_weights: Optional overrides for point weights.
+        include_fixed_stars: Also count each subject's active fixed stars
+            (weight 0.2 unless overridden); off by default so the totals cover
+            exactly the named points.
 
     Returns:
         Dictionary with modality percentages summing to 100.
@@ -2720,6 +2730,7 @@ def calculate_synastry_quality_points(
         _QUALITY_KEYS,
         weight_lookup,
         fallback_weight,
+        include_fixed_stars=include_fixed_stars,
     )
     subject2_totals = _calculate_distribution_for_subject(
         subject2,
@@ -2728,6 +2739,7 @@ def calculate_synastry_quality_points(
         _QUALITY_KEYS,
         weight_lookup,
         fallback_weight,
+        include_fixed_stars=include_fixed_stars,
     )
 
     combined_totals = {key: subject1_totals[key] + subject2_totals[key] for key in _QUALITY_KEYS}

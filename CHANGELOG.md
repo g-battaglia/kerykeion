@@ -46,10 +46,10 @@
 - **Fixed stars count toward element/quality distributions again** (weight 0.2
   for every star unless the table overrides it): v6 moved stars to
   `subject.fixed_stars`, which made the star weight-table entries unreachable.
-  Star inclusion is opt-in via `include_fixed_stars=True` on
-  `calculate_element_points`/`calculate_quality_points` (the chart data factory
-  opts in), so callers naming an explicit point subset get exactly those
-  points; star names go through the shared catalog slugger.
+  Star inclusion is opt-in via `include_fixed_stars=True` on the element/quality
+  helpers — single-subject *and* synastry (the chart data factory opts in for
+  both) — so callers naming an explicit point subset get exactly those points;
+  star names go through the shared catalog slugger.
 - `DualReturnChart` without secondary points now raises `KerykeionException`
   like every other dual chart type instead of silently rendering a bi-wheel
   with the outer return wheel missing.

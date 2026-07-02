@@ -891,6 +891,37 @@ class TestChartsUtilsDistributionEdgeCases:
         # (which would silently take a planet-grade fallback weight).
         assert sum(with_star.values()) == pytest.approx(sum(base.values()) + 0.2)
 
+    def test_synastry_distribution_counts_fixed_stars_when_opted_in(self):
+        """The include_fixed_stars flag must reach the synastry helpers too:
+        both subjects' active stars contribute, off by default."""
+        from kerykeion.charts.charts_utils import calculate_synastry_element_points
+        from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+        from kerykeion import AstrologicalSubjectFactory
+
+        kwargs = dict(
+            year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun"],
+        )
+        s1 = AstrologicalSubjectFactory.from_birth_data(
+            name="Syn A", **kwargs, active_fixed_stars=["Regulus"],
+        )
+        s2 = AstrologicalSubjectFactory.from_birth_data(
+            name="Syn B", **kwargs, active_fixed_stars=["Spica"],
+        )
+        default = calculate_synastry_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], s1, s2, method="pure_count",
+        )
+        with_stars = calculate_synastry_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], s1, s2, method="pure_count",
+            include_fixed_stars=True,
+        )
+        # Percentages, so the two must differ once the two stars are counted
+        # (unless they happened to fall in the same elements as both Suns — the
+        # chosen stars do not).
+        assert default != with_stars
+
 
 # ---------------------------------------------------------------------------
 # Missing edge-case tests (migrated from tests/edge_cases/test_edge_cases.py)
