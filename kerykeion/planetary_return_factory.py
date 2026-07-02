@@ -1120,8 +1120,10 @@ class PlanetaryReturnFactory:
 
     def _build_return_chart(self, return_jd: float, return_type: str) -> PlanetReturnModel:
         """Build a return chart at the given Julian Day."""
-        return_dt = julian_to_datetime(return_jd)
-        utc_iso = return_dt.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        # isoformat() keeps the solver's sub-second precision, matching the
+        # solar/lunar return path (strftime silently floored to the second).
+        return_dt = julian_to_datetime(return_jd).replace(tzinfo=timezone.utc)
+        utc_iso = return_dt.isoformat()
 
         return_kwargs: dict = dict(
             name=f"{self.subject.name} {return_type} Return",

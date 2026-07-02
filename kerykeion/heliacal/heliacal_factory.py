@@ -267,9 +267,11 @@ class HeliacalFactory:
 
         result_jd = dret[0]  # start of visibility
 
-        # Convert Julian Day to a calendar date for the datestamp.
+        # Convert Julian Day to a calendar date for the datestamp. Negative
+        # years need the sign outside the zero-padding ("-0049", not "-049").
         year, month, day, _hour = ephe.revjul(result_jd)
-        datestamp = f"{int(year):04d}-{int(month):02d}-{int(day):02d}"
+        year_str = f"-{abs(int(year)):04d}" if year < 0 else f"{int(year):04d}"
+        datestamp = f"{year_str}-{int(month):02d}-{int(day):02d}"
 
         return HeliacalEventModel(
             event_type=EVENT_TYPE_LABELS.get(event_type, str(event_type)),

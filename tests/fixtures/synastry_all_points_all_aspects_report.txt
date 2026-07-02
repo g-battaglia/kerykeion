@@ -213,19 +213,19 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 22.343324250681196 | 22%        |
-| Earth 🌍 | 25.61307901907357  | 26%        |
-| Air 💨   | 23.43324250681199  | 23%        |
-| Water 💧 | 28.610354223433244 | 29%        |
-| Total    | 100.0              | 100%       |
+| Fire 🔥  | 22.26890756302521  | 22%        |
+| Earth 🌍 | 25.630252100840334 | 26%        |
+| Air 💨   | 23.38935574229692  | 23%        |
+| Water 💧 | 28.71148459383754  | 29%        |
+| Total    | 100.00000000000001 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 35.286103542234336 | 35%        |
-| Fixed    | 36.78474114441417  | 37%        |
-| Mutable  | 27.929155313351494 | 28%        |
+| Cardinal | 35.57422969187675  | 36%        |
+| Fixed    | 37.11484593837535  | 37%        |
+| Mutable  | 27.310924369747898 | 27%        |
 | Total    | 100.0              | 100%       |
 +----------+--------------------+------------+
 
@@ -1503,7 +1503,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Zeus                  | Sample Natal Subject | trine △          | Vesta                 | Yoko Ono | 1.20° | Static = |
 | Zeus                  | Sample Natal Subject | square □         | Makemake              | Yoko Ono | 4.78° | Static = |
 | Zeus                  | Sample Natal Subject | conjunction ☌    | Ixion                 | Yoko Ono | 3.19° | Static = |
-| Zeus                  | Sample Natal Subject | trine △          | Orcus                 | Yoko Ono | 1.75° | Static = |
+| Zeus                  | Sample Natal Subject | trine △          | Orcus                 | Yoko Ono | 1.76° | Static = |
 | Zeus                  | Sample Natal Subject | square □         | Pars Fortunae         | Yoko Ono | 0.63° | Static = |
 | Zeus                  | Sample Natal Subject | conjunction ☌    | Pars Amoris           | Yoko Ono | 3.21° | Static = |
 | Zeus                  | Sample Natal Subject | quincunx ⚻       | Vertex                | Yoko Ono | 0.72° | Static = |

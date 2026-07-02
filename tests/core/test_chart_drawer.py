@@ -571,6 +571,26 @@ class TestChartDrawerBasic:
         assert resolve_glyph_id("Sun_Moon_Midpoint") == "Midpoint"
         assert resolve_glyph_id("True_North_Lunar_Node_Moon_Midpoint") == "Midpoint"
 
+    def test_lilith_variant_points_have_dedicated_glyphs(self):
+        """The five v6 Lilith/Priapus/apse points must not collapse onto the
+        generic FixedStar glyph: each has its own <symbol> in every template."""
+        from pathlib import Path
+
+        from kerykeion.settings.chart_defaults import resolve_glyph_id
+
+        names = [
+            "Interpolated_Lilith", "Mean_Priapus", "True_Priapus",
+            "Interpolated_Perigee", "White_Moon",
+        ]
+        for name in names:
+            assert resolve_glyph_id(name) == name
+
+        templates_dir = Path(__file__).resolve().parents[2] / "kerykeion" / "charts" / "templates"
+        for template in ("chart.xml", "aspect_grid_only.xml", "wheel_only.xml", "modern_wheel.xml"):
+            content = (templates_dir / template).read_text()
+            for name in names:
+                assert f'<symbol id="{name}">' in content, f"{name} symbol missing from {template}"
+
     def test_chart_drawer_viewbox_settings_per_type(self):
         natal_chart = ChartDrawer(ChartDataFactory.create_natal_chart_data(self.subject))
         assert natal_chart.chart_type == "Natal"

@@ -566,6 +566,9 @@ KNOWN_GLYPH_NAMES: Final[frozenset[str]] = frozenset({
     "Mean_South_Lunar_Node", "True_South_Lunar_Node",
     # Centaurs / Lilith / minor bodies
     "Chiron", "Pholus", "Mean_Lilith", "True_Lilith", "Earth",
+    # Lilith/Priapus variants and lunar apse points (v6.0)
+    "Interpolated_Lilith", "Mean_Priapus", "True_Priapus",
+    "Interpolated_Perigee", "White_Moon",
     # Asteroids
     "Ceres", "Pallas", "Juno", "Vesta",
     # TNOs

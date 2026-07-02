@@ -2363,3 +2363,37 @@ class TestIsoUtcTimeEquivalence:
         assert subject.true_north_lunar_node == subject2.true_north_lunar_node
         assert subject.lunar_phase == subject2.lunar_phase
         assert subject.active_points == subject2.active_points
+
+
+class TestDayOfWeekAnteCommonEra:
+    """For year<1 the weekday must be computed from the LOCAL date (like the
+    year>=1 path, which uses iso_formatted_local_datetime), not the UT julian
+    day — near local midnight the LMT offset changes the calendar day."""
+
+    @staticmethod
+    def _weekday(year, month, day, hour, minute, lng):
+        from kerykeion.ephemeris_backend import ephe
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        dec_hour = hour + minute / 60.0
+        jd_local = ephe.julday(year, month, day, dec_hour, ephe.JUL_CAL)
+        data = {
+            "year": year,
+            "lng": lng,
+            "julian_day": jd_local - (lng / 15.0) / 24.0,
+        }
+        AstrologicalSubjectFactory._calculate_day_of_week(data)
+        return data["day_of_week"]
+
+    def test_weekday_matches_local_date_near_midnight(self):
+        # 00:30 local at 120E: the UT date is still the previous day; the
+        # weekday must follow the local date.
+        just_after_midnight = self._weekday(-100, 6, 15, 0, 30, lng=120.0)
+        midday_same_date = self._weekday(-100, 6, 15, 12, 0, lng=120.0)
+        assert just_after_midnight == midday_same_date
+
+    def test_weekday_advances_across_local_midnight(self):
+        _DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        before = self._weekday(-100, 6, 14, 23, 30, lng=120.0)
+        after = self._weekday(-100, 6, 15, 0, 30, lng=120.0)
+        assert (_DAYS.index(before) + 1) % 7 == _DAYS.index(after)

@@ -817,6 +817,38 @@ class TestChartsUtilsDistributionEdgeCases:
         )
         assert dist is not None
 
+    def test_distribution_counts_fixed_stars(self):
+        """v6 regression: stars live in subject.fixed_stars (not as
+        attributes), so the star weight-table entries were unreachable and
+        active stars silently dropped out of element distributions."""
+        from kerykeion.charts.charts_utils import calculate_element_points
+        from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+        from kerykeion import AstrologicalSubjectFactory
+
+        kwargs = dict(
+            year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun"],
+        )
+        without_star = AstrologicalSubjectFactory.from_birth_data(name="NoStar", **kwargs)
+        with_star = AstrologicalSubjectFactory.from_birth_data(
+            name="Star", **kwargs, active_fixed_stars=["Regulus"],
+        )
+        base = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], without_star, method="weighted",
+        )
+        with_regulus = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], with_star, method="weighted",
+        )
+        regulus_sign_group = ["fire", "earth", "air", "water"][
+            with_star.fixed_stars[0].sign_num % 4
+        ]
+        # Regulus (weight 0.2 in the star table) must add to its element.
+        assert with_regulus[regulus_sign_group] == pytest.approx(
+            base[regulus_sign_group] + 0.2
+        )
+
 
 # ---------------------------------------------------------------------------
 # Missing edge-case tests (migrated from tests/edge_cases/test_edge_cases.py)

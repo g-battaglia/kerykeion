@@ -202,10 +202,12 @@ DEFAULT_WEIGHTED_POINT_WEIGHTS: dict[str, float] = {
     "algorab": 0.2,
     "deneb_algedi": 0.2,
     "alkaid": 0.2,
-    # Lilith/Priapus variants
+    # Lilith/Priapus variants and lunar apse points
     "interpolated_lilith": 0.5,
     "mean_priapus": 0.5,
     "true_priapus": 0.5,
+    "interpolated_perigee": 0.5,
+    "white_moon": 0.5,
     # Uranian / Hamburg School hypothetical planets
     "cupido": 0.3,
     "hades": 0.3,
@@ -283,18 +285,25 @@ def _calculate_distribution_for_subject(
     """
     totals = {key: 0.0 for key in group_keys}
 
+    def _accumulate(point, point_name: str, default_weight: float) -> None:
+        sign_index = getattr(point, "sign_num", None)
+        if sign_index is None or not (0 <= sign_index < len(sign_to_group_map)):
+            return
+        group_key = sign_to_group_map[sign_index]
+        totals[group_key] += weight_lookup.get(point_name, default_weight)
+
     for point_name in celestial_points_names:
         point = subject.get(point_name)
         if point is None:
             continue
+        _accumulate(point, point_name, fallback_weight)
 
-        sign_index = getattr(point, "sign_num", None)
-        if sign_index is None or not (0 <= sign_index < len(sign_to_group_map)):
-            continue
-
-        group_key = sign_to_group_map[sign_index]
-        weight = weight_lookup.get(point_name, fallback_weight)
-        totals[group_key] += weight
+    # Fixed stars live in the subject's fixed_stars list (not as attributes,
+    # so they never appear in celestial_points_names); count them with their
+    # table weight (0.2 for the traditional stars) like v5 did.
+    for star in subject.get("fixed_stars") or []:
+        star_key = star.name.lower().replace(" ", "_")
+        _accumulate(star, star_key, fallback_weight)
 
     return totals
 
@@ -419,18 +428,18 @@ def get_decoded_kerykeion_celestial_point_name(
         celestial_point_language: The language model containing translated point names.
 
     Returns:
-        The localized celestial point name.
-
-    Raises:
-        KerykeionException: If the point name is not found in the language model.
+        The localized celestial point name, or the prettified slug for dynamic
+        names (fixed stars, pair midpoints) that have no translation entries.
     """
     language_keys = celestial_point_language.model_dump().keys()
 
     if input_planet_name in language_keys:
         return celestial_point_language[input_planet_name]
-    # v6: catalog fixed stars are not in the translations table. Fall back to the
+    # v6: dynamic point names (fixed stars, pair midpoints such as
+    # "Sun_Moon_Midpoint") are not in the translations table. Fall back to the
     # caller-provided slug with underscores replaced by spaces — labels remain
-    # readable on the chart wheel without polluting the language model.
+    # readable on the chart wheel without polluting the language model. Static
+    # point names are Literal-validated upstream, so typos cannot reach here.
     return input_planet_name.replace("_", " ")
 
 

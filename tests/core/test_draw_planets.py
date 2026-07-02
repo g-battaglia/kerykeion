@@ -797,18 +797,20 @@ class TestEdgeCases:
         )
         assert isinstance(result, str)
 
-    def test_dual_return_chart_without_secondary_does_not_raise(self):
-        """DualReturnChart without secondary points does NOT raise exception."""
-        result = draw_planets(
-            radius=RADIUS,
-            available_kerykeion_celestial_points=_mock_points(),
-            available_planets_setting=_mock_settings(),
-            third_circle_radius=THIRD_CIRCLE_RADIUS,
-            main_subject_first_house_degree_ut=FIRST_HOUSE_DEG,
-            main_subject_seventh_house_degree_ut=SEVENTH_HOUSE_DEG,
-            chart_type="DualReturnChart",
-        )
-        assert isinstance(result, str)
+    def test_dual_return_chart_without_secondary_raises(self):
+        """DualReturnChart requires secondary points like every other dual
+        chart type — previously it silently rendered a bi-wheel with the
+        outer return wheel missing."""
+        with pytest.raises(KerykeionException, match="Secondary celestial points are required for DualReturnChart"):
+            draw_planets(
+                radius=RADIUS,
+                available_kerykeion_celestial_points=_mock_points(),
+                available_planets_setting=_mock_settings(),
+                third_circle_radius=THIRD_CIRCLE_RADIUS,
+                main_subject_first_house_degree_ut=FIRST_HOUSE_DEG,
+                main_subject_seventh_house_degree_ut=SEVENTH_HOUSE_DEG,
+                chart_type="DualReturnChart",
+            )
 
     def test_planets_crossing_zero_boundary(self):
         """Planets spanning the 360/0 boundary render correctly."""

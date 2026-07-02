@@ -2695,9 +2695,12 @@ class AstrologicalSubjectFactory:
         _DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
         if data.get("year", 1) < 1:
-            # BCE dates: compute from Julian Day (floor(jd + 0.5) % 7 → 0=Mon … 6=Sun)
-            jd = data["julian_day"]
-            day_index = int(math.floor(jd + 0.5)) % 7
+            # BCE dates: compute from Julian Day (floor(jd + 0.5) % 7 → 0=Mon … 6=Sun).
+            # julian_day is UT — shift back to the local-mean-time date (the same
+            # lng/15 offset the BCE branch applied) so the weekday matches the
+            # local date like the year>=1 path does.
+            jd_local = data["julian_day"] + data["lng"] / 15.0 / 24.0
+            day_index = int(math.floor(jd_local + 0.5)) % 7
             data["day_of_week"] = _DAY_NAMES[day_index]
         else:
             dt = datetime.fromisoformat(data["iso_formatted_local_datetime"])

@@ -50,7 +50,7 @@ DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
 
 # Chart types that can display two subjects.
 DUAL_CHART_TYPES = DOUBLE_CHART_TYPES
-REQUIRED_SECONDARY_CHART_TYPES: tuple[ChartType, ...] = ("Transit", "Synastry", "Progression")
+REQUIRED_SECONDARY_CHART_TYPES: tuple[ChartType, ...] = ("Transit", "Synastry", "Progression", "DualReturnChart")
 
 
 # =============================================================================
