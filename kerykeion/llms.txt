@@ -433,9 +433,16 @@ except Exception as e:
 2. **Limit active_points** for batch processing
 3. **Disable optional features** when not needed:
     ```python
-    calculate_lunar_phase=False
-    include_house_comparison=False
-    include_relationship_score=False
+    # On AstrologicalSubjectFactory constructors:
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        ..., calculate_lunar_phase=False,
+    )
+    # On ChartDataFactory dual-chart methods:
+    chart_data = ChartDataFactory.create_synastry_chart_data(
+        first, second,
+        include_house_comparison=False,
+        include_relationship_score=False,
+    )
     ```
 4. **Reuse chart_data objects** for multiple output formats
 

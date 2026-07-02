@@ -761,9 +761,18 @@ class AspectsFactory:
         """
         Legacy method - use single_chart_aspects() instead.
 
-        ⚠️  DEPRECATION WARNING ⚠️
-        This method is deprecated. Use AspectsFactory.single_chart_aspects() instead.
+        .. deprecated::
+            Use :meth:`single_chart_aspects` instead. This alias emits a
+            DeprecationWarning and will be removed in kerykeion 7.0.0.
         """
+        import warnings
+
+        warnings.warn(
+            "natal_aspects is deprecated and will be removed in kerykeion 7.0.0; "
+            "use AspectsFactory.single_chart_aspects instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return AspectsFactory.single_chart_aspects(
             subject,
             active_points=active_points,
@@ -783,9 +792,18 @@ class AspectsFactory:
         """
         Legacy method - use dual_chart_aspects() instead.
 
-        ⚠️  DEPRECATION WARNING ⚠️
-        This method is deprecated. Use AspectsFactory.dual_chart_aspects() instead.
+        .. deprecated::
+            Use :meth:`dual_chart_aspects` instead. This alias emits a
+            DeprecationWarning and will be removed in kerykeion 7.0.0.
         """
+        import warnings
+
+        warnings.warn(
+            "synastry_aspects is deprecated and will be removed in kerykeion 7.0.0; "
+            "use AspectsFactory.dual_chart_aspects instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return AspectsFactory.dual_chart_aspects(
             first_subject,
             second_subject,

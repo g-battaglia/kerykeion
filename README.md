@@ -130,7 +130,7 @@ For more installation options and environment setup, see the [Getting Started gu
 > fresh install covers the years **1849–2150** (JPL DE440s). Charts outside
 > that range raise a `KerykeionException` until you install a wider data tier:
 >
-> ```python
+> ```text
 > import libephemeris
 > libephemeris.download_leb_for_tier("medium")    # 1550–2650
 > libephemeris.download_leb_for_tier("extended")  # full range, incl. BCE dates
