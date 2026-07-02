@@ -2,7 +2,23 @@
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **`ChartDataFactory` now treats an explicit `active_points=[]` as a real
+  (empty) filter**, not as "use the subject's own points" — `None` is the
+  documented sentinel for the latter. A chart requested with `active_points=[]`
+  therefore has no active points (no aspects, element/quality distributions all
+  0.0). This aligns with the timing factories' convention, but is the *opposite*
+  of `AstrologicalSubjectFactory`, where an emptied list still means "no filter →
+  all points"; pass `None` (or omit the argument) to get the subject's points.
+
 ### Fixed (pre-6.0.0 full-package review, second pass)
+
+- **Fixed stars in `pure_count` distributions count as 1**, not 0.2: the
+  weighted-mode star table weight leaked into `pure_count`, breaking its integer
+  semantics (a Sun+Moon+Regulus count read 2.2). `DominantsFactory`'s elemental
+  school also opts into fixed stars so its numbers keep matching the chart's
+  element/quality distributions for a star-bearing subject.
 
 - **Online GeoNames gating**: PlanetaryReturnFactory fetches when ANY of
   tz_str/lat/lng is missing (an AND gate crashed callers passing only tz_str);

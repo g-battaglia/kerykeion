@@ -275,6 +275,27 @@ def test_elemental_matches_distribution(john_lennon):
         assert {item.name for item in result.polarities} == {"Yang", "Yin"}
 
 
+def test_elemental_matches_chart_distribution_with_active_stars():
+    """The elemental school must count active fixed stars like ChartDataFactory
+    does, or the dominants numbers silently diverge from the chart's element
+    distribution for a star-bearing subject."""
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.chart_data_factory import ChartDataFactory
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Star Dominant", 1990, 6, 15, 12, 0,
+        lng=12.5, lat=41.9, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+        active_fixed_stars=["Regulus", "Spica"],
+    )
+    chart = ChartDataFactory.create_natal_chart_data(subject)
+    dominants = DominantsFactory.from_subject(subject, strategy="elemental")
+
+    chart_pct = {k: round(getattr(chart.element_distribution, f"{k}_percentage")) for k in ("fire", "earth", "air", "water")}
+    dom_pct = {item.name.lower(): round(item.percentage) for item in dominants.elements}
+    assert chart_pct == dom_pct
+
+
 # =============================================================================
 # FACTORY: RESOLUTION, CUSTOM STRATEGY, ERRORS
 # =============================================================================

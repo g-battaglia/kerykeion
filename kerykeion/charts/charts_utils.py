@@ -235,7 +235,7 @@ _FIXED_STAR_FALLBACK_WEIGHT: float = 0.2
 def _prepare_weight_lookup(
     method: ElementQualityDistributionMethod,
     custom_weights: Optional[Mapping[str, float]] = None,
-) -> tuple[dict[str, float], float]:
+) -> tuple[dict[str, float], float, float]:
     """
     Normalize and merge default weights with any custom overrides.
 
@@ -245,7 +245,11 @@ def _prepare_weight_lookup(
                         Supports special key "__default__" as fallback weight.
 
     Returns:
-        A tuple containing the weight lookup dictionary and fallback weight.
+        ``(weight_lookup, fallback_weight, star_fallback_weight)``. The star
+        fallback is the weight for an active fixed star absent from the table:
+        ``_FIXED_STAR_FALLBACK_WEIGHT`` (0.2) in weighted mode, but the plain
+        ``fallback_weight`` (1.0) in ``pure_count`` — where every counted item
+        must contribute exactly 1, stars included.
     """
     normalized_custom = {key.lower(): float(value) for key, value in custom_weights.items()} if custom_weights else {}
 
@@ -263,7 +267,9 @@ def _prepare_weight_lookup(
             continue
         weight_lookup[key] = float(value)
 
-    return weight_lookup, fallback_weight
+    star_fallback_weight = _FIXED_STAR_FALLBACK_WEIGHT if method == "weighted" else fallback_weight
+
+    return weight_lookup, fallback_weight, star_fallback_weight
 
 
 def _calculate_distribution_for_subject(
@@ -274,6 +280,7 @@ def _calculate_distribution_for_subject(
     weight_lookup: Mapping[str, float],
     fallback_weight: float,
     include_fixed_stars: bool = False,
+    star_fallback_weight: float = _FIXED_STAR_FALLBACK_WEIGHT,
 ) -> dict[str, float]:
     """
     Accumulate distribution totals for a single subject.
@@ -286,8 +293,10 @@ def _calculate_distribution_for_subject(
         weight_lookup: Precomputed mapping of weights per point.
         fallback_weight: Default weight if point missing in lookup.
         include_fixed_stars: Also count the subject's active fixed stars (which
-            live in ``subject.fixed_stars``, not under ``celestial_points_names``)
-            with their table weight, ``_FIXED_STAR_FALLBACK_WEIGHT`` otherwise.
+            live in ``subject.fixed_stars``, not under ``celestial_points_names``).
+        star_fallback_weight: Weight for an active fixed star absent from the
+            table — 0.2 in weighted mode, ``fallback_weight`` (1.0) in
+            pure_count so a star counts as one item like every other point.
 
     Returns:
         Dictionary with accumulated totals keyed by element/modality.
@@ -311,7 +320,7 @@ def _calculate_distribution_for_subject(
         from kerykeion.fixed_stars.catalog import star_slug
 
         for star in subject.get("fixed_stars") or []:
-            _accumulate(star, star_slug(star.name).lower(), _FIXED_STAR_FALLBACK_WEIGHT)
+            _accumulate(star, star_slug(star.name).lower(), star_fallback_weight)
 
     return totals
 
@@ -2198,7 +2207,7 @@ def calculate_element_points(
         Dictionary mapping each element to its accumulated total.
     """
     normalized_names = [name.lower() for name in celestial_points_names]
-    weight_lookup, fallback_weight = _prepare_weight_lookup(method, custom_weights)
+    weight_lookup, fallback_weight, star_fallback_weight = _prepare_weight_lookup(method, custom_weights)
 
     return _calculate_distribution_for_subject(
         subject,
@@ -2208,6 +2217,7 @@ def calculate_element_points(
         weight_lookup,
         fallback_weight,
         include_fixed_stars=include_fixed_stars,
+        star_fallback_weight=star_fallback_weight,
     )
 
 
@@ -2239,7 +2249,7 @@ def calculate_synastry_element_points(
         Dictionary with element percentages summing to 100.
     """
     normalized_names = [name.lower() for name in celestial_points_names]
-    weight_lookup, fallback_weight = _prepare_weight_lookup(method, custom_weights)
+    weight_lookup, fallback_weight, star_fallback_weight = _prepare_weight_lookup(method, custom_weights)
 
     subject1_totals = _calculate_distribution_for_subject(
         subject1,
@@ -2249,6 +2259,7 @@ def calculate_synastry_element_points(
         weight_lookup,
         fallback_weight,
         include_fixed_stars=include_fixed_stars,
+        star_fallback_weight=star_fallback_weight,
     )
     subject2_totals = _calculate_distribution_for_subject(
         subject2,
@@ -2258,6 +2269,7 @@ def calculate_synastry_element_points(
         weight_lookup,
         fallback_weight,
         include_fixed_stars=include_fixed_stars,
+        star_fallback_weight=star_fallback_weight,
     )
 
     combined_totals = {key: subject1_totals[key] + subject2_totals[key] for key in _ELEMENT_KEYS}
@@ -2688,7 +2700,7 @@ def calculate_quality_points(
         Dictionary mapping each modality to its accumulated total.
     """
     normalized_names = [name.lower() for name in celestial_points_names]
-    weight_lookup, fallback_weight = _prepare_weight_lookup(method, custom_weights)
+    weight_lookup, fallback_weight, star_fallback_weight = _prepare_weight_lookup(method, custom_weights)
 
     return _calculate_distribution_for_subject(
         subject,
@@ -2698,6 +2710,7 @@ def calculate_quality_points(
         weight_lookup,
         fallback_weight,
         include_fixed_stars=include_fixed_stars,
+        star_fallback_weight=star_fallback_weight,
     )
 
 
@@ -2729,7 +2742,7 @@ def calculate_synastry_quality_points(
         Dictionary with modality percentages summing to 100.
     """
     normalized_names = [name.lower() for name in celestial_points_names]
-    weight_lookup, fallback_weight = _prepare_weight_lookup(method, custom_weights)
+    weight_lookup, fallback_weight, star_fallback_weight = _prepare_weight_lookup(method, custom_weights)
 
     subject1_totals = _calculate_distribution_for_subject(
         subject1,
@@ -2739,6 +2752,7 @@ def calculate_synastry_quality_points(
         weight_lookup,
         fallback_weight,
         include_fixed_stars=include_fixed_stars,
+        star_fallback_weight=star_fallback_weight,
     )
     subject2_totals = _calculate_distribution_for_subject(
         subject2,
@@ -2748,6 +2762,7 @@ def calculate_synastry_quality_points(
         weight_lookup,
         fallback_weight,
         include_fixed_stars=include_fixed_stars,
+        star_fallback_weight=star_fallback_weight,
     )
 
     combined_totals = {key: subject1_totals[key] + subject2_totals[key] for key in _QUALITY_KEYS}

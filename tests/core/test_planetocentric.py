@@ -170,6 +170,22 @@ class TestCenterBodyExcluded:
         assert getattr(pctr, center_attr) is None
         assert center_name not in pctr.active_points
 
+    def test_chokepoint_guard_skips_center_body_directly(self):
+        """The exclusion lives in _calculate_single_planet — the single point
+        through which every planetary position is stored — so ANY path (not
+        just the resolution filter) inherits it."""
+        from kerykeion.ephemeris_backend import ephe
+
+        data: dict = {}
+        calculated: list = []
+        AstrologicalSubjectFactory._calculate_single_planet(
+            data, "Mars", ephe.MARS, 2451545.0, ephe.FLG_SWIEPH,
+            [0.0] * 12, "AstrologicalPoint", calculated, [],
+            center_body_id=ephe.MARS,
+        )
+        assert "mars" not in data
+        assert "Mars" not in calculated
+
     def test_exclusion_warning_fired(self, caplog):
         with caplog.at_level("WARNING"):
             AstrologicalSubjectFactory.from_birth_data(

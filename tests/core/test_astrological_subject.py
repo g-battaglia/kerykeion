@@ -511,9 +511,14 @@ class TestAstrologicalSubjectFactoryMethods:
 
     def test_from_current_time(self):
         """Test creating subject for current time."""
-        from datetime import datetime
+        from datetime import datetime, timezone
 
-        now = datetime.now()
+        import pytz
+
+        # Compare against the current instant IN the chart's timezone, not the
+        # host's local clock: near midnight a host in a zone ahead of London
+        # would already be on the next calendar day and flake this check.
+        now = datetime.now(timezone.utc).astimezone(pytz.timezone("Europe/London"))
 
         subject = AstrologicalSubjectFactory.from_current_time(
             name="Current Time Test", lng=0.0, lat=51.5074, tz_str="Europe/London", online=False

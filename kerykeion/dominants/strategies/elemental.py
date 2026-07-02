@@ -80,12 +80,16 @@ class ElementalBalanceStrategy(BaseDominantStrategy):
 
         # Raw totals come back keyed lowercase (e.g. "fire"); we relabel them to
         # the Title-case Element/Quality literals the public model expects.
+        # include_fixed_stars matches ChartDataFactory so the dominants numbers
+        # keep agreeing with the element/quality distributions shown on charts
+        # and reports for the same subject.
         element_totals = calculate_element_points(
             planets_settings,
             point_names,
             subject,
             method=config.distribution_method,
             custom_weights=config.custom_weights,
+            include_fixed_stars=True,
         )
         quality_totals = calculate_quality_points(
             planets_settings,
@@ -93,6 +97,7 @@ class ElementalBalanceStrategy(BaseDominantStrategy):
             subject,
             method=config.distribution_method,
             custom_weights=config.custom_weights,
+            include_fixed_stars=True,
         )
 
         elements: Dict[str, float] = {ELEMENT_LOWER_TO_TITLE[key]: value for key, value in element_totals.items()}

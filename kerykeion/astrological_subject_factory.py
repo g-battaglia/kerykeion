@@ -170,6 +170,19 @@ _PLANETOCENTRIC_CENTERS: Dict[str, int] = {
     "Saturncentric": ephe.SATURN,
 }
 
+
+def _planetocentric_center_names(perspective_type: Optional[str]) -> List[str]:
+    """Point names that ARE the center body of a planetocentric perspective.
+
+    Single source of truth for the exclusion: the center body has no position
+    as seen from itself, so it must be dropped from every path that would store
+    a planetary position. Empty for non-planetocentric perspectives.
+    """
+    center_body_id = _PLANETOCENTRIC_CENTERS.get(perspective_type or "")
+    if center_body_id is None:
+        return []
+    return [name for name, pid in STANDARD_PLANETS.items() if pid == center_body_id]
+
 # Arabic Parts configuration: (name, required_points, formula_type)
 # formula_type: "fortune" = day/night variant, "simple" = single formula
 ARABIC_PARTS_CONFIG: Dict[AstrologicalPoint, Dict[str, Any]] = {
@@ -822,10 +835,11 @@ class AstrologicalSubjectFactory:
 
         # Planetocentric charts: the center body has no position as seen from
         # itself, so drop it from the active points instead of silently storing
-        # its geocentric position in the wrong reference frame.
-        _center_body_id = _PLANETOCENTRIC_CENTERS.get(perspective_type)
-        if _center_body_id is not None:
-            _center_names = [n for n, pid in STANDARD_PLANETS.items() if pid == _center_body_id]
+        # its geocentric position in the wrong reference frame. The actual
+        # calculation guard lives in _calculate_single_planet; this pass gives
+        # the user-facing warning and rejects an all-center list.
+        _center_names = _planetocentric_center_names(perspective_type)
+        if _center_names:
             _dropped = [p for p in active_points_list if p in _center_names]
             if _dropped:
                 logging.warning(
@@ -1985,6 +1999,13 @@ class AstrologicalSubjectFactory:
             and velocity data. Retrograde determination is based on the velocity
             component being negative (element index 3).
         """
+        # The center body has no position as seen from itself. Guarding here —
+        # the single function through which every planetary position is written
+        # — means any current or future path inherits the exclusion instead of
+        # each caller having to remember its own guard.
+        if center_body_id is not None and planet_id == center_body_id:
+            return
+
         try:
             # Calculate planet position using Swiss Ephemeris (ecliptic coordinates)
             if center_body_id is not None and planet_id != center_body_id:
@@ -2169,8 +2190,7 @@ class AstrologicalSubjectFactory:
 
         # For planets, use STANDARD_PLANETS mapping
         if point in STANDARD_PLANETS:
-            _center = _PLANETOCENTRIC_CENTERS.get(data.get("perspective_type", ""))
-            if _center is not None and STANDARD_PLANETS[point] == _center:
+            if point in _planetocentric_center_names(data.get("perspective_type")):
                 logging.warning(
                     "Cannot auto-activate %s as an Arabic Part prerequisite: it "
                     "is the center body of the %r perspective. The dependent "
@@ -2460,10 +2480,9 @@ class AstrologicalSubjectFactory:
         # South lunar nodes, Priapus, Descendant, IC, and Anti-Vertex are handled
         # declaratively by _calculate_opposite_points() via OPPOSITE_PAIRS.
         for planet_name, planet_id in STANDARD_PLANETS.items():
-            if center_body_id is not None and planet_id == center_body_id:
-                # Center body excluded upstream; skipping here also covers the
-                # empty-list 'no filter' semantics of should_calculate.
-                continue
+            # The center body is skipped inside _calculate_single_planet (the
+            # single chokepoint for storing a planetary position), so no guard
+            # is needed here.
             if should_calculate(planet_name):
                 AstrologicalSubjectFactory._calculate_single_planet(
                     data,

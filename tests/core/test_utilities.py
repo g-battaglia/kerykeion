@@ -922,6 +922,35 @@ class TestChartsUtilsDistributionEdgeCases:
         # chosen stars do not).
         assert default != with_stars
 
+    def test_pure_count_fixed_star_counts_as_one(self):
+        """In pure_count every counted item contributes exactly 1 — a fixed
+        star must NOT keep its 0.2 weighted-mode table weight, or the integer
+        semantics of the count break (Sun+Moon+Regulus must total 3, not 2.2)."""
+        from kerykeion.charts.charts_utils import calculate_element_points
+        from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+        from kerykeion import AstrologicalSubjectFactory
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            name="Pure", year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun", "Moon"], active_fixed_stars=["Regulus"],
+        )
+        totals = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun", "moon"], subject,
+            method="pure_count", include_fixed_stars=True,
+        )
+        assert sum(totals.values()) == pytest.approx(3.0)
+        # Weighted mode keeps the 0.2 table weight for the star.
+        base = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun", "moon"], subject, method="weighted",
+        )
+        weighted = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun", "moon"], subject,
+            method="weighted", include_fixed_stars=True,
+        )
+        assert sum(weighted.values()) == pytest.approx(sum(base.values()) + 0.2)
+
 
 # ---------------------------------------------------------------------------
 # Missing edge-case tests (migrated from tests/edge_cases/test_edge_cases.py)
