@@ -308,6 +308,7 @@ class ChartDataFactory:
                     first_subject,
                     method=distribution_method,
                     custom_weights=custom_distribution_weights,
+                    include_fixed_stars=True,
                 )
                 quality_totals = calculate_quality_points(
                     available_planets_setting,
@@ -315,6 +316,7 @@ class ChartDataFactory:
                     first_subject,
                     method=distribution_method,
                     custom_weights=custom_distribution_weights,
+                    include_fixed_stars=True,
                 )
         else:
             # Calculate element/quality points for single chart
@@ -324,6 +326,7 @@ class ChartDataFactory:
                 first_subject,
                 method=distribution_method,
                 custom_weights=custom_distribution_weights,
+                include_fixed_stars=True,
             )
             quality_totals = calculate_quality_points(
                 available_planets_setting,
@@ -331,6 +334,7 @@ class ChartDataFactory:
                 first_subject,
                 method=distribution_method,
                 custom_weights=custom_distribution_weights,
+                include_fixed_stars=True,
             )
 
         # Calculate percentages

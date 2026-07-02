@@ -172,9 +172,10 @@ EPHEMERIS_LOCK = RLock()
 #   auto-detected, then swisseph falls back to its built-in Moshier
 #   analytical ephemeris (lower precision).
 
-# Default target of `python -m kerykeion.swisseph_setup` (single source of
-# truth: the setup script imports this constant).
-DEFAULT_SWEPH_DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), ".kerykeion", "sweph")
+# Default target of `python -m kerykeion.swisseph_setup`; the shared constant
+# lives in config_constants (dependency-free) so the setup script can use it
+# without importing this module. Re-exported here for backward compatibility.
+from kerykeion.settings.config_constants import DEFAULT_SWEPH_DOWNLOAD_DIR
 
 
 def _dir_has_sweph_data(path: str) -> bool:

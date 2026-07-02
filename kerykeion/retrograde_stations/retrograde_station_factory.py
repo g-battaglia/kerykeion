@@ -59,7 +59,7 @@ _SAMPLE_STEP_DAYS = 7.0
 # Bisection to sub-millisecond on a 7-day bracket — the ISO output is rounded
 # to the second, so further halvings buy nothing.
 _BISECTION_ITERS = 30
-# Backstop on samples per scan (~2700 years at the default step). Ranges that
+# Backstop on samples per scan (~38,000 years at the 7-day step). Ranges that
 # would exceed it are rejected explicitly rather than silently truncated.
 _MAX_SAMPLES = 2_000_000
 

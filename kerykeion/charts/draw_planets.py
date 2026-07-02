@@ -48,9 +48,11 @@ DUAL_CHART_ANGLE_RADIUS = 76  # Radius for chart angles in dual charts
 DUAL_CHART_PLANET_RADIUS_A = 110  # Alternate planet radius in dual charts
 DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
 
-# Chart types that can display two subjects.
+# Chart types that can display two subjects. Every dual type requires
+# secondary points — keeping the two names aliased means a future dual chart
+# type cannot be added to one list and silently render without its outer wheel.
 DUAL_CHART_TYPES = DOUBLE_CHART_TYPES
-REQUIRED_SECONDARY_CHART_TYPES: tuple[ChartType, ...] = ("Transit", "Synastry", "Progression", "DualReturnChart")
+REQUIRED_SECONDARY_CHART_TYPES: tuple[ChartType, ...] = DOUBLE_CHART_TYPES
 
 
 # =============================================================================

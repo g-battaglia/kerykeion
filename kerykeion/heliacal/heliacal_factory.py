@@ -21,6 +21,7 @@ import logging
 from typing import List, Optional, Sequence, Tuple
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion._predictive_utils import jd_to_iso_utc
 
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
@@ -267,11 +268,9 @@ class HeliacalFactory:
 
         result_jd = dret[0]  # start of visibility
 
-        # Convert Julian Day to a calendar date for the datestamp. Negative
-        # years need the sign outside the zero-padding ("-0049", not "-049").
-        year, month, day, _hour = ephe.revjul(result_jd)
-        year_str = f"-{abs(int(year)):04d}" if year < 0 else f"{int(year):04d}"
-        datestamp = f"{year_str}-{int(month):02d}-{int(day):02d}"
+        # Date part of the shared ISO formatter (split on "T", not [:10]:
+        # a leading BCE minus sign would be truncated by a fixed slice).
+        datestamp = jd_to_iso_utc(result_jd).split("T", 1)[0]
 
         return HeliacalEventModel(
             event_type=EVENT_TYPE_LABELS.get(event_type, str(event_type)),

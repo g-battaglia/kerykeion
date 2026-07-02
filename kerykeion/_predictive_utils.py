@@ -19,24 +19,37 @@ PTOLEMAIC_ASPECTS: tuple[str, ...] = (
 )
 
 
-def jd_to_iso_utc(jd: float) -> str:
-    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds.
+def jd_to_ymd_hms(jd: float, cal: Optional[int] = None) -> tuple[int, int, int, int, int, int]:
+    """Split a Julian Day into integer ``(year, month, day, hour, minute, second)``.
 
     Uses ``ephe.revjul`` rather than Python ``datetime`` (limited to years
-    1..9999) so the BCE range Kerykeion supports formats correctly, with an
-    extended-year sign for negative years. Instants that round up to 24:00:00
-    roll over to 00:00:00 of the next calendar day (carrying month/year
-    boundaries via ``revjul``) rather than clamping to 23:59:59.
+    1..9999) so the BCE range Kerykeion supports decomposes correctly. Rounds
+    to the nearest second; an instant that rounds up to 24:00:00 rolls over to
+    00:00:00 of the next calendar day (carrying month/year boundaries via
+    ``revjul`` in the requested calendar) rather than clamping to 23:59:59.
+
+    Args:
+        jd: Julian Day (UT).
+        cal: ``ephe.GREG_CAL``/``ephe.JUL_CAL``; defaults to Gregorian.
     """
     from kerykeion.ephemeris_backend import ephe
 
-    year, month, day, hour_frac = ephe.revjul(jd)
+    if cal is None:
+        cal = getattr(ephe, "GREG_CAL", 1)
+    year, month, day, hour_frac = ephe.revjul(jd, cal)
     secs = int(hour_frac * 3600 + 0.5)  # nearest second
     if secs >= 86400:
-        year, month, day, _ = ephe.revjul(jd + 0.5 / 86400.0)
+        year, month, day, _ = ephe.revjul(jd + 0.5 / 86400.0, cal)
         secs = 0
     hours, rem = divmod(secs, 3600)
     minutes, seconds = divmod(rem, 60)
+    return int(year), int(month), int(day), hours, minutes, seconds
+
+
+def jd_to_iso_utc(jd: float) -> str:
+    """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds,
+    with an extended-year sign for negative (BCE) years."""
+    year, month, day, hours, minutes, seconds = jd_to_ymd_hms(jd)
     year_str = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
     return f"{year_str}-{month:02d}-{day:02d}T{hours:02d}:{minutes:02d}:{seconds:02d}Z"
 

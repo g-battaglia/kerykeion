@@ -14,6 +14,8 @@ Using these constants instead of magic strings/numbers improves maintainability
 and reduces the risk of typos.
 """
 
+import os
+
 from typing import cast
 
 from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode
@@ -619,3 +621,8 @@ AXIAL_POINTS: list[AstrologicalPoint] = [
     "Imum_Coeli",
 ]
 """The four axial cusps (angles) of the horoscope."""
+
+# Default target of `python -m kerykeion.swisseph_setup` and the directory the
+# swisseph backend auto-detects when KERYKEION_EPHE_PATH is unset. Lives here
+# (dependency-free) so the setup script never has to import the backend module.
+DEFAULT_SWEPH_DOWNLOAD_DIR: str = os.path.join(os.path.expanduser("~"), ".kerykeion", "sweph")

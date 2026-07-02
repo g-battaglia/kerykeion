@@ -836,10 +836,14 @@ class AstrologicalSubjectFactory:
                 )
                 active_points_list = [p for p in active_points_list if p not in _center_names]
                 if not active_points_list:
-                    logging.warning(
-                        "active_points contained only the center body; the "
-                        "remaining list is empty, which is treated as 'no filter' "
-                        "(all other points are calculated)."
+                    # An empty list means 'no filter' downstream, which would
+                    # silently invert the caller's explicit restriction into a
+                    # full chart — fail loudly instead.
+                    raise KerykeionException(
+                        f"active_points contained only {_dropped}, the center "
+                        f"body of the {perspective_type!r} perspective, which "
+                        "has no position as seen from itself. Include at least "
+                        "one other point or omit active_points."
                     )
 
         calc_data["active_points"] = active_points_list

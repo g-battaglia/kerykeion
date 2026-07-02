@@ -37,6 +37,15 @@ def _to_slug(name: str) -> str:
     return name.strip().replace(" ", "_").replace("-", "_")
 
 
+def star_slug(name: str) -> str:
+    """Public canonical slug for a fixed-star name (strip, spaces/hyphens → underscores).
+
+    Case is preserved (catalog slugs are cased); lowercase the result for
+    case-insensitive table lookups.
+    """
+    return _to_slug(name)
+
+
 @lru_cache(maxsize=1)
 def _load_catalog() -> tuple[FixedStarMetadataModel, ...]:
     """Load and cache the libephemeris catalog as metadata tuples."""

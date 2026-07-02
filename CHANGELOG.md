@@ -25,7 +25,10 @@
   planetocentric label** (e.g. a Marscentric chart carried the geocentric Mars in
   aspects and houses). The center body is now excluded from the active points
   with a warning, including via Arabic-Part prerequisite auto-activation;
-  `lunar_phase` is `None` for Selenocentric subjects.
+  `lunar_phase` is `None` for Selenocentric subjects. An explicit
+  `active_points` list containing *only* the center body raises
+  `KerykeionException` (an emptied list would otherwise mean "no filter" and
+  silently invert into a full chart).
 - With `KERYKEION_BACKEND=swisseph` and no `KERYKEION_EPHE_PATH`, the backend now
   **auto-detects the default download directory of
   `python -m kerykeion.swisseph_setup` (`~/.kerykeion/sweph`)** before falling
@@ -41,8 +44,12 @@
   fixed-star symbol, and the latter two weigh 0.5 (not the 1.0 fallback) in
   element/quality distributions.
 - **Fixed stars count toward element/quality distributions again** (weight 0.2
-  for the traditional stars): v6 moved stars to `subject.fixed_stars`, which
-  made the star weight-table entries unreachable.
+  for every star unless the table overrides it): v6 moved stars to
+  `subject.fixed_stars`, which made the star weight-table entries unreachable.
+  Star inclusion is opt-in via `include_fixed_stars=True` on
+  `calculate_element_points`/`calculate_quality_points` (the chart data factory
+  opts in), so callers naming an explicit point subset get exactly those
+  points; star names go through the shared catalog slugger.
 - `DualReturnChart` without secondary points now raises `KerykeionException`
   like every other dual chart type instead of silently rendering a bi-wheel
   with the outer return wheel missing.

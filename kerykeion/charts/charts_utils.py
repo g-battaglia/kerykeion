@@ -221,6 +221,11 @@ DEFAULT_WEIGHTED_POINT_WEIGHTS: dict[str, float] = {
     "earth": 0.3,
 }
 
+#: Weight for active fixed stars that have no entry in the table above (the 23
+#: traditional stars are listed at 0.2): stars must never inherit the generic
+#: planet-grade fallback weight.
+_FIXED_STAR_FALLBACK_WEIGHT: float = 0.2
+
 
 # =============================================================================
 # INTERNAL HELPER FUNCTIONS
@@ -268,6 +273,7 @@ def _calculate_distribution_for_subject(
     group_keys: Sequence[str],
     weight_lookup: Mapping[str, float],
     fallback_weight: float,
+    include_fixed_stars: bool = False,
 ) -> dict[str, float]:
     """
     Accumulate distribution totals for a single subject.
@@ -279,6 +285,9 @@ def _calculate_distribution_for_subject(
         group_keys: Iterable of expected keys for the resulting totals.
         weight_lookup: Precomputed mapping of weights per point.
         fallback_weight: Default weight if point missing in lookup.
+        include_fixed_stars: Also count the subject's active fixed stars (which
+            live in ``subject.fixed_stars``, not under ``celestial_points_names``)
+            with their table weight, ``_FIXED_STAR_FALLBACK_WEIGHT`` otherwise.
 
     Returns:
         Dictionary with accumulated totals keyed by element/modality.
@@ -298,12 +307,11 @@ def _calculate_distribution_for_subject(
             continue
         _accumulate(point, point_name, fallback_weight)
 
-    # Fixed stars live in the subject's fixed_stars list (not as attributes,
-    # so they never appear in celestial_points_names); count them with their
-    # table weight (0.2 for the traditional stars) like v5 did.
-    for star in subject.get("fixed_stars") or []:
-        star_key = star.name.lower().replace(" ", "_")
-        _accumulate(star, star_key, fallback_weight)
+    if include_fixed_stars:
+        from kerykeion.fixed_stars.catalog import star_slug
+
+        for star in subject.get("fixed_stars") or []:
+            _accumulate(star, star_slug(star.name).lower(), _FIXED_STAR_FALLBACK_WEIGHT)
 
     return totals
 
@@ -2167,6 +2175,7 @@ def calculate_element_points(
     *,
     method: ElementQualityDistributionMethod = "weighted",
     custom_weights: Optional[Mapping[str, float]] = None,
+    include_fixed_stars: bool = False,
 ) -> dict[str, float]:
     """
     Calculate elemental totals for a subject using the selected strategy.
@@ -2177,6 +2186,9 @@ def calculate_element_points(
         subject: Astrological subject with planetary data.
         method: Calculation method (pure_count or weighted). Defaults to weighted.
         custom_weights: Optional overrides for point weights keyed by name.
+        include_fixed_stars: Also count the subject's active fixed stars (weight
+            0.2 unless overridden in the table); off by default so the totals
+            cover exactly the named points.
 
     Returns:
         Dictionary mapping each element to its accumulated total.
@@ -2191,6 +2203,7 @@ def calculate_element_points(
         _ELEMENT_KEYS,
         weight_lookup,
         fallback_weight,
+        include_fixed_stars=include_fixed_stars,
     )
 
 
@@ -2642,6 +2655,7 @@ def calculate_quality_points(
     *,
     method: ElementQualityDistributionMethod = "weighted",
     custom_weights: Optional[Mapping[str, float]] = None,
+    include_fixed_stars: bool = False,
 ) -> dict[str, float]:
     """
     Calculate modality totals for a subject using the selected strategy.
@@ -2652,6 +2666,9 @@ def calculate_quality_points(
         subject: Astrological subject with planetary data.
         method: Calculation method (pure_count or weighted). Defaults to weighted.
         custom_weights: Optional overrides for point weights keyed by name.
+        include_fixed_stars: Also count the subject's active fixed stars (weight
+            0.2 unless overridden in the table); off by default so the totals
+            cover exactly the named points.
 
     Returns:
         Dictionary mapping each modality to its accumulated total.
@@ -2666,6 +2683,7 @@ def calculate_quality_points(
         _QUALITY_KEYS,
         weight_lookup,
         fallback_weight,
+        include_fixed_stars=include_fixed_stars,
     )
 
 

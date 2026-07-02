@@ -817,10 +817,13 @@ class TestChartsUtilsDistributionEdgeCases:
         )
         assert dist is not None
 
-    def test_distribution_counts_fixed_stars(self):
+    def test_distribution_counts_fixed_stars_when_opted_in(self):
         """v6 regression: stars live in subject.fixed_stars (not as
         attributes), so the star weight-table entries were unreachable and
-        active stars silently dropped out of element distributions."""
+        active stars silently dropped out of element distributions. Star
+        inclusion is opt-in (include_fixed_stars=True, as the chart data
+        factory does) so callers naming an explicit point subset are not
+        polluted, and every star weighs 0.2 unless the table says otherwise."""
         from kerykeion.charts.charts_utils import calculate_element_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
         from kerykeion import AstrologicalSubjectFactory
@@ -840,6 +843,7 @@ class TestChartsUtilsDistributionEdgeCases:
         )
         with_regulus = calculate_element_points(
             DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], with_star, method="weighted",
+            include_fixed_stars=True,
         )
         regulus_sign_group = ["fire", "earth", "air", "water"][
             with_star.fixed_stars[0].sign_num % 4
@@ -848,6 +852,44 @@ class TestChartsUtilsDistributionEdgeCases:
         assert with_regulus[regulus_sign_group] == pytest.approx(
             base[regulus_sign_group] + 0.2
         )
+
+        # Default (no opt-in): the caller's named subset is exactly what
+        # counts — three active stars must not inflate a ["sun"] total.
+        default_totals = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], with_star, method="pure_count",
+        )
+        assert sum(default_totals.values()) == pytest.approx(1.0)
+
+    def test_distribution_star_weight_never_planet_grade(self):
+        """A catalog star missing from the weight table weighs 0.2 (the star
+        fallback), never the generic 1.0 point fallback; slugs go through the
+        shared catalog slugger (strip + spaces/hyphens -> underscores)."""
+        from kerykeion.charts.charts_utils import (
+            _FIXED_STAR_FALLBACK_WEIGHT,
+            calculate_element_points,
+        )
+        from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+        from kerykeion import AstrologicalSubjectFactory
+
+        assert _FIXED_STAR_FALLBACK_WEIGHT == 0.2
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            name="Star Slug", year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun"], active_fixed_stars=[" Spica "],
+        )
+        assert len(subject.fixed_stars) == 1
+        base = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], subject, method="weighted",
+        )
+        with_star = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], subject, method="weighted",
+            include_fixed_stars=True,
+        )
+        # ' Spica ' must slug to 'spica' (table weight 0.2), not '_spica_'
+        # (which would silently take a planet-grade fallback weight).
+        assert sum(with_star.values()) == pytest.approx(sum(base.values()) + 0.2)
 
 
 # ---------------------------------------------------------------------------

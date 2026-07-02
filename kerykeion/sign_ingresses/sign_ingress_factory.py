@@ -73,11 +73,12 @@ _PLANET_STEP_DAYS = {
     "Neptune": 7.0,
     "Pluto": 7.0,
 }
-# Bisection to ~0.02 s on the widest (30-day) bracket — the ISO output is
+# Bisection to ~0.02 s on the widest (7-day) bracket — the ISO output is
 # rounded to the second, so further halvings buy nothing.
 _BISECTION_ITERS = 27
-# Backstop on samples per scan (~2700 years at the fallback step). Ranges that
-# would exceed it are rejected explicitly rather than silently truncated.
+# Backstop on per-planet samples per scan (~2700 years at the finest half-day
+# step, proportionally longer for slow-body-only requests). Ranges that would
+# exceed it are rejected explicitly rather than silently truncated.
 _MAX_SAMPLES = 2_000_000
 # A planet can cross a boundary, station, and cross back within one sampling
 # interval (both endpoints in the same sign). When the midpoint reveals a hidden
@@ -136,10 +137,19 @@ def _bisect_ingress(body: int, a: float, b: float, boundary: float) -> float:
     return (a + b) / 2.0
 
 
-def _ensure_scannable(start_jd: float, end_jd: float) -> None:
+def _ensure_scannable(start_jd: float, end_jd: float, bodies: List[tuple[str, int]]) -> None:
     """Reject ranges too long to scan, so a caller never receives a silently
-    truncated result whose ``end_jd`` still claims the full requested range."""
-    if (end_jd - start_jd) / _SAMPLE_STEP_DAYS > _MAX_SAMPLES:
+    truncated result whose ``end_jd`` still claims the full requested range.
+
+    The bound follows the finest per-planet step actually requested: a
+    slow-bodies-only scan costs 6-14x less per year than a Moon/Mercury scan
+    and is admitted accordingly.
+    """
+    finest_step = min(
+        (_PLANET_STEP_DAYS.get(name, _SAMPLE_STEP_DAYS) for name, _ in bodies),
+        default=_SAMPLE_STEP_DAYS,
+    )
+    if (end_jd - start_jd) / finest_step > _MAX_SAMPLES:
         raise ValueError(
             f"Date range too large to scan at the current resolution "
             f"(> {_MAX_SAMPLES} samples). Narrow the date range."
@@ -247,7 +257,7 @@ class SignIngressFactory:
 
         ingresses: List[IngressModel] = []
         if end_jd > start_jd and bodies:
-            _ensure_scannable(start_jd, end_jd)
+            _ensure_scannable(start_jd, end_jd, bodies)
             # The session holds the ephemeris lock across the whole scan (calc_ut
             # reads process-global backend state shared with chart calculations)
             # and resets that state on exit without degrading the backend.

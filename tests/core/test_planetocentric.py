@@ -189,19 +189,17 @@ class TestCenterBodyExcluded:
         assert s.moon is None
         assert "center body" in caplog.text
 
-    def test_only_center_requested_falls_back_to_no_filter(self, caplog):
-        with caplog.at_level("WARNING"):
-            s = AstrologicalSubjectFactory.from_birth_data(
+    def test_only_center_requested_raises(self):
+        # An explicit list reduced to nothing would invert into 'no filter'
+        # (a full chart) — the factory must refuse instead.
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="center body"):
+            AstrologicalSubjectFactory.from_birth_data(
                 "Empty Filter Test", **_BIRTH_KWARGS,
                 perspective_type="Selenocentric",
                 active_points=["Moon"],
             )
-        # Empty post-filter list means 'no filter': other points computed,
-        # but the center body itself stays excluded (calc-loop guard).
-        assert "no filter" in caplog.text
-        assert s.moon is None
-        assert s.sun is not None
-        assert s.mars is not None
 
     def test_arabic_part_prerequisite_not_resurrected(self, caplog):
         with caplog.at_level("WARNING"):

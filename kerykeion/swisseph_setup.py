@@ -26,8 +26,10 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-# Single source of truth for the directory ephemeris_backend auto-detects.
-from kerykeion.ephemeris_backend import DEFAULT_SWEPH_DOWNLOAD_DIR
+# Single source of truth for the directory ephemeris_backend auto-detects
+# (from config_constants, NOT ephemeris_backend: this script must not trigger
+# backend detection at import time).
+from kerykeion.settings.config_constants import DEFAULT_SWEPH_DOWNLOAD_DIR
 
 logger = logging.getLogger(__name__)
 

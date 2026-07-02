@@ -44,6 +44,7 @@ from typing import Union
 
 # Fix the circular import by changing this import
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion._predictive_utils import jd_to_ymd_hms
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
 from kerykeion.schemas.kr_literals import (
@@ -87,16 +88,9 @@ def _davison_midpoint_components(
     else:
         cal, jd_base = greg_cal, mid_jd
 
-    year, month, day, hour_frac = ephe.revjul(jd_base, cal)
-    # Round the midpoint instant to the nearest whole second (rather than
-    # truncating, which dropped up to ~1s), carrying any minute/hour/day
-    # overflow via revjul so we never emit a 60-second field.
-    total_secs = int(hour_frac * 3600 + 0.5)
-    if total_secs >= 86400:
-        year, month, day, _ = ephe.revjul(jd_base + 0.5 / 86400.0, cal)
-        total_secs = 0
-    hour, rem = divmod(total_secs, 3600)
-    minute, seconds = divmod(rem, 60)
+    # Nearest-second rounding with calendar-aware midnight carry, shared with
+    # the event factories' timestamp formatting.
+    year, month, day, hour, minute, seconds = jd_to_ymd_hms(jd_base, cal)
 
     # from_birth_data branches on year<1, so the components must land on the
     # same side the probe predicted. The only flips are second-rounding at the
