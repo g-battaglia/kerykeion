@@ -39,8 +39,11 @@ PLANET_GROUPING_THRESHOLD = 3.4  # Distance to consider planets as grouped
 INDICATOR_GROUPING_THRESHOLD = 2.5  # Distance for indicator overlap detection
 
 # Chart angle indices (ASC, MC, DSC, IC are between these indices)
-CHART_ANGLE_MIN_INDEX = 22
-CHART_ANGLE_MAX_INDEX = 27
+# The four chart angles are classified by NAME: the historical index window
+# (22 < idx < 27, inherited from the fixed OpenAstro point ordering) pointed at
+# Ceres/Pallas/Juno/Vesta in the v6 catalog and shifted with any active-points
+# filtering.
+CHART_ANGLE_NAMES: tuple[str, ...] = ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")
 
 # Radius offsets for different chart elements
 NATAL_INDICATOR_OFFSET = 72  # Offset for inner chart degree indicators
@@ -153,7 +156,9 @@ def draw_planets(
         point_idx = sorted_point_indices[position_idx]
 
         # Determine radius based on chart type and point type
-        point_radius = _determine_point_radius(point_idx, chart_type, bool(position_idx % 2), external_view)
+        point_radius = _determine_point_radius(
+            available_planets_setting[point_idx]["name"], chart_type, bool(position_idx % 2), external_view
+        )
 
         # Calculate position offsets
         adjusted_offset = _calculate_point_offset(
@@ -247,7 +252,6 @@ def draw_planets(
                     secondary_settings,
                     chart_type,
                     transit_ring_exclude_points,
-                    adjusted_offset,
                     second_subject_available_kerykeion_celestial_points,
                 )
             # Primary/inner points (natal planets)
@@ -486,7 +490,7 @@ def _calculate_point_offset(
 
 
 def _determine_point_radius(
-    point_idx: int,
+    point_name: str,
     chart_type: str,
     is_alternate_position: bool,
     external_view: bool = False,
@@ -498,7 +502,7 @@ def _determine_point_radius(
     and to distinguish between chart angles and regular planets.
 
     Args:
-        point_idx: Index of the celestial point.
+        point_name: Name of the celestial point (angles get a dedicated radius).
         chart_type: Type of the chart.
         is_alternate_position: Whether to use alternate positioning for visual separation.
         external_view: Whether external view mode is enabled.
@@ -506,7 +510,7 @@ def _determine_point_radius(
     Returns:
         Radius value for the point placement.
     """
-    is_chart_angle = CHART_ANGLE_MIN_INDEX < point_idx < CHART_ANGLE_MAX_INDEX
+    is_chart_angle = point_name in CHART_ANGLE_NAMES
 
     # Dual charts (Transit, Synastry, Return)
     if chart_type in DUAL_CHART_TYPES:
@@ -573,31 +577,58 @@ def _calculate_indicator_adjustments(
         )
     ]
 
-    # Identify groups of close points
-    point_groups: list[list[int]] = []
-    in_group = False
-
-    for pos_idx, point_a_idx in enumerate(sorted_point_indices):
-        point_b_idx = sorted_point_indices[
-            0 if pos_idx == len(sorted_point_indices) - 1 else pos_idx + 1
-        ]
-
-        distance = degree_difference(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
-
-        if distance <= INDICATOR_GROUPING_THRESHOLD:
-            if in_group:
-                point_groups[-1].append(point_b_idx)
-            else:
-                point_groups.append([point_a_idx, point_b_idx])
-                in_group = True
-        else:
-            in_group = False
+    # Identify groups of close points (circular-aware: a run straddling the
+    # list start is one group, not two overwriting each other).
+    point_groups = _group_close_indicators(sorted_point_indices, points_abs_positions)
 
     # Apply adjustments based on group size
     for group in point_groups:
         _apply_group_adjustments(group, position_adjustments)
 
     return position_adjustments
+
+
+def _group_close_indicators(
+    sorted_point_indices: list[int],
+    points_abs_positions: Sequence[Any],
+) -> list[list[int]]:
+    """Group circularly-adjacent indicators closer than the grouping threshold.
+
+    The positions live on a circle: the run detection must treat the
+    last->first pair like any other, and a run straddling the list start must
+    stay ONE group — building it as a separate group would overwrite the first
+    group's adjustments and leave labels overlapping.
+    """
+    m = len(sorted_point_indices)
+    if m < 2:
+        return []
+
+    close_to_next = [
+        degree_difference(
+            points_abs_positions[sorted_point_indices[k]],
+            points_abs_positions[sorted_point_indices[(k + 1) % m]],
+        )
+        <= INDICATOR_GROUPING_THRESHOLD
+        for k in range(m)
+    ]
+
+    if all(close_to_next):
+        # Every neighbor pair is close: one single circular group.
+        return [list(sorted_point_indices)]
+
+    # Rotate to a run boundary so each maximal run is scanned contiguously.
+    start = next(k for k in range(m) if not close_to_next[(k - 1) % m])
+    groups: list[list[int]] = []
+    current = [sorted_point_indices[start]]
+    for step in range(m):
+        k = (start + step) % m
+        if close_to_next[k]:
+            current.append(sorted_point_indices[(k + 1) % m])
+        else:
+            if len(current) > 1:
+                groups.append(current)
+            current = [sorted_point_indices[(k + 1) % m]]
+    return groups
 
 
 def _apply_group_adjustments(group: list[int], adjustments: dict[int, float]) -> None:
@@ -707,25 +738,9 @@ def _calculate_secondary_indicator_adjustments(
         )
     ]
 
-    # Identify groups of close points
-    point_groups: list[list[int]] = []
-    in_group = False
-
-    for pos_idx, point_a_idx in enumerate(sorted_point_indices):
-        point_b_idx = sorted_point_indices[
-            0 if pos_idx == len(sorted_point_indices) - 1 else pos_idx + 1
-        ]
-
-        distance = degree_difference(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
-
-        if distance <= INDICATOR_GROUPING_THRESHOLD:
-            if in_group:
-                point_groups[-1].append(point_b_idx)
-            else:
-                point_groups.append([point_a_idx, point_b_idx])
-                in_group = True
-        else:
-            in_group = False
+    # Identify groups of close points (circular-aware: a run straddling the
+    # list start is one group, not two overwriting each other).
+    point_groups = _group_close_indicators(sorted_point_indices, points_abs_positions)
 
     # Apply secondary-specific adjustments (tighter spacing)
     for group in point_groups:
@@ -1043,7 +1058,6 @@ def _draw_secondary_points(
     points_settings: Sequence[Mapping[str, Any]],
     chart_type: str,
     exclude_points: list[str],
-    main_offset: float,
     celestial_points: Union[list[KerykeionPointModel], None] = None,
 ) -> str:
     """
@@ -1063,7 +1077,6 @@ def _draw_secondary_points(
         points_settings: Display settings.
         chart_type: Type of chart.
         exclude_points: Points to exclude from rendering.
-        main_offset: Offset for connecting line drawing.
         celestial_points: Celestial point models (used for retrograde detection).
 
     Returns:
@@ -1093,7 +1106,6 @@ def _draw_secondary_points(
 
     zero_point = 360 - seventh_house_degree
     alternate_position = False
-    point_idx = 0
 
     # Draw each secondary point
     for point_idx in sorted_point_indices:
@@ -1101,7 +1113,7 @@ def _draw_secondary_points(
             continue
 
         # Determine point radius (alternating for visual separation)
-        is_chart_angle = CHART_ANGLE_MIN_INDEX < point_idx < CHART_ANGLE_MAX_INDEX
+        is_chart_angle = points_settings[point_idx]["name"] in CHART_ANGLE_NAMES
         if is_chart_angle:
             point_radius = 9
         elif alternate_position:
@@ -1187,27 +1199,5 @@ def _draw_secondary_points(
             + '<text text-anchor="middle" dominant-baseline="middle" '
             + f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
         )
-
-    # Draw connecting lines for the main reference point
-    dropin = 36 if chart_type in DUAL_CHART_TYPES else 0
-    x1 = wheel_x(0, radius - (dropin + 3), main_offset) + (dropin + 3)
-    y1 = wheel_y(0, radius - (dropin + 3), main_offset) + (dropin + 3)
-    x2 = wheel_x(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-    y2 = wheel_y(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-    point_color = points_settings[point_idx]["color"]
-
-    # Second connecting line segment
-    dropin2 = 160 if chart_type in DUAL_CHART_TYPES else 120
-    x3 = wheel_x(0, radius - dropin2, main_offset) + dropin2
-    y3 = wheel_y(0, radius - dropin2, main_offset) + dropin2
-    x4 = wheel_x(0, radius - (dropin2 - 3), main_offset) + (dropin2 - 3)
-    y4 = wheel_y(0, radius - (dropin2 - 3), main_offset) + (dropin2 - 3)
-
-    output += (
-        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-        f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
-        f'<line x1="{x3}" y1="{y3}" x2="{x4}" y2="{y4}" '
-        f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
-    )
 
     return output

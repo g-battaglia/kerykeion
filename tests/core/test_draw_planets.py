@@ -24,8 +24,7 @@ from kerykeion.charts.draw_planets import (
     _handle_multi_point_group,
     PLANET_GROUPING_THRESHOLD,
     INDICATOR_GROUPING_THRESHOLD,
-    CHART_ANGLE_MIN_INDEX,
-    CHART_ANGLE_MAX_INDEX,
+    CHART_ANGLE_NAMES,
     DUAL_CHART_TYPES,
 )
 from kerykeion.schemas import KerykeionException, KerykeionPointModel
@@ -245,23 +244,27 @@ class TestPlanetGlyphPositioning:
     def test_determine_point_radius_natal(self):
         """_determine_point_radius returns expected values for Natal chart."""
         # Regular planet, not alternate
-        assert _determine_point_radius(0, "Natal", False) == 94
+        assert _determine_point_radius("Sun", "Natal", False) == 94
         # Regular planet, alternate
-        assert _determine_point_radius(0, "Natal", True) == 74
+        assert _determine_point_radius("Sun", "Natal", True) == 74
         # Chart angle (index 23 is between 22-27)
-        assert _determine_point_radius(23, "Natal", False) == 40
+        assert _determine_point_radius("Ascendant", "Natal", False) == 40
+        # Asteroids landed in the fossil 22<idx<27 window and wrongly got the
+        # angle radius; by name they are regular points.
+        assert _determine_point_radius("Ceres", "Natal", False) == 94
 
     def test_determine_point_radius_dual_chart(self):
         """_determine_point_radius returns dual chart radii for Transit."""
-        assert _determine_point_radius(0, "Transit", False) == 130
-        assert _determine_point_radius(0, "Transit", True) == 110
-        assert _determine_point_radius(23, "Transit", False) == 76
+        assert _determine_point_radius("Sun", "Transit", False) == 130
+        assert _determine_point_radius("Sun", "Transit", True) == 110
+        assert _determine_point_radius("Medium_Coeli", "Transit", False) == 76
+        assert _determine_point_radius("Vesta", "Transit", False) == 130
 
     def test_determine_point_radius_external_view(self):
         """_determine_point_radius returns 10 for all external view cases."""
-        assert _determine_point_radius(0, "Natal", False, external_view=True) == 10
-        assert _determine_point_radius(0, "Natal", True, external_view=True) == 10
-        assert _determine_point_radius(23, "Natal", False, external_view=True) == 10
+        assert _determine_point_radius("Sun", "Natal", False, external_view=True) == 10
+        assert _determine_point_radius("Sun", "Natal", True, external_view=True) == 10
+        assert _determine_point_radius("Ascendant", "Natal", False, external_view=True) == 10
 
     def test_calculate_point_offset(self):
         """_calculate_point_offset returns correct angular offset."""
@@ -1238,8 +1241,7 @@ class TestInternalHelpers:
 
     def test_chart_angle_index_boundaries(self):
         """Chart angle constants define the expected index range."""
-        assert CHART_ANGLE_MIN_INDEX == 22
-        assert CHART_ANGLE_MAX_INDEX == 27
+        assert CHART_ANGLE_NAMES == ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")
 
     def test_dual_chart_types_tuple(self):
         """DUAL_CHART_TYPES includes the expected chart type names."""

@@ -512,8 +512,8 @@
    <!-- Gauquelin Sectors Overlay -->
    <!-- Planets -->
    <g kr:node="Planets_Wheel">
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="19.746767090179205" kr:cx="94.0" kr:cy="240.00000000000003" kr:house="First_House" kr:node="ChartPoint" kr:sign="Ari" kr:signposition="19.746767090179205" kr:slug="Ascendant">
-     <use x="94.0" y="240.00000000000003" xlink:href="#Ascendant"/>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="19.746767090179205" kr:cx="40.0" kr:cy="240.00000000000006" kr:house="First_House" kr:node="ChartPoint" kr:sign="Ari" kr:signposition="19.746767090179205" kr:slug="Ascendant">
+     <use x="40.0" y="240.00000000000006" xlink:href="#Ascendant"/>
     </g>
     <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.21501951224107" kr:cx="86.0874801419133" kr:cy="302.1846945070414" kr:house="First_House" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.21501951224107" kr:slug="Saturn">
      <use x="86.0874801419133" y="302.1846945070414" xlink:href="#Saturn"/>
@@ -557,8 +557,8 @@
     <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="218.5582326340432" kr:cx="396.9560835494866" kr:cy="185.955686360112" kr:house="Seventh_House" kr:node="ChartPoint" kr:sign="Sco" kr:signposition="8.558232634043208" kr:slug="Mercury">
      <use x="396.9560835494866" y="185.955686360112" xlink:href="#Mercury"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="277.070979237045" kr:cx="270.3551068593929" kr:cy="97.19045029286438" kr:house="Tenth_House" kr:node="ChartPoint" kr:sign="Cap" kr:signposition="7.07097923704498" kr:slug="Medium_Coeli">
-     <use x="270.3551068593929" y="97.19045029286438" xlink:href="#Medium_Coeli"/>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="277.070979237045" kr:cx="281.58233816355187" kr:cy="44.37047985323888" kr:house="Tenth_House" kr:node="ChartPoint" kr:sign="Cap" kr:signposition="7.07097923704498" kr:slug="Medium_Coeli">
+     <use x="281.58233816355187" y="44.37047985323888" xlink:href="#Medium_Coeli"/>
     </g>
     <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="303.54662517828336" kr:cx="199.84096533045516" kr:cy="78.93090943818459" kr:house="Eleventh_House" kr:node="ChartPoint" kr:sign="Aqu" kr:signposition="3.5466251782833638" kr:slug="Moon">
      <use x="199.84096533045516" y="78.93090943818459" xlink:href="#Moon"/>
