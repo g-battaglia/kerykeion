@@ -100,8 +100,12 @@ class TestPerspectiveTypeStored:
         assert s is not None
         assert s.sun is not None
         assert 0 <= s.sun.abs_pos < 360
-        assert s.moon is not None
-        assert 0 <= s.moon.abs_pos < 360
+        if perspective == "Selenocentric":
+            # The Moon is the center body: excluded rather than mislabelled.
+            assert s.moon is None
+        else:
+            assert s.moon is not None
+            assert 0 <= s.moon.abs_pos < 360
 
 
 # ---------------------------------------------------------------------------
@@ -150,46 +154,78 @@ class TestPositionsDifferFromGeocentric:
 
 
 # ---------------------------------------------------------------------------
-# 3. Center planet behavior: position unchanged (geocentric fallback by
-#    design) because when planet_id == center_body_id the factory uses
-#    regular calc_ut.
+# 3. Center body behavior: excluded from the chart with a warning — from Mars
+#    there is no "position of Mars", and storing the geocentric position under
+#    a planetocentric label put a wrong-frame value into aspects and houses.
 # ---------------------------------------------------------------------------
-class TestCenterPlanetBehavior:
-    """The center planet's position should equal its geocentric position.
+class TestCenterBodyExcluded:
+    @pytest.mark.parametrize("perspective_fixture,center_attr,center_name", [
+        ("marscentric", "mars", "Mars"),
+        ("jupitercentric", "jupiter", "Jupiter"),
+        ("venuscentric", "venus", "Venus"),
+        ("selenocentric", "moon", "Moon"),
+    ])
+    def test_center_body_absent(self, perspective_fixture, center_attr, center_name, request):
+        pctr = request.getfixturevalue(perspective_fixture)
+        assert getattr(pctr, center_attr) is None
+        assert center_name not in pctr.active_points
 
-    When calculating from Mars, Mars itself cannot be computed via calc_pctr
-    (the body and the center are the same), so the factory correctly falls
-    back to calc_ut.  This means the center planet's position matches the
-    geocentric position exactly.
-    """
+    def test_exclusion_warning_fired(self, caplog):
+        with caplog.at_level("WARNING"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "Warn Test", **_BIRTH_KWARGS,
+                perspective_type="Selenocentric",
+            )
+        assert "center body" in caplog.text
 
-    def test_marscentric_mars_matches_geocentric(self, marscentric, geocentric):
-        assert marscentric.mars is not None
-        assert geocentric.mars is not None
-        assert marscentric.mars.abs_pos == pytest.approx(
-            geocentric.mars.abs_pos, abs=1e-6,
-        )
+    def test_explicit_request_drops_only_center(self, caplog):
+        with caplog.at_level("WARNING"):
+            s = AstrologicalSubjectFactory.from_birth_data(
+                "Explicit Test", **_BIRTH_KWARGS,
+                perspective_type="Selenocentric",
+                active_points=["Sun", "Moon"],
+            )
+        assert s.sun is not None
+        assert s.moon is None
+        assert "center body" in caplog.text
 
-    def test_jupitercentric_jupiter_matches_geocentric(self, jupitercentric, geocentric):
-        assert jupitercentric.jupiter is not None
-        assert geocentric.jupiter is not None
-        assert jupitercentric.jupiter.abs_pos == pytest.approx(
-            geocentric.jupiter.abs_pos, abs=1e-6,
-        )
+    def test_only_center_requested_falls_back_to_no_filter(self, caplog):
+        with caplog.at_level("WARNING"):
+            s = AstrologicalSubjectFactory.from_birth_data(
+                "Empty Filter Test", **_BIRTH_KWARGS,
+                perspective_type="Selenocentric",
+                active_points=["Moon"],
+            )
+        # Empty post-filter list means 'no filter': other points computed,
+        # but the center body itself stays excluded (calc-loop guard).
+        assert "no filter" in caplog.text
+        assert s.moon is None
+        assert s.sun is not None
+        assert s.mars is not None
 
-    def test_venuscentric_venus_matches_geocentric(self, venuscentric, geocentric):
-        assert venuscentric.venus is not None
-        assert geocentric.venus is not None
-        assert venuscentric.venus.abs_pos == pytest.approx(
-            geocentric.venus.abs_pos, abs=1e-6,
-        )
+    def test_arabic_part_prerequisite_not_resurrected(self, caplog):
+        with caplog.at_level("WARNING"):
+            s = AstrologicalSubjectFactory.from_birth_data(
+                "Arabic Part Test", **_BIRTH_KWARGS,
+                perspective_type="Selenocentric",
+                active_points=["Ascendant", "Sun", "Pars_Fortunae"],
+            )
+        # Pars Fortunae needs the Moon; a geocentric Moon must not be
+        # silently mixed into a selenocentric chart to compute it.
+        assert s.moon is None
+        assert getattr(s, "pars_fortunae", None) is None
+        assert "Pars_Fortunae" not in (s.active_points or [])
 
-    def test_selenocentric_moon_matches_geocentric(self, selenocentric, geocentric):
-        assert selenocentric.moon is not None
-        assert geocentric.moon is not None
-        assert selenocentric.moon.abs_pos == pytest.approx(
-            geocentric.moon.abs_pos, abs=1e-6,
-        )
+    def test_selenocentric_lunar_phase_is_none(self, selenocentric):
+        assert selenocentric.lunar_phase is None
+
+    def test_selenocentric_chart_renders(self, selenocentric):
+        from kerykeion import ChartDataFactory, ChartDrawer
+
+        chart_data = ChartDataFactory.create_natal_chart_data(selenocentric)
+        drawer = ChartDrawer(chart_data=chart_data, theme="dark")
+        assert len(drawer.generate_svg_string()) > 1000
+        assert len(drawer.generate_svg_string(style="modern")) > 1000
 
 
 # ---------------------------------------------------------------------------

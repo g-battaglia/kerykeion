@@ -820,6 +820,28 @@ class AstrologicalSubjectFactory:
                         _merged_stars.append(_star)
                 active_fixed_stars = _merged_stars
 
+        # Planetocentric charts: the center body has no position as seen from
+        # itself, so drop it from the active points instead of silently storing
+        # its geocentric position in the wrong reference frame.
+        _center_body_id = _PLANETOCENTRIC_CENTERS.get(perspective_type)
+        if _center_body_id is not None:
+            _center_names = [n for n, pid in STANDARD_PLANETS.items() if pid == _center_body_id]
+            _dropped = [p for p in active_points_list if p in _center_names]
+            if _dropped:
+                logging.warning(
+                    "Excluding %s from active_points: it is the center body of "
+                    "the %r perspective and has no position as seen from itself.",
+                    _dropped,
+                    perspective_type,
+                )
+                active_points_list = [p for p in active_points_list if p not in _center_names]
+                if not active_points_list:
+                    logging.warning(
+                        "active_points contained only the center body; the "
+                        "remaining list is empty, which is treated as 'no filter' "
+                        "(all other points are calculated)."
+                    )
+
         calc_data["active_points"] = active_points_list
 
         # Initialize configuration
@@ -2102,6 +2124,16 @@ class AstrologicalSubjectFactory:
 
         # For planets, use STANDARD_PLANETS mapping
         if point in STANDARD_PLANETS:
+            _center = _PLANETOCENTRIC_CENTERS.get(data.get("perspective_type", ""))
+            if _center is not None and STANDARD_PLANETS[point] == _center:
+                logging.warning(
+                    "Cannot auto-activate %s as an Arabic Part prerequisite: it "
+                    "is the center body of the %r perspective. The dependent "
+                    "part will be skipped.",
+                    point,
+                    data.get("perspective_type"),
+                )
+                return
             planet_id = STANDARD_PLANETS[point]
             try:
                 planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
@@ -2380,6 +2412,10 @@ class AstrologicalSubjectFactory:
         # South lunar nodes, Priapus, Descendant, IC, and Anti-Vertex are handled
         # declaratively by _calculate_opposite_points() via OPPOSITE_PAIRS.
         for planet_name, planet_id in STANDARD_PLANETS.items():
+            if center_body_id is not None and planet_id == center_body_id:
+                # Center body excluded upstream; skipping here also covers the
+                # empty-list 'no filter' semantics of should_calculate.
+                continue
             if should_calculate(planet_name):
                 AstrologicalSubjectFactory._calculate_single_planet(
                     data,
