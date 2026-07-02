@@ -199,26 +199,45 @@ class EphemerisDataFactory:
         self.max_hours = max_hours
         self.max_minutes = max_minutes
 
-        # Step the series in UTC: stepping naive wall-clock datetimes and
-        # localizing each with a fixed is_dst duplicated (spring-forward) or
-        # shifted samples across DST transitions, producing a non-monotonic
-        # UTC series that corrupts downstream transit-event detection. is_dst
-        # only disambiguates a naive start/end inside a fall-back fold.
+        # Sub-day steps (hours/minutes) advance in UTC: stepping naive
+        # wall-clock and localizing each with a fixed is_dst duplicated
+        # (spring-forward) or shifted samples across DST, producing a
+        # non-monotonic UTC series that corrupts transit-event detection.
+        #
+        # Daily steps instead advance by LOCAL calendar days at a fixed wall
+        # time: a fixed 24h UTC increment would drop or mistime a requested
+        # local date on a DST day (e.g. Europe/Rome 2024-03-31→04-01 is 23h in
+        # UTC, so `.days` was 0 and 2024-04-01 was omitted). Each local sample
+        # is then converted to its true (non-uniformly spaced) UTC instant.
+        # is_dst only disambiguates a wall time inside a fall-back fold.
         _tz = pytz.timezone(self.tz_str)
+
+        def _localize_to_utc(naive: datetime) -> datetime:
+            return _tz.localize(naive, is_dst=self.is_dst).astimezone(pytz.utc)
 
         def _to_utc(dt: datetime) -> datetime:
             if dt.tzinfo is None:
-                return _tz.localize(dt, is_dst=self.is_dst).astimezone(pytz.utc)
+                return _localize_to_utc(dt)
             return dt.astimezone(pytz.utc)
+
+        def _to_local_naive(dt: datetime) -> datetime:
+            if dt.tzinfo is None:
+                return dt
+            return dt.astimezone(_tz).replace(tzinfo=None)
 
         _start_utc = _to_utc(self.start_datetime)
         _end_utc = _to_utc(self.end_datetime)
 
         self.dates_list = []
         if self.step_type == "days":
+            # Wall-clock difference in whole days (DST-independent), so a local
+            # date is never skipped and each sample keeps its wall time.
+            local_start = _to_local_naive(self.start_datetime)
+            local_end = _to_local_naive(self.end_datetime)
+            n_samples = (local_end - local_start).days // self.step + 1
             self.dates_list = [
-                _start_utc + timedelta(days=i * self.step)
-                for i in range((_end_utc - _start_utc).days // self.step + 1)
+                _localize_to_utc(local_start + timedelta(days=i * self.step))
+                for i in range(n_samples)
             ]
             if max_days and (len(self.dates_list) > max_days):
                 raise ValueError(

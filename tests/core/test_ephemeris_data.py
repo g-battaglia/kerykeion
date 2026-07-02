@@ -644,3 +644,38 @@ class TestEphemerisConfigurationVariants:
         data = factory.get_ephemeris_data(as_model=True)
         assert data is not None
         assert len(data) == 3
+
+    @pytest.mark.parametrize(
+        "start,end,expected_dates",
+        [
+            # Spring-forward day (clocks jump 02:00->03:00): the UTC span is 23h,
+            # so a fixed 24h step dropped 2024-04-01.
+            (
+                datetime(2024, 3, 29),
+                datetime(2024, 4, 2),
+                ["2024-03-29", "2024-03-30", "2024-03-31", "2024-04-01", "2024-04-02"],
+            ),
+            # Fall-back day (clocks fall 03:00->02:00): the UTC span is 25h.
+            (
+                datetime(2024, 10, 25),
+                datetime(2024, 10, 29),
+                ["2024-10-25", "2024-10-26", "2024-10-27", "2024-10-28", "2024-10-29"],
+            ),
+        ],
+    )
+    def test_daily_samples_preserved_across_dst(self, start, end, expected_dates):
+        """Daily steps must land on each requested LOCAL calendar day at the
+        same wall time, regardless of DST — and the UTC series stays monotonic."""
+        import pytz
+
+        tz = pytz.timezone("Europe/Rome")
+        factory = EphemerisDataFactory(
+            start_datetime=start, end_datetime=end,
+            step_type="days", lat=41.9, lng=12.5, tz_str="Europe/Rome",
+        )
+        data = factory.get_ephemeris_data()
+        locals_ = [datetime.fromisoformat(d["date"]).astimezone(tz) for d in data]
+        assert [d.date().isoformat() for d in locals_] == expected_dates
+        assert all(d.strftime("%H:%M") == "00:00" for d in locals_)
+        utc = [datetime.fromisoformat(d["date"]) for d in data]
+        assert all(utc[i] < utc[i + 1] for i in range(len(utc) - 1))
