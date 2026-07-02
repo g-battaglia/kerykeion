@@ -1280,7 +1280,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pars Amoris           | Sample Natal Subject | opposition ☍     | Admetos               | Yoko Ono | 1.19° | Static = |
 | Pars Amoris           | Sample Natal Subject | trine △          | Vulkanus              | Yoko Ono | 4.23° | Static = |
 | Pars Fidei            | Sample Natal Subject | quintile Q       | Sun                   | Yoko Ono | 3.16° | Static = |
-| Pars Fidei            | Sample Natal Subject | biquintile bQ    | Moon                  | Yoko Ono | 3.09° | Static = |
+| Pars Fidei            | Sample Natal Subject | quincunx ⚻       | Moon                  | Yoko Ono | 2.91° | Static = |
 | Pars Fidei            | Sample Natal Subject | sextile ⚹        | Mercury               | Yoko Ono | 0.33° | Static = |
 | Pars Fidei            | Sample Natal Subject | square □         | Venus                 | Yoko Ono | 5.57° | Static = |
 | Pars Fidei            | Sample Natal Subject | square □         | Saturn                | Yoko Ono | 1.52° | Static = |

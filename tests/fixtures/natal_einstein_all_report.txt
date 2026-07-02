@@ -470,12 +470,12 @@ Einstein Subject — Natal Chart Report
 | Ascendant             | conjunction ☌    | Quaoar                | 1.69° | Separating ← |
 | Ascendant             | sesquiquadrate ⚼ | Vertex                | 1.26° | Applying →   |
 | Ascendant             | semi-square ∠    | Anti Vertex           | 1.26° | Applying →   |
-| Ascendant             | square □         | Interpolated Perigee  | 0.12° | Separating ← |
+| Ascendant             | square □         | Interpolated Perigee  | 0.12° | Applying →   |
 | Ascendant             | biquintile bQ    | Hades                 | 0.83° | Separating ← |
 | Ascendant             | trine △          | Admetos               | 2.27° | Separating ← |
 | Ascendant             | sextile ⚹        | Vulkanus              | 2.36° | Applying →   |
 | Medium Coeli          | sextile ⚹        | Descendant            | 1.19° | Static =     |
-| Medium Coeli          | semi-square ∠    | Mean Lilith           | 0.14° | Separating ← |
+| Medium Coeli          | semi-square ∠    | Mean Lilith           | 0.14° | Applying →   |
 | Medium Coeli          | sextile ⚹        | Ceres                 | 4.49° | Applying →   |
 | Medium Coeli          | trine △          | Vesta                 | 3.08° | Separating ← |
 | Medium Coeli          | conjunction ☌    | Eris                  | 2.01° | Applying →   |
@@ -486,7 +486,7 @@ Einstein Subject — Natal Chart Report
 | Medium Coeli          | trine △          | Quaoar                | 2.88° | Separating ← |
 | Medium Coeli          | biquintile bQ    | Pars Spiritus         | 1.79° | Applying →   |
 | Medium Coeli          | biquintile bQ    | Pars Amoris           | 1.72° | Separating ← |
-| Medium Coeli          | sesquiquadrate ⚼ | Mean Priapus          | 0.14° | Separating ← |
+| Medium Coeli          | sesquiquadrate ⚼ | Mean Priapus          | 0.14° | Applying →   |
 | Medium Coeli          | quincunx ⚻       | Interpolated Perigee  | 1.08° | Separating ← |
 | Medium Coeli          | square □         | Cupido                | 2.36° | Applying →   |
 | Medium Coeli          | conjunction ☌    | Admetos               | 3.46° | Separating ← |
@@ -503,10 +503,10 @@ Einstein Subject — Natal Chart Report
 | Descendant            | semi-square ∠    | Vertex                | 1.26° | Applying →   |
 | Descendant            | sesquiquadrate ⚼ | Anti Vertex           | 1.26° | Applying →   |
 | Descendant            | quintile Q       | Mean Priapus          | 1.67° | Separating ← |
-| Descendant            | square □         | Interpolated Perigee  | 0.12° | Separating ← |
+| Descendant            | square □         | Interpolated Perigee  | 0.12° | Applying →   |
 | Descendant            | sextile ⚹        | Admetos               | 2.27° | Separating ← |
 | Descendant            | trine △          | Vulkanus              | 2.36° | Applying →   |
-| Imum Coeli            | sesquiquadrate ⚼ | Mean Lilith           | 0.14° | Separating ← |
+| Imum Coeli            | sesquiquadrate ⚼ | Mean Lilith           | 0.14° | Applying →   |
 | Imum Coeli            | trine △          | Ceres                 | 4.49° | Applying →   |
 | Imum Coeli            | sextile ⚹        | Vesta                 | 3.08° | Separating ← |
 | Imum Coeli            | opposition ☍     | Eris                  | 2.01° | Applying →   |
@@ -514,7 +514,7 @@ Einstein Subject — Natal Chart Report
 | Imum Coeli            | semi-square ∠    | Ixion                 | 1.71° | Separating ← |
 | Imum Coeli            | sesquiquadrate ⚼ | Orcus                 | 1.53° | Applying →   |
 | Imum Coeli            | sextile ⚹        | Quaoar                | 2.88° | Separating ← |
-| Imum Coeli            | semi-square ∠    | Mean Priapus          | 0.14° | Separating ← |
+| Imum Coeli            | semi-square ∠    | Mean Priapus          | 0.14° | Applying →   |
 | Imum Coeli            | semi-sextile ⚺   | Interpolated Perigee  | 1.08° | Separating ← |
 | Imum Coeli            | square □         | Cupido                | 2.36° | Applying →   |
 | Imum Coeli            | opposition ☍     | Admetos               | 3.46° | Separating ← |

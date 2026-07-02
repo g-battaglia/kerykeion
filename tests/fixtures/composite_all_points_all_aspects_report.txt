@@ -271,7 +271,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Sun                   | quincunx ⚻       | Poseidon              | 1.34° | Static = |
 | Moon                  | trine △          | Mercury               | 3.42° | Static = |
 | Moon                  | trine △          | Saturn                | 0.54° | Static = |
-| Moon                  | biquintile bQ    | Uranus                | 3.47° | Static = |
+| Moon                  | quincunx ⚻       | Uranus                | 2.53° | Static = |
 | Moon                  | biquintile bQ    | Mean North Lunar Node | 2.11° | Static = |
 | Moon                  | biquintile bQ    | True North Lunar Node | 2.64° | Static = |
 | Moon                  | sextile ⚹        | Medium Coeli          | 1.56° | Static = |

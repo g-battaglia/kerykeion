@@ -672,7 +672,7 @@
     <g kr:aspectdegrees="120" kr:aspectmovement="Applying" kr:aspectname="trine" kr:from="True_North_Lunar_Node" kr:fromoriginaldegrees="191.02424780700827" kr:node="Aspect" kr:orb="7.477622628724902" kr:planetsdiff="112.5223773712751" kr:to="Moon" kr:tooriginaldegrees="303.54662517828336">
      <line class="aspect" x1="210.97" x2="358.83" y1="123.56" y2="256.7" stroke="var(--kerykeion-chart-color-trine)" stroke-opacity=".9"/>
     </g>
-    <g kr:aspectdegrees="180" kr:aspectmovement="Separating" kr:aspectname="opposition" kr:from="Chiron" kr:fromoriginaldegrees="120.56821737342428" kr:node="Aspect" kr:orb="2.9784078048591027" kr:planetsdiff="182.9784078048591" kr:to="Moon" kr:tooriginaldegrees="303.54662517828336">
+    <g kr:aspectdegrees="180" kr:aspectmovement="Separating" kr:aspectname="opposition" kr:from="Chiron" kr:fromoriginaldegrees="120.56821737342428" kr:node="Aspect" kr:orb="2.9784078048591027" kr:planetsdiff="177.0215921951409" kr:to="Moon" kr:tooriginaldegrees="303.54662517828336">
      <line class="aspect" x1="210.97" x2="262.9" y1="123.56" y2="357.8" stroke="var(--kerykeion-chart-color-opposition)" stroke-opacity=".9"/>
     </g>
     <g kr:aspectdegrees="180" kr:aspectmovement="Applying" kr:aspectname="opposition" kr:from="Jupiter" kr:fromoriginaldegrees="43.691884226015326" kr:node="Aspect" kr:orb="5.133651591972125" kr:planetsdiff="174.86634840802787" kr:to="Mercury" kr:tooriginaldegrees="218.5582326340432">
@@ -685,7 +685,7 @@
      <line class="aspect" x1="353.46" x2="271.06" y1="200.93" y2="355.91" stroke="var(--kerykeion-chart-color-square)" stroke-opacity=".9"/>
      <use x="306.26025724211024" y="272.42146030991466" xlink:href="#orb90"/>
     </g>
-    <g kr:aspectdegrees="60" kr:aspectmovement="Applying" kr:aspectname="sextile" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.070979237045" kr:node="Aspect" kr:orb="1.4872533969981987" kr:planetsdiff="58.51274660300177" kr:to="Mercury" kr:tooriginaldegrees="218.5582326340432">
+    <g kr:aspectdegrees="60" kr:aspectmovement="Applying" kr:aspectname="sextile" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.070979237045" kr:node="Aspect" kr:orb="1.4872533969981987" kr:planetsdiff="58.5127466030018" kr:to="Mercury" kr:tooriginaldegrees="218.5582326340432">
      <line class="aspect" x1="353.46" x2="264.95" y1="200.93" y2="122.62" stroke="var(--kerykeion-chart-color-sextile)" stroke-opacity=".9"/>
      <use x="303.20581598502457" y="155.77705468854225" xlink:href="#orb60"/>
     </g>
@@ -700,7 +700,7 @@
     <g kr:aspectdegrees="60" kr:aspectmovement="Separating" kr:aspectname="sextile" kr:from="Chiron" kr:fromoriginaldegrees="120.56821737342428" kr:node="Aspect" kr:orb="2.094313833275308" kr:planetsdiff="62.09431383327531" kr:to="Mars" kr:tooriginaldegrees="182.66253120669958">
      <line class="aspect" x1="354.76" x2="262.9" y1="275.08" y2="357.8" stroke="var(--kerykeion-chart-color-sextile)" stroke-opacity=".9"/>
     </g>
-    <g kr:aspectdegrees="90" kr:aspectmovement="Separating" kr:aspectname="square" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.070979237045" kr:node="Aspect" kr:orb="4.408448030345426" kr:planetsdiff="94.4084480303454" kr:to="Mars" kr:tooriginaldegrees="182.66253120669958">
+    <g kr:aspectdegrees="90" kr:aspectmovement="Separating" kr:aspectname="square" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.070979237045" kr:node="Aspect" kr:orb="4.408448030345426" kr:planetsdiff="94.40844803034543" kr:to="Mars" kr:tooriginaldegrees="182.66253120669958">
      <line class="aspect" x1="354.76" x2="264.95" y1="275.08" y2="122.62" stroke="var(--kerykeion-chart-color-square)" stroke-opacity=".9"/>
      <use x="303.8529868068477" y="192.85344623933588" xlink:href="#orb90"/>
     </g>
@@ -719,7 +719,7 @@
      <line class="aspect" x1="271.06" x2="262.9" y1="355.91" y2="357.8" stroke="var(--kerykeion-chart-color-conjunction)" stroke-opacity=".9"/>
      <use x="262.6907341603044" y="354.6351597725254" xlink:href="#orb0"/>
     </g>
-    <g kr:aspectdegrees="90" kr:aspectmovement="Applying" kr:aspectname="square" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.070979237045" kr:node="Aspect" kr:orb="3.9532685699632566" kr:planetsdiff="86.04673143003671" kr:to="True_North_Lunar_Node" kr:tooriginaldegrees="191.02424780700827">
+    <g kr:aspectdegrees="90" kr:aspectmovement="Applying" kr:aspectname="square" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.070979237045" kr:node="Aspect" kr:orb="3.9532685699632566" kr:planetsdiff="86.04673143003674" kr:to="True_North_Lunar_Node" kr:tooriginaldegrees="191.02424780700827">
      <line class="aspect" x1="358.83" x2="264.95" y1="256.7" y2="122.62" stroke="var(--kerykeion-chart-color-square)" stroke-opacity=".9"/>
     </g>
    </g>

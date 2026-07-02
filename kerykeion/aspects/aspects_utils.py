@@ -36,21 +36,28 @@ def get_aspect_from_two_points(
         window — ``extra_orb`` only widens which aspects qualify.
     """
     distance = abs(difdeg2n(point_one, point_two))
-    diff = abs(point_one - point_two)
+    # Angular separation with 0/360 wraparound: abs(p1 - p2) reported 358 for
+    # an exact conjunction at 359 and 1 deg (persisted in AspectModel.diff and
+    # exported as kr:planetsdiff).
+    diff = distance
 
+    # Pick the CLOSEST qualifying aspect, not the first: with user-supplied
+    # overlapping orbs the ascending-degree order could label a separation
+    # with a wider aspect whose window merely contains it. Ties keep the
+    # first (settings order); default orbs never overlap.
+    name = None
+    aspect_degrees = 0
+    best_deviation: Optional[float] = None
     for aspect in aspects_settings:
         aspect_degree = aspect["degree"]  # type: ignore
         aspect_orb = max(0.0, aspect["orb"] + extra_orb)  # type: ignore
 
-        if abs(distance - aspect_degree) <= aspect_orb:
+        deviation = abs(distance - aspect_degree)
+        if deviation <= aspect_orb and (best_deviation is None or deviation < best_deviation):
             name = aspect["name"]  # type: ignore
             aspect_degrees = aspect_degree
-            verdict = True
-            break
-    else:
-        verdict = False
-        name = None
-        aspect_degrees = 0
+            best_deviation = deviation
+    verdict = best_deviation is not None
 
     return {
         "verdict": verdict,
@@ -166,10 +173,18 @@ def calculate_aspect_movement(
     current_orb = get_orb(point_one_abs_pos, point_two_abs_pos, aspect_norm)
 
     # 2. Future state (lookahead)
-    # Project positions forward by a small time step
+    # Project positions forward by a small time step.
+    # The step is capped so the RELATIVE motion cannot exceed the current orb:
+    # with a fixed step, fast movers (axes carry synthetic speeds of
+    # ~280-360 deg/day) overshoot past exactness within DT and an applying
+    # aspect reads as separating. The 1e-3 deg floor keeps the orb change
+    # comfortably above ORB_EPSILON so an exact aspect still reads Separating
+    # (any motion increases a zero orb) instead of Static.
+    max_relative_motion = max(min(current_orb, 0.5), 1e-3)
+    dt = min(DT, max_relative_motion / relative_speed)
     # Use modulo to handle crossing 0°/360° boundary correctly
-    p1_future = (point_one_abs_pos + point_one_speed * DT) % 360.0
-    p2_future = (point_two_abs_pos + point_two_speed * DT) % 360.0
+    p1_future = (point_one_abs_pos + point_one_speed * dt) % 360.0
+    p2_future = (point_two_abs_pos + point_two_speed * dt) % 360.0
 
     future_orb = get_orb(p1_future, p2_future, aspect_norm)
 

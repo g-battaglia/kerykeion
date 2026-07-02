@@ -481,7 +481,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Imum Coeli            | trine △          | True Priapus          | 1.90° | Separating ← |
 | Imum Coeli            | trine △          | Interpolated Perigee  | 1.40° | Applying →   |
 | Imum Coeli            | square □         | Cupido                | 1.30° | Separating ← |
-| Imum Coeli            | biquintile bQ    | Zeus                  | 0.12° | Separating ← |
+| Imum Coeli            | biquintile bQ    | Zeus                  | 0.12° | Applying →   |
 | Imum Coeli            | trine △          | Kronos                | 1.98° | Applying →   |
 | Imum Coeli            | square □         | Admetos               | 4.95° | Separating ← |
 | Imum Coeli            | biquintile bQ    | Vulkanus              | 1.43° | Applying →   |

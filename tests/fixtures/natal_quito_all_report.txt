@@ -500,7 +500,7 @@ Quito Subject — Natal Chart Report
 | Medium Coeli          | opposition ☍     | Pars Spiritus         | 4.54° | Applying →   |
 | Medium Coeli          | quincunx ⚻       | Interpolated Lilith   | 0.35° | Separating ← |
 | Medium Coeli          | conjunction ☌    | True Priapus          | 1.82° | Separating ← |
-| Medium Coeli          | semi-sextile ⚺   | White Moon            | 0.17° | Separating ← |
+| Medium Coeli          | semi-sextile ⚺   | White Moon            | 0.17° | Applying →   |
 | Medium Coeli          | square □         | Zeus                  | 4.76° | Applying →   |
 | Medium Coeli          | conjunction ☌    | Kronos                | 0.30° | Applying →   |
 | Descendant            | square □         | Imum Coeli            | 1.63° | Static =     |
@@ -528,7 +528,7 @@ Quito Subject — Natal Chart Report
 | Imum Coeli            | conjunction ☌    | Pars Spiritus         | 4.54° | Applying →   |
 | Imum Coeli            | semi-sextile ⚺   | Interpolated Lilith   | 0.35° | Separating ← |
 | Imum Coeli            | opposition ☍     | True Priapus          | 1.82° | Separating ← |
-| Imum Coeli            | quincunx ⚻       | White Moon            | 0.17° | Separating ← |
+| Imum Coeli            | quincunx ⚻       | White Moon            | 0.17° | Applying →   |
 | Imum Coeli            | square □         | Zeus                  | 4.76° | Applying →   |
 | Imum Coeli            | opposition ☍     | Kronos                | 0.30° | Applying →   |
 | Imum Coeli            | biquintile bQ    | Admetos               | 0.40° | Separating ← |

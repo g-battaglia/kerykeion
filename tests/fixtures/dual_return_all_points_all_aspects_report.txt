@@ -1433,7 +1433,7 @@ Sample Natal Subject — Solar Return Comparison 1990
 | Zeus                  | Sample Natal Subject | square □         | Venus                 | Sample Natal Subject Solar Return | 5.68° | Separating ← |
 | Zeus                  | Sample Natal Subject | sextile ⚹        | Jupiter               | Sample Natal Subject Solar Return | 2.12° | Applying →   |
 | Zeus                  | Sample Natal Subject | trine △          | Saturn                | Sample Natal Subject Solar Return | 4.51° | Separating ← |
-| Zeus                  | Sample Natal Subject | biquintile bQ    | Imum Coeli            | Sample Natal Subject Solar Return | 0.12° | Separating ← |
+| Zeus                  | Sample Natal Subject | biquintile bQ    | Imum Coeli            | Sample Natal Subject Solar Return | 0.12° | Applying →   |
 | Zeus                  | Sample Natal Subject | sextile ⚹        | Mean Lilith           | Sample Natal Subject Solar Return | 2.96° | Separating ← |
 | Zeus                  | Sample Natal Subject | opposition ☍     | Earth                 | Sample Natal Subject Solar Return | 3.97° | Static =     |
 | Zeus                  | Sample Natal Subject | semi-square ∠    | Juno                  | Sample Natal Subject Solar Return | 0.93° | Applying →   |
