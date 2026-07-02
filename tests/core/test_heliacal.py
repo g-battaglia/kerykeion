@@ -83,6 +83,22 @@ class TestNextHeliacalRising:
         assert default_event.event_type == "heliacal_rising"
         assert default_event.julian_day > START_JD
 
+    def test_no_event_raises_kerykeion_exception(self, factory: HeliacalFactory, monkeypatch):
+        """A no-event lookup surfaces the library's KerykeionException, not a
+        raw backend ValueError/swisseph.Error — the single-event method must
+        honour the same 'no result' contract as the rest of the library.
+
+        libephemeris signals 'no event' by returning jd 0.0; drive that
+        sentinel directly so the assertion doesn't depend on astronomy."""
+        import kerykeion.heliacal.heliacal_factory as hf
+        from kerykeion.schemas import KerykeionException
+
+        monkeypatch.setattr(hf.ephe, "heliacal_ut", lambda *a, **k: (0.0, 0.0, 0.0))
+        with pytest.raises(KerykeionException, match="No heliacal rising"):
+            factory.next_heliacal_rising(
+                julian_day=START_JD, planet_name_or_star="Mercury", geopos=ROME_GEOPOS,
+            )
+
 
 # Tests: search_events -------------------------------------------------------
 

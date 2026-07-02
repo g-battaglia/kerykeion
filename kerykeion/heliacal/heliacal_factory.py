@@ -23,6 +23,7 @@ from typing import List, Optional, Sequence, Tuple
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion._predictive_utils import jd_to_iso_utc
 
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 logger = logging.getLogger(__name__)
@@ -151,16 +152,30 @@ class HeliacalFactory:
         Returns
         -------
         HeliacalEventModel
+
+        Raises
+        ------
+        KerykeionException
+            If no heliacal rising occurs in the search window (the library's
+            user-facing "no result" convention; the internal backend/guard
+            signals ``_NO_EVENT_ERRORS`` are normalized here so callers see one
+            exception type regardless of backend).
         """
         with ephemeris_session(ephe_path=self._ephe_path):
-            result = self._find_event(
-                julian_day=julian_day,
-                planet_name_or_star=planet_name_or_star,
-                geopos=geopos,
-                event_type=HELIACAL_RISING,
-                atmo=atmo,
-                observer=observer,
-            )
+            try:
+                result = self._find_event(
+                    julian_day=julian_day,
+                    planet_name_or_star=planet_name_or_star,
+                    geopos=geopos,
+                    event_type=HELIACAL_RISING,
+                    atmo=atmo,
+                    observer=observer,
+                )
+            except _NO_EVENT_ERRORS as exc:
+                raise KerykeionException(
+                    f"No heliacal rising found for {planet_name_or_star} in the "
+                    f"search window after JD {julian_day:.5f}."
+                ) from exc
         return result
 
     def search_events(
