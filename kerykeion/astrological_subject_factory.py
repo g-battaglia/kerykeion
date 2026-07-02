@@ -1549,16 +1549,21 @@ class AstrologicalSubjectFactory:
             - System clock accuracy affects precision; ensure accurate system time
             - Time zone detection is automatic when using online location lookup
         """
-        if not tz_str and online and city and nation:
-            # Resolve the target timezone BEFORE capturing the instant:
-            # forwarding the host's naive wall clock and letting the geonames
-            # timezone interpret it downstream shifted the "current moment" by
-            # the full host-city offset. The fetch is cached, and passing the
-            # resolved tz/coordinates down avoids a second lookup.
+        if not tz_str and online:
+            # Resolve the target timezone BEFORE capturing the instant, on EVERY
+            # online path (defaults and city-only included): forwarding the
+            # host's naive wall clock and letting the geonames timezone
+            # interpret it downstream shifted the "current moment" by the full
+            # host-city offset. The same Greenwich/GB defaults from_birth_data
+            # applies are used here so the pre-fetch matches the downstream one;
+            # the fetch is cached, so passing the resolved tz/coordinates down
+            # avoids a second lookup.
             resolved_username = geonames_username or _get_geonames_username()
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
                 logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
-            city_data = FetchGeonames(city, nation, username=resolved_username).get_serialized_data()
+            city_data = FetchGeonames(
+                city or "Greenwich", nation or "GB", username=resolved_username
+            ).get_serialized_data()
             missing_fields = [f for f in ("timezonestr", "lat", "lng") if f not in city_data]
             if missing_fields:
                 raise KerykeionException(
@@ -1581,8 +1586,9 @@ class AstrologicalSubjectFactory:
             now = datetime.now(timezone.utc).astimezone(pytz.timezone(tz_str))
             is_dst: Optional[bool] = bool(now.dst())
         else:
-            # Offline without tz_str: from_birth_data raises its explicit
-            # missing-data error downstream; forward the system wall clock.
+            # Only reachable offline without tz_str (every online path resolved
+            # tz above): from_birth_data raises its explicit missing-data error
+            # downstream. Forward the system wall clock.
             now = datetime.now()
             is_dst = None
 

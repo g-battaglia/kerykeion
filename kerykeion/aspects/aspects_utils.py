@@ -177,9 +177,10 @@ def calculate_aspect_movement(
     # The step is capped so the RELATIVE motion cannot exceed the current orb:
     # with a fixed step, fast movers (axes carry synthetic speeds of
     # ~280-360 deg/day) overshoot past exactness within DT and an applying
-    # aspect reads as separating. The 1e-3 deg floor keeps the orb change
-    # comfortably above ORB_EPSILON so an exact aspect still reads Separating
-    # (any motion increases a zero orb) instead of Static.
+    # aspect reads as separating. The 1e-3 deg floor keeps the orb change from
+    # collapsing to zero for an already-exact aspect at normal speeds; two
+    # near-co-moving slow bodies (relative speed well under 1 deg/day) can
+    # still fall below ORB_EPSILON and read Static, unchanged from before.
     max_relative_motion = max(min(current_orb, 0.5), 1e-3)
     dt = min(DT, max_relative_motion / relative_speed)
     # Use modulo to handle crossing 0°/360° boundary correctly

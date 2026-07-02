@@ -2455,6 +2455,35 @@ class TestOnlineGeonamesGating:
         # host wall clock re-interpreted in the target timezone.
         assert before - timedelta(seconds=5) <= got <= after + timedelta(seconds=5)
 
+    @pytest.mark.parametrize(
+        "kwargs,fetched",
+        [
+            # Default path (no city/nation): Greenwich/GB -> Europe/London.
+            ({}, {"countryCode": "GB", "timezonestr": "Europe/London", "lat": "51.48", "lng": "0.0"}),
+            # City without nation: still must resolve the tz before capturing.
+            ({"city": "Tokyo"}, {"countryCode": "JP", "timezonestr": "Asia/Tokyo", "lat": "35.68", "lng": "139.69"}),
+        ],
+    )
+    def test_from_current_time_resolves_tz_on_every_online_path(self, monkeypatch, kwargs, fetched):
+        """The timezone must be resolved before capturing the instant on ALL
+        online paths — not only when both city and nation are explicit — or the
+        default / city-only chart is shifted by the host-city offset."""
+        from datetime import datetime, timedelta, timezone
+        from kerykeion import fetch_geonames
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(fetched)
+        )
+        before = datetime.now(timezone.utc)
+        s = AstrologicalSubjectFactory.from_current_time(
+            "Now Default", online=True, suppress_geonames_warning=True, **kwargs
+        )
+        after = datetime.now(timezone.utc)
+        got = datetime.fromisoformat(s.iso_formatted_utc_datetime)
+        assert before - timedelta(seconds=5) <= got <= after + timedelta(seconds=5)
+        assert s.tz_str == fetched["timezonestr"]
+
     def test_from_iso_utc_time_failed_fetch_raises_kerykeion_exception(self, monkeypatch):
         from kerykeion import fetch_geonames
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
