@@ -394,8 +394,12 @@ class PlanetaryReturnFactory:
         else:
             self.tz_str = tz_str  # type: ignore
 
-        # Online mode
-        if (self.online) and (not self.tz_str) and (self.lat is None) and (self.lng is None):
+        # Online mode: fetch whenever ANY of tz_str/lat/lng is missing (the
+        # username warning above uses the same OR condition; an AND here left
+        # lat/lng as None for callers providing only tz_str, crashing every
+        # return calculation later). Only the missing fields are filled —
+        # explicitly provided coordinates/timezone are never overwritten.
+        if (self.online) and (not self.tz_str or self.lat is None or self.lng is None):
             logging.info("Fetching timezone/coordinates from geonames")
 
             if not self.city or not self.nation or not self.geonames_username:
@@ -417,10 +421,12 @@ class PlanetaryReturnFactory:
             ):
                 raise KerykeionException("No data found for this city, try again! Maybe check your connection?")
 
-            self.nation = self.city_data["countryCode"]
-            self.lng = float(self.city_data["lng"])
-            self.lat = float(self.city_data["lat"])
-            self.tz_str = self.city_data["timezonestr"]
+            if self.lng is None:
+                self.lng = float(self.city_data["lng"])
+            if self.lat is None:
+                self.lat = float(self.city_data["lat"])
+            if not self.tz_str:
+                self.tz_str = self.city_data["timezonestr"]
 
     def next_return_from_iso_formatted_time(
         self, iso_formatted_time: str, return_type: ReturnType, backwards: bool = False

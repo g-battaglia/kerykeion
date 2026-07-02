@@ -1187,3 +1187,26 @@ class TestPlanetaryReturnV6FlagPropagation:
         return_subj = factory.next_return_from_date(2026, 1, 1, return_type="Solar")
         assert return_subj.fixed_stars == []
         assert return_subj.sun.essential_dignity is None
+
+
+class TestReturnFactoryOnlineGating:
+    """Regression: online mode must fetch when ANY of tz_str/lat/lng is
+    missing (an AND gate skipped the fetch for partial input, leaving None
+    coordinates that crashed every return calculation) and must not overwrite
+    the fields the caller provided."""
+
+    def test_partial_input_fetches_and_preserves_tz(self, monkeypatch, johnny_depp):
+        from kerykeion import fetch_geonames
+
+        rome = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "41.89193", "lng": "12.51133"}
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(rome)
+        )
+        factory = PlanetaryReturnFactory(
+            johnny_depp,
+            city="Rome", nation="IT", tz_str="Europe/Vienna",  # tz given, coords missing
+            online=True,
+        )
+        assert factory.lat == pytest.approx(41.89193)
+        assert factory.lng == pytest.approx(12.51133)
+        assert factory.tz_str == "Europe/Vienna"  # explicit value preserved

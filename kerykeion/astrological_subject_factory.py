@@ -898,6 +898,16 @@ class AstrologicalSubjectFactory:
             location.fetch_from_geonames(
                 username=geonames_username or _get_geonames_username(), cache_expire_after_days=cache_expire_after_days
             )
+            # Explicit inputs win over the fetched city centroid: precise birth
+            # coordinates/timezone must not be silently replaced by it.
+            if lat is not None:
+                location.lat = lat
+            if lng is not None:
+                location.lng = lng
+            if tz_str:
+                location.tz_str = tz_str
+            if nation:
+                location.nation = nation
 
         # Prepare location for calculations
         location.prepare_for_calculation()
@@ -1316,6 +1326,14 @@ class AstrologicalSubjectFactory:
             )
 
             city_data = geonames.get_serialized_data()
+            # Same contract as from_birth_data: a failed/rate-limited GeoNames
+            # response must surface as KerykeionException, not a bare KeyError.
+            missing_fields = [field for field in ("lat", "lng") if field not in city_data]
+            if missing_fields:
+                raise KerykeionException(
+                    f"Missing data from geonames: {', '.join(missing_fields)}. "
+                    "Check your connection or try a different location."
+                )
             lng = float(city_data["lng"])
             lat = float(city_data["lat"])
 
@@ -1517,6 +1535,29 @@ class AstrologicalSubjectFactory:
             - System clock accuracy affects precision; ensure accurate system time
             - Time zone detection is automatic when using online location lookup
         """
+        if not tz_str and online and city and nation:
+            # Resolve the target timezone BEFORE capturing the instant:
+            # forwarding the host's naive wall clock and letting the geonames
+            # timezone interpret it downstream shifted the "current moment" by
+            # the full host-city offset. The fetch is cached, and passing the
+            # resolved tz/coordinates down avoids a second lookup.
+            resolved_username = geonames_username or _get_geonames_username()
+            if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
+                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+            city_data = FetchGeonames(city, nation, username=resolved_username).get_serialized_data()
+            missing_fields = [f for f in ("timezonestr", "lat", "lng") if f not in city_data]
+            if missing_fields:
+                raise KerykeionException(
+                    f"Missing data from geonames: {', '.join(missing_fields)}. "
+                    "Check your connection or try a different location."
+                )
+            tz_str = city_data["timezonestr"]
+            if lat is None:
+                lat = float(city_data["lat"])
+            if lng is None:
+                lng = float(city_data["lng"])
+            geonames_username = resolved_username
+
         if tz_str:
             # Render the current instant in the target timezone: interpreting
             # the system clock's wall time in tz_str would shift the chart by
@@ -1526,8 +1567,8 @@ class AstrologicalSubjectFactory:
             now = datetime.now(timezone.utc).astimezone(pytz.timezone(tz_str))
             is_dst: Optional[bool] = bool(now.dst())
         else:
-            # Timezone resolved downstream (online geonames lookup): forward
-            # the system wall clock as before.
+            # Offline without tz_str: from_birth_data raises its explicit
+            # missing-data error downstream; forward the system wall clock.
             now = datetime.now()
             is_dst = None
 

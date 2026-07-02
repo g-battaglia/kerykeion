@@ -2397,3 +2397,70 @@ class TestDayOfWeekAnteCommonEra:
         before = self._weekday(-100, 6, 14, 23, 30, lng=120.0)
         after = self._weekday(-100, 6, 15, 0, 30, lng=120.0)
         assert (_DAYS.index(before) + 1) % 7 == _DAYS.index(after)
+
+
+class TestOnlineGeonamesGating:
+    """Regression tests for the online-mode GeoNames gating fixes: explicit
+    inputs must never be overwritten by the city centroid, from_current_time
+    must capture the target-timezone instant, and a failed fetch must raise
+    KerykeionException, not KeyError."""
+
+    _ROME = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "41.89193", "lng": "12.51133"}
+
+    @pytest.fixture
+    def _mock_geonames(self, monkeypatch):
+        from kerykeion import fetch_geonames
+
+        data = dict(self._ROME)
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(data)
+        )
+        return data
+
+    def test_explicit_coordinates_survive_online_fetch(self, _mock_geonames):
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "Precise", 1990, 6, 15, 12, 0,
+            city="Rome", nation="IT", online=True,
+            lat=45.999, lng=7.111,  # explicit, more precise than the centroid
+            suppress_geonames_warning=True,
+        )
+        assert s.lat == pytest.approx(45.999)
+        assert s.lng == pytest.approx(7.111)
+        assert s.tz_str == "Europe/Rome"  # missing field filled from the fetch
+
+    def test_from_current_time_uses_target_timezone_instant(self, monkeypatch):
+        from datetime import datetime, timedelta, timezone
+        from kerykeion import fetch_geonames
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        auckland = {"countryCode": "NZ", "timezonestr": "Pacific/Auckland", "lat": "-36.85", "lng": "174.76"}
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(auckland)
+        )
+        before = datetime.now(timezone.utc)
+        s = AstrologicalSubjectFactory.from_current_time(
+            "Now Test", city="Auckland", nation="NZ", online=True,
+            suppress_geonames_warning=True,
+        )
+        after = datetime.now(timezone.utc)
+        got = datetime.fromisoformat(s.iso_formatted_utc_datetime)
+        # The captured instant must be the real current UTC moment, not the
+        # host wall clock re-interpreted in the target timezone.
+        assert before - timedelta(seconds=5) <= got <= after + timedelta(seconds=5)
+
+    def test_from_iso_utc_time_failed_fetch_raises_kerykeion_exception(self, monkeypatch):
+        from kerykeion import fetch_geonames
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.schemas import KerykeionException
+
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: {}
+        )
+        with pytest.raises(KerykeionException, match="Missing data from geonames"):
+            AstrologicalSubjectFactory.from_iso_utc_time(
+                "Fail Test", "2020-06-15T12:00:00Z",
+                city="Rome", nation="IT", tz_str="Europe/Rome", online=True,
+                suppress_geonames_warning=True,
+            )
