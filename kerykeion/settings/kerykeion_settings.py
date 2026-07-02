@@ -20,6 +20,13 @@ def load_settings_mapping(settings_source: SettingsSource = None) -> Mapping[str
     """
     Resolve the configuration mapping from the provided source.
 
+    .. deprecated::
+        Unused by the library itself (translations are served with caching by
+        :mod:`kerykeion.settings.translations`); it deep-copies the whole
+        language dictionary on every call. It will be removed in
+        kerykeion 7.0.0 — use ``load_language_settings`` from
+        :mod:`kerykeion.settings.translations` instead.
+
     Args:
         settings_source (Mapping | None): Optional overrides for the bundled
             language settings. When provided, keys and nested dictionaries are
@@ -28,6 +35,14 @@ def load_settings_mapping(settings_source: SettingsSource = None) -> Mapping[str
     Returns:
         Mapping[str, Any]: The resolved configuration dictionary.
     """
+    import warnings
+
+    warnings.warn(
+        "load_settings_mapping is deprecated and will be removed in kerykeion 7.0.0; "
+        "use kerykeion.settings.translations.load_language_settings instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     language_settings = deepcopy(LANGUAGE_SETTINGS)
 
     if settings_source:

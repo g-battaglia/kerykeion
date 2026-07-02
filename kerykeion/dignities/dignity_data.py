@@ -11,6 +11,8 @@ All tables use the 3-letter sign abbreviations from kr_literals.Sign.
 
 from typing import Dict, List, Optional, Tuple
 
+from kerykeion.schemas.kr_literals import SIGN_CODES
+
 # =========================================================================
 # DOMICILE (Rulership) — planet rules the sign
 # Traditional + modern rulerships. Score: +5
@@ -139,8 +141,7 @@ EGYPTIAN_TERMS: Dict[str, List[Tuple[str, int, int]]] = {
 _CHALDEAN_ORDER = ["Mars", "Sun", "Venus", "Mercury", "Moon", "Saturn", "Jupiter"]
 
 CHALDEAN_DECANS: Dict[str, List[str]] = {}
-_sign_order = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
-for _i, _sign in enumerate(_sign_order):
+for _i, _sign in enumerate(SIGN_CODES):
     _base = _i * 3
     CHALDEAN_DECANS[_sign] = [
         _CHALDEAN_ORDER[(_base + 0) % 7],

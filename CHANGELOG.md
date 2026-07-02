@@ -2,6 +2,55 @@
 
 ## [Unreleased]
 
+### Fixed (pre-6.0.0 full-package review, second pass)
+
+- **Online GeoNames gating**: PlanetaryReturnFactory fetches when ANY of
+  tz_str/lat/lng is missing (an AND gate crashed callers passing only tz_str);
+  explicit lat/lng/nation/tz are never overwritten by the fetched city
+  centroid; `from_current_time` resolves the target timezone BEFORE capturing
+  the instant (the naive host wall clock shifted the "current moment" by the
+  full host-city offset); `from_iso_utc_time` raises `KerykeionException`
+  instead of a bare `KeyError` on failed lookups.
+- **Chart rendering**: ASC/MC/DSC/IC get their dedicated radius via NAME
+  classification (the fossil index window pointed at Ceres/Pallas/Juno/Vesta
+  and shifted with filtering); dual charts no longer paint two spurious ticks
+  at the last natal planet's angle; degree-indicator grouping is
+  circular-aware; exact full/new moons render bright/dark instead of inverted;
+  a reduced `aspects_settings` no longer breaks every render on missing
+  `orb_color_*`; unknown-aspect rows no longer emit `xlink:href="#orbNone"`.
+- **Aspects**: applying/separating no longer flips for tight aspects to
+  fast movers (adaptive lookahead step; axes carry ~300 deg/day synthetic
+  speeds); `AspectModel.diff` wraps at 0/360; overlapping user orbs classify
+  by the closest aspect.
+- **Time series**: EphemerisDataFactory steps in UTC — the naive wall-clock
+  series duplicated samples across DST spring-forward and corrupted transit
+  detection.
+- **Returns/report/XML**: Heliocentric and node-crossing returns are titled
+  by their actual type (was always "Lunar Return"); the AI-context XML emits
+  positions for every active point (TNOs, Uranian points, mean nodes, Arabic
+  parts were referenced by <aspects> but never serialized); the transit
+  subject has one consistent name in house overlays.
+- **Factories**: RelationshipScoreFactory raises `KerykeionException` when a
+  subject lacks the Sun; relocation applies the natal polar clamp; midnight-sun
+  days re-pair sunrise/sunset (day_length was negative at Reykjavik in June);
+  heliacal scans skip backend "no event" signals from BOTH backends (pyswisseph
+  errors aborted the scan; libephemeris jd=0.0 sentinels emitted fake events
+  dated -4713); `PlanetaryNodesFactory` validates `method` ('Mean' silently
+  selected osculating data labeled with the caller's string).
+- **Edge cases**: polar day/night at exactly ±90° respects the -0.833°
+  apparent-horizon threshold; the ACG latitude grid reaches the requested
+  edge (float accumulation dropped 66.0 at step=0.1); infinitesimally negative
+  longitudes no longer wrap to exactly 360.0 and crash; an explicit empty
+  `active_points` list on ChartDataFactory is a real filter (None remains the
+  "subject's own points" sentinel); a station exactly on the range's first
+  sample is counted; `applying_start=None` semantics documented (truncation OR
+  undersampled fast pass).
+- **Deprecations**: `natal_aspects`/`synastry_aspects` emit a real
+  DeprecationWarning (removal 7.0.0); `next_return_from_month_and_year` names
+  its removal version; `load_settings_mapping` is deprecated in favor of the
+  cached `translations.load_language_settings`. Docs snippet gate is green
+  (75/75); `llms.txt` performance tips show kwargs on their actual factories.
+
 ### Fixed
 
 - **`PlanetaryNodesFactory` passed `method`/`flags` to `nod_aps_ut` in swapped

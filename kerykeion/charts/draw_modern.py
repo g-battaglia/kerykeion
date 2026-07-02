@@ -21,7 +21,8 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 import math
 from typing import Optional
 
-from kerykeion.charts.charts_utils import escape_svg_text
+from kerykeion.charts.charts_utils import escape_svg_text, normalize_degree
+from kerykeion.utilities import wrap_180
 from kerykeion.schemas.kr_models import KerykeionPointModel
 from kerykeion.settings.chart_defaults import resolve_glyph_id
 
@@ -231,9 +232,8 @@ def _point_on_circle(angle_deg: float, radius: float) -> tuple[float, float]:
     return x, y
 
 
-def _normalize_angle(angle: float) -> float:
-    """Normalize angle to 0-360 range."""
-    return angle % 360.0
+# Shared canonical implementation (see charts_utils.normalize_degree).
+_normalize_angle = normalize_degree
 
 
 def _zodiac_to_wheel_angle(
@@ -721,9 +721,7 @@ def _draw_indicator_line(
     slug_attr = f' kr:slug="{escape_svg_text(planet_slug)}"' if planet_slug else ""
     out = f'<g kr:node="Indicator"{slug_attr} transform="rotate(-{real_angle:.6f} {CENTER} {CENTER})">\n'
 
-    angle_diff = _normalize_angle(display_angle - real_angle)
-    if angle_diff > 180:
-        angle_diff -= 360
+    angle_diff = wrap_180(display_angle - real_angle)
 
     if abs(angle_diff) < 0.5:
         # Simple straight indicator line

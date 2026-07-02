@@ -23,6 +23,7 @@ from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
+from kerykeion.utilities import HOUSE_FIELD_NAMES
 from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
 
 logger = logging.getLogger(__name__)
@@ -39,27 +40,13 @@ def _collect_planet_positions(subject: AstrologicalSubjectModel) -> list[tuple[s
 
 
 def _collect_house_cusps(subject: AstrologicalSubjectModel) -> list[float]:
-    """Collect house cusp longitudes for house placement."""
-    houses_degree_ut: list[float] = []
-    house_keys = [
-        "first_house",
-        "second_house",
-        "third_house",
-        "fourth_house",
-        "fifth_house",
-        "sixth_house",
-        "seventh_house",
-        "eighth_house",
-        "ninth_house",
-        "tenth_house",
-        "eleventh_house",
-        "twelfth_house",
-    ]
-    for house_key in house_keys:
-        house = getattr(subject, house_key, None)
-        if house is not None:
-            houses_degree_ut.append(house.abs_pos)
-    return houses_degree_ut
+    """Collect house cusp longitudes for house placement.
+
+    Direct attribute access on the canonical HOUSE_FIELD_NAMES: a missing
+    house field is a broken subject and must fail loudly, not produce a
+    silently short cusp list.
+    """
+    return [getattr(subject, house_key).abs_pos for house_key in HOUSE_FIELD_NAMES]
 
 
 def _nearest_conjunction(
