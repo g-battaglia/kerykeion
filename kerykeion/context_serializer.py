@@ -292,8 +292,11 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
 
     # First subject's points in second subject's houses
     if house_comparison.first_points_in_second_houses:
+        # Same "Transit" substitution as the other three sections: the same
+        # entity must not appear under two names in one document.
+        tgt = "Transit" if is_transit else house_comparison.second_subject_name
         lines.append(
-            f"  {_o('first_points_in_second', subject=house_comparison.first_subject_name, target=house_comparison.second_subject_name)}"
+            f"  {_o('first_points_in_second', subject=house_comparison.first_subject_name, target=tgt)}"
         )
         for point in house_comparison.first_points_in_second_houses:
             lines.append(f"    {point_in_house_to_context(point)}")
@@ -427,49 +430,42 @@ def astrological_subject_to_context(
     if isinstance(subject, PlanetReturnModel):
         lines.append(f"  {_sc('return_info', type=subject.return_type)}")
 
-    # Celestial Points (planets)
-    celestial_point_names = [
-        "sun",
-        "moon",
-        "mercury",
-        "venus",
-        "mars",
-        "jupiter",
-        "saturn",
-        "uranus",
-        "neptune",
-        "pluto",
-        "chiron",
-        "mean_lilith",
-        "true_lilith",
-        "ceres",
-        "pallas",
-        "juno",
-        "vesta",
-    ]
+    # Celestial points, driven by the subject's OWN active points: a hardcoded
+    # name list dropped everything outside the classical set (TNOs, Uranian
+    # points, mean nodes, Arabic parts...) while the <aspects> section still
+    # referenced them, leaving dangling references in the document.
+    axes_section_names = {
+        "Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli",
+        "Vertex", "Anti_Vertex", "East_Point",
+    }
+    active_point_names = list(getattr(subject, "active_points", None) or [])
+    if not active_point_names:
+        # Older/reduced models without active_points: previous fixed sets.
+        active_point_names = [
+            "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
+            "Uranus", "Neptune", "Pluto", "Chiron", "Mean_Lilith", "True_Lilith",
+            "Ceres", "Pallas", "Juno", "Vesta",
+            "Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli",
+            "Vertex", "Anti_Vertex",
+            "True_North_Lunar_Node", "True_South_Lunar_Node",
+        ]
+
     planet_lines = []
-    for point_name in celestial_point_names:
-        point = getattr(subject, point_name, None)
-        if point is not None:
-            planet_lines.append(f"    {kerykeion_point_to_context(point)}")
+    axes_lines = []
+    for point_name in active_point_names:
+        point = getattr(subject, point_name.lower(), None)
+        if point is None:
+            continue
+        entry = f"    {kerykeion_point_to_context(point)}"
+        if point_name in axes_section_names or point_name.endswith("_Lunar_Node"):
+            axes_lines.append(entry)
+        else:
+            planet_lines.append(entry)
 
     if planet_lines:
         lines.append(f"  {_o('planets')}")
         lines.extend(planet_lines)
         lines.append(f"  {_c('planets')}")
-
-    # Important points (axes and lunar nodes)
-    axes = ["ascendant", "descendant", "medium_coeli", "imum_coeli", "vertex", "anti_vertex"]
-    axes_lines = []
-    for axis_name in axes:
-        axis = getattr(subject, axis_name, None)
-        if axis is not None:
-            axes_lines.append(f"    {kerykeion_point_to_context(axis)}")
-
-    for node_name in ["true_north_lunar_node", "true_south_lunar_node"]:
-        node = getattr(subject, node_name, None)
-        if node is not None:
-            axes_lines.append(f"    {kerykeion_point_to_context(node)}")
 
     if axes_lines:
         lines.append(f"  {_o('axes')}")

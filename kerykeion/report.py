@@ -67,6 +67,19 @@ def _humanize(name: str) -> str:
     return name.replace("_", " ")
 
 
+def _return_type_label(subject: object) -> str:
+    """Human label for a return subject's return_type.
+
+    Derived from the actual value — the old Solar/else-Lunar binary titled
+    Heliocentric and Lunar_Node_Crossing returns as "Lunar Return".
+    """
+    return_type = getattr(subject, "return_type", None)
+    if not return_type:
+        return "Return"
+    label = _humanize(str(return_type))
+    return label if "Return" in label or "Crossing" in label else f"{label} Return"
+
+
 class ReportGenerator:
     """
     Generate textual reports for astrological data models with a structure that mirrors the
@@ -425,10 +438,8 @@ class ReportGenerator:
                 base_title = f"{self._primary_subject.name} — Composite Report"
         elif self.chart_type == "SingleReturnChart":
             year = self._extract_year(self._primary_subject.iso_formatted_local_datetime)
-            if isinstance(self._primary_subject, PlanetReturnModel) and self._primary_subject.return_type == "Solar":
-                base_title = f"{self._primary_subject.name} — Solar Return {year or ''}".strip()
-            else:
-                base_title = f"{self._primary_subject.name} — Lunar Return {year or ''}".strip()
+            label = _return_type_label(self._primary_subject)
+            base_title = f"{self._primary_subject.name} — {label} {year or ''}".strip()
         elif self.chart_type == "Transit":
             date_str = self._format_date_iso(
                 self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
@@ -441,13 +452,8 @@ class ReportGenerator:
             year = self._extract_year(
                 self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
             )
-            if (
-                isinstance(self._secondary_subject, PlanetReturnModel)
-                and self._secondary_subject.return_type == "Solar"
-            ):
-                base_title = f"{self._primary_subject.name} — Solar Return Comparison {year or ''}".strip()
-            else:
-                base_title = f"{self._primary_subject.name} — Lunar Return Comparison {year or ''}".strip()
+            label = _return_type_label(self._secondary_subject)
+            base_title = f"{self._primary_subject.name} — {label} Comparison {year or ''}".strip()
         elif self.chart_type == "Progression":
             date_str = self._format_date_iso(
                 self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
@@ -463,9 +469,7 @@ class ReportGenerator:
         if self.chart_type == "Composite":
             return "Composite Chart"
         if self.chart_type == "SingleReturnChart":
-            if isinstance(self._primary_subject, PlanetReturnModel) and self._primary_subject.return_type == "Solar":
-                return "Solar Return Chart"
-            return "Lunar Return Chart"
+            return f"{_return_type_label(self._primary_subject)} Chart"
         return f"{self.chart_type or 'Chart'}"
 
     def _subject_role_labels(self) -> tuple[str, str]:
