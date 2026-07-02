@@ -213,3 +213,99 @@ class TestDavisonSweReference:
         assert davison.moon.abs_pos == pytest.approx(expected_moon_lng, abs=0.01), (
             f"Davison Moon {davison.moon.abs_pos} != ephe Moon {expected_moon_lng}"
         )
+
+
+class TestDavisonBCE:
+    """The time-midpoint decomposition must be the exact inverse of
+    from_birth_data's BCE branch (Julian calendar + longitude-LMT), not the
+    Gregorian/Etc-GMT decomposition used for CE midpoints — the mismatch cast
+    BCE Davison charts days away from the true midpoint (test node ids contain
+    'bce' so the tier filter skips these without the extended kernel)."""
+
+    def _subject(self, name, year, month, day, hour, minute, lng, lat):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, year, month, day, hour, minute,
+            lng=lng, lat=lat, tz_str="Etc/GMT",
+            city="Test", nation="XX", online=False,
+            suppress_geonames_warning=True,
+        )
+
+    def test_bce_pair_round_trips_to_midpoint_jd(self):
+        s1 = self._subject("BCE One", -100, 6, 15, 12, 0, lng=30.0, lat=40.0)
+        s2 = self._subject("BCE Two", -44, 3, 15, 9, 30, lng=12.5, lat=41.9)
+        mid_jd = (s1.julian_day + s2.julian_day) / 2.0
+
+        davison = CompositeSubjectFactory(s1, s2).get_davison_composite_subject_model()
+
+        assert davison.year < 1
+        err_seconds = abs(davison.julian_day - mid_jd) * 86400.0
+        assert err_seconds < 1.0, (
+            f"Davison JD {davison.julian_day} is {err_seconds:.1f}s away from "
+            f"midpoint {mid_jd} (pre-fix error was ~74 hours)"
+        )
+
+    def test_mixed_pair_with_bce_midpoint_round_trips(self):
+        s1 = self._subject("Deep BCE", -700, 1, 10, 6, 0, lng=-45.0, lat=10.0)
+        s2 = self._subject("Early CE", 600, 8, 20, 18, 0, lng=60.0, lat=-20.0)
+        mid_jd = (s1.julian_day + s2.julian_day) / 2.0
+
+        davison = CompositeSubjectFactory(s1, s2).get_davison_composite_subject_model()
+
+        assert davison.year < 1
+        assert abs(davison.julian_day - mid_jd) * 86400.0 < 1.0
+
+    def test_bce_davison_sun_matches_ephe_at_midpoint_jd(self):
+        from kerykeion.ephemeris_backend import ephe
+
+        s1 = self._subject("BCE Sun A", -200, 4, 1, 0, 0, lng=20.0, lat=35.0)
+        s2 = self._subject("BCE Sun B", -150, 10, 21, 12, 0, lng=25.0, lat=38.0)
+        mid_jd = (s1.julian_day + s2.julian_day) / 2.0
+
+        davison = CompositeSubjectFactory(s1, s2).get_davison_composite_subject_model()
+
+        iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
+        expected_sun = ephe.calc_ut(mid_jd, ephe.SUN, iflag)[0][0]
+        assert davison.sun.abs_pos == pytest.approx(expected_sun, abs=0.01)
+
+
+class TestDavisonMidpointComponentsInverse:
+    """Pure-math round-trip of _davison_midpoint_components: encoding the
+    components back the way from_birth_data does (Julian+LMT for year<1,
+    Gregorian for CE) must land on the original midpoint JD within the 0.5 s
+    seconds-rounding. julday/revjul need no ephemeris data, so this locks the
+    exact-inverse property in every test tier."""
+
+    @staticmethod
+    def _encode(year, month, day, hour, minute, seconds, lng):
+        from kerykeion.ephemeris_backend import ephe
+
+        dec_hour = hour + minute / 60.0 + seconds / 3600.0
+        if year < 1:
+            jd_local = ephe.julday(year, month, day, dec_hour, ephe.JUL_CAL)
+            return jd_local - (lng / 15.0) / 24.0
+        return ephe.julday(year, month, day, dec_hour, getattr(ephe, "GREG_CAL", 1))
+
+    @pytest.mark.parametrize(
+        "mid_jd,lng",
+        [
+            (1684570.0, 30.0),     # deep ante-CE, east longitude
+            (1538550.25, -120.0),  # deeper ante-CE, west longitude
+            (1721000.123456, 45.0),   # just before the CE boundary
+            (2451545.0, 12.5),     # J2000
+            (2429000.789, -2.99),  # 1930s
+        ],
+    )
+    def test_components_round_trip_within_one_second(self, mid_jd, lng):
+        from kerykeion.composite_subject_factory import _davison_midpoint_components
+
+        y, mo, d, h, mi, s = _davison_midpoint_components(mid_jd, lng)
+        got = self._encode(y, mo, d, h, mi, s, lng)
+        assert abs(got - mid_jd) * 86400.0 < 1.0
+
+    def test_unrepresentable_gap_clamps_with_warning(self, caplog):
+        from kerykeion.composite_subject_factory import _davison_midpoint_components
+
+        with caplog.at_level("WARNING"):
+            y, mo, d, h, mi, s = _davison_midpoint_components(1721424.5, 0.0)
+        assert (y, mo, d, h, mi, s) == (1, 1, 1, 0, 0, 0)
+        assert "gap" in caplog.text

@@ -38,6 +38,8 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
+import logging
+
 from typing import Union
 
 # Fix the circular import by changing this import
@@ -61,6 +63,59 @@ from kerykeion.utilities import (
     circular_sort,
     find_common_active_points,
 )
+
+
+def _davison_midpoint_components(
+    mid_jd: float, mid_lng: float
+) -> tuple[int, int, int, int, int, int]:
+    """Decompose a Davison midpoint JD into birth-data components (UTC).
+
+    CE midpoints use the Gregorian calendar to match the proleptic-Gregorian
+    datetimes used everywhere else in kerykeion. BCE midpoints must instead be
+    the exact inverse of from_birth_data's BCE branch, which re-encodes year<1
+    components in the JULIAN calendar and subtracts the longitude-LMT offset
+    (ignoring tz_str) — so decompose the LMT-shifted instant in the Julian
+    calendar or the Davison chart lands days away from the true time midpoint.
+    """
+    from kerykeion.ephemeris_backend import ephe
+
+    lmt_shift = mid_lng / 15.0 / 24.0  # days; mirrors _calculate_time_conversions_bce
+    greg_cal = getattr(ephe, "GREG_CAL", 1)
+    probe_year = int(ephe.revjul(mid_jd + lmt_shift, ephe.JUL_CAL)[0])
+    if probe_year < 1:
+        cal, jd_base = ephe.JUL_CAL, mid_jd + lmt_shift
+    else:
+        cal, jd_base = greg_cal, mid_jd
+
+    year, month, day, hour_frac = ephe.revjul(jd_base, cal)
+    # Round the midpoint instant to the nearest whole second (rather than
+    # truncating, which dropped up to ~1s), carrying any minute/hour/day
+    # overflow via revjul so we never emit a 60-second field.
+    total_secs = int(hour_frac * 3600 + 0.5)
+    if total_secs >= 86400:
+        year, month, day, _ = ephe.revjul(jd_base + 0.5 / 86400.0, cal)
+        total_secs = 0
+    hour, rem = divmod(total_secs, 3600)
+    minute, seconds = divmod(rem, 60)
+
+    # from_birth_data branches on year<1, so the components must land on the
+    # same side the probe predicted. The only flips are second-rounding at the
+    # 1 BCE/1 CE boundary and the ~2-day window before 1 CE Jan 1 (proleptic
+    # Gregorian) that neither branch's components can represent.
+    if probe_year < 1 and year >= 1:
+        # Rounding rolled 1 BCE Dec 31 24:00 (Julian) into 1 CE — clamp to
+        # 23:59:59 (<=1 s error) so the BCE branch is still taken.
+        year, month, day, hour, minute, seconds = 0, 12, 31, 23, 59, 59
+    elif probe_year >= 1 and year < 1:
+        logging.warning(
+            "Davison midpoint JD %.6f falls in the ~2-day gap before 1 CE "
+            "Jan 1 (proleptic Gregorian) that birth-data components cannot "
+            "represent; clamping to 0001-01-01T00:00:00Z (error < ~2.5 days).",
+            mid_jd,
+        )
+        year, month, day, hour, minute, seconds = 1, 1, 1, 0, 0, 0
+
+    return int(year), int(month), int(day), hour, minute, seconds
 
 
 class CompositeSubjectFactory:
@@ -328,7 +383,14 @@ class CompositeSubjectFactory:
             This method should be called after _calculate_midpoint_composite_points_and_houses()
             to ensure Sun and Moon composite positions are available.
         """
-        self.lunar_phase = calculate_moon_phase(self["moon"].abs_pos, self["sun"].abs_pos)
+        moon = getattr(self, "moon", None)
+        sun = getattr(self, "sun", None)
+        if moon is None or sun is None:
+            # Sun/Moon can be absent, e.g. when a planetocentric subject
+            # excludes its center body from the active points.
+            self.lunar_phase = None
+            return
+        self.lunar_phase = calculate_moon_phase(moon.abs_pos, sun.abs_pos)
 
     def get_midpoint_composite_subject_model(self):
         """
@@ -407,21 +469,9 @@ class CompositeSubjectFactory:
         mid_lat = (s1.lat + s2.lat) / 2.0
         mid_lng = circular_mean(s1.lng + 180.0, s2.lng + 180.0) - 180.0
 
-        # Convert midpoint JD to date components (UTC), explicitly in the
-        # Gregorian calendar to match the proleptic-Gregorian datetimes used
-        # everywhere else in kerykeion.
-        from kerykeion.ephemeris_backend import ephe
-
-        year, month, day, hour_frac = ephe.revjul(mid_jd, getattr(ephe, "GREG_CAL", 1))
-        # Round the midpoint instant to the nearest whole second (rather than
-        # truncating, which dropped up to ~1s), carrying any minute/hour/day
-        # overflow via revjul so we never emit a 60-second field.
-        total_secs = int(hour_frac * 3600 + 0.5)
-        if total_secs >= 86400:
-            year, month, day, _ = ephe.revjul(mid_jd + 0.5 / 86400.0, getattr(ephe, "GREG_CAL", 1))
-            total_secs = 0
-        hour, rem = divmod(total_secs, 3600)
-        minute, seconds = divmod(rem, 60)
+        year, month, day, hour, minute, seconds = _davison_midpoint_components(
+            mid_jd, mid_lng
+        )
 
         extra_kwargs: dict = {}
         if custom_ayanamsa_t0 is not None:
