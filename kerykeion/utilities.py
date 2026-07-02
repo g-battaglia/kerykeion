@@ -223,9 +223,11 @@ def get_kerykeion_point_from_degree(
     Raises:
         KerykeionException: If the degree is >= 360 after normalization
     """
-    # Normalize negative degrees
+    # Normalize negative degrees. In float64 an infinitesimally negative
+    # value wraps to exactly 360.0 ((-1e-14) % 360 == 360.0), which the guard
+    # below would reject: fold it back to 0.0 with a second modulo.
     if degree < 0:
-        degree = degree % 360
+        degree = (degree % 360) % 360
 
     if degree >= 360:
         raise KerykeionException(f"Error in calculating positions! Degrees: {degree}")

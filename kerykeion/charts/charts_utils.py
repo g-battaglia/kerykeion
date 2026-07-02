@@ -1457,10 +1457,14 @@ def draw_transit_aspect_list(
             # First planet symbol
             inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{p1_glyph}" />'
 
-            # Aspect symbol
+            # Aspect symbol. Aspects without a settings entry (e.g.
+            # parallel/contra_parallel with the default set) have no orb glyph
+            # in the template: skip the symbol instead of emitting a dangling
+            # xlink:href="#orbNone", matching _draw_all_aspects_lines.
             aspect_name = aspect["aspect"]
             id_value = next((a["degree"] for a in aspects_settings if a["name"] == aspect_name), None)  # type: ignore
-            inner_path += f'<use x="15" y="0" xlink:href="#orb{id_value}" />'
+            if id_value is not None:
+                inner_path += f'<use x="15" y="0" xlink:href="#orb{id_value}" />'
 
             # Second planet symbol
             inner_path += '<g transform="translate(30,0)">'

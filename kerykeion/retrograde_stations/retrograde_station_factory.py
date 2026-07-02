@@ -242,6 +242,15 @@ class RetrogradeStationFactory:
         found: List[StationModel] = []
         jd = start_jd
         prev_speed = _speed(jd, body)
+        if prev_speed == 0.0 and start_jd < end_jd:
+            # A station exactly on the range's first sample: boundary zeros are
+            # claimed on `next` (so zeros shared by two intervals count once),
+            # which can never fire for the very first sample — classify it from
+            # the following motion instead of dropping it.
+            first_next_speed = _speed(min(start_jd + _SAMPLE_STEP_DAYS, end_jd), body)
+            if first_next_speed != 0.0:
+                station_type = "SR" if first_next_speed < 0.0 else "SD"
+                found.append(RetrogradeStationFactory._build(name, station_type, start_jd))
         while jd < end_jd:
             jd_next = min(jd + _SAMPLE_STEP_DAYS, end_jd)
             next_speed = _speed(jd_next, body)

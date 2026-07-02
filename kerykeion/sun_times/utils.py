@@ -229,7 +229,13 @@ def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     decl = math.radians(declination)
     denominator = math.cos(lat) * math.cos(decl)
     if abs(denominator) < 1e-12:
-        return latitude * declination > 0, latitude * declination < 0
+        # Exactly at a pole the Sun's altitude equals its declination all day:
+        # compare against the apparent-horizon threshold (-0.833 deg), not the
+        # sign of lat*decl — a declination in (-0.833, 0) at the North Pole is
+        # still a 24h-visible Sun, not polar night.
+        signed_altitude = declination if latitude > 0 else -declination
+        above = signed_altitude > _APPARENT_UPPER_LIMB_HORIZON_DEGREES
+        return above, not above
 
     cos_hour_angle = (math.sin(horizon) - math.sin(lat) * math.sin(decl)) / denominator
     return cos_hour_angle < -1.0, cos_hour_angle > 1.0

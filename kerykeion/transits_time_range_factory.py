@@ -520,9 +520,11 @@ class TransitsTimeRangeFactory:
             5. Calculate orb rate of change at exact moment (degrees/day)
             6. (Optional) Refine exact_moment via ternary search for sub-step precision
 
-        Events truncated by the analysed range report ``applying_start`` /
-        ``separating_end`` as ``None``: the applying phase (or the separating
-        phase) happened outside the sampled window, so its boundary is unknown.
+        ``applying_start`` / ``separating_end`` are ``None`` when that phase
+        was not sampled — because the event was truncated at a range edge, or
+        because the sampling step was too coarse to capture that side of a
+        fast pass (see the undersampling warning). The boundary is unknown in
+        both cases.
 
         Args:
             refine_exact_moments: If True, uses a ternary search between the

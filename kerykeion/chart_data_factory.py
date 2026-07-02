@@ -182,8 +182,10 @@ class ChartDataFactory:
             if not isinstance(second_subject, AstrologicalSubjectModel):
                 raise KerykeionException("Second subject must be an AstrologicalSubjectModel for Progression charts.")
 
-        # Determine active points
-        if not active_points:
+        # Determine active points. None is the documented "use the subject's
+        # own points" sentinel; an explicitly-passed empty list is a real
+        # (empty) filter, not a request for everything.
+        if active_points is None:
             effective_active_points = first_subject.active_points
         else:
             effective_active_points = find_common_active_points(active_points, first_subject.active_points)

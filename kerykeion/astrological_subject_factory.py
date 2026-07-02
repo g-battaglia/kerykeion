@@ -2317,10 +2317,13 @@ class AstrologicalSubjectFactory:
         else:
             formula = config["formula"]
 
-        # Calculate the part degree
+        # Calculate the part degree. The final % 360.0 folds the float64 edge
+        # where fmod of an infinitesimally negative value plus 360 lands on
+        # exactly 360.0, which the degree validation would reject.
         part_deg = math.fmod(formula(*positions), 360)
         if part_deg < 0:
             part_deg += 360
+        part_deg %= 360.0
 
         # Store the result
         part_key = part_name.lower()

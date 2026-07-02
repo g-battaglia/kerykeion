@@ -155,11 +155,15 @@ class AstroCartographyFactory:
             # while ASC/DSC scanned the true float step, so the two families of
             # lines disagreed on their latitude samples. Build the grid once, in
             # floats, and reuse it everywhere so all lines share the same scan.
-            latitudes: List[float] = []
-            lat = float(lat_min)
-            while lat <= lat_max:
-                latitudes.append(round(lat, 4))
-                lat += step
+            # Integer-indexed grid: accumulating `lat += step` drifts in float
+            # (with step=0.1 the last row landed at 65.9 and the requested
+            # 66.0 edge was missing from every line).
+            n_steps = int(round((lat_max - lat_min) / step))
+            latitudes: List[float] = [
+                round(lat_min + i * step, 4)
+                for i in range(n_steps + 1)
+                if lat_min + i * step <= lat_max + 1e-9
+            ]
 
             for pname in selected:
                 eq_pos = ephe.calc_ut(jd, _ACG_PLANET_IDS[pname], eq_iflag)[0]

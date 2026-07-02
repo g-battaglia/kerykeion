@@ -1264,7 +1264,9 @@ class TransitEventModel(SubscriptableBaseModel):
     applying_start: Optional[str] = Field(
         default=None,
         description="ISO datetime of the first in-orb sample. None when the applying phase "
-        "falls outside the analysed range (event truncated at the range start).",
+        "was not sampled: either the event was truncated at the range start, or the "
+        "sampling step was too coarse to capture the applying side of a fast pass "
+        "(a Moon transit sampled daily, for instance — see the undersampling warning).",
     )
     exact_moment: str = Field(description="ISO datetime of closest approach (minimum orb)")
     separating_end: Optional[str] = Field(
