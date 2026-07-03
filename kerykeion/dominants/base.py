@@ -106,10 +106,17 @@ class Category:
         scores: Mapping of item name to raw score (e.g. ``{"Sun": 12.4}``).
         dominant: The subset of names a school flags as dominant for this
             category (e.g. the top-N planets, or elements above a threshold).
+        tiebreak_order: Optional priority order for breaking equal-score ties in
+            the ranked output. When set, ties are broken by position in this
+            sequence instead of alphabetically, so the ranked list's rank 1
+            agrees with a school that picks its winner by the same order (e.g.
+            the Almuten Figuris' traditional Saturn->Moon order). Names absent
+            from the sequence sort after those present, then alphabetically.
     """
 
     scores: Dict[str, float] = field(default_factory=dict)
     dominant: set[str] = field(default_factory=set)
+    tiebreak_order: Optional[tuple] = None
 
 
 @dataclass
@@ -203,7 +210,15 @@ class BaseDominantStrategy:
         if not scores:
             return []
 
-        ordered = sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))
+        order = category.tiebreak_order
+        if order:
+            rank_of = {name: i for i, name in enumerate(order)}
+            ordered = sorted(
+                scores.items(),
+                key=lambda kv: (-kv[1], rank_of.get(kv[0], len(order)), kv[0]),
+            )
+        else:
+            ordered = sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))
         percentages = distribute_percentages_to_100({name: max(0.0, value) for name, value in scores.items()})
 
         return [

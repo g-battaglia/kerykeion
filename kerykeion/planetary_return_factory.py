@@ -1138,8 +1138,14 @@ class PlanetaryReturnFactory:
 
     def _build_return_chart(self, return_jd: float, return_type: str) -> PlanetReturnModel:
         """Build a return chart at the given Julian Day."""
-        # isoformat() keeps the solver's sub-second precision, matching the
-        # solar/lunar return path (strftime silently floored to the second).
+        # isoformat() carries the solver's sub-second part into the ISO string,
+        # but from_iso_utc_time rebuilds the chart from an integer `seconds`
+        # field, so the sub-second part is truncated downstream (return moments
+        # are second-precision, as the class docstring states). For the Moon
+        # (~1.5e-4 deg/s) this can shift the rebuilt return Moon by up to ~0.5
+        # arcsecond from the exact crossing — well within the 0.1° return
+        # tolerance and below display resolution. Kept as isoformat() (not
+        # strftime) so no ADDITIONAL rounding is introduced here.
         try:
             return_dt = julian_to_datetime(return_jd).replace(tzinfo=timezone.utc)
         except ValueError as exc:

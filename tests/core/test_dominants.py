@@ -483,3 +483,34 @@ def test_sidereal_chart_returns_valid_winner():
     assert result.dominant_planet in _CLASSICAL
     # Sect is a horizon (not zodiac) property, so it is identical in both frames.
     assert sidereal.is_diurnal == tropical.is_diurnal
+
+
+class TestAlmutenRankingConsistency:
+    """Round-2 regression: the ranked planets list's rank 1 must equal the
+    flagged Almuten (dominant_planet), even on score ties (base ranks ties
+    alphabetically; the winner uses the traditional Almuten order)."""
+
+    def test_rank1_equals_dominant_planet_on_tie(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.dominants import DominantsFactory
+
+        # This chart produces a Jupiter/Mercury/Saturn tie at total 14.0.
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "t", 1950, 10, 16, 3, 0, lat=40.0, lng=-3.0,
+            tz_str="Europe/Madrid", online=False, suppress_geonames_warning=True,
+        )
+        r = DominantsFactory.from_subject(s, strategy="almuten_figuris")
+        assert r.planets[0].name == r.dominant_planet
+        assert r.planets[0].is_dominant is True
+
+    def test_rank1_equals_dominant_planet_sweep(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.dominants import DominantsFactory
+
+        for y in range(1955, 2000, 5):
+            s = AstrologicalSubjectFactory.from_birth_data(
+                "x", y, 6, 10, 2, 10, lat=41.9, lng=12.5,
+                tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            )
+            r = DominantsFactory.from_subject(s, strategy="almuten_figuris")
+            assert r.planets[0].name == r.dominant_planet, f"mismatch for year {y}"

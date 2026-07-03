@@ -981,18 +981,24 @@ def _draw_single_planet_in_ring(
     retro_attr = ' kr:retrograde="true"' if is_retro else ""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
 
-    # kr:cx / kr:cy — glyph center in chart SVG ROOT coords, so frontend
-    # hit-detection reads the exact glyph center regardless of chart style
-    # (same contract as the classic draw_planets chart).
+    # kr:cx / kr:cy — glyph center in the WHEEL-LOCAL 100-unit frame (the
+    # ModernHoroscope group's own coordinate space, i.e. the viewBox of the
+    # wheel-only output). This is exact for generate_wheel_only_svg_string
+    # (viewBox 0 0 100 100). In the full-chart output chart_drawer wraps this
+    # wheel in an outer scale/translate to fit the composed layout, so a consumer
+    # that needs true SVG-root coords there must apply that wheel group's
+    # transform (the classic chart likewise emits in its own Full_Wheel-local
+    # frame, a different scale — the two are NOT directly comparable across
+    # styles without each wheel's transform).
     #
-    # Three nested frames sit between the glyph and the SVG root:
+    # Three nested frames sit between the glyph and the wheel-local frame:
     #   1. ChartPoint          rotate(-display_angle, CENTER, CENTER)
     #   2. zodiac-bg wrapper    translate(off off) scale(s)   [only when the
     #                           zodiac background ring is drawn]
     #   3. ModernHoroscope      rotate(-90, CENTER, CENTER)
     # Undoing only (1) — as the old code did — left cx/cy in the PlanetRing
     # frame, ~90° (and, with the zodiac ring, ~8%) off the real glyph. Compose
-    # all three so the emitted values are true root coords.
+    # all three so the emitted values locate the glyph in the wheel-local frame.
     angle_rad = math.radians(display_angle)
     dy = glyph_y - CENTER
     gx = CENTER + dy * math.sin(angle_rad)   # frame (1) undone: ChartPoint-parent coords

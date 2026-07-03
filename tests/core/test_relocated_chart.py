@@ -510,3 +510,29 @@ class TestRelocatedMidpointsRehoused:
             assert mp.house == get_planet_house(mp.abs_pos, cusps), (
                 f"{mp.name} kept a stale natal house after relocation"
             )
+
+
+class TestRelocatedDerivedOppositesRehoused:
+    """Round-2 regression: derived opposite points absent from active_points
+    (South lunar nodes, Priapus) must be re-housed on relocation, not left
+    with a stale natal house."""
+
+    def test_south_node_rehoused(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.utilities import get_planet_house
+
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "John", 1990, 6, 15, 14, 30, lng=-74.0, lat=40.7,
+            tz_str="America/New_York", online=False, suppress_geonames_warning=True,
+        )
+        r = RelocatedChartFactory.relocate(
+            s, new_lat=-33.9, new_lng=151.2, new_tz_str="Australia/Sydney",
+        )
+        order = ["first", "second", "third", "fourth", "fifth", "sixth",
+                 "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"]
+        cusps = [getattr(r, f"{h}_house").abs_pos for h in order]
+        south = r.true_south_lunar_node
+        assert south.house == get_planet_house(south.abs_pos, cusps)
+        # north and south nodes must remain in opposite houses
+        assert r.true_north_lunar_node.house != south.house

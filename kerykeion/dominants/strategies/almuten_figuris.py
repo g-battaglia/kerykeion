@@ -120,9 +120,16 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
             self._add_accidental_dignities(subject, accidental, breakdown)
 
         totals: Dict[str, float] = {planet: essential[planet] + accidental[planet] for planet in CLASSICAL_PLANETS}
-        winner = self._resolve_winner(totals, essential, major_count)
+        ranking = self._resolve_ranking(totals, essential, major_count)
+        winner = ranking[0]
 
-        categories = {"planets": Category(scores=totals, dominant={winner})}
+        # Break equal-total ties in the ranked list by the SAME full Almuten key
+        # used to pick the winner, so the ranked list's rank 1 is the Almuten
+        # (otherwise base ranks ties alphabetically and planets[0] can disagree
+        # with dominant_planet).
+        categories = {
+            "planets": Category(scores=totals, dominant={winner}, tiebreak_order=tuple(ranking))
+        }
         self._fill_winner_placement(subject, winner, totals[winner], categories)
 
         return self.build_model(categories=categories, breakdown=breakdown)
@@ -224,19 +231,21 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
             breakdown.append(BreakdownItem("accidental", day_ruler, "day ruler", ALMUTEN_DAY_RULER_BONUS))
 
     @staticmethod
-    def _resolve_winner(
+    def _resolve_ranking(
         totals: Dict[str, float],
         essential: Dict[str, float],
         major_count: Dict[str, int],
-    ) -> str:
-        """Pick the Almuten, breaking ties deterministically.
+    ) -> List[str]:
+        """Return all planets in Almuten order (winner first).
 
         Tie-break order: higher total, then higher essential-only subtotal, then
         more rulership-grade dignities (domicile/exaltation), then the
         traditional planetary order (Saturn → Moon) via
-        :data:`ALMUTEN_TIEBREAK_ORDER`.
+        :data:`ALMUTEN_TIEBREAK_ORDER`. The full ordering (not just the winner)
+        is returned so the ranked ``planets`` category can break equal-*total*
+        ties by this same key, keeping rank 1 == the Almuten.
         """
-        return min(
+        return sorted(
             CLASSICAL_PLANETS,
             key=lambda planet: (
                 -totals[planet],

@@ -373,15 +373,21 @@ class RelocatedChartFactory:
             part_point.retrograde = False
             relocated_data[part_field] = part_point
 
-        # Reassign planets to new houses
-        for point_name in subject.active_points:
-            if point_name in _AXIAL_POINTS_SET:
+        # Reassign EVERY non-axial point stored on the model to its new house —
+        # not just active_points. Derived opposite points (South lunar nodes,
+        # Priapus) are stored unconditionally by _calculate_opposite_points but
+        # are absent from DEFAULT_ACTIVE_POINTS, so an active_points-only loop
+        # left them with their stale natal house (breaking, e.g., the
+        # North/South node opposition). Axial angles are recomputed above; house
+        # cusps are their own reference and must not be re-housed.
+        for field_name, point_data in relocated_data.items():
+            if field_name.endswith("_house"):
                 continue
-            field_name = point_name.lower()
-            planet_data = relocated_data.get(field_name)
-            if planet_data is not None and isinstance(planet_data, dict) and "abs_pos" in planet_data:
-                new_house = get_planet_house(planet_data["abs_pos"], houses_degree_ut)
-                planet_data["house"] = new_house
+            if not (isinstance(point_data, dict) and point_data.get("abs_pos") is not None):
+                continue
+            if point_data.get("name") in _AXIAL_POINTS_SET or "house" not in point_data:
+                continue
+            point_data["house"] = get_planet_house(point_data["abs_pos"], houses_degree_ut)
 
         # Fixed stars keep their zodiacal positions but live outside
         # active_points: reassign their houses against the relocated cusps too.
