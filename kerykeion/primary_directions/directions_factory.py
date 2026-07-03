@@ -32,6 +32,15 @@ Algorithm:
            direct   = (OA_promissor - OA_significator) mod 360
            converse = 360 - direct
        Both are reported as separate entries (``is_converse`` marker).
+
+       .. warning::
+           The converse arc here is the arithmetic complement of the direct
+           arc, NOT the classical converse method (which swaps the roles of
+           significator and promissor and recomputes the oblique ascension
+           under the *promissor's* pole). Converse (``is_converse=True``)
+           timings are therefore an approximation and should not be relied on
+           for precise converse-direction work; a proper implementation is
+           planned for a future release. Direct directions are unaffected.
     8. Convert the arc to years using the rate key (Ptolemy: 1 deg = 1 year,
        Naibod: 0.98564 deg = 1 year).
 
@@ -224,7 +233,12 @@ class PrimaryDirectionsFactory:
                         # Direct arc: the promissor is carried by primary motion
                         # (increasing RAMC) onto the significator's place.
                         arc_direct = (oa_prom - sig.oblique_ascension) % 360
-                        # Converse arc: motion against the diurnal rotation.
+                        # Converse arc: APPROXIMATED as the arithmetic complement
+                        # of the direct arc. This is NOT the classical converse
+                        # method (swap significator/promissor, recompute the
+                        # oblique ascension under the promissor's pole); see the
+                        # module docstring warning. Converse timings are
+                        # therefore approximate.
                         arc_converse = (360.0 - arc_direct) % 360
 
                         for arc, is_converse in ((arc_direct, False), (arc_converse, True)):

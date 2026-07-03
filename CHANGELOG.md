@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+### Known limitations
+
+- **Converse primary directions are approximate.** `PrimaryDirectionsFactory`
+  computes the converse arc as the arithmetic complement of the direct arc
+  (`360 - direct`), not the classical converse method (swap significator and
+  promissor, recompute the oblique ascension under the promissor's pole).
+  Converse (`is_converse=True`) timings should not be relied on for precise
+  work; a proper implementation is planned for a future release. Direct
+  directions are unaffected.
+- **BCE event timestamps use the proleptic Gregorian calendar** (as ISO 8601
+  mandates), while BCE *natal chart* dates use the Julian calendar (the
+  astro.com convention). For the same ancient instant, an event ISO timestamp
+  and a chart date differ by the Julian/Gregorian gap (~2 days near year 0).
+  This is a deliberate split: ISO strings stay standards-conformant, chart
+  dates stay astrological.
+
 ### Changed (breaking)
 
 - **`ChartDataFactory` now treats an explicit `active_points=[]` as a real

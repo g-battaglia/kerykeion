@@ -48,7 +48,17 @@ def jd_to_ymd_hms(jd: float, cal: Optional[int] = None) -> tuple[int, int, int, 
 
 def jd_to_iso_utc(jd: float) -> str:
     """Convert a Julian Day (UT) to an ISO 8601 UTC string with seconds,
-    with an extended-year sign for negative (BCE) years."""
+    with an extended-year sign for negative (BCE) years.
+
+    Note on the BCE calendar: this uses the proleptic Gregorian calendar (the
+    default of ``jd_to_ymd_hms``), which is what ISO 8601 mandates — so an ISO
+    event timestamp is standards-conformant. ``AstrologicalSubjectFactory``'s
+    BCE birth path instead decomposes year<1 dates in the Julian calendar (the
+    historical convention astro.com uses), so a BCE *event* timestamp and a BCE
+    *natal chart* date for the same instant differ by the Julian/Gregorian gap
+    (~2 days near year 0, growing further back). This is a deliberate
+    convention split — ISO strings stay ISO, chart dates stay astrological.
+    """
     year, month, day, hours, minutes, seconds = jd_to_ymd_hms(jd)
     year_str = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
     return f"{year_str}-{month:02d}-{day:02d}T{hours:02d}:{minutes:02d}:{seconds:02d}Z"
