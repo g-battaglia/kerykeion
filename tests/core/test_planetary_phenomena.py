@@ -253,3 +253,16 @@ class TestSweRegressionPhenomena:
         assert abs(mars.elongation - swe_elongation) < 0.001, (
             f"elongation: factory={mars.elongation} ephe={swe_elongation}"
         )
+
+
+class TestAllFailedGuard:
+    def test_all_planets_failing_raises(self, monkeypatch):
+        """Parity with PlanetaryNodesFactory: if the backend fails for every
+        requested planet, surface a KerykeionException instead of silently
+        returning an empty collection (indistinguishable from 'no phenomena')."""
+        import kerykeion.planetary_phenomena.phenomena_factory as pf
+        from kerykeion.schemas import KerykeionException
+
+        monkeypatch.setattr(pf.ephe, "pheno_ut", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("backend down")))
+        with pytest.raises(KerykeionException, match="all requested planets"):
+            PlanetaryPhenomenaFactory.from_julian_day(2451545.0, planets=["Venus", "Mars"])

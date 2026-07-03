@@ -18,6 +18,7 @@ import logging
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 
 from kerykeion.schemas.kr_models import (
@@ -153,6 +154,16 @@ class PlanetaryPhenomenaFactory:
                     )
                 except Exception as e:
                     logger.warning(f"Could not calculate phenomena for {name}: {e}")
+
+        # Tolerate individual-planet failures, but surface the all-failed case
+        # (an empty result is otherwise indistinguishable from a valid "no
+        # phenomena"). Parity with PlanetaryNodesFactory.
+        if target_planets and not phenomena_list:
+            raise KerykeionException(
+                "Failed to calculate phenomena for all requested planets "
+                f"({', '.join(target_planets)}); the ephemeris backend may be "
+                "unavailable or out of range. See logs for per-planet errors."
+            )
 
         return PlanetaryPhenomenaCollectionModel(
             iso_datetime=iso_datetime,
