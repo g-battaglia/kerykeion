@@ -119,8 +119,13 @@ class TestLoadLanguagePair:
 
     def test_missing_language_falls_back_to_en(self):
         selected, en = load_language_pair("ZZ")  # not a shipped language
-        assert selected is en
+        # Falls back to the English content (equal), but the two are now
+        # independent fresh copies, never live references into the global table.
+        assert selected == en
         assert selected["info"] == "Info"
+        from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
+        assert selected is not LANGUAGE_SETTINGS["EN"]
+        assert en is not LANGUAGE_SETTINGS["EN"]
 
     def test_override_applies_to_selected_only(self):
         overrides = {"IT": {"info": "Informazioni custom"}}

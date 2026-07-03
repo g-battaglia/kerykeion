@@ -122,6 +122,14 @@ class AstroCartographyFactory:
                 f"step must be a positive number of degrees, got {step!r}."
             )
 
+        # An inverted range (lat_min > lat_max) yields a negative n_steps below
+        # and an empty grid — every line would be emitted with no points, no
+        # warning. Reject it rather than return silent garbage.
+        if lat_range[0] > lat_range[1]:
+            raise KerykeionException(
+                f"lat_range must be (min, max) with min <= max, got {lat_range!r}."
+            )
+
         jd = subject.julian_day
 
         # Keep only planets that are both supported and present on the

@@ -363,6 +363,22 @@ class SecondaryProgressionFactory:
             custom_ayanamsa_ayan_t0=natal_subject.custom_ayanamsa_ayan_t0,
         )
 
+        # The v6 enrichment flags aren't stored as booleans on the model, so
+        # infer them from the populated natal fields and carry them over — the
+        # progressed chart otherwise silently dropped dignities/nakshatra/
+        # gauquelin/nutation/local-space/fixed-stars despite the docstring's
+        # "settings copied from the natal subject" promise (parity with
+        # PlanetaryReturnFactory, which forwards the same features).
+        _natal_sun = getattr(natal_subject, "sun", None)
+        common_kwargs.update(
+            active_fixed_stars=[s.name for s in (natal_subject.fixed_stars or [])] or None,
+            calculate_nutation=natal_subject.nutation is not None,
+            calculate_gauquelin=natal_subject.gauquelin_sector_cusps is not None,
+            calculate_dignities=_natal_sun is not None and _natal_sun.essential_dignity is not None,
+            calculate_nakshatra=_natal_sun is not None and _natal_sun.nakshatra is not None,
+            calculate_local_space=_natal_sun is not None and _natal_sun.azimuth is not None,
+        )
+
         if int(progressed_year_gregorian) >= 1:
             progressed_iso = SecondaryProgressionFactory._jd_to_utc_iso(progressed_jd)
             return AstrologicalSubjectFactory.from_iso_utc_time(

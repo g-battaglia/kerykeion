@@ -367,3 +367,33 @@ class TestCatalogStarsParticipateInAspects:
         # catalog-star slugs; both prove the gate is removed.
         for a in result:
             assert a.p1_name != "" and a.p2_name != ""
+
+
+class TestFixedStarOnlyActivePointsRaises:
+    def test_fixed_star_only_active_points_raises(self):
+        """active_points reduced to only fixed-star names (redirected to
+        active_fixed_stars) leaves no regular points — must raise, consistent
+        with the planetocentric center-body path, not silently compute a FULL
+        chart via the empty-list 'no filter' semantics."""
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="only fixed star names"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "Stars Only", 1990, 6, 15, 12, 0,
+                lng=12.5, lat=41.9, tz_str="Europe/Rome",
+                online=False, suppress_geonames_warning=True,
+                active_points=["Regulus", "Spica"],
+            )
+
+    def test_mixed_regular_and_star_points_still_work(self):
+        from kerykeion import AstrologicalSubjectFactory
+
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "Mixed", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun", "Regulus"],
+        )
+        assert s.active_points == ["Sun"]
+        assert [st.name for st in s.fixed_stars] == ["Regulus"]

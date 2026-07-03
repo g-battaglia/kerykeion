@@ -409,11 +409,17 @@ def astrological_subject_to_context(
         lines.append(
             f"  {_sc(data_tag, date=f'{subject.year}-{subject.month:02d}-{subject.day:02d} {subject.hour:02d}:{subject.minute:02d}', city=subject.city, nation=subject.nation, lat=f'{subject.lat:.2f}', lng=f'{subject.lng:.2f}', lng_dir=lng_dir, tz=subject.tz_str)}"
         )
-    elif isinstance(subject, PlanetReturnModel):
+    elif isinstance(subject, PlanetReturnModel) and (
+        subject.lng is not None
+        and subject.lat is not None
+        and subject.iso_formatted_local_datetime is not None
+    ):
         # PlanetReturnModel is a sibling of AstrologicalSubjectModel, not a
         # subclass, and lacks the split year/month/day fields — it carries the
         # datetime as an ISO string. Without this branch a return chart's
         # context XML omitted date/place entirely despite having the data.
+        # location/time are Optional on the base model, so a hand-built model
+        # without them simply skips the block instead of raising.
         data_tag = "transit_data" if is_transit_subject else "birth_data"
         lng_dir = "W" if subject.lng < 0 else "E"
         date_part, _, time_part = subject.iso_formatted_local_datetime.partition("T")

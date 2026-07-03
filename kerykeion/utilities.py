@@ -440,6 +440,11 @@ def _get_lunar_phase_index(phase: int) -> int:
     Raises:
         KerykeionException: If phase is outside valid range
     """
+    if phase < 1:
+        # Valid phases are 1-28; without this, phase <= 0 (and negatives) fell
+        # through the `phase < 7` branch and returned Waxing Crescent instead
+        # of raising as the docstring promises.
+        raise KerykeionException(f"Error in lunar phase calculation! Phase: {phase}")
     if phase == 1:
         return 0
     elif phase < 7:

@@ -47,11 +47,11 @@ def load_language_pair(
 
     Unlike :func:`load_language_settings` (which deep-copies the whole ~10-language
     table on every call), this materializes only the two language blocks a chart
-    actually needs — the requested ``language`` and the English fallback. In the
-    common no-override case it returns direct references into ``LANGUAGE_SETTINGS``:
-    the caller feeds them to a Pydantic model that copies on construction and never
-    mutates the input, so no defensive copy is needed. Only an override path
-    deep-copies (via :func:`_deep_merge`) the single block being merged.
+    actually needs — the requested ``language`` and the English fallback — so it
+    is far cheaper. Both returned blocks are always fresh copies, never live
+    references into ``LANGUAGE_SETTINGS``: like the twin function, a caller
+    mutating the result must not be able to poison the process-wide translation
+    defaults.
 
     The override shape and merge semantics match :func:`load_language_settings`
     (overrides keyed by language code, optionally wrapped under ``language_settings``).
@@ -71,7 +71,9 @@ def load_language_pair(
 
     if selected is None:
         selected = en
-    return selected, en
+    # Fresh copies: the no-override path above still aliases the module-global
+    # table, and this is a public (``__all__``) entry point.
+    return deepcopy(selected), deepcopy(en)
 
 
 def get_translations(

@@ -357,3 +357,18 @@ class TestCalcPctrTimescale:
             # delta-T in 2000 is ~64 s (~7.4e-4 days): the raw UT day is
             # measurably different, so this also fails if deltaT is dropped.
             assert abs(tjdet - jd_ut) > 1e-5
+
+
+class TestOutOfBoundsPerspectiveGating:
+    def test_oob_unset_for_non_geocentric_perspectives(self):
+        """is_out_of_bounds compares declination against the geocentric ecliptic
+        obliquity, which is meaningless for heliocentric/planetocentric frames —
+        it must be None there, and computed for geocentric charts."""
+        geo = AstrologicalSubjectFactory.from_birth_data(
+            "Geo OOB", **_BIRTH_KWARGS,
+        )
+        helio = AstrologicalSubjectFactory.from_birth_data(
+            "Helio OOB", **_BIRTH_KWARGS, perspective_type="Heliocentric",
+        )
+        assert geo.sun.is_out_of_bounds is not None
+        assert helio.sun.is_out_of_bounds is None

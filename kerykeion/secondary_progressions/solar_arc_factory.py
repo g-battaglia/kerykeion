@@ -207,14 +207,21 @@ class SolarArcFactory:
             aspect_settings = build_aspect_settings(aspect_orb, effective_aspects)
             for d in directed_points:
                 for natal_name, natal_pos in natal_targets:
-                    if natal_name == d.name and _is_near_zero_arc(solar_arc, aspect_orb):
-                        continue
                     extra_orb = resolve_pair_orb_adjustment(
                         d.name,
                         natal_name,
                         point_orb_adjustments,
                         point_orb_adjustment_strategy,
                     )
+                    # Skip the tautological self-conjunction (a directed point
+                    # with its own natal position) using the SAME effective orb
+                    # the detection below uses — otherwise a per-pair widening
+                    # (extra_orb) lets the self-conjunction slip past a guard
+                    # sized only to the base orb.
+                    if natal_name == d.name and _is_near_zero_arc(
+                        solar_arc, aspect_orb + max(0.0, extra_orb)
+                    ):
+                        continue
                     outcome = get_aspect_from_two_points(
                         aspects_settings=aspect_settings,
                         point_one=d.directed_abs_pos,

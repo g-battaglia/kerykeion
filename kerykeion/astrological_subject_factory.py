@@ -820,12 +820,18 @@ class AstrologicalSubjectFactory:
                 )
                 active_points_list = [p for p in active_points_list if p not in _star_names]
                 if not active_points_list:
-                    logging.warning(
-                        "active_points contained only fixed star names; the "
-                        "remaining regular-points list is empty, which is "
-                        "treated as 'no filter' (ALL points are calculated). "
-                        "Pass an explicit list of regular points to restrict "
-                        "the chart."
+                    # Same altitude as the planetocentric center-body branch
+                    # below: an emptied explicit list would be read as 'no
+                    # filter' downstream and silently invert the caller's
+                    # restriction into a FULL chart (and _calculate_arabic_part
+                    # would later extend it mid-calc, skipping dependent parts).
+                    # The stars are already redirected to active_fixed_stars, so
+                    # fail loudly asking for at least one regular point.
+                    raise KerykeionException(
+                        f"active_points contained only fixed star names {_star_names}, "
+                        "which are redirected to active_fixed_stars, leaving no regular "
+                        "points. Include at least one regular point, or pass the stars "
+                        "via active_fixed_stars and omit active_points."
                     )
                 _merged_stars: List[str] = list(active_fixed_stars) if active_fixed_stars else []
                 for _star in _star_names:
@@ -1160,19 +1166,27 @@ class AstrologicalSubjectFactory:
             # A planet is OOB when |declination| > true obliquity of the ecliptic (~23.44 deg).
             # The obliquity varies over millennia (22.1 - 24.5 deg) so we use the true value
             # for the chart's epoch, not a hardcoded constant.
-            true_obliquity = None
-            nut_data = None
-            try:
-                nut_data = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
-                true_obliquity = nut_data[0]
-            except Exception as e:
-                logging.warning(f"Could not compute obliquity for OOB detection: {e}")
+            #
+            # OOB is a geocentric/topocentric concept (declination exceeding the
+            # Sun's maximum, i.e. the obliquity of the Earth's equator). For
+            # heliocentric / barycentric / planetocentric perspectives the
+            # declination is in a different frame, so comparing it against the
+            # geocentric obliquity is physically meaningless — leave OOB unset.
+            _GEOCENTRIC_OOB_PERSPECTIVES = ("Apparent Geocentric", "True Geocentric", "Topocentric")
+            if calc_data.get("perspective_type") in _GEOCENTRIC_OOB_PERSPECTIVES:
+                true_obliquity = None
+                nut_data = None
+                try:
+                    nut_data = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
+                    true_obliquity = nut_data[0]
+                except Exception as e:
+                    logging.warning(f"Could not compute obliquity for OOB detection: {e}")
 
-            if true_obliquity is not None:
-                for pk in point_keys:
-                    point = calc_data[pk]
-                    if point.declination is not None:
-                        point_updates[pk]["is_out_of_bounds"] = abs(point.declination) > true_obliquity
+                if true_obliquity is not None:
+                    for pk in point_keys:
+                        point = calc_data[pk]
+                        if point.declination is not None:
+                            point_updates[pk]["is_out_of_bounds"] = abs(point.declination) > true_obliquity
 
             # Apply all accumulated updates with a single model_copy per point
             for pk in point_keys:
