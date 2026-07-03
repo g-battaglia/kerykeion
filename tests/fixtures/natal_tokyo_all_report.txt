@@ -24,7 +24,7 @@ Tokyo Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448057.625000      |
-| Active Points Count | 53                  |
+| Active Points Count | 52                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -48,7 +48,6 @@ Tokyo Subject — Natal Chart Report
 | True North Lunar Node | Aqu ♒️ | 8.12°    | +0.0183°/d   | -18.24° | -    | Fifth House    |
 | Mean Lilith           | Sco ♏️ | 24.91°   | +0.1120°/d   | -23.81° | -    | Second House   |
 | True Lilith           | Sag ♐️ | 18.52°   | +1.5853°/d   | -26.87° | -    | Third House    |
-| Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Seventh House  |
 | Chiron                | Can ♋️ | 16.02°   | +0.1011°/d   | +16.26° | -    | Tenth House    |
 | Pholus                | Can ♋️ | 3.01°    | +0.1367°/d   | +13.46° | -    | Tenth House    |
 | Ceres                 | Can ♋️ | 27.72°   | +0.4257°/d   | +26.76° | -    | Tenth House    |
@@ -113,20 +112,20 @@ Tokyo Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 5.999999999999999  | 17%        |
-| Earth 🌍 | 9.400000000000002  | 26%        |
+| Fire 🔥  | 5.699999999999999  | 16%        |
+| Earth 🌍 | 9.400000000000002  | 27%        |
 | Air 💨   | 9.400000000000002  | 26%        |
 | Water 💧 | 10.900000000000002 | 31%        |
-| Total    | 35.7               | 100%       |
+| Total    | 35.400000000000006 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 8.6                | 24%        |
-| Fixed    | 8.700000000000001  | 24%        |
+| Cardinal | 8.299999999999999  | 23%        |
+| Fixed    | 8.700000000000001  | 25%        |
 | Mutable  | 18.400000000000006 | 52%        |
-| Total    | 35.7               | 100%       |
+| Total    | 35.400000000000006 | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -146,45 +145,44 @@ Tokyo Subject — Natal Chart Report
 | 12 | True_North_Lunar_Node |
 | 13 | Mean_Lilith           |
 | 14 | True_Lilith           |
-| 15 | Earth                 |
-| 16 | Chiron                |
-| 17 | Pholus                |
-| 18 | Ceres                 |
-| 19 | Pallas                |
-| 20 | Juno                  |
-| 21 | Vesta                 |
-| 22 | Interpolated_Lilith   |
-| 23 | Interpolated_Perigee  |
-| 24 | Cupido                |
-| 25 | Hades                 |
-| 26 | Zeus                  |
-| 27 | Kronos                |
-| 28 | Apollon               |
-| 29 | Admetos               |
-| 30 | Vulkanus              |
-| 31 | Poseidon              |
-| 32 | Eris                  |
-| 33 | Sedna                 |
-| 34 | Haumea                |
-| 35 | Makemake              |
-| 36 | Ixion                 |
-| 37 | Orcus                 |
-| 38 | Quaoar                |
-| 39 | Pars_Fortunae         |
-| 40 | Pars_Spiritus         |
-| 41 | Pars_Amoris           |
-| 42 | Pars_Fidei            |
-| 43 | Vertex                |
-| 44 | White_Moon            |
-| 45 | Descendant            |
-| 46 | Imum_Coeli            |
-| 47 | Anti_Vertex           |
-| 48 | Mean_South_Lunar_Node |
-| 49 | True_South_Lunar_Node |
-| 50 | Mean_Priapus          |
-| 51 | True_Priapus          |
-| 52 | Ascendant             |
-| 53 | Medium_Coeli          |
+| 15 | Chiron                |
+| 16 | Pholus                |
+| 17 | Ceres                 |
+| 18 | Pallas                |
+| 19 | Juno                  |
+| 20 | Vesta                 |
+| 21 | Interpolated_Lilith   |
+| 22 | Interpolated_Perigee  |
+| 23 | Cupido                |
+| 24 | Hades                 |
+| 25 | Zeus                  |
+| 26 | Kronos                |
+| 27 | Apollon               |
+| 28 | Admetos               |
+| 29 | Vulkanus              |
+| 30 | Poseidon              |
+| 31 | Eris                  |
+| 32 | Sedna                 |
+| 33 | Haumea                |
+| 34 | Makemake              |
+| 35 | Ixion                 |
+| 36 | Orcus                 |
+| 37 | Quaoar                |
+| 38 | Pars_Fortunae         |
+| 39 | Pars_Spiritus         |
+| 40 | Pars_Amoris           |
+| 41 | Pars_Fidei            |
+| 42 | Vertex                |
+| 43 | White_Moon            |
+| 44 | Descendant            |
+| 45 | Imum_Coeli            |
+| 46 | Anti_Vertex           |
+| 47 | Mean_South_Lunar_Node |
+| 48 | True_South_Lunar_Node |
+| 49 | Mean_Priapus          |
+| 50 | True_Priapus          |
+| 51 | Ascendant             |
+| 52 | Medium_Coeli          |
 +----+-----------------------+
 
 +----------------+---------+
@@ -219,7 +217,6 @@ Tokyo Subject — Natal Chart Report
 | Sun                   | semi-square ∠    | Mean South Lunar Node | 0.95° | Applying →   |
 | Sun                   | semi-square ∠    | True South Lunar Node | 0.66° | Separating ← |
 | Sun                   | opposition ☍     | True Lilith           | 5.25° | Applying →   |
-| Sun                   | square □         | Earth                 | 6.23° | Applying →   |
 | Sun                   | sesquiquadrate ⚼ | Juno                  | 1.59° | Applying →   |
 | Sun                   | sextile ⚹        | Eris                  | 6.24° | Separating ← |
 | Sun                   | semi-square ∠    | Sedna                 | 2.53° | Applying →   |
@@ -401,7 +398,6 @@ Tokyo Subject — Natal Chart Report
 | Pluto                 | square □         | Mean North Lunar Node | 5.69° | Separating ← |
 | Pluto                 | trine △          | Chiron                | 0.61° | Separating ← |
 | Pluto                 | square □         | Mean South Lunar Node | 5.69° | Separating ← |
-| Pluto                 | sesquiquadrate ⚼ | Earth                 | 0.41° | Applying →   |
 | Pluto                 | quincunx ⚻       | Pallas                | 0.35° | Separating ← |
 | Pluto                 | conjunction ☌    | Juno                  | 5.04° | Separating ← |
 | Pluto                 | opposition ☍     | Sedna                 | 4.10° | Applying →   |
@@ -467,7 +463,6 @@ Tokyo Subject — Natal Chart Report
 | Ascendant             | square □         | Medium Coeli          | 0.19° | Static =     |
 | Ascendant             | square □         | Imum Coeli            | 0.19° | Static =     |
 | Ascendant             | sextile ⚹        | Mean Lilith           | 3.26° | Separating ← |
-| Ascendant             | opposition ☍     | Earth                 | 1.84° | Applying →   |
 | Ascendant             | square □         | Pholus                | 4.84° | Applying →   |
 | Ascendant             | sextile ⚹        | Ceres                 | 0.45° | Separating ← |
 | Ascendant             | biquintile bQ    | Vesta                 | 0.49° | Applying →   |
@@ -482,7 +477,6 @@ Tokyo Subject — Natal Chart Report
 | Ascendant             | quintile Q       | Vulkanus              | 1.32° | Separating ← |
 | Ascendant             | semi-sextile ⚺   | Poseidon              | 0.59° | Applying →   |
 | Medium Coeli          | square □         | Descendant            | 0.19° | Static =     |
-| Medium Coeli          | square □         | Earth                 | 2.03° | Applying →   |
 | Medium Coeli          | conjunction ☌    | Pholus                | 5.03° | Applying →   |
 | Medium Coeli          | semi-sextile ⚺   | Ceres                 | 0.26° | Separating ← |
 | Medium Coeli          | quintile Q       | Eris                  | 1.55° | Applying →   |
@@ -497,7 +491,6 @@ Tokyo Subject — Natal Chart Report
 | Medium Coeli          | trine △          | Poseidon              | 0.78° | Applying →   |
 | Descendant            | square □         | Imum Coeli            | 0.19° | Static =     |
 | Descendant            | trine △          | Mean Lilith           | 3.26° | Separating ← |
-| Descendant            | conjunction ☌    | Earth                 | 1.84° | Applying →   |
 | Descendant            | square □         | Pholus                | 4.84° | Applying →   |
 | Descendant            | trine △          | Ceres                 | 0.45° | Separating ← |
 | Descendant            | semi-square ∠    | Sedna                 | 1.86° | Separating ← |
@@ -513,7 +506,6 @@ Tokyo Subject — Natal Chart Report
 | Descendant            | opposition ☍     | Zeus                  | 2.37° | Separating ← |
 | Descendant            | semi-square ∠    | Admetos               | 1.47° | Applying →   |
 | Descendant            | quincunx ⚻       | Poseidon              | 0.59° | Applying →   |
-| Imum Coeli            | square □         | Earth                 | 2.03° | Applying →   |
 | Imum Coeli            | opposition ☍     | Pholus                | 5.03° | Applying →   |
 | Imum Coeli            | quincunx ⚻       | Ceres                 | 0.26° | Separating ← |
 | Imum Coeli            | sesquiquadrate ⚼ | Sedna                 | 1.67° | Separating ← |
@@ -525,7 +517,6 @@ Tokyo Subject — Natal Chart Report
 | Imum Coeli            | square □         | Zeus                  | 2.18° | Separating ← |
 | Imum Coeli            | sesquiquadrate ⚼ | Admetos               | 1.66° | Applying →   |
 | Imum Coeli            | sextile ⚹        | Poseidon              | 0.78° | Applying →   |
-| Mean Lilith           | trine △          | Earth                 | 5.09° | Applying →   |
 | Mean Lilith           | trine △          | Ceres                 | 2.81° | Separating ← |
 | Mean Lilith           | biquintile bQ    | Eris                  | 1.38° | Separating ← |
 | Mean Lilith           | sextile ⚹        | Haumea                | 1.13° | Applying →   |
@@ -576,14 +567,6 @@ Tokyo Subject — Natal Chart Report
 | True Lilith           | semi-sextile ⚺   | Cupido                | 0.48° | Applying →   |
 | True Lilith           | opposition ☍     | Kronos                | 2.81° | Applying →   |
 | True Lilith           | sextile ⚹        | Apollon               | 4.74° | Separating ← |
-| Earth                 | square □         | Pholus                | 3.01° | Separating ← |
-| Earth                 | trine △          | Ceres                 | 2.28° | Applying →   |
-| Earth                 | opposition ☍     | Haumea                | 3.96° | Applying →   |
-| Earth                 | trine △          | Quaoar                | 5.49° | Separating ← |
-| Earth                 | biquintile bQ    | Pars Amoris           | 1.27° | Static =     |
-| Earth                 | opposition ☍     | Zeus                  | 4.20° | Applying →   |
-| Earth                 | semi-square ∠    | Admetos               | 0.36° | Applying →   |
-| Earth                 | quincunx ⚻       | Poseidon              | 1.24° | Separating ← |
 | Pholus                | sextile ⚹        | Vesta                 | 1.65° | Separating ← |
 | Pholus                | sextile ⚹        | Makemake              | 0.93° | Applying →   |
 | Pholus                | sesquiquadrate ⚼ | Cupido                | 0.99° | Applying →   |

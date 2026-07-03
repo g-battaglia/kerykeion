@@ -171,14 +171,37 @@ _PLANETOCENTRIC_CENTERS: Dict[str, int] = {
 }
 
 
-def _planetocentric_center_names(perspective_type: Optional[str]) -> List[str]:
-    """Point names that ARE the center body of a planetocentric perspective.
+_GEO_TOPO_PERSPECTIVES = ("Apparent Geocentric", "True Geocentric", "Topocentric")
+
+
+def _degenerate_center_body_id(perspective_type: Optional[str]) -> Optional[int]:
+    """Body id that IS the origin of ``perspective_type``.
+
+    A body's position as seen from itself is the degenerate origin (0°/0 speed,
+    or garbage for the topocentric observer), never a real point. This is the
+    Earth for geocentric/topocentric charts, the Sun for heliocentric charts,
+    and the center planet for a planetocentric perspective. ``None`` for
+    barycentric or unknown perspectives (no single center body).
+    """
+    p = perspective_type or ""
+    if p in _GEO_TOPO_PERSPECTIVES:
+        return STANDARD_PLANETS.get("Earth")
+    if p == "Heliocentric":
+        return STANDARD_PLANETS.get("Sun")
+    return _PLANETOCENTRIC_CENTERS.get(p)
+
+
+def _center_body_names(perspective_type: Optional[str]) -> List[str]:
+    """Point names that ARE the center body of ``perspective_type``.
 
     Single source of truth for the exclusion: the center body has no position
-    as seen from itself, so it must be dropped from every path that would store
-    a planetary position. Empty for non-planetocentric perspectives.
+    as seen from itself (Earth-from-Earth, Sun-from-Sun, a planet-from-itself),
+    so it must be dropped from every path that would store a planetary position
+    — otherwise it becomes a phantom point (e.g. Earth pinned at 0° Aries in a
+    geocentric chart) that fabricates spurious aspects in the report / SVG /
+    LLM-context. Empty for barycentric / unknown perspectives.
     """
-    center_body_id = _PLANETOCENTRIC_CENTERS.get(perspective_type or "")
+    center_body_id = _degenerate_center_body_id(perspective_type)
     if center_body_id is None:
         return []
     return [name for name, pid in STANDARD_PLANETS.items() if pid == center_body_id]
@@ -839,12 +862,14 @@ class AstrologicalSubjectFactory:
                         _merged_stars.append(_star)
                 active_fixed_stars = _merged_stars
 
-        # Planetocentric charts: the center body has no position as seen from
-        # itself, so drop it from the active points instead of silently storing
-        # its geocentric position in the wrong reference frame. The actual
-        # calculation guard lives in _calculate_single_planet; this pass gives
-        # the user-facing warning and rejects an all-center list.
-        _center_names = _planetocentric_center_names(perspective_type)
+        # The center body of the perspective has no position as seen from itself
+        # (Earth in geocentric/topocentric, Sun in heliocentric, the center
+        # planet in a planetocentric chart), so drop it from the active points
+        # instead of storing a degenerate phantom (e.g. Earth at 0° Aries) that
+        # fabricates spurious aspects. The actual calculation guard lives in
+        # _calculate_single_planet; this pass gives the user-facing warning and
+        # rejects an all-center list.
+        _center_names = _center_body_names(perspective_type)
         if _center_names:
             _dropped = [p for p in active_points_list if p in _center_names]
             if _dropped:
@@ -1980,6 +2005,7 @@ class AstrologicalSubjectFactory:
         calculated_planets: List[AstrologicalPoint],
         active_points: List[AstrologicalPoint],
         center_body_id: Optional[int] = None,
+        degenerate_center_id: Optional[int] = None,
     ) -> None:
         """
         Calculate a single celestial body's position with comprehensive error handling.
@@ -2027,7 +2053,12 @@ class AstrologicalSubjectFactory:
         # The center body has no position as seen from itself. Guarding here —
         # the single function through which every planetary position is written
         # — means any current or future path inherits the exclusion instead of
-        # each caller having to remember its own guard.
+        # each caller having to remember its own guard. ``degenerate_center_id``
+        # covers every perspective (Earth in geocentric/topocentric, Sun in
+        # heliocentric, the center planet in planetocentric); ``center_body_id``
+        # additionally drives the planetocentric calc_pctr routing below.
+        if degenerate_center_id is not None and planet_id == degenerate_center_id:
+            return
         if center_body_id is not None and planet_id == center_body_id:
             return
 
@@ -2215,7 +2246,7 @@ class AstrologicalSubjectFactory:
 
         # For planets, use STANDARD_PLANETS mapping
         if point in STANDARD_PLANETS:
-            if point in _planetocentric_center_names(data.get("perspective_type")):
+            if point in _center_body_names(data.get("perspective_type")):
                 logging.warning(
                     "Cannot auto-activate %s as an Arabic Part prerequisite: it "
                     "is the center body of the %r perspective. The dependent "
@@ -2499,6 +2530,10 @@ class AstrologicalSubjectFactory:
 
         # Determine planetocentric center body (if applicable)
         center_body_id = _PLANETOCENTRIC_CENTERS.get(data.get("perspective_type", ""), None)
+        # Skip the perspective's degenerate center body everywhere (Earth in
+        # geocentric/topocentric, Sun in heliocentric, the center planet in
+        # planetocentric) — its position from itself is the origin, not a point.
+        degenerate_center_id = _degenerate_center_body_id(data.get("perspective_type"))
 
         # Start ephemeris backend tracing (libephemeris only)
         _trace_token = None
@@ -2532,6 +2567,7 @@ class AstrologicalSubjectFactory:
                     calculated_planets,
                     active_points,
                     center_body_id=center_body_id,
+                    degenerate_center_id=degenerate_center_id,
                 )
 
         # =============================================================================
@@ -2552,6 +2588,7 @@ class AstrologicalSubjectFactory:
                         calculated_planets,
                         active_points,
                         center_body_id=center_body_id,
+                        degenerate_center_id=degenerate_center_id,
                     )
                 except Exception as e:
                     logging.warning(f"Could not calculate {tno_name} position: {e}")
@@ -2702,6 +2739,7 @@ class AstrologicalSubjectFactory:
                 calculated_planets,
                 active_points,
                 center_body_id=center_body_id,
+                degenerate_center_id=degenerate_center_id,
             )
             # If the backend does not natively support White Moon / Selena (body ID
             # 56), do NOT fabricate a value: Mean Lilith + 180° is the Priapus point

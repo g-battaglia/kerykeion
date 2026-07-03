@@ -1085,7 +1085,10 @@ class TestSynastryChart:
         john = _make_john("All Active Points", active_points=ALL_ACTIVE_POINTS)
         paul = _make_paul("All Active Points", active_points=ALL_ACTIVE_POINTS)
         data = ChartDataFactory.create_synastry_chart_data(john, paul, active_points=ALL_ACTIVE_POINTS)
-        assert set(data.active_points) == set(ALL_ACTIVE_POINTS)
+        # Earth is the center body of a (default) geocentric chart and is
+        # excluded — it would otherwise be a phantom pinned at 0° Aries — so it
+        # drops out of the resolved active_points.
+        assert set(data.active_points) == set(ALL_ACTIVE_POINTS) - {"Earth"}
         svg = ChartDrawer(data, double_chart_aspect_grid_type="list").generate_svg_string()
         compare_chart_svg("John Lennon - All Active Points - Synastry Chart - List.svg", svg)
 
@@ -1877,7 +1880,10 @@ class TestPartialViews:
 
         subj = _make_john("All Active Points", active_points=ALL_ACTIVE_POINTS)
         data = ChartDataFactory.create_natal_chart_data(subj, active_points=ALL_ACTIVE_POINTS)
-        assert set(data.active_points) == set(ALL_ACTIVE_POINTS)
+        # Earth is the center body of a (default) geocentric chart and is
+        # excluded — it would otherwise be a phantom pinned at 0° Aries — so it
+        # drops out of the resolved active_points.
+        assert set(data.active_points) == set(ALL_ACTIVE_POINTS) - {"Earth"}
         svg = ChartDrawer(data).generate_wheel_only_svg_string()
         compare_chart_svg("John Lennon - All Active Points - Natal Chart - Wheel Only.svg", svg)
 
@@ -1887,7 +1893,10 @@ class TestPartialViews:
         john = _make_john("All Active Points", active_points=ALL_ACTIVE_POINTS)
         paul = _make_paul("All Active Points", active_points=ALL_ACTIVE_POINTS)
         data = ChartDataFactory.create_synastry_chart_data(john, paul, active_points=ALL_ACTIVE_POINTS)
-        assert set(data.active_points) == set(ALL_ACTIVE_POINTS)
+        # Earth is the center body of a (default) geocentric chart and is
+        # excluded — it would otherwise be a phantom pinned at 0° Aries — so it
+        # drops out of the resolved active_points.
+        assert set(data.active_points) == set(ALL_ACTIVE_POINTS) - {"Earth"}
         svg = ChartDrawer(data).generate_wheel_only_svg_string()
         compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Wheel Only.svg", svg)
 
@@ -2001,7 +2010,10 @@ class TestPartialViews:
 
         subj = _make_john("All Active Points", active_points=ALL_ACTIVE_POINTS)
         data = ChartDataFactory.create_natal_chart_data(subj, active_points=ALL_ACTIVE_POINTS)
-        assert set(data.active_points) == set(ALL_ACTIVE_POINTS)
+        # Earth is the center body of a (default) geocentric chart and is
+        # excluded — it would otherwise be a phantom pinned at 0° Aries — so it
+        # drops out of the resolved active_points.
+        assert set(data.active_points) == set(ALL_ACTIVE_POINTS) - {"Earth"}
         svg = ChartDrawer(data).generate_aspect_grid_only_svg_string()
         compare_chart_svg("John Lennon - All Active Points - Natal Chart - Aspect Grid Only.svg", svg)
 
@@ -2011,7 +2023,10 @@ class TestPartialViews:
         john = _make_john("All Active Points", active_points=ALL_ACTIVE_POINTS)
         paul = _make_paul("All Active Points", active_points=ALL_ACTIVE_POINTS)
         data = ChartDataFactory.create_synastry_chart_data(john, paul, active_points=ALL_ACTIVE_POINTS)
-        assert set(data.active_points) == set(ALL_ACTIVE_POINTS)
+        # Earth is the center body of a (default) geocentric chart and is
+        # excluded — it would otherwise be a phantom pinned at 0° Aries — so it
+        # drops out of the resolved active_points.
+        assert set(data.active_points) == set(ALL_ACTIVE_POINTS) - {"Earth"}
         svg = ChartDrawer(data).generate_aspect_grid_only_svg_string()
         compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Aspect Grid Only.svg", svg)
 

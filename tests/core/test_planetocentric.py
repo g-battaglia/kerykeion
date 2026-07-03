@@ -371,4 +371,58 @@ class TestOutOfBoundsPerspectiveGating:
             "Helio OOB", **_BIRTH_KWARGS, perspective_type="Heliocentric",
         )
         assert geo.sun.is_out_of_bounds is not None
-        assert helio.sun.is_out_of_bounds is None
+        # For a heliocentric chart the OOB flag must be unset (the
+        # declination-vs-obliquity test is geocentric). The Sun is the center
+        # body there (excluded), so check a present heliocentric point instead.
+        assert helio.moon is not None
+        assert helio.moon.is_out_of_bounds is None
+
+
+class TestDegenerateCenterBodyExclusion:
+    """Round-3 regression: the perspective's center body (Earth in
+    geocentric/topocentric, Sun in heliocentric, the center planet in
+    planetocentric) has no position as seen from itself and must be excluded —
+    otherwise it is a phantom pinned at 0 Aries that fabricates spurious aspects."""
+
+    def test_earth_excluded_in_geocentric(self):
+        geo = AstrologicalSubjectFactory.from_birth_data(
+            "Geo", **_BIRTH_KWARGS, active_points=["Sun", "Moon", "Earth"],
+        )
+        assert geo.earth is None
+        assert "Earth" not in geo.active_points
+
+    def test_sun_excluded_in_heliocentric_earth_real(self):
+        helio = AstrologicalSubjectFactory.from_birth_data(
+            "Helio", **_BIRTH_KWARGS, perspective_type="Heliocentric",
+            active_points=["Sun", "Moon", "Earth"],
+        )
+        assert helio.sun is None                      # Sun is the center -> excluded
+        assert "Sun" not in helio.active_points
+        assert helio.earth is not None                # Earth is real in heliocentric
+        assert helio.earth.abs_pos != 0.0 or helio.earth.speed != 0.0
+
+    def test_no_phantom_earth_aspects_in_geocentric(self):
+        from kerykeion.chart_data_factory import ChartDataFactory
+
+        geo = AstrologicalSubjectFactory.from_birth_data(
+            "Geo", **_BIRTH_KWARGS, active_points=["Sun", "Moon", "Mars", "Earth"],
+        )
+        cd = ChartDataFactory.create_natal_chart_data(geo)
+        assert not [a for a in cd.aspects if "Earth" in (a.p1_name, a.p2_name)]
+
+    def test_heliocentric_synastry_skips_relationship_score(self):
+        """A synastry whose partners have no natal Sun (heliocentric) must not
+        crash the relationship-score path — the score is geocentric and is skipped."""
+        from kerykeion.chart_data_factory import ChartDataFactory
+
+        john = AstrologicalSubjectFactory.from_birth_data(
+            "John", **_BIRTH_KWARGS, perspective_type="Heliocentric",
+            active_points=["Sun", "Moon", "Mars"],
+        )
+        paul = AstrologicalSubjectFactory.from_birth_data(
+            "Paul", 1942, 6, 18, 15, 30, lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False, perspective_type="Heliocentric",
+            active_points=["Sun", "Moon", "Mars"], suppress_geonames_warning=True,
+        )
+        cd = ChartDataFactory.create_synastry_chart_data(john, paul)  # default score=True
+        assert cd.relationship_score is None

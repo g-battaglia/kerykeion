@@ -29,6 +29,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
+import logging
 from typing import Mapping, Union, Optional, Literal, cast
 
 from kerykeion.aspects import AspectsFactory
@@ -257,12 +258,27 @@ class ChartDataFactory:
             if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(
                 second_subject, AstrologicalSubjectModel
             ):
-                relationship_score_factory = RelationshipScoreFactory(
-                    first_subject,
-                    second_subject,
-                    axis_orb_limit=axis_orb_limit,
-                )
-                relationship_score = relationship_score_factory.get_relationship_score()
+                # The relationship score is a geocentric technique: it weights
+                # the natal Sun (and other bodies) of both partners. A chart
+                # whose perspective excludes the Sun as its center body
+                # (heliocentric: Sun is the center; selenocentric: Moon is) has
+                # no natal Sun to score on, so the score is not applicable —
+                # skip it (with a warning) rather than raise and block an
+                # otherwise valid synastry (aspects/positions are perspective-
+                # independent in the way the chart draws them).
+                if first_subject.sun is not None and second_subject.sun is not None:
+                    relationship_score_factory = RelationshipScoreFactory(
+                        first_subject,
+                        second_subject,
+                        axis_orb_limit=axis_orb_limit,
+                    )
+                    relationship_score = relationship_score_factory.get_relationship_score()
+                else:
+                    logging.warning(
+                        "Skipping relationship_score: a partner subject has no "
+                        "Sun (a non-geocentric perspective excludes the center "
+                        "body). The score is a geocentric technique."
+                    )
 
         # Calculate element and quality distributions
         available_planets_setting_dicts: list[dict[str, object]] = []

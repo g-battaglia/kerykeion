@@ -400,8 +400,18 @@ class TestPerspectiveConfigurations:
         assert subject is not None
         assert subject.perspective_type == perspective_type
 
+        # The perspective's center body has no position as seen from itself and
+        # is excluded (Sun in heliocentric, Moon in selenocentric, ...): skip it.
+        from kerykeion.astrological_subject_factory import _center_body_names
+        center = {n.lower() for n in _center_body_names(perspective_type)}
+
         # Verify planets are present
         for planet in CORE_PLANETS:
+            if planet in center:
+                assert getattr(subject, planet, None) is None, (
+                    f"Center body {planet} should be excluded for {perspective_type}"
+                )
+                continue
             planet_obj = getattr(subject, planet, None)
             assert planet_obj is not None, f"Planet {planet} is None for perspective {perspective_type}"
 

@@ -24,7 +24,7 @@ Buenos Aires Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448058.125000      |
-| Active Points Count | 53                  |
+| Active Points Count | 52                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -48,7 +48,6 @@ Buenos Aires Subject — Natal Chart Report
 | True North Lunar Node | Aqu ♒️ | 8.12°    | +0.0115°/d   | -18.24° | -    | Sixth House    |
 | Mean Lilith           | Sco ♏️ | 24.97°   | +0.1120°/d   | -23.82° | -    | Third House    |
 | True Lilith           | Sag ♐️ | 19.15°   | +0.9132°/d   | -26.89° | -    | Fourth House   |
-| Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Seventh House  |
 | Chiron                | Can ♋️ | 16.07°   | +0.1013°/d   | +16.25° | -    | Eleventh House |
 | Pholus                | Can ♋️ | 3.07°    | +0.1368°/d   | +13.47° | -    | Tenth House    |
 | Ceres                 | Can ♋️ | 27.93°   | +0.4261°/d   | +26.72° | -    | Eleventh House |
@@ -113,20 +112,20 @@ Buenos Aires Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 6.1                | 17%        |
+| Fire 🔥  | 5.8                | 16%        |
 | Earth 🌍 | 9.500000000000002  | 27%        |
 | Air 💨   | 9.200000000000003  | 26%        |
-| Water 💧 | 10.900000000000002 | 30%        |
-| Total    | 35.7               | 100%       |
+| Water 💧 | 10.900000000000002 | 31%        |
+| Total    | 35.400000000000006 | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 8.5                | 24%        |
+| Cardinal | 8.2                | 23%        |
 | Fixed    | 9.5                | 27%        |
-| Mutable  | 17.700000000000006 | 49%        |
-| Total    | 35.7               | 100%       |
+| Mutable  | 17.700000000000006 | 50%        |
+| Total    | 35.400000000000006 | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -146,45 +145,44 @@ Buenos Aires Subject — Natal Chart Report
 | 12 | True_North_Lunar_Node |
 | 13 | Mean_Lilith           |
 | 14 | True_Lilith           |
-| 15 | Earth                 |
-| 16 | Chiron                |
-| 17 | Pholus                |
-| 18 | Ceres                 |
-| 19 | Pallas                |
-| 20 | Juno                  |
-| 21 | Vesta                 |
-| 22 | Interpolated_Lilith   |
-| 23 | Interpolated_Perigee  |
-| 24 | Cupido                |
-| 25 | Hades                 |
-| 26 | Zeus                  |
-| 27 | Kronos                |
-| 28 | Apollon               |
-| 29 | Admetos               |
-| 30 | Vulkanus              |
-| 31 | Poseidon              |
-| 32 | Eris                  |
-| 33 | Sedna                 |
-| 34 | Haumea                |
-| 35 | Makemake              |
-| 36 | Ixion                 |
-| 37 | Orcus                 |
-| 38 | Quaoar                |
-| 39 | Pars_Fortunae         |
-| 40 | Pars_Spiritus         |
-| 41 | Pars_Amoris           |
-| 42 | Pars_Fidei            |
-| 43 | Vertex                |
-| 44 | White_Moon            |
-| 45 | Descendant            |
-| 46 | Imum_Coeli            |
-| 47 | Anti_Vertex           |
-| 48 | Mean_South_Lunar_Node |
-| 49 | True_South_Lunar_Node |
-| 50 | Mean_Priapus          |
-| 51 | True_Priapus          |
-| 52 | Ascendant             |
-| 53 | Medium_Coeli          |
+| 15 | Chiron                |
+| 16 | Pholus                |
+| 17 | Ceres                 |
+| 18 | Pallas                |
+| 19 | Juno                  |
+| 20 | Vesta                 |
+| 21 | Interpolated_Lilith   |
+| 22 | Interpolated_Perigee  |
+| 23 | Cupido                |
+| 24 | Hades                 |
+| 25 | Zeus                  |
+| 26 | Kronos                |
+| 27 | Apollon               |
+| 28 | Admetos               |
+| 29 | Vulkanus              |
+| 30 | Poseidon              |
+| 31 | Eris                  |
+| 32 | Sedna                 |
+| 33 | Haumea                |
+| 34 | Makemake              |
+| 35 | Ixion                 |
+| 36 | Orcus                 |
+| 37 | Quaoar                |
+| 38 | Pars_Fortunae         |
+| 39 | Pars_Spiritus         |
+| 40 | Pars_Amoris           |
+| 41 | Pars_Fidei            |
+| 42 | Vertex                |
+| 43 | White_Moon            |
+| 44 | Descendant            |
+| 45 | Imum_Coeli            |
+| 46 | Anti_Vertex           |
+| 47 | Mean_South_Lunar_Node |
+| 48 | True_South_Lunar_Node |
+| 49 | Mean_Priapus          |
+| 50 | True_Priapus          |
+| 51 | Ascendant             |
+| 52 | Medium_Coeli          |
 +----+-----------------------+
 
 +----------------+---------+
@@ -218,7 +216,6 @@ Buenos Aires Subject — Natal Chart Report
 | Sun                   | semi-square ∠    | Mean South Lunar Node | 0.44° | Applying →   |
 | Sun                   | semi-square ∠    | True South Lunar Node | 1.13° | Separating ← |
 | Sun                   | opposition ☍     | True Lilith           | 5.10° | Separating ← |
-| Sun                   | square □         | Earth                 | 5.75° | Applying →   |
 | Sun                   | sesquiquadrate ⚼ | Juno                  | 1.06° | Applying →   |
 | Sun                   | semi-square ∠    | Sedna                 | 2.06° | Applying →   |
 | Sun                   | square □         | Haumea                | 1.79° | Applying →   |
@@ -415,7 +412,6 @@ Buenos Aires Subject — Natal Chart Report
 | Pluto                 | square □         | Mean North Lunar Node | 5.71° | Separating ← |
 | Pluto                 | trine △          | Chiron                | 0.67° | Separating ← |
 | Pluto                 | square □         | Mean South Lunar Node | 5.71° | Separating ← |
-| Pluto                 | sesquiquadrate ⚼ | Earth                 | 0.40° | Applying →   |
 | Pluto                 | quincunx ⚻       | Pallas                | 0.65° | Separating ← |
 | Pluto                 | conjunction ☌    | Juno                  | 5.09° | Separating ← |
 | Pluto                 | opposition ☍     | Sedna                 | 4.09° | Applying →   |
@@ -480,7 +476,6 @@ Buenos Aires Subject — Natal Chart Report
 | Chiron                | sextile ⚹        | Admetos               | 1.43° | Separating ← |
 | Chiron                | conjunction ☌    | Vulkanus              | 1.22° | Separating ← |
 | Ascendant             | square □         | Mean Lilith           | 5.20° | Separating ← |
-| Ascendant             | quincunx ⚻       | Earth                 | 0.16° | Separating ← |
 | Ascendant             | sextile ⚹        | Pholus                | 2.91° | Applying →   |
 | Ascendant             | quintile Q       | Juno                  | 1.85° | Separating ← |
 | Ascendant             | trine △          | Vesta                 | 4.70° | Applying →   |
@@ -493,7 +488,6 @@ Buenos Aires Subject — Natal Chart Report
 | Ascendant             | sextile ⚹        | Poseidon              | 1.41° | Separating ← |
 | Medium Coeli          | sextile ⚹        | Mean South Lunar Node | 2.08° | Separating ← |
 | Medium Coeli          | sextile ⚹        | True South Lunar Node | 3.65° | Separating ← |
-| Medium Coeli          | quintile Q       | Earth                 | 0.23° | Applying →   |
 | Medium Coeli          | semi-square ∠    | Ceres                 | 1.16° | Applying →   |
 | Medium Coeli          | conjunction ☌    | Pallas                | 4.28° | Applying →   |
 | Medium Coeli          | quincunx ⚻       | Juno                  | 1.46° | Separating ← |
@@ -509,7 +503,6 @@ Buenos Aires Subject — Natal Chart Report
 | Medium Coeli          | sesquiquadrate ⚼ | Poseidon              | 1.98° | Applying →   |
 | Descendant            | square □         | Mean Lilith           | 5.20° | Separating ← |
 | Descendant            | quintile Q       | True Lilith           | 0.99° | Applying →   |
-| Descendant            | semi-sextile ⚺   | Earth                 | 0.16° | Separating ← |
 | Descendant            | trine △          | Pholus                | 2.91° | Applying →   |
 | Descendant            | sextile ⚹        | Vesta                 | 4.70° | Applying →   |
 | Descendant            | quintile Q       | Sedna                 | 0.85° | Separating ← |
@@ -538,7 +531,6 @@ Buenos Aires Subject — Natal Chart Report
 | Imum Coeli            | opposition ☍     | Hades                 | 2.51° | Separating ← |
 | Imum Coeli            | sextile ⚹        | Apollon               | 2.01° | Applying →   |
 | Imum Coeli            | semi-square ∠    | Poseidon              | 1.98° | Applying →   |
-| Mean Lilith           | trine △          | Earth                 | 5.03° | Applying →   |
 | Mean Lilith           | trine △          | Ceres                 | 2.97° | Separating ← |
 | Mean Lilith           | biquintile bQ    | Eris                  | 1.44° | Separating ← |
 | Mean Lilith           | sextile ⚹        | Haumea                | 1.08° | Applying →   |
@@ -585,14 +577,6 @@ Buenos Aires Subject — Natal Chart Report
 | True Lilith           | semi-sextile ⚺   | Cupido                | 0.16° | Separating ← |
 | True Lilith           | opposition ☍     | Kronos                | 2.19° | Applying →   |
 | True Lilith           | biquintile bQ    | Admetos               | 1.50° | Applying →   |
-| Earth                 | square □         | Pholus                | 3.07° | Separating ← |
-| Earth                 | trine △          | Ceres                 | 2.07° | Applying →   |
-| Earth                 | opposition ☍     | Haumea                | 3.96° | Applying →   |
-| Earth                 | trine △          | Quaoar                | 5.50° | Separating ← |
-| Earth                 | trine △          | Pars Amoris           | 5.16° | Static =     |
-| Earth                 | opposition ☍     | Zeus                  | 4.20° | Applying →   |
-| Earth                 | semi-square ∠    | Admetos               | 0.36° | Applying →   |
-| Earth                 | quincunx ⚻       | Poseidon              | 1.25° | Separating ← |
 | Pholus                | sextile ⚹        | Vesta                 | 1.78° | Separating ← |
 | Pholus                | sextile ⚹        | Makemake              | 0.86° | Applying →   |
 | Pholus                | quintile Q       | Anti Vertex           | 1.72° | Applying →   |

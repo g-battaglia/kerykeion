@@ -23,7 +23,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072905      |
-| Active Points Count | 53                  |
+| Active Points Count | 52                  |
 +---------------------+---------------------+
 
 +Solar Return Chart Celestial Points---------+--------------+---------+------+----------------+
@@ -47,7 +47,6 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0080°/d   | -18.46° | R    | Third House    |
 | Mean Lilith           | Sco ♏️ | 28.99°   | +0.1119°/d   | -24.62° | -    | First House    |
 | True Lilith           | Sag ♐️ | 18.01°   | -1.4330°/d   | -26.88° | R    | Second House   |
-| Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Fifth House    |
 | Chiron                | Can ♋️ | 19.88°   | +0.1070°/d   | +15.79° | -    | Ninth House    |
 | Pholus                | Can ♋️ | 7.99°    | +0.1329°/d   | +13.79° | -    | Eighth House   |
 | Ceres                 | Leo ♌️ | 13.71°   | +0.4492°/d   | +23.05° | -    | Ninth House    |
@@ -112,20 +111,20 @@ Sample Natal Subject Solar Return — Solar Return 1990
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 6.699999999999999  | 19%        |
-| Earth 🌍 | 7.999999999999999  | 22%        |
+| Fire 🔥  | 6.3999999999999995 | 18%        |
+| Earth 🌍 | 7.999999999999999  | 23%        |
 | Air 💨   | 6.8999999999999995 | 19%        |
 | Water 💧 | 14.100000000000003 | 40%        |
-| Total    | 35.7               | 100%       |
+| Total    | 35.4               | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 13.200000000000005 | 37%        |
-| Fixed    | 17.900000000000006 | 50%        |
+| Cardinal | 12.900000000000004 | 36%        |
+| Fixed    | 17.900000000000006 | 51%        |
 | Mutable  | 4.6                | 13%        |
-| Total    | 35.70000000000001  | 100%       |
+| Total    | 35.40000000000001  | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -145,45 +144,44 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | 12 | True_North_Lunar_Node |
 | 13 | Mean_Lilith           |
 | 14 | True_Lilith           |
-| 15 | Earth                 |
-| 16 | Chiron                |
-| 17 | Pholus                |
-| 18 | Ceres                 |
-| 19 | Pallas                |
-| 20 | Juno                  |
-| 21 | Vesta                 |
-| 22 | Interpolated_Lilith   |
-| 23 | Interpolated_Perigee  |
-| 24 | Cupido                |
-| 25 | Hades                 |
-| 26 | Zeus                  |
-| 27 | Kronos                |
-| 28 | Apollon               |
-| 29 | Admetos               |
-| 30 | Vulkanus              |
-| 31 | Poseidon              |
-| 32 | Eris                  |
-| 33 | Sedna                 |
-| 34 | Haumea                |
-| 35 | Makemake              |
-| 36 | Ixion                 |
-| 37 | Orcus                 |
-| 38 | Quaoar                |
-| 39 | Pars_Fortunae         |
-| 40 | Pars_Spiritus         |
-| 41 | Pars_Amoris           |
-| 42 | Pars_Fidei            |
-| 43 | Vertex                |
-| 44 | White_Moon            |
-| 45 | Descendant            |
-| 46 | Imum_Coeli            |
-| 47 | Anti_Vertex           |
-| 48 | Mean_South_Lunar_Node |
-| 49 | True_South_Lunar_Node |
-| 50 | Mean_Priapus          |
-| 51 | True_Priapus          |
-| 52 | Ascendant             |
-| 53 | Medium_Coeli          |
+| 15 | Chiron                |
+| 16 | Pholus                |
+| 17 | Ceres                 |
+| 18 | Pallas                |
+| 19 | Juno                  |
+| 20 | Vesta                 |
+| 21 | Interpolated_Lilith   |
+| 22 | Interpolated_Perigee  |
+| 23 | Cupido                |
+| 24 | Hades                 |
+| 25 | Zeus                  |
+| 26 | Kronos                |
+| 27 | Apollon               |
+| 28 | Admetos               |
+| 29 | Vulkanus              |
+| 30 | Poseidon              |
+| 31 | Eris                  |
+| 32 | Sedna                 |
+| 33 | Haumea                |
+| 34 | Makemake              |
+| 35 | Ixion                 |
+| 36 | Orcus                 |
+| 37 | Quaoar                |
+| 38 | Pars_Fortunae         |
+| 39 | Pars_Spiritus         |
+| 40 | Pars_Amoris           |
+| 41 | Pars_Fidei            |
+| 42 | Vertex                |
+| 43 | White_Moon            |
+| 44 | Descendant            |
+| 45 | Imum_Coeli            |
+| 46 | Anti_Vertex           |
+| 47 | Mean_South_Lunar_Node |
+| 48 | True_South_Lunar_Node |
+| 49 | Mean_Priapus          |
+| 50 | True_Priapus          |
+| 51 | Ascendant             |
+| 52 | Medium_Coeli          |
 +----+-----------------------+
 
 +----------------+---------+
@@ -207,7 +205,6 @@ Sample Natal Subject Solar Return — Solar Return 1990
 +-----------------------+------------------+-----------------------+-------+--------------+
 | Sun                   | conjunction ☌    | Jupiter               | 4.63° | Separating ← |
 | Sun                   | trine △          | Mean Lilith           | 0.45° | Applying →   |
-| Sun                   | trine △          | Earth                 | 1.46° | Applying →   |
 | Sun                   | quintile Q       | Vesta                 | 1.60° | Applying →   |
 | Sun                   | sextile ⚹        | Haumea                | 2.22° | Separating ← |
 | Sun                   | trine △          | Ixion                 | 5.84° | Separating ← |
@@ -264,7 +261,6 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Venus                 | biquintile bQ    | True North Lunar Node | 0.44° | Separating ← |
 | Venus                 | trine △          | Ascendant             | 4.11° | Separating ← |
 | Venus                 | sextile ⚹        | Descendant            | 4.11° | Separating ← |
-| Venus                 | square □         | Earth                 | 1.71° | Separating ← |
 | Venus                 | conjunction ☌    | Pallas                | 5.54° | Applying →   |
 | Venus                 | semi-square ∠    | Vesta                 | 1.44° | Applying →   |
 | Venus                 | square □         | Haumea                | 5.39° | Separating ← |
@@ -366,7 +362,6 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Pluto                 | trine △          | Chiron                | 4.91° | Separating ← |
 | Pluto                 | square □         | Medium Coeli          | 4.94° | Separating ← |
 | Pluto                 | square □         | Imum Coeli            | 4.94° | Separating ← |
-| Pluto                 | sesquiquadrate ⚼ | Earth                 | 0.03° | Separating ← |
 | Pluto                 | square □         | Ceres                 | 1.26° | Applying →   |
 | Pluto                 | conjunction ☌    | Juno                  | 4.88° | Applying →   |
 | Pluto                 | opposition ☍     | Vesta                 | 3.17° | Separating ← |
@@ -436,7 +431,6 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Chiron                | conjunction ☌    | Vulkanus              | 4.54° | Separating ← |
 | Ascendant             | square □         | Mean South Lunar Node | 1.97° | Applying →   |
 | Ascendant             | square □         | True South Lunar Node | 1.45° | Applying →   |
-| Ascendant             | biquintile bQ    | Earth                 | 0.18° | Applying →   |
 | Ascendant             | trine △          | Pholus                | 2.17° | Applying →   |
 | Ascendant             | trine △          | Pallas                | 1.43° | Applying →   |
 | Ascendant             | conjunction ☌    | Juno                  | 4.28° | Applying →   |
@@ -485,7 +479,6 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Imum Coeli            | trine △          | Kronos                | 1.98° | Applying →   |
 | Imum Coeli            | square □         | Admetos               | 4.95° | Separating ← |
 | Imum Coeli            | biquintile bQ    | Vulkanus              | 1.43° | Applying →   |
-| Mean Lilith           | trine △          | Earth                 | 1.01° | Applying →   |
 | Mean Lilith           | sextile ⚹        | Haumea                | 2.67° | Separating ← |
 | Mean Lilith           | square □         | Makemake              | 5.51° | Applying →   |
 | Mean Lilith           | conjunction ☌    | Quaoar                | 4.91° | Separating ← |
@@ -532,18 +525,6 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | True Lilith           | semi-sextile ⚺   | Cupido                | 0.60° | Separating ← |
 | True Lilith           | opposition ☍     | Kronos                | 3.88° | Separating ← |
 | True Lilith           | sextile ⚹        | Apollon               | 4.19° | Applying →   |
-| Earth                 | sesquiquadrate ⚼ | Ceres                 | 1.29° | Applying →   |
-| Earth                 | opposition ☍     | Haumea                | 3.68° | Applying →   |
-| Earth                 | trine △          | Quaoar                | 5.92° | Separating ← |
-| Earth                 | quincunx ⚻       | Pars Fortunae         | 1.52° | Static =     |
-| Earth                 | sesquiquadrate ⚼ | Pars Spiritus         | 1.85° | Static =     |
-| Earth                 | quintile Q       | Vertex                | 0.54° | Static =     |
-| Earth                 | trine △          | Interpolated Lilith   | 4.58° | Applying →   |
-| Earth                 | sextile ⚹        | Mean Priapus          | 1.01° | Applying →   |
-| Earth                 | trine △          | White Moon            | 3.74° | Applying →   |
-| Earth                 | opposition ☍     | Zeus                  | 3.97° | Applying →   |
-| Earth                 | semi-square ∠    | Admetos               | 0.04° | Applying →   |
-| Earth                 | quincunx ⚻       | Poseidon              | 1.32° | Applying →   |
 | Pholus                | conjunction ☌    | Pallas                | 0.74° | Applying →   |
 | Pholus                | trine △          | Juno                  | 2.11° | Applying →   |
 | Pholus                | sextile ⚹        | Sedna                 | 3.56° | Applying →   |

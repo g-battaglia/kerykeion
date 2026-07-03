@@ -16,7 +16,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Zodiac Type         | Tropical            |
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
-| Active Points Count | 53                  |
+| Active Points Count | 52                  |
 +---------------------+---------------------+
 
 +Composite – First Subject — Birth Data----------+
@@ -41,7 +41,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2448094.072917      |
-| Active Points Count | 53                  |
+| Active Points Count | 52                  |
 +---------------------+---------------------+
 
 +Composite – Second Subject — Birth Data---------+
@@ -66,7 +66,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2427121.979167      |
-| Active Points Count | 53                  |
+| Active Points Count | 52                  |
 +---------------------+---------------------+
 
 +Composite Chart Celestial Points-+----------+-------+-------+------+----------------+
@@ -94,7 +94,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Ceres                 | Tau ♉️ | 22.10°   | N/A   | N/A   | -    | Eighth House   |
 | Chiron                | Gem ♊️ | 21.81°   | N/A   | N/A   | -    | Eighth House   |
 | Cupido                | Lib ♎️ | 9.65°    | N/A   | N/A   | -    | Twelfth House  |
-| Earth                 | Ari ♈️ | 0.00°    | N/A   | N/A   | -    | Sixth House    |
 | Eris                  | Ari ♈️ | 9.82°    | N/A   | N/A   | -    | Sixth House    |
 | Hades                 | Tau ♉️ | 10.06°   | N/A   | N/A   | -    | Seventh House  |
 | Haumea                | Vir ♍️ | 0.67°    | N/A   | N/A   | -    | Tenth House    |
@@ -155,20 +154,20 @@ Sample Natal Subject & Yoko Ono — Composite Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 7.699999999999999  | 22%        |
-| Earth 🌍 | 11.200000000000003 | 31%        |
+| Fire 🔥  | 7.3999999999999995 | 21%        |
+| Earth 🌍 | 11.200000000000003 | 32%        |
 | Air 💨   | 10.000000000000002 | 28%        |
 | Water 💧 | 6.8                | 19%        |
-| Total    | 35.7               | 100%       |
+| Total    | 35.4               | 100%       |
 +----------+--------------------+------------+
 
 +Quality Distribution-----------+------------+
 | Quality  | Count              | Percentage |
 +----------+--------------------+------------+
-| Cardinal | 15.500000000000007 | 43%        |
+| Cardinal | 15.200000000000006 | 43%        |
 | Fixed    | 13.900000000000004 | 39%        |
 | Mutable  | 6.299999999999999  | 18%        |
-| Total    | 35.70000000000001  | 100%       |
+| Total    | 35.400000000000006 | 100%       |
 +----------+--------------------+------------+
 
 +Active Celestial Points-----+
@@ -182,51 +181,50 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | 6  | Chiron                |
 | 7  | Cupido                |
 | 8  | Descendant            |
-| 9  | Earth                 |
-| 10 | Eris                  |
-| 11 | Hades                 |
-| 12 | Haumea                |
-| 13 | Imum_Coeli            |
-| 14 | Interpolated_Lilith   |
-| 15 | Interpolated_Perigee  |
-| 16 | Ixion                 |
-| 17 | Juno                  |
-| 18 | Jupiter               |
-| 19 | Kronos                |
-| 20 | Makemake              |
-| 21 | Mars                  |
-| 22 | Mean_Lilith           |
-| 23 | Mean_North_Lunar_Node |
-| 24 | Mean_Priapus          |
-| 25 | Mean_South_Lunar_Node |
-| 26 | Medium_Coeli          |
-| 27 | Mercury               |
-| 28 | Moon                  |
-| 29 | Neptune               |
-| 30 | Orcus                 |
-| 31 | Pallas                |
-| 32 | Pars_Amoris           |
-| 33 | Pars_Fidei            |
-| 34 | Pars_Fortunae         |
-| 35 | Pars_Spiritus         |
-| 36 | Pholus                |
-| 37 | Pluto                 |
-| 38 | Poseidon              |
-| 39 | Quaoar                |
-| 40 | Saturn                |
-| 41 | Sedna                 |
-| 42 | Sun                   |
-| 43 | True_Lilith           |
-| 44 | True_North_Lunar_Node |
-| 45 | True_Priapus          |
-| 46 | True_South_Lunar_Node |
-| 47 | Uranus                |
-| 48 | Venus                 |
-| 49 | Vertex                |
-| 50 | Vesta                 |
-| 51 | Vulkanus              |
-| 52 | White_Moon            |
-| 53 | Zeus                  |
+| 9  | Eris                  |
+| 10 | Hades                 |
+| 11 | Haumea                |
+| 12 | Imum_Coeli            |
+| 13 | Interpolated_Lilith   |
+| 14 | Interpolated_Perigee  |
+| 15 | Ixion                 |
+| 16 | Juno                  |
+| 17 | Jupiter               |
+| 18 | Kronos                |
+| 19 | Makemake              |
+| 20 | Mars                  |
+| 21 | Mean_Lilith           |
+| 22 | Mean_North_Lunar_Node |
+| 23 | Mean_Priapus          |
+| 24 | Mean_South_Lunar_Node |
+| 25 | Medium_Coeli          |
+| 26 | Mercury               |
+| 27 | Moon                  |
+| 28 | Neptune               |
+| 29 | Orcus                 |
+| 30 | Pallas                |
+| 31 | Pars_Amoris           |
+| 32 | Pars_Fidei            |
+| 33 | Pars_Fortunae         |
+| 34 | Pars_Spiritus         |
+| 35 | Pholus                |
+| 36 | Pluto                 |
+| 37 | Poseidon              |
+| 38 | Quaoar                |
+| 39 | Saturn                |
+| 40 | Sedna                 |
+| 41 | Sun                   |
+| 42 | True_Lilith           |
+| 43 | True_North_Lunar_Node |
+| 44 | True_Priapus          |
+| 45 | True_South_Lunar_Node |
+| 46 | Uranus                |
+| 47 | Venus                 |
+| 48 | Vertex                |
+| 49 | Vesta                 |
+| 50 | Vulkanus              |
+| 51 | White_Moon            |
+| 52 | Zeus                  |
 +----+-----------------------+
 
 +----------------+---------+
@@ -254,7 +252,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Sun                   | opposition ☍     | Neptune               | 3.04° | Static = |
 | Sun                   | trine △          | Pluto                 | 4.34° | Static = |
 | Sun                   | sextile ⚹        | True Lilith           | 0.46° | Static = |
-| Sun                   | semi-square ∠    | Earth                 | 1.04° | Static = |
 | Sun                   | opposition ☍     | Juno                  | 6.00° | Static = |
 | Sun                   | trine △          | Pars Spiritus         | 2.70° | Static = |
 | Sun                   | sesquiquadrate ⚼ | Pars Amoris           | 1.94° | Static = |
@@ -277,7 +274,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Moon                  | sextile ⚹        | Medium Coeli          | 1.56° | Static = |
 | Moon                  | trine △          | Imum Coeli            | 1.56° | Static = |
 | Moon                  | semi-sextile ⚺   | Mean Lilith           | 0.42° | Static = |
-| Moon                  | opposition ☍     | Earth                 | 1.17° | Static = |
 | Moon                  | opposition ☍     | Pholus                | 6.93° | Static = |
 | Moon                  | quincunx ⚻       | Sedna                 | 1.80° | Static = |
 | Moon                  | semi-sextile ⚺   | Haumea                | 0.50° | Static = |
@@ -307,7 +303,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mercury               | square □         | Mean South Lunar Node | 4.69° | Static = |
 | Mercury               | square □         | True South Lunar Node | 5.22° | Static = |
 | Mercury               | quintile Q       | True Lilith           | 1.33° | Static = |
-| Mercury               | sextile ⚹        | Earth                 | 2.25° | Static = |
 | Mercury               | conjunction ☌    | Ceres                 | 5.65° | Static = |
 | Mercury               | conjunction ☌    | Vesta                 | 5.06° | Static = |
 | Mercury               | semi-sextile ⚺   | Sedna                 | 1.62° | Static = |
@@ -363,7 +358,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Jupiter               | trine △          | Descendant            | 0.19° | Static = |
 | Jupiter               | conjunction ☌    | Mean South Lunar Node | 0.76° | Static = |
 | Jupiter               | conjunction ☌    | True South Lunar Node | 0.23° | Static = |
-| Jupiter               | biquintile bQ    | Earth                 | 1.70° | Static = |
 | Jupiter               | sesquiquadrate ⚼ | Pholus                | 0.79° | Static = |
 | Jupiter               | square □         | Ceres                 | 0.20° | Static = |
 | Jupiter               | trine △          | Pallas                | 1.55° | Static = |
@@ -380,7 +374,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Saturn                | conjunction ☌    | Imum Coeli            | 1.02° | Static = |
 | Saturn                | quincunx ⚻       | Mean Lilith           | 0.13° | Static = |
 | Saturn                | semi-square ∠    | True Lilith           | 1.21° | Static = |
-| Saturn                | sextile ⚹        | Earth                 | 0.63° | Static = |
 | Saturn                | square □         | Sedna                 | 1.26° | Static = |
 | Saturn                | quincunx ⚻       | Haumea                | 0.04° | Static = |
 | Saturn                | opposition ☍     | Makemake              | 2.03° | Static = |
@@ -402,7 +395,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Uranus                | semi-sextile ⚺   | Imum Coeli            | 0.97° | Static = |
 | Uranus                | opposition ☍     | Mean Lilith           | 2.11° | Static = |
 | Uranus                | opposition ☍     | Mean South Lunar Node | 5.58° | Static = |
-| Uranus                | semi-sextile ⚺   | Earth                 | 1.36° | Static = |
 | Uranus                | sextile ⚹        | Pallas                | 4.79° | Static = |
 | Uranus                | square □         | Vesta                 | 5.95° | Static = |
 | Uranus                | sextile ⚹        | Sedna                 | 0.72° | Static = |
@@ -508,7 +500,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Ascendant             | opposition ☍     | Admetos               | 5.45° | Static = |
 | Medium Coeli          | semi-sextile ⚺   | Mean Lilith           | 1.14° | Static = |
 | Medium Coeli          | sesquiquadrate ⚼ | True Lilith           | 0.19° | Static = |
-| Medium Coeli          | trine △          | Earth                 | 0.39° | Static = |
 | Medium Coeli          | square □         | Pallas                | 5.76° | Static = |
 | Medium Coeli          | square □         | Sedna                 | 0.24° | Static = |
 | Medium Coeli          | semi-sextile ⚺   | Haumea                | 1.06° | Static = |
@@ -542,7 +533,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Descendant            | conjunction ☌    | Admetos               | 5.45° | Static = |
 | Imum Coeli            | quincunx ⚻       | Mean Lilith           | 1.14° | Static = |
 | Imum Coeli            | semi-square ∠    | True Lilith           | 0.19° | Static = |
-| Imum Coeli            | sextile ⚹        | Earth                 | 0.39° | Static = |
 | Imum Coeli            | square □         | Pallas                | 5.76° | Static = |
 | Imum Coeli            | quintile Q       | Eris                  | 1.79° | Static = |
 | Imum Coeli            | square □         | Sedna                 | 0.24° | Static = |
@@ -560,7 +550,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Imum Coeli            | trine △          | Apollon               | 3.26° | Static = |
 | Imum Coeli            | square □         | Admetos               | 2.04° | Static = |
 | Imum Coeli            | quincunx ⚻       | Vulkanus              | 0.33° | Static = |
-| Mean Lilith           | quincunx ⚻       | Earth                 | 0.75° | Static = |
 | Mean Lilith           | biquintile bQ    | Pholus                | 1.34° | Static = |
 | Mean Lilith           | trine △          | Sedna                 | 1.39° | Static = |
 | Mean Lilith           | conjunction ☌    | Haumea                | 0.08° | Static = |
@@ -577,7 +566,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean Lilith           | sextile ⚹        | Vulkanus              | 1.48° | Static = |
 | Mean Lilith           | semi-square ∠    | Poseidon              | 0.45° | Static = |
 | Mean South Lunar Node | conjunction ☌    | True South Lunar Node | 0.53° | Static = |
-| Mean South Lunar Node | biquintile bQ    | Earth                 | 0.94° | Static = |
 | Mean South Lunar Node | sesquiquadrate ⚼ | Pholus                | 0.03° | Static = |
 | Mean South Lunar Node | square □         | Ceres                 | 0.96° | Static = |
 | Mean South Lunar Node | trine △          | Pallas                | 0.79° | Static = |
@@ -592,7 +580,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean South Lunar Node | sextile ⚹        | White Moon            | 3.48° | Static = |
 | Mean South Lunar Node | semi-square ∠    | Cupido                | 1.58° | Static = |
 | Mean South Lunar Node | trine △          | Admetos               | 4.50° | Static = |
-| True South Lunar Node | biquintile bQ    | Earth                 | 1.47° | Static = |
 | True South Lunar Node | sesquiquadrate ⚼ | Pholus                | 0.56° | Static = |
 | True South Lunar Node | square □         | Ceres                 | 0.43° | Static = |
 | True South Lunar Node | trine △          | Pallas                | 1.32° | Static = |
@@ -615,19 +602,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | True Lilith           | sextile ⚹        | Hades                 | 4.36° | Static = |
 | True Lilith           | semi-square ∠    | Admetos               | 1.86° | Static = |
 | True Lilith           | quincunx ⚻       | Poseidon              | 0.88° | Static = |
-| Earth                 | biquintile bQ    | Juno                  | 1.97° | Static = |
-| Earth                 | semi-sextile ⚺   | Sedna                 | 0.63° | Static = |
-| Earth                 | quincunx ⚻       | Haumea                | 0.67° | Static = |
-| Earth                 | trine △          | Makemake              | 2.66° | Static = |
-| Earth                 | square □         | Orcus                 | 4.31° | Static = |
-| Earth                 | trine △          | Pars Fortunae         | 2.42° | Static = |
-| Earth                 | opposition ☍     | Pars Amoris           | 0.90° | Static = |
-| Earth                 | semi-square ∠    | Pars Fidei            | 1.21° | Static = |
-| Earth                 | quincunx ⚻       | Interpolated Lilith   | 1.09° | Static = |
-| Earth                 | semi-sextile ⚺   | Mean Priapus          | 0.75° | Static = |
-| Earth                 | sextile ⚹        | Kronos                | 1.11° | Static = |
-| Earth                 | opposition ☍     | Apollon               | 3.65° | Static = |
-| Earth                 | square □         | Vulkanus              | 0.72° | Static = |
 | Pholus                | semi-square ∠    | Ceres                 | 0.99° | Static = |
 | Pholus                | quincunx ⚻       | Juno                  | 0.13° | Static = |
 | Pholus                | semi-square ∠    | Vesta                 | 0.41° | Static = |

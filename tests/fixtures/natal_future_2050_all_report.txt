@@ -24,7 +24,7 @@ Future 2050 Subject — Natal Chart Report
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
 | Julian Day          | 2470007.625000      |
-| Active Points Count | 53                  |
+| Active Points Count | 52                  |
 +---------------------+---------------------+
 
 +Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
@@ -48,7 +48,6 @@ Future 2050 Subject — Natal Chart Report
 | True North Lunar Node | Sco ♏️ | 18.28°   | -0.2080°/d   | -17.27° | R    | First House    |
 | Mean Lilith           | Vir ♍️ | 10.24°   | +0.1119°/d   | +3.33°  | -    | Eleventh House |
 | True Lilith           | Vir ♍️ | 11.79°   | +1.3024°/d   | +2.87°  | -    | Eleventh House |
-| Earth                 | Ari ♈️ | 0.00°    | +0.0000°/d   | +0.00°  | -    | Fifth House    |
 | Chiron                | Sag ♐️ | 5.76°    | -0.0272°/d   | -16.50° | R    | Second House   |
 | Pholus                | Aqu ♒️ | 11.94°   | -0.0286°/d   | -22.36° | R    | Fourth House   |
 | Ceres                 | Leo ♌️ | 23.69°   | +0.4438°/d   | +20.75° | -    | Tenth House    |
@@ -113,21 +112,21 @@ Future 2050 Subject — Natal Chart Report
 +Element Distribution-----------+------------+
 | Element  | Count              | Percentage |
 +----------+--------------------+------------+
-| Fire 🔥  | 11.200000000000003 | 31%        |
+| Fire 🔥  | 10.900000000000002 | 31%        |
 | Earth 🌍 | 6.7                | 19%        |
 | Air 💨   | 10.600000000000001 | 30%        |
 | Water 💧 | 7.199999999999999  | 20%        |
-| Total    | 35.7               | 100%       |
+| Total    | 35.400000000000006 | 100%       |
 +----------+--------------------+------------+
 
-+Quality Distribution----------+------------+
-| Quality  | Count             | Percentage |
-+----------+-------------------+------------+
-| Cardinal | 7.2               | 20%        |
-| Fixed    | 19.30000000000001 | 54%        |
-| Mutable  | 9.2               | 26%        |
-| Total    | 35.70000000000001 | 100%       |
-+----------+-------------------+------------+
++Quality Distribution-----------+------------+
+| Quality  | Count              | Percentage |
++----------+--------------------+------------+
+| Cardinal | 6.9                | 19%        |
+| Fixed    | 19.30000000000001  | 55%        |
+| Mutable  | 9.2                | 26%        |
+| Total    | 35.400000000000006 | 100%       |
++----------+--------------------+------------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |
@@ -146,45 +145,44 @@ Future 2050 Subject — Natal Chart Report
 | 12 | True_North_Lunar_Node |
 | 13 | Mean_Lilith           |
 | 14 | True_Lilith           |
-| 15 | Earth                 |
-| 16 | Chiron                |
-| 17 | Pholus                |
-| 18 | Ceres                 |
-| 19 | Pallas                |
-| 20 | Juno                  |
-| 21 | Vesta                 |
-| 22 | Interpolated_Lilith   |
-| 23 | Interpolated_Perigee  |
-| 24 | Cupido                |
-| 25 | Hades                 |
-| 26 | Zeus                  |
-| 27 | Kronos                |
-| 28 | Apollon               |
-| 29 | Admetos               |
-| 30 | Vulkanus              |
-| 31 | Poseidon              |
-| 32 | Eris                  |
-| 33 | Sedna                 |
-| 34 | Haumea                |
-| 35 | Makemake              |
-| 36 | Ixion                 |
-| 37 | Orcus                 |
-| 38 | Quaoar                |
-| 39 | Pars_Fortunae         |
-| 40 | Pars_Spiritus         |
-| 41 | Pars_Amoris           |
-| 42 | Pars_Fidei            |
-| 43 | Vertex                |
-| 44 | White_Moon            |
-| 45 | Descendant            |
-| 46 | Imum_Coeli            |
-| 47 | Anti_Vertex           |
-| 48 | Mean_South_Lunar_Node |
-| 49 | True_South_Lunar_Node |
-| 50 | Mean_Priapus          |
-| 51 | True_Priapus          |
-| 52 | Ascendant             |
-| 53 | Medium_Coeli          |
+| 15 | Chiron                |
+| 16 | Pholus                |
+| 17 | Ceres                 |
+| 18 | Pallas                |
+| 19 | Juno                  |
+| 20 | Vesta                 |
+| 21 | Interpolated_Lilith   |
+| 22 | Interpolated_Perigee  |
+| 23 | Cupido                |
+| 24 | Hades                 |
+| 25 | Zeus                  |
+| 26 | Kronos                |
+| 27 | Apollon               |
+| 28 | Admetos               |
+| 29 | Vulkanus              |
+| 30 | Poseidon              |
+| 31 | Eris                  |
+| 32 | Sedna                 |
+| 33 | Haumea                |
+| 34 | Makemake              |
+| 35 | Ixion                 |
+| 36 | Orcus                 |
+| 37 | Quaoar                |
+| 38 | Pars_Fortunae         |
+| 39 | Pars_Spiritus         |
+| 40 | Pars_Amoris           |
+| 41 | Pars_Fidei            |
+| 42 | Vertex                |
+| 43 | White_Moon            |
+| 44 | Descendant            |
+| 45 | Imum_Coeli            |
+| 46 | Anti_Vertex           |
+| 47 | Mean_South_Lunar_Node |
+| 48 | True_South_Lunar_Node |
+| 49 | Mean_Priapus          |
+| 50 | True_Priapus          |
+| 51 | Ascendant             |
+| 52 | Medium_Coeli          |
 +----+-----------------------+
 
 +----------------+---------+
@@ -218,7 +216,6 @@ Future 2050 Subject — Natal Chart Report
 | Sun                   | quintile Q       | Mean South Lunar Node | 1.75° | Applying →   |
 | Sun                   | quintile Q       | True South Lunar Node | 2.65° | Applying →   |
 | Sun                   | semi-square ∠    | True Lilith           | 0.85° | Applying →   |
-| Sun                   | trine △          | Earth                 | 2.36° | Applying →   |
 | Sun                   | semi-square ∠    | Juno                  | 1.38° | Applying →   |
 | Sun                   | sextile ⚹        | Vesta                 | 0.00° | Separating ← |
 | Sun                   | square □         | Eris                  | 3.96° | Applying →   |
@@ -245,7 +242,6 @@ Future 2050 Subject — Natal Chart Report
 | Moon                  | square □         | Mean South Lunar Node | 5.84° | Applying →   |
 | Moon                  | square □         | True South Lunar Node | 6.74° | Applying →   |
 | Moon                  | semi-sextile ⚺   | True Lilith           | 0.24° | Applying →   |
-| Moon                  | sesquiquadrate ⚼ | Earth                 | 3.45° | Applying →   |
 | Moon                  | opposition ☍     | Pholus                | 0.40° | Applying →   |
 | Moon                  | semi-sextile ⚺   | Pallas                | 2.17° | Separating ← |
 | Moon                  | semi-sextile ⚺   | Juno                  | 2.47° | Applying →   |
@@ -272,7 +268,6 @@ Future 2050 Subject — Natal Chart Report
 | Mercury               | trine △          | Descendant            | 3.82° | Separating ← |
 | Mercury               | square □         | Mean South Lunar Node | 5.90° | Separating ← |
 | Mercury               | square □         | True South Lunar Node | 5.00° | Separating ← |
-| Mercury               | biquintile bQ    | Earth                 | 0.72° | Applying →   |
 | Mercury               | conjunction ☌    | Ceres                 | 0.41° | Applying →   |
 | Mercury               | semi-square ∠    | Pallas                | 1.10° | Applying →   |
 | Mercury               | sextile ⚹        | Sedna                 | 4.50° | Separating ← |
@@ -382,7 +377,6 @@ Future 2050 Subject — Natal Chart Report
 | Neptune               | sextile ⚹        | Medium Coeli          | 2.65° | Separating ← |
 | Neptune               | semi-sextile ⚺   | Descendant            | 0.80° | Applying →   |
 | Neptune               | trine △          | Imum Coeli            | 2.65° | Separating ← |
-| Neptune               | sextile ⚹        | Earth                 | 2.10° | Applying →   |
 | Neptune               | square □         | Ceres                 | 4.20° | Applying →   |
 | Neptune               | trine △          | Vesta                 | 0.26° | Applying →   |
 | Neptune               | opposition ☍     | Haumea                | 1.32° | Applying →   |
@@ -443,7 +437,6 @@ Future 2050 Subject — Natal Chart Report
 | True North Lunar Node | square □         | Vulkanus              | 0.73° | Applying →   |
 | Chiron                | trine △          | Medium Coeli          | 5.21° | Applying →   |
 | Chiron                | square □         | Mean Lilith           | 4.47° | Separating ← |
-| Chiron                | trine △          | Earth                 | 5.76° | Applying →   |
 | Chiron                | biquintile bQ    | Eris                  | 1.83° | Separating ← |
 | Chiron                | opposition ☍     | Vertex                | 2.31° | Separating ← |
 | Chiron                | conjunction ☌    | Anti Vertex           | 2.31° | Separating ← |
@@ -470,7 +463,6 @@ Future 2050 Subject — Natal Chart Report
 | Medium Coeli          | square □         | Descendant            | 3.45° | Static =     |
 | Medium Coeli          | quintile Q       | Mean South Lunar Node | 1.17° | Separating ← |
 | Medium Coeli          | quintile Q       | True South Lunar Node | 0.27° | Separating ← |
-| Medium Coeli          | trine △          | Earth                 | 0.55° | Separating ← |
 | Medium Coeli          | semi-square ∠    | Juno                  | 1.53° | Separating ← |
 | Medium Coeli          | sextile ⚹        | Vesta                 | 2.92° | Separating ← |
 | Medium Coeli          | square □         | Eris                  | 1.05° | Applying →   |
@@ -500,7 +492,6 @@ Future 2050 Subject — Natal Chart Report
 | Descendant            | sextile ⚹        | White Moon            | 4.92° | Separating ← |
 | Descendant            | quintile Q       | Cupido                | 1.04° | Separating ← |
 | Descendant            | quincunx ⚻       | Poseidon              | 0.73° | Applying →   |
-| Imum Coeli            | sextile ⚹        | Earth                 | 0.55° | Separating ← |
 | Imum Coeli            | sesquiquadrate ⚼ | Juno                  | 1.53° | Separating ← |
 | Imum Coeli            | trine △          | Vesta                 | 2.92° | Separating ← |
 | Imum Coeli            | square □         | Eris                  | 1.05° | Applying →   |
@@ -566,15 +557,6 @@ Future 2050 Subject — Natal Chart Report
 | True Lilith           | conjunction ☌    | Interpolated Lilith   | 1.97° | Applying →   |
 | True Lilith           | opposition ☍     | Mean Priapus          | 1.55° | Separating ← |
 | True Lilith           | sextile ⚹        | Zeus                  | 2.35° | Applying →   |
-| Earth                 | biquintile bQ    | Ceres                 | 0.31° | Applying →   |
-| Earth                 | opposition ☍     | Vesta                 | 2.37° | Applying →   |
-| Earth                 | semi-sextile ⚺   | Eris                  | 1.60° | Separating ← |
-| Earth                 | trine △          | Haumea                | 0.79° | Separating ← |
-| Earth                 | semi-square ∠    | Quaoar                | 0.45° | Separating ← |
-| Earth                 | semi-square ∠    | Cupido                | 0.94° | Separating ← |
-| Earth                 | sesquiquadrate ⚼ | Zeus                  | 0.87° | Separating ← |
-| Earth                 | trine △          | Kronos                | 3.42° | Separating ← |
-| Earth                 | trine △          | Poseidon              | 2.17° | Separating ← |
 | Pholus                | sesquiquadrate ⚼ | Vesta                 | 0.69° | Separating ← |
 | Pholus                | quintile Q       | Haumea                | 0.73° | Applying →   |
 | Pholus                | trine △          | Orcus                 | 0.01° | Applying →   |
