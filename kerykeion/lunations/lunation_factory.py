@@ -173,11 +173,15 @@ class LunationFinderFactory:
             ValueError: If a phase name is unknown or the range is too large
                 to scan.
         """
-        if phases:
+        # None = default (all four phases); an explicit empty list = scan none.
+        # `if phases:` conflated the two, treating phases=[] as "all four" —
+        # the opposite of the ingress/station factories, whose planets=[] means
+        # "scan nothing". Distinguish on `is not None` for a consistent contract.
+        if phases is not None:
             invalid = sorted(set(phases) - set(_PHASE_ANGLES))
             if invalid:
                 raise ValueError(f"Unknown phase names: {', '.join(invalid)}")
-            targets = {k: _PHASE_ANGLES[k] for k in phases}
+            targets = {k: _PHASE_ANGLES[k] for k in dict.fromkeys(phases)}
         else:
             targets = dict(_PHASE_ANGLES)
 

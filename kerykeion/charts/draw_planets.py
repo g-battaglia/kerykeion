@@ -132,8 +132,12 @@ def draw_planets(
     # A list of (abs_pos, index) tuples is used instead of a {abs_pos: index}
     # dict so that two points sharing the exact same absolute position (e.g.
     # an exact conjunction) are both kept and rendered.
+    # Bound to the shorter of the two lists so a settings list longer than the
+    # collected points (e.g. a return subject with fewer points than settings)
+    # can't IndexError — the same length guard the sibling indicator helpers use.
     sorted_position_entries = sorted(
-        (main_points_abs_positions[i], i) for i in range(len(available_planets_setting))
+        (main_points_abs_positions[i], i)
+        for i in range(min(len(available_planets_setting), len(main_points_abs_positions)))
     )
     sorted_positions = [entry[0] for entry in sorted_position_entries]
     sorted_point_indices = [entry[1] for entry in sorted_position_entries]
@@ -471,7 +475,13 @@ def _handle_multi_point_group(
     if (space_before_first > (needed_space * 0.5)) and (space_after_last > (needed_space * 0.5)):
         start_position = space_before_first - (needed_space * 0.5)
     else:
-        start_position = (leftover_space / (space_before_first + space_after_last)) * space_before_first
+        # Guard the divisor: a group of >=3 points at the exact same absolute
+        # position gives space_before_first == space_after_last == 0 (0/0). Fall
+        # back to centering the group instead of raising ZeroDivisionError.
+        edge_space = space_before_first + space_after_last
+        start_position = (
+            (leftover_space / edge_space) * space_before_first if edge_space else space_before_first
+        )
 
     # Apply positions if there's enough space
     if available_space > needed_space:

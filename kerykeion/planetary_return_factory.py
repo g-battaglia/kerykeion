@@ -618,7 +618,18 @@ class PlanetaryReturnFactory:
             else:
                 raise KerykeionException(f"Invalid return type {return_type}. Use 'Solar' or 'Lunar'.")
 
-        return_date_utc = julian_to_datetime(return_julian_date)
+        try:
+            return_date_utc = julian_to_datetime(return_julian_date)
+        except ValueError as exc:
+            # julian_to_datetime (and the from_iso_utc_time path below) use
+            # Python datetime, which cannot represent years < 1. A return
+            # instant landing before 1 CE (e.g. a backwards search from early
+            # CE) surfaces as a clear KerykeionException rather than a raw
+            # ValueError. BCE returns are not yet supported.
+            raise KerykeionException(
+                "The return instant falls before 1 CE, which is not supported "
+                "(datetime cannot represent BCE years). Narrow the search range."
+            ) from exc
         return_date_utc = return_date_utc.replace(tzinfo=timezone.utc)
 
         # Build kwargs, propagating the source subject's zodiac/sidereal settings
@@ -1129,7 +1140,13 @@ class PlanetaryReturnFactory:
         """Build a return chart at the given Julian Day."""
         # isoformat() keeps the solver's sub-second precision, matching the
         # solar/lunar return path (strftime silently floored to the second).
-        return_dt = julian_to_datetime(return_jd).replace(tzinfo=timezone.utc)
+        try:
+            return_dt = julian_to_datetime(return_jd).replace(tzinfo=timezone.utc)
+        except ValueError as exc:
+            raise KerykeionException(
+                "The return instant falls before 1 CE, which is not supported "
+                "(datetime cannot represent BCE years). Narrow the search range."
+            ) from exc
         utc_iso = return_dt.isoformat()
 
         return_kwargs: dict = dict(

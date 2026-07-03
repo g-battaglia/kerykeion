@@ -489,8 +489,10 @@ class TestDualChartDataToContext:
 
         if dual_chart_with_score.relationship_score is not None:
             assert "<relationship_score " in context
-            assert 'max="44"' in context
             assert "value=" in context
+            # No hardcoded max: the score is an open-ended additive sum (a strong
+            # synastry exceeds the old 44 cap), so value/max would read >100%.
+            assert "max=" not in context
 
 
 class TestToContextDispatcher:

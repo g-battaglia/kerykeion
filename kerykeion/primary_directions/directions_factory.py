@@ -53,8 +53,23 @@ from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from typing import List, Optional, Literal, Tuple, cast
 from pydantic import BaseModel, Field
 
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+
+
+def _require_geometry(subject: AstrologicalSubjectModel) -> None:
+    """Fail cleanly if the subject lacks the geometry primary directions need.
+
+    julian_day/lat/lng are Optional (e.g. on composite charts); without this
+    guard they reach ephe.calc_ut / math.radians as None and raise a raw,
+    undiagnosable TypeError. Mirrors SecondaryProgressionFactory's guard.
+    """
+    if subject.julian_day is None:
+        raise KerykeionException("Subject is missing Julian Day — cannot compute primary directions.")
+    if subject.lat is None or subject.lng is None:
+        raise KerykeionException("Subject is missing longitude/latitude — cannot compute primary directions.")
+
 
 logger = logging.getLogger(__name__)
 
@@ -144,6 +159,7 @@ class PrimaryDirectionsFactory:
         if aspects is None:
             aspects = list(PrimaryDirectionsFactory.ASPECT_ANGLES.keys())
 
+        _require_geometry(subject)
         rate = 1.0 if rate_key == "ptolemy" else 0.98564
 
         jd = subject.julian_day
@@ -260,6 +276,7 @@ class PrimaryDirectionsFactory:
     @staticmethod
     def compute_speculum(subject: AstrologicalSubjectModel) -> List[SpeculumEntryModel]:
         """Compute and return the speculum (coordinate table) for a chart."""
+        _require_geometry(subject)
         jd = subject.julian_day
         with ephemeris_session() as iflag:
             obliquity = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]

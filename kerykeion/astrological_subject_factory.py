@@ -1172,10 +1172,15 @@ class AstrologicalSubjectFactory:
             # heliocentric / barycentric / planetocentric perspectives the
             # declination is in a different frame, so comparing it against the
             # geocentric obliquity is physically meaningless — leave OOB unset.
+            # Bind nut_data unconditionally: the nutation block below reuses it,
+            # and OOB only runs for geocentric perspectives — without this it was
+            # left unbound for heliocentric/planetocentric charts, so the
+            # nutation feature raised UnboundLocalError and silently returned None
+            # (it is a property of Earth's orientation, valid for any perspective).
+            nut_data = None
             _GEOCENTRIC_OOB_PERSPECTIVES = ("Apparent Geocentric", "True Geocentric", "Topocentric")
             if calc_data.get("perspective_type") in _GEOCENTRIC_OOB_PERSPECTIVES:
                 true_obliquity = None
-                nut_data = None
                 try:
                     nut_data = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
                     true_obliquity = nut_data[0]
@@ -2470,7 +2475,19 @@ class AstrologicalSubjectFactory:
             This ensures that dependent calculations and aspects only use valid data.
         """
 
-        should_calculate = partial(AstrologicalSubjectFactory._should_calculate, active_points=active_points)
+        # Freeze the active-points FILTER. The standard-planet and TNO loops
+        # below remove failed points from the working ``active_points`` list;
+        # if every requested point fails (e.g. active_points=['Sedna'] out of
+        # ephemeris range) that would empty an explicit filter, and
+        # _should_calculate reads an empty list as 'no filter' — silently
+        # computing a FULL chart, the runtime twin of the construction-time
+        # inversion already guarded at build. The final active_points comes
+        # from ``calculated_planets`` (successes only), so the removals are
+        # cosmetic; filtering must run off a stable snapshot.
+        active_points_filter = list(active_points) if active_points else active_points
+        should_calculate = partial(
+            AstrologicalSubjectFactory._should_calculate, active_points=active_points_filter
+        )
 
         point_type: PointType = "AstrologicalPoint"
         julian_day = data["julian_day"]
@@ -2628,7 +2645,7 @@ class AstrologicalSubjectFactory:
                     iflag,
                     houses_degree_ut,
                     point_type,
-                    active_points,
+                    active_points_filter,
                     calculated_planets,
                 )
 
@@ -2710,7 +2727,7 @@ class AstrologicalSubjectFactory:
             data,
             houses_degree_ut,
             point_type,
-            active_points,
+            active_points_filter,
             calculated_planets,
         )
 

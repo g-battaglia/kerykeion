@@ -100,6 +100,16 @@ class PlanetaryPhenomenaFactory:
         if planets is None:
             target_planets = dict(_PHENOMENA_PLANETS)
         else:
+            # Reject unknown/mistyped/wrong-case names rather than silently
+            # dropping them into an empty result (e.g. ['mercury'] or ['Venuss']
+            # would return no phenomena with no signal). Consistent with the
+            # ingress/station/nodes factories.
+            invalid = sorted(set(planets) - set(_PHENOMENA_PLANETS))
+            if invalid:
+                raise ValueError(
+                    f"Unknown planets: {', '.join(invalid)}. "
+                    f"Valid: {', '.join(_PHENOMENA_PLANETS)}"
+                )
             target_planets = {k: v for k, v in _PHENOMENA_PLANETS.items() if k in planets}
 
         phenomena_list: List[PlanetaryPhenomenaModel] = []

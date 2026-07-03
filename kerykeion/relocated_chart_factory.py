@@ -295,8 +295,13 @@ class RelocatedChartFactory:
         # the subject factory, which computes sect inside its own session. A
         # plain session is enough: _compute_is_diurnal builds its own flags.
         with ephemeris_session():
+            # AstrologicalSubjectModel does not carry an ``altitude`` field, so
+            # the sect computation uses sea level (0.0) — the getattr here was
+            # dead code that always resolved to None. Altitude only shifts sect
+            # by arcminutes near sunrise/sunset; a relocation may change it
+            # anyway, so 0.0 is the honest default.
             is_diurnal = AstrologicalSubjectFactory._compute_is_diurnal(
-                jd, new_lat, new_lng, getattr(subject, "altitude", None) or 0.0
+                jd, new_lat, new_lng, 0.0
             )
         relocated_data["is_diurnal"] = is_diurnal
 

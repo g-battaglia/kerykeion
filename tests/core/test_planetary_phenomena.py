@@ -101,11 +101,11 @@ class TestPhenomenaFiltering:
         names = {p.name for p in result.phenomena}
         assert names == {"Venus", "Jupiter"}
 
-    def test_nonexistent_planet_ignored(self, subject):
-        result = PlanetaryPhenomenaFactory.from_subject(
-            subject, planets=["FakePlanet"]
-        )
-        assert len(result.phenomena) == 0
+    def test_nonexistent_planet_raises(self, subject):
+        # Unknown/mistyped names now raise instead of silently returning an
+        # empty result (contract parity with the ingress/station/nodes factories).
+        with pytest.raises(ValueError, match="Unknown planets"):
+            PlanetaryPhenomenaFactory.from_subject(subject, planets=["FakePlanet"])
 
 
 class TestPhenomenaEdgeCases:

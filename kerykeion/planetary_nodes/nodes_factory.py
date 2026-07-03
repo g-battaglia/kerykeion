@@ -161,6 +161,19 @@ class PlanetaryNodesFactory:
                 "requested planets."
             )
 
+        # Reject unknown/mistyped names rather than silently dropping them —
+        # planets=['Jupiter','Pluot'] would otherwise compute only Jupiter, and
+        # planets=['Pluot'] would return an empty result with no error (the
+        # all-failed guard below never fires on an empty target set). Consistent
+        # with SignIngressFactory / RetrogradeStationFactory.
+        if planets is not None:
+            invalid = sorted(set(planets) - set(_NODE_PLANETS) - {"Sun"})
+            if invalid:
+                raise ValueError(
+                    f"Unknown planets: {', '.join(invalid)}. "
+                    f"Valid: {', '.join(_NODE_PLANETS)}"
+                )
+
         target_planets = _NODE_PLANETS if planets is None else {
             k: v for k, v in _NODE_PLANETS.items() if k in planets
         }

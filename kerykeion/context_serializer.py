@@ -620,11 +620,13 @@ def dual_chart_data_to_context(chart_data: DualChartDataModel) -> str:
         for line in hc_xml.split("\n"):
             lines.append(f"  {line}")
 
-    # Relationship score (for synastry)
+    # Relationship score (for synastry). No ``max`` attribute: the score is an
+    # open-ended additive sum (a strong synastry exceeds 44, the old hardcoded
+    # cap, so value/max read >100%). The description conveys the level instead.
     if chart_data.relationship_score is not None:
         score = chart_data.relationship_score
         lines.append(
-            f"  {_sc('relationship_score', value=str(score.score_value), max='44', description=score.score_description, destiny_sign=str(score.is_destiny_sign).lower())}"
+            f"  {_sc('relationship_score', value=str(score.score_value), description=score.score_description, destiny_sign=str(score.is_destiny_sign).lower())}"
         )
 
     # Element and quality distributions
