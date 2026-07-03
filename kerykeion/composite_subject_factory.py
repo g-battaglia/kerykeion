@@ -204,6 +204,16 @@ class CompositeSubjectFactory:
         self.first_subject = first_subject
         self.second_subject = second_subject
         self.active_points = find_common_active_points(first_subject.active_points, second_subject.active_points)
+        if not self.active_points:
+            # Disjoint active_points -> empty intersection. Fail loudly: the two
+            # composite paths would otherwise diverge silently (the midpoint loop
+            # produces an empty chart, while the Davison path forwards [] to
+            # from_birth_data where it is read as 'no filter' and expands to a
+            # FULL chart). Same empty-explicit-list inversion guarded elsewhere.
+            raise KerykeionException(
+                "The two subjects share no common active points; a composite "
+                "chart needs at least one. Align their active_points."
+            )
 
         # Name
         if chart_name is None:

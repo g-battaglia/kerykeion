@@ -803,6 +803,7 @@ def _draw_planet_ring(
     scale_config: Optional[dict] = None,
     gauquelin_sectors: bool = False,
     gauquelin_cusps: Optional[list[float]] = None,
+    show_zodiac_background_ring: bool = True,
 ) -> str:
     """
     Draw the planet ring with data clusters and indicator lines.
@@ -913,6 +914,7 @@ def _draw_planet_ring(
             counter_rotation=counter_rotation,
             color=color,
             horoscope_id=horoscope_id,
+            show_zodiac_background_ring=show_zodiac_background_ring,
             **planet_kwargs,
         )
         out += planet_svg
@@ -940,6 +942,7 @@ def _draw_single_planet_in_ring(
     minutes_font_size: float = MINUTES_FONT_SIZE,
     rx_font_size: float = RX_FONT_SIZE,
     horoscope_id: Optional[str] = None,
+    show_zodiac_background_ring: bool = True,
 ) -> str:
     """
     Draw a single planet with its data cluster in the planet ring.
@@ -978,20 +981,30 @@ def _draw_single_planet_in_ring(
     retro_attr = ' kr:retrograde="true"' if is_retro else ""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
 
-    # kr:cx / kr:cy — glyph center in chart SVG root coords (post-rotation).
-    # The ChartPoint applies `rotate(-display_angle, CENTER, CENTER)` to its
-    # content; the glyph itself sits at (CENTER, glyph_y) in the ChartPoint's
-    # pre-rotation local coords. Rotating (0, glyph_y - CENTER) by
-    # -display_angle (SVG convention) and translating back by (CENTER, CENTER)
-    # gives:
-    #   cx = CENTER + dy * sin(display_angle)
-    #   cy = CENTER + dy * cos(display_angle)
-    # Emitted so frontend hit-detection can read the exact glyph center
-    # regardless of chart style or symbol viewBox quirks.
+    # kr:cx / kr:cy — glyph center in chart SVG ROOT coords, so frontend
+    # hit-detection reads the exact glyph center regardless of chart style
+    # (same contract as the classic draw_planets chart).
+    #
+    # Three nested frames sit between the glyph and the SVG root:
+    #   1. ChartPoint          rotate(-display_angle, CENTER, CENTER)
+    #   2. zodiac-bg wrapper    translate(off off) scale(s)   [only when the
+    #                           zodiac background ring is drawn]
+    #   3. ModernHoroscope      rotate(-90, CENTER, CENTER)
+    # Undoing only (1) — as the old code did — left cx/cy in the PlanetRing
+    # frame, ~90° (and, with the zodiac ring, ~8%) off the real glyph. Compose
+    # all three so the emitted values are true root coords.
     angle_rad = math.radians(display_angle)
     dy = glyph_y - CENTER
-    glyph_cx = CENTER + dy * math.sin(angle_rad)
-    glyph_cy = CENTER + dy * math.cos(angle_rad)
+    gx = CENTER + dy * math.sin(angle_rad)   # frame (1) undone: ChartPoint-parent coords
+    gy = CENTER + dy * math.cos(angle_rad)
+    if show_zodiac_background_ring:
+        s = ZODIAC_BG_SCALE
+        off = CENTER * (1 - s)
+        gx = gx * s + off                     # frame (2): translate(off) scale(s)
+        gy = gy * s + off
+    # frame (3): rotate(-90, CENTER, CENTER) maps (x, y) -> (C + (y-C), C - (x-C))
+    glyph_cx = CENTER + (gy - CENTER)
+    glyph_cy = CENTER - (gx - CENTER)
 
     out = (
         f'<g kr:node="ChartPoint" kr:house="{point.house}" '
@@ -1522,6 +1535,7 @@ def draw_modern_horoscope(
     out += _draw_planet_ring(
         planets, planets_settings, seventh_house_degree_ut, houses,
         gauquelin_sectors=gauquelin_sectors, gauquelin_cusps=gauquelin_cusps,
+        show_zodiac_background_ring=show_zodiac_background_ring,
     )
     if gauquelin_sectors:
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut, gauquelin_cusps=gauquelin_cusps)
@@ -1635,6 +1649,7 @@ def draw_modern_dual_horoscope(
             "minutes_font_size": SYN_MINUTES_FONT_SIZE,
             "rx_font_size": SYN_RX_FONT_SIZE,
         },
+        show_zodiac_background_ring=show_zodiac_background_ring,
     )
 
     # ─── INNER PLANET RING (Subject 1) ──────────────────────────────
@@ -1669,6 +1684,7 @@ def draw_modern_dual_horoscope(
             "minutes_font_size": SYN_MINUTES_FONT_SIZE,
             "rx_font_size": SYN_RX_FONT_SIZE,
         },
+        show_zodiac_background_ring=show_zodiac_background_ring,
     )
 
     # ─── HOUSE NUMBER RING (Subject 1's houses — shared) ────────────

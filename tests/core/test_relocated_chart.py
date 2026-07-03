@@ -481,3 +481,32 @@ class TestPolarRelocation:
         )
         relocated = RelocatedChartFactory.relocate(natal, new_lat=78.2, new_lng=15.6)
         assert relocated.first_house is not None
+
+
+class TestRelocatedMidpointsRehoused:
+    """Round-1 regression: active_midpoints must be re-housed on relocation."""
+
+    def test_active_midpoints_get_new_houses(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.midpoints import MidpointFactory
+        from kerykeion.utilities import get_planet_house
+
+        subj = AstrologicalSubjectFactory.from_birth_data(
+            "Reloc MP", 1990, 6, 15, 12, 0, lng=-74.0, lat=40.71,
+            tz_str="America/New_York", online=False, suppress_geonames_warning=True,
+        )
+        subj.active_midpoints = MidpointFactory.compute_active_midpoint_points(subj, ["Sun_Moon"])
+        reloc = RelocatedChartFactory.relocate(
+            subj, new_lat=35.68, new_lng=139.69, new_tz_str="Asia/Tokyo",
+        )
+        assert reloc.active_midpoints, "midpoints missing after relocation"
+        house_order = [
+            "first", "second", "third", "fourth", "fifth", "sixth",
+            "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth",
+        ]
+        cusps = [getattr(reloc, f"{h}_house").abs_pos for h in house_order]
+        for mp in reloc.active_midpoints:
+            assert mp.house == get_planet_house(mp.abs_pos, cusps), (
+                f"{mp.name} kept a stale natal house after relocation"
+            )

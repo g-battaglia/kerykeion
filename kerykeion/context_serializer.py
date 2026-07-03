@@ -14,7 +14,7 @@ Optional/None fields are omitted from the output rather than rendered as empty.
 
 from __future__ import annotations
 
-from typing import Union
+from typing import Optional, Union
 from xml.sax.saxutils import escape, quoteattr
 from kerykeion.schemas.kr_models import (
     KerykeionPointModel,
@@ -240,9 +240,17 @@ def aspect_to_context(aspect: AspectModel, is_synastry: bool = False, is_transit
         )
 
 
-def point_in_house_to_context(point_in_house: PointInHouseModel) -> str:
+def point_in_house_to_context(
+    point_in_house: PointInHouseModel,
+    is_transit: bool = False,
+    transit_subject_name: Optional[str] = None,
+) -> str:
     """
     Transform a PointInHouseModel into an XML ``<point_in_house />`` element.
+
+    When ``is_transit`` is set, any owner (point_owner / projected_house_owner)
+    equal to ``transit_subject_name`` is rewritten to ``"Transit"``, matching the
+    section-header substitution so the same entity never appears under two names.
 
     Args:
         point_in_house: A PointInHouseModel representing a point's house placement.
@@ -256,9 +264,14 @@ def point_in_house_to_context(point_in_house: PointInHouseModel) -> str:
             sign="Aries" owner_house="First House" projected_house="Seventh House"
             projected_house_owner="Jane" />
     """
+    def _owner(name: str) -> str:
+        if is_transit and transit_subject_name is not None and name == transit_subject_name:
+            return "Transit"
+        return name
+
     attrs: dict = {
         "point_name": point_in_house.point_name,
-        "point_owner": point_in_house.point_owner_name,
+        "point_owner": _owner(point_in_house.point_owner_name),
         "degree": f"{point_in_house.point_degree:.2f}",
         "sign": point_in_house.point_sign,
     }
@@ -270,7 +283,7 @@ def point_in_house_to_context(point_in_house: PointInHouseModel) -> str:
 
     attrs["projected_house"] = point_in_house.projected_house_name
     attrs["projected_house_number"] = str(point_in_house.projected_house_number)
-    attrs["projected_house_owner"] = point_in_house.projected_house_owner_name
+    attrs["projected_house_owner"] = _owner(point_in_house.projected_house_owner_name)
 
     return _sc("point_in_house", **attrs)
 
@@ -290,6 +303,11 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
     """
     lines = [_o("house_overlay")]
 
+    # In a transit chart the "transit" role is always the second subject; rewrite
+    # its real name to "Transit" in both the section headers AND the per-point
+    # owners so the same entity never appears under two names.
+    transit_name = house_comparison.second_subject_name if is_transit else None
+
     # First subject's points in second subject's houses
     if house_comparison.first_points_in_second_houses:
         # Same "Transit" substitution as the other three sections: the same
@@ -299,7 +317,7 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
             f"  {_o('first_points_in_second', subject=house_comparison.first_subject_name, target=tgt)}"
         )
         for point in house_comparison.first_points_in_second_houses:
-            lines.append(f"    {point_in_house_to_context(point)}")
+            lines.append(f"    {point_in_house_to_context(point, is_transit, transit_name)}")
         lines.append(f"  {_c('first_points_in_second')}")
 
     # Second subject's points in first subject's houses
@@ -310,7 +328,7 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
             subj, tgt = house_comparison.second_subject_name, house_comparison.first_subject_name
         lines.append(f"  {_o('second_points_in_first', subject=subj, target=tgt)}")
         for point in house_comparison.second_points_in_first_houses:
-            lines.append(f"    {point_in_house_to_context(point)}")
+            lines.append(f"    {point_in_house_to_context(point, is_transit, transit_name)}")
         lines.append(f"  {_c('second_points_in_first')}")
 
     # First subject's cusps in second subject's houses
@@ -321,7 +339,7 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
             subj, tgt = house_comparison.first_subject_name, house_comparison.second_subject_name
         lines.append(f"  {_o('first_cusps_in_second', subject=subj, target=tgt)}")
         for cusp in house_comparison.first_cusps_in_second_houses:
-            lines.append(f"    {point_in_house_to_context(cusp)}")
+            lines.append(f"    {point_in_house_to_context(cusp, is_transit, transit_name)}")
         lines.append(f"  {_c('first_cusps_in_second')}")
 
     # Second subject's cusps in first subject's houses
@@ -332,7 +350,7 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
             subj, tgt = house_comparison.second_subject_name, house_comparison.first_subject_name
         lines.append(f"  {_o('second_cusps_in_first', subject=subj, target=tgt)}")
         for cusp in house_comparison.second_cusps_in_first_houses:
-            lines.append(f"    {point_in_house_to_context(cusp)}")
+            lines.append(f"    {point_in_house_to_context(cusp, is_transit, transit_name)}")
         lines.append(f"  {_c('second_cusps_in_first')}")
 
     lines.append(_c("house_overlay"))
@@ -468,17 +486,31 @@ def astrological_subject_to_context(
             "True_North_Lunar_Node", "True_South_Lunar_Node",
         ]
 
+    # Planets come from active_points (so active TNOs / Uranian points / Arabic
+    # parts that <aspects> references are serialized). Axes and lunar nodes are
+    # NOT driven by active_points: Descendant/Imum_Coeli/South nodes are derived
+    # 180-degree opposites absent from DEFAULT_ACTIVE_POINTS, so driving them off
+    # active_points dropped them from every default chart's <axes> section. Emit
+    # whichever axes/nodes are present on the subject, unconditionally.
+    _AXIS_AND_NODE_ORDER = (
+        "Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli",
+        "Vertex", "Anti_Vertex", "East_Point",
+        "Mean_North_Lunar_Node", "True_North_Lunar_Node",
+        "Mean_South_Lunar_Node", "True_South_Lunar_Node",
+    )
     planet_lines = []
-    axes_lines = []
     for point_name in active_point_names:
-        point = getattr(subject, point_name.lower(), None)
-        if point is None:
-            continue
-        entry = f"    {kerykeion_point_to_context(point)}"
         if point_name in axes_section_names or point_name.endswith("_Lunar_Node"):
-            axes_lines.append(entry)
-        else:
-            planet_lines.append(entry)
+            continue  # handled unconditionally below
+        point = getattr(subject, point_name.lower(), None)
+        if point is not None:
+            planet_lines.append(f"    {kerykeion_point_to_context(point)}")
+
+    axes_lines = []
+    for point_name in _AXIS_AND_NODE_ORDER:
+        point = getattr(subject, point_name.lower(), None)
+        if point is not None:
+            axes_lines.append(f"    {kerykeion_point_to_context(point)}")
 
     if planet_lines:
         lines.append(f"  {_o('planets')}")

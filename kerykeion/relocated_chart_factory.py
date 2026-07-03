@@ -54,7 +54,7 @@ class RelocatedChartFactory:
         year: int,
         julian_day: float,
         new_lng: float,
-        new_tz_str: str,
+        new_tz_str: Optional[str],
         iso_utc: str,
     ) -> None:
         """Recompute the local calendar fields for a new timezone in place.
@@ -270,8 +270,13 @@ class RelocatedChartFactory:
         relocated_data["houses_names_list"] = houses_list
 
         # Recompute the local ISO datetime for the new timezone (the UTC
-        # moment is unchanged — only its local representation moves).
-        if new_tz_str:
+        # moment is unchanged — only its local representation moves). A BCE
+        # subject (year < 1) has no named timezone: its local time IS Local
+        # Mean Time (lng/15), so a longitude change alone makes the stored
+        # local fields stale even without new_tz_str — recompute them too (the
+        # BCE branch of the helper ignores new_tz_str and derives LMT from the
+        # new longitude).
+        if new_tz_str or subject.year < 1:
             RelocatedChartFactory._recompute_local_datetime_fields(
                 relocated_data,
                 year=subject.year,
@@ -383,5 +388,13 @@ class RelocatedChartFactory:
         for star_data in relocated_data.get("fixed_stars") or []:
             if isinstance(star_data, dict) and star_data.get("abs_pos") is not None:
                 star_data["house"] = get_planet_house(star_data["abs_pos"], houses_degree_ut)
+
+        # Active midpoints are another list field outside active_points; like the
+        # fixed stars above they keep their zodiacal position but must be
+        # re-housed against the relocated cusps, else they keep a stale natal
+        # house (visible in report.py's House column and chart_drawer).
+        for mp_data in relocated_data.get("active_midpoints") or []:
+            if isinstance(mp_data, dict) and mp_data.get("abs_pos") is not None:
+                mp_data["house"] = get_planet_house(mp_data["abs_pos"], houses_degree_ut)
 
         return AstrologicalSubjectModel(**relocated_data)

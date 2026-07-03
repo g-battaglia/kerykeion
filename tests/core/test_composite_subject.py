@@ -700,3 +700,23 @@ class TestCompositeWithDavisonMethod:
 
 if __name__ == "__main__":
     pytest.main(["-vv", __file__])
+
+
+class TestCompositeDisjointActivePoints:
+    """Round-1 regression: disjoint active_points must raise, not diverge."""
+
+    def test_disjoint_active_points_raises(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.schemas import KerykeionException
+
+        a = AstrologicalSubjectFactory.from_birth_data(
+            "A", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True, active_points=["Sun", "Moon"],
+        )
+        b = AstrologicalSubjectFactory.from_birth_data(
+            "B", 1992, 3, 3, 8, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True, active_points=["Mars", "Venus"],
+        )
+        with pytest.raises(KerykeionException, match="no common active points"):
+            CompositeSubjectFactory(a, b)

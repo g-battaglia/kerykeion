@@ -124,6 +124,14 @@ def compare_chart_svg(file_name: str, chart_svg: str) -> None:
     (same overall structure) rather than failing outright.
     """
     baseline = SVG_DIR / file_name
+    # Opt-in regeneration: write the freshly-rendered SVG as the baseline instead
+    # of comparing. This captures the exact file each test actually reads (the
+    # standalone regen scripts use different filenames for some variants), so the
+    # baselines can never drift out of sync with the tests' own rendering.
+    if os.environ.get("KERYKEION_REGEN_BASELINES"):
+        baseline.parent.mkdir(parents=True, exist_ok=True)
+        baseline.write_text(chart_svg, encoding="utf-8")
+        return
     if not baseline.exists():
         pytest.skip(f"Baseline not found: {baseline}. Run: poe regenerate:charts")
 

@@ -1553,3 +1553,46 @@ class TestFixedStarsAndMidpointsInSubjectContext:
         context = to_context(self.plain_subject)
         assert "fixed_stars" not in context
         assert "active_midpoints" not in context
+
+
+class TestRoundOneRegressions:
+    """Regressions caught by the deep-validation review round 1."""
+
+    def _subject(self, name="RegSubj"):
+        from kerykeion import AstrologicalSubjectFactory
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 1990, 6, 15, 10, 30, lng=12.48, lat=41.89,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+        )
+
+    def test_axes_always_include_derived_points(self):
+        """Descendant / Imum_Coeli / True_South_Lunar_Node are derived opposites
+        absent from DEFAULT_ACTIVE_POINTS; the <axes> section must still emit
+        them (regression: the active_points-driven loop dropped them)."""
+        from kerykeion.context_serializer import astrological_subject_to_context
+        ctx = astrological_subject_to_context(self._subject())
+        for axis in ("Descendant", "Imum_Coeli", "True_South_Lunar_Node"):
+            assert axis in ctx, f"{axis} dropped from <axes>"
+
+    def test_transit_per_point_owner_substituted(self):
+        """In a transit chart the transit subject's real name must not leak into
+        per-point owners (only the substituted 'Transit' label)."""
+        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.context_serializer import to_context
+        natal = self._subject("Alice")
+        transit = self._subject("BobTheTransit")
+        ctx = to_context(ChartDataFactory.create_transit_chart_data(natal, transit))
+        assert 'point_owner="BobTheTransit"' not in ctx
+        assert 'projected_house_owner="BobTheTransit"' not in ctx
+
+    def test_relationship_score_no_hardcoded_max(self):
+        """The relationship_score is an open-ended sum; it must not carry a
+        hardcoded max='44' (a strong synastry exceeds it -> >100%)."""
+        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.context_serializer import to_context
+        s1 = self._subject("A")
+        s2 = self._subject("B")
+        cd = ChartDataFactory.create_synastry_chart_data(s1, s2, include_relationship_score=True)
+        ctx = to_context(cd)
+        if "<relationship_score" in ctx:
+            assert "max=" not in ctx
