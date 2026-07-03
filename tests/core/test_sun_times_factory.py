@@ -51,6 +51,22 @@ def test_polar_boundary_uses_apparent_horizon_flags():
     assert s.sunrise is None and s.sunset is None
 
 
+def test_sunset_after_local_midnight_is_not_nulled():
+    """Mirror of the sunset-before-sunrise case: at high latitude a real sunset
+    just PAST local midnight was nulled by the civil-day bound, returning
+    sunset/day_length/solar_noon = None with neither polar flag set on a
+    non-polar day. It must now report the continuous daylight span."""
+    # 69.0N is below the Tromsø latitude, so 2026-05-19 is not yet polar there —
+    # the Sun rises and sets ~00:07 local the next day.
+    s = SunTimesFactory.from_date(2026, 5, 19, latitude=69.0, longitude=18.0, tz_str="Europe/Oslo")
+    assert s.is_polar_day is False and s.is_polar_night is False
+    assert s.sunrise is not None and s.sunset is not None
+    assert s.day_length is not None and s.solar_noon is not None
+    assert s.sunset > s.sunrise
+    # Daylight span crosses local midnight -> longer than 20h but under 24h.
+    assert s.day_length.total_seconds() > 20 * 3600
+
+
 def test_polar_night():
     s = SunTimesFactory.from_date(2026, 12, 21, **TROMSO)
     assert s.is_polar_night is True

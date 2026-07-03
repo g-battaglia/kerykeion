@@ -40,6 +40,14 @@ TRANSIENT_GEONAMES_ERROR_CODES = frozenset(
     }
 )
 
+# Credential/authorization errors: not transient, but caching them would serve
+# a stale auth failure for up to the cache expiry after the credential is fixed.
+_AUTH_GEONAMES_ERROR_CODES = frozenset(
+    {
+        10,  # authorization exception (invalid username)
+    }
+)
+
 
 def _should_cache_geonames_response(response: Response) -> bool:
     """
@@ -63,12 +71,18 @@ def _should_cache_geonames_response(response: Response) -> bool:
             # avoid caching malformed responses until expiry.
             return False
         if "status" in data:
-            error_code = data["status"].get("value", 0)
-            if error_code in TRANSIENT_GEONAMES_ERROR_CODES:
+            status = data["status"] if isinstance(data["status"], dict) else {}
+            error_code = status.get("value", 0)
+            # Transient (quota/timeout/overload) and credential (invalid
+            # username) errors must not be cached, or a stale error is served
+            # until the cache expiry (up to 30 days). A genuine stable-negative
+            # result (code 15, "no result found" for a nonexistent place) stays
+            # cacheable — re-querying it every time would waste API credits.
+            if error_code in TRANSIENT_GEONAMES_ERROR_CODES or error_code in _AUTH_GEONAMES_ERROR_CODES:
                 logger.debug(
-                    "GeoNames transient error (code %d) will not be cached: %s",
+                    "GeoNames error (code %s) will not be cached: %s",
                     error_code,
-                    data["status"].get("message", "unknown error"),
+                    status.get("message", "unknown error"),
                 )
                 return False
         return True
@@ -164,6 +178,7 @@ class FetchGeonames:
 
         try:
             response = self.session.send(prepared_request, timeout=DEFAULT_GEONAMES_TIMEOUT)
+            response.raise_for_status()
             response_json = response.json()
 
         except RequestException as e:
@@ -171,6 +186,18 @@ class FetchGeonames:
             return {}
         except JSONDecodeError as e:
             logger.error("GeoNames timezone invalid JSON response: %s", e)
+            return {}
+
+        # GeoNames signals API errors (invalid username, quota) as HTTP 200 with
+        # a 'status' object; surface it clearly instead of the misleading
+        # "payload missing expected keys" KeyError the lookup below would raise.
+        if isinstance(response_json, dict) and "status" in response_json:
+            status = response_json["status"] if isinstance(response_json["status"], dict) else {}
+            logger.error(
+                "GeoNames timezone API error (code %s): %s",
+                status.get("value"),
+                status.get("message", "unknown error"),
+            )
             return {}
 
         try:
@@ -231,6 +258,18 @@ class FetchGeonames:
             return {}
         except JSONDecodeError as e:
             logger.error("GeoNames search invalid JSON response: %s", e)
+            return {}
+
+        # GeoNames returns API errors (invalid username, quota exceeded) as
+        # HTTP 200 with a 'status' object and no 'geonames' array; surface it
+        # clearly instead of the misleading "payload missing expected keys".
+        if isinstance(response_json, dict) and "status" in response_json:
+            status = response_json["status"] if isinstance(response_json["status"], dict) else {}
+            logger.error(
+                "GeoNames search API error (code %s): %s",
+                status.get("value"),
+                status.get("message", "unknown error"),
+            )
             return {}
 
         try:

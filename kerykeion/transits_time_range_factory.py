@@ -85,6 +85,13 @@ from pathlib import Path
 # detect undersampling (steps larger than half the in-orb window of the
 # fastest active point). Static values are enough for an order-of-magnitude
 # check; the Moon dominates in practice.
+#
+# The chart AXES are deliberately excluded: driven by diurnal rotation they
+# sweep ~360°/day, so NO practical transit step resolves them — including them
+# would fire the warning on every normal daily/hourly series (the axes are in
+# DEFAULT_ACTIVE_POINTS), turning an actionable "halve your step for the Moon"
+# hint into constant noise. Aspects to transiting angles are inherently a
+# fine-resolution technique the step warning can't meaningfully advise on.
 _TYPICAL_DAILY_MOTION_DEGREES: dict[str, float] = {
     "Moon": 13.2,
     "Mercury": 1.4,
@@ -97,6 +104,24 @@ _TYPICAL_DAILY_MOTION_DEGREES: dict[str, float] = {
     "Neptune": 0.006,
     "Pluto": 0.004,
 }
+
+
+def _iso_chronological_key(iso: str) -> tuple:
+    """Signed ``(year, month, day, hour, minute, second)`` key for an
+    extended-year ISO timestamp so BCE ranges sort chronologically.
+
+    ``datetime.fromisoformat`` cannot parse years < 1 (MINYEAR=1); a leading
+    ``-`` marks a BCE (negative) year in the ISO 8601 extended format.
+    """
+    negative = iso.startswith("-")
+    body = iso[1:] if negative else iso
+    date_part, _, time_part = body.partition("T")
+    y, mo, d = (date_part.split("-") + ["1", "1"])[:3]
+    year = -int(y) if negative else int(y)
+    time_part = time_part.split("+")[0].split("Z")[0]
+    parts = (time_part.split(":") + ["0", "0", "0"])[:3]
+    hour, minute, second = (int(float(p)) for p in parts)
+    return (year, int(mo), int(d), hour, minute, second)
 
 
 class TransitsTimeRangeFactory:
@@ -685,8 +710,11 @@ class TransitsTimeRangeFactory:
                     )
                 )
 
-        # Sort by exact_moment
-        events.sort(key=lambda e: e.exact_moment)
+        # Sort chronologically. exact_moment is an extended-year ISO string
+        # (BCE years carry a leading '-', which datetime can't parse), so a
+        # plain string sort orders BCE years anti-chronologically ('-0400' <
+        # '-0500' lexically). Decompose into a signed numeric key instead.
+        events.sort(key=lambda e: _iso_chronological_key(e.exact_moment))
 
         return TransitEventsTimeRangeModel(
             events=events,

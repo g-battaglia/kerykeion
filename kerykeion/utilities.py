@@ -223,14 +223,18 @@ def get_kerykeion_point_from_degree(
     Raises:
         KerykeionException: If the degree is >= 360 after normalization
     """
-    # Normalize negative degrees. In float64 an infinitesimally negative
-    # value wraps to exactly 360.0 ((-1e-14) % 360 == 360.0), which the guard
-    # below would reject: fold it back to 0.0 with a second modulo.
-    if degree < 0:
-        degree = (degree % 360) % 360
-
-    if degree >= 360:
+    # A non-finite degree is a genuine calculation failure — fail loudly.
+    if not math.isfinite(degree):
         raise KerykeionException(f"Error in calculating positions! Degrees: {degree}")
+
+    # Normalize any finite degree into [0, 360). Modulo alone handles negatives
+    # and values >= 360 (e.g. a positive exactly 360.0 from swe_degnorm rounding
+    # on a non-pre-normalized point — axis/fixed-star/cusp — which used to abort
+    # subject creation), but float64 `%` can itself return exactly 360.0 for a
+    # tiny-negative input ((-1e-14) % 360 == 360.0), so fold that edge back.
+    degree = degree % 360.0
+    if degree >= 360.0:
+        degree -= 360.0
 
     sign_index = int(degree // 30)
     sign_degree = degree % 30

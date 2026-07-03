@@ -181,6 +181,10 @@ class EphemerisDataFactory:
         custom_ayanamsa_t0: Optional[float] = None,
         custom_ayanamsa_ayan_t0: Optional[float] = None,
     ):
+        if step <= 0:
+            # A non-positive step divides by zero when sizing the series; reject
+            # it up front with the documented ValueError instead.
+            raise ValueError(f"step must be a positive integer, got {step}.")
         self.start_datetime = start_datetime
         self.end_datetime = end_datetime
         self.step_type = step_type

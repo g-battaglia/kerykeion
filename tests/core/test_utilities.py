@@ -85,13 +85,21 @@ class TestGetKerykeionPointFromDegree:
         assert point.abs_pos == 330
         assert point.sign == "Pis"
 
-    def test_degree_360_raises_kerykeion_exception(self):
-        with pytest.raises(KerykeionException, match="Error in calculating positions"):
-            get_kerykeion_point_from_degree(360.0, "Test", point_type="Natal")
+    def test_degree_360_wraps_to_aries_zero(self):
+        # A positive exactly 360.0 (from swe_degnorm rounding on a
+        # non-pre-normalized point) must wrap to 0° Aries, not abort the chart.
+        point = get_kerykeion_point_from_degree(360.0, "Sun", point_type="AstrologicalPoint")
+        assert point.sign == "Ari"
+        assert point.abs_pos == pytest.approx(0.0)
 
-    def test_degree_above_360_raises_kerykeion_exception(self):
-        with pytest.raises(KerykeionException):
-            get_kerykeion_point_from_degree(400.0, "Test", point_type="Natal")
+    def test_degree_above_360_wraps(self):
+        point = get_kerykeion_point_from_degree(400.0, "Sun", point_type="AstrologicalPoint")
+        assert point.abs_pos == pytest.approx(40.0)
+        assert point.sign == "Tau"
+
+    def test_degree_non_finite_raises_kerykeion_exception(self):
+        with pytest.raises(KerykeionException, match="Error in calculating positions"):
+            get_kerykeion_point_from_degree(float("nan"), "Sun", point_type="AstrologicalPoint")
 
     def test_zero_degrees_is_aries(self):
         point = get_kerykeion_point_from_degree(0, "Sun", "AstrologicalPoint")

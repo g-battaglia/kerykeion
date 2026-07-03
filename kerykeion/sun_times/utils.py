@@ -267,6 +267,9 @@ def compute_sun_events(
     # resets it on exit without degrading the pinned calculation mode.
     with ephemeris_session():
         sunrise_jd, sunset_jd = compute_sun_rise_set_ephe(jd_midnight, latitude, longitude)
+        # Whether a sunset exists at all (before civil-day bounding): distinguishes
+        # "sunset falls just past local midnight" from "no sunset today" (polar).
+        sunset_exists = sunset_jd is not None
 
         if sunrise_jd is not None and sunrise_jd >= jd_next_midnight:
             sunrise_jd = None
@@ -279,6 +282,14 @@ def compute_sun_events(
             # This paired sunset is deliberately NOT re-bounded to the civil day, so
             # on high-latitude transition days it can fall on the next civil date and
             # make day_length exceed 24h — the correct continuous daylight span here.
+            _, paired_sunset_jd = compute_sun_rise_set_ephe(sunrise_jd + 1e-6, latitude, longitude)
+            sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
+        elif sunrise_jd is not None and sunset_jd is None and sunset_exists:
+            # Mirror of the case above: a valid sunrise whose following sunset falls
+            # just PAST local midnight (nulled by the civil-day bound). Without this
+            # a high-latitude day with a real sunset after 00:00 returned
+            # sunset/day_length/solar_noon = None with neither polar flag set — on a
+            # day that is not polar. Recompute the sunset following sunrise.
             _, paired_sunset_jd = compute_sun_rise_set_ephe(sunrise_jd + 1e-6, latitude, longitude)
             sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
 
