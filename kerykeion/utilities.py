@@ -319,15 +319,44 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
     Raises:
         ValueError: If the planet's position doesn't fall within any house range
     """
-    # Reuse the shared arc-containment primitive with allow_reflex=True so
-    # non-quadrant systems (e.g. 'H' Horizon) whose cusps can span more than 180°
-    # are handled too. The start-inclusive / end-exclusive contract makes a planet
-    # exactly on a cusp fall into the house that cusp opens.
-    for i in range(len(_HOUSE_NAMES_TUPLE)):
-        start = houses_degree_ut_list[i]
-        end = houses_degree_ut_list[(i + 1) % len(houses_degree_ut_list)]
-        if is_point_between(start, end, planet_degree, allow_reflex=True):
+    n = len(_HOUSE_NAMES_TUPLE)
+    # A house is the arc from its own cusp to the NEXT cusp, but the cusps do
+    # not always run in increasing longitude: some systems return them in
+    # decreasing (clockwise) order — notably 'H' Horizon near the equator and
+    # 'T' Polich-Page at high latitude — and quadrant systems can go
+    # non-monotonic near the poles. Assuming a forward (increasing) arc there
+    # turns house 1 into a ~350° reflex arc that swallows every planet. Instead,
+    # a point belongs to the house whose cusp→next-cusp arc contains it via the
+    # SHORTEST path (the real house span is always < 180°); a point exactly on a
+    # cusp belongs to the house that cusp opens.
+    for i in range(n):
+        if abs((planet_degree - houses_degree_ut_list[i] + 180.0) % 360.0 - 180.0) < 1e-9:
             return _HOUSE_NAMES_TUPLE[i]
+
+    best_index = None
+    best_span = 360.0 + 1.0
+    for i in range(n):
+        start = houses_degree_ut_list[i]
+        end = houses_degree_ut_list[(i + 1) % n]
+        fwd = (end - start) % 360.0
+        if fwd == 0:
+            continue  # coincident cusps can't contain a point in their arc
+        # Distance from the cusp to the point, in whichever direction the arc
+        # to the next cusp actually runs (forward if fwd is the short way,
+        # backward otherwise).
+        if fwd <= 180.0:
+            inside = (planet_degree - start) % 360.0 < fwd
+            span = fwd
+        else:
+            back = 360.0 - fwd
+            inside = (start - planet_degree) % 360.0 < back
+            span = back
+        if inside and span < best_span:
+            best_index = i
+            best_span = span
+
+    if best_index is not None:
+        return _HOUSE_NAMES_TUPLE[best_index]
 
     raise ValueError(f"Error in house calculation, planet: {planet_degree}, houses: {houses_degree_ut_list}")
 

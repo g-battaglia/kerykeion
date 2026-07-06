@@ -206,6 +206,38 @@ def _center_body_names(perspective_type: Optional[str]) -> List[str]:
         return []
     return [name for name, pid in STANDARD_PLANETS.items() if pid == center_body_id]
 
+
+def _gauquelin_sector_from_cusps(longitude: float, cusps: Optional[List[float]]) -> Optional[float]:
+    """True Gauquelin sector (1..36, fractional) of an on-ecliptic longitude.
+
+    ``cusps`` are the 36 Gauquelin sector-boundary longitudes from
+    ``houses_ex2(..., b"G")``, numbered diurnally from the Ascendant, so they
+    RUN CLOCKWISE (decreasing longitude): cusp[i] opens sector i+1. A point at
+    fractional position within sector i's arc gets ``i + 1 + fraction``. This is
+    the real latitude-dependent sector (an axis lands exactly on its cusp),
+    unlike the uniform 10°/sector approximation. Returns ``None`` if cusps are
+    missing or malformed so the caller can fall back.
+    """
+    if not cusps or len(cusps) != 36:
+        return None
+    # Snap a point sitting on a cusp to that cusp's sector opening (handles the
+    # axes, which ARE cusps up to rounding), so the ASC reads exactly 1.0.
+    for i in range(36):
+        if abs((longitude - cusps[i] + 180.0) % 360.0 - 180.0) < 1e-4:
+            return float(i + 1)
+    for i in range(36):
+        start = cusps[i]
+        end = cusps[(i + 1) % 36]
+        # Gauquelin cusps decrease, so the arc from cusp[i] to cusp[i+1] is the
+        # CLOCKWISE (decreasing) direction; span is measured that way.
+        span = (start - end) % 360.0
+        if span == 0:
+            continue
+        offset = (start - longitude) % 360.0
+        if offset < span:
+            return (i + 1) + offset / span
+    return None
+
 # Arabic Parts configuration: (name, required_points, formula_type)
 # formula_type: "fortune" = day/night variant, "simple" = single formula
 ARABIC_PARTS_CONFIG: Dict[AstrologicalPoint, Dict[str, Any]] = {
@@ -1106,6 +1138,24 @@ class AstrologicalSubjectFactory:
                 asc_degree = calc_data.get("ascendant")
                 asc_abs = asc_degree.abs_pos if asc_degree else 0.0
 
+                # Compute the 36 Gauquelin sector cusps FIRST (zodiacal longitudes),
+                # so on-ecliptic points that lack a SwissEph body id (the axes,
+                # South nodes, White Moon) can be placed by interpolating within
+                # the REAL cusps instead of a uniform 10°/sector approximation
+                # (which is only correct at the equator).
+                gauquelin_cusps = None
+                try:
+                    # hsys as a 1-byte char: pyswisseph rejects a plain int
+                    # (ord("G")) for hsys; libephemeris accepts both forms.
+                    # Pass the session iflag so sidereal/topocentric charts get
+                    # cusps in the same frame as their points (mirrors the main
+                    # houses_ex2 call) instead of always-tropical longitudes.
+                    cusps_g = ephe.houses_ex2(jd, geopos[1], geopos[0], b"G", iflag)
+                    gauquelin_cusps = [round(c, 4) for c in cusps_g[0]]
+                    calc_data["gauquelin_sector_cusps"] = gauquelin_cusps
+                except Exception:
+                    pass
+
                 for pk in point_keys:
                     point = calc_data[pk]
                     sector = None
@@ -1124,16 +1174,19 @@ class AstrologicalSubjectFactory:
                         except Exception:
                             pass
 
-                    # Fallback for points without a SwissEph body id (axial cusps,
-                    # South Nodes, White Moon, TNOs): an ECLIPTIC APPROXIMATION that
-                    # divides the circle from the ASC into 36 sectors. This is NOT the
-                    # true diurnal Gauquelin sector (which depends on RA/declination,
-                    # geographic latitude and local sidereal time); the two coincide
-                    # only on the ecliptic near the equator.
+                    # Fallback for points without a SwissEph body id (axial
+                    # cusps, South Nodes, White Moon, TNOs). These are (except
+                    # the TNOs) ON the ecliptic, so interpolate within the REAL
+                    # Gauquelin cusps: this reproduces the true diurnal sector at
+                    # any latitude (an axis lands exactly on its cusp). Only when
+                    # the cusps are unavailable do we degrade to the uniform
+                    # 10°-from-ASC ecliptic approximation (correct at the equator).
+                    if sector is None:
+                        sector = _gauquelin_sector_from_cusps(point.abs_pos, gauquelin_cusps)
                     if sector is None:
                         logging.debug(
-                            "Gauquelin sector for %r computed via geometric ecliptic "
-                            "approximation (no SwissEph body id); not the true diurnal sector.",
+                            "Gauquelin sector for %r via uniform ecliptic approximation "
+                            "(no body id and no cusps); not the true diurnal sector.",
                             point.name,
                         )
                         diff = (asc_abs - point.abs_pos) % 360.0
@@ -1142,20 +1195,6 @@ class AstrologicalSubjectFactory:
                             sector -= 36.0
 
                     point_updates[pk]["gauquelin_sector"] = round(sector, 4)
-
-                # Compute the 36 Gauquelin sector cusps (zodiacal longitudes)
-                try:
-                    lat_geo = geopos[1]
-                    lon_geo = geopos[0]
-                    # hsys as a 1-byte char: pyswisseph rejects a plain int
-                    # (ord("G")) for hsys; libephemeris accepts both forms.
-                    # Pass the session iflag so sidereal/topocentric charts get
-                    # cusps in the same frame as their points (mirrors the main
-                    # houses_ex2 call) instead of always-tropical longitudes.
-                    cusps_g = ephe.houses_ex2(jd, lat_geo, lon_geo, b"G", iflag)
-                    calc_data["gauquelin_sector_cusps"] = [round(c, 4) for c in cusps_g[0]]
-                except Exception:
-                    pass
 
             # Calculate Local Space (azimuth/altitude) for all celestial points (v6.0)
             if config.calculate_local_space and calc_data.get("lng") is not None and calc_data.get("lat") is not None:

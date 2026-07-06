@@ -301,6 +301,15 @@ def compute_sun_events(
                     f"The ephemeris backend failed to evaluate the Sun for {year:04d}-{month:02d}-{day:02d} "
                     f"at latitude {latitude}: {exc}."
                 ) from exc
+            # Polar day/night means the Sun NEVER crosses the horizon, so a polar
+            # flag is only valid when BOTH events are absent. On a midnight-sun
+            # transition day one event can survive civil-day bounding while the
+            # other is nulled; the single-instant _polar_state noon approximation
+            # can still say "polar", producing a self-contradictory model (a
+            # polar-day flag beside a real sunset). Clear the flags whenever an
+            # event is present.
+            if sunrise_jd is not None or sunset_jd is not None:
+                is_polar_day = is_polar_night = False
             if sunrise_jd is None and sunset_jd is None and not (is_polar_day or is_polar_night):
                 raise KerykeionException(
                     f"The ephemeris backend returned no sunrise or sunset for {year:04d}-{month:02d}-{day:02d} "

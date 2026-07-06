@@ -371,3 +371,20 @@ class TestGauquelinBackendCallShape:
 
         # The backend sector value must flow through (no geometric fallback)
         assert subject.sun.gauquelin_sector == 7.5
+
+
+class TestGauquelinAxisSectorsRound6:
+    """Round-6 regression: axial points (ASC/MC/IC/DSC) must land on their exact
+    Gauquelin sector at any latitude (they ARE cusps), not via a uniform
+    10deg/sector ecliptic approximation that is only correct at the equator."""
+
+    def test_axes_on_exact_sectors_high_latitude(self):
+        from kerykeion import AstrologicalSubjectFactory
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "X", 1990, 6, 15, 12, 0, lng=18.07, lat=59.33,
+            tz_str="Europe/Stockholm", online=False, suppress_geonames_warning=True,
+            calculate_gauquelin=True)
+        assert abs(s.ascendant.gauquelin_sector - 1.0) < 0.05
+        assert abs(s.medium_coeli.gauquelin_sector - 10.0) < 0.05
+        assert abs(s.imum_coeli.gauquelin_sector - 28.0) < 0.05
+        assert abs(s.descendant.gauquelin_sector - 19.0) < 0.05

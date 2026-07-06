@@ -237,13 +237,19 @@ class TestGetPlanetHouse:
         result = get_planet_house(planet, houses)
         assert result == "Seventh_House"
 
-    def test_non_quadrant_wide_span_house(self):
-        """Non-quadrant systems can have cusps spanning > 180°; the planet must
-        still resolve via the reflex-aware arc containment instead of raising."""
-        # First house spans 200° (0 -> 200), the rest are crammed into 200..360.
-        houses = [0, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300]
-        assert get_planet_house(100, houses) == "First_House"
-        assert get_planet_house(205, houses) == "Second_House"
+    def test_clockwise_decreasing_cusps(self):
+        """Some systems (e.g. 'H' Horizon near the equator) return cusps in
+        DECREASING (clockwise) longitude. Each real house still spans < 180°;
+        the planet must resolve by the correct clockwise arc direction rather
+        than a spurious reflex arc that would swallow every planet into house 1."""
+        # 12 cusps decreasing by 30° each: cusp[i] = (360 - i*30) % 360.
+        houses = [(360 - i * 30) % 360 for i in range(12)]  # [0,330,300,...,30]
+        # Point at 345 lies clockwise between cusp[0]=0 and cusp[1]=330 -> house 1.
+        assert get_planet_house(345, houses) == "First_House"
+        # Point at 315 lies between cusp[1]=330 and cusp[2]=300 -> house 2.
+        assert get_planet_house(315, houses) == "Second_House"
+        # A point exactly on a cusp opens that house.
+        assert get_planet_house(300, houses) == "Third_House"
 
     def test_planet_exactly_on_cusp_is_start_inclusive(self):
         """A planet exactly on a cusp falls into the house that cusp opens."""
@@ -1068,3 +1074,18 @@ class TestFormatAncientIso:
     def test_no_rollover_for_normal_hour(self):
         result = format_ancient_iso(-500, 3, 21, 11.5, 0.0)
         assert result == "-0500-03-21T11:30:00+00:00"
+
+
+class TestHorizonSystemHouseAssignmentRound6:
+    """Round-6 regression: the 'H' Horizon system returns decreasing cusps near
+    the equator; planets must spread across houses, not all collapse to House 1."""
+
+    def test_horizon_system_not_all_first_house(self):
+        from kerykeion import AstrologicalSubjectFactory
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "SG", 1985, 3, 10, 1, 0, lng=103.82, lat=1.35,
+            tz_str="Asia/Singapore", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="H")
+        houses = {getattr(s, p).house for p in
+                  ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]}
+        assert len(houses) > 1, "H-system collapsed every planet into one house"
