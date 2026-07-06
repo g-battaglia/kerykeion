@@ -637,10 +637,12 @@ class TestAspectMovementEdgeCases:
         result = calculate_aspect_movement(100.0, 110.0, 0.0, -1.0, -1.0)
         assert result == "Static"
 
-    def test_aspect_crossing_with_small_dt(self):
-        """Point crossing exact aspect within dt → Static due to ORB_EPSILON."""
+    def test_small_nonzero_orb_reports_true_direction(self):
+        """A small-but-resolvable orb (0.0005°) must report its true direction,
+        not be flattened to Static by the old 1e-3 lookahead floor. Here p2 moves
+        toward exactness (finite-difference truth = Applying)."""
         result = calculate_aspect_movement(10.0, 9.9995, 0.0, 0.0, 1.0)
-        assert result == "Static"
+        assert result == "Applying"
 
     # --- Opposition (180 deg) exact ---
 

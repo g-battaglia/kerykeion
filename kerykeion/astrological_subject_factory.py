@@ -60,6 +60,7 @@ from kerykeion.utilities import (
     get_kerykeion_point_from_degree,
     get_planet_house,
     check_and_adjust_polar_latitude,
+    normalize_longitude,
     calculate_moon_phase,
     datetime_to_julian,
     format_ancient_iso,
@@ -574,8 +575,12 @@ class LocationData:
             either manually or via fetch_from_geonames(), and before performing
             any astrological calculations.
         """
-        # Adjust latitude for polar regions
+        # Adjust latitude for polar regions (raises on impossible |lat| > 90).
         self.lat = check_and_adjust_polar_latitude(self.lat)
+        # Wrap an un-normalized longitude (e.g. 370° == 10° E) into [-180, 180)
+        # so the houses backend does not reject it with a raw CoordinateError.
+        if self.lng is not None:
+            self.lng = normalize_longitude(self.lng)
 
 
 class AstrologicalSubjectFactory:
@@ -1767,10 +1772,19 @@ class AstrologicalSubjectFactory:
             AstrologicalSubjectFactory._calculate_time_conversions_bce(data, location)
             return
 
-        # Convert local time to UTC
-        naive_datetime = datetime(
-            data["year"], data["month"], data["day"], data["hour"], data["minute"], data["seconds"]
-        )
+        # Convert local time to UTC. Wrap the datetime construction so an
+        # out-of-range component (month=13, day=32, hour=25, Feb-31, ...)
+        # surfaces as the library's own KerykeionException rather than a raw
+        # datetime ValueError a caller catching KerykeionException would miss.
+        try:
+            naive_datetime = datetime(
+                data["year"], data["month"], data["day"], data["hour"], data["minute"], data["seconds"]
+            )
+        except ValueError as exc:
+            raise KerykeionException(
+                f"Invalid birth date/time component: {exc}. "
+                "Check year/month/day/hour/minute/seconds are within valid ranges."
+            ) from exc
 
         # Explicit LMT offset supplied by from_iso_utc_time (which already
         # resolved the zone period from the unambiguous UTC instant). Apply it
@@ -1801,6 +1815,13 @@ class AstrologicalSubjectFactory:
                 "Non-existent time error! The time does not exist due to DST transition (spring forward). "
                 "Please specify a valid time."
             )
+        except (OverflowError, ValueError) as exc:
+            # For a transition-based IANA zone, pytz.localize probes
+            # ``naive_datetime ± 1 day`` to resolve the offset; at 0001-01-01
+            # that subtraction underflows below datetime.min (year 0), BEFORE the
+            # astimezone call wrapped below. Surface the same clean exception here
+            # (offset-sign-independent, so it also covers west-of-UTC zones).
+            raise AstrologicalSubjectFactory._pre_1ce_utc_exception() from exc
 
         # Pre-standardization births: the IANA zone falls back to its initial
         # "LMT" record, whose offset is the Local Mean Time of the zone's
@@ -1834,11 +1855,18 @@ class AstrologicalSubjectFactory:
 
     @staticmethod
     def _pre_1ce_utc_exception() -> "KerykeionException":
-        """Uniform error for a local time that converts to a UTC instant < 1 CE."""
+        """Uniform error for a local time whose UTC instant is unrepresentable.
+
+        Fires at either datetime boundary: a year-1-CE local time near midnight
+        can convert to a UTC instant before 1 CE, and (symmetrically) a year-9999
+        local time can push past datetime.max. The message names both so it is
+        never factually inverted (both boundaries are outside the ephemeris range
+        regardless)."""
         return KerykeionException(
-            "The birth instant converts to a UTC time before 1 CE, which is not "
-            "representable. Year-1 CE births in the first hours after midnight and "
-            "east of UTC are unsupported (and outside the ephemeris range regardless)."
+            "The birth instant converts to a UTC time outside the representable "
+            "datetime range (before 1 CE or after 9999 CE). Births within a few "
+            "hours of those calendar boundaries are unsupported (and outside the "
+            "ephemeris range regardless)."
         )
 
     @staticmethod

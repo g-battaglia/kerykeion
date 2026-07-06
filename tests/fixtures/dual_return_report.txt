@@ -254,21 +254,21 @@ Sample Natal Subject — Solar Return Comparison 1990
 +Aspects----------------+----------------------+---------------+-----------------------+-----------------------------------+-------+--------------+
 | Point 1               | Owner 1              | Aspect        | Point 2               | Owner 2                           | Orb   | Movement     |
 +-----------------------+----------------------+---------------+-----------------------+-----------------------------------+-------+--------------+
-| Sun                   | Sample Natal Subject | conjunction ☌ | Sun                   | Sample Natal Subject Solar Return | 0.00° | Separating ← |
-| Moon                  | Sample Natal Subject | conjunction ☌ | Moon                  | Sample Natal Subject Solar Return | 0.00° | Separating ← |
+| Sun                   | Sample Natal Subject | conjunction ☌ | Sun                   | Sample Natal Subject Solar Return | 0.00° | Applying →   |
+| Moon                  | Sample Natal Subject | conjunction ☌ | Moon                  | Sample Natal Subject Solar Return | 0.00° | Applying →   |
 | Moon                  | Sample Natal Subject | conjunction ☌ | Jupiter               | Sample Natal Subject Solar Return | 2.70° | Separating ← |
 | Moon                  | Sample Natal Subject | opposition ☍  | Saturn                | Sample Natal Subject Solar Return | 0.31° | Applying →   |
 | Moon                  | Sample Natal Subject | conjunction ☌ | Chiron                | Sample Natal Subject Solar Return | 1.33° | Applying →   |
-| Mercury               | Sample Natal Subject | conjunction ☌ | Mercury               | Sample Natal Subject Solar Return | 0.00° | Separating ← |
+| Mercury               | Sample Natal Subject | conjunction ☌ | Mercury               | Sample Natal Subject Solar Return | 0.00° | Applying →   |
 | Mercury               | Sample Natal Subject | square □      | Pluto                 | Sample Natal Subject Solar Return | 2.63° | Separating ← |
 | Mercury               | Sample Natal Subject | conjunction ☌ | Medium Coeli          | Sample Natal Subject Solar Return | 2.30° | Separating ← |
-| Venus                 | Sample Natal Subject | conjunction ☌ | Venus                 | Sample Natal Subject Solar Return | 0.00° | Separating ← |
-| Mars                  | Sample Natal Subject | conjunction ☌ | Mars                  | Sample Natal Subject Solar Return | 0.00° | Separating ← |
+| Venus                 | Sample Natal Subject | conjunction ☌ | Venus                 | Sample Natal Subject Solar Return | 0.00° | Applying →   |
+| Mars                  | Sample Natal Subject | conjunction ☌ | Mars                  | Sample Natal Subject Solar Return | 0.00° | Applying →   |
 | Mars                  | Sample Natal Subject | trine △       | Uranus                | Sample Natal Subject Solar Return | 0.77° | Applying →   |
 | Mars                  | Sample Natal Subject | square □      | True North Lunar Node | Sample Natal Subject Solar Return | 1.30° | Applying →   |
 | Mars                  | Sample Natal Subject | opposition ☍  | Ascendant             | Sample Natal Subject Solar Return | 0.15° | Applying →   |
 | Jupiter               | Sample Natal Subject | conjunction ☌ | Moon                  | Sample Natal Subject Solar Return | 2.70° | Applying →   |
-| Jupiter               | Sample Natal Subject | conjunction ☌ | Jupiter               | Sample Natal Subject Solar Return | 0.00° | Separating ← |
+| Jupiter               | Sample Natal Subject | conjunction ☌ | Jupiter               | Sample Natal Subject Solar Return | 0.00° | Applying →   |
 | Jupiter               | Sample Natal Subject | opposition ☍  | Saturn                | Sample Natal Subject Solar Return | 2.40° | Separating ← |
 | Saturn                | Sample Natal Subject | opposition ☍  | Moon                  | Sample Natal Subject Solar Return | 0.31° | Applying →   |
 | Saturn                | Sample Natal Subject | opposition ☍  | Jupiter               | Sample Natal Subject Solar Return | 2.40° | Separating ← |
@@ -287,7 +287,7 @@ Sample Natal Subject — Solar Return Comparison 1990
 | True North Lunar Node | Sample Natal Subject | square □      | Ascendant             | Sample Natal Subject Solar Return | 1.45° | Applying →   |
 | Chiron                | Sample Natal Subject | conjunction ☌ | Moon                  | Sample Natal Subject Solar Return | 1.33° | Separating ← |
 | Chiron                | Sample Natal Subject | opposition ☍  | Saturn                | Sample Natal Subject Solar Return | 1.64° | Applying →   |
-| Chiron                | Sample Natal Subject | conjunction ☌ | Chiron                | Sample Natal Subject Solar Return | 0.00° | Separating ← |
+| Chiron                | Sample Natal Subject | conjunction ☌ | Chiron                | Sample Natal Subject Solar Return | 0.00° | Applying →   |
 | Ascendant             | Sample Natal Subject | opposition ☍  | Mars                  | Sample Natal Subject Solar Return | 0.15° | Separating ← |
 | Ascendant             | Sample Natal Subject | sextile ⚹     | Uranus                | Sample Natal Subject Solar Return | 0.92° | Applying →   |
 | Ascendant             | Sample Natal Subject | square □      | True North Lunar Node | Sample Natal Subject Solar Return | 1.44° | Applying →   |

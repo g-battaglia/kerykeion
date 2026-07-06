@@ -178,10 +178,17 @@ def calculate_aspect_movement(
     # with a fixed step, fast movers (axes carry synthetic speeds of
     # ~280-360 deg/day) overshoot past exactness within DT and an applying
     # aspect reads as separating. The 1e-3 deg floor keeps the orb change from
-    # collapsing to zero for an already-exact aspect at normal speeds; two
-    # near-co-moving slow bodies (relative speed well under 1 deg/day) can
-    # still fall below ORB_EPSILON and read Static, unchanged from before.
-    max_relative_motion = max(min(current_orb, 0.5), 1e-3)
+    # collapsing to zero for an aspect that is ALREADY EXACT within float noise
+    # (orb <= ORB_EPSILON): there the current orb (possibly ~1e-15) is too small
+    # to size a meaningful step, so the floor lets the lookahead reveal the true
+    # direction. For a resolvably-nonzero orb the floor must NOT exceed the orb
+    # itself, or a fast body (e.g. an axis at ~360 deg/day) would step PAST
+    # exactness and flip applying->separating — so cap the motion at the current
+    # orb. Two near-co-moving slow bodies can still read Static, as before.
+    if current_orb <= ORB_EPSILON:
+        max_relative_motion = 1e-3
+    else:
+        max_relative_motion = min(current_orb, 0.5)
     dt = min(DT, max_relative_motion / relative_speed)
     # Use modulo to handle crossing 0°/360° boundary correctly
     p1_future = (point_one_abs_pos + point_one_speed * dt) % 360.0

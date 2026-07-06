@@ -549,7 +549,20 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
 
     Returns:
         The adjusted latitude value, clamped between -66° and 66°
+
+    Raises:
+        KerykeionException: If the latitude is geometrically impossible
+            (outside [-90, 90]) — a corrupt/mistyped value, not a polar one.
     """
+    # Reject geometrically-impossible latitudes rather than silently clamping
+    # them to the polar limit (which would turn a mistyped lat=100 into a
+    # plausible-but-wrong chart at 66N). The ephemeris backend validates this
+    # symmetrically with longitude; only genuinely-polar-but-valid latitudes
+    # (66 < |lat| <= 90) are clamped below for house stability.
+    if not -90.0 <= latitude <= 90.0:
+        raise KerykeionException(
+            f"Latitude {latitude} is out of range; it must be between -90 and 90 degrees."
+        )
     if latitude > _POLAR_LATITUDE_LIMIT:
         latitude = _POLAR_LATITUDE_LIMIT
         logger.info(f"Latitude capped at {_POLAR_LATITUDE_LIMIT:.0f}° to keep house calculations stable.")
@@ -559,6 +572,21 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
         logger.info(f"Latitude capped at -{_POLAR_LATITUDE_LIMIT:.0f}° to keep house calculations stable.")
 
     return latitude
+
+
+def normalize_longitude(longitude: float) -> float:
+    """Normalize a longitude to the [-180, 180) range the ephemeris backend expects.
+
+    A caller passing an un-normalized longitude (e.g. 370° == 10° E, or -190°
+    == 170° E) would otherwise leak a raw backend CoordinateError from the
+    houses call. Wrap it into range instead, matching the astronomical meaning.
+
+    A longitude already in range is returned UNCHANGED (no modulo round-off), so
+    ordinary inputs keep their exact value.
+    """
+    if -180.0 <= longitude < 180.0:
+        return longitude
+    return (longitude + 180.0) % 360.0 - 180.0
 
 
 # =============================================================================

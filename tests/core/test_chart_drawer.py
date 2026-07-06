@@ -3861,3 +3861,20 @@ class TestModernNoClassicHitAreaLeakRound7:
         svg = ChartDrawer(cd, style="modern").generate_svg_string(style="modern")
         n = svg.count('kr:node="HouseSector"') + svg.count("kr:node='HouseSector'")
         assert n == 12, f"expected 12 HouseSector nodes in modern full-chart, got {n}"
+
+
+class TestSvgControlCharStripRound8:
+    """Round-8 regression: a control char in a name must not break the SVG."""
+
+    def test_control_char_name_yields_parseable_svg(self):
+        import xml.dom.minidom
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.charts.chart_drawer import ChartDrawer
+
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "Ann\x0ca", 1990, 6, 15, 12, 0, city="London", nation="GB",
+            lng=-0.1, lat=51.5, tz_str="Europe/London", online=False,
+            suppress_geonames_warning=True)
+        cd = ChartDataFactory.create_natal_chart_data(s)
+        xml.dom.minidom.parseString(ChartDrawer(cd).generate_svg_string())

@@ -46,13 +46,21 @@ ElementQualityDistributionMethod = Literal["pure_count", "weighted"]
 # Entities for quote characters, complementing the default &, <, > escaping.
 _XML_TEXT_ENTITIES = {'"': "&quot;", "'": "&apos;"}
 
+# Control characters illegal in XML 1.0 even when escaped (everything below
+# 0x20 except tab/LF/CR). Escaping does not neutralize them, so a name/city
+# containing one would make the SVG unparseable — strip them first. Mirrors
+# context_serializer._strip_illegal.
+_SVG_ILLEGAL_TRANSLATION = {c: None for c in range(0x20) if c not in (0x09, 0x0A, 0x0D)}
+
 
 def escape_svg_text(value: object) -> str:
     """Escape a plain-text value for safe embedding in SVG markup.
 
     Converts ``&``, ``<``, ``>`` and single/double quotes to their XML
     entities so user-supplied strings (subject names, cities, custom titles)
-    cannot break the SVG structure or inject markup.
+    cannot break the SVG structure or inject markup, and strips XML-1.0-illegal
+    control characters that escaping cannot neutralize (which would otherwise
+    make the SVG rejected by any conforming XML parser).
 
     Args:
         value: The value to escape; non-strings are converted with ``str()``.
@@ -60,7 +68,7 @@ def escape_svg_text(value: object) -> str:
     Returns:
         The escaped string, safe for use as XML text content or attribute value.
     """
-    return _xml_escape(str(value), _XML_TEXT_ENTITIES)
+    return _xml_escape(str(value).translate(_SVG_ILLEGAL_TRANSLATION), _XML_TEXT_ENTITIES)
 
 
 def _resolve_point_glyph_id(

@@ -1153,15 +1153,15 @@ print(context)
 
 ```xml
 <chart name="John Doe">
-  <birth_data date="1990-01-01" time="12:00" city="London" nation="GB" ... />
+  <birth_data date="1990-01-01 12:00" city="London" nation="GB" lat="51.51" lng="-0.13" lng_dir="W" tz="Europe/London" />
   <config zodiac="Tropical" house_system="Placidus" perspective="Apparent Geocentric" />
   <planets>
     <point name="Sun" position="10.81" sign="Capricorn" element="Earth" quality="Cardinal" ... />
-    <point name="Moon" position="25.60" sign="Aquarius" element="Air" quality="Fixed" ... />
+    <point name="Moon" position="3.27" sign="Pisces" element="Water" quality="Mutable" ... />
     ...
   </planets>
   <houses>...</houses>
-  <lunar_phase name="Waning Gibbous" phase="20" degrees_between="254.32" emoji="🌖" />
+  <lunar_phase name="Waxing Crescent" phase="5" degrees_between="52.45" emoji="🌒" />
 </chart>
 ```
 

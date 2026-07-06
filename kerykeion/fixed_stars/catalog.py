@@ -17,11 +17,16 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class FixedStarMetadataModel(BaseModel):
     """Metadata for a single fixed star entry from the catalog."""
+
+    # Frozen: the catalog is lru_cache-backed and hands the SAME instances to
+    # every caller, so mutable models would let one caller's edit poison the
+    # cache process-wide. Immutable entries make the shared cache safe.
+    model_config = ConfigDict(frozen=True)
 
     name: str = Field(description="IAU canonical name (e.g. 'Vindemiatrix', 'Deneb Algedi').")
     slug: str = Field(description="URL/identifier-safe slug (spaces → underscores).")

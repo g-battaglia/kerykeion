@@ -17,6 +17,17 @@
   and a chart date differ by the Julian/Gregorian gap (~2 days near year 0).
   This is a deliberate split: ISO strings stay standards-conformant, chart
   dates stay astrological.
+- **Minor bodies degrade silently to a Keplerian approximation near the date
+  range edges.** For birth years roughly outside ~1600–2450 (the SPK coverage
+  of the bundled asteroid kernels), the default `libephemeris` backend returns
+  an unperturbed two-body position for Chiron, the asteroids and TNOs (error up
+  to several degrees), with the same success flag as an accurate value — so
+  kerykeion cannot detect it and the body is not dropped. The Sun, Moon and
+  main planets stay accurate across the whole `de440` range (1550–2650), and
+  mainstream modern charts (1900–2100) are unaffected. Install the wider SPK
+  kernels (or enable auto-download) for accurate minor-body positions at extreme
+  dates; libephemeris logs a `source=Keplerian (fallback)` warning to stderr
+  when this happens.
 
 ### Changed (breaking)
 

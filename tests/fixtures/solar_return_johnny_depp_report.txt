@@ -254,7 +254,7 @@ Johnny Depp — Solar Return Comparison 2024
 +Aspects----------------+-------------+---------------+-----------------------+--------------------------+-------+--------------+
 | Point 1               | Owner 1     | Aspect        | Point 2               | Owner 2                  | Orb   | Movement     |
 +-----------------------+-------------+---------------+-----------------------+--------------------------+-------+--------------+
-| Sun                   | Johnny Depp | conjunction ☌ | Sun                   | Johnny Depp Solar Return | 0.00° | Separating ← |
+| Sun                   | Johnny Depp | conjunction ☌ | Sun                   | Johnny Depp Solar Return | 0.00° | Applying →   |
 | Sun                   | Johnny Depp | conjunction ☌ | Venus                 | Johnny Depp Solar Return | 0.90° | Separating ← |
 | Sun                   | Johnny Depp | square □      | Saturn                | Johnny Depp Solar Return | 1.37° | Separating ← |
 | Mercury               | Johnny Depp | conjunction ☌ | Uranus                | Johnny Depp Solar Return | 0.44° | Applying →   |

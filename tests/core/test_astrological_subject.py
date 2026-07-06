@@ -2513,3 +2513,45 @@ class TestYear1CEBoundaryRound7:
             AstrologicalSubjectFactory.from_birth_data(
                 "x", 1, 1, 1, 0, 30, lng=45.0, lat=41.9,
                 tz_str="Etc/GMT-3", online=False, suppress_geonames_warning=True)
+
+
+class TestInputValidationRound8:
+    """Round-8 regressions: input validation surfaces KerykeionException (not raw
+    ValueError/CoordinateError/OverflowError) and normalizes longitude."""
+
+    def _base(self, **kw):
+        from kerykeion import AstrologicalSubjectFactory
+        base = dict(name="t", year=1990, month=6, day=15, hour=12, minute=0,
+                    lat=51.5, lng=10.0, tz_str="Etc/GMT", online=False,
+                    suppress_geonames_warning=True)
+        base.update(kw)
+        return AstrologicalSubjectFactory.from_birth_data(**base)
+
+    def test_impossible_latitude_raises(self):
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException):
+            self._base(lat=100.0)
+
+    def test_valid_polar_latitude_clamps(self):
+        s = self._base(lat=78.0)
+        assert s.lat == 66.0
+
+    @pytest.mark.parametrize("kw", [{"month": 13}, {"day": 32}, {"hour": 25}, {"minute": 99}])
+    def test_out_of_range_date_raises_kerykeion(self, kw):
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException):
+            self._base(**kw)
+
+    def test_longitude_normalized(self):
+        s = self._base(lng=370.0)
+        s10 = self._base(lng=10.0)
+        assert s.lng == 10.0
+        assert abs(s.ascendant.abs_pos - s10.ascendant.abs_pos) < 1e-9
+
+    def test_year1_ce_iana_zone_raises_kerykeion(self):
+        """Round-7 regression follow-up: real IANA zones (not just static
+        Etc/GMT) at year 1 CE raise KerykeionException, not raw OverflowError."""
+        from kerykeion.schemas import KerykeionException
+        for tz in ("Asia/Tokyo", "America/New_York"):
+            with pytest.raises(KerykeionException):
+                self._base(year=1, month=1, day=1, hour=0, minute=30, lng=40.0, tz_str=tz)
