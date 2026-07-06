@@ -23,8 +23,10 @@
   an unperturbed two-body position for Chiron, the asteroids and TNOs (error up
   to several degrees), with the same success flag as an accurate value — so
   kerykeion cannot detect it and the body is not dropped. The Sun, Moon and
-  main planets stay accurate across the whole `de440` range (1550–2650), and
-  mainstream modern charts (1900–2100) are unaffected. Install the wider SPK
+  main planets stay accurate across the loaded ephemeris' whole date range (the
+  default `DE440s` install covers 1849–2150; the `medium` tier extends the
+  planet range to 1550–2650 — see the supported-date-range note in the README),
+  and mainstream modern charts (1900–2100) are unaffected. Install the wider SPK
   kernels (or enable auto-download) for accurate minor-body positions at extreme
   dates; libephemeris logs a `source=Keplerian (fallback)` warning to stderr
   when this happens.

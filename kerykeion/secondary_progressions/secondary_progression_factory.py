@@ -369,14 +369,26 @@ class SecondaryProgressionFactory:
         # gauquelin/nutation/local-space/fixed-stars despite the docstring's
         # "settings copied from the natal subject" promise (parity with
         # PlanetaryReturnFactory, which forwards the same features).
-        _natal_sun = getattr(natal_subject, "sun", None)
+        #
+        # Infer the per-point flags from ANY populated point, not the Sun
+        # specifically: in a heliocentric natal the Sun is the excluded center
+        # body (sun is None), and even in geocentric charts the Sun may be absent
+        # from active_points — keying off it would silently drop the enrichments.
+        def _any_point_has(attr: str) -> bool:
+            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter",
+                          "saturn", "uranus", "neptune", "pluto"):
+                _p = getattr(natal_subject, _name, None)
+                if _p is not None:
+                    return getattr(_p, attr, None) is not None
+            return False
+
         common_kwargs.update(
             active_fixed_stars=[s.name for s in (natal_subject.fixed_stars or [])] or None,
             calculate_nutation=natal_subject.nutation is not None,
             calculate_gauquelin=natal_subject.gauquelin_sector_cusps is not None,
-            calculate_dignities=_natal_sun is not None and _natal_sun.essential_dignity is not None,
-            calculate_nakshatra=_natal_sun is not None and _natal_sun.nakshatra is not None,
-            calculate_local_space=_natal_sun is not None and _natal_sun.azimuth is not None,
+            calculate_dignities=_any_point_has("essential_dignity"),
+            calculate_nakshatra=_any_point_has("nakshatra"),
+            calculate_local_space=_any_point_has("azimuth"),
         )
 
         if int(progressed_year_gregorian) >= 1:

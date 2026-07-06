@@ -962,3 +962,22 @@ class TestSolarArcDirectedAnglesRound12:
             assert abs((api_pos - subj_pos + 180) % 360 - 180) < 1e-9
         # house cusps stay on the natal frame
         assert abs(directed.first_house.abs_pos - natal.first_house.abs_pos) < 1e-9
+
+
+class TestProgressionEnrichmentSunIndependentCodeRabbit:
+    """CodeRabbit review: progression enrichment inference must not be gated on
+    the Sun (None in a heliocentric natal, or absent from active_points)."""
+
+    def test_heliocentric_progression_inherits_enrichments(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.secondary_progressions import SecondaryProgressionFactory
+
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "H", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            perspective_type="Heliocentric", calculate_dignities=True,
+            calculate_nakshatra=True)
+        assert natal.sun is None  # excluded center body
+        prog = SecondaryProgressionFactory.compute(natal, target_year=2020)
+        assert prog.mars.essential_dignity is not None
+        assert prog.mars.nakshatra is not None

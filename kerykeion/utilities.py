@@ -221,7 +221,8 @@ def get_kerykeion_point_from_degree(
         A KerykeionPointModel with calculated zodiac sign, position, and properties
 
     Raises:
-        KerykeionException: If the degree is >= 360 after normalization
+        KerykeionException: If degree is non-finite (NaN or infinite). Any finite
+            degree (negative or >= 360) is wrapped into [0, 360), not rejected.
     """
     # A non-finite degree is a genuine calculation failure — fail loudly.
     if not math.isfinite(degree):
