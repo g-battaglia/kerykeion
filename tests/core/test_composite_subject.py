@@ -720,3 +720,33 @@ class TestCompositeDisjointActivePoints:
         )
         with pytest.raises(KerykeionException, match="no common active points"):
             CompositeSubjectFactory(a, b)
+
+
+class TestCompositeMidheavenInvariantRound5:
+    """Round-5 HIGH regression: the midpoint-composite Midheaven must equal the
+    tenth-house cusp and sit in the Tenth house, even when the two subjects'
+    Ascendants are far apart (previously circular_sort mislabeled the cusps)."""
+
+    def _pair_composite(self, h1, h2):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        a = AstrologicalSubjectFactory.from_birth_data(
+            "C1", 1990, 6, 15, h1, 0, lng=12.5, lat=41.9, tz_str="Etc/GMT",
+            online=False, suppress_geonames_warning=True)
+        b = AstrologicalSubjectFactory.from_birth_data(
+            "C2", 1990, 6, 15, h2, 0, lng=12.5, lat=41.9, tz_str="Etc/GMT",
+            online=False, suppress_geonames_warning=True)
+        return CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
+
+    def test_mc_equals_tenth_cusp_degenerate(self):
+        comp = self._pair_composite(6, 19)  # Ascendants ~154 deg apart
+        diff = abs((comp.medium_coeli.abs_pos - comp.tenth_house.abs_pos + 180) % 360 - 180)
+        assert diff < 1e-6
+        assert comp.medium_coeli.house == "Tenth_House"
+
+    def test_mc_invariant_monte_carlo(self):
+        for h1, h2 in [(0, 6), (3, 15), (8, 20), (11, 23), (5, 17)]:
+            comp = self._pair_composite(h1, h2)
+            diff = abs((comp.medium_coeli.abs_pos - comp.tenth_house.abs_pos + 180) % 360 - 180)
+            assert diff < 1e-6, f"MC != tenth cusp for {h1},{h2}"
+            assert comp.medium_coeli.house == "Tenth_House"

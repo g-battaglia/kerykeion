@@ -607,108 +607,125 @@ class TransitsTimeRangeFactory:
                 continue
 
             for run in self._split_track_into_runs(track, step_days):
-                # Find minimum orb moment (exact)
-                min_orb_idx = min(range(len(run)), key=lambda i: run[i][1])
-                exact_date = run[min_orb_idx][0]
-                min_orb = run[min_orb_idx][1]
+                # A single in-orb run can contain MORE THAN ONE exact pass when
+                # a slow retrograde loop stays inside the orb the whole time
+                # (e.g. Neptune conjunct a natal point: direct hit, retrograde
+                # back over it, direct again — all without leaving a 3° orb). The
+                # run splitter only cuts where the aspect LEAVES orb, so those
+                # passes share one run. Emit one event per local orb minimum
+                # instead of collapsing the run to its single global minimum.
+                _run_minima = self._local_orb_minima(run)
+                for _minimum_pos, min_orb_idx in enumerate(_run_minima):
+                    _is_first_minimum = _minimum_pos == 0
+                    _is_last_minimum = _minimum_pos == len(_run_minima) - 1
+                    exact_date = run[min_orb_idx][0]
+                    min_orb = run[min_orb_idx][1]
 
-                # Estimate orb rate after the exact moment (degrees per day),
-                # from the coarse samples (before any refinement).
-                orb_rate = None
-                if min_orb_idx < len(run) - 1:
-                    after_date, orb_after, _ = run[min_orb_idx + 1]
-                    try:
-                        dt_days = (
-                            datetime.fromisoformat(after_date) - datetime.fromisoformat(exact_date)
-                        ).total_seconds() / 86400.0
-                    except ValueError:
-                        dt_days = 0.0
-                    if dt_days > 0:
-                        orb_rate = round((orb_after - min_orb) / dt_days, 6)
-
-                # Ternary-search refinement (v6.0): refine exact_moment between
-                # bracketing steps. With tight orbs and fast bodies (Moon at
-                # multi-hour steps) a run often has only 1-3 samples and the
-                # minimum sits at a run EDGE — bracket one sampling step
-                # beyond the edge in that case, otherwise the very events
-                # that need refinement most would silently keep coarse values.
-                if refine_exact_moments and supports_refinement and step_days:
-                    # Never extend past the analysed range itself: for an
-                    # event truncated at the range edge the orb is monotonic
-                    # there (the true exact lies outside the window), and the
-                    # trisection would converge onto the artificial bracket
-                    # edge — fabricating an exact_moment outside [start, end].
-                    # At a range edge the bracket bound is the edge sample
-                    # itself: in-range minima still refine, truncated events
-                    # honestly converge to the range boundary.
-                    if min_orb_idx > 0:
-                        left_bracket = run[min_orb_idx - 1][0]
-                    elif run[0][0] == first_moment_date:
-                        left_bracket = run[0][0]
-                    else:
-                        try:
-                            left_bracket = (
-                                datetime.fromisoformat(run[0][0]) - timedelta(days=step_days)
-                            ).isoformat()
-                        except ValueError:
-                            left_bracket = None
+                    # Estimate orb rate after the exact moment (degrees per day),
+                    # from the coarse samples (before any refinement).
+                    orb_rate = None
                     if min_orb_idx < len(run) - 1:
-                        right_bracket = run[min_orb_idx + 1][0]
-                    elif run[-1][0] == last_moment_date:
-                        right_bracket = run[-1][0]
-                    else:
+                        after_date, orb_after, _ = run[min_orb_idx + 1]
                         try:
-                            right_bracket = (
-                                datetime.fromisoformat(run[-1][0]) + timedelta(days=step_days)
-                            ).isoformat()
+                            dt_days = (
+                                datetime.fromisoformat(after_date) - datetime.fromisoformat(exact_date)
+                            ).total_seconds() / 86400.0
                         except ValueError:
-                            right_bracket = None
-                    if left_bracket is not None and right_bracket is not None:
-                        refined = self._refine_exact_moment(
+                            dt_days = 0.0
+                        if dt_days > 0:
+                            orb_rate = round((orb_after - min_orb) / dt_days, 6)
+
+                    # Ternary-search refinement (v6.0): refine exact_moment between
+                    # bracketing steps. With tight orbs and fast bodies (Moon at
+                    # multi-hour steps) a run often has only 1-3 samples and the
+                    # minimum sits at a run EDGE — bracket one sampling step
+                    # beyond the edge in that case, otherwise the very events
+                    # that need refinement most would silently keep coarse values.
+                    if refine_exact_moments and supports_refinement and step_days:
+                        # Never extend past the analysed range itself: for an
+                        # event truncated at the range edge the orb is monotonic
+                        # there (the true exact lies outside the window), and the
+                        # trisection would converge onto the artificial bracket
+                        # edge — fabricating an exact_moment outside [start, end].
+                        # At a range edge the bracket bound is the edge sample
+                        # itself: in-range minima still refine, truncated events
+                        # honestly converge to the range boundary.
+                        if min_orb_idx > 0:
+                            left_bracket = run[min_orb_idx - 1][0]
+                        elif run[0][0] == first_moment_date:
+                            left_bracket = run[0][0]
+                        else:
+                            try:
+                                left_bracket = (
+                                    datetime.fromisoformat(run[0][0]) - timedelta(days=step_days)
+                                ).isoformat()
+                            except ValueError:
+                                left_bracket = None
+                        if min_orb_idx < len(run) - 1:
+                            right_bracket = run[min_orb_idx + 1][0]
+                        elif run[-1][0] == last_moment_date:
+                            right_bracket = run[-1][0]
+                        else:
+                            try:
+                                right_bracket = (
+                                    datetime.fromisoformat(run[-1][0]) + timedelta(days=step_days)
+                                ).isoformat()
+                            except ValueError:
+                                right_bracket = None
+                        if left_bracket is not None and right_bracket is not None:
+                            refined = self._refine_exact_moment(
+                                p1_name=p1,
+                                p2_name=p2,
+                                aspect_name=aspect_name,
+                                left_date_str=left_bracket,
+                                right_date_str=right_bracket,
+                                iterations=refinement_iterations,
+                            )
+                            # Accept only genuine improvements: for an event
+                            # truncated at the range edge the orb is monotonic and
+                            # the probe points can never land exactly on the edge
+                            # sample, so the "refined" orb comes back marginally
+                            # worse — keep the coarse values then.
+                            if refined is not None and refined[1] < min_orb:
+                                exact_date, min_orb = refined
+
+                    # Event edges. None when the event is truncated by the range:
+                    # a run that starts on the first sample (or whose first in-orb
+                    # sample is already Separating) never showed its applying
+                    # phase; symmetrically for the separating side. When a run
+                    # holds several passes (sub-orb retrograde loop), the run's
+                    # applying edge belongs only to the FIRST pass and the
+                    # separating edge only to the LAST — the interior passes have
+                    # no orb-exit edge, so both are None for them.
+                    first_date, _, first_movement = run[0]
+                    last_date, _, last_movement = run[-1]
+                    applying_start = (
+                        first_date
+                        if _is_first_minimum
+                        and first_date != first_moment_date
+                        and first_movement != "Separating"
+                        else None
+                    )
+                    separating_end = (
+                        last_date
+                        if _is_last_minimum
+                        and last_date != last_moment_date
+                        and last_movement != "Applying"
+                        else None
+                    )
+
+                    events.append(
+                        TransitEventModel(
                             p1_name=p1,
                             p2_name=p2,
-                            aspect_name=aspect_name,
-                            left_date_str=left_bracket,
-                            right_date_str=right_bracket,
-                            iterations=refinement_iterations,
+                            aspect=aspect_name,
+                            applying_start=applying_start,
+                            exact_moment=exact_date,
+                            separating_end=separating_end,
+                            min_orb=round(min_orb, 6),
+                            orb_rate=orb_rate,
                         )
-                        # Accept only genuine improvements: for an event
-                        # truncated at the range edge the orb is monotonic and
-                        # the probe points can never land exactly on the edge
-                        # sample, so the "refined" orb comes back marginally
-                        # worse — keep the coarse values then.
-                        if refined is not None and refined[1] < min_orb:
-                            exact_date, min_orb = refined
-
-                # Event edges. None when the event is truncated by the range:
-                # a run that starts on the first sample (or whose first in-orb
-                # sample is already Separating) never showed its applying
-                # phase; symmetrically for the separating side.
-                first_date, _, first_movement = run[0]
-                last_date, _, last_movement = run[-1]
-                applying_start = (
-                    first_date
-                    if first_date != first_moment_date and first_movement != "Separating"
-                    else None
-                )
-                separating_end = (
-                    last_date
-                    if last_date != last_moment_date and last_movement != "Applying"
-                    else None
-                )
-
-                events.append(
-                    TransitEventModel(
-                        p1_name=p1,
-                        p2_name=p2,
-                        aspect=aspect_name,
-                        applying_start=applying_start,
-                        exact_moment=exact_date,
-                        separating_end=separating_end,
-                        min_orb=round(min_orb, 6),
-                        orb_rate=orb_rate,
                     )
-                )
 
         # Sort chronologically. exact_moment is an extended-year ISO string
         # (BCE years carry a leading '-', which datetime can't parse), so a
@@ -720,6 +737,51 @@ class TransitsTimeRangeFactory:
             events=events,
             subject=self.natal_chart,
         )
+
+    @staticmethod
+    def _local_orb_minima(run: "list[tuple[str, float, str]]") -> "list[int]":
+        """Indices of the local orb minima within one in-orb run.
+
+        Each local minimum is a genuine exact pass. A run usually has exactly
+        one (the global minimum), but a sub-orb retrograde loop produces several
+        — the orb dips to a minimum, rises as the transiter stations, then dips
+        again. A sample is a local minimum when it is <= both neighbours (with a
+        strict inequality on at least one side to avoid reporting a flat plateau
+        twice); the two run endpoints count as minima only when they are proper
+        turning points, so a monotone (truncated) run still yields exactly one.
+        Guarantees at least one index (falls back to the global minimum).
+        """
+        n = len(run)
+        if n == 1:
+            return [0]
+        minima: list[int] = []
+        for i in range(n):
+            cur = run[i][1]
+            left = run[i - 1][1] if i > 0 else None
+            right = run[i + 1][1] if i < n - 1 else None
+            if left is None:
+                # First sample: a minimum only if the orb DECREASES away from it
+                # would be false — it's a turning point only when the next sample
+                # is higher (orb rising = we are at/near the exact, truncated
+                # applying phase). If the next sample is lower, this is just the
+                # separating tail of an out-of-range earlier pass, not a minimum.
+                is_min = right is not None and cur < right
+            elif right is None:
+                # Last sample: a minimum only if the orb was still DECREASING
+                # into it (truncated approach; true exact lies beyond the range).
+                # If it rose into the last sample, it is the separating tail of
+                # the previous minimum, not a new one.
+                is_min = cur < left
+            else:
+                is_min = cur <= left and cur <= right and (cur < left or cur < right)
+            if is_min:
+                # Skip an equal-orb plateau's later points: only keep the first.
+                if minima and run[minima[-1]][1] == cur and i - minima[-1] == 1:
+                    continue
+                minima.append(i)
+        if not minima:
+            minima = [min(range(n), key=lambda i: run[i][1])]
+        return minima
 
     @staticmethod
     def _split_track_into_runs(

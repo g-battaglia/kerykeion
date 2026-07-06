@@ -135,20 +135,20 @@ Sample Natal Subject & Yoko Ono — Composite Report
 +Active Celestial Points-----+
 | #  | Active Point          |
 +----+-----------------------+
-| 1  | Ascendant             |
-| 2  | Chiron                |
-| 3  | Jupiter               |
-| 4  | Mars                  |
-| 5  | Medium_Coeli          |
-| 6  | Mercury               |
-| 7  | Moon                  |
-| 8  | Neptune               |
-| 9  | Pluto                 |
-| 10 | Saturn                |
-| 11 | Sun                   |
-| 12 | True_North_Lunar_Node |
-| 13 | Uranus                |
-| 14 | Venus                 |
+| 1  | Sun                   |
+| 2  | Moon                  |
+| 3  | Mercury               |
+| 4  | Venus                 |
+| 5  | Mars                  |
+| 6  | Jupiter               |
+| 7  | Saturn                |
+| 8  | Uranus                |
+| 9  | Neptune               |
+| 10 | Pluto                 |
+| 11 | True_North_Lunar_Node |
+| 12 | Chiron                |
+| 13 | Ascendant             |
+| 14 | Medium_Coeli          |
 +----+-----------------------+
 
 +-------------+---------+

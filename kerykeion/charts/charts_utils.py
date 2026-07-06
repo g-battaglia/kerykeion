@@ -2230,9 +2230,17 @@ def calculate_synastry_element_points(
     method: ElementQualityDistributionMethod = "weighted",
     custom_weights: Optional[Mapping[str, float]] = None,
     include_fixed_stars: bool = False,
+    as_percentages: bool = True,
 ) -> dict[str, float]:
     """
-    Calculate combined element percentages for a synastry chart.
+    Calculate combined element points for a synastry chart.
+
+    With ``as_percentages=True`` (default, backward-compatible) the returned
+    values are percentages summing to 100. With ``as_percentages=False`` they
+    are the raw combined weighted point totals of both subjects — matching what
+    every single-subject distribution helper returns, so a caller (the chart
+    data factory) can populate the model's documented "points total" fields
+    consistently and derive percentages itself.
 
     Args:
         planets_settings: Planet configuration list (unused but preserved).
@@ -2274,6 +2282,9 @@ def calculate_synastry_element_points(
 
     combined_totals = {key: subject1_totals[key] + subject2_totals[key] for key in _ELEMENT_KEYS}
     total_points = sum(combined_totals.values())
+
+    if not as_percentages:
+        return combined_totals
 
     if total_points == 0:
         return {key: 0.0 for key in _ELEMENT_KEYS}
@@ -2723,9 +2734,14 @@ def calculate_synastry_quality_points(
     method: ElementQualityDistributionMethod = "weighted",
     custom_weights: Optional[Mapping[str, float]] = None,
     include_fixed_stars: bool = False,
+    as_percentages: bool = True,
 ) -> dict[str, float]:
     """
-    Calculate combined modality percentages for a synastry chart.
+    Calculate combined modality points for a synastry chart.
+
+    With ``as_percentages=True`` (default) the values are percentages summing to
+    100; with ``as_percentages=False`` they are raw combined point totals (see
+    :func:`calculate_synastry_element_points`).
 
     Args:
         planets_settings: Planet configuration list (unused but preserved).
@@ -2767,6 +2783,9 @@ def calculate_synastry_quality_points(
 
     combined_totals = {key: subject1_totals[key] + subject2_totals[key] for key in _QUALITY_KEYS}
     total_points = sum(combined_totals.values())
+
+    if not as_percentages:
+        return combined_totals
 
     if total_points == 0:
         return {key: 0.0 for key in _QUALITY_KEYS}

@@ -417,9 +417,19 @@ def find_common_active_points(
         second_points: Second list of astrological points
 
     Returns:
-        List of points common to both input lists (without duplicates)
+        List of points common to both input lists (without duplicates),
+        preserving the conventional astrological order of ``first_points``
+        (Sun, Moon, Mercury, ...) rather than sorting alphabetically — so a
+        dual chart's active_points read in the same order as a single chart's.
     """
-    return sorted(set(first_points) & set(second_points))
+    common = set(second_points)
+    seen: set = set()
+    result = []
+    for point in first_points:
+        if point in common and point not in seen:
+            seen.add(point)
+            result.append(point)
+    return result
 
 
 # =============================================================================

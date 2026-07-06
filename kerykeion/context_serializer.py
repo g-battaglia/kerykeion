@@ -60,9 +60,23 @@ SIGN_FULL_NAMES = {
 # ============================================================================
 
 
+# Control characters that are illegal in XML 1.0 even when escaped (everything
+# below 0x20 except tab, LF, CR). quoteattr/escape pass these through verbatim,
+# producing a document a conforming parser then rejects, so strip them first.
+_XML_ILLEGAL_CONTROL_CHARS = "".join(
+    chr(c) for c in range(0x20) if c not in (0x09, 0x0A, 0x0D)
+) + "\x7f"
+_XML_ILLEGAL_TRANSLATION = {ord(c): None for c in _XML_ILLEGAL_CONTROL_CHARS}
+
+
+def _strip_illegal(value) -> str:
+    """Drop XML-1.0-illegal control characters from a stringified value."""
+    return str(value).translate(_XML_ILLEGAL_TRANSLATION)
+
+
 def _xe(value) -> str:
     """Escape a value for use as XML text content."""
-    return escape(str(value))
+    return escape(_strip_illegal(value))
 
 
 def _attrs(**kwargs) -> str:
@@ -74,7 +88,7 @@ def _attrs(**kwargs) -> str:
     parts = []
     for key, value in kwargs.items():
         if value is not None:
-            parts.append(f"{key}={quoteattr(str(value))}")
+            parts.append(f"{key}={quoteattr(_strip_illegal(value))}")
     if not parts:
         return ""
     return " " + " ".join(parts)

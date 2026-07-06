@@ -132,24 +132,24 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Lunation Day            | 28                 |
 +-------------------------+--------------------+
 
-+Element Distribution-----------+------------+
-| Element  | Count              | Percentage |
-+----------+--------------------+------------+
-| Fire 🔥  | 16.566265060240962 | 17%        |
-| Earth 🌍 | 21.385542168674696 | 21%        |
-| Air 💨   | 21.08433734939759  | 21%        |
-| Water 💧 | 40.96385542168674  | 41%        |
-| Total    | 99.99999999999997  | 100%       |
-+----------+--------------------+------------+
++Element Distribution-----------+
+| Element  | Count | Percentage |
++----------+-------+------------+
+| Fire 🔥  | 5.5   | 17%        |
+| Earth 🌍 | 7.1   | 21%        |
+| Air 💨   | 7.0   | 21%        |
+| Water 💧 | 13.6  | 41%        |
+| Total    | 33.2  | 100%       |
++----------+-------+------------+
 
-+Quality Distribution-----------+------------+
-| Quality  | Count              | Percentage |
-+----------+--------------------+------------+
-| Cardinal | 40.96385542168674  | 41%        |
-| Fixed    | 37.951807228915655 | 38%        |
-| Mutable  | 21.08433734939759  | 21%        |
-| Total    | 99.99999999999999  | 100%       |
-+----------+--------------------+------------+
++Quality Distribution-----------+
+| Quality  | Count | Percentage |
++----------+-------+------------+
+| Cardinal | 13.6  | 41%        |
+| Fixed    | 12.6  | 38%        |
+| Mutable  | 7.0   | 21%        |
+| Total    | 33.2  | 100%       |
++----------+-------+------------+
 
 +Sample Natal Subject points in Yoko Ono houses+-------------------+---------------------+------+--------+
 | Point                                        | Owner House       | Projected House     | Sign | Degree |
@@ -240,20 +240,20 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +Active Celestial Points-----+
 | #  | Active Point          |
 +----+-----------------------+
-| 1  | Ascendant             |
-| 2  | Chiron                |
-| 3  | Jupiter               |
-| 4  | Mars                  |
-| 5  | Medium_Coeli          |
-| 6  | Mercury               |
-| 7  | Moon                  |
-| 8  | Neptune               |
-| 9  | Pluto                 |
-| 10 | Saturn                |
-| 11 | Sun                   |
-| 12 | True_North_Lunar_Node |
-| 13 | Uranus                |
-| 14 | Venus                 |
+| 1  | Sun                   |
+| 2  | Moon                  |
+| 3  | Mercury               |
+| 4  | Venus                 |
+| 5  | Mars                  |
+| 6  | Jupiter               |
+| 7  | Saturn                |
+| 8  | Uranus                |
+| 9  | Neptune               |
+| 10 | Pluto                 |
+| 11 | True_North_Lunar_Node |
+| 12 | Chiron                |
+| 13 | Ascendant             |
+| 14 | Medium_Coeli          |
 +----+-----------------------+
 
 +-------------+---------+

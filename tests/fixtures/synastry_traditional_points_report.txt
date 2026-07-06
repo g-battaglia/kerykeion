@@ -122,24 +122,24 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Lunation Day            | 28                 |
 +-------------------------+--------------------+
 
-+Element Distribution-----------+------------+
-| Element  | Count              | Percentage |
-+----------+--------------------+------------+
-| Fire 🔥  | 17.391304347826086 | 17%        |
-| Earth 🌍 | 23.91304347826087  | 24%        |
-| Air 💨   | 21.73913043478261  | 22%        |
-| Water 💧 | 36.95652173913043  | 37%        |
-| Total    | 100.0              | 100%       |
-+----------+--------------------+------------+
++Element Distribution-----------+
+| Element  | Count | Percentage |
++----------+-------+------------+
+| Fire 🔥  | 4.0   | 17%        |
+| Earth 🌍 | 5.5   | 24%        |
+| Air 💨   | 5.0   | 22%        |
+| Water 💧 | 8.5   | 37%        |
+| Total    | 23.0  | 100%       |
++----------+-------+------------+
 
-+Quality Distribution-----------+------------+
-| Quality  | Count              | Percentage |
-+----------+--------------------+------------+
-| Cardinal | 32.608695652173914 | 33%        |
-| Fixed    | 36.95652173913043  | 37%        |
-| Mutable  | 30.434782608695656 | 30%        |
-| Total    | 100.0              | 100%       |
-+----------+--------------------+------------+
++Quality Distribution-----------+
+| Quality  | Count | Percentage |
++----------+-------+------------+
+| Cardinal | 7.5   | 33%        |
+| Fixed    | 8.5   | 37%        |
+| Mutable  | 7.0   | 30%        |
+| Total    | 23.0  | 100%       |
++----------+-------+------------+
 
 +Sample Natal Subject points in Yoko Ono houses+-------------------+---------------------+------+--------+
 | Point                                        | Owner House       | Projected House     | Sign | Degree |
@@ -214,15 +214,15 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +Active Celestial Points----+
 | # | Active Point          |
 +---+-----------------------+
-| 1 | Jupiter               |
-| 2 | Mars                  |
+| 1 | Sun                   |
+| 2 | Moon                  |
 | 3 | Mercury               |
-| 4 | Moon                  |
-| 5 | Saturn                |
-| 6 | Sun                   |
-| 7 | True_North_Lunar_Node |
-| 8 | True_South_Lunar_Node |
-| 9 | Venus                 |
+| 4 | Venus                 |
+| 5 | Mars                  |
+| 6 | Jupiter               |
+| 7 | Saturn                |
+| 8 | True_North_Lunar_Node |
+| 9 | True_South_Lunar_Node |
 +---+-----------------------+
 
 +-------------+---------+

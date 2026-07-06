@@ -351,24 +351,29 @@ class PlanetaryReturnFactory:
         # fields so the return computes the same enrichments as the natal
         # (dignities/nakshatra/gauquelin/nutation/local-space/fixed-stars) —
         # otherwise they were silently dropped despite the documented promise.
-        # Parity with SecondaryProgressionFactory.
-        _subj_sun = getattr(subject, "sun", None)
+        # Parity with SecondaryProgressionFactory. Infer the per-point flags
+        # from ANY populated point, not subject.sun specifically: in a
+        # heliocentric chart the Sun is the excluded center body (sun is None),
+        # so keying off it would silently drop the enrichments the user did
+        # request. Scan the standard bodies for the first one present.
+        def _any_point_has(attr: str) -> bool:
+            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter",
+                          "saturn", "uranus", "neptune", "pluto"):
+                _p = getattr(subject, _name, None)
+                if _p is not None:
+                    return getattr(_p, attr, None) is not None
+            return False
+
         self.active_fixed_stars = (
             active_fixed_stars
             if active_fixed_stars is not None
             else ([s.name for s in (subject.fixed_stars or [])] or None)
         )
-        self.calculate_dignities = calculate_dignities or (
-            _subj_sun is not None and _subj_sun.essential_dignity is not None
-        )
-        self.calculate_nakshatra = calculate_nakshatra or (
-            _subj_sun is not None and _subj_sun.nakshatra is not None
-        )
+        self.calculate_dignities = calculate_dignities or _any_point_has("essential_dignity")
+        self.calculate_nakshatra = calculate_nakshatra or _any_point_has("nakshatra")
         self.calculate_gauquelin = calculate_gauquelin or (subject.gauquelin_sector_cusps is not None)
         self.calculate_nutation = calculate_nutation or (subject.nutation is not None)
-        self.calculate_local_space = calculate_local_space or (
-            _subj_sun is not None and _subj_sun.azimuth is not None
-        )
+        self.calculate_local_space = calculate_local_space or _any_point_has("azimuth")
 
         # Validate USER sidereal mode requires both custom ayanamsa values
         # (after the subject fallback above, so a USER-sidereal subject that

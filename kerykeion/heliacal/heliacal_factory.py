@@ -214,46 +214,74 @@ class HeliacalFactory:
         -------
         list[HeliacalEventModel]
         """
+        if count <= 0:
+            return []
+        # Each event costs a full heliacal search (seconds per call), so an
+        # unbounded count would hang. Cap it like the other event factories'
+        # _ensure_scannable guards rather than scan indefinitely.
+        _MAX_HELIACAL_EVENTS = 200
+        if count > _MAX_HELIACAL_EVENTS:
+            raise ValueError(
+                f"count too large ({count} > {_MAX_HELIACAL_EVENTS}); each heliacal "
+                "event requires a full ephemeris search. Request fewer events."
+            )
         if planets is None:
             planets = PLANETS
         if event_types is None:
             event_types = [HELIACAL_RISING, HELIACAL_SETTING]
 
+        # Build the list of (planet, event_type) combinations to interleave.
+        combos = [
+            (planet, etype)
+            for planet in planets
+            for etype in event_types
+            if not (etype in (EVENING_FIRST, MORNING_LAST) and planet not in INNER_PLANETS)
+        ]
+
+        def _next_event(planet, etype, from_jd):
+            """Next event of one combo at/after ``from_jd`` (None if none)."""
+            try:
+                return self._find_event(
+                    julian_day=from_jd,
+                    planet_name_or_star=planet,
+                    geopos=geopos,
+                    event_type=etype,
+                    atmo=atmo,
+                    observer=observer,
+                )
+            except _NO_EVENT_ERRORS as exc:
+                # Expected "no solution in window" skip (ValueError on
+                # libephemeris / swisseph.Error on pyswisseph). Narrower than a
+                # blanket except so real bugs still propagate.
+                logger.debug("Skipping %s %s: %s", planet, EVENT_TYPE_LABELS.get(etype, etype), exc)
+                return None
+
         events: List[HeliacalEventModel] = []
 
         with ephemeris_session(ephe_path=self._ephe_path):
-            for planet in planets:
-                for etype in event_types:
-                    # Skip event types that only apply to inner planets
-                    if etype in (EVENING_FIRST, MORNING_LAST) and planet not in INNER_PLANETS:
-                        continue
-                    try:
-                        event = self._find_event(
-                            julian_day=julian_day,
-                            planet_name_or_star=planet,
-                            geopos=geopos,
-                            event_type=etype,
-                            atmo=atmo,
-                            observer=observer,
-                        )
-                        events.append(event)
-                    except _NO_EVENT_ERRORS as exc:
-                        # "No solution in the search window" is an expected
-                        # skip, not a failure. libephemeris raises ValueError;
-                        # pyswisseph raises swisseph.Error ('no heliacal date
-                        # found within N synodic periods') — both must skip the
-                        # combination instead of aborting the whole scan.
-                        # Narrower than a blanket ``except Exception`` so a
-                        # genuine bug (TypeError, KeyError, ...) propagates
-                        # instead of being silently swallowed.
-                        logger.debug(
-                            "Skipping %s %s: %s",
-                            planet,
-                            EVENT_TYPE_LABELS.get(etype, etype),
-                            exc,
-                        )
+            # Interleaved merge: keep the current next-event per combo, always
+            # emit the globally earliest, and advance ONLY that combo. This
+            # yields the true "next `count` events sorted by JD" without the old
+            # hard cap of one-per-combo, while calling the (expensive) heliacal
+            # search at most count + len(combos) times — not count-per-combo.
+            heads = {}
+            for planet, etype in combos:
+                ev = _next_event(planet, etype, julian_day)
+                if ev is not None:
+                    heads[(planet, etype)] = ev
 
-        # Sort chronologically and trim to *count*.
+            while heads and len(events) < count:
+                key = min(heads, key=lambda k: heads[k].julian_day)
+                ev = heads.pop(key)
+                events.append(ev)
+                planet, etype = key
+                # Advance just past this event (+1 day is safely inside any
+                # body's synodic gap; a non-advancing cursor would re-find it).
+                nxt = _next_event(planet, etype, ev.julian_day + 1.0)
+                if nxt is not None and nxt.julian_day > ev.julian_day:
+                    heads[key] = nxt
+
+        # Already emitted in chronological order; sort defensively and trim.
         events.sort(key=lambda e: e.julian_day)
         return events[:count]
 

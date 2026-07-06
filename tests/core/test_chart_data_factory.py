@@ -1111,3 +1111,23 @@ class TestCompleteFactoryBehavior:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+
+class TestSynastryDistributionRawTotalsRound5:
+    """Round-5 regression: synastry element/quality fields hold RAW point totals
+    (like every other chart type), not percentages summing to 100."""
+
+    def test_synastry_element_fields_are_raw_totals(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.chart_data_factory import ChartDataFactory
+        john = AstrologicalSubjectFactory.from_birth_data(
+            "John", 1990, 1, 1, 12, 0, lng=-0.13, lat=51.5, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True)
+        jane = AstrologicalSubjectFactory.from_birth_data(
+            "Jane", 1992, 6, 15, 14, 30, lng=2.35, lat=48.85, tz_str="Europe/Paris",
+            online=False, suppress_geonames_warning=True)
+        ed = ChartDataFactory.create_synastry_chart_data(john, jane).element_distribution
+        raw_sum = ed.fire + ed.earth + ed.air + ed.water
+        assert abs(raw_sum - 100.0) > 1.0  # raw totals, not percentages
+        pct_sum = ed.fire_percentage + ed.earth_percentage + ed.air_percentage + ed.water_percentage
+        assert 99 <= pct_sum <= 101

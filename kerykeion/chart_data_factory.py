@@ -302,6 +302,10 @@ class ChartDataFactory:
             if isinstance(first_subject, AstrologicalSubjectModel) and isinstance(
                 second_subject, AstrologicalSubjectModel
             ):
+                # Raw combined point totals (not percentages): the model's
+                # fire/earth/... fields are documented "points total" and every
+                # other chart type stores raw totals here; the percentages are
+                # derived below via distribute_percentages_to_100.
                 element_totals = calculate_synastry_element_points(
                     available_planets_setting,
                     celestial_points_names,
@@ -310,6 +314,7 @@ class ChartDataFactory:
                     method=distribution_method,
                     custom_weights=custom_distribution_weights,
                     include_fixed_stars=True,
+                    as_percentages=False,
                 )
                 quality_totals = calculate_synastry_quality_points(
                     available_planets_setting,
@@ -319,6 +324,7 @@ class ChartDataFactory:
                     method=distribution_method,
                     custom_weights=custom_distribution_weights,
                     include_fixed_stars=True,
+                    as_percentages=False,
                 )
             else:
                 # Fallback to single chart calculation for incompatible types

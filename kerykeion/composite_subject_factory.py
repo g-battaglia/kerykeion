@@ -61,7 +61,6 @@ from kerykeion.utilities import (
     get_planet_house,
     circular_mean,
     calculate_moon_phase,
-    circular_sort,
     find_common_active_points,
 )
 
@@ -347,14 +346,20 @@ class CompositeSubjectFactory:
             This is an internal method called by get_midpoint_composite_subject_model().
             Only planets that exist in both subjects' active_points are included.
         """
-        # Houses
+        # Houses: each composite cusp is the circular mean of the two subjects'
+        # SAME-numbered cusps, and it KEEPS that house number. Do NOT re-sort by
+        # longitude and re-label positionally: averaging cusps of two charts whose
+        # Ascendants are far apart produces a non-monotone cusp ring (the forward
+        # arcs can sum to a multiple of 360°), and sorting then files the averaged
+        # 10th cusp (the composite MC) into a lower slot — swapping MC/IC by 180°
+        # and corrupting every planet's house. The tenth cusp must stay the mean
+        # of the tenth cusps, i.e. the composite Midheaven.
         house_degree_list_ut = []
         for house in self.first_subject.houses_names_list:
             house_lower = house.lower()
             house_degree_list_ut.append(
                 circular_mean(self.first_subject[house_lower]["abs_pos"], self.second_subject[house_lower]["abs_pos"])
             )
-        house_degree_list_ut = circular_sort(house_degree_list_ut)
 
         for house_index, house_name in enumerate(self.first_subject.houses_names_list):
             house_lower = house_name.lower()
@@ -371,7 +376,40 @@ class CompositeSubjectFactory:
             self[planet_lower] = get_kerykeion_point_from_degree(
                 planets[planet_lower]["abs_pos"], planet, "AstrologicalPoint"
             )
-            self[planet_lower]["house"] = get_planet_house(self[planet_lower]["abs_pos"], house_degree_list_ut)
+            self[planet_lower]["house"] = self._composite_house_for(
+                self[planet_lower]["abs_pos"], house_degree_list_ut, self.houses_names_list
+            )
+
+    @staticmethod
+    def _composite_house_for(planet_degree: float, house_cusps: list, house_names: list) -> str:
+        """House of a point given composite cusps, robust to a non-monotone ring.
+
+        Averaging two charts' cusps can yield cusps that are not in ascending
+        circular order, so the usual start-inclusive containment can match the
+        wrong (over-long or reflex) arc. Here each house is the forward arc from
+        its own cusp to the NEXT house's cusp; when several arcs contain the
+        point (overlap from non-monotonicity) the SHORTEST containing arc wins —
+        the tightest, most specific house. Falls back to the first house only if
+        nothing contains it (degenerate all-equal cusps).
+        """
+        # A point sitting exactly ON a cusp belongs to the house that cusp opens
+        # (this is what makes the composite MC land in the 10th house even when
+        # overlapping degenerate arcs would otherwise file it elsewhere).
+        for i in range(len(house_cusps)):
+            if abs((planet_degree - house_cusps[i] + 180.0) % 360.0 - 180.0) < 1e-9:
+                return house_names[i]
+        best_index = 0
+        best_span = 360.0 + 1.0
+        for i in range(len(house_cusps)):
+            start = house_cusps[i]
+            end = house_cusps[(i + 1) % len(house_cusps)]
+            span = (end - start) % 360.0
+            offset = (planet_degree - start) % 360.0
+            # start-inclusive / end-exclusive; span 0 (coincident cusps) can't contain
+            if span > 0 and offset < span and span < best_span:
+                best_index = i
+                best_span = span
+        return house_names[best_index]
 
     def _calculate_composite_lunar_phase(self):
         """

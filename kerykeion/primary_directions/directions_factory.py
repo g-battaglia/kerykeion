@@ -71,6 +71,28 @@ def _require_geometry(subject: AstrologicalSubjectModel) -> None:
         raise KerykeionException("Subject is missing longitude/latitude — cannot compute primary directions.")
 
 
+def _session_kwargs(subject: AstrologicalSubjectModel) -> dict:
+    """Ephemeris-session config matching the subject's own frame.
+
+    The speculum's equatorial RA/dec must be computed in the SAME frame as the
+    subject's stored ecliptic longitudes; a bare session forces Apparent
+    Geocentric, mixing frames (geocentric RA/dec against sidereal/topocentric/
+    heliocentric longitudes) for non-default charts. Forward the subject's
+    zodiac/sidereal/ayanamsa/perspective (and topocentric observer) so the two
+    agree.
+    """
+    perspective = getattr(subject, "perspective_type", None)
+    altitude = getattr(subject, "altitude", None)
+    return dict(
+        zodiac_type=subject.zodiac_type,
+        sidereal_mode=subject.sidereal_mode,
+        custom_ayanamsa_t0=subject.custom_ayanamsa_t0,
+        custom_ayanamsa_ayan_t0=subject.custom_ayanamsa_ayan_t0,
+        perspective_type=perspective,
+        topo=(subject.lng, subject.lat, altitude or 0.0) if perspective == "Topocentric" else None,
+    )
+
+
 logger = logging.getLogger(__name__)
 
 # MD (in degrees of RA) below which a point is treated as being on the meridian.
@@ -165,7 +187,7 @@ class PrimaryDirectionsFactory:
         jd = subject.julian_day
         lat = subject.lat
 
-        with ephemeris_session() as iflag:
+        with ephemeris_session(**_session_kwargs(subject)) as iflag:
             # True obliquity of the ecliptic
             obliquity = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
 
@@ -278,7 +300,7 @@ class PrimaryDirectionsFactory:
         """Compute and return the speculum (coordinate table) for a chart."""
         _require_geometry(subject)
         jd = subject.julian_day
-        with ephemeris_session() as iflag:
+        with ephemeris_session(**_session_kwargs(subject)) as iflag:
             obliquity = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
             ramc = (ephe.sidtime(jd) * 15.0 + subject.lng) % 360
             speculum = PrimaryDirectionsFactory._build_speculum(
