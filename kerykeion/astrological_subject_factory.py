@@ -61,6 +61,7 @@ from kerykeion.utilities import (
     get_planet_house,
     check_and_adjust_polar_latitude,
     normalize_longitude,
+    safe_timezone,
     calculate_moon_phase,
     datetime_to_julian,
     format_ancient_iso,
@@ -173,6 +174,19 @@ _PLANETOCENTRIC_CENTERS: Dict[str, int] = {
 
 
 _GEO_TOPO_PERSPECTIVES = ("Apparent Geocentric", "True Geocentric", "Topocentric")
+
+# Lunar nodes and apogees (Lilith) are defined relative to the Earth-Moon system
+# (geocentric by construction). In a heliocentric / barycentric / planetocentric
+# frame they have no meaning: swisseph returns an all-zero phantom (0° Aries)
+# without raising, while libephemeris ignores the perspective flag and returns
+# the geocentric value — a silent backend disagreement. Exclude them there.
+_GEOCENTRIC_ONLY_BODY_IDS = frozenset(
+    bid for bid in (
+        getattr(ephe, "MEAN_NODE", None), getattr(ephe, "TRUE_NODE", None),
+        getattr(ephe, "MEAN_APOG", None), getattr(ephe, "OSCU_APOG", None),
+        getattr(ephe, "INTP_APOG", None),
+    ) if bid is not None
+)
 
 
 def _degenerate_center_body_id(perspective_type: Optional[str]) -> Optional[int]:
@@ -1439,8 +1453,9 @@ class AstrologicalSubjectFactory:
             lng = float(city_data["lng"])
             lat = float(city_data["lat"])
 
-        # Convert UTC to local time
-        local_time = pytz.timezone(tz_str)
+        # Convert UTC to local time (wrap invalid tz as KerykeionException, so
+        # this entry point matches from_birth_data's error contract).
+        local_time = safe_timezone(tz_str)
         local_datetime = dt.astimezone(local_time)
 
         # The local wall time may be ambiguous (fall-back fold) even though the
@@ -1678,7 +1693,7 @@ class AstrologicalSubjectFactory:
             # the offset between the two zones, and a system wall time inside
             # a DST fall-back fold would raise "Ambiguous time". The current
             # instant itself is never ambiguous.
-            now = datetime.now(timezone.utc).astimezone(pytz.timezone(tz_str))
+            now = datetime.now(timezone.utc).astimezone(safe_timezone(tz_str))
             is_dst: Optional[bool] = bool(now.dst())
         else:
             # Only reachable offline without tz_str (every online path resolved
@@ -2110,6 +2125,7 @@ class AstrologicalSubjectFactory:
         active_points: List[AstrologicalPoint],
         center_body_id: Optional[int] = None,
         degenerate_center_id: Optional[int] = None,
+        exclude_geocentric_only: bool = False,
     ) -> None:
         """
         Calculate a single celestial body's position with comprehensive error handling.
@@ -2164,6 +2180,11 @@ class AstrologicalSubjectFactory:
         if degenerate_center_id is not None and planet_id == degenerate_center_id:
             return
         if center_body_id is not None and planet_id == center_body_id:
+            return
+        # Lunar nodes / apogees are geocentric-only; drop them for non-geocentric
+        # perspectives rather than store a backend-dependent phantom (swisseph
+        # 0° Aries vs libephemeris geocentric value).
+        if exclude_geocentric_only and planet_id in _GEOCENTRIC_ONLY_BODY_IDS:
             return
 
         try:
@@ -2655,6 +2676,9 @@ class AstrologicalSubjectFactory:
         # geocentric/topocentric, Sun in heliocentric, the center planet in
         # planetocentric) — its position from itself is the origin, not a point.
         degenerate_center_id = _degenerate_center_body_id(data.get("perspective_type"))
+        # Lunar nodes/apogees are geocentric-only: exclude them for any
+        # non-geocentric/topocentric perspective (backend-dependent phantom).
+        exclude_geocentric_only = data.get("perspective_type") not in _GEO_TOPO_PERSPECTIVES
 
         # Start ephemeris backend tracing (libephemeris only)
         _trace_token = None
@@ -2689,6 +2713,7 @@ class AstrologicalSubjectFactory:
                     active_points,
                     center_body_id=center_body_id,
                     degenerate_center_id=degenerate_center_id,
+                    exclude_geocentric_only=exclude_geocentric_only,
                 )
 
         # =============================================================================
@@ -2710,6 +2735,7 @@ class AstrologicalSubjectFactory:
                         active_points,
                         center_body_id=center_body_id,
                         degenerate_center_id=degenerate_center_id,
+                        exclude_geocentric_only=exclude_geocentric_only,
                     )
                 except Exception as e:
                     logging.warning(f"Could not calculate {tno_name} position: {e}")
@@ -2861,6 +2887,7 @@ class AstrologicalSubjectFactory:
                 active_points,
                 center_body_id=center_body_id,
                 degenerate_center_id=degenerate_center_id,
+                exclude_geocentric_only=exclude_geocentric_only,
             )
             # If the backend does not natively support White Moon / Selena (body ID
             # 56), do NOT fabricate a value: Mean Lilith + 180° is the Priapus point
@@ -2967,7 +2994,11 @@ class AstrologicalSubjectFactory:
             data["day_of_week"] = _DAY_NAMES[day_index]
         else:
             dt = datetime.fromisoformat(data["iso_formatted_local_datetime"])
-            data["day_of_week"] = dt.strftime("%A")
+            # datetime.weekday(): Monday=0 … Sunday=6. Use the hardcoded English
+            # names (like the BCE branch) instead of strftime("%A"), which is
+            # locale-dependent and would emit e.g. "Lunedì" under an Italian
+            # locale — day_of_week must be a stable English literal.
+            data["day_of_week"] = _DAY_NAMES[dt.weekday()]
 
 
 if __name__ == "__main__":

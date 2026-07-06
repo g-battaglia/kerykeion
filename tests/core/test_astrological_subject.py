@@ -2604,3 +2604,32 @@ class TestExplicitDerivedOppositeRound12:
             online=False, suppress_geonames_warning=True,
             active_points=["Sun", "Moon", "True_Priapus"])
         assert s.true_priapus is not None
+
+
+class TestTzWrapAndNodeParityRound13:
+    """Round-13: invalid tz raises KerykeionException across entry points;
+    lunar nodes excluded in non-geocentric perspectives; day_of_week is English."""
+
+    def test_from_iso_invalid_tz_raises_kerykeion(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException):
+            AstrologicalSubjectFactory.from_iso_utc_time(
+                "E", "2020-06-15T12:00:00Z", tz_str="Bad/Zone",
+                online=False, lng=0.0, lat=51.0, suppress_geonames_warning=True)
+
+    def test_nodes_excluded_in_heliocentric(self):
+        from kerykeion import AstrologicalSubjectFactory
+        h = AstrologicalSubjectFactory.from_birth_data(
+            "H", 1940, 10, 9, 18, 30, lng=-2.99, lat=53.4, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True, perspective_type="Heliocentric")
+        assert h.true_north_lunar_node is None
+        assert "True_North_Lunar_Node" not in h.active_points
+
+    def test_day_of_week_is_english_literal(self):
+        from kerykeion import AstrologicalSubjectFactory
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "D", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True)
+        assert s.day_of_week in ("Monday", "Tuesday", "Wednesday", "Thursday",
+                                 "Friday", "Saturday", "Sunday")

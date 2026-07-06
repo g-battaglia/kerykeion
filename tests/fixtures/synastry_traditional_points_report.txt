@@ -144,29 +144,29 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +Sample Natal Subject points in Yoko Ono houses+-------------------+---------------------+------+--------+
 | Point                                        | Owner House       | Projected House     | Sign | Degree |
 +----------------------------------------------+-------------------+---------------------+------+--------+
-| Sample Natal Subject – Sun                   | 9 (Ninth_House)   | 10 (Tenth_House)    | Can  | 28.54° |
-| Sample Natal Subject – Moon                  | 9 (Ninth_House)   | 10 (Tenth_House)    | Can  | 21.21° |
-| Sample Natal Subject – Mercury               | 9 (Ninth_House)   | 11 (Eleventh_House) | Leo  | 17.61° |
-| Sample Natal Subject – Venus                 | 8 (Eighth_House)  | 9 (Ninth_House)     | Can  | 1.71°  |
-| Sample Natal Subject – Mars                  | 7 (Seventh_House) | 8 (Eighth_House)    | Tau  | 5.97°  |
-| Sample Natal Subject – Jupiter               | 9 (Ninth_House)   | 10 (Tenth_House)    | Can  | 23.91° |
-| Sample Natal Subject – Saturn                | 3 (Third_House)   | 4 (Fourth_House)    | Cap  | 21.52° |
-| Sample Natal Subject – True North Lunar Node | 3 (Third_House)   | 4 (Fourth_House)    | Aqu  | 7.26°  |
-| Sample Natal Subject – True South Lunar Node | 9 (Ninth_House)   | 10 (Tenth_House)    | Leo  | 7.26°  |
+| Sample Natal Subject – Sun                   | 9 (Ninth House)   | 10 (Tenth House)    | Can  | 28.54° |
+| Sample Natal Subject – Moon                  | 9 (Ninth House)   | 10 (Tenth House)    | Can  | 21.21° |
+| Sample Natal Subject – Mercury               | 9 (Ninth House)   | 11 (Eleventh House) | Leo  | 17.61° |
+| Sample Natal Subject – Venus                 | 8 (Eighth House)  | 9 (Ninth House)     | Can  | 1.71°  |
+| Sample Natal Subject – Mars                  | 7 (Seventh House) | 8 (Eighth House)    | Tau  | 5.97°  |
+| Sample Natal Subject – Jupiter               | 9 (Ninth House)   | 10 (Tenth House)    | Can  | 23.91° |
+| Sample Natal Subject – Saturn                | 3 (Third House)   | 4 (Fourth House)    | Cap  | 21.52° |
+| Sample Natal Subject – True North Lunar Node | 3 (Third House)   | 4 (Fourth House)    | Aqu  | 7.26°  |
+| Sample Natal Subject – True South Lunar Node | 9 (Ninth House)   | 10 (Tenth House)    | Leo  | 7.26°  |
 +----------------------------------------------+-------------------+---------------------+------+--------+
 
 +Yoko Ono points in Sample Natal Subject houses----------+------------------+------+--------+
 | Point                            | Owner House         | Projected House  | Sign | Degree |
 +----------------------------------+---------------------+------------------+------+--------+
-| Yoko Ono – Sun                   | 5 (Fifth_House)     | 4 (Fourth_House) | Aqu  | 29.38° |
-| Yoko Ono – Moon                  | 3 (Third_House)     | 2 (Second_House) | Sag  | 11.13° |
-| Yoko Ono – Mercury               | 5 (Fifth_House)     | 4 (Fourth_House) | Pis  | 7.89°  |
-| Yoko Ono – Venus                 | 5 (Fifth_House)     | 3 (Third_House)  | Aqu  | 13.79° |
-| Yoko Ono – Mars                  | 12 (Twelfth_House)  | 10 (Tenth_House) | Vir  | 15.13° |
-| Yoko Ono – Jupiter               | 12 (Twelfth_House)  | 10 (Tenth_House) | Vir  | 20.70° |
-| Yoko Ono – Saturn                | 4 (Fourth_House)    | 3 (Third_House)  | Aqu  | 9.74°  |
-| Yoko Ono – True North Lunar Node | 5 (Fifth_House)     | 4 (Fourth_House) | Pis  | 7.80°  |
-| Yoko Ono – True South Lunar Node | 11 (Eleventh_House) | 10 (Tenth_House) | Vir  | 7.80°  |
+| Yoko Ono – Sun                   | 5 (Fifth House)     | 4 (Fourth House) | Aqu  | 29.38° |
+| Yoko Ono – Moon                  | 3 (Third House)     | 2 (Second House) | Sag  | 11.13° |
+| Yoko Ono – Mercury               | 5 (Fifth House)     | 4 (Fourth House) | Pis  | 7.89°  |
+| Yoko Ono – Venus                 | 5 (Fifth House)     | 3 (Third House)  | Aqu  | 13.79° |
+| Yoko Ono – Mars                  | 12 (Twelfth House)  | 10 (Tenth House) | Vir  | 15.13° |
+| Yoko Ono – Jupiter               | 12 (Twelfth House)  | 10 (Tenth House) | Vir  | 20.70° |
+| Yoko Ono – Saturn                | 4 (Fourth House)    | 3 (Third House)  | Aqu  | 9.74°  |
+| Yoko Ono – True North Lunar Node | 5 (Fifth House)     | 4 (Fourth House) | Pis  | 7.80°  |
+| Yoko Ono – True South Lunar Node | 11 (Eleventh House) | 10 (Tenth House) | Vir  | 7.80°  |
 +----------------------------------+---------------------+------------------+------+--------+
 
 +Sample Natal Subject cusps in Yoko Ono houses----------------+------+--------+

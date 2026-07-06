@@ -590,6 +590,28 @@ def normalize_longitude(longitude: float) -> float:
     return (longitude + 180.0) % 360.0 - 180.0
 
 
+def safe_timezone(tz_str: str):
+    """Resolve an IANA timezone string, raising ``KerykeionException`` if invalid.
+
+    ``pytz.timezone`` raises ``UnknownTimeZoneError`` — a ``KeyError`` subclass,
+    NOT a ``KerykeionException`` — so a caller catching only the library's own
+    exception around a public entry point (from_iso_utc_time, from_current_time,
+    EphemerisDataFactory, RelocatedChartFactory.relocate) would be broken by an
+    invalid ``tz_str``. This is the single wrapper every such entry point should
+    use so the failure mode is uniform (mirrors the guard in from_birth_data's
+    _calculate_time_conversions and sun_times.resolve_timezone).
+    """
+    import pytz
+
+    try:
+        return pytz.timezone(tz_str)
+    except pytz.exceptions.UnknownTimeZoneError as exc:
+        raise KerykeionException(
+            f"Unknown timezone: {tz_str!r}. Use a valid IANA timezone name "
+            "(e.g. 'Europe/Rome', 'America/New_York')."
+        ) from exc
+
+
 # =============================================================================
 # ANGULAR MATHEMATICS
 # =============================================================================

@@ -230,115 +230,115 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +Sample Natal Subject points in Yoko Ono houses+---------------------+---------------------+------+--------+
 | Point                                        | Owner House         | Projected House     | Sign | Degree |
 +----------------------------------------------+---------------------+---------------------+------+--------+
-| Sample Natal Subject – Sun                   | 9 (Ninth_House)     | 10 (Tenth_House)    | Can  | 28.54° |
-| Sample Natal Subject – Moon                  | 9 (Ninth_House)     | 10 (Tenth_House)    | Can  | 21.21° |
-| Sample Natal Subject – Mercury               | 9 (Ninth_House)     | 11 (Eleventh_House) | Leo  | 17.61° |
-| Sample Natal Subject – Venus                 | 8 (Eighth_House)    | 9 (Ninth_House)     | Can  | 1.71°  |
-| Sample Natal Subject – Mars                  | 7 (Seventh_House)   | 8 (Eighth_House)    | Tau  | 5.97°  |
-| Sample Natal Subject – Jupiter               | 9 (Ninth_House)     | 10 (Tenth_House)    | Can  | 23.91° |
-| Sample Natal Subject – Saturn                | 3 (Third_House)     | 4 (Fourth_House)    | Cap  | 21.52° |
-| Sample Natal Subject – Uranus                | 2 (Second_House)    | 3 (Third_House)     | Cap  | 6.74°  |
-| Sample Natal Subject – Neptune               | 3 (Third_House)     | 4 (Fourth_House)    | Cap  | 12.76° |
-| Sample Natal Subject – Pluto                 | 1 (First_House)     | 2 (Second_House)    | Sco  | 14.97° |
-| Sample Natal Subject – Mean North Lunar Node | 3 (Third_House)     | 4 (Fourth_House)    | Aqu  | 7.79°  |
-| Sample Natal Subject – True North Lunar Node | 3 (Third_House)     | 4 (Fourth_House)    | Aqu  | 7.26°  |
-| Sample Natal Subject – Mean Lilith           | 1 (First_House)     | 2 (Second_House)    | Sco  | 28.99° |
-| Sample Natal Subject – True Lilith           | 2 (Second_House)    | 3 (Third_House)     | Sag  | 18.01° |
-| Sample Natal Subject – Chiron                | 9 (Ninth_House)     | 10 (Tenth_House)    | Can  | 19.88° |
-| Sample Natal Subject – Pholus                | 8 (Eighth_House)    | 9 (Ninth_House)     | Can  | 7.99°  |
-| Sample Natal Subject – Ceres                 | 9 (Ninth_House)     | 11 (Eleventh_House) | Leo  | 13.71° |
-| Sample Natal Subject – Pallas                | 8 (Eighth_House)    | 9 (Ninth_House)     | Can  | 7.25°  |
-| Sample Natal Subject – Juno                  | 1 (First_House)     | 2 (Second_House)    | Sco  | 10.10° |
-| Sample Natal Subject – Vesta                 | 7 (Seventh_House)   | 8 (Eighth_House)    | Tau  | 18.15° |
-| Sample Natal Subject – Interpolated Lilith   | 1 (First_House)     | 2 (Second_House)    | Sco  | 25.42° |
-| Sample Natal Subject – Interpolated Perigee  | 8 (Eighth_House)    | 9 (Ninth_House)     | Gem  | 21.31° |
-| Sample Natal Subject – Cupido                | 1 (First_House)     | 2 (Second_House)    | Sco  | 18.61° |
-| Sample Natal Subject – Hades                 | 8 (Eighth_House)    | 9 (Ninth_House)     | Gem  | 9.92°  |
-| Sample Natal Subject – Zeus                  | 11 (Eleventh_House) | 12 (Twelfth_House)  | Vir  | 26.03° |
-| Sample Natal Subject – Kronos                | 8 (Eighth_House)    | 9 (Ninth_House)     | Gem  | 21.89° |
-| Sample Natal Subject – Apollon               | 11 (Eleventh_House) | 1 (First_House)     | Lib  | 13.82° |
-| Sample Natal Subject – Admetos               | 7 (Seventh_House)   | 8 (Eighth_House)    | Tau  | 14.96° |
-| Sample Natal Subject – Vulkanus              | 9 (Ninth_House)     | 10 (Tenth_House)    | Can  | 15.34° |
-| Sample Natal Subject – Poseidon              | 12 (Twelfth_House)  | 1 (First_House)     | Lib  | 28.68° |
-| Sample Natal Subject – Eris                  | 6 (Sixth_House)     | 7 (Seventh_House)   | Ari  | 17.60° |
-| Sample Natal Subject – Sedna                 | 7 (Seventh_House)   | 8 (Eighth_House)    | Tau  | 11.55° |
-| Sample Natal Subject – Haumea                | 11 (Eleventh_House) | 12 (Twelfth_House)  | Vir  | 26.32° |
-| Sample Natal Subject – Makemake              | 10 (Tenth_House)    | 11 (Eleventh_House) | Vir  | 4.50°  |
-| Sample Natal Subject – Ixion                 | 1 (First_House)     | 2 (Second_House)    | Sco  | 22.70° |
-| Sample Natal Subject – Orcus                 | 9 (Ninth_House)     | 10 (Tenth_House)    | Leo  | 10.84° |
-| Sample Natal Subject – Quaoar                | 1 (First_House)     | 2 (Second_House)    | Sco  | 24.08° |
-| Sample Natal Subject – Pars Fortunae         | 12 (Twelfth_House)  | 1 (First_House)     | Lib  | 28.49° |
-| Sample Natal Subject – Pars Spiritus         | 1 (First_House)     | 2 (Second_House)    | Sco  | 13.16° |
-| Sample Natal Subject – Pars Amoris           | 11 (Eleventh_House) | 1 (First_House)     | Lib  | 8.99°  |
-| Sample Natal Subject – Pars Fidei            | 7 (Seventh_House)   | 8 (Eighth_House)    | Tau  | 8.22°  |
-| Sample Natal Subject – Vertex                | 8 (Eighth_House)    | 9 (Ninth_House)     | Gem  | 11.46° |
-| Sample Natal Subject – White Moon            | 9 (Ninth_House)     | 10 (Tenth_House)    | Can  | 26.26° |
-| Sample Natal Subject – Descendant            | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 5.82°  |
-| Sample Natal Subject – Imum Coeli            | 4 (Fourth_House)    | 5 (Fifth_House)     | Aqu  | 19.91° |
-| Sample Natal Subject – Anti Vertex           | 2 (Second_House)    | 3 (Third_House)     | Sag  | 11.46° |
-| Sample Natal Subject – Mean South Lunar Node | 9 (Ninth_House)     | 10 (Tenth_House)    | Leo  | 7.79°  |
-| Sample Natal Subject – True South Lunar Node | 9 (Ninth_House)     | 10 (Tenth_House)    | Leo  | 7.26°  |
-| Sample Natal Subject – Mean Priapus          | 7 (Seventh_House)   | 8 (Eighth_House)    | Tau  | 28.99° |
-| Sample Natal Subject – True Priapus          | 8 (Eighth_House)    | 9 (Ninth_House)     | Gem  | 18.01° |
-| Sample Natal Subject – Ascendant             | 1 (First_House)     | 1 (First_House)     | Sco  | 5.82°  |
-| Sample Natal Subject – Medium Coeli          | 10 (Tenth_House)    | 11 (Eleventh_House) | Leo  | 19.91° |
+| Sample Natal Subject – Sun                   | 9 (Ninth House)     | 10 (Tenth House)    | Can  | 28.54° |
+| Sample Natal Subject – Moon                  | 9 (Ninth House)     | 10 (Tenth House)    | Can  | 21.21° |
+| Sample Natal Subject – Mercury               | 9 (Ninth House)     | 11 (Eleventh House) | Leo  | 17.61° |
+| Sample Natal Subject – Venus                 | 8 (Eighth House)    | 9 (Ninth House)     | Can  | 1.71°  |
+| Sample Natal Subject – Mars                  | 7 (Seventh House)   | 8 (Eighth House)    | Tau  | 5.97°  |
+| Sample Natal Subject – Jupiter               | 9 (Ninth House)     | 10 (Tenth House)    | Can  | 23.91° |
+| Sample Natal Subject – Saturn                | 3 (Third House)     | 4 (Fourth House)    | Cap  | 21.52° |
+| Sample Natal Subject – Uranus                | 2 (Second House)    | 3 (Third House)     | Cap  | 6.74°  |
+| Sample Natal Subject – Neptune               | 3 (Third House)     | 4 (Fourth House)    | Cap  | 12.76° |
+| Sample Natal Subject – Pluto                 | 1 (First House)     | 2 (Second House)    | Sco  | 14.97° |
+| Sample Natal Subject – Mean North Lunar Node | 3 (Third House)     | 4 (Fourth House)    | Aqu  | 7.79°  |
+| Sample Natal Subject – True North Lunar Node | 3 (Third House)     | 4 (Fourth House)    | Aqu  | 7.26°  |
+| Sample Natal Subject – Mean Lilith           | 1 (First House)     | 2 (Second House)    | Sco  | 28.99° |
+| Sample Natal Subject – True Lilith           | 2 (Second House)    | 3 (Third House)     | Sag  | 18.01° |
+| Sample Natal Subject – Chiron                | 9 (Ninth House)     | 10 (Tenth House)    | Can  | 19.88° |
+| Sample Natal Subject – Pholus                | 8 (Eighth House)    | 9 (Ninth House)     | Can  | 7.99°  |
+| Sample Natal Subject – Ceres                 | 9 (Ninth House)     | 11 (Eleventh House) | Leo  | 13.71° |
+| Sample Natal Subject – Pallas                | 8 (Eighth House)    | 9 (Ninth House)     | Can  | 7.25°  |
+| Sample Natal Subject – Juno                  | 1 (First House)     | 2 (Second House)    | Sco  | 10.10° |
+| Sample Natal Subject – Vesta                 | 7 (Seventh House)   | 8 (Eighth House)    | Tau  | 18.15° |
+| Sample Natal Subject – Interpolated Lilith   | 1 (First House)     | 2 (Second House)    | Sco  | 25.42° |
+| Sample Natal Subject – Interpolated Perigee  | 8 (Eighth House)    | 9 (Ninth House)     | Gem  | 21.31° |
+| Sample Natal Subject – Cupido                | 1 (First House)     | 2 (Second House)    | Sco  | 18.61° |
+| Sample Natal Subject – Hades                 | 8 (Eighth House)    | 9 (Ninth House)     | Gem  | 9.92°  |
+| Sample Natal Subject – Zeus                  | 11 (Eleventh House) | 12 (Twelfth House)  | Vir  | 26.03° |
+| Sample Natal Subject – Kronos                | 8 (Eighth House)    | 9 (Ninth House)     | Gem  | 21.89° |
+| Sample Natal Subject – Apollon               | 11 (Eleventh House) | 1 (First House)     | Lib  | 13.82° |
+| Sample Natal Subject – Admetos               | 7 (Seventh House)   | 8 (Eighth House)    | Tau  | 14.96° |
+| Sample Natal Subject – Vulkanus              | 9 (Ninth House)     | 10 (Tenth House)    | Can  | 15.34° |
+| Sample Natal Subject – Poseidon              | 12 (Twelfth House)  | 1 (First House)     | Lib  | 28.68° |
+| Sample Natal Subject – Eris                  | 6 (Sixth House)     | 7 (Seventh House)   | Ari  | 17.60° |
+| Sample Natal Subject – Sedna                 | 7 (Seventh House)   | 8 (Eighth House)    | Tau  | 11.55° |
+| Sample Natal Subject – Haumea                | 11 (Eleventh House) | 12 (Twelfth House)  | Vir  | 26.32° |
+| Sample Natal Subject – Makemake              | 10 (Tenth House)    | 11 (Eleventh House) | Vir  | 4.50°  |
+| Sample Natal Subject – Ixion                 | 1 (First House)     | 2 (Second House)    | Sco  | 22.70° |
+| Sample Natal Subject – Orcus                 | 9 (Ninth House)     | 10 (Tenth House)    | Leo  | 10.84° |
+| Sample Natal Subject – Quaoar                | 1 (First House)     | 2 (Second House)    | Sco  | 24.08° |
+| Sample Natal Subject – Pars Fortunae         | 12 (Twelfth House)  | 1 (First House)     | Lib  | 28.49° |
+| Sample Natal Subject – Pars Spiritus         | 1 (First House)     | 2 (Second House)    | Sco  | 13.16° |
+| Sample Natal Subject – Pars Amoris           | 11 (Eleventh House) | 1 (First House)     | Lib  | 8.99°  |
+| Sample Natal Subject – Pars Fidei            | 7 (Seventh House)   | 8 (Eighth House)    | Tau  | 8.22°  |
+| Sample Natal Subject – Vertex                | 8 (Eighth House)    | 9 (Ninth House)     | Gem  | 11.46° |
+| Sample Natal Subject – White Moon            | 9 (Ninth House)     | 10 (Tenth House)    | Can  | 26.26° |
+| Sample Natal Subject – Descendant            | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 5.82°  |
+| Sample Natal Subject – Imum Coeli            | 4 (Fourth House)    | 5 (Fifth House)     | Aqu  | 19.91° |
+| Sample Natal Subject – Anti Vertex           | 2 (Second House)    | 3 (Third House)     | Sag  | 11.46° |
+| Sample Natal Subject – Mean South Lunar Node | 9 (Ninth House)     | 10 (Tenth House)    | Leo  | 7.79°  |
+| Sample Natal Subject – True South Lunar Node | 9 (Ninth House)     | 10 (Tenth House)    | Leo  | 7.26°  |
+| Sample Natal Subject – Mean Priapus          | 7 (Seventh House)   | 8 (Eighth House)    | Tau  | 28.99° |
+| Sample Natal Subject – True Priapus          | 8 (Eighth House)    | 9 (Ninth House)     | Gem  | 18.01° |
+| Sample Natal Subject – Ascendant             | 1 (First House)     | 1 (First House)     | Sco  | 5.82°  |
+| Sample Natal Subject – Medium Coeli          | 10 (Tenth House)    | 11 (Eleventh House) | Leo  | 19.91° |
 +----------------------------------------------+---------------------+---------------------+------+--------+
 
 +Yoko Ono points in Sample Natal Subject houses----------+---------------------+------+--------+
 | Point                            | Owner House         | Projected House     | Sign | Degree |
 +----------------------------------+---------------------+---------------------+------+--------+
-| Yoko Ono – Sun                   | 5 (Fifth_House)     | 4 (Fourth_House)    | Aqu  | 29.38° |
-| Yoko Ono – Moon                  | 3 (Third_House)     | 2 (Second_House)    | Sag  | 11.13° |
-| Yoko Ono – Mercury               | 5 (Fifth_House)     | 4 (Fourth_House)    | Pis  | 7.89°  |
-| Yoko Ono – Venus                 | 5 (Fifth_House)     | 3 (Third_House)     | Aqu  | 13.79° |
-| Yoko Ono – Mars                  | 12 (Twelfth_House)  | 10 (Tenth_House)    | Vir  | 15.13° |
-| Yoko Ono – Jupiter               | 12 (Twelfth_House)  | 10 (Tenth_House)    | Vir  | 20.70° |
-| Yoko Ono – Saturn                | 4 (Fourth_House)    | 3 (Third_House)     | Aqu  | 9.74°  |
-| Yoko Ono – Uranus                | 7 (Seventh_House)   | 6 (Sixth_House)     | Ari  | 20.55° |
-| Yoko Ono – Neptune               | 11 (Eleventh_House) | 10 (Tenth_House)    | Vir  | 9.08°  |
-| Yoko Ono – Pluto                 | 10 (Tenth_House)    | 9 (Ninth_House)     | Can  | 21.63° |
-| Yoko Ono – Mean North Lunar Node | 5 (Fifth_House)     | 4 (Fourth_House)    | Pis  | 8.34°  |
-| Yoko Ono – True North Lunar Node | 5 (Fifth_House)     | 4 (Fourth_House)    | Pis  | 7.80°  |
-| Yoko Ono – Mean Lilith           | 8 (Eighth_House)    | 7 (Seventh_House)   | Gem  | 2.52°  |
-| Yoko Ono – True Lilith           | 9 (Ninth_House)     | 8 (Eighth_House)    | Gem  | 10.83° |
-| Yoko Ono – Chiron                | 8 (Eighth_House)    | 7 (Seventh_House)   | Tau  | 23.74° |
-| Yoko Ono – Pholus                | 3 (Third_House)     | 2 (Second_House)    | Cap  | 8.20°  |
-| Yoko Ono – Ceres                 | 5 (Fifth_House)     | 4 (Fourth_House)    | Pis  | 0.49°  |
-| Yoko Ono – Pallas                | 4 (Fourth_House)    | 3 (Third_House)     | Aqu  | 10.45° |
-| Yoko Ono – Juno                  | 2 (Second_House)    | 1 (First_House)     | Sco  | 5.83°  |
-| Yoko Ono – Vesta                 | 8 (Eighth_House)    | 7 (Seventh_House)   | Tau  | 27.23° |
-| Yoko Ono – Interpolated Lilith   | 8 (Eighth_House)    | 7 (Seventh_House)   | Gem  | 2.40°  |
-| Yoko Ono – Interpolated Perigee  | 3 (Third_House)     | 2 (Second_House)    | Sag  | 10.37° |
-| Yoko Ono – Cupido                | 11 (Eleventh_House) | 10 (Tenth_House)    | Vir  | 0.68°  |
-| Yoko Ono – Hades                 | 7 (Seventh_House)   | 5 (Fifth_House)     | Ari  | 10.21° |
-| Yoko Ono – Zeus                  | 10 (Tenth_House)    | 9 (Ninth_House)     | Leo  | 10.47° |
-| Yoko Ono – Kronos                | 8 (Eighth_House)    | 7 (Seventh_House)   | Tau  | 10.32° |
-| Yoko Ono – Apollon               | 11 (Eleventh_House) | 10 (Tenth_House)    | Vir  | 8.89°  |
-| Yoko Ono – Admetos               | 7 (Seventh_House)   | 5 (Fifth_House)     | Ari  | 10.17° |
-| Yoko Ono – Vulkanus              | 9 (Ninth_House)     | 8 (Eighth_House)    | Gem  | 13.21° |
-| Yoko Ono – Poseidon              | 12 (Twelfth_House)  | 11 (Eleventh_House) | Lib  | 1.93°  |
-| Yoko Ono – Eris                  | 6 (Sixth_House)     | 5 (Fifth_House)     | Ari  | 2.05°  |
-| Yoko Ono – Sedna                 | 7 (Seventh_House)   | 5 (Fifth_House)     | Ari  | 17.18° |
-| Yoko Ono – Haumea                | 10 (Tenth_House)    | 9 (Ninth_House)     | Leo  | 5.02°  |
-| Yoko Ono – Makemake              | 9 (Ninth_House)     | 8 (Eighth_House)    | Can  | 0.81°  |
-| Yoko Ono – Ixion                 | 12 (Twelfth_House)  | 11 (Eleventh_House) | Vir  | 29.22° |
-| Yoko Ono – Orcus                 | 8 (Eighth_House)    | 7 (Seventh_House)   | Tau  | 27.78° |
-| Yoko Ono – Quaoar                | 12 (Twelfth_House)  | 10 (Tenth_House)    | Vir  | 16.77° |
-| Yoko Ono – Pars Fortunae         | 3 (Third_House)     | 2 (Second_House)    | Sag  | 26.66° |
-| Yoko Ono – Pars Spiritus         | 10 (Tenth_House)    | 9 (Ninth_House)     | Can  | 20.16° |
-| Yoko Ono – Pars Amoris           | 12 (Twelfth_House)  | 10 (Tenth_House)    | Vir  | 22.82° |
-| Yoko Ono – Pars Fidei            | 8 (Eighth_House)    | 7 (Seventh_House)   | Tau  | 19.37° |
-| Yoko Ono – Vertex                | 7 (Seventh_House)   | 6 (Sixth_House)     | Ari  | 26.75° |
-| Yoko Ono – White Moon            | 8 (Eighth_House)    | 7 (Seventh_House)   | Tau  | 12.91° |
-| Yoko Ono – Descendant            | 7 (Seventh_House)   | 5 (Fifth_House)     | Ari  | 8.41°  |
-| Yoko Ono – Imum Coeli            | 4 (Fourth_House)    | 2 (Second_House)    | Cap  | 9.31°  |
-| Yoko Ono – Anti Vertex           | 1 (First_House)     | 12 (Twelfth_House)  | Lib  | 26.75° |
-| Yoko Ono – Mean South Lunar Node | 11 (Eleventh_House) | 10 (Tenth_House)    | Vir  | 8.34°  |
-| Yoko Ono – True South Lunar Node | 11 (Eleventh_House) | 10 (Tenth_House)    | Vir  | 7.80°  |
-| Yoko Ono – Mean Priapus          | 2 (Second_House)    | 1 (First_House)     | Sag  | 2.52°  |
-| Yoko Ono – True Priapus          | 3 (Third_House)     | 2 (Second_House)    | Sag  | 10.83° |
-| Yoko Ono – Ascendant             | 1 (First_House)     | 11 (Eleventh_House) | Lib  | 8.41°  |
-| Yoko Ono – Medium Coeli          | 10 (Tenth_House)    | 8 (Eighth_House)    | Can  | 9.31°  |
+| Yoko Ono – Sun                   | 5 (Fifth House)     | 4 (Fourth House)    | Aqu  | 29.38° |
+| Yoko Ono – Moon                  | 3 (Third House)     | 2 (Second House)    | Sag  | 11.13° |
+| Yoko Ono – Mercury               | 5 (Fifth House)     | 4 (Fourth House)    | Pis  | 7.89°  |
+| Yoko Ono – Venus                 | 5 (Fifth House)     | 3 (Third House)     | Aqu  | 13.79° |
+| Yoko Ono – Mars                  | 12 (Twelfth House)  | 10 (Tenth House)    | Vir  | 15.13° |
+| Yoko Ono – Jupiter               | 12 (Twelfth House)  | 10 (Tenth House)    | Vir  | 20.70° |
+| Yoko Ono – Saturn                | 4 (Fourth House)    | 3 (Third House)     | Aqu  | 9.74°  |
+| Yoko Ono – Uranus                | 7 (Seventh House)   | 6 (Sixth House)     | Ari  | 20.55° |
+| Yoko Ono – Neptune               | 11 (Eleventh House) | 10 (Tenth House)    | Vir  | 9.08°  |
+| Yoko Ono – Pluto                 | 10 (Tenth House)    | 9 (Ninth House)     | Can  | 21.63° |
+| Yoko Ono – Mean North Lunar Node | 5 (Fifth House)     | 4 (Fourth House)    | Pis  | 8.34°  |
+| Yoko Ono – True North Lunar Node | 5 (Fifth House)     | 4 (Fourth House)    | Pis  | 7.80°  |
+| Yoko Ono – Mean Lilith           | 8 (Eighth House)    | 7 (Seventh House)   | Gem  | 2.52°  |
+| Yoko Ono – True Lilith           | 9 (Ninth House)     | 8 (Eighth House)    | Gem  | 10.83° |
+| Yoko Ono – Chiron                | 8 (Eighth House)    | 7 (Seventh House)   | Tau  | 23.74° |
+| Yoko Ono – Pholus                | 3 (Third House)     | 2 (Second House)    | Cap  | 8.20°  |
+| Yoko Ono – Ceres                 | 5 (Fifth House)     | 4 (Fourth House)    | Pis  | 0.49°  |
+| Yoko Ono – Pallas                | 4 (Fourth House)    | 3 (Third House)     | Aqu  | 10.45° |
+| Yoko Ono – Juno                  | 2 (Second House)    | 1 (First House)     | Sco  | 5.83°  |
+| Yoko Ono – Vesta                 | 8 (Eighth House)    | 7 (Seventh House)   | Tau  | 27.23° |
+| Yoko Ono – Interpolated Lilith   | 8 (Eighth House)    | 7 (Seventh House)   | Gem  | 2.40°  |
+| Yoko Ono – Interpolated Perigee  | 3 (Third House)     | 2 (Second House)    | Sag  | 10.37° |
+| Yoko Ono – Cupido                | 11 (Eleventh House) | 10 (Tenth House)    | Vir  | 0.68°  |
+| Yoko Ono – Hades                 | 7 (Seventh House)   | 5 (Fifth House)     | Ari  | 10.21° |
+| Yoko Ono – Zeus                  | 10 (Tenth House)    | 9 (Ninth House)     | Leo  | 10.47° |
+| Yoko Ono – Kronos                | 8 (Eighth House)    | 7 (Seventh House)   | Tau  | 10.32° |
+| Yoko Ono – Apollon               | 11 (Eleventh House) | 10 (Tenth House)    | Vir  | 8.89°  |
+| Yoko Ono – Admetos               | 7 (Seventh House)   | 5 (Fifth House)     | Ari  | 10.17° |
+| Yoko Ono – Vulkanus              | 9 (Ninth House)     | 8 (Eighth House)    | Gem  | 13.21° |
+| Yoko Ono – Poseidon              | 12 (Twelfth House)  | 11 (Eleventh House) | Lib  | 1.93°  |
+| Yoko Ono – Eris                  | 6 (Sixth House)     | 5 (Fifth House)     | Ari  | 2.05°  |
+| Yoko Ono – Sedna                 | 7 (Seventh House)   | 5 (Fifth House)     | Ari  | 17.18° |
+| Yoko Ono – Haumea                | 10 (Tenth House)    | 9 (Ninth House)     | Leo  | 5.02°  |
+| Yoko Ono – Makemake              | 9 (Ninth House)     | 8 (Eighth House)    | Can  | 0.81°  |
+| Yoko Ono – Ixion                 | 12 (Twelfth House)  | 11 (Eleventh House) | Vir  | 29.22° |
+| Yoko Ono – Orcus                 | 8 (Eighth House)    | 7 (Seventh House)   | Tau  | 27.78° |
+| Yoko Ono – Quaoar                | 12 (Twelfth House)  | 10 (Tenth House)    | Vir  | 16.77° |
+| Yoko Ono – Pars Fortunae         | 3 (Third House)     | 2 (Second House)    | Sag  | 26.66° |
+| Yoko Ono – Pars Spiritus         | 10 (Tenth House)    | 9 (Ninth House)     | Can  | 20.16° |
+| Yoko Ono – Pars Amoris           | 12 (Twelfth House)  | 10 (Tenth House)    | Vir  | 22.82° |
+| Yoko Ono – Pars Fidei            | 8 (Eighth House)    | 7 (Seventh House)   | Tau  | 19.37° |
+| Yoko Ono – Vertex                | 7 (Seventh House)   | 6 (Sixth House)     | Ari  | 26.75° |
+| Yoko Ono – White Moon            | 8 (Eighth House)    | 7 (Seventh House)   | Tau  | 12.91° |
+| Yoko Ono – Descendant            | 7 (Seventh House)   | 5 (Fifth House)     | Ari  | 8.41°  |
+| Yoko Ono – Imum Coeli            | 4 (Fourth House)    | 2 (Second House)    | Cap  | 9.31°  |
+| Yoko Ono – Anti Vertex           | 1 (First House)     | 12 (Twelfth House)  | Lib  | 26.75° |
+| Yoko Ono – Mean South Lunar Node | 11 (Eleventh House) | 10 (Tenth House)    | Vir  | 8.34°  |
+| Yoko Ono – True South Lunar Node | 11 (Eleventh House) | 10 (Tenth House)    | Vir  | 7.80°  |
+| Yoko Ono – Mean Priapus          | 2 (Second House)    | 1 (First House)     | Sag  | 2.52°  |
+| Yoko Ono – True Priapus          | 3 (Third House)     | 2 (Second House)    | Sag  | 10.83° |
+| Yoko Ono – Ascendant             | 1 (First House)     | 11 (Eleventh House) | Lib  | 8.41°  |
+| Yoko Ono – Medium Coeli          | 10 (Tenth House)    | 8 (Eighth House)    | Can  | 9.31°  |
 +----------------------------------+---------------------+---------------------+------+--------+
 
 +Sample Natal Subject cusps in Yoko Ono houses----------------+------+--------+

@@ -154,39 +154,39 @@ John Lennon & Yoko Ono — Synastry Report
 +John Lennon points in Yoko Ono houses+---------------------+---------------------+------+--------+
 | Point                               | Owner House         | Projected House     | Sign | Degree |
 +-------------------------------------+---------------------+---------------------+------+--------+
-| John Lennon – Sun                   | 6 (Sixth_House)     | 1 (First_House)     | Lib  | 16.27° |
-| John Lennon – Moon                  | 11 (Eleventh_House) | 4 (Fourth_House)    | Aqu  | 3.55°  |
-| John Lennon – Mercury               | 7 (Seventh_House)   | 2 (Second_House)    | Sco  | 8.56°  |
-| John Lennon – Venus                 | 6 (Sixth_House)     | 11 (Eleventh_House) | Vir  | 3.22°  |
-| John Lennon – Mars                  | 6 (Sixth_House)     | 12 (Twelfth_House)  | Lib  | 2.66°  |
-| John Lennon – Jupiter               | 1 (First_House)     | 8 (Eighth_House)    | Tau  | 13.69° |
-| John Lennon – Saturn                | 1 (First_House)     | 8 (Eighth_House)    | Tau  | 13.22° |
-| John Lennon – Uranus                | 1 (First_House)     | 8 (Eighth_House)    | Tau  | 25.55° |
-| John Lennon – Neptune               | 6 (Sixth_House)     | 12 (Twelfth_House)  | Vir  | 26.03° |
-| John Lennon – Pluto                 | 5 (Fifth_House)     | 10 (Tenth_House)    | Leo  | 4.19°  |
-| John Lennon – True North Lunar Node | 6 (Sixth_House)     | 1 (First_House)     | Lib  | 11.02° |
-| John Lennon – Chiron                | 5 (Fifth_House)     | 10 (Tenth_House)    | Leo  | 0.57°  |
-| John Lennon – Ascendant             | 1 (First_House)     | 7 (Seventh_House)   | Ari  | 19.71° |
-| John Lennon – Medium Coeli          | 10 (Tenth_House)    | 3 (Third_House)     | Cap  | 7.06°  |
+| John Lennon – Sun                   | 6 (Sixth House)     | 1 (First House)     | Lib  | 16.27° |
+| John Lennon – Moon                  | 11 (Eleventh House) | 4 (Fourth House)    | Aqu  | 3.55°  |
+| John Lennon – Mercury               | 7 (Seventh House)   | 2 (Second House)    | Sco  | 8.56°  |
+| John Lennon – Venus                 | 6 (Sixth House)     | 11 (Eleventh House) | Vir  | 3.22°  |
+| John Lennon – Mars                  | 6 (Sixth House)     | 12 (Twelfth House)  | Lib  | 2.66°  |
+| John Lennon – Jupiter               | 1 (First House)     | 8 (Eighth House)    | Tau  | 13.69° |
+| John Lennon – Saturn                | 1 (First House)     | 8 (Eighth House)    | Tau  | 13.22° |
+| John Lennon – Uranus                | 1 (First House)     | 8 (Eighth House)    | Tau  | 25.55° |
+| John Lennon – Neptune               | 6 (Sixth House)     | 12 (Twelfth House)  | Vir  | 26.03° |
+| John Lennon – Pluto                 | 5 (Fifth House)     | 10 (Tenth House)    | Leo  | 4.19°  |
+| John Lennon – True North Lunar Node | 6 (Sixth House)     | 1 (First House)     | Lib  | 11.02° |
+| John Lennon – Chiron                | 5 (Fifth House)     | 10 (Tenth House)    | Leo  | 0.57°  |
+| John Lennon – Ascendant             | 1 (First House)     | 7 (Seventh House)   | Ari  | 19.71° |
+| John Lennon – Medium Coeli          | 10 (Tenth House)    | 3 (Third House)     | Cap  | 7.06°  |
 +-------------------------------------+---------------------+---------------------+------+--------+
 
 +Yoko Ono points in John Lennon houses-------------------+---------------------+------+--------+
 | Point                            | Owner House         | Projected House     | Sign | Degree |
 +----------------------------------+---------------------+---------------------+------+--------+
-| Yoko Ono – Sun                   | 5 (Fifth_House)     | 12 (Twelfth_House)  | Aqu  | 29.38° |
-| Yoko Ono – Moon                  | 3 (Third_House)     | 8 (Eighth_House)    | Sag  | 11.13° |
-| Yoko Ono – Mercury               | 5 (Fifth_House)     | 12 (Twelfth_House)  | Pis  | 7.89°  |
-| Yoko Ono – Venus                 | 5 (Fifth_House)     | 11 (Eleventh_House) | Aqu  | 13.79° |
-| Yoko Ono – Mars                  | 12 (Twelfth_House)  | 6 (Sixth_House)     | Vir  | 15.13° |
-| Yoko Ono – Jupiter               | 12 (Twelfth_House)  | 6 (Sixth_House)     | Vir  | 20.70° |
-| Yoko Ono – Saturn                | 4 (Fourth_House)    | 11 (Eleventh_House) | Aqu  | 9.74°  |
-| Yoko Ono – Uranus                | 7 (Seventh_House)   | 1 (First_House)     | Ari  | 20.55° |
-| Yoko Ono – Neptune               | 11 (Eleventh_House) | 6 (Sixth_House)     | Vir  | 9.08°  |
-| Yoko Ono – Pluto                 | 10 (Tenth_House)    | 4 (Fourth_House)    | Can  | 21.63° |
-| Yoko Ono – True North Lunar Node | 5 (Fifth_House)     | 12 (Twelfth_House)  | Pis  | 7.80°  |
-| Yoko Ono – Chiron                | 8 (Eighth_House)    | 1 (First_House)     | Tau  | 23.74° |
-| Yoko Ono – Ascendant             | 1 (First_House)     | 6 (Sixth_House)     | Lib  | 8.41°  |
-| Yoko Ono – Medium Coeli          | 10 (Tenth_House)    | 4 (Fourth_House)    | Can  | 9.31°  |
+| Yoko Ono – Sun                   | 5 (Fifth House)     | 12 (Twelfth House)  | Aqu  | 29.38° |
+| Yoko Ono – Moon                  | 3 (Third House)     | 8 (Eighth House)    | Sag  | 11.13° |
+| Yoko Ono – Mercury               | 5 (Fifth House)     | 12 (Twelfth House)  | Pis  | 7.89°  |
+| Yoko Ono – Venus                 | 5 (Fifth House)     | 11 (Eleventh House) | Aqu  | 13.79° |
+| Yoko Ono – Mars                  | 12 (Twelfth House)  | 6 (Sixth House)     | Vir  | 15.13° |
+| Yoko Ono – Jupiter               | 12 (Twelfth House)  | 6 (Sixth House)     | Vir  | 20.70° |
+| Yoko Ono – Saturn                | 4 (Fourth House)    | 11 (Eleventh House) | Aqu  | 9.74°  |
+| Yoko Ono – Uranus                | 7 (Seventh House)   | 1 (First House)     | Ari  | 20.55° |
+| Yoko Ono – Neptune               | 11 (Eleventh House) | 6 (Sixth House)     | Vir  | 9.08°  |
+| Yoko Ono – Pluto                 | 10 (Tenth House)    | 4 (Fourth House)    | Can  | 21.63° |
+| Yoko Ono – True North Lunar Node | 5 (Fifth House)     | 12 (Twelfth House)  | Pis  | 7.80°  |
+| Yoko Ono – Chiron                | 8 (Eighth House)    | 1 (First House)     | Tau  | 23.74° |
+| Yoko Ono – Ascendant             | 1 (First House)     | 6 (Sixth House)     | Lib  | 8.41°  |
+| Yoko Ono – Medium Coeli          | 10 (Tenth House)    | 4 (Fourth House)    | Can  | 9.31°  |
 +----------------------------------+---------------------+---------------------+------+--------+
 
 +John Lennon cusps in Yoko Ono houses----------------+------+--------+

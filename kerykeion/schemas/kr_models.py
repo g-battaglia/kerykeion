@@ -1448,9 +1448,16 @@ class DualChartDataModel(SubscriptableBaseModel):
     Chart data model for dual-subject astrological charts.
 
     This model contains all pure data from dual-subject charts including both subjects,
-    inter-chart aspects, house comparisons, relationship analysis, and combined
+    inter-chart aspects, house comparisons, relationship analysis, and
     element/quality distributions. Used for chart types that compare or overlay
     two astrological subjects.
+
+    Distribution semantics differ by chart type: for **Synastry** the
+    element/quality distributions are the COMBINED weighted points of both
+    partners (a relationship reads both people together). For **Transit /
+    DualReturnChart / Progression** they describe the FIRST (natal) subject
+    only — the second subject is a different moment of the same person, so its
+    points are not summed into the natal's temperament.
 
     Supported chart types:
     - Transit: Natal chart with current planetary transits
@@ -1465,8 +1472,10 @@ class DualChartDataModel(SubscriptableBaseModel):
         aspects: Inter-chart aspects between the two subjects
         house_comparison: House overlay analysis between subjects
         relationship_score: Compatibility scoring (synastry only)
-        element_distribution: Combined elemental distribution
-        quality_distribution: Combined modal distribution
+        element_distribution: Elemental distribution — combined (both subjects)
+            for Synastry, first-subject only for Transit/DualReturnChart/Progression
+        quality_distribution: Modal distribution — combined (both subjects) for
+            Synastry, first-subject only for Transit/DualReturnChart/Progression
         active_points: Celestial points included in calculations
         active_aspects: Aspect types and orb settings used
     """

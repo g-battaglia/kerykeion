@@ -52,6 +52,7 @@ from kerykeion.utilities import (
     get_houses_list,
     get_available_astrological_points_list,
     normalize_zodiac_type,
+    safe_timezone,
 )
 from kerykeion.astrological_subject_factory import (
     DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
@@ -214,7 +215,7 @@ class EphemerisDataFactory:
         # UTC, so `.days` was 0 and 2024-04-01 was omitted). Each local sample
         # is then converted to its true (non-uniformly spaced) UTC instant.
         # is_dst only disambiguates a wall time inside a fall-back fold.
-        _tz = pytz.timezone(self.tz_str)
+        _tz = safe_timezone(self.tz_str)
 
         def _localize_to_utc(naive: datetime) -> datetime:
             return _tz.localize(naive, is_dst=self.is_dst).astimezone(pytz.utc)
@@ -287,7 +288,7 @@ class EphemerisDataFactory:
             # fold-side discriminator for standard-offset-change folds (UK 1971,
             # Portugal 1976): both occurrences have dst()==0, so is_dst=False would
             # re-localize onto the wrong side, silently computing a chart 1 h off.
-            local_date = date.astimezone(pytz.timezone(self.tz_str))
+            local_date = date.astimezone(safe_timezone(self.tz_str))
             is_dst = bool(local_date.dst())
             _off = local_date.utcoffset()
             if _off is not None:

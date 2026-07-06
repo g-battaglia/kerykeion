@@ -36,6 +36,7 @@ from kerykeion.settings.config_constants import AXIAL_POINTS
 from kerykeion.utilities import (
     check_and_adjust_polar_latitude,
     normalize_longitude,
+    safe_timezone,
     get_kerykeion_point_from_degree,
     get_planet_house,
     _assemble_ancient_iso,
@@ -97,12 +98,10 @@ class RelocatedChartFactory:
                 field_year, field_month, field_day, field_hour, field_minute, field_seconds, lmt_offset_hours
             )
         else:
-            import pytz
-
             utc_dt = datetime.fromisoformat(iso_utc)
             if utc_dt.tzinfo is None:
                 utc_dt = utc_dt.replace(tzinfo=timezone.utc)
-            local_dt = utc_dt.astimezone(pytz.timezone(new_tz_str))
+            local_dt = utc_dt.astimezone(safe_timezone(new_tz_str))
             relocated_data["iso_formatted_local_datetime"] = local_dt.isoformat()
             relocated_data["year"] = local_dt.year
             relocated_data["month"] = local_dt.month

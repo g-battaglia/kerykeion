@@ -154,39 +154,39 @@ Johnny Depp — Transit 1940-10-09
 +Johnny Depp points in John Lennon houses-------------------+---------------------+------+--------+
 | Point                               | Owner House         | Projected House     | Sign | Degree |
 +-------------------------------------+---------------------+---------------------+------+--------+
-| Johnny Depp – Sun                   | 4 (Fourth_House)    | 2 (Second_House)    | Gem  | 17.66° |
-| Johnny Depp – Moon                  | 11 (Eleventh_House) | 10 (Tenth_House)    | Cap  | 8.74°  |
-| Johnny Depp – Mercury               | 3 (Third_House)     | 1 (First_House)     | Tau  | 25.00° |
-| Johnny Depp – Venus                 | 3 (Third_House)     | 1 (First_House)     | Tau  | 25.60° |
-| Johnny Depp – Mars                  | 7 (Seventh_House)   | 6 (Sixth_House)     | Vir  | 3.01°  |
-| Johnny Depp – Jupiter               | 2 (Second_House)    | 12 (Twelfth_House)  | Ari  | 13.91° |
-| Johnny Depp – Saturn                | 1 (First_House)     | 12 (Twelfth_House)  | Aqu  | 23.08° |
-| Johnny Depp – Uranus                | 7 (Seventh_House)   | 6 (Sixth_House)     | Vir  | 1.57°  |
-| Johnny Depp – Neptune               | 9 (Ninth_House)     | 7 (Seventh_House)   | Sco  | 13.42° |
-| Johnny Depp – Pluto                 | 7 (Seventh_House)   | 6 (Sixth_House)     | Vir  | 9.63°  |
-| Johnny Depp – True North Lunar Node | 5 (Fifth_House)     | 4 (Fourth_House)    | Can  | 20.64° |
-| Johnny Depp – Chiron                | 1 (First_House)     | 12 (Twelfth_House)  | Pis  | 14.87° |
-| Johnny Depp – Ascendant             | 1 (First_House)     | 11 (Eleventh_House) | Aqu  | 20.70° |
-| Johnny Depp – Medium Coeli          | 10 (Tenth_House)    | 8 (Eighth_House)    | Sag  | 6.59°  |
+| Johnny Depp – Sun                   | 4 (Fourth House)    | 2 (Second House)    | Gem  | 17.66° |
+| Johnny Depp – Moon                  | 11 (Eleventh House) | 10 (Tenth House)    | Cap  | 8.74°  |
+| Johnny Depp – Mercury               | 3 (Third House)     | 1 (First House)     | Tau  | 25.00° |
+| Johnny Depp – Venus                 | 3 (Third House)     | 1 (First House)     | Tau  | 25.60° |
+| Johnny Depp – Mars                  | 7 (Seventh House)   | 6 (Sixth House)     | Vir  | 3.01°  |
+| Johnny Depp – Jupiter               | 2 (Second House)    | 12 (Twelfth House)  | Ari  | 13.91° |
+| Johnny Depp – Saturn                | 1 (First House)     | 12 (Twelfth House)  | Aqu  | 23.08° |
+| Johnny Depp – Uranus                | 7 (Seventh House)   | 6 (Sixth House)     | Vir  | 1.57°  |
+| Johnny Depp – Neptune               | 9 (Ninth House)     | 7 (Seventh House)   | Sco  | 13.42° |
+| Johnny Depp – Pluto                 | 7 (Seventh House)   | 6 (Sixth House)     | Vir  | 9.63°  |
+| Johnny Depp – True North Lunar Node | 5 (Fifth House)     | 4 (Fourth House)    | Can  | 20.64° |
+| Johnny Depp – Chiron                | 1 (First House)     | 12 (Twelfth House)  | Pis  | 14.87° |
+| Johnny Depp – Ascendant             | 1 (First House)     | 11 (Eleventh House) | Aqu  | 20.70° |
+| Johnny Depp – Medium Coeli          | 10 (Tenth House)    | 8 (Eighth House)    | Sag  | 6.59°  |
 +-------------------------------------+---------------------+---------------------+------+--------+
 
 +John Lennon points in Johnny Depp houses-------------------+---------------------+------+--------+
 | Point                               | Owner House         | Projected House     | Sign | Degree |
 +-------------------------------------+---------------------+---------------------+------+--------+
-| John Lennon – Sun                   | 6 (Sixth_House)     | 8 (Eighth_House)    | Lib  | 16.27° |
-| John Lennon – Moon                  | 11 (Eleventh_House) | 12 (Twelfth_House)  | Aqu  | 3.55°  |
-| John Lennon – Mercury               | 7 (Seventh_House)   | 8 (Eighth_House)    | Sco  | 8.56°  |
-| John Lennon – Venus                 | 6 (Sixth_House)     | 7 (Seventh_House)   | Vir  | 3.22°  |
-| John Lennon – Mars                  | 6 (Sixth_House)     | 7 (Seventh_House)   | Lib  | 2.66°  |
-| John Lennon – Jupiter               | 1 (First_House)     | 3 (Third_House)     | Tau  | 13.69° |
-| John Lennon – Saturn                | 1 (First_House)     | 3 (Third_House)     | Tau  | 13.22° |
-| John Lennon – Uranus                | 1 (First_House)     | 3 (Third_House)     | Tau  | 25.55° |
-| John Lennon – Neptune               | 6 (Sixth_House)     | 7 (Seventh_House)   | Vir  | 26.03° |
-| John Lennon – Pluto                 | 5 (Fifth_House)     | 6 (Sixth_House)     | Leo  | 4.19°  |
-| John Lennon – True North Lunar Node | 6 (Sixth_House)     | 8 (Eighth_House)    | Lib  | 11.02° |
-| John Lennon – Chiron                | 5 (Fifth_House)     | 6 (Sixth_House)     | Leo  | 0.57°  |
-| John Lennon – Ascendant             | 1 (First_House)     | 2 (Second_House)    | Ari  | 19.71° |
-| John Lennon – Medium Coeli          | 10 (Tenth_House)    | 11 (Eleventh_House) | Cap  | 7.06°  |
+| John Lennon – Sun                   | 6 (Sixth House)     | 8 (Eighth House)    | Lib  | 16.27° |
+| John Lennon – Moon                  | 11 (Eleventh House) | 12 (Twelfth House)  | Aqu  | 3.55°  |
+| John Lennon – Mercury               | 7 (Seventh House)   | 8 (Eighth House)    | Sco  | 8.56°  |
+| John Lennon – Venus                 | 6 (Sixth House)     | 7 (Seventh House)   | Vir  | 3.22°  |
+| John Lennon – Mars                  | 6 (Sixth House)     | 7 (Seventh House)   | Lib  | 2.66°  |
+| John Lennon – Jupiter               | 1 (First House)     | 3 (Third House)     | Tau  | 13.69° |
+| John Lennon – Saturn                | 1 (First House)     | 3 (Third House)     | Tau  | 13.22° |
+| John Lennon – Uranus                | 1 (First House)     | 3 (Third House)     | Tau  | 25.55° |
+| John Lennon – Neptune               | 6 (Sixth House)     | 7 (Seventh House)   | Vir  | 26.03° |
+| John Lennon – Pluto                 | 5 (Fifth House)     | 6 (Sixth House)     | Leo  | 4.19°  |
+| John Lennon – True North Lunar Node | 6 (Sixth House)     | 8 (Eighth House)    | Lib  | 11.02° |
+| John Lennon – Chiron                | 5 (Fifth House)     | 6 (Sixth House)     | Leo  | 0.57°  |
+| John Lennon – Ascendant             | 1 (First House)     | 2 (Second House)    | Ari  | 19.71° |
+| John Lennon – Medium Coeli          | 10 (Tenth House)    | 11 (Eleventh House) | Cap  | 7.06°  |
 +-------------------------------------+---------------------+---------------------+------+--------+
 
 +Johnny Depp cusps in John Lennon houses-------------+------+--------+

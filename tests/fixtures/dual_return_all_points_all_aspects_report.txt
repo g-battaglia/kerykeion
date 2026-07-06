@@ -229,115 +229,115 @@ Sample Natal Subject — Solar Return Comparison 1990
 +Sample Natal Subject points in Sample Natal Subject Solar Return houses-------------------+------+--------+
 | Point                                        | Owner House         | Projected House     | Sign | Degree |
 +----------------------------------------------+---------------------+---------------------+------+--------+
-| Sample Natal Subject – Sun                   | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 28.54° |
-| Sample Natal Subject – Moon                  | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 21.21° |
-| Sample Natal Subject – Mercury               | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 17.61° |
-| Sample Natal Subject – Venus                 | 8 (Eighth_House)    | 8 (Eighth_House)    | Can  | 1.71°  |
-| Sample Natal Subject – Mars                  | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 5.97°  |
-| Sample Natal Subject – Jupiter               | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 23.91° |
-| Sample Natal Subject – Saturn                | 3 (Third_House)     | 3 (Third_House)     | Cap  | 21.52° |
-| Sample Natal Subject – Uranus                | 2 (Second_House)    | 2 (Second_House)    | Cap  | 6.74°  |
-| Sample Natal Subject – Neptune               | 3 (Third_House)     | 3 (Third_House)     | Cap  | 12.76° |
-| Sample Natal Subject – Pluto                 | 1 (First_House)     | 1 (First_House)     | Sco  | 14.97° |
-| Sample Natal Subject – Mean North Lunar Node | 3 (Third_House)     | 3 (Third_House)     | Aqu  | 7.79°  |
-| Sample Natal Subject – True North Lunar Node | 3 (Third_House)     | 3 (Third_House)     | Aqu  | 7.26°  |
-| Sample Natal Subject – Mean Lilith           | 1 (First_House)     | 1 (First_House)     | Sco  | 28.99° |
-| Sample Natal Subject – True Lilith           | 2 (Second_House)    | 2 (Second_House)    | Sag  | 18.01° |
-| Sample Natal Subject – Chiron                | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 19.88° |
-| Sample Natal Subject – Pholus                | 8 (Eighth_House)    | 8 (Eighth_House)    | Can  | 7.99°  |
-| Sample Natal Subject – Ceres                 | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 13.71° |
-| Sample Natal Subject – Pallas                | 8 (Eighth_House)    | 8 (Eighth_House)    | Can  | 7.25°  |
-| Sample Natal Subject – Juno                  | 1 (First_House)     | 1 (First_House)     | Sco  | 10.10° |
-| Sample Natal Subject – Vesta                 | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 18.15° |
-| Sample Natal Subject – Interpolated Lilith   | 1 (First_House)     | 1 (First_House)     | Sco  | 25.42° |
-| Sample Natal Subject – Interpolated Perigee  | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 21.31° |
-| Sample Natal Subject – Cupido                | 1 (First_House)     | 1 (First_House)     | Sco  | 18.61° |
-| Sample Natal Subject – Hades                 | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 9.92°  |
-| Sample Natal Subject – Zeus                  | 11 (Eleventh_House) | 11 (Eleventh_House) | Vir  | 26.03° |
-| Sample Natal Subject – Kronos                | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 21.89° |
-| Sample Natal Subject – Apollon               | 11 (Eleventh_House) | 11 (Eleventh_House) | Lib  | 13.82° |
-| Sample Natal Subject – Admetos               | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 14.96° |
-| Sample Natal Subject – Vulkanus              | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 15.34° |
-| Sample Natal Subject – Poseidon              | 12 (Twelfth_House)  | 12 (Twelfth_House)  | Lib  | 28.68° |
-| Sample Natal Subject – Eris                  | 6 (Sixth_House)     | 6 (Sixth_House)     | Ari  | 17.60° |
-| Sample Natal Subject – Sedna                 | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 11.55° |
-| Sample Natal Subject – Haumea                | 11 (Eleventh_House) | 11 (Eleventh_House) | Vir  | 26.32° |
-| Sample Natal Subject – Makemake              | 10 (Tenth_House)    | 10 (Tenth_House)    | Vir  | 4.50°  |
-| Sample Natal Subject – Ixion                 | 1 (First_House)     | 1 (First_House)     | Sco  | 22.70° |
-| Sample Natal Subject – Orcus                 | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 10.84° |
-| Sample Natal Subject – Quaoar                | 1 (First_House)     | 1 (First_House)     | Sco  | 24.08° |
-| Sample Natal Subject – Pars Fortunae         | 12 (Twelfth_House)  | 12 (Twelfth_House)  | Lib  | 28.49° |
-| Sample Natal Subject – Pars Spiritus         | 1 (First_House)     | 1 (First_House)     | Sco  | 13.16° |
-| Sample Natal Subject – Pars Amoris           | 11 (Eleventh_House) | 11 (Eleventh_House) | Lib  | 8.99°  |
-| Sample Natal Subject – Pars Fidei            | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 8.22°  |
-| Sample Natal Subject – Vertex                | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 11.46° |
-| Sample Natal Subject – White Moon            | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 26.26° |
-| Sample Natal Subject – Descendant            | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 5.82°  |
-| Sample Natal Subject – Imum Coeli            | 4 (Fourth_House)    | 4 (Fourth_House)    | Aqu  | 19.91° |
-| Sample Natal Subject – Anti Vertex           | 2 (Second_House)    | 2 (Second_House)    | Sag  | 11.46° |
-| Sample Natal Subject – Mean South Lunar Node | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 7.79°  |
-| Sample Natal Subject – True South Lunar Node | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 7.26°  |
-| Sample Natal Subject – Mean Priapus          | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 28.99° |
-| Sample Natal Subject – True Priapus          | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 18.01° |
-| Sample Natal Subject – Ascendant             | 1 (First_House)     | 1 (First_House)     | Sco  | 5.82°  |
-| Sample Natal Subject – Medium Coeli          | 10 (Tenth_House)    | 10 (Tenth_House)    | Leo  | 19.91° |
+| Sample Natal Subject – Sun                   | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 28.54° |
+| Sample Natal Subject – Moon                  | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 21.21° |
+| Sample Natal Subject – Mercury               | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 17.61° |
+| Sample Natal Subject – Venus                 | 8 (Eighth House)    | 8 (Eighth House)    | Can  | 1.71°  |
+| Sample Natal Subject – Mars                  | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 5.97°  |
+| Sample Natal Subject – Jupiter               | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 23.91° |
+| Sample Natal Subject – Saturn                | 3 (Third House)     | 3 (Third House)     | Cap  | 21.52° |
+| Sample Natal Subject – Uranus                | 2 (Second House)    | 2 (Second House)    | Cap  | 6.74°  |
+| Sample Natal Subject – Neptune               | 3 (Third House)     | 3 (Third House)     | Cap  | 12.76° |
+| Sample Natal Subject – Pluto                 | 1 (First House)     | 1 (First House)     | Sco  | 14.97° |
+| Sample Natal Subject – Mean North Lunar Node | 3 (Third House)     | 3 (Third House)     | Aqu  | 7.79°  |
+| Sample Natal Subject – True North Lunar Node | 3 (Third House)     | 3 (Third House)     | Aqu  | 7.26°  |
+| Sample Natal Subject – Mean Lilith           | 1 (First House)     | 1 (First House)     | Sco  | 28.99° |
+| Sample Natal Subject – True Lilith           | 2 (Second House)    | 2 (Second House)    | Sag  | 18.01° |
+| Sample Natal Subject – Chiron                | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 19.88° |
+| Sample Natal Subject – Pholus                | 8 (Eighth House)    | 8 (Eighth House)    | Can  | 7.99°  |
+| Sample Natal Subject – Ceres                 | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 13.71° |
+| Sample Natal Subject – Pallas                | 8 (Eighth House)    | 8 (Eighth House)    | Can  | 7.25°  |
+| Sample Natal Subject – Juno                  | 1 (First House)     | 1 (First House)     | Sco  | 10.10° |
+| Sample Natal Subject – Vesta                 | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 18.15° |
+| Sample Natal Subject – Interpolated Lilith   | 1 (First House)     | 1 (First House)     | Sco  | 25.42° |
+| Sample Natal Subject – Interpolated Perigee  | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 21.31° |
+| Sample Natal Subject – Cupido                | 1 (First House)     | 1 (First House)     | Sco  | 18.61° |
+| Sample Natal Subject – Hades                 | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 9.92°  |
+| Sample Natal Subject – Zeus                  | 11 (Eleventh House) | 11 (Eleventh House) | Vir  | 26.03° |
+| Sample Natal Subject – Kronos                | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 21.89° |
+| Sample Natal Subject – Apollon               | 11 (Eleventh House) | 11 (Eleventh House) | Lib  | 13.82° |
+| Sample Natal Subject – Admetos               | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 14.96° |
+| Sample Natal Subject – Vulkanus              | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 15.34° |
+| Sample Natal Subject – Poseidon              | 12 (Twelfth House)  | 12 (Twelfth House)  | Lib  | 28.68° |
+| Sample Natal Subject – Eris                  | 6 (Sixth House)     | 6 (Sixth House)     | Ari  | 17.60° |
+| Sample Natal Subject – Sedna                 | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 11.55° |
+| Sample Natal Subject – Haumea                | 11 (Eleventh House) | 11 (Eleventh House) | Vir  | 26.32° |
+| Sample Natal Subject – Makemake              | 10 (Tenth House)    | 10 (Tenth House)    | Vir  | 4.50°  |
+| Sample Natal Subject – Ixion                 | 1 (First House)     | 1 (First House)     | Sco  | 22.70° |
+| Sample Natal Subject – Orcus                 | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 10.84° |
+| Sample Natal Subject – Quaoar                | 1 (First House)     | 1 (First House)     | Sco  | 24.08° |
+| Sample Natal Subject – Pars Fortunae         | 12 (Twelfth House)  | 12 (Twelfth House)  | Lib  | 28.49° |
+| Sample Natal Subject – Pars Spiritus         | 1 (First House)     | 1 (First House)     | Sco  | 13.16° |
+| Sample Natal Subject – Pars Amoris           | 11 (Eleventh House) | 11 (Eleventh House) | Lib  | 8.99°  |
+| Sample Natal Subject – Pars Fidei            | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 8.22°  |
+| Sample Natal Subject – Vertex                | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 11.46° |
+| Sample Natal Subject – White Moon            | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 26.26° |
+| Sample Natal Subject – Descendant            | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 5.82°  |
+| Sample Natal Subject – Imum Coeli            | 4 (Fourth House)    | 4 (Fourth House)    | Aqu  | 19.91° |
+| Sample Natal Subject – Anti Vertex           | 2 (Second House)    | 2 (Second House)    | Sag  | 11.46° |
+| Sample Natal Subject – Mean South Lunar Node | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 7.79°  |
+| Sample Natal Subject – True South Lunar Node | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 7.26°  |
+| Sample Natal Subject – Mean Priapus          | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 28.99° |
+| Sample Natal Subject – True Priapus          | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 18.01° |
+| Sample Natal Subject – Ascendant             | 1 (First House)     | 1 (First House)     | Sco  | 5.82°  |
+| Sample Natal Subject – Medium Coeli          | 10 (Tenth House)    | 10 (Tenth House)    | Leo  | 19.91° |
 +----------------------------------------------+---------------------+---------------------+------+--------+
 
 +Sample Natal Subject Solar Return points in Sample Natal Subject houses----------+---------------------+------+--------+
 | Point                                                     | Owner House         | Projected House     | Sign | Degree |
 +-----------------------------------------------------------+---------------------+---------------------+------+--------+
-| Sample Natal Subject Solar Return – Sun                   | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 28.54° |
-| Sample Natal Subject Solar Return – Moon                  | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 21.21° |
-| Sample Natal Subject Solar Return – Mercury               | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 17.61° |
-| Sample Natal Subject Solar Return – Venus                 | 8 (Eighth_House)    | 8 (Eighth_House)    | Can  | 1.71°  |
-| Sample Natal Subject Solar Return – Mars                  | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 5.97°  |
-| Sample Natal Subject Solar Return – Jupiter               | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 23.91° |
-| Sample Natal Subject Solar Return – Saturn                | 3 (Third_House)     | 3 (Third_House)     | Cap  | 21.52° |
-| Sample Natal Subject Solar Return – Uranus                | 2 (Second_House)    | 2 (Second_House)    | Cap  | 6.74°  |
-| Sample Natal Subject Solar Return – Neptune               | 3 (Third_House)     | 3 (Third_House)     | Cap  | 12.76° |
-| Sample Natal Subject Solar Return – Pluto                 | 1 (First_House)     | 1 (First_House)     | Sco  | 14.97° |
-| Sample Natal Subject Solar Return – Mean North Lunar Node | 3 (Third_House)     | 3 (Third_House)     | Aqu  | 7.79°  |
-| Sample Natal Subject Solar Return – True North Lunar Node | 3 (Third_House)     | 3 (Third_House)     | Aqu  | 7.26°  |
-| Sample Natal Subject Solar Return – Mean Lilith           | 1 (First_House)     | 1 (First_House)     | Sco  | 28.99° |
-| Sample Natal Subject Solar Return – True Lilith           | 2 (Second_House)    | 2 (Second_House)    | Sag  | 18.01° |
-| Sample Natal Subject Solar Return – Chiron                | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 19.88° |
-| Sample Natal Subject Solar Return – Pholus                | 8 (Eighth_House)    | 8 (Eighth_House)    | Can  | 7.99°  |
-| Sample Natal Subject Solar Return – Ceres                 | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 13.71° |
-| Sample Natal Subject Solar Return – Pallas                | 8 (Eighth_House)    | 8 (Eighth_House)    | Can  | 7.25°  |
-| Sample Natal Subject Solar Return – Juno                  | 1 (First_House)     | 1 (First_House)     | Sco  | 10.10° |
-| Sample Natal Subject Solar Return – Vesta                 | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 18.15° |
-| Sample Natal Subject Solar Return – Interpolated Lilith   | 1 (First_House)     | 1 (First_House)     | Sco  | 25.42° |
-| Sample Natal Subject Solar Return – Interpolated Perigee  | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 21.31° |
-| Sample Natal Subject Solar Return – Cupido                | 1 (First_House)     | 1 (First_House)     | Sco  | 18.61° |
-| Sample Natal Subject Solar Return – Hades                 | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 9.92°  |
-| Sample Natal Subject Solar Return – Zeus                  | 11 (Eleventh_House) | 11 (Eleventh_House) | Vir  | 26.03° |
-| Sample Natal Subject Solar Return – Kronos                | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 21.89° |
-| Sample Natal Subject Solar Return – Apollon               | 11 (Eleventh_House) | 11 (Eleventh_House) | Lib  | 13.82° |
-| Sample Natal Subject Solar Return – Admetos               | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 14.96° |
-| Sample Natal Subject Solar Return – Vulkanus              | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 15.34° |
-| Sample Natal Subject Solar Return – Poseidon              | 12 (Twelfth_House)  | 12 (Twelfth_House)  | Lib  | 28.68° |
-| Sample Natal Subject Solar Return – Eris                  | 6 (Sixth_House)     | 6 (Sixth_House)     | Ari  | 17.60° |
-| Sample Natal Subject Solar Return – Sedna                 | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 11.55° |
-| Sample Natal Subject Solar Return – Haumea                | 11 (Eleventh_House) | 11 (Eleventh_House) | Vir  | 26.32° |
-| Sample Natal Subject Solar Return – Makemake              | 10 (Tenth_House)    | 10 (Tenth_House)    | Vir  | 4.50°  |
-| Sample Natal Subject Solar Return – Ixion                 | 1 (First_House)     | 1 (First_House)     | Sco  | 22.70° |
-| Sample Natal Subject Solar Return – Orcus                 | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 10.84° |
-| Sample Natal Subject Solar Return – Quaoar                | 1 (First_House)     | 1 (First_House)     | Sco  | 24.08° |
-| Sample Natal Subject Solar Return – Pars Fortunae         | 12 (Twelfth_House)  | 12 (Twelfth_House)  | Lib  | 28.48° |
-| Sample Natal Subject Solar Return – Pars Spiritus         | 1 (First_House)     | 1 (First_House)     | Sco  | 13.15° |
-| Sample Natal Subject Solar Return – Pars Amoris           | 11 (Eleventh_House) | 11 (Eleventh_House) | Lib  | 8.98°  |
-| Sample Natal Subject Solar Return – Pars Fidei            | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 8.21°  |
-| Sample Natal Subject Solar Return – Vertex                | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 11.46° |
-| Sample Natal Subject Solar Return – White Moon            | 9 (Ninth_House)     | 9 (Ninth_House)     | Can  | 26.26° |
-| Sample Natal Subject Solar Return – Descendant            | 7 (Seventh_House)   | 6 (Sixth_House)     | Tau  | 5.82°  |
-| Sample Natal Subject Solar Return – Imum Coeli            | 4 (Fourth_House)    | 3 (Third_House)     | Aqu  | 19.91° |
-| Sample Natal Subject Solar Return – Anti Vertex           | 2 (Second_House)    | 2 (Second_House)    | Sag  | 11.46° |
-| Sample Natal Subject Solar Return – Mean South Lunar Node | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 7.79°  |
-| Sample Natal Subject Solar Return – True South Lunar Node | 9 (Ninth_House)     | 9 (Ninth_House)     | Leo  | 7.26°  |
-| Sample Natal Subject Solar Return – Mean Priapus          | 7 (Seventh_House)   | 7 (Seventh_House)   | Tau  | 28.99° |
-| Sample Natal Subject Solar Return – True Priapus          | 8 (Eighth_House)    | 8 (Eighth_House)    | Gem  | 18.01° |
-| Sample Natal Subject Solar Return – Ascendant             | 1 (First_House)     | 12 (Twelfth_House)  | Sco  | 5.82°  |
-| Sample Natal Subject Solar Return – Medium Coeli          | 10 (Tenth_House)    | 9 (Ninth_House)     | Leo  | 19.91° |
+| Sample Natal Subject Solar Return – Sun                   | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 28.54° |
+| Sample Natal Subject Solar Return – Moon                  | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 21.21° |
+| Sample Natal Subject Solar Return – Mercury               | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 17.61° |
+| Sample Natal Subject Solar Return – Venus                 | 8 (Eighth House)    | 8 (Eighth House)    | Can  | 1.71°  |
+| Sample Natal Subject Solar Return – Mars                  | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 5.97°  |
+| Sample Natal Subject Solar Return – Jupiter               | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 23.91° |
+| Sample Natal Subject Solar Return – Saturn                | 3 (Third House)     | 3 (Third House)     | Cap  | 21.52° |
+| Sample Natal Subject Solar Return – Uranus                | 2 (Second House)    | 2 (Second House)    | Cap  | 6.74°  |
+| Sample Natal Subject Solar Return – Neptune               | 3 (Third House)     | 3 (Third House)     | Cap  | 12.76° |
+| Sample Natal Subject Solar Return – Pluto                 | 1 (First House)     | 1 (First House)     | Sco  | 14.97° |
+| Sample Natal Subject Solar Return – Mean North Lunar Node | 3 (Third House)     | 3 (Third House)     | Aqu  | 7.79°  |
+| Sample Natal Subject Solar Return – True North Lunar Node | 3 (Third House)     | 3 (Third House)     | Aqu  | 7.26°  |
+| Sample Natal Subject Solar Return – Mean Lilith           | 1 (First House)     | 1 (First House)     | Sco  | 28.99° |
+| Sample Natal Subject Solar Return – True Lilith           | 2 (Second House)    | 2 (Second House)    | Sag  | 18.01° |
+| Sample Natal Subject Solar Return – Chiron                | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 19.88° |
+| Sample Natal Subject Solar Return – Pholus                | 8 (Eighth House)    | 8 (Eighth House)    | Can  | 7.99°  |
+| Sample Natal Subject Solar Return – Ceres                 | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 13.71° |
+| Sample Natal Subject Solar Return – Pallas                | 8 (Eighth House)    | 8 (Eighth House)    | Can  | 7.25°  |
+| Sample Natal Subject Solar Return – Juno                  | 1 (First House)     | 1 (First House)     | Sco  | 10.10° |
+| Sample Natal Subject Solar Return – Vesta                 | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 18.15° |
+| Sample Natal Subject Solar Return – Interpolated Lilith   | 1 (First House)     | 1 (First House)     | Sco  | 25.42° |
+| Sample Natal Subject Solar Return – Interpolated Perigee  | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 21.31° |
+| Sample Natal Subject Solar Return – Cupido                | 1 (First House)     | 1 (First House)     | Sco  | 18.61° |
+| Sample Natal Subject Solar Return – Hades                 | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 9.92°  |
+| Sample Natal Subject Solar Return – Zeus                  | 11 (Eleventh House) | 11 (Eleventh House) | Vir  | 26.03° |
+| Sample Natal Subject Solar Return – Kronos                | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 21.89° |
+| Sample Natal Subject Solar Return – Apollon               | 11 (Eleventh House) | 11 (Eleventh House) | Lib  | 13.82° |
+| Sample Natal Subject Solar Return – Admetos               | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 14.96° |
+| Sample Natal Subject Solar Return – Vulkanus              | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 15.34° |
+| Sample Natal Subject Solar Return – Poseidon              | 12 (Twelfth House)  | 12 (Twelfth House)  | Lib  | 28.68° |
+| Sample Natal Subject Solar Return – Eris                  | 6 (Sixth House)     | 6 (Sixth House)     | Ari  | 17.60° |
+| Sample Natal Subject Solar Return – Sedna                 | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 11.55° |
+| Sample Natal Subject Solar Return – Haumea                | 11 (Eleventh House) | 11 (Eleventh House) | Vir  | 26.32° |
+| Sample Natal Subject Solar Return – Makemake              | 10 (Tenth House)    | 10 (Tenth House)    | Vir  | 4.50°  |
+| Sample Natal Subject Solar Return – Ixion                 | 1 (First House)     | 1 (First House)     | Sco  | 22.70° |
+| Sample Natal Subject Solar Return – Orcus                 | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 10.84° |
+| Sample Natal Subject Solar Return – Quaoar                | 1 (First House)     | 1 (First House)     | Sco  | 24.08° |
+| Sample Natal Subject Solar Return – Pars Fortunae         | 12 (Twelfth House)  | 12 (Twelfth House)  | Lib  | 28.48° |
+| Sample Natal Subject Solar Return – Pars Spiritus         | 1 (First House)     | 1 (First House)     | Sco  | 13.15° |
+| Sample Natal Subject Solar Return – Pars Amoris           | 11 (Eleventh House) | 11 (Eleventh House) | Lib  | 8.98°  |
+| Sample Natal Subject Solar Return – Pars Fidei            | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 8.21°  |
+| Sample Natal Subject Solar Return – Vertex                | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 11.46° |
+| Sample Natal Subject Solar Return – White Moon            | 9 (Ninth House)     | 9 (Ninth House)     | Can  | 26.26° |
+| Sample Natal Subject Solar Return – Descendant            | 7 (Seventh House)   | 6 (Sixth House)     | Tau  | 5.82°  |
+| Sample Natal Subject Solar Return – Imum Coeli            | 4 (Fourth House)    | 3 (Third House)     | Aqu  | 19.91° |
+| Sample Natal Subject Solar Return – Anti Vertex           | 2 (Second House)    | 2 (Second House)    | Sag  | 11.46° |
+| Sample Natal Subject Solar Return – Mean South Lunar Node | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 7.79°  |
+| Sample Natal Subject Solar Return – True South Lunar Node | 9 (Ninth House)     | 9 (Ninth House)     | Leo  | 7.26°  |
+| Sample Natal Subject Solar Return – Mean Priapus          | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 28.99° |
+| Sample Natal Subject Solar Return – True Priapus          | 8 (Eighth House)    | 8 (Eighth House)    | Gem  | 18.01° |
+| Sample Natal Subject Solar Return – Ascendant             | 1 (First House)     | 12 (Twelfth House)  | Sco  | 5.82°  |
+| Sample Natal Subject Solar Return – Medium Coeli          | 10 (Tenth House)    | 9 (Ninth House)     | Leo  | 19.91° |
 +-----------------------------------------------------------+---------------------+---------------------+------+--------+
 
 +Sample Natal Subject cusps in Sample Natal Subject Solar Return houses-------+

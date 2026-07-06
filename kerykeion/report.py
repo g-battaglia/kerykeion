@@ -834,9 +834,10 @@ class ReportGenerator:
         for point in points:
             owner_house = "-"
             if point.point_owner_house_number is not None or point.point_owner_house_name:
-                owner_house = f"{point.point_owner_house_number or '-'} ({point.point_owner_house_name or '-'})"
+                _owner_name = _humanize(point.point_owner_house_name) if point.point_owner_house_name else "-"
+                owner_house = f"{point.point_owner_house_number or '-'} ({_owner_name})"
 
-            projected_house = f"{point.projected_house_number} ({point.projected_house_name})"
+            projected_house = f"{point.projected_house_number} ({_humanize(point.projected_house_name)})"
             table_data.append(
                 [
                     f"{point.point_owner_name} – {_humanize(point.point_name)}",

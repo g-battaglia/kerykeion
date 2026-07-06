@@ -230,115 +230,115 @@ Sample Natal Subject — Transit 1980-12-08
 +Sample Natal Subject points in 1980 Transit houses------------------+---------------------+------+--------+
 | Point                                        | Owner House         | Projected House     | Sign | Degree |
 +----------------------------------------------+---------------------+---------------------+------+--------+
-| Sample Natal Subject – Sun                   | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 28.54° |
-| Sample Natal Subject – Moon                  | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 21.21° |
-| Sample Natal Subject – Mercury               | 9 (Ninth_House)     | 12 (Twelfth_House)  | Leo  | 17.61° |
-| Sample Natal Subject – Venus                 | 8 (Eighth_House)    | 10 (Tenth_House)    | Can  | 1.71°  |
-| Sample Natal Subject – Mars                  | 7 (Seventh_House)   | 9 (Ninth_House)     | Tau  | 5.97°  |
-| Sample Natal Subject – Jupiter               | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 23.91° |
-| Sample Natal Subject – Saturn                | 3 (Third_House)     | 5 (Fifth_House)     | Cap  | 21.52° |
-| Sample Natal Subject – Uranus                | 2 (Second_House)    | 4 (Fourth_House)    | Cap  | 6.74°  |
-| Sample Natal Subject – Neptune               | 3 (Third_House)     | 5 (Fifth_House)     | Cap  | 12.76° |
-| Sample Natal Subject – Pluto                 | 1 (First_House)     | 3 (Third_House)     | Sco  | 14.97° |
-| Sample Natal Subject – Mean North Lunar Node | 3 (Third_House)     | 5 (Fifth_House)     | Aqu  | 7.79°  |
-| Sample Natal Subject – True North Lunar Node | 3 (Third_House)     | 5 (Fifth_House)     | Aqu  | 7.26°  |
-| Sample Natal Subject – Mean Lilith           | 1 (First_House)     | 3 (Third_House)     | Sco  | 28.99° |
-| Sample Natal Subject – True Lilith           | 2 (Second_House)    | 4 (Fourth_House)    | Sag  | 18.01° |
-| Sample Natal Subject – Chiron                | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 19.88° |
-| Sample Natal Subject – Pholus                | 8 (Eighth_House)    | 10 (Tenth_House)    | Can  | 7.99°  |
-| Sample Natal Subject – Ceres                 | 9 (Ninth_House)     | 12 (Twelfth_House)  | Leo  | 13.71° |
-| Sample Natal Subject – Pallas                | 8 (Eighth_House)    | 10 (Tenth_House)    | Can  | 7.25°  |
-| Sample Natal Subject – Juno                  | 1 (First_House)     | 3 (Third_House)     | Sco  | 10.10° |
-| Sample Natal Subject – Vesta                 | 7 (Seventh_House)   | 9 (Ninth_House)     | Tau  | 18.15° |
-| Sample Natal Subject – Interpolated Lilith   | 1 (First_House)     | 3 (Third_House)     | Sco  | 25.42° |
-| Sample Natal Subject – Interpolated Perigee  | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 21.31° |
-| Sample Natal Subject – Cupido                | 1 (First_House)     | 3 (Third_House)     | Sco  | 18.61° |
-| Sample Natal Subject – Hades                 | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 9.92°  |
-| Sample Natal Subject – Zeus                  | 11 (Eleventh_House) | 1 (First_House)     | Vir  | 26.03° |
-| Sample Natal Subject – Kronos                | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 21.89° |
-| Sample Natal Subject – Apollon               | 11 (Eleventh_House) | 2 (Second_House)    | Lib  | 13.82° |
-| Sample Natal Subject – Admetos               | 7 (Seventh_House)   | 9 (Ninth_House)     | Tau  | 14.96° |
-| Sample Natal Subject – Vulkanus              | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 15.34° |
-| Sample Natal Subject – Poseidon              | 12 (Twelfth_House)  | 2 (Second_House)    | Lib  | 28.68° |
-| Sample Natal Subject – Eris                  | 6 (Sixth_House)     | 8 (Eighth_House)    | Ari  | 17.60° |
-| Sample Natal Subject – Sedna                 | 7 (Seventh_House)   | 9 (Ninth_House)     | Tau  | 11.55° |
-| Sample Natal Subject – Haumea                | 11 (Eleventh_House) | 1 (First_House)     | Vir  | 26.32° |
-| Sample Natal Subject – Makemake              | 10 (Tenth_House)    | 12 (Twelfth_House)  | Vir  | 4.50°  |
-| Sample Natal Subject – Ixion                 | 1 (First_House)     | 3 (Third_House)     | Sco  | 22.70° |
-| Sample Natal Subject – Orcus                 | 9 (Ninth_House)     | 12 (Twelfth_House)  | Leo  | 10.84° |
-| Sample Natal Subject – Quaoar                | 1 (First_House)     | 3 (Third_House)     | Sco  | 24.08° |
-| Sample Natal Subject – Pars Fortunae         | 12 (Twelfth_House)  | 2 (Second_House)    | Lib  | 28.49° |
-| Sample Natal Subject – Pars Spiritus         | 1 (First_House)     | 3 (Third_House)     | Sco  | 13.16° |
-| Sample Natal Subject – Pars Amoris           | 11 (Eleventh_House) | 2 (Second_House)    | Lib  | 8.99°  |
-| Sample Natal Subject – Pars Fidei            | 7 (Seventh_House)   | 9 (Ninth_House)     | Tau  | 8.22°  |
-| Sample Natal Subject – Vertex                | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 11.46° |
-| Sample Natal Subject – White Moon            | 9 (Ninth_House)     | 11 (Eleventh_House) | Can  | 26.26° |
-| Sample Natal Subject – Descendant            | 7 (Seventh_House)   | 9 (Ninth_House)     | Tau  | 5.82°  |
-| Sample Natal Subject – Imum Coeli            | 4 (Fourth_House)    | 6 (Sixth_House)     | Aqu  | 19.91° |
-| Sample Natal Subject – Anti Vertex           | 2 (Second_House)    | 4 (Fourth_House)    | Sag  | 11.46° |
-| Sample Natal Subject – Mean South Lunar Node | 9 (Ninth_House)     | 11 (Eleventh_House) | Leo  | 7.79°  |
-| Sample Natal Subject – True South Lunar Node | 9 (Ninth_House)     | 11 (Eleventh_House) | Leo  | 7.26°  |
-| Sample Natal Subject – Mean Priapus          | 7 (Seventh_House)   | 9 (Ninth_House)     | Tau  | 28.99° |
-| Sample Natal Subject – True Priapus          | 8 (Eighth_House)    | 10 (Tenth_House)    | Gem  | 18.01° |
-| Sample Natal Subject – Ascendant             | 1 (First_House)     | 3 (Third_House)     | Sco  | 5.82°  |
-| Sample Natal Subject – Medium Coeli          | 10 (Tenth_House)    | 12 (Twelfth_House)  | Leo  | 19.91° |
+| Sample Natal Subject – Sun                   | 9 (Ninth House)     | 11 (Eleventh House) | Can  | 28.54° |
+| Sample Natal Subject – Moon                  | 9 (Ninth House)     | 11 (Eleventh House) | Can  | 21.21° |
+| Sample Natal Subject – Mercury               | 9 (Ninth House)     | 12 (Twelfth House)  | Leo  | 17.61° |
+| Sample Natal Subject – Venus                 | 8 (Eighth House)    | 10 (Tenth House)    | Can  | 1.71°  |
+| Sample Natal Subject – Mars                  | 7 (Seventh House)   | 9 (Ninth House)     | Tau  | 5.97°  |
+| Sample Natal Subject – Jupiter               | 9 (Ninth House)     | 11 (Eleventh House) | Can  | 23.91° |
+| Sample Natal Subject – Saturn                | 3 (Third House)     | 5 (Fifth House)     | Cap  | 21.52° |
+| Sample Natal Subject – Uranus                | 2 (Second House)    | 4 (Fourth House)    | Cap  | 6.74°  |
+| Sample Natal Subject – Neptune               | 3 (Third House)     | 5 (Fifth House)     | Cap  | 12.76° |
+| Sample Natal Subject – Pluto                 | 1 (First House)     | 3 (Third House)     | Sco  | 14.97° |
+| Sample Natal Subject – Mean North Lunar Node | 3 (Third House)     | 5 (Fifth House)     | Aqu  | 7.79°  |
+| Sample Natal Subject – True North Lunar Node | 3 (Third House)     | 5 (Fifth House)     | Aqu  | 7.26°  |
+| Sample Natal Subject – Mean Lilith           | 1 (First House)     | 3 (Third House)     | Sco  | 28.99° |
+| Sample Natal Subject – True Lilith           | 2 (Second House)    | 4 (Fourth House)    | Sag  | 18.01° |
+| Sample Natal Subject – Chiron                | 9 (Ninth House)     | 11 (Eleventh House) | Can  | 19.88° |
+| Sample Natal Subject – Pholus                | 8 (Eighth House)    | 10 (Tenth House)    | Can  | 7.99°  |
+| Sample Natal Subject – Ceres                 | 9 (Ninth House)     | 12 (Twelfth House)  | Leo  | 13.71° |
+| Sample Natal Subject – Pallas                | 8 (Eighth House)    | 10 (Tenth House)    | Can  | 7.25°  |
+| Sample Natal Subject – Juno                  | 1 (First House)     | 3 (Third House)     | Sco  | 10.10° |
+| Sample Natal Subject – Vesta                 | 7 (Seventh House)   | 9 (Ninth House)     | Tau  | 18.15° |
+| Sample Natal Subject – Interpolated Lilith   | 1 (First House)     | 3 (Third House)     | Sco  | 25.42° |
+| Sample Natal Subject – Interpolated Perigee  | 8 (Eighth House)    | 10 (Tenth House)    | Gem  | 21.31° |
+| Sample Natal Subject – Cupido                | 1 (First House)     | 3 (Third House)     | Sco  | 18.61° |
+| Sample Natal Subject – Hades                 | 8 (Eighth House)    | 10 (Tenth House)    | Gem  | 9.92°  |
+| Sample Natal Subject – Zeus                  | 11 (Eleventh House) | 1 (First House)     | Vir  | 26.03° |
+| Sample Natal Subject – Kronos                | 8 (Eighth House)    | 10 (Tenth House)    | Gem  | 21.89° |
+| Sample Natal Subject – Apollon               | 11 (Eleventh House) | 2 (Second House)    | Lib  | 13.82° |
+| Sample Natal Subject – Admetos               | 7 (Seventh House)   | 9 (Ninth House)     | Tau  | 14.96° |
+| Sample Natal Subject – Vulkanus              | 9 (Ninth House)     | 11 (Eleventh House) | Can  | 15.34° |
+| Sample Natal Subject – Poseidon              | 12 (Twelfth House)  | 2 (Second House)    | Lib  | 28.68° |
+| Sample Natal Subject – Eris                  | 6 (Sixth House)     | 8 (Eighth House)    | Ari  | 17.60° |
+| Sample Natal Subject – Sedna                 | 7 (Seventh House)   | 9 (Ninth House)     | Tau  | 11.55° |
+| Sample Natal Subject – Haumea                | 11 (Eleventh House) | 1 (First House)     | Vir  | 26.32° |
+| Sample Natal Subject – Makemake              | 10 (Tenth House)    | 12 (Twelfth House)  | Vir  | 4.50°  |
+| Sample Natal Subject – Ixion                 | 1 (First House)     | 3 (Third House)     | Sco  | 22.70° |
+| Sample Natal Subject – Orcus                 | 9 (Ninth House)     | 12 (Twelfth House)  | Leo  | 10.84° |
+| Sample Natal Subject – Quaoar                | 1 (First House)     | 3 (Third House)     | Sco  | 24.08° |
+| Sample Natal Subject – Pars Fortunae         | 12 (Twelfth House)  | 2 (Second House)    | Lib  | 28.49° |
+| Sample Natal Subject – Pars Spiritus         | 1 (First House)     | 3 (Third House)     | Sco  | 13.16° |
+| Sample Natal Subject – Pars Amoris           | 11 (Eleventh House) | 2 (Second House)    | Lib  | 8.99°  |
+| Sample Natal Subject – Pars Fidei            | 7 (Seventh House)   | 9 (Ninth House)     | Tau  | 8.22°  |
+| Sample Natal Subject – Vertex                | 8 (Eighth House)    | 10 (Tenth House)    | Gem  | 11.46° |
+| Sample Natal Subject – White Moon            | 9 (Ninth House)     | 11 (Eleventh House) | Can  | 26.26° |
+| Sample Natal Subject – Descendant            | 7 (Seventh House)   | 9 (Ninth House)     | Tau  | 5.82°  |
+| Sample Natal Subject – Imum Coeli            | 4 (Fourth House)    | 6 (Sixth House)     | Aqu  | 19.91° |
+| Sample Natal Subject – Anti Vertex           | 2 (Second House)    | 4 (Fourth House)    | Sag  | 11.46° |
+| Sample Natal Subject – Mean South Lunar Node | 9 (Ninth House)     | 11 (Eleventh House) | Leo  | 7.79°  |
+| Sample Natal Subject – True South Lunar Node | 9 (Ninth House)     | 11 (Eleventh House) | Leo  | 7.26°  |
+| Sample Natal Subject – Mean Priapus          | 7 (Seventh House)   | 9 (Ninth House)     | Tau  | 28.99° |
+| Sample Natal Subject – True Priapus          | 8 (Eighth House)    | 10 (Tenth House)    | Gem  | 18.01° |
+| Sample Natal Subject – Ascendant             | 1 (First House)     | 3 (Third House)     | Sco  | 5.82°  |
+| Sample Natal Subject – Medium Coeli          | 10 (Tenth House)    | 12 (Twelfth House)  | Leo  | 19.91° |
 +----------------------------------------------+---------------------+---------------------+------+--------+
 
 +1980 Transit points in Sample Natal Subject houses----------+---------------------+------+--------+
 | Point                                | Owner House         | Projected House     | Sign | Degree |
 +--------------------------------------+---------------------+---------------------+------+--------+
-| 1980 Transit – Sun                   | 4 (Fourth_House)    | 2 (Second_House)    | Sag  | 17.24° |
-| 1980 Transit – Moon                  | 4 (Fourth_House)    | 2 (Second_House)    | Cap  | 5.06°  |
-| 1980 Transit – Mercury               | 4 (Fourth_House)    | 2 (Second_House)    | Sag  | 5.09°  |
-| 1980 Transit – Venus                 | 3 (Third_House)     | 1 (First_House)     | Sco  | 18.67° |
-| 1980 Transit – Mars                  | 5 (Fifth_House)     | 3 (Third_House)     | Cap  | 13.06° |
-| 1980 Transit – Jupiter               | 2 (Second_House)    | 11 (Eleventh_House) | Lib  | 7.16°  |
-| 1980 Transit – Saturn                | 2 (Second_House)    | 11 (Eleventh_House) | Lib  | 8.35°  |
-| 1980 Transit – Uranus                | 3 (Third_House)     | 1 (First_House)     | Sco  | 27.15° |
-| 1980 Transit – Neptune               | 4 (Fourth_House)    | 2 (Second_House)    | Sag  | 22.20° |
-| 1980 Transit – Pluto                 | 2 (Second_House)    | 12 (Twelfth_House)  | Lib  | 23.66° |
-| 1980 Transit – Mean North Lunar Node | 12 (Twelfth_House)  | 9 (Ninth_House)     | Leo  | 13.72° |
-| 1980 Transit – True North Lunar Node | 12 (Twelfth_House)  | 9 (Ninth_House)     | Leo  | 12.16° |
-| 1980 Transit – Mean Lilith           | 2 (Second_House)    | 12 (Twelfth_House)  | Lib  | 27.66° |
-| 1980 Transit – True Lilith           | 3 (Third_House)     | 12 (Twelfth_House)  | Sco  | 1.17°  |
-| 1980 Transit – Chiron                | 9 (Ninth_House)     | 7 (Seventh_House)   | Tau  | 14.36° |
-| 1980 Transit – Pholus                | 7 (Seventh_House)   | 5 (Fifth_House)     | Pis  | 27.38° |
-| 1980 Transit – Ceres                 | 11 (Eleventh_House) | 9 (Ninth_House)     | Can  | 26.68° |
-| 1980 Transit – Pallas                | 8 (Eighth_House)    | 5 (Fifth_House)     | Ari  | 16.25° |
-| 1980 Transit – Juno                  | 2 (Second_House)    | 12 (Twelfth_House)  | Lib  | 24.32° |
-| 1980 Transit – Vesta                 | 12 (Twelfth_House)  | 10 (Tenth_House)    | Vir  | 7.30°  |
-| 1980 Transit – Interpolated Lilith   | 2 (Second_House)    | 12 (Twelfth_House)  | Lib  | 23.29° |
-| 1980 Transit – Interpolated Perigee  | 9 (Ninth_House)     | 7 (Seventh_House)   | Tau  | 19.41° |
-| 1980 Transit – Cupido                | 3 (Third_House)     | 1 (First_House)     | Sco  | 7.49°  |
-| 1980 Transit – Hades                 | 9 (Ninth_House)     | 7 (Seventh_House)   | Tau  | 29.00° |
-| 1980 Transit – Zeus                  | 1 (First_House)     | 10 (Tenth_House)    | Vir  | 20.09° |
-| 1980 Transit – Kronos                | 10 (Tenth_House)    | 8 (Eighth_House)    | Gem  | 14.58° |
-| 1980 Transit – Apollon               | 2 (Second_House)    | 11 (Eleventh_House) | Lib  | 9.36°  |
-| 1980 Transit – Admetos               | 9 (Ninth_House)     | 7 (Seventh_House)   | Tau  | 8.10°  |
-| 1980 Transit – Vulkanus              | 11 (Eleventh_House) | 9 (Ninth_House)     | Can  | 10.22° |
-| 1980 Transit – Poseidon              | 2 (Second_House)    | 12 (Twelfth_House)  | Lib  | 25.25° |
-| 1980 Transit – Eris                  | 8 (Eighth_House)    | 5 (Fifth_House)     | Ari  | 14.15° |
-| 1980 Transit – Sedna                 | 9 (Ninth_House)     | 7 (Seventh_House)   | Tau  | 5.87°  |
-| 1980 Transit – Haumea                | 1 (First_House)     | 10 (Tenth_House)    | Vir  | 19.69° |
-| 1980 Transit – Makemake              | 12 (Twelfth_House)  | 10 (Tenth_House)    | Leo  | 26.14° |
-| 1980 Transit – Ixion                 | 3 (Third_House)     | 1 (First_House)     | Sco  | 14.86° |
-| 1980 Transit – Orcus                 | 11 (Eleventh_House) | 9 (Ninth_House)     | Leo  | 1.98°  |
-| 1980 Transit – Quaoar                | 3 (Third_House)     | 1 (First_House)     | Sco  | 14.08° |
-| 1980 Transit – Pars Fortunae         | 12 (Twelfth_House)  | 9 (Ninth_House)     | Leo  | 19.65° |
-| 1980 Transit – Pars Spiritus         | 1 (First_House)     | 11 (Eleventh_House) | Vir  | 25.29° |
-| 1980 Transit – Pars Amoris           | 11 (Eleventh_House) | 9 (Ninth_House)     | Leo  | 8.91°  |
-| 1980 Transit – Pars Fidei            | 12 (Twelfth_House)  | 10 (Tenth_House)    | Vir  | 6.29°  |
-| 1980 Transit – Vertex                | 5 (Fifth_House)     | 3 (Third_House)     | Aqu  | 5.85°  |
-| 1980 Transit – White Moon            | 7 (Seventh_House)   | 4 (Fourth_House)    | Pis  | 11.76° |
-| 1980 Transit – Descendant            | 7 (Seventh_House)   | 4 (Fourth_House)    | Pis  | 7.47°  |
-| 1980 Transit – Imum Coeli            | 4 (Fourth_House)    | 1 (First_House)     | Sag  | 3.56°  |
-| 1980 Transit – Anti Vertex           | 11 (Eleventh_House) | 9 (Ninth_House)     | Leo  | 5.85°  |
-| 1980 Transit – Mean South Lunar Node | 6 (Sixth_House)     | 3 (Third_House)     | Aqu  | 13.72° |
-| 1980 Transit – True South Lunar Node | 6 (Sixth_House)     | 3 (Third_House)     | Aqu  | 12.16° |
-| 1980 Transit – Mean Priapus          | 8 (Eighth_House)    | 6 (Sixth_House)     | Ari  | 27.66° |
-| 1980 Transit – True Priapus          | 9 (Ninth_House)     | 6 (Sixth_House)     | Tau  | 1.17°  |
-| 1980 Transit – Ascendant             | 1 (First_House)     | 10 (Tenth_House)    | Vir  | 7.47°  |
-| 1980 Transit – Medium Coeli          | 10 (Tenth_House)    | 7 (Seventh_House)   | Gem  | 3.56°  |
+| 1980 Transit – Sun                   | 4 (Fourth House)    | 2 (Second House)    | Sag  | 17.24° |
+| 1980 Transit – Moon                  | 4 (Fourth House)    | 2 (Second House)    | Cap  | 5.06°  |
+| 1980 Transit – Mercury               | 4 (Fourth House)    | 2 (Second House)    | Sag  | 5.09°  |
+| 1980 Transit – Venus                 | 3 (Third House)     | 1 (First House)     | Sco  | 18.67° |
+| 1980 Transit – Mars                  | 5 (Fifth House)     | 3 (Third House)     | Cap  | 13.06° |
+| 1980 Transit – Jupiter               | 2 (Second House)    | 11 (Eleventh House) | Lib  | 7.16°  |
+| 1980 Transit – Saturn                | 2 (Second House)    | 11 (Eleventh House) | Lib  | 8.35°  |
+| 1980 Transit – Uranus                | 3 (Third House)     | 1 (First House)     | Sco  | 27.15° |
+| 1980 Transit – Neptune               | 4 (Fourth House)    | 2 (Second House)    | Sag  | 22.20° |
+| 1980 Transit – Pluto                 | 2 (Second House)    | 12 (Twelfth House)  | Lib  | 23.66° |
+| 1980 Transit – Mean North Lunar Node | 12 (Twelfth House)  | 9 (Ninth House)     | Leo  | 13.72° |
+| 1980 Transit – True North Lunar Node | 12 (Twelfth House)  | 9 (Ninth House)     | Leo  | 12.16° |
+| 1980 Transit – Mean Lilith           | 2 (Second House)    | 12 (Twelfth House)  | Lib  | 27.66° |
+| 1980 Transit – True Lilith           | 3 (Third House)     | 12 (Twelfth House)  | Sco  | 1.17°  |
+| 1980 Transit – Chiron                | 9 (Ninth House)     | 7 (Seventh House)   | Tau  | 14.36° |
+| 1980 Transit – Pholus                | 7 (Seventh House)   | 5 (Fifth House)     | Pis  | 27.38° |
+| 1980 Transit – Ceres                 | 11 (Eleventh House) | 9 (Ninth House)     | Can  | 26.68° |
+| 1980 Transit – Pallas                | 8 (Eighth House)    | 5 (Fifth House)     | Ari  | 16.25° |
+| 1980 Transit – Juno                  | 2 (Second House)    | 12 (Twelfth House)  | Lib  | 24.32° |
+| 1980 Transit – Vesta                 | 12 (Twelfth House)  | 10 (Tenth House)    | Vir  | 7.30°  |
+| 1980 Transit – Interpolated Lilith   | 2 (Second House)    | 12 (Twelfth House)  | Lib  | 23.29° |
+| 1980 Transit – Interpolated Perigee  | 9 (Ninth House)     | 7 (Seventh House)   | Tau  | 19.41° |
+| 1980 Transit – Cupido                | 3 (Third House)     | 1 (First House)     | Sco  | 7.49°  |
+| 1980 Transit – Hades                 | 9 (Ninth House)     | 7 (Seventh House)   | Tau  | 29.00° |
+| 1980 Transit – Zeus                  | 1 (First House)     | 10 (Tenth House)    | Vir  | 20.09° |
+| 1980 Transit – Kronos                | 10 (Tenth House)    | 8 (Eighth House)    | Gem  | 14.58° |
+| 1980 Transit – Apollon               | 2 (Second House)    | 11 (Eleventh House) | Lib  | 9.36°  |
+| 1980 Transit – Admetos               | 9 (Ninth House)     | 7 (Seventh House)   | Tau  | 8.10°  |
+| 1980 Transit – Vulkanus              | 11 (Eleventh House) | 9 (Ninth House)     | Can  | 10.22° |
+| 1980 Transit – Poseidon              | 2 (Second House)    | 12 (Twelfth House)  | Lib  | 25.25° |
+| 1980 Transit – Eris                  | 8 (Eighth House)    | 5 (Fifth House)     | Ari  | 14.15° |
+| 1980 Transit – Sedna                 | 9 (Ninth House)     | 7 (Seventh House)   | Tau  | 5.87°  |
+| 1980 Transit – Haumea                | 1 (First House)     | 10 (Tenth House)    | Vir  | 19.69° |
+| 1980 Transit – Makemake              | 12 (Twelfth House)  | 10 (Tenth House)    | Leo  | 26.14° |
+| 1980 Transit – Ixion                 | 3 (Third House)     | 1 (First House)     | Sco  | 14.86° |
+| 1980 Transit – Orcus                 | 11 (Eleventh House) | 9 (Ninth House)     | Leo  | 1.98°  |
+| 1980 Transit – Quaoar                | 3 (Third House)     | 1 (First House)     | Sco  | 14.08° |
+| 1980 Transit – Pars Fortunae         | 12 (Twelfth House)  | 9 (Ninth House)     | Leo  | 19.65° |
+| 1980 Transit – Pars Spiritus         | 1 (First House)     | 11 (Eleventh House) | Vir  | 25.29° |
+| 1980 Transit – Pars Amoris           | 11 (Eleventh House) | 9 (Ninth House)     | Leo  | 8.91°  |
+| 1980 Transit – Pars Fidei            | 12 (Twelfth House)  | 10 (Tenth House)    | Vir  | 6.29°  |
+| 1980 Transit – Vertex                | 5 (Fifth House)     | 3 (Third House)     | Aqu  | 5.85°  |
+| 1980 Transit – White Moon            | 7 (Seventh House)   | 4 (Fourth House)    | Pis  | 11.76° |
+| 1980 Transit – Descendant            | 7 (Seventh House)   | 4 (Fourth House)    | Pis  | 7.47°  |
+| 1980 Transit – Imum Coeli            | 4 (Fourth House)    | 1 (First House)     | Sag  | 3.56°  |
+| 1980 Transit – Anti Vertex           | 11 (Eleventh House) | 9 (Ninth House)     | Leo  | 5.85°  |
+| 1980 Transit – Mean South Lunar Node | 6 (Sixth House)     | 3 (Third House)     | Aqu  | 13.72° |
+| 1980 Transit – True South Lunar Node | 6 (Sixth House)     | 3 (Third House)     | Aqu  | 12.16° |
+| 1980 Transit – Mean Priapus          | 8 (Eighth House)    | 6 (Sixth House)     | Ari  | 27.66° |
+| 1980 Transit – True Priapus          | 9 (Ninth House)     | 6 (Sixth House)     | Tau  | 1.17°  |
+| 1980 Transit – Ascendant             | 1 (First House)     | 10 (Tenth House)    | Vir  | 7.47°  |
+| 1980 Transit – Medium Coeli          | 10 (Tenth House)    | 7 (Seventh House)   | Gem  | 3.56°  |
 +--------------------------------------+---------------------+---------------------+------+--------+
 
 +Sample Natal Subject cusps in 1980 Transit houses------------+------+--------+

@@ -771,3 +771,23 @@ class TestUserSiderealCompositeRound10:
         comp = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
         assert comp.sun is not None
         assert comp.custom_ayanamsa_t0 == 2451545.0
+
+
+class TestDavisonEnrichmentRound13:
+    """Round-13: Davison composite must carry over enrichments both parents had."""
+
+    def test_davison_inherits_enrichments(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        kw = dict(calculate_dignities=True, calculate_gauquelin=True,
+                  calculate_nutation=True, active_fixed_stars=["Regulus"])
+        a = AstrologicalSubjectFactory.from_birth_data(
+            "A", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True, **kw)
+        b = AstrologicalSubjectFactory.from_birth_data(
+            "B", 1992, 3, 3, 8, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True, **kw)
+        d = CompositeSubjectFactory(a, b).get_davison_composite_subject_model()
+        assert d.sun.essential_dignity is not None
+        assert d.gauquelin_sector_cusps is not None
+        assert [s.name for s in d.fixed_stars] == ["Regulus"]

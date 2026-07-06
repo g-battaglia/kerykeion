@@ -345,18 +345,30 @@ class ChartDataFactory:
                     include_fixed_stars=True,
                 )
         else:
-            # Calculate element/quality points for single chart
+            # Single-subject distribution (Natal, and the FIRST subject of
+            # Transit/DualReturnChart/Progression). Compute it over the FIRST
+            # subject's OWN active_points, not the both-subjects intersection:
+            # a transit that tracks fewer points must not silently truncate the
+            # natal's element/quality distribution (a natal's Uranus/Neptune/
+            # Pluto shouldn't vanish because the transit only tracked 7 bodies).
+            first_points = set(first_subject.active_points)
+            first_subject_setting = [
+                KerykeionSettingsCelestialPointModel(**{**dict(body), "is_active": True})  # type: ignore[arg-type]
+                for body in DEFAULT_CELESTIAL_POINTS_SETTINGS
+                if body["name"] in first_points
+            ]
+            first_subject_names = [b.name.lower() for b in first_subject_setting]
             element_totals = calculate_element_points(
-                available_planets_setting,
-                celestial_points_names,
+                first_subject_setting,
+                first_subject_names,
                 first_subject,
                 method=distribution_method,
                 custom_weights=custom_distribution_weights,
                 include_fixed_stars=True,
             )
             quality_totals = calculate_quality_points(
-                available_planets_setting,
-                celestial_points_names,
+                first_subject_setting,
+                first_subject_names,
                 first_subject,
                 method=distribution_method,
                 custom_weights=custom_distribution_weights,

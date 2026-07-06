@@ -532,6 +532,34 @@ class CompositeSubjectFactory:
         if custom_ayanamsa_ayan_t0 is not None:
             extra_kwargs["custom_ayanamsa_ayan_t0"] = custom_ayanamsa_ayan_t0
 
+        # The Davison is a real recomputable natal chart, so carry over the v6
+        # enrichment flags BOTH parents requested (inferred from their populated
+        # fields, since the flags aren't stored as booleans) — otherwise the
+        # dignities/nakshatra/gauquelin/nutation/local-space/fixed-stars are
+        # silently dropped. Parity with PlanetaryReturnFactory /
+        # SecondaryProgressionFactory (which infer the same flags). Enable a
+        # feature only when BOTH parents carried it, matching composite semantics.
+        def _point_has(subject, attr: str) -> bool:
+            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter",
+                          "saturn", "uranus", "neptune", "pluto"):
+                _p = getattr(subject, _name, None)
+                if _p is not None:
+                    return getattr(_p, attr, None) is not None
+            return False
+
+        _shared_stars = sorted(
+            {st.name for st in (s1.fixed_stars or [])} & {st.name for st in (s2.fixed_stars or [])}
+        )
+        extra_kwargs["calculate_dignities"] = _point_has(s1, "essential_dignity") and _point_has(s2, "essential_dignity")
+        extra_kwargs["calculate_nakshatra"] = _point_has(s1, "nakshatra") and _point_has(s2, "nakshatra")
+        extra_kwargs["calculate_local_space"] = _point_has(s1, "azimuth") and _point_has(s2, "azimuth")
+        extra_kwargs["calculate_gauquelin"] = (
+            s1.gauquelin_sector_cusps is not None and s2.gauquelin_sector_cusps is not None
+        )
+        extra_kwargs["calculate_nutation"] = s1.nutation is not None and s2.nutation is not None
+        if _shared_stars:
+            extra_kwargs["active_fixed_stars"] = _shared_stars
+
         # Cast a real natal chart at the midpoint moment/location.
         # ephe.revjul returns UTC, so use Etc/GMT to avoid double-conversion.
         davison_subject = AstrologicalSubjectFactory.from_birth_data(

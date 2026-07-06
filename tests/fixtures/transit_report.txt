@@ -154,39 +154,39 @@ Sample Natal Subject — Transit 1980-12-08
 +Sample Natal Subject points in 1980 Transit houses----------------+---------------------+------+--------+
 | Point                                        | Owner House       | Projected House     | Sign | Degree |
 +----------------------------------------------+-------------------+---------------------+------+--------+
-| Sample Natal Subject – Sun                   | 9 (Ninth_House)   | 11 (Eleventh_House) | Can  | 28.54° |
-| Sample Natal Subject – Moon                  | 9 (Ninth_House)   | 11 (Eleventh_House) | Can  | 21.21° |
-| Sample Natal Subject – Mercury               | 9 (Ninth_House)   | 12 (Twelfth_House)  | Leo  | 17.61° |
-| Sample Natal Subject – Venus                 | 8 (Eighth_House)  | 10 (Tenth_House)    | Can  | 1.71°  |
-| Sample Natal Subject – Mars                  | 7 (Seventh_House) | 9 (Ninth_House)     | Tau  | 5.97°  |
-| Sample Natal Subject – Jupiter               | 9 (Ninth_House)   | 11 (Eleventh_House) | Can  | 23.91° |
-| Sample Natal Subject – Saturn                | 3 (Third_House)   | 5 (Fifth_House)     | Cap  | 21.52° |
-| Sample Natal Subject – Uranus                | 2 (Second_House)  | 4 (Fourth_House)    | Cap  | 6.74°  |
-| Sample Natal Subject – Neptune               | 3 (Third_House)   | 5 (Fifth_House)     | Cap  | 12.76° |
-| Sample Natal Subject – Pluto                 | 1 (First_House)   | 3 (Third_House)     | Sco  | 14.97° |
-| Sample Natal Subject – True North Lunar Node | 3 (Third_House)   | 5 (Fifth_House)     | Aqu  | 7.26°  |
-| Sample Natal Subject – Chiron                | 9 (Ninth_House)   | 11 (Eleventh_House) | Can  | 19.88° |
-| Sample Natal Subject – Ascendant             | 1 (First_House)   | 3 (Third_House)     | Sco  | 5.82°  |
-| Sample Natal Subject – Medium Coeli          | 10 (Tenth_House)  | 12 (Twelfth_House)  | Leo  | 19.91° |
+| Sample Natal Subject – Sun                   | 9 (Ninth House)   | 11 (Eleventh House) | Can  | 28.54° |
+| Sample Natal Subject – Moon                  | 9 (Ninth House)   | 11 (Eleventh House) | Can  | 21.21° |
+| Sample Natal Subject – Mercury               | 9 (Ninth House)   | 12 (Twelfth House)  | Leo  | 17.61° |
+| Sample Natal Subject – Venus                 | 8 (Eighth House)  | 10 (Tenth House)    | Can  | 1.71°  |
+| Sample Natal Subject – Mars                  | 7 (Seventh House) | 9 (Ninth House)     | Tau  | 5.97°  |
+| Sample Natal Subject – Jupiter               | 9 (Ninth House)   | 11 (Eleventh House) | Can  | 23.91° |
+| Sample Natal Subject – Saturn                | 3 (Third House)   | 5 (Fifth House)     | Cap  | 21.52° |
+| Sample Natal Subject – Uranus                | 2 (Second House)  | 4 (Fourth House)    | Cap  | 6.74°  |
+| Sample Natal Subject – Neptune               | 3 (Third House)   | 5 (Fifth House)     | Cap  | 12.76° |
+| Sample Natal Subject – Pluto                 | 1 (First House)   | 3 (Third House)     | Sco  | 14.97° |
+| Sample Natal Subject – True North Lunar Node | 3 (Third House)   | 5 (Fifth House)     | Aqu  | 7.26°  |
+| Sample Natal Subject – Chiron                | 9 (Ninth House)   | 11 (Eleventh House) | Can  | 19.88° |
+| Sample Natal Subject – Ascendant             | 1 (First House)   | 3 (Third House)     | Sco  | 5.82°  |
+| Sample Natal Subject – Medium Coeli          | 10 (Tenth House)  | 12 (Twelfth House)  | Leo  | 19.91° |
 +----------------------------------------------+-------------------+---------------------+------+--------+
 
 +1980 Transit points in Sample Natal Subject houses---------+---------------------+------+--------+
 | Point                                | Owner House        | Projected House     | Sign | Degree |
 +--------------------------------------+--------------------+---------------------+------+--------+
-| 1980 Transit – Sun                   | 4 (Fourth_House)   | 2 (Second_House)    | Sag  | 17.24° |
-| 1980 Transit – Moon                  | 4 (Fourth_House)   | 2 (Second_House)    | Cap  | 5.06°  |
-| 1980 Transit – Mercury               | 4 (Fourth_House)   | 2 (Second_House)    | Sag  | 5.09°  |
-| 1980 Transit – Venus                 | 3 (Third_House)    | 1 (First_House)     | Sco  | 18.67° |
-| 1980 Transit – Mars                  | 5 (Fifth_House)    | 3 (Third_House)     | Cap  | 13.06° |
-| 1980 Transit – Jupiter               | 2 (Second_House)   | 11 (Eleventh_House) | Lib  | 7.16°  |
-| 1980 Transit – Saturn                | 2 (Second_House)   | 11 (Eleventh_House) | Lib  | 8.35°  |
-| 1980 Transit – Uranus                | 3 (Third_House)    | 1 (First_House)     | Sco  | 27.15° |
-| 1980 Transit – Neptune               | 4 (Fourth_House)   | 2 (Second_House)    | Sag  | 22.20° |
-| 1980 Transit – Pluto                 | 2 (Second_House)   | 12 (Twelfth_House)  | Lib  | 23.66° |
-| 1980 Transit – True North Lunar Node | 12 (Twelfth_House) | 9 (Ninth_House)     | Leo  | 12.16° |
-| 1980 Transit – Chiron                | 9 (Ninth_House)    | 7 (Seventh_House)   | Tau  | 14.36° |
-| 1980 Transit – Ascendant             | 1 (First_House)    | 10 (Tenth_House)    | Vir  | 7.47°  |
-| 1980 Transit – Medium Coeli          | 10 (Tenth_House)   | 7 (Seventh_House)   | Gem  | 3.56°  |
+| 1980 Transit – Sun                   | 4 (Fourth House)   | 2 (Second House)    | Sag  | 17.24° |
+| 1980 Transit – Moon                  | 4 (Fourth House)   | 2 (Second House)    | Cap  | 5.06°  |
+| 1980 Transit – Mercury               | 4 (Fourth House)   | 2 (Second House)    | Sag  | 5.09°  |
+| 1980 Transit – Venus                 | 3 (Third House)    | 1 (First House)     | Sco  | 18.67° |
+| 1980 Transit – Mars                  | 5 (Fifth House)    | 3 (Third House)     | Cap  | 13.06° |
+| 1980 Transit – Jupiter               | 2 (Second House)   | 11 (Eleventh House) | Lib  | 7.16°  |
+| 1980 Transit – Saturn                | 2 (Second House)   | 11 (Eleventh House) | Lib  | 8.35°  |
+| 1980 Transit – Uranus                | 3 (Third House)    | 1 (First House)     | Sco  | 27.15° |
+| 1980 Transit – Neptune               | 4 (Fourth House)   | 2 (Second House)    | Sag  | 22.20° |
+| 1980 Transit – Pluto                 | 2 (Second House)   | 12 (Twelfth House)  | Lib  | 23.66° |
+| 1980 Transit – True North Lunar Node | 12 (Twelfth House) | 9 (Ninth House)     | Leo  | 12.16° |
+| 1980 Transit – Chiron                | 9 (Ninth House)    | 7 (Seventh House)   | Tau  | 14.36° |
+| 1980 Transit – Ascendant             | 1 (First House)    | 10 (Tenth House)    | Vir  | 7.47°  |
+| 1980 Transit – Medium Coeli          | 10 (Tenth House)   | 7 (Seventh House)   | Gem  | 3.56°  |
 +--------------------------------------+--------------------+---------------------+------+--------+
 
 +Sample Natal Subject cusps in 1980 Transit houses------------+------+--------+
