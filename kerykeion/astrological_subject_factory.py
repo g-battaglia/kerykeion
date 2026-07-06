@@ -1443,12 +1443,19 @@ class AstrologicalSubjectFactory:
         local_time = pytz.timezone(tz_str)
         local_datetime = dt.astimezone(local_time)
 
-        # The local wall time may be ambiguous (DST fall-back fold) even
-        # though the source UTC instant is not. Derive the fold side from the
-        # unambiguous conversion above and pass it down: without is_dst,
-        # from_birth_data re-localizes the wall time with is_dst=None and
-        # raises "Ambiguous time" for instants inside the fold.
+        # The local wall time may be ambiguous (fall-back fold) even though the
+        # source UTC instant is not. We ALREADY hold the correct offset from the
+        # unambiguous astimezone conversion above, so pass that offset down
+        # directly (via _lmt_offset_seconds) instead of re-detecting the fold
+        # side from a boolean is_dst. bool(dst()) is the wrong discriminator for
+        # folds caused by a change of STANDARD offset (UK 1971 BST->GMT, Portugal
+        # 1976 CET->WET): both occurrences have dst()==0, so is_dst=False would
+        # re-localize onto the wrong (lower-offset) side, a whole hour off.
         is_dst = bool(local_datetime.dst())
+        resolved_offset_seconds: Optional[int] = None
+        _off = local_datetime.utcoffset()
+        if _off is not None:
+            resolved_offset_seconds = round(_off.total_seconds())
 
         # Pre-standardization dates: pytz resolves to the zone's reference-
         # meridian LMT, but from_birth_data re-derives the offset from the birth
@@ -1460,7 +1467,7 @@ class AstrologicalSubjectFactory:
         # The offset is passed to from_birth_data explicitly (_lmt_offset_seconds)
         # so it is applied directly rather than re-detected from a wall time that
         # may land past the IANA LMT->standard transition boundary.
-        lmt_offset_seconds: Optional[int] = None
+        lmt_offset_seconds: Optional[int] = resolved_offset_seconds
         if local_datetime.tzname() == "LMT" and lng is not None:
             lmt_offset_seconds = round(lng / 15.0 * 3600)
             local_datetime = dt.astimezone(timezone(timedelta(seconds=lmt_offset_seconds)))
@@ -1802,7 +1809,17 @@ class AstrologicalSubjectFactory:
             data["julian_day"] = datetime_to_julian(utc_datetime)
             return
 
-        local_timezone = pytz.timezone(location.tz_str)
+        try:
+            local_timezone = pytz.timezone(location.tz_str)
+        except pytz.exceptions.UnknownTimeZoneError as exc:
+            # Wrap the bare pytz error (a KeyError subclass) as the library's own
+            # exception, matching sun_times/moon_phase, so a caller catching
+            # KerykeionException around from_birth_data/from_iso_utc_time is not
+            # broken by an invalid non-IANA tz_str.
+            raise KerykeionException(
+                f"Unknown timezone: {location.tz_str!r}. Use a valid IANA timezone name "
+                "(e.g. 'Europe/Rome', 'America/New_York')."
+            ) from exc
         try:
             local_datetime = local_timezone.localize(naive_datetime, is_dst=data.get("is_dst"))
         except pytz.exceptions.AmbiguousTimeError:

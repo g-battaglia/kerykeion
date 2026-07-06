@@ -27,41 +27,41 @@ John Lennon — Subject Report
 | Active Points Count | 14                  |
 +---------------------+---------------------+
 
-+Celestial Points-------+---------+----------+--------------+---------+------+----------------+
-| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
-+-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Ari ♈️ | 19.71°   | +886.9394°/d | N/A     | -    | First House    |
-| Medium Coeli          | Cap ♑️ | 7.06°    | +332.1233°/d | N/A     | -    | Tenth House    |
-| Sun                   | Lib ♎️ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
-| Moon                  | Aqu ♒️ | 3.55°    | +12.5279°/d  | -14.60° | -    | Eleventh House |
-| Mercury               | Sco ♏️ | 8.56°    | +1.3193°/d   | -16.23° | -    | Seventh House  |
-| Venus                 | Vir ♍️ | 3.22°    | +1.1337°/d   | +10.57° | -    | Sixth House    |
-| Mars                  | Lib ♎️ | 2.66°    | +0.6449°/d   | -0.18°  | -    | Sixth House    |
-| Jupiter               | Tau ♉️ | 13.69°   | -0.1070°/d   | +14.61° | R    | First House    |
-| Saturn                | Tau ♉️ | 13.22°   | -0.0670°/d   | +13.30° | R    | First House    |
-| Uranus                | Tau ♉️ | 25.55°   | -0.0295°/d   | +18.88° | R    | First House    |
-| Neptune               | Vir ♍️ | 26.03°   | +0.0353°/d   | +2.68°  | -    | Sixth House    |
-| Pluto                 | Leo ♌️ | 4.19°    | +0.0112°/d   | +23.12° | -    | Fifth House    |
-| True North Lunar Node | Lib ♎️ | 11.02°   | +0.0059°/d   | -4.36°  | -    | Sixth House    |
-| Chiron                | Leo ♌️ | 0.57°    | +0.0528°/d   | +13.41° | -    | Fifth House    |
-+-----------------------+---------+----------+--------------+---------+------+----------------+
++Celestial Points-------+--------+----------+--------------+---------+------+----------------+
+| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+--------+----------+--------------+---------+------+----------------+
+| Ascendant             | Ari ♈ | 19.71°   | +886.9394°/d | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑ | 7.06°    | +332.1233°/d | N/A     | -    | Tenth House    |
+| Sun                   | Lib ♎ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
+| Moon                  | Aqu ♒ | 3.55°    | +12.5279°/d  | -14.60° | -    | Eleventh House |
+| Mercury               | Sco ♏ | 8.56°    | +1.3193°/d   | -16.23° | -    | Seventh House  |
+| Venus                 | Vir ♍ | 3.22°    | +1.1337°/d   | +10.57° | -    | Sixth House    |
+| Mars                  | Lib ♎ | 2.66°    | +0.6449°/d   | -0.18°  | -    | Sixth House    |
+| Jupiter               | Tau ♉ | 13.69°   | -0.1070°/d   | +14.61° | R    | First House    |
+| Saturn                | Tau ♉ | 13.22°   | -0.0670°/d   | +13.30° | R    | First House    |
+| Uranus                | Tau ♉ | 25.55°   | -0.0295°/d   | +18.88° | R    | First House    |
+| Neptune               | Vir ♍ | 26.03°   | +0.0353°/d   | +2.68°  | -    | Sixth House    |
+| Pluto                 | Leo ♌ | 4.19°    | +0.0112°/d   | +23.12° | -    | Fifth House    |
+| True North Lunar Node | Lib ♎ | 11.02°   | +0.0059°/d   | -4.36°  | -    | Sixth House    |
+| Chiron                | Leo ♌ | 0.57°    | +0.0528°/d   | +13.41° | -    | Fifth House    |
++-----------------------+--------+----------+--------------+---------+------+----------------+
 
-+Houses (Placidus)---------+----------+-------------------+
-| House          | Sign    | Position | Absolute Position |
-+----------------+---------+----------+-------------------+
-| First House    | Ari ♈️ | 19.71°   | 19.71°            |
-| Second House   | Tau ♉️ | 29.52°   | 59.52°            |
-| Third House    | Gem ♊️ | 20.22°   | 80.22°            |
-| Fourth House   | Can ♋️ | 7.06°    | 97.06°            |
-| Fifth House    | Can ♋️ | 25.30°   | 115.30°           |
-| Sixth House    | Leo ♌️ | 22.09°   | 142.09°           |
-| Seventh House  | Lib ♎️ | 19.71°   | 199.71°           |
-| Eighth House   | Sco ♏️ | 29.52°   | 239.52°           |
-| Ninth House    | Sag ♐️ | 20.22°   | 260.22°           |
-| Tenth House    | Cap ♑️ | 7.06°    | 277.06°           |
-| Eleventh House | Cap ♑️ | 25.30°   | 295.30°           |
-| Twelfth House  | Aqu ♒️ | 22.09°   | 322.09°           |
-+----------------+---------+----------+-------------------+
++Houses (Placidus)--------+----------+-------------------+
+| House          | Sign   | Position | Absolute Position |
++----------------+--------+----------+-------------------+
+| First House    | Ari ♈ | 19.71°   | 19.71°            |
+| Second House   | Tau ♉ | 29.52°   | 59.52°            |
+| Third House    | Gem ♊ | 20.22°   | 80.22°            |
+| Fourth House   | Can ♋ | 7.06°    | 97.06°            |
+| Fifth House    | Can ♋ | 25.30°   | 115.30°           |
+| Sixth House    | Leo ♌ | 22.09°   | 142.09°           |
+| Seventh House  | Lib ♎ | 19.71°   | 199.71°           |
+| Eighth House   | Sco ♏ | 29.52°   | 239.52°           |
+| Ninth House    | Sag ♐ | 20.22°   | 260.22°           |
+| Tenth House    | Cap ♑ | 7.06°    | 277.06°           |
+| Eleventh House | Cap ♑ | 25.30°   | 295.30°           |
+| Twelfth House  | Aqu ♒ | 22.09°   | 322.09°           |
++----------------+--------+----------+-------------------+
 
 +Lunar Phase--------------+------------------+
 | Lunar Phase Information | Value            |

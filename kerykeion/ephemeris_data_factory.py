@@ -280,11 +280,18 @@ class EphemerisDataFactory:
 
     def _create_subject_for_date(self, date: datetime) -> AstrologicalSubjectModel:
         """Create an AstrologicalSubject for a given date using the factory's settings."""
+        resolved_offset_seconds = None
         if date.tzinfo is not None:
-            # UTC-stepped series: render the instant in the target timezone
-            # and derive the fold side from the unambiguous UTC instant.
+            # UTC-stepped series: render the instant in the target timezone and
+            # pass the RESOLVED UTC offset down directly. bool(dst()) is the wrong
+            # fold-side discriminator for standard-offset-change folds (UK 1971,
+            # Portugal 1976): both occurrences have dst()==0, so is_dst=False would
+            # re-localize onto the wrong side, silently computing a chart 1 h off.
             local_date = date.astimezone(pytz.timezone(self.tz_str))
             is_dst = bool(local_date.dst())
+            _off = local_date.utcoffset()
+            if _off is not None:
+                resolved_offset_seconds = round(_off.total_seconds())
         else:
             # Naive input (e.g. a hand-built dates_list): previous behavior.
             local_date = date
@@ -309,6 +316,7 @@ class EphemerisDataFactory:
             is_dst=is_dst,
             custom_ayanamsa_t0=self.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
+            _lmt_offset_seconds=resolved_offset_seconds,
         )
 
     def get_ephemeris_data(self, as_model: bool = False) -> list:

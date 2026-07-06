@@ -27,79 +27,79 @@ Einstein Subject — Natal Chart Report
 | Active Points Count | 52                  |
 +---------------------+---------------------+
 
-+Natal Celestial Points-+---------+----------+--------------+---------+------+----------------+
-| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House          |
-+-----------------------+---------+----------+--------------+---------+------+----------------+
-| Ascendant             | Can ♋️ | 11.65°   | +297.4361°/d | N/A     | -    | First House    |
-| Medium Coeli          | Pis ♓️ | 12.84°   | +388.0742°/d | N/A     | -    | Tenth House    |
-| Descendant            | Cap ♑️ | 11.65°   | +297.4361°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Vir ♍️ | 12.84°   | +388.0742°/d | N/A     | -    | Fourth House   |
-| Sun                   | Pis ♓️ | 23.51°   | +0.9959°/d   | -2.58°  | -    | Tenth House    |
-| Moon                  | Sag ♐️ | 14.53°   | +13.9201°/d  | -26.36° | -    | Sixth House    |
-| Mercury               | Ari ♈️ | 3.14°    | +1.9516°/d   | +0.89°  | -    | Tenth House    |
-| Venus                 | Ari ♈️ | 16.99°   | +1.2317°/d   | +6.04°  | -    | Tenth House    |
-| Mars                  | Cap ♑️ | 26.91°   | +0.7285°/d   | -21.63° | -    | Seventh House  |
-| Jupiter               | Aqu ♒️ | 27.48°   | +0.2273°/d   | -13.07° | -    | Ninth House    |
-| Saturn                | Ari ♈️ | 4.19°    | +0.1235°/d   | -0.31°  | -    | Tenth House    |
-| Uranus                | Vir ♍️ | 1.29°    | -0.0396°/d   | +11.77° | R    | Third House    |
-| Neptune               | Tau ♉️ | 7.87°    | +0.0288°/d   | +12.50° | -    | Eleventh House |
-| Pluto                 | Tau ♉️ | 24.73°   | +0.0122°/d   | +5.66°  | -    | Eleventh House |
-| Mean North Lunar Node | Aqu ♒️ | 1.48°    | -0.0530°/d   | -19.84° | R    | Eighth House   |
-| True North Lunar Node | Aqu ♒️ | 2.73°    | -0.0193°/d   | -19.56° | R    | Eighth House   |
-| Mean Lilith           | Ari ♈️ | 27.98°   | +0.1121°/d   | +15.55° | -    | Eleventh House |
-| True Lilith           | Ari ♈️ | 1.62°    | -0.7974°/d   | +4.68°  | R    | Tenth House    |
-| Chiron                | Tau ♉️ | 5.54°    | +0.0525°/d   | +12.39° | -    | Eleventh House |
-| Pholus                | Aqu ♒️ | 27.08°   | +0.0403°/d   | -23.59° | -    | Ninth House    |
-| Ceres                 | Tau ♉️ | 17.33°   | +0.3513°/d   | +14.54° | -    | Eleventh House |
-| Pallas                | Ari ♈️ | 10.04°   | +0.3948°/d   | -6.61°  | -    | Tenth House    |
-| Juno                  | Ari ♈️ | 25.46°   | +0.5684°/d   | +3.06°  | -    | Eleventh House |
-| Vesta                 | Can ♋️ | 9.76°    | +0.1231°/d   | +25.96° | -    | Twelfth House  |
-| Interpolated Lilith   | Tau ♉️ | 3.08°    | +0.1021°/d   | +16.67° | -    | Eleventh House |
-| Interpolated Perigee  | Lib ♎️ | 11.76°   | +0.4871°/d   | -8.70°  | -    | Fourth House   |
-| Cupido                | Gem ♊️ | 15.20°   | +0.0068°/d   | +21.77° | -    | Twelfth House  |
-| Hades                 | Aqu ♒️ | 16.82°   | +0.0184°/d   | -15.39° | -    | Eighth House   |
-| Zeus                  | Gem ♊️ | 26.56°   | +0.0010°/d   | +23.41° | -    | Twelfth House  |
-| Kronos                | Ari ♈️ | 3.26°    | +0.0166°/d   | +1.30°  | -    | Tenth House    |
-| Apollon               | Leo ♌️ | 4.45°    | -0.0078°/d   | +19.16° | R    | Second House   |
-| Admetos               | Pis ♓️ | 9.38°    | +0.0145°/d   | -8.06°  | -    | Ninth House    |
-| Vulkanus              | Tau ♉️ | 14.01°   | +0.0094°/d   | +16.05° | -    | Eleventh House |
-| Poseidon              | Vir ♍️ | 5.23°    | -0.0101°/d   | +9.60°  | R    | Third House    |
-| Eris                  | Pis ♓️ | 14.85°   | +0.0146°/d   | -38.50° | -    | Tenth House    |
-| Sedna                 | Ari ♈️ | 2.88°    | +0.0075°/d   | -5.94°  | -    | Tenth House    |
-| Haumea                | Tau ♉️ | 24.37°   | +0.0188°/d   | -5.91°  | -    | Eleventh House |
-| Makemake              | Ari ♈️ | 13.83°   | +0.0311°/d   | -18.23° | -    | Tenth House    |
-| Ixion                 | Can ♋️ | 26.13°   | -0.0104°/d   | +35.67° | R    | First House    |
-| Orcus                 | Cap ♑️ | 29.37°   | +0.0243°/d   | -9.77°  | -    | Eighth House   |
-| Quaoar                | Can ♋️ | 9.96°    | -0.0034°/d   | +15.06° | R    | Twelfth House  |
-| Pars Fortunae         | Ari ♈️ | 2.67°    | N/A          | N/A     | -    | Tenth House    |
-| Pars Spiritus         | Lib ♎️ | 20.63°   | N/A          | N/A     | -    | Fifth House    |
-| Pars Amoris           | Leo ♌️ | 5.12°    | N/A          | N/A     | -    | Second House   |
-| Pars Fidei            | Gem ♊️ | 4.94°    | N/A          | N/A     | -    | Twelfth House  |
-| Vertex                | Sco ♏️ | 27.91°   | N/A          | N/A     | -    | Fifth House    |
-| White Moon            | Leo ♌️ | 28.85°   | +0.1408°/d   | +11.88° | -    | Third House    |
-| Anti Vertex           | Tau ♉️ | 27.91°   | N/A          | N/A     | -    | Eleventh House |
-| Mean South Lunar Node | Leo ♌️ | 1.48°    | -0.0530°/d   | +19.84° | R    | Second House   |
-| True South Lunar Node | Leo ♌️ | 2.73°    | -0.0193°/d   | +19.56° | R    | Second House   |
-| Mean Priapus          | Lib ♎️ | 27.98°   | +0.1121°/d   | -15.55° | -    | Fifth House    |
-| True Priapus          | Lib ♎️ | 1.62°    | -0.7974°/d   | -4.68°  | R    | Fourth House   |
-+-----------------------+---------+----------+--------------+---------+------+----------------+
++Natal Celestial Points-+--------+----------+--------------+---------+------+----------------+
+| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House          |
++-----------------------+--------+----------+--------------+---------+------+----------------+
+| Ascendant             | Can ♋ | 11.65°   | +297.4361°/d | N/A     | -    | First House    |
+| Medium Coeli          | Pis ♓ | 12.84°   | +388.0742°/d | N/A     | -    | Tenth House    |
+| Descendant            | Cap ♑ | 11.65°   | +297.4361°/d | N/A     | -    | Seventh House  |
+| Imum Coeli            | Vir ♍ | 12.84°   | +388.0742°/d | N/A     | -    | Fourth House   |
+| Sun                   | Pis ♓ | 23.51°   | +0.9959°/d   | -2.58°  | -    | Tenth House    |
+| Moon                  | Sag ♐ | 14.53°   | +13.9201°/d  | -26.36° | -    | Sixth House    |
+| Mercury               | Ari ♈ | 3.14°    | +1.9516°/d   | +0.89°  | -    | Tenth House    |
+| Venus                 | Ari ♈ | 16.99°   | +1.2317°/d   | +6.04°  | -    | Tenth House    |
+| Mars                  | Cap ♑ | 26.91°   | +0.7285°/d   | -21.63° | -    | Seventh House  |
+| Jupiter               | Aqu ♒ | 27.48°   | +0.2273°/d   | -13.07° | -    | Ninth House    |
+| Saturn                | Ari ♈ | 4.19°    | +0.1235°/d   | -0.31°  | -    | Tenth House    |
+| Uranus                | Vir ♍ | 1.29°    | -0.0396°/d   | +11.77° | R    | Third House    |
+| Neptune               | Tau ♉ | 7.87°    | +0.0288°/d   | +12.50° | -    | Eleventh House |
+| Pluto                 | Tau ♉ | 24.73°   | +0.0122°/d   | +5.66°  | -    | Eleventh House |
+| Mean North Lunar Node | Aqu ♒ | 1.48°    | -0.0530°/d   | -19.84° | R    | Eighth House   |
+| True North Lunar Node | Aqu ♒ | 2.73°    | -0.0193°/d   | -19.56° | R    | Eighth House   |
+| Mean Lilith           | Ari ♈ | 27.98°   | +0.1121°/d   | +15.55° | -    | Eleventh House |
+| True Lilith           | Ari ♈ | 1.62°    | -0.7974°/d   | +4.68°  | R    | Tenth House    |
+| Chiron                | Tau ♉ | 5.54°    | +0.0525°/d   | +12.39° | -    | Eleventh House |
+| Pholus                | Aqu ♒ | 27.08°   | +0.0403°/d   | -23.59° | -    | Ninth House    |
+| Ceres                 | Tau ♉ | 17.33°   | +0.3513°/d   | +14.54° | -    | Eleventh House |
+| Pallas                | Ari ♈ | 10.04°   | +0.3948°/d   | -6.61°  | -    | Tenth House    |
+| Juno                  | Ari ♈ | 25.46°   | +0.5684°/d   | +3.06°  | -    | Eleventh House |
+| Vesta                 | Can ♋ | 9.76°    | +0.1231°/d   | +25.96° | -    | Twelfth House  |
+| Interpolated Lilith   | Tau ♉ | 3.08°    | +0.1021°/d   | +16.67° | -    | Eleventh House |
+| Interpolated Perigee  | Lib ♎ | 11.76°   | +0.4871°/d   | -8.70°  | -    | Fourth House   |
+| Cupido                | Gem ♊ | 15.20°   | +0.0068°/d   | +21.77° | -    | Twelfth House  |
+| Hades                 | Aqu ♒ | 16.82°   | +0.0184°/d   | -15.39° | -    | Eighth House   |
+| Zeus                  | Gem ♊ | 26.56°   | +0.0010°/d   | +23.41° | -    | Twelfth House  |
+| Kronos                | Ari ♈ | 3.26°    | +0.0166°/d   | +1.30°  | -    | Tenth House    |
+| Apollon               | Leo ♌ | 4.45°    | -0.0078°/d   | +19.16° | R    | Second House   |
+| Admetos               | Pis ♓ | 9.38°    | +0.0145°/d   | -8.06°  | -    | Ninth House    |
+| Vulkanus              | Tau ♉ | 14.01°   | +0.0094°/d   | +16.05° | -    | Eleventh House |
+| Poseidon              | Vir ♍ | 5.23°    | -0.0101°/d   | +9.60°  | R    | Third House    |
+| Eris                  | Pis ♓ | 14.85°   | +0.0146°/d   | -38.50° | -    | Tenth House    |
+| Sedna                 | Ari ♈ | 2.88°    | +0.0075°/d   | -5.94°  | -    | Tenth House    |
+| Haumea                | Tau ♉ | 24.37°   | +0.0188°/d   | -5.91°  | -    | Eleventh House |
+| Makemake              | Ari ♈ | 13.83°   | +0.0311°/d   | -18.23° | -    | Tenth House    |
+| Ixion                 | Can ♋ | 26.13°   | -0.0104°/d   | +35.67° | R    | First House    |
+| Orcus                 | Cap ♑ | 29.37°   | +0.0243°/d   | -9.77°  | -    | Eighth House   |
+| Quaoar                | Can ♋ | 9.96°    | -0.0034°/d   | +15.06° | R    | Twelfth House  |
+| Pars Fortunae         | Ari ♈ | 2.67°    | N/A          | N/A     | -    | Tenth House    |
+| Pars Spiritus         | Lib ♎ | 20.63°   | N/A          | N/A     | -    | Fifth House    |
+| Pars Amoris           | Leo ♌ | 5.12°    | N/A          | N/A     | -    | Second House   |
+| Pars Fidei            | Gem ♊ | 4.94°    | N/A          | N/A     | -    | Twelfth House  |
+| Vertex                | Sco ♏ | 27.91°   | N/A          | N/A     | -    | Fifth House    |
+| White Moon            | Leo ♌ | 28.85°   | +0.1408°/d   | +11.88° | -    | Third House    |
+| Anti Vertex           | Tau ♉ | 27.91°   | N/A          | N/A     | -    | Eleventh House |
+| Mean South Lunar Node | Leo ♌ | 1.48°    | -0.0530°/d   | +19.84° | R    | Second House   |
+| True South Lunar Node | Leo ♌ | 2.73°    | -0.0193°/d   | +19.56° | R    | Second House   |
+| Mean Priapus          | Lib ♎ | 27.98°   | +0.1121°/d   | -15.55° | -    | Fifth House    |
+| True Priapus          | Lib ♎ | 1.62°    | -0.7974°/d   | -4.68°  | R    | Fourth House   |
++-----------------------+--------+----------+--------------+---------+------+----------------+
 
-+Natal Houses (Placidus)---+----------+-------------------+
-| House          | Sign    | Position | Absolute Position |
-+----------------+---------+----------+-------------------+
-| First House    | Can ♋️ | 11.65°   | 101.65°           |
-| Second House   | Can ♋️ | 28.62°   | 118.62°           |
-| Third House    | Leo ♌️ | 17.81°   | 137.81°           |
-| Fourth House   | Vir ♍️ | 12.84°   | 162.84°           |
-| Fifth House    | Lib ♎️ | 18.33°   | 198.33°           |
-| Sixth House    | Sag ♐️ | 3.11°    | 243.11°           |
-| Seventh House  | Cap ♑️ | 11.65°   | 281.65°           |
-| Eighth House   | Cap ♑️ | 28.62°   | 298.62°           |
-| Ninth House    | Aqu ♒️ | 17.81°   | 317.81°           |
-| Tenth House    | Pis ♓️ | 12.84°   | 342.84°           |
-| Eleventh House | Ari ♈️ | 18.33°   | 18.33°            |
-| Twelfth House  | Gem ♊️ | 3.11°    | 63.11°            |
-+----------------+---------+----------+-------------------+
++Natal Houses (Placidus)--+----------+-------------------+
+| House          | Sign   | Position | Absolute Position |
++----------------+--------+----------+-------------------+
+| First House    | Can ♋ | 11.65°   | 101.65°           |
+| Second House   | Can ♋ | 28.62°   | 118.62°           |
+| Third House    | Leo ♌ | 17.81°   | 137.81°           |
+| Fourth House   | Vir ♍ | 12.84°   | 162.84°           |
+| Fifth House    | Lib ♎ | 18.33°   | 198.33°           |
+| Sixth House    | Sag ♐ | 3.11°    | 243.11°           |
+| Seventh House  | Cap ♑ | 11.65°   | 281.65°           |
+| Eighth House   | Cap ♑ | 28.62°   | 298.62°           |
+| Ninth House    | Aqu ♒ | 17.81°   | 317.81°           |
+| Tenth House    | Pis ♓ | 12.84°   | 342.84°           |
+| Eleventh House | Ari ♈ | 18.33°   | 18.33°            |
+| Twelfth House  | Gem ♊ | 3.11°    | 63.11°            |
++----------------+--------+----------+-------------------+
 
 +Lunar Phase--------------+-----------------+
 | Lunar Phase Information | Value           |

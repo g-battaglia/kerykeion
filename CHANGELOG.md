@@ -28,6 +28,14 @@
   kernels (or enable auto-download) for accurate minor-body positions at extreme
   dates; libephemeris logs a `source=Keplerian (fallback)` warning to stderr
   when this happens.
+- **Secondary progressions are rebuilt through a whole-second ISO round-trip.**
+  `SecondaryProgressionFactory` derives the progressed instant as a float Julian
+  Day but rebuilds the chart via an ISO-8601 UTC string (`from_iso_utc_time`),
+  which is second-precision, so the progressed Julian Day is rounded to the
+  nearest second (≤ ~0.5 s error). Fast bodies deviate from the exact-float-JD
+  ephemeris by up to ~0.3 arcsecond (~8e-5° for the Moon) — sub-arcsecond and
+  astrologically negligible (far inside the day-for-a-year technique's own
+  precision), but not bit-exact against a raw `ephe.calc_ut` at the float JD.
 
 ### Changed (breaking)
 

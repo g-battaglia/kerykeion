@@ -60,14 +60,21 @@ class TestUtcEntryPointFolds:
         b = AstrologicalSubjectFactory.from_iso_utc_time("b", "2024-10-27T01:30:00Z", **_ROME)
         assert (b.julian_day - a.julian_day) * 24.0 == pytest.approx(1.0, abs=1e-6)
 
-    def test_double_dst_fold_raises_instead_of_silent_hour(self):
+    def test_double_dst_fold_resolves_to_exact_instant(self):
         # UK double summer time (1941-1947): both fold occurrences are DST, so
-        # pytz's boolean is_dst cannot disambiguate. Pre-fix this constructed
-        # a subject silently one hour off.
-        with pytest.raises(KerykeionException, match="double summer time"):
-            AstrologicalSubjectFactory.from_iso_utc_time(
-                "c", "1947-08-10T01:30:00Z", tz_str="Europe/London", lng=-0.12, lat=51.5, online=False
-            )
+        # pytz's boolean is_dst cannot disambiguate. from_iso_utc_time now passes
+        # the resolved UTC offset down directly (not a boolean is_dst), so it
+        # reconstructs the exact source instant instead of raising or landing an
+        # hour off. Same mechanism fixes the standard-offset-change folds
+        # (UK 1971 BST->GMT, Portugal 1976).
+        from kerykeion.utilities import datetime_to_julian
+        from datetime import datetime, timezone
+
+        subject = AstrologicalSubjectFactory.from_iso_utc_time(
+            "c", "1947-08-10T01:30:00Z", tz_str="Europe/London", lng=-0.12, lat=51.5, online=False
+        )
+        expected = datetime_to_julian(datetime(1947, 8, 10, 1, 30, 0, tzinfo=timezone.utc))
+        assert abs(subject.julian_day - expected) < 2 / 86400.0
 
     def test_double_dst_day_unambiguous_time_works(self):
         subject = AstrologicalSubjectFactory.from_iso_utc_time(

@@ -231,6 +231,17 @@ class CompositeSubjectFactory:
 
         self.sidereal_mode = first_subject.sidereal_mode
 
+        # Custom ayanamsa (required by the model validator when sidereal_mode is
+        # 'USER'): carry both subjects' values over so CompositeSubjectModel does
+        # not reject the self-inconsistent state (mode='USER' but fields absent).
+        if first_subject.sidereal_mode == "USER" and (
+            first_subject.custom_ayanamsa_t0 != second_subject.custom_ayanamsa_t0
+            or first_subject.custom_ayanamsa_ayan_t0 != second_subject.custom_ayanamsa_ayan_t0
+        ):
+            raise KerykeionException("Both subjects must have the same custom ayanamsa values")
+        self.custom_ayanamsa_t0 = first_subject.custom_ayanamsa_t0
+        self.custom_ayanamsa_ayan_t0 = first_subject.custom_ayanamsa_ayan_t0
+
         # Houses System
         if first_subject.houses_system_identifier != second_subject.houses_system_identifier:
             raise KerykeionException("Both subjects must have the same houses system")

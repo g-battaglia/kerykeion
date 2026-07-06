@@ -4904,23 +4904,27 @@ class ChartDrawer:  # type: ignore[no-redef]
                 f"Refusing to write SVG outside the output directory: {resolved_chartname} is not inside {resolved_directory}."
             ) from None
 
-        # Write WITHOUT errors="ignore": that silently dropped un-encodable
-        # characters (lone surrogates), producing a file that no longer matched
-        # generate_svg_string(). A raw stdlib error (missing/read-only dir,
-        # un-encodable content) is wrapped in the library's own exception so a
-        # caller catching KerykeionException gets a clear, actionable message.
+        # Encode FIRST (before opening the file): a lone surrogate would
+        # otherwise raise mid-write, after open() already truncated/created the
+        # file, leaving a stale 0-byte .svg behind. Encoding up front means an
+        # un-encodable character fails before any file is touched. WITHOUT
+        # errors="ignore" (which silently dropped such characters, producing a
+        # file that no longer matched generate_svg_string()). Both raw stdlib
+        # errors are wrapped in the library's own exception.
         try:
-            with open(chartname, "w", encoding="utf-8") as output_file:
-                output_file.write(content)
-        except OSError as exc:
-            raise KerykeionException(
-                f"Could not write the SVG to {chartname}: {exc}. "
-                "Check the output directory exists and is writable."
-            ) from exc
+            encoded = content.encode("utf-8")
         except UnicodeEncodeError as exc:
             raise KerykeionException(
                 f"The SVG content contains a character that cannot be encoded ({exc}). "
                 "Check the subject name / city / custom title for invalid characters."
+            ) from exc
+        try:
+            with open(chartname, "wb") as output_file:
+                output_file.write(encoded)
+        except OSError as exc:
+            raise KerykeionException(
+                f"Could not write the SVG to {chartname}: {exc}. "
+                "Check the output directory exists and is writable."
             ) from exc
 
         print(f"SVG Generated Correctly in: {chartname}")

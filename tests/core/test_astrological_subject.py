@@ -2555,3 +2555,27 @@ class TestInputValidationRound8:
         for tz in ("Asia/Tokyo", "America/New_York"):
             with pytest.raises(KerykeionException):
                 self._base(year=1, month=1, day=1, hour=0, minute=30, lng=40.0, tz_str=tz)
+
+
+class TestStandardOffsetFoldRound10:
+    """Round-10 regression: a fall-back fold caused by a STANDARD-time change
+    (UK 1971 BST->GMT, Portugal 1976) must round-trip correctly, not raise a
+    spurious 'double summer time' error, and an invalid tz raises KerykeionException."""
+
+    def test_uk_1971_bst_gmt_fold_builds(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.utilities import datetime_to_julian
+        from datetime import datetime, timezone
+        s = AstrologicalSubjectFactory.from_iso_utc_time(
+            name="x", iso_utc_time="1971-10-31T01:30:00Z", tz_str="Europe/London",
+            lng=-0.1, lat=51.5, online=False, suppress_geonames_warning=True)
+        exp = datetime_to_julian(datetime(1971, 10, 31, 1, 30, 0, tzinfo=timezone.utc))
+        assert abs(s.julian_day - exp) < 2 / 86400.0
+
+    def test_invalid_timezone_raises_kerykeion(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.schemas import KerykeionException
+        with pytest.raises(KerykeionException):
+            AstrologicalSubjectFactory.from_birth_data(
+                "x", 2000, 1, 1, 12, 0, lng=10.0, lat=45.0,
+                tz_str="+05:00", online=False, suppress_geonames_warning=True)

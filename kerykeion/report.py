@@ -67,6 +67,17 @@ def _humanize(name: str) -> str:
     return name.replace("_", " ")
 
 
+def _sign_emoji(emoji: str) -> str:
+    """Zodiac sign emoji without the trailing VS16 variation selector.
+
+    The sign emoji (e.g. '♋️' = U+264B + U+FE0F) carries a U+FE0F the ASCII-table
+    width helper counts as one column, while a conformant terminal renders VS16
+    as zero-width. Dropping it makes the reported width match the rendered width,
+    so the Celestial Points / Houses tables' column separators line up.
+    """
+    return emoji.replace("️", "")
+
+
 def _return_type_label(subject: object) -> str:
     """Human label for a return subject's return_type.
 
@@ -581,7 +592,7 @@ class ReportGenerator:
             house_str = _humanize(point.house) if point.house else "-"
             row = [
                 _humanize(point.name),
-                f"{point.sign} {point.emoji}",
+                f"{point.sign} {_sign_emoji(point.emoji)}",
                 f"{point.position:.2f}°",
                 speed_str,
                 decl_str,
@@ -640,7 +651,7 @@ class ReportGenerator:
             houses_data.append(
                 [
                     _humanize(house.name),
-                    f"{house.sign} {house.emoji}",
+                    f"{house.sign} {_sign_emoji(house.emoji)}",
                     f"{house.position:.2f}°",
                     f"{house.abs_pos:.2f}°",
                 ]

@@ -27,41 +27,41 @@ New Moon - Test — Natal Chart Report
 | Active Points Count | 14                  |
 +---------------------+---------------------+
 
-+Natal Celestial Points-+---------+----------+--------------+---------+------+---------------+
-| Point                 | Sign    | Position | Speed        | Decl.   | Ret. | House         |
-+-----------------------+---------+----------+--------------+---------+------+---------------+
-| Ascendant             | Vir ♍️ | 22.88°   | +287.0307°/d | N/A     | -    | First House   |
-| Medium Coeli          | Gem ♊️ | 21.77°   | +332.4728°/d | N/A     | -    | Tenth House   |
-| Sun                   | Sco ♏️ | 28.20°   | +1.0097°/d   | -19.76° | -    | Third House   |
-| Moon                  | Sco ♏️ | 28.19°   | +11.8608°/d  | -24.41° | -    | Third House   |
-| Mercury               | Sco ♏️ | 28.46°   | -1.3593°/d   | -19.32° | R    | Third House   |
-| Venus                 | Sco ♏️ | 16.73°   | +1.2559°/d   | -15.82° | -    | Second House  |
-| Mars                  | Sag ♐️ | 11.40°   | +0.7319°/d   | -22.71° | -    | Third House   |
-| Jupiter               | Can ♋️ | 25.03°   | -0.0288°/d   | +21.26° | R    | Tenth House   |
-| Saturn                | Pis ♓️ | 25.21°   | -0.0140°/d   | -4.11°  | R    | Seventh House |
-| Uranus                | Tau ♉️ | 29.50°   | -0.0419°/d   | +19.84° | R    | Ninth House   |
-| Neptune               | Pis ♓️ | 29.49°   | -0.0111°/d   | -1.45°  | R    | Seventh House |
-| Pluto                 | Aqu ♒️ | 1.69°    | +0.0173°/d   | -23.45° | -    | Fifth House   |
-| True North Lunar Node | Pis ♓️ | 15.44°   | -0.2335°/d   | -5.74°  | R    | Sixth House   |
-| Chiron                | Ari ♈️ | 23.43°   | -0.0359°/d   | +9.63°  | R    | Eighth House  |
-+-----------------------+---------+----------+--------------+---------+------+---------------+
++Natal Celestial Points-+--------+----------+--------------+---------+------+---------------+
+| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House         |
++-----------------------+--------+----------+--------------+---------+------+---------------+
+| Ascendant             | Vir ♍ | 22.88°   | +287.0307°/d | N/A     | -    | First House   |
+| Medium Coeli          | Gem ♊ | 21.77°   | +332.4728°/d | N/A     | -    | Tenth House   |
+| Sun                   | Sco ♏ | 28.20°   | +1.0097°/d   | -19.76° | -    | Third House   |
+| Moon                  | Sco ♏ | 28.19°   | +11.8608°/d  | -24.41° | -    | Third House   |
+| Mercury               | Sco ♏ | 28.46°   | -1.3593°/d   | -19.32° | R    | Third House   |
+| Venus                 | Sco ♏ | 16.73°   | +1.2559°/d   | -15.82° | -    | Second House  |
+| Mars                  | Sag ♐ | 11.40°   | +0.7319°/d   | -22.71° | -    | Third House   |
+| Jupiter               | Can ♋ | 25.03°   | -0.0288°/d   | +21.26° | R    | Tenth House   |
+| Saturn                | Pis ♓ | 25.21°   | -0.0140°/d   | -4.11°  | R    | Seventh House |
+| Uranus                | Tau ♉ | 29.50°   | -0.0419°/d   | +19.84° | R    | Ninth House   |
+| Neptune               | Pis ♓ | 29.49°   | -0.0111°/d   | -1.45°  | R    | Seventh House |
+| Pluto                 | Aqu ♒ | 1.69°    | +0.0173°/d   | -23.45° | -    | Fifth House   |
+| True North Lunar Node | Pis ♓ | 15.44°   | -0.2335°/d   | -5.74°  | R    | Sixth House   |
+| Chiron                | Ari ♈ | 23.43°   | -0.0359°/d   | +9.63°  | R    | Eighth House  |
++-----------------------+--------+----------+--------------+---------+------+---------------+
 
-+Natal Houses (Placidus)---+----------+-------------------+
-| House          | Sign    | Position | Absolute Position |
-+----------------+---------+----------+-------------------+
-| First House    | Vir ♍️ | 22.88°   | 172.88°           |
-| Second House   | Lib ♎️ | 18.35°   | 198.35°           |
-| Third House    | Sco ♏️ | 18.38°   | 228.38°           |
-| Fourth House   | Sag ♐️ | 21.77°   | 261.77°           |
-| Fifth House    | Cap ♑️ | 25.46°   | 295.46°           |
-| Sixth House    | Aqu ♒️ | 26.23°   | 326.23°           |
-| Seventh House  | Pis ♓️ | 22.88°   | 352.88°           |
-| Eighth House   | Ari ♈️ | 18.35°   | 18.35°            |
-| Ninth House    | Tau ♉️ | 18.38°   | 48.38°            |
-| Tenth House    | Gem ♊️ | 21.77°   | 81.77°            |
-| Eleventh House | Can ♋️ | 25.46°   | 115.46°           |
-| Twelfth House  | Leo ♌️ | 26.23°   | 146.23°           |
-+----------------+---------+----------+-------------------+
++Natal Houses (Placidus)--+----------+-------------------+
+| House          | Sign   | Position | Absolute Position |
++----------------+--------+----------+-------------------+
+| First House    | Vir ♍ | 22.88°   | 172.88°           |
+| Second House   | Lib ♎ | 18.35°   | 198.35°           |
+| Third House    | Sco ♏ | 18.38°   | 228.38°           |
+| Fourth House   | Sag ♐ | 21.77°   | 261.77°           |
+| Fifth House    | Cap ♑ | 25.46°   | 295.46°           |
+| Sixth House    | Aqu ♒ | 26.23°   | 326.23°           |
+| Seventh House  | Pis ♓ | 22.88°   | 352.88°           |
+| Eighth House   | Ari ♈ | 18.35°   | 18.35°            |
+| Ninth House    | Tau ♉ | 18.38°   | 48.38°            |
+| Tenth House    | Gem ♊ | 21.77°   | 81.77°            |
+| Eleventh House | Can ♋ | 25.46°   | 115.46°           |
+| Twelfth House  | Leo ♌ | 26.23°   | 146.23°           |
++----------------+--------+----------+-------------------+
 
 +Lunar Phase--------------+--------------------+
 | Lunar Phase Information | Value              |

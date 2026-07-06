@@ -750,3 +750,24 @@ class TestCompositeMidheavenInvariantRound5:
             diff = abs((comp.medium_coeli.abs_pos - comp.tenth_house.abs_pos + 180) % 360 - 180)
             assert diff < 1e-6, f"MC != tenth cusp for {h1},{h2}"
             assert comp.medium_coeli.house == "Tenth_House"
+
+
+class TestUserSiderealCompositeRound10:
+    """Round-10 regression: a USER-sidereal midpoint composite must build (the
+    custom ayanamsa fields must be carried over to the composite model)."""
+
+    def test_user_sidereal_midpoint_composite_builds(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+
+        kw = dict(zodiac_type="Sidereal", sidereal_mode="USER",
+                  custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=23.5)
+        a = AstrologicalSubjectFactory.from_birth_data(
+            "A", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True, **kw)
+        b = AstrologicalSubjectFactory.from_birth_data(
+            "B", 1992, 3, 3, 8, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True, **kw)
+        comp = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
+        assert comp.sun is not None
+        assert comp.custom_ayanamsa_t0 == 2451545.0

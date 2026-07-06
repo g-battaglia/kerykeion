@@ -703,7 +703,15 @@ def _apply_secondary_group_adjustments(group: list[int], adjustments: dict[int, 
         adjustments[group[1]] = -1.0
         adjustments[group[2]] = 1.0
         adjustments[group[3]] = 2.0
-    # Note: Groups of 5+ are not handled for secondary points in original code
+    elif size >= 5:
+        # Spread a 5+ transit stellium symmetrically about its center, mirroring
+        # the primary path (whose size>=5 branch uses spread 1.5). Secondary
+        # spacing is tighter (2/3 of primary, matching the 2/3/4 ratios above),
+        # so a 5+ outer stellium's degree labels no longer stack and overlap.
+        spread = 1.0
+        mid = (size - 1) / 2
+        for i, idx in enumerate(group):
+            adjustments[idx] = (i - mid) * spread
 
 
 def _calculate_secondary_indicator_adjustments(
