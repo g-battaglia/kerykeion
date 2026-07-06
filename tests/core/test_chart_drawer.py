@@ -3842,3 +3842,22 @@ class TestMinifyFallbackScope:
         assert_svg_wellformed(svg)
         assert '"' not in svg, "Fallback minification must rewrite double quotes"
         assert "\n" not in svg, "Fallback minification must collapse whitespace"
+
+
+class TestModernNoClassicHitAreaLeakRound7:
+    """Round-7 regression: the modern full-chart path must not leak the classic
+    transparent house-sector / Gauquelin hit-area overlays on top of the modern
+    wheel (duplicate, mismatched-geometry click regions)."""
+
+    def test_modern_natal_emits_twelve_house_sectors(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.charts.chart_drawer import ChartDrawer
+
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 12, 0, lng=-74.0, lat=40.7,
+            tz_str="America/New_York", online=False, suppress_geonames_warning=True)
+        cd = ChartDataFactory.create_natal_chart_data(s)
+        svg = ChartDrawer(cd, style="modern").generate_svg_string(style="modern")
+        n = svg.count('kr:node="HouseSector"') + svg.count("kr:node='HouseSector'")
+        assert n == 12, f"expected 12 HouseSector nodes in modern full-chart, got {n}"

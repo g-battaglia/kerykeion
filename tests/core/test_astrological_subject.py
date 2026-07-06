@@ -2498,3 +2498,18 @@ class TestOnlineGeonamesGating:
                 city="Rome", nation="IT", tz_str="Europe/Rome", online=True,
                 suppress_geonames_warning=True,
             )
+
+
+class TestYear1CEBoundaryRound7:
+    """Round-7 regression: a year-1-CE local time east of UTC that converts to a
+    UTC instant in year 0 must raise a clean KerykeionException, not a raw
+    OverflowError (matching every adjacent input)."""
+
+    def test_year1_ce_east_of_utc_raises_kerykeion_exception(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException):
+            AstrologicalSubjectFactory.from_birth_data(
+                "x", 1, 1, 1, 0, 30, lng=45.0, lat=41.9,
+                tz_str="Etc/GMT-3", online=False, suppress_geonames_warning=True)

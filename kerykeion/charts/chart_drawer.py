@@ -4788,6 +4788,13 @@ class ChartDrawer:  # type: ignore[no-redef]
             overrides["makeHouses"] = ""
             overrides["makePlanets"] = ""
             overrides["makeAspects"] = ""
+            # Blank the classic transparent hit-area overlays too: otherwise the
+            # classic house-sector / Gauquelin click wedges (populated in
+            # template_data) leak on top of the injected modern wheel with
+            # mismatched classic-wheel geometry, duplicating the modern wheel's
+            # own click regions. The modern wheel renders its own sectors.
+            overrides["makeHouseSectors"] = ""
+            overrides["makeGauquelinSectors"] = ""
             template = Template(raw_template).substitute(overrides)
         else:
             template = Template(raw_template).substitute(template_data)

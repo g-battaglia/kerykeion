@@ -1779,7 +1779,10 @@ class AstrologicalSubjectFactory:
         lmt_offset_seconds = data.get("lmt_offset_seconds")
         if lmt_offset_seconds is not None:
             local_datetime = naive_datetime.replace(tzinfo=timezone(timedelta(seconds=lmt_offset_seconds)))
-            utc_datetime = local_datetime.astimezone(pytz.utc)
+            try:
+                utc_datetime = local_datetime.astimezone(pytz.utc)
+            except (OverflowError, ValueError) as exc:
+                raise AstrologicalSubjectFactory._pre_1ce_utc_exception() from exc
             data["iso_formatted_utc_datetime"] = utc_datetime.isoformat()
             data["iso_formatted_local_datetime"] = local_datetime.isoformat()
             data["julian_day"] = datetime_to_julian(utc_datetime)
@@ -1814,12 +1817,29 @@ class AstrologicalSubjectFactory:
             local_datetime = naive_datetime.replace(tzinfo=timezone(lmt_offset))
 
         # Store formatted times
-        utc_datetime = local_datetime.astimezone(pytz.utc)
+        try:
+            utc_datetime = local_datetime.astimezone(pytz.utc)
+        except (OverflowError, ValueError) as exc:
+            # A year-1-CE local time east of UTC (first few hours) subtracts into
+            # year 0, which Python datetime cannot represent (min 0001-01-01).
+            # Surface the library's own exception instead of a raw OverflowError,
+            # matching every adjacent input (the BCE branch, west-of-UTC, later
+            # hours). Such dates are out of the ephemeris range regardless.
+            raise AstrologicalSubjectFactory._pre_1ce_utc_exception() from exc
         data["iso_formatted_utc_datetime"] = utc_datetime.isoformat()
         data["iso_formatted_local_datetime"] = local_datetime.isoformat()
 
         # Calculate Julian day
         data["julian_day"] = datetime_to_julian(utc_datetime)
+
+    @staticmethod
+    def _pre_1ce_utc_exception() -> "KerykeionException":
+        """Uniform error for a local time that converts to a UTC instant < 1 CE."""
+        return KerykeionException(
+            "The birth instant converts to a UTC time before 1 CE, which is not "
+            "representable. Year-1 CE births in the first hours after midnight and "
+            "east of UTC are unsupported (and outside the ephemeris range regardless)."
+        )
 
     @staticmethod
     def _calculate_time_conversions_bce(data: Dict[str, Any], location: LocationData) -> None:
