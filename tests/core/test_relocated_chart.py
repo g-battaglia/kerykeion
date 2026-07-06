@@ -536,3 +536,34 @@ class TestRelocatedDerivedOppositesRehoused:
         assert south.house == get_planet_house(south.abs_pos, cusps)
         # north and south nodes must remain in opposite houses
         assert r.true_north_lunar_node.house != south.house
+
+
+class TestRelocateBirthplaceExactNoOpRound11:
+    """Round-11 regression: relocating to one's own birthplace must be an EXACT
+    house no-op. The old ARMC reconstruction from ephe.sidtime drifted ~arcsec
+    (amplified at high latitude / far from J2000); houses_ex2 computes the ARMC
+    internally and reproduces the natal cusps exactly."""
+
+    _HO = ["first", "second", "third", "fourth", "fifth", "sixth",
+           "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"]
+
+    def _drift(self, natal, reloc):
+        m = 0.0
+        for h in self._HO:
+            d = abs((getattr(reloc, f"{h}_house").abs_pos - getattr(natal, f"{h}_house").abs_pos + 180) % 360 - 180)
+            m = max(m, d)
+        return m
+
+    def test_tropical_high_latitude_exact(self):
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "N", 2131, 8, 13, 20, 55, lng=-10.6457, lat=65.4251, tz_str="Etc/GMT",
+            online=False, houses_system_identifier="R")
+        reloc = RelocatedChartFactory.relocate(natal, 65.4251, -10.6457, "same")
+        assert self._drift(natal, reloc) < 1e-8
+
+    def test_sidereal_exact(self):
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "S", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        reloc = RelocatedChartFactory.relocate(natal, 41.9, 12.5, "same")
+        assert self._drift(natal, reloc) < 1e-8

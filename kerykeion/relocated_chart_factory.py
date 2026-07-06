@@ -145,7 +145,7 @@ class RelocatedChartFactory:
         # like a natal chart cast there, not crash.
         new_lat = check_and_adjust_polar_latitude(new_lat)
 
-        # houses_armc works in tropical longitudes. For sidereal subjects the
+        # houses_ex2 outputs tropical longitudes. For sidereal subjects the
         # session configures the subject's ayanamsa so get_ayanamsa_ut()
         # returns the matching offset to shift cusps/angles into the
         # subject's sidereal zodiac.
@@ -155,17 +155,22 @@ class RelocatedChartFactory:
             custom_ayanamsa_t0=subject.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=subject.custom_ayanamsa_ayan_t0,
         ) as _iflag:
-            # Get obliquity of ecliptic (zodiac-independent)
-            eps = ephe.calc_ut(jd, ephe.ECL_NUT, ephe.FLG_SWIEPH | ephe.FLG_SPEED)[0][0]
-
-            # Get ARMC (sidereal time at Greenwich in degrees) from original JD
-            armc_hours = ephe.sidtime(jd)  # Greenwich sidereal time in hours
-            # Adjust for new longitude: local sidereal time = GST + lng/15
-            local_st_hours = armc_hours + new_lng / 15.0
-            armc_degrees = (local_st_hours * 15.0) % 360.0
-
-            # Calculate new houses for the new location (tropical output)
-            cusps, ascmc = ephe.houses_armc(armc_degrees, new_lat, eps, hsys)
+            # Calculate new houses for the new location via houses_ex2 — the
+            # SAME call the natal path uses — so it computes the ARMC internally
+            # and exactly. Reconstructing the ARMC from ephe.sidtime(jd) + lng/15
+            # and feeding houses_armc introduced a sidtime-vs-internal-ARMC
+            # divergence (~1 arcsec, amplified at high latitude) that made
+            # relocating to one's own birthplace NOT a house no-op.
+            #
+            # Request TROPICAL cusps (mask FLG_SIDEREAL): the sidereal shift is
+            # applied explicitly below using the subject's stored ayanamsa_value
+            # (which carries nutation-in-longitude), matching the natal chart.
+            # Letting houses_ex2 apply the sidereal flag itself would double-
+            # subtract the ayanamsa.
+            tropical_iflag = _iflag & ~ephe.FLG_SIDEREAL
+            cusps, ascmc, _cusps_speed, _ascmc_speed = ephe.houses_ex2(
+                jd, new_lat, new_lng, hsys, tropical_iflag
+            )
 
             # Sidereal charts: shift the tropical cusps/angles by the ayanamsa.
             # Use the subject's stored ayanamsa_value: it was computed alongside
@@ -232,7 +237,7 @@ class RelocatedChartFactory:
             "imum_coeli": ("Imum_Coeli", ic_deg),
         }
 
-        # Vertex / Anti-Vertex come from ascmc[3] of the same houses_armc call
+        # Vertex / Anti-Vertex come from ascmc[3] of the same houses_ex2 call
         # (the Vertex is house-system independent but location dependent).
         if subject.vertex is not None or subject.anti_vertex is not None:
             vertex_deg = ascmc[3] % 360
