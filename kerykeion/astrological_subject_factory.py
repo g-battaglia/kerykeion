@@ -2062,7 +2062,12 @@ class AstrologicalSubjectFactory:
             ("twelfth_house", "Twelfth_House"),
         ]
 
-        # Create house objects (with cusp speeds from houses_ex2)
+        # Create house objects (with cusp speeds from houses_ex2). NOTE: only
+        # the four angular cusps (1st/ASC, 4th/IC, 7th/DSC, 10th/MC) carry a
+        # physically meaningful diurnal speed; the intermediate-cusp speeds are a
+        # house-system construction artefact and the two ephemeris backends
+        # disagree on them by several deg/day (documented as a known limitation).
+        # The values are still exposed for the v5.12 house-cusp-speed feature.
         point_type: PointType = "House"
         for i, (attr_name, house_name) in enumerate(HOUSE_CONFIG):
             data[attr_name] = get_kerykeion_point_from_degree(

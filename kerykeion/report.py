@@ -466,10 +466,12 @@ class ReportGenerator:
             label = _return_type_label(self._secondary_subject)
             base_title = f"{self._primary_subject.name} — {label} Comparison {year or ''}".strip()
         elif self.chart_type == "Progression":
-            date_str = self._format_date_iso(
-                self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
-            )
-            base_title = f"{self._primary_subject.name} — Secondary Progression {date_str}".strip()
+            # The progressed subject's iso datetime is the INTERNAL day-for-a-year
+            # ephemeris instant (~a few weeks after birth), not the target year
+            # the user progressed to — showing it in the title is misleading, and
+            # the target year isn't stored on the model. The progressed subject's
+            # name already carries "(Progressed YYYY-MM-DD)", so title by name.
+            base_title = f"{self._primary_subject.name} — Secondary Progression".strip()
         else:
             base_title = f"{self._primary_subject.name} — Chart Report"
 

@@ -30,6 +30,13 @@
   kernels (or enable auto-download) for accurate minor-body positions at extreme
   dates; libephemeris logs a `source=Keplerian (fallback)` warning to stderr
   when this happens.
+- **Intermediate house-cusp speeds are backend-dependent.** Only the four
+  angular cusps (1st/ASC, 4th/IC, 7th/DSC, 10th/MC) carry a physically
+  meaningful diurnal speed. The `speed` of the eight intermediate cusps is a
+  house-system construction artefact with no standard astrological meaning, and
+  the `libephemeris` and `swisseph` backends disagree on it by up to several
+  deg/day. The cusp longitudes themselves are identical across backends; only
+  the intermediate-cusp `speed` field differs.
 - **Secondary progressions are rebuilt through a whole-second ISO round-trip.**
   `SecondaryProgressionFactory` derives the progressed instant as a float Julian
   Day but rebuilds the chart via an ISO-8601 UTC string (`from_iso_utc_time`),
