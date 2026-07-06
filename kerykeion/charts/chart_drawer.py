@@ -105,8 +105,13 @@ logger = logging.getLogger(__name__)
 
 @lru_cache(maxsize=8)
 def _load_cached_file(path: str) -> str:
-    """Read a file from disk and cache the result for subsequent calls."""
-    with open(path, "r", encoding="utf-8", errors="ignore") as f:
+    """Read a file from disk and cache the result for subsequent calls.
+
+    These are trusted in-package templates/themes (valid UTF-8); read strictly
+    so a truncated or corrupt install surfaces a clear decode error instead of
+    silently yielding malformed SVG (``errors="ignore"`` would drop bad bytes).
+    """
+    with open(path, "r", encoding="utf-8") as f:
         return f.read()
 
 
@@ -4875,7 +4880,9 @@ class ChartDrawer:  # type: ignore[no-redef]
             Path: The path where the file was saved.
 
         Raises:
-            KerykeionException: If the resolved path escapes the output directory.
+            KerykeionException: If the resolved path escapes the output
+                directory, or if the SVG cannot be written (missing/read-only
+                directory, un-encodable content).
         """
         output_directory = Path(output_path) if output_path is not None else Path.home()
 
@@ -4897,8 +4904,24 @@ class ChartDrawer:  # type: ignore[no-redef]
                 f"Refusing to write SVG outside the output directory: {resolved_chartname} is not inside {resolved_directory}."
             ) from None
 
-        with open(chartname, "w", encoding="utf-8", errors="ignore") as output_file:
-            output_file.write(content)
+        # Write WITHOUT errors="ignore": that silently dropped un-encodable
+        # characters (lone surrogates), producing a file that no longer matched
+        # generate_svg_string(). A raw stdlib error (missing/read-only dir,
+        # un-encodable content) is wrapped in the library's own exception so a
+        # caller catching KerykeionException gets a clear, actionable message.
+        try:
+            with open(chartname, "w", encoding="utf-8") as output_file:
+                output_file.write(content)
+        except OSError as exc:
+            raise KerykeionException(
+                f"Could not write the SVG to {chartname}: {exc}. "
+                "Check the output directory exists and is writable."
+            ) from exc
+        except UnicodeEncodeError as exc:
+            raise KerykeionException(
+                f"The SVG content contains a character that cannot be encoded ({exc}). "
+                "Check the subject name / city / custom title for invalid characters."
+            ) from exc
 
         print(f"SVG Generated Correctly in: {chartname}")
         return chartname

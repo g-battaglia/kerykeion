@@ -62,13 +62,21 @@ def escape_svg_text(value: object) -> str:
     control characters that escaping cannot neutralize (which would otherwise
     make the SVG rejected by any conforming XML parser).
 
+    A literal ``var(...)`` token in the text is defused (its ``(`` is entity-
+    encoded) so the optional CSS-variable inliner — which runs a ``var(...)``
+    regex over the whole document on the ``remove_css_variables=True`` path —
+    cannot rewrite a person's name/city/title into a theme color value. The
+    displayed text is unchanged (``&#40;`` renders as ``(``).
+
     Args:
         value: The value to escape; non-strings are converted with ``str()``.
 
     Returns:
         The escaped string, safe for use as XML text content or attribute value.
     """
-    return _xml_escape(str(value).translate(_SVG_ILLEGAL_TRANSLATION), _XML_TEXT_ENTITIES)
+    escaped = _xml_escape(str(value).translate(_SVG_ILLEGAL_TRANSLATION), _XML_TEXT_ENTITIES)
+    # Break any 'var(' so the CSS-variable inliner's regex no longer matches it.
+    return escaped.replace("var(", "var&#40;")
 
 
 def _resolve_point_glyph_id(

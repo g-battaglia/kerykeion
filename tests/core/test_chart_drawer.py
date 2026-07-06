@@ -3878,3 +3878,40 @@ class TestSvgControlCharStripRound8:
             suppress_geonames_warning=True)
         cd = ChartDataFactory.create_natal_chart_data(s)
         xml.dom.minidom.parseString(ChartDrawer(cd).generate_svg_string())
+
+
+class TestSaveSvgRobustnessRound9:
+    """Round-9 regressions: save_svg wraps I/O errors and does not silently
+    corrupt content; a var() token in a name is not consumed by the CSS inliner."""
+
+    def _drawer(self, name="T"):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.charts.chart_drawer import ChartDrawer
+        s = AstrologicalSubjectFactory.from_birth_data(
+            name, 1990, 6, 15, 12, 0, city="London", nation="GB",
+            lng=-0.1, lat=51.5, tz_str="Europe/London", online=False,
+            suppress_geonames_warning=True)
+        return ChartDrawer(ChartDataFactory.create_natal_chart_data(s))
+
+    def test_save_svg_missing_dir_raises_kerykeion(self):
+        import os, tempfile
+        from kerykeion.schemas import KerykeionException
+        drawer = self._drawer()
+        with tempfile.TemporaryDirectory() as d:
+            with pytest.raises(KerykeionException):
+                drawer.save_svg(output_path=os.path.join(d, "nope"))
+
+    def test_save_svg_valid_dir_ok(self):
+        import glob, os, tempfile
+        drawer = self._drawer()
+        with tempfile.TemporaryDirectory() as d:
+            drawer.save_svg(output_path=d)
+            assert glob.glob(os.path.join(d, "*.svg")), "no SVG written to a valid dir"
+
+    def test_var_token_name_not_inlined(self):
+        import xml.dom.minidom
+        drawer = self._drawer("var(--kerykeion-chart-color-paper-0)")
+        svg = drawer.generate_svg_string(remove_css_variables=True)
+        assert "#000000 - Birth" not in svg
+        xml.dom.minidom.parseString(svg)
