@@ -2266,9 +2266,26 @@ class AstrologicalSubjectFactory:
         should_calculate = partial(AstrologicalSubjectFactory._should_calculate, active_points=active_points)
 
         for derived_name, config in OPPOSITE_PAIRS.items():
-            primary_key = config["primary"].lower()
+            primary_name = config["primary"]
+            primary_key = primary_name.lower()
             if primary_key not in data:
-                continue
+                # The derived point is the antipode of a primary that was not
+                # itself requested. If the derived point WAS explicitly requested
+                # (e.g. a Vedic user listing True_South_Lunar_Node / Ketu without
+                # Rahu), auto-activate the primary on demand so the requested
+                # point is not silently dropped from the model/report/SVG.
+                if should_calculate(derived_name):
+                    AstrologicalSubjectFactory._ensure_point_calculated(
+                        primary_name,
+                        data,
+                        data["julian_day"],
+                        data["_iflag"],
+                        houses_degree_ut,
+                        point_type,
+                        active_points,
+                    )
+                if primary_key not in data:
+                    continue
 
             primary = data[primary_key]
             deg = math.fmod(primary.abs_pos + 180, 360)

@@ -940,3 +940,25 @@ def test_sweep_predictive_invariants(name, yr, mo, dy, hr, mn, lat, lng, tz, tar
     sun_delta = (sp.progressed_subject.sun.abs_pos - natal.sun.abs_pos) % 360.0
     # ~1°/year ± ephemeris seasonal variation
     assert abs(sun_delta - years) < 8.0
+
+
+class TestSolarArcDirectedAnglesRound12:
+    """Round-12 regression: compute() and compute_directed_subject() must agree
+    on the directed angle positions (both direct Asc/MC); house cusps stay natal."""
+
+    def test_directed_angles_agree_between_apis(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.secondary_progressions.solar_arc_factory import SolarArcFactory
+
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "John", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True)
+        res = SolarArcFactory.compute(natal, target_year=2030)
+        directed = SolarArcFactory.compute_directed_subject(natal, target_year=2030)
+
+        for angle, field in [("Ascendant", "ascendant"), ("Medium_Coeli", "medium_coeli")]:
+            api_pos = next(dp.directed_abs_pos for dp in res.directed_points if dp.name == angle)
+            subj_pos = getattr(directed, field).abs_pos
+            assert abs((api_pos - subj_pos + 180) % 360 - 180) < 1e-9
+        # house cusps stay on the natal frame
+        assert abs(directed.first_house.abs_pos - natal.first_house.abs_pos) < 1e-9

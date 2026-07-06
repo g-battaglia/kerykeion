@@ -2579,3 +2579,28 @@ class TestStandardOffsetFoldRound10:
             AstrologicalSubjectFactory.from_birth_data(
                 "x", 2000, 1, 1, 12, 0, lng=10.0, lat=45.0,
                 tz_str="+05:00", online=False, suppress_geonames_warning=True)
+
+
+class TestExplicitDerivedOppositeRound12:
+    """Round-12 regression: a derived opposite point (South Node, Priapus)
+    explicitly requested WITHOUT its primary must still be computed (the primary
+    is auto-activated), not silently dropped."""
+
+    def test_south_node_without_north_node(self):
+        from kerykeion import AstrologicalSubjectFactory
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "V", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun", "Moon", "True_South_Lunar_Node"])
+        assert "True_South_Lunar_Node" in s.active_points
+        assert s.true_south_lunar_node is not None
+        # the auto-activated primary must NOT leak into active_points
+        assert "True_North_Lunar_Node" not in s.active_points
+
+    def test_priapus_without_lilith(self):
+        from kerykeion import AstrologicalSubjectFactory
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "P", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun", "Moon", "True_Priapus"])
+        assert s.true_priapus is not None

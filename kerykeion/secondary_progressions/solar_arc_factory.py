@@ -252,8 +252,12 @@ class SolarArcFactory:
         )
 
     # Names of point fields whose abs_pos must be shifted by the solar arc
-    # when building a directed AstrologicalSubjectModel. Angles and houses
-    # are intentionally left in place (the natal frame is preserved).
+    # when building a directed AstrologicalSubjectModel. The four angles
+    # (Asc/MC/Desc/IC) ARE directed — solar-arc-directed angles are a standard
+    # technique and compute()'s aspect list (which uses DEFAULT_PREDICTIVE_POINTS,
+    # including Ascendant/Medium_Coeli) reports directed-angle contacts, so the
+    # directed subject must place the angles where those aspects point. Only the
+    # house CUSPS stay on the natal frame (they define the biwheel's house grid).
     _DIRECTABLE_FIELDS = (
         "sun", "moon", "mercury", "venus", "mars",
         "jupiter", "saturn", "uranus", "neptune", "pluto",
@@ -268,6 +272,7 @@ class SolarArcFactory:
         "mean_south_lunar_node", "true_south_lunar_node",
         "pars_fortunae", "pars_spiritus", "pars_amoris", "pars_fidei",
         "vertex", "anti_vertex",
+        "ascendant", "medium_coeli", "descendant", "imum_coeli",
     )
 
     @staticmethod
@@ -280,10 +285,10 @@ class SolarArcFactory:
         """Return a copy of ``natal_subject`` with every directable point
         shifted forward by the solar arc.
 
-        Houses and the four angles (Asc/MC/Desc/IC) are left at their natal
-        positions — the solar arc preserves the natal frame and only moves
-        the planets and sensitive points. This is what you want for a
-        biwheel rendering: inner ring = natal, outer ring = directed.
+        The four angles (Asc/MC/Desc/IC) ARE directed, consistent with
+        :meth:`compute`, whose aspect list reports directed-angle contacts.
+        Only the house CUSPS stay on the natal frame (they define the biwheel's
+        house grid): inner ring = natal, outer ring = directed, houses fixed.
         """
         result = SolarArcFactory.compute(
             natal_subject,
