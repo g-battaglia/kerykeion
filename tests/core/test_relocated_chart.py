@@ -567,3 +567,24 @@ class TestRelocateBirthplaceExactNoOpRound11:
             online=False, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
         reloc = RelocatedChartFactory.relocate(natal, 41.9, 12.5, "same")
         assert self._drift(natal, reloc) < 1e-8
+
+
+class TestRelocateNormalizesLongitudeCodeRabbit:
+    """CodeRabbit P2: relocate() must accept an un-normalized longitude (370,
+    -190) like the natal path, not leak a raw backend CoordinateError."""
+
+    def test_wrapped_longitude_matches_normalized(self):
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True)
+        r_wrapped = RelocatedChartFactory.relocate(natal, 41.9, 370.0, "X")
+        r_norm = RelocatedChartFactory.relocate(natal, 41.9, 10.0, "X")
+        assert r_wrapped.lng == 10.0
+        assert abs(r_wrapped.ascendant.abs_pos - r_norm.ascendant.abs_pos) < 1e-9
+
+    def test_negative_wrapped_longitude(self):
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True)
+        r = RelocatedChartFactory.relocate(natal, 41.9, -190.0, "X")
+        assert r.lng == 170.0

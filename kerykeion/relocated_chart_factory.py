@@ -35,6 +35,7 @@ from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.settings.config_constants import AXIAL_POINTS
 from kerykeion.utilities import (
     check_and_adjust_polar_latitude,
+    normalize_longitude,
     get_kerykeion_point_from_degree,
     get_planet_house,
     _assemble_ancient_iso,
@@ -142,8 +143,13 @@ class RelocatedChartFactory:
 
         # Same polar clamp as the natal path (quadrant house systems raise
         # PolarCircleError past ~66 deg): relocating to lat 78 must behave
-        # like a natal chart cast there, not crash.
+        # like a natal chart cast there, not crash. Also raises on an
+        # impossible |lat| > 90.
         new_lat = check_and_adjust_polar_latitude(new_lat)
+        # Wrap an un-normalized longitude (e.g. 370 == 10 E) into [-180, 180) as
+        # the natal path does, so relocation accepts wrapped values instead of
+        # the houses backend raising a raw CoordinateError.
+        new_lng = normalize_longitude(new_lng)
 
         # houses_ex2 outputs tropical longitudes. For sidereal subjects the
         # session configures the subject's ayanamsa so get_ayanamsa_ut()
