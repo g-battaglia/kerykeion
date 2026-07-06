@@ -201,11 +201,17 @@ class FetchGeonames:
             return {}
 
         try:
-            timezone_data["timezonestr"] = response_json["timezoneId"]
-
+            tz_id = response_json["timezoneId"]
         except (KeyError, TypeError) as e:
             logger.error("GeoNames timezone payload missing expected keys: %s", e)
             return {}
+
+        # A present-but-empty timezoneId would slip past the key-presence check
+        # and reach pytz as "" (which pytz rejects). Treat it as a missing tz.
+        if not tz_id:
+            logger.error("GeoNames timezone payload had an empty timezoneId.")
+            return {}
+        timezone_data["timezonestr"] = tz_id
 
         if hasattr(response, "from_cache"):
             timezone_data["from_tz_cache"] = response.from_cache  # type: ignore

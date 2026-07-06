@@ -170,3 +170,12 @@ def test_removed_pre_b1_aliases_raise(old_name):
         getattr(module, old_name)
     assert getattr(module, new_name) is PUBLIC_MODELS[new_name]
     assert old_name not in getattr(module, "__all__", ())
+
+
+def test_relationship_and_ephemeris_models_top_level_exported():
+    """Round-4: result models of exported factories must be importable from the
+    top-level namespace, like every other factory's result model."""
+    import kerykeion
+    from kerykeion import RelationshipScoreModel, EphemerisDictModel  # noqa: F401
+    assert "RelationshipScoreModel" in kerykeion.__all__
+    assert "EphemerisDictModel" in kerykeion.__all__

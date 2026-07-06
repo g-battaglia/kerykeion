@@ -162,6 +162,8 @@ from .schemas.kr_models import (
     TriplicityLordsModel,
     ZodiacalReleasingModel,
     ZRPeriodModel,
+    RelationshipScoreModel,
+    EphemerisDictModel,
 )
 from .schemas.kr_literals import DominantMethod
 
@@ -274,6 +276,8 @@ __all__ = [
     "DominantBreakdownItemModel",
     "ZodiacalReleasingModel",
     "ZRPeriodModel",
+    "RelationshipScoreModel",
+    "EphemerisDictModel",
     "DominantMethod",
     # Settings and Utilities
     "KerykeionSettingsModel",

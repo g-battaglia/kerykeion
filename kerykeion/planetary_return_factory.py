@@ -334,18 +334,48 @@ class PlanetaryReturnFactory:
         self.online = online
         self.cache_expire_after_days = cache_expire_after_days
         self.altitude = altitude
-        self.custom_ayanamsa_t0 = custom_ayanamsa_t0
-        self.custom_ayanamsa_ayan_t0 = custom_ayanamsa_ayan_t0
-        # v6 calc flags forwarded to the return subject
-        self.active_fixed_stars = active_fixed_stars
-        self.calculate_dignities = calculate_dignities
-        self.calculate_nakshatra = calculate_nakshatra
-        self.calculate_gauquelin = calculate_gauquelin
-        self.calculate_nutation = calculate_nutation
-        self.calculate_local_space = calculate_local_space
+        # Custom ayanamsa: fall back to the values already on the subject (a
+        # USER-sidereal subject always carries them — its own validator requires
+        # both) so a caller that built a USER-sidereal natal need not re-pass
+        # them. Parity with SecondaryProgressionFactory, which reads them off
+        # the subject.
+        self.custom_ayanamsa_t0 = (
+            custom_ayanamsa_t0 if custom_ayanamsa_t0 is not None else subject.custom_ayanamsa_t0
+        )
+        self.custom_ayanamsa_ayan_t0 = (
+            custom_ayanamsa_ayan_t0 if custom_ayanamsa_ayan_t0 is not None else subject.custom_ayanamsa_ayan_t0
+        )
+
+        # v6 calc flags forwarded to the return subject. When the caller does not
+        # pass them explicitly, INFER them from the natal subject's populated
+        # fields so the return computes the same enrichments as the natal
+        # (dignities/nakshatra/gauquelin/nutation/local-space/fixed-stars) —
+        # otherwise they were silently dropped despite the documented promise.
+        # Parity with SecondaryProgressionFactory.
+        _subj_sun = getattr(subject, "sun", None)
+        self.active_fixed_stars = (
+            active_fixed_stars
+            if active_fixed_stars is not None
+            else ([s.name for s in (subject.fixed_stars or [])] or None)
+        )
+        self.calculate_dignities = calculate_dignities or (
+            _subj_sun is not None and _subj_sun.essential_dignity is not None
+        )
+        self.calculate_nakshatra = calculate_nakshatra or (
+            _subj_sun is not None and _subj_sun.nakshatra is not None
+        )
+        self.calculate_gauquelin = calculate_gauquelin or (subject.gauquelin_sector_cusps is not None)
+        self.calculate_nutation = calculate_nutation or (subject.nutation is not None)
+        self.calculate_local_space = calculate_local_space or (
+            _subj_sun is not None and _subj_sun.azimuth is not None
+        )
 
         # Validate USER sidereal mode requires both custom ayanamsa values
-        if subject.sidereal_mode == "USER" and (custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None):
+        # (after the subject fallback above, so a USER-sidereal subject that
+        # carries them is accepted without re-passing).
+        if subject.sidereal_mode == "USER" and (
+            self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None
+        ):
             raise KerykeionException(
                 "PlanetaryReturnFactory requires both custom_ayanamsa_t0 and "
                 "custom_ayanamsa_ayan_t0 when sidereal_mode='USER'."

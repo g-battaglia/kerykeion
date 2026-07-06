@@ -1210,3 +1210,46 @@ class TestReturnFactoryOnlineGating:
         assert factory.lat == pytest.approx(41.89193)
         assert factory.lng == pytest.approx(12.51133)
         assert factory.tz_str == "Europe/Vienna"  # explicit value preserved
+
+
+class TestReturnEnrichmentParityRound4:
+    """Round-4 regression: the return chart must inherit the natal subject's
+    enrichments (parity with SecondaryProgressionFactory), and a USER-sidereal
+    subject must not require re-passing its ayanamsa."""
+
+    def test_return_inherits_natal_enrichments(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            name="T", year=1990, month=6, day=15, hour=12, minute=0,
+            city="Rome", nation="IT", lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            calculate_dignities=True, active_fixed_stars=["Regulus", "Spica"],
+        )
+        rf = PlanetaryReturnFactory(
+            natal, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        ret = rf.next_return_from_iso_formatted_time("2026-06-01T00:00:00Z", "Solar")
+        assert ret.sun.essential_dignity is not None
+        assert [s.name for s in ret.fixed_stars] == ["Regulus", "Spica"]
+
+    def test_user_sidereal_return_reads_ayanamsa_from_subject(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+        sid = AstrologicalSubjectFactory.from_birth_data(
+            name="S", year=1990, month=6, day=15, hour=12, minute=0,
+            city="Rome", nation="IT", lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            zodiac_type="Sidereal", sidereal_mode="USER",
+            custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=23.5,
+        )
+        # Must NOT raise despite not re-passing custom_ayanamsa_* to the factory.
+        rf = PlanetaryReturnFactory(
+            sid, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        ret = rf.next_return_from_date(2027, 1, 1, return_type="Solar")
+        assert ret is not None
