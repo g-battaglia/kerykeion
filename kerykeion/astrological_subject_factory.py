@@ -72,6 +72,7 @@ from kerykeion.utilities import (
     datetime_to_julian,
     format_ancient_iso,
     normalize_zodiac_type,
+    _days_in_proleptic_julian_month,
 )
 from kerykeion.settings.config_constants import (
     DEFAULT_ACTIVE_POINTS,
@@ -2071,11 +2072,16 @@ class AstrologicalSubjectFactory:
         # Validate the components before handing them to ephe.julday(): the CE
         # branch gets this for free from datetime() (wrapped as
         # KerykeionException in _calculate_time_conversions), while julday()
-        # would silently normalize out-of-range values (month=13, hour=25, ...)
-        # into a wrong Julian Day.
+        # would silently normalize out-of-range values (month=13, hour=25,
+        # Feb-30, Apr-31, ...) into a wrong Julian Day. The day bound uses the
+        # proleptic-Julian month length so an out-of-range day is rejected
+        # symmetrically with the CE datetime() path. The `and` short-circuits
+        # left-to-right, so `_days_in_proleptic_julian_month` is only reached
+        # once `1 <= month <= 12` holds — a month=13 input raises cleanly here
+        # rather than an IndexError from the month-length table.
         if not (
             1 <= month <= 12
-            and 1 <= day <= 31
+            and 1 <= day <= _days_in_proleptic_julian_month(year, month)
             and 0 <= hour <= 23
             and 0 <= minute <= 59
             and 0 <= seconds <= 59

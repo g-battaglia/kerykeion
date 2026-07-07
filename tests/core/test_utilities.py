@@ -35,6 +35,7 @@ from kerykeion.utilities import (
     get_house_number,
     format_ancient_iso,
     format_timedelta_hhmm,
+    extract_year_from_iso,
 )
 from kerykeion.charts.charts_utils import convert_decimal_to_degree_string
 
@@ -1095,6 +1096,37 @@ class TestFormatAncientIso:
     def test_no_rollover_for_normal_hour(self):
         result = format_ancient_iso(-500, 3, 21, 11.5, 0.0)
         assert result == "-0500-03-21T11:30:00+00:00"
+
+
+class TestYearZeroIsoConformance:
+    """Year 0 (= 1 BCE) must be the ISO 8601 unsigned ``0000``, never ``-0000``
+    (the minus sign is reserved for years <= -1). The formatter and parser are
+    coupled, so both are checked here plus a full round-trip."""
+
+    def test_year_zero_formats_unsigned(self):
+        result = format_ancient_iso(0, 6, 15, 12.0, 0.0)
+        assert result.startswith("0000-06-15")
+        assert not result.startswith("-0000")
+
+    def test_parser_maps_unsigned_year_zero(self):
+        assert extract_year_from_iso("0000-06-15T12:00:00+00:00") == 0
+
+    def test_year_zero_round_trip(self):
+        assert extract_year_from_iso(format_ancient_iso(0, 6, 15, 12.0, 0.0)) == 0
+
+    def test_adjacent_years_unaffected(self):
+        # year -1 -> "-0001..." -> -1
+        neg = format_ancient_iso(-1, 6, 15, 12.0, 0.0)
+        assert neg.startswith("-0001")
+        assert extract_year_from_iso(neg) == -1
+        # year 1 -> "0001..." -> 1
+        pos = format_ancient_iso(1, 6, 15, 12.0, 0.0)
+        assert pos.startswith("0001")
+        assert extract_year_from_iso(pos) == 1
+
+    def test_legacy_minus_zero_still_parses(self):
+        # Backward compatibility: older stored strings used "-0000".
+        assert extract_year_from_iso("-0000-06-15T12:00:00+00:00") == 0
 
 
 class TestHorizonSystemHouseAssignmentRound6:

@@ -3015,3 +3015,55 @@ class TestNonIntDateComponents:
             name="CE Valid", year=1990, month=6, day=15, hour=12, minute=0, **self._KW
         )
         assert s.year == 1990 and s.month == 6 and s.sun is not None
+
+
+class TestAncientJulianDayValidation:
+    """The pre-1 CE (Julian-calendar) path must reject an out-of-range
+    day-of-month symmetrically with the CE datetime() path. ``ephe.julday(...,
+    JUL_CAL)`` would otherwise silently roll e.g. Feb-30 into the next month and
+    compute a wrong Julian Day. Validation raises BEFORE any ephemeris call, so
+    these tests run on any tier without the extended kernel.
+
+    (Kept in this module, not test_bce_dates.py, because the tier gate skips any
+    node whose id contains "bce" unless the extended kernel is loaded — and the
+    validation this exercises is kernel-independent. The class/method names avoid
+    that substring on purpose.)"""
+
+    _KW = dict(
+        lng=0.0, lat=0.0, tz_str="UTC", city="X", nation="XX",
+        online=False, suppress_geonames_warning=True,
+    )
+
+    @pytest.mark.parametrize(
+        "year, month, day",
+        [
+            (-99, 2, 30),   # Feb never has 30 days
+            (-99, 4, 31),   # April has 30
+            (-1, 2, 29),    # 2 BCE is NOT a proleptic-Julian leap year (-1 % 4 != 0)
+            (-99, 13, 1),   # month out of range — must raise, NOT IndexError
+        ],
+        ids=lambda v: str(v),
+    )
+    def test_invalid_julian_day_raises_validation_error(self, year, month, day):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="Invalid birth date/time component"):
+            AstrologicalSubjectFactory.from_birth_data(
+                name="Ancient Invalid", year=year, month=month, day=day,
+                hour=12, minute=0, **self._KW
+            )
+
+    def test_valid_leap_feb29_passes_validation(self):
+        """1 BCE (year 0) IS a proleptic-Julian leap year (0 % 4 == 0), so Feb-29
+        is a valid day and must get PAST validation. Without the extended kernel
+        the subsequent ephemeris call fails with a range error — that is fine and
+        still proves the validation accepted the day (the message differs)."""
+        from kerykeion.schemas import KerykeionException
+
+        try:
+            AstrologicalSubjectFactory.from_birth_data(
+                name="Ancient Valid Leap", year=0, month=2, day=29,
+                hour=12, minute=0, **self._KW
+            )
+        except KerykeionException as exc:
+            assert "Invalid birth date/time component" not in str(exc)

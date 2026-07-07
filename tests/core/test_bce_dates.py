@@ -302,7 +302,9 @@ class TestAncientISOFormat:
         assert format_ancient_iso(-500, 3, 21, 12.0, 0.0) == "-0500-03-21T12:00:00+00:00"
 
     def test_year_zero(self):
-        assert format_ancient_iso(0, 1, 1, 0.0, 0.0) == "-0000-01-01T00:00:00+00:00"
+        # ISO 8601 represents year 0 (= 1 BCE) as the unsigned "0000"; the minus
+        # sign is reserved for years <= -1 (see extract_year_from_iso round-trip).
+        assert format_ancient_iso(0, 1, 1, 0.0, 0.0) == "0000-01-01T00:00:00+00:00"
 
     def test_positive_offset(self):
         result = format_ancient_iso(-44, 3, 15, 12.0, 2.5)
@@ -338,7 +340,12 @@ class TestAncientISOFormat:
 
     def test_extract_year_bce(self):
         assert extract_year_from_iso("-0500-03-21T12:00:00+01:35") == -500
+        # Year 0 is the unsigned "0000" (what format_ancient_iso now emits);
+        # the legacy "-0000" form is still parsed for backward compatibility.
+        assert extract_year_from_iso("0000-01-01T00:00:00+00:00") == 0
         assert extract_year_from_iso("-0000-01-01T00:00:00+00:00") == 0
+        # Full round-trip: the formatter's year-0 output parses back to 0.
+        assert extract_year_from_iso(format_ancient_iso(0, 6, 15, 12.0, 0.0)) == 0
 
     def test_extract_year_modern(self):
         assert extract_year_from_iso("1940-10-09T18:30:00+01:00") == 1940

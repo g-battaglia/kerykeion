@@ -398,7 +398,7 @@ Asteroids: Ceres, Pallas, Juno, Vesta, Chiron
 Angles: Ascendant, Medium_Coeli, Descendant, Imum_Coeli
 Arabic Parts: Pars_Fortunae, Pars_Spiritus, Pars_Amoris, Pars_Fidei
 Fixed Stars: Regulus, Spica, Sirius, Aldebaran, Antares, Fomalhaut, Algol, + 16 more (23 total)
-TNOs: Eris, Sedna, Makemake, Haumea, Quaoar, Orcus, Gonggong, Ixion
+TNOs: Eris, Sedna, Makemake, Haumea, Quaoar, Orcus, Ixion
 Uranian: Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon
 Lilith variants: Mean_Lilith, True_Lilith, Interpolated_Lilith, Mean_Priapus, True_Priapus
 Others: Earth, Vertex, Anti_Vertex

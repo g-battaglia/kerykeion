@@ -193,11 +193,13 @@ john = AstrologicalSubjectFactory.from_birth_data(
 
 # Retrieve information about the Sun:
 print(john.sun.model_dump_json())
-# > {"name":"Sun","quality":"Cardinal","element":"Air","sign":"Lib","sign_num":6,"position":16.26789199474399,"abs_pos":196.267891994744,"emoji":"♎️","point_type":"AstrologicalPoint","house":"Sixth_House","retrograde":false}
+# > {"name":"Sun","quality":"Cardinal","element":"Air","sign":"Lib","sign_num":6,"position":16.26789435029039,"abs_pos":196.2678943502904,"emoji":"♎️","point_type":"AstrologicalPoint","house":"Sixth_House","retrograde":false,"speed":0.9884519666546676,"declination":-6.39888585742412, ...}
+# (additional fields omitted: ecliptic_latitude, nakshatra*, gauquelin_sector, azimuth, altitude_above_horizon, is_out_of_bounds, ...)
 
 # Retrieve information about the first house:
 print(john.first_house.model_dump_json())
-# > {"name":"First_House","quality":"Cardinal","element":"Fire","sign":"Ari","sign_num":0,"position":19.74676624176799,"abs_pos":19.74676624176799,"emoji":"♈️","point_type":"House","house":null,"retrograde":null}
+# > {"name":"First_House","quality":"Cardinal","element":"Fire","sign":"Ari","sign_num":0,"position":19.72351854613349,"abs_pos":19.72351854613349,"emoji":"♈️","point_type":"House","house":null,"retrograde":null,"speed":886.503993869951, ...}
+# (additional fields omitted: declination, nakshatra*, gauquelin_sector, azimuth, altitude_above_horizon, is_out_of_bounds, ...)
 
 # Retrieve the element of the Moon sign:
 print(john.moon.element)
@@ -1680,19 +1682,19 @@ Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
 | Phase Name   | Waxing Crescent 🌒 |
 | Major Phase  | New Moon           |
 | Stage        | Waxing             |
-| Illumination | 8%                 |
+| Illumination | 12%                |
 | Age (days)   | 3                  |
-| Lunar Cycle  | 9.571%             |
+| Lunar Cycle  | 11.068%            |
 | Sun Sign     | Ari                |
-| Moon Sign    | Gem                |
+| Moon Sign    | Tau                |
 +--------------+--------------------+
 
 +Illumination Details-------+
 | Field            | Value  |
 +------------------+--------+
-| Percentage       | 8.0%   |
-| Visible Fraction | 0.0837 |
-| Phase Angle      | 34.46° |
+| Percentage       | 12.0%  |
+| Visible Fraction | 0.1161 |
+| Phase Angle      | 39.85° |
 +------------------+--------+
 
 +Upcoming Phases+---------------------------------+---------------------------------+

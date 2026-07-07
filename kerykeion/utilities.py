@@ -880,6 +880,11 @@ def extract_year_from_iso(iso_datetime_string: str) -> int:
         rest = iso_datetime_string[1:]
         year_str, _ = rest.split("-", 1)
         return -int(year_str)
+    # ISO 8601 represents year 0 (= 1 BCE) as the unsigned "0000"; datetime
+    # cannot parse it (its minimum year is 1), so map it explicitly. The minus
+    # sign is reserved for years <= -1, handled by the branch above.
+    if iso_datetime_string.startswith("0000"):
+        return 0
     return datetime.fromisoformat(iso_datetime_string).year
 
 
@@ -917,6 +922,19 @@ def _next_proleptic_julian_day(year: int, month: int, day: int) -> tuple[int, in
     return year, month, day
 
 
+def _days_in_proleptic_julian_month(year: int, month: int) -> int:
+    """Days in ``month`` under proleptic Julian rules (leap when ``year % 4 == 0``,
+    astronomical numbering where year 0 = 1 BCE). ``month`` must be 1..12.
+
+    Matches the ``JUL_CAL`` leap rule ``ephe.julday`` applies on the BCE code
+    path, so the BCE validation can reject impossible days (Feb-30, Apr-31,
+    Feb-29 in a non-leap Julian year) that ``julday`` would otherwise silently
+    roll into the next month.
+    """
+    is_leap = (year % 4) == 0
+    return [31, 29 if is_leap else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1]
+
+
 def _split_decimal_hour_with_carry(
     year: int, month: int, day: int, decimal_hour: float
 ) -> tuple[int, int, int, int, int, int]:
@@ -950,8 +968,10 @@ def _assemble_ancient_iso(
     values are taken verbatim — no rounding or carry happens here, so callers must
     pass fields that already encode any midnight rollover.
     """
-    # ISO 8601 extended year: negative sign for years <= 0
-    year_str = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
+    # ISO 8601 extended year: the minus sign is reserved for years <= -1. Year 0
+    # (= 1 BCE) is the unsigned "0000" — sending it down the negative branch would
+    # emit the non-conformant "-0000" that standards-based parsers reject.
+    year_str = f"{year:04d}" if year >= 0 else f"-{abs(year):04d}"
 
     # UTC offset string
     if utc_offset_hours == 0.0:

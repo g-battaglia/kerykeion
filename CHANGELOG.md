@@ -2,6 +2,35 @@
 
 ## [Unreleased]
 
+### Fixed (pre-6.0.0 invariants + calendrical + doc-contract review, round 25)
+
+- **BCE dates reject an impossible day-of-month instead of silently rolling it
+  over.** The year-<1 (Julian-calendar) path validated only `1 ≤ day ≤ 31`, so
+  e.g. a `2 BCE Feb 29` (non-leap) or `100 BCE Apr 31` was silently normalized by
+  `ephe.julday` to the following month — computing a wrong Julian Day and a
+  `iso_formatted_utc_datetime` that disagreed with the stored
+  `iso_formatted_local_datetime` (off by 1–3 days). The BCE path now validates
+  the day against the proleptic-Julian month length (leap when `year % 4 == 0`),
+  matching the rejection the CE path already got from `datetime()`.
+- **Year 0 (1 BCE) is formatted as ISO-8601-conformant `0000`.** Ancient ISO
+  strings rendered astronomical year 0 as the non-standard `-0000` (the minus
+  sign is reserved for years ≤ −1); a standards-conformant external parser would
+  reject or misread it. Year 0 now formats as the unsigned `0000`, and
+  `extract_year_from_iso` parses both `0000` and the legacy `-0000` to 0.
+- **Docs**: removed the unsupported `Gonggong` from the TNO list in the LLM guide
+  (`llms.txt`) — only the seven TNOs in the `AstrologicalPoint` type are listed;
+  refreshed the README Moon-phase report example (it was stale and disagreed with
+  its own adjacent JSON block) and the `model_dump_json()` output comment (v6
+  adds ~25 fields after `retrograde`).
+
+This round added three fresh lenses. **Algebraic/property-based invariants**
+(aspect reciprocity, longitude algebra, house partition, midpoint/composite/
+relationship symmetry, return fixed-points, JD round-trips, event monotonicity)
+were verified across thousands of randomized inputs — all hold. The
+**documentation-vs-behavior** lens found no code defects (every house-system and
+perspective literal, default, deprecation, and README example matches runtime);
+only the three doc drifts above.
+
 ### Fixed (pre-6.0.0 security + performance + backend-differential review, round 24)
 
 - **`EphemerisDataFactory` enforces its size cap before building the series.**
