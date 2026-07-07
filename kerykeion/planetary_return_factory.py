@@ -217,6 +217,22 @@ class PlanetaryReturnFactory:
         if year < 1 or year > 9999:
             raise KerykeionException(f"Invalid year {year}. Year must be between 1 and 9999.")
 
+    @staticmethod
+    def _parse_iso(iso_formatted_time: str) -> datetime:
+        """Parse a user ISO timestamp, surfacing errors as KerykeionException.
+
+        Every public ``*_from_iso_formatted_time`` entry point uses this so a
+        malformed timestamp fails with the library's own exception instead of a
+        raw ValueError from ``datetime.fromisoformat``.
+        """
+        try:
+            return datetime.fromisoformat(iso_formatted_time)
+        except (ValueError, TypeError) as exc:
+            raise KerykeionException(
+                f"Invalid ISO timestamp {iso_formatted_time!r}: {exc}. "
+                "Expected an ISO 8601 datetime such as '2023-06-15T14:30:00Z'."
+            ) from exc
+
     def __init__(
         self,
         subject: AstrologicalSubjectModel,
@@ -571,7 +587,7 @@ class PlanetaryReturnFactory:
             next_return_from_date(): Date-based calculation interface
         """
 
-        date = datetime.fromisoformat(iso_formatted_time)
+        date = self._parse_iso(iso_formatted_time)
         julian_day = datetime_to_julian(date)
 
         # The natal abs_pos values are expressed in the subject's zodiac
@@ -1058,7 +1074,7 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the heliocentric return chart.
         """
-        dt = datetime.fromisoformat(iso_formatted_time)
+        dt = self._parse_iso(iso_formatted_time)
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
         return self.next_heliocentric_return(
@@ -1141,7 +1157,7 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the node crossing chart.
         """
-        dt = datetime.fromisoformat(iso_formatted_time)
+        dt = self._parse_iso(iso_formatted_time)
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
         return self.next_lunar_node_crossing(

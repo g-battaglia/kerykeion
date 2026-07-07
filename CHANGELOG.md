@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Fixed (pre-6.0.0 cross-cutting review, round 19)
+
+- **Malformed ISO timestamps raise `KerykeionException`, not a raw
+  `ValueError`.** `AstrologicalSubjectFactory.from_iso_utc_time` and the three
+  `PlanetaryReturnFactory.*_from_iso_formatted_time` entry points wrapped
+  `datetime.fromisoformat`, so an empty/garbage/out-of-range timestamp
+  (`""`, `"not-a-date"`, `"2023-06-15T25:00:00Z"`) now fails with the library's
+  own exception — matching `from_birth_data` and the `from_iso_range` timing
+  factories. (`EphemerisDataFactory` keeps its documented, tested `ValueError`
+  contract.)
+
 ### Fixed (pre-6.0.0 cross-cutting review, round 18)
 
 - **GeoNames request cache is segregated by TTL.** requests-cache stamps each

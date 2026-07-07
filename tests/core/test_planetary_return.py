@@ -610,6 +610,15 @@ class TestValidationErrors:
                 "Mercury",  # type: ignore
             )
 
+    @pytest.mark.parametrize("bad_iso", ["", "not-a-date", "2024-13-01T00:00:00Z"])
+    def test_malformed_iso_raises_kerykeion(self, factory, bad_iso):
+        """Round 19: a malformed ISO timestamp on the *_from_iso_formatted_time
+        entry points surfaces as KerykeionException, not a raw ValueError."""
+        with pytest.raises(KerykeionException):
+            factory.next_return_from_iso_formatted_time(bad_iso, "Solar")
+        with pytest.raises(KerykeionException):
+            factory.next_lunar_node_crossing_from_iso_formatted_time(bad_iso)
+
     def test_invalid_month_raises(self, factory):
         with pytest.raises(KerykeionException, match="Invalid month"):
             factory.next_return_from_date(2024, 13, 1, return_type="Solar")

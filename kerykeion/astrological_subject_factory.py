@@ -1491,8 +1491,16 @@ class AstrologicalSubjectFactory:
               the city/nation centroid; explicit lng/lat always win (same
               semantics as from_birth_data) and skip the GeoNames lookup
         """
-        # Parse the ISO time
-        dt = datetime.fromisoformat(iso_utc_time.replace("Z", "+00:00"))
+        # Parse the ISO time. Wrap the parse so a malformed timestamp surfaces
+        # as KerykeionException (the library's error contract, matching
+        # from_birth_data's field validation) rather than a raw ValueError.
+        try:
+            dt = datetime.fromisoformat(iso_utc_time.replace("Z", "+00:00"))
+        except (ValueError, TypeError) as exc:
+            raise KerykeionException(
+                f"Invalid ISO UTC timestamp {iso_utc_time!r}: {exc}. "
+                "Expected an ISO 8601 datetime such as '2023-06-15T14:30:00Z'."
+            ) from exc
         if dt.tzinfo is None:
             # Offset-less timestamps are documented as UTC. Without this,
             # astimezone() below would interpret them in the HOST machine's

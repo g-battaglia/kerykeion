@@ -509,6 +509,18 @@ class TestAstrologicalSubjectFactoryMethods:
         assert subject.lat == approx(40.7128, abs=_POS_TOL)
         assert subject.lng == approx(-74.006, abs=_POS_TOL)
 
+    @pytest.mark.parametrize("bad_iso", ["", "not-a-date", "2023-06-15T25:00:00Z"])
+    def test_from_iso_utc_time_malformed_raises_kerykeion(self, bad_iso):
+        """Round 19: a malformed ISO timestamp must surface as KerykeionException
+        (the library's error contract), not a raw ValueError from fromisoformat."""
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException):
+            AstrologicalSubjectFactory.from_iso_utc_time(
+                name="Bad", iso_utc_time=bad_iso,
+                lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
+            )
+
     def test_from_current_time(self):
         """Test creating subject for current time."""
         from datetime import datetime, timezone
