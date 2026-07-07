@@ -343,6 +343,14 @@ class SolarArcFactory:
             point.nakshatra_number = None
             point.nakshatra_pada = None
             point.nakshatra_lord = None
+            # Also null the location/diurnal-dependent enrichments: after the arc
+            # shift the natal azimuth/altitude (local-space horizon position) and
+            # gauquelin_sector (diurnal sector) describe a longitude the point no
+            # longer occupies. Same triple, same reason, as relocate() nulls when
+            # it moves a chart to a new location.
+            point.azimuth = None
+            point.altitude_above_horizon = None
+            point.gauquelin_sector = None
             if len(houses_degree_ut) == 12:
                 try:
                     point.house = get_planet_house(new_abs, houses_degree_ut)

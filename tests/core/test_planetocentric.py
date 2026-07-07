@@ -453,3 +453,34 @@ class TestGeocentricOnlyQuantitiesRound14:
         assert s.jupiter.azimuth is not None
         assert s.lunar_phase is not None
         assert s.pars_fortunae is not None
+
+
+class TestGauquelinAndDerivedPointGuardRound15:
+    """Round-15: Gauquelin sector is the last geocentric-only member (guarded);
+    auto-activated node prerequisites are also guarded in non-geocentric charts."""
+
+    def test_gauquelin_sector_skipped_in_heliocentric(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "H", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            perspective_type="Heliocentric", calculate_gauquelin=True,
+            active_points=["Moon", "Mars"])
+        assert s.mars.gauquelin_sector is None
+        assert s.gauquelin_sector_cusps is None
+
+    def test_gauquelin_sector_present_in_geocentric(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "G", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            calculate_gauquelin=True, active_points=["Moon", "Mars"])
+        assert s.mars.gauquelin_sector is not None
+
+    def test_node_prerequisite_guarded_in_heliocentric(self):
+        # South node's primary (a lunar node) must not be auto-activated as a
+        # phantom in a heliocentric chart.
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "H2", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            perspective_type="Heliocentric",
+            active_points=["Mercury", "Mean_South_Lunar_Node"])
+        assert s.mean_south_lunar_node is None

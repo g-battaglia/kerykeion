@@ -981,3 +981,22 @@ class TestProgressionEnrichmentSunIndependentCodeRabbit:
         prog = SecondaryProgressionFactory.compute(natal, target_year=2020)
         assert prog.mars.essential_dignity is not None
         assert prog.mars.nakshatra is not None
+
+
+class TestSolarArcDirectedStaleTripleRound15:
+    """Round-15: solar-arc directed points must null the location/diurnal triple
+    (azimuth/altitude/gauquelin) — they described the natal, not directed, place."""
+
+    def test_directed_nulls_location_triple(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.secondary_progressions.solar_arc_factory import SolarArcFactory
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "J", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            calculate_local_space=True, calculate_gauquelin=True)
+        d = SolarArcFactory.compute_directed_subject(natal, target_year=2025)
+        assert d.mars.azimuth is None
+        assert d.mars.altitude_above_horizon is None
+        assert d.mars.gauquelin_sector is None
+        # sign still recomputed (not nulled)
+        assert d.mars.sign is not None

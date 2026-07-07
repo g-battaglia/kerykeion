@@ -1157,8 +1157,19 @@ class AstrologicalSubjectFactory:
                     nak_data = calc_nak(point.abs_pos)
                     point_updates[pk].update(nak_data)
 
-            # Calculate Gauquelin sectors (optional) — for ALL celestial points
-            if config.calculate_gauquelin and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
+            # Calculate Gauquelin sectors (optional) — for ALL celestial points.
+            # Gauquelin sectors describe a body's GEOCENTRIC diurnal-rotation
+            # position (ephe.gauquelin_sector recomputes the geocentric place and
+            # ignores the perspective flag), so for a non-geocentric chart the
+            # sector would be a wrong-frame phantom inconsistent with the point's
+            # heliocentric/planetocentric abs_pos. Guard like lunar-phase/local-
+            # space/OOB — the last member of the geocentric-only class.
+            if (
+                config.calculate_gauquelin
+                and calc_data.get("perspective_type") in _GEO_TOPO_PERSPECTIVES
+                and calc_data.get("lng") is not None
+                and calc_data.get("lat") is not None
+            ):
                 geopos = [calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0]
                 jd = calc_data["julian_day"]
 
@@ -2421,6 +2432,16 @@ class AstrologicalSubjectFactory:
                 )
                 return
             planet_id = STANDARD_PLANETS[point]
+            # Mirror the geocentric-only guard in _calculate_single_planet: lunar
+            # nodes/apogees are geocentric-only, so auto-activating one as a
+            # derived-point (South node / Priapus) prerequisite under a
+            # non-geocentric perspective would compute a backend-dependent
+            # phantom. Skip it — the dependent derived point is then skipped too.
+            if (
+                data.get("perspective_type") not in _GEO_TOPO_PERSPECTIVES
+                and planet_id in _GEOCENTRIC_ONLY_BODY_IDS
+            ):
+                return
             try:
                 planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
                 # Get declination from equatorial coordinates (matching _calculate_single_planet)

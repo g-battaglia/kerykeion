@@ -863,6 +863,12 @@ class PlanetaryReturnFactory:
         if month < 1 or month > 12:
             raise KerykeionException(f"Invalid month {month}. Month must be between 1 and 12.")
 
+        # Validate year input — datetime() only accepts 1..9999, and forwarding
+        # an out-of-range year would leak a raw ValueError instead of the
+        # library's own exception a caller expects from this entry point.
+        if year < 1 or year > 9999:
+            raise KerykeionException(f"Invalid year {year}. Year must be between 1 and 9999.")
+
         # Validate day input
         max_day = calendar.monthrange(year, month)[1]
         if day < 1 or day > max_day:

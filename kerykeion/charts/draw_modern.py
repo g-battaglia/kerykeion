@@ -1260,6 +1260,71 @@ def _draw_house_sectors_modern(
     return out
 
 
+def _draw_gauquelin_sectors_modern(
+    seventh_house_degree_ut: float,
+    gauquelin_cusps: Optional[list[float]] = None,
+    inner_r: float = R_HOUSE_INNER,
+    outer_r: float = R_CUSP_OUTER,
+) -> str:
+    """Draw 36 transparent Gauquelin-sector wedges for interactive highlighting.
+
+    The Gauquelin variant of ``_draw_house_sectors_modern``: on a Gauquelin chart
+    the visible cusp/house rings are the 36-sector variants, so the click hit-
+    areas must match them (12 house wedges would leave the ring un-clickable /
+    mis-targeted). Each wedge is tagged ``kr:node="GauquelinSector"`` with its
+    1-based sector number.
+    """
+    out = ""
+    for i in range(36):
+        next_i = (i + 1) % 36
+        sector_num = i + 1
+
+        if gauquelin_cusps is not None:
+            start_deg = gauquelin_cusps[i]
+            end_deg = gauquelin_cusps[next_i]
+        else:
+            # Descending fallback matching _draw_gauquelin_house_ring.
+            start_deg = None
+            a_start = (360.0 - i * 10.0) % 360.0
+            a_end = (360.0 - next_i * 10.0) % 360.0
+
+        if start_deg is not None:
+            a_start = _zodiac_to_wheel_angle(start_deg, seventh_house_degree_ut)
+            a_end = _zodiac_to_wheel_angle(end_deg, seventh_house_degree_ut)
+            span = _normalize_angle(end_deg - start_deg)
+        else:
+            span = 10.0
+
+        r_start = math.radians(-a_start - 90)
+        r_end = math.radians(-a_end - 90)
+
+        ox1 = CENTER + outer_r * math.cos(r_start)
+        oy1 = CENTER + outer_r * math.sin(r_start)
+        ox2 = CENTER + outer_r * math.cos(r_end)
+        oy2 = CENTER + outer_r * math.sin(r_end)
+        ix1 = CENTER + inner_r * math.cos(r_start)
+        iy1 = CENTER + inner_r * math.sin(r_start)
+        ix2 = CENTER + inner_r * math.cos(r_end)
+        iy2 = CENTER + inner_r * math.sin(r_end)
+
+        large_arc = 1 if span > 180 else 0
+
+        d = (
+            f"M {ox1:.6f},{oy1:.6f} "
+            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2:.6f},{oy2:.6f} "
+            f"L {ix2:.6f},{iy2:.6f} "
+            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1:.6f},{iy1:.6f} Z"
+        )
+
+        out += (
+            f'<g kr:node="GauquelinSector" kr:sector="{sector_num}">'
+            f'<path d="{d}" fill="transparent" stroke="none" pointer-events="all"/>'
+            f"</g>\n"
+        )
+
+    return out
+
+
 def _draw_house_ring(
     houses: list[KerykeionPointModel],
     seventh_house_degree_ut: float,
@@ -1552,7 +1617,13 @@ def draw_modern_horoscope(
     # zodiac sign isn't intercepted by the house sector underneath. Falls
     # back to R_CUSP_OUTER when no zodiac ring is rendered.
     house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
-    out += _draw_house_sectors_modern(houses, seventh_house_degree_ut, outer_r=house_sector_outer_r)
+    if gauquelin_sectors:
+        # Match the click hit-areas to the visible 36-sector rings above.
+        out += _draw_gauquelin_sectors_modern(
+            seventh_house_degree_ut, gauquelin_cusps=gauquelin_cusps, outer_r=house_sector_outer_r
+        )
+    else:
+        out += _draw_house_sectors_modern(houses, seventh_house_degree_ut, outer_r=house_sector_outer_r)
     out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut)
 
     if show_zodiac_background_ring:

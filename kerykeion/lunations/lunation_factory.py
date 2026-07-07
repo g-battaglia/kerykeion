@@ -141,8 +141,17 @@ class LunationFinderFactory:
             end_date: ISO date or datetime, e.g. ``"2026-12-31"``.
             phases: Optional subset of ``new``/``first_quarter``/``full``/``last_quarter``.
         """
-        start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
-        end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
+        try:
+            start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
+            end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
+        except (ValueError, TypeError) as exc:
+            # Wrap the bare datetime error as the library's own exception, so a
+            # caller catching KerykeionException around this entry point is not
+            # broken by a malformed ISO start_date/end_date.
+            raise KerykeionException(
+                f"Invalid ISO date/datetime for lunation range "
+                f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
+            ) from exc
         # A date-only end_date means "through the end of that UTC day"; without
         # this it resolves to midnight and drops any lunation later that day.
         # Lowercase "t" is a valid ISO 8601 separator too — a full datetime
