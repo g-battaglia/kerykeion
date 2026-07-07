@@ -2633,3 +2633,17 @@ class TestTzWrapAndNodeParityRound13:
             online=False, suppress_geonames_warning=True)
         assert s.day_of_week in ("Monday", "Tuesday", "Wednesday", "Thursday",
                                  "Friday", "Saturday", "Sunday")
+
+
+class TestSiderealDeclinationRound16:
+    """Round-16: declination is a physical equatorial coordinate — it must be
+    zodiac-independent (equatorial fetch strips FLG_SIDEREAL)."""
+
+    def test_sidereal_declination_matches_tropical(self):
+        kw = dict(lat=51.5, lng=-0.12, tz_str="Europe/London", online=False,
+                  suppress_geonames_warning=True)
+        trop = AstrologicalSubjectFactory.from_birth_data("T", 1990, 6, 15, 12, 0, **kw)
+        sid = AstrologicalSubjectFactory.from_birth_data(
+            "S", 1990, 6, 15, 12, 0, zodiac_type="Sidereal", sidereal_mode="LAHIRI", **kw)
+        for body in ("sun", "moon", "mars", "jupiter"):
+            assert abs(getattr(trop, body).declination - getattr(sid, body).declination) < 1e-6

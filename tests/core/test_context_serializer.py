@@ -919,8 +919,10 @@ class TestMoonPhaseOverviewToContext:
         )
         context = moon_phase_overview_to_context(overview)
         assert "<zodiac " in context
-        assert 'sun_sign="Lib"' in context
-        assert 'moon_sign="Can"' in context
+        # The serializer expands the 3-letter sign code to the full sign name,
+        # consistent with every other converter (round-16 fix).
+        assert 'sun_sign="Libra"' in context
+        assert 'moon_sign="Cancer"' in context
 
     def test_overview_with_moonrise_moonset(self):
         """Test MoonPhaseOverviewModel with moonrise/moonset fields."""

@@ -133,11 +133,19 @@ class AstroCartographyFactory:
         jd = subject.julian_day
 
         # Keep only planets that are both supported and present on the
-        # subject (mirrors the subject's active points selection).
-        selected = [
-            pname for pname in planets
-            if pname in _ACG_PLANET_IDS and getattr(subject, pname.lower(), None) is not None
-        ]
+        # subject (mirrors the subject's active points selection). De-duplicate
+        # while preserving order: a caller passing the same planet twice must
+        # not get duplicate MC/IC lines and doubled ASC/DSC point lists.
+        selected: List[str] = []
+        _seen: set = set()
+        for pname in planets:
+            if (
+                pname in _ACG_PLANET_IDS
+                and pname not in _seen
+                and getattr(subject, pname.lower(), None) is not None
+            ):
+                selected.append(pname)
+                _seen.add(pname)
         if not selected:
             return []
 

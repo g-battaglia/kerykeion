@@ -1291,7 +1291,10 @@ def _draw_gauquelin_sectors_modern(
         if start_deg is not None:
             a_start = _zodiac_to_wheel_angle(start_deg, seventh_house_degree_ut)
             a_end = _zodiac_to_wheel_angle(end_deg, seventh_house_degree_ut)
-            span = _normalize_angle(end_deg - start_deg)
+            # Gauquelin cusps DECREASE (diurnal direction), so the sector span is
+            # start-minus-end (~10 deg); end-minus-start would wrap to ~350 and
+            # wrongly set large_arc=1, making every hit-area cover the whole ring.
+            span = _normalize_angle(start_deg - end_deg)
         else:
             span = 10.0
 

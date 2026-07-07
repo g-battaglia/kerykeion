@@ -791,3 +791,28 @@ class TestDavisonEnrichmentRound13:
         assert d.sun.essential_dignity is not None
         assert d.gauquelin_sector_cusps is not None
         assert [s.name for s in d.fixed_stars] == ["Regulus"]
+
+
+class TestMidpointCompositeLunarPhaseGuardRound16:
+    """Round-16: midpoint composite lunar_phase must be guarded to geocentric
+    perspectives (sibling of the single-subject geocentric-only lunar-phase)."""
+
+    def test_planetocentric_midpoint_lunar_phase_none(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        kw = dict(city="X", nation="GB", lng=0.0, lat=51.5, tz_str="Etc/GMT",
+                  online=False, suppress_geonames_warning=True)
+        a = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 12, 0, perspective_type="Marscentric", **kw)
+        b = AstrologicalSubjectFactory.from_birth_data("B", 1992, 6, 15, 14, 30, perspective_type="Marscentric", **kw)
+        m = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
+        assert m.lunar_phase is None
+
+    def test_geocentric_midpoint_lunar_phase_present(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        kw = dict(city="X", nation="GB", lng=0.0, lat=51.5, tz_str="Etc/GMT",
+                  online=False, suppress_geonames_warning=True)
+        a = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 12, 0, **kw)
+        b = AstrologicalSubjectFactory.from_birth_data("B", 1992, 6, 15, 14, 30, **kw)
+        m = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
+        assert m.lunar_phase is not None

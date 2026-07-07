@@ -43,7 +43,7 @@ import logging
 from typing import Union
 
 # Fix the circular import by changing this import
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, _GEO_TOPO_PERSPECTIVES
 from kerykeion._predictive_utils import jd_to_ymd_hms
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
@@ -436,6 +436,13 @@ class CompositeSubjectFactory:
             This method should be called after _calculate_midpoint_composite_points_and_houses()
             to ensure Sun and Moon composite positions are available.
         """
+        # Lunar phase is a GEOCENTRIC quantity (the Sun-Earth-Moon angle); for a
+        # non-geocentric composite the Moon-Sun elongation is a phantom. Guard to
+        # geocentric/topocentric perspectives, matching the single-subject
+        # factory (the Davison path already inherits the guard via from_birth_data).
+        if getattr(self, "perspective_type", None) not in _GEO_TOPO_PERSPECTIVES:
+            self.lunar_phase = None
+            return
         moon = getattr(self, "moon", None)
         sun = getattr(self, "sun", None)
         if moon is None or sun is None:

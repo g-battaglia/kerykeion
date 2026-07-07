@@ -777,7 +777,7 @@ def moon_phase_overview_to_context(overview: MoonPhaseOverviewModel) -> str:
 
     # Zodiac
     if moon.zodiac is not None:
-        lines.append(f"    {_sc('zodiac', sun_sign=moon.zodiac.sun_sign, moon_sign=moon.zodiac.moon_sign)}")
+        lines.append(f"    {_sc('zodiac', sun_sign=SIGN_FULL_NAMES.get(moon.zodiac.sun_sign, moon.zodiac.sun_sign), moon_sign=SIGN_FULL_NAMES.get(moon.zodiac.moon_sign, moon.zodiac.moon_sign))}")
 
     # Moonrise / moonset
     if moon.moonrise is not None:
@@ -1022,7 +1022,7 @@ def solar_arc_to_context(model: SolarArcSubjectModel) -> str:
     if model.directed_points:
         lines.append(f"  {_o('directed_points', count=str(len(model.directed_points)))}")
         for dp in model.directed_points:
-            lines.append(f"    {_sc('point', name=dp.name, natal_sign=dp.natal_sign, directed_sign=dp.directed_sign, natal_pos=f'{dp.natal_abs_pos:.2f}', directed_pos=f'{dp.directed_abs_pos:.2f}', position=f'{dp.directed_position:.2f}', sign_changed=str(dp.sign_changed).lower())}")
+            lines.append(f"    {_sc('point', name=dp.name, natal_sign=SIGN_FULL_NAMES.get(dp.natal_sign, dp.natal_sign), directed_sign=SIGN_FULL_NAMES.get(dp.directed_sign, dp.directed_sign), natal_pos=f'{dp.natal_abs_pos:.2f}', directed_pos=f'{dp.directed_abs_pos:.2f}', position=f'{dp.directed_position:.2f}', sign_changed=str(dp.sign_changed).lower())}")
         lines.append(f"  {_c('directed_points')}")
 
     if model.directed_to_natal_aspects:

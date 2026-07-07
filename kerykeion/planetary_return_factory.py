@@ -206,6 +206,17 @@ class PlanetaryReturnFactory:
         different dates depending on leap years and location).
     """
 
+    @staticmethod
+    def _require_valid_year(year: int) -> None:
+        """Reject a year outside datetime's 1..9999 range as KerykeionException.
+
+        Every public entry point that forwards ``year`` to ``datetime(year, ...)``
+        must call this first, so an out-of-range year fails with the library's
+        own exception instead of a raw ValueError from datetime.
+        """
+        if year < 1 or year > 9999:
+            raise KerykeionException(f"Invalid year {year}. Year must be between 1 and 9999.")
+
     def __init__(
         self,
         subject: AstrologicalSubjectModel,
@@ -866,8 +877,7 @@ class PlanetaryReturnFactory:
         # Validate year input — datetime() only accepts 1..9999, and forwarding
         # an out-of-range year would leak a raw ValueError instead of the
         # library's own exception a caller expects from this entry point.
-        if year < 1 or year > 9999:
-            raise KerykeionException(f"Invalid year {year}. Year must be between 1 and 9999.")
+        self._require_valid_year(year)
 
         # Validate day input
         max_day = calendar.monthrange(year, month)[1]
@@ -1063,6 +1073,7 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the heliocentric return chart.
         """
+        self._require_valid_year(year)
         start = datetime(year, 1, 1, 0, 0, tzinfo=timezone.utc)
         return self.next_heliocentric_return(
             planet_name=planet_name,
@@ -1096,6 +1107,7 @@ class PlanetaryReturnFactory:
         max_day = calendar.monthrange(year, month)[1]
         if day < 1 or day > max_day:
             raise KerykeionException(f"Invalid day {day} for {year}-{month:02d}. Day must be between 1 and {max_day}.")
+        self._require_valid_year(year)
         start = datetime(year, month, day, 0, 0, tzinfo=timezone.utc)
         return self.next_heliocentric_return(
             planet_name=planet_name,
@@ -1141,6 +1153,7 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the node crossing chart.
         """
+        self._require_valid_year(year)
         start = datetime(year, 1, 1, 0, 0, tzinfo=timezone.utc)
         return self.next_lunar_node_crossing(start_jd=datetime_to_julian(start))
 
@@ -1169,6 +1182,7 @@ class PlanetaryReturnFactory:
         max_day = calendar.monthrange(year, month)[1]
         if day < 1 or day > max_day:
             raise KerykeionException(f"Invalid day {day} for {year}-{month:02d}. Day must be between 1 and {max_day}.")
+        self._require_valid_year(year)
         start = datetime(year, month, day, 0, 0, tzinfo=timezone.utc)
         return self.next_lunar_node_crossing(
             start_jd=datetime_to_julian(start),

@@ -2230,7 +2230,7 @@ class AstrologicalSubjectFactory:
                     # both backends: convert the UT day with delta-T first.
                     julian_day_tt = julian_day + ephe.deltat(julian_day)
                     planet_calc = ephe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag)[0]
-                    planet_eq = ephe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag | ephe.FLG_EQUATORIAL)[0]
+                    planet_eq = ephe.calc_pctr(julian_day_tt, planet_id, center_body_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
                 except Exception as e:
                     # Fallback to geocentric if planetary ephemeris not available.
                     # Never silently: the caller asked for a planetocentric
@@ -2244,10 +2244,10 @@ class AstrologicalSubjectFactory:
                         e,
                     )
                     planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
-                    planet_eq = ephe.calc_ut(julian_day, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
+                    planet_eq = ephe.calc_ut(julian_day, planet_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
             else:
                 planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
-                planet_eq = ephe.calc_ut(julian_day, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
+                planet_eq = ephe.calc_ut(julian_day, planet_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
 
             # Get declination from equatorial coordinates
             declination = planet_eq[1]  # Declination from equatorial coordinates
@@ -2445,7 +2445,7 @@ class AstrologicalSubjectFactory:
             try:
                 planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
                 # Get declination from equatorial coordinates (matching _calculate_single_planet)
-                planet_eq = ephe.calc_ut(julian_day, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
+                planet_eq = ephe.calc_ut(julian_day, planet_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
             except Exception as e:
                 # Same typed-error policy as _calculate_single_planet: raw
                 # backend exceptions (e.g. out-of-ephemeris-range dates) must
@@ -2804,7 +2804,7 @@ class AstrologicalSubjectFactory:
                 # same way planets and derived antipodes already do.
                 star_ecl_lat = pos_ecl[1] if len(pos_ecl) > 1 else None
                 star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
-                pos_eq = ephe.fixstar_ut(swe_name, julian_day, iflag | ephe.FLG_EQUATORIAL)[0]
+                pos_eq = ephe.fixstar_ut(swe_name, julian_day, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
                 star_dec = pos_eq[1] if len(pos_eq) > 1 else None
                 try:
                     star_mag = ephe.fixstar2_mag(swe_name)[0]

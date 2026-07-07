@@ -1000,3 +1000,23 @@ class TestSolarArcDirectedStaleTripleRound15:
         assert d.mars.gauquelin_sector is None
         # sign still recomputed (not nulled)
         assert d.mars.sign is not None
+
+
+class TestReturnSiblingYearValidationRound16:
+    """Round-16: every planetary-return entry point that forwards year to
+    datetime() validates the 1..9999 range (KerykeionException, not raw ValueError)."""
+
+    def test_sibling_entry_points_wrap_year(self):
+        import pytest
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+        from kerykeion.schemas import KerykeionException
+        subj = AstrologicalSubjectFactory.from_birth_data(
+            "S", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True)
+        rf = PlanetaryReturnFactory(subj, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+                                    city="Rome", nation="IT", online=False)
+        with pytest.raises(KerykeionException):
+            rf.next_heliocentric_return_from_year("Mars", 10000)
+        with pytest.raises(KerykeionException):
+            rf.next_lunar_node_crossing_from_date(0, 1, 1)
