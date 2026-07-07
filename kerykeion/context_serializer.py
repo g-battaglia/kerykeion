@@ -35,7 +35,7 @@ from kerykeion.schemas.kr_models import (
 )
 from kerykeion.secondary_progressions import SolarArcSubjectModel
 from kerykeion.midpoints import MidpointModel
-from kerykeion.utilities import format_timedelta_hhmm
+from kerykeion.utilities import format_timedelta_hhmm, strip_illegal_control_chars as _strip_illegal
 
 
 # Mapping from abbreviated sign names to full names
@@ -60,20 +60,11 @@ SIGN_FULL_NAMES = {
 # ============================================================================
 
 
-# Control characters that are illegal in XML 1.0 even when escaped (everything
-# below 0x20 except tab, LF, CR). quoteattr/escape pass these through verbatim,
-# producing a document a conforming parser then rejects, so strip them first.
-_XML_ILLEGAL_CONTROL_CHARS = "".join(
-    chr(c) for c in range(0x20) if c not in (0x09, 0x0A, 0x0D)
-) + "\x7f"
-_XML_ILLEGAL_TRANSLATION = {ord(c): None for c in _XML_ILLEGAL_CONTROL_CHARS}
-
-
-def _strip_illegal(value) -> str:
-    """Drop XML-1.0-illegal control characters from a stringified value."""
-    return str(value).translate(_XML_ILLEGAL_TRANSLATION)
-
-
+# XML-1.0-illegal control-character stripping is shared with the ASCII report
+# generator; the canonical implementation lives in kerykeion.utilities
+# (imported above as ``_strip_illegal``). quoteattr/escape pass control chars
+# through verbatim, producing a document a conforming parser then rejects, so
+# strip them first.
 def _xe(value) -> str:
     """Escape a value for use as XML text content."""
     return escape(_strip_illegal(value))

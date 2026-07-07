@@ -240,35 +240,41 @@ class EphemerisDataFactory:
             local_start = _to_local_naive(self.start_datetime)
             local_end = _to_local_naive(self.end_datetime)
             n_samples = (local_end - local_start).days // self.step + 1
+            # Enforce the cap on the projected count BEFORE materializing the
+            # series: the list comprehension is the expensive step this guard
+            # exists to prevent, so checking len() afterwards still pays the
+            # full memory/CPU cost it is meant to avoid.
+            if max_days and (n_samples > max_days):
+                raise ValueError(
+                    f"Too many days: {n_samples} > {self.max_days}. To prevent this error, set max_days to a higher value or reduce the date range."
+                )
             self.dates_list = [
                 _localize_to_utc(local_start + timedelta(days=i * self.step))
                 for i in range(n_samples)
             ]
-            if max_days and (len(self.dates_list) > max_days):
-                raise ValueError(
-                    f"Too many days: {len(self.dates_list)} > {self.max_days}. To prevent this error, set max_days to a higher value or reduce the date range."
-                )
 
         elif self.step_type == "hours":
             hours_diff = (_end_utc - _start_utc).total_seconds() / 3600
-            self.dates_list = [
-                _start_utc + timedelta(hours=i * self.step) for i in range(int(hours_diff) // self.step + 1)
-            ]
-            if max_hours and (len(self.dates_list) > max_hours):
+            n_samples = int(hours_diff) // self.step + 1
+            if max_hours and (n_samples > max_hours):
                 raise ValueError(
-                    f"Too many hours: {len(self.dates_list)} > {self.max_hours}. To prevent this error, set max_hours to a higher value or reduce the date range."
+                    f"Too many hours: {n_samples} > {self.max_hours}. To prevent this error, set max_hours to a higher value or reduce the date range."
                 )
+            self.dates_list = [
+                _start_utc + timedelta(hours=i * self.step) for i in range(n_samples)
+            ]
 
         elif self.step_type == "minutes":
             minutes_diff = (_end_utc - _start_utc).total_seconds() / 60
+            n_samples = int(minutes_diff) // self.step + 1
+            if max_minutes and (n_samples > max_minutes):
+                raise ValueError(
+                    f"Too many minutes: {n_samples} > {self.max_minutes}. To prevent this error, set max_minutes to a higher value or reduce the date range."
+                )
             self.dates_list = [
                 _start_utc + timedelta(minutes=i * self.step)
-                for i in range(int(minutes_diff) // self.step + 1)
+                for i in range(n_samples)
             ]
-            if max_minutes and (len(self.dates_list) > max_minutes):
-                raise ValueError(
-                    f"Too many minutes: {len(self.dates_list)} > {self.max_minutes}. To prevent this error, set max_minutes to a higher value or reduce the date range."
-                )
 
         else:
             raise ValueError(f"Invalid step type: {self.step_type}")

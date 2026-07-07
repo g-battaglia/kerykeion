@@ -2348,6 +2348,57 @@ class TestReportMissingDataScenarios:
         assert "Subject Report" in result
 
 
+class TestUntrustedFieldSanitization:
+    """Untrusted subject free-text (name/city/nation) is stripped of terminal-
+    control chars before it reaches stdout, so a birth record cannot rewrite the
+    window title, clear the screen, or drive an OSC-52 clipboard write."""
+
+    def test_control_char_name_city_nation_sanitized(self) -> None:
+        subject = _make_offline_subject(
+            "\x1b]0;pwn\x07\x1b[2Jinjected",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            city="\x1b]52;c;evil\x07Rome",
+            nation="I\x00T",
+        )
+        report = ReportGenerator(subject, include_aspects=False).generate_report()
+
+        # No raw ESC / BEL / NUL survive anywhere in the rendered report.
+        assert "\x1b" not in report
+        assert "\x07" not in report
+        assert "\x00" not in report
+        # The printable remainder is preserved (only control chars are dropped).
+        assert "injected" in report
+        assert "Rome" in report
+
+    def test_normal_name_renders_unchanged(self) -> None:
+        subject = _make_offline_subject(
+            "Alice",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+        )
+        report = ReportGenerator(subject, include_aspects=False).generate_report()
+        # Clean text is untouched by the sanitizer (translate is a no-op on it).
+        assert "Alice — Subject Report" in report
+        assert "Alice" in report
+        assert "Rome" in report
+        assert "IT" in report
+
+
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     import logging

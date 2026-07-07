@@ -109,4 +109,50 @@ tests for expected soft-failures first.
 
 ---
 
+## 3. 🔴 Surface degraded/substituted points on the model (swisseph-without-data)
+
+**Why (limitation being removed).** With the `swisseph` backend installed but its
+`.se1` data files not yet fetched (`python -m kerykeion.swisseph_setup`), swisseph
+runs on its Moshier analytical fallback. In that state several points silently
+degrade and a user diffing against the `libephemeris` backend gets a materially
+different chart with only scattered log lines to explain it:
+- **Planetocentric perspectives** (e.g. `Marscentric`): a point whose `calc_pctr`
+  needs a missing planetary kernel (notably the **Sun**, which needs `sepl_18.se1`)
+  falls back to its **geocentric** position — returned under the planetocentric
+  label, ~62° off, with only a `logging.warning`. The fallback is deliberate and
+  logged (see the comment at `astrological_subject_factory.py` ~2353), but the
+  point is not flagged as degraded on the returned model.
+- **Chiron / asteroids / TNOs** need `seas_18.se1`; **fixed stars** need
+  `sefstars.txt`; **barycentric** perspectives need `sepl_*.se1`. These are
+  dropped (set to None / removed from `active_points`) with a log line.
+
+The `libephemeris` default backend and a fully-provisioned `swisseph` install are
+both correct — this is only the incomplete-swisseph state. The test suite
+`conftest.py` fail-fasts there, so it is invisible to CI but reachable by a real
+user immediately after `pip install kerykeion[swiss]`.
+
+**Scope.**
+- Add a machine-readable degradation signal on the subject model (e.g. a
+  `degraded_points: list[str]` / per-point `is_degraded` flag) so a consumer can
+  detect a substituted/dropped point without scraping logs.
+- For the planetocentric Sun (and any pctr point) that cannot be computed,
+  reconsider substituting a *mislabeled geocentric* value vs. dropping it (as
+  lunar nodes are dropped for non-geocentric perspectives) — the two degradation
+  philosophies in `_calculate_planet` are currently inconsistent.
+- Consider a one-time prominent runtime warning when swisseph is active without
+  data files (parallel to the import-time Moshier warning), pointing at
+  `swisseph_setup`.
+
+**Risk.** Low. Additive model field + a consistency decision on the pctr
+fallback. No change to the correct (libephemeris / provisioned-swisseph) paths.
+
+**Acceptance criteria.**
+- A degraded/substituted point is detectable from the returned model, not only
+  from logs.
+- The planetocentric-fallback philosophy is consistent with the lunar-node
+  drop-don't-fake rule (documented either way).
+- Quality gate green; libephemeris output unchanged.
+
+---
+
 <!-- Add further mandatory evolutions below, same structure. -->

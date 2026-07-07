@@ -93,6 +93,22 @@ class FixedStarCatalog:
         return None
 
     @staticmethod
+    @lru_cache(maxsize=1)
+    def _lookup_sets() -> tuple[frozenset[str], frozenset[str]]:
+        """Cached lowercased (slug, name) membership sets for O(1) lookups."""
+        catalog = _load_catalog()
+        return (
+            frozenset(e.slug.lower() for e in catalog),
+            frozenset(e.name.lower() for e in catalog),
+        )
+
+    @staticmethod
+    def is_known_name(name: str) -> bool:
+        """True iff ``find(name)`` would resolve — O(1), used for hot-path detection."""
+        slugs_lower, names_lower = FixedStarCatalog._lookup_sets()
+        return _to_slug(name).lower() in slugs_lower or str(name).lower() in names_lower
+
+    @staticmethod
     def known_slugs() -> frozenset[str]:
         """Return all slug identifiers available in the catalog."""
         return frozenset(entry.slug for entry in _load_catalog())

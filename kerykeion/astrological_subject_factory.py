@@ -892,7 +892,7 @@ class AstrologicalSubjectFactory:
             try:
                 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 
-                _star_names = [p for p in active_points_list if FixedStarCatalog.find(p) is not None]
+                _star_names = [p for p in active_points_list if FixedStarCatalog.is_known_name(p)]
             except Exception:
                 # Star catalog unavailable (e.g. swisseph-only install): fall
                 # back to the v5-era star list so type-valid star names are

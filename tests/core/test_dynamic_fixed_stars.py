@@ -397,3 +397,73 @@ class TestFixedStarOnlyActivePointsRaises:
         )
         assert s.active_points == ["Sun"]
         assert [st.name for st in s.fixed_stars] == ["Regulus"]
+
+
+class TestFixedStarCatalogIsKnownName:
+    """``FixedStarCatalog.is_known_name`` is the O(1) hot-path replacement for
+    ``find(...) is not None`` and MUST stay exactly equivalent to it."""
+
+    def test_is_known_name_matches_find_over_whole_catalog(self):
+        from kerykeion.fixed_stars.catalog import FixedStarCatalog
+
+        catalog = FixedStarCatalog.list_all()
+        assert len(catalog) > 1000  # the full 1447-entry catalog is loaded
+        for entry in catalog:
+            for candidate in (
+                entry.name,
+                entry.slug,
+                entry.name.upper(),
+                entry.name.lower(),
+                entry.slug.replace("_", "-"),
+                entry.slug.replace("_", " "),
+            ):
+                assert FixedStarCatalog.is_known_name(candidate) == (
+                    FixedStarCatalog.find(candidate) is not None
+                ), candidate
+
+    def test_is_known_name_matches_find_for_active_point_names(self):
+        from typing import get_args
+        from kerykeion.fixed_stars.catalog import FixedStarCatalog
+        from kerykeion.schemas.kr_literals import AstrologicalPoint
+
+        for name in get_args(AstrologicalPoint):
+            assert FixedStarCatalog.is_known_name(name) == (
+                FixedStarCatalog.find(name) is not None
+            ), name
+
+    def test_is_known_name_rejects_typos_and_junk(self):
+        from kerykeion.fixed_stars.catalog import FixedStarCatalog
+
+        for bad in ("Reguluss", "NotAStar", "", "xyz123", "Sun", "Moon"):
+            assert FixedStarCatalog.is_known_name(bad) is False, bad
+            assert FixedStarCatalog.find(bad) is None, bad
+
+    def test_is_known_name_accepts_known_star_and_slug(self):
+        from kerykeion.fixed_stars.catalog import FixedStarCatalog
+
+        assert FixedStarCatalog.is_known_name("Regulus") is True
+        assert FixedStarCatalog.is_known_name("regulus") is True
+        assert FixedStarCatalog.is_known_name("Spica") is True
+
+    def test_explicit_active_points_still_redirects_star_names(self, caplog):
+        """A v5-style star name in ``active_points`` (['Sun','Moon','Regulus'])
+        is still detected via ``is_known_name`` and redirected to
+        ``active_fixed_stars`` with a warning — the behavior the old linear
+        ``find`` scan fed."""
+        import logging
+        from kerykeion import AstrologicalSubjectFactory
+
+        with caplog.at_level(logging.WARNING):
+            s = AstrologicalSubjectFactory.from_birth_data(
+                "Redirect", 1990, 6, 15, 12, 0,
+                lng=12.5, lat=41.9, tz_str="Europe/Rome",
+                online=False, suppress_geonames_warning=True,
+                active_points=["Sun", "Moon", "Regulus"],
+            )
+
+        assert s.active_points == ["Sun", "Moon"]
+        assert [st.name for st in s.fixed_stars] == ["Regulus"]
+        assert any(
+            "Regulus" in r.getMessage() and "active_fixed_stars" in r.getMessage()
+            for r in caplog.records
+        ), caplog.text

@@ -51,6 +51,22 @@ _LUNAR_PHASE_EMOJIS: tuple[LunarPhaseEmoji, ...] = get_args(LunarPhaseEmoji)
 _LUNAR_PHASE_NAMES: tuple[LunarPhaseName, ...] = get_args(LunarPhaseName)
 
 
+# Control characters illegal in XML 1.0 even when escaped (everything below
+# 0x20 except tab/LF/CR, plus DEL/0x7F). Shared by the XML context serializer
+# and the ASCII report generator so untrusted free-text fields (name/city/
+# nation) cannot smuggle ESC/BEL/OSC terminal-control sequences or produce a
+# document a conforming XML parser rejects.
+_XML_ILLEGAL_CONTROL_CHARS = "".join(
+    chr(c) for c in range(0x20) if c not in (0x09, 0x0A, 0x0D)
+) + "\x7f"
+_XML_ILLEGAL_TRANSLATION = {ord(c): None for c in _XML_ILLEGAL_CONTROL_CHARS}
+
+
+def strip_illegal_control_chars(value) -> str:
+    """Drop XML-1.0-illegal / terminal-control characters from a stringified value."""
+    return str(value).translate(_XML_ILLEGAL_TRANSLATION)
+
+
 # =============================================================================
 # CONSTANTS AND MAPPINGS
 # =============================================================================

@@ -403,6 +403,113 @@ class TestEdgeCases:
                 max_minutes=100,
             )
 
+    def test_over_cap_raises_before_materializing_series(self, monkeypatch):
+        """The size cap is enforced on the PROJECTED count, before the date
+        list is built — the allocation is the cost the cap exists to prevent.
+
+        Patch the module's ``timedelta`` so any attempt to build the series
+        (the only place it is constructed) raises a sentinel; an over-cap
+        request must still raise the plain ``ValueError`` cap message, proving
+        the comprehension is never reached.
+        """
+        from kerykeion import ephemeris_data_factory as edf
+
+        def _boom(*_args, **_kwargs):
+            raise AssertionError("series was materialized before the cap check")
+
+        monkeypatch.setattr(edf, "timedelta", _boom)
+
+        # minutes (2.2x over cap) — the original DoS vector
+        with pytest.raises(ValueError, match="Too many minutes"):
+            EphemerisDataFactory(
+                start_datetime=datetime(2000, 1, 1),
+                end_datetime=datetime(2002, 4, 1),
+                step_type="minutes",
+                step=1,
+                lat=DEFAULT_LAT,
+                lng=DEFAULT_LNG,
+                tz_str=DEFAULT_TZ,
+                max_minutes=500000,
+            )
+
+        # days over cap
+        with pytest.raises(ValueError, match="Too many days"):
+            EphemerisDataFactory(
+                start_datetime=datetime(2024, 1, 1),
+                end_datetime=datetime(2026, 1, 1),
+                step_type="days",
+                step=1,
+                lat=DEFAULT_LAT,
+                lng=DEFAULT_LNG,
+                tz_str=DEFAULT_TZ,
+                max_days=100,
+            )
+
+        # hours over cap
+        with pytest.raises(ValueError, match="Too many hours"):
+            EphemerisDataFactory(
+                start_datetime=datetime(2024, 1, 1, 0, 0),
+                end_datetime=datetime(2024, 1, 10, 0, 0),
+                step_type="hours",
+                step=1,
+                lat=DEFAULT_LAT,
+                lng=DEFAULT_LNG,
+                tz_str=DEFAULT_TZ,
+                max_hours=50,
+            )
+
+    def test_over_cap_minutes_is_fast_and_low_memory(self):
+        """A wildly over-cap minutes range fails cheaply (no 66 MB / 13 s
+        materialization before the ValueError)."""
+        import time
+        import tracemalloc
+
+        tracemalloc.start()
+        start = time.perf_counter()
+        with pytest.raises(ValueError, match="Too many minutes"):
+            EphemerisDataFactory(
+                start_datetime=datetime(2000, 1, 1),
+                end_datetime=datetime(2002, 4, 1),
+                step_type="minutes",
+                step=1,
+                lat=DEFAULT_LAT,
+                lng=DEFAULT_LNG,
+                tz_str=DEFAULT_TZ,
+                max_minutes=500000,
+            )
+        elapsed = time.perf_counter() - start
+        _, peak = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+
+        assert elapsed < 1.0, f"over-cap path too slow: {elapsed:.3f}s"
+        assert peak < 5 * 1024 * 1024, f"over-cap path allocated {peak} bytes"
+
+    def test_in_cap_series_unchanged(self):
+        """Moving the cap check earlier does not alter an in-cap series."""
+        factory = EphemerisDataFactory(
+            start_datetime=datetime(2024, 1, 1, 0, 0),
+            end_datetime=datetime(2024, 1, 1, 2, 0),
+            step_type="minutes",
+            step=30,
+            lat=DEFAULT_LAT,
+            lng=DEFAULT_LNG,
+            tz_str=DEFAULT_TZ,
+            max_minutes=1000,
+        )
+        assert len(factory.dates_list) == 5  # 0, 30, 60, 90, 120 min
+
+        factory_h = EphemerisDataFactory(
+            start_datetime=datetime(2024, 1, 1, 0, 0),
+            end_datetime=datetime(2024, 1, 1, 10, 0),
+            step_type="hours",
+            step=2,
+            lat=DEFAULT_LAT,
+            lng=DEFAULT_LNG,
+            tz_str=DEFAULT_TZ,
+            max_hours=1000,
+        )
+        assert len(factory_h.dates_list) == 6  # 0, 2, 4, 6, 8, 10 h
+
     def test_end_before_start_raises(self):
         """End datetime before start raises ValueError."""
         with pytest.raises(ValueError, match="No dates found"):

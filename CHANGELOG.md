@@ -2,6 +2,42 @@
 
 ## [Unreleased]
 
+### Fixed (pre-6.0.0 security + performance + backend-differential review, round 24)
+
+- **`EphemerisDataFactory` enforces its size cap before building the series.**
+  Each step-type branch built the full `dates_list` and only then checked it
+  against `max_days`/`max_hours`/`max_minutes`, so an over-cap range paid the
+  full allocation (~66 MB / ~13 s at 2.2× over the minute cap; unbounded for a
+  wider range — a single-call resource exhaustion) before raising. The projected
+  count is now checked in O(1) and the `ValueError` is raised before any list is
+  materialized (over-cap now rejected in well under a second with negligible
+  memory; in-cap output unchanged).
+- **Passing `active_points` no longer triggers a 1447-entry catalog scan.**
+  Detecting v5-style fixed-star names in an explicit `active_points` list ran a
+  linear `FixedStarCatalog.find()` per point — so a subject built with
+  `active_points` (a documented performance optimization) took ~2.5× as long as
+  one without. Replaced with an O(1) cached-set membership check
+  (`FixedStarCatalog.is_known_name`), byte-for-byte equivalent to the old
+  detection; the optimization now actually speeds builds up.
+- **Reports sanitize untrusted subject strings.** A birth `name`/`city`/`nation`
+  containing control or ANSI-escape characters flowed verbatim into the
+  plain-text report (terminal title/screen manipulation when an operator views a
+  report of user-submitted data). The report now strips XML-illegal control
+  characters from those fields, matching the existing `context_serializer`
+  behavior (the shared sanitizer was factored into `utilities`). Normal text is
+  unchanged.
+
+Security lens: path traversal (`save`/SVG output), GeoNames-response poisoning,
+SVG/LLM-context injection, ReDoS, and deserialization were all re-probed and
+hold. Performance lens: ephemeris generation, aspect grids, and date-range scans
+are dominated by inherent astronomy (single hoisted session, no per-step churn).
+Backend-differential lens: for the supported configuration `libephemeris` and
+`swisseph` agree within documented tolerances across core positions, the full
+house matrix (including the polar fallback), Gauquelin sectors, sidereal
+ayanamsas, and every event factory except heliacal (a visibility-model
+difference now documented under Known limitations); the remaining divergences
+trace to `swisseph` running on its Moshier fallback without `.se1` data files.
+
 ### Fixed (pre-6.0.0 error-contract + R22-diff review, round 23)
 
 - **Heliacal search no longer swallows backend errors as "no event".**
@@ -149,6 +185,17 @@ tables) — all verified correct with no changes needed beyond the fix above.
   the `libephemeris` and `swisseph` backends disagree on it by up to several
   deg/day. The cusp longitudes themselves are identical across backends; only
   the intermediate-cusp `speed` field differs.
+- **Heliacal event dates are backend-dependent (visibility-model difference).**
+  `HeliacalFactory` passes identical arguments to each backend's `heliacal_ut`,
+  but the two backends use different visibility models — `libephemeris` routes
+  the computation through Skyfield, `swisseph` uses its native arcus-visionis
+  algorithm — so a heliacal rising/setting date can differ by up to ~9 days
+  between backends (the underlying planet positions feeding the search agree to
+  arcseconds; only the visibility threshold differs). The planetary positions,
+  house matrix (including the polar fallback), Gauquelin sectors, sidereal
+  ayanamsas, and every other event factory agree across backends within the
+  documented ~0.2° / few-second tolerances; heliacal is the one technique whose
+  *output date* is materially model-dependent.
 - **Secondary progressions are rebuilt through a whole-second ISO round-trip.**
   `SecondaryProgressionFactory` derives the progressed instant as a float Julian
   Day but rebuilds the chart via an ISO-8601 UTC string (`from_iso_utc_time`),

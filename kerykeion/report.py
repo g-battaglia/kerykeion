@@ -11,6 +11,7 @@ from kerykeion.utilities import (
     get_houses_list,
     format_iso_display,
     format_timedelta_hhmm,
+    strip_illegal_control_chars,
 )
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -65,6 +66,17 @@ _ANGLES = list(AXIAL_POINTS)
 def _humanize(name: str) -> str:
     """Replace underscores with spaces for display."""
     return name.replace("_", " ")
+
+
+def _san(value: object) -> str:
+    """Sanitize an untrusted subject-provided string for terminal-safe output.
+
+    Strips XML-1.0-illegal / terminal-control characters (ESC, BEL, OSC, ...)
+    so a birth ``name``/``city``/``nation`` cannot rewrite the window title,
+    clear the screen, or drive OSC-52 clipboard writes. Ordinary printable
+    content renders identically. Mirrors context_serializer's sanitization.
+    """
+    return strip_illegal_control_chars(value)
 
 
 def _sign_emoji(emoji: str) -> str:
@@ -442,44 +454,50 @@ class ReportGenerator:
 
         assert self._primary_subject is not None
 
+        # Subject name is untrusted free text: strip terminal-control chars so it
+        # cannot rewrite the window title / clear the screen when the report is
+        # printed. Done before the separator is sized so the underline width
+        # matches the visible title.
+        primary_name = _san(self._primary_subject.name)
+
         if self._model_kind == "subject":
-            base_title = f"{self._primary_subject.name} — Subject Report"
+            base_title = f"{primary_name} — Subject Report"
         elif self.chart_type == "Natal":
-            base_title = f"{self._primary_subject.name} — Natal Chart Report"
+            base_title = f"{primary_name} — Natal Chart Report"
         elif self.chart_type == "Composite":
             if isinstance(self._primary_subject, CompositeSubjectModel):
-                first = self._primary_subject.first_subject.name
-                second = self._primary_subject.second_subject.name
+                first = _san(self._primary_subject.first_subject.name)
+                second = _san(self._primary_subject.second_subject.name)
                 base_title = f"{first} & {second} — Composite Report"
             else:
-                base_title = f"{self._primary_subject.name} — Composite Report"
+                base_title = f"{primary_name} — Composite Report"
         elif self.chart_type == "SingleReturnChart":
             year = self._extract_year(self._primary_subject.iso_formatted_local_datetime)
             label = _return_type_label(self._primary_subject)
-            base_title = f"{self._primary_subject.name} — {label} {year or ''}".strip()
+            base_title = f"{primary_name} — {label} {year or ''}".strip()
         elif self.chart_type == "Transit":
             date_str = self._format_date_iso(
                 self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
             )
-            base_title = f"{self._primary_subject.name} — Transit {date_str}".strip()
+            base_title = f"{primary_name} — Transit {date_str}".strip()
         elif self.chart_type == "Synastry":
-            second_name = self._secondary_subject.name if self._secondary_subject is not None else "Unknown"
-            base_title = f"{self._primary_subject.name} & {second_name} — Synastry Report"
+            second_name = _san(self._secondary_subject.name) if self._secondary_subject is not None else "Unknown"
+            base_title = f"{primary_name} & {second_name} — Synastry Report"
         elif self.chart_type == "DualReturnChart":
             year = self._extract_year(
                 self._secondary_subject.iso_formatted_local_datetime if self._secondary_subject else None
             )
             label = _return_type_label(self._secondary_subject)
-            base_title = f"{self._primary_subject.name} — {label} Comparison {year or ''}".strip()
+            base_title = f"{primary_name} — {label} Comparison {year or ''}".strip()
         elif self.chart_type == "Progression":
             # The progressed subject's iso datetime is the INTERNAL day-for-a-year
             # ephemeris instant (~a few weeks after birth), not the target year
             # the user progressed to — showing it in the title is misleading, and
             # the target year isn't stored on the model. The progressed subject's
             # name already carries "(Progressed YYYY-MM-DD)", so title by name.
-            base_title = f"{self._primary_subject.name} — Secondary Progression".strip()
+            base_title = f"{primary_name} — Secondary Progression".strip()
         else:
-            base_title = f"{self._primary_subject.name} — Chart Report"
+            base_title = f"{primary_name} — Chart Report"
 
         separator = "=" * len(base_title)
         return f"\n{separator}\n{base_title}\n{separator}\n"
@@ -503,10 +521,12 @@ class ReportGenerator:
         return "Primary Subject", "Secondary Subject"
 
     def _subject_data_report(self, subject: SubjectLike, label: str) -> str:
-        birth_data = [["Field", "Value"], ["Name", subject.name]]
+        # name/city/nation are untrusted free text: strip terminal-control chars
+        # (ESC/BEL/OSC) before they reach stdout. Printable content is unchanged.
+        birth_data = [["Field", "Value"], ["Name", _san(subject.name)]]
 
         if isinstance(subject, CompositeSubjectModel):
-            composite_members = f"{subject.first_subject.name} & {subject.second_subject.name}"
+            composite_members = f"{_san(subject.first_subject.name)} & {_san(subject.second_subject.name)}"
             birth_data.append(["Composite Members", composite_members])
             birth_data.append(["Composite Type", subject.composite_chart_type])
 
@@ -519,11 +539,11 @@ class ReportGenerator:
 
         city = getattr(subject, "city", None)
         if city:
-            birth_data.append(["City", str(city)])
+            birth_data.append(["City", _san(city)])
 
         nation = getattr(subject, "nation", None)
         if nation:
-            birth_data.append(["Nation", str(nation)])
+            birth_data.append(["Nation", _san(nation)])
 
         lat = getattr(subject, "lat", None)
         if lat is not None:
