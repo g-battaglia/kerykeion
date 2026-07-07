@@ -51,7 +51,8 @@ import logging
 import math
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from typing import List, Optional, Literal, Tuple, cast
-from pydantic import BaseModel, Field
+from pydantic import Field
+from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
@@ -99,7 +100,7 @@ logger = logging.getLogger(__name__)
 _ON_MERIDIAN_TOLERANCE = 1e-6
 
 
-class SpeculumEntryModel(BaseModel):
+class SpeculumEntryModel(SubscriptableBaseModel):
     """Speculum (coordinate table) entry for a single celestial point."""
     name: str
     ecliptic_longitude: float = Field(description="Ecliptic longitude (0-360), in the subject's zodiac")
@@ -114,7 +115,7 @@ class SpeculumEntryModel(BaseModel):
     )
 
 
-class PrimaryDirectionModel(BaseModel):
+class PrimaryDirectionModel(SubscriptableBaseModel):
     """A single primary direction result."""
     promissor: str = Field(description="The directed planet (moving point)")
     significator: str = Field(description="The receiving point (fixed target)")

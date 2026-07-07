@@ -65,6 +65,35 @@ class TestGeonamesMocked:
         assert fetcher.city_name == "TestCity"
         assert fetcher.country_code == "TS"
 
+    def test_urls_use_https_secure_endpoint(self):
+        """GeoNames calls must go over HTTPS (secure.geonames.org), not
+        plaintext HTTP: the username credential travels as a query param."""
+        fetcher = FetchGeonames("TestCity", "TS")
+        assert fetcher.base_url == "https://secure.geonames.org/searchJSON"
+        assert fetcher.timezone_url == "https://secure.geonames.org/timezoneJSON"
+
+    def test_get_timezone_for_coordinates_returns_timezonestr(self):
+        """The public coordinate-based lookup hits the timezoneJSON endpoint
+        (reusing the cached session) and returns the timezonestr."""
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"timezoneId": "Europe/Rome", "gmtOffset": 1}
+        geonames = FetchGeonames("Rome", "IT", username="test_user")
+        with patch.object(geonames.session, "send", return_value=mock_response) as mock_send:
+            result = geonames.get_timezone_for_coordinates(41.9028, 12.4964)
+
+        assert result["timezonestr"] == "Europe/Rome"
+        sent_url = mock_send.call_args.args[0].url
+        assert sent_url.startswith("https://secure.geonames.org/timezoneJSON")
+
+    def test_get_timezone_for_coordinates_missing_timezone_id_returns_empty(self):
+        """A timezoneJSON payload without a timezoneId yields an empty dict."""
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"gmtOffset": 1}
+        geonames = FetchGeonames("Rome", "IT", username="test_user")
+        with patch.object(geonames.session, "send", return_value=mock_response):
+            result = geonames.get_timezone_for_coordinates(41.9028, 12.4964)
+        assert result == {}
+
     def test_exception_handling_with_mocks(self):
         """Mocked session raising RequestException returns empty dict."""
         with patch("kerykeion.fetch_geonames.CachedSession") as mock_session:
@@ -92,15 +121,18 @@ class TestGeonamesMocked:
             result = fetcher.get_serialized_data()
             assert result == {}
 
-    def test_custom_cache_name(self, monkeypatch):
-        """Custom cache_name is forwarded to CachedSession."""
+    def test_custom_cache_name(self, monkeypatch, tmp_path):
+        """Custom cache_name is forwarded to CachedSession (its parent
+        directory is created on demand)."""
         session_mock = Mock()
         cached_session_mock = Mock(return_value=session_mock)
         monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
 
-        FetchGeonames("TestCity", "TS", cache_name="custom/cache/path")
+        custom_cache_name = tmp_path / "custom" / "cache" / "path"
+        FetchGeonames("TestCity", "TS", cache_name=custom_cache_name)
 
-        assert cached_session_mock.call_args.kwargs["cache_name"] == "custom/cache/path"
+        assert cached_session_mock.call_args.kwargs["cache_name"] == str(custom_cache_name)
+        assert custom_cache_name.parent.is_dir()
 
     def test_default_cache_name(self, monkeypatch, tmp_path):
         """Default cache_name uses FetchGeonames.default_cache_name."""
@@ -111,6 +143,15 @@ class TestGeonamesMocked:
         monkeypatch.setattr(FetchGeonames, "default_cache_name", tmp_path / "geo_cache")
         FetchGeonames("TestCity", "TS")
         assert cached_session_mock.call_args.kwargs["cache_name"] == str(tmp_path / "geo_cache")
+
+    def test_default_cache_name_is_per_user(self):
+        """The default cache lives in the per-user ~/.kerykeion/cache/ directory
+        (same convention as DEFAULT_SWEPH_DOWNLOAD_DIR), not relative to the CWD."""
+        from pathlib import Path
+        from kerykeion.fetch_geonames import DEFAULT_GEONAMES_CACHE_NAME
+
+        assert DEFAULT_GEONAMES_CACHE_NAME.is_absolute()
+        assert DEFAULT_GEONAMES_CACHE_NAME == Path.home() / ".kerykeion" / "cache" / "kerykeion_geonames_cache"
 
 
 # ---------------------------------------------------------------------------

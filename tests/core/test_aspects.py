@@ -1240,7 +1240,7 @@ class TestUnknownActiveAspectWarning:
                 active_aspects=[
                     {"name": "conjunction", "orb": 6},
                     {"name": "parallel", "orb": 1},
-                    {"name": "contra_parallel", "orb": 1},
+                    {"name": "contra-parallel", "orb": 1},
                 ],
             )
         assert "parallel" in caplog.text

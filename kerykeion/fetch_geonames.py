@@ -19,7 +19,10 @@ from requests_cache import CachedSession
 logger = getLogger(__name__)
 
 
-DEFAULT_GEONAMES_CACHE_NAME = Path("cache") / "kerykeion_geonames_cache"
+# Per-user default (same ~/.kerykeion convention as DEFAULT_SWEPH_DOWNLOAD_DIR):
+# a CWD-relative default would scatter cache files across every directory the
+# library happens to be invoked from.
+DEFAULT_GEONAMES_CACHE_NAME = Path.home() / ".kerykeion" / "cache" / "kerykeion_geonames_cache"
 GEONAMES_CACHE_ENV_VAR = "KERYKEION_GEONAMES_CACHE_NAME"
 
 # (connect, read) timeout in seconds for GeoNames HTTP calls. Without a timeout a
@@ -105,9 +108,9 @@ class FetchGeonames:
         username: GeoNames username for API access, defaults to "century.boy".
         cache_expire_after_days: Number of days to cache responses, defaults to 30.
         cache_name: Optional path (directory or filename stem) used by requests-cache.
-            Defaults to "cache/kerykeion_geonames_cache" and may also be overridden
-            via the environment variable ``KERYKEION_GEONAMES_CACHE_NAME`` or by
-            calling :meth:`FetchGeonames.set_default_cache_name`.
+            Defaults to ``~/.kerykeion/cache/kerykeion_geonames_cache`` and may also
+            be overridden via the environment variable ``KERYKEION_GEONAMES_CACHE_NAME``
+            or by calling :meth:`FetchGeonames.set_default_cache_name`.
     """
 
     default_cache_name: Path = DEFAULT_GEONAMES_CACHE_NAME
@@ -120,8 +123,12 @@ class FetchGeonames:
         cache_expire_after_days: int = 30,
         cache_name: Optional[Union[str, Path]] = None,
     ):
+        resolved_cache_name = self._resolve_cache_name(cache_name)
+        # Ensure the cache directory exists (the per-user default lives under
+        # ~/.kerykeion/cache/, which may not exist yet on a fresh install).
+        resolved_cache_name.parent.mkdir(parents=True, exist_ok=True)
         self.session = CachedSession(
-            cache_name=str(self._resolve_cache_name(cache_name)),
+            cache_name=str(resolved_cache_name),
             backend="sqlite",
             expire_after=timedelta(days=cache_expire_after_days),
             filter_fn=_should_cache_geonames_response,
@@ -130,11 +137,12 @@ class FetchGeonames:
         self.username = username
         self.city_name = city_name
         self.country_code = country_code
-        # NOTE: GeoNames free API does not support HTTPS (SSL certificate mismatch).
-        # See: https://forum.geonames.org/gforum/posts/list/27020.page
-        # Premium users can use secure.geonames.org instead.
-        self.base_url = "http://api.geonames.org/searchJSON"
-        self.timezone_url = "http://api.geonames.org/timezoneJSON"
+        # secure.geonames.org serves the same endpoints over HTTPS (the
+        # historical SSL certificate mismatch on api.geonames.org is why the
+        # plaintext host was used before; the secure host works for free
+        # accounts too, so credentials no longer travel in cleartext).
+        self.base_url = "https://secure.geonames.org/searchJSON"
+        self.timezone_url = "https://secure.geonames.org/timezoneJSON"
 
     @classmethod
     def set_default_cache_name(cls, cache_name: Union[str, Path]) -> None:
@@ -217,6 +225,28 @@ class FetchGeonames:
             timezone_data["from_tz_cache"] = response.from_cache  # type: ignore
 
         return timezone_data
+
+    def get_timezone_for_coordinates(
+        self, lat: Union[str, float, int], lng: Union[str, float, int]
+    ) -> dict[str, str]:
+        """
+        Resolve the timezone for explicit coordinates via the timezoneJSON endpoint.
+
+        Unlike :meth:`get_serialized_data`, this does not perform a city search:
+        it queries the GeoNames timezoneJSON endpoint directly with the given
+        coordinates, reusing the same cached session (so repeated lookups are
+        served from the local cache).
+
+        Args:
+            lat: Latitude coordinate.
+            lng: Longitude coordinate.
+
+        Returns:
+            dict[str, str]: Dictionary with ``timezonestr`` (and cache status) on
+                success; an empty dict when the response is missing a ``timezoneId``
+                or the request fails.
+        """
+        return self.__get_timezone(lat, lng)
 
     def __get_country_data(self, city_name: str, country_code: str) -> dict[str, str]:
         """

@@ -64,6 +64,16 @@ class PlanetaryPhenomenaFactory:
         Returns:
             PlanetaryPhenomenaCollectionModel with phenomena for each planet.
         """
+        # julian_day is Optional on the model (composite subjects have no
+        # single moment in time); without this guard every pheno_ut call fails
+        # on the None and the all-failed check below raises a misleading
+        # "backend may be unavailable" error. Mirrors PrimaryDirectionsFactory's
+        # _require_geometry guard.
+        if subject.julian_day is None:
+            raise KerykeionException(
+                "Subject is missing Julian Day — cannot compute planetary phenomena "
+                "(composite subjects are not supported here)."
+            )
         return PlanetaryPhenomenaFactory._calculate(
             julian_day=subject.julian_day,
             iso_datetime=subject.iso_formatted_utc_datetime,

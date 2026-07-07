@@ -986,6 +986,25 @@ class TestInlineCssEdgeCases:
         result = inline_css_variables_in_svg(svg)
         assert 'fill=""' in result or "var" not in result
 
+    def test_inline_css_self_referential_variable_terminates(self):
+        """A self-referential CSS variable (--a: var(--a)) must not loop
+        forever: the substitution reaches a fixed point and exits."""
+        svg = '<svg><style>:root { --a: var(--a); }</style><rect fill="var(--a)" /></svg>'
+        result = inline_css_variables_in_svg(svg)
+        assert "<style>" not in result
+
+    def test_inline_css_mutually_referential_variables_hit_pass_limit(self, caplog):
+        """Mutually recursive variables (--a: var(--b); --b: var(--a)) swap
+        forever without converging: the pass limit must stop the loop, log a
+        warning, and return the current (partially inlined) state."""
+        import logging as _logging
+
+        svg = '<svg><style>:root { --a: var(--b); --b: var(--a); }</style><rect fill="var(--a)" /></svg>'
+        with caplog.at_level(_logging.WARNING, logger="kerykeion.utilities"):
+            result = inline_css_variables_in_svg(svg)
+        assert "<style>" not in result
+        assert any("substitution pass limit" in record.getMessage() for record in caplog.records)
+
 
 # =============================================================================
 # TestConvertDecimalToDegreeString
@@ -996,7 +1015,9 @@ class TestConvertDecimalToDegreeString:
     """Tests for convert_decimal_to_degree_string (charts_utils)."""
 
     def test_basic_dms(self):
-        assert convert_decimal_to_degree_string(10.5, "3") == "10°30'00\""
+        # The arc-seconds mark is emitted as &quot; so the SVG quote-replace
+        # post-processing pass can't corrupt it into an apostrophe.
+        assert convert_decimal_to_degree_string(10.5, "3") == "10°30'00&quot;"
 
     def test_degree_and_minute_formats_floor(self):
         assert convert_decimal_to_degree_string(10.99, "1") == "10°"
@@ -1007,21 +1028,21 @@ class TestConvertDecimalToDegreeString:
         never overshoots the sign boundary (consistent with format "1"/"2")."""
         # Just under a whole degree: floors down, no carry into the next degree.
         result = convert_decimal_to_degree_string(10.99997, "3")
-        assert result == "10°59'59\""
-        assert "60\"" not in result
+        assert result == "10°59'59&quot;"
+        assert "60&quot;" not in result
 
     def test_format_three_stays_within_sign_at_boundary(self):
         """A within-sign position just below 30° must read "29°59'59\"", not the
         out-of-sign "30°00'00\"" the old rounding produced — and must agree with
         format "1" which floors to "29°"."""
-        assert convert_decimal_to_degree_string(29.9999, "3") == "29°59'59\""
+        assert convert_decimal_to_degree_string(29.9999, "3") == "29°59'59&quot;"
         assert convert_decimal_to_degree_string(29.9999, "1") == "29°"
 
     def test_no_invalid_sixty_across_sampled_boundaries(self):
         for deg in (9, 14, 29, 59):
             for frac in (0.99997, 0.999999):
                 out = convert_decimal_to_degree_string(deg + frac, "3")
-                assert "'60\"" not in out
+                assert "'60&quot;" not in out
                 assert "60'" not in out
 
     def test_negative_inputs_consistent_and_not_malformed(self):
@@ -1030,7 +1051,7 @@ class TestConvertDecimalToDegreeString:
         formats must agree on the floored representation."""
         assert convert_decimal_to_degree_string(-5.5, "1") == "-6°"
         assert convert_decimal_to_degree_string(-5.5, "2") == "-6°30'"
-        assert convert_decimal_to_degree_string(-5.5, "3") == "-6°30'00\""
+        assert convert_decimal_to_degree_string(-5.5, "3") == "-6°30'00&quot;"
         for fmt in ("1", "2", "3"):
             out = convert_decimal_to_degree_string(-5.5, fmt)
             assert "-30" not in out, f"format {fmt} emitted a malformed negative field: {out}"

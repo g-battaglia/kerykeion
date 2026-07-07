@@ -209,6 +209,34 @@ class TestBCESubjectCreation:
         assert subject.moon.sign == expected["moon_sign"]
         assert subject.moon.abs_pos == pytest.approx(expected["moon_abs_pos"], abs=BCE_POSITION_TOLERANCE)
 
+    @pytest.mark.parametrize(
+        "component_override",
+        [
+            {"month": 13},
+            {"month": 0},
+            {"day": 32},
+            {"day": 0},
+            {"hour": 24},
+            {"minute": 60},
+            {"seconds": 60},
+        ],
+        ids=lambda kw: next(iter(kw.items()))[0] + "=" + str(next(iter(kw.items()))[1]),
+    )
+    def test_out_of_range_component_raises(self, component_override):
+        """The BCE branch must validate component ranges before ephe.julday()
+        (the CE branch gets this from datetime()): julday would silently
+        normalize month=13, hour=24, etc. into a wrong Julian Day."""
+        from kerykeion.schemas import KerykeionException
+
+        base = dict(
+            name="BCE Invalid", year=-100, month=6, day=15, hour=12, minute=0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+            suppress_geonames_warning=True,
+        )
+        base.update(component_override)
+        with pytest.raises(KerykeionException, match="Invalid birth date/time component"):
+            AstrologicalSubjectFactory.from_birth_data(**base)
+
     @pytest.mark.parametrize("subject_id", list(BCE_SUBJECTS.keys()), ids=lambda s: s)
     def test_planetary_positions_valid_range(self, subject_id):
         """All available planetary positions are in [0, 360)."""

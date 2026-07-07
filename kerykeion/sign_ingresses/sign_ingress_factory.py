@@ -211,8 +211,18 @@ class SignIngressFactory:
             planets: Optional subset of planet names. Defaults to Sun..Pluto
                 (Moon excluded unless explicitly requested).
         """
-        start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
-        end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
+        try:
+            start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
+            end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
+        except (ValueError, TypeError) as exc:
+            # Wrap the bare datetime error as the library's own exception, so a
+            # caller catching KerykeionException around this entry point is not
+            # broken by a malformed ISO start_date/end_date. Same contract as
+            # LunationFinderFactory.from_iso_range.
+            raise KerykeionException(
+                f"Invalid ISO date/datetime for ingress range "
+                f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
+            ) from exc
         # A date-only end_date means "through the end of that UTC day". Check for
         # both T/t (fromisoformat accepts a lowercase 't') and a space separator.
         if "T" not in end_date and "t" not in end_date and " " not in end_date:

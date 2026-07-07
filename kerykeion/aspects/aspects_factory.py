@@ -22,6 +22,7 @@ from kerykeion.schemas.kr_models import (
     SingleChartAspectsModel,
     DualChartAspectsModel,
 )
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint, AspectMovementType
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, AXIAL_POINTS
 from kerykeion.settings.chart_defaults import (
@@ -47,6 +48,23 @@ AXES_LIST = AXIAL_POINTS
 GEOMETRIC_OPPOSITE_PAIRS: frozenset = frozenset(
     frozenset((derived, config["primary"])) for derived, config in OPPOSITE_PAIRS.items()
 )
+
+# Mean/true variants of the same lunar node never separate by more than ~1.75°:
+# within a single chart every mean×true node pair reports a permanent
+# conjunction (same end) or opposition (opposite ends) — configuration
+# artifacts, exactly like the rigid pairs above. Cross-chart pairs (synastry,
+# transits) remain meaningful and are NOT skipped.
+MEAN_TRUE_NODE_ARTIFACT_PAIRS: frozenset = frozenset(
+    (
+        frozenset(("Mean_North_Lunar_Node", "True_North_Lunar_Node")),
+        frozenset(("Mean_South_Lunar_Node", "True_South_Lunar_Node")),
+        frozenset(("Mean_North_Lunar_Node", "True_South_Lunar_Node")),
+        frozenset(("True_North_Lunar_Node", "Mean_South_Lunar_Node")),
+    )
+)
+
+# Full set of same-chart artifact pairs skipped by the single-chart paths.
+SINGLE_CHART_ARTIFACT_PAIRS: frozenset = GEOMETRIC_OPPOSITE_PAIRS | MEAN_TRUE_NODE_ARTIFACT_PAIRS
 
 # `find_common_active_points` is annotated for AstrologicalPoint literals only,
 # but the v6 fixed-star channel mixes plain catalog star names (str) into the
@@ -465,11 +483,13 @@ class AspectsFactory:
                 second_point = active_points_list[second_idx]
                 second_name = second_point["name"]
 
-                # Skip geometrically locked opposite pairs (AC/DC, MC/IC,
-                # N/S nodes, Vertex/Anti-Vertex, Lilith/Priapus): the derived
-                # point sits at primary + 180° by construction, so the pair
-                # would always report a fake 0.0-orb opposition.
-                if frozenset((first_name, second_name)) in GEOMETRIC_OPPOSITE_PAIRS:
+                # Skip same-chart artifact pairs: geometrically locked
+                # opposites (AC/DC, MC/IC, N/S nodes, Vertex/Anti-Vertex,
+                # Lilith/Priapus — the derived point sits at primary + 180° by
+                # construction, a fake 0.0-orb opposition) and mean×true lunar
+                # node combinations (a permanent ≤1.75°-orb conjunction or
+                # opposition when both variants are active).
+                if frozenset((first_name, second_name)) in SINGLE_CHART_ARTIFACT_PAIRS:
                     continue
 
                 # Skip star-star pairs: fixed stars are mutually static, so
@@ -617,6 +637,15 @@ class AspectsFactory:
                     first_speed = first_active_points_list[first].get("speed") or 0.0
                     second_speed = second_active_points_list[second].get("speed") or 0.0
 
+                    # Override speeds if subjects are fixed — BEFORE the
+                    # axis-axis branch, so axis-axis pairs of a fixed chart
+                    # don't persist synthetic cusp speeds (~360°/day) in the
+                    # model while every other pair reports 0.0.
+                    if first_subject_is_fixed:
+                        first_speed = 0.0
+                    if second_subject_is_fixed:
+                        second_speed = 0.0
+
                     # For aspects between axes (ASC, MC, DSC, IC) in different charts
                     # there is no meaningful dynamic movement between two house systems,
                     # so we mark the movement as "Static".
@@ -624,12 +653,6 @@ class AspectsFactory:
                     if first_name in AXES_LIST and second_name in AXES_LIST:
                         aspect_movement = "Static"
                     else:
-                        # Override speeds if subjects are fixed
-                        if first_subject_is_fixed:
-                            first_speed = 0.0
-                        if second_subject_is_fixed:
-                            second_speed = 0.0
-
                         # Calculate aspect movement (applying/separating/fixed)
                         aspect_movement = calculate_aspect_movement(
                             first_active_points_list[first]["abs_pos"],
@@ -692,7 +715,7 @@ class AspectsFactory:
         known_names = {aspect_setting["name"] for aspect_setting in aspects_settings}
         unknown_names = [name for name in active_orbs if name not in known_names]
         if unknown_names:
-            declination_names = [n for n in unknown_names if n in ("parallel", "contra_parallel")]
+            declination_names = [n for n in unknown_names if n in ("parallel", "contra-parallel")]
             if declination_names:
                 logger.warning(
                     "Declination aspects %s are not handled by the longitudinal aspect "
@@ -736,7 +759,7 @@ class AspectsFactory:
             return list(all_aspects)
 
         if axis_orb_limit <= 0:
-            raise ValueError("axis_orb_limit must be a positive number when provided")
+            raise KerykeionException("axis_orb_limit must be a positive number when provided")
 
         for aspect in all_aspects:
             # Check if aspect involves any of the chart axes and apply stricter orb limits
@@ -834,11 +857,17 @@ class AspectsFactory:
         Args:
             subject: The astrological subject.
             orb: Maximum orb in degrees (default 1.0, standard for declination aspects).
-            active_points: Optional list of points to include.
+                Must be non-negative.
+            active_points: Optional list of points to include. As in the
+                longitudinal twin (``single_chart_aspects``), the restriction is
+                intersected with ``subject.active_points``.
 
         Returns:
-            List of AspectModel with aspect="parallel" or aspect="contra_parallel".
+            List of AspectModel with aspect="parallel" or aspect="contra-parallel".
         """
+        if orb < 0:
+            raise KerykeionException("orb must be a non-negative number")
+
         # v6: extend points_to_use and celestial_points with subject.fixed_stars
         # so catalog stars participate in parallel/contra-parallel aspects too.
         # As in the longitudinal methods, stars are a separate channel and
@@ -846,10 +875,15 @@ class AspectsFactory:
         # regular points); star–star pairs are skipped downstream.
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
 
-        # Widened element type: plain catalog star names (str) may be appended below.
-        points_to_use = cast(
-            "List[Union[AstrologicalPoint, str]]",
-            active_points if active_points is not None else subject.active_points,
+        # Same active-points contract as single_chart_aspects: the caller's
+        # restriction is intersected with subject.active_points instead of
+        # replacing it, so the longitude and declination channels see the same
+        # point set for the same arguments.
+        subject_active_points = cast("List[Union[AstrologicalPoint, str]]", list(subject.active_points))
+        points_to_use: List[Union[AstrologicalPoint, str]] = (
+            _find_common_point_names(subject_active_points, list(active_points))
+            if active_points is not None
+            else subject_active_points
         )
         raw_star_names = [
             getattr(s, "name", None) for s in getattr(subject, "fixed_stars", None) or []
@@ -894,24 +928,34 @@ class AspectsFactory:
         Args:
             first_subject: First astrological subject.
             second_subject: Second astrological subject.
-            orb: Maximum orb in degrees (default 1.0).
-            active_points: Optional list of points to include.
+            orb: Maximum orb in degrees (default 1.0). Must be non-negative.
+            active_points: Optional list of points to include. As in the
+                longitudinal twin (``dual_chart_aspects``), the restriction is
+                intersected with each subject's ``active_points``.
 
         Returns:
-            List of AspectModel with aspect="parallel" or aspect="contra_parallel".
+            List of AspectModel with aspect="parallel" or aspect="contra-parallel".
         """
+        if orb < 0:
+            raise KerykeionException("orb must be a non-negative number")
+
         # v6: extend points + celestial_points with both subjects' fixed_stars
         # so catalog stars participate in parallel/contra-parallel aspects.
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
 
-        # Widened element type: plain catalog star names (str) may be appended below.
-        pts1 = cast(
-            "List[Union[AstrologicalPoint, str]]",
-            active_points if active_points is not None else first_subject.active_points,
+        # Same active-points contract as dual_chart_aspects: the caller's
+        # restriction is intersected with each subject's own active_points.
+        first_active = cast("List[Union[AstrologicalPoint, str]]", list(first_subject.active_points))
+        second_active = cast("List[Union[AstrologicalPoint, str]]", list(second_subject.active_points))
+        pts1: List[Union[AstrologicalPoint, str]] = (
+            _find_common_point_names(first_active, list(active_points))
+            if active_points is not None
+            else first_active
         )
-        pts2 = cast(
-            "List[Union[AstrologicalPoint, str]]",
-            active_points if active_points is not None else second_subject.active_points,
+        pts2: List[Union[AstrologicalPoint, str]] = (
+            _find_common_point_names(second_active, list(active_points))
+            if active_points is not None
+            else second_active
         )
         dynamic_star_names: list[str] = []
         for subj in (first_subject, second_subject):
@@ -980,11 +1024,13 @@ class AspectsFactory:
                 name_b = pb["name"] if isinstance(pb, dict) else pb.name
 
                 # Geometrically derived opposite pairs (Vertex/Anti-Vertex,
-                # node axes, Lilith/Priapus) have rigidly mirrored declinations:
-                # their contra-parallel is a construction artifact, not an
-                # aspect. Same-chart only — cross-chart pairs (synastry,
-                # transits) are independent points and remain meaningful.
-                if single_chart and frozenset((name_a, name_b)) in GEOMETRIC_OPPOSITE_PAIRS:
+                # node axes, Lilith/Priapus) have rigidly mirrored declinations
+                # (their contra-parallel is a construction artifact, not an
+                # aspect), and mean×true lunar node combinations share nearly
+                # identical declinations (a permanent parallel/contra-parallel).
+                # Same-chart only — cross-chart pairs (synastry, transits) are
+                # independent points and remain meaningful.
+                if single_chart and frozenset((name_a, name_b)) in SINGLE_CHART_ARTIFACT_PAIRS:
                     continue
 
                 # Star–star pairs: fixed stars barely move relative to each
@@ -1032,7 +1078,7 @@ class AspectsFactory:
                             p2_name=name_b,
                             p2_owner=owner_b,
                             p2_abs_pos=abs_pos_b,
-                            aspect="contra_parallel",
+                            aspect="contra-parallel",
                             orbit=round(contra_diff, 6),
                             aspect_degrees=0,
                             diff=round(contra_diff, 6),

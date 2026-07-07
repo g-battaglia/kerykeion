@@ -79,6 +79,9 @@ CHART_TYPE_SINGLE_RETURN: str = "SingleReturnChart"
 CHART_TYPE_DUAL_RETURN: str = "DualReturnChart"
 """Dual chart with natal and return overlay."""
 
+CHART_TYPE_PROGRESSION: str = "Progression"
+"""Dual chart comparing natal to secondary-progressed positions."""
+
 
 # =============================================================================
 # DEFAULT LOCATION CONSTANTS

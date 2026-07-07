@@ -3895,7 +3895,8 @@ class TestSaveSvgRobustnessRound9:
         return ChartDrawer(ChartDataFactory.create_natal_chart_data(s))
 
     def test_save_svg_missing_dir_raises_kerykeion(self):
-        import os, tempfile
+        import os
+        import tempfile
         from kerykeion.schemas import KerykeionException
         drawer = self._drawer()
         with tempfile.TemporaryDirectory() as d:
@@ -3903,7 +3904,9 @@ class TestSaveSvgRobustnessRound9:
                 drawer.save_svg(output_path=os.path.join(d, "nope"))
 
     def test_save_svg_valid_dir_ok(self):
-        import glob, os, tempfile
+        import glob
+        import os
+        import tempfile
         drawer = self._drawer()
         with tempfile.TemporaryDirectory() as d:
             drawer.save_svg(output_path=d)

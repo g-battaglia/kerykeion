@@ -23,7 +23,8 @@ from __future__ import annotations
 
 from typing import List, Optional, Sequence, cast
 
-from pydantic import BaseModel, Field
+from pydantic import Field
+from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
 from kerykeion.schemas.kr_literals import SIGN_CODES, SignNumbers
@@ -32,7 +33,7 @@ from kerykeion._predictive_utils import gather_active_points, build_aspect_setti
 from kerykeion.utilities import _ZODIAC_SIGNS, circular_mean, get_planet_house, HOUSE_FIELD_NAMES
 
 
-class MidpointAspectModel(BaseModel):
+class MidpointAspectModel(SubscriptableBaseModel):
     """An aspect formed between a midpoint and a third active point."""
 
     point_name: str = Field(description="Name of the third point that aspects the midpoint.")
@@ -42,7 +43,7 @@ class MidpointAspectModel(BaseModel):
     orb: float = Field(description="Orb (deviation from exact aspect) in degrees.")
 
 
-class MidpointModel(BaseModel):
+class MidpointModel(SubscriptableBaseModel):
     """The midpoint of two zodiacal points plus optional aspect activations."""
 
     point_a: str = Field(description="Name of the first point.")

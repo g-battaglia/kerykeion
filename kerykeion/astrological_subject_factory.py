@@ -567,8 +567,17 @@ class LocationData:
 
         # Update location data
         self.nation = self.city_data["countryCode"]
-        self.lng = float(self.city_data["lng"])
-        self.lat = float(self.city_data["lat"])
+        try:
+            self.lng = float(self.city_data["lng"])
+            self.lat = float(self.city_data["lat"])
+        except (TypeError, ValueError) as exc:
+            # A malformed payload (non-numeric lat/lng) must surface as the
+            # library's own exception, not a raw ValueError.
+            raise KerykeionException(
+                f"Invalid coordinates from geonames for {self.city}, {self.nation}: "
+                f"lat={self.city_data.get('lat')!r}, lng={self.city_data.get('lng')!r} "
+                "are not valid numbers. Check your connection or try a different location."
+            ) from exc
         self.tz_str = self.city_data["timezonestr"]
 
     def prepare_for_calculation(self) -> None:
@@ -725,7 +734,9 @@ class AstrologicalSubjectFactory:
             lat (float, optional): Latitude in decimal degrees. North is positive, South
                 is negative. If not provided and online=True, fetched from GeoNames.
             tz_str (str, optional): IANA timezone identifier (e.g., 'Europe/London').
-                If not provided and online=True, fetched from GeoNames.
+                If not provided and online=True, fetched from GeoNames — from the
+                city when one is provided, otherwise (with explicit lat/lng and no
+                city) resolved from the coordinates via the timezoneJSON endpoint.
             geonames_username (str, optional): Username for GeoNames API. Required for
                 online location lookup. Get one free at geonames.org.
             online (bool, optional): Whether to fetch location data online. If False,
@@ -848,16 +859,6 @@ class AstrologicalSubjectFactory:
             - The method handles polar regions by adjusting extreme latitudes
             - Time zones are handled with full DST awareness via pytz
         """
-        # Resolve time defaults using current time
-        if year is None or month is None or day is None or hour is None or minute is None or seconds is None:
-            now = datetime.now()
-            year = year if year is not None else now.year
-            month = month if month is not None else now.month
-            day = day if day is not None else now.day
-            hour = hour if hour is not None else now.hour
-            minute = minute if minute is not None else now.minute
-            seconds = seconds if seconds is not None else now.second
-
         # Create a calculation data container
         calc_data: Dict[str, Any] = {}
 
@@ -991,22 +992,57 @@ class AstrologicalSubjectFactory:
 
         # Fetch location data if needed
         if online and (not tz_str or lat is None or lng is None):
-            location.fetch_from_geonames(
-                username=geonames_username or _get_geonames_username(), cache_expire_after_days=cache_expire_after_days
-            )
-            # Explicit inputs win over the fetched city centroid: precise birth
-            # coordinates/timezone must not be silently replaced by it.
-            if lat is not None:
-                location.lat = lat
-            if lng is not None:
-                location.lng = lng
-            if tz_str:
-                location.tz_str = tz_str
-            if nation:
-                location.nation = nation
+            resolved_geonames_username = geonames_username or _get_geonames_username()
+            if lat is not None and lng is not None and city is None:
+                # Explicit coordinates, missing timezone, and no city given:
+                # resolving the timezone from the DEFAULT city ("Greenwich")
+                # would silently build the chart in the wrong zone. Resolve it
+                # from the coordinates themselves via the GeoNames timezoneJSON
+                # endpoint instead (same cached session as the city search).
+                geonames = FetchGeonames(
+                    location.city,
+                    location.nation,
+                    username=resolved_geonames_username,
+                    cache_expire_after_days=cache_expire_after_days,
+                )
+                timezone_data = geonames.get_timezone_for_coordinates(lat, lng)
+                if "timezonestr" not in timezone_data:
+                    raise KerykeionException(
+                        f"Could not resolve the timezone for coordinates lat={lat}, lng={lng}: "
+                        "the GeoNames timezoneJSON response did not contain a timezoneId. "
+                        "Check your connection or provide tz_str explicitly."
+                    )
+                location.tz_str = timezone_data["timezonestr"]
+            else:
+                location.fetch_from_geonames(
+                    username=resolved_geonames_username, cache_expire_after_days=cache_expire_after_days
+                )
+                # Explicit inputs win over the fetched city centroid: precise birth
+                # coordinates/timezone must not be silently replaced by it.
+                if lat is not None:
+                    location.lat = lat
+                if lng is not None:
+                    location.lng = lng
+                if tz_str:
+                    location.tz_str = tz_str
+                if nation:
+                    location.nation = nation
 
         # Prepare location for calculations
         location.prepare_for_calculation()
+
+        # Resolve time defaults from the current instant rendered in the
+        # SUBJECT's resolved timezone (same pattern as from_current_time):
+        # the host's naive wall clock interpreted in the target tz would shift
+        # the "current moment" by the offset between the two zones.
+        if year is None or month is None or day is None or hour is None or minute is None or seconds is None:
+            now = datetime.now(timezone.utc).astimezone(safe_timezone(location.tz_str))
+            year = year if year is not None else now.year
+            month = month if month is not None else now.month
+            day = day if day is not None else now.day
+            hour = hour if hour is not None else now.hour
+            minute = minute if minute is not None else now.minute
+            seconds = seconds if seconds is not None else now.second
 
         # Add location data to calculation data
         calc_data["city"] = location.city
@@ -1336,12 +1372,12 @@ class AstrologicalSubjectFactory:
         cls,
         name: str,
         iso_utc_time: str,
-        city: str = "Greenwich",
-        nation: str = "GB",
+        city: Optional[str] = None,
+        nation: Optional[str] = None,
         tz_str: str = "Etc/GMT",
         online: bool = True,
-        lng: float = 0.0,
-        lat: float = 51.5074,
+        lng: Optional[float] = None,
+        lat: Optional[float] = None,
         geonames_username: str = DEFAULT_GEONAMES_USERNAME,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
         sidereal_mode: Optional[SiderealMode] = None,
@@ -1377,17 +1413,23 @@ class AstrologicalSubjectFactory:
                 - "2023-06-15T14:30:00Z" (with Z suffix)
                 - "2023-06-15T14:30:00+00:00" (with UTC offset)
                 - "2023-06-15T14:30:00.123Z" (with milliseconds)
-            city (str, optional): City name for location. Defaults to "Greenwich".
-            nation (str, optional): ISO country code. Defaults to "GB".
+            city (str, optional): City name for location. Defaults to None
+                ("Greenwich" if not specified).
+            nation (str, optional): ISO country code. Defaults to None
+                ('GB' if not specified).
             tz_str (str, optional): IANA timezone identifier for result conversion.
                 The ISO time is assumed to be in UTC and will be converted to this
                 timezone. Defaults to "Etc/GMT".
-            online (bool, optional): Whether to fetch coordinates online. If True,
-                coordinates are fetched via GeoNames API. Defaults to True.
-            lng (float, optional): Longitude in decimal degrees. Used when online=False
-                or as fallback. Defaults to 0.0 (Greenwich).
-            lat (float, optional): Latitude in decimal degrees. Used when online=False
-                or as fallback. Defaults to 51.5074 (Greenwich).
+            online (bool, optional): Whether to fetch coordinates online. Only
+                used when lng/lat are not explicitly provided; explicit
+                coordinates are never overwritten by the city centroid.
+                Defaults to True.
+            lng (float, optional): Longitude in decimal degrees. If not provided,
+                resolved from city/nation when online=True, otherwise defaults
+                to 0.0 (Greenwich).
+            lat (float, optional): Latitude in decimal degrees. If not provided,
+                resolved from city/nation when online=True, otherwise defaults
+                to 51.5074 (Greenwich).
             geonames_username (str, optional): GeoNames API username. Required when
                 online=True. Defaults to DEFAULT_GEONAMES_USERNAME.
             zodiac_type (ZodiacType, optional): Zodiac system. Defaults to 'Tropical'.
@@ -1446,7 +1488,9 @@ class AstrologicalSubjectFactory:
               fold are disambiguated automatically (the fold side is derived
               from the UTC instant itself, which is never ambiguous)
             - Milliseconds in the timestamp are supported but truncated to seconds
-            - When online=True, the city/nation parameters override lng/lat
+            - When online=True, lng/lat not explicitly provided are resolved from
+              the city/nation centroid; explicit lng/lat always win (same
+              semantics as from_birth_data) and skip the GeoNames lookup
         """
         # Parse the ISO time
         dt = datetime.fromisoformat(iso_utc_time.replace("Z", "+00:00"))
@@ -1456,8 +1500,11 @@ class AstrologicalSubjectFactory:
             # timezone, making results host-dependent.
             dt = dt.replace(tzinfo=timezone.utc)
 
-        # Get location data if online mode is enabled
-        if online:
+        # Resolve missing coordinates online. Explicit lng/lat win over the
+        # city centroid (same semantics as from_birth_data): precise event
+        # coordinates must never be silently replaced, so when both are given
+        # the lookup is skipped entirely.
+        if online and (lng is None or lat is None):
             resolved_username = (
                 geonames_username if geonames_username != DEFAULT_GEONAMES_USERNAME else _get_geonames_username()
             )
@@ -1465,8 +1512,8 @@ class AstrologicalSubjectFactory:
                 logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
 
             geonames = FetchGeonames(
-                city,
-                nation,
+                city or "Greenwich",
+                nation or "GB",
                 username=resolved_username,
             )
 
@@ -1479,8 +1526,17 @@ class AstrologicalSubjectFactory:
                     f"Missing data from geonames: {', '.join(missing_fields)}. "
                     "Check your connection or try a different location."
                 )
-            lng = float(city_data["lng"])
-            lat = float(city_data["lat"])
+            if lng is None:
+                lng = float(city_data["lng"])
+            if lat is None:
+                lat = float(city_data["lat"])
+
+        # Fall back to the historical Greenwich defaults when neither explicit
+        # values nor an online lookup supplied the coordinates (offline mode).
+        if lng is None:
+            lng = 0.0
+        if lat is None:
+            lat = 51.5074
 
         # Convert UTC to local time (wrap invalid tz as KerykeionException, so
         # this entry point matches from_birth_data's error contract).
@@ -1969,6 +2025,24 @@ class AstrologicalSubjectFactory:
         hour = data["hour"]
         minute = data["minute"]
         seconds = data["seconds"]
+
+        # Validate the components before handing them to ephe.julday(): the CE
+        # branch gets this for free from datetime() (wrapped as
+        # KerykeionException in _calculate_time_conversions), while julday()
+        # would silently normalize out-of-range values (month=13, hour=25, ...)
+        # into a wrong Julian Day.
+        if not (
+            1 <= month <= 12
+            and 1 <= day <= 31
+            and 0 <= hour <= 23
+            and 0 <= minute <= 59
+            and 0 <= seconds <= 59
+        ):
+            raise KerykeionException(
+                f"Invalid birth date/time component: month={month}, day={day}, "
+                f"hour={hour}, minute={minute}, seconds={seconds}. "
+                "Check year/month/day/hour/minute/seconds are within valid ranges."
+            )
 
         decimal_hour = hour + minute / 60.0 + seconds / 3600.0
 

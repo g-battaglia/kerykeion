@@ -219,11 +219,21 @@ class ModernDominantStrategy(BaseDominantStrategy):
         planet_set = set(planet_names)
         angle_set = set(_ANGLE_NAMES)
 
+        # The names come from the subject's own points plus the four angles,
+        # so they are valid AstrologicalPoint literals at runtime.
+        requested_points = cast(List[AstrologicalPoint], planet_names + list(_ANGLE_NAMES))
+        # single_chart_aspects intersects the requested points with
+        # subject.active_points, which by default excludes Descendant and
+        # Imum_Coeli. The angularity channel reads all four angles straight
+        # from the model, so without this widening the dominants ranking
+        # would depend on the subject's active_points configuration rather
+        # than on the birth data alone.
+        aspect_subject = subject.model_copy(
+            update={"active_points": list(dict.fromkeys([*subject.active_points, *requested_points]))}
+        )
         aspects_model = AspectsFactory.single_chart_aspects(
-            subject,
-            # The names come from the subject's own points plus the four angles,
-            # so they are valid AstrologicalPoint literals at runtime.
-            active_points=cast(List[AstrologicalPoint], planet_names + list(_ANGLE_NAMES)),
+            aspect_subject,
+            active_points=requested_points,
             active_aspects=DOMINANT_ASPECTS,
         )
 

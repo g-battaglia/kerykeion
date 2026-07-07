@@ -327,10 +327,8 @@ Sample Natal Subject — Natal Chart Report
 | Pluto                 | conjunction ☌ | Cupido                | 3.64° | Applying →   |
 | Pluto                 | opposition ☍  | Admetos               | 0.02° | Applying →   |
 | Pluto                 | trine △       | Vulkanus              | 0.37° | Separating ← |
-| Mean North Lunar Node | conjunction ☌ | True North Lunar Node | 0.52° | Applying →   |
 | Mean North Lunar Node | square □      | Ascendant             | 1.97° | Applying →   |
 | Mean North Lunar Node | square □      | Descendant            | 1.97° | Applying →   |
-| Mean North Lunar Node | opposition ☍  | True South Lunar Node | 0.52° | Applying →   |
 | Mean North Lunar Node | opposition ☍  | Ceres                 | 5.93° | Separating ← |
 | Mean North Lunar Node | square □      | Juno                  | 2.31° | Separating ← |
 | Mean North Lunar Node | square □      | Sedna                 | 3.76° | Separating ← |
@@ -343,7 +341,6 @@ Sample Natal Subject — Natal Chart Report
 | Mean North Lunar Node | trine △       | Hades                 | 2.13° | Separating ← |
 | True North Lunar Node | square □      | Ascendant             | 1.44° | Applying →   |
 | True North Lunar Node | square □      | Descendant            | 1.44° | Applying →   |
-| True North Lunar Node | opposition ☍  | Mean South Lunar Node | 0.52° | Applying →   |
 | True North Lunar Node | square □      | Juno                  | 2.83° | Separating ← |
 | True North Lunar Node | square □      | Sedna                 | 4.28° | Separating ← |
 | True North Lunar Node | opposition ☍  | Orcus                 | 3.57° | Separating ← |
@@ -407,7 +404,6 @@ Sample Natal Subject — Natal Chart Report
 | Mean Lilith           | conjunction ☌ | Interpolated Lilith   | 3.57° | Applying →   |
 | Mean Lilith           | trine △       | White Moon            | 2.73° | Applying →   |
 | Mean Lilith           | sextile ⚹     | Zeus                  | 2.96° | Separating ← |
-| Mean South Lunar Node | conjunction ☌ | True South Lunar Node | 0.52° | Applying →   |
 | Mean South Lunar Node | conjunction ☌ | Ceres                 | 5.93° | Separating ← |
 | Mean South Lunar Node | square □      | Juno                  | 2.31° | Separating ← |
 | Mean South Lunar Node | square □      | Sedna                 | 3.76° | Separating ← |

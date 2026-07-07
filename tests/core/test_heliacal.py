@@ -144,6 +144,75 @@ class TestSearchEvents:
         assert event["datestamp"] == event.datestamp
 
 
+# Tests: geopos / lat-lng keyword alternative --------------------------------
+
+class TestGeoposKeywordAlternative:
+    """geopos=(lng, lat, altitude_m) — longitude first, easy to invert — can be
+    replaced by unambiguous lat=/lng=/altitude= keywords; the two forms are
+    mutually exclusive."""
+
+    @staticmethod
+    def _capture_heliacal_ut(monkeypatch):
+        """Stub the backend call (real heliacal searches take seconds) and
+        capture the geopos it receives."""
+        import kerykeion.heliacal.heliacal_factory as hf
+
+        captured = {}
+
+        def fake_heliacal_ut(jd, geopos, atmo, observer, name, event_type, flags):
+            captured["geopos"] = tuple(geopos)
+            return (START_JD + 10.0, START_JD + 10.1, START_JD + 10.2)
+
+        monkeypatch.setattr(hf.ephe, "heliacal_ut", fake_heliacal_ut)
+        return captured
+
+    def test_lat_lng_keywords_build_swiss_order_geopos(self, factory: HeliacalFactory, monkeypatch):
+        captured = self._capture_heliacal_ut(monkeypatch)
+        event = factory.next_heliacal_rising(
+            julian_day=START_JD, planet_name_or_star="Venus",
+            lat=ROME_GEOPOS[1], lng=ROME_GEOPOS[0], altitude=ROME_GEOPOS[2],
+        )
+        assert captured["geopos"] == ROME_GEOPOS
+        assert event.planet_name == "Venus"
+
+    def test_altitude_defaults_to_zero(self, factory: HeliacalFactory, monkeypatch):
+        captured = self._capture_heliacal_ut(monkeypatch)
+        factory.next_heliacal_rising(
+            julian_day=START_JD, planet_name_or_star="Venus",
+            lat=41.9028, lng=12.4964,
+        )
+        assert captured["geopos"] == (12.4964, 41.9028, 0.0)
+
+    def test_search_events_accepts_keywords(self, factory: HeliacalFactory, monkeypatch):
+        captured = self._capture_heliacal_ut(monkeypatch)
+        events = factory.search_events(
+            julian_day=START_JD, count=1,
+            planets=("Venus",), event_types=[HELIACAL_SETTING],
+            lat=ROME_GEOPOS[1], lng=ROME_GEOPOS[0], altitude=ROME_GEOPOS[2],
+        )
+        assert captured["geopos"] == ROME_GEOPOS
+        assert len(events) == 1
+
+    def test_geopos_and_keywords_mutually_exclusive(self, factory: HeliacalFactory):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="not both"):
+            factory.next_heliacal_rising(
+                julian_day=START_JD, planet_name_or_star="Venus",
+                geopos=ROME_GEOPOS, lat=41.9028,
+            )
+        with pytest.raises(KerykeionException, match="not both"):
+            factory.search_events(julian_day=START_JD, geopos=ROME_GEOPOS, lng=12.4964)
+
+    def test_missing_position_raises(self, factory: HeliacalFactory):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="position required"):
+            factory.next_heliacal_rising(julian_day=START_JD, planet_name_or_star="Venus")
+        with pytest.raises(KerykeionException, match="position required"):
+            factory.search_events(julian_day=START_JD, lat=41.9028)  # lng missing
+
+
 # Tests: default constants ---------------------------------------------------
 
 class TestDefaultConstants:

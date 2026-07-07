@@ -1029,8 +1029,25 @@ def inline_css_variables_in_svg(svg_content: str) -> str:
     variable_usage_pattern = re.compile(r"var\(\s*(--[\w-]+)\s*(,\s*([^)]+))?\s*\)")
 
     processed_svg = svg_without_style_blocks
-    while variable_usage_pattern.search(processed_svg):
-        processed_svg = variable_usage_pattern.sub(lambda m: replace_css_variable_reference(m), processed_svg)
+    # Nested var() references need repeated passes, but self-/mutually-
+    # referential variables (e.g. --a: var(--a)) would loop forever: bound the
+    # number of passes and stop early when a pass no longer changes the string.
+    max_substitution_passes = 10
+    for _ in range(max_substitution_passes):
+        if not variable_usage_pattern.search(processed_svg):
+            break
+        substituted_svg = variable_usage_pattern.sub(replace_css_variable_reference, processed_svg)
+        if substituted_svg == processed_svg:
+            # Fixed point that still contains var() references (self-referential
+            # variable): nothing more can be resolved.
+            break
+        processed_svg = substituted_svg
+    else:
+        logger.warning(
+            "inline_css_variables_in_svg reached the substitution pass limit (%d); "
+            "returning the partially inlined SVG (possible circular CSS variable references).",
+            max_substitution_passes,
+        )
 
     return processed_svg
 

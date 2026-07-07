@@ -588,3 +588,23 @@ class TestRelocateNormalizesLongitudeCodeRabbit:
             online=False, suppress_geonames_warning=True)
         r = RelocatedChartFactory.relocate(natal, 41.9, -190.0, "X")
         assert r.lng == 170.0
+
+
+class TestRelocateTopocentricRejected:
+    """Topocentric subjects cannot be relocated coherently: the planetary
+    positions embed the natal observer's parallax, so relocate() must refuse
+    instead of returning a chart whose planets still describe the birthplace."""
+
+    def test_topocentric_subject_raises(self):
+        from kerykeion.schemas import KerykeionException
+
+        topo = AstrologicalSubjectFactory.from_birth_data(
+            "Topo Subject", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            perspective_type="Topocentric",
+        )
+        with pytest.raises(KerykeionException, match="[Tt]opocentric"):
+            RelocatedChartFactory.relocate(
+                topo, new_lat=40.7128, new_lng=-74.006, new_city="New York"
+            )

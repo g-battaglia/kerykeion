@@ -24,20 +24,21 @@ import math
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from typing import List, Optional, Dict, Literal
-from pydantic import BaseModel, Field
+from pydantic import Field
+from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
 from kerykeion.utilities import wrap_180
 
 
-class ACGLinePointModel(BaseModel):
+class ACGLinePointModel(SubscriptableBaseModel):
     """A single point on a planetary line."""
     longitude: float = Field(description="Geographic longitude (-180 to +180)")
     latitude: float = Field(description="Geographic latitude (-90 to +90)")
 
 
-class ACGLineModel(BaseModel):
+class ACGLineModel(SubscriptableBaseModel):
     """A planetary line on the astro-cartography map."""
     planet: str = Field(description="Planet name")
     line_type: Literal["ASC", "DSC", "MC", "IC"] = Field(description="Angular line type")

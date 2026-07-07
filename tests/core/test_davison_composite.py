@@ -154,13 +154,23 @@ class TestCompositeSubjectDunderMethods:
         f2 = CompositeSubjectFactory(s1, s2, "Chart B")
         assert f1 != f2
 
-    def test_hash_raises_for_unhashable_subjects(self, subjects):
-        """__hash__ tries to hash the subjects; if they're unhashable, TypeError is raised."""
+    def test_hash_uses_stable_scalars(self, subjects):
+        """__hash__ must hash stable scalar identifiers (name/julian_day) rather
+        than the subject models themselves: AstrologicalSubjectModel is a
+        non-frozen Pydantic model, so hashing it always raised TypeError."""
         s1, s2 = subjects
         f1 = CompositeSubjectFactory(s1, s2, "Chart")
-        # AstrologicalSubjectModel (Pydantic BaseModel) is not hashable
-        with pytest.raises(TypeError):
-            hash(f1)
+        f2 = CompositeSubjectFactory(s1, s2, "Chart")
+        assert isinstance(hash(f1), int)
+        # Consistent with __eq__: equal factories hash equal.
+        assert f1 == f2
+        assert hash(f1) == hash(f2)
+
+    def test_hash_differs_for_different_name(self, subjects):
+        s1, s2 = subjects
+        f1 = CompositeSubjectFactory(s1, s2, "Chart A")
+        f2 = CompositeSubjectFactory(s1, s2, "Chart B")
+        assert hash(f1) != hash(f2)
 
 
 class TestCompositeValidation:

@@ -109,7 +109,7 @@ class TestDeclinationAspects:
         aspects = AspectsFactory.single_chart_declination_aspects(john_lennon, orb=1.5)
         assert isinstance(aspects, list)
         for aspect in aspects:
-            assert aspect.aspect in ("parallel", "contra_parallel")
+            assert aspect.aspect in ("parallel", "contra-parallel")
             assert aspect.orbit >= 0
             assert aspect.orbit <= 1.5
 
@@ -128,7 +128,7 @@ class TestDeclinationAspects:
     def test_contra_parallel_opposite_declination(self, john_lennon):
         """Contra-parallels should have declinations with similar absolute values but opposite signs."""
         aspects = AspectsFactory.single_chart_declination_aspects(john_lennon, orb=1.5)
-        contras = [a for a in aspects if a.aspect == "contra_parallel"]
+        contras = [a for a in aspects if a.aspect == "contra-parallel"]
         for cp in contras:
             p1 = getattr(john_lennon, cp.p1_name.lower(), None)
             p2 = getattr(john_lennon, cp.p2_name.lower(), None)
@@ -143,7 +143,7 @@ class TestDeclinationAspects:
         )
         assert isinstance(aspects, list)
         for aspect in aspects:
-            assert aspect.aspect in ("parallel", "contra_parallel")
+            assert aspect.aspect in ("parallel", "contra-parallel")
             assert aspect.p1_owner == "John Lennon"
             assert aspect.p2_owner == "Yoko Ono"
 
@@ -187,7 +187,7 @@ class TestDeclinationAspects:
         """Contra-parallels should only occur between opposite-sign declinations."""
         aspects = AspectsFactory.single_chart_declination_aspects(john_lennon, orb=2.0)
         for a in aspects:
-            if a.aspect == "contra_parallel":
+            if a.aspect == "contra-parallel":
                 p1 = getattr(john_lennon, a.p1_name.lower(), None)
                 p2 = getattr(john_lennon, a.p2_name.lower(), None)
                 if p1 and p2 and p1.declination is not None and p2.declination is not None:

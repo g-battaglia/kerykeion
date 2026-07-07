@@ -41,7 +41,7 @@ ASPECT_SYMBOLS = {
     "quintile": "Q",
     "biquintile": "bQ",
     "parallel": "∥",
-    "contra_parallel": "⋕",
+    "contra-parallel": "⋕",
 }
 
 MOVEMENT_SYMBOLS = {
@@ -178,7 +178,10 @@ class ReportGenerator:
             self._secondary_subject = None
             self._active_points = []
             self._active_aspects = []
-        elif isinstance(self.model, AstrologicalSubjectModel):
+        elif isinstance(self.model, (AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel)):
+            # Raw composite/return models are accepted like natal subjects:
+            # every internal helper is SubjectLike-based, and to_context()
+            # already takes them — the two entry points must agree.
             self._model_kind = "subject"
             self.chart_type = "Subject"
             self._primary_subject = self.model
@@ -201,7 +204,10 @@ class ReportGenerator:
             self._active_points = list(self.model.active_points)
             self._active_aspects = [dict(aspect) for aspect in self.model.active_aspects]
         else:
-            supported = "AstrologicalSubjectModel, SingleChartDataModel, DualChartDataModel, MoonPhaseOverviewModel"
+            supported = (
+                "AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel, "
+                "SingleChartDataModel, DualChartDataModel, MoonPhaseOverviewModel"
+            )
             raise TypeError(f"Unsupported model type {type(self.model)!r}. Supported models: {supported}.")
 
     # ------------------------------------------------------------------ #

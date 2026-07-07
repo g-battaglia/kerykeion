@@ -62,6 +62,48 @@ class TestGlobalSearch:
                 assert eclipses[i].maximum_jd < eclipses[i + 1].maximum_jd
 
 
+class TestDefaultStartYear:
+    """start_year defaults to the current UTC year at call time (a wired-in
+    default year would silently age)."""
+
+    @staticmethod
+    def _capture_julday(monkeypatch):
+        import kerykeion.eclipses.eclipse_factory as ef
+
+        captured = {}
+
+        def fake_julday(year, month, day, hour):
+            captured["args"] = (year, month, day, hour)
+            return 2451545.0
+
+        monkeypatch.setattr(ef.ephe, "julday", fake_julday)
+        # Stub the internal searches: only the start_jd resolution is under test.
+        monkeypatch.setattr(ef.EclipseFactory, "_find_solar_global", staticmethod(lambda jd, count: []))
+        monkeypatch.setattr(ef.EclipseFactory, "_find_lunar_global", staticmethod(lambda jd, count: []))
+        monkeypatch.setattr(ef.EclipseFactory, "_find_solar_local", staticmethod(lambda jd, geopos, count: []))
+        monkeypatch.setattr(ef.EclipseFactory, "_find_lunar_local", staticmethod(lambda jd, geopos, count: []))
+        return captured
+
+    def test_global_default_is_current_utc_year(self, monkeypatch):
+        from datetime import datetime, timezone
+
+        captured = self._capture_julday(monkeypatch)
+        EclipseFactory.search_global()
+        assert captured["args"] == (datetime.now(timezone.utc).year, 1, 1, 0.0)
+
+    def test_local_default_is_current_utc_year(self, monkeypatch):
+        from datetime import datetime, timezone
+
+        captured = self._capture_julday(monkeypatch)
+        EclipseFactory.search_from_location(lat=41.9, lng=12.5)
+        assert captured["args"] == (datetime.now(timezone.utc).year, 1, 1, 0.0)
+
+    def test_explicit_start_year_still_honored(self, monkeypatch):
+        captured = self._capture_julday(monkeypatch)
+        EclipseFactory.search_global(start_year=2030)
+        assert captured["args"] == (2030, 1, 1, 0.0)
+
+
 class TestLocalSearch:
     """Test location-specific eclipse search."""
 

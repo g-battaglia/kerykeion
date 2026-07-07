@@ -2499,6 +2499,145 @@ class TestOnlineGeonamesGating:
                 suppress_geonames_warning=True,
             )
 
+    def test_explicit_coordinates_without_city_resolve_tz_from_coordinates(self, monkeypatch):
+        """online=True + explicit lat/lng + no tz_str + no city: the timezone
+        must be resolved from the coordinates (timezoneJSON endpoint), NOT from
+        the default city "Greenwich" (which silently produced a chart in the
+        wrong zone)."""
+        from kerykeion import fetch_geonames
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        captured = {}
+
+        def fake_tz_lookup(self, lat, lng):
+            captured["coords"] = (lat, lng)
+            return {"timezonestr": "Europe/Rome"}
+
+        def fail_city_lookup(self):
+            raise AssertionError(
+                "the city-based lookup must not run when lat/lng are explicit and city is missing"
+            )
+
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup
+        )
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+        )
+
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "Coords Only", 1990, 6, 15, 12, 0,
+            lat=41.9028, lng=12.4964, online=True,
+            suppress_geonames_warning=True,
+        )
+        assert captured["coords"] == (41.9028, 12.4964)
+        assert s.tz_str == "Europe/Rome"
+        assert s.lat == pytest.approx(41.9028)
+        assert s.lng == pytest.approx(12.4964)
+
+    def test_explicit_coordinates_without_city_missing_timezone_id_raises(self, monkeypatch):
+        """A timezoneJSON response without a timezoneId must raise a clear
+        KerykeionException, not fall back to a default timezone."""
+        from kerykeion import fetch_geonames
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.schemas import KerykeionException
+
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames,
+            "get_timezone_for_coordinates",
+            lambda self, lat, lng: {},
+        )
+        with pytest.raises(KerykeionException, match="timezoneId"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "Coords Fail", 1990, 6, 15, 12, 0,
+                lat=41.9028, lng=12.4964, online=True,
+                suppress_geonames_warning=True,
+            )
+
+    def test_from_iso_utc_time_explicit_coordinates_win(self, monkeypatch):
+        """Explicit lng/lat must never be overwritten by the city centroid in
+        from_iso_utc_time (and the GeoNames lookup is skipped entirely)."""
+        from kerykeion import fetch_geonames
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        def fail_city_lookup(self):
+            raise AssertionError("no GeoNames lookup should run when lng/lat are explicit")
+
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+        )
+        s = AstrologicalSubjectFactory.from_iso_utc_time(
+            "ISO Precise", "1990-06-15T12:00:00Z",
+            city="Rome", nation="IT", tz_str="Europe/Rome", online=True,
+            lat=45.999, lng=7.111,  # explicit, more precise than the centroid
+            suppress_geonames_warning=True,
+        )
+        assert s.lat == pytest.approx(45.999)
+        assert s.lng == pytest.approx(7.111)
+
+    def test_from_iso_utc_time_city_centroid_fills_missing_coordinates(self, _mock_geonames):
+        """Without explicit lng/lat, from_iso_utc_time still resolves them from
+        the city centroid (legacy behavior preserved)."""
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        s = AstrologicalSubjectFactory.from_iso_utc_time(
+            "ISO City", "1990-06-15T12:00:00Z",
+            city="Rome", nation="IT", tz_str="Europe/Rome", online=True,
+            suppress_geonames_warning=True,
+        )
+        assert s.lat == pytest.approx(41.89193)
+        assert s.lng == pytest.approx(12.51133)
+
+    def test_from_iso_utc_time_defaults_remain_greenwich_offline(self):
+        """With no location at all and online=False, the historical Greenwich
+        defaults still apply."""
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        s = AstrologicalSubjectFactory.from_iso_utc_time(
+            "ISO Default", "1990-06-15T12:00:00Z", online=False,
+        )
+        assert s.lat == pytest.approx(51.5074)
+        assert s.lng == pytest.approx(0.0)
+        assert s.tz_str == "Etc/GMT"
+
+    def test_malformed_geonames_coordinates_raise_kerykeion_exception(self, monkeypatch):
+        """A GeoNames payload with non-numeric lat/lng must surface as
+        KerykeionException, not a raw ValueError from float()."""
+        from kerykeion import fetch_geonames
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.schemas import KerykeionException
+
+        bad = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "not-a-number", "lng": "12.5"}
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(bad)
+        )
+        with pytest.raises(KerykeionException, match="Invalid coordinates from geonames"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "Bad Coords", 1990, 6, 15, 12, 0,
+                city="Rome", nation="IT", online=True,
+                suppress_geonames_warning=True,
+            )
+
+    def test_partial_date_defaults_use_target_timezone_instant(self):
+        """Missing date/time components must be filled from the current instant
+        rendered in the SUBJECT's resolved timezone, not from the host's naive
+        wall clock re-interpreted in that timezone (which shifted the moment by
+        the full host-target offset)."""
+        from datetime import datetime, timedelta, timezone
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        before = datetime.now(timezone.utc)
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "Partial Now", lat=-36.85, lng=174.76, tz_str="Pacific/Auckland",
+            online=False, suppress_geonames_warning=True,
+        )
+        after = datetime.now(timezone.utc)
+        got = datetime.fromisoformat(s.iso_formatted_utc_datetime)
+        # `seconds` has a plain 0 default (it is not filled from "now"), so the
+        # captured instant may lag by up to a minute; anything larger means the
+        # instant was captured in the wrong timezone (offsets are >= 1 hour).
+        assert before - timedelta(seconds=65) <= got <= after + timedelta(seconds=5)
+
 
 class TestYear1CEBoundaryRound7:
     """Round-7 regression: a year-1-CE local time east of UTC that converts to a

@@ -14,6 +14,7 @@ Eclipse type bit flags (pyswisseph uses both SE_ prefix and non-prefix):
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
@@ -266,7 +267,7 @@ class EclipseFactory:
     def search_from_location(
         lat: float,
         lng: float,
-        start_year: int = 2025,
+        start_year: Optional[int] = None,
         count: int = 5,
     ) -> EclipseSearchResultModel:
         """Search for eclipses visible from a specific location.
@@ -274,7 +275,9 @@ class EclipseFactory:
         Args:
             lat: Geographic latitude (north positive).
             lng: Geographic longitude (east positive).
-            start_year: Year to start searching from.
+            start_year: Year to start searching from. Defaults to the current
+                UTC year when ``None`` (a wired-in default year would silently
+                age).
             count: Number of each type to find.
 
         Returns:
@@ -287,6 +290,8 @@ class EclipseFactory:
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
+        if start_year is None:
+            start_year = datetime.now(timezone.utc).year
         geopos = (lng, lat, 0.0)
         start_jd = ephe.julday(start_year, 1, 1, 0.0)
 
@@ -307,13 +312,15 @@ class EclipseFactory:
 
     @staticmethod
     def search_global(
-        start_year: int = 2025,
+        start_year: Optional[int] = None,
         count: int = 10,
     ) -> EclipseSearchResultModel:
         """Search for global eclipses (any location).
 
         Args:
-            start_year: Year to start searching from.
+            start_year: Year to start searching from. Defaults to the current
+                UTC year when ``None`` (a wired-in default year would silently
+                age).
             count: Number of each type to find.
 
         Returns:
@@ -330,6 +337,8 @@ class EclipseFactory:
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
+        if start_year is None:
+            start_year = datetime.now(timezone.utc).year
         start_jd = ephe.julday(start_year, 1, 1, 0.0)
 
         with ephemeris_session():

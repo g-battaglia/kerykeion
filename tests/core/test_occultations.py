@@ -216,6 +216,55 @@ class TestOccultationBreakAndErrorPaths:
             factory.search_local(start_jd, ephe.VENUS, lat=41.9, lng=12.5, count=1_001)
 
 
+class TestPlanetNameResolution:
+    """planet_id also accepts planet names (resolved via the project-wide
+    STANDARD_PLANETS map); raw Swiss Ephemeris ints stay supported."""
+
+    def test_global_accepts_planet_name(self, factory, start_jd):
+        """search_global("Venus") must search the same body as ephe.VENUS."""
+        from unittest.mock import patch
+        captured = {}
+
+        def fake_glob(cursor, planet_id, flags, ecl_type, backwards):
+            captured["planet_id"] = planet_id
+            return (4, [start_jd + 5.0] + [0.0] * 9)  # 4 = ECL_TOTAL
+
+        with patch(
+            "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_glob",
+            side_effect=fake_glob,
+        ):
+            results = factory.search_global(start_jd, "Venus", count=1)
+        assert captured["planet_id"] == ephe.VENUS
+        assert len(results) == 1
+        assert results[0].planet_name == "Venus"
+
+    def test_local_accepts_planet_name(self, factory, start_jd):
+        from unittest.mock import patch
+        captured = {}
+
+        def fake_loc(cursor, planet_id, geopos, flags, backwards):
+            captured["planet_id"] = planet_id
+            return (4, [start_jd + 5.0] + [0.0] * 9, [0.0] * 10)
+
+        with patch(
+            "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_loc",
+            side_effect=fake_loc,
+        ):
+            results = factory.search_local(start_jd, "Mars", lat=41.9, lng=12.5, count=1)
+        assert captured["planet_id"] == ephe.MARS
+        assert len(results) == 1
+
+    def test_unknown_planet_name_raises(self, factory, start_jd):
+        with pytest.raises(KerykeionException, match="Unknown planet name"):
+            factory.search_global(start_jd, "Vulcan", count=1)
+        with pytest.raises(KerykeionException, match="Unknown planet name"):
+            factory.search_local(start_jd, "Vulcan", lat=41.9, lng=12.5, count=1)
+
+    def test_wrong_type_raises_type_error(self, factory, start_jd):
+        with pytest.raises(TypeError, match="planet_id"):
+            factory.search_global(start_jd, 3.5, count=1)
+
+
 class TestSweReference:
     """Compare factory results with direct ephe.lun_occult_when_glob() calls."""
 

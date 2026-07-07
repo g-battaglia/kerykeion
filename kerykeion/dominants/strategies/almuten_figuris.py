@@ -212,6 +212,13 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
         # eastern timezones and early-morning births in western ones). The JD
         # method remains as a fallback for charts whose local date fields
         # cannot form a ``datetime`` (e.g. BCE years).
+        # DELIBERATE SIMPLIFICATION: the day boundary is civil midnight, not
+        # local sunrise as in the strict planetary-day tradition — a birth
+        # between midnight and sunrise therefore credits the following day's
+        # ruler. Sunrise-based day rulership (as the planetary_hours module
+        # implements) would couple this optional bonus to the rise/set
+        # machinery, which is undefined at polar latitudes; civil midnight is
+        # a stable convention that always resolves.
         # Weekday index: 0 = Sunday … 6 = Saturday.
         weekday_index: Optional[int] = None
         try:

@@ -375,10 +375,8 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Pluto                 | semi-sextile ⚺   | Apollon               | 1.15° | Applying →   |
 | Pluto                 | opposition ☍     | Admetos               | 0.02° | Applying →   |
 | Pluto                 | trine △          | Vulkanus              | 0.37° | Separating ← |
-| Mean North Lunar Node | conjunction ☌    | True North Lunar Node | 0.52° | Applying →   |
 | Mean North Lunar Node | square □         | Ascendant             | 1.97° | Applying →   |
 | Mean North Lunar Node | square □         | Descendant            | 1.97° | Applying →   |
-| Mean North Lunar Node | opposition ☍     | True South Lunar Node | 0.52° | Applying →   |
 | Mean North Lunar Node | quincunx ⚻       | Pholus                | 0.20° | Separating ← |
 | Mean North Lunar Node | opposition ☍     | Ceres                 | 5.93° | Separating ← |
 | Mean North Lunar Node | quincunx ⚻       | Pallas                | 0.54° | Applying →   |
@@ -397,7 +395,6 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Mean North Lunar Node | sesquiquadrate ⚼ | Kronos                | 0.89° | Applying →   |
 | True North Lunar Node | square □         | Ascendant             | 1.45° | Applying →   |
 | True North Lunar Node | square □         | Descendant            | 1.45° | Applying →   |
-| True North Lunar Node | opposition ☍     | Mean South Lunar Node | 0.52° | Applying →   |
 | True North Lunar Node | quincunx ⚻       | Pholus                | 0.73° | Separating ← |
 | True North Lunar Node | quincunx ⚻       | Pallas                | 0.02° | Applying →   |
 | True North Lunar Node | square □         | Juno                  | 2.83° | Separating ← |
@@ -489,7 +486,6 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Mean Lilith           | semi-square ∠    | Apollon               | 0.17° | Separating ← |
 | Mean Lilith           | sesquiquadrate ⚼ | Vulkanus              | 1.35° | Applying →   |
 | Mean Lilith           | semi-sextile ⚺   | Poseidon              | 0.31° | Separating ← |
-| Mean South Lunar Node | conjunction ☌    | True South Lunar Node | 0.52° | Applying →   |
 | Mean South Lunar Node | semi-sextile ⚺   | Pholus                | 0.20° | Separating ← |
 | Mean South Lunar Node | conjunction ☌    | Ceres                 | 5.93° | Separating ← |
 | Mean South Lunar Node | semi-sextile ⚺   | Pallas                | 0.54° | Applying →   |

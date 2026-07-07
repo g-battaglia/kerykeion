@@ -176,6 +176,19 @@ class TestPlanetaryReturnValidation:
         with pytest.raises(KerykeionException, match="undefined"):
             factory.next_heliocentric_return_from_iso_formatted_time("Sun", "2025-01-01T00:00:00+00:00")
 
+    def test_missing_julian_day_raises(self, subject, start_jd):
+        """julian_day is Optional on the model (composite subjects leave it
+        None): the guard must raise a clear KerykeionException instead of a
+        raw TypeError from calc_ut(None, ...)."""
+        from kerykeion.schemas import KerykeionException
+        no_jd_subject = subject.model_copy(update={"julian_day": None})
+        no_jd_factory = PlanetaryReturnFactory(
+            no_jd_subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        with pytest.raises(KerykeionException, match="Julian Day"):
+            no_jd_factory.next_heliocentric_return("Mars", start_jd)
+
     def test_user_sidereal_without_custom_ayanamsa_raises(self, subject):
         """USER sidereal mode without custom ayanamsa params should raise."""
         from kerykeion.schemas import KerykeionException

@@ -46,6 +46,124 @@
   astrologically negligible (far inside the day-for-a-year technique's own
   precision), but not bit-exact against a raw `ephe.calc_ut` at the float JD.
 
+### Changed (breaking, pre-6.0.0 full-codebase review, third pass)
+
+- **`AspectName` literal: `"contra_parallel"` renamed to `"contra-parallel"`**,
+  aligning the separator with every other multi-word aspect name
+  (`"semi-sextile"`, `"semi-square"`). The old underscore spelling is gone from
+  the literal, the aspects factory output and the report glyph table; update
+  any stored configuration or JSON consumers before upgrading.
+- **Single-chart aspects skip mean×true lunar-node artifact pairs.** With both
+  node variants active, every chart used to report a permanent ≤1.75°-orb
+  Mean×True conjunction (and near-opposition with the opposite end) — a
+  configuration artifact, not an aspect. Cross-chart (synastry/transit) node
+  pairs are unaffected. Golden report fixtures were regenerated.
+- **Declination aspect methods now share the longitudinal contract**:
+  `single_chart_declination_aspects` / `dual_chart_declination_aspects`
+  intersect the caller's `active_points` with each subject's own
+  `active_points` (they previously replaced them) and reject a negative `orb`
+  with `KerykeionException`.
+- **Uniform error contract: `KerykeionException` replaces `ValueError`** in
+  `AspectsFactory` (`axis_orb_limit`), fixed-star discovery (negative `orb`),
+  and `SignIngressFactory.from_iso_range` / `RetrogradeStationFactory.
+  from_iso_range` (malformed ISO input, matching the lunation factory).
+- **`to_context([])` raises the documented `TypeError`** instead of silently
+  serializing any empty list as a zero-count midpoints analysis
+  (`midpoints_to_context([])` remains available for an intentional empty set).
+- **`RelocatedChartFactory.relocate` rejects Topocentric subjects** with
+  `KerykeionException`: planets would keep the natal observer's parallax (up
+  to ~1-2° for the Moon), producing an internally inconsistent chart.
+  Recreate the subject at the new coordinates instead.
+- **`from_iso_utc_time` no longer overwrites explicit coordinates**: passing
+  `lat`/`lng` skips the GeoNames lookup entirely (same semantics as
+  `from_birth_data`); the fetched city centroid only fills in what is missing.
+- **BCE dates are validated**: the `year < 1` path used to pass raw fields to
+  `julday`, silently extrapolating impossible dates (month 13, day 32) into a
+  different chart; it now raises `KerykeionException` like the CE path.
+- **GeoNames is reached over HTTPS** (`secure.geonames.org`) and the request
+  cache default moved from the CWD-relative `cache/` to the per-user
+  `~/.kerykeion/cache/` (a read-only CWD no longer breaks online charts).
+  With explicit `lat`/`lng` but no `tz_str` and no `city`, `from_birth_data`
+  now resolves the timezone from the coordinates (timezoneJSON) instead of
+  silently using the default city's timezone (Tokyo coordinates no longer get
+  Greenwich time, ~9 h off).
+- **`MoonPhaseDetailsFactory`: malformed/empty subject timestamps raise**
+  `KerykeionException` instead of silently computing the phase for "now".
+- **`EclipseFactory.search_global`/`search_local` default `start_year`** is now
+  the current UTC year instead of the hardcoded 2025.
+- **Dominants**: the `modern` strategy's aspect channel always sees all four
+  angles, so the ranking no longer changes with the subject's `active_points`
+  configuration; the `elemental` strategy treats an explicit `active_points=[]`
+  as a real empty filter (zero totals), matching the factory convention above.
+- **`kerykeion.settings.__all__` drops `load_settings_mapping`** (deprecated at
+  birth, "removed in 7.0.0"); it stays importable from
+  `kerykeion.settings.kerykeion_settings` for the v6 cycle. The sibling
+  `load_language_pair` is now re-exported as its `__all__` promised.
+
+### Fixed (pre-6.0.0 full-codebase review, third pass)
+
+- **Dual-wheel charts: the second subject's glyphs are always drawn.**
+  `show_degree_indicators=False` used to remove the entire outer ring of
+  transit/partner planets (glyphs included); the flag now gates only tick
+  lines and degree labels.
+- **Glyph anti-collision works across 0°/360°**: the overlap scan is now
+  circular (it starts after the widest gap), so a conjunction straddling the
+  Aries point (29°58' Pisces + 0°10' Aries) is spread like any other pair
+  instead of overlapping. Dense stelliums that exceed the available space now
+  get a proportional partial spread instead of no spread at all.
+- **Arc-seconds render correctly in chart grids**: the degree formatter emits
+  `&quot;` so the SVG quote-replace pass can't corrupt `24°05'23"` into
+  `24°05'23'` (previously wrong on every rendered chart, declination column
+  included).
+- **Transit chart "table" aspect grid no longer clips**: it uses the same
+  (550, 450) anchor as Synastry/DualReturn — the hardcoded (600, 520) pushed
+  the glyph header row past the viewBox bottom on every table-mode Transit.
+- **Declination aspects can't masquerade as conjunctions**: both aspect grids
+  and the modern wheel's aspect core skip aspects that have no entry in
+  `aspects_settings` (a hand-built `parallel` aspect used to render the
+  conjunction glyph / a longitude chord).
+- **Dual-chart aspect models honor `*_subject_is_fixed` for axis-axis pairs**:
+  the speed override now applies before the axis-axis branch, so fixed charts
+  no longer persist synthetic cusp speeds (~360°/day) on those pairs.
+- **Composite factories: `hash(CompositeSubjectFactory)` works** (it hashed
+  unhashable pydantic models — every call raised `TypeError`); missing
+  `julian_day` on composite subjects is now caught with a clear
+  `KerykeionException` in `PlanetaryNodesFactory`, `PlanetaryPhenomenaFactory`
+  and `next_heliocentric_return` instead of a raw backend `TypeError`.
+- **Transit refinement works on BCE ranges**: `_sampling_gaps_days` parses
+  extended-year ISO timestamps (the same ones `_iso_chronological_key`
+  supports), so per-pass splitting/refinement no longer silently degrades;
+  flat orb plateaus of any width dedupe to a single exactness event.
+- **`inline_css_variables_in_svg` can't hang**: self-referential CSS variables
+  in a custom theme now hit an iteration cap (with a warning) instead of
+  looping forever.
+- **Partial-date defaults use the subject's timezone**: `from_birth_data`
+  without a date used to capture the host machine's naive wall clock and
+  reinterpret it in the target timezone (off by the full host-target offset).
+- **Report/serializer parity**: `ReportGenerator` accepts raw
+  `CompositeSubjectModel`/`PlanetReturnModel` like `to_context` always did.
+- **Models**: the midpoints, primary-directions, astro-cartography,
+  secondary-progressions and fixed-star-catalog models are subscriptable like
+  every other public model; `SingleChartDataModel.active_points` /
+  `DualChartDataModel.active_points` accept catalog star names (matching the
+  aspects models); `PointInHouseModel`'s owner-house fields are optional with
+  `None` defaults; `kr_models` imports its literals directly from
+  `kr_literals` (removing a fragile import-order dependency).
+
+### Added (pre-6.0.0 full-codebase review, third pass)
+
+- **GitHub Actions CI** (`.github/workflows/ci.yml`): ruff + mypy + pyright and
+  the base-tier offline test suite on Python 3.12/3.13, with ephemeris-kernel
+  caching and a build smoke check.
+- **`OccultationFactory` accepts planet names** (`"Venus"`) in addition to raw
+  Swiss Ephemeris integer ids; **`HeliacalFactory` accepts `lat=`/`lng=`/
+  `altitude=` keywords** as a safer alternative to the `geopos` tuple
+  (longitude first — the tuple order is now documented).
+- **`FetchGeonames.get_timezone_for_coordinates(lat, lng)`**: coordinate-based
+  timezone resolution over the same cached session.
+- **`CHART_TYPE_PROGRESSION` constant** completes the `ChartType` coverage in
+  `kerykeion.settings.config_constants`.
+
 ### Changed (breaking)
 
 - **`ChartDataFactory` now treats an explicit `active_points=[]` as a real

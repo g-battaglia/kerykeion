@@ -232,33 +232,36 @@ def draw_planets(
                 points_settings=available_planets_setting,
             )
     elif chart_type in DUAL_CHART_TYPES:
-        # Dual charts: draw indicators for both primary and secondary points
+        # Dual charts: the secondary/outer points (transit or partner planets)
+        # are ALWAYS drawn — their glyphs are chart content, not an indicator.
+        # ``show_degree_indicators`` only gates tick lines and degree labels.
+        if secondary_points_abs_positions and secondary_points_rel_positions:
+            # v6: use the per-second-subject settings list if provided so
+            # the iteration aligns with the actual collected points. Falls
+            # back to the shared ``available_planets_setting`` to keep
+            # legacy callers working (single-subject + transit charts where
+            # the second subject mirrors the primary settings).
+            secondary_settings = (
+                second_subject_available_planets_setting
+                if second_subject_available_planets_setting is not None
+                else available_planets_setting
+            )
+            output = _draw_secondary_points(
+                output,
+                radius,
+                main_subject_first_house_degree_ut,
+                main_subject_seventh_house_degree_ut,
+                secondary_points_abs_positions,
+                secondary_points_rel_positions,
+                secondary_settings,
+                chart_type,
+                transit_ring_exclude_points,
+                second_subject_available_kerykeion_celestial_points,
+                show_degree_indicators=show_degree_indicators,
+            )
+        # Primary/inner points (natal planets): pure degree indicators, so the
+        # flag gates the whole call (their glyphs are drawn in section 5).
         if show_degree_indicators:
-            # Secondary/outer points (transit planets)
-            if secondary_points_abs_positions and secondary_points_rel_positions:
-                # v6: use the per-second-subject settings list if provided so
-                # the iteration aligns with the actual collected points. Falls
-                # back to the shared ``available_planets_setting`` to keep
-                # legacy callers working (single-subject + transit charts where
-                # the second subject mirrors the primary settings).
-                secondary_settings = (
-                    second_subject_available_planets_setting
-                    if second_subject_available_planets_setting is not None
-                    else available_planets_setting
-                )
-                output = _draw_secondary_points(
-                    output,
-                    radius,
-                    main_subject_first_house_degree_ut,
-                    main_subject_seventh_house_degree_ut,
-                    secondary_points_abs_positions,
-                    secondary_points_rel_positions,
-                    secondary_settings,
-                    chart_type,
-                    transit_ring_exclude_points,
-                    second_subject_available_kerykeion_celestial_points,
-                )
-            # Primary/inner points (natal planets)
             output = _draw_inner_point_indicators(
                 output=output,
                 radius=radius,
@@ -318,7 +321,7 @@ def _calculate_planet_adjustments(
     position_adjustments: list[float] = [0.0] * len(points_settings)
     is_group_open = False
 
-    # Build position data and identify groups
+    # First pass: compute adjacent distances for every position
     for position_idx, abs_position in enumerate(sorted_positions):
         point_idx = sorted_point_indices[position_idx]
 
@@ -335,7 +338,21 @@ def _calculate_planet_adjustments(
             distance_to_next = degree_difference(next_pos, points_abs_positions[point_idx])
 
         planets_by_position[position_idx] = [point_idx, distance_to_prev, distance_to_next]
-        label = points_settings[point_idx]["label"]
+
+    # Second pass: identify groups scanning the ring circularly, starting just
+    # after the widest gap. Starting at index 0 would split a run that
+    # straddles 0°/360° (e.g. 29°58' Pisces + 0°10' Aries) into two fragments,
+    # leaving the wrap pair without any anti-collision adjustment.
+    total_positions = len(sorted_positions)
+    scan_start = (
+        max(range(total_positions), key=lambda idx: planets_by_position[idx][1])  # type: ignore[index]
+        if total_positions
+        else 0
+    )
+    for scan_step in range(total_positions):
+        position_idx = (scan_start + scan_step) % total_positions
+        point_idx, distance_to_prev, distance_to_next = planets_by_position[position_idx]  # type: ignore[misc, assignment]
+        label = points_settings[int(point_idx)]["label"]
 
         # Group points that are close to each other
         if distance_to_next < PLANET_GROUPING_THRESHOLD:
@@ -488,6 +505,15 @@ def _handle_multi_point_group(
         position_adjustments[group[0][0]] = start_position - group[0][1] + (1.5 * threshold)
         for i in range(group_size - 1):
             position_adjustments[group[i + 1][0]] = 1.2 * threshold + position_adjustments[group[i][0]] - group[i][2]
+    else:
+        # Not enough room for the full spread: distribute the points evenly
+        # across whatever space is available instead of giving up entirely —
+        # dense stelliums would otherwise render fully stacked, mitigated only
+        # by the alternating point radii.
+        step = available_space / (group_size + 1)
+        position_adjustments[group[0][0]] = step - group[0][1]
+        for i in range(group_size - 1):
+            position_adjustments[group[i + 1][0]] = step + position_adjustments[group[i][0]] - group[i][2]
 
 
 def _calculate_point_offset(
@@ -1077,6 +1103,7 @@ def _draw_secondary_points(
     chart_type: str,
     exclude_points: list[str],
     celestial_points: Union[list[KerykeionPointModel], None] = None,
+    show_degree_indicators: bool = True,
 ) -> str:
     """
     Draw secondary celestial points for transit/synastry charts.
@@ -1084,6 +1111,8 @@ def _draw_secondary_points(
     Renders the outer ring of planets (transit positions) with symbols,
     connecting lines, and degree indicators. If a point is retrograde,
     a small retrograde symbol (℞) is rendered next to the glyph.
+    The glyphs are always rendered; ``show_degree_indicators`` only controls
+    the tick lines and the degree labels next to them.
 
     Args:
         output: Current SVG output.
@@ -1195,27 +1224,29 @@ def _draw_secondary_points(
             )
         point_svg += "</g></g>"
 
-        # Draw indicator line
-        x1 = wheel_x(0, radius + 3, point_offset) - 3
-        y1 = wheel_y(0, radius + 3, point_offset) - 3
-        x2 = wheel_x(0, radius - 3, point_offset) + 3
-        y2 = wheel_y(0, radius - 3, point_offset) + 3
+        output += point_svg
 
-        # Draw degree text (always horizontal for readability)
-        adjusted_point_offset = point_offset + position_adjustments[point_idx]
-        text_radius = -9.0
+        if show_degree_indicators:
+            # Draw indicator line
+            x1 = wheel_x(0, radius + 3, point_offset) - 3
+            y1 = wheel_y(0, radius + 3, point_offset) - 3
+            x2 = wheel_x(0, radius - 3, point_offset) + 3
+            y2 = wheel_y(0, radius - 3, point_offset) + 3
 
-        deg_x = wheel_x(0, radius - text_radius, adjusted_point_offset) + text_radius
-        deg_y = wheel_y(0, radius - text_radius, adjusted_point_offset) + text_radius
+            # Draw degree text (always horizontal for readability)
+            adjusted_point_offset = point_offset + position_adjustments[point_idx]
+            text_radius = -9.0
 
-        degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
-        output += (
-            point_svg
-            + f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-            + f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
-            + f'<g transform="translate({deg_x},{deg_y})">'
-            + '<text text-anchor="middle" dominant-baseline="middle" '
-            + f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
-        )
+            deg_x = wheel_x(0, radius - text_radius, adjusted_point_offset) + text_radius
+            deg_y = wheel_y(0, radius - text_radius, adjusted_point_offset) + text_radius
+
+            degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
+            output += (
+                f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+                + f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
+                + f'<g transform="translate({deg_x},{deg_y})">'
+                + '<text text-anchor="middle" dominant-baseline="middle" '
+                + f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+            )
 
     return output

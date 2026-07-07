@@ -26,6 +26,7 @@ import math
 from datetime import datetime, timezone
 from typing import Optional
 from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.utilities import wrap_180
 
 logger = logging.getLogger(__name__)
@@ -59,27 +60,33 @@ def safe_parse_iso_datetime(value: Optional[str]) -> datetime:
     """
     Parse an ISO formatted datetime string into an aware UTC datetime.
 
-    This helper is defensive:
+    This helper is tolerant about the *format*:
         - Accepts both standard ISO strings and those ending with 'Z'
         - Treats naive datetimes as UTC
-        - Falls back to the current UTC time if parsing fails
+
+    It is strict about *invalid input*: an empty or unparseable value raises
+    a :class:`KerykeionException` instead of silently falling back to the
+    current UTC time, which produced a plausible-looking but wrong result
+    downstream.
+
+    Raises:
+        KerykeionException: If ``value`` is empty/None or not a valid ISO
+            datetime string.
     """
     if not value:
-        logger.warning("safe_parse_iso_datetime received empty value; using current UTC time.")
-        return datetime.now(timezone.utc)
+        raise KerykeionException(
+            "Cannot parse ISO datetime: value is empty or None."
+        )
 
     try:
         dt = datetime.fromisoformat(value)
-    except ValueError:
+    except (TypeError, ValueError):
         try:
             dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
         except Exception as exc:
-            logger.warning(
-                "safe_parse_iso_datetime failed to parse value %r (%s); using current UTC time.",
-                value,
-                exc,
-            )
-            return datetime.now(timezone.utc)
+            raise KerykeionException(
+                f"Cannot parse ISO datetime {value!r}: {exc}"
+            ) from exc
 
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)

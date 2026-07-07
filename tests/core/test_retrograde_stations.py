@@ -113,6 +113,15 @@ class TestStationErrorContract:
     the lunation factory's contract — never propagate raw backend errors and
     never return silently truncated results."""
 
+    def test_malformed_iso_raises_kerykeion_exception(self):
+        # A malformed ISO date must surface as KerykeionException (same wrap
+        # as LunationFinderFactory.from_iso_range), never as a raw ValueError
+        # leaking from datetime.fromisoformat.
+        with pytest.raises(KerykeionException, match="Invalid ISO"):
+            RetrogradeStationFactory.from_iso_range("not-a-date", "2026-12-31", ["Mercury"])
+        with pytest.raises(KerykeionException, match="Invalid ISO"):
+            RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-13-45", ["Mercury"])
+
     def test_backend_failure_raises_kerykeion_exception(self, monkeypatch):
         # Simulate the backend rejecting a date (as a raw libephemeris
         # EphemerisRangeError / swisseph.Error would) instead of using extreme

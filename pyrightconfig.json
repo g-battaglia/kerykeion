@@ -12,7 +12,7 @@
     "*.egg-info"
   ],
   "typeCheckingMode": "basic",
-  "pythonVersion": "3.9",
+  "pythonVersion": "3.12",
   "pythonPlatform": "All",
   "venvPath": ".",
   "venv": ".venv",

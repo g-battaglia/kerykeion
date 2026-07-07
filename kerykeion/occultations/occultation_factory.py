@@ -32,11 +32,13 @@ License: AGPL-3.0
 import logging
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
+from kerykeion.settings.config_constants import STANDARD_PLANETS
 
 from pydantic import Field
-from typing import List
+from typing import List, Union, cast
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 logger = logging.getLogger(__name__)
@@ -75,6 +77,34 @@ def _ensure_scannable(count: int) -> None:
             f"count too large (> {_MAX_COUNT} events per search). "
             f"Request fewer events per search."
         )
+
+
+def _resolve_planet_id(planet_id: Union[int, str]) -> int:
+    """Resolve *planet_id* to a Swiss Ephemeris body number.
+
+    Raw backend IDs (``int``, e.g. ``ephe.VENUS``) stay supported; a planet
+    name (``str``, e.g. ``"Venus"``) is resolved through the project-wide
+    name -> ID map (``STANDARD_PLANETS`` in ``settings.config_constants``),
+    matching PlanetaryReturnFactory's name handling.
+
+    Raises:
+        KerykeionException: If the name is not a known planet.
+        TypeError: If *planet_id* is neither an int nor a str.
+    """
+    if isinstance(planet_id, str):
+        resolved = STANDARD_PLANETS.get(cast(AstrologicalPoint, planet_id))
+        if resolved is None:
+            raise KerykeionException(
+                f"Unknown planet name for occultation search: {planet_id!r}. "
+                f"Valid names: {', '.join(STANDARD_PLANETS)}."
+            )
+        return resolved
+    if isinstance(planet_id, int):
+        return planet_id
+    raise TypeError(
+        f"planet_id must be a Swiss Ephemeris body number (int) or a planet "
+        f"name (str), got {type(planet_id).__name__}."
+    )
 
 
 def _search_failure(kind: str, jd: float, exc: Exception) -> KerykeionException:
@@ -138,7 +168,7 @@ class OccultationFactory:
     def search_global(
         self,
         julian_day: float,
-        planet_id: int,
+        planet_id: Union[int, str],
         count: int = 5,
     ) -> List[OccultationModel]:
         """Find the next *count* global lunar occultations of *planet_id*.
@@ -148,19 +178,22 @@ class OccultationFactory:
 
         Args:
             julian_day: Starting Julian Day (UT) for the search.
-            planet_id: Swiss Ephemeris planet identifier (e.g. ``ephe.VENUS``).
+            planet_id: Swiss Ephemeris planet identifier (e.g. ``ephe.VENUS``)
+                or planet name (e.g. ``"Venus"``).
             count: Number of events to return. Defaults to ``5``.
 
         Returns:
             A list of :class:`OccultationModel` instances ordered by date.
 
         Raises:
-            KerykeionException: If the ephemeris backend fails mid-search (most
-                often a date outside the available ephemeris range); the search
-                never returns silently truncated results.
+            KerykeionException: If the planet name is unknown, or if the
+                ephemeris backend fails mid-search (most often a date outside
+                the available ephemeris range); the search never returns
+                silently truncated results.
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
+        planet_id = _resolve_planet_id(planet_id)
         planet_name = ephe.get_planet_name(planet_id)
         results: List[OccultationModel] = []
         cursor = julian_day
@@ -204,7 +237,7 @@ class OccultationFactory:
     def search_local(
         self,
         julian_day: float,
-        planet_id: int,
+        planet_id: Union[int, str],
         lat: float,
         lng: float,
         count: int = 5,
@@ -216,7 +249,8 @@ class OccultationFactory:
 
         Args:
             julian_day: Starting Julian Day (UT) for the search.
-            planet_id: Swiss Ephemeris planet identifier (e.g. ``ephe.MARS``).
+            planet_id: Swiss Ephemeris planet identifier (e.g. ``ephe.MARS``)
+                or planet name (e.g. ``"Mars"``).
             lat: Geographic latitude (northern positive).
             lng: Geographic longitude (eastern positive).
             count: Number of events to return. Defaults to ``5``.
@@ -225,12 +259,14 @@ class OccultationFactory:
             A list of :class:`OccultationModel` instances ordered by date.
 
         Raises:
-            KerykeionException: If the ephemeris backend fails mid-search (most
-                often a date outside the available ephemeris range); the search
-                never returns silently truncated results.
+            KerykeionException: If the planet name is unknown, or if the
+                ephemeris backend fails mid-search (most often a date outside
+                the available ephemeris range); the search never returns
+                silently truncated results.
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
+        planet_id = _resolve_planet_id(planet_id)
         planet_name = ephe.get_planet_name(planet_id)
         geopos = (lng, lat, 0.0)  # (longitude, latitude, altitude)
         results: List[OccultationModel] = []

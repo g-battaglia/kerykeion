@@ -426,10 +426,8 @@ Buenos Aires Subject — Natal Chart Report
 | Pluto                 | semi-sextile ⚺   | Apollon               | 1.62° | Applying →   |
 | Pluto                 | opposition ☍     | Admetos               | 0.76° | Applying →   |
 | Pluto                 | trine △          | Vulkanus              | 0.55° | Applying →   |
-| Mean North Lunar Node | conjunction ☌    | True North Lunar Node | 1.57° | Applying →   |
 | Mean North Lunar Node | trine △          | Medium Coeli          | 2.08° | Separating ← |
 | Mean North Lunar Node | sextile ⚹        | Imum Coeli            | 2.08° | Separating ← |
-| Mean North Lunar Node | opposition ☍     | True South Lunar Node | 1.57° | Applying →   |
 | Mean North Lunar Node | biquintile bQ    | Pholus                | 0.62° | Applying →   |
 | Mean North Lunar Node | square □         | Juno                  | 0.62° | Applying →   |
 | Mean North Lunar Node | square □         | Vesta                 | 4.83° | Applying →   |
@@ -446,7 +444,6 @@ Buenos Aires Subject — Natal Chart Report
 | True North Lunar Node | trine △          | Medium Coeli          | 3.65° | Separating ← |
 | True North Lunar Node | sextile ⚹        | Imum Coeli            | 3.65° | Separating ← |
 | True North Lunar Node | quintile Q       | Mean Lilith           | 1.16° | Applying →   |
-| True North Lunar Node | opposition ☍     | Mean South Lunar Node | 1.57° | Applying →   |
 | True North Lunar Node | biquintile bQ    | Pholus                | 0.95° | Separating ← |
 | True North Lunar Node | square □         | Juno                  | 2.19° | Applying →   |
 | True North Lunar Node | square □         | Vesta                 | 3.27° | Applying →   |
@@ -543,7 +540,6 @@ Buenos Aires Subject — Natal Chart Report
 | Mean Lilith           | trine △          | White Moon            | 3.77° | Applying →   |
 | Mean Lilith           | conjunction ☌    | Cupido                | 5.98° | Separating ← |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 0.83° | Applying →   |
-| Mean South Lunar Node | conjunction ☌    | True South Lunar Node | 1.57° | Applying →   |
 | Mean South Lunar Node | square □         | Juno                  | 0.62° | Applying →   |
 | Mean South Lunar Node | square □         | Vesta                 | 4.83° | Applying →   |
 | Mean South Lunar Node | square □         | Sedna                 | 1.62° | Separating ← |

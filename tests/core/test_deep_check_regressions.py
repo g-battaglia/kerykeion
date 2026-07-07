@@ -14,7 +14,6 @@ import pytest
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.dignities import calculate_essential_dignity
 from kerykeion.relocated_chart_factory import RelocatedChartFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
 
 _ROME = dict(lng=12.49, lat=41.89, tz_str="Europe/Rome", online=False)
 

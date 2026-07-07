@@ -405,9 +405,7 @@ Future 2050 Subject — Natal Chart Report
 | Pluto                 | quincunx ⚻       | Hades                 | 1.07° | Applying →   |
 | Pluto                 | trine △          | Zeus                  | 3.74° | Separating ← |
 | Pluto                 | biquintile bQ    | Kronos                | 0.97° | Applying →   |
-| Mean North Lunar Node | conjunction ☌    | True North Lunar Node | 0.90° | Applying →   |
 | Mean North Lunar Node | quintile Q       | Imum Coeli            | 1.17° | Separating ← |
-| Mean North Lunar Node | opposition ☍     | True South Lunar Node | 0.90° | Applying →   |
 | Mean North Lunar Node | square □         | Pholus                | 5.44° | Applying →   |
 | Mean North Lunar Node | sextile ⚹        | Juno                  | 3.37° | Applying →   |
 | Mean North Lunar Node | quincunx ⚻       | Sedna                 | 1.40° | Separating ← |
@@ -421,7 +419,6 @@ Future 2050 Subject — Natal Chart Report
 | Mean North Lunar Node | conjunction ☌    | Apollon               | 3.96° | Separating ← |
 | Mean North Lunar Node | square □         | Vulkanus              | 0.17° | Separating ← |
 | True North Lunar Node | quintile Q       | Imum Coeli            | 0.27° | Separating ← |
-| True North Lunar Node | opposition ☍     | Mean South Lunar Node | 0.90° | Applying →   |
 | True North Lunar Node | square □         | Ceres                 | 5.41° | Separating ← |
 | True North Lunar Node | sextile ⚹        | Juno                  | 4.27° | Applying →   |
 | True North Lunar Node | quincunx ⚻       | Sedna                 | 0.50° | Separating ← |
@@ -515,7 +512,6 @@ Future 2050 Subject — Natal Chart Report
 | Mean Lilith           | semi-sextile ⚺   | Hades                 | 0.92° | Separating ← |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 3.89° | Applying →   |
 | Mean Lilith           | quintile Q       | Apollon               | 0.89° | Separating ← |
-| Mean South Lunar Node | conjunction ☌    | True South Lunar Node | 0.90° | Applying →   |
 | Mean South Lunar Node | trine △          | True Lilith           | 5.60° | Applying →   |
 | Mean South Lunar Node | square □         | Pholus                | 5.44° | Applying →   |
 | Mean South Lunar Node | trine △          | Juno                  | 3.37° | Applying →   |

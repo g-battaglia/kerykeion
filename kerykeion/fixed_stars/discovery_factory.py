@@ -21,6 +21,7 @@ from typing import cast
 
 from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, ephe
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.utilities import HOUSE_FIELD_NAMES
@@ -125,7 +126,7 @@ class FixedStarDiscoveryFactory:
         Only stars that are within ``orb`` degrees of any natal planet are included.
         """
         if orb < 0:
-            raise ValueError(f"orb must be >= 0, got {orb}")
+            raise KerykeionException(f"orb must be >= 0, got {orb}")
 
         planet_positions = _collect_planet_positions(subject)
         if not planet_positions:

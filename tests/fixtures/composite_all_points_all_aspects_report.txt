@@ -436,11 +436,9 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Pluto                 | conjunction ☌    | True Priapus          | 3.88° | Static = |
 | Pluto                 | conjunction ☌    | Interpolated Perigee  | 2.46° | Static = |
 | Pluto                 | square □         | White Moon            | 1.28° | Static = |
-| Mean North Lunar Node | conjunction ☌    | True North Lunar Node | 0.53° | Static = |
 | Mean North Lunar Node | trine △          | Chiron                | 1.26° | Static = |
 | Mean North Lunar Node | trine △          | Ascendant             | 0.95° | Static = |
 | Mean North Lunar Node | sextile ⚹        | Descendant            | 0.95° | Static = |
-| Mean North Lunar Node | opposition ☍     | True South Lunar Node | 0.53° | Static = |
 | Mean North Lunar Node | semi-square ∠    | Pholus                | 0.03° | Static = |
 | Mean North Lunar Node | square □         | Ceres                 | 0.96° | Static = |
 | Mean North Lunar Node | sextile ⚹        | Pallas                | 0.79° | Static = |
@@ -459,7 +457,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | True North Lunar Node | trine △          | Chiron                | 0.72° | Static = |
 | True North Lunar Node | trine △          | Ascendant             | 0.42° | Static = |
 | True North Lunar Node | sextile ⚹        | Descendant            | 0.42° | Static = |
-| True North Lunar Node | opposition ☍     | Mean South Lunar Node | 0.53° | Static = |
 | True North Lunar Node | semi-square ∠    | Pholus                | 0.56° | Static = |
 | True North Lunar Node | square □         | Ceres                 | 0.43° | Static = |
 | True North Lunar Node | sextile ⚹        | Pallas                | 1.32° | Static = |
@@ -565,7 +562,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean Lilith           | trine △          | Admetos               | 3.19° | Static = |
 | Mean Lilith           | sextile ⚹        | Vulkanus              | 1.48° | Static = |
 | Mean Lilith           | semi-square ∠    | Poseidon              | 0.45° | Static = |
-| Mean South Lunar Node | conjunction ☌    | True South Lunar Node | 0.53° | Static = |
 | Mean South Lunar Node | sesquiquadrate ⚼ | Pholus                | 0.03° | Static = |
 | Mean South Lunar Node | square □         | Ceres                 | 0.96° | Static = |
 | Mean South Lunar Node | trine △          | Pallas                | 0.79° | Static = |

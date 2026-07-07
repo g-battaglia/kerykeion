@@ -106,9 +106,9 @@ _TYPICAL_DAILY_MOTION_DEGREES: dict[str, float] = {
 }
 
 
-def _iso_chronological_key(iso: str) -> tuple:
-    """Signed ``(year, month, day, hour, minute, second)`` key for an
-    extended-year ISO timestamp so BCE ranges sort chronologically.
+def _iso_signed_fields(iso: str) -> "tuple[int, int, int, int, int, float]":
+    """Signed ``(year, month, day, hour, minute, second)`` fields of an
+    extended-year ISO timestamp (seconds keep their fractional part).
 
     ``datetime.fromisoformat`` cannot parse years < 1 (MINYEAR=1); a leading
     ``-`` marks a BCE (negative) year in the ISO 8601 extended format.
@@ -120,8 +120,35 @@ def _iso_chronological_key(iso: str) -> tuple:
     year = -int(y) if negative else int(y)
     time_part = time_part.split("+")[0].split("Z")[0]
     parts = (time_part.split(":") + ["0", "0", "0"])[:3]
-    hour, minute, second = (int(float(p)) for p in parts)
-    return (year, int(mo), int(d), hour, minute, second)
+    hour, minute = int(float(parts[0])), int(float(parts[1]))
+    return (year, int(mo), int(d), hour, minute, float(parts[2]))
+
+
+def _iso_chronological_key(iso: str) -> tuple:
+    """Signed ``(year, month, day, hour, minute, second)`` key for an
+    extended-year ISO timestamp so BCE ranges sort chronologically."""
+    year, month, day, hour, minute, second = _iso_signed_fields(iso)
+    return (year, month, day, hour, minute, int(second))
+
+
+def _iso_to_day_number(iso: str) -> float:
+    """Continuous (fractional) day count for an extended-year ISO timestamp.
+
+    Arithmetic companion to ``_iso_chronological_key``: sampling gaps must be
+    computable on BCE series too, where ``datetime.fromisoformat`` fails, so
+    the same signed decomposition is mapped onto a proleptic-Gregorian day
+    number (days_from_civil algorithm — matches ``datetime.toordinal`` for CE
+    dates and extends it to any signed year). Only *differences* of this value
+    are used, so the epoch is irrelevant.
+    """
+    year, month, day, hour, minute, second = _iso_signed_fields(iso)
+    y = year - (1 if month <= 2 else 0)
+    era = y // 400  # floor division: correct for negative years too
+    yoe = y - era * 400  # [0, 399]
+    doy = (153 * (month + (9 if month <= 2 else -3)) + 2) // 5 + day - 1  # [0, 365]
+    doe = yoe * 365 + yoe // 4 - yoe // 100 + doy  # [0, 146096]
+    days = era * 146097 + doe - 719468  # days since 1970-01-01
+    return days + (hour * 3600.0 + minute * 60.0 + second) / 86400.0
 
 
 class TransitsTimeRangeFactory:
@@ -346,13 +373,16 @@ class TransitsTimeRangeFactory:
         if len(self.ephemeris_data_points) < 2:
             return []
         try:
-            dates = [datetime.fromisoformat(p.iso_formatted_utc_datetime) for p in self.ephemeris_data_points]
-        except (TypeError, ValueError):
+            # Signed decomposition (not datetime.fromisoformat, which cannot
+            # parse extended BCE years): a failed parse here would silently
+            # disable event splitting and refinement on BCE ranges.
+            days = [_iso_to_day_number(p.iso_formatted_utc_datetime) for p in self.ephemeris_data_points]
+        except (AttributeError, TypeError, ValueError):
             return []
         return [
-            (later - earlier).total_seconds() / 86400.0
-            for earlier, later in zip(dates, dates[1:])
-            if (later - earlier).total_seconds() > 0
+            later - earlier
+            for earlier, later in zip(days, days[1:])
+            if later > earlier
         ]
 
     def _representative_step_days(self) -> Optional[float]:
@@ -775,8 +805,17 @@ class TransitsTimeRangeFactory:
             else:
                 is_min = cur <= left and cur <= right and (cur < left or cur < right)
             if is_min:
-                # Skip an equal-orb plateau's later points: only keep the first.
-                if minima and run[minima[-1]][1] == cur and i - minima[-1] == 1:
+                # Skip the later points of an equal-orb plateau (any width):
+                # when every sample between the recorded minimum and this one
+                # carries the same orb, this is still the same flat pass, not a
+                # second event. A plain adjacency check (i - minima[-1] == 1)
+                # only deduplicated width-2 plateaus — [5, 2, 2, 2, 5] emitted
+                # two minima (indices 1 and 3) for a single passage.
+                if (
+                    minima
+                    and run[minima[-1]][1] == cur
+                    and all(run[j][1] == cur for j in range(minima[-1] + 1, i))
+                ):
                     continue
                 minima.append(i)
         if not minima:

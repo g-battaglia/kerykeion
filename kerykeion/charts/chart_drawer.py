@@ -853,14 +853,20 @@ class TransitChartRenderer(BaseChartRenderer):
                     d.aspects_list,
                     grid_x,
                     grid_y,
+                    aspects_settings=d.aspects_settings,
                 )
             else:
+                # Same anchor as Synastry/DualReturn (550, 450): the previous
+                # hardcoded (600, 520) pushed the glyph header row past the
+                # 565-unit viewBox bottom, clipping it on every table-mode
+                # Transit chart.
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                     d.chart_colors_settings["paper_0"],
                     d._get_aspect_grid_planets_setting(),
                     d.aspects_list,
-                    600,
-                    520,
+                    d._TRANSIT_ASPECT_GRID_X,
+                    d._TRANSIT_ASPECT_GRID_Y,
+                    aspects_settings=d.aspects_settings,
                 )
 
         template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
@@ -1143,6 +1149,7 @@ class SynastryChartRenderer(BaseChartRenderer):
                     d.aspects_list,
                     grid_x,
                     grid_y,
+                    aspects_settings=d.aspects_settings,
                 )
             else:
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
@@ -1151,6 +1158,7 @@ class SynastryChartRenderer(BaseChartRenderer):
                     d.aspects_list,
                     550,
                     450,
+                    aspects_settings=d.aspects_settings,
                 )
 
         template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
@@ -1462,6 +1470,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
                     d.aspects_list,
                     grid_x,
                     grid_y,
+                    aspects_settings=d.aspects_settings,
                 )
             else:
                 template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
@@ -1470,6 +1479,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
                     d.aspects_list,
                     550,
                     450,
+                    aspects_settings=d.aspects_settings,
                 )
 
         template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
@@ -1937,7 +1947,7 @@ class ChartDrawer:  # type: ignore[no-redef]
     theme: Union[KerykeionChartTheme, None]
     double_chart_aspect_grid_type: Literal["list", "table"]
     chart_language: KerykeionChartLanguage
-    active_points: List[AstrologicalPoint]
+    active_points: List[Union[AstrologicalPoint, str]]
     active_aspects: List[ActiveAspect]
     transparent_background: bool
     external_view: bool
@@ -3788,6 +3798,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.available_planets_setting,
             self.aspects_list,
             x_start=aspect_x,
+            aspects_settings=self.aspects_settings,
         )
         template_dict["makeAspects"] = self._draw_all_aspects_lines(
             self.main_radius, self.main_radius - self.third_circle_radius
@@ -3815,12 +3826,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
         else:
             template_dict["makeAspectGrid"] = ""
+            # Same anchor as Synastry/DualReturn (550, 450): (600, 520) would
+            # push the glyph header row past the 565-unit viewBox bottom.
             template_dict["makeDoubleChartAspectList"] = draw_transit_aspect_grid(
                 self.chart_colors_settings["paper_0"],
                 self._get_aspect_grid_planets_setting(),
                 self.aspects_list,
-                600,
-                520,
+                self._TRANSIT_ASPECT_GRID_X,
+                self._TRANSIT_ASPECT_GRID_Y,
+                aspects_settings=self.aspects_settings,
             )
         template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
 
@@ -4567,8 +4581,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Initialize all slots with default black, then override with settings.
         # This ensures template substitution never fails on missing colors.
         default_color = "#000000"
-        for i in range(71):  # Support all 71 celestial points (0-70, includes Uranian planets)
+        # Seed the model-declared range (ChartTemplateModel requires
+        # planets_color_0..61) PLUS every id in the default catalog, which now
+        # extends past 61 (e.g. Vulkanus 72, White_Moon 75) — the old
+        # hardcoded range(71) silently drifted out of sync with the catalog.
+        for i in range(62):
             template_dict[f"planets_color_{i}"] = default_color
+        for planet_setting in DEFAULT_CELESTIAL_POINTS_SETTINGS:
+            template_dict[f"planets_color_{planet_setting['id']}"] = default_color
 
         for planet in self.planets_settings:
             planet_id = planet["id"]
@@ -4587,8 +4607,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         # declares all orb_color_* fields as required, so a caller-reduced
         # aspects_settings (documented constructor option) would otherwise
         # fail template validation on every render.
-        for aspect in DEFAULT_CHART_ASPECTS_SETTINGS:
-            template_dict[f"orb_color_{aspect['degree']}"] = aspect["color"]
+        for default_aspect in DEFAULT_CHART_ASPECTS_SETTINGS:
+            template_dict[f"orb_color_{default_aspect['degree']}"] = default_aspect["color"]
         for aspect in self.aspects_settings:
             template_dict[f"orb_color_{aspect['degree']}"] = aspect["color"]
 
@@ -5099,6 +5119,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 self.chart_colors_settings["paper_0"],
                 self._get_aspect_grid_planets_setting(),
                 self.aspects_list,
+                aspects_settings=self.aspects_settings,
             )
         else:
             aspects_grid = draw_aspect_grid(
@@ -5107,6 +5128,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 self.aspects_list,
                 x_start=50,
                 y_start=250,
+                aspects_settings=self.aspects_settings,
             )
 
         # Use a compact, known-good viewBox that frames the grid

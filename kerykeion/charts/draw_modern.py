@@ -1282,13 +1282,6 @@ def _draw_gauquelin_sectors_modern(
         if gauquelin_cusps is not None:
             start_deg = gauquelin_cusps[i]
             end_deg = gauquelin_cusps[next_i]
-        else:
-            # Descending fallback matching _draw_gauquelin_house_ring.
-            start_deg = None
-            a_start = (360.0 - i * 10.0) % 360.0
-            a_end = (360.0 - next_i * 10.0) % 360.0
-
-        if start_deg is not None:
             a_start = _zodiac_to_wheel_angle(start_deg, seventh_house_degree_ut)
             a_end = _zodiac_to_wheel_angle(end_deg, seventh_house_degree_ut)
             # Gauquelin cusps DECREASE (diurnal direction), so the sector span is
@@ -1296,6 +1289,9 @@ def _draw_gauquelin_sectors_modern(
             # wrongly set large_arc=1, making every hit-area cover the whole ring.
             span = _normalize_angle(start_deg - end_deg)
         else:
+            # Descending fallback matching _draw_gauquelin_house_ring.
+            a_start = (360.0 - i * 10.0) % 360.0
+            a_end = (360.0 - next_i * 10.0) % 360.0
             span = 10.0
 
         r_start = math.radians(-a_start - 90)
@@ -1462,7 +1458,12 @@ def _draw_aspect_core(
 
     for aspect in aspects_list:
         aspect_name = aspect.get("aspect", "")
-        color = color_map.get(aspect_name, COLOR_STROKE)
+        if aspect_name not in color_map:
+            # No settings entry (e.g. declination parallels with the default
+            # set): drawing a longitude chord would misrepresent a declination
+            # aspect — skip it, matching the classic wheel's name lookup.
+            continue
+        color = color_map[aspect_name]
         if not color:
             continue
 

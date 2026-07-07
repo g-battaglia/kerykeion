@@ -400,10 +400,8 @@ Einstein Subject — Natal Chart Report
 | Pluto                 | conjunction ☌    | Anti Vertex           | 3.18° | Applying →   |
 | Pluto                 | square □         | White Moon            | 4.12° | Separating ← |
 | Pluto                 | semi-sextile ⚺   | Zeus                  | 1.83° | Applying →   |
-| Mean North Lunar Node | conjunction ☌    | True North Lunar Node | 1.25° | Separating ← |
 | Mean North Lunar Node | square □         | Chiron                | 4.06° | Separating ← |
 | Mean North Lunar Node | square □         | Mean Lilith           | 3.50° | Applying →   |
-| Mean North Lunar Node | opposition ☍     | True South Lunar Node | 1.25° | Separating ← |
 | Mean North Lunar Node | sextile ⚹        | True Lilith           | 0.14° | Applying →   |
 | Mean North Lunar Node | semi-square ∠    | Eris                  | 1.63° | Applying →   |
 | Mean North Lunar Node | sextile ⚹        | Sedna                 | 1.40° | Separating ← |
@@ -424,7 +422,6 @@ Einstein Subject — Natal Chart Report
 | Mean North Lunar Node | opposition ☍     | Apollon               | 2.97° | Separating ← |
 | True North Lunar Node | square □         | Chiron                | 2.81° | Separating ← |
 | True North Lunar Node | square □         | Mean Lilith           | 4.75° | Applying →   |
-| True North Lunar Node | opposition ☍     | Mean South Lunar Node | 1.25° | Separating ← |
 | True North Lunar Node | sextile ⚹        | True Lilith           | 1.11° | Separating ← |
 | True North Lunar Node | sextile ⚹        | Sedna                 | 0.15° | Separating ← |
 | True North Lunar Node | quintile Q       | Makemake              | 0.90° | Applying →   |
@@ -525,7 +522,6 @@ Einstein Subject — Natal Chart Report
 | Mean Lilith           | trine △          | White Moon            | 0.87° | Separating ← |
 | Mean Lilith           | quintile Q       | Hades                 | 0.85° | Applying →   |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 1.42° | Separating ← |
-| Mean South Lunar Node | conjunction ☌    | True South Lunar Node | 1.25° | Separating ← |
 | Mean South Lunar Node | trine △          | True Lilith           | 0.14° | Applying →   |
 | Mean South Lunar Node | sesquiquadrate ⚼ | Eris                  | 1.63° | Applying →   |
 | Mean South Lunar Node | trine △          | Sedna                 | 1.40° | Separating ← |

@@ -11,6 +11,8 @@ All tables use the 3-letter sign abbreviations from kr_literals.Sign.
 
 from typing import Dict, List, Optional, Tuple
 
+from kerykeion.schemas.kr_literals import ClassicalPlanet
+
 from kerykeion.schemas.kr_literals import SIGN_CODES
 
 # =========================================================================
@@ -98,7 +100,7 @@ FALL_TABLE: Dict[str, Optional[str]] = {
 # triplicity-lords technique, exposed via
 # ``kerykeion.dignities.get_triplicity_lords()``.
 # =========================================================================
-TRIPLICITY_RULERS: Dict[str, Dict[str, str]] = {
+TRIPLICITY_RULERS: Dict[str, Dict[str, "ClassicalPlanet"]] = {
     # element -> {"day": planet, "night": planet, "participating": planet}
     "Fire": {"day": "Sun", "night": "Jupiter", "participating": "Saturn"},
     "Earth": {"day": "Venus", "night": "Moon", "participating": "Mars"},

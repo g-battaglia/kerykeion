@@ -242,6 +242,9 @@ class TestBasicCompositeCreation:
         assert hasattr(factory, "first_subject")
         assert hasattr(factory, "second_subject")
         assert hasattr(factory, "name")
+        # __hash__ hashes stable scalars (name/julian_day), so it must work
+        # even though the Pydantic subject models themselves are unhashable.
+        assert isinstance(hash(factory), int)
 
 
 # =============================================================================

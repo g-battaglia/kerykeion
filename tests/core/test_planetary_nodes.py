@@ -54,6 +54,14 @@ class TestNodesFromSubject:
         asc = result.nodes[0].ascending_node
         assert 0 <= asc.abs_pos < 360
 
+    def test_missing_julian_day_raises(self, subject):
+        """julian_day is Optional on the model (composite subjects leave it
+        None): the guard must raise a clear KerykeionException instead of a
+        raw TypeError deep inside the ephemeris backend."""
+        no_jd = subject.model_copy(update={"julian_day": None})
+        with pytest.raises(KerykeionException, match="Julian Day"):
+            PlanetaryNodesFactory.from_subject(no_jd)
+
 
 class TestNodesFromJulianDay:
     def test_j2000_epoch(self):

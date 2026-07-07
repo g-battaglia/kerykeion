@@ -1473,12 +1473,18 @@ class TestMidpointsToContext:
         assert 'count="0"' in result
         assert 'activated="0"' in result
 
-    def test_to_context_empty_list_is_valid_midpoints(self):
-        from kerykeion.context_serializer import midpoints_to_context, to_context
+    def test_to_context_empty_list_raises_type_error(self):
+        """An empty list carries no type information: dispatching it to the
+        midpoints serializer would silently mislabel any empty collection
+        (e.g. an empty aspects list) as a zero-count midpoints analysis.
+        The documented TypeError applies; ``midpoints_to_context([])`` stays
+        available for callers who explicitly mean "no midpoints"."""
+        import pytest
 
-        result = to_context([])
-        assert "<midpoints_analysis " in result
-        assert result == midpoints_to_context([])
+        from kerykeion.context_serializer import to_context
+
+        with pytest.raises(TypeError):
+            to_context([])
 
 
 class TestFixedStarsAndMidpointsInSubjectContext:

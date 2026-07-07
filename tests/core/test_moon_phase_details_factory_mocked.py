@@ -33,6 +33,8 @@ from kerykeion.moon_phase_details.factory import (
     _compute_lunar_phase_metrics,
     _build_moon_zodiac_info,
 )
+from kerykeion.moon_phase_details.utils import safe_parse_iso_datetime
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     LunarPhaseModel,
@@ -155,6 +157,32 @@ def _side_effect_lunar_phase_jd(jd_start: float, target_angle: float, forward: b
 # ---------------------------------------------------------------------------
 # 1. Pure utility function tests (no mocking needed)
 # ---------------------------------------------------------------------------
+
+
+class TestSafeParseIsoDatetime:
+    """safe_parse_iso_datetime: tolerant on format, strict on invalid input."""
+
+    def test_standard_iso_with_offset(self) -> None:
+        dt = safe_parse_iso_datetime("1993-10-10T12:12:00+01:00")
+        assert dt == datetime(1993, 10, 10, 11, 12, tzinfo=timezone.utc)
+        assert dt.tzinfo == timezone.utc
+
+    def test_z_suffix_accepted(self) -> None:
+        dt = safe_parse_iso_datetime("1993-10-10T11:12:00Z")
+        assert dt == datetime(1993, 10, 10, 11, 12, tzinfo=timezone.utc)
+
+    def test_naive_treated_as_utc(self) -> None:
+        dt = safe_parse_iso_datetime("1993-10-10T11:12:00")
+        assert dt.tzinfo == timezone.utc
+        assert dt.hour == 11
+
+    @pytest.mark.parametrize("bad_value", [None, "", "not-a-datetime", "1993-13-45T99:00:00"])
+    def test_invalid_input_raises(self, bad_value) -> None:
+        # An empty or malformed value used to fall back silently to
+        # datetime.now(UTC) — a plausible-looking but wrong result. It must
+        # raise the library's own exception instead.
+        with pytest.raises(KerykeionException):
+            safe_parse_iso_datetime(bad_value)
 
 
 class TestComputeMajorPhaseName:

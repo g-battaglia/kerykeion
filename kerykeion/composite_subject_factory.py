@@ -58,7 +58,6 @@ from kerykeion.schemas.kr_literals import (
 )
 from kerykeion.utilities import (
     get_kerykeion_point_from_degree,
-    get_planet_house,
     circular_mean,
     calculate_moon_phase,
     find_common_active_points,
@@ -294,10 +293,24 @@ class CompositeSubjectFactory:
         """
         Generate hash for the composite subject.
 
+        Hashes stable scalar identifiers instead of the subject models
+        themselves: AstrologicalSubjectModel is a non-frozen Pydantic model,
+        so hashing it raises TypeError. Consistent with __eq__ — equal
+        factories have equal subjects (hence equal names/julian days) and
+        equal chart names.
+
         Returns:
-            int: Hash value based on both subjects and chart name.
+            int: Hash value based on both subjects' identity scalars and chart name.
         """
-        return hash((self.first_subject, self.second_subject, self.name))
+        return hash(
+            (
+                self.first_subject.name,
+                self.first_subject.julian_day,
+                self.second_subject.name,
+                self.second_subject.julian_day,
+                self.name,
+            )
+        )
 
     def __copy__(self):
         """

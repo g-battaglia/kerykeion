@@ -24,7 +24,8 @@ import re
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
-from pydantic import BaseModel, Field
+from pydantic import Field
+from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
@@ -41,7 +42,7 @@ from kerykeion.utilities import datetime_to_julian
 # on long progression spans; 365.24219 is the astronomically correct value.
 DAYS_PER_TROPICAL_YEAR = 365.24219
 
-class ProgressedToNatalAspectModel(BaseModel):
+class ProgressedToNatalAspectModel(SubscriptableBaseModel):
     """A progressed-to-natal aspect contact — the predictive timing signal."""
 
     progressed_point: str = Field(description="Name of the progressed (moving) point.")
@@ -53,7 +54,7 @@ class ProgressedToNatalAspectModel(BaseModel):
     orb: float
 
 
-class SecondaryProgressionsResultModel(BaseModel):
+class SecondaryProgressionsResultModel(SubscriptableBaseModel):
     """Full secondary progressions result: progressed subject + cross-aspects."""
 
     natal_name: str

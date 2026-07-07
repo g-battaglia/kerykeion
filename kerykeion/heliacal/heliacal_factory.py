@@ -77,6 +77,38 @@ PLANETS = ("Mercury", "Venus", "Mars", "Jupiter", "Saturn")
 INNER_PLANETS = {"Mercury", "Venus"}
 
 
+def _resolve_geopos(
+    geopos: Optional[Tuple[float, float, float]],
+    lat: Optional[float],
+    lng: Optional[float],
+    altitude: Optional[float],
+) -> Tuple[float, float, float]:
+    """Resolve the observer position from ``geopos`` or lat/lng/altitude keywords.
+
+    ``geopos`` follows the Swiss Ephemeris convention ``(longitude, latitude,
+    altitude_m)`` — longitude FIRST — which is easy to pass inverted; the
+    keyword form is unambiguous. The two forms are mutually exclusive.
+
+    Raises:
+        KerykeionException: If both forms are given, or if neither fully
+            specifies a position (``lat`` and ``lng`` are both required in
+            keyword form; ``altitude`` defaults to 0 m).
+    """
+    if geopos is not None and any(v is not None for v in (lat, lng, altitude)):
+        raise KerykeionException(
+            "Provide either geopos=(lng, lat, altitude_m) or the lat=/lng=/altitude= "
+            "keywords, not both."
+        )
+    if geopos is not None:
+        return geopos
+    if lat is None or lng is None:
+        raise KerykeionException(
+            "Observer position required: pass geopos=(lng, lat, altitude_m) or "
+            "both lat= and lng= (with optional altitude=, defaulting to 0 m)."
+        )
+    return (lng, lat, altitude if altitude is not None else 0.0)
+
+
 # ---- Data model ----
 class HeliacalEventModel(SubscriptableBaseModel):
     """Model representing a single heliacal event."""
@@ -128,9 +160,13 @@ class HeliacalFactory:
         self,
         julian_day: float,
         planet_name_or_star: str,
-        geopos: Tuple[float, float, float],
+        geopos: Optional[Tuple[float, float, float]] = None,
         atmo: Optional[Tuple[float, float, float, float]] = None,
         observer: Optional[Tuple[float, float, float, float, float, float]] = None,
+        *,
+        lat: Optional[float] = None,
+        lng: Optional[float] = None,
+        altitude: Optional[float] = None,
     ) -> HeliacalEventModel:
         """Find the next heliacal rising after *julian_day*.
 
@@ -141,13 +177,20 @@ class HeliacalFactory:
         planet_name_or_star:
             Planet name (e.g. ``"Venus"``) or fixed-star name.
         geopos:
-            ``(longitude, latitude, altitude_m)`` of the observer.
+            ``(longitude, latitude, altitude_m)`` of the observer — note the
+            Swiss Ephemeris order: longitude FIRST, then latitude, then
+            altitude in meters. Mutually exclusive with the
+            ``lat``/``lng``/``altitude`` keywords.
         atmo:
             ``(pressure, temperature, humidity, extinction)``; uses
             sensible defaults when *None*.
         observer:
             Observer parameters tuple of length 6; uses defaults when
             *None*.
+        lat, lng, altitude:
+            Keyword-only alternative to ``geopos`` that cannot be passed in
+            the wrong order. ``altitude`` (meters) defaults to 0 when only
+            ``lat``/``lng`` are given.
 
         Returns
         -------
@@ -159,8 +202,10 @@ class HeliacalFactory:
             If no heliacal rising occurs in the search window (the library's
             user-facing "no result" convention; the internal backend/guard
             signals ``_NO_EVENT_ERRORS`` are normalized here so callers see one
-            exception type regardless of backend).
+            exception type regardless of backend); or if the observer position
+            is given both as ``geopos`` and as keywords (or not at all).
         """
+        geopos = _resolve_geopos(geopos, lat, lng, altitude)
         with ephemeris_session(ephe_path=self._ephe_path):
             try:
                 result = self._find_event(
@@ -181,12 +226,16 @@ class HeliacalFactory:
     def search_events(
         self,
         julian_day: float,
-        geopos: Tuple[float, float, float],
+        geopos: Optional[Tuple[float, float, float]] = None,
         count: int = 5,
         planets: Optional[Sequence[str]] = None,
         event_types: Optional[Sequence[int]] = None,
         atmo: Optional[Tuple[float, float, float, float]] = None,
         observer: Optional[Tuple[float, float, float, float, float, float]] = None,
+        *,
+        lat: Optional[float] = None,
+        lng: Optional[float] = None,
+        altitude: Optional[float] = None,
     ) -> List[HeliacalEventModel]:
         """Find the next *count* heliacal events across multiple planets.
 
@@ -197,7 +246,10 @@ class HeliacalFactory:
         julian_day:
             Starting Julian Day (UT).
         geopos:
-            ``(longitude, latitude, altitude_m)`` of the observer.
+            ``(longitude, latitude, altitude_m)`` of the observer — note the
+            Swiss Ephemeris order: longitude FIRST, then latitude, then
+            altitude in meters. Mutually exclusive with the
+            ``lat``/``lng``/``altitude`` keywords.
         count:
             Maximum number of events to return.
         planets:
@@ -209,11 +261,22 @@ class HeliacalFactory:
             Atmospheric parameters; uses defaults when *None*.
         observer:
             Observer parameters; uses defaults when *None*.
+        lat, lng, altitude:
+            Keyword-only alternative to ``geopos`` that cannot be passed in
+            the wrong order. ``altitude`` (meters) defaults to 0 when only
+            ``lat``/``lng`` are given.
 
         Returns
         -------
         list[HeliacalEventModel]
+
+        Raises
+        ------
+        KerykeionException
+            If the observer position is given both as ``geopos`` and as
+            keywords (or not at all).
         """
+        geopos = _resolve_geopos(geopos, lat, lng, altitude)
         if count <= 0:
             return []
         # Each event costs a full heliacal search (seconds per call), so an

@@ -17,10 +17,11 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
+from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 
-class FixedStarMetadataModel(BaseModel):
+class FixedStarMetadataModel(SubscriptableBaseModel):
     """Metadata for a single fixed star entry from the catalog."""
 
     # Frozen: the catalog is lru_cache-backed and hands the SAME instances to

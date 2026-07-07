@@ -33,7 +33,12 @@ from typing_extensions import TypedDict
 from pydantic import BaseModel, Field, field_validator, model_validator
 from kerykeion.schemas.kr_literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
 
-from kerykeion.schemas import (
+# Import directly from kr_literals (NOT from the kerykeion.schemas package
+# __init__): importing from the package while the package is importing this
+# module works only because of the import order in schemas/__init__.py, and
+# any reordering there would break the whole package with a partial-import
+# error.
+from kerykeion.schemas.kr_literals import (
     LunarPhaseEmoji,
     LunarPhaseName,
     AstrologicalPoint,
@@ -1316,9 +1321,9 @@ class PointInHouseModel(SubscriptableBaseModel):
     """Zodiacal sign containing the point"""
     point_owner_name: str
     """Name of the subject who owns this point"""
-    point_owner_house_number: Optional[int]
+    point_owner_house_number: Optional[int] = None
     """House number in owner's chart"""
-    point_owner_house_name: Optional[str]
+    point_owner_house_name: Optional[str] = None
     """House name in owner's chart"""
     projected_house_number: int
     """House number in target subject's chart"""
@@ -1439,7 +1444,9 @@ class SingleChartDataModel(SubscriptableBaseModel):
     quality_distribution: "QualityDistributionModel"
 
     # Configuration and metadata
-    active_points: list[AstrologicalPoint]
+    # Union with str: catalog fixed stars aspect the regular points (see the
+    # aspects models), so their plain names must be representable here too.
+    active_points: list[Union[AstrologicalPoint, str]]
     active_aspects: list["ActiveAspect"]
 
 
@@ -1501,7 +1508,9 @@ class DualChartDataModel(SubscriptableBaseModel):
     quality_distribution: "QualityDistributionModel"
 
     # Configuration and metadata
-    active_points: list[AstrologicalPoint]
+    # Union with str: catalog fixed stars aspect the regular points (see the
+    # aspects models), so their plain names must be representable here too.
+    active_points: list[Union[AstrologicalPoint, str]]
     active_aspects: list["ActiveAspect"]
 
 

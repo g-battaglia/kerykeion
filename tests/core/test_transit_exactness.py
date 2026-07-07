@@ -391,3 +391,70 @@ class TestNonUniformCadence:
         gaps = factory._sampling_gaps_days()
         assert min(gaps) == pytest.approx(max(gaps))
         assert factory._representative_step_days() == pytest.approx(max(gaps))
+
+
+class TestBceSamplingGaps:
+    """Sampling gaps must be computable on extended-year BCE timestamps
+    (which ``datetime.fromisoformat`` cannot parse): a failed parse used to
+    return no gaps, silently disabling event splitting and sub-step
+    refinement on BCE ranges."""
+
+    def test_bce_daily_series_yields_daily_gaps(self, transit_factory):
+        dates = [f"-0500-01-{d:02d}T00:00:00+00:00" for d in range(1, 9)]
+        factory = _make_factory_with_dates(transit_factory.natal_chart, dates, {})
+        gaps = factory._sampling_gaps_days()
+        assert len(gaps) == 7
+        assert gaps == pytest.approx([1.0] * 7)
+        assert factory._representative_step_days() == pytest.approx(1.0)
+
+    def test_bce_gaps_cross_year_boundary(self, transit_factory):
+        # Astronomical numbering: the year after -0500 is -0499.
+        dates = [
+            "-0500-12-30T00:00:00+00:00",
+            "-0500-12-31T00:00:00+00:00",
+            "-0499-01-01T00:00:00+00:00",
+            "-0499-01-02T00:00:00+00:00",
+        ]
+        factory = _make_factory_with_dates(transit_factory.natal_chart, dates, {})
+        assert factory._sampling_gaps_days() == pytest.approx([1.0, 1.0, 1.0])
+
+    def test_ce_gaps_match_datetime_arithmetic(self, transit_factory):
+        """Guard: the signed-decomposition parse must agree with the previous
+        datetime-based computation for ordinary CE timestamps."""
+        base = datetime(2025, 1, 1)
+        deltas = [timedelta(0), timedelta(hours=6), timedelta(days=1, hours=6), timedelta(days=3)]
+        dates = [(base + d).strftime("%Y-%m-%dT%H:%M:%S+00:00") for d in deltas]
+        factory = _make_factory_with_dates(transit_factory.natal_chart, dates, {})
+        expected = [
+            (later - earlier).total_seconds() / 86400.0
+            for earlier, later in zip(deltas, deltas[1:])
+        ]
+        assert factory._sampling_gaps_days() == pytest.approx(expected)
+
+
+class TestLocalOrbMinimaPlateaus:
+    """A flat equal-orb plateau of ANY width is one pass, not several."""
+
+    @staticmethod
+    def _run(orbs):
+        return [
+            (f"2025-01-{i + 1:02d}T00:00:00+00:00", orb, "Applying")
+            for i, orb in enumerate(orbs)
+        ]
+
+    def test_wide_plateau_is_single_minimum(self):
+        # [5, 2, 2, 2, 5] used to emit minima at indices 1 AND 3 — two events
+        # for one passage (the adjacency check only deduplicated width-2
+        # plateaus).
+        minima = TransitsTimeRangeFactory._local_orb_minima(self._run([5.0, 2.0, 2.0, 2.0, 5.0]))
+        assert minima == [1]
+
+    def test_width_two_plateau_still_single_minimum(self):
+        minima = TransitsTimeRangeFactory._local_orb_minima(self._run([5.0, 2.0, 2.0, 5.0]))
+        assert minima == [1]
+
+    def test_equal_minima_separated_by_rise_stay_distinct(self):
+        # Two genuine passes at the same orb separated by an out-of-plateau
+        # rise (e.g. a sub-orb retrograde loop) must both be kept.
+        minima = TransitsTimeRangeFactory._local_orb_minima(self._run([5.0, 2.0, 3.0, 2.0, 5.0]))
+        assert minima == [1, 3]

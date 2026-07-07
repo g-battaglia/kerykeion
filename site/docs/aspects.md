@@ -204,7 +204,7 @@ for asp in dec_aspects:
 dec_synastry = AspectsFactory.dual_chart_declination_aspects(subject_a, subject_b, orb=1.0)
 ```
 
-Returns `List[AspectModel]` with `aspect="parallel"` or `aspect="contra_parallel"`.
+Returns `List[AspectModel]` with `aspect="parallel"` or `aspect="contra-parallel"`.
 
 ## Aspect Utilities
 

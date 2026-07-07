@@ -72,7 +72,13 @@ class ElementalBalanceStrategy(BaseDominantStrategy):
         from kerykeion.charts.charts_utils import calculate_element_points, calculate_quality_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
-        point_names: List[str] = list(config.active_points) if config.active_points else list(subject.active_points)
+        # `is not None` (not truthiness): an explicit empty list is a valid
+        # restriction meaning "no points", matching the AspectsFactory
+        # convention — falling back to the subject's points would silently
+        # score the whole chart instead.
+        point_names: List[str] = (
+            list(config.active_points) if config.active_points is not None else list(subject.active_points)
+        )
 
         # ``planets_settings`` is kept by the helpers for API compatibility only
         # (unused), so the TypedDict-based defaults are safe to pass here.

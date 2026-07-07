@@ -29,7 +29,7 @@ from __future__ import annotations
 import logging
 import math
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Callable, Optional, cast
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -630,12 +630,13 @@ class MoonPhaseDetailsFactory:
                 # pytz keeps sunrise's offset across arithmetic; normalize so
                 # solar_noon carries the correct local offset on DST-transition days
                 # (the instant is already correct, only the wall-clock representation
-                # could otherwise be off). hasattr guards non-pytz tzinfo defensively.
-                solar_noon_local = (
-                    sunrise_local.tzinfo.normalize(midpoint)
-                    if hasattr(sunrise_local.tzinfo, "normalize")
-                    else midpoint
+                # could otherwise be off). getattr + callable guards non-pytz tzinfo
+                # defensively (and narrows the type where a hasattr check would not).
+                normalize = cast(
+                    "Optional[Callable[[datetime], datetime]]",
+                    getattr(sunrise_local.tzinfo, "normalize", None),
                 )
+                solar_noon_local = normalize(midpoint) if callable(normalize) else midpoint
                 day_length = sunset_local - sunrise_local
         except RuntimeError as exc:
             # Expected error: polar regions, ephemeris unavailable, etc.

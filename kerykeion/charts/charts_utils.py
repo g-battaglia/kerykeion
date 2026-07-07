@@ -944,7 +944,11 @@ def convert_decimal_to_degree_string(dec: float, format_type: Literal["1", "2", 
         total_seconds = math.floor(dec * 3600)
         d, rem = divmod(total_seconds, 3600)
         m, s = divmod(rem, 60)
-        return f"{d}°{m:02d}'{s:02d}\""
+        # The arc-seconds mark is emitted as &quot; (not a literal ") because the
+        # result lands in SVG <text> nodes: the post-processing pass rewrites
+        # every literal double quote to a single quote (attribute style), which
+        # would corrupt the seconds mark into an apostrophe on every chart.
+        return f"{d}°{m:02d}'{s:02d}&quot;"
 
 
 # =============================================================================
@@ -1145,6 +1149,7 @@ def draw_aspect_grid(
     aspects: list,
     x_start: int = 510,
     y_start: int = 468,
+    aspects_settings: Union[list, None] = None,
 ) -> str:
     """
     Draw the triangular aspect grid showing relationships between planets.
@@ -1160,6 +1165,9 @@ def draw_aspect_grid(
         aspects: List of aspect dictionaries containing p1, p2, and aspect_degrees.
         x_start: X-coordinate for the bottom-left corner of the grid.
         y_start: Y-coordinate for the bottom-left corner of the grid.
+        aspects_settings: Optional aspect settings list; when provided, aspects
+            whose name has no settings entry (e.g. declination parallels, which
+            have no orb glyph and would render as a conjunction) are skipped.
 
     Returns:
         SVG string containing the aspect grid rectangles and symbols.
@@ -1173,11 +1181,19 @@ def draw_aspect_grid(
     # Reverse the list of active planets for the first iteration
     reversed_planets = active_planets[::-1]
 
+    # Aspects without a settings entry share aspect_degrees with real aspects
+    # (parallel has degree 0, same as conjunction): filter them out up front so
+    # the grid can't draw the wrong glyph. None (no settings supplied) keeps
+    # every aspect, preserving the legacy behaviour for external callers.
+    known_aspect_names = {setting["name"] for setting in aspects_settings} if aspects_settings is not None else None
+
     # Pre-index aspects by unordered pair (O(k)) so the grid loop can look up aspects
     # in O(1) instead of scanning the full aspects list for every cell (was O(n^2 * k)).
     # Preserve original order when multiple aspects exist for the same pair (synastry).
     aspect_lookup: dict[tuple[int, int], list] = {}
     for aspect in aspects:
+        if known_aspect_names is not None and aspect["aspect"] not in known_aspect_names:
+            continue
         p1 = aspect["p1"]
         p2 = aspect["p2"]
         key = (p1, p2) if p1 <= p2 else (p2, p1)
@@ -1483,7 +1499,7 @@ def draw_transit_aspect_list(
             inner_path += f'<use transform="scale(0.4)" x="0" y="3" xlink:href="#{p1_glyph}" />'
 
             # Aspect symbol. Aspects without a settings entry (e.g.
-            # parallel/contra_parallel with the default set) have no orb glyph
+            # parallel/contra-parallel with the default set) have no orb glyph
             # in the template: skip the symbol instead of emitting a dangling
             # xlink:href="#orbNone", matching _draw_all_aspects_lines.
             aspect_name = aspect["aspect"]
@@ -1795,7 +1811,8 @@ def draw_gauquelin_unified_grid(
             dm = int((da - dd) * 60)
             ds = int(((da - dd) * 60 - dm) * 60)
             decl_dir = "N" if decl >= 0 else "S"
-            decl_str = f"{dd:02d}°{dm:02d}'{ds:02d}\"{decl_dir}"
+            # &quot; instead of a literal ": see convert_decimal_to_degree_string.
+            decl_str = f"{dd:02d}°{dm:02d}'{ds:02d}&quot;{decl_dir}"
         else:
             decl_str = ""
 
@@ -2019,6 +2036,7 @@ def draw_transit_aspect_grid(
     x_indent: int = 50,
     y_indent: int = 250,
     box_size: int = 14,
+    aspects_settings: Union[list, None] = None,
 ) -> str:
     """
     Draw a rectangular aspect grid for transit charts.
@@ -2035,6 +2053,9 @@ def draw_transit_aspect_grid(
         x_indent: X-coordinate for the grid's left edge.
         y_indent: Y-coordinate for the grid's top edge.
         box_size: Width and height of each grid cell in pixels.
+        aspects_settings: Optional aspect settings list; when provided, aspects
+            whose name has no settings entry (e.g. declination parallels, which
+            have no orb glyph and would render as a conjunction) are skipped.
 
     Returns:
         SVG string containing the transit aspect grid.
@@ -2048,11 +2069,17 @@ def draw_transit_aspect_grid(
     # Filter active planets
     active_planets = [planet for planet in available_planets if planet["is_active"]]
 
+    # Same up-front filter as draw_aspect_grid: settings-less aspects (e.g.
+    # declination parallels) would resolve to the wrong orb glyph.
+    known_aspect_names = {setting["name"] for setting in aspects_settings} if aspects_settings is not None else None
+
     # Index aspects by (p1, p2) pair for O(1) lookup per grid cell instead of
     # scanning the whole aspect list for every cell. The key is ordered:
     # p1 belongs to the first subject (rows), p2 to the second (columns).
     aspects_by_pair: dict = {}
     for aspect in aspects:
+        if known_aspect_names is not None and aspect["aspect"] not in known_aspect_names:
+            continue
         aspects_by_pair.setdefault((aspect["p1"], aspect["p2"]), []).append(aspect)
 
     # Reverse the list of active planets for the first iteration

@@ -201,7 +201,7 @@ class ChartDataFactory:
             # Single chart aspects
             aspects_model = AspectsFactory.single_chart_aspects(
                 first_subject,
-                active_points=effective_active_points,
+                active_points=list(effective_active_points),
                 active_aspects=active_aspects,
                 axis_orb_limit=axis_orb_limit,
                 point_orb_adjustments=point_orb_adjustments,
@@ -232,7 +232,7 @@ class ChartDataFactory:
             aspects_model = AspectsFactory.dual_chart_aspects(
                 first_subject,
                 second_subject,
-                active_points=effective_active_points,
+                active_points=list(effective_active_points),
                 active_aspects=active_aspects,
                 axis_orb_limit=axis_orb_limit,
                 first_subject_is_fixed=first_subject_is_fixed,
@@ -423,7 +423,7 @@ class ChartDataFactory:
                 aspects=cast(SingleChartAspectsModel, aspects_model).aspects,
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
-                active_points=effective_active_points,
+                active_points=list(effective_active_points),
                 active_aspects=active_aspects,
             )
         else:
@@ -439,7 +439,7 @@ class ChartDataFactory:
                 relationship_score=relationship_score,
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
-                active_points=effective_active_points,
+                active_points=list(effective_active_points),
                 active_aspects=active_aspects,
             )
 

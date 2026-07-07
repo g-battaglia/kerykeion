@@ -1,6 +1,8 @@
 import re
 
-_DMS_PATTERN = re.compile(r"(\d+)°(\d+)'(\d+)'")
+# Seconds mark: &quot; (current output), a literal ", or the pre-fix apostrophe
+# (older baselines were generated while the quote-replace pass corrupted it).
+_DMS_PATTERN = re.compile(r"(\d+)°(\d+)'(\d+)(?:&quot;|\"|')")
 _NON_VISUAL_KR_ATTR_PATTERN = re.compile(r"\s+kr:c[xy]=(['\"])[^'\"]*\1")
 
 

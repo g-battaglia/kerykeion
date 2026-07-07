@@ -937,6 +937,16 @@ class PlanetaryReturnFactory:
         """
         from kerykeion.astrological_subject_factory import STANDARD_PLANETS
 
+        # julian_day is Optional on the model (composite subjects have no
+        # single moment in time); without this guard it reaches calc_ut as
+        # None and raises a raw, undiagnosable TypeError. Mirrors
+        # PrimaryDirectionsFactory's _require_geometry guard.
+        if self.subject.julian_day is None:
+            raise KerykeionException(
+                "Subject is missing Julian Day — cannot compute heliocentric returns "
+                "(composite subjects are not supported here)."
+            )
+
         # The public parameter stays `str`; unknown names fall through to the explicit raise below.
         planet_id = STANDARD_PLANETS.get(cast(AstrologicalPoint, planet_name))
         if planet_id is None:

@@ -107,6 +107,15 @@ class TestPhenomenaFiltering:
         with pytest.raises(ValueError, match="Unknown planets"):
             PlanetaryPhenomenaFactory.from_subject(subject, planets=["FakePlanet"])
 
+    def test_missing_julian_day_raises(self, subject):
+        """julian_day is Optional on the model (composite subjects leave it
+        None): the guard must raise a clear KerykeionException instead of the
+        misleading all-planets-failed "backend may be unavailable" error."""
+        from kerykeion.schemas import KerykeionException
+        no_jd = subject.model_copy(update={"julian_day": None})
+        with pytest.raises(KerykeionException, match="Julian Day"):
+            PlanetaryPhenomenaFactory.from_subject(no_jd)
+
 
 class TestPhenomenaEdgeCases:
     """Test edge-case branches in the phenomena factory."""

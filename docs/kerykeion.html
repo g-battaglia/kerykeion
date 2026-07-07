@@ -24924,7 +24924,7 @@ biwheel rendering: inner ring = natal, outer ring = directed.</p>
 </span><span id="AspectsFactory-694"><a href="#AspectsFactory-694"><span class="linenos"> 694</span></a>        <span class="n">known_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">aspect_setting</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">aspect_setting</span> <span class="ow">in</span> <span class="n">aspects_settings</span><span class="p">}</span>
 </span><span id="AspectsFactory-695"><a href="#AspectsFactory-695"><span class="linenos"> 695</span></a>        <span class="n">unknown_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">active_orbs</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_names</span><span class="p">]</span>
 </span><span id="AspectsFactory-696"><a href="#AspectsFactory-696"><span class="linenos"> 696</span></a>        <span class="k">if</span> <span class="n">unknown_names</span><span class="p">:</span>
-</span><span id="AspectsFactory-697"><a href="#AspectsFactory-697"><span class="linenos"> 697</span></a>            <span class="n">declination_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">unknown_names</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;contra_parallel&quot;</span><span class="p">)]</span>
+</span><span id="AspectsFactory-697"><a href="#AspectsFactory-697"><span class="linenos"> 697</span></a>            <span class="n">declination_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">unknown_names</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;contra-parallel&quot;</span><span class="p">)]</span>
 </span><span id="AspectsFactory-698"><a href="#AspectsFactory-698"><span class="linenos"> 698</span></a>            <span class="k">if</span> <span class="n">declination_names</span><span class="p">:</span>
 </span><span id="AspectsFactory-699"><a href="#AspectsFactory-699"><span class="linenos"> 699</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
 </span><span id="AspectsFactory-700"><a href="#AspectsFactory-700"><span class="linenos"> 700</span></a>                    <span class="s2">&quot;Declination aspects </span><span class="si">%s</span><span class="s2"> are not handled by the longitudinal aspect &quot;</span>
@@ -25050,7 +25050,7 @@ biwheel rendering: inner ring = natal, outer ring = directed.</p>
 </span><span id="AspectsFactory-820"><a href="#AspectsFactory-820"><span class="linenos"> 820</span></a><span class="sd">            active_points: Optional list of points to include.</span>
 </span><span id="AspectsFactory-821"><a href="#AspectsFactory-821"><span class="linenos"> 821</span></a>
 </span><span id="AspectsFactory-822"><a href="#AspectsFactory-822"><span class="linenos"> 822</span></a><span class="sd">        Returns:</span>
-</span><span id="AspectsFactory-823"><a href="#AspectsFactory-823"><span class="linenos"> 823</span></a><span class="sd">            List of AspectModel with aspect=&quot;parallel&quot; or aspect=&quot;contra_parallel&quot;.</span>
+</span><span id="AspectsFactory-823"><a href="#AspectsFactory-823"><span class="linenos"> 823</span></a><span class="sd">            List of AspectModel with aspect=&quot;parallel&quot; or aspect=&quot;contra-parallel&quot;.</span>
 </span><span id="AspectsFactory-824"><a href="#AspectsFactory-824"><span class="linenos"> 824</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="AspectsFactory-825"><a href="#AspectsFactory-825"><span class="linenos"> 825</span></a>        <span class="c1"># v6: extend points_to_use and celestial_points with subject.fixed_stars</span>
 </span><span id="AspectsFactory-826"><a href="#AspectsFactory-826"><span class="linenos"> 826</span></a>        <span class="c1"># so catalog stars participate in parallel/contra-parallel aspects too.</span>
@@ -25111,7 +25111,7 @@ biwheel rendering: inner ring = natal, outer ring = directed.</p>
 </span><span id="AspectsFactory-881"><a href="#AspectsFactory-881"><span class="linenos"> 881</span></a><span class="sd">            active_points: Optional list of points to include.</span>
 </span><span id="AspectsFactory-882"><a href="#AspectsFactory-882"><span class="linenos"> 882</span></a>
 </span><span id="AspectsFactory-883"><a href="#AspectsFactory-883"><span class="linenos"> 883</span></a><span class="sd">        Returns:</span>
-</span><span id="AspectsFactory-884"><a href="#AspectsFactory-884"><span class="linenos"> 884</span></a><span class="sd">            List of AspectModel with aspect=&quot;parallel&quot; or aspect=&quot;contra_parallel&quot;.</span>
+</span><span id="AspectsFactory-884"><a href="#AspectsFactory-884"><span class="linenos"> 884</span></a><span class="sd">            List of AspectModel with aspect=&quot;parallel&quot; or aspect=&quot;contra-parallel&quot;.</span>
 </span><span id="AspectsFactory-885"><a href="#AspectsFactory-885"><span class="linenos"> 885</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="AspectsFactory-886"><a href="#AspectsFactory-886"><span class="linenos"> 886</span></a>        <span class="c1"># v6: extend points + celestial_points with both subjects&#39; fixed_stars</span>
 </span><span id="AspectsFactory-887"><a href="#AspectsFactory-887"><span class="linenos"> 887</span></a>        <span class="c1"># so catalog stars participate in parallel/contra-parallel aspects.</span>
@@ -25245,7 +25245,7 @@ biwheel rendering: inner ring = natal, outer ring = directed.</p>
 </span><span id="AspectsFactory-1015"><a href="#AspectsFactory-1015"><span class="linenos">1015</span></a>                            <span class="n">p2_name</span><span class="o">=</span><span class="n">name_b</span><span class="p">,</span>
 </span><span id="AspectsFactory-1016"><a href="#AspectsFactory-1016"><span class="linenos">1016</span></a>                            <span class="n">p2_owner</span><span class="o">=</span><span class="n">owner_b</span><span class="p">,</span>
 </span><span id="AspectsFactory-1017"><a href="#AspectsFactory-1017"><span class="linenos">1017</span></a>                            <span class="n">p2_abs_pos</span><span class="o">=</span><span class="n">abs_pos_b</span><span class="p">,</span>
-</span><span id="AspectsFactory-1018"><a href="#AspectsFactory-1018"><span class="linenos">1018</span></a>                            <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;contra_parallel&quot;</span><span class="p">,</span>
+</span><span id="AspectsFactory-1018"><a href="#AspectsFactory-1018"><span class="linenos">1018</span></a>                            <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;contra-parallel&quot;</span><span class="p">,</span>
 </span><span id="AspectsFactory-1019"><a href="#AspectsFactory-1019"><span class="linenos">1019</span></a>                            <span class="n">orbit</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">contra_diff</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
 </span><span id="AspectsFactory-1020"><a href="#AspectsFactory-1020"><span class="linenos">1020</span></a>                            <span class="n">aspect_degrees</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 </span><span id="AspectsFactory-1021"><a href="#AspectsFactory-1021"><span class="linenos">1021</span></a>                            <span class="n">diff</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">contra_diff</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
@@ -25787,7 +25787,7 @@ This method is deprecated. Use <a href="#AspectsFactory.dual_chart_aspects">Aspe
 </span><span id="AspectsFactory.single_chart_declination_aspects-820"><a href="#AspectsFactory.single_chart_declination_aspects-820"><span class="linenos">820</span></a><span class="sd">            active_points: Optional list of points to include.</span>
 </span><span id="AspectsFactory.single_chart_declination_aspects-821"><a href="#AspectsFactory.single_chart_declination_aspects-821"><span class="linenos">821</span></a>
 </span><span id="AspectsFactory.single_chart_declination_aspects-822"><a href="#AspectsFactory.single_chart_declination_aspects-822"><span class="linenos">822</span></a><span class="sd">        Returns:</span>
-</span><span id="AspectsFactory.single_chart_declination_aspects-823"><a href="#AspectsFactory.single_chart_declination_aspects-823"><span class="linenos">823</span></a><span class="sd">            List of AspectModel with aspect=&quot;parallel&quot; or aspect=&quot;contra_parallel&quot;.</span>
+</span><span id="AspectsFactory.single_chart_declination_aspects-823"><a href="#AspectsFactory.single_chart_declination_aspects-823"><span class="linenos">823</span></a><span class="sd">            List of AspectModel with aspect=&quot;parallel&quot; or aspect=&quot;contra-parallel&quot;.</span>
 </span><span id="AspectsFactory.single_chart_declination_aspects-824"><a href="#AspectsFactory.single_chart_declination_aspects-824"><span class="linenos">824</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="AspectsFactory.single_chart_declination_aspects-825"><a href="#AspectsFactory.single_chart_declination_aspects-825"><span class="linenos">825</span></a>        <span class="c1"># v6: extend points_to_use and celestial_points with subject.fixed_stars</span>
 </span><span id="AspectsFactory.single_chart_declination_aspects-826"><a href="#AspectsFactory.single_chart_declination_aspects-826"><span class="linenos">826</span></a>        <span class="c1"># so catalog stars participate in parallel/contra-parallel aspects too.</span>
@@ -25845,7 +25845,7 @@ magnitude but opposite in sign (one north, one south).</p>
     active_points: Optional list of points to include.</p>
 
 <p>Returns:
-    List of AspectModel with aspect="parallel" or aspect="contra_parallel".</p>
+    List of AspectModel with aspect="parallel" or aspect="contra-parallel".</p>
 </div>
 
 
@@ -25880,7 +25880,7 @@ magnitude but opposite in sign (one north, one south).</p>
 </span><span id="AspectsFactory.dual_chart_declination_aspects-881"><a href="#AspectsFactory.dual_chart_declination_aspects-881"><span class="linenos">881</span></a><span class="sd">            active_points: Optional list of points to include.</span>
 </span><span id="AspectsFactory.dual_chart_declination_aspects-882"><a href="#AspectsFactory.dual_chart_declination_aspects-882"><span class="linenos">882</span></a>
 </span><span id="AspectsFactory.dual_chart_declination_aspects-883"><a href="#AspectsFactory.dual_chart_declination_aspects-883"><span class="linenos">883</span></a><span class="sd">        Returns:</span>
-</span><span id="AspectsFactory.dual_chart_declination_aspects-884"><a href="#AspectsFactory.dual_chart_declination_aspects-884"><span class="linenos">884</span></a><span class="sd">            List of AspectModel with aspect=&quot;parallel&quot; or aspect=&quot;contra_parallel&quot;.</span>
+</span><span id="AspectsFactory.dual_chart_declination_aspects-884"><a href="#AspectsFactory.dual_chart_declination_aspects-884"><span class="linenos">884</span></a><span class="sd">            List of AspectModel with aspect=&quot;parallel&quot; or aspect=&quot;contra-parallel&quot;.</span>
 </span><span id="AspectsFactory.dual_chart_declination_aspects-885"><a href="#AspectsFactory.dual_chart_declination_aspects-885"><span class="linenos">885</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="AspectsFactory.dual_chart_declination_aspects-886"><a href="#AspectsFactory.dual_chart_declination_aspects-886"><span class="linenos">886</span></a>        <span class="c1"># v6: extend points + celestial_points with both subjects&#39; fixed_stars</span>
 </span><span id="AspectsFactory.dual_chart_declination_aspects-887"><a href="#AspectsFactory.dual_chart_declination_aspects-887"><span class="linenos">887</span></a>        <span class="c1"># so catalog stars participate in parallel/contra-parallel aspects.</span>
@@ -25933,7 +25933,7 @@ magnitude but opposite in sign (one north, one south).</p>
     active_points: Optional list of points to include.</p>
 
 <p>Returns:
-    List of AspectModel with aspect="parallel" or aspect="contra_parallel".</p>
+    List of AspectModel with aspect="parallel" or aspect="contra-parallel".</p>
 </div>
 
 

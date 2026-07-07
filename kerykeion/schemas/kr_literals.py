@@ -430,12 +430,12 @@ AspectName: TypeAlias = Literal[
     "opposition",
     # Declination-based aspects (v6.0)
     "parallel",
-    "contra_parallel",
+    "contra-parallel",
 ]
 """Literal type for all the available aspects names.
 
 Ecliptic aspects (conjunction through opposition) are measured along the zodiac.
-Declination aspects (parallel, contra_parallel) compare celestial latitude
+Declination aspects (parallel, contra-parallel) compare celestial latitude
 north/south of the equator and are added in v6.0.
 """
 

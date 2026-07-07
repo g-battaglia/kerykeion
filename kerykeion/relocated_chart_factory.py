@@ -30,6 +30,7 @@ from typing import Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint, Houses
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.settings.config_constants import AXIAL_POINTS
@@ -98,6 +99,10 @@ class RelocatedChartFactory:
                 field_year, field_month, field_day, field_hour, field_minute, field_seconds, lmt_offset_hours
             )
         else:
+            # The CE path is only entered by the caller when new_tz_str is
+            # truthy (the year >= 1 branch of the gating condition); make the
+            # non-None guarantee explicit for the type checker.
+            assert new_tz_str is not None
             utc_dt = datetime.fromisoformat(iso_utc)
             if utc_dt.tzinfo is None:
                 utc_dt = utc_dt.replace(tzinfo=timezone.utc)
@@ -135,7 +140,21 @@ class RelocatedChartFactory:
 
         Returns:
             New AstrologicalSubjectModel with relocated houses.
+
+        Raises:
+            KerykeionException: If the subject uses the Topocentric perspective
+                (its planetary positions embed the natal observer's parallax,
+                so they cannot be kept while coherently moving the observer).
         """
+        if subject.perspective_type == "Topocentric":
+            raise KerykeionException(
+                "Cannot relocate a Topocentric chart: its planetary positions "
+                "embed the parallax of the natal observer, so a coherent "
+                "relocation would require recomputing the planets for the new "
+                "observer. Re-create the subject with the new coordinates "
+                "(perspective_type='Topocentric') instead."
+            )
+
         jd = subject.julian_day
         hsys = subject.houses_system_identifier.encode("ascii")
         is_sidereal = subject.zodiac_type == "Sidereal"
