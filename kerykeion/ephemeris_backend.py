@@ -69,11 +69,19 @@ import importlib
 import logging
 import os
 from contextlib import contextmanager
-from threading import RLock
+from threading import RLock, local as _thread_local
 import types
 from typing import Iterator, Optional, Tuple
 
 logger = logging.getLogger(__name__)
+
+# Per-thread nesting depth of ``ephemeris_session``. ``EPHEMERIS_LOCK`` is an
+# RLock, so the same thread CAN re-enter a session, but the inner session's
+# cleanup (``reset_ephemeris_session``) resets the sidereal/topo state the outer
+# session configured — silently shifting every subsequent position in the outer
+# session. No internal path nests, so this only guards raw callers; a warning is
+# enough (raising would break re-entrancy the RLock otherwise permits).
+_SESSION_DEPTH = _thread_local()
 
 # ---------------------------------------------------------------------------
 # Backend detection
@@ -354,6 +362,16 @@ def ephemeris_session(
           ayanamsa parameters are missing.
     """
     with EPHEMERIS_LOCK:
+        depth = getattr(_SESSION_DEPTH, "value", 0)
+        if depth > 0:
+            logger.warning(
+                "Nested ephemeris_session detected (depth %d): the inner session's "
+                "cleanup will reset the sidereal/topocentric state configured by the "
+                "outer session, silently shifting its subsequent positions. Exit the "
+                "outer session before building subjects or calling other factories.",
+                depth + 1,
+            )
+        _SESSION_DEPTH.value = depth + 1
         try:
             ephe.set_ephe_path(EPHE_DATA_PATH if ephe_path is None else ephe_path)
             iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
@@ -395,6 +413,7 @@ def ephemeris_session(
 
             yield iflag
         finally:
+            _SESSION_DEPTH.value = getattr(_SESSION_DEPTH, "value", 1) - 1
             reset_ephemeris_session()
 
 

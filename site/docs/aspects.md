@@ -254,11 +254,12 @@ Extracts active celestial points from a subject based on configuration.
 
 ```python
 from kerykeion.aspects.aspects_utils import get_active_points_list
+from kerykeion.settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
 points = get_active_points_list(
-    subject=subject,
+    subject,
     active_points=["Sun", "Moon", "Mercury"],
-    celestial_points=settings.celestial_points  # keyword-only
+    celestial_points=DEFAULT_CELESTIAL_POINTS_SETTINGS,  # keyword-only; defaults to this
 )
 ```
 
@@ -268,8 +269,9 @@ Converts a planet name to its Swiss Ephemeris ID.
 
 ```python
 from kerykeion.aspects.aspects_utils import planet_id_decoder
+from kerykeion.settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
-swe_id = planet_id_decoder(planets_settings, "Jupiter")
+swe_id = planet_id_decoder(DEFAULT_CELESTIAL_POINTS_SETTINGS, "Jupiter")
 # Returns 5
 ```
 

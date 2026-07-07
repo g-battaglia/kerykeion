@@ -1093,13 +1093,16 @@ def to_context(
     appropriate transformer function.
 
     Args:
-        model: Any supported Kerykeion Pydantic model.
+        model: Any supported Kerykeion Pydantic model, or a non-empty
+            ``list[MidpointModel]``.
 
     Returns:
         A string containing the XML representation of the model.
 
     Raises:
-        TypeError: If the model type is not supported.
+        TypeError: If the model type is not supported, or if an empty list is
+            passed (its element type is ambiguous — call
+            :func:`midpoints_to_context` with ``[]`` for an empty midpoints set).
 
     Example:
         >>> from kerykeion import AstrologicalSubjectFactory, to_context
@@ -1140,6 +1143,15 @@ def to_context(
         # all(...) and silently serialize as a zero-count midpoints analysis
         # instead of raising the documented TypeError.
         return midpoints_to_context(model)
+    elif isinstance(model, list) and not model:
+        # An empty list is genuinely ambiguous (it could be an empty midpoints
+        # list — e.g. MidpointFactory.compute with <2 active points — or an
+        # empty aspects list), so dispatch cannot guess. Point callers who mean
+        # "no midpoints" at the explicit entry point instead of failing opaquely.
+        raise TypeError(
+            "Cannot serialize an empty list: its element type is ambiguous. "
+            "For an intentionally empty midpoints set call midpoints_to_context([]) directly."
+        )
     else:
         raise TypeError(
             f"Unsupported model type: {type(model).__name__}. "

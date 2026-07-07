@@ -2,6 +2,38 @@
 
 ## [Unreleased]
 
+### Fixed (pre-6.0.0 cross-cutting review, round 18)
+
+- **GeoNames request cache is segregated by TTL.** requests-cache stamps each
+  entry's expiry at write time and every instance shared one sqlite store, so a
+  caller asking for a 1-day `cache_expire_after_days` could be served a 30-day
+  entry another instance wrote. The store filename now carries the TTL suffix.
+- **`FetchGeonames` releases its session** via a new `close()` and context-
+  manager protocol; every internal lookup now uses `with FetchGeonames(...)`,
+  so the sqlite-backed session's file descriptors are freed deterministically
+  instead of at GC time.
+- **Nested `ephemeris_session` calls now warn.** The lock is re-entrant, but an
+  inner session's cleanup resets the sidereal/topocentric state the outer one
+  configured (a silent ~0.88° shift). No internal path nests; the warning
+  guards raw callers.
+- **Chart-data `active_points` metadata lists the fixed stars actually
+  aspected.** `SingleChartDataModel`/`DualChartDataModel` now source
+  `active_points` and `active_aspects` from the aspects model, so catalog stars
+  appear and ignored declination aspects (`parallel`/`contra-parallel`) do not —
+  the serialized metadata describes the real calculation.
+- **Aspects models drop uncomputed declination aspects from `active_aspects`.**
+  A `parallel`/`contra-parallel` entry the longitudinal engine ignores no
+  longer appears in the serialized `active_aspects`.
+- **`to_context([])` fails with an actionable message.** An empty list is
+  ambiguous (empty midpoints vs empty aspects); the `TypeError` now points at
+  `midpoints_to_context([])` for an intentionally empty midpoints set (this also
+  restores a clear path for `MidpointFactory.compute` returning `[]`).
+- **Docs/examples**: `ChartDataFactory` class docstring enables
+  `include_relationship_score`; `settings.md` marks `load_settings_mapping`
+  deprecated; `aspects.md` uses `DEFAULT_CELESTIAL_POINTS_SETTINGS` instead of
+  undefined placeholders; the transit examples use a 4-hour ephemeris step
+  (no sub-sampling warning); the pandas cookbook recipe notes its prerequisite.
+
 ### Known limitations
 
 - **Converse primary directions are approximate.** `PrimaryDirectionsFactory`

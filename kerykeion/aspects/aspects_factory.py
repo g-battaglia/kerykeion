@@ -376,7 +376,7 @@ class AspectsFactory:
             subject=subject,
             aspects=filtered_aspects,
             active_points=active_points_resolved,
-            active_aspects=active_aspects_resolved,
+            active_aspects=AspectsFactory._computed_active_aspects(active_aspects_resolved, aspects_settings),
         )
 
     @staticmethod
@@ -433,8 +433,23 @@ class AspectsFactory:
             second_subject=second_subject,
             aspects=filtered_aspects,
             active_points=active_points_resolved,
-            active_aspects=active_aspects_resolved,
+            active_aspects=AspectsFactory._computed_active_aspects(active_aspects_resolved, aspects_settings),
         )
+
+    @staticmethod
+    def _computed_active_aspects(
+        active_aspects: List[ActiveAspect], aspects_settings: Sequence[Mapping[str, Any]]
+    ) -> List[ActiveAspect]:
+        """Return only the active aspects the longitudinal engine actually computes.
+
+        Declination aspects (``parallel``/``contra-parallel``) and any name
+        without a settings entry are silently ignored by the calculation (see the
+        warning in ``_update_aspect_settings``); dropping them here keeps the
+        serialized ``active_aspects`` an honest description of the result — a JSON
+        consumer must not believe a parallel was computed when it was not.
+        """
+        known_names = {setting["name"] for setting in aspects_settings}
+        return [aspect for aspect in active_aspects if aspect["name"] in known_names]
 
     @staticmethod
     def _calculate_single_chart_aspects(

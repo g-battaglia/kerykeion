@@ -1477,13 +1477,14 @@ class TestMidpointsToContext:
         """An empty list carries no type information: dispatching it to the
         midpoints serializer would silently mislabel any empty collection
         (e.g. an empty aspects list) as a zero-count midpoints analysis.
-        The documented TypeError applies; ``midpoints_to_context([])`` stays
-        available for callers who explicitly mean "no midpoints"."""
+        The TypeError message points at the explicit entry point;
+        ``midpoints_to_context([])`` stays available for callers who mean
+        "no midpoints"."""
         import pytest
 
         from kerykeion.context_serializer import to_context
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="midpoints_to_context"):
             to_context([])
 
 

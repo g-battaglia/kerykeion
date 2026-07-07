@@ -679,3 +679,32 @@ class TestEphemerisConfigurationVariants:
         assert all(d.strftime("%H:%M") == "00:00" for d in locals_)
         utc = [datetime.fromisoformat(d["date"]) for d in data]
         assert all(utc[i] < utc[i + 1] for i in range(len(utc) - 1))
+
+
+# ---------------------------------------------------------------------------
+# Nested ephemeris_session guard (round 18)
+# ---------------------------------------------------------------------------
+
+
+class TestEphemerisSessionNestingGuard:
+    """A nested ephemeris_session on the same thread warns: the inner session's
+    cleanup resets the sidereal/topo state configured by the outer one."""
+
+    def test_no_warning_when_not_nested(self, caplog):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+            with ephemeris_session():
+                pass
+        assert "Nested ephemeris_session" not in caplog.text
+
+    def test_warns_when_nested(self, caplog):
+        from kerykeion.ephemeris_backend import ephemeris_session, _SESSION_DEPTH
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+            with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI"):
+                with ephemeris_session():
+                    pass
+        assert "Nested ephemeris_session" in caplog.text
+        # Depth counter returns to zero after both sessions exit.
+        assert getattr(_SESSION_DEPTH, "value", 0) == 0

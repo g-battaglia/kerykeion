@@ -268,6 +268,8 @@ Moon,Sco,15.32,Third_House,False,13.1762,,
 
 ### Export Ephemeris Data to Pandas DataFrame
 
+> **Requires pandas** (not a Kerykeion dependency): `pip install pandas`.
+
 ```python
 import pandas as pd
 from datetime import datetime

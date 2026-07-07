@@ -123,26 +123,52 @@ class TestGeonamesMocked:
 
     def test_custom_cache_name(self, monkeypatch, tmp_path):
         """Custom cache_name is forwarded to CachedSession (its parent
-        directory is created on demand)."""
+        directory is created on demand), with the TTL appended to the stem."""
         session_mock = Mock()
         cached_session_mock = Mock(return_value=session_mock)
         monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
 
         custom_cache_name = tmp_path / "custom" / "cache" / "path"
-        FetchGeonames("TestCity", "TS", cache_name=custom_cache_name)
+        FetchGeonames("TestCity", "TS", cache_name=custom_cache_name, cache_expire_after_days=30)
 
-        assert cached_session_mock.call_args.kwargs["cache_name"] == str(custom_cache_name)
+        assert cached_session_mock.call_args.kwargs["cache_name"] == str(custom_cache_name.with_name("path_30d"))
         assert custom_cache_name.parent.is_dir()
 
     def test_default_cache_name(self, monkeypatch, tmp_path):
-        """Default cache_name uses FetchGeonames.default_cache_name."""
+        """Default cache_name uses FetchGeonames.default_cache_name (TTL-suffixed)."""
         session_mock = Mock()
         cached_session_mock = Mock(return_value=session_mock)
         monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
 
         monkeypatch.setattr(FetchGeonames, "default_cache_name", tmp_path / "geo_cache")
-        FetchGeonames("TestCity", "TS")
-        assert cached_session_mock.call_args.kwargs["cache_name"] == str(tmp_path / "geo_cache")
+        FetchGeonames("TestCity", "TS", cache_expire_after_days=30)
+        assert cached_session_mock.call_args.kwargs["cache_name"] == str(tmp_path / "geo_cache_30d")
+
+    def test_cache_segregated_by_ttl(self, monkeypatch, tmp_path):
+        """Instances with different TTLs must not share a sqlite store, or a
+        short-TTL caller could be served a long-lived entry another instance
+        wrote (requests-cache stamps expiry at write time)."""
+        cache_names = []
+        cached_session_mock = Mock(side_effect=lambda **kw: cache_names.append(kw["cache_name"]) or Mock())
+        monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
+        monkeypatch.setattr(FetchGeonames, "default_cache_name", tmp_path / "geo_cache")
+
+        FetchGeonames("TestCity", "TS", cache_expire_after_days=30)
+        FetchGeonames("TestCity", "TS", cache_expire_after_days=1)
+        assert cache_names[0] != cache_names[1]
+        assert cache_names[0].endswith("_30d")
+        assert cache_names[1].endswith("_1d")
+
+    def test_close_releases_session(self, monkeypatch, tmp_path):
+        """close() / context manager release the CachedSession's file handles."""
+        session_mock = Mock()
+        cached_session_mock = Mock(return_value=session_mock)
+        monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
+        monkeypatch.setattr(FetchGeonames, "default_cache_name", tmp_path / "geo_cache")
+
+        with FetchGeonames("TestCity", "TS") as geonames:
+            assert geonames.session is session_mock
+        session_mock.close.assert_called_once()
 
     def test_default_cache_name_is_per_user(self):
         """The default cache lives in the per-user ~/.kerykeion/cache/ directory

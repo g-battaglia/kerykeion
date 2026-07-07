@@ -451,13 +451,13 @@ class PlanetaryReturnFactory:
             if not self.city or not self.nation or not self.geonames_username:
                 raise KerykeionException("You need to set the city and nation if you want to use the online mode!")
 
-            geonames = FetchGeonames(
+            with FetchGeonames(
                 self.city,
                 self.nation,
                 username=self.geonames_username,
                 cache_expire_after_days=self.cache_expire_after_days,
-            )
-            self.city_data: dict[str, str] = geonames.get_serialized_data()
+            ) as geonames:
+                self.city_data: dict[str, str] = geonames.get_serialized_data()
 
             if (
                 "countryCode" not in self.city_data

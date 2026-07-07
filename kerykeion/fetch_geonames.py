@@ -110,7 +110,11 @@ class FetchGeonames:
         cache_name: Optional path (directory or filename stem) used by requests-cache.
             Defaults to ``~/.kerykeion/cache/kerykeion_geonames_cache`` and may also
             be overridden via the environment variable ``KERYKEION_GEONAMES_CACHE_NAME``
-            or by calling :meth:`FetchGeonames.set_default_cache_name`.
+            or by calling :meth:`FetchGeonames.set_default_cache_name`. The chosen
+            ``cache_expire_after_days`` is appended to the stem, so instances with
+            different TTLs never share a sqlite file (requests-cache stamps each
+            entry's expiry at write time, so a short-TTL caller would otherwise be
+            served a long-lived entry written by another instance).
     """
 
     default_cache_name: Path = DEFAULT_GEONAMES_CACHE_NAME
@@ -124,6 +128,13 @@ class FetchGeonames:
         cache_name: Optional[Union[str, Path]] = None,
     ):
         resolved_cache_name = self._resolve_cache_name(cache_name)
+        # Segregate the store by TTL: the expiry of a cached response is fixed at
+        # write time to the writing session's expire_after, and the default store
+        # is shared across every instance — so a caller asking for a 1-day TTL
+        # could otherwise read a 30-day entry another instance persisted.
+        resolved_cache_name = resolved_cache_name.with_name(
+            f"{resolved_cache_name.name}_{cache_expire_after_days}d"
+        )
         # Ensure the cache directory exists (the per-user default lives under
         # ~/.kerykeion/cache/, which may not exist yet on a fresh install).
         resolved_cache_name.parent.mkdir(parents=True, exist_ok=True)
@@ -143,6 +154,24 @@ class FetchGeonames:
         # accounts too, so credentials no longer travel in cleartext).
         self.base_url = "https://secure.geonames.org/searchJSON"
         self.timezone_url = "https://secure.geonames.org/timezoneJSON"
+
+    def close(self) -> None:
+        """Close the underlying cached HTTP session and release its file handles.
+
+        Each ``FetchGeonames`` opens a sqlite-backed ``CachedSession`` (two file
+        descriptors). Long-lived callers that keep instances referenced can
+        otherwise exhaust file descriptors; use :meth:`close` or the context
+        manager form to release them deterministically instead of at GC time.
+        """
+        session = getattr(self, "session", None)
+        if session is not None:
+            session.close()
+
+    def __enter__(self) -> "FetchGeonames":
+        return self
+
+    def __exit__(self, *_exc_info: object) -> None:
+        self.close()
 
     @classmethod
     def set_default_cache_name(cls, cache_name: Union[str, Path]) -> None:

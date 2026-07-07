@@ -2112,10 +2112,13 @@ natal = AstrologicalSubjectFactory.from_birth_data(
     lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
 )
 
-# Generate ephemeris points for the transit period
+# Generate ephemeris points for the transit period. A 4-hour step keeps the
+# sampling finer than half the Moon's in-orb window; the default 1-day step is
+# coarse enough that the factory logs a sub-sampling warning for the Moon.
 ephemeris = EphemerisDataFactory(
     start_datetime=datetime(2025, 6, 1),
     end_datetime=datetime(2025, 7, 1),
+    step_type="hours", step=4,
     lng=11.25, lat=43.77, tz_str="Europe/Rome",
 )
 points = ephemeris.get_ephemeris_data_as_astrological_subjects()

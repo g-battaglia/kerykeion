@@ -549,11 +549,10 @@ class LocationData:
         """
         logging.info(f"Fetching timezone/coordinates for {self.city}, {self.nation} from geonames")
 
-        geonames = FetchGeonames(
+        with FetchGeonames(
             self.city, self.nation, username=username, cache_expire_after_days=cache_expire_after_days
-        )
-
-        self.city_data = geonames.get_serialized_data()
+        ) as geonames:
+            self.city_data = geonames.get_serialized_data()
 
         # Validate data
         required_fields = ["countryCode", "timezonestr", "lat", "lng"]
@@ -999,13 +998,13 @@ class AstrologicalSubjectFactory:
                 # would silently build the chart in the wrong zone. Resolve it
                 # from the coordinates themselves via the GeoNames timezoneJSON
                 # endpoint instead (same cached session as the city search).
-                geonames = FetchGeonames(
+                with FetchGeonames(
                     location.city,
                     location.nation,
                     username=resolved_geonames_username,
                     cache_expire_after_days=cache_expire_after_days,
-                )
-                timezone_data = geonames.get_timezone_for_coordinates(lat, lng)
+                ) as geonames:
+                    timezone_data = geonames.get_timezone_for_coordinates(lat, lng)
                 if "timezonestr" not in timezone_data:
                     raise KerykeionException(
                         f"Could not resolve the timezone for coordinates lat={lat}, lng={lng}: "
@@ -1511,13 +1510,12 @@ class AstrologicalSubjectFactory:
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
                 logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
 
-            geonames = FetchGeonames(
+            with FetchGeonames(
                 city or "Greenwich",
                 nation or "GB",
                 username=resolved_username,
-            )
-
-            city_data = geonames.get_serialized_data()
+            ) as geonames:
+                city_data = geonames.get_serialized_data()
             # Same contract as from_birth_data: a failed/rate-limited GeoNames
             # response must surface as KerykeionException, not a bare KeyError.
             missing_fields = [field for field in ("lat", "lng") if field not in city_data]
@@ -1756,9 +1754,10 @@ class AstrologicalSubjectFactory:
             resolved_username = geonames_username or _get_geonames_username()
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
                 logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
-            city_data = FetchGeonames(
+            with FetchGeonames(
                 city or "Greenwich", nation or "GB", username=resolved_username
-            ).get_serialized_data()
+            ) as _geonames:
+                city_data = _geonames.get_serialized_data()
             missing_fields = [f for f in ("timezonestr", "lat", "lng") if f not in city_data]
             if missing_fields:
                 raise KerykeionException(

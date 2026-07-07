@@ -117,14 +117,21 @@ overrides = {
 settings = load_language_settings(overrides)
 ```
 
-### `load_settings_mapping`
+### `load_settings_mapping` (deprecated)
+
+> **Deprecated since 6.0.0, removed in 7.0.0.** Use
+> [`load_language_settings`](#load_language_settings) instead — it returns the
+> same language mapping and accepts the same overrides. `load_settings_mapping`
+> is no longer part of `kerykeion.settings.__all__` and emits a
+> `DeprecationWarning` when called.
 
 Resolves the full configuration mapping, including overrides for bundled language settings.
 
 ```python
-from kerykeion.settings import load_settings_mapping
+# Preferred:
+from kerykeion.settings import load_language_settings
 
-settings_map = load_settings_mapping()
+settings = load_language_settings()
 ```
 
 ### Advanced Settings Types

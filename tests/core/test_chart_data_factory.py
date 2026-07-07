@@ -651,6 +651,36 @@ class TestAspectCalculations:
         aspect_points = {a.p1_name for a in chart.aspects}.union({a.p2_name for a in chart.aspects})
         assert aspect_points.issubset(set(chart.active_points))
 
+    def test_active_points_metadata_includes_fixed_stars(self):
+        """Round 18 F4: chart-data active_points must list the catalog stars that
+        actually appear in the aspects, or the metadata misdescribes the result."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "StarChart", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Roma", online=False,
+            active_fixed_stars=["Sirius", "Regulus"],
+        )
+        chart = ChartDataFactory.create_natal_chart_data(subject)
+        star_aspects = [
+            a for a in chart.aspects
+            if a.p1_name in ("Sirius", "Regulus") or a.p2_name in ("Sirius", "Regulus")
+        ]
+        assert star_aspects, "expected at least one aspect involving a fixed star"
+        assert {"Sirius", "Regulus"}.issubset(set(chart.active_points))
+        # And every aspect participant is still within the declared active set.
+        aspect_points = {a.p1_name for a in chart.aspects}.union({a.p2_name for a in chart.aspects})
+        assert aspect_points.issubset(set(chart.active_points))
+
+    def test_active_aspects_metadata_drops_ignored_declination(self, johnny_depp):
+        """Round 18 F5: an active_aspects entry the longitudinal engine ignores
+        (parallel/contra-parallel) must not appear in the serialized metadata."""
+        chart = ChartDataFactory.create_natal_chart_data(
+            johnny_depp,
+            active_aspects=[{"name": "conjunction", "orb": 8}, {"name": "parallel", "orb": 1}],
+        )
+        names = [a["name"] for a in chart.active_aspects]
+        assert "parallel" not in names
+        assert "conjunction" in names
+
 
 # =============================================================================
 # 6. TestFactoryParameterValidation

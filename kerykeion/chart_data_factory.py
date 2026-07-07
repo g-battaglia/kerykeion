@@ -90,9 +90,12 @@ class ChartDataFactory:
         >>> natal_data = ChartDataFactory.create_chart_data("Natal", john)
         >>> print(f"Elements: Fire {natal_data.element_distribution.fire_percentage}%")
         >>>
-        >>> # Create synastry chart data
+        >>> # Create synastry chart data (relationship_score is opt-in on
+        >>> # create_chart_data; create_synastry_chart_data enables it by default)
         >>> jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1992, 6, 15, 14, 30, "Paris", "FR")
-        >>> synastry_data = ChartDataFactory.create_chart_data("Synastry", john, jane)
+        >>> synastry_data = ChartDataFactory.create_chart_data(
+        ...     "Synastry", john, jane, include_relationship_score=True
+        ... )
         >>> print(f"Relationship score: {synastry_data.relationship_score.score_value}")
     """
 
@@ -415,32 +418,39 @@ class ChartDataFactory:
         )
 
         # Create and return the appropriate chart data model
+        # Source the serialized metadata from the aspects model, not from the raw
+        # inputs: aspects_model.active_points includes the catalog fixed stars
+        # actually aspected (effective_active_points omits them), and
+        # aspects_model.active_aspects has had unsupported declination names
+        # dropped — so the metadata describes the real calculation.
         if chart_type in ["Natal", "Composite", "SingleReturnChart"]:
             # Single chart data model - cast types since they're already validated
+            single_model = cast(SingleChartAspectsModel, aspects_model)
             return SingleChartDataModel(
                 chart_type=cast(Literal["Natal", "Composite", "SingleReturnChart"], chart_type),
                 subject=first_subject,
-                aspects=cast(SingleChartAspectsModel, aspects_model).aspects,
+                aspects=single_model.aspects,
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
-                active_points=list(effective_active_points),
-                active_aspects=active_aspects,
+                active_points=list(single_model.active_points),
+                active_aspects=list(single_model.active_aspects),
             )
         else:
             # Dual chart data model - cast types since they're already validated
             if second_subject is None:
                 raise KerykeionException(f"Second subject is required for {chart_type} charts.")
+            dual_model = cast(DualChartAspectsModel, aspects_model)
             return DualChartDataModel(
                 chart_type=cast(Literal["Transit", "Synastry", "DualReturnChart", "Progression"], chart_type),
                 first_subject=first_subject,
                 second_subject=second_subject,
-                aspects=cast(DualChartAspectsModel, aspects_model).aspects,
+                aspects=dual_model.aspects,
                 house_comparison=house_comparison,
                 relationship_score=relationship_score,
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
-                active_points=list(effective_active_points),
-                active_aspects=active_aspects,
+                active_points=list(dual_model.active_points),
+                active_aspects=list(dual_model.active_aspects),
             )
 
     @staticmethod
