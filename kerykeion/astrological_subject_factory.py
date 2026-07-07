@@ -1495,8 +1495,10 @@ class AstrologicalSubjectFactory:
         # as KerykeionException (the library's error contract, matching
         # from_birth_data's field validation) rather than a raw ValueError.
         try:
+            # `.replace` is inside the try so a non-string (e.g. None) also
+            # surfaces as KerykeionException, not a raw AttributeError.
             dt = datetime.fromisoformat(iso_utc_time.replace("Z", "+00:00"))
-        except (ValueError, TypeError) as exc:
+        except (ValueError, TypeError, AttributeError) as exc:
             raise KerykeionException(
                 f"Invalid ISO UTC timestamp {iso_utc_time!r}: {exc}. "
                 "Expected an ISO 8601 datetime such as '2023-06-15T14:30:00Z'."

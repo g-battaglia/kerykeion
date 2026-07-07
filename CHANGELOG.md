@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### Fixed (pre-6.0.0 convergence review, round 20)
+
+- **`from_iso_utc_time(None)` (or any non-string) raises `KerykeionException`.**
+  The `.replace("Z", …)` call is now inside the guarded block, so a non-string
+  timestamp surfaces as the library's exception instead of a raw
+  `AttributeError` — completing the ISO error-contract consistency from round 19.
+
+This round was primarily a convergence check: an adversarial re-review of the
+round-19 diff, a thread-safety sweep (300 concurrent tasks across 32 workers —
+all bit-identical to sequential references, thread-local session-depth counter
+correctly isolated, TTL-segregated cache safe under concurrent creation), and a
+data-table audit (fixed stars, Arabic Parts day/night formulas, Vimshottari
+nakshatra lords, exaltation degrees, aspect-degree maps, sign element/quality
+tables) — all verified correct with no changes needed beyond the fix above.
+
 ### Fixed (pre-6.0.0 cross-cutting review, round 19)
 
 - **Malformed ISO timestamps raise `KerykeionException`, not a raw
