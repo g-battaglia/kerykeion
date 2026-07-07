@@ -28,14 +28,14 @@ import math
 from datetime import datetime, timezone
 from typing import Optional
 
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend import ephe, ephemeris_session, houses_ex2_with_polar_fallback
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint, Houses
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.settings.config_constants import AXIAL_POINTS
 from kerykeion.utilities import (
-    check_and_adjust_polar_latitude,
+    validate_latitude,
     normalize_longitude,
     safe_timezone,
     get_kerykeion_point_from_degree,
@@ -159,11 +159,11 @@ class RelocatedChartFactory:
         hsys = subject.houses_system_identifier.encode("ascii")
         is_sidereal = subject.zodiac_type == "Sidereal"
 
-        # Same polar clamp as the natal path (quadrant house systems raise
-        # PolarCircleError past ~66 deg): relocating to lat 78 must behave
-        # like a natal chart cast there, not crash. Also raises on an
-        # impossible |lat| > 90.
-        new_lat = check_and_adjust_polar_latitude(new_lat)
+        # Validate but do NOT clamp: relocating to lat 78 must persist the real
+        # latitude and cast latitude-agnostic house systems there, exactly like a
+        # natal chart. Quadrant systems undefined inside the polar circle fall
+        # back locally at the houses call below. Raises on impossible |lat| > 90.
+        new_lat = validate_latitude(new_lat)
         # Wrap an un-normalized longitude (e.g. 370 == 10 E) into [-180, 180) as
         # the natal path does, so relocation accepts wrapped values instead of
         # the houses backend raising a raw CoordinateError.
@@ -192,8 +192,8 @@ class RelocatedChartFactory:
             # Letting houses_ex2 apply the sidereal flag itself would double-
             # subtract the ayanamsa.
             tropical_iflag = _iflag & ~ephe.FLG_SIDEREAL
-            cusps, ascmc, _cusps_speed, _ascmc_speed = ephe.houses_ex2(
-                jd, new_lat, new_lng, hsys, tropical_iflag
+            cusps, ascmc, _cusps_speed, _ascmc_speed = houses_ex2_with_polar_fallback(
+                jd, new_lat, new_lng, hsys, tropical_iflag, context=new_city or subject.name
             )
 
             # Sidereal charts: shift the tropical cusps/angles by the ayanamsa.

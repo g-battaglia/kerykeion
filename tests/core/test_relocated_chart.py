@@ -469,8 +469,9 @@ class TestRelocatedLocalDatetimeRecompute:
 
 class TestPolarRelocation:
     def test_relocation_to_polar_latitude_clamps_like_natal(self):
-        # Placidus raises PolarCircleError past ~66 deg; the natal path clamps,
-        # the relocation must too instead of crashing.
+        # Placidus raises PolarCircleError past ~66 deg; the natal path falls back
+        # to the clamped houses, and the relocation must too instead of crashing —
+        # while STILL persisting the real relocation latitude (not the clamp).
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.relocated_chart_factory import RelocatedChartFactory
 
@@ -481,6 +482,29 @@ class TestPolarRelocation:
         )
         relocated = RelocatedChartFactory.relocate(natal, new_lat=78.2, new_lng=15.6)
         assert relocated.first_house is not None
+        # The real latitude is preserved on the relocated model (no global clamp).
+        assert relocated.lat == 78.2
+
+    def test_relocation_to_polar_latitude_agnostic_houses_use_real_lat(self):
+        # Whole Sign is defined at every latitude: relocating a Whole Sign chart
+        # to a polar latitude must use the REAL latitude for the cusps, matching
+        # an independent backend call there (not the 66°-clamped one).
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.ephemeris_backend import ephe, ephemeris_session
+
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "Polar WS", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True, houses_system_identifier="W",
+        )
+        relocated = RelocatedChartFactory.relocate(natal, new_lat=78.2, new_lng=15.6)
+        assert relocated.lat == 78.2
+        with ephemeris_session() as iflag:
+            _, ascmc_real, _, _ = ephe.houses_ex2(natal.julian_day, 78.2, 15.6, b"W", iflag)
+            _, ascmc_66, _, _ = ephe.houses_ex2(natal.julian_day, 66.0, 15.6, b"W", iflag)
+        assert abs(relocated.ascendant.abs_pos - ascmc_real[0]) < 1e-6
+        assert abs(ascmc_real[0] - ascmc_66[0]) > 1.0
 
 
 class TestRelocatedMidpointsRehoused:

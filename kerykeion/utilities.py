@@ -32,7 +32,7 @@ from kerykeion.schemas.kr_literals import (
     Houses,
 )
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP as _POINT_NUMBER_MAP_IMPORT
-from typing import Union, Optional, get_args, cast
+from typing import Any, Union, Optional, get_args, cast
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
 import re
@@ -539,11 +539,50 @@ def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     return _LUNAR_PHASE_NAMES[index]
 
 
+def validate_latitude(latitude: float) -> float:
+    """
+    Validate that a latitude lies within the geometrically-possible range.
+
+    Returns the latitude UNCHANGED when valid. Unlike
+    :func:`check_and_adjust_polar_latitude`, this does NOT clamp polar latitudes
+    to the ±66° house-stability limit: the real observer latitude must survive
+    into the persisted model, into the topocentric observer (``set_topo``), and
+    into every house system that is defined at all latitudes (Whole Sign,
+    Equal, Porphyry, Morinus, Meridian/axial, …). Polar clamping is applied
+    *locally* and only for the quadrant house systems the ephemeris backend
+    cannot compute inside the polar circle — see
+    :func:`kerykeion.ephemeris_backend.houses_ex2_with_polar_fallback`.
+
+    Args:
+        latitude: The latitude value to validate.
+
+    Returns:
+        The latitude value unchanged.
+
+    Raises:
+        KerykeionException: If the latitude is geometrically impossible
+            (outside [-90, 90]) — a corrupt/mistyped value, not a polar one.
+    """
+    # Reject geometrically-impossible latitudes (a mistyped lat=100 is a corrupt
+    # value, not a polar one). The ephemeris backend validates this symmetrically
+    # with longitude.
+    if not -90.0 <= latitude <= 90.0:
+        raise KerykeionException(
+            f"Latitude {latitude} is out of range; it must be between -90 and 90 degrees."
+        )
+    return latitude
+
+
 def check_and_adjust_polar_latitude(latitude: float) -> float:
     """
-    Adjust latitude values for polar regions to prevent calculation errors.
+    Clamp a polar latitude to the ±66° limit for house-calculation stability.
 
-    Latitudes beyond ±66° are clamped to ±66° for house calculations.
+    This is the FALLBACK applied ONLY where a quadrant house system (Placidus
+    'P', Koch 'K', …) would otherwise be mathematically undefined inside the
+    polar circle. It must NOT be used to sanitise the observer latitude globally:
+    doing so corrupts the persisted latitude, shifts the topocentric observer,
+    and wrongly translates the cusps of house systems that ARE defined at every
+    latitude. Use :func:`validate_latitude` for plain range validation.
 
     Args:
         latitude: The original latitude value
@@ -555,15 +594,7 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
         KerykeionException: If the latitude is geometrically impossible
             (outside [-90, 90]) — a corrupt/mistyped value, not a polar one.
     """
-    # Reject geometrically-impossible latitudes rather than silently clamping
-    # them to the polar limit (which would turn a mistyped lat=100 into a
-    # plausible-but-wrong chart at 66N). The ephemeris backend validates this
-    # symmetrically with longitude; only genuinely-polar-but-valid latitudes
-    # (66 < |lat| <= 90) are clamped below for house stability.
-    if not -90.0 <= latitude <= 90.0:
-        raise KerykeionException(
-            f"Latitude {latitude} is out of range; it must be between -90 and 90 degrees."
-        )
+    latitude = validate_latitude(latitude)
     if latitude > _POLAR_LATITUDE_LIMIT:
         latitude = _POLAR_LATITUDE_LIMIT
         logger.info(f"Latitude capped at {_POLAR_LATITUDE_LIMIT:.0f}° to keep house calculations stable.")
@@ -573,6 +604,73 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
         logger.info(f"Latitude capped at -{_POLAR_LATITUDE_LIMIT:.0f}° to keep house calculations stable.")
 
     return latitude
+
+
+def require_same_frame(first: Any, second: Any) -> None:
+    """
+    Reject two subjects whose astrological reference frame differs.
+
+    Aspects, synastry, transits, relationship scores and house overlays between
+    two charts are only meaningful when both charts are cast in the same
+    reference frame. Mixing e.g. a Tropical chart with a Sidereal (Lahiri) one
+    compares longitudes measured from different zero points and silently yields
+    aspects/scores that look plausible but are astronomically meaningless (a
+    tropical×sidereal pair reports dozens of spurious aspects for the same sky).
+
+    Mirrors the frame checks ``CompositeSubjectFactory`` already performs:
+    ``zodiac_type``, ``perspective_type`` and — only for Sidereal charts —
+    ``sidereal_mode`` (plus the custom ayanamsa epoch/offset when
+    ``sidereal_mode`` is ``'USER'``). The house-system identifier is NOT checked
+    here: it is irrelevant to inter-chart aspects and house overlays legitimately
+    compare two subjects using different house systems.
+
+    ``getattr`` with a sentinel default keeps this safe for hand-built
+    ``CompositeSubjectModel`` / ``PlanetReturnModel`` inputs; the frame fields
+    live on the shared base model, so in practice they are always present.
+
+    Args:
+        first: The first subject (any model exposing the frame attributes).
+        second: The second subject.
+
+    Raises:
+        KerykeionException: If the two subjects do not share the same frame.
+    """
+    _MISSING = object()
+    first_zodiac = getattr(first, "zodiac_type", _MISSING)
+    second_zodiac = getattr(second, "zodiac_type", _MISSING)
+    if first_zodiac != second_zodiac:
+        raise KerykeionException(
+            "Both subjects must share the same zodiac_type to be compared "
+            f"(got {first_zodiac!r} and {second_zodiac!r}); a Tropical chart and "
+            "a Sidereal chart measure longitudes from different zero points, so "
+            "their aspects would be meaningless."
+        )
+
+    first_perspective = getattr(first, "perspective_type", _MISSING)
+    second_perspective = getattr(second, "perspective_type", _MISSING)
+    if first_perspective != second_perspective:
+        raise KerykeionException(
+            "Both subjects must share the same perspective_type to be compared "
+            f"(got {first_perspective!r} and {second_perspective!r})."
+        )
+
+    # sidereal_mode / custom ayanamsa only pin the zero point for Sidereal charts.
+    if first_zodiac == "Sidereal":
+        first_mode = getattr(first, "sidereal_mode", None)
+        second_mode = getattr(second, "sidereal_mode", None)
+        if first_mode != second_mode:
+            raise KerykeionException(
+                "Both subjects must share the same sidereal_mode to be compared "
+                f"(got {first_mode!r} and {second_mode!r})."
+            )
+        if first_mode == "USER" and (
+            getattr(first, "custom_ayanamsa_t0", None) != getattr(second, "custom_ayanamsa_t0", None)
+            or getattr(first, "custom_ayanamsa_ayan_t0", None) != getattr(second, "custom_ayanamsa_ayan_t0", None)
+        ):
+            raise KerykeionException(
+                "Both subjects must share the same custom ayanamsa (t0 and offset) "
+                "to be compared."
+            )
 
 
 def normalize_longitude(longitude: float) -> float:

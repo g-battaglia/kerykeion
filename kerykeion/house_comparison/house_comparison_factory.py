@@ -65,7 +65,17 @@ class HouseComparisonFactory:
 
         Note:
             Both subjects must have valid house system data for accurate analysis.
+            They must also share the same reference frame (zodiac, perspective,
+            sidereal mode); overlaying a Tropical chart's points on a Sidereal
+            chart's houses (or vice versa) is astronomically meaningless.
         """
+        # Reject mixed reference frames early (mirrors CompositeSubjectFactory and
+        # the aspects/relationship-score entry points). The house *system* may
+        # legitimately differ between the two subjects, so it is not checked here.
+        from kerykeion.utilities import require_same_frame
+
+        require_same_frame(first_subject, second_subject)
+
         self.first_subject = first_subject
         self.second_subject = second_subject
         # Copy-on-store: active_points defaults to the shared module-level

@@ -112,6 +112,14 @@ class RelationshipScoreFactory:
         *,
         axis_orb_limit: Optional[float] = None,
     ):
+        # A relationship score weighs the two natal charts against each other, so
+        # it is only meaningful when both share the same reference frame (zodiac,
+        # perspective, sidereal mode). Reject mixed frames early with a clear
+        # error rather than emitting a plausible-but-meaningless score.
+        from kerykeion.utilities import require_same_frame
+
+        require_same_frame(first_subject, second_subject)
+
         self.use_only_major_aspects = use_only_major_aspects
         self.first_subject: AstrologicalSubjectModel = first_subject
         self.second_subject: AstrologicalSubjectModel = second_subject

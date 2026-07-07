@@ -31,7 +31,13 @@ License: AGPL-3.0
 """
 
 import pytz
-from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH, BACKEND_NAME, ephemeris_session
+from kerykeion.ephemeris_backend import (
+    ephe,
+    EPHE_DATA_PATH,
+    BACKEND_NAME,
+    ephemeris_session,
+    houses_ex2_with_polar_fallback,
+)
 import logging
 import math
 from datetime import datetime, timezone, timedelta
@@ -59,7 +65,7 @@ from kerykeion.schemas import (
 from kerykeion.utilities import (
     get_kerykeion_point_from_degree,
     get_planet_house,
-    check_and_adjust_polar_latitude,
+    validate_latitude,
     normalize_longitude,
     safe_timezone,
     calculate_moon_phase,
@@ -588,17 +594,25 @@ class LocationData:
         like polar regions where extreme latitudes can cause calculation errors.
 
         Side Effects:
-            - Adjusts latitude values for polar regions (beyond ±66.5°) to
-              prevent Swiss Ephemeris calculation failures
-            - May log warnings about latitude adjustments
+            - Validates the latitude (raises on impossible |lat| > 90)
+            - Normalizes an un-normalized longitude into [-180, 180)
 
         Note:
             This method should be called after all location data has been set,
             either manually or via fetch_from_geonames(), and before performing
             any astrological calculations.
+
+            The real latitude is PRESERVED here (no polar clamping). Polar-only
+            house systems (Placidus/Koch) are handled locally at the houses call
+            via ``houses_ex2_with_polar_fallback``, so topocentric positions, the
+            persisted latitude, and every latitude-agnostic house system keep the
+            real observer latitude.
         """
-        # Adjust latitude for polar regions (raises on impossible |lat| > 90).
-        self.lat = check_and_adjust_polar_latitude(self.lat)
+        # Validate the latitude but do NOT clamp it: the real value must reach
+        # the topocentric observer, the persisted model, and every house system
+        # defined at all latitudes. Only genuinely polar-undefined quadrant
+        # systems are clamped, locally, at the houses call.
+        self.lat = validate_latitude(self.lat)
         # Wrap an un-normalized longitude (e.g. 370° == 10° E) into [-180, 180)
         # so the houses backend does not reject it with a raw CoordinateError.
         if self.lng is not None:
@@ -2146,13 +2160,16 @@ class AstrologicalSubjectFactory:
         calculated_axial_cusps: List[AstrologicalPoint] = []
 
         # Calculate houses using the calculated flags (handles both Sidereal and Topocentric)
-        # houses_ex2 returns cusp speeds and ascmc speeds in addition to the standard output
-        cusps, ascmc, cusps_speed, ascmc_speed = ephe.houses_ex2(
-            tjdut=data["julian_day"],
-            lat=data["lat"],
-            lon=data["lng"],
-            hsys=str.encode(data["houses_system_identifier"]),
-            flags=data["_iflag"],
+        # houses_ex2 returns cusp speeds and ascmc speeds in addition to the standard output.
+        # Cast at the REAL latitude; only quadrant systems undefined inside the
+        # polar circle (Placidus/Koch) fall back to the ±66° clamp, with a warning.
+        cusps, ascmc, cusps_speed, ascmc_speed = houses_ex2_with_polar_fallback(
+            data["julian_day"],
+            data["lat"],
+            data["lng"],
+            str.encode(data["houses_system_identifier"]),
+            data["_iflag"],
+            context=data.get("name", ""),
         )
 
         # Store house degrees
@@ -2489,12 +2506,15 @@ class AstrologicalSubjectFactory:
 
         # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            _, ascmc, _, ascmc_speed = ephe.houses_ex2(
-                tjdut=data["julian_day"],
-                lat=data["lat"],
-                lon=data["lng"],
-                hsys=str.encode(data["houses_system_identifier"]),
-                flags=iflag,
+            # Mirror the main houses call: real latitude, polar-clamp fallback
+            # only for house systems undefined inside the polar circle.
+            _, ascmc, _, ascmc_speed = houses_ex2_with_polar_fallback(
+                data["julian_day"],
+                data["lat"],
+                data["lng"],
+                str.encode(data["houses_system_identifier"]),
+                iflag,
+                context=data.get("name", ""),
             )
             data["ascendant"] = get_kerykeion_point_from_degree(
                 ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]

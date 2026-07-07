@@ -71,7 +71,7 @@ import os
 from contextlib import contextmanager
 from threading import RLock, local as _thread_local
 import types
-from typing import Iterator, Optional, Tuple
+from typing import Iterator, Optional, Sequence, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -161,6 +161,94 @@ else:
 # and no compatibility shims are required.
 
 ephe = _backend_module
+
+
+def _resolve_polar_houses_error_types() -> Tuple[type[BaseException], ...]:
+    """Exception types the active backend raises when a house system is
+    mathematically UNDEFINED inside the polar circle.
+
+    Some quadrant house systems (Placidus 'P', Koch 'K') cannot be computed once
+    the observer is inside the polar circle (|lat| beyond ~66.56° for the current
+    obliquity); the Sunshine systems ('I'/'i') additionally fail whenever the Sun
+    is circumpolar for the chart's date. The two backends signal this differently:
+
+    - libephemeris raises a precise ``PolarCircleError``.
+    - pyswisseph raises the generic ``swisseph.Error`` for the same failure.
+
+    We prefer the most specific type available so genuine (non-polar) calculation
+    errors are NOT swallowed by the polar-latitude fallback below.
+    """
+    specific = getattr(_backend_module, "PolarCircleError", None)
+    if isinstance(specific, type) and issubclass(specific, BaseException):
+        return (specific,)
+    generic = getattr(_backend_module, "Error", None)
+    if isinstance(generic, type) and issubclass(generic, BaseException):
+        return (generic,)
+    return ()
+
+
+# Resolved once at import for the active backend (see the helper above).
+POLAR_HOUSES_ERROR_TYPES: Tuple[type[BaseException], ...] = _resolve_polar_houses_error_types()
+
+
+def houses_ex2_with_polar_fallback(
+    tjdut: float,
+    lat: float,
+    lon: float,
+    hsys: bytes,
+    flags: int,
+    *,
+    context: str = "",
+) -> Tuple[Sequence[float], Sequence[float], Sequence[float], Sequence[float]]:
+    """Compute house cusps at the REAL latitude, clamping only when unavoidable.
+
+    Calls ``ephe.houses_ex2`` at the real observer ``lat``. If — and only if — the
+    backend reports the chosen house system is undefined inside the polar circle
+    (see :data:`POLAR_HOUSES_ERROR_TYPES`), it retries once with the latitude
+    clamped to the ±66° polar limit and logs a WARNING naming the system. Every
+    house system that IS defined at all latitudes (Whole Sign, Equal, Porphyry,
+    Morinus, Meridian/axial, …) therefore keeps the real latitude, and only the
+    handful of quadrant systems that genuinely cannot be cast beyond the polar
+    circle fall back — instead of the old global clamp that silently mis-cast
+    every polar chart at 66°.
+
+    Args:
+        tjdut: Julian Day (UT).
+        lat: The REAL observer latitude.
+        lon: Observer longitude.
+        hsys: House system identifier as a 1-byte value (e.g. ``b"P"``).
+        flags: Ephemeris iflag.
+        context: Optional label for the WARNING (e.g. the subject/relocation name).
+
+    Returns:
+        The 4-tuple ``(cusps, ascmc, cusps_speed, ascmc_speed)`` from
+        ``ephe.houses_ex2``.
+    """
+    try:
+        return ephe.houses_ex2(tjdut, lat, lon, hsys, flags)
+    except POLAR_HOUSES_ERROR_TYPES:
+        # Lazy import avoids an import cycle: utilities does not import this
+        # module, but this module must not import utilities at load time.
+        from kerykeion.utilities import check_and_adjust_polar_latitude
+
+        clamped_lat = check_and_adjust_polar_latitude(lat)
+        try:
+            hsys_char = hsys.decode("ascii")
+        except (UnicodeDecodeError, AttributeError):
+            hsys_char = str(hsys)
+        logger.warning(
+            "House system %r is undefined inside the polar circle at latitude "
+            "%.4f°%s; falling back to the ±%.0f° polar limit for the house cusps "
+            "only (planetary positions and the persisted latitude keep the real "
+            "value). Consider Whole Sign ('W'), Equal ('A') or Porphyry ('O'), "
+            "which are defined at every latitude.",
+            hsys_char,
+            lat,
+            f" for {context}" if context else "",
+            abs(clamped_lat),
+        )
+        return ephe.houses_ex2(tjdut, clamped_lat, lon, hsys, flags)
+
 
 # Swiss Ephemeris keeps mutable process-global state for sidereal mode,
 # topocentric coordinates, and reset/close operations. Code that mutates that

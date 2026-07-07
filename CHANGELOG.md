@@ -62,6 +62,15 @@ tables) — all verified correct with no changes needed beyond the fix above.
 
 ### Known limitations
 
+- **DST-zone charts after 2037 use a frozen offset.** Local↔UTC conversion for
+  named IANA timezones goes through `pytz`, whose compiled transition tables
+  end around 2037. For a birth/event date past the last compiled transition in
+  a DST zone (e.g. a summer 2038+ `America/New_York` chart), `pytz` freezes the
+  offset at the last known entry instead of applying the zone's perpetual DST
+  rule, so the resolved instant can be off by one hour (Moon ≈ 0.55°, angles up
+  to ~15°). `from_iso_utc_time` is unaffected (it starts from the UTC instant).
+  Dates within the mainstream range (through ~2037) are exact; a `zoneinfo`-based
+  resolution that honors perpetual rules is planned for a future release.
 - **Converse primary directions are approximate.** `PrimaryDirectionsFactory`
   computes the converse arc as the arithmetic complement of the direct arc
   (`360 - direct`), not the classical converse method (swap significator and

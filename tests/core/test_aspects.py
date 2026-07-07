@@ -1266,3 +1266,101 @@ class TestUnknownActiveAspectWarning:
             )
         factory_records = [r for r in caplog.records if r.name == "kerykeion.aspects.aspects_factory"]
         assert factory_records == []
+
+
+class TestDualChartFrameValidation:
+    """Round-22: the two-subject APIs must reject subjects cast in DIFFERENT
+    reference frames (zodiac / perspective / sidereal mode). Comparing e.g. a
+    Tropical chart with a Sidereal (Lahiri) one silently produces meaningless
+    aspects and scores; mirror the check CompositeSubjectFactory already makes."""
+
+    @staticmethod
+    def _mk(name, **kw):
+        base = dict(
+            name=name, year=1990, month=6, day=15, hour=12, minute=0,
+            city="London", nation="GB", lat=51.5, lng=0.0, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True,
+        )
+        base.update(kw)
+        return AstrologicalSubjectFactory.from_birth_data(**base)
+
+    @pytest.fixture(scope="class")
+    def tropical(self):
+        return self._mk("Tropical")
+
+    @pytest.fixture(scope="class")
+    def tropical_other(self):
+        return self._mk("Tropical Other", day=20)
+
+    @pytest.fixture(scope="class")
+    def sidereal(self):
+        return self._mk("Sidereal", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+
+    @pytest.fixture(scope="class")
+    def heliocentric(self):
+        return self._mk("Helio", perspective_type="Heliocentric")
+
+    def test_dual_chart_aspects_rejects_mixed_zodiac(self, tropical, sidereal):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="zodiac_type"):
+            AspectsFactory.dual_chart_aspects(tropical, sidereal)
+
+    def test_dual_chart_aspects_rejects_mixed_perspective(self, tropical, heliocentric):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="perspective_type"):
+            AspectsFactory.dual_chart_aspects(tropical, heliocentric)
+
+    def test_dual_chart_aspects_rejects_mixed_sidereal_mode(self):
+        from kerykeion.schemas import KerykeionException
+
+        lahiri = self._mk("Lahiri", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        fagan = self._mk("Fagan", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
+        with pytest.raises(KerykeionException, match="sidereal_mode"):
+            AspectsFactory.dual_chart_aspects(lahiri, fagan)
+
+    def test_synastry_chart_data_rejects_mixed_frame(self, tropical, sidereal):
+        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException):
+            ChartDataFactory.create_synastry_chart_data(tropical, sidereal)
+
+    def test_transit_chart_data_rejects_mixed_frame(self, tropical, sidereal):
+        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException):
+            ChartDataFactory.create_transit_chart_data(tropical, sidereal)
+
+    def test_relationship_score_rejects_mixed_frame(self, tropical, sidereal):
+        from kerykeion.relationship_score_factory import RelationshipScoreFactory
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException):
+            RelationshipScoreFactory(tropical, sidereal)
+
+    def test_house_comparison_rejects_mixed_frame(self, tropical, sidereal):
+        from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException):
+            HouseComparisonFactory(tropical, sidereal)
+
+    def test_same_frame_still_works(self, tropical, tropical_other):
+        from kerykeion.relationship_score_factory import RelationshipScoreFactory
+        from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
+
+        # Aspects, relationship score and house comparison all succeed for a
+        # matched frame (the overwhelmingly common case must not regress).
+        result = AspectsFactory.dual_chart_aspects(tropical, tropical_other)
+        assert len(result.aspects) > 0
+        RelationshipScoreFactory(tropical, tropical_other)
+        HouseComparisonFactory(tropical, tropical_other).get_house_comparison()
+
+    def test_same_sidereal_mode_works(self):
+        lahiri_a = self._mk("LahiriA", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        lahiri_b = self._mk("LahiriB", day=20, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        result = AspectsFactory.dual_chart_aspects(lahiri_a, lahiri_b)
+        assert len(result.aspects) > 0

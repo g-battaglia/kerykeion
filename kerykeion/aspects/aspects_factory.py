@@ -30,7 +30,7 @@ from kerykeion.settings.chart_defaults import (
     DEFAULT_CHART_ASPECTS_SETTINGS,
     _CelestialPointSetting,
 )
-from kerykeion.utilities import find_common_active_points
+from kerykeion.utilities import find_common_active_points, require_same_frame
 
 logger = logging.getLogger(__name__)
 
@@ -271,6 +271,12 @@ class AspectsFactory:
             >>> synastry = AspectsFactory.dual_chart_aspects(john, jane)
             >>> print(f"Found {len(synastry.aspects)} aspects")
         """
+        # Aspects between two charts are only meaningful when both are cast in the
+        # same reference frame. Reject mixed frames (e.g. Tropical × Sidereal)
+        # instead of returning astronomically-meaningless aspects — mirrors the
+        # check CompositeSubjectFactory already performs.
+        require_same_frame(first_subject, second_subject)
+
         # Initialize settings and configurations (v6: include dynamic star settings)
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
 

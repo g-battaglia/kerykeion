@@ -845,20 +845,45 @@ class TestLocationData:
         assert location.lat == 51.5074
         assert location.lng == 0.0
 
-    def test_prepare_for_calculation_adjusts_polar_latitudes(self):
-        """Test that polar latitudes are adjusted."""
+    def test_prepare_for_calculation_preserves_polar_latitudes(self):
+        """prepare_for_calculation validates but does NOT clamp polar latitudes.
+
+        The real observer latitude must survive into the persisted model, the
+        topocentric observer, and every latitude-agnostic house system. Polar
+        clamping is applied locally only at the houses call for quadrant systems
+        undefined inside the polar circle.
+        """
         from kerykeion.astrological_subject_factory import LocationData
 
-        # Test North Pole - gets adjusted to 66 degrees (polar circle)
+        # North Pole: latitude is preserved, not clamped to 66.
         location = LocationData(lat=90.0)
         location.prepare_for_calculation()
-        # Should be adjusted to polar circle limit
-        assert location.lat == 66.0
+        assert location.lat == 90.0
 
-        # Test South Pole
+        # South Pole
         location = LocationData(lat=-90.0)
         location.prepare_for_calculation()
-        assert location.lat == -66.0
+        assert location.lat == -90.0
+
+        # A geometrically-impossible latitude is still rejected.
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException):
+            LocationData(lat=100.0).prepare_for_calculation()
+
+    def test_check_and_adjust_polar_latitude_still_clamps(self):
+        """The clamp helper itself still clamps (used as the houses fallback)."""
+        from kerykeion.utilities import check_and_adjust_polar_latitude, validate_latitude
+
+        assert check_and_adjust_polar_latitude(90.0) == 66.0
+        assert check_and_adjust_polar_latitude(-90.0) == -66.0
+        assert check_and_adjust_polar_latitude(45.0) == 45.0
+        # validate_latitude preserves the value but rejects impossible ones.
+        assert validate_latitude(78.2232) == 78.2232
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException):
+            validate_latitude(100.0)
 
 
 class TestEdgeCases:
@@ -2684,9 +2709,11 @@ class TestInputValidationRound8:
         with pytest.raises(KerykeionException):
             self._base(lat=100.0)
 
-    def test_valid_polar_latitude_clamps(self):
+    def test_valid_polar_latitude_preserved(self):
+        # The real polar latitude is preserved on the model (no global clamp);
+        # only the quadrant house cusps fall back to the ±66° limit internally.
         s = self._base(lat=78.0)
-        assert s.lat == 66.0
+        assert s.lat == 78.0
 
     @pytest.mark.parametrize("kw", [{"month": 13}, {"day": 32}, {"hour": 25}, {"minute": 99}])
     def test_out_of_range_date_raises_kerykeion(self, kw):
@@ -2799,3 +2826,80 @@ class TestSiderealDeclinationRound16:
             "S", 1990, 6, 15, 12, 0, zodiac_type="Sidereal", sidereal_mode="LAHIRI", **kw)
         for body in ("sun", "moon", "mars", "jupiter"):
             assert abs(getattr(trop, body).declination - getattr(sid, body).declination) < 1e-6
+
+
+class TestPolarLatitudePreserved:
+    """Round-22: the polar-latitude clamp must be applied ONLY where a quadrant
+    house system is undefined inside the polar circle — never globally. The real
+    observer latitude must reach the persisted model, the topocentric observer,
+    and every house system that is defined at all latitudes."""
+
+    _KW = dict(
+        year=1995, month=1, day=15, hour=2, minute=0,
+        city="Longyearbyen", nation="NO", lng=15.6467,
+        tz_str="Arctic/Longyearbyen", online=False, suppress_geonames_warning=True,
+    )
+
+    def _mk(self, **kw):
+        base = dict(name="Polar", lat=78.2232)
+        base.update(self._KW)
+        base.update(kw)
+        return AstrologicalSubjectFactory.from_birth_data(**base)
+
+    def test_persisted_latitude_is_real_not_clamped(self):
+        # Latitude-agnostic system (Whole Sign): nothing forces a clamp.
+        s = self._mk(houses_system_identifier="W")
+        assert s.lat == 78.2232
+
+    def test_persisted_latitude_real_even_with_placidus(self):
+        # Even when the quadrant houses fall back internally, the model keeps the
+        # real latitude — only the house cusps use the clamped value.
+        s = self._mk(houses_system_identifier="P")
+        assert s.lat == 78.2232
+
+    def test_topocentric_uses_real_latitude(self):
+        # A topocentric polar subject must NOT be bit-identical to a 66°-clamped
+        # one, and must match a direct backend call at the real latitude.
+        from kerykeion.ephemeris_backend import ephe, ephemeris_session
+
+        s = self._mk(perspective_type="Topocentric", houses_system_identifier="W")
+        s66 = self._mk(perspective_type="Topocentric", houses_system_identifier="W", lat=66.0)
+        assert abs(s.moon.abs_pos - s66.moon.abs_pos) * 60 > 1.0  # arcmin
+
+        with ephemeris_session(perspective_type="Topocentric", topo=(15.6467, 78.2232, 0.0)) as iflag:
+            direct_moon = ephe.calc_ut(s.julian_day, 1, iflag)[0][0]
+        assert abs(direct_moon - s.moon.abs_pos) * 3600 < 1.0  # arcsec
+
+    def test_latitude_agnostic_houses_use_real_latitude(self):
+        # Whole Sign ASC at the real polar latitude must match an independent
+        # backend call at that latitude — NOT the 66°-clamped one.
+        from kerykeion.ephemeris_backend import ephe, ephemeris_session
+
+        s = self._mk(houses_system_identifier="W")
+        with ephemeris_session() as iflag:
+            _, ascmc_real, _, _ = ephe.houses_ex2(s.julian_day, 78.2232, 15.6467, b"W", iflag)
+            _, ascmc_66, _, _ = ephe.houses_ex2(s.julian_day, 66.0, 15.6467, b"W", iflag)
+        assert abs(s.ascendant.abs_pos - ascmc_real[0]) < 1e-6
+        assert abs(ascmc_real[0] - ascmc_66[0]) > 1.0  # real vs clamped differ
+
+    def test_placidus_falls_back_with_warning(self, caplog):
+        # A quadrant system undefined inside the polar circle falls back to the
+        # ±66° clamp and emits a WARNING naming the system.
+        import logging
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+            s = self._mk(houses_system_identifier="P")
+        assert s.lat == 78.2232
+        warnings = [r for r in caplog.records if r.levelno == logging.WARNING and "'P'" in r.getMessage()]
+        assert warnings, "expected a WARNING about the Placidus polar fallback"
+
+    def test_whole_sign_does_not_warn(self, caplog):
+        import logging
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+            self._mk(houses_system_identifier="W")
+        polar_warnings = [
+            r for r in caplog.records
+            if r.levelno == logging.WARNING and "undefined inside the polar circle" in r.getMessage()
+        ]
+        assert not polar_warnings
