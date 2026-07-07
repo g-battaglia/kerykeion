@@ -426,3 +426,30 @@ class TestDegenerateCenterBodyExclusion:
         )
         cd = ChartDataFactory.create_synastry_chart_data(john, paul)  # default score=True
         assert cd.relationship_score is None
+
+
+class TestGeocentricOnlyQuantitiesRound14:
+    """Round-14 sweep: geocentric-only quantities (local-space azimuth, lunar
+    phase, Arabic Parts) must be skipped for non-geocentric perspectives, not
+    emitted as wrong-frame phantoms."""
+
+    def test_planetocentric_skips_geocentric_only(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "M", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            perspective_type="Marscentric", calculate_local_space=True,
+            calculate_lunar_phase=True,
+            active_points=["Moon", "Jupiter", "Saturn", "Ascendant", "Medium_Coeli", "Pars_Fidei"])
+        assert s.jupiter.azimuth is None
+        assert s.lunar_phase is None
+        assert s.pars_fidei is None
+
+    def test_geocentric_keeps_geocentric_only(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "G", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            calculate_local_space=True, calculate_lunar_phase=True,
+            active_points=["Moon", "Sun", "Jupiter", "Ascendant", "Pars_Fortunae"])
+        assert s.jupiter.azimuth is not None
+        assert s.lunar_phase is not None
+        assert s.pars_fortunae is not None

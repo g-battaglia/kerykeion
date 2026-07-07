@@ -347,11 +347,15 @@ class ChartDataFactory:
         else:
             # Single-subject distribution (Natal, and the FIRST subject of
             # Transit/DualReturnChart/Progression). Compute it over the FIRST
-            # subject's OWN active_points, not the both-subjects intersection:
-            # a transit that tracks fewer points must not silently truncate the
-            # natal's element/quality distribution (a natal's Uranus/Neptune/
-            # Pluto shouldn't vanish because the transit only tracked 7 bodies).
+            # subject's OWN active_points, intersected with the caller's explicit
+            # active_points filter (when given). This keeps the caller's filter
+            # honored (a chart requested with active_points=['Sun','Moon'] has a
+            # Sun+Moon distribution, consistent with its aspect list) WITHOUT
+            # letting the SECOND subject's point count truncate it (a transit
+            # tracking 7 bodies must not drop the natal's Uranus/Neptune/Pluto).
             first_points = set(first_subject.active_points)
+            if active_points is not None:
+                first_points &= set(active_points)
             first_subject_setting = [
                 KerykeionSettingsCelestialPointModel(**{**dict(body), "is_active": True})  # type: ignore[arg-type]
                 for body in DEFAULT_CELESTIAL_POINTS_SETTINGS

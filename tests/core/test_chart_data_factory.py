@@ -1131,3 +1131,18 @@ class TestSynastryDistributionRawTotalsRound5:
         assert abs(raw_sum - 100.0) > 1.0  # raw totals, not percentages
         pct_sum = ed.fire_percentage + ed.earth_percentage + ed.air_percentage + ed.water_percentage
         assert 99 <= pct_sum <= 101
+
+
+class TestDistributionHonorsExplicitFilterRound14:
+    """Round-14 regression: the single-subject distribution must honor an
+    explicit active_points filter (round-13 fix over-corrected and dropped it)."""
+
+    def test_explicit_filter_honored(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.chart_data_factory import ChartDataFactory
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True)
+        ed = ChartDataFactory.create_natal_chart_data(s, active_points=["Sun", "Moon"]).element_distribution
+        # Sun (Gemini/air) + Moon (Pisces/water) only -> no fire/earth
+        assert ed.fire == 0 and ed.earth == 0

@@ -24,7 +24,9 @@ from __future__ import annotations
 
 from typing import List, Mapping, Optional, Sequence
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # noqa: F401  (BaseModel kept for back-compat imports)
+
+from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
 from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
@@ -63,7 +65,7 @@ def _midpoint_name_to_pair_key(name: str) -> str:
     return name[:-len("_Midpoint")] if name.endswith("_Midpoint") else name
 
 
-class SolarArcDirectedPointModel(BaseModel):
+class SolarArcDirectedPointModel(SubscriptableBaseModel):
     """A natal point after applying the solar-arc shift."""
 
     name: str = Field(description="Name of the natal point (Sun, Moon, Mercury, ...).")
@@ -75,7 +77,7 @@ class SolarArcDirectedPointModel(BaseModel):
     sign_changed: bool = Field(description="True if the directed position is in a different sign than the natal one.")
 
 
-class SolarArcDirectedAspectModel(BaseModel):
+class SolarArcDirectedAspectModel(SubscriptableBaseModel):
     """A directed-to-natal aspect — the actionable timing signal."""
 
     directed_point: str = Field(description="Name of the directed (moving) point.")
@@ -87,7 +89,7 @@ class SolarArcDirectedAspectModel(BaseModel):
     orb: float
 
 
-class SolarArcSubjectModel(BaseModel):
+class SolarArcSubjectModel(SubscriptableBaseModel):
     """The full solar-arc result: arc, directed points, directed-to-natal hits."""
 
     natal_name: str
@@ -327,6 +329,20 @@ class SolarArcFactory:
             point.quality = zodiac.quality
             point.element = zodiac.element
             point.emoji = zodiac.emoji
+            # Clear the OTHER position-derived enrichments: after the arc shift
+            # the natal essential_dignity / dignity_score / decan / term /
+            # nakshatra no longer describe the directed position, and a stale
+            # value is more misleading than None. (These are opt-in fields,
+            # populated only when the natal requested them.)
+            point.essential_dignity = None
+            point.dignity_score = None
+            point.decan_number = None
+            point.decan_ruler = None
+            point.term_ruler = None
+            point.nakshatra = None
+            point.nakshatra_number = None
+            point.nakshatra_pada = None
+            point.nakshatra_lord = None
             if len(houses_degree_ut) == 12:
                 try:
                     point.house = get_planet_house(new_abs, houses_degree_ut)

@@ -1078,8 +1078,17 @@ class AstrologicalSubjectFactory:
 
             AstrologicalSubjectFactory._calculate_day_of_week(calc_data)
 
-            # Calculate lunar phase (optional - only if requested and Sun and Moon are available)
-            if calculate_lunar_phase and "moon" in calc_data and "sun" in calc_data:
+            # Calculate lunar phase (optional - only if requested and Sun and Moon
+            # are available). The illuminated-fraction phase is a GEOCENTRIC
+            # quantity (the Sun-Earth-Moon angle); a planetocentric Moon-Sun
+            # elongation does not represent it, so skip it for non-geocentric
+            # perspectives (Heliocentric already skips because the Sun is excluded).
+            if (
+                calculate_lunar_phase
+                and calc_data.get("perspective_type") in _GEO_TOPO_PERSPECTIVES
+                and "moon" in calc_data
+                and "sun" in calc_data
+            ):
                 calc_data["lunar_phase"] = calculate_moon_phase(
                     calc_data["moon"].abs_pos,  # type: ignore[attr-defined,union-attr]
                     calc_data["sun"].abs_pos,  # type: ignore[attr-defined,union-attr]
@@ -1216,7 +1225,16 @@ class AstrologicalSubjectFactory:
                     point_updates[pk]["gauquelin_sector"] = round(sector, 4)
 
             # Calculate Local Space (azimuth/altitude) for all celestial points (v6.0)
-            if config.calculate_local_space and calc_data.get("lng") is not None and calc_data.get("lat") is not None:
+            # Only meaningful for geocentric/topocentric charts: azalt(ECL2HOR) is
+            # a geocentric-observer horizon transform, so feeding it a heliocentric/
+            # planetocentric abs_pos would project a wrong-frame phantom onto the
+            # sky (same reason the OOB block below is geocentric-guarded).
+            if (
+                config.calculate_local_space
+                and calc_data.get("perspective_type") in _GEO_TOPO_PERSPECTIVES
+                and calc_data.get("lng") is not None
+                and calc_data.get("lat") is not None
+            ):
                 ls_geopos = (calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0)
                 ls_jd = calc_data["julian_day"]
                 # azalt(ECL2HOR) expects TROPICAL ecliptic-of-date longitudes.
@@ -2824,8 +2842,17 @@ class AstrologicalSubjectFactory:
         # =============================================================================
         # This loop replaces ~260 lines of repetitive Arabic Parts calculations.
         # Each part is configured in ARABIC_PARTS_CONFIG with its formula and requirements.
+        #
+        # Lots are a GEOCENTRIC technique: their formula mixes the (always
+        # geocentric) Ascendant with luminary/planet longitudes, so under a
+        # heliocentric/planetocentric perspective they would blend frames and
+        # emit a wrong-frame phantom. Skip them entirely for non-geocentric
+        # perspectives (Sun-dependent lots already skip in heliocentric because
+        # the Sun is excluded; this also covers the planetocentric case where
+        # none of the required points is the center body).
+        _lots_meaningful = data.get("perspective_type") in _GEO_TOPO_PERSPECTIVES
         for part_name, part_config in ARABIC_PARTS_CONFIG.items():
-            if should_calculate(part_name):
+            if _lots_meaningful and should_calculate(part_name):
                 AstrologicalSubjectFactory._calculate_arabic_part(
                     part_name,
                     part_config,
