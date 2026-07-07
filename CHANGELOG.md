@@ -2,6 +2,51 @@
 
 ## [Unreleased]
 
+### Fixed (pre-6.0.0 error-contract + R22-diff review, round 23)
+
+- **Heliacal search no longer swallows backend errors as "no event".**
+  `HeliacalFactory.search_events` returned an empty list — indistinguishable
+  from a genuine "no events in window" — when the backend raised an
+  out-of-range / unknown-body / bad-config error (a mistyped planet name, or a
+  window at the edge of the ephemeris). Those hard errors now surface as
+  `KerykeionException`; only a genuine no-solution result still yields `[]`.
+  `search_events` also validates its `planets` argument against the supported
+  set up front. (The single-event entry points that accept a fixed-star name —
+  e.g. `next_heliacal_rising` — still return the correct exception *type* for an
+  unrecognized body but a less precise message; full star-name validation is
+  tracked as a mandatory evolution.)
+- **Gauquelin sector cusps are preserved at polar latitudes.** With
+  `calculate_gauquelin=True` above the polar circle, the `b"G"` house call
+  raised `PolarCircleError`, which was swallowed, leaving `gauquelin_sector_cusps`
+  `None` — and three consumers (secondary progressions, planetary returns,
+  composite charts) infer "gauquelin disabled" from that, so the sectors
+  vanished downstream too. The call now routes through the same polar fallback
+  as the main house cusps (clamped to ±66° with a warning).
+- **`MoonPhaseDetailsFactory` and `VoidOfCourseMoonFactory` honor their
+  documented error contracts near the ephemeris edge.** Their "expected: date
+  out of range → degrade gracefully" handlers caught `RuntimeError`, which no
+  backend raises, so a date within ~one synodic month of the range end leaked a
+  raw backend `EphemerisRangeError`. Moon-phase details now return a model with
+  `None` fields; void-of-course now raises `KerykeionException` (its documented
+  type).
+- **`from_birth_data` normalizes non-integer date/time components.** A string or
+  float component (e.g. `month="06"` from JSON/form data), and a non-int `year`,
+  raised a raw `TypeError`; both now raise `KerykeionException` like the
+  existing out-of-range-component contract.
+- **Aspects signal dropped `active_points` names.** A requested point that
+  resolves to nothing is still dropped, but now logs a `WARNING` for an
+  unrecognized name (typo) or `DEBUG` for a known point simply absent from the
+  subject — instead of vanishing silently.
+- **Polar-fallback diagnostics corrected.** The fallback warning now states that
+  the clamp affects "house cusps and angles" (the returned Ascendant/MC/Vertex
+  also come from the clamped retry, not just the cusps); on the swisseph
+  backend, a non-polar houses failure no longer emits a spurious polar warning
+  or masks the original error behind the clamped retry.
+
+This round completed two coverage-gap lenses (numeric precision — clean, no
+findings — and error-swallowing / error-contract) plus an adversarial re-review
+of the round-22 diff (polar clamp + frame validation), which held.
+
 ### Fixed (pre-6.0.0 convergence review, round 20)
 
 - **`from_iso_utc_time(None)` (or any non-string) raises `KerykeionException`.**

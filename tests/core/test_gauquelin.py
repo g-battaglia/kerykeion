@@ -388,3 +388,52 @@ class TestGauquelinAxisSectorsRound6:
         assert abs(s.medium_coeli.gauquelin_sector - 10.0) < 0.05
         assert abs(s.imum_coeli.gauquelin_sector - 28.0) < 0.05
         assert abs(s.descendant.gauquelin_sector - 19.0) < 0.05
+
+
+class TestGauquelinPolarFallback:
+    """R23 regression: at latitudes inside the polar circle the ``b"G"`` cusp
+    call must route through ``houses_ex2_with_polar_fallback`` (clamp to ±66°
+    with a warning) instead of being swallowed by the ``except Exception: pass``
+    guard. Otherwise ``gauquelin_sector_cusps`` stays None and three consumers
+    (secondary progressions, planetary returns, composite) infer that Gauquelin
+    was disabled."""
+
+    def test_polar_subject_has_36_cusps(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "Polar Gauquelin", 1990, 6, 15, 12, 0,
+            lng=15.6, lat=78.2232, tz_str="Arctic/Longyearbyen",
+            city="Longyearbyen", nation="NO", online=False,
+            suppress_geonames_warning=True, calculate_gauquelin=True,
+        )
+        assert s.gauquelin_sector_cusps is not None
+        assert len(s.gauquelin_sector_cusps) == 36
+        # The real latitude is still persisted (only the cusps clamp).
+        assert s.lat == 78.2232
+
+    def test_control_latitude_unchanged(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "Sub-polar Gauquelin", 1990, 6, 15, 12, 0,
+            lng=10.0, lat=60.0, tz_str="Europe/Oslo",
+            city="Oslo", nation="NO", online=False,
+            suppress_geonames_warning=True, calculate_gauquelin=True,
+        )
+        assert s.gauquelin_sector_cusps is not None
+        assert len(s.gauquelin_sector_cusps) == 36
+
+    def test_secondary_progression_of_polar_natal_keeps_gauquelin(self):
+        """A secondary-progressed chart infers calculate_gauquelin from the
+        natal's ``gauquelin_sector_cusps is not None`` — so the polar natal must
+        carry cusps for the progressed chart to keep its Gauquelin sectors."""
+        from kerykeion.secondary_progressions.secondary_progression_factory import (
+            SecondaryProgressionFactory,
+        )
+
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "Polar Natal", 1990, 6, 15, 12, 0,
+            lng=15.6, lat=78.2232, tz_str="Arctic/Longyearbyen",
+            city="Longyearbyen", nation="NO", online=False,
+            suppress_geonames_warning=True, calculate_gauquelin=True,
+        )
+        progressed = SecondaryProgressionFactory.compute(natal, target_year=2020)
+        assert progressed.gauquelin_sector_cusps is not None
+        assert progressed.sun.gauquelin_sector is not None

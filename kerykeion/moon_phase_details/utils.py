@@ -32,6 +32,15 @@ from kerykeion.utilities import wrap_180
 logger = logging.getLogger(__name__)
 
 
+# The "expected calculation failed → degrade to None" handlers below must catch
+# the backend's own error (libephemeris raises its ``Error`` hierarchy — incl.
+# ``EphemerisRangeError`` near the ephemeris edge; pyswisseph raises
+# ``swisseph.Error``), NOT ``RuntimeError`` which no backend raises. Resolve the
+# type once, module-level, so the ``except`` clauses stay mypy-clean (a bare
+# ``getattr(ephe, "Error", …)`` inline in an ``except`` is untyped ``Any``).
+_BACKEND_ERRORS: tuple = tuple({RuntimeError, getattr(ephe, "Error", RuntimeError)})
+
+
 # ---------------------------------------------------------------------------
 # Swiss Ephemeris compatibility shims and constants
 # ---------------------------------------------------------------------------
@@ -194,7 +203,7 @@ def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]
     try:
         iflag = configure_ephemeris_path()
         result = ephe.sol_eclipse_when_glob(jd_start, iflag)
-    except RuntimeError as exc:
+    except _BACKEND_ERRORS as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Solar eclipse calculation failed (expected): %s", exc)
         return None
@@ -232,7 +241,7 @@ def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]
     try:
         iflag = configure_ephemeris_path()
         result = ephe.lun_eclipse_when(jd_start, iflag)
-    except RuntimeError as exc:
+    except _BACKEND_ERRORS as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Lunar eclipse calculation failed (expected): %s", exc)
         return None
@@ -340,7 +349,7 @@ def compute_sun_rise_set_ephe(
 
         return sunrise_jd, sunset_jd
 
-    except RuntimeError as exc:
+    except _BACKEND_ERRORS as exc:
         # Expected error: circumpolar conditions, ephemeris unavailable, etc.
         logger.debug("Sun rise/set calculation failed (expected for polar regions): %s", exc)
         return None, None
@@ -462,7 +471,7 @@ def compute_lunar_phase_jd(
         # Fallback: return best estimate
         return (jd_min + jd_max) / 2.0
 
-    except RuntimeError as exc:
+    except _BACKEND_ERRORS as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Lunar phase calculation failed (expected): %s", exc)
         return None
@@ -563,7 +572,7 @@ def compute_sun_position(
         dec_deg = float(sun_eq[1])
 
         altitude, azimuth = equatorial_to_horizontal(ra_deg, dec_deg, jd_ut, latitude, longitude)
-    except RuntimeError as exc:
+    except _BACKEND_ERRORS as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Sun position calculation failed (expected): %s", exc)
         return None, None, None

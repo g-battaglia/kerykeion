@@ -1364,3 +1364,76 @@ class TestDualChartFrameValidation:
         lahiri_b = self._mk("LahiriB", day=20, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
         result = AspectsFactory.dual_chart_aspects(lahiri_a, lahiri_b)
         assert len(result.aspects) > 0
+
+
+class TestActivePointsListLogging:
+    """R23: get_active_points_list silently dropped unknown/absent requested
+    point names. It now emits a signal (still dropping the point): a WARNING for
+    a name outside the known catalog (a certain typo) and a DEBUG for a known
+    point simply absent from the subject (a legitimate config)."""
+
+    _LOGGER = "kerykeion.aspects.aspects_utils"
+
+    @pytest.fixture(scope="class")
+    def subject(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Active Points", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
+        )
+
+    def test_typo_name_warns_and_is_dropped(self, subject, caplog):
+        from kerykeion.aspects.aspects_utils import get_active_points_list
+
+        with caplog.at_level(logging.DEBUG, logger=self._LOGGER):
+            result = get_active_points_list(
+                subject, active_points=["Sun", "Moon", "Mercuryy", "Venus", "Mars"]
+            )
+        # Still dropped (behavior unchanged).
+        assert [getattr(p, "name", p) for p in result] == ["Sun", "Moon", "Venus", "Mars"]
+        warnings = [
+            r.getMessage() for r in caplog.records
+            if r.levelno == logging.WARNING and "Mercuryy" in r.getMessage()
+        ]
+        assert warnings, "expected a WARNING naming the dropped typo point"
+
+    def test_known_but_absent_point_logs_debug_not_warning(self, subject, caplog):
+        from kerykeion.aspects.aspects_utils import get_active_points_list
+
+        # 'Eris' is a real catalog name but not calculated on a default subject.
+        with caplog.at_level(logging.DEBUG, logger=self._LOGGER):
+            result = get_active_points_list(subject, active_points=["Sun", "Eris"])
+        assert [getattr(p, "name", p) for p in result] == ["Sun"]
+        assert not [r for r in caplog.records if r.levelno == logging.WARNING]
+        debugs = [
+            r.getMessage() for r in caplog.records
+            if r.levelno == logging.DEBUG and "Eris" in r.getMessage()
+        ]
+        assert debugs, "expected a DEBUG for the known-but-absent point"
+
+    def test_all_valid_names_do_not_log(self, subject, caplog):
+        from kerykeion.aspects.aspects_utils import get_active_points_list
+
+        with caplog.at_level(logging.DEBUG, logger=self._LOGGER):
+            result = get_active_points_list(subject, active_points=["Sun", "Moon", "Venus"])
+        assert [getattr(p, "name", p) for p in result] == ["Sun", "Moon", "Venus"]
+        assert not [
+            r for r in caplog.records if r.name == self._LOGGER
+        ], "an all-valid active_points list must not log"
+
+    def test_case_variant_logs_debug_not_warning(self, subject, caplog):
+        from kerykeion.aspects.aspects_utils import get_active_points_list
+
+        # 'sun' is a case-variant of the canonical 'Sun': a case mismatch, not a
+        # typo. Resolution stays case-sensitive (so 'sun' is still dropped), but
+        # it must be classified as known-but-absent (DEBUG), never a typo
+        # (WARNING). Only the correctly-cased 'Moon' resolves.
+        with caplog.at_level(logging.DEBUG, logger=self._LOGGER):
+            result = get_active_points_list(subject, active_points=["sun", "Moon"])
+        assert [getattr(p, "name", p) for p in result] == ["Moon"]
+        assert not [r for r in caplog.records if r.levelno == logging.WARNING]
+        debugs = [
+            r.getMessage() for r in caplog.records
+            if r.levelno == logging.DEBUG and "sun" in r.getMessage()
+        ]
+        assert debugs, "expected a DEBUG (case mismatch), not a WARNING, for 'sun'"

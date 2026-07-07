@@ -58,4 +58,55 @@ change (and become correct).
 
 ---
 
+## 2. 🔴 Canonical backend-error taxonomy + runtime name validation
+
+**Why (limitation being removed).** The library repeatedly rediscovers, module
+by module, that the ephemeris backend does *not* raise `RuntimeError` for its
+failures (libephemeris raises an `Error` hierarchy — `CalculationError` /
+`EphemerisRangeError`, `DataNotFoundError` / `UnknownBodyError`, `ConfigurationError`;
+pyswisseph raises a generic `swisseph.Error`). Three modules independently
+learned this the hard way (`dominants/utils.py`, `lunations/lunation_factory.py`,
+and — fixed in round 23 — `moon_phase_details`, `void_of_course_moon`,
+`heliacal`). Each site resolves the backend error type ad hoc with
+`getattr(ephe, "Error", …)`. There is no single source of truth that also
+distinguishes the *range* / *data* / *config* subtrees, so "expected no-event"
+vs "hard failure" is re-derived everywhere and easy to get wrong (round 23's
+HIGH was exactly this: heliacal treating every backend error as "no event").
+
+**Scope.**
+- Export a canonical tuple/enum from `kerykeion/ephemeris_backend.py`, e.g.
+  `BACKEND_ERROR_TYPES` (the base) plus distinguishable `BACKEND_RANGE_ERRORS`,
+  `BACKEND_DATA_ERRORS`, `BACKEND_CONFIG_ERRORS`, resolved once for the active
+  backend (swisseph collapses to the generic `Error` — document that these
+  cannot be told apart there). Include the *Skyfield* `EphemerisRangeError`
+  (libephemeris runs `heliacal_ut` through Skyfield, which raises its own
+  `ValueError` subclass — round 23 discovered this).
+- Migrate every ad-hoc `getattr(ephe, "Error", …)` handler and the remaining
+  dead `except RuntimeError` site (`sun_times/utils.py:346`, left untouched in
+  round 23 because no harm was reproduced) to the canonical types.
+- **Runtime validation of open `str` name parameters** at public entries whose
+  type is only a `Literal` at static-check time (no runtime enforcement for
+  API/JSON/form callers): aspects `active_points`, heliacal `planets` and the
+  fixed-star-accepting `planet_name_or_star` (validate against the
+  fixed-star catalog so a mistyped star yields "unknown body", not a misleading
+  "no event found"), `active_fixed_stars`. Round 23 hard-validated only the
+  closed `PLANETS` set in `search_events`; the star-accepting entries still
+  return a correct exception *type* but an imprecise message.
+
+**Risk.** Low–medium. Mostly mechanical, but the range/data/config split must
+match real backend behavior on both backends, and tightening name validation
+could reject inputs some caller currently relies on failing softly — audit
+tests for expected soft-failures first.
+
+**Acceptance criteria.**
+- One canonical error taxonomy in `ephemeris_backend`; no module resolves the
+  backend error type ad hoc; no `except RuntimeError` left for a backend call.
+- A mistyped fixed-star name to `next_heliacal_rising` raises an "unknown body"
+  `KerykeionException`, not "no rising found in the search window".
+- All existing tests pass; new tests cover each name-validation entry and the
+  range/data/config discrimination on the default backend.
+- Quality gate green.
+
+---
+
 <!-- Add further mandatory evolutions below, same structure. -->

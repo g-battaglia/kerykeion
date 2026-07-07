@@ -3,14 +3,29 @@
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
+import logging
+
 from kerykeion.ephemeris_backend import ephe as _ephe
 
 difdeg2n = _ephe.difdeg2n
-from typing import Optional, Union
+from typing import Optional, Union, get_args
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
-from kerykeion.schemas.kr_literals import AspectMovementType
+from kerykeion.schemas.kr_literals import AspectMovementType, AstrologicalPoint
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS, _CelestialPointSetting
+
+logger = logging.getLogger(__name__)
+
+# The closed catalog of recognized astrological point names (planets, nodes,
+# asteroids, TNOs, fixed stars, Arabic parts, axes). Used to tell a genuine typo
+# (not in the catalog → WARNING) from a known point simply absent from a given
+# subject (e.g. disabled Chiron → DEBUG).
+_KNOWN_POINT_NAMES: frozenset[str] = frozenset(get_args(AstrologicalPoint))
+# Case-insensitive membership: a case-variant of a canonical name (e.g. 'sun'
+# for 'Sun') is a case mismatch, not a typo, so it must be classified as
+# known-but-absent (DEBUG) rather than a typo (WARNING). Point resolution above
+# stays case-sensitive and unchanged — only the log classification is relaxed.
+_KNOWN_POINT_NAMES_LOWER: frozenset[str] = frozenset(n.lower() for n in _KNOWN_POINT_NAMES)
 
 
 def get_aspect_from_two_points(
@@ -257,6 +272,7 @@ def get_active_points_list(
         slug = star_name.strip().lower().replace(" ", "_").replace("-", "_")
         star_lookup[slug] = star
 
+    resolved_names: set = set()
     for planet in celestial_points:
         if planet["name"] not in active_points:
             continue
@@ -271,5 +287,29 @@ def get_active_points_list(
             point = star_lookup.get(slug)
         if point is not None:
             point_list.append(point)
+            resolved_names.add(planet["name"])
+
+    # Signal (without crying wolf) any requested name that produced no point:
+    # a name outside the known catalog is a certain typo (WARNING); a known
+    # point simply absent from this subject (e.g. disabled Chiron) is a
+    # legitimate config (DEBUG). Behavior is unchanged — the name is still
+    # dropped from the returned list either way.
+    already_logged: set = set()
+    for name in active_points:
+        if name in resolved_names or name in already_logged:
+            continue
+        already_logged.add(name)
+        if str(name).lower() in _KNOWN_POINT_NAMES_LOWER:
+            logger.debug(
+                "Requested active point %r is a known astrological point but is "
+                "absent from this subject (disabled or not calculated); skipping it.",
+                name,
+            )
+        else:
+            logger.warning(
+                "Requested active point %r is not a recognized astrological point "
+                "name; skipping it. Check for a typo.",
+                name,
+            )
 
     return point_list

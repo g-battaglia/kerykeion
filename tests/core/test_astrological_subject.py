@@ -2903,3 +2903,115 @@ class TestPolarLatitudePreserved:
             if r.levelno == logging.WARNING and "undefined inside the polar circle" in r.getMessage()
         ]
         assert not polar_warnings
+
+
+class TestPolarFallbackErrorHandling:
+    """R23 regression for houses_ex2_with_polar_fallback: (F3) a houses failure at
+    a NON-polar latitude must be re-raised unchanged (no spurious polar warning /
+    retry) and a retry failure must surface the ORIGINAL real-latitude error;
+    (F2) the warning must name the clamped outputs accurately (cusps AND angles,
+    since the ascmc angles also come from the clamped retry)."""
+
+    def _polar_error_type(self):
+        from kerykeion import ephemeris_backend as eb
+
+        if not eb.POLAR_HOUSES_ERROR_TYPES:
+            pytest.skip("backend exposes no polar houses error type")
+        return eb.POLAR_HOUSES_ERROR_TYPES[0]
+
+    def test_normal_latitude_error_reraised_without_polar_warning(self, monkeypatch, caplog):
+        import logging
+        from kerykeion import ephemeris_backend as eb
+        from kerykeion.ephemeris_backend import houses_ex2_with_polar_fallback
+
+        err_type = self._polar_error_type()
+
+        def always_fail(jd, lat, lon, hsys, flags):
+            raise err_type(f"forced at lat={lat}")
+
+        monkeypatch.setattr(eb.ephe, "houses_ex2", always_fail)
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+            # 41.9 is NOT inside the polar circle → not a polar-undefined error.
+            with pytest.raises(err_type, match="forced at lat=41.9"):
+                houses_ex2_with_polar_fallback(2451545.0, 41.9, 12.5, b"P", 0)
+        assert not [
+            r for r in caplog.records if "undefined inside the polar circle" in r.getMessage()
+        ]
+
+    def test_polar_latitude_retry_failure_surfaces_original(self, monkeypatch, caplog):
+        import logging
+        from kerykeion import ephemeris_backend as eb
+        from kerykeion.ephemeris_backend import houses_ex2_with_polar_fallback
+
+        err_type = self._polar_error_type()
+
+        def always_fail(jd, lat, lon, hsys, flags):
+            raise err_type(f"forced at lat={lat}")
+
+        monkeypatch.setattr(eb.ephe, "houses_ex2", always_fail)
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+            # 78.0 IS inside the polar circle → warn, clamp+retry; the retry also
+            # fails, so the ORIGINAL (lat=78) error surfaces with the clamped
+            # retry (lat=66) chained as its cause.
+            with pytest.raises(err_type, match="forced at lat=78.0") as excinfo:
+                houses_ex2_with_polar_fallback(2451545.0, 78.0, 12.5, b"P", 0)
+        assert "forced at lat=66" in str(excinfo.value.__cause__)
+        assert any(
+            "undefined inside the polar circle" in r.getMessage() for r in caplog.records
+        )
+
+    def test_warning_names_cusps_and_angles(self, caplog):
+        import logging
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "Polar Wording", 1995, 1, 15, 2, 0,
+                lat=78.2232, lng=15.6467, city="Longyearbyen", nation="NO",
+                tz_str="Arctic/Longyearbyen", online=False,
+                suppress_geonames_warning=True, houses_system_identifier="P",
+            )
+        polar = [
+            r.getMessage() for r in caplog.records
+            if "undefined inside the polar circle" in r.getMessage()
+        ]
+        assert polar
+        assert any("house cusps and angles" in m for m in polar)
+        assert all("house cusps only" not in m for m in polar)
+
+
+class TestNonIntDateComponents:
+    """R23 regression: from_birth_data on the CE path (year >= 1) must normalize a
+    non-int date/time component (str/float, e.g. month='06' from JSON/form data)
+    to KerykeionException, not leak a raw TypeError. The `year < 1` comparison is
+    guarded too, since a str year raised before ever reaching the datetime()
+    wrap."""
+
+    _KW = dict(
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
+    )
+
+    @pytest.mark.parametrize(
+        "component_override",
+        [
+            {"month": "06"},   # str component from JSON/form data
+            {"day": "15"},
+            {"hour": 12.0},    # float component -> TypeError from datetime()
+            {"year": "1990"},  # str year -> TypeError at the `year < 1` comparison
+        ],
+        ids=lambda kw: next(iter(kw.items()))[0] + "=" + repr(next(iter(kw.items()))[1]),
+    )
+    def test_non_int_component_raises_kerykeion_exception(self, component_override):
+        from kerykeion.schemas import KerykeionException
+
+        base = dict(name="CE Invalid", year=1990, month=6, day=15, hour=12, minute=0)
+        base.update(self._KW)
+        base.update(component_override)
+        with pytest.raises(KerykeionException, match="Invalid birth date/time component"):
+            AstrologicalSubjectFactory.from_birth_data(**base)
+
+    def test_valid_int_components_unchanged(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            name="CE Valid", year=1990, month=6, day=15, hour=12, minute=0, **self._KW
+        )
+        assert s.year == 1990 and s.month == 6 and s.sun is not None

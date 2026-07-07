@@ -1238,7 +1238,14 @@ class AstrologicalSubjectFactory:
                     # Pass the session iflag so sidereal/topocentric charts get
                     # cusps in the same frame as their points (mirrors the main
                     # houses_ex2 call) instead of always-tropical longitudes.
-                    cusps_g = ephe.houses_ex2(jd, geopos[1], geopos[0], b"G", iflag)
+                    # Route through the polar fallback (like the main house call)
+                    # so a latitude inside the polar circle clamps to ±66° with a
+                    # warning instead of silently losing the 36 cusps — three
+                    # consumers infer gauquelin-enabled from
+                    # ``gauquelin_sector_cusps is not None``.
+                    cusps_g = houses_ex2_with_polar_fallback(
+                        jd, geopos[1], geopos[0], b"G", iflag, context=calc_data.get("name", "")
+                    )
                     gauquelin_cusps = [round(c, 4) for c in cusps_g[0]]
                     calc_data["gauquelin_sector_cusps"] = gauquelin_cusps
                 except Exception:
@@ -1898,7 +1905,17 @@ class AstrologicalSubjectFactory:
         # NOTE the calendar asymmetry documented above: this branch switches
         # from the proleptic Gregorian calendar (used for year >= 1) to the
         # Julian calendar (used for year < 1).
-        if data["year"] < 1:
+        # Guard the comparison itself: a non-int year (e.g. "1990" from JSON/form
+        # data) would raise a raw TypeError here, BEFORE reaching the datetime
+        # wrap below — normalize it to the same KerykeionException contract.
+        try:
+            is_bce = data["year"] < 1
+        except TypeError as exc:
+            raise KerykeionException(
+                f"Invalid birth date/time component: {exc}. "
+                "Check year/month/day/hour/minute/seconds are within valid ranges."
+            ) from exc
+        if is_bce:
             AstrologicalSubjectFactory._calculate_time_conversions_bce(data, location)
             return
 
@@ -1910,7 +1927,9 @@ class AstrologicalSubjectFactory:
             naive_datetime = datetime(
                 data["year"], data["month"], data["day"], data["hour"], data["minute"], data["seconds"]
             )
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
+            # ValueError: out-of-range component (month=13, Feb-31, …).
+            # TypeError: a non-int component (e.g. month="06" from JSON/form data).
             raise KerykeionException(
                 f"Invalid birth date/time component: {exc}. "
                 "Check year/month/day/hour/minute/seconds are within valid ranges."

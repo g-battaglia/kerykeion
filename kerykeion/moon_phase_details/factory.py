@@ -59,12 +59,19 @@ from kerykeion.moon_phase_details.utils import (
     compute_lunar_phase_jd,
     compute_sun_position,
 )
-from kerykeion.ephemeris_backend import ephemeris_session
+from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion.schemas.kr_literals import LunarPhaseEmoji, LunarPhaseName
 from kerykeion.utilities import datetime_to_julian, julian_to_datetime
 
 
 logger = logging.getLogger(__name__)
+
+
+# Backend error the "expected calculation failed → degrade to None" handlers
+# below must catch (libephemeris ``Error`` incl. ``EphemerisRangeError`` near the
+# ephemeris edge; pyswisseph ``swisseph.Error``), NOT ``RuntimeError`` which no
+# backend raises. Resolved once so the ``except`` clauses stay mypy-clean.
+_BACKEND_ERRORS: tuple = tuple({RuntimeError, getattr(ephe, "Error", RuntimeError)})
 
 
 # Mean synodic month length in days (lunation period)
@@ -638,7 +645,7 @@ class MoonPhaseDetailsFactory:
                 )
                 solar_noon_local = normalize(midpoint) if callable(normalize) else midpoint
                 day_length = sunset_local - sunrise_local
-        except RuntimeError as exc:
+        except _BACKEND_ERRORS as exc:
             # Expected error: polar regions, ephemeris unavailable, etc.
             logger.debug("Sunrise/sunset calculation failed (expected): %s", exc)
         except (AttributeError, ValueError, TypeError) as exc:  # pragma: no cover - defensive
@@ -653,7 +660,7 @@ class MoonPhaseDetailsFactory:
                     azimuth=azimuth,
                     distance=distance_km,
                 )
-        except RuntimeError as exc:
+        except _BACKEND_ERRORS as exc:
             # Expected error: ephemeris unavailable, date out of range, etc.
             logger.debug("Sun position calculation failed (expected): %s", exc)
         except (AttributeError, ValueError, TypeError) as exc:  # pragma: no cover - defensive

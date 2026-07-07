@@ -162,3 +162,19 @@ def test_voc_aspect_model_rejects_out_of_domain_values():
 def test_invalid_timezone_raises():
     with pytest.raises(KerykeionException):
         VoidOfCourseMoonFactory.from_datetime(2026, 5, 28, 12, 0, tz_str="Not/AZone")
+
+
+def test_range_edge_dates_raise_kerykeion_exception():
+    """R23: near either end of the ephemeris the forward/backward Moon scans walk
+    off the edge; the raw backend range error must be normalized to the
+    documented KerykeionException, not leak (was raw EphemerisRangeError)."""
+    with pytest.raises(KerykeionException, match="ephemeris range"):
+        VoidOfCourseMoonFactory.from_datetime(2650, 1, 20, 12, 0, tz_str="Europe/Rome")
+    with pytest.raises(KerykeionException, match="ephemeris range"):
+        VoidOfCourseMoonFactory.from_datetime(1550, 1, 2, 12, 0, tz_str="Europe/Rome")
+
+
+def test_normal_date_unaffected_by_range_normalization():
+    voc = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 12, 0, tz_str="Europe/Rome")
+    assert isinstance(voc.is_void_of_course, bool)
+    assert voc.moon_sign in SIGN_CODES

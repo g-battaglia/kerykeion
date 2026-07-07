@@ -99,6 +99,30 @@ class TestNextHeliacalRising:
                 julian_day=START_JD, planet_name_or_star="Mercury", geopos=ROME_GEOPOS,
             )
 
+    def test_unrecognized_body_message_names_supported_planets(self, factory: HeliacalFactory, monkeypatch):
+        """A mistyped body raises a plain ValueError / base ephe.Error on the
+        backend — NOT a hard error — so it is indistinguishable BY TYPE from a
+        genuine 'no event', and this method accepts fixed-star names too (cannot
+        hard-validate against PLANETS). The message must own both possibilities:
+        keep 'No heliacal rising' but also name the supported planet set and the
+        fixed-star option so it is actionable, not a bare/misleading assertion."""
+        import kerykeion.heliacal.heliacal_factory as hf
+        from kerykeion.schemas import KerykeionException
+        from kerykeion.heliacal.heliacal_factory import PLANETS
+
+        def _raise_unknown_body(*a, **k):
+            raise ValueError("body not found")
+
+        monkeypatch.setattr(hf.ephe, "heliacal_ut", _raise_unknown_body)
+        with pytest.raises(KerykeionException, match="No heliacal rising") as excinfo:
+            factory.next_heliacal_rising(
+                julian_day=START_JD, planet_name_or_star="Jupitre", geopos=ROME_GEOPOS,
+            )
+        msg = str(excinfo.value)
+        for planet in PLANETS:
+            assert planet in msg, f"message should name supported planet {planet!r}"
+        assert "fixed-star" in msg
+
 
 # Tests: search_events -------------------------------------------------------
 
@@ -142,6 +166,47 @@ class TestSearchEvents:
         assert event["planet_name"] == event.planet_name
         assert event["julian_day"] == event.julian_day
         assert event["datestamp"] == event.datestamp
+
+    def test_lowercase_planet_name_accepted_and_canonicalized(self, factory: HeliacalFactory, monkeypatch):
+        """ephe.heliacal_ut is case-insensitive, so a lowercase planet name must
+        be accepted (not the R23 regression 'Unknown planet') and canonicalized
+        to the PLANETS spelling in the returned model. Backend-independent logic,
+        so drive it with a stubbed heliacal_ut for speed/determinism."""
+        import kerykeion.heliacal.heliacal_factory as hf
+
+        monkeypatch.setattr(
+            hf.ephe, "heliacal_ut",
+            lambda *a, **k: (START_JD + 10.0, START_JD + 10.1, START_JD + 10.2),
+        )
+        events = factory.search_events(
+            julian_day=START_JD, geopos=ROME_GEOPOS, count=2,
+            planets=["mercury"], event_types=[HELIACAL_SETTING],
+        )
+        assert events, "a lowercase planet name must yield events, not raise"
+        assert all(e.planet_name == "Mercury" for e in events)
+
+    def test_mixed_case_planet_names_accepted_and_canonicalized(self, factory: HeliacalFactory, monkeypatch):
+        import kerykeion.heliacal.heliacal_factory as hf
+
+        monkeypatch.setattr(
+            hf.ephe, "heliacal_ut",
+            lambda *a, **k: (START_JD + 10.0, START_JD + 10.1, START_JD + 10.2),
+        )
+        events = factory.search_events(
+            julian_day=START_JD, geopos=ROME_GEOPOS, count=4,
+            planets=["MERCURY", "venus"], event_types=[HELIACAL_SETTING],
+        )
+        assert events
+        assert {e.planet_name for e in events} <= {"Mercury", "Venus"}
+
+    def test_typo_planet_still_raises(self, factory: HeliacalFactory):
+        """A genuine typo must STILL raise (case-insensitivity is not leniency)."""
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="Unknown planet"):
+            factory.search_events(
+                julian_day=START_JD, geopos=ROME_GEOPOS, count=2, planets=["Jupitre"],
+            )
 
 
 # Tests: geopos / lat-lng keyword alternative --------------------------------
@@ -214,6 +279,42 @@ class TestGeoposKeywordAlternative:
 
 
 # Tests: default constants ---------------------------------------------------
+
+class TestBackendHardErrors:
+    """R23: a hard backend failure (out-of-range window, invalid body/config)
+    must surface as KerykeionException, not be swallowed as a benign 'no event'
+    (which previously returned [] or a misleading 'no rising found')."""
+
+    def test_unknown_planet_raises(self, factory: HeliacalFactory):
+        from kerykeion.schemas import KerykeionException
+
+        # Validated up front against the closed PLANETS set, before any search.
+        with pytest.raises(KerykeionException, match="Unknown planet"):
+            factory.search_events(
+                julian_day=START_JD, geopos=ROME_GEOPOS, count=3, planets=["Jupitre"],
+            )
+
+    def test_out_of_range_window_raises(self, factory: HeliacalFactory):
+        from kerykeion.schemas import KerykeionException
+
+        # A window butting against the end of the ephemeris makes the scan walk
+        # off the edge; the backend range error must surface, not read as [].
+        with pytest.raises(KerykeionException, match="ephemeris range"):
+            factory.search_events(
+                julian_day=2688970.5, lat=41.9, lng=12.5, count=3,
+            )
+
+    def test_genuine_no_event_still_returns_empty(self, factory: HeliacalFactory, monkeypatch):
+        # The libephemeris 'no event' sentinel (jd 0.0 -> our ValueError) is NOT
+        # a hard error: it must stay a benign skip returning [].
+        import kerykeion.heliacal.heliacal_factory as hf
+
+        monkeypatch.setattr(hf.ephe, "heliacal_ut", lambda *a, **k: (0.0, 0.0, 0.0))
+        events = factory.search_events(
+            julian_day=START_JD, geopos=ROME_GEOPOS, count=3, planets=("Venus",),
+        )
+        assert events == []
+
 
 class TestDefaultConstants:
     """Verify that default atmospheric constants are set correctly."""

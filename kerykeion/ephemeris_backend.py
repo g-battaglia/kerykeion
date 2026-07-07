@@ -169,8 +169,10 @@ def _resolve_polar_houses_error_types() -> Tuple[type[BaseException], ...]:
 
     Some quadrant house systems (Placidus 'P', Koch 'K') cannot be computed once
     the observer is inside the polar circle (|lat| beyond ~66.56° for the current
-    obliquity); the Sunshine systems ('I'/'i') additionally fail whenever the Sun
-    is circumpolar for the chart's date. The two backends signal this differently:
+    obliquity). Some backends additionally fail the Sunshine systems ('I'/'i')
+    when the Sun is circumpolar for the chart's date, but that is
+    backend-dependent (libephemeris does NOT raise for Sunshine at, e.g., 78°N in
+    the cases tested). The two backends signal a polar failure differently:
 
     - libephemeris raises a precise ``PolarCircleError``.
     - pyswisseph raises the generic ``swisseph.Error`` for the same failure.
@@ -226,12 +228,20 @@ def houses_ex2_with_polar_fallback(
     """
     try:
         return ephe.houses_ex2(tjdut, lat, lon, hsys, flags)
-    except POLAR_HOUSES_ERROR_TYPES:
+    except POLAR_HOUSES_ERROR_TYPES as original_exc:
         # Lazy import avoids an import cycle: utilities does not import this
         # module, but this module must not import utilities at load time.
         from kerykeion.utilities import check_and_adjust_polar_latitude
 
         clamped_lat = check_and_adjust_polar_latitude(lat)
+        if clamped_lat == lat:
+            # The latitude is NOT inside the polar circle, so this failure is
+            # not a polar-undefined error. Only reachable on the swisseph
+            # backend, whose generic Error cannot tell a polar failure apart
+            # from any other houses failure; re-raise the real error unchanged
+            # instead of emitting a spurious polar warning and retrying at an
+            # unchanged latitude.
+            raise
         try:
             hsys_char = hsys.decode("ascii")
         except (UnicodeDecodeError, AttributeError):
@@ -239,15 +249,21 @@ def houses_ex2_with_polar_fallback(
         logger.warning(
             "House system %r is undefined inside the polar circle at latitude "
             "%.4f°%s; falling back to the ±%.0f° polar limit for the house cusps "
-            "only (planetary positions and the persisted latitude keep the real "
-            "value). Consider Whole Sign ('W'), Equal ('A') or Porphyry ('O'), "
-            "which are defined at every latitude.",
+            "and angles (planetary positions and the persisted latitude keep the "
+            "real value). Consider Whole Sign ('W'), Equal ('A') or Porphyry "
+            "('O'), which are defined at every latitude.",
             hsys_char,
             lat,
             f" for {context}" if context else "",
             abs(clamped_lat),
         )
-        return ephe.houses_ex2(tjdut, clamped_lat, lon, hsys, flags)
+        try:
+            return ephe.houses_ex2(tjdut, clamped_lat, lon, hsys, flags)
+        except Exception as retry_exc:
+            # The clamped retry also failed; the ORIGINAL error at the real
+            # latitude is the meaningful diagnostic (the retry only perturbed
+            # the latitude), so surface it, chaining the retry as the cause.
+            raise original_exc from retry_exc
 
 
 # Swiss Ephemeris keeps mutable process-global state for sidereal mode,

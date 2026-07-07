@@ -124,7 +124,19 @@ class VoidOfCourseMoonFactory:
         # pinned calculation mode; its iflag already includes FLG_SPEED (plus
         # FLG_SIDEREAL for sidereal zodiacs).
         with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
-            result = compute_void_of_course(moment_utc, iflag)
+            try:
+                result = compute_void_of_course(moment_utc, iflag)
+            except getattr(ephe, "Error", ()) as exc:
+                # The forward/backward Moon scans walk off the ephemeris near
+                # either edge; the raw backend range error is not this factory's
+                # documented contract. Normalize it to KerykeionException
+                # (mirrors lunation_factory). KerykeionException/ValueError
+                # contract errors are not caught and pass through unchanged.
+                raise KerykeionException(
+                    f"Void-of-course computation failed at {moment_utc.isoformat()}: "
+                    f"{exc}. This usually means the date falls outside the available "
+                    f"ephemeris range; narrow the date range."
+                ) from exc
 
         return VoidOfCourseMoonModel(
             is_void_of_course=result.is_void_of_course,

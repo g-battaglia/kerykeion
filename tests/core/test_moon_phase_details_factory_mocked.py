@@ -689,3 +689,33 @@ class TestMoonPhaseDetailsIntegration:
         assert overview.sun.solar_noon is not None
         assert overview.sun.day_length is not None
         assert overview.sun.position is not None
+
+
+class TestFactoryFromSubjectRangeEdge:
+    """R23 regression (real ephe, NOT mocked): a subject within ~1 synodic month
+    of the ephemeris range end makes the forward phase scan walk off the edge.
+    The backend range error must degrade to None fields (documented "Returns None
+    if calculation fails"), not leak a raw EphemerisRangeError."""
+
+    def test_range_end_subject_returns_model(self) -> None:
+        # 2650-01-20 is inside the final synodic month before the backend range
+        # end (~2650-01-25); the forward Full/quarter scans overshoot the edge.
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Range Edge", 2650, 1, 20, 12, 0,
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
+        )
+        overview = MoonPhaseDetailsFactory.from_subject(subject)
+        assert isinstance(overview, MoonPhaseOverviewModel)
+
+    def test_normal_date_subject_unaffected(self) -> None:
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Normal", 1990, 6, 15, 12, 0,
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
+        )
+        overview = MoonPhaseDetailsFactory.from_subject(subject)
+        assert isinstance(overview, MoonPhaseOverviewModel)
+        assert overview.moon is not None
+        assert overview.moon.detailed is not None
+        assert overview.moon.detailed.upcoming_phases is not None

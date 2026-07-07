@@ -35,6 +35,41 @@ _NO_EVENT_ERRORS: tuple = tuple(
     {ValueError, getattr(ephe, "Error", ValueError)}
 )
 
+def _resolve_skyfield_range_error() -> Optional[type]:
+    """libephemeris runs ``heliacal_ut`` through Skyfield, which raises its OWN
+    ``skyfield.errors.EphemerisRangeError`` (a plain ``ValueError`` subclass,
+    unrelated to libephemeris's exception tree) when a search walks off the end
+    of the ephemeris. Resolve it defensively so an out-of-range window is treated
+    as a hard error rather than a benign "no event". Returns ``None`` on
+    installs without Skyfield (e.g. the swisseph backend)."""
+    try:
+        from skyfield.errors import EphemerisRangeError
+
+        return EphemerisRangeError
+    except Exception:  # pragma: no cover - Skyfield absent (swisseph backend)
+        return None
+
+
+# Backend errors that are NOT a benign "no event in window": a mistyped body
+# (DataNotFoundError, whose subclasses include UnknownBodyError/StarNotFoundError),
+# an out-of-range date/window (EphemerisRangeError), or a bad config
+# (ConfigurationError) are real failures and must surface, not be swallowed as
+# "no event". Resolved defensively: on the swisseph backend these subclasses do
+# not exist, so only the resolvable members are included and other failures
+# remain best-effort "no event" — the generic swisseph.Error cannot be told
+# apart. The heliacal path in particular surfaces the *Skyfield* range error, so
+# it is resolved separately above.
+_BACKEND_HARD_ERRORS: tuple = tuple(
+    t
+    for t in (
+        getattr(ephe, "EphemerisRangeError", None),
+        getattr(ephe, "DataNotFoundError", None),
+        getattr(ephe, "ConfigurationError", None),
+        _resolve_skyfield_range_error(),
+    )
+    if isinstance(t, type)
+)
+
 # ---- Event-type constants (mirrors Swiss Ephemeris) ----
 HELIACAL_RISING: int = ephe.HELIACAL_RISING    # 1 - morning first
 HELIACAL_SETTING: int = ephe.HELIACAL_SETTING  # 2 - evening last
@@ -217,9 +252,28 @@ class HeliacalFactory:
                     observer=observer,
                 )
             except _NO_EVENT_ERRORS as exc:
+                if isinstance(exc, _BACKEND_HARD_ERRORS):
+                    # Not a "no event in window" signal: the date/window is
+                    # outside the available ephemeris range or the body/config is
+                    # invalid. Surface it as such instead of a misleading "no
+                    # rising found" (mirrors lunation_factory normalization).
+                    raise KerykeionException(
+                        f"Heliacal rising search for {planet_name_or_star!r} could "
+                        f"not complete: the date is outside the available ephemeris "
+                        f"range or the body/config is invalid; narrow the date range "
+                        f"or check inputs: {exc}"
+                    ) from exc
+                # A mistyped body (planet OR star) raises a plain ValueError /
+                # base ephe.Error here — NOT a _BACKEND_HARD_ERRORS subtype — so
+                # it is indistinguishable BY TYPE from a genuine "no event", and
+                # this method accepts fixed-star names too (cannot hard-validate
+                # against PLANETS). Make the MESSAGE own both possibilities and be
+                # actionable rather than assert a definite "no rising".
                 raise KerykeionException(
-                    f"No heliacal rising found for {planet_name_or_star} in the "
-                    f"search window after JD {julian_day:.5f}."
+                    f"No heliacal rising found for {planet_name_or_star!r} after "
+                    f"JD {julian_day:.5f}. If this is unexpected, verify it is a "
+                    f"supported planet {PLANETS} or a recognized fixed-star name, "
+                    f"and try widening the search window."
                 ) from exc
         return result
 
@@ -290,6 +344,27 @@ class HeliacalFactory:
             )
         if planets is None:
             planets = PLANETS
+        else:
+            # search_events hard-validates its planet set UP FRONT (this loop):
+            # a mistyped name would otherwise be swallowed as a benign "no event"
+            # and silently omitted. It takes planets only (never fixed stars), so
+            # it CAN hard-validate here. next_heliacal_rising also accepts
+            # fixed-star names, so it cannot hard-validate and instead surfaces an
+            # unrecognized body via the actionable "No heliacal rising" message
+            # (full fixed-star-name validation is tracked as a mandatory
+            # evolution). ephe.heliacal_ut is case-insensitive, so accept any
+            # casing and canonicalize to the PLANETS spelling for consistent
+            # downstream output (HeliacalEventModel.planet_name).
+            _canonical_by_lower = {p.lower(): p for p in PLANETS}
+            canonicalized: List[str] = []
+            for name in planets:
+                canonical = _canonical_by_lower.get(str(name).lower())
+                if canonical is None:
+                    raise KerykeionException(
+                        f"Unknown planet {name!r}; heliacal search supports {PLANETS}."
+                    )
+                canonicalized.append(canonical)
+            planets = canonicalized
         if event_types is None:
             event_types = [HELIACAL_RISING, HELIACAL_SETTING]
 
@@ -313,6 +388,16 @@ class HeliacalFactory:
                     observer=observer,
                 )
             except _NO_EVENT_ERRORS as exc:
+                if isinstance(exc, _BACKEND_HARD_ERRORS):
+                    # Not a "no event in window" signal: the date/window is
+                    # outside the available ephemeris range or the body/config is
+                    # invalid. Surface it instead of silently returning [].
+                    raise KerykeionException(
+                        f"Heliacal search for {planet!r} could not complete: the "
+                        f"date/window is outside the available ephemeris range or "
+                        f"the body/config is invalid; narrow the date range or "
+                        f"check inputs: {exc}"
+                    ) from exc
                 # Expected "no solution in window" skip (ValueError on
                 # libephemeris / swisseph.Error on pyswisseph). Narrower than a
                 # blanket except so real bugs still propagate.
