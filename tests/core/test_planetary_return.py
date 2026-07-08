@@ -1295,3 +1295,28 @@ class TestReturnSearchAtEphemerisEdge:
             rf.next_return_from_iso_formatted_time(
                 "1550-01-05T00:00:00Z", return_type, backwards=True
             )
+
+    def _edge_factory(self):
+        natal = AstrologicalSubjectFactory.from_iso_utc_time(
+            name="Edge", iso_utc_time="2600-06-01T00:00:00Z",
+            lng=0.0, lat=51.5, tz_str="UTC", online=False,
+        )
+        return PlanetaryReturnFactory(natal, lng=0.0, lat=51.5, tz_str="UTC", online=False)
+
+    @pytest.mark.parametrize("backwards", [False, True])
+    def test_heliocentric_search_past_edge_raises_kerykeion(self, backwards):
+        # Round 32: the heliocentric crossing search (helio_cross_ut) must also
+        # normalize an off-range backend error to KerykeionException, like the
+        # Solar/Lunar paths (R31 wrapped those but missed this sibling method).
+        rf = self._edge_factory()
+        start = (2287184.5 + 5) if backwards else (2688976.5 - 5)
+        with pytest.raises(KerykeionException):
+            rf.next_heliocentric_return("Jupiter", start, backwards=backwards)
+
+    @pytest.mark.parametrize("backwards", [False, True])
+    def test_lunar_node_crossing_past_edge_raises_kerykeion(self, backwards):
+        # Round 32: same for the lunar-node crossing search (mooncross_node_ut).
+        rf = self._edge_factory()
+        start = (2287184.5 + 1) if backwards else (2688976.5 - 1)
+        with pytest.raises(KerykeionException):
+            rf.next_lunar_node_crossing(start, backwards=backwards)

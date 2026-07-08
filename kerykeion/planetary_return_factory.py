@@ -1039,8 +1039,19 @@ class PlanetaryReturnFactory:
                     raise KerykeionException(
                         "Backward heliocentric search requires the libephemeris backend."
                     )
+                except _BACKEND_ERRORS as exc:
+                    raise KerykeionException(
+                        "The heliocentric return search stepped outside the available "
+                        f"ephemeris date range; narrow the search window. ({exc})"
+                    ) from exc
             else:
-                return_jd = ephe.helio_cross_ut(planet_id, natal_lon, start_jd, helio_iflag)
+                try:
+                    return_jd = ephe.helio_cross_ut(planet_id, natal_lon, start_jd, helio_iflag)
+                except _BACKEND_ERRORS as exc:
+                    raise KerykeionException(
+                        "The heliocentric return search stepped outside the available "
+                        f"ephemeris date range; narrow the search window. ({exc})"
+                    ) from exc
 
         # Build return chart at that moment (outside the session: subject
         # construction manages its own ephemeris state).
@@ -1075,8 +1086,19 @@ class PlanetaryReturnFactory:
                     raise KerykeionException(
                         "Backward lunar node crossing search requires the libephemeris backend."
                     )
+                except _BACKEND_ERRORS as exc:
+                    raise KerykeionException(
+                        "The lunar node crossing search stepped outside the available "
+                        f"ephemeris date range; narrow the search window. ({exc})"
+                    ) from exc
             else:
-                result = ephe.mooncross_node_ut(start_jd, iflag)
+                try:
+                    result = ephe.mooncross_node_ut(start_jd, iflag)
+                except _BACKEND_ERRORS as exc:
+                    raise KerykeionException(
+                        "The lunar node crossing search stepped outside the available "
+                        f"ephemeris date range; narrow the search window. ({exc})"
+                    ) from exc
             crossing_jd = result[0]
 
         return_model = self._build_return_chart(crossing_jd, "Lunar_Node_Crossing")
