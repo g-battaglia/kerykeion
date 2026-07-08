@@ -303,3 +303,45 @@ class TestDignitySwissEphRegression:
         result = calculate_essential_dignity("Mars", sign, element, pos_in_sign, True)
         assert result["essential_dignity"] == "Exaltation"
         assert result["dignity_score"] >= 4
+
+
+class TestDignityScoreDocumentedRange:
+    """Round 28: dignity_score is the NET SUM of all applicable dignities, so it
+    ranges [-9, +11], not the ±5 the field docstring used to claim. Guard both
+    the achievable range and the corrected doc so they can never drift apart."""
+
+    _SIGN_ELEMENT = {
+        "Ari": "Fire", "Tau": "Earth", "Gem": "Air", "Can": "Water",
+        "Leo": "Fire", "Vir": "Earth", "Lib": "Air", "Sco": "Water",
+        "Sag": "Fire", "Cap": "Earth", "Aqu": "Air", "Pis": "Water",
+    }
+
+    def test_achievable_score_range_is_minus9_to_plus11(self):
+        from kerykeion.dignities.dignity_factory import DIGNITY_PLANETS
+
+        scores = set()
+        for planet in DIGNITY_PLANETS:
+            for sign, element in self._SIGN_ELEMENT.items():
+                for degree in range(30):
+                    for diurnal in (True, False):
+                        r = calculate_essential_dignity(planet, sign, element, degree + 0.5, diurnal)
+                        scores.add(r["dignity_score"])
+        assert min(scores) == -9, f"min changed: {min(scores)}"
+        assert max(scores) == 11, f"max changed: {max(scores)}"
+        # The old ±5 doc was wrong by more than 2x in both directions.
+        assert min(scores) < -5 and max(scores) > 5
+
+    def test_known_extremes(self):
+        # Mercury in Virgo: domicile + exaltation (+ term) -> +11 (>5).
+        hi = calculate_essential_dignity("Mercury", "Vir", "Earth", 0.5, True)
+        assert hi["dignity_score"] == 11
+        # Mercury in Pisces: detriment + fall -> -9 (<-5).
+        lo = calculate_essential_dignity("Mercury", "Pis", "Water", 0.5, True)
+        assert lo["dignity_score"] == -9
+
+    def test_field_doc_states_true_range(self):
+        from kerykeion.schemas.kr_models import KerykeionPointModel
+
+        desc = KerykeionPointModel.model_fields["dignity_score"].description or ""
+        assert "-9" in desc and "+11" in desc
+        assert "-5 to +5" not in desc  # the old, wrong claim must not return

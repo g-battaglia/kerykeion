@@ -643,7 +643,16 @@ class KerykeionPointModel(SubscriptableBaseModel):
         default=None,
         description="Highest active essential dignity (e.g. 'Domicile', 'Exaltation', 'Detriment', 'Fall', 'Peregrine').",
     )
-    dignity_score: Optional[int] = Field(default=None, description="Ptolemaic essential dignity score (-5 to +5).")
+    dignity_score: Optional[int] = Field(
+        default=None,
+        description=(
+            "Net Ptolemaic essential dignity score: the SUM of every applicable "
+            "dignity (domicile +5, exaltation +4, triplicity +3, term +2, face +1) "
+            "and debility (detriment -5, fall -4). Because several can coincide "
+            "(e.g. Mercury in Virgo is domicile + exaltation + term), the achievable "
+            "range is -9 to +11, not +/-5."
+        ),
+    )
     # Nakshatra (Vedic lunar mansions, v6.0)
     nakshatra: Optional[str] = Field(
         default=None, description="Name of the Nakshatra (Vedic lunar mansion), e.g. 'Rohini'."
