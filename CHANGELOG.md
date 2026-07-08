@@ -233,24 +233,28 @@ tables) — all verified correct with no changes needed beyond the fix above.
   ephemeris by up to ~0.3 arcsecond (~8e-5° for the Moon) — sub-arcsecond and
   astrologically negligible (far inside the day-for-a-year technique's own
   precision), but not bit-exact against a raw `ephe.calc_ut` at the float JD.
-- **Five house systems return degenerate cusps at deep southern-polar
-  latitudes.** For latitudes below roughly −67° (inside the Antarctic polar
-  circle), the bundled `libephemeris 3.0.0rc1` backend silently returns
-  non-partitioning house cusps (they run backwards, so `abs_pos` gaps sum to
-  ~3960° instead of 360°) and a Medium Coeli flipped by 180° for Campanus (`C`),
-  Regiomontanus (`R`), Polich-Page (`T`), APC (`Y`) and Sunshine (`I`) — and
-  `Sunshine` (`I`) additionally collapses several cusps onto one longitude
-  whenever the Sun is circumpolar, in *both* hemispheres. Unlike Placidus/Koch,
-  which *raise* inside the polar circle (kerykeion then clamps to the ±66° limit
-  with a warning), these systems return the wrong cusps **without raising**, so
-  kerykeion's polar fallback does not fire and the bad cusps reach the model.
-  The MC is a function of RAMC only and cannot depend on latitude, so this is a
-  definite backend defect, not a documented polar degradation. Impact is
-  effectively nil in practice (no one is born inside the Antarctic circle), and
-  the northern-polar equivalents, every other house system, and the four angular
-  cusps are all correct. Whole Sign (`W`), Equal (`A`) and Porphyry (`O`) are
-  defined and correct at every latitude. A post-hoc cusp-partition validation in
-  kerykeion (plus an upstream `libephemeris` fix) is planned for a future release.
+- **Quadrant house systems flip the MC and reverse their cusps inside the polar
+  circle (Swiss Ephemeris convention).** For latitudes inside the polar circle
+  (onset ~66.5°, depending on ARMC), Campanus (`C`), Regiomontanus (`R`),
+  Polich-Page (`T`), APC (`Y`) and Sunshine (`I`) return a Medium Coeli on the
+  `RA = ARMC + 180°` branch (the *above-horizon* meridian∩ecliptic point) and a
+  correspondingly reversed cusp ring (the 12 `abs_pos` gaps sum to ~3960° rather
+  than 360°); `Sunshine` (`I`) further collapses several cusps onto one longitude
+  when the Sun is circumpolar, in both hemispheres. This is **not a defect**: it
+  is the reference Swiss Ephemeris convention (inside the polar circle the
+  quadrant MC is redefined as the above-horizon meridian point), reproduced by
+  `libephemeris` for bit-for-bit parity — verified 0 mismatches vs the reference
+  across an 800-case grid, and documented upstream as working-as-intended
+  (libephemeris#46, `known-differences` §2.4). The *astronomical* MC — a function
+  of RAMC only — is what the latitude-independent systems Whole Sign (`W`), Equal
+  (`A`), Porphyry (`O`) and Meridian (`X`) return, unflipped, at every latitude;
+  the Ascendant is never flipped either. Placidus (`P`) and Koch (`K`) instead
+  raise `PolarCircleError` inside the polar circle, which kerykeion catches and
+  clamps to the ±66° limit with a warning. Real-world impact is nil (no Antarctic
+  births). Callers who need forward-partitioning cusps at polar latitudes should
+  use `W`/`A`/`O`/`X`, or validate that the 12 cusp gaps sum to 360°. An opt-in
+  polar-safe mode (astronomical MC + forward cusps, or a raise) may be offered in
+  a future release, mirroring the upstream v4 opt-in flag.
 
 ### Changed (breaking, pre-6.0.0 full-codebase review, third pass)
 
