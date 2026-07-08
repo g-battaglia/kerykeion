@@ -1571,7 +1571,18 @@ class AstrologicalSubjectFactory:
         # Convert UTC to local time (wrap invalid tz as KerykeionException, so
         # this entry point matches from_birth_data's error contract).
         local_time = safe_timezone(tz_str)
-        local_datetime = dt.astimezone(local_time)
+        try:
+            # A near-datetime.max/min instant (e.g. 9999-12-31T23:59:59Z, or a
+            # year-1 instant with a positive offset) can push the local wall time
+            # past datetime's representable range, raising a raw OverflowError.
+            # from_birth_data surfaces the equivalent boundary as
+            # KerykeionException; match that contract here.
+            local_datetime = dt.astimezone(local_time)
+        except (OverflowError, OSError) as exc:
+            raise KerykeionException(
+                f"ISO UTC timestamp {iso_utc_time!r} is outside the representable "
+                f"date range once converted to {tz_str!r}: {exc}."
+            ) from exc
 
         # The local wall time may be ambiguous (fall-back fold) even though the
         # source UTC instant is not. We ALREADY hold the correct offset from the

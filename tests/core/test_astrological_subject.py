@@ -522,6 +522,27 @@ class TestAstrologicalSubjectFactoryMethods:
                 lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
             )
 
+    @pytest.mark.parametrize(
+        "iso_utc, tz_str",
+        [
+            ("9999-12-31T23:59:59-14:00", "Etc/GMT-14"),  # overflow past datetime.max
+            ("0001-01-01T00:00:00Z", "America/New_York"),  # underflow past datetime.min
+            ("0001-01-01T00:00:00Z", "Etc/GMT+10"),
+        ],
+    )
+    def test_from_iso_utc_time_extreme_boundary_raises_kerykeion(self, iso_utc, tz_str):
+        """Round 26: an instant near datetime.max/min whose local wall time
+        overflows the representable range during the UTC->local conversion must
+        surface as KerykeionException (raw OverflowError before), matching
+        from_birth_data's contract at the same boundary."""
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException):
+            AstrologicalSubjectFactory.from_iso_utc_time(
+                name="Edge", iso_utc_time=iso_utc,
+                lng=0.0, lat=0.0, tz_str=tz_str, online=False,
+            )
+
     def test_from_current_time(self):
         """Test creating subject for current time."""
         from datetime import datetime, timezone
