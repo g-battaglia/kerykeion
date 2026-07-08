@@ -2,6 +2,31 @@
 
 ## [Unreleased]
 
+### Changed (6.0.0a63 — golden-baseline regeneration on the DE441 extended kernel)
+
+Regenerated every test golden baseline on the `extended` (DE441) precision tier
+with libephemeris `3.0.0rc1`, restoring the nine pre-1550 historical subjects a
+prior `medium`-tier regeneration had silently dropped (41 subjects again, not 32).
+No kerykeion computation bug was involved; the diff decomposes into:
+
+- **Stale-baseline fixes now captured.** The previous baselines predated two
+  house-ring fixes (composite MC/IC no longer swapped by re-sorting non-monotone
+  cusps; `get_planet_house` resolves non-monotone rings via the shortest arc — e.g.
+  Horizon houses at the equator). The regenerated fixtures encode the corrected
+  (invariant-satisfying) values: composite 10th cusp == MC, and equatorial-Horizon
+  planets distributed across houses instead of collapsed into the 1st.
+- **libephemeris behavioural updates (documented upstream).** `houses_ex2` now
+  reports true time-derivative cusp speeds, so sign-locked systems (Whole Sign,
+  Aries, Krusinski) carry the guiding-point (Asc/MC) rate instead of `0`; the
+  Interpolated-Lilith/osculating-apogee position drifted ~0.02–0.06° after the
+  upstream apogee fixes. Report snapshots (which track the shipped base/medium
+  kernel) were regenerated accordingly.
+- **Heliocentric charts** no longer carry geocentric lunar nodes.
+- **Test fix.** `TestDavisonBCE` derived the era from `davison.year`, but
+  `CompositeSubjectModel` exposes only ISO datetimes; it now parses the
+  extended-year ISO string. These BCE tests only run on the extended kernel, so the
+  latent failure was invisible to the default-tier CI.
+
 ### Fixed (pre-6.0.0 zero-bug review campaign, rounds 26–35)
 
 Ten further review rounds, each rotating a fresh runtime-reproduced lens. Every

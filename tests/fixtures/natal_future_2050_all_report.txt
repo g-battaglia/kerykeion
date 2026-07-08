@@ -54,8 +54,8 @@ Future 2050 Subject — Natal Chart Report
 | Pallas                | Can ♋ | 9.38°    | +0.5963°/d   | -1.46°  | -    | Ninth House    |
 | Juno                  | Vir ♍ | 14.02°   | +0.3526°/d   | +7.87°  | -    | Eleventh House |
 | Vesta                 | Vir ♍ | 27.63°   | +0.4303°/d   | +6.61°  | -    | Eleventh House |
-| Interpolated Lilith   | Vir ♍ | 13.76°   | +0.1352°/d   | +2.13°  | -    | Eleventh House |
-| Interpolated Perigee  | Aqu ♒ | 21.62°   | +0.3923°/d   | -9.92°  | -    | Fourth House   |
+| Interpolated Lilith   | Vir ♍ | 13.77°   | +0.1365°/d   | +2.12°  | -    | Eleventh House |
+| Interpolated Perigee  | Aqu ♒ | 21.41°   | +0.3886°/d   | -9.49°  | -    | Fourth House   |
 | Cupido                | Aqu ♒ | 14.06°   | -0.0195°/d   | -16.65° | R    | Fourth House   |
 | Hades                 | Leo ♌ | 9.32°    | +0.0210°/d   | +17.38° | -    | Tenth House    |
 | Zeus                  | Sco ♏ | 14.13°   | -0.0024°/d   | -16.09° | R    | First House    |
@@ -224,7 +224,7 @@ Future 2050 Subject — Natal Chart Report
 | Sun                   | quintile Q       | Orcus                 | 2.30° | Applying →   |
 | Sun                   | sesquiquadrate ⚼ | Pars Amoris           | 0.80° | Separating ← |
 | Sun                   | square □         | Pars Fidei            | 4.65° | Applying →   |
-| Sun                   | semi-square ∠    | Interpolated Lilith   | 1.12° | Applying →   |
+| Sun                   | semi-square ∠    | Interpolated Lilith   | 1.13° | Applying →   |
 | Sun                   | sesquiquadrate ⚼ | Mean Priapus          | 2.40° | Separating ← |
 | Sun                   | sesquiquadrate ⚼ | True Priapus          | 0.85° | Applying →   |
 | Sun                   | conjunction ☌    | Kronos                | 5.78° | Applying →   |
@@ -253,7 +253,7 @@ Future 2050 Subject — Natal Chart Report
 | Moon                  | trine △          | Pars Amoris           | 0.29° | Applying →   |
 | Moon                  | sextile ⚹        | Vertex                | 3.48° | Separating ← |
 | Moon                  | trine △          | Anti Vertex           | 3.48° | Separating ← |
-| Moon                  | semi-sextile ⚺   | Interpolated Lilith   | 2.21° | Applying →   |
+| Moon                  | semi-sextile ⚺   | Interpolated Lilith   | 2.22° | Applying →   |
 | Moon                  | quincunx ⚻       | Mean Priapus          | 1.31° | Separating ← |
 | Moon                  | quincunx ⚻       | True Priapus          | 0.24° | Applying →   |
 | Moon                  | opposition ☍     | Cupido                | 2.51° | Applying →   |
@@ -273,7 +273,7 @@ Future 2050 Subject — Natal Chart Report
 | Mercury               | sextile ⚹        | Sedna                 | 4.50° | Separating ← |
 | Mercury               | square □         | Haumea                | 5.93° | Applying →   |
 | Mercury               | opposition ☍     | Ixion                 | 0.74° | Applying →   |
-| Mercury               | opposition ☍     | Interpolated Perigee  | 1.67° | Separating ← |
+| Mercury               | opposition ☍     | Interpolated Perigee  | 1.87° | Separating ← |
 | Mercury               | opposition ☍     | White Moon            | 1.10° | Separating ← |
 | Mercury               | square □         | Apollon               | 1.94° | Separating ← |
 | Mercury               | sextile ⚹        | Admetos               | 3.57° | Separating ← |
@@ -298,7 +298,7 @@ Future 2050 Subject — Natal Chart Report
 | Venus                 | square □         | Pars Amoris           | 0.54° | Separating ← |
 | Venus                 | square □         | Vertex                | 4.30° | Separating ← |
 | Venus                 | square □         | Anti Vertex           | 4.30° | Separating ← |
-| Venus                 | conjunction ☌    | Interpolated Lilith   | 1.38° | Applying →   |
+| Venus                 | conjunction ☌    | Interpolated Lilith   | 1.40° | Applying →   |
 | Venus                 | opposition ☍     | Mean Priapus          | 2.14° | Separating ← |
 | Venus                 | opposition ☍     | True Priapus          | 0.59° | Applying →   |
 | Venus                 | quincunx ⚻       | Cupido                | 1.68° | Applying →   |
@@ -312,7 +312,7 @@ Future 2050 Subject — Natal Chart Report
 | Mars                  | conjunction ☌    | Ixion                 | 2.53° | Applying →   |
 | Mars                  | sesquiquadrate ⚼ | Orcus                 | 0.38° | Separating ← |
 | Mars                  | sesquiquadrate ⚼ | Pars Spiritus         | 1.64° | Separating ← |
-| Mars                  | conjunction ☌    | Interpolated Perigee  | 4.93° | Applying →   |
+| Mars                  | conjunction ☌    | Interpolated Perigee  | 5.14° | Applying →   |
 | Mars                  | conjunction ☌    | White Moon            | 4.37° | Applying →   |
 | Mars                  | square □         | Apollon               | 5.21° | Applying →   |
 | Mars                  | square □         | Poseidon              | 1.28° | Separating ← |
@@ -352,7 +352,7 @@ Future 2050 Subject — Natal Chart Report
 | Saturn                | square □         | Pars Fidei            | 3.92° | Applying →   |
 | Saturn                | trine △          | Vertex                | 1.87° | Separating ← |
 | Saturn                | sextile ⚹        | Anti Vertex           | 1.87° | Separating ← |
-| Saturn                | biquintile bQ    | Interpolated Lilith   | 1.55° | Separating ← |
+| Saturn                | biquintile bQ    | Interpolated Lilith   | 1.57° | Separating ← |
 | Saturn                | opposition ☍     | Hades                 | 3.12° | Separating ← |
 | Saturn                | opposition ☍     | Kronos                | 2.78° | Applying →   |
 | Saturn                | sesquiquadrate ⚼ | Admetos               | 1.49° | Applying →   |
@@ -367,7 +367,7 @@ Future 2050 Subject — Natal Chart Report
 | Uranus                | quintile Q       | Haumea                | 0.76° | Separating ← |
 | Uranus                | semi-square ∠    | Makemake              | 0.18° | Applying →   |
 | Uranus                | sesquiquadrate ⚼ | Pars Fidei            | 0.69° | Separating ← |
-| Uranus                | conjunction ☌    | Interpolated Lilith   | 4.22° | Applying →   |
+| Uranus                | conjunction ☌    | Interpolated Lilith   | 4.20° | Applying →   |
 | Uranus                | sextile ⚹        | Zeus                  | 3.84° | Separating ← |
 | Uranus                | semi-square ∠    | Kronos                | 0.45° | Applying →   |
 | Uranus                | sextile ⚹        | Apollon               | 3.37° | Applying →   |
@@ -399,7 +399,7 @@ Future 2050 Subject — Natal Chart Report
 | Pluto                 | square □         | Pars Amoris           | 1.45° | Separating ← |
 | Pluto                 | square □         | Vertex                | 2.32° | Applying →   |
 | Pluto                 | square □         | Anti Vertex           | 2.32° | Applying →   |
-| Pluto                 | opposition ☍     | Interpolated Lilith   | 3.37° | Separating ← |
+| Pluto                 | opposition ☍     | Interpolated Lilith   | 3.38° | Separating ← |
 | Pluto                 | conjunction ☌    | Mean Priapus          | 0.15° | Applying →   |
 | Pluto                 | conjunction ☌    | True Priapus          | 1.40° | Separating ← |
 | Pluto                 | quincunx ⚻       | Hades                 | 1.07° | Applying →   |
@@ -410,9 +410,9 @@ Future 2050 Subject — Natal Chart Report
 | Mean North Lunar Node | sextile ⚹        | Juno                  | 3.37° | Applying →   |
 | Mean North Lunar Node | quincunx ⚻       | Sedna                 | 1.40° | Separating ← |
 | Mean North Lunar Node | square □         | Quaoar                | 2.83° | Applying →   |
-| Mean North Lunar Node | sextile ⚹        | Interpolated Lilith   | 3.63° | Applying →   |
+| Mean North Lunar Node | sextile ⚹        | Interpolated Lilith   | 3.61° | Applying →   |
 | Mean North Lunar Node | trine △          | True Priapus          | 5.60° | Applying →   |
-| Mean North Lunar Node | square □         | Interpolated Perigee  | 4.23° | Separating ← |
+| Mean North Lunar Node | square □         | Interpolated Perigee  | 4.03° | Separating ← |
 | Mean North Lunar Node | square □         | White Moon            | 4.79° | Separating ← |
 | Mean North Lunar Node | square □         | Cupido                | 3.33° | Applying →   |
 | Mean North Lunar Node | conjunction ☌    | Zeus                  | 3.25° | Applying →   |
@@ -424,8 +424,8 @@ Future 2050 Subject — Natal Chart Report
 | True North Lunar Node | quincunx ⚻       | Sedna                 | 0.50° | Separating ← |
 | True North Lunar Node | square □         | Ixion                 | 5.74° | Separating ← |
 | True North Lunar Node | square □         | Quaoar                | 3.73° | Applying →   |
-| True North Lunar Node | sextile ⚹        | Interpolated Lilith   | 4.53° | Applying →   |
-| True North Lunar Node | square □         | Interpolated Perigee  | 3.33° | Separating ← |
+| True North Lunar Node | sextile ⚹        | Interpolated Lilith   | 4.51° | Applying →   |
+| True North Lunar Node | square □         | Interpolated Perigee  | 3.13° | Separating ← |
 | True North Lunar Node | square □         | White Moon            | 3.89° | Separating ← |
 | True North Lunar Node | square □         | Cupido                | 4.23° | Applying →   |
 | True North Lunar Node | conjunction ☌    | Zeus                  | 4.15° | Applying →   |
@@ -451,10 +451,10 @@ Future 2050 Subject — Natal Chart Report
 | Ascendant             | trine △          | Ixion                 | 3.08° | Separating ← |
 | Ascendant             | semi-square ∠    | Pars Amoris           | 0.26° | Separating ← |
 | Ascendant             | opposition ☍     | Pars Fidei            | 5.18° | Applying →   |
-| Ascendant             | semi-square ∠    | Interpolated Lilith   | 1.65° | Applying →   |
+| Ascendant             | semi-square ∠    | Interpolated Lilith   | 1.67° | Applying →   |
 | Ascendant             | sesquiquadrate ⚼ | Mean Priapus          | 1.86° | Separating ← |
 | Ascendant             | sesquiquadrate ⚼ | True Priapus          | 0.31° | Separating ← |
-| Ascendant             | trine △          | Interpolated Perigee  | 5.48° | Separating ← |
+| Ascendant             | trine △          | Interpolated Perigee  | 5.69° | Separating ← |
 | Ascendant             | trine △          | White Moon            | 4.92° | Separating ← |
 | Ascendant             | semi-sextile ⚺   | Poseidon              | 0.73° | Applying →   |
 | Medium Coeli          | square □         | Descendant            | 3.45° | Static =     |
@@ -468,7 +468,7 @@ Future 2050 Subject — Natal Chart Report
 | Medium Coeli          | quintile Q       | Orcus                 | 0.62° | Separating ← |
 | Medium Coeli          | quintile Q       | Pars Spiritus         | 0.64° | Applying →   |
 | Medium Coeli          | square □         | Pars Fidei            | 1.74° | Applying →   |
-| Medium Coeli          | semi-square ∠    | Interpolated Lilith   | 1.79° | Separating ← |
+| Medium Coeli          | semi-square ∠    | Interpolated Lilith   | 1.78° | Separating ← |
 | Medium Coeli          | conjunction ☌    | Kronos                | 2.87° | Applying →   |
 | Medium Coeli          | trine △          | Poseidon              | 2.72° | Separating ← |
 | Descendant            | square □         | Imum Coeli            | 3.45° | Static =     |
@@ -483,7 +483,7 @@ Future 2050 Subject — Natal Chart Report
 | Descendant            | quintile Q       | Quaoar                | 0.55° | Separating ← |
 | Descendant            | sesquiquadrate ⚼ | Pars Amoris           | 0.26° | Separating ← |
 | Descendant            | conjunction ☌    | Pars Fidei            | 5.18° | Applying →   |
-| Descendant            | sesquiquadrate ⚼ | Interpolated Lilith   | 1.65° | Applying →   |
+| Descendant            | sesquiquadrate ⚼ | Interpolated Lilith   | 1.67° | Applying →   |
 | Descendant            | semi-square ∠    | Mean Priapus          | 1.86° | Separating ← |
 | Descendant            | semi-square ∠    | True Priapus          | 0.31° | Separating ← |
 | Descendant            | sextile ⚹        | White Moon            | 4.92° | Separating ← |
@@ -495,7 +495,7 @@ Future 2050 Subject — Natal Chart Report
 | Imum Coeli            | sextile ⚹        | Haumea                | 1.34° | Separating ← |
 | Imum Coeli            | square □         | Makemake              | 2.60° | Applying →   |
 | Imum Coeli            | square □         | Pars Fidei            | 1.74° | Applying →   |
-| Imum Coeli            | sesquiquadrate ⚼ | Interpolated Lilith   | 1.79° | Separating ← |
+| Imum Coeli            | sesquiquadrate ⚼ | Interpolated Lilith   | 1.78° | Separating ← |
 | Imum Coeli            | opposition ☍     | Kronos                | 2.87° | Applying →   |
 | Imum Coeli            | sextile ⚹        | Poseidon              | 2.72° | Separating ← |
 | Mean Lilith           | conjunction ☌    | True Lilith           | 1.55° | Separating ← |
@@ -507,7 +507,7 @@ Future 2050 Subject — Natal Chart Report
 | Mean Lilith           | square □         | Pars Amoris           | 1.60° | Applying →   |
 | Mean Lilith           | square □         | Vertex                | 2.17° | Separating ← |
 | Mean Lilith           | square □         | Anti Vertex           | 2.17° | Separating ← |
-| Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 3.52° | Separating ← |
+| Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 3.53° | Separating ← |
 | Mean Lilith           | opposition ☍     | True Priapus          | 1.55° | Separating ← |
 | Mean Lilith           | semi-sextile ⚺   | Hades                 | 0.92° | Separating ← |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 3.89° | Applying →   |
@@ -519,8 +519,8 @@ Future 2050 Subject — Natal Chart Report
 | Mean South Lunar Node | biquintile bQ    | Orcus                 | 0.55° | Separating ← |
 | Mean South Lunar Node | square □         | Quaoar                | 2.83° | Applying →   |
 | Mean South Lunar Node | biquintile bQ    | Pars Spiritus         | 1.81° | Separating ← |
-| Mean South Lunar Node | trine △          | Interpolated Lilith   | 3.63° | Applying →   |
-| Mean South Lunar Node | square □         | Interpolated Perigee  | 4.23° | Separating ← |
+| Mean South Lunar Node | trine △          | Interpolated Lilith   | 3.61° | Applying →   |
+| Mean South Lunar Node | square □         | Interpolated Perigee  | 4.03° | Separating ← |
 | Mean South Lunar Node | square □         | White Moon            | 4.79° | Separating ← |
 | Mean South Lunar Node | square □         | Cupido                | 3.33° | Applying →   |
 | Mean South Lunar Node | opposition ☍     | Zeus                  | 3.25° | Applying →   |
@@ -533,8 +533,8 @@ Future 2050 Subject — Natal Chart Report
 | True South Lunar Node | biquintile bQ    | Orcus                 | 0.35° | Applying →   |
 | True South Lunar Node | square □         | Quaoar                | 3.73° | Applying →   |
 | True South Lunar Node | biquintile bQ    | Pars Spiritus         | 0.91° | Separating ← |
-| True South Lunar Node | trine △          | Interpolated Lilith   | 4.53° | Applying →   |
-| True South Lunar Node | square □         | Interpolated Perigee  | 3.33° | Separating ← |
+| True South Lunar Node | trine △          | Interpolated Lilith   | 4.51° | Applying →   |
+| True South Lunar Node | square □         | Interpolated Perigee  | 3.13° | Separating ← |
 | True South Lunar Node | square □         | White Moon            | 3.89° | Separating ← |
 | True South Lunar Node | square □         | Cupido                | 4.23° | Applying →   |
 | True South Lunar Node | opposition ☍     | Zeus                  | 4.15° | Applying →   |
@@ -550,7 +550,7 @@ Future 2050 Subject — Natal Chart Report
 | True Lilith           | square □         | Pars Amoris           | 0.05° | Applying →   |
 | True Lilith           | square □         | Vertex                | 3.72° | Separating ← |
 | True Lilith           | square □         | Anti Vertex           | 3.72° | Separating ← |
-| True Lilith           | conjunction ☌    | Interpolated Lilith   | 1.97° | Applying →   |
+| True Lilith           | conjunction ☌    | Interpolated Lilith   | 1.98° | Applying →   |
 | True Lilith           | opposition ☍     | Mean Priapus          | 1.55° | Separating ← |
 | True Lilith           | sextile ⚹        | Zeus                  | 2.35° | Applying →   |
 | Pholus                | sesquiquadrate ⚼ | Vesta                 | 0.69° | Separating ← |
@@ -562,7 +562,7 @@ Future 2050 Subject — Natal Chart Report
 | Pholus                | sextile ⚹        | Pars Amoris           | 0.11° | Applying →   |
 | Pholus                | trine △          | Vertex                | 3.87° | Applying →   |
 | Pholus                | sextile ⚹        | Anti Vertex           | 3.87° | Applying →   |
-| Pholus                | quincunx ⚻       | Interpolated Lilith   | 1.81° | Separating ← |
+| Pholus                | quincunx ⚻       | Interpolated Lilith   | 1.83° | Separating ← |
 | Pholus                | semi-sextile ⚺   | Mean Priapus          | 1.71° | Applying →   |
 | Pholus                | semi-sextile ⚺   | True Priapus          | 0.16° | Applying →   |
 | Pholus                | conjunction ☌    | Cupido                | 2.11° | Separating ← |
@@ -573,7 +573,7 @@ Future 2050 Subject — Natal Chart Report
 | Ceres                 | sextile ⚹        | Sedna                 | 4.91° | Separating ← |
 | Ceres                 | square □         | Haumea                | 5.52° | Applying →   |
 | Ceres                 | opposition ☍     | Ixion                 | 0.33° | Applying →   |
-| Ceres                 | opposition ☍     | Interpolated Perigee  | 2.08° | Separating ← |
+| Ceres                 | opposition ☍     | Interpolated Perigee  | 2.28° | Separating ← |
 | Ceres                 | opposition ☍     | White Moon            | 1.52° | Separating ← |
 | Ceres                 | square □         | Apollon               | 2.35° | Separating ← |
 | Ceres                 | sextile ⚹        | Admetos               | 3.99° | Separating ← |
@@ -586,7 +586,7 @@ Future 2050 Subject — Natal Chart Report
 | Pallas                | square □         | Pars Spiritus         | 3.82° | Applying →   |
 | Pallas                | semi-sextile ⚺   | Vertex                | 1.31° | Separating ← |
 | Pallas                | quincunx ⚻       | Anti Vertex           | 1.31° | Separating ← |
-| Pallas                | sextile ⚹        | Interpolated Lilith   | 4.38° | Applying →   |
+| Pallas                | sextile ⚹        | Interpolated Lilith   | 4.39° | Applying →   |
 | Pallas                | trine △          | Mean Priapus          | 0.86° | Applying →   |
 | Pallas                | trine △          | True Priapus          | 2.41° | Separating ← |
 | Pallas                | biquintile bQ    | Cupido                | 1.32° | Separating ← |
@@ -599,7 +599,7 @@ Future 2050 Subject — Natal Chart Report
 | Juno                  | square □         | Pars Amoris           | 2.18° | Separating ← |
 | Juno                  | square □         | Vertex                | 5.95° | Separating ← |
 | Juno                  | square □         | Anti Vertex           | 5.95° | Separating ← |
-| Juno                  | conjunction ☌    | Interpolated Lilith   | 0.26° | Separating ← |
+| Juno                  | conjunction ☌    | Interpolated Lilith   | 0.25° | Separating ← |
 | Juno                  | opposition ☍     | Mean Priapus          | 3.78° | Separating ← |
 | Juno                  | opposition ☍     | True Priapus          | 2.23° | Applying →   |
 | Juno                  | quincunx ⚻       | Cupido                | 0.04° | Applying →   |
@@ -611,7 +611,7 @@ Future 2050 Subject — Natal Chart Report
 | Vesta                 | semi-square ∠    | Pars Fortunae         | 1.62° | Separating ← |
 | Vesta                 | biquintile bQ    | Pars Fidei            | 1.35° | Separating ← |
 | Vesta                 | quintile Q       | Anti Vertex           | 1.56° | Separating ← |
-| Vesta                 | biquintile bQ    | Interpolated Perigee  | 0.02° | Separating ← |
+| Vesta                 | biquintile bQ    | Interpolated Perigee  | 0.22° | Separating ← |
 | Vesta                 | biquintile bQ    | White Moon            | 0.54° | Applying →   |
 | Vesta                 | sesquiquadrate ⚼ | Cupido                | 1.42° | Applying →   |
 | Vesta                 | semi-square ∠    | Zeus                  | 1.50° | Applying →   |
@@ -619,6 +619,7 @@ Future 2050 Subject — Natal Chart Report
 | Eris                  | opposition ☍     | Makemake              | 1.56° | Static =     |
 | Eris                  | conjunction ☌    | Pars Fidei            | 0.69° | Applying →   |
 | Eris                  | biquintile bQ    | Anti Vertex           | 0.47° | Applying →   |
+| Eris                  | quintile Q       | Interpolated Perigee  | 1.82° | Separating ← |
 | Eris                  | square □         | Kronos                | 1.82° | Separating ← |
 | Sedna                 | sesquiquadrate ⚼ | Makemake              | 0.63° | Separating ← |
 | Sedna                 | trine △          | Ixion                 | 5.24° | Applying →   |
@@ -626,8 +627,8 @@ Future 2050 Subject — Natal Chart Report
 | Sedna                 | biquintile bQ    | Pars Fortunae         | 1.77° | Separating ← |
 | Sedna                 | trine △          | Pars Spiritus         | 5.59° | Separating ← |
 | Sedna                 | semi-square ∠    | Pars Fidei            | 1.50° | Separating ← |
-| Sedna                 | square □         | Interpolated Lilith   | 5.03° | Applying →   |
-| Sedna                 | trine △          | Interpolated Perigee  | 2.83° | Separating ← |
+| Sedna                 | square □         | Interpolated Lilith   | 5.01° | Applying →   |
+| Sedna                 | trine △          | Interpolated Perigee  | 2.63° | Separating ← |
 | Sedna                 | trine △          | White Moon            | 3.39° | Separating ← |
 | Sedna                 | trine △          | Cupido                | 4.73° | Separating ← |
 | Sedna                 | biquintile bQ    | Zeus                  | 1.35° | Applying →   |
@@ -643,7 +644,7 @@ Future 2050 Subject — Natal Chart Report
 | Makemake              | square □         | Kronos                | 0.27° | Separating ← |
 | Makemake              | sesquiquadrate ⚼ | Admetos               | 1.55° | Separating ← |
 | Ixion                 | quintile Q       | Pars Amoris           | 0.19° | Applying →   |
-| Ixion                 | conjunction ☌    | Interpolated Perigee  | 2.41° | Applying →   |
+| Ixion                 | conjunction ☌    | Interpolated Perigee  | 2.61° | Applying →   |
 | Ixion                 | conjunction ☌    | White Moon            | 1.85° | Applying →   |
 | Ixion                 | square □         | Apollon               | 2.68° | Applying →   |
 | Ixion                 | trine △          | Admetos               | 4.32° | Applying →   |
@@ -654,7 +655,7 @@ Future 2050 Subject — Natal Chart Report
 | Orcus                 | sextile ⚹        | Pars Amoris           | 0.10° | Separating ← |
 | Orcus                 | trine △          | Vertex                | 3.86° | Separating ← |
 | Orcus                 | sextile ⚹        | Anti Vertex           | 3.86° | Separating ← |
-| Orcus                 | semi-sextile ⚺   | Interpolated Lilith   | 1.82° | Separating ← |
+| Orcus                 | semi-sextile ⚺   | Interpolated Lilith   | 1.84° | Separating ← |
 | Orcus                 | quincunx ⚻       | Mean Priapus          | 1.69° | Applying →   |
 | Orcus                 | quincunx ⚻       | True Priapus          | 0.15° | Applying →   |
 | Orcus                 | trine △          | Cupido                | 2.12° | Applying →   |
@@ -663,14 +664,14 @@ Future 2050 Subject — Natal Chart Report
 | Quaoar                | square □         | Pars Fortunae         | 3.54° | Applying →   |
 | Quaoar                | trine △          | Pars Spiritus         | 1.36° | Applying →   |
 | Quaoar                | sextile ⚹        | Pars Amoris           | 2.72° | Applying →   |
-| Quaoar                | quincunx ⚻       | Interpolated Lilith   | 0.80° | Applying →   |
+| Quaoar                | quincunx ⚻       | Interpolated Lilith   | 0.78° | Applying →   |
 | Quaoar                | conjunction ☌    | Cupido                | 0.49° | Static =     |
 | Quaoar                | opposition ☍     | Hades                 | 5.23° | Applying →   |
 | Quaoar                | square □         | Zeus                  | 0.42° | Applying →   |
 | Quaoar                | trine △          | Admetos               | 5.16° | Separating ← |
 | Quaoar                | opposition ☍     | Vulkanus              | 3.00° | Separating ← |
 | Pars Fortunae         | semi-sextile ⚺   | Pars Amoris           | 0.83° | Static =     |
-| Pars Fortunae         | sextile ⚹        | Interpolated Lilith   | 2.75° | Separating ← |
+| Pars Fortunae         | sextile ⚹        | Interpolated Lilith   | 2.76° | Separating ← |
 | Pars Fortunae         | trine △          | Mean Priapus          | 0.77° | Applying →   |
 | Pars Fortunae         | trine △          | True Priapus          | 0.78° | Separating ← |
 | Pars Fortunae         | square □         | Cupido                | 3.05° | Applying →   |
@@ -678,7 +679,7 @@ Future 2050 Subject — Natal Chart Report
 | Pars Fortunae         | conjunction ☌    | Zeus                  | 3.12° | Applying →   |
 | Pars Spiritus         | sextile ⚹        | Pars Amoris           | 1.36° | Static =     |
 | Pars Spiritus         | trine △          | Vertex                | 5.12° | Static =     |
-| Pars Spiritus         | semi-sextile ⚺   | Interpolated Lilith   | 0.56° | Separating ← |
+| Pars Spiritus         | semi-sextile ⚺   | Interpolated Lilith   | 0.58° | Separating ← |
 | Pars Spiritus         | quincunx ⚻       | True Priapus          | 1.40° | Applying →   |
 | Pars Spiritus         | trine △          | Cupido                | 0.87° | Applying →   |
 | Pars Spiritus         | sextile ⚹        | Hades                 | 3.87° | Applying →   |
@@ -687,7 +688,7 @@ Future 2050 Subject — Natal Chart Report
 | Pars Spiritus         | semi-square ∠    | Poseidon              | 0.36° | Separating ← |
 | Pars Amoris           | opposition ☍     | Vertex                | 3.77° | Static =     |
 | Pars Amoris           | conjunction ☌    | Anti Vertex           | 3.77° | Static =     |
-| Pars Amoris           | square □         | Interpolated Lilith   | 1.92° | Separating ← |
+| Pars Amoris           | square □         | Interpolated Lilith   | 1.93° | Separating ← |
 | Pars Amoris           | square □         | Mean Priapus          | 1.60° | Applying →   |
 | Pars Amoris           | square □         | True Priapus          | 0.05° | Applying →   |
 | Pars Amoris           | quintile Q       | White Moon            | 1.66° | Applying →   |
@@ -695,35 +696,35 @@ Future 2050 Subject — Natal Chart Report
 | Pars Amoris           | trine △          | Hades                 | 2.52° | Applying →   |
 | Pars Amoris           | trine △          | Vulkanus              | 5.72° | Separating ← |
 | Pars Fidei            | biquintile bQ    | Anti Vertex           | 0.21° | Static =     |
-| Pars Fidei            | quintile Q       | Interpolated Perigee  | 1.33° | Separating ← |
+| Pars Fidei            | quintile Q       | Interpolated Perigee  | 1.13° | Separating ← |
 | Pars Fidei            | quintile Q       | White Moon            | 1.89° | Separating ← |
 | Pars Fidei            | square □         | Kronos                | 1.13° | Separating ← |
-| Vertex                | square □         | Interpolated Lilith   | 5.69° | Separating ← |
+| Vertex                | square □         | Interpolated Lilith   | 5.70° | Separating ← |
 | Vertex                | square □         | Mean Priapus          | 2.17° | Separating ← |
 | Vertex                | square □         | True Priapus          | 3.72° | Separating ← |
 | Vertex                | trine △          | Cupido                | 5.99° | Applying →   |
 | Vertex                | sextile ⚹        | Hades                 | 1.25° | Separating ← |
 | Vertex                | sextile ⚹        | Kronos                | 4.65° | Applying →   |
-| Anti Vertex           | square □         | Interpolated Lilith   | 5.69° | Separating ← |
+| Anti Vertex           | square □         | Interpolated Lilith   | 5.70° | Separating ← |
 | Anti Vertex           | square □         | Mean Priapus          | 2.17° | Separating ← |
 | Anti Vertex           | square □         | True Priapus          | 3.72° | Separating ← |
-| Anti Vertex           | quintile Q       | Interpolated Perigee  | 1.55° | Separating ← |
+| Anti Vertex           | quintile Q       | Interpolated Perigee  | 1.34° | Separating ← |
 | Anti Vertex           | trine △          | Hades                 | 1.25° | Separating ← |
 | Anti Vertex           | trine △          | Kronos                | 4.65° | Applying →   |
-| Interpolated Lilith   | opposition ☍     | Mean Priapus          | 3.52° | Separating ← |
-| Interpolated Lilith   | opposition ☍     | True Priapus          | 1.97° | Applying →   |
-| Interpolated Lilith   | quincunx ⚻       | Cupido                | 0.30° | Applying →   |
-| Interpolated Lilith   | sextile ⚹        | Zeus                  | 0.38° | Applying →   |
-| Interpolated Lilith   | square □         | Admetos               | 5.95° | Applying →   |
+| Interpolated Lilith   | opposition ☍     | Mean Priapus          | 3.53° | Separating ← |
+| Interpolated Lilith   | opposition ☍     | True Priapus          | 1.98° | Applying →   |
+| Interpolated Lilith   | quincunx ⚻       | Cupido                | 0.29° | Applying →   |
+| Interpolated Lilith   | sextile ⚹        | Zeus                  | 0.36° | Applying →   |
+| Interpolated Lilith   | square □         | Admetos               | 5.94° | Applying →   |
 | Mean Priapus          | conjunction ☌    | True Priapus          | 1.55° | Separating ← |
 | Mean Priapus          | quincunx ⚻       | Hades                 | 0.92° | Separating ← |
 | Mean Priapus          | trine △          | Zeus                  | 3.89° | Applying →   |
 | Mean Priapus          | biquintile bQ    | Kronos                | 0.82° | Separating ← |
 | True Priapus          | trine △          | Zeus                  | 2.35° | Applying →   |
-| Interpolated Perigee  | conjunction ☌    | White Moon            | 0.56° | Applying →   |
-| Interpolated Perigee  | square □         | Apollon               | 0.27° | Separating ← |
-| Interpolated Perigee  | trine △          | Admetos               | 1.91° | Separating ← |
-| Interpolated Perigee  | opposition ☍     | Vulkanus              | 4.06° | Separating ← |
+| Interpolated Perigee  | conjunction ☌    | White Moon            | 0.76° | Applying →   |
+| Interpolated Perigee  | square □         | Apollon               | 0.07° | Separating ← |
+| Interpolated Perigee  | trine △          | Admetos               | 1.71° | Separating ← |
+| Interpolated Perigee  | opposition ☍     | Vulkanus              | 3.86° | Separating ← |
 | White Moon            | square □         | Apollon               | 0.83° | Separating ← |
 | White Moon            | trine △          | Admetos               | 2.47° | Separating ← |
 | White Moon            | opposition ☍     | Vulkanus              | 4.62° | Separating ← |

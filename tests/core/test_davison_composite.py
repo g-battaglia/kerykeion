@@ -5,6 +5,20 @@ import pytest
 from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
 
 
+def _astro_year_from_iso(iso_datetime: str) -> int:
+    """Astronomical year from a kerykeion ISO 8601 extended-year string.
+
+    ``CompositeSubjectModel`` exposes the Davison event date only through its
+    ISO datetime fields (it has no scalar ``year`` attribute like a natal
+    subject). BCE years carry a leading ``-`` (e.g. ``-0072-04-30T...``), so
+    the sign must be stripped before splitting on the date separators.
+    """
+    negative = iso_datetime.startswith("-")
+    year_token = iso_datetime.lstrip("-").split("-", 1)[0]
+    year = int(year_token)
+    return -year if negative else year
+
+
 @pytest.fixture(scope="module")
 def subjects():
     s1 = AstrologicalSubjectFactory.from_birth_data(
@@ -247,7 +261,7 @@ class TestDavisonBCE:
 
         davison = CompositeSubjectFactory(s1, s2).get_davison_composite_subject_model()
 
-        assert davison.year < 1
+        assert _astro_year_from_iso(davison.iso_formatted_utc_datetime) < 1
         err_seconds = abs(davison.julian_day - mid_jd) * 86400.0
         assert err_seconds < 1.0, (
             f"Davison JD {davison.julian_day} is {err_seconds:.1f}s away from "
@@ -261,7 +275,7 @@ class TestDavisonBCE:
 
         davison = CompositeSubjectFactory(s1, s2).get_davison_composite_subject_model()
 
-        assert davison.year < 1
+        assert _astro_year_from_iso(davison.iso_formatted_utc_datetime) < 1
         assert abs(davison.julian_day - mid_jd) * 86400.0 < 1.0
 
     def test_bce_davison_sun_matches_ephe_at_midpoint_jd(self):

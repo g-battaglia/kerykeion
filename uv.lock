@@ -2,6 +2,9 @@ version = 1
 revision = 3
 requires-python = ">=3.12"
 
+[options]
+prerelease-mode = "allow"
+
 [[package]]
 name = "annotated-types"
 version = "0.7.0"
@@ -496,7 +499,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a62"
+version = "6.0.0a63"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -537,7 +540,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "libephemeris", specifier = ">=3.0.0rc1,<4" },
+    { name = "libephemeris", specifier = "==3.0.0rc3" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'all'", specifier = ">=2.10.3.1" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -587,7 +590,7 @@ wheels = [
 
 [[package]]
 name = "libephemeris"
-version = "3.0.0rc1"
+version = "3.0.0rc3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astroquery" },
@@ -598,9 +601,9 @@ dependencies = [
     { name = "skyfield-data" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/41/ab4bfea2f45061147b92423cb8e484634ca5839057a5ff74d8dcf9482461/libephemeris-3.0.0rc1.tar.gz", hash = "sha256:f3dcb1d27d2d3dd2f7e0ba7dad0a5dcf5be211c397c4fdd83eedd1b2c59730de", size = 12529352, upload-time = "2026-06-25T14:16:47.045Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/52/9f/bfa3380a3b71c0ef0f60d99f2d699f1f9e319e0c08213a08106fd3eef773/libephemeris-3.0.0rc3.tar.gz", hash = "sha256:aa91346774ca9bf13f638e854fdbb45de63decfbf7eb4d1a18ef7e2cea5e4469", size = 12593298, upload-time = "2026-07-08T10:41:24.938Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a6/69/c7da5bd5c6750bbe477c500e50938ae4d4de92a474409dcd4a444e032009/libephemeris-3.0.0rc1-py3-none-any.whl", hash = "sha256:e3981535cfdf415167f66509469afe1c3ac8d62f426dfb1ba60ed83aa3d81024", size = 12572854, upload-time = "2026-06-25T14:16:43.311Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/f1/ae604fb741ab11ab07dbe5f14e3a10f8b82d6ee47f279b67add228848009/libephemeris-3.0.0rc3-py3-none-any.whl", hash = "sha256:515f2b57be922663b4c5cf3b4397b6e223dccdb3aac4669875b33bec199179ee", size = 12639280, upload-time = "2026-07-08T10:41:16.895Z" },
 ]
 
 [[package]]
