@@ -208,7 +208,8 @@ audit tests/goldens for any southern-polar chart using these systems first
 - New tests: `C`/`R`/`Y`/`I` at −78° recover valid partitioning cusps with the
   correct (un-flipped) MC; `T` at −78° and `I` with a circumpolar Sun raise a
   clear exception; northern-polar and normal-latitude output unchanged.
-- Upstream `libephemeris` issue filed (link recorded here).
+- Upstream `libephemeris` issue filed: g-battaglia/libephemeris#46
+  (https://github.com/g-battaglia/libephemeris/issues/46).
 - Quality gate green.
 
 <!-- Add further mandatory evolutions below, same structure. -->
