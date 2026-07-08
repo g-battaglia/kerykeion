@@ -281,3 +281,27 @@ class TestSweReference:
         with ephemeris_session():
             _retflags, tret = ephe.lun_occult_when_glob(start_jd, ephe.SATURN, ephe.FLG_SWIEPH, 0, False)
         assert results[0].maximum_jd == pytest.approx(tret[0], abs=0.01)
+
+
+class TestOccultationValidation:
+    """Round 35: the location search rejects an impossible latitude, and the body
+    resolver rejects non-physically-occultable calculated points (lunar nodes,
+    Lilith/apogee variants, Uranian hypotheticals) that would otherwise fabricate a
+    meaningless 'occultation' of a point that has no disk to be covered."""
+
+    @pytest.mark.parametrize("lat", [200.0, -95.0, 139.69])
+    def test_local_search_invalid_latitude_raises(self, factory, start_jd, lat):
+        with pytest.raises(KerykeionException):
+            factory.search_local(start_jd, "Venus", lat=lat, lng=12.0, count=1)
+
+    @pytest.mark.parametrize(
+        "name", ["Mean_North_Lunar_Node", "True_Lilith", "Interpolated_Perigee", "Cupido", "Earth"]
+    )
+    def test_non_occultable_body_raises(self, factory, start_jd, name):
+        with pytest.raises(KerykeionException):
+            factory.search_global(start_jd, name, count=1)
+
+    @pytest.mark.parametrize("name", ["Venus", "Mars", "Jupiter"])
+    def test_occultable_body_still_works(self, factory, start_jd, name):
+        results = factory.search_global(start_jd, name, count=1)
+        assert len(results) >= 1

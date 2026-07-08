@@ -23,7 +23,7 @@ from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
-from kerykeion.utilities import get_kerykeion_point_from_degree
+from kerykeion.utilities import get_kerykeion_point_from_degree, validate_latitude
 from pydantic import Field
 
 logger = logging.getLogger(__name__)
@@ -284,12 +284,17 @@ class EclipseFactory:
             EclipseSearchResultModel with solar and lunar eclipses.
 
         Raises:
-            KerykeionException: If the ephemeris backend fails mid-search (most
+            KerykeionException: If ``lat`` is outside the geometrically-possible
+                ±90° range, or if the ephemeris backend fails mid-search (most
                 often a date outside the available ephemeris range); the search
                 never returns silently truncated results.
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
+        # Reject an impossible latitude (e.g. an accidental lat/lng swap, made
+        # easy by the longitude-first backend geopos convention) rather than
+        # returning a bogus "visible" eclipse with the Sun below the horizon.
+        validate_latitude(lat)
         if start_year is None:
             start_year = datetime.now(timezone.utc).year
         geopos = (lng, lat, 0.0)

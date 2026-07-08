@@ -478,3 +478,19 @@ def test_jd_to_iso_rolls_over_midnight(module_path):
 
     # A normal mid-day time is unaffected.
     assert _jd_to_iso(ephe.julday(2020, 6, 15, 12.5)) == "2020-06-15T12:30:00Z"
+
+
+class TestLocationLatitudeValidation:
+    """Round 35: search_from_location must reject an impossible latitude (|lat|>90) —
+    e.g. an accidental lat/lng swap, made easy by the longitude-first backend geopos
+    convention — instead of returning a bogus 'visible' eclipse with the Sun below
+    the horizon (the rest of the library rejects |lat|>90 via validate_latitude)."""
+
+    @pytest.mark.parametrize("lat", [200.0, -95.0, 139.69])
+    def test_invalid_latitude_raises(self, lat):
+        with pytest.raises(KerykeionException):
+            EclipseFactory.search_from_location(lat=lat, lng=12.0, start_year=2024, count=1)
+
+    def test_valid_latitude_still_works(self):
+        result = EclipseFactory.search_from_location(lat=41.9, lng=12.5, start_year=2024, count=1)
+        assert len(result.solar_eclipses) >= 1

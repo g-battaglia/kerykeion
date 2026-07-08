@@ -40,6 +40,7 @@ from typing import List, Union, cast
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.utilities import validate_latitude
 
 logger = logging.getLogger(__name__)
 
@@ -79,16 +80,31 @@ def _ensure_scannable(count: int) -> None:
         )
 
 
+# Only physically real bodies can be occulted by the Moon. STANDARD_PLANETS also
+# contains calculated points (lunar nodes, Lilith/apogee variants, the Uranian
+# hypotheticals) and the Moon/Earth themselves; feeding those to the backend's
+# lun_occult primitive fabricates a plausible-looking but meaningless "occultation"
+# of a point that has no disk to be covered. Restrict string names to the real
+# occultable bodies (the classical planets plus the resolvable minor planets).
+_OCCULTABLE_BODY_NAMES = frozenset({
+    "Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
+    "Chiron", "Pholus", "Ceres", "Pallas", "Juno", "Vesta",
+})
+
+
 def _resolve_planet_id(planet_id: Union[int, str]) -> int:
     """Resolve *planet_id* to a Swiss Ephemeris body number.
 
     Raw backend IDs (``int``, e.g. ``ephe.VENUS``) stay supported; a planet
     name (``str``, e.g. ``"Venus"``) is resolved through the project-wide
     name -> ID map (``STANDARD_PLANETS`` in ``settings.config_constants``),
-    matching PlanetaryReturnFactory's name handling.
+    matching PlanetaryReturnFactory's name handling, then restricted to the
+    physically occultable bodies (:data:`_OCCULTABLE_BODY_NAMES`).
 
     Raises:
-        KerykeionException: If the name is not a known planet.
+        KerykeionException: If the name is not a known planet, or is a known
+            name that is not a physically occultable body (a calculated point
+            such as a lunar node, Lilith, or a Uranian hypothetical).
         TypeError: If *planet_id* is neither an int nor a str.
     """
     if isinstance(planet_id, str):
@@ -96,7 +112,13 @@ def _resolve_planet_id(planet_id: Union[int, str]) -> int:
         if resolved is None:
             raise KerykeionException(
                 f"Unknown planet name for occultation search: {planet_id!r}. "
-                f"Valid names: {', '.join(STANDARD_PLANETS)}."
+                f"Valid names: {', '.join(sorted(_OCCULTABLE_BODY_NAMES))}."
+            )
+        if planet_id not in _OCCULTABLE_BODY_NAMES:
+            raise KerykeionException(
+                f"{planet_id!r} is not a physically occultable body (it is a "
+                f"calculated point). Occultation search accepts: "
+                f"{', '.join(sorted(_OCCULTABLE_BODY_NAMES))}."
             )
         return resolved
     if isinstance(planet_id, int):
@@ -259,13 +281,18 @@ class OccultationFactory:
             A list of :class:`OccultationModel` instances ordered by date.
 
         Raises:
-            KerykeionException: If the planet name is unknown, or if the
-                ephemeris backend fails mid-search (most often a date outside
-                the available ephemeris range); the search never returns
-                silently truncated results.
+            KerykeionException: If the planet name is unknown or not a physically
+                occultable body, if ``lat`` is outside the geometrically-possible
+                ±90° range, or if the ephemeris backend fails mid-search (most
+                often a date outside the available ephemeris range); the search
+                never returns silently truncated results.
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
+        # Reject an impossible latitude (e.g. an accidental lat/lng swap, made
+        # easy by the longitude-first backend geopos convention) rather than
+        # returning a bogus "visible" occultation.
+        validate_latitude(lat)
         planet_id = _resolve_planet_id(planet_id)
         planet_name = ephe.get_planet_name(planet_id)
         geopos = (lng, lat, 0.0)  # (longitude, latitude, altitude)
