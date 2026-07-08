@@ -1474,6 +1474,17 @@ class AstrologicalSubjectFactory:
             custom_ayanamsa_ayan_t0 (float, optional): Ayanamsa offset in degrees at
                 epoch ``t0`` for the USER sidereal mode. Required when
                 ``sidereal_mode="USER"``. Defaults to None.
+            active_fixed_stars (Optional[List[str]], optional): Fixed stars to
+                compute (forwarded to from_birth_data). Defaults to None.
+            calculate_dignities (bool, optional): Compute essential dignities.
+                Defaults to False.
+            calculate_nakshatra (bool, optional): Compute Vedic nakshatras.
+                Defaults to False.
+            calculate_gauquelin (bool, optional): Compute Gauquelin sectors.
+                Defaults to False.
+            calculate_nutation (bool, optional): Compute nutation. Defaults to False.
+            calculate_local_space (bool, optional): Compute local-space (horizontal)
+                coordinates. Defaults to False.
 
         Returns:
             AstrologicalSubjectModel: Astrological subject with positions calculated
@@ -2114,8 +2125,11 @@ class AstrologicalSubjectFactory:
         # Compute Julian Day for the input time (treated as local solar time)
         jd_local = ephe.julday(year, month, day, decimal_hour, cal_flag)
 
-        # Local Mean Time offset: 1 hour per 15° of longitude (east = ahead of UT)
-        lmt_offset_hours = location.lng / 15.0
+        # Local Mean Time offset: 1 hour per 15° of longitude (east = ahead of UT),
+        # quantized to the whole second — the same resolution the CE LMT path uses
+        # (see ~line 2009) — so jd_ut (below) and the displayed local ISO offset
+        # describe the identical instant rather than disagreeing by up to ~30 s.
+        lmt_offset_hours = round(location.lng / 15.0 * 3600) / 3600.0
 
         # Convert from Local Mean Time to Universal Time
         jd_ut = jd_local - lmt_offset_hours / 24.0

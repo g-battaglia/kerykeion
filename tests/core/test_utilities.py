@@ -1099,6 +1099,44 @@ class TestFormatAncientIso:
         result = format_ancient_iso(-500, 3, 21, 11.5, 0.0)
         assert result == "-0500-03-21T11:30:00+00:00"
 
+    def test_offset_rendered_at_second_resolution(self):
+        """Round 34: a sub-minute LMT offset must render at whole-second resolution
+        (HH:MM:SS), not rounded to the minute — otherwise the local ISO string and
+        the exact-offset UTC string/JD disagree by up to ~30s. Athens lng 23.7275
+        -> +01:34:55 exactly (minute-rounding would show the wrong +01:35)."""
+        offset_hours = 23.7275 / 15.0
+        result = format_ancient_iso(-500, 3, 21, 12.0, offset_hours)
+        assert result == "-0500-03-21T12:00:00+01:34:55"
+        # A whole-minute offset stays HH:MM (no trailing :00 seconds field), matching
+        # Python's datetime.isoformat convention.
+        assert format_ancient_iso(-500, 3, 21, 12.0, 1.5) == "-0500-03-21T12:00:00+01:30"
+
+    def test_negative_year_local_and_utc_iso_describe_the_same_instant(self):
+        """Round 34 regression: for a year<1 subject, local_time minus the displayed
+        offset must equal the UTC time exactly (they used to disagree by up to 30s
+        because the offset was minute-rounded for display but exact for the JD/UTC)."""
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, LocationData
+
+        for lng in (7.6869, 23.7275, 62.624, -47.3):
+            loc = LocationData(city="X", lng=lng, lat=45.0, tz_str="UTC", nation="XX")
+            data = dict(year=-100, month=6, day=15, hour=12, minute=0, seconds=0, lng=lng)
+            AstrologicalSubjectFactory._calculate_time_conversions_bce(data, loc)
+            local = data["iso_formatted_local_datetime"]
+            utc = data["iso_formatted_utc_datetime"]
+            # Parse "T12:00:00" and the offset from the local string; subtract offset.
+            time_part = local.split("T")[1]
+            hms = time_part[:8]
+            lh, lm, ls = (int(x) for x in hms.split(":"))
+            off = time_part[8:]  # e.g. "+00:30:45" or "+01:30"
+            oparts = [int(x) for x in off[1:].split(":")]
+            off_sec = (oparts[0] * 3600 + oparts[1] * 60 + (oparts[2] if len(oparts) > 2 else 0))
+            off_sec = off_sec if off[0] == "+" else -off_sec
+            local_sec = lh * 3600 + lm * 60 + ls
+            derived_utc_sec = (local_sec - off_sec) % 86400
+            uh, um, us = (int(x) for x in utc.split("T")[1][:8].split(":"))
+            utc_sec = uh * 3600 + um * 60 + us
+            assert derived_utc_sec == utc_sec, f"lng={lng}: {local} vs {utc}"
+
 
 class TestYearZeroIsoConformance:
     """Year 0 (= 1 BCE) must be the ISO 8601 unsigned ``0000``, never ``-0000``

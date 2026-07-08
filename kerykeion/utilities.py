@@ -1002,17 +1002,22 @@ def _assemble_ancient_iso(
     # emit the non-conformant "-0000" that standards-based parsers reject.
     year_str = f"{year:04d}" if year >= 0 else f"-{abs(year):04d}"
 
-    # UTC offset string
+    # UTC offset string, rendered at WHOLE-SECOND resolution — matching the CE LMT
+    # path (astrological_subject_factory ~line 2009) and Python's datetime.isoformat:
+    # "+HH:MM" for a whole-minute offset, "+HH:MM:SS" when it carries seconds. The
+    # local ISO must display the SAME offset the caller used to derive the UTC
+    # instant (a longitude-based LMT offset rounded only to the minute would make
+    # this local string and the exact-offset UTC string disagree by up to ~30 s).
     if utc_offset_hours == 0.0:
         offset_str = "+00:00"
     else:
         sign = "+" if utc_offset_hours >= 0 else "-"
-        abs_off = abs(utc_offset_hours)
-        # Carry a rounded-up 60 into the hour (e.g. 0.99333 h -> 00:60 -> 01:00):
-        # rounding minutes independently of hours could otherwise emit ":60",
-        # which is not a valid ISO 8601 offset field (minutes must be 0-59).
-        oh, om = divmod(round(abs_off * 60), 60)
-        offset_str = f"{sign}{oh:02d}:{om:02d}"
+        # divmod on total seconds carries any 60 up into the next field, so no
+        # ":60" can be emitted (minutes/seconds stay 0-59).
+        total_seconds = round(abs(utc_offset_hours) * 3600)
+        oh, rem = divmod(total_seconds, 3600)
+        om, osec = divmod(rem, 60)
+        offset_str = f"{sign}{oh:02d}:{om:02d}:{osec:02d}" if osec else f"{sign}{oh:02d}:{om:02d}"
 
     return f"{year_str}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{second:02d}{offset_str}"
 

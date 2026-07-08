@@ -74,7 +74,7 @@ import logging
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
 from datetime import datetime, timezone
-from typing import List, Union, cast
+from typing import List, Literal, Union, cast
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.fetch_geonames import FetchGeonames
@@ -85,7 +85,7 @@ from kerykeion.astrological_subject_factory import (
     DEFAULT_GEONAMES_USERNAME,
 )
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.schemas.kr_literals import AstrologicalPoint, ReturnType
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import PlanetReturnModel, AstrologicalSubjectModel
 
 
@@ -94,6 +94,12 @@ from kerykeion.schemas.kr_models import PlanetReturnModel, AstrologicalSubjectMo
 # RuntimeError, but include it defensively. Defined module-level (not inline in
 # the except clause) so mypy accepts the dynamic getattr tuple.
 _BACKEND_ERRORS: tuple = tuple({RuntimeError, getattr(ephe, "Error", RuntimeError)})
+
+# The Solar/Lunar return entry points accept only these two of ReturnType's four
+# members; Heliocentric and Lunar_Node_Crossing have their own dedicated methods
+# (next_heliocentric_return / next_lunar_node_crossing) and are rejected here. Use
+# the narrow alias so a type checker matches the runtime-accepted set.
+SolarLunarReturnType = Literal["Solar", "Lunar"]
 
 
 class PlanetaryReturnFactory:
@@ -498,7 +504,7 @@ class PlanetaryReturnFactory:
                 self.tz_str = self.city_data["timezonestr"]
 
     def next_return_from_iso_formatted_time(
-        self, iso_formatted_time: str, return_type: ReturnType, backwards: bool = False
+        self, iso_formatted_time: str, return_type: SolarLunarReturnType, backwards: bool = False
     ) -> PlanetReturnModel:
         """
         Calculate the next planetary return occurring after a specified ISO-formatted datetime.
@@ -520,7 +526,7 @@ class PlanetaryReturnFactory:
                 Must be a valid ISO 8601 datetime string (e.g., "2024-01-15T10:30:00"
                 or "2024-01-15T10:30:00+00:00"). The method will find the next return
                 occurring after this moment.
-            return_type (ReturnType): Type of planetary return to calculate.
+            return_type (SolarLunarReturnType): Type of planetary return to calculate.
                 Must be either "Solar" for Sun returns or "Lunar" for Moon returns.
                 This determines which planet's return cycle to compute.
             backwards (bool): If True, search backward in time for the previous
@@ -767,7 +773,7 @@ class PlanetaryReturnFactory:
             **model_data,
         )
 
-    def next_return_from_year(self, year: int, return_type: ReturnType) -> PlanetReturnModel:
+    def next_return_from_year(self, year: int, return_type: SolarLunarReturnType) -> PlanetReturnModel:
         """
         Calculate the planetary return occurring within a specified year.
 
@@ -791,7 +797,7 @@ class PlanetaryReturnFactory:
             year (int): The calendar year to search for the return. Must be a valid
                 year (typically between 1800-2200 for reliable ephemeris data).
                 Examples: 2024, 2025, 1990, 2050.
-            return_type (ReturnType): The type of planetary return to calculate.
+            return_type (SolarLunarReturnType): The type of planetary return to calculate.
                 Must be either "Solar" for Sun returns or "Lunar" for Moon returns.
 
         Returns:
@@ -863,7 +869,7 @@ class PlanetaryReturnFactory:
         return self.next_return_from_date(year, 1, 1, return_type=return_type)
 
     def next_return_from_date(
-        self, year: int, month: int, day: int = 1, *, return_type: ReturnType, backwards: bool = False
+        self, year: int, month: int, day: int = 1, *, return_type: SolarLunarReturnType, backwards: bool = False
     ) -> PlanetReturnModel:
         """
         Calculate the first planetary return occurring on or after a specified date.
@@ -882,7 +888,7 @@ class PlanetaryReturnFactory:
             month (int): The month to start the search from. Must be between 1 and 12.
             day (int): The day to start the search from. Must be a valid day for the
                 specified month (1-28/29/30/31 depending on month). Defaults to 1.
-            return_type (ReturnType): The type of planetary return to calculate.
+            return_type (SolarLunarReturnType): The type of planetary return to calculate.
                 Must be either "Solar" for Sun returns or "Lunar" for Moon returns.
             backwards (bool): If True, search backward in time for the previous
                 return instead of forward. Defaults to False.
@@ -934,7 +940,7 @@ class PlanetaryReturnFactory:
         # Get the return using the existing method
         return self.next_return_from_iso_formatted_time(start_date.isoformat(), return_type, backwards=backwards)
 
-    def next_return_from_month_and_year(self, year: int, month: int, return_type: ReturnType) -> PlanetReturnModel:
+    def next_return_from_month_and_year(self, year: int, month: int, return_type: SolarLunarReturnType) -> PlanetReturnModel:
         """
         DEPRECATED: Use next_return_from_date() instead.
 
@@ -944,7 +950,7 @@ class PlanetaryReturnFactory:
         Args:
             year (int): The calendar year to search within.
             month (int): The month to start the search from (1-12).
-            return_type (ReturnType): "Solar" or "Lunar".
+            return_type (SolarLunarReturnType): "Solar" or "Lunar".
 
         Returns:
             PlanetReturnModel: Return chart data for the first return found.

@@ -257,10 +257,11 @@ class TestLMTOffset:
 
     def test_lmt_offset_positive_longitude(self):
         """East longitude produces a positive LMT offset (local time ahead of UT)."""
-        # Athens: lng=23.7275 → offset ≈ +1.5818 hours
+        # Athens: lng=23.7275 → offset ≈ +1.5818 hours = +01:34:55 (whole-second
+        # resolution, so the local ISO and the exact-offset UTC agree).
         subject = _create_bce_subject("ancient_500bc")
         # The local ISO should show a positive UTC offset
-        assert "+01:35" in subject.iso_formatted_local_datetime
+        assert "+01:34:55" in subject.iso_formatted_local_datetime
 
     def test_lmt_offset_different_longitudes(self):
         """Different longitudes produce different Julian Days for the same local time."""
@@ -314,13 +315,18 @@ class TestAncientISOFormat:
         result = format_ancient_iso(-100, 6, 15, 12.0, -5.0)
         assert "-05:00" in result
 
-    def test_offset_minutes_carry_into_hour(self):
-        """A fractional offset that rounds to 60 minutes must carry into the hour,
-        never emit an invalid ':60' offset field (minutes must be 0-59)."""
-        # lng 14.9 / 15 = 0.99333 h -> 59.6 min -> rounds to 60 -> must become +01:00
+    def test_offset_seconds_carry_and_no_invalid_field(self):
+        """The offset renders at whole-second resolution and any carry stays valid
+        (no ':60' minutes/seconds field). Round 34: this used to minute-round, which
+        made the local ISO disagree with the exact-offset UTC by up to ~30 s."""
+        # lng 14.9/15 h = 0.99333 h = 59m36s exactly -> +00:59:36 (not minute-rounded to +01:00).
         result = format_ancient_iso(-500, 3, 21, 12.0, 14.9 / 15.0)
-        assert result.endswith("+01:00")
+        assert result.endswith("+00:59:36")
         assert ":60" not in result
+        # A sub-second remainder that rounds up to a full 3600 s carries into the hour.
+        carry = format_ancient_iso(-500, 3, 21, 12.0, 3599.7 / 3600.0)
+        assert carry.endswith("+01:00")
+        assert ":60" not in carry
 
     def test_decimal_hour(self):
         result = format_ancient_iso(-200, 6, 21, 14.5, 0.0)

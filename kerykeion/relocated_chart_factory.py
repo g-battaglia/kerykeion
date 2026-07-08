@@ -76,7 +76,10 @@ class RelocatedChartFactory:
         fields and the ISO string agree.
         """
         if year < 1:
-            lmt_offset_hours = new_lng / 15.0
+            # Quantize the LMT offset to the whole second (matching the subject
+            # factory's BCE path and the CE LMT path) so the recomputed local ISO
+            # offset and the UT-derived instant describe the identical time.
+            lmt_offset_hours = round(new_lng / 15.0 * 3600) / 3600.0
             jd_local = julian_day + lmt_offset_hours / 24.0
             loc_year, loc_month, loc_day, loc_dec_hour = ephe.revjul(jd_local, ephe.JUL_CAL)
             loc_year, loc_month, loc_day = int(loc_year), int(loc_month), int(loc_day)
