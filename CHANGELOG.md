@@ -233,6 +233,24 @@ tables) — all verified correct with no changes needed beyond the fix above.
   ephemeris by up to ~0.3 arcsecond (~8e-5° for the Moon) — sub-arcsecond and
   astrologically negligible (far inside the day-for-a-year technique's own
   precision), but not bit-exact against a raw `ephe.calc_ut` at the float JD.
+- **Five house systems return degenerate cusps at deep southern-polar
+  latitudes.** For latitudes below roughly −67° (inside the Antarctic polar
+  circle), the bundled `libephemeris 3.0.0rc1` backend silently returns
+  non-partitioning house cusps (they run backwards, so `abs_pos` gaps sum to
+  ~3960° instead of 360°) and a Medium Coeli flipped by 180° for Campanus (`C`),
+  Regiomontanus (`R`), Polich-Page (`T`), APC (`Y`) and Sunshine (`I`) — and
+  `Sunshine` (`I`) additionally collapses several cusps onto one longitude
+  whenever the Sun is circumpolar, in *both* hemispheres. Unlike Placidus/Koch,
+  which *raise* inside the polar circle (kerykeion then clamps to the ±66° limit
+  with a warning), these systems return the wrong cusps **without raising**, so
+  kerykeion's polar fallback does not fire and the bad cusps reach the model.
+  The MC is a function of RAMC only and cannot depend on latitude, so this is a
+  definite backend defect, not a documented polar degradation. Impact is
+  effectively nil in practice (no one is born inside the Antarctic circle), and
+  the northern-polar equivalents, every other house system, and the four angular
+  cusps are all correct. Whole Sign (`W`), Equal (`A`) and Porphyry (`O`) are
+  defined and correct at every latitude. A post-hoc cusp-partition validation in
+  kerykeion (plus an upstream `libephemeris` fix) is planned for a future release.
 
 ### Changed (breaking, pre-6.0.0 full-codebase review, third pass)
 

@@ -155,4 +155,60 @@ fallback. No change to the correct (libephemeris / provisioned-swisseph) paths.
 
 ---
 
+## 4. 🔴 Post-hoc house-cusp partition validation (southern-polar backend defect)
+
+**Why (limitation being removed).** `houses_ex2_with_polar_fallback` trusts the
+backend to *raise* `POLAR_HOUSES_ERROR_TYPES` when a quadrant house system is
+undefined inside the polar circle, and only then clamps to the ±66° limit. But
+at deep **southern** latitudes (onset ~−67°, inside the Antarctic circle) the
+bundled `libephemeris 3.0.0rc1` does **not** raise for Campanus (`C`),
+Regiomontanus (`R`), Polich-Page (`T`), APC (`Y`) and Sunshine (`I`) — it
+silently returns **non-partitioning cusps** (they run backwards, so the 12
+consecutive `abs_pos` gaps sum to ~3960° instead of 360°) and a **Medium Coeli
+flipped by 180°** (MC is a function of RAMC only and cannot depend on latitude).
+`Sunshine` (`I`) additionally collapses several cusps onto a single longitude
+whenever the Sun is circumpolar, in *both* hemispheres (its sibling `i` correctly
+raises and falls back). Because nothing is raised, the polar fallback never fires
+and the degenerate cusps reach the model, silently mis-assigning every house.
+Reproduced round 29 (config-matrix lens); the northern-polar equivalents and
+every other house system are correct, and the four angular cusps are correct.
+Root cause is the backend (this is the pre-6.0.0 `libephemeris` rc — the same
+release blocker); real-world impact is nil (no Antarctic-circle births).
+
+**Scope.**
+- Add a cusp-partition validator (the 12 consecutive gaps each strictly in
+  `(0, 360)` and summing to 360 within tolerance; also reject any ~0-width house
+  to catch the Sunshine collapse). Run it on the cusps returned by
+  `houses_ex2_with_polar_fallback` **whether or not** the backend raised.
+- On a degenerate result: route through the existing clamp-and-retry path (the
+  ±66° clamp recovers `C`/`R`/`Y`/`I`). If the clamped retry is *still*
+  degenerate (`T`/Polich-Page is degenerate at the −66° clamp target itself, and
+  `I` when the Sun stays circumpolar), raise a clear `KerykeionException`
+  ("house system undefined at this latitude") rather than shipping bad cusps —
+  the same never-ship-garbage contract used for the raised case.
+- Validate the clamped retry on the **raised** path too (currently returned
+  unvalidated), so both paths share the guarantee.
+- **Report upstream to `libephemeris`**: the backend should raise (as it does in
+  the northern hemisphere and for Placidus/Koch) instead of returning a
+  180°-flipped MC and backwards cusps at southern-polar latitudes. Prefer the
+  upstream fix; the kerykeion validator is defense-in-depth.
+
+**Risk.** Medium. Touches the core house-computation path. The validator must
+never false-positive on legitimately narrow-but-valid polar quadrant houses
+(valid cusps at ±66° can have &lt;0.5° houses but still sum to 360°); key on the
+partition sum + zero-width test, not a min-gap threshold. Changes the error
+contract for `T`/`I` at southern-polar latitudes (silent garbage → clear raise);
+audit tests/goldens for any southern-polar chart using these systems first
+(none found in round 29).
+
+**Acceptance criteria.**
+- No config ever returns cusps whose gaps do not partition [0, 360); degenerate
+  backend output is either clamped to valid cusps (with the existing warning) or
+  raises `KerykeionException`.
+- New tests: `C`/`R`/`Y`/`I` at −78° recover valid partitioning cusps with the
+  correct (un-flipped) MC; `T` at −78° and `I` with a circumpolar Sun raise a
+  clear exception; northern-polar and normal-latitude output unchanged.
+- Upstream `libephemeris` issue filed (link recorded here).
+- Quality gate green.
+
 <!-- Add further mandatory evolutions below, same structure. -->
