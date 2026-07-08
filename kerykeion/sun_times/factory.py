@@ -28,7 +28,7 @@ class SunTimesFactory:
         >>> sun.sunrise.isoformat()
         '2026-05-28T03:39:...+00:00'
         >>> str(sun.day_length)
-        '15:0...'
+        '14:5...'
 
     Note:
         The result is the apparent (refracted) upper-limb sunrise/sunset, the

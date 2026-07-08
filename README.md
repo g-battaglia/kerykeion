@@ -1357,7 +1357,7 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
 )
 
 # The ayanamsa offset (degrees) is available on sidereal charts:
-print(johnny.ayanamsa_value)  # e.g. 23.85
+print(johnny.ayanamsa_value)  # e.g. 23.34
 ```
 
 Kerykeion supports **47 named sidereal modes** plus a **USER** mode for custom ayanamsa definitions (48 total). Mode families include Indian/Vedic (Lahiri, Krishnamurti, Raman, Aryabhata, Suryasiddhanta, True Citra/Pushya/Revati, ...), Western sidereal (Fagan-Bradley, DeLuce, Hipparchos, ...), Babylonian (Kugler, Huber, Britton, ...), galactic alignment, and astronomical reference frames (J2000, J1900, B1950).
@@ -1700,7 +1700,7 @@ Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
 +Upcoming Phases+---------------------------------+---------------------------------+
 | Phase         | Last                            | Next                            |
 +---------------+---------------------------------+---------------------------------+
-| New Moon      | Sun, 29 Mar 2025 10:57:49 +0000 | Mon, 28 Apr 2025 00:31:07 +0000 |
+| New Moon      | Sat, 29 Mar 2025 10:57:49 +0000 | Sun, 27 Apr 2025 19:31:09 +0000 |
 | First Quarter | ...                             | ...                             |
 | Full Moon     | ...                             | ...                             |
 | Last Quarter  | ...                             | ...                             |
@@ -1729,10 +1729,10 @@ print(overview.model_dump_json(exclude_none=True, indent=2))
   "timestamp": 1743490260,
   "datestamp": "Tue, 01 Apr 2025 06:51:00 +0000",
   "sun": {
-    "sunrise": "2025-04-01T06:35:00Z",
-    "sunset": "2025-04-01T19:34:00Z",
-    "solar_noon": "2025-04-01T13:04:00Z",
-    "day_length": "PT12H59M",
+    "sunrise": "2025-04-01T05:35:33.380154Z",
+    "sunset": "2025-04-01T18:34:03.841539Z",
+    "solar_noon": "2025-04-01T12:04:48.610846Z",
+    "day_length": "PT12H58M30.461385S",
     "next_solar_eclipse": { "type": "Partial Solar Eclipse", "...": "..." }
   },
   "moon": {
