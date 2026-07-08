@@ -2177,14 +2177,17 @@ def format_datetime_with_timezone(iso_datetime_string: str) -> str:
     Returns:
         Formatted datetime string with properly formatted timezone offset (HH:MM)
     """
-    # BCE dates: negative-year ISO strings like "-0500-03-21T12:00:00+01:35"
-    # Python's datetime.fromisoformat cannot handle these.
-    if iso_datetime_string.startswith("-"):
-        # Split: "-0500-03-21T12:00:00+01:35" → year="-0500", rest="03-21T12:00:00+01:35"
-        # The year is everything up to the second hyphen (after the leading minus)
-        rest = iso_datetime_string[1:]  # "0500-03-21T12:00:00+01:35"
-        year_str, remainder = rest.split("-", 1)  # "0500", "03-21T12:00:00+01:35"
-        year_str = "-" + year_str  # "-0500"
+    # BCE dates: negative-year ISO strings like "-0500-03-21T12:00:00+01:35",
+    # and ISO year 0 ("0000-...", i.e. 1 BCE) — Python's datetime.fromisoformat
+    # cannot handle either (its minimum year is 1). Parse them manually.
+    if iso_datetime_string.startswith("-") or iso_datetime_string.startswith("0000-"):
+        # Split off the year field. For "-0500-..." strip the leading minus first
+        # (year is negative); for "0000-..." the year is already the leading token.
+        negative = iso_datetime_string.startswith("-")
+        rest = iso_datetime_string[1:] if negative else iso_datetime_string  # "0500-03-21T..." / "0000-06-15T..."
+        year_str, remainder = rest.split("-", 1)  # "0500", "03-21T..." / "0000", "06-15T..."
+        if negative:
+            year_str = "-" + year_str  # "-0500"
 
         # Extract date and time parts
         date_part, time_with_tz = remainder.split("T", 1)  # "03-21", "12:00:00+01:35"

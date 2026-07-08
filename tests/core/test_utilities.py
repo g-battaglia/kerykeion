@@ -34,10 +34,12 @@ from kerykeion.utilities import (
     get_house_name,
     get_house_number,
     format_ancient_iso,
+    format_degrees_below_bound,
+    format_iso_display,
     format_timedelta_hhmm,
     extract_year_from_iso,
 )
-from kerykeion.charts.charts_utils import convert_decimal_to_degree_string
+from kerykeion.charts.charts_utils import convert_decimal_to_degree_string, format_datetime_with_timezone
 
 
 # =============================================================================
@@ -1127,6 +1129,43 @@ class TestYearZeroIsoConformance:
     def test_legacy_minus_zero_still_parses(self):
         # Backward compatibility: older stored strings used "-0000".
         assert extract_year_from_iso("-0000-06-15T12:00:00+00:00") == 0
+
+    def test_display_helpers_handle_unsigned_year_zero(self):
+        # Round 27 regression: once year 0 stores as unsigned "0000-..." the two
+        # display consumers must not fall through to datetime.fromisoformat (min
+        # year 1) and raise "year must be in 1..9999, not 0" — which crashed chart
+        # rendering. Both take the manual branch and format the ISO year 0000.
+        iso = "0000-06-15T12:00:00+00:00"
+        assert format_iso_display(iso, "%Y-%m-%d %H:%M") == "0000-06-15 12:00"
+        assert format_iso_display(iso, "%Y") == "0000"
+        assert format_datetime_with_timezone(iso) == "0000-06-15 12:00 [+00:00]"
+        # Adjacent years still route correctly (BCE manual, CE via fromisoformat).
+        assert format_iso_display("-0001-06-15T12:00:00+00:00", "%Y") == "-0001"
+        assert format_iso_display("0001-06-15T12:00:00+00:00", "%Y-%m-%d") == "0001-06-15"
+
+
+class TestFormatDegreesBelowBound:
+    """Round 27: a within-sign position in [0,30) or abs_pos in [0,360) sitting
+    within ~0.005° of the upper cusp must never render as the impossible "30.00"
+    (= 0° of the next sign) or the out-of-range "360.00"; it clamps just below."""
+
+    def test_position_near_cusp_clamped(self):
+        # 29.9997° Pisces must not print "30.00" (which reads as 0° Aries).
+        assert format_degrees_below_bound(29.999722, 30.0) == "29.99"
+
+    def test_abs_pos_near_full_circle_clamped(self):
+        # abs_pos 359.9997 must stay in [0,360); never "360.00".
+        assert format_degrees_below_bound(359.9997, 360.0) == "359.99"
+
+    def test_mid_sign_value_unchanged_vs_naive_format(self):
+        # Non-overshoot values keep their ordinary rounded 2-decimal rendering.
+        for v, bound in [(12.345, 30.0), (0.0, 30.0), (15.674, 30.0), (123.82, 360.0)]:
+            assert format_degrees_below_bound(v, bound) == f"{round(v, 2):.2f}"
+
+    def test_result_is_always_below_bound(self):
+        for v in [29.9999999, 30.0, 359.99999, 360.0]:
+            bound = 30.0 if v < 40 else 360.0
+            assert float(format_degrees_below_bound(v, bound)) < bound
 
 
 class TestHorizonSystemHouseAssignmentRound6:

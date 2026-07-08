@@ -127,6 +127,11 @@ def zodiac_breakdown(degree: float) -> ZodiacPosition:
         The :class:`ZodiacPosition` for the normalized degree.
     """
     deg = degree % 360.0
+    # float64 `%` can itself return exactly 360.0 for a tiny-negative input
+    # ((-1e-15) % 360.0 == 360.0), which would make sign_num == 12 and index
+    # past SIGN_CODES; fold that edge back (mirrors get_kerykeion_point_from_degree).
+    if deg >= 360.0:
+        deg -= 360.0
     sign_num = int(deg // 30)
     return ZodiacPosition(
         sign=SIGN_CODES[sign_num],

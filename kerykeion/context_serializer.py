@@ -35,7 +35,11 @@ from kerykeion.schemas.kr_models import (
 )
 from kerykeion.secondary_progressions import SolarArcSubjectModel
 from kerykeion.midpoints import MidpointModel
-from kerykeion.utilities import format_timedelta_hhmm, strip_illegal_control_chars as _strip_illegal
+from kerykeion.utilities import (
+    format_degrees_below_bound,
+    format_timedelta_hhmm,
+    strip_illegal_control_chars as _strip_illegal,
+)
 
 
 # Mapping from abbreviated sign names to full names
@@ -151,9 +155,9 @@ def kerykeion_point_to_context(point: KerykeionPointModel) -> str:
 
     attrs: dict = {
         "name": point.name,
-        "position": f"{point.position:.2f}",
+        "position": format_degrees_below_bound(point.position, 30.0),
         "sign": full_sign_name,
-        "abs_pos": f"{point.abs_pos:.2f}",
+        "abs_pos": format_degrees_below_bound(point.abs_pos, 360.0),
         "quality": point.quality,
         "element": point.element,
     }

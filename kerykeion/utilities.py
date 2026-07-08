@@ -840,13 +840,17 @@ def format_iso_display(iso_datetime_string: str, fmt: str = "%Y-%m-%d %H:%M") ->
     Returns:
         Formatted date/time string.
     """
-    if not iso_datetime_string.startswith("-"):
+    # BCE ("-YYYY-...") and ISO year 0 ("0000-...", i.e. 1 BCE) both fall outside
+    # datetime.fromisoformat's range (its minimum year is 1); parse them manually.
+    if not (iso_datetime_string.startswith("-") or iso_datetime_string.startswith("0000-")):
         return datetime.fromisoformat(iso_datetime_string).strftime(fmt)
 
-    # Parse "-YYYY-MM-DDThh:mm:ss±HH:MM" manually
-    rest = iso_datetime_string[1:]  # strip leading minus
+    # Parse "[-]YYYY-MM-DDThh:mm:ss±HH:MM" manually
+    negative = iso_datetime_string.startswith("-")
+    rest = iso_datetime_string[1:] if negative else iso_datetime_string  # strip leading minus if present
     year_str, remainder = rest.split("-", 1)
-    year_str = "-" + year_str  # e.g. "-0500"
+    if negative:
+        year_str = "-" + year_str  # e.g. "-0500"
     parts = remainder.split("T", 1)
     date_tokens = parts[0].split("-")  # ["03", "21"]
     time_str = parts[1] if len(parts) > 1 else "00:00:00"
@@ -886,6 +890,31 @@ def extract_year_from_iso(iso_datetime_string: str) -> int:
     if iso_datetime_string.startswith("0000"):
         return 0
     return datetime.fromisoformat(iso_datetime_string).year
+
+
+def format_degrees_below_bound(value: float, upper_bound: float, decimals: int = 2) -> str:
+    """Format a degree value, guaranteeing the rounded string stays *below* ``upper_bound``.
+
+    A within-sign ``position`` lives in ``[0, 30)`` and an ``abs_pos`` in ``[0, 360)``,
+    but a point can sit within ~0.005° of the upper cusp. Naive ``f"{v:.2f}"`` rounds
+    such a value UP across the boundary, printing an impossible ``"30.00"`` (that is 0°
+    of the *next* sign) or an out-of-range ``"360.00"`` while the ``sign`` label still
+    shows the current sign. Clamp the rounded value to the largest representable value
+    strictly below the cusp so the number stays consistent with the sign — the chart
+    drawing path floors for exactly this reason (see ``convert_decimal_to_degree_string``).
+
+    Args:
+        value: The degree value to format (assumed already normalized to ``[0, upper_bound)``).
+        upper_bound: Exclusive upper cusp (``30.0`` for a within-sign position, ``360.0`` for abs_pos).
+        decimals: Number of fractional digits (default 2).
+
+    Returns:
+        The formatted string, never equal to or above ``upper_bound``.
+    """
+    rounded = round(value, decimals)
+    if rounded >= upper_bound:
+        rounded = upper_bound - 10 ** (-decimals)
+    return f"{rounded:.{decimals}f}"
 
 
 def format_timedelta_hhmm(td: timedelta) -> str:

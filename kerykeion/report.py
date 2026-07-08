@@ -9,6 +9,7 @@ from simple_ascii_tables import AsciiTable
 from kerykeion.utilities import (
     get_available_astrological_points_list,
     get_houses_list,
+    format_degrees_below_bound,
     format_iso_display,
     format_timedelta_hhmm,
     strip_illegal_control_chars,
@@ -621,7 +622,7 @@ class ReportGenerator:
             row = [
                 _humanize(point.name),
                 f"{point.sign} {_sign_emoji(point.emoji)}",
-                f"{point.position:.2f}°",
+                f"{format_degrees_below_bound(point.position, 30.0)}°",
                 speed_str,
                 decl_str,
                 ret_str,
@@ -680,8 +681,8 @@ class ReportGenerator:
                 [
                     _humanize(house.name),
                     f"{house.sign} {_sign_emoji(house.emoji)}",
-                    f"{house.position:.2f}°",
-                    f"{house.abs_pos:.2f}°",
+                    f"{format_degrees_below_bound(house.position, 30.0)}°",
+                    f"{format_degrees_below_bound(house.abs_pos, 360.0)}°",
                 ]
             )
 

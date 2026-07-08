@@ -632,3 +632,41 @@ class TestRelocateTopocentricRejected:
             RelocatedChartFactory.relocate(
                 topo, new_lat=40.7128, new_lng=-74.006, new_city="New York"
             )
+
+
+class TestRelocateExtremeYearBoundary:
+    """Round 27: relocating a near-datetime.max/min subject to a timezone whose
+    offset pushes the local wall time past datetime's representable range must
+    surface as KerykeionException (raw OverflowError before), matching the ISO
+    entry points' contract. Uses model_copy to stand in for an extended-kernel
+    year-9999 / year-1 subject the default test kernel cannot construct; the
+    astimezone conversion at the fix site is kernel-independent."""
+
+    @pytest.mark.parametrize(
+        "year, iso_utc, jd_dt, new_tz_str",
+        [
+            (9999, "9999-12-31T23:59:59+00:00", (9999, 12, 31, 23, 59, 59), "Etc/GMT-14"),
+            (1, "0001-01-01T00:00:00+00:00", (1, 1, 1, 0, 0, 0), "Etc/GMT+12"),
+        ],
+    )
+    def test_extreme_year_relocation_raises_kerykeion(self, year, iso_utc, jd_dt, new_tz_str):
+        from datetime import datetime, timezone
+        from kerykeion.schemas import KerykeionException
+        from kerykeion.utilities import datetime_to_julian
+
+        base = AstrologicalSubjectFactory.from_birth_data(
+            "B", 2000, 6, 15, 12, 0, lng=0.0, lat=41.9, tz_str="UTC",
+            city="X", nation="XX", online=False, suppress_geonames_warning=True,
+        )
+        edge = base.model_copy(update=dict(
+            year=year,
+            julian_day=datetime_to_julian(datetime(*jd_dt, tzinfo=timezone.utc)),
+            iso_formatted_utc_datetime=iso_utc,
+            iso_formatted_local_datetime=iso_utc,
+            tz_str="UTC",
+        ))
+        with pytest.raises(KerykeionException):
+            RelocatedChartFactory.relocate(
+                edge, new_lat=0.0, new_lng=0.0, new_city="K", new_nation="KI",
+                new_tz_str=new_tz_str,
+            )

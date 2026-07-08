@@ -32,7 +32,7 @@ from kerykeion import (
 )
 from kerykeion.dominants.base import Category
 from kerykeion.dominants.strategies.modern import ModernDominantStrategy
-from kerykeion.dominants.utils import part_of_fortune_degree, prenatal_syzygy
+from kerykeion.dominants.utils import part_of_fortune_degree, prenatal_syzygy, zodiac_breakdown
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.utilities import get_kerykeion_point_from_degree
 
@@ -514,3 +514,23 @@ class TestAlmutenRankingConsistency:
             )
             r = DominantsFactory.from_subject(s, strategy="almuten_figuris")
             assert r.planets[0].name == r.dominant_planet, f"mismatch for year {y}"
+
+
+class TestZodiacBreakdownBoundary:
+    """Round 27: zodiac_breakdown documents "any real number". A tiny-negative
+    input hits float64's `(-1e-15) % 360.0 == 360.0`, which made sign_num == 12
+    and indexed past SIGN_CODES (IndexError). The fold-back keeps it in [0,360)."""
+
+    def test_tiny_negative_does_not_crash(self):
+        z = zodiac_breakdown(-1e-15)
+        assert z.sign == "Ari"
+        assert z.sign_num == 0
+        assert z.position == approx(0.0)
+
+    def test_boundaries_stay_in_range(self):
+        assert zodiac_breakdown(0.0).sign == "Ari"
+        assert zodiac_breakdown(360.0).sign == "Ari"  # full circle folds to 0°
+        assert zodiac_breakdown(359.9999).sign == "Pis"
+        # -1e-9 % 360.0 == 359.9999... (< 360, no fold) -> last sliver of Pisces;
+        # only the exact-360.0 float edge (-1e-15) folds back to Aries 0°.
+        assert zodiac_breakdown(-1e-9).sign == "Pis"

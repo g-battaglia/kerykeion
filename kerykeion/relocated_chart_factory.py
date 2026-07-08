@@ -106,7 +106,18 @@ class RelocatedChartFactory:
             utc_dt = datetime.fromisoformat(iso_utc)
             if utc_dt.tzinfo is None:
                 utc_dt = utc_dt.replace(tzinfo=timezone.utc)
-            local_dt = utc_dt.astimezone(safe_timezone(new_tz_str))
+            try:
+                # A near-datetime.max/min instant (extended-kernel year-9999 or
+                # year-1 subject) can push the local wall time past datetime's
+                # representable range, raising a raw OverflowError/OSError. The
+                # subject factory entry points surface the equivalent boundary as
+                # KerykeionException; match that contract here.
+                local_dt = utc_dt.astimezone(safe_timezone(new_tz_str))
+            except (OverflowError, OSError) as exc:
+                raise KerykeionException(
+                    f"Relocating {iso_utc!r} to timezone {new_tz_str!r} pushes the "
+                    f"local wall time outside the representable date range: {exc}."
+                ) from exc
             relocated_data["iso_formatted_local_datetime"] = local_dt.isoformat()
             relocated_data["year"] = local_dt.year
             relocated_data["month"] = local_dt.month
