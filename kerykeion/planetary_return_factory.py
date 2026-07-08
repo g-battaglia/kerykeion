@@ -89,6 +89,13 @@ from kerykeion.schemas.kr_literals import AstrologicalPoint, ReturnType
 from kerykeion.schemas.kr_models import PlanetReturnModel, AstrologicalSubjectModel
 
 
+# Backend errors the return-crossing search can raise when it walks off the
+# ephemeris date range. libephemeris raises its own `Error`; no backend raises
+# RuntimeError, but include it defensively. Defined module-level (not inline in
+# the except clause) so mypy accepts the dynamic getattr tuple.
+_BACKEND_ERRORS: tuple = tuple({RuntimeError, getattr(ephe, "Error", RuntimeError)})
+
+
 class PlanetaryReturnFactory:
     """
     A factory class for calculating and generating planetary return charts.
@@ -530,10 +537,9 @@ class PlanetaryReturnFactory:
                 - Julian Day Number for the return moment
 
         Raises:
-            KerykeionException: If return_type is not "Solar" or "Lunar".
-            ValueError: If iso_formatted_time is not a valid ISO datetime format.
-            SwissEphException: If Swiss Ephemeris calculations fail due to invalid
-                date ranges or astronomical calculation errors.
+            KerykeionException: If ``return_type`` is not "Solar" or "Lunar", if
+                ``iso_formatted_time`` is not a valid ISO datetime, or if the return
+                search steps outside the available ephemeris date range.
 
         Examples:
             Calculate next Solar Return after a specific date:
@@ -648,12 +654,23 @@ class PlanetaryReturnFactory:
                         raise KerykeionException(
                             "Backward Solar return search requires the libephemeris backend."
                         )
+                    except _BACKEND_ERRORS as exc:
+                        raise KerykeionException(
+                            "The Solar return search stepped outside the available ephemeris "
+                            f"date range; narrow the search window. ({exc})"
+                        ) from exc
                 else:
-                    return_julian_date = ephe.solcross_ut(
-                        self.subject.sun.abs_pos,
-                        julian_day,
-                        iflag,
-                    )
+                    try:
+                        return_julian_date = ephe.solcross_ut(
+                            self.subject.sun.abs_pos,
+                            julian_day,
+                            iflag,
+                        )
+                    except _BACKEND_ERRORS as exc:
+                        raise KerykeionException(
+                            "The Solar return search stepped outside the available ephemeris "
+                            f"date range; narrow the search window. ({exc})"
+                        ) from exc
             elif return_type == "Lunar":
                 if self.subject.moon is None:
                     raise KerykeionException(
@@ -671,12 +688,23 @@ class PlanetaryReturnFactory:
                         raise KerykeionException(
                             "Backward Lunar return search requires the libephemeris backend."
                         )
+                    except _BACKEND_ERRORS as exc:
+                        raise KerykeionException(
+                            "The Lunar return search stepped outside the available ephemeris "
+                            f"date range; narrow the search window. ({exc})"
+                        ) from exc
                 else:
-                    return_julian_date = ephe.mooncross_ut(
-                        self.subject.moon.abs_pos,
-                        julian_day,
-                        iflag,
-                    )
+                    try:
+                        return_julian_date = ephe.mooncross_ut(
+                            self.subject.moon.abs_pos,
+                            julian_day,
+                            iflag,
+                        )
+                    except _BACKEND_ERRORS as exc:
+                        raise KerykeionException(
+                            "The Lunar return search stepped outside the available ephemeris "
+                            f"date range; narrow the search window. ({exc})"
+                        ) from exc
             else:
                 raise KerykeionException(f"Invalid return type {return_type}. Use 'Solar' or 'Lunar'.")
 
@@ -776,9 +804,9 @@ class PlanetaryReturnFactory:
                 - Return type and subject identification
 
         Raises:
-            KerykeionException: If return_type is not "Solar" or "Lunar".
-            ValueError: If year is outside the valid range for ephemeris calculations.
-            SwissEphException: If astronomical calculations fail for the given year.
+            KerykeionException: If ``return_type`` is not "Solar" or "Lunar", if
+                ``year`` is outside the representable range (1..9999), or if the
+                return search steps outside the available ephemeris date range.
 
         Examples:
             Calculate Solar Return for 2024:

@@ -1480,8 +1480,9 @@ class AstrologicalSubjectFactory:
                 for the specified UTC time converted to local timezone.
 
         Raises:
-            ValueError: If the ISO timestamp format is invalid or cannot be parsed.
-            KerykeionException: If location data cannot be fetched or is invalid.
+            KerykeionException: If the ISO timestamp format is invalid or cannot
+                be parsed, or if location data cannot be fetched or is invalid, or
+                if the instant is outside the representable/ephemeris date range.
 
         Examples:
             >>> # From API timestamp with online location lookup

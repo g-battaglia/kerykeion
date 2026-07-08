@@ -1262,3 +1262,36 @@ class TestReturnEnrichmentParityRound4:
         )
         ret = rf.next_return_from_date(2027, 1, 1, return_type="Solar")
         assert ret is not None
+
+
+class TestReturnSearchAtEphemerisEdge:
+    """Round 31: when the return-crossing search (solcross_ut / mooncross_ut)
+    walks off the loaded ephemeris date range, the raw libephemeris Error must be
+    normalized to KerykeionException — matching every sibling event factory,
+    instead of leaking a raw backend exception through the public API."""
+
+    @pytest.mark.parametrize("return_type", ["Solar", "Lunar"])
+    def test_forward_search_past_upper_edge_raises_kerykeion(self, return_type):
+        # Natal just below the kernel's upper edge; the forward return search
+        # then steps past 2650 and the backend can no longer calculate.
+        natal = AstrologicalSubjectFactory.from_iso_utc_time(
+            name="Edge", iso_utc_time="2649-06-01T00:00:00Z",
+            lng=0.0, lat=51.5, tz_str="UTC", online=False,
+        )
+        rf = PlanetaryReturnFactory(natal, lng=0.0, lat=51.5, tz_str="UTC", online=False)
+        with pytest.raises(KerykeionException):
+            rf.next_return_from_iso_formatted_time("2650-01-24T00:00:00Z", return_type)
+
+    @pytest.mark.parametrize("return_type", ["Solar", "Lunar"])
+    def test_backward_search_past_lower_edge_raises_kerykeion(self, return_type):
+        # Natal just above the kernel's lower edge; the backward search then
+        # steps before 1550.
+        natal = AstrologicalSubjectFactory.from_iso_utc_time(
+            name="Edge", iso_utc_time="1550-06-01T00:00:00Z",
+            lng=0.0, lat=51.5, tz_str="UTC", online=False,
+        )
+        rf = PlanetaryReturnFactory(natal, lng=0.0, lat=51.5, tz_str="UTC", online=False)
+        with pytest.raises(KerykeionException):
+            rf.next_return_from_iso_formatted_time(
+                "1550-01-05T00:00:00Z", return_type, backwards=True
+            )
