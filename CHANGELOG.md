@@ -2,6 +2,63 @@
 
 ## [Unreleased]
 
+### Fixed (pre-6.0.0 zero-bug review campaign, rounds 26–35)
+
+Ten further review rounds, each rotating a fresh runtime-reproduced lens. Every
+finding below was reproduced offline before fixing and covered by a regression
+test; the fixes are error-contract / validation / display-consistency hardening
+with no change to any correct computed value.
+
+- **Error contract at the ephemeris/date boundary.** `from_iso_utc_time` wrapped a
+  raw `OverflowError`/`OSError` for an instant near `datetime.max/min` whose local
+  wall time overflows during the UTC→local conversion (round 26). The
+  `PlanetaryReturnFactory` crossing searches (`solcross_ut`/`mooncross_ut` and the
+  sibling `helio_cross_ut`/`mooncross_node_ut`, forward **and** backward) leaked a
+  raw `libephemeris` error when the search stepped off the loaded ephemeris range;
+  all are now normalized to `KerykeionException` like every sibling event factory
+  (rounds 31–32). `RelocatedChartFactory` leaked the same `astimezone` overflow for
+  an extended-kernel extreme-year subject (round 27).
+- **Year 0 / BCE calendrical & ISO.** Year 0 (1 BCE) stored as the ISO-8601 unsigned
+  `"0000"` crashed chart rendering because two display helpers
+  (`format_datetime_with_timezone`, `format_iso_display`) routed it to
+  `datetime.fromisoformat` (min year 1); both now take the manual branch (round 27).
+  BCE subjects rendered the local ISO's LMT offset at minute resolution while
+  deriving the Julian Day / UTC ISO from the exact offset, so the two ISO fields of
+  one subject disagreed about the instant by up to ~30 s; the offset is now quantized
+  to the whole second (matching the CE LMT path) and rendered `+HH:MM:SS` (round 34).
+- **Serialization / display consistency.** The text and LLM-context serializers
+  rendered a within-~0.005°-of-cusp `position`/`abs_pos` as the impossible `"30.00"`
+  / out-of-range `"360.00"`; a shared `format_degrees_below_bound` now clamps just
+  below the cusp (round 27). `dominants.zodiac_breakdown` raised `IndexError` on a
+  tiny-negative input; a fold-back guard mirrors `get_kerykeion_point_from_degree`
+  (round 27).
+- **Input validation.** `EclipseFactory.search_from_location` and
+  `OccultationFactory.search_local` accepted an impossible latitude (`|lat|>90`,
+  reachable via a lat/lng swap) and returned a bogus "visible" event; both now
+  `validate_latitude`. Occultation search accepted non-physical calculated points
+  (nodes, Lilith, Uranian hypotheticals) and fabricated events; it is now restricted
+  to an occultable-body allowlist (round 35).
+- **Documentation & type-contract accuracy.** `KerykeionPointModel.dignity_score`
+  documented range corrected to its true `[-9, +11]` net-sum span (round 28); the
+  four Solar/Lunar `PlanetaryReturnFactory` methods narrowed `return_type` from the
+  4-member `ReturnType` to `Literal["Solar","Lunar"]` (the accepted set); several
+  `Raises:`/parameter docstrings aligned to the actual `KerykeionException` contract
+  (rounds 31, 34); stale example output values in the SunTimes docstring and the
+  README Moon-phase examples refreshed (round 33).
+
+Lenses that ran fully **clean** across these rounds (extensive runtime evidence, no
+defect): algebraic/property invariants, aliasing/shared-mutable-state, concurrency &
+shared-cache thread-safety, resource lifecycle/long-run stability, cross-field model
+internal-consistency, model serialization round-trip (all types), SVG rendering at
+degenerate/extreme configs, two-subject techniques (composite/Davison/synastry/score),
+transit-series & chart-data assembly, predictive-technique arithmetic (progressions/
+returns/directions/zodiacal-releasing), perspective & coordinate transforms, peripheral
+reference values (Arabic parts/fixed stars/nodes/ACG/eclipses/nutation), settings &
+translation completeness (10 languages), configurable-input correctness & public-API
+integrity. The southern-polar quadrant-house MC behavior flagged in round 29 was
+confirmed upstream (libephemeris#46) as intended Swiss Ephemeris parity, not a defect —
+see Known limitations.
+
 ### Fixed (pre-6.0.0 invariants + calendrical + doc-contract review, round 25)
 
 - **BCE dates reject an impossible day-of-month instead of silently rolling it
