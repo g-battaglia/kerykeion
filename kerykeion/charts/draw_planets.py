@@ -194,6 +194,7 @@ def draw_planets(
                 adjusted_offset,
                 available_planets_setting[point_idx]["color"],
                 available_planets_setting[point_idx]["name"],
+                abs_pos=main_points_abs_positions[point_idx],
             )
 
         # Draw the celestial point SVG element
@@ -864,13 +865,15 @@ def _generate_point_svg(
     gauq = getattr(point_details, "gauquelin_sector", None)
     gauq_attr = f' kr:gauquelinsector="{gauq}"' if gauq is not None else ""
 
-    # kr:cx / kr:cy — the rendered glyph center in chart SVG root coordinates.
-    # Emitted so frontend hit-detection can use an exact center without having
-    # to measure the symbol's <use> (whose bbox depends on the referenced
-    # <symbol>, which has no intrinsic viewBox). `x` and `y` passed into this
-    # function are already the intended glyph center in root coords — the
-    # translate(-12*scale, -12*scale) on the wrapping <g> cancels the half-
-    # offset that the symbol's own coordinate system imposes.
+    # kr:cx / kr:cy — the rendered glyph center, emitted so frontend hit-
+    # detection can use an exact center without having to measure the symbol's
+    # <use> (whose bbox depends on the referenced <symbol>, which has no
+    # intrinsic viewBox). `x` and `y` passed into this function are the glyph
+    # center in the FULL_WHEEL-LOCAL frame — the translate(-12*scale, -12*scale)
+    # on the wrapping <g> cancels the half-offset that the symbol's own
+    # coordinate system imposes. chart_drawer._rebase_glyph_centers then adds
+    # each template's Full_Wheel translate so the final SVG carries true
+    # root-space values.
     glyph_ref = glyph_id or (
         point_name if point_details.point_type == "House" else resolve_glyph_id(point_name)
     )
@@ -906,6 +909,7 @@ def _draw_external_natal_lines(
     adjusted_offset: Union[int, float],
     color: str,
     point_name: str = "",
+    abs_pos: Optional[Union[int, float]] = None,
 ) -> str:
     """
     Draw connecting lines for external view mode.
@@ -922,6 +926,8 @@ def _draw_external_natal_lines(
         adjusted_offset: Visually adjusted position.
         color: Line color.
         point_name: Name of the celestial point (for kr:slug metadata).
+        abs_pos: The owning ChartPoint's absolute position — the same float the
+            ChartPoint tag interpolates, so kr:absoluteposition strings match.
 
     Returns:
         Updated SVG output with added lines.
@@ -936,9 +942,10 @@ def _draw_external_natal_lines(
     x3 = wheel_x(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
     y3 = wheel_y(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
 
+    pos_attr = f' kr:absoluteposition="{abs_pos}"' if abs_pos is not None else ""
     return (
         output
-        + f'<g kr:node="ConnectingLine" kr:slug="{escape_svg_text(point_name)}">'
+        + f'<g kr:node="ConnectingLine" kr:slug="{escape_svg_text(point_name)}"{pos_attr}>'
         + f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
         + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
         + f'<line x1="{x2}" y1="{y2}" x2="{x3}" y2="{y3}" '
@@ -1011,8 +1018,11 @@ def _draw_primary_point_indicators(
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         point_slug = points_settings[point_idx]["name"]
+        # kr:absoluteposition reuses the same float as the ChartPoint tag so the
+        # two attribute strings are identical (focus code matches by string).
         parts.append(
-            f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_slug)}">'
+            f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_slug)}" '
+            f'kr:absoluteposition="{points_abs_positions[point_idx]}">'
             f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
             f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
             f'<g transform="translate({deg_x},{deg_y})">'
@@ -1079,8 +1089,11 @@ def _draw_inner_point_indicators(
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
         point_slug = points_settings[point_idx]["name"]
+        # Subject 1's ring in dual charts: kr:horoscope="0" + the same abs-pos
+        # float as the ChartPoint tag (string-identical for focus matching).
         parts.append(
-            f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_slug)}">'
+            f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_slug)}" '
+            f'kr:absoluteposition="{points_abs_positions[point_idx]}" kr:horoscope="0">'
             f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
             f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
             f'<g transform="translate({deg_x},{deg_y})">'
@@ -1205,10 +1218,11 @@ def _draw_secondary_points(
         if celestial_points is not None and point_idx < len(celestial_points):
             cp = celestial_points[point_idx]
             kr_attrs += f' kr:house="{cp.house}" kr:sign="{cp.sign}" kr:absoluteposition="{cp.abs_pos}" kr:signposition="{cp.position}"'
-        # kr:cx / kr:cy — glyph center in chart SVG root coordinates, matching
+        # kr:cx / kr:cy — glyph center in the FULL_WHEEL-LOCAL frame, matching
         # _generate_point_svg. The outer translate(-6,-6) plus inner scale(0.5)
         # and pre-doubled use x/y place the symbol center exactly at
-        # (point_x, point_y) in root coords.
+        # (point_x, point_y) in that frame; chart_drawer._rebase_glyph_centers
+        # adds the template's Full_Wheel translate for true root-space values.
         kr_attrs += f' kr:cx="{point_x}" kr:cy="{point_y}"'
         point_svg = (
             f'<g {kr_attrs}{retro_attr} class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
@@ -1241,12 +1255,18 @@ def _draw_secondary_points(
             deg_y = wheel_y(0, radius - text_radius, adjusted_point_offset) + text_radius
 
             degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
+            # Wrap tick + degree text in an Indicator node (kr:absoluteposition is
+            # the same float as the ChartPoint tag, so the strings are identical
+            # and downstream focus code can tie this tick to the outer ring).
             output += (
-                f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+                f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_name)}" '
+                + f'kr:absoluteposition="{points_abs_positions[point_idx]}" kr:horoscope="1">'
+                + f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
                 + f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
                 + f'<g transform="translate({deg_x},{deg_y})">'
                 + '<text text-anchor="middle" dominant-baseline="middle" '
                 + f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+                + "</g>"
             )
 
     return output

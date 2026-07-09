@@ -4733,6 +4733,32 @@ class ChartDrawer:  # type: ignore[no-redef]
                 gauquelin_cusps=gauq_cusps,
             )
 
+    _GLYPH_CENTER_ATTR_RE = re.compile(r'kr:(cx|cy)="([^"]+)"')
+
+    @classmethod
+    def _rebase_glyph_centers(cls, svg: str, scale: float, tx: float, ty: float) -> str:
+        """Rewrite every kr:cx / kr:cy attribute from wheel-local to SVG-root user space.
+
+        The three ChartPoint emitters (classic draw_planets, modern draw_modern)
+        write glyph centers in their own wheel-local frame at draw time — they
+        cannot know which template will consume the fragment. Each output path
+        (full chart vs wheel-only, classic vs modern) wraps the wheel in a known
+        affine map (scale + Full_Wheel translate), so the final values are
+        normalized here to honor the documented contract: kr:cx / kr:cy are in
+        chart SVG root coordinates. kr:cx/kr:cy occur only on ChartPoint nodes,
+        so a global rewrite is safe.
+        """
+        if scale == 1.0 and tx == 0.0 and ty == 0.0:
+            return svg
+
+        def _sub(match: "re.Match[str]") -> str:
+            axis = match.group(1)
+            value = float(match.group(2))
+            offset = tx if axis == "cx" else ty
+            return f'kr:{axis}="{value * scale + offset}"'
+
+        return cls._GLYPH_CENTER_ATTR_RE.sub(_sub, svg)
+
     def _validate_chart_style(self, style: KerykeionChartStyle) -> None:
         """Validate that the given style is a supported chart style.
 
@@ -4821,8 +4847,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             overrides["makeHouseSectors"] = ""
             overrides["makeGauquelinSectors"] = ""
             template = Template(raw_template).substitute(overrides)
+            # Modern wheel-local (100x100) -> scale wrapper -> Full_Wheel translate.
+            template = self._rebase_glyph_centers(template, scale, 100.0, self._vertical_offsets["wheel"])
         else:
             template = Template(raw_template).substitute(template_data)
+            # Classic values are Full_Wheel-local; add the template's translate.
+            template = self._rebase_glyph_centers(template, 1.0, 100.0, self._vertical_offsets["wheel"])
 
         logger.debug("Template dictionary includes %s fields", len(template_data))
 
@@ -5051,6 +5081,10 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict = self._create_template_dictionary()
             wheel_viewbox = self._wheel_only_viewbox()
             template = Template(raw_template).substitute({**template_dict.model_dump(), "viewbox": wheel_viewbox})
+            # Classic values are Full_Wheel-local; wheel_only.xml pins the wheel
+            # at translate(100, 50). (The modern branch is already root-space:
+            # its wheel-local 100x100 frame IS the wheel-only viewBox.)
+            template = self._rebase_glyph_centers(template, 1.0, 100.0, 50.0)
 
         return self._apply_svg_post_processing(template, minify, remove_css_variables)
 

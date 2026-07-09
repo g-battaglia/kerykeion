@@ -410,6 +410,7 @@ def _draw_cusp_ring(
     houses: list[KerykeionPointModel],
     seventh_house_degree_ut: float,
     show_zodiac_background_ring: bool = True,
+    horoscope_id: Optional[str] = None,
 ) -> str:
     """
     Draw the outermost ring with zodiac sign glyphs and cusp degree/minute data.
@@ -420,10 +421,13 @@ def _draw_cusp_ring(
     Args:
         houses: List of 12 house KerykeionPointModel objects.
         seventh_house_degree_ut: 7th house cusp absolute degree.
+        horoscope_id: Owner subject id emitted as kr:horoscope on each Cusp
+            ("0" = first subject, "1" = second), matching the classic engine.
 
     Returns:
         SVG group string for the cusp ring.
     """
+    horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id is not None else ""
     parts: list[str] = ['<g kr:node="CuspRing">\n']
 
     parts.append(
@@ -453,7 +457,7 @@ def _draw_cusp_ring(
         parts.append(
             f'  <g kr:node="Cusp" kr:absoluteposition="{house.abs_pos}" '
             f'kr:signposition="{house.position}" kr:sign="{sign_abbrev}" '
-            f'kr:slug="{escape_svg_text(house.name)}" '
+            f'kr:slug="{escape_svg_text(house.name)}"{horoscope_attr} '
             f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})">\n'
         )
 
@@ -696,6 +700,8 @@ def _draw_indicator_line(
     tick_length: float = 1.075,
     arc_radius: Optional[float] = None,
     planet_slug: str = "",
+    abs_pos: Optional[float] = None,
+    horoscope_id: Optional[str] = None,
 ) -> str:
     """
     Draw a tether/indicator line from a displaced planet to its true position.
@@ -711,6 +717,11 @@ def _draw_indicator_line(
                      negative = upward (default 1.075).
         arc_radius: Radius for the connecting arc. If None, uses R_PLANET_OUTER - 1.
         planet_slug: Name of the celestial point (for kr:slug metadata).
+        abs_pos: The owning ChartPoint's absolute position. Must be the SAME float
+            the ChartPoint tag interpolates so the kr:absoluteposition strings are
+            identical (downstream focus code matches them by string equality).
+        horoscope_id: Owner subject id ("0"/"1") emitted as kr:horoscope in dual
+            charts so the indicator can be tied to the correct ring.
 
     Returns:
         SVG group string for the indicator line.
@@ -719,7 +730,9 @@ def _draw_indicator_line(
         arc_radius = R_PLANET_OUTER - 1  # 42.5
 
     slug_attr = f' kr:slug="{escape_svg_text(planet_slug)}"' if planet_slug else ""
-    out = f'<g kr:node="Indicator"{slug_attr} transform="rotate(-{real_angle:.6f} {CENTER} {CENTER})">\n'
+    pos_attr = f' kr:absoluteposition="{abs_pos}"' if abs_pos is not None else ""
+    horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id is not None else ""
+    out = f'<g kr:node="Indicator"{slug_attr}{pos_attr}{horoscope_attr} transform="rotate(-{real_angle:.6f} {CENTER} {CENTER})">\n'
 
     angle_diff = wrap_180(display_angle - real_angle)
 
@@ -919,8 +932,16 @@ def _draw_planet_ring(
         )
         out += planet_svg
 
-        # Draw indicator line
-        out += _draw_indicator_line(real_angle, display_angle, planet_slug=point.name, **ind_kwargs)
+        # Draw indicator line. abs_pos must be the same float the ChartPoint tag
+        # interpolates so the kr:absoluteposition strings match exactly.
+        out += _draw_indicator_line(
+            real_angle,
+            display_angle,
+            planet_slug=point.name,
+            abs_pos=point.abs_pos,
+            horoscope_id=horoscope_id,
+            **ind_kwargs,
+        )
 
     out += "</g>\n"
     return out
@@ -980,16 +1001,16 @@ def _draw_single_planet_in_ring(
 
     retro_attr = ' kr:retrograde="true"' if is_retro else ""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
+    gauq = getattr(point, "gauquelin_sector", None)
+    gauq_attr = f' kr:gauquelinsector="{gauq}"' if gauq is not None else ""
 
     # kr:cx / kr:cy — glyph center in the WHEEL-LOCAL 100-unit frame (the
     # ModernHoroscope group's own coordinate space, i.e. the viewBox of the
     # wheel-only output). This is exact for generate_wheel_only_svg_string
     # (viewBox 0 0 100 100). In the full-chart output chart_drawer wraps this
-    # wheel in an outer scale/translate to fit the composed layout, so a consumer
-    # that needs true SVG-root coords there must apply that wheel group's
-    # transform (the classic chart likewise emits in its own Full_Wheel-local
-    # frame, a different scale — the two are NOT directly comparable across
-    # styles without each wheel's transform).
+    # wheel in an outer scale + Full_Wheel translate and rebases these values
+    # via _rebase_glyph_centers, so every final SVG carries true root-space
+    # coordinates regardless of the consuming template.
     #
     # Three nested frames sit between the glyph and the wheel-local frame:
     #   1. ChartPoint          rotate(-display_angle, CENTER, CENTER)
@@ -1015,7 +1036,7 @@ def _draw_single_planet_in_ring(
     out = (
         f'<g kr:node="ChartPoint" kr:house="{point.house}" '
         f'kr:sign="{sign}" kr:absoluteposition="{point.abs_pos}" '
-        f'kr:signposition="{point.position}" kr:slug="{escape_svg_text(point_slug)}"{retro_attr}{horoscope_attr} '
+        f'kr:signposition="{point.position}" kr:slug="{escape_svg_text(point_slug)}"{retro_attr}{horoscope_attr}{gauq_attr} '
         f'kr:cx="{glyph_cx}" kr:cy="{glyph_cy}" '
         f'transform="rotate(-{display_angle:.6f} {CENTER} {CENTER})">\n'
     )
@@ -1216,8 +1237,10 @@ def _draw_house_sectors_modern(
     seventh_house_degree_ut: float,
     inner_r: float = R_HOUSE_INNER,
     outer_r: float = R_CUSP_OUTER,
+    horoscope_id: Optional[str] = None,
 ) -> str:
     """Draw transparent house sector wedges for interactive highlighting (modern style)."""
+    horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id is not None else ""
     out = ""
     for i in range(12):
         next_i = (i + 1) % 12
@@ -1252,7 +1275,7 @@ def _draw_house_sectors_modern(
         )
 
         out += (
-            f'<g kr:node="HouseSector" kr:house="{house_num}">'
+            f'<g kr:node="HouseSector" kr:house="{house_num}"{horoscope_attr}>'
             f'<path d="{d}" fill="transparent" stroke="none" pointer-events="all"/>'
             f"</g>\n"
         )
@@ -1332,6 +1355,7 @@ def _draw_house_ring(
     house_inner_r: float = R_HOUSE_INNER,
     house_outer_r: float = R_HOUSE_OUTER,
     text_y: float = 29.25,
+    horoscope_id: Optional[str] = None,
 ) -> str:
     """
     Draw the house numbers ring with small numbers centered in each house sector.
@@ -1344,10 +1368,13 @@ def _draw_house_ring(
         house_inner_r: Inner radius of the house ring (default 19.5).
         house_outer_r: Outer radius of the house ring (default 22.0).
         text_y: Y position for house number text (default 29.25).
+        horoscope_id: Owner subject id emitted as kr:horoscope on each HouseNumber
+            ("0" = first subject, "1" = second), matching the classic engine.
 
     Returns:
         SVG group string for the house ring.
     """
+    horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id is not None else ""
     out = '<g kr:node="HouseRing">\n'
 
     out += f'<path d="{_annulus_path(house_outer_r, house_inner_r)}" fill="{COLOR_HOUSE_RING}" fill-rule="evenodd"/>\n'
@@ -1381,7 +1408,7 @@ def _draw_house_ring(
             # Place at the absolute mid-angle, keep text upright
             angle_upright = 90 + mid_angle_abs
             out += (
-                f'<g kr:node="HouseNumber" kr:house="{house_num}">'
+                f'<g kr:node="HouseNumber" kr:house="{house_num}"{horoscope_attr}>'
                 f'<text text-anchor="middle" dominant-baseline="middle" '
                 f'x="{CENTER}" y="{text_y}" font-size="1.5" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
@@ -1605,7 +1632,7 @@ def draw_modern_horoscope(
     if gauquelin_sectors:
         out += _draw_gauquelin_cusp_ring(seventh_house_degree_ut, show_zodiac_background_ring, gauquelin_cusps=gauquelin_cusps)
     else:
-        out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring)
+        out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring, horoscope_id="0")
     out += _draw_ruler_ring()
     out += _draw_planet_ring(
         planets, planets_settings, seventh_house_degree_ut, houses,
@@ -1615,7 +1642,7 @@ def draw_modern_horoscope(
     if gauquelin_sectors:
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut, gauquelin_cusps=gauquelin_cusps)
     else:
-        out += _draw_house_ring(houses, seventh_house_degree_ut)
+        out += _draw_house_ring(houses, seventh_house_degree_ut, horoscope_id="0")
     # House sectors are click-only overlays; clip them to the inner edge of
     # the zodiac background ring when the zodiac is drawn, so a click on a
     # zodiac sign isn't intercepted by the house sector underneath. Falls
@@ -1693,7 +1720,7 @@ def draw_modern_dual_horoscope(
     out += f'<circle fill="{COLOR_BACKGROUND}" r="{R_CUSP_OUTER}" cx="{CENTER}" cy="{CENTER}" stroke="{COLOR_STROKE}" stroke-width="0.15"/>\n'
 
     # ─── CUSP RING (Subject 1's houses — shared, not duplicated) ────
-    out += _draw_cusp_ring(houses_1, seventh_house_degree_ut, show_zodiac_background_ring)
+    out += _draw_cusp_ring(houses_1, seventh_house_degree_ut, show_zodiac_background_ring, horoscope_id="0")
 
     # ─── RULER RING (Subject 1's houses — shared) ───────────────────
     out += _draw_ruler_ring()
@@ -1777,6 +1804,7 @@ def draw_modern_dual_horoscope(
         house_inner_r=SYN_R_HOUSE_INNER,
         house_outer_r=SYN_R_HOUSE_OUTER,
         text_y=36.0,
+        horoscope_id="0",
     )
 
     # ─── HOUSE SECTORS (transparent, for interactive highlighting) ───
@@ -1784,7 +1812,11 @@ def draw_modern_dual_horoscope(
     # drawn, so clicks on a zodiac sign aren't swallowed by the house sector.
     syn_house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
     out += _draw_house_sectors_modern(
-        houses_1, seventh_house_degree_ut, inner_r=SYN_R_HOUSE_INNER, outer_r=syn_house_sector_outer_r
+        houses_1,
+        seventh_house_degree_ut,
+        inner_r=SYN_R_HOUSE_INNER,
+        outer_r=syn_house_sector_outer_r,
+        horoscope_id="0",
     )
 
     # ─── ASPECT CORE (cross-chart aspects) ──────────────────────────

@@ -2,6 +2,42 @@
 
 ## [Unreleased]
 
+### Added (6.0.0a64 — modern SVG focus-mode contract parity)
+
+The `kr:*` SVG attribute vocabulary the modern (`style="modern"`) charts emit
+now matches the classic engine, so downstream focus/highlight code (which
+selects nodes via `kr:node` and matches related nodes by STRING equality of
+`kr:absoluteposition` / `kr:horoscope`) works identically on both styles.
+All changes are SVG metadata only — no astrological computation moved.
+
+- **Modern house-focus owner attributes.** `Cusp` and `HouseNumber` nodes now
+  carry `kr:horoscope="0"` (single and dual charts, mirroring classic);
+  `HouseSector` wedges carry `kr:horoscope="0"` in dual charts (single charts
+  stay bare, mirroring classic).
+- **Indicator ownership (both styles).** Every degree-tick `Indicator` node now
+  carries `kr:absoluteposition`, interpolated from the SAME float object as its
+  owning `ChartPoint`, so the two attribute strings are guaranteed identical.
+  Dual charts also carry `kr:horoscope` (`"0"` inner ring / `"1"` outer ring).
+  In classic dual charts the second subject's tick line + degree text — which
+  previously rendered unwrapped — are now wrapped in a proper
+  `<g kr:node="Indicator" kr:slug kr:absoluteposition kr:horoscope="1">` group.
+  `ConnectingLine` nodes (external natal) carry `kr:absoluteposition` too.
+- **Modern Gauquelin metadata.** Modern `ChartPoint` nodes now carry
+  `kr:gauquelinsector` like classic ones.
+- **`kr:cx` / `kr:cy` normalized to SVG-root user space in every output.**
+  Previously the values were wheel-local: classic outputs were off by the
+  `Full_Wheel` translate (100, 50/offset) and the modern full-chart output by
+  the composed scale+translate, so consumers converting them via `getCTM()`
+  got displaced glyph centers everywhere except the modern wheel-only output.
+  A single rebase pass in `ChartDrawer` now rewrites the values per template,
+  honoring the documented contract ("glyph center in chart SVG root coords").
+  Consumers that already treated them as root coords need no change and become
+  correct; anything that compensated manually must drop the compensation.
+- New structural test suite `tests/core/test_svg_focus_contract.py` pins the
+  contract (owner attributes, Indicator↔ChartPoint string equality, aspect
+  endpoint formatting, root-space glyph centers, Gauquelin metadata) for both
+  styles; all SVG golden baselines regenerated.
+
 ### Changed (6.0.0a63 — golden-baseline regeneration on the DE441 extended kernel)
 
 Regenerated every test golden baseline on the `extended` (DE441) precision tier
