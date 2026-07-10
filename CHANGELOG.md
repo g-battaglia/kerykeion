@@ -2,6 +2,102 @@
 
 ## [Unreleased]
 
+### Fixed (6.0.0a65 — zero-bug review campaign, rounds 36–47)
+
+Twelve further review rounds, each rotating a fresh runtime-reproduced lens, and
+each round adversarially re-reviewing the previous round's own diff. Rounds 45,
+46 and 47 closed with zero findings. Every fix below was reproduced by execution
+before being applied and is covered by a regression test.
+
+- **Golden baselines regenerated on the pinned engine.** `6.0.0a63` regenerated
+  the baselines with libephemeris `3.0.0rc1` while the same commit pinned
+  `==3.0.0rc3`, whose upstream speed-model fixes shift speeds by ~1e-4 °/day —
+  enough to fail 58 tests on tolerance and flip near-threshold aspect-movement
+  labels in the report snapshots. All expected-position/aspect/subject data and
+  report fixtures were regenerated on rc3 at the `extended` (DE441) tier, which
+  also restored the previously unregenerable `natal_ancient_rome` fixture.
+- **BCE event splitting.** `TransitsTimeRangeFactory` computed sampling gaps with
+  `datetime.fromisoformat`, which raises on extended-year ISO strings; the
+  `except` mapped that to "gap 0", silently merging every recurrence of an aspect
+  in a BCE range into a single event (`applying_start`/`separating_end`/`orb_rate`
+  all `None`). Both call sites now use the module's BCE-safe day arithmetic.
+- **Pre-1 CE progression window.** A progressed Julian Day landing in the ~2-day
+  window before 1 CE Jan 1 (proleptic Gregorian) decomposed to Julian year 1,
+  which `from_birth_data` reinterpreted as Gregorian — building the progressed
+  chart exactly two days late, silently. Clamped with a warning, mirroring the
+  Davison composite guard.
+- **Civil-range edges.** `pytz.localize` probes the surrounding day to resolve
+  DST, so the first and last civil days (`0001-01-01`, `9999-12-31`) crashed with
+  a raw `OverflowError` in `SunTimesFactory`, `PlanetaryHoursFactory` and
+  `VoidOfCourseMoonFactory` instead of the documented `KerykeionException`.
+- **Transits to non-default points.** `EphemerisDataFactory` accepted no
+  `active_points`, so every ephemeris subject carried only the defaults and
+  transits to asteroids/TNOs on the natal chart silently produced zero events
+  while the parameter was advertised. The factory now forwards an optional
+  `active_points` list, and `TransitsTimeRangeFactory` warns when a requested
+  point is missing from the natal side, the ephemeris side, or both (points the
+  subject factory drops by design for the chart's frame stay silent).
+- **Sect (`is_diurnal`) lost at the model boundary.** The value was computed by
+  the return and Davison factories but silently dropped by pydantic (field
+  undeclared on `PlanetReturnModel` / `CompositeSubjectModel`), so sect-aware
+  consumers — dominants, almuten, zodiacal releasing — treated every night return
+  as a day chart. Both models now declare `is_diurnal: Optional[bool]`, and the
+  new `utilities.resolve_sect_is_diurnal` coalesces the midpoint composite's
+  `None` ("no single sky") back to the historical day-chart default.
+- **`Interpolated_Perigee` phantom.** `SE_INTP_PERG` was missing from the
+  geocentric-only exclusion, so in non-geocentric frames libephemeris echoed the
+  geocentric value while swisseph returned a 0° Aries phantom — the exact silent
+  backend disagreement the exclusion exists to prevent.
+- **Geocentric-only points dropped silently.** Explicitly requesting lunar nodes
+  or Lilith/apogee variants in a non-geocentric chart removed them with no log at
+  any level (the analogous center-body drop warns), and a list containing *only*
+  such points returned a silent EMPTY chart. Both now warn and raise respectively.
+- **`active_points` contract.** Unknown names (a typo such as `"Sunn"`) were
+  silently dropped from the chart; an explicit empty list inverted into a FULL
+  default chart. Both now raise `KerykeionException`; fixed-star names still
+  redirect to `active_fixed_stars` with a warning.
+- **Error contracts hardened.** `CompositeSubjectFactory` /
+  `RelationshipScoreFactory` raised raw `AttributeError` on non-subject inputs
+  (and `require_same_frame` let two frameless inputs through, sentinel ==
+  sentinel); `create_chart_data` answered an unknown `chart_type` with a
+  misleading "second subject is required" message; `PlanetaryHoursFactory`
+  accepted out-of-range latitude/longitude; `ChartDrawer` silently fell back on
+  an unknown `chart_language` (to EN) or `double_chart_aspect_grid_type` (to
+  table); `TransitsTimeRangeFactory` validated `axis_orb_limit` only deep inside
+  `get_transit_moments`. All now fail up front with actionable messages. A
+  `language_pack` still legitimizes a custom `chart_language` code.
+- **Fixed-star discovery on composites.** `find_prominent_stars` fed a `None`
+  Julian Day to `fixstar_ut`, which returns NaN positions on libephemeris, so
+  every orb comparison was false and the caller silently received `[]`. It now
+  raises like the sibling planetary-nodes factory.
+- **Zodiacal releasing on returns and Davison charts.** `from_subject` crashed
+  with a raw `AttributeError` on `PlanetReturnModel` / `CompositeSubjectModel`
+  (no split `year`/`month`/`day` fields) — the very models that carry sect for
+  it. Both now anchor on their ISO timestamp; midpoint composites, which have no
+  single moment in time, raise a clear `KerykeionException`.
+- **Nakshatra pada boundaries.** The pada was computed from the remainder against
+  the span constant, inheriting its floating-point error: exactly representable
+  boundaries (20.0°, 30.0°, 60.0°, 70.0°, …) landed in the *previous* pada while
+  the nakshatra itself was correct. Both values now derive from a single global
+  108-quarter index.
+- **Swiss Ephemeris backend suite restored to green.** The backend itself proved
+  healthy (sub-arcsecond parity with libephemeris, worst 0.25″ on Chiron); the
+  failures were test-side: a Lilith reference calc forced the Moshier fallback
+  by resetting the ephemeris path outside the lock; `test_barycentric` asserted
+  the barycentric Sun sits within 0.05° of the geocentric one (physically wrong —
+  both backends agree it is ~25° away); backward return searches are a documented
+  libephemeris-only feature; TNO-dependent tests now auto-skip when the swisseph
+  install lacks the manual-download asteroid files. Kernel-edge tests are gated on
+  the detected ephemeris tier.
+- **Documentation.** ~140 verified corrections across `site/docs`, `site/examples`,
+  `README.md` and `kerykeion/llms.txt`: wrong API names (`swe` → `ephe`, Equal
+  house code `"A"`), wrong defaults and types, crashing or undefined-variable
+  snippets, and stale example outputs — every snippet re-executed and its printed
+  output pasted from the real run. The snippet harness itself was rehabilitated:
+  it pointed at long-gone directories, and once fixed, three interacting defects
+  (joint dedent, a geonames mask that swallowed tracebacks, and masked passes
+  feeding the page context) were producing ~16% false passes.
+
 ### Added (6.0.0a64 — modern SVG focus-mode contract parity)
 
 The `kr:*` SVG attribute vocabulary the modern (`style="modern"`) charts emit
