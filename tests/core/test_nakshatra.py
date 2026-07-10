@@ -113,7 +113,11 @@ class TestNakshatraCalculation:
         >= 108 clamp protects the last sliver of the circle. (The old
         per-constant guards were removed with the remainder-based pada
         computation, which misclassified exact boundary degrees.)"""
-        result = calculate_nakshatra(359.9999999999999)
+        # A tiny negative float is the ONE reachable path into the clamp:
+        # Python's float modulo returns the modulus itself (-1e-16 % 360.0
+        # == 360.0 exactly), so the quarter index hits 108. No non-negative
+        # in-range float maps past 107 (exhaustively probed).
+        result = calculate_nakshatra(-1e-16)
         assert result["nakshatra_number"] == 27
         assert result["nakshatra"] == "Revati"
         assert result["nakshatra_pada"] == 4
