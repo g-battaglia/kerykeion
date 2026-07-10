@@ -82,7 +82,7 @@ HIGH was exactly this: heliacal treating every backend error as "no event").
   (libephemeris runs `heliacal_ut` through Skyfield, which raises its own
   `ValueError` subclass — round 23 discovered this).
 - Migrate every ad-hoc `getattr(ephe, "Error", …)` handler and the remaining
-  dead `except RuntimeError` site (`sun_times/utils.py:365`, left untouched in
+  dead `except RuntimeError` site (`sun_times/utils.py:368`, left untouched in
   round 23 because no harm was reproduced) to the canonical types.
 - **Runtime validation of open `str` name parameters** at public entries whose
   type is only a `Literal` at static-check time (no runtime enforcement for

@@ -124,10 +124,10 @@ The 23 names below make up the opt-in `DEFAULT_FIXED_STARS` preset (smaller pres
 -   `Deneb Algedi` (mag +2.83)
 -   `Alcyone` (mag +2.87)
 -   `Algorab` (mag +2.94)
--   `Alkaid` (mag +1.86)
 
 **Other Bright Stars:**
 
+-   `Alkaid` (mag +1.86)
 -   `Canopus` (mag -0.74)
 -   `Rigel` (mag +0.13)
 -   `Betelgeuse` (mag +0.42)

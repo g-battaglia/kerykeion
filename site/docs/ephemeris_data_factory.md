@@ -59,11 +59,11 @@ The `planets` and `houses` lists hold `KerykeionPointModel` instances -- not pla
   {
     "date": "2024-01-01T00:00:00",
     "planets": [
-      KerykeionPointModel(name="Sun", abs_pos=280.23, sign="Cap", ...),
+      KerykeionPointModel(name="Sun", abs_pos=280.04, sign="Cap", ...),
       ...
     ],
     "houses": [
-      KerykeionPointModel(name="First_House", abs_pos=15.42, sign="Ari", ...),
+      KerykeionPointModel(name="First_House", abs_pos=187.07, sign="Lib", ...),
       ...
     ]
   },
