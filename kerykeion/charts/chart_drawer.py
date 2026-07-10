@@ -2065,6 +2065,20 @@ class ChartDrawer:  # type: ignore[no-redef]
         # =====================================================================
         # STEP 1: Store basic configuration parameters
         # =====================================================================
+        # Validate the open string parameters up front, mirroring the theme
+        # contract below: an unknown language would otherwise silently fall
+        # back to EN and an unknown grid type would silently render as
+        # "table" — plausible-looking output hiding the caller's mistake.
+        if chart_language not in get_args(KerykeionChartLanguage):
+            raise KerykeionException(
+                f"chart_language {chart_language!r} is not available. "
+                f"Valid languages: {', '.join(get_args(KerykeionChartLanguage))}."
+            )
+        if double_chart_aspect_grid_type not in ("list", "table"):
+            raise KerykeionException(
+                f"double_chart_aspect_grid_type {double_chart_aspect_grid_type!r} "
+                "is not valid. Use 'list' or 'table'."
+            )
         # These are direct assignments of constructor parameters to instance
         # attributes. They form the foundation for all subsequent setup.
         self._store_basic_configuration(

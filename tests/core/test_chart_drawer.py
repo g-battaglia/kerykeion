@@ -3154,7 +3154,7 @@ class TestChartDrawerLargeAspectList:
             "Medium_Coeli",
             "Mean_North_Lunar_Node",
             "Chiron",
-            "Lilith",
+            "Mean_Lilith",
         ]
         first = AstrologicalSubjectFactory.from_birth_data(
             name="First",
@@ -3922,3 +3922,28 @@ class TestSaveSvgRobustnessRound9:
         svg = drawer.generate_svg_string(remove_css_variables=True)
         assert "#000000 - Birth" not in svg
         xml.dom.minidom.parseString(svg)
+
+
+class TestConstructorStringValidation:
+    """chart_language and double_chart_aspect_grid_type must be validated like
+    theme: unknown values used to silently fall back (EN / table)."""
+
+    def _data(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "T", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        return ChartDataFactory.create_natal_chart_data(subject)
+
+    def test_unknown_language_raises(self):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="chart_language"):
+            ChartDrawer(self._data(), chart_language="XX")
+
+    def test_unknown_grid_type_raises(self):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="double_chart_aspect_grid_type"):
+            ChartDrawer(self._data(), double_chart_aspect_grid_type="grid")

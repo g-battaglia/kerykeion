@@ -199,6 +199,15 @@ class CompositeSubjectFactory:
         self.model: Union[CompositeSubjectModel, None] = None
         self.composite_chart_type = "Midpoint"
 
+        for _label, _subject in (("first_subject", first_subject), ("second_subject", second_subject)):
+            if getattr(_subject, "active_points", None) is None:
+                # Fail with a clear message instead of a raw AttributeError on
+                # `.active_points` below (e.g. when None is passed).
+                raise KerykeionException(
+                    f"CompositeSubjectFactory {_label} is not an astrological subject "
+                    f"model (got {type(_subject).__name__!r})."
+                )
+
         self.first_subject = first_subject
         self.second_subject = second_subject
         self.active_points = find_common_active_points(first_subject.active_points, second_subject.active_points)

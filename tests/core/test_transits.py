@@ -499,3 +499,43 @@ class TestActivePointsForwarding:
         with caplog.at_level(logging.WARNING):
             TransitsTimeRangeFactory(natal, ephemeris, active_points=points)
         assert not any("absent" in record.message for record in caplog.records)
+
+    def test_no_false_positive_for_points_absent_from_both_sides(self, caplog):
+        # Heliocentric drops Sun/nodes from BOTH natal and ephemeris subjects;
+        # that is not a caller mistake and must not warn (the advice would be
+        # unfollowable — the factory re-drops them).
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "Helio", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            perspective_type="Heliocentric",
+        )
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            perspective_type="Heliocentric",
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal, ephemeris)
+        assert not any("absent" in record.message for record in caplog.records)
+
+    def test_warns_when_requested_points_missing_from_natal(self, caplog):
+        # Symmetric hole: point computed on the ephemeris side but not on the
+        # natal — aspects involving it are equally undetectable.
+        points, _ = self._natal_with_ceres()
+        natal_default = AstrologicalSubjectFactory.from_birth_data(
+            "Default Natal", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            active_points=points,
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal_default, ephemeris, active_points=points)
+        assert any(
+            "Ceres" in record.message and "natal chart" in record.message
+            for record in caplog.records
+        )

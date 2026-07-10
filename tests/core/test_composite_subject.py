@@ -819,3 +819,16 @@ class TestMidpointCompositeLunarPhaseGuardRound16:
         b = AstrologicalSubjectFactory.from_birth_data("B", 1992, 6, 15, 14, 30, **kw)
         m = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
         assert m.lunar_phase is not None
+
+
+def test_none_subjects_raise_clean_exception():
+    """None inputs must fail with a clear KerykeionException, not a raw
+    AttributeError on .active_points deep in the pipeline."""
+    from kerykeion.composite_subject_factory import CompositeSubjectFactory
+    from kerykeion.relationship_score_factory import RelationshipScoreFactory
+    from kerykeion.schemas import KerykeionException
+
+    with pytest.raises(KerykeionException):
+        CompositeSubjectFactory(None, None)
+    with pytest.raises(KerykeionException):
+        RelationshipScoreFactory(None, None)

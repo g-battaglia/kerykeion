@@ -79,9 +79,18 @@ class PlanetaryHoursFactory:
             the bounding sunrise/sunset/next-sunrise, and the full 24-hour table.
 
         Raises:
-            KerykeionException: If ``tz_str`` is invalid, or if the Sun does not
-                rise and set on the relevant date (polar day/night).
+            KerykeionException: If ``tz_str`` is invalid, the latitude/longitude
+                is out of range, or if the Sun does not rise and set on the
+                relevant date (polar day/night).
         """
+        if not -90.0 <= latitude <= 90.0:
+            raise KerykeionException(
+                f"Latitude {latitude} is out of range; it must be between -90 and 90 degrees."
+            )
+        if not -180.0 <= longitude <= 180.0:
+            raise KerykeionException(
+                f"Longitude {longitude} is out of range; it must be between -180 and 180 degrees."
+            )
         tz = resolve_timezone(tz_str)
         moment_utc = localize_datetime(year, month, day, hour, minute, tz=tz).astimezone(timezone.utc)
 

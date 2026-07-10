@@ -28,7 +28,7 @@ from kerykeion.dominants.data import (
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion.schemas.kr_literals import SIGN_CODES, Element, Quality, Sign
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
-from kerykeion.utilities import wrap_180
+from kerykeion.utilities import resolve_sect_is_diurnal, wrap_180
 
 logger = logging.getLogger(__name__)
 
@@ -217,7 +217,7 @@ def part_of_fortune_degree(subject: AstrologicalSubjectModel) -> Optional[float]
     if ascendant is None or sun is None or moon is None:
         return None
 
-    if bool(getattr(subject, "is_diurnal", True)):
+    if resolve_sect_is_diurnal(subject):
         degree = ascendant.abs_pos + moon.abs_pos - sun.abs_pos
     else:
         degree = ascendant.abs_pos + sun.abs_pos - moon.abs_pos
@@ -378,7 +378,7 @@ def prenatal_syzygy(subject: AstrologicalSubjectModel) -> Optional[SyzygyInfo]:
         logger.debug("Prenatal syzygy skipped (ephemeris unavailable): %s", exc)
         return None
 
-    is_diurnal = bool(getattr(subject, "is_diurnal", True))
+    is_diurnal = resolve_sect_is_diurnal(subject)
     if kind == "New":
         raw_degree = sun_lon  # Sun and Moon coincide at the conjunction.
     else:  # Full Moon — use the luminary above the horizon at birth.

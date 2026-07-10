@@ -62,7 +62,7 @@ from kerykeion.dominants.data import (
 from kerykeion.dominants.utils import angle_degrees, rulers_inverse, scoring_planets
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, DominantsModel, KerykeionPointModel
-from kerykeion.utilities import get_house_number
+from kerykeion.utilities import get_house_number, resolve_sect_is_diurnal
 
 #: The four chart angles, in the order the engine references them.
 _ANGLE_NAMES: tuple[str, ...] = ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")
@@ -287,7 +287,7 @@ class ModernDominantStrategy(BaseDominantStrategy):
         Egyptian term AND in detriment, scoring 0.25 - 1.00 = -0.75 — not the
         bare +0.25 the "Term" label alone would suggest.
         """
-        is_diurnal = bool(getattr(subject, "is_diurnal", True))
+        is_diurnal = resolve_sect_is_diurnal(subject)
         scores: Dict[str, float] = {}
         for point in planets:
             result = calculate_essential_dignity(point.name, point.sign, point.element, point.position, is_diurnal)

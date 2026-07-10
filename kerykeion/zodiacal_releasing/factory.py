@@ -10,6 +10,7 @@ from typing import Iterator, List, Literal, Optional
 
 from kerykeion.dominants.utils import part_of_fortune_degree
 from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.utilities import resolve_sect_is_diurnal
 from kerykeion.schemas.kr_literals import SIGN_CODES, Sign
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -73,7 +74,7 @@ def _lot_degree(subject: AstrologicalSubjectModel, lot: LotName) -> Optional[flo
     ascendant, sun, moon = subject.ascendant, subject.sun, subject.moon
     if ascendant is None or sun is None or moon is None:
         return None
-    if getattr(subject, "is_diurnal", True):
+    if resolve_sect_is_diurnal(subject):
         degree = ascendant.abs_pos + sun.abs_pos - moon.abs_pos
     else:
         degree = ascendant.abs_pos + moon.abs_pos - sun.abs_pos

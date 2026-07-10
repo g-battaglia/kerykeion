@@ -1176,3 +1176,18 @@ class TestDistributionHonorsExplicitFilterRound14:
         ed = ChartDataFactory.create_natal_chart_data(s, active_points=["Sun", "Moon"]).element_distribution
         # Sun (Gemini/air) + Moon (Pisces/water) only -> no fire/earth
         assert ed.fire == 0 and ed.earth == 0
+
+
+def test_unknown_chart_type_raises_with_valid_options():
+    """An unknown chart_type must fail up front naming the valid types, not
+    with a misleading 'Second subject is required for X charts' error."""
+    from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+    from kerykeion.schemas import KerykeionException
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "T", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    with pytest.raises(KerykeionException, match="Unknown chart_type.*Natal"):
+        ChartDataFactory.create_chart_data("NatalFoo", subject)

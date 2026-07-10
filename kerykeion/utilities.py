@@ -622,6 +622,20 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
     return latitude
 
 
+def resolve_sect_is_diurnal(subject: Any) -> bool:
+    """Sect (day/night) of a subject-like model, defaulting to day.
+
+    ``is_diurnal`` may be absent (hand-built objects) or ``None`` (midpoint
+    composites, which have no single sky). Both must resolve to the day-chart
+    default: sect consumers historically used ``getattr(subject,
+    "is_diurnal", True)``, and when the field became a declared
+    ``Optional[bool]`` a bare ``bool(None)`` would silently flip those charts
+    to the night branch (changing e.g. the Part of Fortune formula).
+    """
+    value = getattr(subject, "is_diurnal", None)
+    return True if value is None else bool(value)
+
+
 def require_same_frame(first: Any, second: Any) -> None:
     """
     Reject two subjects whose astrological reference frame differs.
@@ -654,6 +668,20 @@ def require_same_frame(first: Any, second: Any) -> None:
     _MISSING = object()
     first_zodiac = getattr(first, "zodiac_type", _MISSING)
     second_zodiac = getattr(second, "zodiac_type", _MISSING)
+    if first_zodiac is _MISSING or second_zodiac is _MISSING:
+        # Not a subject-like model at all (e.g. None). Without this check two
+        # frameless inputs would compare equal (sentinel == sentinel) and slip
+        # through, crashing later with a raw AttributeError deep in a consumer.
+        _offenders = [
+            type(obj).__name__
+            for obj, zodiac in ((first, first_zodiac), (second, second_zodiac))
+            if zodiac is _MISSING
+        ]
+        raise KerykeionException(
+            f"require_same_frame: input(s) of type {_offenders} do not expose the "
+            "chart frame attributes (zodiac_type/perspective_type); expected "
+            "astrological subject models."
+        )
     if first_zodiac != second_zodiac:
         raise KerykeionException(
             "Both subjects must share the same zodiac_type to be compared "

@@ -146,6 +146,10 @@ _LEGACY_ACTIVE_POINT_STAR_NAMES = frozenset(
     }
 )
 
+# Every name accepted in ``active_points``. Unknown names (typos) must raise
+# instead of silently vanishing from the calculation loop.
+_VALID_ACTIVE_POINT_NAMES = frozenset(get_args(AstrologicalPoint))
+
 # Declarative mapping of geometrically opposite point pairs.
 # Each derived point is computed as primary.abs_pos + 180 (mod 360).
 # negate_speed/negate_dec/negate_lat control whether speed, declination and
@@ -885,6 +889,16 @@ class AstrologicalSubjectFactory:
             active_points_list: List[AstrologicalPoint] = list(DEFAULT_ACTIVE_POINTS)
         else:
             active_points_list = list(active_points)
+            if not active_points_list:
+                # An empty list means 'no filter' downstream (_should_calculate
+                # treats it as falsy), which would silently invert the caller's
+                # explicit "nothing" into a FULL chart — the exact inversion the
+                # emptied-list branches below fail loudly for. Reject it up
+                # front; None is the documented way to request the defaults.
+                raise KerykeionException(
+                    "active_points is an empty list. Pass None (or omit it) to use "
+                    "DEFAULT_ACTIVE_POINTS, or list at least one point to calculate."
+                )
             # v6: ``active_points`` is no longer a channel for fixed stars.
             # Star names that v5 accepted here (e.g. "Regulus", "Spica") are
             # redirected to the ``active_fixed_stars`` channel — with a
@@ -927,6 +941,19 @@ class AstrologicalSubjectFactory:
                     if _star not in _merged_stars:
                         _merged_stars.append(_star)
                 active_fixed_stars = _merged_stars
+
+            # Anything left must be a real AstrologicalPoint: an unknown name
+            # (e.g. a typo like "Sunn") would otherwise never be iterated by
+            # the calculation loop and simply vanish from the chart — a silent
+            # wrong result rather than an error.
+            _unknown_points = [p for p in active_points_list if p not in _VALID_ACTIVE_POINT_NAMES]
+            if _unknown_points:
+                raise KerykeionException(
+                    f"Unknown active_points {_unknown_points}: not valid astrological "
+                    "points (and not fixed star names, which are redirected to "
+                    "active_fixed_stars). Check the AstrologicalPoint literal in "
+                    "kerykeion.schemas.kr_literals for valid names."
+                )
 
         # The center body of the perspective has no position as seen from itself
         # (Earth in geocentric/topocentric, Sun in heliocentric, the center

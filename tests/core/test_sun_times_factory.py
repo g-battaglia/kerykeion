@@ -281,3 +281,18 @@ def test_twilight_during_polar_night():
     assert s.civil_dawn is None and s.civil_dusk is None
     assert s.nautical_dawn is not None and s.nautical_dusk is not None
     assert s.astronomical_dawn is not None and s.astronomical_dusk is not None
+
+
+def test_planetary_hours_rejects_out_of_range_coordinates():
+    # Mirrors SunTimesFactory's contract; lat=95 used to produce a misleading
+    # polar-day message and lng=200 was silently accepted.
+    from kerykeion.planetary_hours import PlanetaryHoursFactory
+
+    with pytest.raises(KerykeionException, match="Latitude"):
+        PlanetaryHoursFactory.from_datetime(
+            2026, 6, 1, 12, 0, latitude=95.0, longitude=12.5, tz_str="Europe/Rome"
+        )
+    with pytest.raises(KerykeionException, match="Longitude"):
+        PlanetaryHoursFactory.from_datetime(
+            2026, 6, 1, 12, 0, latitude=41.9, longitude=200.0, tz_str="Europe/Rome"
+        )

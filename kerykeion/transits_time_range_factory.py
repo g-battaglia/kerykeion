@@ -285,14 +285,16 @@ class TransitsTimeRangeFactory:
         self._warn_if_points_missing_from_ephemeris()
 
     def _warn_if_points_missing_from_ephemeris(self) -> None:
-        """Warn when requested points are absent from the ephemeris subjects.
+        """Warn when requested points are missing from ONE side of the pair.
 
-        Aspect detection intersects the requested points with each ephemeris
-        subject's own ``active_points`` (fixed stars excepted), so a point the
-        ephemeris series never computed — e.g. an asteroid requested here but
-        not passed as ``active_points`` to ``EphemerisDataFactory`` — silently
-        produces zero transits to the corresponding natal point. Surface that
-        instead of returning quietly-empty results.
+        Aspect detection needs a point on BOTH the natal chart and the
+        ephemeris subjects (fixed stars excepted), so a one-sided point — e.g.
+        an asteroid requested here but not passed as ``active_points`` to
+        ``EphemerisDataFactory``, or present in the series but never computed
+        on the natal — silently produces zero transits for it. Surface that
+        instead of returning quietly-empty results. Points absent from BOTH
+        sides stay silent: they were never calculable (e.g. the perspective's
+        center body, which the subject factory already warned about dropping).
         """
         if not self.ephemeris_data_points:
             return
@@ -300,19 +302,33 @@ class TransitsTimeRangeFactory:
         ephemeris_points = set(getattr(sample, "active_points", None) or [])
         if not ephemeris_points:
             return
+        natal_points = set(getattr(self.natal_chart, "active_points", None) or [])
         star_names = {star.name for star in (getattr(self.natal_chart, "fixed_stars", None) or [])}
-        missing = [
+        missing_from_ephemeris = [
             point for point in self.active_points
-            if point not in ephemeris_points and point not in star_names
+            if point in natal_points and point not in ephemeris_points and point not in star_names
         ]
-        if missing:
+        if missing_from_ephemeris:
             logging.warning(
                 "TransitsTimeRangeFactory: %s requested in active_points but absent "
                 "from the ephemeris subjects (they carry %d points). Transits to "
                 "these natal points cannot be detected — pass the same active_points "
                 "to EphemerisDataFactory.",
-                missing,
+                missing_from_ephemeris,
                 len(ephemeris_points),
+            )
+        missing_from_natal = [
+            point for point in self.active_points
+            if point in ephemeris_points and point not in natal_points and point not in star_names
+        ]
+        if missing_from_natal:
+            logging.warning(
+                "TransitsTimeRangeFactory: %s requested in active_points but absent "
+                "from the natal chart (it carries %d points). Aspects involving "
+                "these points cannot be detected — build the natal subject with "
+                "the same active_points.",
+                missing_from_natal,
+                len(natal_points),
             )
 
     def _warn_if_unordered(self) -> None:
