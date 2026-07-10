@@ -433,6 +433,7 @@ except Exception as e:
 2. **Limit active_points** for batch processing
 3. **Disable optional features** when not needed:
     ```python
+    # doc-snippet: no-run — illustrative fragment (placeholder args, undefined first/second)
     # On AstrologicalSubjectFactory constructors:
     subject = AstrologicalSubjectFactory.from_birth_data(
         ..., calculate_lunar_phase=False,

@@ -25,7 +25,10 @@ The `kerykeion.schemas` package contains all the data definitions:
 All Kerykeion models inherit from `SubscriptableBaseModel`, allowing dictionary-like access to fields in addition to dot notation.
 
 ```python
-subject = AstrologicalSubjectFactory.from_birth_data(...)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
 # Access as object
 print(subject.name)
 # Access as dict
@@ -186,10 +189,13 @@ Compact lunar phase information attached to every `AstrologicalSubjectModel` (vi
 | `moon_phase_name`     | `LunarPhaseName`  | Text name (e.g. `"Full Moon"`, `"Waxing Crescent"`).    |
 
 ```python
-subject = AstrologicalSubjectFactory.from_birth_data(...)
-print(subject.lunar_phase.moon_phase_name)   # "Waxing Gibbous"
-print(subject.lunar_phase.moon_emoji)         # "🌔"
-print(subject.lunar_phase.degrees_between_s_m)  # 135.7
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+print(subject.lunar_phase.moon_phase_name)   # e.g. "Waxing Gibbous"
+print(subject.lunar_phase.moon_emoji)         # e.g. "🌔"
+print(subject.lunar_phase.degrees_between_s_m)  # e.g. 135.7
 ```
 
 ### MoonPhaseOverviewModel

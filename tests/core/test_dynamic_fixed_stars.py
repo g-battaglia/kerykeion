@@ -467,3 +467,26 @@ class TestFixedStarCatalogIsKnownName:
             "Regulus" in r.getMessage() and "active_fixed_stars" in r.getMessage()
             for r in caplog.records
         ), caplog.text
+
+
+def test_composite_subject_raises_clean_exception():
+    """A midpoint composite has julian_day=None; fixstar_ut with a None JD
+    returns NaN positions on libephemeris, so discovery used to silently
+    return [] instead of failing. Mirrors the PlanetaryNodesFactory guard."""
+    from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+    from kerykeion.fixed_stars.discovery_factory import FixedStarDiscoveryFactory
+    from kerykeion.schemas import KerykeionException
+
+    a = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    b = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1985, 3, 10, 4, 20,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    midpoint = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
+    with pytest.raises(KerykeionException, match="Julian Day"):
+        FixedStarDiscoveryFactory.find_prominent_stars(midpoint)

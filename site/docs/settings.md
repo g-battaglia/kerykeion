@@ -31,13 +31,15 @@ from kerykeion.settings.config_constants import (
 
 # Use extended point set
 subject = AstrologicalSubjectFactory.from_birth_data(
-    ...,
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
     active_points=ALL_ACTIVE_POINTS
 )
 
 # Use classical planets only (traditional/Hellenistic astrology)
 subject = AstrologicalSubjectFactory.from_birth_data(
-    ...,
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
     active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 )
 ```
@@ -51,6 +53,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 | `DISCEPOLO_SCORE_ACTIVE_ASPECTS` | Orbs per Ciro Discepolo scoring methodology                      |
 
 ```python
+from kerykeion import AspectsFactory
 from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS
 
 aspects = AspectsFactory.single_chart_aspects(
@@ -108,6 +111,8 @@ print(sun_it) # "Sole"
 Returns the entire language setting dictionary, optionally merging with overrides.
 
 ```python
+from kerykeion.settings import load_language_settings
+
 # Create custom overrides
 overrides = {
     "IT": {

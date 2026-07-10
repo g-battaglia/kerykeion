@@ -201,6 +201,15 @@ for asp in dec_aspects:
 ### `dual_chart_declination_aspects`
 
 ```python
+subject_a = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+subject_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 20, 14, 30,
+    lng=-74.0060, lat=40.7128, tz_str="America/New_York", online=False
+)
+
 dec_synastry = AspectsFactory.dual_chart_declination_aspects(subject_a, subject_b, orb=1.0)
 ```
 

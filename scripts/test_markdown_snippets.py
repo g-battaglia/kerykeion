@@ -123,8 +123,14 @@ from kerykeion import (
             # Check if it's just a geonames warning (not a real error)
             error_output = result.stderr or result.stdout
             if result.returncode != 0:
-                # Ignore geonames username warnings
-                if "NO GEONAMES USERNAME SET" in error_output and "WARNING:root:" in error_output:
+                # Ignore pure geonames-username warnings — but never mask a
+                # real crash: a traceback in the output is a genuine failure
+                # even when the warning also fired earlier in the run.
+                if (
+                    "NO GEONAMES USERNAME SET" in error_output
+                    and "WARNING:root:" in error_output
+                    and "Traceback" not in error_output
+                ):
                     return True, "Success (geonames warning ignored)"
                 return False, error_output
 
@@ -227,12 +233,21 @@ def main():
             page_context = ""
             for i, snippet in enumerate(snippets, 1):
                 total_snippets += 1
-                success, error = test_snippet(page_context + "\n" + snippet, timeout=args.timeout)
+                # Dedent the snippet BEFORE concatenation: the joint dedent
+                # inside test_snippet is a no-op once the accumulated context
+                # is flush-left, which would leave an indented snippet
+                # syntactically absorbed by the last context block.
+                dedented = textwrap.dedent(snippet)
+                success, error = test_snippet(page_context + "\n" + dedented, timeout=args.timeout)
 
                 if success:
                     status = error if error else "OK"
                     print(f"  ✅ Snippet {i}: {status}")
-                    page_context += "\n" + textwrap.dedent(snippet)
+                    if error is None:
+                        # Only a genuinely clean run may feed the page context;
+                        # a masked pass (ignored warning) could poison every
+                        # later snippet on the page.
+                        page_context += "\n" + dedented
                 else:
                     # Show full error for debugging
                     error_msg = error if error else "Unknown error"

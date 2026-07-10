@@ -202,7 +202,9 @@ Adds `essential_dignity` field to each point (Domicile, Exaltation, Detriment, F
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
-    ..., calculate_dignities=True
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    calculate_dignities=True
 )
 print(subject.sun.essential_dignity)  # e.g. "Domicile"
 ```
@@ -213,7 +215,9 @@ Adds `nakshatra`, `nakshatra_pada`, and `nakshatra_lord` fields. Best used with 
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
-    ..., zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
     calculate_nakshatra=True
 )
 print(f"{subject.moon.nakshatra}, pada {subject.moon.nakshatra_pada}")

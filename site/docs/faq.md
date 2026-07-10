@@ -318,6 +318,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 Results are cached for 30 days by default. Customize with:
 
 ```python
+# doc-snippet: no-run — illustrative fragment (placeholder arguments)
 subject = AstrologicalSubjectFactory.from_birth_data(
     ...,
     cache_expire_after_days=90  # Cache for 90 days
@@ -344,6 +345,7 @@ Yes, Kerykeion supports historical dates including BCE dates. The Swiss Ephemeri
 Placidus and Koch house systems fail at extreme latitudes (>60°). Use Whole Sign (`W`) or Equal (`A`) houses instead:
 
 ```python
+# doc-snippet: no-run — illustrative fragment (placeholder arguments)
 subject = AstrologicalSubjectFactory.from_birth_data(
     ...,
     houses_system_identifier="W"  # Works at any latitude
@@ -392,7 +394,10 @@ See the full [Eclipse Factory](/content/docs/eclipse_factory) documentation.
 ```python
 from kerykeion import AstrologicalSubjectFactory, AstroCartographyFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data(...)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 6, 15, 14, 30,
+    lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
+)
 lines = AstroCartographyFactory.compute(subject, step=2)
 ```
 
@@ -403,8 +408,9 @@ See the full [Astro-Cartography](/content/docs/astro_cartography_factory) docume
 ```python
 from kerykeion import RelocatedChartFactory
 
+# `natal` is the subject from the secondary-progressions example above
 relocated = RelocatedChartFactory.relocate(
-    natal_subject, new_lat=40.71, new_lng=-74.00, new_city="New York"
+    natal, new_lat=40.71, new_lng=-74.00, new_city="New York"
 )
 ```
 

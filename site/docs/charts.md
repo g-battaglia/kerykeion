@@ -70,7 +70,17 @@ drawer = ChartDrawer(chart_data, external_view=True)
 Synastry charts overlay two users' planetary positions to visualize their relationship. The outer wheel shows the second subject's planets.
 
 ```python
-# Create chart data for two subjects
+# Create the two subjects to compare
+subject_a = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+subject_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 20, 14, 30,
+    lng=-74.0060, lat=40.7128, tz_str="America/New_York", online=False
+)
+
+# Create chart data for the two subjects
 synastry_data = ChartDataFactory.create_synastry_chart_data(subject_a, subject_b)
 drawer = ChartDrawer(synastry_data)
 ```
@@ -81,7 +91,10 @@ Transit charts compare a static natal chart (inner wheel) against the current mo
 
 ```python
 # Compare natal chart against current time
-transit_data = ChartDataFactory.create_transit_chart_data(natal_subject, current_time_subject)
+current_time_subject = AstrologicalSubjectFactory.from_current_time(
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+transit_data = ChartDataFactory.create_transit_chart_data(subject, current_time_subject)
 drawer = ChartDrawer(transit_data)
 ```
 
@@ -145,6 +158,11 @@ Kerykeion supports two visual styles for chart rendering.
 The traditional astrological wheel layout with concentric rings for signs, houses, and planets.
 
 ```python
+from pathlib import Path
+
+output_path = Path("charts_output")
+output_path.mkdir(exist_ok=True)
+
 drawer.save_svg(output_path, filename="chart", style="classic")
 ```
 
@@ -213,12 +231,15 @@ Methods to write the SVG directly to disk.
 ```python
 from pathlib import Path
 
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
 # Full Chart
-drawer.save_svg(Path("./output"), filename="natal_chart")
+drawer.save_svg(output_dir, filename="natal_chart")
 
 # Components
-drawer.save_wheel_only_svg_file(Path("./output"), filename="wheel_only")
-drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
+drawer.save_wheel_only_svg_file(output_dir, filename="wheel_only")
+drawer.save_aspect_grid_only_svg_file(output_dir, filename="grid_only")
 ```
 
 ### Class `ChartDrawer`
