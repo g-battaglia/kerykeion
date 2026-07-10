@@ -52,6 +52,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 **Solution:** Register your own free account at [geonames.org](https://www.geonames.org/login):
 
 ```python
+# doc-snippet: no-run — requires your own GeoNames account (online)
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 1990, 1, 1, 12, 0,
     city="London", nation="GB",
@@ -181,6 +182,14 @@ composite = CompositeSubjectFactory(subject1, subject2)
 **Solution:** Use exactly `"Solar"` or `"Lunar"` (case-sensitive):
 
 ```python
+from kerykeion import PlanetaryReturnFactory
+
+factory = PlanetaryReturnFactory(
+    subject,  # your natal AstrologicalSubjectModel
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False
+)
+
 # Correct
 solar_return = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 lunar_return = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
@@ -297,6 +306,7 @@ See the [Migration Guide](/content/docs/migration) and [Legacy API](/content/doc
 ### How do I suppress the GeoNames warning?
 
 ```python
+# doc-snippet: no-run — illustrative fragment (placeholder arguments)
 subject = AstrologicalSubjectFactory.from_birth_data(
     ...,
     suppress_geonames_warning=True

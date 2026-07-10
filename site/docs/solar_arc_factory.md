@@ -57,7 +57,7 @@ Returns a `SolarArcSubjectModel` with the solar arc, directed points, and direct
 Returns a copy of `natal_subject` with every directable point advanced by the solar arc -- including the four angles (Asc/MC/Desc/IC), which are directed like the planets -- while only the house cusps stay on the natal frame. This is the form you want for a **biwheel** rendering: inner ring = natal, outer ring = directed.
 
 ```python
-directed = SolarArcFactory.compute_directed_subject(natal_subject, target_year=2030)
+directed = SolarArcFactory.compute_directed_subject(natal, target_year=2030)
 print(directed.name)            # "<name> (directed)"
 print(directed.sun.sign, f"{directed.sun.abs_pos:.2f}°")
 ```

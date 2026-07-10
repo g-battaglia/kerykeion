@@ -1762,9 +1762,11 @@ class ChartDrawer:  # type: ignore[no-redef]
         chart_language (KerykeionChartLanguage, optional):
             Language code for chart labels. Defaults to 'EN'.
         language_pack (dict | None, optional):
-            Additional translations merged over the bundled defaults for the
-            selected language. Useful to introduce new languages or override
-            existing labels.
+            Additional translations. For one of the bundled languages the pack
+            is merged over that language's defaults (partial packs override
+            individual labels). For a NEW language code the pack itself is the
+            language: it must be complete (clone the EN block and edit), or
+            model validation fails listing the missing fields.
         external_view (bool, optional):
             For Natal charts only: place planets outside the zodiac ring.
             Defaults to False.
@@ -2018,9 +2020,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             chart_language (KerykeionChartLanguage, optional):
                 Language code for chart labels (e.g., 'EN', 'IT'). Defaults to 'EN'.
             language_pack (dict | None, optional):
-                Additional translations merged over the bundled defaults for the
-                selected language. Useful to introduce new languages or override
-                existing labels.
+                Additional translations. For one of the bundled languages the
+                pack is merged over that language's defaults (partial packs
+                override individual labels). For a NEW language code the pack
+                itself is the language: it must be complete (clone the EN
+                block and edit), or model validation fails listing the
+                missing fields.
             external_view (bool, optional):
                 Whether to use external visualization (planets on outer ring) for
                 single-subject charts. Only applies to Natal charts. Defaults to False.

@@ -273,6 +273,7 @@ Moon,Ari,21.80,Eighth_House,False,14.0131,13.1955,
 > **Requires pandas** (not a Kerykeion dependency): `pip install pandas`.
 
 ```python
+# doc-snippet: no-run — requires optional pandas dependency
 import pandas as pd
 from datetime import datetime
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory

@@ -60,6 +60,7 @@ Age: 22 days
 ### `MoonPhaseDetailsFactory.from_subject(...)`
 
 ```python
+# doc-snippet: no-run — API signature reference
 @classmethod
 def from_subject(
     cls,

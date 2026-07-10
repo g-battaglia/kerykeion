@@ -17,6 +17,7 @@ A map of the sky at the exact moment and location of birth. Shows the positions 
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 ```
 
@@ -50,6 +51,7 @@ The zodiac sign rising on the eastern horizon at the time of birth. Determines t
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(subject.first_house.sign)  # The Ascendant sign
 print(subject.ascendant.position)  # Exact degree
 ```
@@ -59,6 +61,7 @@ The highest point in the chart, representing career and public image. The cusp o
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(subject.tenth_house.sign)
 print(subject.medium_coeli.position)
 ```
@@ -97,6 +100,7 @@ The points where the Moon's orbit crosses the ecliptic. Related to karmic themes
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 # True nodes (oscillating)
 print(subject.true_north_lunar_node)
 print(subject.true_south_lunar_node)
@@ -159,6 +163,7 @@ The tolerance in degrees for an aspect to be considered active. A conjunction wi
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 # Aspect data includes orb
 aspect.orbit  # The actual deviation from exact
 ```
@@ -201,6 +206,7 @@ When a planet appears to move backward through the zodiac due to relative orbita
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 if subject.mercury.retrograde:
     print("Mercury is retrograde")
 ```
@@ -216,6 +222,7 @@ A continuous count of days since January 1, 4713 BCE. Used internally for astron
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(subject.julian_day)
 ```
 
@@ -223,13 +230,13 @@ print(subject.julian_day)
 The period after the Moon makes its last major aspect in a sign and before it enters the next sign. Traditionally considered an unfavorable time for initiating new actions. Duration varies from minutes to over a day.
 
 > **In Kerykeion:** Use `VoidOfCourseMoonFactory` to compute the void-of-course state for any moment — it returns the void window, the current/next sign, and the framing last/next aspects:
->
-> ```python
-> from kerykeion import VoidOfCourseMoonFactory
->
-> voc = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 9, 0, tz_str="Europe/Rome")
-> print(voc.is_void_of_course, voc.moon_sign, voc.next_sign)  # True Sag Cap
-> ```
+
+```python
+from kerykeion import VoidOfCourseMoonFactory
+
+voc = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 9, 0, tz_str="Europe/Rome")
+print(voc.is_void_of_course, voc.moon_sign, voc.next_sign)  # True Sag Cap
+```
 
 ### Progressed Chart
 A forecasting technique where each day after birth corresponds to one year of life (secondary progressions). For example, the planetary positions 30 days after birth represent the progressed chart for age 30.
@@ -279,6 +286,7 @@ Declination-based aspects. A parallel is when two planets have the same declinat
 Overlays two natal charts to analyze relationship compatibility. Shows how one person's planets aspect the other's.
 
 ```python
+# doc-snippet: no-run — illustrative fragment
 synastry_data = ChartDataFactory.create_synastry_chart_data(person1, person2)
 ```
 
@@ -286,6 +294,7 @@ synastry_data = ChartDataFactory.create_synastry_chart_data(person1, person2)
 Creates a single chart from the midpoints of two people's charts. Represents the relationship itself as an entity.
 
 ```python
+# doc-snippet: no-run — illustrative fragment
 composite = CompositeSubjectFactory(person1, person2).get_midpoint_composite_subject_model()
 ```
 
@@ -293,6 +302,7 @@ composite = CompositeSubjectFactory(person1, person2).get_midpoint_composite_sub
 Compares current planetary positions to a natal chart. Used for timing and prediction.
 
 ```python
+# doc-snippet: no-run — illustrative fragment
 transit_data = ChartDataFactory.create_transit_chart_data(natal_subject, transit_subject)
 ```
 
@@ -300,6 +310,7 @@ transit_data = ChartDataFactory.create_transit_chart_data(natal_subject, transit
 The chart for the moment the Sun returns to its exact natal position each year. Used for annual forecasts.
 
 ```python
+# doc-snippet: no-run — illustrative fragment
 return_subject = PlanetaryReturnFactory(natal, ...).next_return_from_date(2024, 1, 1, return_type="Solar")
 ```
 
@@ -331,6 +342,7 @@ Three modes describing how signs express energy:
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(chart_data.element_distribution.fire_percentage)
 print(chart_data.quality_distribution.cardinal_percentage)
 ```
@@ -352,6 +364,7 @@ print(chart_data.quality_distribution.cardinal_percentage)
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(subject.lunar_phase.moon_phase_name)
 print(subject.lunar_phase.moon_emoji)
 ```

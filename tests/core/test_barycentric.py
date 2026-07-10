@@ -84,8 +84,11 @@ class TestBarycentricPerspective:
             barycentric_subject.sun.abs_pos,
             geocentric_subject.sun.abs_pos,
         )
-        # The barycenter→Sun direction changes slowly (years); for any modern
-        # date it is well away from the geocentric longitude.
+        # The barycenter→Sun direction changes slowly (years). It is NOT far
+        # from the geocentric longitude on every date — the geocentric Sun
+        # sweeps the full circle yearly and crosses it for a day or two — but
+        # for the pinned fixture date (1990-06-15) the separation is ~24.5°
+        # on both backends. Keep the fixture date if you touch this test.
         assert sun_diff > 1.0, (
             f"Barycentric Sun ({barycentric_subject.sun.abs_pos:.4f}°) suspiciously "
             f"close to geocentric ({geocentric_subject.sun.abs_pos:.4f}°): the "

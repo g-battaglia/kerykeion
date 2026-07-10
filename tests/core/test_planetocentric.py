@@ -484,3 +484,30 @@ class TestGauquelinAndDerivedPointGuardRound15:
             perspective_type="Heliocentric",
             active_points=["Mercury", "Mean_South_Lunar_Node"])
         assert s.mean_south_lunar_node is None
+
+
+class TestGeocentricOnlyLunarApsidesRound40:
+    """Interpolated_Perigee (SE_INTP_PERG) is a geocentric lunar-orbit quantity
+    like the nodes and apogee/Lilith variants. It used to be missing from the
+    non-geocentric exclusion set, computing as a backend-dependent phantom in
+    heliocentric charts (libephemeris echoed the geocentric value, swisseph a
+    zero phantom)."""
+
+    def test_heliocentric_drops_interpolated_perigee(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "H", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            perspective_type="Heliocentric",
+            active_points=["Mercury", "Venus", "Interpolated_Perigee", "Interpolated_Lilith"],
+        )
+        assert s.interpolated_perigee is None
+        assert s.interpolated_lilith is None
+
+    def test_geocentric_keeps_interpolated_perigee(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "G", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            active_points=["Mercury", "Interpolated_Perigee"],
+        )
+        assert s.interpolated_perigee is not None
+        assert 0 <= s.interpolated_perigee.abs_pos < 360

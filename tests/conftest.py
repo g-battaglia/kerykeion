@@ -24,6 +24,7 @@ Tier filtering:
 """
 
 import os
+import re
 
 import pytest
 from typing import Dict, Any
@@ -124,14 +125,17 @@ _EXTENDED_ONLY_NODE_PATTERNS = ("bce", "ancient_rome", "historical_date")
 # swisseph backend these need per-body asteroid `.se1` files that the setup
 # helper cannot auto-download (manual mirror only); skip them when the backend
 # cannot compute a probe TNO instead of failing dozens of snapshot tests.
-# The second row lists the golden snapshots whose fixtures are generated with
-# ALL_ACTIVE_POINTS but whose node ids don't carry an all-points marker.
-_TNO_NODE_PATTERNS = (
-    "all_active_points", "all_points", "tno", "has_extra_bodies", "all_32pts",
-    "einstein_snapshot", "tokyo_snapshot", "quito_snapshot",
-    "buenos_aires_snapshot", "ancient_rome_snapshot", "future_2050_snapshot",
-    "test_natal_snapshot", "solar_return_snapshot", "test_transit_snapshot",
-    "test_synastry_snapshot", "test_composite_snapshot", "dual_return_snapshot",
+# The city-named snapshots are the golden reports generated with
+# ALL_ACTIVE_POINTS whose node ids don't carry an all-points marker.
+# NOTE: matched as a delimiter-bounded regex, not a bare substring — a bare
+# "tno" would also hit camelCase joins like TestNOrmalize/TesTNOnInt once
+# lowercased, silently skipping ~40 unrelated tests.
+_TNO_NODE_REGEX = re.compile(
+    r"(?:^|[^a-z0-9])(?:"
+    r"all_active_points|all_points|tnos?|has_extra_bodies|all_32pts|"
+    r"einstein_snapshot|tokyo_snapshot|quito_snapshot|"
+    r"buenos_aires_snapshot|ancient_rome_snapshot|future_2050_snapshot"
+    r")(?:[^a-z0-9]|$)"
 )
 
 
@@ -176,7 +180,7 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         node_id = item.nodeid
         node_id_lower = node_id.lower()
-        if tnos_missing and any(pattern in node_id_lower for pattern in _TNO_NODE_PATTERNS):
+        if tnos_missing and _TNO_NODE_REGEX.search(node_id_lower):
             item.add_marker(skip_tno)
             continue
         if tier != "extended":

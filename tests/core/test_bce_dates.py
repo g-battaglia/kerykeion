@@ -607,8 +607,14 @@ class TestBCEBackendComparison:
             # Under KERYKEION_BACKEND=swisseph the tier auto-detection probes
             # the swisseph ephemeris (Moshier covers any year), so the "bce"
             # node skip does not fire even when the LOCAL libephemeris kernel
-            # is short-range. Skip explicitly instead of failing.
-            pytest.skip(f"local libephemeris kernel cannot compute this BCE date: {exc}")
+            # is short-range. Skip explicitly there — but on libephemeris runs
+            # the tier gate already handled coverage, so an exception here is a
+            # genuine regression and must fail.
+            from kerykeion.ephemeris_backend import BACKEND_NAME
+
+            if BACKEND_NAME == "swisseph":
+                pytest.skip(f"local libephemeris kernel cannot compute this BCE date: {exc}")
+            raise
 
         _swisseph.set_ephe_path("")
         swe_sun = _swisseph.calc_ut(jd, _swisseph.SUN, _swisseph.FLG_SWIEPH)[0][0]

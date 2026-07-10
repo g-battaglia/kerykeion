@@ -71,6 +71,7 @@ Find the next N heliacal events across multiple planets, sorted chronologically.
 **Returns:** `List[HeliacalEventModel]`
 
 ```python
+# doc-snippet: no-run — multi-planet visibility search runs for minutes
 events = factory.search_events(
     julian_day=ephe.julday(2025, 1, 1, 0.0),
     geopos=(12.4964, 41.9028, 50),

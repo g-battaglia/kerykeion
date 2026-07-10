@@ -195,7 +195,7 @@ _GEOCENTRIC_ONLY_BODY_IDS = frozenset(
     bid for bid in (
         getattr(ephe, "MEAN_NODE", None), getattr(ephe, "TRUE_NODE", None),
         getattr(ephe, "MEAN_APOG", None), getattr(ephe, "OSCU_APOG", None),
-        getattr(ephe, "INTP_APOG", None),
+        getattr(ephe, "INTP_APOG", None), getattr(ephe, "INTP_PERG", None),
     ) if bid is not None
 )
 

@@ -67,6 +67,7 @@ The API returns JSON with:
 ### Python
 
 ```python
+# doc-snippet: no-run — external service call (requires RapidAPI key)
 import requests
 
 API_KEY = "your_rapidapi_key"
