@@ -1030,6 +1030,13 @@ class CompositeSubjectModel(AstrologicalBaseModel):
     second_subject: AstrologicalSubjectModel
     composite_chart_type: str
 
+    # Sect (diurnal/nocturnal) — meaningful for Davison charts, which
+    # represent a real moment; None when not applicable (the midpoint method
+    # has no single sky). Declared here so the value the factory computes is
+    # not silently dropped by pydantic, which would make sect-aware consumers
+    # (dominants, zodiacal releasing) treat night charts as day charts.
+    is_diurnal: Optional[bool] = None
+
 
 class PlanetReturnModel(AstrologicalBaseModel):
     """
@@ -1048,6 +1055,12 @@ class PlanetReturnModel(AstrologicalBaseModel):
     return_type: ReturnType = Field(
         description="Type of return: Solar, Lunar, Heliocentric or Lunar_Node_Crossing"
     )
+
+    # Sect (diurnal/nocturnal) of the return moment. Declared here so the
+    # value the factory computes is not silently dropped by pydantic, which
+    # would make sect-aware consumers (dominants, zodiacal releasing) treat
+    # night returns as day charts.
+    is_diurnal: Optional[bool] = None
 
 
 class EphemerisDictModel(SubscriptableBaseModel):

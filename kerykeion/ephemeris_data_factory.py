@@ -66,10 +66,11 @@ from kerykeion.schemas import (
     PerspectiveType,
     ZodiacType,
 )
+from kerykeion.schemas.kr_literals import AstrologicalPoint
 from datetime import datetime, timedelta
 
 import pytz
-from typing import Any, Literal, Optional
+from typing import Any, List, Literal, Optional
 import logging
 
 # Default limits to prevent excessive computational load
@@ -129,6 +130,12 @@ class EphemerisDataFactory:
         custom_ayanamsa_ayan_t0 (Union[float, None], optional): The ayanamsa value (in degrees)
             at the reference epoch t0. Only used when sidereal_mode is "USER".
             Defaults to None.
+        active_points (Union[List[AstrologicalPoint], None], optional): Points to
+            calculate on every generated subject. Defaults to None, which uses
+            DEFAULT_ACTIVE_POINTS. Pass the same list you give the consumer
+            (e.g. TransitsTimeRangeFactory with asteroids/TNOs) — aspects can
+            only be detected for points present on BOTH the natal and the
+            ephemeris subjects.
 
     Raises:
         ValueError: If step_type is not one of "days", "hours", or "minutes".
@@ -181,6 +188,7 @@ class EphemerisDataFactory:
         max_minutes: Optional[int] = _MAX_MINUTES,
         custom_ayanamsa_t0: Optional[float] = None,
         custom_ayanamsa_ayan_t0: Optional[float] = None,
+        active_points: Optional[List[AstrologicalPoint]] = None,
     ):
         if step <= 0:
             # A non-positive step divides by zero when sizing the series; reject
@@ -200,6 +208,7 @@ class EphemerisDataFactory:
         self.perspective_type = perspective_type
         self.custom_ayanamsa_t0 = custom_ayanamsa_t0
         self.custom_ayanamsa_ayan_t0 = custom_ayanamsa_ayan_t0
+        self.active_points = active_points
         self.max_days = max_days
         self.max_hours = max_hours
         self.max_minutes = max_minutes
@@ -323,6 +332,7 @@ class EphemerisDataFactory:
             is_dst=is_dst,
             custom_ayanamsa_t0=self.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
+            active_points=self.active_points,
             _lmt_offset_seconds=resolved_offset_seconds,
         )
 
@@ -351,10 +361,10 @@ class EphemerisDataFactory:
                 If as_model=False (default):
                     List of dictionaries with keys:
                     - "date" (str): ISO format datetime string (e.g., "2020-01-01T00:00:00")
-                    - "planets" (list): List of dictionaries, each containing planetary data
-                      with keys like 'name', 'abs_pos', 'lon', 'lat', 'dist', 'speed', etc.
-                    - "houses" (list): List of dictionaries containing house cusp data
-                      with keys like 'name', 'abs_pos', 'lon', etc.
+                    - "planets" (list): List of KerykeionPointModel instances (attribute
+                      or subscript access: 'name', 'abs_pos', 'sign', 'speed', etc.)
+                    - "houses" (list): List of KerykeionPointModel instances for the
+                      house cusps (same access patterns)
 
                 If as_model=True:
                     List of EphemerisDictModel instances providing the same data

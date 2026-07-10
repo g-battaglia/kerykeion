@@ -127,6 +127,19 @@ def test_bce_year_raises_clean_exception():
         SunTimesFactory.from_date(-43, 3, 15, **ROME)
 
 
+def test_civil_day_bounds_penultimate_day_falls_back():
+    # 9999-12-30 is computable; its NEXT midnight (9999-12-31) is not, because
+    # pytz's DST probe overflows there. _civil_day_bounds must fall back to
+    # jd_midnight + 1 (its documented behavior) rather than propagate the
+    # KerykeionException the localize helpers now raise for that day.
+    import pytz
+
+    from kerykeion.sun_times.utils import _civil_day_bounds
+
+    lo, hi = _civil_day_bounds(9999, 12, 30, pytz.timezone("America/New_York"))
+    assert hi == pytest.approx(lo + 1.0)
+
+
 def test_civil_range_edge_days_raise_clean_exception():
     # pytz.localize probes the surrounding day to resolve DST, so the first and
     # last civil days of the datetime range overflow inside localize. They must

@@ -333,3 +333,25 @@ class TestDavisonMidpointComponentsInverse:
             y, mo, d, h, mi, s = _davison_midpoint_components(1721424.5, 0.0)
         assert (y, mo, d, h, mi, s) == (1, 1, 1, 0, 0, 0)
         assert "gap" in caplog.text
+
+
+def test_davison_model_carries_sect():
+    """is_diurnal must survive the CompositeSubjectModel boundary for Davison
+    charts (a real moment in time); midpoint composites have no single sky and
+    stay None."""
+    from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
+    a = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    b = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1985, 3, 10, 4, 20,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    davison = CompositeSubjectFactory(a, b).get_davison_composite_subject_model()
+    assert isinstance(davison.is_diurnal, bool)
+    midpoint = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
+    assert midpoint.is_diurnal is None

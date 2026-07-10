@@ -446,3 +446,56 @@ class TestExtendedYearRunSplitting:
         # CE control: identical structure must split identically.
         ce_track = [(d.replace("-0499", "2020"), o, m) for d, o, m in track]
         assert len(factory._split_track_into_runs(ce_track, 1.0)) == 2
+
+
+class TestActivePointsForwarding:
+    """Transits to non-default natal points require the ephemeris subjects to
+    carry the same points: EphemerisDataFactory must forward active_points and
+    TransitsTimeRangeFactory must warn when requested points are absent from
+    the series (they used to vanish silently)."""
+
+    def _natal_with_ceres(self):
+        from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+
+        points = [*DEFAULT_ACTIVE_POINTS, "Ceres"]
+        return points, AstrologicalSubjectFactory.from_birth_data(
+            "Ceres Natal", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=points,
+        )
+
+    def test_ephemeris_factory_forwards_active_points(self):
+        points, _ = self._natal_with_ceres()
+        factory = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            active_points=points,
+        )
+        subjects = factory.get_ephemeris_data_as_astrological_subjects()
+        assert "Ceres" in subjects[0].active_points
+        assert subjects[0].ceres is not None
+
+    def test_warns_when_requested_points_missing_from_ephemeris(self, caplog):
+        points, natal = self._natal_with_ceres()
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal, ephemeris, active_points=points)
+        assert any(
+            "Ceres" in record.message and "absent" in record.message
+            for record in caplog.records
+        )
+
+    def test_no_warning_when_points_match(self, caplog):
+        points, natal = self._natal_with_ceres()
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            active_points=points,
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal, ephemeris, active_points=points)
+        assert not any("absent" in record.message for record in caplog.records)

@@ -209,13 +209,16 @@ def _civil_day_bounds(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> t
     """Julian Days (UT) of the local midnights opening and closing the civil day.
 
     Returns ``(jd_midnight, jd_next_midnight)``; the upper bound falls back to
-    ``jd_midnight + 1`` when the following date overflows the supported range.
+    ``jd_midnight + 1`` when the following date overflows the supported range —
+    either as a raw ``OverflowError`` from the ``date`` arithmetic or as the
+    ``KerykeionException`` the localize helpers now raise for the last civil
+    day (whose DST probe overflows inside pytz).
     """
     jd_midnight = local_midnight_julian_day(year, month, day, tz)
     try:
         next_day = date(year, month, day) + timedelta(days=1)
         jd_next_midnight = local_midnight_julian_day(next_day.year, next_day.month, next_day.day, tz)
-    except OverflowError:
+    except (OverflowError, KerykeionException):
         jd_next_midnight = jd_midnight + 1.0
     return jd_midnight, jd_next_midnight
 
