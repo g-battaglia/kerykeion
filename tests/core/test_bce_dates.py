@@ -168,6 +168,7 @@ class TestBCESubjectCreation:
     """Test that BCE subjects can be created and have valid properties."""
 
     @pytest.mark.parametrize("subject_id", list(BCE_SUBJECTS.keys()), ids=lambda s: s)
+    @pytest.mark.extended
     def test_subject_creation(self, subject_id):
         """Subject is created without error for each BCE date."""
         subject = _create_bce_subject(subject_id)
@@ -180,6 +181,7 @@ class TestBCESubjectCreation:
         assert subject.name == data["name"]
 
     @pytest.mark.parametrize("subject_id", list(BCE_SUBJECTS.keys()), ids=lambda s: s)
+    @pytest.mark.extended
     def test_julian_day_baseline(self, subject_id):
         """Julian Day matches the precomputed baseline."""
         subject = _create_bce_subject(subject_id)
@@ -187,6 +189,7 @@ class TestBCESubjectCreation:
         assert subject.julian_day == pytest.approx(expected_jd, abs=1e-3)
 
     @pytest.mark.parametrize("subject_id", list(BCE_SUBJECTS.keys()), ids=lambda s: s)
+    @pytest.mark.extended
     def test_day_of_week_baseline(self, subject_id):
         """Day of week matches the precomputed baseline."""
         subject = _create_bce_subject(subject_id)
@@ -194,6 +197,7 @@ class TestBCESubjectCreation:
         assert subject.day_of_week == expected_dow
 
     @pytest.mark.parametrize("subject_id", list(BCE_SUBJECTS.keys()), ids=lambda s: s)
+    @pytest.mark.extended
     def test_sun_position_baseline(self, subject_id):
         """Sun sign and position match precomputed baselines."""
         subject = _create_bce_subject(subject_id)
@@ -202,6 +206,7 @@ class TestBCESubjectCreation:
         assert subject.sun.abs_pos == pytest.approx(expected["sun_abs_pos"], abs=BCE_POSITION_TOLERANCE)
 
     @pytest.mark.parametrize("subject_id", list(BCE_SUBJECTS.keys()), ids=lambda s: s)
+    @pytest.mark.extended
     def test_moon_position_baseline(self, subject_id):
         """Moon sign and position match precomputed baselines."""
         subject = _create_bce_subject(subject_id)
@@ -238,6 +243,7 @@ class TestBCESubjectCreation:
             AstrologicalSubjectFactory.from_birth_data(**base)
 
     @pytest.mark.parametrize("subject_id", list(BCE_SUBJECTS.keys()), ids=lambda s: s)
+    @pytest.mark.extended
     def test_planetary_positions_valid_range(self, subject_id):
         """All available planetary positions are in [0, 360)."""
         subject = _create_bce_subject(subject_id)
@@ -255,6 +261,7 @@ class TestBCESubjectCreation:
 class TestLMTOffset:
     """Test that Local Mean Time offset is correctly applied."""
 
+    @pytest.mark.extended
     def test_lmt_offset_positive_longitude(self):
         """East longitude produces a positive LMT offset (local time ahead of UT)."""
         # Athens: lng=23.7275 → offset ≈ +1.5818 hours = +01:34:55 (whole-second
@@ -263,6 +270,7 @@ class TestLMTOffset:
         # The local ISO should show a positive UTC offset
         assert "+01:34:55" in subject.iso_formatted_local_datetime
 
+    @pytest.mark.extended
     def test_lmt_offset_different_longitudes(self):
         """Different longitudes produce different Julian Days for the same local time."""
         # Same date/time, different locations
@@ -280,6 +288,7 @@ class TestLMTOffset:
         jd_diff = subj_east.julian_day - subj_west.julian_day
         assert jd_diff == pytest.approx(-0.5, abs=1e-6)
 
+    @pytest.mark.extended
     def test_lmt_offset_zero_longitude(self):
         """Zero longitude means no LMT offset (local time = UT)."""
         subject = AstrologicalSubjectFactory.from_birth_data(
@@ -373,6 +382,7 @@ class TestDayOfWeek:
         day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         assert day_names[day_index] == "Saturday"
 
+    @pytest.mark.extended
     def test_bce_day_of_week_consistency(self):
         """Day of week should be consistent with the Julian Day for all BCE subjects."""
         for subject_id in BCE_SUBJECTS:
@@ -402,6 +412,7 @@ class TestBCEChartSVG:
     def subj_200bc(self):
         return _create_bce_subject("ancient_200bc")
 
+    @pytest.mark.extended
     def test_natal_chart_svg(self, subj_500bc):
         """Natal chart SVG can be generated for a BCE subject."""
         data = ChartDataFactory.create_natal_chart_data(subj_500bc)
@@ -413,6 +424,7 @@ class TestBCEChartSVG:
         assert "</svg>" in svg
         assert "Ancient Greece 500BC" in svg
 
+    @pytest.mark.extended
     def test_natal_chart_baseline(self, subj_500bc):
         """Natal chart SVG matches the golden baseline (if available)."""
         baseline_path = SVG_DIR / "Ancient Greece 500BC - Natal Chart.svg"
@@ -428,6 +440,7 @@ class TestBCEChartSVG:
         baseline_lines = baseline.strip().splitlines()
         assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
 
+    @pytest.mark.extended
     def test_transit_chart_svg(self, subj_500bc, subj_200bc):
         """Transit chart SVG can be generated between two BCE subjects."""
         data = ChartDataFactory.create_transit_chart_data(subj_500bc, subj_200bc)
@@ -438,6 +451,7 @@ class TestBCEChartSVG:
         assert "<svg" in svg
         assert "</svg>" in svg
 
+    @pytest.mark.extended
     def test_transit_chart_baseline(self, subj_500bc, subj_200bc):
         """Transit chart SVG matches the golden baseline (if available)."""
         baseline_path = SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart.svg"
@@ -452,6 +466,7 @@ class TestBCEChartSVG:
         baseline_lines = baseline.strip().splitlines()
         assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
 
+    @pytest.mark.extended
     def test_synastry_chart_svg(self, subj_500bc, subj_200bc):
         """Synastry chart SVG can be generated between two BCE subjects."""
         data = ChartDataFactory.create_synastry_chart_data(subj_500bc, subj_200bc)
@@ -462,6 +477,7 @@ class TestBCEChartSVG:
         assert "<svg" in svg
         assert "</svg>" in svg
 
+    @pytest.mark.extended
     def test_synastry_chart_baseline(self, subj_500bc, subj_200bc):
         """Synastry chart SVG matches the golden baseline (if available)."""
         baseline_path = SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart.svg"
@@ -476,6 +492,7 @@ class TestBCEChartSVG:
         baseline_lines = baseline.strip().splitlines()
         assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
 
+    @pytest.mark.extended
     def test_progression_chart_svg(self, subj_500bc):
         """Progression chart SVG can be generated for a BCE subject."""
         progressed = SecondaryProgressionFactory.compute(subj_500bc, target_year=-460)
@@ -488,6 +505,7 @@ class TestBCEChartSVG:
         assert "</svg>" in svg
         assert "Ancient Greece 500BC" in svg
 
+    @pytest.mark.extended
     def test_progression_chart_baseline(self, subj_500bc):
         """Progression chart SVG matches the golden baseline (if available)."""
         baseline_path = SVG_DIR / "Ancient Greece 500BC - Progression Chart.svg"
@@ -503,6 +521,7 @@ class TestBCEChartSVG:
         baseline_lines = baseline.strip().splitlines()
         assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
 
+    @pytest.mark.extended
     def test_progression_bce_pre_1ce_gap_clamps_to_bce_branch(self):
         """A progressed JD in the ~2-day window before 1 CE Jan 1 (proleptic
         Gregorian) decomposes to Julian year 1, which ``from_birth_data`` would
@@ -536,6 +555,7 @@ class TestBCEHouseSystems:
     """Test that various house systems work with BCE dates."""
 
     @pytest.mark.parametrize("house_system", HOUSE_SYSTEMS, ids=lambda h: f"house_{h}")
+    @pytest.mark.extended
     def test_house_system_creates_valid_subject(self, house_system):
         """Each house system produces a valid subject for a BCE date."""
         subject = _create_bce_subject("ides_of_march", houses_system_identifier=house_system)
@@ -552,6 +572,7 @@ class TestBCEHouseSystems:
 class TestBCESiderealMode:
     """Test that sidereal modes work with BCE dates."""
 
+    @pytest.mark.extended
     def test_sidereal_lahiri(self):
         """Sidereal Lahiri mode produces different positions from tropical."""
         tropical = _create_bce_subject("ancient_500bc")
@@ -562,6 +583,7 @@ class TestBCESiderealMode:
         assert sidereal.sun.abs_pos != pytest.approx(tropical.sun.abs_pos, abs=1.0)
         assert sidereal.ayanamsa_value is not None
 
+    @pytest.mark.extended
     def test_sidereal_fagan_bradley(self):
         """Sidereal Fagan-Bradley mode works with BCE dates."""
         subject = _create_bce_subject(
@@ -594,6 +616,7 @@ class TestBCEBackendComparison:
         )
 
     @pytest.mark.parametrize("subject_id", list(BCE_SUBJECTS.keys()), ids=lambda s: s)
+    @pytest.mark.extended
     def test_sun_position_agreement(self, subject_id):
         """Both backends should compute similar Sun positions for BCE dates."""
         data = BCE_SUBJECTS[subject_id]
@@ -661,6 +684,7 @@ class TestModernDatesRegression:
         assert subject.iso_formatted_local_datetime.startswith("1940-")
         assert "T18:30:" in subject.iso_formatted_local_datetime
 
+    @pytest.mark.extended
     def test_year_one_uses_modern_path(self):
         """Year 1 AD should use the standard datetime/pytz path."""
         subject = AstrologicalSubjectFactory.from_birth_data(
@@ -682,6 +706,7 @@ class TestModernDatesRegression:
 class TestBCEReport:
     """Test report generation for BCE subjects."""
 
+    @pytest.mark.extended
     def test_natal_report(self):
         """Natal report can be generated for a BCE subject without error."""
         from kerykeion.report import ReportGenerator

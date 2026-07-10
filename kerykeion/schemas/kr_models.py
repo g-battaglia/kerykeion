@@ -577,7 +577,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
         position: Position within the sign (0-30 degrees).
         abs_pos: Absolute position in the zodiac (0-360 degrees).
         emoji: Unicode emoji representing the point or sign.
-        point_type: Type of the celestial point (Planet, House, etc.).
+        point_type: Category of the point — one of "AstrologicalPoint", "House", "Midpoint".
         house: House placement of the point (optional).
         retrograde: Whether the point is in retrograde motion (optional).
         speed: Daily motion in degrees/day along the ecliptic. Negative values

@@ -1587,7 +1587,7 @@ def draw_main_house_grid(
     - main_subject_houses_list (list[KerykeionPointModel]): List of houses for the main subject.
     - house_cusp_generale_name_label (str): Label for the house cusp. Defaults to "Cusp".
     - text_color (str): Color of the text. Defaults to "#000000".
-    - x_position (int): X position for the grid. Defaults to 720.
+    - x_position (int): X position for the grid. Defaults to 750.
     - y_position (int): Y position for the grid. Defaults to 30.
 
     Returns:
@@ -1625,7 +1625,7 @@ def draw_secondary_house_grid(
     - secondary_subject_houses_list (list[KerykeionPointModel]): List of houses for the secondary subject.
     - house_cusp_generale_name_label (str): Label for the house cusp. Defaults to "Cusp".
     - text_color (str): Color of the text. Defaults to "#000000".
-    - x_position (int): X position for the grid. Defaults to 970.
+    - x_position (int): X position for the grid. Defaults to 1015.
     - y_position (int): Y position for the grid. Defaults to 30.
 
     Returns:
@@ -1879,7 +1879,7 @@ def draw_main_planet_grid(
         chart_type: Chart type identifier (Literal string).
         celestial_point_language: Language model for celestial point decoding.
         text_color: Text color for labels (default: "#000000").
-        x_position: X translation applied to the outer `<g>` (default: 620).
+        x_position: X translation applied to the outer `<g>` (default: 645).
         y_position: Y translation applied to the outer `<g>` (default: 0).
 
     Returns:
@@ -1959,7 +1959,7 @@ def draw_secondary_planet_grid(
         chart_type: Chart type identifier (Literal string).
         celestial_point_language: Language model for celestial point decoding.
         text_color: Text color for labels (default: "#000000").
-        x_position: X translation applied to the outer `<g>` (default: 870).
+        x_position: X translation applied to the outer `<g>` (default: 910).
         y_position: Y translation applied to the outer `<g>` (default: 0).
 
     Returns:

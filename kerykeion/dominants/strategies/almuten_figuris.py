@@ -117,7 +117,9 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
 
         # --- optional accidental dignities -----------------------------------
         if config.include_accidental_dignities:
-            self._add_accidental_dignities(subject, accidental, breakdown)
+            self._add_accidental_dignities(
+                subject, accidental, breakdown, include_breakdown=config.include_score_breakdown
+            )
 
         totals: Dict[str, float] = {planet: essential[planet] + accidental[planet] for planet in CLASSICAL_PLANETS}
         ranking = self._resolve_ranking(totals, essential, major_count)
@@ -186,6 +188,7 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
         subject: AstrologicalSubjectModel,
         accidental: Dict[str, float],
         breakdown: List[BreakdownItem],
+        include_breakdown: bool = True,
     ) -> None:
         """Add the optional accidental-dignity layer in place.
 
@@ -193,6 +196,10 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
         occupies, and a bonus for the planet ruling the weekday of birth. (The
         planetary-hour ruler is intentionally not included; it would require the
         full sunrise-based planetary-hours computation.)
+
+        ``include_breakdown`` mirrors ``DominantsConfig.include_score_breakdown``:
+        the scores are always accumulated, but the audit trail is only recorded
+        when the caller asked for it.
         """
         # House placement.
         for planet in CLASSICAL_PLANETS:
@@ -202,9 +209,10 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
             house_points = ALMUTEN_HOUSE_PLACEMENT_POINTS.get(get_house_number(point.house))
             if house_points:
                 accidental[planet] += house_points
-                breakdown.append(
-                    BreakdownItem("accidental", planet, "house placement", float(house_points), point.house)
-                )
+                if include_breakdown:
+                    breakdown.append(
+                        BreakdownItem("accidental", planet, "house placement", float(house_points), point.house)
+                    )
 
         # Weekday (day) ruler. The traditional day ruler follows the LOCAL
         # civil date at the birthplace, not the UT date (the UT-based Julian
@@ -235,7 +243,8 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
         if weekday_index is not None:
             day_ruler = WEEKDAY_RULERS[weekday_index]
             accidental[day_ruler] += ALMUTEN_DAY_RULER_BONUS
-            breakdown.append(BreakdownItem("accidental", day_ruler, "day ruler", ALMUTEN_DAY_RULER_BONUS))
+            if include_breakdown:
+                breakdown.append(BreakdownItem("accidental", day_ruler, "day ruler", ALMUTEN_DAY_RULER_BONUS))
 
     @staticmethod
     def _resolve_ranking(

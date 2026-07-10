@@ -116,10 +116,17 @@ def _detect_ephemeris_tier() -> str:
     return "base"
 
 
-# Test modules/ids that need the full-range (extended) kernel but are not
-# parametrized with temporal-subject ids, so the tier filter below cannot
-# catch them by subject. Matched as substrings of the lowercased node id.
-_EXTENDED_ONLY_NODE_PATTERNS = ("bce", "ancient_rome", "historical_date")
+# Tests that need the full-range (extended) kernel but are not parametrized with
+# temporal-subject ids, so the subject-tier filter below cannot catch them.
+#
+# These carry an explicit ``@pytest.mark.extended``. This used to be a bare
+# substring match on the lowercased node id ("bce", "ancient_rome",
+# "historical_date"), which silently skipped 25 tests that need no ephemeris at
+# all — every ``test_jd_to_iso_bce_year`` (pure string formatting), the whole of
+# ``TestAncientISOFormat`` (including ``test_year_zero``), and the BCE sampling-gap
+# tests. No substring or regex on the node id can separate them: the defect is
+# that a test's *name* says "bce" while its *body* never leaves the civil range.
+# Intent has to be declared, not inferred.
 
 # Tests exercising the full point set (TNOs and other extra bodies). On the
 # swisseph backend these need per-body asteroid `.se1` files that the setup
@@ -183,10 +190,9 @@ def pytest_collection_modifyitems(config, items):
         if tnos_missing and _TNO_NODE_REGEX.search(node_id_lower):
             item.add_marker(skip_tno)
             continue
-        if tier != "extended":
-            if any(pattern in node_id_lower for pattern in _EXTENDED_ONLY_NODE_PATTERNS):
-                item.add_marker(skip_range)
-                continue
+        if tier != "extended" and item.get_closest_marker("extended") is not None:
+            item.add_marker(skip_range)
+            continue
         for subject_id in all_subject_ids:
             if subject_id in node_id and subject_id not in allowed_ids:
                 item.add_marker(skip_subject)
@@ -277,6 +283,10 @@ def paul_mccartney():
 
     Birth data: June 18, 1942, 15:30, Liverpool, GB (53.4084, -2.9916)
     Used for synastry testing with John Lennon.
+
+    NOTE: 15:30 matches the canonical ``paul_mccartney_1942`` matrix subject, but
+    tests/core/conftest.py defines a *different* 14:00 chart under the same fixture
+    name, which shadows this one for everything under tests/core/. See that file.
     """
     return AstrologicalSubjectFactory.from_birth_data(
         "Paul McCartney",

@@ -996,7 +996,11 @@ def _draw_primary_point_indicators(
 
     parts: list[str] = [output]
 
-    for point_idx in range(len(points_settings)):
+    # Bound by the shortest list, as every sibling helper does (see
+    # _calculate_indicator_adjustments and _draw_secondary_points). A settings
+    # list longer than the collected points would otherwise raise IndexError.
+    n = min(len(points_settings), len(points_abs_positions), len(points_rel_positions))
+    for point_idx in range(n):
         point_offset = zero_point + points_abs_positions[point_idx]
         if point_offset > 360:
             point_offset -= 360
@@ -1067,7 +1071,11 @@ def _draw_inner_point_indicators(
     zero_point = 360 - seventh_house_degree
     parts: list[str] = [output]
 
-    for point_idx in range(len(points_settings)):
+    # Bound by the shortest list, as every sibling helper does (see
+    # _calculate_indicator_adjustments and _draw_secondary_points). A settings
+    # list longer than the collected points would otherwise raise IndexError.
+    n = min(len(points_settings), len(points_abs_positions), len(points_rel_positions))
+    for point_idx in range(n):
         point_offset = zero_point + points_abs_positions[point_idx]
         if point_offset > 360:
             point_offset -= 360

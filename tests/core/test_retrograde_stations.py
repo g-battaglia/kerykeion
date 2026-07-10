@@ -85,6 +85,7 @@ class TestStationApi:
         with pytest.raises(ValueError):
             RetrogradeStationFactory.from_julian_day(0.0, 20_000_000.0)
 
+    @pytest.mark.extended
     def test_bce_range_via_julian_day(self):
         # The BCE range must not crash on JD->ISO conversion (datetime caps at
         # year 1). Mercury stations in 100 BCE; just assert it runs and formats.
@@ -93,6 +94,9 @@ class TestStationApi:
         jd0 = ephe.julday(-100, 1, 1, 0.0)
         jd1 = ephe.julday(-100, 12, 31, 23.9)
         res = RetrogradeStationFactory.from_julian_day(jd0, jd1, ["Mercury"])
+        # Mercury stations several times a year, so an empty list is itself a
+        # failure — without this the all(...) below is vacuously True.
+        assert res.stations, "expected Mercury stations in 100 BCE"
         assert all(s.iso_utc.startswith("-0100-") for s in res.stations)
 
     def test_duplicate_planets_deduplicated(self):

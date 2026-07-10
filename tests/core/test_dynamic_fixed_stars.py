@@ -199,7 +199,9 @@ class TestFixedStarEdgeCases:
         with patch("kerykeion.fixed_stars.discovery_factory.ephe.fixstar_ut", side_effect=mock_fixstar_ut):
             result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
             assert isinstance(result, list)
-            # Should still find some stars (the ones that didn't fail)
+            # The non-failing stars (9 of every 10 calls) must still be returned;
+            # a bare isinstance check would pass even if a bug wiped the whole list.
+            assert len(result) > 0, "per-star failure must not wipe the surviving stars"
 
 
 class TestFixedStarDiscovery:

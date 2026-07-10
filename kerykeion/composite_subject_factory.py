@@ -121,7 +121,9 @@ class CompositeSubjectFactory:
     Currently supports the midpoint method for composite chart calculation, where:
     - Planetary positions are calculated as the circular mean of corresponding planets
     - House cusps are calculated as the circular mean of corresponding houses
-    - Houses are reordered to maintain consistency with the original house system
+    - Each composite cusp keeps its own house number; cusps are deliberately NOT
+      re-sorted by longitude (that would swap the composite MC and IC — see
+      _calculate_midpoint_composite_points_and_houses)
     - Only common active points between both subjects are included
 
     The resulting composite chart maintains the zodiac type, sidereal mode, houses system,
@@ -363,7 +365,8 @@ class CompositeSubjectFactory:
 
         This method implements the midpoint composite technique by:
         1. Computing circular means of house cusp positions from both subjects
-        2. Sorting house positions to maintain proper house order
+        2. Keeping each averaged cusp under its own house number (no re-sorting;
+           see the implementation note below)
         3. Creating composite house cusps with calculated positions
         4. Computing circular means of planetary positions for common active points
         5. Assigning planets to their appropriate houses in the composite chart

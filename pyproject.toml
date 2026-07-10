@@ -143,6 +143,7 @@ precision = 2
 
 [tool.coverage.html]
 directory = "htmlcov"
+title = "Kerykeion Test Coverage Report"
 
 # Task Runner
 [tool.poe.tasks]
@@ -231,8 +232,11 @@ help = "Static type checking with pyright"
 sequence = ["lint", "analyze", "typecheck", "test:core"]
 help = "Run all quality checks (lint, analyze, typecheck, test:core)"
 
+# cmd, not `script = "...:main"`: poethepoet 0.40.0 discards a script function's
+# int return, so a `script` task exits 0 even when the checks fail — the gate
+# would pass silently. Running the file propagates its `sys.exit(main())` code.
 [tool.poe.tasks.quality]
-script = "scripts.quality_check:main"
+cmd = "python scripts/quality_check.py"
 help = "Run quality check script"
 
 # Documentation
@@ -334,30 +338,8 @@ ignore = [
 "kerykeion/kr_types/__init__.py" = ["F405", "F403", "F401"]
 
 # Pyright Static Type Checking
-[tool.pyright]
-include = ["kerykeion"]
-exclude = [
-    "tests",
-    "examples",
-    "workspace",
-    "scripts",
-    "**/__pycache__",
-    ".venv",
-    "dist",
-    "build",
-    "*.egg-info"
-]
-typeCheckingMode = "basic"
-pythonVersion = "3.12"
-pythonPlatform = "All"
-venvPath = "."
-venv = ".venv"
-reportOptionalMemberAccess = "none"
-reportIncompatibleVariableOverride = "none"
-reportArgumentType = "none"
-reportInvalidTypeForm = "error"
-reportAttributeAccessIssue = "error"
-reportGeneralTypeIssues = "none"
+# Pyright is configured in pyrightconfig.json, which takes precedence over a
+# [tool.pyright] table here. Keeping both invites edits to the ignored copy.
 
 [dependency-groups]
 dev = [

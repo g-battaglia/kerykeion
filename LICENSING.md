@@ -42,12 +42,13 @@ See [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md).
   (Symbola), SIL OFL 1.1 (Noto Sans Symbols 2), or clean-room originals; see
   [NOTICE](NOTICE). The OFL components require their notice to travel with any
   distribution, including the commercial edition.
-- **Runtime backend.** The default ephemeris backend, `libephemeris`, is itself
-  dual-licensed (`AGPL-3.0-only OR LicenseRef-LibEphemeris-Commercial`) and is
-  authored by the same maintainer; the commercial edition elects its commercial
-  grant — see [LIBEPHEMERIS-COMMERCIAL-GRANT.md](LIBEPHEMERIS-COMMERCIAL-GRANT.md).
-  The optional Swiss Ephemeris backend (`pyswisseph`) is never used on the
-  default path and requires a separate license from Astrodienst AG for closed use.
+- **Runtime backend.** The default ephemeris backend, `libephemeris`, is licensed
+  **Apache-2.0** and is authored by the same maintainer. Apache-2.0 is permissive,
+  so both the AGPL edition and the commercial edition may use it; redistributions
+  must preserve its copyright, license and attribution notices, including its
+  `NOTICE` file. The optional Swiss Ephemeris backend (`pyswisseph`) is never used
+  on the default path and requires a separate license from Astrodienst AG for
+  closed use.
 
 ## Commercial delivery
 
