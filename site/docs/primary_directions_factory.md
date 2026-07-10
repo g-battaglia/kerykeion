@@ -68,6 +68,13 @@ Compute primary directions for a natal chart.
 | `arc`             | float | Arc of direction in degrees of RA                 |
 | `direction_years` | float | Equivalent years using the selected rate key      |
 | `rate_key`        | str   | Rate key used (ptolemy or naibod)                 |
+| `is_converse`     | bool  | `True` for converse directions (see note below)   |
+
+> **Note:** `compute()` returns both **direct** (`is_converse=False`) and
+> **converse** (`is_converse=True`) entries interleaved, so the same
+> promissor/significator pair appears twice at different arcs. The converse
+> arc is an explicit sign-flip approximation of the classical technique —
+> filter on `is_converse` if you only want the traditional direct directions.
 
 ### `SpeculumEntryModel`
 

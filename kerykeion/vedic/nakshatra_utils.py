@@ -13,7 +13,7 @@ approximate (the position is treated as-is without ayanamsa correction).
 
 from __future__ import annotations
 
-from .nakshatra_data import NAKSHATRAS, NAKSHATRA_SPAN, PADA_SPAN, get_dasha_lord
+from .nakshatra_data import NAKSHATRAS, get_dasha_lord
 
 
 def calculate_nakshatra(abs_pos: float) -> dict:
@@ -33,18 +33,18 @@ def calculate_nakshatra(abs_pos: float) -> dict:
     # Normalize to 0-360
     pos = abs_pos % 360.0
 
-    # Determine nakshatra index (0-26)
-    nakshatra_index = int(pos / NAKSHATRA_SPAN)
-    if nakshatra_index >= 27:
-        nakshatra_index = 26  # Edge case: exactly 360.0
+    # Derive nakshatra AND pada from the same global quarter index (108
+    # padas of 3°20' each). Computing the pada from the remainder
+    # `pos - index * NAKSHATRA_SPAN` inherits the span constant's float
+    # error, misclassifying exactly-representable boundary degrees (e.g.
+    # 20.0° landed in pada 2 instead of 3); the direct 108-quarter mapping
+    # keeps both values exact and mutually consistent at every boundary.
+    global_pada_index = int(pos * 108.0 / 360.0)
+    if global_pada_index >= 108:
+        global_pada_index = 107  # Edge case: exactly 360.0
 
-    # Position within the nakshatra
-    pos_in_nakshatra = pos - (nakshatra_index * NAKSHATRA_SPAN)
-
-    # Determine pada (1-4)
-    pada = int(pos_in_nakshatra / PADA_SPAN) + 1
-    if pada > 4:
-        pada = 4  # Edge case
+    nakshatra_index = global_pada_index // 4
+    pada = global_pada_index % 4 + 1
 
     name, _deity = NAKSHATRAS[nakshatra_index]
     lord = get_dasha_lord(nakshatra_index)

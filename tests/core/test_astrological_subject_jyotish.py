@@ -415,3 +415,23 @@ class TestAstrologicalSubjectJyotish:
             self.subject.lunar_phase.model_dump()["moon_phase_name"]
             == self.expected_output["lunar_phase"]["moon_phase_name"]
         )
+
+
+def test_nakshatra_pada_exact_boundary_degrees():
+    """Exactly-representable pada boundaries (20.0, 30.0, 60.0, 70.0, ...)
+    used to land in the PREVIOUS pada: the remainder-based pada computation
+    inherited the span constant's float error. The 108-quarter mapping keeps
+    nakshatra and pada exact and mutually consistent."""
+    from kerykeion.vedic.nakshatra_utils import calculate_nakshatra
+
+    for degrees, expected_nakshatra, expected_pada in [
+        (20.0, 2, 3),   # 20° = 6th pada boundary → Bharani pada 3
+        (30.0, 3, 2),   # 30° = 9th pada boundary → Krittika pada 2
+        (60.0, 5, 3),   # 60° = 18th pada boundary → Mrigashira pada 3
+        (70.0, 6, 2),   # 70° = 21st pada boundary → Ardra pada 2
+        (0.0, 1, 1),
+        (360.0, 1, 1),  # wraps to 0
+    ]:
+        result = calculate_nakshatra(degrees)
+        assert result["nakshatra_number"] == expected_nakshatra, (degrees, result)
+        assert result["nakshatra_pada"] == expected_pada, (degrees, result)
