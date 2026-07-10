@@ -82,7 +82,7 @@ HIGH was exactly this: heliacal treating every backend error as "no event").
   (libephemeris runs `heliacal_ut` through Skyfield, which raises its own
   `ValueError` subclass — round 23 discovered this).
 - Migrate every ad-hoc `getattr(ephe, "Error", …)` handler and the remaining
-  dead `except RuntimeError` site (`sun_times/utils.py:346`, left untouched in
+  dead `except RuntimeError` site (`sun_times/utils.py:365`, left untouched in
   round 23 because no harm was reproduced) to the canonical types.
 - **Runtime validation of open `str` name parameters** at public entries whose
   type is only a `Literal` at static-check time (no runtime enforcement for
@@ -120,7 +120,7 @@ different chart with only scattered log lines to explain it:
   needs a missing planetary kernel (notably the **Sun**, which needs `sepl_18.se1`)
   falls back to its **geocentric** position — returned under the planetocentric
   label, ~62° off, with only a `logging.warning`. The fallback is deliberate and
-  logged (see the comment at `astrological_subject_factory.py` ~2353), but the
+  logged (see the comment at `astrological_subject_factory.py` ~2386), but the
   point is not flagged as degraded on the returned model.
 - **Chiron / asteroids / TNOs** need `seas_18.se1`; **fixed stars** need
   `sefstars.txt`; **barycentric** perspectives need `sepl_*.se1`. These are

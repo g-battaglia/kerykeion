@@ -8,12 +8,14 @@ order: 11
 
 ## Overview
 
-The theming functionality allows you to customize the look and feel of your astrological charts. You can choose from four unique themes to enhance your charting experience:
+The theming functionality allows you to customize the look and feel of your astrological charts. You can choose from six unique themes to enhance your charting experience:
 
 1. **Classic**: The default theme with a classic, traditional color scheme.
 2. **Dark**: A dark theme that is easy on the eyes, especially in low-light environments.
 3. **Dark High Contrast**: A dark theme with high contrast for better visibility.
 4. **Light**: A light theme with a clean and bright appearance.
+5. **Strawberry**: A strawberry-toned theme with pink and red accents.
+6. **Black and White**: A monochrome theme optimized for printing.
 
 ## How to Use Themes
 

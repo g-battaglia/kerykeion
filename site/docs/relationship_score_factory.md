@@ -36,9 +36,15 @@ To calculate a score, create two astrological subjects via `AstrologicalSubjectF
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.relationship_score_factory import RelationshipScoreFactory
 
-# 1. Create Subjects
-person_a = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 6, 15, 12, 0, "London", "GB")
-person_b = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 20, 14, 30, "Roma", "IT")
+# 1. Create Subjects (offline mode: explicit coordinates, no GeoNames lookup)
+person_a = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1278, lat=51.5074, tz_str="Europe/London", online=False,
+)
+person_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 20, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+)
 
 # 2. Calculate Score
 factory = RelationshipScoreFactory(person_a, person_b)
@@ -66,7 +72,7 @@ for aspect in score_model.aspects[:3]:
 
 ```text
 Sun sextile Sun (orb: 3.6354400115408794°)
-Ascendant trine Moon (orb: 2.242282739025086°)
+Ascendant trine Moon (orb: 2.242423320728676°)
 ```
 
 ## Constructor Parameters

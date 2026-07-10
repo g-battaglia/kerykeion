@@ -249,7 +249,7 @@ drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 
 **Public Methods:**
 
-All render/save methods accept two optional keyword arguments:
+All render/save methods accept `minify` and `remove_css_variables`. The full-chart methods (`save_svg`, `generate_svg_string`) additionally accept `custom_title`, `style`, and `show_zodiac_background_ring`; the wheel-only methods accept `style` and `show_zodiac_background_ring` (see the method list below):
 
 | Parameter              | Type   | Default | Description                                                  |
 | :--------------------- | :----- | :------ | :----------------------------------------------------------- |

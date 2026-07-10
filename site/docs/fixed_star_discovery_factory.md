@@ -8,7 +8,7 @@ order: 51
 
 # Fixed Star Discovery
 
-The `FixedStarDiscoveryFactory` dynamically discovers **fixed stars conjunct natal planets** within a configurable orb. Unlike the 23 built-in fixed stars on every subject, this factory scans the full star catalog provided by the ephemeris backend and returns only stars that are within orb of at least one active point.
+The `FixedStarDiscoveryFactory` dynamically discovers **fixed stars conjunct natal planets** within a configurable orb. Unlike the per-subject stars requested via `active_fixed_stars` (none are computed by default), this factory scans the full star catalog provided by the ephemeris backend and returns only stars that are within orb of at least one active point.
 
 ## Basic Usage
 

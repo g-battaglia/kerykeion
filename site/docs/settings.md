@@ -20,7 +20,7 @@ Import from: `kerykeion.settings.config_constants`
 | :------------------------------------- | :----------------------------------------------------------------- |
 | `DEFAULT_ACTIVE_POINTS`                | Standard points: Sun, Moon, the planets, the True North Node, Chiron, plus Asc & MC (14 points) |
 | `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS`  | Classical planets (Sun-Saturn) + True Lunar Nodes (9 points)       |
-| `ALL_ACTIVE_POINTS`                    | Complete list including asteroids, TNOs, Arabic parts, fixed stars |
+| `ALL_ACTIVE_POINTS`                    | Complete list including asteroids, TNOs, Uranian points, and Arabic parts (no fixed stars -- those are requested via `active_fixed_stars`) |
 
 ```python
 from kerykeion.settings.config_constants import (

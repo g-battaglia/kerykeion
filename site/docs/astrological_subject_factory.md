@@ -114,7 +114,7 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 | `calculate_gauquelin`      | `bool`                   | `False`                 | Calculate Gauquelin 36-sector positions.                               |
 | `calculate_nutation`       | `bool`                   | `False`                 | Include true/mean obliquity and nutation data.                         |
 | `calculate_local_space`    | `bool`                   | `False`                 | Calculate azimuth and altitude for each point.                         |
-| `active_fixed_stars`       | `Optional[List[str]]`    | `None`                  | Additional fixed stars to compute beyond the built-in 23.              |
+| `active_fixed_stars`       | `Optional[List[str]]`    | `None`                  | Fixed stars to compute into `subject.fixed_stars`. Default `None` computes none; `DEFAULT_FIXED_STARS` is an opt-in 23-star preset. |
 
 ### 3. `from_current_time`
 

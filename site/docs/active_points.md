@@ -247,7 +247,7 @@ print(f"Pars Fortunae: {subject.pars_fortunae.sign} at {subject.pars_fortunae.po
 
 ## Diurnal / Nocturnal Detection
 
-Since v5.8.0, the `AstrologicalSubjectModel` includes an `is_diurnal` boolean field. This determines whether the chart is a day chart (Sun above the horizon) or a night chart (Sun below). It is used internally for Arabic Parts calculation (the formula reverses for night charts).
+Since v5.8.0, the `AstrologicalSubjectModel` includes an `is_diurnal` boolean field. This determines whether the chart is a day chart (Sun above the horizon) or a night chart (Sun below). It is used internally for Arabic Parts calculation (for `Pars_Fortunae` and `Pars_Spiritus` the formula reverses in night charts; `Pars_Amoris` and `Pars_Fidei` use the same formula regardless of sect, as shown in the table above).
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(

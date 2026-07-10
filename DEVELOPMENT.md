@@ -45,7 +45,7 @@ Kerykeion uses [poethepoet](https://github.com/nat-n/poethepoet) as a task runne
 Tests are organized in 4 tiers (each tier includes the previous):
 
 ```bash
-# Core tests (fastest, ~1750+ tests, excludes heavy parametrized suites)
+# Core tests (fastest, ~4,500 tests, excludes heavy parametrized suites)
 uv run poe test:core
 
 # Base tier (DE440s range: 1849-2150)
@@ -57,7 +57,7 @@ uv run poe test:medium
 # Extended tier (DE441 full range)
 uv run poe test:extended
 
-# All tests including online (GeoNames API)
+# All offline tests (alias for test:extended; online GeoNames tests stay excluded)
 uv run poe test:all
 
 # Run with coverage
@@ -87,7 +87,7 @@ uv run poe typecheck
 # Type checking with MyPy
 uv run poe analyze
 
-# Run all quality checks (lint + typecheck)
+# Run the full quality gate (ruff lint + mypy + pyright + full pytest suite)
 uv run poe quality
 ```
 
@@ -136,7 +136,7 @@ kerykeion/
 │   ├── secondary_progressions/      # Progressions & solar arc
 │   ├── settings/                    # Configuration & constants
 │   └── vedic/                       # Nakshatra support
-├── tests/core/                      # Test suite (59+ files)
+├── tests/core/                      # Test suite (72 files)
 ├── examples/                        # Usage examples
 ├── site/docs/                       # Documentation source (markdown)
 ├── release_notes/                   # Per-version release notes
@@ -282,7 +282,7 @@ uv sync --upgrade
 uv add "requests>=2.32.0" --upgrade
 
 # Check for outdated dependencies
-uv tree
+uv tree --outdated
 ```
 
 ## 🏗️ Building the Package

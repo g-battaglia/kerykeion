@@ -33,11 +33,11 @@ print(f"Cycle:        {overview.moon.lunar_cycle}")
 
 ```text
 Phase:        Waxing Crescent 🌒
-Illumination: 5%
+Illumination: 12%
 Stage:        waxing
 Major Phase:  New Moon
-Age:          2 days
-Cycle:        6.836%
+Age:          3 days
+Cycle:        11.068%
 ```
 
 ## Upcoming Phases
@@ -66,11 +66,11 @@ if overview.moon.detailed and overview.moon.detailed.upcoming_phases:
 **Output:**
 
 ```text
-New Moon          Last: Sun, 30 Mar 2025 ...
-                  Next: Mon, 28 Apr 2025 ...
+New Moon         Last: Sat, 29 Mar 2025 ...
+                 Next: Sun, 27 Apr 2025 ...
 
-First Quarter     Last: ...
-                  Next: ...
+First Quarter    Last: ...
+                 Next: ...
 ...
 ```
 
@@ -124,24 +124,24 @@ ReportGenerator(overview).print_report()
 Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
 =====================================================
 
-+Moon Summary--+-------------------+
-| Field        | Value             |
-+--------------+-------------------+
-| Phase Name   | Waxing Crescent 🌒|
-| Major Phase  | New Moon          |
-| Stage        | Waxing            |
-| Illumination | 5%                |
-| Age (days)   | 2                 |
-| ...          | ...               |
-+--------------+-------------------+
++Moon Summary--+--------------------+
+| Field        | Value              |
++--------------+--------------------+
+| Phase Name   | Waxing Crescent 🌒 |
+| Major Phase  | New Moon           |
+| Stage        | Waxing             |
+| Illumination | 12%                |
+| Age (days)   | 3                  |
+| ...          | ...                |
++--------------+--------------------+
 
-+Illumination Details--------+
-| Field            | Value   |
-+------------------+---------+
-| Percentage       | 5.0%    |
-| Visible Fraction | 0.0476  |
-| Phase Angle      | 24.61°  |
-+------------------+---------+
++Illumination Details-------+
+| Field            | Value  |
++------------------+--------+
+| Percentage       | 12.0%  |
+| Visible Fraction | 0.1161 |
+| Phase Angle      | 39.85° |
++------------------+--------+
 
 ...
 ```
