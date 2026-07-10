@@ -93,3 +93,9 @@ scripts/.glyph-cache/
 /planetary_positions.csv
 /transit_charts/
 /*.svg
+
+# Generated API docs (pdoc). Regenerate on demand with `uv run poe docs`.
+# Only docs/charts/ is tracked — README embeds those SVGs.
+/docs/*.html
+/docs/search.js
+/docs/kerykeion/

@@ -270,8 +270,14 @@ def point_in_house_to_context(
     Example::
 
         <point_in_house point_name="Sun" point_owner="John" degree="15.32"
-            sign="Aries" owner_house="First House" projected_house="Seventh House"
+            sign="Aries" owner_house="First_House" owner_house_number="1"
+            projected_house="Seventh_House" projected_house_number="7"
             projected_house_owner="Jane" />
+
+    House names are emitted as raw enum identifiers (``First_House``), not
+    humanized, because this is a machine-readable context; the ``*_number``
+    attributes are always present, and ``owner_house`` / ``owner_house_number``
+    are omitted when the point has no owner house.
     """
     def _owner(name: str) -> str:
         if is_transit and transit_subject_name is not None and name == transit_subject_name:

@@ -20,7 +20,7 @@ and behavioural differences a user or contributor may encounter.
 | ---------------- | ---------------------------------------- | ----------------------------------- |
 | Language         | C bindings (`pyswisseph`)                | Pure Python                         |
 | Ephemeris source | Swiss Ephemeris (Moshier / `.se1` files) | NASA JPL DE440 / DE441 via Skyfield |
-| License          | AGPL-3.0                                 | AGPL-3.0                            |
+| License          | Apache-2.0                               | AGPL-3.0                            |
 | Install          | `pip install kerykeion[swiss]`           | Included by default                 |
 | Date range       | Full (DE431 covers -13200 to +17191)     | Full (DE441 same range)             |
 | Compilation      | Requires C compiler                      | None                                |
@@ -186,5 +186,5 @@ For natal chart interpretation, transit analysis, synastry, and all
 standard astrological work, **both backends produce equivalent results**.
 Choose based on your constraints:
 
-- **libephemeris** (default): no C compiler, AGPL-3.0, pure Python, more accurate barycentric
+- **libephemeris** (default): no C compiler, Apache-2.0, pure Python, more accurate barycentric
 - **swisseph**: C bindings (AGPL-3.0 Astrodienst AG), broader minor-body coverage on ancient dates

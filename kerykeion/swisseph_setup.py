@@ -133,9 +133,15 @@ def _download_file(url: str, dest: Path) -> str:
 def download_swisseph_data(target: Path, *, skip_asteroids: bool = False) -> dict:
     """Download Swiss Ephemeris data files to *target*.
 
-    Returns a dict with 'main' and 'asteroids' lists of newly downloaded file
-    paths, an 'existing' list of files that were already present, and a
-    'failed' list of files that could not be downloaded.
+    Returns a dict with:
+
+    - ``main``: paths of the main ephemeris files downloaded by this call.
+    - ``asteroids``: **always empty.** Asteroid/TNO ``.se1`` files are not
+      auto-downloadable (manual mirror only), so they are merely *detected*.
+      Ones already on disk land in ``existing``; missing ones only produce
+      manual-download instructions on stdout.
+    - ``existing``: files that were already present (main and asteroid alike).
+    - ``failed``: files that could not be downloaded.
     """
     target.mkdir(parents=True, exist_ok=True)
     result: dict = {"main": [], "asteroids": [], "existing": [], "failed": []}

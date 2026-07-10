@@ -190,6 +190,10 @@ class TestTemporalSubjects:
             chart_svg = ChartDrawer(chart_data).generate_svg_string()
             expected_file = f"{subject_data['name']} - Natal Chart.svg"
             _compare_chart_svg(expected_file, chart_svg)
+        except AssertionError:
+            # A baseline mismatch is a real regression, not an environment problem.
+            # Without this, `except Exception` swallows it into a skip and the suite stays green.
+            raise
         except Exception as e:
             pytest.skip(f"Could not generate chart for {subject_data['name']}: {e}")
 
@@ -217,6 +221,10 @@ class TestTemporalSubjects:
             chart_svg = ChartDrawer(chart_data, theme=theme).generate_svg_string()
             expected_file = f"{subject.name} - Natal Chart.svg"
             _compare_chart_svg(expected_file, chart_svg)
+        except AssertionError:
+            # A baseline mismatch is a real regression, not an environment problem.
+            # Without this, `except Exception` swallows it into a skip and the suite stays green.
+            raise
         except Exception as e:
             pytest.skip(f"Could not generate chart for {subject_data['name']} with {theme}: {e}")
 
@@ -245,6 +253,10 @@ class TestGeographicSubjects:
             chart_svg = ChartDrawer(chart_data).generate_svg_string()
             expected_file = f"{subject_data['name']} - Natal Chart.svg"
             _compare_chart_svg(expected_file, chart_svg)
+        except AssertionError:
+            # A baseline mismatch is a real regression, not an environment problem.
+            # Without this, `except Exception` swallows it into a skip and the suite stays green.
+            raise
         except Exception as e:
             pytest.skip(f"Could not generate chart for {subject_data['name']}: {e}")
 
@@ -258,6 +270,10 @@ class TestGeographicSubjects:
             chart_svg = ChartDrawer(chart_data).generate_svg_string()
             expected_file = f"{subject.name} - Natal Chart.svg"
             _compare_chart_svg(expected_file, chart_svg)
+        except AssertionError:
+            # A baseline mismatch is a real regression, not an environment problem.
+            # Without this, `except Exception` swallows it into a skip and the suite stays green.
+            raise
         except Exception as e:
             pytest.skip(f"Could not generate Koch chart for {subject_data['name']}: {e}")
 
@@ -285,6 +301,10 @@ class TestGeographicSubjects:
             chart_svg = ChartDrawer(chart_data).generate_svg_string()
             expected_file = f"{subject.name} - Natal Chart.svg"
             _compare_chart_svg(expected_file, chart_svg)
+        except AssertionError:
+            # A baseline mismatch is a real regression, not an environment problem.
+            # Without this, `except Exception` swallows it into a skip and the suite stays green.
+            raise
         except Exception as e:
             pytest.skip(f"Could not generate Whole Sign chart for {subject_data['name']}: {e}")
 

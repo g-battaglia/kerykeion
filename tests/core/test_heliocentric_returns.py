@@ -385,12 +385,15 @@ class TestHeliocentricReturnBackwards:
     def test_backwards_returns_earlier_jd(self, factory):
         """Backward search from 2026 should return JD before the start."""
         from kerykeion.ephemeris_backend import ephe as _ephe
+        from kerykeion.schemas import KerykeionException
+
         start_jd = _ephe.julday(2026, 1, 1, 0.0)
         try:
             result = factory.next_heliocentric_return("Mars", start_jd, backwards=True)
-            assert result.julian_day < start_jd
-        except Exception:
+        except (NotImplementedError, KerykeionException):
             pytest.skip("Backend does not support backwards search")
+        # Asserted outside the try: a violated invariant must fail, not skip.
+        assert result.julian_day < start_jd
 
 
 class TestLunarNodeCrossingFromIso:

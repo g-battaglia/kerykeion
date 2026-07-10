@@ -4,8 +4,9 @@ Planetary Return Factory Module
 
 This module provides the PlanetaryReturnFactory class for calculating and generating
 comprehensive planetary return charts, specifically Solar and Lunar returns. It leverages
-the Swiss Ephemeris library for precise astronomical calculations to determine exact
-return moments and create complete astrological chart data.
+the configured ephemeris backend (libephemeris by default, swisseph optionally) for precise
+astronomical calculations to determine exact return moments and create complete astrological
+chart data.
 
 Key Features:
     - Solar Return calculations (Sun's annual return to natal position)
@@ -148,8 +149,9 @@ class PlanetaryReturnFactory:
         cache_expire_after_days (int, optional): Number of days to cache Geonames
             location data before refreshing. Defaults to system setting.
         altitude (Optional[Union[float, int]]): Elevation above sea level in meters
-            for the return chart location. Reserved for future astronomical
-            calculations. Defaults to None.
+            for the return chart location. Forwarded to the return chart's subject, where
+            a Topocentric perspective feeds it to the observer position (sub-arcsecond
+            effect on positions). Ignored by geocentric perspectives. Defaults to None.
 
     Raises:
         KerykeionException: If required location parameters are missing for the
@@ -320,8 +322,9 @@ class PlanetaryReturnFactory:
                 calls and improve performance for repeated calculations.
                 Defaults to system configuration value.
             altitude (Optional[Union[float, int]]): Elevation above sea level in meters
-                for the return chart location. Currently reserved for future use in
-                advanced astronomical calculations. Defaults to None.
+                for the return chart location. Forwarded to the return chart's subject, where
+                a Topocentric perspective feeds it to the observer position (sub-arcsecond
+                effect on positions). Ignored by geocentric perspectives. Defaults to None.
 
         Raises:
             KerykeionException: If city is not provided when online=True.
@@ -511,12 +514,12 @@ class PlanetaryReturnFactory:
 
         This method computes the exact moment when the specified planet (Sun or Moon) returns
         to its natal position, starting the search from the provided datetime. It uses precise
-        Swiss Ephemeris calculations to determine the exact return moment and generates a
+        ephemeris-backend calculations to determine the exact return moment and generates a
         complete astrological chart for that calculated time.
 
         The calculation process:
         1. Converts the ISO datetime to Julian Day format for astronomical calculations
-        2. Uses Swiss Ephemeris functions (solcross_ut/mooncross_ut) to find the exact
+        2. Uses the backend's solcross_ut/mooncross_ut to find the exact
            return moment when the planet reaches its natal degree and minute
         3. Creates a complete AstrologicalSubject instance for the calculated return time
         4. Returns a comprehensive PlanetReturnModel with all chart data

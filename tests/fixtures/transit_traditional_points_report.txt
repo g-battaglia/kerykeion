@@ -172,35 +172,35 @@ Sample Natal Subject — Transit 1980-12-08
 +Sample Natal Subject cusps in 1980 Transit houses------------+------+--------+
 | Point                                 | Projected House     | Sign | Degree |
 +---------------------------------------+---------------------+------+--------+
-| Sample Natal Subject – First House    | 3 (Third_House)     | Sco  | 5.82°  |
-| Sample Natal Subject – Second House   | 4 (Fourth_House)    | Sag  | 3.71°  |
-| Sample Natal Subject – Third House    | 5 (Fifth_House)     | Cap  | 9.79°  |
-| Sample Natal Subject – Fourth House   | 6 (Sixth_House)     | Aqu  | 19.91° |
-| Sample Natal Subject – Fifth House    | 7 (Seventh_House)   | Pis  | 23.00° |
-| Sample Natal Subject – Sixth House    | 8 (Eighth_House)    | Ari  | 17.47° |
-| Sample Natal Subject – Seventh House  | 9 (Ninth_House)     | Tau  | 5.82°  |
-| Sample Natal Subject – Eighth House   | 10 (Tenth_House)    | Gem  | 3.71°  |
-| Sample Natal Subject – Ninth House    | 11 (Eleventh_House) | Can  | 9.79°  |
-| Sample Natal Subject – Tenth House    | 12 (Twelfth_House)  | Leo  | 19.91° |
-| Sample Natal Subject – Eleventh House | 1 (First_House)     | Vir  | 23.00° |
-| Sample Natal Subject – Twelfth House  | 2 (Second_House)    | Lib  | 17.47° |
+| Sample Natal Subject – First House    | 3 (Third House)     | Sco  | 5.82°  |
+| Sample Natal Subject – Second House   | 4 (Fourth House)    | Sag  | 3.71°  |
+| Sample Natal Subject – Third House    | 5 (Fifth House)     | Cap  | 9.79°  |
+| Sample Natal Subject – Fourth House   | 6 (Sixth House)     | Aqu  | 19.91° |
+| Sample Natal Subject – Fifth House    | 7 (Seventh House)   | Pis  | 23.00° |
+| Sample Natal Subject – Sixth House    | 8 (Eighth House)    | Ari  | 17.47° |
+| Sample Natal Subject – Seventh House  | 9 (Ninth House)     | Tau  | 5.82°  |
+| Sample Natal Subject – Eighth House   | 10 (Tenth House)    | Gem  | 3.71°  |
+| Sample Natal Subject – Ninth House    | 11 (Eleventh House) | Can  | 9.79°  |
+| Sample Natal Subject – Tenth House    | 12 (Twelfth House)  | Leo  | 19.91° |
+| Sample Natal Subject – Eleventh House | 1 (First House)     | Vir  | 23.00° |
+| Sample Natal Subject – Twelfth House  | 2 (Second House)    | Lib  | 17.47° |
 +---------------------------------------+---------------------+------+--------+
 
 +1980 Transit cusps in Sample Natal Subject houses----+------+--------+
 | Point                         | Projected House     | Sign | Degree |
 +-------------------------------+---------------------+------+--------+
-| 1980 Transit – First House    | 10 (Tenth_House)    | Vir  | 7.47°  |
-| 1980 Transit – Second House   | 11 (Eleventh_House) | Lib  | 1.34°  |
-| 1980 Transit – Third House    | 12 (Twelfth_House)  | Sco  | 0.26°  |
-| 1980 Transit – Fourth House   | 1 (First_House)     | Sag  | 3.56°  |
-| 1980 Transit – Fifth House    | 2 (Second_House)    | Cap  | 8.04°  |
-| 1980 Transit – Sixth House    | 3 (Third_House)     | Aqu  | 9.79°  |
-| 1980 Transit – Seventh House  | 4 (Fourth_House)    | Pis  | 7.47°  |
-| 1980 Transit – Eighth House   | 5 (Fifth_House)     | Ari  | 1.34°  |
-| 1980 Transit – Ninth House    | 6 (Sixth_House)     | Tau  | 0.26°  |
-| 1980 Transit – Tenth House    | 7 (Seventh_House)   | Gem  | 3.56°  |
-| 1980 Transit – Eleventh House | 8 (Eighth_House)    | Can  | 8.04°  |
-| 1980 Transit – Twelfth House  | 9 (Ninth_House)     | Leo  | 9.79°  |
+| 1980 Transit – First House    | 10 (Tenth House)    | Vir  | 7.47°  |
+| 1980 Transit – Second House   | 11 (Eleventh House) | Lib  | 1.34°  |
+| 1980 Transit – Third House    | 12 (Twelfth House)  | Sco  | 0.26°  |
+| 1980 Transit – Fourth House   | 1 (First House)     | Sag  | 3.56°  |
+| 1980 Transit – Fifth House    | 2 (Second House)    | Cap  | 8.04°  |
+| 1980 Transit – Sixth House    | 3 (Third House)     | Aqu  | 9.79°  |
+| 1980 Transit – Seventh House  | 4 (Fourth House)    | Pis  | 7.47°  |
+| 1980 Transit – Eighth House   | 5 (Fifth House)     | Ari  | 1.34°  |
+| 1980 Transit – Ninth House    | 6 (Sixth House)     | Tau  | 0.26°  |
+| 1980 Transit – Tenth House    | 7 (Seventh House)   | Gem  | 3.56°  |
+| 1980 Transit – Eleventh House | 8 (Eighth House)    | Can  | 8.04°  |
+| 1980 Transit – Twelfth House  | 9 (Ninth House)     | Leo  | 9.79°  |
 +-------------------------------+---------------------+------+--------+
 
 +Active Celestial Points----+

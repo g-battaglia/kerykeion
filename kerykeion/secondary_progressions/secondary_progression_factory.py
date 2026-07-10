@@ -271,7 +271,9 @@ class SecondaryProgressionFactory:
         year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
             jd, ephe.JUL_CAL
         )
-        year_label = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
+        # `year < 0`, not `year > 0`: astronomical year 0 (1 BCE) must render as
+        # "0000", not "-0000". Matches _predictive_utils.jd_to_iso_utc.
+        year_label = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
         return f"{year_label}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}.000000Z"
 
     @staticmethod
@@ -282,7 +284,9 @@ class SecondaryProgressionFactory:
         year, month, day, _, _, _ = SecondaryProgressionFactory._jd_to_components(
             jd, calendar_flag
         )
-        year_label = f"{year:04d}" if year > 0 else f"-{abs(year):04d}"
+        # `year < 0`, not `year > 0`: astronomical year 0 (1 BCE) must render as
+        # "0000", not "-0000". Matches _predictive_utils.jd_to_iso_utc.
+        year_label = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
         return f"{year_label}-{month:02d}-{day:02d}"
 
     @staticmethod

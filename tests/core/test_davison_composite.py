@@ -254,6 +254,7 @@ class TestDavisonBCE:
             suppress_geonames_warning=True,
         )
 
+    @pytest.mark.extended
     def test_bce_pair_round_trips_to_midpoint_jd(self):
         s1 = self._subject("BCE One", -100, 6, 15, 12, 0, lng=30.0, lat=40.0)
         s2 = self._subject("BCE Two", -44, 3, 15, 9, 30, lng=12.5, lat=41.9)
@@ -268,6 +269,7 @@ class TestDavisonBCE:
             f"midpoint {mid_jd} (pre-fix error was ~74 hours)"
         )
 
+    @pytest.mark.extended
     def test_mixed_pair_with_bce_midpoint_round_trips(self):
         s1 = self._subject("Deep BCE", -700, 1, 10, 6, 0, lng=-45.0, lat=10.0)
         s2 = self._subject("Early CE", 600, 8, 20, 18, 0, lng=60.0, lat=-20.0)
@@ -278,6 +280,7 @@ class TestDavisonBCE:
         assert _astro_year_from_iso(davison.iso_formatted_utc_datetime) < 1
         assert abs(davison.julian_day - mid_jd) * 86400.0 < 1.0
 
+    @pytest.mark.extended
     def test_bce_davison_sun_matches_ephe_at_midpoint_jd(self):
         from kerykeion.ephemeris_backend import ephe
 
