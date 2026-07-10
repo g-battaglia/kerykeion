@@ -199,6 +199,19 @@ _GEOCENTRIC_ONLY_BODY_IDS = frozenset(
     ) if bid is not None
 )
 
+# Point names dropped by the exclusion above (plus their derived opposites,
+# which cannot exist without their primaries). Consumers that diagnose
+# missing points (e.g. the transit factory's misconfiguration warning) use
+# this to recognize by-design absences in non-geocentric frames.
+_GEOCENTRIC_ONLY_POINT_NAMES = frozenset(
+    {
+        "Mean_North_Lunar_Node", "True_North_Lunar_Node",
+        "Mean_South_Lunar_Node", "True_South_Lunar_Node",
+        "Mean_Lilith", "True_Lilith", "Interpolated_Lilith",
+        "Mean_Priapus", "True_Priapus", "Interpolated_Perigee",
+    }
+)
+
 
 def _degenerate_center_body_id(perspective_type: Optional[str]) -> Optional[int]:
     """Body id that IS the origin of ``perspective_type``.
@@ -828,6 +841,9 @@ class AstrologicalSubjectFactory:
                 - If invalid zodiac/sidereal mode combinations are specified
                 - If GeoNames data is missing or invalid
                 - If timezone localization fails (ambiguous DST times)
+                - If active_points contains unknown point names, or is an
+                  empty list (pass None to use the defaults). Fixed star
+                  names are redirected to active_fixed_stars with a warning.
 
         Examples:
             >>> # Basic natal chart with online location lookup

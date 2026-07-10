@@ -601,7 +601,14 @@ class TestBCEBackendComparison:
         jd = _libephemeris.julday(data["year"], data["month"], data["day"], decimal_hour, 0)
 
         _libephemeris.set_ephe_path("")
-        lib_sun = _libephemeris.calc_ut(jd, _libephemeris.SUN, _libephemeris.FLG_SWIEPH)[0][0]
+        try:
+            lib_sun = _libephemeris.calc_ut(jd, _libephemeris.SUN, _libephemeris.FLG_SWIEPH)[0][0]
+        except Exception as exc:  # EphemerisRangeError on short local kernels
+            # Under KERYKEION_BACKEND=swisseph the tier auto-detection probes
+            # the swisseph ephemeris (Moshier covers any year), so the "bce"
+            # node skip does not fire even when the LOCAL libephemeris kernel
+            # is short-range. Skip explicitly instead of failing.
+            pytest.skip(f"local libephemeris kernel cannot compute this BCE date: {exc}")
 
         _swisseph.set_ephe_path("")
         swe_sun = _swisseph.calc_ut(jd, _swisseph.SUN, _swisseph.FLG_SWIEPH)[0][0]

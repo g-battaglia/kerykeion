@@ -36,6 +36,7 @@ from typing import Any, List, get_args
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory
+from kerykeion.ephemeris_backend import BACKEND_NAME
 from kerykeion.report import ASPECT_SYMBOLS, ReportGenerator
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
@@ -793,6 +794,11 @@ class TestTransitReport:
 class TestMoonPhaseOverviewReport:
     """Report from MoonPhaseOverviewModel via MoonPhaseDetailsFactory."""
 
+    @pytest.mark.skipif(
+        BACKEND_NAME == "swisseph",
+        reason="Phase-event root-finding differs by a few seconds across backends; "
+        "the golden fixture tracks the default libephemeris backend.",
+    )
     def test_generate_matches_print(self) -> None:
         """generate_report() and print_report() must produce identical content."""
         overview = _make_moon_phase_overview()
@@ -1039,6 +1045,11 @@ class TestGoldenFileSnapshots:
         expected = fixture.read_text(encoding="utf-8")
         _assert_report_match(captured, expected + "\n")
 
+    @pytest.mark.skipif(
+        BACKEND_NAME == "swisseph",
+        reason="Phase-event root-finding differs by a few seconds across backends; "
+        "the golden fixture tracks the default libephemeris backend.",
+    )
     def test_moon_phase_overview_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "moon_phase_overview_report.txt"
         if not fixture.exists():

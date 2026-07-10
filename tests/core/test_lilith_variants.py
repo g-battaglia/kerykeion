@@ -3,7 +3,7 @@
 
 import math
 import pytest
-from kerykeion.ephemeris_backend import ephe
+from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from typing import List
@@ -162,8 +162,8 @@ class TestLilithSweReference:
     def test_mean_lilith_matches_swe_reference(self, subject_with_lilith_variants):
         """Mean Lilith abs_pos must match ephe.calc_ut for SE_MEAN_APOG (ID 12) within 0.001 deg."""
         jd = subject_with_lilith_variants.julian_day
-        ephe.set_ephe_path("")
-        mean_lil_calc = ephe.calc_ut(jd, 12, ephe.FLG_SWIEPH | ephe.FLG_SPEED)[0]
+        with ephemeris_session() as iflag:
+            mean_lil_calc = ephe.calc_ut(jd, 12, iflag | ephe.FLG_SPEED)[0]
         expected_lon = mean_lil_calc[0]
         actual_lon = subject_with_lilith_variants.mean_lilith.abs_pos
         assert abs(actual_lon - expected_lon) < 0.001, (
@@ -173,8 +173,8 @@ class TestLilithSweReference:
     def test_true_lilith_matches_swe_reference(self, subject_with_lilith_variants):
         """True Lilith abs_pos must match ephe.calc_ut for SE_OSCU_APOG (ID 13) within 0.001 deg."""
         jd = subject_with_lilith_variants.julian_day
-        ephe.set_ephe_path("")
-        true_lil_calc = ephe.calc_ut(jd, 13, ephe.FLG_SWIEPH | ephe.FLG_SPEED)[0]
+        with ephemeris_session() as iflag:
+            true_lil_calc = ephe.calc_ut(jd, 13, iflag | ephe.FLG_SPEED)[0]
         expected_lon = true_lil_calc[0]
         actual_lon = subject_with_lilith_variants.true_lilith.abs_pos
         assert abs(actual_lon - expected_lon) < 0.001, (
@@ -184,8 +184,8 @@ class TestLilithSweReference:
     def test_mean_priapus_opposite_swe_mean_lilith(self, subject_with_lilith_variants):
         """Mean Priapus must be Mean Lilith + 180 deg (mod 360), verified against ephe."""
         jd = subject_with_lilith_variants.julian_day
-        ephe.set_ephe_path("")
-        mean_lil_lon = ephe.calc_ut(jd, 12, ephe.FLG_SWIEPH | ephe.FLG_SPEED)[0][0]
+        with ephemeris_session() as iflag:
+            mean_lil_lon = ephe.calc_ut(jd, 12, iflag | ephe.FLG_SPEED)[0][0]
         expected_priapus = math.fmod(mean_lil_lon + 180, 360)
         actual_priapus = subject_with_lilith_variants.mean_priapus.abs_pos
         diff = abs(actual_priapus - expected_priapus)
@@ -196,8 +196,8 @@ class TestLilithSweReference:
     def test_true_priapus_opposite_swe_true_lilith(self, subject_with_lilith_variants):
         """True Priapus must be True Lilith + 180 deg (mod 360), verified against ephe."""
         jd = subject_with_lilith_variants.julian_day
-        ephe.set_ephe_path("")
-        true_lil_lon = ephe.calc_ut(jd, 13, ephe.FLG_SWIEPH | ephe.FLG_SPEED)[0][0]
+        with ephemeris_session() as iflag:
+            true_lil_lon = ephe.calc_ut(jd, 13, iflag | ephe.FLG_SPEED)[0][0]
         expected_priapus = math.fmod(true_lil_lon + 180, 360)
         actual_priapus = subject_with_lilith_variants.true_priapus.abs_pos
         diff = abs(actual_priapus - expected_priapus)
@@ -255,7 +255,6 @@ class TestPriapusEclipticLatitude:
             pytest.skip("Priapus latitude too small to distinguish from flat 0")
         jd = subject_local_space.julian_day
         geopos = (subject_local_space.lng, subject_local_space.lat, 0.0)
-        ephe.set_ephe_path("")
         true_proj = ephe.azalt(jd, ephe.ECL2HOR, geopos, 0, 0, (pri.abs_pos, pri.ecliptic_latitude, 1.0))
         flat_proj = ephe.azalt(jd, ephe.ECL2HOR, geopos, 0, 0, (pri.abs_pos, 0.0, 1.0))
         assert abs(pri.altitude_above_horizon - true_proj[1]) < 0.01

@@ -3947,3 +3947,18 @@ class TestConstructorStringValidation:
 
         with pytest.raises(KerykeionException, match="double_chart_aspect_grid_type"):
             ChartDrawer(self._data(), double_chart_aspect_grid_type="grid")
+
+    def test_custom_language_with_pack_allowed(self):
+        # A language_pack legitimizes any code — the documented way to
+        # introduce new languages (the pack must be complete; here we clone
+        # EN and relabel one planet). Only a bare unknown code must raise.
+        import copy
+
+        from kerykeion.settings.translations import LANGUAGE_SETTINGS
+
+        pack = copy.deepcopy(LANGUAGE_SETTINGS["EN"])
+        pack["celestial_points"]["Sun"] = "Taiyou"
+        drawer = ChartDrawer(
+            self._data(), chart_language="JP", language_pack=pack,
+        )
+        assert "<svg" in drawer.generate_svg_string()

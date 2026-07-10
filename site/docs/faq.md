@@ -323,7 +323,7 @@ svg_string = chart_drawer.generate_svg_string()
 
 ### Why are Trans-Neptunian objects missing from my chart?
 
-Some TNOs (Eris, Sedna, etc.) may not have ephemeris data for all dates. If calculation fails, the point is silently removed from `active_points`.
+Some TNOs (Eris, Sedna, etc.) may not have ephemeris data for all dates. If calculation fails, a warning is logged and the point is removed from `active_points`.
 
 ### Can I use historical dates?
 

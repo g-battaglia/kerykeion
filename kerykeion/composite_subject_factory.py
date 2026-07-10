@@ -189,8 +189,10 @@ class CompositeSubjectFactory:
                                              Defaults to None.
 
         Raises:
-            KerykeionException: If subjects have different zodiac types, sidereal modes,
-                              house systems, house system names, or perspective types.
+            KerykeionException: If either input is not an astrological subject model
+                              (e.g. None), or if subjects have different zodiac types,
+                              sidereal modes, house systems, house system names, or
+                              perspective types.
 
         Note:
             Both subjects must have identical astrological calculation settings to ensure

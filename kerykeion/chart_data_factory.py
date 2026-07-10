@@ -153,7 +153,9 @@ class ChartDataFactory:
             ChartDataModel: Comprehensive chart data model
 
         Raises:
-            KerykeionException: If chart type requirements are not met
+            KerykeionException: If ``chart_type`` is not a valid ``ChartType``,
+                or if chart type requirements are not met (e.g. a missing
+                second subject for dual charts)
         """
         # An unknown chart_type must fail here with the valid options; letting
         # it fall through produces misleading errors ("Second subject is

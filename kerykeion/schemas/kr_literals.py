@@ -175,19 +175,19 @@ Fixed Stars (23 total, expanded in v5.12 from 2):
         - Antares (alpha Scorpii) -- Watcher of the West, mag 1.06
         - Fomalhaut (alpha Piscis Austrini) -- Watcher of the South, mag 1.16
 
-    Behenian stars (not listed above):
+    Behenian stars (not listed above; the 4 Royal Stars complete the 15):
         - Algol (beta Persei), Sirius (alpha Canis Majoris),
           Procyon (alpha Canis Minoris), Capella (alpha Aurigae),
           Spica (alpha Virginis), Arcturus (alpha Bootis),
           Vega (alpha Lyrae), Alcyone (eta Tauri),
           Alphecca (alpha Coronae Borealis), Algorab (delta Corvi),
-          Deneb Algedi (delta Capricorni), Alkaid (eta Ursae Majoris)
+          Deneb Algedi (delta Capricorni)
 
     Other prominent fixed stars:
-        - Betelgeuse (alpha Orionis), Canopus (alpha Carinae),
-          Pollux (beta Geminorum), Deneb (alpha Cygni),
-          Altair (alpha Aquilae), Rigel (beta Orionis),
-          Achernar (alpha Eridani)
+        - Alkaid (eta Ursae Majoris), Betelgeuse (alpha Orionis),
+          Canopus (alpha Carinae), Pollux (beta Geminorum),
+          Deneb (alpha Cygni), Altair (alpha Aquilae),
+          Rigel (beta Orionis), Achernar (alpha Eridani)
 """
 
 

@@ -2061,6 +2061,13 @@ class ChartDrawer:  # type: ignore[no-redef]
             show_zodiac_background_ring (bool, optional):
                 Default for whether to draw colored zodiac wedges (modern style only).
                 Can be overridden at render time.  Defaults to True.
+
+        Raises:
+            KerykeionException: If ``theme`` is not a valid KerykeionChartTheme
+                (and not None), if ``chart_language`` is not a valid
+                KerykeionChartLanguage (unless a ``language_pack`` supplies the
+                custom language), or if ``double_chart_aspect_grid_type`` is
+                not 'list' or 'table'.
         """
         # =====================================================================
         # STEP 1: Store basic configuration parameters
@@ -2069,10 +2076,13 @@ class ChartDrawer:  # type: ignore[no-redef]
         # contract below: an unknown language would otherwise silently fall
         # back to EN and an unknown grid type would silently render as
         # "table" — plausible-looking output hiding the caller's mistake.
-        if chart_language not in get_args(KerykeionChartLanguage):
+        # A language_pack legitimizes ANY code: it is the documented way to
+        # introduce new languages (e.g. chart_language="JP" + a JP pack).
+        if chart_language not in get_args(KerykeionChartLanguage) and language_pack is None:
             raise KerykeionException(
                 f"chart_language {chart_language!r} is not available. "
-                f"Valid languages: {', '.join(get_args(KerykeionChartLanguage))}."
+                f"Valid languages: {', '.join(get_args(KerykeionChartLanguage))} — "
+                "or supply a language_pack to introduce a custom language."
             )
         if double_chart_aspect_grid_type not in ("list", "table"):
             raise KerykeionException(

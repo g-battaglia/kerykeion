@@ -330,6 +330,37 @@ class TransitsTimeRangeFactory:
                 missing_from_natal,
                 len(natal_points),
             )
+        # Points on NEITHER side are still a misconfiguration worth surfacing
+        # (e.g. an asteroid added only to this factory's request) — except
+        # points the subject factory drops by design for this frame: the
+        # perspective's center body, and the geocentric-only points (lunar
+        # nodes, Lilith/apogee variants) in non-geocentric perspectives. Those
+        # were already warned about at subject-build time.
+        from kerykeion.astrological_subject_factory import (
+            _GEO_TOPO_PERSPECTIVES,
+            _GEOCENTRIC_ONLY_POINT_NAMES,
+            _center_body_names,
+        )
+
+        perspective = getattr(self.natal_chart, "perspective_type", None)
+        by_design_absent = set(_center_body_names(perspective))
+        if perspective not in _GEO_TOPO_PERSPECTIVES:
+            by_design_absent |= _GEOCENTRIC_ONLY_POINT_NAMES
+        missing_everywhere = [
+            point for point in self.active_points
+            if point not in natal_points
+            and point not in ephemeris_points
+            and point not in star_names
+            and point not in by_design_absent
+        ]
+        if missing_everywhere:
+            logging.warning(
+                "TransitsTimeRangeFactory: %s requested in active_points but absent "
+                "from BOTH the natal chart and the ephemeris subjects. No transits "
+                "can be detected for them — pass the same active_points to the "
+                "natal subject factory and to EphemerisDataFactory.",
+                missing_everywhere,
+            )
 
     def _warn_if_unordered(self) -> None:
         """Warn when the ephemeris series is not in chronological order.

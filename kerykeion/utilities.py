@@ -654,16 +654,20 @@ def require_same_frame(first: Any, second: Any) -> None:
     here: it is irrelevant to inter-chart aspects and house overlays legitimately
     compare two subjects using different house systems.
 
-    ``getattr`` with a sentinel default keeps this safe for hand-built
-    ``CompositeSubjectModel`` / ``PlanetReturnModel`` inputs; the frame fields
-    live on the shared base model, so in practice they are always present.
+    Inputs that do not expose ``zodiac_type`` at all (e.g. ``None``) are
+    rejected up front: hand-built ``CompositeSubjectModel`` /
+    ``PlanetReturnModel`` inputs are fine (the frame fields live on the shared
+    base model), but a non-subject input must fail here with a clear message
+    rather than crash later with a raw ``AttributeError`` in a consumer.
 
     Args:
         first: The first subject (any model exposing the frame attributes).
         second: The second subject.
 
     Raises:
-        KerykeionException: If the two subjects do not share the same frame.
+        KerykeionException: If either input is not a subject-like model
+            (missing the frame attributes), or if the two subjects do not
+            share the same frame.
     """
     _MISSING = object()
     first_zodiac = getattr(first, "zodiac_type", _MISSING)

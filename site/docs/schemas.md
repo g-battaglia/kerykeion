@@ -141,6 +141,7 @@ Represents a composite chart derived from two subjects.
 | `first_subject`        | `AstrologicalSubjectModel` | First source subject.              |
 | `second_subject`       | `AstrologicalSubjectModel` | Second source subject.             |
 | `composite_chart_type` | `str`                      | Type of composite (e.g. Midpoint). |
+| `is_diurnal`           | `bool \| None`             | Sect of the chart. Real boolean for Davison charts; `None` for midpoint composites (no single sky). Sect-aware consumers treat `None` as a day chart. |
 
 Inherits all celestial point fields from `AstrologicalBaseModel`.
 
@@ -151,6 +152,7 @@ Represents a planetary return chart.
 | Field         | Type         | Description             |
 | :------------ | :----------- | :---------------------- |
 | `return_type` | `ReturnType` | `"Solar"`, `"Lunar"`, `"Heliocentric"`, or `"Lunar_Node_Crossing"`. |
+| `is_diurnal`  | `bool \| None` | Sect of the return moment (Sun above/below the horizon). Populated by `PlanetaryReturnFactory`. |
 
 Inherits all celestial point fields from `AstrologicalBaseModel`.
 

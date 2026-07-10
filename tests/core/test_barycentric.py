@@ -13,7 +13,6 @@ depend on the Sun gracefully skip in that scenario.
 
 import pytest
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.ephemeris_backend import BACKEND_NAME
 
 
 def _angular_diff(a: float, b: float) -> float:
@@ -62,13 +61,17 @@ class TestBarycentricPerspective:
     # ------------------------------------------------------------------
     # Sun: barycentric vs geocentric
     # ------------------------------------------------------------------
-    def test_sun_nearly_unchanged(self, barycentric_subject, geocentric_subject):
-        """Sun's barycentric position should be very close to geocentric.
+    def test_sun_position_is_barycentric_direction(self, barycentric_subject, geocentric_subject):
+        """The barycentric Sun is a DISTINCT direction, far from geocentric.
 
-        The solar system barycenter is mostly inside the Sun, so the Sun's
-        apparent direction barely changes when the observer moves from Earth
-        to the barycenter.  The difference should be on the order of
-        arcseconds -- we use a generous 0.05 degree (~3 arcminute) tolerance.
+        Seen from the solar-system barycenter — which sits inside or near the
+        Sun's surface — the Sun's direction is the small barycenter→Sun offset
+        vector, dominated by the giant planets' pull (roughly anti-Jupiter).
+        It has no relationship to the geocentric solar longitude, so the two
+        must NOT be close. (An earlier version of this test asserted they were
+        within 0.05°, which both backends rightly contradict: they agree with
+        each other — e.g. 59.57° vs geocentric 84.05° for this fixture — while
+        being ~25° apart from geocentric.)
 
         If the required ephemeris file (sepl_18.se1) is not installed the Sun
         is returned as None and the test is skipped.
@@ -76,18 +79,17 @@ class TestBarycentricPerspective:
         if barycentric_subject.sun is None or geocentric_subject.sun is None:
             pytest.skip("Sun unavailable (sepl_18.se1 ephemeris file missing)")
 
+        assert 0 <= barycentric_subject.sun.abs_pos < 360
         sun_diff = _angular_diff(
             barycentric_subject.sun.abs_pos,
             geocentric_subject.sun.abs_pos,
         )
-        if BACKEND_NAME != "swisseph" and sun_diff > 1.0:
-            pytest.skip(
-                f"Barycentric Sun offset ({sun_diff:.2f}°) too large — "
-                f"{BACKEND_NAME} may not fully support barycentric perspective"
-            )
-        assert sun_diff < 0.05, (
-            f"Sun barycentric-geocentric diff is {sun_diff:.6f} deg; "
-            f"expected < 0.05 deg"
+        # The barycenter→Sun direction changes slowly (years); for any modern
+        # date it is well away from the geocentric longitude.
+        assert sun_diff > 1.0, (
+            f"Barycentric Sun ({barycentric_subject.sun.abs_pos:.4f}°) suspiciously "
+            f"close to geocentric ({geocentric_subject.sun.abs_pos:.4f}°): the "
+            "barycentric perspective is probably not being applied to the Sun."
         )
 
     # ------------------------------------------------------------------

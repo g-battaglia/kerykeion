@@ -119,7 +119,7 @@ print(subjects[0].sun.sign)
 
 _Note: You can override safety limits by passing `None` if you need large datasets. Both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` are required when `sidereal_mode="USER"`._
 
-_Note: When feeding `TransitsTimeRangeFactory` with non-default points (asteroids, TNOs, extra angles), pass the **same** `active_points` list here — aspects can only be detected for points present on both the natal and the ephemeris subjects; the transit factory warns if any requested point is missing from the series._
+_Note: When feeding `TransitsTimeRangeFactory` with non-default points (asteroids, TNOs, extra angles), pass the **same** `active_points` list here — aspects can only be detected for points present on both the natal and the ephemeris subjects; the transit factory warns if a requested point is present on only one side (missing from the ephemeris series or from the natal chart)._
 
 ---
 

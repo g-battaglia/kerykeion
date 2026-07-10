@@ -539,3 +539,22 @@ class TestActivePointsForwarding:
             "Ceres" in record.message and "natal chart" in record.message
             for record in caplog.records
         )
+
+    def test_warns_when_point_missing_from_both_sides(self, caplog):
+        # The most common misconfiguration: an asteroid added only to this
+        # factory's request, computed by neither side.
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "Plain", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal, ephemeris, active_points=["Sun", "Ceres"])
+        assert any(
+            "Ceres" in record.message and "BOTH" in record.message
+            for record in caplog.records
+        )
