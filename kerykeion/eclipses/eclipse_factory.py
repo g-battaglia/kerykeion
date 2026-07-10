@@ -21,7 +21,7 @@ from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import get_kerykeion_point_from_degree, validate_latitude
 from pydantic import Field
@@ -51,6 +51,26 @@ def _ensure_scannable(count: int) -> None:
             f"count too large (> {_MAX_COUNT} events per eclipse type). "
             f"Request fewer events per search."
         )
+
+
+def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> None:
+    """Validate the zodiac configuration before opening an ephemeris session.
+
+    Same contract as ``VoidOfCourseMoonFactory``'s validator: pure validation,
+    no global ephemeris state touched.
+    """
+    if zodiac_type not in ("Tropical", "Sidereal"):
+        raise KerykeionException(f"Unknown zodiac_type: {zodiac_type!r} (expected 'Tropical' or 'Sidereal').")
+
+    if zodiac_type == "Sidereal":
+        if sidereal_mode is None:
+            raise KerykeionException("sidereal_mode is required when zodiac_type='Sidereal'.")
+        if sidereal_mode == "USER":
+            raise KerykeionException(
+                "sidereal_mode='USER' requires custom ayanamsha parameters, which EclipseFactory does not accept."
+            )
+        if not hasattr(ephe, f"SIDM_{sidereal_mode}"):
+            raise KerykeionException(f"Unknown sidereal_mode: {sidereal_mode!r}.")
 
 
 def _search_failure(kind: str, jd: float, exc: Exception) -> KerykeionException:
@@ -93,15 +113,19 @@ def _classify_lunar_eclipse(retflags: int) -> str:
     return "unknown"
 
 
-def _zodiac_fields(jd: float, body: int, name: AstrologicalPoint) -> dict:
+def _zodiac_fields(jd: float, body: int, name: AstrologicalPoint, iflag: int = ephe.FLG_SWIEPH) -> dict:
     """Ecliptic sign/degree of a luminary at the eclipse maximum.
 
     Backend-agnostic (uses ``ephe.calc_ut``). For a solar eclipse the eclipse
     degree is the Sun/Moon conjunction longitude; for a lunar eclipse it is the
-    Moon's longitude (the Full Moon point).
+    Moon's longitude (the Full Moon point). ``iflag`` carries the enclosing
+    session's zodiac (``FLG_SIDEREAL`` for a sidereal search), so the reported
+    sign/degree shift with the ayanamsha while the eclipse maximum JD — pure
+    shadow geometry — is unchanged. Defaults to the tropical flag so direct
+    callers keep the historical behavior.
     """
     try:
-        lon = float(ephe.calc_ut(jd, body, ephe.FLG_SWIEPH)[0][0]) % 360.0
+        lon = float(ephe.calc_ut(jd, body, iflag)[0][0]) % 360.0
         point = get_kerykeion_point_from_degree(lon, name, "AstrologicalPoint")
         return {
             "ecliptic_longitude": round(lon, 6),
@@ -269,6 +293,8 @@ class EclipseFactory:
         lng: float,
         start_year: Optional[int] = None,
         count: int = 5,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
     ) -> EclipseSearchResultModel:
         """Search for eclipses visible from a specific location.
 
@@ -279,15 +305,20 @@ class EclipseFactory:
                 UTC year when ``None`` (a wired-in default year would silently
                 age).
             count: Number of each type to find.
+            zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. Eclipse
+                maximum TIMES are pure shadow geometry and are
+                zodiac-independent; only the reported sign/degree shift.
+            sidereal_mode: Ayanamsha when ``zodiac_type='Sidereal'``.
 
         Returns:
             EclipseSearchResultModel with solar and lunar eclipses.
 
         Raises:
             KerykeionException: If ``lat`` is outside the geometrically-possible
-                ±90° range, or if the ephemeris backend fails mid-search (most
-                often a date outside the available ephemeris range); the search
-                never returns silently truncated results.
+                ±90° range, for an invalid zodiac configuration, or if the
+                ephemeris backend fails mid-search (most often a date outside
+                the available ephemeris range); the search never returns
+                silently truncated results.
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
@@ -295,6 +326,7 @@ class EclipseFactory:
         # easy by the longitude-first backend geopos convention) rather than
         # returning a bogus "visible" eclipse with the Sun below the horizon.
         validate_latitude(lat)
+        _validate_zodiac(zodiac_type, sidereal_mode)
         if start_year is None:
             start_year = datetime.now(timezone.utc).year
         geopos = (lng, lat, 0.0)
@@ -303,10 +335,12 @@ class EclipseFactory:
         # The session holds the ephemeris lock across the whole scan (the
         # eclipse primitives read process-global backend state shared with
         # chart calculations) and resets that state on exit without degrading
-        # the backend.
-        with ephemeris_session():
-            solar_eclipses = EclipseFactory._find_solar_local(start_jd, geopos, count)
-            lunar_eclipses = EclipseFactory._find_lunar_local(start_jd, geopos, count)
+        # the backend. Its iflag carries FLG_SIDEREAL for a sidereal zodiac and
+        # is used ONLY for the reported sign/degree; the eclipse-timing
+        # primitives stay tropical, so the maximum JDs never shift.
+        with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
+            solar_eclipses = EclipseFactory._find_solar_local(start_jd, geopos, count, iflag)
+            lunar_eclipses = EclipseFactory._find_lunar_local(start_jd, geopos, count, iflag)
 
         return EclipseSearchResultModel(
             solar_eclipses=solar_eclipses,
@@ -319,6 +353,8 @@ class EclipseFactory:
     def search_global(
         start_year: Optional[int] = None,
         count: int = 10,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
     ) -> EclipseSearchResultModel:
         """Search for global eclipses (any location).
 
@@ -327,6 +363,10 @@ class EclipseFactory:
                 UTC year when ``None`` (a wired-in default year would silently
                 age).
             count: Number of each type to find.
+            zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. Eclipse
+                maximum TIMES are zodiac-independent; only the reported
+                sign/degree shift.
+            sidereal_mode: Ayanamsha when ``zodiac_type='Sidereal'``.
 
         Returns:
             EclipseSearchResultModel with solar and lunar eclipses. Global
@@ -336,19 +376,21 @@ class EclipseFactory:
             in global results too.
 
         Raises:
-            KerykeionException: If the ephemeris backend fails mid-search (most
-                often a date outside the available ephemeris range); the search
-                never returns silently truncated results.
+            KerykeionException: For an invalid zodiac configuration, or if the
+                ephemeris backend fails mid-search (most often a date outside
+                the available ephemeris range); the search never returns
+                silently truncated results.
             ValueError: If ``count`` exceeds the supported maximum.
         """
         _ensure_scannable(count)
+        _validate_zodiac(zodiac_type, sidereal_mode)
         if start_year is None:
             start_year = datetime.now(timezone.utc).year
         start_jd = ephe.julday(start_year, 1, 1, 0.0)
 
-        with ephemeris_session():
-            solar_eclipses = EclipseFactory._find_solar_global(start_jd, count)
-            lunar_eclipses = EclipseFactory._find_lunar_global(start_jd, count)
+        with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
+            solar_eclipses = EclipseFactory._find_solar_global(start_jd, count, iflag)
+            lunar_eclipses = EclipseFactory._find_lunar_global(start_jd, count, iflag)
 
         return EclipseSearchResultModel(
             solar_eclipses=solar_eclipses,
@@ -356,7 +398,9 @@ class EclipseFactory:
         )
 
     @staticmethod
-    def _find_solar_local(start_jd: float, geopos: tuple, count: int) -> List[SolarEclipseModel]:
+    def _find_solar_local(
+        start_jd: float, geopos: tuple, count: int, iflag: int = ephe.FLG_SWIEPH
+    ) -> List[SolarEclipseModel]:
         """Search for solar eclipses visible from a geographic position."""
         results = []
         jd = start_jd
@@ -378,7 +422,7 @@ class EclipseFactory:
                 magnitude=round(attr[0], 6) if len(attr) > 0 else None,
                 obscuration=round(attr[2], 6) if len(attr) > 2 else None,
                 sun_altitude=round(attr[5], 4) if len(attr) > 5 else None,
-                **_zodiac_fields(max_jd, ephe.SUN, "Sun"),
+                **_zodiac_fields(max_jd, ephe.SUN, "Sun", iflag),
                 **_saros_inex(max_jd, "solar"),
                 # gamma / duration are global central-line properties; max_jd
                 # here is the observer's local maximum, so they are omitted
@@ -388,7 +432,9 @@ class EclipseFactory:
         return results
 
     @staticmethod
-    def _find_solar_global(start_jd: float, count: int) -> List[SolarEclipseModel]:
+    def _find_solar_global(
+        start_jd: float, count: int, iflag: int = ephe.FLG_SWIEPH
+    ) -> List[SolarEclipseModel]:
         """Search for solar eclipses globally (any location on Earth)."""
         results = []
         jd = start_jd
@@ -410,7 +456,7 @@ class EclipseFactory:
                 # magnitude/obscuration are observer-dependent: None in global mode.
                 magnitude=None,
                 obscuration=None,
-                **_zodiac_fields(max_jd, ephe.SUN, "Sun"),
+                **_zodiac_fields(max_jd, ephe.SUN, "Sun", iflag),
                 **_saros_inex(max_jd, "solar"),
                 **_solar_gamma_duration(max_jd),
             ))
@@ -418,7 +464,9 @@ class EclipseFactory:
         return results
 
     @staticmethod
-    def _find_lunar_local(start_jd: float, geopos: tuple, count: int) -> List[LunarEclipseModel]:
+    def _find_lunar_local(
+        start_jd: float, geopos: tuple, count: int, iflag: int = ephe.FLG_SWIEPH
+    ) -> List[LunarEclipseModel]:
         """Search for lunar eclipses visible from a geographic position."""
         results = []
         jd = start_jd
@@ -439,14 +487,16 @@ class EclipseFactory:
                 datestamp=_jd_to_iso(max_jd),
                 magnitude_umbral=round(attr[0], 6) if len(attr) > 0 else None,
                 magnitude_penumbral=round(attr[1], 6) if len(attr) > 1 else None,
-                **_zodiac_fields(max_jd, ephe.MOON, "Moon"),
+                **_zodiac_fields(max_jd, ephe.MOON, "Moon", iflag),
                 **_saros_inex(max_jd, "lunar"),
             ))
             jd = max_jd + 10
         return results
 
     @staticmethod
-    def _find_lunar_global(start_jd: float, count: int) -> List[LunarEclipseModel]:
+    def _find_lunar_global(
+        start_jd: float, count: int, iflag: int = ephe.FLG_SWIEPH
+    ) -> List[LunarEclipseModel]:
         """Search for lunar eclipses globally."""
         results = []
         jd = start_jd
@@ -468,7 +518,7 @@ class EclipseFactory:
                 # Lunar magnitudes are observer-independent, so (unlike the
                 # solar fields) they are populated in global mode too.
                 **_lunar_magnitudes(max_jd),
-                **_zodiac_fields(max_jd, ephe.MOON, "Moon"),
+                **_zodiac_fields(max_jd, ephe.MOON, "Moon", iflag),
                 **_saros_inex(max_jd, "lunar"),
             ))
             jd = max_jd + 10

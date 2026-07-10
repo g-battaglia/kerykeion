@@ -143,6 +143,50 @@ class TestLunationApi:
         assert res.end_jd == end
 
 
+class TestSiderealLunations:
+    """Phase instants are the Sun-Moon elongation (frame-independent), so the
+    lunation TIMES are identical tropical vs sidereal; only the signs shift."""
+
+    def test_phase_times_identical_signs_shift(self):
+        trop = LunationFinderFactory.from_iso_range("2026-08-01", "2026-09-30")
+        sid = LunationFinderFactory.from_iso_range(
+            "2026-08-01", "2026-09-30", zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        # Same events in the same order (times are frame-independent).
+        assert len(trop.lunations) == len(sid.lunations)
+        sign_changed = False
+        for t, s in zip(trop.lunations, sid.lunations):
+            assert t.phase == s.phase
+            # Phase TIME identical to within 1 second.
+            assert abs(t.julian_day - s.julian_day) * 86400.0 <= 1.0
+            # The elongation is preserved: the Sun-Moon separation matches the
+            # phase in BOTH frames (the ayanamsha cancels in the separation).
+            expected_sep = {"new": 0.0, "first_quarter": 90.0, "full": 180.0, "last_quarter": 90.0}[t.phase]
+            for lun in (t, s):
+                sep = abs(lun.sun.abs_pos - lun.moon.abs_pos) % 360.0
+                sep = min(sep, 360.0 - sep)  # fold to [0, 180]; last_quarter (270) -> 90
+                assert abs(sep - expected_sep) < 0.5
+            if t.sun.sign != s.sun.sign or t.moon.sign != s.moon.sign:
+                sign_changed = True
+        # The ~24° Lahiri shift relabels at least some signs over two months.
+        assert sign_changed
+
+    def test_known_aug_2026_new_moon_leo_to_cancer(self):
+        # The 12 Aug 2026 New Moon is ~20° Leo tropical; under Lahiri (~24°) it
+        # lands in the previous sign, Cancer, at the identical instant.
+        trop = LunationFinderFactory.from_iso_range("2026-08-01", "2026-08-31", phases=["new"])
+        sid = LunationFinderFactory.from_iso_range(
+            "2026-08-01", "2026-08-31", phases=["new"], zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        assert trop.lunations[0].julian_day == sid.lunations[0].julian_day
+        assert trop.lunations[0].sun.sign == "Leo"
+        assert sid.lunations[0].sun.sign == "Can"
+
+    def test_sidereal_requires_mode(self):
+        with pytest.raises(KerykeionException):
+            LunationFinderFactory.from_iso_range("2026-01-01", "2026-02-01", zodiac_type="Sidereal")
+
+
 class TestLunationFormatter:
     """The revjul-based ISO formatter must handle the BCE range."""
 

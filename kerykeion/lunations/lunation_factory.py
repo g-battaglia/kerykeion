@@ -26,6 +26,7 @@ from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
 
 from kerykeion.moon_phase_details.utils import compute_lunar_phase_jd
 from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.kr_literals import SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import KerykeionPointModel, SubscriptableBaseModel
 from kerykeion.utilities import (
     datetime_to_julian,
@@ -68,6 +69,26 @@ def _to_utc_naive(dt: datetime) -> datetime:
     if dt.tzinfo is not None:
         dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
     return dt
+
+
+def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> None:
+    """Validate the zodiac configuration before opening an ephemeris session.
+
+    Same contract as ``VoidOfCourseMoonFactory``'s validator: pure validation,
+    no global ephemeris state touched.
+    """
+    if zodiac_type not in ("Tropical", "Sidereal"):
+        raise KerykeionException(f"Unknown zodiac_type: {zodiac_type!r} (expected 'Tropical' or 'Sidereal').")
+
+    if zodiac_type == "Sidereal":
+        if sidereal_mode is None:
+            raise KerykeionException("sidereal_mode is required when zodiac_type='Sidereal'.")
+        if sidereal_mode == "USER":
+            raise KerykeionException(
+                "sidereal_mode='USER' requires custom ayanamsha parameters, which LunationFinderFactory does not accept."
+            )
+        if not hasattr(ephe, f"SIDM_{sidereal_mode}"):
+            raise KerykeionException(f"Unknown sidereal_mode: {sidereal_mode!r}.")
 
 
 def _phase_angle_error(jd: float, target_angle: float) -> float:
@@ -133,6 +154,8 @@ class LunationFinderFactory:
         start_date: str,
         end_date: str,
         phases: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
     ) -> LunationsCollectionModel:
         """Find lunations between two ISO date(time) strings (treated as UTC).
 
@@ -140,6 +163,11 @@ class LunationFinderFactory:
             start_date: ISO date or datetime, e.g. ``"2026-01-01"``.
             end_date: ISO date or datetime, e.g. ``"2026-12-31"``.
             phases: Optional subset of ``new``/``first_quarter``/``full``/``last_quarter``.
+            zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. Phase TIMES
+                are the Sun-Moon elongation and are zodiac-independent (the
+                ayanamsha cancels in the separation); only the reported Sun/Moon
+                signs shift under a sidereal zodiac.
+            sidereal_mode: Ayanamsha when ``zodiac_type='Sidereal'``.
         """
         try:
             start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
@@ -160,13 +188,15 @@ class LunationFinderFactory:
             end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         start_jd = datetime_to_julian(start_dt)
         end_jd = datetime_to_julian(end_dt)
-        return LunationFinderFactory.from_julian_day(start_jd, end_jd, phases)
+        return LunationFinderFactory.from_julian_day(start_jd, end_jd, phases, zodiac_type, sidereal_mode)
 
     @staticmethod
     def from_julian_day(
         start_jd: float,
         end_jd: float,
         phases: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
     ) -> LunationsCollectionModel:
         """Find all requested lunations in ``[start_jd, end_jd]``.
 
@@ -174,11 +204,15 @@ class LunationFinderFactory:
             start_jd: Julian Day (UT) range start.
             end_jd: Julian Day (UT) range end.
             phases: Optional subset of phase names. Defaults to all four.
+            zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. Phase TIMES
+                are zodiac-independent; only the reported Sun/Moon signs shift.
+            sidereal_mode: Ayanamsha when ``zodiac_type='Sidereal'``.
 
         Raises:
-            KerykeionException: If the ephemeris backend fails mid-scan (most
-                often a date outside the available ephemeris range); the scan
-                never returns silently truncated results.
+            KerykeionException: For an invalid zodiac configuration, or if the
+                ephemeris backend fails mid-scan (most often a date outside the
+                available ephemeris range); the scan never returns silently
+                truncated results.
             ValueError: If a phase name is unknown or the range is too large
                 to scan.
         """
@@ -194,6 +228,8 @@ class LunationFinderFactory:
         else:
             targets = dict(_PHASE_ANGLES)
 
+        _validate_zodiac(zodiac_type, sidereal_mode)
+
         lunations: List[LunationModel] = []
 
         if targets and end_jd > start_jd:
@@ -201,7 +237,11 @@ class LunationFinderFactory:
             # Iterate each phase independently. Stepping by half a synodic month
             # after each hit keeps the search base clear of the just-found event
             # (avoiding solver degeneracy) without skipping the next occurrence.
-            with ephemeris_session():
+            # The phase solver (compute_lunar_phase_jd) works on the Sun-Moon
+            # elongation, which is frame-independent, so the phase TIMES are
+            # identical under a sidereal zodiac; only _build's reported signs
+            # shift, via the session iflag (FLG_SIDEREAL).
+            with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
                 for phase_name, angle in targets.items():
                     jd = start_jd
                     for _ in range(_MAX_ITERATIONS):
@@ -239,7 +279,7 @@ class LunationFinderFactory:
                         # past jd) when called just after a phase, reporting an event
                         # whose true angle is not the target. Record only genuine hits.
                         if _phase_angle_error(hit, angle) <= _PHASE_ANGLE_TOL:
-                            lunations.append(LunationFinderFactory._build(phase_name, hit))
+                            lunations.append(LunationFinderFactory._build(phase_name, hit, iflag))
                         jd = hit + _SEARCH_ADVANCE_DAYS
 
             lunations.sort(key=lambda lun: lun.julian_day)
@@ -251,9 +291,13 @@ class LunationFinderFactory:
         )
 
     @staticmethod
-    def _build(phase_name: str, jd: float) -> LunationModel:
-        """Build a LunationModel with Sun/Moon positions at the exact phase JD."""
-        iflag = ephe.FLG_SWIEPH
+    def _build(phase_name: str, jd: float, iflag: int) -> LunationModel:
+        """Build a LunationModel with Sun/Moon positions at the exact phase JD.
+
+        ``iflag`` is the enclosing session's flag: for a sidereal zodiac it
+        carries ``FLG_SIDEREAL``, so the reported Sun/Moon longitudes (and hence
+        signs) are sidereal while the phase JD itself is unchanged.
+        """
         sun_lon = float(ephe.calc_ut(jd, ephe.SUN, iflag)[0][0]) % 360.0
         moon_lon = float(ephe.calc_ut(jd, ephe.MOON, iflag)[0][0]) % 360.0
         return LunationModel(

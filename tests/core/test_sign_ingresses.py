@@ -207,3 +207,43 @@ class TestSeasonMarkers:
         assert res.ingresses, "Pluto crossed Cap/Aqu boundaries in 2023-24"
         # Pluto's 300° crossings are cardinal-adjacent but NOT season markers.
         assert all(x.season_marker is None for x in res.ingresses)
+
+
+class TestSiderealIngresses:
+    """A sidereal scan relabels signs and shifts the ingress TIMES (the sidereal
+    boundary is one ayanamsha away); season_marker is tropical-only."""
+
+    def test_sidereal_sun_year_shifts_and_drops_season_markers(self):
+        trop = SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Sun"])
+        sid = SignIngressFactory.from_iso_range(
+            "2026-01-01", "2026-12-31", ["Sun"], zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        # Same number of Sun ingresses; the Sun is never retrograde in either frame.
+        assert len(sid.ingresses) == 12
+        # season_marker is meaningful only in the tropical frame: NONE under sidereal.
+        assert all(x.season_marker is None for x in sid.ingresses)
+        # The tropical scan is unchanged — its four cardinal markers are present.
+        assert sum(1 for x in trop.ingresses if x.season_marker is not None) == 4
+
+    def test_sidereal_aries_ingress_shifts_by_one_ayanamsha(self):
+        trop = SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Sun"])
+        sid = SignIngressFactory.from_iso_range(
+            "2026-01-01", "2026-12-31", ["Sun"], zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        trop_ari = [x for x in trop.ingresses if x.sign == "Ari"][0]
+        sid_ari = [x for x in sid.ingresses if x.sign == "Ari"][0]
+        # Sidereal longitude lags tropical by the Lahiri ayanamsha (~24° in 2026),
+        # so the Sun reaches the sidereal Aries boundary ~24 days LATER than the
+        # tropical equinox. Magnitude 20-26 days; direction is strictly later.
+        shift_days = sid_ari.julian_day - trop_ari.julian_day
+        assert 20.0 <= shift_days <= 26.0
+        # The tropical Aries ingress is the equinox and carries the marker; the
+        # sidereal one is an ordinary sign change with no marker.
+        assert trop_ari.season_marker == "march_equinox"
+        assert sid_ari.season_marker is None
+
+    def test_sidereal_requires_mode(self):
+        with pytest.raises(KerykeionException):
+            SignIngressFactory.from_iso_range(
+                "2026-01-01", "2026-12-31", ["Sun"], zodiac_type="Sidereal"
+            )

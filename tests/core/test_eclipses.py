@@ -78,10 +78,11 @@ class TestDefaultStartYear:
 
         monkeypatch.setattr(ef.ephe, "julday", fake_julday)
         # Stub the internal searches: only the start_jd resolution is under test.
-        monkeypatch.setattr(ef.EclipseFactory, "_find_solar_global", staticmethod(lambda jd, count: []))
-        monkeypatch.setattr(ef.EclipseFactory, "_find_lunar_global", staticmethod(lambda jd, count: []))
-        monkeypatch.setattr(ef.EclipseFactory, "_find_solar_local", staticmethod(lambda jd, geopos, count: []))
-        monkeypatch.setattr(ef.EclipseFactory, "_find_lunar_local", staticmethod(lambda jd, geopos, count: []))
+        # (The trailing iflag arg is threaded from the session by the factory.)
+        monkeypatch.setattr(ef.EclipseFactory, "_find_solar_global", staticmethod(lambda jd, count, iflag=None: []))
+        monkeypatch.setattr(ef.EclipseFactory, "_find_lunar_global", staticmethod(lambda jd, count, iflag=None: []))
+        monkeypatch.setattr(ef.EclipseFactory, "_find_solar_local", staticmethod(lambda jd, geopos, count, iflag=None: []))
+        monkeypatch.setattr(ef.EclipseFactory, "_find_lunar_local", staticmethod(lambda jd, geopos, count, iflag=None: []))
         return captured
 
     def test_global_default_is_current_utc_year(self, monkeypatch):
@@ -448,6 +449,58 @@ class TestEclipseEnrichment:
                 assert ecl.magnitude_umbral <= 0
             else:
                 assert ecl.magnitude_umbral > 0
+
+
+class TestSiderealEclipses:
+    """Eclipse maxima are pure shadow geometry, so the maximum TIMES are
+    identical tropical vs sidereal; only the reported sign/degree shift."""
+
+    def test_global_times_identical_signs_shift(self):
+        trop = EclipseFactory.search_global(start_year=2026, count=3)
+        sid = EclipseFactory.search_global(
+            start_year=2026, count=3, zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        assert len(trop.solar_eclipses) == len(sid.solar_eclipses)
+        assert len(trop.lunar_eclipses) == len(sid.lunar_eclipses)
+        sign_changed = False
+        for t, s in zip(
+            trop.solar_eclipses + trop.lunar_eclipses,
+            sid.solar_eclipses + sid.lunar_eclipses,
+        ):
+            # Maximum instant is unchanged (the eclipse primitives stay tropical).
+            assert abs(t.maximum_jd - s.maximum_jd) * 86400.0 < 1e-3
+            # The sidereal degree lags the tropical one by ~one ayanamsha (~24°).
+            if t.sign != s.sign:
+                sign_changed = True
+        assert sign_changed, "a ~24° ayanamsha must relabel at least one eclipse sign"
+
+    def test_aug_2026_total_solar_leo_to_cancer(self):
+        # The 12 Aug 2026 total solar eclipse is ~20° Leo tropical; under Lahiri
+        # (~24°) it lands in the previous sign, Cancer, at the identical instant.
+        trop = EclipseFactory.search_global(start_year=2026, count=2)
+        sid = EclipseFactory.search_global(
+            start_year=2026, count=2, zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        t_total = [e for e in trop.solar_eclipses if e.type == "total"][0]
+        s_total = [e for e in sid.solar_eclipses if e.type == "total"][0]
+        assert t_total.maximum_jd == s_total.maximum_jd
+        assert t_total.sign == "Leo"
+        assert s_total.sign == "Can"
+
+    def test_local_times_identical_signs_shift(self):
+        trop = EclipseFactory.search_from_location(lat=41.9, lng=12.5, start_year=2026, count=2)
+        sid = EclipseFactory.search_from_location(
+            lat=41.9, lng=12.5, start_year=2026, count=2,
+            zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+        )
+        for t, s in zip(trop.solar_eclipses, sid.solar_eclipses):
+            assert abs(t.maximum_jd - s.maximum_jd) * 86400.0 < 1e-3
+            # Observer-dependent magnitude is unaffected by the zodiac relabel.
+            assert t.magnitude == s.magnitude
+
+    def test_sidereal_requires_mode(self):
+        with pytest.raises(KerykeionException):
+            EclipseFactory.search_global(start_year=2026, count=1, zodiac_type="Sidereal")
 
 
 @pytest.mark.parametrize(

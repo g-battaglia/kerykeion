@@ -2,6 +2,37 @@
 
 ## [Unreleased]
 
+### Added (6.0.0a67 — sidereal mundane event finders)
+
+- **Sidereal support for the mundane event finders** — `SignIngressFactory`,
+  `LunationFinderFactory`, `RetrogradeStationFactory` and `EclipseFactory` now
+  accept `zodiac_type` (`"Tropical"` default / `"Sidereal"`) and `sidereal_mode`
+  keyword arguments on their public entry points (`from_iso_range` /
+  `from_julian_day`, and `search_global` / `search_from_location` for eclipses),
+  mirroring the already-zodiac-aware `MundaneAspectFactory` and
+  `VoidOfCourseMoonFactory`. Each factory runs its scan inside
+  `ephemeris_session(zodiac_type=…, sidereal_mode=…)` so `calc_ut` reports
+  longitudes in the requested frame — an astro-calendar can now render
+  consistently in a single zodiac. Frame-independent event TIMES stay identical
+  (lunation phase = Sun-Moon elongation; station = speed zero, found in the
+  tropical frame; eclipse maximum = shadow geometry); only the reported SIGN
+  labels shift. Sign-ingress TIMES legitimately shift (the sidereal boundary is
+  ~24° away). `season_marker` stays **tropical-only** — a sidereal cardinal
+  crossing is not the equinox/solstice, so it is `None` on every sidereal
+  ingress. All additive: the two new kwargs default to the previous tropical
+  behavior, and no existing signature or model field changed.
+
+### Changed (6.0.0a67 — void-of-course range normalization)
+
+- **`VoidOfCourseMoonFactory.from_iso_range` now normalizes civil-range
+  overflow to `KerykeionException`.** Near the year-1 boundary the sign-by-sign
+  Moon walk can step before 1 CE, where `julian_day_to_utc` raises a bare
+  `OverflowError`/`ValueError` (Python's `datetime` has no BCE support) that the
+  previous `except getattr(ephe, "Error", ())` did not catch — leaking a 500
+  downstream. The range scan now also catches `OverflowError`/`ValueError` and
+  normalizes them to `KerykeionException` with the same "narrow the date range"
+  message the single-moment `from_datetime` path already uses.
+
 ### Added (6.0.0a66 — astrological calendar primitives)
 
 - **Mundane aspectarian** — new `MundaneAspectFactory`

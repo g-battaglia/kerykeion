@@ -28,7 +28,7 @@ from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
     datetime_to_julian,
@@ -75,6 +75,26 @@ def _to_utc_naive(dt: datetime) -> datetime:
         dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
     return dt
 
+
+
+def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> None:
+    """Validate the zodiac configuration before opening an ephemeris session.
+
+    Same contract as ``VoidOfCourseMoonFactory``'s validator: pure validation,
+    no global ephemeris state touched.
+    """
+    if zodiac_type not in ("Tropical", "Sidereal"):
+        raise KerykeionException(f"Unknown zodiac_type: {zodiac_type!r} (expected 'Tropical' or 'Sidereal').")
+
+    if zodiac_type == "Sidereal":
+        if sidereal_mode is None:
+            raise KerykeionException("sidereal_mode is required when zodiac_type='Sidereal'.")
+        if sidereal_mode == "USER":
+            raise KerykeionException(
+                "sidereal_mode='USER' requires custom ayanamsha parameters, which RetrogradeStationFactory does not accept."
+            )
+        if not hasattr(ephe, f"SIDM_{sidereal_mode}"):
+            raise KerykeionException(f"Unknown sidereal_mode: {sidereal_mode!r}.")
 
 
 def _speed(jd: float, body: int) -> float:
@@ -162,6 +182,8 @@ class RetrogradeStationFactory:
         start_date: str,
         end_date: str,
         planets: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
     ) -> RetrogradeStationsCollectionModel:
         """Find stations between two ISO date(time) strings (treated as UTC).
 
@@ -169,6 +191,11 @@ class RetrogradeStationFactory:
             start_date: ISO date or datetime, e.g. ``"2026-01-01"``.
             end_date: ISO date or datetime, e.g. ``"2026-12-31"``.
             planets: Optional subset of planet names. Defaults to Mercury..Pluto.
+            zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. A station is
+                the instant longitudinal speed passes through zero, computed in
+                the tropical frame, so the station TIMES are zodiac-independent;
+                only the reported sign shifts under a sidereal zodiac.
+            sidereal_mode: Ayanamsha when ``zodiac_type='Sidereal'``.
         """
         try:
             start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
@@ -189,13 +216,15 @@ class RetrogradeStationFactory:
             end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         start_jd = datetime_to_julian(start_dt)
         end_jd = datetime_to_julian(end_dt)
-        return RetrogradeStationFactory.from_julian_day(start_jd, end_jd, planets)
+        return RetrogradeStationFactory.from_julian_day(start_jd, end_jd, planets, zodiac_type, sidereal_mode)
 
     @staticmethod
     def from_julian_day(
         start_jd: float,
         end_jd: float,
         planets: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
     ) -> RetrogradeStationsCollectionModel:
         """Find all stations in ``[start_jd, end_jd]``, ordered chronologically.
 
@@ -203,11 +232,15 @@ class RetrogradeStationFactory:
             start_jd: Julian Day (UT) range start.
             end_jd: Julian Day (UT) range end.
             planets: Optional subset of planet names. Defaults to Mercury..Pluto.
+            zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. Station
+                TIMES are zodiac-independent; only the reported sign shifts.
+            sidereal_mode: Ayanamsha when ``zodiac_type='Sidereal'``.
 
         Raises:
-            KerykeionException: If the ephemeris backend fails mid-scan (most
-                often a date outside the available ephemeris range); the scan
-                never returns silently truncated results.
+            KerykeionException: For an invalid zodiac configuration, or if the
+                ephemeris backend fails mid-scan (most often a date outside the
+                available ephemeris range); the scan never returns silently
+                truncated results.
             ValueError: If a planet name is unknown or the range is too large
                 to scan.
         """
@@ -225,16 +258,21 @@ class RetrogradeStationFactory:
         else:
             bodies = list(_STATION_PLANETS)
 
+        _validate_zodiac(zodiac_type, sidereal_mode)
+
         stations: List[StationModel] = []
         if end_jd > start_jd and bodies:
             _ensure_scannable(start_jd, end_jd)
             # The session holds the ephemeris lock across the whole scan (calc_ut
             # reads process-global backend state shared with chart calculations)
-            # and resets that state on exit without degrading the backend.
-            with ephemeris_session():
+            # and resets that state on exit without degrading the backend. Its
+            # iflag carries FLG_SIDEREAL for a sidereal zodiac and is used ONLY
+            # for the reported sign in _build; the speed-zero station search
+            # stays tropical (see _speed), so the station TIMES never shift.
+            with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
                 for name, body in bodies:
                     stations.extend(
-                        RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd)
+                        RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd, iflag)
                     )
             stations.sort(key=lambda s: s.julian_day)
 
@@ -246,9 +284,14 @@ class RetrogradeStationFactory:
 
     @staticmethod
     def _scan_planet(
-        name: str, body: int, start_jd: float, end_jd: float
+        name: str, body: int, start_jd: float, end_jd: float, iflag: int
     ) -> List[StationModel]:
-        """Walk the range for one planet, bisecting each speed sign change."""
+        """Walk the range for one planet, bisecting each speed sign change.
+
+        The speed sampling (``_speed``/``_bisect_station``) is tropical, so the
+        station instants are frame-independent; ``iflag`` is passed to ``_build``
+        only to report the sign in the requested (possibly sidereal) frame.
+        """
         found: List[StationModel] = []
         jd = start_jd
         prev_speed = _speed(jd, body)
@@ -260,7 +303,7 @@ class RetrogradeStationFactory:
             first_next_speed = _speed(min(start_jd + _SAMPLE_STEP_DAYS, end_jd), body)
             if first_next_speed != 0.0:
                 station_type = "SR" if first_next_speed < 0.0 else "SD"
-                found.append(RetrogradeStationFactory._build(name, station_type, start_jd))
+                found.append(RetrogradeStationFactory._build(name, station_type, start_jd, iflag))
         while jd < end_jd:
             jd_next = min(jd + _SAMPLE_STEP_DAYS, end_jd)
             next_speed = _speed(jd_next, body)
@@ -274,16 +317,21 @@ class RetrogradeStationFactory:
                 # Direct -> retrograde is a retrograde station (SR); the reverse
                 # is a direct station (SD). prev_speed is non-zero in both branches.
                 station_type = "SR" if prev_speed > 0.0 else "SD"
-                found.append(RetrogradeStationFactory._build(name, station_type, jd_station))
+                found.append(RetrogradeStationFactory._build(name, station_type, jd_station, iflag))
             prev_speed = next_speed
             jd = jd_next
         return found
 
     @staticmethod
-    def _build(name: str, station_type: str, jd: float) -> StationModel:
-        """Build a StationModel with the zodiac position at the station JD."""
+    def _build(name: str, station_type: str, jd: float, iflag: int) -> StationModel:
+        """Build a StationModel with the zodiac position at the station JD.
+
+        ``iflag`` is the enclosing session's flag: for a sidereal zodiac it
+        carries ``FLG_SIDEREAL``, so the reported longitude/sign is sidereal
+        while the station JD (found from the tropical speed) is unchanged.
+        """
         try:
-            lon = float(ephe.calc_ut(jd, _PLANET_IDS[name], ephe.FLG_SWIEPH)[0][0]) % 360.0
+            lon = float(ephe.calc_ut(jd, _PLANET_IDS[name], iflag)[0][0]) % 360.0
         except Exception as exc:
             # Same normalization as _speed: the station JD lies inside a
             # bracket whose endpoints already computed, so this is practically

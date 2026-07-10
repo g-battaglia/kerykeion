@@ -28,6 +28,7 @@ from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.kr_literals import SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 from kerykeion.utilities import (
     datetime_to_julian,
@@ -94,16 +95,42 @@ def _to_utc_naive(dt: datetime) -> datetime:
     return dt
 
 
+def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> None:
+    """Validate the zodiac configuration before opening an ephemeris session.
+
+    Same contract as ``VoidOfCourseMoonFactory``'s validator: pure validation,
+    no global ephemeris state touched.
+    """
+    if zodiac_type not in ("Tropical", "Sidereal"):
+        raise KerykeionException(f"Unknown zodiac_type: {zodiac_type!r} (expected 'Tropical' or 'Sidereal').")
+
+    if zodiac_type == "Sidereal":
+        if sidereal_mode is None:
+            raise KerykeionException("sidereal_mode is required when zodiac_type='Sidereal'.")
+        if sidereal_mode == "USER":
+            raise KerykeionException(
+                "sidereal_mode='USER' requires custom ayanamsha parameters, which SignIngressFactory does not accept."
+            )
+        if not hasattr(ephe, f"SIDM_{sidereal_mode}"):
+            raise KerykeionException(f"Unknown sidereal_mode: {sidereal_mode!r}.")
+
 
 def _ang_diff(a: float, b: float) -> float:
     """Signed smallest angular difference ``a - b`` in ``[-180, 180)``."""
     return wrap_180(a - b)
 
 
-def _lon(jd: float, body: int) -> float:
-    """Ecliptic longitude (deg, 0-360) of ``body`` at ``jd``."""
+def _lon(jd: float, body: int, iflag: int) -> float:
+    """Ecliptic longitude (deg, 0-360) of ``body`` at ``jd`` in the session frame.
+
+    ``iflag`` carries the enclosing session's zodiac (``FLG_SIDEREAL`` for a
+    sidereal scan), so the sampled longitude — and hence every sign boundary
+    the scan bisects — is expressed in the requested frame. A sidereal scan's
+    30° boundaries sit ~24° (one ayanamsha) away from the tropical ones, so the
+    ingress TIMES legitimately shift.
+    """
     try:
-        return float(ephe.calc_ut(jd, body, ephe.FLG_SWIEPH)[0][0]) % 360.0
+        return float(ephe.calc_ut(jd, body, iflag)[0][0]) % 360.0
     except Exception as exc:
         # Range errors (libephemeris EphemerisRangeError, swisseph.Error)
         # propagate raw from calc_ut — normalize them to the documented
@@ -122,12 +149,12 @@ def _sign_name(sign_num: int) -> str:
     ).sign
 
 
-def _bisect_ingress(body: int, a: float, b: float, boundary: float) -> float:
+def _bisect_ingress(body: int, a: float, b: float, boundary: float, iflag: int) -> float:
     """Bisect ``[a, b]`` to the JD where longitude equals the 30° ``boundary``."""
-    fa = _ang_diff(_lon(a, body), boundary)
+    fa = _ang_diff(_lon(a, body, iflag), boundary)
     for _ in range(_BISECTION_ITERS):
         mid = (a + b) / 2.0
-        fm = _ang_diff(_lon(mid, body), boundary)
+        fm = _ang_diff(_lon(mid, body, iflag), boundary)
         if fm == 0.0:
             return mid
         if (fa < 0.0) != (fm < 0.0):
@@ -222,6 +249,8 @@ class SignIngressFactory:
         start_date: str,
         end_date: str,
         planets: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
     ) -> SignIngressesCollectionModel:
         """Find ingresses between two ISO date(time) strings (treated as UTC).
 
@@ -230,6 +259,11 @@ class SignIngressFactory:
             end_date: ISO date or datetime, e.g. ``"2026-12-31"``.
             planets: Optional subset of planet names. Defaults to Sun..Pluto
                 (Moon excluded unless explicitly requested).
+            zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. A sidereal
+                scan reports sidereal signs and its ingress TIMES shift (the
+                boundary is ~24° away); ``season_marker`` is tropical-only and
+                is ``None`` on every sidereal ingress.
+            sidereal_mode: Ayanamsha when ``zodiac_type='Sidereal'``.
         """
         try:
             start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
@@ -249,13 +283,15 @@ class SignIngressFactory:
             end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         start_jd = datetime_to_julian(start_dt)
         end_jd = datetime_to_julian(end_dt)
-        return SignIngressFactory.from_julian_day(start_jd, end_jd, planets)
+        return SignIngressFactory.from_julian_day(start_jd, end_jd, planets, zodiac_type, sidereal_mode)
 
     @staticmethod
     def from_julian_day(
         start_jd: float,
         end_jd: float,
         planets: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
     ) -> SignIngressesCollectionModel:
         """Find all sign ingresses in ``[start_jd, end_jd]``, ordered chronologically.
 
@@ -263,11 +299,16 @@ class SignIngressFactory:
             start_jd: Julian Day (UT) range start.
             end_jd: Julian Day (UT) range end.
             planets: Optional subset of planet names. Defaults to Sun..Pluto.
+            zodiac_type: ``"Tropical"`` (default) or ``"Sidereal"``. Sidereal
+                ingress TIMES shift with the ayanamsha; ``season_marker`` is
+                tropical-only.
+            sidereal_mode: Ayanamsha when ``zodiac_type='Sidereal'``.
 
         Raises:
-            KerykeionException: If the ephemeris backend fails mid-scan (most
-                often a date outside the available ephemeris range); the scan
-                never returns silently truncated results.
+            KerykeionException: For an invalid zodiac configuration, or if the
+                ephemeris backend fails mid-scan (most often a date outside the
+                available ephemeris range); the scan never returns silently
+                truncated results.
             ValueError: If a planet name is unknown or the range is too large
                 to scan.
         """
@@ -285,16 +326,22 @@ class SignIngressFactory:
         else:
             bodies = list(_INGRESS_PLANETS)
 
+        _validate_zodiac(zodiac_type, sidereal_mode)
+        # season_marker is meaningful ONLY in the tropical frame: the Sun
+        # crossing a SIDEREAL cardinal boundary is not the equinox/solstice.
+        tropical = zodiac_type != "Sidereal"
+
         ingresses: List[IngressModel] = []
         if end_jd > start_jd and bodies:
             _ensure_scannable(start_jd, end_jd, bodies)
             # The session holds the ephemeris lock across the whole scan (calc_ut
             # reads process-global backend state shared with chart calculations)
-            # and resets that state on exit without degrading the backend.
-            with ephemeris_session():
+            # and resets that state on exit without degrading the backend. Its
+            # iflag carries FLG_SIDEREAL for a sidereal scan.
+            with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
                 for name, body in bodies:
                     ingresses.extend(
-                        SignIngressFactory._scan_planet(name, body, start_jd, end_jd)
+                        SignIngressFactory._scan_planet(name, body, start_jd, end_jd, iflag, tropical)
                     )
             ingresses.sort(key=lambda i: i.julian_day)
 
@@ -306,17 +353,17 @@ class SignIngressFactory:
 
     @staticmethod
     def _scan_planet(
-        name: str, body: int, start_jd: float, end_jd: float
+        name: str, body: int, start_jd: float, end_jd: float, iflag: int, tropical: bool
     ) -> List[IngressModel]:
         """Walk the range for one planet, emitting every sign-boundary crossing."""
         found: List[IngressModel] = []
         step = _PLANET_STEP_DAYS.get(name, _SAMPLE_STEP_DAYS)
         jd = start_jd
-        prev_sign = int(_lon(jd, body) // 30)
+        prev_sign = int(_lon(jd, body, iflag) // 30)
         while jd < end_jd:
             jd_next = min(jd + step, end_jd)
-            cur_sign = int(_lon(jd_next, body) // 30)
-            SignIngressFactory._emit_segment(name, body, jd, prev_sign, jd_next, cur_sign, found, 0)
+            cur_sign = int(_lon(jd_next, body, iflag) // 30)
+            SignIngressFactory._emit_segment(name, body, jd, prev_sign, jd_next, cur_sign, found, 0, iflag, tropical)
             prev_sign = cur_sign
             jd = jd_next
         return found
@@ -331,6 +378,8 @@ class SignIngressFactory:
         sign_b: int,
         found: List[IngressModel],
         depth: int,
+        iflag: int,
+        tropical: bool,
     ) -> None:
         """Emit ingresses within ``[a, b]``, subdividing to catch crossings the
         endpoints hide (a forward + retrograde re-crossing inside one interval)."""
@@ -341,10 +390,10 @@ class SignIngressFactory:
             if depth >= _MAX_SUBDIVISION_DEPTH or (b - a) <= _MIN_SEGMENT_DAYS:
                 return
             mid = (a + b) / 2.0
-            sign_mid = int(_lon(mid, body) // 30)
+            sign_mid = int(_lon(mid, body, iflag) // 30)
             if sign_mid != sign_a:
-                SignIngressFactory._emit_segment(name, body, a, sign_a, mid, sign_mid, found, depth + 1)
-                SignIngressFactory._emit_segment(name, body, mid, sign_mid, b, sign_b, found, depth + 1)
+                SignIngressFactory._emit_segment(name, body, a, sign_a, mid, sign_mid, found, depth + 1, iflag, tropical)
+                SignIngressFactory._emit_segment(name, body, mid, sign_mid, b, sign_b, found, depth + 1, iflag, tropical)
             return
 
         diff = (sign_b - sign_a) % 12
@@ -352,18 +401,18 @@ class SignIngressFactory:
             # More than one boundary between the endpoints (a fast body, or a
             # multi-crossing interval): split so each half resolves one boundary.
             mid = (a + b) / 2.0
-            sign_mid = int(_lon(mid, body) // 30)
-            SignIngressFactory._emit_segment(name, body, a, sign_a, mid, sign_mid, found, depth + 1)
-            SignIngressFactory._emit_segment(name, body, mid, sign_mid, b, sign_b, found, depth + 1)
+            sign_mid = int(_lon(mid, body, iflag) // 30)
+            SignIngressFactory._emit_segment(name, body, a, sign_a, mid, sign_mid, found, depth + 1, iflag, tropical)
+            SignIngressFactory._emit_segment(name, body, mid, sign_mid, b, sign_b, found, depth + 1, iflag, tropical)
             return
 
         # Adjacent signs: a single boundary. diff==1 is forward (top of sign_a),
         # diff==11 is retrograde (bottom of sign_a).
         retro = diff == 11
         boundary = ((sign_a * 30) if retro else ((sign_a + 1) * 30)) % 360.0
-        jd_ingress = _bisect_ingress(body, a, b, boundary)
+        jd_ingress = _bisect_ingress(body, a, b, boundary, iflag)
         found.append(
-            SignIngressFactory._build(name, jd_ingress, sign_a, sign_b, retro, boundary)
+            SignIngressFactory._build(name, jd_ingress, sign_a, sign_b, retro, boundary, tropical)
         )
 
     @staticmethod
@@ -374,6 +423,7 @@ class SignIngressFactory:
         to_sign_num: int,
         retro: bool,
         boundary: float,
+        tropical: bool,
     ) -> IngressModel:
         """Build an IngressModel for a boundary crossing at ``jd``."""
         return IngressModel(
@@ -386,7 +436,11 @@ class SignIngressFactory:
             from_sign_num=from_sign_num % 12,
             retrograde=retro,
             ecliptic_longitude=round(boundary, 6),
-            # Only the Sun's cardinal crossings mark seasons; the factory is
-            # tropical-only, so the boundary IS the tropical longitude.
-            season_marker=_SEASON_MARKERS.get(boundary % 360.0) if name == "Sun" else None,
+            # Only the Sun's cardinal crossings mark seasons, and ONLY in the
+            # tropical frame — a sidereal cardinal boundary is not the
+            # equinox/solstice, so season_marker stays None for every sidereal
+            # ingress. In a tropical scan the boundary IS the tropical longitude.
+            season_marker=(
+                _SEASON_MARKERS.get(boundary % 360.0) if (name == "Sun" and tropical) else None
+            ),
         )

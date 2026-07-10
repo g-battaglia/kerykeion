@@ -108,6 +108,36 @@ class TestStationApi:
         assert res.start_jd == start and res.end_jd == end
 
 
+class TestSiderealStations:
+    """A station is the speed-zero instant, found in the tropical frame, so the
+    station TIMES are identical tropical vs sidereal; only the sign shifts."""
+
+    def test_times_identical_signs_shift(self):
+        trop = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", ["Mercury"])
+        sid = RetrogradeStationFactory.from_iso_range(
+            "2026-01-01", "2026-12-31", ["Mercury"], zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        assert len(trop.stations) == len(sid.stations) == 6
+        sign_changed = False
+        for t, s in zip(trop.stations, sid.stations):
+            assert t.station_type == s.station_type
+            # Station instant is byte-identical (the speed search never sees
+            # FLG_SIDEREAL), to within a millisecond.
+            assert abs(t.julian_day - s.julian_day) * 86400.0 < 1e-3
+            if t.sign != s.sign:
+                sign_changed = True
+        # The first 2026 Mercury station is late Pisces tropical -> Aquarius sidereal.
+        assert trop.stations[0].sign == "Pis"
+        assert sid.stations[0].sign == "Aqu"
+        assert sign_changed
+
+    def test_sidereal_requires_mode(self):
+        with pytest.raises(KerykeionException):
+            RetrogradeStationFactory.from_iso_range(
+                "2026-01-01", "2026-12-31", ["Mercury"], zodiac_type="Sidereal"
+            )
+
+
 class TestStationErrorContract:
     """Backend failures mid-scan must surface as KerykeionException, matching
     the lunation factory's contract — never propagate raw backend errors and

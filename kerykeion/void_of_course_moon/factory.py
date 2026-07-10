@@ -210,9 +210,18 @@ class VoidOfCourseMoonFactory:
             with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
                 try:
                     raw_windows = compute_void_windows(start_jd, end_jd, iflag)
-                except getattr(ephe, "Error", ()) as exc:
-                    # Same normalization as from_datetime: backend range errors
-                    # become the documented exception type.
+                except (getattr(ephe, "Error", ()), OverflowError, ValueError) as exc:
+                    # Same normalization as from_datetime, widened for the range
+                    # scan: besides the backend range errors (libephemeris
+                    # EphemerisRangeError, swisseph.Error), the sign-by-sign Moon
+                    # walk can step before 1 CE near the year-1 edge, where
+                    # julian_day_to_utc raises a bare OverflowError/ValueError
+                    # (Python's datetime has no BCE support). All of these are
+                    # normalized to the documented exception type so the range
+                    # entry point matches the single-moment path (from_datetime)
+                    # and never leaks a raw error (a 500 downstream).
+                    # KerykeionException is not a ValueError subclass, so a
+                    # zodiac/contract error is never swallowed here.
                     raise KerykeionException(
                         f"Void-of-course window scan failed for "
                         f"[{start_date!r}, {end_date!r}]: {exc}. This usually means "

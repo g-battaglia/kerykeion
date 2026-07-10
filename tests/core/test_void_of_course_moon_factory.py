@@ -252,6 +252,38 @@ class TestVoidWindowsRange:
         res = VoidOfCourseMoonFactory.from_iso_range("2025-01-31", "2025-01-01")
         assert res.windows == []
 
+    def test_civil_range_overflow_normalized_to_kerykeion_exception(self, monkeypatch):
+        # Near the year-1 boundary the sign-by-sign Moon walk can step before
+        # 1 CE, where julian_day_to_utc raises a bare OverflowError/ValueError
+        # (Python's datetime has no BCE support). from_iso_range must normalize
+        # BOTH to KerykeionException (like the single-moment path) rather than
+        # leaking a 500 downstream. Exercise the widened catch directly, so the
+        # test is kernel-independent.
+        import kerykeion.void_of_course_moon.factory as fac
+
+        for exc_type in (ValueError, OverflowError):
+            def boom(*a, **k):
+                raise exc_type("simulated civil-range overflow")
+
+            monkeypatch.setattr(fac, "compute_void_windows", boom)
+            with pytest.raises(KerykeionException, match="narrow the date range"):
+                VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
+
+    def test_year_one_edge_never_leaks_a_bare_error(self):
+        # A range at the very start of the civil calendar must never surface a
+        # non-KerykeionException. Depending on the installed kernel it either
+        # raises KerykeionException (out of ephemeris range, or the civil-range
+        # overflow above) or stays in range and returns windows — but never a
+        # raw ValueError/OverflowError/backend error.
+        try:
+            res = VoidOfCourseMoonFactory.from_iso_range("0001-01-01", "0001-02-15")
+        except KerykeionException:
+            pass  # acceptable: normalized to the documented exception type
+        except Exception as exc:  # noqa: BLE001 — the whole point is to catch leaks
+            pytest.fail(f"expected KerykeionException, got {type(exc).__name__}: {exc}")
+        else:
+            assert isinstance(res.windows, list)
+
     def test_sidereal_windows_shift_signs_not_aspects(self):
         tropical = VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-15")
         sidereal = VoidOfCourseMoonFactory.from_iso_range(
