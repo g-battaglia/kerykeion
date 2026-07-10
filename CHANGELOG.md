@@ -31,6 +31,13 @@
   `december_solstice`. Hemisphere-neutral month-based names; `None` on all
   other ingresses. Additive and backward compatible.
 
+### Changed (6.0.0a67 — libephemeris 3.0.0rc5)
+
+- **Bumped the `libephemeris` pin to `==3.0.0rc5`** (from `==3.0.0rc3`), pulling
+  in the upstream release-candidate fixes since rc3. No kerykeion computation
+  code changed; the commit only advances the dependency floor. The pin will move
+  to the stable `3.0.0` at the 6.0.0 tag (see the `TODO` in `pyproject.toml`).
+
 ### Fixed (6.0.0a65 — zero-bug review campaign, rounds 36–47)
 
 Twelve further review rounds, each rotating a fresh runtime-reproduced lens, and
