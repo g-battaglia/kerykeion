@@ -176,6 +176,98 @@ def _aspects_in_window(
     return sorted(unique.values(), key=lambda e: e.exact_time)
 
 
+@dataclass(frozen=True)
+class VoidWindow:
+    """One complete void-of-course window (sign indices are 0=Aries…11=Pisces)."""
+
+    moon_sign_index: int
+    next_sign_index: int
+    void_start: datetime
+    void_end: datetime  # = the ingress instant
+    last_aspect: Optional[AspectEvent]  # None for a whole-sign void
+
+
+def compute_void_windows(start_jd: float, end_jd: float, iflag: int) -> list[VoidWindow]:
+    """Every void-of-course window intersecting ``[start_jd, end_jd]``.
+
+    Walks the Moon sign by sign (~13.7 spans per month): for each span, the
+    last exact Ptolemaic aspect perfected inside the sign opens the void, the
+    sign ingress closes it. A sign with no aspect at all yields a whole-sign
+    void (rare, but real). Windows are returned **unclipped** — a window may
+    start before ``start_jd`` or end after ``end_jd``; the caller decides how
+    to render the overhang.
+
+    Args:
+        start_jd: Julian Day (UT) range start.
+        end_jd: Julian Day (UT) range end.
+        iflag: Ephemeris flags from the enclosing session (includes FLG_SPEED).
+    """
+    if end_jd <= start_jd:
+        return []
+
+    range_start = julian_day_to_utc(start_jd)
+    range_end = julian_day_to_utc(end_jd)
+
+    moon_lon, moon_speed = _lon_speed(start_jd, ephe.MOON, iflag)
+    if moon_speed <= 0:  # defensive: the Moon never goes retrograde in longitude
+        moon_speed = _MEAN_LUNAR_SPEED
+
+    sign_index = int(moon_lon // 30) % 12
+    sign_floor = sign_index * 30.0
+    # Newton back-crossing to the current sign's floor: the walk starts at the
+    # entry of the sign that CONTAINS start_jd, so a void window already open
+    # at range start is captured whole.
+    entry_jd = _moon_crossing_jd(start_jd, sign_floor % 360.0, (sign_floor - moon_lon) / moon_speed, iflag)
+
+    windows: list[VoidWindow] = []
+    # The Moon spends >= ~2 days per sign; the cap only guards a runaway loop.
+    max_spans = int((end_jd - start_jd) / 2.0) + 4
+    for span in range(max_spans):
+        if entry_jd > end_jd:
+            break
+        sign_ceiling = sign_floor + 30.0
+        _, speed_at_entry = _lon_speed(entry_jd, ephe.MOON, iflag)
+        if speed_at_entry <= 0:
+            speed_at_entry = _MEAN_LUNAR_SPEED
+        ingress_jd = _moon_crossing_jd(entry_jd, sign_ceiling % 360.0, 30.0 / speed_at_entry, iflag)
+
+        # Seed the aspect scan from the middle of the span. First span keeps
+        # the wide entry tolerance (its entry came from a backward Newton seed,
+        # ~86 s overshoot); later spans tighten it so an aspect perfecting
+        # exactly on a cusp is never counted in two consecutive signs.
+        jd_ref = (entry_jd + ingress_jd) / 2.0
+        in_sign = _aspects_in_window(
+            jd_ref, entry_jd, ingress_jd, iflag,
+            start_tol=1e-3 if span == 0 else 1e-6,
+        )
+
+        ingress_dt = julian_day_to_utc(ingress_jd)
+        if in_sign:
+            last_aspect: Optional[AspectEvent] = in_sign[-1]
+            void_start = last_aspect.exact_time
+        else:
+            last_aspect = None
+            void_start = julian_day_to_utc(entry_jd)
+
+        # Keep every window that INTERSECTS the requested range.
+        if ingress_dt >= range_start and void_start <= range_end:
+            windows.append(
+                VoidWindow(
+                    moon_sign_index=sign_index,
+                    next_sign_index=(sign_index + 1) % 12,
+                    void_start=void_start,
+                    void_end=ingress_dt,
+                    last_aspect=last_aspect,
+                )
+            )
+
+        entry_jd = ingress_jd
+        sign_index = (sign_index + 1) % 12
+        sign_floor = (sign_floor + 30.0) % 360.0
+
+    return windows
+
+
 def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResult:
     """
     Compute the Moon's void-of-course state at a UTC instant.

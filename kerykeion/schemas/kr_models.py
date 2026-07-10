@@ -560,6 +560,41 @@ class VoidOfCourseMoonModel(SubscriptableBaseModel):
     next_aspect: Optional[VoidOfCourseAspectModel] = None
 
 
+class VoidOfCourseWindowModel(SubscriptableBaseModel):
+    """
+    One complete void-of-course window within a scanned range.
+
+    Attributes:
+        moon_sign: The sign the Moon is leaving (the void happens here).
+        next_sign: The sign the Moon ingresses into, ending the void.
+        void_start: Start of the void window (UTC) — the Moon's last exact
+            in-sign aspect, or the sign-entry moment for a whole-sign void.
+        void_end: End of the void window (UTC), i.e. the ingress instant.
+        duration_minutes: Window length in minutes.
+        last_aspect: The aspect that opened the void, or ``None`` when the Moon
+            made no aspect at all while in the sign (whole-sign void).
+    """
+
+    moon_sign: Sign
+    next_sign: Sign
+    void_start: datetime
+    void_end: datetime
+    duration_minutes: float
+    last_aspect: Optional[VoidOfCourseAspectModel] = None
+
+
+class VoidOfCourseWindowsCollectionModel(SubscriptableBaseModel):
+    """Ordered list of void-of-course windows intersecting a Julian Day range.
+
+    Windows are unclipped: the first may start before ``start_jd`` and the last
+    may end after ``end_jd``.
+    """
+
+    start_jd: float
+    end_jd: float
+    windows: list[VoidOfCourseWindowModel]
+
+
 class KerykeionPointModel(SubscriptableBaseModel):
     """
     Model representing an astrological celestial point or house cusp.

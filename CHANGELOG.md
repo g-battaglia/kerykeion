@@ -2,6 +2,35 @@
 
 ## [Unreleased]
 
+### Added (6.0.0a66 — astrological calendar primitives)
+
+- **Mundane aspectarian** — new `MundaneAspectFactory`
+  (`kerykeion/mundane_aspects/`): every exact transiting-to-transiting aspect
+  within a date range, the content of a printed astrological calendar's
+  aspectarian. Uniform 6-hour sampling of the signed pairwise separation with
+  bisection refinement (unconditionally convergent — Newton diverges on slow
+  mutual pairs near stations), midpoint splitting for relative-motion reversals
+  inside a step, and a branch-cut guard against antipode wraps. Default scan
+  set is Sun..Pluto with the five Ptolemaic aspects; the Moon is opt-in (its
+  ~75 events/month are noise for most consumers); the full minor-aspect
+  vocabulary from the chart defaults is accepted. Aspect instants are
+  zodiac-independent (verified by a sidereal-invariance test); reported
+  longitudes/signs follow the requested zodiac. Returns
+  `MundaneAspectsCollectionModel` with per-event longitudes, signs and
+  retrograde flags.
+- **Void-of-course windows over a range** — new
+  `VoidOfCourseMoonFactory.from_iso_range`: walks the Moon sign by sign and
+  returns every VoC window intersecting the range (unclipped), each framed by
+  its opening aspect and closing ingress, as
+  `VoidOfCourseWindowsCollectionModel`. Reuses the shipped single-moment
+  Newton machinery unchanged; whole-sign voids (no aspect in the sign) are
+  reported with `last_aspect: null`.
+- **Season markers on Sun ingresses** — `IngressModel.season_marker`
+  (optional): Sun ingresses at the cardinal boundaries now carry
+  `march_equinox` / `june_solstice` / `september_equinox` /
+  `december_solstice`. Hemisphere-neutral month-based names; `None` on all
+  other ingresses. Additive and backward compatible.
+
 ### Fixed (6.0.0a65 — zero-bug review campaign, rounds 36–47)
 
 Twelve further review rounds, each rotating a fresh runtime-reproduced lens, and

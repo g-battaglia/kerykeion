@@ -188,3 +188,78 @@ def test_normal_date_unaffected_by_range_normalization():
     voc = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 12, 0, tz_str="Europe/Rome")
     assert isinstance(voc.is_void_of_course, bool)
     assert voc.moon_sign in SIGN_CODES
+
+
+# =============================================================================
+# from_iso_range — void windows over a range
+# =============================================================================
+
+
+class TestVoidWindowsRange:
+    """Range scan: every void window intersecting the range, unclipped."""
+
+    def test_january_2025_window_count_and_ordering(self):
+        res = VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
+        # ~13.7 Moon sign spans per month; the first window is the one already
+        # open at range start (unclipped), so 12-15 windows are expected.
+        assert 12 <= len(res.windows) <= 15
+        for prev, cur in zip(res.windows, res.windows[1:]):
+            assert prev.void_end <= cur.void_start, "windows must not overlap"
+        # Signs chain: each window's next_sign is the following window's moon_sign.
+        for prev, cur in zip(res.windows, res.windows[1:]):
+            assert prev.next_sign == cur.moon_sign
+
+    def test_windows_cross_check_with_single_moment(self):
+        res = VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
+        for window in res.windows[2:5]:
+            mid = window.void_start + (window.void_end - window.void_start) / 2
+            single = VoidOfCourseMoonFactory.from_datetime(
+                mid.year, mid.month, mid.day, mid.hour, mid.minute, tz_str="UTC"
+            )
+            assert single.is_void_of_course
+            assert abs((single.void_start - window.void_start).total_seconds()) < 2
+            assert abs((single.void_end - window.void_end).total_seconds()) < 2
+
+    def test_moment_between_windows_is_not_void(self):
+        res = VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
+        # A moment right between window N's end (ingress) and window N+1's
+        # start is inside a sign with aspects still to perfect: not void.
+        gap_mid = res.windows[1].void_end + (res.windows[2].void_start - res.windows[1].void_end) / 2
+        single = VoidOfCourseMoonFactory.from_datetime(
+            gap_mid.year, gap_mid.month, gap_mid.day, gap_mid.hour, gap_mid.minute, tz_str="UTC"
+        )
+        assert not single.is_void_of_course
+
+    def test_straddling_window_included_unclipped(self):
+        res = VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
+        first = res.windows[0]
+        # Dec 31 2024 19:02 UTC opens a void that ends Jan 1 10:49 — it must be
+        # present and keep its pre-range start.
+        assert first.void_start.month == 12 and first.void_start.day == 31
+        assert first.void_end.month == 1 and first.void_end.day == 1
+
+    def test_duration_consistency(self):
+        res = VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
+        for window in res.windows:
+            expected = (window.void_end - window.void_start).total_seconds() / 60.0
+            assert window.duration_minutes == pytest.approx(expected, abs=0.02)
+
+    def test_malformed_iso_raises_kerykeion_exception(self):
+        with pytest.raises(KerykeionException, match="Invalid ISO"):
+            VoidOfCourseMoonFactory.from_iso_range("nope", "2025-01-31")
+
+    def test_empty_range_yields_no_windows(self):
+        res = VoidOfCourseMoonFactory.from_iso_range("2025-01-31", "2025-01-01")
+        assert res.windows == []
+
+    def test_sidereal_windows_shift_signs_not_aspects(self):
+        tropical = VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-15")
+        sidereal = VoidOfCourseMoonFactory.from_iso_range(
+            "2025-01-01", "2025-01-15", zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
+        # Sidereal sign boundaries sit ~24° earlier, so windows differ — but
+        # both scans produce a coherent, ordered set.
+        assert 5 <= len(sidereal.windows) <= 9
+        for prev, cur in zip(sidereal.windows, sidereal.windows[1:]):
+            assert prev.void_end <= cur.void_start
+        assert tropical.windows[0].void_end != sidereal.windows[0].void_end
