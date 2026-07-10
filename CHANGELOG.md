@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 6.0.0a68 - 2026-07-11
+
 ### Added (astrological calendar primitives)
 
 - **Mundane aspectarian** — new `MundaneAspectFactory`
@@ -30,6 +32,37 @@
   `march_equinox` / `june_solstice` / `september_equinox` /
   `december_solstice`. Hemisphere-neutral month-based names; `None` on all
   other ingresses. Additive and backward compatible.
+
+### Changed (6.0.0a68 — backend repinned rc3 → rc6, golden fixtures regenerated)
+
+Default backend repinned `libephemeris==3.0.0rc3` → `==3.0.0rc6` (the tagged
+`6.0.0a67` intermediate pin to `rc5` is superseded; `rc5` and `rc6` are
+numerically identical — `rc6` is a provenance/independence release — so the
+effective trajectory is `rc3 → rc6`). No public API change; both upstream test
+backends green at 16024 each.
+
+- **Reference-frame transforms refined ~1.5″ across rc3 → rc6.** Sidereal
+  fixed-reference modes (`J1900`/`J2000`/`B1950`) and the heliocentric /
+  topocentric / true-geocentric perspectives moved closer to Swiss Ephemeris.
+  Spot-check, John Lennon Moon sidereal `J2000`: `rc6` 304.37271839 is 0.17″
+  off Swiss; the previous rc3 fixture 304.37313858 was 1.69″ off — `rc6` is
+  ~10× closer, the fixture carried the *less* accurate value.
+- **Golden position fixtures regenerated on rc6.** All 41 sidereal-mode and 3
+  non-default-perspective expected-position fixtures (23 files). The 8
+  tolerance failures the repin surfaced (Moon/Mercury/Pluto, frame-transform
+  paths, sub-arcsecond) are resolved; suite green at 9689 passed.
+- **SVG chart baselines unchanged.** A ~1.5″ shift is far below rendering
+  precision, so every chart baseline is byte-identical and all chart tests
+  stay green without regeneration.
+
+### Fixed (6.0.0a68)
+
+- **`test_defaults_to_current_time_when_none` compared against the wrong
+  timezone.** `AstrologicalSubjectFactory.from_birth_data` resolves "now" in
+  the subject's own timezone (`Etc/GMT` = UTC for the test subject); the
+  assertion used naive `datetime.now()` (local), so it failed whenever the
+  local day differed from the UTC day near midnight in a non-UTC timezone —
+  silently green on UTC CI. It now compares against `datetime.now(timezone.utc)`.
 
 ### Fixed (fresh full-codebase review, round 48)
 

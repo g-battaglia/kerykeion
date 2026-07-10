@@ -243,7 +243,7 @@ def compute_void_windows(start_jd: float, end_jd: float, iflag: int) -> list[Voi
 
         ingress_dt = julian_day_to_utc(ingress_jd)
         if in_sign:
-            last_aspect: Optional[AspectEvent] = in_sign[-1]
+            last_aspect = in_sign[-1]
             void_start = last_aspect.exact_time
         else:
             last_aspect = None
