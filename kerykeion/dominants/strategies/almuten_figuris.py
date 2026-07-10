@@ -42,7 +42,7 @@ from kerykeion.dominants.data import (
 )
 from kerykeion.dominants.utils import ZodiacPosition, part_of_fortune_degree, prenatal_syzygy, zodiac_breakdown
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, DominantsModel
-from kerykeion.utilities import get_house_number
+from kerykeion.utilities import get_house_number, resolve_sect_is_diurnal
 
 
 class AlmutenFigurisStrategy(BaseDominantStrategy):
@@ -85,7 +85,7 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
         Returns:
             A :class:`DominantsModel` whose ``dominant_planet`` is the Almuten.
         """
-        sect = "day" if bool(getattr(subject, "is_diurnal", True)) else "night"
+        sect = "day" if resolve_sect_is_diurnal(subject) else "night"
         places = self._collect_places(subject)
 
         essential: Dict[str, float] = {planet: 0.0 for planet in CLASSICAL_PLANETS}

@@ -62,7 +62,7 @@ KERYKEION_EPHE_PATH=/path/to/se1/files python my_script.py
 KERYKEION_EPHE_PATH=/path/to/custom/data python my_script.py
 ```
 
-Both backends call `swe.set_ephe_path(EPHE_DATA_PATH)` at init time.
+Both backends call `ephe.set_ephe_path(EPHE_DATA_PATH)` at init time.
 For swisseph this points to `.se1` files; for libephemeris the call is
 a no-op (it manages its own data directory internally).
 
@@ -103,12 +103,12 @@ Application code
        v
 kerykeion.ephemeris_backend   <-- single import point
        |
-       +-- swe = <module>     (swisseph OR libephemeris, selected at import)
+       +-- ephe = <module>    (swisseph OR libephemeris, selected at import)
        +-- BACKEND_NAME       ("swisseph" or "libephemeris")
        +-- EPHE_DATA_PATH     (resolved data directory)
        |
        v
-16 factory modules            <-- all import: from kerykeion.ephemeris_backend import swe
+~28 consumer modules          <-- all import: from kerykeion.ephemeris_backend import ephe
 ```
 
 **Key design decisions:**
@@ -118,7 +118,7 @@ kerykeion.ephemeris_backend   <-- single import point
    module alias with zero overhead. No wrapper, no proxy, no method interception.
 
 2. **Selection at import time.** The backend is resolved once when
-   `kerykeion.ephemeris_backend` is first imported. All subsequent `swe.*`
+   `kerykeion.ephemeris_backend` is first imported. All subsequent `ephe.*`
    calls go directly to the backend module with no indirection.
 
 3. **Environment variables only.** No Python API to switch backends at runtime.

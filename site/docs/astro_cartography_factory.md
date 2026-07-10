@@ -12,7 +12,7 @@ The `AstroCartographyFactory` computes **Astro-Cartography (ACG) lines** -- geog
 
 ## How It Works
 
-For a fixed Julian Day, the factory iterates across longitudes and latitudes, recalculating house cusps at each position using `swe.houses_armc()`. When a planet's ecliptic longitude matches an angle cusp within tolerance, that coordinate is recorded as a point on the planet's line.
+For a fixed Julian Day, each planet's true equatorial coordinates (right ascension and declination) are computed once. MC/IC lines are derived analytically: the body culminates on the meridian at geographic longitude `RA - GST` (MC), and anti-culminates on the antimeridian (IC). ASC/DSC lines are obtained by solving the horizon equation `cos H = -tan(lat) * tan(declination)` at each sampled latitude -- latitudes where the body is circumpolar (or never rises) have no line point. Lines are computed in mundo, so they are identical for tropical and sidereal charts of the same instant.
 
 ## Basic Usage
 
@@ -39,8 +39,8 @@ Compute ACG lines for a natal chart.
 | Parameter   | Type                     | Default    | Description                                              |
 | :---------- | :----------------------- | :--------- | :------------------------------------------------------- |
 | `subject`   | AstrologicalSubjectModel | --         | The natal chart subject                                  |
-| `step`      | float                    | 1.0        | Longitude/latitude scanning step in degrees              |
-| `tolerance` | float or None            | step/2     | Angular tolerance for ASC/DSC matching in degrees        |
+| `step`      | float                    | 1.0        | Latitude sampling step in degrees for the line points    |
+| `tolerance` | float or None            | None       | Unused since v6 (horizon equation is solved exactly); kept for backward compatibility |
 | `lat_range` | tuple                    | (-66, 66)  | Latitude range to compute (avoids polar instability)     |
 | `planets`   | List[str] or None        | None       | Planet names (defaults to Sun through Pluto)             |
 

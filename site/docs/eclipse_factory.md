@@ -1,6 +1,6 @@
 ---
 title: 'Eclipse Factory'
-description: 'Search for upcoming solar and lunar eclipses, globally or from a specific location, using the ephemeris backend's eclipse algorithms (libephemeris by default).'
+description: 'Search for upcoming solar and lunar eclipses, globally or from a specific location, using the eclipse algorithms of the ephemeris backend (libephemeris by default).'
 category: 'Advanced Calculations'
 tags: ['docs', 'eclipses', 'solar', 'lunar', 'kerykeion']
 order: 40
@@ -40,7 +40,7 @@ Finds eclipses visible from a specific geographic location.
 | :----------- | :---- | :------ | :----------------------------------- |
 | `lat`        | float | —       | Geographic latitude (north positive) |
 | `lng`        | float | —       | Geographic longitude (east positive) |
-| `start_year` | int   | 2025    | Year to start searching from         |
+| `start_year` | Optional[int] | None | Year to start searching from; `None` = current UTC year |
 | `count`      | int   | 5       | Number of each type to find          |
 
 **Returns:** `EclipseSearchResultModel`
@@ -51,7 +51,7 @@ Finds eclipses regardless of observer position.
 
 | Parameter    | Type | Default | Description                  |
 | :----------- | :--- | :------ | :--------------------------- |
-| `start_year` | int  | 2025    | Year to start searching from |
+| `start_year` | Optional[int] | None | Year to start searching from; `None` = current UTC year |
 | `count`      | int  | 10      | Number of each type to find  |
 
 **Returns:** `EclipseSearchResultModel`

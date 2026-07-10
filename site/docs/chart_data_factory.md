@@ -41,7 +41,7 @@ print(f"Qualities: {natal_data.quality_distribution.cardinal_percentage}% Cardin
 | Parameter                    | Type                       | Default      | Description                                                                   |
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `subject`                    | `AstrologicalSubjectModel` | **Required** | The subject to create chart data for. Also accepts `CompositeSubjectModel` or `PlanetReturnModel`. |
-| `active_points`              | `List[str]`                | `None`       | Custom points list. If `None`, uses `DEFAULT_ACTIVE_POINTS`.                  |
+| `active_points`              | `List[str]`                | `None`       | Custom points list. If `None`, uses the first subject's own `active_points`.  |
 | `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs. Each item: `{"name": "conjunction", "orb": 10}`. |
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method: `"weighted"` or `"pure_count"`. Keyword-only. |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override individual point weights. Use `"__default__"` for fallback. Keyword-only. |
@@ -111,7 +111,7 @@ Creates data for a composite (midpoint) chart from a `CompositeSubjectModel`.
 ```python
 from kerykeion import CompositeSubjectFactory
 
-composite_subject = CompositeSubjectFactory(subject_a, subject_b).get_midpoint_composite_subject_model()
+composite_subject = CompositeSubjectFactory(subject, subject_b).get_midpoint_composite_subject_model()
 composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
 ```
 
@@ -132,10 +132,10 @@ Creates a dual-wheel planetary return chart (natal + return overlay).
 ```python
 from kerykeion import PlanetaryReturnFactory
 
-return_factory = PlanetaryReturnFactory(natal_subject, city="New York", nation="US")
+return_factory = PlanetaryReturnFactory(subject, city="New York", nation="US")
 solar_return = return_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
-return_data = ChartDataFactory.create_return_chart_data(natal_subject, solar_return)
+return_data = ChartDataFactory.create_return_chart_data(subject, solar_return)
 ```
 
 #### Parameters
@@ -205,7 +205,7 @@ chart_data = ChartDataFactory.create_chart_data(
 
 | Parameter                    | Type                       | Default      | Description                                                                   |
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
-| `chart_type`                 | `ChartType`                | **Required** | `"Natal"`, `"Synastry"`, `"Transit"`, `"Composite"`, `"DualReturnChart"`, `"SingleReturnChart"`. |
+| `chart_type`                 | `ChartType`                | **Required** | `"Natal"`, `"Synastry"`, `"Transit"`, `"Composite"`, `"Progression"`, `"DualReturnChart"`, `"SingleReturnChart"`. |
 | `first_subject`              | Subject Model              | **Required** | Primary subject.                                                              |
 | `second_subject`             | Subject Model              | `None`       | Second subject (for dual-chart types).                                        |
 | `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |

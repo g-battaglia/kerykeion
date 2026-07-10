@@ -61,7 +61,11 @@ def _dms_to_decimal(match: re.Match) -> str:
     return f"{d + m / 60 + s / 3600:.6f}"
 
 
-_DMS_PATTERN = re.compile(r"(\d+)°(\d+)'(\d+)'")
+# The seconds terminator varies with the SVG context: aspect-grid orbs render
+# it as `&quot;` (XML-escaped double quote), other labels as a bare apostrophe.
+# Both must collapse to decimal degrees, or a 1-arcsecond flip between kernel
+# builds is compared as a bare integer diff of 1 and blows the 0.5 tolerance.
+_DMS_PATTERN = re.compile(r"(\d+)°(\d+)'(\d+)(?:&quot;|\"|')")
 
 
 def compare_svg_lines(
@@ -3150,7 +3154,7 @@ class TestChartDrawerLargeAspectList:
             "Medium_Coeli",
             "Mean_North_Lunar_Node",
             "Chiron",
-            "Lilith",
+            "Mean_Lilith",
         ]
         first = AstrologicalSubjectFactory.from_birth_data(
             name="First",
@@ -3918,3 +3922,43 @@ class TestSaveSvgRobustnessRound9:
         svg = drawer.generate_svg_string(remove_css_variables=True)
         assert "#000000 - Birth" not in svg
         xml.dom.minidom.parseString(svg)
+
+
+class TestConstructorStringValidation:
+    """chart_language and double_chart_aspect_grid_type must be validated like
+    theme: unknown values used to silently fall back (EN / table)."""
+
+    def _data(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "T", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        return ChartDataFactory.create_natal_chart_data(subject)
+
+    def test_unknown_language_raises(self):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="chart_language"):
+            ChartDrawer(self._data(), chart_language="XX")
+
+    def test_unknown_grid_type_raises(self):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="double_chart_aspect_grid_type"):
+            ChartDrawer(self._data(), double_chart_aspect_grid_type="grid")
+
+    def test_custom_language_with_pack_allowed(self):
+        # A language_pack legitimizes any code — the documented way to
+        # introduce new languages (the pack must be complete; here we clone
+        # EN and relabel one planet). Only a bare unknown code must raise.
+        import copy
+
+        from kerykeion.settings.translations import LANGUAGE_SETTINGS
+
+        pack = copy.deepcopy(LANGUAGE_SETTINGS["EN"])
+        pack["celestial_points"]["Sun"] = "Taiyou"
+        drawer = ChartDrawer(
+            self._data(), chart_language="JP", language_pack=pack,
+        )
+        assert "<svg" in drawer.generate_svg_string()

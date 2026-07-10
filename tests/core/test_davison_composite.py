@@ -333,3 +333,54 @@ class TestDavisonMidpointComponentsInverse:
             y, mo, d, h, mi, s = _davison_midpoint_components(1721424.5, 0.0)
         assert (y, mo, d, h, mi, s) == (1, 1, 1, 0, 0, 0)
         assert "gap" in caplog.text
+
+
+def test_davison_model_carries_sect():
+    """is_diurnal must survive the CompositeSubjectModel boundary for Davison
+    charts (a real moment in time); midpoint composites have no single sky and
+    stay None."""
+    from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+
+    a = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    b = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1985, 3, 10, 4, 20,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    davison = CompositeSubjectFactory(a, b).get_davison_composite_subject_model()
+    assert isinstance(davison.is_diurnal, bool)
+    midpoint = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
+    assert midpoint.is_diurnal is None
+
+
+def test_midpoint_composite_sect_defaults_to_day_in_consumers():
+    """A midpoint composite has is_diurnal=None ("no single sky"); sect-aware
+    consumers must resolve that to the historical day-chart default, not fall
+    into the night branch via bool(None)."""
+    from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+    from kerykeion.dominants.utils import part_of_fortune_degree
+    from kerykeion.utilities import resolve_sect_is_diurnal
+
+    a = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    b = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1985, 3, 10, 4, 20,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    midpoint = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
+    assert midpoint.is_diurnal is None
+    assert resolve_sect_is_diurnal(midpoint) is True
+    # Day formula: Asc + Moon - Sun. The night formula would give the
+    # reflected value instead.
+    expected_day = (
+        midpoint.ascendant.abs_pos + midpoint.moon.abs_pos - midpoint.sun.abs_pos
+    ) % 360.0
+    assert part_of_fortune_degree(midpoint) == pytest.approx(expected_day, abs=1e-9)

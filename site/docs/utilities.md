@@ -39,18 +39,19 @@ Functions for working with astrological houses.
 
 | Function                                     | Description                                                    |
 | :------------------------------------------- | :------------------------------------------------------------- |
-| `get_planet_house(planet_pos, active_cusps)` | Determines which house a planet falls into.                    |
+| `get_planet_house(planet_pos, active_cusps)` | Determines which house a planet falls into (returns a house name like `"First_House"`). |
 | `get_house_name(number)`                     | Converts `1` to `"First_House"`.                               |
 | `get_house_number(name)`                     | Converts `"First_House"` to `1`.                               |
 | `get_houses_list(subject)`                   | Returns list of all 12 house objects from a subject.           |
 | `check_and_adjust_polar_latitude(lat)`       | Adjusts extreme latitudes to prevent house calculation errors. |
 
 ```python
-from kerykeion.utilities import get_planet_house
+from kerykeion.utilities import get_planet_house, get_house_number
 
-# Check if a planet at 15° is in the first house (cusps: 0° and 30°)
+# Find the house containing a planet at 15° (cusps: 0° and 30°)
 cusps = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
-house_num = get_planet_house(15, cusps) # Returns 1
+house_name = get_planet_house(15, cusps) # Returns "First_House"
+house_num = get_house_number(house_name) # Returns 1
 ```
 
 ## Time & Dates
@@ -72,11 +73,11 @@ jd = datetime_to_julian(datetime(2000, 1, 1, 12, 0, 0))
 
 ## Lunar Data
 
-Helper function to calculate accurate lunar phases and illumination.
+Helper function to calculate accurate lunar phases.
 
 | Function                                  | Description                                                        |
 | :---------------------------------------- | :----------------------------------------------------------------- |
-| `calculate_moon_phase(moon_deg, sun_deg)` | Returns `MoonPhaseModel` with phase name, emoji, and illumination. |
+| `calculate_moon_phase(moon_deg, sun_deg)` | Returns `LunarPhaseModel` with the Sun-Moon angle, phase number (1-28), phase name, and emoji. |
 
 ```python
 from kerykeion.utilities import calculate_moon_phase
@@ -104,8 +105,8 @@ Additional moon phase formatting utilities.
 
 | Function                                    | Description                        |
 | :------------------------------------------ | :--------------------------------- |
-| `get_moon_emoji_from_phase_int(phase)`      | Returns emoji for 0-7 phase index. |
-| `get_moon_phase_name_from_phase_int(phase)` | Returns name for 0-7 phase index.  |
+| `get_moon_emoji_from_phase_int(phase)`      | Returns emoji for a lunation day (1-28). |
+| `get_moon_phase_name_from_phase_int(phase)` | Returns name for a lunation day (1-28).  |
 
 ---
 

@@ -14,13 +14,13 @@ The `OccultationFactory` searches for **lunar occultations** -- events where the
 
 ```python
 from kerykeion import OccultationFactory
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 
 factory = OccultationFactory()
 
 # Find next 3 global occultations of Venus
-jd_start = swe.julday(2025, 1, 1, 0.0)
-events = factory.search_global(jd_start, swe.VENUS, count=3)
+jd_start = ephe.julday(2025, 1, 1, 0.0)
+events = factory.search_global(jd_start, ephe.VENUS, count=3)
 
 for occ in events:
     print(f"{occ.planet_name}: {occ.type} on {occ.datestamp}")
@@ -35,7 +35,7 @@ Find occultations visible from anywhere on Earth.
 | Parameter    | Type  | Default | Description                                      |
 | :----------- | :---- | :------ | :----------------------------------------------- |
 | `julian_day` | float | --      | Starting Julian Day (UT) for the search          |
-| `planet_id`  | int   | --      | Planet identifier (swe-style constant, e.g. `swe.VENUS`) |
+| `planet_id`  | int   | --      | Planet identifier (ephe-style constant, e.g. `ephe.VENUS`) |
 | `count`      | int   | 5       | Number of events to return                       |
 
 **Returns:** `List[OccultationModel]`
@@ -47,7 +47,7 @@ Find occultations visible from a specific location.
 | Parameter    | Type  | Default | Description                                      |
 | :----------- | :---- | :------ | :----------------------------------------------- |
 | `julian_day` | float | --      | Starting Julian Day (UT) for the search          |
-| `planet_id`  | int   | --      | Planet identifier (swe-style constant)           |
+| `planet_id`  | int   | --      | Planet identifier (ephe-style constant)           |
 | `lat`        | float | --      | Geographic latitude (north positive)             |
 | `lng`        | float | --      | Geographic longitude (east positive)             |
 | `count`      | int   | 5       | Number of events to return                       |
@@ -57,8 +57,8 @@ Find occultations visible from a specific location.
 ```python
 # Find occultations visible from Rome
 events = factory.search_local(
-    julian_day=swe.julday(2025, 1, 1, 0.0),
-    planet_id=swe.SATURN,
+    julian_day=ephe.julday(2025, 1, 1, 0.0),
+    planet_id=ephe.SATURN,
     lat=41.9028,
     lng=12.4964,
     count=5,
@@ -67,15 +67,15 @@ events = factory.search_local(
 
 ## Planet Identifiers
 
-Use `swe` constants for the `planet_id` parameter:
+Use `ephe` constants for the `planet_id` parameter:
 
 | Planet  | Constant       |
 | :------ | :------------- |
-| Mercury | `swe.MERCURY`  |
-| Venus   | `swe.VENUS`    |
-| Mars    | `swe.MARS`     |
-| Jupiter | `swe.JUPITER`  |
-| Saturn  | `swe.SATURN`   |
+| Mercury | `ephe.MERCURY`  |
+| Venus   | `ephe.VENUS`    |
+| Mars    | `ephe.MARS`     |
+| Jupiter | `ephe.JUPITER`  |
+| Saturn  | `ephe.SATURN`   |
 
 ## Data Models
 

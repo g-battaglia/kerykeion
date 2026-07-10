@@ -28,6 +28,17 @@ TROPICAL_YEAR = 365.2422
 SIDEREAL_MONTH = 27.3217
 NODAL_HALF_MONTH = 13.61
 
+# Backward return searches are a libephemeris-only feature: the swisseph
+# crossing functions (solcross_ut & co.) have no backward flag, and the
+# factory raises a documented KerykeionException there. Skip the whole module
+# on that backend instead of failing on the documented raise.
+from kerykeion.ephemeris_backend import BACKEND_NAME
+
+pytestmark = pytest.mark.skipif(
+    BACKEND_NAME == "swisseph",
+    reason="Backward return searches require the libephemeris backend (documented contract).",
+)
+
 
 @pytest.fixture(scope="module")
 def subject():

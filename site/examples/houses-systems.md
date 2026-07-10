@@ -121,16 +121,16 @@ print(subject.houses_system_name)
 from kerykeion import AstrologicalSubjectFactory
 
 # Same birth data, different house systems
-systems = ["P", "K", "W", "R"]
+systems = {"P": "Placidus", "K": "Koch", "W": "Whole Sign", "R": "Regiomontanus"}
 
-for system_id in systems:
+for system_id, label in systems.items():
     subject = AstrologicalSubjectFactory.from_birth_data(
         "Test", 1990, 6, 15, 12, 0,
         lng=-0.1276, lat=51.5074, tz_str="Europe/London",
         online=False,
         houses_system_identifier=system_id,
     )
-    print(f"{subject.houses_system_name}:")
+    print(f"{label}:")
     print(f"  1st House: {subject.first_house.sign} {subject.first_house.position:.1f}°")
     print(f"  10th House (MC): {subject.tenth_house.sign} {subject.tenth_house.position:.1f}°")
 ```
@@ -138,17 +138,17 @@ for system_id in systems:
 **Output:**
 ```
 Placidus:
-  1st House: Vir 24.5°
-  10th House (MC): Gem 25.3°
+  1st House: Vir 14.7°
+  10th House (MC): Gem 10.0°
 Koch:
-  1st House: Vir 24.5°
-  10th House (MC): Gem 25.3°
+  1st House: Vir 14.7°
+  10th House (MC): Gem 10.0°
 Whole Sign:
   1st House: Vir 0.0°
   10th House (MC): Gem 0.0°
 Regiomontanus:
-  1st House: Vir 24.5°
-  10th House (MC): Gem 25.3°
+  1st House: Vir 14.7°
+  10th House (MC): Gem 10.0°
 ```
 
 > **Note:** The Ascendant and MC remain the same across most systems - only the intermediate house cusps differ.

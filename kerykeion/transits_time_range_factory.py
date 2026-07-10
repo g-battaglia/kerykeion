@@ -72,6 +72,7 @@ from datetime import datetime, timedelta
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import ActiveAspect, TransitEventModel, TransitEventsTimeRangeModel, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.schemas.settings_models import KerykeionSettingsModel
@@ -279,9 +280,95 @@ class TransitsTimeRangeFactory:
             [dict(a) for a in active_aspects] if active_aspects is not None else [dict(a) for a in PREDICTIVE_ACTIVE_ASPECTS],
         )
         self.settings_file = settings_file
+        # Validate up front: aspect calculation requires a positive limit, and
+        # failing there (deep inside get_transit_moments) is undiagnosable.
+        if axis_orb_limit is not None and axis_orb_limit <= 0:
+            raise KerykeionException(
+                f"axis_orb_limit must be a positive number of degrees or None "
+                f"(got {axis_orb_limit!r})."
+            )
         self.axis_orb_limit = axis_orb_limit
         self._warn_if_frame_mismatch()
         self._warn_if_unordered()
+        self._warn_if_points_missing_from_ephemeris()
+
+    def _warn_if_points_missing_from_ephemeris(self) -> None:
+        """Warn when requested points are missing from ONE side of the pair.
+
+        Aspect detection needs a point on BOTH the natal chart and the
+        ephemeris subjects (fixed stars excepted), so a one-sided point — e.g.
+        an asteroid requested here but not passed as ``active_points`` to
+        ``EphemerisDataFactory``, or present in the series but never computed
+        on the natal — silently produces zero transits for it. Surface that
+        instead of returning quietly-empty results. Points absent from BOTH
+        sides stay silent: they were never calculable (e.g. the perspective's
+        center body, which the subject factory already warned about dropping).
+        """
+        if not self.ephemeris_data_points:
+            return
+        sample = self.ephemeris_data_points[0]
+        ephemeris_points = set(getattr(sample, "active_points", None) or [])
+        if not ephemeris_points:
+            return
+        natal_points = set(getattr(self.natal_chart, "active_points", None) or [])
+        star_names = {star.name for star in (getattr(self.natal_chart, "fixed_stars", None) or [])}
+        missing_from_ephemeris = [
+            point for point in self.active_points
+            if point in natal_points and point not in ephemeris_points and point not in star_names
+        ]
+        if missing_from_ephemeris:
+            logging.warning(
+                "TransitsTimeRangeFactory: %s requested in active_points but absent "
+                "from the ephemeris subjects (they carry %d points). Transits to "
+                "these natal points cannot be detected — pass the same active_points "
+                "to EphemerisDataFactory.",
+                missing_from_ephemeris,
+                len(ephemeris_points),
+            )
+        missing_from_natal = [
+            point for point in self.active_points
+            if point in ephemeris_points and point not in natal_points and point not in star_names
+        ]
+        if missing_from_natal:
+            logging.warning(
+                "TransitsTimeRangeFactory: %s requested in active_points but absent "
+                "from the natal chart (it carries %d points). Aspects involving "
+                "these points cannot be detected — build the natal subject with "
+                "the same active_points.",
+                missing_from_natal,
+                len(natal_points),
+            )
+        # Points on NEITHER side are still a misconfiguration worth surfacing
+        # (e.g. an asteroid added only to this factory's request) — except
+        # points the subject factory drops by design for this frame: the
+        # perspective's center body, and the geocentric-only points (lunar
+        # nodes, Lilith/apogee variants) in non-geocentric perspectives. Those
+        # were already warned about at subject-build time.
+        from kerykeion.astrological_subject_factory import (
+            _GEO_TOPO_PERSPECTIVES,
+            _GEOCENTRIC_ONLY_POINT_NAMES,
+            _center_body_names,
+        )
+
+        perspective = getattr(self.natal_chart, "perspective_type", None)
+        by_design_absent = set(_center_body_names(perspective))
+        if perspective not in _GEO_TOPO_PERSPECTIVES:
+            by_design_absent |= _GEOCENTRIC_ONLY_POINT_NAMES
+        missing_everywhere = [
+            point for point in self.active_points
+            if point not in natal_points
+            and point not in ephemeris_points
+            and point not in star_names
+            and point not in by_design_absent
+        ]
+        if missing_everywhere:
+            logging.warning(
+                "TransitsTimeRangeFactory: %s requested in active_points but absent "
+                "from BOTH the natal chart and the ephemeris subjects. No transits "
+                "can be detected for them — pass the same active_points to the "
+                "natal subject factory and to EphemerisDataFactory.",
+                missing_everywhere,
+            )
 
     def _warn_if_unordered(self) -> None:
         """Warn when the ephemeris series is not in chronological order.
@@ -656,12 +743,9 @@ class TransitsTimeRangeFactory:
                     orb_rate = None
                     if min_orb_idx < len(run) - 1:
                         after_date, orb_after, _ = run[min_orb_idx + 1]
-                        try:
-                            dt_days = (
-                                datetime.fromisoformat(after_date) - datetime.fromisoformat(exact_date)
-                            ).total_seconds() / 86400.0
-                        except ValueError:
-                            dt_days = 0.0
+                        # BCE-safe day arithmetic (datetime.fromisoformat rejects
+                        # extended-year ISO strings, which would null orb_rate).
+                        dt_days = _iso_to_day_number(after_date) - _iso_to_day_number(exact_date)
                         if dt_days > 0:
                             orb_rate = round((orb_after - min_orb) / dt_days, 6)
 
@@ -849,12 +933,9 @@ class TransitsTimeRangeFactory:
         runs: list[list[tuple[str, float, str]]] = []
         current_run = [track[0]]
         for previous, current in zip(track, track[1:]):
-            try:
-                gap_seconds = (
-                    datetime.fromisoformat(current[0]) - datetime.fromisoformat(previous[0])
-                ).total_seconds()
-            except ValueError:
-                gap_seconds = 0.0
+            # BCE-safe: extended-year ISO strings break datetime.fromisoformat,
+            # which would silently disable event splitting on BCE series.
+            gap_seconds = (_iso_to_day_number(current[0]) - _iso_to_day_number(previous[0])) * 86400.0
             if gap_seconds > gap_threshold_seconds:
                 runs.append(current_run)
                 current_run = [current]

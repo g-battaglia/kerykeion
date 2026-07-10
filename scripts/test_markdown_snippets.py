@@ -31,7 +31,9 @@ def find_markdown_files(
 
     for target in targets:
         path = target.resolve()
-        if path.is_file() and path.suffix.lower() == ".md":
+        # Explicit files: accept markdown and markdown-formatted .txt
+        # (kerykeion/llms.txt is the AI-agent guide with ```python blocks).
+        if path.is_file() and path.suffix.lower() in (".md", ".txt"):
             markdown_files.add(path)
             continue
 
@@ -49,9 +51,19 @@ def find_markdown_files(
 
 
 def extract_python_snippets(content):
-    """Extract Python code blocks from markdown."""
+    """Extract runnable Python code blocks from markdown.
+
+    A block whose first line contains the marker ``doc-snippet: no-run`` is
+    illustrative (pseudo-fragment, deliberately-old API on migration pages,
+    external-service call) and is excluded from execution. The marker lives in
+    a Python comment so site renderers are unaffected.
+    """
     pattern = r"```python[^\n]*\n(.*?)\n[ \t]*```"
-    return re.findall(pattern, content, re.DOTALL)
+    snippets = re.findall(pattern, content, re.DOTALL)
+    return [
+        snippet for snippet in snippets
+        if "doc-snippet: no-run" not in snippet.split("\n", 1)[0]
+    ]
 
 
 def test_snippet(code: str, *, timeout: float) -> Tuple[bool, Optional[str]]:
@@ -111,8 +123,14 @@ from kerykeion import (
             # Check if it's just a geonames warning (not a real error)
             error_output = result.stderr or result.stdout
             if result.returncode != 0:
-                # Ignore geonames username warnings
-                if "NO GEONAMES USERNAME SET" in error_output and "WARNING:root:" in error_output:
+                # Ignore pure geonames-username warnings — but never mask a
+                # real crash: a traceback in the output is a genuine failure
+                # even when the warning also fired earlier in the run.
+                if (
+                    "NO GEONAMES USERNAME SET" in error_output
+                    and "WARNING:root:" in error_output
+                    and "Traceback" not in error_output
+                ):
                     return True, "Success (geonames warning ignored)"
                 return False, error_output
 
@@ -161,17 +179,17 @@ def main():
         exclude_release_notes = False
         mode_description = "README.md only"
     elif args.docs_only:
-        targets = [Path("site-docs")]
+        targets = [Path("site/docs")]
         exclude_release_notes = True
-        mode_description = "site-docs folder only"
+        mode_description = "site/docs folder only"
     elif args.examples_only:
-        targets = [Path("site-examples")]
+        targets = [Path("site/examples")]
         exclude_release_notes = True
-        mode_description = "site-examples folder only"
+        mode_description = "site/examples folder only"
     elif args.ai_guide_only:
-        targets = [Path("AI_AGENT_GUIDE.md")]
+        targets = [Path("kerykeion/llms.txt")]
         exclude_release_notes = False
-        mode_description = "AI_AGENT_GUIDE.md only"
+        mode_description = "kerykeion/llms.txt only"
     elif args.all_files:
         targets = args.paths or [Path(".")]
         exclude_release_notes = False
@@ -181,13 +199,13 @@ def main():
         exclude_release_notes = True
         mode_description = "all markdown files (excluding release notes)"
     else:
-        # Default: README, AI guide, and site-docs (or user-specified paths if provided)
+        # Default: README, llms.txt, and site/docs (or user-specified paths if provided)
         if args.paths:
             targets = args.paths
         else:
-            targets = [Path("README.md"), Path("AI_AGENT_GUIDE.md"), Path("site-docs")]
+            targets = [Path("README.md"), Path("kerykeion/llms.txt"), Path("site/docs")]
         exclude_release_notes = True
-        mode_description = "README.md, AI_AGENT_GUIDE.md, and site-docs (default)"
+        mode_description = "README.md, kerykeion/llms.txt, and site/docs (default)"
 
     print(f"� Testing Python snippets in {mode_description}")
 
@@ -207,13 +225,29 @@ def main():
 
             print(f"\n📝 {md_file} ({len(snippets)} snippets)")
 
+            # Snippets on one page often build on each other (imports and
+            # variables from earlier blocks); executing each standalone flags
+            # dozens of false "NameError" failures. Run snippet N with the
+            # page's preceding snippets prepended as context — the way a
+            # reader following the page top-to-bottom experiences it.
+            page_context = ""
             for i, snippet in enumerate(snippets, 1):
                 total_snippets += 1
-                success, error = test_snippet(snippet, timeout=args.timeout)
+                # Dedent the snippet BEFORE concatenation: the joint dedent
+                # inside test_snippet is a no-op once the accumulated context
+                # is flush-left, which would leave an indented snippet
+                # syntactically absorbed by the last context block.
+                dedented = textwrap.dedent(snippet)
+                success, error = test_snippet(page_context + "\n" + dedented, timeout=args.timeout)
 
                 if success:
                     status = error if error else "OK"
                     print(f"  ✅ Snippet {i}: {status}")
+                    if error is None:
+                        # Only a genuinely clean run may feed the page context;
+                        # a masked pass (ignored warning) could poison every
+                        # later snippet on the page.
+                        page_context += "\n" + dedented
                 else:
                     # Show full error for debugging
                     error_msg = error if error else "Unknown error"

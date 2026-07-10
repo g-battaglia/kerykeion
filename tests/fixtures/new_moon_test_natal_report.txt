@@ -35,12 +35,12 @@ New Moon - Test — Natal Chart Report
 | Sun                   | Sco ♏ | 28.20°   | +1.0097°/d   | -19.76° | -    | Third House   |
 | Moon                  | Sco ♏ | 28.19°   | +11.8608°/d  | -24.41° | -    | Third House   |
 | Mercury               | Sco ♏ | 28.46°   | -1.3593°/d   | -19.32° | R    | Third House   |
-| Venus                 | Sco ♏ | 16.73°   | +1.2559°/d   | -15.82° | -    | Second House  |
+| Venus                 | Sco ♏ | 16.73°   | +1.2560°/d   | -15.82° | -    | Second House  |
 | Mars                  | Sag ♐ | 11.40°   | +0.7319°/d   | -22.71° | -    | Third House   |
-| Jupiter               | Can ♋ | 25.03°   | -0.0288°/d   | +21.26° | R    | Tenth House   |
-| Saturn                | Pis ♓ | 25.21°   | -0.0140°/d   | -4.11°  | R    | Seventh House |
+| Jupiter               | Can ♋ | 25.03°   | -0.0287°/d   | +21.26° | R    | Tenth House   |
+| Saturn                | Pis ♓ | 25.21°   | -0.0141°/d   | -4.11°  | R    | Seventh House |
 | Uranus                | Tau ♉ | 29.50°   | -0.0419°/d   | +19.84° | R    | Ninth House   |
-| Neptune               | Pis ♓ | 29.49°   | -0.0111°/d   | -1.45°  | R    | Seventh House |
+| Neptune               | Pis ♓ | 29.49°   | -0.0112°/d   | -1.45°  | R    | Seventh House |
 | Pluto                 | Aqu ♒ | 1.69°    | +0.0173°/d   | -23.45° | -    | Fifth House   |
 | True North Lunar Node | Pis ♓ | 15.44°   | -0.2335°/d   | -5.74°  | R    | Sixth House   |
 | Chiron                | Ari ♈ | 23.43°   | -0.0359°/d   | +9.63°  | R    | Eighth House  |

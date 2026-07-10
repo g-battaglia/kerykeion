@@ -87,12 +87,12 @@ print(f"Ascendant: {subject.first_house.sign}")
 
 **Output:**
 ```
-Sun: Can at 22.54°
-  House: Eleventh_House
+Sun: Can at 22.65°
+  House: Tenth_House
   Retrograde: False
-Moon: Sco at 15.32°
-  Element: Water
-  Quality: Fixed
+Moon: Ari at 21.80°
+  Element: Fire
+  Quality: Cardinal
 Ascendant: Vir
 ```
 
@@ -143,11 +143,11 @@ for aspect in aspects_result.aspects[:5]:
 
 **Output:**
 ```
-Sun conjunction Mercury
-  Orb: 2.34° (Separating)
+Sun square Moon
+  Orb: 0.85° (Applying)
 
-Moon trine Mars
-  Orb: 1.87° (Applying)
+Sun conjunction Jupiter
+  Orb: 0.12° (Separating)
 ...
 ```
 

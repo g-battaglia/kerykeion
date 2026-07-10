@@ -165,3 +165,35 @@ def test_current_path_is_internally_consistent(john_lennon):
     )
     for parent, child in pairwise(zr.current_path):
         assert child in parent.subperiods
+
+
+def test_from_subject_accepts_return_and_davison_models():
+    """PlanetReturnModel/CompositeSubjectModel lack the split year/month/day
+    fields; from_subject used to crash with a raw AttributeError instead of
+    using their ISO timestamp (a return or Davison chart is a real moment)."""
+    from kerykeion import (
+        AstrologicalSubjectFactory,
+        CompositeSubjectFactory,
+        PlanetaryReturnFactory,
+    )
+    from kerykeion.schemas import KerykeionException
+    from kerykeion.zodiacal_releasing import ZodiacalReleasingFactory
+
+    common = dict(
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    natal = AstrologicalSubjectFactory.from_birth_data("N", 1990, 6, 15, 12, 0, **common)
+    partner = AstrologicalSubjectFactory.from_birth_data("B", 1985, 3, 10, 4, 20, **common)
+
+    solar_return = PlanetaryReturnFactory(
+        natal, lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+    ).next_return_from_date(2025, 1, 1, return_type="Solar")
+    assert ZodiacalReleasingFactory.from_subject(solar_return).periods
+
+    davison = CompositeSubjectFactory(natal, partner).get_davison_composite_subject_model()
+    assert ZodiacalReleasingFactory.from_subject(davison).periods
+
+    midpoint = CompositeSubjectFactory(natal, partner).get_midpoint_composite_subject_model()
+    with pytest.raises(KerykeionException, match="moment in time"):
+        ZodiacalReleasingFactory.from_subject(midpoint)

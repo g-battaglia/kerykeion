@@ -117,7 +117,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 
 print(f"Ayanamsa value: {subject.ayanamsa_value:.4f}°")
-# e.g. 23.7234° -- the tropical-sidereal offset for this date
+# e.g. 23.7273° -- the tropical-sidereal offset for this date
 ```
 
 > `ayanamsa_value` is `None` for tropical charts.
@@ -155,7 +155,7 @@ chart.save_svg(output_path=out_dir, filename="lennon-lahiri")
 
 **Output:**
 ```
-Sun (Lahiri): Vir 23.08°
+Sun (Lahiri): Vir 23.24°
 ```
 
 The chart output:
@@ -220,10 +220,10 @@ for mode in modes:
 
 **Output:**
 ```
-LAHIRI: Sun at Tau 29.85°
-FAGAN_BRADLEY: Sun at Gem 0.62°
-KRISHNAMURTI: Sun at Tau 29.78°
-RAMAN: Sun at Tau 28.25°
+LAHIRI: Sun at Gem 0.36°
+FAGAN_BRADLEY: Sun at Tau 29.48°
+KRISHNAMURTI: Sun at Gem 0.46°
+RAMAN: Sun at Gem 1.81°
 ```
 
 > **Note:** The differences between ayanamsas can be significant (up to a few degrees), which may change the sign a planet falls in, especially for planets near sign boundaries.
@@ -263,14 +263,14 @@ print(f"  Ascendant: {sidereal.first_house.sign} {sidereal.first_house.position:
 **Output:**
 ```
 Tropical positions:
-  Sun: Gem 24.05°
-  Moon: Sco 15.23°
-  Ascendant: Vir 24.52°
+  Sun: Gem 24.09°
+  Moon: Pis 14.80°
+  Ascendant: Vir 14.74°
 
 Sidereal (Lahiri) positions:
-  Sun: Tau 29.85°
-  Moon: Lib 21.03°
-  Ascendant: Leo 0.32°
+  Sun: Gem 0.36°
+  Moon: Aqu 21.07°
+  Ascendant: Leo 21.02°
 ```
 
 > **Important:** You cannot set a `sidereal_mode` when using `zodiac_type="Tropical"`. Attempting to do so will raise a `KerykeionException`.

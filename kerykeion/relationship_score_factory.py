@@ -89,6 +89,11 @@ class RelationshipScoreFactory:
         axis_orb_limit (float | None, optional): Optional orb threshold for chart axes
             filtering during aspect calculation.
 
+    Raises:
+        KerykeionException: If either input is not an astrological subject model
+            (e.g. None), or if the two subjects do not share the same reference
+            frame (zodiac type, sidereal mode, perspective type).
+
     Reference:
         http://www.cirodiscepolo.it/Articoli/Discepoloele.htm
     """

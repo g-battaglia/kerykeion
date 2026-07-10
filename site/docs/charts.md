@@ -70,7 +70,17 @@ drawer = ChartDrawer(chart_data, external_view=True)
 Synastry charts overlay two users' planetary positions to visualize their relationship. The outer wheel shows the second subject's planets.
 
 ```python
-# Create chart data for two subjects
+# Create the two subjects to compare
+subject_a = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+subject_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 20, 14, 30,
+    lng=-74.0060, lat=40.7128, tz_str="America/New_York", online=False
+)
+
+# Create chart data for the two subjects
 synastry_data = ChartDataFactory.create_synastry_chart_data(subject_a, subject_b)
 drawer = ChartDrawer(synastry_data)
 ```
@@ -81,7 +91,10 @@ Transit charts compare a static natal chart (inner wheel) against the current mo
 
 ```python
 # Compare natal chart against current time
-transit_data = ChartDataFactory.create_transit_chart_data(natal_subject, current_time_subject)
+current_time_subject = AstrologicalSubjectFactory.from_current_time(
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+transit_data = ChartDataFactory.create_transit_chart_data(subject, current_time_subject)
 drawer = ChartDrawer(transit_data)
 ```
 
@@ -145,6 +158,11 @@ Kerykeion supports two visual styles for chart rendering.
 The traditional astrological wheel layout with concentric rings for signs, houses, and planets.
 
 ```python
+from pathlib import Path
+
+output_path = Path("charts_output")
+output_path.mkdir(exist_ok=True)
+
 drawer.save_svg(output_path, filename="chart", style="classic")
 ```
 
@@ -213,12 +231,15 @@ Methods to write the SVG directly to disk.
 ```python
 from pathlib import Path
 
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
 # Full Chart
-drawer.save_svg(Path("./output"), filename="natal_chart")
+drawer.save_svg(output_dir, filename="natal_chart")
 
 # Components
-drawer.save_wheel_only_svg_file(Path("./output"), filename="wheel_only")
-drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
+drawer.save_wheel_only_svg_file(output_dir, filename="wheel_only")
+drawer.save_aspect_grid_only_svg_file(output_dir, filename="grid_only")
 ```
 
 ### Class `ChartDrawer`
@@ -249,19 +270,22 @@ drawer.save_aspect_grid_only_svg_file(Path("./output"), filename="grid_only")
 
 **Public Methods:**
 
-All render/save methods accept two optional keyword arguments:
+All render/save methods accept `minify` and `remove_css_variables`. The full-chart methods (`save_svg`, `generate_svg_string`) additionally accept `custom_title`, `style`, and `show_zodiac_background_ring`; the wheel-only methods accept `style` and `show_zodiac_background_ring` (see the method list below):
 
 | Parameter              | Type   | Default | Description                                                  |
 | :--------------------- | :----- | :------ | :----------------------------------------------------------- |
 | `minify`               | `bool` | `False` | Minify the SVG output (remove whitespace/comments).          |
 | `remove_css_variables`  | `bool` | `False` | Inline all CSS variables for broader SVG viewer compatibility. |
+| `custom_title`         | `Optional[str]` | `None` | Override the chart title (full chart methods only).   |
+| `style`                | `KerykeionChartStyle` | chart default | Per-call style override (e.g. `"modern"`).   |
+| `show_zodiac_background_ring` | `bool` | chart default | Per-call toggle for the zodiac background ring. |
 
-- `save_svg(output_path, filename, *, minify, remove_css_variables) -> None`
-- `generate_svg_string(*, minify, remove_css_variables) -> str`
-- `generate_wheel_only_svg_string(*, minify, remove_css_variables) -> str`
-- `generate_aspect_grid_only_svg_string(*, minify, remove_css_variables) -> str`
-- `save_wheel_only_svg_file(output_path, filename, *, minify, remove_css_variables)`
-- `save_aspect_grid_only_svg_file(output_path, filename, *, minify, remove_css_variables)`
+- `save_svg(output_path, filename, minify, remove_css_variables, *, custom_title, style, show_zodiac_background_ring) -> None`
+- `generate_svg_string(minify, remove_css_variables, *, custom_title, style, show_zodiac_background_ring) -> str`
+- `generate_wheel_only_svg_string(minify, remove_css_variables, *, style, show_zodiac_background_ring) -> str`
+- `generate_aspect_grid_only_svg_string(minify, remove_css_variables) -> str`
+- `save_wheel_only_svg_file(output_path, filename, minify, remove_css_variables, *, style, show_zodiac_background_ring)`
+- `save_aspect_grid_only_svg_file(output_path, filename, minify, remove_css_variables)`
 
 ## Helper Functions (`charts_utils`)
 
@@ -274,8 +298,8 @@ Utility functions used in SVG generation that can be helpful for custom renderin
 | `degree_difference(a, b)`             | Smallest difference between two angles (0-180°).   |
 | `degree_sum(a, b)`                    | Sum of two angles normalized to 0-360°.            |
 | `normalize_degree(angle)`             | Constrains any angle to 0-360° range.              |
-| `wheel_x(sign_index, radius, offset)` | Calculates X coordinate for a circle slice (1-12). |
-| `wheel_y(sign_index, radius, offset)` | Calculates Y coordinate for a circle slice (1-12). |
+| `wheel_x(sign_index, radius, offset)` | Calculates X coordinate for a wheel sector (`sign_index` 0-11, 30° each). |
+| `wheel_y(sign_index, radius, offset)` | Calculates Y coordinate for a wheel sector (`sign_index` 0-11, 30° each). |
 
 ```python
 from kerykeion.charts.charts_utils import degree_difference

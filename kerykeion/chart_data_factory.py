@@ -30,7 +30,7 @@ License: AGPL-3.0
 """
 
 import logging
-from typing import Mapping, Union, Optional, Literal, cast
+from typing import Mapping, Union, Optional, Literal, cast, get_args
 
 from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
@@ -153,8 +153,21 @@ class ChartDataFactory:
             ChartDataModel: Comprehensive chart data model
 
         Raises:
-            KerykeionException: If chart type requirements are not met
+            KerykeionException: If ``chart_type`` is not a valid ``ChartType``,
+                or if chart type requirements are not met (e.g. a missing
+                second subject for dual charts)
         """
+        # An unknown chart_type must fail here with the valid options; letting
+        # it fall through produces misleading errors ("Second subject is
+        # required for NatalFoo charts") or a late pydantic ValidationError
+        # after the full dual pipeline has already run.
+        _valid_chart_types = get_args(ChartType)
+        if chart_type not in _valid_chart_types:
+            raise KerykeionException(
+                f"Unknown chart_type {chart_type!r}. Valid chart types: "
+                f"{', '.join(_valid_chart_types)}."
+            )
+
         # Resolve per-chart-type defaults when the caller did not specify them.
         is_natal_family = chart_type in ChartDataFactory._NATAL_FAMILY_CHART_TYPES
         if active_aspects is None:

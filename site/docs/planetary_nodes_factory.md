@@ -51,7 +51,7 @@ Calculate nodes from an existing astrological subject.
 | :-------- | :----------------------- | :------ | :----------------------------------------- |
 | `subject` | AstrologicalSubjectModel | --      | An astrological subject                    |
 | `method`  | str                      | "mean"  | "mean" or "osculating"                     |
-| `planets` | List[str] or None        | None    | Planet names (defaults to Sun through Pluto) |
+| `planets` | List[str] or None        | None    | Planet names (defaults to Moon through Pluto; the Sun is deliberately excluded — it has no geocentric nodes) |
 
 **Returns:** `PlanetaryNodesCollectionModel`
 

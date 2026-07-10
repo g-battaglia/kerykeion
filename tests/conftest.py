@@ -24,6 +24,7 @@ Tier filtering:
 """
 
 import os
+import re
 
 import pytest
 from typing import Dict, Any
@@ -82,9 +83,9 @@ def pytest_sessionstart(session):
         pytest.exit(
             "KERYKEION_BACKEND=swisseph needs Swiss Ephemeris data files (.se1); "
             "the built-in Moshier fallback fails the golden-value tests.\n"
-            "Download them and point the suite at them:\n"
-            "    python -m kerykeion.swisseph_setup\n"
-            "    KERYKEION_EPHE_PATH=~/.kerykeion/sweph uv run poe test:ephe",
+            "Download them (auto-detected from ~/.kerykeion/sweph) and rerun:\n"
+            "    uv run python -m kerykeion.swisseph_setup\n"
+            "    uv run poe test:swe",
             returncode=4,
         )
 
@@ -120,6 +121,36 @@ def _detect_ephemeris_tier() -> str:
 # catch them by subject. Matched as substrings of the lowercased node id.
 _EXTENDED_ONLY_NODE_PATTERNS = ("bce", "ancient_rome", "historical_date")
 
+# Tests exercising the full point set (TNOs and other extra bodies). On the
+# swisseph backend these need per-body asteroid `.se1` files that the setup
+# helper cannot auto-download (manual mirror only); skip them when the backend
+# cannot compute a probe TNO instead of failing dozens of snapshot tests.
+# The city-named snapshots are the golden reports generated with
+# ALL_ACTIVE_POINTS whose node ids don't carry an all-points marker.
+# NOTE: matched as a delimiter-bounded regex, not a bare substring — a bare
+# "tno" would also hit camelCase joins like TestNOrmalize/TesTNOnInt once
+# lowercased, silently skipping ~40 unrelated tests.
+_TNO_NODE_REGEX = re.compile(
+    r"(?:^|[^a-z0-9])(?:"
+    r"all_active_points|all_points|tnos?|has_extra_bodies|all_32pts|"
+    r"einstein_snapshot|tokyo_snapshot|quito_snapshot|"
+    r"buenos_aires_snapshot|ancient_rome_snapshot|future_2050_snapshot"
+    r")(?:[^a-z0-9]|$)"
+)
+
+
+def _tnos_available() -> bool:
+    """Probe whether the loaded ephemeris can compute a TNO (Eris)."""
+    from kerykeion.astrological_subject_factory import TNO_PLANETS
+    from kerykeion.ephemeris_backend import ephe, ephemeris_session
+
+    try:
+        with ephemeris_session() as iflag:
+            ephe.calc_ut(ephe.julday(2020, 1, 1, 12.0), TNO_PLANETS["Eris"], iflag)
+        return True
+    except Exception:
+        return False
+
 
 def pytest_collection_modifyitems(config, items):
     tier = config.getoption("--tier")
@@ -137,10 +168,22 @@ def pytest_collection_modifyitems(config, items):
     skip_range = pytest.mark.skip(
         reason=f"Requires the full-range (extended) ephemeris kernel; current tier is '{tier}'{detected_note}"
     )
+
+    from kerykeion.ephemeris_backend import BACKEND_NAME
+
+    tnos_missing = BACKEND_NAME == "swisseph" and not _tnos_available()
+    skip_tno = pytest.mark.skip(
+        reason="Full-point-set test needs TNO ephemeris files the swisseph setup "
+        "cannot auto-download (manual mirror only)."
+    )
+
     for item in items:
         node_id = item.nodeid
+        node_id_lower = node_id.lower()
+        if tnos_missing and _TNO_NODE_REGEX.search(node_id_lower):
+            item.add_marker(skip_tno)
+            continue
         if tier != "extended":
-            node_id_lower = node_id.lower()
             if any(pattern in node_id_lower for pattern in _EXTENDED_ONLY_NODE_PATTERNS):
                 item.add_marker(skip_range)
                 continue

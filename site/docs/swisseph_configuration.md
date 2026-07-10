@@ -193,7 +193,7 @@ own catalog. See site/docs/swisseph_configuration.md for details.
 ### Quick alternative
 
 If you don't have a specific reason to use swisseph for fixed stars, the
-**libephemeris backend ships a 116-star catalog built-in** (Hipparcos +
+**libephemeris backend ships a 1447-star catalog built-in** (Hipparcos +
 IAU WGSN, AGPL-3.0 owned by the kerykeion project) and does not require
 any external data file:
 
@@ -209,9 +209,12 @@ is available).
 
 ## Fallback behavior (no .se1 files)
 
-If `KERYKEION_EPHE_PATH` is not set (or points to an empty directory),
-swisseph automatically uses its **built-in Moshier analytical ephemeris**.
-This provides:
+If `KERYKEION_EPHE_PATH` is not set, kerykeion first looks for `.se1`
+files in the default download directory `~/.kerykeion/sweph` (populated
+by `python -m kerykeion.swisseph_setup`) and uses them automatically if
+present. Only when no `.se1` files are found there (or the configured
+path is empty) does swisseph fall back to its **built-in Moshier
+analytical ephemeris**. This provides:
 
 - Planetary positions with ~1 arc-second accuracy (sufficient for most
   astrological work)

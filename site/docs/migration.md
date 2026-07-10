@@ -19,8 +19,10 @@ This guide provides comprehensive instructions for migrating your code from Kery
 | `NatalAspects()` | `AspectsFactory.single_chart_aspects()` |
 | `SynastryAspects()` | `AspectsFactory.dual_chart_aspects()` |
 | `relationship_score()` | `RelationshipScoreFactory` |
-| `kerykeion.kr_types` | `kerykeion.schemas` |
+| `kerykeion.kr_types` (deprecated shim) | `kerykeion.schemas` |
 | `mean_node`, `true_node` | `mean_north_lunar_node`, `true_north_lunar_node` |
+
+> **Note:** `kerykeion.kr_types` is the one entry above that is *not* removed: it still works as a deprecated shim that re-exports `kerykeion.schemas` and emits a `DeprecationWarning` on import. Update your imports anyway — the shim will be removed in a future release.
 
 ## Breaking Changes
 
@@ -28,6 +30,7 @@ This guide provides comprehensive instructions for migrating your code from Kery
 
 **v4 (Deprecated):**
 ```python
+# doc-snippet: no-run — legacy v4 example (removed in v6)
 from kerykeion import AstrologicalSubject
 
 subject = AstrologicalSubject(
@@ -56,6 +59,7 @@ Key differences:
 
 **v4 (Deprecated):**
 ```python
+# doc-snippet: no-run — legacy v4 example (removed in v6)
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
@@ -95,6 +99,7 @@ The new architecture separates:
 
 **v4 (Deprecated):**
 ```python
+# doc-snippet: no-run — legacy v4 example (removed in v6)
 from kerykeion import NatalAspects, SynastryAspects
 
 natal_aspects = NatalAspects(subject)
@@ -112,8 +117,13 @@ from kerykeion import AspectsFactory
 # Single chart (natal, composite, return)
 natal_result = AspectsFactory.single_chart_aspects(subject)
 
-# Dual chart (synastry, transit)
-synastry_result = AspectsFactory.dual_chart_aspects(subject1, subject2)
+# Dual chart (synastry, transit) — needs a second subject
+subject2 = AstrologicalSubjectFactory.from_birth_data(
+    "Jane", 1992, 5, 15, 10, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+    online=False
+)
+synastry_result = AspectsFactory.dual_chart_aspects(subject, subject2)
 
 # Accessing aspects (unified list)
 for aspect in natal_result.aspects:
@@ -189,8 +199,8 @@ v5 included a compatibility layer in `kerykeion.backword` that allowed gradual m
 ### Step 1: Update Imports
 
 ```python
-# Old
-from kerykeion import AstrologicalSubject, KerykeionChartSVG
+# Old (removed in v6)
+# from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 # New
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
@@ -200,8 +210,8 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 ### Step 2: Update Subject Creation
 
 ```python
-# Old
-subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
+# Old (removed in v6)
+# subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
 
 # New
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -214,21 +224,23 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 ### Step 3: Update Chart Generation
 
 ```python
-# Old
-chart = KerykeionChartSVG(subject)
-chart.makeSVG()
+# Old (removed in v6)
+# chart = KerykeionChartSVG(subject)
+# chart.makeSVG()
 
 # New
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
-drawer.save_svg(output_path=Path("output"), filename="chart")
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+drawer.save_svg(output_path=output_dir, filename="chart")
 ```
 
 ### Step 4: Update Lunar Node References
 
 ```python
-# Old
-mean_node = subject.mean_node
+# Old (removed in v6)
+# mean_node = subject.mean_node
 
 # New
 mean_node = subject.mean_north_lunar_node
@@ -237,10 +249,10 @@ mean_node = subject.mean_north_lunar_node
 ### Step 5: Update Aspect Access
 
 ```python
-# Old
-aspects = NatalAspects(subject)
-for a in aspects.relevant_aspects:
-    print(a)
+# Old (removed in v6)
+# aspects = NatalAspects(subject)
+# for a in aspects.relevant_aspects:
+#     print(a)
 
 # New
 result = AspectsFactory.single_chart_aspects(subject)

@@ -484,3 +484,64 @@ class TestGauquelinAndDerivedPointGuardRound15:
             perspective_type="Heliocentric",
             active_points=["Mercury", "Mean_South_Lunar_Node"])
         assert s.mean_south_lunar_node is None
+
+
+class TestGeocentricOnlyLunarApsidesRound40:
+    """Interpolated_Perigee (SE_INTP_PERG) is a geocentric lunar-orbit quantity
+    like the nodes and apogee/Lilith variants. It used to be missing from the
+    non-geocentric exclusion set, computing as a backend-dependent phantom in
+    heliocentric charts (libephemeris echoed the geocentric value, swisseph a
+    zero phantom)."""
+
+    def test_heliocentric_drops_interpolated_perigee(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "H", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            perspective_type="Heliocentric",
+            active_points=["Mercury", "Venus", "Interpolated_Perigee", "Interpolated_Lilith"],
+        )
+        assert s.interpolated_perigee is None
+        assert s.interpolated_lilith is None
+
+    def test_geocentric_keeps_interpolated_perigee(self):
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "G", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            active_points=["Mercury", "Interpolated_Perigee"],
+        )
+        assert s.interpolated_perigee is not None
+        assert 0 <= s.interpolated_perigee.abs_pos < 360
+
+
+class TestGeocentricOnlyExplicitRequestRound44:
+    """Explicitly requesting geocentric-only points in a non-geocentric frame
+    must warn (they used to vanish silently) and an all-geocentric-only list
+    must raise (it used to return a silent empty chart)."""
+
+    COMMON = dict(
+        city="Rome", nation="IT", lng=12.5, lat=41.9,
+        tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+    )
+
+    def test_explicit_request_warns_and_drops(self, caplog):
+        import logging
+
+        with caplog.at_level(logging.WARNING):
+            s = AstrologicalSubjectFactory.from_birth_data(
+                "H", 1990, 6, 15, 12, 0, perspective_type="Heliocentric",
+                active_points=["Moon", "Mercury", "Mean_Lilith"], **self.COMMON,
+            )
+        assert "Mean_Lilith" not in s.active_points
+        assert any(
+            "Mean_Lilith" in record.message and "geocentric-only" in record.message
+            for record in caplog.records
+        )
+
+    def test_all_geocentric_only_list_raises(self):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="geocentric-only"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "H", 1990, 6, 15, 12, 0, perspective_type="Heliocentric",
+                active_points=["Mean_Lilith", "Mean_North_Lunar_Node"], **self.COMMON,
+            )

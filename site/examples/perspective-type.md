@@ -52,14 +52,18 @@ from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Heliocentric", 1940, 10, 9, 18, 30,
     lng=-2.9833, lat=53.4, tz_str="Europe/London",
     online=False,
     perspective_type="Heliocentric",
+    # Heliocentric excludes the Sun automatically, but Earth is NOT added
+    # by default — opt in explicitly to chart it.
+    active_points=[*DEFAULT_ACTIVE_POINTS, "Earth"],
 )
 
-# Note: In heliocentric, Earth replaces Sun
 print(f"Earth: {subject.earth.sign} {subject.earth.position:.2f}°")
 print(f"Mars: {subject.mars.sign} {subject.mars.position:.2f}°")
 

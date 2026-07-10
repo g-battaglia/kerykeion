@@ -299,6 +299,13 @@ class TestBackendHardErrors:
 
         # A window butting against the end of the ephemeris makes the scan walk
         # off the edge; the backend range error must surface, not read as [].
+        # The probe JD sits just inside the medium (DE440) kernel's ~2650
+        # upper edge; on other kernel tiers the edge is elsewhere and the
+        # scan either fails outright (base) or never leaves range (extended).
+        from tests.conftest import _detect_ephemeris_tier
+
+        if _detect_ephemeris_tier() != "medium":
+            pytest.skip("Requires the medium (DE440) kernel's ~2650 upper edge.")
         with pytest.raises(KerykeionException, match="ephemeris range"):
             factory.search_events(
                 julian_day=2688970.5, lat=41.9, lng=12.5, count=3,

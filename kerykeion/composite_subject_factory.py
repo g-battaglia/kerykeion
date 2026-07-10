@@ -189,8 +189,10 @@ class CompositeSubjectFactory:
                                              Defaults to None.
 
         Raises:
-            KerykeionException: If subjects have different zodiac types, sidereal modes,
-                              house systems, house system names, or perspective types.
+            KerykeionException: If either input is not an astrological subject model
+                              (e.g. None), or if subjects have different zodiac types,
+                              sidereal modes, house systems, house system names, or
+                              perspective types.
 
         Note:
             Both subjects must have identical astrological calculation settings to ensure
@@ -198,6 +200,15 @@ class CompositeSubjectFactory:
         """
         self.model: Union[CompositeSubjectModel, None] = None
         self.composite_chart_type = "Midpoint"
+
+        for _label, _subject in (("first_subject", first_subject), ("second_subject", second_subject)):
+            if getattr(_subject, "active_points", None) is None:
+                # Fail with a clear message instead of a raw AttributeError on
+                # `.active_points` below (e.g. when None is passed).
+                raise KerykeionException(
+                    f"CompositeSubjectFactory {_label} is not an astrological subject "
+                    f"model (got {type(_subject).__name__!r})."
+                )
 
         self.first_subject = first_subject
         self.second_subject = second_subject

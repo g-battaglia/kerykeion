@@ -44,8 +44,10 @@ for conj in conjunctions:
 
 **Output:**
 ```
-Sun conjunct Mercury (orb: 2.34°)
-Venus conjunct Mars (orb: 5.12°)
+Sun conjunct Jupiter (orb: 0.12°)
+Sun conjunct Chiron (orb: 3.43°)
+Jupiter conjunct Chiron (orb: 3.31°)
+Uranus conjunct Neptune (orb: 5.95°)
 ```
 
 ### Find Applying vs Separating Aspects
@@ -118,11 +120,11 @@ for aspect_name, count in aspect_counts.most_common():
 **Output:**
 ```
 Aspect distribution:
-  sextile: 8
-  trine: 6
-  square: 5
+  square: 8
+  sextile: 6
   conjunction: 4
-  opposition: 3
+  opposition: 4
+  trine: 3
 ```
 
 ---
@@ -261,8 +263,8 @@ print("Positions exported to planetary_positions.csv")
 **Output CSV:**
 ```csv
 Planet,Sign,Position,House,Retrograde,Speed,Declination,Magnitude
-Sun,Can,22.54,Eleventh_House,False,0.9534,,
-Moon,Sco,15.32,Third_House,False,13.1762,,
+Sun,Can,22.65,Tenth_House,False,0.9539,21.5399,
+Moon,Ari,21.80,Eighth_House,False,14.0131,13.1955,
 ...
 ```
 
@@ -271,6 +273,7 @@ Moon,Sco,15.32,Third_House,False,13.1762,,
 > **Requires pandas** (not a Kerykeion dependency): `pip install pandas`.
 
 ```python
+# doc-snippet: no-run — requires optional pandas dependency
 import pandas as pd
 from datetime import datetime
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
@@ -324,11 +327,11 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 
 # Define custom tight orbs
 custom_aspects = [
-    {"name": "conjunction", "orb": 6},  # Tighter than default 10
-    {"name": "opposition", "orb": 6},
-    {"name": "trine", "orb": 5},        # Tighter than default 8
-    {"name": "square", "orb": 4},       # Tighter than default 5
-    {"name": "sextile", "orb": 3},      # Tighter than default 6
+    {"name": "conjunction", "orb": 6},  # Same as default 6
+    {"name": "opposition", "orb": 6},   # Same as default 6
+    {"name": "trine", "orb": 5},        # Tighter than default 6
+    {"name": "square", "orb": 4},       # Tighter than default 6
+    {"name": "sextile", "orb": 3},      # Tighter than default 5
 ]
 
 aspects = AspectsFactory.single_chart_aspects(

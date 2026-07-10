@@ -1762,9 +1762,11 @@ class ChartDrawer:  # type: ignore[no-redef]
         chart_language (KerykeionChartLanguage, optional):
             Language code for chart labels. Defaults to 'EN'.
         language_pack (dict | None, optional):
-            Additional translations merged over the bundled defaults for the
-            selected language. Useful to introduce new languages or override
-            existing labels.
+            Additional translations. For one of the bundled languages the pack
+            is merged over that language's defaults (partial packs override
+            individual labels). For a NEW language code the pack itself is the
+            language: it must be complete (clone the EN block and edit), or
+            model validation fails listing the missing fields.
         external_view (bool, optional):
             For Natal charts only: place planets outside the zodiac ring.
             Defaults to False.
@@ -2018,9 +2020,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             chart_language (KerykeionChartLanguage, optional):
                 Language code for chart labels (e.g., 'EN', 'IT'). Defaults to 'EN'.
             language_pack (dict | None, optional):
-                Additional translations merged over the bundled defaults for the
-                selected language. Useful to introduce new languages or override
-                existing labels.
+                Additional translations. For one of the bundled languages the
+                pack is merged over that language's defaults (partial packs
+                override individual labels). For a NEW language code the pack
+                itself is the language: it must be complete (clone the EN
+                block and edit), or model validation fails listing the
+                missing fields.
             external_view (bool, optional):
                 Whether to use external visualization (planets on outer ring) for
                 single-subject charts. Only applies to Natal charts. Defaults to False.
@@ -2061,10 +2066,34 @@ class ChartDrawer:  # type: ignore[no-redef]
             show_zodiac_background_ring (bool, optional):
                 Default for whether to draw colored zodiac wedges (modern style only).
                 Can be overridden at render time.  Defaults to True.
+
+        Raises:
+            KerykeionException: If ``theme`` is not a valid KerykeionChartTheme
+                (and not None), if ``chart_language`` is not a valid
+                KerykeionChartLanguage (unless a ``language_pack`` supplies the
+                custom language), or if ``double_chart_aspect_grid_type`` is
+                not 'list' or 'table'.
         """
         # =====================================================================
         # STEP 1: Store basic configuration parameters
         # =====================================================================
+        # Validate the open string parameters up front, mirroring the theme
+        # contract below: an unknown language would otherwise silently fall
+        # back to EN and an unknown grid type would silently render as
+        # "table" — plausible-looking output hiding the caller's mistake.
+        # A language_pack legitimizes ANY code: it is the documented way to
+        # introduce new languages (e.g. chart_language="JP" + a JP pack).
+        if chart_language not in get_args(KerykeionChartLanguage) and language_pack is None:
+            raise KerykeionException(
+                f"chart_language {chart_language!r} is not available. "
+                f"Valid languages: {', '.join(get_args(KerykeionChartLanguage))} — "
+                "or supply a language_pack to introduce a custom language."
+            )
+        if double_chart_aspect_grid_type not in ("list", "table"):
+            raise KerykeionException(
+                f"double_chart_aspect_grid_type {double_chart_aspect_grid_type!r} "
+                "is not valid. Use 'list' or 'table'."
+            )
         # These are direct assignments of constructor parameters to instance
         # attributes. They form the foundation for all subsequent setup.
         self._store_basic_configuration(

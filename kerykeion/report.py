@@ -963,12 +963,12 @@ if __name__ == "__main__":
     from kerykeion.composite_subject_factory import CompositeSubjectFactory
     from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
-    # Shared offline location configuration (Rome, Italy)
-    john_city = "Liverpool"
-    john_nation = "GB"
-    john_lat = 53.4084
-    john_lng = -2.9916
-    john_tz = "Europe/London"
+    # Shared offline location configuration (Liverpool, GB)
+    demo_city = "Liverpool"
+    demo_nation = "GB"
+    demo_lat = 53.4084
+    demo_lng = -2.9916
+    demo_tz = "Europe/London"
     offline_online = False
 
     # Base natal subject (AstrologicalSubjectModel)
@@ -979,11 +979,11 @@ if __name__ == "__main__":
         day=21,
         hour=14,
         minute=45,
-        city=john_city,
-        nation=john_nation,
-        lat=john_lat,
-        lng=john_lng,
-        tz_str=john_tz,
+        city=demo_city,
+        nation=demo_nation,
+        lat=demo_lat,
+        lng=demo_lng,
+        tz_str=demo_tz,
         online=offline_online,
     )
 
@@ -1037,7 +1037,7 @@ if __name__ == "__main__":
     composite_subject = CompositeSubjectFactory(
         natal_subject,
         partner_subject,
-        chart_name="John & Yoko Composite Chart",
+        chart_name="Sample & Yoko Composite Chart",
     ).get_midpoint_composite_subject_model()
 
     # Build chart data models mirroring ChartDrawer inputs
@@ -1050,36 +1050,36 @@ if __name__ == "__main__":
 
     # Demonstrate each report/model type
     print("\n" + "=" * 54)
-    print("AstrologicalSubjectModel Report — John Lennon")
+    print("AstrologicalSubjectModel Report — Sample Natal Subject")
     print("=" * 54)
     ReportGenerator(natal_subject, include_aspects=False).print_report(include_aspects=False)
 
     print("\n" + "=" * 57)
-    print("SingleChartDataModel Report (Natal) — John Lennon")
+    print("SingleChartDataModel Report (Natal) — Sample Natal Subject")
     print("=" * 57)
     ReportGenerator(natal_chart_data).print_report()
 
     print("\n" + "=" * 65)
-    print("SingleChartDataModel Report (Composite) — John & Yoko")
+    print("SingleChartDataModel Report (Composite) — Sample & Yoko")
     print("=" * 65)
     ReportGenerator(composite_chart_data).print_report()
 
     print("\n" + "=" * 63)
-    print("SingleChartDataModel Report (Single Return) — John Lennon")
+    print("SingleChartDataModel Report (Single Return) — Sample Natal Subject")
     print("=" * 63)
     ReportGenerator(single_return_chart_data).print_report()
 
     print("\n" + "=" * 58)
-    print("DualChartDataModel Report (Transit) — John Lennon")
+    print("DualChartDataModel Report (Transit) — Sample Natal Subject")
     print("=" * 58)
     ReportGenerator(transit_chart_data).print_report()
 
     print("\n" + "=" * 60)
-    print("DualChartDataModel Report (Synastry) — John & Yoko")
+    print("DualChartDataModel Report (Synastry) — Sample & Yoko")
     print("=" * 60)
     ReportGenerator(synastry_chart_data).print_report()
 
     print("\n" + "=" * 58)
-    print("DualChartDataModel Report (Dual Return) — John Lennon")
+    print("DualChartDataModel Report (Dual Return) — Sample Natal Subject")
     print("=" * 58)
     ReportGenerator(dual_return_chart_data).print_report()

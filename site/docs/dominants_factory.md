@@ -86,7 +86,7 @@ Returns the sorted list of built-in strategy identifiers: `["almuten_figuris", "
 | `dominant_element`  | str or None     | Convenience winner of `elements`.                       |
 | `dominant_quality`  | str or None     | Convenience winner of `qualities`.                      |
 | `dominant_house`    | str or None     | Convenience winner of `houses`.                         |
-| `score_breakdown`   | list or None    | Per-rule audit trail (when `include_score_breakdown=True`). |
+| `score_breakdown`   | list            | Per-rule audit trail; empty unless `include_score_breakdown=True`. |
 
 A school only populates the categories it computes (e.g. the `elemental` school leaves `planets`/`houses` empty); uncomputed categories are simply absent/empty.
 

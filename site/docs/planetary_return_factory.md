@@ -67,8 +67,8 @@ print(f"Sun Position: {solar_return.sun.abs_pos:.2f}°")
 **Expected Output:**
 
 ```text
-Return Date: 2024-06-15T08:23:47
-Sun Position: 84.32°
+Return Date: 2024-06-14T12:14:42-04:00
+Sun Position: 84.09°
 ```
 
 > **Note:** The Sun position matches Alice's natal Sun position exactly (within calculation precision).
@@ -162,7 +162,7 @@ Convenience wrappers: `next_lunar_node_crossing_from_year(year)`, `next_lunar_no
 Finds the next return starting search from a specific year/month/day. This is the **primary method**.
 
 ```python
-result = calculator.next_return_from_date(2025, 1, 1, return_type="Solar")
+result = return_factory.next_return_from_date(2025, 1, 1, return_type="Solar")
 ```
 
 | Parameter     | Type         | Default     | Description                              |
@@ -177,7 +177,7 @@ result = calculator.next_return_from_date(2025, 1, 1, return_type="Solar")
 Finds the next return starting search from a precise ISO timestamp.
 
 ```python
-result = calculator.next_return_from_iso_formatted_time("2024-06-15T12:00:00", "Lunar")
+result = return_factory.next_return_from_iso_formatted_time("2024-06-15T12:00:00", "Lunar")
 ```
 
 ### `next_return_from_year(year, return_type)` _(Deprecated)_
@@ -185,8 +185,8 @@ result = calculator.next_return_from_iso_formatted_time("2024-06-15T12:00:00", "
 Finds the first return occurring in a given calendar year. **Deprecated** -- use `next_return_from_date` instead.
 
 ```python
-result = calculator.next_return_from_year(2025, "Solar")  # Deprecated
-result = calculator.next_return_from_date(2025, 1, 1, return_type="Solar")  # Preferred
+result = return_factory.next_return_from_year(2025, "Solar")  # Deprecated
+result = return_factory.next_return_from_date(2025, 1, 1, return_type="Solar")  # Preferred
 ```
 
 ## Relocation Astrology

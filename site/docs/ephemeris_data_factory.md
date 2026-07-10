@@ -44,7 +44,9 @@ print(f"Sun 1st Day: {data[0]['planets'][0]['abs_pos']:.2f}°")
 
 ### `get_ephemeris_data(as_model=False)`
 
-Returns a list of dictionaries (or `EphemerisDictModel` instances if `as_model=True`). Fast and lightweight. Best for raw data processing.
+Returns a list of dictionaries with `date`, `planets`, and `houses` keys (or `EphemerisDictModel` instances if `as_model=True`). Fast and lightweight. Best for raw data processing.
+
+The `planets` and `houses` lists hold `KerykeionPointModel` instances -- not plain dicts -- which support both attribute access (`point.abs_pos`) and dictionary-style subscripting (`point["abs_pos"]`).
 
 | Parameter  | Type   | Default | Description                                              |
 | :--------- | :----- | :------ | :------------------------------------------------------- |
@@ -52,16 +54,16 @@ Returns a list of dictionaries (or `EphemerisDictModel` instances if `as_model=T
 
 **Output Structure:**
 
-```json
+```text
 [
   {
     "date": "2024-01-01T00:00:00",
     "planets": [
-      { "name": "Sun", "abs_pos": 280.23, "sign": "Cap", ... },
+      KerykeionPointModel(name="Sun", abs_pos=280.04, sign="Cap", ...),
       ...
     ],
     "houses": [
-      { "name": "First_House", "abs_pos": 15.42, "sign": "Ari", ... },
+      KerykeionPointModel(name="First_House", abs_pos=187.07, sign="Lib", ...),
       ...
     ]
   },
@@ -113,8 +115,11 @@ print(subjects[0].sun.sign)
 | `perspective_type`         | Calculation perspective     | `"Apparent Geocentric"` |
 | `custom_ayanamsa_t0`      | Reference epoch (Julian Day) for USER sidereal mode | `None` |
 | `custom_ayanamsa_ayan_t0` | Ayanamsa offset in degrees at epoch (USER mode)     | `None` |
+| `active_points`            | Points computed on every generated subject | `None` (= `DEFAULT_ACTIVE_POINTS`) |
 
 _Note: You can override safety limits by passing `None` if you need large datasets. Both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` are required when `sidereal_mode="USER"`._
+
+_Note: When feeding `TransitsTimeRangeFactory` with non-default points (asteroids, TNOs, extra angles), pass the **same** `active_points` list here — aspects can only be detected for points present on both the natal and the ephemeris subjects; the transit factory warns if a requested point is present on only one side (missing from the ephemeris series or from the natal chart)._
 
 ---
 

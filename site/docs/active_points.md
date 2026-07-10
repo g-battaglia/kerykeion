@@ -40,7 +40,7 @@ Two calculation methods are available: **True** (oscillating, astronomically pre
 | `Mean_North_Lunar_Node` | Mean (averaged) North Node |
 | `Mean_South_Lunar_Node` | Mean (averaged) South Node |
 
-By default, only the True nodes are active. You can switch to Mean nodes or enable both.
+By default, only `True_North_Lunar_Node` is active (the South Node is not). You can switch to Mean nodes or enable more.
 
 ### Angles / Axial Cusps (4)
 
@@ -106,7 +106,7 @@ Distant objects beyond Neptune. Ephemeris data may not be available for all hist
 | `Orcus` | Oaths, the underworld, accountability |
 | `Quaoar` | Creation myths, primordial forces |
 
-> **Note:** Some TNOs may not have ephemeris data for very old or far-future dates. If calculation fails for a point, it is silently removed from the active points for that subject.
+> **Note:** Some TNOs may not have ephemeris data for very old or far-future dates. If calculation fails for a point, a warning is logged and the point is removed from the active points for that subject.
 
 ### Fixed Stars (23)
 
@@ -152,14 +152,14 @@ All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 8 ad
 
 ### Arabic Parts / Lots (4)
 
-Calculated points based on the formula involving the Ascendant, Sun, and other bodies. Their calculation depends on whether the chart is diurnal or nocturnal (the `is_diurnal` field on the subject model).
+Calculated points based on the formula involving the Ascendant, Sun, and other bodies. For `Pars_Fortunae` and `Pars_Spiritus`, the calculation depends on whether the chart is diurnal or nocturnal (the `is_diurnal` field on the subject model); `Pars_Amoris` and `Pars_Fidei` use a single formula regardless of sect.
 
 | Point | Formula (Day) | Formula (Night) |
 | :---- | :------------ | :-------------- |
 | `Pars_Fortunae` | Asc + Moon - Sun | Asc + Sun - Moon |
 | `Pars_Spiritus` | Asc + Sun - Moon | Asc + Moon - Sun |
-| `Pars_Amoris` | Asc + Venus - Sun | Asc + Sun - Venus |
-| `Pars_Fidei` | Asc + Mercury - Moon | Asc + Moon - Mercury |
+| `Pars_Amoris` | Asc + Venus - Sun | Asc + Venus - Sun (same) |
+| `Pars_Fidei` | Asc + Jupiter - Saturn | Asc + Jupiter - Saturn (same) |
 
 ### Special Points (4)
 
@@ -221,11 +221,6 @@ You can build your own list by combining any of the available point names:
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Custom Points", 1990, 6, 15, 12, 0,
-    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
-)
-
 # Classical planets + asteroids + Part of Fortune
 custom_points = [
     "Sun", "Moon", "Mercury", "Venus", "Mars",
@@ -234,6 +229,12 @@ custom_points = [
     "Pars_Fortunae",
     "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
 ]
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Custom Points", 1990, 6, 15, 12, 0,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    active_points=custom_points,
+)
 
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
@@ -246,7 +247,7 @@ print(f"Pars Fortunae: {subject.pars_fortunae.sign} at {subject.pars_fortunae.po
 
 ## Diurnal / Nocturnal Detection
 
-Since v5.8.0, the `AstrologicalSubjectModel` includes an `is_diurnal` boolean field. This determines whether the chart is a day chart (Sun above the horizon) or a night chart (Sun below). It is used internally for Arabic Parts calculation (the formula reverses for night charts).
+Since v5.8.0, the `AstrologicalSubjectModel` includes an `is_diurnal` boolean field. This determines whether the chart is a day chart (Sun above the horizon) or a night chart (Sun below). It is used internally for Arabic Parts calculation (for `Pars_Fortunae` and `Pars_Spiritus` the formula reverses in night charts; `Pars_Amoris` and `Pars_Fidei` use the same formula regardless of sect, as shown in the table above).
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(

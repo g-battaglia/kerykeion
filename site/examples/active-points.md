@@ -156,11 +156,6 @@ By default, Kerykeion uses True (oscillating) lunar nodes. To use Mean nodes ins
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Mean Nodes", 1990, 6, 15, 12, 0,
-    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
-)
-
 mean_node_points = [
     "Sun", "Moon", "Mercury", "Venus", "Mars",
     "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
@@ -169,6 +164,14 @@ mean_node_points = [
     "Chiron", "Mean_Lilith",
     "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
 ]
+
+# The points must be calculated on the subject itself; ChartDataFactory can
+# only ever *narrow* to points the subject already carries.
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mean Nodes", 1990, 6, 15, 12, 0,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    active_points=mean_node_points,
+)
 
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,

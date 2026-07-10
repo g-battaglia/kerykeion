@@ -54,10 +54,10 @@ print(f"Composite Sun: {composite_subject.sun.sign} {composite_subject.sun.abs_p
 **Expected Output:**
 
 ```text
-Composite Sun: Leo 124.36°
+Composite Sun: Leo 132.24°
 ```
 
-> **Note:** The position is the midpoint between Alice's Sun (Gemini ~84°) and Bob's Sun (Virgo ~170°), yielding ~127° (Leo).
+> **Note:** The position is the midpoint between Alice's Sun (Gemini ~84°) and Bob's Sun (Libra ~180°), yielding ~132° (Leo).
 
 ## Chart Generation
 

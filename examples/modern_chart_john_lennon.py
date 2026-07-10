@@ -4,7 +4,7 @@ from kerykeion import ChartDrawer
 from pathlib import Path
 from os import makedirs as mkdirs
 
-OUTPUT = str(Path.home() / "kerykeion_charts_output")
+OUTPUT = str(Path(__file__).parent / "output")
 THEMES = ["classic", "black-and-white", "dark", "dark-high-contrast", "light", "strawberry"]
 
 # ── Subject 1: John Lennon ──────────────────────────────────────────────────

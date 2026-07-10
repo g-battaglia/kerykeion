@@ -20,6 +20,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
+import logging
 import re
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Mapping, Optional, Sequence
@@ -406,6 +407,22 @@ class SecondaryProgressionFactory:
         year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
             progressed_lmt_jd, ephe.JUL_CAL
         )
+        if year >= 1:
+            # The progressed JD fell in the ~2-day window (Julian 0001-01-01/02
+            # = proleptic-Gregorian 0000-12-30/31) that neither branch's
+            # components can represent: from_birth_data would reinterpret the
+            # Julian year-1 components as proleptic Gregorian and build the
+            # chart exactly 2 days late. Clamp to 1 BCE Dec 31 23:59:59 Julian
+            # so the BCE branch is still taken, mirroring
+            # composite_subject_factory._davison_midpoint_components.
+            logging.warning(
+                "Progressed JD %.6f falls in the ~2-day gap before 1 CE Jan 1 "
+                "(proleptic Gregorian) that birth-data components cannot "
+                "represent; clamping to 1 BCE Dec 31 23:59:59 Julian "
+                "(error < ~2.5 days).",
+                progressed_lmt_jd,
+            )
+            year, month, day, hour, minute, seconds = 0, 12, 31, 23, 59, 59
         return AstrologicalSubjectFactory.from_birth_data(
             year=year,
             month=month,

@@ -137,6 +137,16 @@ class FixedStarDiscoveryFactory:
             return []
 
         houses_degree_ut = _collect_house_cusps(subject)
+        # julian_day is Optional on the model (midpoint composites have no
+        # single moment in time); without this guard a None JD reaches
+        # fixstar_ut, which returns NaN positions on libephemeris — every
+        # orb comparison is then False and the caller silently gets an
+        # empty list. Mirrors the PlanetaryNodesFactory guard.
+        if subject.julian_day is None:
+            raise KerykeionException(
+                "Subject is missing Julian Day — cannot search fixed stars "
+                "(composite subjects are not supported here)."
+            )
         jd = subject.julian_day
 
         prominent: list[KerykeionPointModel] = []

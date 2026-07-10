@@ -114,7 +114,9 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 | `calculate_gauquelin`      | `bool`                   | `False`                 | Calculate Gauquelin 36-sector positions.                               |
 | `calculate_nutation`       | `bool`                   | `False`                 | Include true/mean obliquity and nutation data.                         |
 | `calculate_local_space`    | `bool`                   | `False`                 | Calculate azimuth and altitude for each point.                         |
-| `active_fixed_stars`       | `Optional[List[str]]`    | `None`                  | Additional fixed stars to compute beyond the built-in 23.              |
+| `active_fixed_stars`       | `Optional[List[str]]`    | `None`                  | Fixed stars to compute into `subject.fixed_stars`. Default `None` computes none; `DEFAULT_FIXED_STARS` is an opt-in 23-star preset. |
+
+### 3. `from_current_time`
 
 Creates a subject for the current moment ("Now"), useful for Horary astrology or transits. Uses the system clock -- does **not** accept `year`/`month`/`day`/`hour`/`minute` parameters.
 
@@ -168,7 +170,7 @@ Use `position` for display purposes and `abs_pos` for calculations (aspect detec
 | **"K"**    | Koch          | Time-based, often used in German schools.                                 |
 | **"W"**    | Whole Sign    | Each house is exactly 30°, matching signs. Standard in Hellenistic/Vedic. |
 | **"R"**    | Regiomontanus | Standard for Horary astrology.                                            |
-| **"E"**    | Equal         | Equal 30° houses starting from Ascendant.                                 |
+| **"A"**    | Equal         | Equal 30° houses starting from Ascendant.                                 |
 | **"M"**    | Morinus       | Space-based system.                                                       |
 
 ### Zodiac Types
@@ -200,7 +202,9 @@ Adds `essential_dignity` field to each point (Domicile, Exaltation, Detriment, F
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
-    ..., calculate_dignities=True
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    calculate_dignities=True
 )
 print(subject.sun.essential_dignity)  # e.g. "Domicile"
 ```
@@ -211,7 +215,9 @@ Adds `nakshatra`, `nakshatra_pada`, and `nakshatra_lord` fields. Best used with 
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
-    ..., zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
     calculate_nakshatra=True
 )
 print(f"{subject.moon.nakshatra}, pada {subject.moon.nakshatra_pada}")
@@ -235,7 +241,7 @@ Always computed. Access via `subject.sun.declination` and `subject.sun.is_out_of
 
 ### Lilith Variants & Priapus
 
-Enable via `active_points`: `"Interpolated_Lilith"`, `"Mean_Priapus"`, `"True_Priapus"`. These complement the default `Mean_Lilith` and `True_Lilith`.
+Enable via `active_points`: `"Mean_Lilith"`, `"True_Lilith"`, `"Interpolated_Lilith"`, `"Mean_Priapus"`, `"True_Priapus"`. None of these are in `DEFAULT_ACTIVE_POINTS` — every Lilith/Priapus variant is opt-in.
 
 ## Performance & Optimization
 
@@ -261,7 +267,7 @@ These `@dataclass` structures are used internally but are exposed for reference.
 #### `ChartConfiguration`
 
 Dataclass holding chart calculation settings.
-Fields: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0`.
+Fields: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0`, `calculate_dignities`, `calculate_nakshatra`, `calculate_gauquelin`, `calculate_nutation`, `calculate_local_space`, `active_fixed_stars`.
 
 #### `LocationData`
 
@@ -270,7 +276,7 @@ Fields: `city`, `nation`, `lng`, `lat`, `tz_str`, `altitude`, `city_data`.
 
 #### `ephemeris_context`
 
-Helper context manager for thread-safe Swisseph calculations.
+Helper context manager for thread-safe ephemeris calculations.
 **Not intended for public use.**
 
 **Memory Usage**:
@@ -280,7 +286,7 @@ Helper context manager for thread-safe Swisseph calculations.
 
 ## Thread Safety Note
 
-The underlying Swiss Ephemeris library is **not thread-safe** by default. If using Kerykeion in a multi-threaded web server (like Gunicorn/Uvicorn workers), ensure `AstrologicalSubjectFactory` usage is process-isolated or appropriately locked if sharing state (though Kerykeion objects themselves are generally self-contained).
+Kerykeion serializes all ephemeris access internally through a process-wide lock, so `AstrologicalSubjectFactory` is safe to call from multiple threads (e.g., Gunicorn/Uvicorn workers). The lock does mean concurrent calculations within one process run sequentially; for CPU-bound throughput, prefer multiple worker processes. Kerykeion result objects are self-contained and can be shared freely once created.
 
 ---
 

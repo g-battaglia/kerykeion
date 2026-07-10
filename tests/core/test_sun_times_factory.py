@@ -127,6 +127,40 @@ def test_bce_year_raises_clean_exception():
         SunTimesFactory.from_date(-43, 3, 15, **ROME)
 
 
+def test_civil_day_bounds_penultimate_day_falls_back():
+    # 9999-12-30 is computable; its NEXT midnight (9999-12-31) is not, because
+    # pytz's DST probe overflows there. _civil_day_bounds must fall back to
+    # jd_midnight + 1 (its documented behavior) rather than propagate the
+    # KerykeionException the localize helpers now raise for that day.
+    import pytz
+
+    from kerykeion.sun_times.utils import _civil_day_bounds
+
+    lo, hi = _civil_day_bounds(9999, 12, 30, pytz.timezone("America/New_York"))
+    assert hi == pytest.approx(lo + 1.0)
+
+
+def test_civil_range_edge_days_raise_clean_exception():
+    # pytz.localize probes the surrounding day to resolve DST, so the first and
+    # last civil days of the datetime range overflow inside localize. They must
+    # surface as a clean KerykeionException, not a raw OverflowError.
+    from kerykeion.planetary_hours import PlanetaryHoursFactory
+    from kerykeion.void_of_course_moon import VoidOfCourseMoonFactory
+
+    with pytest.raises(KerykeionException):
+        SunTimesFactory.from_date(1, 1, 1, **ROME)
+    with pytest.raises(KerykeionException):
+        SunTimesFactory.from_date(9999, 12, 31, **ROME)
+    with pytest.raises(KerykeionException):
+        PlanetaryHoursFactory.from_datetime(1, 1, 1, 0, 30, **ROME)
+    with pytest.raises(KerykeionException):
+        PlanetaryHoursFactory.from_datetime(9999, 12, 31, 23, 30, **ROME)
+    with pytest.raises(KerykeionException):
+        VoidOfCourseMoonFactory.from_datetime(1, 1, 1, 0, 30, tz_str=ROME["tz_str"])
+    with pytest.raises(KerykeionException):
+        VoidOfCourseMoonFactory.from_datetime(9999, 12, 31, 23, 30, tz_str=ROME["tz_str"])
+
+
 def test_invalid_timezone_raises():
     with pytest.raises(KerykeionException):
         SunTimesFactory.from_date(2026, 5, 28, latitude=0.0, longitude=0.0, tz_str="Not/AZone")
@@ -247,3 +281,18 @@ def test_twilight_during_polar_night():
     assert s.civil_dawn is None and s.civil_dusk is None
     assert s.nautical_dawn is not None and s.nautical_dusk is not None
     assert s.astronomical_dawn is not None and s.astronomical_dusk is not None
+
+
+def test_planetary_hours_rejects_out_of_range_coordinates():
+    # Mirrors SunTimesFactory's contract; lat=95 used to produce a misleading
+    # polar-day message and lng=200 was silently accepted.
+    from kerykeion.planetary_hours import PlanetaryHoursFactory
+
+    with pytest.raises(KerykeionException, match="Latitude"):
+        PlanetaryHoursFactory.from_datetime(
+            2026, 6, 1, 12, 0, latitude=95.0, longitude=12.5, tz_str="Europe/Rome"
+        )
+    with pytest.raises(KerykeionException, match="Longitude"):
+        PlanetaryHoursFactory.from_datetime(
+            2026, 6, 1, 12, 0, latitude=41.9, longitude=200.0, tz_str="Europe/Rome"
+        )

@@ -52,6 +52,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 **Solution:** Register your own free account at [geonames.org](https://www.geonames.org/login):
 
 ```python
+# doc-snippet: no-run — requires your own GeoNames account (online)
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 1990, 1, 1, 12, 0,
     city="London", nation="GB",
@@ -181,6 +182,14 @@ composite = CompositeSubjectFactory(subject1, subject2)
 **Solution:** Use exactly `"Solar"` or `"Lunar"` (case-sensitive):
 
 ```python
+from kerykeion import PlanetaryReturnFactory
+
+factory = PlanetaryReturnFactory(
+    subject,  # your natal AstrologicalSubjectModel
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False
+)
+
 # Correct
 solar_return = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 lunar_return = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
@@ -194,18 +203,18 @@ lunar_return = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
 
 ## Performance & Limits
 
-### Polar Latitude Clamping
+### Polar Latitudes
 
-**Behavior:** Latitudes beyond ±66° are automatically clamped to ±66°.
+**Behavior:** The subject's latitude is never clamped in v6 — the real value is preserved in the model, in the topocentric observer, and in every house system defined at all latitudes. Only when a quadrant house system (e.g. Placidus `"P"`, Koch `"K"`) is mathematically undefined inside the polar circle do the house cusps fall back to the ±66° limit, and a warning is logged naming the system.
 
-**Reason:** Swiss Ephemeris house calculations become unstable at extreme latitudes.
+**Reason:** Quadrant house systems cannot be computed inside the polar circle; latitude-agnostic systems (Whole Sign, Equal, Porphyry, ...) have no such limit.
 
 **Recommendation:** For polar locations, use Whole Sign houses:
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Arctic Explorer", 1990, 6, 21, 12, 0,
-    lng=25.0, lat=70.0,  # Will be clamped to 66.0
+    lng=25.0, lat=70.0,  # Real latitude is preserved
     tz_str="Europe/Helsinki",
     online=False,
     houses_system_identifier="W"  # Whole Sign works at any latitude
@@ -297,6 +306,7 @@ See the [Migration Guide](/content/docs/migration) and [Legacy API](/content/doc
 ### How do I suppress the GeoNames warning?
 
 ```python
+# doc-snippet: no-run — illustrative fragment (placeholder arguments)
 subject = AstrologicalSubjectFactory.from_birth_data(
     ...,
     suppress_geonames_warning=True
@@ -308,6 +318,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 Results are cached for 30 days by default. Customize with:
 
 ```python
+# doc-snippet: no-run — illustrative fragment (placeholder arguments)
 subject = AstrologicalSubjectFactory.from_birth_data(
     ...,
     cache_expire_after_days=90  # Cache for 90 days
@@ -323,7 +334,7 @@ svg_string = chart_drawer.generate_svg_string()
 
 ### Why are Trans-Neptunian objects missing from my chart?
 
-Some TNOs (Eris, Sedna, etc.) may not have ephemeris data for all dates. If calculation fails, the point is silently removed from `active_points`.
+Some TNOs (Eris, Sedna, etc.) may not have ephemeris data for all dates. If calculation fails, a warning is logged and the point is removed from `active_points`.
 
 ### Can I use historical dates?
 
@@ -334,6 +345,7 @@ Yes, Kerykeion supports historical dates including BCE dates. The Swiss Ephemeri
 Placidus and Koch house systems fail at extreme latitudes (>60°). Use Whole Sign (`W`) or Equal (`A`) houses instead:
 
 ```python
+# doc-snippet: no-run — illustrative fragment (placeholder arguments)
 subject = AstrologicalSubjectFactory.from_birth_data(
     ...,
     houses_system_identifier="W"  # Works at any latitude
@@ -382,7 +394,10 @@ See the full [Eclipse Factory](/content/docs/eclipse_factory) documentation.
 ```python
 from kerykeion import AstrologicalSubjectFactory, AstroCartographyFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data(...)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 6, 15, 14, 30,
+    lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
+)
 lines = AstroCartographyFactory.compute(subject, step=2)
 ```
 
@@ -393,8 +408,9 @@ See the full [Astro-Cartography](/content/docs/astro_cartography_factory) docume
 ```python
 from kerykeion import RelocatedChartFactory
 
+# `natal` is the subject from the secondary-progressions example above
 relocated = RelocatedChartFactory.relocate(
-    natal_subject, new_lat=40.71, new_lng=-74.00, new_city="New York"
+    natal, new_lat=40.71, new_lng=-74.00, new_city="New York"
 )
 ```
 

@@ -29,14 +29,14 @@ print(ai_context)
 
 ```xml
 <chart name="Alice">
-  <birth_data date="1990-01-01" time="12:00" city="London" nation="GB" ... />
+  <birth_data date="1990-01-01 12:00" city="London" nation="GB" ... />
   <config zodiac="Tropical" house_system="Placidus" perspective="Apparent Geocentric" />
   <planets>
     <point name="Sun" position="10.81" sign="Capricorn" element="Earth" quality="Cardinal" house="Tenth House" motion="direct" speed="1.02" />
     ...
   </planets>
   <houses>...</houses>
-  <lunar_phase name="Waning Gibbous" phase="20" degrees_between="254.32" emoji="🌖" />
+  <lunar_phase name="Waxing Crescent" phase="5" degrees_between="52.45" emoji="🌒" />
 </chart>
 ```
 

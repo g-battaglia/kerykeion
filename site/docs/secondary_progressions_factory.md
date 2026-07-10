@@ -59,7 +59,7 @@ Returns a `SecondaryProgressionsResultModel` with the progressed subject **plus*
 | `active_points`                | Sequence[str] or None | None        | Points to include in aspect calculations           |
 | `compute_aspects`              | bool              | True            | Whether to compute progressed-to-natal aspects     |
 | `aspect_orb`                   | float             | 3.0             | Orb in degrees for aspect detection                |
-| `aspects`                      | Sequence[str] or None | None        | Whitelist of aspect names (defaults to all)        |
+| `aspects`                      | Sequence[str] or None | None        | Whitelist of aspect names (defaults to the 5 Ptolemaic majors: conjunction, opposition, trine, square, sextile) |
 
 ```python
 result = SecondaryProgressionFactory.compute_full(

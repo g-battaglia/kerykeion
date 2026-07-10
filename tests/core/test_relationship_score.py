@@ -154,10 +154,11 @@ def fixed_taurus():
 
 @pytest.fixture(scope="module")
 def ancient_subject():
-    """Subject from a much earlier era (year 1800)."""
+    """Subject from a much earlier era (year 1875 — inside every kernel tier,
+    including the base kernel's 1849 lower edge)."""
     return AstrologicalSubjectFactory.from_birth_data(
         name="Ancient Subject",
-        year=1800,
+        year=1875,
         month=1,
         day=1,
         hour=0,

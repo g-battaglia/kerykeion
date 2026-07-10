@@ -37,6 +37,7 @@ print(data)
 ### `__init__`
 
 ```python
+# doc-snippet: no-run — API signature reference
 def __init__(
     self,
     city_name: str,

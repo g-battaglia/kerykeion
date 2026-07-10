@@ -10,6 +10,7 @@ from typing import Iterator, List, Literal, Optional
 
 from kerykeion.dominants.utils import part_of_fortune_degree
 from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.utilities import resolve_sect_is_diurnal
 from kerykeion.schemas.kr_literals import SIGN_CODES, Sign
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -73,7 +74,7 @@ def _lot_degree(subject: AstrologicalSubjectModel, lot: LotName) -> Optional[flo
     ascendant, sun, moon = subject.ascendant, subject.sun, subject.moon
     if ascendant is None or sun is None or moon is None:
         return None
-    if getattr(subject, "is_diurnal", True):
+    if resolve_sect_is_diurnal(subject):
         degree = ascendant.abs_pos + sun.abs_pos - moon.abs_pos
     else:
         degree = ascendant.abs_pos + moon.abs_pos - sun.abs_pos
@@ -244,12 +245,34 @@ class ZodiacalReleasingFactory:
             )
         fortune_sign_num = int(fortune_degree % 360.0 // 30)
 
-        try:
-            birth_dt = datetime(
-                subject.year, subject.month, subject.day, subject.hour, subject.minute
+        # PlanetReturnModel / CompositeSubjectModel don't carry the split
+        # year/month/day fields (getattr would raise a raw AttributeError
+        # before the except below could fire); fall back to their local ISO
+        # timestamp — a return or Davison chart is a real moment in time.
+        if getattr(subject, "year", None) is not None:
+            try:
+                birth_dt = datetime(
+                    subject.year, subject.month, subject.day, subject.hour, subject.minute
+                )
+            except (TypeError, ValueError) as exc:
+                raise KerykeionException(f"Invalid birth date on subject: {exc}") from exc
+        else:
+            _iso = getattr(subject, "iso_formatted_local_datetime", None) or getattr(
+                subject, "iso_formatted_utc_datetime", None
             )
-        except (TypeError, ValueError) as exc:
-            raise KerykeionException(f"Invalid birth date on subject: {exc}") from exc
+            if _iso is None:
+                raise KerykeionException(
+                    "Subject carries neither birth-date components nor an ISO "
+                    "timestamp — cannot anchor zodiacal releasing (midpoint "
+                    "composites have no single moment in time)."
+                )
+            try:
+                birth_dt = datetime.fromisoformat(_iso).replace(tzinfo=None)
+            except ValueError as exc:
+                raise KerykeionException(
+                    f"Cannot parse the subject's ISO timestamp {_iso!r} for "
+                    f"zodiacal releasing: {exc}"
+                ) from exc
 
         target_dt: Optional[datetime] = None
         if target_date is not None:

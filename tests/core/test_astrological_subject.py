@@ -3088,3 +3088,38 @@ class TestAncientJulianDayValidation:
             )
         except KerykeionException as exc:
             assert "Invalid birth date/time component" not in str(exc)
+
+
+class TestActivePointsValidation:
+    """Unknown names must raise (they used to silently vanish from the chart);
+    an explicit empty list must raise (it used to invert into a FULL chart)."""
+
+
+    COMMON = dict(
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+
+    def test_typoed_point_name_raises(self):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="Sunn"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "T", 1990, 6, 15, 12, 0, active_points=["Sunn", "Moon"], **self.COMMON
+            )
+
+    def test_empty_active_points_raises(self):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="empty"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "T", 1990, 6, 15, 12, 0, active_points=[], **self.COMMON
+            )
+
+    def test_star_names_still_redirected(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "T", 1990, 6, 15, 12, 0,
+            active_points=["Sun", "Moon", "Regulus"], **self.COMMON
+        )
+        assert [star.name for star in (subject.fixed_stars or [])] == ["Regulus"]
+        assert "Regulus" not in subject.active_points

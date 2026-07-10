@@ -16,7 +16,7 @@ The `MoonPhaseDetailsFactory` builds a complete `MoonPhaseOverviewModel` from an
 | :--- | :--- |
 | **Moon Summary** | Phase name, emoji, major phase label, waxing/waning stage, illumination percentage, age in days, lunar cycle progress, Sun and Moon zodiac signs |
 | **Illumination Details** | Numeric percentage, visible fraction (0-1), phase angle in degrees |
-| **Upcoming Phases** | Last and next occurrence of New Moon, First Quarter, Full Moon, Last Quarter (precise Swiss Ephemeris timing) |
+| **Upcoming Phases** | Last and next occurrence of New Moon, First Quarter, Full Moon, Last Quarter (precise ephemeris timing) |
 | **Next Lunar Eclipse** | Date, timestamp, eclipse type (Total, Partial, Penumbral) |
 | **Sun Info** | Sunrise, sunset, solar noon, day length, apparent altitude and azimuth |
 | **Next Solar Eclipse** | Date, timestamp, eclipse type (Total, Annular, Partial, Hybrid) |
@@ -48,11 +48,11 @@ print(f"Age: {overview.moon.age_days} days")
 **Expected Output:**
 
 ```text
-Phase: Waxing Crescent 🌒
-Illumination: 2%
-Stage: waxing
-Major Phase: New Moon
-Age: 1 days
+Phase: Last Quarter 🌗
+Illumination: 59%
+Stage: waning
+Major Phase: Last Quarter
+Age: 22 days
 ```
 
 ## API Reference
@@ -60,6 +60,7 @@ Age: 1 days
 ### `MoonPhaseDetailsFactory.from_subject(...)`
 
 ```python
+# doc-snippet: no-run — API signature reference
 @classmethod
 def from_subject(
     cls,
@@ -150,11 +151,11 @@ This produces a formatted ASCII table report with sections for Moon Summary, Ill
 
 ## Precision and Accuracy
 
-- **Phase timings**: Binary search with Swiss Ephemeris converges to ~1 second precision for all major phase events.
+- **Phase timings**: Binary search on the ephemeris backend converges to ~1 second precision for all major phase events.
 - **Illumination formula**: Standard `k = 0.5 * (1 - cos(angle))` applied to the Sun-Moon ecliptic separation.
 - **Lunar age**: Computed from the actual last New Moon timestamp (not a synodic-month approximation).
-- **Eclipse search**: Uses `swe.sol_eclipse_when_glob` and `swe.lun_eclipse_when` for the next global eclipse of each type.
-- **Sunrise/sunset**: Computed via `swe.rise_trans` with standard atmospheric refraction corrections.
+- **Eclipse search**: Uses `ephe.sol_eclipse_when_glob` and `ephe.lun_eclipse_when` for the next global eclipse of each type.
+- **Sunrise/sunset**: Computed via `ephe.rise_trans` with standard atmospheric refraction corrections.
 
 ## Edge Cases
 
