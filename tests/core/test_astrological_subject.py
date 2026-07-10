@@ -1355,7 +1355,7 @@ class TestDefaultTimeParameters:
 
     def test_defaults_to_current_time_when_none(self):
         """Test that None time parameters default to current time."""
-        from datetime import datetime
+        from datetime import datetime, timezone
 
         # Call with all time parameters as None
         subject = AstrologicalSubjectFactory.from_birth_data(
@@ -1373,7 +1373,10 @@ class TestDefaultTimeParameters:
             suppress_geonames_warning=True,
         )
 
-        now = datetime.now()
+        # The factory resolves "now" in the subject's own timezone (Etc/GMT = UTC
+        # here), so compare against UTC now — not naive local time, which can
+        # differ from the GMT day near midnight in a non-UTC local timezone.
+        now = datetime.now(timezone.utc)
         assert subject.year == now.year
         assert subject.month == now.month
         assert subject.day == now.day
