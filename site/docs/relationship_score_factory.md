@@ -51,8 +51,8 @@ print(f"Category: {score_model.score_description}")
 **Expected Output:**
 
 ```text
-Score: 18
-Category: Very Important
+Score: 8
+Category: Medium
 ```
 
 You can also inspect which aspects contributed to the score:
@@ -65,9 +65,8 @@ for aspect in score_model.aspects[:3]:
 **Expected Output:**
 
 ```text
-Sun conjunction Moon (orb: 1.5°)
-Venus trine Mars (orb: 3.4°)
-Moon sextile Ascendant (orb: 2.1°)
+Sun sextile Sun (orb: 3.6354400115408794°)
+Ascendant trine Moon (orb: 2.242282739025086°)
 ```
 
 ## Constructor Parameters

@@ -23,12 +23,12 @@ The `HeliacalFactory` calculates **heliacal events** -- the first/last visibilit
 
 ```python
 from kerykeion import HeliacalFactory
-from kerykeion.ephemeris_backend import swe
+from kerykeion.ephemeris_backend import ephe
 
 factory = HeliacalFactory()
 
 # Find the next heliacal rising of Venus from Rome
-jd_start = swe.julday(2025, 1, 1, 0.0)
+jd_start = ephe.julday(2025, 1, 1, 0.0)
 event = factory.next_heliacal_rising(
     julian_day=jd_start,
     planet_name_or_star="Venus",
@@ -72,7 +72,7 @@ Find the next N heliacal events across multiple planets, sorted chronologically.
 
 ```python
 events = factory.search_events(
-    julian_day=swe.julday(2025, 1, 1, 0.0),
+    julian_day=ephe.julday(2025, 1, 1, 0.0),
     geopos=(12.4964, 41.9028, 50),
     count=10,
 )

@@ -37,7 +37,7 @@ pure_data = ChartDataFactory.create_natal_chart_data(
 **Expected Output (Weighted):**
 
 ```text
-Fire: 28.5%
+Fire: 9%
 ```
 
 You can also access all element and quality percentages:
@@ -56,13 +56,13 @@ print(f"Mutable: {data.quality_distribution.mutable_percentage}%")
 **Expected Output:**
 
 ```text
-Fire: 28.5%
-Earth: 22.3%
-Air: 31.7%
-Water: 17.5%
-Cardinal: 35.2%
-Fixed: 28.4%
-Mutable: 36.4%
+Fire: 9%
+Earth: 33%
+Air: 33%
+Water: 25%
+Cardinal: 31%
+Fixed: 15%
+Mutable: 54%
 ```
 
 ## Weights System
@@ -90,10 +90,12 @@ custom_data = ChartDataFactory.create_natal_chart_data(
     custom_distribution_weights={
         "sun": 3.0,       # Emphasize Sun
         "chiron": 1.5,    # Emphasize Chiron
-        "__default__": 1.0 # Everything else
+        "__default__": 1.0 # Fallback for points not in the default weight table
     }
 )
 ```
+
+> **Note:** In weighted mode, `__default__` only changes the fallback weight used for points that are **absent** from the built-in weight table. Points listed in the table keep their default weights unless you override them individually (like `sun` and `chiron` above).
 
 ---
 

@@ -43,12 +43,12 @@ for aspect in aspects_data.aspects[:5]:  # Show first 5
 **Expected Output:**
 
 ```text
-Total Aspects: 24
-Sun conjunction Mercury (orb: 3.45°)
-Sun square Mars (orb: 2.18°)
-Sun trine Jupiter (orb: 4.67°)
-Sun sextile Ascendant (orb: 1.23°)
-Moon opposition Saturn (orb: 5.89°)
+Total Aspects: 34
+Moon sextile Venus (orb: 3.93°)
+Moon trine Jupiter (orb: 1.08°)
+Moon sextile Neptune (orb: 1.08°)
+Moon trine Pluto (orb: 0.60°)
+Moon trine Chiron (orb: 1.25°)
 ```
 
 > **Note:** Orb values are always non-negative (absolute deviation from exact aspect). To determine whether an aspect is applying or separating, check the `aspect_movement` field (`"Applying"`, `"Separating"`, or `"Static"`).
@@ -70,7 +70,7 @@ print(f"Synastry Aspects: {len(synastry.aspects)}")
 **Expected Output:**
 
 ```text
-Synastry Aspects: 31
+Synastry Aspects: 67
 ```
 
 **Additional Parameters for `dual_chart_aspects`:**

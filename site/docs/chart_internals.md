@@ -52,10 +52,10 @@ These functions return SVG string elements.
 | `calculate_synastry_quality_points(...)`           | Internal calculation for synastry quality comparison.               |
 | `calculate_moon_phase_chart_params(...)`           | Calculates lunar phase icon parameters.                             |
 | `convert_decimal_to_degree_string(dec)`            | Converts a float degree (e.g., 12.5) to a string (e.g., "12° 30'"). |
-| `convert_longitude_coordinate_to_string(lng)`      | Converts a longitude coordinate to a readable string.               |
-| `convert_latitude_coordinate_to_string(lat)`       | Converts a latitude coordinate to a readable string.                |
+| `convert_longitude_coordinate_to_string(coord, east_label, west_label)` | Converts a longitude coordinate to a readable string. |
+| `convert_latitude_coordinate_to_string(coord, north_label, south_label)` | Converts a latitude coordinate to a readable string. |
 | `hms_to_decimal_hours(hours, minutes, seconds)`    | Combines hours, minutes, seconds into a decimal hour.               |
-| `format_datetime_with_timezone(dt, tz)`            | Formats a datetime object with timezone info.                       |
+| `format_datetime_with_timezone(iso_datetime_string)` | Formats an ISO datetime string with timezone info.                |
 | `format_location_string(location, max_length=35)` | Truncates a location string to fit within a max length. |
 | `get_decoded_kerykeion_celestial_point_name(name)` | Decodes internal point names to human names.                        |
 | `timedelta_to_decimal_hours(datetime_offset)`      | Converts a `timedelta` offset to a float in hours.                  |

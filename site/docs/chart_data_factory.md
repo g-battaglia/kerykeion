@@ -41,7 +41,7 @@ print(f"Qualities: {natal_data.quality_distribution.cardinal_percentage}% Cardin
 | Parameter                    | Type                       | Default      | Description                                                                   |
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `subject`                    | `AstrologicalSubjectModel` | **Required** | The subject to create chart data for. Also accepts `CompositeSubjectModel` or `PlanetReturnModel`. |
-| `active_points`              | `List[str]`                | `None`       | Custom points list. If `None`, uses `DEFAULT_ACTIVE_POINTS`.                  |
+| `active_points`              | `List[str]`                | `None`       | Custom points list. If `None`, uses the first subject's own `active_points`.  |
 | `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs. Each item: `{"name": "conjunction", "orb": 10}`. |
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method: `"weighted"` or `"pure_count"`. Keyword-only. |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override individual point weights. Use `"__default__"` for fallback. Keyword-only. |
@@ -205,7 +205,7 @@ chart_data = ChartDataFactory.create_chart_data(
 
 | Parameter                    | Type                       | Default      | Description                                                                   |
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
-| `chart_type`                 | `ChartType`                | **Required** | `"Natal"`, `"Synastry"`, `"Transit"`, `"Composite"`, `"DualReturnChart"`, `"SingleReturnChart"`. |
+| `chart_type`                 | `ChartType`                | **Required** | `"Natal"`, `"Synastry"`, `"Transit"`, `"Composite"`, `"Progression"`, `"DualReturnChart"`, `"SingleReturnChart"`. |
 | `first_subject`              | Subject Model              | **Required** | Primary subject.                                                              |
 | `second_subject`             | Subject Model              | `None`       | Second subject (for dual-chart types).                                        |
 | `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |

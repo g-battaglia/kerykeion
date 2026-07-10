@@ -8,7 +8,7 @@ order: 46
 
 # Planetary Phenomena Factory
 
-The `PlanetaryPhenomenaFactory` calculates **observational phenomena** for planets using the Swiss Ephemeris `swe.pheno_ut()` function. It computes elongation, illumination fraction, phase angle, apparent diameter/magnitude, and morning/evening star status.
+The `PlanetaryPhenomenaFactory` calculates **observational phenomena** for planets using the ephemeris backend's `ephe.pheno_ut()` function (libephemeris by default). It computes elongation, illumination fraction, phase angle, apparent diameter/magnitude, and morning/evening star status.
 
 ## Basic Usage
 
@@ -72,8 +72,8 @@ Morning/evening star status is calculated only for the inferior planets (Mercury
 | `elongation`         | float         | Angular distance from the Sun in degrees          |
 | `apparent_diameter`  | float         | Apparent diameter in degrees                      |
 | `apparent_magnitude` | float         | Apparent visual magnitude                         |
-| `is_morning_star`    | bool          | True if visible before sunrise (Mercury/Venus)    |
-| `is_evening_star`    | bool          | True if visible after sunset (Mercury/Venus)      |
+| `is_morning_star`    | Optional[bool] | True if visible before sunrise; `None` for planets other than Mercury/Venus |
+| `is_evening_star`    | Optional[bool] | True if visible after sunset; `None` for planets other than Mercury/Venus   |
 
 ### `PlanetaryPhenomenaCollectionModel`
 

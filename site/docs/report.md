@@ -33,25 +33,55 @@ ReportGenerator(subject).print_report()
 **Example Output:**
 
 ```text
-+------------------------------+
-|         Birth Data           |
-+------------------------------+
-| Name    : Alice              |
-| Date    : 1990-06-15         |
-| Time    : 12:00              |
-| Location: London, GB         |
-+------------------------------+
+======================
+Alice — Subject Report
+======================
 
-+------------------------------------------+
-|          Celestial Points                |
-+------------------------------------------+
-| Planet   | Sign | Position | House       |
-+----------+------+----------+-------------+
-| Sun      | Gem  |  23.81°  | 10th House  |
-| Moon     | Pis  |   8.45°  |  7th House  |
-| Mercury  | Can  |   5.12°  | 10th House  |
-| ...                                      |
-+------------------------------------------+
++Astrological Subject — Birth Data---------------+
+| Field              | Value                     |
++--------------------+---------------------------+
+| Name               | Alice                     |
+| Date               | 15/06/1990                |
+| Time               | 12:00                     |
+| City               | London                    |
+| Nation             | GB                        |
+| Latitude           | 51.5085°                  |
+| Longitude          | -0.1257°                  |
+| Timezone           | Europe/London             |
+| Day of Week        | Friday                    |
+| ISO Local Datetime | 1990-06-15T12:00:00+01:00 |
++--------------------+---------------------------+
+
++Astrological Subject — Settings------------+
+| Setting             | Value               |
++---------------------+---------------------+
+| Zodiac Type         | Tropical            |
+| Houses System       | Placidus            |
+| Perspective Type    | Apparent Geocentric |
+| Julian Day          | 2448057.958333      |
+| Active Points Count | 14                  |
++---------------------+---------------------+
+
++Celestial Points-------+--------+----------+--------------+---------+------+---------------+
+| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House         |
++-----------------------+--------+----------+--------------+---------+------+---------------+
+| Ascendant             | Vir ♍ | 14.74°   | +253.7350°/d | N/A     | -    | First House   |
+| Medium Coeli          | Gem ♊ | 9.98°    | +338.4840°/d | N/A     | -    | Tenth House   |
+| Sun                   | Gem ♊ | 24.09°   | +0.9551°/d   | +23.31° | -    | Tenth House   |
+| Moon                  | Pis ♓ | 14.80°   | +13.3469°/d  | -3.13°  | -    | Seventh House |
+| Mercury               | Gem ♊ | 5.62°    | +1.7140°/d   | +19.60° | -    | Ninth House   |
+| ...                                                                                       |
++-----------------------+--------+----------+--------------+---------+------+---------------+
+
+...
+
++Lunar Phase--------------+-----------------+
+| Lunar Phase Information | Value           |
++-------------------------+-----------------+
+| Phase Name              | Last Quarter 🌗 |
+| Sun-Moon Angle          | 260.71°         |
+| Lunation Day            | 21              |
++-------------------------+-----------------+
 ```
 
 ### Generating a String

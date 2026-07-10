@@ -209,7 +209,7 @@ if subject.mercury.retrograde:
 A planet's angular distance north or south of the celestial equator. Planets with the same declination are "in parallel."
 
 ### Ephemeris
-Tables showing planetary positions for each day. Kerykeion uses the Swiss Ephemeris for high-precision calculations.
+Tables showing planetary positions for each day. Kerykeion uses libephemeris (based on NASA JPL ephemerides) for high-precision calculations by default, with the Swiss Ephemeris available as an opt-in backend.
 
 ### Julian Day
 A continuous count of days since January 1, 4713 BCE. Used internally for astronomical calculations.
@@ -222,7 +222,14 @@ print(subject.julian_day)
 ### Void-of-Course Moon
 The period after the Moon makes its last major aspect in a sign and before it enters the next sign. Traditionally considered an unfavorable time for initiating new actions. Duration varies from minutes to over a day.
 
-> **Note:** Kerykeion does not calculate void-of-course periods directly, but you can determine them by analyzing Moon aspects and sign ingresses using `EphemerisDataFactory` and `AspectsFactory`.
+> **In Kerykeion:** Use `VoidOfCourseMoonFactory` to compute the void-of-course state for any moment — it returns the void window, the current/next sign, and the framing last/next aspects:
+>
+> ```python
+> from kerykeion import VoidOfCourseMoonFactory
+>
+> voc = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 9, 0, tz_str="Europe/Rome")
+> print(voc.is_void_of_course, voc.moon_sign, voc.next_sign)  # True Sag Cap
+> ```
 
 ### Progressed Chart
 A forecasting technique where each day after birth corresponds to one year of life (secondary progressions). For example, the planetary positions 30 days after birth represent the progressed chart for age 30.

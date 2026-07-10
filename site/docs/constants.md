@@ -119,7 +119,7 @@ When customizing `active_points`, you can use any of the following string identi
 -   `Arcturus` (mag -0.05)
 -   `Algol` (mag +2.12)
 -   `Alphecca` (mag +2.22)
--   `Deneb_Algedi` (mag +2.83)
+-   `Deneb Algedi` (mag +2.83)
 -   `Alcyone` (mag +2.87)
 -   `Algorab` (mag +2.94)
 -   `Alkaid` (mag +1.86)
@@ -179,7 +179,7 @@ Conjunction (orb: 6), Opposition (orb: 6), Trine (orb: 6), Square (orb: 6), Sext
 
 ### `ALL_ACTIVE_ASPECTS`
 
-All major and minor aspects listed above, with minor aspects using 1° orbs.
+All major and minor aspects listed above, with minor aspects using 2° orbs.
 
 ### `DISCEPOLO_SCORE_ACTIVE_ASPECTS`
 

@@ -40,7 +40,7 @@ Finds eclipses visible from a specific geographic location.
 | :----------- | :---- | :------ | :----------------------------------- |
 | `lat`        | float | —       | Geographic latitude (north positive) |
 | `lng`        | float | —       | Geographic longitude (east positive) |
-| `start_year` | int   | 2025    | Year to start searching from         |
+| `start_year` | Optional[int] | None | Year to start searching from; `None` = current UTC year |
 | `count`      | int   | 5       | Number of each type to find          |
 
 **Returns:** `EclipseSearchResultModel`

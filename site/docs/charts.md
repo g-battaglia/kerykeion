@@ -255,13 +255,16 @@ All render/save methods accept two optional keyword arguments:
 | :--------------------- | :----- | :------ | :----------------------------------------------------------- |
 | `minify`               | `bool` | `False` | Minify the SVG output (remove whitespace/comments).          |
 | `remove_css_variables`  | `bool` | `False` | Inline all CSS variables for broader SVG viewer compatibility. |
+| `custom_title`         | `Optional[str]` | `None` | Override the chart title (full chart methods only).   |
+| `style`                | `KerykeionChartStyle` | chart default | Per-call style override (e.g. `"modern"`).   |
+| `show_zodiac_background_ring` | `bool` | chart default | Per-call toggle for the zodiac background ring. |
 
-- `save_svg(output_path, filename, *, minify, remove_css_variables) -> None`
-- `generate_svg_string(*, minify, remove_css_variables) -> str`
-- `generate_wheel_only_svg_string(*, minify, remove_css_variables) -> str`
-- `generate_aspect_grid_only_svg_string(*, minify, remove_css_variables) -> str`
-- `save_wheel_only_svg_file(output_path, filename, *, minify, remove_css_variables)`
-- `save_aspect_grid_only_svg_file(output_path, filename, *, minify, remove_css_variables)`
+- `save_svg(output_path, filename, minify, remove_css_variables, *, custom_title, style, show_zodiac_background_ring) -> None`
+- `generate_svg_string(minify, remove_css_variables, *, custom_title, style, show_zodiac_background_ring) -> str`
+- `generate_wheel_only_svg_string(minify, remove_css_variables, *, style, show_zodiac_background_ring) -> str`
+- `generate_aspect_grid_only_svg_string(minify, remove_css_variables) -> str`
+- `save_wheel_only_svg_file(output_path, filename, minify, remove_css_variables, *, style, show_zodiac_background_ring)`
+- `save_aspect_grid_only_svg_file(output_path, filename, minify, remove_css_variables)`
 
 ## Helper Functions (`charts_utils`)
 
@@ -274,8 +277,8 @@ Utility functions used in SVG generation that can be helpful for custom renderin
 | `degree_difference(a, b)`             | Smallest difference between two angles (0-180°).   |
 | `degree_sum(a, b)`                    | Sum of two angles normalized to 0-360°.            |
 | `normalize_degree(angle)`             | Constrains any angle to 0-360° range.              |
-| `wheel_x(sign_index, radius, offset)` | Calculates X coordinate for a circle slice (1-12). |
-| `wheel_y(sign_index, radius, offset)` | Calculates Y coordinate for a circle slice (1-12). |
+| `wheel_x(sign_index, radius, offset)` | Calculates X coordinate for a wheel sector (`sign_index` 0-11, 30° each). |
+| `wheel_y(sign_index, radius, offset)` | Calculates Y coordinate for a wheel sector (`sign_index` 0-11, 30° each). |
 
 ```python
 from kerykeion.charts.charts_utils import degree_difference

@@ -67,8 +67,8 @@ print(f"Sun Position: {solar_return.sun.abs_pos:.2f}°")
 **Expected Output:**
 
 ```text
-Return Date: 2024-06-15T08:23:47
-Sun Position: 84.32°
+Return Date: 2024-06-14T12:14:42-04:00
+Sun Position: 84.09°
 ```
 
 > **Note:** The Sun position matches Alice's natal Sun position exactly (within calculation precision).

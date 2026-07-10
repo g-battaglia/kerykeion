@@ -4,7 +4,7 @@
 
 ## Quick Overview
 
-Kerykeion is a Python library for astrological calculations using Swiss Ephemeris. It provides:
+Kerykeion is a Python library for astrological calculations powered by the libephemeris backend by default (Swiss Ephemeris available as an opt-in extra). It provides:
 
 -   Planetary position calculations (tropical/sidereal)
 -   Chart generation (Natal, Synastry, Transit, Composite, Returns)

@@ -25,7 +25,7 @@ The `kerykeion.schemas` package contains all the data definitions:
 All Kerykeion models inherit from `SubscriptableBaseModel`, allowing dictionary-like access to fields in addition to dot notation.
 
 ```python
-subject = AstrologicalSubjectFactory(...)
+subject = AstrologicalSubjectFactory.from_birth_data(...)
 # Access as object
 print(subject.name)
 # Access as dict
@@ -103,7 +103,7 @@ Data structure for comparing two charts (Synastry, Transits).
 
 | Field                  | Type                       | Description                             |
 | :--------------------- | :------------------------- | :-------------------------------------- |
-| `chart_type`           | `Literal`                  | `"Transit"`, `"Synastry"`, or `"DualReturnChart"` |
+| `chart_type`           | `Literal`                  | `"Transit"`, `"Synastry"`, `"DualReturnChart"`, or `"Progression"` |
 | `first_subject`        | `AstrologicalSubjectModel \| CompositeSubjectModel \| PlanetReturnModel` | The primary subject (e.g., Natal) |
 | `second_subject`       | `AstrologicalSubjectModel \| PlanetReturnModel` | The secondary subject (e.g., Transit) |
 | `aspects`              | `List[AspectModel]`        | Inter-chart aspects                     |
@@ -146,11 +146,11 @@ Inherits all celestial point fields from `AstrologicalBaseModel`.
 
 ### PlanetReturnModel
 
-Represents a Solar or Lunar return chart.
+Represents a planetary return chart.
 
 | Field         | Type         | Description             |
 | :------------ | :----------- | :---------------------- |
-| `return_type` | `ReturnType` | `"Solar"` or `"Lunar"`. |
+| `return_type` | `ReturnType` | `"Solar"`, `"Lunar"`, `"Heliocentric"`, or `"Lunar_Node_Crossing"`. |
 
 Inherits all celestial point fields from `AstrologicalBaseModel`.
 
@@ -179,7 +179,7 @@ Compact lunar phase information attached to every `AstrologicalSubjectModel` (vi
 | Field                 | Type              | Description                                              |
 | :-------------------- | :---------------- | :------------------------------------------------------- |
 | `degrees_between_s_m` | `float \| int`    | Angular separation between the Sun and Moon in degrees.  |
-| `moon_phase`          | `int`             | Phase index (0-7, matching `LunarPhaseName` order).      |
+| `moon_phase`          | `int`             | Lunation day (1-28), derived from the Sun-Moon angle.    |
 | `moon_emoji`          | `LunarPhaseEmoji` | Emoji representation of the phase (e.g. `"🌕"`).        |
 | `moon_phase_name`     | `LunarPhaseName`  | Text name (e.g. `"Full Moon"`, `"Waxing Crescent"`).    |
 
@@ -270,7 +270,7 @@ TypedDict for configuring aspect orbs.
 | Field  | Type         | Description     |
 | :----- | :----------- | :-------------- |
 | `name` | `AspectName` | e.g. "trine".   |
-| `orb`  | `int`        | Orb in degrees. |
+| `orb`  | `float`      | Orb in degrees. |
 
 ### TransitMomentModel
 
@@ -556,6 +556,7 @@ Defines the type of chart being generated.
 | `"Composite"`         | A single chart derived from the midpoints of two charts.  |
 | `"SingleReturnChart"` | A Solar or Lunar return chart viewed alone.               |
 | `"DualReturnChart"`   | A return chart overlaid on the natal chart.               |
+| `"Progression"`       | A secondary progression chart overlaid on the natal chart. |
 
 ---
 
@@ -576,6 +577,8 @@ The names of all supported aspects.
 | `"biquintile"`     | 144°    | Creative aspect.                                    |
 | `"quincunx"`       | 150°    | Inconjunct; requires adjustment.                    |
 | `"opposition"`     | 180°    | Major hard aspect; polarity and awareness.          |
+| `"parallel"`       | —       | Declination aspect (v6): same declination, same side of the equator. |
+| `"contra-parallel"`| —       | Declination aspect (v6): same declination, opposite sides of the equator. |
 
 ---
 
@@ -797,17 +800,19 @@ Types of composite charts.
 | Value        | Description                                       |
 | :----------- | :------------------------------------------------ |
 | `"Midpoint"` | Chart created from midpoints of two natal charts. |
+| `"Davison"`  | Chart cast for the midpoint in time and space between two births. |
 
 ---
 
 ### `PointType`
 
-Distinguishes between celestial bodies and house cusps.
+Distinguishes between celestial bodies, house cusps, and midpoints.
 
 | Value                 | Description                           |
 | :-------------------- | :------------------------------------ |
 | `"AstrologicalPoint"` | Planets, asteroids, angles, etc.      |
 | `"House"`             | House cusps (1st through 12th house). |
+| `"Midpoint"`          | Midpoint between two points (see `MidpointFactory`). |
 
 ---
 
@@ -896,18 +901,18 @@ These models are used internally for SVG generation but exposed for advanced cus
 
 Variables passed to the Jinja2 template for rendering the SVG.
 
-| Field                         | Type                                         | Description                             |
-| :---------------------------- | :------------------------------------------- | :-------------------------------------- |
-| `viewBox`                     | `str`                                        | SVG viewbox string.                     |
-| `chart_width`, `chart_height` | `int`                                        | Dimensions of the chart.                |
-| `cx`, `cy`                    | `float`                                      | Center coordinates.                     |
-| `outer_radius`                | `int`                                        | Radius of the outer rim.                |
-| `inner_radius`                | `int`                                        | Radius of the inner wheel.              |
-| `planets_settings`            | `List[KerykeionSettingsCelestialPointModel]` | Configuration for each planet.          |
-| `paper_color_0`               | `str`                                        | Background color.                       |
-| `chart_name`                  | `str`                                        | Title of the chart.                     |
-| `chart_first_subject`         | `str`                                        | Name of the primary subject.            |
-| `makeLunarPhase`              | `str`                                        | SVG path data for the lunar phase icon. |
+| Field                                  | Type    | Description                                            |
+| :------------------------------------- | :------ | :----------------------------------------------------- |
+| `viewbox`                              | `str`   | SVG viewBox attribute value.                           |
+| `chart_width`, `chart_height`          | `float` | Dimensions of the chart in pixels.                     |
+| `stringTitle`                          | `str`   | Chart title string.                                    |
+| `paper_color_0`                        | `str`   | Font color.                                            |
+| `background_color`                     | `str`   | Dynamic background color (theme color or transparent). |
+| `planets_color_0` ... `planets_color_61` | `str` | Per-point colors (index 0 = Sun, 1 = Moon, ...).       |
+| `zodiac_color_0` ... `zodiac_color_11` | `str`   | Per-sign colors (index 0 = Aries).                     |
+| `orb_color_0` ... `orb_color_180`      | `str`   | Aspect colors keyed by aspect degrees.                 |
+| `makeZodiac`, `makeHouses`, `makePlanets`, `makeAspects` | `str` | SVG markup fragments for each chart layer. |
+| `makeLunarPhase`                       | `str`   | SVG markup for the lunar phase.                        |
 
 _(And many more styling variables)_
 

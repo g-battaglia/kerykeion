@@ -56,10 +56,10 @@ svg_string = drawer.generate_svg_string()
 
 **Output:**
 ```
-Sun: Can at 22.54°
-Moon: Sco at 15.32°
+Sun: Can at 22.61°
+Moon: Ari at 21.21°
 Ascendant: Vir
-Sun absolute position: 112.54°
+Sun absolute position: 112.61°
 ```
 
 > **`position` vs `abs_pos`**: Every celestial point has two position fields. `position` is the degree within its sign (0-30°), while `abs_pos` is the absolute ecliptic longitude (0-360°). Use `position` for display and `abs_pos` for calculations.

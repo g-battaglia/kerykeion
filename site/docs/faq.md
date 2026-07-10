@@ -194,18 +194,18 @@ lunar_return = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
 
 ## Performance & Limits
 
-### Polar Latitude Clamping
+### Polar Latitudes
 
-**Behavior:** Latitudes beyond ±66° are automatically clamped to ±66°.
+**Behavior:** The subject's latitude is never clamped in v6 — the real value is preserved in the model, in the topocentric observer, and in every house system defined at all latitudes. Only when a quadrant house system (e.g. Placidus `"P"`, Koch `"K"`) is mathematically undefined inside the polar circle do the house cusps fall back to the ±66° limit, and a warning is logged naming the system.
 
-**Reason:** Swiss Ephemeris house calculations become unstable at extreme latitudes.
+**Reason:** Quadrant house systems cannot be computed inside the polar circle; latitude-agnostic systems (Whole Sign, Equal, Porphyry, ...) have no such limit.
 
 **Recommendation:** For polar locations, use Whole Sign houses:
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Arctic Explorer", 1990, 6, 21, 12, 0,
-    lng=25.0, lat=70.0,  # Will be clamped to 66.0
+    lng=25.0, lat=70.0,  # Real latitude is preserved
     tz_str="Europe/Helsinki",
     online=False,
     houses_system_identifier="W"  # Whole Sign works at any latitude
