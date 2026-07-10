@@ -94,6 +94,11 @@ from .sign_ingresses import (
     IngressModel,
     SignIngressesCollectionModel,
 )
+from .mundane_aspects import (
+    MundaneAspectFactory,
+    MundaneAspectModel,
+    MundaneAspectsCollectionModel,
+)
 from .planetary_nodes import PlanetaryNodesFactory, PlanetaryNodeModel, PlanetaryNodesCollectionModel
 from .heliacal import HeliacalFactory, HeliacalEventModel
 from .occultations import OccultationFactory, OccultationModel
@@ -156,6 +161,8 @@ from .schemas.kr_models import (
     PlanetaryHoursModel,
     VoidOfCourseAspectModel,
     VoidOfCourseMoonModel,
+    VoidOfCourseWindowModel,
+    VoidOfCourseWindowsCollectionModel,
     DominantsModel,
     DominantScoreModel,
     DominantBreakdownItemModel,
@@ -207,6 +214,9 @@ __all__ = [
     "SignIngressFactory",
     "IngressModel",
     "SignIngressesCollectionModel",
+    "MundaneAspectFactory",
+    "MundaneAspectModel",
+    "MundaneAspectsCollectionModel",
     "PlanetaryNodesFactory",
     "PlanetaryNodeModel",
     "PlanetaryNodesCollectionModel",
@@ -270,6 +280,8 @@ __all__ = [
     "PlanetaryHoursModel",
     "VoidOfCourseAspectModel",
     "VoidOfCourseMoonModel",
+    "VoidOfCourseWindowModel",
+    "VoidOfCourseWindowsCollectionModel",
     "DominantsModel",
     "TriplicityLordsModel",
     "DominantScoreModel",

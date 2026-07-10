@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
@@ -161,6 +161,19 @@ def _ensure_scannable(start_jd: float, end_jd: float, bodies: List[tuple[str, in
 # =============================================================================
 
 
+SeasonMarker = Literal["march_equinox", "june_solstice", "september_equinox", "december_solstice"]
+
+# Sun crossing a cardinal (tropical) boundary IS the astronomical season
+# definition. Month-based names stay hemisphere-neutral — "march_equinox" is
+# spring in the north and autumn in the south; consumers localize.
+_SEASON_MARKERS: dict[float, SeasonMarker] = {
+    0.0: "march_equinox",
+    90.0: "june_solstice",
+    180.0: "september_equinox",
+    270.0: "december_solstice",
+}
+
+
 class IngressModel(SubscriptableBaseModel):
     """A single zodiac sign ingress (30° boundary crossing)."""
 
@@ -173,6 +186,13 @@ class IngressModel(SubscriptableBaseModel):
     from_sign_num: int = Field(description="Left sign number (0=Aries)")
     retrograde: bool = Field(description="True if the ingress occurs in retrograde motion")
     ecliptic_longitude: float = Field(description="The 30° boundary crossed (0-360)")
+    season_marker: Optional[SeasonMarker] = Field(
+        default=None,
+        description=(
+            "Set on Sun ingresses at the cardinal boundaries (0/90/180/270°): "
+            "the equinox/solstice this ingress marks. Hemisphere-neutral names."
+        ),
+    )
 
 
 class SignIngressesCollectionModel(SubscriptableBaseModel):
@@ -366,4 +386,7 @@ class SignIngressFactory:
             from_sign_num=from_sign_num % 12,
             retrograde=retro,
             ecliptic_longitude=round(boundary, 6),
+            # Only the Sun's cardinal crossings mark seasons; the factory is
+            # tropical-only, so the boundary IS the tropical longitude.
+            season_marker=_SEASON_MARKERS.get(boundary % 360.0) if name == "Sun" else None,
         )

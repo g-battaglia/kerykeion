@@ -89,6 +89,8 @@ from .kr_models import (
     # Void of course Moon
     VoidOfCourseAspectModel,
     VoidOfCourseMoonModel,
+    VoidOfCourseWindowModel,
+    VoidOfCourseWindowsCollectionModel,
     # Planetary phenomena
     PlanetaryPhenomenaModel,
     PlanetaryPhenomenaCollectionModel,
@@ -134,6 +136,8 @@ _FEATURE_MODEL_HOMES = {
     "RetrogradeStationsCollectionModel": "kerykeion.retrograde_stations.retrograde_station_factory",
     "IngressModel": "kerykeion.sign_ingresses.sign_ingress_factory",
     "SignIngressesCollectionModel": "kerykeion.sign_ingresses.sign_ingress_factory",
+    "MundaneAspectModel": "kerykeion.mundane_aspects.factory",
+    "MundaneAspectsCollectionModel": "kerykeion.mundane_aspects.factory",
     "MidpointModel": "kerykeion.midpoints.midpoint_factory",
     "MidpointAspectModel": "kerykeion.midpoints.midpoint_factory",
     "ProgressedToNatalAspectModel": "kerykeion.secondary_progressions.secondary_progression_factory",
@@ -162,6 +166,7 @@ if TYPE_CHECKING:  # static analyzers see the lazy re-exports as plain imports
         RetrogradeStationsCollectionModel,
     )
     from kerykeion.sign_ingresses.sign_ingress_factory import IngressModel, SignIngressesCollectionModel
+    from kerykeion.mundane_aspects.factory import MundaneAspectModel, MundaneAspectsCollectionModel
     from kerykeion.midpoints.midpoint_factory import MidpointModel, MidpointAspectModel
     from kerykeion.secondary_progressions.secondary_progression_factory import (
         ProgressedToNatalAspectModel,
@@ -278,6 +283,8 @@ __all__ = [
     # Void of course Moon (from kr_models)
     "VoidOfCourseAspectModel",
     "VoidOfCourseMoonModel",
+    "VoidOfCourseWindowModel",
+    "VoidOfCourseWindowsCollectionModel",
     # Planetary phenomena (from kr_models)
     "PlanetaryPhenomenaModel",
     "PlanetaryPhenomenaCollectionModel",
@@ -311,6 +318,8 @@ __all__ = [
     "RetrogradeStationsCollectionModel",
     "IngressModel",
     "SignIngressesCollectionModel",
+    "MundaneAspectModel",
+    "MundaneAspectsCollectionModel",
     "MidpointModel",
     "MidpointAspectModel",
     "ProgressedToNatalAspectModel",

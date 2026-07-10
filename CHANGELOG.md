@@ -98,6 +98,47 @@ dropped, including two raised by the reviewer itself.
   the stale generated pdoc tree under `docs/` (12 of its pages documented modules
   deleted in v6). It is regenerated on demand with `poe docs` and is now git-ignored.
 
+## 6.0.0a67 - 2026-07-10
+
+### Changed (6.0.0a67 — libephemeris 3.0.0rc5)
+
+- **Bumped the `libephemeris` pin to `==3.0.0rc5`** (from `==3.0.0rc3`), pulling
+  in the upstream release-candidate fixes since rc3. No kerykeion computation
+  code changed; the commit only advances the dependency floor. The pin will move
+  to the stable `3.0.0` at the 6.0.0 tag (see the `TODO` in `pyproject.toml`).
+
+## 6.0.0a66 - 2026-07-10
+
+### Added (6.0.0a66 — astrological calendar primitives)
+
+- **Mundane aspectarian** — new `MundaneAspectFactory`
+  (`kerykeion/mundane_aspects/`): every exact transiting-to-transiting aspect
+  within a date range, the content of a printed astrological calendar's
+  aspectarian. Uniform 6-hour sampling of the signed pairwise separation with
+  bisection refinement (unconditionally convergent — Newton diverges on slow
+  mutual pairs near stations), midpoint splitting for relative-motion reversals
+  inside a step, and a branch-cut guard against antipode wraps. Default scan
+  set is Sun..Pluto with the five Ptolemaic aspects; the Moon is opt-in (its
+  ~75 events/month are noise for most consumers); the full minor-aspect
+  vocabulary from the chart defaults is accepted. Aspect instants are
+  zodiac-independent (verified by a sidereal-invariance test); reported
+  longitudes/signs follow the requested zodiac. Returns
+  `MundaneAspectsCollectionModel` with per-event longitudes, signs and
+  retrograde flags.
+- **Void-of-course windows over a range** — new
+  `VoidOfCourseMoonFactory.from_iso_range`: walks the Moon sign by sign and
+  returns every VoC window intersecting the range (unclipped), each framed by
+  its opening aspect and closing ingress, as
+  `VoidOfCourseWindowsCollectionModel`. Reuses the shipped single-moment
+  Newton machinery unchanged; whole-sign voids (no aspect in the sign) are
+  reported with `last_aspect: null`.
+- **Season markers on Sun ingresses** — `IngressModel.season_marker`
+  (optional): Sun ingresses at the cardinal boundaries now carry
+  `march_equinox` / `june_solstice` / `september_equinox` /
+  `december_solstice`. Hemisphere-neutral month-based names; `None` on all
+  other ingresses. Additive and backward compatible.
+
+
 ## 6.0.0a65 - 2026-07-10
 
 ### Fixed (6.0.0a65 — zero-bug review campaign, rounds 36–47)

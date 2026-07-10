@@ -186,3 +186,25 @@ class TestIngressErrorContract:
         monkeypatch.setattr(sif.ephe, "calc_ut", flaky_calc_ut)
         with pytest.raises(KerykeionException, match=r"failed at JD "):
             SignIngressFactory.from_iso_range("2026-01-01", "2026-01-10", ["Sun"])
+
+
+class TestSeasonMarkers:
+    """Sun ingresses at cardinal boundaries carry the equinox/solstice marker."""
+
+    def test_exactly_four_markers_in_2026(self):
+        res = SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Sun"])
+        marked = [x for x in res.ingresses if x.season_marker is not None]
+        assert [(x.iso_utc[:10], x.season_marker) for x in marked] == [
+            ("2026-03-20", "march_equinox"),
+            ("2026-06-21", "june_solstice"),
+            ("2026-09-23", "september_equinox"),
+            ("2026-12-21", "december_solstice"),
+        ]
+        # The other 8 Sun ingresses are non-cardinal: no marker.
+        assert sum(1 for x in res.ingresses if x.season_marker is None) == 8
+
+    def test_markers_only_on_the_sun(self):
+        res = SignIngressFactory.from_iso_range("2023-01-01", "2024-12-31", ["Pluto"])
+        assert res.ingresses, "Pluto crossed Cap/Aqu boundaries in 2023-24"
+        # Pluto's 300° crossings are cardinal-adjacent but NOT season markers.
+        assert all(x.season_marker is None for x in res.ingresses)
