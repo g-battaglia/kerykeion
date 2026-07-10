@@ -85,3 +85,11 @@ sync-docs.sh
 
 # Build-time font cache for scripts/build_chart_glyphs.py (not redistributed)
 scripts/.glyph-cache/
+
+# Artifacts written to the repo root by doc-snippet harness runs
+/report.txt
+/alice_report.txt
+/chart_data.json
+/planetary_positions.csv
+/transit_charts/
+/*.svg

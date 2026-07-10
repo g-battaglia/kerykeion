@@ -1000,6 +1000,30 @@ class AstrologicalSubjectFactory:
                         "one other point or omit active_points."
                     )
 
+        # Geocentric-only points (lunar nodes, Lilith/apogee variants) have no
+        # meaning in non-geocentric frames; the calculation loop drops them
+        # (see _GEOCENTRIC_ONLY_BODY_IDS). Mirror the center-body pass: give
+        # the user-facing warning here instead of a silent disappearance, and
+        # reject a list that would empty out (the 'no filter' inversion).
+        if perspective_type not in _GEO_TOPO_PERSPECTIVES:
+            _geo_only_dropped = [p for p in active_points_list if p in _GEOCENTRIC_ONLY_POINT_NAMES]
+            if _geo_only_dropped:
+                logging.warning(
+                    "Excluding %s from active_points: geocentric-only points "
+                    "(lunar nodes, Lilith/apogee variants) have no meaning in "
+                    "the %r perspective.",
+                    _geo_only_dropped,
+                    perspective_type,
+                )
+                active_points_list = [p for p in active_points_list if p not in _GEOCENTRIC_ONLY_POINT_NAMES]
+                if not active_points_list:
+                    raise KerykeionException(
+                        f"active_points contained only {_geo_only_dropped}, which are "
+                        f"geocentric-only points with no meaning in the "
+                        f"{perspective_type!r} perspective. Include at least one "
+                        "other point or omit active_points."
+                    )
+
         calc_data["active_points"] = active_points_list
 
         # Initialize configuration

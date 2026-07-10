@@ -72,6 +72,7 @@ from datetime import datetime, timedelta
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import ActiveAspect, TransitEventModel, TransitEventsTimeRangeModel, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.schemas.settings_models import KerykeionSettingsModel
@@ -279,6 +280,13 @@ class TransitsTimeRangeFactory:
             [dict(a) for a in active_aspects] if active_aspects is not None else [dict(a) for a in PREDICTIVE_ACTIVE_ASPECTS],
         )
         self.settings_file = settings_file
+        # Validate up front: aspect calculation requires a positive limit, and
+        # failing there (deep inside get_transit_moments) is undiagnosable.
+        if axis_orb_limit is not None and axis_orb_limit <= 0:
+            raise KerykeionException(
+                f"axis_orb_limit must be a positive number of degrees or None "
+                f"(got {axis_orb_limit!r})."
+            )
         self.axis_orb_limit = axis_orb_limit
         self._warn_if_frame_mismatch()
         self._warn_if_unordered()

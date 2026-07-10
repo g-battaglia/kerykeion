@@ -558,3 +558,18 @@ class TestActivePointsForwarding:
             "Ceres" in record.message and "BOTH" in record.message
             for record in caplog.records
         )
+
+
+def test_axis_orb_limit_validated_up_front():
+    """axis_orb_limit=0 used to fail only deep inside get_transit_moments."""
+    from kerykeion.schemas import KerykeionException
+
+    natal = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    with pytest.raises(KerykeionException, match="axis_orb_limit"):
+        TransitsTimeRangeFactory(natal, [natal], axis_orb_limit=0.0)
+    with pytest.raises(KerykeionException, match="axis_orb_limit"):
+        TransitsTimeRangeFactory(natal, [natal], axis_orb_limit=-1.0)
