@@ -700,6 +700,14 @@ class TestFactoryFromSubjectRangeEdge:
     def test_range_end_subject_returns_model(self) -> None:
         # 2650-01-20 is inside the final synodic month before the backend range
         # end (~2650-01-25); the forward Full/quarter scans overshoot the edge.
+        # The date presumes at least the medium (DE440) kernel: on base kernels
+        # the subject itself is out of range. On extended kernels no edge is
+        # hit — the model is still returned, just without exercising the
+        # degradation path.
+        from tests.conftest import _detect_ephemeris_tier
+
+        if _detect_ephemeris_tier() == "base":
+            pytest.skip("2650 is outside the base kernel's range (1849-2150).")
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Range Edge", 2650, 1, 20, 12, 0,
             lat=41.9028, lng=12.4964, tz_str="Europe/Rome",

@@ -106,7 +106,10 @@ def localize_datetime(
     These timing factories are anchored to civil (IANA) timezones, so they operate
     on the years Python's ``datetime`` can represent (1-9999 CE). Out-of-range
     years and impossible dates (e.g. 30 February) are reported as a clean
-    ``KerykeionException`` rather than a raw ``ValueError``.
+    ``KerykeionException`` rather than a raw ``ValueError``. The very first and
+    last civil days of that range (0001-01-01 and 9999-12-31) are also
+    unsupported: timezone resolution needs to probe the surrounding day, which
+    overflows ``datetime`` there.
 
     Raises:
         KerykeionException: If the date/time is invalid or the year is unsupported.
@@ -127,6 +130,14 @@ def localize_datetime(
         return tz.localize(naive, is_dst=False)
     except NonExistentTimeError as exc:
         raise KerykeionException(f"Non-existent local time {naive!s} in timezone {tz.zone!r}: {exc}") from exc
+    except OverflowError as exc:
+        # pytz probes the wall-clock time ± 1 day to resolve DST, so the first
+        # and last civil days of the datetime range overflow inside localize.
+        raise KerykeionException(
+            f"Unsupported date/time {naive!s}: timezone resolution needs the "
+            f"surrounding civil day, which falls outside the supported range "
+            f"(1-9999 CE, excluding its first and last days)."
+        ) from exc
 
 
 def _localize_civil_midnight(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> datetime:
@@ -164,6 +175,14 @@ def _localize_civil_midnight(year: int, month: int, day: int, tz: pytz.BaseTzInf
             tz.normalize(tz.localize(naive, is_dst=False)),
             tz.normalize(tz.localize(naive, is_dst=True)),
         )
+    except OverflowError as exc:
+        # pytz probes the wall-clock time ± 1 day to resolve DST, so the first
+        # and last civil days of the datetime range overflow inside localize.
+        raise KerykeionException(
+            f"Unsupported date {naive.date()!s}: timezone resolution needs the "
+            f"surrounding civil day, which falls outside the supported range "
+            f"(1-9999 CE, excluding its first and last days)."
+        ) from exc
 
 
 def local_midnight_julian_day(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> float:

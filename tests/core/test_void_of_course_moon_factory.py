@@ -167,7 +167,17 @@ def test_invalid_timezone_raises():
 def test_range_edge_dates_raise_kerykeion_exception():
     """R23: near either end of the ephemeris the forward/backward Moon scans walk
     off the edge; the raw backend range error must be normalized to the
-    documented KerykeionException, not leak (was raw EphemerisRangeError)."""
+    documented KerykeionException, not leak (was raw EphemerisRangeError).
+
+    The probe dates sit just inside the medium (DE440) kernel's ~1550/2650
+    edges; on base kernels they are out of range outright and on extended
+    kernels the scans never leave the range, so the scenario only exists on
+    the medium kernel.
+    """
+    from tests.conftest import _detect_ephemeris_tier
+
+    if _detect_ephemeris_tier() != "medium":
+        pytest.skip("Requires the medium (DE440) kernel's range edges (~1550/2650).")
     with pytest.raises(KerykeionException, match="ephemeris range"):
         VoidOfCourseMoonFactory.from_datetime(2650, 1, 20, 12, 0, tz_str="Europe/Rome")
     with pytest.raises(KerykeionException, match="ephemeris range"):

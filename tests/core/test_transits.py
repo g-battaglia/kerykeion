@@ -417,3 +417,32 @@ class TestTransitIntegration:
 
         assert isinstance(result, TransitsTimeRangeModel)
         assert len(result.transits) == 4
+
+
+# ===========================================================================
+# Extended-year (pre-CE) ISO handling in run splitting
+# ===========================================================================
+
+
+class TestExtendedYearRunSplitting:
+    """The run splitter must compute sampling gaps on extended-year ISO
+    timestamps (e.g. ``-0499-…``), where ``datetime.fromisoformat`` raises.
+    A silent parse failure used to map every gap to 0 seconds, merging all
+    recurrences of an aspect in a pre-CE range into one event."""
+
+    def test_split_track_extended_year_iso(self):
+        factory = TransitsTimeRangeFactory.__new__(TransitsTimeRangeFactory)
+        track = [
+            ("-0499-01-01T12:00:00+00:00", 1.0, "applying"),
+            ("-0499-01-02T12:00:00+00:00", 0.5, "applying"),
+            # 44-day hole: the aspect left orb in between, so a new run starts.
+            ("-0499-02-15T12:00:00+00:00", 0.8, "separating"),
+        ]
+        runs = factory._split_track_into_runs(track, 1.0)
+        assert len(runs) == 2
+        assert runs[0] == track[:2]
+        assert runs[1] == track[2:]
+
+        # CE control: identical structure must split identically.
+        ce_track = [(d.replace("-0499", "2020"), o, m) for d, o, m in track]
+        assert len(factory._split_track_into_runs(ce_track, 1.0)) == 2

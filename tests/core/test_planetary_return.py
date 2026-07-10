@@ -1270,6 +1270,18 @@ class TestReturnSearchAtEphemerisEdge:
     normalized to KerykeionException — matching every sibling event factory,
     instead of leaking a raw backend exception through the public API."""
 
+    @pytest.fixture(autouse=True)
+    def _require_medium_kernel_edges(self):
+        # These tests hardcode the medium (DE440) range boundaries (~1550/2650
+        # and their JD equivalents). On a base kernel the natal dates are
+        # themselves out of range; on an extended kernel the searches never
+        # walk off the edge, so nothing raises. Only the medium kernel puts
+        # the edges where the scenarios need them.
+        from tests.conftest import _detect_ephemeris_tier
+
+        if _detect_ephemeris_tier() != "medium":
+            pytest.skip("Requires the medium (DE440) kernel's range edges (~1550/2650).")
+
     @pytest.mark.parametrize("return_type", ["Solar", "Lunar"])
     def test_forward_search_past_upper_edge_raises_kerykeion(self, return_type):
         # Natal just below the kernel's upper edge; the forward return search

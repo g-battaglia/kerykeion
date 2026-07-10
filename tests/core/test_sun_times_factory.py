@@ -127,6 +127,27 @@ def test_bce_year_raises_clean_exception():
         SunTimesFactory.from_date(-43, 3, 15, **ROME)
 
 
+def test_civil_range_edge_days_raise_clean_exception():
+    # pytz.localize probes the surrounding day to resolve DST, so the first and
+    # last civil days of the datetime range overflow inside localize. They must
+    # surface as a clean KerykeionException, not a raw OverflowError.
+    from kerykeion.planetary_hours import PlanetaryHoursFactory
+    from kerykeion.void_of_course_moon import VoidOfCourseMoonFactory
+
+    with pytest.raises(KerykeionException):
+        SunTimesFactory.from_date(1, 1, 1, **ROME)
+    with pytest.raises(KerykeionException):
+        SunTimesFactory.from_date(9999, 12, 31, **ROME)
+    with pytest.raises(KerykeionException):
+        PlanetaryHoursFactory.from_datetime(1, 1, 1, 0, 30, **ROME)
+    with pytest.raises(KerykeionException):
+        PlanetaryHoursFactory.from_datetime(9999, 12, 31, 23, 30, **ROME)
+    with pytest.raises(KerykeionException):
+        VoidOfCourseMoonFactory.from_datetime(1, 1, 1, 0, 30, tz_str=ROME["tz_str"])
+    with pytest.raises(KerykeionException):
+        VoidOfCourseMoonFactory.from_datetime(9999, 12, 31, 23, 30, tz_str=ROME["tz_str"])
+
+
 def test_invalid_timezone_raises():
     with pytest.raises(KerykeionException):
         SunTimesFactory.from_date(2026, 5, 28, latitude=0.0, longitude=0.0, tz_str="Not/AZone")

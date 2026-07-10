@@ -61,7 +61,11 @@ def _dms_to_decimal(match: re.Match) -> str:
     return f"{d + m / 60 + s / 3600:.6f}"
 
 
-_DMS_PATTERN = re.compile(r"(\d+)°(\d+)'(\d+)'")
+# The seconds terminator varies with the SVG context: aspect-grid orbs render
+# it as `&quot;` (XML-escaped double quote), other labels as a bare apostrophe.
+# Both must collapse to decimal degrees, or a 1-arcsecond flip between kernel
+# builds is compared as a bare integer diff of 1 and blows the 0.5 tolerance.
+_DMS_PATTERN = re.compile(r"(\d+)°(\d+)'(\d+)(?:&quot;|\"|')")
 
 
 def compare_svg_lines(

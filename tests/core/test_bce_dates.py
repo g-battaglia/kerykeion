@@ -503,6 +503,26 @@ class TestBCEChartSVG:
         baseline_lines = baseline.strip().splitlines()
         assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
 
+    def test_progression_bce_pre_1ce_gap_clamps_to_bce_branch(self):
+        """A progressed JD in the ~2-day window before 1 CE Jan 1 (proleptic
+        Gregorian) decomposes to Julian year 1, which ``from_birth_data`` would
+        reinterpret as proleptic Gregorian — silently building the chart 2 days
+        late. The factory must clamp into the BCE branch instead."""
+        from kerykeion.utilities import extract_year_from_iso
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            name="Pre-1CE Gap",
+            year=0, month=12, day=15, hour=12, minute=0,
+            lng=0.0, lat=51.48, tz_str="UTC",
+            city="Greenwich", nation="GB",
+            online=False, suppress_geonames_warning=True,
+        )
+        progressed = SecondaryProgressionFactory.compute(
+            subject, target_iso_utc_datetime="0018-01-01T00:00:00Z"
+        )
+        # Clamped to 1 BCE Dec 31 23:59:59 Julian — NOT rolled into 1 CE.
+        assert extract_year_from_iso(progressed.iso_formatted_utc_datetime) < 1
+
 
 # =============================================================================
 # HOUSE SYSTEMS WITH BCE DATES

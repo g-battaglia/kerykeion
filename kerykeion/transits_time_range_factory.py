@@ -656,12 +656,9 @@ class TransitsTimeRangeFactory:
                     orb_rate = None
                     if min_orb_idx < len(run) - 1:
                         after_date, orb_after, _ = run[min_orb_idx + 1]
-                        try:
-                            dt_days = (
-                                datetime.fromisoformat(after_date) - datetime.fromisoformat(exact_date)
-                            ).total_seconds() / 86400.0
-                        except ValueError:
-                            dt_days = 0.0
+                        # BCE-safe day arithmetic (datetime.fromisoformat rejects
+                        # extended-year ISO strings, which would null orb_rate).
+                        dt_days = _iso_to_day_number(after_date) - _iso_to_day_number(exact_date)
                         if dt_days > 0:
                             orb_rate = round((orb_after - min_orb) / dt_days, 6)
 
@@ -849,12 +846,9 @@ class TransitsTimeRangeFactory:
         runs: list[list[tuple[str, float, str]]] = []
         current_run = [track[0]]
         for previous, current in zip(track, track[1:]):
-            try:
-                gap_seconds = (
-                    datetime.fromisoformat(current[0]) - datetime.fromisoformat(previous[0])
-                ).total_seconds()
-            except ValueError:
-                gap_seconds = 0.0
+            # BCE-safe: extended-year ISO strings break datetime.fromisoformat,
+            # which would silently disable event splitting on BCE series.
+            gap_seconds = (_iso_to_day_number(current[0]) - _iso_to_day_number(previous[0])) * 86400.0
             if gap_seconds > gap_threshold_seconds:
                 runs.append(current_run)
                 current_run = [current]
