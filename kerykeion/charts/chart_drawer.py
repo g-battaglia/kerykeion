@@ -84,6 +84,7 @@ from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.charts.draw_modern import draw_modern_horoscope, draw_modern_dual_horoscope
 from kerykeion.utilities import (
     get_houses_list,
+    get_planet_house,
     inline_css_variables_in_svg,
     distribute_percentages_to_100,
     format_iso_display,
@@ -4763,6 +4764,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
 
     _GLYPH_CENTER_ATTR_RE = re.compile(r'kr:(cx|cy)="([^"]+)"')
+    _CHART_POINT_TAG_RE = re.compile(r'<g\b(?=[^>]*\bkr:node=(["\'])ChartPoint\1)[^>]*>')
+    _CHART_POINT_ID_ATTR_RE = re.compile(r'\bkr:(horoscope|absoluteposition)=(["\'])(.*?)\2')
 
     @classmethod
     def _rebase_glyph_centers(cls, svg: str, scale: float, tx: float, ty: float) -> str:
@@ -4787,6 +4790,50 @@ class ChartDrawer:  # type: ignore[no-redef]
             return f'kr:{axis}="{value * scale + offset}"'
 
         return cls._GLYPH_CENTER_ATTR_RE.sub(_sub, svg)
+
+    def _inject_projected_house_metadata(self, svg: str) -> str:
+        """Add reciprocal-house metadata to every point in a dual wheel.
+
+        ``kr:house`` remains the house in the point owner's own horoscope. The
+        additive ``kr:projectedhouse`` attribute is the house containing that
+        point in the other horoscope, while ``kr:projectedhoroscope`` identifies
+        that target ring. Computing this from the two subjects keeps the SVG
+        contract available even when optional chart-data house comparisons were
+        disabled.
+        """
+        if self.second_obj is None or not self._renderer.is_dual_wheel():
+            return svg
+
+        first_cusps = [house.abs_pos for house in get_houses_list(self.first_obj)]
+        second_cusps = [house.abs_pos for house in get_houses_list(self.second_obj)]
+        projected_by_position: dict[tuple[str, str], tuple[str, str]] = {}
+
+        for owner_ring, target_ring, points, target_cusps in (
+            ("0", "1", self.available_kerykeion_celestial_points, second_cusps),
+            ("1", "0", self.second_subject_celestial_points, first_cusps),
+        ):
+            for point in points:
+                try:
+                    projected_house = get_planet_house(point.abs_pos, target_cusps)
+                except ValueError:
+                    continue
+                projected_by_position[(owner_ring, str(point.abs_pos))] = (projected_house, target_ring)
+
+        def _annotate(match: "re.Match[str]") -> str:
+            tag = match.group(0)
+            identity = {name: value for name, _, value in self._CHART_POINT_ID_ATTR_RE.findall(tag)}
+            key = (identity.get("horoscope", "0"), identity.get("absoluteposition", ""))
+            projection = projected_by_position.get(key)
+            if projection is None:
+                return tag
+
+            projected_house, target_ring = projection
+            return (
+                f'{tag[:-1]} kr:projectedhouse="{projected_house}" '
+                f'kr:projectedhoroscope="{target_ring}">'
+            )
+
+        return self._CHART_POINT_TAG_RE.sub(_annotate, svg)
 
     def _validate_chart_style(self, style: KerykeionChartStyle) -> None:
         """Validate that the given style is a supported chart style.
@@ -4882,6 +4929,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             template = Template(raw_template).substitute(template_data)
             # Classic values are Full_Wheel-local; add the template's translate.
             template = self._rebase_glyph_centers(template, 1.0, 100.0, self._vertical_offsets["wheel"])
+
+        template = self._inject_projected_house_metadata(template)
 
         logger.debug("Template dictionary includes %s fields", len(template_data))
 
@@ -5114,6 +5163,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             # at translate(100, 50). (The modern branch is already root-space:
             # its wheel-local 100x100 frame IS the wheel-only viewBox.)
             template = self._rebase_glyph_centers(template, 1.0, 100.0, 50.0)
+
+        template = self._inject_projected_house_metadata(template)
 
         return self._apply_svg_post_processing(template, minify, remove_css_variables)
 

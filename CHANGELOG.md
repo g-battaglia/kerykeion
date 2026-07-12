@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## 6.0.0a70 - 2026-07-13
+
+### Added (6.0.0a70 — dual-chart projected-house SVG metadata)
+
+- **Dual-chart `ChartPoint` nodes now expose both house meanings.** Existing
+  `kr:house` remains the point owner's own house, preserving the SVG contract
+  for consumers that display both subjects' domifications. New
+  `kr:projectedhouse` reports the same point in the other subject's house
+  system, while `kr:projectedhoroscope` identifies that target ring (`0` or
+  `1`). The metadata is emitted for both rings of every dual chart type:
+  Transit, Synastry, DualReturnChart (including solar and lunar returns), and
+  Progression. It is present in classic and modern wheels, full and wheel-only
+  SVGs, and is calculated directly from the reciprocal cusps even when optional
+  house-comparison tables are disabled. No visual geometry or existing
+  attribute changed.
+
 ## 6.0.0a69 - 2026-07-12
 
 ### Added (6.0.0a69 — sidereal mundane event finders)

@@ -18,6 +18,8 @@ pin that contract for both chart styles:
 - ``kr:cx`` / ``kr:cy`` are in SVG-root user space in EVERY output template
   (full chart and wheel-only, both styles).
 - Gauquelin: ChartPoint carries ``kr:gauquelinsector`` in both styles.
+- Dual charts: ChartPoint retains the owner's ``kr:house`` and also carries
+  reciprocal ``kr:projectedhouse`` / ``kr:projectedhoroscope`` metadata.
 """
 
 import re
@@ -25,6 +27,8 @@ import re
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.secondary_progressions import SecondaryProgressionFactory
 
 
 # =============================================================================
@@ -79,6 +83,32 @@ def transit_chart_data(john_lennon, paul_mccartney):
     return ChartDataFactory.create_transit_chart_data(john_lennon, paul_mccartney)
 
 
+@pytest.fixture(
+    scope="module",
+    params=["Transit", "Synastry", "SolarReturn", "LunarReturn", "Progression"],
+)
+def all_dual_chart_data(request, john_lennon, paul_mccartney):
+    if request.param == "Transit":
+        return ChartDataFactory.create_transit_chart_data(john_lennon, paul_mccartney)
+    if request.param == "Synastry":
+        return ChartDataFactory.create_synastry_chart_data(john_lennon, paul_mccartney)
+    if request.param in {"SolarReturn", "LunarReturn"}:
+        return_factory = PlanetaryReturnFactory(
+            john_lennon,
+            lng=-2.9833,
+            lat=53.4,
+            tz_str="Europe/London",
+            online=False,
+        )
+        return_subject = return_factory.next_return_from_iso_formatted_time(
+            "2025-01-09T18:30:00+01:00",
+            return_type="Solar" if request.param == "SolarReturn" else "Lunar",
+        )
+        return ChartDataFactory.create_return_chart_data(john_lennon, return_subject)
+    progressed = SecondaryProgressionFactory.compute(john_lennon, target_year=2000)
+    return ChartDataFactory.create_progression_chart_data(john_lennon, progressed)
+
+
 @pytest.fixture(scope="module")
 def gauquelin_chart_data():
     subject = AstrologicalSubjectFactory.from_birth_data(
@@ -128,6 +158,52 @@ class TestModernHouseOwnerAttributes:
             attrs = _node_attrs(svg, node)
             assert len(attrs) == 12, node
             assert all(_attr(a, "horoscope") == "0" for a in attrs), node
+
+
+# =============================================================================
+# Dual-chart owner/projected-house metadata (all dual types, both styles)
+# =============================================================================
+
+
+class TestDualChartHouseMetadata:
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    @pytest.mark.parametrize("output_method", ["generate_svg_string", "generate_wheel_only_svg_string"])
+    def test_chartpoints_expose_owner_and_reciprocal_houses(self, all_dual_chart_data, style, output_method):
+        drawer = ChartDrawer(chart_data=all_dual_chart_data, style=style)
+        svg = _svg(getattr(drawer, output_method))
+        chartpoints = {
+            (_attr(attrs, "horoscope"), _attr(attrs, "absoluteposition")): attrs
+            for attrs in _node_attrs(svg, "ChartPoint")
+        }
+        comparison = all_dual_chart_data.house_comparison
+        assert comparison is not None
+
+        ring_comparisons = (
+            ("0", "1", all_dual_chart_data.first_subject, comparison.first_points_in_second_houses),
+            ("1", "0", all_dual_chart_data.second_subject, comparison.second_points_in_first_houses),
+        )
+        for owner_ring, projected_ring, owner, points in ring_comparisons:
+            assert points
+            for point in points:
+                owner_point = getattr(owner, point.point_name.lower())
+                attrs = chartpoints[(owner_ring, str(owner_point.abs_pos))]
+                assert _attr(attrs, "house") == point.point_owner_house_name
+                assert _attr(attrs, "projectedhouse") == point.projected_house_name
+                assert _attr(attrs, "projectedhoroscope") == projected_ring
+
+    def test_metadata_does_not_require_house_comparison_payload(self, john_lennon, paul_mccartney):
+        chart_data = ChartDataFactory.create_transit_chart_data(
+            john_lennon,
+            paul_mccartney,
+            include_house_comparison=False,
+        )
+        assert chart_data.house_comparison is None
+
+        svg = _svg(ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string)
+        points = _node_attrs(svg, "ChartPoint")
+        assert points
+        assert all(_attr(attrs, "projectedhouse") is not None for attrs in points)
+        assert {_attr(attrs, "projectedhoroscope") for attrs in points} == {"0", "1"}
 
 
 # =============================================================================
