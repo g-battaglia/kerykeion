@@ -26,7 +26,10 @@ def main() -> int:
         ("lint", ["ruff", "check"]),
         ("analyze", ["mypy"]),
         ("typecheck", ["pyright"]),
-        ("test", ["pytest", "--tb=no", "-q"]),
+        # -m "not online": every poe test:* task excludes the network-bound
+        # geonames tests, but pytest's addopts do not — without this the local
+        # quality gate silently depends on GeoNames being reachable.
+        ("test", ["pytest", "--tb=no", "-q", "-m", "not online"]),
     ]
 
     results = []

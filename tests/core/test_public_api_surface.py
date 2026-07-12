@@ -148,6 +148,35 @@ def test_get_type_hints_resolves_on_every_public_model():
     assert not failures, f"get_type_hints failures: {failures}"
 
 
+def test_get_type_hints_resolves_on_every_public_callable():
+    """Rule 4, extended to CALLABLES — a FastAPI app introspects factory methods,
+    not just models, and ``test_factory_return_models_are_top_level_exports``
+    deliberately swallows NameError, so a broken forward ref on a public method's
+    signature would slip past every other test here.
+
+    Scoped to kerykeion-owned callables: pydantic's own inherited deprecated
+    methods (``copy``/``parse_file``/``parse_raw``/``model_rebuild``) reference
+    names like ``AbstractSetIntStr`` that only resolve inside pydantic and are
+    not our contract.
+    """
+    failures = []
+    for export_name in sorted(kerykeion.__all__):
+        exported = getattr(kerykeion, export_name)
+        if not inspect.isclass(exported):
+            continue
+        for member_name, member in inspect.getmembers(exported, callable):
+            if member_name.startswith("_"):
+                continue
+            function = inspect.unwrap(getattr(member, "__func__", member))
+            if not getattr(function, "__module__", "").startswith("kerykeion"):
+                continue
+            try:
+                typing.get_type_hints(function)
+            except Exception as error:  # noqa: BLE001 — collect all at once
+                failures.append(f"{export_name}.{member_name}: {type(error).__name__}: {error}")
+    assert not failures, f"get_type_hints failures on public callables: {failures}"
+
+
 def test_public_model_names_end_with_model_suffix():
     """Rule 5 — naming convention (ActiveAspect is a TypedDict, not collected)."""
     offenders = sorted(name for name in PUBLIC_MODELS if not name.endswith("Model"))

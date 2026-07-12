@@ -617,12 +617,16 @@ class TestChartDrawerBasic:
     def test_chart_drawer_save_svg_method(self):
         chart = ChartDrawer(self.chart_data)
         with tempfile.TemporaryDirectory() as temp_dir:
-            output_path = os.path.join(temp_dir, "test_chart.svg")
-            try:
-                chart.save_svg(output_path)
-                assert os.path.exists(output_path)
-            except Exception:
-                assert hasattr(chart, "save_svg")
+            # save_svg takes the output DIRECTORY, not a file path, and derives the
+            # filename itself. The previous version of this test passed a file path,
+            # so save_svg raised KerykeionException every time and the
+            # `except Exception: assert hasattr(chart, "save_svg")` fallback hid it.
+            chart.save_svg(temp_dir, filename="test_chart")
+            written_path = Path(temp_dir) / "test_chart.svg"
+            assert written_path.exists(), f"save_svg wrote nothing; dir holds {os.listdir(temp_dir)}"
+            written = written_path.read_text(encoding="utf-8")
+            assert written.strip(), "save_svg wrote an empty file"
+            assert "<svg" in written
 
     def test_chart_drawer_error_handling(self):
         chart = ChartDrawer(self.chart_data, theme=None)
@@ -1709,6 +1713,7 @@ class TestChartOptions:
         svg = ChartDrawer(data).generate_svg_string()
         compare_chart_svg("Antarctic Subject - Natal Chart.svg", svg)
 
+    @pytest.mark.extended
     def test_historical_date(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
             "Historical Subject",

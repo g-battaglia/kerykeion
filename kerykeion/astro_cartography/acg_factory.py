@@ -132,6 +132,15 @@ class AstroCartographyFactory:
             )
 
         jd = subject.julian_day
+        # A midpoint composite subject carries julian_day=None (it is a synthetic
+        # blend of two charts, not a single instant). Without this guard the None
+        # flows into the JD arithmetic below and surfaces as a cryptic
+        # "'<' not supported between float and NoneType" from deep inside skyfield.
+        if jd is None:
+            raise KerykeionException(
+                "Subject is missing Julian Day - astro-cartography needs a single birth "
+                "instant and cannot be computed for a midpoint composite subject."
+            )
 
         # Keep only planets that are both supported and present on the
         # subject (mirrors the subject's active points selection). De-duplicate

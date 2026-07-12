@@ -54,8 +54,8 @@ Runtime dependencies (installed from PyPI, not bundled in this package)
 Kerykeion installs the following packages at runtime. They are NOT vendored
 into this package; their licenses are listed here as a courtesy.
 
-  libephemeris         AGPL-3.0-only — default ephemeris backend; dual-licensed,
-                       a commercial grant is available from the same maintainer
+  libephemeris         Apache-2.0 — default ephemeris backend (maintained by the
+                       same author); its NOTICE must travel with redistributions
   pydantic             MIT
   svg-polish           Apache-2.0 (maintained by the same author)
   requests             Apache-2.0

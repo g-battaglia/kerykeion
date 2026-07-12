@@ -191,35 +191,35 @@ Johnny Depp — Solar Return Comparison 2024
 +Johnny Depp cusps in Johnny Depp Solar Return houses+------+--------+
 | Point                        | Projected House     | Sign | Degree |
 +------------------------------+---------------------+------+--------+
-| Johnny Depp – First House    | 3 (Third_House)     | Aqu  | 20.70° |
-| Johnny Depp – Second House   | 5 (Fifth_House)     | Ari  | 6.64°  |
-| Johnny Depp – Third House    | 6 (Sixth_House)     | Tau  | 11.22° |
-| Johnny Depp – Fourth House   | 7 (Seventh_House)   | Gem  | 6.59°  |
-| Johnny Depp – Fifth House    | 8 (Eighth_House)    | Gem  | 28.34° |
-| Johnny Depp – Sixth House    | 8 (Eighth_House)    | Can  | 20.99° |
-| Johnny Depp – Seventh House  | 9 (Ninth_House)     | Leo  | 20.70° |
-| Johnny Depp – Eighth House   | 11 (Eleventh_House) | Lib  | 6.64°  |
-| Johnny Depp – Ninth House    | 12 (Twelfth_House)  | Sco  | 11.22° |
-| Johnny Depp – Tenth House    | 1 (First_House)     | Sag  | 6.59°  |
-| Johnny Depp – Eleventh House | 2 (Second_House)    | Sag  | 28.34° |
-| Johnny Depp – Twelfth House  | 2 (Second_House)    | Cap  | 20.99° |
+| Johnny Depp – First House    | 3 (Third House)     | Aqu  | 20.70° |
+| Johnny Depp – Second House   | 5 (Fifth House)     | Ari  | 6.64°  |
+| Johnny Depp – Third House    | 6 (Sixth House)     | Tau  | 11.22° |
+| Johnny Depp – Fourth House   | 7 (Seventh House)   | Gem  | 6.59°  |
+| Johnny Depp – Fifth House    | 8 (Eighth House)    | Gem  | 28.34° |
+| Johnny Depp – Sixth House    | 8 (Eighth House)    | Can  | 20.99° |
+| Johnny Depp – Seventh House  | 9 (Ninth House)     | Leo  | 20.70° |
+| Johnny Depp – Eighth House   | 11 (Eleventh House) | Lib  | 6.64°  |
+| Johnny Depp – Ninth House    | 12 (Twelfth House)  | Sco  | 11.22° |
+| Johnny Depp – Tenth House    | 1 (First House)     | Sag  | 6.59°  |
+| Johnny Depp – Eleventh House | 2 (Second House)    | Sag  | 28.34° |
+| Johnny Depp – Twelfth House  | 2 (Second House)    | Cap  | 20.99° |
 +------------------------------+---------------------+------+--------+
 
 +Johnny Depp Solar Return cusps in Johnny Depp houses------------+------+--------+
 | Point                                     | Projected House    | Sign | Degree |
 +-------------------------------------------+--------------------+------+--------+
-| Johnny Depp Solar Return – First House    | 9 (Ninth_House)    | Sco  | 20.42° |
-| Johnny Depp Solar Return – Second House   | 10 (Tenth_House)   | Sag  | 20.41° |
-| Johnny Depp Solar Return – Third House    | 12 (Twelfth_House) | Cap  | 24.68° |
-| Johnny Depp Solar Return – Fourth House   | 1 (First_House)    | Pis  | 0.36°  |
-| Johnny Depp Solar Return – Fifth House    | 1 (First_House)    | Ari  | 2.39°  |
-| Johnny Depp Solar Return – Sixth House    | 2 (Second_House)   | Ari  | 28.68° |
-| Johnny Depp Solar Return – Seventh House  | 3 (Third_House)    | Tau  | 20.42° |
-| Johnny Depp Solar Return – Eighth House   | 4 (Fourth_House)   | Gem  | 20.41° |
-| Johnny Depp Solar Return – Ninth House    | 6 (Sixth_House)    | Can  | 24.68° |
-| Johnny Depp Solar Return – Tenth House    | 7 (Seventh_House)  | Vir  | 0.36°  |
-| Johnny Depp Solar Return – Eleventh House | 7 (Seventh_House)  | Lib  | 2.39°  |
-| Johnny Depp Solar Return – Twelfth House  | 8 (Eighth_House)   | Lib  | 28.68° |
+| Johnny Depp Solar Return – First House    | 9 (Ninth House)    | Sco  | 20.42° |
+| Johnny Depp Solar Return – Second House   | 10 (Tenth House)   | Sag  | 20.41° |
+| Johnny Depp Solar Return – Third House    | 12 (Twelfth House) | Cap  | 24.68° |
+| Johnny Depp Solar Return – Fourth House   | 1 (First House)    | Pis  | 0.36°  |
+| Johnny Depp Solar Return – Fifth House    | 1 (First House)    | Ari  | 2.39°  |
+| Johnny Depp Solar Return – Sixth House    | 2 (Second House)   | Ari  | 28.68° |
+| Johnny Depp Solar Return – Seventh House  | 3 (Third House)    | Tau  | 20.42° |
+| Johnny Depp Solar Return – Eighth House   | 4 (Fourth House)   | Gem  | 20.41° |
+| Johnny Depp Solar Return – Ninth House    | 6 (Sixth House)    | Can  | 24.68° |
+| Johnny Depp Solar Return – Tenth House    | 7 (Seventh House)  | Vir  | 0.36°  |
+| Johnny Depp Solar Return – Eleventh House | 7 (Seventh House)  | Lib  | 2.39°  |
+| Johnny Depp Solar Return – Twelfth House  | 8 (Eighth House)   | Lib  | 28.68° |
 +-------------------------------------------+--------------------+------+--------+
 
 +Active Celestial Points-----+

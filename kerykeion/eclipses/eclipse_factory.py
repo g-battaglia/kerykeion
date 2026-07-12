@@ -172,10 +172,11 @@ def _solar_gamma_duration(jd: float) -> dict:
 
     ``sol_eclipse_max_time`` returns ``(jd_max, gamma)`` in global mode (gamma in
     Earth radii); ``calc_solar_eclipse_duration`` returns the duration of the
-    central (total/annular) phase across the Earth's surface in minutes -- the
-    global span of the central shadow path from first to last contact with
-    Earth, NOT the totality duration at any single place (which is only a few
-    minutes). 0.0 for partial eclipses.
+    central (total/annular) phase in minutes AT THE POINT OF GREATEST ECLIPSE --
+    the local totality/annularity duration there, only a few minutes, NOT the
+    global span of the shadow path across the Earth (which lasts hours).
+    Verified against the 2027-08-02 total eclipse: 6.42 min, matching its
+    published maximum totality of 6m23s. 0.0 for partial eclipses.
     """
     out: dict = {}
     gamma_fn = getattr(ephe, "sol_eclipse_max_time", None)
@@ -242,7 +243,7 @@ class SolarEclipseModel(SubscriptableBaseModel):
     saros: Optional[int] = Field(default=None, description="Saros series number (None on the swisseph backend or when the eclipse is absent from the catalog tables)")
     inex: Optional[int] = Field(default=None, description="Inex series number. Currently always None: libephemeris <= 2.0.2 get_inex_number lacks a residual threshold and returns nearest-series values for arbitrary eclipses; the field is reserved until a trustworthy source is available")
     gamma: Optional[float] = Field(default=None, description="Gamma: shadow-axis distance from Earth's centre (Earth radii)")
-    duration_minutes: Optional[float] = Field(default=None, description="Duration of the central (total/annular) phase across the Earth's surface in minutes (global central-path span, not the local totality duration at one place); None if partial")
+    duration_minutes: Optional[float] = Field(default=None, description="Duration of the central (total/annular) phase in minutes, at the point of greatest eclipse — i.e. the local totality/annularity duration there, not the global span of the shadow path across the Earth; None if partial")
 
 
 class LunarEclipseModel(SubscriptableBaseModel):

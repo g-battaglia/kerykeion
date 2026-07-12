@@ -110,6 +110,7 @@ class TestIngressApi:
         with pytest.raises(ValueError):
             SignIngressFactory.from_iso_range("0001-01-01", "3000-01-01")
 
+    @pytest.mark.extended
     def test_bce_range_via_julian_day(self):
         # The BCE range Kerykeion supports must not crash on JD->ISO conversion
         # (Python datetime caps at year 1). Year -100 has 12 solar ingresses.

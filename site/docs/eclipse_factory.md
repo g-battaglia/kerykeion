@@ -75,8 +75,8 @@ print(f"Found {len(global_results.lunar_eclipses)} lunar eclipses")
 | `type`         | str            | Eclipse type: total, annular, partial, annular-total |
 | `maximum_jd`   | float          | Julian Day of maximum eclipse              |
 | `datestamp`     | str            | ISO 8601 formatted datetime of maximum     |
-| `magnitude`    | float          | Fraction of solar diameter covered          |
-| `obscuration`  | float          | Fraction of solar disk area covered         |
+| `magnitude`    | float or None          | Fraction of solar diameter covered          |
+| `obscuration`  | float or None          | Fraction of solar disk area covered         |
 | `sun_altitude` | float or None  | Sun altitude at maximum (degrees)          |
 
 ### `LunarEclipseModel`

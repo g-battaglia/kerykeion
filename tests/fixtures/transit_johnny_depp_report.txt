@@ -192,35 +192,35 @@ Johnny Depp — Transit 1940-10-09
 +Johnny Depp cusps in John Lennon houses-------------+------+--------+
 | Point                        | Projected House     | Sign | Degree |
 +------------------------------+---------------------+------+--------+
-| Johnny Depp – First House    | 11 (Eleventh_House) | Aqu  | 20.70° |
-| Johnny Depp – Second House   | 12 (Twelfth_House)  | Ari  | 6.64°  |
-| Johnny Depp – Third House    | 1 (First_House)     | Tau  | 11.22° |
-| Johnny Depp – Fourth House   | 2 (Second_House)    | Gem  | 6.59°  |
-| Johnny Depp – Fifth House    | 3 (Third_House)     | Gem  | 28.34° |
-| Johnny Depp – Sixth House    | 4 (Fourth_House)    | Can  | 20.99° |
-| Johnny Depp – Seventh House  | 5 (Fifth_House)     | Leo  | 20.70° |
-| Johnny Depp – Eighth House   | 6 (Sixth_House)     | Lib  | 6.64°  |
-| Johnny Depp – Ninth House    | 7 (Seventh_House)   | Sco  | 11.22° |
-| Johnny Depp – Tenth House    | 8 (Eighth_House)    | Sag  | 6.59°  |
-| Johnny Depp – Eleventh House | 9 (Ninth_House)     | Sag  | 28.34° |
-| Johnny Depp – Twelfth House  | 10 (Tenth_House)    | Cap  | 20.99° |
+| Johnny Depp – First House    | 11 (Eleventh House) | Aqu  | 20.70° |
+| Johnny Depp – Second House   | 12 (Twelfth House)  | Ari  | 6.64°  |
+| Johnny Depp – Third House    | 1 (First House)     | Tau  | 11.22° |
+| Johnny Depp – Fourth House   | 2 (Second House)    | Gem  | 6.59°  |
+| Johnny Depp – Fifth House    | 3 (Third House)     | Gem  | 28.34° |
+| Johnny Depp – Sixth House    | 4 (Fourth House)    | Can  | 20.99° |
+| Johnny Depp – Seventh House  | 5 (Fifth House)     | Leo  | 20.70° |
+| Johnny Depp – Eighth House   | 6 (Sixth House)     | Lib  | 6.64°  |
+| Johnny Depp – Ninth House    | 7 (Seventh House)   | Sco  | 11.22° |
+| Johnny Depp – Tenth House    | 8 (Eighth House)    | Sag  | 6.59°  |
+| Johnny Depp – Eleventh House | 9 (Ninth House)     | Sag  | 28.34° |
+| Johnny Depp – Twelfth House  | 10 (Tenth House)    | Cap  | 20.99° |
 +------------------------------+---------------------+------+--------+
 
 +John Lennon cusps in Johnny Depp houses-------------+------+--------+
 | Point                        | Projected House     | Sign | Degree |
 +------------------------------+---------------------+------+--------+
-| John Lennon – First House    | 2 (Second_House)    | Ari  | 19.71° |
-| John Lennon – Second House   | 3 (Third_House)     | Tau  | 29.52° |
-| John Lennon – Third House    | 4 (Fourth_House)    | Gem  | 20.22° |
-| John Lennon – Fourth House   | 5 (Fifth_House)     | Can  | 7.06°  |
-| John Lennon – Fifth House    | 6 (Sixth_House)     | Can  | 25.30° |
-| John Lennon – Sixth House    | 7 (Seventh_House)   | Leo  | 22.09° |
-| John Lennon – Seventh House  | 8 (Eighth_House)    | Lib  | 19.71° |
-| John Lennon – Eighth House   | 9 (Ninth_House)     | Sco  | 29.52° |
-| John Lennon – Ninth House    | 10 (Tenth_House)    | Sag  | 20.22° |
-| John Lennon – Tenth House    | 11 (Eleventh_House) | Cap  | 7.06°  |
-| John Lennon – Eleventh House | 12 (Twelfth_House)  | Cap  | 25.30° |
-| John Lennon – Twelfth House  | 1 (First_House)     | Aqu  | 22.09° |
+| John Lennon – First House    | 2 (Second House)    | Ari  | 19.71° |
+| John Lennon – Second House   | 3 (Third House)     | Tau  | 29.52° |
+| John Lennon – Third House    | 4 (Fourth House)    | Gem  | 20.22° |
+| John Lennon – Fourth House   | 5 (Fifth House)     | Can  | 7.06°  |
+| John Lennon – Fifth House    | 6 (Sixth House)     | Can  | 25.30° |
+| John Lennon – Sixth House    | 7 (Seventh House)   | Leo  | 22.09° |
+| John Lennon – Seventh House  | 8 (Eighth House)    | Lib  | 19.71° |
+| John Lennon – Eighth House   | 9 (Ninth House)     | Sco  | 29.52° |
+| John Lennon – Ninth House    | 10 (Tenth House)    | Sag  | 20.22° |
+| John Lennon – Tenth House    | 11 (Eleventh House) | Cap  | 7.06°  |
+| John Lennon – Eleventh House | 12 (Twelfth House)  | Cap  | 25.30° |
+| John Lennon – Twelfth House  | 1 (First House)     | Aqu  | 22.09° |
 +------------------------------+---------------------+------+--------+
 
 +Active Celestial Points-----+

@@ -37,11 +37,36 @@ def _join_with_shared_deadline(threads: list, total_seconds: float) -> list:
     return [t for t in threads if t.is_alive()]
 
 
+def _deadline_for(measured_unit_seconds: float, units: int, slack: float = 4.0) -> float:
+    """Scale the deadline to the machine, instead of hardcoding a wall-clock budget.
+
+    Every factory call here serializes on ``EPHEMERIS_LOCK``, so total runtime is
+    ``units * cost_of_one_unit`` — a quantity that varies by an order of magnitude
+    between a warm suite (the ephemeris session is already loaded) and a cold
+    single-test run, and again under a fully loaded xdist pool.
+
+    A hardcoded 300s budget sat only ~15% above the real cost of this workload, so
+    the test failed whenever the machine was busy — a timing flake dressed up as a
+    concurrency failure. The deadline only exists to turn a genuine deadlock into a
+    loud failure instead of a hung suite, so it should be generous in absolute terms
+    and proportional to the measured cost of the work. The upper cap keeps a real
+    deadlock from stalling the suite for the better part of an hour.
+    """
+    return min(1200.0, max(300.0, measured_unit_seconds * units * slack))
+
+
 def test_tropical_and_sidereal_do_not_corrupt_each_other_under_threads():
+    iterations, thread_count = 5, 8
+
+    # Time the baselines: one tropical + one sidereal call is exactly the unit of
+    # work each worker iteration repeats, so it calibrates the deadline below.
+    unit_started = time.monotonic()
     base_trop = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 9, 0, tz_str="Europe/Rome")
     base_sid = VoidOfCourseMoonFactory.from_datetime(
         2026, 6, 1, 9, 0, tz_str="Europe/Rome", zodiac_type="Sidereal", sidereal_mode="LAHIRI"
     )
+    unit_seconds = time.monotonic() - unit_started
+
     # The ayanamsha must actually move the Moon into a different sign, otherwise
     # the test could pass even if the lock were broken.
     assert base_trop.moon_sign != base_sid.moon_sign
@@ -50,10 +75,7 @@ def test_tropical_and_sidereal_do_not_corrupt_each_other_under_threads():
 
     def worker() -> None:
         try:
-            # 5 iterations keep the workload well under the join deadline even
-            # under xdist load (15 iterations measured ~117s on an idle
-            # machine, within 3% of the old 120s budget — a flake by design).
-            for _ in range(5):
+            for _ in range(iterations):
                 trop = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 9, 0, tz_str="Europe/Rome")
                 sid = VoidOfCourseMoonFactory.from_datetime(
                     2026, 6, 1, 9, 0, tz_str="Europe/Rome", zodiac_type="Sidereal", sidereal_mode="LAHIRI"
@@ -66,13 +88,17 @@ def test_tropical_and_sidereal_do_not_corrupt_each_other_under_threads():
         except Exception as exc:  # pragma: no cover - any raise is a failure
             errors.append(repr(exc))
 
-    threads = [threading.Thread(target=worker) for _ in range(8)]
+    threads = [threading.Thread(target=worker) for _ in range(thread_count)]
     for thread in threads:
         thread.start()
     # Threads still alive after the shared deadline mean a deadlock/hang in the
     # shared ephemeris session — fail loudly instead of blocking the suite.
-    still_alive = _join_with_shared_deadline(threads, total_seconds=300)
-    assert not still_alive, f"{len(still_alive)} worker thread(s) did not finish within the timeout"
+    budget = _deadline_for(unit_seconds, iterations * thread_count)
+    still_alive = _join_with_shared_deadline(threads, total_seconds=budget)
+    assert not still_alive, (
+        f"{len(still_alive)} worker thread(s) did not finish within {budget:.0f}s "
+        f"(one tropical+sidereal pair measured {unit_seconds:.2f}s)"
+    )
 
     assert not errors, errors
 
@@ -82,17 +108,22 @@ def test_event_scan_factories_match_single_threaded_baselines_under_threads():
     backend calls; run them on many threads interleaved with sidereal work and
     assert every thread reproduces the single-threaded baseline exactly — i.e.
     no concurrent session (sidereal mode, path reset) bleeds into a scan."""
+    iterations, thread_count = 3, 8
+
+    # The three baseline scans are one worker iteration's worth of scan work.
+    unit_started = time.monotonic()
     base_lun = LunationFinderFactory.from_iso_range("2026-06-01", "2026-06-30").model_dump()
     base_ecl = EclipseFactory.search_global(start_year=2026, count=2).model_dump()
     base_ing = SignIngressFactory.from_iso_range(
         "2026-06-01", "2026-06-30", planets=["Sun", "Mars"]
     ).model_dump()
+    unit_seconds = time.monotonic() - unit_started
 
     errors: list[str] = []
 
     def worker() -> None:
         try:
-            for _ in range(3):
+            for _ in range(iterations):
                 # Sidereal work creates real contention: it mutates the global
                 # sidereal mode inside its own session.
                 VoidOfCourseMoonFactory.from_datetime(
@@ -113,12 +144,16 @@ def test_event_scan_factories_match_single_threaded_baselines_under_threads():
         except Exception as exc:  # pragma: no cover - any raise is a failure
             errors.append(repr(exc))
 
-    threads = [threading.Thread(target=worker) for _ in range(8)]
+    threads = [threading.Thread(target=worker) for _ in range(thread_count)]
     for thread in threads:
         thread.start()
     # Threads still alive after the shared deadline mean a deadlock/hang in the
     # shared ephemeris session — fail loudly instead of blocking the suite.
-    still_alive = _join_with_shared_deadline(threads, total_seconds=300)
-    assert not still_alive, f"{len(still_alive)} worker thread(s) did not finish within the timeout"
+    budget = _deadline_for(unit_seconds, iterations * thread_count)
+    still_alive = _join_with_shared_deadline(threads, total_seconds=budget)
+    assert not still_alive, (
+        f"{len(still_alive)} worker thread(s) did not finish within {budget:.0f}s "
+        f"(one scan triple measured {unit_seconds:.2f}s)"
+    )
 
     assert not errors, errors

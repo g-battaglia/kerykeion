@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-### Added (6.0.0a67 — sidereal mundane event finders)
+## 6.0.0a69 - 2026-07-12
+
+### Added (6.0.0a69 — sidereal mundane event finders)
 
 - **Sidereal support for the mundane event finders** — `SignIngressFactory`,
   `LunationFinderFactory`, `RetrogradeStationFactory` and `EclipseFactory` now
@@ -22,7 +24,7 @@
   ingress. All additive: the two new kwargs default to the previous tropical
   behavior, and no existing signature or model field changed.
 
-### Changed (6.0.0a67 — void-of-course range normalization)
+### Changed (6.0.0a69 — void-of-course range normalization)
 
 - **`VoidOfCourseMoonFactory.from_iso_range` now normalizes civil-range
   overflow to `KerykeionException`.** Near the year-1 boundary the sign-by-sign
@@ -33,7 +35,9 @@
   normalizes them to `KerykeionException` with the same "narrow the date range"
   message the single-moment `from_datetime` path already uses.
 
-### Added (6.0.0a66 — astrological calendar primitives)
+## 6.0.0a68 - 2026-07-11
+
+### Added (astrological calendar primitives)
 
 - **Mundane aspectarian** — new `MundaneAspectFactory`
   (`kerykeion/mundane_aspects/`): every exact transiting-to-transiting aspect
@@ -62,12 +66,134 @@
   `december_solstice`. Hemisphere-neutral month-based names; `None` on all
   other ingresses. Additive and backward compatible.
 
-### Changed (6.0.0a67 — libephemeris 3.0.0rc5)
+### Changed (6.0.0a68 — backend repinned rc3 → rc6, golden fixtures regenerated)
 
-- **Bumped the `libephemeris` pin to `==3.0.0rc5`** (from `==3.0.0rc3`), pulling
-  in the upstream release-candidate fixes since rc3. No kerykeion computation
-  code changed; the commit only advances the dependency floor. The pin will move
-  to the stable `3.0.0` at the 6.0.0 tag (see the `TODO` in `pyproject.toml`).
+Default backend repinned `libephemeris==3.0.0rc3` → `==3.0.0rc6` (the tagged
+`6.0.0a67` intermediate pin to `rc5` is superseded; `rc5` and `rc6` are
+numerically identical — `rc6` is a provenance/independence release — so the
+effective trajectory is `rc3 → rc6`). No public API change; both upstream test
+backends green at 16024 each.
+
+- **Reference-frame transforms refined ~1.5″ across rc3 → rc6.** Sidereal
+  fixed-reference modes (`J1900`/`J2000`/`B1950`) and the heliocentric /
+  topocentric / true-geocentric perspectives moved closer to Swiss Ephemeris.
+  Spot-check, John Lennon Moon sidereal `J2000`: `rc6` 304.37271839 is 0.17″
+  off Swiss; the previous rc3 fixture 304.37313858 was 1.69″ off — `rc6` is
+  ~10× closer, the fixture carried the *less* accurate value.
+- **Golden position fixtures regenerated on rc6.** All 41 sidereal-mode and 3
+  non-default-perspective expected-position fixtures (23 files). The 8
+  tolerance failures the repin surfaced (Moon/Mercury/Pluto, frame-transform
+  paths, sub-arcsecond) are resolved; suite green at 9689 passed.
+- **SVG chart baselines unchanged.** A ~1.5″ shift is far below rendering
+  precision, so every chart baseline is byte-identical and all chart tests
+  stay green without regeneration.
+
+### Fixed (6.0.0a68)
+
+- **`test_defaults_to_current_time_when_none` compared against the wrong
+  timezone.** `AstrologicalSubjectFactory.from_birth_data` resolves "now" in
+  the subject's own timezone (`Etc/GMT` = UTC for the test subject); the
+  assertion used naive `datetime.now()` (local), so it failed whenever the
+  local day differed from the UTC day near midnight in a non-UTC timezone —
+  silently green on UTC CI. It now compares against `datetime.now(timezone.utc)`.
+
+### Fixed (fresh full-codebase review, round 48)
+
+A from-scratch review that deliberately ignored every previous round's "clean"
+verdict. 48 finders, three adversarial skeptics per finding, then an execution
+proof for each survivor: a reproduction script, or a mutation test showing the
+suite stayed green without it. Findings that could not be reproduced were
+dropped, including two raised by the reviewer itself.
+
+- **Rendering regressions were silently skipped, not failed.** Five
+  baseline-comparison tests in `test_chart_parametrized.py` wrapped the
+  comparison in `except Exception -> pytest.skip`. `AssertionError` inherits
+  from `Exception`, so any SVG mismatch was reported as a skip and the suite
+  stayed green. The same swallow hid a violated backwards-search invariant in
+  `test_heliocentric_returns.py`.
+- **The tier filter skipped 25 tests that need no ephemeris.** Extended-kernel
+  tests were selected by matching `"bce"`, `"ancient_rome"` and
+  `"historical_date"` as bare substrings of the node id, so pure string-formatting
+  tests (`test_jd_to_iso_bce_year` in three modules, all of `TestAncientISOFormat`
+  including `test_year_zero`, the BCE sampling-gap tests) never ran on the default
+  tier. No regex can separate them — a test's *name* says "bce" while its body
+  never leaves the civil range — so intent is now declared with an explicit
+  `@pytest.mark.extended` marker on the 40 tests that genuinely need DE441.
+- **`test_chart_drawer_save_svg_method` never tested `save_svg`.** It passed a
+  file path where the method expects a directory, so every call raised, and the
+  `except Exception: assert hasattr(chart, "save_svg")` fallback made the test
+  pass regardless. It now asserts the file is written and non-empty.
+- **Coverage config was silently ignored.** `.coveragerc` took precedence over
+  `pyproject.toml`, so `source = ["kerykeion"]` and the whole `omit` list never
+  applied — while `.coveragerc`'s own comment claimed "the main configuration is
+  in pyproject.toml". Removed; `pyproject.toml` now takes effect.
+- **Fixed stars received none of the point enrichments.** They live in a list
+  under `calc_data["fixed_stars"]`, not as `KerykeionPointModel` values, so the
+  loops that iterate `point_keys` skipped them: Algol (declination +40.9°, plainly
+  out of bounds) returned `azimuth`, `altitude_above_horizon`, `gauquelin_sector`,
+  `is_out_of_bounds` and `nakshatra` all `None` while the Moon was fully populated.
+  The frame-independent enrichments now reach them. Essential dignities stay
+  point-only: rulership is not defined for stars.
+- **Almuten Figuris ignored `include_score_breakdown=False`.** The essential-dignity
+  loop guarded its appends with the flag; `_add_accidental_dignities` appended
+  unconditionally, so `include_accidental_dignities=True` populated the audit trail
+  the caller had opted out of. Scores were always correct and are unchanged.
+- **Astronomical year 0 rendered as `-0000`.** Both formatters in
+  `SecondaryProgressionFactory` tested `year > 0`, sending year 0 down the negative
+  branch and emitting malformed ISO 8601, inconsistent with
+  `_predictive_utils.jd_to_iso_utc`, which tests `year < 0`.
+- **Cusp-in-house report table showed `First_House`.** The projected house name
+  skipped the `_humanize()` call that the adjacent cell uses. Report snapshots
+  under `tests/fixtures/` regenerated accordingly.
+- **`draw_planets` indicator helpers could raise `IndexError`.** Both iterated
+  `range(len(points_settings))` while indexing `points_abs_positions`; every
+  sibling helper bounds the loop with `min(...)`. Not reachable through the
+  shipped `ChartDrawer`, which re-aligns the two lists, so this is hardening.
+- **Untested guards.** The `phase < 1` lower bound in `_get_lunar_phase_index` and
+  the non-finite/negative orb validation in `build_aspect_settings` had no test at
+  all: deleting either left the suite green. Both are now covered, verified by
+  mutation.
+
+### Documentation (fresh full-codebase review, round 48)
+
+- **`libephemeris` is Apache-2.0, not AGPL.** `LICENSING.md`, `COMMERCIAL-LICENSE.md`
+  and `NOTICE` still described the default backend as dual-licensed
+  (`AGPL-3.0-only OR LicenseRef-LibEphemeris-Commercial`) and promised a pass-through
+  commercial grant via `LIBEPHEMERIS-COMMERCIAL-GRANT.md` — a file that does not exist.
+  Apache-2.0 already permits closed-source and commercial use; only its notices must
+  travel with redistributions.
+- **`SolarEclipseModel.duration_minutes` was documented as its own opposite.** The
+  field description and the `_solar_gamma_duration` docstring said the value is the
+  global span of the shadow path across the Earth and explicitly "not the totality
+  duration at any single place"; the backend returns exactly that local
+  totality/annularity duration at the point of greatest eclipse (verified: 6.42 min
+  for the 2027-08-02 total eclipse, against its published 6m23s maximum).
+- **`PlanetaryReturnFactory.altitude` was documented as inert.** "Reserved for future
+  astronomical calculations" — but it is forwarded to the topocentric observer setup
+  and does move positions (~0.56″ at 8848 m).
+- The module and class docstrings of `PlanetaryReturnFactory` claimed the Swiss
+  Ephemeris library, while the default runtime uses `libephemeris` and never imports
+  `pyswisseph`.
+- `CompositeSubjectFactory` docstrings described house sorting; the implementation
+  deliberately does not sort (a comment in the body says so, because sorting would
+  swap the composite MC and IC).
+- `download_swisseph_data` documented an `asteroids` key of downloaded paths that is
+  always empty — asteroid files are only detected, never downloaded.
+- Four `charts_utils` grid docstrings stated `x_position` defaults of 620/870/720/970
+  against real defaults of 645/910/750/1015.
+- `site/docs/eclipse_factory.md` typed `magnitude`/`obscuration` as `float`; both are
+  `Optional[float]` defaulting to `None`.
+- The `--ai-guide` flag advertised `AI_AGENT_GUIDE.md`; it scans `kerykeion/llms.txt`.
+- Snapshot-regeneration instructions named two different commands, one of which
+  (`poe regenerate:report-snapshots`) does not exist; unified on `poe regenerate:reports`.
+  The SVG baseline message named `poe regenerate:charts`, also nonexistent.
+- `scripts/quality_check.py` ran `pytest` without `-m "not online"`, so the local
+  quality gate depended on GeoNames being reachable.
+- Removed the duplicate `[tool.pyright]` table shadowed by `pyrightconfig.json`, and
+  the stale generated pdoc tree under `docs/` (12 of its pages documented modules
+  deleted in v6). It is regenerated on demand with `poe docs` and is now git-ignored.
+
+## 6.0.0a65 - 2026-07-10
 
 ### Fixed (6.0.0a65 — zero-bug review campaign, rounds 36–47)
 
@@ -165,6 +291,8 @@ before being applied and is covered by a regression test.
   (joint dedent, a geonames mask that swallowed tracebacks, and masked passes
   feeding the page context) were producing ~16% false passes.
 
+## 6.0.0a64 - 2026-07-09
+
 ### Added (6.0.0a64 — modern SVG focus-mode contract parity)
 
 The `kr:*` SVG attribute vocabulary the modern (`style="modern"`) charts emit
@@ -201,6 +329,8 @@ All changes are SVG metadata only — no astrological computation moved.
   endpoint formatting, root-space glyph centers, Gauquelin metadata) for both
   styles; all SVG golden baselines regenerated.
 
+## 6.0.0a63 - 2026-07-08
+
 ### Changed (6.0.0a63 — golden-baseline regeneration on the DE441 extended kernel)
 
 Regenerated every test golden baseline on the `extended` (DE441) precision tier
@@ -225,6 +355,8 @@ No kerykeion computation bug was involved; the diff decomposes into:
   `CompositeSubjectModel` exposes only ISO datetimes; it now parses the
   extended-year ISO string. These BCE tests only run on the extended kernel, so the
   latent failure was invisible to the default-tier CI.
+
+## 6.0.0a62 - 2026-07-08
 
 ### Fixed (pre-6.0.0 zero-bug review campaign, rounds 26–35)
 

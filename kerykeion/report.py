@@ -793,10 +793,10 @@ class ReportGenerator:
                 aspects_table.append(
                     [
                         _humanize(aspect.p1_name),
-                        aspect.p1_owner,
+                        _san(aspect.p1_owner),
                         f"{aspect.aspect} {symbol}".strip(),
                         _humanize(aspect.p2_name),
-                        aspect.p2_owner,
+                        _san(aspect.p2_owner),
                         f"{aspect.orbit:.2f}°",
                         movement,
                     ]
@@ -821,18 +821,22 @@ class ReportGenerator:
             return ""
 
         comparison = self._chart_data.house_comparison
+        # Subject names are user-controlled and flow into every table title below;
+        # sanitize once here so a control-char name cannot rewrite the terminal.
+        first_name = _san(comparison.first_subject_name)
+        second_name = _san(comparison.second_subject_name)
         sections = []
 
         sections.append(
             self._render_point_in_house_table(
                 comparison.first_points_in_second_houses,
-                f"{comparison.first_subject_name} points in {comparison.second_subject_name} houses",
+                f"{first_name} points in {second_name} houses",
             )
         )
         sections.append(
             self._render_point_in_house_table(
                 comparison.second_points_in_first_houses,
-                f"{comparison.second_subject_name} points in {comparison.first_subject_name} houses",
+                f"{second_name} points in {first_name} houses",
             )
         )
 
@@ -841,7 +845,7 @@ class ReportGenerator:
             sections.append(
                 self._render_cusp_in_house_table(
                     comparison.first_cusps_in_second_houses,
-                    f"{comparison.first_subject_name} cusps in {comparison.second_subject_name} houses",
+                    f"{first_name} cusps in {second_name} houses",
                 )
             )
 
@@ -849,7 +853,7 @@ class ReportGenerator:
             sections.append(
                 self._render_cusp_in_house_table(
                     comparison.second_cusps_in_first_houses,
-                    f"{comparison.second_subject_name} cusps in {comparison.first_subject_name} houses",
+                    f"{second_name} cusps in {first_name} houses",
                 )
             )
 
@@ -869,7 +873,7 @@ class ReportGenerator:
             projected_house = f"{point.projected_house_number} ({_humanize(point.projected_house_name)})"
             table_data.append(
                 [
-                    f"{point.point_owner_name} – {_humanize(point.point_name)}",
+                    f"{_san(point.point_owner_name)} – {_humanize(point.point_name)}",
                     owner_house,
                     projected_house,
                     point.point_sign,
@@ -885,10 +889,10 @@ class ReportGenerator:
 
         table_data: list[list[str]] = [["Point", "Projected House", "Sign", "Degree"]]
         for point in points:
-            projected_house = f"{point.projected_house_number} ({point.projected_house_name})"
+            projected_house = f"{point.projected_house_number} ({_humanize(point.projected_house_name)})"
             table_data.append(
                 [
-                    f"{point.point_owner_name} – {_humanize(point.point_name)}",
+                    f"{_san(point.point_owner_name)} – {_humanize(point.point_name)}",
                     projected_house,
                     point.point_sign,
                     f"{point.point_degree:.2f}°",

@@ -111,6 +111,14 @@ def paul_mccartney():
     Paul McCartney.
 
     Birth data: June 18, 1942, 14:00, Liverpool, GB (53.4084, -2.9916)
+
+    NOTE: 14:00, not the 15:30 used by the same-named fixture in tests/conftest.py
+    and by the canonical ``paul_mccartney_1942`` matrix subject. Two different
+    charts share one display name. This fixture shadows the root one for every
+    test under tests/core/, and the hand-written expectations in test_aspects.py /
+    expected_positions.py were generated from THIS 14:00 chart. Changing either
+    time invalidates a different set of baselines — check which fixture a test
+    actually receives before touching them.
     """
     from kerykeion import AstrologicalSubjectFactory
 
@@ -250,7 +258,7 @@ def assert_svg_matches_baseline(
     """
     from tests.data.compare_svg_lines import compare_svg_lines
 
-    assert baseline_path.exists(), f"Baseline SVG not found: {baseline_path}\nRegenerate with: poe regenerate:charts"
+    assert baseline_path.exists(), f"Baseline SVG not found: {baseline_path}\nRegenerate with: uv run poe regenerate:svg"
 
     expected_lines = baseline_path.read_text().splitlines()
     actual_lines = generated_svg.splitlines()
@@ -277,10 +285,10 @@ def assert_report_matches_snapshot(generated_report: str, snapshot_path: Path) -
         snapshot_path: Path to the golden snapshot text file
     """
     assert snapshot_path.exists(), (
-        f"Report snapshot not found: {snapshot_path}\nRegenerate with: poe regenerate:report-snapshots"
+        f"Report snapshot not found: {snapshot_path}\nRegenerate with: uv run poe regenerate:reports"
     )
 
     expected = snapshot_path.read_text()
     assert generated_report == expected, (
-        f"Report mismatch for {snapshot_path.name}.\nRegenerate with: poe regenerate:report-snapshots"
+        f"Report mismatch for {snapshot_path.name}.\nRegenerate with: uv run poe regenerate:reports"
     )

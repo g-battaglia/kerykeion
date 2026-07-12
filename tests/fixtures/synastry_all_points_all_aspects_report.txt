@@ -344,35 +344,35 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 +Sample Natal Subject cusps in Yoko Ono houses----------------+------+--------+
 | Point                                 | Projected House     | Sign | Degree |
 +---------------------------------------+---------------------+------+--------+
-| Sample Natal Subject – First House    | 1 (First_House)     | Sco  | 5.82°  |
-| Sample Natal Subject – Second House   | 2 (Second_House)    | Sag  | 3.71°  |
-| Sample Natal Subject – Third House    | 4 (Fourth_House)    | Cap  | 9.79°  |
-| Sample Natal Subject – Fourth House   | 5 (Fifth_House)     | Aqu  | 19.91° |
-| Sample Natal Subject – Fifth House    | 6 (Sixth_House)     | Pis  | 23.00° |
-| Sample Natal Subject – Sixth House    | 7 (Seventh_House)   | Ari  | 17.47° |
-| Sample Natal Subject – Seventh House  | 7 (Seventh_House)   | Tau  | 5.82°  |
-| Sample Natal Subject – Eighth House   | 8 (Eighth_House)    | Gem  | 3.71°  |
-| Sample Natal Subject – Ninth House    | 10 (Tenth_House)    | Can  | 9.79°  |
-| Sample Natal Subject – Tenth House    | 11 (Eleventh_House) | Leo  | 19.91° |
-| Sample Natal Subject – Eleventh House | 12 (Twelfth_House)  | Vir  | 23.00° |
-| Sample Natal Subject – Twelfth House  | 1 (First_House)     | Lib  | 17.47° |
+| Sample Natal Subject – First House    | 1 (First House)     | Sco  | 5.82°  |
+| Sample Natal Subject – Second House   | 2 (Second House)    | Sag  | 3.71°  |
+| Sample Natal Subject – Third House    | 4 (Fourth House)    | Cap  | 9.79°  |
+| Sample Natal Subject – Fourth House   | 5 (Fifth House)     | Aqu  | 19.91° |
+| Sample Natal Subject – Fifth House    | 6 (Sixth House)     | Pis  | 23.00° |
+| Sample Natal Subject – Sixth House    | 7 (Seventh House)   | Ari  | 17.47° |
+| Sample Natal Subject – Seventh House  | 7 (Seventh House)   | Tau  | 5.82°  |
+| Sample Natal Subject – Eighth House   | 8 (Eighth House)    | Gem  | 3.71°  |
+| Sample Natal Subject – Ninth House    | 10 (Tenth House)    | Can  | 9.79°  |
+| Sample Natal Subject – Tenth House    | 11 (Eleventh House) | Leo  | 19.91° |
+| Sample Natal Subject – Eleventh House | 12 (Twelfth House)  | Vir  | 23.00° |
+| Sample Natal Subject – Twelfth House  | 1 (First House)     | Lib  | 17.47° |
 +---------------------------------------+---------------------+------+--------+
 
 +Yoko Ono cusps in Sample Natal Subject houses----+------+--------+
 | Point                     | Projected House     | Sign | Degree |
 +---------------------------+---------------------+------+--------+
-| Yoko Ono – First House    | 11 (Eleventh_House) | Lib  | 8.41°  |
-| Yoko Ono – Second House   | 1 (First_House)     | Sco  | 5.83°  |
-| Yoko Ono – Third House    | 2 (Second_House)    | Sag  | 6.53°  |
-| Yoko Ono – Fourth House   | 2 (Second_House)    | Cap  | 9.31°  |
-| Yoko Ono – Fifth House    | 3 (Third_House)     | Aqu  | 11.95° |
-| Yoko Ono – Sixth House    | 4 (Fourth_House)    | Pis  | 12.11° |
-| Yoko Ono – Seventh House  | 5 (Fifth_House)     | Ari  | 8.41°  |
-| Yoko Ono – Eighth House   | 7 (Seventh_House)   | Tau  | 5.83°  |
-| Yoko Ono – Ninth House    | 8 (Eighth_House)    | Gem  | 6.53°  |
-| Yoko Ono – Tenth House    | 8 (Eighth_House)    | Can  | 9.31°  |
-| Yoko Ono – Eleventh House | 9 (Ninth_House)     | Leo  | 11.95° |
-| Yoko Ono – Twelfth House  | 10 (Tenth_House)    | Vir  | 12.11° |
+| Yoko Ono – First House    | 11 (Eleventh House) | Lib  | 8.41°  |
+| Yoko Ono – Second House   | 1 (First House)     | Sco  | 5.83°  |
+| Yoko Ono – Third House    | 2 (Second House)    | Sag  | 6.53°  |
+| Yoko Ono – Fourth House   | 2 (Second House)    | Cap  | 9.31°  |
+| Yoko Ono – Fifth House    | 3 (Third House)     | Aqu  | 11.95° |
+| Yoko Ono – Sixth House    | 4 (Fourth House)    | Pis  | 12.11° |
+| Yoko Ono – Seventh House  | 5 (Fifth House)     | Ari  | 8.41°  |
+| Yoko Ono – Eighth House   | 7 (Seventh House)   | Tau  | 5.83°  |
+| Yoko Ono – Ninth House    | 8 (Eighth House)    | Gem  | 6.53°  |
+| Yoko Ono – Tenth House    | 8 (Eighth House)    | Can  | 9.31°  |
+| Yoko Ono – Eleventh House | 9 (Ninth House)     | Leo  | 11.95° |
+| Yoko Ono – Twelfth House  | 10 (Tenth House)    | Vir  | 12.11° |
 +---------------------------+---------------------+------+--------+
 
 +Relationship Score Summary---+

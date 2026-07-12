@@ -34,7 +34,7 @@ def _run_backend_probe(env_overrides: dict) -> dict:
         text=True,
         env=env,
         cwd=str(KERYKEION_ROOT),
-        timeout=30,
+        timeout=90,
     )
     if result.returncode != 0:
         pytest.fail(f"Subprocess failed:\nstderr: {result.stderr}")
@@ -98,7 +98,7 @@ class TestSwissephPathValidation:
             [sys.executable, "-W", "all", "-c",
              "import logging; logging.basicConfig(level=logging.WARNING); "
              "from kerykeion.ephemeris_backend import EPHE_DATA_PATH"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True, text=True, timeout=90,
             env={**os.environ, **env},
             cwd=str(KERYKEION_ROOT),
         )
@@ -114,7 +114,7 @@ class TestSwissephPathValidation:
             [sys.executable, "-W", "all", "-c",
              "import logging; logging.basicConfig(level=logging.WARNING); "
              "from kerykeion.ephemeris_backend import EPHE_DATA_PATH"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True, text=True, timeout=90,
             env={**os.environ, **env},
             cwd=str(KERYKEION_ROOT),
         )

@@ -186,6 +186,11 @@ _PLANETOCENTRIC_CENTERS: Dict[str, int] = {
 
 _GEO_TOPO_PERSPECTIVES = ("Apparent Geocentric", "True Geocentric", "Topocentric")
 
+# Synthetic key prefix used to address entries of calc_data["fixed_stars"] (a list)
+# in the point-enrichment loops, which are otherwise keyed by calc_data's own keys.
+# Chosen so it can never collide with a real point name.
+_FIXED_STAR_KEY_PREFIX = "fixed_stars::"
+
 # Lunar nodes and apogees (Lilith) are defined relative to the Earth-Moon system
 # (geocentric by construction). In a heliocentric / barycentric / planetocentric
 # frame they have no meaning: swisseph returns an all-zero phantom (0° Aries)
@@ -1231,7 +1236,25 @@ class AstrologicalSubjectFactory:
             # keys (which include non-point entries like name, year, etc.) in
             # every optional calculation loop.
             point_keys = [k for k, v in calc_data.items() if isinstance(v, KerykeionPointModel)]
-            point_updates: Dict[str, Dict[str, Any]] = {k: {} for k in point_keys}
+
+            # Fixed stars are stored as a LIST under calc_data["fixed_stars"], never as
+            # KerykeionPointModel values of calc_data, so they are not members of
+            # point_keys. Address them by synthetic key so the frame-independent
+            # enrichments below (nakshatra, Gauquelin, local space, out-of-bounds) reach
+            # them too; otherwise a star like Algol (declination +40.9 deg, plainly out
+            # of bounds) silently carries azimuth/gauquelin_sector/is_out_of_bounds/
+            # nakshatra = None while every ordinary point is populated.
+            # Essential dignities stay point-only: rulership is not defined for stars.
+            fixed_star_points: List[KerykeionPointModel] = list(calc_data.get("fixed_stars") or [])
+            fixed_star_keys = [f"{_FIXED_STAR_KEY_PREFIX}{i}" for i in range(len(fixed_star_points))]
+
+            def _enrich_point(pk: str) -> KerykeionPointModel:
+                if pk.startswith(_FIXED_STAR_KEY_PREFIX):
+                    return fixed_star_points[int(pk[len(_FIXED_STAR_KEY_PREFIX) :])]
+                return calc_data[pk]
+
+            enrichable_keys = point_keys + fixed_star_keys
+            point_updates: Dict[str, Dict[str, Any]] = {k: {} for k in enrichable_keys}
 
             # Calculate essential dignities (optional)
             if config.calculate_dignities:
@@ -1269,8 +1292,8 @@ class AstrologicalSubjectFactory:
                         config.zodiac_type,
                     )
 
-                for pk in point_keys:
-                    point = calc_data[pk]
+                for pk in enrichable_keys:
+                    point = _enrich_point(pk)
                     nak_data = calc_nak(point.abs_pos)
                     point_updates[pk].update(nak_data)
 
@@ -1319,12 +1342,14 @@ class AstrologicalSubjectFactory:
                 except Exception:
                     pass
 
-                for pk in point_keys:
-                    point = calc_data[pk]
+                for pk in enrichable_keys:
+                    point = _enrich_point(pk)
                     sector = None
 
-                    # Try ephe.gauquelin_sector for planets with known SwissEph IDs
-                    pid = STANDARD_PLANETS.get(point.name)
+                    # Try ephe.gauquelin_sector for planets with known SwissEph IDs.
+                    # KerykeionPointModel.name widens to str (it also carries house
+                    # names); the lookup is a plain miss for anything not a body.
+                    pid = STANDARD_PLANETS.get(cast(AstrologicalPoint, point.name))
                     if pid is not None:
                         try:
                             # Both backends share the signature
@@ -1382,8 +1407,8 @@ class AstrologicalSubjectFactory:
                         "Skipping local space: sidereal chart without a computed ayanamsa value"
                     )
                 else:
-                    for pk in point_keys:
-                        point = calc_data[pk]
+                    for pk in enrichable_keys:
+                        point = _enrich_point(pk)
                         try:
                             # Use the body's true ecliptic latitude so off-ecliptic
                             # bodies (Moon, Pluto, asteroids) project onto the local
@@ -1424,15 +1449,22 @@ class AstrologicalSubjectFactory:
                     logging.warning(f"Could not compute obliquity for OOB detection: {e}")
 
                 if true_obliquity is not None:
-                    for pk in point_keys:
-                        point = calc_data[pk]
+                    for pk in enrichable_keys:
+                        point = _enrich_point(pk)
                         if point.declination is not None:
                             point_updates[pk]["is_out_of_bounds"] = abs(point.declination) > true_obliquity
 
             # Apply all accumulated updates with a single model_copy per point
-            for pk in point_keys:
-                if point_updates[pk]:
+            for pk in enrichable_keys:
+                if not point_updates[pk]:
+                    continue
+                if pk.startswith(_FIXED_STAR_KEY_PREFIX):
+                    idx = int(pk[len(_FIXED_STAR_KEY_PREFIX) :])
+                    fixed_star_points[idx] = fixed_star_points[idx].model_copy(update=point_updates[pk])
+                else:
                     calc_data[pk] = calc_data[pk].model_copy(update=point_updates[pk])
+            if fixed_star_points:
+                calc_data["fixed_stars"] = fixed_star_points
 
             # Calculate Nutation/Obliquity parameters (optional, v6.0)
             if config.calculate_nutation:

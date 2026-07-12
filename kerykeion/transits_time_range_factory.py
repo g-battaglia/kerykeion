@@ -577,7 +577,7 @@ class TransitsTimeRangeFactory:
                 - transits (List[TransitMomentModel]): Chronological list of transit moments,
                   each containing:
                   * date (str): ISO-formatted timestamp for the transit moment
-                  * aspects (List[RelevantAspect]): All aspects formed at this moment
+                  * aspects (List[AspectModel]): All aspects formed at this moment
                     between transiting and natal positions
 
         Examples:

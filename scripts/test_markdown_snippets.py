@@ -168,7 +168,7 @@ def main():
         help="Run snippets only for site-examples folder.",
     )
     parser.add_argument(
-        "-ai", "--ai-guide", dest="ai_guide_only", action="store_true", help="Run snippets only for AI_AGENT_GUIDE.md."
+        "-ai", "--ai-guide", dest="ai_guide_only", action="store_true", help="Run snippets only for the AI-agent guide (kerykeion/llms.txt)."
     )
     parser.add_argument("--timeout", type=float, default=20.0, help="Per-snippet timeout in seconds (default: 20).")
     parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")

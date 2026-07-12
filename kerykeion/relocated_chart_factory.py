@@ -7,13 +7,14 @@ geographic location. This is equivalent to asking: "If I had been born at
 the same Universal Time but in a different city, which houses would my
 planets fall in?"
 
-Swiss Ephemeris function: ``ephe.houses_armc(armc, lat, eps, hsys)``
+Ephemeris function: ``houses_ex2_with_polar_fallback(...)`` (a polar-safe
+wrapper over the backend's ``houses_ex2``)
 
 Location-dependent derived points are recomputed as well: the Vertex /
-Anti-Vertex (from the same ``houses_armc`` call), the Ascendant-based Arabic
+Anti-Vertex (from the same house call), the Ascendant-based Arabic
 parts (with the day/night formula re-selected from the Sun's altitude at the
 new location), and the local ISO datetime when a new timezone is provided.
-For sidereal subjects the tropical ``houses_armc`` output is shifted by the
+For sidereal subjects the tropical house output is shifted by the
 subject's ayanamsa so the relocated cusps stay in the natal zodiac.
 
 Per-point local-space / Gauquelin enrichments (``azimuth``,
@@ -297,11 +298,23 @@ class RelocatedChartFactory:
         # sector cusps were computed for the NATAL location and are not
         # recomputed here: null them rather than carrying stale values that
         # silently describe the wrong horizon.
-        for point_data in relocated_data.values():
+        _LOCATION_DEPENDENT_FIELDS = ("azimuth", "altitude_above_horizon", "gauquelin_sector")
+
+        def _null_location_fields(point_data: object) -> None:
             if isinstance(point_data, dict):
-                for location_dependent_field in ("azimuth", "altitude_above_horizon", "gauquelin_sector"):
-                    if location_dependent_field in point_data:
-                        point_data[location_dependent_field] = None
+                for field in _LOCATION_DEPENDENT_FIELDS:
+                    if field in point_data:
+                        point_data[field] = None
+
+        for point_data in relocated_data.values():
+            _null_location_fields(point_data)
+        # Fixed stars (and any other list-valued point collection) live in a list,
+        # not as a scalar KerykeionPointModel value, so the loop above skips them.
+        # Without this, a relocated chart's fixed stars keep the NATAL location's
+        # azimuth/altitude/gauquelin_sector — the exact stale-horizon bug this block
+        # exists to prevent.
+        for star_data in relocated_data.get("fixed_stars") or []:
+            _null_location_fields(star_data)
         relocated_data["gauquelin_sector_cusps"] = None
 
         relocated_data.update(house_data)

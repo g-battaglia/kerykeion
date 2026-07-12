@@ -93,11 +93,17 @@ uv run poe quality
 
 ### Documentation
 ```bash
-# Generate documentation
+# Generate the API reference (pdoc)
 uv run poe docs
 
-# The docs will be generated in the ./docs folder
-# Open docs/index.html in your browser to view them
+# Output lands in ./docs — open docs/index.html in your browser.
+# It is generated on demand and git-ignored; only docs/charts/ is tracked.
+
+# Check that every ```python block in the docs actually runs
+uv run poe docs:snippets
+
+# Audit public-API documentation coverage
+uv run poe docs:check
 ```
 
 ## 📁 Project Structure

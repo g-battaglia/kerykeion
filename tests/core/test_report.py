@@ -74,7 +74,7 @@ def _assert_report_match(captured: str, expected_with_newline: str, abs_tol: flo
     tolerance) let the all-points fixtures go stale through three real code
     changes without a single test noticing. If a legitimate code change
     alters the output, regenerate the fixtures with
-    scripts/regenerate_test_output.py instead of loosening this helper.
+    `uv run poe regenerate:reports` instead of loosening this helper.
     """
     number_re = re.compile(r"-?\d+(?:\.\d+)?")
     captured_lines = captured.splitlines()
@@ -91,7 +91,7 @@ def _assert_report_match(captured: str, expected_with_newline: str, abs_tol: flo
         raise AssertionError(
             f"Report line count mismatch: got {len(captured_lines)}, expected "
             f"{len(expected_lines)} — the fixture is stale or the generator "
-            f"changed; regenerate via scripts/regenerate_test_output.py. "
+            f"changed; regenerate via `uv run poe regenerate:reports`. "
             f"{first_diff}"
         )
     for i, (cap, exp) in enumerate(zip(captured_lines, expected_lines)):
@@ -1377,6 +1377,7 @@ class TestGoldenFileSnapshots:
 
     # ---- Temporal diversity golden snapshots ----
 
+    @pytest.mark.extended
     def test_ancient_rome_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_ancient_rome_all_report.txt"
         if not fixture.exists():
@@ -2017,6 +2018,7 @@ class TestActiveAspectsContentValidation:
 class TestTemporalDiversity:
     """Reports for different epochs must differ; ancient era excludes unsupported TNOs."""
 
+    @pytest.mark.extended
     def test_ancient_rome_has_fewer_points_due_to_ephemeris(self) -> None:
         subject = AstrologicalSubjectFactory.from_birth_data(
             name="Ancient Rome Subject",

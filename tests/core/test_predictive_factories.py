@@ -245,6 +245,7 @@ def test_secondary_progression_sun_advances_roughly_1_deg_per_year():
     assert 30.0 < delta < 50.0  # ~40 years * ~1°/year
 
 
+@pytest.mark.extended
 def test_secondary_progression_bce_subject():
     natal = AstrologicalSubjectFactory.from_birth_data(
         "BCE Test",
@@ -270,6 +271,7 @@ def test_secondary_progression_bce_subject():
     assert progressed.julian_day == pytest.approx(expected_jd, abs=2e-5)
 
 
+@pytest.mark.extended
 def test_secondary_progression_bce_iso_target_matches_year_target():
     natal = AstrologicalSubjectFactory.from_birth_data(
         "BCE Test",
@@ -432,6 +434,7 @@ def test_solar_arc_roughly_1_deg_per_year():
     assert abs(solar_arc.solar_arc - years) < 5.0  # ~1°/year ± ephemeris deviation
 
 
+@pytest.mark.extended
 def test_solar_arc_bce_subject():
     natal = AstrologicalSubjectFactory.from_birth_data(
         "BCE Test",
@@ -471,6 +474,7 @@ def test_solar_arc_iso_target():
     assert solar_arc.target_iso_utc_datetime == "2030-06-15T12:00:00.000000Z"
 
 
+@pytest.mark.extended
 def test_solar_arc_bce_iso_target_preserves_seconds():
     solar_arc = SolarArcFactory.compute(
         _bce_subject(),
@@ -523,6 +527,7 @@ def _bce_subject():
     )
 
 
+@pytest.mark.extended
 def test_baseline_bce_natal_positions():
     """Regression baseline: BCE natal (-500, Athens)."""
     natal = _bce_subject()
@@ -531,6 +536,7 @@ def test_baseline_bce_natal_positions():
     assert natal.moon.abs_pos == pytest.approx(227.27, abs=0.5)
 
 
+@pytest.mark.extended
 def test_baseline_bce_progression_positions():
     """Regression baseline: BCE natal progressed to -460."""
     progressed = SecondaryProgressionFactory.compute(_bce_subject(), target_year=-460)
@@ -539,6 +545,7 @@ def test_baseline_bce_progression_positions():
     assert progressed.year < 1
 
 
+@pytest.mark.extended
 def test_baseline_bce_solar_arc():
     """Regression baseline: BCE solar arc for -500 → -460."""
     arc = SolarArcFactory.compute(_bce_subject(), target_year=-460, compute_aspects=False)
