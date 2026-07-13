@@ -50,4 +50,3 @@ the last can end after `end_date` when they intersect the requested range.
   chronological `windows` list.
 - `VoidOfCourseAspectModel`: target `planet`, `aspect`, exact angle, and
   timezone-aware UTC `exact_time`.
-

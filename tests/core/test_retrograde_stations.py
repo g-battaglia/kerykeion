@@ -79,6 +79,11 @@ class TestStationApi:
         res = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", [])
         assert res.stations == []
 
+    def test_nonstandard_datetime_separator_not_widened(self):
+        end = "2026-01-01_12:00:00"
+        res = RetrogradeStationFactory.from_iso_range(end, end, planets=[])
+        assert res.end_jd == datetime_to_julian(datetime.fromisoformat(end))
+
     def test_oversized_range_raises(self):
         # A range too long to scan (> _MAX_SAMPLES at the current step) is
         # rejected up front, never silently truncated.

@@ -46,4 +46,3 @@ coordinates, `day_ruler`, `current_index`, `current_ruler`, the bounding
 
 Each `PlanetaryHourModel` has a 1-based `index`, `ruler`, `is_diurnal`, `start`,
 and `end`. All event instants are timezone-aware UTC datetimes.
-

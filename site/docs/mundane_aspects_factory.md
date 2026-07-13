@@ -53,4 +53,3 @@ explicit empty `points` or `aspects` list returns an empty collection.
 `aspects`. Each `MundaneAspectModel` contains `point_a`, `point_b`, `aspect`,
 `aspect_degrees`, `julian_day`, `iso_utc`, both bodies' longitude/sign, and both
 retrograde flags. Body ordering is canonical and independent of caller order.
-

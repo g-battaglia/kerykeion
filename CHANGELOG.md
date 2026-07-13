@@ -19,6 +19,10 @@
 - **Void-of-course backend error normalization is statically typed.** Backend
   exception classes are resolved and validated once, preserving the documented
   `KerykeionException` boundary while restoring a clean mypy gate.
+- **ISO range endpoints preserve every separator accepted by Python.** The five
+  timing range factories now distinguish date-only bounds by parsing them as
+  dates. Datetimes using valid non-`T` separators such as `_` are no longer
+  mistaken for dates and widened through the end of the day.
 - **Dual-chart SVG baselines include the a70 projected-house attributes.** The
   eleven affected synastry/transit goldens now match the additive metadata
   contract instead of failing the base-tier suite.
@@ -35,6 +39,10 @@
   skips all docs when the optional `swisseph` package is absent, and uses a
   fast page-level pass with cumulative replay only for diagnostics. All 379
   maintained runnable snippets pass.
+- CI now runs both documentation gates and invokes the isolated `build:smoke`
+  task, so it verifies the built wheel and packaged assets rather than importing
+  the source checkout directly. Development/test counts and Markdown EOF
+  hygiene were aligned with the current tree.
 
 ## 6.0.0a70 - 2026-07-13
 

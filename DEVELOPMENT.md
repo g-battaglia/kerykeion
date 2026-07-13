@@ -45,7 +45,7 @@ Kerykeion uses [poethepoet](https://github.com/nat-n/poethepoet) as a task runne
 Tests are organized in 4 tiers (each tier includes the previous):
 
 ```bash
-# Core tests (fastest, ~4,500 tests, excludes heavy parametrized suites)
+# Core tests (fastest, ~4,600 tests, excludes heavy parametrized suites)
 uv run poe test:core
 
 # Base tier (DE440s range: 1849-2150)
@@ -89,6 +89,9 @@ uv run poe analyze
 
 # Run the full quality gate (ruff lint + mypy + pyright + full pytest suite)
 uv run poe quality
+
+# Build the wheel, install it in isolation, and smoke-test packaged assets
+uv run poe build:smoke
 ```
 
 ### Documentation
@@ -307,6 +310,9 @@ uv tree --outdated
 uv build
 
 # The built packages will be in the dist/ folder
+
+# CI/release gate: build, install the wheel in isolation, and render a chart
+uv run poe build:smoke
 ```
 
 ---

@@ -52,4 +52,3 @@ The result contains `date`, `timezone`, `latitude`, `longitude`, `sunrise`,
 At high latitudes a date may have no complete sunrise-to-sunset pair. Missing
 events, `solar_noon`, or `day_length` are then `None`, and the applicable polar
 flag is set. On transition dates sunrise and sunset may be present independently.
-

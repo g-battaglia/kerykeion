@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
+from kerykeion._predictive_utils import is_iso_date_only
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES, SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import (
@@ -212,7 +213,7 @@ class VoidOfCourseMoonFactory:
                 f"Invalid ISO date/datetime for void-of-course range "
                 f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
             ) from exc
-        if "T" not in end_date and "t" not in end_date and " " not in end_date:
+        if is_iso_date_only(end_date):
             end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         start_jd = datetime_to_julian(start_dt)
         end_jd = datetime_to_julian(end_dt)

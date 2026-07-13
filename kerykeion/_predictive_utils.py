@@ -8,6 +8,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from __future__ import annotations
 
 import math
+from datetime import date
 from typing import Iterable, List, Optional, Sequence
 
 from kerykeion.schemas import KerykeionException
@@ -17,6 +18,21 @@ from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS, DE
 PTOLEMAIC_ASPECTS: tuple[str, ...] = (
     "conjunction", "opposition", "trine", "sextile", "square",
 )
+
+
+def is_iso_date_only(value: str) -> bool:
+    """Return whether *value* is an ISO date with no time component.
+
+    ``datetime.fromisoformat`` accepts any single character as the date/time
+    separator, not only ``T`` or a space. Parsing as ``date`` is therefore the
+    reliable way to decide whether an end bound should be widened through the
+    end of its UTC day.
+    """
+    try:
+        date.fromisoformat(value)
+    except (TypeError, ValueError):
+        return False
+    return True
 
 
 def validate_julian_range(start_jd: float, end_jd: float) -> None:

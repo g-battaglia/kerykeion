@@ -130,6 +130,15 @@ class TestContract:
         )
         assert len(res.aspects) == 1
 
+    def test_nonstandard_datetime_separator_not_widened(self):
+        from datetime import datetime
+
+        from kerykeion.utilities import datetime_to_julian
+
+        end = "2026-01-01_12:00:00"
+        res = MundaneAspectFactory.from_iso_range(end, end, points=[])
+        assert res.end_jd == datetime_to_julian(datetime.fromisoformat(end))
+
     def test_unknown_point_rejected(self):
         with pytest.raises(ValueError, match="Unknown points"):
             MundaneAspectFactory.from_iso_range("2025-01-01", "2025-01-31", points=["Vulcan"])

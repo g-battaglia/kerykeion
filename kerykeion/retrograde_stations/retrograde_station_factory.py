@@ -25,7 +25,7 @@ from typing import List, Optional, cast
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
-from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso, validate_julian_range
+from kerykeion._predictive_utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_range
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode, ZodiacType
@@ -209,10 +209,10 @@ class RetrogradeStationFactory:
                 f"Invalid ISO date/datetime for station range "
                 f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
             ) from exc
-        # A date-only end_date means "through the end of that UTC day"; without
-        # this it resolves to midnight and drops any station later that day. Check
-        # for both T/t (fromisoformat accepts a lowercase 't') and a space.
-        if "T" not in end_date and "t" not in end_date and " " not in end_date:
+        # A date-only end means "through the end of that UTC day". Parsing it
+        # as a date avoids misclassifying datetime.fromisoformat's other valid
+        # one-character separators (for example ``_``).
+        if is_iso_date_only(end_date):
             end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         start_jd = datetime_to_julian(start_dt)
         end_jd = datetime_to_julian(end_dt)

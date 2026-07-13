@@ -78,6 +78,11 @@ class TestLunationsRange:
         # And every reported lunation respects that exact boundary.
         assert all(lun.julian_day <= res.end_jd for lun in res.lunations)
 
+    def test_nonstandard_datetime_separator_not_widened(self):
+        end = "2026-03-20_12:00:00"
+        res = LunationFinderFactory.from_iso_range("2026-03-20_12:00:00", end, phases=[])
+        assert res.end_jd == datetime_to_julian(datetime.fromisoformat(end))
+
     def test_no_phantom_lunation_at_range_start(self):
         # A range beginning just after a new moon (12 Aug 2026) must not report a
         # phantom new moon echoed at the range start.

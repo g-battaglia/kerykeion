@@ -252,6 +252,15 @@ class TestVoidWindowsRange:
         res = VoidOfCourseMoonFactory.from_iso_range("2025-01-31", "2025-01-01")
         assert res.windows == []
 
+    def test_nonstandard_datetime_separator_not_widened(self):
+        from datetime import datetime
+
+        from kerykeion.utilities import datetime_to_julian
+
+        end = "2026-01-01_12:00:00"
+        res = VoidOfCourseMoonFactory.from_iso_range(end, end)
+        assert res.end_jd == datetime_to_julian(datetime.fromisoformat(end))
+
     def test_civil_range_overflow_normalized_to_kerykeion_exception(self, monkeypatch):
         # Near the year-1 boundary the sign-by-sign Moon walk can step before
         # 1 CE, where julian_day_to_utc raises a bare OverflowError/ValueError

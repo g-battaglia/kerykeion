@@ -33,6 +33,12 @@ jobs:
       - name: Pyright
         run: uv run pyright
 
+      - name: Public API documentation coverage
+        run: uv run poe docs:check
+
+      - name: Documentation snippets
+        run: uv run poe docs:snippets
+
   test:
     name: Test (base tier, Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
@@ -65,5 +71,5 @@ jobs:
       - name: Run base-tier tests (offline)
         run: uv run poe test:base
 
-      - name: Build smoke check
-        run: uv run python scripts/build_smoke_check.py
+      - name: Build and smoke-test the wheel
+        run: uv run poe build:smoke
