@@ -54,8 +54,8 @@ Future 2050 Subject — Natal Chart Report
 | Pallas                | Can ♋ | 9.38°    | +0.5963°/d   | -1.46°  | -    | Ninth House    |
 | Juno                  | Vir ♍ | 14.02°   | +0.3526°/d   | +7.87°  | -    | Eleventh House |
 | Vesta                 | Vir ♍ | 27.63°   | +0.4303°/d   | +6.61°  | -    | Eleventh House |
-| Interpolated Lilith   | Vir ♍ | 13.77°   | +0.1365°/d   | +2.12°  | -    | Eleventh House |
-| Interpolated Perigee  | Aqu ♒ | 21.41°   | +0.3886°/d   | -9.49°  | -    | Fourth House   |
+| Interpolated Lilith   | Vir ♍ | 13.77°   | +0.1374°/d   | +2.12°  | -    | Eleventh House |
+| Interpolated Perigee  | Aqu ♒ | 21.37°   | +0.3890°/d   | -9.56°  | -    | Fourth House   |
 | Cupido                | Aqu ♒ | 14.06°   | -0.0195°/d   | -16.65° | R    | Fourth House   |
 | Hades                 | Leo ♌ | 9.32°    | +0.0211°/d   | +17.37° | -    | Tenth House    |
 | Zeus                  | Sco ♏ | 14.14°   | -0.0024°/d   | -16.09° | R    | First House    |
@@ -273,7 +273,7 @@ Future 2050 Subject — Natal Chart Report
 | Mercury               | sextile ⚹        | Sedna                 | 4.50° | Separating ← |
 | Mercury               | square □         | Haumea                | 5.93° | Applying →   |
 | Mercury               | opposition ☍     | Ixion                 | 0.74° | Applying →   |
-| Mercury               | opposition ☍     | Interpolated Perigee  | 1.87° | Separating ← |
+| Mercury               | opposition ☍     | Interpolated Perigee  | 1.91° | Separating ← |
 | Mercury               | opposition ☍     | White Moon            | 1.10° | Separating ← |
 | Mercury               | square □         | Apollon               | 1.93° | Separating ← |
 | Mercury               | sextile ⚹        | Admetos               | 3.57° | Separating ← |
@@ -312,7 +312,7 @@ Future 2050 Subject — Natal Chart Report
 | Mars                  | conjunction ☌    | Ixion                 | 2.53° | Applying →   |
 | Mars                  | sesquiquadrate ⚼ | Orcus                 | 0.38° | Separating ← |
 | Mars                  | sesquiquadrate ⚼ | Pars Spiritus         | 1.64° | Separating ← |
-| Mars                  | conjunction ☌    | Interpolated Perigee  | 5.14° | Applying →   |
+| Mars                  | conjunction ☌    | Interpolated Perigee  | 5.18° | Applying →   |
 | Mars                  | conjunction ☌    | White Moon            | 4.37° | Applying →   |
 | Mars                  | square □         | Apollon               | 5.20° | Applying →   |
 | Mars                  | square □         | Poseidon              | 1.28° | Separating ← |
@@ -412,7 +412,7 @@ Future 2050 Subject — Natal Chart Report
 | Mean North Lunar Node | square □         | Quaoar                | 2.83° | Applying →   |
 | Mean North Lunar Node | sextile ⚹        | Interpolated Lilith   | 3.61° | Applying →   |
 | Mean North Lunar Node | trine △          | True Priapus          | 5.60° | Applying →   |
-| Mean North Lunar Node | square □         | Interpolated Perigee  | 4.03° | Separating ← |
+| Mean North Lunar Node | square □         | Interpolated Perigee  | 3.99° | Separating ← |
 | Mean North Lunar Node | square □         | White Moon            | 4.79° | Separating ← |
 | Mean North Lunar Node | square □         | Cupido                | 3.32° | Applying →   |
 | Mean North Lunar Node | conjunction ☌    | Zeus                  | 3.25° | Applying →   |
@@ -425,7 +425,7 @@ Future 2050 Subject — Natal Chart Report
 | True North Lunar Node | square □         | Ixion                 | 5.74° | Separating ← |
 | True North Lunar Node | square □         | Quaoar                | 3.73° | Applying →   |
 | True North Lunar Node | sextile ⚹        | Interpolated Lilith   | 4.51° | Applying →   |
-| True North Lunar Node | square □         | Interpolated Perigee  | 3.13° | Separating ← |
+| True North Lunar Node | square □         | Interpolated Perigee  | 3.09° | Separating ← |
 | True North Lunar Node | square □         | White Moon            | 3.89° | Separating ← |
 | True North Lunar Node | square □         | Cupido                | 4.22° | Applying →   |
 | True North Lunar Node | conjunction ☌    | Zeus                  | 4.15° | Applying →   |
@@ -454,7 +454,7 @@ Future 2050 Subject — Natal Chart Report
 | Ascendant             | semi-square ∠    | Interpolated Lilith   | 1.67° | Applying →   |
 | Ascendant             | sesquiquadrate ⚼ | Mean Priapus          | 1.86° | Separating ← |
 | Ascendant             | sesquiquadrate ⚼ | True Priapus          | 0.31° | Separating ← |
-| Ascendant             | trine △          | Interpolated Perigee  | 5.69° | Separating ← |
+| Ascendant             | trine △          | Interpolated Perigee  | 5.73° | Separating ← |
 | Ascendant             | trine △          | White Moon            | 4.92° | Separating ← |
 | Ascendant             | semi-sextile ⚺   | Poseidon              | 0.73° | Applying →   |
 | Medium Coeli          | square □         | Descendant            | 3.45° | Static =     |
@@ -520,7 +520,7 @@ Future 2050 Subject — Natal Chart Report
 | Mean South Lunar Node | square □         | Quaoar                | 2.83° | Applying →   |
 | Mean South Lunar Node | biquintile bQ    | Pars Spiritus         | 1.81° | Separating ← |
 | Mean South Lunar Node | trine △          | Interpolated Lilith   | 3.61° | Applying →   |
-| Mean South Lunar Node | square □         | Interpolated Perigee  | 4.03° | Separating ← |
+| Mean South Lunar Node | square □         | Interpolated Perigee  | 3.99° | Separating ← |
 | Mean South Lunar Node | square □         | White Moon            | 4.79° | Separating ← |
 | Mean South Lunar Node | square □         | Cupido                | 3.32° | Applying →   |
 | Mean South Lunar Node | opposition ☍     | Zeus                  | 3.25° | Applying →   |
@@ -534,7 +534,7 @@ Future 2050 Subject — Natal Chart Report
 | True South Lunar Node | square □         | Quaoar                | 3.73° | Applying →   |
 | True South Lunar Node | biquintile bQ    | Pars Spiritus         | 0.91° | Separating ← |
 | True South Lunar Node | trine △          | Interpolated Lilith   | 4.51° | Applying →   |
-| True South Lunar Node | square □         | Interpolated Perigee  | 3.13° | Separating ← |
+| True South Lunar Node | square □         | Interpolated Perigee  | 3.09° | Separating ← |
 | True South Lunar Node | square □         | White Moon            | 3.89° | Separating ← |
 | True South Lunar Node | square □         | Cupido                | 4.22° | Applying →   |
 | True South Lunar Node | opposition ☍     | Zeus                  | 4.15° | Applying →   |
@@ -573,7 +573,7 @@ Future 2050 Subject — Natal Chart Report
 | Ceres                 | sextile ⚹        | Sedna                 | 4.91° | Separating ← |
 | Ceres                 | square □         | Haumea                | 5.52° | Applying →   |
 | Ceres                 | opposition ☍     | Ixion                 | 0.33° | Applying →   |
-| Ceres                 | opposition ☍     | Interpolated Perigee  | 2.28° | Separating ← |
+| Ceres                 | opposition ☍     | Interpolated Perigee  | 2.32° | Separating ← |
 | Ceres                 | opposition ☍     | White Moon            | 1.52° | Separating ← |
 | Ceres                 | square □         | Apollon               | 2.34° | Separating ← |
 | Ceres                 | sextile ⚹        | Admetos               | 3.98° | Separating ← |
@@ -611,7 +611,7 @@ Future 2050 Subject — Natal Chart Report
 | Vesta                 | semi-square ∠    | Pars Fortunae         | 1.62° | Separating ← |
 | Vesta                 | biquintile bQ    | Pars Fidei            | 1.35° | Separating ← |
 | Vesta                 | quintile Q       | Anti Vertex           | 1.56° | Separating ← |
-| Vesta                 | biquintile bQ    | Interpolated Perigee  | 0.22° | Separating ← |
+| Vesta                 | biquintile bQ    | Interpolated Perigee  | 0.26° | Separating ← |
 | Vesta                 | biquintile bQ    | White Moon            | 0.54° | Applying →   |
 | Vesta                 | sesquiquadrate ⚼ | Cupido                | 1.43° | Applying →   |
 | Vesta                 | semi-square ∠    | Zeus                  | 1.50° | Applying →   |
@@ -619,7 +619,7 @@ Future 2050 Subject — Natal Chart Report
 | Eris                  | opposition ☍     | Makemake              | 1.56° | Static =     |
 | Eris                  | conjunction ☌    | Pars Fidei            | 0.69° | Applying →   |
 | Eris                  | biquintile bQ    | Anti Vertex           | 0.47° | Applying →   |
-| Eris                  | quintile Q       | Interpolated Perigee  | 1.82° | Separating ← |
+| Eris                  | quintile Q       | Interpolated Perigee  | 1.78° | Separating ← |
 | Eris                  | square □         | Kronos                | 1.83° | Separating ← |
 | Sedna                 | sesquiquadrate ⚼ | Makemake              | 0.63° | Separating ← |
 | Sedna                 | trine △          | Ixion                 | 5.24° | Applying →   |
@@ -628,7 +628,7 @@ Future 2050 Subject — Natal Chart Report
 | Sedna                 | trine △          | Pars Spiritus         | 5.59° | Separating ← |
 | Sedna                 | semi-square ∠    | Pars Fidei            | 1.50° | Separating ← |
 | Sedna                 | square □         | Interpolated Lilith   | 5.01° | Applying →   |
-| Sedna                 | trine △          | Interpolated Perigee  | 2.63° | Separating ← |
+| Sedna                 | trine △          | Interpolated Perigee  | 2.59° | Separating ← |
 | Sedna                 | trine △          | White Moon            | 3.39° | Separating ← |
 | Sedna                 | trine △          | Cupido                | 4.72° | Separating ← |
 | Sedna                 | biquintile bQ    | Zeus                  | 1.35° | Applying →   |
@@ -644,7 +644,7 @@ Future 2050 Subject — Natal Chart Report
 | Makemake              | square □         | Kronos                | 0.27° | Separating ← |
 | Makemake              | sesquiquadrate ⚼ | Admetos               | 1.56° | Separating ← |
 | Ixion                 | quintile Q       | Pars Amoris           | 0.19° | Applying →   |
-| Ixion                 | conjunction ☌    | Interpolated Perigee  | 2.61° | Applying →   |
+| Ixion                 | conjunction ☌    | Interpolated Perigee  | 2.65° | Applying →   |
 | Ixion                 | conjunction ☌    | White Moon            | 1.85° | Applying →   |
 | Ixion                 | square □         | Apollon               | 2.67° | Applying →   |
 | Ixion                 | trine △          | Admetos               | 4.31° | Applying →   |
@@ -696,7 +696,7 @@ Future 2050 Subject — Natal Chart Report
 | Pars Amoris           | trine △          | Hades                 | 2.51° | Applying →   |
 | Pars Amoris           | trine △          | Vulkanus              | 5.72° | Separating ← |
 | Pars Fidei            | biquintile bQ    | Anti Vertex           | 0.21° | Static =     |
-| Pars Fidei            | quintile Q       | Interpolated Perigee  | 1.13° | Separating ← |
+| Pars Fidei            | quintile Q       | Interpolated Perigee  | 1.09° | Separating ← |
 | Pars Fidei            | quintile Q       | White Moon            | 1.89° | Separating ← |
 | Pars Fidei            | square □         | Kronos                | 1.14° | Separating ← |
 | Vertex                | square □         | Interpolated Lilith   | 5.70° | Separating ← |
@@ -708,7 +708,7 @@ Future 2050 Subject — Natal Chart Report
 | Anti Vertex           | square □         | Interpolated Lilith   | 5.70° | Separating ← |
 | Anti Vertex           | square □         | Mean Priapus          | 2.17° | Separating ← |
 | Anti Vertex           | square □         | True Priapus          | 3.72° | Separating ← |
-| Anti Vertex           | quintile Q       | Interpolated Perigee  | 1.34° | Separating ← |
+| Anti Vertex           | quintile Q       | Interpolated Perigee  | 1.30° | Separating ← |
 | Anti Vertex           | trine △          | Hades                 | 1.25° | Separating ← |
 | Anti Vertex           | trine △          | Kronos                | 4.65° | Applying →   |
 | Interpolated Lilith   | opposition ☍     | Mean Priapus          | 3.53° | Separating ← |
@@ -721,10 +721,10 @@ Future 2050 Subject — Natal Chart Report
 | Mean Priapus          | trine △          | Zeus                  | 3.90° | Applying →   |
 | Mean Priapus          | biquintile bQ    | Kronos                | 0.82° | Separating ← |
 | True Priapus          | trine △          | Zeus                  | 2.35° | Applying →   |
-| Interpolated Perigee  | conjunction ☌    | White Moon            | 0.76° | Applying →   |
-| Interpolated Perigee  | square □         | Apollon               | 0.07° | Separating ← |
-| Interpolated Perigee  | trine △          | Admetos               | 1.70° | Separating ← |
-| Interpolated Perigee  | opposition ☍     | Vulkanus              | 3.85° | Separating ← |
+| Interpolated Perigee  | conjunction ☌    | White Moon            | 0.80° | Applying →   |
+| Interpolated Perigee  | square □         | Apollon               | 0.02° | Separating ← |
+| Interpolated Perigee  | trine △          | Admetos               | 1.66° | Separating ← |
+| Interpolated Perigee  | opposition ☍     | Vulkanus              | 3.81° | Separating ← |
 | White Moon            | square □         | Apollon               | 0.83° | Separating ← |
 | White Moon            | trine △          | Admetos               | 2.47° | Separating ← |
 | White Moon            | opposition ☍     | Vulkanus              | 4.62° | Separating ← |
