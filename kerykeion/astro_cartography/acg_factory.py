@@ -53,6 +53,17 @@ _ACG_PLANET_IDS: Dict[str, int] = {
 }
 
 
+def _finite_float(value: object) -> Optional[float]:
+    """Coerce a supported real value to float, returning ``None`` if unsafe."""
+    if not isinstance(value, Real):
+        return None
+    try:
+        converted = float(value)
+    except (OverflowError, TypeError, ValueError):
+        return None
+    return converted if math.isfinite(converted) else None
+
+
 class AstroCartographyFactory:
     """
     Factory for computing astro-cartography (ACG) lines.
@@ -69,6 +80,7 @@ class AstroCartographyFactory:
 
     PLANETS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
                "Uranus", "Neptune", "Pluto"]
+    MAX_PROJECTED_POINTS = 250_000
 
     @staticmethod
     def compute(
@@ -109,18 +121,34 @@ class AstroCartographyFactory:
                 backward compatibility.
             lat_range: Two finite latitude bounds within -90..+90, ordered
                 minimum first (default -66 to +66, avoids polar).
-            planets: List of planet names. Defaults to Sun through Pluto.
+            planets: List of supported planet names. Defaults to Sun through
+                Pluto. Unknown/malformed entries raise ``KerykeionException``.
 
         Returns:
             List of ACGLineModel objects, one per planet per line type.
         """
         if planets is None:
-            planets = AstroCartographyFactory.PLANETS
+            requested_planets = list(AstroCartographyFactory.PLANETS)
+        else:
+            if isinstance(planets, (str, bytes)) or not isinstance(planets, (list, tuple)):
+                raise KerykeionException("planets must be a sequence of supported planet names, not a string.")
+            invalid_planets = [
+                planet
+                for planet in planets
+                if not isinstance(planet, str) or planet not in _ACG_PLANET_IDS
+            ]
+            if invalid_planets:
+                raise KerykeionException(
+                    f"Unknown astro-cartography planets: {invalid_planets!r}. "
+                    f"Valid values: {', '.join(AstroCartographyFactory.PLANETS)}."
+                )
+            requested_planets = list(dict.fromkeys(planets))
 
         # A non-positive step never advances the latitude scan: the ASC/DSC
         # ``while lat <= lat_max: lat += step`` loop would spin forever. Reject
         # it up front rather than hang.
-        if not isinstance(step, Real) or not math.isfinite(step) or step <= 0:
+        step_value = _finite_float(step)
+        if step_value is None or step_value <= 0:
             raise KerykeionException(
                 f"step must be a finite positive number of degrees, got {step!r}."
             )
@@ -133,8 +161,9 @@ class AstroCartographyFactory:
             raise KerykeionException(
                 f"lat_range must contain two finite numeric latitudes, got {lat_range!r}."
             )
-        lat_min, lat_max = float(lat_range[0]), float(lat_range[1])
-        if not math.isfinite(lat_min) or not math.isfinite(lat_max):
+        lat_min = _finite_float(lat_range[0])
+        lat_max = _finite_float(lat_range[1])
+        if lat_min is None or lat_max is None:
             raise KerykeionException(f"lat_range bounds must be finite, got {lat_range!r}.")
         if lat_min < -90 or lat_max > 90:
             raise KerykeionException(
@@ -149,16 +178,19 @@ class AstroCartographyFactory:
                 f"lat_range must be (min, max) with min <= max, got {lat_range!r}."
             )
 
-        jd = subject.julian_day
+        subject_jd = subject.julian_day
         # A midpoint composite subject carries julian_day=None (it is a synthetic
         # blend of two charts, not a single instant). Without this guard the None
         # flows into the JD arithmetic below and surfaces as a cryptic
         # "'<' not supported between float and NoneType" from deep inside skyfield.
-        if jd is None:
+        if subject_jd is None:
             raise KerykeionException(
                 "Subject is missing Julian Day - astro-cartography needs a single birth "
                 "instant and cannot be computed for a midpoint composite subject."
             )
+        jd = _finite_float(subject_jd)
+        if jd is None:
+            raise KerykeionException("Subject Julian Day must be finite to compute astro-cartography lines.")
 
         # Keep only planets that are both supported and present on the
         # subject (mirrors the subject's active points selection). De-duplicate
@@ -166,7 +198,7 @@ class AstroCartographyFactory:
         # not get duplicate MC/IC lines and doubled ASC/DSC point lists.
         selected: List[str] = []
         _seen: set = set()
-        for pname in planets:
+        for pname in requested_planets:
             if (
                 pname in _ACG_PLANET_IDS
                 and pname not in _seen
@@ -176,6 +208,16 @@ class AstroCartographyFactory:
                 _seen.add(pname)
         if not selected:
             return []
+
+        span = lat_max - lat_min
+        raw_steps = span / step_value
+        projected_points = (raw_steps + 2.0) * len(selected) * 4
+        if not math.isfinite(projected_points) or projected_points > AstroCartographyFactory.MAX_PROJECTED_POINTS:
+            raise KerykeionException(
+                f"Requested ACG grid exceeds the {AstroCartographyFactory.MAX_PROJECTED_POINTS:,}-point "
+                "safety limit. "
+                "Increase step, narrow lat_range, or request fewer planets."
+            )
 
         mc_lines: Dict[str, ACGLineModel] = {}
         ic_lines: Dict[str, ACGLineModel] = {}
@@ -201,11 +243,11 @@ class AstroCartographyFactory:
             # Integer-indexed grid: accumulating `lat += step` drifts in float
             # (with step=0.1 the last row landed at 65.9 and the requested
             # 66.0 edge was missing from every line).
-            n_steps = int(round((lat_max - lat_min) / step))
+            n_steps = int(round((lat_max - lat_min) / step_value))
             latitudes: List[float] = [
-                round(lat_min + i * step, 4)
+                round(lat_min + i * step_value, 4)
                 for i in range(n_steps + 1)
-                if lat_min + i * step <= lat_max + 1e-9
+                if lat_min + i * step_value <= lat_max + 1e-9
             ]
 
             for pname in selected:

@@ -446,7 +446,7 @@ Nodes: True_North_Lunar_Node, True_South_Lunar_Node, Mean_North_Lunar_Node, Mean
 Asteroids: Ceres, Pallas, Juno, Vesta, Chiron
 Angles: Ascendant, Medium_Coeli, Descendant, Imum_Coeli
 Arabic Parts: Pars_Fortunae, Pars_Spiritus, Pars_Amoris, Pars_Fidei
-Fixed Stars: Regulus, Spica, Sirius, Aldebaran, Antares, Fomalhaut, Algol, + 16 more (23 total)
+Fixed Stars: 1,447 catalog names on the default libephemeris backend; `DEFAULT_FIXED_STARS` selects 23 common stars (Regulus, Spica, Sirius, Aldebaran, Antares, Fomalhaut, Algol, + 16 more). Configure them separately with `active_fixed_stars`.
 TNOs: Eris, Sedna, Makemake, Haumea, Quaoar, Orcus, Ixion
 Uranian: Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon
 Lilith variants: Mean_Lilith, True_Lilith, Interpolated_Lilith, Mean_Priapus, True_Priapus

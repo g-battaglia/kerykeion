@@ -13,7 +13,11 @@ from kerykeion.aspects.aspects_utils import (
     get_active_points_list,
     calculate_aspect_movement,
 )
-from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
+from kerykeion.aspects.orb_utils import (
+    OrbAdjustmentStrategy,
+    resolve_pair_orb_adjustment,
+    validate_point_orb_adjustments,
+)
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     AspectModel,
@@ -158,6 +162,8 @@ class AspectsFactory:
             >>> chart_aspects = AspectsFactory.single_chart_aspects(johnny)
             >>> print(f"Found {len(chart_aspects.aspects)} aspects")
         """
+        validate_point_orb_adjustments(point_orb_adjustments)
+
         # Initialize settings and configurations
         # v6: extend celestial_points with synthetic settings for any dynamic
         # catalog fixed star carried on subject.fixed_stars, so aspects engine
@@ -272,6 +278,8 @@ class AspectsFactory:
             >>> synastry = AspectsFactory.dual_chart_aspects(john, jane)
             >>> print(f"Found {len(synastry.aspects)} aspects")
         """
+        validate_point_orb_adjustments(point_orb_adjustments)
+
         # Aspects between two charts are only meaningful when both are cast in the
         # same reference frame. Reject mixed frames (e.g. Tropical × Sidereal)
         # instead of returning astronomically-meaningless aspects — mirrors the

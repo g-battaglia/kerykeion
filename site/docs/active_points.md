@@ -111,9 +111,14 @@ Distant objects beyond Neptune. Ephemeris data may not be available for all hist
 
 > **Note:** Some TNOs may not have ephemeris data for very old or far-future dates. If calculation fails for a point, a warning is logged and the point is removed from the active points for that subject.
 
-### Fixed Stars (23, configured separately)
+### Fixed Stars (1,447-name catalog; 23-star preset, configured separately)
 
-All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 8 additional bright stars. Fixed stars are inactive by default and are selected with `active_fixed_stars`, not `active_points`.
+The default libephemeris backend provides a 1,447-name catalog. The 23 names
+below form `DEFAULT_FIXED_STARS` (all 15 Behenian stars plus 8 additional bright
+stars); they are a convenient preset, not the complete catalog. Fixed stars are
+inactive by default and are selected with `active_fixed_stars`, not
+`active_points`. Import `FixedStarCatalog` from `kerykeion.fixed_stars` and use
+`list_all()`/`find()` for the full catalog.
 
 #### Royal Stars (4)
 

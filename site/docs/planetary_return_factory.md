@@ -100,7 +100,7 @@ return_factory = PlanetaryReturnFactory(
     custom_ayanamsa_ayan_t0=23.5,
 )
 
-solar_return = return_factory.next_return_from_year(2024, "Solar")
+solar_return = return_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 print(f"Return ayanamsa: {solar_return.ayanamsa_value:.4f}°")
 ```
 
@@ -145,15 +145,21 @@ Convenience wrappers: `next_lunar_node_crossing_from_year(year)`, `next_lunar_no
 | `subject`                  | `AstrologicalSubjectModel` | **Required** | The natal subject whose return is being calculated.              |
 | `city`                     | `Optional[str]`          | `None`      | City name for the return location.                                 |
 | `nation`                   | `Optional[str]`          | `None`      | ISO country code for the return location.                          |
-| `lng`                      | `Optional[float]`        | `None`      | Longitude of the return location.                                  |
-| `lat`                      | `Optional[float]`        | `None`      | Latitude of the return location.                                   |
+| `lng`                      | `int \| float \| None`  | `None`      | Longitude of the return location.                                  |
+| `lat`                      | `int \| float \| None`  | `None`      | Latitude of the return location.                                   |
 | `tz_str`                   | `Optional[str]`          | `None`      | Timezone string for the return location.                           |
 | `online`                   | `bool`                   | `True`      | Whether to resolve location via GeoNames API.                      |
 | `geonames_username`        | `Optional[str]`          | `None`      | GeoNames username for online mode.                                 |
 | `cache_expire_after_days`  | `int`                    | `30`        | Days to cache online location lookups.                             |
-| `altitude`                 | `Optional[float]`        | `None`      | Altitude in meters for the return location.                        |
+| `altitude`                 | `int \| float \| None`  | `None`      | Altitude in meters for the return location.                        |
 | `custom_ayanamsa_t0`       | `Optional[float]`        | `None`      | Reference epoch (Julian Day) for USER sidereal mode.               |
 | `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`      | Ayanamsa offset at epoch (required with USER sidereal mode).       |
+| `active_fixed_stars`       | `List[str] \| None`     | `None`      | Fixed-star catalog names to compute on the return chart.           |
+| `calculate_dignities`      | `bool`                   | `False`     | Populate essential dignity data.                                   |
+| `calculate_nakshatra`      | `bool`                   | `False`     | Populate Vedic nakshatra data.                                     |
+| `calculate_gauquelin`      | `bool`                   | `False`     | Populate Gauquelin sectors.                                        |
+| `calculate_nutation`       | `bool`                   | `False`     | Populate the nutation model.                                       |
+| `calculate_local_space`    | `bool`                   | `False`     | Populate local-space azimuth/altitude.                             |
 
 ## Methods
 
@@ -208,6 +214,16 @@ Finds the first return occurring in a given calendar year. **Deprecated** -- use
 result = return_factory.next_return_from_year(2025, "Solar")  # Deprecated
 result = return_factory.next_return_from_date(2025, 1, 1, return_type="Solar")  # Preferred
 ```
+
+Both arguments are required; `return_type` is `"Solar"` or `"Lunar"`. The
+method emits `DeprecationWarning`, is scheduled for removal in 7.0.0, and
+delegates to `next_return_from_date(year, 1, 1, return_type=...)`.
+
+### `next_return_from_month_and_year(year, month, return_type)` _(Deprecated)_
+
+This older three-argument alias searches from the first day of `month`. It
+emits `DeprecationWarning`, is scheduled for removal in 7.0.0, and delegates to
+`next_return_from_date(year, month, 1, return_type=...)`.
 
 ## Relocation Astrology
 

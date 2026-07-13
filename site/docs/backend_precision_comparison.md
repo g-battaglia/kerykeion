@@ -8,9 +8,11 @@ order: 21
 
 # Backend Precision Comparison: swisseph vs libephemeris
 
-Kerykeion supports two ephemeris backends that are **functionally equivalent**
-and **100% API-compatible**. This document summarises the concrete numerical
-and behavioural differences a user or contributor may encounter.
+Kerykeion exposes a common adapter surface over two ephemeris backends. Most
+core calculations share the same Kerykeion API, but data installation,
+available date/body coverage, fixed-star setup, and a few search directions
+differ. This document summarises the numerical and behavioral differences a
+user or contributor may encounter.
 
 ---
 
@@ -19,10 +21,11 @@ and behavioural differences a user or contributor may encounter.
 |                  | **swisseph**                             | **libephemeris**                    |
 | ---------------- | ---------------------------------------- | ----------------------------------- |
 | Language         | C bindings (`pyswisseph`)                | Pure Python                         |
-| Ephemeris source | Swiss Ephemeris (Moshier / `.se1` files) | NASA JPL DE440 / DE441 via Skyfield |
+| Ephemeris source | Swiss Ephemeris (Moshier / `.se1` files) | NASA JPL DE440 / DE441 via LEB/Skyfield |
 | License          | AGPL-3.0                                 | Apache-2.0                          |
 | Install          | `pip install kerykeion[swiss]`           | Included by default                 |
-| Date range       | Full (DE431 covers -13200 to +17191)     | Full (DE441 same range)             |
+| Bundled range    | Depends on installed Swiss `.se1` files | 1849–2150 (DE440s)                  |
+| Wider range      | Install the required Swiss data files    | Download medium/extended LEB tiers  |
 | Compilation      | Requires C compiler                      | None                                |
 
 ---
@@ -42,10 +45,10 @@ antiquity to 2650 CE):
 | Chiron            | < 0.01 deg              |                                      |
 | Mean Lilith       | < 0.01 deg              |                                      |
 
-**For all practical astrological purposes the two backends are
-indistinguishable**: differences stay well below 1 arcminute for major
-planets and never cross zodiac-sign or house-cusp boundaries in any
-tested scenario.
+In the maintained comparison matrix, differences stay below 1 arcminute for
+the major planets. Near a sign or house boundary, however, even a small numeric
+difference can change a discrete label; callers that require backend-identical
+classification should pin one backend.
 
 ---
 
@@ -57,9 +60,9 @@ tested scenario.
 | Midheaven (MC)                 | < 0.02 deg    |
 | Intermediate cusps (2-6, 8-12) | < 0.05 deg    |
 
-All 23 supported house systems (Placidus, Koch, Whole Sign, Equal,
-Porphyry, Regiomontanus, Campanus, etc.) behave identically on both
-backends.
+Kerykeion exposes the same supported house-system identifiers through both
+backends. The maintained comparison tests cover their numeric agreement; polar
+fallback behavior and installed ephemeris data can still affect a result.
 
 ---
 
@@ -70,7 +73,8 @@ backends.
 | Planetary speed | < 0.01 deg/day | Analytical (swe) vs finite-difference (lib) |
 | Declination     | < 0.01 deg     | Ephemeris source difference                 |
 
-Retrograde status (`speed < 0`) always agrees between backends.
+Retrograde status (`speed < 0`) agrees throughout the maintained comparison
+matrix.
 
 ---
 
@@ -182,9 +186,11 @@ measured deltas:
 
 ## Summary
 
-For natal chart interpretation, transit analysis, synastry, and all
-standard astrological work, **both backends produce equivalent results**.
-Choose based on your constraints:
+For common natal, transit, and synastry calculations, the maintained comparison
+matrix shows close numerical agreement within the tolerances above. Results are
+not guaranteed to be identical at boundaries or where body/date/search support
+differs, so reproducible workflows should pin one backend. Choose based on your
+constraints:
 
 - **libephemeris** (default): no C compiler, Apache-2.0, pure Python, more accurate barycentric
 - **swisseph**: C bindings (AGPL-3.0 Astrodienst AG), broader minor-body coverage on ancient dates

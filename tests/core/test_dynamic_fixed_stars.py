@@ -502,3 +502,17 @@ def test_composite_subject_raises_clean_exception():
     midpoint = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
     with pytest.raises(KerykeionException, match="Julian Day"):
         FixedStarDiscoveryFactory.find_prominent_stars(midpoint)
+
+
+@pytest.mark.parametrize(
+    "julian_day",
+    [float("nan"), float("inf"), float("-inf"), 10**309],
+    ids=["nan", "positive-infinity", "negative-infinity", "unrepresentably-large"],
+)
+def test_non_finite_subject_julian_day_raises(subject_all_stars, julian_day):
+    """Per-star recovery must not turn a corrupt instant into an empty result."""
+    from kerykeion.schemas import KerykeionException
+
+    corrupted = subject_all_stars.model_copy(update={"julian_day": julian_day})
+    with pytest.raises((ValueError, KerykeionException), match="finite"):
+        FixedStarDiscoveryFactory.find_prominent_stars(corrupted)

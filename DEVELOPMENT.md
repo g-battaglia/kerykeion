@@ -157,7 +157,7 @@ kerykeion/
 ├── tests/core/                      # Test suite (74 files)
 ├── examples/                        # Usage examples
 ├── site/docs/                       # Documentation source (markdown)
-├── release_notes/                   # Per-version release notes
+├── release_notes/                   # Selective longer release notes
 ├── pyproject.toml                   # Project configuration
 ├── uv.lock                          # Dependency lock file
 └── README.md

@@ -8,16 +8,17 @@ order: 20
 
 # Ephemeris Backend
 
-Kerykeion supports two interchangeable ephemeris backends. All astrological
+Kerykeion supports two selectable ephemeris backends. All astrological
 calculations go through a single adapter module (`kerykeion.ephemeris_backend`)
-that selects the active engine at import time. Both backends expose an identical
-API so **no application code needs to change** when switching.
+that selects the active engine at import time. Kerykeion's core chart APIs stay
+the same when switching, while backend-specific body/date coverage, fixed-star
+setup, and some search directions can differ.
 
 ## Backends
 
 | Backend | Package | License | Notes |
 |---------|---------|---------|-------|
-| **libephemeris** (default) | `libephemeris` | Apache-2.0 | Pure Python. Uses NASA JPL DE440/DE441 via Skyfield. No C compiler needed. Owned by the Kerykeion project. |
+| **libephemeris** (default) | `libephemeris` | Apache-2.0 | Pure Python. Uses NASA JPL DE440/DE441 data via LEB/Skyfield. No C compiler needed. Owned by the Kerykeion project. |
 | **swisseph** | `pyswisseph` | AGPL-3.0 | C bindings to the Swiss Ephemeris library by Astrodienst AG. If you use this backend, the Swiss Ephemeris AGPL-3.0 license applies. |
 
 ## Installation
@@ -113,9 +114,10 @@ kerykeion.ephemeris_backend   <-- single import point
 
 **Key design decisions:**
 
-1. **Direct module re-export, not an adapter class.** Both backends are 100%
-   API-compatible (as of libephemeris >= 1.0.0a4), so the adapter is just a
-   module alias with zero overhead. No wrapper, no proxy, no method interception.
+1. **Direct module re-export, not an adapter class.** The overlapping ephemeris
+   API used by Kerykeion is exposed through a module alias with zero overhead.
+   No wrapper, proxy, or method interception is involved; callers that use
+   backend-specific functions must still account for their differences.
 
 2. **Selection at import time.** The backend is resolved once when
    `kerykeion.ephemeris_backend` is first imported. All subsequent `ephe.*`
@@ -138,11 +140,10 @@ if BACKEND_NAME == "libephemeris":
 
 ## Licensing and Dual-License Strategy
 
-The backend abstraction exists primarily to protect the project's ability
-to offer **dual licensing** (AGPL-3.0 + commercial):
+The backend abstraction gives Kerykeion one calculation surface across two
+dependencies with different licenses:
 
-- **libephemeris** is owned by the Kerykeion project and licensed under
-  AGPL-3.0. It can be relicensed commercially without third-party approval.
+- **libephemeris** is licensed under Apache-2.0.
 - **swisseph** (Swiss Ephemeris) is licensed under AGPL-3.0 by Astrodienst AG.
   If you use this backend, the Swiss Ephemeris license terms apply to
   those components.
@@ -183,8 +184,8 @@ different ephemeris sources and algorithms:
 | House cusps | < 0.01 deg | Negligible |
 | Planet speeds | < 0.01 deg/day | Analytical vs finite differences |
 | True Node | ~ 6 arcsec | Different osculating element methods |
-| Zodiac signs | Identical | Deltas too small to cross boundaries |
-| Retrograde status | Identical | Speed sign always agrees |
+| Zodiac signs | Agreement in the maintained matrix | A boundary-adjacent delta can change the label |
+| Retrograde status | Agreement in the maintained matrix | A near-stationary speed can be boundary-sensitive |
 
 ## Debug: Backend Source Tracing
 

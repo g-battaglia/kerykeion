@@ -1612,7 +1612,12 @@ chart.save_svg(output_path=output_dir, filename="johnny-depp-custom-points")
 
 ## Fixed Stars
 
-Kerykeion includes **23 fixed stars** — the 2 original stars (Regulus, Spica) plus 21 new stars added in v5.12, completing all 15 Behenian stars of the medieval/Hermetic tradition plus 8 additional bright stars. The set includes the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each star provides ecliptic longitude, daily motion (`speed`), equatorial `declination`, and apparent visual `magnitude`.
+The default libephemeris backend exposes a **1,447-star catalog**. Kerykeion's
+`DEFAULT_FIXED_STARS` preset selects 23 commonly used stars: all 15 Behenian
+stars plus 8 additional bright stars, including the 4 Royal Stars. You may pass
+any catalog name, not only preset members. Each computed star provides ecliptic
+longitude, daily motion (`speed`), equatorial `declination`, and apparent visual
+`magnitude`.
 
 Fixed stars are **opt-in**: pass the names you want to `active_fixed_stars` when building the subject. Stars requested this way are computed into `subject.fixed_stars` and participate automatically in chart rendering and aspect calculations.
 
@@ -1636,7 +1641,11 @@ print(sirius.declination)    # Equatorial declination
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 ```
 
-Available fixed stars: Regulus, Spica, Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi, Alkaid.
+The 23-star preset contains: Regulus, Spica, Aldebaran, Antares, Sirius,
+Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair,
+Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi, and
+Alkaid. Discover other names with `FixedStarCatalog.list_all()` or
+`FixedStarCatalog.find()` from `kerykeion.fixed_stars`.
 
 **📖 Full active points list: [Active Points Documentation](https://www.kerykeion.net/content/docs/active_points)**
 

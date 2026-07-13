@@ -42,7 +42,10 @@ print(f"Qualities: {natal_data.quality_distribution.cardinal_percentage}% Cardin
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `subject`                    | `AstrologicalSubjectModel` | **Required** | The subject to create chart data for. Also accepts `CompositeSubjectModel` or `PlanetReturnModel`. |
 | `active_points`              | `List[str]`                | `None`       | Custom points list. If `None`, uses the first subject's own `active_points`.  |
-| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs. Each item: `{"name": "conjunction", "orb": 10}`. |
+| `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to natal defaults. Each item: `{"name": "conjunction", "orb": 10}`. |
+| `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only. |
+| `point_orb_adjustments`      | `Mapping[str, float]`      | `None`       | Finite additive per-point orb adjustments; `None` resolves to the natal Sun/Moon preset. Keyword-only. |
+| `point_orb_adjustment_strategy` | `str`                   | `"max_explicit"` | `"max_explicit"`, `"min_explicit"`, `"sum"`, or `"none"`. Keyword-only. |
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method: `"weighted"` or `"pure_count"`. Keyword-only. |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override individual point weights. Use `"__default__"` for fallback. Keyword-only. |
 
@@ -77,7 +80,10 @@ if synastry_data.relationship_score:
 | `first_subject`              | `AstrologicalSubjectModel` | **Required** | Primary subject.                                                              |
 | `second_subject`             | `AstrologicalSubjectModel` | **Required** | Partner subject.                                                              |
 | `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
-| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to natal defaults.             |
+| `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
+| `point_orb_adjustments`      | `Mapping[str, float]`      | `None`       | Finite additive per-point orb adjustments; `None` resolves to the natal Sun/Moon preset. Keyword-only. |
+| `point_orb_adjustment_strategy` | `str`                   | `"max_explicit"` | Orb adjustment combination strategy. Keyword-only.                         |
 | `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays.                                                     |
 | `include_relationship_score` | `bool`                     | `True`       | Calculate Ciro Discepolo compatibility score.                                 |
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
@@ -99,7 +105,10 @@ transit_data = ChartDataFactory.create_transit_chart_data(subject, now)
 | `natal_subject`              | `AstrologicalSubjectModel` | **Required** | Birth chart.                                                                  |
 | `transit_subject`            | `AstrologicalSubjectModel` | **Required** | Current time chart.                                                           |
 | `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
-| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list.                                                          |
+| `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list; `None` resolves to predictive defaults.                  |
+| `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
+| `point_orb_adjustments`      | `Mapping[str, float]`      | `None`       | Finite additive per-point orb adjustments; predictive methods apply none by default. Keyword-only. |
+| `point_orb_adjustment_strategy` | `str`                   | `"max_explicit"` | Orb adjustment combination strategy. Keyword-only.                         |
 | `include_house_comparison`   | `bool`                     | `True`       | Calculate natal points in transit houses.                                     |
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
@@ -121,7 +130,10 @@ composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `composite_subject`          | `CompositeSubjectModel`    | **Required** | Composite subject from `CompositeSubjectFactory`.                             |
 | `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
-| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to natal defaults.             |
+| `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
+| `point_orb_adjustments`      | `Mapping[str, float]`      | `None`       | Finite additive per-point orb adjustments; `None` resolves to the natal Sun/Moon preset. Keyword-only. |
+| `point_orb_adjustment_strategy` | `str`                   | `"max_explicit"` | Orb adjustment combination strategy. Keyword-only.                         |
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 
@@ -145,7 +157,10 @@ return_data = ChartDataFactory.create_return_chart_data(subject, solar_return)
 | `natal_subject`              | `AstrologicalSubjectModel` | **Required** | The natal subject (inner wheel).                                              |
 | `return_subject`             | `PlanetReturnModel`        | **Required** | The return subject from `PlanetaryReturnFactory`.                             |
 | `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
-| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to predictive defaults.        |
+| `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
+| `point_orb_adjustments`      | `Mapping[str, float]`      | `None`       | Finite additive per-point orb adjustments; predictive methods apply none by default. Keyword-only. |
+| `point_orb_adjustment_strategy` | `str`                   | `"max_explicit"` | Orb adjustment combination strategy. Keyword-only.                         |
 | `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays between natal and return.                            |
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
@@ -164,7 +179,10 @@ single_return_data = ChartDataFactory.create_single_wheel_return_chart_data(sola
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `return_subject`             | `PlanetReturnModel`        | **Required** | The return subject.                                                           |
 | `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
-| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to predictive defaults.        |
+| `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
+| `point_orb_adjustments`      | `Mapping[str, float]`      | `None`       | Finite additive per-point orb adjustments; predictive methods apply none by default. Keyword-only. |
+| `point_orb_adjustment_strategy` | `str`                   | `"max_explicit"` | Orb adjustment combination strategy. Keyword-only.                         |
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 
@@ -186,7 +204,10 @@ progression_data = ChartDataFactory.create_progression_chart_data(subject, progr
 | `natal_subject`              | `AstrologicalSubjectModel` | **Required** | The natal subject (inner ring).                                               |
 | `progressed_subject`         | `AstrologicalSubjectModel` | **Required** | Progressed subject from `SecondaryProgressionFactory.compute()`.              |
 | `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
-| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to predictive defaults.        |
+| `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
+| `point_orb_adjustments`      | `Mapping[str, float]`      | `None`       | Finite additive per-point orb adjustments; predictive methods apply none by default. Keyword-only. |
+| `point_orb_adjustment_strategy` | `str`                   | `"max_explicit"` | Orb adjustment combination strategy. Keyword-only.                         |
 | `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays between natal and progressed.                        |
 | `distribution_method`        | `str`                      | `"weighted"` | Element/quality calculation method. Keyword-only.                             |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
@@ -209,10 +230,12 @@ chart_data = ChartDataFactory.create_chart_data(
 | `first_subject`              | Subject Model              | **Required** | Primary subject.                                                              |
 | `second_subject`             | Subject Model              | `None`       | Second subject (for dual-chart types).                                        |
 | `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
-| `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
+| `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; chart-type defaults are resolved internally.   |
 | `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays (dual charts only).                                  |
 | `include_relationship_score` | `bool`                     | `False`      | Calculate compatibility score (synastry only).                                |
 | `axis_orb_limit`             | `float`                    | `None`       | Finite, positive stricter orb for angles. Keyword-only.                        |
+| `point_orb_adjustments`      | `Mapping[str, float]`      | `None`       | Finite additive per-point orb adjustments; chart-type defaults are resolved internally. Keyword-only. |
+| `point_orb_adjustment_strategy` | `str`                   | `"max_explicit"` | `"max_explicit"`, `"min_explicit"`, `"sum"`, or `"none"`. Keyword-only. |
 | `distribution_method`        | `str`                      | `"weighted"` | `"weighted"` or `"pure_count"`. Keyword-only.                                 |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 

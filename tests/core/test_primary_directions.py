@@ -57,6 +57,103 @@ class TestSpeculum:
             )
 
 
+class TestPrimaryDirectionsReferenceFrames:
+    def test_marscentric_speculum_uses_calc_pctr_equatorial_coordinates(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Marscentric PD",
+            2000,
+            1,
+            1,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5,
+            tz_str="Etc/GMT",
+            online=False,
+            perspective_type="Marscentric",
+        )
+        moon = next(
+            entry
+            for entry in PrimaryDirectionsFactory.compute_speculum(subject)
+            if entry.name == "Moon"
+        )
+
+        with ephemeris_session(perspective_type="Marscentric") as iflag:
+            eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
+            expected = ephe.calc_pctr(
+                subject.julian_day + ephe.deltat(subject.julian_day),
+                ephe.MOON,
+                ephe.MARS,
+                eq_iflag,
+            )[0]
+
+        assert moon.right_ascension == pytest.approx(expected[0], abs=1e-4)
+        assert moon.declination == pytest.approx(expected[1], abs=1e-4)
+        assert all(entry.name != "Mars" for entry in PrimaryDirectionsFactory.compute_speculum(subject))
+
+    def test_sidereal_speculum_uses_physical_equatorial_coordinates(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Sidereal PD",
+            2000,
+            1,
+            1,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5,
+            tz_str="Etc/GMT",
+            online=False,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        moon = next(
+            entry
+            for entry in PrimaryDirectionsFactory.compute_speculum(subject)
+            if entry.name == "Moon"
+        )
+        with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as iflag:
+            expected = ephe.calc_ut(
+                subject.julian_day,
+                ephe.MOON,
+                (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL,
+            )[0]
+        assert moon.right_ascension == pytest.approx(expected[0], abs=1e-4)
+        assert moon.declination == pytest.approx(expected[1], abs=1e-4)
+
+    def test_topocentric_altitude_is_persisted_and_used(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "High-altitude PD",
+            2000,
+            1,
+            1,
+            12,
+            0,
+            lng=12.5,
+            lat=41.9,
+            altitude=3500.0,
+            tz_str="Etc/GMT",
+            online=False,
+            perspective_type="Topocentric",
+        )
+        assert subject.altitude == 3500.0
+        moon = next(
+            entry
+            for entry in PrimaryDirectionsFactory.compute_speculum(subject)
+            if entry.name == "Moon"
+        )
+        with ephemeris_session(
+            perspective_type="Topocentric",
+            topo=(subject.lng, subject.lat, subject.altitude),
+        ) as iflag:
+            expected = ephe.calc_ut(
+                subject.julian_day,
+                ephe.MOON,
+                (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL,
+            )[0]
+        assert moon.right_ascension == pytest.approx(expected[0], abs=1e-4)
+        assert moon.declination == pytest.approx(expected[1], abs=1e-4)
+
+
 class TestPrimaryDirections:
     def test_directions_computed(self, subject):
         """Should compute primary directions."""

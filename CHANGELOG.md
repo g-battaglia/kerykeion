@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 6.0.0a71 - 2026-07-13
+
 ### Fixed
 
 - **Nested ephemeris sessions can no longer corrupt an outer calculation.**
@@ -37,6 +39,17 @@
   aspect names, and non-finite subject geometry are rejected or normalized
   before calculation instead of returning plausible empty/corrupt/duplicated
   directions.
+- **Primary-direction coordinates now preserve the subject's reference frame.**
+  Planetocentric specula use the requested center-body vector, sidereal labels
+  no longer leak into physical equatorial coordinates, and Topocentric subjects
+  retain and reuse their observer altitude.
+- **Fast paths no longer bypass subject and filter validation.** Fixed-star
+  discovery rejects non-finite subject Julian Days before catalog shortcuts;
+  astro-cartography also rejects non-finite Julian Days, malformed or unknown
+  planet filters, and projected grids above 250,000 line points.
+- **Per-point aspect adjustments reject corrupt numeric input.** Non-string
+  keys and non-finite adjustment values now fail before single-, dual-,
+  progression-, or solar-arc aspect calculation.
 - **Heliacal and occultation searches reject physically invalid requests.**
   Heliacal coordinates, event types, counts, atmosphere/observer tuples, and
   Julian Days are validated even for empty searches. Raw occultation body IDs
@@ -55,7 +68,7 @@
   and examples and exits non-zero for real omissions; current coverage is 100%.
 - The Markdown snippet gate now includes site examples by default, no longer
   skips all docs when the optional `swisseph` package is absent, and uses a
-  fast page-level pass with cumulative replay only for diagnostics. All 379
+  fast page-level pass with cumulative replay only for diagnostics. All 380
   maintained runnable snippets pass.
 - CI now runs both documentation gates and invokes the isolated `build:smoke`
   task, so it verifies the built wheel and packaged assets rather than importing

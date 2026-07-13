@@ -56,10 +56,13 @@ Returns a `SecondaryProgressionsResultModel` with the progressed subject **plus*
 | `natal_subject`                | AstrologicalSubjectModel | —       | The natal chart                                    |
 | `target_iso_utc_datetime`      | str or None       | None            | Target moment in ISO UTC format                    |
 | `target_year`                  | int or None       | None            | Shorthand: progress to January 1 of this year      |
+| `progressed_subject_name`      | str or None       | None            | Custom name for the progressed subject             |
 | `active_points`                | Sequence[str] or None | None        | Points to include in aspect calculations           |
 | `compute_aspects`              | bool              | True            | Whether to compute progressed-to-natal aspects     |
 | `aspect_orb`                   | float             | 3.0             | Orb in degrees for aspect detection                |
 | `aspects`                      | Sequence[str] or None | None        | Whitelist of aspect names (defaults to the 5 Ptolemaic majors: conjunction, opposition, trine, square, sextile) |
+| `point_orb_adjustments`         | Mapping[str, float] or None | None   | Finite additive per-point orb adjustments          |
+| `point_orb_adjustment_strategy`| str               | "max_explicit" | `max_explicit`, `min_explicit`, `sum`, or `none`   |
 
 ```python
 result = SecondaryProgressionFactory.compute_full(

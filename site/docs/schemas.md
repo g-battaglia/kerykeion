@@ -51,6 +51,7 @@ Represents a person or event to be analyzed.
 | `city`                 | `str`          | Location city                         |
 | `nation`               | `str`          | Country code                          |
 | `lng`, `lat`           | `float`        | Coordinates                           |
+| `altitude`             | `float \| None` | Observer altitude in meters; used by Topocentric calculations |
 | `tz_str`               | `str`          | Timezone string (e.g., "Europe/Rome") |
 | `zodiac_type`          | `ZodiacType`   | "Tropical" or "Sidereal"              |
 | `sidereal_mode`        | `SiderealMode \| None` | Specific Ayanamsa if Sidereal         |
@@ -163,7 +164,10 @@ Inherits all celestial point fields from `AstrologicalBaseModel`.
 
 Base model for all astrological subjects. Contains common fields for location, time, and all celestial points.
 
-Key fields: `name`, `city`, `nation`, `lng`, `lat`, `tz_str`, `zodiac_type`, `houses_system_identifier`, `sun`, `moon`, `mercury`..., `first_house`..., `ascendant`, etc.
+Key fields: `name`, `city`, `nation`, `lng`, `lat`, `altitude`, `tz_str`,
+`zodiac_type`, `houses_system_identifier`, `perspective_type`, `sun`, `moon`,
+`mercury`..., `first_house`..., `ascendant`, etc. `altitude` is the observer
+height in meters retained for Topocentric calculations.
 
 New in v5.12: `ayanamsa_value` (`float | None`) -- the computed ayanamsa offset in degrees for sidereal charts (`None` for tropical).
 

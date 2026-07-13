@@ -20,6 +20,8 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
+import math
+from numbers import Real
 from typing import Literal, Mapping, Optional
 
 OrbAdjustmentStrategy = Literal["max_explicit", "min_explicit", "sum", "none"]
@@ -31,6 +33,31 @@ OrbAdjustmentStrategy = Literal["max_explicit", "min_explicit", "sum", "none"]
 - ``sum``: adjustments of both configured points are added together.
 - ``none``: adjustments are disabled (always resolves to ``0.0``).
 """
+
+
+def _is_finite_real(value: object) -> bool:
+    """Return whether *value* is a real number representable as a finite float."""
+    if not isinstance(value, Real):
+        return False
+    try:
+        return math.isfinite(value)
+    except (OverflowError, TypeError):
+        return False
+
+
+def validate_point_orb_adjustments(
+    point_orb_adjustments: Optional[Mapping[str, float]],
+) -> None:
+    """Validate every configured per-point orb adjustment once, up front."""
+    if point_orb_adjustments is None:
+        return
+    for point_name, adjustment in point_orb_adjustments.items():
+        if not isinstance(point_name, str):
+            raise ValueError(f"point_orb_adjustments keys must be point names, got {point_name!r}.")
+        if not _is_finite_real(adjustment):
+            raise ValueError(
+                f"point_orb_adjustments[{point_name!r}] must be a finite number, got {adjustment!r}."
+            )
 
 
 def resolve_pair_orb_adjustment(
@@ -73,6 +100,14 @@ def resolve_pair_orb_adjustment(
     v1 = point_orb_adjustments.get(first_name)
     v2 = point_orb_adjustments.get(second_name)
 
+    # Direct callers of this resolver still get a safe boundary even when they
+    # bypass the factory-level whole-mapping validation.
+    for point_name, value in ((first_name, v1), (second_name, v2)):
+        if value is not None and not _is_finite_real(value):
+            raise ValueError(
+                f"point_orb_adjustments[{point_name!r}] must be a finite number, got {value!r}."
+            )
+
     if v1 is None and v2 is None:
         return 0.0
 
@@ -85,5 +120,12 @@ def resolve_pair_orb_adjustment(
             return v1 if v1 < v2 else v2
         return v1 if v1 is not None else v2  # type: ignore[return-value]
 
-    # strategy == "sum" (the only remaining value after the check above)
-    return (v1 or 0.0) + (v2 or 0.0)
+    # strategy == "sum" (the only remaining value after the check above).
+    # Two individually finite floats can still overflow when combined.
+    combined = (v1 or 0.0) + (v2 or 0.0)
+    if not _is_finite_real(combined):
+        raise ValueError(
+            f"Combined point-orb adjustment for {first_name!r} and {second_name!r} "
+            "must be finite."
+        )
+    return combined

@@ -355,7 +355,7 @@ class PrimaryDirectionsFactory:
         Must be called inside an :func:`ephemeris_session` (``iflag`` is the
         session flag).
         """
-        from kerykeion.astrological_subject_factory import STANDARD_PLANETS
+        from kerykeion.astrological_subject_factory import STANDARD_PLANETS, _PLANETOCENTRIC_CENTERS
 
         entries: List[SpeculumEntryModel] = []
         lat_rad = math.radians(geo_lat)
@@ -363,6 +363,12 @@ class PrimaryDirectionsFactory:
         # For sidereal charts abs_pos is sidereal; the ecliptic->equatorial
         # fallback below requires tropical longitudes.
         ayanamsa = getattr(subject, "ayanamsa_value", None) or 0.0
+        center_body_id = _PLANETOCENTRIC_CENTERS.get(subject.perspective_type)
+        jd_tt = jd + ephe.deltat(jd) if center_body_id is not None else None
+        # RA/declination are physical equatorial coordinates, independent of
+        # the zodiac label. Preserve perspective/topocentric flags but never
+        # send FLG_SIDEREAL to the equatorial calculation.
+        eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
 
         for point_name in PrimaryDirectionsFactory.DIRECTION_POINTS:
             point = getattr(subject, point_name.lower(), None)
@@ -380,8 +386,22 @@ class PrimaryDirectionsFactory:
             # DIRECTION_POINTS entries are all valid AstrologicalPoint names.
             planet_id = STANDARD_PLANETS.get(cast(AstrologicalPoint, point_name))
             if planet_id is not None:
+                if center_body_id is not None and planet_id == center_body_id:
+                    # The origin has no direction in its own frame. Subjects
+                    # created by the factory already omit it; this protects
+                    # manually constructed or old serialized models too.
+                    continue
                 try:
-                    eq_coords = ephe.calc_ut(jd, planet_id, iflag | ephe.FLG_EQUATORIAL)[0]
+                    if center_body_id is not None:
+                        assert jd_tt is not None
+                        eq_coords = ephe.calc_pctr(
+                            jd_tt,
+                            planet_id,
+                            center_body_id,
+                            eq_iflag,
+                        )[0]
+                    else:
+                        eq_coords = ephe.calc_ut(jd, planet_id, eq_iflag)[0]
                     ra = eq_coords[0]  # RA in degrees
                     dec = eq_coords[1]  # Dec in degrees (more precise)
                 except Exception:
@@ -389,9 +409,12 @@ class PrimaryDirectionsFactory:
 
             if ra is None or dec is None:
                 # ASC/MC (exact: they lie on the ecliptic, latitude 0) and
-                # planetary fallback (zero ecliptic latitude approximation).
+                # planetary fallback using the subject's stored ecliptic
+                # latitude so a backend failure cannot silently mix frames.
                 ra_from_ecliptic, dec_from_ecliptic = PrimaryDirectionsFactory._ecliptic_to_equatorial(
-                    ecl_lon_tropical, obliquity
+                    ecl_lon_tropical,
+                    obliquity,
+                    point.ecliptic_latitude or 0.0,
                 )
                 if ra is None:
                     ra = ra_from_ecliptic
@@ -502,26 +525,37 @@ class PrimaryDirectionsFactory:
         return math.degrees(math.atan(math.sin(ad_p) / tan_dec))
 
     @staticmethod
-    def _ecliptic_to_equatorial(ecl_lon: float, obliquity: float) -> Tuple[float, float]:
-        """Convert an ecliptic point with zero latitude to equatorial coordinates.
-
-            dec = asin(sin(eps) * sin(lambda))
-            RA  = atan2(sin(lambda) * cos(eps), cos(lambda))
+    def _ecliptic_to_equatorial(
+        ecl_lon: float,
+        obliquity: float,
+        ecl_lat: float = 0.0,
+    ) -> Tuple[float, float]:
+        """Convert tropical ecliptic longitude/latitude to equatorial coordinates.
 
         Args:
             ecl_lon: TROPICAL ecliptic longitude in degrees.
             obliquity: Obliquity of the ecliptic in degrees.
+            ecl_lat: Ecliptic latitude in degrees (default 0 for aspect points
+                and chart axes).
 
         Returns:
             (right_ascension, declination) in degrees, RA normalized to [0, 360).
         """
-        lon_rad = math.radians(ecl_lon % 360)
+        lon_rad = math.radians(ecl_lon % 360.0)
+        lat_rad = math.radians(ecl_lat)
         eps_rad = math.radians(obliquity)
-        dec = math.degrees(math.asin(math.sin(eps_rad) * math.sin(lon_rad)))
-        ra = math.degrees(math.atan2(
-            math.sin(lon_rad) * math.cos(eps_rad),
-            math.cos(lon_rad)
-        )) % 360
+
+        x = math.cos(lat_rad) * math.cos(lon_rad)
+        y = (
+            math.cos(lat_rad) * math.sin(lon_rad) * math.cos(eps_rad)
+            - math.sin(lat_rad) * math.sin(eps_rad)
+        )
+        z = (
+            math.cos(lat_rad) * math.sin(lon_rad) * math.sin(eps_rad)
+            + math.sin(lat_rad) * math.cos(eps_rad)
+        )
+        ra = math.degrees(math.atan2(y, x)) % 360.0
+        dec = math.degrees(math.atan2(z, math.hypot(x, y)))
         return ra, dec
 
     @staticmethod

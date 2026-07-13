@@ -105,7 +105,7 @@ tests/
 │   ├── test_subject_factory_parametrized.py
 │   ├── test_transits.py
 │   ├── test_utilities.py
-│   └── ...                  # (72 files total — see Test Files Reference below)
+│   └── ...                  # (74 files total — see Test Files Reference below)
 ├── data/                    # Shared test data
 │   ├── compare_svg_lines.py          # SVG line-by-line comparison utility
 │   ├── expected_natal_aspects.py     # Golden natal aspect data

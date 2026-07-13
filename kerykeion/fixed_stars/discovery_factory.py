@@ -20,6 +20,7 @@ import logging
 import math
 from typing import cast
 
+from kerykeion._predictive_utils import validate_julian_day
 from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, ephe
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 from kerykeion.schemas.kerykeion_exception import KerykeionException
@@ -130,6 +131,18 @@ class FixedStarDiscoveryFactory:
         if not math.isfinite(orb) or orb < 0:
             raise KerykeionException(f"orb must be a finite number >= 0, got {orb}")
 
+        # Validate the instant before any empty-subject/catalog fast path. A
+        # non-finite JD makes every per-star backend call fail; the deliberately
+        # resilient per-entry handler would otherwise turn a corrupt subject
+        # into a plausible empty discovery result.
+        if subject.julian_day is None:
+            raise KerykeionException(
+                "Subject is missing Julian Day — cannot search fixed stars "
+                "(composite subjects are not supported here)."
+            )
+        validate_julian_day(subject.julian_day)
+        jd = subject.julian_day
+
         planet_positions = _collect_planet_positions(subject)
         if not planet_positions:
             return []
@@ -139,18 +152,6 @@ class FixedStarDiscoveryFactory:
             return []
 
         houses_degree_ut = _collect_house_cusps(subject)
-        # julian_day is Optional on the model (midpoint composites have no
-        # single moment in time); without this guard a None JD reaches
-        # fixstar_ut, which returns NaN positions on libephemeris — every
-        # orb comparison is then False and the caller silently gets an
-        # empty list. Mirrors the PlanetaryNodesFactory guard.
-        if subject.julian_day is None:
-            raise KerykeionException(
-                "Subject is missing Julian Day — cannot search fixed stars "
-                "(composite subjects are not supported here)."
-            )
-        jd = subject.julian_day
-
         prominent: list[KerykeionPointModel] = []
         seen_names: set[str] = set()
         with ephemeris_session(

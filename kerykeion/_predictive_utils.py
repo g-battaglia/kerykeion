@@ -49,7 +49,11 @@ def validate_julian_range(start_jd: float, end_jd: float) -> None:
 
 def validate_julian_day(julian_day: float, *, name: str = "julian_day") -> None:
     """Reject a non-finite Julian Day before calculation or empty fast paths."""
-    if not math.isfinite(julian_day):
+    try:
+        is_finite = math.isfinite(julian_day)
+    except (OverflowError, TypeError):
+        is_finite = False
+    if not is_finite:
         raise ValueError(f"{name} must be a finite number")
 
 

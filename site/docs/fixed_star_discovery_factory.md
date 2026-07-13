@@ -36,7 +36,7 @@ Find fixed stars conjunct natal planets within the given orb.
 
 | Parameter | Type                     | Default | Description                                   |
 | :-------- | :----------------------- | :------ | :-------------------------------------------- |
-| `subject` | AstrologicalSubjectModel | --      | The natal chart                               |
+| `subject` | AstrologicalSubjectModel | --      | A natal chart with a finite Julian Day        |
 | `orb`     | float                    | 1.0     | Finite, non-negative maximum conjunction orb in degrees |
 
 **Returns:** `List[KerykeionPointModel]` sorted by magnitude (brightest first).
