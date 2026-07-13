@@ -913,6 +913,16 @@ class TestAxisOrbFilter:
         filtered = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=limit).aspects
         assert len(filtered) < len(unfiltered)
 
+    @pytest.mark.parametrize(
+        "invalid_limit",
+        [float("nan"), float("inf"), float("-inf"), 0.0, -1.0],
+    )
+    def test_axis_orb_limit_rejects_non_finite_or_non_positive(self, _subject, invalid_limit):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="axis_orb_limit"):
+            AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=invalid_limit)
+
     def test_axis_orb_filters_dual_chart(self, _subject, _subject2):
         """axis_orb_limit now also filters dual-chart (synastry) aspects (was a no-op)."""
         active_points = [

@@ -102,7 +102,7 @@ The `get_transit_moments()` method returns `TransitsTimeRangeModel`, a specializ
 | `active_points` | `List[AstrologicalPoint]` | `DEFAULT_ACTIVE_POINTS` | Points to include in calculation. |
 | `active_aspects` | `List[ActiveAspect]` | `PREDICTIVE_ACTIVE_ASPECTS` | Aspect types and orbs to use (tight 3° predictive orbs by default). |
 | `settings_file` | `Path`, `KerykeionSettingsModel`, `dict`, or `None` | `None` | Custom orb/calculation settings. |
-| `axis_orb_limit` | `float` | `None` | Stricter orb for angles (Asc, MC). |
+| `axis_orb_limit` | `float` | `None` | Finite, positive stricter orb for angles (Asc, MC). |
 
 ## Transit Events with Exact Moment Refinement (v6)
 

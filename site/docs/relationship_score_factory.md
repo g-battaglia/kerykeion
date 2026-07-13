@@ -82,7 +82,7 @@ Ascendant trine Moon (orb: 2.242423320728676°)
 | `first_subject`          | Model   | Required | First astrological subject.                       |
 | `second_subject`         | Model   | Required | Second astrological subject.                      |
 | `use_only_major_aspects` | `bool`  | `True`   | Only consider major aspects (conj, opp, sq, etc). |
-| `axis_orb_limit`         | `float` | `None`   | Stricter orb for angles (Asc, MC). Keyword-only.  |
+| `axis_orb_limit`         | `float` | `None`   | Finite, positive stricter orb for angles (Asc, MC). Keyword-only.  |
 
 ## Score Categories
 

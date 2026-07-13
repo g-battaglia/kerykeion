@@ -21,6 +21,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
+from numbers import Real
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from typing import List, Optional, Dict, Literal
@@ -75,7 +76,7 @@ class AstroCartographyFactory:
         *,
         step: float = 1.0,
         tolerance: Optional[float] = None,
-        lat_range: tuple = (-66, 66),
+        lat_range: tuple[float, float] = (-66, 66),
         planets: Optional[List[str]] = None,
     ) -> List[ACGLineModel]:
         """
@@ -102,11 +103,12 @@ class AstroCartographyFactory:
         Args:
             subject: The natal chart subject.
             step: Latitude scanning step in degrees for the line points
-                (default 1.0).
+                (default 1.0). Must be finite and positive.
             tolerance: Unused since v6 (the horizon equation is solved
                 exactly, so there is no proximity matching). Accepted for
                 backward compatibility.
-            lat_range: Latitude range to compute (default -66 to +66, avoids polar).
+            lat_range: Two finite latitude bounds within -90..+90, ordered
+                minimum first (default -66 to +66, avoids polar).
             planets: List of planet names. Defaults to Sun through Pluto.
 
         Returns:
@@ -118,15 +120,31 @@ class AstroCartographyFactory:
         # A non-positive step never advances the latitude scan: the ASC/DSC
         # ``while lat <= lat_max: lat += step`` loop would spin forever. Reject
         # it up front rather than hang.
-        if step <= 0:
+        if not isinstance(step, Real) or not math.isfinite(step) or step <= 0:
             raise KerykeionException(
-                f"step must be a positive number of degrees, got {step!r}."
+                f"step must be a finite positive number of degrees, got {step!r}."
+            )
+
+        if not isinstance(lat_range, (tuple, list)) or len(lat_range) != 2:
+            raise KerykeionException(
+                f"lat_range must contain exactly two numeric latitudes, got {lat_range!r}."
+            )
+        if any(not isinstance(value, Real) for value in lat_range):
+            raise KerykeionException(
+                f"lat_range must contain two finite numeric latitudes, got {lat_range!r}."
+            )
+        lat_min, lat_max = float(lat_range[0]), float(lat_range[1])
+        if not math.isfinite(lat_min) or not math.isfinite(lat_max):
+            raise KerykeionException(f"lat_range bounds must be finite, got {lat_range!r}.")
+        if lat_min < -90 or lat_max > 90:
+            raise KerykeionException(
+                f"lat_range must stay within -90..90 degrees, got {lat_range!r}."
             )
 
         # An inverted range (lat_min > lat_max) yields a negative n_steps below
         # and an empty grid — every line would be emitted with no points, no
         # warning. Reject it rather than return silent garbage.
-        if lat_range[0] > lat_range[1]:
+        if lat_min > lat_max:
             raise KerykeionException(
                 f"lat_range must be (min, max) with min <= max, got {lat_range!r}."
             )
@@ -174,7 +192,6 @@ class AstroCartographyFactory:
             # so the fetch is identical for tropical and sidereal charts.
             eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
 
-            lat_min, lat_max = lat_range
             # One shared float latitude grid for every line type. Previously
             # MC/IC built their grid with range(int(lat_min), ..., max(1, int(step)))
             # — silently coercing a fractional step to an integer (and to >= 1) —
@@ -242,4 +259,3 @@ class AstroCartographyFactory:
                 result.append(ACGLineModel(planet=pname, line_type="DSC", points=dsc_lines[pname]))
 
         return result
-

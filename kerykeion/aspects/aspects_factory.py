@@ -4,6 +4,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import logging
+import math
 from typing import Any, Callable, Mapping, Sequence, Union, List, Optional, cast
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, OPPOSITE_PAIRS
@@ -779,7 +780,7 @@ class AspectsFactory:
         if axis_orb_limit is None:
             return list(all_aspects)
 
-        if axis_orb_limit <= 0:
+        if not math.isfinite(axis_orb_limit) or axis_orb_limit <= 0:
             raise KerykeionException("axis_orb_limit must be a positive number when provided")
 
         for aspect in all_aspects:
@@ -878,7 +879,7 @@ class AspectsFactory:
         Args:
             subject: The astrological subject.
             orb: Maximum orb in degrees (default 1.0, standard for declination aspects).
-                Must be non-negative.
+                Must be finite and non-negative.
             active_points: Optional list of points to include. As in the
                 longitudinal twin (``single_chart_aspects``), the restriction is
                 intersected with ``subject.active_points``.
@@ -886,8 +887,8 @@ class AspectsFactory:
         Returns:
             List of AspectModel with aspect="parallel" or aspect="contra-parallel".
         """
-        if orb < 0:
-            raise KerykeionException("orb must be a non-negative number")
+        if not math.isfinite(orb) or orb < 0:
+            raise KerykeionException("orb must be a finite non-negative number")
 
         # v6: extend points_to_use and celestial_points with subject.fixed_stars
         # so catalog stars participate in parallel/contra-parallel aspects too.
@@ -949,7 +950,7 @@ class AspectsFactory:
         Args:
             first_subject: First astrological subject.
             second_subject: Second astrological subject.
-            orb: Maximum orb in degrees (default 1.0). Must be non-negative.
+            orb: Maximum orb in degrees (default 1.0). Must be finite and non-negative.
             active_points: Optional list of points to include. As in the
                 longitudinal twin (``dual_chart_aspects``), the restriction is
                 intersected with each subject's ``active_points``.
@@ -957,8 +958,8 @@ class AspectsFactory:
         Returns:
             List of AspectModel with aspect="parallel" or aspect="contra-parallel".
         """
-        if orb < 0:
-            raise KerykeionException("orb must be a non-negative number")
+        if not math.isfinite(orb) or orb < 0:
+            raise KerykeionException("orb must be a finite non-negative number")
 
         # v6: extend points + celestial_points with both subjects' fixed_stars
         # so catalog stars participate in parallel/contra-parallel aspects.

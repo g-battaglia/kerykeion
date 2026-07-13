@@ -232,6 +232,16 @@ class TestFixedStarDiscovery:
         narrow = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=0.5)
         assert len(narrow) <= len(wide)
 
+    @pytest.mark.parametrize(
+        "invalid_orb",
+        [float("nan"), float("inf"), float("-inf"), -1.0],
+    )
+    def test_invalid_orb_rejected(self, subject_all_stars, invalid_orb):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="orb"):
+            FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=invalid_orb)
+
     def test_sorted_by_magnitude(self, subject_all_stars):
         """Results should be sorted by magnitude (brightest first)."""
         prominent = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=3.0)

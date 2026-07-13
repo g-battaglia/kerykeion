@@ -136,6 +136,7 @@ tight_aspects = AspectsFactory.single_chart_aspects(subject, active_aspects=cust
 #### Axis Orbs (`axis_orb_limit`)
 
 Apply stricter orbs when angles (Ascendant, MC) are involved.
+The value must be a finite positive number when provided.
 
 ```python
 # Standard orb for planets, but strict 2° orb for Angles
@@ -195,7 +196,7 @@ for asp in dec_aspects:
 | Parameter       | Type         | Default | Description                                    |
 | :-------------- | :----------- | :------ | :--------------------------------------------- |
 | `subject`       | Subject      | --      | The astrological subject                       |
-| `orb`           | float        | 1.0     | Maximum orb in degrees                         |
+| `orb`           | float        | 1.0     | Finite, non-negative maximum orb in degrees    |
 | `active_points` | List or None | None    | Points to include (defaults to subject's list) |
 
 ### `dual_chart_declination_aspects`
@@ -214,6 +215,8 @@ dec_synastry = AspectsFactory.dual_chart_declination_aspects(subject_a, subject_
 ```
 
 Returns `List[AspectModel]` with `aspect="parallel"` or `aspect="contra-parallel"`.
+Its `orb` parameter has the same finite, non-negative contract as the
+single-chart method.
 
 ## Aspect Utilities
 

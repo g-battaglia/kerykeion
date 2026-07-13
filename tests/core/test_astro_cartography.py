@@ -79,6 +79,32 @@ class TestACGComputation:
         fine_mc = next(line for line in fine if line.line_type == "MC")
         assert len(fine_mc.points) >= len(coarse_mc.points)
 
+    @pytest.mark.parametrize(
+        "invalid_step",
+        [float("nan"), float("inf"), float("-inf"), 0.0, -1.0],
+    )
+    def test_invalid_step_rejected(self, subject, invalid_step):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="step"):
+            AstroCartographyFactory.compute(subject, step=invalid_step)
+
+    @pytest.mark.parametrize(
+        "invalid_lat_range",
+        [
+            (-90.1, 0.0),
+            (0.0, 90.1),
+            (float("nan"), 0.0),
+            (0.0, float("inf")),
+            (10.0, -10.0),
+        ],
+    )
+    def test_invalid_lat_range_rejected(self, subject, invalid_lat_range):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="lat_range"):
+            AstroCartographyFactory.compute(subject, lat_range=invalid_lat_range)
+
 
 def _true_equatorial(jd, planet_id):
     """True equatorial RA/declination (degrees), sidereal flag stripped."""

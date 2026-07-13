@@ -51,6 +51,19 @@ Compute primary directions for a natal chart.
 
 **Returns:** `List[PrimaryDirectionModel]` sorted by `direction_years`.
 
+### `compute_speculum(subject)`
+
+Compute the Placidian coordinate table independently of the direction list:
+
+```python
+speculum = PrimaryDirectionsFactory.compute_speculum(subject)
+for entry in speculum:
+    print(entry.name, entry.right_ascension, entry.declination, entry.semi_arc)
+```
+
+**Returns:** `List[SpeculumEntryModel]`. The subject must represent one real
+instant with valid chart geometry; midpoint composites are not supported.
+
 ### Rate Keys
 
 - **Ptolemy**: 1 degree of arc = 1 year of life (the classical rate)

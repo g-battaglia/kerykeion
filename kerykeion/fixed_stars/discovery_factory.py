@@ -17,6 +17,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from __future__ import annotations
 
 import logging
+import math
 from typing import cast
 
 from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, ephe
@@ -124,9 +125,10 @@ class FixedStarDiscoveryFactory:
 
         Returns a list of KerykeionPointModel sorted by magnitude (brightest first).
         Only stars that are within ``orb`` degrees of any natal planet are included.
+        ``orb`` must be finite and non-negative.
         """
-        if orb < 0:
-            raise KerykeionException(f"orb must be >= 0, got {orb}")
+        if not math.isfinite(orb) or orb < 0:
+            raise KerykeionException(f"orb must be a finite number >= 0, got {orb}")
 
         planet_positions = _collect_planet_positions(subject)
         if not planet_positions:

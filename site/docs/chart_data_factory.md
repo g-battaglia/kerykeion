@@ -212,7 +212,7 @@ chart_data = ChartDataFactory.create_chart_data(
 | `active_aspects`             | `List[ActiveAspect]`       | Default      | Custom aspects list with orbs.                                                |
 | `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays (dual charts only).                                  |
 | `include_relationship_score` | `bool`                     | `False`      | Calculate compatibility score (synastry only).                                |
-| `axis_orb_limit`             | `float`                    | `None`       | Stricter orb for angles. Keyword-only.                                        |
+| `axis_orb_limit`             | `float`                    | `None`       | Finite, positive stricter orb for angles. Keyword-only.                        |
 | `distribution_method`        | `str`                      | `"weighted"` | `"weighted"` or `"pure_count"`. Keyword-only.                                 |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 

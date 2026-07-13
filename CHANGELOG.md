@@ -23,6 +23,10 @@
   timing range factories now distinguish date-only bounds by parsing them as
   dates. Datetimes using valid non-`T` separators such as `_` are no longer
   mistaken for dates and widened through the end of the day.
+- **Orb and astrocartography numeric contracts reject non-finite values.**
+  Aspect-axis limits, declination orbs, fixed-star discovery orbs, and ACG
+  latitude steps now reject `NaN` and infinities. ACG latitude bounds must also
+  be finite, ordered, and contained within the geographic -90..+90 range.
 - **Dual-chart SVG baselines include the a70 projected-house attributes.** The
   eleven affected synastry/transit goldens now match the additive metadata
   contract instead of failing the base-tier suite.
@@ -43,6 +47,8 @@
   task, so it verifies the built wheel and packaged assets rather than importing
   the source checkout directly. Development/test counts and Markdown EOF
   hygiene were aligned with the current tree.
+- CI now exercises every advertised Python minor (3.12, 3.13, and 3.14), and
+  the primary-directions guide documents the public `compute_speculum()` helper.
 
 ## 6.0.0a70 - 2026-07-13
 
