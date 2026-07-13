@@ -32,7 +32,9 @@ jd_start = ephe.julday(2025, 1, 1, 0.0)
 event = factory.next_heliacal_rising(
     julian_day=jd_start,
     planet_name_or_star="Venus",
-    geopos=(12.4964, 41.9028, 50),  # (longitude, latitude, altitude_m)
+    lat=41.9028,
+    lng=12.4964,
+    altitude=50,
 )
 
 print(f"Venus heliacal rising: {event.datestamp}")
@@ -40,33 +42,43 @@ print(f"Venus heliacal rising: {event.datestamp}")
 
 ## Methods
 
-### `next_heliacal_rising(julian_day, planet_name_or_star, geopos, atmo, observer)`
+### `next_heliacal_rising(julian_day, planet_name_or_star, geopos=None, atmo=None, observer=None, *, lat=None, lng=None, altitude=None)`
 
 Find the next heliacal rising after the given Julian Day.
 
-| Parameter              | Type                               | Default  | Description                                              |
-| :--------------------- | :--------------------------------- | :------- | :------------------------------------------------------- |
-| `julian_day`           | float                              | --       | Starting Julian Day (UT)                                 |
-| `planet_name_or_star`  | str                                | --       | Planet name (e.g. `"Venus"`) or fixed-star name          |
-| `geopos`               | Tuple[float, float, float]         | --       | (longitude, latitude, altitude_m) of the observer        |
-| `atmo`                 | Tuple[float,float,float,float] or None | None | (pressure, temperature, humidity, extinction)            |
-| `observer`             | Tuple of 6 floats or None          | None     | Observer parameters (age, Snellen ratio, etc.)           |
+| Parameter              | Type                                   | Default      | Description                                              |
+| :--------------------- | :------------------------------------- | :----------- | :------------------------------------------------------- |
+| `julian_day`           | float                                  | **Required** | Starting Julian Day (UT).                                |
+| `planet_name_or_star`  | str                                    | **Required** | Planet name (e.g. `"Venus"`) or fixed-star name.         |
+| `geopos`               | Tuple[float, float, float] or None     | None         | Observer `(longitude, latitude, altitude_m)`; mutually exclusive with the coordinate keywords. |
+| `atmo`                 | Tuple[float, float, float, float] or None | None       | `(pressure, temperature, humidity, extinction)`.         |
+| `observer`             | Tuple of 6 floats or None              | None         | Observer parameters (age, Snellen ratio, etc.).          |
+| `lat`                  | float or None                          | None         | Observer latitude (keyword-only); must be paired with `lng`. |
+| `lng`                  | float or None                          | None         | Observer longitude (keyword-only); must be paired with `lat`. |
+| `altitude`             | float or None                          | None         | Observer altitude in metres; defaults to `0` with `lat`/`lng`. |
 
 **Returns:** `HeliacalEventModel`
 
-### `search_events(julian_day, geopos, count, planets, event_types, atmo, observer)`
+### `search_events(julian_day, geopos=None, count=5, planets=None, event_types=None, atmo=None, observer=None, *, lat=None, lng=None, altitude=None)`
 
 Find the next N heliacal events across multiple planets, sorted chronologically.
 
-| Parameter     | Type                       | Default | Description                                         |
-| :------------ | :------------------------- | :------ | :-------------------------------------------------- |
-| `julian_day`  | float                      | --      | Starting Julian Day (UT)                            |
-| `geopos`      | Tuple[float,float,float]   | --      | Observer position                                   |
-| `count`       | int                        | 5       | Maximum number of events to return                  |
-| `planets`     | Sequence[str] or None      | None    | Planet names (defaults to Mercury through Saturn)   |
-| `event_types` | Sequence[int] or None      | None    | Event type constants (defaults to rising/setting)   |
-| `atmo`        | Tuple or None              | None    | Atmospheric parameters                              |
-| `observer`    | Tuple or None              | None    | Observer parameters                                 |
+| Parameter     | Type                       | Default      | Description                                         |
+| :------------ | :------------------------- | :----------- | :-------------------------------------------------- |
+| `julian_day`  | float                      | **Required** | Starting Julian Day (UT).                           |
+| `geopos`      | Tuple[float,float,float] or None | None    | Observer `(longitude, latitude, altitude_m)`; mutually exclusive with coordinate keywords. |
+| `count`       | int                        | 5            | Maximum number of events to return.                 |
+| `planets`     | Sequence[str] or None      | None         | Planet names (defaults to Mercury through Saturn).  |
+| `event_types` | Sequence[int] or None      | None         | Event type constants (defaults to rising/setting).  |
+| `atmo`        | Tuple or None              | None         | Atmospheric parameters.                             |
+| `observer`    | Tuple or None              | None         | Observer parameters.                                |
+| `lat`         | float or None              | None         | Observer latitude (keyword-only); must be paired with `lng`. |
+| `lng`         | float or None              | None         | Observer longitude (keyword-only); must be paired with `lat`. |
+| `altitude`    | float or None              | None         | Observer altitude in metres; defaults to `0` with `lat`/`lng`. |
+
+The keyword coordinate form is recommended because it makes latitude and
+longitude order explicit. Do not combine it with `geopos`; passing both forms,
+or passing only one of `lat`/`lng`, raises `KerykeionException`.
 
 **Returns:** `List[HeliacalEventModel]`
 
@@ -74,7 +86,9 @@ Find the next N heliacal events across multiple planets, sorted chronologically.
 # doc-snippet: no-run — multi-planet visibility search runs for minutes
 events = factory.search_events(
     julian_day=ephe.julday(2025, 1, 1, 0.0),
-    geopos=(12.4964, 41.9028, 50),
+    lat=41.9028,
+    lng=12.4964,
+    altitude=50,
     count=10,
 )
 

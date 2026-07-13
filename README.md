@@ -910,6 +910,17 @@ aspect_grid_chart.save_aspect_grid_only_svg_file(output_path=output_dir, filenam
 
 ![John Lennon — Aspect Grid](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
 
+### Machine-readable point metadata
+
+Rendered `<g kr:node="ChartPoint">` elements expose stable `kr:` attributes for
+interactive consumers. On every dual wheel (Transit, Synastry, Dual Return,
+and Progression), `kr:house` remains the point owner's house and
+`kr:horoscope` identifies that owner ring. `kr:projectedhouse` gives the same
+point's house in the other subject's cusp system, while
+`kr:projectedhoroscope` identifies that target ring. The reciprocal metadata is
+available in classic/modern, full/wheel-only output even when house-comparison
+data or tables are disabled.
+
 ## Modern Chart Style
 
 All chart types support a **modern** concentric-ring layout as an alternative to the classic wheel. You can set the style at the instance level via `ChartDrawer(chart_data=..., style="modern")` or per-render via `save_svg(style="modern")`. The modern style works with all six themes.

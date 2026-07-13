@@ -61,6 +61,11 @@ Each returned `KerykeionPointModel` is enriched with discovery metadata:
 
 The catalog is sourced from **libephemeris** (the default backend). On the swisseph backend, the factory requires `sefstars.txt` to be present in the ephemeris data path (see [Swiss Ephemeris Configuration](/content/docs/swisseph_configuration) for details).
 
+Catalog enumeration uses immutable `FixedStarMetadataModel` entries containing
+`name`, canonical `slug`, optional Hipparcos number, nomenclature, and visual
+magnitude. Discovery results remain enriched `KerykeionPointModel` objects as
+described above.
+
 ## Wider Orb Example
 
 ```python

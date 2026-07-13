@@ -53,6 +53,13 @@ class TestLunationsRange:
         with pytest.raises(ValueError):
             LunationFinderFactory.from_julian_day(2451545.0, 2451545.0 + 3.1e6)
 
+    @pytest.mark.parametrize("bad_jd", [float("nan"), float("inf"), float("-inf")])
+    @pytest.mark.parametrize("bad_bound", ["start", "end"])
+    def test_non_finite_julian_bounds_rejected(self, bad_jd, bad_bound):
+        start, end = (bad_jd, 2451546.0) if bad_bound == "start" else (2451545.0, bad_jd)
+        with pytest.raises(ValueError, match="finite"):
+            LunationFinderFactory.from_julian_day(start, end, phases=[])
+
     def test_date_only_end_covers_full_day(self):
         # A date-only end_date must span through the end of that UTC day, not
         # stop at midnight (which would drop a lunation later on the last day).

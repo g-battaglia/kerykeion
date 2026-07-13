@@ -76,11 +76,10 @@ from typing import Iterator, Optional, Sequence, Tuple
 logger = logging.getLogger(__name__)
 
 # Per-thread nesting depth of ``ephemeris_session``. ``EPHEMERIS_LOCK`` is an
-# RLock, so the same thread CAN re-enter a session, but the inner session's
-# cleanup (``reset_ephemeris_session``) resets the sidereal/topo state the outer
-# session configured — silently shifting every subsequent position in the outer
-# session. No internal path nests, so this only guards raw callers; a warning is
-# enough (raising would break re-entrancy the RLock otherwise permits).
+# RLock so the same thread can acquire it recursively, but a nested session is
+# not semantically safe: the inner cleanup resets the sidereal/topocentric state
+# configured by the outer session. Reject nesting before touching backend state,
+# so an accidental inner factory call cannot corrupt the still-active session.
 _SESSION_DEPTH = _thread_local()
 
 # ---------------------------------------------------------------------------
@@ -457,23 +456,21 @@ def ephemeris_session(
             lon = ephe.calc_ut(jd, ephe.SUN, iflag)[0][0]
 
     Notes:
-        - ``EPHEMERIS_LOCK`` is re-entrant, but keep sessions as narrow as
-          possible and do NOT build :class:`AstrologicalSubjectFactory`
-          subjects (or call other factories) inside a session: the inner
-          calculation's cleanup resets the sidereal/topo state configured by
-          the outer session. Exit the session first, then build subjects.
+        - Nested sessions on the same thread raise ``RuntimeError`` before the
+          inner session mutates backend state. Keep sessions as narrow as
+          possible and exit the outer session before building subjects or
+          calling another factory that opens its own session.
         - ``sidereal_mode="USER"`` raises ``ValueError`` when the custom
           ayanamsa parameters are missing.
     """
     with EPHEMERIS_LOCK:
         depth = getattr(_SESSION_DEPTH, "value", 0)
         if depth > 0:
-            logger.warning(
-                "Nested ephemeris_session detected (depth %d): the inner session's "
-                "cleanup will reset the sidereal/topocentric state configured by the "
-                "outer session, silently shifting its subsequent positions. Exit the "
-                "outer session before building subjects or calling other factories.",
-                depth + 1,
+            raise RuntimeError(
+                "Nested ephemeris_session is not supported: an inner session's cleanup "
+                "would reset the sidereal/topocentric state configured by the outer "
+                "session. Exit the outer session before building subjects or calling "
+                "other factories."
             )
         _SESSION_DEPTH.value = depth + 1
         try:

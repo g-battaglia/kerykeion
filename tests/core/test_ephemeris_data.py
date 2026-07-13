@@ -794,8 +794,7 @@ class TestEphemerisConfigurationVariants:
 
 
 class TestEphemerisSessionNestingGuard:
-    """A nested ephemeris_session on the same thread warns: the inner session's
-    cleanup resets the sidereal/topo state configured by the outer one."""
+    """A nested session is rejected before it can corrupt the outer state."""
 
     def test_no_warning_when_not_nested(self, caplog):
         from kerykeion.ephemeris_backend import ephemeris_session
@@ -805,13 +804,21 @@ class TestEphemerisSessionNestingGuard:
                 pass
         assert "Nested ephemeris_session" not in caplog.text
 
-    def test_warns_when_nested(self, caplog):
-        from kerykeion.ephemeris_backend import ephemeris_session, _SESSION_DEPTH
+    def test_nested_session_is_rejected_without_mutating_outer_sidereal_state(self):
+        from kerykeion.ephemeris_backend import ephe, ephemeris_session, _SESSION_DEPTH
 
-        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
-            with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI"):
+        jd = 2451545.0
+        with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as outer_iflag:
+            before = ephe.calc_ut(jd, ephe.SUN, outer_iflag)[0][0]
+
+            with pytest.raises(RuntimeError, match="Nested ephemeris_session is not supported"):
                 with ephemeris_session():
-                    pass
-        assert "Nested ephemeris_session" in caplog.text
-        # Depth counter returns to zero after both sessions exit.
+                    pytest.fail("nested session must be rejected before entering")
+
+            # The rejected inner session never resets the outer LAHIRI state.
+            after = ephe.calc_ut(jd, ephe.SUN, outer_iflag)[0][0]
+            assert after == pytest.approx(before, abs=1e-12)
+            assert getattr(_SESSION_DEPTH, "value", 0) == 1
+
+        # The successfully-entered outer session still performs its normal cleanup.
         assert getattr(_SESSION_DEPTH, "value", 0) == 0

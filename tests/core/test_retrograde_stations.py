@@ -85,6 +85,13 @@ class TestStationApi:
         with pytest.raises(ValueError):
             RetrogradeStationFactory.from_julian_day(0.0, 20_000_000.0)
 
+    @pytest.mark.parametrize("bad_jd", [float("nan"), float("inf"), float("-inf")])
+    @pytest.mark.parametrize("bad_bound", ["start", "end"])
+    def test_non_finite_julian_bounds_rejected(self, bad_jd, bad_bound):
+        start, end = (bad_jd, 2451546.0) if bad_bound == "start" else (2451545.0, bad_jd)
+        with pytest.raises(ValueError, match="finite"):
+            RetrogradeStationFactory.from_julian_day(start, end, planets=[])
+
     @pytest.mark.extended
     def test_bce_range_via_julian_day(self):
         # The BCE range must not crash on JD->ISO conversion (datetime caps at

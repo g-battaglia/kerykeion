@@ -46,6 +46,8 @@ ECL_ANNULAR_TOTAL = getattr(ephe, "SE_ECL_ANNULAR_TOTAL", getattr(ephe, "ECL_ANN
 def _ensure_scannable(count: int) -> None:
     """Reject absurd event counts upfront, so a caller never receives a
     silently truncated result and never waits on a scan that cannot finish."""
+    if count < 0:
+        raise ValueError("count must be non-negative")
     if count > _MAX_COUNT:
         raise ValueError(
             f"count too large (> {_MAX_COUNT} events per eclipse type). "
@@ -320,7 +322,7 @@ class EclipseFactory:
                 ephemeris backend fails mid-search (most often a date outside
                 the available ephemeris range); the search never returns
                 silently truncated results.
-            ValueError: If ``count`` exceeds the supported maximum.
+            ValueError: If ``count`` is negative or exceeds the supported maximum.
         """
         _ensure_scannable(count)
         # Reject an impossible latitude (e.g. an accidental lat/lng swap, made
@@ -381,7 +383,7 @@ class EclipseFactory:
                 ephemeris backend fails mid-search (most often a date outside
                 the available ephemeris range); the search never returns
                 silently truncated results.
-            ValueError: If ``count`` exceeds the supported maximum.
+            ValueError: If ``count`` is negative or exceeds the supported maximum.
         """
         _ensure_scannable(count)
         _validate_zodiac(zodiac_type, sidereal_mode)

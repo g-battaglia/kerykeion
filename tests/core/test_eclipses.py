@@ -48,6 +48,12 @@ class TestGlobalSearch:
         with pytest.raises(ValueError):
             EclipseFactory.search_from_location(lat=41.9, lng=12.5, count=1_000_001)
 
+    def test_negative_count_rejected_upfront(self):
+        with pytest.raises(ValueError, match="non-negative"):
+            EclipseFactory.search_global(start_year=2025, count=-1)
+        with pytest.raises(ValueError, match="non-negative"):
+            EclipseFactory.search_from_location(lat=41.9, lng=12.5, count=-1)
+
     def test_lunar_eclipse_has_type(self):
         result = EclipseFactory.search_global(start_year=2025, count=1)
         assert len(result.lunar_eclipses) >= 1, "Global search with count=1 should find at least one lunar eclipse"

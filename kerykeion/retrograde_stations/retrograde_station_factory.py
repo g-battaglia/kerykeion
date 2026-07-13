@@ -25,7 +25,7 @@ from typing import List, Optional, cast
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
-from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
+from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso, validate_julian_range
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode, ZodiacType
@@ -241,9 +241,11 @@ class RetrogradeStationFactory:
                 ephemeris backend fails mid-scan (most often a date outside the
                 available ephemeris range); the scan never returns silently
                 truncated results.
-            ValueError: If a planet name is unknown or the range is too large
-                to scan.
+            ValueError: If a planet name is unknown, either Julian bound is
+                non-finite, or the range is too large to scan.
         """
+        validate_julian_range(start_jd, end_jd)
+
         # None = default set; an explicit empty list = scan nothing.
         if planets is not None:
             invalid = sorted(set(planets) - set(_PLANET_IDS))

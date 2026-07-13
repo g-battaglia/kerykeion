@@ -54,6 +54,9 @@ Find occultations visible from a specific location.
 
 **Returns:** `List[OccultationModel]`
 
+For both search methods, `count` must be between 0 and 1,000 inclusive;
+invalid counts raise `ValueError` before any backend call.
+
 ```python
 # Find occultations visible from Rome
 events = factory.search_local(

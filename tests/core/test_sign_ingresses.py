@@ -110,6 +110,13 @@ class TestIngressApi:
         with pytest.raises(ValueError):
             SignIngressFactory.from_iso_range("0001-01-01", "3000-01-01")
 
+    @pytest.mark.parametrize("bad_jd", [float("nan"), float("inf"), float("-inf")])
+    @pytest.mark.parametrize("bad_bound", ["start", "end"])
+    def test_non_finite_julian_bounds_rejected(self, bad_jd, bad_bound):
+        start, end = (bad_jd, 2451546.0) if bad_bound == "start" else (2451545.0, bad_jd)
+        with pytest.raises(ValueError, match="finite"):
+            SignIngressFactory.from_julian_day(start, end, planets=[])
+
     @pytest.mark.extended
     def test_bce_range_via_julian_day(self):
         # The BCE range Kerykeion supports must not crash on JD->ISO conversion

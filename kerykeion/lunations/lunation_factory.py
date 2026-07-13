@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
-from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
+from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso, validate_julian_range
 
 from kerykeion.moon_phase_details.utils import compute_lunar_phase_jd
 from kerykeion.schemas.kerykeion_exception import KerykeionException
@@ -213,9 +213,11 @@ class LunationFinderFactory:
                 ephemeris backend fails mid-scan (most often a date outside the
                 available ephemeris range); the scan never returns silently
                 truncated results.
-            ValueError: If a phase name is unknown or the range is too large
-                to scan.
+            ValueError: If a phase name is unknown, either Julian bound is
+                non-finite, or the range is too large to scan.
         """
+        validate_julian_range(start_jd, end_jd)
+
         # None = default (all four phases); an explicit empty list = scan none.
         # `if phases:` conflated the two, treating phases=[] as "all four" —
         # the opposite of the ingress/station factories, whose planets=[] means

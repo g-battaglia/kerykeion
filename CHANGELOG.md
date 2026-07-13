@@ -2,6 +2,40 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **Nested ephemeris sessions can no longer corrupt an outer calculation.**
+  `ephemeris_session()` now rejects same-thread nesting before the inner call
+  mutates process-global sidereal/topocentric state. Previously the inner
+  cleanup reset the still-active outer session; a LAHIRI calculation could
+  silently continue with tropical/default state.
+- **Predictive Julian-Day range APIs reject non-finite bounds consistently.**
+  Lunation, retrograde-station, sign-ingress, and mundane-aspect searches now
+  raise `ValueError` for `NaN` or infinite bounds instead of returning a
+  plausible empty model, serializing `null`, or leaking a later overflow.
+- **Eclipse and occultation searches reject negative event counts.** `count=0`
+  remains an explicit empty search; negative counts now raise `ValueError`
+  rather than succeeding vacuously.
+- **Void-of-course backend error normalization is statically typed.** Backend
+  exception classes are resolved and validated once, preserving the documented
+  `KerykeionException` boundary while restoring a clean mypy gate.
+- **Dual-chart SVG baselines include the a70 projected-house attributes.** The
+  eleven affected synastry/transit goldens now match the additive metadata
+  contract instead of failing the base-tier suite.
+
+### Documentation
+
+- Added complete guides for mundane aspects, Sun times, planetary hours, and
+  void-of-course Moon windows; updated timing, eclipse, heliacal, planetary
+  return, SVG metadata, public-model, development, and test-suite references.
+- Rebuilt the documentation coverage audit around the explicit 102-name
+  package-root export contract. It now scans README, the AI guide, site docs,
+  and examples and exits non-zero for real omissions; current coverage is 100%.
+- The Markdown snippet gate now includes site examples by default, no longer
+  skips all docs when the optional `swisseph` package is absent, and uses a
+  fast page-level pass with cumulative replay only for diagnostics. All 379
+  maintained runnable snippets pass.
+
 ## 6.0.0a70 - 2026-07-13
 
 ### Added (6.0.0a70 — dual-chart projected-house SVG metadata)

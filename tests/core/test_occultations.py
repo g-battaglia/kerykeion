@@ -215,6 +215,12 @@ class TestOccultationBreakAndErrorPaths:
         with pytest.raises(ValueError):
             factory.search_local(start_jd, ephe.VENUS, lat=41.9, lng=12.5, count=1_001)
 
+    def test_negative_count_rejected_upfront(self, factory, start_jd):
+        with pytest.raises(ValueError, match="non-negative"):
+            factory.search_global(start_jd, ephe.VENUS, count=-1)
+        with pytest.raises(ValueError, match="non-negative"):
+            factory.search_local(start_jd, ephe.VENUS, lat=41.9, lng=12.5, count=-1)
+
 
 class TestPlanetNameResolution:
     """planet_id also accepts planet names (resolved via the project-wide

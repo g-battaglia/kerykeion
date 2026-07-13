@@ -73,6 +73,8 @@ def _classify_occultation(retflags: int) -> str:
 def _ensure_scannable(count: int) -> None:
     """Reject absurd event counts upfront, so a caller never receives a
     silently truncated result and never waits on a scan that cannot finish."""
+    if count < 0:
+        raise ValueError("count must be non-negative")
     if count > _MAX_COUNT:
         raise ValueError(
             f"count too large (> {_MAX_COUNT} events per search). "
@@ -212,7 +214,7 @@ class OccultationFactory:
                 ephemeris backend fails mid-search (most often a date outside
                 the available ephemeris range); the search never returns
                 silently truncated results.
-            ValueError: If ``count`` exceeds the supported maximum.
+            ValueError: If ``count`` is negative or exceeds the supported maximum.
         """
         _ensure_scannable(count)
         planet_id = _resolve_planet_id(planet_id)
@@ -286,7 +288,7 @@ class OccultationFactory:
                 ±90° range, or if the ephemeris backend fails mid-search (most
                 often a date outside the available ephemeris range); the search
                 never returns silently truncated results.
-            ValueError: If ``count`` exceeds the supported maximum.
+            ValueError: If ``count`` is negative or exceeds the supported maximum.
         """
         _ensure_scannable(count)
         # Reject an impossible latitude (e.g. an accidental lat/lng swap, made

@@ -269,6 +269,18 @@ class TestVoidWindowsRange:
             with pytest.raises(KerykeionException, match="narrow the date range"):
                 VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
 
+    def test_backend_range_error_normalized_to_kerykeion_exception(self, monkeypatch):
+        import kerykeion.void_of_course_moon.factory as fac
+
+        assert fac._BACKEND_ERROR_TYPES, "active ephemeris backend must expose an Error type"
+
+        def boom(*args, **kwargs):
+            raise fac._BACKEND_ERROR_TYPES[0]("simulated ephemeris range failure")
+
+        monkeypatch.setattr(fac, "compute_void_windows", boom)
+        with pytest.raises(KerykeionException, match="narrow the date range"):
+            VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
+
     def test_year_one_edge_never_leaks_a_bare_error(self):
         # A range at the very start of the civil calendar must never surface a
         # non-KerykeionException. Depending on the installed kernel it either

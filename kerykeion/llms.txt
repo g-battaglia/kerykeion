@@ -10,6 +10,7 @@ Kerykeion is a Python library for astrological calculations powered by the libep
 -   Chart generation (Natal, Synastry, Transit, Composite, Returns)
 -   Aspect analysis and element/quality distributions
 -   SVG chart visualization
+-   Calendar events, sun times, planetary hours, and void-of-course windows
 -   Multiple house systems and coordinate perspectives
 
 ## Core Architecture
@@ -292,6 +293,50 @@ wheel_only = drawer.generate_wheel_only_svg_string()  # Just the wheel
 aspects_only = drawer.generate_aspect_grid_only_svg_string()  # Just aspects
 ```
 
+### Dual-chart SVG house metadata
+
+Each `<g kr:node="ChartPoint">` keeps the owner placement in `kr:house` and
+the owner ring in `kr:horoscope`. In Transit, Synastry, DualReturnChart, and
+Progression wheels, `kr:projectedhouse` is the point's house in the other
+subject's cusp system and `kr:projectedhoroscope` identifies that target ring.
+The contract is identical in classic/modern and full/wheel-only output, even
+when house-comparison data is disabled.
+
+## 5A. Calendar and Civil-Time Factories
+
+```python
+from kerykeion import (
+    MundaneAspectFactory,
+    PlanetaryHoursFactory,
+    SunTimesFactory,
+    VoidOfCourseMoonFactory,
+)
+
+# Civil solar events and the unequal Chaldean hours for Rome.
+sun_times = SunTimesFactory.from_date(
+    2026, 5, 28, latitude=41.9028, longitude=12.4964, tz_str="Europe/Rome"
+)
+planetary_hours = PlanetaryHoursFactory.from_datetime(
+    2026, 5, 28, 11, 30,
+    latitude=41.9028, longitude=12.4964, tz_str="Europe/Rome",
+)
+
+# Geocentric timing primitives need no observer coordinates.
+void_state = VoidOfCourseMoonFactory.from_datetime(
+    2026, 6, 1, 9, 0, tz_str="Europe/Rome"
+)
+aspectarian = MundaneAspectFactory.from_iso_range(
+    "2020-12-01", "2020-12-31",
+    points=["Jupiter", "Saturn"], aspects=["conjunction"],
+)
+```
+
+`VoidOfCourseMoonFactory.from_iso_range()` returns complete, unclipped void
+windows intersecting a UTC range. `MundaneAspectFactory` defaults to Sun–Pluto
+(Moon opt-in) and the five Ptolemaic aspects; sidereal mode changes reported
+signs but not exact aspect times. Sun/planetary-hour datetimes are timezone-aware
+UTC values anchored to the requested civil timezone.
+
 ## 6. AI Context Serialization
 
 Convert any Kerykeion model to AI-readable XML:
@@ -389,6 +434,10 @@ transits = ChartDataFactory.create_transit_chart_data(natal, now)
 -   `DualChartDataModel`: Synastry/Transit chart data
 -   `ElementDistributionModel`: Element percentages
 -   `QualityDistributionModel`: Quality/mode percentages
+-   `SunTimesModel`: Sunrise, sunset, twilight, solar noon, and day length
+-   `PlanetaryHoursModel`: Planetary-day bounds and 24 `PlanetaryHourModel` entries
+-   `VoidOfCourseMoonModel`: Current void state; range searches return window models
+-   `MundaneAspectsCollectionModel`: Exact transiting-to-transiting aspect events
 
 ### Available Points
 
@@ -557,6 +606,10 @@ export KERYKEION_GEONAMES_USERNAME="your_username"  # For online mode
 | Relocated Chart  | `RelocatedChartFactory`        | Subject + coords |
 | Star Discovery   | `FixedStarDiscoveryFactory`    | Subject + orb    |
 | ACG Lines        | `AstroCartographyFactory`      | Subject          |
+| Mundane Aspects  | `MundaneAspectFactory`         | UTC date range   |
+| Void-of-Course   | `VoidOfCourseMoonFactory`      | Moment/range     |
+| Sun Times        | `SunTimesFactory`              | Date + location  |
+| Planetary Hours  | `PlanetaryHoursFactory`        | Moment + location|
 
 ---
 

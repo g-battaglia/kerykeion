@@ -19,6 +19,18 @@ PTOLEMAIC_ASPECTS: tuple[str, ...] = (
 )
 
 
+def validate_julian_range(start_jd: float, end_jd: float) -> None:
+    """Reject non-finite Julian Day bounds before a predictive scan.
+
+    ``NaN`` makes ordering comparisons false and can otherwise turn an invalid
+    request into a plausible empty collection. Infinite bounds can escape later
+    as backend or datetime-conversion errors. Keeping the check shared gives all
+    range factories the same public contract.
+    """
+    if not math.isfinite(start_jd) or not math.isfinite(end_jd):
+        raise ValueError("start_jd and end_jd must be finite numbers")
+
+
 def jd_to_ymd_hms(jd: float, cal: Optional[int] = None) -> tuple[int, int, int, int, int, int]:
     """Split a Julian Day into integer ``(year, month, day, hour, minute, second)``.
 

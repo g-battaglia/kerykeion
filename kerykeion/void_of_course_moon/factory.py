@@ -22,6 +22,18 @@ from kerykeion.utilities import datetime_to_julian
 from kerykeion.void_of_course_moon.utils import AspectEvent, compute_void_of_course, compute_void_windows
 
 
+def _resolve_backend_error_types() -> tuple[type[BaseException], ...]:
+    """Return the active ephemeris backend's public exception hierarchy."""
+    backend_error = getattr(ephe, "Error", None)
+    if isinstance(backend_error, type) and issubclass(backend_error, BaseException):
+        return (backend_error,)
+    return ()
+
+
+_BACKEND_ERROR_TYPES: tuple[type[BaseException], ...] = _resolve_backend_error_types()
+_RANGE_ERROR_TYPES: tuple[type[BaseException], ...] = (*_BACKEND_ERROR_TYPES, OverflowError, ValueError)
+
+
 def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> None:
     """Validate the zodiac configuration before opening an ephemeris session.
 
@@ -132,7 +144,7 @@ class VoidOfCourseMoonFactory:
         with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
             try:
                 result = compute_void_of_course(moment_utc, iflag)
-            except getattr(ephe, "Error", ()) as exc:
+            except _BACKEND_ERROR_TYPES as exc:
                 # The forward/backward Moon scans walk off the ephemeris near
                 # either edge; the raw backend range error is not this factory's
                 # documented contract. Normalize it to KerykeionException
@@ -210,7 +222,7 @@ class VoidOfCourseMoonFactory:
             with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
                 try:
                     raw_windows = compute_void_windows(start_jd, end_jd, iflag)
-                except (getattr(ephe, "Error", ()), OverflowError, ValueError) as exc:
+                except _RANGE_ERROR_TYPES as exc:
                     # Same normalization as from_datetime, widened for the range
                     # scan: besides the backend range errors (libephemeris
                     # EphemerisRangeError, swisseph.Error), the sign-by-sign Moon

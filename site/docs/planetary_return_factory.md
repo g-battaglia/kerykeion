@@ -157,27 +157,47 @@ Convenience wrappers: `next_lunar_node_crossing_from_year(year)`, `next_lunar_no
 
 ## Methods
 
-### `next_return_from_date(year, month, day, *, return_type)`
+### `next_return_from_date(year, month, day=1, *, return_type, backwards=False)`
 
-Finds the next return starting search from a specific year/month/day. This is the **primary method**.
+Finds a return starting from a specific year/month/day. This is the **primary method**.
 
 ```python
 result = return_factory.next_return_from_date(2025, 1, 1, return_type="Solar")
 ```
 
-| Parameter     | Type         | Default     | Description                              |
-| :------------ | :----------- | :---------- | :--------------------------------------- |
-| `year`        | `int`        | **Required** | Year to start searching from.           |
-| `month`       | `int`        | **Required** | Month to start searching from.          |
-| `day`         | `int`        | `1`          | Day to start searching from.            |
-| `return_type` | `ReturnType` | **Required** | `"Solar"` or `"Lunar"` (keyword-only).  |
+| Parameter     | Type         | Default      | Description                              |
+| :------------ | :----------- | :----------- | :--------------------------------------- |
+| `year`        | `int`        | **Required** | Year to start searching from.            |
+| `month`       | `int`        | **Required** | Month to start searching from.           |
+| `day`         | `int`        | `1`          | Day to start searching from.             |
+| `return_type` | `ReturnType` | **Required** | `"Solar"` or `"Lunar"` (keyword-only).   |
+| `backwards`   | `bool`       | `False`      | If `True`, return the most recent return before the starting date instead of the next one. |
 
-### `next_return_from_iso_formatted_time(iso_formatted_time, return_type)`
+### `next_return_from_iso_formatted_time(iso_formatted_time, return_type, backwards=False)`
 
-Finds the next return starting search from a precise ISO timestamp.
+Finds a return starting from a precise ISO timestamp.
 
 ```python
 result = return_factory.next_return_from_iso_formatted_time("2024-06-15T12:00:00", "Lunar")
+```
+
+| Parameter            | Type         | Default      | Description                              |
+| :------------------- | :----------- | :----------- | :--------------------------------------- |
+| `iso_formatted_time` | `str`        | **Required** | ISO 8601 timestamp at which to start the search. |
+| `return_type`        | `ReturnType` | **Required** | `"Solar"` or `"Lunar"`.                  |
+| `backwards`          | `bool`       | `False`      | If `True`, search for the most recent return before the timestamp. |
+
+Backward Solar/Lunar return search requires the default libephemeris backend;
+the optional pyswisseph backend does not expose backward crossing searches and
+raises `KerykeionException` for `backwards=True`.
+
+```python
+previous_solar_return = return_factory.next_return_from_date(
+    2025, 1, 1,
+    return_type="Solar",
+    backwards=True,
+)
+print(previous_solar_return.iso_formatted_utc_datetime)
 ```
 
 ### `next_return_from_year(year, return_type)` _(Deprecated)_

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Kerykeion's test suite lives in `tests/core/` with **72 test files** and parallel execution via `pytest-xdist` (`-n 8`).
+Kerykeion's test suite lives in `tests/core/` with **74 test files** and parallel execution via `pytest-xdist` (`-n 8`).
 
 Tests are run through **4 hierarchical tiers** (`core < base < medium < extended`). Without an explicit `--tier` option, the tier is auto-detected by probing the loaded ephemeris kernel, so a plain `pytest` run is green on any kernel; test cases for subjects outside the active tier are skipped (with a reason), not failed.
 
@@ -12,7 +12,7 @@ Tests are run through **4 hierarchical tiers** (`core < base < medium < extended
 
 ```bash
 # Test — 4 tiers, each includes everything from the previous one
-poe test:core         # ~4,500 tests — every module, no exhaustive matrix
+poe test:core         # ~4,600 tests — every module, no exhaustive matrix
 poe test:base         # full suite (~11,000 collected) — exhaustive matrix, DE440s subjects (1849-2150)
 poe test:medium       # full suite — adds DE440 subjects (1550-2650)
 poe test:extended     # full suite — all subjects, full ephemeris range
@@ -35,9 +35,16 @@ poe regenerate:all        # All of the above
 
 ## What Each Tier Tests
 
-### `test:core` (~4,500 tests)
+### `test:core` (~4,600 tests)
 
-Runs **67 of the 72 test files** — one per module/concern. This tier exercises **every code path** in Kerykeion: subject creation, chart drawing, aspects, reports, composite subjects, planetary returns, ephemeris data, transits, relationship scores, context serialization, settings, utilities, Arabic parts, house comparison, moon phases, geonames, eclipses, heliacal, occultations, planetary phenomena, primary directions, secondary progressions, midpoints, astro-cartography, and more.
+Runs **69 of the 74 test files** (currently about 4,600 offline tests), one per
+module/concern. This tier exercises representative paths across Kerykeion:
+subject creation, chart drawing, aspects, reports, composite subjects,
+planetary returns, ephemeris data, transits, relationship scores, context
+serialization, settings, utilities, Arabic parts, house comparison, moon
+phases, geonames, eclipses, heliacal, occultations, planetary phenomena,
+primary directions, secondary progressions, midpoints, astro-cartography, and
+more.
 
 It **excludes** the 5 exhaustive matrix files that generate thousands of parametrized combinations:
 
@@ -53,7 +60,7 @@ Use `test:core` for fast local development feedback.
 
 ### `test:base`
 
-Includes **all 72 test files** (core + the 5 matrix files above). The full suite always collects ~11,000 tests; the tier controls which temporal subjects actually run — cases for subjects outside the tier are skipped at runtime. `base` restricts temporal subjects to the **DE440s ephemeris** range (1849-2150, 11 subjects). This is the recommended local-validation tier — it catches regressions across the full matrix without requiring extended ephemeris files.
+Includes **all 74 test files** (core + the 5 matrix files above). The full suite always collects ~11,000 tests; the tier controls which temporal subjects actually run — cases for subjects outside the tier are skipped at runtime. `base` restricts temporal subjects to the **DE440s ephemeris** range (1849-2150, 11 subjects). This is the recommended local-validation tier — it catches regressions across the full matrix without requiring extended ephemeris files.
 
 ### `test:medium`
 
@@ -70,7 +77,7 @@ Runs everything with **all 25 temporal subjects** spanning from 500 BC to 2200 A
 ```
 tests/
 ├── conftest.py              # Tier filtering (auto-detected), parametrized fixtures, session subjects
-├── core/                    # All 72 test files (representative subset shown)
+├── core/                    # All 74 test files (representative subset shown)
 │   ├── conftest.py          # Session fixtures, SVG/report comparison helpers
 │   ├── test_arabic_parts.py
 │   ├── test_aspects.py
@@ -252,6 +259,7 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 | `test_lunar_phase_search_directions.py` | Lunar phase search direction handling |
 | `test_lunations.py` | LunationFactory new/full moon search |
 | `test_modern_decluttering.py` | Modern chart style declutter logic |
+| `test_mundane_aspects.py` | MundaneAspectFactory exact transiting-to-transiting aspect search |
 | `test_nakshatra.py` | Vedic nakshatra calculation |
 | `test_nutation.py` | Nutation model computation |
 | `test_occultations.py` | OccultationFactory lunar occultations |
@@ -266,6 +274,7 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 | `test_public_api_surface.py` | Public API surface guard (exports/introspection) |
 | `test_reference_validation.py` | Validation against external reference values |
 | `test_relocated_chart.py` | RelocatedChartFactory house recalculation |
+| `test_review_regressions.py` | Regression cases from fresh review campaigns |
 | `test_retrograde_stations.py` | Retrograde station search |
 | `test_sign_ingresses.py` | Sign ingress search |
 | `test_sun_times_factory.py` | SunTimesFactory sunrise/sunset/twilight |
@@ -300,7 +309,7 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 
 ### Golden-File Testing
 
-SVG baseline files live in `tests/data/svg/` (361 files). Tests compare generated SVGs line-by-line using `compare_svg_lines()`, which applies numeric tolerance for floating-point coordinates. If a baseline file is missing, the test is skipped gracefully.
+SVG baseline files live in `tests/data/svg/` (361 files). Tests compare generated SVGs line-by-line using `compare_svg_lines()`, which applies numeric tolerance for floating-point coordinates. The extended parametrized matrix skips combinations whose baseline is intentionally absent; the main golden tests fail on a missing baseline and name the regeneration command.
 
 Report golden files live in `tests/fixtures/` (36 `.txt` files). The `assert_report_matches_snapshot` helper compares generated report output against these files.
 
@@ -314,7 +323,7 @@ Report golden files live in `tests/fixtures/` (36 `.txt` files). The `assert_rep
 
 3. **Tiered ephemeris.** Historical and future test subjects are stratified by the JPL ephemeris file required. Run `test:base` for fast validation and `test:extended` for full coverage.
 
-4. **Graceful skip on missing baselines.** SVG golden-file tests skip (not fail) when the expected baseline doesn't exist, allowing new chart types to be added without immediately generating baselines.
+4. **Explicit baseline policy.** Main SVG golden tests fail when an expected baseline is missing. The extended parametrized matrix alone skips combinations that do not have an intentionally generated baseline.
 
 5. **Semantic file organization.** Each test file maps to a specific module or concern (e.g., `test_chart_drawer.py` covers `kerykeion.charts.chart_drawer`, `test_aspects.py` covers `kerykeion.aspects`).
 

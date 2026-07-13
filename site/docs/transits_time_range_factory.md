@@ -86,7 +86,7 @@ for moment in results.transits:
 
 ### Result Data Structure
 
-The `get_transit_moments()` method returns a specialized object simplifying access to the data.
+The `get_transit_moments()` method returns `TransitsTimeRangeModel`, a specialized object simplifying access to the data.
 
 - `results.dates`: List of all ISO timestamps checked.
 - `results.transits`: List of objects containing:
@@ -121,6 +121,12 @@ for ev in events.events[:5]:
 | `refinement_iterations`| int   | 21      | Number of ternary-search iterations (higher = more precise)|
 
 When `refine_exact_moments=True`, the factory performs a ternary search between the two ephemeris steps that bracket the minimum orb, yielding a much more precise `exact_moment` timestamp.
+
+The return type is `TransitEventsTimeRangeModel`: its chronological `events`
+list contains `TransitEventModel` objects. Each event records `p1_name`,
+`p2_name`, `aspect`, optional `applying_start`/`separating_end`, `exact_moment`,
+`min_orb`, and optional `orb_rate`. A missing phase boundary means it was
+outside the sampled range or missed by a step too coarse for that fast pass.
 
 ## Configuration Tips
 

@@ -72,8 +72,8 @@ Returns the sorted list of built-in strategy identifiers: `["almuten_figuris", "
 | Field               | Type            | Description                                              |
 | :------------------ | :-------------- | :------------------------------------------------------ |
 | `strategy_name`     | str             | Human-readable name of the strategy used.               |
-| `method`            | str or None     | Built-in method identifier (or `None` for custom).      |
-| `planets`           | list            | Ranked planetary/point dominants.                       |
+| `method`            | `DominantMethod` or None | Built-in method identifier (or `None` for custom). |
+| `planets`           | list[`DominantScoreModel`] | Ranked planetary/point dominants.              |
 | `signs`             | list            | Ranked sign dominants.                                  |
 | `elements`          | list            | Ranked element dominants (Fire/Earth/Air/Water).        |
 | `qualities`         | list            | Ranked mode/quality dominants (Cardinal/Fixed/Mutable). |
@@ -86,9 +86,23 @@ Returns the sorted list of built-in strategy identifiers: `["almuten_figuris", "
 | `dominant_element`  | str or None     | Convenience winner of `elements`.                       |
 | `dominant_quality`  | str or None     | Convenience winner of `qualities`.                      |
 | `dominant_house`    | str or None     | Convenience winner of `houses`.                         |
-| `score_breakdown`   | list            | Per-rule audit trail; empty unless `include_score_breakdown=True`. |
+| `score_breakdown`   | list[`DominantBreakdownItemModel`] | Per-rule audit trail; empty unless `include_score_breakdown=True`. |
 
 A school only populates the categories it computes (e.g. the `elemental` school leaves `planets`/`houses` empty); uncomputed categories are simply absent/empty.
+
+`DominantScoreModel` gives every ranked item a `name`, raw `score`, normalized
+`percentage`, 1-based `rank`, and `is_dominant` flag. Each
+`DominantBreakdownItemModel` records the scoring `category`, `target`, `rule`,
+signed `points`, and optional detail. The `DominantMethod` literal contains the
+three built-in identifiers.
+
+Custom strategies implement the runtime-checkable `DominantStrategy` protocol.
+Subclass `BaseDominantStrategy` when its shared validation and result-building
+helpers are useful, or provide any independent object satisfying the protocol.
+
+The related essential-dignity helpers return `TriplicityLordsModel`, whose
+`primary`, `secondary`, and `participating` rulers are ordered for the requested
+day/night sect.
 
 ---
 

@@ -128,21 +128,30 @@ kerykeion/
 │   ├── astro_cartography/           # ACG lines
 │   ├── charts/                      # SVG chart rendering
 │   ├── dignities/                   # Essential dignities
+│   ├── dominants/                   # Planet/sign/element/quality scoring
 │   ├── eclipses/                    # Eclipse search
 │   ├── fixed_stars/                 # Dynamic star discovery
 │   ├── heliacal/                    # Heliacal risings/settings
 │   ├── house_comparison/            # Synastry house overlay
+│   ├── lunations/                   # Lunar phase event search
 │   ├── midpoints/                   # Cosmobiology midpoints
 │   ├── moon_phase_details/          # Lunar phase context
+│   ├── mundane_aspects/             # Exact transiting aspects
 │   ├── occultations/                # Lunar occultations
+│   ├── planetary_hours/             # Chaldean planetary hours
 │   ├── planetary_nodes/             # Nodes & apsides
 │   ├── planetary_phenomena/         # Elongation/station/etc
 │   ├── primary_directions/          # Placidus semi-arc
+│   ├── retrograde_stations/         # Retrograde/direct station search
 │   ├── schemas/                     # Pydantic models & types
 │   ├── secondary_progressions/      # Progressions & solar arc
 │   ├── settings/                    # Configuration & constants
-│   └── vedic/                       # Nakshatra support
-├── tests/core/                      # Test suite (72 files)
+│   ├── sign_ingresses/              # Zodiac sign-boundary search
+│   ├── sun_times/                   # Sunrise/sunset/twilight
+│   ├── vedic/                       # Nakshatra support
+│   ├── void_of_course_moon/         # Void-of-course state/windows
+│   └── zodiacal_releasing/          # Hellenistic time-lord periods
+├── tests/core/                      # Test suite (74 files)
 ├── examples/                        # Usage examples
 ├── site/docs/                       # Documentation source (markdown)
 ├── release_notes/                   # Per-version release notes
