@@ -126,7 +126,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 ## Reference
 
 -   **[Types & Schemas](/content/docs/schemas)**: Complete Pydantic model and type reference.
--   **[Active Points](/content/docs/active_points)**: Reference for all 53+ celestial points and preset configurations.
+-   **[Active Points](/content/docs/active_points)**: Reference for 53 non-star chart points, separately configured fixed stars, and their presets.
 -   **[Cookbook](/content/docs/cookbook)**: Practical recipes and code snippets for common tasks.
 -   **[Constants](/content/docs/constants)**: Exhaustive lists of points, aspects, and preset constants.
 -   **[Utilities](/content/docs/utilities)**: Helper functions for zodiac math, Julian Day, and SVG processing.
@@ -134,6 +134,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[Chart Internals](/content/docs/chart_internals)**: Low-level SVG rendering functions (advanced).
 -   **[Fetch Geonames](/content/docs/fetch_geonames)**: GeoNames API integration for location resolution.
 -   **[Ephemeris Backend](/content/docs/ephemeris_backend)**: Backend configuration (libephemeris vs Swiss Ephemeris).
+-   **[Backend Precision Comparison](/content/docs/backend_precision_comparison)**: Numerical and behavioral differences between the two backends.
 -   **[Swiss Ephemeris Configuration](/content/docs/swisseph_configuration)**: Optional Swiss Ephemeris backend setup, fixed-star catalog, and precision notes.
 -   **[Legacy API](/content/docs/legacy)**: Migration info for v4/v5 users (removed in v6).
 

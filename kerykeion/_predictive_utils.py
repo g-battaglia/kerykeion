@@ -43,8 +43,14 @@ def validate_julian_range(start_jd: float, end_jd: float) -> None:
     as backend or datetime-conversion errors. Keeping the check shared gives all
     range factories the same public contract.
     """
-    if not math.isfinite(start_jd) or not math.isfinite(end_jd):
-        raise ValueError("start_jd and end_jd must be finite numbers")
+    validate_julian_day(start_jd, name="start_jd")
+    validate_julian_day(end_jd, name="end_jd")
+
+
+def validate_julian_day(julian_day: float, *, name: str = "julian_day") -> None:
+    """Reject a non-finite Julian Day before calculation or empty fast paths."""
+    if not math.isfinite(julian_day):
+        raise ValueError(f"{name} must be a finite number")
 
 
 def jd_to_ymd_hms(jd: float, cal: Optional[int] = None) -> tuple[int, int, int, int, int, int]:

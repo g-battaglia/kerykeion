@@ -38,8 +38,8 @@ Finds eclipses visible from a specific geographic location.
 
 | Parameter       | Type                   | Default      | Description                          |
 | :-------------- | :--------------------- | :----------- | :----------------------------------- |
-| `lat`           | float                  | —            | Geographic latitude (north positive) |
-| `lng`           | float                  | —            | Geographic longitude (east positive) |
+| `lat`           | float                  | —            | Geographic latitude in [-90, 90] (north positive) |
+| `lng`           | float                  | —            | Geographic longitude in [-180, 180] (east positive) |
 | `start_year`    | Optional[int]          | None         | Year to start searching from; `None` = current UTC year |
 | `count`         | int                    | 5            | Number of each type to find          |
 | `zodiac_type`   | `ZodiacType`           | `"Tropical"` | `"Tropical"` or `"Sidereal"`; affects reported eclipse positions, not maximum times. |

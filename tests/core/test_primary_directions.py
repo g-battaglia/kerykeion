@@ -106,6 +106,19 @@ class TestPrimaryDirections:
             expected_years = d.arc / 0.98564
             assert abs(d.direction_years - expected_years) < 0.1
 
+    def test_unknown_rate_key_rejected(self, subject):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="rate_key"):
+            PrimaryDirectionsFactory.compute(subject, rate_key="typo")  # type: ignore[arg-type]
+
+    @pytest.mark.parametrize("max_years", [float("nan"), float("inf"), float("-inf"), -1.0])
+    def test_invalid_max_years_rejected(self, subject, max_years):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="max_years"):
+            PrimaryDirectionsFactory.compute(subject, max_years=max_years)
+
     def test_filter_aspects(self, subject):
         """Should respect aspects filter."""
         conj_only = PrimaryDirectionsFactory.compute(
@@ -133,13 +146,39 @@ class TestPrimaryDirectionEdgeCases:
             result = PrimaryDirectionsFactory.compute(sub)
             assert result == []
 
-    def test_invalid_aspect_name_skipped(self, subject):
-        """Invalid aspect names should be skipped (aspect_angle is None)."""
-        directions = PrimaryDirectionsFactory.compute(
-            subject, max_years=80, aspects=["nonexistent_aspect"]
+    @pytest.mark.parametrize(
+        "aspects",
+        [["nonexistent_aspect"], ["trine", "bogus"], "trine"],
+    )
+    def test_invalid_aspects_rejected(self, subject, aspects):
+        """Mistyped or malformed filters must not look like a valid empty result."""
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="aspects"):
+            PrimaryDirectionsFactory.compute(
+                subject,
+                max_years=80,
+                aspects=aspects,  # type: ignore[arg-type]
+            )
+
+    def test_duplicate_aspects_do_not_duplicate_directions(self, subject):
+        once = PrimaryDirectionsFactory.compute(subject, max_years=80, aspects=["trine"])
+        duplicated = PrimaryDirectionsFactory.compute(
+            subject,
+            max_years=80,
+            aspects=["trine", "trine"],
         )
-        # No valid aspects -> no directions
-        assert directions == []
+        assert duplicated == once
+
+    @pytest.mark.parametrize("field", ["julian_day", "lat", "lng"])
+    def test_non_finite_subject_geometry_rejected(self, subject, field):
+        from kerykeion.schemas import KerykeionException
+
+        corrupted = subject.model_copy(update={field: float("nan")})
+        with pytest.raises(KerykeionException, match="finite"):
+            PrimaryDirectionsFactory.compute_speculum(corrupted)
+        with pytest.raises(KerykeionException, match="finite"):
+            PrimaryDirectionsFactory.compute(corrupted)
 
     def test_oblique_ascension_extreme_declination(self):
         """_oblique_ascension with extreme values should not raise."""

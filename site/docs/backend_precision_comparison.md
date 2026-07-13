@@ -20,7 +20,7 @@ and behavioural differences a user or contributor may encounter.
 | ---------------- | ---------------------------------------- | ----------------------------------- |
 | Language         | C bindings (`pyswisseph`)                | Pure Python                         |
 | Ephemeris source | Swiss Ephemeris (Moshier / `.se1` files) | NASA JPL DE440 / DE441 via Skyfield |
-| License          | Apache-2.0                               | AGPL-3.0                            |
+| License          | AGPL-3.0                                 | Apache-2.0                          |
 | Install          | `pip install kerykeion[swiss]`           | Included by default                 |
 | Date range       | Full (DE431 covers -13200 to +17191)     | Full (DE441 same range)             |
 | Compilation      | Requires C compiler                      | None                                |

@@ -61,7 +61,7 @@ Calculate nodes from a Julian Day number.
 
 | Parameter    | Type              | Default | Description            |
 | :----------- | :---------------- | :------ | :--------------------- |
-| `julian_day` | float             | --      | Julian Day number      |
+| `julian_day` | float             | --      | Finite Julian Day number |
 | `method`     | str               | "mean"  | "mean" or "osculating" |
 | `planets`    | List[str] or None | None    | Planet names           |
 

@@ -300,12 +300,27 @@ class TestOccultationValidation:
         with pytest.raises(KerykeionException):
             factory.search_local(start_jd, "Venus", lat=lat, lng=12.0, count=1)
 
+    @pytest.mark.parametrize("lng", [181.0, -181.0, float("nan"), float("inf"), float("-inf")])
+    def test_local_search_invalid_longitude_raises(self, factory, start_jd, lng):
+        with pytest.raises(KerykeionException, match="Longitude"):
+            factory.search_local(start_jd, "Venus", lat=41.9, lng=lng, count=0)
+
+    @pytest.mark.parametrize("julian_day", [float("nan"), float("inf"), float("-inf")])
+    def test_non_finite_julian_day_rejected_even_for_zero_count(self, factory, julian_day):
+        with pytest.raises(ValueError, match="finite"):
+            factory.search_global(julian_day, "Venus", count=0)
+
     @pytest.mark.parametrize(
         "name", ["Mean_North_Lunar_Node", "True_Lilith", "Interpolated_Perigee", "Cupido", "Earth"]
     )
     def test_non_occultable_body_raises(self, factory, start_jd, name):
         with pytest.raises(KerykeionException):
             factory.search_global(start_jd, name, count=1)
+
+    @pytest.mark.parametrize("planet_id", [ephe.MEAN_NODE, ephe.TRUE_NODE, ephe.MOON, ephe.EARTH])
+    def test_non_occultable_raw_body_id_raises(self, factory, start_jd, planet_id):
+        with pytest.raises(KerykeionException, match="not a physically occultable body"):
+            factory.search_global(start_jd, planet_id, count=0)
 
     @pytest.mark.parametrize("name", ["Venus", "Mars", "Jupiter"])
     def test_occultable_body_still_works(self, factory, start_jd, name):

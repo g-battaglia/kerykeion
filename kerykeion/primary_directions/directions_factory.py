@@ -70,6 +70,12 @@ def _require_geometry(subject: AstrologicalSubjectModel) -> None:
         raise KerykeionException("Subject is missing Julian Day — cannot compute primary directions.")
     if subject.lat is None or subject.lng is None:
         raise KerykeionException("Subject is missing longitude/latitude — cannot compute primary directions.")
+    if not math.isfinite(subject.julian_day):
+        raise KerykeionException("Subject Julian Day must be finite to compute primary directions.")
+    if not math.isfinite(subject.lat) or not -90.0 <= subject.lat <= 90.0:
+        raise KerykeionException("Subject latitude must be finite and between -90 and 90 degrees.")
+    if not math.isfinite(subject.lng) or not -180.0 <= subject.lng <= 180.0:
+        raise KerykeionException("Subject longitude must be finite and between -180 and 180 degrees.")
 
 
 def _session_kwargs(subject: AstrologicalSubjectModel) -> dict:
@@ -178,9 +184,34 @@ class PrimaryDirectionsFactory:
             ``is_converse`` field. For sextile, square and trine, both the
             dexter and sinister aspect points (lambda - aspect and
             lambda + aspect) are directed.
+
+        Raises:
+            KerykeionException: If ``rate_key`` is unknown or ``max_years`` is
+                negative/non-finite.
         """
+        if rate_key not in ("ptolemy", "naibod"):
+            raise KerykeionException(
+                f"Unknown rate_key {rate_key!r}: expected 'ptolemy' or 'naibod'."
+            )
+        if not math.isfinite(max_years) or max_years < 0:
+            raise KerykeionException("max_years must be a finite non-negative number.")
+
         if aspects is None:
             aspects = list(PrimaryDirectionsFactory.ASPECT_ANGLES.keys())
+        else:
+            if isinstance(aspects, (str, bytes)):
+                raise KerykeionException("aspects must be a list of aspect names, not a string.")
+            invalid_aspects = [
+                aspect
+                for aspect in aspects
+                if not isinstance(aspect, str) or aspect not in PrimaryDirectionsFactory.ASPECT_ANGLES
+            ]
+            if invalid_aspects:
+                raise KerykeionException(
+                    f"Unknown primary-direction aspects: {invalid_aspects!r}. "
+                    f"Valid values: {', '.join(PrimaryDirectionsFactory.ASPECT_ANGLES)}."
+                )
+            aspects = list(dict.fromkeys(aspects))
 
         _require_geometry(subject)
         rate = 1.0 if rate_key == "ptolemy" else 0.98564
@@ -515,4 +546,3 @@ class PrimaryDirectionsFactory:
     def _oblique_descension(ra: float, dec: float, pole: float) -> float:
         """Oblique descension of a point under a given pole: OD = RA + AD."""
         return (ra + PrimaryDirectionsFactory._ascensional_difference(dec, pole)) % 360
-

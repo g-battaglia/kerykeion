@@ -45,9 +45,9 @@ Compute primary directions for a natal chart.
 | Parameter   | Type                      | Default    | Description                                             |
 | :---------- | :------------------------ | :--------- | :------------------------------------------------------ |
 | `subject`   | AstrologicalSubjectModel  | --         | The natal chart subject                                 |
-| `max_years` | float                     | 100        | Maximum number of years to compute directions for       |
-| `rate_key`  | "ptolemy" or "naibod"     | "ptolemy"  | Conversion rate (ptolemy: 1 deg = 1 yr, naibod: 0.98564 deg = 1 yr) |
-| `aspects`   | List[str] or None         | None       | Aspect names to compute (defaults to all major aspects) |
+| `max_years` | float                     | 100        | Finite, non-negative maximum number of years to compute directions for |
+| `rate_key`  | "ptolemy" or "naibod"     | "ptolemy"  | Conversion rate (ptolemy: 1 deg = 1 yr, naibod: 0.98564 deg = 1 yr); other values raise `KerykeionException` |
+| `aspects`   | List[str] or None         | None       | Unique supported aspect names; strings, unknown names, and malformed entries raise `KerykeionException` |
 
 **Returns:** `List[PrimaryDirectionModel]` sorted by `direction_years`.
 

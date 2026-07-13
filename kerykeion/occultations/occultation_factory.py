@@ -31,7 +31,7 @@ License: AGPL-3.0
 
 import logging
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
-from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
+from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso, validate_julian_day
 from kerykeion.settings.config_constants import STANDARD_PLANETS
 
 from pydantic import Field
@@ -40,7 +40,7 @@ from typing import List, Union, cast
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
-from kerykeion.utilities import validate_latitude
+from kerykeion.utilities import validate_latitude, validate_longitude
 
 logger = logging.getLogger(__name__)
 
@@ -92,6 +92,7 @@ _OCCULTABLE_BODY_NAMES = frozenset({
     "Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
     "Chiron", "Pholus", "Ceres", "Pallas", "Juno", "Vesta",
 })
+_OCCULTABLE_BODY_IDS = frozenset(STANDARD_PLANETS[cast(AstrologicalPoint, name)] for name in _OCCULTABLE_BODY_NAMES)
 
 
 def _resolve_planet_id(planet_id: Union[int, str]) -> int:
@@ -123,7 +124,12 @@ def _resolve_planet_id(planet_id: Union[int, str]) -> int:
                 f"{', '.join(sorted(_OCCULTABLE_BODY_NAMES))}."
             )
         return resolved
-    if isinstance(planet_id, int):
+    if isinstance(planet_id, int) and not isinstance(planet_id, bool):
+        if planet_id not in _OCCULTABLE_BODY_IDS:
+            raise KerykeionException(
+                f"Swiss Ephemeris body ID {planet_id} is not a physically occultable body. "
+                f"Occultation search accepts IDs for: {', '.join(sorted(_OCCULTABLE_BODY_NAMES))}."
+            )
         return planet_id
     raise TypeError(
         f"planet_id must be a Swiss Ephemeris body number (int) or a planet "
@@ -216,6 +222,7 @@ class OccultationFactory:
                 silently truncated results.
             ValueError: If ``count`` is negative or exceeds the supported maximum.
         """
+        validate_julian_day(julian_day)
         _ensure_scannable(count)
         planet_id = _resolve_planet_id(planet_id)
         planet_name = ephe.get_planet_name(planet_id)
@@ -285,16 +292,18 @@ class OccultationFactory:
         Raises:
             KerykeionException: If the planet name is unknown or not a physically
                 occultable body, if ``lat`` is outside the geometrically-possible
-                ±90° range, or if the ephemeris backend fails mid-search (most
+                ±90° range, if ``lng`` is outside ±180°, or if the ephemeris backend fails mid-search (most
                 often a date outside the available ephemeris range); the search
                 never returns silently truncated results.
             ValueError: If ``count`` is negative or exceeds the supported maximum.
         """
+        validate_julian_day(julian_day)
         _ensure_scannable(count)
         # Reject an impossible latitude (e.g. an accidental lat/lng swap, made
         # easy by the longitude-first backend geopos convention) rather than
         # returning a bogus "visible" occultation.
         validate_latitude(lat)
+        validate_longitude(lng)
         planet_id = _resolve_planet_id(planet_id)
         planet_name = ephe.get_planet_name(planet_id)
         geopos = (lng, lat, 0.0)  # (longitude, latitude, altitude)

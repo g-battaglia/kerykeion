@@ -16,7 +16,7 @@
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 
 <p align="center">
-  <img src="docs/charts/classic_default_natal.svg" width="540" alt="John Lennon - Natal Chart">
+  <img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_default_natal.svg" width="540" alt="John Lennon - Natal Chart">
 </p>
 
 Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts, including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
@@ -1450,17 +1450,17 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
   </tr>
   <tr>
     <td align="center"><strong>Classic Style</strong></td>
-    <td><img src="docs/charts/classic_default_natal.svg" width="220" alt="Classic Natal Chart"></td>
-    <td><img src="docs/charts/classic_dark_natal.svg" width="220" alt="Dark Natal Chart"></td>
-    <td><img src="docs/charts/classic_light_natal.svg" width="220" alt="Light Natal Chart"></td>
-    <td><img src="docs/charts/classic_black_and_white_natal.svg" width="220" alt="Black and White Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_default_natal.svg" width="220" alt="Classic Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_dark_natal.svg" width="220" alt="Dark Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_light_natal.svg" width="220" alt="Light Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_black_and_white_natal.svg" width="220" alt="Black and White Natal Chart"></td>
   </tr>
   <tr>
     <td align="center"><strong>Modern Style</strong></td>
-    <td><img src="docs/charts/modern_classic_natal.svg" width="220" alt="Modern Classic Natal Chart"></td>
-    <td><img src="docs/charts/modern_dark_natal.svg" width="220" alt="Modern Dark Natal Chart"></td>
-    <td><img src="docs/charts/modern_light_natal.svg" width="220" alt="Modern Light Natal Chart"></td>
-    <td><img src="docs/charts/modern_black_and_white_natal.svg" width="220" alt="Modern Black and White Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_classic_natal.svg" width="220" alt="Modern Classic Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_dark_natal.svg" width="220" alt="Modern Dark Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_light_natal.svg" width="220" alt="Modern Light Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_black_and_white_natal.svg" width="220" alt="Modern Black and White Natal Chart"></td>
   </tr>
 </table>
 
@@ -2364,13 +2364,13 @@ For commercial or closed-source applications, consider using the paid [Astrologe
 
 ## License
 
-This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
+This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](https://github.com/g-battaglia/kerykeion/blob/alpha/v6/LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
 
 As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the paid [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe), which is AGPL-3.0 compliant and also helps support the project.
 
 Since the Astrologer API is an external third-party service, using it does _not_ require your code to be open-source.
 
-_This is not legal advice — see the [LICENSE](LICENSE) file and consult legal counsel for guidance._
+_This is not legal advice — see the [LICENSE](https://github.com/g-battaglia/kerykeion/blob/alpha/v6/LICENSE) file and consult legal counsel for guidance._
 
 ## Contributing
 

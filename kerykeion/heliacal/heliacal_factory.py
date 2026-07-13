@@ -18,13 +18,16 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from __future__ import annotations
 
 import logging
+import math
+from numbers import Real
 from typing import List, Optional, Sequence, Tuple
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
-from kerykeion._predictive_utils import jd_to_iso_utc
+from kerykeion._predictive_utils import jd_to_iso_utc, validate_julian_day
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.utilities import validate_latitude, validate_longitude
 
 logger = logging.getLogger(__name__)
 
@@ -135,13 +138,54 @@ def _resolve_geopos(
             "keywords, not both."
         )
     if geopos is not None:
-        return geopos
-    if lat is None or lng is None:
+        if not isinstance(geopos, (tuple, list)) or len(geopos) != 3:
+            raise KerykeionException("geopos must contain exactly (longitude, latitude, altitude_m).")
+        resolved = (geopos[0], geopos[1], geopos[2])
+    else:
+        if lat is None or lng is None:
+            raise KerykeionException(
+                "Observer position required: pass geopos=(lng, lat, altitude_m) or "
+                "both lat= and lng= (with optional altitude=, defaulting to 0 m)."
+            )
+        resolved = (lng, lat, altitude if altitude is not None else 0.0)
+
+    if any(not isinstance(value, Real) for value in resolved):
+        raise KerykeionException("Observer coordinates must be finite numeric values.")
+    validate_longitude(resolved[0])
+    validate_latitude(resolved[1])
+    if not math.isfinite(resolved[2]):
+        raise KerykeionException("Observer altitude must be a finite number of metres.")
+    return resolved
+
+
+def _validate_numeric_tuple(values: Optional[tuple], *, name: str, length: int) -> None:
+    """Validate fixed-width backend parameter tuples before any fast return."""
+    if values is None:
+        return
+    if not isinstance(values, (tuple, list)) or len(values) != length:
+        raise KerykeionException(f"{name} must contain exactly {length} numeric values.")
+    if any(not isinstance(value, Real) or not math.isfinite(value) for value in values):
+        raise KerykeionException(f"{name} must contain exactly {length} finite numeric values.")
+
+
+def _normalize_event_types(event_types: Optional[Sequence[int]]) -> list[int]:
+    """Validate and de-duplicate heliacal event types while preserving order."""
+    if event_types is None:
+        return [HELIACAL_RISING, HELIACAL_SETTING]
+    if isinstance(event_types, (str, bytes)):
+        raise KerykeionException("event_types must be a sequence of heliacal event constants, not a string.")
+    invalid = [
+        event_type
+        for event_type in event_types
+        if not isinstance(event_type, int)
+        or isinstance(event_type, bool)
+        or event_type not in EVENT_TYPE_LABELS
+    ]
+    if invalid:
         raise KerykeionException(
-            "Observer position required: pass geopos=(lng, lat, altitude_m) or "
-            "both lat= and lng= (with optional altitude=, defaulting to 0 m)."
+            f"Unknown heliacal event_types: {invalid!r}. Valid values: {sorted(EVENT_TYPE_LABELS)}."
         )
-    return (lng, lat, altitude if altitude is not None else 0.0)
+    return list(dict.fromkeys(event_types))
 
 
 # ---- Data model ----
@@ -240,6 +284,9 @@ class HeliacalFactory:
             exception type regardless of backend); or if the observer position
             is given both as ``geopos`` and as keywords (or not at all).
         """
+        validate_julian_day(julian_day)
+        _validate_numeric_tuple(atmo, name="atmo", length=4)
+        _validate_numeric_tuple(observer, name="observer", length=6)
         geopos = _resolve_geopos(geopos, lat, lng, altitude)
         with ephemeris_session(ephe_path=self._ephe_path):
             try:
@@ -330,9 +377,12 @@ class HeliacalFactory:
             If the observer position is given both as ``geopos`` and as
             keywords (or not at all).
         """
+        validate_julian_day(julian_day)
+        _validate_numeric_tuple(atmo, name="atmo", length=4)
+        _validate_numeric_tuple(observer, name="observer", length=6)
         geopos = _resolve_geopos(geopos, lat, lng, altitude)
-        if count <= 0:
-            return []
+        if count < 0:
+            raise ValueError("count must be non-negative")
         # Each event costs a full heliacal search (seconds per call), so an
         # unbounded count would hang. Cap it like the other event factories'
         # _ensure_scannable guards rather than scan indefinitely.
@@ -363,10 +413,12 @@ class HeliacalFactory:
                     raise KerykeionException(
                         f"Unknown planet {name!r}; heliacal search supports {PLANETS}."
                     )
-                canonicalized.append(canonical)
+                if canonical not in canonicalized:
+                    canonicalized.append(canonical)
             planets = canonicalized
-        if event_types is None:
-            event_types = [HELIACAL_RISING, HELIACAL_SETTING]
+        event_types = _normalize_event_types(event_types)
+        if count == 0:
+            return []
 
         # Build the list of (planet, event_type) combinations to interleave.
         combos = [

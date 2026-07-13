@@ -231,13 +231,13 @@ Swiss Ephemeris license terms apply to those components.
 
 **Kerykeion itself** is licensed under AGPL-3.0 by the Kerykeion project.
 When installed without `pyswisseph` (i.e., using libephemeris only),
-only Kerykeion's own AGPL-3.0 license applies.
+Kerykeion's AGPL-3.0 license and libephemeris's Apache-2.0 license apply.
 
 ## Comparison with libephemeris
 
 | Feature | libephemeris (default) | swisseph (optional) |
 |---------|----------------------|---------------------|
-| License | AGPL-3.0 (Kerykeion project) | AGPL-3.0 (Astrodienst AG) |
+| License | Apache-2.0 | AGPL-3.0 (Astrodienst AG) |
 | Language | Pure Python | C bindings |
 | Data source | NASA JPL DE440/DE441 | Swiss Ephemeris `.se1` files |
 | Data management | Automatic (`~/.libephemeris/leb/`) | Manual (download `.se1` files) |

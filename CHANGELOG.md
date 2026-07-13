@@ -27,6 +27,20 @@
   Aspect-axis limits, declination orbs, fixed-star discovery orbs, and ACG
   latitude steps now reject `NaN` and infinities. ACG latitude bounds must also
   be finite, ordered, and contained within the geographic -90..+90 range.
+- **Low-level ephemeris and predictive inputs now fail fast.** Unknown zodiac
+  or perspective session values, non-finite USER ayanamsha/topocentric values,
+  non-finite single Julian Days, and invalid eclipse/occultation longitudes no
+  longer select defaults, bypass work through empty requests, or persist
+  invalid model fields.
+- **Primary directions validate their calculation contract.** Unknown rate
+  keys, invalid horizons, malformed or unknown aspect filters, duplicate
+  aspect names, and non-finite subject geometry are rejected or normalized
+  before calculation instead of returning plausible empty/corrupt/duplicated
+  directions.
+- **Heliacal and occultation searches reject physically invalid requests.**
+  Heliacal coordinates, event types, counts, atmosphere/observer tuples, and
+  Julian Days are validated even for empty searches. Raw occultation body IDs
+  now obey the same real-body restriction as named bodies.
 - **Dual-chart SVG baselines include the a70 projected-house attributes.** The
   eleven affected synastry/transit goldens now match the additive metadata
   contract instead of failing the base-tier suite.
@@ -49,6 +63,11 @@
   hygiene were aligned with the current tree.
 - CI now exercises every advertised Python minor (3.12, 3.13, and 3.14), and
   the primary-directions guide documents the public `compute_speculum()` helper.
+- Corrected backend license assignments, active-point/fixed-star configuration
+  guidance, and the all-points example; added the backend precision guide to
+  navigation. README chart/license resources now use verified absolute URLs so
+  they render from wheel metadata on PyPI, and CI uses the committed lockfile
+  with `uv sync --locked`.
 
 ## 6.0.0a70 - 2026-07-13
 

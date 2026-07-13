@@ -6,7 +6,9 @@ order: 16
 
 # Active Points
 
-Kerykeion supports 53+ celestial points that can be individually enabled or disabled. This page shows practical examples.
+Kerykeion supports 53 non-star chart points through `active_points`, plus fixed
+stars through the separate `active_fixed_stars` parameter. This page shows
+practical examples of both mechanisms.
 
 For the full reference of all available points, see [Active Points Reference](/content/docs/active_points).
 
@@ -97,19 +99,23 @@ print(f"Part of Fortune: {subject.pars_fortunae.sign} at {subject.pars_fortunae.
 print(f"Part of Spirit: {subject.pars_spiritus.sign} at {subject.pars_spiritus.position:.2f}°")
 ```
 
-## Enabling All Points
+## Enabling All Points and Fixed Stars
 
-Use the `ALL_ACTIVE_POINTS` preset to enable everything:
+`ALL_ACTIVE_POINTS` enables all 53 non-star chart points. Fixed stars use the
+separate `active_fixed_stars` parameter; combine both presets to enable the
+complete built-in point set:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, DEFAULT_FIXED_STARS
 from pathlib import Path
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "All Points", 1990, 6, 15, 12, 0,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    active_points=ALL_ACTIVE_POINTS,
+    active_fixed_stars=DEFAULT_FIXED_STARS,
 )
 
 chart_data = ChartDataFactory.create_natal_chart_data(
@@ -117,7 +123,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
     active_points=ALL_ACTIVE_POINTS,
 )
 
-# Generate a chart with all 53 points
+# Generate a chart with all 53 non-star points plus the configured fixed stars
 chart = ChartDrawer(chart_data=chart_data)
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)

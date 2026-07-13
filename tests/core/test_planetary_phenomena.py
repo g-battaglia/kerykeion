@@ -275,3 +275,9 @@ class TestAllFailedGuard:
         monkeypatch.setattr(pf.ephe, "pheno_ut", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("backend down")))
         with pytest.raises(KerykeionException, match="all requested planets"):
             PlanetaryPhenomenaFactory.from_julian_day(2451545.0, planets=["Venus", "Mars"])
+
+
+@pytest.mark.parametrize("julian_day", [float("nan"), float("inf"), float("-inf")])
+def test_non_finite_julian_day_rejected_for_empty_selection(julian_day):
+    with pytest.raises(ValueError, match="finite"):
+        PlanetaryPhenomenaFactory.from_julian_day(julian_day, planets=[])

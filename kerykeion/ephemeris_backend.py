@@ -8,7 +8,7 @@ supporting two mutually exclusive backends:
 
 - **libephemeris**: Pure-Python drop-in replacement using NASA JPL DE440/DE441
   via Skyfield. No C compiler needed; works everywhere Python runs.
-  Licensed under AGPL-3.0 by the Kerykeion project.
+  Licensed under Apache-2.0.
 - **swisseph** (``pyswisseph``): The traditional Swiss Ephemeris C library bindings.
   Requires compilation. Licensed under AGPL-3.0 by Astrodienst AG.
 
@@ -67,6 +67,7 @@ from __future__ import annotations
 
 import importlib
 import logging
+import math
 import os
 from contextlib import contextmanager
 from threading import RLock, local as _thread_local
@@ -81,6 +82,22 @@ logger = logging.getLogger(__name__)
 # configured by the outer session. Reject nesting before touching backend state,
 # so an accidental inner factory call cannot corrupt the still-active session.
 _SESSION_DEPTH = _thread_local()
+
+_VALID_SESSION_ZODIACS = (None, "Tropical", "Sidereal")
+_VALID_SESSION_PERSPECTIVES = (
+    None,
+    "Apparent Geocentric",
+    "True Geocentric",
+    "Heliocentric",
+    "Topocentric",
+    "Barycentric",
+    "Selenocentric",
+    "Mercurycentric",
+    "Venuscentric",
+    "Marscentric",
+    "Jupitercentric",
+    "Saturncentric",
+)
 
 # ---------------------------------------------------------------------------
 # Backend detection
@@ -438,7 +455,7 @@ def ephemeris_session(
             ``sidereal_mode="USER"``.
         perspective_type: One of ``"Apparent Geocentric"`` (default),
             ``"True Geocentric"``, ``"Heliocentric"``, ``"Topocentric"``,
-            ``"Barycentric"``.
+            ``"Barycentric"``, or a supported planetocentric perspective.
         topo: ``(lng, lat, altitude_m)`` observer tuple, required when
             ``perspective_type="Topocentric"``.
         ephe_path: Ephemeris data path; defaults to ``EPHE_DATA_PATH``.
@@ -460,8 +477,10 @@ def ephemeris_session(
           inner session mutates backend state. Keep sessions as narrow as
           possible and exit the outer session before building subjects or
           calling another factory that opens its own session.
+        - Unknown zodiac/perspective names raise ``ValueError`` rather than
+          silently selecting the apparent-tropical defaults.
         - ``sidereal_mode="USER"`` raises ``ValueError`` when the custom
-          ayanamsa parameters are missing.
+          ayanamsa parameters are missing or non-finite.
     """
     with EPHEMERIS_LOCK:
         depth = getattr(_SESSION_DEPTH, "value", 0)
@@ -474,6 +493,32 @@ def ephemeris_session(
             )
         _SESSION_DEPTH.value = depth + 1
         try:
+            if zodiac_type not in _VALID_SESSION_ZODIACS:
+                raise ValueError(
+                    f"Unknown zodiac_type {zodiac_type!r}: expected 'Tropical', 'Sidereal', or None."
+                )
+            if perspective_type not in _VALID_SESSION_PERSPECTIVES:
+                valid_perspectives = ", ".join(repr(value) for value in _VALID_SESSION_PERSPECTIVES if value)
+                raise ValueError(
+                    f"Unknown perspective_type {perspective_type!r}: expected one of {valid_perspectives}, or None."
+                )
+            if sidereal_mode == "USER":
+                if custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None:
+                    raise ValueError(
+                        "sidereal_mode='USER' requires custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0"
+                    )
+                if not math.isfinite(custom_ayanamsa_t0) or not math.isfinite(custom_ayanamsa_ayan_t0):
+                    raise ValueError("sidereal_mode='USER' custom ayanamsa parameters must be finite numbers")
+            if perspective_type == "Topocentric":
+                if topo is None:
+                    raise ValueError("perspective_type='Topocentric' requires the topo=(lng, lat, alt) argument")
+                if len(topo) != 3 or not all(math.isfinite(value) for value in topo):
+                    raise ValueError("topo must contain three finite numbers: (lng, lat, altitude_m)")
+                if not -180.0 <= topo[0] <= 180.0:
+                    raise ValueError("topo longitude must be between -180 and 180 degrees")
+                if not -90.0 <= topo[1] <= 90.0:
+                    raise ValueError("topo latitude must be between -90 and 90 degrees")
+
             ephe.set_ephe_path(EPHE_DATA_PATH if ephe_path is None else ephe_path)
             iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
 
@@ -485,17 +530,14 @@ def ephemeris_session(
                 iflag |= ephe.FLG_BARYCTR
             elif perspective_type == "Topocentric":
                 iflag |= ephe.FLG_TOPOCTR
-                if topo is None:
-                    raise ValueError("perspective_type='Topocentric' requires the topo=(lng, lat, alt) argument")
+                assert topo is not None  # validated above
                 ephe.set_topo(topo[0], topo[1], topo[2] or 0.0)
 
             if zodiac_type == "Sidereal":
                 iflag |= ephe.FLG_SIDEREAL
                 if sidereal_mode == "USER":
-                    if custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None:
-                        raise ValueError(
-                            "sidereal_mode='USER' requires custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0"
-                        )
+                    assert custom_ayanamsa_t0 is not None
+                    assert custom_ayanamsa_ayan_t0 is not None
                     ephe.set_sid_mode(ephe.SIDM_USER, custom_ayanamsa_t0, custom_ayanamsa_ayan_t0)
                 else:
                     # Defensive fallback for raw callers that bypass the model

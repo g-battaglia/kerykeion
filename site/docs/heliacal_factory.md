@@ -48,14 +48,14 @@ Find the next heliacal rising after the given Julian Day.
 
 | Parameter              | Type                                   | Default      | Description                                              |
 | :--------------------- | :------------------------------------- | :----------- | :------------------------------------------------------- |
-| `julian_day`           | float                                  | **Required** | Starting Julian Day (UT).                                |
+| `julian_day`           | float                                  | **Required** | Finite starting Julian Day (UT).                         |
 | `planet_name_or_star`  | str                                    | **Required** | Planet name (e.g. `"Venus"`) or fixed-star name.         |
 | `geopos`               | Tuple[float, float, float] or None     | None         | Observer `(longitude, latitude, altitude_m)`; mutually exclusive with the coordinate keywords. |
-| `atmo`                 | Tuple[float, float, float, float] or None | None       | `(pressure, temperature, humidity, extinction)`.         |
-| `observer`             | Tuple of 6 floats or None              | None         | Observer parameters (age, Snellen ratio, etc.).          |
-| `lat`                  | float or None                          | None         | Observer latitude (keyword-only); must be paired with `lng`. |
-| `lng`                  | float or None                          | None         | Observer longitude (keyword-only); must be paired with `lat`. |
-| `altitude`             | float or None                          | None         | Observer altitude in metres; defaults to `0` with `lat`/`lng`. |
+| `atmo`                 | Tuple[float, float, float, float] or None | None       | Four finite values: `(pressure, temperature, humidity, extinction)`. |
+| `observer`             | Tuple of 6 floats or None              | None         | Six finite observer parameters (age, Snellen ratio, etc.). |
+| `lat`                  | float or None                          | None         | Observer latitude in [-90, 90] (keyword-only); must be paired with `lng`. |
+| `lng`                  | float or None                          | None         | Observer longitude in [-180, 180] (keyword-only); must be paired with `lat`. |
+| `altitude`             | float or None                          | None         | Finite observer altitude in metres; defaults to `0` with `lat`/`lng`. |
 
 **Returns:** `HeliacalEventModel`
 
@@ -65,16 +65,16 @@ Find the next N heliacal events across multiple planets, sorted chronologically.
 
 | Parameter     | Type                       | Default      | Description                                         |
 | :------------ | :------------------------- | :----------- | :-------------------------------------------------- |
-| `julian_day`  | float                      | **Required** | Starting Julian Day (UT).                           |
+| `julian_day`  | float                      | **Required** | Finite starting Julian Day (UT).                    |
 | `geopos`      | Tuple[float,float,float] or None | None    | Observer `(longitude, latitude, altitude_m)`; mutually exclusive with coordinate keywords. |
-| `count`       | int                        | 5            | Maximum number of events to return.                 |
+| `count`       | int                        | 5            | Non-negative maximum number of events to return (maximum 200). |
 | `planets`     | Sequence[str] or None      | None         | Planet names (defaults to Mercury through Saturn).  |
-| `event_types` | Sequence[int] or None      | None         | Event type constants (defaults to rising/setting).  |
-| `atmo`        | Tuple or None              | None         | Atmospheric parameters.                             |
-| `observer`    | Tuple or None              | None         | Observer parameters.                                |
-| `lat`         | float or None              | None         | Observer latitude (keyword-only); must be paired with `lng`. |
-| `lng`         | float or None              | None         | Observer longitude (keyword-only); must be paired with `lat`. |
-| `altitude`    | float or None              | None         | Observer altitude in metres; defaults to `0` with `lat`/`lng`. |
+| `event_types` | Sequence[int] or None      | None         | Valid event type constants from the table above (defaults to rising/setting). |
+| `atmo`        | Tuple or None              | None         | Exactly four finite atmospheric parameters.         |
+| `observer`    | Tuple or None              | None         | Exactly six finite observer parameters.             |
+| `lat`         | float or None              | None         | Observer latitude in [-90, 90] (keyword-only); must be paired with `lng`. |
+| `lng`         | float or None              | None         | Observer longitude in [-180, 180] (keyword-only); must be paired with `lat`. |
+| `altitude`    | float or None              | None         | Finite observer altitude in metres; defaults to `0` with `lat`/`lng`. |
 
 The keyword coordinate form is recommended because it makes latitude and
 longitude order explicit. Do not combine it with `geopos`; passing both forms,

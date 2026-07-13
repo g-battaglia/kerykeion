@@ -822,3 +822,58 @@ class TestEphemerisSessionNestingGuard:
 
         # The successfully-entered outer session still performs its normal cleanup.
         assert getattr(_SESSION_DEPTH, "value", 0) == 0
+
+
+class TestEphemerisSessionValidation:
+    @pytest.mark.parametrize("zodiac_type", ["Typo", "sidereal", ""])
+    def test_unknown_zodiac_rejected(self, zodiac_type):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with pytest.raises(ValueError, match="zodiac_type"):
+            with ephemeris_session(zodiac_type=zodiac_type):
+                pass
+
+    @pytest.mark.parametrize("perspective_type", ["Typo", "Geocentric", ""])
+    def test_unknown_perspective_rejected(self, perspective_type):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with pytest.raises(ValueError, match="perspective_type"):
+            with ephemeris_session(perspective_type=perspective_type):
+                pass
+
+    @pytest.mark.parametrize(
+        ("t0", "ayan_t0"),
+        [
+            (float("nan"), 0.0),
+            (0.0, float("nan")),
+            (float("inf"), 0.0),
+            (0.0, float("-inf")),
+        ],
+    )
+    def test_user_ayanamsa_requires_finite_parameters(self, t0, ayan_t0):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with pytest.raises(ValueError, match="finite"):
+            with ephemeris_session(
+                zodiac_type="Sidereal",
+                sidereal_mode="USER",
+                custom_ayanamsa_t0=t0,
+                custom_ayanamsa_ayan_t0=ayan_t0,
+            ):
+                pass
+
+    @pytest.mark.parametrize(
+        "topo",
+        [
+            (float("nan"), 0.0, 0.0),
+            (0.0, float("inf"), 0.0),
+            (181.0, 0.0, 0.0),
+            (0.0, -91.0, 0.0),
+        ],
+    )
+    def test_topocentric_coordinates_validated(self, topo):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with pytest.raises(ValueError, match="topo"):
+            with ephemeris_session(perspective_type="Topocentric", topo=topo):
+                pass
