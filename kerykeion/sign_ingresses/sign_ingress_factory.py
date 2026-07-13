@@ -25,7 +25,7 @@ from typing import List, Literal, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
-from kerykeion._predictive_utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_range
+from kerykeion._predictive_utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_bounds
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import SiderealMode, ZodiacType
@@ -311,7 +311,7 @@ class SignIngressFactory:
             ValueError: If a planet name is unknown, either Julian bound is
                 non-finite, or the range is too large to scan.
         """
-        validate_julian_range(start_jd, end_jd)
+        validate_julian_bounds(start_jd, end_jd)
 
         # None = default set; an explicit empty list = scan nothing.
         if planets is not None:

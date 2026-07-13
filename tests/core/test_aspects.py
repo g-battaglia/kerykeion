@@ -1079,6 +1079,16 @@ class TestOrbAdjustmentResolver:
         with pytest.raises(ValueError, match="finite"):
             resolve_pair_orb_adjustment("Sun", "Mars", {"Sun": 10**309})
 
+    @pytest.mark.parametrize("adjustment", [True, False])
+    def test_boolean_adjustment_rejected(self, adjustment):
+        """bool is a Real (int subclass) but is never a valid orb adjustment."""
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment, validate_point_orb_adjustments
+
+        with pytest.raises(ValueError, match="finite"):
+            resolve_pair_orb_adjustment("Sun", "Mars", {"Sun": adjustment})
+        with pytest.raises(ValueError, match="finite"):
+            validate_point_orb_adjustments({"Sun": adjustment})
+
 
 class TestPointOrbAdjustmentsIntegration:
     """Integration: point_orb_adjustments threaded through AspectsFactory."""

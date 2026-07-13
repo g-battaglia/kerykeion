@@ -36,8 +36,12 @@ OrbAdjustmentStrategy = Literal["max_explicit", "min_explicit", "sum", "none"]
 
 
 def _is_finite_real(value: object) -> bool:
-    """Return whether *value* is a real number representable as a finite float."""
-    if not isinstance(value, Real):
+    """Return whether *value* is a real number representable as a finite float.
+
+    ``bool`` is excluded: it is technically a ``Real`` (``int`` subclass), but
+    ``True``/``False`` as an orb adjustment is always a caller mistake.
+    """
+    if isinstance(value, bool) or not isinstance(value, Real):
         return False
     try:
         return math.isfinite(value)

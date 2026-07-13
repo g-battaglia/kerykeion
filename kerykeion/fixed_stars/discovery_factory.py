@@ -140,7 +140,14 @@ class FixedStarDiscoveryFactory:
                 "Subject is missing Julian Day — cannot search fixed stars "
                 "(composite subjects are not supported here)."
             )
-        validate_julian_day(subject.julian_day)
+        try:
+            validate_julian_day(subject.julian_day)
+        except ValueError as exc:
+            # Keep this factory's documented KerykeionException boundary (the
+            # None-JD and orb checks above raise it too).
+            raise KerykeionException(
+                f"Subject Julian Day must be a finite number, got {subject.julian_day!r}."
+            ) from exc
         jd = subject.julian_day
 
         planet_positions = _collect_planet_positions(subject)

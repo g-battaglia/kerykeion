@@ -149,7 +149,9 @@ def _resolve_geopos(
             )
         resolved = (lng, lat, altitude if altitude is not None else 0.0)
 
-    if any(not isinstance(value, Real) for value in resolved):
+    # bool is a Real (int subclass) but a True/False coordinate is always a
+    # caller mistake — reject it alongside non-numeric values.
+    if any(isinstance(value, bool) or not isinstance(value, Real) for value in resolved):
         raise KerykeionException("Observer coordinates must be finite numeric values.")
     validate_longitude(resolved[0])
     validate_latitude(resolved[1])
@@ -164,7 +166,10 @@ def _validate_numeric_tuple(values: Optional[tuple], *, name: str, length: int) 
         return
     if not isinstance(values, (tuple, list)) or len(values) != length:
         raise KerykeionException(f"{name} must contain exactly {length} numeric values.")
-    if any(not isinstance(value, Real) or not math.isfinite(value) for value in values):
+    if any(
+        isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value)
+        for value in values
+    ):
         raise KerykeionException(f"{name} must contain exactly {length} finite numeric values.")
 
 

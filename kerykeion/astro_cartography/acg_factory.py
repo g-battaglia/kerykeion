@@ -54,8 +54,12 @@ _ACG_PLANET_IDS: Dict[str, int] = {
 
 
 def _finite_float(value: object) -> Optional[float]:
-    """Coerce a supported real value to float, returning ``None`` if unsafe."""
-    if not isinstance(value, Real):
+    """Coerce a supported real value to float, returning ``None`` if unsafe.
+
+    ``bool`` is rejected: it passes ``Real`` checks (``int`` subclass) but a
+    ``True``/``False`` step, latitude, or Julian Day is always a caller mistake.
+    """
+    if isinstance(value, bool) or not isinstance(value, Real):
         return None
     try:
         converted = float(value)
@@ -80,7 +84,11 @@ class AstroCartographyFactory:
 
     PLANETS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
                "Uranus", "Neptune", "Pluto"]
-    MAX_PROJECTED_POINTS = 250_000
+    # Upper bound on the projected number of line points for one compute()
+    # call. Generous enough for high-resolution maps (step=0.01 over the full
+    # default range with all ten planets stays under it) while still rejecting
+    # pathological grids (step=1e-9) that would hang the process.
+    MAX_PROJECTED_POINTS = 1_000_000
 
     @staticmethod
     def compute(
@@ -126,6 +134,12 @@ class AstroCartographyFactory:
 
         Returns:
             List of ACGLineModel objects, one per planet per line type.
+
+        Raises:
+            KerykeionException: For invalid inputs, or when the requested grid
+                would project more than ``MAX_PROJECTED_POINTS`` (1,000,000)
+                line points — increase ``step``, narrow ``lat_range``, or
+                request fewer planets.
         """
         if planets is None:
             requested_planets = list(AstroCartographyFactory.PLANETS)
@@ -157,7 +171,7 @@ class AstroCartographyFactory:
             raise KerykeionException(
                 f"lat_range must contain exactly two numeric latitudes, got {lat_range!r}."
             )
-        if any(not isinstance(value, Real) for value in lat_range):
+        if any(isinstance(value, bool) or not isinstance(value, Real) for value in lat_range):
             raise KerykeionException(
                 f"lat_range must contain two finite numeric latitudes, got {lat_range!r}."
             )

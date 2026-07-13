@@ -115,6 +115,15 @@ class TestACGComputation:
         with pytest.raises(KerykeionException, match="safety limit"):
             AstroCartographyFactory.compute(subject, step=step, planets=["Sun"])
 
+    def test_boolean_step_and_lat_range_rejected(self, subject):
+        """bool passes isinstance(..., Real) but is never a valid coordinate."""
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="step"):
+            AstroCartographyFactory.compute(subject, step=True)
+        with pytest.raises(KerykeionException, match="lat_range"):
+            AstroCartographyFactory.compute(subject, lat_range=(True, 66))
+
     @pytest.mark.parametrize(
         "julian_day",
         [float("nan"), float("inf"), float("-inf"), 10**309],

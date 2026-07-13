@@ -35,13 +35,16 @@ def is_iso_date_only(value: str) -> bool:
     return True
 
 
-def validate_julian_range(start_jd: float, end_jd: float) -> None:
+def validate_julian_bounds(start_jd: float, end_jd: float) -> None:
     """Reject non-finite Julian Day bounds before a predictive scan.
 
     ``NaN`` makes ordering comparisons false and can otherwise turn an invalid
     request into a plausible empty collection. Infinite bounds can escape later
     as backend or datetime-conversion errors. Keeping the check shared gives all
     range factories the same public contract.
+
+    Only finiteness is checked — ordering is not: an inverted range
+    (``start_jd > end_jd``) is a valid request that scans nothing.
     """
     validate_julian_day(start_jd, name="start_jd")
     validate_julian_day(end_jd, name="end_jd")

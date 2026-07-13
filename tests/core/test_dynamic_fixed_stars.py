@@ -514,5 +514,5 @@ def test_non_finite_subject_julian_day_raises(subject_all_stars, julian_day):
     from kerykeion.schemas import KerykeionException
 
     corrupted = subject_all_stars.model_copy(update={"julian_day": julian_day})
-    with pytest.raises((ValueError, KerykeionException), match="finite"):
+    with pytest.raises(KerykeionException, match="finite"):
         FixedStarDiscoveryFactory.find_prominent_stars(corrupted)

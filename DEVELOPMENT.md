@@ -311,7 +311,7 @@ uv build
 
 # The built packages will be in the dist/ folder
 
-# CI/release gate: build, install the wheel in isolation, and render a chart
+# Release gate: build, install the wheel in isolation, and render a chart
 uv run poe build:smoke
 ```
 

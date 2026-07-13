@@ -336,6 +336,14 @@ class TestGeoposKeywordAlternative:
         with pytest.raises(ValueError, match="non-negative"):
             factory.search_events(julian_day=START_JD, lat=41.9, lng=12.5, count=-1)
 
+    @pytest.mark.parametrize("boolean", [True, False])
+    def test_boolean_coordinates_rejected(self, factory, boolean):
+        """bool passes isinstance(..., Real) but is never a valid coordinate."""
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="numeric"):
+            factory.search_events(julian_day=START_JD, lat=boolean, lng=12.5, count=0)
+
 
 # Tests: default constants ---------------------------------------------------
 

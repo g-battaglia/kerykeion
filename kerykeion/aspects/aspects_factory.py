@@ -146,6 +146,12 @@ class AspectsFactory:
         Returns:
             SingleChartAspectsModel containing all calculated aspects data
 
+        Raises:
+            ValueError: If ``point_orb_adjustments`` contains a non-string key
+                or a non-finite adjustment value.
+            KerykeionException: If ``axis_orb_limit`` is provided but not a
+                finite positive number.
+
         Note:
             Luminary orbs differ between entry points: this method applies NO
             per-point orb widening by default (``point_orb_adjustments=None``),
@@ -260,6 +266,13 @@ class AspectsFactory:
         Returns:
             DualChartAspectsModel: Complete model containing all calculated aspects data,
                                   including both comprehensive and filtered relevant aspects.
+
+        Raises:
+            ValueError: If ``point_orb_adjustments`` contains a non-string key
+                or a non-finite adjustment value.
+            KerykeionException: If the two subjects use different reference
+                frames, or ``axis_orb_limit`` is provided but not a finite
+                positive number.
 
         Note:
             Luminary orbs differ between entry points: this method applies NO

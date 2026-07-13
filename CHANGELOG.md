@@ -44,12 +44,17 @@
   no longer leak into physical equatorial coordinates, and Topocentric subjects
   retain and reuse their observer altitude.
 - **Fast paths no longer bypass subject and filter validation.** Fixed-star
-  discovery rejects non-finite subject Julian Days before catalog shortcuts;
-  astro-cartography also rejects non-finite Julian Days, malformed or unknown
-  planet filters, and projected grids above 250,000 line points.
+  discovery rejects non-finite subject Julian Days before catalog shortcuts
+  (raising the factory's documented `KerykeionException`); astro-cartography
+  also rejects non-finite Julian Days, malformed or unknown planet filters,
+  and projected grids above 1,000,000 line points (generous enough for
+  step=0.01 high-resolution maps with all ten planets).
 - **Per-point aspect adjustments reject corrupt numeric input.** Non-string
   keys and non-finite adjustment values now fail before single-, dual-,
-  progression-, or solar-arc aspect calculation.
+  progression-, or solar-arc aspect calculation. Boolean values are rejected
+  wherever numeric coordinates, orbs, steps, or backend tuples are validated
+  (`True`/`False` pass `isinstance(..., Real)` but are always caller
+  mistakes).
 - **Heliacal and occultation searches reject physically invalid requests.**
   Heliacal coordinates, event types, counts, atmosphere/observer tuples, and
   Julian Days are validated even for empty searches. Raw occultation body IDs
@@ -70,17 +75,21 @@
   skips all docs when the optional `swisseph` package is absent, and uses a
   fast page-level pass with cumulative replay only for diagnostics. All 380
   maintained runnable snippets pass.
-- CI now runs both documentation gates and invokes the isolated `build:smoke`
-  task, so it verifies the built wheel and packaged assets rather than importing
-  the source checkout directly. Development/test counts and Markdown EOF
-  hygiene were aligned with the current tree.
-- CI now exercises every advertised Python minor (3.12, 3.13, and 3.14), and
-  the primary-directions guide documents the public `compute_speculum()` helper.
+- Development/test counts and Markdown EOF hygiene were aligned with the
+  current tree, and the primary-directions guide documents the public
+  `compute_speculum()` helper.
 - Corrected backend license assignments, active-point/fixed-star configuration
   guidance, and the all-points example; added the backend precision guide to
   navigation. README chart/license resources now use verified absolute URLs so
-  they render from wheel metadata on PyPI, and CI uses the committed lockfile
-  with `uv sync --locked`.
+  they render from wheel metadata on PyPI.
+
+### Removed
+
+- **Hosted CI removed again (no-CI policy).** The GitHub Actions workflow that
+  crept back in during the review rounds is deleted; the project deliberately
+  has no hosted CI. Every gate runs locally through `poe`: `quality` (ruff,
+  mypy, pyright, full pytest suite), `docs:check`, `docs:snippets`, and
+  `build:smoke` for the isolated wheel smoke test.
 
 ## 6.0.0a70 - 2026-07-13
 

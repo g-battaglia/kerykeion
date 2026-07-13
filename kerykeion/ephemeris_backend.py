@@ -479,6 +479,12 @@ def ephemeris_session(
           calling another factory that opens its own session.
         - Unknown zodiac/perspective names raise ``ValueError`` rather than
           silently selecting the apparent-tropical defaults.
+        - Planetocentric perspective names (``"Selenocentric"``,
+          ``"Marscentric"``, ...) are accepted as valid, but the session sets
+          no calculation flag for them: ``calc_ut`` inside such a session still
+          returns geocentric positions. Planetocentric positions must be
+          fetched with ``ephe.calc_pctr`` (TT Julian Day), as the subject and
+          primary-directions factories do.
         - ``sidereal_mode="USER"`` raises ``ValueError`` when the custom
           ayanamsa parameters are missing or non-finite.
     """
