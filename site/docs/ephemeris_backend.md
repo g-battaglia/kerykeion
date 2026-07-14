@@ -17,7 +17,7 @@ API so **no application code needs to change** when switching.
 
 | Backend | Package | License | Notes |
 |---------|---------|---------|-------|
-| **libephemeris** (default) | `libephemeris` | Apache-2.0 | Pure Python. Uses NASA JPL DE440/DE441 via Skyfield. No C compiler needed. Owned by the Kerykeion project. |
+| **libephemeris** (default) | `libephemeris` | AGPL-3.0 | Pure Python. Uses NASA JPL DE440/DE441 via Skyfield. No C compiler needed. Owned by the Kerykeion project. |
 | **swisseph** | `pyswisseph` | AGPL-3.0 | C bindings to the Swiss Ephemeris library by Astrodienst AG. If you use this backend, the Swiss Ephemeris AGPL-3.0 license applies. |
 
 ## Installation
