@@ -75,7 +75,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Pars Amoris           | Lib ♎ | 8.98°    | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Tau ♉ | 8.21°    | N/A          | N/A     | -    | Seventh House  |
 | Vertex                | Gem ♊ | 11.46°   | N/A          | N/A     | -    | Eighth House   |
-| White Moon            | Can ♋ | 26.26°   | +0.1409°/d   | +20.90° | -    | Ninth House    |
+| White Moon            | Can ♋ | 26.44°   | +0.1409°/d   | +20.87° | -    | Ninth House    |
 | Anti Vertex           | Sag ♐ | 11.46°   | N/A          | N/A     | -    | Second House   |
 | Mean South Lunar Node | Leo ♌ | 7.79°    | -0.0529°/d   | +18.32° | R    | Ninth House    |
 | True South Lunar Node | Leo ♌ | 7.26°    | -0.0080°/d   | +18.46° | R    | Ninth House    |
@@ -213,7 +213,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Sun                   | quintile Q       | Pars Amoris           | 1.56° | Separating ← |
 | Sun                   | trine △          | Interpolated Lilith   | 3.07° | Separating ← |
 | Sun                   | sextile ⚹        | Mean Priapus          | 0.45° | Applying →   |
-| Sun                   | conjunction ☌    | White Moon            | 2.29° | Separating ← |
+| Sun                   | conjunction ☌    | White Moon            | 2.11° | Separating ← |
 | Sun                   | sextile ⚹        | Zeus                  | 2.51° | Separating ← |
 | Sun                   | quintile Q       | Admetos               | 1.58° | Separating ← |
 | Sun                   | square □         | Poseidon              | 0.14° | Applying →   |
@@ -230,7 +230,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Moon                  | quintile Q       | Pars Fidei            | 0.99° | Separating ← |
 | Moon                  | trine △          | Interpolated Lilith   | 4.27° | Applying →   |
 | Moon                  | semi-sextile ⚺   | Interpolated Perigee  | 0.23° | Separating ← |
-| Moon                  | conjunction ☌    | White Moon            | 5.05° | Applying →   |
+| Moon                  | conjunction ☌    | White Moon            | 5.23° | Applying →   |
 | Moon                  | trine △          | Cupido                | 2.59° | Separating ← |
 | Moon                  | sextile ⚹        | Zeus                  | 4.82° | Applying →   |
 | Moon                  | semi-sextile ⚺   | Kronos                | 0.69° | Applying →   |
@@ -300,7 +300,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Jupiter               | trine △          | Quaoar                | 0.16° | Applying →   |
 | Jupiter               | square □         | Pars Fortunae         | 4.57° | Applying →   |
 | Jupiter               | trine △          | Interpolated Lilith   | 1.56° | Applying →   |
-| Jupiter               | conjunction ☌    | White Moon            | 2.35° | Applying →   |
+| Jupiter               | conjunction ☌    | White Moon            | 2.52° | Applying →   |
 | Jupiter               | trine △          | Cupido                | 5.30° | Separating ← |
 | Jupiter               | semi-square ∠    | Hades                 | 1.01° | Applying →   |
 | Jupiter               | sextile ⚹        | Zeus                  | 2.12° | Applying →   |
@@ -316,7 +316,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Saturn                | sextile ⚹        | Quaoar                | 2.56° | Separating ← |
 | Saturn                | sextile ⚹        | Interpolated Lilith   | 3.96° | Separating ← |
 | Saturn                | quincunx ⚻       | Interpolated Perigee  | 0.53° | Applying →   |
-| Saturn                | opposition ☍     | White Moon            | 4.74° | Separating ← |
+| Saturn                | opposition ☍     | White Moon            | 4.92° | Separating ← |
 | Saturn                | sextile ⚹        | Cupido                | 2.90° | Applying →   |
 | Saturn                | trine △          | Zeus                  | 4.52° | Separating ← |
 | Saturn                | quincunx ⚻       | Kronos                | 0.38° | Separating ← |
@@ -481,7 +481,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Mean Lilith           | conjunction ☌    | Quaoar                | 4.91° | Separating ← |
 | Mean Lilith           | semi-sextile ⚺   | Pars Fortunae         | 0.51° | Separating ← |
 | Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 3.51° | Applying →   |
-| Mean Lilith           | trine △          | White Moon            | 2.73° | Applying →   |
+| Mean Lilith           | trine △          | White Moon            | 2.55° | Applying →   |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 2.96° | Separating ← |
 | Mean Lilith           | semi-square ∠    | Apollon               | 0.16° | Separating ← |
 | Mean Lilith           | sesquiquadrate ⚼ | Vulkanus              | 1.36° | Applying →   |
@@ -605,7 +605,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Haumea                | sextile ⚹        | Interpolated Lilith   | 0.85° | Applying →   |
 | Haumea                | trine △          | Mean Priapus          | 2.67° | Separating ← |
 | Haumea                | square □         | Interpolated Perigee  | 5.34° | Applying →   |
-| Haumea                | sextile ⚹        | White Moon            | 0.07° | Applying →   |
+| Haumea                | sextile ⚹        | White Moon            | 0.11° | Separating ← |
 | Haumea                | conjunction ☌    | Zeus                  | 0.29° | Separating ← |
 | Haumea                | square □         | Kronos                | 4.42° | Static =     |
 | Haumea                | quintile Q       | Vulkanus              | 1.02° | Static =     |
@@ -618,7 +618,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Ixion                 | semi-square ∠    | Pars Amoris           | 1.28° | Separating ← |
 | Ixion                 | conjunction ☌    | Interpolated Lilith   | 2.77° | Separating ← |
 | Ixion                 | quincunx ⚻       | Interpolated Perigee  | 1.72° | Applying →   |
-| Ixion                 | trine △          | White Moon            | 3.55° | Separating ← |
+| Ixion                 | trine △          | White Moon            | 3.73° | Separating ← |
 | Ixion                 | conjunction ☌    | Cupido                | 4.09° | Applying →   |
 | Ixion                 | sextile ⚹        | Zeus                  | 3.33° | Separating ← |
 | Ixion                 | quincunx ⚻       | Kronos                | 0.80° | Applying →   |
@@ -635,11 +635,11 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Quaoar                | semi-square ∠    | Pars Amoris           | 0.09° | Applying →   |
 | Quaoar                | conjunction ☌    | Interpolated Lilith   | 1.40° | Separating ← |
 | Quaoar                | opposition ☍     | Mean Priapus          | 4.91° | Separating ← |
-| Quaoar                | trine △          | White Moon            | 2.18° | Separating ← |
+| Quaoar                | trine △          | White Moon            | 2.36° | Separating ← |
 | Quaoar                | conjunction ☌    | Cupido                | 5.46° | Applying →   |
 | Quaoar                | sextile ⚹        | Zeus                  | 1.96° | Separating ← |
 | Pars Fortunae         | quincunx ⚻       | Mean Priapus          | 0.51° | Separating ← |
-| Pars Fortunae         | square □         | White Moon            | 2.23° | Applying →   |
+| Pars Fortunae         | square □         | White Moon            | 2.05° | Applying →   |
 | Pars Fortunae         | conjunction ☌    | Poseidon              | 0.20° | Separating ← |
 | Pars Spiritus         | opposition ☍     | Pars Fidei            | 4.94° | Static =     |
 | Pars Spiritus         | quincunx ⚻       | Vertex                | 1.69° | Static =     |
@@ -654,22 +654,22 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Pars Amoris           | trine △          | Vertex                | 2.48° | Static =     |
 | Pars Amoris           | sextile ⚹        | Anti Vertex           | 2.48° | Static =     |
 | Pars Amoris           | semi-square ∠    | Interpolated Lilith   | 1.49° | Separating ← |
-| Pars Amoris           | quintile Q       | White Moon            | 0.73° | Applying →   |
+| Pars Amoris           | quintile Q       | White Moon            | 0.55° | Applying →   |
 | Pars Amoris           | trine △          | Hades                 | 0.94° | Separating ← |
 | Pars Amoris           | conjunction ☌    | Apollon               | 4.84° | Separating ← |
 | Pars Amoris           | biquintile bQ    | Admetos               | 0.02° | Applying →   |
 | Pars Fidei            | semi-sextile ⚺   | Hades                 | 1.71° | Separating ← |
 | Pars Fidei            | semi-square ∠    | Kronos                | 1.32° | Applying →   |
-| Vertex                | semi-square ∠    | White Moon            | 0.20° | Applying →   |
+| Vertex                | semi-square ∠    | White Moon            | 0.02° | Applying →   |
 | Vertex                | conjunction ☌    | Hades                 | 1.53° | Applying →   |
 | Vertex                | trine △          | Apollon               | 2.37° | Separating ← |
-| Anti Vertex           | sesquiquadrate ⚼ | White Moon            | 0.20° | Applying →   |
+| Anti Vertex           | sesquiquadrate ⚼ | White Moon            | 0.02° | Applying →   |
 | Anti Vertex           | opposition ☍     | Hades                 | 1.53° | Applying →   |
 | Anti Vertex           | sextile ⚹        | Apollon               | 2.37° | Separating ← |
 | Interpolated Lilith   | opposition ☍     | Mean Priapus          | 3.51° | Applying →   |
-| Interpolated Lilith   | trine △          | White Moon            | 0.78° | Applying →   |
+| Interpolated Lilith   | trine △          | White Moon            | 0.96° | Applying →   |
 | Interpolated Lilith   | sextile ⚹        | Zeus                  | 0.56° | Applying →   |
-| Mean Priapus          | sextile ⚹        | White Moon            | 2.73° | Applying →   |
+| Mean Priapus          | sextile ⚹        | White Moon            | 2.55° | Applying →   |
 | Mean Priapus          | trine △          | Zeus                  | 2.96° | Separating ← |
 | Mean Priapus          | sesquiquadrate ⚼ | Apollon               | 0.16° | Separating ← |
 | Mean Priapus          | semi-square ∠    | Vulkanus              | 1.36° | Applying →   |
@@ -680,10 +680,10 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | True Priapus          | trine △          | Apollon               | 4.19° | Applying →   |
 | Interpolated Perigee  | square □         | Zeus                  | 5.05° | Applying →   |
 | Interpolated Perigee  | conjunction ☌    | Kronos                | 0.92° | Applying →   |
-| White Moon            | semi-square ∠    | Hades                 | 1.33° | Separating ← |
-| White Moon            | sextile ⚹        | Zeus                  | 0.22° | Separating ← |
-| White Moon            | quintile Q       | Admetos               | 0.70° | Applying →   |
-| White Moon            | square □         | Poseidon              | 2.43° | Applying →   |
+| White Moon            | semi-square ∠    | Hades                 | 1.51° | Separating ← |
+| White Moon            | sextile ⚹        | Zeus                  | 0.40° | Separating ← |
+| White Moon            | quintile Q       | Admetos               | 0.52° | Applying →   |
+| White Moon            | square □         | Poseidon              | 2.25° | Applying →   |
 | Cupido                | opposition ☍     | Admetos               | 3.66° | Applying →   |
 | Cupido                | trine △          | Vulkanus              | 3.27° | Applying →   |
 | Hades                 | trine △          | Apollon               | 3.90° | Applying →   |

@@ -76,7 +76,7 @@ Quito Subject — Natal Chart Report
 | Pars Amoris           | Leo ♌ | 14.10°   | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Pis ♓ | 11.32°   | N/A          | N/A     | -    | Sixth House    |
 | Vertex                | Ari ♈ | 0.08°    | N/A          | N/A     | -    | Seventh House  |
-| White Moon            | Can ♋ | 21.21°   | +0.1408°/d   | +21.77° | -    | Eleventh House |
+| White Moon            | Can ♋ | 21.39°   | +0.1408°/d   | +21.74° | -    | Eleventh House |
 | Anti Vertex           | Lib ♎ | 0.08°    | N/A          | N/A     | -    | First House    |
 | Mean South Lunar Node | Leo ♌ | 9.69°    | -0.0530°/d   | +17.83° | R    | Eleventh House |
 | True South Lunar Node | Leo ♌ | 8.12°    | +0.0101°/d   | +18.24° | -    | Eleventh House |
@@ -231,7 +231,7 @@ Quito Subject — Natal Chart Report
 | Sun                   | biquintile bQ    | Interpolated Lilith   | 2.33° | Applying →   |
 | Sun                   | semi-sextile ⚺   | Mean Priapus          | 0.65° | Applying →   |
 | Sun                   | conjunction ☌    | True Priapus          | 5.11° | Separating ← |
-| Sun                   | semi-sextile ⚺   | White Moon            | 3.12° | Separating ← |
+| Sun                   | semi-sextile ⚺   | White Moon            | 2.94° | Separating ← |
 | Sun                   | biquintile bQ    | Cupido                | 0.66° | Applying →   |
 | Sun                   | square □         | Zeus                  | 1.47° | Applying →   |
 | Sun                   | conjunction ☌    | Kronos                | 2.99° | Separating ← |
@@ -262,7 +262,7 @@ Quito Subject — Natal Chart Report
 | Moon                  | conjunction ☌    | Pars Fidei            | 6.83° | Separating ← |
 | Moon                  | trine △          | Interpolated Lilith   | 2.51° | Applying →   |
 | Moon                  | square □         | True Priapus          | 1.07° | Applying →   |
-| Moon                  | trine △          | White Moon            | 3.06° | Applying →   |
+| Moon                  | trine △          | White Moon            | 3.24° | Applying →   |
 | Moon                  | trine △          | Cupido                | 0.84° | Applying →   |
 | Moon                  | square □         | Kronos                | 3.19° | Applying →   |
 | Moon                  | sextile ⚹        | Admetos               | 3.50° | Separating ← |
@@ -278,7 +278,7 @@ Quito Subject — Natal Chart Report
 | Mercury               | square □         | Pars Fidei            | 5.27° | Applying →   |
 | Mercury               | trine △          | Anti Vertex           | 5.97° | Separating ← |
 | Mercury               | conjunction ☌    | Interpolated Perigee  | 2.48° | Applying →   |
-| Mercury               | semi-square ∠    | White Moon            | 0.16° | Applying →   |
+| Mercury               | semi-square ∠    | White Moon            | 0.34° | Applying →   |
 | Mercury               | conjunction ☌    | Hades                 | 3.21° | Applying →   |
 | Mercury               | biquintile bQ    | Poseidon              | 1.29° | Separating ← |
 | Venus                 | sextile ⚹        | Jupiter               | 3.09° | Separating ← |
@@ -299,7 +299,7 @@ Quito Subject — Natal Chart Report
 | Venus                 | opposition ☍     | Interpolated Lilith   | 1.63° | Applying →   |
 | Venus                 | conjunction ☌    | Mean Priapus          | 5.95° | Applying →   |
 | Venus                 | semi-sextile ⚺   | True Priapus          | 0.20° | Applying →   |
-| Venus                 | sextile ⚹        | White Moon            | 2.18° | Applying →   |
+| Venus                 | sextile ⚹        | White Moon            | 2.36° | Applying →   |
 | Venus                 | opposition ☍     | Cupido                | 0.03° | Separating ← |
 | Venus                 | biquintile bQ    | Apollon               | 0.76° | Applying →   |
 | Venus                 | conjunction ☌    | Admetos               | 4.37° | Separating ← |
@@ -344,7 +344,7 @@ Quito Subject — Natal Chart Report
 | Jupiter               | semi-sextile ⚺   | Pars Amoris           | 1.84° | Separating ← |
 | Jupiter               | trine △          | Pars Fidei            | 4.61° | Separating ← |
 | Jupiter               | trine △          | Interpolated Lilith   | 4.72° | Applying →   |
-| Jupiter               | conjunction ☌    | White Moon            | 5.27° | Applying →   |
+| Jupiter               | conjunction ☌    | White Moon            | 5.45° | Applying →   |
 | Jupiter               | trine △          | Cupido                | 3.06° | Applying →   |
 | Jupiter               | square □         | Apollon               | 2.15° | Separating ← |
 | Jupiter               | sextile ⚹        | Admetos               | 1.29° | Separating ← |
@@ -363,7 +363,7 @@ Quito Subject — Natal Chart Report
 | Saturn                | trine △          | Mean Priapus          | 0.95° | Separating ← |
 | Saturn                | biquintile bQ    | True Priapus          | 1.20° | Separating ← |
 | Saturn                | sesquiquadrate ⚼ | Interpolated Perigee  | 0.49° | Applying →   |
-| Saturn                | opposition ☍     | White Moon            | 2.81° | Applying →   |
+| Saturn                | opposition ☍     | White Moon            | 2.63° | Applying →   |
 | Saturn                | sesquiquadrate ⚼ | Hades                 | 0.24° | Separating ← |
 | Saturn                | trine △          | Zeus                  | 1.78° | Separating ← |
 | Saturn                | square □         | Poseidon              | 4.74° | Separating ← |
@@ -418,7 +418,7 @@ Quito Subject — Natal Chart Report
 | Pluto                 | sesquiquadrate ⚼ | Vertex                | 0.32° | Applying →   |
 | Pluto                 | semi-square ∠    | Anti Vertex           | 0.32° | Applying →   |
 | Pluto                 | conjunction ☌    | Interpolated Lilith   | 5.26° | Separating ← |
-| Pluto                 | trine △          | White Moon            | 5.81° | Separating ← |
+| Pluto                 | trine △          | White Moon            | 5.99° | Separating ← |
 | Pluto                 | conjunction ☌    | Cupido                | 3.60° | Separating ← |
 | Pluto                 | biquintile bQ    | Kronos                | 0.06° | Applying →   |
 | Pluto                 | semi-sextile ⚺   | Apollon               | 1.61° | Applying →   |
@@ -463,7 +463,7 @@ Quito Subject — Natal Chart Report
 | Chiron                | trine △          | Pars Fidei            | 4.76° | Separating ← |
 | Chiron                | quintile Q       | Anti Vertex           | 2.00° | Applying →   |
 | Chiron                | trine △          | Interpolated Lilith   | 4.58° | Applying →   |
-| Chiron                | conjunction ☌    | White Moon            | 5.12° | Separating ← |
+| Chiron                | conjunction ☌    | White Moon            | 5.30° | Separating ← |
 | Chiron                | trine △          | Cupido                | 2.91° | Applying →   |
 | Chiron                | square □         | Apollon               | 2.30° | Separating ← |
 | Chiron                | sextile ⚹        | Admetos               | 1.43° | Separating ← |
@@ -478,7 +478,7 @@ Quito Subject — Natal Chart Report
 | Ascendant             | sextile ⚹        | Interpolated Lilith   | 1.25° | Applying →   |
 | Ascendant             | trine △          | Mean Priapus          | 5.57° | Applying →   |
 | Ascendant             | square □         | True Priapus          | 0.19° | Separating ← |
-| Ascendant             | sextile ⚹        | White Moon            | 1.80° | Applying →   |
+| Ascendant             | sextile ⚹        | White Moon            | 1.98° | Applying →   |
 | Ascendant             | sextile ⚹        | Cupido                | 0.41° | Separating ← |
 | Ascendant             | square □         | Kronos                | 1.94° | Applying →   |
 | Ascendant             | trine △          | Admetos               | 4.76° | Separating ← |
@@ -493,7 +493,7 @@ Quito Subject — Natal Chart Report
 | Medium Coeli          | opposition ☍     | Pars Spiritus         | 4.54° | Applying →   |
 | Medium Coeli          | quincunx ⚻       | Interpolated Lilith   | 0.38° | Separating ← |
 | Medium Coeli          | conjunction ☌    | True Priapus          | 1.82° | Separating ← |
-| Medium Coeli          | semi-sextile ⚺   | White Moon            | 0.17° | Applying →   |
+| Medium Coeli          | semi-sextile ⚺   | White Moon            | 0.35° | Applying →   |
 | Medium Coeli          | square □         | Zeus                  | 4.76° | Applying →   |
 | Medium Coeli          | conjunction ☌    | Kronos                | 0.30° | Applying →   |
 | Descendant            | square □         | Imum Coeli            | 1.63° | Static =     |
@@ -507,7 +507,7 @@ Quito Subject — Natal Chart Report
 | Descendant            | biquintile bQ    | Pars Amoris           | 0.69° | Applying →   |
 | Descendant            | trine △          | Interpolated Lilith   | 1.25° | Applying →   |
 | Descendant            | square □         | True Priapus          | 0.19° | Separating ← |
-| Descendant            | trine △          | White Moon            | 1.80° | Applying →   |
+| Descendant            | trine △          | White Moon            | 1.98° | Applying →   |
 | Descendant            | trine △          | Cupido                | 0.41° | Separating ← |
 | Descendant            | square □         | Kronos                | 1.94° | Applying →   |
 | Descendant            | sextile ⚹        | Admetos               | 4.76° | Separating ← |
@@ -521,7 +521,7 @@ Quito Subject — Natal Chart Report
 | Imum Coeli            | conjunction ☌    | Pars Spiritus         | 4.54° | Applying →   |
 | Imum Coeli            | semi-sextile ⚺   | Interpolated Lilith   | 0.38° | Separating ← |
 | Imum Coeli            | opposition ☍     | True Priapus          | 1.82° | Separating ← |
-| Imum Coeli            | quincunx ⚻       | White Moon            | 0.17° | Applying →   |
+| Imum Coeli            | quincunx ⚻       | White Moon            | 0.35° | Applying →   |
 | Imum Coeli            | square □         | Zeus                  | 4.76° | Applying →   |
 | Imum Coeli            | opposition ☍     | Kronos                | 0.30° | Applying →   |
 | Imum Coeli            | biquintile bQ    | Admetos               | 0.39° | Separating ← |
@@ -533,7 +533,7 @@ Quito Subject — Natal Chart Report
 | Mean Lilith           | semi-sextile ⚺   | Pars Spiritus         | 0.61° | Applying →   |
 | Mean Lilith           | trine △          | Vertex                | 5.10° | Applying →   |
 | Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 4.32° | Separating ← |
-| Mean Lilith           | trine △          | White Moon            | 3.77° | Applying →   |
+| Mean Lilith           | trine △          | White Moon            | 3.59° | Applying →   |
 | Mean Lilith           | conjunction ☌    | Cupido                | 5.98° | Separating ← |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 0.83° | Applying →   |
 | Mean South Lunar Node | square □         | Juno                  | 0.62° | Applying →   |
@@ -566,7 +566,6 @@ Quito Subject — Natal Chart Report
 | True Lilith           | opposition ☍     | Pars Fortunae         | 5.99° | Separating ← |
 | True Lilith           | trine △          | Pars Amoris           | 5.12° | Separating ← |
 | True Lilith           | semi-sextile ⚺   | Interpolated Lilith   | 1.44° | Applying →   |
-| True Lilith           | quincunx ⚻       | White Moon            | 1.99° | Applying →   |
 | True Lilith           | semi-sextile ⚺   | Cupido                | 0.23° | Separating ← |
 | True Lilith           | opposition ☍     | Kronos                | 2.12° | Applying →   |
 | True Lilith           | biquintile bQ    | Admetos               | 1.43° | Applying →   |
@@ -620,7 +619,7 @@ Quito Subject — Natal Chart Report
 | Eris                  | sextile ⚹        | Pars Fortunae         | 4.30° | Separating ← |
 | Eris                  | trine △          | Pars Amoris           | 3.43° | Separating ← |
 | Eris                  | sextile ⚹        | True Priapus          | 1.69° | Separating ← |
-| Eris                  | square □         | White Moon            | 3.68° | Separating ← |
+| Eris                  | square □         | White Moon            | 3.86° | Separating ← |
 | Eris                  | quincunx ⚻       | Cupido                | 1.46° | Applying →   |
 | Eris                  | sextile ⚹        | Kronos                | 3.81° | Separating ← |
 | Eris                  | opposition ☍     | Apollon               | 3.74° | Separating ← |
@@ -631,6 +630,7 @@ Quito Subject — Natal Chart Report
 | Sedna                 | sesquiquadrate ⚼ | Pars Spiritus         | 0.73° | Separating ← |
 | Sedna                 | square □         | Pars Amoris           | 2.79° | Applying →   |
 | Sedna                 | sextile ⚹        | Pars Fidei            | 0.01° | Applying →   |
+| Sedna                 | quintile Q       | White Moon            | 1.93° | Applying →   |
 | Sedna                 | sesquiquadrate ⚼ | Zeus                  | 0.51° | Separating ← |
 | Sedna                 | conjunction ☌    | Admetos               | 3.34° | Separating ← |
 | Sedna                 | sextile ⚹        | Vulkanus              | 3.54° | Separating ← |
@@ -641,7 +641,7 @@ Quito Subject — Natal Chart Report
 | Haumea                | opposition ☍     | Vertex                | 4.03° | Applying →   |
 | Haumea                | conjunction ☌    | Anti Vertex           | 4.03° | Applying →   |
 | Haumea                | trine △          | Mean Priapus          | 1.07° | Applying →   |
-| Haumea                | sextile ⚹        | White Moon            | 4.84° | Applying →   |
+| Haumea                | sextile ⚹        | White Moon            | 4.66° | Applying →   |
 | Haumea                | conjunction ☌    | Zeus                  | 0.24° | Static =     |
 | Haumea                | square □         | Kronos                | 4.70° | Applying →   |
 | Haumea                | quintile Q       | Vulkanus              | 0.81° | Separating ← |
@@ -651,7 +651,7 @@ Quito Subject — Natal Chart Report
 | Ixion                 | conjunction ☌    | Quaoar                | 1.38° | Static =     |
 | Ixion                 | conjunction ☌    | Interpolated Lilith   | 2.46° | Applying →   |
 | Ixion                 | opposition ☍     | Mean Priapus          | 1.86° | Separating ← |
-| Ixion                 | trine △          | White Moon            | 1.91° | Applying →   |
+| Ixion                 | trine △          | White Moon            | 1.73° | Applying →   |
 | Ixion                 | conjunction ☌    | Cupido                | 4.12° | Static =     |
 | Ixion                 | sextile ⚹        | Zeus                  | 2.69° | Separating ← |
 | Ixion                 | quincunx ⚻       | Kronos                | 1.77° | Applying →   |
@@ -668,7 +668,7 @@ Quito Subject — Natal Chart Report
 | Quaoar                | trine △          | Vertex                | 5.58° | Separating ← |
 | Quaoar                | conjunction ☌    | Interpolated Lilith   | 3.84° | Applying →   |
 | Quaoar                | opposition ☍     | Mean Priapus          | 0.48° | Separating ← |
-| Quaoar                | trine △          | White Moon            | 3.29° | Applying →   |
+| Quaoar                | trine △          | White Moon            | 3.11° | Applying →   |
 | Quaoar                | conjunction ☌    | Cupido                | 5.50° | Static =     |
 | Quaoar                | sextile ⚹        | Zeus                  | 1.30° | Separating ← |
 | Pars Fortunae         | sextile ⚹        | Pars Amoris           | 0.87° | Static =     |
@@ -709,22 +709,21 @@ Quito Subject — Natal Chart Report
 | Anti Vertex           | semi-sextile ⚺   | Poseidon              | 1.32° | Separating ← |
 | Interpolated Lilith   | opposition ☍     | Mean Priapus          | 4.32° | Separating ← |
 | Interpolated Lilith   | quincunx ⚻       | True Priapus          | 1.44° | Applying →   |
-| Interpolated Lilith   | trine △          | White Moon            | 0.55° | Separating ← |
+| Interpolated Lilith   | trine △          | White Moon            | 0.73° | Separating ← |
 | Interpolated Lilith   | conjunction ☌    | Cupido                | 1.66° | Separating ← |
 | Interpolated Lilith   | quincunx ⚻       | Kronos                | 0.68° | Applying →   |
 | Interpolated Lilith   | trine △          | Vulkanus              | 5.80° | Separating ← |
-| Mean Priapus          | sextile ⚹        | White Moon            | 3.77° | Applying →   |
+| Mean Priapus          | sextile ⚹        | White Moon            | 3.59° | Applying →   |
 | Mean Priapus          | opposition ☍     | Cupido                | 5.98° | Separating ← |
 | Mean Priapus          | trine △          | Zeus                  | 0.83° | Applying →   |
-| True Priapus          | semi-sextile ⚺   | White Moon            | 1.99° | Applying →   |
 | True Priapus          | quincunx ⚻       | Cupido                | 0.23° | Separating ← |
 | True Priapus          | conjunction ☌    | Kronos                | 2.12° | Applying →   |
 | True Priapus          | trine △          | Apollon               | 5.44° | Separating ← |
 | Interpolated Perigee  | conjunction ☌    | Hades                 | 0.73° | Applying →   |
 | Interpolated Perigee  | trine △          | Apollon               | 5.26° | Applying →   |
-| White Moon            | trine △          | Cupido                | 2.21° | Separating ← |
-| White Moon            | sextile ⚹        | Zeus                  | 4.59° | Applying →   |
-| White Moon            | semi-sextile ⚺   | Kronos                | 0.14° | Applying →   |
+| White Moon            | trine △          | Cupido                | 2.39° | Separating ← |
+| White Moon            | sextile ⚹        | Zeus                  | 4.41° | Applying →   |
+| White Moon            | semi-sextile ⚺   | Kronos                | 0.04° | Separating ← |
 | Cupido                | opposition ☍     | Admetos               | 4.34° | Applying →   |
 | Cupido                | trine △          | Vulkanus              | 4.14° | Applying →   |
 | Hades                 | trine △          | Apollon               | 4.52° | Applying →   |

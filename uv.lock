@@ -338,7 +338,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "libephemeris", specifier = "==3.0.0rc10" },
+    { name = "libephemeris", specifier = "==3.0.0rc11" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'all'", specifier = ">=2.10.3.1" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -371,7 +371,7 @@ dev = [
 
 [[package]]
 name = "libephemeris"
-version = "3.0.0rc10"
+version = "3.0.0rc11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
@@ -381,9 +381,9 @@ dependencies = [
     { name = "skyfield-data" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/71/b3/4c7e8f65b3769a6f417107f6bebcf77f72d9df6283ed029be0960b391037/libephemeris-3.0.0rc10.tar.gz", hash = "sha256:d1a46a2ac2dfec16292b9f1fbc499d964b766874599a680c55faedf1991b8f01", size = 12835873, upload-time = "2026-07-14T00:44:15.328Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/73/60/26d40c7e38bad74e4b9f0b1423c4060996f1be7b299f566b51e851c3d584/libephemeris-3.0.0rc11.tar.gz", hash = "sha256:19b369723d293cf712ec6b66c2a36ea8195cd851642e8b3ee698538b6aef9321", size = 12833639, upload-time = "2026-07-15T14:56:30.873Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/76/7c/d39d800728e5bc3f243153b9667dd000792fa430dbf7c3ece9c80eb8c0a0/libephemeris-3.0.0rc10-py3-none-any.whl", hash = "sha256:92850f80f45537dcaa9d734e12330a28346742becad5b4fc17b813bdf744dd78", size = 12889657, upload-time = "2026-07-14T00:44:09.869Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/85/060f768c1494475a322a7e5f31260ac375c3c2ceafe0fdc5c200a1be8718/libephemeris-3.0.0rc11-py3-none-any.whl", hash = "sha256:492f5b7829b2b079368853a0118462005d3089a7a45a19b0713340cb023e7cfd", size = 12880185, upload-time = "2026-07-15T14:56:25.717Z" },
 ]
 
 [[package]]

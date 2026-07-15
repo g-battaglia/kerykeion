@@ -76,7 +76,7 @@ Buenos Aires Subject — Natal Chart Report
 | Pars Amoris           | Can ♋ | 24.84°   | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Aqu ♒ | 22.05°   | N/A          | N/A     | -    | Sixth House    |
 | Vertex                | Pis ♓ | 16.80°   | N/A          | N/A     | -    | Seventh House  |
-| White Moon            | Can ♋ | 21.19°   | +0.1408°/d   | +21.77° | -    | Eleventh House |
+| White Moon            | Can ♋ | 21.37°   | +0.1408°/d   | +21.74° | -    | Eleventh House |
 | Anti Vertex           | Vir ♍ | 16.80°   | N/A          | N/A     | -    | First House    |
 | Mean South Lunar Node | Leo ♌ | 9.69°    | -0.0530°/d   | +17.83° | R    | Twelfth House  |
 | True South Lunar Node | Leo ♌ | 8.12°    | +0.0115°/d   | +18.24° | -    | Twelfth House  |
@@ -231,7 +231,7 @@ Buenos Aires Subject — Natal Chart Report
 | Sun                   | biquintile bQ    | Interpolated Lilith   | 2.40° | Applying →   |
 | Sun                   | semi-sextile ⚺   | Mean Priapus          | 0.72° | Applying →   |
 | Sun                   | conjunction ☌    | True Priapus          | 5.10° | Separating ← |
-| Sun                   | semi-sextile ⚺   | White Moon            | 3.06° | Separating ← |
+| Sun                   | semi-sextile ⚺   | White Moon            | 2.88° | Separating ← |
 | Sun                   | biquintile bQ    | Cupido                | 0.74° | Applying →   |
 | Sun                   | square □         | Zeus                  | 1.55° | Applying →   |
 | Sun                   | conjunction ☌    | Kronos                | 2.91° | Separating ← |
@@ -260,7 +260,7 @@ Buenos Aires Subject — Natal Chart Report
 | Moon                  | opposition ☍     | Anti Vertex           | 0.23° | Separating ← |
 | Moon                  | trine △          | Interpolated Lilith   | 3.62° | Applying →   |
 | Moon                  | square □         | True Priapus          | 2.12° | Applying →   |
-| Moon                  | trine △          | White Moon            | 4.16° | Applying →   |
+| Moon                  | trine △          | White Moon            | 4.34° | Applying →   |
 | Moon                  | trine △          | Cupido                | 1.96° | Applying →   |
 | Moon                  | square □         | Kronos                | 4.31° | Applying →   |
 | Moon                  | quincunx ⚻       | Apollon               | 3.25° | Separating ← |
@@ -281,7 +281,7 @@ Buenos Aires Subject — Natal Chart Report
 | Mercury               | sextile ⚹        | Orcus                 | 4.18° | Applying →   |
 | Mercury               | opposition ☍     | Pars Spiritus         | 1.47° | Applying →   |
 | Mercury               | conjunction ☌    | Interpolated Perigee  | 2.59° | Applying →   |
-| Mercury               | semi-square ∠    | White Moon            | 0.29° | Applying →   |
+| Mercury               | semi-square ∠    | White Moon            | 0.47° | Applying →   |
 | Mercury               | conjunction ☌    | Hades                 | 3.36° | Applying →   |
 | Mercury               | biquintile bQ    | Poseidon              | 1.15° | Separating ← |
 | Venus                 | sextile ⚹        | Jupiter               | 3.01° | Separating ← |
@@ -300,7 +300,7 @@ Buenos Aires Subject — Natal Chart Report
 | Venus                 | trine △          | Anti Vertex           | 2.13° | Separating ← |
 | Venus                 | opposition ☍     | Interpolated Lilith   | 1.73° | Applying →   |
 | Venus                 | semi-sextile ⚺   | True Priapus          | 0.22° | Applying →   |
-| Venus                 | sextile ⚹        | White Moon            | 2.27° | Applying →   |
+| Venus                 | sextile ⚹        | White Moon            | 2.45° | Applying →   |
 | Venus                 | opposition ☍     | Cupido                | 0.07° | Applying →   |
 | Venus                 | biquintile bQ    | Apollon               | 0.86° | Applying →   |
 | Venus                 | conjunction ☌    | Admetos               | 4.28° | Separating ← |
@@ -347,7 +347,7 @@ Buenos Aires Subject — Natal Chart Report
 | Jupiter               | trine △          | Vertex                | 0.88° | Applying →   |
 | Jupiter               | sextile ⚹        | Anti Vertex           | 0.88° | Applying →   |
 | Jupiter               | trine △          | Interpolated Lilith   | 4.73° | Applying →   |
-| Jupiter               | conjunction ☌    | White Moon            | 5.28° | Applying →   |
+| Jupiter               | conjunction ☌    | White Moon            | 5.46° | Applying →   |
 | Jupiter               | trine △          | Cupido                | 3.08° | Applying →   |
 | Jupiter               | square □         | Apollon               | 2.13° | Separating ← |
 | Jupiter               | sextile ⚹        | Admetos               | 1.27° | Separating ← |
@@ -368,7 +368,7 @@ Buenos Aires Subject — Natal Chart Report
 | Saturn                | trine △          | Mean Priapus          | 0.94° | Separating ← |
 | Saturn                | biquintile bQ    | True Priapus          | 1.12° | Separating ← |
 | Saturn                | sesquiquadrate ⚼ | Interpolated Perigee  | 0.53° | Applying →   |
-| Saturn                | opposition ☍     | White Moon            | 2.83° | Applying →   |
+| Saturn                | opposition ☍     | White Moon            | 2.65° | Applying →   |
 | Saturn                | sesquiquadrate ⚼ | Hades                 | 0.24° | Separating ← |
 | Saturn                | trine △          | Zeus                  | 1.78° | Separating ← |
 | Saturn                | square □         | Poseidon              | 4.73° | Separating ← |
@@ -420,7 +420,7 @@ Buenos Aires Subject — Natal Chart Report
 | Pluto                 | trine △          | Vertex                | 1.40° | Separating ← |
 | Pluto                 | sextile ⚹        | Anti Vertex           | 1.40° | Separating ← |
 | Pluto                 | conjunction ☌    | Interpolated Lilith   | 5.25° | Separating ← |
-| Pluto                 | trine △          | White Moon            | 5.79° | Separating ← |
+| Pluto                 | trine △          | White Moon            | 5.97° | Separating ← |
 | Pluto                 | conjunction ☌    | Cupido                | 3.59° | Separating ← |
 | Pluto                 | biquintile bQ    | Kronos                | 0.06° | Applying →   |
 | Pluto                 | semi-sextile ⚺   | Apollon               | 1.61° | Applying →   |
@@ -467,7 +467,7 @@ Buenos Aires Subject — Natal Chart Report
 | Chiron                | trine △          | Vertex                | 0.72° | Applying →   |
 | Chiron                | sextile ⚹        | Anti Vertex           | 0.72° | Applying →   |
 | Chiron                | trine △          | Interpolated Lilith   | 4.58° | Applying →   |
-| Chiron                | conjunction ☌    | White Moon            | 5.12° | Separating ← |
+| Chiron                | conjunction ☌    | White Moon            | 5.30° | Separating ← |
 | Chiron                | trine △          | Cupido                | 2.92° | Applying →   |
 | Chiron                | square □         | Apollon               | 2.29° | Separating ← |
 | Chiron                | sextile ⚹        | Admetos               | 1.43° | Separating ← |
@@ -537,7 +537,7 @@ Buenos Aires Subject — Natal Chart Report
 | Mean Lilith           | trine △          | Pars Amoris           | 0.13° | Separating ← |
 | Mean Lilith           | square □         | Pars Fidei            | 2.91° | Separating ← |
 | Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 4.32° | Separating ← |
-| Mean Lilith           | trine △          | White Moon            | 3.77° | Applying →   |
+| Mean Lilith           | trine △          | White Moon            | 3.59° | Applying →   |
 | Mean Lilith           | conjunction ☌    | Cupido                | 5.97° | Separating ← |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 0.83° | Applying →   |
 | Mean South Lunar Node | square □         | Juno                  | 0.62° | Applying →   |
@@ -617,7 +617,7 @@ Buenos Aires Subject — Natal Chart Report
 | Eris                  | semi-sextile ⚺   | Vertex                | 0.73° | Separating ← |
 | Eris                  | quincunx ⚻       | Anti Vertex           | 0.73° | Separating ← |
 | Eris                  | sextile ⚹        | True Priapus          | 1.62° | Separating ← |
-| Eris                  | square □         | White Moon            | 3.66° | Separating ← |
+| Eris                  | square □         | White Moon            | 3.85° | Separating ← |
 | Eris                  | quincunx ⚻       | Cupido                | 1.46° | Applying →   |
 | Eris                  | sextile ⚹        | Kronos                | 3.81° | Separating ← |
 | Eris                  | opposition ☍     | Apollon               | 3.74° | Separating ← |
@@ -626,6 +626,7 @@ Buenos Aires Subject — Natal Chart Report
 | Sedna                 | square □         | Orcus                 | 1.22° | Applying →   |
 | Sedna                 | quintile Q       | Pars Amoris           | 1.53° | Applying →   |
 | Sedna                 | trine △          | Anti Vertex           | 5.49° | Applying →   |
+| Sedna                 | quintile Q       | White Moon            | 1.94° | Applying →   |
 | Sedna                 | sesquiquadrate ⚼ | Zeus                  | 0.51° | Separating ← |
 | Sedna                 | conjunction ☌    | Admetos               | 3.34° | Separating ← |
 | Sedna                 | sextile ⚹        | Vulkanus              | 3.54° | Separating ← |
@@ -636,7 +637,7 @@ Buenos Aires Subject — Natal Chart Report
 | Haumea                | quintile Q       | Pars Spiritus         | 0.66° | Separating ← |
 | Haumea                | sextile ⚹        | Pars Amoris           | 1.21° | Separating ← |
 | Haumea                | trine △          | Mean Priapus          | 1.08° | Applying →   |
-| Haumea                | sextile ⚹        | White Moon            | 4.85° | Applying →   |
+| Haumea                | sextile ⚹        | White Moon            | 4.67° | Applying →   |
 | Haumea                | conjunction ☌    | Zeus                  | 0.24° | Static =     |
 | Haumea                | square □         | Kronos                | 4.70° | Applying →   |
 | Haumea                | quintile Q       | Vulkanus              | 0.81° | Separating ← |
@@ -650,7 +651,7 @@ Buenos Aires Subject — Natal Chart Report
 | Ixion                 | square □         | Pars Fidei            | 1.06° | Applying →   |
 | Ixion                 | conjunction ☌    | Interpolated Lilith   | 2.46° | Applying →   |
 | Ixion                 | opposition ☍     | Mean Priapus          | 1.85° | Separating ← |
-| Ixion                 | trine △          | White Moon            | 1.92° | Applying →   |
+| Ixion                 | trine △          | White Moon            | 1.74° | Applying →   |
 | Ixion                 | conjunction ☌    | Cupido                | 4.12° | Static =     |
 | Ixion                 | sextile ⚹        | Zeus                  | 2.69° | Separating ← |
 | Ixion                 | quincunx ⚻       | Kronos                | 1.78° | Applying →   |
@@ -666,26 +667,26 @@ Buenos Aires Subject — Natal Chart Report
 | Quaoar                | square □         | Pars Fidei            | 2.44° | Applying →   |
 | Quaoar                | conjunction ☌    | Interpolated Lilith   | 3.85° | Applying →   |
 | Quaoar                | opposition ☍     | Mean Priapus          | 0.47° | Separating ← |
-| Quaoar                | trine △          | White Moon            | 3.30° | Applying →   |
+| Quaoar                | trine △          | White Moon            | 3.12° | Applying →   |
 | Quaoar                | conjunction ☌    | Cupido                | 5.50° | Static =     |
 | Quaoar                | sextile ⚹        | Zeus                  | 1.30° | Separating ← |
 | Pars Fortunae         | sextile ⚹        | Pars Amoris           | 1.89° | Static =     |
 | Pars Fortunae         | square □         | Pars Fidei            | 0.89° | Static =     |
 | Pars Fortunae         | opposition ☍     | Interpolated Lilith   | 2.29° | Applying →   |
 | Pars Fortunae         | conjunction ☌    | Mean Priapus          | 2.02° | Separating ← |
-| Pars Fortunae         | sextile ⚹        | White Moon            | 1.75° | Applying →   |
+| Pars Fortunae         | sextile ⚹        | White Moon            | 1.57° | Applying →   |
 | Pars Fortunae         | opposition ☍     | Cupido                | 3.95° | Separating ← |
 | Pars Fortunae         | trine △          | Zeus                  | 2.86° | Separating ← |
 | Pars Fortunae         | semi-sextile ⚺   | Kronos                | 1.60° | Applying →   |
 | Pars Spiritus         | opposition ☍     | Interpolated Perigee  | 1.11° | Separating ← |
-| Pars Spiritus         | sesquiquadrate ⚼ | White Moon            | 1.19° | Applying →   |
+| Pars Spiritus         | sesquiquadrate ⚼ | White Moon            | 1.01° | Applying →   |
 | Pars Spiritus         | opposition ☍     | Hades                 | 1.88° | Separating ← |
 | Pars Spiritus         | quintile Q       | Zeus                  | 0.42° | Separating ← |
 | Pars Spiritus         | biquintile bQ    | Vulkanus              | 1.47° | Separating ← |
 | Pars Amoris           | trine △          | Interpolated Lilith   | 4.19° | Applying →   |
 | Pars Amoris           | sextile ⚹        | Mean Priapus          | 0.13° | Separating ← |
 | Pars Amoris           | semi-square ∠    | Interpolated Perigee  | 1.35° | Applying →   |
-| Pars Amoris           | conjunction ☌    | White Moon            | 3.64° | Applying →   |
+| Pars Amoris           | conjunction ☌    | White Moon            | 3.46° | Applying →   |
 | Pars Amoris           | trine △          | Cupido                | 5.84° | Separating ← |
 | Pars Amoris           | semi-square ∠    | Hades                 | 0.58° | Applying →   |
 | Pars Amoris           | sextile ⚹        | Zeus                  | 0.96° | Separating ← |
@@ -694,31 +695,31 @@ Buenos Aires Subject — Natal Chart Report
 | Pars Fidei            | square □         | Interpolated Lilith   | 1.40° | Applying →   |
 | Pars Fidei            | square □         | Mean Priapus          | 2.91° | Separating ← |
 | Pars Fidei            | trine △          | True Priapus          | 2.91° | Applying →   |
-| Pars Fidei            | quincunx ⚻       | White Moon            | 0.86° | Applying →   |
+| Pars Fidei            | quincunx ⚻       | White Moon            | 0.68° | Applying →   |
 | Pars Fidei            | square □         | Cupido                | 3.06° | Separating ← |
 | Pars Fidei            | trine △          | Kronos                | 0.71° | Applying →   |
 | Pars Fidei            | biquintile bQ    | Vulkanus              | 1.20° | Applying →   |
 | Vertex                | trine △          | Interpolated Lilith   | 3.85° | Separating ← |
 | Vertex                | square □         | True Priapus          | 2.35° | Separating ← |
-| Vertex                | trine △          | White Moon            | 4.40° | Separating ← |
+| Vertex                | trine △          | White Moon            | 4.58° | Separating ← |
 | Vertex                | trine △          | Cupido                | 2.20° | Applying →   |
 | Vertex                | square □         | Kronos                | 4.54° | Separating ← |
 | Vertex                | sextile ⚹        | Admetos               | 2.15° | Applying →   |
 | Vertex                | trine △          | Vulkanus              | 1.94° | Applying →   |
 | Anti Vertex           | sextile ⚹        | Interpolated Lilith   | 3.85° | Separating ← |
 | Anti Vertex           | square □         | True Priapus          | 2.35° | Separating ← |
-| Anti Vertex           | sextile ⚹        | White Moon            | 4.40° | Separating ← |
+| Anti Vertex           | sextile ⚹        | White Moon            | 4.58° | Separating ← |
 | Anti Vertex           | sextile ⚹        | Cupido                | 2.20° | Applying →   |
 | Anti Vertex           | square □         | Kronos                | 4.54° | Separating ← |
 | Anti Vertex           | trine △          | Admetos               | 2.15° | Applying →   |
 | Anti Vertex           | sextile ⚹        | Vulkanus              | 1.94° | Applying →   |
 | Interpolated Lilith   | opposition ☍     | Mean Priapus          | 4.32° | Separating ← |
 | Interpolated Lilith   | quincunx ⚻       | True Priapus          | 1.50° | Applying →   |
-| Interpolated Lilith   | trine △          | White Moon            | 0.54° | Separating ← |
+| Interpolated Lilith   | trine △          | White Moon            | 0.72° | Separating ← |
 | Interpolated Lilith   | conjunction ☌    | Cupido                | 1.66° | Separating ← |
 | Interpolated Lilith   | quincunx ⚻       | Kronos                | 0.69° | Applying →   |
 | Interpolated Lilith   | trine △          | Vulkanus              | 5.80° | Separating ← |
-| Mean Priapus          | sextile ⚹        | White Moon            | 3.77° | Applying →   |
+| Mean Priapus          | sextile ⚹        | White Moon            | 3.59° | Applying →   |
 | Mean Priapus          | opposition ☍     | Cupido                | 5.97° | Separating ← |
 | Mean Priapus          | trine △          | Zeus                  | 0.83° | Applying →   |
 | True Priapus          | quincunx ⚻       | Cupido                | 0.15° | Separating ← |
@@ -726,9 +727,9 @@ Buenos Aires Subject — Natal Chart Report
 | True Priapus          | trine △          | Apollon               | 5.36° | Separating ← |
 | Interpolated Perigee  | conjunction ☌    | Hades                 | 0.77° | Applying →   |
 | Interpolated Perigee  | trine △          | Apollon               | 5.29° | Applying →   |
-| White Moon            | trine △          | Cupido                | 2.20° | Separating ← |
-| White Moon            | sextile ⚹        | Zeus                  | 4.61° | Applying →   |
-| White Moon            | semi-sextile ⚺   | Kronos                | 0.15° | Applying →   |
+| White Moon            | trine △          | Cupido                | 2.38° | Separating ← |
+| White Moon            | sextile ⚹        | Zeus                  | 4.43° | Applying →   |
+| White Moon            | semi-sextile ⚺   | Kronos                | 0.03° | Separating ← |
 | Cupido                | opposition ☍     | Admetos               | 4.35° | Applying →   |
 | Cupido                | trine △          | Vulkanus              | 4.14° | Applying →   |
 | Hades                 | trine △          | Apollon               | 4.52° | Applying →   |

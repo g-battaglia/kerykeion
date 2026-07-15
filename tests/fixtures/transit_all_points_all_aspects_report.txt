@@ -101,7 +101,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Pars Amoris           | Lib ♎ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Tau ♉ | 8.22°    | N/A          | N/A     | -    | Seventh House  |
 | Vertex                | Gem ♊ | 11.46°   | N/A          | N/A     | -    | Eighth House   |
-| White Moon            | Can ♋ | 26.26°   | +0.1409°/d   | +20.90° | -    | Ninth House    |
+| White Moon            | Can ♋ | 26.44°   | +0.1409°/d   | +20.87° | -    | Ninth House    |
 | Anti Vertex           | Sag ♐ | 11.46°   | N/A          | N/A     | -    | Second House   |
 | Mean South Lunar Node | Leo ♌ | 7.79°    | -0.0529°/d   | +18.32° | R    | Ninth House    |
 | True South Lunar Node | Leo ♌ | 7.26°    | -0.0080°/d   | +18.46° | R    | Ninth House    |
@@ -158,7 +158,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Pars Amoris           | Leo ♌ | 8.91°    | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Vir ♍ | 6.29°    | N/A          | N/A     | -    | Twelfth House  |
 | Vertex                | Aqu ♒ | 5.85°    | N/A          | N/A     | -    | Fifth House    |
-| White Moon            | Pis ♓ | 11.76°   | +0.1409°/d   | -7.15°  | -    | Seventh House  |
+| White Moon            | Pis ♓ | 11.97°   | +0.1408°/d   | -7.07°  | -    | Seventh House  |
 | Anti Vertex           | Leo ♌ | 5.85°    | N/A          | N/A     | -    | Eleventh House |
 | Mean South Lunar Node | Aqu ♒ | 13.72°   | -0.0529°/d   | -16.71° | R    | Sixth House    |
 | True South Lunar Node | Aqu ♒ | 12.16°   | -0.1140°/d   | -17.15° | R    | Sixth House    |
@@ -272,7 +272,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Sample Natal Subject – Pars Amoris           | 11 (Eleventh House) | 2 (Second House)    | Lib  | 8.99°  |
 | Sample Natal Subject – Pars Fidei            | 7 (Seventh House)   | 9 (Ninth House)     | Tau  | 8.22°  |
 | Sample Natal Subject – Vertex                | 8 (Eighth House)    | 10 (Tenth House)    | Gem  | 11.46° |
-| Sample Natal Subject – White Moon            | 9 (Ninth House)     | 11 (Eleventh House) | Can  | 26.26° |
+| Sample Natal Subject – White Moon            | 9 (Ninth House)     | 11 (Eleventh House) | Can  | 26.44° |
 | Sample Natal Subject – Descendant            | 7 (Seventh House)   | 9 (Ninth House)     | Tau  | 5.82°  |
 | Sample Natal Subject – Imum Coeli            | 4 (Fourth House)    | 6 (Sixth House)     | Aqu  | 19.91° |
 | Sample Natal Subject – Anti Vertex           | 2 (Second House)    | 4 (Fourth House)    | Sag  | 11.46° |
@@ -329,7 +329,7 @@ Sample Natal Subject — Transit 1980-12-08
 | 1980 Transit – Pars Amoris           | 11 (Eleventh House) | 9 (Ninth House)     | Leo  | 8.91°  |
 | 1980 Transit – Pars Fidei            | 12 (Twelfth House)  | 10 (Tenth House)    | Vir  | 6.29°  |
 | 1980 Transit – Vertex                | 5 (Fifth House)     | 3 (Third House)     | Aqu  | 5.85°  |
-| 1980 Transit – White Moon            | 7 (Seventh House)   | 4 (Fourth House)    | Pis  | 11.76° |
+| 1980 Transit – White Moon            | 7 (Seventh House)   | 4 (Fourth House)    | Pis  | 11.97° |
 | 1980 Transit – Descendant            | 7 (Seventh House)   | 4 (Fourth House)    | Pis  | 7.47°  |
 | 1980 Transit – Imum Coeli            | 4 (Fourth House)    | 1 (First House)     | Sag  | 3.56°  |
 | 1980 Transit – Anti Vertex           | 11 (Eleventh House) | 9 (Ninth House)     | Leo  | 5.85°  |
@@ -465,7 +465,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Sun                   | Sample Natal Subject | square □         | Interpolated Lilith   | 1980 Transit | 5.26° | Applying →   |
 | Sun                   | Sample Natal Subject | square □         | Mean Priapus          | 1980 Transit | 0.88° | Applying →   |
 | Sun                   | Sample Natal Subject | square □         | True Priapus          | 1980 Transit | 2.63° | Separating ← |
-| Sun                   | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | 1980 Transit | 1.78° | Applying →   |
+| Sun                   | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | 1980 Transit | 1.57° | Applying →   |
 | Sun                   | Sample Natal Subject | sextile ⚹        | Hades                 | 1980 Transit | 0.45° | Applying →   |
 | Sun                   | Sample Natal Subject | semi-square ∠    | Kronos                | 1980 Transit | 1.03° | Applying →   |
 | Sun                   | Sample Natal Subject | quintile Q       | Apollon               | 1980 Transit | 1.19° | Applying →   |
@@ -627,7 +627,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Neptune               | Sample Natal Subject | sextile ⚹        | Ixion                 | 1980 Transit | 2.10° | Separating ← |
 | Neptune               | Sample Natal Subject | sextile ⚹        | Quaoar                | 1980 Transit | 1.32° | Separating ← |
 | Neptune               | Sample Natal Subject | biquintile bQ    | Pars Fortunae         | 1980 Transit | 0.89° | Static =     |
-| Neptune               | Sample Natal Subject | sextile ⚹        | White Moon            | 1980 Transit | 1.00° | Applying →   |
+| Neptune               | Sample Natal Subject | sextile ⚹        | White Moon            | 1980 Transit | 0.79° | Applying →   |
 | Neptune               | Sample Natal Subject | sesquiquadrate ⚼ | Hades                 | 1980 Transit | 1.23° | Applying →   |
 | Neptune               | Sample Natal Subject | quincunx ⚻       | Kronos                | 1980 Transit | 1.81° | Applying →   |
 | Neptune               | Sample Natal Subject | square □         | Apollon               | 1980 Transit | 3.41° | Applying →   |
@@ -647,7 +647,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Pluto                 | Sample Natal Subject | conjunction ☌    | Quaoar                | 1980 Transit | 0.90° | Applying →   |
 | Pluto                 | Sample Natal Subject | square □         | Pars Fortunae         | 1980 Transit | 4.68° | Static =     |
 | Pluto                 | Sample Natal Subject | opposition ☍     | Interpolated Perigee  | 1980 Transit | 4.67° | Separating ← |
-| Pluto                 | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 3.21° | Applying →   |
+| Pluto                 | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 3.00° | Applying →   |
 | Pluto                 | Sample Natal Subject | quincunx ⚻       | Kronos                | 1980 Transit | 0.40° | Separating ← |
 | Pluto                 | Sample Natal Subject | trine △          | Vulkanus              | 1980 Transit | 4.75° | Separating ← |
 | Mean North Lunar Node | Sample Natal Subject | sextile ⚹        | Mercury               | 1980 Transit | 2.70° | Applying →   |
@@ -728,7 +728,6 @@ Sample Natal Subject — Transit 1980-12-08
 | Ascendant             | Sample Natal Subject | square □         | Vertex                | 1980 Transit | 0.03° | Static =     |
 | Ascendant             | Sample Natal Subject | square □         | Anti Vertex           | 1980 Transit | 0.03° | Static =     |
 | Ascendant             | Sample Natal Subject | opposition ☍     | True Priapus          | 1980 Transit | 4.65° | Applying →   |
-| Ascendant             | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 5.94° | Separating ← |
 | Ascendant             | Sample Natal Subject | conjunction ☌    | Cupido                | 1980 Transit | 1.66° | Separating ← |
 | Ascendant             | Sample Natal Subject | semi-square ∠    | Zeus                  | 1980 Transit | 0.74° | Applying →   |
 | Ascendant             | Sample Natal Subject | opposition ☍     | Admetos               | 1980 Transit | 2.28° | Applying →   |
@@ -824,6 +823,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Mean South Lunar Node | Sample Natal Subject | semi-sextile ⚺   | Pars Fidei            | 1980 Transit | 1.50° | Static =     |
 | Mean South Lunar Node | Sample Natal Subject | opposition ☍     | Vertex                | 1980 Transit | 1.94° | Static =     |
 | Mean South Lunar Node | Sample Natal Subject | conjunction ☌    | Anti Vertex           | 1980 Transit | 1.94° | Static =     |
+| Mean South Lunar Node | Sample Natal Subject | biquintile bQ    | White Moon            | 1980 Transit | 1.82° | Applying →   |
 | Mean South Lunar Node | Sample Natal Subject | square □         | Cupido                | 1980 Transit | 0.31° | Applying →   |
 | Mean South Lunar Node | Sample Natal Subject | sextile ⚹        | Apollon               | 1980 Transit | 1.57° | Separating ← |
 | Mean South Lunar Node | Sample Natal Subject | square □         | Admetos               | 1980 Transit | 0.31° | Applying →   |
@@ -844,7 +844,7 @@ Sample Natal Subject — Transit 1980-12-08
 | True South Lunar Node | Sample Natal Subject | semi-sextile ⚺   | Pars Fidei            | 1980 Transit | 0.98° | Static =     |
 | True South Lunar Node | Sample Natal Subject | opposition ☍     | Vertex                | 1980 Transit | 1.42° | Static =     |
 | True South Lunar Node | Sample Natal Subject | conjunction ☌    | Anti Vertex           | 1980 Transit | 1.42° | Static =     |
-| True South Lunar Node | Sample Natal Subject | biquintile bQ    | White Moon            | 1980 Transit | 1.50° | Applying →   |
+| True South Lunar Node | Sample Natal Subject | biquintile bQ    | White Moon            | 1980 Transit | 1.29° | Applying →   |
 | True South Lunar Node | Sample Natal Subject | square □         | Cupido                | 1980 Transit | 0.22° | Separating ← |
 | True South Lunar Node | Sample Natal Subject | sextile ⚹        | Apollon               | 1980 Transit | 2.09° | Separating ← |
 | True South Lunar Node | Sample Natal Subject | square □         | Admetos               | 1980 Transit | 0.83° | Applying →   |
@@ -880,7 +880,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Pholus                | Sample Natal Subject | semi-sextile ⚺   | Pars Amoris           | 1980 Transit | 0.92° | Static =     |
 | Pholus                | Sample Natal Subject | sextile ⚹        | Pars Fidei            | 1980 Transit | 1.70° | Static =     |
 | Pholus                | Sample Natal Subject | quintile Q       | Mean Priapus          | 1980 Transit | 1.67° | Separating ← |
-| Pholus                | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 3.77° | Separating ← |
+| Pholus                | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 3.98° | Separating ← |
 | Pholus                | Sample Natal Subject | trine △          | Cupido                | 1980 Transit | 0.51° | Applying →   |
 | Pholus                | Sample Natal Subject | quintile Q       | Zeus                  | 1980 Transit | 0.10° | Separating ← |
 | Pholus                | Sample Natal Subject | square □         | Apollon               | 1980 Transit | 1.37° | Separating ← |
@@ -905,7 +905,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Ceres                 | Sample Natal Subject | conjunction ☌    | Pars Fortunae         | 1980 Transit | 5.93° | Static =     |
 | Ceres                 | Sample Natal Subject | conjunction ☌    | Pars Amoris           | 1980 Transit | 4.80° | Static =     |
 | Ceres                 | Sample Natal Subject | square □         | Interpolated Perigee  | 1980 Transit | 5.93° | Separating ← |
-| Ceres                 | Sample Natal Subject | quincunx ⚻       | White Moon            | 1980 Transit | 1.95° | Applying →   |
+| Ceres                 | Sample Natal Subject | quincunx ⚻       | White Moon            | 1980 Transit | 1.74° | Applying →   |
 | Ceres                 | Sample Natal Subject | sextile ⚹        | Kronos                | 1980 Transit | 0.86° | Applying →   |
 | Ceres                 | Sample Natal Subject | sextile ⚹        | Apollon               | 1980 Transit | 4.36° | Applying →   |
 | Ceres                 | Sample Natal Subject | square □         | Admetos               | 1980 Transit | 5.62° | Separating ← |
@@ -925,7 +925,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Pallas                | Sample Natal Subject | sextile ⚹        | Pars Fidei            | 1980 Transit | 0.96° | Static =     |
 | Pallas                | Sample Natal Subject | quincunx ⚻       | Vertex                | 1980 Transit | 1.40° | Static =     |
 | Pallas                | Sample Natal Subject | semi-sextile ⚺   | Anti Vertex           | 1980 Transit | 1.40° | Static =     |
-| Pallas                | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 4.51° | Separating ← |
+| Pallas                | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 4.72° | Separating ← |
 | Pallas                | Sample Natal Subject | trine △          | Cupido                | 1980 Transit | 0.23° | Separating ← |
 | Pallas                | Sample Natal Subject | quintile Q       | Zeus                  | 1980 Transit | 0.84° | Separating ← |
 | Pallas                | Sample Natal Subject | square □         | Apollon               | 1980 Transit | 2.11° | Separating ← |
@@ -950,7 +950,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Juno                  | Sample Natal Subject | sextile ⚹        | Pars Fidei            | 1980 Transit | 3.81° | Static =     |
 | Juno                  | Sample Natal Subject | square □         | Vertex                | 1980 Transit | 4.25° | Static =     |
 | Juno                  | Sample Natal Subject | square □         | Anti Vertex           | 1980 Transit | 4.25° | Static =     |
-| Juno                  | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 1.67° | Separating ← |
+| Juno                  | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 1.88° | Separating ← |
 | Juno                  | Sample Natal Subject | conjunction ☌    | Cupido                | 1980 Transit | 2.61° | Applying →   |
 | Juno                  | Sample Natal Subject | biquintile bQ    | Kronos                | 1980 Transit | 1.52° | Separating ← |
 | Juno                  | Sample Natal Subject | semi-sextile ⚺   | Apollon               | 1980 Transit | 0.74° | Applying →   |
@@ -1010,7 +1010,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Sedna                 | Sample Natal Subject | trine △          | Pars Fidei            | 1980 Transit | 5.26° | Static =     |
 | Sedna                 | Sample Natal Subject | square □         | Vertex                | 1980 Transit | 5.70° | Static =     |
 | Sedna                 | Sample Natal Subject | square □         | Anti Vertex           | 1980 Transit | 5.70° | Static =     |
-| Sedna                 | Sample Natal Subject | sextile ⚹        | White Moon            | 1980 Transit | 0.21° | Separating ← |
+| Sedna                 | Sample Natal Subject | sextile ⚹        | White Moon            | 1980 Transit | 0.42° | Separating ← |
 | Sedna                 | Sample Natal Subject | opposition ☍     | Cupido                | 1980 Transit | 4.07° | Applying →   |
 | Sedna                 | Sample Natal Subject | conjunction ☌    | Admetos               | 1980 Transit | 3.45° | Separating ← |
 | Sedna                 | Sample Natal Subject | sextile ⚹        | Vulkanus              | 1980 Transit | 1.33° | Separating ← |
@@ -1086,7 +1086,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Orcus                 | Sample Natal Subject | opposition ☍     | Vertex                | 1980 Transit | 4.99° | Static =     |
 | Orcus                 | Sample Natal Subject | conjunction ☌    | Anti Vertex           | 1980 Transit | 4.99° | Static =     |
 | Orcus                 | Sample Natal Subject | quintile Q       | Interpolated Lilith   | 1980 Transit | 0.44° | Separating ← |
-| Orcus                 | Sample Natal Subject | quincunx ⚻       | White Moon            | 1980 Transit | 0.92° | Separating ← |
+| Orcus                 | Sample Natal Subject | quincunx ⚻       | White Moon            | 1980 Transit | 1.13° | Separating ← |
 | Orcus                 | Sample Natal Subject | square □         | Cupido                | 1980 Transit | 3.36° | Applying →   |
 | Orcus                 | Sample Natal Subject | quintile Q       | Hades                 | 1980 Transit | 0.16° | Applying →   |
 | Orcus                 | Sample Natal Subject | sextile ⚹        | Kronos                | 1980 Transit | 3.74° | Applying →   |
@@ -1128,7 +1128,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Pars Fortunae         | Sample Natal Subject | conjunction ☌    | Interpolated Lilith   | 1980 Transit | 5.21° | Applying →   |
 | Pars Fortunae         | Sample Natal Subject | opposition ☍     | Mean Priapus          | 1980 Transit | 0.83° | Applying →   |
 | Pars Fortunae         | Sample Natal Subject | opposition ☍     | True Priapus          | 1980 Transit | 2.68° | Separating ← |
-| Pars Fortunae         | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | 1980 Transit | 1.72° | Applying →   |
+| Pars Fortunae         | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | 1980 Transit | 1.51° | Applying →   |
 | Pars Fortunae         | Sample Natal Subject | quincunx ⚻       | Hades                 | 1980 Transit | 0.51° | Applying →   |
 | Pars Fortunae         | Sample Natal Subject | sesquiquadrate ⚼ | Kronos                | 1980 Transit | 1.09° | Applying →   |
 | Pars Fortunae         | Sample Natal Subject | conjunction ☌    | Poseidon              | 1980 Transit | 3.24° | Applying →   |
@@ -1145,7 +1145,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Pars Spiritus         | Sample Natal Subject | conjunction ☌    | Ixion                 | 1980 Transit | 1.71° | Separating ← |
 | Pars Spiritus         | Sample Natal Subject | conjunction ☌    | Quaoar                | 1980 Transit | 0.92° | Separating ← |
 | Pars Spiritus         | Sample Natal Subject | square □         | Pars Amoris           | 1980 Transit | 4.25° | Static =     |
-| Pars Spiritus         | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 1.39° | Applying →   |
+| Pars Spiritus         | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 1.18° | Applying →   |
 | Pars Spiritus         | Sample Natal Subject | conjunction ☌    | Cupido                | 1980 Transit | 5.67° | Applying →   |
 | Pars Spiritus         | Sample Natal Subject | quincunx ⚻       | Kronos                | 1980 Transit | 1.42° | Applying →   |
 | Pars Spiritus         | Sample Natal Subject | opposition ☍     | Admetos               | 1980 Transit | 5.06° | Separating ← |
@@ -1193,7 +1193,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Pars Fidei            | Sample Natal Subject | trine △          | Pars Fidei            | 1980 Transit | 1.93° | Static =     |
 | Pars Fidei            | Sample Natal Subject | square □         | Vertex                | 1980 Transit | 2.37° | Static =     |
 | Pars Fidei            | Sample Natal Subject | square □         | Anti Vertex           | 1980 Transit | 2.37° | Static =     |
-| Pars Fidei            | Sample Natal Subject | sextile ⚹        | White Moon            | 1980 Transit | 3.55° | Separating ← |
+| Pars Fidei            | Sample Natal Subject | sextile ⚹        | White Moon            | 1980 Transit | 3.76° | Separating ← |
 | Pars Fidei            | Sample Natal Subject | opposition ☍     | Cupido                | 1980 Transit | 0.74° | Applying →   |
 | Pars Fidei            | Sample Natal Subject | quincunx ⚻       | Apollon               | 1980 Transit | 1.14° | Separating ← |
 | Pars Fidei            | Sample Natal Subject | conjunction ☌    | Admetos               | 1980 Transit | 0.12° | Separating ← |
@@ -1217,7 +1217,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Vertex                | Sample Natal Subject | square □         | Pars Fidei            | 1980 Transit | 5.18° | Static =     |
 | Vertex                | Sample Natal Subject | trine △          | Vertex                | 1980 Transit | 5.62° | Static =     |
 | Vertex                | Sample Natal Subject | semi-square ∠    | Mean Priapus          | 1980 Transit | 1.19° | Separating ← |
-| Vertex                | Sample Natal Subject | square □         | White Moon            | 1980 Transit | 0.30° | Separating ← |
+| Vertex                | Sample Natal Subject | square □         | White Moon            | 1980 Transit | 0.51° | Separating ← |
 | Vertex                | Sample Natal Subject | conjunction ☌    | Kronos                | 1980 Transit | 3.11° | Applying →   |
 | Vertex                | Sample Natal Subject | trine △          | Apollon               | 1980 Transit | 2.11° | Applying →   |
 | Vertex                | Sample Natal Subject | semi-sextile ⚺   | Vulkanus              | 1980 Transit | 1.25° | Separating ← |
@@ -1242,7 +1242,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Anti Vertex           | Sample Natal Subject | square □         | Pars Fidei            | 1980 Transit | 5.18° | Static =     |
 | Anti Vertex           | Sample Natal Subject | trine △          | Anti Vertex           | 1980 Transit | 5.62° | Static =     |
 | Anti Vertex           | Sample Natal Subject | sesquiquadrate ⚼ | Mean Priapus          | 1980 Transit | 1.19° | Separating ← |
-| Anti Vertex           | Sample Natal Subject | square □         | White Moon            | 1980 Transit | 0.30° | Separating ← |
+| Anti Vertex           | Sample Natal Subject | square □         | White Moon            | 1980 Transit | 0.51° | Separating ← |
 | Anti Vertex           | Sample Natal Subject | opposition ☍     | Kronos                | 1980 Transit | 3.11° | Applying →   |
 | Anti Vertex           | Sample Natal Subject | sextile ⚹        | Apollon               | 1980 Transit | 2.11° | Applying →   |
 | Anti Vertex           | Sample Natal Subject | quincunx ⚻       | Vulkanus              | 1980 Transit | 1.25° | Separating ← |
@@ -1315,27 +1315,27 @@ Sample Natal Subject — Transit 1980-12-08
 | Interpolated Perigee  | Sample Natal Subject | sesquiquadrate ⚼ | Cupido                | 1980 Transit | 1.50° | Separating ← |
 | Interpolated Perigee  | Sample Natal Subject | square □         | Zeus                  | 1980 Transit | 0.90° | Applying →   |
 | Interpolated Perigee  | Sample Natal Subject | trine △          | Poseidon              | 1980 Transit | 4.26° | Separating ← |
-| White Moon            | Sample Natal Subject | quintile Q       | Jupiter               | 1980 Transit | 1.09° | Applying →   |
-| White Moon            | Sample Natal Subject | quintile Q       | Saturn                | 1980 Transit | 0.09° | Separating ← |
-| White Moon            | Sample Natal Subject | trine △          | Uranus                | 1980 Transit | 0.89° | Separating ← |
-| White Moon            | Sample Natal Subject | biquintile bQ    | Neptune               | 1980 Transit | 1.94° | Separating ← |
-| White Moon            | Sample Natal Subject | square □         | Pluto                 | 1980 Transit | 2.59° | Applying →   |
-| White Moon            | Sample Natal Subject | quintile Q       | Chiron                | 1980 Transit | 0.11° | Applying →   |
-| White Moon            | Sample Natal Subject | square □         | Mean Lilith           | 1980 Transit | 1.40° | Separating ← |
-| White Moon            | Sample Natal Subject | square □         | True Lilith           | 1980 Transit | 4.91° | Separating ← |
-| White Moon            | Sample Natal Subject | trine △          | Pholus                | 1980 Transit | 1.12° | Separating ← |
-| White Moon            | Sample Natal Subject | conjunction ☌    | Ceres                 | 1980 Transit | 0.42° | Applying →   |
-| White Moon            | Sample Natal Subject | square □         | Juno                  | 1980 Transit | 1.93° | Applying →   |
-| White Moon            | Sample Natal Subject | semi-sextile ⚺   | Makemake              | 1980 Transit | 0.12° | Separating ← |
-| White Moon            | Sample Natal Subject | conjunction ☌    | Orcus                 | 1980 Transit | 5.72° | Applying →   |
-| White Moon            | Sample Natal Subject | sextile ⚹        | Pars Spiritus         | 1980 Transit | 0.96° | Static =     |
-| White Moon            | Sample Natal Subject | square □         | Interpolated Lilith   | 1980 Transit | 2.98° | Applying →   |
-| White Moon            | Sample Natal Subject | square □         | Mean Priapus          | 1980 Transit | 1.40° | Separating ← |
-| White Moon            | Sample Natal Subject | square □         | True Priapus          | 1980 Transit | 4.91° | Separating ← |
-| White Moon            | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | 1980 Transit | 0.51° | Separating ← |
-| White Moon            | Sample Natal Subject | sextile ⚹        | Hades                 | 1980 Transit | 2.74° | Applying →   |
-| White Moon            | Sample Natal Subject | quintile Q       | Apollon               | 1980 Transit | 1.10° | Separating ← |
-| White Moon            | Sample Natal Subject | square □         | Poseidon              | 1980 Transit | 1.01° | Applying →   |
+| White Moon            | Sample Natal Subject | quintile Q       | Jupiter               | 1980 Transit | 1.27° | Applying →   |
+| White Moon            | Sample Natal Subject | quintile Q       | Saturn                | 1980 Transit | 0.09° | Applying →   |
+| White Moon            | Sample Natal Subject | trine △          | Uranus                | 1980 Transit | 0.71° | Separating ← |
+| White Moon            | Sample Natal Subject | biquintile bQ    | Neptune               | 1980 Transit | 1.76° | Separating ← |
+| White Moon            | Sample Natal Subject | square □         | Pluto                 | 1980 Transit | 2.77° | Applying →   |
+| White Moon            | Sample Natal Subject | quintile Q       | Chiron                | 1980 Transit | 0.07° | Separating ← |
+| White Moon            | Sample Natal Subject | square □         | Mean Lilith           | 1980 Transit | 1.22° | Separating ← |
+| White Moon            | Sample Natal Subject | square □         | True Lilith           | 1980 Transit | 4.73° | Separating ← |
+| White Moon            | Sample Natal Subject | trine △          | Pholus                | 1980 Transit | 0.94° | Separating ← |
+| White Moon            | Sample Natal Subject | conjunction ☌    | Ceres                 | 1980 Transit | 0.24° | Applying →   |
+| White Moon            | Sample Natal Subject | square □         | Juno                  | 1980 Transit | 2.11° | Applying →   |
+| White Moon            | Sample Natal Subject | semi-sextile ⚺   | Makemake              | 1980 Transit | 0.30° | Separating ← |
+| White Moon            | Sample Natal Subject | conjunction ☌    | Orcus                 | 1980 Transit | 5.54° | Applying →   |
+| White Moon            | Sample Natal Subject | sextile ⚹        | Pars Spiritus         | 1980 Transit | 1.14° | Static =     |
+| White Moon            | Sample Natal Subject | square □         | Interpolated Lilith   | 1980 Transit | 3.16° | Applying →   |
+| White Moon            | Sample Natal Subject | square □         | Mean Priapus          | 1980 Transit | 1.22° | Separating ← |
+| White Moon            | Sample Natal Subject | square □         | True Priapus          | 1980 Transit | 4.73° | Separating ← |
+| White Moon            | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | 1980 Transit | 0.54° | Separating ← |
+| White Moon            | Sample Natal Subject | sextile ⚹        | Hades                 | 1980 Transit | 2.56° | Applying →   |
+| White Moon            | Sample Natal Subject | quintile Q       | Apollon               | 1980 Transit | 0.92° | Separating ← |
+| White Moon            | Sample Natal Subject | square □         | Poseidon              | 1980 Transit | 1.19° | Applying →   |
 | Cupido                | Sample Natal Subject | semi-sextile ⚺   | Sun                   | 1980 Transit | 1.38° | Applying →   |
 | Cupido                | Sample Natal Subject | semi-square ∠    | Moon                  | 1980 Transit | 1.44° | Separating ← |
 | Cupido                | Sample Natal Subject | conjunction ☌    | Venus                 | 1980 Transit | 0.06° | Separating ← |
@@ -1372,7 +1372,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Hades                 | Sample Natal Subject | trine △          | Vertex                | 1980 Transit | 4.08° | Static =     |
 | Hades                 | Sample Natal Subject | sextile ⚹        | Anti Vertex           | 1980 Transit | 4.08° | Static =     |
 | Hades                 | Sample Natal Subject | sesquiquadrate ⚼ | Interpolated Lilith   | 1980 Transit | 1.65° | Applying →   |
-| Hades                 | Sample Natal Subject | square □         | White Moon            | 1980 Transit | 1.84° | Separating ← |
+| Hades                 | Sample Natal Subject | square □         | White Moon            | 1980 Transit | 2.05° | Separating ← |
 | Hades                 | Sample Natal Subject | conjunction ☌    | Kronos                | 1980 Transit | 4.65° | Applying →   |
 | Hades                 | Sample Natal Subject | trine △          | Apollon               | 1980 Transit | 0.57° | Applying →   |
 | Hades                 | Sample Natal Subject | semi-sextile ⚺   | Admetos               | 1980 Transit | 1.83° | Separating ← |
@@ -1430,6 +1430,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Apollon               | Sample Natal Subject | semi-sextile ⚺   | Quaoar                | 1980 Transit | 0.25° | Separating ← |
 | Apollon               | Sample Natal Subject | sextile ⚹        | Pars Amoris           | 1980 Transit | 4.92° | Static =     |
 | Apollon               | Sample Natal Subject | biquintile bQ    | Interpolated Perigee  | 1980 Transit | 0.18° | Applying →   |
+| Apollon               | Sample Natal Subject | quincunx ⚻       | White Moon            | 1980 Transit | 1.85° | Applying →   |
 | Apollon               | Sample Natal Subject | sesquiquadrate ⚼ | Hades                 | 1980 Transit | 0.17° | Applying →   |
 | Apollon               | Sample Natal Subject | trine △          | Kronos                | 1980 Transit | 0.75° | Applying →   |
 | Apollon               | Sample Natal Subject | conjunction ☌    | Apollon               | 1980 Transit | 4.47° | Applying →   |
@@ -1452,7 +1453,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Admetos               | Sample Natal Subject | opposition ☍     | Quaoar                | 1980 Transit | 0.88° | Applying →   |
 | Admetos               | Sample Natal Subject | square □         | Pars Fortunae         | 1980 Transit | 4.69° | Static =     |
 | Admetos               | Sample Natal Subject | conjunction ☌    | Interpolated Perigee  | 1980 Transit | 4.69° | Separating ← |
-| Admetos               | Sample Natal Subject | sextile ⚹        | White Moon            | 1980 Transit | 3.20° | Applying →   |
+| Admetos               | Sample Natal Subject | sextile ⚹        | White Moon            | 1980 Transit | 2.99° | Applying →   |
 | Admetos               | Sample Natal Subject | trine △          | Zeus                  | 1980 Transit | 5.13° | Separating ← |
 | Admetos               | Sample Natal Subject | semi-sextile ⚺   | Kronos                | 1980 Transit | 0.38° | Separating ← |
 | Admetos               | Sample Natal Subject | biquintile bQ    | Apollon               | 1980 Transit | 0.40° | Separating ← |
@@ -1469,7 +1470,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Vulkanus              | Sample Natal Subject | trine △          | Ixion                 | 1980 Transit | 0.48° | Applying →   |
 | Vulkanus              | Sample Natal Subject | trine △          | Quaoar                | 1980 Transit | 1.27° | Applying →   |
 | Vulkanus              | Sample Natal Subject | sextile ⚹        | Interpolated Perigee  | 1980 Transit | 4.30° | Separating ← |
-| Vulkanus              | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 3.58° | Applying →   |
+| Vulkanus              | Sample Natal Subject | trine △          | White Moon            | 1980 Transit | 3.37° | Applying →   |
 | Vulkanus              | Sample Natal Subject | semi-square ∠    | Hades                 | 1980 Transit | 1.35° | Separating ← |
 | Vulkanus              | Sample Natal Subject | sextile ⚹        | Zeus                  | 1980 Transit | 4.74° | Separating ← |
 | Vulkanus              | Sample Natal Subject | semi-sextile ⚺   | Kronos                | 1980 Transit | 0.77° | Separating ← |
@@ -1488,7 +1489,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Poseidon              | Sample Natal Subject | conjunction ☌    | Interpolated Lilith   | 1980 Transit | 5.40° | Applying →   |
 | Poseidon              | Sample Natal Subject | opposition ☍     | Mean Priapus          | 1980 Transit | 1.02° | Applying →   |
 | Poseidon              | Sample Natal Subject | opposition ☍     | True Priapus          | 1980 Transit | 2.49° | Separating ← |
-| Poseidon              | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | 1980 Transit | 1.92° | Applying →   |
+| Poseidon              | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | 1980 Transit | 1.71° | Applying →   |
 | Poseidon              | Sample Natal Subject | quincunx ⚻       | Hades                 | 1980 Transit | 0.31° | Applying →   |
 | Poseidon              | Sample Natal Subject | sesquiquadrate ⚼ | Kronos                | 1980 Transit | 0.89° | Applying →   |
 | Poseidon              | Sample Natal Subject | conjunction ☌    | Poseidon              | 1980 Transit | 3.44° | Applying →   |

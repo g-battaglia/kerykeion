@@ -76,7 +76,7 @@ Tokyo Subject — Natal Chart Report
 | Pars Amoris           | Leo ♌ | 22.73°   | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Pis ♓ | 19.92°   | N/A          | N/A     | -    | Sixth House    |
 | Vertex                | Pis ♓ | 23.94°   | N/A          | N/A     | -    | Sixth House    |
-| White Moon            | Can ♋ | 21.12°   | +0.1408°/d   | +21.78° | -    | Tenth House    |
+| White Moon            | Can ♋ | 21.30°   | +0.1408°/d   | +21.75° | -    | Tenth House    |
 | Anti Vertex           | Vir ♍ | 23.94°   | N/A          | N/A     | -    | Twelfth House  |
 | Mean South Lunar Node | Leo ♌ | 9.72°    | -0.0530°/d   | +17.82° | R    | Eleventh House |
 | True South Lunar Node | Leo ♌ | 8.12°    | +0.0183°/d   | +18.24° | -    | Eleventh House |
@@ -232,7 +232,7 @@ Tokyo Subject — Natal Chart Report
 | Sun                   | biquintile bQ    | Interpolated Lilith   | 2.84° | Applying →   |
 | Sun                   | semi-sextile ⚺   | Mean Priapus          | 1.14° | Applying →   |
 | Sun                   | conjunction ☌    | True Priapus          | 5.25° | Applying →   |
-| Sun                   | semi-sextile ⚺   | White Moon            | 2.65° | Separating ← |
+| Sun                   | semi-sextile ⚺   | White Moon            | 2.47° | Separating ← |
 | Sun                   | biquintile bQ    | Cupido                | 1.23° | Applying →   |
 | Sun                   | square □         | Zeus                  | 2.03° | Applying →   |
 | Sun                   | conjunction ☌    | Kronos                | 2.44° | Separating ← |
@@ -276,7 +276,7 @@ Tokyo Subject — Natal Chart Report
 | Mercury               | biquintile bQ    | Pars Spiritus         | 0.51° | Applying →   |
 | Mercury               | quintile Q       | Vertex                | 0.89° | Applying →   |
 | Mercury               | conjunction ☌    | Interpolated Perigee  | 3.22° | Applying →   |
-| Mercury               | semi-square ∠    | White Moon            | 1.07° | Applying →   |
+| Mercury               | semi-square ∠    | White Moon            | 1.25° | Applying →   |
 | Mercury               | conjunction ☌    | Hades                 | 4.20° | Applying →   |
 | Mercury               | biquintile bQ    | Poseidon              | 0.29° | Separating ← |
 | Venus                 | sextile ⚹        | Jupiter               | 2.53° | Separating ← |
@@ -293,7 +293,7 @@ Tokyo Subject — Natal Chart Report
 | Venus                 | trine △          | Anti Vertex           | 5.60° | Applying →   |
 | Venus                 | opposition ☍     | Interpolated Lilith   | 2.28° | Applying →   |
 | Venus                 | semi-sextile ⚺   | True Priapus          | 0.19° | Separating ← |
-| Venus                 | sextile ⚹        | White Moon            | 2.79° | Applying →   |
+| Venus                 | sextile ⚹        | White Moon            | 2.97° | Applying →   |
 | Venus                 | opposition ☍     | Cupido                | 0.67° | Applying →   |
 | Venus                 | biquintile bQ    | Apollon               | 1.45° | Applying →   |
 | Venus                 | conjunction ☌    | Admetos               | 3.70° | Separating ← |
@@ -336,7 +336,7 @@ Tokyo Subject — Natal Chart Report
 | Jupiter               | opposition ☍     | Pars Spiritus         | 4.24° | Separating ← |
 | Jupiter               | trine △          | Pars Fidei            | 4.11° | Applying →   |
 | Jupiter               | trine △          | Interpolated Lilith   | 4.80° | Applying →   |
-| Jupiter               | conjunction ☌    | White Moon            | 5.32° | Applying →   |
+| Jupiter               | conjunction ☌    | White Moon            | 5.50° | Applying →   |
 | Jupiter               | trine △          | Cupido                | 3.19° | Applying →   |
 | Jupiter               | square □         | Apollon               | 2.02° | Separating ← |
 | Jupiter               | sextile ⚹        | Admetos               | 1.17° | Separating ← |
@@ -357,7 +357,7 @@ Tokyo Subject — Natal Chart Report
 | Saturn                | trine △          | Mean Priapus          | 0.86° | Separating ← |
 | Saturn                | biquintile bQ    | True Priapus          | 0.47° | Separating ← |
 | Saturn                | sesquiquadrate ⚼ | Interpolated Perigee  | 0.79° | Applying →   |
-| Saturn                | opposition ☍     | White Moon            | 2.93° | Applying →   |
+| Saturn                | opposition ☍     | White Moon            | 2.75° | Applying →   |
 | Saturn                | sesquiquadrate ⚼ | Hades                 | 0.20° | Separating ← |
 | Saturn                | trine △          | Zeus                  | 1.75° | Separating ← |
 | Saturn                | square □         | Poseidon              | 4.71° | Separating ← |
@@ -407,7 +407,7 @@ Tokyo Subject — Natal Chart Report
 | Pluto                 | sextile ⚹        | Pars Spiritus         | 3.84° | Applying →   |
 | Pluto                 | trine △          | Pars Fidei            | 4.51° | Separating ← |
 | Pluto                 | conjunction ☌    | Interpolated Lilith   | 5.20° | Separating ← |
-| Pluto                 | trine △          | White Moon            | 5.71° | Separating ← |
+| Pluto                 | trine △          | White Moon            | 5.89° | Separating ← |
 | Pluto                 | conjunction ☌    | Cupido                | 3.59° | Separating ← |
 | Pluto                 | biquintile bQ    | Kronos                | 0.08° | Applying →   |
 | Pluto                 | semi-sextile ⚺   | Apollon               | 1.62° | Applying →   |
@@ -452,7 +452,7 @@ Tokyo Subject — Natal Chart Report
 | Chiron                | opposition ☍     | Pars Spiritus         | 4.46° | Separating ← |
 | Chiron                | trine △          | Pars Fidei            | 3.90° | Applying →   |
 | Chiron                | trine △          | Interpolated Lilith   | 4.59° | Applying →   |
-| Chiron                | conjunction ☌    | White Moon            | 5.10° | Separating ← |
+| Chiron                | conjunction ☌    | White Moon            | 5.28° | Separating ← |
 | Chiron                | trine △          | Cupido                | 2.98° | Applying →   |
 | Chiron                | square □         | Apollon               | 2.24° | Separating ← |
 | Chiron                | sextile ⚹        | Admetos               | 1.38° | Separating ← |
@@ -525,7 +525,7 @@ Tokyo Subject — Natal Chart Report
 | Mean Lilith           | trine △          | Vertex                | 0.97° | Separating ← |
 | Mean Lilith           | sextile ⚹        | Anti Vertex           | 0.97° | Separating ← |
 | Mean Lilith           | conjunction ☌    | Interpolated Lilith   | 4.30° | Separating ← |
-| Mean Lilith           | trine △          | White Moon            | 3.79° | Applying →   |
+| Mean Lilith           | trine △          | White Moon            | 3.61° | Applying →   |
 | Mean Lilith           | conjunction ☌    | Cupido                | 5.91° | Separating ← |
 | Mean Lilith           | sextile ⚹        | Zeus                  | 0.89° | Applying →   |
 | Mean South Lunar Node | square □         | Juno                  | 0.65° | Applying →   |
@@ -611,7 +611,7 @@ Tokyo Subject — Natal Chart Report
 | Eris                  | square □         | Pars Spiritus         | 5.96° | Separating ← |
 | Eris                  | trine △          | Pars Amoris           | 5.20° | Applying →   |
 | Eris                  | sextile ⚹        | True Priapus          | 1.00° | Separating ← |
-| Eris                  | square □         | White Moon            | 3.60° | Separating ← |
+| Eris                  | square □         | White Moon            | 3.78° | Separating ← |
 | Eris                  | quincunx ⚻       | Cupido                | 1.48° | Applying →   |
 | Eris                  | sextile ⚹        | Kronos                | 3.80° | Separating ← |
 | Eris                  | opposition ☍     | Apollon               | 3.74° | Separating ← |
@@ -628,7 +628,7 @@ Tokyo Subject — Natal Chart Report
 | Haumea                | opposition ☍     | Vertex                | 2.11° | Separating ← |
 | Haumea                | conjunction ☌    | Anti Vertex           | 2.11° | Separating ← |
 | Haumea                | trine △          | Mean Priapus          | 1.13° | Applying →   |
-| Haumea                | sextile ⚹        | White Moon            | 4.92° | Applying →   |
+| Haumea                | sextile ⚹        | White Moon            | 4.74° | Applying →   |
 | Haumea                | conjunction ☌    | Zeus                  | 0.24° | Static =     |
 | Haumea                | square □         | Kronos                | 4.71° | Applying →   |
 | Haumea                | quintile Q       | Vulkanus              | 0.80° | Separating ← |
@@ -642,7 +642,7 @@ Tokyo Subject — Natal Chart Report
 | Ixion                 | sextile ⚹        | Anti Vertex           | 0.81° | Separating ← |
 | Ixion                 | conjunction ☌    | Interpolated Lilith   | 2.51° | Applying →   |
 | Ixion                 | opposition ☍     | Mean Priapus          | 1.79° | Separating ← |
-| Ixion                 | trine △          | White Moon            | 2.00° | Applying →   |
+| Ixion                 | trine △          | White Moon            | 1.82° | Applying →   |
 | Ixion                 | conjunction ☌    | Cupido                | 4.12° | Static =     |
 | Ixion                 | sextile ⚹        | Zeus                  | 2.68° | Separating ← |
 | Ixion                 | quincunx ⚻       | Kronos                | 1.79° | Applying →   |
@@ -661,7 +661,7 @@ Tokyo Subject — Natal Chart Report
 | Quaoar                | sextile ⚹        | Anti Vertex           | 0.57° | Applying →   |
 | Quaoar                | conjunction ☌    | Interpolated Lilith   | 3.89° | Applying →   |
 | Quaoar                | opposition ☍     | Mean Priapus          | 0.40° | Separating ← |
-| Quaoar                | trine △          | White Moon            | 3.38° | Applying →   |
+| Quaoar                | trine △          | White Moon            | 3.20° | Applying →   |
 | Quaoar                | conjunction ☌    | Cupido                | 5.50° | Static =     |
 | Quaoar                | sextile ⚹        | Zeus                  | 1.29° | Separating ← |
 | Pars Fortunae         | square □         | Pars Fidei            | 5.15° | Static =     |
@@ -682,7 +682,7 @@ Tokyo Subject — Natal Chart Report
 | Pars Amoris           | square □         | Interpolated Lilith   | 2.12° | Applying →   |
 | Pars Amoris           | square □         | Mean Priapus          | 2.18° | Separating ← |
 | Pars Amoris           | sextile ⚹        | True Priapus          | 4.21° | Applying →   |
-| Pars Amoris           | semi-sextile ⚺   | White Moon            | 1.61° | Applying →   |
+| Pars Amoris           | semi-sextile ⚺   | White Moon            | 1.43° | Applying →   |
 | Pars Amoris           | square □         | Cupido                | 3.73° | Separating ← |
 | Pars Amoris           | quintile Q       | Hades                 | 1.48° | Applying →   |
 | Pars Amoris           | sextile ⚹        | Kronos                | 1.40° | Applying →   |
@@ -691,7 +691,7 @@ Tokyo Subject — Natal Chart Report
 | Pars Fidei            | trine △          | Interpolated Lilith   | 0.69° | Separating ← |
 | Pars Fidei            | sextile ⚹        | Mean Priapus          | 4.99° | Separating ← |
 | Pars Fidei            | square □         | True Priapus          | 1.40° | Applying →   |
-| Pars Fidei            | trine △          | White Moon            | 1.20° | Separating ← |
+| Pars Fidei            | trine △          | White Moon            | 1.38° | Separating ← |
 | Pars Fidei            | trine △          | Cupido                | 0.92° | Separating ← |
 | Pars Fidei            | opposition ☍     | Zeus                  | 5.88° | Separating ← |
 | Pars Fidei            | square □         | Kronos                | 1.41° | Separating ← |
@@ -699,7 +699,7 @@ Tokyo Subject — Natal Chart Report
 | Vertex                | trine △          | Interpolated Lilith   | 3.32° | Applying →   |
 | Vertex                | sextile ⚹        | Mean Priapus          | 0.97° | Separating ← |
 | Vertex                | square □         | True Priapus          | 5.41° | Applying →   |
-| Vertex                | trine △          | White Moon            | 2.81° | Applying →   |
+| Vertex                | trine △          | White Moon            | 2.63° | Applying →   |
 | Vertex                | trine △          | Cupido                | 4.93° | Separating ← |
 | Vertex                | opposition ☍     | Zeus                  | 1.86° | Separating ← |
 | Vertex                | square □         | Kronos                | 2.61° | Applying →   |
@@ -707,27 +707,28 @@ Tokyo Subject — Natal Chart Report
 | Anti Vertex           | sextile ⚹        | Interpolated Lilith   | 3.32° | Applying →   |
 | Anti Vertex           | trine △          | Mean Priapus          | 0.97° | Separating ← |
 | Anti Vertex           | square □         | True Priapus          | 5.41° | Applying →   |
-| Anti Vertex           | sextile ⚹        | White Moon            | 2.81° | Applying →   |
+| Anti Vertex           | sextile ⚹        | White Moon            | 2.63° | Applying →   |
 | Anti Vertex           | sextile ⚹        | Cupido                | 4.93° | Separating ← |
 | Anti Vertex           | conjunction ☌    | Zeus                  | 1.86° | Separating ← |
 | Anti Vertex           | square □         | Kronos                | 2.61° | Applying →   |
 | Interpolated Lilith   | opposition ☍     | Mean Priapus          | 4.30° | Separating ← |
-| Interpolated Lilith   | trine △          | White Moon            | 0.51° | Separating ← |
+| Interpolated Lilith   | trine △          | White Moon            | 0.69° | Separating ← |
 | Interpolated Lilith   | conjunction ☌    | Cupido                | 1.61° | Separating ← |
 | Interpolated Lilith   | quincunx ⚻       | Kronos                | 0.72° | Applying →   |
 | Interpolated Lilith   | opposition ☍     | Admetos               | 5.97° | Separating ← |
 | Interpolated Lilith   | trine △          | Vulkanus              | 5.76° | Separating ← |
-| Mean Priapus          | sextile ⚹        | White Moon            | 3.79° | Applying →   |
+| Mean Priapus          | sextile ⚹        | White Moon            | 3.61° | Applying →   |
 | Mean Priapus          | opposition ☍     | Cupido                | 5.91° | Separating ← |
 | Mean Priapus          | trine △          | Zeus                  | 0.89° | Applying →   |
 | True Priapus          | quincunx ⚻       | Cupido                | 0.48° | Applying →   |
 | True Priapus          | conjunction ☌    | Kronos                | 2.81° | Applying →   |
 | True Priapus          | trine △          | Apollon               | 4.74° | Separating ← |
+| Interpolated Perigee  | semi-square ∠    | White Moon            | 1.97° | Separating ← |
 | Interpolated Perigee  | conjunction ☌    | Hades                 | 0.98° | Applying →   |
 | Interpolated Perigee  | trine △          | Apollon               | 5.52° | Applying →   |
-| White Moon            | trine △          | Cupido                | 2.12° | Separating ← |
-| White Moon            | sextile ⚹        | Zeus                  | 4.68° | Applying →   |
-| White Moon            | semi-sextile ⚺   | Kronos                | 0.21° | Applying →   |
+| White Moon            | trine △          | Cupido                | 2.30° | Separating ← |
+| White Moon            | sextile ⚹        | Zeus                  | 4.50° | Applying →   |
+| White Moon            | semi-sextile ⚺   | Kronos                | 0.03° | Applying →   |
 | Cupido                | opposition ☍     | Admetos               | 4.36° | Applying →   |
 | Cupido                | trine △          | Vulkanus              | 4.15° | Applying →   |
 | Hades                 | trine △          | Apollon               | 4.54° | Applying →   |

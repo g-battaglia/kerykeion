@@ -101,7 +101,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pars Amoris           | Lib ♎ | 8.99°    | N/A          | N/A     | -    | Eleventh House |
 | Pars Fidei            | Tau ♉ | 8.22°    | N/A          | N/A     | -    | Seventh House  |
 | Vertex                | Gem ♊ | 11.46°   | N/A          | N/A     | -    | Eighth House   |
-| White Moon            | Can ♋ | 26.26°   | +0.1409°/d   | +20.90° | -    | Ninth House    |
+| White Moon            | Can ♋ | 26.44°   | +0.1409°/d   | +20.87° | -    | Ninth House    |
 | Anti Vertex           | Sag ♐ | 11.46°   | N/A          | N/A     | -    | Second House   |
 | Mean South Lunar Node | Leo ♌ | 7.79°    | -0.0529°/d   | +18.32° | R    | Ninth House    |
 | True South Lunar Node | Leo ♌ | 7.26°    | -0.0080°/d   | +18.46° | R    | Ninth House    |
@@ -158,7 +158,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pars Amoris           | Vir ♍ | 22.82°   | N/A          | N/A     | -    | Twelfth House  |
 | Pars Fidei            | Tau ♉ | 19.37°   | N/A          | N/A     | -    | Eighth House   |
 | Vertex                | Ari ♈ | 26.75°   | N/A          | N/A     | -    | Seventh House  |
-| White Moon            | Tau ♉ | 12.91°   | +0.1409°/d   | +15.72° | -    | Eighth House   |
+| White Moon            | Tau ♉ | 13.27°   | +0.1408°/d   | +15.83° | -    | Eighth House   |
 | Anti Vertex           | Lib ♎ | 26.75°   | N/A          | N/A     | -    | First House    |
 | Mean South Lunar Node | Vir ♍ | 8.34°    | -0.0529°/d   | +8.45°  | R    | Eleventh House |
 | True South Lunar Node | Vir ♍ | 7.80°    | -0.0063°/d   | +8.65°  | R    | Eleventh House |
@@ -272,7 +272,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Sample Natal Subject – Pars Amoris           | 11 (Eleventh House) | 1 (First House)     | Lib  | 8.99°  |
 | Sample Natal Subject – Pars Fidei            | 7 (Seventh House)   | 8 (Eighth House)    | Tau  | 8.22°  |
 | Sample Natal Subject – Vertex                | 8 (Eighth House)    | 9 (Ninth House)     | Gem  | 11.46° |
-| Sample Natal Subject – White Moon            | 9 (Ninth House)     | 10 (Tenth House)    | Can  | 26.26° |
+| Sample Natal Subject – White Moon            | 9 (Ninth House)     | 10 (Tenth House)    | Can  | 26.44° |
 | Sample Natal Subject – Descendant            | 7 (Seventh House)   | 7 (Seventh House)   | Tau  | 5.82°  |
 | Sample Natal Subject – Imum Coeli            | 4 (Fourth House)    | 5 (Fifth House)     | Aqu  | 19.91° |
 | Sample Natal Subject – Anti Vertex           | 2 (Second House)    | 3 (Third House)     | Sag  | 11.46° |
@@ -329,7 +329,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Yoko Ono – Pars Amoris           | 12 (Twelfth House)  | 10 (Tenth House)    | Vir  | 22.82° |
 | Yoko Ono – Pars Fidei            | 8 (Eighth House)    | 7 (Seventh House)   | Tau  | 19.37° |
 | Yoko Ono – Vertex                | 7 (Seventh House)   | 6 (Sixth House)     | Ari  | 26.75° |
-| Yoko Ono – White Moon            | 8 (Eighth House)    | 7 (Seventh House)   | Tau  | 12.91° |
+| Yoko Ono – White Moon            | 8 (Eighth House)    | 7 (Seventh House)   | Tau  | 13.27° |
 | Yoko Ono – Descendant            | 7 (Seventh House)   | 5 (Fifth House)     | Ari  | 8.41°  |
 | Yoko Ono – Imum Coeli            | 4 (Fourth House)    | 2 (Second House)    | Cap  | 9.31°  |
 | Yoko Ono – Anti Vertex           | 1 (First House)     | 12 (Twelfth House)  | Lib  | 26.75° |
@@ -493,6 +493,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Sun                   | Sample Natal Subject | trine △          | Mean Priapus          | Yoko Ono | 3.97° | Static = |
 | Sun                   | Sample Natal Subject | sesquiquadrate ⚼ | True Priapus          | Yoko Ono | 2.72° | Static = |
 | Sun                   | Sample Natal Subject | sesquiquadrate ⚼ | Interpolated Perigee  | Yoko Ono | 2.82° | Static = |
+| Sun                   | Sample Natal Subject | quintile Q       | White Moon            | Yoko Ono | 3.27° | Static = |
 | Sun                   | Sample Natal Subject | semi-sextile ⚺   | Cupido                | Yoko Ono | 2.14° | Static = |
 | Sun                   | Sample Natal Subject | semi-square ∠    | Vulkanus              | Yoko Ono | 0.33° | Static = |
 | Sun                   | Sample Natal Subject | sextile ⚹        | Poseidon              | Yoko Ono | 3.39° | Static = |
@@ -528,7 +529,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Mercury               | Sample Natal Subject | semi-square ∠    | Makemake              | Yoko Ono | 1.79° | Static = |
 | Mercury               | Sample Natal Subject | semi-sextile ⚺   | Quaoar                | Yoko Ono | 0.84° | Static = |
 | Mercury               | Sample Natal Subject | square □         | Pars Fidei            | Yoko Ono | 1.76° | Static = |
-| Mercury               | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 4.70° | Static = |
+| Mercury               | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 4.33° | Static = |
 | Mercury               | Sample Natal Subject | sextile ⚹        | Vulkanus              | Yoko Ono | 4.39° | Static = |
 | Mercury               | Sample Natal Subject | semi-square ∠    | Poseidon              | Yoko Ono | 0.68° | Static = |
 | Venus                 | Sample Natal Subject | trine △          | Sun                   | Yoko Ono | 2.33° | Static = |
@@ -594,7 +595,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Jupiter               | Sample Natal Subject | square □         | Anti Vertex           | Yoko Ono | 2.84° | Static = |
 | Jupiter               | Sample Natal Subject | sesquiquadrate ⚼ | True Priapus          | Yoko Ono | 1.92° | Static = |
 | Jupiter               | Sample Natal Subject | sesquiquadrate ⚼ | Interpolated Perigee  | Yoko Ono | 1.81° | Static = |
-| Jupiter               | Sample Natal Subject | quintile Q       | White Moon            | Yoko Ono | 1.00° | Static = |
+| Jupiter               | Sample Natal Subject | quintile Q       | White Moon            | Yoko Ono | 1.36° | Static = |
 | Jupiter               | Sample Natal Subject | quintile Q       | Kronos                | Yoko Ono | 1.59° | Static = |
 | Jupiter               | Sample Natal Subject | semi-square ∠    | Apollon               | Yoko Ono | 0.02° | Static = |
 | Saturn                | Sample Natal Subject | semi-square ∠    | Mercury               | Yoko Ono | 1.38° | Static = |
@@ -659,7 +660,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Neptune               | Sample Natal Subject | sesquiquadrate ⚼ | Orcus                 | Yoko Ono | 0.02° | Static = |
 | Neptune               | Sample Natal Subject | trine △          | Quaoar                | Yoko Ono | 4.01° | Static = |
 | Neptune               | Sample Natal Subject | semi-sextile ⚺   | True Priapus          | Yoko Ono | 1.94° | Static = |
-| Neptune               | Sample Natal Subject | trine △          | White Moon            | Yoko Ono | 0.15° | Static = |
+| Neptune               | Sample Natal Subject | trine △          | White Moon            | Yoko Ono | 0.51° | Static = |
 | Neptune               | Sample Natal Subject | square □         | Hades                 | Yoko Ono | 2.55° | Static = |
 | Neptune               | Sample Natal Subject | trine △          | Kronos                | Yoko Ono | 2.44° | Static = |
 | Neptune               | Sample Natal Subject | trine △          | Apollon               | Yoko Ono | 3.87° | Static = |
@@ -676,7 +677,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pluto                 | Sample Natal Subject | sextile ⚹        | Quaoar                | Yoko Ono | 1.79° | Static = |
 | Pluto                 | Sample Natal Subject | trine △          | Pars Spiritus         | Yoko Ono | 5.19° | Static = |
 | Pluto                 | Sample Natal Subject | opposition ☍     | Pars Fidei            | Yoko Ono | 4.40° | Static = |
-| Pluto                 | Sample Natal Subject | opposition ☍     | White Moon            | Yoko Ono | 2.06° | Static = |
+| Pluto                 | Sample Natal Subject | opposition ☍     | White Moon            | Yoko Ono | 1.70° | Static = |
 | Pluto                 | Sample Natal Subject | biquintile bQ    | Hades                 | Yoko Ono | 1.24° | Static = |
 | Pluto                 | Sample Natal Subject | square □         | Zeus                  | Yoko Ono | 4.50° | Static = |
 | Pluto                 | Sample Natal Subject | opposition ☍     | Kronos                | Yoko Ono | 4.65° | Static = |
@@ -709,7 +710,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Mean North Lunar Node | Sample Natal Subject | trine △          | Interpolated Lilith   | Yoko Ono | 5.41° | Static = |
 | Mean North Lunar Node | Sample Natal Subject | sextile ⚹        | True Priapus          | Yoko Ono | 3.04° | Static = |
 | Mean North Lunar Node | Sample Natal Subject | sextile ⚹        | Interpolated Perigee  | Yoko Ono | 2.93° | Static = |
-| Mean North Lunar Node | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 5.12° | Static = |
+| Mean North Lunar Node | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 5.49° | Static = |
 | Mean North Lunar Node | Sample Natal Subject | sextile ⚹        | Hades                 | Yoko Ono | 2.42° | Static = |
 | Mean North Lunar Node | Sample Natal Subject | opposition ☍     | Zeus                  | Yoko Ono | 2.68° | Static = |
 | Mean North Lunar Node | Sample Natal Subject | square □         | Kronos                | Yoko Ono | 2.54° | Static = |
@@ -742,7 +743,6 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | True North Lunar Node | Sample Natal Subject | sextile ⚹        | Mean Priapus          | Yoko Ono | 4.75° | Static = |
 | True North Lunar Node | Sample Natal Subject | sextile ⚹        | True Priapus          | Yoko Ono | 3.56° | Static = |
 | True North Lunar Node | Sample Natal Subject | sextile ⚹        | Interpolated Perigee  | Yoko Ono | 3.46° | Static = |
-| True North Lunar Node | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 5.65° | Static = |
 | True North Lunar Node | Sample Natal Subject | sextile ⚹        | Hades                 | Yoko Ono | 2.94° | Static = |
 | True North Lunar Node | Sample Natal Subject | opposition ☍     | Zeus                  | Yoko Ono | 3.21° | Static = |
 | True North Lunar Node | Sample Natal Subject | square □         | Kronos                | Yoko Ono | 3.06° | Static = |
@@ -867,7 +867,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Mean South Lunar Node | Sample Natal Subject | trine △          | Mean Priapus          | Yoko Ono | 5.27° | Static = |
 | Mean South Lunar Node | Sample Natal Subject | trine △          | True Priapus          | Yoko Ono | 3.04° | Static = |
 | Mean South Lunar Node | Sample Natal Subject | trine △          | Interpolated Perigee  | Yoko Ono | 2.93° | Static = |
-| Mean South Lunar Node | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 5.12° | Static = |
+| Mean South Lunar Node | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 5.49° | Static = |
 | Mean South Lunar Node | Sample Natal Subject | trine △          | Hades                 | Yoko Ono | 2.42° | Static = |
 | Mean South Lunar Node | Sample Natal Subject | conjunction ☌    | Zeus                  | Yoko Ono | 2.68° | Static = |
 | Mean South Lunar Node | Sample Natal Subject | square □         | Kronos                | Yoko Ono | 2.54° | Static = |
@@ -898,7 +898,6 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | True South Lunar Node | Sample Natal Subject | trine △          | Mean Priapus          | Yoko Ono | 4.75° | Static = |
 | True South Lunar Node | Sample Natal Subject | trine △          | True Priapus          | Yoko Ono | 3.56° | Static = |
 | True South Lunar Node | Sample Natal Subject | trine △          | Interpolated Perigee  | Yoko Ono | 3.46° | Static = |
-| True South Lunar Node | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 5.65° | Static = |
 | True South Lunar Node | Sample Natal Subject | trine △          | Hades                 | Yoko Ono | 2.94° | Static = |
 | True South Lunar Node | Sample Natal Subject | conjunction ☌    | Zeus                  | Yoko Ono | 3.21° | Static = |
 | True South Lunar Node | Sample Natal Subject | square □         | Kronos                | Yoko Ono | 3.06° | Static = |
@@ -915,7 +914,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | True Lilith           | Sample Natal Subject | square □         | Quaoar                | Yoko Ono | 1.25° | Static = |
 | True Lilith           | Sample Natal Subject | square □         | Pars Amoris           | Yoko Ono | 4.80° | Static = |
 | True Lilith           | Sample Natal Subject | quincunx ⚻       | Pars Fidei            | Yoko Ono | 1.36° | Static = |
-| True Lilith           | Sample Natal Subject | biquintile bQ    | White Moon            | Yoko Ono | 0.90° | Static = |
+| True Lilith           | Sample Natal Subject | biquintile bQ    | White Moon            | Yoko Ono | 1.26° | Static = |
 | True Lilith           | Sample Natal Subject | biquintile bQ    | Kronos                | Yoko Ono | 1.69° | Static = |
 | True Lilith           | Sample Natal Subject | opposition ☍     | Vulkanus              | Yoko Ono | 4.80° | Static = |
 | Pholus                | Sample Natal Subject | quincunx ⚻       | Moon                  | Yoko Ono | 3.14° | Static = |
@@ -938,7 +937,6 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pholus                | Sample Natal Subject | square □         | Eris                  | Yoko Ono | 5.94° | Static = |
 | Pholus                | Sample Natal Subject | quintile Q       | Vertex                | Yoko Ono | 0.76° | Static = |
 | Pholus                | Sample Natal Subject | biquintile bQ    | Mean Priapus          | Yoko Ono | 0.53° | Static = |
-| Pholus                | Sample Natal Subject | sextile ⚹        | White Moon            | Yoko Ono | 4.92° | Static = |
 | Pholus                | Sample Natal Subject | square □         | Hades                 | Yoko Ono | 2.22° | Static = |
 | Pholus                | Sample Natal Subject | sextile ⚹        | Kronos                | Yoko Ono | 2.34° | Static = |
 | Pholus                | Sample Natal Subject | sextile ⚹        | Apollon               | Yoko Ono | 0.90° | Static = |
@@ -960,7 +958,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Ceres                 | Sample Natal Subject | quintile Q       | Interpolated Lilith   | Yoko Ono | 0.67° | Static = |
 | Ceres                 | Sample Natal Subject | trine △          | True Priapus          | Yoko Ono | 2.89° | Static = |
 | Ceres                 | Sample Natal Subject | trine △          | Interpolated Perigee  | Yoko Ono | 2.99° | Static = |
-| Ceres                 | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 0.80° | Static = |
+| Ceres                 | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 0.44° | Static = |
 | Ceres                 | Sample Natal Subject | trine △          | Hades                 | Yoko Ono | 3.50° | Static = |
 | Ceres                 | Sample Natal Subject | conjunction ☌    | Zeus                  | Yoko Ono | 3.24° | Static = |
 | Ceres                 | Sample Natal Subject | square □         | Kronos                | Yoko Ono | 3.39° | Static = |
@@ -1010,7 +1008,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Juno                  | Sample Natal Subject | semi-square ∠    | Pars Fortunae         | Yoko Ono | 1.57° | Static = |
 | Juno                  | Sample Natal Subject | semi-sextile ⚺   | True Priapus          | Yoko Ono | 0.73° | Static = |
 | Juno                  | Sample Natal Subject | semi-sextile ⚺   | Interpolated Perigee  | Yoko Ono | 0.62° | Static = |
-| Juno                  | Sample Natal Subject | opposition ☍     | White Moon            | Yoko Ono | 2.82° | Static = |
+| Juno                  | Sample Natal Subject | opposition ☍     | White Moon            | Yoko Ono | 3.18° | Static = |
 | Juno                  | Sample Natal Subject | quincunx ⚻       | Hades                 | Yoko Ono | 0.11° | Static = |
 | Juno                  | Sample Natal Subject | square □         | Zeus                  | Yoko Ono | 0.38° | Static = |
 | Juno                  | Sample Natal Subject | opposition ☍     | Kronos                | Yoko Ono | 0.23° | Static = |
@@ -1029,7 +1027,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Vesta                 | Sample Natal Subject | sextile ⚹        | Pars Spiritus         | Yoko Ono | 2.02° | Static = |
 | Vesta                 | Sample Natal Subject | trine △          | Pars Amoris           | Yoko Ono | 4.67° | Static = |
 | Vesta                 | Sample Natal Subject | conjunction ☌    | Pars Fidei            | Yoko Ono | 1.23° | Static = |
-| Vesta                 | Sample Natal Subject | conjunction ☌    | White Moon            | Yoko Ono | 5.23° | Static = |
+| Vesta                 | Sample Natal Subject | conjunction ☌    | White Moon            | Yoko Ono | 4.87° | Static = |
 | Vesta                 | Sample Natal Subject | sesquiquadrate ⚼ | Poseidon              | Yoko Ono | 1.22° | Static = |
 | Eris                  | Sample Natal Subject | semi-square ∠    | Sun                   | Yoko Ono | 3.22° | Static = |
 | Eris                  | Sample Natal Subject | trine △          | Moon                  | Yoko Ono | 6.47° | Static = |
@@ -1069,7 +1067,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Sedna                 | Sample Natal Subject | sesquiquadrate ⚼ | Pars Fortunae         | Yoko Ono | 0.11° | Static = |
 | Sedna                 | Sample Natal Subject | quincunx ⚻       | True Priapus          | Yoko Ono | 0.72° | Static = |
 | Sedna                 | Sample Natal Subject | quincunx ⚻       | Interpolated Perigee  | Yoko Ono | 0.83° | Static = |
-| Sedna                 | Sample Natal Subject | conjunction ☌    | White Moon            | Yoko Ono | 1.36° | Static = |
+| Sedna                 | Sample Natal Subject | conjunction ☌    | White Moon            | Yoko Ono | 1.73° | Static = |
 | Sedna                 | Sample Natal Subject | semi-sextile ⚺   | Hades                 | Yoko Ono | 1.34° | Static = |
 | Sedna                 | Sample Natal Subject | square □         | Zeus                  | Yoko Ono | 1.08° | Static = |
 | Sedna                 | Sample Natal Subject | conjunction ☌    | Kronos                | Yoko Ono | 1.22° | Static = |
@@ -1092,7 +1090,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Haumea                | Sample Natal Subject | conjunction ☌    | Pars Amoris           | Yoko Ono | 3.50° | Static = |
 | Haumea                | Sample Natal Subject | quincunx ⚻       | Vertex                | Yoko Ono | 0.43° | Static = |
 | Haumea                | Sample Natal Subject | semi-sextile ⚺   | Anti Vertex           | Yoko Ono | 0.43° | Static = |
-| Haumea                | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | Yoko Ono | 1.59° | Static = |
+| Haumea                | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | Yoko Ono | 1.95° | Static = |
 | Haumea                | Sample Natal Subject | semi-square ∠    | Zeus                  | Yoko Ono | 0.85° | Static = |
 | Haumea                | Sample Natal Subject | sesquiquadrate ⚼ | Kronos                | Yoko Ono | 1.00° | Static = |
 | Haumea                | Sample Natal Subject | conjunction ☌    | Poseidon              | Yoko Ono | 5.61° | Static = |
@@ -1155,7 +1153,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Orcus                 | Sample Natal Subject | sesquiquadrate ⚼ | Pars Fortunae         | Yoko Ono | 0.82° | Static = |
 | Orcus                 | Sample Natal Subject | trine △          | True Priapus          | Yoko Ono | 0.01° | Static = |
 | Orcus                 | Sample Natal Subject | trine △          | Interpolated Perigee  | Yoko Ono | 0.12° | Static = |
-| Orcus                 | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 2.07° | Static = |
+| Orcus                 | Sample Natal Subject | square □         | White Moon            | Yoko Ono | 2.43° | Static = |
 | Orcus                 | Sample Natal Subject | trine △          | Hades                 | Yoko Ono | 0.63° | Static = |
 | Orcus                 | Sample Natal Subject | conjunction ☌    | Zeus                  | Yoko Ono | 0.37° | Static = |
 | Orcus                 | Sample Natal Subject | square □         | Kronos                | Yoko Ono | 0.51° | Static = |
@@ -1212,7 +1210,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pars Spiritus         | Sample Natal Subject | semi-square ∠    | Ixion                 | Yoko Ono | 1.06° | Static = |
 | Pars Spiritus         | Sample Natal Subject | sextile ⚹        | Quaoar                | Yoko Ono | 3.61° | Static = |
 | Pars Spiritus         | Sample Natal Subject | semi-square ∠    | Pars Fortunae         | Yoko Ono | 1.49° | Static = |
-| Pars Spiritus         | Sample Natal Subject | opposition ☍     | White Moon            | Yoko Ono | 0.24° | Static = |
+| Pars Spiritus         | Sample Natal Subject | opposition ☍     | White Moon            | Yoko Ono | 0.12° | Static = |
 | Pars Spiritus         | Sample Natal Subject | quintile Q       | Cupido                | Yoko Ono | 0.48° | Static = |
 | Pars Spiritus         | Sample Natal Subject | square □         | Zeus                  | Yoko Ono | 2.68° | Static = |
 | Pars Spiritus         | Sample Natal Subject | opposition ☍     | Kronos                | Yoko Ono | 2.83° | Static = |
@@ -1238,6 +1236,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pars Amoris           | Sample Natal Subject | sextile ⚹        | Haumea                | Yoko Ono | 3.97° | Static = |
 | Pars Amoris           | Sample Natal Subject | sextile ⚹        | True Priapus          | Yoko Ono | 1.84° | Static = |
 | Pars Amoris           | Sample Natal Subject | sextile ⚹        | Interpolated Perigee  | Yoko Ono | 1.73° | Static = |
+| Pars Amoris           | Sample Natal Subject | biquintile bQ    | White Moon            | Yoko Ono | 1.71° | Static = |
 | Pars Amoris           | Sample Natal Subject | opposition ☍     | Hades                 | Yoko Ono | 1.22° | Static = |
 | Pars Amoris           | Sample Natal Subject | sextile ⚹        | Zeus                  | Yoko Ono | 1.49° | Static = |
 | Pars Amoris           | Sample Natal Subject | quincunx ⚻       | Kronos                | Yoko Ono | 1.34° | Static = |
@@ -1265,7 +1264,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Pars Fidei            | Sample Natal Subject | square □         | Haumea                | Yoko Ono | 3.20° | Static = |
 | Pars Fidei            | Sample Natal Subject | quintile Q       | Pars Spiritus         | Yoko Ono | 0.05° | Static = |
 | Pars Fidei            | Sample Natal Subject | sesquiquadrate ⚼ | Pars Amoris           | Yoko Ono | 0.40° | Static = |
-| Pars Fidei            | Sample Natal Subject | conjunction ☌    | White Moon            | Yoko Ono | 4.69° | Static = |
+| Pars Fidei            | Sample Natal Subject | conjunction ☌    | White Moon            | Yoko Ono | 5.06° | Static = |
 | Pars Fidei            | Sample Natal Subject | semi-sextile ⚺   | Hades                 | Yoko Ono | 1.99° | Static = |
 | Pars Fidei            | Sample Natal Subject | square □         | Zeus                  | Yoko Ono | 2.25° | Static = |
 | Pars Fidei            | Sample Natal Subject | conjunction ☌    | Kronos                | Yoko Ono | 2.11° | Static = |
@@ -1292,7 +1291,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Vertex                | Sample Natal Subject | sesquiquadrate ⚼ | Anti Vertex           | Yoko Ono | 0.29° | Static = |
 | Vertex                | Sample Natal Subject | opposition ☍     | True Priapus          | Yoko Ono | 0.64° | Static = |
 | Vertex                | Sample Natal Subject | opposition ☍     | Interpolated Perigee  | Yoko Ono | 0.74° | Static = |
-| Vertex                | Sample Natal Subject | semi-sextile ⚺   | White Moon            | Yoko Ono | 1.45° | Static = |
+| Vertex                | Sample Natal Subject | semi-sextile ⚺   | White Moon            | Yoko Ono | 1.81° | Static = |
 | Vertex                | Sample Natal Subject | sextile ⚹        | Hades                 | Yoko Ono | 1.26° | Static = |
 | Vertex                | Sample Natal Subject | sextile ⚹        | Zeus                  | Yoko Ono | 0.99° | Static = |
 | Vertex                | Sample Natal Subject | semi-sextile ⚺   | Kronos                | Yoko Ono | 1.14° | Static = |
@@ -1320,7 +1319,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Anti Vertex           | Sample Natal Subject | semi-square ∠    | Anti Vertex           | Yoko Ono | 0.29° | Static = |
 | Anti Vertex           | Sample Natal Subject | conjunction ☌    | True Priapus          | Yoko Ono | 0.64° | Static = |
 | Anti Vertex           | Sample Natal Subject | conjunction ☌    | Interpolated Perigee  | Yoko Ono | 0.74° | Static = |
-| Anti Vertex           | Sample Natal Subject | quincunx ⚻       | White Moon            | Yoko Ono | 1.45° | Static = |
+| Anti Vertex           | Sample Natal Subject | quincunx ⚻       | White Moon            | Yoko Ono | 1.81° | Static = |
 | Anti Vertex           | Sample Natal Subject | trine △          | Hades                 | Yoko Ono | 1.26° | Static = |
 | Anti Vertex           | Sample Natal Subject | trine △          | Zeus                  | Yoko Ono | 0.99° | Static = |
 | Anti Vertex           | Sample Natal Subject | quincunx ⚻       | Kronos                | Yoko Ono | 1.14° | Static = |
@@ -1389,26 +1388,26 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Interpolated Perigee  | Sample Natal Subject | trine △          | Anti Vertex           | Yoko Ono | 5.77° | Static = |
 | Interpolated Perigee  | Sample Natal Subject | quintile Q       | Hades                 | Yoko Ono | 1.23° | Static = |
 | Interpolated Perigee  | Sample Natal Subject | quintile Q       | Admetos               | Yoko Ono | 1.19° | Static = |
-| White Moon            | Sample Natal Subject | biquintile bQ    | Sun                   | Yoko Ono | 2.88° | Static = |
-| White Moon            | Sample Natal Subject | sesquiquadrate ⚼ | Moon                  | Yoko Ono | 0.13° | Static = |
-| White Moon            | Sample Natal Subject | square □         | Uranus                | Yoko Ono | 5.71° | Static = |
-| White Moon            | Sample Natal Subject | conjunction ☌    | Pluto                 | Yoko Ono | 4.63° | Static = |
-| White Moon            | Sample Natal Subject | sextile ⚹        | Chiron                | Yoko Ono | 2.52° | Static = |
-| White Moon            | Sample Natal Subject | quintile Q       | Ascendant             | Yoko Ono | 0.16° | Static = |
-| White Moon            | Sample Natal Subject | semi-square ∠    | True Lilith           | Yoko Ono | 0.43° | Static = |
-| White Moon            | Sample Natal Subject | biquintile bQ    | Ceres                 | Yoko Ono | 1.77° | Static = |
-| White Moon            | Sample Natal Subject | sextile ⚹        | Vesta                 | Yoko Ono | 0.98° | Static = |
-| White Moon            | Sample Natal Subject | trine △          | Eris                  | Yoko Ono | 5.80° | Static = |
-| White Moon            | Sample Natal Subject | sextile ⚹        | Ixion                 | Yoko Ono | 2.96° | Static = |
-| White Moon            | Sample Natal Subject | sextile ⚹        | Orcus                 | Yoko Ono | 1.53° | Static = |
-| White Moon            | Sample Natal Subject | quincunx ⚻       | Pars Fortunae         | Yoko Ono | 0.41° | Static = |
-| White Moon            | Sample Natal Subject | sextile ⚹        | Pars Amoris           | Yoko Ono | 3.44° | Static = |
-| White Moon            | Sample Natal Subject | square □         | Vertex                | Yoko Ono | 0.49° | Static = |
-| White Moon            | Sample Natal Subject | square □         | Anti Vertex           | Yoko Ono | 0.49° | Static = |
-| White Moon            | Sample Natal Subject | sesquiquadrate ⚼ | True Priapus          | Yoko Ono | 0.43° | Static = |
-| White Moon            | Sample Natal Subject | sesquiquadrate ⚼ | Interpolated Perigee  | Yoko Ono | 0.54° | Static = |
-| White Moon            | Sample Natal Subject | quintile Q       | White Moon            | Yoko Ono | 1.34° | Static = |
-| White Moon            | Sample Natal Subject | semi-square ∠    | Vulkanus              | Yoko Ono | 1.96° | Static = |
+| White Moon            | Sample Natal Subject | quincunx ⚻       | Sun                   | Yoko Ono | 2.94° | Static = |
+| White Moon            | Sample Natal Subject | sesquiquadrate ⚼ | Moon                  | Yoko Ono | 0.31° | Static = |
+| White Moon            | Sample Natal Subject | square □         | Uranus                | Yoko Ono | 5.89° | Static = |
+| White Moon            | Sample Natal Subject | conjunction ☌    | Pluto                 | Yoko Ono | 4.81° | Static = |
+| White Moon            | Sample Natal Subject | sextile ⚹        | Chiron                | Yoko Ono | 2.70° | Static = |
+| White Moon            | Sample Natal Subject | quintile Q       | Ascendant             | Yoko Ono | 0.02° | Static = |
+| White Moon            | Sample Natal Subject | semi-square ∠    | True Lilith           | Yoko Ono | 0.61° | Static = |
+| White Moon            | Sample Natal Subject | biquintile bQ    | Ceres                 | Yoko Ono | 1.95° | Static = |
+| White Moon            | Sample Natal Subject | sextile ⚹        | Vesta                 | Yoko Ono | 0.80° | Static = |
+| White Moon            | Sample Natal Subject | trine △          | Eris                  | Yoko Ono | 5.62° | Static = |
+| White Moon            | Sample Natal Subject | sextile ⚹        | Ixion                 | Yoko Ono | 2.78° | Static = |
+| White Moon            | Sample Natal Subject | sextile ⚹        | Orcus                 | Yoko Ono | 1.35° | Static = |
+| White Moon            | Sample Natal Subject | quincunx ⚻       | Pars Fortunae         | Yoko Ono | 0.23° | Static = |
+| White Moon            | Sample Natal Subject | sextile ⚹        | Pars Amoris           | Yoko Ono | 3.62° | Static = |
+| White Moon            | Sample Natal Subject | square □         | Vertex                | Yoko Ono | 0.32° | Static = |
+| White Moon            | Sample Natal Subject | square □         | Anti Vertex           | Yoko Ono | 0.32° | Static = |
+| White Moon            | Sample Natal Subject | sesquiquadrate ⚼ | True Priapus          | Yoko Ono | 0.61° | Static = |
+| White Moon            | Sample Natal Subject | sesquiquadrate ⚼ | Interpolated Perigee  | Yoko Ono | 0.72° | Static = |
+| White Moon            | Sample Natal Subject | quintile Q       | White Moon            | Yoko Ono | 1.16° | Static = |
+| White Moon            | Sample Natal Subject | semi-square ∠    | Vulkanus              | Yoko Ono | 1.78° | Static = |
 | Cupido                | Sample Natal Subject | square □         | Venus                 | Yoko Ono | 4.83° | Static = |
 | Cupido                | Sample Natal Subject | sextile ⚹        | Mars                  | Yoko Ono | 3.49° | Static = |
 | Cupido                | Sample Natal Subject | sextile ⚹        | Jupiter               | Yoko Ono | 2.08° | Static = |
@@ -1423,7 +1422,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Cupido                | Sample Natal Subject | trine △          | Pars Spiritus         | Yoko Ono | 1.55° | Static = |
 | Cupido                | Sample Natal Subject | sextile ⚹        | Pars Amoris           | Yoko Ono | 4.20° | Static = |
 | Cupido                | Sample Natal Subject | opposition ☍     | Pars Fidei            | Yoko Ono | 0.76° | Static = |
-| Cupido                | Sample Natal Subject | opposition ☍     | White Moon            | Yoko Ono | 5.70° | Static = |
+| Cupido                | Sample Natal Subject | opposition ☍     | White Moon            | Yoko Ono | 5.34° | Static = |
 | Cupido                | Sample Natal Subject | semi-square ∠    | Poseidon              | Yoko Ono | 1.69° | Static = |
 | Hades                 | Sample Natal Subject | opposition ☍     | Moon                  | Yoko Ono | 1.20° | Static = |
 | Hades                 | Sample Natal Subject | square □         | Mercury               | Yoko Ono | 2.03° | Static = |
@@ -1469,7 +1468,6 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Zeus                  | Sample Natal Subject | conjunction ☌    | Pars Amoris           | Yoko Ono | 3.21° | Static = |
 | Zeus                  | Sample Natal Subject | quincunx ⚻       | Vertex                | Yoko Ono | 0.72° | Static = |
 | Zeus                  | Sample Natal Subject | semi-sextile ⚺   | Anti Vertex           | Yoko Ono | 0.72° | Static = |
-| Zeus                  | Sample Natal Subject | sesquiquadrate ⚼ | White Moon            | Yoko Ono | 1.88° | Static = |
 | Zeus                  | Sample Natal Subject | semi-square ∠    | Zeus                  | Yoko Ono | 0.56° | Static = |
 | Zeus                  | Sample Natal Subject | sesquiquadrate ⚼ | Kronos                | Yoko Ono | 0.71° | Static = |
 | Zeus                  | Sample Natal Subject | conjunction ☌    | Poseidon              | Yoko Ono | 5.90° | Static = |
@@ -1513,7 +1511,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Apollon               | Sample Natal Subject | biquintile bQ    | Pars Fidei            | Yoko Ono | 0.45° | Static = |
 | Apollon               | Sample Natal Subject | sextile ⚹        | True Priapus          | Yoko Ono | 3.00° | Static = |
 | Apollon               | Sample Natal Subject | sextile ⚹        | Interpolated Perigee  | Yoko Ono | 3.11° | Static = |
-| Apollon               | Sample Natal Subject | quincunx ⚻       | White Moon            | Yoko Ono | 0.91° | Static = |
+| Apollon               | Sample Natal Subject | quincunx ⚻       | White Moon            | Yoko Ono | 0.55° | Static = |
 | Apollon               | Sample Natal Subject | semi-square ∠    | Cupido                | Yoko Ono | 1.85° | Static = |
 | Apollon               | Sample Natal Subject | opposition ☍     | Hades                 | Yoko Ono | 3.62° | Static = |
 | Apollon               | Sample Natal Subject | sextile ⚹        | Zeus                  | Yoko Ono | 3.35° | Static = |
@@ -1531,7 +1529,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Admetos               | Sample Natal Subject | sesquiquadrate ⚼ | Ixion                 | Yoko Ono | 0.74° | Static = |
 | Admetos               | Sample Natal Subject | trine △          | Quaoar                | Yoko Ono | 1.81° | Static = |
 | Admetos               | Sample Natal Subject | conjunction ☌    | Pars Fidei            | Yoko Ono | 4.41° | Static = |
-| Admetos               | Sample Natal Subject | conjunction ☌    | White Moon            | Yoko Ono | 2.05° | Static = |
+| Admetos               | Sample Natal Subject | conjunction ☌    | White Moon            | Yoko Ono | 1.69° | Static = |
 | Admetos               | Sample Natal Subject | square □         | Zeus                  | Yoko Ono | 4.49° | Static = |
 | Admetos               | Sample Natal Subject | conjunction ☌    | Kronos                | Yoko Ono | 4.63° | Static = |
 | Admetos               | Sample Natal Subject | semi-sextile ⚺   | Vulkanus              | Yoko Ono | 1.74° | Static = |
@@ -1549,7 +1547,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Vulkanus              | Sample Natal Subject | sextile ⚹        | Pars Fidei            | Yoko Ono | 4.03° | Static = |
 | Vulkanus              | Sample Natal Subject | biquintile bQ    | True Priapus          | Yoko Ono | 1.48° | Static = |
 | Vulkanus              | Sample Natal Subject | biquintile bQ    | Interpolated Perigee  | Yoko Ono | 1.38° | Static = |
-| Vulkanus              | Sample Natal Subject | sextile ⚹        | White Moon            | Yoko Ono | 2.43° | Static = |
+| Vulkanus              | Sample Natal Subject | sextile ⚹        | White Moon            | Yoko Ono | 2.07° | Static = |
 | Vulkanus              | Sample Natal Subject | semi-square ∠    | Cupido                | Yoko Ono | 0.34° | Static = |
 | Vulkanus              | Sample Natal Subject | square □         | Hades                 | Yoko Ono | 5.14° | Static = |
 | Vulkanus              | Sample Natal Subject | square □         | Admetos               | Yoko Ono | 5.17° | Static = |
