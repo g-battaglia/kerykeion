@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## 6.0.0a72 - 2026-07-15
+
+### Changed (6.0.0a72 — libephemeris 3.0.0rc11 repin)
+
+- **Repins libephemeris to 3.0.0rc11.** rc11 refines the computed position of
+  the mean lunar apogee — the **White Moon (Selena)** — by roughly 0.2° versus
+  rc10 (the natal sample subject moves from 26.26° to 26.44° Cancer, for
+  example), with the corresponding shift in every aspect orb that references
+  that point. No zodiac framing, public API, or model field changed; the 13
+  affected `*_report.txt` snapshots were regenerated to match. Tropical
+  longitudes, house cusps, the ascendant, and all other points are unaffected.
+
 ## 6.0.0a70 - 2026-07-13
 
 ### Added (6.0.0a70 — dual-chart projected-house SVG metadata)
