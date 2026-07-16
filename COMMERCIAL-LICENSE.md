@@ -29,9 +29,9 @@ the commercial grant, AGPL §13 (network source disclosure) does not attach.
 
 - The Kerykeion code owned by the Licensor at the identified reference tag.
 - The default runtime backend, `libephemeris` (also the Licensor's project), is
-  licensed **Apache-2.0** and already permits closed-source and commercial use.
-  No pass-through grant is needed; the commercial customer must simply preserve
-  its copyright, license and attribution notices, including its `NOTICE` file.
+  licensed **AGPL-3.0-only**. The commercial grant for Kerykeion includes a
+  commercial license for `libephemeris` as well; the customer must preserve
+  its copyright and attribution notices, including its `NOTICE` file.
 
 ## What the grant does not cover
 

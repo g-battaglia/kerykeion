@@ -22,7 +22,7 @@ user or contributor may encounter.
 | ---------------- | ---------------------------------------- | ----------------------------------- |
 | Language         | C bindings (`pyswisseph`)                | Pure Python                         |
 | Ephemeris source | Swiss Ephemeris (Moshier / `.se1` files) | NASA JPL DE440 / DE441 via LEB/Skyfield |
-| License          | AGPL-3.0                                 | Apache-2.0                          |
+| License          | AGPL-3.0                                 | AGPL-3.0                            |
 | Install          | `pip install kerykeion[swiss]`           | Included by default                 |
 | Bundled range    | Depends on installed Swiss `.se1` files | 1849–2150 (DE440s)                  |
 | Wider range      | Install the required Swiss data files    | Download medium/extended LEB tiers  |
@@ -192,5 +192,5 @@ not guaranteed to be identical at boundaries or where body/date/search support
 differs, so reproducible workflows should pin one backend. Choose based on your
 constraints:
 
-- **libephemeris** (default): no C compiler, Apache-2.0, pure Python, more accurate barycentric
+- **libephemeris** (default): no C compiler, AGPL-3.0, pure Python, more accurate barycentric
 - **swisseph**: C bindings (AGPL-3.0 Astrodienst AG), broader minor-body coverage on ancient dates

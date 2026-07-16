@@ -8,7 +8,7 @@ supporting two mutually exclusive backends:
 
 - **libephemeris**: Pure-Python drop-in replacement using NASA JPL DE440/DE441
   via Skyfield. No C compiler needed; works everywhere Python runs.
-  Licensed under Apache-2.0.
+  Licensed under AGPL-3.0 by the Kerykeion project.
 - **swisseph** (``pyswisseph``): The traditional Swiss Ephemeris C library bindings.
   Requires compilation. Licensed under AGPL-3.0 by Astrodienst AG.
 

@@ -155,9 +155,25 @@ def _resolve_geopos(
         raise KerykeionException("Observer coordinates must be finite numeric values.")
     validate_longitude(resolved[0])
     validate_latitude(resolved[1])
-    if not math.isfinite(resolved[2]):
+    if not _is_finite_real(resolved[2]):
         raise KerykeionException("Observer altitude must be a finite number of metres.")
     return resolved
+
+
+def _is_finite_real(value: object) -> bool:
+    """Return whether *value* is a non-bool real number with a finite float value.
+
+    ``bool`` is excluded (a ``True``/``False`` parameter is always a caller
+    mistake), and ints too large for ``float`` are treated as non-finite:
+    ``math.isfinite`` raises ``OverflowError`` on them instead of returning
+    ``False``, which would leak past the KerykeionException boundary.
+    """
+    if isinstance(value, bool) or not isinstance(value, Real):
+        return False
+    try:
+        return math.isfinite(value)
+    except (OverflowError, TypeError):
+        return False
 
 
 def _validate_numeric_tuple(values: Optional[tuple], *, name: str, length: int) -> None:
@@ -166,10 +182,7 @@ def _validate_numeric_tuple(values: Optional[tuple], *, name: str, length: int) 
         return
     if not isinstance(values, (tuple, list)) or len(values) != length:
         raise KerykeionException(f"{name} must contain exactly {length} numeric values.")
-    if any(
-        isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value)
-        for value in values
-    ):
+    if any(not _is_finite_real(value) for value in values):
         raise KerykeionException(f"{name} must contain exactly {length} finite numeric values.")
 
 

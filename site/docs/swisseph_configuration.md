@@ -194,7 +194,7 @@ own catalog. See site/docs/swisseph_configuration.md for details.
 
 If you don't have a specific reason to use swisseph for fixed stars, the
 **libephemeris backend ships a 1,447-star catalog built-in** (Hipparcos +
-IAU WGSN, Apache-2.0) and does not require
+IAU WGSN, AGPL-3.0 owned by the Kerykeion project) and does not require
 any external data file:
 
 ```bash
@@ -231,13 +231,13 @@ Swiss Ephemeris license terms apply to those components.
 
 **Kerykeion itself** is licensed under AGPL-3.0 by the Kerykeion project.
 When installed without `pyswisseph` (i.e., using libephemeris only),
-Kerykeion's AGPL-3.0 license and libephemeris's Apache-2.0 license apply.
+only Kerykeion's own AGPL-3.0 license applies.
 
 ## Comparison with libephemeris
 
 | Feature | libephemeris (default) | swisseph (optional) |
 |---------|----------------------|---------------------|
-| License | Apache-2.0 | AGPL-3.0 (Astrodienst AG) |
+| License | AGPL-3.0 (Kerykeion project) | AGPL-3.0 (Astrodienst AG) |
 | Language | Pure Python | C bindings |
 | Data source | NASA JPL DE440/DE441 | Swiss Ephemeris `.se1` files |
 | Data management | Automatic (`~/.libephemeris/leb/`) | Manual (download `.se1` files) |

@@ -176,8 +176,12 @@ class TestSearchEvents:
         [
             ((1013.0,), None),
             ((1013.0, 15.0, 40.0, float("nan")), None),
+            # int too large for float: math.isfinite raises OverflowError on it,
+            # which must not leak past the KerykeionException boundary.
+            ((10**400, 15.0, 40.0, 0.2), None),
             (None, (36.0,)),
             (None, (36.0, 1.0, 0.0, 0.0, 0.0, float("inf"))),
+            (None, (10**400, 1.0, 0.0, 0.0, 0.0, 0.0)),
         ],
     )
     def test_malformed_environment_parameters_rejected(self, factory, atmo, observer):
@@ -320,6 +324,9 @@ class TestGeoposKeywordAlternative:
             (float("nan"), 12.5, 0.0),
             (41.9, float("inf"), 0.0),
             (41.9, 12.5, float("nan")),
+            # int too large for float: math.isfinite raises OverflowError on it,
+            # which must not leak past the KerykeionException boundary.
+            (41.9, 12.5, 10**400),
         ],
     )
     def test_invalid_coordinates_rejected_even_for_zero_count(self, factory, lat, lng, altitude):

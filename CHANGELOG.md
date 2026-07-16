@@ -261,12 +261,11 @@ dropped, including two raised by the reviewer itself.
 
 ### Documentation (fresh full-codebase review, round 48)
 
-- **`libephemeris` is Apache-2.0, not AGPL.** `LICENSING.md`, `COMMERCIAL-LICENSE.md`
-  and `NOTICE` still described the default backend as dual-licensed
-  (`AGPL-3.0-only OR LicenseRef-LibEphemeris-Commercial`) and promised a pass-through
-  commercial grant via `LIBEPHEMERIS-COMMERCIAL-GRANT.md` — a file that does not exist.
-  Apache-2.0 already permits closed-source and commercial use; only its notices must
-  travel with redistributions.
+- **`libephemeris` is AGPL-3.0-only.** `LICENSING.md`, `COMMERCIAL-LICENSE.md`
+  and `NOTICE` describe the default backend as AGPL-3.0-only. It is authored by the
+  same maintainer as Kerykeion, so the commercial edition covers `libephemeris`
+  through its own commercial license alongside Kerykeion's grant; redistributions
+  must preserve its copyright and attribution notices, including its `NOTICE` file.
 - **`SolarEclipseModel.duration_minutes` was documented as its own opposite.** The
   field description and the `_solar_gamma_duration` docstring said the value is the
   global span of the shadow path across the Earth and explicitly "not the totality
