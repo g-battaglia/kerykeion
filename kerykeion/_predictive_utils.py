@@ -8,6 +8,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from __future__ import annotations
 
 import math
+from datetime import date
 from typing import Iterable, List, Optional, Sequence
 
 from kerykeion.schemas import KerykeionException
@@ -17,6 +18,46 @@ from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS, DE
 PTOLEMAIC_ASPECTS: tuple[str, ...] = (
     "conjunction", "opposition", "trine", "sextile", "square",
 )
+
+
+def is_iso_date_only(value: str) -> bool:
+    """Return whether *value* is an ISO date with no time component.
+
+    ``datetime.fromisoformat`` accepts any single character as the date/time
+    separator, not only ``T`` or a space. Parsing as ``date`` is therefore the
+    reliable way to decide whether an end bound should be widened through the
+    end of its UTC day.
+    """
+    try:
+        date.fromisoformat(value)
+    except (TypeError, ValueError):
+        return False
+    return True
+
+
+def validate_julian_bounds(start_jd: float, end_jd: float) -> None:
+    """Reject non-finite Julian Day bounds before a predictive scan.
+
+    ``NaN`` makes ordering comparisons false and can otherwise turn an invalid
+    request into a plausible empty collection. Infinite bounds can escape later
+    as backend or datetime-conversion errors. Keeping the check shared gives all
+    range factories the same public contract.
+
+    Only finiteness is checked — ordering is not: an inverted range
+    (``start_jd > end_jd``) is a valid request that scans nothing.
+    """
+    validate_julian_day(start_jd, name="start_jd")
+    validate_julian_day(end_jd, name="end_jd")
+
+
+def validate_julian_day(julian_day: float, *, name: str = "julian_day") -> None:
+    """Reject a non-finite Julian Day before calculation or empty fast paths."""
+    try:
+        is_finite = math.isfinite(julian_day)
+    except (OverflowError, TypeError):
+        is_finite = False
+    if not is_finite:
+        raise ValueError(f"{name} must be a finite number")
 
 
 def jd_to_ymd_hms(jd: float, cal: Optional[int] = None) -> tuple[int, int, int, int, int, int]:

@@ -754,6 +754,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         nation: Country code (optional for composite charts).
         lng: Longitude coordinate (optional for composite charts).
         lat: Latitude coordinate (optional for composite charts).
+        altitude: Observer altitude in meters (optional; used by topocentric charts).
         tz_str: Timezone string (optional for composite charts).
         iso_formatted_local_datetime: Local datetime in ISO format (optional).
         iso_formatted_utc_datetime: UTC datetime in ISO format (optional).
@@ -799,6 +800,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     nation: Optional[str] = None
     lng: Optional[float] = None
     lat: Optional[float] = None
+    altitude: Optional[float] = None
     tz_str: Optional[str] = None
 
     # Common time data (optional for composite charts)

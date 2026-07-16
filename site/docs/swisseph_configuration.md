@@ -193,8 +193,8 @@ own catalog. See site/docs/swisseph_configuration.md for details.
 ### Quick alternative
 
 If you don't have a specific reason to use swisseph for fixed stars, the
-**libephemeris backend ships a 1447-star catalog built-in** (Hipparcos +
-IAU WGSN, AGPL-3.0 owned by the kerykeion project) and does not require
+**libephemeris backend ships a 1,447-star catalog built-in** (Hipparcos +
+IAU WGSN, AGPL-3.0 owned by the Kerykeion project) and does not require
 any external data file:
 
 ```bash

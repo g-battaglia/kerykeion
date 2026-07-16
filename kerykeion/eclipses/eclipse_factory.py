@@ -23,7 +23,7 @@ from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
-from kerykeion.utilities import get_kerykeion_point_from_degree, validate_latitude
+from kerykeion.utilities import get_kerykeion_point_from_degree, validate_latitude, validate_longitude
 from pydantic import Field
 
 logger = logging.getLogger(__name__)
@@ -46,6 +46,8 @@ ECL_ANNULAR_TOTAL = getattr(ephe, "SE_ECL_ANNULAR_TOTAL", getattr(ephe, "ECL_ANN
 def _ensure_scannable(count: int) -> None:
     """Reject absurd event counts upfront, so a caller never receives a
     silently truncated result and never waits on a scan that cannot finish."""
+    if count < 0:
+        raise ValueError("count must be non-negative")
     if count > _MAX_COUNT:
         raise ValueError(
             f"count too large (> {_MAX_COUNT} events per eclipse type). "
@@ -316,17 +318,18 @@ class EclipseFactory:
 
         Raises:
             KerykeionException: If ``lat`` is outside the geometrically-possible
-                ±90° range, for an invalid zodiac configuration, or if the
+                ±90° range, if ``lng`` is outside ±180°, for an invalid zodiac configuration, or if the
                 ephemeris backend fails mid-search (most often a date outside
                 the available ephemeris range); the search never returns
                 silently truncated results.
-            ValueError: If ``count`` exceeds the supported maximum.
+            ValueError: If ``count`` is negative or exceeds the supported maximum.
         """
         _ensure_scannable(count)
         # Reject an impossible latitude (e.g. an accidental lat/lng swap, made
         # easy by the longitude-first backend geopos convention) rather than
         # returning a bogus "visible" eclipse with the Sun below the horizon.
         validate_latitude(lat)
+        validate_longitude(lng)
         _validate_zodiac(zodiac_type, sidereal_mode)
         if start_year is None:
             start_year = datetime.now(timezone.utc).year
@@ -381,7 +384,7 @@ class EclipseFactory:
                 ephemeris backend fails mid-search (most often a date outside
                 the available ephemeris range); the search never returns
                 silently truncated results.
-            ValueError: If ``count`` exceeds the supported maximum.
+            ValueError: If ``count`` is negative or exceeds the supported maximum.
         """
         _ensure_scannable(count)
         _validate_zodiac(zodiac_type, sidereal_mode)

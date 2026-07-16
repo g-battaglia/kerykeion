@@ -22,6 +22,7 @@ import logging
 from typing import Dict, List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion._predictive_utils import validate_julian_day
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
@@ -156,6 +157,7 @@ class PlanetaryNodesFactory:
         subtracting the session's ayanamsa, which is deterministic on both
         backends.
         """
+        validate_julian_day(julian_day)
         if method not in ("mean", "osculating"):
             # Without this, any other string (e.g. "Mean") silently selected
             # the osculating branch while the model echoed the caller's label.

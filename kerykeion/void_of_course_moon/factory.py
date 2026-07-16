@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
+from kerykeion._predictive_utils import is_iso_date_only
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES, SiderealMode, ZodiacType
 from kerykeion.schemas.kr_models import (
@@ -20,6 +21,18 @@ from kerykeion.schemas.kr_models import (
 from kerykeion.sun_times.utils import localize_datetime, resolve_timezone
 from kerykeion.utilities import datetime_to_julian
 from kerykeion.void_of_course_moon.utils import AspectEvent, compute_void_of_course, compute_void_windows
+
+
+def _resolve_backend_error_types() -> tuple[type[BaseException], ...]:
+    """Return the active ephemeris backend's public exception hierarchy."""
+    backend_error = getattr(ephe, "Error", None)
+    if isinstance(backend_error, type) and issubclass(backend_error, BaseException):
+        return (backend_error,)
+    return ()
+
+
+_BACKEND_ERROR_TYPES: tuple[type[BaseException], ...] = _resolve_backend_error_types()
+_RANGE_ERROR_TYPES: tuple[type[BaseException], ...] = (*_BACKEND_ERROR_TYPES, OverflowError, ValueError)
 
 
 def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> None:
@@ -132,7 +145,7 @@ class VoidOfCourseMoonFactory:
         with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
             try:
                 result = compute_void_of_course(moment_utc, iflag)
-            except getattr(ephe, "Error", ()) as exc:
+            except _BACKEND_ERROR_TYPES as exc:
                 # The forward/backward Moon scans walk off the ephemeris near
                 # either edge; the raw backend range error is not this factory's
                 # documented contract. Normalize it to KerykeionException
@@ -200,7 +213,7 @@ class VoidOfCourseMoonFactory:
                 f"Invalid ISO date/datetime for void-of-course range "
                 f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
             ) from exc
-        if "T" not in end_date and "t" not in end_date and " " not in end_date:
+        if is_iso_date_only(end_date):
             end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         start_jd = datetime_to_julian(start_dt)
         end_jd = datetime_to_julian(end_dt)
@@ -210,7 +223,7 @@ class VoidOfCourseMoonFactory:
             with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
                 try:
                     raw_windows = compute_void_windows(start_jd, end_jd, iflag)
-                except (getattr(ephe, "Error", ()), OverflowError, ValueError) as exc:
+                except _RANGE_ERROR_TYPES as exc:
                     # Same normalization as from_datetime, widened for the range
                     # scan: besides the backend range errors (libephemeris
                     # EphemerisRangeError, swisseph.Error), the sign-by-sign Moon

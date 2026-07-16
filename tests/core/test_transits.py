@@ -560,8 +560,12 @@ class TestActivePointsForwarding:
         )
 
 
-def test_axis_orb_limit_validated_up_front():
-    """axis_orb_limit=0 used to fail only deep inside get_transit_moments."""
+@pytest.mark.parametrize(
+    "invalid_limit",
+    [float("nan"), float("inf"), float("-inf"), 0.0, -1.0],
+)
+def test_axis_orb_limit_validated_up_front(invalid_limit):
+    """Invalid limits used to fail only deep inside get_transit_moments."""
     from kerykeion.schemas import KerykeionException
 
     natal = AstrologicalSubjectFactory.from_birth_data(
@@ -570,6 +574,4 @@ def test_axis_orb_limit_validated_up_front():
         online=False, suppress_geonames_warning=True,
     )
     with pytest.raises(KerykeionException, match="axis_orb_limit"):
-        TransitsTimeRangeFactory(natal, [natal], axis_orb_limit=0.0)
-    with pytest.raises(KerykeionException, match="axis_orb_limit"):
-        TransitsTimeRangeFactory(natal, [natal], axis_orb_limit=-1.0)
+        TransitsTimeRangeFactory(natal, [natal], axis_orb_limit=invalid_limit)

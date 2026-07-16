@@ -79,11 +79,23 @@ class TestStationApi:
         res = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", [])
         assert res.stations == []
 
+    def test_nonstandard_datetime_separator_not_widened(self):
+        end = "2026-01-01_12:00:00"
+        res = RetrogradeStationFactory.from_iso_range(end, end, planets=[])
+        assert res.end_jd == datetime_to_julian(datetime.fromisoformat(end))
+
     def test_oversized_range_raises(self):
         # A range too long to scan (> _MAX_SAMPLES at the current step) is
         # rejected up front, never silently truncated.
         with pytest.raises(ValueError):
             RetrogradeStationFactory.from_julian_day(0.0, 20_000_000.0)
+
+    @pytest.mark.parametrize("bad_jd", [float("nan"), float("inf"), float("-inf")])
+    @pytest.mark.parametrize("bad_bound", ["start", "end"])
+    def test_non_finite_julian_bounds_rejected(self, bad_jd, bad_bound):
+        start, end = (bad_jd, 2451546.0) if bad_bound == "start" else (2451545.0, bad_jd)
+        with pytest.raises(ValueError, match="finite"):
+            RetrogradeStationFactory.from_julian_day(start, end, planets=[])
 
     @pytest.mark.extended
     def test_bce_range_via_julian_day(self):

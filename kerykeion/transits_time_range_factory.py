@@ -66,6 +66,7 @@ License: AGPL-3.0
 """
 
 import logging
+import math
 
 from typing import Union, List, Optional, cast
 from datetime import datetime, timedelta
@@ -282,7 +283,7 @@ class TransitsTimeRangeFactory:
         self.settings_file = settings_file
         # Validate up front: aspect calculation requires a positive limit, and
         # failing there (deep inside get_transit_moments) is undiagnosable.
-        if axis_orb_limit is not None and axis_orb_limit <= 0:
+        if axis_orb_limit is not None and (not math.isfinite(axis_orb_limit) or axis_orb_limit <= 0):
             raise KerykeionException(
                 f"axis_orb_limit must be a positive number of degrees or None "
                 f"(got {axis_orb_limit!r})."

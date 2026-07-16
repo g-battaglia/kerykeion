@@ -19,7 +19,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
-from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
+from kerykeion._predictive_utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_bounds
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.mundane_aspects.utils import MundaneAspectEvent, _lon_speed, scan_mundane_aspects
 from kerykeion.schemas.kerykeion_exception import KerykeionException
@@ -173,7 +173,7 @@ class MundaneAspectFactory:
                 f"Invalid ISO date/datetime for mundane aspect range "
                 f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
             ) from exc
-        if "T" not in end_date and "t" not in end_date and " " not in end_date:
+        if is_iso_date_only(end_date):
             end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         return MundaneAspectFactory.from_julian_day(
             datetime_to_julian(start_dt),
@@ -199,9 +199,11 @@ class MundaneAspectFactory:
             KerykeionException: For an invalid zodiac configuration, or if the
                 ephemeris backend fails mid-scan (most often a date outside the
                 available ephemeris range).
-            ValueError: If a body/aspect name is unknown or the range is too
-                large to scan.
+            ValueError: If a body/aspect name is unknown, either Julian bound
+                is non-finite, or the range is too large to scan.
         """
+        validate_julian_bounds(start_jd, end_jd)
+
         # None = default set; an explicit empty list = scan nothing.
         if points is not None:
             invalid = sorted(set(points) - set(_POINT_IDS))

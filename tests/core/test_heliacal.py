@@ -8,6 +8,7 @@ with default atmospheric parameters.
 
 import pytest
 from kerykeion.ephemeris_backend import ephe
+from kerykeion.schemas import KerykeionException
 
 pytestmark = pytest.mark.xdist_group(name="heliacal")
 
@@ -160,6 +161,39 @@ class TestSearchEvents:
         events = self._get_events(factory, count=2)
         assert len(events) <= 2
 
+    @pytest.mark.parametrize("event_types", [[999], [0], [-1], ["1"]])
+    def test_invalid_event_types_rejected(self, factory, event_types):
+        with pytest.raises(KerykeionException, match="event_types"):
+            factory.search_events(
+                julian_day=START_JD,
+                geopos=ROME_GEOPOS,
+                count=0,
+                event_types=event_types,
+            )
+
+    @pytest.mark.parametrize(
+        ("atmo", "observer"),
+        [
+            ((1013.0,), None),
+            ((1013.0, 15.0, 40.0, float("nan")), None),
+            # int too large for float: math.isfinite raises OverflowError on it,
+            # which must not leak past the KerykeionException boundary.
+            ((10**400, 15.0, 40.0, 0.2), None),
+            (None, (36.0,)),
+            (None, (36.0, 1.0, 0.0, 0.0, 0.0, float("inf"))),
+            (None, (10**400, 1.0, 0.0, 0.0, 0.0, 0.0)),
+        ],
+    )
+    def test_malformed_environment_parameters_rejected(self, factory, atmo, observer):
+        with pytest.raises(KerykeionException):
+            factory.search_events(
+                julian_day=START_JD,
+                geopos=ROME_GEOPOS,
+                count=0,
+                atmo=atmo,
+                observer=observer,
+            )
+
     def test_subscriptable_access(self, factory: HeliacalFactory):
         event = _cached_rising(factory, "Venus")
         assert event["event_type"] == event.event_type
@@ -276,6 +310,46 @@ class TestGeoposKeywordAlternative:
             factory.next_heliacal_rising(julian_day=START_JD, planet_name_or_star="Venus")
         with pytest.raises(KerykeionException, match="position required"):
             factory.search_events(julian_day=START_JD, lat=41.9028)  # lng missing
+
+    @pytest.mark.parametrize("julian_day", [float("nan"), float("inf"), float("-inf")])
+    def test_non_finite_julian_day_rejected_even_for_zero_count(self, factory, julian_day):
+        with pytest.raises(ValueError, match="finite"):
+            factory.search_events(julian_day=julian_day, lat=41.9, lng=12.5, count=0)
+
+    @pytest.mark.parametrize(
+        ("lat", "lng", "altitude"),
+        [
+            (91.0, 12.5, 0.0),
+            (41.9, 181.0, 0.0),
+            (float("nan"), 12.5, 0.0),
+            (41.9, float("inf"), 0.0),
+            (41.9, 12.5, float("nan")),
+            # int too large for float: math.isfinite raises OverflowError on it,
+            # which must not leak past the KerykeionException boundary.
+            (41.9, 12.5, 10**400),
+        ],
+    )
+    def test_invalid_coordinates_rejected_even_for_zero_count(self, factory, lat, lng, altitude):
+        with pytest.raises(KerykeionException):
+            factory.search_events(
+                julian_day=START_JD,
+                lat=lat,
+                lng=lng,
+                altitude=altitude,
+                count=0,
+            )
+
+    def test_negative_count_rejected(self, factory):
+        with pytest.raises(ValueError, match="non-negative"):
+            factory.search_events(julian_day=START_JD, lat=41.9, lng=12.5, count=-1)
+
+    @pytest.mark.parametrize("boolean", [True, False])
+    def test_boolean_coordinates_rejected(self, factory, boolean):
+        """bool passes isinstance(..., Real) but is never a valid coordinate."""
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="numeric"):
+            factory.search_events(julian_day=START_JD, lat=boolean, lng=12.5, count=0)
 
 
 # Tests: default constants ---------------------------------------------------

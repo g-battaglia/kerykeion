@@ -80,18 +80,6 @@ sys.path.insert(0, '{project_root}')
 import warnings
 warnings.filterwarnings('ignore')
 
-# Ensure required optional dependencies are present; otherwise skip gracefully.
-missing_dependencies = []
-for _module in ("pytz", "swisseph"):
-    try:
-        __import__(_module)
-    except ModuleNotFoundError:
-        missing_dependencies.append(_module)
-
-if missing_dependencies:
-    print("Skipping snippet due to missing dependencies: " + ", ".join(sorted(set(missing_dependencies))))
-    sys.exit(0)
-
 # Common imports for kerykeion
 from typing import Literal, Union
 from kerykeion import (
@@ -203,9 +191,9 @@ def main():
         if args.paths:
             targets = args.paths
         else:
-            targets = [Path("README.md"), Path("kerykeion/llms.txt"), Path("site/docs")]
+            targets = [Path("README.md"), Path("kerykeion/llms.txt"), Path("site/docs"), Path("site/examples")]
         exclude_release_notes = True
-        mode_description = "README.md, kerykeion/llms.txt, and site/docs (default)"
+        mode_description = "README.md, kerykeion/llms.txt, site/docs, and site/examples (default)"
 
     print(f"� Testing Python snippets in {mode_description}")
 
@@ -225,19 +213,27 @@ def main():
 
             print(f"\n📝 {md_file} ({len(snippets)} snippets)")
 
-            # Snippets on one page often build on each other (imports and
-            # variables from earlier blocks); executing each standalone flags
-            # dozens of false "NameError" failures. Run snippet N with the
-            # page's preceding snippets prepended as context — the way a
-            # reader following the page top-to-bottom experiences it.
+            # Snippets on one page often build on each other. A single clean
+            # page-level execution proves the same sequential contract as the
+            # old cumulative N executions, without quadratic process startup.
+            # If it fails (or hits the narrowly ignored GeoNames-warning path),
+            # replay cumulatively to identify the exact failing block(s).
+            dedented_snippets = [textwrap.dedent(snippet) for snippet in snippets]
+            combined_success, combined_error = test_snippet(
+                "\n".join(dedented_snippets), timeout=args.timeout
+            )
+            total_snippets += len(snippets)
+            if combined_success and combined_error is None:
+                print(f"  ✅ All {len(snippets)} snippets: OK")
+                continue
+
+            print("  Page-level run failed; replaying snippets for diagnostics")
             page_context = ""
-            for i, snippet in enumerate(snippets, 1):
-                total_snippets += 1
+            for i, dedented in enumerate(dedented_snippets, 1):
                 # Dedent the snippet BEFORE concatenation: the joint dedent
                 # inside test_snippet is a no-op once the accumulated context
                 # is flush-left, which would leave an indented snippet
                 # syntactically absorbed by the last context block.
-                dedented = textwrap.dedent(snippet)
                 success, error = test_snippet(page_context + "\n" + dedented, timeout=args.timeout)
 
                 if success:

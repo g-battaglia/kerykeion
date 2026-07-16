@@ -1,6 +1,6 @@
 ---
 title: 'Active Points Reference'
-description: 'Complete reference for all 53+ celestial points available in Kerykeion: planets, asteroids, TNOs, Arabic parts, fixed stars, and special points.'
+description: 'Complete reference for 53 active chart points plus separately configured fixed stars.'
 category: 'Reference'
 tags: ['docs', 'points', 'planets', 'asteroids', 'configuration', 'kerykeion']
 order: 14
@@ -8,7 +8,10 @@ order: 14
 
 # Active Points Reference
 
-Kerykeion supports **53+ celestial points** that can be individually enabled or disabled via the `active_points` parameter. This page documents every available point and the preset configurations.
+Kerykeion supports **53 non-star chart points** through the `active_points`
+parameter. Fixed stars use the separate `active_fixed_stars` parameter and
+fixed-star presets; they are not members of `ALL_ACTIVE_POINTS`. This page
+documents both configuration mechanisms.
 
 ## Available Points
 
@@ -108,9 +111,14 @@ Distant objects beyond Neptune. Ephemeris data may not be available for all hist
 
 > **Note:** Some TNOs may not have ephemeris data for very old or far-future dates. If calculation fails for a point, a warning is logged and the point is removed from the active points for that subject.
 
-### Fixed Stars (23)
+### Fixed Stars (1,447-name catalog; 23-star preset, configured separately)
 
-All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 8 additional bright stars. Fixed stars are inactive by default.
+The default libephemeris backend provides a 1,447-name catalog. The 23 names
+below form `DEFAULT_FIXED_STARS` (all 15 Behenian stars plus 8 additional bright
+stars); they are a convenient preset, not the complete catalog. Fixed stars are
+inactive by default and are selected with `active_fixed_stars`, not
+`active_points`. Import `FixedStarCatalog` from `kerykeion.fixed_stars` and use
+`list_all()`/`find()` for the full catalog.
 
 #### Royal Stars (4)
 
@@ -203,7 +211,7 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 
 ### `ALL_ACTIVE_POINTS` (53 points)
 
-Every available point enabled. Useful for research or comprehensive analysis.
+Every non-star active point enabled. Useful for research or comprehensive analysis; configure fixed stars separately with `active_fixed_stars`.
 
 ```python
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS

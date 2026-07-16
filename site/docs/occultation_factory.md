@@ -34,7 +34,7 @@ Find occultations visible from anywhere on Earth.
 
 | Parameter    | Type  | Default | Description                                      |
 | :----------- | :---- | :------ | :----------------------------------------------- |
-| `julian_day` | float | --      | Starting Julian Day (UT) for the search          |
+| `julian_day` | float | --      | Finite starting Julian Day (UT) for the search   |
 | `planet_id`  | int   | --      | Planet identifier (ephe-style constant, e.g. `ephe.VENUS`) |
 | `count`      | int   | 5       | Number of events to return                       |
 
@@ -46,13 +46,16 @@ Find occultations visible from a specific location.
 
 | Parameter    | Type  | Default | Description                                      |
 | :----------- | :---- | :------ | :----------------------------------------------- |
-| `julian_day` | float | --      | Starting Julian Day (UT) for the search          |
+| `julian_day` | float | --      | Finite starting Julian Day (UT) for the search   |
 | `planet_id`  | int   | --      | Planet identifier (ephe-style constant)           |
-| `lat`        | float | --      | Geographic latitude (north positive)             |
-| `lng`        | float | --      | Geographic longitude (east positive)             |
+| `lat`        | float | --      | Geographic latitude in [-90, 90] (north positive) |
+| `lng`        | float | --      | Geographic longitude in [-180, 180] (east positive) |
 | `count`      | int   | 5       | Number of events to return                       |
 
 **Returns:** `List[OccultationModel]`
+
+For both search methods, `count` must be between 0 and 1,000 inclusive;
+invalid counts raise `ValueError` before any backend call.
 
 ```python
 # Find occultations visible from Rome

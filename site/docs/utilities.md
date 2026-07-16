@@ -43,6 +43,8 @@ Functions for working with astrological houses.
 | `get_house_name(number)`                     | Converts `1` to `"First_House"`.                               |
 | `get_house_number(name)`                     | Converts `"First_House"` to `1`.                               |
 | `get_houses_list(subject)`                   | Returns list of all 12 house objects from a subject.           |
+| `validate_latitude(lat)`                     | Returns a finite latitude in [-90, 90] unchanged; otherwise raises `KerykeionException`. |
+| `validate_longitude(lng)`                    | Returns a finite longitude in [-180, 180] unchanged; otherwise raises `KerykeionException`. |
 | `check_and_adjust_polar_latitude(lat)`       | Adjusts extreme latitudes to prevent house calculation errors. |
 
 ```python

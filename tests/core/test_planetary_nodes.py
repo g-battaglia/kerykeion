@@ -224,3 +224,8 @@ class TestMethodValidation:
         # model echoed the caller's label.
         with pytest.raises(KerykeionException, match="Invalid nodes method"):
             PlanetaryNodesFactory.from_julian_day(2451545.0, method="Mean", planets=["Moon"])
+
+    @pytest.mark.parametrize("julian_day", [float("nan"), float("inf"), float("-inf")])
+    def test_non_finite_julian_day_rejected_for_empty_selection(self, julian_day):
+        with pytest.raises(ValueError, match="finite"):
+            PlanetaryNodesFactory.from_julian_day(julian_day, planets=[])

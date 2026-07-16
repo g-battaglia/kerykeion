@@ -287,6 +287,28 @@ All render/save methods accept `minify` and `remove_css_variables`. The full-cha
 - `save_wheel_only_svg_file(output_path, filename, minify, remove_css_variables, *, style, show_zodiac_background_ring)`
 - `save_aspect_grid_only_svg_file(output_path, filename, minify, remove_css_variables)`
 
+## Machine-Readable SVG Point Metadata
+
+Every rendered celestial point is a `<g kr:node="ChartPoint">` with stable
+`kr:` attributes such as `kr:slug`, `kr:house`, `kr:sign`,
+`kr:absoluteposition`, `kr:signposition`, `kr:horoscope`, and its root-space
+glyph center (`kr:cx`, `kr:cy`).
+
+In dual wheels—Transit, Synastry, DualReturnChart, and Progression—house meaning
+is explicit on both rings:
+
+| Attribute | Meaning |
+| :-- | :-- |
+| `kr:house` | The point's house in its owner's horoscope. |
+| `kr:horoscope` | Owner ring: `0` for the first subject, `1` for the second. |
+| `kr:projectedhouse` | The same longitude's house in the other subject's cusp system. |
+| `kr:projectedhoroscope` | Target ring used for `kr:projectedhouse`. |
+
+The reciprocal attributes are present in classic and modern styles, full and
+wheel-only output, and do not require the optional `house_comparison` payload
+or visible comparison tables. They are additive metadata; existing geometry
+and the owner semantics of `kr:house` are unchanged.
+
 ## Helper Functions (`charts_utils`)
 
 Import from: `kerykeion.charts.charts_utils`

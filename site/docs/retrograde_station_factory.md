@@ -26,21 +26,39 @@ Restrict to specific planets:
 mercury = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", planets=["Mercury"])
 ```
 
+For sidereal output, provide an ayanamsha. A station is the instant a planet's
+longitudinal speed crosses zero, so its time is zodiac-independent; the
+reported longitude and sign use the requested zodiac.
+
+```python
+sidereal = RetrogradeStationFactory.from_iso_range(
+    "2026-01-01",
+    "2026-12-31",
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+)
+```
+
 ## Methods
 
-### `from_iso_range(start_date, end_date, planets=None)`
+### `from_iso_range(start_date, end_date, planets=None, zodiac_type="Tropical", sidereal_mode=None)`
 
-| Parameter    | Type              | Default | Description                                                                |
-| :----------- | :---------------- | :------ | :------------------------------------------------------------------------ |
-| `start_date` | str (ISO)         | --      | Range start (a date-only value starts at 00:00 UTC).                      |
-| `end_date`   | str (ISO)         | --      | Range end (a date-only value is widened through the end of that UTC day). |
-| `planets`    | list[str] or None | None    | Subset of planet names. Defaults to Mercury–Pluto.                       |
+| Parameter       | Type                   | Default      | Description                                                                |
+| :-------------- | :--------------------- | :----------- | :------------------------------------------------------------------------- |
+| `start_date`    | str (ISO)              | --           | Range start (a date-only value starts at 00:00 UTC).                      |
+| `end_date`      | str (ISO)              | --           | Range end (a date-only value is widened through the end of that UTC day). |
+| `planets`       | list[str] or None      | None         | Subset of planet names. Defaults to Mercury–Pluto.                       |
+| `zodiac_type`   | `ZodiacType`           | `"Tropical"` | `"Tropical"` or `"Sidereal"`; affects reported longitude/sign, not station time. |
+| `sidereal_mode` | `SiderealMode` or None | None         | Required ayanamsha when `zodiac_type="Sidereal"`.                       |
 
 **Returns:** `RetrogradeStationsCollectionModel`
 
-### `from_julian_day(start_jd, end_jd, planets=None)`
+### `from_julian_day(start_jd, end_jd, planets=None, zodiac_type="Tropical", sidereal_mode=None)`
 
-Same as above with Julian Day (UT) bounds. **Raises** `KerykeionException` if the ephemeris backend fails mid-scan and `ValueError` for an unknown planet name or an over-large range.
+Same as above with Julian Day (UT) bounds. **Raises** `KerykeionException`
+for an invalid zodiac configuration or if the ephemeris backend fails mid-scan,
+and `ValueError` for an unknown planet name, a non-finite Julian bound, or an
+over-large range.
 
 ## Data Models
 
@@ -48,9 +66,11 @@ Same as above with Julian Day (UT) bounds. **Raises** `KerykeionException` if th
 
 | Field      | Type | Description                        |
 | :--------- | :--- | :--------------------------------- |
+| `start_jd` | float | Requested Julian Day (UT) range start. |
+| `end_jd`   | float | Requested Julian Day (UT) range end. |
 | `stations` | list | Chronologically ordered stations.  |
 
-Each station item has:
+Each `StationModel` item has:
 
 | Field                | Type  | Description                                          |
 | :------------------- | :---- | :-------------------------------------------------- |

@@ -69,6 +69,17 @@ class TestACGComputation:
         for line in lines:
             assert line.planet == "Jupiter"
 
+    @pytest.mark.parametrize("planets", [["Nope"], ["Sun", "Nope"], [1], "Sun"])
+    def test_invalid_planet_filter_rejected(self, subject, planets):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="planets"):
+            AstroCartographyFactory.compute(subject, planets=planets)  # type: ignore[arg-type]
+
+    def test_supported_but_absent_planet_is_valid_empty_filter(self, subject):
+        without_pluto = subject.model_copy(update={"pluto": None})
+        assert AstroCartographyFactory.compute(without_pluto, planets=["Pluto"]) == []
+
     def test_step_affects_detail(self, subject):
         """Smaller step should produce more points (for MC/IC vertical lines)."""
         coarse = AstroCartographyFactory.compute(subject, step=10, planets=["Sun"])
@@ -78,6 +89,69 @@ class TestACGComputation:
         coarse_mc = next(line for line in coarse if line.line_type == "MC")
         fine_mc = next(line for line in fine if line.line_type == "MC")
         assert len(fine_mc.points) >= len(coarse_mc.points)
+
+    @pytest.mark.parametrize(
+        "invalid_step",
+        [float("nan"), float("inf"), float("-inf"), 0.0, -1.0, 10**309],
+        ids=[
+            "nan",
+            "positive-infinity",
+            "negative-infinity",
+            "zero",
+            "negative",
+            "unrepresentably-large",
+        ],
+    )
+    def test_invalid_step_rejected(self, subject, invalid_step):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="step"):
+            AstroCartographyFactory.compute(subject, step=invalid_step)
+
+    @pytest.mark.parametrize("step", [1e-9, 1e-306])
+    def test_projected_point_limit_rejects_pathological_grid(self, subject, step):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="safety limit"):
+            AstroCartographyFactory.compute(subject, step=step, planets=["Sun"])
+
+    def test_boolean_step_and_lat_range_rejected(self, subject):
+        """bool passes isinstance(..., Real) but is never a valid coordinate."""
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="step"):
+            AstroCartographyFactory.compute(subject, step=True)
+        with pytest.raises(KerykeionException, match="lat_range"):
+            AstroCartographyFactory.compute(subject, lat_range=(True, 66))
+
+    @pytest.mark.parametrize(
+        "julian_day",
+        [float("nan"), float("inf"), float("-inf"), 10**309],
+        ids=["nan", "positive-infinity", "negative-infinity", "unrepresentably-large"],
+    )
+    def test_non_finite_subject_julian_day_rejected(self, subject, julian_day):
+        from kerykeion.schemas import KerykeionException
+
+        corrupted = subject.model_copy(update={"julian_day": julian_day})
+        with pytest.raises(KerykeionException, match="Julian Day.*finite"):
+            AstroCartographyFactory.compute(corrupted, planets=["Sun"])
+
+    @pytest.mark.parametrize(
+        "invalid_lat_range",
+        [
+            (-90.1, 0.0),
+            (0.0, 90.1),
+            (float("nan"), 0.0),
+            (0.0, float("inf")),
+            (0.0, 10**309),
+            (10.0, -10.0),
+        ],
+    )
+    def test_invalid_lat_range_rejected(self, subject, invalid_lat_range):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="lat_range"):
+            AstroCartographyFactory.compute(subject, lat_range=invalid_lat_range)
 
 
 def _true_equatorial(jd, planet_id):

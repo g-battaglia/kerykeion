@@ -36,8 +36,8 @@ Find fixed stars conjunct natal planets within the given orb.
 
 | Parameter | Type                     | Default | Description                                   |
 | :-------- | :----------------------- | :------ | :-------------------------------------------- |
-| `subject` | AstrologicalSubjectModel | --      | The natal chart                               |
-| `orb`     | float                    | 1.0     | Maximum conjunction orb in degrees             |
+| `subject` | AstrologicalSubjectModel | --      | A natal chart with a finite Julian Day        |
+| `orb`     | float                    | 1.0     | Finite, non-negative maximum conjunction orb in degrees |
 
 **Returns:** `List[KerykeionPointModel]` sorted by magnitude (brightest first).
 
@@ -60,6 +60,11 @@ Each returned `KerykeionPointModel` is enriched with discovery metadata:
 ## Catalog Source
 
 The catalog is sourced from **libephemeris** (the default backend). On the swisseph backend, the factory requires `sefstars.txt` to be present in the ephemeris data path (see [Swiss Ephemeris Configuration](/content/docs/swisseph_configuration) for details).
+
+Catalog enumeration uses immutable `FixedStarMetadataModel` entries containing
+`name`, canonical `slug`, optional Hipparcos number, nomenclature, and visual
+magnitude. Discovery results remain enriched `KerykeionPointModel` objects as
+described above.
 
 ## Wider Orb Example
 

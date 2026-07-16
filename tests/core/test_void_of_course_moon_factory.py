@@ -252,6 +252,15 @@ class TestVoidWindowsRange:
         res = VoidOfCourseMoonFactory.from_iso_range("2025-01-31", "2025-01-01")
         assert res.windows == []
 
+    def test_nonstandard_datetime_separator_not_widened(self):
+        from datetime import datetime
+
+        from kerykeion.utilities import datetime_to_julian
+
+        end = "2026-01-01_12:00:00"
+        res = VoidOfCourseMoonFactory.from_iso_range(end, end)
+        assert res.end_jd == datetime_to_julian(datetime.fromisoformat(end))
+
     def test_civil_range_overflow_normalized_to_kerykeion_exception(self, monkeypatch):
         # Near the year-1 boundary the sign-by-sign Moon walk can step before
         # 1 CE, where julian_day_to_utc raises a bare OverflowError/ValueError
@@ -268,6 +277,18 @@ class TestVoidWindowsRange:
             monkeypatch.setattr(fac, "compute_void_windows", boom)
             with pytest.raises(KerykeionException, match="narrow the date range"):
                 VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
+
+    def test_backend_range_error_normalized_to_kerykeion_exception(self, monkeypatch):
+        import kerykeion.void_of_course_moon.factory as fac
+
+        assert fac._BACKEND_ERROR_TYPES, "active ephemeris backend must expose an Error type"
+
+        def boom(*args, **kwargs):
+            raise fac._BACKEND_ERROR_TYPES[0]("simulated ephemeris range failure")
+
+        monkeypatch.setattr(fac, "compute_void_windows", boom)
+        with pytest.raises(KerykeionException, match="narrow the date range"):
+            VoidOfCourseMoonFactory.from_iso_range("2025-01-01", "2025-01-31")
 
     def test_year_one_edge_never_leaks_a_bare_error(self):
         # A range at the very start of the civil calendar must never surface a

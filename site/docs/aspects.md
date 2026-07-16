@@ -82,6 +82,15 @@ Synastry Aspects: 67
 
 _These parameters affect aspect movement calculation (applying/separating)._
 
+### Deprecated compatibility aliases
+
+`natal_aspects(subject, *, active_points=None, active_aspects=None,
+axis_orb_limit=None)` delegates to `single_chart_aspects()`, while
+`synastry_aspects(first_subject, second_subject, *, active_points=None,
+active_aspects=None, axis_orb_limit=None)` delegates to `dual_chart_aspects()`.
+Both aliases emit `DeprecationWarning` and are scheduled for removal in 7.0.0;
+new code should call the corresponding primary method directly.
+
 ## Configuration
 
 ### Supported Aspects
@@ -102,7 +111,7 @@ Kerykeion calculates both major and minor aspects. Orbs can be customized.
 | **Biquintile**     | 144°  | 2°          | No                | Minor |
 | **Quincunx**       | 150°  | 2°          | No                | Minor |
 
-> The orb values shown above are the base orbs from `DEFAULT_ACTIVE_ASPECTS` / `ALL_ACTIVE_ASPECTS`. Luminary widening (+1.5° for Sun/Moon) is applied separately via per-point orb adjustments, bringing Sun/Moon major aspects to an effective ~7.5° orb. The `DEFAULT_ACTIVE_ASPECTS` preset includes only the five major aspects (conjunction, sextile, square, trine, opposition). To enable all 11 aspects, pass `active_aspects=ALL_ACTIVE_ASPECTS` from `kerykeion.settings.config_constants`.
+> The orb values shown above are the base orbs from `DEFAULT_ACTIVE_ASPECTS` / `ALL_ACTIVE_ASPECTS`. `AspectsFactory` applies no luminary widening unless a per-point adjustment table is supplied; `ChartDataFactory` natal, synastry, and composite entry points resolve `None` to the Sun/Moon +1.5° preset. The `DEFAULT_ACTIVE_ASPECTS` preset includes only the five major aspects (conjunction, sextile, square, trine, opposition). To enable all 11 aspects, pass `active_aspects=ALL_ACTIVE_ASPECTS` from `kerykeion.settings.config_constants`.
 
 ### Filtering Options
 
@@ -136,6 +145,7 @@ tight_aspects = AspectsFactory.single_chart_aspects(subject, active_aspects=cust
 #### Axis Orbs (`axis_orb_limit`)
 
 Apply stricter orbs when angles (Ascendant, MC) are involved.
+The value must be a finite positive number when provided.
 
 ```python
 # Standard orb for planets, but strict 2° orb for Angles
@@ -145,15 +155,16 @@ aspects = AspectsFactory.single_chart_aspects(subject, axis_orb_limit=2.0)
 #### Per-point Orbs (`point_orb_adjustments`)
 
 Widen or tighten the orb for specific points (for example, give the luminaries a
-larger orb). `point_orb_adjustments` maps a point name to an orb value, and
-`point_orb_adjustment_strategy` (default `"max_explicit"`) controls how the two
-endpoints' adjustments combine.
+larger orb). `point_orb_adjustments` maps a point name to a **finite additive
+adjustment** in degrees, and `point_orb_adjustment_strategy` (default
+`"max_explicit"`) controls how the two endpoints' adjustments combine. NaN and
+infinite adjustments are rejected before calculation.
 
 ```python
-# Give the Sun and Moon a wider 10° orb; all other points keep their defaults.
+# Add 1.5° to aspects involving the Sun or Moon.
 aspects = AspectsFactory.single_chart_aspects(
     subject,
-    point_orb_adjustments={"Sun": 10.0, "Moon": 10.0},
+    point_orb_adjustments={"Sun": 1.5, "Moon": 1.5},
 )
 ```
 
@@ -195,7 +206,7 @@ for asp in dec_aspects:
 | Parameter       | Type         | Default | Description                                    |
 | :-------------- | :----------- | :------ | :--------------------------------------------- |
 | `subject`       | Subject      | --      | The astrological subject                       |
-| `orb`           | float        | 1.0     | Maximum orb in degrees                         |
+| `orb`           | float        | 1.0     | Finite, non-negative maximum orb in degrees    |
 | `active_points` | List or None | None    | Points to include (defaults to subject's list) |
 
 ### `dual_chart_declination_aspects`
@@ -214,6 +225,8 @@ dec_synastry = AspectsFactory.dual_chart_declination_aspects(subject_a, subject_
 ```
 
 Returns `List[AspectModel]` with `aspect="parallel"` or `aspect="contra-parallel"`.
+Its `orb` parameter has the same finite, non-negative contract as the
+single-chart method.
 
 ## Aspect Utilities
 

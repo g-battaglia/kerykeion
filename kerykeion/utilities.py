@@ -589,6 +589,26 @@ def validate_latitude(latitude: float) -> float:
     return latitude
 
 
+def validate_longitude(longitude: float) -> float:
+    """Validate a geographic longitude without wrapping or clamping it.
+
+    Args:
+        longitude: Longitude in degrees, east positive.
+
+    Returns:
+        The longitude unchanged.
+
+    Raises:
+        KerykeionException: If the longitude is non-finite or outside
+            the geometrically valid [-180, 180] interval.
+    """
+    if not -180.0 <= longitude <= 180.0:
+        raise KerykeionException(
+            f"Longitude {longitude} is out of range; it must be between -180 and 180 degrees."
+        )
+    return longitude
+
+
 def check_and_adjust_polar_latitude(latitude: float) -> float:
     """
     Clamp a polar latitude to the ±66° limit for house-calculation stability.

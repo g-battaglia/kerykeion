@@ -159,6 +159,22 @@ class TestDeclinationAspects:
         for a in aspects:
             assert a.orbit == 0.0
 
+    @pytest.mark.parametrize(
+        "invalid_orb",
+        [float("nan"), float("inf"), float("-inf"), -1.0],
+    )
+    def test_invalid_orb_rejected(self, john_lennon, yoko_ono, invalid_orb):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="orb"):
+            AspectsFactory.single_chart_declination_aspects(john_lennon, orb=invalid_orb)
+        with pytest.raises(KerykeionException, match="orb"):
+            AspectsFactory.dual_chart_declination_aspects(
+                john_lennon,
+                yoko_ono,
+                orb=invalid_orb,
+            )
+
     def test_no_duplicate_pairs(self, john_lennon):
         """Each planet pair should appear at most once (no parallel AND contra-parallel)."""
         aspects = AspectsFactory.single_chart_declination_aspects(john_lennon, orb=2.0)

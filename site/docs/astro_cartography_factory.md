@@ -38,11 +38,11 @@ Compute ACG lines for a natal chart.
 
 | Parameter   | Type                     | Default    | Description                                              |
 | :---------- | :----------------------- | :--------- | :------------------------------------------------------- |
-| `subject`   | AstrologicalSubjectModel | --         | The natal chart subject                                  |
-| `step`      | float                    | 1.0        | Latitude sampling step in degrees for the line points    |
+| `subject`   | AstrologicalSubjectModel | --         | A natal chart subject with a finite Julian Day            |
+| `step`      | float                    | 1.0        | Finite positive latitude sampling step; the projected grid is capped at 1,000,000 line points |
 | `tolerance` | float or None            | None       | Unused since v6 (horizon equation is solved exactly); kept for backward compatibility |
-| `lat_range` | tuple                    | (-66, 66)  | Latitude range to compute (avoids polar instability)     |
-| `planets`   | List[str] or None        | None       | Planet names (defaults to Sun through Pluto)             |
+| `lat_range` | tuple[float, float]      | (-66, 66)  | Finite ordered bounds within -90..+90 degrees            |
+| `planets`   | list[str] or tuple[str, ...] or None | None | Supported planet names (defaults to Sun through Pluto); malformed or unknown entries raise `KerykeionException` |
 
 **Returns:** `List[ACGLineModel]` -- one per planet per line type.
 

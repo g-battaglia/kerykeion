@@ -100,7 +100,7 @@ return_factory = PlanetaryReturnFactory(
     custom_ayanamsa_ayan_t0=23.5,
 )
 
-solar_return = return_factory.next_return_from_year(2024, "Solar")
+solar_return = return_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 print(f"Return ayanamsa: {solar_return.ayanamsa_value:.4f}°")
 ```
 
@@ -145,39 +145,65 @@ Convenience wrappers: `next_lunar_node_crossing_from_year(year)`, `next_lunar_no
 | `subject`                  | `AstrologicalSubjectModel` | **Required** | The natal subject whose return is being calculated.              |
 | `city`                     | `Optional[str]`          | `None`      | City name for the return location.                                 |
 | `nation`                   | `Optional[str]`          | `None`      | ISO country code for the return location.                          |
-| `lng`                      | `Optional[float]`        | `None`      | Longitude of the return location.                                  |
-| `lat`                      | `Optional[float]`        | `None`      | Latitude of the return location.                                   |
+| `lng`                      | `int \| float \| None`  | `None`      | Longitude of the return location.                                  |
+| `lat`                      | `int \| float \| None`  | `None`      | Latitude of the return location.                                   |
 | `tz_str`                   | `Optional[str]`          | `None`      | Timezone string for the return location.                           |
 | `online`                   | `bool`                   | `True`      | Whether to resolve location via GeoNames API.                      |
 | `geonames_username`        | `Optional[str]`          | `None`      | GeoNames username for online mode.                                 |
 | `cache_expire_after_days`  | `int`                    | `30`        | Days to cache online location lookups.                             |
-| `altitude`                 | `Optional[float]`        | `None`      | Altitude in meters for the return location.                        |
+| `altitude`                 | `int \| float \| None`  | `None`      | Altitude in meters for the return location.                        |
 | `custom_ayanamsa_t0`       | `Optional[float]`        | `None`      | Reference epoch (Julian Day) for USER sidereal mode.               |
 | `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`      | Ayanamsa offset at epoch (required with USER sidereal mode).       |
+| `active_fixed_stars`       | `List[str] \| None`     | `None`      | Fixed-star catalog names to compute on the return chart.           |
+| `calculate_dignities`      | `bool`                   | `False`     | Populate essential dignity data.                                   |
+| `calculate_nakshatra`      | `bool`                   | `False`     | Populate Vedic nakshatra data.                                     |
+| `calculate_gauquelin`      | `bool`                   | `False`     | Populate Gauquelin sectors.                                        |
+| `calculate_nutation`       | `bool`                   | `False`     | Populate the nutation model.                                       |
+| `calculate_local_space`    | `bool`                   | `False`     | Populate local-space azimuth/altitude.                             |
 
 ## Methods
 
-### `next_return_from_date(year, month, day, *, return_type)`
+### `next_return_from_date(year, month, day=1, *, return_type, backwards=False)`
 
-Finds the next return starting search from a specific year/month/day. This is the **primary method**.
+Finds a return starting from a specific year/month/day. This is the **primary method**.
 
 ```python
 result = return_factory.next_return_from_date(2025, 1, 1, return_type="Solar")
 ```
 
-| Parameter     | Type         | Default     | Description                              |
-| :------------ | :----------- | :---------- | :--------------------------------------- |
-| `year`        | `int`        | **Required** | Year to start searching from.           |
-| `month`       | `int`        | **Required** | Month to start searching from.          |
-| `day`         | `int`        | `1`          | Day to start searching from.            |
-| `return_type` | `ReturnType` | **Required** | `"Solar"` or `"Lunar"` (keyword-only).  |
+| Parameter     | Type         | Default      | Description                              |
+| :------------ | :----------- | :----------- | :--------------------------------------- |
+| `year`        | `int`        | **Required** | Year to start searching from.            |
+| `month`       | `int`        | **Required** | Month to start searching from.           |
+| `day`         | `int`        | `1`          | Day to start searching from.             |
+| `return_type` | `ReturnType` | **Required** | `"Solar"` or `"Lunar"` (keyword-only).   |
+| `backwards`   | `bool`       | `False`      | If `True`, return the most recent return before the starting date instead of the next one. |
 
-### `next_return_from_iso_formatted_time(iso_formatted_time, return_type)`
+### `next_return_from_iso_formatted_time(iso_formatted_time, return_type, backwards=False)`
 
-Finds the next return starting search from a precise ISO timestamp.
+Finds a return starting from a precise ISO timestamp.
 
 ```python
 result = return_factory.next_return_from_iso_formatted_time("2024-06-15T12:00:00", "Lunar")
+```
+
+| Parameter            | Type         | Default      | Description                              |
+| :------------------- | :----------- | :----------- | :--------------------------------------- |
+| `iso_formatted_time` | `str`        | **Required** | ISO 8601 timestamp at which to start the search. |
+| `return_type`        | `ReturnType` | **Required** | `"Solar"` or `"Lunar"`.                  |
+| `backwards`          | `bool`       | `False`      | If `True`, search for the most recent return before the timestamp. |
+
+Backward Solar/Lunar return search requires the default libephemeris backend;
+the optional pyswisseph backend does not expose backward crossing searches and
+raises `KerykeionException` for `backwards=True`.
+
+```python
+previous_solar_return = return_factory.next_return_from_date(
+    2025, 1, 1,
+    return_type="Solar",
+    backwards=True,
+)
+print(previous_solar_return.iso_formatted_utc_datetime)
 ```
 
 ### `next_return_from_year(year, return_type)` _(Deprecated)_
@@ -188,6 +214,16 @@ Finds the first return occurring in a given calendar year. **Deprecated** -- use
 result = return_factory.next_return_from_year(2025, "Solar")  # Deprecated
 result = return_factory.next_return_from_date(2025, 1, 1, return_type="Solar")  # Preferred
 ```
+
+Both arguments are required; `return_type` is `"Solar"` or `"Lunar"`. The
+method emits `DeprecationWarning`, is scheduled for removal in 7.0.0, and
+delegates to `next_return_from_date(year, 1, 1, return_type=...)`.
+
+### `next_return_from_month_and_year(year, month, return_type)` _(Deprecated)_
+
+This older three-argument alias searches from the first day of `month`. It
+emits `DeprecationWarning`, is scheduled for removal in 7.0.0, and delegates to
+`next_return_from_date(year, month, 1, return_type=...)`.
 
 ## Relocation Astrology
 

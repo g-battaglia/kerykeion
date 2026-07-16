@@ -130,6 +130,15 @@ class TestContract:
         )
         assert len(res.aspects) == 1
 
+    def test_nonstandard_datetime_separator_not_widened(self):
+        from datetime import datetime
+
+        from kerykeion.utilities import datetime_to_julian
+
+        end = "2026-01-01_12:00:00"
+        res = MundaneAspectFactory.from_iso_range(end, end, points=[])
+        assert res.end_jd == datetime_to_julian(datetime.fromisoformat(end))
+
     def test_unknown_point_rejected(self):
         with pytest.raises(ValueError, match="Unknown points"):
             MundaneAspectFactory.from_iso_range("2025-01-01", "2025-01-31", points=["Vulcan"])
@@ -145,6 +154,13 @@ class TestContract:
     def test_range_too_large_rejected(self):
         with pytest.raises(ValueError, match="too large"):
             MundaneAspectFactory.from_julian_day(0.0, 600_000_000.0)
+
+    @pytest.mark.parametrize("bad_jd", [float("nan"), float("inf"), float("-inf")])
+    @pytest.mark.parametrize("bad_bound", ["start", "end"])
+    def test_non_finite_julian_bounds_rejected(self, bad_jd, bad_bound):
+        start, end = (bad_jd, 2451546.0) if bad_bound == "start" else (2451545.0, bad_jd)
+        with pytest.raises(ValueError, match="finite"):
+            MundaneAspectFactory.from_julian_day(start, end, points=[])
 
     def test_empty_points_yields_empty_result(self):
         res = MundaneAspectFactory.from_iso_range("2025-01-01", "2025-01-31", points=[])

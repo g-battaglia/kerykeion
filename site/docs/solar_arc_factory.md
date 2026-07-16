@@ -51,6 +51,8 @@ Returns a `SolarArcSubjectModel` with the solar arc, directed points, and direct
 | `compute_aspects`          | bool              | True            | Whether to compute directed-to-natal aspects   |
 | `aspect_orb`               | float             | 3.0             | Orb in degrees for aspect detection            |
 | `aspects`                  | Sequence[str] or None | None        | Whitelist of aspect names                      |
+| `point_orb_adjustments`    | Mapping[str, float] or None | None   | Finite additive per-point orb adjustments      |
+| `point_orb_adjustment_strategy` | str          | "max_explicit" | `max_explicit`, `min_explicit`, `sum`, or `none` |
 
 ### `compute_directed_subject(natal_subject, *, target_iso_utc_datetime=None, target_year=None)`
 

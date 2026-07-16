@@ -21,6 +21,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import math
+from numbers import Real
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from typing import List, Optional, Dict, Literal
@@ -52,6 +53,21 @@ _ACG_PLANET_IDS: Dict[str, int] = {
 }
 
 
+def _finite_float(value: object) -> Optional[float]:
+    """Coerce a supported real value to float, returning ``None`` if unsafe.
+
+    ``bool`` is rejected: it passes ``Real`` checks (``int`` subclass) but a
+    ``True``/``False`` step, latitude, or Julian Day is always a caller mistake.
+    """
+    if isinstance(value, bool) or not isinstance(value, Real):
+        return None
+    try:
+        converted = float(value)
+    except (OverflowError, TypeError, ValueError):
+        return None
+    return converted if math.isfinite(converted) else None
+
+
 class AstroCartographyFactory:
     """
     Factory for computing astro-cartography (ACG) lines.
@@ -68,6 +84,11 @@ class AstroCartographyFactory:
 
     PLANETS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
                "Uranus", "Neptune", "Pluto"]
+    # Upper bound on the projected number of line points for one compute()
+    # call. Generous enough for high-resolution maps (step=0.01 over the full
+    # default range with all ten planets stays under it) while still rejecting
+    # pathological grids (step=1e-9) that would hang the process.
+    MAX_PROJECTED_POINTS = 1_000_000
 
     @staticmethod
     def compute(
@@ -75,7 +96,7 @@ class AstroCartographyFactory:
         *,
         step: float = 1.0,
         tolerance: Optional[float] = None,
-        lat_range: tuple = (-66, 66),
+        lat_range: tuple[float, float] = (-66, 66),
         planets: Optional[List[str]] = None,
     ) -> List[ACGLineModel]:
         """
@@ -102,45 +123,88 @@ class AstroCartographyFactory:
         Args:
             subject: The natal chart subject.
             step: Latitude scanning step in degrees for the line points
-                (default 1.0).
+                (default 1.0). Must be finite and positive.
             tolerance: Unused since v6 (the horizon equation is solved
                 exactly, so there is no proximity matching). Accepted for
                 backward compatibility.
-            lat_range: Latitude range to compute (default -66 to +66, avoids polar).
-            planets: List of planet names. Defaults to Sun through Pluto.
+            lat_range: Two finite latitude bounds within -90..+90, ordered
+                minimum first (default -66 to +66, avoids polar).
+            planets: List of supported planet names. Defaults to Sun through
+                Pluto. Unknown/malformed entries raise ``KerykeionException``.
 
         Returns:
             List of ACGLineModel objects, one per planet per line type.
+
+        Raises:
+            KerykeionException: For invalid inputs, or when the requested grid
+                would project more than ``MAX_PROJECTED_POINTS`` (1,000,000)
+                line points — increase ``step``, narrow ``lat_range``, or
+                request fewer planets.
         """
         if planets is None:
-            planets = AstroCartographyFactory.PLANETS
+            requested_planets = list(AstroCartographyFactory.PLANETS)
+        else:
+            if isinstance(planets, (str, bytes)) or not isinstance(planets, (list, tuple)):
+                raise KerykeionException("planets must be a sequence of supported planet names, not a string.")
+            invalid_planets = [
+                planet
+                for planet in planets
+                if not isinstance(planet, str) or planet not in _ACG_PLANET_IDS
+            ]
+            if invalid_planets:
+                raise KerykeionException(
+                    f"Unknown astro-cartography planets: {invalid_planets!r}. "
+                    f"Valid values: {', '.join(AstroCartographyFactory.PLANETS)}."
+                )
+            requested_planets = list(dict.fromkeys(planets))
 
         # A non-positive step never advances the latitude scan: the ASC/DSC
         # ``while lat <= lat_max: lat += step`` loop would spin forever. Reject
         # it up front rather than hang.
-        if step <= 0:
+        step_value = _finite_float(step)
+        if step_value is None or step_value <= 0:
             raise KerykeionException(
-                f"step must be a positive number of degrees, got {step!r}."
+                f"step must be a finite positive number of degrees, got {step!r}."
+            )
+
+        if not isinstance(lat_range, (tuple, list)) or len(lat_range) != 2:
+            raise KerykeionException(
+                f"lat_range must contain exactly two numeric latitudes, got {lat_range!r}."
+            )
+        if any(isinstance(value, bool) or not isinstance(value, Real) for value in lat_range):
+            raise KerykeionException(
+                f"lat_range must contain two finite numeric latitudes, got {lat_range!r}."
+            )
+        lat_min = _finite_float(lat_range[0])
+        lat_max = _finite_float(lat_range[1])
+        if lat_min is None or lat_max is None:
+            raise KerykeionException(f"lat_range bounds must be finite, got {lat_range!r}.")
+        if lat_min < -90 or lat_max > 90:
+            raise KerykeionException(
+                f"lat_range must stay within -90..90 degrees, got {lat_range!r}."
             )
 
         # An inverted range (lat_min > lat_max) yields a negative n_steps below
         # and an empty grid — every line would be emitted with no points, no
         # warning. Reject it rather than return silent garbage.
-        if lat_range[0] > lat_range[1]:
+        if lat_min > lat_max:
             raise KerykeionException(
                 f"lat_range must be (min, max) with min <= max, got {lat_range!r}."
             )
 
-        jd = subject.julian_day
+        subject_jd = subject.julian_day
         # A midpoint composite subject carries julian_day=None (it is a synthetic
         # blend of two charts, not a single instant). Without this guard the None
         # flows into the JD arithmetic below and surfaces as a cryptic
         # "'<' not supported between float and NoneType" from deep inside skyfield.
-        if jd is None:
+        if subject_jd is None:
             raise KerykeionException(
                 "Subject is missing Julian Day - astro-cartography needs a single birth "
                 "instant and cannot be computed for a midpoint composite subject."
             )
+        jd = _finite_float(subject_jd)
+        if jd is None:
+            raise KerykeionException("Subject Julian Day must be finite to compute astro-cartography lines.")
 
         # Keep only planets that are both supported and present on the
         # subject (mirrors the subject's active points selection). De-duplicate
@@ -148,7 +212,7 @@ class AstroCartographyFactory:
         # not get duplicate MC/IC lines and doubled ASC/DSC point lists.
         selected: List[str] = []
         _seen: set = set()
-        for pname in planets:
+        for pname in requested_planets:
             if (
                 pname in _ACG_PLANET_IDS
                 and pname not in _seen
@@ -158,6 +222,16 @@ class AstroCartographyFactory:
                 _seen.add(pname)
         if not selected:
             return []
+
+        span = lat_max - lat_min
+        raw_steps = span / step_value
+        projected_points = (raw_steps + 2.0) * len(selected) * 4
+        if not math.isfinite(projected_points) or projected_points > AstroCartographyFactory.MAX_PROJECTED_POINTS:
+            raise KerykeionException(
+                f"Requested ACG grid exceeds the {AstroCartographyFactory.MAX_PROJECTED_POINTS:,}-point "
+                "safety limit. "
+                "Increase step, narrow lat_range, or request fewer planets."
+            )
 
         mc_lines: Dict[str, ACGLineModel] = {}
         ic_lines: Dict[str, ACGLineModel] = {}
@@ -174,7 +248,6 @@ class AstroCartographyFactory:
             # so the fetch is identical for tropical and sidereal charts.
             eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
 
-            lat_min, lat_max = lat_range
             # One shared float latitude grid for every line type. Previously
             # MC/IC built their grid with range(int(lat_min), ..., max(1, int(step)))
             # — silently coercing a fractional step to an integer (and to >= 1) —
@@ -184,11 +257,11 @@ class AstroCartographyFactory:
             # Integer-indexed grid: accumulating `lat += step` drifts in float
             # (with step=0.1 the last row landed at 65.9 and the requested
             # 66.0 edge was missing from every line).
-            n_steps = int(round((lat_max - lat_min) / step))
+            n_steps = int(round((lat_max - lat_min) / step_value))
             latitudes: List[float] = [
-                round(lat_min + i * step, 4)
+                round(lat_min + i * step_value, 4)
                 for i in range(n_steps + 1)
-                if lat_min + i * step <= lat_max + 1e-9
+                if lat_min + i * step_value <= lat_max + 1e-9
             ]
 
             for pname in selected:
@@ -242,4 +315,3 @@ class AstroCartographyFactory:
                 result.append(ACGLineModel(planet=pname, line_type="DSC", points=dsc_lines[pname]))
 
         return result
-

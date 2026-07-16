@@ -16,7 +16,7 @@
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 
 <p align="center">
-  <img src="docs/charts/classic_default_natal.svg" width="540" alt="John Lennon - Natal Chart">
+  <img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_default_natal.svg" width="540" alt="John Lennon - Natal Chart">
 </p>
 
 Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts, including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
@@ -910,6 +910,17 @@ aspect_grid_chart.save_aspect_grid_only_svg_file(output_path=output_dir, filenam
 
 ![John Lennon — Aspect Grid](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
 
+### Machine-readable point metadata
+
+Rendered `<g kr:node="ChartPoint">` elements expose stable `kr:` attributes for
+interactive consumers. On every dual wheel (Transit, Synastry, Dual Return,
+and Progression), `kr:house` remains the point owner's house and
+`kr:horoscope` identifies that owner ring. `kr:projectedhouse` gives the same
+point's house in the other subject's cusp system, while
+`kr:projectedhoroscope` identifies that target ring. The reciprocal metadata is
+available in classic/modern, full/wheel-only output even when house-comparison
+data or tables are disabled.
+
 ## Modern Chart Style
 
 All chart types support a **modern** concentric-ring layout as an alternative to the classic wheel. You can set the style at the instance level via `ChartDrawer(chart_data=..., style="modern")` or per-render via `save_svg(style="modern")`. The modern style works with all six themes.
@@ -1439,17 +1450,17 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
   </tr>
   <tr>
     <td align="center"><strong>Classic Style</strong></td>
-    <td><img src="docs/charts/classic_default_natal.svg" width="220" alt="Classic Natal Chart"></td>
-    <td><img src="docs/charts/classic_dark_natal.svg" width="220" alt="Dark Natal Chart"></td>
-    <td><img src="docs/charts/classic_light_natal.svg" width="220" alt="Light Natal Chart"></td>
-    <td><img src="docs/charts/classic_black_and_white_natal.svg" width="220" alt="Black and White Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_default_natal.svg" width="220" alt="Classic Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_dark_natal.svg" width="220" alt="Dark Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_light_natal.svg" width="220" alt="Light Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_black_and_white_natal.svg" width="220" alt="Black and White Natal Chart"></td>
   </tr>
   <tr>
     <td align="center"><strong>Modern Style</strong></td>
-    <td><img src="docs/charts/modern_classic_natal.svg" width="220" alt="Modern Classic Natal Chart"></td>
-    <td><img src="docs/charts/modern_dark_natal.svg" width="220" alt="Modern Dark Natal Chart"></td>
-    <td><img src="docs/charts/modern_light_natal.svg" width="220" alt="Modern Light Natal Chart"></td>
-    <td><img src="docs/charts/modern_black_and_white_natal.svg" width="220" alt="Modern Black and White Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_classic_natal.svg" width="220" alt="Modern Classic Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_dark_natal.svg" width="220" alt="Modern Dark Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_light_natal.svg" width="220" alt="Modern Light Natal Chart"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_black_and_white_natal.svg" width="220" alt="Modern Black and White Natal Chart"></td>
   </tr>
 </table>
 
@@ -1601,7 +1612,12 @@ chart.save_svg(output_path=output_dir, filename="johnny-depp-custom-points")
 
 ## Fixed Stars
 
-Kerykeion includes **23 fixed stars** — the 2 original stars (Regulus, Spica) plus 21 new stars added in v5.12, completing all 15 Behenian stars of the medieval/Hermetic tradition plus 8 additional bright stars. The set includes the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each star provides ecliptic longitude, daily motion (`speed`), equatorial `declination`, and apparent visual `magnitude`.
+The default libephemeris backend exposes a **1,447-star catalog**. Kerykeion's
+`DEFAULT_FIXED_STARS` preset selects 23 commonly used stars: all 15 Behenian
+stars plus 8 additional bright stars, including the 4 Royal Stars. You may pass
+any catalog name, not only preset members. Each computed star provides ecliptic
+longitude, daily motion (`speed`), equatorial `declination`, and apparent visual
+`magnitude`.
 
 Fixed stars are **opt-in**: pass the names you want to `active_fixed_stars` when building the subject. Stars requested this way are computed into `subject.fixed_stars` and participate automatically in chart rendering and aspect calculations.
 
@@ -1625,7 +1641,11 @@ print(sirius.declination)    # Equatorial declination
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 ```
 
-Available fixed stars: Regulus, Spica, Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi, Alkaid.
+The 23-star preset contains: Regulus, Spica, Aldebaran, Antares, Sirius,
+Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair,
+Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi, and
+Alkaid. Discover other names with `FixedStarCatalog.list_all()` or
+`FixedStarCatalog.find()` from `kerykeion.fixed_stars`.
 
 **📖 Full active points list: [Active Points Documentation](https://www.kerykeion.net/content/docs/active_points)**
 
@@ -2353,13 +2373,13 @@ For commercial or closed-source applications, consider using the paid [Astrologe
 
 ## License
 
-This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
+This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](https://github.com/g-battaglia/kerykeion/blob/alpha/v6/LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
 
 As a rule of thumb, if you use this library in a project, you should open-source that project under a compatible license. Alternatively, if you wish to keep your source closed, consider using the paid [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe), which is AGPL-3.0 compliant and also helps support the project.
 
 Since the Astrologer API is an external third-party service, using it does _not_ require your code to be open-source.
 
-_This is not legal advice — see the [LICENSE](LICENSE) file and consult legal counsel for guidance._
+_This is not legal advice — see the [LICENSE](https://github.com/g-battaglia/kerykeion/blob/alpha/v6/LICENSE) file and consult legal counsel for guidance._
 
 ## Contributing
 

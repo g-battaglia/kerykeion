@@ -913,6 +913,16 @@ class TestAxisOrbFilter:
         filtered = AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=limit).aspects
         assert len(filtered) < len(unfiltered)
 
+    @pytest.mark.parametrize(
+        "invalid_limit",
+        [float("nan"), float("inf"), float("-inf"), 0.0, -1.0],
+    )
+    def test_axis_orb_limit_rejects_non_finite_or_non_positive(self, _subject, invalid_limit):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="axis_orb_limit"):
+            AspectsFactory.single_chart_aspects(_subject, axis_orb_limit=invalid_limit)
+
     def test_axis_orb_filters_dual_chart(self, _subject, _subject2):
         """axis_orb_limit now also filters dual-chart (synastry) aspects (was a no-op)."""
         active_points = [
@@ -1034,11 +1044,50 @@ class TestOrbAdjustmentResolver:
         adj = {"Sun": 1.5, "Moon": 1.0}
         assert resolve_pair_orb_adjustment("Sun", "Moon", adj, strategy="sum") == 2.5
 
+    @pytest.mark.parametrize(
+        ("first", "second"),
+        [(1e308, 1e308), (10**308, 10**308)],
+        ids=["floats", "integers"],
+    )
+    def test_sum_strategy_rejects_finite_values_that_overflow(self, first, second):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        with pytest.raises(ValueError, match="must be finite"):
+            resolve_pair_orb_adjustment(
+                "Sun",
+                "Moon",
+                {"Sun": first, "Moon": second},
+                strategy="sum",
+            )
+
     def test_min_explicit_strategy(self):
         from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
 
         adj = {"Sun": 1.5, "Pluto": -2.0}
         assert resolve_pair_orb_adjustment("Sun", "Pluto", adj, strategy="min_explicit") == -2.0
+
+    @pytest.mark.parametrize("adjustment", [float("nan"), float("inf"), float("-inf")])
+    def test_non_finite_adjustment_rejected(self, adjustment):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        with pytest.raises(ValueError, match="finite"):
+            resolve_pair_orb_adjustment("Sun", "Mars", {"Sun": adjustment})
+
+    def test_unrepresentably_large_integer_adjustment_rejected(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        with pytest.raises(ValueError, match="finite"):
+            resolve_pair_orb_adjustment("Sun", "Mars", {"Sun": 10**309})
+
+    @pytest.mark.parametrize("adjustment", [True, False])
+    def test_boolean_adjustment_rejected(self, adjustment):
+        """bool is a Real (int subclass) but is never a valid orb adjustment."""
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment, validate_point_orb_adjustments
+
+        with pytest.raises(ValueError, match="finite"):
+            resolve_pair_orb_adjustment("Sun", "Mars", {"Sun": adjustment})
+        with pytest.raises(ValueError, match="finite"):
+            validate_point_orb_adjustments({"Sun": adjustment})
 
 
 class TestPointOrbAdjustmentsIntegration:
@@ -1085,6 +1134,14 @@ class TestPointOrbAdjustmentsIntegration:
         for a in result.aspects:
             assert "Sun" not in (a.p1_name, a.p2_name)
             assert "Moon" not in (a.p1_name, a.p2_name)
+
+    @pytest.mark.parametrize("adjustment", [float("nan"), float("inf"), float("-inf")])
+    def test_non_finite_adjustment_rejected_up_front(self, _subject, adjustment):
+        with pytest.raises(ValueError, match="finite"):
+            AspectsFactory.single_chart_aspects(
+                _subject,
+                point_orb_adjustments={"UnusedPoint": adjustment},
+            )
 
     def test_chart_data_natal_applies_luminary_bonus(self, _subject):
         """create_natal_chart_data defaults to the luminary bonus."""

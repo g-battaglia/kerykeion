@@ -53,6 +53,13 @@ class TestLunationsRange:
         with pytest.raises(ValueError):
             LunationFinderFactory.from_julian_day(2451545.0, 2451545.0 + 3.1e6)
 
+    @pytest.mark.parametrize("bad_jd", [float("nan"), float("inf"), float("-inf")])
+    @pytest.mark.parametrize("bad_bound", ["start", "end"])
+    def test_non_finite_julian_bounds_rejected(self, bad_jd, bad_bound):
+        start, end = (bad_jd, 2451546.0) if bad_bound == "start" else (2451545.0, bad_jd)
+        with pytest.raises(ValueError, match="finite"):
+            LunationFinderFactory.from_julian_day(start, end, phases=[])
+
     def test_date_only_end_covers_full_day(self):
         # A date-only end_date must span through the end of that UTC day, not
         # stop at midnight (which would drop a lunation later on the last day).
@@ -70,6 +77,11 @@ class TestLunationsRange:
         assert res.end_jd == upper.end_jd
         # And every reported lunation respects that exact boundary.
         assert all(lun.julian_day <= res.end_jd for lun in res.lunations)
+
+    def test_nonstandard_datetime_separator_not_widened(self):
+        end = "2026-03-20_12:00:00"
+        res = LunationFinderFactory.from_iso_range("2026-03-20_12:00:00", end, phases=[])
+        assert res.end_jd == datetime_to_julian(datetime.fromisoformat(end))
 
     def test_no_phantom_lunation_at_range_start(self):
         # A range beginning just after a new moon (12 Aug 2026) must not report a

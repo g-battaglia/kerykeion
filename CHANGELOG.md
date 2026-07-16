@@ -2,6 +2,95 @@
 
 ## [Unreleased]
 
+## 6.0.0a73 - 2026-07-16
+
+### Fixed
+
+- **Nested ephemeris sessions can no longer corrupt an outer calculation.**
+  `ephemeris_session()` now rejects same-thread nesting before the inner call
+  mutates process-global sidereal/topocentric state. Previously the inner
+  cleanup reset the still-active outer session; a LAHIRI calculation could
+  silently continue with tropical/default state.
+- **Predictive Julian-Day range APIs reject non-finite bounds consistently.**
+  Lunation, retrograde-station, sign-ingress, and mundane-aspect searches now
+  raise `ValueError` for `NaN` or infinite bounds instead of returning a
+  plausible empty model, serializing `null`, or leaking a later overflow.
+- **Eclipse and occultation searches reject negative event counts.** `count=0`
+  remains an explicit empty search; negative counts now raise `ValueError`
+  rather than succeeding vacuously.
+- **Void-of-course backend error normalization is statically typed.** Backend
+  exception classes are resolved and validated once, preserving the documented
+  `KerykeionException` boundary while restoring a clean mypy gate.
+- **ISO range endpoints preserve every separator accepted by Python.** The five
+  timing range factories now distinguish date-only bounds by parsing them as
+  dates. Datetimes using valid non-`T` separators such as `_` are no longer
+  mistaken for dates and widened through the end of the day.
+- **Orb and astrocartography numeric contracts reject non-finite values.**
+  Aspect-axis limits, declination orbs, fixed-star discovery orbs, and ACG
+  latitude steps now reject `NaN` and infinities. ACG latitude bounds must also
+  be finite, ordered, and contained within the geographic -90..+90 range.
+- **Low-level ephemeris and predictive inputs now fail fast.** Unknown zodiac
+  or perspective session values, non-finite USER ayanamsha/topocentric values,
+  non-finite single Julian Days, and invalid eclipse/occultation longitudes no
+  longer select defaults, bypass work through empty requests, or persist
+  invalid model fields.
+- **Primary directions validate their calculation contract.** Unknown rate
+  keys, invalid horizons, malformed or unknown aspect filters, duplicate
+  aspect names, and non-finite subject geometry are rejected or normalized
+  before calculation instead of returning plausible empty/corrupt/duplicated
+  directions.
+- **Primary-direction coordinates now preserve the subject's reference frame.**
+  Planetocentric specula use the requested center-body vector, sidereal labels
+  no longer leak into physical equatorial coordinates, and Topocentric subjects
+  retain and reuse their observer altitude.
+- **Fast paths no longer bypass subject and filter validation.** Fixed-star
+  discovery rejects non-finite subject Julian Days before catalog shortcuts
+  (raising the factory's documented `KerykeionException`); astro-cartography
+  also rejects non-finite Julian Days, malformed or unknown planet filters,
+  and projected grids above 1,000,000 line points (generous enough for
+  step=0.01 high-resolution maps with all ten planets).
+- **Per-point aspect adjustments reject corrupt numeric input.** Non-string
+  keys and non-finite adjustment values now fail before single-, dual-,
+  progression-, or solar-arc aspect calculation. Boolean values are rejected
+  wherever numeric coordinates, orbs, steps, or backend tuples are validated
+  (`True`/`False` pass `isinstance(..., Real)` but are always caller
+  mistakes).
+- **Heliacal and occultation searches reject physically invalid requests.**
+  Heliacal coordinates, event types, counts, atmosphere/observer tuples, and
+  Julian Days are validated even for empty searches. Raw occultation body IDs
+  now obey the same real-body restriction as named bodies.
+- **Dual-chart SVG baselines include the a70 projected-house attributes.** The
+  eleven affected synastry/transit goldens now match the additive metadata
+  contract instead of failing the base-tier suite.
+
+### Documentation
+
+- Added complete guides for mundane aspects, Sun times, planetary hours, and
+  void-of-course Moon windows; updated timing, eclipse, heliacal, planetary
+  return, SVG metadata, public-model, development, and test-suite references.
+- Rebuilt the documentation coverage audit around the explicit 102-name
+  package-root export contract. It now scans README, the AI guide, site docs,
+  and examples and exits non-zero for real omissions; current coverage is 100%.
+- The Markdown snippet gate now includes site examples by default, no longer
+  skips all docs when the optional `swisseph` package is absent, and uses a
+  fast page-level pass with cumulative replay only for diagnostics. All 380
+  maintained runnable snippets pass.
+- Development/test counts and Markdown EOF hygiene were aligned with the
+  current tree, and the primary-directions guide documents the public
+  `compute_speculum()` helper.
+- Corrected backend license assignments, active-point/fixed-star configuration
+  guidance, and the all-points example; added the backend precision guide to
+  navigation. README chart/license resources now use verified absolute URLs so
+  they render from wheel metadata on PyPI.
+
+### Removed
+
+- **Hosted CI removed again (no-CI policy).** The GitHub Actions workflow that
+  crept back in during the review rounds is deleted; the project deliberately
+  has no hosted CI. Every gate runs locally through `poe`: `quality` (ruff,
+  mypy, pyright, full pytest suite), `docs:check`, `docs:snippets`, and
+  `build:smoke` for the isolated wheel smoke test.
+
 ## 6.0.0a72 - 2026-07-15
 
 ### Changed (6.0.0a72 — libephemeris 3.0.0rc11 repin)
@@ -184,12 +273,11 @@ dropped, including two raised by the reviewer itself.
 
 ### Documentation (fresh full-codebase review, round 48)
 
-- **`libephemeris` is Apache-2.0, not AGPL.** `LICENSING.md`, `COMMERCIAL-LICENSE.md`
-  and `NOTICE` still described the default backend as dual-licensed
-  (`AGPL-3.0-only OR LicenseRef-LibEphemeris-Commercial`) and promised a pass-through
-  commercial grant via `LIBEPHEMERIS-COMMERCIAL-GRANT.md` — a file that does not exist.
-  Apache-2.0 already permits closed-source and commercial use; only its notices must
-  travel with redistributions.
+- **`libephemeris` is AGPL-3.0-only.** `LICENSING.md`, `COMMERCIAL-LICENSE.md`
+  and `NOTICE` describe the default backend as AGPL-3.0-only. It is authored by the
+  same maintainer as Kerykeion, so the commercial edition covers `libephemeris`
+  through its own commercial license alongside Kerykeion's grant; redistributions
+  must preserve its copyright and attribution notices, including its `NOTICE` file.
 - **`SolarEclipseModel.duration_minutes` was documented as its own opposite.** The
   field description and the `_solar_gamma_duration` docstring said the value is the
   global span of the shadow path across the Earth and explicitly "not the totality
@@ -220,6 +308,47 @@ dropped, including two raised by the reviewer itself.
 - Removed the duplicate `[tool.pyright]` table shadowed by `pyrightconfig.json`, and
   the stale generated pdoc tree under `docs/` (12 of its pages documented modules
   deleted in v6). It is regenerated on demand with `poe docs` and is now git-ignored.
+
+## 6.0.0a67 - 2026-07-10
+
+### Changed (6.0.0a67 — libephemeris 3.0.0rc5)
+
+- **Bumped the `libephemeris` pin to `==3.0.0rc5`** (from `==3.0.0rc3`), pulling
+  in the upstream release-candidate fixes since rc3. No kerykeion computation
+  code changed; the commit only advances the dependency floor. The pin will move
+  to the stable `3.0.0` at the 6.0.0 tag (see the `TODO` in `pyproject.toml`).
+
+## 6.0.0a66 - 2026-07-10
+
+### Added (6.0.0a66 — astrological calendar primitives)
+
+- **Mundane aspectarian** — new `MundaneAspectFactory`
+  (`kerykeion/mundane_aspects/`): every exact transiting-to-transiting aspect
+  within a date range, the content of a printed astrological calendar's
+  aspectarian. Uniform 6-hour sampling of the signed pairwise separation with
+  bisection refinement (unconditionally convergent — Newton diverges on slow
+  mutual pairs near stations), midpoint splitting for relative-motion reversals
+  inside a step, and a branch-cut guard against antipode wraps. Default scan
+  set is Sun..Pluto with the five Ptolemaic aspects; the Moon is opt-in (its
+  ~75 events/month are noise for most consumers); the full minor-aspect
+  vocabulary from the chart defaults is accepted. Aspect instants are
+  zodiac-independent (verified by a sidereal-invariance test); reported
+  longitudes/signs follow the requested zodiac. Returns
+  `MundaneAspectsCollectionModel` with per-event longitudes, signs and
+  retrograde flags.
+- **Void-of-course windows over a range** — new
+  `VoidOfCourseMoonFactory.from_iso_range`: walks the Moon sign by sign and
+  returns every VoC window intersecting the range (unclipped), each framed by
+  its opening aspect and closing ingress, as
+  `VoidOfCourseWindowsCollectionModel`. Reuses the shipped single-moment
+  Newton machinery unchanged; whole-sign voids (no aspect in the sign) are
+  reported with `last_aspect: null`.
+- **Season markers on Sun ingresses** — `IngressModel.season_marker`
+  (optional): Sun ingresses at the cardinal boundaries now carry
+  `march_equinox` / `june_solstice` / `september_equinox` /
+  `december_solstice`. Hemisphere-neutral month-based names; `None` on all
+  other ingresses. Additive and backward compatible.
+
 
 ## 6.0.0a65 - 2026-07-10
 

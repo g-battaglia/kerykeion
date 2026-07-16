@@ -1,145 +1,100 @@
 #!/usr/bin/env python3
-import pkgutil
+"""Fail when an explicitly exported package API is absent from user docs.
+
+The package root's ``__all__`` is Kerykeion's supported public surface.  Using
+that explicit contract avoids treating helpers imported by implementation
+modules as public API while still checking classes, models, literals, and
+constants (not only functions/classes discovered by ``inspect``).
+"""
+
+from __future__ import annotations
+
 import importlib
-import inspect
-from pathlib import Path
+import re
 import sys
-
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-
-def get_public_members(module):
-    """
-    Return a list of (name, object) for all public classes and functions in the module.
-    """
-    members = []
-
-    # If the module defines __all__, use it
-    if hasattr(module, "__all__"):
-        for name in module.__all__:
-            if hasattr(module, name):
-                obj = getattr(module, name)
-                members.append((name, obj))
-    else:
-        # Fallback: inspect module members (less reliable for identifying what is truly "exported")
-        for name, obj in inspect.getmembers(module):
-            if name.startswith("_"):
-                continue
-            if inspect.isclass(obj) or inspect.isfunction(obj):
-                # Ensure the object is defined in this module or one of its submodules
-                # This prevents listing imported externals
-                if hasattr(obj, "__module__") and obj.__module__ and obj.__module__.startswith("kerykeion"):
-                    members.append((name, obj))
-
-    return members
+from pathlib import Path
+from types import ModuleType
 
 
-def scan_package(package_name):
-    """
-    Recursively scan the package for modules and return a dictionary of {module_name: [members]}.
-    """
-    package = importlib.import_module(package_name)
-    results = {}
-
-    # Helper to process a single module
-    def process_module(mod_name):
-        try:
-            mod = importlib.import_module(mod_name)
-            members = get_public_members(mod)
-            results[mod_name] = members
-        except Exception as e:
-            print(f"Error importing {mod_name}: {e}")
-
-    # Walk through the package
-    if hasattr(package, "__path__"):
-        for _, name, is_pkg in pkgutil.walk_packages(package.__path__, package.__name__ + "."):
-            process_module(name)
-    else:
-        process_module(package_name)
-
-    return results
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DOCUMENTATION_TARGETS = (
+    PROJECT_ROOT / "README.md",
+    PROJECT_ROOT / "kerykeion" / "llms.txt",
+    PROJECT_ROOT / "site" / "docs",
+    PROJECT_ROOT / "site" / "examples",
+)
 
 
-def load_documentation_content(docs_dir):
-    """
-    Load all content from markdown files in the docs directory.
-    Returns a single string containing all documentation text.
-    """
-    content = ""
-    docs_path = Path(docs_dir)
-    for md_file in docs_path.glob("**/*.md"):
-        try:
-            with open(md_file, "r", encoding="utf-8") as f:
-                content += f.read() + "\n"
-        except Exception as e:
-            print(f"Error reading {md_file}: {e}")
-    return content
+def get_public_api_names(package: ModuleType) -> list[str]:
+    """Return and validate the package's deliberately exported names."""
+    exported = getattr(package, "__all__", None)
+    if exported is None:
+        raise RuntimeError(f"{package.__name__} does not define __all__; the public API contract is unknown")
+
+    names = sorted(set(exported))
+    missing_exports = [name for name in names if not hasattr(package, name)]
+    if missing_exports:
+        raise RuntimeError(
+            f"{package.__name__}.__all__ contains missing attributes: {', '.join(missing_exports)}"
+        )
+    return names
 
 
-def main():
-    print("Starting Kerykeion Documentation Coverage Audit...")
+def iter_documentation_files() -> list[Path]:
+    """Return the maintained user-facing Markdown/text documentation corpus."""
+    files: set[Path] = set()
+    for target in DOCUMENTATION_TARGETS:
+        if target.is_file():
+            files.add(target)
+        elif target.is_dir():
+            files.update(target.rglob("*.md"))
+        else:
+            raise FileNotFoundError(f"Documentation target not found: {target}")
+    return sorted(files)
 
-    # 1. Scan Codebase
-    codebase_members = scan_package("kerykeion")
 
-    # 2. Load Documentation
-    docs_path = Path(__file__).parent.parent / "site" / "docs"
-    if not docs_path.exists():
-        print(f"Error: Documentation directory not found at {docs_path}")
-        return
+def load_documentation_content(files: list[Path]) -> str:
+    """Load the documentation corpus as one searchable string."""
+    return "\n".join(path.read_text(encoding="utf-8") for path in files)
 
-    docs_content = load_documentation_content(docs_path)
 
-    # 3. Cross-reference
-    missing_items = {}
-    documented_count = 0
-    total_count = 0
-
-    # Exclude list (things we know we don't document or are implementation details)
-    excludes = [
-        "settings",  # Module itself
-        "schemas",  # Module itself
-        "charts",  # Module itself
-        "utilities",  # Module itself
-        "__init__",
-        "kerykeion",
-        "print_function",
+def undocumented_names(public_names: list[str], docs_content: str) -> list[str]:
+    """Return exported names that never occur as complete identifiers."""
+    return [
+        name
+        for name in public_names
+        if re.search(rf"(?<!\w){re.escape(name)}(?!\w)", docs_content) is None
     ]
 
-    for mod_name, members in codebase_members.items():
-        for name, obj in members:
-            # Skip if name is in excludes
-            if name in excludes:
-                continue
 
-            total_count += 1
+def main() -> int:
+    """Run the public-API documentation coverage gate."""
+    print("Starting Kerykeion Documentation Coverage Audit...")
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-            # Simple check: is the name present in the docs?
-            # A more robust check would look for headers or backticks, but this is a good first pass
-            if name in docs_content:
-                documented_count += 1
-            else:
-                if mod_name not in missing_items:
-                    missing_items[mod_name] = []
-                missing_items[mod_name].append(name)
+    package = importlib.import_module("kerykeion")
+    public_names = get_public_api_names(package)
+    documentation_files = iter_documentation_files()
+    docs_content = load_documentation_content(documentation_files)
+    missing = undocumented_names(public_names, docs_content)
+    documented_count = len(public_names) - len(missing)
+    coverage = documented_count / len(public_names) * 100 if public_names else 100.0
 
-    # 4. Report
-    print("\nAudit Complete.")
-    print(f"Total Public Items Found: {total_count}")
-    print(f"Documented Items: {documented_count}")
-    print(f"Coverage: {documented_count / total_count * 100:.1f}%\n")
+    print(f"Documentation files scanned: {len(documentation_files)}")
+    print(f"Explicit public exports: {len(public_names)}")
+    print(f"Documented exports: {documented_count}")
+    print(f"Coverage: {coverage:.1f}%")
 
-    if missing_items:
-        print("MISSING DOCUMENTATION FOR:")
-        print("========================")
-        for mod, items in missing_items.items():
-            print(f"\nModule: {mod}")
-            for item in items:
-                print(f"  - {item}")
-    else:
-        print("All identified public items appear to be documented!")
+    if missing:
+        print("\nMISSING PUBLIC API DOCUMENTATION:")
+        print("=================================")
+        for name in missing:
+            print(f"  - {name}")
+        return 1
+
+    print("\nAll explicitly exported public APIs are documented.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

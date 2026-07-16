@@ -45,11 +45,27 @@ Compute primary directions for a natal chart.
 | Parameter   | Type                      | Default    | Description                                             |
 | :---------- | :------------------------ | :--------- | :------------------------------------------------------ |
 | `subject`   | AstrologicalSubjectModel  | --         | The natal chart subject                                 |
-| `max_years` | float                     | 100        | Maximum number of years to compute directions for       |
-| `rate_key`  | "ptolemy" or "naibod"     | "ptolemy"  | Conversion rate (ptolemy: 1 deg = 1 yr, naibod: 0.98564 deg = 1 yr) |
-| `aspects`   | List[str] or None         | None       | Aspect names to compute (defaults to all major aspects) |
+| `max_years` | float                     | 100        | Finite, non-negative maximum number of years to compute directions for |
+| `rate_key`  | "ptolemy" or "naibod"     | "ptolemy"  | Conversion rate (ptolemy: 1 deg = 1 yr, naibod: 0.98564 deg = 1 yr); other values raise `KerykeionException` |
+| `aspects`   | List[str] or None         | None       | Unique supported aspect names; non-strings, unknown names, and malformed entries raise `KerykeionException` |
 
 **Returns:** `List[PrimaryDirectionModel]` sorted by `direction_years`.
+
+### `compute_speculum(subject)`
+
+Compute the Placidian coordinate table independently of the direction list:
+
+```python
+speculum = PrimaryDirectionsFactory.compute_speculum(subject)
+for entry in speculum:
+    print(entry.name, entry.right_ascension, entry.declination, entry.semi_arc)
+```
+
+**Returns:** `List[SpeculumEntryModel]`. The subject must represent one real
+instant with valid chart geometry; midpoint composites are not supported.
+Equatorial coordinates follow the subject's configured perspective:
+planetocentric charts use that center body's frame, and Topocentric charts use
+the observer coordinates including `subject.altitude` (sea level when `None`).
 
 ### Rate Keys
 

@@ -49,7 +49,7 @@ Calculate phenomena from a Julian Day number.
 
 | Parameter    | Type              | Default | Description                    |
 | :----------- | :---------------- | :------ | :----------------------------- |
-| `julian_day` | float             | --      | Julian Day number              |
+| `julian_day` | float             | --      | Finite Julian Day number       |
 | `planets`    | List[str] or None | None    | Planet names (defaults to all) |
 
 **Returns:** `PlanetaryPhenomenaCollectionModel`

@@ -57,6 +57,103 @@ class TestSpeculum:
             )
 
 
+class TestPrimaryDirectionsReferenceFrames:
+    def test_marscentric_speculum_uses_calc_pctr_equatorial_coordinates(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Marscentric PD",
+            2000,
+            1,
+            1,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5,
+            tz_str="Etc/GMT",
+            online=False,
+            perspective_type="Marscentric",
+        )
+        moon = next(
+            entry
+            for entry in PrimaryDirectionsFactory.compute_speculum(subject)
+            if entry.name == "Moon"
+        )
+
+        with ephemeris_session(perspective_type="Marscentric") as iflag:
+            eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
+            expected = ephe.calc_pctr(
+                subject.julian_day + ephe.deltat(subject.julian_day),
+                ephe.MOON,
+                ephe.MARS,
+                eq_iflag,
+            )[0]
+
+        assert moon.right_ascension == pytest.approx(expected[0], abs=1e-4)
+        assert moon.declination == pytest.approx(expected[1], abs=1e-4)
+        assert all(entry.name != "Mars" for entry in PrimaryDirectionsFactory.compute_speculum(subject))
+
+    def test_sidereal_speculum_uses_physical_equatorial_coordinates(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Sidereal PD",
+            2000,
+            1,
+            1,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5,
+            tz_str="Etc/GMT",
+            online=False,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        moon = next(
+            entry
+            for entry in PrimaryDirectionsFactory.compute_speculum(subject)
+            if entry.name == "Moon"
+        )
+        with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as iflag:
+            expected = ephe.calc_ut(
+                subject.julian_day,
+                ephe.MOON,
+                (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL,
+            )[0]
+        assert moon.right_ascension == pytest.approx(expected[0], abs=1e-4)
+        assert moon.declination == pytest.approx(expected[1], abs=1e-4)
+
+    def test_topocentric_altitude_is_persisted_and_used(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "High-altitude PD",
+            2000,
+            1,
+            1,
+            12,
+            0,
+            lng=12.5,
+            lat=41.9,
+            altitude=3500.0,
+            tz_str="Etc/GMT",
+            online=False,
+            perspective_type="Topocentric",
+        )
+        assert subject.altitude == 3500.0
+        moon = next(
+            entry
+            for entry in PrimaryDirectionsFactory.compute_speculum(subject)
+            if entry.name == "Moon"
+        )
+        with ephemeris_session(
+            perspective_type="Topocentric",
+            topo=(subject.lng, subject.lat, subject.altitude),
+        ) as iflag:
+            expected = ephe.calc_ut(
+                subject.julian_day,
+                ephe.MOON,
+                (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL,
+            )[0]
+        assert moon.right_ascension == pytest.approx(expected[0], abs=1e-4)
+        assert moon.declination == pytest.approx(expected[1], abs=1e-4)
+
+
 class TestPrimaryDirections:
     def test_directions_computed(self, subject):
         """Should compute primary directions."""
@@ -106,6 +203,19 @@ class TestPrimaryDirections:
             expected_years = d.arc / 0.98564
             assert abs(d.direction_years - expected_years) < 0.1
 
+    def test_unknown_rate_key_rejected(self, subject):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="rate_key"):
+            PrimaryDirectionsFactory.compute(subject, rate_key="typo")  # type: ignore[arg-type]
+
+    @pytest.mark.parametrize("max_years", [float("nan"), float("inf"), float("-inf"), -1.0])
+    def test_invalid_max_years_rejected(self, subject, max_years):
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="max_years"):
+            PrimaryDirectionsFactory.compute(subject, max_years=max_years)
+
     def test_filter_aspects(self, subject):
         """Should respect aspects filter."""
         conj_only = PrimaryDirectionsFactory.compute(
@@ -133,13 +243,39 @@ class TestPrimaryDirectionEdgeCases:
             result = PrimaryDirectionsFactory.compute(sub)
             assert result == []
 
-    def test_invalid_aspect_name_skipped(self, subject):
-        """Invalid aspect names should be skipped (aspect_angle is None)."""
-        directions = PrimaryDirectionsFactory.compute(
-            subject, max_years=80, aspects=["nonexistent_aspect"]
+    @pytest.mark.parametrize(
+        "aspects",
+        [["nonexistent_aspect"], ["trine", "bogus"], "trine"],
+    )
+    def test_invalid_aspects_rejected(self, subject, aspects):
+        """Mistyped or malformed filters must not look like a valid empty result."""
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException, match="aspects"):
+            PrimaryDirectionsFactory.compute(
+                subject,
+                max_years=80,
+                aspects=aspects,  # type: ignore[arg-type]
+            )
+
+    def test_duplicate_aspects_do_not_duplicate_directions(self, subject):
+        once = PrimaryDirectionsFactory.compute(subject, max_years=80, aspects=["trine"])
+        duplicated = PrimaryDirectionsFactory.compute(
+            subject,
+            max_years=80,
+            aspects=["trine", "trine"],
         )
-        # No valid aspects -> no directions
-        assert directions == []
+        assert duplicated == once
+
+    @pytest.mark.parametrize("field", ["julian_day", "lat", "lng"])
+    def test_non_finite_subject_geometry_rejected(self, subject, field):
+        from kerykeion.schemas import KerykeionException
+
+        corrupted = subject.model_copy(update={field: float("nan")})
+        with pytest.raises(KerykeionException, match="finite"):
+            PrimaryDirectionsFactory.compute_speculum(corrupted)
+        with pytest.raises(KerykeionException, match="finite"):
+            PrimaryDirectionsFactory.compute(corrupted)
 
     def test_oblique_ascension_extreme_declination(self):
         """_oblique_ascension with extreme values should not raise."""

@@ -18,6 +18,7 @@ import logging
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion._predictive_utils import validate_julian_day
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 
@@ -107,6 +108,7 @@ class PlanetaryPhenomenaFactory:
         planets: Optional[List[str]] = None,
     ) -> PlanetaryPhenomenaCollectionModel:
         """Compute elongation, illumination, and visibility for each planet."""
+        validate_julian_day(julian_day)
         if planets is None:
             target_planets = dict(_PHENOMENA_PLANETS)
         else:

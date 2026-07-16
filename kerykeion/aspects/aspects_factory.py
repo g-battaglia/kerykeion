@@ -4,6 +4,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import logging
+import math
 from typing import Any, Callable, Mapping, Sequence, Union, List, Optional, cast
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, OPPOSITE_PAIRS
@@ -12,7 +13,11 @@ from kerykeion.aspects.aspects_utils import (
     get_active_points_list,
     calculate_aspect_movement,
 )
-from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
+from kerykeion.aspects.orb_utils import (
+    OrbAdjustmentStrategy,
+    resolve_pair_orb_adjustment,
+    validate_point_orb_adjustments,
+)
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     AspectModel,
@@ -141,6 +146,12 @@ class AspectsFactory:
         Returns:
             SingleChartAspectsModel containing all calculated aspects data
 
+        Raises:
+            ValueError: If ``point_orb_adjustments`` contains a non-string key
+                or a non-finite adjustment value.
+            KerykeionException: If ``axis_orb_limit`` is provided but not a
+                finite positive number.
+
         Note:
             Luminary orbs differ between entry points: this method applies NO
             per-point orb widening by default (``point_orb_adjustments=None``),
@@ -157,6 +168,8 @@ class AspectsFactory:
             >>> chart_aspects = AspectsFactory.single_chart_aspects(johnny)
             >>> print(f"Found {len(chart_aspects.aspects)} aspects")
         """
+        validate_point_orb_adjustments(point_orb_adjustments)
+
         # Initialize settings and configurations
         # v6: extend celestial_points with synthetic settings for any dynamic
         # catalog fixed star carried on subject.fixed_stars, so aspects engine
@@ -254,6 +267,13 @@ class AspectsFactory:
             DualChartAspectsModel: Complete model containing all calculated aspects data,
                                   including both comprehensive and filtered relevant aspects.
 
+        Raises:
+            ValueError: If ``point_orb_adjustments`` contains a non-string key
+                or a non-finite adjustment value.
+            KerykeionException: If the two subjects use different reference
+                frames, or ``axis_orb_limit`` is provided but not a finite
+                positive number.
+
         Note:
             Luminary orbs differ between entry points: this method applies NO
             per-point orb widening by default (``point_orb_adjustments=None``),
@@ -271,6 +291,8 @@ class AspectsFactory:
             >>> synastry = AspectsFactory.dual_chart_aspects(john, jane)
             >>> print(f"Found {len(synastry.aspects)} aspects")
         """
+        validate_point_orb_adjustments(point_orb_adjustments)
+
         # Aspects between two charts are only meaningful when both are cast in the
         # same reference frame. Reject mixed frames (e.g. Tropical × Sidereal)
         # instead of returning astronomically-meaningless aspects — mirrors the
@@ -779,7 +801,7 @@ class AspectsFactory:
         if axis_orb_limit is None:
             return list(all_aspects)
 
-        if axis_orb_limit <= 0:
+        if not math.isfinite(axis_orb_limit) or axis_orb_limit <= 0:
             raise KerykeionException("axis_orb_limit must be a positive number when provided")
 
         for aspect in all_aspects:
@@ -878,7 +900,7 @@ class AspectsFactory:
         Args:
             subject: The astrological subject.
             orb: Maximum orb in degrees (default 1.0, standard for declination aspects).
-                Must be non-negative.
+                Must be finite and non-negative.
             active_points: Optional list of points to include. As in the
                 longitudinal twin (``single_chart_aspects``), the restriction is
                 intersected with ``subject.active_points``.
@@ -886,8 +908,8 @@ class AspectsFactory:
         Returns:
             List of AspectModel with aspect="parallel" or aspect="contra-parallel".
         """
-        if orb < 0:
-            raise KerykeionException("orb must be a non-negative number")
+        if not math.isfinite(orb) or orb < 0:
+            raise KerykeionException("orb must be a finite non-negative number")
 
         # v6: extend points_to_use and celestial_points with subject.fixed_stars
         # so catalog stars participate in parallel/contra-parallel aspects too.
@@ -949,7 +971,7 @@ class AspectsFactory:
         Args:
             first_subject: First astrological subject.
             second_subject: Second astrological subject.
-            orb: Maximum orb in degrees (default 1.0). Must be non-negative.
+            orb: Maximum orb in degrees (default 1.0). Must be finite and non-negative.
             active_points: Optional list of points to include. As in the
                 longitudinal twin (``dual_chart_aspects``), the restriction is
                 intersected with each subject's ``active_points``.
@@ -957,8 +979,8 @@ class AspectsFactory:
         Returns:
             List of AspectModel with aspect="parallel" or aspect="contra-parallel".
         """
-        if orb < 0:
-            raise KerykeionException("orb must be a non-negative number")
+        if not math.isfinite(orb) or orb < 0:
+            raise KerykeionException("orb must be a finite non-negative number")
 
         # v6: extend points + celestial_points with both subjects' fixed_stars
         # so catalog stars participate in parallel/contra-parallel aspects.

@@ -8,11 +8,14 @@ order: 2
 
 # Astrological Subject Factory
 
-The `AstrologicalSubjectFactory` is the central mechanism in Kerykeion for creating `AstrologicalSubject` instances. It handles the complex astronomical calculations required to generate a chart, supporting widely used zodiacs, house systems, and coordinate perspectives.
+The `AstrologicalSubjectFactory` is the central mechanism in Kerykeion for creating `AstrologicalSubjectModel` instances. It handles the complex astronomical calculations required to generate a chart, supporting widely used zodiacs, house systems, and coordinate perspectives.
 
 ## Key Features
 
-- **Precision**: Uses libephemeris by default (full DE441 range via NASA JPL, no external data files), with an optional Swiss Ephemeris (`pyswisseph`) backend.
+- **Precision**: Uses libephemeris by default. A fresh install bundles DE440s
+  coverage for 1849–2150; wider medium/extended data tiers (including the full
+  DE441 range) must be downloaded separately. An optional Swiss Ephemeris
+  (`pyswisseph`) backend is also available.
 - **Flexibility**: Supports Tropical/Sidereal zodiacs, multiple House systems (Placidus, Whole Sign, etc.), and various coordinate (Geocentric/Heliocentric) perspectives.
 - **Optimization**: The `active_points` argument allows you to calculate only what you need, saving resources.
 - **Online/Offline**: Can resolve locations automatically via GeoNames (Online) or accept raw coordinates (Offline).
@@ -93,10 +96,10 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 | :------------------------- | :----------------------- | :---------------------- | :--------------------------------------------------------------------- |
 | `name`                     | `str`                    | **Required**            | Name or identifier for the subject.                                    |
 | `iso_utc_time`             | `str`                    | **Required**            | UTC timestamp in ISO 8601 format (e.g., `"2023-06-21T12:00:00Z"`).    |
-| `city`                     | `str`                    | `"Greenwich"`           | City name.                                                             |
-| `nation`                   | `str`                    | `"GB"`                  | ISO Country code.                                                      |
+| `city`                     | `Optional[str]`          | `None`                  | City used for online lookup; omitted locations fall back to Greenwich. |
+| `nation`                   | `Optional[str]`          | `None`                  | ISO country code used for online lookup; omitted locations fall back to `"GB"`. |
 | `tz_str`                   | `str`                    | `"Etc/GMT"`             | Timezone string.                                                       |
-| `lng`, `lat`               | `float`                  | `0.0`, `51.5074`        | Coordinates (defaults to Greenwich).                                   |
+| `lng`, `lat`               | `Optional[float]`        | `None`                  | Explicit coordinates override lookup values. Missing values are looked up online or fall back to `0.0`, `51.5074` offline. |
 | `online`                   | `bool`                   | `True`                  | Whether to resolve location via GeoNames API.                          |
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`            | `"Tropical"` or `"Sidereal"`.                                          |
 | `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode. Required if `zodiac_type="Sidereal"`.                  |
@@ -108,7 +111,7 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 | `calculate_lunar_phase`    | `bool`                   | `True`                  | Whether to calculate lunar phase data.                                 |
 | `custom_ayanamsa_t0`       | `Optional[float]`        | `None`                  | Julian Day epoch for custom ayanamsa (requires `sidereal_mode="USER"`). |
 | `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`                  | Ayanamsa degrees at epoch (requires `sidereal_mode="USER"`).           |
-| `geonames_username`        | `str`                    | `"century.boy"`         | GeoNames API username.                                                 |
+| `geonames_username`        | `str`                    | `DEFAULT_GEONAMES_USERNAME` | GeoNames API username.                                              |
 | `calculate_dignities`      | `bool`                   | `False`                 | Calculate essential dignities for each point.                          |
 | `calculate_nakshatra`      | `bool`                   | `False`                 | Calculate Vedic Nakshatra/Pada/Dasha lord.                             |
 | `calculate_gauquelin`      | `bool`                   | `False`                 | Calculate Gauquelin 36-sector positions.                               |
@@ -148,6 +151,13 @@ now_chart = AstrologicalSubjectFactory.from_current_time(
 | `calculate_lunar_phase`    | `bool`                   | `True`                  | Whether to calculate lunar phase data.                                 |
 | `custom_ayanamsa_t0`       | `Optional[float]`        | `None`                  | Julian Day epoch for custom ayanamsa (requires `sidereal_mode="USER"`). |
 | `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`                  | Ayanamsa degrees at epoch (requires `sidereal_mode="USER"`).           |
+| `altitude`                 | `Optional[float]`        | `None`                  | Observer altitude in meters (used by Topocentric calculations).        |
+| `active_fixed_stars`       | `Optional[List[str]]`    | `None`                  | Fixed-star catalog names to compute into `subject.fixed_stars`.         |
+| `calculate_dignities`      | `bool`                   | `False`                 | Calculate essential dignities for each point.                          |
+| `calculate_nakshatra`      | `bool`                   | `False`                 | Calculate Vedic Nakshatra/Pada/Dasha lord data.                        |
+| `calculate_gauquelin`      | `bool`                   | `False`                 | Calculate Gauquelin 36-sector positions.                               |
+| `calculate_nutation`       | `bool`                   | `False`                 | Include true/mean obliquity and nutation data.                         |
+| `calculate_local_space`    | `bool`                   | `False`                 | Calculate azimuth and altitude for each point.                         |
 
 ## Understanding Position Fields
 
