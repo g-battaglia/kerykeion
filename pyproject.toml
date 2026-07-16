@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a71"
+version = "6.0.0a73"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -46,7 +46,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     # TODO before tagging 6.0.0: bump the floor to the stable 3.0.0 once released.
-    "libephemeris==3.0.0rc6",
+    "libephemeris==3.0.0rc11",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",
@@ -257,6 +257,9 @@ help = "Test Python snippets in markdown files"
 sequence = ["regenerate:svg:base", "regenerate:svg:extended", "regenerate:svg:modern"]
 help = "Regenerate all SVG chart baselines (tests/data/svg/)"
 
+[tool.poe.tasks."regenerate:svg".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
 [tool.poe.tasks."regenerate:svg:base"]
 cmd = "python scripts/regenerate_test_charts.py"
 
@@ -270,6 +273,9 @@ cmd = "python scripts/generate_modern_baselines.py"
 sequence = ["regenerate:reports:snapshots", "regenerate:reports:output"]
 help = "Regenerate all report golden files (tests/fixtures/)"
 
+[tool.poe.tasks."regenerate:reports".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
 [tool.poe.tasks."regenerate:reports:snapshots"]
 cmd = "python scripts/regenerate_report_snapshots.py"
 
@@ -280,9 +286,15 @@ cmd = "python scripts/regenerate_test_output.py"
 cmd = "python scripts/regenerate_all.py --positions --subjects"
 help = "Regenerate expected positions and subjects (tests/data/expected_positions.py, expected_astrological_subjects.py)"
 
+[tool.poe.tasks."regenerate:positions".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
 [tool.poe.tasks."regenerate:aspects"]
 sequence = ["regenerate:aspects:natal", "regenerate:aspects:synastry"]
 help = "Regenerate all expected aspects (tests/data/expected_*_aspects.py)"
+
+[tool.poe.tasks."regenerate:aspects".env]
+LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:aspects:natal"]
 cmd = "python scripts/regenerate_expected_aspects.py"
@@ -294,9 +306,17 @@ cmd = "python scripts/regenerate_synastry_aspects.py"
 cmd = "python scripts/regenerate_all.py --configurations"
 help = "Regenerate all configuration-specific fixtures (house-systems, sidereal-modes, perspectives, returns, composite, ephemeris, arabic-parts)"
 
+[tool.poe.tasks."regenerate:configurations".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
 [tool.poe.tasks."regenerate:all"]
 sequence = ["regenerate:svg", "regenerate:reports", "regenerate:positions", "regenerate:aspects", "regenerate:configurations"]
 help = "Regenerate all golden standards"
+# Baselines must regenerate at the extended (DE441) tier so ancient/BCE subjects
+# (year 100 AD, etc.) resolve on-disk instead of falling back, and so the long-range
+# subjects aren't silently dropped (41 vs 32). Per memory baseline-regeneration-tier.
+[tool.poe.tasks."regenerate:all".env]
+LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks.benchmark]
 cmd = "python scripts/benchmark.py"
