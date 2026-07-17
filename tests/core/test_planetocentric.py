@@ -63,10 +63,9 @@ def selenocentric():
     )
 
 
-# List of planet attribute names we can compare across subjects.
-# Sun is excluded because calc_pctr for the Sun requires the sepl_*.se1
-# planetary ephemeris file which is not bundled; the factory silently falls
-# back to geocentric for any body whose calc_pctr call fails.
+# List of stable planet attributes compared across every supported backend.
+# Individual unsupported points may be omitted, but they must never be
+# replaced with a position calculated in a different reference frame.
 _COMPARABLE_PLANETS = ["moon", "mercury", "venus", "mars", "jupiter", "saturn"]
 
 
@@ -118,10 +117,8 @@ class TestPositionsDifferFromGeocentric:
     data.  For each planetocentric perspective, we compare every comparable
     planet and require at least one measurable difference.
 
-    Note: The Sun position may silently fall back to geocentric when the
-    sepl_*.se1 planetary ephemeris file is unavailable.  We exclude it from
-    the comparison set and focus on Moon through Saturn, which use the
-    seas_*.se1 or internal Moshier fallback successfully.
+    The comparison set focuses on Moon through Saturn so the assertion remains
+    portable across both supported ephemeris backends.
     """
 
     @pytest.mark.parametrize("perspective_fixture,center_attr", [
@@ -357,6 +354,41 @@ class TestCalcPctrTimescale:
             # delta-T in 2000 is ~64 s (~7.4e-4 days): the raw UT day is
             # measurably different, so this also fails if deltaT is dropped.
             assert abs(tjdet - jd_ut) > 1e-5
+
+    def test_failed_planetocentric_point_is_never_replaced_with_geocentric(
+        self, monkeypatch, caplog
+    ):
+        """A failed frame-specific calculation is omitted, never relabelled."""
+        from kerykeion.ephemeris_backend import ephe
+
+        def fail_pctr(*_args, **_kwargs):
+            raise RuntimeError("planetocentric source unavailable")
+
+        def forbidden_geocentric(*_args, **_kwargs):
+            raise AssertionError("calc_ut must not substitute another frame")
+
+        monkeypatch.setattr(ephe, "calc_pctr", fail_pctr)
+        monkeypatch.setattr(ephe, "calc_ut", forbidden_geocentric)
+
+        data = {}
+        active_points = ["Mercury"]
+        with caplog.at_level("ERROR"):
+            AstrologicalSubjectFactory._calculate_single_planet(
+                data,
+                "Mercury",
+                ephe.MERCURY,
+                2451545.0,
+                ephe.FLG_SWIEPH,
+                [0.0] * 12,
+                "AstrologicalPoint",
+                [],
+                active_points,
+                center_body_id=ephe.MARS,
+            )
+
+        assert "mercury" not in data
+        assert "Mercury" not in active_points
+        assert "planetocentric source unavailable" in caplog.text
 
 
 class TestOutOfBoundsPerspectiveGating:

@@ -2516,30 +2516,15 @@ class AstrologicalSubjectFactory:
             # Calculate planet position using Swiss Ephemeris (ecliptic coordinates)
             if center_body_id is not None and planet_id != center_body_id:
                 # Planetocentric: calculate position as seen from another planet
-                try:
-                    # Unlike calc_ut, calc_pctr takes a TT/ET julian day on
-                    # both backends: convert the UT day with delta-T first.
-                    julian_day_tt = julian_day + ephe.deltat(julian_day)
-                    planet_calc = ephe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag)[0]
-                    planet_eq = ephe.calc_pctr(
-                        julian_day_tt, planet_id, center_body_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
-                    )[0]
-                except Exception as e:
-                    # Fallback to geocentric if planetary ephemeris not available.
-                    # Never silently: the caller asked for a planetocentric
-                    # perspective, so a geocentric substitute is wrong data
-                    # unless the user is told about it.
-                    logging.warning(
-                        "Planetocentric calculation failed for %s (center body ID %s); "
-                        "falling back to geocentric position. Error: %s",
-                        planet_name,
-                        center_body_id,
-                        e,
-                    )
-                    planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
-                    planet_eq = ephe.calc_ut(julian_day, planet_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[
-                        0
-                    ]
+                # Unlike calc_ut, calc_pctr takes a TT/ET julian day on both
+                # backends: convert the UT day with delta-T first. A failed
+                # planetocentric result must reach the outer error policy;
+                # substituting a geocentric value would silently mix frames.
+                julian_day_tt = julian_day + ephe.deltat(julian_day)
+                planet_calc = ephe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag)[0]
+                planet_eq = ephe.calc_pctr(
+                    julian_day_tt, planet_id, center_body_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
+                )[0]
             else:
                 planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
                 planet_eq = ephe.calc_ut(julian_day, planet_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
