@@ -3017,56 +3017,10 @@ class AstrologicalSubjectFactory:
         # non-geocentric/topocentric perspective (backend-dependent phantom).
         exclude_geocentric_only = data.get("perspective_type") not in _GEO_TOPO_PERSPECTIVES
 
-        # In sealed LEB mode, optional minor bodies are capabilities, not
-        # speculative fallbacks. Check the per-body range before calling the
-        # engine so an uncovered point is omitted once with machine-readable
-        # context instead of triggering network or a silent approximation.
+        # libephemeris owns source selection. In sealed LEB mode it may serve a
+        # point from the active LEB group or from an explicitly traced local
+        # model; Kerykeion must not pre-empt that decision from inventory alone.
         data.setdefault("ephemeris_warnings", [])
-
-        def _coverage_allows(point_name: str, body_id: int) -> bool:
-            if BACKEND_NAME != "libephemeris":
-                return True
-            try:
-                if ephe.get_calc_mode() != "leb" or body_id not in ephe.SPK_BODY_NAME_MAP:
-                    return True
-                body_coverage = ephe.get_body_coverage(body_id)
-            except AttributeError:
-                # Dependency pinning requires the coverage API. Keep this
-                # compatibility branch for backend doubles used by consumers.
-                return True
-
-            if body_coverage is not None and body_coverage.contains(julian_day):
-                return True
-
-            if body_coverage is None:
-                code = "body_not_in_active_leb"
-                start_jd = end_jd = None
-                message = f"{point_name} (body {body_id}) is not present in the active LEB inventory and was omitted."
-            else:
-                code = "date_outside_leb_coverage"
-                start_jd = float(body_coverage.jd_start)
-                end_jd = float(body_coverage.jd_end)
-                message = (
-                    f"{point_name} (body {body_id}) at JD {julian_day:.6f} is "
-                    f"outside LEB coverage [{start_jd:.6f}, {end_jd:.6f}] and "
-                    "was omitted."
-                )
-
-            data["ephemeris_warnings"].append(
-                {
-                    "code": code,
-                    "point_name": point_name,
-                    "body_id": body_id,
-                    "requested_jd": float(julian_day),
-                    "message": message,
-                    "coverage_start_jd": start_jd,
-                    "coverage_end_jd": end_jd,
-                }
-            )
-            logger.warning(message)
-            if active_points is not None and point_name in active_points:
-                active_points.remove(point_name)
-            return False
 
         # Start ephemeris backend tracing (libephemeris only)
         _trace_token = None
@@ -3088,7 +3042,7 @@ class AstrologicalSubjectFactory:
             # The center body is skipped inside _calculate_single_planet (the
             # single chokepoint for storing a planetary position), so no guard
             # is needed here.
-            if should_calculate(planet_name) and _coverage_allows(planet_name, planet_id):
+            if should_calculate(planet_name):
                 AstrologicalSubjectFactory._calculate_single_planet(
                     data,
                     planet_name,
@@ -3110,7 +3064,7 @@ class AstrologicalSubjectFactory:
         # TNOs require AST_OFFSET and may fail for dates outside ephemeris range
         for tno_name, asteroid_num in TNO_PLANETS.items():
             tno_body_id = ephe.AST_OFFSET + asteroid_num
-            if should_calculate(tno_name) and _coverage_allows(tno_name, tno_body_id):
+            if should_calculate(tno_name):
                 try:
                     AstrologicalSubjectFactory._calculate_single_planet(
                         data,

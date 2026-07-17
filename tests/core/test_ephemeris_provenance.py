@@ -65,60 +65,70 @@ def test_derived_source_does_not_depend_on_trace_rows(
 class _OutsideCoverage:
     jd_start: float = 2_400_000.0
     jd_end: float = 2_500_000.0
+    precision_class: str = "ephemeris"
+    reviewed: bool = True
 
     def contains(self, _jd: float) -> bool:
         return False
 
 
 @pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
-def test_uncovered_optional_body_is_reported_without_calculation(
+def test_inventory_range_does_not_preempt_engine_source_selection(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     real_calc_ut = ephe.calc_ut
     calls_for_chiron: list[float] = []
 
-    def _guarded_calc_ut(jd, body_id, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def _observed_calc_ut(jd, body_id, *args, **kwargs):  # type: ignore[no-untyped-def]
         if body_id == ephe.CHIRON:
             calls_for_chiron.append(float(jd))
-            raise AssertionError("uncovered Chiron reached calc_ut")
         return real_calc_ut(jd, body_id, *args, **kwargs)
 
     monkeypatch.setattr(ephe, "get_body_coverage", lambda body_id: _OutsideCoverage())
-    monkeypatch.setattr(ephe, "calc_ut", _guarded_calc_ut)
+    monkeypatch.setattr(ephe, "calc_ut", _observed_calc_ut)
 
     subject = _subject(active_points=["Chiron"])
 
-    assert calls_for_chiron == []
-    assert subject.chiron is None
-    assert subject.active_points == []
-    assert len(subject.ephemeris_warnings) == 1
-    warning = subject.ephemeris_warnings[0]
-    assert warning.code == "date_outside_leb_coverage"
-    assert warning.point_name == "Chiron"
-    assert warning.body_id == ephe.CHIRON
+    assert len(calls_for_chiron) == 2
+    assert subject.chiron is not None
+    assert subject.active_points == ["Chiron"]
+    assert subject.ephemeris_warnings == []
 
 
 @pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
-def test_ephemeris_series_preserves_coverage_warnings(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setattr(ephe, "get_body_coverage", lambda body_id: _OutsideCoverage())
+def test_default_chart_uses_traced_local_fallback_outside_chiron_leb_range() -> None:
+    subject = _subject(year=1580, month=7, day=21, tz_str="Etc/GMT")
 
+    coverage = ephe.get_body_coverage(ephe.CHIRON)
+    assert coverage is not None
+    assert not coverage.contains(subject.julian_day)
+    assert subject.chiron is not None
+    assert subject.chiron.source == "Keplerian"
+    assert subject.chiron.precision_class == "approximate"
+    assert subject.chiron.source_reviewed is not True
+    assert "Chiron" in subject.active_points
+    assert subject.ephemeris_warnings == []
+
+
+@pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
+def test_ephemeris_series_preserves_fallback_source_per_sample() -> None:
     factory = EphemerisDataFactory(
-        start_datetime=datetime(1990, 7, 21, 12),
-        end_datetime=datetime(1990, 7, 22, 12),
+        start_datetime=datetime(1580, 7, 21, 12),
+        end_datetime=datetime(1580, 7, 22, 12),
         lat=53.4084,
         lng=-2.9916,
-        tz_str="Europe/London",
+        tz_str="Etc/GMT",
         active_points=["Chiron"],
     )
 
     rows = factory.get_ephemeris_data(as_model=True)
 
     assert len(rows) == 2
-    assert all(row.planets == [] for row in rows)
-    assert all(len(row.ephemeris_warnings) == 1 for row in rows)
-    assert all(row.ephemeris_warnings[0].code == "date_outside_leb_coverage" for row in rows)
+    assert all(len(row.planets) == 1 for row in rows)
+    assert all(row.planets[0].name == "Chiron" for row in rows)
+    assert all(row.planets[0].source == "Keplerian" for row in rows)
+    assert all(row.planets[0].precision_class == "approximate" for row in rows)
+    assert all(row.ephemeris_warnings == [] for row in rows)
 
 
 @pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
