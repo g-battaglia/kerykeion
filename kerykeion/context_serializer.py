@@ -173,6 +173,10 @@ def kerykeion_point_to_context(point: KerykeionPointModel) -> str:
 
     if point.declination is not None:
         attrs["declination"] = f"{point.declination:.2f}"
+    if point.source is not None:
+        attrs["source"] = point.source
+    if point.precision_class is not None:
+        attrs["precision_class"] = point.precision_class
 
     return _sc("point", **attrs)
 
@@ -279,6 +283,7 @@ def point_in_house_to_context(
     attributes are always present, and ``owner_house`` / ``owner_house_number``
     are omitted when the point has no owner house.
     """
+
     def _owner(name: str) -> str:
         if is_transit and transit_subject_name is not None and name == transit_subject_name:
             return "Transit"
@@ -328,9 +333,7 @@ def house_comparison_to_context(house_comparison: HouseComparisonModel, is_trans
         # Same "Transit" substitution as the other three sections: the same
         # entity must not appear under two names in one document.
         tgt = "Transit" if is_transit else house_comparison.second_subject_name
-        lines.append(
-            f"  {_o('first_points_in_second', subject=house_comparison.first_subject_name, target=tgt)}"
-        )
+        lines.append(f"  {_o('first_points_in_second', subject=house_comparison.first_subject_name, target=tgt)}")
         for point in house_comparison.first_points_in_second_houses:
             lines.append(f"    {point_in_house_to_context(point, is_transit, transit_name)}")
         lines.append(f"  {_c('first_points_in_second')}")
@@ -443,9 +446,7 @@ def astrological_subject_to_context(
             f"  {_sc(data_tag, date=f'{subject.year}-{subject.month:02d}-{subject.day:02d} {subject.hour:02d}:{subject.minute:02d}', city=subject.city, nation=subject.nation, lat=f'{subject.lat:.2f}', lng=f'{subject.lng:.2f}', lng_dir=lng_dir, tz=subject.tz_str)}"
         )
     elif isinstance(subject, PlanetReturnModel) and (
-        subject.lng is not None
-        and subject.lat is not None
-        and subject.iso_formatted_local_datetime is not None
+        subject.lng is not None and subject.lat is not None and subject.iso_formatted_local_datetime is not None
     ):
         # PlanetReturnModel is a sibling of AstrologicalSubjectModel, not a
         # subclass, and lacks the split year/month/day fields — it carries the
@@ -486,19 +487,43 @@ def astrological_subject_to_context(
     # points, mean nodes, Arabic parts...) while the <aspects> section still
     # referenced them, leaving dangling references in the document.
     axes_section_names = {
-        "Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli",
-        "Vertex", "Anti_Vertex", "East_Point",
+        "Ascendant",
+        "Descendant",
+        "Medium_Coeli",
+        "Imum_Coeli",
+        "Vertex",
+        "Anti_Vertex",
+        "East_Point",
     }
     active_point_names = list(getattr(subject, "active_points", None) or [])
     if not active_point_names:
         # Older/reduced models without active_points: previous fixed sets.
         active_point_names = [
-            "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-            "Uranus", "Neptune", "Pluto", "Chiron", "Mean_Lilith", "True_Lilith",
-            "Ceres", "Pallas", "Juno", "Vesta",
-            "Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli",
-            "Vertex", "Anti_Vertex",
-            "True_North_Lunar_Node", "True_South_Lunar_Node",
+            "Sun",
+            "Moon",
+            "Mercury",
+            "Venus",
+            "Mars",
+            "Jupiter",
+            "Saturn",
+            "Uranus",
+            "Neptune",
+            "Pluto",
+            "Chiron",
+            "Mean_Lilith",
+            "True_Lilith",
+            "Ceres",
+            "Pallas",
+            "Juno",
+            "Vesta",
+            "Ascendant",
+            "Descendant",
+            "Medium_Coeli",
+            "Imum_Coeli",
+            "Vertex",
+            "Anti_Vertex",
+            "True_North_Lunar_Node",
+            "True_South_Lunar_Node",
         ]
 
     # Planets come from active_points (so active TNOs / Uranian points / Arabic
@@ -508,10 +533,17 @@ def astrological_subject_to_context(
     # active_points dropped them from every default chart's <axes> section. Emit
     # whichever axes/nodes are present on the subject, unconditionally.
     _AXIS_AND_NODE_ORDER = (
-        "Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli",
-        "Vertex", "Anti_Vertex", "East_Point",
-        "Mean_North_Lunar_Node", "True_North_Lunar_Node",
-        "Mean_South_Lunar_Node", "True_South_Lunar_Node",
+        "Ascendant",
+        "Descendant",
+        "Medium_Coeli",
+        "Imum_Coeli",
+        "Vertex",
+        "Anti_Vertex",
+        "East_Point",
+        "Mean_North_Lunar_Node",
+        "True_North_Lunar_Node",
+        "Mean_South_Lunar_Node",
+        "True_South_Lunar_Node",
     )
     planet_lines = []
     for point_name in active_point_names:
@@ -778,7 +810,9 @@ def moon_phase_overview_to_context(overview: MoonPhaseOverviewModel) -> str:
 
     # Zodiac
     if moon.zodiac is not None:
-        lines.append(f"    {_sc('zodiac', sun_sign=SIGN_FULL_NAMES.get(moon.zodiac.sun_sign, moon.zodiac.sun_sign), moon_sign=SIGN_FULL_NAMES.get(moon.zodiac.moon_sign, moon.zodiac.moon_sign))}")
+        lines.append(
+            f"    {_sc('zodiac', sun_sign=SIGN_FULL_NAMES.get(moon.zodiac.sun_sign, moon.zodiac.sun_sign), moon_sign=SIGN_FULL_NAMES.get(moon.zodiac.moon_sign, moon.zodiac.moon_sign))}"
+        )
 
     # Moonrise / moonset
     if moon.moonrise is not None:
@@ -1015,21 +1049,29 @@ def solar_arc_to_context(model: SolarArcSubjectModel) -> str:
     Includes the solar-arc value, all directed-point positions, and every
     directed-to-natal aspect.
     """
-    lines = [_o("solar_arc_analysis",
-                natal=model.natal_name,
-                target=model.target_iso_utc_datetime,
-                arc=f"{model.solar_arc:.4f}")]
+    lines = [
+        _o(
+            "solar_arc_analysis",
+            natal=model.natal_name,
+            target=model.target_iso_utc_datetime,
+            arc=f"{model.solar_arc:.4f}",
+        )
+    ]
 
     if model.directed_points:
         lines.append(f"  {_o('directed_points', count=str(len(model.directed_points)))}")
         for dp in model.directed_points:
-            lines.append(f"    {_sc('point', name=dp.name, natal_sign=SIGN_FULL_NAMES.get(dp.natal_sign, dp.natal_sign), directed_sign=SIGN_FULL_NAMES.get(dp.directed_sign, dp.directed_sign), natal_pos=f'{dp.natal_abs_pos:.2f}', directed_pos=f'{dp.directed_abs_pos:.2f}', position=f'{dp.directed_position:.2f}', sign_changed=str(dp.sign_changed).lower())}")
+            lines.append(
+                f"    {_sc('point', name=dp.name, natal_sign=SIGN_FULL_NAMES.get(dp.natal_sign, dp.natal_sign), directed_sign=SIGN_FULL_NAMES.get(dp.directed_sign, dp.directed_sign), natal_pos=f'{dp.natal_abs_pos:.2f}', directed_pos=f'{dp.directed_abs_pos:.2f}', position=f'{dp.directed_position:.2f}', sign_changed=str(dp.sign_changed).lower())}"
+            )
         lines.append(f"  {_c('directed_points')}")
 
     if model.directed_to_natal_aspects:
         lines.append(f"  {_o('directed_natal_aspects', count=str(len(model.directed_to_natal_aspects)))}")
         for a in model.directed_to_natal_aspects:
-            lines.append(f"    {_sc('aspect', directed=a.directed_point, natal=a.natal_point, type=a.aspect, degrees=str(a.aspect_degrees), orb=f'{a.orb:.2f}')}")
+            lines.append(
+                f"    {_sc('aspect', directed=a.directed_point, natal=a.natal_point, type=a.aspect, degrees=str(a.aspect_degrees), orb=f'{a.orb:.2f}')}"
+            )
         lines.append(f"  {_c('directed_natal_aspects')}")
 
     lines.append(_c("solar_arc_analysis"))
@@ -1044,18 +1086,22 @@ def midpoints_to_context(midpoints: list[MidpointModel]) -> str:
     third-point activations for each midpoint.
     """
     activated = [m for m in midpoints if m.aspects_to_midpoint]
-    lines = [_o("midpoints_analysis",
-                count=str(len(midpoints)),
-                activated=str(len(activated)))]
+    lines = [_o("midpoints_analysis", count=str(len(midpoints)), activated=str(len(activated)))]
 
     for m in midpoints:
         if m.aspects_to_midpoint:
-            lines.append(f"  {_o('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=f'{m.midpoint_abs_pos:.2f}', sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=f'{m.midpoint_position:.2f}', modulus_90=f'{m.midpoint_modulus_90:.2f}')}")
+            lines.append(
+                f"  {_o('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=f'{m.midpoint_abs_pos:.2f}', sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=f'{m.midpoint_position:.2f}', modulus_90=f'{m.midpoint_modulus_90:.2f}')}"
+            )
             for act in m.aspects_to_midpoint:
-                lines.append(f"    {_sc('activation', point=act.point_name, aspect=act.aspect, degrees=str(act.aspect_degrees), orb=f'{act.orb:.2f}')}")
+                lines.append(
+                    f"    {_sc('activation', point=act.point_name, aspect=act.aspect, degrees=str(act.aspect_degrees), orb=f'{act.orb:.2f}')}"
+                )
             lines.append(f"  {_c('midpoint')}")
         else:
-            lines.append(f"  {_sc('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=f'{m.midpoint_abs_pos:.2f}', sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=f'{m.midpoint_position:.2f}', modulus_90=f'{m.midpoint_modulus_90:.2f}')}")
+            lines.append(
+                f"  {_sc('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=f'{m.midpoint_abs_pos:.2f}', sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=f'{m.midpoint_position:.2f}', modulus_90=f'{m.midpoint_modulus_90:.2f}')}"
+            )
 
     lines.append(_c("midpoints_analysis"))
     return "\n".join(lines)

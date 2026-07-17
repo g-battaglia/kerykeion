@@ -208,7 +208,11 @@ class EphemerisDataFactory:
         self.perspective_type = perspective_type
         self.custom_ayanamsa_t0 = custom_ayanamsa_t0
         self.custom_ayanamsa_ayan_t0 = custom_ayanamsa_ayan_t0
-        self.active_points = active_points
+        # Subject construction may remove optional points that are outside the
+        # active LEB coverage. Keep the caller's list immutable and give every
+        # sample a fresh selection so one uncovered date cannot suppress the
+        # warning (or the calculation) for later covered dates.
+        self.active_points = list(active_points) if active_points is not None else None
         self.max_days = max_days
         self.max_hours = max_hours
         self.max_minutes = max_minutes
@@ -257,10 +261,7 @@ class EphemerisDataFactory:
                 raise ValueError(
                     f"Too many days: {n_samples} > {self.max_days}. To prevent this error, set max_days to a higher value or reduce the date range."
                 )
-            self.dates_list = [
-                _localize_to_utc(local_start + timedelta(days=i * self.step))
-                for i in range(n_samples)
-            ]
+            self.dates_list = [_localize_to_utc(local_start + timedelta(days=i * self.step)) for i in range(n_samples)]
 
         elif self.step_type == "hours":
             hours_diff = (_end_utc - _start_utc).total_seconds() / 3600
@@ -269,9 +270,7 @@ class EphemerisDataFactory:
                 raise ValueError(
                     f"Too many hours: {n_samples} > {self.max_hours}. To prevent this error, set max_hours to a higher value or reduce the date range."
                 )
-            self.dates_list = [
-                _start_utc + timedelta(hours=i * self.step) for i in range(n_samples)
-            ]
+            self.dates_list = [_start_utc + timedelta(hours=i * self.step) for i in range(n_samples)]
 
         elif self.step_type == "minutes":
             minutes_diff = (_end_utc - _start_utc).total_seconds() / 60
@@ -280,10 +279,7 @@ class EphemerisDataFactory:
                 raise ValueError(
                     f"Too many minutes: {n_samples} > {self.max_minutes}. To prevent this error, set max_minutes to a higher value or reduce the date range."
                 )
-            self.dates_list = [
-                _start_utc + timedelta(minutes=i * self.step)
-                for i in range(n_samples)
-            ]
+            self.dates_list = [_start_utc + timedelta(minutes=i * self.step) for i in range(n_samples)]
 
         else:
             raise ValueError(f"Invalid step type: {self.step_type}")
@@ -332,7 +328,7 @@ class EphemerisDataFactory:
             is_dst=is_dst,
             custom_ayanamsa_t0=self.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
-            active_points=self.active_points,
+            active_points=(list(self.active_points) if self.active_points is not None else None),
             _lmt_offset_seconds=resolved_offset_seconds,
         )
 
@@ -399,12 +395,24 @@ class EphemerisDataFactory:
             houses_list = get_houses_list(subject)
             available_planets = get_available_astrological_points_list(subject)
 
-            ephemeris_data_list.append({"date": date.isoformat(), "planets": available_planets, "houses": houses_list})
+            ephemeris_data_list.append(
+                {
+                    "date": date.isoformat(),
+                    "planets": available_planets,
+                    "houses": houses_list,
+                    "ephemeris_warnings": list(subject.ephemeris_warnings),
+                }
+            )
 
         if as_model:
             # Type narrowing: at this point, the dict structure matches EphemerisDictModel
             return [
-                EphemerisDictModel(date=data["date"], planets=data["planets"], houses=data["houses"])
+                EphemerisDictModel(
+                    date=data["date"],
+                    planets=data["planets"],
+                    houses=data["houses"],
+                    ephemeris_warnings=data["ephemeris_warnings"],
+                )
                 for data in ephemeris_data_list
             ]  # type: ignore
 

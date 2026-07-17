@@ -656,6 +656,26 @@ class KerykeionPointModel(SubscriptableBaseModel):
     magnitude: Optional[float] = Field(
         default=None, description="Apparent visual magnitude (fixed stars only). Lower = brighter."
     )
+    source: Optional[str] = Field(
+        default=None,
+        description="Ephemeris or derivation source selected for this point (for example LEB, SPK, Skyfield, Analytical, Derived).",
+    )
+    precision_class: Optional[str] = Field(
+        default=None,
+        description="Machine-readable source class: ephemeris, analytical, approximate, derived, or unverified-local.",
+    )
+    ephemeris_coverage_start_jd: Optional[float] = Field(
+        default=None,
+        description="First Julian Day covered by the selected ephemeris source, when reported by the backend.",
+    )
+    ephemeris_coverage_end_jd: Optional[float] = Field(
+        default=None,
+        description="Last Julian Day covered by the selected ephemeris source, when reported by the backend.",
+    )
+    source_reviewed: Optional[bool] = Field(
+        default=None,
+        description="Whether the active source artifact passed the backend's pinned review gate.",
+    )
     near_point: Optional[str] = Field(default=None, description="Nearest chart point for fixed-star discovery results.")
     orb: Optional[float] = Field(
         default=None, description="Orb from the nearest chart point in fixed-star discovery results."
@@ -737,6 +757,18 @@ class NutationObliquityModel(SubscriptableBaseModel):
     mean_obliquity: float = Field(description="Mean obliquity of the ecliptic in degrees (without nutation).")
     nutation_longitude: float = Field(description="Nutation in longitude (delta-psi) in degrees.")
     nutation_obliquity: float = Field(description="Nutation in obliquity (delta-epsilon) in degrees.")
+
+
+class EphemerisWarningModel(SubscriptableBaseModel):
+    """A requested optional point omitted by the active ephemeris contract."""
+
+    code: str
+    point_name: str
+    body_id: int
+    requested_jd: float
+    message: str
+    coverage_start_jd: Optional[float] = None
+    coverage_end_jd: Optional[float] = None
 
 
 class AstrologicalBaseModel(SubscriptableBaseModel):
@@ -967,6 +999,10 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     active_points: list[AstrologicalPoint] = Field(
         description="List of active points in the chart or aspects calculations."
     )
+    ephemeris_warnings: list[EphemerisWarningModel] = Field(
+        default_factory=list,
+        description="Optional points omitted because the active ephemeris source did not cover the body or date.",
+    )
 
     # Common lunar phase data (optional)
     lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")
@@ -1089,9 +1125,7 @@ class PlanetReturnModel(AstrologicalBaseModel):
     """
 
     # Specific return data
-    return_type: ReturnType = Field(
-        description="Type of return: Solar, Lunar, Heliocentric or Lunar_Node_Crossing"
-    )
+    return_type: ReturnType = Field(description="Type of return: Solar, Lunar, Heliocentric or Lunar_Node_Crossing")
 
     # Sect (diurnal/nocturnal) of the return moment. Declared here so the
     # value the factory computes is not silently dropped by pydantic, which
@@ -1116,6 +1150,13 @@ class EphemerisDictModel(SubscriptableBaseModel):
     date: str
     planets: list[KerykeionPointModel]
     houses: list[KerykeionPointModel]
+    ephemeris_warnings: list[EphemerisWarningModel] = Field(
+        default_factory=list,
+        description=(
+            "Requested optional points omitted at this sample because the "
+            "sealed ephemeris inventory does not cover its body/date pair."
+        ),
+    )
 
 
 class AspectModel(SubscriptableBaseModel):

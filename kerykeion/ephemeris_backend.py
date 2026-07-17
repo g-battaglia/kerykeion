@@ -129,9 +129,7 @@ if _forced_backend:
             ) from None
         # Installed but broken (e.g. a failing transitive dependency):
         # keep the real cause in the chain.
-        raise ImportError(
-            f"KERYKEION_BACKEND={_forced_backend!r} is installed but failed to import: {_exc}"
-        ) from _exc
+        raise ImportError(f"KERYKEION_BACKEND={_forced_backend!r} is installed but failed to import: {_exc}") from _exc
     logger.info("Kerykeion ephemeris backend forced via KERYKEION_BACKEND: %s", BACKEND_NAME)
 else:
     # Auto-detect: try libephemeris first (our own backend),
@@ -327,8 +325,7 @@ elif BACKEND_NAME == "swisseph":
     if _dir_has_sweph_data(DEFAULT_SWEPH_DOWNLOAD_DIR):
         EPHE_DATA_PATH = DEFAULT_SWEPH_DOWNLOAD_DIR
         logger.info(
-            "Using Swiss Ephemeris data auto-detected in %s (set "
-            "KERYKEION_EPHE_PATH to override).",
+            "Using Swiss Ephemeris data auto-detected in %s (set KERYKEION_EPHE_PATH to override).",
             DEFAULT_SWEPH_DOWNLOAD_DIR,
         )
     else:
@@ -364,10 +361,15 @@ if BACKEND_NAME == "libephemeris":
     _VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
     _PINNED_LEB_MODE = os.environ.get("KERYKEION_LEB_MODE", "leb").strip().lower()
     if _PINNED_LEB_MODE not in _VALID_LEB_MODES:
-        raise ValueError(
-            f"Invalid KERYKEION_LEB_MODE={_PINNED_LEB_MODE!r}. Must be one of {_VALID_LEB_MODES}."
-        )
+        raise ValueError(f"Invalid KERYKEION_LEB_MODE={_PINNED_LEB_MODE!r}. Must be one of {_VALID_LEB_MODES}.")
     _backend_module.set_calc_mode(_PINNED_LEB_MODE)
+    if _PINNED_LEB_MODE == "leb":
+        if not hasattr(_backend_module, "set_network_policy"):
+            raise RuntimeError(
+                "Kerykeion LEB mode requires a libephemeris release with "
+                "sealed-network support. Upgrade the pinned dependency."
+            )
+        _backend_module.set_network_policy("sealed")
     logger.debug("libephemeris calc mode set to: %s", _PINNED_LEB_MODE)
 
 # ---------------------------------------------------------------------------
@@ -377,7 +379,8 @@ if BACKEND_NAME == "libephemeris":
 if BACKEND_NAME == "libephemeris":
     _mode = _backend_module.get_calc_mode()
     _tier = _backend_module.get_precision_tier()
-    _parts = [f"mode={_mode}", f"tier={_tier}"]
+    _network = _backend_module.get_network_policy() if hasattr(_backend_module, "get_network_policy") else "unknown"
+    _parts = [f"mode={_mode}", f"tier={_tier}", f"network={_network}"]
     logger.info(
         "kerykeion ephemeris: libephemeris %s (%s)",
         _backend_module.__version__,
@@ -500,9 +503,7 @@ def ephemeris_session(
         _SESSION_DEPTH.value = depth + 1
         try:
             if zodiac_type not in _VALID_SESSION_ZODIACS:
-                raise ValueError(
-                    f"Unknown zodiac_type {zodiac_type!r}: expected 'Tropical', 'Sidereal', or None."
-                )
+                raise ValueError(f"Unknown zodiac_type {zodiac_type!r}: expected 'Tropical', 'Sidereal', or None.")
             if perspective_type not in _VALID_SESSION_PERSPECTIVES:
                 valid_perspectives = ", ".join(repr(value) for value in _VALID_SESSION_PERSPECTIVES if value)
                 raise ValueError(
@@ -510,9 +511,7 @@ def ephemeris_session(
                 )
             if sidereal_mode == "USER":
                 if custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None:
-                    raise ValueError(
-                        "sidereal_mode='USER' requires custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0"
-                    )
+                    raise ValueError("sidereal_mode='USER' requires custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0")
                 if not math.isfinite(custom_ayanamsa_t0) or not math.isfinite(custom_ayanamsa_ayan_t0):
                     raise ValueError("sidereal_mode='USER' custom ayanamsa parameters must be finite numbers")
             if perspective_type == "Topocentric":

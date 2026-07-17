@@ -139,10 +139,29 @@ TNO_PLANETS: Dict[AstrologicalPoint, int] = {
 # ``subject[point.lower()]`` would hit KeyError on never-calculated points.
 _LEGACY_ACTIVE_POINT_STAR_NAMES = frozenset(
     {
-        "Regulus", "Spica", "Aldebaran", "Antares", "Sirius", "Fomalhaut",
-        "Algol", "Betelgeuse", "Canopus", "Procyon", "Arcturus", "Pollux",
-        "Deneb", "Altair", "Rigel", "Achernar", "Capella", "Vega",
-        "Alcyone", "Alphecca", "Algorab", "Deneb_Algedi", "Alkaid",
+        "Regulus",
+        "Spica",
+        "Aldebaran",
+        "Antares",
+        "Sirius",
+        "Fomalhaut",
+        "Algol",
+        "Betelgeuse",
+        "Canopus",
+        "Procyon",
+        "Arcturus",
+        "Pollux",
+        "Deneb",
+        "Altair",
+        "Rigel",
+        "Achernar",
+        "Capella",
+        "Vega",
+        "Alcyone",
+        "Alphecca",
+        "Algorab",
+        "Deneb_Algedi",
+        "Alkaid",
     }
 )
 
@@ -165,8 +184,18 @@ OPPOSITE_PAIRS: Dict[AstrologicalPoint, Dict[str, Any]] = {
     # South nodes are rigidly 180° from the north nodes, so they share the
     # SAME angular velocity (negating it would invert applying/separating
     # verdicts in aspect movement); declination IS mirrored.
-    "Mean_South_Lunar_Node": {"primary": "Mean_North_Lunar_Node", "negate_speed": False, "negate_dec": True, "negate_lat": False},
-    "True_South_Lunar_Node": {"primary": "True_North_Lunar_Node", "negate_speed": False, "negate_dec": True, "negate_lat": False},
+    "Mean_South_Lunar_Node": {
+        "primary": "Mean_North_Lunar_Node",
+        "negate_speed": False,
+        "negate_dec": True,
+        "negate_lat": False,
+    },
+    "True_South_Lunar_Node": {
+        "primary": "True_North_Lunar_Node",
+        "negate_speed": False,
+        "negate_dec": True,
+        "negate_lat": False,
+    },
     # Priapus is the true antipode of the off-ecliptic Lilith: mirror both
     # declination and ecliptic latitude so local-space projection uses ∓β.
     "Mean_Priapus": {"primary": "Mean_Lilith", "negate_speed": False, "negate_dec": True, "negate_lat": True},
@@ -197,11 +226,16 @@ _FIXED_STAR_KEY_PREFIX = "fixed_stars::"
 # without raising, while libephemeris ignores the perspective flag and returns
 # the geocentric value — a silent backend disagreement. Exclude them there.
 _GEOCENTRIC_ONLY_BODY_IDS = frozenset(
-    bid for bid in (
-        getattr(ephe, "MEAN_NODE", None), getattr(ephe, "TRUE_NODE", None),
-        getattr(ephe, "MEAN_APOG", None), getattr(ephe, "OSCU_APOG", None),
-        getattr(ephe, "INTP_APOG", None), getattr(ephe, "INTP_PERG", None),
-    ) if bid is not None
+    bid
+    for bid in (
+        getattr(ephe, "MEAN_NODE", None),
+        getattr(ephe, "TRUE_NODE", None),
+        getattr(ephe, "MEAN_APOG", None),
+        getattr(ephe, "OSCU_APOG", None),
+        getattr(ephe, "INTP_APOG", None),
+        getattr(ephe, "INTP_PERG", None),
+    )
+    if bid is not None
 )
 
 # Point names dropped by the exclusion above (plus their derived opposites,
@@ -210,10 +244,16 @@ _GEOCENTRIC_ONLY_BODY_IDS = frozenset(
 # this to recognize by-design absences in non-geocentric frames.
 _GEOCENTRIC_ONLY_POINT_NAMES = frozenset(
     {
-        "Mean_North_Lunar_Node", "True_North_Lunar_Node",
-        "Mean_South_Lunar_Node", "True_South_Lunar_Node",
-        "Mean_Lilith", "True_Lilith", "Interpolated_Lilith",
-        "Mean_Priapus", "True_Priapus", "Interpolated_Perigee",
+        "Mean_North_Lunar_Node",
+        "True_North_Lunar_Node",
+        "Mean_South_Lunar_Node",
+        "True_South_Lunar_Node",
+        "Mean_Lilith",
+        "True_Lilith",
+        "Interpolated_Lilith",
+        "Mean_Priapus",
+        "True_Priapus",
+        "Interpolated_Perigee",
     }
 )
 
@@ -281,6 +321,7 @@ def _gauquelin_sector_from_cusps(longitude: float, cusps: Optional[List[float]])
         if offset < span:
             return (i + 1) + offset / span
     return None
+
 
 # Arabic Parts configuration: (name, required_points, formula_type)
 # formula_type: "fortune" = day/night variant, "simple" = single formula
@@ -1403,9 +1444,7 @@ class AstrologicalSubjectFactory:
                 # projecting onto the local horizon.
                 ls_ayanamsa = calc_data.get("ayanamsa_value") if config.zodiac_type == "Sidereal" else 0.0
                 if ls_ayanamsa is None:
-                    logger.debug(
-                        "Skipping local space: sidereal chart without a computed ayanamsa value"
-                    )
+                    logger.debug("Skipping local space: sidereal chart without a computed ayanamsa value")
                 else:
                     for pk in enrichable_keys:
                         point = _enrich_point(pk)
@@ -1473,7 +1512,11 @@ class AstrologicalSubjectFactory:
                 try:
                     # Reuse the ECL_NUT result already fetched for OOB detection; only
                     # recompute if that call failed (nut_data is None).
-                    nut_raw = nut_data if nut_data is not None else ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
+                    nut_raw = (
+                        nut_data
+                        if nut_data is not None
+                        else ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
+                    )
                     calc_data["nutation"] = NutationObliquityModel(
                         true_obliquity=nut_raw[0],
                         mean_obliquity=nut_raw[1],
@@ -1908,9 +1951,7 @@ class AstrologicalSubjectFactory:
             resolved_username = geonames_username or _get_geonames_username()
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
                 logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
-            with FetchGeonames(
-                city or "Greenwich", nation or "GB", username=resolved_username
-            ) as _geonames:
+            with FetchGeonames(city or "Greenwich", nation or "GB", username=resolved_username) as _geonames:
                 city_data = _geonames.get_serialized_data()
             missing_fields = [f for f in ("timezonestr", "lat", "lng") if f not in city_data]
             if missing_fields:
@@ -2480,7 +2521,9 @@ class AstrologicalSubjectFactory:
                     # both backends: convert the UT day with delta-T first.
                     julian_day_tt = julian_day + ephe.deltat(julian_day)
                     planet_calc = ephe.calc_pctr(julian_day_tt, planet_id, center_body_id, iflag)[0]
-                    planet_eq = ephe.calc_pctr(julian_day_tt, planet_id, center_body_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
+                    planet_eq = ephe.calc_pctr(
+                        julian_day_tt, planet_id, center_body_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
+                    )[0]
                 except Exception as e:
                     # Fallback to geocentric if planetary ephemeris not available.
                     # Never silently: the caller asked for a planetocentric
@@ -2494,7 +2537,9 @@ class AstrologicalSubjectFactory:
                         e,
                     )
                     planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
-                    planet_eq = ephe.calc_ut(julian_day, planet_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
+                    planet_eq = ephe.calc_ut(julian_day, planet_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[
+                        0
+                    ]
             else:
                 planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
                 planet_eq = ephe.calc_ut(julian_day, planet_id, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
@@ -2690,10 +2735,7 @@ class AstrologicalSubjectFactory:
             # derived-point (South node / Priapus) prerequisite under a
             # non-geocentric perspective would compute a backend-dependent
             # phantom. Skip it — the dependent derived point is then skipped too.
-            if (
-                data.get("perspective_type") not in _GEO_TOPO_PERSPECTIVES
-                and planet_id in _GEOCENTRIC_ONLY_BODY_IDS
-            ):
+            if data.get("perspective_type") not in _GEO_TOPO_PERSPECTIVES and planet_id in _GEOCENTRIC_ONLY_BODY_IDS:
                 return
             try:
                 planet_calc = ephe.calc_ut(julian_day, planet_id, iflag)[0]
@@ -2955,9 +2997,7 @@ class AstrologicalSubjectFactory:
         # from ``calculated_planets`` (successes only), so the removals are
         # cosmetic; filtering must run off a stable snapshot.
         active_points_filter = list(active_points) if active_points else active_points
-        should_calculate = partial(
-            AstrologicalSubjectFactory._should_calculate, active_points=active_points_filter
-        )
+        should_calculate = partial(AstrologicalSubjectFactory._should_calculate, active_points=active_points_filter)
 
         point_type: PointType = "AstrologicalPoint"
         julian_day = data["julian_day"]
@@ -2976,6 +3016,57 @@ class AstrologicalSubjectFactory:
         # Lunar nodes/apogees are geocentric-only: exclude them for any
         # non-geocentric/topocentric perspective (backend-dependent phantom).
         exclude_geocentric_only = data.get("perspective_type") not in _GEO_TOPO_PERSPECTIVES
+
+        # In sealed LEB mode, optional minor bodies are capabilities, not
+        # speculative fallbacks. Check the per-body range before calling the
+        # engine so an uncovered point is omitted once with machine-readable
+        # context instead of triggering network or a silent approximation.
+        data.setdefault("ephemeris_warnings", [])
+
+        def _coverage_allows(point_name: str, body_id: int) -> bool:
+            if BACKEND_NAME != "libephemeris":
+                return True
+            try:
+                if ephe.get_calc_mode() != "leb" or body_id not in ephe.SPK_BODY_NAME_MAP:
+                    return True
+                body_coverage = ephe.get_body_coverage(body_id)
+            except AttributeError:
+                # Dependency pinning requires the coverage API. Keep this
+                # compatibility branch for backend doubles used by consumers.
+                return True
+
+            if body_coverage is not None and body_coverage.contains(julian_day):
+                return True
+
+            if body_coverage is None:
+                code = "body_not_in_active_leb"
+                start_jd = end_jd = None
+                message = f"{point_name} (body {body_id}) is not present in the active LEB inventory and was omitted."
+            else:
+                code = "date_outside_leb_coverage"
+                start_jd = float(body_coverage.jd_start)
+                end_jd = float(body_coverage.jd_end)
+                message = (
+                    f"{point_name} (body {body_id}) at JD {julian_day:.6f} is "
+                    f"outside LEB coverage [{start_jd:.6f}, {end_jd:.6f}] and "
+                    "was omitted."
+                )
+
+            data["ephemeris_warnings"].append(
+                {
+                    "code": code,
+                    "point_name": point_name,
+                    "body_id": body_id,
+                    "requested_jd": float(julian_day),
+                    "message": message,
+                    "coverage_start_jd": start_jd,
+                    "coverage_end_jd": end_jd,
+                }
+            )
+            logger.warning(message)
+            if active_points is not None and point_name in active_points:
+                active_points.remove(point_name)
+            return False
 
         # Start ephemeris backend tracing (libephemeris only)
         _trace_token = None
@@ -2997,7 +3088,7 @@ class AstrologicalSubjectFactory:
             # The center body is skipped inside _calculate_single_planet (the
             # single chokepoint for storing a planetary position), so no guard
             # is needed here.
-            if should_calculate(planet_name):
+            if should_calculate(planet_name) and _coverage_allows(planet_name, planet_id):
                 AstrologicalSubjectFactory._calculate_single_planet(
                     data,
                     planet_name,
@@ -3018,12 +3109,13 @@ class AstrologicalSubjectFactory:
         # =============================================================================
         # TNOs require AST_OFFSET and may fail for dates outside ephemeris range
         for tno_name, asteroid_num in TNO_PLANETS.items():
-            if should_calculate(tno_name):
+            tno_body_id = ephe.AST_OFFSET + asteroid_num
+            if should_calculate(tno_name) and _coverage_allows(tno_name, tno_body_id):
                 try:
                     AstrologicalSubjectFactory._calculate_single_planet(
                         data,
                         tno_name,
-                        ephe.AST_OFFSET + asteroid_num,
+                        tno_body_id,
                         julian_day,
                         iflag,
                         houses_degree_ut,
@@ -3242,8 +3334,10 @@ class AstrologicalSubjectFactory:
                 _trace_token.var.reset(_trace_token)
             except Exception:
                 pass
-            if trace_map and logger.isEnabledFor(logging.DEBUG):
-                # Build reverse map: body_id -> planet_name
+            if trace_map:
+                # Build reverse map: body_id -> planet_name. Source metadata is
+                # part of the public point model; DEBUG logging is only a view
+                # over the same data and no longer controls whether it survives.
                 _id_to_name: Dict[int, str] = {v: k for k, v in STANDARD_PLANETS.items()}
                 for tname, tnum in TNO_PLANETS.items():
                     _id_to_name[ephe.AST_OFFSET + tnum] = tname
@@ -3260,15 +3354,46 @@ class AstrologicalSubjectFactory:
                     name = _id_to_name.get(body_id, f"body_{body_id}")
                     point = data.get(name.lower())
                     if point is not None and hasattr(point, "abs_pos"):
+                        point.source = backend
+                        normalized_source = str(backend).lower()
+                        if normalized_source.startswith("keplerian"):
+                            point.precision_class = "approximate"
+                        elif normalized_source.startswith("analytical"):
+                            point.precision_class = "analytical"
+                        else:
+                            point.precision_class = "ephemeris"
+
+                        if backend == "LEB" and hasattr(ephe, "get_body_coverage"):
+                            body_coverage = ephe.get_body_coverage(body_id)
+                            if body_coverage is not None:
+                                point.precision_class = body_coverage.precision_class
+                                point.ephemeris_coverage_start_jd = body_coverage.jd_start
+                                point.ephemeris_coverage_end_jd = body_coverage.jd_end
+                                point.source_reviewed = body_coverage.reviewed
+
                         order_idx = trace_order.get(name, len(trace_order))
                         trace_rows.append((order_idx, float(point.abs_pos), name, backend))
 
-                if trace_rows:
+                if trace_rows and logger.isEnabledFor(logging.DEBUG):
                     trace_rows.sort(key=lambda row: (row[0], row[1]))
                     logger.debug("Ephemeris trace [%s]", data.get("name", "unknown"))
                     logger.debug("  %-24s %8s  %s", "point", "deg", "backend")
                     for _, abs_pos, name, backend in trace_rows:
                         logger.debug("  %-24s %8.2f  %s", name, abs_pos, backend)
+
+            # Geometric antipodes inherit the precision contract of their
+            # primary while declaring that their coordinate was derived. This
+            # public metadata must not depend on whether tracing returned rows.
+            for derived_name, pair_config in OPPOSITE_PAIRS.items():
+                derived = data.get(derived_name.lower())
+                primary = data.get(pair_config["primary"].lower())
+                if derived is None or primary is None:
+                    continue
+                derived.source = "Derived"
+                derived.precision_class = primary.precision_class
+                derived.ephemeris_coverage_start_jd = primary.ephemeris_coverage_start_jd
+                derived.ephemeris_coverage_end_jd = primary.ephemeris_coverage_end_jd
+                derived.source_reviewed = primary.source_reviewed
 
     @staticmethod
     def _calculate_day_of_week(data: Dict[str, Any]) -> None:

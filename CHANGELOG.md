@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Added
+
+- Every calculated point can now expose its selected ephemeris `source`,
+  `precision_class`, reviewed status and backend-reported coverage window.
+  Tracing is collected independently of DEBUG logging and survives normal
+  model serialization.
+- Subjects expose structured `ephemeris_warnings` for optional points omitted
+  because the active LEB inventory lacks the body or requested date.
+
+### Changed
+
+- LEB mode now enforces libephemeris' sealed network policy and preflights
+  mapped minor bodies with the per-body coverage API. An uncovered optional
+  point is not calculated, is removed from `active_points`, and is reported;
+  no online or undeclared lower-precision fallback is probed.
+- The dependency advances to libephemeris 3.0.0rc13, which supplies the pinned
+  modular data set, sealed-network gate and coverage inventory.
+
 ## 6.0.0a73 - 2026-07-16
 
 ### Fixed
