@@ -15,11 +15,12 @@
 ### Changed
 
 - LEB mode now enforces libephemeris' sealed network policy and delegates
-  source selection to libephemeris. For a configured maximum tier, the most
-  precise reviewed LEB artifact covering each body and date is preferred; an
-  explicitly supported local model remains available and is labelled with its
-  actual source. Only a point for which no permitted source succeeds is
-  omitted from `active_points` and reported through `ephemeris_warnings`.
+  source selection to libephemeris. For a configured maximum tier, the
+  highest-priority manifest-pinned LEB artifact covering each body and date is
+  preferred; an explicitly supported local model remains available and is
+  labelled with its actual source. Only a point for which no permitted source
+  succeeds is omitted from `active_points` and reported through
+  `ephemeris_warnings`.
 - Planetocentric failures are no longer replaced with geocentric coordinates.
   In particular, a Sun or Moon failure now aborts the subject instead of
   returning a mislabeled frame; swisseph installations therefore need the
