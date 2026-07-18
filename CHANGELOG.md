@@ -4,19 +4,25 @@
 
 ### Added
 
-- Every calculated point can now expose its selected ephemeris `source`,
-  `precision_class`, reviewed status and backend-reported coverage window.
-  Tracing is collected independently of DEBUG logging and survives normal
-  model serialization.
+- Ephemeris-backed points calculated through libephemeris can now expose their
+  selected `source`, `precision_class`, reviewed status and backend-reported
+  coverage window. Tracing is collected independently of DEBUG logging and
+  survives normal model serialization.
 - Subjects expose structured `ephemeris_warnings` for optional points omitted
-  because the active LEB inventory lacks the body or requested date.
+  after neither the selected ephemeris nor a permitted local model produced a
+  value. Backend exception details remain in logs rather than public payloads.
 
 ### Changed
 
-- LEB mode now enforces libephemeris' sealed network policy and preflights
-  mapped minor bodies with the per-body coverage API. An uncovered optional
-  point is not calculated, is removed from `active_points`, and is reported;
-  no online or undeclared lower-precision fallback is probed.
+- LEB mode now enforces libephemeris' sealed network policy and delegates
+  source selection to libephemeris. A covered LEB value is preferred; an
+  explicitly supported local model remains available and is labelled with its
+  actual source. Only a point for which no permitted source succeeds is
+  omitted from `active_points` and reported through `ephemeris_warnings`.
+- Planetocentric failures are no longer replaced with geocentric coordinates.
+  In particular, a Sun or Moon failure now aborts the subject instead of
+  returning a mislabeled frame; swisseph installations therefore need the
+  corresponding planetary ephemeris files for those perspectives.
 - The dependency advances to libephemeris 3.0.0rc13, which supplies the pinned
   modular data set, sealed-network gate and coverage inventory.
 

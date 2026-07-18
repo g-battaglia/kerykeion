@@ -662,7 +662,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
     )
     precision_class: Optional[str] = Field(
         default=None,
-        description="Machine-readable source class: ephemeris, analytical, approximate, derived, or unverified-local.",
+        description="Machine-readable source class: ephemeris, analytical, approximate, or unverified-local.",
     )
     ephemeris_coverage_start_jd: Optional[float] = Field(
         default=None,
@@ -760,7 +760,7 @@ class NutationObliquityModel(SubscriptableBaseModel):
 
 
 class EphemerisWarningModel(SubscriptableBaseModel):
-    """A requested optional point omitted by the active ephemeris contract."""
+    """A requested optional point omitted after source selection failed."""
 
     code: str
     point_name: str
@@ -1001,7 +1001,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     )
     ephemeris_warnings: list[EphemerisWarningModel] = Field(
         default_factory=list,
-        description="Optional points omitted because the active ephemeris source did not cover the body or date.",
+        description="Optional points omitted because no permitted source produced a value.",
     )
 
     # Common lunar phase data (optional)
@@ -1153,8 +1153,8 @@ class EphemerisDictModel(SubscriptableBaseModel):
     ephemeris_warnings: list[EphemerisWarningModel] = Field(
         default_factory=list,
         description=(
-            "Requested optional points omitted at this sample because the "
-            "sealed ephemeris inventory does not cover its body/date pair."
+            "Requested optional points omitted at this sample because no "
+            "permitted ephemeris or local model produced a value."
         ),
     )
 

@@ -2438,6 +2438,81 @@ class AstrologicalSubjectFactory:
         return calculated_axial_cusps
 
     @staticmethod
+    def _append_ephemeris_warning(
+        data: Dict[str, Any],
+        point_name: str,
+        body_id: int,
+        requested_jd: float,
+        *,
+        code: str | None = None,
+    ) -> None:
+        """Record a safe, structured warning for an omitted optional point.
+
+        Backend exception text stays in the application log: it can contain
+        installation paths or transport details and is not suitable for the
+        public model. Coverage is advisory metadata only; libephemeris remains
+        responsible for choosing LEB or an allowed local fallback.
+        """
+        coverage = None
+        if BACKEND_NAME == "libephemeris" and hasattr(ephe, "get_body_coverage"):
+            try:
+                coverage = ephe.get_body_coverage(body_id, requested_jd)
+            except TypeError:
+                # Compatibility with the rc13 one-argument coverage API.
+                coverage = ephe.get_body_coverage(body_id)
+
+        resolved_code = code
+        if resolved_code is None:
+            if coverage is not None and not coverage.contains(requested_jd):
+                resolved_code = "date_outside_ephemeris_coverage"
+            else:
+                resolved_code = "ephemeris_calculation_failed"
+
+        if resolved_code == "date_outside_ephemeris_coverage":
+            message = (
+                "Optional point omitted because no stored ephemeris or permitted "
+                "local model produced a value for the requested date."
+            )
+        elif resolved_code == "unsupported_by_backend":
+            message = (
+                "Optional point omitted because the active backend does not support it."
+            )
+        else:
+            message = (
+                "Optional point omitted because the active ephemeris backend "
+                "could not calculate it."
+            )
+
+        warning = {
+            "code": resolved_code,
+            "point_name": point_name,
+            "body_id": int(body_id),
+            "requested_jd": float(requested_jd),
+            "message": message,
+            "coverage_start_jd": getattr(coverage, "jd_start", None),
+            "coverage_end_jd": getattr(coverage, "jd_end", None),
+        }
+        warnings = data.setdefault("ephemeris_warnings", [])
+        warning_identity = (
+            warning["code"],
+            warning["point_name"],
+            warning["body_id"],
+            warning["requested_jd"],
+        )
+        if not any(
+            (
+                existing.get("code"),
+                existing.get("point_name"),
+                existing.get("body_id"),
+                existing.get("requested_jd"),
+            )
+            == warning_identity
+            for existing in warnings
+            if isinstance(existing, dict)
+        ):
+            warnings.append(warning)
+
+    @staticmethod
     def _calculate_single_planet(
         data: Dict[str, Any],
         planet_name: AstrologicalPoint,
@@ -2564,6 +2639,12 @@ class AstrologicalSubjectFactory:
                     "The date is likely outside the range covered by the loaded ephemeris data."
                 ) from e
             logging.error(f"Error calculating {planet_name}: {e}")
+            AstrologicalSubjectFactory._append_ephemeris_warning(
+                data,
+                planet_name,
+                planet_id,
+                julian_day,
+            )
             if planet_name in active_points:
                 active_points.remove(planet_name)
 
@@ -2738,6 +2819,12 @@ class AstrologicalSubjectFactory:
                         "The date is likely outside the range covered by the loaded ephemeris data."
                     ) from e
                 logging.error(f"Error calculating {point}: {e}")
+                AstrologicalSubjectFactory._append_ephemeris_warning(
+                    data,
+                    point,
+                    planet_id,
+                    julian_day,
+                )
                 if point in active_points:
                     active_points.remove(point)
                 return
@@ -3238,6 +3325,13 @@ class AstrologicalSubjectFactory:
                     "backend; skipping it instead of substituting an incorrect value "
                     "(Mean Lilith + 180° is Priapus, not Selena)."
                 )
+                AstrologicalSubjectFactory._append_ephemeris_warning(
+                    data,
+                    "White_Moon",
+                    56,
+                    julian_day,
+                    code="unsupported_by_backend",
+                )
                 if "White_Moon" in active_points:
                     active_points.remove("White_Moon")
 
@@ -3303,7 +3397,10 @@ class AstrologicalSubjectFactory:
                             point.precision_class = "ephemeris"
 
                         if backend == "LEB" and hasattr(ephe, "get_body_coverage"):
-                            body_coverage = ephe.get_body_coverage(body_id)
+                            try:
+                                body_coverage = ephe.get_body_coverage(body_id, julian_day)
+                            except TypeError:
+                                body_coverage = ephe.get_body_coverage(body_id)
                             if body_coverage is not None:
                                 point.precision_class = body_coverage.precision_class
                                 point.ephemeris_coverage_start_jd = body_coverage.jd_start
