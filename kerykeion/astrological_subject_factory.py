@@ -2458,7 +2458,7 @@ class AstrologicalSubjectFactory:
             try:
                 coverage = ephe.get_body_coverage(body_id, requested_jd)
             except TypeError:
-                # Compatibility with the rc13 one-argument coverage API.
+                # Compatibility with the pre-rc14 one-argument coverage API.
                 coverage = ephe.get_body_coverage(body_id)
 
         resolved_code = code

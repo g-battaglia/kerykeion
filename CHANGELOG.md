@@ -15,7 +15,8 @@
 ### Changed
 
 - LEB mode now enforces libephemeris' sealed network policy and delegates
-  source selection to libephemeris. A covered LEB value is preferred; an
+  source selection to libephemeris. For a configured maximum tier, the most
+  precise reviewed LEB artifact covering each body and date is preferred; an
   explicitly supported local model remains available and is labelled with its
   actual source. Only a point for which no permitted source succeeds is
   omitted from `active_points` and reported through `ephemeris_warnings`.
@@ -23,8 +24,9 @@
   In particular, a Sun or Moon failure now aborts the subject instead of
   returning a mislabeled frame; swisseph installations therefore need the
   corresponding planetary ephemeris files for those perspectives.
-- The dependency advances to libephemeris 3.0.0rc13, which supplies the pinned
-  modular data set, sealed-network gate and coverage inventory.
+- The dependency advances to libephemeris 3.0.0rc14, which supplies the pinned
+  data-v3 modular set, sealed-network gate, best-by-date tier routing and
+  coverage inventory.
 
 ## 6.0.0a73 - 2026-07-16
 

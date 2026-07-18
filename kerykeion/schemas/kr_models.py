@@ -662,7 +662,7 @@ class KerykeionPointModel(SubscriptableBaseModel):
     )
     precision_class: Optional[str] = Field(
         default=None,
-        description="Machine-readable source class: ephemeris, analytical, approximate, or unverified-local.",
+        description="Machine-readable source class: ephemeris, analytical, numerical-model, approximate, mixed, or unverified-local.",
     )
     ephemeris_coverage_start_jd: Optional[float] = Field(
         default=None,
