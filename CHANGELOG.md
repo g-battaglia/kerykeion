@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 6.0.0a75 - 2026-07-18
+
 ### Added
 
 - Ephemeris-backed points calculated through libephemeris can now expose their
