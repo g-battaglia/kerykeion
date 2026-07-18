@@ -80,6 +80,66 @@ def test_derived_source_does_not_depend_on_trace_rows(
     )
 
 
+@pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
+def test_arabic_parts_inherit_derived_provenance_from_primaries() -> None:
+    subject = _subject(active_points=["Sun", "Moon", "Ascendant", "Pars_Fortunae"])
+
+    assert subject.sun is not None
+    assert subject.moon is not None
+    assert subject.pars_fortunae is not None
+
+    part = subject.pars_fortunae
+    assert part.source == "Derived"
+
+    primaries = [subject.sun, subject.moon]
+    primary_classes = {p.precision_class for p in primaries if p.precision_class is not None}
+    assert primary_classes, "test premise: Sun/Moon must carry precision metadata"
+    if len(primary_classes) == 1:
+        assert part.precision_class == next(iter(primary_classes))
+    else:
+        assert part.precision_class == "mixed"
+
+    starts = [p.ephemeris_coverage_start_jd for p in primaries if p.ephemeris_coverage_start_jd is not None]
+    ends = [p.ephemeris_coverage_end_jd for p in primaries if p.ephemeris_coverage_end_jd is not None]
+    assert part.ephemeris_coverage_start_jd == max(starts)
+    assert part.ephemeris_coverage_end_jd == min(ends)
+
+    reviewed = [p.source_reviewed for p in primaries if p.source_reviewed is not None]
+    if reviewed:
+        assert part.source_reviewed == all(reviewed)
+
+    # The Ascendant itself is direct house geometry: it stays unannotated and
+    # must not have diluted the inherited contract.
+    assert subject.ascendant is not None
+    assert subject.ascendant.source is None
+
+
+@pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
+def test_relocation_preserves_derived_lot_provenance() -> None:
+    from kerykeion.relocated_chart_factory import RelocatedChartFactory
+
+    subject = _subject(active_points=["Sun", "Moon", "Ascendant", "Pars_Fortunae"])
+    part = subject.pars_fortunae
+    assert part is not None
+    assert part.source == "Derived"
+
+    relocated = RelocatedChartFactory.relocate(
+        subject,
+        new_lat=40.7128,
+        new_lng=-74.006,
+        new_city="New York",
+        new_nation="US",
+        new_tz_str="America/New_York",
+    )
+    moved = relocated.pars_fortunae
+    assert moved is not None
+    assert moved.source == "Derived"
+    assert moved.precision_class == part.precision_class
+    assert moved.ephemeris_coverage_start_jd == part.ephemeris_coverage_start_jd
+    assert moved.ephemeris_coverage_end_jd == part.ephemeris_coverage_end_jd
+    assert moved.source_reviewed == part.source_reviewed
+
+
 @dataclass
 class _OutsideCoverage:
     jd_start: float = 2_400_000.0
@@ -103,7 +163,10 @@ def test_inventory_range_does_not_preempt_engine_source_selection(
             calls_for_chiron.append(float(jd))
         return real_calc_ut(jd, body_id, *args, **kwargs)
 
-    monkeypatch.setattr(ephe, "get_body_coverage", lambda body_id: _OutsideCoverage())
+    # Both arguments are required on purpose: the factory must call the rc14
+    # date-aware form get_body_coverage(body_id, jd) — a regression to the old
+    # one-argument call would raise TypeError here and fail the test.
+    monkeypatch.setattr(ephe, "get_body_coverage", lambda body_id, jd: _OutsideCoverage())
     monkeypatch.setattr(ephe, "calc_ut", _observed_calc_ut)
 
     subject = _subject(active_points=["Chiron"])
@@ -118,7 +181,7 @@ def test_inventory_range_does_not_preempt_engine_source_selection(
 def test_default_chart_uses_traced_local_fallback_outside_chiron_leb_range() -> None:
     subject = _subject(year=1580, month=7, day=21, tz_str="Etc/GMT")
 
-    coverage = ephe.get_body_coverage(ephe.CHIRON)
+    coverage = ephe.get_body_coverage(ephe.CHIRON, subject.julian_day)
     assert coverage is not None
     assert not coverage.contains(subject.julian_day)
     assert subject.chiron is not None

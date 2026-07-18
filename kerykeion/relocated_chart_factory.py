@@ -427,6 +427,15 @@ class RelocatedChartFactory:
             part_point = get_kerykeion_point_from_degree(part_deg, part_name, "AstrologicalPoint")
             part_point.house = get_planet_house(part_deg, houses_degree_ut)
             part_point.retrograde = False
+            # The natal lot carries Derived provenance inherited from its
+            # planetary primaries; relocation changes houses, not primaries.
+            prior_part = relocated_data.get(part_field)
+            if isinstance(prior_part, dict):
+                part_point.source = prior_part.get("source")
+                part_point.precision_class = prior_part.get("precision_class")
+                part_point.ephemeris_coverage_start_jd = prior_part.get("ephemeris_coverage_start_jd")
+                part_point.ephemeris_coverage_end_jd = prior_part.get("ephemeris_coverage_end_jd")
+                part_point.source_reviewed = prior_part.get("source_reviewed")
             relocated_data[part_field] = part_point
 
         # Reassign EVERY non-axial point stored on the model to its new house —

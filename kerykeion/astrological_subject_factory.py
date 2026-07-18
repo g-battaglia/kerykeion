@@ -2455,11 +2455,8 @@ class AstrologicalSubjectFactory:
         """
         coverage = None
         if BACKEND_NAME == "libephemeris" and hasattr(ephe, "get_body_coverage"):
-            try:
-                coverage = ephe.get_body_coverage(body_id, requested_jd)
-            except TypeError:
-                # Compatibility with the pre-rc14 one-argument coverage API.
-                coverage = ephe.get_body_coverage(body_id)
+            # rc14 date-aware coverage API: body_id + requested JD.
+            coverage = ephe.get_body_coverage(body_id, requested_jd)
 
         resolved_code = code
         if resolved_code is None:
@@ -3397,10 +3394,8 @@ class AstrologicalSubjectFactory:
                             point.precision_class = "ephemeris"
 
                         if backend == "LEB" and hasattr(ephe, "get_body_coverage"):
-                            try:
-                                body_coverage = ephe.get_body_coverage(body_id, julian_day)
-                            except TypeError:
-                                body_coverage = ephe.get_body_coverage(body_id)
+                            # rc14 date-aware coverage API: body_id + requested JD.
+                            body_coverage = ephe.get_body_coverage(body_id, julian_day)
                             if body_coverage is not None:
                                 point.precision_class = body_coverage.precision_class
                                 point.ephemeris_coverage_start_jd = body_coverage.jd_start
@@ -3417,6 +3412,24 @@ class AstrologicalSubjectFactory:
                     for _, abs_pos, name, backend in trace_rows:
                         logger.debug("  %-24s %8.2f  %s", name, abs_pos, backend)
 
+            # -----------------------------------------------------------------
+            # Provenance for geometrically derived points.
+            #
+            # Surface covered by provenance metadata (source / precision_class
+            # / coverage window / reviewed flag):
+            #   1. Traced ephemeris bodies (loop above): planets, nodes,
+            #      Lilith variants, Chiron, asteroids, TNOs, White Moon.
+            #   2. OPPOSITE_PAIRS antipodes (first loop below): each inherits
+            #      from its single primary.
+            #   3. Arabic Parts / Lots (second loop below): each inherits from
+            #      the ephemeris-backed primaries in its formula.
+            # NOT annotated here (source stays None): Ascendant, Medium Coeli,
+            # Vertex and house cusps (direct outputs of the backend house
+            # geometry, with no per-body coverage inventory) and fixed stars
+            # (direct catalog queries, not traced by body id). No blanket
+            # "every calculated point" guarantee is intended.
+            # -----------------------------------------------------------------
+
             # Geometric antipodes inherit the precision contract of their
             # primary while declaring that their coordinate was derived. This
             # public metadata must not depend on whether tracing returned rows.
@@ -3430,6 +3443,43 @@ class AstrologicalSubjectFactory:
                 derived.ephemeris_coverage_start_jd = primary.ephemeris_coverage_start_jd
                 derived.ephemeris_coverage_end_jd = primary.ephemeris_coverage_end_jd
                 derived.source_reviewed = primary.source_reviewed
+
+            # Arabic Parts are pure arithmetic on their primaries (Ascendant
+            # plus planetary longitudes), so they are Derived as well. The
+            # Ascendant carries no per-body coverage metadata (house geometry,
+            # see the surface note above) and therefore never dilutes the
+            # inherited contract. When the reporting primaries disagree on
+            # precision the part is honestly labelled "mixed"; the coverage
+            # window is the intersection of the reported windows and the
+            # reviewed flag is true only when every reporting primary is.
+            for part_name, part_config in ARABIC_PARTS_CONFIG.items():
+                part = data.get(part_name.lower())
+                if part is None:
+                    continue
+                part_primaries = [
+                    point
+                    for point in (data.get(req.lower()) for req in part_config["required"])
+                    if point is not None
+                ]
+                part.source = "Derived"
+                primary_classes = {p.precision_class for p in part_primaries if p.precision_class is not None}
+                if len(primary_classes) == 1:
+                    part.precision_class = next(iter(primary_classes))
+                elif primary_classes:
+                    part.precision_class = "mixed"
+                coverage_starts = [
+                    p.ephemeris_coverage_start_jd for p in part_primaries if p.ephemeris_coverage_start_jd is not None
+                ]
+                coverage_ends = [
+                    p.ephemeris_coverage_end_jd for p in part_primaries if p.ephemeris_coverage_end_jd is not None
+                ]
+                if coverage_starts:
+                    part.ephemeris_coverage_start_jd = max(coverage_starts)
+                if coverage_ends:
+                    part.ephemeris_coverage_end_jd = min(coverage_ends)
+                reviewed_flags = [p.source_reviewed for p in part_primaries if p.source_reviewed is not None]
+                if reviewed_flags:
+                    part.source_reviewed = all(reviewed_flags)
 
     @staticmethod
     def _calculate_day_of_week(data: Dict[str, Any]) -> None:
