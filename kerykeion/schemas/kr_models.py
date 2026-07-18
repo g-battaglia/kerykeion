@@ -1145,11 +1145,21 @@ class EphemerisDictModel(SubscriptableBaseModel):
         date: ISO formatted date string.
         planets: List of planetary positions.
         houses: List of house cusp positions.
+        fixed_stars: Fixed star positions, populated only when the producing
+            factory was configured with a non-empty ``active_fixed_stars``.
     """
 
     date: str
     planets: list[KerykeionPointModel]
     houses: list[KerykeionPointModel]
+    fixed_stars: list[KerykeionPointModel] = Field(
+        default_factory=list,
+        description=(
+            "Fixed star positions for this sample (same shape as "
+            "AstrologicalSubjectModel.fixed_stars). Empty unless the producing "
+            "factory requested stars via active_fixed_stars."
+        ),
+    )
     ephemeris_warnings: list[EphemerisWarningModel] = Field(
         default_factory=list,
         description=(

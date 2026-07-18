@@ -10,6 +10,25 @@
   selected `source`, `precision_class`, reviewed status and backend-reported
   coverage window. Tracing is collected independently of DEBUG logging and
   survives normal model serialization.
+- Geometrically derived points inherit provenance from their primaries on the
+  libephemeris backend (like all provenance metadata, this is not populated on
+  the pyswisseph backend): besides the opposite-point antipodes (South Nodes,
+  Priapus variants, Descendant, Imum Coeli, Anti-Vertex), Arabic Parts / Lots
+  are now labelled `source="Derived"` with precision, coverage window and
+  reviewed status inherited from the ephemeris-backed points in their formula
+  (distinct precision classes collapse to `mixed`; coverage is the
+  intersection). Relocated charts preserve the inherited lot provenance.
+  Points computed directly from house geometry (Ascendant, Medium Coeli,
+  Vertex, house cusps) and fixed stars intentionally carry no per-body
+  coverage metadata.
+- `EphemerisDataFactory` accepts `active_fixed_stars`: requested stars are
+  calculated on every generated subject and, when the list is non-empty, each
+  `get_ephemeris_data` sample carries a `fixed_stars` key with the star point
+  models (same shape as `subject.fixed_stars`); subjects returned by
+  `get_ephemeris_data_as_astrological_subjects` expose them via
+  `subject.fixed_stars`. With no stars requested the plain-dict output is
+  unchanged; `as_model=True` serialization gains an empty `fixed_stars` list
+  on every sample (like `ephemeris_warnings` in this same alpha cycle).
 - Subjects expose structured `ephemeris_warnings` for optional points omitted
   after neither the selected ephemeris nor a permitted local model produced a
   value. Backend exception details remain in logs rather than public payloads.

@@ -83,8 +83,9 @@ class EphemerisDataFactory:
     """
     A factory class for generating ephemeris data over a specified date range.
 
-    This class calculates astrological ephemeris data (planetary positions and house cusps)
-    for a sequence of dates, allowing for detailed astronomical calculations across time periods.
+    This class calculates astrological ephemeris data (planetary positions, house cusps
+    and, when requested via ``active_fixed_stars``, fixed star positions) for a sequence
+    of dates, allowing for detailed astronomical calculations across time periods.
     It supports different time intervals (days, hours, or minutes) and various astrological
     calculation systems.
 
@@ -136,6 +137,14 @@ class EphemerisDataFactory:
             (e.g. TransitsTimeRangeFactory with asteroids/TNOs) — aspects can
             only be detected for points present on BOTH the natal and the
             ephemeris subjects.
+        active_fixed_stars (Union[List[str], None], optional): Fixed star names to
+            calculate on every generated subject (same contract as
+            ``AstrologicalSubjectFactory.from_birth_data``). When non-empty, each
+            sample returned by ``get_ephemeris_data`` additionally carries a
+            ``"fixed_stars"`` key with the calculated star point models, and the
+            subjects returned by ``get_ephemeris_data_as_astrological_subjects``
+            expose them via ``subject.fixed_stars``. Defaults to None (no stars,
+            output identical to previous releases).
 
     Raises:
         ValueError: If step_type is not one of "days", "hours", or "minutes".
@@ -189,6 +198,7 @@ class EphemerisDataFactory:
         custom_ayanamsa_t0: Optional[float] = None,
         custom_ayanamsa_ayan_t0: Optional[float] = None,
         active_points: Optional[List[AstrologicalPoint]] = None,
+        active_fixed_stars: Optional[List[str]] = None,
     ):
         if step <= 0:
             # A non-positive step divides by zero when sizing the series; reject
@@ -213,6 +223,9 @@ class EphemerisDataFactory:
         # sample a fresh selection so one uncovered date cannot suppress the
         # warning (or the calculation) for later covered dates.
         self.active_points = list(active_points) if active_points is not None else None
+        # Same immutability contract as active_points: keep the caller's list
+        # untouched and hand every sample its own fresh copy.
+        self.active_fixed_stars = list(active_fixed_stars) if active_fixed_stars is not None else None
         self.max_days = max_days
         self.max_hours = max_hours
         self.max_minutes = max_minutes
@@ -329,6 +342,7 @@ class EphemerisDataFactory:
             custom_ayanamsa_t0=self.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
             active_points=(list(self.active_points) if self.active_points is not None else None),
+            active_fixed_stars=(list(self.active_fixed_stars) if self.active_fixed_stars is not None else None),
             _lmt_offset_seconds=resolved_offset_seconds,
         )
 
@@ -361,6 +375,11 @@ class EphemerisDataFactory:
                       or subscript access: 'name', 'abs_pos', 'sign', 'speed', etc.)
                     - "houses" (list): List of KerykeionPointModel instances for the
                       house cusps (same access patterns)
+                    - "fixed_stars" (list): ONLY present when the factory was built
+                      with a non-empty ``active_fixed_stars``. List of the calculated
+                      fixed star KerykeionPointModel instances (same shape as
+                      ``subject.fixed_stars``). Without requested stars the key is
+                      absent and the output is unchanged from previous releases.
 
                 If as_model=True:
                     List of EphemerisDictModel instances providing the same data
@@ -395,14 +414,18 @@ class EphemerisDataFactory:
             houses_list = get_houses_list(subject)
             available_planets = get_available_astrological_points_list(subject)
 
-            ephemeris_data_list.append(
-                {
-                    "date": date.isoformat(),
-                    "planets": available_planets,
-                    "houses": houses_list,
-                    "ephemeris_warnings": list(subject.ephemeris_warnings),
-                }
-            )
+            sample: dict[str, Any] = {
+                "date": date.isoformat(),
+                "planets": available_planets,
+                "houses": houses_list,
+                "ephemeris_warnings": list(subject.ephemeris_warnings),
+            }
+            # The key is emitted only when stars were requested: without
+            # active_fixed_stars the sample dict stays byte-identical to
+            # previous releases (public backward-compatibility contract).
+            if self.active_fixed_stars:
+                sample["fixed_stars"] = list(subject.fixed_stars)
+            ephemeris_data_list.append(sample)
 
         if as_model:
             # Type narrowing: at this point, the dict structure matches EphemerisDictModel
@@ -412,6 +435,7 @@ class EphemerisDataFactory:
                     planets=data["planets"],
                     houses=data["houses"],
                     ephemeris_warnings=data["ephemeris_warnings"],
+                    **({"fixed_stars": data["fixed_stars"]} if "fixed_stars" in data else {}),
                 )
                 for data in ephemeris_data_list
             ]  # type: ignore
@@ -437,6 +461,7 @@ class EphemerisDataFactory:
                 Each subject contains:
                 - All planetary and astrological point positions (e.g., ``subject.sun.sign``)
                 - Complete house system calculations (e.g., ``subject.first_house.sign``)
+                - Fixed stars requested via ``active_fixed_stars`` (``subject.fixed_stars``)
                 - Lunar phase data
                 - JSON serialization via Pydantic
 

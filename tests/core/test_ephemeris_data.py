@@ -877,3 +877,114 @@ class TestEphemerisSessionValidation:
         with pytest.raises(ValueError, match="topo"):
             with ephemeris_session(perspective_type="Topocentric", topo=topo):
                 pass
+
+
+# ===========================================================================
+# 10. TestFixedStarsInEphemeris
+# ===========================================================================
+
+
+class TestFixedStarsInEphemeris:
+    """Fixed stars in EphemerisDataFactory samples via active_fixed_stars."""
+
+    @staticmethod
+    def _factory(**overrides):
+        kwargs = dict(
+            start_datetime=datetime(2024, 1, 1, 12, 0),
+            end_datetime=datetime(2024, 1, 2, 12, 0),
+            step_type="days",
+            step=1,
+            lat=DEFAULT_LAT,
+            lng=DEFAULT_LNG,
+            tz_str=DEFAULT_TZ,
+        )
+        kwargs.update(overrides)
+        return EphemerisDataFactory(**kwargs)
+
+    def test_default_output_has_no_fixed_stars_key(self):
+        """Without active_fixed_stars the sample dicts are unchanged: no key."""
+        data = self._factory().get_ephemeris_data()
+        assert len(data) == 2
+        for sample in data:
+            assert "fixed_stars" not in sample
+            assert set(sample.keys()) == {"date", "planets", "houses", "ephemeris_warnings"}
+
+    def test_empty_star_list_output_has_no_fixed_stars_key(self):
+        """active_fixed_stars=[] behaves exactly like the default (no key)."""
+        data = self._factory(active_fixed_stars=[]).get_ephemeris_data()
+        for sample in data:
+            assert "fixed_stars" not in sample
+
+    def test_requested_stars_present_with_point_model_shape(self):
+        """Requested stars appear in every sample as KerykeionPointModel entries."""
+        from kerykeion.schemas.kr_models import KerykeionPointModel
+
+        data = self._factory(active_fixed_stars=["Regulus", "Spica"]).get_ephemeris_data()
+        assert len(data) == 2
+        for sample in data:
+            stars = sample["fixed_stars"]
+            assert [star.name for star in stars] == ["Regulus", "Spica"]
+            for star in stars:
+                # Same shape as subject.fixed_stars: real point models with
+                # attribute AND subscript access.
+                assert isinstance(star, KerykeionPointModel)
+                assert 0.0 <= star.abs_pos < 360.0
+                assert star["abs_pos"] == star.abs_pos
+                assert star.sign is not None
+                assert star.house is not None
+                assert star.retrograde is False
+
+    def test_as_model_carries_fixed_stars(self):
+        """as_model=True: EphemerisDictModel exposes the same star points."""
+        models = self._factory(active_fixed_stars=["Regulus"]).get_ephemeris_data(as_model=True)
+        assert len(models) == 2
+        for model in models:
+            assert [star.name for star in model.fixed_stars] == ["Regulus"]
+
+    def test_as_model_default_fixed_stars_empty(self):
+        """as_model=True without requested stars: field validates to empty list."""
+        models = self._factory().get_ephemeris_data(as_model=True)
+        for model in models:
+            assert model.fixed_stars == []
+
+    def test_subjects_expose_fixed_stars(self):
+        """get_ephemeris_data_as_astrological_subjects carries subject.fixed_stars."""
+        subjects = self._factory(
+            active_fixed_stars=["Regulus", "Spica"]
+        ).get_ephemeris_data_as_astrological_subjects()
+        assert len(subjects) == 2
+        for subject in subjects:
+            assert [star.name for star in subject.fixed_stars] == ["Regulus", "Spica"]
+
+    def test_active_fixed_stars_passthrough_and_isolation(self, monkeypatch):
+        """The factory forwards a fresh copy of the star list to from_birth_data."""
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        captured = []
+        real = AstrologicalSubjectFactory.from_birth_data.__func__
+
+        def spy(cls, *args, **kwargs):
+            captured.append(kwargs.get("active_fixed_stars"))
+            return real(cls, *args, **kwargs)
+
+        monkeypatch.setattr(AstrologicalSubjectFactory, "from_birth_data", classmethod(spy))
+
+        requested = ["Regulus", "Spica"]
+        factory = self._factory(active_fixed_stars=requested)
+        # Mutating the caller's list after construction must not leak into the
+        # factory (constructor copies) ...
+        requested.append("Algol")
+        factory.get_ephemeris_data()
+
+        assert len(captured) == 2
+        for forwarded in captured:
+            assert forwarded == ["Regulus", "Spica"]
+            # ... and every sample gets its own fresh copy, never the
+            # factory's (or the caller's) list object itself.
+            assert forwarded is not requested
+            assert forwarded is not factory.active_fixed_stars
+
+        # Default path: from_birth_data receives None, not [].
+        captured.clear()
+        self._factory().get_ephemeris_data()
+        assert captured == [None, None]
