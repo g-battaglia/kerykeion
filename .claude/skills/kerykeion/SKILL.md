@@ -206,10 +206,22 @@ serialize and trust:
 
 | Field on `KerykeionPointModel` | Meaning |
 |---|---|
-| `source` | selected source: `"LEB"`, `"SPK"`, `"Skyfield"`, `"Analytical"`, `"Derived"` |
+| `source` | selected source: `"LEB"`, `"SPK"`, `"Skyfield"`, `"Keplerian"`, `"ASSIST"`, `"Analytical"`, `"Derived"`. **Not exhaustive** — treat it as an opaque label, never `assert point.source in {...}` |
 | `precision_class` | machine label: `ephemeris`, `analytical`, `approximate`, `numerical-model`, `mixed`, `unverified-local` |
 | `ephemeris_coverage_start_jd` / `ephemeris_coverage_end_jd` | backend-reported coverage window (JD) |
 | `source_reviewed` | did the active source artifact pass the backend's pinned review gate |
+
+`source` → `precision_class` is a coarse mapping from the source name:
+`Keplerian*` → `approximate`, `Analytical*` → `analytical`,
+`LEB`/`SPK`/`Skyfield` → `ephemeris`, and any other label (e.g. `ASSIST`, the
+live n-body integration fallback) → `numerical-model` — an unrecognized source
+is never promoted to `ephemeris`. For `source == "LEB"` the backend's per-body
+coverage class then overrides it.
+
+`"Keplerian"` is **not** an exotic edge case: it is what the *default* point set
+produces whenever a body falls outside its LEB coverage — e.g. Chiron on a
+16th-century chart comes back `source="Keplerian"`, `precision_class="approximate"`.
+Code that matches exhaustively on the source values will break on it.
 
 These stay `None` on swisseph, and are **intentionally** `None` even on
 libephemeris for points derived from house geometry (Ascendant, Medium Coeli,

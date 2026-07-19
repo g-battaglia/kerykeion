@@ -77,10 +77,23 @@ libephemeris.download_leb_for_tier("extended")   # full range, incl. BCE
 
 `point.precision_class` (libephemeris only) is machine-readable, one of:
 `ephemeris`, `analytical`, `approximate`, `numerical-model`, `mixed`,
-`unverified-local`. The factory assigns a coarse class from the source name
-(`keplerian*` → `approximate`, `analytical*` → `analytical`, else `ephemeris`),
-then, for `source == "LEB"`, overrides it with the backend's per-body coverage
-class. Derived points collapse multiple distinct classes to `mixed`.
+`unverified-local`. The factory assigns a coarse class from the source name:
+
+| source | precision_class |
+|---|---|
+| `keplerian*` | `approximate` |
+| `analytical*` | `analytical` |
+| `LEB`, `SPK`, `Skyfield` | `ephemeris` |
+| anything else (e.g. `ASSIST`) | `numerical-model` |
+
+Only the three tabulated-ephemeris labels get `ephemeris`; an unrecognized
+label is never promoted to it. `ASSIST` is libephemeris' live n-body
+integration fallback for minor bodies, and libephemeris classifies the same
+trajectory as `numerical-model` in its own inventory, so kerykeion matches it
+rather than overstating the point as ephemeris-grade.
+
+Then, for `source == "LEB"`, the backend's per-body coverage class overrides
+the coarse value. Derived points collapse multiple distinct classes to `mixed`.
 
 ## Swiss Ephemeris data setup
 

@@ -143,8 +143,9 @@ class EphemerisDataFactory:
             sample returned by ``get_ephemeris_data`` additionally carries a
             ``"fixed_stars"`` key with the calculated star point models, and the
             subjects returned by ``get_ephemeris_data_as_astrological_subjects``
-            expose them via ``subject.fixed_stars``. Defaults to None (no stars,
-            output identical to previous releases).
+            expose them via ``subject.fixed_stars``. Defaults to None, which adds
+            no ``"fixed_stars"`` key to the samples. (Independently of this
+            argument, every sample carries ``"ephemeris_warnings"`` since a75.)
 
     Raises:
         ValueError: If step_type is not one of "days", "hours", or "minutes".
@@ -375,11 +376,17 @@ class EphemerisDataFactory:
                       or subscript access: 'name', 'abs_pos', 'sign', 'speed', etc.)
                     - "houses" (list): List of KerykeionPointModel instances for the
                       house cusps (same access patterns)
+                    - "ephemeris_warnings" (list): ALWAYS present since 6.0.0a75.
+                      List of EphemerisWarningModel entries describing optional
+                      points that no permitted source could produce; an empty list
+                      when nothing was omitted. This key is new in a75: samples are
+                      NOT key-identical to earlier releases, so consumers that
+                      validate keys strictly must accept it.
                     - "fixed_stars" (list): ONLY present when the factory was built
                       with a non-empty ``active_fixed_stars``. List of the calculated
                       fixed star KerykeionPointModel instances (same shape as
                       ``subject.fixed_stars``). Without requested stars the key is
-                      absent and the output is unchanged from previous releases.
+                      absent.
 
                 If as_model=True:
                     List of EphemerisDictModel instances providing the same data
@@ -420,9 +427,11 @@ class EphemerisDataFactory:
                 "houses": houses_list,
                 "ephemeris_warnings": list(subject.ephemeris_warnings),
             }
-            # The key is emitted only when stars were requested: without
-            # active_fixed_stars the sample dict stays byte-identical to
-            # previous releases (public backward-compatibility contract).
+            # The "fixed_stars" key is emitted only when stars were requested.
+            # It is the only optional key: "ephemeris_warnings" above is always
+            # present (empty list when nothing was omitted), so since a75 the
+            # sample dict is NOT key-identical to earlier releases even without
+            # stars. Key-strict consumers must tolerate "ephemeris_warnings".
             if self.active_fixed_stars:
                 sample["fixed_stars"] = list(subject.fixed_stars)
             ephemeris_data_list.append(sample)

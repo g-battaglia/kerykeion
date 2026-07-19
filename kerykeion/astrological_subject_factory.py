@@ -220,6 +220,17 @@ _GEO_TOPO_PERSPECTIVES = ("Apparent Geocentric", "True Geocentric", "Topocentric
 # Chosen so it can never collide with a real point name.
 _FIXED_STAR_KEY_PREFIX = "fixed_stars::"
 
+# Trace/dispatch source labels that really denote a tabulated ephemeris read
+# (interpolated from a stored ephemeris file), and so honestly carry
+# precision_class="ephemeris". Everything else must NOT be promoted to that
+# class: libephemeris also dispatches to "ASSIST", its live n-body integration
+# fallback for minor bodies, and classifies that very trajectory as
+# "numerical-model" in its own inventory. Defaulting unknown labels to
+# "ephemeris" would overstate them (and would silently mislabel any source
+# label a future libephemeris adds), so unrecognized labels fall back to
+# "numerical-model" instead. Compared lowercased.
+_EPHEMERIS_GRADE_SOURCES = frozenset({"leb", "spk", "skyfield"})
+
 # Lunar nodes and apogees (Lilith) are defined relative to the Earth-Moon system
 # (geocentric by construction). In a heliocentric / barycentric / planetocentric
 # frame they have no meaning: swisseph returns an all-zero phantom (0° Aries)
@@ -3390,8 +3401,13 @@ class AstrologicalSubjectFactory:
                             point.precision_class = "approximate"
                         elif normalized_source.startswith("analytical"):
                             point.precision_class = "analytical"
-                        else:
+                        elif normalized_source in _EPHEMERIS_GRADE_SOURCES:
                             point.precision_class = "ephemeris"
+                        else:
+                            # ASSIST (live n-body integration) and any label this
+                            # version does not know: honest floor, never promoted
+                            # to "ephemeris". See _EPHEMERIS_GRADE_SOURCES.
+                            point.precision_class = "numerical-model"
 
                         if backend == "LEB" and hasattr(ephe, "get_body_coverage"):
                             # rc14 date-aware coverage API: body_id + requested JD.

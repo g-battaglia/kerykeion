@@ -26,15 +26,31 @@
   `get_ephemeris_data` sample carries a `fixed_stars` key with the star point
   models (same shape as `subject.fixed_stars`); subjects returned by
   `get_ephemeris_data_as_astrological_subjects` expose them via
-  `subject.fixed_stars`. With no stars requested the plain-dict output is
-  unchanged; `as_model=True` serialization gains an empty `fixed_stars` list
-  on every sample (like `ephemeris_warnings` in this same alpha cycle).
+  `subject.fixed_stars`. With no stars requested no `fixed_stars` key is added
+  to the plain-dict samples; `as_model=True` serialization gains an empty
+  `fixed_stars` list on every sample (like `ephemeris_warnings` in this same
+  alpha cycle).
 - Subjects expose structured `ephemeris_warnings` for optional points omitted
   after neither the selected ephemeris nor a permitted local model produced a
   value. Backend exception details remain in logs rather than public payloads.
 
 ### Changed
 
+- **Output shape:** every `EphemerisDataFactory.get_ephemeris_data()` sample now
+  carries an `ephemeris_warnings` key — a list, empty when nothing was omitted —
+  in both the plain-dict and `as_model=True` forms. The plain-dict sample is
+  therefore **not** key-identical to pre-a75 releases even when no stars are
+  requested; the keys are now `date`, `planets`, `houses`, `ephemeris_warnings`
+  (plus `fixed_stars` only when `active_fixed_stars` is non-empty). Consumers
+  that validate keys strictly, golden-diff the raw dict, or serialize
+  `sample.items()` into a pinned payload must accept the new key.
+- A point's `precision_class` is no longer defaulted to `ephemeris` for source
+  labels the coarse mapping does not recognize. Only the tabulated-ephemeris
+  labels (`LEB`, `SPK`, `Skyfield`) map to `ephemeris`; `Keplerian*` and
+  `Analytical*` keep `approximate` / `analytical`, and anything else — notably
+  `ASSIST`, libephemeris' live n-body integration fallback, which libephemeris
+  itself classifies as `numerical-model` — now reports `numerical-model` rather
+  than overstating the point as ephemeris-grade.
 - LEB mode now enforces libephemeris' sealed network policy and delegates
   source selection to libephemeris. For a configured maximum tier, the
   highest-priority manifest-pinned LEB artifact covering each body and date is

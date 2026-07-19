@@ -12,6 +12,20 @@ from kerykeion import AstrologicalSubjectFactory, EphemerisDataFactory
 from kerykeion.ephemeris_backend import BACKEND_NAME, ephe
 
 
+def _require_medium_tier() -> None:
+    """Skip unless the loaded ephemeris is exactly the medium (DE440) kernel.
+
+    Same gate the other deep-time boundary tests use (see
+    ``test_void_of_course_moon_factory.test_range_edge_dates_raise_kerykeion_exception``):
+    the 16th-century scenarios below are only meaningful on the medium kernel —
+    base cannot reach them at all and extended covers them too well.
+    """
+    from tests.conftest import _detect_ephemeris_tier
+
+    if _detect_ephemeris_tier() != "medium":
+        pytest.skip("Requires the medium (DE440) kernel's ~1550 lower range.")
+
+
 def _subject(**overrides):
     kwargs = {
         "name": "Ephemeris contract",
@@ -78,6 +92,40 @@ def test_derived_source_does_not_depend_on_trace_rows(
         subject.true_south_lunar_node.source_reviewed
         == subject.true_north_lunar_node.source_reviewed
     )
+
+
+@pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
+@pytest.mark.parametrize(
+    ("trace_label", "expected_class"),
+    [
+        # Tabulated ephemeris reads: genuinely ephemeris-grade.
+        ("SPK", "ephemeris"),
+        ("Skyfield", "ephemeris"),
+        # Explicitly recognized lower-precision models.
+        ("Keplerian", "approximate"),
+        ("Analytical", "analytical"),
+        # ASSIST is libephemeris' live n-body integration fallback, which
+        # libephemeris itself classifies as "numerical-model". An unrecognized
+        # label must not be promoted to "ephemeris" either.
+        ("ASSIST", "numerical-model"),
+        ("SomeFutureBackend", "numerical-model"),
+    ],
+)
+def test_trace_label_maps_to_an_honest_precision_class(
+    monkeypatch: pytest.MonkeyPatch, trace_label: str, expected_class: str
+) -> None:
+    """The coarse source -> precision_class mapping must never overstate.
+
+    Only the tabulated-ephemeris labels earn "ephemeris"; anything the mapping
+    does not recognize falls back to "numerical-model".
+    """
+    monkeypatch.setattr(ephe, "get_trace_results", lambda: {ephe.CHIRON: trace_label})
+
+    subject = _subject(active_points=["Chiron"])
+
+    assert subject.chiron is not None
+    assert subject.chiron.source == trace_label
+    assert subject.chiron.precision_class == expected_class
 
 
 @pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
@@ -179,6 +227,18 @@ def test_inventory_range_does_not_preempt_engine_source_selection(
 
 @pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
 def test_default_chart_uses_traced_local_fallback_outside_chiron_leb_range() -> None:
+    """1580 sits inside the medium (DE440) range but outside Chiron's LEB
+    coverage, so the default chart falls back to the traced local Keplerian
+    model.
+
+    Gated to the medium kernel like the other boundary tests in this PR: on a
+    base install (1849+) the subject's own Sun/Moon raise KerykeionException and
+    this would ERROR rather than skip, while on extended the wider numerical
+    trajectory can cover 1580, breaking both the premise
+    (``not coverage.contains(jd)``) and the Keplerian source assertion.
+    """
+    _require_medium_tier()
+
     subject = _subject(year=1580, month=7, day=21, tz_str="Etc/GMT")
 
     coverage = ephe.get_body_coverage(ephe.CHIRON, subject.julian_day)
@@ -194,6 +254,11 @@ def test_default_chart_uses_traced_local_fallback_outside_chiron_leb_range() -> 
 
 @pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
 def test_ephemeris_series_preserves_fallback_source_per_sample() -> None:
+    """The same 1580 Chiron fallback, asserted per sample across a series.
+    Tier-gated for the same reason as the single-chart test above.
+    """
+    _require_medium_tier()
+
     factory = EphemerisDataFactory(
         start_datetime=datetime(1580, 7, 21, 12),
         end_datetime=datetime(1580, 7, 22, 12),
