@@ -91,10 +91,20 @@ live in `~/.libephemeris/leb/`. Download them with:
 
 ```python
 from libephemeris import download_leb_for_tier
-download_leb_for_tier("base")      # Essential planets, ~2 MB
-download_leb_for_tier("medium")    # + minor bodies, ~10 MB
-download_leb_for_tier("extended")  # + asteroids, ~50 MB
+
+# Every tier installs the SAME 14-body core (Sun-Pluto, Earth,
+# Mean/True Node, Mean Apogee). Tiers differ by DATE RANGE, not by
+# which bodies the core contains.
+download_leb_for_tier("base")      # 1850-2150, ~10 MB (bundled in the wheel)
+download_leb_for_tier("medium")    # 1550-2650, ~37 MB
+download_leb_for_tier("extended")  # full range (incl. BCE dates), ~1154 MB
 ```
+
+Asteroids (Chiron, Ceres, Pallas, Juno, Vesta), other curated minor
+bodies and exotics (centaurs, trans-Neptunians), lunar apsides, and the
+Hamburg/Uranian points are **separate companion groups**, available at
+every tier — they are not folded into the core by tier. Install them
+alongside the core with `download_leb2_for_tier(tier, groups=[...])`.
 
 ## Architecture
 

@@ -44,7 +44,9 @@ print(f"Sun 1st Day: {data[0]['planets'][0]['abs_pos']:.2f}°")
 
 ### `get_ephemeris_data(as_model=False)`
 
-Returns a list of dictionaries with `date`, `planets`, and `houses` keys (or `EphemerisDictModel` instances if `as_model=True`). Fast and lightweight. Best for raw data processing.
+Returns a list of dictionaries (or `EphemerisDictModel` instances if `as_model=True`). Fast and lightweight. Best for raw data processing.
+
+Every sample dict always carries `date`, `planets`, `houses`, and `ephemeris_warnings` keys. A `fixed_stars` key is added to each sample **only when** the factory was built with a non-empty `active_fixed_stars` list; without requested stars the key is omitted entirely (byte-identical to earlier releases).
 
 The `planets` and `houses` lists hold `KerykeionPointModel` instances -- not plain dicts -- which support both attribute access (`point.abs_pos`) and dictionary-style subscripting (`point["abs_pos"]`).
 
@@ -65,7 +67,9 @@ The `planets` and `houses` lists hold `KerykeionPointModel` instances -- not pla
     "houses": [
       KerykeionPointModel(name="First_House", abs_pos=187.07, sign="Lib", ...),
       ...
-    ]
+    ],
+    "ephemeris_warnings": [],
+    # "fixed_stars": [...]  # present only when active_fixed_stars is non-empty
   },
   ...
 ]
