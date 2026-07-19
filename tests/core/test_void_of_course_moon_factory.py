@@ -169,10 +169,15 @@ def test_range_edge_dates_raise_kerykeion_exception():
     off the edge; the raw backend range error must be normalized to the
     documented KerykeionException, not leak (was raw EphemerisRangeError).
 
-    The probe dates sit just inside the medium (DE440) kernel's ~1550/2650
-    edges; on base kernels they are out of range outright and on extended
-    kernels the scans never leave the range, so the scenario only exists on
-    the medium kernel.
+    The medium (DE440) series really covers [1550-01-01, 2650-01-01) — the
+    "2650" in the shorthand is exclusive. So the two probes differ: 1550-01-02
+    sits just inside the lower edge (the backward Moon scan walks off it),
+    while 2650-01-20 is ~19.5 days beyond the upper edge, so under the
+    libephemeris 3.0.0rc14 sealed-LEB contract the subject's own calculation
+    already raises the typed range error (no silent lower-precision
+    substitution). Both paths must surface as KerykeionException. On base
+    kernels the dates are out of range of a different boundary and on extended
+    kernels neither edge exists, so the scenario is gated to the medium kernel.
     """
     from tests.conftest import _detect_ephemeris_tier
 

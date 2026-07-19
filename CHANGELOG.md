@@ -49,6 +49,12 @@
 - The dependency advances to libephemeris 3.0.0rc14, which supplies the pinned
   data-v3 modular set, sealed-network gate, best-by-date tier routing and
   coverage inventory.
+- Tier range shorthands ("1550–2650" for medium) are upper-bound exclusive:
+  the medium LEB core covers `[1550-01-01, 2650-01-01)` — JD `[2287185.5,
+  2688952.5)`. Dates at or beyond the boundary now raise the typed
+  `EphemerisRangeError` (wrapped in `KerykeionException` for luminaries)
+  instead of being served by a silently substituted lower-precision source
+  as in rc12.
 
 ## 6.0.0a73 - 2026-07-16
 

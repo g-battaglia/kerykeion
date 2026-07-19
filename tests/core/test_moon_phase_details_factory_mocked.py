@@ -695,26 +695,80 @@ class TestFactoryFromSubjectRangeEdge:
     """R23 regression (real ephe, NOT mocked): a subject within ~1 synodic month
     of the ephemeris range end makes the forward phase scan walk off the edge.
     The backend range error must degrade to None fields (documented "Returns None
-    if calculation fails"), not leak a raw EphemerisRangeError."""
+    if calculation fails"), not leak a raw EphemerisRangeError.
+
+    Range semantics of the medium (DE440) LEB series since libephemeris
+    3.0.0rc14: the "1550-2650" shorthand means [1550-01-01, 2650-01-01) — JD
+    [2287185.5, 2688952.5) — i.e. the upper year is *exclusive* (only the very
+    first instant of 2650-01-01 is inside the coverage inventory, and even that
+    instant is unusable because interpolation needs interior neighbours). A
+    date beyond the edge no longer degrades to a silently substituted
+    lower-precision source (the rc12 behaviour): sealed LEB mode raises the
+    typed ``EphemerisRangeError`` by deliberate contract ("LEB mode does not
+    silently substitute a lower-precision source")."""
 
     def test_range_end_subject_returns_model(self) -> None:
-        # 2650-01-20 is inside the final synodic month before the backend range
-        # end (~2650-01-25); the forward Full/quarter scans overshoot the edge.
-        # The date presumes at least the medium (DE440) kernel: on base kernels
-        # the subject itself is out of range. On extended kernels no edge is
+        # 2649-12-20 is inside the final synodic month of the medium (DE440)
+        # series, whose REAL coverage ends at JD 2688952.5 = 2650-01-01T00:00
+        # (exclusive — see the class docstring). The subject itself computes,
+        # but the forward Full/quarter phase scans overshoot the edge and must
+        # degrade to None fields instead of leaking the backend range error.
+        # The date presumes at least the medium kernel: on base kernels the
+        # subject itself is out of range. On extended kernels no edge is
         # hit — the model is still returned, just without exercising the
         # degradation path.
         from tests.conftest import _detect_ephemeris_tier
 
         if _detect_ephemeris_tier() == "base":
-            pytest.skip("2650 is outside the base kernel's range (1849-2150).")
+            pytest.skip("2649 is outside the base kernel's range (1849-2150).")
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Range Edge", 2650, 1, 20, 12, 0,
+            "Range Edge", 2649, 12, 20, 12, 0,
             lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
             city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
         )
         overview = MoonPhaseDetailsFactory.from_subject(subject)
         assert isinstance(overview, MoonPhaseOverviewModel)
+
+    def test_beyond_range_end_raises_typed_error(self) -> None:
+        # Complement of the case above: 2650-01-20 lies ~19.5 days BEYOND the
+        # real end of the medium (DE440) series (JD 2688952.5 = 2650-01-01),
+        # so the subject's own Sun/Moon cannot be computed at all. Under
+        # libephemeris 3.0.0rc14 sealed LEB mode this is a deliberate
+        # contract: the backend raises the typed EphemerisRangeError instead
+        # of silently substituting a lower-precision source (which is what
+        # rc12 did, and why this date used to build a subject). Kerykeion
+        # wraps luminary failures in KerykeionException with the backend
+        # error chained as __cause__, so we assert on the cause chain by
+        # exception name (no hard libephemeris import needed here).
+        # Gate to the exact configuration under test: on extended kernels the
+        # date is covered (no edge); on base it is out of range too, but of a
+        # different boundary; on the swisseph backend the sealed-LEB contract
+        # does not exist.
+        from kerykeion.ephemeris_backend import BACKEND_NAME
+        from tests.conftest import _detect_ephemeris_tier
+
+        if BACKEND_NAME != "libephemeris":
+            pytest.skip("The sealed-LEB range contract is libephemeris-specific.")
+        if _detect_ephemeris_tier() != "medium":
+            pytest.skip(
+                "2650-01-20 is just-beyond-range only on the medium (DE440) "
+                "kernel: extended covers it, base ends at 2150."
+            )
+        with pytest.raises(KerykeionException) as excinfo:
+            AstrologicalSubjectFactory.from_birth_data(
+                "Beyond Range End", 2650, 1, 20, 12, 0,
+                lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+                city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
+            )
+        cause_names = []
+        cause = excinfo.value.__cause__
+        while cause is not None:
+            cause_names.append(type(cause).__name__)
+            cause = cause.__cause__
+        assert "EphemerisRangeError" in cause_names, (
+            "Expected the typed libephemeris EphemerisRangeError in the "
+            f"exception cause chain; got {cause_names or [repr(excinfo.value)]}"
+        )
 
     def test_normal_date_subject_unaffected(self) -> None:
         subject = AstrologicalSubjectFactory.from_birth_data(

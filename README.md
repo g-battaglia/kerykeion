@@ -140,7 +140,7 @@ For more installation options and environment setup, see the [Getting Started gu
 >
 > ```text
 > import libephemeris
-> libephemeris.download_leb_for_tier("medium")    # 1550–2650
+> libephemeris.download_leb_for_tier("medium")    # 1550–2650 (upper bound exclusive: through 2649-12-31)
 > libephemeris.download_leb_for_tier("extended")  # full range, incl. BCE dates
 > ```
 
