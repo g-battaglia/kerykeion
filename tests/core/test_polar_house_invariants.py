@@ -22,6 +22,9 @@ simultaneously-computed values together stays diagnostic.
 
 from __future__ import annotations
 
+import io
+import logging
+
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory
@@ -288,3 +291,37 @@ class TestThePolarLimitMovesWithTheEpoch:
         assert fallback.threshold is not None
         assert abs(fallback.used_latitude) < fallback.threshold < 66.0
         assert len(cusps) == 36
+
+
+class TestTheLogAgreesWithWhatHappened:
+    """A substitution must not announce a clamp that never took place.
+
+    The helper that caps a latitude logs while doing it, so calling it merely to
+    ASK whether a latitude is inside the circle emits "Latitude capped at 66°"
+    even on the path that goes on to compute at the real latitude. Anyone reading
+    the log while debugging a polar chart would then see a cap that the fallback
+    record and the warning both deny.
+    """
+
+    @staticmethod
+    def _logs_for(hsys: bytes) -> str:
+        stream = io.StringIO()
+        handler = logging.StreamHandler(stream)
+        logger = logging.getLogger("kerykeion")
+        previous_level = logger.level
+        logger.addHandler(handler)
+        logger.setLevel(logging.INFO)
+        try:
+            with ephemeris_session():
+                houses_ex2_with_polar_fallback_ex(_JD, 78.0, _LON, hsys, 0)
+        finally:
+            logger.removeHandler(handler)
+            logger.setLevel(previous_level)
+        return stream.getvalue().lower()
+
+    def test_substitution_does_not_claim_a_cap(self):
+        assert "capped" not in self._logs_for(b"P")
+
+    def test_the_clamp_path_still_says_so(self):
+        """The control: where a latitude really is capped, the log must show it."""
+        assert "capped" in self._logs_for(b"G")

@@ -325,7 +325,7 @@ def houses_ex2_with_polar_fallback_ex(
         # Lazy imports avoid an import cycle: utilities does not import this
         # module, but this module must not import utilities at load time, and the
         # models package imports back into kerykeion.
-        from kerykeion.utilities import check_and_adjust_polar_latitude
+        from kerykeion.utilities import _POLAR_LATITUDE_LIMIT, check_and_adjust_polar_latitude
         from kerykeion.schemas.kr_models import PolarHouseFallbackModel
 
         # The threshold and obliquity are knowable only from the backend that
@@ -336,7 +336,12 @@ def houses_ex2_with_polar_fallback_ex(
         threshold = getattr(original_exc, "threshold", None)
         obliquity = getattr(original_exc, "obliquity", None)
 
-        clamped_lat = check_and_adjust_polar_latitude(lat)
+        # Decide with the LIMIT, not with the clamp helper: that helper logs
+        # "Latitude capped at 66°" as a side effect, and on the substitution path
+        # nothing is capped — the retry happens at the real latitude. Calling it
+        # merely to ask a question would put a line in the log that the fallback
+        # record and the warning below both contradict.
+        clamped_lat = max(-_POLAR_LATITUDE_LIMIT, min(_POLAR_LATITUDE_LIMIT, lat))
         if threshold is None and clamped_lat == lat:
             # No measured threshold AND outside the ±66° rule of thumb, so nothing
             # identifies this as a polar-undefined failure. Only reachable on the
@@ -365,7 +370,11 @@ def houses_ex2_with_polar_fallback_ex(
             retry_hsys, retry_lat = _POLAR_FALLBACK_HSYS, lat
             affects = ["house_cusps"]
         else:
-            retry_hsys, retry_lat = hsys, _clamp_inside_polar_limit(lat, clamped_lat, threshold)
+            # Only here is a latitude actually capped, so this is where the
+            # helper — and the log line it emits — belongs.
+            retry_hsys, retry_lat = hsys, _clamp_inside_polar_limit(
+                lat, check_and_adjust_polar_latitude(lat), threshold
+            )
             affects = ["house_cusps", "angles"]
 
         try:

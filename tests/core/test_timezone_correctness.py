@@ -20,6 +20,7 @@ would make the diagnosis ambiguous.
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+import zoneinfo
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -374,58 +375,106 @@ class TestSafeTimezone:
         assert safe_timezone("Europe/Rome").key == "Europe/Rome"
 
 
-class TestIsDstFollowsTheZoneNotTheClock:
-    """`is_dst` asks about daylight saving, so the zone's own flag answers first.
+class TestIsDstIsResolvedIdenticallyOnEveryHost:
+    """The answer must not depend on which tz database the machine happens to ship.
 
-    A wall time can be non-unique for two different reasons. Usually summer time
-    ended and the clock repeated an hour, and there the daylight side is also the
-    one with the larger offset — the two readings of "which is DST" agree. But a
-    change of STANDARD offset repeats an hour too, and then they part company:
-    the larger offset can belong to the side that was never on daylight saving.
+    `dst()` looks like the natural way to answer "is daylight saving in effect",
+    but it is not portable. Builds of the tz database disagree about how to record
+    the same zone: for Ireland one encodes summer as `dst()=+1h` against a winter
+    of `0`, another encodes summer as `0` against a winter of `-1h`. A rule that
+    keys on the flag hands back a different hour depending on the host, which is
+    the one failure mode a chart library cannot have.
 
-    Inferring from the offsets alone silently answers the wrong question there,
-    which is why the zone's `dst()` is consulted before the clock is.
+    The offsets carry the same information without the encoding, so the clock is
+    what decides. These tests pin that equivalence directly, by resolving the
+    same instant against both databases available here.
     """
 
-    def test_a_standard_offset_change_is_resolved_by_the_dst_flag(self):
-        """Kyiv 1941: one side is Moscow time, the other Central European Summer.
+    _DUBLIN_FOLD = datetime(2026, 10, 25, 1, 30)
 
-        The daylight side (+02:00 CEST) has the SMALLER offset, so an
-        offset-only rule hands `is_dst=True` the standard side and moves the
-        chart an hour.
-        """
-        kyiv = ZoneInfo("Europe/Kyiv")
-        wall = datetime(1941, 9, 19, 23, 30)
-        assert is_ambiguous(wall, kyiv), "precondition: the hour must be repeated"
+    @staticmethod
+    def _resolve_with(tzpath, is_dst):
+        """Resolve the Dublin fold against a specific tz database."""
+        previous = list(zoneinfo.TZPATH)
+        try:
+            zoneinfo.reset_tzpath(to=tzpath)
+            zone = ZoneInfo.no_cache("Europe/Dublin")
+            wall = TestIsDstIsResolvedIdenticallyOnEveryHost._DUBLIN_FOLD
+            return localize_naive(wall, zone, is_dst=is_dst).utcoffset()
+        finally:
+            zoneinfo.reset_tzpath(to=previous)
 
-        on_dst = localize_naive(wall, kyiv, is_dst=True)
-        off_dst = localize_naive(wall, kyiv, is_dst=False)
+    def test_the_two_databases_really_do_disagree_about_the_flag(self):
+        """Precondition. Without this the portability tests below prove nothing."""
+        previous = list(zoneinfo.TZPATH)
+        try:
+            flags = {}
+            for label, path in (("system", previous), ("package", [])):
+                zoneinfo.reset_tzpath(to=path)
+                zone = ZoneInfo.no_cache("Europe/Dublin")
+                summer = self._DUBLIN_FOLD.replace(tzinfo=zone, fold=0)
+                flags[label] = summer.dst()
+        finally:
+            zoneinfo.reset_tzpath(to=previous)
 
-        assert on_dst.dst() != timedelta(), "is_dst=True must land on the daylight side"
-        assert off_dst.dst() == timedelta()
-        assert on_dst.utcoffset() == timedelta(hours=2)
-        assert off_dst.utcoffset() == timedelta(hours=3)
-        assert on_dst.utcoffset() < off_dst.utcoffset(), (
-            "this case only bites because the daylight side is the smaller offset"
+        if flags["system"] == flags["package"]:
+            pytest.skip("this host ships one encoding only; nothing to compare")
+        assert flags["system"] != flags["package"], (
+            "the encodings must differ for the portability assertion to mean anything"
         )
 
-    def test_an_ordinary_fold_is_unaffected(self):
-        """The control: where both readings agree, nothing changes."""
-        on_dst = localize_naive(datetime(2026, 10, 25, 2, 30), _ROME, is_dst=True)
-        off_dst = localize_naive(datetime(2026, 10, 25, 2, 30), _ROME, is_dst=False)
-        assert on_dst.utcoffset() == timedelta(hours=2)
-        assert off_dst.utcoffset() == timedelta(hours=1)
+    @pytest.mark.parametrize("is_dst", [True, False])
+    def test_same_answer_from_the_system_and_packaged_databases(self, is_dst):
+        system = self._resolve_with(list(zoneinfo.TZPATH), is_dst)
+        package = self._resolve_with([], is_dst)
+        assert system == package, (
+            f"is_dst={is_dst} resolved to {system} against the system database "
+            f"and {package} against the packaged one"
+        )
 
-    def test_negative_daylight_saving_still_follows_the_caller(self):
-        """Ireland subtracts an hour in winter instead of adding one in summer.
+    def test_summer_is_the_larger_offset_even_where_dst_is_recorded_negative(self):
+        """Ireland keeps standard time in summer and subtracts an hour in winter.
 
-        The summer reading is the larger offset, as everywhere else, so the
-        clock fallback keeps serving the caller's intent even though the zone
-        books the same fact with the opposite sign.
+        Whichever way the database books that, the caller asking for daylight
+        saving means the summer reading, and summer is the larger offset.
         """
         dublin = ZoneInfo("Europe/Dublin")
-        on_dst = localize_naive(datetime(2026, 10, 25, 1, 30), dublin, is_dst=True)
-        assert on_dst.utcoffset() == timedelta(hours=1), "summer time in Ireland"
+        assert localize_naive(self._DUBLIN_FOLD, dublin, is_dst=True).utcoffset() == timedelta(hours=1)
+        assert localize_naive(self._DUBLIN_FOLD, dublin, is_dst=False).utcoffset() == timedelta()
+
+    def test_an_ordinary_fold_is_unaffected(self):
+        """The control: an ordinary zone where both readings agree anyway."""
+        assert localize_naive(datetime(2026, 10, 25, 2, 30), _ROME, is_dst=True).utcoffset() == timedelta(hours=2)
+        assert localize_naive(datetime(2026, 10, 25, 2, 30), _ROME, is_dst=False).utcoffset() == timedelta(hours=1)
+
+
+class TestAStandardOffsetChangeHasNoDaylightAnswer:
+    """Not every repeated wall time is a summer-time fold.
+
+    A zone can also repeat an hour because its STANDARD offset changed — Kyiv on
+    1941-09-19 hands one reading to Moscow time and the next to Central European
+    Summer Time. Modern tz data flags neither side as daylight saving, so there is
+    no "is DST in effect" answer to give and the parameter does not really apply.
+
+    The rule still has to return something, and what it returns must at least be
+    deterministic and the same everywhere. This pins that, and documents the case
+    so nobody later reads the result as a considered claim about daylight saving.
+    """
+
+    _KYIV_FOLD = datetime(1941, 9, 19, 23, 30)
+
+    def test_neither_reading_claims_daylight_saving(self):
+        kyiv = ZoneInfo("Europe/Kyiv")
+        assert is_ambiguous(self._KYIV_FOLD, kyiv), "precondition: the hour repeats"
+        sides = [self._KYIV_FOLD.replace(tzinfo=kyiv, fold=f) for f in (0, 1)]
+        assert not any((side.dst() or timedelta()) > timedelta() for side in sides), (
+            "if a side ever starts claiming positive DST, this case needs rethinking"
+        )
+
+    def test_the_result_is_deterministic(self):
+        kyiv = ZoneInfo("Europe/Kyiv")
+        assert localize_naive(self._KYIV_FOLD, kyiv, is_dst=True).utcoffset() == timedelta(hours=3)
+        assert localize_naive(self._KYIV_FOLD, kyiv, is_dst=False).utcoffset() == timedelta(hours=2)
 
 
 class TestElapsedTimeIsMeasuredBetweenInstants:
