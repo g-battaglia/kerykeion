@@ -564,8 +564,14 @@ class InfoSectionBuilder:
 
     def build_houses_system_info(self, subject) -> str:
         """Build compact house system string (without 'Domification:' label)."""
-        house_key = "houses_system_" + subject.houses_system_identifier
-        return f"{self._translate(house_key, subject.houses_system_name)} {self._translate('houses', 'Houses')}"
+        # The system the cusps came from, not the one requested: the compact
+        # renderers label dual wheels and returns, where a polar chart would
+        # otherwise read as the system it could not actually be cast in.
+        house_key = "houses_system_" + subject.effective_houses_system_identifier
+        return (
+            f"{self._translate(house_key, subject.effective_houses_system_name)} "
+            f"{self._translate('houses', 'Houses')}"
+        )
 
     def build_lunar_phase_info(
         self,
@@ -4255,7 +4261,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         house_key = "houses_system_" + self.first_obj.effective_houses_system_identifier
         return (
             f"{self._translate('domification', 'Domification')}: "
-            f"{self._translate(house_key, self.first_obj.houses_system_name)}"
+            f"{self._translate(house_key, self.first_obj.effective_houses_system_name)}"
         )
 
     # =========================================================================
@@ -4352,8 +4358,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             Formatted string like "Placidus Houses".
         """
-        house_key = "houses_system_" + subject.houses_system_identifier
-        return f"{self._translate(house_key, subject.houses_system_name)} {self._translate('houses', 'Houses')}"
+        # The system the cusps came from, not the one requested: the compact
+        # renderers label dual wheels and returns, where a polar chart would
+        # otherwise read as the system it could not actually be cast in.
+        house_key = "houses_system_" + subject.effective_houses_system_identifier
+        return (
+            f"{self._translate(house_key, subject.effective_houses_system_name)} "
+            f"{self._translate('houses', 'Houses')}"
+        )
 
     def _apply_svg_post_processing(self, template: str, minify: bool, remove_css_variables: bool) -> str:
         """

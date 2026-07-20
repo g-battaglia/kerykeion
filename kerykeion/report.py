@@ -688,7 +688,11 @@ class ReportGenerator:
                 ]
             )
 
-        system_name = getattr(subject, "houses_system_name", "")
+        # Effective, so the houses table title cannot disagree with the
+        # settings row above it in the same report.
+        system_name = getattr(subject, "effective_houses_system_name", "") or getattr(
+            subject, "houses_system_name", ""
+        )
         table_title = f"{title} ({system_name})" if system_name else title
         return AsciiTable(houses_data, title=table_title).table
 

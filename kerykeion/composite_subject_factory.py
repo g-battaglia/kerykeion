@@ -264,6 +264,27 @@ class CompositeSubjectFactory:
             raise KerykeionException("Both subjects must have the same houses system name")
         self.houses_system_name = first_subject.houses_system_name
 
+        # Matching REQUESTS is not enough: inside the polar circle a chart's
+        # cusps may have come from a substitute. Two subjects that both asked for
+        # Placidus can therefore hold Porphyry cusps and Placidus cusps, and a
+        # midpoint of two different divisions is not a composite in either of
+        # them. The check above already refuses mismatched systems; this is the
+        # same refusal, applied to what the houses actually are.
+        first_effective = first_subject.effective_houses_system_identifier
+        second_effective = second_subject.effective_houses_system_identifier
+        if first_effective != second_effective:
+            raise KerykeionException(
+                "Both subjects must have the same houses system: "
+                f"{first_subject.name}'s cusps were computed with "
+                f"{first_subject.effective_houses_system_name!r} and "
+                f"{second_subject.name}'s with {second_subject.effective_houses_system_name!r}. "
+                "A house system undefined at one subject's latitude was substituted there; "
+                "see polar_house_fallbacks on that subject."
+            )
+        # Both sides agree, so the composite can state what its own cusps are.
+        self.houses_system_identifier = first_effective
+        self.houses_system_name = first_subject.effective_houses_system_name
+
         # Perspective Type
         if first_subject.perspective_type != second_subject.perspective_type:
             raise KerykeionException("Both subjects must have the same perspective type")

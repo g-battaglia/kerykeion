@@ -438,3 +438,86 @@ class TestASubstitutionDoesNotBecomeASetting:
         )
         assert subject.houses_system_identifier == subject.effective_houses_system_identifier == "P"
         assert subject.houses_system_name == subject.effective_houses_system_name
+
+
+class TestTheEffectiveViewNamesTheMainHouses:
+    """The effective view must describe THIS chart's houses, and only those.
+
+    A chart can carry more than one fallback record: asking for Gauquelin
+    sectors adds an ancillary one for the 36-sector ring, which degrades on its
+    own and lists "house_cusps" like any other. Matching on the requested
+    identifier is what tells them apart — without it a polar Whole Sign chart,
+    whose own cusps never degraded, would report itself as Gauquelin sectors.
+    """
+
+    @staticmethod
+    def _polar(hsys: str, gauquelin: bool):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Polar", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier=hsys,
+            calculate_gauquelin=gauquelin, **_POLAR_SUBJECT,
+        )
+
+    def test_an_ancillary_gauquelin_clamp_does_not_rename_the_chart(self):
+        subject = self._polar("W", gauquelin=True)
+        assert subject.polar_house_fallbacks, "precondition: the sector ring did clamp"
+        assert subject.effective_houses_system_identifier == "W"
+
+    def test_the_main_substitution_is_still_found_alongside_it(self):
+        """Two records present; the one describing the main houses must win."""
+        subject = self._polar("P", gauquelin=True)
+        assert len(subject.polar_house_fallbacks) == 2
+        assert subject.effective_houses_system_identifier == "O"
+
+    def test_the_report_cannot_contradict_itself(self):
+        """The settings row and the houses table title read the same source."""
+        from kerykeion.report import ReportGenerator
+
+        report = ReportGenerator(self._polar("P", gauquelin=False)).generate_report()
+        assert "Houses (Porphyry)" in report
+        assert "Houses (Placidus)" not in report
+
+
+class TestACompositeCannotMixTwoDivisions:
+    """Matching REQUESTS is not enough to make two charts composable.
+
+    Inside the polar circle a chart's cusps may have come from a substitute, so
+    two subjects that both asked for Placidus can hold Porphyry cusps and
+    Placidus cusps. A midpoint of two different divisions is not a composite in
+    either of them, and the factory already refuses mismatched systems — this is
+    the same refusal applied to what the houses actually are.
+    """
+
+    @staticmethod
+    def _subject(name: str, lat: float, **over):
+        base = dict(
+            lng=15.6467, tz_str="Arctic/Longyearbyen", city="L", nation="NO",
+            online=False, suppress_geonames_warning=True,
+        )
+        base.update(over)
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 1995, 1, 15, 2, 0, lat=lat, houses_system_identifier="P", **base
+        )
+
+    def test_a_substituted_parent_cannot_compose_with_an_intact_one(self):
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.schemas.kerykeion_exception import KerykeionException
+
+        polar = self._subject("Polar", 78.2232)
+        temperate = self._subject(
+            "Temperate", 41.9, lng=12.5, tz_str="Europe/Rome", city="Rome", nation="IT"
+        )
+        assert polar.houses_system_identifier == temperate.houses_system_identifier, (
+            "precondition: the REQUESTS match, so only the effective check can catch this"
+        )
+        with pytest.raises(KerykeionException, match="same houses system"):
+            CompositeSubjectFactory(polar, temperate).get_midpoint_composite_subject_model()
+
+    def test_two_substituted_parents_compose_and_say_so(self):
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+
+        composite = CompositeSubjectFactory(
+            self._subject("Polar A", 78.2232), self._subject("Polar B", 79.0)
+        ).get_midpoint_composite_subject_model()
+        assert composite.houses_system_identifier == "O"
+        assert composite.houses_system_name == "Porphyry"

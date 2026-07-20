@@ -1116,20 +1116,36 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     # differ from the requested pair only inside the polar circle, and only for
     # the systems that are undefined there.
 
+    def _main_house_fallback(self) -> Optional[PolarHouseFallbackModel]:
+        """The record describing THIS chart's houses, if one exists.
+
+        A chart can carry more than one: asking for Gauquelin sectors alongside
+        the houses adds a second, ancillary record for the 36-sector ring, which
+        degrades independently and lists "house_cusps" like any other. Matching
+        on the REQUESTED identifier is what separates them — the ancillary record
+        asks for "G", the main one asks for whatever the caller asked for. Without
+        that match a polar Whole Sign chart with Gauquelin enabled would report
+        its perfectly undegraded cusps as Gauquelin sectors.
+        """
+        for fallback in self.polar_house_fallbacks:
+            if fallback.requested_house_system_identifier == self.houses_system_identifier:
+                return fallback
+        return None
+
     @property
     def effective_houses_system_identifier(self) -> str:
         """Identifier of the house system these cusps were really computed with."""
-        for fallback in self.polar_house_fallbacks:
-            if fallback.affects and "house_cusps" in fallback.affects and fallback.used_house_system_identifier:
-                return fallback.used_house_system_identifier
+        fallback = self._main_house_fallback()
+        if fallback is not None and fallback.used_house_system_identifier:
+            return fallback.used_house_system_identifier
         return self.houses_system_identifier
 
     @property
     def effective_houses_system_name(self) -> str:
         """Name of the house system these cusps were really computed with."""
-        for fallback in self.polar_house_fallbacks:
-            if fallback.affects and "house_cusps" in fallback.affects and fallback.used_house_system_name:
-                return fallback.used_house_system_name
+        fallback = self._main_house_fallback()
+        if fallback is not None and fallback.used_house_system_name:
+            return fallback.used_house_system_name
         return self.houses_system_name
 
 
