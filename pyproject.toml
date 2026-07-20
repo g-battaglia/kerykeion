@@ -52,7 +52,13 @@ dependencies = [
     "requests-cache>=1.2.1",
     "requests>=2.33.0",
     "simple-ascii-tables>=1.0.0",
-    "pytz>=2024.2",
+    # HARD runtime dependency, not a convenience: the stdlib `zoneinfo` reads the
+    # HOST's tz database and only falls back to this package when there isn't one.
+    # Without it the same birth data would resolve to different offsets on two
+    # machines with differently-aged system tzdata — and would not resolve at all
+    # on images that ship no tz database (Alpine, Windows). Pinning it here makes
+    # the zone rules part of the locked dependency set, so results are reproducible.
+    "tzdata>=2025.2",
     "typing-extensions>=4.12.2",
 ]
 
@@ -374,7 +380,6 @@ dev = [
     "pytest-xdist>=3.5.0",
     "pytest-sugar>=1.1.1",
     "ruff>=0.12.9",
-    "types-pytz>=2025.2.0.20250516",
     "types-requests>=2.32.4.20250611",
     "pyswisseph>=2.10.3.2",
 ]

@@ -20,9 +20,7 @@ import math
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from typing import Optional
-
-import pytz
-from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
+from zoneinfo import ZoneInfo
 
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion.moon_phase_details.utils import (
@@ -30,7 +28,14 @@ from kerykeion.moon_phase_details.utils import (
     configure_ephemeris_path,
 )
 from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.utilities import datetime_to_julian, julian_to_datetime
+from kerykeion.utilities import (
+    datetime_to_julian,
+    is_ambiguous,
+    is_nonexistent,
+    julian_to_datetime,
+    localize_naive,
+    safe_timezone,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -73,22 +78,27 @@ class TwilightEvents:
     astronomical_dusk: Optional[datetime]
 
 
-def resolve_timezone(tz_str: str) -> pytz.BaseTzInfo:
+def resolve_timezone(tz_str: str) -> ZoneInfo:
     """Resolve an IANA timezone string, raising ``KerykeionException`` if invalid.
+
+    A thin alias for :func:`kerykeion.utilities.safe_timezone`, kept as its own
+    name because the timing factories import it from here. Delegating rather than
+    re-implementing is the point: two wrappers around the same constructor drift
+    apart on WHICH failures they wrap, and the gap is not hypothetical —
+    ``AstrologicalSubjectModel.tz_str`` is ``Optional[str]`` (composite charts
+    have no single zone), so ``None`` reaches this function and must come back out
+    as the library's own exception rather than a raw ``TypeError``.
 
     Args:
         tz_str: IANA timezone identifier (e.g. ``"Europe/Rome"``).
 
     Returns:
-        The corresponding ``pytz`` timezone object.
+        The corresponding ``ZoneInfo`` object.
 
     Raises:
-        KerykeionException: If ``tz_str`` is not a known IANA timezone.
+        KerykeionException: If ``tz_str`` is not a usable IANA timezone key.
     """
-    try:
-        return pytz.timezone(tz_str)
-    except pytz.UnknownTimeZoneError as exc:
-        raise KerykeionException(f"Unknown timezone: {tz_str!r}") from exc
+    return safe_timezone(tz_str)
 
 
 def localize_datetime(
@@ -99,17 +109,18 @@ def localize_datetime(
     minute: int = 0,
     second: int = 0,
     *,
-    tz: pytz.BaseTzInfo,
+    tz: ZoneInfo,
 ) -> datetime:
     """Build a timezone-aware local ``datetime``, validating the inputs.
 
     These timing factories are anchored to civil (IANA) timezones, so they operate
     on the years Python's ``datetime`` can represent (1-9999 CE). Out-of-range
     years and impossible dates (e.g. 30 February) are reported as a clean
-    ``KerykeionException`` rather than a raw ``ValueError``. The very first and
-    last civil days of that range (0001-01-01 and 9999-12-31) are also
-    unsupported: timezone resolution needs to probe the surrounding day, which
-    overflows ``datetime`` there.
+    ``KerykeionException`` rather than a raw ``ValueError``. Each extreme edge of
+    the range is unsupported for one hemisphere of offsets: converting to UTC
+    subtracts the offset, so an EAST-of-UTC zone drops 0001-01-01 below year 1
+    and a WEST-of-UTC zone pushes 9999-12-31 past year 9999. Which edge fails is
+    sign-dependent (see :func:`_unsupported_range_error`).
 
     Raises:
         KerykeionException: If the date/time is invalid or the year is unsupported.
@@ -121,26 +132,56 @@ def localize_datetime(
             f"Invalid or unsupported date/time ({year:04d}-{month:02d}-{day:02d} "
             f"{hour:02d}:{minute:02d}): {exc}. Supported civil years are 1-9999 CE."
         ) from exc
+    # Only the final astimezone can overflow: the gap/fold probes read offsets out
+    # of the zone's transition table and swallow their own range errors. The guard
+    # still spans the block so a future probe that DOES cross to UTC stays covered.
     try:
-        return tz.localize(naive, is_dst=None)
-    except AmbiguousTimeError:
-        # DST fall-back: the same wall-clock time exists twice. Default to the
-        # standard-time (post-transition) interpretation so the caller always
-        # gets a deterministic result without needing an extra parameter.
-        return tz.localize(naive, is_dst=False)
-    except NonExistentTimeError as exc:
-        raise KerykeionException(f"Non-existent local time {naive!s} in timezone {tz.zone!r}: {exc}") from exc
+        # A wall time inside a spring-forward gap ALSO reads as ambiguous, so the
+        # gap must be tested first or the diagnosis comes out inverted.
+        if is_nonexistent(naive, tz):
+            raise KerykeionException(
+                f"Non-existent local time {naive!s} in timezone {tz.key!r}: it falls inside "
+                f"a DST spring-forward gap, so that wall-clock reading never occurs."
+            )
+        if is_ambiguous(naive, tz):
+            # DST fall-back: the same wall-clock time exists twice. Default to the
+            # standard-time (post-transition) interpretation so the caller always
+            # gets a deterministic result without needing an extra parameter.
+            local = localize_naive(naive, tz, is_dst=False)
+        else:
+            local = localize_naive(naive, tz)
+        # Validate eagerly: every caller converts the result to UTC, and at the
+        # east-of-UTC edge of the range that conversion overflows. Checking here
+        # keeps the failure a KerykeionException instead of letting a raw
+        # OverflowError escape a public factory.
+        local.astimezone(timezone.utc)
     except OverflowError as exc:
-        # pytz probes the wall-clock time ± 1 day to resolve DST, so the first
-        # and last civil days of the datetime range overflow inside localize.
-        raise KerykeionException(
-            f"Unsupported date/time {naive!s}: timezone resolution needs the "
-            f"surrounding civil day, which falls outside the supported range "
-            f"(1-9999 CE, excluding its first and last days)."
-        ) from exc
+        raise _unsupported_range_error(naive, tz) from exc
+    return local
 
 
-def _localize_civil_midnight(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> datetime:
+def _unsupported_range_error(naive: datetime, tz: ZoneInfo) -> KerykeionException:
+    """Build the range-edge error for a wall time that cannot be resolved to UTC.
+
+    Resolving a wall time to an instant subtracts the zone's UTC offset, so it can
+    leave the window ``datetime`` represents. Which END it leaves is
+    sign-dependent, and BOTH are reachable: an east-of-UTC (positive) offset drops
+    0001-01-01 below year 1, a west-of-UTC (negative) one pushes 9999-12-31 past
+    year 9999. Each edge therefore excludes exactly one hemisphere of zones, and
+    the message names the direction that actually applied rather than assuming
+    one — a caller diagnosing a UTC-5 failure must not be told about an
+    east-of-UTC offset the zone does not have.
+    """
+    offset = naive.replace(tzinfo=tz).utcoffset() or timedelta(0)
+    direction = "east-of-UTC" if offset > timedelta(0) else "west-of-UTC"
+    return KerykeionException(
+        f"Unsupported date/time {naive!s} in timezone {tz.key!r}: resolving it to a UTC "
+        f"instant subtracts the zone's {direction} offset ({offset}), which falls outside "
+        f"the supported range (1-9999 CE)."
+    )
+
+
+def _localize_civil_midnight(year: int, month: int, day: int, tz: ZoneInfo) -> datetime:
     """Timezone-aware first instant of a civil day, resolving DST gaps forward.
 
     Unlike :func:`localize_datetime` — used for *user-supplied* clock times, where
@@ -161,31 +202,31 @@ def _localize_civil_midnight(year: int, month: int, day: int, tz: pytz.BaseTzInf
             f"Invalid or unsupported date ({year:04d}-{month:02d}-{day:02d}): {exc}. "
             f"Supported civil years are 1-9999 CE."
         ) from exc
+    # As in localize_datetime, only the final astimezone can overflow; the guard
+    # spans the block so a future probe that crosses to UTC stays covered.
     try:
-        return tz.localize(naive, is_dst=None)
-    except AmbiguousTimeError:
-        # DST fall-back: midnight exists twice. Like localize_datetime, default to
-        # the standard-time (post-transition) interpretation.
-        return tz.localize(naive, is_dst=False)
-    except NonExistentTimeError:
-        # Spring-forward gap at midnight. Of the two possible interpretations the
-        # later UTC instant is the one that lands *after* the gap (the pre-gap
-        # offset overshoots forward when normalized), i.e. the day's real start.
-        return max(
-            tz.normalize(tz.localize(naive, is_dst=False)),
-            tz.normalize(tz.localize(naive, is_dst=True)),
-        )
+        # Gap before fold: a nonexistent wall time also reads as ambiguous, so
+        # testing the fold first would misclassify it.
+        if is_nonexistent(naive, tz):
+            # Spring-forward gap at midnight. Of the two readings, the one that
+            # lands *after* the gap — the day's real start — is the SMALLER-offset
+            # one, because a smaller offset subtracts less on the way to UTC.
+            local = localize_naive(naive, tz, is_dst=False)
+        elif is_ambiguous(naive, tz):
+            # DST fall-back: midnight exists twice. Like localize_datetime, default
+            # to the standard-time (post-transition) interpretation. Kept as its own
+            # branch even though it resolves the same way: the two cases mean
+            # different things, and collapsing them would hide that.
+            local = localize_naive(naive, tz, is_dst=False)
+        else:
+            local = localize_naive(naive, tz)
+        local.astimezone(timezone.utc)
     except OverflowError as exc:
-        # pytz probes the wall-clock time ± 1 day to resolve DST, so the first
-        # and last civil days of the datetime range overflow inside localize.
-        raise KerykeionException(
-            f"Unsupported date {naive.date()!s}: timezone resolution needs the "
-            f"surrounding civil day, which falls outside the supported range "
-            f"(1-9999 CE, excluding its first and last days)."
-        ) from exc
+        raise _unsupported_range_error(naive, tz) from exc
+    return local
 
 
-def local_midnight_julian_day(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> float:
+def local_midnight_julian_day(year: int, month: int, day: int, tz: ZoneInfo) -> float:
     """Julian Day (UT) of the start of the local civil day for a date and timezone.
 
     ``rise_trans`` searches for the next rise/set *after* this instant, so seeding
@@ -196,7 +237,8 @@ def local_midnight_julian_day(year: int, month: int, day: int, tz: pytz.BaseTzIn
     Note:
         The local midnight is converted to UTC before the Julian Day conversion.
     """
-    utc_midnight = _localize_civil_midnight(year, month, day, tz).astimezone(pytz.utc)
+    # _localize_civil_midnight has already proved this conversion is representable.
+    utc_midnight = _localize_civil_midnight(year, month, day, tz).astimezone(timezone.utc)
     return datetime_to_julian(utc_midnight)
 
 
@@ -205,14 +247,14 @@ def julian_day_to_utc(jd: float) -> datetime:
     return julian_to_datetime(jd).replace(tzinfo=timezone.utc)
 
 
-def _civil_day_bounds(year: int, month: int, day: int, tz: pytz.BaseTzInfo) -> tuple[float, float]:
+def _civil_day_bounds(year: int, month: int, day: int, tz: ZoneInfo) -> tuple[float, float]:
     """Julian Days (UT) of the local midnights opening and closing the civil day.
 
     Returns ``(jd_midnight, jd_next_midnight)``; the upper bound falls back to
     ``jd_midnight + 1`` when the following date overflows the supported range —
-    either as a raw ``OverflowError`` from the ``date`` arithmetic or as the
-    ``KerykeionException`` the localize helpers now raise for the last civil
-    day (whose DST probe overflows inside pytz).
+    either as a raw ``OverflowError`` from the ``date`` arithmetic on 9999-12-31,
+    or as the ``KerykeionException`` the localize helpers raise when the UTC
+    conversion of that next midnight leaves the representable range.
     """
     jd_midnight = local_midnight_julian_day(year, month, day, tz)
     try:
@@ -264,7 +306,7 @@ def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
 
 
 def compute_sun_events(
-    year: int, month: int, day: int, latitude: float, longitude: float, tz: pytz.BaseTzInfo
+    year: int, month: int, day: int, latitude: float, longitude: float, tz: ZoneInfo
 ) -> SunEvents:
     """Compute sunrise, sunset, solar noon, day length and polar flags.
 
@@ -272,7 +314,7 @@ def compute_sun_events(
         year, month, day: Civil date in the supplied timezone.
         latitude: Observer latitude in degrees (north positive).
         longitude: Observer longitude in degrees (east positive).
-        tz: Resolved ``pytz`` timezone the civil date is anchored to.
+        tz: Resolved ``ZoneInfo`` the civil date is anchored to.
 
     Returns:
         A :class:`SunEvents` with timezone-aware UTC instants (or ``None`` on
@@ -384,7 +426,7 @@ def _next_event_jd(
 
 
 def compute_twilight_events(
-    year: int, month: int, day: int, latitude: float, longitude: float, tz: pytz.BaseTzInfo
+    year: int, month: int, day: int, latitude: float, longitude: float, tz: ZoneInfo
 ) -> TwilightEvents:
     """Compute civil, nautical and astronomical dawn/dusk for a civil day.
 
@@ -399,7 +441,7 @@ def compute_twilight_events(
         year, month, day: Civil date in the supplied timezone.
         latitude: Observer latitude in degrees (north positive).
         longitude: Observer longitude in degrees (east positive).
-        tz: Resolved ``pytz`` timezone the civil date is anchored to.
+        tz: Resolved ``ZoneInfo`` the civil date is anchored to.
 
     Returns:
         A :class:`TwilightEvents` with the six dawn/dusk instants (each ``None``

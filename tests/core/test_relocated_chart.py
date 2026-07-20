@@ -434,8 +434,10 @@ class TestRelocatedLocalDatetimeRecompute:
         assert (data["year"], data["month"], data["day"]) == (-500, 3, 22)
         assert data["iso_formatted_local_datetime"].startswith("-0500-03-22T00:00:00")
 
-    def test_ce_subject_matches_pytz(self):
-        import pytz
+    def test_ce_subject_matches_stdlib_zoneinfo(self):
+        # The normative reference for a CE conversion is the stdlib tz database
+        # reader: the factory must not reimplement the offset lookup, only route to it.
+        from zoneinfo import ZoneInfo
 
         iso_utc = "2024-01-01T23:30:15+00:00"
         data: dict = {}
@@ -448,7 +450,7 @@ class TestRelocatedLocalDatetimeRecompute:
             iso_utc=iso_utc,
         )
 
-        expected = datetime.fromisoformat(iso_utc).astimezone(pytz.timezone("Asia/Tokyo"))
+        expected = datetime.fromisoformat(iso_utc).astimezone(ZoneInfo("Asia/Tokyo"))
         assert data["iso_formatted_local_datetime"] == expected.isoformat()
         assert (
             data["year"],

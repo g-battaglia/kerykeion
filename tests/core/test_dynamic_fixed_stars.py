@@ -516,3 +516,90 @@ def test_non_finite_subject_julian_day_raises(subject_all_stars, julian_day):
     corrupted = subject_all_stars.model_copy(update={"julian_day": julian_day})
     with pytest.raises(KerykeionException, match="finite"):
         FixedStarDiscoveryFactory.find_prominent_stars(corrupted)
+
+
+class TestFixedStarProvenance:
+    """Discovered stars must declare where their positions came from.
+
+    A star listed alongside planets that each carry a `source` and a
+    `precision_class`, while declaring nothing itself, reads as the least
+    trustworthy point on the chart when in fact it came from the same backend. The
+    fields were previously left unset not because the data was poor but because the
+    fixed-star id space has no coverage inventory to read them from, so nothing
+    filled them in — a contract gap, not a precision one.
+
+    The coverage window and the review flag stay None on purpose. They describe a
+    per-body inventory the backend does not publish for stars, and populating them
+    from the planetary inventory would assert a coverage range nobody verified.
+    """
+
+    def test_discovered_stars_declare_source_and_precision_class(self, subject_all_stars):
+        prominent = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
+        assert prominent, "need at least one discovered star to assert provenance"
+        for star in prominent:
+            assert star.source is not None, f"{star.name} carries no source"
+            assert star.precision_class is not None, f"{star.name} carries no precision_class"
+
+    def test_precision_class_agrees_with_the_shared_mapping(self, subject_all_stars):
+        """The class must be DERIVED from the source, not hardcoded per call site.
+
+        Asserted against the same helper the planetary path uses, so a future
+        change to the grading scale cannot leave stars on a stale copy of it.
+        """
+        from kerykeion.astrological_subject_factory import _precision_class_for_source
+
+        prominent = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
+        for star in prominent:
+            assert star.precision_class == _precision_class_for_source(star.source)
+
+    def test_coverage_fields_stay_unset(self, subject_all_stars):
+        """The deliberate omission, pinned so it is not "fixed" by guesswork."""
+        prominent = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
+        for star in prominent:
+            assert star.ephemeris_coverage_start_jd is None
+            assert star.ephemeris_coverage_end_jd is None
+            assert star.source_reviewed is None
+
+    def test_natal_fixed_stars_declare_provenance_too(self):
+        """Stars requested up front go through a different path than discovery.
+
+        Both must satisfy the same contract, or a chart's provenance would depend
+        on how its stars were asked for.
+        """
+        from kerykeion.astrological_subject_factory import _precision_class_for_source
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Natal Stars", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_fixed_stars=["Regulus", "Spica", "Aldebaran"],
+        )
+        assert subject.fixed_stars
+        for star in subject.fixed_stars:
+            assert star.source is not None
+            assert star.precision_class == _precision_class_for_source(star.source)
+
+    def test_provenance_reaches_the_serializer(self):
+        """A field absent from the serialized context is invisible downstream.
+
+        The serializer emits `source`/`precision_class` only when they are set, so
+        an unset field degrades silently into a missing attribute rather than an
+        error — which is exactly why it needs an explicit test.
+        """
+        from kerykeion.context_serializer import astrological_subject_to_context
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Serialized Stars", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_fixed_stars=["Regulus", "Spica"],
+        )
+        context = astrological_subject_to_context(subject)
+        star_lines = [
+            line for line in context.splitlines()
+            if 'name="Regulus"' in line or 'name="Spica"' in line
+        ]
+        assert star_lines, "fixed stars missing from the serialized context"
+        for line in star_lines:
+            assert "source=" in line
+            assert "precision_class=" in line

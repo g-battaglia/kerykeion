@@ -771,6 +771,70 @@ class EphemerisWarningModel(SubscriptableBaseModel):
     coverage_end_jd: Optional[float] = None
 
 
+class PolarHouseFallbackModel(SubscriptableBaseModel):
+    """A house system substituted because the requested one is undefined here.
+
+    Quadrant systems such as Placidus ('P') and Koch ('K') are genuinely
+    undefined inside the polar circle: they divide the semi-diurnal arc of a
+    degree of the ecliptic, and beyond the threshold latitude some degrees
+    never rise or set, so the arc does not exist. The chart is still castable —
+    what has to give is the HOUSE SYSTEM, not the observer's position.
+
+    This record therefore reports a substitution performed at the REAL
+    latitude: ``used_latitude`` equals ``latitude`` for the
+    ``substitute_system`` strategy, and the angles (Ascendant, MC, Descendant,
+    IC, Vertex) stay exact, because they are the intersections of the ecliptic
+    with the horizon and the meridian and do not depend on a house system at
+    all. Only the intermediate cusps come from the substitute system, which is
+    what ``affects`` names.
+
+    A list of these is carried per subject rather than a single value: one
+    chart can substitute for its main house system and separately clamp for the
+    Gauquelin sectors, and both facts have to survive.
+
+    Added in v6.0.
+    """
+
+    strategy: str = Field(
+        description="How the undefined system was resolved. 'substitute_system' recomputes at "
+        "the real latitude with a system defined everywhere; 'clamp_latitude' retries the "
+        "requested system at the polar-limit latitude (used where the output is a pure "
+        "house-division product with no angles to preserve, e.g. Gauquelin sectors)."
+    )
+    requested_house_system_identifier: str = Field(
+        description="Identifier of the house system originally asked for (e.g. 'P')."
+    )
+    requested_house_system_name: Optional[str] = Field(
+        default=None, description="Human-readable name of the requested house system (e.g. 'Placidus')."
+    )
+    used_house_system_identifier: str = Field(
+        description="Identifier of the house system actually used for the cusps (e.g. 'O')."
+    )
+    used_house_system_name: Optional[str] = Field(
+        default=None, description="Human-readable name of the house system actually used (e.g. 'Porphyry')."
+    )
+    latitude: float = Field(description="The real observer latitude, always preserved in the chart data.")
+    used_latitude: float = Field(
+        description="Latitude the successful house call ran at. Equal to 'latitude' for "
+        "'substitute_system'; the clamped polar limit for 'clamp_latitude'."
+    )
+    threshold: Optional[float] = Field(
+        default=None,
+        description="Polar-circle threshold latitude for the epoch's obliquity, when the backend "
+        "reports it. None on backends whose error type carries no detail.",
+    )
+    obliquity: Optional[float] = Field(
+        default=None,
+        description="True obliquity of the ecliptic used to derive the threshold, when reported.",
+    )
+    affects: list[str] = Field(
+        default_factory=list,
+        description="Which chart products the substitution changed, e.g. ['house_cusps']. The "
+        "angles are NOT listed under 'substitute_system': they remain exact.",
+    )
+    message: str = Field(description="Human-readable explanation of the substitution.")
+
+
 class AstrologicalBaseModel(SubscriptableBaseModel):
     """
     Base model containing common fields for all astrological subjects.
@@ -1003,6 +1067,11 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         default_factory=list,
         description="Optional points omitted because no permitted source produced a value.",
     )
+    polar_house_fallbacks: list[PolarHouseFallbackModel] = Field(
+        default_factory=list,
+        description="House systems substituted because the requested one is undefined at this "
+        "latitude. Empty for every chart cast outside the polar circle.",
+    )
 
     # Common lunar phase data (optional)
     lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")
@@ -1165,6 +1234,13 @@ class EphemerisDictModel(SubscriptableBaseModel):
         description=(
             "Requested optional points omitted at this sample because no "
             "permitted ephemeris or local model produced a value."
+        ),
+    )
+    polar_house_fallbacks: list[PolarHouseFallbackModel] = Field(
+        default_factory=list,
+        description=(
+            "House systems substituted at this sample because the requested one "
+            "is undefined at the sample's latitude."
         ),
     )
 

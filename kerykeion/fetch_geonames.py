@@ -244,7 +244,7 @@ class FetchGeonames:
             return {}
 
         # A present-but-empty timezoneId would slip past the key-presence check
-        # and reach pytz as "" (which pytz rejects). Treat it as a missing tz.
+        # and reach the tz resolver as "", which it rejects. Treat it as missing.
         if not tz_id:
             logger.error("GeoNames timezone payload had an empty timezoneId.")
             return {}

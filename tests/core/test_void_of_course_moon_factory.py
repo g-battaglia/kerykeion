@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 import pytest
-import pytz
 
 from kerykeion import VoidOfCourseMoonFactory
 from kerykeion.aspects.aspects_utils import difdeg2n
@@ -21,7 +21,7 @@ _IFLAG = ephe.FLG_SWIEPH | ephe.FLG_SPEED
 
 
 def _rome_moment_utc(y, mo, d, h, mi):
-    return pytz.timezone("Europe/Rome").localize(datetime(y, mo, d, h, mi)).astimezone(timezone.utc)
+    return datetime(y, mo, d, h, mi, tzinfo=ZoneInfo("Europe/Rome")).astimezone(timezone.utc)
 
 
 def test_structure_and_invariants():

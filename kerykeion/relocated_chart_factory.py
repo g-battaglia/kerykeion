@@ -7,8 +7,9 @@ geographic location. This is equivalent to asking: "If I had been born at
 the same Universal Time but in a different city, which houses would my
 planets fall in?"
 
-Ephemeris function: ``houses_ex2_with_polar_fallback(...)`` (a polar-safe
-wrapper over the backend's ``houses_ex2``)
+Ephemeris function: ``houses_ex2_with_polar_fallback_ex(...)`` (a polar-safe
+wrapper over the backend's ``houses_ex2``, which substitutes the house SYSTEM
+rather than the latitude so the relocated angles stay exact)
 
 Location-dependent derived points are recomputed as well: the Vertex /
 Anti-Vertex (from the same house call), the Ascendant-based Arabic
@@ -29,7 +30,7 @@ import math
 from datetime import datetime, timezone
 from typing import Optional
 
-from kerykeion.ephemeris_backend import ephe, ephemeris_session, houses_ex2_with_polar_fallback
+from kerykeion.ephemeris_backend import ephe, ephemeris_session, houses_ex2_with_polar_fallback_ex
 
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint, Houses
@@ -70,7 +71,7 @@ class RelocatedChartFactory:
 
         BCE subjects (``year < 1``) store extended-year ISO strings (e.g.
         ``"-0500-03-21T..."``) that ``datetime.fromisoformat`` cannot parse and
-        ``pytz`` cannot localise, so they take the subject factory's ancient
+        no tzinfo can localise, so they take the subject factory's ancient
         path: derive local time from the (unchanged) UT Julian Day using the new
         longitude's Local Mean Time offset (named timezones are anachronistic
         for BCE). The h/m/s split matches ``format_ancient_iso`` so the integer
@@ -207,7 +208,11 @@ class RelocatedChartFactory:
             # Letting houses_ex2 apply the sidereal flag itself would double-
             # subtract the ayanamsa.
             tropical_iflag = _iflag & ~ephe.FLG_SIDEREAL
-            cusps, ascmc, _cusps_speed, _ascmc_speed = houses_ex2_with_polar_fallback(
+            # The ``_ex`` variant also reports whether the requested house system
+            # had to be substituted: relocating TOWARDS a polar latitude is the
+            # most common way a real user meets the case, and the relocated
+            # subject is the only place that fact can still be told.
+            cusps, ascmc, _cusps_speed, _ascmc_speed, polar_fallback = houses_ex2_with_polar_fallback_ex(
                 jd, new_lat, new_lng, hsys, tropical_iflag, context=new_city or subject.name
             )
 
@@ -316,6 +321,13 @@ class RelocatedChartFactory:
         for star_data in relocated_data.get("fixed_stars") or []:
             _null_location_fields(star_data)
         relocated_data["gauquelin_sector_cusps"] = None
+
+        # Any polar fallback the NATAL chart recorded describes the natal
+        # location's house call, which this factory has just replaced. Overwrite
+        # rather than append, for the same reason the enrichments above are
+        # nulled: carrying it over would attribute a substitution to a latitude
+        # that no longer produced these cusps.
+        relocated_data["polar_house_fallbacks"] = [polar_fallback] if polar_fallback is not None else []
 
         relocated_data.update(house_data)
         relocated_data["city"] = new_city

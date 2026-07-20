@@ -773,9 +773,9 @@ class TestEphemerisConfigurationVariants:
     def test_daily_samples_preserved_across_dst(self, start, end, expected_dates):
         """Daily steps must land on each requested LOCAL calendar day at the
         same wall time, regardless of DST — and the UTC series stays monotonic."""
-        import pytz
+        from zoneinfo import ZoneInfo
 
-        tz = pytz.timezone("Europe/Rome")
+        tz = ZoneInfo("Europe/Rome")
         factory = EphemerisDataFactory(
             start_datetime=start, end_datetime=end,
             step_type="days", lat=41.9, lng=12.5, tz_str="Europe/Rome",
@@ -907,7 +907,34 @@ class TestFixedStarsInEphemeris:
         assert len(data) == 2
         for sample in data:
             assert "fixed_stars" not in sample
-            assert set(sample.keys()) == {"date", "planets", "houses", "ephemeris_warnings"}
+            assert set(sample.keys()) == {
+                "date",
+                "planets",
+                "houses",
+                "ephemeris_warnings",
+                "polar_house_fallbacks",
+            }
+
+    def test_a_substituted_house_system_is_declared_on_every_sample(self):
+        """A series whose houses are NOT the requested system must say so.
+
+        The samples carry house cusps with no label, so a consumer that asked for
+        Placidus and got Porphyry has no way to notice. An empty list here would
+        be worse than a missing field: it actively asserts the cusps are Placidus.
+        """
+        factory = self._factory(
+            lat=78.2232, lng=15.6467, tz_str="Arctic/Longyearbyen",
+            houses_system_identifier="P",
+        )
+        for sample in factory.get_ephemeris_data():
+            declared = sample["polar_house_fallbacks"]
+            assert [f.used_house_system_identifier for f in declared] == ["O"]
+        for model in factory.get_ephemeris_data(as_model=True):
+            assert [f.used_house_system_identifier for f in model.polar_house_fallbacks] == ["O"]
+
+    def test_no_declaration_when_the_requested_system_was_used(self):
+        for sample in self._factory().get_ephemeris_data():
+            assert sample["polar_house_fallbacks"] == []
 
     def test_empty_star_list_output_has_no_fixed_stars_key(self):
         """active_fixed_stars=[] behaves exactly like the default (no key)."""
