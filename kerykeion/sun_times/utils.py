@@ -210,8 +210,13 @@ def _localize_civil_midnight(year: int, month: int, day: int, tz: ZoneInfo) -> d
         if is_nonexistent(naive, tz):
             # Spring-forward gap at midnight. Of the two readings, the one that
             # lands *after* the gap — the day's real start — is the SMALLER-offset
-            # one, because a smaller offset subtracts less on the way to UTC.
-            local = localize_naive(naive, tz, is_dst=False)
+            # one. For example, at a -03:00 -> -02:00 jump, interpreting 00:00
+            # with -03:00 maps to 03:00 UTC, which normalizes to 01:00 -02:00.
+            local = (
+                localize_naive(naive, tz, is_dst=False)
+                .astimezone(timezone.utc)
+                .astimezone(tz)
+            )
         elif is_ambiguous(naive, tz):
             # DST fall-back: midnight exists twice. Like localize_datetime, default
             # to the standard-time (post-transition) interpretation. Kept as its own

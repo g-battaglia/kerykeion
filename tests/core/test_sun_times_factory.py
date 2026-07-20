@@ -81,12 +81,18 @@ def test_dst_spring_forward_midnight_gap_sao_paulo():
     # raising on the non-existent wall time, and still return a sane sunrise/sunset.
     from zoneinfo import ZoneInfo
 
+    from kerykeion.sun_times.utils import _localize_civil_midnight
+
     s = SunTimesFactory.from_date(
         2018, 11, 4, latitude=-23.5505, longitude=-46.6333, tz_str="America/Sao_Paulo"
     )
     assert s.sunrise is not None and s.sunset is not None
     assert s.sunrise < s.solar_noon < s.sunset
     sp = ZoneInfo("America/Sao_Paulo")
+    first_instant = _localize_civil_midnight(2018, 11, 4, sp)
+    # The helper promises the real first instant, not an imaginary
+    # 00:00-03:00 wall time that merely maps to it after UTC conversion.
+    assert (first_instant.hour, first_instant.utcoffset().total_seconds()) == (1, -2 * 3600)
     sunrise_local = s.sunrise.astimezone(sp)
     assert sunrise_local.date().isoformat() == "2018-11-04"
     assert 5 <= sunrise_local.hour <= 7  # ~06:18 local (DST)

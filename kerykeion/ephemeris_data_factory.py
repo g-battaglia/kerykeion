@@ -382,6 +382,10 @@ class EphemerisDataFactory:
                       when nothing was omitted. This key is new in a75: samples are
                       NOT key-identical to earlier releases, so consumers that
                       validate keys strictly must accept it.
+                    - "polar_house_fallbacks" (list): ALWAYS present. List of
+                      PolarHouseFallbackModel entries describing any polar house
+                      substitution or Gauquelin latitude fallback used for that
+                      sample; an empty list when no fallback was needed.
                     - "fixed_stars" (list): ONLY present when the factory was built
                       with a non-empty ``active_fixed_stars``. List of the calculated
                       fixed star KerykeionPointModel instances (same shape as

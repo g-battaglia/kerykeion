@@ -2579,6 +2579,46 @@ class TestOnlineGeonamesGating:
         assert before - timedelta(seconds=5) <= got <= after + timedelta(seconds=5)
         assert s.tz_str == fetched["timezonestr"]
 
+    @pytest.mark.parametrize("city", [None, ""])
+    def test_from_current_time_resolves_explicit_coordinates_without_a_city(
+        self, monkeypatch, city
+    ):
+        """The current-time prefetch must preserve the coordinate-only route."""
+        from kerykeion import fetch_geonames
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        captured = {}
+
+        def fake_tz_lookup(self, lat, lng):
+            captured["coords"] = (lat, lng)
+            return {"timezonestr": "Europe/Rome"}
+
+        def fail_city_lookup(self):
+            raise AssertionError(
+                "the city-based lookup must not run when lat/lng are explicit and city is missing"
+            )
+
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup
+        )
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+        )
+
+        subject = AstrologicalSubjectFactory.from_current_time(
+            "Coords Now",
+            lat=41.9028,
+            lng=12.4964,
+            city=city,
+            online=True,
+            suppress_geonames_warning=True,
+        )
+
+        assert captured["coords"] == (41.9028, 12.4964)
+        assert subject.tz_str == "Europe/Rome"
+        assert subject.lat == pytest.approx(41.9028)
+        assert subject.lng == pytest.approx(12.4964)
+
     def test_from_iso_utc_time_failed_fetch_raises_kerykeion_exception(self, monkeypatch):
         from kerykeion import fetch_geonames
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
@@ -2594,7 +2634,10 @@ class TestOnlineGeonamesGating:
                 suppress_geonames_warning=True,
             )
 
-    def test_explicit_coordinates_without_city_resolve_tz_from_coordinates(self, monkeypatch):
+    @pytest.mark.parametrize("city", [None, ""])
+    def test_explicit_coordinates_without_city_resolve_tz_from_coordinates(
+        self, monkeypatch, city
+    ):
         """online=True + explicit lat/lng + no tz_str + no city: the timezone
         must be resolved from the coordinates (timezoneJSON endpoint), NOT from
         the default city "Greenwich" (which silently produced a chart in the
@@ -2622,7 +2665,7 @@ class TestOnlineGeonamesGating:
 
         s = AstrologicalSubjectFactory.from_birth_data(
             "Coords Only", 1990, 6, 15, 12, 0,
-            lat=41.9028, lng=12.4964, online=True,
+            lat=41.9028, lng=12.4964, city=city, online=True,
             suppress_geonames_warning=True,
         )
         assert captured["coords"] == (41.9028, 12.4964)
@@ -2886,10 +2929,11 @@ class TestSiderealDeclinationRound16:
 
 
 class TestPolarLatitudePreserved:
-    """Round-22: the polar-latitude clamp must be applied ONLY where a quadrant
-    house system is undefined inside the polar circle — never globally. The real
-    observer latitude must reach the persisted model, the topocentric observer,
-    and every house system that is defined at all latitudes."""
+    """The polar fallback must remain local to the unsupported house call.
+
+    The real observer latitude must reach the persisted model, the topocentric
+    observer, and every house system that is defined at all latitudes.
+    """
 
     _KW = dict(
         year=1995, month=1, day=15, hour=2, minute=0,

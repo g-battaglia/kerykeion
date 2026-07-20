@@ -264,27 +264,6 @@ class CompositeSubjectFactory:
             raise KerykeionException("Both subjects must have the same houses system name")
         self.houses_system_name = first_subject.houses_system_name
 
-        # Matching REQUESTS is not enough: inside the polar circle a chart's
-        # cusps may have come from a substitute. Two subjects that both asked for
-        # Placidus can therefore hold Porphyry cusps and Placidus cusps, and a
-        # midpoint of two different divisions is not a composite in either of
-        # them. The check above already refuses mismatched systems; this is the
-        # same refusal, applied to what the houses actually are.
-        first_effective = first_subject.effective_houses_system_identifier
-        second_effective = second_subject.effective_houses_system_identifier
-        if first_effective != second_effective:
-            raise KerykeionException(
-                "Both subjects must have the same houses system: "
-                f"{first_subject.name}'s cusps were computed with "
-                f"{first_subject.effective_houses_system_name!r} and "
-                f"{second_subject.name}'s with {second_subject.effective_houses_system_name!r}. "
-                "A house system undefined at one subject's latitude was substituted there; "
-                "see polar_house_fallbacks on that subject."
-            )
-        # Both sides agree, so the composite can state what its own cusps are.
-        self.houses_system_identifier = first_effective
-        self.houses_system_name = first_subject.effective_houses_system_name
-
         # Perspective Type
         if first_subject.perspective_type != second_subject.perspective_type:
             raise KerykeionException("Both subjects must have the same perspective type")
@@ -500,6 +479,29 @@ class CompositeSubjectFactory:
             return
         self.lunar_phase = calculate_moon_phase(moon.abs_pos, sun.abs_pos)
 
+    def _effective_midpoint_house_system(self) -> tuple[str, str]:
+        """Return the common house division used by the parents' actual cusps.
+
+        This compatibility rule belongs only to midpoint composites, which
+        average the parents' existing cusps. A Davison composite recasts a new
+        chart at the midpoint location and must therefore retain the requested
+        system, allowing that new cast to decide whether a polar fallback is
+        needed and to record it when it is.
+        """
+        first_effective = self.first_subject.effective_houses_system_identifier
+        second_effective = self.second_subject.effective_houses_system_identifier
+        if first_effective != second_effective:
+            raise KerykeionException(
+                "Both subjects must have the same houses system: "
+                f"{self.first_subject.name}'s cusps were computed with "
+                f"{self.first_subject.effective_houses_system_name!r} and "
+                f"{self.second_subject.name}'s with "
+                f"{self.second_subject.effective_houses_system_name!r}. "
+                "A house system undefined at one subject's latitude was substituted there; "
+                "see polar_house_fallbacks on that subject."
+            )
+        return first_effective, self.first_subject.effective_houses_system_name
+
     def get_midpoint_composite_subject_model(self):
         """
         Generate the complete composite chart model using the midpoint technique.
@@ -529,10 +531,14 @@ class CompositeSubjectFactory:
             This method performs all calculations internally and returns a complete,
             ready-to-use composite chart model suitable for analysis or chart drawing.
         """
+        effective_identifier, effective_name = self._effective_midpoint_house_system()
         self._calculate_midpoint_composite_points_and_houses()
         self._calculate_composite_lunar_phase()
 
-        return CompositeSubjectModel(**self.__dict__)
+        midpoint_data = self.__dict__.copy()
+        midpoint_data["houses_system_identifier"] = effective_identifier
+        midpoint_data["houses_system_name"] = effective_name
+        return CompositeSubjectModel(**midpoint_data)
 
     def get_davison_composite_subject_model(
         self,

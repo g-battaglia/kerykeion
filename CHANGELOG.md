@@ -53,6 +53,11 @@
 - A local time of year 9999 east of UTC now resolves instead of raising. The old
   failure was an artifact of `pytz` probing ±1 day around the requested instant,
   not a real limit.
+- **Output shape:** every `EphemerisDataFactory.get_ephemeris_data()` sample now
+  carries a `polar_house_fallbacks` key in both the plain-dict and
+  `as_model=True` forms. It is a list of the sample's structured fallback
+  records, empty when no polar substitution was needed. Consumers that validate
+  plain-dict keys strictly must accept the new always-present key.
 
 ## 6.0.0a75 - 2026-07-18
 

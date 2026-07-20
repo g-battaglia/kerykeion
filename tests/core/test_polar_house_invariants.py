@@ -30,6 +30,7 @@ import pytest
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import (
     BACKEND_NAME,
+    ephe,
     ephemeris_session,
     houses_ex2_with_polar_fallback,
     houses_ex2_with_polar_fallback_ex,
@@ -229,6 +230,36 @@ class TestPolarFallbackIsDeclared:
         # The observer DID move here — which is precisely why it has to be declared.
         assert fallback.used_latitude != fallback.latitude == 78.2232
         assert fallback.affects == ["house_cusps", "angles"]
+
+    def test_gauquelin_points_use_the_same_fallback_latitude_as_the_ring(self):
+        """A clamped ring cannot coexist with sectors cast at the real latitude."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Gauquelin Consistency", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="W",
+            calculate_gauquelin=True, **_POLAR_SUBJECT,
+        )
+        fallback = next(
+            record
+            for record in subject.polar_house_fallbacks
+            if record.requested_house_system_identifier == "G"
+        )
+
+        with ephemeris_session():
+            at_fallback = ephe.gauquelin_sector(
+                subject.julian_day,
+                ephe.SUN,
+                0,
+                [subject.lng, fallback.used_latitude, 0.0],
+            )
+            at_real_latitude = ephe.gauquelin_sector(
+                subject.julian_day,
+                ephe.SUN,
+                0,
+                [subject.lng, subject.lat, 0.0],
+            )
+
+        assert subject.sun.gauquelin_sector == pytest.approx(at_fallback, abs=5e-5)
+        assert abs(subject.sun.gauquelin_sector - at_real_latitude) > 0.01
 
     def test_both_degradations_survive_together(self):
         """Placidus substitutes and Gauquelin clamps in the SAME chart.
@@ -521,3 +552,106 @@ class TestACompositeCannotMixTwoDivisions:
         ).get_midpoint_composite_subject_model()
         assert composite.houses_system_identifier == "O"
         assert composite.houses_system_name == "Porphyry"
+
+    def test_davison_accepts_parents_with_different_effective_systems(self):
+        """Davison recasts its houses and does not average the parents' cusps."""
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+
+        polar = self._subject("Polar", 78.2232)
+        temperate = self._subject("Temperate", 41.9, lng=12.5, tz_str="Europe/Rome", city="Rome", nation="IT")
+
+        davison = CompositeSubjectFactory(polar, temperate).get_davison_composite_subject_model()
+
+        assert davison.lat == pytest.approx((polar.lat + temperate.lat) / 2.0)
+        assert davison.houses_system_identifier == "P"
+        assert davison.effective_houses_system_identifier == "P"
+        assert davison.polar_house_fallbacks == []
+
+    def test_temperate_davison_of_two_polar_parents_restores_the_request(self):
+        """Matching parent fallbacks must not become the Davison chart setting."""
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+
+        north = self._subject("North Polar", 78.2232)
+        south = self._subject("South Polar", -78.2232)
+        assert north.effective_houses_system_identifier == "O"
+        assert south.effective_houses_system_identifier == "O"
+
+        davison = CompositeSubjectFactory(north, south).get_davison_composite_subject_model()
+
+        assert davison.lat == pytest.approx(0.0)
+        assert davison.houses_system_identifier == "P"
+        assert davison.effective_houses_system_identifier == "P"
+        assert davison.polar_house_fallbacks == []
+
+    def test_polar_davison_records_its_own_fallback(self):
+        """A polar midpoint may substitute, but the new cast must say that it did."""
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+
+        davison = CompositeSubjectFactory(
+            self._subject("Polar A", 78.2232),
+            self._subject("Polar B", 79.0),
+        ).get_davison_composite_subject_model()
+
+        assert davison.houses_system_identifier == "P"
+        assert davison.effective_houses_system_identifier == "O"
+        main_fallback = next(
+            fallback for fallback in davison.polar_house_fallbacks if fallback.requested_house_system_identifier == "P"
+        )
+        assert main_fallback.used_house_system_identifier == "O"
+
+
+class TestDualWheelEffectiveHouseLabels:
+    """A dual wheel must describe both house divisions when fallbacks differ."""
+
+    @staticmethod
+    def _subjects():
+        polar = AstrologicalSubjectFactory.from_birth_data(
+            "Polar",
+            1995,
+            1,
+            15,
+            2,
+            0,
+            lat=78.2232,
+            houses_system_identifier="P",
+            **_POLAR_SUBJECT,
+        )
+        temperate = AstrologicalSubjectFactory.from_birth_data(
+            "Temperate",
+            1995,
+            1,
+            15,
+            2,
+            0,
+            lat=41.9,
+            lng=12.5,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
+            suppress_geonames_warning=True,
+            houses_system_identifier="P",
+        )
+        return polar, temperate
+
+    def test_synastry_labels_both_effective_systems(self):
+        from kerykeion import ChartDataFactory
+        from kerykeion.charts.chart_drawer import ChartDrawer
+
+        polar, temperate = self._subjects()
+        svg = ChartDrawer(
+            ChartDataFactory.create_synastry_chart_data(polar, temperate)
+        ).generate_svg_string()
+
+        assert "Porphyry / Placidus Houses" in svg
+
+    def test_transit_labels_both_effective_systems(self):
+        from kerykeion import ChartDataFactory
+        from kerykeion.charts.chart_drawer import ChartDrawer
+
+        polar, temperate = self._subjects()
+        svg = ChartDrawer(
+            ChartDataFactory.create_transit_chart_data(polar, temperate)
+        ).generate_svg_string()
+
+        assert "Domification: Porphyry / Placidus" in svg

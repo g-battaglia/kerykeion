@@ -604,8 +604,8 @@ class LocationData:
     Note:
         When using online mode, the initial coordinate and timezone values may be
         overridden by data fetched from the GeoNames API based on city and nation.
-        For polar regions, latitude values are automatically adjusted to prevent
-        calculation errors.
+        Polar latitudes are preserved. If the requested house system is
+        undefined there, the house calculation records a local system fallback.
 
     Example:
         >>> location = LocationData(city="Rome", nation="IT")
@@ -708,7 +708,7 @@ class LocationData:
         # Validate the latitude but do NOT clamp it: the real value must reach
         # the topocentric observer, the persisted model, and every house system
         # defined at all latitudes. Only genuinely polar-undefined quadrant
-        # systems are clamped, locally, at the houses call.
+        # systems are substituted, locally, at the houses call.
         self.lat = validate_latitude(self.lat)
         # Wrap an un-normalized longitude (e.g. 370° == 10° E) into [-180, 180)
         # so the houses backend does not reject it with a raw CoordinateError.
@@ -970,7 +970,7 @@ class AstrologicalSubjectFactory:
             - For high-precision calculations, consider providing seconds parameter
             - Use topocentric perspective for observer-specific calculations
             - Some Arabic parts automatically activate required base points
-            - The method handles polar regions by adjusting extreme latitudes
+            - Polar latitudes are preserved; undefined house systems fall back locally
             - Time zones are handled with full DST awareness via the IANA database
         """
         # Create a calculation data container
@@ -1154,7 +1154,7 @@ class AstrologicalSubjectFactory:
         # Fetch location data if needed
         if online and (not tz_str or lat is None or lng is None):
             resolved_geonames_username = geonames_username or _get_geonames_username()
-            if lat is not None and lng is not None and city is None:
+            if lat is not None and lng is not None and not city:
                 # Explicit coordinates, missing timezone, and no city given:
                 # resolving the timezone from the DEFAULT city ("Greenwich")
                 # would silently build the chart in the wrong zone. Resolve it
@@ -1386,6 +1386,7 @@ class AstrologicalSubjectFactory:
                 and calc_data.get("lat") is not None
             ):
                 geopos = [calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0]
+                gauquelin_geopos = geopos
                 jd = calc_data["julian_day"]
 
                 # Get ASC degree for geometric fallback
@@ -1425,7 +1426,18 @@ class AstrologicalSubjectFactory:
                         polar_strategy="clamp_latitude",
                     )
                     if cusps_g[4] is not None:
-                        calc_data.setdefault("polar_house_fallbacks", []).append(cusps_g[4])
+                        gauquelin_fallback = cusps_g[4]
+                        calc_data.setdefault("polar_house_fallbacks", []).append(gauquelin_fallback)
+                        # The cusp ring and the per-body sector numbers must
+                        # describe the SAME observer. A polar G call is retried
+                        # at the recorded fallback latitude; leaving
+                        # gauquelin_sector() at the real latitude produced
+                        # sector values that did not fit the public ring.
+                        gauquelin_geopos = [
+                            geopos[0],
+                            gauquelin_fallback.used_latitude,
+                            geopos[2],
+                        ]
                     gauquelin_cusps = [round(c, 4) for c in cusps_g[0]]
                     calc_data["gauquelin_sector_cusps"] = gauquelin_cusps
                 except Exception:
@@ -1447,16 +1459,17 @@ class AstrologicalSubjectFactory:
                             # floor) parses "dOiO|ddi" with no starname slot
                             # (the 5-arg starname form existed only in pre-2.10
                             # releases), and libephemeris mirrors it.
-                            sector = ephe.gauquelin_sector(jd, pid, 0, geopos)
+                            sector = ephe.gauquelin_sector(jd, pid, 0, gauquelin_geopos)
                         except Exception:
                             pass
 
                     # Fallback for points without a SwissEph body id (axial
                     # cusps, South Nodes, White Moon, TNOs). These are (except
                     # the TNOs) ON the ecliptic, so interpolate within the REAL
-                    # Gauquelin cusps: this reproduces the true diurnal sector at
-                    # any latitude (an axis lands exactly on its cusp). Only when
-                    # the cusps are unavailable do we degrade to the uniform
+                    # Gauquelin cusps: this reproduces the sector division that
+                    # the public ring actually uses (an axis lands exactly on its
+                    # cusp), including its declared polar fallback latitude.
+                    # Only when the cusps are unavailable do we degrade to the uniform
                     # 10°-from-ASC ecliptic approximation (correct at the equator).
                     if sector is None:
                         sector = _gauquelin_sector_from_cusps(point.abs_pos, gauquelin_cusps)
@@ -2003,9 +2016,23 @@ class AstrologicalSubjectFactory:
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
                 logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             with FetchGeonames(city or "Greenwich", nation or "GB", username=resolved_username) as _geonames:
-                city_data = _geonames.get_serialized_data()
-            missing_fields = [f for f in ("timezonestr", "lat", "lng") if f not in city_data]
+                if lat is not None and lng is not None and not city:
+                    # Match from_birth_data: precise coordinates with no city
+                    # must use GeoNames' timezoneJSON endpoint. Looking up the
+                    # default city here would capture the instant in Greenwich
+                    # and then attach those coordinates to the wrong zone.
+                    city_data = _geonames.get_timezone_for_coordinates(lat, lng)
+                    missing_fields = ["timezonestr"] if "timezonestr" not in city_data else []
+                else:
+                    city_data = _geonames.get_serialized_data()
+                    missing_fields = [f for f in ("timezonestr", "lat", "lng") if f not in city_data]
             if missing_fields:
+                if lat is not None and lng is not None and not city:
+                    raise KerykeionException(
+                        f"Could not resolve the timezone for coordinates lat={lat}, lng={lng}: "
+                        "the GeoNames timezoneJSON response did not contain a timezoneId. "
+                        "Check your connection or provide tz_str explicitly."
+                    )
                 raise KerykeionException(
                     f"Missing data from geonames: {', '.join(missing_fields)}. "
                     "Check your connection or try a different location."
@@ -2839,8 +2866,8 @@ class AstrologicalSubjectFactory:
 
         # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            # Mirror the main houses call: real latitude, polar-clamp fallback
-            # only for house systems undefined inside the polar circle.
+            # Mirror the main houses call: preserve the real latitude and
+            # substitute only a house system undefined inside the polar circle.
             _, ascmc, _, ascmc_speed = houses_ex2_with_polar_fallback(
                 data["julian_day"],
                 data["lat"],

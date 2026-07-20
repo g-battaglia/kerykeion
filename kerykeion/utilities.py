@@ -565,9 +565,8 @@ def validate_latitude(latitude: float) -> float:
     to the ±66° house-stability limit: the real observer latitude must survive
     into the persisted model, into the topocentric observer (``set_topo``), and
     into every house system that is defined at all latitudes (Whole Sign,
-    Equal, Porphyry, Morinus, Meridian/axial, …). Polar clamping is applied
-    *locally* and only for the quadrant house systems the ephemeris backend
-    cannot compute inside the polar circle — see
+    Equal, Porphyry, Morinus, Meridian/axial, …). A house system that is
+    undefined there is substituted *locally* at the house call — see
     :func:`kerykeion.ephemeris_backend.houses_ex2_with_polar_fallback`.
 
     Args:
