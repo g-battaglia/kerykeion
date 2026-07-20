@@ -105,7 +105,7 @@ def _star_source_trace() -> Iterator[dict[str, str | None]]:
                 holder["source"] = str(next(iter(trace_map.values())))
             try:
                 token.var.reset(token)
-            except Exception:
+            except (RuntimeError, ValueError):
                 pass
 
 

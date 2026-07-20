@@ -1138,12 +1138,12 @@ class TestTimeZoneEdgeCases:
     # is_dst=True must take the LARGER UTC offset and is_dst=False the smaller, which
     # is why Sydney is here: south of the equator the DST months are reversed, so a
     # rule accidentally keyed to the calendar rather than to the offset breaks on it.
-    AMBIGUOUS_CASES = [
+    AMBIGUOUS_CASES: tuple[tuple[object, ...], ...] = (
         # tz, Y, M, D, h, m, lng, lat, utc_if_dst_true, utc_if_dst_false
         ("Europe/Rome", 2026, 10, 25, 2, 30, 12.4964, 41.9028, "2026-10-25T00:30:00+00:00", "2026-10-25T01:30:00+00:00"),
         ("America/New_York", 2023, 11, 5, 1, 30, -74.006, 40.7128, "2023-11-05T05:30:00+00:00", "2023-11-05T06:30:00+00:00"),
         ("Australia/Sydney", 2026, 4, 5, 2, 30, 151.2093, -33.8688, "2026-04-04T15:30:00+00:00", "2026-04-04T16:30:00+00:00"),
-    ]
+    )
 
     @pytest.mark.parametrize(
         "tz_str,year,month,day,hour,minute,lng,lat,utc_dst_true,utc_dst_false", AMBIGUOUS_CASES
