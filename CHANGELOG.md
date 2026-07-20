@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 6.0.0a76 - 2026-07-20
+
 ### Fixed
 
 - Timezone offsets are now resolved with the standard library's `zoneinfo`
