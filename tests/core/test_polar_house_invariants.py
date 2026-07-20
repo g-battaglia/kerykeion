@@ -545,13 +545,71 @@ class TestACompositeCannotMixTwoDivisions:
             CompositeSubjectFactory(polar, temperate).get_midpoint_composite_subject_model()
 
     def test_two_substituted_parents_compose_and_say_so(self):
+        """The composite reports Porphyry cusps without forgetting Placidus was asked for.
+
+        Both facts have to survive, and in the right fields. Overwriting the
+        REQUEST with the substitute — which is what this test used to pin — makes
+        the relationship look as though Porphyry were its setting, so relocating
+        it to a temperate latitude would keep dividing by Porphyry with nothing
+        left to say why. The requested pair therefore stays untouched and the
+        parents' own substitution records travel with the composite, which is
+        what the effective view reads.
+        """
         from kerykeion.composite_subject_factory import CompositeSubjectFactory
 
         composite = CompositeSubjectFactory(
             self._subject("Polar A", 78.2232), self._subject("Polar B", 79.0)
         ).get_midpoint_composite_subject_model()
-        assert composite.houses_system_identifier == "O"
-        assert composite.houses_system_name == "Porphyry"
+
+        assert composite.houses_system_identifier == "P"
+        assert composite.houses_system_name == "Placidus"
+        assert composite.effective_houses_system_identifier == "O"
+        assert composite.effective_houses_system_name == "Porphyry"
+
+        # One record per parent: a midpoint composite has no latitude of its own
+        # (verified below), so it cannot author a substitution — only inherit the
+        # two that produced the cusps it averaged.
+        assert composite.lat is None
+        assert [fallback.latitude for fallback in composite.polar_house_fallbacks] == [78.2232, 79.0]
+        assert {fallback.used_house_system_identifier for fallback in composite.polar_house_fallbacks} == {"O"}
+
+    def test_a_composite_of_intact_parents_records_no_substitution(self):
+        """The negative control: inheriting records must not become inventing them."""
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+
+        composite = CompositeSubjectFactory(
+            self._subject("Temperate A", 41.9, lng=12.5, tz_str="Europe/Rome", city="Rome", nation="IT"),
+            self._subject("Temperate B", 45.46, lng=9.19, tz_str="Europe/Rome", city="Milan", nation="IT"),
+        ).get_midpoint_composite_subject_model()
+
+        assert composite.houses_system_identifier == "P"
+        assert composite.effective_houses_system_identifier == "P"
+        assert composite.polar_house_fallbacks == []
+
+    def test_the_gauquelin_record_does_not_travel_to_the_composite(self):
+        """A midpoint composite averages no sectors, so it may claim no sector clamp.
+
+        A polar parent with Gauquelin enabled carries a second, ancillary record
+        for the 36-sector ring. Copying a parent's fallbacks wholesale would
+        attach that clamp to a chart with no ``gauquelin_sector_cusps`` at all —
+        and, because the ancillary record asks for "G", it would also sit in the
+        list where a future reader could mistake it for the one that explains
+        these cusps.
+        """
+        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+
+        parents = [self._subject("Polar A", 78.2232, calculate_gauquelin=True),
+                   self._subject("Polar B", 79.0, calculate_gauquelin=True)]
+        assert any(
+            fallback.requested_house_system_identifier == "G"
+            for parent in parents
+            for fallback in parent.polar_house_fallbacks
+        ), "precondition: the parents really do carry an ancillary Gauquelin record"
+
+        composite = CompositeSubjectFactory(*parents).get_midpoint_composite_subject_model()
+
+        assert composite.gauquelin_sector_cusps is None
+        assert [fallback.requested_house_system_identifier for fallback in composite.polar_house_fallbacks] == ["P", "P"]
 
     def test_davison_accepts_parents_with_different_effective_systems(self):
         """Davison recasts its houses and does not average the parents' cusps."""

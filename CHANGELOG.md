@@ -2,6 +2,72 @@
 
 ## [Unreleased]
 
+## 6.0.0a77 - 2026-07-21
+
+### Fixed
+
+- Births before 1902 no longer fail in the minutes around a zone's adoption of
+  mean or standard time. Those adoptions move a clock once and permanently, and
+  the tz database records them in the same shape as a summer-time change, so
+  6.0.0a76 rejected the skipped or repeated wall times as ambiguous and told the
+  caller to answer with `is_dst` — a question about daylight saving, which did
+  not exist yet. `Europe/Rome` on 1893-10-31 between 23:49:56 and midnight,
+  `America/New_York` in the four minutes noon struck twice on 1883-11-18,
+  `Australia/Adelaide` in the half hour it skipped on 1899-05-01: 264 of the 598
+  zones carry at least one such window. Below 1902-01-01 a non-unique wall time
+  now resolves to the offset in force before the change and logs at INFO instead
+  of raising. The date is what decides, because nothing else can: the earliest
+  seasonal transition anywhere in the database is from 1916, and the `dst()` flag
+  that would otherwise tell an adoption apart from a summer-time fold is encoded
+  with opposite signs by different builds of the database. The modern contract is
+  unchanged — an ambiguous or non-existent time from 1902 onwards still raises.
+- A midpoint composite no longer overwrites the requested house system with the
+  substituted one. Two subjects inside the polar circle who both asked for
+  Placidus hold Porphyry cusps, and 6.0.0a76 reported `houses_system_identifier`
+  as `"O"` on the composite — so relocating that relationship to a temperate
+  latitude carried a substitution forced by somewhere else, with nothing left to
+  say why. The requested pair is kept, the parents' own `polar_house_fallbacks`
+  records travel with the composite, and `effective_houses_system_identifier`
+  reports Porphyry as it does on a subject. Composing parents whose cusps came
+  from *different* divisions still raises: each composite cusp is the circular
+  mean of the two same-numbered cusps, so averaging across systems would produce
+  a boundary belonging to neither.
+
+### Changed
+
+- The two transition error messages now name the wall time and the zone, offer
+  both possible causes rather than asserting daylight saving, and define `is_dst`
+  by the offset it selects. Their `"Ambiguous time error!"` and
+  `"Non-existent time error!"` prefixes are unchanged, so callers matching on
+  those keep working.
+
+### Corrected notes for 6.0.0a76
+
+The points below were wrong or missing when 6.0.0a76 shipped. They have been
+corrected in place in its own section, and are recorded here so the change is
+visible rather than a silent rewrite of a published release.
+
+- The historical-charts line described the change as recorded city mean times
+  reaching the chart "with their seconds intact". That is a real effect and a
+  negligible one. The effect that actually moves charts went unstated: for a date
+  between a zone's adoption of a recorded civil time and 1901-12-13, the previous
+  backend's truncated table did not know the adoption had happened, so the chart
+  fell back to a mean time derived from the birth longitude. It now uses the
+  record the zone actually kept. Measured at 1900 Amsterdam that is 19m35s, or
+  4.90° of Ascendant; 1895 Tokyo 18m46s (4.69°); 1875 Milan 13m10s (3.29°).
+  Minutes and degrees, not seconds.
+- Nothing was said about `is_dst` changing which side of a fold it selects in
+  zones whose tz build records daylight saving as a negative offset — Ireland,
+  Morocco and Namibia among them. `Europe/Dublin` on 2023-10-29 at 01:30 with
+  `is_dst=True` resolved to 01:30Z before and resolves to 00:30Z now, about 10°
+  of Ascendant. The new answer is the intended one: `is_dst=True` means the
+  larger UTC offset, which is the summer reading whichever way the database
+  books the flag. The count of affected zones is deliberately not stated — it
+  depends on which build of the tz database the host ships.
+- Nothing was said about the composite at all, though 6.0.0a76 both introduced
+  the overwrite corrected above and began refusing parents whose cusps came from
+  different divisions, with a new message.
+
 ## 6.0.0a76 - 2026-07-20
 
 ### Fixed
@@ -13,9 +79,25 @@
   southern zones stayed on DST, and every affected chart was up to an hour off.
   Because the Ascendant advances ~15°/hour, that surfaced as an Ascendant wrong
   by up to ~12° — for example a 2100 New York chart was cast on EST instead of
-  EDT. Historical charts gain precision too: `pytz` rounded pre-standardization
-  offsets to whole minutes, so recorded city mean times now reach the chart with
-  their seconds intact.
+  EDT.
+- Charts before 1902 now use the civil time the zone actually kept. Between a
+  zone's adoption of a recorded mean or standard time and 1901-12-13, the old
+  transition table did not know the adoption had happened, so the chart fell back
+  to a mean time derived from the birth longitude — a sundial reading standing in
+  for a clock that existed and was documented. Measured at 1900 Amsterdam the
+  correction is 19m35s, or 4.90° of Ascendant; 1895 Tokyo 18m46s (4.69°); 1875
+  Milan 13m10s (3.29°). Separately, and much smaller, the old table rounded
+  pre-standardization offsets to whole minutes, so those records now also reach
+  the chart with their seconds intact — worth up to ~30 seconds.
+- `is_dst=True` now selects the larger UTC offset in every zone, including those
+  whose tz build records daylight saving as a negative offset (Ireland, Morocco,
+  Namibia among them). There the old rule keyed on a non-zero `dst()`, which in
+  that encoding is the WINTER side, so the selection was inverted:
+  `Europe/Dublin` on 2023-10-29 at 01:30 with `is_dst=True` resolved to 01:30Z
+  and now resolves to 00:30Z, about 10° of Ascendant. The larger offset is the
+  summer reading whichever way the database books the flag, which is why the rule
+  no longer consults it. How many zones this touches depends on which build of
+  the tz database the host ships, so no count is given.
 - The polar house fallback no longer corrupts the Ascendant. House systems that
   are undefined inside the polar circle used to be retried at a latitude clamped
   to ±66°, and the angles from that retry were reported as the subject's own —
@@ -60,6 +142,14 @@
   `as_model=True` forms. It is a list of the sample's structured fallback
   records, empty when no polar substitution was needed. Consumers that validate
   plain-dict keys strictly must accept the new always-present key.
+- A midpoint composite now refuses two subjects whose cusps came from different
+  house divisions, with a new message naming both. Matching *requests* is no
+  longer enough: inside the polar circle two subjects that both asked for
+  Placidus can hold Placidus cusps and Porphyry cusps, and each composite cusp is
+  the circular mean of the two same-numbered ones. A Davison composite is
+  unaffected — it recasts a new chart rather than averaging existing cusps.
+  (6.0.0a76 also overwrote the composite's requested house system with the
+  substituted one; that was a defect and is fixed in 6.0.0a77.)
 
 ## 6.0.0a75 - 2026-07-18
 

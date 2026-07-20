@@ -87,13 +87,13 @@ svg = drawer.generate_svg_string()
 
 ## Requirements
 
-To calculate a valid composite chart, both subjects **MUST** have matching configuration:
+To calculate a valid midpoint composite, both subjects must agree on:
 
 - **Zodiac System**: Both Tropical OR Both Sidereal (with same Ayanamsa).
-- **House System**: Both Placidus, Whole Sign, etc.
+- **House System**: the division their cusps were **actually computed with** — see below.
 - **Perspective**: Both Apparent Geocentric, etc.
 
-If these settings do not match, the factory will raise a `KerykeionException` with one of these messages:
+If these settings do not match, the factory raises a `KerykeionException`. The messages, which are not an exhaustive list, read:
 
 ```text
 KerykeionException: Both subjects must have the same zodiac type
@@ -102,6 +102,46 @@ KerykeionException: Both subjects must have the same houses system
 KerykeionException: Both subjects must have the same houses system name
 KerykeionException: Both subjects must have the same perspective type
 ```
+
+### The house-system requirement is about the cusps, not the request
+
+Each composite cusp is the circular mean of the two subjects' same-numbered cusps, so the result inherits whatever division produced them. Averaging a Porphyry third house with a Placidus third house yields a boundary belonging to neither system, and no label on the output could turn it into one.
+
+That matters because a subject's requested and actual divisions can differ. Inside the polar circle a quadrant system is undefined, so the cusps are recomputed with Porphyry at the real latitude and the substitution is recorded — see [Polar Latitudes](/content/docs/faq). Two subjects can therefore both request Placidus and still have incompatible cusps. The factory compares `effective_houses_system_identifier`, and says why when it refuses:
+
+```text
+KerykeionException: Both subjects must have the same houses system: Polar's cusps were
+computed with 'Porphyry' and Temp's with 'Placidus'. A house system undefined at one
+subject's latitude was substituted there; see polar_house_fallbacks on that subject.
+```
+
+To compose such a pair, cast both subjects with a system defined at every latitude (Whole Sign, Equal, Porphyry) so neither needs a substitute.
+
+### What the composite reports when both parents were substituted
+
+When both parents' cusps came from the same substitute, the composite is valid and keeps both facts, in separate fields:
+
+```python
+# Two subjects far inside the Arctic circle, both cast with houses_system_identifier="P"
+composite = CompositeSubjectFactory(polar_a, polar_b).get_midpoint_composite_subject_model()
+
+print(composite.houses_system_identifier)            # "P" — the REQUESTED system
+print(composite.houses_system_name)                  # "Placidus"
+print(composite.effective_houses_system_identifier)  # "O" — where the cusps came from
+print(composite.effective_houses_system_name)        # "Porphyry"
+
+for record in composite.polar_house_fallbacks:
+    print(record.latitude, record.requested_house_system_identifier,
+          record.used_house_system_identifier)
+# 78.2232 P O
+# 79.0    P O
+```
+
+The requested pair is deliberately left untouched. A substitution forced by one parent's latitude is a fact about that parent, not a preference the relationship adopted, and the requested value is what a relocation or a re-cast has to start from. The substitution stays visible because the parents' own records travel with the composite, and the `effective_houses_system_*` view is derived from them.
+
+A midpoint composite has no latitude of its own — `composite.lat` is `None`, since its cusps are means of cusps computed in two different places — so it can never author a substitution record, only inherit one. Each parent contributes the record that explains its house cusps; an ancillary Gauquelin clamp does not travel, because the midpoint technique averages no sectors and the composite has none to claim.
+
+A **Davison** composite is not affected by any of this. It recasts a whole new chart at the midpoint moment and place rather than averaging cusps, so it accepts parents whose effective systems differ, retains the requested system, and lets that fresh cast decide for itself whether a substitution is needed at the derived latitude.
 
 ## Davison Composite (Time-Space Midpoint)
 
@@ -119,7 +159,7 @@ When the input subjects use `sidereal_mode="USER"`, pass `custom_ayanamsa_t0` an
 
 ## Methodology
 
-- **Midpoint method**: Positions are calculated as the shortest-arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°); house cusps are also taken by midpoint. Only points present in _both_ input subjects are included.
+- **Midpoint method**: Positions are calculated as the shortest-arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°); house cusps are also taken by midpoint, which is why both parents' cusps have to come from the same division. Only points present in _both_ input subjects are included.
 - **Davison method**: The two birth moments (Julian Day) and the two locations (lat/lng) are averaged, then a standard natal chart is cast for that derived moment and place.
 - **Active Points**: For the midpoint composite, only points present in _both_ input subjects are included.
 

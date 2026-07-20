@@ -866,10 +866,22 @@ class AstrologicalSubjectFactory:
                 Defaults to 'Apparent Geocentric'.
             cache_expire_after_days (int, optional): Days to cache GeoNames data locally.
                 Defaults to 30.
-            is_dst (bool, optional): Daylight Saving Time flag for ambiguous times.
-                If None, a wall time made non-unique by a DST transition is
-                rejected rather than guessed. Set explicitly for times during
-                DST transitions.
+            is_dst (bool, optional): Which reading to take when a transition makes
+                the wall time non-unique. The contract is the UTC offset, not the
+                season: True selects the LARGER offset, False the SMALLER, None
+                raises rather than guessing. The offset is a property of the clock
+                and is therefore reproducible; the zone's dst() flag is not, since
+                different builds of the tz database encode the same zone
+                differently.
+                An explicit value also resolves a NON-EXISTENT wall time, not only
+                an ambiguous one — inside a spring-forward gap it picks the offset
+                on one side or the other, which is the only honest answer for a
+                time the clock skipped.
+                Below 1902-01-01 nothing is rejected whatever this is set to.
+                Daylight saving did not exist yet, so there is nothing for the flag
+                to select; a wall time made non-unique by a 19th-century adoption
+                of mean or standard time resolves to the offset in force before the
+                change.
             altitude (float, optional): Altitude above sea level in meters. Used for
                 topocentric calculations and atmospheric corrections. Defaults to None
                 (sea level assumed).
@@ -2126,8 +2138,8 @@ class AstrologicalSubjectFactory:
             location (LocationData): Location data containing timezone information.
 
         Raises:
-            KerykeionException: If DST ambiguity occurs during timezone transitions
-                and is_dst parameter is not explicitly set to resolve the ambiguity.
+            KerykeionException: If a transition makes the wall time non-unique and
+                ``is_dst`` was left as None, above the pre-1902 horizon.
 
         Side Effects:
             Updates data dictionary with:
@@ -2136,9 +2148,13 @@ class AstrologicalSubjectFactory:
             - julian_day: Julian Day Number for astronomical calculations
 
         Note:
-            During DST transitions, times may be ambiguous (fall back) or non-existent
-            (spring forward). The method raises an exception for ambiguous times unless
-            the is_dst parameter is explicitly set to True or False.
+            A transition leaves a wall time either repeated (clocks moved back) or
+            skipped (clocks jumped forward). Both are resolved by ``is_dst``, which
+            selects a UTC offset: True the larger, False the smaller. With None the
+            conversion raises rather than guess — except below 1902-01-01, where
+            daylight saving did not yet exist and the wall time resolves to the
+            offset in force before the change. See
+            :func:`kerykeion.utilities.localize_naive`.
 
         Calendar asymmetry (year < 1 vs 1-1582 CE):
             The two code paths interpret the input date in DIFFERENT calendars:
