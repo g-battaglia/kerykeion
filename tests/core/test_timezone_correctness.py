@@ -279,10 +279,16 @@ class TestTransitionClassification:
         assert is_nonexistent(datetime(2023, 11, 5, 2, 30), tz) is False
 
 
-class TestIsDstSelectsByOffset:
-    """is_dst=True means the LARGER UTC offset, and False the smaller.
+class TestIsDstFallsBackToTheOffset:
+    """When the zone flags neither reading as DST, the larger offset wins.
 
-    The mapping is stated in terms of the offset, not of a fixed fold index,
+    This is the fallback arm of the rule, not the whole of it: the zone's own
+    `dst()` is consulted first, and only a wall time whose two readings carry the
+    same flag reaches the clock comparison. See
+    :class:`TestIsDstFollowsTheZoneNotTheClock` for the arm that fires when the
+    zone does distinguish them.
+
+    The fallback is stated in terms of the offset, not of a fixed fold index,
     because the correspondence between the two INVERTS between a fold and a gap.
     It is also why zones with negative DST resolve correctly: there, standard time
     is the summer reading, and following the clock rather than the label gives the
@@ -366,3 +372,81 @@ class TestSafeTimezone:
     def test_valid_zone_resolves(self):
         """The control case: the guard must not reject everything."""
         assert safe_timezone("Europe/Rome").key == "Europe/Rome"
+
+
+class TestIsDstFollowsTheZoneNotTheClock:
+    """`is_dst` asks about daylight saving, so the zone's own flag answers first.
+
+    A wall time can be non-unique for two different reasons. Usually summer time
+    ended and the clock repeated an hour, and there the daylight side is also the
+    one with the larger offset — the two readings of "which is DST" agree. But a
+    change of STANDARD offset repeats an hour too, and then they part company:
+    the larger offset can belong to the side that was never on daylight saving.
+
+    Inferring from the offsets alone silently answers the wrong question there,
+    which is why the zone's `dst()` is consulted before the clock is.
+    """
+
+    def test_a_standard_offset_change_is_resolved_by_the_dst_flag(self):
+        """Kyiv 1941: one side is Moscow time, the other Central European Summer.
+
+        The daylight side (+02:00 CEST) has the SMALLER offset, so an
+        offset-only rule hands `is_dst=True` the standard side and moves the
+        chart an hour.
+        """
+        kyiv = ZoneInfo("Europe/Kyiv")
+        wall = datetime(1941, 9, 19, 23, 30)
+        assert is_ambiguous(wall, kyiv), "precondition: the hour must be repeated"
+
+        on_dst = localize_naive(wall, kyiv, is_dst=True)
+        off_dst = localize_naive(wall, kyiv, is_dst=False)
+
+        assert on_dst.dst() != timedelta(), "is_dst=True must land on the daylight side"
+        assert off_dst.dst() == timedelta()
+        assert on_dst.utcoffset() == timedelta(hours=2)
+        assert off_dst.utcoffset() == timedelta(hours=3)
+        assert on_dst.utcoffset() < off_dst.utcoffset(), (
+            "this case only bites because the daylight side is the smaller offset"
+        )
+
+    def test_an_ordinary_fold_is_unaffected(self):
+        """The control: where both readings agree, nothing changes."""
+        on_dst = localize_naive(datetime(2026, 10, 25, 2, 30), _ROME, is_dst=True)
+        off_dst = localize_naive(datetime(2026, 10, 25, 2, 30), _ROME, is_dst=False)
+        assert on_dst.utcoffset() == timedelta(hours=2)
+        assert off_dst.utcoffset() == timedelta(hours=1)
+
+    def test_negative_daylight_saving_still_follows_the_caller(self):
+        """Ireland subtracts an hour in winter instead of adding one in summer.
+
+        The summer reading is the larger offset, as everywhere else, so the
+        clock fallback keeps serving the caller's intent even though the zone
+        books the same fact with the opposite sign.
+        """
+        dublin = ZoneInfo("Europe/Dublin")
+        on_dst = localize_naive(datetime(2026, 10, 25, 1, 30), dublin, is_dst=True)
+        assert on_dst.utcoffset() == timedelta(hours=1), "summer time in Ireland"
+
+
+class TestElapsedTimeIsMeasuredBetweenInstants:
+    """Subtracting two aware datetimes does NOT always cross to UTC first.
+
+    When both operands carry the SAME tzinfo object, Python subtracts their
+    wall-clock fields and never calls `utcoffset()`. `ZoneInfo` instances are
+    cached, so two lookups of one zone return the same object and that shortcut
+    is the normal case, not an edge one. Across a transition it reports the
+    clock elapsed instead of the time elapsed.
+    """
+
+    def test_same_zone_object_subtraction_measures_the_clock(self):
+        """Pin the language behaviour the calculation has to work around."""
+        juba = ZoneInfo("Africa/Juba")
+        sunrise = datetime(2000, 1, 15, 6, 30, tzinfo=juba)
+        sunset = datetime(2000, 1, 15, 18, 30, tzinfo=juba)
+        assert sunrise.tzinfo is sunset.tzinfo, "ZoneInfo is cached"
+        assert sunrise.utcoffset() != sunset.utcoffset(), "a transition sits between them"
+
+        assert (sunset - sunrise) == timedelta(hours=12), "wall clock"
+        assert (
+            sunset.astimezone(timezone.utc) - sunrise.astimezone(timezone.utc)
+        ) == timedelta(hours=11), "actual elapsed time"

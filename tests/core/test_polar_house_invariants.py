@@ -26,9 +26,20 @@ import pytest
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import (
+    BACKEND_NAME,
     ephemeris_session,
     houses_ex2_with_polar_fallback,
     houses_ex2_with_polar_fallback_ex,
+)
+
+# The epoch-dependent band below reads the threshold off the backend's own polar
+# diagnostic. Only libephemeris publishes one; swisseph raises a generic error that
+# carries no latitude, so there the fallback can only fall back on the ±66 rule of
+# thumb and the band between the two stays uncast. That is a real limitation of that
+# backend, not something these invariants can assert away.
+_NEEDS_MEASURED_THRESHOLD = pytest.mark.skipif(
+    BACKEND_NAME != "libephemeris",
+    reason="the polar threshold is only reported by the libephemeris backend",
 )
 
 # 2026-06-15 12:00 UT at 15E. Chosen so the Sun is well north of the equator and the
@@ -233,6 +244,7 @@ class TestPolarFallbackIsDeclared:
         ]
 
 
+@_NEEDS_MEASURED_THRESHOLD
 class TestThePolarLimitMovesWithTheEpoch:
     """The polar circle is 90 deg minus the obliquity, and obliquity is not constant.
 

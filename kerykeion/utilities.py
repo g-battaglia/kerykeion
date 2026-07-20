@@ -853,18 +853,24 @@ def localize_naive(naive: datetime, tz: _tzinfo, *, is_dst: Optional[bool] = Non
 
     ``is_dst`` disambiguates a wall time that a transition makes non-unique:
 
-    * ``True``  → the reading with the LARGER UTC offset (clocks moved forward)
-    * ``False`` → the reading with the SMALLER UTC offset
+    * ``True``  → the reading that is on daylight saving
+    * ``False`` → the reading that is not
     * ``None``  → raise, rather than guess
 
-    The offset comparison, not a fixed ``fold`` value, is the invariant: inside
-    a fall-back fold ``fold=0`` is the summer reading, while inside a
+    The zone answers first: when exactly one of the two readings reports a
+    non-zero ``dst()``, that IS the daylight-saving one and the offsets are
+    irrelevant. This is what separates a summer-time fold from a wall time made
+    non-unique by a change of STANDARD offset, where the larger offset can
+    belong to the side that is not on daylight saving at all.
+
+    Only when the zone declines to distinguish them — neither side flagged, or
+    both — does the clock decide, and then the larger offset is the one that has
+    been moved forward. A fixed ``fold`` value is never the invariant: inside a
+    fall-back fold ``fold=0`` is the summer reading, while inside a
     spring-forward gap ``fold=0`` is the *winter* one, so a hardcoded fold would
-    be right on one side of the year and wrong on the other. Selecting by offset
-    is also correct for the zones whose DST is negative (Ireland keeps standard
-    time in summer and subtracts an hour in winter): "is DST in effect" there
-    means the SMALLER offset, and the larger/smaller rule follows the clock
-    rather than the label.
+    be right on one side of the year and wrong on the other. The clock fallback
+    also serves the zones whose daylight saving is recorded as negative, where
+    following the label would invert what the caller asked for.
 
     An explicit ``is_dst`` never raises — the caller has already answered the
     only question a gap or a fold can ask.
@@ -896,6 +902,24 @@ def localize_naive(naive: datetime, tz: _tzinfo, *, is_dst: Optional[bool] = Non
             "Please specify is_dst=True or is_dst=False to clarify."
         )
 
+    # When the zone itself distinguishes the two readings by DST status, that
+    # answer beats any inference from the offsets: `is_dst` is a question about
+    # daylight saving, and the zone is the authority on which side is which.
+    # It matters where a wall time is non-unique because the STANDARD offset
+    # changed rather than because summer time started — Kyiv 1941 hands one side
+    # to Moscow time and the other to Central European Summer Time, and there
+    # the larger offset is the side that is NOT on daylight saving.
+    dst0 = naive.replace(tzinfo=tz, fold=0).dst() or timedelta()
+    dst1 = naive.replace(tzinfo=tz, fold=1).dst() or timedelta()
+    if (dst0 == timedelta()) != (dst1 == timedelta()):
+        dst_fold = 1 if dst0 == timedelta() else 0
+        return naive.replace(tzinfo=tz, fold=dst_fold if is_dst else 1 - dst_fold)
+
+    # Neither reading carries a DST flag (a pure standard-offset change), or
+    # both do. Fall back to the clock: the larger offset is the one that has
+    # been moved forward. This is also the branch that serves the zones whose
+    # daylight saving is recorded as negative, where the label would invert the
+    # user's intent but the clock reading does not.
     larger_fold = 0 if (off0 or timedelta()) > (off1 or timedelta()) else 1
     return naive.replace(tzinfo=tz, fold=larger_fold if is_dst else 1 - larger_fold)
 

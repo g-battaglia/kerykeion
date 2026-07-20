@@ -3,6 +3,7 @@
 
 import pytest
 from kerykeion import AstrologicalSubjectFactory, FixedStarDiscoveryFactory
+from kerykeion.ephemeris_backend import BACKEND_NAME
 
 
 @pytest.fixture(scope="module")
@@ -518,6 +519,10 @@ def test_non_finite_subject_julian_day_raises(subject_all_stars, julian_day):
         FixedStarDiscoveryFactory.find_prominent_stars(corrupted)
 
 
+@pytest.mark.skipif(
+    BACKEND_NAME != "libephemeris",
+    reason="only the libephemeris backend publishes a per-body provenance channel",
+)
 class TestFixedStarProvenance:
     """Discovered stars must declare where their positions came from.
 

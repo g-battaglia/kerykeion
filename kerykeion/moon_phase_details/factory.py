@@ -642,9 +642,16 @@ class MoonPhaseDetailsFactory:
                 # Converting to UTC first makes the addition offset-independent; the
                 # result is rendered back in the subject's zone, which restores the
                 # correct local wall clock on either side of the transition.
-                half = (sunset_local - sunrise_local) / 2
-                solar_noon_local = (sunrise_local.astimezone(timezone.utc) + half).astimezone(sunrise_local.tzinfo)
-                day_length = sunset_local - sunrise_local
+                # Both endpoints are converted BEFORE the subtraction, not just
+                # before the addition: when two aware datetimes share the same
+                # tzinfo object — and ZoneInfo caches, so they always do here —
+                # Python subtracts their wall-clock fields and never consults
+                # the offsets. Across a transition that silently reports the
+                # clock elapsed rather than the time elapsed.
+                sunrise_utc = sunrise_local.astimezone(timezone.utc)
+                sunset_utc = sunset_local.astimezone(timezone.utc)
+                day_length = sunset_utc - sunrise_utc
+                solar_noon_local = (sunrise_utc + day_length / 2).astimezone(sunrise_local.tzinfo)
         except _BACKEND_ERRORS as exc:
             # Expected error: polar regions, ephemeris unavailable, etc.
             logger.debug("Sunrise/sunset calculation failed (expected): %s", exc)
