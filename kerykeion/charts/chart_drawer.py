@@ -4250,7 +4250,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             str: Formatted domification string (e.g., "Domification: Placidus").
         """
-        house_key = "houses_system_" + self.first_obj.houses_system_identifier
+        # The system the cusps CAME FROM, not the one requested: inside the polar
+        # circle those differ, and the legend describes what is drawn.
+        house_key = "houses_system_" + self.first_obj.effective_houses_system_identifier
         return (
             f"{self._translate('domification', 'Domification')}: "
             f"{self._translate(house_key, self.first_obj.houses_system_name)}"

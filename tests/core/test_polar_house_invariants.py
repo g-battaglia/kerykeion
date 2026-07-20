@@ -348,9 +348,15 @@ class TestTheChartIsLabelledWithTheSystemItUsed:
         )
 
     def test_a_substituted_chart_names_the_substitute(self):
+        """Through the EFFECTIVE view, which is what rendering reads.
+
+        The requested field keeps the request on purpose — see
+        :class:`TestASubstitutionDoesNotBecomeASetting` for why touching it
+        breaks relocation.
+        """
         subject = self._subject("P", 78.2232)
-        assert subject.houses_system_identifier == "O"
-        assert subject.houses_system_name == "Porphyry"
+        assert subject.effective_houses_system_identifier == "O"
+        assert subject.effective_houses_system_name == "Porphyry"
 
     def test_the_request_survives_on_the_record(self):
         record = self._subject("P", 78.2232).polar_house_fallbacks[0]
@@ -385,3 +391,50 @@ class TestTheChartIsLabelledWithTheSystemItUsed:
         ).generate_svg_string()
         assert "Domification: Porphyry" in svg
         assert "Domification: Placidus" not in svg
+
+
+class TestASubstitutionDoesNotBecomeASetting:
+    """The substitution belongs to a latitude, not to the subject.
+
+    `houses_system_identifier` is fed back in when a chart is relocated or a
+    return is cast, so overwriting it with the substitute would carry a polar
+    workaround to places where the requested system is perfectly well defined —
+    and silently, because the recast produces no fallback record of its own to
+    explain the change. The requested system therefore stays in that field and
+    the substitute is exposed separately, for rendering.
+    """
+
+    @staticmethod
+    def _polar_placidus():
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Polar Placidus", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="P", **_POLAR_SUBJECT,
+        )
+
+    def test_the_request_is_what_survives_on_the_subject(self):
+        subject = self._polar_placidus()
+        assert subject.houses_system_identifier == "P"
+        assert subject.effective_houses_system_identifier == "O"
+        assert subject.effective_houses_system_name == "Porphyry"
+
+    def test_relocating_away_from_the_pole_restores_the_requested_system(self):
+        """Rome can cast Placidus, so a chart relocated there must get Placidus."""
+        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+
+        relocated = RelocatedChartFactory.relocate(
+            self._polar_placidus(),
+            new_lat=41.9028, new_lng=12.4964, new_tz_str="Europe/Rome",
+            new_city="Rome", new_nation="IT",
+        )
+        assert relocated.houses_system_identifier == "P"
+        assert relocated.effective_houses_system_identifier == "P"
+        assert relocated.polar_house_fallbacks == []
+
+    def test_a_chart_that_never_substituted_reports_one_system(self):
+        """The control: the two views agree wherever nothing degraded."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Temperate", 1995, 1, 15, 2, 0,
+            lat=45.0, houses_system_identifier="P", **_POLAR_SUBJECT,
+        )
+        assert subject.houses_system_identifier == subject.effective_houses_system_identifier == "P"
+        assert subject.houses_system_name == subject.effective_houses_system_name

@@ -499,3 +499,58 @@ class TestElapsedTimeIsMeasuredBetweenInstants:
         assert (
             sunset.astimezone(timezone.utc) - sunrise.astimezone(timezone.utc)
         ) == timedelta(hours=11), "actual elapsed time"
+
+
+class TestCurrentTimeChartsDoNotDependOnTheDstEncoding:
+    """`from_current_time` must land on the instant it was called at.
+
+    It used to hand `bool(now.dst())` down as `is_dst` and let the wall time be
+    re-localized from it. That boolean is not portable: where one build of the tz
+    database records Ireland's summer as `dst()=+1h` against a winter of `0`,
+    another records summer as `0` against a winter of `-1h`. During the repeated
+    hour the two therefore disagree about which side the boolean names, and the
+    chart is reconstructed an hour away from the instant it was cast at — on some
+    machines only.
+
+    The conversion already resolved the offset unambiguously, so it is passed
+    down directly and no re-derivation happens at all.
+    """
+
+    @staticmethod
+    def _utc_of_a_chart_cast_now():
+        subject = AstrologicalSubjectFactory.from_current_time(
+            "Now", lng=-6.2603, lat=53.3498, tz_str="Europe/Dublin",
+            city="Dublin", nation="IE", online=False, suppress_geonames_warning=True,
+        )
+        return datetime.fromisoformat(subject.iso_formatted_utc_datetime)
+
+    def test_the_chart_lands_on_the_current_instant_under_both_databases(self):
+        previous = list(zoneinfo.TZPATH)
+        results = {}
+        try:
+            for label, path in (("system", previous), ("package", [])):
+                zoneinfo.reset_tzpath(to=path)
+                cast_at = datetime.now(timezone.utc)
+                results[label] = abs((self._utc_of_a_chart_cast_now() - cast_at).total_seconds())
+        finally:
+            zoneinfo.reset_tzpath(to=previous)
+
+        for label, drift in results.items():
+            assert drift < 5, f"chart cast against the {label} database is {drift:.0f}s off"
+
+    def test_the_fold_side_is_not_re_derived_from_a_boolean(self):
+        """The mechanism, pinned directly.
+
+        Asserting only the drift above would pass again if someone reintroduced
+        the boolean while the current date happens to sit outside a fold — which
+        is true for all but one hour a year.
+        """
+        import inspect
+
+        source = inspect.getsource(AstrologicalSubjectFactory.from_current_time)
+        # Comments are stripped first: the explanation of why the boolean is not
+        # used names it, and matching that would make this assert itself.
+        code = "\n".join(line.split("#", 1)[0] for line in source.splitlines())
+        assert "dst()" not in code, (
+            "the fold side must come from the resolved offset, not from dst()"
+        )

@@ -328,15 +328,10 @@ class RelocatedChartFactory:
         # nulled: carrying it over would attribute a substitution to a latitude
         # that no longer produced these cusps.
         relocated_data["polar_house_fallbacks"] = [polar_fallback] if polar_fallback is not None else []
-        if polar_fallback is not None:
-            # Same reasoning as the natal path: the label has to follow the
-            # cusps, or the relocated chart renders as the requested system over
-            # a substitute's houses. Relocating INTO the polar circle is the
-            # commonest way a real chart meets this, so it matters more here.
-            if polar_fallback.used_house_system_identifier:
-                relocated_data["houses_system_identifier"] = polar_fallback.used_house_system_identifier
-            if polar_fallback.used_house_system_name:
-                relocated_data["houses_system_name"] = polar_fallback.used_house_system_name
+        # As in the natal path, the requested system stays in
+        # `houses_system_identifier` so a further recast is not poisoned by a
+        # substitution that belonged to one location. Rendering reads
+        # `effective_houses_system_*` instead.
 
         relocated_data.update(house_data)
         relocated_data["city"] = new_city

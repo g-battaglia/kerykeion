@@ -2024,13 +2024,25 @@ class AstrologicalSubjectFactory:
             # a DST fall-back fold would raise "Ambiguous time". The current
             # instant itself is never ambiguous.
             now = datetime.now(timezone.utc).astimezone(safe_timezone(tz_str))
-            is_dst: Optional[bool] = bool(now.dst())
+            is_dst: Optional[bool] = None
+            # The conversion above already resolved the offset unambiguously, so
+            # hand THAT down rather than re-deriving a fold side from
+            # bool(now.dst()) — the same reasoning from_iso_utc_time records.
+            # dst() is not a portable discriminator: builds of the tz database
+            # disagree about the sign, and where one records Ireland's summer as
+            # +1h against a winter of 0, another records summer as 0 against a
+            # winter of -1h. Passing the boolean would then reconstruct the
+            # opposite side of a fall-back fold on one of the two, putting a
+            # chart cast during that hour off by an hour on some machines only.
+            _now_offset = now.utcoffset()
+            offset_seconds: Optional[int] = None if _now_offset is None else round(_now_offset.total_seconds())
         else:
             # Only reachable offline without tz_str (every online path resolved
             # tz above): from_birth_data raises its explicit missing-data error
             # downstream. Forward the system wall clock.
             now = datetime.now()
             is_dst = None
+            offset_seconds = None
 
         return cls.from_birth_data(
             name=name,
@@ -2041,6 +2053,7 @@ class AstrologicalSubjectFactory:
             minute=now.minute,
             seconds=now.second,
             is_dst=is_dst,
+            _lmt_offset_seconds=offset_seconds,
             city=city,
             nation=nation,
             lng=lng,
@@ -2413,20 +2426,17 @@ class AstrologicalSubjectFactory:
         )
         if polar_fallback is not None:
             data.setdefault("polar_house_fallbacks", []).append(polar_fallback)
-            # Re-label the chart with the system its cusps ACTUALLY came from.
-            # `houses_system_identifier` answers "which division are these
-            # houses", and after a substitution the honest answer is the
-            # substitute — the request survives on the fallback record, which is
-            # where it belongs. Leaving the requested name here would make every
-            # rendered output say Placidus over Porphyry cusps: the SVG legend,
-            # the report table and the serialized context all read these two
-            # fields, and none of them knows about the fallback list. Declaring
-            # the degradation only in a structure the renderers ignore is the
-            # same silence this fallback exists to end.
-            if polar_fallback.used_house_system_identifier:
-                data["houses_system_identifier"] = polar_fallback.used_house_system_identifier
-            if polar_fallback.used_house_system_name:
-                data["houses_system_name"] = polar_fallback.used_house_system_name
+            # `houses_system_identifier` deliberately keeps the REQUEST. It is
+            # not only a label: RelocatedChartFactory and PlanetaryReturnFactory
+            # feed it back in to recast the chart elsewhere, and a substitution
+            # forced by THIS latitude must not follow the subject to a location
+            # where the requested system is perfectly well defined. Overwriting
+            # it would silently hand a relocated Longyearbyen chart Porphyry
+            # cusps in Rome, with no fallback record left to explain them.
+            #
+            # What the cusps actually came from is exposed separately, through
+            # `effective_houses_system_*` on the model, which is what rendering
+            # reads. See PolarHouseFallbackModel for the split.
 
         # Store house degrees
         data["_houses_degree_ut"] = cusps

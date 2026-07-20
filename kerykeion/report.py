@@ -570,7 +570,9 @@ class ReportGenerator:
         settings_data.append(["Zodiac Type", str(subject.zodiac_type)])
         if getattr(subject, "sidereal_mode", None):
             settings_data.append(["Sidereal Mode", str(subject.sidereal_mode)])
-        settings_data.append(["Houses System", str(subject.houses_system_name)])
+        # The system actually used, so a polar chart is not tabulated as the
+        # one that was asked for but could not be cast.
+        settings_data.append(["Houses System", str(subject.effective_houses_system_name)])
         settings_data.append(["Perspective Type", str(subject.perspective_type)])
 
         julian_day = getattr(subject, "julian_day", None)

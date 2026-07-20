@@ -1104,6 +1104,34 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
                 return star
         return None
 
+    # -- Requested vs actual house system --------------------------------------
+    #
+    # `houses_system_identifier` holds what the caller ASKED FOR, and has to: it
+    # is fed back in when a chart is relocated or a return is cast, and a
+    # substitution forced by one latitude must not follow the subject to a place
+    # where the requested system is perfectly well defined.
+    #
+    # These two answer the other question — which division these cusps actually
+    # came from — and are what anything DISPLAYING a chart should read. They
+    # differ from the requested pair only inside the polar circle, and only for
+    # the systems that are undefined there.
+
+    @property
+    def effective_houses_system_identifier(self) -> str:
+        """Identifier of the house system these cusps were really computed with."""
+        for fallback in self.polar_house_fallbacks:
+            if fallback.affects and "house_cusps" in fallback.affects and fallback.used_house_system_identifier:
+                return fallback.used_house_system_identifier
+        return self.houses_system_identifier
+
+    @property
+    def effective_houses_system_name(self) -> str:
+        """Name of the house system these cusps were really computed with."""
+        for fallback in self.polar_house_fallbacks:
+            if fallback.affects and "house_cusps" in fallback.affects and fallback.used_house_system_name:
+                return fallback.used_house_system_name
+        return self.houses_system_name
+
 
 class AstrologicalSubjectModel(AstrologicalBaseModel):
     """
