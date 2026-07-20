@@ -465,7 +465,9 @@ def astrological_subject_to_context(
     # Chart configuration
     config_attrs: dict = {
         "zodiac": subject.zodiac_type,
-        "house_system": subject.houses_system_name,
+        # What the cusps were computed with; differs from the requested
+        # system only for a polar substitution, which polar_house_fallbacks details.
+        "house_system": subject.effective_houses_system_name,
         "perspective": subject.perspective_type,
     }
     if subject.sidereal_mode:

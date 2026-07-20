@@ -52,6 +52,7 @@ from kerykeion.utilities import (
     get_houses_list,
     get_available_astrological_points_list,
     normalize_zodiac_type,
+    localize_naive,
     safe_timezone,
 )
 from kerykeion.astrological_subject_factory import (
@@ -67,9 +68,8 @@ from kerykeion.schemas import (
     ZodiacType,
 )
 from kerykeion.schemas.kr_literals import AstrologicalPoint
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
-import pytz
 from typing import Any, List, Literal, Optional
 import logging
 
@@ -245,12 +245,12 @@ class EphemerisDataFactory:
         _tz = safe_timezone(self.tz_str)
 
         def _localize_to_utc(naive: datetime) -> datetime:
-            return _tz.localize(naive, is_dst=self.is_dst).astimezone(pytz.utc)
+            return localize_naive(naive, _tz, is_dst=self.is_dst).astimezone(timezone.utc)
 
         def _to_utc(dt: datetime) -> datetime:
             if dt.tzinfo is None:
                 return _localize_to_utc(dt)
-            return dt.astimezone(pytz.utc)
+            return dt.astimezone(timezone.utc)
 
         def _to_local_naive(dt: datetime) -> datetime:
             if dt.tzinfo is None:
@@ -382,6 +382,10 @@ class EphemerisDataFactory:
                       when nothing was omitted. This key is new in a75: samples are
                       NOT key-identical to earlier releases, so consumers that
                       validate keys strictly must accept it.
+                    - "polar_house_fallbacks" (list): ALWAYS present. List of
+                      PolarHouseFallbackModel entries describing any polar house
+                      substitution or Gauquelin latitude fallback used for that
+                      sample; an empty list when no fallback was needed.
                     - "fixed_stars" (list): ONLY present when the factory was built
                       with a non-empty ``active_fixed_stars``. List of the calculated
                       fixed star KerykeionPointModel instances (same shape as
@@ -426,12 +430,20 @@ class EphemerisDataFactory:
                 "planets": available_planets,
                 "houses": houses_list,
                 "ephemeris_warnings": list(subject.ephemeris_warnings),
+                # Every sample is cast at the SAME latitude, so a polar
+                # substitution applies to the whole series — but it is emitted
+                # per sample anyway, because the polar threshold is 90° minus the
+                # obliquity of the sample's own epoch, and a long enough series
+                # can straddle it. Silently dropping it would let a series report
+                # Placidus cusps that are in fact Porphyry's.
+                "polar_house_fallbacks": list(subject.polar_house_fallbacks),
             }
-            # The "fixed_stars" key is emitted only when stars were requested.
-            # It is the only optional key: "ephemeris_warnings" above is always
-            # present (empty list when nothing was omitted), so since a75 the
-            # sample dict is NOT key-identical to earlier releases even without
-            # stars. Key-strict consumers must tolerate "ephemeris_warnings".
+            # The "fixed_stars" key is emitted only when stars were requested. It
+            # is the only optional key: "ephemeris_warnings" and
+            # "polar_house_fallbacks" above are always present (empty lists when
+            # nothing happened), so since a75 the sample dict is NOT key-identical
+            # to earlier releases even without stars. Key-strict consumers must
+            # tolerate both.
             if self.active_fixed_stars:
                 sample["fixed_stars"] = list(subject.fixed_stars)
             ephemeris_data_list.append(sample)
@@ -444,6 +456,7 @@ class EphemerisDataFactory:
                     planets=data["planets"],
                     houses=data["houses"],
                     ephemeris_warnings=data["ephemeris_warnings"],
+                    polar_house_fallbacks=data["polar_house_fallbacks"],
                     **({"fixed_stars": data["fixed_stars"]} if "fixed_stars" in data else {}),
                 )
                 for data in ephemeris_data_list

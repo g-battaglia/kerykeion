@@ -434,8 +434,10 @@ class TestRelocatedLocalDatetimeRecompute:
         assert (data["year"], data["month"], data["day"]) == (-500, 3, 22)
         assert data["iso_formatted_local_datetime"].startswith("-0500-03-22T00:00:00")
 
-    def test_ce_subject_matches_pytz(self):
-        import pytz
+    def test_ce_subject_matches_stdlib_zoneinfo(self):
+        # The normative reference for a CE conversion is the stdlib tz database
+        # reader: the factory must not reimplement the offset lookup, only route to it.
+        from zoneinfo import ZoneInfo
 
         iso_utc = "2024-01-01T23:30:15+00:00"
         data: dict = {}
@@ -448,7 +450,7 @@ class TestRelocatedLocalDatetimeRecompute:
             iso_utc=iso_utc,
         )
 
-        expected = datetime.fromisoformat(iso_utc).astimezone(pytz.timezone("Asia/Tokyo"))
+        expected = datetime.fromisoformat(iso_utc).astimezone(ZoneInfo("Asia/Tokyo"))
         assert data["iso_formatted_local_datetime"] == expected.isoformat()
         assert (
             data["year"],
@@ -468,10 +470,10 @@ class TestRelocatedLocalDatetimeRecompute:
 
 
 class TestPolarRelocation:
-    def test_relocation_to_polar_latitude_clamps_like_natal(self):
+    def test_relocation_to_polar_latitude_substitutes_like_natal(self):
         # Placidus raises PolarCircleError past ~66 deg; the natal path falls back
-        # to the clamped houses, and the relocation must too instead of crashing —
-        # while STILL persisting the real relocation latitude (not the clamp).
+        # to Porphyry at the real latitude, and relocation must do the same
+        # instead of crashing.
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.relocated_chart_factory import RelocatedChartFactory
 
@@ -482,8 +484,12 @@ class TestPolarRelocation:
         )
         relocated = RelocatedChartFactory.relocate(natal, new_lat=78.2, new_lng=15.6)
         assert relocated.first_house is not None
-        # The real latitude is preserved on the relocated model (no global clamp).
         assert relocated.lat == 78.2
+        assert relocated.houses_system_identifier == "P"
+        assert relocated.effective_houses_system_identifier == "O"
+        assert [fallback.strategy for fallback in relocated.polar_house_fallbacks] == [
+            "substitute_system"
+        ]
 
     def test_relocation_to_polar_latitude_agnostic_houses_use_real_lat(self):
         # Whole Sign is defined at every latitude: relocating a Whole Sign chart

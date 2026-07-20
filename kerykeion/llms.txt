@@ -572,7 +572,7 @@ ai_xml = to_context(chart_data)
 ## Dependencies
 
 -   **libephemeris** (default) or **Swiss Ephemeris** (optional): Core astronomical calculations
--   **pytz**: Timezone handling
+-   **tzdata**: Fallback IANA timezone database for hosts without system zone data
 -   **GeoNames API**: Optional online location lookup (requires username)
 -   **Python 3.12+**: Minimum version
 

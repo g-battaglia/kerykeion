@@ -78,15 +78,21 @@ def test_dst_spring_forward_midnight_gap_sao_paulo():
     # Regression: on 2018-11-04 America/Sao_Paulo clocks jumped straight from
     # 00:00 to 01:00, so the civil midnight used internally to anchor the day
     # does not exist. The factory must resolve the gap forward instead of
-    # raising NonExistentTimeError, and still return a sane sunrise/sunset.
-    import pytz
+    # raising on the non-existent wall time, and still return a sane sunrise/sunset.
+    from zoneinfo import ZoneInfo
+
+    from kerykeion.sun_times.utils import _localize_civil_midnight
 
     s = SunTimesFactory.from_date(
         2018, 11, 4, latitude=-23.5505, longitude=-46.6333, tz_str="America/Sao_Paulo"
     )
     assert s.sunrise is not None and s.sunset is not None
     assert s.sunrise < s.solar_noon < s.sunset
-    sp = pytz.timezone("America/Sao_Paulo")
+    sp = ZoneInfo("America/Sao_Paulo")
+    first_instant = _localize_civil_midnight(2018, 11, 4, sp)
+    # The helper promises the real first instant, not an imaginary
+    # 00:00-03:00 wall time that merely maps to it after UTC conversion.
+    assert (first_instant.hour, first_instant.utcoffset().total_seconds()) == (1, -2 * 3600)
     sunrise_local = s.sunrise.astimezone(sp)
     assert sunrise_local.date().isoformat() == "2018-11-04"
     assert 5 <= sunrise_local.hour <= 7  # ~06:18 local (DST)
@@ -97,14 +103,14 @@ def test_dst_spring_forward_midnight_gap_sao_paulo():
 
 def test_dst_spring_forward_midnight_gap_santiago():
     # Regression: 2022-09-11 America/Santiago also jumps 00:00 -> 01:00.
-    import pytz
+    from zoneinfo import ZoneInfo
 
     s = SunTimesFactory.from_date(
         2022, 9, 11, latitude=-33.4489, longitude=-70.6693, tz_str="America/Santiago"
     )
     assert s.sunrise is not None and s.sunset is not None
     assert s.sunrise < s.solar_noon < s.sunset
-    scl = pytz.timezone("America/Santiago")
+    scl = ZoneInfo("America/Santiago")
     sunrise_local = s.sunrise.astimezone(scl)
     assert sunrise_local.date().isoformat() == "2022-09-11"
     assert 6 <= sunrise_local.hour <= 9  # ~07:47 local (DST starts this day)
@@ -127,35 +133,76 @@ def test_bce_year_raises_clean_exception():
         SunTimesFactory.from_date(-43, 3, 15, **ROME)
 
 
-def test_civil_day_bounds_penultimate_day_falls_back():
-    # 9999-12-30 is computable; its NEXT midnight (9999-12-31) is not, because
-    # pytz's DST probe overflows there. _civil_day_bounds must fall back to
-    # jd_midnight + 1 (its documented behavior) rather than propagate the
-    # KerykeionException the localize helpers now raise for that day.
-    import pytz
+def test_civil_day_bounds_last_day_falls_back():
+    # The upper bound is normally the NEXT local midnight, which is what makes a
+    # DST day come out 23 or 25 hours long rather than a flat 24. On the very last
+    # civil date there is no next date to localize at all — `date(9999, 12, 31) + 1
+    # day` overflows — so the bound falls back to jd_midnight + 1. Without that
+    # fallback the call raises instead of returning, so the assertion is load-bearing.
+    from zoneinfo import ZoneInfo
 
     from kerykeion.sun_times.utils import _civil_day_bounds
 
-    lo, hi = _civil_day_bounds(9999, 12, 30, pytz.timezone("America/New_York"))
+    lo, hi = _civil_day_bounds(9999, 12, 31, ZoneInfo("America/New_York"))
     assert hi == pytest.approx(lo + 1.0)
+
+    # The non-fallback path is the contrast that proves the above is a fallback and
+    # not the general rule: on a real transition day the span is not 24 hours.
+    rome = ZoneInfo("Europe/Rome")
+    spring_lo, spring_hi = _civil_day_bounds(2026, 3, 29, rome)
+    assert (spring_hi - spring_lo) * 24 == pytest.approx(23.0)
+    autumn_lo, autumn_hi = _civil_day_bounds(2026, 10, 25, rome)
+    assert (autumn_hi - autumn_lo) * 24 == pytest.approx(25.0)
+
+
+def test_civil_range_edge_is_sign_dependent_not_symmetric():
+    # DELIBERATE CONTRACT CHANGE. Resolving a wall time to an instant subtracts the
+    # zone's UTC offset, so only an EAST-of-UTC offset can push 0001-01-01 below the
+    # representable range. The limit therefore depends on the sign of the offset and
+    # is not a symmetric "first and last civil day are unsupported" rule:
+    #   * year 1 east of UTC (Rome)  -> still unsupported, and for a stated reason
+    #   * year 9999 east of UTC      -> now legitimately resolvable; a negative
+    #                                   offset is subtracted, moving it further
+    #                                   INSIDE the range, so nothing overflows
+    #   * year 1 west of UTC (New York) -> resolvable for the same reason
+    # The timezone layer is asserted directly because the public factories cannot
+    # reach year 9999 for an unrelated reason (see the ephemeris-coverage test below).
+    from zoneinfo import ZoneInfo
+
+    from kerykeion.sun_times.utils import _localize_civil_midnight, localize_datetime
+
+    rome, new_york = ZoneInfo("Europe/Rome"), ZoneInfo("America/New_York")
+
+    with pytest.raises(KerykeionException, match="east-of-UTC"):
+        _localize_civil_midnight(1, 1, 1, rome)
+    with pytest.raises(KerykeionException, match="east-of-UTC"):
+        localize_datetime(1, 1, 1, 0, 30, tz=rome)
+
+    assert _localize_civil_midnight(9999, 12, 31, rome).year == 9999
+    assert localize_datetime(9999, 12, 31, 23, 30, tz=rome).year == 9999
+    assert _localize_civil_midnight(1, 1, 1, new_york).year == 1
+    assert localize_datetime(1, 1, 1, 0, 30, tz=new_york).year == 1
 
 
 def test_civil_range_edge_days_raise_clean_exception():
-    # pytz.localize probes the surrounding day to resolve DST, so the first and
-    # last civil days of the datetime range overflow inside localize. They must
-    # surface as a clean KerykeionException, not a raw OverflowError.
+    # Whatever the cause, a caller must see a KerykeionException and never a raw
+    # OverflowError or backend error. The two ends now fail for DIFFERENT reasons:
+    # year 1 east of UTC fails in the timezone layer (above), while year 9999 gets
+    # past the timezone layer and is stopped by the ephemeris coverage range. Both
+    # are asserted here because the guarantee this test protects is the exception
+    # TYPE at the public boundary, which must hold either way.
     from kerykeion.planetary_hours import PlanetaryHoursFactory
     from kerykeion.void_of_course_moon import VoidOfCourseMoonFactory
 
-    with pytest.raises(KerykeionException):
+    with pytest.raises(KerykeionException, match="east-of-UTC"):
         SunTimesFactory.from_date(1, 1, 1, **ROME)
     with pytest.raises(KerykeionException):
         SunTimesFactory.from_date(9999, 12, 31, **ROME)
-    with pytest.raises(KerykeionException):
+    with pytest.raises(KerykeionException, match="east-of-UTC"):
         PlanetaryHoursFactory.from_datetime(1, 1, 1, 0, 30, **ROME)
     with pytest.raises(KerykeionException):
         PlanetaryHoursFactory.from_datetime(9999, 12, 31, 23, 30, **ROME)
-    with pytest.raises(KerykeionException):
+    with pytest.raises(KerykeionException, match="east-of-UTC"):
         VoidOfCourseMoonFactory.from_datetime(1, 1, 1, 0, 30, tz_str=ROME["tz_str"])
     with pytest.raises(KerykeionException):
         VoidOfCourseMoonFactory.from_datetime(9999, 12, 31, 23, 30, tz_str=ROME["tz_str"])
@@ -258,7 +305,7 @@ def test_twilight_dusk_crosses_midnight_high_latitude():
     # so the evening dusk lands on the next civil date. Searching dusk from local noon
     # keeps it the evening crossing (dawn < dusk, ~a full day after dawn); a
     # midnight-anchored search would instead return a pre-dawn value (dusk < dawn).
-    import pytz
+    from zoneinfo import ZoneInfo
 
     s = SunTimesFactory.from_date(2026, 6, 21, latitude=48.0, longitude=2.35, tz_str="Europe/Paris")
     assert s.astronomical_dawn is not None and s.astronomical_dusk is not None
@@ -266,7 +313,7 @@ def test_twilight_dusk_crosses_midnight_high_latitude():
     assert (s.astronomical_dusk - s.astronomical_dawn).total_seconds() > 12 * 3600
     assert s.sunset < s.civil_dusk < s.nautical_dusk < s.astronomical_dusk
     # The evening astronomical dusk spills past local midnight onto the next date.
-    paris = pytz.timezone("Europe/Paris")
+    paris = ZoneInfo("Europe/Paris")
     assert s.astronomical_dusk.astimezone(paris).date() > s.sunset.astimezone(paris).date()
 
 

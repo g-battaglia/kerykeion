@@ -554,18 +554,40 @@ class InfoSectionBuilder:
         """Build the zodiac/ayanamsa info string."""
         return self.drawer._get_zodiac_info()
 
-    def build_domification_info(self) -> str:
-        """Build the domification/house system string."""
-        return self.drawer._get_domification_string()
+    def _translated_house_system(self, subject) -> str:
+        """Translate the effective house system of one wheel."""
+        house_key = "houses_system_" + subject.effective_houses_system_identifier
+        return self._translate(house_key, subject.effective_houses_system_name)
+
+    def _translated_house_systems(self, subject, second_subject=None) -> str:
+        """Translate one system, or both when a dual wheel uses different ones."""
+        first_system = self._translated_house_system(subject)
+        if (
+            second_subject is not None
+            and second_subject.effective_houses_system_identifier
+            != subject.effective_houses_system_identifier
+        ):
+            return f"{first_system} / {self._translated_house_system(second_subject)}"
+        return first_system
+
+    def build_domification_info(self, second_subject=None) -> str:
+        """Build the domification string, including both differing dual-wheel systems."""
+        systems = self._translated_house_systems(self.drawer.first_obj, second_subject)
+        return f"{self._translate('domification', 'Domification')}: {systems}"
 
     def build_perspective_info(self, subject) -> str:
         """Build the perspective type string."""
         return self.drawer._get_perspective_string(subject)
 
-    def build_houses_system_info(self, subject) -> str:
-        """Build compact house system string (without 'Domification:' label)."""
-        house_key = "houses_system_" + subject.houses_system_identifier
-        return f"{self._translate(house_key, subject.houses_system_name)} {self._translate('houses', 'Houses')}"
+    def build_houses_system_info(self, subject, second_subject=None) -> str:
+        """Build compact house-system text, including a differing second wheel."""
+        # The system the cusps came from, not the one requested: the compact
+        # renderers label dual wheels and returns, where a polar chart would
+        # otherwise read as the system it could not actually be cast in.
+        return (
+            f"{self._translated_house_systems(subject, second_subject)} "
+            f"{self._translate('houses', 'Houses')}"
+        )
 
     def build_lunar_phase_info(
         self,
@@ -916,7 +938,7 @@ class TransitChartRenderer(BaseChartRenderer):
 
         # Bottom left section
         template_dict["bottom_left_0"] = builder.build_zodiac_info()
-        template_dict["bottom_left_1"] = builder.build_domification_info()
+        template_dict["bottom_left_1"] = builder.build_domification_info(d.second_obj)
 
         # Lunar phase from transit subject
         if d.second_obj is not None and hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
@@ -1180,7 +1202,9 @@ class SynastryChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_0"] = ""
         template_dict["bottom_left_1"] = ""
         template_dict["bottom_left_2"] = builder.build_zodiac_info()
-        template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj)
+        template_dict["bottom_left_3"] = builder.build_houses_system_info(
+            d.first_obj, d.second_obj
+        )
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
 
         template_dict["makeLunarPhase"] = ""
@@ -1509,7 +1533,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
 
         # Bottom left section
         template_dict["bottom_left_0"] = builder.build_zodiac_info()
-        template_dict["bottom_left_1"] = builder.build_domification_info()
+        template_dict["bottom_left_1"] = builder.build_domification_info(d.second_obj)
         builder.build_lunar_phase_info(template_dict, d.first_obj)
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
 
@@ -4250,10 +4274,12 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             str: Formatted domification string (e.g., "Domification: Placidus").
         """
-        house_key = "houses_system_" + self.first_obj.houses_system_identifier
+        # The system the cusps CAME FROM, not the one requested: inside the polar
+        # circle those differ, and the legend describes what is drawn.
+        house_key = "houses_system_" + self.first_obj.effective_houses_system_identifier
         return (
             f"{self._translate('domification', 'Domification')}: "
-            f"{self._translate(house_key, self.first_obj.houses_system_name)}"
+            f"{self._translate(house_key, self.first_obj.effective_houses_system_name)}"
         )
 
     # =========================================================================
@@ -4350,8 +4376,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             Formatted string like "Placidus Houses".
         """
-        house_key = "houses_system_" + subject.houses_system_identifier
-        return f"{self._translate(house_key, subject.houses_system_name)} {self._translate('houses', 'Houses')}"
+        # The system the cusps came from, not the one requested: the compact
+        # renderers label dual wheels and returns, where a polar chart would
+        # otherwise read as the system it could not actually be cast in.
+        house_key = "houses_system_" + subject.effective_houses_system_identifier
+        return (
+            f"{self._translate(house_key, subject.effective_houses_system_name)} "
+            f"{self._translate('houses', 'Houses')}"
+        )
 
     def _apply_svg_post_processing(self, template: str, minify: bool, remove_css_variables: bool) -> str:
         """

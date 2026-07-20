@@ -52,7 +52,16 @@ dependencies = [
     "requests-cache>=1.2.1",
     "requests>=2.33.0",
     "simple-ascii-tables>=1.0.0",
-    "pytz>=2024.2",
+    # HARD runtime dependency, not a convenience: the stdlib `zoneinfo` searches
+    # TZPATH (the HOST's tz database) first and falls back to this package only
+    # when a zone is not found there. Without it, an image that ships no tz
+    # database — Alpine, Windows, most slim containers — raises on every zone
+    # lookup instead of casting a chart. It is a FLOOR, not a pin: where a system
+    # database exists it still wins, so this does not by itself make two hosts
+    # agree about a zone whose rules changed recently. Forcing agreement would
+    # mean clearing TZPATH at import, which would silently override the tz
+    # database an operator deliberately maintains.
+    "tzdata>=2025.2",
     "typing-extensions>=4.12.2",
 ]
 
@@ -374,7 +383,6 @@ dev = [
     "pytest-xdist>=3.5.0",
     "pytest-sugar>=1.1.1",
     "ruff>=0.12.9",
-    "types-pytz>=2025.2.0.20250516",
     "types-requests>=2.32.4.20250611",
     "pyswisseph>=2.10.3.2",
 ]

@@ -546,13 +546,12 @@ class TestAstrologicalSubjectFactoryMethods:
     def test_from_current_time(self):
         """Test creating subject for current time."""
         from datetime import datetime, timezone
-
-        import pytz
+        from zoneinfo import ZoneInfo
 
         # Compare against the current instant IN the chart's timezone, not the
         # host's local clock: near midnight a host in a zone ahead of London
         # would already be on the next calendar day and flake this check.
-        now = datetime.now(timezone.utc).astimezone(pytz.timezone("Europe/London"))
+        now = datetime.now(timezone.utc).astimezone(ZoneInfo("Europe/London"))
 
         subject = AstrologicalSubjectFactory.from_current_time(
             name="Current Time Test", lng=0.0, lat=51.5074, tz_str="Europe/London", online=False
@@ -1128,43 +1127,49 @@ class TestPerspectiveTypes:
 class TestTimeZoneEdgeCases:
     """Test DST and timezone edge cases."""
 
-    def test_dst_time_with_is_dst_false(self):
-        """Test DST time with is_dst=False."""
-        # During DST fall-back, 2:30 AM occurs twice
-        # Setting is_dst=False selects the second occurrence (standard time)
-        subject = AstrologicalSubjectFactory.from_birth_data(
-            "DST False",
-            2023,
-            11,
-            5,
-            2,
-            30,
-            lng=-74.006,
-            lat=40.7128,
-            tz_str="America/New_York",
-            online=False,
-            is_dst=False,
-            suppress_geonames_warning=True,
-        )
-        assert subject.hour == 2
+    # Wall times that really repeat, one per hemisphere and per DST direction, with
+    # the UTC instant each is_dst value must select. These replace an earlier pair of
+    # tests that used America/New_York 2023-11-05 02:30 and only asserted
+    # `subject.hour == 2`: that wall time is NOT ambiguous (the fold is 01:00-02:00),
+    # and the hour is echoed back from the input, so both assertions held no matter
+    # what the resolver did. Pinning the UTC instant is what makes them fail if the
+    # is_dst -> offset mapping inverts.
+    #
+    # is_dst=True must take the LARGER UTC offset and is_dst=False the smaller, which
+    # is why Sydney is here: south of the equator the DST months are reversed, so a
+    # rule accidentally keyed to the calendar rather than to the offset breaks on it.
+    AMBIGUOUS_CASES: tuple[tuple[object, ...], ...] = (
+        # tz, Y, M, D, h, m, lng, lat, utc_if_dst_true, utc_if_dst_false
+        ("Europe/Rome", 2026, 10, 25, 2, 30, 12.4964, 41.9028, "2026-10-25T00:30:00+00:00", "2026-10-25T01:30:00+00:00"),
+        ("America/New_York", 2023, 11, 5, 1, 30, -74.006, 40.7128, "2023-11-05T05:30:00+00:00", "2023-11-05T06:30:00+00:00"),
+        ("Australia/Sydney", 2026, 4, 5, 2, 30, 151.2093, -33.8688, "2026-04-04T15:30:00+00:00", "2026-04-04T16:30:00+00:00"),
+    )
 
-    def test_dst_time_with_is_dst_true(self):
-        """Test DST time with is_dst=True."""
-        subject = AstrologicalSubjectFactory.from_birth_data(
-            "DST True",
-            2023,
-            11,
-            5,
-            2,
-            30,
-            lng=-74.006,
-            lat=40.7128,
-            tz_str="America/New_York",
-            online=False,
-            is_dst=True,
-            suppress_geonames_warning=True,
+    @pytest.mark.parametrize(
+        "tz_str,year,month,day,hour,minute,lng,lat,utc_dst_true,utc_dst_false", AMBIGUOUS_CASES
+    )
+    def test_ambiguous_wall_time_is_dst_selects_the_instant(
+        self, tz_str, year, month, day, hour, minute, lng, lat, utc_dst_true, utc_dst_false
+    ):
+        """is_dst picks between the two real instants sharing one wall time."""
+        common = dict(
+            lng=lng, lat=lat, tz_str=tz_str, online=False, suppress_geonames_warning=True
         )
-        assert subject.hour == 2
+        dst = AstrologicalSubjectFactory.from_birth_data(
+            "DST True", year, month, day, hour, minute, is_dst=True, **common
+        )
+        std = AstrologicalSubjectFactory.from_birth_data(
+            "DST False", year, month, day, hour, minute, is_dst=False, **common
+        )
+        assert dst.iso_formatted_utc_datetime == utc_dst_true
+        assert std.iso_formatted_utc_datetime == utc_dst_false
+        # The two readings are exactly one hour apart, and is_dst=True is the earlier
+        # instant precisely because it carries the larger offset. The tolerance is the
+        # float64 resolution of a Julian Day near 2.46e6 (~5e-10 d), not a physical
+        # margin: the signal being separated from zero is a full hour.
+        assert (std.julian_day - dst.julian_day) * 24.0 == pytest.approx(1.0, abs=1e-6)
+        # The wall time itself is unchanged by the choice — only the instant moves.
+        assert dst.hour == std.hour == hour
 
     def test_from_iso_utc_time_dst_fold_constructs_both_sides(self):
         """v6 regression: from_iso_utc_time must not raise "Ambiguous time"
@@ -1902,61 +1907,89 @@ class TestMockErrorConditions:
             assert hasattr(subject, "moon")
             # Mercury may not be in active_points due to error
 
-    def test_ambiguous_time_error_with_pytz_exception(self):
-        """Test ambiguous DST time error (lines 972-978)."""
-        from unittest.mock import patch, MagicMock
+    # Both of these previously patched the timezone constructor and fed it a
+    # library-specific exception. The mock decided the outcome, so the test proved
+    # only that the factory re-raised whatever it was handed — and the ambiguous
+    # case additionally used a wall time (New York 02:30) that is not ambiguous at
+    # all. Real zones and real transition instants exercise the actual detection.
+
+    def test_ambiguous_time_raises_without_is_dst(self):
+        """A wall time that occurs twice must be refused, not silently guessed."""
         from kerykeion.schemas import KerykeionException
-        import pytz
-        import pytest
 
-        # Mock the localize method to raise AmbiguousTimeError
-        with patch("pytz.timezone") as mock_tz:
-            mock_tz_instance = MagicMock()
-            mock_tz_instance.localize.side_effect = pytz.exceptions.AmbiguousTimeError("Test ambiguous")
-            mock_tz.return_value = mock_tz_instance
+        with pytest.raises(KerykeionException, match="Ambiguous time error"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "Ambiguous",
+                2026,
+                10,
+                25,
+                2,
+                30,  # Europe/Rome falls back 03:00 -> 02:00; 02:30 occurs twice.
+                lng=12.4964,
+                lat=41.9028,
+                tz_str="Europe/Rome",
+                online=False,
+                suppress_geonames_warning=True,
+            )
 
-            with pytest.raises(KerykeionException, match="Ambiguous time error"):
-                AstrologicalSubjectFactory.from_birth_data(
-                    "Ambiguous",
-                    2023,
-                    11,
-                    5,
-                    2,
-                    30,
-                    lng=-74.006,
-                    lat=40.7128,
-                    tz_str="America/New_York",
-                    online=False,
-                    suppress_geonames_warning=True,
-                )
-
-    def test_nonexistent_time_error(self):
-        """Test non-existent DST time error."""
-        from unittest.mock import patch, MagicMock
+    def test_nonexistent_time_raises_without_is_dst(self):
+        """A wall time inside the spring-forward gap must be refused."""
         from kerykeion.schemas import KerykeionException
-        import pytz
-        import pytest
 
-        # Mock the localize method to raise NonExistentTimeError
-        with patch("pytz.timezone") as mock_tz:
-            mock_tz_instance = MagicMock()
-            mock_tz_instance.localize.side_effect = pytz.exceptions.NonExistentTimeError("Test nonexistent")
-            mock_tz.return_value = mock_tz_instance
+        with pytest.raises(KerykeionException, match="Non-existent time error"):
+            AstrologicalSubjectFactory.from_birth_data(
+                "Nonexistent",
+                2026,
+                3,
+                29,
+                2,
+                30,  # Europe/Rome springs 02:00 -> 03:00; 02:30 never happens.
+                lng=12.4964,
+                lat=41.9028,
+                tz_str="Europe/Rome",
+                online=False,
+                suppress_geonames_warning=True,
+            )
 
-            with pytest.raises(KerykeionException, match="Non-existent time error"):
-                AstrologicalSubjectFactory.from_birth_data(
-                    "Nonexistent",
-                    2023,
-                    3,
-                    12,
-                    2,
-                    30,
-                    lng=-74.006,
-                    lat=40.7128,
-                    tz_str="America/New_York",
-                    online=False,
-                    suppress_geonames_warning=True,
+    def test_gap_is_diagnosed_before_ambiguity(self):
+        """Order matters: a non-existent wall time ALSO reads as ambiguous.
+
+        Both readings of a spring-forward gap carry different UTC offsets, exactly
+        as a fall-back fold does, so an ambiguity-first check would label every gap
+        'Ambiguous' and tell the user to pass is_dst for a time that has no valid
+        reading at all. The gap must therefore be tested first. This asserts the
+        NEGATIVE too: the ambiguous wording must be absent, which is what fails if
+        the two checks are ever reordered.
+        """
+        from kerykeion.schemas import KerykeionException
+
+        with pytest.raises(KerykeionException) as excinfo:
+            AstrologicalSubjectFactory.from_birth_data(
+                "Gap", 2026, 3, 29, 2, 30,
+                lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+                online=False, suppress_geonames_warning=True,
+            )
+        assert "Non-existent time error" in str(excinfo.value)
+        assert "Ambiguous" not in str(excinfo.value)
+
+    def test_explicit_is_dst_suppresses_both_errors(self):
+        """An explicit is_dst answers the only question a gap or fold can ask.
+
+        Neither a repeated nor a skipped wall time may raise once the caller has
+        stated which side they mean — including in the gap, where the value picks
+        the reading whose offset it names rather than rejecting the input.
+        """
+        common = dict(
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        for month, day in ((10, 25), (3, 29)):  # fold, then gap
+            for flag in (True, False):
+                subject = AstrologicalSubjectFactory.from_birth_data(
+                    "Explicit", 2026, month, day, 2, 30, is_dst=flag, **common
                 )
+                assert subject.hour == 2
+                assert subject.minute == 30
 
     def test_day_chart_vs_night_chart(self):
         """Test day vs night chart calculation for Arabic Parts (line 1589)."""
@@ -2546,6 +2579,46 @@ class TestOnlineGeonamesGating:
         assert before - timedelta(seconds=5) <= got <= after + timedelta(seconds=5)
         assert s.tz_str == fetched["timezonestr"]
 
+    @pytest.mark.parametrize("city", [None, ""])
+    def test_from_current_time_resolves_explicit_coordinates_without_a_city(
+        self, monkeypatch, city
+    ):
+        """The current-time prefetch must preserve the coordinate-only route."""
+        from kerykeion import fetch_geonames
+        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+
+        captured = {}
+
+        def fake_tz_lookup(self, lat, lng):
+            captured["coords"] = (lat, lng)
+            return {"timezonestr": "Europe/Rome"}
+
+        def fail_city_lookup(self):
+            raise AssertionError(
+                "the city-based lookup must not run when lat/lng are explicit and city is missing"
+            )
+
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup
+        )
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+        )
+
+        subject = AstrologicalSubjectFactory.from_current_time(
+            "Coords Now",
+            lat=41.9028,
+            lng=12.4964,
+            city=city,
+            online=True,
+            suppress_geonames_warning=True,
+        )
+
+        assert captured["coords"] == (41.9028, 12.4964)
+        assert subject.tz_str == "Europe/Rome"
+        assert subject.lat == pytest.approx(41.9028)
+        assert subject.lng == pytest.approx(12.4964)
+
     def test_from_iso_utc_time_failed_fetch_raises_kerykeion_exception(self, monkeypatch):
         from kerykeion import fetch_geonames
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
@@ -2561,7 +2634,10 @@ class TestOnlineGeonamesGating:
                 suppress_geonames_warning=True,
             )
 
-    def test_explicit_coordinates_without_city_resolve_tz_from_coordinates(self, monkeypatch):
+    @pytest.mark.parametrize("city", [None, ""])
+    def test_explicit_coordinates_without_city_resolve_tz_from_coordinates(
+        self, monkeypatch, city
+    ):
         """online=True + explicit lat/lng + no tz_str + no city: the timezone
         must be resolved from the coordinates (timezoneJSON endpoint), NOT from
         the default city "Greenwich" (which silently produced a chart in the
@@ -2589,7 +2665,7 @@ class TestOnlineGeonamesGating:
 
         s = AstrologicalSubjectFactory.from_birth_data(
             "Coords Only", 1990, 6, 15, 12, 0,
-            lat=41.9028, lng=12.4964, online=True,
+            lat=41.9028, lng=12.4964, city=city, online=True,
             suppress_geonames_warning=True,
         )
         assert captured["coords"] == (41.9028, 12.4964)
@@ -2853,10 +2929,11 @@ class TestSiderealDeclinationRound16:
 
 
 class TestPolarLatitudePreserved:
-    """Round-22: the polar-latitude clamp must be applied ONLY where a quadrant
-    house system is undefined inside the polar circle — never globally. The real
-    observer latitude must reach the persisted model, the topocentric observer,
-    and every house system that is defined at all latitudes."""
+    """The polar fallback must remain local to the unsupported house call.
+
+    The real observer latitude must reach the persisted model, the topocentric
+    observer, and every house system that is defined at all latitudes.
+    """
 
     _KW = dict(
         year=1995, month=1, day=15, hour=2, minute=0,
@@ -2877,7 +2954,7 @@ class TestPolarLatitudePreserved:
 
     def test_persisted_latitude_real_even_with_placidus(self):
         # Even when the quadrant houses fall back internally, the model keeps the
-        # real latitude — only the house cusps use the clamped value.
+        # real latitude — the substitution changes the house SYSTEM, not the place.
         s = self._mk(houses_system_identifier="P")
         assert s.lat == 78.2232
 
@@ -2907,8 +2984,8 @@ class TestPolarLatitudePreserved:
         assert abs(ascmc_real[0] - ascmc_66[0]) > 1.0  # real vs clamped differ
 
     def test_placidus_falls_back_with_warning(self, caplog):
-        # A quadrant system undefined inside the polar circle falls back to the
-        # ±66° clamp and emits a WARNING naming the system.
+        # A quadrant system undefined inside the polar circle is substituted at the
+        # real latitude and emits a WARNING naming the system that was requested.
         import logging
 
         with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
@@ -2932,9 +3009,15 @@ class TestPolarLatitudePreserved:
 class TestPolarFallbackErrorHandling:
     """R23 regression for houses_ex2_with_polar_fallback: (F3) a houses failure at
     a NON-polar latitude must be re-raised unchanged (no spurious polar warning /
-    retry) and a retry failure must surface the ORIGINAL real-latitude error;
-    (F2) the warning must name the clamped outputs accurately (cusps AND angles,
-    since the ascmc angles also come from the clamped retry)."""
+    retry) and a retry failure must surface the ORIGINAL error for the REQUESTED
+    system; (F2) the warning must name the degraded outputs accurately.
+
+    (F2) was inverted when the fallback stopped moving the observer. The retry now
+    happens at the REAL latitude with a substitute house system, so the cusps are
+    the only thing that changes: the angles are intersections of the ecliptic with
+    the horizon and the meridian and never depended on a house system, so claiming
+    they fall back would be a false warning. The assertions below therefore pin the
+    substituted SYSTEM rather than a substituted latitude."""
 
     def _polar_error_type(self):
         from kerykeion import ephemeris_backend as eb
@@ -2968,27 +3051,73 @@ class TestPolarFallbackErrorHandling:
         from kerykeion.ephemeris_backend import houses_ex2_with_polar_fallback
 
         err_type = self._polar_error_type()
+        calls = []
 
+        # The stub reports the SYSTEM as well as the latitude. Under the substitution
+        # strategy both calls happen at the same real latitude, so a latitude-only
+        # message would make the original and the retry indistinguishable and the
+        # __cause__ assertion would pass on either one.
         def always_fail(jd, lat, lon, hsys, flags):
-            raise err_type(f"forced at lat={lat}")
+            calls.append((lat, hsys))
+            raise err_type(f"forced at lat={lat} hsys={hsys.decode('ascii')}")
 
         monkeypatch.setattr(eb.ephe, "houses_ex2", always_fail)
         with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
-            # 78.0 IS inside the polar circle → warn, clamp+retry; the retry also
-            # fails, so the ORIGINAL (lat=78) error surfaces with the clamped
-            # retry (lat=66) chained as its cause.
-            with pytest.raises(err_type, match="forced at lat=78.0") as excinfo:
+            # 78.0 IS inside the polar circle → warn, retry with the substitute
+            # system at the SAME latitude; that retry also fails, so the ORIGINAL
+            # error (for the requested Placidus) surfaces with the Porphyry retry
+            # chained as its cause.
+            with pytest.raises(err_type, match=r"forced at lat=78\.0 hsys=P") as excinfo:
                 houses_ex2_with_polar_fallback(2451545.0, 78.0, 12.5, b"P", 0)
-        assert "forced at lat=66" in str(excinfo.value.__cause__)
-        assert any(
-            "undefined inside the polar circle" in r.getMessage() for r in caplog.records
-        )
+        assert "hsys=O" in str(excinfo.value.__cause__)
+        # The observer never moved: both attempts ran at the real latitude.
+        assert calls == [(78.0, b"P"), (78.0, b"O")]
+        # No substitution WARNING: the warning reports what the fallback DID, and
+        # here it did nothing — the call raised. Announcing a substitute system that
+        # never produced cusps would be a log entry contradicted by the exception.
+        assert not [
+            r for r in caplog.records if "undefined inside the polar circle" in r.getMessage()
+        ]
 
-    def test_warning_names_cusps_and_angles(self, caplog):
+    def test_gauquelin_still_clamps_because_it_has_no_substitute(self, monkeypatch, caplog):
+        """The 36-sector division has no 12-cusp equivalent, so it clamps instead.
+
+        This is the one case where moving the observer is the honest trade: any
+        substitute would change the SHAPE of the result, not just its values. It is
+        asserted here so the substitution strategy cannot be widened to swallow it.
+        """
+        import logging
+        from kerykeion import ephemeris_backend as eb
+        from kerykeion.ephemeris_backend import houses_ex2_with_polar_fallback
+
+        err_type = self._polar_error_type()
+        calls = []
+
+        def always_fail(jd, lat, lon, hsys, flags):
+            calls.append((lat, hsys))
+            raise err_type(f"forced at lat={lat} hsys={hsys.decode('ascii')}")
+
+        monkeypatch.setattr(eb.ephe, "houses_ex2", always_fail)
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+            with pytest.raises(err_type, match=r"forced at lat=78\.0 hsys=G"):
+                houses_ex2_with_polar_fallback(2451545.0, 78.0, 12.5, b"G", 0)
+        # Same system, clamped latitude — the mirror image of the Placidus case.
+        assert calls == [(78.0, b"G"), (66.0, b"G")]
+
+    def test_warning_does_not_claim_the_angles_fell_back(self, caplog):
+        """The substitution WARNING must not overstate what it degraded.
+
+        Under the previous clamped-retry behaviour the angles genuinely came out of
+        the moved observer, so naming them was correct. Now the retry runs at the
+        real latitude and only the intermediate cusps come from the substitute
+        system, so the old wording would be a false claim of lost precision. Both
+        the positive and the negative are asserted: the message must name the
+        substitute system, and must NOT say the angles were affected.
+        """
         import logging
 
         with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
-            AstrologicalSubjectFactory.from_birth_data(
+            subject = AstrologicalSubjectFactory.from_birth_data(
                 "Polar Wording", 1995, 1, 15, 2, 0,
                 lat=78.2232, lng=15.6467, city="Longyearbyen", nation="NO",
                 tz_str="Arctic/Longyearbyen", online=False,
@@ -2999,8 +3128,15 @@ class TestPolarFallbackErrorHandling:
             if "undefined inside the polar circle" in r.getMessage()
         ]
         assert polar
-        assert any("house cusps and angles" in m for m in polar)
-        assert all("house cusps only" not in m for m in polar)
+        assert any("Porphyry" in m and "REAL latitude" in m for m in polar)
+        assert any("unaffected" in m for m in polar)
+        assert all("house cusps and angles" not in m for m in polar)
+
+        # The structured record must agree with the prose: cusps only, real latitude.
+        fallback = subject.polar_house_fallbacks[0]
+        assert fallback.affects == ["house_cusps"]
+        assert "angles" not in fallback.affects
+        assert fallback.used_latitude == fallback.latitude == 78.2232
 
 
 class TestNonIntDateComponents:

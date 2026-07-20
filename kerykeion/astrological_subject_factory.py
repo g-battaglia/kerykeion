@@ -30,13 +30,13 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-import pytz
 from kerykeion.ephemeris_backend import (
     ephe,
     EPHE_DATA_PATH,
     BACKEND_NAME,
     ephemeris_session,
     houses_ex2_with_polar_fallback,
+    houses_ex2_with_polar_fallback_ex,
 )
 import logging
 import math
@@ -68,6 +68,7 @@ from kerykeion.utilities import (
     validate_latitude,
     normalize_longitude,
     safe_timezone,
+    localize_naive,
     calculate_moon_phase,
     datetime_to_julian,
     format_ancient_iso,
@@ -230,6 +231,27 @@ _FIXED_STAR_KEY_PREFIX = "fixed_stars::"
 # label a future libephemeris adds), so unrecognized labels fall back to
 # "numerical-model" instead. Compared lowercased.
 _EPHEMERIS_GRADE_SOURCES = frozenset({"leb", "spk", "skyfield"})
+
+
+def _precision_class_for_source(source: str) -> str:
+    """Map a backend source label to the precision class it honestly supports.
+
+    The scale is shared by every traced quantity — planets, minor bodies and
+    fixed stars all come from the same dispatcher, so they must be graded by the
+    same rule rather than by three drifting copies of it.
+    """
+    normalized = str(source).lower()
+    if normalized.startswith("keplerian"):
+        return "approximate"
+    if normalized.startswith("analytical"):
+        return "analytical"
+    if normalized in _EPHEMERIS_GRADE_SOURCES:
+        return "ephemeris"
+    # ASSIST (live n-body integration) and any label this version does not
+    # know: honest floor, never promoted to "ephemeris". See
+    # _EPHEMERIS_GRADE_SOURCES.
+    return "numerical-model"
+
 
 # Lunar nodes and apogees (Lilith) are defined relative to the Earth-Moon system
 # (geocentric by construction). In a heliocentric / barycentric / planetocentric
@@ -582,8 +604,8 @@ class LocationData:
     Note:
         When using online mode, the initial coordinate and timezone values may be
         overridden by data fetched from the GeoNames API based on city and nation.
-        For polar regions, latitude values are automatically adjusted to prevent
-        calculation errors.
+        Polar latitudes are preserved. If the requested house system is
+        undefined there, the house calculation records a local system fallback.
 
     Example:
         >>> location = LocationData(city="Rome", nation="IT")
@@ -686,7 +708,7 @@ class LocationData:
         # Validate the latitude but do NOT clamp it: the real value must reach
         # the topocentric observer, the persisted model, and every house system
         # defined at all latitudes. Only genuinely polar-undefined quadrant
-        # systems are clamped, locally, at the houses call.
+        # systems are substituted, locally, at the houses call.
         self.lat = validate_latitude(self.lat)
         # Wrap an un-normalized longitude (e.g. 370° == 10° E) into [-180, 180)
         # so the houses backend does not reject it with a raw CoordinateError.
@@ -845,8 +867,9 @@ class AstrologicalSubjectFactory:
             cache_expire_after_days (int, optional): Days to cache GeoNames data locally.
                 Defaults to 30.
             is_dst (bool, optional): Daylight Saving Time flag for ambiguous times.
-                If None, pytz attempts automatic detection. Set explicitly for
-                times during DST transitions.
+                If None, a wall time made non-unique by a DST transition is
+                rejected rather than guessed. Set explicitly for times during
+                DST transitions.
             altitude (float, optional): Altitude above sea level in meters. Used for
                 topocentric calculations and atmospheric corrections. Defaults to None
                 (sea level assumed).
@@ -947,8 +970,8 @@ class AstrologicalSubjectFactory:
             - For high-precision calculations, consider providing seconds parameter
             - Use topocentric perspective for observer-specific calculations
             - Some Arabic parts automatically activate required base points
-            - The method handles polar regions by adjusting extreme latitudes
-            - Time zones are handled with full DST awareness via pytz
+            - Polar latitudes are preserved; undefined house systems fall back locally
+            - Time zones are handled with full DST awareness via the IANA database
         """
         # Create a calculation data container
         calc_data: Dict[str, Any] = {}
@@ -1131,7 +1154,7 @@ class AstrologicalSubjectFactory:
         # Fetch location data if needed
         if online and (not tz_str or lat is None or lng is None):
             resolved_geonames_username = geonames_username or _get_geonames_username()
-            if lat is not None and lng is not None and city is None:
+            if lat is not None and lng is not None and not city:
                 # Explicit coordinates, missing timezone, and no city given:
                 # resolving the timezone from the DEFAULT city ("Greenwich")
                 # would silently build the chart in the wrong zone. Resolve it
@@ -1363,6 +1386,7 @@ class AstrologicalSubjectFactory:
                 and calc_data.get("lat") is not None
             ):
                 geopos = [calc_data["lng"], calc_data["lat"], calc_data.get("altitude") or 0.0]
+                gauquelin_geopos = geopos
                 jd = calc_data["julian_day"]
 
                 # Get ASC degree for geometric fallback
@@ -1382,13 +1406,38 @@ class AstrologicalSubjectFactory:
                     # cusps in the same frame as their points (mirrors the main
                     # houses_ex2 call) instead of always-tropical longitudes.
                     # Route through the polar fallback (like the main house call)
-                    # so a latitude inside the polar circle clamps to ±66° with a
-                    # warning instead of silently losing the 36 cusps — three
-                    # consumers infer gauquelin-enabled from
-                    # ``gauquelin_sector_cusps is not None``.
-                    cusps_g = houses_ex2_with_polar_fallback(
-                        jd, geopos[1], geopos[0], b"G", iflag, context=calc_data.get("name", "")
+                    # so a latitude inside the polar circle still yields the 36
+                    # cusps instead of nothing — three consumers infer
+                    # gauquelin-enabled from ``gauquelin_sector_cusps is not None``.
+                    # This is the ONE call that keeps the latitude clamp: the
+                    # default substitution swaps in a 12-cusp system, which cannot
+                    # express 36 sectors. The clamp is NOT free here — the sector
+                    # ring is strongly latitude-dependent, so a chart cast well
+                    # inside the polar circle gets a ring computed for a different
+                    # place — which is exactly why the fallback record is appended
+                    # alongside the main house call's instead of being dropped.
+                    cusps_g = houses_ex2_with_polar_fallback_ex(
+                        jd,
+                        geopos[1],
+                        geopos[0],
+                        b"G",
+                        iflag,
+                        context=calc_data.get("name", ""),
+                        polar_strategy="clamp_latitude",
                     )
+                    if cusps_g[4] is not None:
+                        gauquelin_fallback = cusps_g[4]
+                        calc_data.setdefault("polar_house_fallbacks", []).append(gauquelin_fallback)
+                        # The cusp ring and the per-body sector numbers must
+                        # describe the SAME observer. A polar G call is retried
+                        # at the recorded fallback latitude; leaving
+                        # gauquelin_sector() at the real latitude produced
+                        # sector values that did not fit the public ring.
+                        gauquelin_geopos = [
+                            geopos[0],
+                            gauquelin_fallback.used_latitude,
+                            geopos[2],
+                        ]
                     gauquelin_cusps = [round(c, 4) for c in cusps_g[0]]
                     calc_data["gauquelin_sector_cusps"] = gauquelin_cusps
                 except Exception:
@@ -1410,16 +1459,17 @@ class AstrologicalSubjectFactory:
                             # floor) parses "dOiO|ddi" with no starname slot
                             # (the 5-arg starname form existed only in pre-2.10
                             # releases), and libephemeris mirrors it.
-                            sector = ephe.gauquelin_sector(jd, pid, 0, geopos)
+                            sector = ephe.gauquelin_sector(jd, pid, 0, gauquelin_geopos)
                         except Exception:
                             pass
 
                     # Fallback for points without a SwissEph body id (axial
                     # cusps, South Nodes, White Moon, TNOs). These are (except
                     # the TNOs) ON the ecliptic, so interpolate within the REAL
-                    # Gauquelin cusps: this reproduces the true diurnal sector at
-                    # any latitude (an axis lands exactly on its cusp). Only when
-                    # the cusps are unavailable do we degrade to the uniform
+                    # Gauquelin cusps: this reproduces the sector division that
+                    # the public ring actually uses (an axis lands exactly on its
+                    # cusp), including its declared polar fallback latitude.
+                    # Only when the cusps are unavailable do we degrade to the uniform
                     # 10°-from-ASC ecliptic approximation (correct at the equator).
                     if sector is None:
                         sector = _gauquelin_sector_from_cusps(point.abs_pos, gauquelin_cusps)
@@ -1763,9 +1813,12 @@ class AstrologicalSubjectFactory:
         if _off is not None:
             resolved_offset_seconds = round(_off.total_seconds())
 
-        # Pre-standardization dates: pytz resolves to the zone's reference-
-        # meridian LMT, but from_birth_data re-derives the offset from the birth
-        # longitude (see _calculate_time_conversions). Convert UTC->local using
+        # Dates before the zone kept any recorded civil time: the IANA zone
+        # resolves to its synthetic reference-meridian "LMT" record, and
+        # from_birth_data re-derives the offset from the birth longitude (see
+        # _calculate_time_conversions, which also explains why the test is the
+        # record NAME rather than the era). The predicate MUST stay identical to
+        # that one, or the two entry points disagree. Convert UTC->local using
         # the same longitude-based LMT here so the wall time we extract maps back
         # to the original UTC instant instead of being double-interpreted (which
         # would shift the instant by the longitude delta and trip the round-trip
@@ -1815,7 +1868,7 @@ class AstrologicalSubjectFactory:
             _lmt_offset_seconds=lmt_offset_seconds,
         )
 
-        # Round-trip guard: pytz's boolean is_dst cannot disambiguate
+        # Round-trip guard: a boolean is_dst cannot disambiguate
         # historical double-DST folds (e.g. UK/Ireland 1941-1947, where both
         # fold occurrences are DST — 1h vs 2h), so the re-localization above
         # can land on the wrong side, a whole hour off. The source instant is
@@ -1963,9 +2016,23 @@ class AstrologicalSubjectFactory:
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
                 logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             with FetchGeonames(city or "Greenwich", nation or "GB", username=resolved_username) as _geonames:
-                city_data = _geonames.get_serialized_data()
-            missing_fields = [f for f in ("timezonestr", "lat", "lng") if f not in city_data]
+                if lat is not None and lng is not None and not city:
+                    # Match from_birth_data: precise coordinates with no city
+                    # must use GeoNames' timezoneJSON endpoint. Looking up the
+                    # default city here would capture the instant in Greenwich
+                    # and then attach those coordinates to the wrong zone.
+                    city_data = _geonames.get_timezone_for_coordinates(lat, lng)
+                    missing_fields = ["timezonestr"] if "timezonestr" not in city_data else []
+                else:
+                    city_data = _geonames.get_serialized_data()
+                    missing_fields = [f for f in ("timezonestr", "lat", "lng") if f not in city_data]
             if missing_fields:
+                if lat is not None and lng is not None and not city:
+                    raise KerykeionException(
+                        f"Could not resolve the timezone for coordinates lat={lat}, lng={lng}: "
+                        "the GeoNames timezoneJSON response did not contain a timezoneId. "
+                        "Check your connection or provide tz_str explicitly."
+                    )
                 raise KerykeionException(
                     f"Missing data from geonames: {', '.join(missing_fields)}. "
                     "Check your connection or try a different location."
@@ -1984,13 +2051,25 @@ class AstrologicalSubjectFactory:
             # a DST fall-back fold would raise "Ambiguous time". The current
             # instant itself is never ambiguous.
             now = datetime.now(timezone.utc).astimezone(safe_timezone(tz_str))
-            is_dst: Optional[bool] = bool(now.dst())
+            is_dst: Optional[bool] = None
+            # The conversion above already resolved the offset unambiguously, so
+            # hand THAT down rather than re-deriving a fold side from
+            # bool(now.dst()) — the same reasoning from_iso_utc_time records.
+            # dst() is not a portable discriminator: builds of the tz database
+            # disagree about the sign, and where one records Ireland's summer as
+            # +1h against a winter of 0, another records summer as 0 against a
+            # winter of -1h. Passing the boolean would then reconstruct the
+            # opposite side of a fall-back fold on one of the two, putting a
+            # chart cast during that hour off by an hour on some machines only.
+            _now_offset = now.utcoffset()
+            offset_seconds: Optional[int] = None if _now_offset is None else round(_now_offset.total_seconds())
         else:
             # Only reachable offline without tz_str (every online path resolved
             # tz above): from_birth_data raises its explicit missing-data error
             # downstream. Forward the system wall clock.
             now = datetime.now()
             is_dst = None
+            offset_seconds = None
 
         return cls.from_birth_data(
             name=name,
@@ -2001,6 +2080,7 @@ class AstrologicalSubjectFactory:
             minute=now.minute,
             seconds=now.second,
             is_dst=is_dst,
+            _lmt_offset_seconds=offset_seconds,
             city=city,
             nation=nation,
             lng=lng,
@@ -2036,8 +2116,9 @@ class AstrologicalSubjectFactory:
 
         For dates before 1 AD (year < 1), Python's datetime cannot represent the date.
         In that case, the method delegates to ``_calculate_time_conversions_bce`` which
-        bypasses datetime/pytz entirely and uses the ephemeris backend's Julian Day
-        functions directly with Local Mean Time (LMT) for timezone offset.
+        bypasses datetime and timezone handling entirely and uses the ephemeris
+        backend's Julian Day functions directly with Local Mean Time (LMT) for
+        timezone offset.
 
         Args:
             data (Dict[str, Any]): Calculation data dictionary containing time components
@@ -2076,7 +2157,7 @@ class AstrologicalSubjectFactory:
             otherwise the computed Julian Day will be offset by the calendar
             difference (up to ~10 days near 1582, ~0 days near 200 CE).
         """
-        # BCE dates: bypass datetime/pytz (Python datetime doesn't support year < 1).
+        # BCE dates: bypass datetime entirely (Python datetime doesn't support year < 1).
         # NOTE the calendar asymmetry documented above: this branch switches
         # from the proleptic Gregorian calendar (used for year >= 1) to the
         # Julian calendar (used for year < 1).
@@ -2112,13 +2193,14 @@ class AstrologicalSubjectFactory:
 
         # Explicit LMT offset supplied by from_iso_utc_time (which already
         # resolved the zone period from the unambiguous UTC instant). Apply it
-        # directly and bypass pytz, so a wall time sitting just past an IANA
-        # LMT->standard transition cannot be re-localized to the wrong period.
+        # directly and bypass the zone lookup, so a wall time sitting just past
+        # an IANA LMT->standard transition cannot be re-localized to the wrong
+        # period.
         lmt_offset_seconds = data.get("lmt_offset_seconds")
         if lmt_offset_seconds is not None:
             local_datetime = naive_datetime.replace(tzinfo=timezone(timedelta(seconds=lmt_offset_seconds)))
             try:
-                utc_datetime = local_datetime.astimezone(pytz.utc)
+                utc_datetime = local_datetime.astimezone(timezone.utc)
             except (OverflowError, ValueError) as exc:
                 raise AstrologicalSubjectFactory._pre_1ce_utc_exception() from exc
             data["iso_formatted_utc_datetime"] = utc_datetime.isoformat()
@@ -2126,54 +2208,46 @@ class AstrologicalSubjectFactory:
             data["julian_day"] = datetime_to_julian(utc_datetime)
             return
 
-        try:
-            local_timezone = pytz.timezone(location.tz_str)
-        except pytz.exceptions.UnknownTimeZoneError as exc:
-            # Wrap the bare pytz error (a KeyError subclass) as the library's own
-            # exception, matching sun_times/moon_phase, so a caller catching
-            # KerykeionException around from_birth_data/from_iso_utc_time is not
-            # broken by an invalid non-IANA tz_str.
-            raise KerykeionException(
-                f"Unknown timezone: {location.tz_str!r}. Use a valid IANA timezone name "
-                "(e.g. 'Europe/Rome', 'America/New_York')."
-            ) from exc
-        try:
-            local_datetime = local_timezone.localize(naive_datetime, is_dst=data.get("is_dst"))
-        except pytz.exceptions.AmbiguousTimeError:
-            raise KerykeionException(
-                "Ambiguous time error! The time falls during a DST transition. "
-                "Please specify is_dst=True or is_dst=False to clarify."
-            )
-        except pytz.exceptions.NonExistentTimeError:
-            raise KerykeionException(
-                "Non-existent time error! The time does not exist due to DST transition (spring forward). "
-                "Please specify a valid time."
-            )
-        except (OverflowError, ValueError) as exc:
-            # For a transition-based IANA zone, pytz.localize probes
-            # ``naive_datetime ± 1 day`` to resolve the offset; at 0001-01-01
-            # that subtraction underflows below datetime.min (year 0), BEFORE the
-            # astimezone call wrapped below. Surface the same clean exception here
-            # (offset-sign-independent, so it also covers west-of-UTC zones).
-            raise AstrologicalSubjectFactory._pre_1ce_utc_exception() from exc
+        # safe_timezone wraps every way an IANA key can be rejected (unknown,
+        # empty, path-like, non-string) as the library's own exception, matching
+        # sun_times/moon_phase, so a caller catching KerykeionException around
+        # from_birth_data/from_iso_utc_time is not broken by a bad tz_str.
+        local_timezone = safe_timezone(location.tz_str)
+        # Raises KerykeionException (same messages as before) when the wall time
+        # is ambiguous or non-existent and the caller gave no is_dst.
+        local_datetime = localize_naive(naive_datetime, local_timezone, is_dst=data.get("is_dst"))
 
-        # Pre-standardization births: the IANA zone falls back to its initial
-        # "LMT" record, whose offset is the Local Mean Time of the zone's
-        # *reference meridian* (e.g. Berlin for Europe/Berlin), not the birth
-        # city's. astro.com and other ephemerides use the birth location's own
-        # longitude-based LMT. Mirror _calculate_time_conversions_bce and derive
-        # the offset from the birth longitude so historical Asc/MC line up.
+        # Births before the zone kept ANY recorded civil time: the tz database
+        # answers with its synthetic opening record, always named "LMT", whose
+        # offset is the mean solar time of the zone's *reference meridian* (e.g.
+        # Berlin for Europe/Berlin), not the birth city's. That record is an
+        # admission of missing data, so we replace it with what the birth place
+        # itself would have read off a sundial. Mirror
+        # _calculate_time_conversions_bce and derive the offset from the birth
+        # longitude so historical Asc/MC line up.
+        #
+        # The test is the record NAME, not the era, and deliberately so: the
+        # later pre-standard records (Rome's RMT, Amsterdam's BMT, Kyiv's KMT,
+        # Moscow's MMT, …) are documented clock times the zone genuinely kept,
+        # and overriding those with a sundial reading would discard real data.
+        # This is a boundary with a step in it — the wall clock legitimately
+        # jumps when a city adopts an imported mean time — not a smooth ramp.
+        # NOTE: before the migration to zoneinfo this branch fired for EVERY
+        # pre-1901 birth, because the previous backend's transition table began
+        # in 1901 and collapsed all earlier dates onto the opening LMT record.
+        # Charts in the ~60 zones carrying a named 19th-century mean time move
+        # as a result, and toward the recorded civil time.
         if local_datetime.tzname() == "LMT" and location.lng is not None:
             # Exact longitude-based LMT (15° = 1 h, east = ahead of UT), rounded
-            # to the whole second to match how pytz emits LMT offsets (e.g.
-            # +00:53:28) and keep the ISO offset standards-compliant. The
-            # sub-second remainder is astronomically irrelevant (<0.3" of arc).
+            # to the whole second because an ISO 8601 UTC offset has no
+            # sub-second field — the remainder we drop is astronomically
+            # irrelevant (<0.3" of arc).
             lmt_offset = timedelta(seconds=round(location.lng / 15.0 * 3600))
             local_datetime = naive_datetime.replace(tzinfo=timezone(lmt_offset))
 
         # Store formatted times
         try:
-            utc_datetime = local_datetime.astimezone(pytz.utc)
+            utc_datetime = local_datetime.astimezone(timezone.utc)
         except (OverflowError, ValueError) as exc:
             # A year-1-CE local time east of UTC (first few hours) subtracts into
             # year 0, which Python datetime cannot represent (min 0001-01-01).
@@ -2364,8 +2438,12 @@ class AstrologicalSubjectFactory:
         # Calculate houses using the calculated flags (handles both Sidereal and Topocentric)
         # houses_ex2 returns cusp speeds and ascmc speeds in addition to the standard output.
         # Cast at the REAL latitude; only quadrant systems undefined inside the
-        # polar circle (Placidus/Koch) fall back to the ±66° clamp, with a warning.
-        cusps, ascmc, cusps_speed, ascmc_speed = houses_ex2_with_polar_fallback(
+        # polar circle (Placidus/Koch) degrade, and then to a house system that
+        # IS defined there rather than to a displaced observer. The ``_ex``
+        # variant additionally returns a descriptor of any such degradation:
+        # keep it on the subject so the chart declares that its houses are not
+        # the requested system instead of only whispering it to the log.
+        cusps, ascmc, cusps_speed, ascmc_speed, polar_fallback = houses_ex2_with_polar_fallback_ex(
             data["julian_day"],
             data["lat"],
             data["lng"],
@@ -2373,6 +2451,19 @@ class AstrologicalSubjectFactory:
             data["_iflag"],
             context=data.get("name", ""),
         )
+        if polar_fallback is not None:
+            data.setdefault("polar_house_fallbacks", []).append(polar_fallback)
+            # `houses_system_identifier` deliberately keeps the REQUEST. It is
+            # not only a label: RelocatedChartFactory and PlanetaryReturnFactory
+            # feed it back in to recast the chart elsewhere, and a substitution
+            # forced by THIS latitude must not follow the subject to a location
+            # where the requested system is perfectly well defined. Overwriting
+            # it would silently hand a relocated Longyearbyen chart Porphyry
+            # cusps in Rome, with no fallback record left to explain them.
+            #
+            # What the cusps actually came from is exposed separately, through
+            # `effective_houses_system_*` on the model, which is what rendering
+            # reads. See PolarHouseFallbackModel for the split.
 
         # Store house degrees
         data["_houses_degree_ut"] = cusps
@@ -2775,8 +2866,8 @@ class AstrologicalSubjectFactory:
 
         # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            # Mirror the main houses call: real latitude, polar-clamp fallback
-            # only for house systems undefined inside the polar circle.
+            # Mirror the main houses call: preserve the real latitude and
+            # substitute only a house system undefined inside the polar circle.
             _, ascmc, _, ascmc_speed = houses_ex2_with_polar_fallback(
                 data["julian_day"],
                 data["lat"],
@@ -3174,6 +3265,19 @@ class AstrologicalSubjectFactory:
         fixed_stars_list: list = []
 
         def _calc_fixed_star(star_name: str, swe_name: str) -> "KerykeionPointModel | None":
+            # Stars are addressed by catalog name, not by body id, so the outer
+            # per-body trace map cannot attribute them: a star's rows would be
+            # indistinguishable from a planet's. Wrap this star's calls in their
+            # OWN tracing scope instead — start_tracing() nests (it sets a
+            # ContextVar and hands back a restore token), so everything the map
+            # holds on exit belongs to this star and this star alone. Same guard
+            # as the planetary scope above: only libephemeris exposes the channel.
+            _star_trace_token = None
+            if BACKEND_NAME == "libephemeris" and hasattr(ephe, "start_tracing"):
+                try:
+                    _star_trace_token = ephe.start_tracing()
+                except AttributeError:
+                    pass  # libephemeris version without tracing support
             try:
                 pos_ecl = ephe.fixstar_ut(swe_name, julian_day, iflag)[0]
                 star_deg = pos_ecl[0]
@@ -3189,6 +3293,19 @@ class AstrologicalSubjectFactory:
                     star_mag = ephe.fixstar2_mag(swe_name)[0]
                 except Exception:
                     star_mag = None
+                # Last backend call for this star is done: harvest the scope.
+                star_source: Optional[str] = None
+                if _star_trace_token is not None:
+                    try:
+                        star_labels = {str(label) for label in ephe.get_trace_results().values()}
+                    except AttributeError:
+                        star_labels = set()
+                    # One label means one producer answered for this star. Zero
+                    # (untraced path) or several (no single label describes the
+                    # result) stay unannotated rather than assert a provenance
+                    # we cannot back.
+                    if len(star_labels) == 1:
+                        star_source = star_labels.pop()
                 point = get_kerykeion_point_from_degree(
                     star_deg,
                     # Requested star names are an open set; the model accepts them at runtime.
@@ -3201,10 +3318,25 @@ class AstrologicalSubjectFactory:
                 )
                 point.house = get_planet_house(star_deg, houses_degree_ut)
                 point.retrograde = False
+                if star_source is not None:
+                    point.source = star_source
+                    point.precision_class = _precision_class_for_source(star_source)
+                    # source_reviewed and the coverage window stay None on
+                    # purpose: the backend's coverage inventory is keyed by body
+                    # id and has no entry for a catalog star, so there is no
+                    # window to quote and nothing to declare reviewed.
                 return point
             except Exception as e:
                 logging.warning(f"Could not calculate {star_name} ({swe_name}) position: {e}")
                 return None
+            finally:
+                if _star_trace_token is not None:
+                    # Restore the enclosing (planetary) scope even on failure, or
+                    # every later body would be traced into this star's map.
+                    try:
+                        _star_trace_token.var.reset(_star_trace_token)
+                    except Exception:
+                        pass
 
         requested_fixed_stars = data.get("_active_fixed_stars") or []
         seen_star_slugs: set[str] = set()
@@ -3396,18 +3528,7 @@ class AstrologicalSubjectFactory:
                     point = data.get(name.lower())
                     if point is not None and hasattr(point, "abs_pos"):
                         point.source = backend
-                        normalized_source = str(backend).lower()
-                        if normalized_source.startswith("keplerian"):
-                            point.precision_class = "approximate"
-                        elif normalized_source.startswith("analytical"):
-                            point.precision_class = "analytical"
-                        elif normalized_source in _EPHEMERIS_GRADE_SOURCES:
-                            point.precision_class = "ephemeris"
-                        else:
-                            # ASSIST (live n-body integration) and any label this
-                            # version does not know: honest floor, never promoted
-                            # to "ephemeris". See _EPHEMERIS_GRADE_SOURCES.
-                            point.precision_class = "numerical-model"
+                        point.precision_class = _precision_class_for_source(backend)
 
                         if backend == "LEB" and hasattr(ephe, "get_body_coverage"):
                             # rc14 date-aware coverage API: body_id + requested JD.
@@ -3439,11 +3560,16 @@ class AstrologicalSubjectFactory:
             #      from its single primary.
             #   3. Arabic Parts / Lots (second loop below): each inherits from
             #      the ephemeris-backed primaries in its formula.
-            # NOT annotated here (source stays None): Ascendant, Medium Coeli,
-            # Vertex and house cusps (direct outputs of the backend house
-            # geometry, with no per-body coverage inventory) and fixed stars
-            # (direct catalog queries, not traced by body id). No blanket
-            # "every calculated point" guarantee is intended.
+            #   4. Fixed stars (annotated at their own call site, from a nested
+            #      per-star trace scope): source and precision_class only — the
+            #      coverage inventory is keyed by body id and holds no entry for
+            #      a catalog star, so the window and reviewed flag stay None.
+            # NOT annotated (source stays None): Ascendant, Medium Coeli, Vertex
+            # and house cusps — direct outputs of the backend house geometry,
+            # with no per-body coverage inventory. Their honesty channel is
+            # ``polar_house_fallbacks`` instead, which declares when the polar
+            # circle forced a different house system than the one requested.
+            # No blanket "every calculated point" guarantee is intended.
             # -----------------------------------------------------------------
 
             # Geometric antipodes inherit the precision contract of their

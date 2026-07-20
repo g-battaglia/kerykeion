@@ -18,9 +18,11 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import cast
+from contextlib import contextmanager
+from typing import Iterator, cast
 
 from kerykeion._predictive_utils import validate_julian_day
+from kerykeion.astrological_subject_factory import _precision_class_for_source
 from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, ephe
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 from kerykeion.schemas.kerykeion_exception import KerykeionException
@@ -68,6 +70,45 @@ def _nearest_conjunction(
     return nearest
 
 
+@contextmanager
+def _star_source_trace() -> Iterator[dict[str, str | None]]:
+    """Scope backend source tracing to a single star's ephemeris calls.
+
+    ``start_tracing`` sets a ContextVar, so scopes nest cleanly: opening one
+    per star keeps the collected map down to that star's own body id, which is
+    what lets us read the source label back without an id -> name inventory
+    (the fixed-star id space, unlike the planetary one, exposes none).
+
+    The label is written into the yielded holder on exit, so a caller that
+    leaves the block early — a star that turned out to be outside orb — still
+    resets the token. On backends without tracing the holder stays ``None``
+    and the provenance fields are simply left unset.
+    """
+    holder: dict[str, str | None] = {"source": None}
+    token = None
+    if BACKEND_NAME == "libephemeris":
+        try:
+            token = ephe.start_tracing()
+        except AttributeError:
+            token = None  # libephemeris version without tracing support
+    try:
+        yield holder
+    finally:
+        if token is not None:
+            try:
+                trace_map = ephe.get_trace_results()
+            except AttributeError:
+                trace_map = {}
+            if trace_map:
+                # One scope per star means at most one traced body, so the
+                # single recorded label is this star's source by construction.
+                holder["source"] = str(next(iter(trace_map.values())))
+            try:
+                token.var.reset(token)
+            except (RuntimeError, ValueError):
+                pass
+
+
 def _build_discovery_point(
     star_name: str,
     pos_ecl: tuple,
@@ -76,6 +117,7 @@ def _build_discovery_point(
     houses_degree_ut: list[float],
     near_point: str,
     discovery_orb: float,
+    source: str | None = None,
 ) -> KerykeionPointModel:
     """Build a Kerykeion point enriched with discovery metadata."""
     star_deg = pos_ecl[0]
@@ -98,6 +140,15 @@ def _build_discovery_point(
     point.near_point = near_point
     point.orb = discovery_orb
     point.aspect = "conjunction"
+    # Discovered stars answer to the same provenance contract as every other
+    # point: a star listed next to planets that declare their source, while
+    # declaring nothing itself, reads as less trustworthy than it is. The
+    # coverage window and the review flag stay unset on purpose — the backend
+    # publishes no coverage inventory for the fixed-star id space, and filling
+    # them from the planetary inventory would be a claim we cannot back.
+    if source is not None:
+        point.source = source
+        point.precision_class = _precision_class_for_source(source)
     point.longitude = star_deg
     point.latitude = star_lat
     point.degree = point.position
@@ -123,6 +174,10 @@ class FixedStarDiscoveryFactory:
         frame-consistent for sidereal charts too. Equatorial data (declination)
         is fetched without the sidereal flag: it is physical and independent of
         the zodiac convention.
+
+        Each returned point also carries the backend source that produced it
+        and the matching precision class, so a discovered star is as auditable
+        as the planets it is reported against.
 
         Returns a list of KerykeionPointModel sorted by magnitude (brightest first).
         Only stars that are within ``orb`` degrees of any natal planet are included.
@@ -181,17 +236,19 @@ class FixedStarDiscoveryFactory:
                     continue
                 seen_names.add(star_name)
                 try:
-                    pos_ecl = ephe.fixstar_ut(star_name, jd, scan_iflag)[0]
-                    star_deg = pos_ecl[0]
+                    with _star_source_trace() as star_trace:
+                        pos_ecl = ephe.fixstar_ut(star_name, jd, scan_iflag)[0]
+                        star_deg = pos_ecl[0]
 
-                    nearest = _nearest_conjunction(star_deg, planet_positions, orb)
-                    if nearest is None:
-                        continue
+                        nearest = _nearest_conjunction(star_deg, planet_positions, orb)
+                        if nearest is None:
+                            continue
 
-                    # Declination is zodiac-independent; drop FLG_SIDEREAL so the
-                    # equatorial fetch is identical for tropical and sidereal charts.
-                    eq_iflag = (scan_iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
-                    pos_eq = ephe.fixstar_ut(star_name, jd, eq_iflag)[0]
+                        # Declination is zodiac-independent; drop FLG_SIDEREAL so the
+                        # equatorial fetch is identical for tropical and sidereal charts.
+                        eq_iflag = (scan_iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
+                        pos_eq = ephe.fixstar_ut(star_name, jd, eq_iflag)[0]
+
                     star_mag = entry.magnitude
 
                     prominent.append(
@@ -203,6 +260,7 @@ class FixedStarDiscoveryFactory:
                             houses_degree_ut,
                             near_point=nearest[0],
                             discovery_orb=nearest[1],
+                            source=star_trace["source"],
                         )
                     )
                 except Exception as e:

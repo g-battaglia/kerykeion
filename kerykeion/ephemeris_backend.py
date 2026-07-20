@@ -72,7 +72,12 @@ import os
 from contextlib import contextmanager
 from threading import RLock, local as _thread_local
 import types
-from typing import Iterator, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, Iterator, Optional, Sequence, Tuple
+
+if TYPE_CHECKING:
+    # Type-only: the runtime import lives inside the polar fallback branch below,
+    # because the models package imports back into kerykeion at load time.
+    from kerykeion.schemas.kr_models import PolarHouseFallbackModel
 
 logger = logging.getLogger(__name__)
 
@@ -206,6 +211,220 @@ def _resolve_polar_houses_error_types() -> Tuple[type[BaseException], ...]:
 # Resolved once at import for the active backend (see the helper above).
 POLAR_HOUSES_ERROR_TYPES: Tuple[type[BaseException], ...] = _resolve_polar_houses_error_types()
 
+# The house system substituted when the requested one is undefined inside the
+# polar circle. Porphyry trisects the quadrants the ANGLES already define, so
+# cusps[0] == ascmc[0] and cusps[9] == ascmc[1] exactly, at every latitude we can
+# cast (verified through ±90°). It therefore preserves the ASC/MC/DSC/IC frame a
+# quadrant-system user is asking for, unlike Whole Sign or Equal whose first cusp
+# leaves the Ascendant. It is also cheaper than the systems it replaces.
+_POLAR_FALLBACK_HSYS = b"O"
+
+# House identifiers whose output is NOT the 12-cusp quadrant division, and which
+# therefore cannot accept a 12-cusp substitute: Gauquelin ('G') returns 36 sectors,
+# so swapping in Porphyry would silently change the SHAPE of the result rather
+# than only its values. These clamp the latitude instead, keeping the requested
+# division intact — the trade the substitution avoids everywhere else.
+_NON_QUADRANT_HOUSE_SYSTEMS = frozenset({b"G"})
+
+_POLAR_STRATEGIES = ("substitute_system", "clamp_latitude")
+
+
+def _house_system_name(hsys: bytes) -> Optional[str]:
+    """Human-readable name for a house identifier, or None if unavailable.
+
+    Purely descriptive: it decorates the fallback record, so a backend that does
+    not expose ``house_name`` must not turn a successful chart into an error.
+    """
+    getter = getattr(ephe, "house_name", None)
+    if getter is None:
+        return None
+    try:
+        return getter(hsys)
+    except Exception:
+        return None
+
+
+def _clamp_inside_polar_limit(lat: float, clamped_lat: float, threshold: Optional[float]) -> float:
+    """Latitude to retry at when the requested house division must be preserved.
+
+    ``clamped_lat`` is the ±66° rule of thumb. When the backend reported the
+    threshold it actually applied, honour that instead whenever it is TIGHTER:
+    the polar circle sits at 90° − obliquity, and obliquity varies with the epoch
+    (~24.15° in deep antiquity, putting the limit near 65.85°), so retrying at a
+    fixed 66° would fail exactly as the first call did. A micro-degree is stepped
+    off the threshold because the backend rejects the limit itself; 0.0036" is
+    four orders of magnitude finer than anything the resulting cusps resolve.
+    """
+    if threshold is None or abs(clamped_lat) <= abs(threshold):
+        return clamped_lat
+    return math.copysign(abs(threshold) - 1e-6, lat)
+
+
+def houses_ex2_with_polar_fallback_ex(
+    tjdut: float,
+    lat: float,
+    lon: float,
+    hsys: bytes,
+    flags: int,
+    *,
+    context: str = "",
+    polar_strategy: str = "substitute_system",
+) -> Tuple[
+    Sequence[float], Sequence[float], Sequence[float], Sequence[float], Optional["PolarHouseFallbackModel"]
+]:
+    """Compute house cusps at the REAL latitude, substituting the SYSTEM if needed.
+
+    Calls ``ephe.houses_ex2`` at the real observer ``lat``. If — and only if — the
+    backend reports the chosen house system is undefined inside the polar circle
+    (see :data:`POLAR_HOUSES_ERROR_TYPES`), it retries once and returns a record
+    describing what was traded away. Every house system that IS defined at all
+    latitudes (Whole Sign, Equal, Porphyry, Morinus, Meridian/axial, …) keeps the
+    real latitude untouched.
+
+    The default ``substitute_system`` strategy retries with Porphyry at the REAL
+    latitude. This matters beyond tidiness: the Ascendant is the intersection of
+    the ecliptic with the horizon, so it is a function of latitude alone and
+    cannot depend on which house system was requested. Retrying at a clamped
+    latitude — the previous behaviour — pushed the substituted latitude into
+    ``ascmc`` and hence into the reported angles, so one place and instant
+    yielded a DIFFERENT Ascendant under Placidus than under Whole Sign, and every
+    latitude beyond the circle collapsed onto the same frozen 66° value.
+    Substituting the system leaves the angles exact and confines the
+    approximation to the intermediate cusps, which is where the ambiguity
+    genuinely lives.
+
+    ``clamp_latitude`` keeps the requested system and retries just inside the
+    polar limit — the backend-reported threshold when it names one, the ±66° rule
+    of thumb otherwise, whichever is tighter, since the limit is 90° − obliquity
+    and so moves with the epoch.
+    It is the honest choice only where the output has no angles to protect
+    and no equivalent substitute — Gauquelin's 36 sectors — and is selected
+    automatically for those identifiers.
+
+    Args:
+        tjdut: Julian Day (UT).
+        lat: The REAL observer latitude.
+        lon: Observer longitude.
+        hsys: House system identifier as a 1-byte value (e.g. ``b"P"``).
+        flags: Ephemeris iflag.
+        context: Optional label for the WARNING (e.g. the subject/relocation name).
+        polar_strategy: ``"substitute_system"`` (default) or ``"clamp_latitude"``.
+
+    Returns:
+        The 5-tuple ``(cusps, ascmc, cusps_speed, ascmc_speed, fallback)`` where
+        ``fallback`` is a ``PolarHouseFallbackModel`` describing the substitution,
+        or ``None`` when the requested system computed normally.
+    """
+    if polar_strategy not in _POLAR_STRATEGIES:
+        raise ValueError(f"polar_strategy must be one of {_POLAR_STRATEGIES}, got {polar_strategy!r}")
+
+    try:
+        cusps, ascmc, cusps_speed, ascmc_speed = ephe.houses_ex2(tjdut, lat, lon, hsys, flags)
+        return cusps, ascmc, cusps_speed, ascmc_speed, None
+    except POLAR_HOUSES_ERROR_TYPES as original_exc:
+        # Lazy imports avoid an import cycle: utilities does not import this
+        # module, but this module must not import utilities at load time, and the
+        # models package imports back into kerykeion.
+        from kerykeion.utilities import _POLAR_LATITUDE_LIMIT, check_and_adjust_polar_latitude
+        from kerykeion.schemas.kr_models import PolarHouseFallbackModel
+
+        # The threshold and obliquity are knowable only from the backend that
+        # measured them; libephemeris' PolarCircleError carries both, while the
+        # swisseph backend's generic Error carries neither. The latitude and the
+        # requested system come from our own call arguments, which are
+        # authoritative on every backend.
+        threshold = getattr(original_exc, "threshold", None)
+        obliquity = getattr(original_exc, "obliquity", None)
+
+        # Decide with the LIMIT, not with the clamp helper: that helper logs
+        # "Latitude capped at 66°" as a side effect, and on the substitution path
+        # nothing is capped — the retry happens at the real latitude. Calling it
+        # merely to ask a question would put a line in the log that the fallback
+        # record and the warning below both contradict.
+        clamped_lat = max(-_POLAR_LATITUDE_LIMIT, min(_POLAR_LATITUDE_LIMIT, lat))
+        if threshold is None and clamped_lat == lat:
+            # No measured threshold AND outside the ±66° rule of thumb, so nothing
+            # identifies this as a polar-undefined failure. Only reachable on the
+            # swisseph backend, whose generic Error cannot tell a polar failure
+            # apart from any other houses failure; re-raise the real error
+            # unchanged instead of emitting a spurious polar warning and retrying
+            # at an unchanged latitude.
+            #
+            # ±66° is a rule of thumb, NOT the limit: the polar circle sits at
+            # 90° − obliquity, and obliquity varies with the epoch (~24.15° around
+            # 3000 BCE, so the limit drops to ~65.85°). Gating on the clamp alone
+            # would re-raise for every deep-antiquity chart in that band — exactly
+            # the case the fallback exists for — so a backend-reported threshold
+            # always wins over the constant.
+            raise
+        try:
+            hsys_char = hsys.decode("ascii")
+        except (UnicodeDecodeError, AttributeError):
+            hsys_char = str(hsys)
+
+        # A 12-cusp substitute cannot represent a 36-sector division, so those
+        # identifiers clamp regardless of what the caller asked for.
+        strategy = "clamp_latitude" if hsys in _NON_QUADRANT_HOUSE_SYSTEMS else polar_strategy
+
+        if strategy == "substitute_system":
+            retry_hsys, retry_lat = _POLAR_FALLBACK_HSYS, lat
+            affects = ["house_cusps"]
+        else:
+            # Only here is a latitude actually capped, so this is where the
+            # helper — and the log line it emits — belongs.
+            retry_hsys, retry_lat = hsys, _clamp_inside_polar_limit(
+                lat, check_and_adjust_polar_latitude(lat), threshold
+            )
+            affects = ["house_cusps", "angles"]
+
+        try:
+            cusps, ascmc, cusps_speed, ascmc_speed = ephe.houses_ex2(tjdut, retry_lat, lon, retry_hsys, flags)
+        except Exception as retry_exc:
+            # The retry also failed; the ORIGINAL error for the requested system
+            # at the real latitude is the meaningful diagnostic (the retry only
+            # varied the system or the latitude), so surface it, chaining the
+            # retry as the cause.
+            raise original_exc from retry_exc
+
+        used_char = retry_hsys.decode("ascii") if strategy == "substitute_system" else hsys_char
+        requested_name = _house_system_name(hsys)
+        used_name = _house_system_name(retry_hsys)
+        where = f" for {context}" if context else ""
+
+        if strategy == "substitute_system":
+            message = (
+                f"House system {hsys_char!r} is undefined inside the polar circle at latitude "
+                f"{lat:.4f}°{where}; the house cusps were computed with {used_char!r} "
+                f"({used_name or 'Porphyry'}) at the REAL latitude instead. The Ascendant, MC, "
+                f"Descendant, IC and Vertex are unaffected: they are intersections of the ecliptic "
+                f"with the horizon and the meridian, independent of any house system."
+            )
+        else:
+            message = (
+                f"House system {hsys_char!r} is undefined inside the polar circle at latitude "
+                f"{lat:.4f}°{where}; it has no equivalent at every latitude, so its division was "
+                f"computed at {abs(retry_lat):.4f}°, just inside the polar limit. The cusps and the angles "
+                f"derived from this call are approximate; planetary positions and the persisted "
+                f"latitude keep the real value."
+            )
+
+        logger.warning("%s", message)
+
+        fallback = PolarHouseFallbackModel(
+            strategy=strategy,
+            requested_house_system_identifier=hsys_char,
+            requested_house_system_name=requested_name,
+            used_house_system_identifier=used_char,
+            used_house_system_name=used_name,
+            latitude=lat,
+            used_latitude=retry_lat,
+            threshold=threshold,
+            obliquity=obliquity,
+            affects=affects,
+            message=message,
+        )
+        return cusps, ascmc, cusps_speed, ascmc_speed, fallback
+
 
 def houses_ex2_with_polar_fallback(
     tjdut: float,
@@ -216,68 +435,15 @@ def houses_ex2_with_polar_fallback(
     *,
     context: str = "",
 ) -> Tuple[Sequence[float], Sequence[float], Sequence[float], Sequence[float]]:
-    """Compute house cusps at the REAL latitude, clamping only when unavoidable.
+    """Backwards-compatible view of :func:`houses_ex2_with_polar_fallback_ex`.
 
-    Calls ``ephe.houses_ex2`` at the real observer ``lat``. If — and only if — the
-    backend reports the chosen house system is undefined inside the polar circle
-    (see :data:`POLAR_HOUSES_ERROR_TYPES`), it retries once with the latitude
-    clamped to the ±66° polar limit and logs a WARNING naming the system. Every
-    house system that IS defined at all latitudes (Whole Sign, Equal, Porphyry,
-    Morinus, Meridian/axial, …) therefore keeps the real latitude, and only the
-    handful of quadrant systems that genuinely cannot be cast beyond the polar
-    circle fall back — instead of the old global clamp that silently mis-cast
-    every polar chart at 66°.
-
-    Args:
-        tjdut: Julian Day (UT).
-        lat: The REAL observer latitude.
-        lon: Observer longitude.
-        hsys: House system identifier as a 1-byte value (e.g. ``b"P"``).
-        flags: Ephemeris iflag.
-        context: Optional label for the WARNING (e.g. the subject/relocation name).
+    Same behaviour, minus the fallback record: callers that have nowhere to put a
+    ``PolarHouseFallbackModel`` still get the corrected cusps and the WARNING.
 
     Returns:
-        The 4-tuple ``(cusps, ascmc, cusps_speed, ascmc_speed)`` from
-        ``ephe.houses_ex2``.
+        The 4-tuple ``(cusps, ascmc, cusps_speed, ascmc_speed)``.
     """
-    try:
-        return ephe.houses_ex2(tjdut, lat, lon, hsys, flags)
-    except POLAR_HOUSES_ERROR_TYPES as original_exc:
-        # Lazy import avoids an import cycle: utilities does not import this
-        # module, but this module must not import utilities at load time.
-        from kerykeion.utilities import check_and_adjust_polar_latitude
-
-        clamped_lat = check_and_adjust_polar_latitude(lat)
-        if clamped_lat == lat:
-            # The latitude is NOT inside the polar circle, so this failure is
-            # not a polar-undefined error. Only reachable on the swisseph
-            # backend, whose generic Error cannot tell a polar failure apart
-            # from any other houses failure; re-raise the real error unchanged
-            # instead of emitting a spurious polar warning and retrying at an
-            # unchanged latitude.
-            raise
-        try:
-            hsys_char = hsys.decode("ascii")
-        except (UnicodeDecodeError, AttributeError):
-            hsys_char = str(hsys)
-        logger.warning(
-            "House system %r is undefined inside the polar circle at latitude "
-            "%.4f°%s; falling back to the ±%.0f° polar limit for the house cusps "
-            "and angles (planetary positions and the persisted latitude keep the "
-            "real value). Consider Whole Sign ('W'), Equal ('A') or Porphyry "
-            "('O'), which are defined at every latitude.",
-            hsys_char,
-            lat,
-            f" for {context}" if context else "",
-            abs(clamped_lat),
-        )
-        try:
-            return ephe.houses_ex2(tjdut, clamped_lat, lon, hsys, flags)
-        except Exception as retry_exc:
-            # The clamped retry also failed; the ORIGINAL error at the real
-            # latitude is the meaningful diagnostic (the retry only perturbed
-            # the latitude), so surface it, chaining the retry as the cause.
-            raise original_exc from retry_exc
+    return houses_ex2_with_polar_fallback_ex(tjdut, lat, lon, hsys, flags, context=context)[:4]
 
 
 # Swiss Ephemeris keeps mutable process-global state for sidereal mode,

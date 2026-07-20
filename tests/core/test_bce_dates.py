@@ -686,7 +686,7 @@ class TestModernDatesRegression:
 
     @pytest.mark.extended
     def test_year_one_uses_modern_path(self):
-        """Year 1 AD should use the standard datetime/pytz path."""
+        """Year 1 AD should use the standard datetime/zoneinfo path."""
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Year 1 AD", 1, 6, 15, 12, 0,
             lat=51.5, lng=0.0, tz_str="Etc/GMT",

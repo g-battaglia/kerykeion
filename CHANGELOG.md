@@ -2,6 +2,63 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Timezone offsets are now resolved with the standard library's `zoneinfo`
+  instead of `pytz`. `pytz` builds its transition table bounded by 32-bit
+  `time_t`, so for any date after ~2037 or before 1901-12-13 it froze the offset
+  at the nearest known transition: northern zones stayed on standard time,
+  southern zones stayed on DST, and every affected chart was up to an hour off.
+  Because the Ascendant advances ~15°/hour, that surfaced as an Ascendant wrong
+  by up to ~12° — for example a 2100 New York chart was cast on EST instead of
+  EDT. Historical charts gain precision too: `pytz` rounded pre-standardization
+  offsets to whole minutes, so recorded city mean times now reach the chart with
+  their seconds intact.
+- The polar house fallback no longer corrupts the Ascendant. House systems that
+  are undefined inside the polar circle used to be retried at a latitude clamped
+  to ±66°, and the angles from that retry were reported as the subject's own —
+  so the same place and instant yielded a different Ascendant depending on the
+  house system, which cannot be true of a horizon intersection. Those systems
+  now fall back to Porphyry at the real latitude: cusps stay quadrant-based with
+  the first cusp exactly on the Ascendant, and the angles are exact. The
+  substitution is declared rather than silent (see below). The clamp survives
+  only for Gauquelin sectors, whose 36-cusp output shape admits no substitute.
+- Solar noon in the moon-phase details is computed in instant space. The prior
+  wall-clock arithmetic relied on a fixed-offset tzinfo and would have shifted
+  the result by an hour across a DST transition under a live tzinfo.
+
+### Added
+
+- `AstrologicalSubjectModel.polar_house_fallbacks`: a list of
+  `PolarHouseFallbackModel` records naming the requested and substituted house
+  system, the real and used latitude, and the backend-reported polar threshold.
+  A chart can carry more than one (a main-system substitution and a Gauquelin
+  clamp), so it is a list. Empty for every chart outside the polar circle.
+- Fixed stars now declare `source` and `precision_class` like every other point,
+  on both the requested-star and discovery paths. Per-body coverage and reviewed
+  status stay `None`: the backend keys its coverage inventory by body id and has
+  no star entries, so reporting a window would be an unbacked claim.
+
+### Changed
+
+- `tzdata` is now a hard runtime dependency and `pytz` is gone. `zoneinfo`
+  searches `TZPATH` (the host's own database) first and falls back to the
+  `tzdata` package only when a zone is not found there, so the dependency is a
+  floor rather than a pin: it guarantees every zone resolves on hosts that ship
+  no system database — Alpine, Windows, slim containers — where the library
+  would otherwise raise. It does **not** override a differently-aged system
+  database, so two hosts can still disagree about a zone whose rules changed
+  recently. Pinning outright would require clearing `TZPATH` at import, which
+  would override the deliberate choices of anyone who maintains their own.
+- A local time of year 9999 east of UTC now resolves instead of raising. The old
+  failure was an artifact of `pytz` probing ±1 day around the requested instant,
+  not a real limit.
+- **Output shape:** every `EphemerisDataFactory.get_ephemeris_data()` sample now
+  carries a `polar_house_fallbacks` key in both the plain-dict and
+  `as_model=True` forms. It is a list of the sample's structured fallback
+  records, empty when no polar substitution was needed. Consumers that validate
+  plain-dict keys strictly must accept the new always-present key.
+
 ## 6.0.0a75 - 2026-07-18
 
 ### Added

@@ -36,7 +36,8 @@ from typing import Any, Union, Optional, get_args, cast
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, tzinfo as _tzinfo
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
 logger = getLogger(__name__)
@@ -564,9 +565,8 @@ def validate_latitude(latitude: float) -> float:
     to the ±66° house-stability limit: the real observer latitude must survive
     into the persisted model, into the topocentric observer (``set_topo``), and
     into every house system that is defined at all latitudes (Whole Sign,
-    Equal, Porphyry, Morinus, Meridian/axial, …). Polar clamping is applied
-    *locally* and only for the quadrant house systems the ephemeris backend
-    cannot compute inside the polar circle — see
+    Equal, Porphyry, Morinus, Meridian/axial, …). A house system that is
+    undefined there is substituted *locally* at the house call — see
     :func:`kerykeion.ephemeris_backend.houses_ex2_with_polar_fallback`.
 
     Args:
@@ -613,12 +613,20 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
     """
     Clamp a polar latitude to the ±66° limit for house-calculation stability.
 
-    This is the FALLBACK applied ONLY where a quadrant house system (Placidus
-    'P', Koch 'K', …) would otherwise be mathematically undefined inside the
-    polar circle. It must NOT be used to sanitise the observer latitude globally:
-    doing so corrupts the persisted latitude, shifts the topocentric observer,
-    and wrongly translates the cusps of house systems that ARE defined at every
-    latitude. Use :func:`validate_latitude` for plain range validation.
+    NARROW USE ONLY. This is no longer the general fallback for a quadrant house
+    system inside the polar circle: moving the observer keeps the house count but
+    reports cusps for a place the subject was not born in, so the house call now
+    substitutes a system that IS defined at every latitude (see
+    :func:`kerykeion.ephemeris_backend.houses_ex2_with_polar_fallback`, whose
+    default ``polar_strategy`` does exactly that) and records the substitution.
+
+    The clamp survives only where substitution is impossible because the output
+    shape itself is what the caller needs: the 36 Gauquelin sector cusps have no
+    12-cusp equivalent, so that call opts back in explicitly. It must NOT be used
+    to sanitise the observer latitude globally: doing so corrupts the persisted
+    latitude, shifts the topocentric observer, and wrongly translates the cusps of
+    house systems that ARE defined at every latitude. Use
+    :func:`validate_latitude` for plain range validation.
 
     Args:
         latitude: The original latitude value
@@ -756,26 +764,162 @@ def normalize_longitude(longitude: float) -> float:
     return (longitude + 180.0) % 360.0 - 180.0
 
 
-def safe_timezone(tz_str: str):
+def safe_timezone(tz_str: str) -> ZoneInfo:
     """Resolve an IANA timezone string, raising ``KerykeionException`` if invalid.
 
-    ``pytz.timezone`` raises ``UnknownTimeZoneError`` — a ``KeyError`` subclass,
-    NOT a ``KerykeionException`` — so a caller catching only the library's own
-    exception around a public entry point (from_iso_utc_time, from_current_time,
-    EphemerisDataFactory, RelocatedChartFactory.relocate) would be broken by an
-    invalid ``tz_str``. This is the single wrapper every such entry point should
-    use so the failure mode is uniform (mirrors the guard in from_birth_data's
-    _calculate_time_conversions and sun_times.resolve_timezone).
-    """
-    import pytz
+    Backed by :class:`zoneinfo.ZoneInfo`, which reads the platform TZif files in
+    full and extrapolates beyond the last recorded transition from the zone's
+    POSIX TZ rule. That matters for an ephemeris library: a transition table
+    truncated to the 32-bit time_t range freezes the offset outside roughly
+    1902-2037, so every chart cast for a future year keeps or loses DST at the
+    wrong instant (in Rome, a year-5000 chart lands ~11.8° off on the
+    Ascendant), and pre-1902 wall times silently reuse the 1902 offset instead
+    of the zone's Local Mean Time record.
 
+    Building a ``ZoneInfo`` can fail in four distinct ways where a single
+    ``KeyError`` subclass used to cover everything: ``ZoneInfoNotFoundError``
+    (unknown key), ``ValueError`` (empty string, absolute path, or a ``..``
+    component in the key), ``TypeError`` (a non-string, e.g. ``None``) and
+    ``OSError`` (the tz database entry exists but cannot be read). Neither of
+    the last two is hypothetical: ``AstrologicalSubjectModel.tz_str`` is
+    ``Optional[str]`` because composite charts have no single zone, and GeoNames
+    can answer with an empty ``timezoneId`` (see ``fetch_geonames``). All four
+    are wrapped here so every public entry point (from_iso_utc_time,
+    from_current_time, EphemerisDataFactory, RelocatedChartFactory.relocate, and
+    the timing factories via ``sun_times.resolve_timezone``) fails uniformly with
+    the library's own exception. This is the ONE place that decides that set —
+    ``resolve_timezone`` delegates here rather than keeping a second list that
+    would drift.
+    """
     try:
-        return pytz.timezone(tz_str)
-    except pytz.exceptions.UnknownTimeZoneError as exc:
+        return ZoneInfo(tz_str)
+    except (ZoneInfoNotFoundError, ValueError, TypeError, OSError) as exc:
         raise KerykeionException(
             f"Unknown timezone: {tz_str!r}. Use a valid IANA timezone name "
             "(e.g. 'Europe/Rome', 'America/New_York')."
         ) from exc
+
+
+def _fold_offsets(naive: datetime, tz: _tzinfo) -> tuple[Optional[timedelta], Optional[timedelta]]:
+    """UTC offsets a wall time would get on each side of a nearby transition.
+
+    ``fold`` (PEP 495) selects between the two interpretations of a wall time
+    that a zone offers around a transition; away from one, both readings agree.
+    Returned as a pair so callers can branch on ``off0 != off1`` — the single
+    cheap test for "this wall time sits on a transition boundary at all".
+    """
+    return (
+        naive.replace(tzinfo=tz, fold=0).utcoffset(),
+        naive.replace(tzinfo=tz, fold=1).utcoffset(),
+    )
+
+
+def is_nonexistent(naive: datetime, tz: _tzinfo) -> bool:
+    """Whether a naive wall time never occurred in ``tz`` (spring-forward gap).
+
+    Detected by round-tripping through UTC: a wall time inside a gap has no UTC
+    instant that maps back to it, so the round trip lands on a *different* wall
+    time. An existing time round-trips exactly, ambiguous ones included.
+
+    Must be tested BEFORE :func:`is_ambiguous`: a gap also reports two different
+    fold offsets, so an ambiguity-first diagnosis would mislabel every gap.
+    """
+    off0, off1 = _fold_offsets(naive, tz)
+    if off0 == off1:
+        return False
+    aware = naive.replace(tzinfo=tz, fold=0)
+    try:
+        return aware.astimezone(timezone.utc).astimezone(tz).replace(tzinfo=None) != naive
+    except (OverflowError, OSError):
+        # Only reachable within a day of datetime.min/max, where no IANA zone
+        # has a transition — so "not a gap" is also the correct answer.
+        return False
+
+
+def is_ambiguous(naive: datetime, tz: _tzinfo) -> bool:
+    """Whether a naive wall time occurred twice in ``tz`` (fall-back fold).
+
+    True only for a wall time that really repeats; a spring-forward gap, which
+    also yields two different fold offsets, is excluded via
+    :func:`is_nonexistent`.
+    """
+    off0, off1 = _fold_offsets(naive, tz)
+    return off0 != off1 and not is_nonexistent(naive, tz)
+
+
+def localize_naive(naive: datetime, tz: _tzinfo, *, is_dst: Optional[bool] = None) -> datetime:
+    """Attach ``tz`` to a naive wall time, resolving DST transitions explicitly.
+
+    ``is_dst`` disambiguates a wall time that a transition makes non-unique:
+
+    * ``True``  → the reading with the LARGER UTC offset (clocks moved forward)
+    * ``False`` → the reading with the SMALLER UTC offset
+    * ``None``  → raise, rather than guess
+
+    The clock decides, never the zone's ``dst()`` flag and never a fixed ``fold``
+    index. Not the fold, because the correspondence between the two INVERTS
+    between a fall-back and a gap: inside a fold ``fold=0`` is the summer
+    reading, inside a spring-forward gap it is the winter one, so a hardcoded
+    value would be right on one side of the year and wrong on the other.
+
+    Not ``dst()``, because that flag is not portable. Different builds of the tz
+    database record the same zone differently — for Ireland one encodes summer
+    as ``dst()=+1h`` against a winter of ``0``, another encodes summer as ``0``
+    against a winter of ``-1h``. Keying on the flag would hand the caller a
+    different hour depending on which database the host ships, and this library
+    is meant to give one answer for one birth. The offsets carry the same
+    information without the encoding: measured across 23 zones and every
+    transition from 1902 to 2037, on both encodings, the side with a positive
+    ``dst()`` is always the side with the larger offset.
+
+    One consequence is worth stating. A wall time can also repeat because the
+    STANDARD offset changed rather than because summer time ended — a zone moved
+    between administrations, say. Modern tz data flags neither reading as
+    daylight saving there, so no "is DST in effect" answer exists to give; the
+    rule still returns something deterministic, but the question does not really
+    apply to that instant.
+
+    An explicit ``is_dst`` never raises — the caller has already answered the
+    only question a gap or a fold can ask.
+
+    Args:
+        naive: A wall time with ``tzinfo`` unset.
+        tz: The zone to interpret it in.
+        is_dst: Disambiguator; ``None`` means "reject anything non-unique".
+
+    Raises:
+        KerykeionException: If ``is_dst`` is None and the wall time either does
+            not exist or occurs twice in ``tz``.
+    """
+    off0, off1 = _fold_offsets(naive, tz)
+
+    # Dominant case: nowhere near a transition, both readings agree.
+    if off0 == off1:
+        return naive.replace(tzinfo=tz)
+
+    if is_dst is None:
+        # Gap first: a non-existent wall time is ALSO reported as ambiguous.
+        if is_nonexistent(naive, tz):
+            raise KerykeionException(
+                "Non-existent time error! The time does not exist due to DST transition (spring forward). "
+                "Please specify a valid time."
+            )
+        raise KerykeionException(
+            "Ambiguous time error! The time falls during a DST transition. "
+            "Please specify is_dst=True or is_dst=False to clarify."
+        )
+
+    # Deliberately the offsets and NOT dst(): the flag is not portable. The same
+    # zone is encoded differently by different builds of the tz database — for
+    # Ireland one has summer at dst()=+1h and winter at 0, another has summer at
+    # 0 and winter at -1h. Keying on "dst() is non-zero" therefore picks a
+    # different side depending on which database the host happens to ship, which
+    # is a one-hour error that only appears on some machines. Measured across 23
+    # zones and every transition from 1902 to 2037, on both encodings, the side
+    # carrying a POSITIVE dst() is always the side with the larger offset, so
+    # consulting the flag could never have decided anything the clock does not.
+    larger_fold = 0 if (off0 or timedelta()) > (off1 or timedelta()) else 1
+    return naive.replace(tzinfo=tz, fold=larger_fold if is_dst else 1 - larger_fold)
 
 
 # =============================================================================

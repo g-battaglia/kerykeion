@@ -60,8 +60,8 @@ class TestUtcEntryPointFolds:
         assert (b.julian_day - a.julian_day) * 24.0 == pytest.approx(1.0, abs=1e-6)
 
     def test_double_dst_fold_resolves_to_exact_instant(self):
-        # UK double summer time (1941-1947): both fold occurrences are DST, so
-        # pytz's boolean is_dst cannot disambiguate. from_iso_utc_time now passes
+        # UK double summer time (1941-1947): both fold occurrences are DST, so a
+        # boolean is_dst cannot disambiguate them at all. from_iso_utc_time passes
         # the resolved UTC offset down directly (not a boolean is_dst), so it
         # reconstructs the exact source instant instead of raising or landing an
         # hour off. Same mechanism fixes the standard-offset-change folds

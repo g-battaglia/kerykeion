@@ -29,7 +29,8 @@ from __future__ import annotations
 import logging
 import math
 from datetime import datetime, timedelta, timezone
-from typing import Callable, Optional, cast
+from typing import Optional
+from zoneinfo import ZoneInfo
 
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -61,7 +62,7 @@ from kerykeion.moon_phase_details.utils import (
 )
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion.schemas.kr_literals import LunarPhaseEmoji, LunarPhaseName
-from kerykeion.utilities import datetime_to_julian, julian_to_datetime
+from kerykeion.utilities import datetime_to_julian, julian_to_datetime, localize_naive
 
 
 logger = logging.getLogger(__name__)
@@ -239,17 +240,13 @@ def _compute_sun_times(
         return None
 
     try:
-        # Use pytz to preserve DST rules
-        import pytz
-
-        tzinfo = pytz.timezone(tz_str)
-    except (ImportError, AttributeError) as exc:  # pragma: no cover - defensive
-        logger.error("Error importing pytz: %s. Cannot compute sunrise/sunset.", exc)
-        return None
-    except pytz.UnknownTimeZoneError as exc:
-        # Expected error: the subject's tz_str is not a known IANA timezone.
-        # (pytz.UnknownTimeZoneError subclasses KeyError, NOT RuntimeError, so the
-        # previous `except RuntimeError` never caught it.)
+        # ZoneInfo evaluates the zone's rules on demand, so DST stays correct at any
+        # date instead of freezing at the end of a precomputed transition table.
+        tzinfo = ZoneInfo(tz_str)
+    except (KeyError, ValueError) as exc:
+        # Expected error: the subject's tz_str is not a known IANA timezone
+        # (ZoneInfoNotFoundError subclasses KeyError) or is a malformed key
+        # (ValueError). Neither is a RuntimeError, so they need naming explicitly.
         logger.debug("Unknown timezone '%s': %s. Cannot compute sunrise/sunset.", tz_str, exc)
         return None
     except Exception as exc:  # pragma: no cover - defensive
@@ -265,14 +262,19 @@ def _compute_sun_times(
     dt_local = dt_utc.astimezone(tzinfo)
 
     # Calculate JD for midnight local time (start of the day)
-    # IMPORTANT: Use tzinfo.localize() instead of datetime(..., tzinfo=tzinfo)
-    # to properly handle DST transitions with pytz
+    # IMPORTANT: resolve the wall time through localize_naive rather than attaching
+    # the tzinfo directly, so DST edge cases are decided instead of defaulted.
     midnight_naive = datetime(
         year=dt_local.year,
         month=dt_local.month,
         day=dt_local.day,
     )
-    midnight_local = tzinfo.localize(midnight_naive)
+    # Civil midnight can be ambiguous (fall-back fold) or nonexistent (spring-forward
+    # gap at 00:00 — America/Sao_Paulo 2018-11-04, Africa/Cairo 2023-04-28). The
+    # smaller-offset reading answers both correctly: inside a fold it is the
+    # post-transition occurrence, and across a gap it is the first instant of the
+    # civil day that actually exists. A bare localize silently took a default here.
+    midnight_local = localize_naive(midnight_naive, tzinfo, is_dst=False)
     midnight_utc = midnight_local.astimezone(timezone.utc)
     jd_midnight = datetime_to_julian(midnight_utc)
 
@@ -632,19 +634,24 @@ class MoonPhaseDetailsFactory:
             sun_times = _compute_sun_times(subject)
             if sun_times is not None:
                 sunrise_local, sunset_local = sun_times
-                # Solar noon as the midpoint between sunrise and sunset.
-                midpoint = sunrise_local + (sunset_local - sunrise_local) / 2
-                # pytz keeps sunrise's offset across arithmetic; normalize so
-                # solar_noon carries the correct local offset on DST-transition days
-                # (the instant is already correct, only the wall-clock representation
-                # could otherwise be off). getattr + callable guards non-pytz tzinfo
-                # defensively (and narrows the type where a hasattr check would not).
-                normalize = cast(
-                    "Optional[Callable[[datetime], datetime]]",
-                    getattr(sunrise_local.tzinfo, "normalize", None),
-                )
-                solar_noon_local = normalize(midpoint) if callable(normalize) else midpoint
-                day_length = sunset_local - sunrise_local
+                # Solar noon as the midpoint between sunrise and sunset, computed in
+                # INSTANT space. Adding a timedelta to an aware datetime is wall-clock
+                # arithmetic: the fields advance and the offset is then re-resolved at
+                # the NEW clock time, so on a DST-transition day the midpoint lands on a
+                # different moment (measured: one hour off across a spring-forward).
+                # Converting to UTC first makes the addition offset-independent; the
+                # result is rendered back in the subject's zone, which restores the
+                # correct local wall clock on either side of the transition.
+                # Both endpoints are converted BEFORE the subtraction, not just
+                # before the addition: when two aware datetimes share the same
+                # tzinfo object — and ZoneInfo caches, so they always do here —
+                # Python subtracts their wall-clock fields and never consults
+                # the offsets. Across a transition that silently reports the
+                # clock elapsed rather than the time elapsed.
+                sunrise_utc = sunrise_local.astimezone(timezone.utc)
+                sunset_utc = sunset_local.astimezone(timezone.utc)
+                day_length = sunset_utc - sunrise_utc
+                solar_noon_local = (sunrise_utc + day_length / 2).astimezone(sunrise_local.tzinfo)
         except _BACKEND_ERRORS as exc:
             # Expected error: polar regions, ephemeris unavailable, etc.
             logger.debug("Sunrise/sunset calculation failed (expected): %s", exc)
