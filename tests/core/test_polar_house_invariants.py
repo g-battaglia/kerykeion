@@ -325,3 +325,63 @@ class TestTheLogAgreesWithWhatHappened:
     def test_the_clamp_path_still_says_so(self):
         """The control: where a latitude really is capped, the log must show it."""
         assert "capped" in self._logs_for(b"G")
+
+
+class TestTheChartIsLabelledWithTheSystemItUsed:
+    """A substituted chart must not render as the system that was requested.
+
+    The fallback record is structured data that renderers do not read. The SVG
+    legend, the report table and the serialized context all take the house system
+    from `houses_system_identifier` / `houses_system_name`, so leaving the request
+    in those fields prints "Placidus" over Porphyry cusps — the same silence the
+    substitution exists to end, just moved one layer out.
+
+    The request is not lost: it survives on the fallback record, which is where a
+    consumer that cares about the distinction should look.
+    """
+
+    @staticmethod
+    def _subject(hsys: str, latitude: float):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Labelled", 1995, 1, 15, 2, 0,
+            lat=latitude, houses_system_identifier=hsys, **_POLAR_SUBJECT,
+        )
+
+    def test_a_substituted_chart_names_the_substitute(self):
+        subject = self._subject("P", 78.2232)
+        assert subject.houses_system_identifier == "O"
+        assert subject.houses_system_name == "Porphyry"
+
+    def test_the_request_survives_on_the_record(self):
+        record = self._subject("P", 78.2232).polar_house_fallbacks[0]
+        assert record.requested_house_system_identifier == "P"
+        assert record.requested_house_system_name == "Placidus"
+
+    def test_an_unsubstituted_chart_keeps_its_own_name(self):
+        """The control: relabelling must not leak outside the fallback."""
+        subject = self._subject("P", 45.0)
+        assert subject.polar_house_fallbacks == []
+        assert subject.houses_system_identifier == "P"
+        assert subject.houses_system_name == "Placidus"
+
+    def test_a_system_defined_everywhere_is_untouched_at_the_pole(self):
+        subject = self._subject("W", 78.2232)
+        assert subject.polar_house_fallbacks == []
+        assert subject.houses_system_identifier == "W"
+
+    def test_the_rendered_chart_names_the_substitute_too(self):
+        """The subject-level assertions above are not enough on their own.
+
+        The SVG baseline cannot catch this: `compare_chart_svg` compares numeric
+        tokens with a tolerance, so a legend reading "Placidus" over Porphyry
+        cusps passes it. The mislabelling lived in the rendered output for exactly
+        that reason, and it is the rendered output a reader trusts.
+        """
+        from kerykeion import ChartDataFactory
+        from kerykeion.charts.chart_drawer import ChartDrawer
+
+        svg = ChartDrawer(
+            ChartDataFactory.create_natal_chart_data(self._subject("P", 78.2232))
+        ).generate_svg_string()
+        assert "Domification: Porphyry" in svg
+        assert "Domification: Placidus" not in svg

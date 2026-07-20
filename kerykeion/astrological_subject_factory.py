@@ -2413,6 +2413,20 @@ class AstrologicalSubjectFactory:
         )
         if polar_fallback is not None:
             data.setdefault("polar_house_fallbacks", []).append(polar_fallback)
+            # Re-label the chart with the system its cusps ACTUALLY came from.
+            # `houses_system_identifier` answers "which division are these
+            # houses", and after a substitution the honest answer is the
+            # substitute — the request survives on the fallback record, which is
+            # where it belongs. Leaving the requested name here would make every
+            # rendered output say Placidus over Porphyry cusps: the SVG legend,
+            # the report table and the serialized context all read these two
+            # fields, and none of them knows about the fallback list. Declaring
+            # the degradation only in a structure the renderers ignore is the
+            # same silence this fallback exists to end.
+            if polar_fallback.used_house_system_identifier:
+                data["houses_system_identifier"] = polar_fallback.used_house_system_identifier
+            if polar_fallback.used_house_system_name:
+                data["houses_system_name"] = polar_fallback.used_house_system_name
 
         # Store house degrees
         data["_houses_degree_ut"] = cusps
