@@ -41,10 +41,15 @@
 
 ### Changed
 
-- `tzdata` is now a hard runtime dependency and `pytz` is gone. `zoneinfo` reads
-  the host's timezone database and only falls back to `tzdata`, so without the
-  pin two machines with differently-aged system data would compute different
-  charts, and platforms without a system database would not resolve at all.
+- `tzdata` is now a hard runtime dependency and `pytz` is gone. `zoneinfo`
+  searches `TZPATH` (the host's own database) first and falls back to the
+  `tzdata` package only when a zone is not found there, so the dependency is a
+  floor rather than a pin: it guarantees every zone resolves on hosts that ship
+  no system database — Alpine, Windows, slim containers — where the library
+  would otherwise raise. It does **not** override a differently-aged system
+  database, so two hosts can still disagree about a zone whose rules changed
+  recently. Pinning outright would require clearing `TZPATH` at import, which
+  would override the deliberate choices of anyone who maintains their own.
 - A local time of year 9999 east of UTC now resolves instead of raising. The old
   failure was an artifact of `pytz` probing ±1 day around the requested instant,
   not a real limit.
