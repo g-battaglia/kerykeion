@@ -800,6 +800,17 @@ def safe_timezone(tz_str: str) -> ZoneInfo:
         ) from exc
 
 
+def _zone_label(tz: _tzinfo) -> str:
+    """Readable name for a zone, for error messages and logs.
+
+    ``ZoneInfo`` carries the IANA key; a fixed-offset or hand-rolled ``tzinfo``
+    does not, and ``str()`` is the closest it offers. Naming the zone is what
+    makes a transition error actionable — "02:30 does not exist" is a riddle
+    until the reader knows which clock it did not exist on.
+    """
+    return getattr(tz, "key", None) or str(tz)
+
+
 def _fold_offsets(naive: datetime, tz: _tzinfo) -> tuple[Optional[timedelta], Optional[timedelta]]:
     """UTC offsets a wall time would get on each side of a nearby transition.
 
@@ -847,6 +858,38 @@ def is_ambiguous(naive: datetime, tz: _tzinfo) -> bool:
     return off0 != off1 and not is_nonexistent(naive, tz)
 
 
+# Below this instant a non-unique wall time is resolved, never rejected.
+#
+# Two independent facts put the line exactly here.
+#
+# Daylight saving did not exist yet. The earliest SEASONAL transition anywhere in
+# the tz database — a shift that returns to the previous offset within a year —
+# is from 1916. What sits below the horizon instead are the 19th-century
+# adoptions of mean and standard time: one-off, permanent moves of a zone's
+# clock. The database records them in the same shape as a seasonal shift, so they
+# arrive here indistinguishable, and "was daylight saving in effect?" is not a
+# question 1893 can answer. Asking a caller to answer it about their own birth
+# certificate is asking for a guess.
+#
+# And it is where the previous backend's horizon already was. That transition
+# table began at 1901-12-13 20:45:52 — the 32-bit ``time_t`` floor — with no
+# recorded transition below it, so an earlier wall time fell through to the zone's
+# opening mean-time record and was ALWAYS resolvable: measured at the midpoint of
+# all 299 pre-1902 gap and fold windows, the old backend rejected none of them.
+# Putting the horizon just above the floor restores that, and only that. The
+# offsets themselves do NOT come back: where the truncated table had swallowed a
+# real transition it also froze the answer, so e.g. Australia/Adelaide on
+# 1899-05-01 read +09:14 there and reads its adopted +09:00 here — 14 minutes
+# better, deliberately not restored.
+#
+# The 18 days between the floor and the constant are empty (zero transitions), so
+# the two are behaviourally identical and the rounder date is the readable one.
+# Not 1900, though: 43 transitions fall in ``[1900, 1902)`` — Asia/Shanghai's on
+# 1900-12-31, the whole Alaska group on 1900-08-20 — and those resolved under the
+# old backend too.
+_PRE_DAYLIGHT_SAVING_HORIZON = datetime(1902, 1, 1)
+
+
 def localize_naive(naive: datetime, tz: _tzinfo, *, is_dst: Optional[bool] = None) -> datetime:
     """Attach ``tz`` to a naive wall time, resolving DST transitions explicitly.
 
@@ -854,13 +897,21 @@ def localize_naive(naive: datetime, tz: _tzinfo, *, is_dst: Optional[bool] = Non
 
     * ``True``  → the reading with the LARGER UTC offset (clocks moved forward)
     * ``False`` → the reading with the SMALLER UTC offset
-    * ``None``  → raise, rather than guess
+    * ``None``  → raise, rather than guess — but only above
+      :data:`_PRE_DAYLIGHT_SAVING_HORIZON`, below which the question does not
+      arise and the wall time resolves to the offset in force before the change.
 
     The clock decides, never the zone's ``dst()`` flag and never a fixed ``fold``
     index. Not the fold, because the correspondence between the two INVERTS
     between a fall-back and a gap: inside a fold ``fold=0`` is the summer
     reading, inside a spring-forward gap it is the winter one, so a hardcoded
     value would be right on one side of the year and wrong on the other.
+
+    That warning does not touch the pre-1902 branch, which also hardcodes
+    ``fold=0``: what inverts is the mapping from ``is_dst``, not the meaning of
+    the index. PEP 495 defines ``fold=0`` as the EARLIER of the two readings in
+    a fold and as the pre-transition offset in a gap — "what the clock showed
+    before the change" — in both directions of the year alike.
 
     Not ``dst()``, because that flag is not portable. Different builds of the tz
     database record the same zone differently — for Ireland one encodes summer
@@ -888,8 +939,9 @@ def localize_naive(naive: datetime, tz: _tzinfo, *, is_dst: Optional[bool] = Non
         is_dst: Disambiguator; ``None`` means "reject anything non-unique".
 
     Raises:
-        KerykeionException: If ``is_dst`` is None and the wall time either does
-            not exist or occurs twice in ``tz``.
+        KerykeionException: If ``is_dst`` is None, the wall time is at or above
+            :data:`_PRE_DAYLIGHT_SAVING_HORIZON`, and it either does not exist
+            or occurs twice in ``tz``.
     """
     off0, off1 = _fold_offsets(naive, tz)
 
@@ -898,15 +950,37 @@ def localize_naive(naive: datetime, tz: _tzinfo, *, is_dst: Optional[bool] = Non
         return naive.replace(tzinfo=tz)
 
     if is_dst is None:
+        # Before daylight saving existed there is nothing for is_dst to select,
+        # so a birth date is answered rather than bounced back at the caller.
+        if naive < _PRE_DAYLIGHT_SAVING_HORIZON:
+            resolved = naive.replace(tzinfo=tz, fold=0)
+            logger.info(
+                f"{naive.isoformat()} falls on a pre-1902 change of civil time in "
+                f"{_zone_label(tz)}; resolved to the offset in force before it "
+                f"({resolved.utcoffset()})."
+            )
+            return resolved
+
         # Gap first: a non-existent wall time is ALSO reported as ambiguous.
+        #
+        # Both messages name daylight saving AND a change of standard time,
+        # because which one it was is not decidable here: the tz database
+        # records them in the same shape, and the dst() flag that would tell
+        # them apart is encoded differently by different builds of it. Naming
+        # only DST would be a confident answer we cannot back.
         if is_nonexistent(naive, tz):
             raise KerykeionException(
-                "Non-existent time error! The time does not exist due to DST transition (spring forward). "
-                "Please specify a valid time."
+                f"Non-existent time error! The wall time {naive.isoformat()} never occurred in "
+                f"{_zone_label(tz)}: the zone's clocks jumped forward across it, either for "
+                "daylight saving or for a change of standard time. Please specify a valid time, "
+                "or pass is_dst to choose a reading."
             )
         raise KerykeionException(
-            "Ambiguous time error! The time falls during a DST transition. "
-            "Please specify is_dst=True or is_dst=False to clarify."
+            f"Ambiguous time error! The wall time {naive.isoformat()} occurred twice in "
+            f"{_zone_label(tz)}: the zone's clocks moved back across it, either for daylight "
+            "saving or for a change of standard time. Please specify is_dst=True for the "
+            "earlier reading (the larger UTC offset) or is_dst=False for the later one (the "
+            "smaller)."
         )
 
     # Deliberately the offsets and NOT dst(): the flag is not portable. The same

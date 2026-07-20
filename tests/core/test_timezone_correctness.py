@@ -21,7 +21,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 import zoneinfo
-from zoneinfo import ZoneInfo
+from zoneinfo import ZoneInfo, available_timezones
 
 import pytest
 
@@ -159,6 +159,175 @@ class TestStandardTimeAdoptionBoundary:
 
 
 # ---------------------------------------------------------------------------
+# The minutes INSIDE the adoption window, where the clock actually jumped
+# ---------------------------------------------------------------------------
+
+
+class TestPreDaylightSavingWallTimesResolve:
+    """A birth in the minutes a zone skipped or repeated must still cast.
+
+    Adopting standard time moves a clock once, permanently, and the tz database
+    records that in the same shape as a summer-time change: some wall times are
+    skipped, others happen twice. A registrar in 1893 wrote down what the clock
+    said and had no way to annotate which side of a jump it was on, so rejecting
+    those minutes rejects the birth certificate rather than a mistake — and asks
+    the caller a question ("was daylight saving in effect?") about a year in which
+    daylight saving had not been invented.
+
+    The class above probes the same boundary at NOON, which is why it stayed green
+    while this was broken: every one of these windows is minutes wide and sits
+    against a midnight or a midday, so a date-level test walks straight past it.
+    The cases here are deliberately about the MINUTES.
+    """
+
+    def test_the_whole_rome_window_resolves(self):
+        """Rome's adoption skipped 1893-10-31 23:49:56 through midnight.
+
+        Asserted across the window rather than at one sample: a single probe could
+        be satisfied by a fix that happened to catch that minute, and the failure
+        this pins was found precisely by moving the probe.
+        """
+        for minute in (50, 55, 59):
+            wall = datetime(1893, 10, 31, 23, minute)
+            assert is_nonexistent(wall, _ROME), "precondition: these minutes really were skipped"
+            resolved = localize_naive(wall, _ROME)
+            assert resolved.utcoffset() == timedelta(minutes=49, seconds=56), (
+                "the reading before the jump is Rome's own mean time"
+            )
+
+        assert localize_naive(datetime(1893, 10, 31, 23, 55), _ROME).astimezone(timezone.utc) == datetime(
+            1893, 10, 31, 23, 5, 4, tzinfo=timezone.utc
+        )
+
+    def test_the_window_is_answered_through_the_public_entry_point(self):
+        """The regression was reported against a chart, so it is pinned on one."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Rome inside the adoption gap", 1893, 10, 31, 23, 55,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        assert subject.iso_formatted_local_datetime == "1893-10-31T23:55:00+00:49:56"
+        assert subject.iso_formatted_utc_datetime == "1893-10-31T23:05:04+00:00"
+
+    def test_a_repeated_wall_time_resolves_to_the_earlier_reading(self):
+        """New York's 1883 adoption REPEATS four minutes instead of skipping them.
+
+        A fold and a gap have to come out on the same side of the change, and this
+        is the case that shows the rule is not "take the smaller offset": here the
+        answer is the LARGER one, because that is what the clock read before noon
+        struck twice.
+        """
+        new_york = ZoneInfo("America/New_York")
+        wall = datetime(1883, 11, 18, 12, 0)
+        assert is_ambiguous(wall, new_york), "precondition: this minute happened twice"
+        assert localize_naive(wall, new_york).utcoffset() == timedelta(hours=-4, minutes=-56, seconds=-2)
+
+        # Half an hour later the adoption is done and there is nothing to resolve.
+        assert localize_naive(datetime(1883, 11, 18, 12, 30), new_york).utcoffset() == timedelta(hours=-5)
+
+    def test_a_half_hour_jump_is_treated_no_differently(self):
+        """Adelaide moved 30 minutes, so size cannot be what identifies these.
+
+        A tempting shortcut is to separate an adoption from a summer-time change
+        by the size of the step — an hour means daylight saving, anything else
+        means a change of standard time. Adelaide 1899 (+09:00 to +09:30) and the
+        Broken Hill adoptions are exactly an hour or exactly half of one, so the
+        shortcut would misfile the very cases it exists to catch. The date is what
+        decides, and this pins that.
+        """
+        adelaide = ZoneInfo("Australia/Adelaide")
+        for wall in (datetime(1899, 5, 1, 0, 0), datetime(1899, 5, 1, 0, 10), datetime(1899, 5, 1, 0, 29)):
+            assert is_nonexistent(wall, adelaide), "precondition: inside the 30-minute gap"
+            assert localize_naive(wall, adelaide).utcoffset() == timedelta(hours=9)
+
+        assert localize_naive(datetime(1899, 5, 1, 0, 30), adelaide).utcoffset() == timedelta(hours=9, minutes=30)
+
+    def test_the_day_after_adoption_is_unremarkable(self):
+        """Negative control: the same hours once the change is behind us.
+
+        Without this, a fix that simply stopped raising everywhere in the 1890s
+        would pass every assertion above.
+        """
+        wall = datetime(1893, 11, 1, 23, 55)
+        assert not is_nonexistent(wall, _ROME) and not is_ambiguous(wall, _ROME)
+        assert localize_naive(wall, _ROME).utcoffset() == timedelta(hours=1)
+
+    def test_fold_zero_is_the_offset_in_force_before_every_such_change(self):
+        """The invariant the resolution rests on, asserted over the whole database.
+
+        PEP 495 makes ``fold=0`` the pre-transition reading in a fold and in a gap
+        alike, which is the single sentence that lets one branch answer both. It
+        is worth pinning across every zone rather than trusting the prose: were it
+        ever false in one direction, the resolution would silently take the wrong
+        side of an adoption for half the affected zones.
+        """
+        from kerykeion.utilities import _PRE_DAYLIGHT_SAVING_HORIZON, _fold_offsets
+
+        checked = 0
+        for zone_name in sorted(available_timezones()):
+            tz = ZoneInfo(zone_name)
+            for wall in (
+                datetime(1893, 10, 31, 23, 55),
+                datetime(1883, 11, 18, 12, 0),
+                datetime(1899, 5, 1, 0, 10),
+                datetime(1900, 12, 31, 23, 50),
+            ):
+                off0, off1 = _fold_offsets(wall, tz)
+                if off0 == off1:
+                    continue
+                assert wall < _PRE_DAYLIGHT_SAVING_HORIZON
+                before = (wall - timedelta(days=2)).replace(tzinfo=tz).utcoffset()
+                assert localize_naive(wall, tz).utcoffset() == before == off0, (
+                    f"{zone_name} at {wall}: fold=0 must be the offset in force two days earlier"
+                )
+                checked += 1
+
+        assert checked > 20, f"only {checked} windows exercised; the sweep found nothing to prove"
+
+    def test_no_seasonal_change_hides_below_the_horizon(self):
+        """Data-drift guard: the horizon must never start swallowing real DST.
+
+        The resolution is safe only because daylight saving did not exist yet
+        below 1902 — the earliest seasonal transition in the database is from
+        1916. That is a fact about the tz data, not about this code, so a future
+        revision could in principle introduce one and turn the branch from
+        "answers an unanswerable question" into "silently picks a side of a real
+        summer-time fold".
+
+        Detected WITHOUT consulting ``dst()``, which is what makes the guard worth
+        having: the flag is encoded differently by different builds of the
+        database, so a check keyed on it would pass on this host and fail on
+        another. A seasonal change is instead recognised by its shape — the offset
+        goes away and comes back within the year.
+        """
+        from kerykeion.utilities import _PRE_DAYLIGHT_SAVING_HORIZON
+
+        samples = []
+        year, month = 1835, 1
+        while datetime(year, month, 1) < _PRE_DAYLIGHT_SAVING_HORIZON:
+            samples.append(datetime(year, month, 1, 12, 0))
+            month += 1
+            if month > 12:
+                month, year = 1, year + 1
+
+        seasonal = []
+        for zone_name in sorted(available_timezones()):
+            tz = ZoneInfo(zone_name)
+            offsets = [sample.replace(tzinfo=tz).utcoffset() for sample in samples]
+            for index in range(1, len(offsets)):
+                previous = offsets[index - 1]
+                if offsets[index] == previous:
+                    continue
+                if previous in offsets[index : index + 13]:
+                    seasonal.append(f"{zone_name} {samples[index].date()} {previous} -> {offsets[index]}")
+
+        assert seasonal == [], (
+            "a transition below the horizon now returns to its previous offset within a year, "
+            f"i.e. it looks seasonal: {seasonal[:5]}"
+        )
+
+
+# ---------------------------------------------------------------------------
 # Births before the zone kept any recorded civil time
 # ---------------------------------------------------------------------------
 
@@ -281,19 +450,18 @@ class TestTransitionClassification:
 
 
 class TestIsDstFallsBackToTheOffset:
-    """When the zone flags neither reading as DST, the larger offset wins.
+    """`is_dst=True` means the larger UTC offset. Always, and by that alone.
 
-    This is the fallback arm of the rule, not the whole of it: the zone's own
-    `dst()` is consulted first, and only a wall time whose two readings carry the
-    same flag reaches the clock comparison. See
-    :class:`TestIsDstFollowsTheZoneNotTheClock` for the arm that fires when the
-    zone does distinguish them.
+    Not a fallback arm — the whole rule. The zone's `dst()` is never consulted,
+    because different builds of the tz database encode the same zone with
+    opposite signs and keying on the flag would hand back a different hour
+    depending on the host.
 
-    The fallback is stated in terms of the offset, not of a fixed fold index,
+    The rule is stated in terms of the offset rather than a fixed fold index
     because the correspondence between the two INVERTS between a fold and a gap.
-    It is also why zones with negative DST resolve correctly: there, standard time
-    is the summer reading, and following the clock rather than the label gives the
-    right answer without special-casing the zone.
+    It is also why zones with negative DST resolve correctly: there, standard
+    time is the summer reading, and following the clock rather than the label
+    gives the right answer without special-casing the zone.
     """
 
     @pytest.mark.parametrize(
@@ -334,6 +502,41 @@ class TestIsDstFallsBackToTheOffset:
             localize_naive(datetime(2026, 10, 25, 2, 30), _ROME)
         with pytest.raises(KerykeionException, match="Non-existent time error"):
             localize_naive(datetime(2026, 3, 29, 2, 30), _ROME)
+
+    @pytest.mark.parametrize("naive", [datetime(2026, 10, 25, 2, 30), datetime(2026, 3, 29, 2, 30)])
+    def test_the_message_is_answerable(self, naive):
+        """What the caller is told has to be enough to act on.
+
+        Three things, each of which was missing at some point and each of which
+        someone had to guess at instead:
+
+        * the wall time and the ZONE, so the reader knows which clock this is
+          about — "02:30 does not exist" alone is a riddle;
+        * both possible causes, because which one it was is genuinely not
+          decidable here, and naming only daylight saving is a confident answer
+          the code cannot back — it also makes the message absurd on a 19th
+          century adoption of standard time;
+        * what ``is_dst`` selects, in terms of the offset. "Was daylight saving in
+          effect?" has no answer for a fold caused by a change of standard time,
+          so a caller facing one cannot act on a message phrased that way.
+        """
+        with pytest.raises(KerykeionException) as excinfo:
+            localize_naive(naive, _ROME)
+        message = str(excinfo.value)
+
+        assert "Europe/Rome" in message
+        assert naive.isoformat() in message
+        assert "daylight saving" in message and "standard time" in message
+        assert "DST transition" not in message, (
+            "the old wording claimed a cause the code cannot determine"
+        )
+
+    def test_the_ambiguous_message_defines_is_dst_by_the_offset(self):
+        with pytest.raises(KerykeionException) as excinfo:
+            localize_naive(datetime(2026, 10, 25, 2, 30), _ROME)
+        message = str(excinfo.value)
+        assert "is_dst=True" in message and "larger UTC offset" in message
+        assert "is_dst=False" in message and "smaller" in message
 
     def test_ordinary_wall_time_needs_no_disambiguation(self):
         naive = datetime(2026, 6, 15, 2, 30)
@@ -447,6 +650,46 @@ class TestIsDstIsResolvedIdenticallyOnEveryHost:
         assert localize_naive(datetime(2026, 10, 25, 2, 30), _ROME, is_dst=True).utcoffset() == timedelta(hours=2)
         assert localize_naive(datetime(2026, 10, 25, 2, 30), _ROME, is_dst=False).utcoffset() == timedelta(hours=1)
 
+    @pytest.mark.parametrize(
+        "zone_name,wall",
+        [
+            # Negative-DST encoding: the build disagreement is about summer itself.
+            ("Europe/Dublin", datetime(2026, 10, 25, 1, 30)),
+            # A change of STANDARD offset, where the builds disagree about whether
+            # either side counts as daylight saving at all.
+            ("Europe/Kyiv", datetime(1941, 9, 19, 23, 30)),
+        ],
+    )
+    def test_neither_database_lets_a_non_unique_wall_time_through(self, zone_name, wall):
+        """The refusal, and the resolution, must both be build-independent.
+
+        This is the test that would catch anyone reintroducing a `dst()`-based
+        discriminator. Such a rule looks correct on whichever database its author
+        happened to have: it would let one of these two through on one build and
+        raise on the other, or resolve them to instants an hour apart. Asserting
+        against both databases present on this machine is the only way to see that
+        from inside a test suite.
+        """
+        previous = list(zoneinfo.TZPATH)
+        resolved = {}
+        try:
+            for label, path in (("system", previous), ("package", [])):
+                zoneinfo.reset_tzpath(to=path)
+                zone = ZoneInfo.no_cache(zone_name)
+                with pytest.raises(KerykeionException):
+                    localize_naive(wall, zone)
+                resolved[label] = tuple(
+                    localize_naive(wall, zone, is_dst=flag).astimezone(timezone.utc) for flag in (True, False)
+                )
+        finally:
+            zoneinfo.reset_tzpath(to=previous)
+
+        assert resolved["system"] == resolved["package"], (
+            f"{zone_name} at {wall} resolved to {resolved['system']} against the system database "
+            f"and {resolved['package']} against the packaged one"
+        )
+        assert resolved["system"][0] < resolved["system"][1], "is_dst=True is the earlier instant"
+
 
 class TestAStandardOffsetChangeHasNoDaylightAnswer:
     """Not every repeated wall time is a summer-time fold.
@@ -464,12 +707,26 @@ class TestAStandardOffsetChangeHasNoDaylightAnswer:
     _KYIV_FOLD = datetime(1941, 9, 19, 23, 30)
 
     def test_neither_reading_claims_daylight_saving(self):
-        kyiv = ZoneInfo("Europe/Kyiv")
-        assert is_ambiguous(self._KYIV_FOLD, kyiv), "precondition: the hour repeats"
-        sides = [self._KYIV_FOLD.replace(tzinfo=kyiv, fold=f) for f in (0, 1)]
-        assert not any((side.dst() or timedelta()) > timedelta() for side in sides), (
-            "if a side ever starts claiming positive DST, this case needs rethinking"
-        )
+        """Checked against BOTH databases, because the claim is about `dst()`.
+
+        Every assertion whose subject is the daylight-saving flag has to be made
+        twice or it is not really made: the two builds on this machine encode the
+        same zone with opposite signs elsewhere, so a single-build check could
+        pass here and be false on a user's host — which is exactly the trap this
+        whole class exists to document.
+        """
+        previous = list(zoneinfo.TZPATH)
+        try:
+            for label, path in (("system", previous), ("package", [])):
+                zoneinfo.reset_tzpath(to=path)
+                kyiv = ZoneInfo.no_cache("Europe/Kyiv")
+                assert is_ambiguous(self._KYIV_FOLD, kyiv), f"precondition ({label}): the hour repeats"
+                sides = [self._KYIV_FOLD.replace(tzinfo=kyiv, fold=f) for f in (0, 1)]
+                assert not any((side.dst() or timedelta()) > timedelta() for side in sides), (
+                    f"a side claims positive DST on the {label} database; this case needs rethinking"
+                )
+        finally:
+            zoneinfo.reset_tzpath(to=previous)
 
     def test_the_result_is_deterministic(self):
         kyiv = ZoneInfo("Europe/Kyiv")

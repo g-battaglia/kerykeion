@@ -46,7 +46,7 @@ from typing import Union
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, _GEO_TOPO_PERSPECTIVES
 from kerykeion._predictive_utils import jd_to_ymd_hms
 from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_models import CompositeSubjectModel, AstrologicalSubjectModel
+from kerykeion.schemas.kr_models import CompositeSubjectModel, AstrologicalSubjectModel, PolarHouseFallbackModel
 from kerykeion.schemas.kr_literals import (
     ZodiacType,
     PerspectiveType,
@@ -479,14 +479,21 @@ class CompositeSubjectFactory:
             return
         self.lunar_phase = calculate_moon_phase(moon.abs_pos, sun.abs_pos)
 
-    def _effective_midpoint_house_system(self) -> tuple[str, str]:
-        """Return the common house division used by the parents' actual cusps.
+    def _require_parents_to_share_a_house_division(self) -> None:
+        """Reject parents whose cusps came from different house divisions.
 
-        This compatibility rule belongs only to midpoint composites, which
-        average the parents' existing cusps. A Davison composite recasts a new
-        chart at the midpoint location and must therefore retain the requested
-        system, allowing that new cast to decide whether a polar fallback is
-        needed and to record it when it is.
+        Each composite cusp is the circular mean of the two subjects' SAME-numbered
+        cusps, so the result inherits whatever division produced them. Averaging a
+        Porphyry third house with a Placidus third house yields a boundary that
+        belongs to neither system — a number with no astrological reading — and no
+        label on the output could make it one. The factory already refuses parents
+        whose REQUESTED systems disagree; a substitution forced at one parent's
+        latitude makes their ACTUAL systems disagree just as materially.
+
+        This rule belongs only to midpoint composites. A Davison composite recasts
+        a whole new chart at the midpoint moment and location, so it retains the
+        requested system and lets that fresh cast decide for itself whether a polar
+        substitution is needed.
         """
         first_effective = self.first_subject.effective_houses_system_identifier
         second_effective = self.second_subject.effective_houses_system_identifier
@@ -500,7 +507,29 @@ class CompositeSubjectFactory:
                 "A house system undefined at one subject's latitude was substituted there; "
                 "see polar_house_fallbacks on that subject."
             )
-        return first_effective, self.first_subject.effective_houses_system_name
+
+    def _inherited_house_fallbacks(self) -> list[PolarHouseFallbackModel]:
+        """The parents' house-substitution records, carried onto the composite.
+
+        A midpoint composite has no latitude of its own — its cusps are circular
+        means of cusps computed at two different places — so it cannot perform a
+        substitution and cannot author a record of one. It can only inherit. These
+        are the records that explain why the averaged cusps are Porphyry when
+        Placidus is what the caller asked for, and carrying them is what lets the
+        model's ``effective_houses_system_*`` view answer correctly without the
+        requested identifier having to be overwritten.
+
+        Only each parent's MAIN record travels. An ancillary one — the Gauquelin
+        ring degrades on its own terms — describes a product the midpoint technique
+        does not average, so passing it on would attach to the composite a claim
+        nothing in it supports.
+        """
+        records = []
+        for subject in (self.first_subject, self.second_subject):
+            record = subject._main_house_fallback()
+            if record is not None:
+                records.append(record)
+        return records
 
     def get_midpoint_composite_subject_model(self):
         """
@@ -531,13 +560,18 @@ class CompositeSubjectFactory:
             This method performs all calculations internally and returns a complete,
             ready-to-use composite chart model suitable for analysis or chart drawing.
         """
-        effective_identifier, effective_name = self._effective_midpoint_house_system()
+        self._require_parents_to_share_a_house_division()
         self._calculate_midpoint_composite_points_and_houses()
         self._calculate_composite_lunar_phase()
 
         midpoint_data = self.__dict__.copy()
-        midpoint_data["houses_system_identifier"] = effective_identifier
-        midpoint_data["houses_system_name"] = effective_name
+        # `houses_system_identifier` keeps the REQUEST, as it does on a subject: a
+        # substitution forced by one parent's latitude is a fact about that parent,
+        # not a preference the relationship has adopted, and the requested value is
+        # what a relocation or a re-cast must start from. The substitution still has
+        # to be visible, so the parents' own records travel with the composite and
+        # drive the inherited `effective_houses_system_*` view.
+        midpoint_data["polar_house_fallbacks"] = self._inherited_house_fallbacks()
         return CompositeSubjectModel(**midpoint_data)
 
     def get_davison_composite_subject_model(

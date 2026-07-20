@@ -79,35 +79,66 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 
 ## Timezone & DST Errors
 
-### "Ambiguous time error! The time falls during a DST transition..."
+### What `is_dst` actually selects
 
-**Cause:** During the "fall back" DST transition, the same local time occurs twice (e.g., 1:30 AM happens twice on the first Sunday of November in the US).
+`is_dst` picks a **UTC offset**, not a season:
 
-**Solution:** Specify which occurrence you mean with `is_dst`:
+- `is_dst=True` → the reading with the **larger** UTC offset.
+- `is_dst=False` → the reading with the **smaller** UTC offset.
+- `is_dst=None` (the default) → raise, rather than guess.
+
+The name is historical; the contract is the offset. Reading it as "was summer time in force?" gives the same answer almost everywhere, because a zone that advances its clocks in summer does end up with the larger offset then. It gives the *opposite* answer on zones whose tz build encodes summer as the baseline and winter as a *negative* DST shift — Ireland is the textbook case, with `Europe/Dublin` shipped by some builds as summer `dst()=0` against a winter of `-1h`; `Africa/Casablanca` and `Africa/Windhoek` have carried the same encoding. Which zones use it depends on the tz database build installed on your machine (vanguard and rearguard formats disagree), so there is no fixed list and no fixed count to quote.
+
+If you are migrating from Kerykeion 5, which delegated to `pytz` and its `is_dst` flag, expect the selection to flip for exactly those zones. Everywhere else the resolved instant is unchanged. Anchoring on the offset is what makes the behaviour reproducible across machines: the offset is a property of the clock, the DST flag is a property of how someone chose to write the zone down.
+
+### "Ambiguous time error! The wall time ... occurred twice in ..."
+
+Full message:
+
+```text
+Ambiguous time error! The wall time 2023-11-05T01:30:00 occurred twice in
+America/New_York: the zone's clocks moved back across it, either for daylight
+saving or for a change of standard time. Please specify is_dst=True for the
+earlier reading (the larger UTC offset) or is_dst=False for the later one (the
+smaller).
+```
+
+**Cause:** The zone's clocks moved back across that wall time, so it happened twice (e.g. 1:30 AM occurs twice on the first Sunday of November in the US). The message names both daylight saving and a change of standard time because the tz database records the two in the same shape, and Kerykeion does not claim to know which one it was.
+
+**Solution:** Pick the occurrence with `is_dst`:
 
 ```python
-# For the first occurrence (during daylight saving time)
+# The earlier reading — the larger UTC offset, here -04:00
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 2023, 11, 5, 1, 30,  # Ambiguous time
     lng=-74.006, lat=40.7128, tz_str="America/New_York",
     online=False,
-    is_dst=True  # First occurrence (summer time)
+    is_dst=True
 )
 
-# For the second occurrence (after DST ends)
+# The later reading — the smaller UTC offset, here -05:00
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 2023, 11, 5, 1, 30,
     lng=-74.006, lat=40.7128, tz_str="America/New_York",
     online=False,
-    is_dst=False  # Second occurrence (standard time)
+    is_dst=False
 )
 ```
 
-### "Non-existent time error! The time does not exist..."
+### "Non-existent time error! The wall time ... never occurred in ..."
 
-**Cause:** During the "spring forward" DST transition, certain times are skipped (e.g., 2:30 AM doesn't exist on the second Sunday of March in the US).
+Full message:
 
-**Solution:** Use a valid time before or after the transition:
+```text
+Non-existent time error! The wall time 2023-03-12T02:30:00 never occurred in
+America/New_York: the zone's clocks jumped forward across it, either for
+daylight saving or for a change of standard time. Please specify a valid time,
+or pass is_dst to choose a reading.
+```
+
+**Cause:** The zone's clocks jumped forward across that wall time, skipping it (e.g. 2:30 AM does not exist on the second Sunday of March in the US).
+
+**Solution A — use a time the clock really showed:**
 
 ```python
 # Instead of 2:30 AM (which doesn't exist)
@@ -118,6 +149,50 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     online=False
 )
 ```
+
+**Solution B — resolve the gap with `is_dst`:** the flag is not limited to ambiguous times. Inside a gap it selects an offset just as it does inside a fold, which is what you want when a record says 2:30 and you have no way to correct it:
+
+```python
+# Read with the larger offset, -04:00 -> 06:30 UTC
+AstrologicalSubjectFactory.from_birth_data(
+    "John", 2023, 3, 12, 2, 30,
+    lng=-74, lat=40.7, tz_str="America/New_York",
+    online=False, is_dst=True
+)
+
+# Read with the smaller offset, -05:00 -> 07:30 UTC
+AstrologicalSubjectFactory.from_birth_data(
+    "John", 2023, 3, 12, 2, 30,
+    lng=-74, lat=40.7, tz_str="America/New_York",
+    online=False, is_dst=False
+)
+```
+
+The two land an hour apart, which is the honest representation of a wall time the clock skipped: there is no single correct instant, only two defensible readings.
+
+### Births before 1902: nothing is rejected
+
+Below `1902-01-01` a non-unique wall time is **resolved**, never raised. This is not leniency, it is the only answerable reading.
+
+Daylight saving did not exist yet — the earliest seasonal transition anywhere in the tz database is from 1916. What sits below that horizon instead are the 19th-century adoptions of mean and standard time: one-off, permanent moves of a city's clock. The database stores them in the same shape as a summer-time change, so they reach the resolver looking identical, and "was daylight saving in effect?" is not a question 1893 can answer. Asking a caller to answer it about their own birth certificate would be asking for a guess.
+
+So with `is_dst` left at its default the wall time resolves to the offset **in force before the change**, which is what the clock in the room showed and what the registrar wrote down. An explicit `is_dst` still means what it means everywhere else — the larger or the smaller offset — and is honoured here too:
+
+```python
+# Rome adopted Central European Time on 1893-11-01; the wall times from
+# 23:49:56 to midnight were skipped. This one casts, on Rome's own mean time.
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Roman birth", 1893, 10, 31, 23, 55,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+    online=False
+)
+print(subject.iso_formatted_local_datetime)  # 1893-10-31T23:55:00+00:49:56
+print(subject.iso_formatted_utc_datetime)    # 1893-10-31T23:05:04+00:00
+```
+
+Folds behave the same way. New York's 1883 adoption *repeated* four minutes rather than skipping them, and 1883-11-18 12:00 resolves to the pre-change −04:56:02 rather than to the −05:00 that followed.
+
+A chart for that instant reports −04:56:01 rather than −04:56:02, and the extra second is not a rounding slip: New York's pre-1883 record is the tz database's synthetic `LMT` entry, which carries the mean time of the zone's reference point and not of the birth place. Kerykeion replaces that one with the mean time of the birth longitude, since a sundial in the room is better data than a placeholder. Named records — Rome's `RMT`, Amsterdam's `BMT`, Kyiv's `KMT` — are documented clock times the city genuinely kept, and are never overridden.
 
 ---
 
@@ -205,16 +280,44 @@ lunar_return = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
 
 ### Polar Latitudes
 
-**Behavior:** The subject's latitude is never clamped in v6 — the real value is preserved in the model, in the topocentric observer, and in every house system defined at all latitudes. Only when a quadrant house system (e.g. Placidus `"P"`, Koch `"K"`) is mathematically undefined inside the polar circle do the house cusps fall back to the ±66° limit, and a warning is logged naming the system.
+**Behavior:** The subject's latitude is never clamped in v6 — the real value is preserved in the model, in the topocentric observer, and in every house call. When a quadrant house system (e.g. Placidus `"P"`, Koch `"K"`) is undefined at the birth latitude, what gives way is the **house system**, not the observer's position: the cusps are recomputed with Porphyry (`"O"`) **at the real latitude**, a warning is logged naming both systems, and the substitution is recorded on the subject in `polar_house_fallbacks`, a list of `PolarHouseFallbackModel`.
 
-**Reason:** Quadrant house systems cannot be computed inside the polar circle; latitude-agnostic systems (Whole Sign, Equal, Porphyry, ...) have no such limit.
+The angles are untouched. Ascendant, MC, Descendant, IC and Vertex are intersections of the ecliptic with the horizon and the meridian; they do not depend on a house system, so they stay exact at any latitude. Only the intermediate cusps come from the substitute, which is what the record's `affects` field names.
 
-**Recommendation:** For polar locations, use Whole Sign houses:
+The requested system also survives. `houses_system_identifier` still reports what you asked for, while `effective_houses_system_identifier` reports the division the cusps really came from — so a later relocation to a temperate latitude starts from Placidus again rather than inheriting Porphyry forever.
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Arctic Explorer", 1990, 6, 21, 12, 0,
-    lng=25.0, lat=70.0,  # Real latitude is preserved
+    lng=25.0, lat=70.0,           # Real latitude, preserved everywhere
+    tz_str="Europe/Helsinki",
+    online=False,
+    houses_system_identifier="P",  # Placidus, undefined this far north
+)
+
+print(subject.lat)                                    # 70.0 — never clamped
+print(subject.houses_system_identifier)               # "P"  — what you asked for
+print(subject.effective_houses_system_identifier)     # "O"  — what the cusps used
+
+record = subject.polar_house_fallbacks[0]
+print(record.strategy)      # "substitute_system"
+print(record.used_latitude) # 70.0 — the substitution ran at the real latitude
+print(record.threshold)     # 66.558... — the polar circle for this epoch
+print(record.affects)       # ["house_cusps"] — the angles are not listed
+```
+
+**Reason:** Quadrant systems divide the semi-diurnal arc of a degree of the ecliptic. Inside the polar circle some degrees never rise or set, so that arc does not exist and there is nothing to divide. Latitude-agnostic systems (Whole Sign, Equal, Porphyry, ...) have no such limit, which is why one of them can stand in.
+
+**About "±66°":** that figure is a rule of thumb, not the boundary. The polar circle sits at 90° minus the true obliquity of the ecliptic, which drifts with the epoch — 66.558° for a modern date, closer to 65.85° around 3000 BCE. The backend measures it per chart and reports it in the record's `threshold` field, alongside the `obliquity` it was derived from. Do not hardcode 66.
+
+The fixed ±66° clamp survives in exactly one place: **Gauquelin sectors**. Their 36-cusp shape has no 12-cusp equivalent, so no substitute system can produce it, and the only way to get an answer is to retry the requested division just inside the limit. That case is recorded too, with `strategy="clamp_latitude"` and `affects` listing the angles as well, because there the observer really did move.
+
+**Recommendation:** If you would rather choose the division yourself than accept a substitute, pick one that is defined everywhere:
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Arctic Explorer", 1990, 6, 21, 12, 0,
+    lng=25.0, lat=70.0,
     tz_str="Europe/Helsinki",
     online=False,
     houses_system_identifier="W"  # Whole Sign works at any latitude

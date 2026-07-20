@@ -45,7 +45,9 @@ Functions for working with astrological houses.
 | `get_houses_list(subject)`                   | Returns list of all 12 house objects from a subject.           |
 | `validate_latitude(lat)`                     | Returns a finite latitude in [-90, 90] unchanged; otherwise raises `KerykeionException`. |
 | `validate_longitude(lng)`                    | Returns a finite longitude in [-180, 180] unchanged; otherwise raises `KerykeionException`. |
-| `check_and_adjust_polar_latitude(lat)`       | Adjusts extreme latitudes to prevent house calculation errors. |
+| `check_and_adjust_polar_latitude(lat)`       | Clamps a latitude to the ±66° limit. Narrow use only — see below. |
+
+`check_and_adjust_polar_latitude` is **not** the general answer to a house system undefined inside the polar circle. A chart cast there keeps its real latitude and substitutes a house system that is defined everywhere; moving the observer instead would report cusps for a place the subject was not born in. The only remaining caller is `kerykeion/ephemeris_backend.py`, inside the `clamp_latitude` branch, which serves Gauquelin sectors alone: their 36-sector division has no 12-cusp substitute, so retrying just inside the limit is the only way to produce that shape at all. Use `validate_latitude` for plain range checks.
 
 ```python
 from kerykeion.utilities import get_planet_house, get_house_number

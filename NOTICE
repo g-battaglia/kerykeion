@@ -61,7 +61,8 @@ into this package; their licenses are listed here as a courtesy.
   requests             Apache-2.0
   requests-cache       BSD-2-Clause
   simple-ascii-tables  MIT (maintained by the same author)
-  pytz                 MIT
+  tzdata               Apache-2.0 — IANA time zone database, used by zoneinfo on
+                       hosts that ship none of their own
   typing-extensions    PSF-2.0
   certifi (transitive) MPL-2.0
 

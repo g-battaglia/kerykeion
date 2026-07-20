@@ -107,8 +107,11 @@ class EphemerisDataFactory:
             Positive values for East, negative for West. Defaults to 0.0005 (Greenwich).
         tz_str (str, optional): Timezone identifier (e.g., "Europe/London", "America/New_York").
             Defaults to "Etc/UTC".
-        is_dst (bool, optional): Whether daylight saving time is active for the location.
-            Only relevant for certain timezone calculations. Defaults to False.
+        is_dst (bool, optional): Which reading to take when a transition makes a
+            sample's wall time non-unique. The contract is the UTC offset, not the
+            season: True selects the LARGER offset, False the SMALLER. It applies to
+            skipped wall times as well as repeated ones, picking one side of the gap.
+            Defaults to False, i.e. the smaller offset for any non-unique sample.
         zodiac_type (ZodiacType, optional): The zodiac system to use (tropical or sidereal).
             Defaults to DEFAULT_ZODIAC_TYPE.
         sidereal_mode (Union[SiderealMode, None], optional): The sidereal calculation mode

@@ -166,8 +166,20 @@ Base model for all astrological subjects. Contains common fields for location, t
 
 Key fields: `name`, `city`, `nation`, `lng`, `lat`, `altitude`, `tz_str`,
 `zodiac_type`, `houses_system_identifier`, `perspective_type`, `sun`, `moon`,
-`mercury`..., `first_house`..., `ascendant`, etc. `altitude` is the observer
-height in meters retained for Topocentric calculations.
+`mercury`..., `first_house`..., `ascendant`, `polar_house_fallbacks`,
+`effective_houses_system_identifier`, `effective_houses_system_name`, etc.
+`altitude` is the observer height in meters retained for Topocentric
+calculations.
+
+`houses_system_identifier` (and its `houses_system_name`) always report the
+**requested** system, even when the cusps did not come from it. Inside the polar
+circle a quadrant system is undefined and the cusps are recomputed with a system
+that is defined everywhere; the request survives untouched so that a relocation
+or a re-cast starts from what the caller asked for rather than inheriting the
+substitute.
+
+- `polar_house_fallbacks` (`list[PolarHouseFallbackModel]`, empty when nothing was substituted) records each substitution: the requested and used systems, the real latitude, the latitude the successful call ran at, the epoch's polar threshold and obliquity, and which chart products changed.
+- `effective_houses_system_identifier` / `effective_houses_system_name` are derived from that list and report the division the cusps really came from. With no fallback they equal the requested pair.
 
 New in v5.12: `ayanamsa_value` (`float | None`) -- the computed ayanamsa offset in degrees for sidereal charts (`None` for tropical).
 
@@ -180,6 +192,9 @@ Snapshot of planetary positions for a specific date.
 | `date`    | `str`                       | ISO 8601 formatted date |
 | `planets` | `List[KerykeionPointModel]` | Planet positions        |
 | `houses`  | `List[KerykeionPointModel]` | House cusps             |
+| `fixed_stars` | `List[KerykeionPointModel]` | Fixed star positions. Empty unless the producing factory requested stars via `active_fixed_stars`. |
+| `ephemeris_warnings` | `List[EphemerisWarningModel]` | Requested optional points omitted at this sample because no permitted ephemeris or local model produced a value. Empty when nothing was dropped. |
+| `polar_house_fallbacks` | `List[PolarHouseFallbackModel]` | House systems substituted at this sample because the requested one is undefined at the sample's latitude. Empty at temperate latitudes. |
 
 ### LunarPhaseModel
 
