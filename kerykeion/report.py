@@ -576,8 +576,11 @@ class ReportGenerator:
         # panel uses: ``None`` on a midpoint composite, which represents no
         # single sky, and any heliocentric chart, which does not include the Sun
         # at all (it is the centre body), leaving the statement without a
-        # referent. The report and the SVG must agree — a value here that the
-        # drawing withholds reads as one of them being broken.
+        # referent. These two rules are duplicated in
+        # ``InfoSectionBuilder._diurnality_value`` and must be kept in step: a
+        # value here that the chart withholds reads as one of them being broken.
+        # (The report has no ``show_diurnality`` equivalent, so a caller who
+        # switches the chart's line off does get a report that still shows it.)
         is_diurnal = getattr(subject, "is_diurnal", None)
         heliocentric = getattr(subject, "perspective_type", None) == PERSPECTIVE_HELIOCENTRIC
         if is_diurnal is not None and not heliocentric:

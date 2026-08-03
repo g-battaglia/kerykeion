@@ -5,6 +5,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import re
+import unicodedata
 from functools import lru_cache
 from math import ceil
 from pathlib import Path
@@ -261,6 +262,88 @@ class CircleRadiiConfig:
 # "Progression Lunar phase: Waxing Gibbous" under the wheel in the default
 # language. When the line is not drawn, nothing moves at all.
 DIURNALITY_GLYPH_DROP: float = 14.0
+
+# How much clear width row 5 really has, and it is not the 258.55px the chord
+# gives at the baseline: the chord narrows going *upward*, and text rises above
+# its baseline. Ideographs fill the em box, so the binding measurement is the
+# chord at y = 522 - 10px = 512, which is 228.56px from the text's x=20. Taking
+# the baseline figure overstates the room by 13% and is what let a row overrun.
+DIURNALITY_ROW_CLEAR_WIDTH: float = 228.0
+
+# What a glyph costs, as a fraction of the em. The panel's text nodes name no
+# font-family, so the real glyphs are the viewer's choice and no exact width
+# exists here. These figures are calibrated against real advance metrics from
+# Times, Helvetica and Arial Unicode so that the estimate never reads narrower
+# than the widest of the three — the only direction an overflow guard may not
+# err in — while staying inside about 1.3x of it.
+#
+# The two explicit sets are not fussiness, they are where a single average
+# breaks down:
+#
+# - Spaces and the middot cost 0.28em, half the letter average, and this row
+#   carries five or six of them; the ellipsis costs a full em, nearly double it,
+#   and truncation puts one on every name it cuts. Charging all three at the
+#   average was worth 25px of error on a 228px row.
+# - _WIDE_GLYPHS holds every character in Latin, Greek and Cyrillic measured
+#   above 0.80em across the three fonts. Without it an ordinary capital rate
+#   underestimates "MMMM…" and "ЖЮЖЮ…" and they overrun. Characters above 1.0em
+#   — the ǆ-style digraphs, the vulgar fractions — remain a known residual; they
+#   do not occur in names or in any shipped label.
+_GLYPH_EM: dict = {" ": 0.30, "·": 0.30, "…": 1.0}
+_WIDE_GLYPHS = frozenset(
+    "%@MWm¼½¾ÆæŒœŴƕƜƠƢƯǄǅǆǇǈǊǋǢǣǱǲǳǼǽȸȹɄɊΈΉΌΎΏΑΗΘΜΟΠΦΨϢϣϺ"
+    "ЂЉЊЋЖМФШЩЪЫЮфшщљњѠѢѤѨѩѪѬѭѰѸѹѼѾҖҗҠҤҴҼҾӁӔӕӜӝӸ"
+)
+_IDEOGRAPH_EM: float = 1.0
+_UPPERCASE_EM: float = 0.80
+_DEFAULT_GLYPH_EM: float = 0.55
+
+
+def estimate_text_width(text: str, font_size: float = 10.0) -> float:
+    """Rough rendered width of *text*, in pixels, for the info panel's rows.
+
+    A character count cannot do this job, which is what a previous version of
+    the row-width guard tried: the same 38-character row measures 168px of Latin
+    Helvetica and 250px of Arial Unicode ideographs. Advance widths across the
+    panel's corpus span 2.7 to 9.9 px per character, so no per-character constant
+    separates a row that fits from one that runs under the wheel.
+
+    East-Asian ideographs, kana and hangul are full-width by design and occupy
+    the em; capitals run four fifths of it and everything else a little over
+    half, with the exceptions listed above. That is what is worth modelling
+    without a font engine.
+    """
+    total = 0.0
+    for char in text:
+        explicit = _GLYPH_EM.get(char)
+        if explicit is not None:
+            total += font_size * explicit
+        elif char in _WIDE_GLYPHS or unicodedata.east_asian_width(char) in ("W", "F"):
+            total += font_size * _IDEOGRAPH_EM
+        elif char.isupper():
+            total += font_size * _UPPERCASE_EM
+        else:
+            total += font_size * _DEFAULT_GLYPH_EM
+    return total
+
+
+def truncate_to_width(text: str, budget: float, ellipsis_symbol: str = "…") -> str:
+    """Shorten *text* until :func:`estimate_text_width` fits *budget*.
+
+    Always keeps at least one character: returning nothing would leave the value
+    on the diurnality row with no owner, the very ambiguity the wheel names are
+    there to remove.
+    """
+    if estimate_text_width(text) <= budget:
+        return text
+
+    ellipsis_width = estimate_text_width(ellipsis_symbol)
+    kept = ""
+    for char in text:
+        if kept and estimate_text_width(kept + char) + ellipsis_width > budget:
+            break
+        kept += char
+    return kept + ellipsis_symbol
 
 
 @dataclass
@@ -719,19 +802,18 @@ class InfoSectionBuilder:
         one line, each behind the name of its own wheel, so a bare "Nocturnal"
         can never be read as a statement about the wrong chart.
 
-        The separator is a single-spaced "·" rather than the wide one used
-        elsewhere in this panel: two English "Nocturnal" values plus two
-        8-character names already come to 41 characters, and the row sits low
-        enough that the wheel's chord leaves only about that much clear width.
-        The two spaces were the difference between fitting and not.
+        Everything on this row is fighting for about 228px — see
+        :data:`DIURNALITY_ROW_CLEAR_WIDTH` — so two of its choices are about
+        space rather than style. The separator is a single-spaced "·" rather
+        than the wide one used elsewhere in this panel, and there is no
+        "Diurnality:" label; the wheel names carry the meaning perfectly well on
+        their own, since "Natal Nocturnal" needs no heading to be understood.
 
-        Unlike the single-wheel line this carries no "Diurnality:" label, and
-        that is a space decision rather than a stylistic one. The row sits low in
-        the panel, where the wheel's chord has closed to roughly 40 characters'
-        worth of clear width; the label plus two wheel names plus two values does
-        not fit, and the overflow runs under the graphics. The wheel names carry
-        the meaning perfectly well on their own — "Natal Nocturnal" needs no
-        heading to be understood.
+        The values and separators are shipped text and fixed, so the wheel names
+        absorb whatever is left, cut to :func:`estimate_text_width` rather than to
+        a character count. That distinction is the whole point: eight ideographs
+        are twice the width of eight Latin letters, and a character cap sent a
+        Chinese-named synastry clean under the wheel while its test stayed green.
 
         Args:
             first: ``(subject, wheel_name)`` for the first wheel.
@@ -740,14 +822,38 @@ class InfoSectionBuilder:
         Returns:
             The joined line, or ``""`` when neither wheel has an applicable value.
         """
-        parts = []
+        labelled = []
         for subject, wheel_name in (first, second):
             if subject is None:
                 continue
             value = self._diurnality_value(subject)
             if value:
-                parts.append(f"{wheel_name} {value}")
-        return " · ".join(parts)
+                labelled.append((wheel_name, value))
+        if not labelled:
+            return ""
+
+        separator = " · "
+        # The values and separators are shipped text and cannot be shortened, so
+        # they come off the budget first and the wheel names get what is left.
+        fixed = estimate_text_width(separator) * (len(labelled) - 1) + sum(
+            estimate_text_width(f" {value}") for _, value in labelled
+        )
+        names_budget = max(DIURNALITY_ROW_CLEAR_WIDTH - fixed, 0.0)
+
+        # Water-filling: a name that wants less than its equal share hands the
+        # remainder to the one that wants more, so "Natal" beside a long name
+        # does not get cut to make room it was never going to use.
+        natural = [estimate_text_width(name) for name, _ in labelled]
+        share = names_budget / len(labelled)
+        spare = sum(share - width for width in natural if width < share)
+        over = [width for width in natural if width > share]
+        share_for_long = share + (spare / len(over) if over else 0.0)
+
+        parts = [
+            f"{truncate_to_width(name, share if width <= share else share_for_long)} {value}"
+            for (name, value), width in zip(labelled, natural)
+        ]
+        return separator.join(parts)
 
     def build_location_coordinates(
         self,
@@ -1355,14 +1461,15 @@ class SynastryChartRenderer(BaseChartRenderer):
         # Both natals keep their own sect: a placement that is in sect for one
         # partner can be out of sect for the other, which is precisely what a
         # synastry reading needs to see.
-        # Truncated hard — 8 characters, cut at a word boundary, which is exactly
-        # what the comparison grids above do to the same two names. These are the
-        # only user-controlled strings on the line, and the row sits low enough
-        # that the wheel's chord has closed in on it: untruncated, a pair of
-        # ordinary Italian names ran clean under the graphics.
+        # Only the first word of each name, as the comparison grids above do to
+        # the same two names. No character cap here: these are the only
+        # user-controlled strings on the row, and the builder cuts them to the
+        # width actually left by the wheel's chord — a cap in characters cannot,
+        # since eight ideographs are twice the width of eight Latin letters and
+        # ran clean under the graphics.
         template_dict["bottom_left_5"] = builder.build_dual_diurnality_info(
-            (d.first_obj, d._truncate_name(d.first_obj.name, 8, "…", True)),
-            (d.second_obj, d._truncate_name(d.second_obj.name, 8, "…", True)),
+            (d.first_obj, d._truncate_name(d.first_obj.name, truncate_at_space=True)),
+            (d.second_obj, d._truncate_name(d.second_obj.name, truncate_at_space=True)),
         )
 
         template_dict["makeLunarPhase"] = ""
@@ -4795,7 +4902,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         template_dict["elements_translate_y"] = offsets["elements"]
         template_dict["qualities_translate_y"] = offsets["qualities"]
         # lunar_phase / bottom_left are written after the renderer runs — see the
-        # note further down, next to the diurnality lift.
+        # note further down, next to DIURNALITY_GLYPH_DROP.
 
         # ---------------------------------------------------------------------
         # COLORS: Paper, background, and transparency settings
@@ -4907,12 +5014,13 @@ class ChartDrawer:  # type: ignore[no-redef]
         # ---------------------------------------------------------------------
         # LAYOUT: bottom-left block and moon glyph
         # ---------------------------------------------------------------------
-        # Written here, after the renderer, because the glyph drop must key off
-        # whether a line was actually produced — not off the flag.
-        # `show_diurnality=True` still yields an empty line on heliocentric charts
-        # and midpoint composites, and dropping the glyph for a line that is not
-        # there would open a gap for nothing. This is also the single point every
-        # height branch converges on, right-panel synastry included.
+        # Written here, after the renderer, because the drop must key off whether
+        # row 5 in particular got filled — not off the flag. `show_diurnality=True`
+        # still leaves row 5 empty on a heliocentric chart, on a midpoint composite,
+        # and on a Davison composite, which puts its line in row 4 instead; in all
+        # three the glyph must stay where it is, since only row 5 reaches into its
+        # clearance. This is also the single point every height branch converges
+        # on, right-panel synastry included.
         lunar_phase_y = offsets["lunar_phase"]
         if template_dict.get("bottom_left_5"):
             lunar_phase_y += DIURNALITY_GLYPH_DROP

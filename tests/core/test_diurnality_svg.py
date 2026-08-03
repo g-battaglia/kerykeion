@@ -33,7 +33,11 @@ from kerykeion import (
     CompositeSubjectFactory,
     PlanetaryReturnFactory,
 )
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.chart_drawer import (
+    DIURNALITY_ROW_CLEAR_WIDTH,
+    ChartDrawer,
+    estimate_text_width,
+)
 
 def _row_re(index: int):
     return re.compile(rf"Bottom_Left_Text_{index}'[^>]*>([^<]*)<")
@@ -91,6 +95,16 @@ def _layout(svg: str) -> tuple:
     moon = MOON_TRANSFORM.search(svg)
     assert block and moon
     return block.group(1), moon.group(1)
+
+
+def _solar_return():
+    """A natal chart and its next solar return, computed offline."""
+    natal = _subject()
+    factory = PlanetaryReturnFactory(
+        natal, city="Liverpool", nation="GB", lat=53.41058, lng=-2.97794,
+        tz_str="Europe/London", online=False,
+    )
+    return natal, factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
 
 class TestDiurnalityValue:
@@ -203,24 +217,35 @@ class TestDiurnalityOnDualCharts:
         assert "Paul Diurnal" in row
 
     # The worst case, not a lucky fixture: two nocturnal charts (the longest
-    # value pair in English) with names long enough to truncate, plus the
-    # longest wheel labels the panel ships. An earlier version of this test used
-    # one convenient synastry and passed while eight real combinations overran.
-    @pytest.mark.parametrize("language", ["EN", "IT", "RU", "DE"])
+    # value pair in English), names chosen to be wide rather than merely long,
+    # and the longest wheel labels the panel ships. An earlier version used one
+    # convenient synastry and passed while eight real combinations overran.
+    @pytest.mark.parametrize("language", ["EN", "IT", "RU", "DE", "CN"])
     def test_the_widest_dual_row_still_clears_the_wheel(self, language):
         """The row sits where the wheel's chord has closed in on it.
 
-        Centre x=340, r=240; the row sits at y=522 and the block no longer moves,
-        so the graphics start at x≈278 — about 258px from the text's x=20, or
-        roughly 50 characters at 10px. Character count is a rough proxy in a
-        proportional font and a poor one for full-width scripts, so the budget
-        here is deliberately looser than the geometry and the real guard is that
-        nothing grew unboundedly.
+        Measured in pixels, not characters. The previous version of this test
+        capped the row at 48 characters, which is not a width: measured advances
+        across this panel's own corpus run from 2.7 to 9.9 px per character, so
+        the cap authorised anything from 130px to 476px. A 38-character row of
+        ideographs measured 250px against 228px of clear width and ran under the
+        wheel while this test stayed green in all four languages.
         """
         widest = [
             ChartDataFactory.create_synastry_chart_data(
                 _subject("Alessandra Giovanna Bianchi"),
                 _subject("Massimiliano Ferrari", hour=23, minute=0),
+            ),
+            # Ideographs: full-width by design, so the same character count is
+            # nearly twice the pixels. This is the case the old cap could not see.
+            ChartDataFactory.create_synastry_chart_data(
+                _subject("阿部寛田中太郎彦仁美"),
+                _subject("山田花子鈴木一郎次郎", hour=23, minute=0),
+            ),
+            # Capitals are the other class a half-em average gets wrong; an
+            # all-capitals name measured 254px against a 225px estimate.
+            ChartDataFactory.create_synastry_chart_data(
+                _subject("MARIAGRAZIA" * 3), _subject("GIANFRANCO" * 3, hour=23, minute=0)
             ),
             ChartDataFactory.create_transit_chart_data(
                 _subject(), _subject("Now", year=2024, month=6, day=15, hour=12, minute=0)
@@ -228,18 +253,50 @@ class TestDiurnalityOnDualCharts:
             ChartDataFactory.create_progression_chart_data(
                 _subject(), _subject("P", year=2000, month=10, day=9, hour=18, minute=30)
             ),
+            # The longest wheel label the panel ships: "Solar Return" beats
+            # "Transit" by five characters, and its translations more.
+            ChartDataFactory.create_return_chart_data(*_solar_return()),
         ]
         for data in widest:
             row = _row(_render(data, chart_language=language))
-            assert len(row) <= 48, f"{language}: {len(row)} chars will overrun the wheel: {row!r}"
+            width = estimate_text_width(row)
+            assert width <= DIURNALITY_ROW_CLEAR_WIDTH, (
+                f"{language}: {width:.1f}px will overrun the wheel's {DIURNALITY_ROW_CLEAR_WIDTH}px: {row!r}"
+            )
 
-    def test_long_names_are_truncated_like_the_grids(self):
-        """Same 8-character, cut-at-a-word-boundary budget the comparison grids use."""
+    def test_only_the_first_word_of_a_name_reaches_the_row(self):
+        """As the comparison grids do to the same two names."""
         john = _subject("Maria Alessandra Giovanna Bianchi")
         paul = _subject("Massimiliano Ferrari-Castiglione", year=1942, month=6, day=18, hour=8, minute=0)
         row = _row(_render(ChartDataFactory.create_synastry_chart_data(john, paul)))
-        assert "…" in row
-        assert "Maria Alessandra" not in row
+        assert "Maria Nocturnal" in row
+        assert "Alessandra" not in row
+
+    def test_a_name_is_cut_only_when_it_would_not_fit(self):
+        """The cut is a width budget, not a fixed cap.
+
+        Both halves matter: a ten-character name that fits must survive whole —
+        an earlier fixed eight-character cap mangled names it had room for — and
+        one that does not fit must lose its tail.
+        """
+        fits = _row(
+            _render(
+                ChartDataFactory.create_synastry_chart_data(
+                    _subject("Alessandro"), _subject("Antonio", hour=23, minute=0)
+                )
+            )
+        )
+        assert "Alessandro Nocturnal" in fits and "…" not in fits
+
+        cut = _row(
+            _render(
+                ChartDataFactory.create_synastry_chart_data(
+                    _subject("Massimiliano" * 4), _subject("Gianfranco" * 4, hour=23, minute=0)
+                )
+            )
+        )
+        assert "…" in cut
+        assert estimate_text_width(cut) <= DIURNALITY_ROW_CLEAR_WIDTH
 
     def test_a_name_with_markup_characters_cannot_break_the_svg(self):
         """The synastry line embeds user-controlled names, so it must be escaped.
@@ -258,8 +315,11 @@ class TestDiurnalityOnDualCharts:
         ElementTree.fromstring(svg)  # raises if the escaping let the markup through
 
 
-class TestDiurnalitySwitchedOff:
-    """Opting out restores the exact layout the panel had before the feature."""
+class TestDiurnalityLayout:
+    """What moves when the line appears, and what must not.
+
+    Includes the switched-off case: opting out has to restore the panel exactly.
+    """
 
     @pytest.mark.parametrize("hour", [12, 18])
     def test_line_is_empty(self, hour):
@@ -276,8 +336,9 @@ class TestDiurnalitySwitchedOff:
     def test_the_glyph_keeps_its_gap_below_the_last_row(self):
         """Read from the rendered output, not restated from the constants.
 
-        An earlier version asserted `532 - 522 == 518 - 508`, which is a
-        tautology on integer literals and holds whatever the code does.
+        The gap is read from rendered output on both sides. Asserting it as
+        `532 - 522 == 518 - 508` — as an earlier revision did — is a tautology on
+        integer literals that holds whatever the code does.
         """
         data = ChartDataFactory.create_natal_chart_data(_subject())
         off_block, off_moon = (float(v) for v in _layout(_render(data, show_diurnality=False)))
@@ -299,10 +360,6 @@ class TestDiurnalitySwitchedOff:
         assert _layout(_render(data, show_diurnality=False)) == LAYOUT_WITHOUT_LINE
         assert _layout(_render(data, show_diurnality=True)) == LAYOUT_WITH_LINE
 
-        # And the glyph keeps the 10px gap below the last row it has always had:
-        # 518 - 508 with no line, 532 - 522 with one.
-        assert 532 - 522 == 518 - 508
-
     def test_off_leaves_the_other_rows_untouched(self):
         """Nothing but the empty node itself may differ when the line is off."""
         data = ChartDataFactory.create_natal_chart_data(_subject())
@@ -320,21 +377,13 @@ class TestDiurnalityOnOtherRenderers:
     text-blind comparator, so they pin nothing here.
     """
 
-    def _solar_return(self):
-        natal = _subject()
-        factory = PlanetaryReturnFactory(
-            natal, city="Liverpool", nation="GB", lat=53.41058, lng=-2.97794,
-            tz_str="Europe/London", online=False,
-        )
-        return natal, factory.next_return_from_date(2024, 1, 1, return_type="Solar")
-
     def test_single_wheel_return_carries_its_own(self):
-        _, solar = self._solar_return()
+        _, solar = _solar_return()
         row = _row(_render(ChartDataFactory.create_single_wheel_return_chart_data(solar)))
         assert row.startswith("Diurnality: "), row
 
     def test_dual_wheel_return_names_both_and_labels_the_return_correctly(self):
-        natal, solar = self._solar_return()
+        natal, solar = _solar_return()
         row = _row(_render(ChartDataFactory.create_return_chart_data(natal, solar)))
         assert "Natal " in row
         # Pins _return_label: collapsing it to the old Solar/else-Lunar binary

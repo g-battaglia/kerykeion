@@ -19,11 +19,15 @@
   - Two-wheel charts report both wheels, because diurnality belongs to a single
     chart and the same placement reads differently under each: a transit shows
     `Natal Nocturnal · Transit Diurnal`, a synastry names both subjects
-    (truncated, like every other name in that panel). A bare value on a biwheel
+    (shortened, like every other name in that panel). A bare value on a biwheel
     would be worse than no line, since the reader could not tell which chart it
-    described. That row carries no `Diurnality:` heading — at the height it sits,
-    the wheel leaves roughly forty characters of clear width, and the heading
-    plus two names plus two values does not fit.
+    described. That row carries no `Diurnality:` heading — at the height it sits
+    the wheel leaves about 228px of clear width, and the heading plus two names
+    plus two values does not fit. The names are cut to that width rather than to
+    a character count, since eight ideographs are twice the width of eight Latin
+    letters: `kerykeion.charts.chart_drawer.estimate_text_width` is the public
+    entry point, calibrated against real advance metrics so it never reads
+    narrower than the text will render.
   - The line is omitted, not guessed, where it has no referent: a heliocentric
     chart excludes the Sun (it is the centre body), and a midpoint composite
     represents no single sky (`is_diurnal` is `None`). Note a heliocentric chart

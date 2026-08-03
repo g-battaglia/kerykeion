@@ -99,7 +99,12 @@ class ChartTemplateModel(SubscriptableBaseModel):
     """Bottom left panel content - line 4"""
 
     bottom_left_5: str
-    """Bottom left panel content - line 5 (chart sect: day/night)"""
+    """Bottom left panel content - line 5.
+
+    Carries the chart's diurnality on most chart types — but not all: the
+    composite renderer puts it in line 4, the slot it already left blank, and
+    blanks this one. Do not assume line 5 means diurnality.
+    """
 
     top_left_1: str
     """Top left panel content - line 1"""
