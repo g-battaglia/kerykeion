@@ -35,12 +35,14 @@ from kerykeion.utilities import wrap_180
 
 class ACGLinePointModel(SubscriptableBaseModel):
     """A single point on a planetary line."""
+
     longitude: float = Field(description="Geographic longitude (-180 to +180)")
     latitude: float = Field(description="Geographic latitude (-90 to +90)")
 
 
 class ACGLineModel(SubscriptableBaseModel):
     """A planetary line on the astro-cartography map."""
+
     planet: str = Field(description="Planet name")
     line_type: Literal["ASC", "DSC", "MC", "IC"] = Field(description="Angular line type")
     points: List[ACGLinePointModel] = Field(description="Geographic coordinates of the line")
@@ -82,8 +84,7 @@ class AstroCartographyFactory:
         ...     print(f"{line.planet} {line.line_type}: {len(line.points)} points")
     """
 
-    PLANETS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-               "Uranus", "Neptune", "Pluto"]
+    PLANETS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
     # Upper bound on the projected number of line points for one compute()
     # call. Generous enough for high-resolution maps (step=0.01 over the full
     # default range with all ten planets stays under it) while still rejecting
@@ -147,9 +148,7 @@ class AstroCartographyFactory:
             if isinstance(planets, (str, bytes)) or not isinstance(planets, (list, tuple)):
                 raise KerykeionException("planets must be a sequence of supported planet names, not a string.")
             invalid_planets = [
-                planet
-                for planet in planets
-                if not isinstance(planet, str) or planet not in _ACG_PLANET_IDS
+                planet for planet in planets if not isinstance(planet, str) or planet not in _ACG_PLANET_IDS
             ]
             if invalid_planets:
                 raise KerykeionException(
@@ -163,34 +162,24 @@ class AstroCartographyFactory:
         # it up front rather than hang.
         step_value = _finite_float(step)
         if step_value is None or step_value <= 0:
-            raise KerykeionException(
-                f"step must be a finite positive number of degrees, got {step!r}."
-            )
+            raise KerykeionException(f"step must be a finite positive number of degrees, got {step!r}.")
 
         if not isinstance(lat_range, (tuple, list)) or len(lat_range) != 2:
-            raise KerykeionException(
-                f"lat_range must contain exactly two numeric latitudes, got {lat_range!r}."
-            )
+            raise KerykeionException(f"lat_range must contain exactly two numeric latitudes, got {lat_range!r}.")
         if any(isinstance(value, bool) or not isinstance(value, Real) for value in lat_range):
-            raise KerykeionException(
-                f"lat_range must contain two finite numeric latitudes, got {lat_range!r}."
-            )
+            raise KerykeionException(f"lat_range must contain two finite numeric latitudes, got {lat_range!r}.")
         lat_min = _finite_float(lat_range[0])
         lat_max = _finite_float(lat_range[1])
         if lat_min is None or lat_max is None:
             raise KerykeionException(f"lat_range bounds must be finite, got {lat_range!r}.")
         if lat_min < -90 or lat_max > 90:
-            raise KerykeionException(
-                f"lat_range must stay within -90..90 degrees, got {lat_range!r}."
-            )
+            raise KerykeionException(f"lat_range must stay within -90..90 degrees, got {lat_range!r}.")
 
         # An inverted range (lat_min > lat_max) yields a negative n_steps below
         # and an empty grid — every line would be emitted with no points, no
         # warning. Reject it rather than return silent garbage.
         if lat_min > lat_max:
-            raise KerykeionException(
-                f"lat_range must be (min, max) with min <= max, got {lat_range!r}."
-            )
+            raise KerykeionException(f"lat_range must be (min, max) with min <= max, got {lat_range!r}.")
 
         subject_jd = subject.julian_day
         # A midpoint composite subject carries julian_day=None (it is a synthetic
@@ -213,11 +202,7 @@ class AstroCartographyFactory:
         selected: List[str] = []
         _seen: set = set()
         for pname in requested_planets:
-            if (
-                pname in _ACG_PLANET_IDS
-                and pname not in _seen
-                and getattr(subject, pname.lower(), None) is not None
-            ):
+            if pname in _ACG_PLANET_IDS and pname not in _seen and getattr(subject, pname.lower(), None) is not None:
                 selected.append(pname)
                 _seen.add(pname)
         if not selected:
@@ -274,14 +259,8 @@ class AstroCartographyFactory:
                 ic_geo_lng = wrap_180(mc_geo_lng + 180.0)
 
                 # MC/IC lines are vertical (same lng, full latitude grid)
-                mc_points = [
-                    ACGLinePointModel(longitude=round(mc_geo_lng, 4), latitude=lat)
-                    for lat in latitudes
-                ]
-                ic_points = [
-                    ACGLinePointModel(longitude=round(ic_geo_lng, 4), latitude=lat)
-                    for lat in latitudes
-                ]
+                mc_points = [ACGLinePointModel(longitude=round(mc_geo_lng, 4), latitude=lat) for lat in latitudes]
+                ic_points = [ACGLinePointModel(longitude=round(ic_geo_lng, 4), latitude=lat) for lat in latitudes]
 
                 mc_lines[pname] = ACGLineModel(planet=pname, line_type="MC", points=mc_points)
                 ic_lines[pname] = ACGLineModel(planet=pname, line_type="IC", points=ic_points)
@@ -297,12 +276,8 @@ class AstroCartographyFactory:
                         # Rising: hour angle -H0; setting: +H0.
                         rise_lng = wrap_180(ra_deg - h0_deg - gst_deg)
                         set_lng = wrap_180(ra_deg + h0_deg - gst_deg)
-                        asc_lines[pname].append(
-                            ACGLinePointModel(longitude=round(rise_lng, 4), latitude=lat)
-                        )
-                        dsc_lines[pname].append(
-                            ACGLinePointModel(longitude=round(set_lng, 4), latitude=lat)
-                        )
+                        asc_lines[pname].append(ACGLinePointModel(longitude=round(rise_lng, 4), latitude=lat))
+                        dsc_lines[pname].append(ACGLinePointModel(longitude=round(set_lng, 4), latitude=lat))
 
         # Assemble results
         result: List[ACGLineModel] = []

@@ -6,6 +6,7 @@ from .chart_defaults import (
     DEFAULT_CELESTIAL_POINTS_SETTINGS,
     DEFAULT_CHART_ASPECTS_SETTINGS,
 )
+
 # load_settings_mapping stays importable for compatibility but is NOT part of
 # __all__: it was born deprecated ("removed in 7.0.0") and a new major must
 # not freeze dead API in its public surface.

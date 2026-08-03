@@ -258,7 +258,9 @@ def assert_svg_matches_baseline(
     """
     from tests.data.compare_svg_lines import compare_svg_lines
 
-    assert baseline_path.exists(), f"Baseline SVG not found: {baseline_path}\nRegenerate with: uv run poe regenerate:svg"
+    assert baseline_path.exists(), (
+        f"Baseline SVG not found: {baseline_path}\nRegenerate with: uv run poe regenerate:svg"
+    )
 
     expected_lines = baseline_path.read_text().splitlines()
     actual_lines = generated_svg.splitlines()

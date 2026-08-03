@@ -235,8 +235,17 @@ def _make_angelina():
     key = ("angelina",)
     if key not in _subject_cache:
         _subject_cache[key] = AstrologicalSubjectFactory.from_birth_data(
-            "Angelina Jolie", 1975, 6, 4, 9, 9, "Los Angeles", "US",
-            lng=-118.15, lat=34.03, tz_str="America/Los_Angeles",
+            "Angelina Jolie",
+            1975,
+            6,
+            4,
+            9,
+            9,
+            "Los Angeles",
+            "US",
+            lng=-118.15,
+            lat=34.03,
+            tz_str="America/Los_Angeles",
             suppress_geonames_warning=True,
         )
     return _subject_cache[key]
@@ -246,8 +255,17 @@ def _make_brad():
     key = ("brad",)
     if key not in _subject_cache:
         _subject_cache[key] = AstrologicalSubjectFactory.from_birth_data(
-            "Brad Pitt", 1963, 12, 18, 6, 31, "Shawnee", "US",
-            lng=-96.56, lat=35.20, tz_str="America/Chicago",
+            "Brad Pitt",
+            1963,
+            12,
+            18,
+            6,
+            31,
+            "Shawnee",
+            "US",
+            lng=-96.56,
+            lat=35.20,
+            tz_str="America/Chicago",
             suppress_geonames_warning=True,
         )
     return _subject_cache[key]
@@ -389,9 +407,9 @@ class TestChartDrawerBasic:
         chart = ChartDrawer(self.chart_data)
         fallback = chart.chart_colors_settings["houses_radix_line"]
         chart.planets_settings = [
-            {"name": "Ascendant", "color": None},          # explicit None -> fallback
-            {"name": "Medium_Coeli"},                        # missing color -> fallback
-            {"name": "Descendant", "color": "#123456"},     # valid -> kept
+            {"name": "Ascendant", "color": None},  # explicit None -> fallback
+            {"name": "Medium_Coeli"},  # missing color -> fallback
+            {"name": "Descendant", "color": "#123456"},  # valid -> kept
             # Imum_Coeli absent entirely -> fallback
         ]
         asc, mc, dsc, ic = chart._axis_cusp_colors()
@@ -591,8 +609,11 @@ class TestChartDrawerBasic:
         from kerykeion.settings.chart_defaults import resolve_glyph_id
 
         names = [
-            "Interpolated_Lilith", "Mean_Priapus", "True_Priapus",
-            "Interpolated_Perigee", "White_Moon",
+            "Interpolated_Lilith",
+            "Mean_Priapus",
+            "True_Priapus",
+            "Interpolated_Perigee",
+            "White_Moon",
         ]
         for name in names:
             assert resolve_glyph_id(name) == name
@@ -803,7 +824,9 @@ class TestNatalChart:
         svg = ChartDrawer(data).generate_svg_string()
         compare_chart_svg("Kanye - Natal Chart.svg", svg)
 
-    @pytest.mark.skip(reason="v6: snapshot needs regeneration after fixed-stars channel split (active_points no longer includes the 23 hardcoded stars)")
+    @pytest.mark.skip(
+        reason="v6: snapshot needs regeneration after fixed-stars channel split (active_points no longer includes the 23 hardcoded stars)"
+    )
     def test_all_active_points_natal_chart(self):
         from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 
@@ -3648,7 +3671,7 @@ class TestSvgXmlEscaping:
 
         john = _make_john()
         data = ChartDataFactory.create_natal_chart_data(john)
-        svg = ChartDrawer(data).generate_svg_string(custom_title="<script>alert(1)</script>\"&")
+        svg = ChartDrawer(data).generate_svg_string(custom_title='<script>alert(1)</script>"&')
 
         ElementTree.fromstring(svg)
         assert "<script>" not in svg
@@ -3728,9 +3751,9 @@ class TestTransitAspectGridIndex:
 
         svg = draw_transit_aspect_grid("#000000", planets, aspects, x_indent=50, y_indent=250)
 
-        assert '#orb120' in svg
-        assert '#orb60' in svg
-        assert '#orb90' in svg
+        assert "#orb120" in svg
+        assert "#orb60" in svg
+        assert "#orb90" in svg
         # Aspects of the same pair must keep their input order (behavior parity
         # with the previous full-scan implementation).
         assert svg.index("#orb120") < svg.index("#orb60")
@@ -3864,8 +3887,18 @@ class TestModernNoClassicHitAreaLeakRound7:
         from kerykeion.charts.chart_drawer import ChartDrawer
 
         s = AstrologicalSubjectFactory.from_birth_data(
-            "N", 1990, 6, 15, 12, 0, lng=-74.0, lat=40.7,
-            tz_str="America/New_York", online=False, suppress_geonames_warning=True)
+            "N",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=-74.0,
+            lat=40.7,
+            tz_str="America/New_York",
+            online=False,
+            suppress_geonames_warning=True,
+        )
         cd = ChartDataFactory.create_natal_chart_data(s)
         svg = ChartDrawer(cd, style="modern").generate_svg_string(style="modern")
         n = svg.count('kr:node="HouseSector"') + svg.count("kr:node='HouseSector'")
@@ -3882,9 +3915,20 @@ class TestSvgControlCharStripRound8:
         from kerykeion.charts.chart_drawer import ChartDrawer
 
         s = AstrologicalSubjectFactory.from_birth_data(
-            "Ann\x0ca", 1990, 6, 15, 12, 0, city="London", nation="GB",
-            lng=-0.1, lat=51.5, tz_str="Europe/London", online=False,
-            suppress_geonames_warning=True)
+            "Ann\x0ca",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            city="London",
+            nation="GB",
+            lng=-0.1,
+            lat=51.5,
+            tz_str="Europe/London",
+            online=False,
+            suppress_geonames_warning=True,
+        )
         cd = ChartDataFactory.create_natal_chart_data(s)
         xml.dom.minidom.parseString(ChartDrawer(cd).generate_svg_string())
 
@@ -3897,16 +3941,29 @@ class TestSaveSvgRobustnessRound9:
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.chart_data_factory import ChartDataFactory
         from kerykeion.charts.chart_drawer import ChartDrawer
+
         s = AstrologicalSubjectFactory.from_birth_data(
-            name, 1990, 6, 15, 12, 0, city="London", nation="GB",
-            lng=-0.1, lat=51.5, tz_str="Europe/London", online=False,
-            suppress_geonames_warning=True)
+            name,
+            1990,
+            6,
+            15,
+            12,
+            0,
+            city="London",
+            nation="GB",
+            lng=-0.1,
+            lat=51.5,
+            tz_str="Europe/London",
+            online=False,
+            suppress_geonames_warning=True,
+        )
         return ChartDrawer(ChartDataFactory.create_natal_chart_data(s))
 
     def test_save_svg_missing_dir_raises_kerykeion(self):
         import os
         import tempfile
         from kerykeion.schemas import KerykeionException
+
         drawer = self._drawer()
         with tempfile.TemporaryDirectory() as d:
             with pytest.raises(KerykeionException):
@@ -3916,6 +3973,7 @@ class TestSaveSvgRobustnessRound9:
         import glob
         import os
         import tempfile
+
         drawer = self._drawer()
         with tempfile.TemporaryDirectory() as d:
             drawer.save_svg(output_path=d)
@@ -3923,6 +3981,7 @@ class TestSaveSvgRobustnessRound9:
 
     def test_var_token_name_not_inlined(self):
         import xml.dom.minidom
+
         drawer = self._drawer("var(--kerykeion-chart-color-paper-0)")
         svg = drawer.generate_svg_string(remove_css_variables=True)
         assert "#000000 - Birth" not in svg
@@ -3935,9 +3994,17 @@ class TestConstructorStringValidation:
 
     def _data(self):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "T", 1990, 6, 15, 12, 0,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
+            "T",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
         )
         return ChartDataFactory.create_natal_chart_data(subject)
 
@@ -3964,6 +4031,8 @@ class TestConstructorStringValidation:
         pack = copy.deepcopy(LANGUAGE_SETTINGS["EN"])
         pack["celestial_points"]["Sun"] = "Taiyou"
         drawer = ChartDrawer(
-            self._data(), chart_language="JP", language_pack=pack,
+            self._data(),
+            chart_language="JP",
+            language_pack=pack,
         )
         assert "<svg" in drawer.generate_svg_string()

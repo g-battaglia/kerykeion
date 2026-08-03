@@ -269,9 +269,7 @@ def houses_ex2_with_polar_fallback_ex(
     *,
     context: str = "",
     polar_strategy: str = "substitute_system",
-) -> Tuple[
-    Sequence[float], Sequence[float], Sequence[float], Sequence[float], Optional["PolarHouseFallbackModel"]
-]:
+) -> Tuple[Sequence[float], Sequence[float], Sequence[float], Sequence[float], Optional["PolarHouseFallbackModel"]]:
     """Compute house cusps at the REAL latitude, substituting the SYSTEM if needed.
 
     Calls ``ephe.houses_ex2`` at the real observer ``lat``. If — and only if — the
@@ -372,8 +370,9 @@ def houses_ex2_with_polar_fallback_ex(
         else:
             # Only here is a latitude actually capped, so this is where the
             # helper — and the log line it emits — belongs.
-            retry_hsys, retry_lat = hsys, _clamp_inside_polar_limit(
-                lat, check_and_adjust_polar_latitude(lat), threshold
+            retry_hsys, retry_lat = (
+                hsys,
+                _clamp_inside_polar_limit(lat, check_and_adjust_polar_latitude(lat), threshold),
             )
             affects = ["house_cusps", "angles"]
 

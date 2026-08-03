@@ -1283,8 +1283,7 @@ class EphemerisDictModel(SubscriptableBaseModel):
     polar_house_fallbacks: list[PolarHouseFallbackModel] = Field(
         default_factory=list,
         description=(
-            "House systems substituted at this sample because the requested one "
-            "is undefined at the sample's latitude."
+            "House systems substituted at this sample because the requested one is undefined at the sample's latitude."
         ),
     )
 

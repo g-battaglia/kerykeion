@@ -31,13 +31,13 @@ CHALDEAN_ORDER: tuple[ClassicalPlanet, ...] = (
 # ``date.weekday()`` (Monday = 0 … Sunday = 6). This is the classical
 # day-rulership that also gives each day its name (dies Lunae, dies Martis, …).
 WEEKDAY_RULER: tuple[ClassicalPlanet, ...] = (
-    "Moon",     # Monday
-    "Mars",     # Tuesday
+    "Moon",  # Monday
+    "Mars",  # Tuesday
     "Mercury",  # Wednesday
     "Jupiter",  # Thursday
-    "Venus",    # Friday
-    "Saturn",   # Saturday
-    "Sun",      # Sunday
+    "Venus",  # Friday
+    "Saturn",  # Saturday
+    "Sun",  # Sunday
 )
 
 HOURS_PER_HALF = 12

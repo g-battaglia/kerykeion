@@ -212,11 +212,7 @@ def _localize_civil_midnight(year: int, month: int, day: int, tz: ZoneInfo) -> d
             # lands *after* the gap — the day's real start — is the SMALLER-offset
             # one. For example, at a -03:00 -> -02:00 jump, interpreting 00:00
             # with -03:00 maps to 03:00 UTC, which normalizes to 01:00 -02:00.
-            local = (
-                localize_naive(naive, tz, is_dst=False)
-                .astimezone(timezone.utc)
-                .astimezone(tz)
-            )
+            local = localize_naive(naive, tz, is_dst=False).astimezone(timezone.utc).astimezone(tz)
         elif is_ambiguous(naive, tz):
             # DST fall-back: midnight exists twice. Like localize_datetime, default
             # to the standard-time (post-transition) interpretation. Kept as its own
@@ -310,9 +306,7 @@ def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     return cos_hour_angle < -1.0, cos_hour_angle > 1.0
 
 
-def compute_sun_events(
-    year: int, month: int, day: int, latitude: float, longitude: float, tz: ZoneInfo
-) -> SunEvents:
+def compute_sun_events(year: int, month: int, day: int, latitude: float, longitude: float, tz: ZoneInfo) -> SunEvents:
     """Compute sunrise, sunset, solar noon, day length and polar flags.
 
     Args:
@@ -396,9 +390,7 @@ def compute_sun_events(
     return SunEvents(sunrise, sunset, solar_noon, day_length, False, False)
 
 
-def _next_event_jd(
-    jd_start: float, geopos: tuple[float, float, float], rsmi: int, iflag: int
-) -> Optional[float]:
+def _next_event_jd(jd_start: float, geopos: tuple[float, float, float], rsmi: int, iflag: int) -> Optional[float]:
     """Julian Day (UT) of the next ``rise_trans`` event, or ``None`` if none found.
 
     Thin wrapper used for twilight crossings. The twilight bits make the backend

@@ -13,27 +13,21 @@ class TestMercuryStations2026:
     """Mercury's three 2026 retrograde periods are well-documented anchors."""
 
     def test_six_stations_alternating(self):
-        res = RetrogradeStationFactory.from_iso_range(
-            "2026-01-01", "2026-12-31", ["Mercury"]
-        )
+        res = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", ["Mercury"])
         # Three retrograde periods => three SR + three SD, strictly alternating.
         assert len(res.stations) == 6
         types = [s.station_type for s in res.stations]
         assert types == ["SR", "SD", "SR", "SD", "SR", "SD"]
 
     def test_first_station_is_late_february_in_pisces(self):
-        res = RetrogradeStationFactory.from_iso_range(
-            "2026-01-01", "2026-12-31", ["Mercury"]
-        )
+        res = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", ["Mercury"])
         first = res.stations[0]
         assert first.station_type == "SR"
         assert first.iso_utc.startswith("2026-02-26")
         assert first.sign == "Pis"
 
     def test_chronological_and_within_sign_pairs(self):
-        res = RetrogradeStationFactory.from_iso_range(
-            "2026-01-01", "2026-12-31", ["Mercury"]
-        )
+        res = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", ["Mercury"])
         jds = [s.julian_day for s in res.stations]
         assert jds == sorted(jds)
         # Each SR/SD pair brackets one retrograde period (~3 weeks long).
@@ -60,9 +54,7 @@ class TestStationApi:
             RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", ["Moon"])
 
     def test_zodiac_fields_consistent(self):
-        res = RetrogradeStationFactory.from_iso_range(
-            "2026-01-01", "2026-12-31", ["Mercury"]
-        )
+        res = RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", ["Mercury"])
         for s in res.stations:
             assert 0 <= s.sign_num <= 11
             assert 0.0 <= s.degree < 30.0
@@ -149,9 +141,7 @@ class TestSiderealStations:
 
     def test_sidereal_requires_mode(self):
         with pytest.raises(KerykeionException):
-            RetrogradeStationFactory.from_iso_range(
-                "2026-01-01", "2026-12-31", ["Mercury"], zodiac_type="Sidereal"
-            )
+            RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-12-31", ["Mercury"], zodiac_type="Sidereal")
 
 
 class TestStationErrorContract:
@@ -179,9 +169,7 @@ class TestStationErrorContract:
 
         monkeypatch.setattr(rsf.ephe, "calc_ut", failing_calc_ut)
         with pytest.raises(KerykeionException, match="narrow the date range"):
-            RetrogradeStationFactory.from_iso_range(
-                "2026-01-01", "2026-01-10", ["Mercury"]
-            )
+            RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-01-10", ["Mercury"])
 
     def test_mid_scan_failure_raises_not_truncates(self, monkeypatch):
         # First samples succeed, then the scan walks past the range edge: the
@@ -199,6 +187,4 @@ class TestStationErrorContract:
 
         monkeypatch.setattr(rsf.ephe, "calc_ut", flaky_calc_ut)
         with pytest.raises(KerykeionException, match=r"failed at JD "):
-            RetrogradeStationFactory.from_iso_range(
-                "2026-01-01", "2026-01-10", ["Mercury"]
-            )
+            RetrogradeStationFactory.from_iso_range("2026-01-01", "2026-01-10", ["Mercury"])

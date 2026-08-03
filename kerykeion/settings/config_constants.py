@@ -51,6 +51,14 @@ PERSPECTIVE_TRUE_GEOCENTRIC: str = "True Geocentric"
 """Earth-centered view without refraction correction."""
 
 PERSPECTIVE_HELIOCENTRIC: str = "Heliocentric"
+
+#: The perspectives cast from the Earth, and so the only ones whose Sun is the
+#: Sun ``is_diurnal`` measures. A whitelist rather than a list of exclusions on
+#: purpose: a perspective added upstream should default to *not* claiming a
+#: day/night, since asserting one about the wrong body is worse than omitting it.
+#: Topocentric and True Geocentric differ from Apparent Geocentric by parallax
+#: and aberration — fractions of a degree, never a hemisphere.
+EARTH_CENTRED_PERSPECTIVES: frozenset = frozenset({"Apparent Geocentric", "True Geocentric", "Topocentric"})
 """Sun-centered view of planetary positions."""
 
 PERSPECTIVE_TOPOCENTRIC: str = "Topocentric"

@@ -34,9 +34,8 @@ logger = logging.getLogger(__name__)
 # Backend-specific "no event in the search window" errors: libephemeris (and
 # the jd<=0 guard in _find_event) raise ValueError; pyswisseph raises its own
 # swisseph.Error, which does NOT subclass ValueError.
-_NO_EVENT_ERRORS: tuple = tuple(
-    {ValueError, getattr(ephe, "Error", ValueError)}
-)
+_NO_EVENT_ERRORS: tuple = tuple({ValueError, getattr(ephe, "Error", ValueError)})
+
 
 def _resolve_skyfield_range_error() -> Optional[type]:
     """libephemeris runs ``heliacal_ut`` through Skyfield, which raises its OWN
@@ -74,10 +73,10 @@ _BACKEND_HARD_ERRORS: tuple = tuple(
 )
 
 # ---- Event-type constants (mirrors Swiss Ephemeris) ----
-HELIACAL_RISING: int = ephe.HELIACAL_RISING    # 1 - morning first
+HELIACAL_RISING: int = ephe.HELIACAL_RISING  # 1 - morning first
 HELIACAL_SETTING: int = ephe.HELIACAL_SETTING  # 2 - evening last
-EVENING_FIRST: int = ephe.EVENING_FIRST        # 3
-MORNING_LAST: int = ephe.MORNING_LAST          # 4
+EVENING_FIRST: int = ephe.EVENING_FIRST  # 3
+MORNING_LAST: int = ephe.MORNING_LAST  # 4
 
 EVENT_TYPE_LABELS = {
     HELIACAL_RISING: "heliacal_rising",
@@ -87,10 +86,10 @@ EVENT_TYPE_LABELS = {
 }
 
 # ---- Default atmospheric / observer parameters ----
-DEFAULT_PRESSURE: float = 1013.25   # mbar (hPa)
-DEFAULT_TEMPERATURE: float = 15.0   # Celsius
-DEFAULT_HUMIDITY: float = 40.0      # percent
-DEFAULT_EXTINCTION: float = 0.2     # extinction coefficient
+DEFAULT_PRESSURE: float = 1013.25  # mbar (hPa)
+DEFAULT_TEMPERATURE: float = 15.0  # Celsius
+DEFAULT_HUMIDITY: float = 40.0  # percent
+DEFAULT_EXTINCTION: float = 0.2  # extinction coefficient
 
 DEFAULT_ATMO: Tuple[float, float, float, float] = (
     DEFAULT_PRESSURE,
@@ -101,11 +100,11 @@ DEFAULT_ATMO: Tuple[float, float, float, float] = (
 
 DEFAULT_OBSERVER: Tuple[float, float, float, float, float, float] = (
     36.0,  # age of observer in years
-    1.0,   # Snellen ratio (1 = normal vision)
-    0.0,   # monocular (0) / binocular (1)
-    0.0,   # telescope magnification (0 = naked eye default)
-    0.0,   # optical aperture in mm
-    0.0,   # optical transmission
+    1.0,  # Snellen ratio (1 = normal vision)
+    0.0,  # monocular (0) / binocular (1)
+    0.0,  # telescope magnification (0 = naked eye default)
+    0.0,  # optical aperture in mm
+    0.0,  # optical transmission
 )
 
 # Planets supported by ephe.heliacal_ut
@@ -134,8 +133,7 @@ def _resolve_geopos(
     """
     if geopos is not None and any(v is not None for v in (lat, lng, altitude)):
         raise KerykeionException(
-            "Provide either geopos=(lng, lat, altitude_m) or the lat=/lng=/altitude= "
-            "keywords, not both."
+            "Provide either geopos=(lng, lat, altitude_m) or the lat=/lng=/altitude= keywords, not both."
         )
     if geopos is not None:
         if not isinstance(geopos, (tuple, list)) or len(geopos) != 3:
@@ -195,9 +193,7 @@ def _normalize_event_types(event_types: Optional[Sequence[int]]) -> list[int]:
     invalid = [
         event_type
         for event_type in event_types
-        if not isinstance(event_type, int)
-        or isinstance(event_type, bool)
-        or event_type not in EVENT_TYPE_LABELS
+        if not isinstance(event_type, int) or isinstance(event_type, bool) or event_type not in EVENT_TYPE_LABELS
     ]
     if invalid:
         raise KerykeionException(
@@ -428,9 +424,7 @@ class HeliacalFactory:
             for name in planets:
                 canonical = _canonical_by_lower.get(str(name).lower())
                 if canonical is None:
-                    raise KerykeionException(
-                        f"Unknown planet {name!r}; heliacal search supports {PLANETS}."
-                    )
+                    raise KerykeionException(f"Unknown planet {name!r}; heliacal search supports {PLANETS}.")
                 if canonical not in canonicalized:
                     canonicalized.append(canonical)
             planets = canonicalized
@@ -543,8 +537,7 @@ class HeliacalFactory:
             # than raising: without this guard the scan emits fake events dated
             # -4713-11-24 that sort first in the results.
             raise ValueError(
-                f"No heliacal event found for {planet_name_or_star} "
-                f"(event type {event_type}) in the search window."
+                f"No heliacal event found for {planet_name_or_star} (event type {event_type}) in the search window."
             )
 
         # Date part of the shared ISO formatter (split on "T", not [:10]:

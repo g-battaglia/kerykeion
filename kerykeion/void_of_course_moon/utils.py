@@ -237,7 +237,10 @@ def compute_void_windows(start_jd: float, end_jd: float, iflag: int) -> list[Voi
         # exactly on a cusp is never counted in two consecutive signs.
         jd_ref = (entry_jd + ingress_jd) / 2.0
         in_sign = _aspects_in_window(
-            jd_ref, entry_jd, ingress_jd, iflag,
+            jd_ref,
+            entry_jd,
+            ingress_jd,
+            iflag,
             start_tol=1e-3 if span == 0 else 1e-6,
         )
 
@@ -313,9 +316,7 @@ def compute_void_of_course(moment_utc: datetime, iflag: int) -> VoidOfCourseResu
     # in the *next* sign, never reused from the current-sign list (doing so collapses
     # it onto `last_aspect` whenever the query precedes that aspect). Seed from the
     # midpoint of the next sign so the linear approximation lands inside the window.
-    next_ingress_jd = _moon_crossing_jd(
-        ingress_jd, (sign_ceiling + 30.0) % 360.0, 30.0 / moon_speed, iflag
-    )
+    next_ingress_jd = _moon_crossing_jd(ingress_jd, (sign_ceiling + 30.0) % 360.0, 30.0 / moon_speed, iflag)
     jd_ref_next = (ingress_jd + next_ingress_jd) / 2.0
     following = _aspects_in_window(jd_ref_next, ingress_jd, next_ingress_jd, iflag, start_tol=1e-6)
     next_aspect = following[0] if following else None

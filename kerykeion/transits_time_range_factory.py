@@ -75,7 +75,13 @@ from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import ActiveAspect, TransitEventModel, TransitEventsTimeRangeModel, TransitMomentModel, TransitsTimeRangeModel
+from kerykeion.schemas.kr_models import (
+    ActiveAspect,
+    TransitEventModel,
+    TransitEventsTimeRangeModel,
+    TransitMomentModel,
+    TransitsTimeRangeModel,
+)
 from kerykeion.schemas.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import (
     DEFAULT_ACTIVE_POINTS,
@@ -278,15 +284,16 @@ class TransitsTimeRangeFactory:
         # The dict(...) copies keep callers' TypedDicts unshared; cast restores the ActiveAspect type.
         self.active_aspects: List[ActiveAspect] = cast(
             List[ActiveAspect],
-            [dict(a) for a in active_aspects] if active_aspects is not None else [dict(a) for a in PREDICTIVE_ACTIVE_ASPECTS],
+            [dict(a) for a in active_aspects]
+            if active_aspects is not None
+            else [dict(a) for a in PREDICTIVE_ACTIVE_ASPECTS],
         )
         self.settings_file = settings_file
         # Validate up front: aspect calculation requires a positive limit, and
         # failing there (deep inside get_transit_moments) is undiagnosable.
         if axis_orb_limit is not None and (not math.isfinite(axis_orb_limit) or axis_orb_limit <= 0):
             raise KerykeionException(
-                f"axis_orb_limit must be a positive number of degrees or None "
-                f"(got {axis_orb_limit!r})."
+                f"axis_orb_limit must be a positive number of degrees or None (got {axis_orb_limit!r})."
             )
         self.axis_orb_limit = axis_orb_limit
         self._warn_if_frame_mismatch()
@@ -314,7 +321,8 @@ class TransitsTimeRangeFactory:
         natal_points = set(getattr(self.natal_chart, "active_points", None) or [])
         star_names = {star.name for star in (getattr(self.natal_chart, "fixed_stars", None) or [])}
         missing_from_ephemeris = [
-            point for point in self.active_points
+            point
+            for point in self.active_points
             if point in natal_points and point not in ephemeris_points and point not in star_names
         ]
         if missing_from_ephemeris:
@@ -327,7 +335,8 @@ class TransitsTimeRangeFactory:
                 len(ephemeris_points),
             )
         missing_from_natal = [
-            point for point in self.active_points
+            point
+            for point in self.active_points
             if point in ephemeris_points and point not in natal_points and point not in star_names
         ]
         if missing_from_natal:
@@ -356,7 +365,8 @@ class TransitsTimeRangeFactory:
         if perspective not in _GEO_TOPO_PERSPECTIVES:
             by_design_absent |= _GEOCENTRIC_ONLY_POINT_NAMES
         missing_everywhere = [
-            point for point in self.active_points
+            point
+            for point in self.active_points
             if point not in natal_points
             and point not in ephemeris_points
             and point not in star_names
@@ -467,11 +477,7 @@ class TransitsTimeRangeFactory:
             days = [_iso_to_day_number(p.iso_formatted_utc_datetime) for p in self.ephemeris_data_points]
         except (AttributeError, TypeError, ValueError):
             return []
-        return [
-            later - earlier
-            for earlier, later in zip(days, days[1:])
-            if later > earlier
-        ]
+        return [later - earlier for earlier, later in zip(days, days[1:]) if later > earlier]
 
     def _representative_step_days(self) -> Optional[float]:
         """Return the *typical* sample spacing (the median gap, in days).
@@ -816,16 +822,12 @@ class TransitsTimeRangeFactory:
                     last_date, _, last_movement = run[-1]
                     applying_start = (
                         first_date
-                        if _is_first_minimum
-                        and first_date != first_moment_date
-                        and first_movement != "Separating"
+                        if _is_first_minimum and first_date != first_moment_date and first_movement != "Separating"
                         else None
                     )
                     separating_end = (
                         last_date
-                        if _is_last_minimum
-                        and last_date != last_moment_date
-                        and last_movement != "Applying"
+                        if _is_last_minimum and last_date != last_moment_date and last_movement != "Applying"
                         else None
                     )
 
@@ -896,11 +898,7 @@ class TransitsTimeRangeFactory:
                 # second event. A plain adjacency check (i - minima[-1] == 1)
                 # only deduplicated width-2 plateaus — [5, 2, 2, 2, 5] emitted
                 # two minima (indices 1 and 3) for a single passage.
-                if (
-                    minima
-                    and run[minima[-1]][1] == cur
-                    and all(run[j][1] == cur for j in range(minima[-1] + 1, i))
-                ):
+                if minima and run[minima[-1]][1] == cur and all(run[j][1] == cur for j in range(minima[-1] + 1, i)):
                     continue
                 minima.append(i)
         if not minima:
@@ -1051,6 +1049,7 @@ class TransitsTimeRangeFactory:
                 custom_ayanamsa_ayan_t0=self.natal_chart.custom_ayanamsa_ayan_t0,
                 perspective_type=self.natal_chart.perspective_type,
             ) as iflag:
+
                 def orb_at(moment: datetime) -> float:
                     """Angular deviation from exactness at ``moment``, in degrees."""
                     position = ephe.calc_ut(datetime_to_julian(moment), planet_id, iflag)[0][0]

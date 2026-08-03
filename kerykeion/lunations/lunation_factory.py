@@ -101,7 +101,6 @@ def _phase_angle_error(jd: float, target_angle: float) -> float:
     return min(diff, 360.0 - diff)
 
 
-
 def _ensure_scannable(start_jd: float, end_jd: float) -> None:
     """Reject ranges too long to scan, so a caller never receives a silently
     truncated result whose ``end_jd`` still claims the full requested range."""

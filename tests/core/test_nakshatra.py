@@ -83,16 +83,22 @@ class TestNakshatraCalculation:
     def test_dasha_lord_sequence(self):
         """Verify the Vimsottari Dasha lord sequence repeats correctly."""
         expected_lords = [
-            "Ketu", "Venus", "Sun", "Moon", "Mars",
-            "Rahu", "Jupiter", "Saturn", "Mercury",
+            "Ketu",
+            "Venus",
+            "Sun",
+            "Moon",
+            "Mars",
+            "Rahu",
+            "Jupiter",
+            "Saturn",
+            "Mercury",
         ]
         for i in range(27):
             pos = i * NAKSHATRA_SPAN + 1.0
             result = calculate_nakshatra(pos)
             expected = expected_lords[i % 9]
             assert result["nakshatra_lord"] == expected, (
-                f"Nakshatra {i+1} ({result['nakshatra']}): "
-                f"expected lord {expected}, got {result['nakshatra_lord']}"
+                f"Nakshatra {i + 1} ({result['nakshatra']}): expected lord {expected}, got {result['nakshatra_lord']}"
             )
 
     def test_wraparound_at_360(self):
@@ -137,18 +143,36 @@ class TestNakshatraIntegration:
     @pytest.fixture(scope="class")
     def subject_with_nakshatra(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "Nakshatra Test", 1990, 1, 1, 12, 0,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            "Nakshatra Test",
+            1990,
+            1,
+            1,
+            12,
+            0,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
             calculate_nakshatra=True,
         )
 
     @pytest.fixture(scope="class")
     def subject_without_nakshatra(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "No Nakshatra", 1990, 1, 1, 12, 0,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            "No Nakshatra",
+            1990,
+            1,
+            1,
+            12,
+            0,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
         )
 
     def test_nakshatra_populated(self, subject_with_nakshatra):
@@ -195,12 +219,9 @@ class TestNakshatraSwissEphRegression:
     # (year, month, day, hour, label, expected_nakshatra_name, expected_number)
     # Values pre-computed with ephe.calc_ut + LAHIRI
     TEST_DATES = [
-        (2000, 1, 1, 12.0, "J2000.0",
-         199.470553, "Swati", 15, 4, "Rahu"),
-        (2000, 6, 15, 12.0, "mid-2000",
-         225.045266, "Anuradha", 17, 4, "Saturn"),
-        (2010, 3, 21, 12.0, "2010-equinox",
-         42.318238, "Rohini", 4, 1, "Moon"),
+        (2000, 1, 1, 12.0, "J2000.0", 199.470553, "Swati", 15, 4, "Rahu"),
+        (2000, 6, 15, 12.0, "mid-2000", 225.045266, "Anuradha", 17, 4, "Saturn"),
+        (2010, 3, 21, 12.0, "2010-equinox", 42.318238, "Rohini", 4, 1, "Moon"),
     ]
 
     @pytest.mark.parametrize(
@@ -209,8 +230,17 @@ class TestNakshatraSwissEphRegression:
         ids=[t[4] for t in TEST_DATES],
     )
     def test_moon_nakshatra_matches_swe_sidereal(
-        self, year, month, day, hour, label,
-        expected_sid_pos, exp_name, exp_num, exp_pada, exp_lord,
+        self,
+        year,
+        month,
+        day,
+        hour,
+        label,
+        expected_sid_pos,
+        exp_name,
+        exp_num,
+        exp_pada,
+        exp_lord,
     ):
         """Verify nakshatra from ephe sidereal Moon position matches calculate_nakshatra."""
         jd = ephe.julday(year, month, day, hour)
@@ -228,24 +258,16 @@ class TestNakshatraSwissEphRegression:
         # Manually compute expected nakshatra index
         manual_index = int(sid_pos / (360.0 / 27.0))
         manual_number = manual_index + 1
-        assert manual_number == exp_num, (
-            f"[{label}] manual nakshatra number = {manual_number}, expected {exp_num}"
-        )
+        assert manual_number == exp_num, f"[{label}] manual nakshatra number = {manual_number}, expected {exp_num}"
 
         # Use kerykeion's calculate_nakshatra and verify all fields
         result = calculate_nakshatra(sid_pos)
-        assert result["nakshatra"] == exp_name, (
-            f"[{label}] nakshatra name = {result['nakshatra']}, expected {exp_name}"
-        )
+        assert result["nakshatra"] == exp_name, f"[{label}] nakshatra name = {result['nakshatra']}, expected {exp_name}"
         assert result["nakshatra_number"] == exp_num, (
             f"[{label}] nakshatra number = {result['nakshatra_number']}, expected {exp_num}"
         )
-        assert result["nakshatra_pada"] == exp_pada, (
-            f"[{label}] pada = {result['nakshatra_pada']}, expected {exp_pada}"
-        )
-        assert result["nakshatra_lord"] == exp_lord, (
-            f"[{label}] lord = {result['nakshatra_lord']}, expected {exp_lord}"
-        )
+        assert result["nakshatra_pada"] == exp_pada, f"[{label}] pada = {result['nakshatra_pada']}, expected {exp_pada}"
+        assert result["nakshatra_lord"] == exp_lord, f"[{label}] lord = {result['nakshatra_lord']}, expected {exp_lord}"
 
 
 class TestNakshatraTropicalWarning:
@@ -254,9 +276,17 @@ class TestNakshatraTropicalWarning:
     still computed for backward compatibility); sidereal charts stay silent."""
 
     _BIRTH = dict(
-        year=1990, month=1, day=1, hour=12, minute=0,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        year=1990,
+        month=1,
+        day=1,
+        hour=12,
+        minute=0,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
         suppress_geonames_warning=True,
     )
 

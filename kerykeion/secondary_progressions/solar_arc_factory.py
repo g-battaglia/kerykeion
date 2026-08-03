@@ -62,7 +62,7 @@ def _midpoint_name_to_pair_key(name: str) -> str:
     ``MidpointFactory.compute_active_midpoint_points`` is the same string
     minus the ``_Midpoint`` suffix.
     """
-    return name[:-len("_Midpoint")] if name.endswith("_Midpoint") else name
+    return name[: -len("_Midpoint")] if name.endswith("_Midpoint") else name
 
 
 class SolarArcDirectedPointModel(SubscriptableBaseModel):
@@ -165,13 +165,9 @@ class SolarArcFactory:
         if natal_subject.sun is None:
             raise KerykeionException("Natal subject is missing the Sun — cannot compute solar arc.")
         if (target_iso_utc_datetime is None) == (target_year is None):
-            raise KerykeionException(
-                "Pass exactly one of `target_iso_utc_datetime` or `target_year`."
-            )
+            raise KerykeionException("Pass exactly one of `target_iso_utc_datetime` or `target_year`.")
 
-        target_jd = SecondaryProgressionFactory._target_to_jd(
-            target_iso_utc_datetime, target_year
-        )
+        target_jd = SecondaryProgressionFactory._target_to_jd(target_iso_utc_datetime, target_year)
 
         progressed = SecondaryProgressionFactory.compute(
             natal_subject,
@@ -220,9 +216,7 @@ class SolarArcFactory:
                     # the detection below uses — otherwise a per-pair widening
                     # (extra_orb) lets the self-conjunction slip past a guard
                     # sized only to the base orb.
-                    if natal_name == d.name and _is_near_zero_arc(
-                        solar_arc, aspect_orb + max(0.0, extra_orb)
-                    ):
+                    if natal_name == d.name and _is_near_zero_arc(solar_arc, aspect_orb + max(0.0, extra_orb)):
                         continue
                     outcome = get_aspect_from_two_points(
                         aspects_settings=aspect_settings,
@@ -261,20 +255,59 @@ class SolarArcFactory:
     # directed subject must place the angles where those aspects point. Only the
     # house CUSPS stay on the natal frame (they define the biwheel's house grid).
     _DIRECTABLE_FIELDS = (
-        "sun", "moon", "mercury", "venus", "mars",
-        "jupiter", "saturn", "uranus", "neptune", "pluto",
-        "chiron", "earth", "pholus",
-        "mean_lilith", "true_lilith", "interpolated_lilith",
-        "mean_priapus", "true_priapus",
-        "interpolated_perigee", "white_moon",
-        "ceres", "pallas", "juno", "vesta",
-        "eris", "sedna", "haumea", "makemake", "ixion", "orcus", "quaoar",
-        "cupido", "hades", "zeus", "kronos", "apollon", "admetos", "vulkanus", "poseidon",
-        "mean_north_lunar_node", "true_north_lunar_node",
-        "mean_south_lunar_node", "true_south_lunar_node",
-        "pars_fortunae", "pars_spiritus", "pars_amoris", "pars_fidei",
-        "vertex", "anti_vertex",
-        "ascendant", "medium_coeli", "descendant", "imum_coeli",
+        "sun",
+        "moon",
+        "mercury",
+        "venus",
+        "mars",
+        "jupiter",
+        "saturn",
+        "uranus",
+        "neptune",
+        "pluto",
+        "chiron",
+        "earth",
+        "pholus",
+        "mean_lilith",
+        "true_lilith",
+        "interpolated_lilith",
+        "mean_priapus",
+        "true_priapus",
+        "interpolated_perigee",
+        "white_moon",
+        "ceres",
+        "pallas",
+        "juno",
+        "vesta",
+        "eris",
+        "sedna",
+        "haumea",
+        "makemake",
+        "ixion",
+        "orcus",
+        "quaoar",
+        "cupido",
+        "hades",
+        "zeus",
+        "kronos",
+        "apollon",
+        "admetos",
+        "vulkanus",
+        "poseidon",
+        "mean_north_lunar_node",
+        "true_north_lunar_node",
+        "mean_south_lunar_node",
+        "true_south_lunar_node",
+        "pars_fortunae",
+        "pars_spiritus",
+        "pars_amoris",
+        "pars_fidei",
+        "vertex",
+        "anti_vertex",
+        "ascendant",
+        "medium_coeli",
+        "descendant",
+        "imum_coeli",
     )
 
     @staticmethod
@@ -364,13 +397,9 @@ class SolarArcFactory:
         # rather than stale natal ones.
         if directed.active_midpoints:
             from kerykeion.midpoints.midpoint_factory import MidpointFactory
-            pair_names = [
-                _midpoint_name_to_pair_key(mp.name) for mp in directed.active_midpoints
-            ]
+
+            pair_names = [_midpoint_name_to_pair_key(mp.name) for mp in directed.active_midpoints]
             pair_names = [n for n in pair_names if n]
-            directed.active_midpoints = MidpointFactory.compute_active_midpoint_points(
-                directed, pair_names
-            )
+            directed.active_midpoints = MidpointFactory.compute_active_midpoint_points(directed, pair_names)
 
         return directed
-

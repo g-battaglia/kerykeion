@@ -16,7 +16,11 @@ from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPoint
 from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS, DEFAULT_PREDICTIVE_POINTS
 
 PTOLEMAIC_ASPECTS: tuple[str, ...] = (
-    "conjunction", "opposition", "trine", "sextile", "square",
+    "conjunction",
+    "opposition",
+    "trine",
+    "sextile",
+    "square",
 )
 
 
@@ -115,18 +119,14 @@ def gather_active_points(
     subject was built with a reduced ``active_points`` list).
     """
     if isinstance(active_points, (str, bytes)):
-        raise KerykeionException(
-            "`active_points` must be a sequence of point names, not a single string."
-        )
+        raise KerykeionException("`active_points` must be a sequence of point names, not a single string.")
     candidate_names: Iterable[str] = DEFAULT_PREDICTIVE_POINTS if active_points is None else active_points
 
     gathered: List[tuple[str, float]] = []
     seen: set[str] = set()
     for name in candidate_names:
         if not isinstance(name, str):
-            raise KerykeionException(
-                f"`active_points` entries must be strings; got {type(name).__name__}."
-            )
+            raise KerykeionException(f"`active_points` entries must be strings; got {type(name).__name__}.")
         attr = name.lower()
         if attr in seen:
             continue
@@ -141,9 +141,7 @@ def gather_active_points(
 def build_aspect_settings(orb: float, aspect_filter: Optional[Sequence[str]]) -> list[dict]:
     """Materialise an aspects-settings list with a uniform orb override."""
     if isinstance(aspect_filter, (str, bytes)):
-        raise KerykeionException(
-            "`aspects` must be a sequence of aspect names, not a single string."
-        )
+        raise KerykeionException("`aspects` must be a sequence of aspect names, not a single string.")
     if not math.isfinite(orb) or orb < 0:
         raise KerykeionException("`aspect_orb` must be a finite non-negative number.")
     settings: list[dict] = []

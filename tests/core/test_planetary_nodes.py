@@ -10,17 +10,33 @@ from kerykeion.schemas import KerykeionException
 # is deliberately absent — it has no geocentric orbital nodes/apsides and the
 # ephemeris would only return all-zero placeholders for it.
 _DEFAULT_NODE_PLANETS = {
-    "Moon", "Mercury", "Venus", "Mars", "Jupiter",
-    "Saturn", "Uranus", "Neptune", "Pluto",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
 }
 
 
 @pytest.fixture(scope="module")
 def subject():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Nodes Test", 2000, 1, 1, 12, 0,
-        lng=0.0, lat=51.5, tz_str="Etc/GMT",
-        city="Greenwich", nation="GB", online=False,
+        "Nodes Test",
+        2000,
+        1,
+        1,
+        12,
+        0,
+        lng=0.0,
+        lat=51.5,
+        tz_str="Etc/GMT",
+        city="Greenwich",
+        nation="GB",
+        online=False,
     )
 
 
@@ -43,7 +59,20 @@ class TestNodesFromSubject:
         for node in result.nodes:
             for point in [node.ascending_node, node.descending_node, node.perihelion, node.aphelion]:
                 assert 0 <= point.abs_pos < 360
-                assert point.sign in ("Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis")
+                assert point.sign in (
+                    "Ari",
+                    "Tau",
+                    "Gem",
+                    "Can",
+                    "Leo",
+                    "Vir",
+                    "Lib",
+                    "Sco",
+                    "Sag",
+                    "Cap",
+                    "Aqu",
+                    "Pis",
+                )
                 assert 0 <= point.position < 30
 
     def test_mars_ascending_node(self, subject):
@@ -119,9 +148,7 @@ class TestSweRegressionNodes:
             swe_peri_lon = swe_result[2][0] % 360
             swe_aph_lon = swe_result[3][0] % 360
 
-        factory_result = PlanetaryNodesFactory.from_julian_day(
-            jd_j2000, method="mean", planets=["Mars"]
-        )
+        factory_result = PlanetaryNodesFactory.from_julian_day(jd_j2000, method="mean", planets=["Mars"])
         assert len(factory_result.nodes) == 1
         mars = factory_result.nodes[0]
 
@@ -147,9 +174,7 @@ class TestSweRegressionNodes:
             swe_result = ephe.nod_aps_ut(jd_j2000, ephe.JUPITER, NODBIT_MEAN, iflag)
             swe_asc_lon = swe_result[0][0] % 360
 
-        factory_result = PlanetaryNodesFactory.from_julian_day(
-            jd_j2000, method="mean", planets=["Jupiter"]
-        )
+        factory_result = PlanetaryNodesFactory.from_julian_day(jd_j2000, method="mean", planets=["Jupiter"])
         assert len(factory_result.nodes) == 1
         jupiter = factory_result.nodes[0]
 
@@ -163,12 +188,8 @@ class TestSweRegressionNodes:
         argument order that made every "mean" request silently osculating."""
         jd_j2000 = 2451545.0
 
-        mean = PlanetaryNodesFactory.from_julian_day(
-            jd_j2000, method="mean", planets=["Moon"]
-        ).nodes[0]
-        oscu = PlanetaryNodesFactory.from_julian_day(
-            jd_j2000, method="osculating", planets=["Moon"]
-        ).nodes[0]
+        mean = PlanetaryNodesFactory.from_julian_day(jd_j2000, method="mean", planets=["Moon"]).nodes[0]
+        oscu = PlanetaryNodesFactory.from_julian_day(jd_j2000, method="osculating", planets=["Moon"]).nodes[0]
 
         delta = abs(mean.ascending_node.abs_pos - oscu.ascending_node.abs_pos)
         delta = min(delta, 360 - delta)
@@ -189,9 +210,17 @@ class TestSiderealFrameConsistency:
         """LAHIRI vs tropical subject at the same instant: node longitudes
         differ by exactly the chart ayanamsa (mod 360)."""
         birth = dict(
-            year=2000, month=1, day=1, hour=12, minute=0,
-            lng=0.0, lat=51.5, tz_str="Etc/GMT",
-            city="Greenwich", nation="GB", online=False,
+            year=2000,
+            month=1,
+            day=1,
+            hour=12,
+            minute=0,
+            lng=0.0,
+            lat=51.5,
+            tz_str="Etc/GMT",
+            city="Greenwich",
+            nation="GB",
+            online=False,
         )
         tropical = AstrologicalSubjectFactory.from_birth_data("Nodes Tropical", **birth)
         sidereal = AstrologicalSubjectFactory.from_birth_data(

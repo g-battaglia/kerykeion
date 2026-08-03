@@ -22,14 +22,32 @@ def _astro_year_from_iso(iso_datetime: str) -> int:
 @pytest.fixture(scope="module")
 def subjects():
     s1 = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon", 1940, 10, 9, 18, 30,
-        lng=-2.9916, lat=53.4084, tz_str="Europe/London",
-        city="Liverpool", nation="GB", online=False,
+        "John Lennon",
+        1940,
+        10,
+        9,
+        18,
+        30,
+        lng=-2.9916,
+        lat=53.4084,
+        tz_str="Europe/London",
+        city="Liverpool",
+        nation="GB",
+        online=False,
     )
     s2 = AstrologicalSubjectFactory.from_birth_data(
-        "Yoko Ono", 1933, 2, 18, 20, 30,
-        lng=139.6917, lat=35.6895, tz_str="Asia/Tokyo",
-        city="Tokyo", nation="JP", online=False,
+        "Yoko Ono",
+        1933,
+        2,
+        18,
+        20,
+        30,
+        lng=139.6917,
+        lat=35.6895,
+        tz_str="Asia/Tokyo",
+        city="Tokyo",
+        nation="JP",
+        online=False,
     )
     return s1, s2
 
@@ -97,14 +115,32 @@ class TestDavisonUserSiderealMode:
             custom_ayanamsa_ayan_t0=23.85,
         )
         s1 = AstrologicalSubjectFactory.from_birth_data(
-            "User One", 1940, 10, 9, 18, 30,
-            lng=-2.9916, lat=53.4084, tz_str="Europe/London",
-            city="Liverpool", nation="GB", **kwargs,
+            "User One",
+            1940,
+            10,
+            9,
+            18,
+            30,
+            lng=-2.9916,
+            lat=53.4084,
+            tz_str="Europe/London",
+            city="Liverpool",
+            nation="GB",
+            **kwargs,
         )
         s2 = AstrologicalSubjectFactory.from_birth_data(
-            "User Two", 1933, 2, 18, 20, 30,
-            lng=139.6917, lat=35.6895, tz_str="Asia/Tokyo",
-            city="Tokyo", nation="JP", **kwargs,
+            "User Two",
+            1933,
+            2,
+            18,
+            20,
+            30,
+            lng=139.6917,
+            lat=35.6895,
+            tz_str="Asia/Tokyo",
+            city="Tokyo",
+            nation="JP",
+            **kwargs,
         )
         return s1, s2
 
@@ -193,6 +229,7 @@ class TestCompositeValidation:
     def test_different_houses_system_name_raises(self, subjects):
         """Subjects with different houses_system_name should raise."""
         from kerykeion.schemas import KerykeionException
+
         s1, s2 = subjects
         # Mutate s2's houses_system_name (keeping identifier the same)
         s2_mod = s2.model_copy()
@@ -207,6 +244,7 @@ class TestDavisonSweReference:
     def test_davison_sun_matches_swe_at_midpoint_jd(self, subjects):
         """Davison Sun longitude must match ephe.calc_ut(midpoint_jd, SUN)."""
         from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+
         ephe.set_ephe_path(EPHE_DATA_PATH)
 
         s1, s2 = subjects
@@ -224,6 +262,7 @@ class TestDavisonSweReference:
     def test_davison_moon_matches_swe_at_midpoint_jd(self, subjects):
         """Davison Moon longitude must match ephe.calc_ut(midpoint_jd, MOON)."""
         from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+
         ephe.set_ephe_path(EPHE_DATA_PATH)
 
         s1, s2 = subjects
@@ -248,9 +287,18 @@ class TestDavisonBCE:
 
     def _subject(self, name, year, month, day, hour, minute, lng, lat):
         return AstrologicalSubjectFactory.from_birth_data(
-            name, year, month, day, hour, minute,
-            lng=lng, lat=lat, tz_str="Etc/GMT",
-            city="Test", nation="XX", online=False,
+            name,
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            lng=lng,
+            lat=lat,
+            tz_str="Etc/GMT",
+            city="Test",
+            nation="XX",
+            online=False,
             suppress_geonames_warning=True,
         )
 
@@ -315,10 +363,10 @@ class TestDavisonMidpointComponentsInverse:
     @pytest.mark.parametrize(
         "mid_jd,lng",
         [
-            (1684570.0, 30.0),     # deep ante-CE, east longitude
+            (1684570.0, 30.0),  # deep ante-CE, east longitude
             (1538550.25, -120.0),  # deeper ante-CE, west longitude
-            (1721000.123456, 45.0),   # just before the CE boundary
-            (2451545.0, 12.5),     # J2000
+            (1721000.123456, 45.0),  # just before the CE boundary
+            (2451545.0, 12.5),  # J2000
             (2429000.789, -2.99),  # 1930s
         ],
     )
@@ -345,14 +393,30 @@ def test_davison_model_carries_sect():
     from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
 
     a = AstrologicalSubjectFactory.from_birth_data(
-        "A", 1990, 6, 15, 12, 0,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        online=False, suppress_geonames_warning=True,
+        "A",
+        1990,
+        6,
+        15,
+        12,
+        0,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        online=False,
+        suppress_geonames_warning=True,
     )
     b = AstrologicalSubjectFactory.from_birth_data(
-        "B", 1985, 3, 10, 4, 20,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        online=False, suppress_geonames_warning=True,
+        "B",
+        1985,
+        3,
+        10,
+        4,
+        20,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        online=False,
+        suppress_geonames_warning=True,
     )
     davison = CompositeSubjectFactory(a, b).get_davison_composite_subject_model()
     assert isinstance(davison.is_diurnal, bool)
@@ -369,21 +433,35 @@ def test_midpoint_composite_sect_defaults_to_day_in_consumers():
     from kerykeion.utilities import resolve_sect_is_diurnal
 
     a = AstrologicalSubjectFactory.from_birth_data(
-        "A", 1990, 6, 15, 12, 0,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        online=False, suppress_geonames_warning=True,
+        "A",
+        1990,
+        6,
+        15,
+        12,
+        0,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        online=False,
+        suppress_geonames_warning=True,
     )
     b = AstrologicalSubjectFactory.from_birth_data(
-        "B", 1985, 3, 10, 4, 20,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        online=False, suppress_geonames_warning=True,
+        "B",
+        1985,
+        3,
+        10,
+        4,
+        20,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        online=False,
+        suppress_geonames_warning=True,
     )
     midpoint = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
     assert midpoint.is_diurnal is None
     assert resolve_sect_is_diurnal(midpoint) is True
     # Day formula: Asc + Moon - Sun. The night formula would give the
     # reflected value instead.
-    expected_day = (
-        midpoint.ascendant.abs_pos + midpoint.moon.abs_pos - midpoint.sun.abs_pos
-    ) % 360.0
+    expected_day = (midpoint.ascendant.abs_pos + midpoint.moon.abs_pos - midpoint.sun.abs_pos) % 360.0
     assert part_of_fortune_degree(midpoint) == pytest.approx(expected_day, abs=1e-9)

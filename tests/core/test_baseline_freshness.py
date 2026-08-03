@@ -2,14 +2,15 @@
 
 A row added to `chart.xml` reaches the baselines only if something regenerates
 them, and this repo has several regenerators covering overlapping sets. When the
-diurnality row landed, nineteen committed baselines were left behind — eleven of
+diurnality row landed, fifty-one committed baselines were left behind — eleven of
 them the README's own showcase images, which GitHub serves by raw URL, so the
-documentation was advertising a panel the library no longer draws.
+documentation was advertising a panel the library no longer draws, and thirty-two
+of them the v6 gallery, whose regenerator is wired into no poe task.
 
 Nothing caught it. The parametrised chart comparison covers most of the tree but
 not these; the BCE charts are compared by a line-count assertion with a ±5%
-tolerance, which one added line cannot trip; and the three natal fixtures below
-had no regenerator and no comparison at all.
+tolerance, which one added line cannot trip; and the three fixtures still exempt
+below have no regenerator and no comparison at all.
 
 So this test does not compare rendering — it asks a much cheaper question that
 the tolerant comparators cannot: is the file structurally the shape the current
@@ -26,24 +27,45 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).parents[2]
-BASELINE_DIRS = [REPO_ROOT / "tests" / "data" / "svg", REPO_ROOT / "docs" / "charts"]
+BASELINE_DIRS = [
+    REPO_ROOT / "tests" / "data" / "svg",
+    REPO_ROOT / "docs" / "charts",
+    REPO_ROOT / "tests" / "data" / "v6_gallery",
+]
 
-#: The bottom-left rows `chart.xml` emits. A chart that has any of them has all
-#: of them: the template writes the whole block unconditionally, and a renderer
-#: that leaves a slot empty still emits the node with empty text.
-PANEL_ROWS = 6
+#: How many bottom-left rows `chart.xml` emits, read from the template rather
+#: than written down. A hardcoded count catches the change that already happened
+#: and is blind to the next one, which is the failure this whole file exists to
+#: stop. A chart that has any of the rows has all of them: the template writes
+#: the block unconditionally, and a renderer that leaves a slot empty still emits
+#: the node with empty text.
+PANEL_ROWS = len(
+    re.findall(
+        r"Bottom_Left_Text_\d+",
+        (REPO_ROOT / "kerykeion" / "charts" / "templates" / "chart.xml").read_text(encoding="utf-8"),
+    )
+)
 
-#: Baselines that cannot be regenerated on an ordinary checkout, with the reason.
-#: These five are cast before 1 CE and need the full DE441 kernel; the short-range
-#: kernel most machines carry raises rather than computing them, which is why
-#: ``poe regenerate:svg`` reports the ancient-Rome step as an expected failure.
-#: Regenerate them on a machine with the extended tier and delete the entry.
+#: Baselines this repository cannot reproduce, with the reason.
+#:
+#: An earlier version of this list held five files and blamed the DE441 kernel.
+#: That was wrong and a reviewer caught it: ``poe regenerate:svg`` already sets
+#: ``LIBEPHEMERIS_PRECISION=extended``, and under that tier this machine computes
+#: pre-1-CE subjects and draws them with all six rows. Two of the five were
+#: regenerated that way. A wrong exemption is worse than no exemption, because it
+#: reads as verified and permanently silences the only guard that would flag the
+#: file.
+#:
+#: These three are exempt for a different reason: no script in the repository
+#: produces them, and their second subject is not recoverable from it — the
+#: synastry is cast against a subject named "Transit Partner" that appears in no
+#: source file, and the transit against 1970-01-01. Regenerating them means
+#: deciding what they are supposed to represent, which is a change to the
+#: fixtures rather than a refresh of them.
 CANNOT_REGENERATE_HERE = {
-    "Ancient Greece 500BC - Progression Chart.svg": "pre-1 CE, needs the DE441 kernel",
-    "Ancient Greece 500BC - Synastry Chart.svg": "pre-1 CE, needs the DE441 kernel",
-    "Ancient Greece 500BC - Transit Chart.svg": "pre-1 CE, needs the DE441 kernel",
-    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart.svg": "pre-1 CE, needs the DE441 kernel",
-    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart.svg": "pre-1 CE, needs the DE441 kernel",
+    "Ancient Greece 500BC - Progression Chart.svg": "no generator in the repo; progressed target not recorded",
+    "Ancient Greece 500BC - Synastry Chart.svg": "no generator in the repo; second subject not recorded",
+    "Ancient Greece 500BC - Transit Chart.svg": "no generator in the repo; transit moment not recorded",
 }
 
 _ROW = re.compile(r"Bottom_Left_Text_(\d+)")
@@ -82,7 +104,8 @@ def test_every_panelled_baseline_has_every_row(svg: Path):
     assert not missing, (
         f"{svg.name} is missing bottom-left row(s) {sorted(missing)} — it predates a template change. "
         f"Regenerate it: `poe regenerate:svg` for tests/data/svg, "
-        f"`python scripts/regenerate_docs_charts.py` for docs/charts."
+        f"`python scripts/regenerate_docs_charts.py` for docs/charts, "
+        f"`python scripts/generate_v6_test_gallery.py` for tests/data/v6_gallery."
     )
 
 

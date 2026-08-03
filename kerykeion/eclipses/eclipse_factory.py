@@ -42,17 +42,13 @@ ECL_PENUMBRAL = getattr(ephe, "SE_ECL_PENUMBRAL", getattr(ephe, "ECL_PENUMBRAL",
 ECL_ANNULAR_TOTAL = getattr(ephe, "SE_ECL_ANNULAR_TOTAL", getattr(ephe, "ECL_ANNULAR_TOTAL", 32))
 
 
-
 def _ensure_scannable(count: int) -> None:
     """Reject absurd event counts upfront, so a caller never receives a
     silently truncated result and never waits on a scan that cannot finish."""
     if count < 0:
         raise ValueError("count must be non-negative")
     if count > _MAX_COUNT:
-        raise ValueError(
-            f"count too large (> {_MAX_COUNT} events per eclipse type). "
-            f"Request fewer events per search."
-        )
+        raise ValueError(f"count too large (> {_MAX_COUNT} events per eclipse type). Request fewer events per search.")
 
 
 def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> None:
@@ -230,11 +226,18 @@ def _lunar_magnitudes(jd: float) -> dict:
 
 class SolarEclipseModel(SubscriptableBaseModel):
     """Solar eclipse data."""
+
     type: str = Field(description="Eclipse type: total, annular, partial, annular-total")
     maximum_jd: float = Field(description="Julian Day of maximum eclipse")
     datestamp: str = Field(description="ISO 8601 formatted datetime of maximum")
-    magnitude: Optional[float] = Field(default=None, description="Fraction of solar diameter covered; None for global searches, populated for local searches")
-    obscuration: Optional[float] = Field(default=None, description="Fraction of solar disk area covered; None for global searches, populated for local searches")
+    magnitude: Optional[float] = Field(
+        default=None,
+        description="Fraction of solar diameter covered; None for global searches, populated for local searches",
+    )
+    obscuration: Optional[float] = Field(
+        default=None,
+        description="Fraction of solar disk area covered; None for global searches, populated for local searches",
+    )
     sun_altitude: Optional[float] = Field(default=None, description="Sun altitude at maximum (degrees)")
     # Zodiac position of the eclipse (Sun/Moon conjunction longitude at maximum).
     ecliptic_longitude: Optional[float] = Field(default=None, description="Ecliptic longitude at maximum (0-360)")
@@ -242,31 +245,56 @@ class SolarEclipseModel(SubscriptableBaseModel):
     sign_num: Optional[int] = Field(default=None, description="Zodiac sign number (0=Aries)")
     degree: Optional[float] = Field(default=None, description="Degree within the sign (0-30)")
     # Catalogued series + geometry (libephemeris extensions; None on swisseph backend).
-    saros: Optional[int] = Field(default=None, description="Saros series number (None on the swisseph backend or when the eclipse is absent from the catalog tables)")
-    inex: Optional[int] = Field(default=None, description="Inex series number. Currently always None: libephemeris <= 2.0.2 get_inex_number lacks a residual threshold and returns nearest-series values for arbitrary eclipses; the field is reserved until a trustworthy source is available")
-    gamma: Optional[float] = Field(default=None, description="Gamma: shadow-axis distance from Earth's centre (Earth radii)")
-    duration_minutes: Optional[float] = Field(default=None, description="Duration of the central (total/annular) phase in minutes, at the point of greatest eclipse — i.e. the local totality/annularity duration there, not the global span of the shadow path across the Earth; None if partial")
+    saros: Optional[int] = Field(
+        default=None,
+        description="Saros series number (None on the swisseph backend or when the eclipse is absent from the catalog tables)",
+    )
+    inex: Optional[int] = Field(
+        default=None,
+        description="Inex series number. Currently always None: libephemeris <= 2.0.2 get_inex_number lacks a residual threshold and returns nearest-series values for arbitrary eclipses; the field is reserved until a trustworthy source is available",
+    )
+    gamma: Optional[float] = Field(
+        default=None, description="Gamma: shadow-axis distance from Earth's centre (Earth radii)"
+    )
+    duration_minutes: Optional[float] = Field(
+        default=None,
+        description="Duration of the central (total/annular) phase in minutes, at the point of greatest eclipse — i.e. the local totality/annularity duration there, not the global span of the shadow path across the Earth; None if partial",
+    )
 
 
 class LunarEclipseModel(SubscriptableBaseModel):
     """Lunar eclipse data."""
+
     type: str = Field(description="Eclipse type: total, partial, penumbral")
     maximum_jd: float = Field(description="Julian Day of maximum eclipse")
     datestamp: str = Field(description="ISO 8601 formatted datetime of maximum")
-    magnitude_umbral: Optional[float] = Field(default=None, description="Umbral magnitude at maximum_jd, populated in both global and local searches (lunar magnitudes are observer-independent; non-positive when the Moon misses the umbra, i.e. penumbral eclipses)")
-    magnitude_penumbral: Optional[float] = Field(default=None, description="Penumbral magnitude at maximum_jd, populated in both global and local searches (lunar magnitudes are observer-independent)")
+    magnitude_umbral: Optional[float] = Field(
+        default=None,
+        description="Umbral magnitude at maximum_jd, populated in both global and local searches (lunar magnitudes are observer-independent; non-positive when the Moon misses the umbra, i.e. penumbral eclipses)",
+    )
+    magnitude_penumbral: Optional[float] = Field(
+        default=None,
+        description="Penumbral magnitude at maximum_jd, populated in both global and local searches (lunar magnitudes are observer-independent)",
+    )
     # Zodiac position of the eclipse (Moon longitude / Full Moon point at maximum).
     ecliptic_longitude: Optional[float] = Field(default=None, description="Ecliptic longitude at maximum (0-360)")
     sign: Optional[str] = Field(default=None, description="Zodiac sign of the eclipse")
     sign_num: Optional[int] = Field(default=None, description="Zodiac sign number (0=Aries)")
     degree: Optional[float] = Field(default=None, description="Degree within the sign (0-30)")
     # Catalogued series (libephemeris extensions; None on swisseph backend).
-    saros: Optional[int] = Field(default=None, description="Saros series number (None on the swisseph backend or when the eclipse is absent from the catalog tables)")
-    inex: Optional[int] = Field(default=None, description="Inex series number. Currently always None: libephemeris <= 2.0.2 get_inex_number lacks a residual threshold and returns nearest-series values for arbitrary eclipses; the field is reserved until a trustworthy source is available")
+    saros: Optional[int] = Field(
+        default=None,
+        description="Saros series number (None on the swisseph backend or when the eclipse is absent from the catalog tables)",
+    )
+    inex: Optional[int] = Field(
+        default=None,
+        description="Inex series number. Currently always None: libephemeris <= 2.0.2 get_inex_number lacks a residual threshold and returns nearest-series values for arbitrary eclipses; the field is reserved until a trustworthy source is available",
+    )
 
 
 class EclipseSearchResultModel(SubscriptableBaseModel):
     """Result of an eclipse search."""
+
     solar_eclipses: List[SolarEclipseModel] = Field(description="Solar eclipses found")
     lunar_eclipses: List[LunarEclipseModel] = Field(description="Lunar eclipses found")
     latitude: Optional[float] = Field(default=None, description="Search latitude (None for global)")
@@ -419,26 +447,26 @@ class EclipseFactory:
                 # guard against a pathological zero result.
                 break
             max_jd = tret[0]
-            results.append(SolarEclipseModel(
-                type=_classify_solar_eclipse(retflags),
-                maximum_jd=max_jd,
-                datestamp=_jd_to_iso(max_jd),
-                magnitude=round(attr[0], 6) if len(attr) > 0 else None,
-                obscuration=round(attr[2], 6) if len(attr) > 2 else None,
-                sun_altitude=round(attr[5], 4) if len(attr) > 5 else None,
-                **_zodiac_fields(max_jd, ephe.SUN, "Sun", iflag),
-                **_saros_inex(max_jd, "solar"),
-                # gamma / duration are global central-line properties; max_jd
-                # here is the observer's local maximum, so they are omitted
-                # (the global search reports them from the global maximum).
-            ))
+            results.append(
+                SolarEclipseModel(
+                    type=_classify_solar_eclipse(retflags),
+                    maximum_jd=max_jd,
+                    datestamp=_jd_to_iso(max_jd),
+                    magnitude=round(attr[0], 6) if len(attr) > 0 else None,
+                    obscuration=round(attr[2], 6) if len(attr) > 2 else None,
+                    sun_altitude=round(attr[5], 4) if len(attr) > 5 else None,
+                    **_zodiac_fields(max_jd, ephe.SUN, "Sun", iflag),
+                    **_saros_inex(max_jd, "solar"),
+                    # gamma / duration are global central-line properties; max_jd
+                    # here is the observer's local maximum, so they are omitted
+                    # (the global search reports them from the global maximum).
+                )
+            )
             jd = max_jd + 10  # Skip ahead
         return results
 
     @staticmethod
-    def _find_solar_global(
-        start_jd: float, count: int, iflag: int = ephe.FLG_SWIEPH
-    ) -> List[SolarEclipseModel]:
+    def _find_solar_global(start_jd: float, count: int, iflag: int = ephe.FLG_SWIEPH) -> List[SolarEclipseModel]:
         """Search for solar eclipses globally (any location on Earth)."""
         results = []
         jd = start_jd
@@ -453,17 +481,19 @@ class EclipseFactory:
                 # guard against a pathological zero result.
                 break
             max_jd = tret[0]
-            results.append(SolarEclipseModel(
-                type=_classify_solar_eclipse(retflags),
-                maximum_jd=max_jd,
-                datestamp=_jd_to_iso(max_jd),
-                # magnitude/obscuration are observer-dependent: None in global mode.
-                magnitude=None,
-                obscuration=None,
-                **_zodiac_fields(max_jd, ephe.SUN, "Sun", iflag),
-                **_saros_inex(max_jd, "solar"),
-                **_solar_gamma_duration(max_jd),
-            ))
+            results.append(
+                SolarEclipseModel(
+                    type=_classify_solar_eclipse(retflags),
+                    maximum_jd=max_jd,
+                    datestamp=_jd_to_iso(max_jd),
+                    # magnitude/obscuration are observer-dependent: None in global mode.
+                    magnitude=None,
+                    obscuration=None,
+                    **_zodiac_fields(max_jd, ephe.SUN, "Sun", iflag),
+                    **_saros_inex(max_jd, "solar"),
+                    **_solar_gamma_duration(max_jd),
+                )
+            )
             jd = max_jd + 10
         return results
 
@@ -485,22 +515,22 @@ class EclipseFactory:
                 # guard against a pathological zero result.
                 break
             max_jd = tret[0]
-            results.append(LunarEclipseModel(
-                type=_classify_lunar_eclipse(retflags),
-                maximum_jd=max_jd,
-                datestamp=_jd_to_iso(max_jd),
-                magnitude_umbral=round(attr[0], 6) if len(attr) > 0 else None,
-                magnitude_penumbral=round(attr[1], 6) if len(attr) > 1 else None,
-                **_zodiac_fields(max_jd, ephe.MOON, "Moon", iflag),
-                **_saros_inex(max_jd, "lunar"),
-            ))
+            results.append(
+                LunarEclipseModel(
+                    type=_classify_lunar_eclipse(retflags),
+                    maximum_jd=max_jd,
+                    datestamp=_jd_to_iso(max_jd),
+                    magnitude_umbral=round(attr[0], 6) if len(attr) > 0 else None,
+                    magnitude_penumbral=round(attr[1], 6) if len(attr) > 1 else None,
+                    **_zodiac_fields(max_jd, ephe.MOON, "Moon", iflag),
+                    **_saros_inex(max_jd, "lunar"),
+                )
+            )
             jd = max_jd + 10
         return results
 
     @staticmethod
-    def _find_lunar_global(
-        start_jd: float, count: int, iflag: int = ephe.FLG_SWIEPH
-    ) -> List[LunarEclipseModel]:
+    def _find_lunar_global(start_jd: float, count: int, iflag: int = ephe.FLG_SWIEPH) -> List[LunarEclipseModel]:
         """Search for lunar eclipses globally."""
         results = []
         jd = start_jd
@@ -515,15 +545,17 @@ class EclipseFactory:
                 # guard against a pathological zero result.
                 break
             max_jd = tret[0]
-            results.append(LunarEclipseModel(
-                type=_classify_lunar_eclipse(retflags),
-                maximum_jd=max_jd,
-                datestamp=_jd_to_iso(max_jd),
-                # Lunar magnitudes are observer-independent, so (unlike the
-                # solar fields) they are populated in global mode too.
-                **_lunar_magnitudes(max_jd),
-                **_zodiac_fields(max_jd, ephe.MOON, "Moon", iflag),
-                **_saros_inex(max_jd, "lunar"),
-            ))
+            results.append(
+                LunarEclipseModel(
+                    type=_classify_lunar_eclipse(retflags),
+                    maximum_jd=max_jd,
+                    datestamp=_jd_to_iso(max_jd),
+                    # Lunar magnitudes are observer-independent, so (unlike the
+                    # solar fields) they are populated in global mode too.
+                    **_lunar_magnitudes(max_jd),
+                    **_zodiac_fields(max_jd, ephe.MOON, "Moon", iflag),
+                    **_saros_inex(max_jd, "lunar"),
+                )
+            )
             jd = max_jd + 10
         return results

@@ -40,11 +40,13 @@ from kerykeion import (
 from kerykeion.charts.chart_drawer import (
     DIURNALITY_ROW_CLEAR_WIDTH,
     ChartDrawer,
-    estimate_text_width,
 )
+
 
 def _row_re(index: int):
     return re.compile(rf"Bottom_Left_Text_{index}'[^>]*>([^<]*)<")
+
+
 BLOCK_TRANSFORM = re.compile(r"Bottom_Left_Text' transform='translate\(0,([-\d.]+)\)'")
 MOON_TRANSFORM = re.compile(r"Lunar_Phase' transform='translate\(10,([-\d.]+)\)'")
 
@@ -111,9 +113,7 @@ def _subject(name="John", **kwargs):
 
 def _composite(kind: str):
     """A midpoint or Davison composite of the same two subjects."""
-    factory = CompositeSubjectFactory(
-        _subject(), _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0)
-    )
+    factory = CompositeSubjectFactory(_subject(), _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0))
     if kind == "Midpoint":
         return factory.get_midpoint_composite_subject_model()
     return factory.get_davison_composite_subject_model()
@@ -141,8 +141,13 @@ def _solar_return():
     """A natal chart and its next solar return, computed offline."""
     natal = _subject()
     factory = PlanetaryReturnFactory(
-        natal, city="Liverpool", nation="GB", lat=53.41058, lng=-2.97794,
-        tz_str="Europe/London", online=False,
+        natal,
+        city="Liverpool",
+        nation="GB",
+        lat=53.41058,
+        lng=-2.97794,
+        tz_str="Europe/London",
+        online=False,
     )
     return natal, factory.next_return_from_date(2024, 1, 1, return_type="Solar")
 
@@ -209,6 +214,36 @@ class TestDiurnalityOmitted:
         svg = _render(ChartDataFactory.create_natal_chart_data(subject))
         assert _row(svg) == ""
         assert _layout(svg) == LAYOUT_WITHOUT_LINE
+
+    @pytest.mark.parametrize(
+        "perspective,expected",
+        [
+            ("Apparent Geocentric", True),
+            ("True Geocentric", True),
+            ("Topocentric", True),
+            ("Heliocentric", False),
+            ("Selenocentric", False),
+            ("Marscentric", False),
+            ("Jupitercentric", False),
+            ("Barycentric", False),
+        ],
+    )
+    def test_only_a_chart_cast_from_the_earth_states_a_diurnality(self, perspective, expected):
+        """Seven of the eleven perspectives draw a Sun that is not the measured one.
+
+        `is_diurnal` comes from a tropical *geocentric* Sun. A heliocentric chart
+        draws no Sun at all, which was the case this feature already handled. The
+        planetocentric ones are worse: they draw a Sun, and it is a different
+        body. On this Liverpool chart the measured Sun is at 196° and the
+        Marscentric wheel draws 354°, so the panel asserted "Nocturnal" over a
+        Sun it was not describing — one row below `Perspective: Marscentric`.
+
+        Topocentric and True Geocentric differ from Apparent Geocentric by
+        parallax and aberration, fractions of a degree, so they keep the line.
+        """
+        subject = _subject(perspective_type=perspective)
+        row = _row(_render(ChartDataFactory.create_natal_chart_data(subject)))
+        assert bool(row) is expected, f"{perspective}: {row!r}"
 
     def test_midpoint_composite_has_no_single_sky(self):
         composite = _composite("Midpoint")
@@ -303,6 +338,52 @@ class TestDiurnalityOnDualCharts:
             assert width <= DIURNALITY_ROW_CLEAR_WIDTH, (
                 f"{language}: {width:.1f}px will overrun the wheel's {DIURNALITY_ROW_CLEAR_WIDTH}px: {row!r}"
             )
+
+    # Every name class that has broken this guard, and the ones that have not
+    # yet. The guard has been wrong three times — a character cap that could not
+    # see ideographs, an em average that undercharged lowercase w and Cyrillic
+    # ж ю ы, and a 1.0-em fallback that undercharged Arabic. Each time the
+    # verification sweep that found the next one was run by hand and thrown away,
+    # so the next class was free to break it again. This is that sweep, committed.
+    NAME_CLASSES = {
+        "ideographs": ("阿部寛田中太郎彦仁美", "山田花子鈴木一郎次郎"),
+        "hangul": ("김철수박영희정민수", "이민호최지우강동원"),
+        "arabic": ("محمدعبدالرحمن", "فاطمةالزهراء"),
+        "arabic-presentation": ("ﶩﶪﶫﶬﶭﶮﶯﶰ", "ﷲﷺﷻﷴﷵﷶﷷﷸ"),
+        "hebrew": ("דודבןגוריון", "שרהלויכהן"),
+        "devanagari": ("राजेशकुमारशर्मा", "प्रियादेवीसिंह"),
+        "thai": ("สมชายใจดีมาก", "สุดารัตน์ทองดี"),
+        "greek": ("ΑΘΗΝΑΠΑΠΑΔΟΠΟΥΛΟΥ", "Γεώργιοςαντωνίου"),
+        "cyrillic-lower": ("жжжжжжжжжжжж", "юююююююююююю"),
+        "cyrillic-upper": ("ЖЮЖЮЖЮЖЮЖЮ", "ШЩШЩШЩШЩ"),
+        "latin-upper": ("MARIAGRAZIAMARIA", "GIANFRANCOGIAN"),
+        "latin-widest": ("MMMMMMMMMMMM", "WWWWWWWWWWWW"),
+        "latin-lower-wide": ("mmmmmmmmmmmm", "wwwwwwwwwwww"),
+        "digraphs": ("ǆǆǆǆǆǆǆǆǆǆ", "ǱǱǱǱǱǱǱǱǱǱ"),
+        "combining": ("Ana\u0301sta\u0301sia\u0301", "Jose\u0301Mari\u0301a"),
+        "soft-hyphen": ("Ana" + "\u00ad" * 20, "Bo" + "\u00ad" * 20),
+        "emoji": ("👩‍🚀🌟🔮🪐🌙☀️", "🧿✨🌞🌛🪄🕯️"),
+        "markup": ("&&&&&&&&&&&&", "<<<<<<<<<<<<"),
+        "whitespace-only": (" ", "  "),
+        "ordinary-latin": ("Alessandra Giovanna Bianchi", "Massimiliano Ferrari"),
+    }
+
+    @pytest.mark.parametrize("script", sorted(NAME_CLASSES))
+    @pytest.mark.parametrize("language", ["EN", "IT", "RU", "DE", "CN", "HI"])
+    def test_no_name_in_any_script_overruns_the_wheel(self, script, language):
+        """The sweep that keeps finding the next hole, run every time.
+
+        Measured against `tests/data/glyph_advances.json`, not against the
+        estimator that sized the row — see `_measured_width` for why that
+        distinction is the whole point.
+        """
+        first, second = self.NAME_CLASSES[script]
+        data = ChartDataFactory.create_synastry_chart_data(_subject(first), _subject(second, hour=23, minute=0))
+        row = _row(_render(data, chart_language=language))
+        width = _measured_width(row)
+        assert width <= DIURNALITY_ROW_CLEAR_WIDTH, (
+            f"{script}/{language}: {width:.1f}px overruns the wheel's {DIURNALITY_ROW_CLEAR_WIDTH}px — {row!r}"
+        )
 
     def test_only_the_first_word_of_a_name_reaches_the_row(self):
         """As the comparison grids do to the same two names."""

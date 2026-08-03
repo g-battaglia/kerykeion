@@ -108,6 +108,7 @@ _ON_MERIDIAN_TOLERANCE = 1e-6
 
 class SpeculumEntryModel(SubscriptableBaseModel):
     """Speculum (coordinate table) entry for a single celestial point."""
+
     name: str
     ecliptic_longitude: float = Field(description="Ecliptic longitude (0-360), in the subject's zodiac")
     right_ascension: float = Field(description="Right Ascension in degrees (0-360)")
@@ -123,6 +124,7 @@ class SpeculumEntryModel(SubscriptableBaseModel):
 
 class PrimaryDirectionModel(SubscriptableBaseModel):
     """A single primary direction result."""
+
     promissor: str = Field(description="The directed planet (moving point)")
     significator: str = Field(description="The receiving point (fixed target)")
     aspect: str = Field(description="Aspect type (conjunction, opposition, trine, square, sextile)")
@@ -149,8 +151,7 @@ class PrimaryDirectionsFactory:
     """
 
     # Planets used as promissors and significators
-    DIRECTION_POINTS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-                        "Ascendant", "Medium_Coeli"]
+    DIRECTION_POINTS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Ascendant", "Medium_Coeli"]
 
     ASPECT_ANGLES = {
         "conjunction": 0,
@@ -190,9 +191,7 @@ class PrimaryDirectionsFactory:
                 negative/non-finite.
         """
         if rate_key not in ("ptolemy", "naibod"):
-            raise KerykeionException(
-                f"Unknown rate_key {rate_key!r}: expected 'ptolemy' or 'naibod'."
-            )
+            raise KerykeionException(f"Unknown rate_key {rate_key!r}: expected 'ptolemy' or 'naibod'.")
         if not math.isfinite(max_years) or max_years < 0:
             raise KerykeionException("max_years must be a finite non-negative number.")
 
@@ -228,9 +227,7 @@ class PrimaryDirectionsFactory:
             ramc = (ephe.sidtime(jd) * 15.0 + subject.lng) % 360
 
             # Build speculum
-            speculum = PrimaryDirectionsFactory._build_speculum(
-                subject, jd, iflag, obliquity, ramc, lat
-            )
+            speculum = PrimaryDirectionsFactory._build_speculum(subject, jd, iflag, obliquity, ramc, lat)
 
         if not speculum:
             return []
@@ -275,18 +272,12 @@ class PrimaryDirectionsFactory:
                         aspect_lambda = (prom_lambda_tropical + offset) % 360
 
                         try:
-                            ra_asp, dec_asp = PrimaryDirectionsFactory._ecliptic_to_equatorial(
-                                aspect_lambda, obliquity
-                            )
+                            ra_asp, dec_asp = PrimaryDirectionsFactory._ecliptic_to_equatorial(aspect_lambda, obliquity)
                             # OA/OD of the aspect point under the significator's pole
                             if sig_is_eastern:
-                                oa_prom = PrimaryDirectionsFactory._oblique_ascension(
-                                    ra_asp, dec_asp, sig.pole
-                                )
+                                oa_prom = PrimaryDirectionsFactory._oblique_ascension(ra_asp, dec_asp, sig.pole)
                             else:
-                                oa_prom = PrimaryDirectionsFactory._oblique_descension(
-                                    ra_asp, dec_asp, sig.pole
-                                )
+                                oa_prom = PrimaryDirectionsFactory._oblique_descension(ra_asp, dec_asp, sig.pole)
                         except (ValueError, ArithmeticError) as exc:
                             # A degenerate geometry (math-domain / division error)
                             # means this aspect point has no valid arc here — skip
@@ -314,15 +305,17 @@ class PrimaryDirectionsFactory:
                         for arc, is_converse in ((arc_direct, False), (arc_converse, True)):
                             years = arc / rate
                             if 0.1 < years <= max_years:
-                                directions.append(PrimaryDirectionModel(
-                                    promissor=prom_name,
-                                    significator=sig_name,
-                                    aspect=aspect_name,
-                                    arc=round(arc, 4),
-                                    direction_years=round(years, 2),
-                                    rate_key=rate_key,
-                                    is_converse=is_converse,
-                                ))
+                                directions.append(
+                                    PrimaryDirectionModel(
+                                        promissor=prom_name,
+                                        significator=sig_name,
+                                        aspect=aspect_name,
+                                        arc=round(arc, 4),
+                                        direction_years=round(years, 2),
+                                        rate_key=rate_key,
+                                        is_converse=is_converse,
+                                    )
+                                )
 
         directions.sort(key=lambda d: d.direction_years)
         return directions
@@ -335,9 +328,7 @@ class PrimaryDirectionsFactory:
         with ephemeris_session(**_session_kwargs(subject)) as iflag:
             obliquity = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
             ramc = (ephe.sidtime(jd) * 15.0 + subject.lng) % 360
-            speculum = PrimaryDirectionsFactory._build_speculum(
-                subject, jd, iflag, obliquity, ramc, subject.lat
-            )
+            speculum = PrimaryDirectionsFactory._build_speculum(subject, jd, iflag, obliquity, ramc, subject.lat)
         return speculum
 
     @staticmethod
@@ -452,9 +443,7 @@ class PrimaryDirectionsFactory:
             # Placidian pole ("under the pole" recipe). Points on the meridian
             # have pole 0: directions to the MC/IC are pure RA arcs.
             try:
-                pole = PrimaryDirectionsFactory._placidian_pole(
-                    md_for_pole, semi_arc, dec, geo_lat
-                )
+                pole = PrimaryDirectionsFactory._placidian_pole(md_for_pole, semi_arc, dec, geo_lat)
             except (ValueError, ZeroDivisionError):
                 pole = 0.0
 
@@ -465,17 +454,19 @@ class PrimaryDirectionsFactory:
             else:
                 oa = PrimaryDirectionsFactory._oblique_descension(ra, dec, pole)
 
-            entries.append(SpeculumEntryModel(
-                name=point_name,
-                ecliptic_longitude=round(ecl_lon, 4),
-                right_ascension=round(ra, 4),
-                declination=round(dec, 4),
-                meridian_distance=round(md, 4),
-                semi_arc=round(semi_arc, 4),
-                is_above_horizon=is_above,
-                pole=round(pole, 4),
-                oblique_ascension=round(oa, 4),
-            ))
+            entries.append(
+                SpeculumEntryModel(
+                    name=point_name,
+                    ecliptic_longitude=round(ecl_lon, 4),
+                    right_ascension=round(ra, 4),
+                    declination=round(dec, 4),
+                    meridian_distance=round(md, 4),
+                    semi_arc=round(semi_arc, 4),
+                    is_above_horizon=is_above,
+                    pole=round(pole, 4),
+                    oblique_ascension=round(oa, 4),
+                )
+            )
 
         return entries
 
@@ -546,14 +537,8 @@ class PrimaryDirectionsFactory:
         eps_rad = math.radians(obliquity)
 
         x = math.cos(lat_rad) * math.cos(lon_rad)
-        y = (
-            math.cos(lat_rad) * math.sin(lon_rad) * math.cos(eps_rad)
-            - math.sin(lat_rad) * math.sin(eps_rad)
-        )
-        z = (
-            math.cos(lat_rad) * math.sin(lon_rad) * math.sin(eps_rad)
-            + math.sin(lat_rad) * math.cos(eps_rad)
-        )
+        y = math.cos(lat_rad) * math.sin(lon_rad) * math.cos(eps_rad) - math.sin(lat_rad) * math.sin(eps_rad)
+        z = math.cos(lat_rad) * math.sin(lon_rad) * math.sin(eps_rad) + math.sin(lat_rad) * math.cos(eps_rad)
         ra = math.degrees(math.atan2(y, x)) % 360.0
         dec = math.degrees(math.atan2(z, math.hypot(x, y)))
         return ra, dec

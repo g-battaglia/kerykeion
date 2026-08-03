@@ -64,7 +64,6 @@ STANDARD_ATMOSPHERIC_PRESSURE_HPA = 1013.25  # hectopascals (sea level)
 STANDARD_TEMPERATURE_CELSIUS = 15.0  # degrees Celsius
 
 
-
 def safe_parse_iso_datetime(value: Optional[str]) -> datetime:
     """
     Parse an ISO formatted datetime string into an aware UTC datetime.
@@ -83,9 +82,7 @@ def safe_parse_iso_datetime(value: Optional[str]) -> datetime:
             datetime string.
     """
     if not value:
-        raise KerykeionException(
-            "Cannot parse ISO datetime: value is empty or None."
-        )
+        raise KerykeionException("Cannot parse ISO datetime: value is empty or None.")
 
     try:
         dt = datetime.fromisoformat(value)
@@ -93,9 +90,7 @@ def safe_parse_iso_datetime(value: Optional[str]) -> datetime:
         try:
             dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
         except Exception as exc:
-            raise KerykeionException(
-                f"Cannot parse ISO datetime {value!r}: {exc}"
-            ) from exc
+            raise KerykeionException(f"Cannot parse ISO datetime {value!r}: {exc}") from exc
 
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)

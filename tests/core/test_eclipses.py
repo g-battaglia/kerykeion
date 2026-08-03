@@ -87,8 +87,12 @@ class TestDefaultStartYear:
         # (The trailing iflag arg is threaded from the session by the factory.)
         monkeypatch.setattr(ef.EclipseFactory, "_find_solar_global", staticmethod(lambda jd, count, iflag=None: []))
         monkeypatch.setattr(ef.EclipseFactory, "_find_lunar_global", staticmethod(lambda jd, count, iflag=None: []))
-        monkeypatch.setattr(ef.EclipseFactory, "_find_solar_local", staticmethod(lambda jd, geopos, count, iflag=None: []))
-        monkeypatch.setattr(ef.EclipseFactory, "_find_lunar_local", staticmethod(lambda jd, geopos, count, iflag=None: []))
+        monkeypatch.setattr(
+            ef.EclipseFactory, "_find_solar_local", staticmethod(lambda jd, geopos, count, iflag=None: [])
+        )
+        monkeypatch.setattr(
+            ef.EclipseFactory, "_find_lunar_local", staticmethod(lambda jd, geopos, count, iflag=None: [])
+        )
         return captured
 
     def test_global_default_is_current_utc_year(self, monkeypatch):
@@ -115,49 +119,39 @@ class TestLocalSearch:
     """Test location-specific eclipse search."""
 
     def test_finds_local_solar_eclipses(self):
-        result = EclipseFactory.search_from_location(
-            lat=41.9, lng=12.5, start_year=2020, count=3
-        )
+        result = EclipseFactory.search_from_location(lat=41.9, lng=12.5, start_year=2020, count=3)
         assert len(result.solar_eclipses) > 0
 
     def test_local_solar_omits_global_gamma_duration(self):
         # gamma and central duration are global central-line properties; local
         # results (max_jd = observer maximum) must not carry them.
-        result = EclipseFactory.search_from_location(
-            lat=41.9, lng=12.5, start_year=2020, count=3
-        )
+        result = EclipseFactory.search_from_location(lat=41.9, lng=12.5, start_year=2020, count=3)
         assert result.solar_eclipses
         for e in result.solar_eclipses:
             assert e.gamma is None
             assert e.duration_minutes is None
 
     def test_finds_local_lunar_eclipses(self):
-        result = EclipseFactory.search_from_location(
-            lat=41.9, lng=12.5, start_year=2020, count=3
-        )
+        result = EclipseFactory.search_from_location(lat=41.9, lng=12.5, start_year=2020, count=3)
         assert len(result.lunar_eclipses) > 0
 
     def test_location_stored(self):
-        result = EclipseFactory.search_from_location(
-            lat=41.9, lng=12.5, start_year=2025, count=1
-        )
+        result = EclipseFactory.search_from_location(lat=41.9, lng=12.5, start_year=2025, count=1)
         assert result.latitude == 41.9
         assert result.longitude == 12.5
 
     def test_solar_has_magnitude(self):
-        result = EclipseFactory.search_from_location(
-            lat=41.9, lng=12.5, start_year=2020, count=1
+        result = EclipseFactory.search_from_location(lat=41.9, lng=12.5, start_year=2020, count=1)
+        assert len(result.solar_eclipses) >= 1, (
+            "Local search from Rome with count=1 should find at least one solar eclipse"
         )
-        assert len(result.solar_eclipses) >= 1, "Local search from Rome with count=1 should find at least one solar eclipse"
         ecl = result.solar_eclipses[0]
         # Local searches populate the observer-dependent fields.
         assert ecl.magnitude is not None and ecl.magnitude >= 0
         assert ecl.obscuration is not None and ecl.obscuration >= 0
 
     def test_datestamp_format(self):
-        result = EclipseFactory.search_from_location(
-            lat=0, lng=0, start_year=2020, count=1
-        )
+        result = EclipseFactory.search_from_location(lat=0, lng=0, start_year=2020, count=1)
         for eclipses in [result.solar_eclipses, result.lunar_eclipses]:
             for ecl in eclipses:
                 assert "T" in ecl.datestamp
@@ -170,18 +164,22 @@ class TestClassifyHelpers:
     def test_classify_solar_annular_total(self):
         """ECL_ANNULAR_TOTAL flag should classify as 'annular-total'."""
         from kerykeion.eclipses.eclipse_factory import (
-            _classify_solar_eclipse, ECL_ANNULAR_TOTAL,
+            _classify_solar_eclipse,
+            ECL_ANNULAR_TOTAL,
         )
+
         assert _classify_solar_eclipse(ECL_ANNULAR_TOTAL) == "annular-total"
 
     def test_classify_solar_unknown(self):
         """Flag 0 (no type bits) should classify as 'unknown'."""
         from kerykeion.eclipses.eclipse_factory import _classify_solar_eclipse
+
         assert _classify_solar_eclipse(0) == "unknown"
 
     def test_classify_lunar_unknown(self):
         """Flag 0 (no type bits) should classify as 'unknown'."""
         from kerykeion.eclipses.eclipse_factory import _classify_lunar_eclipse
+
         assert _classify_lunar_eclipse(0) == "unknown"
 
     def test_jd_to_iso_bce_year(self):
@@ -207,6 +205,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         """_find_solar_local should return empty list if tret[0] == 0."""
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
+
         zero_tret = [0.0] * 10
         with patch(
             "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_loc",
@@ -220,6 +219,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         (with the failing JD), never silently return partial results."""
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
+
         with patch(
             "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_loc",
             side_effect=RuntimeError("ephe failure"),
@@ -231,6 +231,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         """_find_solar_global should return empty list if tret[0] == 0."""
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
+
         zero_tret = [0.0] * 10
         with patch(
             "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_glob",
@@ -243,6 +244,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         """A backend failure must abort the search as KerykeionException."""
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
+
         with patch(
             "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_glob",
             side_effect=RuntimeError("ephe failure"),
@@ -256,6 +258,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         rather than return a truncated list claiming full coverage."""
         from kerykeion.eclipses.eclipse_factory import EclipseFactory, ECL_TOTAL
         from unittest.mock import patch
+
         good = (ECL_TOTAL, [2451550.0] + [0.0] * 9)
         with patch(
             "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_glob",
@@ -268,6 +271,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         """_find_lunar_local should return empty list if tret[0] == 0."""
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
+
         zero_tret = [0.0] * 10
         with patch(
             "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when_loc",
@@ -280,6 +284,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         """A backend failure must abort the search as KerykeionException."""
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
+
         with patch(
             "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when_loc",
             side_effect=RuntimeError("ephe failure"),
@@ -291,6 +296,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         """_find_lunar_global should return empty list if tret[0] == 0."""
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
+
         zero_tret = [0.0] * 10
         with patch(
             "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when",
@@ -303,6 +309,7 @@ class TestEclipseSearchBreakAndErrorPaths:
         """A backend failure must abort the search as KerykeionException."""
         from kerykeion.eclipses.eclipse_factory import EclipseFactory
         from unittest.mock import patch
+
         with patch(
             "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when",
             side_effect=RuntimeError("ephe failure"),
@@ -390,8 +397,10 @@ class TestEclipseEnrichment:
         from unittest.mock import patch
         from kerykeion.eclipses import eclipse_factory as ef
 
-        with patch.object(ef.ephe, "get_saros_number", None, create=True), \
-             patch.object(ef.ephe, "get_inex_number", None, create=True):
+        with (
+            patch.object(ef.ephe, "get_saros_number", None, create=True),
+            patch.object(ef.ephe, "get_inex_number", None, create=True),
+        ):
             assert ef._saros_inex(2451545.0, "solar") == {}
 
     def test_non_positive_saros_inex_treated_as_missing(self):
@@ -402,8 +411,10 @@ class TestEclipseEnrichment:
         from unittest.mock import patch
         from kerykeion.eclipses import eclipse_factory as ef
 
-        with patch.object(ef.ephe, "get_saros_number", lambda jd, kind: 0, create=True), \
-             patch.object(ef.ephe, "get_inex_number", lambda jd, kind: -3, create=True):
+        with (
+            patch.object(ef.ephe, "get_saros_number", lambda jd, kind: 0, create=True),
+            patch.object(ef.ephe, "get_inex_number", lambda jd, kind: -3, create=True),
+        ):
             assert ef._saros_inex(2451545.0, "solar") == {}
 
     def test_positive_saros_pass_through_inex_never_trusted(self):
@@ -415,8 +426,10 @@ class TestEclipseEnrichment:
         from unittest.mock import patch
         from kerykeion.eclipses import eclipse_factory as ef
 
-        with patch.object(ef.ephe, "get_saros_number", lambda jd, kind: 126, create=True), \
-             patch.object(ef.ephe, "get_inex_number", lambda jd, kind: 50, create=True):
+        with (
+            patch.object(ef.ephe, "get_saros_number", lambda jd, kind: 126, create=True),
+            patch.object(ef.ephe, "get_inex_number", lambda jd, kind: 50, create=True),
+        ):
             assert ef._saros_inex(2451545.0, "solar") == {"saros": 126}
 
     def test_saros_inex_never_zero_in_results(self):
@@ -463,9 +476,7 @@ class TestSiderealEclipses:
 
     def test_global_times_identical_signs_shift(self):
         trop = EclipseFactory.search_global(start_year=2026, count=3)
-        sid = EclipseFactory.search_global(
-            start_year=2026, count=3, zodiac_type="Sidereal", sidereal_mode="LAHIRI"
-        )
+        sid = EclipseFactory.search_global(start_year=2026, count=3, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
         assert len(trop.solar_eclipses) == len(sid.solar_eclipses)
         assert len(trop.lunar_eclipses) == len(sid.lunar_eclipses)
         sign_changed = False
@@ -484,9 +495,7 @@ class TestSiderealEclipses:
         # The 12 Aug 2026 total solar eclipse is ~20° Leo tropical; under Lahiri
         # (~24°) it lands in the previous sign, Cancer, at the identical instant.
         trop = EclipseFactory.search_global(start_year=2026, count=2)
-        sid = EclipseFactory.search_global(
-            start_year=2026, count=2, zodiac_type="Sidereal", sidereal_mode="LAHIRI"
-        )
+        sid = EclipseFactory.search_global(start_year=2026, count=2, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
         t_total = [e for e in trop.solar_eclipses if e.type == "total"][0]
         s_total = [e for e in sid.solar_eclipses if e.type == "total"][0]
         assert t_total.maximum_jd == s_total.maximum_jd
@@ -496,8 +505,12 @@ class TestSiderealEclipses:
     def test_local_times_identical_signs_shift(self):
         trop = EclipseFactory.search_from_location(lat=41.9, lng=12.5, start_year=2026, count=2)
         sid = EclipseFactory.search_from_location(
-            lat=41.9, lng=12.5, start_year=2026, count=2,
-            zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+            lat=41.9,
+            lng=12.5,
+            start_year=2026,
+            count=2,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
         )
         for t, s in zip(trop.solar_eclipses, sid.solar_eclipses):
             assert abs(t.maximum_jd - s.maximum_jd) * 86400.0 < 1e-3

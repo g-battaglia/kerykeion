@@ -5,7 +5,6 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import re
-import unicodedata
 from functools import lru_cache
 from math import ceil
 from pathlib import Path
@@ -52,7 +51,7 @@ from kerykeion.schemas.kr_literals import (
 from kerykeion.settings.config_constants import (
     AXIAL_POINTS,
     DEFAULT_ACTIVE_POINTS,
-    PERSPECTIVE_HELIOCENTRIC,
+    EARTH_CENTRED_PERSPECTIVES,
 )
 from kerykeion.settings.translations import get_translations, load_language_pair
 from kerykeion.charts.charts_utils import (
@@ -343,22 +342,82 @@ _MEASURED_EM: dict = {
     1.34: "ǄǱ",
 }
 
-# Anything outside the table. Ideographs, kana and hangul are full-width by
-# design; so, in practice, is every script we have no measurements for, and
-# charging them a full em over-truncates a name rather than letting it run under
-# the graphics. Combining marks cost nothing — they stack on the glyph before
-# them, and charging them a share is what made a Devanagari row look like it fit.
 _MEASURED_EM_BY_CHAR: dict = {char: em for em, chars in _MEASURED_EM.items() for char in chars}
 
-_UNMEASURED_GLYPH_EM: float = 1.0
-_COMBINING_CATEGORIES = frozenset({"Mn", "Me", "Cf"})
+# Anything outside the table above. Not a single fallback figure — that was
+# tried twice and was wrong both times. `1.0` looked like a safe ceiling because
+# ideographs are one em; 510 characters the reference fonts carry exceed it, up
+# to 2.26 em among the Arabic presentation forms, so an Arabic name overran the
+# wheel by 39px. What holds instead is a ceiling per 256-code-point block: the
+# widest advance any character in that block has across the three fonts, rounded
+# up. 147 of the 172 blocks come in at or under one em, so this costs almost
+# nothing where the old figure happened to be right, and is correct where it was
+# not.
+#
+# Note there is deliberately no rule for combining marks. Charging them zero —
+# on the reasonable-sounding grounds that a matra stacks on the letter before it
+# — is another guess about the renderer, and the SOFT HYPHEN it also swept up is
+# 0.333 em of real width in all three fonts. Every character is charged; a
+# mark-heavy name truncates a little harder than it strictly needs to, which is
+# the direction this may err in.
+_BLOCK_CEILING_EM: tuple = (
+    (0x0000, 0x00FF, 1.02),
+    (0x0100, 0x01FF, 1.34),
+    (0x0200, 0x02FF, 1.04),
+    (0x0300, 0x03FF, 1.10),
+    (0x0400, 0x04FF, 1.28),
+    (0x0500, 0x05FF, 0.76),
+    (0x0600, 0x06FF, 1.30),
+    (0x0900, 0x09FF, 1.04),
+    (0x0A00, 0x0AFF, 1.06),
+    (0x0B00, 0x0BFF, 2.00),
+    (0x0C00, 0x0CFF, 1.70),
+    (0x0D00, 0x0DFF, 1.84),
+    (0x0E00, 0x0EFF, 1.28),
+    (0x0F00, 0x0FFF, 0.62),
+    (0x1000, 0x10FF, 0.98),
+    (0x1100, 0x11FF, 1.00),
+    (0x1C00, 0x1CFF, 1.06),
+    (0x1D00, 0x1DFF, 0.94),
+    (0x1E00, 0x1EFF, 0.96),
+    (0x1F00, 0x1FFF, 1.48),
+    (0x2000, 0x20FF, 1.38),
+    (0x2100, 0x21FF, 1.74),
+    (0x2200, 0x22FF, 1.36),
+    (0x2300, 0x23FF, 1.10),
+    (0x2400, 0x25FF, 1.00),
+    (0x2600, 0x26FF, 1.10),
+    (0x2700, 0x27FF, 0.98),
+    (0x2C00, 0x2CFF, 0.80),
+    (0x2E00, 0x2EFF, 1.20),
+    (0x3000, 0x33FF, 1.00),
+    (0x4E00, 0x60FF, 1.00),
+    (0x6100, 0x61FF, 1.02),
+    (0x6200, 0x9FFF, 1.00),
+    (0xA700, 0xA7FF, 0.68),
+    (0xAC00, 0xD7FF, 1.00),
+    (0xE800, 0xE8FF, 0.92),
+    (0xF000, 0xF0FF, 0.50),
+    (0xF700, 0xF7FF, 0.86),
+    (0xF800, 0xF8FF, 0.80),
+    (0xF900, 0xFAFF, 1.00),
+    (0xFB00, 0xFBFF, 1.22),
+    (0xFC00, 0xFCFF, 1.58),
+    (0xFD00, 0xFDFF, 2.26),
+    (0xFE00, 0xFEFF, 1.30),
+    (0xFF00, 0xFFFF, 1.00),
+)
 
-#: Known residual, stated rather than papered over: under a CJK system font the
-#: Ambiguous-width characters — Cyrillic, Greek, the middot — render full-width,
-#: up to 3x what this table charges. The table cannot know the viewer's font, and
-#: calibrating for that case would cut every Russian label in half. A chart that
-#: must be exact should set an explicit font-family on the panel.
-_AMBIGUOUS_WIDTH_IS_A_KNOWN_RESIDUAL = True
+#: For a character in no listed block. The widest advance in the whole covered
+#: repertoire, so it cannot be an underestimate for any glyph these fonts carry.
+_UNKNOWN_BLOCK_CEILING_EM: float = 2.26
+
+
+def _block_ceiling(code_point: int) -> float:
+    for low, high, ceiling in _BLOCK_CEILING_EM:
+        if low <= code_point <= high:
+            return ceiling
+    return _UNKNOWN_BLOCK_CEILING_EM
 
 
 def estimate_text_width(text: str, font_size: float = 10.0) -> float:
@@ -368,22 +427,21 @@ def estimate_text_width(text: str, font_size: float = 10.0) -> float:
     row-width guard tried: the same 38-character row measures 168px of Latin
     Helvetica and 250px of Arial Unicode ideographs.
 
-    See :data:`_MEASURED_EM` for what the figures are and where they come from,
-    and for the one case they knowingly under-report.
+    Exact for the scripts the panel's own text and the overwhelming majority of
+    names are written in (see :data:`_MEASURED_EM`), and an upper bound
+    everywhere else (see :data:`_BLOCK_CEILING_EM`). Never an underestimate for
+    any character the reference fonts carry — which is the one property that
+    matters, since the row it guards runs under the wheel graphics when it is
+    wrong, and has done three times.
     """
     total = 0.0
     for char in text:
         measured = _MEASURED_EM_BY_CHAR.get(char)
-        if measured is not None:
-            total += font_size * measured
-        elif unicodedata.category(char) in _COMBINING_CATEGORIES:
-            continue
-        else:
-            total += font_size * _UNMEASURED_GLYPH_EM
+        total += font_size * (measured if measured is not None else _block_ceiling(ord(char)))
     return total
 
 
-def truncate_to_width(text: str, budget: float, ellipsis_symbol: str = "…") -> str:
+def truncate_to_width(text: str, budget: float, ellipsis_symbol: str = "…", font_size: float = 10.0) -> str:
     """Shorten *text* until :func:`estimate_text_width` fits *budget*.
 
     Keeps at least one character of a non-empty *text*, even when that overshoots:
@@ -394,16 +452,26 @@ def truncate_to_width(text: str, budget: float, ellipsis_symbol: str = "…") ->
     see the guard in :meth:`InfoSectionBuilder.build_dual_diurnality_info`.
 
     Empty text stays empty rather than becoming a bare ellipsis.
+
+    *budget* is in pixels at *font_size*. Both default to the info panel's 10px,
+    which is the only caller in this module — but a caller measuring 16px text
+    against a pixel budget got a 53% overrun when the size was hardcoded here,
+    so it is a parameter.
+
+    Cuts by code point, not by grapheme cluster: a Devanagari conjunct or an
+    emoji ZWJ sequence can lose its tail and leave a dangling virama or joiner
+    before the ellipsis. It never overruns the budget — the pieces are charged
+    individually — so this is a quality limit rather than a layout one.
     """
     if not text:
         return ""
-    if estimate_text_width(text) <= budget:
+    if estimate_text_width(text, font_size) <= budget:
         return text
 
-    ellipsis_width = estimate_text_width(ellipsis_symbol)
+    ellipsis_width = estimate_text_width(ellipsis_symbol, font_size)
     kept = ""
     for char in text:
-        if kept and estimate_text_width(kept + char) + ellipsis_width > budget:
+        if kept and estimate_text_width(kept + char, font_size) + ellipsis_width > budget:
             break
         kept += char
     return kept + ellipsis_symbol
@@ -818,11 +886,16 @@ class InfoSectionBuilder:
         other two are absences of meaning rather than absences of data:
 
         - **``show_diurnality=False``.** The caller opted out of the line.
-        - **Heliocentric charts.** Not for want of a horizon: such a chart still
-          carries an Ascendant and houses, and this very panel prints its
-          domification one row above. It is the Sun that is missing — it is the
-          centre body and is excluded from the chart's points — so a statement
-          about where the Sun stood has nothing in the drawing to refer to.
+        - **Any perspective not cast from the Earth.** Not for want of a horizon:
+          such a chart still carries an Ascendant and houses, and this very panel
+          prints its domification one row above. The objection is the Sun. On a
+          heliocentric chart it is the centre body and is excluded from the
+          points, so the statement has nothing in the drawing to refer to; on a
+          Marscentric or Selenocentric one it is worse, because a Sun *is* drawn
+          and it is not the Sun that was measured — ``is_diurnal`` comes from a
+          tropical geocentric Sun, and on a Liverpool chart that is 196° while
+          the Marscentric wheel draws 354°. Seven of the eleven perspectives are
+          in that position.
         - **``is_diurnal is None``.** Midpoint composites represent no single
           sky, so there is no moment for the Sun to be above or below.
 
@@ -833,8 +906,8 @@ class InfoSectionBuilder:
         """
         if not self.drawer.show_diurnality:
             return ""
-        # See the docstring: the objection is the missing Sun, not a missing horizon.
-        if getattr(subject, "perspective_type", None) == PERSPECTIVE_HELIOCENTRIC:
+        # See the docstring: the objection is which Sun, not a missing horizon.
+        if getattr(subject, "perspective_type", None) not in EARTH_CENTRED_PERSPECTIVES:
             return ""
 
         is_diurnal = getattr(subject, "is_diurnal", None)
@@ -3856,12 +3929,17 @@ class ChartDrawer:  # type: ignore[no-redef]
         # imposed by the title area.
         return max(per_column, min(allowed_capacity, max_capacity_by_top))
 
-    def _estimate_text_width(self, text: str, font_size: float = 12) -> float:
-        """Very rough text width estimation in pixels based on font size."""
-        if not text:
-            return 0.0
-        average_char_width = float(font_size) * 0.7
-        return max(float(font_size), len(text) * average_char_width)
+    def _estimate_text_width(self, text: str, font_size: float) -> float:
+        """Delegates to :func:`estimate_text_width`.
+
+        This used to be ``len(text) * font_size * 0.7`` and sized the planet grid
+        and legend with it. That is the averaging approach the module-level
+        function exists to replace: measured against real metrics it under-reports
+        ideographs by 30% and over-reports narrow Latin by 150%, so a CJK legend
+        entry was laid out as if it were a third narrower than it renders. Two
+        width models in one renderer, disagreeing, is worse than either.
+        """
+        return estimate_text_width(text, font_size)
 
     def _get_active_point_display_names(self) -> list[str]:
         """Return localized labels for the currently active celestial points."""

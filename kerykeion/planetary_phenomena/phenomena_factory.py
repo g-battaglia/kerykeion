@@ -118,10 +118,7 @@ class PlanetaryPhenomenaFactory:
             # ingress/station/nodes factories.
             invalid = sorted(set(planets) - set(_PHENOMENA_PLANETS))
             if invalid:
-                raise ValueError(
-                    f"Unknown planets: {', '.join(invalid)}. "
-                    f"Valid: {', '.join(_PHENOMENA_PLANETS)}"
-                )
+                raise ValueError(f"Unknown planets: {', '.join(invalid)}. Valid: {', '.join(_PHENOMENA_PLANETS)}")
             target_planets = {k: v for k, v in _PHENOMENA_PLANETS.items() if k in planets}
 
         phenomena_list: List[PlanetaryPhenomenaModel] = []

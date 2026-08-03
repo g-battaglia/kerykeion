@@ -61,9 +61,7 @@ def test_angular_periods_are_pivots_from_lot(john_lennon):
 
 def test_current_path_tracks_target_date(john_lennon):
     """With a target date, the current path is reported from L1 down."""
-    zr = ZodiacalReleasingFactory.from_subject(
-        john_lennon, lot="fortune", levels=3, target_date="2000-01-01"
-    )
+    zr = ZodiacalReleasingFactory.from_subject(john_lennon, lot="fortune", levels=3, target_date="2000-01-01")
     assert zr.current_path, "expected a non-empty current path"
     target = datetime(2000, 1, 1)
 
@@ -77,9 +75,7 @@ def test_loosing_of_the_bond_fires_in_subperiods(john_lennon):
     """A long L1 period is filled by L2 sub-periods that loose the bond."""
     zr = ZodiacalReleasingFactory.from_subject(john_lennon, lot="fortune", levels=2)
     # Aquarius (30y) is the longest period; its L2 chain must wrap and jump.
-    flagged = any(
-        sub.is_loosing_the_bond for period in zr.periods for sub in period.subperiods
-    )
+    flagged = any(sub.is_loosing_the_bond for period in zr.periods for sub in period.subperiods)
     assert flagged
 
 
@@ -107,8 +103,7 @@ def test_spirit_release_peaks_are_fortune_relative(john_lennon):
     fortune_angular = {"Cap", "Ari", "Can", "Lib"}  # 1/4/7/10 from Capricorn
     for period in zr.periods:
         assert period.is_angular == (period.sign in fortune_angular), (
-            f"L1 {period.sign}: is_angular={period.is_angular} must follow Fortune (Cap), "
-            "not the released lot (Leo)"
+            f"L1 {period.sign}: is_angular={period.is_angular} must follow Fortune (Cap), not the released lot (Leo)"
         )
         for sub in period.subperiods:
             assert sub.is_angular == (sub.sign in fortune_angular), (
@@ -128,9 +123,7 @@ def test_unknown_lot_raises(john_lennon):
 
 def test_levels_are_bounded_off_path(john_lennon):
     """L2 is built for every L1 period; L3 only along the target path."""
-    zr = ZodiacalReleasingFactory.from_subject(
-        john_lennon, lot="fortune", levels=3, target_date="2000-01-01"
-    )
+    zr = ZodiacalReleasingFactory.from_subject(john_lennon, lot="fortune", levels=3, target_date="2000-01-01")
     # Every L1 period has L2 children.
     assert all(p.subperiods for p in zr.periods)
 
@@ -143,9 +136,7 @@ def test_levels_are_bounded_off_path(john_lennon):
 def test_life_cap_is_honored(john_lennon):
     """A small life_cap_years bounds the L1 horizon (last period truncated)."""
     cap_years = 5
-    zr = ZodiacalReleasingFactory.from_subject(
-        john_lennon, lot="fortune", levels=1, life_cap_years=cap_years
-    )
+    zr = ZodiacalReleasingFactory.from_subject(john_lennon, lot="fortune", levels=1, life_cap_years=cap_years)
     total = _days(zr.periods[0].start, zr.periods[-1].end)
     assert total <= cap_years * TROPICAL_YEAR_DAYS + 1
 
@@ -153,16 +144,12 @@ def test_life_cap_is_honored(john_lennon):
 def test_timezone_aware_target_raises(john_lennon):
     """A timezone-aware target_date is rejected with KerykeionException, not TypeError."""
     with pytest.raises(KerykeionException):
-        ZodiacalReleasingFactory.from_subject(
-            john_lennon, lot="fortune", target_date="2026-06-04T00:00:00+02:00"
-        )
+        ZodiacalReleasingFactory.from_subject(john_lennon, lot="fortune", target_date="2026-06-04T00:00:00+02:00")
 
 
 def test_current_path_is_internally_consistent(john_lennon):
     """Each step of the current path is a real child of the previous one."""
-    zr = ZodiacalReleasingFactory.from_subject(
-        john_lennon, lot="fortune", levels=3, target_date="2000-01-01"
-    )
+    zr = ZodiacalReleasingFactory.from_subject(john_lennon, lot="fortune", levels=3, target_date="2000-01-01")
     for parent, child in pairwise(zr.current_path):
         assert child in parent.subperiods
 
@@ -180,8 +167,11 @@ def test_from_subject_accepts_return_and_davison_models():
     from kerykeion.zodiacal_releasing import ZodiacalReleasingFactory
 
     common = dict(
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        online=False, suppress_geonames_warning=True,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        online=False,
+        suppress_geonames_warning=True,
     )
     natal = AstrologicalSubjectFactory.from_birth_data("N", 1990, 6, 15, 12, 0, **common)
     partner = AstrologicalSubjectFactory.from_birth_data("B", 1985, 3, 10, 4, 20, **common)

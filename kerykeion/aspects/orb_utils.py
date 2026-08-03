@@ -59,9 +59,7 @@ def validate_point_orb_adjustments(
         if not isinstance(point_name, str):
             raise ValueError(f"point_orb_adjustments keys must be point names, got {point_name!r}.")
         if not _is_finite_real(adjustment):
-            raise ValueError(
-                f"point_orb_adjustments[{point_name!r}] must be a finite number, got {adjustment!r}."
-            )
+            raise ValueError(f"point_orb_adjustments[{point_name!r}] must be a finite number, got {adjustment!r}.")
 
 
 def resolve_pair_orb_adjustment(
@@ -108,9 +106,7 @@ def resolve_pair_orb_adjustment(
     # bypass the factory-level whole-mapping validation.
     for point_name, value in ((first_name, v1), (second_name, v2)):
         if value is not None and not _is_finite_real(value):
-            raise ValueError(
-                f"point_orb_adjustments[{point_name!r}] must be a finite number, got {value!r}."
-            )
+            raise ValueError(f"point_orb_adjustments[{point_name!r}] must be a finite number, got {value!r}.")
 
     if v1 is None and v2 is None:
         return 0.0
@@ -128,8 +124,5 @@ def resolve_pair_orb_adjustment(
     # Two individually finite floats can still overflow when combined.
     combined = (v1 or 0.0) + (v2 or 0.0)
     if not _is_finite_real(combined):
-        raise ValueError(
-            f"Combined point-orb adjustment for {first_name!r} and {second_name!r} "
-            "must be finite."
-        )
+        raise ValueError(f"Combined point-orb adjustment for {first_name!r} and {second_name!r} must be finite.")
     return combined

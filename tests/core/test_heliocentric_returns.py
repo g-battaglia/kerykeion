@@ -11,8 +11,6 @@ Verifies the core invariants:
 - return_type field is set correctly on every result.
 """
 
-
-
 import pytest
 from kerykeion.ephemeris_backend import ephe
 
@@ -26,7 +24,7 @@ from kerykeion import AstrologicalSubjectFactory, PlanetaryReturnFactory
 from kerykeion.ephemeris_backend import EPHE_DATA_PATH as EPHE_PATH
 
 # Approximate synodic / sidereal orbital periods in days (generous upper bounds).
-MARS_ORBITAL_PERIOD = 687      # ~1.88 years
+MARS_ORBITAL_PERIOD = 687  # ~1.88 years
 JUPITER_ORBITAL_PERIOD = 4333  # ~11.86 years
 
 
@@ -48,20 +46,35 @@ def _helio_longitude(jd: float, planet_id: int) -> float:
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture(scope="module")
 def subject():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Test", 1990, 6, 15, 14, 30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        "Test",
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
     )
 
 
 @pytest.fixture(scope="module")
 def factory(subject):
     return PlanetaryReturnFactory(
-        subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        subject,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
     )
 
 
@@ -73,6 +86,7 @@ def start_jd():
 # ---------------------------------------------------------------------------
 # Heliocentric return tests
 # ---------------------------------------------------------------------------
+
 
 class TestHeliocentricReturn:
     """Verify that heliocentric returns satisfy the fundamental invariant:
@@ -86,8 +100,7 @@ class TestHeliocentricReturn:
         return_lon = _helio_longitude(result.julian_day, 4)
 
         assert _angular_distance(return_lon, natal_lon) < 1.0, (
-            f"Mars helio return longitude {return_lon:.4f} differs from "
-            f"natal {natal_lon:.4f} by more than 1 degree"
+            f"Mars helio return longitude {return_lon:.4f} differs from natal {natal_lon:.4f} by more than 1 degree"
         )
 
     def test_jupiter_return_longitude_matches_natal(self, factory, subject, start_jd):
@@ -98,8 +111,7 @@ class TestHeliocentricReturn:
         return_lon = _helio_longitude(result.julian_day, 5)
 
         assert _angular_distance(return_lon, natal_lon) < 1.0, (
-            f"Jupiter helio return longitude {return_lon:.4f} differs from "
-            f"natal {natal_lon:.4f} by more than 1 degree"
+            f"Jupiter helio return longitude {return_lon:.4f} differs from natal {natal_lon:.4f} by more than 1 degree"
         )
 
     def test_mars_return_within_one_orbital_period(self, factory, start_jd):
@@ -108,8 +120,7 @@ class TestHeliocentricReturn:
         days_elapsed = result.julian_day - start_jd
 
         assert 0 < days_elapsed <= MARS_ORBITAL_PERIOD, (
-            f"Mars return occurred {days_elapsed:.1f} days after start; "
-            f"expected 0 < days <= {MARS_ORBITAL_PERIOD}"
+            f"Mars return occurred {days_elapsed:.1f} days after start; expected 0 < days <= {MARS_ORBITAL_PERIOD}"
         )
 
     def test_jupiter_return_within_one_orbital_period(self, factory, start_jd):
@@ -149,30 +160,35 @@ class TestHeliocentricReturn:
 # Lunar node crossing tests
 # ---------------------------------------------------------------------------
 
+
 class TestPlanetaryReturnValidation:
     """Test validation and error paths in PlanetaryReturnFactory."""
 
     def test_unknown_planet_heliocentric_raises(self, factory, start_jd):
         """next_heliocentric_return with an unknown planet name should raise."""
         from kerykeion.schemas import KerykeionException
+
         with pytest.raises(KerykeionException, match="Unknown planet"):
             factory.next_heliocentric_return("NonExistentPlanet", start_jd)
 
     def test_sun_heliocentric_raises(self, factory, start_jd):
         """The Sun has no heliocentric longitude — must raise a clear error."""
         from kerykeion.schemas import KerykeionException
+
         with pytest.raises(KerykeionException, match="undefined"):
             factory.next_heliocentric_return("Sun", start_jd)
 
     def test_moon_heliocentric_raises(self, factory, start_jd):
         """The Moon's heliocentric longitude tracks Earth — must raise a clear error."""
         from kerykeion.schemas import KerykeionException
+
         with pytest.raises(KerykeionException, match="undefined"):
             factory.next_heliocentric_return("Moon", start_jd)
 
     def test_sun_heliocentric_raises_via_iso_wrapper(self, factory):
         """The guard must also cover the ISO convenience wrapper."""
         from kerykeion.schemas import KerykeionException
+
         with pytest.raises(KerykeionException, match="undefined"):
             factory.next_heliocentric_return_from_iso_formatted_time("Sun", "2025-01-01T00:00:00+00:00")
 
@@ -181,10 +197,16 @@ class TestPlanetaryReturnValidation:
         None): the guard must raise a clear KerykeionException instead of a
         raw TypeError from calc_ut(None, ...)."""
         from kerykeion.schemas import KerykeionException
+
         no_jd_subject = subject.model_copy(update={"julian_day": None})
         no_jd_factory = PlanetaryReturnFactory(
-            no_jd_subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            no_jd_subject,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
         )
         with pytest.raises(KerykeionException, match="Julian Day"):
             no_jd_factory.next_heliocentric_return("Mars", start_jd)
@@ -192,21 +214,31 @@ class TestPlanetaryReturnValidation:
     def test_user_sidereal_without_custom_ayanamsa_raises(self, subject):
         """USER sidereal mode without custom ayanamsa params should raise."""
         from kerykeion.schemas import KerykeionException
+
         # Create a subject with sidereal_mode = "USER"
         user_subject = subject.model_copy()
         user_subject.sidereal_mode = "USER"
         with pytest.raises(KerykeionException, match="custom_ayanamsa"):
             PlanetaryReturnFactory(
                 user_subject,
-                lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-                city="Rome", nation="IT", online=False,
+                lng=12.4964,
+                lat=41.9028,
+                tz_str="Europe/Rome",
+                city="Rome",
+                nation="IT",
+                online=False,
             )
 
     def test_custom_ayanamsa_propagation_build_return_chart(self, subject):
         """Factory with custom ayanamsa attrs should propagate them via _build_return_chart."""
         factory_obj = PlanetaryReturnFactory(
-            subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            subject,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
         )
         # Manually set custom ayanamsa attributes to exercise lines 828, 830
         factory_obj.custom_ayanamsa_t0 = 2451545.0
@@ -220,8 +252,13 @@ class TestPlanetaryReturnValidation:
     def test_custom_ayanamsa_propagation_iso_time(self, subject):
         """Factory with custom ayanamsa attrs should propagate them via next_return_from_iso_formatted_time."""
         factory_obj = PlanetaryReturnFactory(
-            subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            subject,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
         )
         # Manually set custom ayanamsa attributes to exercise lines 550, 552
         factory_obj.custom_ayanamsa_t0 = 2451545.0
@@ -234,9 +271,15 @@ class TestPlanetaryReturnValidation:
     def test_solar_return_with_no_sun_raises(self, subject):
         """Solar return with a subject whose sun is None should raise."""
         from kerykeion.schemas import KerykeionException
+
         factory_obj = PlanetaryReturnFactory(
-            subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            subject,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
         )
         # Mock subject.sun = None
         factory_obj.subject = subject.model_copy()
@@ -247,9 +290,15 @@ class TestPlanetaryReturnValidation:
     def test_lunar_return_with_no_moon_raises(self, subject):
         """Lunar return with a subject whose moon is None should raise."""
         from kerykeion.schemas import KerykeionException
+
         factory_obj = PlanetaryReturnFactory(
-            subject, lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            subject,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
         )
         # Mock subject.moon = None
         factory_obj.subject = subject.model_copy()
@@ -303,8 +352,7 @@ class TestLunarNodeCrossing:
         result = factory.next_lunar_node_crossing(start_jd)
         days_elapsed = result.julian_day - start_jd
         assert days_elapsed < 15, (
-            f"Node crossing occurred {days_elapsed:.1f} days after start; "
-            f"expected < 15 days (half draconic month)"
+            f"Node crossing occurred {days_elapsed:.1f} days after start; expected < 15 days (half draconic month)"
         )
 
     def test_crossing_has_chart_data(self, factory, start_jd):
@@ -317,6 +365,7 @@ class TestLunarNodeCrossing:
 # ---------------------------------------------------------------------------
 # ISO / year wrapper tests
 # ---------------------------------------------------------------------------
+
 
 class TestHeliocentricReturnFromIso:
     """Verify that from_iso wrappers produce different returns for different start times."""
@@ -334,6 +383,7 @@ class TestHeliocentricReturnFromIso:
         iso = "2026-03-15T12:00:00+00:00"
         from kerykeion.utilities import datetime_to_julian
         from datetime import datetime
+
         start_jd = datetime_to_julian(datetime.fromisoformat(iso))
         result = factory.next_heliocentric_return_from_iso_formatted_time("Jupiter", iso)
         assert result.julian_day > start_jd
@@ -357,6 +407,7 @@ class TestHeliocentricReturnFromYear:
     def test_year_return_in_expected_range(self, factory):
         """Mars return from 2025 should fall within 2025-2027 (< 1 orbital period)."""
         from kerykeion.ephemeris_backend import ephe as _ephe
+
         result = factory.next_heliocentric_return_from_year("Mars", 2025)
         jan1_jd = _ephe.julday(2025, 1, 1, 0.0)
         assert result.julian_day > jan1_jd
@@ -369,12 +420,14 @@ class TestHeliocentricReturnFromDate:
     def test_from_date_basic(self, factory):
         """from_date(2025, 6, 15) should return after June 15."""
         from kerykeion.ephemeris_backend import ephe as _ephe
+
         result = factory.next_heliocentric_return_from_date("Mars", 2025, 6, 15)
         june15_jd = _ephe.julday(2025, 6, 15, 0.0)
         assert result.julian_day > june15_jd
 
     def test_from_date_invalid_month_raises(self, factory):
         from kerykeion.schemas import KerykeionException
+
         with pytest.raises(KerykeionException, match="Invalid month"):
             factory.next_heliocentric_return_from_date("Mars", 2025, 13)
 
@@ -409,6 +462,7 @@ class TestLunarNodeCrossingFromIso:
         """Crossing must be after the ISO start time."""
         from kerykeion.utilities import datetime_to_julian
         from datetime import datetime
+
         iso = "2025-06-01T00:00:00+00:00"
         start_jd = datetime_to_julian(datetime.fromisoformat(iso))
         result = factory.next_lunar_node_crossing_from_iso_formatted_time(iso)
@@ -427,6 +481,7 @@ class TestLunarNodeCrossingFromYear:
     def test_year_crossing_after_jan1(self, factory):
         """Crossing from 2025 should be after Jan 1 2025."""
         from kerykeion.ephemeris_backend import ephe as _ephe
+
         result = factory.next_lunar_node_crossing_from_year(2025)
         jan1_jd = _ephe.julday(2025, 1, 1, 0.0)
         assert result.julian_day > jan1_jd
@@ -438,11 +493,13 @@ class TestLunarNodeCrossingFromDate:
     def test_from_date_basic(self, factory):
         """from_date(2025, 6, 15) should return after June 15."""
         from kerykeion.ephemeris_backend import ephe as _ephe
+
         result = factory.next_lunar_node_crossing_from_date(2025, 6, 15)
         june15_jd = _ephe.julday(2025, 6, 15, 0.0)
         assert result.julian_day > june15_jd
 
     def test_from_date_invalid_month_raises(self, factory):
         from kerykeion.schemas import KerykeionException
+
         with pytest.raises(KerykeionException, match="Invalid month"):
             factory.next_lunar_node_crossing_from_date(2025, 0)

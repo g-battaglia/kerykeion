@@ -177,9 +177,7 @@ class AspectsFactory:
         from kerykeion.settings.chart_defaults import build_dynamic_fixed_star_settings
 
         celestial_points = list(DEFAULT_CELESTIAL_POINTS_SETTINGS)
-        raw_star_names = [
-            getattr(s, "name", None) for s in getattr(subject, "fixed_stars", None) or []
-        ]
+        raw_star_names = [getattr(s, "name", None) for s in getattr(subject, "fixed_stars", None) or []]
         dynamic_star_names: List[str] = [n for n in raw_star_names if n]
         if dynamic_star_names:
             celestial_points = celestial_points + build_dynamic_fixed_star_settings(
@@ -632,8 +630,12 @@ class AspectsFactory:
         """
         # Get active points lists for both subjects
         # v6: see single_chart_aspects note — pass extended celestial_points.
-        first_active_points_list = get_active_points_list(first_subject, active_points, celestial_points=celestial_points)
-        second_active_points_list = get_active_points_list(second_subject, active_points, celestial_points=celestial_points)
+        first_active_points_list = get_active_points_list(
+            first_subject, active_points, celestial_points=celestial_points
+        )
+        second_active_points_list = get_active_points_list(
+            second_subject, active_points, celestial_points=celestial_points
+        )
 
         # Create a lookup dictionary for planet IDs to optimize performance
         planet_id_lookup = {planet["name"]: planet["id"] for planet in celestial_points}
@@ -769,8 +771,7 @@ class AspectsFactory:
             other_names = [n for n in unknown_names if n not in declination_names]
             if other_names:
                 logger.warning(
-                    "Unknown active aspect names %s are not present in the chart aspect "
-                    "settings and were ignored.",
+                    "Unknown active aspect names %s are not present in the chart aspect settings and were ignored.",
                     other_names,
                 )
         return filtered_settings
@@ -928,9 +929,7 @@ class AspectsFactory:
             if active_points is not None
             else subject_active_points
         )
-        raw_star_names = [
-            getattr(s, "name", None) for s in getattr(subject, "fixed_stars", None) or []
-        ]
+        raw_star_names = [getattr(s, "name", None) for s in getattr(subject, "fixed_stars", None) or []]
         dynamic_star_names: List[str] = [n for n in raw_star_names if n]
         celestial_points = list(DEFAULT_CELESTIAL_POINTS_SETTINGS)
         if dynamic_star_names:
@@ -941,9 +940,7 @@ class AspectsFactory:
             # active_fixed_stars); they participate regardless of the
             # active_points restriction. Star–star pairs are skipped in
             # _compute_declination_aspects.
-            points_to_use = list(points_to_use) + [
-                n for n in dynamic_star_names if n not in points_to_use
-            ]
+            points_to_use = list(points_to_use) + [n for n in dynamic_star_names if n not in points_to_use]
         points_list = get_active_points_list(subject, points_to_use, celestial_points=celestial_points)
 
         return AspectsFactory._compute_declination_aspects(
@@ -991,14 +988,10 @@ class AspectsFactory:
         first_active = cast("List[Union[AstrologicalPoint, str]]", list(first_subject.active_points))
         second_active = cast("List[Union[AstrologicalPoint, str]]", list(second_subject.active_points))
         pts1: List[Union[AstrologicalPoint, str]] = (
-            _find_common_point_names(first_active, list(active_points))
-            if active_points is not None
-            else first_active
+            _find_common_point_names(first_active, list(active_points)) if active_points is not None else first_active
         )
         pts2: List[Union[AstrologicalPoint, str]] = (
-            _find_common_point_names(second_active, list(active_points))
-            if active_points is not None
-            else second_active
+            _find_common_point_names(second_active, list(active_points)) if active_points is not None else second_active
         )
         dynamic_star_names: list[str] = []
         for subj in (first_subject, second_subject):

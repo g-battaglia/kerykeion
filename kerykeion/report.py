@@ -30,7 +30,7 @@ from kerykeion.settings.config_constants import (
     AXIAL_POINTS,
     LUNAR_NODES,
     MAIN_PLANETS,
-    PERSPECTIVE_HELIOCENTRIC,
+    EARTH_CENTRED_PERSPECTIVES,
 )
 
 
@@ -574,16 +574,17 @@ class ReportGenerator:
         # Whether the Sun stood above or below the horizon. Omitted rather than
         # guessed wherever it does not apply, on the same two grounds the chart
         # panel uses: ``None`` on a midpoint composite, which represents no
-        # single sky, and any heliocentric chart, which does not include the Sun
-        # at all (it is the centre body), leaving the statement without a
-        # referent. These two rules are duplicated in
-        # ``InfoSectionBuilder._diurnality_value`` and must be kept in step: a
-        # value here that the chart withholds reads as one of them being broken.
-        # (The report has no ``show_diurnality`` equivalent, so a caller who
-        # switches the chart's line off does get a report that still shows it.)
+        # single sky, and any perspective not cast from the Earth, whose drawn
+        # Sun is not the Sun ``is_diurnal`` measures — absent entirely on a
+        # heliocentric chart, and a different body on a Marscentric one. These
+        # two rules are duplicated in ``InfoSectionBuilder._diurnality_value``
+        # and must be kept in step: a value here that the chart withholds reads
+        # as one of them being broken. (The report has no ``show_diurnality``
+        # equivalent, so a caller who switches the chart's line off does get a
+        # report that still shows it.)
         is_diurnal = getattr(subject, "is_diurnal", None)
-        heliocentric = getattr(subject, "perspective_type", None) == PERSPECTIVE_HELIOCENTRIC
-        if is_diurnal is not None and not heliocentric:
+        earth_centred = getattr(subject, "perspective_type", None) in EARTH_CENTRED_PERSPECTIVES
+        if is_diurnal is not None and earth_centred:
             birth_data.append(["Diurnality", "Diurnal" if is_diurnal else "Nocturnal"])
 
         settings_data = [["Setting", "Value"]]
@@ -710,9 +711,7 @@ class ReportGenerator:
 
         # Effective, so the houses table title cannot disagree with the
         # settings row above it in the same report.
-        system_name = getattr(subject, "effective_houses_system_name", "") or getattr(
-            subject, "houses_system_name", ""
-        )
+        system_name = getattr(subject, "effective_houses_system_name", "") or getattr(subject, "houses_system_name", "")
         table_title = f"{title} ({system_name})" if system_name else title
         return AsciiTable(houses_data, title=table_title).table
 

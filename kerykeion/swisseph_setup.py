@@ -46,16 +46,13 @@ _ASTEROID_FILES = [
     ("ast136", "s136108s.se1"),  # Haumea (136108)
     ("ast136", "s136199s.se1"),  # Eris (136199)
     ("ast136", "s136472s.se1"),  # Makemake (136472)
-    ("ast28", "se28978s.se1"),   # Ixion (28978)
-    ("ast50", "se50000s.se1"),   # Quaoar (50000)
-    ("ast90", "se90377s.se1"),   # Sedna (90377)
-    ("ast90", "se90482s.se1"),   # Orcus (90482)
+    ("ast28", "se28978s.se1"),  # Ixion (28978)
+    ("ast50", "se50000s.se1"),  # Quaoar (50000)
+    ("ast90", "se90377s.se1"),  # Sedna (90377)
+    ("ast90", "se90482s.se1"),  # Orcus (90482)
 ]
 
-_ASTEROID_DROPBOX_URL = (
-    "https://www.dropbox.com/scl/fo/y3naz62gy6f6qfrhquu7u/h"
-    "?rlkey=ejltdhb262zglm7eo6yfj2940&dl=0"
-)
+_ASTEROID_DROPBOX_URL = "https://www.dropbox.com/scl/fo/y3naz62gy6f6qfrhquu7u/h?rlkey=ejltdhb262zglm7eo6yfj2940&dl=0"
 
 _ASTEROID_INSTRUCTIONS = """\
   TNO/dwarf planet ephemeris files (Eris, Sedna, Haumea, etc.) are not
@@ -176,9 +173,12 @@ def download_swisseph_data(target: Path, *, skip_asteroids: bool = False) -> dic
             print(f"  found:         {f}")
     missing = [(s, n) for s, n in _ASTEROID_FILES if f"{s}/{n}" not in existing]
     if missing:
-        print(_ASTEROID_INSTRUCTIONS.format(
-            dropbox_url=_ASTEROID_DROPBOX_URL, target=target,
-        ))
+        print(
+            _ASTEROID_INSTRUCTIONS.format(
+                dropbox_url=_ASTEROID_DROPBOX_URL,
+                target=target,
+            )
+        )
 
     return result
 
@@ -195,7 +195,8 @@ def main() -> None:
         help=f"Target directory (default: {_DEFAULT_TARGET})",
     )
     parser.add_argument(
-        "--yes", "-y",
+        "--yes",
+        "-y",
         action="store_true",
         help="Skip license confirmation (for CI/scripts)",
     )
@@ -224,7 +225,7 @@ def main() -> None:
     existing = len(result["existing"])
     failed = len(result["failed"])
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Downloaded:     {downloaded} files")
     print(f"Found existing: {existing} files")
     if failed:

@@ -70,18 +70,34 @@ class TestOffsetsBeyondTheTransitionTable:
         diagnostic if an ephemeris change ever moves the angles.
         """
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Future Rome", 2040, 6, 15, 12, 0,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
+            "Future Rome",
+            2040,
+            6,
+            15,
+            12,
+            0,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
         )
         assert subject.iso_formatted_local_datetime == "2040-06-15T12:00:00+02:00"
         assert subject.iso_formatted_utc_datetime == "2040-06-15T10:00:00+00:00"
 
     def test_future_southern_subject_does_not_inherit_summer_time(self):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Future Sydney", 2040, 7, 15, 12, 0,
-            lng=151.2093, lat=-33.8688, tz_str="Australia/Sydney",
-            online=False, suppress_geonames_warning=True,
+            "Future Sydney",
+            2040,
+            7,
+            15,
+            12,
+            0,
+            lng=151.2093,
+            lat=-33.8688,
+            tz_str="Australia/Sydney",
+            online=False,
+            suppress_geonames_warning=True,
         )
         assert subject.iso_formatted_local_datetime == "2040-07-15T12:00:00+10:00"
         assert subject.iso_formatted_utc_datetime == "2040-07-15T02:00:00+00:00"
@@ -128,9 +144,17 @@ class TestStandardTimeAdoptionBoundary:
 
     def test_subject_before_adoption_carries_the_recorded_offset_whole(self):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Pre-adoption Rome", 1893, 10, 31, 12, 0,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
+            "Pre-adoption Rome",
+            1893,
+            10,
+            31,
+            12,
+            0,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
         )
         # The RMT record reaches the chart with its SECONDS component intact. An
         # offset rounded to the whole minute would render as '+00:50' and shift
@@ -149,9 +173,17 @@ class TestStandardTimeAdoptionBoundary:
         """
         offsets = {
             AstrologicalSubjectFactory.from_birth_data(
-                "Pre-adoption", 1893, 10, 31, 12, 0,
-                lng=lng, lat=41.9028, tz_str="Europe/Rome",
-                online=False, suppress_geonames_warning=True,
+                "Pre-adoption",
+                1893,
+                10,
+                31,
+                12,
+                0,
+                lng=lng,
+                lat=41.9028,
+                tz_str="Europe/Rome",
+                online=False,
+                suppress_geonames_warning=True,
             ).iso_formatted_local_datetime[-9:]
             for lng in (12.4964, 0.0, 18.0, -8.0)
         }
@@ -202,9 +234,17 @@ class TestPreDaylightSavingWallTimesResolve:
     def test_the_window_is_answered_through_the_public_entry_point(self):
         """The regression was reported against a chart, so it is pinned on one."""
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Rome inside the adoption gap", 1893, 10, 31, 23, 55,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
+            "Rome inside the adoption gap",
+            1893,
+            10,
+            31,
+            23,
+            55,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
         )
         assert subject.iso_formatted_local_datetime == "1893-10-31T23:55:00+00:49:56"
         assert subject.iso_formatted_utc_datetime == "1893-10-31T23:05:04+00:00"
@@ -352,9 +392,17 @@ class TestSyntheticLmtRecordUsesTheBirthMeridian:
     def test_the_offset_follows_the_birth_longitude(self):
         for lng, expected in ((12.4964, "+00:49:59"), (0.0, "+00:00"), (18.0, "+01:12")):
             subject = AstrologicalSubjectFactory.from_birth_data(
-                "Pre-record", 1750, 6, 1, 12, 0,
-                lng=lng, lat=41.9028, tz_str="Europe/Rome",
-                online=False, suppress_geonames_warning=True,
+                "Pre-record",
+                1750,
+                6,
+                1,
+                12,
+                0,
+                lng=lng,
+                lat=41.9028,
+                tz_str="Europe/Rome",
+                online=False,
+                suppress_geonames_warning=True,
             )
             # Exactly round(lng / 15 * 3600) seconds: 15 deg = 1 h, east ahead.
             assert subject.iso_formatted_local_datetime.endswith(expected), lng
@@ -367,9 +415,17 @@ class TestSyntheticLmtRecordUsesTheBirthMeridian:
         1324 s, roughly 5.5 degrees of Ascendant.
         """
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "East of Rome", 1750, 6, 1, 12, 0,
-            lng=18.0, lat=41.9028, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
+            "East of Rome",
+            1750,
+            6,
+            1,
+            12,
+            0,
+            lng=18.0,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
         )
         assert subject.iso_formatted_utc_datetime == "1750-06-01T10:48:00+00:00"
 
@@ -382,9 +438,14 @@ class TestSyntheticLmtRecordUsesTheBirthMeridian:
         shift by the longitude delta.
         """
         from_iso = AstrologicalSubjectFactory.from_iso_utc_time(
-            "Round trip", "1750-06-01T10:48:00Z",
-            lng=18.0, lat=41.9028, tz_str="Europe/Rome",
-            city="Nowhere", nation="IT", online=False,
+            "Round trip",
+            "1750-06-01T10:48:00Z",
+            lng=18.0,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Nowhere",
+            nation="IT",
+            online=False,
         )
         assert from_iso.iso_formatted_local_datetime == "1750-06-01T12:00:00+01:12"
         assert from_iso.iso_formatted_utc_datetime == "1750-06-01T10:48:00+00:00"
@@ -527,9 +588,7 @@ class TestIsDstFallsBackToTheOffset:
         assert "Europe/Rome" in message
         assert naive.isoformat() in message
         assert "daylight saving" in message and "standard time" in message
-        assert "DST transition" not in message, (
-            "the old wording claimed a cause the code cannot determine"
-        )
+        assert "DST transition" not in message, "the old wording claimed a cause the code cannot determine"
 
     def test_the_ambiguous_message_defines_is_dst_by_the_offset(self):
         with pytest.raises(KerykeionException) as excinfo:
@@ -631,8 +690,7 @@ class TestIsDstIsResolvedIdenticallyOnEveryHost:
         system = self._resolve_with(list(zoneinfo.TZPATH), is_dst)
         package = self._resolve_with([], is_dst)
         assert system == package, (
-            f"is_dst={is_dst} resolved to {system} against the system database "
-            f"and {package} against the packaged one"
+            f"is_dst={is_dst} resolved to {system} against the system database and {package} against the packaged one"
         )
 
     def test_summer_is_the_larger_offset_even_where_dst_is_recorded_negative(self):
@@ -753,9 +811,9 @@ class TestElapsedTimeIsMeasuredBetweenInstants:
         assert sunrise.utcoffset() != sunset.utcoffset(), "a transition sits between them"
 
         assert (sunset - sunrise) == timedelta(hours=12), "wall clock"
-        assert (
-            sunset.astimezone(timezone.utc) - sunrise.astimezone(timezone.utc)
-        ) == timedelta(hours=11), "actual elapsed time"
+        assert (sunset.astimezone(timezone.utc) - sunrise.astimezone(timezone.utc)) == timedelta(hours=11), (
+            "actual elapsed time"
+        )
 
 
 class TestCurrentTimeChartsDoNotDependOnTheDstEncoding:
@@ -776,8 +834,14 @@ class TestCurrentTimeChartsDoNotDependOnTheDstEncoding:
     @staticmethod
     def _utc_of_a_chart_cast_now():
         subject = AstrologicalSubjectFactory.from_current_time(
-            "Now", lng=-6.2603, lat=53.3498, tz_str="Europe/Dublin",
-            city="Dublin", nation="IE", online=False, suppress_geonames_warning=True,
+            "Now",
+            lng=-6.2603,
+            lat=53.3498,
+            tz_str="Europe/Dublin",
+            city="Dublin",
+            nation="IE",
+            online=False,
+            suppress_geonames_warning=True,
         )
         return datetime.fromisoformat(subject.iso_formatted_utc_datetime)
 
@@ -808,6 +872,4 @@ class TestCurrentTimeChartsDoNotDependOnTheDstEncoding:
         # Comments are stripped first: the explanation of why the boolean is not
         # used names it, and matching that would make this assert itself.
         code = "\n".join(line.split("#", 1)[0] for line in source.splitlines())
-        assert "dst()" not in code, (
-            "the fold side must come from the resolved offset, not from dst()"
-        )
+        assert "dst()" not in code, "the fold side must come from the resolved offset, not from dst()"

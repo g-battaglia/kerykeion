@@ -312,9 +312,7 @@ class TestCircularMean:
         """Mirror-symmetric positions around 0° Aries (the composite-chart
         crash case): the mean must be accepted by the point builder."""
         for first, second in [(350.0, 10.0), (359.9, 0.1), (355.5, 4.5)]:
-            point = get_kerykeion_point_from_degree(
-                circular_mean(first, second), "Sun", "AstrologicalPoint"
-            )
+            point = get_kerykeion_point_from_degree(circular_mean(first, second), "Sun", "AstrologicalPoint")
             # Circular distance from 0° Aries (float noise may land the mean
             # on either side of the 0°/360° seam).
             assert min(point.abs_pos, 360.0 - point.abs_pos) < 1e-6
@@ -846,34 +844,48 @@ class TestChartsUtilsDistributionEdgeCases:
         from kerykeion import AstrologicalSubjectFactory
 
         kwargs = dict(
-            year=1990, month=6, day=15, hour=12, minute=0,
-            lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=0,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
             active_points=["Sun"],
         )
         without_star = AstrologicalSubjectFactory.from_birth_data(name="NoStar", **kwargs)
         with_star = AstrologicalSubjectFactory.from_birth_data(
-            name="Star", **kwargs, active_fixed_stars=["Regulus"],
+            name="Star",
+            **kwargs,
+            active_fixed_stars=["Regulus"],
         )
         base = calculate_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], without_star, method="weighted",
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun"],
+            without_star,
+            method="weighted",
         )
         with_regulus = calculate_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], with_star, method="weighted",
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun"],
+            with_star,
+            method="weighted",
             include_fixed_stars=True,
         )
-        regulus_sign_group = ["fire", "earth", "air", "water"][
-            with_star.fixed_stars[0].sign_num % 4
-        ]
+        regulus_sign_group = ["fire", "earth", "air", "water"][with_star.fixed_stars[0].sign_num % 4]
         # Regulus (weight 0.2 in the star table) must add to its element.
-        assert with_regulus[regulus_sign_group] == pytest.approx(
-            base[regulus_sign_group] + 0.2
-        )
+        assert with_regulus[regulus_sign_group] == pytest.approx(base[regulus_sign_group] + 0.2)
 
         # Default (no opt-in): the caller's named subset is exactly what
         # counts — three active stars must not inflate a ["sun"] total.
         default_totals = calculate_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], with_star, method="pure_count",
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun"],
+            with_star,
+            method="pure_count",
         )
         assert sum(default_totals.values()) == pytest.approx(1.0)
 
@@ -891,17 +903,32 @@ class TestChartsUtilsDistributionEdgeCases:
         assert _FIXED_STAR_FALLBACK_WEIGHT == 0.2
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            name="Star Slug", year=1990, month=6, day=15, hour=12, minute=0,
-            lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
-            active_points=["Sun"], active_fixed_stars=[" Spica "],
+            name="Star Slug",
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=0,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+            active_points=["Sun"],
+            active_fixed_stars=[" Spica "],
         )
         assert len(subject.fixed_stars) == 1
         base = calculate_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], subject, method="weighted",
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun"],
+            subject,
+            method="weighted",
         )
         with_star = calculate_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], subject, method="weighted",
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun"],
+            subject,
+            method="weighted",
             include_fixed_stars=True,
         )
         # ' Spica ' must slug to 'spica' (table weight 0.2), not '_spica_'
@@ -916,22 +943,41 @@ class TestChartsUtilsDistributionEdgeCases:
         from kerykeion import AstrologicalSubjectFactory
 
         kwargs = dict(
-            year=1990, month=6, day=15, hour=12, minute=0,
-            lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=0,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
             active_points=["Sun"],
         )
         s1 = AstrologicalSubjectFactory.from_birth_data(
-            name="Syn A", **kwargs, active_fixed_stars=["Regulus"],
+            name="Syn A",
+            **kwargs,
+            active_fixed_stars=["Regulus"],
         )
         s2 = AstrologicalSubjectFactory.from_birth_data(
-            name="Syn B", **kwargs, active_fixed_stars=["Spica"],
+            name="Syn B",
+            **kwargs,
+            active_fixed_stars=["Spica"],
         )
         default = calculate_synastry_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], s1, s2, method="pure_count",
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun"],
+            s1,
+            s2,
+            method="pure_count",
         )
         with_stars = calculate_synastry_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], s1, s2, method="pure_count",
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun"],
+            s1,
+            s2,
+            method="pure_count",
             include_fixed_stars=True,
         )
         # Percentages, so the two must differ once the two stars are counted
@@ -948,23 +994,41 @@ class TestChartsUtilsDistributionEdgeCases:
         from kerykeion import AstrologicalSubjectFactory
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            name="Pure", year=1990, month=6, day=15, hour=12, minute=0,
-            lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
-            active_points=["Sun", "Moon"], active_fixed_stars=["Regulus"],
+            name="Pure",
+            year=1990,
+            month=6,
+            day=15,
+            hour=12,
+            minute=0,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+            active_points=["Sun", "Moon"],
+            active_fixed_stars=["Regulus"],
         )
         totals = calculate_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun", "moon"], subject,
-            method="pure_count", include_fixed_stars=True,
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun", "moon"],
+            subject,
+            method="pure_count",
+            include_fixed_stars=True,
         )
         assert sum(totals.values()) == pytest.approx(3.0)
         # Weighted mode keeps the 0.2 table weight for the star.
         base = calculate_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun", "moon"], subject, method="weighted",
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun", "moon"],
+            subject,
+            method="weighted",
         )
         weighted = calculate_element_points(
-            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun", "moon"], subject,
-            method="weighted", include_fixed_stars=True,
+            DEFAULT_CELESTIAL_POINTS_SETTINGS,
+            ["sun", "moon"],
+            subject,
+            method="weighted",
+            include_fixed_stars=True,
         )
         assert sum(weighted.values()) == pytest.approx(sum(base.values()) + 0.2)
 
@@ -1129,7 +1193,7 @@ class TestFormatAncientIso:
             lh, lm, ls = (int(x) for x in hms.split(":"))
             off = time_part[8:]  # e.g. "+00:30:45" or "+01:30"
             oparts = [int(x) for x in off[1:].split(":")]
-            off_sec = (oparts[0] * 3600 + oparts[1] * 60 + (oparts[2] if len(oparts) > 2 else 0))
+            off_sec = oparts[0] * 3600 + oparts[1] * 60 + (oparts[2] if len(oparts) > 2 else 0)
             off_sec = off_sec if off[0] == "+" else -off_sec
             local_sec = lh * 3600 + lm * 60 + ls
             derived_utc_sec = (local_sec - off_sec) % 86400
@@ -1212,10 +1276,20 @@ class TestHorizonSystemHouseAssignmentRound6:
 
     def test_horizon_system_not_all_first_house(self):
         from kerykeion import AstrologicalSubjectFactory
+
         s = AstrologicalSubjectFactory.from_birth_data(
-            "SG", 1985, 3, 10, 1, 0, lng=103.82, lat=1.35,
-            tz_str="Asia/Singapore", online=False, suppress_geonames_warning=True,
-            houses_system_identifier="H")
-        houses = {getattr(s, p).house for p in
-                  ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]}
+            "SG",
+            1985,
+            3,
+            10,
+            1,
+            0,
+            lng=103.82,
+            lat=1.35,
+            tz_str="Asia/Singapore",
+            online=False,
+            suppress_geonames_warning=True,
+            houses_system_identifier="H",
+        )
+        houses = {getattr(s, p).house for p in ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]}
         assert len(houses) > 1, "H-system collapsed every planet into one house"

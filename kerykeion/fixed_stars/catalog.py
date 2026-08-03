@@ -112,4 +112,3 @@ class FixedStarCatalog:
     def known_slugs() -> frozenset[str]:
         """Return all slug identifiers available in the catalog."""
         return frozenset(entry.slug for entry in _load_catalog())
-

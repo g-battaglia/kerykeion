@@ -43,6 +43,7 @@ from kerykeion.utilities import datetime_to_julian
 # on long progression spans; 365.24219 is the astronomically correct value.
 DAYS_PER_TROPICAL_YEAR = 365.24219
 
+
 class ProgressedToNatalAspectModel(SubscriptableBaseModel):
     """A progressed-to-natal aspect contact — the predictive timing signal."""
 
@@ -69,6 +70,7 @@ class SecondaryProgressionsResultModel(SubscriptableBaseModel):
     )
     progressed_subject: AstrologicalSubjectModel
     progressed_to_natal_aspects: List[ProgressedToNatalAspectModel] = Field(default_factory=list)
+
 
 _ANCIENT_ISO_RE = re.compile(
     r"^(?P<year>[+-]?\d{4,})-(?P<month>\d{2})-(?P<day>\d{2})"
@@ -138,9 +140,7 @@ class SecondaryProgressionFactory:
         second = float(match.group("second") or 0.0)
         tz_part = match.group("tz")
         if tz_part is None:
-            raise ValueError(
-                f"Timezone is required for target_iso_utc_datetime: {iso_datetime!r}"
-            )
+            raise ValueError(f"Timezone is required for target_iso_utc_datetime: {iso_datetime!r}")
 
         if not (1 <= month <= 12 and 1 <= day <= 31):
             raise ValueError(f"Invalid ancient ISO date: {iso_datetime!r}")
@@ -173,13 +173,9 @@ class SecondaryProgressionFactory:
     ) -> float:
         """Convert a target timestamp/year to Julian Day UT."""
         if target_iso_utc_datetime is not None and target_year is not None:
-            raise KerykeionException(
-                "Pass exactly one of `target_iso_utc_datetime` or `target_year`."
-            )
+            raise KerykeionException("Pass exactly one of `target_iso_utc_datetime` or `target_year`.")
         if target_iso_utc_datetime is None and target_year is None:
-            raise KerykeionException(
-                "Pass one of `target_iso_utc_datetime` or `target_year`."
-            )
+            raise KerykeionException("Pass one of `target_iso_utc_datetime` or `target_year`.")
 
         if target_year is not None:
             try:
@@ -187,9 +183,7 @@ class SecondaryProgressionFactory:
                     return ephe.julday(target_year, 1, 1, 0.0, ephe.JUL_CAL)
                 return ephe.julday(target_year, 1, 1, 0.0, ephe.GREG_CAL)
             except (ValueError, OverflowError, TypeError) as exc:
-                raise KerykeionException(
-                    f"Invalid `target_year`: {target_year!r}"
-                ) from exc
+                raise KerykeionException(f"Invalid `target_year`: {target_year!r}") from exc
 
         try:
             if not isinstance(target_iso_utc_datetime, str):
@@ -198,18 +192,12 @@ class SecondaryProgressionFactory:
             try:
                 target_utc = datetime.fromisoformat(iso)
             except ValueError:
-                return SecondaryProgressionFactory._parse_ancient_iso_to_jd(
-                    target_iso_utc_datetime
-                )
+                return SecondaryProgressionFactory._parse_ancient_iso_to_jd(target_iso_utc_datetime)
         except (ValueError, TypeError) as exc:
-            raise KerykeionException(
-                f"Invalid `target_iso_utc_datetime`: {target_iso_utc_datetime!r}"
-            ) from exc
+            raise KerykeionException(f"Invalid `target_iso_utc_datetime`: {target_iso_utc_datetime!r}") from exc
 
         if target_utc.tzinfo is None:
-            raise KerykeionException(
-                "`target_iso_utc_datetime` must include `Z` or an explicit UTC offset."
-            )
+            raise KerykeionException("`target_iso_utc_datetime` must include `Z` or an explicit UTC offset.")
         target_utc = target_utc.astimezone(timezone.utc)
         return datetime_to_julian(target_utc)
 
@@ -245,13 +233,9 @@ class SecondaryProgressionFactory:
     @staticmethod
     def _jd_to_utc_datetime(jd: float) -> datetime:
         """Convert a CE Julian Day UT to an aware UTC ``datetime``."""
-        year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
-            jd, ephe.GREG_CAL
-        )
+        year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(jd, ephe.GREG_CAL)
         if not (1 <= year <= 9999):
-            raise KerykeionException(
-                f"Julian Day {jd!r} is outside Python datetime's supported year range."
-            )
+            raise KerykeionException(f"Julian Day {jd!r} is outside Python datetime's supported year range.")
         return datetime(year, month, day, hour, minute, seconds, tzinfo=timezone.utc)
 
     @staticmethod
@@ -259,18 +243,16 @@ class SecondaryProgressionFactory:
         """Format a Julian Day UT as a UTC ISO timestamp."""
         gregorian_year, _, _, _ = ephe.revjul(jd, ephe.GREG_CAL)
         if int(gregorian_year) >= 1:
-            year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
-                jd, ephe.GREG_CAL
-            )
+            year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(jd, ephe.GREG_CAL)
             if year > 9999:
                 return f"+{year:05d}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:{seconds:02d}.000000Z"
-            return SecondaryProgressionFactory._jd_to_utc_datetime(jd).isoformat(
-                timespec="microseconds"
-            ).replace("+00:00", "Z")
+            return (
+                SecondaryProgressionFactory._jd_to_utc_datetime(jd)
+                .isoformat(timespec="microseconds")
+                .replace("+00:00", "Z")
+            )
 
-        year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(
-            jd, ephe.JUL_CAL
-        )
+        year, month, day, hour, minute, seconds = SecondaryProgressionFactory._jd_to_components(jd, ephe.JUL_CAL)
         # `year < 0`, not `year > 0`: astronomical year 0 (1 BCE) must render as
         # "0000", not "-0000". Matches _predictive_utils.jd_to_iso_utc.
         year_label = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
@@ -281,9 +263,7 @@ class SecondaryProgressionFactory:
         """Format a target JD as a calendar date label."""
         gregorian_year, _, _, _ = ephe.revjul(jd, ephe.GREG_CAL)
         calendar_flag = ephe.GREG_CAL if int(gregorian_year) >= 1 else ephe.JUL_CAL
-        year, month, day, _, _, _ = SecondaryProgressionFactory._jd_to_components(
-            jd, calendar_flag
-        )
+        year, month, day, _, _, _ = SecondaryProgressionFactory._jd_to_components(jd, calendar_flag)
         # `year < 0`, not `year > 0`: astronomical year 0 (1 BCE) must render as
         # "0000", not "-0000". Matches _predictive_utils.jd_to_iso_utc.
         year_label = f"-{abs(year):04d}" if year < 0 else f"{year:04d}"
@@ -334,9 +314,7 @@ class SecondaryProgressionFactory:
             the class docstring for details.
         """
         natal_jd = SecondaryProgressionFactory._natal_jd(natal_subject)
-        target_jd = SecondaryProgressionFactory._target_to_jd(
-            target_iso_utc_datetime, target_year
-        )
+        target_jd = SecondaryProgressionFactory._target_to_jd(target_iso_utc_datetime, target_year)
         progressed_jd = SecondaryProgressionFactory._progressed_jd(natal_jd, target_jd)
 
         if progressed_subject_name is None:
@@ -344,9 +322,7 @@ class SecondaryProgressionFactory:
             progressed_subject_name = f"{natal_subject.name} (Progressed {target_label})"
 
         if natal_subject.lng is None or natal_subject.lat is None:
-            raise KerykeionException(
-                "Natal subject is missing longitude/latitude — cannot progress."
-            )
+            raise KerykeionException("Natal subject is missing longitude/latitude — cannot progress.")
 
         progressed_year_gregorian, _, _, _ = ephe.revjul(progressed_jd, ephe.GREG_CAL)
         # Heterogeneous keyword bundle forwarded via ** to the factory entry points.
@@ -381,8 +357,7 @@ class SecondaryProgressionFactory:
         # body (sun is None), and even in geocentric charts the Sun may be absent
         # from active_points — keying off it would silently drop the enrichments.
         def _any_point_has(attr: str) -> bool:
-            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter",
-                          "saturn", "uranus", "neptune", "pluto"):
+            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"):
                 _p = getattr(natal_subject, _name, None)
                 if _p is not None:
                     return getattr(_p, attr, None) is not None
@@ -490,9 +465,7 @@ class SecondaryProgressionFactory:
         )
 
         natal_jd = SecondaryProgressionFactory._natal_jd(natal_subject)
-        target_jd = SecondaryProgressionFactory._target_to_jd(
-            target_iso_utc_datetime, target_year
-        )
+        target_jd = SecondaryProgressionFactory._target_to_jd(target_iso_utc_datetime, target_year)
         progressed_jd = SecondaryProgressionFactory._progressed_jd(natal_jd, target_jd)
 
         result_target_iso = SecondaryProgressionFactory._jd_to_utc_iso(target_jd)
@@ -539,4 +512,3 @@ class SecondaryProgressionFactory:
             progressed_subject=progressed,
             progressed_to_natal_aspects=progressed_to_natal,
         )
-

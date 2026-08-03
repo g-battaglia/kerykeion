@@ -38,6 +38,14 @@
     since the panel names no font-family: under a CJK system font the
     Ambiguous-width characters — Cyrillic, Greek, the middot — render full-width,
     wider than any of the three reference faces.
+  - The line is omitted, not guessed, on every perspective not cast from the
+    Earth — seven of the eleven. `is_diurnal` comes from a tropical *geocentric*
+    Sun, so a Marscentric or Selenocentric chart draws a Sun that is not the one
+    measured: on a Liverpool nativity the measured Sun is at 196° while the
+    Marscentric wheel draws 354°, and the panel was asserting "Nocturnal" one row
+    under `Perspective: Marscentric`. Apparent Geocentric, True Geocentric and
+    Topocentric keep the line — they differ by parallax and aberration, never by
+    a hemisphere.
   - The line is omitted, not guessed, where it has no referent: a heliocentric
     chart excludes the Sun (it is the centre body), and a midpoint composite
     represents no single sky (`is_diurnal` is `None`). Note a heliocentric chart

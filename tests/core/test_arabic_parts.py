@@ -750,21 +750,31 @@ except ImportError:
 
 # Same active-point set the golden generator uses (scripts/regenerate_all.py).
 _ARABIC_GOLDEN_ACTIVE = [
-    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-    "Uranus", "Neptune", "Pluto", "True_North_Lunar_Node", "Chiron",
-    "Mean_Lilith", "Ascendant",
-    "Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei",
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    "True_North_Lunar_Node",
+    "Chiron",
+    "Mean_Lilith",
+    "Ascendant",
+    "Pars_Fortunae",
+    "Pars_Spiritus",
+    "Pars_Amoris",
+    "Pars_Fidei",
 ]
 _ARABIC_PART_NAMES = ("pars_fortunae", "pars_spiritus", "pars_amoris", "pars_fidei")
 
 # Cross-backend: swisseph differs from the libephemeris baselines by arcminutes.
 _ARABIC_ABS_TOL = 0.2 if BACKEND_NAME == "swisseph" else 1e-2
 
-_VALID_ARABIC_IDS = [
-    s["id"]
-    for s in (*TEMPORAL_SUBJECTS, *GEOGRAPHIC_SUBJECTS)
-    if s["id"] in EXPECTED_ARABIC_PARTS
-]
+_VALID_ARABIC_IDS = [s["id"] for s in (*TEMPORAL_SUBJECTS, *GEOGRAPHIC_SUBJECTS) if s["id"] in EXPECTED_ARABIC_PARTS]
 
 
 def _create_arabic_subject(subject_id: str):
@@ -772,17 +782,33 @@ def _create_arabic_subject(subject_id: str):
     for data in TEMPORAL_SUBJECTS:
         if data["id"] == subject_id:
             return AstrologicalSubjectFactory.from_birth_data(
-                name=data["name"], year=data["year"], month=data["month"], day=data["day"],
-                hour=data["hour"], minute=data["minute"], lat=data["lat"], lng=data["lng"],
-                tz_str=data["tz_str"], online=False, suppress_geonames_warning=True,
+                name=data["name"],
+                year=data["year"],
+                month=data["month"],
+                day=data["day"],
+                hour=data["hour"],
+                minute=data["minute"],
+                lat=data["lat"],
+                lng=data["lng"],
+                tz_str=data["tz_str"],
+                online=False,
+                suppress_geonames_warning=True,
                 active_points=_ARABIC_GOLDEN_ACTIVE,
             )
     for data in GEOGRAPHIC_SUBJECTS:
         if data["id"] == subject_id:
             return AstrologicalSubjectFactory.from_birth_data(
-                name=f"Test_{data['id']}", year=1990, month=6, day=15, hour=12, minute=0,
-                lat=data["lat"], lng=data["lng"], tz_str=data["tz_str"],
-                online=False, suppress_geonames_warning=True,
+                name=f"Test_{data['id']}",
+                year=1990,
+                month=6,
+                day=15,
+                hour=12,
+                minute=0,
+                lat=data["lat"],
+                lng=data["lng"],
+                tz_str=data["tz_str"],
+                online=False,
+                suppress_geonames_warning=True,
                 active_points=_ARABIC_GOLDEN_ACTIVE,
             )
     raise ValueError(f"Subject ID '{subject_id}' not found in test matrix")

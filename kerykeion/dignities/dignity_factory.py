@@ -176,8 +176,14 @@ def calculate_essential_dignity(
     term_ruler = _get_term_ruler(sign, position)
 
     dignity, score = _compute_dignity(
-        planet_name, sign, element, position,
-        is_diurnal, decan_number, decan_ruler, term_ruler,
+        planet_name,
+        sign,
+        element,
+        position,
+        is_diurnal,
+        decan_number,
+        decan_ruler,
+        term_ruler,
     )
 
     return {

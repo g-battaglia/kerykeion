@@ -15,8 +15,7 @@ class TestGreatConjunction2020:
     def test_found_once_at_the_published_instant(self):
         res = MundaneAspectFactory.from_iso_range("2020-12-01", "2020-12-31")
         jupsat = [
-            a for a in res.aspects
-            if {a.point_a, a.point_b} == {"Jupiter", "Saturn"} and a.aspect == "conjunction"
+            a for a in res.aspects if {a.point_a, a.point_b} == {"Jupiter", "Saturn"} and a.aspect == "conjunction"
         ]
         assert len(jupsat) == 1
         event = jupsat[0]
@@ -62,8 +61,7 @@ class TestSelfConsistency:
                 # |separation| equals the aspect angle regardless of which side
                 # of the target the signed separation sits on.
                 assert abs(abs(separation) - event.aspect_degrees) < 5e-4, (
-                    f"{event.point_a} {event.aspect} {event.point_b} at {event.iso_utc}: "
-                    f"separation {separation}"
+                    f"{event.point_a} {event.aspect} {event.point_b} at {event.iso_utc}: separation {separation}"
                 )
 
     def test_reported_longitudes_match_the_event(self):
@@ -82,9 +80,7 @@ class TestMoonOptIn:
         assert all("Moon" not in (a.point_a, a.point_b) for a in res.aspects)
 
     def test_moon_events_appear_when_requested(self):
-        res = MundaneAspectFactory.from_iso_range(
-            "2025-01-01", "2025-01-31", points=["Moon", "Sun"]
-        )
+        res = MundaneAspectFactory.from_iso_range("2025-01-01", "2025-01-31", points=["Moon", "Sun"])
         # Moon-Sun perfects each of the 5 Ptolemaic families roughly once per
         # synodic month → 8±2 events expected in a 31-day window.
         assert 6 <= len(res.aspects) <= 10
@@ -171,15 +167,14 @@ class TestContract:
         assert res.aspects == []
 
     def test_minor_aspects_are_searchable(self):
-        res = MundaneAspectFactory.from_iso_range(
-            "2025-01-01", "2025-02-28", aspects=["quincunx", "semi-sextile"]
-        )
+        res = MundaneAspectFactory.from_iso_range("2025-01-01", "2025-02-28", aspects=["quincunx", "semi-sextile"])
         assert all(a.aspect in ("quincunx", "semi-sextile") for a in res.aspects)
         assert all(a.aspect_degrees in (150.0, 30.0) for a in res.aspects)
 
     def test_duplicate_inputs_do_not_duplicate_events(self):
         res = MundaneAspectFactory.from_iso_range(
-            "2020-12-01", "2020-12-31",
+            "2020-12-01",
+            "2020-12-31",
             points=["Jupiter", "Saturn", "Jupiter"],
             aspects=["conjunction", "conjunction"],
         )

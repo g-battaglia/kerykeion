@@ -57,9 +57,7 @@ _LUNAR_PHASE_NAMES: tuple[LunarPhaseName, ...] = get_args(LunarPhaseName)
 # and the ASCII report generator so untrusted free-text fields (name/city/
 # nation) cannot smuggle ESC/BEL/OSC terminal-control sequences or produce a
 # document a conforming XML parser rejects.
-_XML_ILLEGAL_CONTROL_CHARS = "".join(
-    chr(c) for c in range(0x20) if c not in (0x09, 0x0A, 0x0D)
-) + "\x7f"
+_XML_ILLEGAL_CONTROL_CHARS = "".join(chr(c) for c in range(0x20) if c not in (0x09, 0x0A, 0x0D)) + "\x7f"
 _XML_ILLEGAL_TRANSLATION = {ord(c): None for c in _XML_ILLEGAL_CONTROL_CHARS}
 
 
@@ -82,9 +80,18 @@ _POLAR_LATITUDE_LIMIT = 66.0
 _POINT_NUMBER_MAP: dict[str, int] = _POINT_NUMBER_MAP_IMPORT
 
 HOUSE_FIELD_NAMES: tuple[str, ...] = (
-    "first_house", "second_house", "third_house", "fourth_house",
-    "fifth_house", "sixth_house", "seventh_house", "eighth_house",
-    "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+    "first_house",
+    "second_house",
+    "third_house",
+    "fourth_house",
+    "fifth_house",
+    "sixth_house",
+    "seventh_house",
+    "eighth_house",
+    "ninth_house",
+    "tenth_house",
+    "eleventh_house",
+    "twelfth_house",
 )
 
 # Zodiac sign properties lookup table
@@ -583,9 +590,7 @@ def validate_latitude(latitude: float) -> float:
     # value, not a polar one). The ephemeris backend validates this symmetrically
     # with longitude.
     if not -90.0 <= latitude <= 90.0:
-        raise KerykeionException(
-            f"Latitude {latitude} is out of range; it must be between -90 and 90 degrees."
-        )
+        raise KerykeionException(f"Latitude {latitude} is out of range; it must be between -90 and 90 degrees.")
     return latitude
 
 
@@ -603,9 +608,7 @@ def validate_longitude(longitude: float) -> float:
             the geometrically valid [-180, 180] interval.
     """
     if not -180.0 <= longitude <= 180.0:
-        raise KerykeionException(
-            f"Longitude {longitude} is out of range; it must be between -180 and 180 degrees."
-        )
+        raise KerykeionException(f"Longitude {longitude} is out of range; it must be between -180 and 180 degrees.")
     return longitude
 
 
@@ -705,9 +708,7 @@ def require_same_frame(first: Any, second: Any) -> None:
         # frameless inputs would compare equal (sentinel == sentinel) and slip
         # through, crashing later with a raw AttributeError deep in a consumer.
         _offenders = [
-            type(obj).__name__
-            for obj, zodiac in ((first, first_zodiac), (second, second_zodiac))
-            if zodiac is _MISSING
+            type(obj).__name__ for obj, zodiac in ((first, first_zodiac), (second, second_zodiac)) if zodiac is _MISSING
         ]
         raise KerykeionException(
             f"require_same_frame: input(s) of type {_offenders} do not expose the "
@@ -744,8 +745,7 @@ def require_same_frame(first: Any, second: Any) -> None:
             or getattr(first, "custom_ayanamsa_ayan_t0", None) != getattr(second, "custom_ayanamsa_ayan_t0", None)
         ):
             raise KerykeionException(
-                "Both subjects must share the same custom ayanamsa (t0 and offset) "
-                "to be compared."
+                "Both subjects must share the same custom ayanamsa (t0 and offset) to be compared."
             )
 
 
@@ -795,8 +795,7 @@ def safe_timezone(tz_str: str) -> ZoneInfo:
         return ZoneInfo(tz_str)
     except (ZoneInfoNotFoundError, ValueError, TypeError, OSError) as exc:
         raise KerykeionException(
-            f"Unknown timezone: {tz_str!r}. Use a valid IANA timezone name "
-            "(e.g. 'Europe/Rome', 'America/New_York')."
+            f"Unknown timezone: {tz_str!r}. Use a valid IANA timezone name (e.g. 'Europe/Rome', 'America/New_York')."
         ) from exc
 
 

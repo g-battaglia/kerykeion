@@ -35,18 +35,14 @@ class TestLunationsRange:
             assert (later - earlier) > 2.0
 
     def test_phase_filter(self):
-        res = LunationFinderFactory.from_iso_range(
-            "2026-01-01", "2026-12-31", phases=["new"]
-        )
+        res = LunationFinderFactory.from_iso_range("2026-01-01", "2026-12-31", phases=["new"])
         assert res.lunations
         assert all(lun.phase == "new" for lun in res.lunations)
         assert 11 <= len(res.lunations) <= 13
 
     def test_unknown_phase_raises(self):
         with pytest.raises(ValueError):
-            LunationFinderFactory.from_iso_range(
-                "2026-01-01", "2026-12-31", phases=["full", "waxing"]
-            )
+            LunationFinderFactory.from_iso_range("2026-01-01", "2026-12-31", phases=["full", "waxing"])
 
     def test_oversized_range_raises(self):
         # A range too long to scan is rejected upfront, never silently truncated.
@@ -86,9 +82,7 @@ class TestLunationsRange:
     def test_no_phantom_lunation_at_range_start(self):
         # A range beginning just after a new moon (12 Aug 2026) must not report a
         # phantom new moon echoed at the range start.
-        res = LunationFinderFactory.from_iso_range(
-            "2026-08-13", "2026-08-13", phases=["new"]
-        )
+        res = LunationFinderFactory.from_iso_range("2026-08-13", "2026-08-13", phases=["new"])
         assert res.lunations == []
 
     def test_offset_aware_input_normalized_to_utc(self):
@@ -105,18 +99,14 @@ class TestLunationGeometry:
     """Sun/Moon geometry at each phase."""
 
     def test_new_moon_conjunction(self):
-        res = LunationFinderFactory.from_iso_range(
-            "2026-01-01", "2026-03-31", phases=["new"]
-        )
+        res = LunationFinderFactory.from_iso_range("2026-01-01", "2026-03-31", phases=["new"])
         lun = res.lunations[0]
         sep = abs(lun.sun.abs_pos - lun.moon.abs_pos) % 360.0
         sep = min(sep, 360.0 - sep)
         assert sep < 0.5
 
     def test_full_moon_opposition(self):
-        res = LunationFinderFactory.from_iso_range(
-            "2026-01-01", "2026-03-31", phases=["full"]
-        )
+        res = LunationFinderFactory.from_iso_range("2026-01-01", "2026-03-31", phases=["full"])
         lun = res.lunations[0]
         sep = abs(lun.sun.abs_pos - lun.moon.abs_pos) % 360.0
         sep = min(sep, 360.0 - sep)
@@ -124,9 +114,7 @@ class TestLunationGeometry:
 
     def test_known_new_moon_aug_2026_in_leo(self):
         """The New Moon of 12 Aug 2026 (the total solar eclipse) is ~20 deg Leo."""
-        res = LunationFinderFactory.from_iso_range(
-            "2026-08-01", "2026-08-31", phases=["new"]
-        )
+        res = LunationFinderFactory.from_iso_range("2026-08-01", "2026-08-31", phases=["new"])
         assert len(res.lunations) == 1
         lun = res.lunations[0]
         assert lun.iso_utc.startswith("2026-08-12")

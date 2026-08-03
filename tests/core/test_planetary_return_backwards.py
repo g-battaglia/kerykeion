@@ -90,9 +90,7 @@ def _jd_to_iso(jd: float) -> str:
 
 class TestSolarBackwards:
     def test_backwards_returns_past(self, factory):
-        past = factory.next_return_from_iso_formatted_time(
-            "2025-12-31T00:00:00+00:00", "Solar", backwards=True
-        )
+        past = factory.next_return_from_iso_formatted_time("2025-12-31T00:00:00+00:00", "Solar", backwards=True)
         ret_jd = _iso_to_jd(past.iso_formatted_utc_datetime)
         start_jd = _iso_to_jd("2025-12-31T00:00:00+00:00")
         assert ret_jd < start_jd
@@ -100,16 +98,10 @@ class TestSolarBackwards:
 
     def test_back_is_one_cycle_earlier(self, factory):
         """back(fwd) must be exactly one tropical year before fwd."""
-        fwd = factory.next_return_from_iso_formatted_time(
-            "2024-01-01T00:00:00+00:00", "Solar"
-        )
-        back = factory.next_return_from_iso_formatted_time(
-            _jd_to_iso(fwd.julian_day), "Solar", backwards=True
-        )
+        fwd = factory.next_return_from_iso_formatted_time("2024-01-01T00:00:00+00:00", "Solar")
+        back = factory.next_return_from_iso_formatted_time(_jd_to_iso(fwd.julian_day), "Solar", backwards=True)
         delta_days = fwd.julian_day - back.julian_day
-        assert abs(delta_days - TROPICAL_YEAR) < 2.0, (
-            f"Delta {delta_days} days ≠ ~1 tropical year"
-        )
+        assert abs(delta_days - TROPICAL_YEAR) < 2.0, f"Delta {delta_days} days ≠ ~1 tropical year"
 
     def test_date_wrapper_backwards(self, factory):
         back = factory.next_return_from_date(2025, 12, 31, return_type="Solar", backwards=True)
@@ -123,9 +115,7 @@ class TestSolarBackwards:
 
 class TestLunarBackwards:
     def test_backwards_returns_past(self, factory):
-        past = factory.next_return_from_iso_formatted_time(
-            "2024-06-01T00:00:00+00:00", "Lunar", backwards=True
-        )
+        past = factory.next_return_from_iso_formatted_time("2024-06-01T00:00:00+00:00", "Lunar", backwards=True)
         ret_jd = _iso_to_jd(past.iso_formatted_utc_datetime)
         start_jd = _iso_to_jd("2024-06-01T00:00:00+00:00")
         assert ret_jd < start_jd
@@ -133,16 +123,10 @@ class TestLunarBackwards:
 
     def test_back_is_one_cycle_earlier(self, factory):
         """back(fwd) must be exactly one sidereal month before fwd."""
-        fwd = factory.next_return_from_iso_formatted_time(
-            "2024-01-01T00:00:00+00:00", "Lunar"
-        )
-        back = factory.next_return_from_iso_formatted_time(
-            _jd_to_iso(fwd.julian_day), "Lunar", backwards=True
-        )
+        fwd = factory.next_return_from_iso_formatted_time("2024-01-01T00:00:00+00:00", "Lunar")
+        back = factory.next_return_from_iso_formatted_time(_jd_to_iso(fwd.julian_day), "Lunar", backwards=True)
         delta_days = fwd.julian_day - back.julian_day
-        assert abs(delta_days - SIDEREAL_MONTH) < 0.5, (
-            f"Delta {delta_days} days ≠ ~1 sidereal month"
-        )
+        assert abs(delta_days - SIDEREAL_MONTH) < 0.5, f"Delta {delta_days} days ≠ ~1 sidereal month"
 
 
 # ---------------------------------------------------------------------------
@@ -152,9 +136,7 @@ class TestLunarBackwards:
 
 class TestLunarNodeCrossingBackwards:
     def test_backwards_returns_past(self, factory):
-        past = factory.next_lunar_node_crossing_from_iso_formatted_time(
-            "2024-06-15T00:00:00+00:00", backwards=True
-        )
+        past = factory.next_lunar_node_crossing_from_iso_formatted_time("2024-06-15T00:00:00+00:00", backwards=True)
         ret_jd = _iso_to_jd(past.iso_formatted_utc_datetime)
         start_jd = _iso_to_jd("2024-06-15T00:00:00+00:00")
         assert ret_jd < start_jd
@@ -166,16 +148,10 @@ class TestLunarNodeCrossingBackwards:
 
     def test_back_is_one_cycle_earlier(self, factory):
         """back(fwd) must be ~half a nodal month earlier."""
-        fwd = factory.next_lunar_node_crossing_from_iso_formatted_time(
-            "2024-01-01T00:00:00+00:00"
-        )
-        back = factory.next_lunar_node_crossing_from_iso_formatted_time(
-            _jd_to_iso(fwd.julian_day), backwards=True
-        )
+        fwd = factory.next_lunar_node_crossing_from_iso_formatted_time("2024-01-01T00:00:00+00:00")
+        back = factory.next_lunar_node_crossing_from_iso_formatted_time(_jd_to_iso(fwd.julian_day), backwards=True)
         delta_days = fwd.julian_day - back.julian_day
-        assert abs(delta_days - NODAL_HALF_MONTH) < 1.5, (
-            f"Delta {delta_days} days ≠ ~13.61 (half nodal month)"
-        )
+        assert abs(delta_days - NODAL_HALF_MONTH) < 1.5, f"Delta {delta_days} days ≠ ~13.61 (half nodal month)"
 
 
 # ---------------------------------------------------------------------------
@@ -220,9 +196,7 @@ class TestSwissephFallback:
 
         with patch.object(prf.ephe, "solcross_ut", side_effect=fake_solcross):
             with pytest.raises(KerykeionException, match="libephemeris"):
-                factory.next_return_from_iso_formatted_time(
-                    "2025-12-31T00:00:00+00:00", "Solar", backwards=True
-                )
+                factory.next_return_from_iso_formatted_time("2025-12-31T00:00:00+00:00", "Solar", backwards=True)
 
     def test_lunar_backwards_raises_on_swisseph(self, factory):
         import kerykeion.planetary_return_factory as prf
@@ -236,9 +210,7 @@ class TestSwissephFallback:
 
         with patch.object(prf.ephe, "mooncross_ut", side_effect=fake_mooncross):
             with pytest.raises(KerykeionException, match="libephemeris"):
-                factory.next_return_from_iso_formatted_time(
-                    "2024-06-01T00:00:00+00:00", "Lunar", backwards=True
-                )
+                factory.next_return_from_iso_formatted_time("2024-06-01T00:00:00+00:00", "Lunar", backwards=True)
 
     def test_node_crossing_backwards_raises_on_swisseph(self, factory):
         import kerykeion.planetary_return_factory as prf
@@ -252,6 +224,4 @@ class TestSwissephFallback:
 
         with patch.object(prf.ephe, "mooncross_node_ut", side_effect=fake_node):
             with pytest.raises(KerykeionException, match="libephemeris"):
-                factory.next_lunar_node_crossing_from_iso_formatted_time(
-                    "2024-06-15T00:00:00+00:00", backwards=True
-                )
+                factory.next_lunar_node_crossing_from_iso_formatted_time("2024-06-15T00:00:00+00:00", backwards=True)

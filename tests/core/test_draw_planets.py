@@ -1194,10 +1194,12 @@ class TestLogging:
         """Debug logging is invoked when overlapping planets produce groups."""
         mock_logger.isEnabledFor.return_value = True
         # Two planets within PLANET_GROUPING_THRESHOLD (3.4°) to trigger overlap logging
-        close_points = _mock_points([
-            {**MOCK_POINTS_DATA[0], "abs_pos": 15.0, "position": 15.0},
-            {**MOCK_POINTS_DATA[1], "abs_pos": 17.0, "position": 17.0},
-        ])
+        close_points = _mock_points(
+            [
+                {**MOCK_POINTS_DATA[0], "abs_pos": 15.0, "position": 15.0},
+                {**MOCK_POINTS_DATA[1], "abs_pos": 17.0, "position": 17.0},
+            ]
+        )
         close_settings = _mock_settings(MOCK_SETTINGS_DATA[:2])
         _natal_draw(close_points, close_settings)
         assert mock_logger.debug.called
@@ -1207,11 +1209,13 @@ class TestLogging:
         """Debug logging is invoked for overlap groups with multiple planets."""
         mock_logger.isEnabledFor.return_value = True
         # Three planets within PLANET_GROUPING_THRESHOLD to form a multi-point group
-        close_points = _mock_points([
-            {**MOCK_POINTS_DATA[0], "abs_pos": 15.0, "position": 15.0},
-            {**MOCK_POINTS_DATA[2], "abs_pos": 16.5, "position": 16.5},
-            {**MOCK_POINTS_DATA[1], "abs_pos": 18.0, "position": 18.0},
-        ])
+        close_points = _mock_points(
+            [
+                {**MOCK_POINTS_DATA[0], "abs_pos": 15.0, "position": 15.0},
+                {**MOCK_POINTS_DATA[2], "abs_pos": 16.5, "position": 16.5},
+                {**MOCK_POINTS_DATA[1], "abs_pos": 18.0, "position": 18.0},
+            ]
+        )
         close_settings = _mock_settings(MOCK_SETTINGS_DATA)
         _natal_draw(close_points, close_settings)
         # "Layout overlap groups" header + at least one group entry

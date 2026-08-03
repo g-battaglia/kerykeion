@@ -16,19 +16,38 @@ def _angular_diff(a: float, b: float) -> float:
 @pytest.fixture(scope="module")
 def natal():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Test Subject", 1990, 6, 15, 14, 30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        "Test Subject",
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
     )
 
 
 @pytest.fixture(scope="module")
 def sidereal_natal():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Sidereal Subject", 1990, 6, 15, 14, 30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
-        zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+        "Sidereal Subject",
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
+        zodiac_type="Sidereal",
+        sidereal_mode="LAHIRI",
     )
 
 
@@ -38,9 +57,18 @@ def natal_with_derived_points():
     extra = ["Vertex", "Anti_Vertex", "Pars_Fortunae", "Pars_Spiritus"]
     points = list(DEFAULT_ACTIVE_POINTS) + [p for p in extra if p not in DEFAULT_ACTIVE_POINTS]
     return AstrologicalSubjectFactory.from_birth_data(
-        "Derived Points Subject", 1990, 6, 15, 14, 30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        "Derived Points Subject",
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
         active_points=points,
     )
 
@@ -58,7 +86,9 @@ class TestRelocatedChart:
         assert abs(relocated.ascendant.abs_pos - natal.ascendant.abs_pos) > 1.0
 
     def test_city_updated(self, natal):
-        relocated = RelocatedChartFactory.relocate(natal, new_lat=40.7128, new_lng=-74.006, new_city="New York", new_nation="US")
+        relocated = RelocatedChartFactory.relocate(
+            natal, new_lat=40.7128, new_lng=-74.006, new_city="New York", new_nation="US"
+        )
         assert relocated.city == "New York"
         assert relocated.nation == "US"
         assert relocated.lat == 40.7128
@@ -75,9 +105,20 @@ class TestRelocatedChart:
 
     def test_all_houses_present(self, natal):
         relocated = RelocatedChartFactory.relocate(natal, new_lat=35.6895, new_lng=139.6917, new_city="Tokyo")
-        for attr in ["first_house", "second_house", "third_house", "fourth_house",
-                      "fifth_house", "sixth_house", "seventh_house", "eighth_house",
-                      "ninth_house", "tenth_house", "eleventh_house", "twelfth_house"]:
+        for attr in [
+            "first_house",
+            "second_house",
+            "third_house",
+            "fourth_house",
+            "fifth_house",
+            "sixth_house",
+            "seventh_house",
+            "eighth_house",
+            "ninth_house",
+            "tenth_house",
+            "eleventh_house",
+            "twelfth_house",
+        ]:
             house = getattr(relocated, attr)
             assert house is not None
             assert 0 <= house.abs_pos < 360
@@ -89,6 +130,7 @@ class TestRelocatedSweReference:
     def test_relocated_asc_mc_match_swe(self, natal):
         """Factory relocated ASC and MC must match raw ephe.houses_armc()."""
         from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+
         ephe.set_ephe_path(EPHE_DATA_PATH)
 
         new_lat = 40.7128
@@ -122,6 +164,7 @@ class TestRelocatedSweReference:
     def test_relocated_tokyo_asc_mc_match_swe(self, natal):
         """Same check for Tokyo to ensure generalisation across locations."""
         from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+
         ephe.set_ephe_path(EPHE_DATA_PATH)
 
         new_lat = 35.6895
@@ -167,8 +210,15 @@ class TestRelocatedSiderealIdentity:
         relocated = RelocatedChartFactory.relocate(
             sidereal_natal, new_lat=sidereal_natal.lat, new_lng=sidereal_natal.lng
         )
-        for attr in ["first_house", "fourth_house", "seventh_house", "tenth_house",
-                     "medium_coeli", "descendant", "imum_coeli"]:
+        for attr in [
+            "first_house",
+            "fourth_house",
+            "seventh_house",
+            "tenth_house",
+            "medium_coeli",
+            "descendant",
+            "imum_coeli",
+        ]:
             natal_pos = getattr(sidereal_natal, attr).abs_pos
             relocated_pos = getattr(relocated, attr).abs_pos
             assert _angular_diff(relocated_pos, natal_pos) < 1e-5, f"{attr} moved on identity relocation"
@@ -230,9 +280,7 @@ class TestRelocatedDerivedPoints:
         relocated = RelocatedChartFactory.relocate(
             subj, new_lat=35.6895, new_lng=139.6917, new_city="Tokyo", new_tz_str="Asia/Tokyo"
         )
-        assert relocated.is_diurnal is False, (
-            "Sun below the horizon in Tokyo at the same UT instant: sect must flip"
-        )
+        assert relocated.is_diurnal is False, "Sun below the horizon in Tokyo at the same UT instant: sect must flip"
 
     def test_axes_have_house_populated(self, natal_with_derived_points):
         subj = natal_with_derived_points
@@ -295,10 +343,20 @@ class TestRelocatedStaleLocationFields:
     @pytest.fixture(scope="class")
     def enriched_natal(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "Enriched Subject", 1990, 6, 15, 14, 30,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
-            calculate_gauquelin=True, calculate_local_space=True,
+            "Enriched Subject",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
+            calculate_gauquelin=True,
+            calculate_local_space=True,
         )
 
     def test_natal_has_location_dependent_enrichments(self, enriched_natal):
@@ -316,9 +374,7 @@ class TestRelocatedStaleLocationFields:
             point = getattr(relocated, attr)
             assert point.gauquelin_sector is None, f"{attr} carries a stale natal gauquelin_sector"
             assert point.azimuth is None, f"{attr} carries a stale natal azimuth"
-            assert point.altitude_above_horizon is None, (
-                f"{attr} carries a stale natal altitude_above_horizon"
-            )
+            assert point.altitude_above_horizon is None, f"{attr} carries a stale natal altitude_above_horizon"
         assert relocated.gauquelin_sector_cusps is None
 
     def test_relocated_sect_swe_calls_run_inside_session(self, enriched_natal, monkeypatch):
@@ -342,14 +398,10 @@ class TestRelocatedStaleLocationFields:
         monkeypatch.setattr(eb, "reset_ephemeris_session", tracking_reset)
         monkeypatch.setattr(eb.ephe, "azalt", tracking_azalt)
 
-        RelocatedChartFactory.relocate(
-            enriched_natal, new_lat=35.6895, new_lng=139.6917, new_city="Tokyo"
-        )
+        RelocatedChartFactory.relocate(enriched_natal, new_lat=35.6895, new_lng=139.6917, new_city="Tokyo")
 
         assert "azalt" in events, "sect recomputation (azalt) was never invoked"
-        assert events[-1] == "session_reset", (
-            f"ephe calls escaped the ephemeris session during relocation: {events}"
-        )
+        assert events[-1] == "session_reset", f"ephe calls escaped the ephemeris session during relocation: {events}"
 
 
 class TestRelocatedLocalDatetimeRecompute:
@@ -389,9 +441,7 @@ class TestRelocatedLocalDatetimeRecompute:
 
         lmt_offset = new_lng / 15.0
         ey, em, ed, edh = ephe.revjul(jd_ut + lmt_offset / 24.0, ephe.JUL_CAL)
-        assert data["iso_formatted_local_datetime"] == format_ancient_iso(
-            int(ey), int(em), int(ed), edh, lmt_offset
-        )
+        assert data["iso_formatted_local_datetime"] == format_ancient_iso(int(ey), int(em), int(ed), edh, lmt_offset)
         assert data["iso_formatted_local_datetime"].startswith("-0500-")
         assert (data["year"], data["month"], data["day"]) == (int(ey), int(em), int(ed))
 
@@ -478,18 +528,24 @@ class TestPolarRelocation:
         from kerykeion.relocated_chart_factory import RelocatedChartFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "Polar Move", 1990, 6, 15, 12, 0,
-            lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
+            "Polar Move",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
         )
         relocated = RelocatedChartFactory.relocate(natal, new_lat=78.2, new_lng=15.6)
         assert relocated.first_house is not None
         assert relocated.lat == 78.2
         assert relocated.houses_system_identifier == "P"
         assert relocated.effective_houses_system_identifier == "O"
-        assert [fallback.strategy for fallback in relocated.polar_house_fallbacks] == [
-            "substitute_system"
-        ]
+        assert [fallback.strategy for fallback in relocated.polar_house_fallbacks] == ["substitute_system"]
 
     def test_relocation_to_polar_latitude_agnostic_houses_use_real_lat(self):
         # Whole Sign is defined at every latitude: relocating a Whole Sign chart
@@ -500,9 +556,18 @@ class TestPolarRelocation:
         from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "Polar WS", 1990, 6, 15, 12, 0,
-            lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True, houses_system_identifier="W",
+            "Polar WS",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+            houses_system_identifier="W",
         )
         relocated = RelocatedChartFactory.relocate(natal, new_lat=78.2, new_lng=15.6)
         assert relocated.lat == 78.2
@@ -523,17 +588,39 @@ class TestRelocatedMidpointsRehoused:
         from kerykeion.utilities import get_planet_house
 
         subj = AstrologicalSubjectFactory.from_birth_data(
-            "Reloc MP", 1990, 6, 15, 12, 0, lng=-74.0, lat=40.71,
-            tz_str="America/New_York", online=False, suppress_geonames_warning=True,
+            "Reloc MP",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=-74.0,
+            lat=40.71,
+            tz_str="America/New_York",
+            online=False,
+            suppress_geonames_warning=True,
         )
         subj.active_midpoints = MidpointFactory.compute_active_midpoint_points(subj, ["Sun_Moon"])
         reloc = RelocatedChartFactory.relocate(
-            subj, new_lat=35.68, new_lng=139.69, new_tz_str="Asia/Tokyo",
+            subj,
+            new_lat=35.68,
+            new_lng=139.69,
+            new_tz_str="Asia/Tokyo",
         )
         assert reloc.active_midpoints, "midpoints missing after relocation"
         house_order = [
-            "first", "second", "third", "fourth", "fifth", "sixth",
-            "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth",
+            "first",
+            "second",
+            "third",
+            "fourth",
+            "fifth",
+            "sixth",
+            "seventh",
+            "eighth",
+            "ninth",
+            "tenth",
+            "eleventh",
+            "twelfth",
         ]
         cusps = [getattr(reloc, f"{h}_house").abs_pos for h in house_order]
         for mp in reloc.active_midpoints:
@@ -553,14 +640,38 @@ class TestRelocatedDerivedOppositesRehoused:
         from kerykeion.utilities import get_planet_house
 
         s = AstrologicalSubjectFactory.from_birth_data(
-            "John", 1990, 6, 15, 14, 30, lng=-74.0, lat=40.7,
-            tz_str="America/New_York", online=False, suppress_geonames_warning=True,
+            "John",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=-74.0,
+            lat=40.7,
+            tz_str="America/New_York",
+            online=False,
+            suppress_geonames_warning=True,
         )
         r = RelocatedChartFactory.relocate(
-            s, new_lat=-33.9, new_lng=151.2, new_tz_str="Australia/Sydney",
+            s,
+            new_lat=-33.9,
+            new_lng=151.2,
+            new_tz_str="Australia/Sydney",
         )
-        order = ["first", "second", "third", "fourth", "fifth", "sixth",
-                 "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"]
+        order = [
+            "first",
+            "second",
+            "third",
+            "fourth",
+            "fifth",
+            "sixth",
+            "seventh",
+            "eighth",
+            "ninth",
+            "tenth",
+            "eleventh",
+            "twelfth",
+        ]
         cusps = [getattr(r, f"{h}_house").abs_pos for h in order]
         south = r.true_south_lunar_node
         assert south.house == get_planet_house(south.abs_pos, cusps)
@@ -574,8 +685,20 @@ class TestRelocateBirthplaceExactNoOpRound11:
     (amplified at high latitude / far from J2000); houses_ex2 computes the ARMC
     internally and reproduces the natal cusps exactly."""
 
-    _HO = ["first", "second", "third", "fourth", "fifth", "sixth",
-           "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"]
+    _HO = [
+        "first",
+        "second",
+        "third",
+        "fourth",
+        "fifth",
+        "sixth",
+        "seventh",
+        "eighth",
+        "ninth",
+        "tenth",
+        "eleventh",
+        "twelfth",
+    ]
 
     def _drift(self, natal, reloc):
         m = 0.0
@@ -586,15 +709,36 @@ class TestRelocateBirthplaceExactNoOpRound11:
 
     def test_tropical_high_latitude_exact(self):
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "N", 2131, 8, 13, 20, 55, lng=-10.6457, lat=65.4251, tz_str="Etc/GMT",
-            online=False, houses_system_identifier="R")
+            "N",
+            2131,
+            8,
+            13,
+            20,
+            55,
+            lng=-10.6457,
+            lat=65.4251,
+            tz_str="Etc/GMT",
+            online=False,
+            houses_system_identifier="R",
+        )
         reloc = RelocatedChartFactory.relocate(natal, 65.4251, -10.6457, "same")
         assert self._drift(natal, reloc) < 1e-8
 
     def test_sidereal_exact(self):
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "S", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+            "S",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
         reloc = RelocatedChartFactory.relocate(natal, 41.9, 12.5, "same")
         assert self._drift(natal, reloc) < 1e-8
 
@@ -605,8 +749,18 @@ class TestRelocateNormalizesLongitudeCodeRabbit:
 
     def test_wrapped_longitude_matches_normalized(self):
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "N", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True)
+            "N",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+        )
         r_wrapped = RelocatedChartFactory.relocate(natal, 41.9, 370.0, "X")
         r_norm = RelocatedChartFactory.relocate(natal, 41.9, 10.0, "X")
         assert r_wrapped.lng == 10.0
@@ -614,8 +768,18 @@ class TestRelocateNormalizesLongitudeCodeRabbit:
 
     def test_negative_wrapped_longitude(self):
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "N", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True)
+            "N",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+        )
         r = RelocatedChartFactory.relocate(natal, 41.9, -190.0, "X")
         assert r.lng == 170.0
 
@@ -629,15 +793,22 @@ class TestRelocateTopocentricRejected:
         from kerykeion.schemas import KerykeionException
 
         topo = AstrologicalSubjectFactory.from_birth_data(
-            "Topo Subject", 1990, 6, 15, 14, 30,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            "Topo Subject",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
             perspective_type="Topocentric",
         )
         with pytest.raises(KerykeionException, match="[Tt]opocentric"):
-            RelocatedChartFactory.relocate(
-                topo, new_lat=40.7128, new_lng=-74.006, new_city="New York"
-            )
+            RelocatedChartFactory.relocate(topo, new_lat=40.7128, new_lng=-74.006, new_city="New York")
 
 
 class TestRelocateExtremeYearBoundary:
@@ -661,18 +832,35 @@ class TestRelocateExtremeYearBoundary:
         from kerykeion.utilities import datetime_to_julian
 
         base = AstrologicalSubjectFactory.from_birth_data(
-            "B", 2000, 6, 15, 12, 0, lng=0.0, lat=41.9, tz_str="UTC",
-            city="X", nation="XX", online=False, suppress_geonames_warning=True,
-        )
-        edge = base.model_copy(update=dict(
-            year=year,
-            julian_day=datetime_to_julian(datetime(*jd_dt, tzinfo=timezone.utc)),
-            iso_formatted_utc_datetime=iso_utc,
-            iso_formatted_local_datetime=iso_utc,
+            "B",
+            2000,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=41.9,
             tz_str="UTC",
-        ))
+            city="X",
+            nation="XX",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        edge = base.model_copy(
+            update=dict(
+                year=year,
+                julian_day=datetime_to_julian(datetime(*jd_dt, tzinfo=timezone.utc)),
+                iso_formatted_utc_datetime=iso_utc,
+                iso_formatted_local_datetime=iso_utc,
+                tz_str="UTC",
+            )
+        )
         with pytest.raises(KerykeionException):
             RelocatedChartFactory.relocate(
-                edge, new_lat=0.0, new_lng=0.0, new_city="K", new_nation="KI",
+                edge,
+                new_lat=0.0,
+                new_lng=0.0,
+                new_city="K",
+                new_nation="KI",
                 new_tz_str=new_tz_str,
             )

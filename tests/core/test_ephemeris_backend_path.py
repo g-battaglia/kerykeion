@@ -62,21 +62,15 @@ class TestSwephDirectoryRemoved:
 
     def test_sweph_directory_does_not_exist(self):
         sweph_dir = KERYKEION_ROOT / "kerykeion" / "sweph"
-        assert not sweph_dir.exists(), (
-            "kerykeion/sweph/ still exists — Swiss Ephemeris data must not be bundled"
-        )
+        assert not sweph_dir.exists(), "kerykeion/sweph/ still exists — Swiss Ephemeris data must not be bundled"
 
     def test_no_se1_files_in_package(self):
         se1_files = list((KERYKEION_ROOT / "kerykeion").rglob("*.se1"))
-        assert se1_files == [], (
-            f"Found .se1 files in kerykeion/: {[str(f) for f in se1_files]}"
-        )
+        assert se1_files == [], f"Found .se1 files in kerykeion/: {[str(f) for f in se1_files]}"
 
     def test_no_sefstars_in_package(self):
         sefstars = list((KERYKEION_ROOT / "kerykeion").rglob("sefstars.txt"))
-        assert sefstars == [], (
-            f"Found sefstars.txt in kerykeion/: {[str(f) for f in sefstars]}"
-        )
+        assert sefstars == [], f"Found sefstars.txt in kerykeion/: {[str(f) for f in sefstars]}"
 
 
 class TestSwissephPathValidation:
@@ -95,10 +89,17 @@ class TestSwissephPathValidation:
             "KERYKEION_EPHE_PATH": str(tmp_path),
         }
         result = subprocess.run(
-            [sys.executable, "-W", "all", "-c",
-             "import logging; logging.basicConfig(level=logging.WARNING); "
-             "from kerykeion.ephemeris_backend import EPHE_DATA_PATH"],
-            capture_output=True, text=True, timeout=90,
+            [
+                sys.executable,
+                "-W",
+                "all",
+                "-c",
+                "import logging; logging.basicConfig(level=logging.WARNING); "
+                "from kerykeion.ephemeris_backend import EPHE_DATA_PATH",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=90,
             env={**os.environ, **env},
             cwd=str(KERYKEION_ROOT),
         )
@@ -111,10 +112,17 @@ class TestSwissephPathValidation:
             "KERYKEION_EPHE_PATH": str(tmp_path),
         }
         result = subprocess.run(
-            [sys.executable, "-W", "all", "-c",
-             "import logging; logging.basicConfig(level=logging.WARNING); "
-             "from kerykeion.ephemeris_backend import EPHE_DATA_PATH"],
-            capture_output=True, text=True, timeout=90,
+            [
+                sys.executable,
+                "-W",
+                "all",
+                "-c",
+                "import logging; logging.basicConfig(level=logging.WARNING); "
+                "from kerykeion.ephemeris_backend import EPHE_DATA_PATH",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=90,
             env={**os.environ, **env},
             cwd=str(KERYKEION_ROOT),
         )
@@ -150,11 +158,13 @@ class TestSwephAutoDetect:
         explicit = tmp_path / "explicit"
         explicit.mkdir()
         (explicit / "sepl_18.se1").write_bytes(b"\x00")
-        info = _run_backend_probe({
-            "KERYKEION_BACKEND": "swisseph",
-            "KERYKEION_EPHE_PATH": str(explicit),
-            "HOME": str(home),
-        })
+        info = _run_backend_probe(
+            {
+                "KERYKEION_BACKEND": "swisseph",
+                "KERYKEION_EPHE_PATH": str(explicit),
+                "HOME": str(home),
+            }
+        )
         assert info["ephe_path"] == str(explicit)
 
     def test_empty_download_dir_falls_back_to_moshier(self, tmp_path, _require_swisseph):

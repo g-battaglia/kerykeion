@@ -6,7 +6,6 @@ Integrates all cases from tests/settings/test_settings.py plus
 settings-related edge cases from tests/edge_cases/test_edge_cases.py.
 """
 
-
 import pytest
 
 from kerykeion.settings.kerykeion_settings import load_settings_mapping, _deep_merge
@@ -124,6 +123,7 @@ class TestLoadLanguagePair:
         assert selected == en
         assert selected["info"] == "Info"
         from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
+
         assert selected is not LANGUAGE_SETTINGS["EN"]
         assert en is not LANGUAGE_SETTINGS["EN"]
 
@@ -214,10 +214,7 @@ class TestGetTranslations:
         # the fallback_dict wins over the built-in EN defaults and the default arg.
         primary = {"info": "Solo primario"}
         fallback = {"transit": "Dal fallback"}
-        assert (
-            get_translations("transit", "default", language_dict=primary, fallback_dict=fallback)
-            == "Dal fallback"
-        )
+        assert get_translations("transit", "default", language_dict=primary, fallback_dict=fallback) == "Dal fallback"
 
     def test_fallback_dict_primary_takes_precedence(self):
         # When the key exists in the primary dict, fallback_dict is never consulted.
@@ -241,10 +238,7 @@ class TestGetTranslations:
         # defer to the explicit fallback_dict, not short-circuit to the default arg.
         primary = {"transit": None}
         fallback = {"transit": "Dal fallback"}
-        assert (
-            get_translations("transit", "default", language_dict=primary, fallback_dict=fallback)
-            == "Dal fallback"
-        )
+        assert get_translations("transit", "default", language_dict=primary, fallback_dict=fallback) == "Dal fallback"
 
     def test_none_in_primary_falls_through_to_en_defaults(self):
         # When neither the primary nor the fallback_dict provide the key (primary

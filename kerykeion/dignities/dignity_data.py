@@ -27,11 +27,11 @@ DOMICILE_RULERS: Dict[str, List[str]] = {
     "Leo": ["Sun"],
     "Vir": ["Mercury"],
     "Lib": ["Venus"],
-    "Sco": ["Mars"],       # Traditional: Mars (modern co-ruler: Pluto)
+    "Sco": ["Mars"],  # Traditional: Mars (modern co-ruler: Pluto)
     "Sag": ["Jupiter"],
     "Cap": ["Saturn"],
-    "Aqu": ["Saturn"],     # Traditional: Saturn (modern co-ruler: Uranus)
-    "Pis": ["Jupiter"],    # Traditional: Jupiter (modern co-ruler: Neptune)
+    "Aqu": ["Saturn"],  # Traditional: Saturn (modern co-ruler: Uranus)
+    "Pis": ["Jupiter"],  # Traditional: Jupiter (modern co-ruler: Neptune)
 }
 
 # =========================================================================
@@ -60,7 +60,7 @@ EXALTATION_TABLE: Dict[str, Tuple[Optional[str], Optional[int]]] = {
     # sign -> (planet, exact_degree_or_None)
     "Ari": ("Sun", 19),
     "Tau": ("Moon", 3),
-    "Gem": (None, None),       # No classical exaltation
+    "Gem": (None, None),  # No classical exaltation
     "Can": ("Jupiter", 15),
     "Leo": (None, None),
     "Vir": ("Mercury", 15),

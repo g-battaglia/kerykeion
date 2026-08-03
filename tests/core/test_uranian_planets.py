@@ -10,8 +10,14 @@ from kerykeion import AstrologicalSubjectFactory, AspectsFactory, ChartDataFacto
 from kerykeion.settings.config_constants import URANIAN_ACTIVE_POINTS, ALL_ACTIVE_POINTS
 
 URANIAN_NAMES = [
-    "Cupido", "Hades", "Zeus", "Kronos",
-    "Apollon", "Admetos", "Vulkanus", "Poseidon",
+    "Cupido",
+    "Hades",
+    "Zeus",
+    "Kronos",
+    "Apollon",
+    "Admetos",
+    "Vulkanus",
+    "Poseidon",
 ]
 
 
@@ -19,16 +25,36 @@ URANIAN_NAMES = [
 def subject_with_uranian():
     """Create a subject with Uranian planets activated."""
     active = [
-        "Sun", "Moon", "Mercury", "Venus", "Mars",
-        "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
-        "True_North_Lunar_Node", "True_South_Lunar_Node",
-        "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
+        "Sun",
+        "Moon",
+        "Mercury",
+        "Venus",
+        "Mars",
+        "Jupiter",
+        "Saturn",
+        "Uranus",
+        "Neptune",
+        "Pluto",
+        "True_North_Lunar_Node",
+        "True_South_Lunar_Node",
+        "Ascendant",
+        "Medium_Coeli",
+        "Descendant",
+        "Imum_Coeli",
     ] + URANIAN_NAMES
     return AstrologicalSubjectFactory.from_birth_data(
         "Uranian Test",
-        year=1990, month=6, day=15, hour=14, minute=30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        year=1990,
+        month=6,
+        day=15,
+        hour=14,
+        minute=30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
         active_points=active,
     )
 
@@ -38,9 +64,17 @@ def subject_without_uranian():
     """Create a subject without Uranian planets (default)."""
     return AstrologicalSubjectFactory.from_birth_data(
         "Default Test",
-        year=1990, month=6, day=15, hour=14, minute=30,
-        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        year=1990,
+        month=6,
+        day=15,
+        hour=14,
+        minute=30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
     )
 
 
@@ -97,10 +131,7 @@ class TestUranianPlanetsAspects:
     def test_aspects_with_uranian_planets(self, subject_with_uranian):
         """Should calculate aspects involving Uranian planets."""
         aspects = AspectsFactory.single_chart_aspects(subject_with_uranian)
-        uranian_aspects = [
-            a for a in aspects.aspects
-            if a.p1_name in URANIAN_NAMES or a.p2_name in URANIAN_NAMES
-        ]
+        uranian_aspects = [a for a in aspects.aspects if a.p1_name in URANIAN_NAMES or a.p2_name in URANIAN_NAMES]
         # At least some aspects should involve Uranian planets
         assert len(uranian_aspects) > 0, "Should have at least one aspect involving Uranian planets"
 
@@ -139,14 +170,18 @@ class TestUranianSweReference:
         "poseidon": 47,
     }
 
-    @pytest.mark.parametrize("attr,swe_id", [
-        ("cupido", 40),
-        ("hades", 41),
-        ("poseidon", 47),
-    ])
+    @pytest.mark.parametrize(
+        "attr,swe_id",
+        [
+            ("cupido", 40),
+            ("hades", 41),
+            ("poseidon", 47),
+        ],
+    )
     def test_uranian_longitude_matches_swe(self, subject_with_uranian, attr, swe_id):
         """Factory Uranian abs_pos must match ephe.calc_ut() longitude."""
         from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
+
         ephe.set_ephe_path(EPHE_DATA_PATH)
 
         jd = subject_with_uranian.julian_day

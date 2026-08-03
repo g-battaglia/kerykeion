@@ -147,9 +147,7 @@ def _build_level(
         children: List[ZRPeriodModel] = []
         child_path: List[ZRPeriodModel] = []
         if level < levels and (level < 2 or contains_target):
-            children, child_path = _build_level(
-                sign_num, cursor, dur, level + 1, levels, target_dt, fortune_sign
-            )
+            children, child_path = _build_level(sign_num, cursor, dur, level + 1, levels, target_dt, fortune_sign)
 
         period = ZRPeriodModel(
             sign=sign,
@@ -251,9 +249,7 @@ class ZodiacalReleasingFactory:
         # timestamp — a return or Davison chart is a real moment in time.
         if getattr(subject, "year", None) is not None:
             try:
-                birth_dt = datetime(
-                    subject.year, subject.month, subject.day, subject.hour, subject.minute
-                )
+                birth_dt = datetime(subject.year, subject.month, subject.day, subject.hour, subject.minute)
             except (TypeError, ValueError) as exc:
                 raise KerykeionException(f"Invalid birth date on subject: {exc}") from exc
         else:
@@ -270,8 +266,7 @@ class ZodiacalReleasingFactory:
                 birth_dt = datetime.fromisoformat(_iso).replace(tzinfo=None)
             except ValueError as exc:
                 raise KerykeionException(
-                    f"Cannot parse the subject's ISO timestamp {_iso!r} for "
-                    f"zodiacal releasing: {exc}"
+                    f"Cannot parse the subject's ISO timestamp {_iso!r} for zodiacal releasing: {exc}"
                 ) from exc
 
         target_dt: Optional[datetime] = None
@@ -279,15 +274,12 @@ class ZodiacalReleasingFactory:
             try:
                 target_dt = datetime.fromisoformat(target_date)
             except ValueError as exc:
-                raise KerykeionException(
-                    f"Invalid target_date {target_date!r} (expected ISO YYYY-MM-DD)."
-                ) from exc
+                raise KerykeionException(f"Invalid target_date {target_date!r} (expected ISO YYYY-MM-DD).") from exc
             # Birth datetimes are naive; a timezone-aware target would raise a raw
             # TypeError in the date math below. Reject it with a clear message.
             if target_dt.tzinfo is not None:
                 raise KerykeionException(
-                    f"target_date {target_date!r} must be timezone-naive "
-                    "(pass a bare ISO date, e.g. '2026-06-04')."
+                    f"target_date {target_date!r} must be timezone-naive (pass a bare ISO date, e.g. '2026-06-04')."
                 )
 
         # Extend the L1 timeline far enough to cover the target date plus a margin.

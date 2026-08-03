@@ -263,9 +263,7 @@ def test_secondary_progression_bce_subject():
     progressed = SecondaryProgressionFactory.compute(natal, target_year=-460)
 
     target_jd = ephe.julday(-460, 1, 1, 0.0, ephe.JUL_CAL)
-    expected_jd = natal.julian_day + (
-        (target_jd - natal.julian_day) / DAYS_PER_TROPICAL_YEAR
-    )
+    expected_jd = natal.julian_day + ((target_jd - natal.julian_day) / DAYS_PER_TROPICAL_YEAR)
     assert progressed.sun is not None
     assert progressed.year < 1
     assert progressed.julian_day == pytest.approx(expected_jd, abs=2e-5)
@@ -379,7 +377,10 @@ def test_solar_arc_sign_changed_flag():
 def test_solar_arc_aspect_detection():
     """With aspects enabled, there should be at least one directed-to-natal hit."""
     solar_arc = SolarArcFactory.compute(
-        _subject(), target_year=2030, compute_aspects=True, aspect_orb=1.5,
+        _subject(),
+        target_year=2030,
+        compute_aspects=True,
+        aspect_orb=1.5,
     )
     assert len(solar_arc.directed_to_natal_aspects) > 0
 
@@ -522,8 +523,16 @@ def test_baseline_ce_solar_arc():
 @lru_cache(maxsize=1)
 def _bce_subject():
     return AstrologicalSubjectFactory.from_birth_data(
-        "BCE Baseline", -500, 3, 21, 12, 0,
-        lng=23.7, lat=37.97, tz_str="Etc/GMT", online=False,
+        "BCE Baseline",
+        -500,
+        3,
+        21,
+        12,
+        0,
+        lng=23.7,
+        lat=37.97,
+        tz_str="Etc/GMT",
+        online=False,
     )
 
 
@@ -559,9 +568,17 @@ def test_baseline_bce_solar_arc():
 def _user_sidereal_subject():
     return AstrologicalSubjectFactory.from_birth_data(
         "Sidereal USER Test",
-        1990, 6, 15, 14, 30,
-        lng=12.5, lat=41.9, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.5,
+        lat=41.9,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
         zodiac_type="Sidereal",
         sidereal_mode="USER",
         custom_ayanamsa_t0=2451545.0,
@@ -599,7 +616,8 @@ def test_solar_arc_with_user_sidereal():
 
 def test_compute_full_returns_result_model():
     result = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
     assert isinstance(result, kerykeion.SecondaryProgressionsResultModel)
     assert result.natal_name == "Predictive Test"
@@ -611,7 +629,8 @@ def test_compute_full_returns_result_model():
 def test_compute_full_ephemeris_date_is_near_birth():
     """The ephemeris date should be ~36 days after birth for a 36-year progression."""
     result = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
     # Born 1990-06-15, progressed ~35.5 years → ephemeris date ~35.5 days after birth → ~July 1990
     assert result.ephemeris_iso_utc_datetime.startswith("1990-07")
@@ -620,7 +639,8 @@ def test_compute_full_ephemeris_date_is_near_birth():
 def test_compute_full_default_aspects_are_ptolemaic():
     """Default: only 5 Ptolemaic aspects (no quintile, semi-sextile, etc.)."""
     result = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
     aspect_names = {a.aspect for a in result.progressed_to_natal_aspects}
     ptolemaic = {"conjunction", "opposition", "trine", "sextile", "square"}
@@ -630,15 +650,25 @@ def test_compute_full_default_aspects_are_ptolemaic():
 def test_compute_full_all_aspects_when_explicit():
     """Passing all aspect names should return more hits than Ptolemaic only."""
     all_names = [
-        "conjunction", "opposition", "trine", "sextile", "square",
-        "quintile", "semi-sextile", "semi-square", "sesquiquadrate",
-        "biquintile", "quincunx",
+        "conjunction",
+        "opposition",
+        "trine",
+        "sextile",
+        "square",
+        "quintile",
+        "semi-sextile",
+        "semi-square",
+        "sesquiquadrate",
+        "biquintile",
+        "quincunx",
     ]
     result_ptolemaic = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
     result_all = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
         aspects=all_names,
     )
     assert len(result_all.progressed_to_natal_aspects) > len(result_ptolemaic.progressed_to_natal_aspects)
@@ -647,17 +677,23 @@ def test_compute_full_all_aspects_when_explicit():
 def test_compute_full_configurable_orb():
     """Tighter orb should yield fewer aspects."""
     result_3 = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=3.0,
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        aspect_orb=3.0,
     )
     result_1 = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=1.0,
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        aspect_orb=1.0,
     )
     assert len(result_1.progressed_to_natal_aspects) < len(result_3.progressed_to_natal_aspects)
 
 
 def test_compute_full_no_aspects_when_disabled():
     result = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", compute_aspects=False,
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        compute_aspects=False,
     )
     assert result.progressed_to_natal_aspects == []
     assert result.progressed_subject.sun is not None
@@ -667,10 +703,15 @@ def test_compute_full_includes_self_conjunctions():
     """SP self-conjunctions are meaningful (each planet moves at its own rate)."""
     natal = _subject()
     result = SecondaryProgressionFactory.compute_full(
-        natal, target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=3.0,
+        natal,
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        aspect_orb=3.0,
     )
-    self_conjs = [a for a in result.progressed_to_natal_aspects
-                  if a.progressed_point == a.natal_point and a.aspect == "conjunction"]
+    self_conjs = [
+        a
+        for a in result.progressed_to_natal_aspects
+        if a.progressed_point == a.natal_point and a.aspect == "conjunction"
+    ]
     assert len(self_conjs) > 0, "Should include self-conjunctions (e.g. Saturn conj Saturn)"
 
 
@@ -690,7 +731,8 @@ def test_compute_full_custom_active_points():
 def test_baseline_compute_full_ce_progression():
     """Regression baseline: CE compute_full (Rome, 1990-06-15) → 2026."""
     result = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
     assert result.progressed_subject.sun.abs_pos == pytest.approx(118.06, abs=0.1)
     assert result.progressed_subject.moon.abs_pos == pytest.approx(103.91, abs=0.5)
@@ -701,7 +743,9 @@ def test_baseline_compute_full_ce_progression():
 def test_baseline_compute_full_tight_orb():
     """Regression baseline: 1° orb yields exactly 8 aspects."""
     result = SecondaryProgressionFactory.compute_full(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z", aspect_orb=1.0,
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        aspect_orb=1.0,
     )
     assert len(result.progressed_to_natal_aspects) == 8
 
@@ -709,7 +753,8 @@ def test_baseline_compute_full_tight_orb():
 def test_baseline_solar_arc_ptolemaic_default():
     """Regression baseline: SA with 3° Ptolemaic default."""
     sa = SolarArcFactory.compute(
-        _subject(), target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        _subject(),
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
     assert sa.solar_arc == pytest.approx(33.91, abs=0.1)
     assert len(sa.directed_to_natal_aspects) == 27
@@ -766,14 +811,22 @@ def test_reference_ephemeris_date(name, yr, mo, dy, hr, mn, lat, lng, tz):
     from datetime import datetime, timezone
 
     natal = AstrologicalSubjectFactory.from_birth_data(
-        name, yr, mo, dy, hr, mn, lng=lng, lat=lat, tz_str=tz, online=False,
+        name,
+        yr,
+        mo,
+        dy,
+        hr,
+        mn,
+        lng=lng,
+        lat=lat,
+        tz_str=tz,
+        online=False,
     )
     result = SecondaryProgressionFactory.compute_full(
-        natal, target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        natal,
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
-    our_dt = datetime.fromisoformat(
-        result.ephemeris_iso_utc_datetime.replace("Z", "+00:00")
-    )
+    our_dt = datetime.fromisoformat(result.ephemeris_iso_utc_datetime.replace("Z", "+00:00"))
     ref_y, ref_mo, ref_d, ref_h, ref_mn = _REFERENCE_EPHEMERIS[name]
     ref_dt = datetime(ref_y, ref_mo, ref_d, ref_h, ref_mn, tzinfo=timezone.utc)
     diff = abs((our_dt - ref_dt).total_seconds())
@@ -788,10 +841,20 @@ def test_reference_ephemeris_date(name, yr, mo, dy, hr, mn, lat, lng, tz):
 def test_reference_solar_arc_positive(name, yr, mo, dy, hr, mn, lat, lng, tz):
     """Solar arc for a future target must be positive."""
     natal = AstrologicalSubjectFactory.from_birth_data(
-        name, yr, mo, dy, hr, mn, lng=lng, lat=lat, tz_str=tz, online=False,
+        name,
+        yr,
+        mo,
+        dy,
+        hr,
+        mn,
+        lng=lng,
+        lat=lat,
+        tz_str=tz,
+        online=False,
     )
     sa = SolarArcFactory.compute(
-        natal, target_iso_utc_datetime="2026-01-01T00:00:00Z",
+        natal,
+        target_iso_utc_datetime="2026-01-01T00:00:00Z",
     )
     assert sa.solar_arc > 0
     assert len(sa.directed_to_natal_aspects) >= 0
@@ -804,14 +867,34 @@ def test_solar_arc_natal_targets_include_extra_active_points():
     """Natal targets should use the subject's active_points, not DEFAULT_PREDICTIVE_POINTS."""
     subject = AstrologicalSubjectFactory.from_birth_data(
         "Extra Points Test",
-        1990, 6, 15, 14, 30,
-        lng=12.5, lat=41.9, tz_str="Europe/Rome",
-        city="Rome", nation="IT", online=False,
+        1990,
+        6,
+        15,
+        14,
+        30,
+        lng=12.5,
+        lat=41.9,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
         active_points=[
-            "Sun", "Moon", "Mercury", "Venus", "Mars",
-            "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
-            "True_North_Lunar_Node", "True_South_Lunar_Node",
-            "Chiron", "Mean_Lilith", "Ascendant", "Medium_Coeli",
+            "Sun",
+            "Moon",
+            "Mercury",
+            "Venus",
+            "Mars",
+            "Jupiter",
+            "Saturn",
+            "Uranus",
+            "Neptune",
+            "Pluto",
+            "True_North_Lunar_Node",
+            "True_South_Lunar_Node",
+            "Chiron",
+            "Mean_Lilith",
+            "Ascendant",
+            "Medium_Coeli",
             "Vertex",
         ],
     )
@@ -874,7 +957,16 @@ _SWEEP_SUBJECTS = [
 def test_sweep_ephemeris_matches_day_for_year_formula(name, yr, mo, dy, hr, mn, lat, lng, tz, target_year):
     """compute_full's ephemeris JD must equal natal_jd + (target - natal) / 365.25."""
     natal = AstrologicalSubjectFactory.from_birth_data(
-        name, yr, mo, dy, hr, mn, lng=lng, lat=lat, tz_str=tz, online=False,
+        name,
+        yr,
+        mo,
+        dy,
+        hr,
+        mn,
+        lng=lng,
+        lat=lat,
+        tz_str=tz,
+        online=False,
     )
     result = SecondaryProgressionFactory.compute_full(natal, target_year=target_year)
 
@@ -894,7 +986,16 @@ def test_sweep_ephemeris_matches_day_for_year_formula(name, yr, mo, dy, hr, mn, 
 def test_sweep_solar_arc_equals_progressed_sun_delta(name, yr, mo, dy, hr, mn, lat, lng, tz, target_year):
     """Solar arc must equal the forward delta of the progressed Sun from natal."""
     natal = AstrologicalSubjectFactory.from_birth_data(
-        name, yr, mo, dy, hr, mn, lng=lng, lat=lat, tz_str=tz, online=False,
+        name,
+        yr,
+        mo,
+        dy,
+        hr,
+        mn,
+        lng=lng,
+        lat=lat,
+        tz_str=tz,
+        online=False,
     )
     progressed = SecondaryProgressionFactory.compute(natal, target_year=target_year)
     sa = SolarArcFactory.compute(natal, target_year=target_year, compute_aspects=False)
@@ -911,7 +1012,16 @@ def test_sweep_solar_arc_equals_progressed_sun_delta(name, yr, mo, dy, hr, mn, l
 def test_sweep_compute_full_matches_compute(name, yr, mo, dy, hr, mn, lat, lng, tz, target_year):
     """compute_full().progressed_subject must equal a bare compute() call."""
     natal = AstrologicalSubjectFactory.from_birth_data(
-        name, yr, mo, dy, hr, mn, lng=lng, lat=lat, tz_str=tz, online=False,
+        name,
+        yr,
+        mo,
+        dy,
+        hr,
+        mn,
+        lng=lng,
+        lat=lat,
+        tz_str=tz,
+        online=False,
     )
     bare = SecondaryProgressionFactory.compute(natal, target_year=target_year)
     full = SecondaryProgressionFactory.compute_full(natal, target_year=target_year)
@@ -930,7 +1040,16 @@ def test_sweep_predictive_invariants(name, yr, mo, dy, hr, mn, lat, lng, tz, tar
     """Cross-aspects stay Ptolemaic, within orb, and the progressed Sun
     advances at roughly one degree per year of life."""
     natal = AstrologicalSubjectFactory.from_birth_data(
-        name, yr, mo, dy, hr, mn, lng=lng, lat=lat, tz_str=tz, online=False,
+        name,
+        yr,
+        mo,
+        dy,
+        hr,
+        mn,
+        lng=lng,
+        lat=lat,
+        tz_str=tz,
+        online=False,
     )
     sp = SecondaryProgressionFactory.compute_full(natal, target_year=target_year, aspect_orb=3.0)
     sa = SolarArcFactory.compute(natal, target_year=target_year, aspect_orb=3.0)
@@ -958,8 +1077,18 @@ class TestSolarArcDirectedAnglesRound12:
         from kerykeion.secondary_progressions.solar_arc_factory import SolarArcFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "John", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True)
+            "John",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+        )
         res = SolarArcFactory.compute(natal, target_year=2030)
         directed = SolarArcFactory.compute_directed_subject(natal, target_year=2030)
 
@@ -980,10 +1109,23 @@ class TestProgressionEnrichmentSunIndependentCodeRabbit:
         from kerykeion.secondary_progressions import SecondaryProgressionFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "H", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
-            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
-            perspective_type="Heliocentric", calculate_dignities=True,
-            calculate_nakshatra=True)
+            "H",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            city="Rome",
+            nation="IT",
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+            perspective_type="Heliocentric",
+            calculate_dignities=True,
+            calculate_nakshatra=True,
+        )
         assert natal.sun is None  # excluded center body
         prog = SecondaryProgressionFactory.compute(natal, target_year=2020)
         assert prog.mars.essential_dignity is not None
@@ -997,10 +1139,22 @@ class TestSolarArcDirectedStaleTripleRound15:
     def test_directed_nulls_location_triple(self):
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.secondary_progressions.solar_arc_factory import SolarArcFactory
+
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "J", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True,
-            calculate_local_space=True, calculate_gauquelin=True)
+            "J",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+            calculate_local_space=True,
+            calculate_gauquelin=True,
+        )
         d = SolarArcFactory.compute_directed_subject(natal, target_year=2025)
         assert d.mars.azimuth is None
         assert d.mars.altitude_above_horizon is None
@@ -1018,11 +1172,23 @@ class TestReturnSiblingYearValidationRound16:
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.planetary_return_factory import PlanetaryReturnFactory
         from kerykeion.schemas import KerykeionException
+
         subj = AstrologicalSubjectFactory.from_birth_data(
-            "S", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
-            online=False, suppress_geonames_warning=True)
-        rf = PlanetaryReturnFactory(subj, lng=12.5, lat=41.9, tz_str="Europe/Rome",
-                                    city="Rome", nation="IT", online=False)
+            "S",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=12.5,
+            lat=41.9,
+            tz_str="Europe/Rome",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        rf = PlanetaryReturnFactory(
+            subj, lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Rome", nation="IT", online=False
+        )
         with pytest.raises(KerykeionException):
             rf.next_heliocentric_return_from_year("Mars", 10000)
         with pytest.raises(KerykeionException):

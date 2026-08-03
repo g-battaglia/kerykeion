@@ -76,10 +76,7 @@ def test_derived_source_does_not_depend_on_trace_rows(
     assert subject.true_south_lunar_node is not None
     assert subject.true_north_lunar_node.precision_class is not None
     assert subject.true_south_lunar_node.source == "Derived"
-    assert (
-        subject.true_south_lunar_node.precision_class
-        == subject.true_north_lunar_node.precision_class
-    )
+    assert subject.true_south_lunar_node.precision_class == subject.true_north_lunar_node.precision_class
     assert (
         subject.true_south_lunar_node.ephemeris_coverage_start_jd
         == subject.true_north_lunar_node.ephemeris_coverage_start_jd
@@ -88,10 +85,7 @@ def test_derived_source_does_not_depend_on_trace_rows(
         subject.true_south_lunar_node.ephemeris_coverage_end_jd
         == subject.true_north_lunar_node.ephemeris_coverage_end_jd
     )
-    assert (
-        subject.true_south_lunar_node.source_reviewed
-        == subject.true_north_lunar_node.source_reviewed
-    )
+    assert subject.true_south_lunar_node.source_reviewed == subject.true_north_lunar_node.source_reviewed
 
 
 @pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")

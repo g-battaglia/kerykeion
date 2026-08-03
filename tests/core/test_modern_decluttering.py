@@ -66,12 +66,12 @@ def _min_pairwise_gap(resolved: list[dict]) -> float:
 # The important property is the relative spacing, which triggers the bug.
 _ISSUE_CLUSTER = [
     {"angle": 303.155, "point": "True_South_Lunar_Node"},  # 3°09' Aqu
-    {"angle": 305.245, "point": "Neptune"},                # 5°15' Aqu
-    {"angle": 310.019, "point": "Venus"},                  # 10°01' Aqu
-    {"angle": 317.947, "point": "Uranus"},                 # 17°57' Aqu
-    {"angle": 337.003, "point": "Sun"},                    # 7°00' Pis
-    {"angle": 345.339, "point": "Mercury"},                # 15°20' Pis (RX)
-    {"angle": 10.822,  "point": "Mars"},                   # 10°49' Ari
+    {"angle": 305.245, "point": "Neptune"},  # 5°15' Aqu
+    {"angle": 310.019, "point": "Venus"},  # 10°01' Aqu
+    {"angle": 317.947, "point": "Uranus"},  # 17°57' Aqu
+    {"angle": 337.003, "point": "Sun"},  # 7°00' Pis
+    {"angle": 345.339, "point": "Mercury"},  # 15°20' Pis (RX)
+    {"angle": 10.822, "point": "Mars"},  # 10°49' Ari
 ]
 
 
@@ -139,9 +139,7 @@ def test_cluster_min_separation_respected():
     effective_sep = min(sep, 320.0 / len(resolved))
 
     min_gap = _min_pairwise_gap(resolved)
-    assert min_gap >= effective_sep - 1e-6, (
-        f"Minimum gap {min_gap:.4f}° is below sep={effective_sep:.4f}°"
-    )
+    assert min_gap >= effective_sep - 1e-6, f"Minimum gap {min_gap:.4f}° is below sep={effective_sep:.4f}°"
 
 
 # =============================================================================
@@ -185,10 +183,7 @@ def test_order_preserved_random_dense_clusters():
         base = random.uniform(0, 360)
         # Tight cluster within up to 40 degrees, triggers many collisions
         width = random.uniform(1.0, 40.0)
-        planets = [
-            {"angle": _normalize_angle(base + random.uniform(0, width)), "point": f"P{i}"}
-            for i in range(n)
-        ]
+        planets = [{"angle": _normalize_angle(base + random.uniform(0, width)), "point": f"P{i}"} for i in range(n)]
         resolved = _resolve_planet_collisions(planets)
         wraps = _count_display_order_breaks(resolved)
         assert wraps <= 1, (
@@ -214,9 +209,7 @@ def test_order_preserved_random_fullcircle():
         resolved = _resolve_planet_collisions(planets)
 
         wraps = _count_display_order_breaks(resolved)
-        assert wraps <= 1, (
-            f"Order violated with angles={[round(p['angle'], 3) for p in planets]}"
-        )
+        assert wraps <= 1, f"Order violated with angles={[round(p['angle'], 3) for p in planets]}"
         effective_sep = min(PLANET_MIN_SEPARATION, 320.0 / n)
         assert _min_pairwise_gap(resolved) >= effective_sep - 1e-6
 
@@ -260,7 +253,9 @@ def test_long_push_chain_crossing_zero():
     resolved = _resolve_planet_collisions(planets)
 
     wraps = _count_display_order_breaks(resolved)
-    assert wraps <= 1, f"Push chain wrapped extra times: {[(p['point'], round(p['display_angle'], 3)) for p in sorted(resolved, key=lambda x: x['angle'])]}"
+    assert wraps <= 1, (
+        f"Push chain wrapped extra times: {[(p['point'], round(p['display_angle'], 3)) for p in sorted(resolved, key=lambda x: x['angle'])]}"
+    )
 
     effective_sep = min(PLANET_MIN_SEPARATION, 320.0 / len(resolved))
     assert _min_pairwise_gap(resolved) >= effective_sep - 1e-6
@@ -284,9 +279,7 @@ def test_wrap_around_cluster_at_zero_degrees():
         return _normalize_angle(x - a)
 
     dists = {p["point"]: fwd(p["display_angle"]) for p in resolved if p["point"] != "A"}
-    assert 0 < dists["B"] < dists["C"] < dists["D"], (
-        f"Order broken across 0° wrap: {dists}"
-    )
+    assert 0 < dists["B"] < dists["C"] < dists["D"], f"Order broken across 0° wrap: {dists}"
 
 
 # =============================================================================

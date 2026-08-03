@@ -137,22 +137,26 @@ class TestDignityHelperEdgeCases:
     def test_get_decan_ruler_unknown_sign(self):
         """_get_decan_ruler should return None for an unknown sign."""
         from kerykeion.dignities.dignity_factory import _get_decan_ruler
+
         assert _get_decan_ruler("Unknown", 1) is None
 
     def test_get_term_ruler_unknown_sign(self):
         """_get_term_ruler should return None for an unknown sign."""
         from kerykeion.dignities.dignity_factory import _get_term_ruler
+
         assert _get_term_ruler("Unknown", 15.0) is None
 
     def test_get_term_ruler_no_match(self):
         """_get_term_ruler should return None when degree matches no term range."""
         from kerykeion.dignities.dignity_factory import _get_term_ruler
+
         # Egyptian terms cover 0-30 for each sign, so degree 30+ should not match
         assert _get_term_ruler("Ari", 30.0) is None
 
     def test_compute_dignity_non_classical_planet(self):
         """_compute_dignity should return (None, None) for non-classical planets."""
         from kerykeion.dignities.dignity_factory import _compute_dignity
+
         result = _compute_dignity("Uranus", "Aqu", "Air", 15.0, True, 2, None, None)
         assert result == (None, None)
 
@@ -163,6 +167,7 @@ class TestDignityHelperEdgeCases:
         # Let's pick a case: Moon is in fall in Scorpio (FALL_TABLE["Sco"] == "Moon")
         # and Moon is NOT in detriment in Scorpio
         from kerykeion.dignities.dignity_data import DETRIMENT_RULERS
+
         # Find a planet that is in fall but not in detriment for a sign
         for sign, fall_planet in FALL_TABLE.items():
             if fall_planet and fall_planet not in DETRIMENT_RULERS.get(sign, []):
@@ -182,18 +187,36 @@ class TestDignityIntegration:
     @pytest.fixture(scope="class")
     def subject_with_dignities(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "Dignity Test", 1990, 1, 1, 12, 0,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            "Dignity Test",
+            1990,
+            1,
+            1,
+            12,
+            0,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
             calculate_dignities=True,
         )
 
     @pytest.fixture(scope="class")
     def subject_without_dignities(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "No Dignity", 1990, 1, 1, 12, 0,
-            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
-            city="Rome", nation="IT", online=False,
+            "No Dignity",
+            1990,
+            1,
+            1,
+            12,
+            0,
+            lng=12.4964,
+            lat=41.9028,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+            online=False,
         )
 
     def test_dignity_fields_populated(self, subject_with_dignities):
@@ -235,18 +258,14 @@ class TestDignitySwissEphRegression:
     calculate_essential_dignity returns the correct Ptolemaic dignity.
     """
 
-    SIGNS = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir",
-             "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
-    ELEMENTS = ["Fire", "Earth", "Air", "Water", "Fire", "Earth",
-                "Air", "Water", "Fire", "Earth", "Air", "Water"]
+    SIGNS = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+    ELEMENTS = ["Fire", "Earth", "Air", "Water", "Fire", "Earth", "Air", "Water", "Fire", "Earth", "Air", "Water"]
 
     @staticmethod
     def _sign_and_position(abs_lon: float):
         """Return (sign_abbrev, element, degree_in_sign) from absolute longitude."""
-        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir",
-                 "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
-        elements = ["Fire", "Earth", "Air", "Water", "Fire", "Earth",
-                    "Air", "Water", "Fire", "Earth", "Air", "Water"]
+        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+        elements = ["Fire", "Earth", "Air", "Water", "Fire", "Earth", "Air", "Water", "Fire", "Earth", "Air", "Water"]
         idx = int(abs_lon / 30.0)
         return signs[idx], elements[idx], abs_lon - idx * 30.0
 
@@ -311,9 +330,18 @@ class TestDignityScoreDocumentedRange:
     the achievable range and the corrected doc so they can never drift apart."""
 
     _SIGN_ELEMENT = {
-        "Ari": "Fire", "Tau": "Earth", "Gem": "Air", "Can": "Water",
-        "Leo": "Fire", "Vir": "Earth", "Lib": "Air", "Sco": "Water",
-        "Sag": "Fire", "Cap": "Earth", "Aqu": "Air", "Pis": "Water",
+        "Ari": "Fire",
+        "Tau": "Earth",
+        "Gem": "Air",
+        "Can": "Water",
+        "Leo": "Fire",
+        "Vir": "Earth",
+        "Lib": "Air",
+        "Sco": "Water",
+        "Sag": "Fire",
+        "Cap": "Earth",
+        "Aqu": "Air",
+        "Pis": "Water",
     }
 
     def test_achievable_score_range_is_minus9_to_plus11(self):
