@@ -419,6 +419,38 @@ class TestDiurnalityOnDualCharts:
         assert "…" in cut
         assert _measured_width(cut) <= DIURNALITY_ROW_CLEAR_WIDTH
 
+    def test_a_whitespace_only_name_blanks_the_row_rather_than_orphaning_a_value(self):
+        """A value with no owner is the ambiguity the labels exist to prevent.
+
+        `_truncate_name(..., truncate_at_space=True)` returns "" for a name that
+        is nothing but spaces — a reachable input, since the field is a plain
+        string with no normalisation upstream — and the row rendered as
+        " Nocturnal ·  Nocturnal": two values, neither attached to a chart. Worse
+        than no line, so there is no line.
+        """
+        row = _row(
+            _render(ChartDataFactory.create_synastry_chart_data(_subject("   "), _subject("  ", hour=23)))
+        )
+        assert row == ""
+
+    def test_a_language_pack_cannot_push_the_row_past_its_floor(self):
+        """The values are fixed text; the names have a floor; both must fit.
+
+        `truncate_to_width` keeps one character plus an ellipsis rather than
+        returning nothing, so `fixed` alone was never the thing that had to fit.
+        A pack whose values eat the row rendered 260px into 228px of clearance —
+        the guard compared the wrong quantity and passed.
+        """
+        data = ChartDataFactory.create_synastry_chart_data(_subject("Alessandro"), _subject("Antonio", hour=23))
+
+        wide = _row(_render(data, language_pack={"nocturnal": "W" * 11, "diurnal": "W" * 11}))
+        assert wide == "", f"should have been dropped, got {wide!r}"
+
+        # And a pack that does leave room still renders, cut to fit.
+        fits = _row(_render(data, language_pack={"nocturnal": "W" * 8, "diurnal": "W" * 8}))
+        assert fits, "a pack that fits must still produce a row"
+        assert _measured_width(fits) <= DIURNALITY_ROW_CLEAR_WIDTH
+
     def test_a_name_with_markup_characters_cannot_break_the_svg(self):
         """The synastry line embeds user-controlled names, so it must be escaped.
 
@@ -540,6 +572,32 @@ class TestDiurnalityOnOtherRenderers:
         row = _row(_render(ChartDataFactory.create_return_chart_data(natal, relabelled)))
         assert "Natal " in row
         assert expected.split(" ")[0] in row, row
+
+    @pytest.mark.parametrize(
+        "return_type,expected",
+        [("Solar", "Solar"), ("Lunar", "Lunar"), ("Heliocentric", "Heliocentric"), ("Lunar_Node_Crossing", "Node")],
+    )
+    def test_the_title_and_the_grids_agree_with_the_type_line(self, return_type, expected):
+        """One mapping, five call sites — fixing the panel alone was not enough.
+
+        A heliocentric return rendered `Type: Heliocentric Return` under a title
+        ending "Lunar Return 2024-10", with the dual chart's outer planet grid
+        and its house-comparison columns also labelled Lunar. Every heading now
+        routes through `return_label_keys`.
+        """
+        natal, solar = _solar_return()
+        relabelled = solar.model_copy(update={"return_type": return_type})
+        others = {"Solar", "Lunar", "Heliocentric", "Node"} - {expected}
+
+        single = _render(ChartDataFactory.create_single_wheel_return_chart_data(relabelled))
+        assert re.search(rf"<title>[^<]*{expected} Return", single), re.search(r"<title>[^<]*", single).group(0)
+
+        dual = _render(
+            ChartDataFactory.create_return_chart_data(natal, relabelled),
+            show_house_position_comparison=True,
+        )
+        for other in others:
+            assert not re.search(rf"\b{other} Return\b", dual), f"{return_type} chart still says {other} Return"
 
     def test_progression_labels_its_second_wheel_progression_not_transit(self):
         """ProgressionChartRenderer inherits from the transit renderer."""

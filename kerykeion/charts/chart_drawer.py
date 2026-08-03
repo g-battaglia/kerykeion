@@ -656,6 +656,35 @@ class ChartRendererProtocol(Protocol):
         ...
 
 
+#: Translation key and English default per ``ReturnType``, for the full label and
+#: for the short form chart titles use.
+#:
+#: A mapping rather than a Solar/else binary, which is what every one of these
+#: call sites was: ``Heliocentric`` and ``Lunar_Node_Crossing`` are both valid
+#: return types and both rendered as "Lunar Return". Fixing only the panel left a
+#: single-wheel chart reading ``Type: Heliocentric Return`` under a title ending
+#: "Lunar Return", and the dual chart's outer grid still labelled Lunar — one
+#: mapping, five places that need it.
+_RETURN_LABELS: dict = {
+    "Solar": (("solar_return", "Solar Return"), ("solar_return", "Solar")),
+    "Lunar": (("lunar_return", "Lunar Return"), ("lunar_return", "Lunar")),
+    "Heliocentric": (("heliocentric_return", "Heliocentric Return"), ("heliocentric_return", "Heliocentric")),
+    "Lunar_Node_Crossing": (("node_return", "Node Return"), ("node_return", "Node")),
+}
+
+
+def return_label_keys(subject: object, short: bool = False) -> tuple:
+    """``(translation_key, english_default)`` for *subject*'s return type.
+
+    Falls back to the lunar label for anything not in the map, which is what a
+    subject that is not a :class:`PlanetReturnModel` at all gets — the renderers
+    accept one, but the type is not enforced at these calls.
+    """
+    return_type = subject.return_type if isinstance(subject, PlanetReturnModel) else None
+    pair = _RETURN_LABELS.get(return_type or "", _RETURN_LABELS["Lunar"])
+    return pair[1] if short else pair[0]
+
+
 class BaseChartRenderer:
     """Base class providing common functionality for chart renderers.
 
@@ -697,31 +726,13 @@ class BaseChartRenderer:
         """Configure aspect elements. Override in subclasses."""
         raise NotImplementedError("Subclasses must implement setup_aspects")
 
-    #: Wheel label per ``ReturnType``. A mapping rather than a Solar/else binary,
-    #: which is what it was: ``Heliocentric`` and ``Lunar_Node_Crossing`` are both
-    #: valid return types and both rendered as "Lunar Return", contradicting the
-    #: ``return_type`` in the same response. Six of the eight returns Studio
-    #: offers reach one of them.
-    _RETURN_LABELS = {
-        "Solar": ("solar_return", "Solar Return"),
-        "Lunar": ("lunar_return", "Lunar Return"),
-        "Heliocentric": ("heliocentric_return", "Heliocentric Return"),
-        "Lunar_Node_Crossing": ("node_return", "Node Return"),
-    }
-
-    def _return_label(self, subject) -> str:
+    def _return_label(self, subject, short: bool = False) -> str:
         """The display name for a return chart's own wheel.
 
-        Falls back to the lunar label for anything not in the map, which is what
-        a subject that is not a :class:`PlanetReturnModel` at all gets — the
-        renderers accept one, but the type is not enforced at this call.
+        See :func:`return_label_keys`. ``short`` picks the bare body name used in
+        chart titles ("Solar 2024") over the full label used in panels and grids.
         """
-        return_type = subject.return_type if isinstance(subject, PlanetReturnModel) else None
-        key, default = (
-            self._RETURN_LABELS["Lunar"]
-            if return_type is None
-            else self._RETURN_LABELS.get(return_type, self._RETURN_LABELS["Lunar"])
-        )
+        key, default = return_label_keys(subject, short=short)
         return self._translate(key, default)
 
     def setup_info_sections(self, template_dict: dict) -> None:
@@ -971,8 +982,14 @@ class InfoSectionBuilder:
             if subject is None:
                 continue
             value = self._diurnality_value(subject)
-            if value:
-                labelled.append((wheel_name, value))
+            if not value:
+                continue
+            if not wheel_name.strip():
+                # See the note below the return: a value with no owner is worse
+                # than no line. One blank name blanks the whole row rather than
+                # leaving the other value to be read as belonging to both.
+                return ""
+            labelled.append((wheel_name, value))
         if not labelled:
             return ""
 
@@ -982,12 +999,17 @@ class InfoSectionBuilder:
         fixed = estimate_text_width(separator) * (len(labelled) - 1) + sum(
             estimate_text_width(f" {value}") for _, value in labelled
         )
-        if fixed >= DIURNALITY_ROW_CLEAR_WIDTH:
+        # What the names cost even when cut as far as they go. `truncate_to_width`
+        # keeps one character plus an ellipsis rather than returning nothing, so
+        # the row has a floor and `fixed` alone is not what has to fit — an
+        # earlier version of this guard compared `fixed` and let a language pack
+        # with wide values render 260px into a 228px row.
+        floor = sum(estimate_text_width(truncate_to_width(name, 0.0)) for name, _ in labelled if name.strip())
+        if fixed + floor > DIURNALITY_ROW_CLEAR_WIDTH:
             # No shipped translation gets here — the widest pair of values is a
-            # third of the row — but a caller's language pack can, and a name
-            # cut to its one-character floor would then overrun anyway. Drop the
-            # names instead: two bare values on a dual chart are ambiguous, so
-            # the line is worth less than the graphics it would sit on.
+            # third of the row — but a caller's language pack can. Drop the line:
+            # two bare values on a dual chart are ambiguous, so it is worth less
+            # than the graphics it would otherwise sit on.
             return ""
         names_budget = DIURNALITY_ROW_CLEAR_WIDTH - fixed
 
@@ -1005,6 +1027,12 @@ class InfoSectionBuilder:
             for (name, value), width in zip(labelled, natural)
         ]
         return separator.join(parts)
+
+    #: Wheel names are what tell a reader which value belongs to which chart, so
+    #: a value without one is worse than no line at all — which is precisely the
+    #: ambiguity the labels were added to prevent. A subject name of nothing but
+    #: whitespace produces exactly that, and is reachable: the field is a plain
+    #: string with no normalisation upstream.
 
     def build_location_coordinates(
         self,
@@ -1967,16 +1995,8 @@ class DualReturnChartRenderer(BaseChartRenderer):
 
         # Planet grid labels
         first_label = d._truncate_name(d.first_obj.name)
-        if isinstance(d.second_obj, PlanetReturnModel) and d.second_obj.return_type == "Solar":
-            first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
-            second_grid_title = (
-                f"{self._translate('solar_return', 'Solar Return')} ({self._translate('outer_wheel', 'Outer Wheel')})"
-            )
-        else:
-            first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
-            second_grid_title = (
-                f"{self._translate('lunar_return', 'Lunar Return')} ({self._translate('outer_wheel', 'Outer Wheel')})"
-            )
+        first_grid_title = f"{first_label} ({self._translate('inner_wheel', 'Inner Wheel')})"
+        second_grid_title = f"{self._return_label(d.second_obj)} ({self._translate('outer_wheel', 'Outer Wheel')})"
 
         template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
             planets_and_houses_grid_title="",
@@ -3149,10 +3169,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self.chart_type == "DualReturnChart":
             if self.show_house_position_comparison or self.show_cusp_position_comparison:
                 first_subject_label = self._translate("Natal", "Natal")
-                if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
-                    second_subject_label = self._translate("solar_return", "Solar Return")
-                else:
-                    second_subject_label = self._translate("lunar_return", "Lunar Return")
+                key, default = return_label_keys(self.second_obj)
+                second_subject_label = self._translate(key, default)
                 point_column_label = self._translate("point", "Point")
 
                 first_columns = [
@@ -3829,10 +3847,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 if self.show_house_position_comparison or self.show_cusp_position_comparison:
                     # Use localized labels for the natal subject and the return.
                     first_subject_label = self._translate("Natal", "Natal")
-                    if isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar":
-                        second_subject_label = self._translate("solar_return", "Solar Return")
-                    else:
-                        second_subject_label = self._translate("lunar_return", "Lunar Return")
+                    key, default = return_label_keys(self.second_obj)
+                    second_subject_label = self._translate(key, default)
                     point_column_label = self._translate("point", "Point")
 
                     first_columns = [
@@ -4958,27 +4974,21 @@ class ChartDrawer:  # type: ignore[no-redef]
             year = extract_year_from_iso(self.second_obj.iso_formatted_local_datetime)  # type: ignore
             month_year = format_iso_display(self.second_obj.iso_formatted_local_datetime, "%Y-%m")  # type: ignore
             truncated_name = self._truncate_name(self.first_obj.name)
-            if (
-                self.second_obj is not None
-                and isinstance(self.second_obj, PlanetReturnModel)
-                and self.second_obj.return_type == "Solar"
-            ):
-                solar_label = self._translate("solar_return", "Solar")
-                return f"{truncated_name} - {solar_label} {year}"
-            else:
-                lunar_label = self._translate("lunar_return", "Lunar")
-                return f"{truncated_name} - {lunar_label} {month_year}"
+            key, default = return_label_keys(self.second_obj, short=True)
+            label = self._translate(key, default)
+            # A solar return recurs yearly, the others within a year, so only the
+            # solar title is unambiguous with the year alone.
+            is_solar = isinstance(self.second_obj, PlanetReturnModel) and self.second_obj.return_type == "Solar"
+            return f"{truncated_name} - {label} {year if is_solar else month_year}"
 
         elif self.chart_type == "SingleReturnChart":
             year = extract_year_from_iso(self.first_obj.iso_formatted_local_datetime)  # type: ignore
             month_year = format_iso_display(self.first_obj.iso_formatted_local_datetime, "%Y-%m")  # type: ignore
             truncated_name = self._truncate_name(self.first_obj.name)
-            if isinstance(self.first_obj, PlanetReturnModel) and self.first_obj.return_type == "Solar":
-                solar_label = self._translate("solar_return", "Solar")
-                return f"{truncated_name} - {solar_label} {year}"
-            else:
-                lunar_label = self._translate("lunar_return", "Lunar")
-                return f"{truncated_name} - {lunar_label} {month_year}"
+            key, default = return_label_keys(self.first_obj, short=True)
+            label = self._translate(key, default)
+            is_solar = isinstance(self.first_obj, PlanetReturnModel) and self.first_obj.return_type == "Solar"
+            return f"{truncated_name} - {label} {year if is_solar else month_year}"
 
         elif self.chart_type == "Progression":
             prog_label = self._translate("progression", "Progression")

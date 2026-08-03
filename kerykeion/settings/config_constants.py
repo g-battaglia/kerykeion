@@ -57,7 +57,16 @@ PERSPECTIVE_HELIOCENTRIC: str = "Heliocentric"
 #: purpose: a perspective added upstream should default to *not* claiming a
 #: day/night, since asserting one about the wrong body is worse than omitting it.
 #: Topocentric and True Geocentric differ from Apparent Geocentric by parallax
-#: and aberration — fractions of a degree, never a hemisphere.
+#: and aberration — under a hundredth of a degree for the Sun, so the two agree
+#: on which side of the horizon it is at every minute of a sampled day.
+#:
+#: KNOWN LIMIT, not fixed: within the few seconds either side of the horizon
+#: crossing itself, an offset that small is the whole distance, so the value and
+#: a perspective-specific altitude can disagree. Making ``is_diurnal``
+#: perspective-dependent would fix that and cost more than it is worth — the
+#: field is deliberately independent of both ``zodiac_type`` and
+#: ``perspective_type``, which is what lets a sidereal or draconic chart carry a
+#: meaningful one, and every consumer of it relies on that.
 EARTH_CENTRED_PERSPECTIVES: frozenset = frozenset({"Apparent Geocentric", "True Geocentric", "Topocentric"})
 """Sun-centered view of planetary positions."""
 

@@ -68,7 +68,11 @@
   Return"** in the chart's Type line — and, once the diurnality row shipped, on
   that row too — contradicting the `return_type` in the same response. The label
   was a Solar/else-Lunar binary written when those two return types did not
-  exist; it is now a map over all four. Two of the four `ReturnType` values
+  exist; it is now a map over all four — and over every heading, not just the
+  Type line: the chart title, the dual chart's outer planet grid and its
+  house-comparison columns were four further copies of the same binary, so a
+  heliocentric return read `Type: Heliocentric Return` under a title ending
+  "Lunar Return". Two of the four `ReturnType` values
   carried the wrong label — which downstream is most of what gets asked for:
   Astrologer Studio's return picker offers eight bodies, six of which route to
   one of those two.
