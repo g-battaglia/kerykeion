@@ -21,9 +21,14 @@
     `Natal Nocturnal · Transit Diurnal`, a synastry names both subjects
     (shortened, like every other name in that panel). A bare value on a biwheel
     would be worse than no line, since the reader could not tell which chart it
-    described. That row carries no `Diurnality:` heading — at the height it sits
-    the wheel leaves about 228px of clear width, and the heading plus two names
-    plus two values does not fit. The names are cut to that width rather than to
+    described. That row carries no `Diurnality:` heading. The reason is the
+    budget rather than the total: the row has about 228px of clear width, the
+    values and separator are fixed, and what is left is shared between the two
+    wheel names — so a heading would not overflow the row, it would come
+    straight out of the names. (Measured with `estimate_text_width`, the headed
+    English form is 196px and fits; nine of the ten shipped languages do, Hindi
+    being the exception at 272px. An earlier draft of this entry said it did not
+    fit, which was checkably wrong.) The names are cut to that width rather than to
     a character count, since eight ideographs are twice the width of eight Latin
     letters: `kerykeion.charts.chart_drawer.estimate_text_width` is the public
     entry point. It charges each character the widest advance that character has
@@ -55,14 +60,16 @@
   Return"** in the chart's Type line — and, once the diurnality row shipped, on
   that row too — contradicting the `return_type` in the same response. The label
   was a Solar/else-Lunar binary written when those two return types did not
-  exist; it is now a map over all four. Six of the eight returns a caller can
-  request reached the wrong label.
-- The three diurnality translation keys were declared **required** on
-  `KerykeionLanguageModel`, which rejected every third-party language pack
-  written against an earlier release with a pydantic `missing` error and no way
-  for its author to fix an already-shipped release. They now carry English
-  defaults, as the sixteen keys added before them do. The two new return keys
-  follow the same rule.
+  exist; it is now a map over all four. Two of the four `ReturnType` values
+  carried the wrong label — which downstream is most of what gets asked for:
+  Astrologer Studio's return picker offers eight bodies, six of which route to
+  one of those two.
+- Never shipped in this state, recorded because the reasoning is worth keeping:
+  the five new translation keys were first declared **required** on
+  `KerykeionLanguageModel`, which would have rejected every third-party language
+  pack written against an earlier release with a pydantic `missing` error, and
+  its author could not have fixed a release already out. All five carry English
+  defaults, as the sixteen keys added before them do.
 
 ## 6.0.0a77 - 2026-07-21
 

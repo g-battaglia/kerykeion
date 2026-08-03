@@ -2,11 +2,8 @@
 """
 Regenerate the chart SVGs used in docs/charts/ (README showcase grid).
 
-Generates 4 natal charts for John Lennon:
-  - classic_default_natal.svg  (style="classic", theme="classic")
-  - classic_dark_natal.svg     (style="classic", theme="dark")
-  - modern_default_natal.svg   (style="modern",  theme="classic")
-  - modern_dark_natal.svg      (style="modern",  theme="dark")
+Generates one natal chart for John Lennon per file in docs/charts/ — every
+style x theme combination the README showcases. See CHARTS below.
 
 All SVGs are saved with inlined CSS variables (remove_css_variables=True)
 so they render correctly on GitHub without external stylesheets.
@@ -20,11 +17,22 @@ from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
 
+# Every file in docs/charts/, not a subset. The README embeds these by raw URL,
+# so one left behind is a documentation image showing a chart the library no
+# longer draws — which is what happened to eleven of them when the info panel
+# gained a row and only these four were listed here.
 CHARTS = [
     ("classic_default_natal", "classic", "classic"),
     ("classic_dark_natal", "classic", "dark"),
+    ("classic_light_natal", "classic", "light"),
+    ("classic_dark_high_contrast_natal", "classic", "dark-high-contrast"),
+    ("classic_strawberry_natal", "classic", "strawberry"),
+    ("classic_black_and_white_natal", "classic", "black-and-white"),
     ("modern_default_natal", "modern", "classic"),
+    ("modern_classic_natal", "modern", "classic"),
     ("modern_dark_natal", "modern", "dark"),
+    ("modern_light_natal", "modern", "light"),
+    ("modern_black_and_white_natal", "modern", "black-and-white"),
 ]
 
 

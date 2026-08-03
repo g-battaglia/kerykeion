@@ -294,53 +294,53 @@ DIURNALITY_ROW_CLEAR_WIDTH: float = 228.0
 # `poe regenerate:glyph-widths` if the reference set ever changes.
 _MEASURED_EM: dict = {
     0.20: "'",
-    0.24: 'ɉ‛',
-    0.26: '|¦Ɩ',
-    0.28: ' ,./:;\\ijlt\xa0·ìíîïĭįıĵĺļłţƫƭǀǐǰȉȋțȷͺ;·ΐίιϊϳіїјӏ',
-    0.32: 'ŧ',
-    0.34: '!()-I[]`fr¡¨²³´¸¹ÌÍÎÏĬĮİŕŗřſǃǏȈȊȑȓʹ͵΄ІЇӀ‐‑‘’‚‟․‧',
-    0.36: 'ŀƗƚ΅•‣',
-    0.38: 'ªºƪ',
-    0.40: '°ĪīľɍΙΪґғ',
+    0.24: "ɉ‛",
+    0.26: "|¦Ɩ",
+    0.28: " ,./:;\\ijlt\xa0·ìíîïĭįıĵĺļłţƫƭǀǐǰȉȋțȷͺ;·ΐίιϊϳіїјӏ",
+    0.32: "ŧ",
+    0.34: "!()-I[]`fr¡¨²³´¸¹ÌÍÎÏĬĮİŕŗřſǃǏȈȊȑȓʹ͵΄ІЇӀ‐‑‘’‚‟․‧",
+    0.36: "ŀƗƚ΅•‣",
+    0.38: "ªºƪ",
+    0.40: "°ĪīľɍΙΪґғ",
     0.42: '"гѓ',
-    0.44: 'ĩťϯҟӄӷ‖',
-    0.46: 'Ĩѯ“”„',
-    0.48: '^{}ƺǁ',
-    0.50: '*Jcksvxyz¯çýÿćĉċčĴķĸśŝşšŷźżžƙƨƶǩșȳȼͻͼͽζξτϲЈзстухѕўѵ‗',
-    0.52: 'ϩϵ϶эєҁҙқҫҭҳӟӡӭӯӱӳӿ',
-    0.54: '¶ƹƽǮǯϧчьӌ',
-    0.56: '#$0123456789?_abdeghnopqu¢£¤¥§«»àáâãäåèéêëðñòóôõöùúûüþāăąđēĕėęěĝğġģĥħĳńņňŋōŏőũūŭůűųƀƃƄƅƌƒƛƞƥƼƾƿǉǎǒǔǖǘǚǜǝǟǡǧǫǭǵǹǻȁȃȅȇȍȏȕȗȟȧȩȫȭȯȱȽɁɂɇɈέγεκλνςχϥϨϸавекнопряёђћќџѳѻҐҕҷҹһәӛӵ‒–†‡',
-    0.58: 'µƈƍƬƻǂϐϜϞϮϱЃГблцѐѝҒңҧҩӈӑӓӗӣӥӧөӫ',
-    0.60: '+<=>~¬±×÷ǥийѧѷҞӃ',
-    0.62: 'FLTZ¿ßøĹĻĽĿŁŢŤŦŹŻŽƐƑƩƮƴƵǿȚȾɋɏΓΣάήΰαβδηθμορσυϋόύϑϫϬϭϰТдѣѫѮҝӠӶ',
-    0.64: 'ŉƷƸϒϔϪъҬ',
-    0.66: 'ƔΊϕЬҔ',
-    0.68: 'BEPSÈÉÊËÞďĒĔĖĘĚŚŜŞŠƂƋƎƘơƧƲǷȄȆȘȜȝȨȺɅɆΞΡΤπϷЀЁЅБВЕЗРѦѴѶҘҡҰұӖӞӾ‥',
-    0.70: 'ưϠϤϦЧм҂ҽҿӋ',
-    0.72: 'ϼДЛҥҵҶҸҺӴ',
-    0.74: 'ACDHKNRUVXYwÀÁÂÃÄÅÇÐÑÙÚÛÜÝĀĂĄĆĈĊČĎĐĤĦĶŃŅŇŊŔŖŘŨŪŬŮŰŲŵŶŸƆƉƝƤƦǍǓǕǗǙǛǞǠǨǸǺȀȂȐȒȔȖȞȠȦȲȻɃΒΔΕΖφψϓϚϹϻϽϾϿЄЏАКНПСХЭЯыѥѱҀҚҦҪҮүҲӇӐӒӬ',
-    0.76: '©®ƁƏƱƳЌЍЎИЙУЦҢӂӘӚӢӤӮӰӲӹ',
-    0.78: '&GOQÒÓÔÕÖØĜĞĠĢĲŌŎŐƇƟǌǑǦǪǬǴǾȌȎȪȬȮȰɎΚΛΝΥΧΩΫωώϴОжюѡѲѺѽѿҜҨ',
-    0.80: 'ƊƓƣǤɌΆϖӦӨӪ',
-    0.82: 'ƕшњѢѩѭ',
-    0.84: 'm¼½¾ƜΑΗΘΟΠΦϣϺЪфщѪѰ',
-    0.86: 'ɄɊФҗӝ',
-    0.88: 'ƯϢЂЋљҠ',
-    0.90: '%MæƠǈǣǽΨМӕ',
-    0.92: 'ȹҼҾ',
-    0.94: 'ȸЫҤҴӸ',
-    0.96: 'WœŴΌΏΜШЩѨ',
-    0.98: 'ѠѼѾӁ',
-    1.00: 'ÆŒǋǢǼΈЖӔ—―…',
-    1.02: '@ƢЊЮѤ',
-    1.04: 'Ǉ',
-    1.06: 'ǆǳΎѬ',
-    1.08: 'ѹ',
-    1.10: 'Ή',
-    1.12: 'ЉҖӜ',
-    1.24: 'ǅǊǲ',
-    1.28: 'Ѹ',
-    1.34: 'ǄǱ',
+    0.44: "ĩťϯҟӄӷ‖",
+    0.46: "Ĩѯ“”„",
+    0.48: "^{}ƺǁ",
+    0.50: "*Jcksvxyz¯çýÿćĉċčĴķĸśŝşšŷźżžƙƨƶǩșȳȼͻͼͽζξτϲЈзстухѕўѵ‗",
+    0.52: "ϩϵ϶эєҁҙқҫҭҳӟӡӭӯӱӳӿ",
+    0.54: "¶ƹƽǮǯϧчьӌ",
+    0.56: "#$0123456789?_abdeghnopqu¢£¤¥§«»àáâãäåèéêëðñòóôõöùúûüþāăąđēĕėęěĝğġģĥħĳńņňŋōŏőũūŭůűųƀƃƄƅƌƒƛƞƥƼƾƿǉǎǒǔǖǘǚǜǝǟǡǧǫǭǵǹǻȁȃȅȇȍȏȕȗȟȧȩȫȭȯȱȽɁɂɇɈέγεκλνςχϥϨϸавекнопряёђћќџѳѻҐҕҷҹһәӛӵ‒–†‡",
+    0.58: "µƈƍƬƻǂϐϜϞϮϱЃГблцѐѝҒңҧҩӈӑӓӗӣӥӧөӫ",
+    0.60: "+<=>~¬±×÷ǥийѧѷҞӃ",
+    0.62: "FLTZ¿ßøĹĻĽĿŁŢŤŦŹŻŽƐƑƩƮƴƵǿȚȾɋɏΓΣάήΰαβδηθμορσυϋόύϑϫϬϭϰТдѣѫѮҝӠӶ",
+    0.64: "ŉƷƸϒϔϪъҬ",
+    0.66: "ƔΊϕЬҔ",
+    0.68: "BEPSÈÉÊËÞďĒĔĖĘĚŚŜŞŠƂƋƎƘơƧƲǷȄȆȘȜȝȨȺɅɆΞΡΤπϷЀЁЅБВЕЗРѦѴѶҘҡҰұӖӞӾ‥",
+    0.70: "ưϠϤϦЧм҂ҽҿӋ",
+    0.72: "ϼДЛҥҵҶҸҺӴ",
+    0.74: "ACDHKNRUVXYwÀÁÂÃÄÅÇÐÑÙÚÛÜÝĀĂĄĆĈĊČĎĐĤĦĶŃŅŇŊŔŖŘŨŪŬŮŰŲŵŶŸƆƉƝƤƦǍǓǕǗǙǛǞǠǨǸǺȀȂȐȒȔȖȞȠȦȲȻɃΒΔΕΖφψϓϚϹϻϽϾϿЄЏАКНПСХЭЯыѥѱҀҚҦҪҮүҲӇӐӒӬ",
+    0.76: "©®ƁƏƱƳЌЍЎИЙУЦҢӂӘӚӢӤӮӰӲӹ",
+    0.78: "&GOQÒÓÔÕÖØĜĞĠĢĲŌŎŐƇƟǌǑǦǪǬǴǾȌȎȪȬȮȰɎΚΛΝΥΧΩΫωώϴОжюѡѲѺѽѿҜҨ",
+    0.80: "ƊƓƣǤɌΆϖӦӨӪ",
+    0.82: "ƕшњѢѩѭ",
+    0.84: "m¼½¾ƜΑΗΘΟΠΦϣϺЪфщѪѰ",
+    0.86: "ɄɊФҗӝ",
+    0.88: "ƯϢЂЋљҠ",
+    0.90: "%MæƠǈǣǽΨМӕ",
+    0.92: "ȹҼҾ",
+    0.94: "ȸЫҤҴӸ",
+    0.96: "WœŴΌΏΜШЩѨ",
+    0.98: "ѠѼѾӁ",
+    1.00: "ÆŒǋǢǼΈЖӔ—―…",
+    1.02: "@ƢЊЮѤ",
+    1.04: "Ǉ",
+    1.06: "ǆǳΎѬ",
+    1.08: "ѹ",
+    1.10: "Ή",
+    1.12: "ЉҖӜ",
+    1.24: "ǅǊǲ",
+    1.28: "Ѹ",
+    1.34: "ǄǱ",
 }
 
 # Anything outside the table. Ideographs, kana and hangul are full-width by
@@ -648,8 +648,12 @@ class BaseChartRenderer:
         a subject that is not a :class:`PlanetReturnModel` at all gets — the
         renderers accept one, but the type is not enforced at this call.
         """
-        return_type = getattr(subject, "return_type", None) if isinstance(subject, PlanetReturnModel) else None
-        key, default = self._RETURN_LABELS.get(return_type, self._RETURN_LABELS["Lunar"])
+        return_type = subject.return_type if isinstance(subject, PlanetReturnModel) else None
+        key, default = (
+            self._RETURN_LABELS["Lunar"]
+            if return_type is None
+            else self._RETURN_LABELS.get(return_type, self._RETURN_LABELS["Lunar"])
+        )
         return self._translate(key, default)
 
     def setup_info_sections(self, template_dict: dict) -> None:
@@ -756,8 +760,7 @@ class InfoSectionBuilder:
         first_system = self._translated_house_system(subject)
         if (
             second_subject is not None
-            and second_subject.effective_houses_system_identifier
-            != subject.effective_houses_system_identifier
+            and second_subject.effective_houses_system_identifier != subject.effective_houses_system_identifier
         ):
             return f"{first_system} / {self._translated_house_system(second_subject)}"
         return first_system
@@ -776,10 +779,7 @@ class InfoSectionBuilder:
         # The system the cusps came from, not the one requested: the compact
         # renderers label dual wheels and returns, where a polar chart would
         # otherwise read as the system it could not actually be cast in.
-        return (
-            f"{self._translated_house_systems(subject, second_subject)} "
-            f"{self._translate('houses', 'Houses')}"
-        )
+        return f"{self._translated_house_systems(subject, second_subject)} {self._translate('houses', 'Houses')}"
 
     def build_lunar_phase_info(
         self,
@@ -1384,9 +1384,7 @@ class ProgressionChartRenderer(TransitChartRenderer):
         if not isinstance(drawer.first_obj, AstrologicalSubjectModel) or not isinstance(
             drawer.second_obj, AstrologicalSubjectModel
         ):
-            raise KerykeionException(
-                "Progression charts require AstrologicalSubjectModel subjects."
-            )
+            raise KerykeionException("Progression charts require AstrologicalSubjectModel subjects.")
 
     def get_comparison_point_label(self) -> str:
         return self._translate("progressed_point", "Progressed Point")
@@ -1420,9 +1418,11 @@ class ProgressionChartRenderer(TransitChartRenderer):
             if hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
                 builder = InfoSectionBuilder(d)
                 builder.build_lunar_phase_info(
-                    template_dict, d.second_obj,
+                    template_dict,
+                    d.second_obj,
                     prefix=f"{self._translate('progression', 'Progression')} ",
-                    key_lunation="bottom_left_3", key_phase="bottom_left_4",
+                    key_lunation="bottom_left_3",
+                    key_phase="bottom_left_4",
                 )
 
 
@@ -1532,9 +1532,7 @@ class SynastryChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_0"] = ""
         template_dict["bottom_left_1"] = ""
         template_dict["bottom_left_2"] = builder.build_zodiac_info()
-        template_dict["bottom_left_3"] = builder.build_houses_system_info(
-            d.first_obj, d.second_obj
-        )
+        template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj, d.second_obj)
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
         # Both natals keep their own sect: a placement that is in sect for one
         # partner can be out of sect for the other, which is precisely what a
@@ -2463,8 +2461,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
         if double_chart_aspect_grid_type not in ("list", "table"):
             raise KerykeionException(
-                f"double_chart_aspect_grid_type {double_chart_aspect_grid_type!r} "
-                "is not valid. Use 'list' or 'table'."
+                f"double_chart_aspect_grid_type {double_chart_aspect_grid_type!r} is not valid. Use 'list' or 'table'."
             )
         # These are direct assignments of constructor parameters to instance
         # attributes. They form the foundation for all subsequent setup.
@@ -2633,8 +2630,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             hint = ""
             if isinstance(chart_data, (AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel)):
                 hint = (
-                    " In v5, KerykeionChartSVG was built directly from a subject;"
-                    " in v6, compute the chart data first."
+                    " In v5, KerykeionChartSVG was built directly from a subject; in v6, compute the chart data first."
                 )
             raise KerykeionException(
                 f"ChartDrawer expects chart data from ChartDataFactory "
@@ -2777,19 +2773,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         all_available_planets_setting = list(self.available_planets_setting)
 
         # Collect KerykeionPointModel objects for the primary subject
-        available_celestial_points_names = [
-            body["name"].lower() for body in all_available_planets_setting
-        ]
+        available_celestial_points_names = [body["name"].lower() for body in all_available_planets_setting]
         self.available_kerykeion_celestial_points = self._collect_subject_points(
             self.first_obj,
             available_celestial_points_names,
         )
-        first_collected_names = {
-            p.name for p in self.available_kerykeion_celestial_points if p is not None
-        }
+        first_collected_names = {p.name for p in self.available_kerykeion_celestial_points if p is not None}
         self.available_planets_setting = [
-            body for body in all_available_planets_setting
-            if body["name"] in first_collected_names
+            body for body in all_available_planets_setting if body["name"] in first_collected_names
         ]
         self.all_available_planets_setting = all_available_planets_setting
 
@@ -2797,8 +2788,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # fixed stars are excluded from the crowding heuristic since they have
         # their own visibility filter).
         active_dynamic_star_names = {
-            body["name"] for body in self.available_planets_setting
-            if body["name"] in dynamic_star_names
+            body["name"] for body in self.available_planets_setting if body["name"] in dynamic_star_names
         }
         active_points_count = len(self.available_planets_setting) - len(active_dynamic_star_names)
         if active_points_count > 24:
@@ -2823,12 +2813,9 @@ class ChartDrawer:  # type: ignore[no-redef]
             # downstream drawing code would iterate len(settings)=9 against
             # positions=7 and IndexError. Filtering the settings here keeps
             # the two lists symmetric.
-            second_collected_names = {
-                p.name for p in self.second_subject_celestial_points if p is not None
-            }
+            second_collected_names = {p.name for p in self.second_subject_celestial_points if p is not None}
             self.second_subject_available_planets_setting = [
-                body for body in all_available_planets_setting
-                if body["name"] in second_collected_names
+                body for body in all_available_planets_setting if body["name"] in second_collected_names
             ]
 
     def _configure_dimensions_and_geometry(self, chart_data: "ChartDataModel") -> None:
@@ -2970,9 +2957,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         primary = sum(1 for p in self.available_planets_setting if p.get("is_active"))
         if self.second_obj is None:
             return primary
-        secondary = sum(
-            1 for p in self.second_subject_available_planets_setting if p.get("is_active")
-        )
+        secondary = sum(1 for p in self.second_subject_available_planets_setting if p.get("is_active"))
         return max(primary, secondary)
 
     def _get_aspect_grid_planets_setting(self) -> list[dict[Any, Any]]:
@@ -3066,10 +3051,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         comparison_point_label = self._renderer.get_comparison_point_label()
         comparison_cusp_label = self._renderer.get_comparison_cusp_label()
-        comparison_label = max(
-            filter(None, [comparison_point_label, comparison_cusp_label]),
-            key=len, default=""
-        )
+        comparison_label = max(filter(None, [comparison_point_label, comparison_cusp_label]), key=len, default="")
         if comparison_label:
             if self.show_house_position_comparison or self.show_cusp_position_comparison:
                 transit_columns = [
@@ -3739,10 +3721,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
             comparison_point_label = self._renderer.get_comparison_point_label()
             comparison_cusp_label = self._renderer.get_comparison_cusp_label()
-            comparison_label = max(
-                filter(None, [comparison_point_label, comparison_cusp_label]),
-                key=len, default=""
-            )
+            comparison_label = max(filter(None, [comparison_point_label, comparison_cusp_label]), key=len, default="")
             if comparison_label:
                 if self.show_house_position_comparison or self.show_cusp_position_comparison:
                     transit_columns = [
@@ -4260,9 +4239,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # standard cusp color instead of emitting an invalid `stroke:None` into
         # the SVG.
         color_by_name = {
-            name: (p.get("color") or fallback)
-            for p in self.planets_settings
-            if (name := p.get("name")) in AXIAL_POINTS
+            name: (p.get("color") or fallback) for p in self.planets_settings if (name := p.get("name")) in AXIAL_POINTS
         }
         return tuple(color_by_name.get(name, fallback) for name in AXIAL_POINTS)  # type: ignore[return-value]
 
@@ -4731,8 +4708,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # otherwise read as the system it could not actually be cast in.
         house_key = "houses_system_" + subject.effective_houses_system_identifier
         return (
-            f"{self._translate(house_key, subject.effective_houses_system_name)} "
-            f"{self._translate('houses', 'Houses')}"
+            f"{self._translate(house_key, subject.effective_houses_system_name)} {self._translate('houses', 'Houses')}"
         )
 
     def _apply_svg_post_processing(self, template: str, minify: bool, remove_css_variables: bool) -> str:
@@ -5232,10 +5208,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 return tag
 
             projected_house, target_ring = projection
-            return (
-                f'{tag[:-1]} kr:projectedhouse="{projected_house}" '
-                f'kr:projectedhoroscope="{target_ring}">'
-            )
+            return f'{tag[:-1]} kr:projectedhouse="{projected_house}" kr:projectedhoroscope="{target_ring}">'
 
         return self._CHART_POINT_TAG_RE.sub(_annotate, svg)
 
@@ -5455,8 +5428,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 output_file.write(encoded)
         except OSError as exc:
             raise KerykeionException(
-                f"Could not write the SVG to {chartname}: {exc}. "
-                "Check the output directory exists and is writable."
+                f"Could not write the SVG to {chartname}: {exc}. Check the output directory exists and is writable."
             ) from exc
 
         print(f"SVG Generated Correctly in: {chartname}")
