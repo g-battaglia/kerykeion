@@ -44,6 +44,21 @@
   - New translation keys `diurnality`, `diurnal` and `nocturnal` in all ten
     shipped languages.
 
+### Fixed
+
+- Heliocentric returns and lunar node crossings announced themselves as **"Lunar
+  Return"** in the chart's Type line — and, once the diurnality row shipped, on
+  that row too — contradicting the `return_type` in the same response. The label
+  was a Solar/else-Lunar binary written when those two return types did not
+  exist; it is now a map over all four. Six of the eight returns a caller can
+  request reached the wrong label.
+- The three diurnality translation keys were declared **required** on
+  `KerykeionLanguageModel`, which rejected every third-party language pack
+  written against an earlier release with a pydantic `missing` error and no way
+  for its author to fix an already-shipped release. They now carry English
+  defaults, as the sixteen keys added before them do. The two new return keys
+  follow the same rule.
+
 ## 6.0.0a77 - 2026-07-21
 
 ### Fixed

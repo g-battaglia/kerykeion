@@ -237,10 +237,32 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     transit_name: str = Field(title="Transit Name", description="The transit name label in the chart, in the language")
     lunar_phase: str = Field(title="Lunar Phase", description="The lunar phase label in the chart, in the language")
     lunation_day: str = Field(title="Lunation Day", description="The lunation day label in the chart, in the language")
-    diurnality: str = Field(title="Diurnality", description="The diurnality label in the chart, in the language")
-    diurnal: str = Field(title="Diurnal", description="The 'Sun above the horizon' value in the chart, in the language")
+    # Defaulted, not required, so that a language pack written against an earlier
+    # release still validates — the same courtesy the sixteen keys added before
+    # these were given. Every call site already passes an English default, so the
+    # default here is what a pack that predates the diurnality line will show.
+    heliocentric_return: str = Field(
+        default="Heliocentric Return",
+        title="Heliocentric Return",
+        description="The heliocentric return label in the chart, in the language",
+    )
+    node_return: str = Field(
+        default="Node Return",
+        title="Node Return",
+        description="The lunar node crossing return label in the chart, in the language",
+    )
+    diurnality: str = Field(
+        default="Diurnality", title="Diurnality", description="The diurnality label in the chart, in the language"
+    )
+    diurnal: str = Field(
+        default="Diurnal",
+        title="Diurnal",
+        description="The 'Sun above the horizon' value in the chart, in the language",
+    )
     nocturnal: str = Field(
-        title="Nocturnal", description="The 'Sun below the horizon' value in the chart, in the language"
+        default="Nocturnal",
+        title="Nocturnal",
+        description="The 'Sun below the horizon' value in the chart, in the language",
     )
     day: str = Field(title="Day", description="The day label in the chart, in the language")
     celestial_points: KerykeionLanguageCelestialPointModel = Field(

@@ -390,6 +390,36 @@ class TestDiurnalityOnOtherRenderers:
         # titled every solar return "Lunar Return" and nothing noticed.
         assert "Solar Return " in row, row
 
+    @pytest.mark.parametrize(
+        "return_type,expected",
+        [
+            ("Solar", "Solar Return"),
+            ("Lunar", "Lunar Return"),
+            ("Heliocentric", "Heliocentric Return"),
+            ("Lunar_Node_Crossing", "Node Return"),
+        ],
+    )
+    def test_every_return_type_gets_its_own_label(self, return_type, expected):
+        """All four, not just the two that had a branch.
+
+        `_return_label` was a Solar/else-Lunar binary, so a heliocentric return
+        and a node crossing both announced themselves as "Lunar Return" — in the
+        chart's own Type line and, once this feature shipped, on the diurnality
+        row beside it, contradicting the `return_type` in the same response.
+        """
+        natal, solar = _solar_return()
+        relabelled = solar.model_copy(update={"return_type": return_type})
+
+        # The single wheel prints the label in full, on its own Type line.
+        single = _render(ChartDataFactory.create_single_wheel_return_chart_data(relabelled))
+        assert f"Type: {expected}" in single
+
+        # The dual wheel prints it beside the diurnality value, where the row's
+        # width budget may cut it — so match the stem, not the whole label.
+        row = _row(_render(ChartDataFactory.create_return_chart_data(natal, relabelled)))
+        assert "Natal " in row
+        assert expected.split(" ")[0] in row, row
+
     def test_progression_labels_its_second_wheel_progression_not_transit(self):
         """ProgressionChartRenderer inherits from the transit renderer."""
         progressed = _subject("P", year=2000, month=10, day=9, hour=18, minute=30)

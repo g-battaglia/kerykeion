@@ -566,20 +566,28 @@ class BaseChartRenderer:
         """Configure aspect elements. Override in subclasses."""
         raise NotImplementedError("Subclasses must implement setup_aspects")
 
+    #: Wheel label per ``ReturnType``. A mapping rather than a Solar/else binary,
+    #: which is what it was: ``Heliocentric`` and ``Lunar_Node_Crossing`` are both
+    #: valid return types and both rendered as "Lunar Return", contradicting the
+    #: ``return_type`` in the same response. Six of the eight returns Studio
+    #: offers reach one of them.
+    _RETURN_LABELS = {
+        "Solar": ("solar_return", "Solar Return"),
+        "Lunar": ("lunar_return", "Lunar Return"),
+        "Heliocentric": ("heliocentric_return", "Heliocentric Return"),
+        "Lunar_Node_Crossing": ("node_return", "Node Return"),
+    }
+
     def _return_label(self, subject) -> str:
         """The display name for a return chart's own wheel.
 
-        KNOWN LIMITATION, pre-existing and deliberately not widened here: only
-        ``Solar`` has its own branch, so ``Heliocentric`` and
-        ``Lunar_Node_Crossing`` returns — both valid ``ReturnType`` values —
-        render as "Lunar Return", contradicting the ``return_type`` in the same
-        response. Fixing it needs two new translation keys in all ten shipped
-        languages, which is its own change; this exists so that when someone
-        makes it there is one place to edit rather than three.
+        Falls back to the lunar label for anything not in the map, which is what
+        a subject that is not a :class:`PlanetReturnModel` at all gets — the
+        renderers accept one, but the type is not enforced at this call.
         """
-        if isinstance(subject, PlanetReturnModel) and subject.return_type == "Solar":
-            return self._translate("solar_return", "Solar Return")
-        return self._translate("lunar_return", "Lunar Return")
+        return_type = getattr(subject, "return_type", None) if isinstance(subject, PlanetReturnModel) else None
+        key, default = self._RETURN_LABELS.get(return_type, self._RETURN_LABELS["Lunar"])
+        return self._translate(key, default)
 
     def setup_info_sections(self, template_dict: dict) -> None:
         """Configure info sections. Override in subclasses."""

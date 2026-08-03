@@ -341,6 +341,33 @@ class TestKerykeionLanguageModelRoundTrip:
                 f"(expected {source[key]!r}, got {dumped.get(key)!r})"
             )
 
+    def test_a_pack_written_before_a_key_existed_still_validates(self):
+        """Adding a key must not invalidate every third-party language pack.
+
+        A pack is a plain dict handed to ``KerykeionLanguageModel``. Declaring a
+        new key as required rejects every pack written before it existed, with a
+        pydantic ``missing`` error rather than a fallback — and there is nothing
+        the pack's author can do about a release that has already shipped. The
+        sixteen keys added before these three all carry English defaults for
+        exactly this reason; this test is what keeps the seventeenth honest.
+        """
+        pack = dict(LANGUAGE_SETTINGS["EN"])
+        for key in ("diurnality", "diurnal", "nocturnal"):
+            pack.pop(key)
+        model = KerykeionLanguageModel(**pack)
+        assert (model.diurnality, model.diurnal, model.nocturnal) == ("Diurnality", "Diurnal", "Nocturnal")
+
+    @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
+    def test_a_shipped_language_never_falls_back_to_those_defaults(self, language):
+        """The defaults above are a compatibility shim, not a translation.
+
+        Every language kerykeion ships must carry its own three values, or a
+        locale would silently render English while the test above stayed green.
+        """
+        source = LANGUAGE_SETTINGS[language]
+        for key in ("diurnality", "diurnal", "nocturnal"):
+            assert source.get(key), f"{language} is missing the {key!r} translation"
+
     def test_transit_chart_svg_uses_localized_cusp_label(self):
         """End-to-end: a DE transit chart renders 'Transit-Cusp', not the English default."""
         from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
