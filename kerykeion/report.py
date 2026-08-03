@@ -26,7 +26,12 @@ from kerykeion.schemas.kr_models import (
     SingleChartDataModel,
     KerykeionPointModel,
 )
-from kerykeion.settings.config_constants import AXIAL_POINTS, LUNAR_NODES, MAIN_PLANETS
+from kerykeion.settings.config_constants import (
+    AXIAL_POINTS,
+    LUNAR_NODES,
+    MAIN_PLANETS,
+    PERSPECTIVE_HELIOCENTRIC,
+)
 
 
 # Keys must match the ``AspectName`` literal values in kerykeion.schemas.kr_literals.
@@ -565,6 +570,18 @@ class ReportGenerator:
         iso_local = getattr(subject, "iso_formatted_local_datetime", None)
         if iso_local:
             birth_data.append(["ISO Local Datetime", iso_local])
+
+        # Whether the Sun stood above or below the horizon. Omitted rather than
+        # guessed wherever it does not apply, on the same two grounds the chart
+        # panel uses: ``None`` on a midpoint composite, which represents no
+        # single sky, and any heliocentric chart, which does not include the Sun
+        # at all (it is the centre body), leaving the statement without a
+        # referent. The report and the SVG must agree — a value here that the
+        # drawing withholds reads as one of them being broken.
+        is_diurnal = getattr(subject, "is_diurnal", None)
+        heliocentric = getattr(subject, "perspective_type", None) == PERSPECTIVE_HELIOCENTRIC
+        if is_diurnal is not None and not heliocentric:
+            birth_data.append(["Diurnality", "Diurnal" if is_diurnal else "Nocturnal"])
 
         settings_data = [["Setting", "Value"]]
         settings_data.append(["Zodiac Type", str(subject.zodiac_type)])

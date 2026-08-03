@@ -15,6 +15,7 @@ Johnny Depp — Subject Report
 | Timezone           | America/Chicago           |
 | Day of Week        | Sunday                    |
 | ISO Local Datetime | 1963-06-09T00:00:00-05:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Astrological Subject — Settings------------+

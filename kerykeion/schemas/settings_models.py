@@ -237,6 +237,11 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     transit_name: str = Field(title="Transit Name", description="The transit name label in the chart, in the language")
     lunar_phase: str = Field(title="Lunar Phase", description="The lunar phase label in the chart, in the language")
     lunation_day: str = Field(title="Lunation Day", description="The lunation day label in the chart, in the language")
+    diurnality: str = Field(title="Diurnality", description="The diurnality label in the chart, in the language")
+    diurnal: str = Field(title="Diurnal", description="The 'Sun above the horizon' value in the chart, in the language")
+    nocturnal: str = Field(
+        title="Nocturnal", description="The 'Sun below the horizon' value in the chart, in the language"
+    )
     day: str = Field(title="Day", description="The day label in the chart, in the language")
     celestial_points: KerykeionLanguageCelestialPointModel = Field(
         title="Celestial Points", description="The celestial points translations in the chart, in the language"

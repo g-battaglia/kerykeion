@@ -2,6 +2,44 @@
 
 ## [Unreleased]
 
+## 6.0.0a78 - 2026-08-03
+
+### Added
+
+- Charts now report their **diurnality** — whether the Sun stood above the
+  horizon or below it — on a sixth line of the bottom-left info panel, reading
+  `Diurnality: Diurnal` or `Diurnality: Nocturnal`. The value has always been on
+  the subject as `is_diurnal`, computed from the Sun's true geometric altitude
+  and therefore correct for sidereal and heliocentric charts and at polar
+  latitudes; until now nothing drew it. The same line was added to the text
+  report. The wording is deliberately descriptive rather than doctrinal: where
+  the Sun was is an observation every tradition shares, while "sect" is one
+  tradition's name for what follows from it and does not belong in a neutral
+  info panel.
+  - Two-wheel charts report both wheels, because diurnality belongs to a single
+    chart and the same placement reads differently under each: a transit shows
+    `Natal Nocturnal · Transit Diurnal`, a synastry names both subjects
+    (truncated, like every other name in that panel). A bare value on a biwheel
+    would be worse than no line, since the reader could not tell which chart it
+    described. That row carries no `Diurnality:` heading — at the height it sits,
+    the wheel leaves roughly forty characters of clear width, and the heading
+    plus two names plus two values does not fit.
+  - The line is omitted, not guessed, where it has no referent: a heliocentric
+    chart excludes the Sun (it is the centre body), and a midpoint composite
+    represents no single sky (`is_diurnal` is `None`). Note a heliocentric chart
+    does still have an Ascendant and houses — the objection is the missing Sun,
+    not a missing horizon. Note that `resolve_sect_is_diurnal`
+    defaults a missing value to day, which is right for calculations that must
+    pick a branch but would mislabel a composite here.
+  - `ChartDrawer(..., show_diurnality=False)` omits it entirely. Nothing shifts
+    to accommodate the line — the rows below the wheel's centre get wider the
+    lower they sit, and the new one lands in the widest band of the six. Only the
+    moon glyph moves, dropping 14px out of its way, and only when a line was
+    actually produced. Heliocentric charts and midpoint composites therefore keep
+    the previous layout too, as does any caller who opts out.
+  - New translation keys `diurnality`, `diurnal` and `nocturnal` in all ten
+    shipped languages.
+
 ## 6.0.0a77 - 2026-07-21
 
 ### Fixed

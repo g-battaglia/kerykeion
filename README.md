@@ -212,6 +212,15 @@ print(john.first_house.model_dump_json())
 # Retrieve the element of the Moon sign:
 print(john.moon.element)
 # > 'Air'
+
+# Whether the Sun stood above the horizon (day chart) or below it (night chart).
+# Computed from the Sun's true geometric altitude — independent of the chart's
+# zodiac and perspective, so the value holds for sidereal and heliocentric
+# charts and at polar latitudes. Note the chart and report still omit the line
+# for a heliocentric chart: the value is about the moment, but the drawing has
+# no Sun on it to point at — the Sun is the centre body there and is excluded.
+print(john.is_diurnal)
+# > False
 ```
 
 > **Working offline:** pass `online=False` and specify `lng`, `lat`, and `tz_str` as shown above.  
@@ -240,6 +249,8 @@ All chart-rendering examples below create a local `charts_output/` folder so the
 To generate a chart, use the `ChartDataFactory` to pre-compute chart data, then `ChartDrawer` to create the visualization. This two-step process ensures clean separation between astrological calculations and chart rendering.
 
 **📖 Chart generation docs: [Charts Documentation](https://www.kerykeion.net/content/docs/charts)**
+
+The info panel in the bottom-left corner reports the chart's **diurnality** — whether the Sun stood above the horizon (`Diurnality: Diurnal`) or below it (`Diurnality: Nocturnal`). Two-wheel charts report both wheels, since each keeps its own, and drop the heading to fit (`Natal Nocturnal · Transit Diurnal`; a synastry names the two subjects). The line is omitted where it has no referent: a heliocentric chart excludes the Sun (it is the centre body), and a midpoint composite represents no single sky. Pass `show_diurnality=False` to `ChartDrawer` to leave it out entirely — the panel then keeps exactly the spacing it had before the line existed.
 
 **Tip:**
 The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).
@@ -938,6 +949,7 @@ Available `style` values: `"classic"` (default) and `"modern"`.
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `double_chart_aspect_grid_type` | `str` | `"list"` | Aspect grid layout: `"list"` (compact vertical list) or `"table"` (traditional cross-reference grid) |
+| `show_diurnality` | `bool` | `True` | Print the chart's diurnality (Sun above or below the horizon) in the bottom-left info panel |
 
 **Classic-only constructor arguments** (ignored by the modern style):
 
@@ -1115,6 +1127,7 @@ Each report contains:
 - Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
 - House cusp tables for every subject involved
 - Lunar phase details when available
+- Chart diurnality (Sun above or below the horizon), when it applies
 - Element/quality distributions and active configuration summaries (for chart data)
 - Aspect listings tailored for single or dual charts, with symbols for type and movement
 - Dual-chart extras such as house comparisons and relationship scores (when provided by the data)

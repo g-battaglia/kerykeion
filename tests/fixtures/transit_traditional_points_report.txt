@@ -15,6 +15,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Timezone           | Europe/London             |
 | Day of Week        | Saturday                  |
 | ISO Local Datetime | 1990-07-21T14:45:00+01:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Natal Subject — Settings-------------------+
@@ -40,6 +41,7 @@ Sample Natal Subject — Transit 1980-12-08
 | Timezone           | America/New_York          |
 | Day of Week        | Monday                    |
 | ISO Local Datetime | 1980-12-08T22:50:00-05:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Transit Subject — Settings-----------------+

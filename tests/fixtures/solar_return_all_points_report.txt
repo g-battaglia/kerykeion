@@ -14,6 +14,7 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Timezone           | Europe/London                     |
 | Day of Week        | Saturday                          |
 | ISO Local Datetime | 1990-07-21T14:44:59+01:00         |
+| Diurnality         | Diurnal                           |
 +--------------------+-----------------------------------+
 
 +Solar Return Chart — Settings--------------+

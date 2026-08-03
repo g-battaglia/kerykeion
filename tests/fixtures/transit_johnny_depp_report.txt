@@ -15,6 +15,7 @@ Johnny Depp — Transit 1940-10-09
 | Timezone           | America/Chicago           |
 | Day of Week        | Sunday                    |
 | ISO Local Datetime | 1963-06-09T00:00:00-05:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Natal Subject — Settings-------------------+
@@ -40,6 +41,7 @@ Johnny Depp — Transit 1940-10-09
 | Timezone           | Europe/London             |
 | Day of Week        | Wednesday                 |
 | ISO Local Datetime | 1940-10-09T18:30:00+01:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Transit Subject — Settings-----------------+

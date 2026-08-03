@@ -32,6 +32,7 @@ John Lennon & Yoko Ono — Composite Report
 | Timezone           | Europe/London             |
 | Day of Week        | Wednesday                 |
 | ISO Local Datetime | 1940-10-09T18:30:00+01:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Composite – First Subject — Settings-------+
@@ -57,6 +58,7 @@ John Lennon & Yoko Ono — Composite Report
 | Timezone           | Asia/Tokyo                |
 | Day of Week        | Saturday                  |
 | ISO Local Datetime | 1933-02-18T20:30:00+09:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Composite – Second Subject — Settings------+

@@ -261,6 +261,7 @@ drawer.save_aspect_grid_only_svg_file(output_dir, filename="grid_only")
 | `padding`                       | `int`                    | `20`         | Padding around the SVG content.             |
 | `style`                         | `KerykeionChartStyle`    | `"classic"`  | Chart wheel layout ("classic" or "modern"). Per-instance default for all render calls. |
 | `show_zodiac_background_ring`   | `bool`                   | `True`       | Show colored zodiac wedges (modern style only). Per-instance default for all render calls. |
+| `show_diurnality`               | `bool`                   | `True`       | Print the chart's diurnality (Sun above or below the horizon) in the info panel. |
 | `show_house_position_comparison`| `bool`                   | `True`       | Render the house position comparison grid (dual charts). |
 | `show_cusp_position_comparison` | `bool`                   | `False`      | Render the cusp position comparison grid alongside house comparison. |
 | `colors_settings`               | `dict`                   | `DEFAULT_CHART_COLORS` | Custom color settings for chart elements. |

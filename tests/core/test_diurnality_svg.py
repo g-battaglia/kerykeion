@@ -1,0 +1,268 @@
+# -*- coding: utf-8 -*-
+"""
+Diurnality Line SVG Tests
+
+The bottom-left info panel reports whether the Sun stood above or below the
+horizon. These tests pin the four things that are easy to get wrong and hard to
+notice in a 140 KB SVG:
+
+    - It says the right thing, and it says it neutrally ("Diurnality: Nocturnal"
+      rather than any one tradition's vocabulary for what follows from it).
+    - It is *absent*, not guessed, where it has no referent: a heliocentric chart
+      does not include the Sun at all (it is the centre body), and a midpoint
+      composite represents no single sky. A default-to-day helper exists in
+      utilities and would silently label both as diurnal.
+    - Two-wheel charts carry both values, each behind its own wheel's name. A
+      bare "Nocturnal" on a biwheel is worse than no line at all, because the
+      reader cannot tell which chart it describes.
+    - Nothing moves to make room for it except the moon glyph, and only when a
+      line was actually produced — the rows themselves never shift, so a caller
+      who opts out gets the panel exactly as it was.
+
+Usage:
+    pytest tests/core/test_diurnality_svg.py -v
+"""
+
+import re
+
+import pytest
+
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, CompositeSubjectFactory
+from kerykeion.charts.chart_drawer import ChartDrawer
+
+DIURNALITY_ROW = re.compile(r"Bottom_Left_Text_5'[^>]*>([^<]*)<")
+BLOCK_TRANSFORM = re.compile(r"Bottom_Left_Text' transform='translate\(0,([-\d.]+)\)'")
+MOON_TRANSFORM = re.compile(r"Lunar_Phase' transform='translate\(10,([-\d.]+)\)'")
+
+# The layout the panel had before the diurnality line existed. Hard-coded rather
+# than derived so that a change to either constant has to be an explicit edit here.
+LAYOUT_WITHOUT_LINE = ("0", "518")
+# With the line: the block does not move at all; only the glyph drops.
+LAYOUT_WITH_LINE = ("0", "532")
+
+
+def _subject(name="John", **kwargs):
+    params = dict(
+        year=1940,
+        month=10,
+        day=9,
+        hour=18,
+        minute=30,
+        city="Liverpool",
+        nation="GB",
+        lat=53.41058,
+        lng=-2.97794,
+        tz_str="Europe/London",
+        online=False,
+    )
+    params.update(kwargs)
+    return AstrologicalSubjectFactory.from_birth_data(name, **params)
+
+
+def _render(chart_data, **drawer_kwargs) -> str:
+    return ChartDrawer(chart_data, **drawer_kwargs).generate_svg_string(minify=False)
+
+
+def _row(svg: str) -> str:
+    match = DIURNALITY_ROW.search(svg)
+    assert match is not None, "the Bottom_Left_Text_5 node is missing from the template"
+    return match.group(1)
+
+
+def _layout(svg: str) -> tuple:
+    block = BLOCK_TRANSFORM.search(svg)
+    moon = MOON_TRANSFORM.search(svg)
+    assert block and moon
+    return block.group(1), moon.group(1)
+
+
+class TestDiurnalityValue:
+    """The line states the chart's diurnality, in neutral wording."""
+
+    def test_nocturnal_chart(self):
+        subject = _subject()
+        assert subject.is_diurnal is False, "fixture must be a night chart"
+        svg = _render(ChartDataFactory.create_natal_chart_data(subject))
+        assert _row(svg) == "Diurnality: Nocturnal"
+
+    def test_diurnal_chart(self):
+        subject = _subject(hour=12, minute=0)
+        assert subject.is_diurnal is True, "fixture must be a day chart"
+        svg = _render(ChartDataFactory.create_natal_chart_data(subject))
+        assert _row(svg) == "Diurnality: Diurnal"
+
+    def test_wording_stays_school_neutral(self):
+        """Every tradition agrees on where the Sun was; only some name it "sect"."""
+        svg = _render(ChartDataFactory.create_natal_chart_data(_subject()))
+        assert "sect" not in _row(svg).lower()
+        assert "hairesis" not in _row(svg).lower()
+
+    # Every shipped language, both values. Asserting the exact rendered string
+    # rather than "does not contain the English one": a language whose
+    # translation legitimately coincides with English would fail that test while
+    # being perfectly correct, and a language that translates only one of the two
+    # values would pass it. The table is the assertion — it pins what ships.
+    @pytest.mark.parametrize(
+        ("language", "label", "diurnal", "nocturnal"),
+        [
+            ("EN", "Diurnality", "Diurnal", "Nocturnal"),
+            ("IT", "Diurnalità", "Diurno", "Notturno"),
+            ("FR", "Diurnalité", "Diurne", "Nocturne"),
+            ("ES", "Diurnidad", "Diurno", "Nocturno"),
+            ("PT", "Diurnidade", "Diurno", "Noturno"),
+            ("DE", "Tag/Nacht", "Tag", "Nacht"),
+            ("RU", "День/Ночь", "День", "Ночь"),
+            ("TR", "Gündüz/Gece", "Gündüz", "Gece"),
+            ("CN", "晝夜", "日間", "夜間"),
+            ("HI", "दिवा/रात्रि", "दिवा", "रात्रि"),
+        ],
+    )
+    def test_every_language_renders_both_values(self, language, label, diurnal, nocturnal):
+        day = _render(ChartDataFactory.create_natal_chart_data(_subject(hour=12)), chart_language=language)
+        night = _render(ChartDataFactory.create_natal_chart_data(_subject()), chart_language=language)
+        assert _row(day) == f"{label}: {diurnal}"
+        assert _row(night) == f"{label}: {nocturnal}"
+
+
+class TestDiurnalityOmitted:
+    """Where diurnality has no meaning, the line is absent rather than guessed.
+
+    Each case also asserts the layout, because the two go together: the lift that
+    makes room for the line must key off whether a line was produced, not off the
+    flag. Keying it off the flag lifted the block on exactly these charts — the
+    ones the code special-cases — and opened a gap where it meant to close one.
+    """
+
+    def test_heliocentric_chart_does_not_include_the_sun(self):
+        subject = _subject(perspective_type="Heliocentric")
+        svg = _render(ChartDataFactory.create_natal_chart_data(subject))
+        assert _row(svg) == ""
+        assert _layout(svg) == LAYOUT_WITHOUT_LINE
+
+    def test_midpoint_composite_has_no_single_sky(self):
+        composite = CompositeSubjectFactory(
+            _subject(),
+            _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0),
+        ).get_midpoint_composite_subject_model()
+        assert composite.is_diurnal is None, "a midpoint composite must not claim a diurnality"
+        svg = _render(ChartDataFactory.create_composite_chart_data(composite))
+        assert _row(svg) == ""
+        assert _layout(svg) == LAYOUT_WITHOUT_LINE
+
+
+class TestDiurnalityOnDualCharts:
+    """Both wheels are reported, each behind its own name."""
+
+    def test_transit_labels_both_wheels(self):
+        natal = _subject()
+        transit = _subject("Now", year=2024, month=6, day=15, hour=12, minute=0)
+        row = _row(_render(ChartDataFactory.create_transit_chart_data(natal, transit)))
+        assert "Natal Nocturnal" in row
+        assert "Transit Diurnal" in row
+        # No "Diurnality:" heading here, unlike the single-wheel row: the wheel
+        # names already say what each value belongs to, and the label would push
+        # the line under the wheel graphics. See build_dual_diurnality_info.
+        assert not row.startswith("Diurnality")
+
+    def test_synastry_labels_each_partner_by_name(self):
+        john = _subject()
+        paul = _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0)
+        row = _row(_render(ChartDataFactory.create_synastry_chart_data(john, paul)))
+        assert "John Nocturnal" in row
+        assert "Paul Diurnal" in row
+
+    # The worst case, not a lucky fixture: two nocturnal charts (the longest
+    # value pair in English) with names long enough to truncate, plus the
+    # longest wheel labels the panel ships. An earlier version of this test used
+    # one convenient synastry and passed while eight real combinations overran.
+    @pytest.mark.parametrize("language", ["EN", "IT", "RU", "DE"])
+    def test_the_widest_dual_row_still_clears_the_wheel(self, language):
+        """The row sits where the wheel's chord has closed in on it.
+
+        Centre x=340, r=240; the row sits at y=522 and the block no longer moves,
+        so the graphics start at x≈278 — about 258px from the text's x=20, or
+        roughly 50 characters at 10px. Character count is a rough proxy in a
+        proportional font and a poor one for full-width scripts, so the budget
+        here is deliberately looser than the geometry and the real guard is that
+        nothing grew unboundedly.
+        """
+        widest = [
+            ChartDataFactory.create_synastry_chart_data(
+                _subject("Alessandra Giovanna Bianchi"),
+                _subject("Massimiliano Ferrari", hour=23, minute=0),
+            ),
+            ChartDataFactory.create_transit_chart_data(
+                _subject(), _subject("Now", year=2024, month=6, day=15, hour=12, minute=0)
+            ),
+            ChartDataFactory.create_progression_chart_data(
+                _subject(), _subject("P", year=2000, month=10, day=9, hour=18, minute=30)
+            ),
+        ]
+        for data in widest:
+            row = _row(_render(data, chart_language=language))
+            assert len(row) <= 48, f"{language}: {len(row)} chars will overrun the wheel: {row!r}"
+
+    def test_long_names_are_truncated_like_the_grids(self):
+        """Same 8-character, cut-at-a-word-boundary budget the comparison grids use."""
+        john = _subject("Maria Alessandra Giovanna Bianchi")
+        paul = _subject("Massimiliano Ferrari-Castiglione", year=1942, month=6, day=18, hour=8, minute=0)
+        row = _row(_render(ChartDataFactory.create_synastry_chart_data(john, paul)))
+        assert "…" in row
+        assert "Maria Alessandra" not in row
+
+    def test_a_name_with_markup_characters_cannot_break_the_svg(self):
+        """The synastry line embeds user-controlled names, so it must be escaped.
+
+        Single token on purpose: names are cut at a word boundary, so markup
+        after the first space would never reach the row and the test would pass
+        without exercising anything.
+        """
+        john = _subject("A&B<script>x")
+        paul = _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0)
+        svg = _render(ChartDataFactory.create_synastry_chart_data(john, paul))
+        assert "&amp;" in _row(svg)
+        assert "<script>" not in svg
+        from xml.etree import ElementTree
+
+        ElementTree.fromstring(svg)  # raises if the escaping let the markup through
+
+
+class TestDiurnalitySwitchedOff:
+    """Opting out restores the exact layout the panel had before the feature."""
+
+    @pytest.mark.parametrize("hour", [12, 18])
+    def test_line_is_empty(self, hour):
+        svg = _render(
+            ChartDataFactory.create_natal_chart_data(_subject(hour=hour)),
+            show_diurnality=False,
+        )
+        assert _row(svg) == ""
+
+    def test_block_and_moon_return_to_their_original_offsets(self):
+        data = ChartDataFactory.create_natal_chart_data(_subject())
+        assert _layout(_render(data, show_diurnality=False)) == LAYOUT_WITHOUT_LINE
+
+    def test_showing_the_line_moves_the_glyph_and_nothing_else(self):
+        """The five pre-existing rows must not move.
+
+        They sit inside the wheel's chord and the lower a row is the more clear
+        width it has, so shifting the block upwards to make room narrows every
+        row above — an earlier revision did exactly that and pushed a default
+        English progression row under the wheel. The new row needs no room made
+        for it; only the moon glyph is in its way.
+        """
+        data = ChartDataFactory.create_natal_chart_data(_subject())
+        assert _layout(_render(data, show_diurnality=False)) == LAYOUT_WITHOUT_LINE
+        assert _layout(_render(data, show_diurnality=True)) == LAYOUT_WITH_LINE
+
+        # And the glyph keeps the 10px gap below the last row it has always had:
+        # 518 - 508 with no line, 532 - 522 with one.
+        assert 532 - 522 == 518 - 508
+
+    def test_off_leaves_the_other_rows_untouched(self):
+        """Nothing but the empty node itself may differ when the line is off."""
+        data = ChartDataFactory.create_natal_chart_data(_subject())
+        svg_off = _render(data, show_diurnality=False)
+        rows = re.findall(r"Bottom_Left_Text_(\d)'[^>]*>([^<]*)<", svg_off)
+        assert rows[-1] == ("5", ""), "the node exists but carries nothing"
+        assert all(text for _, text in rows[:-1]), "the other rows are untouched"

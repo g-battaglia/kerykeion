@@ -66,6 +66,7 @@
             <text kr:node="Bottom_Left_Text_2" x="20" y="480" style="fill: $paper_color_0; font-size: 10px">$bottom_left_2</text>
             <text kr:node="Bottom_Left_Text_3" x="20" y="494" style="fill: $paper_color_0; font-size: 10px">$bottom_left_3</text>
             <text kr:node="Bottom_Left_Text_4" x="20" y="508" style="fill: $paper_color_0; font-size: 10px">$bottom_left_4</text>
+            <text kr:node="Bottom_Left_Text_5" x="20" y="522" style="fill: $paper_color_0; font-size: 10px">$bottom_left_5</text>
         </g>
 
         <!-- Lunar Phase -->

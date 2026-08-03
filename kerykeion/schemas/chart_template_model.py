@@ -98,6 +98,9 @@ class ChartTemplateModel(SubscriptableBaseModel):
     bottom_left_4: str
     """Bottom left panel content - line 4"""
 
+    bottom_left_5: str
+    """Bottom left panel content - line 5 (chart sect: day/night)"""
+
     top_left_1: str
     """Top left panel content - line 1"""
 

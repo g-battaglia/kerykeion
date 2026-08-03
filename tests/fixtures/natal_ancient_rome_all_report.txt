@@ -15,6 +15,7 @@ Ancient Rome Subject — Natal Chart Report
 | Timezone           | Europe/Rome                  |
 | Day of Week        | Friday                       |
 | ISO Local Datetime | 0100-01-01T12:00:00+00:49:59 |
+| Diurnality         | Diurnal                      |
 +--------------------+------------------------------+
 
 +Natal — Settings-----+---------------------+
@@ -437,7 +438,7 @@ Ancient Rome Subject — Natal Chart Report
 | Chiron                | semi-sextile ⚺   | Eris                  | 0.77° | Separating ← |
 | Chiron                | quincunx ⚻       | Makemake              | 0.85° | Separating ← |
 | Chiron                | square □         | Ixion                 | 2.02° | Applying →   |
-| Chiron                | square □         | Orcus                 | 4.87° | Separating ← |
+| Chiron                | square □         | Orcus                 | 4.86° | Separating ← |
 | Chiron                | sextile ⚹        | Quaoar                | 1.86° | Applying →   |
 | Chiron                | sesquiquadrate ⚼ | Pars Amoris           | 0.94° | Separating ← |
 | Chiron                | opposition ☍     | Pars Fidei            | 1.58° | Applying →   |
@@ -589,7 +590,7 @@ Ancient Rome Subject — Natal Chart Report
 | Juno                  | semi-sextile ⚺   | Kronos                | 0.41° | Applying →   |
 | Juno                  | sextile ⚹        | Vulkanus              | 4.43° | Separating ← |
 | Juno                  | quincunx ⚻       | Poseidon              | 1.50° | Applying →   |
-| Vesta                 | sextile ⚹        | Sedna                 | 3.60° | Applying →   |
+| Vesta                 | sextile ⚹        | Sedna                 | 3.61° | Applying →   |
 | Vesta                 | semi-square ∠    | Ixion                 | 1.94° | Applying →   |
 | Vesta                 | conjunction ☌    | Pars Spiritus         | 3.27° | Applying →   |
 | Vesta                 | square □         | Pars Amoris           | 1.02° | Separating ← |
@@ -600,10 +601,10 @@ Ancient Rome Subject — Natal Chart Report
 | Eris                  | conjunction ☌    | Haumea                | 3.85° | Applying →   |
 | Eris                  | opposition ☍     | Makemake              | 0.08° | Separating ← |
 | Eris                  | trine △          | Ixion                 | 2.79° | Applying →   |
-| Eris                  | sextile ⚹        | Orcus                 | 4.09° | Separating ← |
+| Eris                  | sextile ⚹        | Orcus                 | 4.10° | Separating ← |
 | Eris                  | square □         | Quaoar                | 2.63° | Applying →   |
 | Eris                  | trine △          | Anti Vertex           | 5.55° | Separating ← |
-| Eris                  | trine △          | Cupido                | 1.46° | Separating ← |
+| Eris                  | trine △          | Cupido                | 1.47° | Separating ← |
 | Eris                  | sextile ⚹        | Hades                 | 1.55° | Applying →   |
 | Eris                  | sextile ⚹        | Kronos                | 1.41° | Separating ← |
 | Eris                  | trine △          | Poseidon              | 0.32° | Separating ← |

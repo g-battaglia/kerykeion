@@ -48,7 +48,11 @@ from kerykeion.schemas.kr_literals import (
     KerykeionChartLanguage,
     AstrologicalPoint,
 )
-from kerykeion.settings.config_constants import AXIAL_POINTS, DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.config_constants import (
+    AXIAL_POINTS,
+    DEFAULT_ACTIVE_POINTS,
+    PERSPECTIVE_HELIOCENTRIC,
+)
 from kerykeion.settings.translations import get_translations, load_language_pair
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice,
@@ -132,6 +136,9 @@ _PLAIN_TEXT_TEMPLATE_FIELDS = (
     "bottom_left_2",
     "bottom_left_3",
     "bottom_left_4",
+    # The diurnality line embeds subject names on synastry wheels, so it is
+    # plain user-controlled text and must be escaped like the rest.
+    "bottom_left_5",
     # Element/quality labels are language-pack text (translated names +
     # percentages). Escape them too so a custom or translated pack containing
     # markup-significant characters cannot break the XML.
@@ -238,6 +245,22 @@ class CircleRadiiConfig:
     external_view_first: int = 56
     external_view_second: int = 92
     external_view_third: int = 112
+
+
+# The diurnality line is a sixth bottom-left row, drawn at y=522. The rows sit
+# inside the wheel's chord, and because all of them are *below* its centre
+# (340, 290, r=240) the lower a row is the MORE clear width it has: row 0 gets
+# 143px, row 5 gets 259px. So the new row needs no room made for it — it lands in
+# the widest band of the six.
+#
+# The one thing in its way is the moon glyph, which occupies x 20-40, y 518-538
+# and would sit on top of it. So the glyph drops instead, keeping the same 10px
+# gap below the last row of text that it has always had. An earlier revision
+# lifted the whole block by 22px instead, on the mistaken belief that lower rows
+# were tighter; that stole 18 to 38px from the five existing rows and pushed
+# "Progression Lunar phase: Waxing Gibbous" under the wheel in the default
+# language. When the line is not drawn, nothing moves at all.
+DIURNALITY_GLYPH_DROP: float = 14.0
 
 
 @dataclass
@@ -460,6 +483,21 @@ class BaseChartRenderer:
         """Configure aspect elements. Override in subclasses."""
         raise NotImplementedError("Subclasses must implement setup_aspects")
 
+    def _return_label(self, subject) -> str:
+        """The display name for a return chart's own wheel.
+
+        KNOWN LIMITATION, pre-existing and deliberately not widened here: only
+        ``Solar`` has its own branch, so ``Heliocentric`` and
+        ``Lunar_Node_Crossing`` returns — both valid ``ReturnType`` values —
+        render as "Lunar Return", contradicting the ``return_type`` in the same
+        response. Fixing it needs two new translation keys in all ten shipped
+        languages, which is its own change; this exists so that when someone
+        makes it there is one place to edit rather than three.
+        """
+        if isinstance(subject, PlanetReturnModel) and subject.return_type == "Solar":
+            return self._translate("solar_return", "Solar Return")
+        return self._translate("lunar_return", "Lunar Return")
+
     def setup_info_sections(self, template_dict: dict) -> None:
         """Configure info sections. Override in subclasses."""
         raise NotImplementedError("Subclasses must implement setup_info_sections")
@@ -619,6 +657,98 @@ class InfoSectionBuilder:
         template_dict[key_lunation] = f"{prefix}{lunation_label}: {subject.lunar_phase.get('moon_phase', '')}"
         template_dict[key_phase] = f"{prefix}{phase_label}: {self._translate(phase_key, phase_name)}"
 
+    def _diurnality_value(self, subject) -> str:
+        """The bare "Diurnal"/"Nocturnal" value, or ``""`` when it does not apply.
+
+        Three cases yield nothing, and only the first is a user preference — the
+        other two are absences of meaning rather than absences of data:
+
+        - **``show_diurnality=False``.** The caller opted out of the line.
+        - **Heliocentric charts.** Not for want of a horizon: such a chart still
+          carries an Ascendant and houses, and this very panel prints its
+          domification one row above. It is the Sun that is missing — it is the
+          centre body and is excluded from the chart's points — so a statement
+          about where the Sun stood has nothing in the drawing to refer to.
+        - **``is_diurnal is None``.** Midpoint composites represent no single
+          sky, so there is no moment for the Sun to be above or below.
+
+        Note the deliberate explicit ``is None`` check rather than
+        :func:`resolve_sect_is_diurnal`: that helper defaults a missing value to
+        day, which is right for calculations that must pick a branch, but here it
+        would label a composite that never had a sky as diurnal.
+        """
+        if not self.drawer.show_diurnality:
+            return ""
+        # See the docstring: the objection is the missing Sun, not a missing horizon.
+        if getattr(subject, "perspective_type", None) == PERSPECTIVE_HELIOCENTRIC:
+            return ""
+
+        is_diurnal = getattr(subject, "is_diurnal", None)
+        if is_diurnal is None:
+            return ""
+
+        if is_diurnal:
+            return self._translate("diurnal", "Diurnal")
+        return self._translate("nocturnal", "Nocturnal")
+
+    def build_diurnality_info(self, subject) -> str:
+        """Build the diurnality line for a single-wheel chart.
+
+        Whether the Sun stood above or below the horizon is an observable fact
+        shared by every tradition, so the wording stays descriptive
+        ("Diurnality: Nocturnal") and leaves any one school's vocabulary for what
+        follows from it out of the neutral info panel.
+
+        Args:
+            subject: Subject exposing ``is_diurnal`` and ``perspective_type``.
+
+        Returns:
+            The formatted line, or ``""`` when diurnality does not apply.
+        """
+        value = self._diurnality_value(subject)
+        if not value:
+            return ""
+        return f"{self._translate('diurnality', 'Diurnality')}: {value}"
+
+    def build_dual_diurnality_info(self, first: tuple, second: tuple) -> str:
+        """Build one diurnality line covering both wheels of a dual chart.
+
+        Diurnality belongs to a single chart: the same placement reads
+        differently depending on the diurnality of the chart it sits in, so a
+        two-wheel chart needs both values or neither is interpretable. They share
+        one line, each behind the name of its own wheel, so a bare "Nocturnal"
+        can never be read as a statement about the wrong chart.
+
+        The separator is a single-spaced "·" rather than the wide one used
+        elsewhere in this panel: two English "Nocturnal" values plus two
+        8-character names already come to 41 characters, and the row sits low
+        enough that the wheel's chord leaves only about that much clear width.
+        The two spaces were the difference between fitting and not.
+
+        Unlike the single-wheel line this carries no "Diurnality:" label, and
+        that is a space decision rather than a stylistic one. The row sits low in
+        the panel, where the wheel's chord has closed to roughly 40 characters'
+        worth of clear width; the label plus two wheel names plus two values does
+        not fit, and the overflow runs under the graphics. The wheel names carry
+        the meaning perfectly well on their own — "Natal Nocturnal" needs no
+        heading to be understood.
+
+        Args:
+            first: ``(subject, wheel_name)`` for the first wheel.
+            second: ``(subject, wheel_name)`` for the second wheel.
+
+        Returns:
+            The joined line, or ``""`` when neither wheel has an applicable value.
+        """
+        parts = []
+        for subject, wheel_name in (first, second):
+            if subject is None:
+                continue
+            value = self._diurnality_value(subject)
+            if value:
+                parts.append(f"{wheel_name} {value}")
+        return " · ".join(parts)
+
     def build_location_coordinates(
         self,
         latitude: float,
@@ -684,6 +814,7 @@ class NatalChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_1"] = builder.build_domification_info()
         builder.build_lunar_phase_info(template_dict, d.first_obj)
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+        template_dict["bottom_left_5"] = builder.build_diurnality_info(d.first_obj)
 
         # Lunar phase visualization
         d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
@@ -759,7 +890,12 @@ class CompositeChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_3"] = (
             f"{self._translate('composite_chart', 'Composite Chart')} - {self._translate('midpoints', 'Midpoints')}"
         )
-        template_dict["bottom_left_4"] = ""
+        # Empty for a midpoint composite (is_diurnal is None — no single sky);
+        # populated for a Davison composite, which does represent a real moment.
+        # It goes in row 4, the slot this renderer already left blank, rather than
+        # row 5: appending below an empty row would open a visible gap above it.
+        template_dict["bottom_left_4"] = builder.build_diurnality_info(d.first_obj)
+        template_dict["bottom_left_5"] = ""
 
         # Lunar phase
         d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
@@ -954,6 +1090,10 @@ class TransitChartRenderer(BaseChartRenderer):
             template_dict["bottom_left_4"] = ""
 
         template_dict["bottom_left_2"] = builder.build_perspective_info(d.second_obj)
+        template_dict["bottom_left_5"] = builder.build_dual_diurnality_info(
+            (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
+            (d.second_obj, self._translate("chart_info_transit_label", "Transit")),
+        )
 
         # Moon phase visualization from transit subject
         if d.second_obj is not None and getattr(d.second_obj, "lunar_phase", None):
@@ -1087,6 +1227,12 @@ class ProgressionChartRenderer(TransitChartRenderer):
             if getattr(d.second_obj, "iso_formatted_local_datetime", None) is not None:
                 prog_dt = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
             template_dict["top_left_3"] = f"{self._translate('chart_info_progression_label', 'Progression')}: {prog_dt}"
+            # The transit renderer labelled the second wheel "Transit"; here it is
+            # the progressed chart, so relabel rather than inherit a wrong name.
+            template_dict["bottom_left_5"] = InfoSectionBuilder(d).build_dual_diurnality_info(
+                (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
+                (d.second_obj, self._translate("chart_info_progression_label", "Progression")),
+            )
             if hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
                 builder = InfoSectionBuilder(d)
                 builder.build_lunar_phase_info(
@@ -1206,6 +1352,18 @@ class SynastryChartRenderer(BaseChartRenderer):
             d.first_obj, d.second_obj
         )
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+        # Both natals keep their own sect: a placement that is in sect for one
+        # partner can be out of sect for the other, which is precisely what a
+        # synastry reading needs to see.
+        # Truncated hard — 8 characters, cut at a word boundary, which is exactly
+        # what the comparison grids above do to the same two names. These are the
+        # only user-controlled strings on the line, and the row sits low enough
+        # that the wheel's chord has closed in on it: untruncated, a pair of
+        # ordinary Italian names ran clean under the graphics.
+        template_dict["bottom_left_5"] = builder.build_dual_diurnality_info(
+            (d.first_obj, d._truncate_name(d.first_obj.name, 8, "…", True)),
+            (d.second_obj, d._truncate_name(d.second_obj.name, 8, "…", True)),
+        )
 
         template_dict["makeLunarPhase"] = ""
 
@@ -1380,20 +1538,16 @@ class SingleReturnChartRenderer(BaseChartRenderer):
         template_dict["top_left_3"] = f"{self._translate('latitude', 'Latitude')}: {lat_str}"
         template_dict["top_left_4"] = f"{self._translate('longitude', 'Longitude')}: {lon_str}"
 
-        if isinstance(d.first_obj, PlanetReturnModel) and d.first_obj.return_type == "Solar":
-            template_dict["top_left_5"] = (
-                f"{self._translate('type', 'Type')}: {self._translate('solar_return', 'Solar Return')}"
-            )
-        else:
-            template_dict["top_left_5"] = (
-                f"{self._translate('type', 'Type')}: {self._translate('lunar_return', 'Lunar Return')}"
-            )
+        template_dict["top_left_5"] = f"{self._translate('type', 'Type')}: {self._return_label(d.first_obj)}"
 
         # Bottom left section
         template_dict["bottom_left_0"] = builder.build_zodiac_info()
         template_dict["bottom_left_1"] = builder.build_houses_system_info(d.first_obj)
         builder.build_lunar_phase_info(template_dict, d.first_obj)
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+        # A single-wheel return stands on its own, so it carries its own sect —
+        # the sect of the return moment, not of the nativity behind it.
+        template_dict["bottom_left_5"] = builder.build_diurnality_info(d.first_obj)
 
         # Lunar phase visualization
         d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
@@ -1520,10 +1674,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
         # Return coordinates
         return_lat, return_lon = builder.build_location_coordinates(d.second_obj.lat, d.second_obj.lng)
 
-        if isinstance(d.second_obj, PlanetReturnModel) and d.second_obj.return_type == "Solar":
-            template_dict["top_left_0"] = f"{self._translate('solar_return', 'Solar Return')}:"
-        else:
-            template_dict["top_left_0"] = f"{self._translate('lunar_return', 'Lunar Return')}:"
+        template_dict["top_left_0"] = f"{self._return_label(d.second_obj)}:"
 
         template_dict["top_left_1"] = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
         template_dict["top_left_2"] = f"{return_lat} / {return_lon}"
@@ -1536,6 +1687,11 @@ class DualReturnChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_1"] = builder.build_domification_info(d.second_obj)
         builder.build_lunar_phase_info(template_dict, d.first_obj)
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+
+        template_dict["bottom_left_5"] = builder.build_dual_diurnality_info(
+            (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
+            (d.second_obj, self._return_label(d.second_obj)),
+        )
 
         # Lunar phase visualization
         d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
@@ -2026,6 +2182,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         show_aspect_icons: bool = True,
         style: "KerykeionChartStyle" = "classic",
         show_zodiac_background_ring: bool = True,
+        show_diurnality: bool = True,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -2091,6 +2248,11 @@ class ChartDrawer:  # type: ignore[no-redef]
             show_zodiac_background_ring (bool, optional):
                 Default for whether to draw colored zodiac wedges (modern style only).
                 Can be overridden at render time.  Defaults to True.
+            show_diurnality (bool, optional):
+                Whether to print the chart's diurnality (whether the Sun stood
+                above or below the horizon) in the bottom-left info panel.
+                Set to False to omit the line; the panel then keeps exactly the
+                spacing it had before the line existed. Defaults to True.
 
         Raises:
             KerykeionException: If ``theme`` is not a valid KerykeionChartTheme
@@ -2138,6 +2300,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             padding=padding,
             style=style,
             show_zodiac_background_ring=show_zodiac_background_ring,
+            show_diurnality=show_diurnality,
         )
 
         # =====================================================================
@@ -2227,6 +2390,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         padding: int,
         style: "KerykeionChartStyle",
         show_zodiac_background_ring: bool,
+        show_diurnality: bool,
     ) -> None:
         """
         Store basic configuration parameters as instance attributes.
@@ -2254,6 +2418,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         self.show_cusp_position_comparison = show_cusp_position_comparison
         self.show_degree_indicators = show_degree_indicators
         self.show_aspect_icons = show_aspect_icons
+        self.show_diurnality = show_diurnality
         self.auto_size = auto_size
         self._padding = padding
 
@@ -4490,7 +4655,13 @@ class ChartDrawer:  # type: ignore[no-redef]
             str: Truncated name with ellipsis if needed
         """
         if truncate_at_space:
-            name = name.split(" ")[0]
+            # Strip first: names are not normalised upstream, and a leading space
+            # made the first "word" the empty string. On the diurnality row that
+            # produced a bare value with no owner — exactly the ambiguity the
+            # labels exist to prevent. Fall back to the whole name if stripping
+            # leaves no first word at all.
+            stripped = name.strip()
+            name = stripped.split(" ")[0] or stripped
 
         if len(name) <= max_length:
             return name
@@ -4623,8 +4794,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         template_dict["title_translate_y"] = offsets["title"]
         template_dict["elements_translate_y"] = offsets["elements"]
         template_dict["qualities_translate_y"] = offsets["qualities"]
-        template_dict["lunar_phase_translate_y"] = offsets["lunar_phase"]
-        template_dict["bottom_left_translate_y"] = offsets["bottom_left"]
+        # lunar_phase / bottom_left are written after the renderer runs — see the
+        # note further down, next to the diurnality lift.
 
         # ---------------------------------------------------------------------
         # COLORS: Paper, background, and transparency settings
@@ -4732,6 +4903,21 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Delegate to the appropriate renderer based on chart type.
         # This uses the Strategy Pattern to separate chart-specific logic.
         self._renderer.render(template_dict)
+
+        # ---------------------------------------------------------------------
+        # LAYOUT: bottom-left block and moon glyph
+        # ---------------------------------------------------------------------
+        # Written here, after the renderer, because the glyph drop must key off
+        # whether a line was actually produced — not off the flag.
+        # `show_diurnality=True` still yields an empty line on heliocentric charts
+        # and midpoint composites, and dropping the glyph for a line that is not
+        # there would open a gap for nothing. This is also the single point every
+        # height branch converges on, right-panel synastry included.
+        lunar_phase_y = offsets["lunar_phase"]
+        if template_dict.get("bottom_left_5"):
+            lunar_phase_y += DIURNALITY_GLYPH_DROP
+        template_dict["lunar_phase_translate_y"] = lunar_phase_y
+        template_dict["bottom_left_translate_y"] = offsets["bottom_left"]
 
         # ---------------------------------------------------------------------
         # SECURITY: Escape user-controlled plain-text fields
