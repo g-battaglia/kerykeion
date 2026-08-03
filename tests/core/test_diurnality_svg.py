@@ -27,10 +27,16 @@ import re
 
 import pytest
 
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, CompositeSubjectFactory
+from kerykeion import (
+    AstrologicalSubjectFactory,
+    ChartDataFactory,
+    CompositeSubjectFactory,
+    PlanetaryReturnFactory,
+)
 from kerykeion.charts.chart_drawer import ChartDrawer
 
-DIURNALITY_ROW = re.compile(r"Bottom_Left_Text_5'[^>]*>([^<]*)<")
+def _row_re(index: int):
+    return re.compile(rf"Bottom_Left_Text_{index}'[^>]*>([^<]*)<")
 BLOCK_TRANSFORM = re.compile(r"Bottom_Left_Text' transform='translate\(0,([-\d.]+)\)'")
 MOON_TRANSFORM = re.compile(r"Lunar_Phase' transform='translate\(10,([-\d.]+)\)'")
 
@@ -59,13 +65,24 @@ def _subject(name="John", **kwargs):
     return AstrologicalSubjectFactory.from_birth_data(name, **params)
 
 
+def _composite(kind: str):
+    """A midpoint or Davison composite of the same two subjects."""
+    factory = CompositeSubjectFactory(
+        _subject(), _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0)
+    )
+    if kind == "Midpoint":
+        return factory.get_midpoint_composite_subject_model()
+    return factory.get_davison_composite_subject_model()
+
+
 def _render(chart_data, **drawer_kwargs) -> str:
     return ChartDrawer(chart_data, **drawer_kwargs).generate_svg_string(minify=False)
 
 
-def _row(svg: str) -> str:
-    match = DIURNALITY_ROW.search(svg)
-    assert match is not None, "the Bottom_Left_Text_5 node is missing from the template"
+def _row(svg: str, index: int = 5) -> str:
+    """The text of a bottom-left row. Composites put diurnality in row 4."""
+    match = _row_re(index).search(svg)
+    assert match is not None, f"the Bottom_Left_Text_{index} node is missing from the template"
     return match.group(1)
 
 
@@ -140,13 +157,27 @@ class TestDiurnalityOmitted:
         assert _layout(svg) == LAYOUT_WITHOUT_LINE
 
     def test_midpoint_composite_has_no_single_sky(self):
-        composite = CompositeSubjectFactory(
-            _subject(),
-            _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0),
-        ).get_midpoint_composite_subject_model()
+        composite = _composite("Midpoint")
         assert composite.is_diurnal is None, "a midpoint composite must not claim a diurnality"
         svg = _render(ChartDataFactory.create_composite_chart_data(composite))
-        assert _row(svg) == ""
+        # Row 4, not 5: the composite renderer puts it in the slot it already
+        # left blank, so that no empty row opens up above it. Reading row 5 here
+        # would pass no matter what this renderer does.
+        assert _row(svg, 4) == ""
+        assert _layout(svg) == LAYOUT_WITHOUT_LINE
+
+    def test_a_davison_composite_does_have_one(self):
+        """The counterpart that makes the test above mean something.
+
+        A Davison composite is a real moment, so it carries a real value and the
+        line must appear. Without this, blanking the composite renderer's row —
+        or defaulting a `None` to day — passes unnoticed.
+        """
+        composite = _composite("Davison")
+        assert isinstance(composite.is_diurnal, bool)
+        svg = _render(ChartDataFactory.create_composite_chart_data(composite))
+        assert _row(svg, 4) == f"Diurnality: {'Diurnal' if composite.is_diurnal else 'Nocturnal'}"
+        # Row 4 already existed, so nothing had to move for it.
         assert _layout(svg) == LAYOUT_WITHOUT_LINE
 
 
@@ -242,6 +273,19 @@ class TestDiurnalitySwitchedOff:
         data = ChartDataFactory.create_natal_chart_data(_subject())
         assert _layout(_render(data, show_diurnality=False)) == LAYOUT_WITHOUT_LINE
 
+    def test_the_glyph_keeps_its_gap_below_the_last_row(self):
+        """Read from the rendered output, not restated from the constants.
+
+        An earlier version asserted `532 - 522 == 518 - 508`, which is a
+        tautology on integer literals and holds whatever the code does.
+        """
+        data = ChartDataFactory.create_natal_chart_data(_subject())
+        off_block, off_moon = (float(v) for v in _layout(_render(data, show_diurnality=False)))
+        on_block, on_moon = (float(v) for v in _layout(_render(data, show_diurnality=True)))
+        # Last visible row: y=508 without the line, y=522 with it.
+        assert off_moon - (off_block + 508.0) == pytest.approx(10.0)
+        assert on_moon - (on_block + 522.0) == pytest.approx(10.0)
+
     def test_showing_the_line_moves_the_glyph_and_nothing_else(self):
         """The five pre-existing rows must not move.
 
@@ -266,3 +310,48 @@ class TestDiurnalitySwitchedOff:
         rows = re.findall(r"Bottom_Left_Text_(\d)'[^>]*>([^<]*)<", svg_off)
         assert rows[-1] == ("5", ""), "the node exists but carries nothing"
         assert all(text for _, text in rows[:-1]), "the other rows are untouched"
+
+
+class TestDiurnalityOnOtherRenderers:
+    """The renderers the other classes do not reach.
+
+    Every one of these rows survived a mutation that blanked it: the SVG
+    baselines for composites, returns and progressions are compared by a
+    text-blind comparator, so they pin nothing here.
+    """
+
+    def _solar_return(self):
+        natal = _subject()
+        factory = PlanetaryReturnFactory(
+            natal, city="Liverpool", nation="GB", lat=53.41058, lng=-2.97794,
+            tz_str="Europe/London", online=False,
+        )
+        return natal, factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+
+    def test_single_wheel_return_carries_its_own(self):
+        _, solar = self._solar_return()
+        row = _row(_render(ChartDataFactory.create_single_wheel_return_chart_data(solar)))
+        assert row.startswith("Diurnality: "), row
+
+    def test_dual_wheel_return_names_both_and_labels_the_return_correctly(self):
+        natal, solar = self._solar_return()
+        row = _row(_render(ChartDataFactory.create_return_chart_data(natal, solar)))
+        assert "Natal " in row
+        # Pins _return_label: collapsing it to the old Solar/else-Lunar binary
+        # titled every solar return "Lunar Return" and nothing noticed.
+        assert "Solar Return " in row, row
+
+    def test_progression_labels_its_second_wheel_progression_not_transit(self):
+        """ProgressionChartRenderer inherits from the transit renderer."""
+        progressed = _subject("P", year=2000, month=10, day=9, hour=18, minute=30)
+        row = _row(_render(ChartDataFactory.create_progression_chart_data(_subject(), progressed)))
+        assert "Progression " in row
+        assert "Transit" not in row
+
+
+def test_a_leading_space_cannot_blank_a_wheel_name():
+    """Names are not normalised upstream; the label is what disambiguates."""
+    john = _subject(" John Lennon")
+    paul = _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0)
+    row = _row(_render(ChartDataFactory.create_synastry_chart_data(john, paul)))
+    assert row.startswith("John "), row
