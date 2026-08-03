@@ -23,7 +23,11 @@ Usage:
     pytest tests/core/test_diurnality_svg.py -v
 """
 
+import json
 import re
+import unicodedata
+from html import unescape
+from pathlib import Path
 
 import pytest
 
@@ -49,6 +53,42 @@ MOON_TRANSFORM = re.compile(r"Lunar_Phase' transform='translate\(10,([-\d.]+)\)'
 LAYOUT_WITHOUT_LINE = ("0", "518")
 # With the line: the block does not move at all; only the glyph drops.
 LAYOUT_WITH_LINE = ("0", "532")
+
+
+_ADVANCES = json.loads((Path(__file__).parents[1] / "data" / "glyph_advances.json").read_text())["advances"]
+
+
+def _measured_width(text: str, font_size: float = 10.0) -> float:
+    """Width of *text* from real type metrics, not from the estimator.
+
+    The point of reading a committed table of advance widths rather than calling
+    `estimate_text_width` is that the builder allocates its budget *with* that
+    function, so an assertion phrased in its terms is satisfied by construction:
+    `fixed + sum(names)` equals the budget whatever the function returns, and
+    every row passes however wrongly it is measured. An earlier version of this
+    test did exactly that and stayed green while seven rows overran.
+
+    The figures are the widest advance across Times, Helvetica and Arial Unicode
+    (see the file's own comment), so this measures what those three will actually
+    render. Characters none of them have are charged a full em, matching the
+    estimator's own rule for scripts it cannot measure.
+
+    Unescapes first: the node's source text spells `&` as `&amp;`, five
+    characters for one glyph, and measuring the source charged a name of twelve
+    ampersands 615px when it renders as 60. The escaping is the renderer's, not
+    the reader's — `estimate_text_width` is correctly applied before it.
+
+    Combining and format characters are skipped, as they are in the estimator.
+    That is not borrowing the estimator's arithmetic but agreeing with type: a
+    Devanagari matra stacks on the letter before it, and the zero-width joiner
+    in an emoji sequence fuses two code points into one glyph. Charging them a
+    full em made a six-emoji name measure 255px for what renders as about 140.
+    """
+    return sum(
+        _ADVANCES.get(f"{ord(c):04X}", 1.0) * font_size
+        for c in unescape(text)
+        if unicodedata.category(c) not in ("Mn", "Me", "Cf")
+    )
 
 
 def _subject(name="John", **kwargs):
@@ -259,7 +299,7 @@ class TestDiurnalityOnDualCharts:
         ]
         for data in widest:
             row = _row(_render(data, chart_language=language))
-            width = estimate_text_width(row)
+            width = _measured_width(row)
             assert width <= DIURNALITY_ROW_CLEAR_WIDTH, (
                 f"{language}: {width:.1f}px will overrun the wheel's {DIURNALITY_ROW_CLEAR_WIDTH}px: {row!r}"
             )
@@ -296,7 +336,7 @@ class TestDiurnalityOnDualCharts:
             )
         )
         assert "…" in cut
-        assert estimate_text_width(cut) <= DIURNALITY_ROW_CLEAR_WIDTH
+        assert _measured_width(cut) <= DIURNALITY_ROW_CLEAR_WIDTH
 
     def test_a_name_with_markup_characters_cannot_break_the_svg(self):
         """The synastry line embeds user-controlled names, so it must be escaped.

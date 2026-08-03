@@ -26,8 +26,13 @@
     plus two values does not fit. The names are cut to that width rather than to
     a character count, since eight ideographs are twice the width of eight Latin
     letters: `kerykeion.charts.chart_drawer.estimate_text_width` is the public
-    entry point, calibrated against real advance metrics so it never reads
-    narrower than the text will render.
+    entry point. It charges each character the widest advance that character has
+    across Times, Helvetica and Arial Unicode, rounded up, so it reads at or
+    above what those three render. Regenerate the table with
+    `poe regenerate:glyph-widths` if the reference set changes. Known residual,
+    since the panel names no font-family: under a CJK system font the
+    Ambiguous-width characters — Cyrillic, Greek, the middot — render full-width,
+    wider than any of the three reference faces.
   - The line is omitted, not guessed, where it has no referent: a heliocentric
     chart excludes the Sun (it is the centre body), and a midpoint composite
     represents no single sky (`is_diurnal` is `None`). Note a heliocentric chart

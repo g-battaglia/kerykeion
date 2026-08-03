@@ -263,77 +263,140 @@ class CircleRadiiConfig:
 # language. When the line is not drawn, nothing moves at all.
 DIURNALITY_GLYPH_DROP: float = 14.0
 
-# How much clear width row 5 really has, and it is not the 258.55px the chord
+# How much clear width row 5 really has, and it is not the 258.6px the chord
 # gives at the baseline: the chord narrows going *upward*, and text rises above
 # its baseline. Ideographs fill the em box, so the binding measurement is the
-# chord at y = 522 - 10px = 512, which is 228.56px from the text's x=20. Taking
-# the baseline figure overstates the room by 13% and is what let a row overrun.
+# chord at y = 522 - 10px = 512 — centre (340, 290), r=240, so the graphics start
+# at x=248.8 and 228.8px is clear from the text's x=20. Taking the baseline
+# figure overstates the room by 13% and is what let a row overrun. The constant
+# sits a little under the geometry, since the estimator below is close to the
+# truth rather than wildly conservative and the last pixel is not worth having.
 DIURNALITY_ROW_CLEAR_WIDTH: float = 228.0
 
-# What a glyph costs, as a fraction of the em. The panel's text nodes name no
-# font-family, so the real glyphs are the viewer's choice and no exact width
-# exists here. These figures are calibrated against real advance metrics from
-# Times, Helvetica and Arial Unicode so that the estimate never reads narrower
-# than the widest of the three — the only direction an overflow guard may not
-# err in — while staying inside about 1.3x of it.
+# What a glyph costs, as a fraction of the em.
 #
-# The two explicit sets are not fussiness, they are where a single average
-# breaks down:
+# The panel's text nodes name no font-family, so the real glyphs are the
+# viewer's choice and no exact width exists here. This table is the widest
+# advance each character has across Times, Helvetica and Arial Unicode, rounded
+# *up* to 1/50 em, so it reads at or above what those three will render and
+# never below.
 #
-# - Spaces and the middot cost 0.28em, half the letter average, and this row
-#   carries five or six of them; the ellipsis costs a full em, nearly double it,
-#   and truncation puts one on every name it cuts. Charging all three at the
-#   average was worth 25px of error on a 228px row.
-# - _WIDE_GLYPHS holds every character in Latin, Greek and Cyrillic measured
-#   above 0.80em across the three fonts. Without it an ordinary capital rate
-#   underestimates "MMMM…" and "ЖЮЖЮ…" and they overrun. Characters above 1.0em
-#   — the ǆ-style digraphs, the vulgar fractions — remain a known residual; they
-#   do not occur in names or in any shipped label.
-_GLYPH_EM: dict = {" ": 0.30, "·": 0.30, "…": 1.0}
-_WIDE_GLYPHS = frozenset(
-    "%@MWm¼½¾ÆæŒœŴƕƜƠƢƯǄǅǆǇǈǊǋǢǣǱǲǳǼǽȸȹɄɊΈΉΌΎΏΑΗΘΜΟΠΦΨϢϣϺ"
-    "ЂЉЊЋЖМФШЩЪЫЮфшщљњѠѢѤѨѩѪѬѭѰѸѹѼѾҖҗҠҤҴҼҾӁӔӕӜӝӸ"
-)
-_IDEOGRAPH_EM: float = 1.0
-_UPPERCASE_EM: float = 0.80
-_DEFAULT_GLYPH_EM: float = 0.55
+# A per-character table rather than an average, because the average is what got
+# this wrong twice. Latin letters alone span 0.28em (i, l, t) to 0.89em (M, W) —
+# a 3.2x range — so any single figure either undercharges the wide half or
+# mangles ordinary names to protect against it. A first version charged 0.55em
+# by default and listed only the characters above 0.80em as exceptions, which
+# left 670 measured characters undercharged, lowercase `w` and Cyrillic `ж ю ы`
+# among them: a Russian synastry overran the wheel by 21px, the same magnitude
+# as the ideograph bug the table was written to fix.
+#
+# Generated from the three fonts' `hmtx` tables; regenerate with
+# `poe regenerate:glyph-widths` if the reference set ever changes.
+_MEASURED_EM: dict = {
+    0.20: "'",
+    0.24: 'ɉ‛',
+    0.26: '|¦Ɩ',
+    0.28: ' ,./:;\\ijlt\xa0·ìíîïĭįıĵĺļłţƫƭǀǐǰȉȋțȷͺ;·ΐίιϊϳіїјӏ',
+    0.32: 'ŧ',
+    0.34: '!()-I[]`fr¡¨²³´¸¹ÌÍÎÏĬĮİŕŗřſǃǏȈȊȑȓʹ͵΄ІЇӀ‐‑‘’‚‟․‧',
+    0.36: 'ŀƗƚ΅•‣',
+    0.38: 'ªºƪ',
+    0.40: '°ĪīľɍΙΪґғ',
+    0.42: '"гѓ',
+    0.44: 'ĩťϯҟӄӷ‖',
+    0.46: 'Ĩѯ“”„',
+    0.48: '^{}ƺǁ',
+    0.50: '*Jcksvxyz¯çýÿćĉċčĴķĸśŝşšŷźżžƙƨƶǩșȳȼͻͼͽζξτϲЈзстухѕўѵ‗',
+    0.52: 'ϩϵ϶эєҁҙқҫҭҳӟӡӭӯӱӳӿ',
+    0.54: '¶ƹƽǮǯϧчьӌ',
+    0.56: '#$0123456789?_abdeghnopqu¢£¤¥§«»àáâãäåèéêëðñòóôõöùúûüþāăąđēĕėęěĝğġģĥħĳńņňŋōŏőũūŭůűųƀƃƄƅƌƒƛƞƥƼƾƿǉǎǒǔǖǘǚǜǝǟǡǧǫǭǵǹǻȁȃȅȇȍȏȕȗȟȧȩȫȭȯȱȽɁɂɇɈέγεκλνςχϥϨϸавекнопряёђћќџѳѻҐҕҷҹһәӛӵ‒–†‡',
+    0.58: 'µƈƍƬƻǂϐϜϞϮϱЃГблцѐѝҒңҧҩӈӑӓӗӣӥӧөӫ',
+    0.60: '+<=>~¬±×÷ǥийѧѷҞӃ',
+    0.62: 'FLTZ¿ßøĹĻĽĿŁŢŤŦŹŻŽƐƑƩƮƴƵǿȚȾɋɏΓΣάήΰαβδηθμορσυϋόύϑϫϬϭϰТдѣѫѮҝӠӶ',
+    0.64: 'ŉƷƸϒϔϪъҬ',
+    0.66: 'ƔΊϕЬҔ',
+    0.68: 'BEPSÈÉÊËÞďĒĔĖĘĚŚŜŞŠƂƋƎƘơƧƲǷȄȆȘȜȝȨȺɅɆΞΡΤπϷЀЁЅБВЕЗРѦѴѶҘҡҰұӖӞӾ‥',
+    0.70: 'ưϠϤϦЧм҂ҽҿӋ',
+    0.72: 'ϼДЛҥҵҶҸҺӴ',
+    0.74: 'ACDHKNRUVXYwÀÁÂÃÄÅÇÐÑÙÚÛÜÝĀĂĄĆĈĊČĎĐĤĦĶŃŅŇŊŔŖŘŨŪŬŮŰŲŵŶŸƆƉƝƤƦǍǓǕǗǙǛǞǠǨǸǺȀȂȐȒȔȖȞȠȦȲȻɃΒΔΕΖφψϓϚϹϻϽϾϿЄЏАКНПСХЭЯыѥѱҀҚҦҪҮүҲӇӐӒӬ',
+    0.76: '©®ƁƏƱƳЌЍЎИЙУЦҢӂӘӚӢӤӮӰӲӹ',
+    0.78: '&GOQÒÓÔÕÖØĜĞĠĢĲŌŎŐƇƟǌǑǦǪǬǴǾȌȎȪȬȮȰɎΚΛΝΥΧΩΫωώϴОжюѡѲѺѽѿҜҨ',
+    0.80: 'ƊƓƣǤɌΆϖӦӨӪ',
+    0.82: 'ƕшњѢѩѭ',
+    0.84: 'm¼½¾ƜΑΗΘΟΠΦϣϺЪфщѪѰ',
+    0.86: 'ɄɊФҗӝ',
+    0.88: 'ƯϢЂЋљҠ',
+    0.90: '%MæƠǈǣǽΨМӕ',
+    0.92: 'ȹҼҾ',
+    0.94: 'ȸЫҤҴӸ',
+    0.96: 'WœŴΌΏΜШЩѨ',
+    0.98: 'ѠѼѾӁ',
+    1.00: 'ÆŒǋǢǼΈЖӔ—―…',
+    1.02: '@ƢЊЮѤ',
+    1.04: 'Ǉ',
+    1.06: 'ǆǳΎѬ',
+    1.08: 'ѹ',
+    1.10: 'Ή',
+    1.12: 'ЉҖӜ',
+    1.24: 'ǅǊǲ',
+    1.28: 'Ѹ',
+    1.34: 'ǄǱ',
+}
+
+# Anything outside the table. Ideographs, kana and hangul are full-width by
+# design; so, in practice, is every script we have no measurements for, and
+# charging them a full em over-truncates a name rather than letting it run under
+# the graphics. Combining marks cost nothing — they stack on the glyph before
+# them, and charging them a share is what made a Devanagari row look like it fit.
+_MEASURED_EM_BY_CHAR: dict = {char: em for em, chars in _MEASURED_EM.items() for char in chars}
+
+_UNMEASURED_GLYPH_EM: float = 1.0
+_COMBINING_CATEGORIES = frozenset({"Mn", "Me", "Cf"})
+
+#: Known residual, stated rather than papered over: under a CJK system font the
+#: Ambiguous-width characters — Cyrillic, Greek, the middot — render full-width,
+#: up to 3x what this table charges. The table cannot know the viewer's font, and
+#: calibrating for that case would cut every Russian label in half. A chart that
+#: must be exact should set an explicit font-family on the panel.
+_AMBIGUOUS_WIDTH_IS_A_KNOWN_RESIDUAL = True
 
 
 def estimate_text_width(text: str, font_size: float = 10.0) -> float:
     """Rough rendered width of *text*, in pixels, for the info panel's rows.
 
-    A character count cannot do this job, which is what a previous version of
-    the row-width guard tried: the same 38-character row measures 168px of Latin
-    Helvetica and 250px of Arial Unicode ideographs. Advance widths across the
-    panel's corpus span 2.7 to 9.9 px per character, so no per-character constant
-    separates a row that fits from one that runs under the wheel.
+    A character count cannot do this job, which is what the first version of the
+    row-width guard tried: the same 38-character row measures 168px of Latin
+    Helvetica and 250px of Arial Unicode ideographs.
 
-    East-Asian ideographs, kana and hangul are full-width by design and occupy
-    the em; capitals run four fifths of it and everything else a little over
-    half, with the exceptions listed above. That is what is worth modelling
-    without a font engine.
+    See :data:`_MEASURED_EM` for what the figures are and where they come from,
+    and for the one case they knowingly under-report.
     """
     total = 0.0
     for char in text:
-        explicit = _GLYPH_EM.get(char)
-        if explicit is not None:
-            total += font_size * explicit
-        elif char in _WIDE_GLYPHS or unicodedata.east_asian_width(char) in ("W", "F"):
-            total += font_size * _IDEOGRAPH_EM
-        elif char.isupper():
-            total += font_size * _UPPERCASE_EM
+        measured = _MEASURED_EM_BY_CHAR.get(char)
+        if measured is not None:
+            total += font_size * measured
+        elif unicodedata.category(char) in _COMBINING_CATEGORIES:
+            continue
         else:
-            total += font_size * _DEFAULT_GLYPH_EM
+            total += font_size * _UNMEASURED_GLYPH_EM
     return total
 
 
 def truncate_to_width(text: str, budget: float, ellipsis_symbol: str = "…") -> str:
     """Shorten *text* until :func:`estimate_text_width` fits *budget*.
 
-    Always keeps at least one character: returning nothing would leave the value
-    on the diurnality row with no owner, the very ambiguity the wheel names are
-    there to remove.
+    Keeps at least one character of a non-empty *text*, even when that overshoots:
+    returning nothing would leave the value on the diurnality row with no owner,
+    the very ambiguity the wheel names are there to remove. The overshoot is
+    bounded by one glyph plus the ellipsis and is only reachable when the row's
+    fixed text has already eaten the budget, which no shipped translation does —
+    see the guard in :meth:`InfoSectionBuilder.build_dual_diurnality_info`.
+
+    Empty text stays empty rather than becoming a bare ellipsis.
     """
+    if not text:
+        return ""
     if estimate_text_width(text) <= budget:
         return text
 
@@ -846,7 +909,14 @@ class InfoSectionBuilder:
         fixed = estimate_text_width(separator) * (len(labelled) - 1) + sum(
             estimate_text_width(f" {value}") for _, value in labelled
         )
-        names_budget = max(DIURNALITY_ROW_CLEAR_WIDTH - fixed, 0.0)
+        if fixed >= DIURNALITY_ROW_CLEAR_WIDTH:
+            # No shipped translation gets here — the widest pair of values is a
+            # third of the row — but a caller's language pack can, and a name
+            # cut to its one-character floor would then overrun anyway. Drop the
+            # names instead: two bare values on a dual chart are ambiguous, so
+            # the line is worth less than the graphics it would sit on.
+            return ""
+        names_budget = DIURNALITY_ROW_CLEAR_WIDTH - fixed
 
         # Water-filling: a name that wants less than its equal share hands the
         # remainder to the one that wants more, so "Natal" beside a long name
