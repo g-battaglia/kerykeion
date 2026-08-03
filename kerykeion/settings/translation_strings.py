@@ -705,7 +705,7 @@ LANGUAGE_SETTINGS = {
         "lunar_return": "Ritorno Lunare",
         "heliocentric_return": "Ritorno Eliocentrico",
         "node_return": "Ritorno Nodale",
-        "return_aspects": "Aspetti tra Tema Natale e Ritorno Solare",
+        "return_aspects": "Aspetti tra Tema Natale e Ritorno",
         "inner_wheel": "Cerchio Interno",
         "outer_wheel": "Cerchio Esterno",
         "house_position_comparison": "Confronto posizioni nelle case",

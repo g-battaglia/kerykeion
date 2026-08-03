@@ -37,6 +37,8 @@ from kerykeion import (
     CompositeSubjectFactory,
     PlanetaryReturnFactory,
 )
+from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
+from kerykeion.secondary_progressions import SecondaryProgressionFactory, SolarArcFactory
 from kerykeion.charts.chart_drawer import (
     DIURNALITY_ROW_CLEAR_WIDTH,
     ChartDrawer,
@@ -433,6 +435,39 @@ class TestDiurnalityOnDualCharts:
         )
         assert row == ""
 
+    @pytest.mark.parametrize(
+        "name,label",
+        [
+            ("   ", "spaces"),
+            ("\u200b", "zero-width space"),
+            ("\u200e", "left-to-right mark"),
+            ("\u200d", "zero-width joiner"),
+            ("\u2060", "word joiner"),
+            ("\u00ad", "soft hyphen"),
+            ("\u0301", "a lone combining acute"),
+            ("\u00a0", "non-breaking space"),
+        ],
+    )
+    def test_a_name_with_no_ink_blanks_the_row(self, name, label):
+        """`str.strip()` was not the right question.
+
+        It removes spaces and, incidentally, the non-breaking space — and none of
+        the rest. A wheel name of one zero-width space rendered
+        "\u200b Nocturnal \u00b7 Antonio Nocturnal": a value with no owner, which
+        is what the whitespace guard existed to prevent. A pasted name is far
+        likelier to carry a zero-width character than to be nothing but spaces.
+        """
+        row = _row(
+            _render(ChartDataFactory.create_synastry_chart_data(_subject(name), _subject("Antonio", hour=23)))
+        )
+        assert row == "", f"{label}: {row!r}"
+
+    def test_an_ordinary_name_is_not_caught_by_that(self):
+        row = _row(
+            _render(ChartDataFactory.create_synastry_chart_data(_subject("Marco"), _subject("Antonio", hour=23)))
+        )
+        assert "Marco" in row and "Antonio" in row
+
     def test_a_language_pack_cannot_push_the_row_past_its_floor(self):
         """The values are fixed text; the names have a floor; both must fit.
 
@@ -596,8 +631,78 @@ class TestDiurnalityOnOtherRenderers:
             ChartDataFactory.create_return_chart_data(natal, relabelled),
             show_house_position_comparison=True,
         )
+        # Present, not merely "the others absent": dropping the outer-grid title
+        # entirely would satisfy an absence-only assertion.
+        assert f"{expected} Return" in dual, f"{return_type} chart never names itself"
         for other in others:
             assert not re.search(rf"\b{other} Return\b", dual), f"{return_type} chart still says {other} Return"
+
+    @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
+    def test_no_heading_names_a_body_the_chart_is_not(self, language):
+        """The bug the English-only check missed.
+
+        `return_aspects` is the aspect grid's heading — the largest text block on
+        a dual return — and the Italian pack hardcoded "Ritorno Solare" in it, so
+        a lunar, heliocentric or node return rendered in Italian carried a
+        heading naming the wrong body while every other label was right. Nine of
+        the ten packs were already generic; checking one language could not see
+        it.
+        """
+        natal, solar = _solar_return()
+        for return_type in ("Lunar", "Heliocentric", "Lunar_Node_Crossing"):
+            svg = _render(
+                ChartDataFactory.create_return_chart_data(natal, solar.model_copy(update={"return_type": return_type})),
+                chart_language=language,
+            )
+            solar_label = LANGUAGE_SETTINGS[language]["solar_return"]
+            assert solar_label not in svg, f"{language}/{return_type} names {solar_label!r}"
+
+    def test_a_solar_arc_direction_states_no_diurnality(self):
+        """The directed wheel's value answers for the nativity, not for itself.
+
+        Solar arc keeps the natal instant and moves every point forward by the
+        Sun's arc, so `is_diurnal` describes the birth: on this Rome 1950
+        nativity directed to 2020 it says the Sun is up while the directed Sun
+        sits in the third house, below the horizon. The row said
+        "Natal Diurnal · Progression Diurnal" — two values, one of them about a
+        different chart than the wheel beside it.
+
+        Nothing on the subject distinguishes it from a secondary progression:
+        same model, same renderer, same `chart_type`. The instant does — sharing
+        the nativity's is what makes it symbolic.
+        """
+        natal = _subject("Demo", year=1950, month=6, day=15, hour=5, minute=0)
+        directed = SolarArcFactory.compute_directed_subject(natal, target_year=2020)
+        assert directed.iso_formatted_utc_datetime == natal.iso_formatted_utc_datetime
+        assert _row(_render(ChartDataFactory.create_progression_chart_data(natal, directed))) == ""
+
+    def test_a_secondary_progression_still_states_one(self):
+        """The counterpart that makes the test above mean something.
+
+        A progressed chart is cast for a real later moment, so its value does
+        describe its own wheel. Without this, suppressing the whole renderer
+        would pass.
+        """
+        natal = _subject("Demo", year=1950, month=6, day=15, hour=5, minute=0)
+        progressed = SecondaryProgressionFactory.compute(natal, target_year=2020)
+        assert progressed.iso_formatted_utc_datetime != natal.iso_formatted_utc_datetime
+        assert "Progression " in _row(_render(ChartDataFactory.create_progression_chart_data(natal, progressed)))
+
+    def test_two_subjects_sharing_an_instant_are_not_a_direction(self):
+        """Twins in a synastry share a moment without one deriving from the other.
+
+        The rule is scoped to the renderer that can draw a direction, so a shared
+        instant means nothing here and the row stands.
+        """
+        row = _row(
+            _render(
+                ChartDataFactory.create_synastry_chart_data(
+                    _subject("Twin A", year=1950, month=6, day=15, hour=5, minute=0),
+                    _subject("Twin B", year=1950, month=6, day=15, hour=5, minute=0),
+                )
+            )
+        )
+        assert "Twin" in row and row.count("·") == 1, row
 
     def test_progression_labels_its_second_wheel_progression_not_transit(self):
         """ProgressionChartRenderer inherits from the transit renderer."""

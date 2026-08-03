@@ -99,14 +99,18 @@ def _sign_emoji(emoji: str) -> str:
 def _return_type_label(subject: object) -> str:
     """Human label for a return subject's return_type.
 
-    Derived from the actual value — the old Solar/else-Lunar binary titled
-    Heliocentric and Lunar_Node_Crossing returns as "Lunar Return".
+    Reuses the chart panel's mapping rather than deriving its own. Deriving from
+    the enum agreed on three of the four types and produced "Lunar Node Crossing"
+    where the chart says "Node Return" — the same chart, two names, depending on
+    which surface the reader is looking at. The report has no i18n, so it takes
+    the English defaults.
     """
-    return_type = getattr(subject, "return_type", None)
-    if not return_type:
+    from kerykeion.charts.chart_drawer import return_label_keys
+
+    if getattr(subject, "return_type", None) is None:
         return "Return"
-    label = _humanize(str(return_type))
-    return label if "Return" in label or "Crossing" in label else f"{label} Return"
+    _, english_label = return_label_keys(subject)
+    return english_label
 
 
 class ReportGenerator:

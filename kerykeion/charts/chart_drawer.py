@@ -5,6 +5,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import re
+import unicodedata
 from functools import lru_cache
 from math import ceil
 from pathlib import Path
@@ -656,8 +657,7 @@ class ChartRendererProtocol(Protocol):
         ...
 
 
-#: Translation key and English default per ``ReturnType``, for the full label and
-#: for the short form chart titles use.
+#: Translation key and English default per ``ReturnType``.
 #:
 #: A mapping rather than a Solar/else binary, which is what every one of these
 #: call sites was: ``Heliocentric`` and ``Lunar_Node_Crossing`` are both valid
@@ -666,14 +666,28 @@ class ChartRendererProtocol(Protocol):
 #: "Lunar Return", and the dual chart's outer grid still labelled Lunar — one
 #: mapping, five places that need it.
 _RETURN_LABELS: dict = {
-    "Solar": (("solar_return", "Solar Return"), ("solar_return", "Solar")),
-    "Lunar": (("lunar_return", "Lunar Return"), ("lunar_return", "Lunar")),
-    "Heliocentric": (("heliocentric_return", "Heliocentric Return"), ("heliocentric_return", "Heliocentric")),
-    "Lunar_Node_Crossing": (("node_return", "Node Return"), ("node_return", "Node")),
+    "Solar": ("solar_return", "Solar Return"),
+    "Lunar": ("lunar_return", "Lunar Return"),
+    "Heliocentric": ("heliocentric_return", "Heliocentric Return"),
+    "Lunar_Node_Crossing": ("node_return", "Node Return"),
 }
 
 
-def return_label_keys(subject: object, short: bool = False) -> tuple:
+def _has_visible_text(text: str) -> bool:
+    """Does *text* put any ink on the page?
+
+    ``str.strip()`` is not enough, and the difference is reachable: it does not
+    remove the zero-width space, the joiners, the bidi marks, the word joiner,
+    the soft hyphen, or a lone combining mark. A wheel name of one zero-width
+    space rendered a row reading "\u200b Nocturnal \u00b7 Antonio Nocturnal" — a
+    value with no owner, exactly what the whitespace guard was written to
+    prevent, and a pasted name is far likelier to carry a zero-width character
+    than to consist only of spaces.
+    """
+    return any(not char.isspace() and unicodedata.category(char) not in ("Cf", "Mn", "Me", "Cc") for char in text)
+
+
+def return_label_keys(subject: object) -> tuple:
     """``(translation_key, english_default)`` for *subject*'s return type.
 
     Falls back to the lunar label for anything not in the map, which is what a
@@ -681,8 +695,7 @@ def return_label_keys(subject: object, short: bool = False) -> tuple:
     accept one, but the type is not enforced at these calls.
     """
     return_type = subject.return_type if isinstance(subject, PlanetReturnModel) else None
-    pair = _RETURN_LABELS.get(return_type or "", _RETURN_LABELS["Lunar"])
-    return pair[1] if short else pair[0]
+    return _RETURN_LABELS.get(return_type or "", _RETURN_LABELS["Lunar"])
 
 
 class BaseChartRenderer:
@@ -726,13 +739,12 @@ class BaseChartRenderer:
         """Configure aspect elements. Override in subclasses."""
         raise NotImplementedError("Subclasses must implement setup_aspects")
 
-    def _return_label(self, subject, short: bool = False) -> str:
+    def _return_label(self, subject) -> str:
         """The display name for a return chart's own wheel.
 
-        See :func:`return_label_keys`. ``short`` picks the bare body name used in
-        chart titles ("Solar 2024") over the full label used in panels and grids.
+        See :func:`return_label_keys`.
         """
-        key, default = return_label_keys(subject, short=short)
+        key, default = return_label_keys(subject)
         return self._translate(key, default)
 
     def setup_info_sections(self, template_dict: dict) -> None:
@@ -948,7 +960,33 @@ class InfoSectionBuilder:
             return ""
         return f"{self._translate('diurnality', 'Diurnality')}: {value}"
 
-    def build_dual_diurnality_info(self, first: tuple, second: tuple) -> str:
+    @staticmethod
+    def _is_symbolic_direction(first, second) -> bool:
+        """True when *second*'s points were moved by an arc from *first*, not recast.
+
+        A solar arc directed chart keeps the nativity's instant and shifts every
+        point forward by the Sun's arc, so its ``is_diurnal`` answers for the
+        birth and not for the wheel drawn from it: on a Rome 1950 nativity
+        directed to 2020 the value says the Sun is up while the directed Sun sits
+        in the third house, below the horizon. A secondary progressed chart is
+        cast for a real later moment and its value does describe its own wheel.
+
+        Both arrive through the same renderer and the same model, with the same
+        ``chart_type``, so the flag has to come from somewhere. It comes from the
+        instant: sharing the natal one is what "symbolic" means here. Astrologer
+        Studio reaches the same conclusion by asking its caller, having no better
+        signal on its side of the wire.
+
+        Only the progression renderer consults this. Two subjects can share an
+        instant without one being derived from the other — twins in a synastry,
+        or two charts cast for the same event — and there the shared instant
+        means nothing.
+        """
+        first_utc = getattr(first, "iso_formatted_utc_datetime", None)
+        second_utc = getattr(second, "iso_formatted_utc_datetime", None)
+        return first is not second and first_utc is not None and first_utc == second_utc
+
+    def build_dual_diurnality_info(self, first: tuple, second: tuple, second_may_be_directed: bool = False) -> str:
         """Build one diurnality line covering both wheels of a dual chart.
 
         Diurnality belongs to a single chart: the same placement reads
@@ -977,6 +1015,12 @@ class InfoSectionBuilder:
         Returns:
             The joined line, or ``""`` when neither wheel has an applicable value.
         """
+        if second_may_be_directed and self._is_symbolic_direction(first[0], second[0]):
+            # See _is_symbolic_direction. Neither wheel gets a value: the natal
+            # one would be true and the directed one false, side by side, and a
+            # reader has no way to tell which is which.
+            return ""
+
         labelled = []
         for subject, wheel_name in (first, second):
             if subject is None:
@@ -984,7 +1028,7 @@ class InfoSectionBuilder:
             value = self._diurnality_value(subject)
             if not value:
                 continue
-            if not wheel_name.strip():
+            if not _has_visible_text(wheel_name):
                 # See the note below the return: a value with no owner is worse
                 # than no line. One blank name blanks the whole row rather than
                 # leaving the other value to be read as belonging to both.
@@ -1004,7 +1048,7 @@ class InfoSectionBuilder:
         # the row has a floor and `fixed` alone is not what has to fit — an
         # earlier version of this guard compared `fixed` and let a language pack
         # with wide values render 260px into a 228px row.
-        floor = sum(estimate_text_width(truncate_to_width(name, 0.0)) for name, _ in labelled if name.strip())
+        floor = sum(estimate_text_width(truncate_to_width(name, 0.0)) for name, _ in labelled)
         if fixed + floor > DIURNALITY_ROW_CLEAR_WIDTH:
             # No shipped translation gets here — the widest pair of values is a
             # third of the row — but a caller's language pack can. Drop the line:
@@ -1515,6 +1559,9 @@ class ProgressionChartRenderer(TransitChartRenderer):
             template_dict["bottom_left_5"] = InfoSectionBuilder(d).build_dual_diurnality_info(
                 (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
                 (d.second_obj, self._translate("chart_info_progression_label", "Progression")),
+                # This renderer draws both secondary progressions and solar arc
+                # directions, and only the second is symbolic.
+                second_may_be_directed=True,
             )
             if hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
                 builder = InfoSectionBuilder(d)
@@ -4974,7 +5021,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             year = extract_year_from_iso(self.second_obj.iso_formatted_local_datetime)  # type: ignore
             month_year = format_iso_display(self.second_obj.iso_formatted_local_datetime, "%Y-%m")  # type: ignore
             truncated_name = self._truncate_name(self.first_obj.name)
-            key, default = return_label_keys(self.second_obj, short=True)
+            key, default = return_label_keys(self.second_obj)
             label = self._translate(key, default)
             # A solar return recurs yearly, the others within a year, so only the
             # solar title is unambiguous with the year alone.
@@ -4985,7 +5032,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             year = extract_year_from_iso(self.first_obj.iso_formatted_local_datetime)  # type: ignore
             month_year = format_iso_display(self.first_obj.iso_formatted_local_datetime, "%Y-%m")  # type: ignore
             truncated_name = self._truncate_name(self.first_obj.name)
-            key, default = return_label_keys(self.first_obj, short=True)
+            key, default = return_label_keys(self.first_obj)
             label = self._translate(key, default)
             is_solar = isinstance(self.first_obj, PlanetReturnModel) and self.first_obj.return_type == "Solar"
             return f"{truncated_name} - {label} {year if is_solar else month_year}"
@@ -5413,10 +5460,13 @@ class ChartDrawer:  # type: ignore[no-redef]
         """
         # Handle special case for DualReturnChart with return type suffix
         if self.chart_type == "DualReturnChart" and isinstance(self.second_obj, PlanetReturnModel):
-            if self.second_obj.return_type == "Lunar":
-                return f"{self.first_obj.name} - {self.chart_type} Chart - Lunar Return{suffix}"
-            elif self.second_obj.return_type == "Solar":
-                return f"{self.first_obj.name} - {self.chart_type} Chart - Solar Return{suffix}"
+            # The English label, not the translated one: this is a filename and
+            # has to be stable across the caller's chart_language. Naming only
+            # Solar and Lunar meant a heliocentric and a node-crossing return for
+            # the same subject both fell through to the bare chart-type name, and
+            # the second silently overwrote the first.
+            _, english_label = return_label_keys(self.second_obj)
+            return f"{self.first_obj.name} - {self.chart_type} Chart - {english_label}{suffix}"
 
         # Handle ExternalNatal renaming for wheel and grid exports
         external_alias_suffixes = {" - Wheel Only", " - Aspect Grid Only", " - Modern Wheel Only"}

@@ -39,7 +39,8 @@
     Ambiguous-width characters — Cyrillic, Greek, the middot — render full-width,
     wider than any of the three reference faces.
   - The line is omitted, not guessed, on every perspective not cast from the
-    Earth — seven of the eleven. `is_diurnal` comes from a tropical *geocentric*
+    Earth — eight of the eleven, of which seven draw a Sun that is not the one
+    measured and one (heliocentric) draws none at all. `is_diurnal` comes from a tropical *geocentric*
     Sun, so a Marscentric or Selenocentric chart draws a Sun that is not the one
     measured: on a Liverpool nativity the measured Sun is at 196° while the
     Marscentric wheel draws 354°, and the panel was asserting "Nocturnal" one row
@@ -68,11 +69,17 @@
   Return"** in the chart's Type line — and, once the diurnality row shipped, on
   that row too — contradicting the `return_type` in the same response. The label
   was a Solar/else-Lunar binary written when those two return types did not
-  exist; it is now a map over all four — and over every heading, not just the
-  Type line: the chart title, the dual chart's outer planet grid and its
-  house-comparison columns were four further copies of the same binary, so a
-  heliocentric return read `Type: Heliocentric Return` under a title ending
-  "Lunar Return". Two of the four `ReturnType` values
+  exist; it is now a map over all four — and over every heading and filename,
+  not just the Type line: the chart title, the dual chart's outer planet grid and its
+  house-comparison width estimators were four further copies of the same binary,
+  so a heliocentric return read `Type: Heliocentric Return` under a title ending
+  "Lunar Return". Two more turned up after that: the default filename suffix,
+  where a heliocentric and a node return for one subject collided on the same
+  name and the second overwrote the first, and the Italian `return_aspects`
+  heading, which hardcoded "Ritorno Solare" on the aspect grid of every return
+  type — nine of the ten packs were already generic, so an English-only check
+  could not see it. The text report reuses the same mapping now too, rather than
+  deriving "Lunar Node Crossing" where the chart says "Node Return". Two of the four `ReturnType` values
   carried the wrong label — which downstream is most of what gets asked for:
   Astrologer Studio's return picker offers eight bodies, six of which route to
   one of those two.
