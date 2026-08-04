@@ -122,7 +122,8 @@
   `TypeError` where the old code returned a label. Caught from the lookup rather
   than screened with `isinstance(str)`, so a `UserString` or a lazy-translation
   proxy — which hash and compare equal to `str` without subclassing it — still
-  match the map.
+  match the map. (A `str`-mixin enum resolves too, but it always did: it is a
+  `str` subclass, so it satisfied the screen as readily as the fix.)
 - Never shipped in this state, recorded because the reasoning is worth keeping:
   the five new translation keys were first declared **required** on
   `KerykeionLanguageModel`, which would have rejected every third-party language

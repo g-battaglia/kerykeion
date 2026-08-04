@@ -23,7 +23,6 @@ Usage:
     pytest tests/core/test_diurnality_svg.py -v
 """
 
-import enum
 import json
 import re
 import unicodedata
@@ -747,12 +746,6 @@ def test_a_leading_space_cannot_blank_a_wheel_name():
     assert row.startswith("John "), row
 
 
-class _StrEnum(str, enum.Enum):
-    """A `str`-mixin enum, the shape a caller most plausibly stores a type as."""
-
-    SOLAR = "Solar"
-
-
 class _DuckTypedReturn:
     """Not a `PlanetReturnModel` — just something that says what it is."""
 
@@ -831,8 +824,7 @@ class TestTheReturnLabelMappingItself:
         """
         assert return_label_keys(_DuckTypedReturn(return_type)) == ("Return", "Return")
 
-    @pytest.mark.parametrize("return_type", [UserString("Solar"), _StrEnum.SOLAR])
-    def test_a_string_that_is_not_a_str_is_still_taken_at_its_word(self, return_type):
+    def test_a_string_that_is_not_a_str_is_still_taken_at_its_word(self):
         """Screening on `isinstance(str)` would fail this, and did.
 
         The first guard against the case above tested the *type* rather than the
@@ -841,5 +833,12 @@ class TestTheReturnLabelMappingItself:
         map perfectly. Catching the lookup's own TypeError keeps them working:
         widening this function to duck-typed subjects and then narrowing it back
         by the side door would have undone the point of the change.
+
+        `UserString` alone, because it is the only one of these that ever
+        discriminated. A `str`-mixin enum was pinned here too and satisfied the
+        `isinstance` screen as readily as the fix — `issubclass(_, str)` is True
+        for it — so it read as evidence for a claim it could not support. That is
+        the vacuous-parameter defect the previous commit removed, one commit
+        later, and the commit message repeated it.
         """
-        assert return_label_keys(_DuckTypedReturn(return_type))[1] == "Solar Return"
+        assert return_label_keys(_DuckTypedReturn(UserString("Solar")))[1] == "Solar Return"
