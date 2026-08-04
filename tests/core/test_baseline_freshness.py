@@ -114,3 +114,44 @@ def test_the_exemption_list_does_not_outlive_its_reason():
     names = {svg.name for directory in BASELINE_DIRS for svg in directory.glob("*.svg")}
     stale_entries = set(CANNOT_REGENERATE_HERE) - names
     assert not stale_entries, f"exempted files that no longer exist: {sorted(stale_entries)}"
+
+
+def test_the_gallery_page_declares_the_aspect_ratio_its_charts_actually_have():
+    """The index is a baseline too, and it goes stale on its own.
+
+    `index.html` hardcodes an `aspect-ratio` per chart so the browser reserves
+    the right box before the SVG loads. It is generated from the SVGs, but it is
+    a separate file, so a regeneration that is later reverted in code can leave
+    the page describing charts that no longer exist — which is what happened: an
+    estimator experiment narrowed the transit canvas to 1177px, the code was
+    reverted, the SVG went back to 1244px, and the page kept the number.
+
+    The row check above cannot see this: it reads `Bottom_Left_Text_*` out of
+    `.svg` files, and both the page and the mismatch live outside that. A
+    declared ratio that no longer matches its own SVG is a page laid out for a
+    picture it is not showing.
+
+    Compared as a ratio rather than as the literal pair, because the generator
+    legitimately writes `1/1` for the square wheel-only charts whose viewBox is
+    `530 530`. Demanding the same two numbers would have failed on eight files
+    that are perfectly fresh — a guard that cries wolf gets regenerated away.
+    """
+    gallery = REPO_ROOT / "tests" / "data" / "v6_gallery"
+    index = gallery / "index.html"
+    declared = re.findall(
+        r'data="([^"]+\.svg)"[^>]*aspect-ratio:\s*([\d.]+)\s*/\s*([\d.]+)', index.read_text(encoding="utf-8")
+    )
+    assert len(declared) > 20, f"only {len(declared)} declarations parsed — did the page's markup change?"
+
+    mismatched = []
+    for name, width, height in declared:
+        source = (gallery / name).read_text(encoding="utf-8")
+        view_box = re.search(r"viewBox=['\"]\s*[\d.-]+\s+[\d.-]+\s+([\d.]+)\s+([\d.]+)", source)
+        assert view_box, f"{name} has no viewBox to compare against"
+        drawn = float(view_box.group(1)) / float(view_box.group(2))
+        if abs(float(width) / float(height) - drawn) > 1e-6:
+            mismatched.append(
+                f"{name}: page declares {width}/{height}, SVG draws {view_box.group(1)}/{view_box.group(2)}"
+            )
+
+    assert not mismatched, "Regenerate with `python scripts/generate_v6_test_gallery.py`:\n" + "\n".join(mismatched)

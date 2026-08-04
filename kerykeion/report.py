@@ -106,13 +106,12 @@ def _return_type_label(subject: object) -> str:
     which surface the reader is looking at. The report has no i18n, so it takes
     the English defaults.
 
-    The falsy check is deliberate and was briefly an ``is None``: this module
-    reads subjects with ``getattr`` on purpose, so an empty string or a
-    duck-typed subject that is no ``PlanetReturnModel`` must fall through to the
-    neutral "Return" rather than inherit the lunar default.
+    No local guard for the missing or empty case: the mapping now falls through
+    to the neutral "Return" itself. This function used to repeat that rule, and
+    the copy quietly stopped agreeing — the mapping was returning the *lunar*
+    label for a duck-typed subject, so the check here only looked like it was
+    covering the case it named. One rule, one place, is what keeps it true.
     """
-    if not getattr(subject, "return_type", None):
-        return "Return"
     _, english_label = return_label_keys(subject)
     return english_label
 

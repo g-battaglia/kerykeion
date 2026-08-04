@@ -27,15 +27,16 @@
     wheel names — so a heading would not overflow the row, it would come
     straight out of the names. (Measured with `estimate_text_width`, the headed
     English form is 196px and fits; nine of the ten shipped languages do, Hindi
-    being the exception at 272px. An earlier draft of this entry said it did not
+    being the exception at 314px. An earlier draft of this entry said it did not
     fit, which was checkably wrong.) The names are cut to that width rather than to
     a character count, since eight ideographs are twice the width of eight Latin
     letters: `kerykeion.charts.glyph_metrics.estimate_text_width` is the public
     entry point (re-exported from `chart_drawer` for convenience). Note this is
     *not* what sizes the planet grid, the legend or the auto-size canvas —
     `ChartDrawer._estimate_text_width` still uses its own 0.7-of-the-em average
-    there. Pointing that at the measured table is a layout change (32 baselines
-    move, one canvas from 1244px to 1177px) and belongs in a change about grid
+    there. Pointing that at the measured table is a layout change (28 baselines
+    move — 27 under `tests/data/svg` plus the gallery's transit chart, and none
+    under `docs/charts` — one canvas from 1244px to 1177px) and belongs in a change about grid
     geometry, not in this one. It charges each character the widest advance that character has
     across Times, Helvetica and Arial Unicode, rounded up, so it reads at or
     above what those three render. Regenerate the table with
@@ -66,7 +67,29 @@
     actually produced. Heliocentric charts and midpoint composites therefore keep
     the previous layout too, as does any caller who opts out.
   - New translation keys `diurnality`, `diurnal` and `nocturnal` in all ten
-    shipped languages.
+    shipped languages, plus `heliocentric_return` and `node_return` for the
+    mislabelled return types under *Fixed* — five keys, all with English
+    defaults so an older third-party pack still validates.
+
+### Changed
+
+- **Breaking for direct constructors of `ChartTemplateModel`:** the new panel row
+  adds a required field, `bottom_left_5`. The model is public, so code building
+  one by hand now raises a pydantic `missing` error until it supplies the key.
+  Required rather than defaulted on purpose, and the opposite call from the
+  language keys above: a language pack is written by a third party against a
+  released version and cannot be fixed retroactively, whereas this model is
+  filled in by a renderer in this repository — a renderer that forgets the row
+  should fail loudly at validation rather than silently draw a chart with a
+  blank line where the value belongs. Callers using `ChartDrawer` are unaffected.
+- `uv.lock` no longer carries `[options] prerelease-mode = "allow"`. Not a
+  deliberate policy change: the block came from a `--prerelease` flag passed at
+  lock time, `pyproject.toml` declares no `[tool.uv]` section, and current uv
+  writes the lock without it — which is also what makes `uv lock --check` pass
+  here and fail on the previous release. Verified inert: the lock resolves the
+  same 58 packages at the same versions, the only difference being kerykeion's
+  own bump. The `libephemeris==3.0.0rc15` pin is explicit, so the default
+  `if-necessary-or-explicit` mode still admits it.
 
 ### Fixed
 
@@ -87,7 +110,13 @@
   deriving "Lunar Node Crossing" where the chart says "Node Return". Two of the four `ReturnType` values
   carried the wrong label — which downstream is most of what gets asked for:
   Astrologer Studio's return picker offers eight bodies, six of which route to
-  one of those two.
+  one of those two. The mapping reads `return_type` by duck-typing: an
+  `isinstance` gate on `PlanetReturnModel` had reinstated the very binary this
+  entry describes, discarding the declared type of anything else and labelling it
+  Lunar — reachable through `kerykeion.report`, which reads subjects with
+  `getattr` by design. A type the map does not know now yields the neutral
+  "Return" rather than borrowing the lunar label; untranslated outside English,
+  which beats confidently naming the wrong body.
 - Never shipped in this state, recorded because the reasoning is worth keeping:
   the five new translation keys were first declared **required** on
   `KerykeionLanguageModel`, which would have rejected every third-party language

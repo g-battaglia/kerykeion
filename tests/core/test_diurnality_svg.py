@@ -37,7 +37,8 @@ from kerykeion import (
     CompositeSubjectFactory,
     PlanetaryReturnFactory,
 )
-from kerykeion.report import ReportGenerator
+from kerykeion.report import ReportGenerator, _return_type_label
+from kerykeion.settings.config_constants import return_label_keys
 from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 from kerykeion.secondary_progressions import SecondaryProgressionFactory, SolarArcFactory
 from kerykeion.charts.chart_drawer import (
@@ -742,3 +743,53 @@ def test_a_leading_space_cannot_blank_a_wheel_name():
     paul = _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0)
     row = _row(_render(ChartDataFactory.create_synastry_chart_data(john, paul)))
     assert row.startswith("John "), row
+
+
+class _DuckTypedReturn:
+    """Not a `PlanetReturnModel` — just something that says what it is."""
+
+    def __init__(self, return_type):
+        self.return_type = return_type
+
+
+class TestTheReturnLabelMappingItself:
+    """The mapping reached directly, not through a rendered chart.
+
+    Every other test here goes through a `PlanetReturnModel`, whose `return_type`
+    is always one of the four keyed values — so they all agree no matter how the
+    fallback behaves, and none of them can see it. That blind spot is exactly
+    where the Solar/else-Lunar binary this branch removed grew back: an
+    `isinstance` gate discarded the `return_type` of anything that was not that
+    model, so a subject *declaring* Solar was labelled Lunar. `report.py` reads
+    subjects with `getattr` on purpose and documents duck-typing as supported,
+    which makes it the surface that regressed.
+    """
+
+    @pytest.mark.parametrize(
+        "return_type,expected",
+        [
+            ("Solar", "Solar Return"),
+            ("Lunar", "Lunar Return"),
+            ("Heliocentric", "Heliocentric Return"),
+            ("Lunar_Node_Crossing", "Node Return"),
+        ],
+    )
+    def test_a_duck_typed_subject_is_taken_at_its_word(self, return_type, expected):
+        assert return_label_keys(_DuckTypedReturn(return_type))[1] == expected
+        assert _return_type_label(_DuckTypedReturn(return_type)) == expected
+
+    @pytest.mark.parametrize("return_type", ["", None, "Something_Upstream_Added"])
+    def test_an_unknown_type_is_named_neither_lunar_nor_wrongly(self, return_type):
+        """Naming no body beats naming the wrong one.
+
+        The old fallback handed back the lunar label, so an unmapped value —
+        a `ReturnType` added upstream, or a subject carrying none — was
+        announced as a Lunar Return in the panel, the Type line, the title and
+        both grids at once.
+        """
+        assert return_label_keys(_DuckTypedReturn(return_type)) == ("return", "Return")
+        assert _return_type_label(_DuckTypedReturn(return_type)) == "Return"
+
+    def test_a_subject_with_no_return_type_at_all_is_not_a_lunar_return(self):
+        assert return_label_keys(_subject()) == ("return", "Return")
+        assert _return_type_label(_subject()) == "Return"

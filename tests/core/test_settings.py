@@ -308,6 +308,13 @@ class TestDeepMerge:
 # =============================================================================
 
 
+#: The keys this change added, in the order their English defaults are asserted.
+#: Named once so the "a pack may omit it" test and the "a shipped pack may not"
+#: test cannot cover different subsets — they did, and the two that only the
+#: first one covered were the two nobody had noticed were new.
+_KEYS_ADDED_HERE = ("diurnality", "diurnal", "nocturnal", "heliocentric_return", "node_return")
+
+
 class TestKerykeionLanguageModelRoundTrip:
     """The Pydantic language model must not silently drop render-time keys.
 
@@ -342,24 +349,35 @@ class TestKerykeionLanguageModelRoundTrip:
         new key as required rejects every pack written before it existed, with a
         pydantic ``missing`` error rather than a fallback — and there is nothing
         the pack's author can do about a release that has already shipped. The
-        sixteen keys added before these three all carry English defaults for
-        exactly this reason; this test is what keeps the seventeenth honest.
+        sixteen keys added before these five all carry English defaults for
+        exactly this reason; this test is what keeps the rest honest.
         """
         pack = dict(LANGUAGE_SETTINGS["EN"])
-        for key in ("diurnality", "diurnal", "nocturnal"):
+        for key in _KEYS_ADDED_HERE:
             pack.pop(key)
         model = KerykeionLanguageModel(**pack)
-        assert (model.diurnality, model.diurnal, model.nocturnal) == ("Diurnality", "Diurnal", "Nocturnal")
+        assert [getattr(model, key) for key in _KEYS_ADDED_HERE] == [
+            "Diurnality",
+            "Diurnal",
+            "Nocturnal",
+            "Heliocentric Return",
+            "Node Return",
+        ]
 
     @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
     def test_a_shipped_language_never_falls_back_to_those_defaults(self, language):
         """The defaults above are a compatibility shim, not a translation.
 
-        Every language kerykeion ships must carry its own three values, or a
+        Every language kerykeion ships must carry its own value for each, or a
         locale would silently render English while the test above stayed green.
+
+        Covering all five and not just the three named for this feature:
+        `heliocentric_return` and `node_return` were added by the same change and
+        carry English defaults for the same reason, so leaving them out would
+        have let a pack ship without them under a test that reads as complete.
         """
         source = LANGUAGE_SETTINGS[language]
-        for key in ("diurnality", "diurnal", "nocturnal"):
+        for key in _KEYS_ADDED_HERE:
             assert source.get(key), f"{language} is missing the {key!r} translation"
 
     def test_transit_chart_svg_uses_localized_cusp_label(self):

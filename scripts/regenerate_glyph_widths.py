@@ -2,8 +2,8 @@
 
 There are two, deliberately:
 
-- ``_MEASURED_EM`` in ``kerykeion/charts/chart_drawer.py`` — the widths
-  :func:`~kerykeion.charts.chart_drawer.estimate_text_width` charges, rounded
+- ``_MEASURED_EM`` in ``kerykeion/charts/glyph_metrics.py`` — the widths
+  :func:`~kerykeion.charts.glyph_metrics.estimate_text_width` charges, rounded
   **up** to 1/50 em so the estimate never reads narrower than the text renders.
   Bucketed by width to keep the literal readable.
 - ``tests/data/glyph_advances.json`` — the same measurements *unrounded*, and
@@ -104,7 +104,7 @@ def main() -> None:
     for code_point, width in estimator.items():
         buckets[math.ceil(width * 50) / 50].append(chr(code_point))
     lines = [f"    {width:.2f}: {''.join(sorted(chars))!r}," for width, chars in sorted(buckets.items())]
-    print(f"_MEASURED_EM: {len(estimator)} characters in {len(buckets)} buckets — paste into chart_drawer.py:\n")
+    print(f"_MEASURED_EM: {len(estimator)} characters in {len(buckets)} buckets — paste into glyph_metrics.py:\n")
     print("_MEASURED_EM: dict[float, str] = {\n" + "\n".join(lines) + "\n}")
 
     fixture = _widest_advances(fonts, FIXTURE_RANGES)

@@ -20,7 +20,7 @@ import unicodedata
 from typing import cast
 
 from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode
-from kerykeion.schemas.kr_models import ActiveAspect, PlanetReturnModel
+from kerykeion.schemas.kr_models import ActiveAspect
 
 
 # =============================================================================
@@ -110,12 +110,22 @@ def has_visible_text(text: str) -> bool:
 def return_label_keys(subject: object) -> tuple[str, str]:
     """``(translation_key, english_default)`` for *subject*'s return type.
 
-    Falls back to the lunar label for anything not in the map, which is what a
-    subject that is not a :class:`PlanetReturnModel` at all gets — the renderers
-    accept one, but the type is not enforced at these calls.
+    Read with :func:`getattr` rather than behind an ``isinstance`` gate. The gate
+    looked like type hygiene and was a Solar/else binary in disguise: it fed
+    ``None`` for every subject that was not a :class:`PlanetReturnModel`, so a
+    duck-typed subject *declaring* ``return_type="Solar"`` came out labelled
+    "Lunar Return" — the very substitution this mapping exists to end, on the one
+    input :mod:`kerykeion.report` documents as supported.
+
+    Anything the map does not know falls through to the neutral "Return" instead
+    of borrowing the lunar label. Untranslated in the nine non-English packs,
+    which is the lesser harm: a `PlanetReturnModel` always carries one of the
+    four keyed types, so this arm is reached only by a duck-typed subject or by a
+    ``ReturnType`` added upstream without a label here — and naming the wrong
+    body confidently is worse than naming none.
     """
-    return_type = subject.return_type if isinstance(subject, PlanetReturnModel) else None
-    return _RETURN_LABELS.get(return_type or "", _RETURN_LABELS["Lunar"])
+    return_type = getattr(subject, "return_type", None)
+    return _RETURN_LABELS.get(return_type or "", ("return", "Return"))
 
 
 def subject_states_a_diurnality(subject: object) -> bool:
