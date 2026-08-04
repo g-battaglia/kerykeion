@@ -28,6 +28,10 @@ CHARTS = [
     ("classic_dark_high_contrast_natal", "classic", "dark-high-contrast"),
     ("classic_strawberry_natal", "classic", "strawberry"),
     ("classic_black_and_white_natal", "classic", "black-and-white"),
+    # Same style and theme, so these two render byte-identically. Both filenames
+    # were already committed and the README links `modern_classic_natal`, so
+    # neither is dropped here; listing both is what keeps them in step. Retiring
+    # one is a docs change, not a regeneration one.
     ("modern_default_natal", "modern", "classic"),
     ("modern_classic_natal", "modern", "classic"),
     ("modern_dark_natal", "modern", "dark"),

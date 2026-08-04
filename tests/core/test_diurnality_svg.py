@@ -37,6 +37,7 @@ from kerykeion import (
     CompositeSubjectFactory,
     PlanetaryReturnFactory,
 )
+from kerykeion.report import ReportGenerator
 from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 from kerykeion.secondary_progressions import SecondaryProgressionFactory, SolarArcFactory
 from kerykeion.charts.chart_drawer import (
@@ -270,6 +271,33 @@ class TestDiurnalityOmitted:
         assert _row(svg, 4) == f"Diurnality: {'Diurnal' if composite.is_diurnal else 'Nocturnal'}"
         # Row 4 already existed, so nothing had to move for it.
         assert _layout(svg) == LAYOUT_WITHOUT_LINE
+
+
+class TestDiurnalityInTheTextReport:
+    """The report applies the same omission rule, and nothing pinned it.
+
+    `subject_states_a_diurnality` is shared by the SVG panel and the report so
+    the two cannot drift — but only the panel had tests, so a divergence in the
+    report would have shown up as a user noticing it. These mirror the SVG cases.
+    """
+
+    @staticmethod
+    def _report(subject) -> str:
+        return str(ReportGenerator(subject).generate_report())
+
+    def test_an_ordinary_chart_reports_it(self):
+        assert "Diurnality" in self._report(_subject())
+
+    @pytest.mark.parametrize("perspective", ["Heliocentric", "Marscentric", "Selenocentric", "Barycentric"])
+    def test_a_chart_not_cast_from_the_earth_does_not(self, perspective):
+        assert "Diurnality" not in self._report(_subject(perspective_type=perspective))
+
+    def test_a_midpoint_composite_does_not(self):
+        assert "Diurnality" not in self._report(_composite("Midpoint"))
+
+    def test_a_davison_composite_does(self):
+        # The counterpart: without it, suppressing every composite would pass.
+        assert "Diurnality" in self._report(_composite("Davison"))
 
 
 class TestDiurnalityOnDualCharts:

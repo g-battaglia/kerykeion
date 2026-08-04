@@ -15,11 +15,12 @@ and reduces the risk of typos.
 """
 
 import os
+import unicodedata
 
 from typing import cast
 
 from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode
-from kerykeion.schemas.kr_models import ActiveAspect
+from kerykeion.schemas.kr_models import ActiveAspect, PlanetReturnModel
 
 
 # =============================================================================
@@ -74,6 +75,47 @@ PERSPECTIVE_TOPOCENTRIC: str = "Topocentric"
 EARTH_CENTRED_PERSPECTIVES: frozenset[str] = frozenset(
     {PERSPECTIVE_APPARENT_GEOCENTRIC, PERSPECTIVE_TRUE_GEOCENTRIC, PERSPECTIVE_TOPOCENTRIC}
 )
+
+
+#: Translation key and English default per ``ReturnType``.
+#:
+#: A mapping rather than a Solar/else binary, which is what every one of these
+#: call sites was: ``Heliocentric`` and ``Lunar_Node_Crossing`` are both valid
+#: return types and both rendered as "Lunar Return". Fixing only the panel left a
+#: single-wheel chart reading ``Type: Heliocentric Return`` under a title ending
+#: "Lunar Return", and the dual chart's outer grid still labelled Lunar — one
+#: mapping, five places that need it.
+_RETURN_LABELS: dict[str, tuple[str, str]] = {
+    "Solar": ("solar_return", "Solar Return"),
+    "Lunar": ("lunar_return", "Lunar Return"),
+    "Heliocentric": ("heliocentric_return", "Heliocentric Return"),
+    "Lunar_Node_Crossing": ("node_return", "Node Return"),
+}
+
+
+def has_visible_text(text: str) -> bool:
+    """Does *text* put any ink on the page?
+
+    ``str.strip()`` is not enough, and the difference is reachable: it does not
+    remove the zero-width space, the joiners, the bidi marks, the word joiner,
+    the soft hyphen, or a lone combining mark. A wheel name of one zero-width
+    space rendered a row reading "\u200b Nocturnal \u00b7 Antonio Nocturnal" — a
+    value with no owner, exactly what the whitespace guard was written to
+    prevent, and a pasted name is far likelier to carry a zero-width character
+    than to consist only of spaces.
+    """
+    return any(not char.isspace() and unicodedata.category(char) not in ("Cf", "Mn", "Me", "Cc") for char in text)
+
+
+def return_label_keys(subject: object) -> tuple[str, str]:
+    """``(translation_key, english_default)`` for *subject*'s return type.
+
+    Falls back to the lunar label for anything not in the map, which is what a
+    subject that is not a :class:`PlanetReturnModel` at all gets — the renderers
+    accept one, but the type is not enforced at these calls.
+    """
+    return_type = subject.return_type if isinstance(subject, PlanetReturnModel) else None
+    return _RETURN_LABELS.get(return_type or "", _RETURN_LABELS["Lunar"])
 
 
 def subject_states_a_diurnality(subject: object) -> bool:

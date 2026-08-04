@@ -30,6 +30,7 @@ from kerykeion.settings.config_constants import (
     AXIAL_POINTS,
     LUNAR_NODES,
     MAIN_PLANETS,
+    return_label_keys,
     subject_states_a_diurnality,
 )
 
@@ -104,10 +105,13 @@ def _return_type_label(subject: object) -> str:
     where the chart says "Node Return" — the same chart, two names, depending on
     which surface the reader is looking at. The report has no i18n, so it takes
     the English defaults.
-    """
-    from kerykeion.charts.chart_drawer import return_label_keys
 
-    if getattr(subject, "return_type", None) is None:
+    The falsy check is deliberate and was briefly an ``is None``: this module
+    reads subjects with ``getattr`` on purpose, so an empty string or a
+    duck-typed subject that is no ``PlanetReturnModel`` must fall through to the
+    neutral "Return" rather than inherit the lunar default.
+    """
+    if not getattr(subject, "return_type", None):
         return "Return"
     _, english_label = return_label_keys(subject)
     return english_label

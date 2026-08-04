@@ -30,8 +30,13 @@
     being the exception at 272px. An earlier draft of this entry said it did not
     fit, which was checkably wrong.) The names are cut to that width rather than to
     a character count, since eight ideographs are twice the width of eight Latin
-    letters: `kerykeion.charts.chart_drawer.estimate_text_width` is the public
-    entry point. It charges each character the widest advance that character has
+    letters: `kerykeion.charts.glyph_metrics.estimate_text_width` is the public
+    entry point (re-exported from `chart_drawer` for convenience). Note this is
+    *not* what sizes the planet grid, the legend or the auto-size canvas —
+    `ChartDrawer._estimate_text_width` still uses its own 0.7-of-the-em average
+    there. Pointing that at the measured table is a layout change (32 baselines
+    move, one canvas from 1244px to 1177px) and belongs in a change about grid
+    geometry, not in this one. It charges each character the widest advance that character has
     across Times, Helvetica and Arial Unicode, rounded up, so it reads at or
     above what those three render. Regenerate the table with
     `poe regenerate:glyph-widths` if the reference set changes. Known residual,

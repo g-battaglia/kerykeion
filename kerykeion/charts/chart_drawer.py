@@ -5,7 +5,6 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import re
-import unicodedata
 from functools import lru_cache
 from math import ceil
 from pathlib import Path
@@ -52,9 +51,12 @@ from kerykeion.schemas.kr_literals import (
 from kerykeion.settings.config_constants import (
     AXIAL_POINTS,
     DEFAULT_ACTIVE_POINTS,
+    has_visible_text,
+    return_label_keys,
     subject_states_a_diurnality,
 )
 from kerykeion.settings.translations import get_translations, load_language_pair
+from kerykeion.charts.glyph_metrics import estimate_text_width
 from kerykeion.charts.charts_utils import (
     draw_zodiac_slice,
     convert_latitude_coordinate_to_string,
@@ -273,174 +275,6 @@ DIURNALITY_GLYPH_DROP: int = 14
 # truth rather than wildly conservative and the last pixel is not worth having.
 DIURNALITY_ROW_CLEAR_WIDTH: float = 228.0
 
-# What a glyph costs, as a fraction of the em.
-#
-# The panel's text nodes name no font-family, so the real glyphs are the
-# viewer's choice and no exact width exists here. This table is the widest
-# advance each character has across Times, Helvetica and Arial Unicode, rounded
-# *up* to 1/50 em, so it reads at or above what those three will render and
-# never below.
-#
-# A per-character table rather than an average, because the average is what got
-# this wrong twice. Latin letters alone span 0.28em (i, l, t) to 0.89em (M, W) —
-# a 3.2x range — so any single figure either undercharges the wide half or
-# mangles ordinary names to protect against it. A first version charged 0.55em
-# by default and listed only the characters above 0.80em as exceptions, which
-# left 670 measured characters undercharged, lowercase `w` and Cyrillic `ж ю ы`
-# among them: a Russian synastry overran the wheel by 21px, the same magnitude
-# as the ideograph bug the table was written to fix.
-#
-# Generated from the three fonts' `hmtx` tables; regenerate with
-# `poe regenerate:glyph-widths` if the reference set ever changes.
-_MEASURED_EM: dict[float, str] = {
-    0.20: "'",
-    0.24: "ɉ‛",
-    0.26: "|¦Ɩ",
-    0.28: " ,./:;\\ijlt\xa0·ìíîïĭįıĵĺļłţƫƭǀǐǰȉȋțȷͺ;·ΐίιϊϳіїјӏ",
-    0.32: "ŧ",
-    0.34: "!()-I[]`fr¡¨²³´¸¹ÌÍÎÏĬĮİŕŗřſǃǏȈȊȑȓʹ͵΄ІЇӀ‐‑‘’‚‟․‧",
-    0.36: "ŀƗƚ΅•‣",
-    0.38: "ªºƪ",
-    0.40: "°ĪīľɍΙΪґғ",
-    0.42: '"гѓ',
-    0.44: "ĩťϯҟӄӷ‖",
-    0.46: "Ĩѯ“”„",
-    0.48: "^{}ƺǁ",
-    0.50: "*Jcksvxyz¯çýÿćĉċčĴķĸśŝşšŷźżžƙƨƶǩșȳȼͻͼͽζξτϲЈзстухѕўѵ‗",
-    0.52: "ϩϵ϶эєҁҙқҫҭҳӟӡӭӯӱӳӿ",
-    0.54: "¶ƹƽǮǯϧчьӌ",
-    0.56: "#$0123456789?_abdeghnopqu¢£¤¥§«»àáâãäåèéêëðñòóôõöùúûüþāăąđēĕėęěĝğġģĥħĳńņňŋōŏőũūŭůűųƀƃƄƅƌƒƛƞƥƼƾƿǉǎǒǔǖǘǚǜǝǟǡǧǫǭǵǹǻȁȃȅȇȍȏȕȗȟȧȩȫȭȯȱȽɁɂɇɈέγεκλνςχϥϨϸавекнопряёђћќџѳѻҐҕҷҹһәӛӵ‒–†‡",
-    0.58: "µƈƍƬƻǂϐϜϞϮϱЃГблцѐѝҒңҧҩӈӑӓӗӣӥӧөӫ",
-    0.60: "+<=>~¬±×÷ǥийѧѷҞӃ",
-    0.62: "FLTZ¿ßøĹĻĽĿŁŢŤŦŹŻŽƐƑƩƮƴƵǿȚȾɋɏΓΣάήΰαβδηθμορσυϋόύϑϫϬϭϰТдѣѫѮҝӠӶ",
-    0.64: "ŉƷƸϒϔϪъҬ",
-    0.66: "ƔΊϕЬҔ",
-    0.68: "BEPSÈÉÊËÞďĒĔĖĘĚŚŜŞŠƂƋƎƘơƧƲǷȄȆȘȜȝȨȺɅɆΞΡΤπϷЀЁЅБВЕЗРѦѴѶҘҡҰұӖӞӾ‥",
-    0.70: "ưϠϤϦЧм҂ҽҿӋ",
-    0.72: "ϼДЛҥҵҶҸҺӴ",
-    0.74: "ACDHKNRUVXYwÀÁÂÃÄÅÇÐÑÙÚÛÜÝĀĂĄĆĈĊČĎĐĤĦĶŃŅŇŊŔŖŘŨŪŬŮŰŲŵŶŸƆƉƝƤƦǍǓǕǗǙǛǞǠǨǸǺȀȂȐȒȔȖȞȠȦȲȻɃΒΔΕΖφψϓϚϹϻϽϾϿЄЏАКНПСХЭЯыѥѱҀҚҦҪҮүҲӇӐӒӬ",
-    0.76: "©®ƁƏƱƳЌЍЎИЙУЦҢӂӘӚӢӤӮӰӲӹ",
-    0.78: "&GOQÒÓÔÕÖØĜĞĠĢĲŌŎŐƇƟǌǑǦǪǬǴǾȌȎȪȬȮȰɎΚΛΝΥΧΩΫωώϴОжюѡѲѺѽѿҜҨ",
-    0.80: "ƊƓƣǤɌΆϖӦӨӪ",
-    0.82: "ƕшњѢѩѭ",
-    0.84: "m¼½¾ƜΑΗΘΟΠΦϣϺЪфщѪѰ",
-    0.86: "ɄɊФҗӝ",
-    0.88: "ƯϢЂЋљҠ",
-    0.90: "%MæƠǈǣǽΨМӕ",
-    0.92: "ȹҼҾ",
-    0.94: "ȸЫҤҴӸ",
-    0.96: "WœŴΌΏΜШЩѨ",
-    0.98: "ѠѼѾӁ",
-    1.00: "ÆŒǋǢǼΈЖӔ—―…",
-    1.02: "@ƢЊЮѤ",
-    1.04: "Ǉ",
-    1.06: "ǆǳΎѬ",
-    1.08: "ѹ",
-    1.10: "Ή",
-    1.12: "ЉҖӜ",
-    1.24: "ǅǊǲ",
-    1.28: "Ѹ",
-    1.34: "ǄǱ",
-}
-
-_MEASURED_EM_BY_CHAR: dict[str, float] = {char: em for em, chars in _MEASURED_EM.items() for char in chars}
-
-# Anything outside the table above. Not a single fallback figure — that was
-# tried twice and was wrong both times. `1.0` looked like a safe ceiling because
-# ideographs are one em; 510 characters the reference fonts carry exceed it, up
-# to 2.26 em among the Arabic presentation forms, so an Arabic name overran the
-# wheel by 39px. What holds instead is a ceiling per 256-code-point block: the
-# widest advance any character in that block has across the three fonts, rounded
-# up. 147 of the 172 blocks come in at or under one em, so this costs almost
-# nothing where the old figure happened to be right, and is correct where it was
-# not.
-#
-# Note there is deliberately no rule for combining marks. Charging them zero —
-# on the reasonable-sounding grounds that a matra stacks on the letter before it
-# — is another guess about the renderer, and the SOFT HYPHEN it also swept up is
-# 0.333 em of real width in all three fonts. Every character is charged; a
-# mark-heavy name truncates a little harder than it strictly needs to, which is
-# the direction this may err in.
-_BLOCK_CEILING_EM: tuple[tuple[int, int, float], ...] = (
-    (0x0000, 0x00FF, 1.02),
-    (0x0100, 0x01FF, 1.34),
-    (0x0200, 0x02FF, 1.04),
-    (0x0300, 0x03FF, 1.10),
-    (0x0400, 0x04FF, 1.28),
-    (0x0500, 0x05FF, 0.76),
-    (0x0600, 0x06FF, 1.30),
-    (0x0900, 0x09FF, 1.04),
-    (0x0A00, 0x0AFF, 1.06),
-    (0x0B00, 0x0BFF, 2.00),
-    (0x0C00, 0x0CFF, 1.70),
-    (0x0D00, 0x0DFF, 1.84),
-    (0x0E00, 0x0EFF, 1.28),
-    (0x0F00, 0x0FFF, 0.62),
-    (0x1000, 0x10FF, 0.98),
-    (0x1100, 0x11FF, 1.00),
-    (0x1C00, 0x1CFF, 1.06),
-    (0x1D00, 0x1DFF, 0.94),
-    (0x1E00, 0x1EFF, 0.96),
-    (0x1F00, 0x1FFF, 1.48),
-    (0x2000, 0x20FF, 1.38),
-    (0x2100, 0x21FF, 1.74),
-    (0x2200, 0x22FF, 1.36),
-    (0x2300, 0x23FF, 1.10),
-    (0x2400, 0x25FF, 1.00),
-    (0x2600, 0x26FF, 1.10),
-    (0x2700, 0x27FF, 0.98),
-    (0x2C00, 0x2CFF, 0.80),
-    (0x2E00, 0x2EFF, 1.20),
-    (0x3000, 0x33FF, 1.00),
-    (0x4E00, 0x60FF, 1.00),
-    (0x6100, 0x61FF, 1.02),
-    (0x6200, 0x9FFF, 1.00),
-    (0xA700, 0xA7FF, 0.68),
-    (0xAC00, 0xD7FF, 1.00),
-    (0xE800, 0xE8FF, 0.92),
-    (0xF000, 0xF0FF, 0.50),
-    (0xF700, 0xF7FF, 0.86),
-    (0xF800, 0xF8FF, 0.80),
-    (0xF900, 0xFAFF, 1.00),
-    (0xFB00, 0xFBFF, 1.22),
-    (0xFC00, 0xFCFF, 1.58),
-    (0xFD00, 0xFDFF, 2.26),
-    (0xFE00, 0xFEFF, 1.30),
-    (0xFF00, 0xFFFF, 1.00),
-)
-
-#: For a character in no listed block. The widest advance in the whole covered
-#: repertoire, so it cannot be an underestimate for any glyph these fonts carry.
-_UNKNOWN_BLOCK_CEILING_EM: float = 2.26
-
-
-def _block_ceiling(code_point: int) -> float:
-    for low, high, ceiling in _BLOCK_CEILING_EM:
-        if low <= code_point <= high:
-            return ceiling
-    return _UNKNOWN_BLOCK_CEILING_EM
-
-
-def estimate_text_width(text: str, font_size: float = 10.0) -> float:
-    """Rough rendered width of *text*, in pixels, for the info panel's rows.
-
-    A character count cannot do this job, which is what the first version of the
-    row-width guard tried: the same 38-character row measures 168px of Latin
-    Helvetica and 250px of Arial Unicode ideographs.
-
-    Exact for the scripts the panel's own text and the overwhelming majority of
-    names are written in (see :data:`_MEASURED_EM`), and an upper bound
-    everywhere else (see :data:`_BLOCK_CEILING_EM`). Never an underestimate for
-    any character the reference fonts carry — which is the one property that
-    matters, since the row it guards runs under the wheel graphics when it is
-    wrong, and has done three times.
-    """
-    total = 0.0
-    for char in text:
-        measured = _MEASURED_EM_BY_CHAR.get(char)
-        total += font_size * (measured if measured is not None else _block_ceiling(ord(char)))
-    return total
-
 
 def truncate_to_width(text: str, budget: float, ellipsis_symbol: str = "…", font_size: float = 10.0) -> str:
     """Shorten *text* until :func:`estimate_text_width` fits *budget*.
@@ -655,47 +489,6 @@ class ChartRendererProtocol(Protocol):
     def render(self, template_dict: dict) -> None:
         """Execute all setup methods in order to populate template_dict."""
         ...
-
-
-#: Translation key and English default per ``ReturnType``.
-#:
-#: A mapping rather than a Solar/else binary, which is what every one of these
-#: call sites was: ``Heliocentric`` and ``Lunar_Node_Crossing`` are both valid
-#: return types and both rendered as "Lunar Return". Fixing only the panel left a
-#: single-wheel chart reading ``Type: Heliocentric Return`` under a title ending
-#: "Lunar Return", and the dual chart's outer grid still labelled Lunar — one
-#: mapping, five places that need it.
-_RETURN_LABELS: dict[str, tuple[str, str]] = {
-    "Solar": ("solar_return", "Solar Return"),
-    "Lunar": ("lunar_return", "Lunar Return"),
-    "Heliocentric": ("heliocentric_return", "Heliocentric Return"),
-    "Lunar_Node_Crossing": ("node_return", "Node Return"),
-}
-
-
-def _has_visible_text(text: str) -> bool:
-    """Does *text* put any ink on the page?
-
-    ``str.strip()`` is not enough, and the difference is reachable: it does not
-    remove the zero-width space, the joiners, the bidi marks, the word joiner,
-    the soft hyphen, or a lone combining mark. A wheel name of one zero-width
-    space rendered a row reading "\u200b Nocturnal \u00b7 Antonio Nocturnal" — a
-    value with no owner, exactly what the whitespace guard was written to
-    prevent, and a pasted name is far likelier to carry a zero-width character
-    than to consist only of spaces.
-    """
-    return any(not char.isspace() and unicodedata.category(char) not in ("Cf", "Mn", "Me", "Cc") for char in text)
-
-
-def return_label_keys(subject: object) -> tuple[str, str]:
-    """``(translation_key, english_default)`` for *subject*'s return type.
-
-    Falls back to the lunar label for anything not in the map, which is what a
-    subject that is not a :class:`PlanetReturnModel` at all gets — the renderers
-    accept one, but the type is not enforced at these calls.
-    """
-    return_type = subject.return_type if isinstance(subject, PlanetReturnModel) else None
-    return _RETURN_LABELS.get(return_type or "", _RETURN_LABELS["Lunar"])
 
 
 class BaseChartRenderer:
@@ -1020,7 +813,7 @@ class InfoSectionBuilder:
             value = self._diurnality_value(subject)
             if not value:
                 continue
-            if not _has_visible_text(wheel_name):
+            if not has_visible_text(wheel_name):
                 # A value with no owner is worse than no line — it is precisely
                 # the ambiguity the wheel names were added to prevent. One name
                 # with no visible glyph blanks the whole row rather than leaving
@@ -1064,7 +857,16 @@ class InfoSectionBuilder:
             f"{truncate_to_width(name, share if width <= share else share_for_long)} {value}"
             for (name, value), width in zip(labelled, natural)
         ]
-        return separator.join(parts)
+        row = separator.join(parts)
+
+        # Re-measure what was actually built. Water-filling can hand a long name
+        # less than its own one-glyph floor while the other name takes its full
+        # share, so the pre-allocation guard above is necessary but not
+        # sufficient: constructed adversarially (a language pack of wide values
+        # plus a name of ǅ-digraphs) the row came out 5px over. No shipped
+        # translation reaches it, but the module claims it may only ever
+        # over-estimate, and an invariant with a known hole is not one.
+        return "" if estimate_text_width(row) > DIURNALITY_ROW_CLEAR_WIDTH else row
 
     def build_location_coordinates(
         self,
@@ -3980,17 +3782,26 @@ class ChartDrawer:  # type: ignore[no-redef]
         # imposed by the title area.
         return max(per_column, min(allowed_capacity, max_capacity_by_top))
 
-    def _estimate_text_width(self, text: str, font_size: float) -> float:
-        """Delegates to :func:`estimate_text_width`.
+    def _estimate_text_width(self, text: str, font_size: float = 12) -> float:
+        """Very rough text width estimation in pixels based on font size.
 
-        This used to be ``len(text) * font_size * 0.7`` and sized the planet grid
-        and legend with it. That is the averaging approach the module-level
-        function exists to replace: measured against real metrics it under-reports
-        ideographs by 30% and over-reports narrow Latin by 150%, so a CJK legend
-        entry was laid out as if it were a third narrower than it renders. Two
-        width models in one renderer, disagreeing, is worse than either.
+        KNOWN DIVERGENCE, deliberately left: this is *not*
+        :func:`estimate_text_width`, the per-character table used to fit the info
+        panel's diurnality row. This one sizes the planet grid, the legend and
+        the auto-size canvas, and its 0.7-of-the-em average under-reports
+        ideographs by about 30% while over-reporting narrow Latin.
+
+        Pointing it at the measured table is the right fix and was tried here —
+        it is a **layout change**, not a cleanup: 32 baselines moved, one canvas
+        from 1244px to 1177px. That belongs in a change about grid geometry,
+        where the narrowing can be reviewed against the fact that neither
+        ``chart.xml`` nor the themes declare a font-family, so a viewer with a
+        wider default has only this estimate's generosity as its margin.
         """
-        return estimate_text_width(text, font_size)
+        if not text:
+            return 0.0
+        average_char_width = float(font_size) * 0.7
+        return max(float(font_size), len(text) * average_char_width)
 
     def _get_active_point_display_names(self) -> list[str]:
         """Return localized labels for the currently active celestial points."""
@@ -5201,12 +5012,13 @@ class ChartDrawer:  # type: ignore[no-redef]
         lunar_phase_y = offsets["lunar_phase"]
         if template_dict.get("bottom_left_5"):
             lunar_phase_y += DIURNALITY_GLYPH_DROP
-        # The template field is ``int``; ``offsets["lunar_phase"]`` is a float in
-        # its config default, so coerce here rather than lean on pydantic's lax
-        # coercion. The value is always whole (an integer offset plus an integer
-        # drop), so this rounds nothing away.
-        template_dict["lunar_phase_translate_y"] = int(lunar_phase_y)
-        template_dict["bottom_left_translate_y"] = int(offsets["bottom_left"])
+        # The template field is ``int``; the offsets are floats on a dataclass a
+        # caller can supply, so coerce here rather than lean on pydantic's lax
+        # coercion. ``round`` rather than ``int``: the shipped defaults are whole,
+        # but a caller passing 518.5 should not silently lose half a pixel to
+        # truncation.
+        template_dict["lunar_phase_translate_y"] = round(lunar_phase_y)
+        template_dict["bottom_left_translate_y"] = round(offsets["bottom_left"])
 
         # ---------------------------------------------------------------------
         # SECURITY: Escape user-controlled plain-text fields
