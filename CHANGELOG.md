@@ -115,8 +115,11 @@
   entry describes, discarding the declared type of anything else and labelling it
   Lunar — reachable through `kerykeion.report`, which reads subjects with
   `getattr` by design. A type the map does not know now yields the neutral
-  "Return" rather than borrowing the lunar label; untranslated outside English,
-  which beats confidently naming the wrong body.
+  `Return` — the key every pack already ships (`Ritorno`, `Rückkehr`, `回归`) and
+  which the house-comparison grid already renders — rather than borrowing the
+  lunar label. A non-string `return_type` is treated as absent instead of
+  raising: widening the read to duck-typed subjects had made an unhashable value
+  a `TypeError` where the old code returned a label.
 - Never shipped in this state, recorded because the reasoning is worth keeping:
   the five new translation keys were first declared **required** on
   `KerykeionLanguageModel`, which would have rejected every third-party language

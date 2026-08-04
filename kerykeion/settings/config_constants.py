@@ -117,15 +117,28 @@ def return_label_keys(subject: object) -> tuple[str, str]:
     "Lunar Return" — the very substitution this mapping exists to end, on the one
     input :mod:`kerykeion.report` documents as supported.
 
-    Anything the map does not know falls through to the neutral "Return" instead
-    of borrowing the lunar label. Untranslated in the nine non-English packs,
-    which is the lesser harm: a `PlanetReturnModel` always carries one of the
-    four keyed types, so this arm is reached only by a duck-typed subject or by a
-    ``ReturnType`` added upstream without a label here — and naming the wrong
-    body confidently is worse than naming none.
+    Anything the map does not know falls through to the neutral ``Return``
+    instead of borrowing the lunar label: a `PlanetReturnModel` always carries
+    one of the four keyed types, so this arm is reached only by a duck-typed
+    subject or by a ``ReturnType`` added upstream without a label here, and
+    naming the wrong body confidently is worse than naming none.
+
+    ``Return`` is the key every language pack already ships — `Ritorno`,
+    `Rückkehr`, `回归` — and which the house-comparison grid already renders in
+    the same drawing. A first version of this invented a lowercase ``return``
+    instead, which no pack has and none ever could: the packs are dumped from
+    :class:`KerykeionLanguageModel`, and ``return`` is a Python keyword, so it
+    cannot be a field and is dropped even when a caller passes it. That would
+    have printed English "Return" beside an Italian "Ritorno" in one SVG.
+
+    The value must be a string to be a dict key, and ``getattr`` promises
+    nothing: a subject whose ``return_type`` is a list raised ``TypeError`` where
+    the old gate returned a label. Anything not a string is treated as absent.
     """
     return_type = getattr(subject, "return_type", None)
-    return _RETURN_LABELS.get(return_type or "", ("return", "Return"))
+    if not isinstance(return_type, str):
+        return_type = ""
+    return _RETURN_LABELS.get(return_type, ("Return", "Return"))
 
 
 def subject_states_a_diurnality(subject: object) -> bool:

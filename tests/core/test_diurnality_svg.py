@@ -787,9 +787,34 @@ class TestTheReturnLabelMappingItself:
         announced as a Lunar Return in the panel, the Type line, the title and
         both grids at once.
         """
-        assert return_label_keys(_DuckTypedReturn(return_type)) == ("return", "Return")
+        assert return_label_keys(_DuckTypedReturn(return_type)) == ("Return", "Return")
         assert _return_type_label(_DuckTypedReturn(return_type)) == "Return"
 
     def test_a_subject_with_no_return_type_at_all_is_not_a_lunar_return(self):
-        assert return_label_keys(_subject()) == ("return", "Return")
+        assert return_label_keys(_subject()) == ("Return", "Return")
         assert _return_type_label(_subject()) == "Return"
+
+    def test_the_neutral_label_is_a_key_the_language_packs_actually_have(self):
+        """A neutral label still has to be neutral *in the reader's language*.
+
+        The first version of this returned a lowercase `return` key. No pack has
+        one and none ever could: packs are dumped from `KerykeionLanguageModel`
+        and `return` is a Python keyword, so it cannot be a field and is dropped
+        even when a caller passes it — the drawing would have printed English
+        "Return" beside the Italian "Ritorno" the house-comparison grid renders
+        from the key that does exist.
+        """
+        key, _ = return_label_keys(_DuckTypedReturn("Something_Upstream_Added"))
+        missing = [language for language, pack in LANGUAGE_SETTINGS.items() if not pack.get(key)]
+        assert not missing, f"{key!r} is not translated in: {missing}"
+        assert LANGUAGE_SETTINGS["IT"][key] == "Ritorno"
+
+    @pytest.mark.parametrize("return_type", [["Solar"], {"a": 1}, {"Solar"}, 123, bytearray(b"Solar")])
+    def test_a_return_type_that_is_not_a_string_does_not_raise(self, return_type):
+        """`getattr` promises nothing about the type; the old gate did.
+
+        An unhashable value went straight into `dict.get` and raised TypeError
+        where the previous code returned a label — a new failure mode introduced
+        by the very change that widened this function to duck-typed subjects.
+        """
+        assert return_label_keys(_DuckTypedReturn(return_type)) == ("Return", "Return")

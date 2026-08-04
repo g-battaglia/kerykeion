@@ -138,10 +138,17 @@ def test_the_gallery_page_declares_the_aspect_ratio_its_charts_actually_have():
     """
     gallery = REPO_ROOT / "tests" / "data" / "v6_gallery"
     index = gallery / "index.html"
-    declared = re.findall(
-        r'data="([^"]+\.svg)"[^>]*aspect-ratio:\s*([\d.]+)\s*/\s*([\d.]+)', index.read_text(encoding="utf-8")
+    page = index.read_text(encoding="utf-8")
+    declared = re.findall(r'data="([^"]+\.svg)"[^>]*aspect-ratio:\s*([\d.]+)\s*/\s*([\d.]+)', page)
+    # Every embedded chart, not "enough of them". A `> 20` floor let a third of
+    # the page fall out of the regex — 12 of the 33 rewritten so it no longer
+    # matched — and still passed, which is the same silence this file exists to
+    # break. Counting the embeds independently is what makes the coverage total.
+    embedded = re.findall(r'<object data="([^"]+\.svg)"', page)
+    assert len(declared) == len(embedded) > 20, (
+        f"parsed {len(declared)} aspect-ratio declarations for {len(embedded)} embedded charts — "
+        "the page's markup changed and this guard is no longer reading all of it"
     )
-    assert len(declared) > 20, f"only {len(declared)} declarations parsed — did the page's markup change?"
 
     mismatched = []
     for name, width, height in declared:
