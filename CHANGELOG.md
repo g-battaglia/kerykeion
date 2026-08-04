@@ -117,9 +117,12 @@
   `getattr` by design. A type the map does not know now yields the neutral
   `Return` — the key every pack already ships (`Ritorno`, `Rückkehr`, `回归`) and
   which the house-comparison grid already renders — rather than borrowing the
-  lunar label. A non-string `return_type` is treated as absent instead of
-  raising: widening the read to duck-typed subjects had made an unhashable value
-  a `TypeError` where the old code returned a label.
+  lunar label. An unhashable `return_type` is treated as absent instead of
+  raising: widening the read to duck-typed subjects had made a list or a dict a
+  `TypeError` where the old code returned a label. Caught from the lookup rather
+  than screened with `isinstance(str)`, so a `UserString` or a lazy-translation
+  proxy — which hash and compare equal to `str` without subclassing it — still
+  match the map.
 - Never shipped in this state, recorded because the reasoning is worth keeping:
   the five new translation keys were first declared **required** on
   `KerykeionLanguageModel`, which would have rejected every third-party language

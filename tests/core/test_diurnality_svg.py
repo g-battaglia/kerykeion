@@ -23,9 +23,11 @@ Usage:
     pytest tests/core/test_diurnality_svg.py -v
 """
 
+import enum
 import json
 import re
 import unicodedata
+from collections import UserString
 from html import unescape
 from pathlib import Path
 
@@ -745,6 +747,12 @@ def test_a_leading_space_cannot_blank_a_wheel_name():
     assert row.startswith("John "), row
 
 
+class _StrEnum(str, enum.Enum):
+    """A `str`-mixin enum, the shape a caller most plausibly stores a type as."""
+
+    SOLAR = "Solar"
+
+
 class _DuckTypedReturn:
     """Not a `PlanetReturnModel` — just something that says what it is."""
 
@@ -809,12 +817,29 @@ class TestTheReturnLabelMappingItself:
         assert not missing, f"{key!r} is not translated in: {missing}"
         assert LANGUAGE_SETTINGS["IT"][key] == "Ritorno"
 
-    @pytest.mark.parametrize("return_type", [["Solar"], {"a": 1}, {"Solar"}, 123, bytearray(b"Solar")])
-    def test_a_return_type_that_is_not_a_string_does_not_raise(self, return_type):
+    @pytest.mark.parametrize("return_type", [["Solar"], {"a": 1}, {"Solar"}, bytearray(b"Solar")])
+    def test_an_unhashable_return_type_does_not_raise(self, return_type):
         """`getattr` promises nothing about the type; the old gate did.
 
         An unhashable value went straight into `dict.get` and raised TypeError
         where the previous code returned a label — a new failure mode introduced
         by the very change that widened this function to duck-typed subjects.
+
+        Every parameter here must be *unhashable*. An earlier version included
+        `123`, which is hashable and so returned the default with or without the
+        guard: it read as a fifth hostile case and pinned nothing.
         """
         assert return_label_keys(_DuckTypedReturn(return_type)) == ("Return", "Return")
+
+    @pytest.mark.parametrize("return_type", [UserString("Solar"), _StrEnum.SOLAR])
+    def test_a_string_that_is_not_a_str_is_still_taken_at_its_word(self, return_type):
+        """Screening on `isinstance(str)` would fail this, and did.
+
+        The first guard against the case above tested the *type* rather than the
+        problem, and so refused a `UserString` — and any lazy-translation proxy
+        of that shape — which hashes and compares equal to `str` and matches the
+        map perfectly. Catching the lookup's own TypeError keeps them working:
+        widening this function to duck-typed subjects and then narrowing it back
+        by the side door would have undone the point of the change.
+        """
+        assert return_label_keys(_DuckTypedReturn(return_type))[1] == "Solar Return"

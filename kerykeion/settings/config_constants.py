@@ -131,14 +131,19 @@ def return_label_keys(subject: object) -> tuple[str, str]:
     cannot be a field and is dropped even when a caller passes it. That would
     have printed English "Return" beside an Italian "Ritorno" in one SVG.
 
-    The value must be a string to be a dict key, and ``getattr`` promises
-    nothing: a subject whose ``return_type`` is a list raised ``TypeError`` where
-    the old gate returned a label. Anything not a string is treated as absent.
+    ``getattr`` promises nothing about the value, and an unhashable one — a list,
+    a dict — raised ``TypeError`` out of the lookup where the old gate returned a
+    label. Caught rather than pre-screened with ``isinstance(str)``: that screen
+    was written first and quietly narrowed the input class this function had just
+    been widened to serve. A ``UserString``, or any lazy-translation proxy that
+    hashes and compares equal to :class:`str` without subclassing it, matches the
+    map perfectly well; only the lookup itself knows what it can accept.
     """
     return_type = getattr(subject, "return_type", None)
-    if not isinstance(return_type, str):
-        return_type = ""
-    return _RETURN_LABELS.get(return_type, ("Return", "Return"))
+    try:
+        return _RETURN_LABELS.get(return_type or "", ("Return", "Return"))
+    except TypeError:
+        return ("Return", "Return")
 
 
 def subject_states_a_diurnality(subject: object) -> bool:
