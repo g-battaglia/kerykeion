@@ -97,10 +97,14 @@ def _assert_report_match(captured: str, expected_with_newline: str, abs_tol: flo
     for i, (cap, exp) in enumerate(zip(captured_lines, expected_lines)):
         cap_text = number_re.sub("NUM", cap)
         exp_text = number_re.sub("NUM", exp)
-        assert cap_text == exp_text, f"Line {i + 1} content differs:\n  got:  {cap}\n  exp:  {exp}"
+        assert cap_text == exp_text, (
+            f"Line {i + 1} content differs:\n  got:  {cap}\n  exp:  {exp}"
+        )
         cap_nums = [float(x) for x in number_re.findall(cap)]
         exp_nums = [float(x) for x in number_re.findall(exp)]
-        assert len(cap_nums) == len(exp_nums), f"Line {i + 1} number count differs:\n  got:  {cap}\n  exp:  {exp}"
+        assert len(cap_nums) == len(exp_nums), (
+            f"Line {i + 1} number count differs:\n  got:  {cap}\n  exp:  {exp}"
+        )
         for j, (cn, en) in enumerate(zip(cap_nums, exp_nums)):
             # Add a tiny epsilon so an exact last-decimal flip (e.g. 1.64 vs 1.65,
             # whose float difference is 0.0100000000000000009) stays within the
@@ -247,19 +251,9 @@ def _snapshot_subject(**kwargs):
     key = ("snapshot_subject", tuple(sorted((k, _make_hashable(v)) for k, v in kwargs.items())))
     if key not in _report_cache:
         _report_cache[key] = AstrologicalSubjectFactory.from_birth_data(
-            name="Sample Natal Subject",
-            year=1990,
-            month=7,
-            day=21,
-            hour=14,
-            minute=45,
-            city="Liverpool",
-            nation="GB",
-            lat=53.4084,
-            lng=-2.9916,
-            tz_str="Europe/London",
-            online=False,
-            **kwargs,
+            name="Sample Natal Subject", year=1990, month=7, day=21, hour=14, minute=45,
+            city="Liverpool", nation="GB", lat=53.4084, lng=-2.9916,
+            tz_str="Europe/London", online=False, **kwargs,
         )
     return _report_cache[key]
 
@@ -268,19 +262,9 @@ def _snapshot_partner(**kwargs):
     key = ("snapshot_partner", tuple(sorted((k, _make_hashable(v)) for k, v in kwargs.items())))
     if key not in _report_cache:
         _report_cache[key] = AstrologicalSubjectFactory.from_birth_data(
-            name="Yoko Ono",
-            year=1933,
-            month=2,
-            day=18,
-            hour=20,
-            minute=30,
-            city="Tokyo",
-            nation="JP",
-            lat=35.6762,
-            lng=139.6503,
-            tz_str="Asia/Tokyo",
-            online=False,
-            **kwargs,
+            name="Yoko Ono", year=1933, month=2, day=18, hour=20, minute=30,
+            city="Tokyo", nation="JP", lat=35.6762, lng=139.6503,
+            tz_str="Asia/Tokyo", online=False, **kwargs,
         )
     return _report_cache[key]
 
@@ -1670,7 +1654,9 @@ class TestAspectSymbolMapping:
         for name in get_args(AspectName):
             assert f"{name} {name}" not in text, f"Duplicated aspect cell for {name!r}"
         corrected_cells = [f"{name} {symbol}" for name, symbol in ASPECT_SYMBOLS.items()]
-        assert any(cell in text for cell in corrected_cells), "No 'name glyph' aspect cell found in the aspects table"
+        assert any(cell in text for cell in corrected_cells), (
+            "No 'name glyph' aspect cell found in the aspects table"
+        )
 
     def test_unknown_aspect_name_never_duplicates(self, john_lennon) -> None:
         """Aspects missing from ASPECT_SYMBOLS render the bare name, not name twice."""

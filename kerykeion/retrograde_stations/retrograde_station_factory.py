@@ -76,6 +76,7 @@ def _to_utc_naive(dt: datetime) -> datetime:
     return dt
 
 
+
 def _validate_zodiac(zodiac_type: ZodiacType, sidereal_mode: Optional[SiderealMode]) -> None:
     """Validate the zodiac configuration before opening an ephemeris session.
 
@@ -131,7 +132,8 @@ def _ensure_scannable(start_jd: float, end_jd: float) -> None:
     truncated result whose ``end_jd`` still claims the full requested range."""
     if (end_jd - start_jd) / _SAMPLE_STEP_DAYS > _MAX_SAMPLES:
         raise ValueError(
-            f"Date range too large to scan at the current resolution (> {_MAX_SAMPLES} samples). Narrow the date range."
+            f"Date range too large to scan at the current resolution "
+            f"(> {_MAX_SAMPLES} samples). Narrow the date range."
         )
 
 
@@ -204,7 +206,8 @@ class RetrogradeStationFactory:
             # broken by a malformed ISO start_date/end_date. Same contract as
             # LunationFinderFactory.from_iso_range.
             raise KerykeionException(
-                f"Invalid ISO date/datetime for station range (start_date={start_date!r}, end_date={end_date!r}): {exc}"
+                f"Invalid ISO date/datetime for station range "
+                f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
             ) from exc
         # A date-only end means "through the end of that UTC day". Parsing it
         # as a date avoids misclassifying datetime.fromisoformat's other valid
@@ -248,7 +251,8 @@ class RetrogradeStationFactory:
             invalid = sorted(set(planets) - set(_PLANET_IDS))
             if invalid:
                 raise ValueError(
-                    f"Unknown or non-stationing planets: {', '.join(invalid)}. Valid: {', '.join(_PLANET_IDS)}"
+                    f"Unknown or non-stationing planets: {', '.join(invalid)}. "
+                    f"Valid: {', '.join(_PLANET_IDS)}"
                 )
             # Deduplicate (preserve order): duplicates would repeat the scan and
             # emit every event multiple times.
@@ -269,7 +273,9 @@ class RetrogradeStationFactory:
             # stays tropical (see _speed), so the station TIMES never shift.
             with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
                 for name, body in bodies:
-                    stations.extend(RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd, iflag))
+                    stations.extend(
+                        RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd, iflag)
+                    )
             stations.sort(key=lambda s: s.julian_day)
 
         return RetrogradeStationsCollectionModel(
@@ -279,7 +285,9 @@ class RetrogradeStationFactory:
         )
 
     @staticmethod
-    def _scan_planet(name: str, body: int, start_jd: float, end_jd: float, iflag: int) -> List[StationModel]:
+    def _scan_planet(
+        name: str, body: int, start_jd: float, end_jd: float, iflag: int
+    ) -> List[StationModel]:
         """Walk the range for one planet, bisecting each speed sign change.
 
         The speed sampling (``_speed``/``_bisect_station``) is tropical, so the

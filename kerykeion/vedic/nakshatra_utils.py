@@ -41,9 +41,7 @@ def calculate_nakshatra(abs_pos: float) -> dict:
     # keeps both values exact and mutually consistent at every boundary.
     global_pada_index = int(pos * 108.0 / 360.0)
     if global_pada_index >= 108:
-        global_pada_index = (
-            107  # Edge case: pos == 360.0 (tiny negative inputs — float modulo returns the modulus itself)
-        )
+        global_pada_index = 107  # Edge case: pos == 360.0 (tiny negative inputs — float modulo returns the modulus itself)
 
     nakshatra_index = global_pada_index // 4
     pada = global_pada_index % 4 + 1

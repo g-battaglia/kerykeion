@@ -145,36 +145,12 @@ def _emit_targets_in_segment(
         sep_mid = difdeg2n(lon_a_mid, lon_b_mid)
         rel_mid = speed_a_mid - speed_b_mid
         _emit_targets_in_segment(
-            name_a,
-            name_b,
-            body_a,
-            body_b,
-            t0,
-            mid,
-            sep0,
-            sep_mid,
-            rel0,
-            rel_mid,
-            aspects,
-            iflag,
-            out,
-            depth + 1,
+            name_a, name_b, body_a, body_b, t0, mid, sep0, sep_mid, rel0, rel_mid,
+            aspects, iflag, out, depth + 1,
         )
         _emit_targets_in_segment(
-            name_a,
-            name_b,
-            body_a,
-            body_b,
-            mid,
-            t1,
-            sep_mid,
-            sep1,
-            rel_mid,
-            rel1,
-            aspects,
-            iflag,
-            out,
-            depth + 1,
+            name_a, name_b, body_a, body_b, mid, t1, sep_mid, sep1, rel_mid, rel1,
+            aspects, iflag, out, depth + 1,
         )
         return
 
@@ -222,7 +198,8 @@ def scan_mundane_aspects(
     n_steps = int((end_jd - start_jd) / _STEP_DAYS) + 1
     if n_steps > _MAX_SAMPLES:
         raise ValueError(
-            f"Date range too large to scan at the current resolution (> {_MAX_SAMPLES} samples). Narrow the date range."
+            f"Date range too large to scan at the current resolution "
+            f"(> {_MAX_SAMPLES} samples). Narrow the date range."
         )
 
     # Grid of sample times: uniform 6-hour steps, exact range end appended so
@@ -255,20 +232,9 @@ def scan_mundane_aspects(
                 rel0 = speeds[name_a][k] - speeds[name_b][k]
                 rel1 = speeds[name_a][k + 1] - speeds[name_b][k + 1]
                 _emit_targets_in_segment(
-                    name_a,
-                    name_b,
-                    body_a,
-                    body_b,
-                    grid[k],
-                    grid[k + 1],
-                    sep0,
-                    sep1,
-                    rel0,
-                    rel1,
-                    aspects,
-                    iflag,
-                    events,
-                    0,
+                    name_a, name_b, body_a, body_b,
+                    grid[k], grid[k + 1], sep0, sep1, rel0, rel1,
+                    aspects, iflag, events, 0,
                 )
 
     # Dedupe grid-boundary double hits (exact node hits, or two adjacent

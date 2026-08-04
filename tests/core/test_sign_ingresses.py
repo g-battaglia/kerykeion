@@ -82,14 +82,18 @@ class TestIngressApi:
         assert all(x.planet != "Moon" for x in res.ingresses)
 
     def test_moon_is_opt_in_and_frequent(self):
-        res = SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Moon"])
+        res = SignIngressFactory.from_iso_range(
+            "2026-01-01", "2026-12-31", ["Moon"]
+        )
         # The Moon changes sign every ~2.3 days => ~150+ ingresses a year.
         assert len(res.ingresses) > 140
         assert all(x.planet == "Moon" for x in res.ingresses)
 
     def test_unknown_planet_raises(self):
         with pytest.raises(ValueError):
-            SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Sun", "Nibiru"])
+            SignIngressFactory.from_iso_range(
+                "2026-01-01", "2026-12-31", ["Sun", "Nibiru"]
+            )
 
     def test_empty_range(self):
         start = datetime_to_julian(datetime(2026, 1, 1))
@@ -253,4 +257,6 @@ class TestSiderealIngresses:
 
     def test_sidereal_requires_mode(self):
         with pytest.raises(KerykeionException):
-            SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Sun"], zodiac_type="Sidereal")
+            SignIngressFactory.from_iso_range(
+                "2026-01-01", "2026-12-31", ["Sun"], zodiac_type="Sidereal"
+            )

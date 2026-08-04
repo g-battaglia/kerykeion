@@ -2589,9 +2589,14 @@ class AstrologicalSubjectFactory:
                 "local model produced a value for the requested date."
             )
         elif resolved_code == "unsupported_by_backend":
-            message = "Optional point omitted because the active backend does not support it."
+            message = (
+                "Optional point omitted because the active backend does not support it."
+            )
         else:
-            message = "Optional point omitted because the active ephemeris backend could not calculate it."
+            message = (
+                "Optional point omitted because the active ephemeris backend "
+                "could not calculate it."
+            )
 
         warning = {
             "code": resolved_code,
@@ -3610,7 +3615,9 @@ class AstrologicalSubjectFactory:
                 if part is None:
                     continue
                 part_primaries = [
-                    point for point in (data.get(req.lower()) for req in part_config["required"]) if point is not None
+                    point
+                    for point in (data.get(req.lower()) for req in part_config["required"])
+                    if point is not None
                 ]
                 part.source = "Derived"
                 primary_classes = {p.precision_class for p in part_primaries if p.precision_class is not None}

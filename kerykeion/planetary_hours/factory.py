@@ -84,9 +84,13 @@ class PlanetaryHoursFactory:
                 relevant date (polar day/night).
         """
         if not -90.0 <= latitude <= 90.0:
-            raise KerykeionException(f"Latitude {latitude} is out of range; it must be between -90 and 90 degrees.")
+            raise KerykeionException(
+                f"Latitude {latitude} is out of range; it must be between -90 and 90 degrees."
+            )
         if not -180.0 <= longitude <= 180.0:
-            raise KerykeionException(f"Longitude {longitude} is out of range; it must be between -180 and 180 degrees.")
+            raise KerykeionException(
+                f"Longitude {longitude} is out of range; it must be between -180 and 180 degrees."
+            )
         tz = resolve_timezone(tz_str)
         moment_utc = localize_datetime(year, month, day, hour, minute, tz=tz).astimezone(timezone.utc)
 

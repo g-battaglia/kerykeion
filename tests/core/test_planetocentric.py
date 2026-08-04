@@ -13,17 +13,9 @@ from kerykeion import AstrologicalSubjectFactory
 # Shared birth data for consistent comparisons
 # ---------------------------------------------------------------------------
 _BIRTH_KWARGS = dict(
-    year=2000,
-    month=1,
-    day=1,
-    hour=12,
-    minute=0,
-    lng=0.0,
-    lat=51.5,
-    tz_str="Etc/GMT",
-    city="Greenwich",
-    nation="GB",
-    online=False,
+    year=2000, month=1, day=1, hour=12, minute=0,
+    lng=0.0, lat=51.5, tz_str="Etc/GMT",
+    city="Greenwich", nation="GB", online=False,
 )
 
 
@@ -39,44 +31,35 @@ def _angular_diff(a: float, b: float) -> float:
 @pytest.fixture(scope="module")
 def geocentric():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Geocentric",
-        **_BIRTH_KWARGS,
+        "Geocentric", **_BIRTH_KWARGS,
     )
 
 
 @pytest.fixture(scope="module")
 def marscentric():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Marscentric",
-        **_BIRTH_KWARGS,
-        perspective_type="Marscentric",
+        "Marscentric", **_BIRTH_KWARGS, perspective_type="Marscentric",
     )
 
 
 @pytest.fixture(scope="module")
 def jupitercentric():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Jupitercentric",
-        **_BIRTH_KWARGS,
-        perspective_type="Jupitercentric",
+        "Jupitercentric", **_BIRTH_KWARGS, perspective_type="Jupitercentric",
     )
 
 
 @pytest.fixture(scope="module")
 def venuscentric():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Venuscentric",
-        **_BIRTH_KWARGS,
-        perspective_type="Venuscentric",
+        "Venuscentric", **_BIRTH_KWARGS, perspective_type="Venuscentric",
     )
 
 
 @pytest.fixture(scope="module")
 def selenocentric():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Selenocentric",
-        **_BIRTH_KWARGS,
-        perspective_type="Selenocentric",
+        "Selenocentric", **_BIRTH_KWARGS, perspective_type="Selenocentric",
     )
 
 
@@ -92,19 +75,12 @@ _COMPARABLE_PLANETS = ["moon", "mercury", "venus", "mars", "jupiter", "saturn"]
 class TestPerspectiveTypeStored:
     """Verify that the perspective_type attribute is recorded on the model."""
 
-    @pytest.mark.parametrize(
-        "perspective",
-        [
-            "Marscentric",
-            "Jupitercentric",
-            "Venuscentric",
-            "Selenocentric",
-        ],
-    )
+    @pytest.mark.parametrize("perspective", [
+        "Marscentric", "Jupitercentric", "Venuscentric", "Selenocentric",
+    ])
     def test_perspective_type_attribute(self, perspective):
         s = AstrologicalSubjectFactory.from_birth_data(
-            f"{perspective} Test",
-            **_BIRTH_KWARGS,
+            f"{perspective} Test", **_BIRTH_KWARGS,
             perspective_type=perspective,
         )
         assert s.perspective_type == perspective
@@ -112,19 +88,12 @@ class TestPerspectiveTypeStored:
     def test_default_perspective_is_apparent_geocentric(self, geocentric):
         assert geocentric.perspective_type == "Apparent Geocentric"
 
-    @pytest.mark.parametrize(
-        "perspective",
-        [
-            "Marscentric",
-            "Jupitercentric",
-            "Venuscentric",
-            "Selenocentric",
-        ],
-    )
+    @pytest.mark.parametrize("perspective", [
+        "Marscentric", "Jupitercentric", "Venuscentric", "Selenocentric",
+    ])
     def test_creates_valid_chart_with_positions(self, perspective):
         s = AstrologicalSubjectFactory.from_birth_data(
-            f"{perspective} Test",
-            **_BIRTH_KWARGS,
+            f"{perspective} Test", **_BIRTH_KWARGS,
             perspective_type=perspective,
         )
         assert s is not None
@@ -152,21 +121,14 @@ class TestPositionsDifferFromGeocentric:
     portable across both supported ephemeris backends.
     """
 
-    @pytest.mark.parametrize(
-        "perspective_fixture,center_attr",
-        [
-            ("marscentric", "mars"),
-            ("jupitercentric", "jupiter"),
-            ("venuscentric", "venus"),
-            ("selenocentric", "moon"),
-        ],
-    )
+    @pytest.mark.parametrize("perspective_fixture,center_attr", [
+        ("marscentric", "mars"),
+        ("jupitercentric", "jupiter"),
+        ("venuscentric", "venus"),
+        ("selenocentric", "moon"),
+    ])
     def test_at_least_one_planet_differs(
-        self,
-        perspective_fixture,
-        center_attr,
-        geocentric,
-        request,
+        self, perspective_fixture, center_attr, geocentric, request,
     ):
         pctr = request.getfixturevalue(perspective_fixture)
         max_diff = 0.0
@@ -194,15 +156,12 @@ class TestPositionsDifferFromGeocentric:
 #    a planetocentric label put a wrong-frame value into aspects and houses.
 # ---------------------------------------------------------------------------
 class TestCenterBodyExcluded:
-    @pytest.mark.parametrize(
-        "perspective_fixture,center_attr,center_name",
-        [
-            ("marscentric", "mars", "Mars"),
-            ("jupitercentric", "jupiter", "Jupiter"),
-            ("venuscentric", "venus", "Venus"),
-            ("selenocentric", "moon", "Moon"),
-        ],
-    )
+    @pytest.mark.parametrize("perspective_fixture,center_attr,center_name", [
+        ("marscentric", "mars", "Mars"),
+        ("jupitercentric", "jupiter", "Jupiter"),
+        ("venuscentric", "venus", "Venus"),
+        ("selenocentric", "moon", "Moon"),
+    ])
     def test_center_body_absent(self, perspective_fixture, center_attr, center_name, request):
         pctr = request.getfixturevalue(perspective_fixture)
         assert getattr(pctr, center_attr) is None
@@ -217,15 +176,8 @@ class TestCenterBodyExcluded:
         data: dict = {}
         calculated: list = []
         AstrologicalSubjectFactory._calculate_single_planet(
-            data,
-            "Mars",
-            ephe.MARS,
-            2451545.0,
-            ephe.FLG_SWIEPH,
-            [0.0] * 12,
-            "AstrologicalPoint",
-            calculated,
-            [],
+            data, "Mars", ephe.MARS, 2451545.0, ephe.FLG_SWIEPH,
+            [0.0] * 12, "AstrologicalPoint", calculated, [],
             center_body_id=ephe.MARS,
         )
         assert "mars" not in data
@@ -234,8 +186,7 @@ class TestCenterBodyExcluded:
     def test_exclusion_warning_fired(self, caplog):
         with caplog.at_level("WARNING"):
             AstrologicalSubjectFactory.from_birth_data(
-                "Warn Test",
-                **_BIRTH_KWARGS,
+                "Warn Test", **_BIRTH_KWARGS,
                 perspective_type="Selenocentric",
             )
         assert "center body" in caplog.text
@@ -243,8 +194,7 @@ class TestCenterBodyExcluded:
     def test_explicit_request_drops_only_center(self, caplog):
         with caplog.at_level("WARNING"):
             s = AstrologicalSubjectFactory.from_birth_data(
-                "Explicit Test",
-                **_BIRTH_KWARGS,
+                "Explicit Test", **_BIRTH_KWARGS,
                 perspective_type="Selenocentric",
                 active_points=["Sun", "Moon"],
             )
@@ -259,8 +209,7 @@ class TestCenterBodyExcluded:
 
         with pytest.raises(KerykeionException, match="center body"):
             AstrologicalSubjectFactory.from_birth_data(
-                "Empty Filter Test",
-                **_BIRTH_KWARGS,
+                "Empty Filter Test", **_BIRTH_KWARGS,
                 perspective_type="Selenocentric",
                 active_points=["Moon"],
             )
@@ -268,8 +217,7 @@ class TestCenterBodyExcluded:
     def test_arabic_part_prerequisite_not_resurrected(self, caplog):
         with caplog.at_level("WARNING"):
             s = AstrologicalSubjectFactory.from_birth_data(
-                "Arabic Part Test",
-                **_BIRTH_KWARGS,
+                "Arabic Part Test", **_BIRTH_KWARGS,
                 perspective_type="Selenocentric",
                 active_points=["Ascendant", "Sun", "Pars_Fortunae"],
             )
@@ -306,32 +254,43 @@ class TestNonCenterPlanetsDifferSignificantly:
         """Moon seen from Mars should differ by many degrees from geocentric."""
         diff = _angular_diff(marscentric.moon.abs_pos, geocentric.moon.abs_pos)
         assert diff > 1.0, (
-            f"Marscentric Moon diff={diff:.4f} deg is too small; expected a large shift when viewed from Mars."
+            f"Marscentric Moon diff={diff:.4f} deg is too small; "
+            f"expected a large shift when viewed from Mars."
         )
 
     def test_marscentric_mercury_differs_dramatically(self, marscentric, geocentric):
         diff = _angular_diff(marscentric.mercury.abs_pos, geocentric.mercury.abs_pos)
-        assert diff > 1.0, f"Marscentric Mercury diff={diff:.4f} deg is too small."
+        assert diff > 1.0, (
+            f"Marscentric Mercury diff={diff:.4f} deg is too small."
+        )
 
     def test_jupitercentric_mars_differs_dramatically(self, jupitercentric, geocentric):
         """Mars seen from Jupiter should differ by many degrees."""
         diff = _angular_diff(jupitercentric.mars.abs_pos, geocentric.mars.abs_pos)
-        assert diff > 1.0, f"Jupitercentric Mars diff={diff:.4f} deg is too small."
+        assert diff > 1.0, (
+            f"Jupitercentric Mars diff={diff:.4f} deg is too small."
+        )
 
     def test_jupitercentric_moon_differs_dramatically(self, jupitercentric, geocentric):
         diff = _angular_diff(jupitercentric.moon.abs_pos, geocentric.moon.abs_pos)
-        assert diff > 1.0, f"Jupitercentric Moon diff={diff:.4f} deg is too small."
+        assert diff > 1.0, (
+            f"Jupitercentric Moon diff={diff:.4f} deg is too small."
+        )
 
     def test_venuscentric_moon_differs_dramatically(self, venuscentric, geocentric):
         """Moon seen from Venus should differ enormously."""
         diff = _angular_diff(venuscentric.moon.abs_pos, geocentric.moon.abs_pos)
-        assert diff > 1.0, f"Venuscentric Moon diff={diff:.4f} deg is too small."
+        assert diff > 1.0, (
+            f"Venuscentric Moon diff={diff:.4f} deg is too small."
+        )
 
     def test_selenocentric_mercury_differs(self, selenocentric, geocentric):
         """Mercury seen from the Moon differs slightly (Moon is close to Earth)."""
         diff = _angular_diff(selenocentric.mercury.abs_pos, geocentric.mercury.abs_pos)
         # Moon is close to Earth, so differences are small but still measurable
-        assert diff > 0.01, f"Selenocentric Mercury diff={diff:.6f} deg; expected >0.01."
+        assert diff > 0.01, (
+            f"Selenocentric Mercury diff={diff:.6f} deg; expected >0.01."
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -341,34 +300,21 @@ class TestAllPositionsValid:
     """Every planet on every planetocentric chart should have abs_pos in [0, 360)."""
 
     _ALL_PLANETS = [
-        "sun",
-        "moon",
-        "mercury",
-        "venus",
-        "mars",
-        "jupiter",
-        "saturn",
-        "uranus",
-        "neptune",
-        "pluto",
+        "sun", "moon", "mercury", "venus", "mars",
+        "jupiter", "saturn", "uranus", "neptune", "pluto",
     ]
 
-    @pytest.mark.parametrize(
-        "perspective_fixture",
-        [
-            "marscentric",
-            "jupitercentric",
-            "venuscentric",
-            "selenocentric",
-        ],
-    )
+    @pytest.mark.parametrize("perspective_fixture", [
+        "marscentric", "jupitercentric", "venuscentric", "selenocentric",
+    ])
     def test_all_positions_in_range(self, perspective_fixture, request):
         pctr = request.getfixturevalue(perspective_fixture)
         for planet in self._ALL_PLANETS:
             point = getattr(pctr, planet, None)
             if point is not None:
                 assert 0 <= point.abs_pos < 360, (
-                    f"{perspective_fixture}.{planet}.abs_pos = {point.abs_pos} is out of [0, 360) range"
+                    f"{perspective_fixture}.{planet}.abs_pos = {point.abs_pos} "
+                    f"is out of [0, 360) range"
                 )
 
 
@@ -395,9 +341,7 @@ class TestCalcPctrTimescale:
         monkeypatch.setattr(ephe, "calc_pctr", spy_calc_pctr)
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "TT Timescale Check",
-            **_BIRTH_KWARGS,
-            perspective_type="Marscentric",
+            "TT Timescale Check", **_BIRTH_KWARGS, perspective_type="Marscentric",
         )
 
         assert received, "calc_pctr was never called for a planetocentric chart"
@@ -411,7 +355,9 @@ class TestCalcPctrTimescale:
             # measurably different, so this also fails if deltaT is dropped.
             assert abs(tjdet - jd_ut) > 1e-5
 
-    def test_failed_planetocentric_point_is_never_replaced_with_geocentric(self, monkeypatch, caplog):
+    def test_failed_planetocentric_point_is_never_replaced_with_geocentric(
+        self, monkeypatch, caplog
+    ):
         """A failed frame-specific calculation is omitted, never relabelled."""
         from kerykeion.ephemeris_backend import ephe
 
@@ -451,13 +397,10 @@ class TestOutOfBoundsPerspectiveGating:
         obliquity, which is meaningless for heliocentric/planetocentric frames —
         it must be None there, and computed for geocentric charts."""
         geo = AstrologicalSubjectFactory.from_birth_data(
-            "Geo OOB",
-            **_BIRTH_KWARGS,
+            "Geo OOB", **_BIRTH_KWARGS,
         )
         helio = AstrologicalSubjectFactory.from_birth_data(
-            "Helio OOB",
-            **_BIRTH_KWARGS,
-            perspective_type="Heliocentric",
+            "Helio OOB", **_BIRTH_KWARGS, perspective_type="Heliocentric",
         )
         assert geo.sun.is_out_of_bounds is not None
         # For a heliocentric chart the OOB flag must be unset (the
@@ -475,32 +418,26 @@ class TestDegenerateCenterBodyExclusion:
 
     def test_earth_excluded_in_geocentric(self):
         geo = AstrologicalSubjectFactory.from_birth_data(
-            "Geo",
-            **_BIRTH_KWARGS,
-            active_points=["Sun", "Moon", "Earth"],
+            "Geo", **_BIRTH_KWARGS, active_points=["Sun", "Moon", "Earth"],
         )
         assert geo.earth is None
         assert "Earth" not in geo.active_points
 
     def test_sun_excluded_in_heliocentric_earth_real(self):
         helio = AstrologicalSubjectFactory.from_birth_data(
-            "Helio",
-            **_BIRTH_KWARGS,
-            perspective_type="Heliocentric",
+            "Helio", **_BIRTH_KWARGS, perspective_type="Heliocentric",
             active_points=["Sun", "Moon", "Earth"],
         )
-        assert helio.sun is None  # Sun is the center -> excluded
+        assert helio.sun is None                      # Sun is the center -> excluded
         assert "Sun" not in helio.active_points
-        assert helio.earth is not None  # Earth is real in heliocentric
+        assert helio.earth is not None                # Earth is real in heliocentric
         assert helio.earth.abs_pos != 0.0 or helio.earth.speed != 0.0
 
     def test_no_phantom_earth_aspects_in_geocentric(self):
         from kerykeion.chart_data_factory import ChartDataFactory
 
         geo = AstrologicalSubjectFactory.from_birth_data(
-            "Geo",
-            **_BIRTH_KWARGS,
-            active_points=["Sun", "Moon", "Mars", "Earth"],
+            "Geo", **_BIRTH_KWARGS, active_points=["Sun", "Moon", "Mars", "Earth"],
         )
         cd = ChartDataFactory.create_natal_chart_data(geo)
         assert not [a for a in cd.aspects if "Earth" in (a.p1_name, a.p2_name)]
@@ -511,27 +448,13 @@ class TestDegenerateCenterBodyExclusion:
         from kerykeion.chart_data_factory import ChartDataFactory
 
         john = AstrologicalSubjectFactory.from_birth_data(
-            "John",
-            **_BIRTH_KWARGS,
-            perspective_type="Heliocentric",
+            "John", **_BIRTH_KWARGS, perspective_type="Heliocentric",
             active_points=["Sun", "Moon", "Mars"],
         )
         paul = AstrologicalSubjectFactory.from_birth_data(
-            "Paul",
-            1942,
-            6,
-            18,
-            15,
-            30,
-            lng=0.0,
-            lat=51.5,
-            tz_str="Etc/GMT",
-            city="Greenwich",
-            nation="GB",
-            online=False,
-            perspective_type="Heliocentric",
-            active_points=["Sun", "Moon", "Mars"],
-            suppress_geonames_warning=True,
+            "Paul", 1942, 6, 18, 15, 30, lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False, perspective_type="Heliocentric",
+            active_points=["Sun", "Moon", "Mars"], suppress_geonames_warning=True,
         )
         cd = ChartDataFactory.create_synastry_chart_data(john, paul)  # default score=True
         assert cd.relationship_score is None
@@ -544,47 +467,21 @@ class TestGeocentricOnlyQuantitiesRound14:
 
     def test_planetocentric_skips_geocentric_only(self):
         s = AstrologicalSubjectFactory.from_birth_data(
-            "M",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            city="Rome",
-            nation="IT",
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-            perspective_type="Marscentric",
-            calculate_local_space=True,
+            "M", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            perspective_type="Marscentric", calculate_local_space=True,
             calculate_lunar_phase=True,
-            active_points=["Moon", "Jupiter", "Saturn", "Ascendant", "Medium_Coeli", "Pars_Fidei"],
-        )
+            active_points=["Moon", "Jupiter", "Saturn", "Ascendant", "Medium_Coeli", "Pars_Fidei"])
         assert s.jupiter.azimuth is None
         assert s.lunar_phase is None
         assert s.pars_fidei is None
 
     def test_geocentric_keeps_geocentric_only(self):
         s = AstrologicalSubjectFactory.from_birth_data(
-            "G",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            city="Rome",
-            nation="IT",
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-            calculate_local_space=True,
-            calculate_lunar_phase=True,
-            active_points=["Moon", "Sun", "Jupiter", "Ascendant", "Pars_Fortunae"],
-        )
+            "G", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            calculate_local_space=True, calculate_lunar_phase=True,
+            active_points=["Moon", "Sun", "Jupiter", "Ascendant", "Pars_Fortunae"])
         assert s.jupiter.azimuth is not None
         assert s.lunar_phase is not None
         assert s.pars_fortunae is not None
@@ -596,66 +493,28 @@ class TestGauquelinAndDerivedPointGuardRound15:
 
     def test_gauquelin_sector_skipped_in_heliocentric(self):
         s = AstrologicalSubjectFactory.from_birth_data(
-            "H",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            city="Rome",
-            nation="IT",
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-            perspective_type="Heliocentric",
-            calculate_gauquelin=True,
-            active_points=["Moon", "Mars"],
-        )
+            "H", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            perspective_type="Heliocentric", calculate_gauquelin=True,
+            active_points=["Moon", "Mars"])
         assert s.mars.gauquelin_sector is None
         assert s.gauquelin_sector_cusps is None
 
     def test_gauquelin_sector_present_in_geocentric(self):
         s = AstrologicalSubjectFactory.from_birth_data(
-            "G",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            city="Rome",
-            nation="IT",
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-            calculate_gauquelin=True,
-            active_points=["Moon", "Mars"],
-        )
+            "G", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+            calculate_gauquelin=True, active_points=["Moon", "Mars"])
         assert s.mars.gauquelin_sector is not None
 
     def test_node_prerequisite_guarded_in_heliocentric(self):
         # South node's primary (a lunar node) must not be auto-activated as a
         # phantom in a heliocentric chart.
         s = AstrologicalSubjectFactory.from_birth_data(
-            "H2",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            city="Rome",
-            nation="IT",
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "H2", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
             perspective_type="Heliocentric",
-            active_points=["Mercury", "Mean_South_Lunar_Node"],
-        )
+            active_points=["Mercury", "Mean_South_Lunar_Node"])
         assert s.mean_south_lunar_node is None
 
 
@@ -668,19 +527,8 @@ class TestGeocentricOnlyLunarApsidesRound40:
 
     def test_heliocentric_drops_interpolated_perigee(self):
         s = AstrologicalSubjectFactory.from_birth_data(
-            "H",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            city="Rome",
-            nation="IT",
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "H", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
             perspective_type="Heliocentric",
             active_points=["Mercury", "Venus", "Interpolated_Perigee", "Interpolated_Lilith"],
         )
@@ -689,19 +537,8 @@ class TestGeocentricOnlyLunarApsidesRound40:
 
     def test_geocentric_keeps_interpolated_perigee(self):
         s = AstrologicalSubjectFactory.from_birth_data(
-            "G",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            city="Rome",
-            nation="IT",
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "G", 1990, 6, 15, 12, 0, city="Rome", nation="IT", lng=12.5, lat=41.9,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
             active_points=["Mercury", "Interpolated_Perigee"],
         )
         assert s.interpolated_perigee is not None
@@ -714,13 +551,8 @@ class TestGeocentricOnlyExplicitRequestRound44:
     must raise (it used to return a silent empty chart)."""
 
     COMMON = dict(
-        city="Rome",
-        nation="IT",
-        lng=12.5,
-        lat=41.9,
-        tz_str="Europe/Rome",
-        online=False,
-        suppress_geonames_warning=True,
+        city="Rome", nation="IT", lng=12.5, lat=41.9,
+        tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
     )
 
     def test_explicit_request_warns_and_drops(self, caplog):
@@ -728,31 +560,20 @@ class TestGeocentricOnlyExplicitRequestRound44:
 
         with caplog.at_level(logging.WARNING):
             s = AstrologicalSubjectFactory.from_birth_data(
-                "H",
-                1990,
-                6,
-                15,
-                12,
-                0,
-                perspective_type="Heliocentric",
-                active_points=["Moon", "Mercury", "Mean_Lilith"],
-                **self.COMMON,
+                "H", 1990, 6, 15, 12, 0, perspective_type="Heliocentric",
+                active_points=["Moon", "Mercury", "Mean_Lilith"], **self.COMMON,
             )
         assert "Mean_Lilith" not in s.active_points
-        assert any("Mean_Lilith" in record.message and "geocentric-only" in record.message for record in caplog.records)
+        assert any(
+            "Mean_Lilith" in record.message and "geocentric-only" in record.message
+            for record in caplog.records
+        )
 
     def test_all_geocentric_only_list_raises(self):
         from kerykeion.schemas import KerykeionException
 
         with pytest.raises(KerykeionException, match="geocentric-only"):
             AstrologicalSubjectFactory.from_birth_data(
-                "H",
-                1990,
-                6,
-                15,
-                12,
-                0,
-                perspective_type="Heliocentric",
-                active_points=["Mean_Lilith", "Mean_North_Lunar_Node"],
-                **self.COMMON,
+                "H", 1990, 6, 15, 12, 0, perspective_type="Heliocentric",
+                active_points=["Mean_Lilith", "Mean_North_Lunar_Node"], **self.COMMON,
             )

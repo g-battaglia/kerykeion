@@ -9,36 +9,18 @@ from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 @pytest.fixture(scope="module")
 def john_lennon():
     return AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon",
-        1940,
-        10,
-        9,
-        18,
-        30,
-        lng=-2.9916,
-        lat=53.4084,
-        tz_str="Europe/London",
-        city="Liverpool",
-        nation="GB",
-        online=False,
+        "John Lennon", 1940, 10, 9, 18, 30,
+        lng=-2.9916, lat=53.4084, tz_str="Europe/London",
+        city="Liverpool", nation="GB", online=False,
     )
 
 
 @pytest.fixture(scope="module")
 def yoko_ono():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Yoko Ono",
-        1933,
-        2,
-        18,
-        20,
-        30,
-        lng=139.6503,
-        lat=35.6762,
-        tz_str="Asia/Tokyo",
-        city="Tokyo",
-        nation="JP",
-        online=False,
+        "Yoko Ono", 1933, 2, 18, 20, 30,
+        lng=139.6503, lat=35.6762, tz_str="Asia/Tokyo",
+        city="Tokyo", nation="JP", online=False,
     )
 
 
@@ -88,7 +70,8 @@ class TestOutOfBounds:
         sun_eq = ephe.calc_ut(jd, ephe.SUN, ephe.FLG_SWIEPH | ephe.FLG_EQUATORIAL)[0]
         expected_dec = sun_eq[1]
         assert abs(john_lennon.sun.declination - expected_dec) < 0.001, (
-            f"Sun declination {john_lennon.sun.declination} != ephe reference {expected_dec}"
+            f"Sun declination {john_lennon.sun.declination} != "
+            f"ephe reference {expected_dec}"
         )
 
     def test_moon_declination_matches_swe_reference(self, john_lennon):
@@ -98,7 +81,8 @@ class TestOutOfBounds:
         moon_eq = ephe.calc_ut(jd, ephe.MOON, ephe.FLG_SWIEPH | ephe.FLG_EQUATORIAL)[0]
         expected_dec = moon_eq[1]
         assert abs(john_lennon.moon.declination - expected_dec) < 0.001, (
-            f"Moon declination {john_lennon.moon.declination} != ephe reference {expected_dec}"
+            f"Moon declination {john_lennon.moon.declination} != "
+            f"ephe reference {expected_dec}"
         )
 
     def test_oob_flag_consistent_with_obliquity(self, john_lennon):
@@ -154,7 +138,9 @@ class TestDeclinationAspects:
 
     def test_dual_chart_declination_aspects(self, john_lennon, yoko_ono):
         """Dual chart declination aspects should work between two subjects."""
-        aspects = AspectsFactory.dual_chart_declination_aspects(john_lennon, yoko_ono, orb=1.0)
+        aspects = AspectsFactory.dual_chart_declination_aspects(
+            john_lennon, yoko_ono, orb=1.0
+        )
         assert isinstance(aspects, list)
         for aspect in aspects:
             assert aspect.aspect in ("parallel", "contra-parallel")
@@ -195,7 +181,9 @@ class TestDeclinationAspects:
         seen_pairs = set()
         for a in aspects:
             pair = (a.p1_name, a.p2_name)
-            assert pair not in seen_pairs, f"Duplicate pair {pair}: both parallel and contra-parallel reported"
+            assert pair not in seen_pairs, (
+                f"Duplicate pair {pair}: both parallel and contra-parallel reported"
+            )
             seen_pairs.add(pair)
 
     def test_parallel_same_sign(self, john_lennon):
@@ -238,18 +226,9 @@ class TestDeclinationArtifactFiltering:
         from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 
         return AstrologicalSubjectFactory.from_birth_data(
-            "All Points Declination",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            "All Points Declination", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
             active_points=ALL_ACTIVE_POINTS,
         )
 
@@ -269,7 +248,8 @@ class TestDeclinationArtifactFiltering:
             pair = {derived, config["primary"]}
             offenders = [a for a in aspects if {a.p1_name, a.p2_name} == pair]
             assert offenders == [], (
-                f"Artifact declination aspect for locked pair {pair}: {[(a.aspect, a.orbit) for a in offenders]}"
+                f"Artifact declination aspect for locked pair {pair}: "
+                f"{[(a.aspect, a.orbit) for a in offenders]}"
             )
 
     def test_cross_chart_opposite_name_pairs_are_kept(self, all_points_subject):
@@ -283,18 +263,9 @@ class TestDeclinationArtifactFiltering:
         from kerykeion.aspects.aspects_factory import GEOMETRIC_OPPOSITE_PAIRS
 
         other = AstrologicalSubjectFactory.from_birth_data(
-            "Other Declination",
-            1985,
-            3,
-            10,
-            14,
-            30,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            "Other Declination", 1985, 3, 10, 14, 30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
             active_points=list(all_points_subject.active_points),
         )
         # Wide orb so geometry cannot make this vacuous: with 90° every
@@ -303,8 +274,7 @@ class TestDeclinationArtifactFiltering:
         aspects = AspectsFactory.dual_chart_declination_aspects(all_points_subject, other, orb=90.0)
         found_pairs = {frozenset((a.p1_name, a.p2_name)) for a in aspects}
         missing = [
-            pair
-            for pair in GEOMETRIC_OPPOSITE_PAIRS
+            pair for pair in GEOMETRIC_OPPOSITE_PAIRS
             if all(
                 getattr(all_points_subject, name.lower(), None) is not None
                 and getattr(all_points_subject, name.lower()).declination is not None
@@ -319,18 +289,9 @@ class TestDeclinationArtifactFiltering:
         from kerykeion.settings.config_constants import DEFAULT_FIXED_STARS
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Stars Declination",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            "Stars Declination", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
             active_fixed_stars=list(DEFAULT_FIXED_STARS),
         )
         stars = {star.name for star in subject.fixed_stars}

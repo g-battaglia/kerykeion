@@ -459,28 +459,17 @@ class TestActivePointsForwarding:
 
         points = [*DEFAULT_ACTIVE_POINTS, "Ceres"]
         return points, AstrologicalSubjectFactory.from_birth_data(
-            "Ceres Natal",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Ceres Natal", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
             active_points=points,
         )
 
     def test_ephemeris_factory_forwards_active_points(self):
         points, _ = self._natal_with_ceres()
         factory = EphemerisDataFactory(
-            datetime(2026, 3, 25),
-            datetime(2026, 3, 27),
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
             active_points=points,
         )
         subjects = factory.get_ephemeris_data_as_astrological_subjects()
@@ -490,24 +479,21 @@ class TestActivePointsForwarding:
     def test_warns_when_requested_points_missing_from_ephemeris(self, caplog):
         points, natal = self._natal_with_ceres()
         ephemeris = EphemerisDataFactory(
-            datetime(2026, 3, 25),
-            datetime(2026, 3, 27),
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
         ).get_ephemeris_data_as_astrological_subjects()
         with caplog.at_level(logging.WARNING):
             TransitsTimeRangeFactory(natal, ephemeris, active_points=points)
-        assert any("Ceres" in record.message and "absent" in record.message for record in caplog.records)
+        assert any(
+            "Ceres" in record.message and "absent" in record.message
+            for record in caplog.records
+        )
 
     def test_no_warning_when_points_match(self, caplog):
         points, natal = self._natal_with_ceres()
         ephemeris = EphemerisDataFactory(
-            datetime(2026, 3, 25),
-            datetime(2026, 3, 27),
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
             active_points=points,
         ).get_ephemeris_data_as_astrological_subjects()
         with caplog.at_level(logging.WARNING):
@@ -519,25 +505,14 @@ class TestActivePointsForwarding:
         # that is not a caller mistake and must not warn (the advice would be
         # unfollowable — the factory re-drops them).
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "Helio",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Helio", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
             perspective_type="Heliocentric",
         )
         ephemeris = EphemerisDataFactory(
-            datetime(2026, 3, 25),
-            datetime(2026, 3, 27),
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
             perspective_type="Heliocentric",
         ).get_ephemeris_data_as_astrological_subjects()
         with caplog.at_level(logging.WARNING):
@@ -549,56 +524,40 @@ class TestActivePointsForwarding:
         # natal — aspects involving it are equally undetectable.
         points, _ = self._natal_with_ceres()
         natal_default = AstrologicalSubjectFactory.from_birth_data(
-            "Default Natal",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Default Natal", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
         )
         ephemeris = EphemerisDataFactory(
-            datetime(2026, 3, 25),
-            datetime(2026, 3, 27),
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
             active_points=points,
         ).get_ephemeris_data_as_astrological_subjects()
         with caplog.at_level(logging.WARNING):
             TransitsTimeRangeFactory(natal_default, ephemeris, active_points=points)
-        assert any("Ceres" in record.message and "natal chart" in record.message for record in caplog.records)
+        assert any(
+            "Ceres" in record.message and "natal chart" in record.message
+            for record in caplog.records
+        )
 
     def test_warns_when_point_missing_from_both_sides(self, caplog):
         # The most common misconfiguration: an asteroid added only to this
         # factory's request, computed by neither side.
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "Plain",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Plain", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
         )
         ephemeris = EphemerisDataFactory(
-            datetime(2026, 3, 25),
-            datetime(2026, 3, 27),
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
         ).get_ephemeris_data_as_astrological_subjects()
         with caplog.at_level(logging.WARNING):
             TransitsTimeRangeFactory(natal, ephemeris, active_points=["Sun", "Ceres"])
-        assert any("Ceres" in record.message and "BOTH" in record.message for record in caplog.records)
+        assert any(
+            "Ceres" in record.message and "BOTH" in record.message
+            for record in caplog.records
+        )
 
 
 @pytest.mark.parametrize(
@@ -610,17 +569,9 @@ def test_axis_orb_limit_validated_up_front(invalid_limit):
     from kerykeion.schemas import KerykeionException
 
     natal = AstrologicalSubjectFactory.from_birth_data(
-        "N",
-        1990,
-        6,
-        15,
-        12,
-        0,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        online=False,
-        suppress_geonames_warning=True,
+        "N", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
     )
     with pytest.raises(KerykeionException, match="axis_orb_limit"):
         TransitsTimeRangeFactory(natal, [natal], axis_orb_limit=invalid_limit)

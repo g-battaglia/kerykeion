@@ -777,12 +777,8 @@ class TestEphemerisConfigurationVariants:
 
         tz = ZoneInfo("Europe/Rome")
         factory = EphemerisDataFactory(
-            start_datetime=start,
-            end_datetime=end,
-            step_type="days",
-            lat=41.9,
-            lng=12.5,
-            tz_str="Europe/Rome",
+            start_datetime=start, end_datetime=end,
+            step_type="days", lat=41.9, lng=12.5, tz_str="Europe/Rome",
         )
         data = factory.get_ephemeris_data()
         locals_ = [datetime.fromisoformat(d["date"]).astimezone(tz) for d in data]
@@ -927,9 +923,7 @@ class TestFixedStarsInEphemeris:
         be worse than a missing field: it actively asserts the cusps are Placidus.
         """
         factory = self._factory(
-            lat=78.2232,
-            lng=15.6467,
-            tz_str="Arctic/Longyearbyen",
+            lat=78.2232, lng=15.6467, tz_str="Arctic/Longyearbyen",
             houses_system_identifier="P",
         )
         for sample in factory.get_ephemeris_data():
@@ -982,7 +976,9 @@ class TestFixedStarsInEphemeris:
 
     def test_subjects_expose_fixed_stars(self):
         """get_ephemeris_data_as_astrological_subjects carries subject.fixed_stars."""
-        subjects = self._factory(active_fixed_stars=["Regulus", "Spica"]).get_ephemeris_data_as_astrological_subjects()
+        subjects = self._factory(
+            active_fixed_stars=["Regulus", "Spica"]
+        ).get_ephemeris_data_as_astrological_subjects()
         assert len(subjects) == 2
         for subject in subjects:
             assert [star.name for star in subject.fixed_stars] == ["Regulus", "Spica"]

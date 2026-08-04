@@ -16,29 +16,16 @@ from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
 @pytest.fixture(scope="module")
 def transit_factory():
     natal = AstrologicalSubjectFactory.from_birth_data(
-        "Transit Test",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "Transit Test", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
     )
     start = datetime(2025, 1, 1)
     end = start + timedelta(days=30)
     ephemeris = EphemerisDataFactory(
-        start_datetime=start,
-        end_datetime=end,
-        step_type="days",
-        step=1,
-        lat=41.9028,
-        lng=12.4964,
-        tz_str="Europe/Rome",
+        start_datetime=start, end_datetime=end,
+        step_type="days", step=1,
+        lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
     )
     eph_data = ephemeris.get_ephemeris_data_as_astrological_subjects()
     return TransitsTimeRangeFactory(natal_chart=natal, ephemeris_data_points=eph_data)
@@ -126,7 +113,10 @@ def _make_synthetic_factory(natal_chart, samples):
     in-orb aspects at that day. Days run from 2025-01-01, daily step.
     """
     n_days = max(samples) + 1 if samples else 0
-    dates = [(datetime(2025, 1, 1) + timedelta(days=i)).strftime("%Y-%m-%dT%H:%M:%S+00:00") for i in range(n_days)]
+    dates = [
+        (datetime(2025, 1, 1) + timedelta(days=i)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        for i in range(n_days)
+    ]
     moments = [
         TransitMomentModel(
             date=dates[i],
@@ -255,28 +245,15 @@ class TestTransitEventSplitting:
         merged into one event spanning the whole range.
         """
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "Recurrence Test",
-            1990,
-            6,
-            15,
-            14,
-            30,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            "Recurrence Test", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
         )
         start = datetime(2025, 1, 1)
         ephemeris = EphemerisDataFactory(
-            start_datetime=start,
-            end_datetime=start + timedelta(days=60),
-            step_type="days",
-            step=1,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
+            start_datetime=start, end_datetime=start + timedelta(days=60),
+            step_type="days", step=1,
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
         )
         factory = TransitsTimeRangeFactory(
             natal_chart=natal,
@@ -318,7 +295,9 @@ class TestUndersamplingWarning:
         )
         with caplog.at_level(logging.WARNING):
             factory.get_transit_moments()
-        assert "sampling step" in caplog.text, "Daily sampling with the Moon active must log an undersampling warning"
+        assert "sampling step" in caplog.text, (
+            "Daily sampling with the Moon active must log an undersampling warning"
+        )
 
     def test_slow_points_do_not_warn(self, transit_factory, caplog):
         factory = TransitsTimeRangeFactory(
@@ -351,7 +330,10 @@ class TestNonUniformCadence:
             base.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
             (base + timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
         ]
-        dates += [(base + timedelta(hours=1, days=i)).strftime("%Y-%m-%dT%H:%M:%S+00:00") for i in range(1, 7)]
+        dates += [
+            (base + timedelta(hours=1, days=i)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+            for i in range(1, 7)
+        ]
         return dates
 
     def test_representative_step_is_median_not_min(self, transit_factory):
@@ -373,8 +355,7 @@ class TestNonUniformCadence:
         }
         factory = _make_factory_with_dates(transit_factory.natal_chart, self._non_uniform_dates(), samples)
         moon_sun = [
-            e
-            for e in factory.get_transit_events().events
+            e for e in factory.get_transit_events().events
             if (e.p1_name, e.p2_name, e.aspect) == ("Moon", "Sun", "conjunction")
         ]
         assert len(moon_sun) == 1, (
@@ -444,7 +425,10 @@ class TestBceSamplingGaps:
         deltas = [timedelta(0), timedelta(hours=6), timedelta(days=1, hours=6), timedelta(days=3)]
         dates = [(base + d).strftime("%Y-%m-%dT%H:%M:%S+00:00") for d in deltas]
         factory = _make_factory_with_dates(transit_factory.natal_chart, dates, {})
-        expected = [(later - earlier).total_seconds() / 86400.0 for earlier, later in zip(deltas, deltas[1:])]
+        expected = [
+            (later - earlier).total_seconds() / 86400.0
+            for earlier, later in zip(deltas, deltas[1:])
+        ]
         assert factory._sampling_gaps_days() == pytest.approx(expected)
 
 
@@ -453,7 +437,10 @@ class TestLocalOrbMinimaPlateaus:
 
     @staticmethod
     def _run(orbs):
-        return [(f"2025-01-{i + 1:02d}T00:00:00+00:00", orb, "Applying") for i, orb in enumerate(orbs)]
+        return [
+            (f"2025-01-{i + 1:02d}T00:00:00+00:00", orb, "Applying")
+            for i, orb in enumerate(orbs)
+        ]
 
     def test_wide_plateau_is_single_minimum(self):
         # [5, 2, 2, 2, 5] used to emit minima at indices 1 AND 3 — two events

@@ -722,19 +722,9 @@ class TestFactoryFromSubjectRangeEdge:
         if _detect_ephemeris_tier() == "base":
             pytest.skip("2649 is outside the base kernel's range (1849-2150).")
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Range Edge",
-            2649,
-            12,
-            20,
-            12,
-            0,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
+            "Range Edge", 2649, 12, 20, 12, 0,
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
         )
         overview = MoonPhaseDetailsFactory.from_subject(subject)
         assert isinstance(overview, MoonPhaseOverviewModel)
@@ -766,19 +756,9 @@ class TestFactoryFromSubjectRangeEdge:
             )
         with pytest.raises(KerykeionException) as excinfo:
             AstrologicalSubjectFactory.from_birth_data(
-                "Beyond Range End",
-                2650,
-                1,
-                20,
-                12,
-                0,
-                lat=41.9028,
-                lng=12.4964,
-                tz_str="Europe/Rome",
-                city="Rome",
-                nation="IT",
-                online=False,
-                suppress_geonames_warning=True,
+                "Beyond Range End", 2650, 1, 20, 12, 0,
+                lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+                city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
             )
         cause_names = []
         cause = excinfo.value.__cause__
@@ -792,19 +772,9 @@ class TestFactoryFromSubjectRangeEdge:
 
     def test_normal_date_subject_unaffected(self) -> None:
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Normal",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
+            "Normal", 1990, 6, 15, 12, 0,
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
         )
         overview = MoonPhaseDetailsFactory.from_subject(subject)
         assert isinstance(overview, MoonPhaseOverviewModel)

@@ -10,18 +10,9 @@ from kerykeion import AstrologicalSubjectFactory, AstroCartographyFactory
 @pytest.fixture(scope="module")
 def subject():
     return AstrologicalSubjectFactory.from_birth_data(
-        "ACG Test",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "ACG Test", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
     )
 
 
@@ -208,18 +199,9 @@ class TestACGSweRegressions:
     @pytest.fixture(scope="class")
     def acg_subject(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "ACG Regression",
-            1990,
-            6,
-            15,
-            14,
-            30,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            "ACG Regression", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
         )
 
     def test_sun_mc_line_longitude_matches_swe(self, acg_subject):
@@ -247,7 +229,8 @@ class TestACGSweRegressions:
         factory_mc_lng = sun_mc.points[0].longitude
 
         assert abs(factory_mc_lng - expected_mc_lng) < 0.01, (
-            f"Sun MC line longitude mismatch: factory={factory_mc_lng}, expected={expected_mc_lng}"
+            f"Sun MC line longitude mismatch: factory={factory_mc_lng}, "
+            f"expected={expected_mc_lng}"
         )
 
 
@@ -262,18 +245,9 @@ class TestACGInMundoLines:
     @pytest.fixture(scope="class")
     def acg_subject(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "ACG In Mundo",
-            1990,
-            6,
-            15,
-            14,
-            30,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            "ACG In Mundo", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
         )
 
     @pytest.mark.parametrize(
@@ -297,7 +271,9 @@ class TestACGInMundoLines:
         diff = abs(expected - zodiacal)
         if diff > 180:
             diff = 360 - diff
-        assert diff > min_shift, f"{planet}: fixture no longer discriminative ({diff=:.4f})"
+        assert diff > min_shift, (
+            f"{planet}: fixture no longer discriminative ({diff=:.4f})"
+        )
 
         lines = AstroCartographyFactory.compute(acg_subject, step=1, planets=[planet])
         mc = next(line for line in lines if line.planet == planet and line.line_type == "MC")
@@ -317,15 +293,13 @@ class TestACGInMundoLines:
             eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
             ra, dec, dist = ephe.calc_ut(jd, ephe.SUN, eq_iflag)[0][:3]
             azimuth, true_alt = ephe.azalt(
-                jd,
-                ephe.EQU2HOR,
-                (point.longitude, point.latitude, 0.0),
-                0.0,
-                0.0,
-                (ra, dec, dist),
+                jd, ephe.EQU2HOR, (point.longitude, point.latitude, 0.0),
+                0.0, 0.0, (ra, dec, dist),
             )[:2]
 
-        assert abs(true_alt) <= 0.2, f"Sun not on geometric horizon at ASC line point: alt={true_alt}"
+        assert abs(true_alt) <= 0.2, (
+            f"Sun not on geometric horizon at ASC line point: alt={true_alt}"
+        )
         # Rising side: azimuth east of the meridian (ephe convention: from
         # south, clockwise -> east is 180..360).
         assert 180.0 < azimuth < 360.0, f"ASC point is not on the rising side: az={azimuth}"
@@ -350,17 +324,9 @@ class TestACGSiderealFrameConsistency:
     def test_sidereal_acg_lines_identical_to_tropical(self):
         """LAHIRI vs tropical subject at the same instant: identical geography."""
         birth = dict(
-            year=1990,
-            month=6,
-            day=15,
-            hour=14,
-            minute=30,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
         )
         tropical = AstrologicalSubjectFactory.from_birth_data("ACG Tropical", **birth)
         sidereal = AstrologicalSubjectFactory.from_birth_data(
@@ -381,9 +347,9 @@ class TestACGSiderealFrameConsistency:
             sid_line = sid_map[key]
             if key[1] in ("MC", "IC"):
                 # Vertical lines: the single geographic longitude must match.
-                assert sid_line.points[0].longitude == pytest.approx(trop_line.points[0].longitude, abs=0.01), (
-                    f"{key}: sidereal MC/IC longitude diverges from tropical"
-                )
+                assert sid_line.points[0].longitude == pytest.approx(
+                    trop_line.points[0].longitude, abs=0.01
+                ), f"{key}: sidereal MC/IC longitude diverges from tropical"
             else:
                 # ASC/DSC scans share the same grid: identical point sets.
                 trop_pts = {(p.longitude, p.latitude) for p in trop_line.points}

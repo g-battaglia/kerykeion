@@ -9,18 +9,9 @@ from kerykeion import AstrologicalSubjectFactory
 @pytest.fixture(scope="module")
 def subject_with_nutation():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Nutation Test",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "Nutation Test", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
         calculate_nutation=True,
     )
 
@@ -28,18 +19,9 @@ def subject_with_nutation():
 @pytest.fixture(scope="module")
 def subject_without_nutation():
     return AstrologicalSubjectFactory.from_birth_data(
-        "No Nutation",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "No Nutation", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
     )
 
 
@@ -130,23 +112,16 @@ class TestNutationSwissEphRegression:
         its nutation model fields against the ephe.calc_ut ECL_NUT output.
         """
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "J2000 Nutation Regression",
-            2000,
-            1,
-            1,
-            12,
-            0,
-            lng=0.0,
-            lat=51.5074,
-            tz_str="Etc/GMT",
-            city="Greenwich",
-            nation="GB",
-            online=False,
+            "J2000 Nutation Regression", 2000, 1, 1, 12, 0,
+            lng=0.0, lat=51.5074, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False,
             calculate_nutation=True,
         )
 
         assert subject.nutation is not None, "Nutation should be populated"
-        assert abs(subject.julian_day - self.J2000_JD) < 1e-4, f"JD mismatch: {subject.julian_day} vs {self.J2000_JD}"
+        assert abs(subject.julian_day - self.J2000_JD) < 1e-4, (
+            f"JD mismatch: {subject.julian_day} vs {self.J2000_JD}"
+        )
 
         # Compare each field against the ephe reference with tight tolerance
         assert abs(subject.nutation.true_obliquity - self.SWE_TRUE_OBLIQUITY) < 1e-4, (

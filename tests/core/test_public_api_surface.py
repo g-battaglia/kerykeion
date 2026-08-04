@@ -75,7 +75,9 @@ def test_every_public_model_is_importable_from_schemas():
     missing = sorted(name for name in PUBLIC_MODELS if name not in schemas.__all__)
     assert not missing, f"models missing from kerykeion.schemas.__all__: {missing}"
 
-    mismatched = sorted(name for name, cls in PUBLIC_MODELS.items() if getattr(schemas, name, None) is not cls)
+    mismatched = sorted(
+        name for name, cls in PUBLIC_MODELS.items() if getattr(schemas, name, None) is not cls
+    )
     assert not mismatched, f"schemas attribute is not the defining class for: {mismatched}"
 
 
@@ -204,6 +206,5 @@ def test_relationship_and_ephemeris_models_top_level_exported():
     top-level namespace, like every other factory's result model."""
     import kerykeion
     from kerykeion import RelationshipScoreModel, EphemerisDictModel  # noqa: F401
-
     assert "RelationshipScoreModel" in kerykeion.__all__
     assert "EphemerisDictModel" in kerykeion.__all__

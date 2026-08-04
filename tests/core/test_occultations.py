@@ -16,7 +16,6 @@ from kerykeion.schemas.kerykeion_exception import KerykeionException
 # Shared fixtures
 # ---------------------------------------------------------------------------
 
-
 @pytest.fixture(scope="module")
 def factory():
     return OccultationFactory()
@@ -81,7 +80,6 @@ class TestSearchGlobal:
 # Local search tests
 # ---------------------------------------------------------------------------
 
-
 class TestSearchLocal:
     def test_returns_list(self, factory, start_jd):
         assert isinstance(_local_search(factory, start_jd, ephe.VENUS, 1), list)
@@ -102,21 +100,17 @@ class TestSearchLocal:
 # Import tests
 # ---------------------------------------------------------------------------
 
-
 class TestImports:
     def test_importable_from_package(self):
         from kerykeion import OccultationFactory as OF
-
         assert OF is OccultationFactory
 
     def test_importable_from_subpackage(self):
         from kerykeion.occultations import OccultationFactory as OF
-
         assert OF is OccultationFactory
 
     def test_model_importable(self):
         from kerykeion.occultations import OccultationModel as OM
-
         assert OM is OccultationModel
 
 
@@ -124,14 +118,12 @@ class TestImports:
 # SWE reference tests
 # ---------------------------------------------------------------------------
 
-
 class TestClassifyOccultation:
     """Test the _classify_occultation helper."""
 
     def test_classify_unknown_flag(self):
         """Flag 0 (no matching bits) should return 'Unknown'."""
         from kerykeion.occultations.occultation_factory import _classify_occultation
-
         assert _classify_occultation(0) == "Unknown"
 
 
@@ -162,7 +154,6 @@ class TestOccultationBreakAndErrorPaths:
         """search_global should return empty list when retflags == 0
         ("no further occultation" is a legitimate terminal result)."""
         from unittest.mock import patch
-
         zero_tret = [0.0] * 10
         with patch(
             "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_glob",
@@ -175,7 +166,6 @@ class TestOccultationBreakAndErrorPaths:
         """A backend failure must abort the search as KerykeionException
         (with the failing JD), never silently return partial results."""
         from unittest.mock import patch
-
         with patch(
             "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_glob",
             side_effect=RuntimeError("ephe failure"),
@@ -188,7 +178,6 @@ class TestOccultationBreakAndErrorPaths:
         scan walked past the ephemeris range edge), the whole search must raise
         rather than return a truncated list claiming full coverage."""
         from unittest.mock import patch
-
         good = (4, [start_jd + 5.0] + [0.0] * 9)  # 4 = ECL_TOTAL
         with patch(
             "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_glob",
@@ -201,7 +190,6 @@ class TestOccultationBreakAndErrorPaths:
         """search_local should return empty list when retflags == 0
         ("no further occultation" is a legitimate terminal result)."""
         from unittest.mock import patch
-
         zero_tret = [0.0] * 10
         with patch(
             "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_loc",
@@ -213,7 +201,6 @@ class TestOccultationBreakAndErrorPaths:
     def test_local_backend_failure_raises(self, factory, start_jd):
         """A backend failure must abort the search as KerykeionException."""
         from unittest.mock import patch
-
         with patch(
             "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_loc",
             side_effect=RuntimeError("ephe failure"),
@@ -242,7 +229,6 @@ class TestPlanetNameResolution:
     def test_global_accepts_planet_name(self, factory, start_jd):
         """search_global("Venus") must search the same body as ephe.VENUS."""
         from unittest.mock import patch
-
         captured = {}
 
         def fake_glob(cursor, planet_id, flags, ecl_type, backwards):
@@ -260,7 +246,6 @@ class TestPlanetNameResolution:
 
     def test_local_accepts_planet_name(self, factory, start_jd):
         from unittest.mock import patch
-
         captured = {}
 
         def fake_loc(cursor, planet_id, geopos, flags, backwards):

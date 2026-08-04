@@ -283,25 +283,15 @@ def test_elemental_matches_chart_distribution_with_active_stars():
     from kerykeion.chart_data_factory import ChartDataFactory
 
     subject = AstrologicalSubjectFactory.from_birth_data(
-        "Star Dominant",
-        1990,
-        6,
-        15,
-        12,
-        0,
-        lng=12.5,
-        lat=41.9,
-        tz_str="Europe/Rome",
-        online=False,
-        suppress_geonames_warning=True,
+        "Star Dominant", 1990, 6, 15, 12, 0,
+        lng=12.5, lat=41.9, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
         active_fixed_stars=["Regulus", "Spica"],
     )
     chart = ChartDataFactory.create_natal_chart_data(subject)
     dominants = DominantsFactory.from_subject(subject, strategy="elemental")
 
-    chart_pct = {
-        k: round(getattr(chart.element_distribution, f"{k}_percentage")) for k in ("fire", "earth", "air", "water")
-    }
+    chart_pct = {k: round(getattr(chart.element_distribution, f"{k}_percentage")) for k in ("fire", "earth", "air", "water")}
     dom_pct = {item.name.lower(): round(item.percentage) for item in dominants.elements}
     assert chart_pct == dom_pct
 
@@ -506,17 +496,8 @@ class TestAlmutenRankingConsistency:
 
         # This chart produces a Jupiter/Mercury/Saturn tie at total 14.0.
         s = AstrologicalSubjectFactory.from_birth_data(
-            "t",
-            1950,
-            10,
-            16,
-            3,
-            0,
-            lat=40.0,
-            lng=-3.0,
-            tz_str="Europe/Madrid",
-            online=False,
-            suppress_geonames_warning=True,
+            "t", 1950, 10, 16, 3, 0, lat=40.0, lng=-3.0,
+            tz_str="Europe/Madrid", online=False, suppress_geonames_warning=True,
         )
         r = DominantsFactory.from_subject(s, strategy="almuten_figuris")
         assert r.planets[0].name == r.dominant_planet
@@ -528,17 +509,8 @@ class TestAlmutenRankingConsistency:
 
         for y in range(1955, 2000, 5):
             s = AstrologicalSubjectFactory.from_birth_data(
-                "x",
-                y,
-                6,
-                10,
-                2,
-                10,
-                lat=41.9,
-                lng=12.5,
-                tz_str="Europe/Rome",
-                online=False,
-                suppress_geonames_warning=True,
+                "x", y, 6, 10, 2, 10, lat=41.9, lng=12.5,
+                tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
             )
             r = DominantsFactory.from_subject(s, strategy="almuten_figuris")
             assert r.planets[0].name == r.dominant_planet, f"mismatch for year {y}"

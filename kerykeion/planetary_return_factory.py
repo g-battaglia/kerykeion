@@ -382,7 +382,9 @@ class PlanetaryReturnFactory:
         # both) so a caller that built a USER-sidereal natal need not re-pass
         # them. Parity with SecondaryProgressionFactory, which reads them off
         # the subject.
-        self.custom_ayanamsa_t0 = custom_ayanamsa_t0 if custom_ayanamsa_t0 is not None else subject.custom_ayanamsa_t0
+        self.custom_ayanamsa_t0 = (
+            custom_ayanamsa_t0 if custom_ayanamsa_t0 is not None else subject.custom_ayanamsa_t0
+        )
         self.custom_ayanamsa_ayan_t0 = (
             custom_ayanamsa_ayan_t0 if custom_ayanamsa_ayan_t0 is not None else subject.custom_ayanamsa_ayan_t0
         )
@@ -398,7 +400,8 @@ class PlanetaryReturnFactory:
         # so keying off it would silently drop the enrichments the user did
         # request. Scan the standard bodies for the first one present.
         def _any_point_has(attr: str) -> bool:
-            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"):
+            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter",
+                          "saturn", "uranus", "neptune", "pluto"):
                 _p = getattr(subject, _name, None)
                 if _p is not None:
                     return getattr(_p, attr, None) is not None
@@ -657,7 +660,9 @@ class PlanetaryReturnFactory:
                             backwards=True,
                         )
                     except TypeError:
-                        raise KerykeionException("Backward Solar return search requires the libephemeris backend.")
+                        raise KerykeionException(
+                            "Backward Solar return search requires the libephemeris backend."
+                        )
                     except _BACKEND_ERRORS as exc:
                         raise KerykeionException(
                             "The Solar return search stepped outside the available ephemeris "
@@ -689,7 +694,9 @@ class PlanetaryReturnFactory:
                             backwards=True,
                         )
                     except TypeError:
-                        raise KerykeionException("Backward Lunar return search requires the libephemeris backend.")
+                        raise KerykeionException(
+                            "Backward Lunar return search requires the libephemeris backend."
+                        )
                     except _BACKEND_ERRORS as exc:
                         raise KerykeionException(
                             "The Lunar return search stepped outside the available ephemeris "
@@ -936,9 +943,7 @@ class PlanetaryReturnFactory:
         # Get the return using the existing method
         return self.next_return_from_iso_formatted_time(start_date.isoformat(), return_type, backwards=backwards)
 
-    def next_return_from_month_and_year(
-        self, year: int, month: int, return_type: SolarLunarReturnType
-    ) -> PlanetReturnModel:
+    def next_return_from_month_and_year(self, year: int, month: int, return_type: SolarLunarReturnType) -> PlanetReturnModel:
         """
         DEPRECATED: Use next_return_from_date() instead.
 
@@ -1040,7 +1045,9 @@ class PlanetaryReturnFactory:
                 try:
                     return_jd = ephe.helio_cross_ut(planet_id, natal_lon, start_jd, helio_iflag, backwards=True)
                 except TypeError:
-                    raise KerykeionException("Backward heliocentric search requires the libephemeris backend.")
+                    raise KerykeionException(
+                        "Backward heliocentric search requires the libephemeris backend."
+                    )
                 except _BACKEND_ERRORS as exc:
                     raise KerykeionException(
                         "The heliocentric return search stepped outside the available "
@@ -1085,7 +1092,9 @@ class PlanetaryReturnFactory:
                 try:
                     result = ephe.mooncross_node_ut(start_jd, iflag, backwards=True)
                 except TypeError:
-                    raise KerykeionException("Backward lunar node crossing search requires the libephemeris backend.")
+                    raise KerykeionException(
+                        "Backward lunar node crossing search requires the libephemeris backend."
+                    )
                 except _BACKEND_ERRORS as exc:
                     raise KerykeionException(
                         "The lunar node crossing search stepped outside the available "

@@ -55,15 +55,7 @@ _POINT_IDS: dict[str, int] = {name: POINT_NUMBER_MAP[name] for name in _CANONICA
 # on its own) — noise for most consumers, so it is opt-in by listing it in
 # ``points``, the same convention as ``SignIngressFactory``.
 _DEFAULT_POINTS: Tuple[str, ...] = (
-    "Sun",
-    "Mercury",
-    "Venus",
-    "Mars",
-    "Jupiter",
-    "Saturn",
-    "Uranus",
-    "Neptune",
-    "Pluto",
+    "Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
 )
 
 # Longitude-aspect vocabulary (name → exact degrees) from the shared chart
@@ -216,7 +208,10 @@ class MundaneAspectFactory:
         if points is not None:
             invalid = sorted(set(points) - set(_POINT_IDS))
             if invalid:
-                raise ValueError(f"Unknown points: {', '.join(invalid)}. Valid: {', '.join(_CANONICAL_ORDER)}")
+                raise ValueError(
+                    f"Unknown points: {', '.join(invalid)}. "
+                    f"Valid: {', '.join(_CANONICAL_ORDER)}"
+                )
             requested = set(points)
         else:
             requested = set(_DEFAULT_POINTS)
@@ -227,7 +222,10 @@ class MundaneAspectFactory:
         if aspects is not None:
             invalid = sorted(set(aspects) - set(_ASPECT_DEGREES))
             if invalid:
-                raise ValueError(f"Unknown aspects: {', '.join(invalid)}. Valid: {', '.join(_ASPECT_DEGREES)}")
+                raise ValueError(
+                    f"Unknown aspects: {', '.join(invalid)}. "
+                    f"Valid: {', '.join(_ASPECT_DEGREES)}"
+                )
             aspect_pairs = [(name, _ASPECT_DEGREES[name]) for name in dict.fromkeys(aspects)]
         else:
             aspect_pairs = [(name, _ASPECT_DEGREES[name]) for name in _DEFAULT_ASPECTS]

@@ -51,6 +51,7 @@ class TestAstrologicalSubject:
         assert self.subject.ascendant.emoji == self.expected_output["ascendant"]["emoji"]
         assert self.subject.ascendant.point_type == self.expected_output["ascendant"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.ascendant.house == self.expected_output["ascendant"]["house"]
         assert self.subject.ascendant.retrograde == self.expected_output["ascendant"]["retrograde"]
 
@@ -65,6 +66,7 @@ class TestAstrologicalSubject:
         assert self.subject.descendant.emoji == self.expected_output["descendant"]["emoji"]
         assert self.subject.descendant.point_type == self.expected_output["descendant"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.descendant.house == self.expected_output["descendant"]["house"]
         assert self.subject.descendant.retrograde == self.expected_output["descendant"]["retrograde"]
 
@@ -74,15 +76,12 @@ class TestAstrologicalSubject:
         assert self.subject.medium_coeli.element == self.expected_output["medium_coeli"]["element"]
         assert self.subject.medium_coeli.sign == self.expected_output["medium_coeli"]["sign"]
         assert self.subject.medium_coeli.sign_num == self.expected_output["medium_coeli"]["sign_num"]
-        assert self.subject.medium_coeli.position == approx(
-            self.expected_output["medium_coeli"]["position"], abs=_POS_TOL
-        )
-        assert self.subject.medium_coeli.abs_pos == approx(
-            self.expected_output["medium_coeli"]["abs_pos"], abs=_POS_TOL
-        )
+        assert self.subject.medium_coeli.position == approx(self.expected_output["medium_coeli"]["position"], abs=_POS_TOL)
+        assert self.subject.medium_coeli.abs_pos == approx(self.expected_output["medium_coeli"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.medium_coeli.emoji == self.expected_output["medium_coeli"]["emoji"]
         assert self.subject.medium_coeli.point_type == self.expected_output["medium_coeli"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.medium_coeli.house == self.expected_output["medium_coeli"]["house"]
         assert self.subject.medium_coeli.retrograde == self.expected_output["medium_coeli"]["retrograde"]
 
@@ -97,6 +96,7 @@ class TestAstrologicalSubject:
         assert self.subject.imum_coeli.emoji == self.expected_output["imum_coeli"]["emoji"]
         assert self.subject.imum_coeli.point_type == self.expected_output["imum_coeli"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.imum_coeli.house == self.expected_output["imum_coeli"]["house"]
         assert self.subject.imum_coeli.retrograde == self.expected_output["imum_coeli"]["retrograde"]
 
@@ -111,6 +111,7 @@ class TestAstrologicalSubject:
         assert self.subject.sun.emoji == self.expected_output["sun"]["emoji"]
         assert self.subject.sun.point_type == self.expected_output["sun"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.sun.house == self.expected_output["sun"]["house"]
         assert self.subject.sun.retrograde == self.expected_output["sun"]["retrograde"]
         assert self.subject.sun.speed == approx(self.expected_output["sun"]["speed"], abs=_SPEED_TOL)
@@ -127,6 +128,7 @@ class TestAstrologicalSubject:
         assert self.subject.moon.emoji == self.expected_output["moon"]["emoji"]
         assert self.subject.moon.point_type == self.expected_output["moon"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.moon.house == self.expected_output["moon"]["house"]
         assert self.subject.moon.retrograde == self.expected_output["moon"]["retrograde"]
         assert self.subject.moon.speed == approx(self.expected_output["moon"]["speed"], abs=_SPEED_TOL)
@@ -143,6 +145,7 @@ class TestAstrologicalSubject:
         assert self.subject.mercury.emoji == self.expected_output["mercury"]["emoji"]
         assert self.subject.mercury.point_type == self.expected_output["mercury"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.mercury.house == self.expected_output["mercury"]["house"]
         assert self.subject.mercury.retrograde == self.expected_output["mercury"]["retrograde"]
         assert self.subject.mercury.speed == approx(self.expected_output["mercury"]["speed"], abs=_SPEED_TOL)
@@ -159,6 +162,7 @@ class TestAstrologicalSubject:
         assert self.subject.venus.emoji == self.expected_output["venus"]["emoji"]
         assert self.subject.venus.point_type == self.expected_output["venus"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.venus.house == self.expected_output["venus"]["house"]
         assert self.subject.venus.retrograde == self.expected_output["venus"]["retrograde"]
         assert self.subject.venus.speed == approx(self.expected_output["venus"]["speed"], abs=_SPEED_TOL)
@@ -175,6 +179,7 @@ class TestAstrologicalSubject:
         assert self.subject.mars.emoji == self.expected_output["mars"]["emoji"]
         assert self.subject.mars.point_type == self.expected_output["mars"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.mars.house == self.expected_output["mars"]["house"]
         assert self.subject.mars.retrograde == self.expected_output["mars"]["retrograde"]
         assert self.subject.mars.speed == approx(self.expected_output["mars"]["speed"], abs=_SPEED_TOL)
@@ -191,6 +196,7 @@ class TestAstrologicalSubject:
         assert self.subject.jupiter.emoji == self.expected_output["jupiter"]["emoji"]
         assert self.subject.jupiter.point_type == self.expected_output["jupiter"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.jupiter.house == self.expected_output["jupiter"]["house"]
         assert self.subject.jupiter.retrograde == self.expected_output["jupiter"]["retrograde"]
         assert self.subject.jupiter.speed == approx(self.expected_output["jupiter"]["speed"], abs=_SPEED_TOL)
@@ -207,6 +213,7 @@ class TestAstrologicalSubject:
         assert self.subject.saturn.emoji == self.expected_output["saturn"]["emoji"]
         assert self.subject.saturn.point_type == self.expected_output["saturn"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.saturn.house == self.expected_output["saturn"]["house"]
         assert self.subject.saturn.retrograde == self.expected_output["saturn"]["retrograde"]
         assert self.subject.saturn.speed == approx(self.expected_output["saturn"]["speed"], abs=_SPEED_TOL)
@@ -223,6 +230,7 @@ class TestAstrologicalSubject:
         assert self.subject.uranus.emoji == self.expected_output["uranus"]["emoji"]
         assert self.subject.uranus.point_type == self.expected_output["uranus"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.uranus.house == self.expected_output["uranus"]["house"]
         assert self.subject.uranus.retrograde == self.expected_output["uranus"]["retrograde"]
         assert self.subject.uranus.speed == approx(self.expected_output["uranus"]["speed"], abs=_SPEED_TOL)
@@ -239,6 +247,7 @@ class TestAstrologicalSubject:
         assert self.subject.neptune.emoji == self.expected_output["neptune"]["emoji"]
         assert self.subject.neptune.point_type == self.expected_output["neptune"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.neptune.house == self.expected_output["neptune"]["house"]
         assert self.subject.neptune.retrograde == self.expected_output["neptune"]["retrograde"]
         assert self.subject.neptune.speed == approx(self.expected_output["neptune"]["speed"], abs=_SPEED_TOL)
@@ -255,6 +264,7 @@ class TestAstrologicalSubject:
         assert self.subject.pluto.emoji == self.expected_output["pluto"]["emoji"]
         assert self.subject.pluto.point_type == self.expected_output["pluto"]["point_type"]
         if _STRICT_HOUSE:
+
             assert self.subject.pluto.house == self.expected_output["pluto"]["house"]
         assert self.subject.pluto.retrograde == self.expected_output["pluto"]["retrograde"]
         assert self.subject.pluto.speed == approx(self.expected_output["pluto"]["speed"], abs=_SPEED_TOL)
@@ -277,6 +287,7 @@ class TestAstrologicalSubject:
             self.subject.true_north_lunar_node.point_type == self.expected_output["true_north_lunar_node"]["point_type"]
         )
         if _STRICT_HOUSE:
+
             assert self.subject.true_north_lunar_node.house == self.expected_output["true_north_lunar_node"]["house"]
         assert (
             self.subject.true_north_lunar_node.retrograde == self.expected_output["true_north_lunar_node"]["retrograde"]
@@ -299,6 +310,7 @@ class TestAstrologicalSubject:
             self.subject.true_south_lunar_node.point_type == self.expected_output["true_south_lunar_node"]["point_type"]
         )
         if _STRICT_HOUSE:
+
             assert self.subject.true_south_lunar_node.house == self.expected_output["true_south_lunar_node"]["house"]
         assert (
             self.subject.true_south_lunar_node.retrograde == self.expected_output["true_south_lunar_node"]["retrograde"]
@@ -310,9 +322,7 @@ class TestAstrologicalSubject:
         assert self.subject.first_house.element == self.expected_output["first_house"]["element"]
         assert self.subject.first_house.sign == self.expected_output["first_house"]["sign"]
         assert self.subject.first_house.sign_num == self.expected_output["first_house"]["sign_num"]
-        assert self.subject.first_house.position == approx(
-            self.expected_output["first_house"]["position"], abs=_POS_TOL
-        )
+        assert self.subject.first_house.position == approx(self.expected_output["first_house"]["position"], abs=_POS_TOL)
         assert self.subject.first_house.abs_pos == approx(self.expected_output["first_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.first_house.emoji == self.expected_output["first_house"]["emoji"]
         assert self.subject.first_house.point_type == self.expected_output["first_house"]["point_type"]
@@ -323,12 +333,8 @@ class TestAstrologicalSubject:
         assert self.subject.second_house.element == self.expected_output["second_house"]["element"]
         assert self.subject.second_house.sign == self.expected_output["second_house"]["sign"]
         assert self.subject.second_house.sign_num == self.expected_output["second_house"]["sign_num"]
-        assert self.subject.second_house.position == approx(
-            self.expected_output["second_house"]["position"], abs=_POS_TOL
-        )
-        assert self.subject.second_house.abs_pos == approx(
-            self.expected_output["second_house"]["abs_pos"], abs=_POS_TOL
-        )
+        assert self.subject.second_house.position == approx(self.expected_output["second_house"]["position"], abs=_POS_TOL)
+        assert self.subject.second_house.abs_pos == approx(self.expected_output["second_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.second_house.emoji == self.expected_output["second_house"]["emoji"]
         assert self.subject.second_house.point_type == self.expected_output["second_house"]["point_type"]
 
@@ -338,9 +344,7 @@ class TestAstrologicalSubject:
         assert self.subject.third_house.element == self.expected_output["third_house"]["element"]
         assert self.subject.third_house.sign == self.expected_output["third_house"]["sign"]
         assert self.subject.third_house.sign_num == self.expected_output["third_house"]["sign_num"]
-        assert self.subject.third_house.position == approx(
-            self.expected_output["third_house"]["position"], abs=_POS_TOL
-        )
+        assert self.subject.third_house.position == approx(self.expected_output["third_house"]["position"], abs=_POS_TOL)
         assert self.subject.third_house.abs_pos == approx(self.expected_output["third_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.third_house.emoji == self.expected_output["third_house"]["emoji"]
         assert self.subject.third_house.point_type == self.expected_output["third_house"]["point_type"]
@@ -351,12 +355,8 @@ class TestAstrologicalSubject:
         assert self.subject.fourth_house.element == self.expected_output["fourth_house"]["element"]
         assert self.subject.fourth_house.sign == self.expected_output["fourth_house"]["sign"]
         assert self.subject.fourth_house.sign_num == self.expected_output["fourth_house"]["sign_num"]
-        assert self.subject.fourth_house.position == approx(
-            self.expected_output["fourth_house"]["position"], abs=_POS_TOL
-        )
-        assert self.subject.fourth_house.abs_pos == approx(
-            self.expected_output["fourth_house"]["abs_pos"], abs=_POS_TOL
-        )
+        assert self.subject.fourth_house.position == approx(self.expected_output["fourth_house"]["position"], abs=_POS_TOL)
+        assert self.subject.fourth_house.abs_pos == approx(self.expected_output["fourth_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.fourth_house.emoji == self.expected_output["fourth_house"]["emoji"]
         assert self.subject.fourth_house.point_type == self.expected_output["fourth_house"]["point_type"]
 
@@ -366,9 +366,7 @@ class TestAstrologicalSubject:
         assert self.subject.fifth_house.element == self.expected_output["fifth_house"]["element"]
         assert self.subject.fifth_house.sign == self.expected_output["fifth_house"]["sign"]
         assert self.subject.fifth_house.sign_num == self.expected_output["fifth_house"]["sign_num"]
-        assert self.subject.fifth_house.position == approx(
-            self.expected_output["fifth_house"]["position"], abs=_POS_TOL
-        )
+        assert self.subject.fifth_house.position == approx(self.expected_output["fifth_house"]["position"], abs=_POS_TOL)
         assert self.subject.fifth_house.abs_pos == approx(self.expected_output["fifth_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.fifth_house.emoji == self.expected_output["fifth_house"]["emoji"]
         assert self.subject.fifth_house.point_type == self.expected_output["fifth_house"]["point_type"]
@@ -379,9 +377,7 @@ class TestAstrologicalSubject:
         assert self.subject.sixth_house.element == self.expected_output["sixth_house"]["element"]
         assert self.subject.sixth_house.sign == self.expected_output["sixth_house"]["sign"]
         assert self.subject.sixth_house.sign_num == self.expected_output["sixth_house"]["sign_num"]
-        assert self.subject.sixth_house.position == approx(
-            self.expected_output["sixth_house"]["position"], abs=_POS_TOL
-        )
+        assert self.subject.sixth_house.position == approx(self.expected_output["sixth_house"]["position"], abs=_POS_TOL)
         assert self.subject.sixth_house.abs_pos == approx(self.expected_output["sixth_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.sixth_house.emoji == self.expected_output["sixth_house"]["emoji"]
         assert self.subject.sixth_house.point_type == self.expected_output["sixth_house"]["point_type"]
@@ -395,9 +391,7 @@ class TestAstrologicalSubject:
         assert self.subject.seventh_house.position == approx(
             self.expected_output["seventh_house"]["position"], abs=1e-2
         )
-        assert self.subject.seventh_house.abs_pos == approx(
-            self.expected_output["seventh_house"]["abs_pos"], abs=_POS_TOL
-        )
+        assert self.subject.seventh_house.abs_pos == approx(self.expected_output["seventh_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.seventh_house.emoji == self.expected_output["seventh_house"]["emoji"]
         assert self.subject.seventh_house.point_type == self.expected_output["seventh_house"]["point_type"]
 
@@ -407,12 +401,8 @@ class TestAstrologicalSubject:
         assert self.subject.eighth_house.element == self.expected_output["eighth_house"]["element"]
         assert self.subject.eighth_house.sign == self.expected_output["eighth_house"]["sign"]
         assert self.subject.eighth_house.sign_num == self.expected_output["eighth_house"]["sign_num"]
-        assert self.subject.eighth_house.position == approx(
-            self.expected_output["eighth_house"]["position"], abs=_POS_TOL
-        )
-        assert self.subject.eighth_house.abs_pos == approx(
-            self.expected_output["eighth_house"]["abs_pos"], abs=_POS_TOL
-        )
+        assert self.subject.eighth_house.position == approx(self.expected_output["eighth_house"]["position"], abs=_POS_TOL)
+        assert self.subject.eighth_house.abs_pos == approx(self.expected_output["eighth_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.eighth_house.emoji == self.expected_output["eighth_house"]["emoji"]
         assert self.subject.eighth_house.point_type == self.expected_output["eighth_house"]["point_type"]
 
@@ -422,9 +412,7 @@ class TestAstrologicalSubject:
         assert self.subject.ninth_house.element == self.expected_output["ninth_house"]["element"]
         assert self.subject.ninth_house.sign == self.expected_output["ninth_house"]["sign"]
         assert self.subject.ninth_house.sign_num == self.expected_output["ninth_house"]["sign_num"]
-        assert self.subject.ninth_house.position == approx(
-            self.expected_output["ninth_house"]["position"], abs=_POS_TOL
-        )
+        assert self.subject.ninth_house.position == approx(self.expected_output["ninth_house"]["position"], abs=_POS_TOL)
         assert self.subject.ninth_house.abs_pos == approx(self.expected_output["ninth_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.ninth_house.emoji == self.expected_output["ninth_house"]["emoji"]
         assert self.subject.ninth_house.point_type == self.expected_output["ninth_house"]["point_type"]
@@ -435,9 +423,7 @@ class TestAstrologicalSubject:
         assert self.subject.tenth_house.element == self.expected_output["tenth_house"]["element"]
         assert self.subject.tenth_house.sign == self.expected_output["tenth_house"]["sign"]
         assert self.subject.tenth_house.sign_num == self.expected_output["tenth_house"]["sign_num"]
-        assert self.subject.tenth_house.position == approx(
-            self.expected_output["tenth_house"]["position"], abs=_POS_TOL
-        )
+        assert self.subject.tenth_house.position == approx(self.expected_output["tenth_house"]["position"], abs=_POS_TOL)
         assert self.subject.tenth_house.abs_pos == approx(self.expected_output["tenth_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.tenth_house.emoji == self.expected_output["tenth_house"]["emoji"]
         assert self.subject.tenth_house.point_type == self.expected_output["tenth_house"]["point_type"]
@@ -466,9 +452,7 @@ class TestAstrologicalSubject:
         assert self.subject.twelfth_house.position == approx(
             self.expected_output["twelfth_house"]["position"], abs=1e-2
         )
-        assert self.subject.twelfth_house.abs_pos == approx(
-            self.expected_output["twelfth_house"]["abs_pos"], abs=_POS_TOL
-        )
+        assert self.subject.twelfth_house.abs_pos == approx(self.expected_output["twelfth_house"]["abs_pos"], abs=_POS_TOL)
         assert self.subject.twelfth_house.emoji == self.expected_output["twelfth_house"]["emoji"]
         assert self.subject.twelfth_house.point_type == self.expected_output["twelfth_house"]["point_type"]
 
@@ -534,12 +518,8 @@ class TestAstrologicalSubjectFactoryMethods:
 
         with pytest.raises(KerykeionException):
             AstrologicalSubjectFactory.from_iso_utc_time(
-                name="Bad",
-                iso_utc_time=bad_iso,
-                lng=12.5,
-                lat=41.9,
-                tz_str="Europe/Rome",
-                online=False,
+                name="Bad", iso_utc_time=bad_iso,
+                lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
             )
 
     @pytest.mark.parametrize(
@@ -559,12 +539,8 @@ class TestAstrologicalSubjectFactoryMethods:
 
         with pytest.raises(KerykeionException):
             AstrologicalSubjectFactory.from_iso_utc_time(
-                name="Edge",
-                iso_utc_time=iso_utc,
-                lng=0.0,
-                lat=0.0,
-                tz_str=tz_str,
-                online=False,
+                name="Edge", iso_utc_time=iso_utc,
+                lng=0.0, lat=0.0, tz_str=tz_str, online=False,
             )
 
     def test_from_current_time(self):
@@ -1164,50 +1140,21 @@ class TestTimeZoneEdgeCases:
     # rule accidentally keyed to the calendar rather than to the offset breaks on it.
     AMBIGUOUS_CASES: tuple[tuple[object, ...], ...] = (
         # tz, Y, M, D, h, m, lng, lat, utc_if_dst_true, utc_if_dst_false
-        (
-            "Europe/Rome",
-            2026,
-            10,
-            25,
-            2,
-            30,
-            12.4964,
-            41.9028,
-            "2026-10-25T00:30:00+00:00",
-            "2026-10-25T01:30:00+00:00",
-        ),
-        (
-            "America/New_York",
-            2023,
-            11,
-            5,
-            1,
-            30,
-            -74.006,
-            40.7128,
-            "2023-11-05T05:30:00+00:00",
-            "2023-11-05T06:30:00+00:00",
-        ),
-        (
-            "Australia/Sydney",
-            2026,
-            4,
-            5,
-            2,
-            30,
-            151.2093,
-            -33.8688,
-            "2026-04-04T15:30:00+00:00",
-            "2026-04-04T16:30:00+00:00",
-        ),
+        ("Europe/Rome", 2026, 10, 25, 2, 30, 12.4964, 41.9028, "2026-10-25T00:30:00+00:00", "2026-10-25T01:30:00+00:00"),
+        ("America/New_York", 2023, 11, 5, 1, 30, -74.006, 40.7128, "2023-11-05T05:30:00+00:00", "2023-11-05T06:30:00+00:00"),
+        ("Australia/Sydney", 2026, 4, 5, 2, 30, 151.2093, -33.8688, "2026-04-04T15:30:00+00:00", "2026-04-04T16:30:00+00:00"),
     )
 
-    @pytest.mark.parametrize("tz_str,year,month,day,hour,minute,lng,lat,utc_dst_true,utc_dst_false", AMBIGUOUS_CASES)
+    @pytest.mark.parametrize(
+        "tz_str,year,month,day,hour,minute,lng,lat,utc_dst_true,utc_dst_false", AMBIGUOUS_CASES
+    )
     def test_ambiguous_wall_time_is_dst_selects_the_instant(
         self, tz_str, year, month, day, hour, minute, lng, lat, utc_dst_true, utc_dst_false
     ):
         """is_dst picks between the two real instants sharing one wall time."""
-        common = dict(lng=lng, lat=lat, tz_str=tz_str, online=False, suppress_geonames_warning=True)
+        common = dict(
+            lng=lng, lat=lat, tz_str=tz_str, online=False, suppress_geonames_warning=True
+        )
         dst = AstrologicalSubjectFactory.from_birth_data(
             "DST True", year, month, day, hour, minute, is_dst=True, **common
         )
@@ -1240,8 +1187,12 @@ class TestTimeZoneEdgeCases:
             lat=41.9028,
             suppress_geonames_warning=True,
         )
-        first = AstrologicalSubjectFactory.from_iso_utc_time("Fold CEST", "2024-10-27T00:30:00Z", **common)
-        second = AstrologicalSubjectFactory.from_iso_utc_time("Fold CET", "2024-10-27T01:30:00Z", **common)
+        first = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Fold CEST", "2024-10-27T00:30:00Z", **common
+        )
+        second = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Fold CET", "2024-10-27T01:30:00Z", **common
+        )
 
         # Both UTC instants map to the same ambiguous local wall time...
         assert (first.hour, first.minute) == (2, 30)
@@ -1266,19 +1217,9 @@ class TestTimeZoneEdgeCases:
         not Berlin's meridian (+00:53 -> 10:37). Asserts only the time
         conversion, so it is independent of the ephemeris kernel (DE440/DE441)."""
         einstein = AstrologicalSubjectFactory.from_birth_data(
-            "Einstein",
-            1879,
-            3,
-            14,
-            11,
-            30,
-            city="Ulm",
-            nation="DE",
-            lng=9.9916,
-            lat=48.3984,
-            tz_str="Europe/Berlin",
-            online=False,
-            suppress_geonames_warning=True,
+            "Einstein", 1879, 3, 14, 11, 30,
+            city="Ulm", nation="DE", lng=9.9916, lat=48.3984,
+            tz_str="Europe/Berlin", online=False, suppress_geonames_warning=True,
         )
         assert einstein.iso_formatted_utc_datetime.startswith("1879-03-14T10:50:02")
         assert einstein.iso_formatted_local_datetime.endswith("+00:39:58")
@@ -1288,16 +1229,9 @@ class TestTimeZoneEdgeCases:
         Berlin (13.4 E) and Ulm (9.99 E) both use tz Europe/Berlin, but a
         pre-standardization birth must resolve to each city's own solar time."""
         common = dict(
-            year=1879,
-            month=3,
-            day=14,
-            hour=11,
-            minute=30,
-            nation="DE",
-            tz_str="Europe/Berlin",
-            online=False,
-            lat=50.0,
-            suppress_geonames_warning=True,
+            year=1879, month=3, day=14, hour=11, minute=30,
+            nation="DE", tz_str="Europe/Berlin", online=False,
+            lat=50.0, suppress_geonames_warning=True,
         )
         berlin = AstrologicalSubjectFactory.from_birth_data("B", city="Berlin", lng=13.4, **common)
         ulm = AstrologicalSubjectFactory.from_birth_data("U", city="Ulm", lng=9.9916, **common)
@@ -1310,19 +1244,9 @@ class TestTimeZoneEdgeCases:
         """Modern births (standardized time, zone NOT in its 'LMT' period) must
         be unchanged: UTC comes from the IANA zone offset, not longitude/15."""
         modern = AstrologicalSubjectFactory.from_birth_data(
-            "Modern",
-            1990,
-            1,
-            15,
-            14,
-            30,
-            city="Sydney",
-            nation="AU",
-            lng=151.2073,
-            lat=-33.8678,
-            tz_str="Australia/Sydney",
-            online=False,
-            suppress_geonames_warning=True,
+            "Modern", 1990, 1, 15, 14, 30,
+            city="Sydney", nation="AU", lng=151.2073, lat=-33.8678,
+            tz_str="Australia/Sydney", online=False, suppress_geonames_warning=True,
         )
         # AEDT (+11:00) applied as a whole-hour zone offset, not longitude-based.
         assert modern.iso_formatted_local_datetime.endswith("+11:00")
@@ -1335,15 +1259,9 @@ class TestTimeZoneEdgeCases:
         longitude) and the round-trip guard rejects the ~13-min shift. Einstein:
         UTC 10:50:02 -> Ulm local 11:30:00 (+00:39:58) -> back to UTC 10:50:02."""
         s = AstrologicalSubjectFactory.from_iso_utc_time(
-            "Einstein UTC",
-            "1879-03-14T10:50:02+00:00",
-            city="Ulm",
-            nation="DE",
-            lng=9.9916,
-            lat=48.3984,
-            tz_str="Europe/Berlin",
-            online=False,
-            suppress_geonames_warning=True,
+            "Einstein UTC", "1879-03-14T10:50:02+00:00",
+            city="Ulm", nation="DE", lng=9.9916, lat=48.3984,
+            tz_str="Europe/Berlin", online=False, suppress_geonames_warning=True,
         )
         assert s.iso_formatted_utc_datetime.startswith("1879-03-14T10:50:02")
         assert s.iso_formatted_local_datetime.startswith("1879-03-14T11:30:00")
@@ -1358,15 +1276,9 @@ class TestTimeZoneEdgeCases:
         that wall time as the post-transition +02:30 zone (which broke the
         round-trip guard before the fix)."""
         s = AstrologicalSubjectFactory.from_iso_utc_time(
-            "Nairobi LMT",
-            "1908-04-30T21:20:00+00:00",
-            city="Nairobi",
-            nation="KE",
-            lng=41.9,
-            lat=0.0,
-            tz_str="Africa/Nairobi",
-            online=False,
-            suppress_geonames_warning=True,
+            "Nairobi LMT", "1908-04-30T21:20:00+00:00",
+            city="Nairobi", nation="KE", lng=41.9, lat=0.0,
+            tz_str="Africa/Nairobi", online=False, suppress_geonames_warning=True,
         )
         assert s.iso_formatted_utc_datetime.startswith("1908-04-30T21:20:00")
         assert s.iso_formatted_local_datetime.endswith("+02:47:36")
@@ -2053,17 +1965,9 @@ class TestMockErrorConditions:
 
         with pytest.raises(KerykeionException) as excinfo:
             AstrologicalSubjectFactory.from_birth_data(
-                "Gap",
-                2026,
-                3,
-                29,
-                2,
-                30,
-                lng=12.4964,
-                lat=41.9028,
-                tz_str="Europe/Rome",
-                online=False,
-                suppress_geonames_warning=True,
+                "Gap", 2026, 3, 29, 2, 30,
+                lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+                online=False, suppress_geonames_warning=True,
             )
         assert "Non-existent time error" in str(excinfo.value)
         assert "Ambiguous" not in str(excinfo.value)
@@ -2076,11 +1980,8 @@ class TestMockErrorConditions:
         the reading whose offset it names rather than rejecting the input.
         """
         common = dict(
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
         )
         for month, day in ((10, 25), (3, 29)):  # fold, then gap
             for flag in (True, False):
@@ -2611,24 +2512,18 @@ class TestOnlineGeonamesGating:
         from kerykeion import fetch_geonames
 
         data = dict(self._ROME)
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(data))
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(data)
+        )
         return data
 
     def test_explicit_coordinates_survive_online_fetch(self, _mock_geonames):
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
         s = AstrologicalSubjectFactory.from_birth_data(
-            "Precise",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            city="Rome",
-            nation="IT",
-            online=True,
-            lat=45.999,
-            lng=7.111,  # explicit, more precise than the centroid
+            "Precise", 1990, 6, 15, 12, 0,
+            city="Rome", nation="IT", online=True,
+            lat=45.999, lng=7.111,  # explicit, more precise than the centroid
             suppress_geonames_warning=True,
         )
         assert s.lat == pytest.approx(45.999)
@@ -2641,13 +2536,12 @@ class TestOnlineGeonamesGating:
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
         auckland = {"countryCode": "NZ", "timezonestr": "Pacific/Auckland", "lat": "-36.85", "lng": "174.76"}
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(auckland))
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(auckland)
+        )
         before = datetime.now(timezone.utc)
         s = AstrologicalSubjectFactory.from_current_time(
-            "Now Test",
-            city="Auckland",
-            nation="NZ",
-            online=True,
+            "Now Test", city="Auckland", nation="NZ", online=True,
             suppress_geonames_warning=True,
         )
         after = datetime.now(timezone.utc)
@@ -2673,7 +2567,9 @@ class TestOnlineGeonamesGating:
         from kerykeion import fetch_geonames
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(fetched))
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(fetched)
+        )
         before = datetime.now(timezone.utc)
         s = AstrologicalSubjectFactory.from_current_time(
             "Now Default", online=True, suppress_geonames_warning=True, **kwargs
@@ -2684,7 +2580,9 @@ class TestOnlineGeonamesGating:
         assert s.tz_str == fetched["timezonestr"]
 
     @pytest.mark.parametrize("city", [None, ""])
-    def test_from_current_time_resolves_explicit_coordinates_without_a_city(self, monkeypatch, city):
+    def test_from_current_time_resolves_explicit_coordinates_without_a_city(
+        self, monkeypatch, city
+    ):
         """The current-time prefetch must preserve the coordinate-only route."""
         from kerykeion import fetch_geonames
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
@@ -2696,10 +2594,16 @@ class TestOnlineGeonamesGating:
             return {"timezonestr": "Europe/Rome"}
 
         def fail_city_lookup(self):
-            raise AssertionError("the city-based lookup must not run when lat/lng are explicit and city is missing")
+            raise AssertionError(
+                "the city-based lookup must not run when lat/lng are explicit and city is missing"
+            )
 
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup)
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup)
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup
+        )
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+        )
 
         subject = AstrologicalSubjectFactory.from_current_time(
             "Coords Now",
@@ -2720,20 +2624,20 @@ class TestOnlineGeonamesGating:
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
         from kerykeion.schemas import KerykeionException
 
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: {})
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: {}
+        )
         with pytest.raises(KerykeionException, match="Missing data from geonames"):
             AstrologicalSubjectFactory.from_iso_utc_time(
-                "Fail Test",
-                "2020-06-15T12:00:00Z",
-                city="Rome",
-                nation="IT",
-                tz_str="Europe/Rome",
-                online=True,
+                "Fail Test", "2020-06-15T12:00:00Z",
+                city="Rome", nation="IT", tz_str="Europe/Rome", online=True,
                 suppress_geonames_warning=True,
             )
 
     @pytest.mark.parametrize("city", [None, ""])
-    def test_explicit_coordinates_without_city_resolve_tz_from_coordinates(self, monkeypatch, city):
+    def test_explicit_coordinates_without_city_resolve_tz_from_coordinates(
+        self, monkeypatch, city
+    ):
         """online=True + explicit lat/lng + no tz_str + no city: the timezone
         must be resolved from the coordinates (timezoneJSON endpoint), NOT from
         the default city "Greenwich" (which silently produced a chart in the
@@ -2748,22 +2652,20 @@ class TestOnlineGeonamesGating:
             return {"timezonestr": "Europe/Rome"}
 
         def fail_city_lookup(self):
-            raise AssertionError("the city-based lookup must not run when lat/lng are explicit and city is missing")
+            raise AssertionError(
+                "the city-based lookup must not run when lat/lng are explicit and city is missing"
+            )
 
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup)
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup)
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup
+        )
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+        )
 
         s = AstrologicalSubjectFactory.from_birth_data(
-            "Coords Only",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lat=41.9028,
-            lng=12.4964,
-            city=city,
-            online=True,
+            "Coords Only", 1990, 6, 15, 12, 0,
+            lat=41.9028, lng=12.4964, city=city, online=True,
             suppress_geonames_warning=True,
         )
         assert captured["coords"] == (41.9028, 12.4964)
@@ -2785,15 +2687,8 @@ class TestOnlineGeonamesGating:
         )
         with pytest.raises(KerykeionException, match="timezoneId"):
             AstrologicalSubjectFactory.from_birth_data(
-                "Coords Fail",
-                1990,
-                6,
-                15,
-                12,
-                0,
-                lat=41.9028,
-                lng=12.4964,
-                online=True,
+                "Coords Fail", 1990, 6, 15, 12, 0,
+                lat=41.9028, lng=12.4964, online=True,
                 suppress_geonames_warning=True,
             )
 
@@ -2806,16 +2701,13 @@ class TestOnlineGeonamesGating:
         def fail_city_lookup(self):
             raise AssertionError("no GeoNames lookup should run when lng/lat are explicit")
 
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup)
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+        )
         s = AstrologicalSubjectFactory.from_iso_utc_time(
-            "ISO Precise",
-            "1990-06-15T12:00:00Z",
-            city="Rome",
-            nation="IT",
-            tz_str="Europe/Rome",
-            online=True,
-            lat=45.999,
-            lng=7.111,  # explicit, more precise than the centroid
+            "ISO Precise", "1990-06-15T12:00:00Z",
+            city="Rome", nation="IT", tz_str="Europe/Rome", online=True,
+            lat=45.999, lng=7.111,  # explicit, more precise than the centroid
             suppress_geonames_warning=True,
         )
         assert s.lat == pytest.approx(45.999)
@@ -2827,12 +2719,8 @@ class TestOnlineGeonamesGating:
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
         s = AstrologicalSubjectFactory.from_iso_utc_time(
-            "ISO City",
-            "1990-06-15T12:00:00Z",
-            city="Rome",
-            nation="IT",
-            tz_str="Europe/Rome",
-            online=True,
+            "ISO City", "1990-06-15T12:00:00Z",
+            city="Rome", nation="IT", tz_str="Europe/Rome", online=True,
             suppress_geonames_warning=True,
         )
         assert s.lat == pytest.approx(41.89193)
@@ -2844,9 +2732,7 @@ class TestOnlineGeonamesGating:
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
         s = AstrologicalSubjectFactory.from_iso_utc_time(
-            "ISO Default",
-            "1990-06-15T12:00:00Z",
-            online=False,
+            "ISO Default", "1990-06-15T12:00:00Z", online=False,
         )
         assert s.lat == pytest.approx(51.5074)
         assert s.lng == pytest.approx(0.0)
@@ -2860,18 +2746,13 @@ class TestOnlineGeonamesGating:
         from kerykeion.schemas import KerykeionException
 
         bad = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "not-a-number", "lng": "12.5"}
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(bad))
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(bad)
+        )
         with pytest.raises(KerykeionException, match="Invalid coordinates from geonames"):
             AstrologicalSubjectFactory.from_birth_data(
-                "Bad Coords",
-                1990,
-                6,
-                15,
-                12,
-                0,
-                city="Rome",
-                nation="IT",
-                online=True,
+                "Bad Coords", 1990, 6, 15, 12, 0,
+                city="Rome", nation="IT", online=True,
                 suppress_geonames_warning=True,
             )
 
@@ -2885,12 +2766,8 @@ class TestOnlineGeonamesGating:
 
         before = datetime.now(timezone.utc)
         s = AstrologicalSubjectFactory.from_birth_data(
-            "Partial Now",
-            lat=-36.85,
-            lng=174.76,
-            tz_str="Pacific/Auckland",
-            online=False,
-            suppress_geonames_warning=True,
+            "Partial Now", lat=-36.85, lng=174.76, tz_str="Pacific/Auckland",
+            online=False, suppress_geonames_warning=True,
         )
         after = datetime.now(timezone.utc)
         got = datetime.fromisoformat(s.iso_formatted_utc_datetime)
@@ -2911,18 +2788,8 @@ class TestYear1CEBoundaryRound7:
 
         with pytest.raises(KerykeionException):
             AstrologicalSubjectFactory.from_birth_data(
-                "x",
-                1,
-                1,
-                1,
-                0,
-                30,
-                lng=45.0,
-                lat=41.9,
-                tz_str="Etc/GMT-3",
-                online=False,
-                suppress_geonames_warning=True,
-            )
+                "x", 1, 1, 1, 0, 30, lng=45.0, lat=41.9,
+                tz_str="Etc/GMT-3", online=False, suppress_geonames_warning=True)
 
 
 class TestInputValidationRound8:
@@ -2931,26 +2798,14 @@ class TestInputValidationRound8:
 
     def _base(self, **kw):
         from kerykeion import AstrologicalSubjectFactory
-
-        base = dict(
-            name="t",
-            year=1990,
-            month=6,
-            day=15,
-            hour=12,
-            minute=0,
-            lat=51.5,
-            lng=10.0,
-            tz_str="Etc/GMT",
-            online=False,
-            suppress_geonames_warning=True,
-        )
+        base = dict(name="t", year=1990, month=6, day=15, hour=12, minute=0,
+                    lat=51.5, lng=10.0, tz_str="Etc/GMT", online=False,
+                    suppress_geonames_warning=True)
         base.update(kw)
         return AstrologicalSubjectFactory.from_birth_data(**base)
 
     def test_impossible_latitude_raises(self):
         from kerykeion.schemas import KerykeionException
-
         with pytest.raises(KerykeionException):
             self._base(lat=100.0)
 
@@ -2963,7 +2818,6 @@ class TestInputValidationRound8:
     @pytest.mark.parametrize("kw", [{"month": 13}, {"day": 32}, {"hour": 25}, {"minute": 99}])
     def test_out_of_range_date_raises_kerykeion(self, kw):
         from kerykeion.schemas import KerykeionException
-
         with pytest.raises(KerykeionException):
             self._base(**kw)
 
@@ -2977,7 +2831,6 @@ class TestInputValidationRound8:
         """Round-7 regression follow-up: real IANA zones (not just static
         Etc/GMT) at year 1 CE raise KerykeionException, not raw OverflowError."""
         from kerykeion.schemas import KerykeionException
-
         for tz in ("Asia/Tokyo", "America/New_York"):
             with pytest.raises(KerykeionException):
                 self._base(year=1, month=1, day=1, hour=0, minute=30, lng=40.0, tz_str=tz)
@@ -2992,37 +2845,19 @@ class TestStandardOffsetFoldRound10:
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.utilities import datetime_to_julian
         from datetime import datetime, timezone
-
         s = AstrologicalSubjectFactory.from_iso_utc_time(
-            name="x",
-            iso_utc_time="1971-10-31T01:30:00Z",
-            tz_str="Europe/London",
-            lng=-0.1,
-            lat=51.5,
-            online=False,
-            suppress_geonames_warning=True,
-        )
+            name="x", iso_utc_time="1971-10-31T01:30:00Z", tz_str="Europe/London",
+            lng=-0.1, lat=51.5, online=False, suppress_geonames_warning=True)
         exp = datetime_to_julian(datetime(1971, 10, 31, 1, 30, 0, tzinfo=timezone.utc))
         assert abs(s.julian_day - exp) < 2 / 86400.0
 
     def test_invalid_timezone_raises_kerykeion(self):
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.schemas import KerykeionException
-
         with pytest.raises(KerykeionException):
             AstrologicalSubjectFactory.from_birth_data(
-                "x",
-                2000,
-                1,
-                1,
-                12,
-                0,
-                lng=10.0,
-                lat=45.0,
-                tz_str="+05:00",
-                online=False,
-                suppress_geonames_warning=True,
-            )
+                "x", 2000, 1, 1, 12, 0, lng=10.0, lat=45.0,
+                tz_str="+05:00", online=False, suppress_geonames_warning=True)
 
 
 class TestExplicitDerivedOppositeRound12:
@@ -3032,21 +2867,10 @@ class TestExplicitDerivedOppositeRound12:
 
     def test_south_node_without_north_node(self):
         from kerykeion import AstrologicalSubjectFactory
-
         s = AstrologicalSubjectFactory.from_birth_data(
-            "V",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-            active_points=["Sun", "Moon", "True_South_Lunar_Node"],
-        )
+            "V", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun", "Moon", "True_South_Lunar_Node"])
         assert "True_South_Lunar_Node" in s.active_points
         assert s.true_south_lunar_node is not None
         # the auto-activated primary must NOT leak into active_points
@@ -3054,21 +2878,10 @@ class TestExplicitDerivedOppositeRound12:
 
     def test_priapus_without_lilith(self):
         from kerykeion import AstrologicalSubjectFactory
-
         s = AstrologicalSubjectFactory.from_birth_data(
-            "P",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-            active_points=["Sun", "Moon", "True_Priapus"],
-        )
+            "P", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun", "Moon", "True_Priapus"])
         assert s.true_priapus is not None
 
 
@@ -3079,55 +2892,26 @@ class TestTzWrapAndNodeParityRound13:
     def test_from_iso_invalid_tz_raises_kerykeion(self):
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.schemas import KerykeionException
-
         with pytest.raises(KerykeionException):
             AstrologicalSubjectFactory.from_iso_utc_time(
-                "E",
-                "2020-06-15T12:00:00Z",
-                tz_str="Bad/Zone",
-                online=False,
-                lng=0.0,
-                lat=51.0,
-                suppress_geonames_warning=True,
-            )
+                "E", "2020-06-15T12:00:00Z", tz_str="Bad/Zone",
+                online=False, lng=0.0, lat=51.0, suppress_geonames_warning=True)
 
     def test_nodes_excluded_in_heliocentric(self):
         from kerykeion import AstrologicalSubjectFactory
-
         h = AstrologicalSubjectFactory.from_birth_data(
-            "H",
-            1940,
-            10,
-            9,
-            18,
-            30,
-            lng=-2.99,
-            lat=53.4,
-            tz_str="Europe/London",
-            online=False,
-            suppress_geonames_warning=True,
-            perspective_type="Heliocentric",
-        )
+            "H", 1940, 10, 9, 18, 30, lng=-2.99, lat=53.4, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True, perspective_type="Heliocentric")
         assert h.true_north_lunar_node is None
         assert "True_North_Lunar_Node" not in h.active_points
 
     def test_day_of_week_is_english_literal(self):
         from kerykeion import AstrologicalSubjectFactory
-
         s = AstrologicalSubjectFactory.from_birth_data(
-            "D",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-        )
-        assert s.day_of_week in ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+            "D", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True)
+        assert s.day_of_week in ("Monday", "Tuesday", "Wednesday", "Thursday",
+                                 "Friday", "Saturday", "Sunday")
 
 
 class TestSiderealDeclinationRound16:
@@ -3135,11 +2919,11 @@ class TestSiderealDeclinationRound16:
     zodiac-independent (equatorial fetch strips FLG_SIDEREAL)."""
 
     def test_sidereal_declination_matches_tropical(self):
-        kw = dict(lat=51.5, lng=-0.12, tz_str="Europe/London", online=False, suppress_geonames_warning=True)
+        kw = dict(lat=51.5, lng=-0.12, tz_str="Europe/London", online=False,
+                  suppress_geonames_warning=True)
         trop = AstrologicalSubjectFactory.from_birth_data("T", 1990, 6, 15, 12, 0, **kw)
         sid = AstrologicalSubjectFactory.from_birth_data(
-            "S", 1990, 6, 15, 12, 0, zodiac_type="Sidereal", sidereal_mode="LAHIRI", **kw
-        )
+            "S", 1990, 6, 15, 12, 0, zodiac_type="Sidereal", sidereal_mode="LAHIRI", **kw)
         for body in ("sun", "moon", "mars", "jupiter"):
             assert abs(getattr(trop, body).declination - getattr(sid, body).declination) < 1e-6
 
@@ -3152,17 +2936,9 @@ class TestPolarLatitudePreserved:
     """
 
     _KW = dict(
-        year=1995,
-        month=1,
-        day=15,
-        hour=2,
-        minute=0,
-        city="Longyearbyen",
-        nation="NO",
-        lng=15.6467,
-        tz_str="Arctic/Longyearbyen",
-        online=False,
-        suppress_geonames_warning=True,
+        year=1995, month=1, day=15, hour=2, minute=0,
+        city="Longyearbyen", nation="NO", lng=15.6467,
+        tz_str="Arctic/Longyearbyen", online=False, suppress_geonames_warning=True,
     )
 
     def _mk(self, **kw):
@@ -3224,8 +3000,7 @@ class TestPolarLatitudePreserved:
         with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
             self._mk(houses_system_identifier="W")
         polar_warnings = [
-            r
-            for r in caplog.records
+            r for r in caplog.records
             if r.levelno == logging.WARNING and "undefined inside the polar circle" in r.getMessage()
         ]
         assert not polar_warnings
@@ -3266,7 +3041,9 @@ class TestPolarFallbackErrorHandling:
             # 41.9 is NOT inside the polar circle → not a polar-undefined error.
             with pytest.raises(err_type, match="forced at lat=41.9"):
                 houses_ex2_with_polar_fallback(2451545.0, 41.9, 12.5, b"P", 0)
-        assert not [r for r in caplog.records if "undefined inside the polar circle" in r.getMessage()]
+        assert not [
+            r for r in caplog.records if "undefined inside the polar circle" in r.getMessage()
+        ]
 
     def test_polar_latitude_retry_failure_surfaces_original(self, monkeypatch, caplog):
         import logging
@@ -3298,7 +3075,9 @@ class TestPolarFallbackErrorHandling:
         # No substitution WARNING: the warning reports what the fallback DID, and
         # here it did nothing — the call raised. Announcing a substitute system that
         # never produced cusps would be a log entry contradicted by the exception.
-        assert not [r for r in caplog.records if "undefined inside the polar circle" in r.getMessage()]
+        assert not [
+            r for r in caplog.records if "undefined inside the polar circle" in r.getMessage()
+        ]
 
     def test_gauquelin_still_clamps_because_it_has_no_substitute(self, monkeypatch, caplog):
         """The 36-sector division has no 12-cusp equivalent, so it clamps instead.
@@ -3339,22 +3118,15 @@ class TestPolarFallbackErrorHandling:
 
         with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
             subject = AstrologicalSubjectFactory.from_birth_data(
-                "Polar Wording",
-                1995,
-                1,
-                15,
-                2,
-                0,
-                lat=78.2232,
-                lng=15.6467,
-                city="Longyearbyen",
-                nation="NO",
-                tz_str="Arctic/Longyearbyen",
-                online=False,
-                suppress_geonames_warning=True,
-                houses_system_identifier="P",
+                "Polar Wording", 1995, 1, 15, 2, 0,
+                lat=78.2232, lng=15.6467, city="Longyearbyen", nation="NO",
+                tz_str="Arctic/Longyearbyen", online=False,
+                suppress_geonames_warning=True, houses_system_identifier="P",
             )
-        polar = [r.getMessage() for r in caplog.records if "undefined inside the polar circle" in r.getMessage()]
+        polar = [
+            r.getMessage() for r in caplog.records
+            if "undefined inside the polar circle" in r.getMessage()
+        ]
         assert polar
         assert any("Porphyry" in m and "REAL latitude" in m for m in polar)
         assert any("unaffected" in m for m in polar)
@@ -3375,21 +3147,16 @@ class TestNonIntDateComponents:
     wrap."""
 
     _KW = dict(
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
-        suppress_geonames_warning=True,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
     )
 
     @pytest.mark.parametrize(
         "component_override",
         [
-            {"month": "06"},  # str component from JSON/form data
+            {"month": "06"},   # str component from JSON/form data
             {"day": "15"},
-            {"hour": 12.0},  # float component -> TypeError from datetime()
+            {"hour": 12.0},    # float component -> TypeError from datetime()
             {"year": "1990"},  # str year -> TypeError at the `year < 1` comparison
         ],
         ids=lambda kw: next(iter(kw.items()))[0] + "=" + repr(next(iter(kw.items()))[1]),
@@ -3423,22 +3190,17 @@ class TestAncientJulianDayValidation:
     that substring on purpose.)"""
 
     _KW = dict(
-        lng=0.0,
-        lat=0.0,
-        tz_str="UTC",
-        city="X",
-        nation="XX",
-        online=False,
-        suppress_geonames_warning=True,
+        lng=0.0, lat=0.0, tz_str="UTC", city="X", nation="XX",
+        online=False, suppress_geonames_warning=True,
     )
 
     @pytest.mark.parametrize(
         "year, month, day",
         [
-            (-99, 2, 30),  # Feb never has 30 days
-            (-99, 4, 31),  # April has 30
-            (-1, 2, 29),  # 2 BCE is NOT a proleptic-Julian leap year (-1 % 4 != 0)
-            (-99, 13, 1),  # month out of range — must raise, NOT IndexError
+            (-99, 2, 30),   # Feb never has 30 days
+            (-99, 4, 31),   # April has 30
+            (-1, 2, 29),    # 2 BCE is NOT a proleptic-Julian leap year (-1 % 4 != 0)
+            (-99, 13, 1),   # month out of range — must raise, NOT IndexError
         ],
         ids=lambda v: str(v),
     )
@@ -3447,7 +3209,8 @@ class TestAncientJulianDayValidation:
 
         with pytest.raises(KerykeionException, match="Invalid birth date/time component"):
             AstrologicalSubjectFactory.from_birth_data(
-                name="Ancient Invalid", year=year, month=month, day=day, hour=12, minute=0, **self._KW
+                name="Ancient Invalid", year=year, month=month, day=day,
+                hour=12, minute=0, **self._KW
             )
 
     def test_valid_leap_feb29_passes_validation(self):
@@ -3459,7 +3222,8 @@ class TestAncientJulianDayValidation:
 
         try:
             AstrologicalSubjectFactory.from_birth_data(
-                name="Ancient Valid Leap", year=0, month=2, day=29, hour=12, minute=0, **self._KW
+                name="Ancient Valid Leap", year=0, month=2, day=29,
+                hour=12, minute=0, **self._KW
             )
         except KerykeionException as exc:
             assert "Invalid birth date/time component" not in str(exc)
@@ -3469,12 +3233,10 @@ class TestActivePointsValidation:
     """Unknown names must raise (they used to silently vanish from the chart);
     an explicit empty list must raise (it used to invert into a FULL chart)."""
 
+
     COMMON = dict(
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        online=False,
-        suppress_geonames_warning=True,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
     )
 
     def test_typoed_point_name_raises(self):
@@ -3489,11 +3251,14 @@ class TestActivePointsValidation:
         from kerykeion.schemas import KerykeionException
 
         with pytest.raises(KerykeionException, match="empty"):
-            AstrologicalSubjectFactory.from_birth_data("T", 1990, 6, 15, 12, 0, active_points=[], **self.COMMON)
+            AstrologicalSubjectFactory.from_birth_data(
+                "T", 1990, 6, 15, 12, 0, active_points=[], **self.COMMON
+            )
 
     def test_star_names_still_redirected(self):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "T", 1990, 6, 15, 12, 0, active_points=["Sun", "Moon", "Regulus"], **self.COMMON
+            "T", 1990, 6, 15, 12, 0,
+            active_points=["Sun", "Moon", "Regulus"], **self.COMMON
         )
         assert [star.name for star in (subject.fixed_stars or [])] == ["Regulus"]
         assert "Regulus" not in subject.active_points

@@ -953,7 +953,8 @@ class TestReturnPerspectivePropagation:
         result = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
         diff = _angular_diff(result.sun.abs_pos, subject.sun.abs_pos)
         assert diff < 1e-3, (
-            f"Topocentric solar return Sun {result.sun.abs_pos}° differs from natal {subject.sun.abs_pos}° by {diff}°"
+            f"Topocentric solar return Sun {result.sun.abs_pos}° differs from natal "
+            f"{subject.sun.abs_pos}° by {diff}°"
         )
 
     def test_heliocentric_natal_raises_pointing_to_heliocentric_api(self):
@@ -1207,12 +1208,12 @@ class TestReturnFactoryOnlineGating:
         from kerykeion import fetch_geonames
 
         rome = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "41.89193", "lng": "12.51133"}
-        monkeypatch.setattr(fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(rome))
+        monkeypatch.setattr(
+            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(rome)
+        )
         factory = PlanetaryReturnFactory(
             johnny_depp,
-            city="Rome",
-            nation="IT",
-            tz_str="Europe/Vienna",  # tz given, coords missing
+            city="Rome", nation="IT", tz_str="Europe/Vienna",  # tz given, coords missing
             online=True,
         )
         assert factory.lat == pytest.approx(41.89193)
@@ -1230,30 +1231,14 @@ class TestReturnEnrichmentParityRound4:
         from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
-            name="T",
-            year=1990,
-            month=6,
-            day=15,
-            hour=12,
-            minute=0,
-            city="Rome",
-            nation="IT",
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-            calculate_dignities=True,
-            active_fixed_stars=["Regulus", "Spica"],
+            name="T", year=1990, month=6, day=15, hour=12, minute=0,
+            city="Rome", nation="IT", lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            calculate_dignities=True, active_fixed_stars=["Regulus", "Spica"],
         )
         rf = PlanetaryReturnFactory(
-            natal,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            natal, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
         )
         ret = rf.next_return_from_iso_formatted_time("2026-06-01T00:00:00Z", "Solar")
         assert ret.sun.essential_dignity is not None
@@ -1264,33 +1249,16 @@ class TestReturnEnrichmentParityRound4:
         from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
         sid = AstrologicalSubjectFactory.from_birth_data(
-            name="S",
-            year=1990,
-            month=6,
-            day=15,
-            hour=12,
-            minute=0,
-            city="Rome",
-            nation="IT",
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-            zodiac_type="Sidereal",
-            sidereal_mode="USER",
-            custom_ayanamsa_t0=2451545.0,
-            custom_ayanamsa_ayan_t0=23.5,
+            name="S", year=1990, month=6, day=15, hour=12, minute=0,
+            city="Rome", nation="IT", lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            zodiac_type="Sidereal", sidereal_mode="USER",
+            custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=23.5,
         )
         # Must NOT raise despite not re-passing custom_ayanamsa_* to the factory.
         rf = PlanetaryReturnFactory(
-            sid,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            sid, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
         )
         ret = rf.next_return_from_date(2027, 1, 1, return_type="Solar")
         assert ret is not None
@@ -1319,12 +1287,8 @@ class TestReturnSearchAtEphemerisEdge:
         # Natal just below the kernel's upper edge; the forward return search
         # then steps past 2650 and the backend can no longer calculate.
         natal = AstrologicalSubjectFactory.from_iso_utc_time(
-            name="Edge",
-            iso_utc_time="2649-06-01T00:00:00Z",
-            lng=0.0,
-            lat=51.5,
-            tz_str="UTC",
-            online=False,
+            name="Edge", iso_utc_time="2649-06-01T00:00:00Z",
+            lng=0.0, lat=51.5, tz_str="UTC", online=False,
         )
         rf = PlanetaryReturnFactory(natal, lng=0.0, lat=51.5, tz_str="UTC", online=False)
         with pytest.raises(KerykeionException):
@@ -1335,25 +1299,19 @@ class TestReturnSearchAtEphemerisEdge:
         # Natal just above the kernel's lower edge; the backward search then
         # steps before 1550.
         natal = AstrologicalSubjectFactory.from_iso_utc_time(
-            name="Edge",
-            iso_utc_time="1550-06-01T00:00:00Z",
-            lng=0.0,
-            lat=51.5,
-            tz_str="UTC",
-            online=False,
+            name="Edge", iso_utc_time="1550-06-01T00:00:00Z",
+            lng=0.0, lat=51.5, tz_str="UTC", online=False,
         )
         rf = PlanetaryReturnFactory(natal, lng=0.0, lat=51.5, tz_str="UTC", online=False)
         with pytest.raises(KerykeionException):
-            rf.next_return_from_iso_formatted_time("1550-01-05T00:00:00Z", return_type, backwards=True)
+            rf.next_return_from_iso_formatted_time(
+                "1550-01-05T00:00:00Z", return_type, backwards=True
+            )
 
     def _edge_factory(self):
         natal = AstrologicalSubjectFactory.from_iso_utc_time(
-            name="Edge",
-            iso_utc_time="2600-06-01T00:00:00Z",
-            lng=0.0,
-            lat=51.5,
-            tz_str="UTC",
-            online=False,
+            name="Edge", iso_utc_time="2600-06-01T00:00:00Z",
+            lng=0.0, lat=51.5, tz_str="UTC", online=False,
         )
         return PlanetaryReturnFactory(natal, lng=0.0, lat=51.5, tz_str="UTC", online=False)
 
@@ -1383,19 +1341,13 @@ class TestReturnModelSect:
 
     def test_return_model_carries_sect(self):
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "Sect Natal",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Sect Natal", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
         )
-        rf = PlanetaryReturnFactory(natal, lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False)
+        rf = PlanetaryReturnFactory(
+            natal, lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+        )
         ret = rf.next_return_from_iso_formatted_time("2026-01-01T00:00:00Z", "Solar")
         assert isinstance(ret.is_diurnal, bool)
         # The 2026 solar return for this natal lands at night local time.

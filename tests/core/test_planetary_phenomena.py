@@ -13,18 +13,9 @@ from kerykeion import AstrologicalSubjectFactory, PlanetaryPhenomenaFactory
 @pytest.fixture(scope="module")
 def subject():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Phenomena Test",
-        2000,
-        1,
-        1,
-        12,
-        0,
-        lng=0.0,
-        lat=51.5,
-        tz_str="Etc/GMT",
-        city="Greenwich",
-        nation="GB",
-        online=False,
+        "Phenomena Test", 2000, 1, 1, 12, 0,
+        lng=0.0, lat=51.5, tz_str="Etc/GMT",
+        city="Greenwich", nation="GB", online=False,
     )
 
 
@@ -89,7 +80,9 @@ class TestPhenomenaFromJulianDay:
         result = PlanetaryPhenomenaFactory.from_julian_day(2451545.0)
         for p in result.phenomena:
             # Moon can be ~-13, Venus ~-4.6, Pluto ~+14
-            assert -15 <= p.apparent_magnitude <= 25, f"{p.name} magnitude {p.apparent_magnitude} out of range"
+            assert -15 <= p.apparent_magnitude <= 25, (
+                f"{p.name} magnitude {p.apparent_magnitude} out of range"
+            )
 
 
 class TestPhenomenaFiltering:
@@ -101,7 +94,9 @@ class TestPhenomenaFiltering:
         assert result.phenomena[0].name == "Mars"
 
     def test_multiple_planets(self, subject):
-        result = PlanetaryPhenomenaFactory.from_subject(subject, planets=["Venus", "Jupiter"])
+        result = PlanetaryPhenomenaFactory.from_subject(
+            subject, planets=["Venus", "Jupiter"]
+        )
         assert len(result.phenomena) == 2
         names = {p.name for p in result.phenomena}
         assert names == {"Venus", "Jupiter"}
@@ -117,7 +112,6 @@ class TestPhenomenaFiltering:
         None): the guard must raise a clear KerykeionException instead of the
         misleading all-planets-failed "backend may be unavailable" error."""
         from kerykeion.schemas import KerykeionException
-
         no_jd = subject.model_copy(update={"julian_day": None})
         with pytest.raises(KerykeionException, match="Julian Day"):
             PlanetaryPhenomenaFactory.from_subject(no_jd)
@@ -225,14 +219,18 @@ class TestSweRegressionPhenomena:
         swe_apparent_diameter = swe_result[3]
         swe_apparent_magnitude = swe_result[4]
 
-        factory_result = PlanetaryPhenomenaFactory.from_julian_day(jd_j2000, planets=["Venus"])
+        factory_result = PlanetaryPhenomenaFactory.from_julian_day(
+            jd_j2000, planets=["Venus"]
+        )
         assert len(factory_result.phenomena) == 1
         venus = factory_result.phenomena[0]
 
         assert abs(venus.phase_angle - swe_phase_angle) < 0.001, (
             f"phase_angle: factory={venus.phase_angle} ephe={swe_phase_angle}"
         )
-        assert abs(venus.phase - swe_phase) < 0.001, f"phase: factory={venus.phase} ephe={swe_phase}"
+        assert abs(venus.phase - swe_phase) < 0.001, (
+            f"phase: factory={venus.phase} ephe={swe_phase}"
+        )
         assert abs(venus.elongation - swe_elongation) < 0.001, (
             f"elongation: factory={venus.elongation} ephe={swe_elongation}"
         )
@@ -252,7 +250,9 @@ class TestSweRegressionPhenomena:
         swe_phase_angle = swe_result[0]
         swe_elongation = swe_result[2]
 
-        factory_result = PlanetaryPhenomenaFactory.from_julian_day(jd_j2000, planets=["Mars"])
+        factory_result = PlanetaryPhenomenaFactory.from_julian_day(
+            jd_j2000, planets=["Mars"]
+        )
         assert len(factory_result.phenomena) == 1
         mars = factory_result.phenomena[0]
 

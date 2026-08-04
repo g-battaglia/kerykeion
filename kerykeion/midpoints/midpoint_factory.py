@@ -215,7 +215,6 @@ class MidpointFactory:
         points: List[KerykeionPointModel] = []
         emitted_pairs: set[frozenset[str]] = set()
         import logging
-
         logger = logging.getLogger(__name__)
 
         for raw in pair_names:
@@ -240,8 +239,7 @@ class MidpointFactory:
                     "Skipping midpoint pair %r: could not split it into two "
                     "point names that both resolve in subject.active_points "
                     "(%s available)",
-                    raw,
-                    len(gathered),
+                    raw, len(gathered),
                 )
                 continue
 

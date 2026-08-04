@@ -9,18 +9,9 @@ from kerykeion import AstrologicalSubjectFactory
 @pytest.fixture(scope="module")
 def subject_with_local_space():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Local Space Test",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "Local Space Test", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
         calculate_local_space=True,
     )
 
@@ -28,18 +19,9 @@ def subject_with_local_space():
 @pytest.fixture(scope="module")
 def subject_without_local_space():
     return AstrologicalSubjectFactory.from_birth_data(
-        "No Local Space",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "No Local Space", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
     )
 
 
@@ -56,7 +38,9 @@ class TestLocalSpaceCalculation:
         for name in ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]:
             point = getattr(subject_with_local_space, name)
             if point is not None:
-                assert point.altitude_above_horizon is not None, f"{name} should have altitude_above_horizon"
+                assert point.altitude_above_horizon is not None, (
+                    f"{name} should have altitude_above_horizon"
+                )
 
     def test_not_populated_by_default(self, subject_without_local_space):
         """Azimuth/altitude should be None when not enabled."""
@@ -68,7 +52,9 @@ class TestLocalSpaceCalculation:
         for name in ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]:
             point = getattr(subject_with_local_space, name)
             if point is not None and point.azimuth is not None:
-                assert 0 <= point.azimuth < 360, f"{name} azimuth {point.azimuth} outside 0-360 range"
+                assert 0 <= point.azimuth < 360, (
+                    f"{name} azimuth {point.azimuth} outside 0-360 range"
+                )
 
     def test_altitude_range(self, subject_with_local_space):
         """Altitude should be between -90 and +90 degrees."""
@@ -146,10 +132,12 @@ class TestLocalSpaceCalculation:
         expected_altitude = azalt_result[1]
 
         assert abs(subject_with_local_space.sun.azimuth - expected_azimuth) < 0.01, (
-            f"Sun azimuth {subject_with_local_space.sun.azimuth} != ephe reference {expected_azimuth}"
+            f"Sun azimuth {subject_with_local_space.sun.azimuth} != "
+            f"ephe reference {expected_azimuth}"
         )
         assert abs(subject_with_local_space.sun.altitude_above_horizon - expected_altitude) < 0.01, (
-            f"Sun altitude {subject_with_local_space.sun.altitude_above_horizon} != ephe reference {expected_altitude}"
+            f"Sun altitude {subject_with_local_space.sun.altitude_above_horizon} != "
+            f"ephe reference {expected_altitude}"
         )
 
     def test_mars_azalt_matches_swe_reference(self, subject_with_local_space):
@@ -168,8 +156,10 @@ class TestLocalSpaceCalculation:
         azalt_result = ephe.azalt(jd, ephe.ECL2HOR, geopos, 0, 0, ecl_coords)
 
         assert abs(subject_with_local_space.mars.azimuth - azalt_result[0]) < 0.01, (
-            f"Mars azimuth {subject_with_local_space.mars.azimuth} != ephe reference {azalt_result[0]}"
+            f"Mars azimuth {subject_with_local_space.mars.azimuth} != "
+            f"ephe reference {azalt_result[0]}"
         )
         assert abs(subject_with_local_space.mars.altitude_above_horizon - azalt_result[1]) < 0.01, (
-            f"Mars altitude {subject_with_local_space.mars.altitude_above_horizon} != ephe reference {azalt_result[1]}"
+            f"Mars altitude {subject_with_local_space.mars.altitude_above_horizon} != "
+            f"ephe reference {azalt_result[1]}"
         )

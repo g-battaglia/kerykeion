@@ -557,81 +557,39 @@ DEFAULT_FIXED_STAR_COLOR: Final[str] = "var(--kerykeion-chart-color-fixed-star-d
 
 #: Names that ship with their own ``<symbol id="...">`` in the SVG templates.
 #: Anything not in this set falls back to the generic ``#FixedStar`` glyph.
-KNOWN_GLYPH_NAMES: Final[frozenset[str]] = frozenset(
-    {
-        # Planets
-        "Sun",
-        "Moon",
-        "Mercury",
-        "Venus",
-        "Mars",
-        "Jupiter",
-        "Saturn",
-        "Uranus",
-        "Neptune",
-        "Pluto",
-        # Lunar nodes
-        "Mean_North_Lunar_Node",
-        "True_North_Lunar_Node",
-        "Mean_South_Lunar_Node",
-        "True_South_Lunar_Node",
-        # Centaurs / Lilith / minor bodies
-        "Chiron",
-        "Pholus",
-        "Mean_Lilith",
-        "True_Lilith",
-        "Earth",
-        # Lilith/Priapus variants and lunar apse points (v6.0)
-        "Interpolated_Lilith",
-        "Mean_Priapus",
-        "True_Priapus",
-        "Interpolated_Perigee",
-        "White_Moon",
-        # Asteroids
-        "Ceres",
-        "Pallas",
-        "Juno",
-        "Vesta",
-        # TNOs
-        "Eris",
-        "Sedna",
-        "Haumea",
-        "Makemake",
-        "Ixion",
-        "Orcus",
-        "Quaoar",
-        # Fixed stars: no per-star dedicated glyphs anymore (v6.0.0a44).
-        # ``resolve_glyph_id`` returns "FixedStar" for any name not in this set,
-        # which now matches every fixed star — including the 23 traditionally
-        # hardcoded ones. The unified ``<symbol id="FixedStar">`` ships in every
-        # SVG template; colors are controlled by the single CSS variable
-        # ``--kerykeion-chart-color-fixed-star-default``.
-        # Synthetic midpoint glyph (single shared symbol)
-        "Midpoint",
-        # Arabic parts
-        "Pars_Fortunae",
-        "Pars_Spiritus",
-        "Pars_Amoris",
-        "Pars_Fidei",
-        # Axes / extras
-        "Ascendant",
-        "Medium_Coeli",
-        "Descendant",
-        "Imum_Coeli",
-        "Vertex",
-        "Anti_Vertex",
-        "East_Point",
-        # Uranian hypotheticals
-        "Cupido",
-        "Hades",
-        "Zeus",
-        "Kronos",
-        "Apollon",
-        "Admetos",
-        "Vulkanus",
-        "Poseidon",
-    }
-)
+KNOWN_GLYPH_NAMES: Final[frozenset[str]] = frozenset({
+    # Planets
+    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
+    "Uranus", "Neptune", "Pluto",
+    # Lunar nodes
+    "Mean_North_Lunar_Node", "True_North_Lunar_Node",
+    "Mean_South_Lunar_Node", "True_South_Lunar_Node",
+    # Centaurs / Lilith / minor bodies
+    "Chiron", "Pholus", "Mean_Lilith", "True_Lilith", "Earth",
+    # Lilith/Priapus variants and lunar apse points (v6.0)
+    "Interpolated_Lilith", "Mean_Priapus", "True_Priapus",
+    "Interpolated_Perigee", "White_Moon",
+    # Asteroids
+    "Ceres", "Pallas", "Juno", "Vesta",
+    # TNOs
+    "Eris", "Sedna", "Haumea", "Makemake", "Ixion", "Orcus", "Quaoar",
+    # Fixed stars: no per-star dedicated glyphs anymore (v6.0.0a44).
+    # ``resolve_glyph_id`` returns "FixedStar" for any name not in this set,
+    # which now matches every fixed star — including the 23 traditionally
+    # hardcoded ones. The unified ``<symbol id="FixedStar">`` ships in every
+    # SVG template; colors are controlled by the single CSS variable
+    # ``--kerykeion-chart-color-fixed-star-default``.
+    # Synthetic midpoint glyph (single shared symbol)
+    "Midpoint",
+    # Arabic parts
+    "Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei",
+    # Axes / extras
+    "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
+    "Vertex", "Anti_Vertex", "East_Point",
+    # Uranian hypotheticals
+    "Cupido", "Hades", "Zeus", "Kronos", "Apollon", "Admetos",
+    "Vulkanus", "Poseidon",
+})
 
 
 def resolve_glyph_id(name: str) -> str:

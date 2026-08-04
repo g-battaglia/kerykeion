@@ -750,16 +750,9 @@ class TestMissingSunGuard:
         import pytest
 
         kwargs = dict(
-            year=1990,
-            month=6,
-            day=15,
-            hour=12,
-            minute=0,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
             active_points=["Moon", "Venus", "Mars"],
         )
         s1 = AstrologicalSubjectFactory.from_birth_data(name="No Sun A", **kwargs)

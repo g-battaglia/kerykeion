@@ -63,12 +63,9 @@ _LATITUDES = [65.0, 66.0, 66.4, 66.5, 66.6, 67.0, 70.0, 75.0, 80.0, 85.0, 89.9]
 _HOUSE_SYSTEMS = [b"P", b"K", b"W", b"R", b"C", b"O"]
 
 _POLAR_SUBJECT = dict(
-    lng=15.6467,
-    tz_str="Arctic/Longyearbyen",
-    city="Longyearbyen",
-    nation="NO",
-    online=False,
-    suppress_geonames_warning=True,
+    lng=15.6467, tz_str="Arctic/Longyearbyen",
+    city="Longyearbyen", nation="NO",
+    online=False, suppress_geonames_warning=True,
 )
 
 
@@ -85,7 +82,8 @@ class TestAscendantIsIndependentOfHouseSystem:
     def test_all_house_systems_agree_on_the_ascendant(self, latitude):
         with ephemeris_session() as iflag:
             ascendants = {
-                hsys: houses_ex2_with_polar_fallback(_JD, latitude, _LON, hsys, iflag)[1][0] for hsys in _HOUSE_SYSTEMS
+                hsys: houses_ex2_with_polar_fallback(_JD, latitude, _LON, hsys, iflag)[1][0]
+                for hsys in _HOUSE_SYSTEMS
             }
         spread = max(ascendants.values()) - min(ascendants.values())
         assert spread < 1e-6, f"Ascendant varies by house system at {latitude}N: {ascendants}"
@@ -99,8 +97,13 @@ class TestAscendantIsIndependentOfHouseSystem:
         it is stronger than any single-latitude comparison: one frozen pair fails.
         """
         with ephemeris_session() as iflag:
-            ascendants = [houses_ex2_with_polar_fallback(_JD, lat, _LON, b"P", iflag)[1][0] for lat in _LATITUDES]
-        for lower, upper, lat_lo, lat_hi in zip(ascendants, ascendants[1:], _LATITUDES, _LATITUDES[1:]):
+            ascendants = [
+                houses_ex2_with_polar_fallback(_JD, lat, _LON, b"P", iflag)[1][0]
+                for lat in _LATITUDES
+            ]
+        for lower, upper, lat_lo, lat_hi in zip(
+            ascendants, ascendants[1:], _LATITUDES, _LATITUDES[1:]
+        ):
             assert lower != upper, f"Ascendant frozen between {lat_lo}N and {lat_hi}N"
         # Rising latitude drives the Ascendant toward the equinox point here; the
         # direction is incidental, the absence of a plateau is the assertion.
@@ -118,7 +121,10 @@ class TestAnglesDoNotDependOnLatitude:
 
     def test_mc_and_armc_are_constant_across_the_polar_sweep(self):
         with ephemeris_session() as iflag:
-            rows = [houses_ex2_with_polar_fallback(_JD, lat, _LON, b"P", iflag)[1] for lat in _LATITUDES]
+            rows = [
+                houses_ex2_with_polar_fallback(_JD, lat, _LON, b"P", iflag)[1]
+                for lat in _LATITUDES
+            ]
         mcs = {round(ascmc[1], 9) for ascmc in rows}
         armcs = {round(ascmc[2], 9) for ascmc in rows}
         assert len(mcs) == 1, f"MC varied with latitude: {mcs}"
@@ -138,15 +144,8 @@ class TestFirstCuspEqualsTheAscendant:
 
     def test_placidus_first_house_starts_at_the_ascendant_deep_inside_the_circle(self):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Polar Placidus",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=78.2232,
-            houses_system_identifier="P",
-            **_POLAR_SUBJECT,
+            "Polar Placidus", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="P", **_POLAR_SUBJECT,
         )
         assert subject.first_house.abs_pos == subject.ascendant.abs_pos
         # The same identity holds on the meridian axis.
@@ -161,15 +160,8 @@ class TestFirstCuspEqualsTheAscendant:
         corrupting Whole Sign charts.
         """
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Polar Whole Sign",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=78.2232,
-            houses_system_identifier="W",
-            **_POLAR_SUBJECT,
+            "Polar Whole Sign", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="W", **_POLAR_SUBJECT,
         )
         assert subject.first_house.abs_pos != subject.ascendant.abs_pos
         assert subject.first_house.abs_pos % 30 == 0
@@ -186,15 +178,8 @@ class TestPolarFallbackIsDeclared:
 
     def test_substitution_is_recorded_inside_the_circle(self):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Declared",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=78.2232,
-            houses_system_identifier="P",
-            **_POLAR_SUBJECT,
+            "Declared", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="P", **_POLAR_SUBJECT,
         )
         assert len(subject.polar_house_fallbacks) == 1
         fallback = subject.polar_house_fallbacks[0]
@@ -212,29 +197,15 @@ class TestPolarFallbackIsDeclared:
         be noise, and would make the field useless for telling the two cases apart.
         """
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Undeclared",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=60.0,
-            houses_system_identifier="P",
-            **_POLAR_SUBJECT,
+            "Undeclared", 1995, 1, 15, 2, 0,
+            lat=60.0, houses_system_identifier="P", **_POLAR_SUBJECT,
         )
         assert subject.polar_house_fallbacks == []
 
     def test_no_record_for_a_system_defined_everywhere(self):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Whole Sign Polar",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=78.2232,
-            houses_system_identifier="W",
-            **_POLAR_SUBJECT,
+            "Whole Sign Polar", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="W", **_POLAR_SUBJECT,
         )
         assert subject.polar_house_fallbacks == []
 
@@ -247,16 +218,9 @@ class TestPolarFallbackIsDeclared:
         list holds exactly one entry and it is the clamp.
         """
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Gauquelin Polar",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=78.2232,
-            houses_system_identifier="W",
-            calculate_gauquelin=True,
-            **_POLAR_SUBJECT,
+            "Gauquelin Polar", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="W",
+            calculate_gauquelin=True, **_POLAR_SUBJECT,
         )
         assert len(subject.polar_house_fallbacks) == 1
         fallback = subject.polar_house_fallbacks[0]
@@ -270,19 +234,14 @@ class TestPolarFallbackIsDeclared:
     def test_gauquelin_points_use_the_same_fallback_latitude_as_the_ring(self):
         """A clamped ring cannot coexist with sectors cast at the real latitude."""
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Gauquelin Consistency",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=78.2232,
-            houses_system_identifier="W",
-            calculate_gauquelin=True,
-            **_POLAR_SUBJECT,
+            "Gauquelin Consistency", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="W",
+            calculate_gauquelin=True, **_POLAR_SUBJECT,
         )
         fallback = next(
-            record for record in subject.polar_house_fallbacks if record.requested_house_system_identifier == "G"
+            record
+            for record in subject.polar_house_fallbacks
+            if record.requested_house_system_identifier == "G"
         )
 
         with ephemeris_session():
@@ -309,16 +268,9 @@ class TestPolarFallbackIsDeclared:
         a single value, would silently drop whichever came second.
         """
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Both",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=78.2232,
-            houses_system_identifier="P",
-            calculate_gauquelin=True,
-            **_POLAR_SUBJECT,
+            "Both", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="P",
+            calculate_gauquelin=True, **_POLAR_SUBJECT,
         )
         assert [f.strategy for f in subject.polar_house_fallbacks] == [
             "substitute_system",
@@ -344,7 +296,9 @@ class TestThePolarLimitMovesWithTheEpoch:
     @pytest.mark.parametrize("jd,latitude", _ANTIQUITY)
     def test_a_quadrant_system_still_substitutes_below_66_degrees(self, jd, latitude):
         with ephemeris_session():
-            cusps, ascmc, _, _, fallback = houses_ex2_with_polar_fallback_ex(jd, latitude, _LON, b"P", 0)
+            cusps, ascmc, _, _, fallback = houses_ex2_with_polar_fallback_ex(
+                jd, latitude, _LON, b"P", 0
+            )
         assert fallback is not None
         assert fallback.strategy == "substitute_system"
         # Substitution keeps the real latitude, so the Ascendant stays exact and
@@ -420,15 +374,8 @@ class TestTheChartIsLabelledWithTheSystemItUsed:
     @staticmethod
     def _subject(hsys: str, latitude: float):
         return AstrologicalSubjectFactory.from_birth_data(
-            "Labelled",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=latitude,
-            houses_system_identifier=hsys,
-            **_POLAR_SUBJECT,
+            "Labelled", 1995, 1, 15, 2, 0,
+            lat=latitude, houses_system_identifier=hsys, **_POLAR_SUBJECT,
         )
 
     def test_a_substituted_chart_names_the_substitute(self):
@@ -470,7 +417,9 @@ class TestTheChartIsLabelledWithTheSystemItUsed:
         from kerykeion import ChartDataFactory
         from kerykeion.charts.chart_drawer import ChartDrawer
 
-        svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(self._subject("P", 78.2232))).generate_svg_string()
+        svg = ChartDrawer(
+            ChartDataFactory.create_natal_chart_data(self._subject("P", 78.2232))
+        ).generate_svg_string()
         assert "Domification: Porphyry" in svg
         assert "Domification: Placidus" not in svg
 
@@ -489,15 +438,8 @@ class TestASubstitutionDoesNotBecomeASetting:
     @staticmethod
     def _polar_placidus():
         return AstrologicalSubjectFactory.from_birth_data(
-            "Polar Placidus",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=78.2232,
-            houses_system_identifier="P",
-            **_POLAR_SUBJECT,
+            "Polar Placidus", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="P", **_POLAR_SUBJECT,
         )
 
     def test_the_request_is_what_survives_on_the_subject(self):
@@ -512,11 +454,8 @@ class TestASubstitutionDoesNotBecomeASetting:
 
         relocated = RelocatedChartFactory.relocate(
             self._polar_placidus(),
-            new_lat=41.9028,
-            new_lng=12.4964,
-            new_tz_str="Europe/Rome",
-            new_city="Rome",
-            new_nation="IT",
+            new_lat=41.9028, new_lng=12.4964, new_tz_str="Europe/Rome",
+            new_city="Rome", new_nation="IT",
         )
         assert relocated.houses_system_identifier == "P"
         assert relocated.effective_houses_system_identifier == "P"
@@ -525,15 +464,8 @@ class TestASubstitutionDoesNotBecomeASetting:
     def test_a_chart_that_never_substituted_reports_one_system(self):
         """The control: the two views agree wherever nothing degraded."""
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Temperate",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=45.0,
-            houses_system_identifier="P",
-            **_POLAR_SUBJECT,
+            "Temperate", 1995, 1, 15, 2, 0,
+            lat=45.0, houses_system_identifier="P", **_POLAR_SUBJECT,
         )
         assert subject.houses_system_identifier == subject.effective_houses_system_identifier == "P"
         assert subject.houses_system_name == subject.effective_houses_system_name
@@ -552,16 +484,9 @@ class TestTheEffectiveViewNamesTheMainHouses:
     @staticmethod
     def _polar(hsys: str, gauquelin: bool):
         return AstrologicalSubjectFactory.from_birth_data(
-            "Polar",
-            1995,
-            1,
-            15,
-            2,
-            0,
-            lat=78.2232,
-            houses_system_identifier=hsys,
-            calculate_gauquelin=gauquelin,
-            **_POLAR_SUBJECT,
+            "Polar", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier=hsys,
+            calculate_gauquelin=gauquelin, **_POLAR_SUBJECT,
         )
 
     def test_an_ancillary_gauquelin_clamp_does_not_rename_the_chart(self):
@@ -597,12 +522,8 @@ class TestACompositeCannotMixTwoDivisions:
     @staticmethod
     def _subject(name: str, lat: float, **over):
         base = dict(
-            lng=15.6467,
-            tz_str="Arctic/Longyearbyen",
-            city="L",
-            nation="NO",
-            online=False,
-            suppress_geonames_warning=True,
+            lng=15.6467, tz_str="Arctic/Longyearbyen", city="L", nation="NO",
+            online=False, suppress_geonames_warning=True,
         )
         base.update(over)
         return AstrologicalSubjectFactory.from_birth_data(
@@ -614,7 +535,9 @@ class TestACompositeCannotMixTwoDivisions:
         from kerykeion.schemas.kerykeion_exception import KerykeionException
 
         polar = self._subject("Polar", 78.2232)
-        temperate = self._subject("Temperate", 41.9, lng=12.5, tz_str="Europe/Rome", city="Rome", nation="IT")
+        temperate = self._subject(
+            "Temperate", 41.9, lng=12.5, tz_str="Europe/Rome", city="Rome", nation="IT"
+        )
         assert polar.houses_system_identifier == temperate.houses_system_identifier, (
             "precondition: the REQUESTS match, so only the effective check can catch this"
         )
@@ -675,10 +598,8 @@ class TestACompositeCannotMixTwoDivisions:
         """
         from kerykeion.composite_subject_factory import CompositeSubjectFactory
 
-        parents = [
-            self._subject("Polar A", 78.2232, calculate_gauquelin=True),
-            self._subject("Polar B", 79.0, calculate_gauquelin=True),
-        ]
+        parents = [self._subject("Polar A", 78.2232, calculate_gauquelin=True),
+                   self._subject("Polar B", 79.0, calculate_gauquelin=True)]
         assert any(
             fallback.requested_house_system_identifier == "G"
             for parent in parents
@@ -688,10 +609,7 @@ class TestACompositeCannotMixTwoDivisions:
         composite = CompositeSubjectFactory(*parents).get_midpoint_composite_subject_model()
 
         assert composite.gauquelin_sector_cusps is None
-        assert [fallback.requested_house_system_identifier for fallback in composite.polar_house_fallbacks] == [
-            "P",
-            "P",
-        ]
+        assert [fallback.requested_house_system_identifier for fallback in composite.polar_house_fallbacks] == ["P", "P"]
 
     def test_davison_accepts_parents_with_different_effective_systems(self):
         """Davison recasts its houses and does not average the parents' cusps."""
@@ -779,7 +697,9 @@ class TestDualWheelEffectiveHouseLabels:
         from kerykeion.charts.chart_drawer import ChartDrawer
 
         polar, temperate = self._subjects()
-        svg = ChartDrawer(ChartDataFactory.create_synastry_chart_data(polar, temperate)).generate_svg_string()
+        svg = ChartDrawer(
+            ChartDataFactory.create_synastry_chart_data(polar, temperate)
+        ).generate_svg_string()
 
         assert "Porphyry / Placidus Houses" in svg
 
@@ -788,6 +708,8 @@ class TestDualWheelEffectiveHouseLabels:
         from kerykeion.charts.chart_drawer import ChartDrawer
 
         polar, temperate = self._subjects()
-        svg = ChartDrawer(ChartDataFactory.create_transit_chart_data(polar, temperate)).generate_svg_string()
+        svg = ChartDrawer(
+            ChartDataFactory.create_transit_chart_data(polar, temperate)
+        ).generate_svg_string()
 
         assert "Domification: Porphyry / Placidus" in svg

@@ -854,9 +854,7 @@ def _draw_planet_ring(
 
     # Division lines through the planet ring
     if gauquelin_sectors:
-        out += _draw_gauquelin_division_lines(
-            line_outer_y, line_inner_y, gauquelin_cusps=gauquelin_cusps, seventh_house_degree_ut=seventh_house_degree_ut
-        )
+        out += _draw_gauquelin_division_lines(line_outer_y, line_inner_y, gauquelin_cusps=gauquelin_cusps, seventh_house_degree_ut=seventh_house_degree_ut)
     else:
         out += _draw_house_division_lines(houses, seventh_house_degree_ut, line_outer_y, line_inner_y)
 
@@ -1024,12 +1022,12 @@ def _draw_single_planet_in_ring(
     # all three so the emitted values locate the glyph in the wheel-local frame.
     angle_rad = math.radians(display_angle)
     dy = glyph_y - CENTER
-    gx = CENTER + dy * math.sin(angle_rad)  # frame (1) undone: ChartPoint-parent coords
+    gx = CENTER + dy * math.sin(angle_rad)   # frame (1) undone: ChartPoint-parent coords
     gy = CENTER + dy * math.cos(angle_rad)
     if show_zodiac_background_ring:
         s = ZODIAC_BG_SCALE
         off = CENTER * (1 - s)
-        gx = gx * s + off  # frame (2): translate(off) scale(s)
+        gx = gx * s + off                     # frame (2): translate(off) scale(s)
         gy = gy * s + off
     # frame (3): rotate(-90, CENTER, CENTER) maps (x, y) -> (C + (y-C), C - (x-C))
     glyph_cx = CENTER + (gy - CENTER)
@@ -1632,19 +1630,13 @@ def draw_modern_horoscope(
 
     # Draw rings from outside in
     if gauquelin_sectors:
-        out += _draw_gauquelin_cusp_ring(
-            seventh_house_degree_ut, show_zodiac_background_ring, gauquelin_cusps=gauquelin_cusps
-        )
+        out += _draw_gauquelin_cusp_ring(seventh_house_degree_ut, show_zodiac_background_ring, gauquelin_cusps=gauquelin_cusps)
     else:
         out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring, horoscope_id="0")
     out += _draw_ruler_ring()
     out += _draw_planet_ring(
-        planets,
-        planets_settings,
-        seventh_house_degree_ut,
-        houses,
-        gauquelin_sectors=gauquelin_sectors,
-        gauquelin_cusps=gauquelin_cusps,
+        planets, planets_settings, seventh_house_degree_ut, houses,
+        gauquelin_sectors=gauquelin_sectors, gauquelin_cusps=gauquelin_cusps,
         show_zodiac_background_ring=show_zodiac_background_ring,
     )
     if gauquelin_sectors:

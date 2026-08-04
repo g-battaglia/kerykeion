@@ -64,7 +64,9 @@ from kerykeion.utilities import (
 )
 
 
-def _davison_midpoint_components(mid_jd: float, mid_lng: float) -> tuple[int, int, int, int, int, int]:
+def _davison_midpoint_components(
+    mid_jd: float, mid_lng: float
+) -> tuple[int, int, int, int, int, int]:
     """Decompose a Davison midpoint JD into birth-data components (UTC).
 
     CE midpoints use the Gregorian calendar to match the proleptic-Gregorian
@@ -615,7 +617,9 @@ class CompositeSubjectFactory:
         mid_lat = (s1.lat + s2.lat) / 2.0
         mid_lng = circular_mean(s1.lng + 180.0, s2.lng + 180.0) - 180.0
 
-        year, month, day, hour, minute, seconds = _davison_midpoint_components(mid_jd, mid_lng)
+        year, month, day, hour, minute, seconds = _davison_midpoint_components(
+            mid_jd, mid_lng
+        )
 
         extra_kwargs: dict = {}
         if custom_ayanamsa_t0 is not None:
@@ -631,16 +635,17 @@ class CompositeSubjectFactory:
         # SecondaryProgressionFactory (which infer the same flags). Enable a
         # feature only when BOTH parents carried it, matching composite semantics.
         def _point_has(subject, attr: str) -> bool:
-            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"):
+            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter",
+                          "saturn", "uranus", "neptune", "pluto"):
                 _p = getattr(subject, _name, None)
                 if _p is not None:
                     return getattr(_p, attr, None) is not None
             return False
 
-        _shared_stars = sorted({st.name for st in (s1.fixed_stars or [])} & {st.name for st in (s2.fixed_stars or [])})
-        extra_kwargs["calculate_dignities"] = _point_has(s1, "essential_dignity") and _point_has(
-            s2, "essential_dignity"
+        _shared_stars = sorted(
+            {st.name for st in (s1.fixed_stars or [])} & {st.name for st in (s2.fixed_stars or [])}
         )
+        extra_kwargs["calculate_dignities"] = _point_has(s1, "essential_dignity") and _point_has(s2, "essential_dignity")
         extra_kwargs["calculate_nakshatra"] = _point_has(s1, "nakshatra") and _point_has(s2, "nakshatra")
         extra_kwargs["calculate_local_space"] = _point_has(s1, "azimuth") and _point_has(s2, "azimuth")
         extra_kwargs["calculate_gauquelin"] = (

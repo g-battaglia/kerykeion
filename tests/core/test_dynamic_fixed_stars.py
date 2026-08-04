@@ -257,7 +257,10 @@ class TestFixedStarDiscovery:
         libephemeris 3.0's 1447-star catalog bright stars were suppressed by fainter
         neighbours — e.g. Nunki (sigma Sgr, mag 2.02) lost to Beta Scuti (mag 4.22),
         both rounding to 282.26 deg. Nunki sits at orb ~1.46 here and must appear."""
-        names = {s.name for s in FixedStarDiscoveryFactory.find_prominent_stars(subject_default_stars, orb=2.0)}
+        names = {
+            s.name
+            for s in FixedStarDiscoveryFactory.find_prominent_stars(subject_default_stars, orb=2.0)
+        }
         assert "Nunki" in names, f"Nunki should be discovered within orb 2.0; got {sorted(names)}"
 
 
@@ -272,17 +275,9 @@ class TestFixedStarSiderealFrameConsistency:
 
     def test_lahiri_discovery_matches_tropical_minus_ayanamsa(self):
         birth = dict(
-            year=1990,
-            month=6,
-            day=15,
-            hour=14,
-            minute=30,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
         )
         tropical = AstrologicalSubjectFactory.from_birth_data("Stars Tropical", **birth)
         sidereal = AstrologicalSubjectFactory.from_birth_data(
@@ -308,7 +303,9 @@ class TestFixedStarSiderealFrameConsistency:
             )
             # Declination is physical and must be identical in both frames.
             if trop_stars[name].declination is not None and sid_stars[name].declination is not None:
-                assert sid_stars[name].declination == pytest.approx(trop_stars[name].declination, abs=1e-6)
+                assert sid_stars[name].declination == pytest.approx(
+                    trop_stars[name].declination, abs=1e-6
+                )
 
 
 class TestCatalogStarsParticipateInAspects:
@@ -340,7 +337,10 @@ class TestCatalogStarsParticipateInAspects:
 
         result = AspectsFactory.single_chart_aspects(subj)
         catalog_names = {"Castor", "Vindemiatrix", "Polaris"}
-        star_aspects = [a for a in result.aspects if a.p1_name in catalog_names or a.p2_name in catalog_names]
+        star_aspects = [
+            a for a in result.aspects
+            if a.p1_name in catalog_names or a.p2_name in catalog_names
+        ]
         assert len(star_aspects) > 0, (
             "Catalog fixed stars (non-default) must participate in aspects; "
             f"got {len(star_aspects)} from {len(result.aspects)} total. "
@@ -393,17 +393,9 @@ class TestFixedStarOnlyActivePointsRaises:
 
         with pytest.raises(KerykeionException, match="only fixed star names"):
             AstrologicalSubjectFactory.from_birth_data(
-                "Stars Only",
-                1990,
-                6,
-                15,
-                12,
-                0,
-                lng=12.5,
-                lat=41.9,
-                tz_str="Europe/Rome",
-                online=False,
-                suppress_geonames_warning=True,
+                "Stars Only", 1990, 6, 15, 12, 0,
+                lng=12.5, lat=41.9, tz_str="Europe/Rome",
+                online=False, suppress_geonames_warning=True,
                 active_points=["Regulus", "Spica"],
             )
 
@@ -411,17 +403,9 @@ class TestFixedStarOnlyActivePointsRaises:
         from kerykeion import AstrologicalSubjectFactory
 
         s = AstrologicalSubjectFactory.from_birth_data(
-            "Mixed",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Mixed", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
             active_points=["Sun", "Regulus"],
         )
         assert s.active_points == ["Sun"]
@@ -446,9 +430,9 @@ class TestFixedStarCatalogIsKnownName:
                 entry.slug.replace("_", "-"),
                 entry.slug.replace("_", " "),
             ):
-                assert FixedStarCatalog.is_known_name(candidate) == (FixedStarCatalog.find(candidate) is not None), (
-                    candidate
-                )
+                assert FixedStarCatalog.is_known_name(candidate) == (
+                    FixedStarCatalog.find(candidate) is not None
+                ), candidate
 
     def test_is_known_name_matches_find_for_active_point_names(self):
         from typing import get_args
@@ -456,7 +440,9 @@ class TestFixedStarCatalogIsKnownName:
         from kerykeion.schemas.kr_literals import AstrologicalPoint
 
         for name in get_args(AstrologicalPoint):
-            assert FixedStarCatalog.is_known_name(name) == (FixedStarCatalog.find(name) is not None), name
+            assert FixedStarCatalog.is_known_name(name) == (
+                FixedStarCatalog.find(name) is not None
+            ), name
 
     def test_is_known_name_rejects_typos_and_junk(self):
         from kerykeion.fixed_stars.catalog import FixedStarCatalog
@@ -482,25 +468,18 @@ class TestFixedStarCatalogIsKnownName:
 
         with caplog.at_level(logging.WARNING):
             s = AstrologicalSubjectFactory.from_birth_data(
-                "Redirect",
-                1990,
-                6,
-                15,
-                12,
-                0,
-                lng=12.5,
-                lat=41.9,
-                tz_str="Europe/Rome",
-                online=False,
-                suppress_geonames_warning=True,
+                "Redirect", 1990, 6, 15, 12, 0,
+                lng=12.5, lat=41.9, tz_str="Europe/Rome",
+                online=False, suppress_geonames_warning=True,
                 active_points=["Sun", "Moon", "Regulus"],
             )
 
         assert s.active_points == ["Sun", "Moon"]
         assert [st.name for st in s.fixed_stars] == ["Regulus"]
-        assert any("Regulus" in r.getMessage() and "active_fixed_stars" in r.getMessage() for r in caplog.records), (
-            caplog.text
-        )
+        assert any(
+            "Regulus" in r.getMessage() and "active_fixed_stars" in r.getMessage()
+            for r in caplog.records
+        ), caplog.text
 
 
 def test_composite_subject_raises_clean_exception():
@@ -512,30 +491,14 @@ def test_composite_subject_raises_clean_exception():
     from kerykeion.schemas import KerykeionException
 
     a = AstrologicalSubjectFactory.from_birth_data(
-        "A",
-        1990,
-        6,
-        15,
-        12,
-        0,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        online=False,
-        suppress_geonames_warning=True,
+        "A", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
     )
     b = AstrologicalSubjectFactory.from_birth_data(
-        "B",
-        1985,
-        3,
-        10,
-        4,
-        20,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        online=False,
-        suppress_geonames_warning=True,
+        "B", 1985, 3, 10, 4, 20,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
     )
     midpoint = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
     with pytest.raises(KerykeionException, match="Julian Day"):
@@ -611,17 +574,9 @@ class TestFixedStarProvenance:
         from kerykeion.astrological_subject_factory import _precision_class_for_source
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Natal Stars",
-            1990,
-            6,
-            15,
-            14,
-            30,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Natal Stars", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
             active_fixed_stars=["Regulus", "Spica", "Aldebaran"],
         )
         assert subject.fixed_stars
@@ -639,21 +594,16 @@ class TestFixedStarProvenance:
         from kerykeion.context_serializer import astrological_subject_to_context
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Serialized Stars",
-            1990,
-            6,
-            15,
-            14,
-            30,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Serialized Stars", 1990, 6, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
             active_fixed_stars=["Regulus", "Spica"],
         )
         context = astrological_subject_to_context(subject)
-        star_lines = [line for line in context.splitlines() if 'name="Regulus"' in line or 'name="Spica"' in line]
+        star_lines = [
+            line for line in context.splitlines()
+            if 'name="Regulus"' in line or 'name="Spica"' in line
+        ]
         assert star_lines, "fixed stars missing from the serialized context"
         for line in star_lines:
             assert "source=" in line

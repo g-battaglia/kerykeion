@@ -234,16 +234,8 @@ class TestBCESubjectCreation:
         from kerykeion.schemas import KerykeionException
 
         base = dict(
-            name="BCE Invalid",
-            year=-100,
-            month=6,
-            day=15,
-            hour=12,
-            minute=0,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            online=False,
+            name="BCE Invalid", year=-100, month=6, day=15, hour=12, minute=0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
             suppress_geonames_warning=True,
         )
         base.update(component_override)
@@ -283,30 +275,14 @@ class TestLMTOffset:
         """Different longitudes produce different Julian Days for the same local time."""
         # Same date/time, different locations
         subj_east = AstrologicalSubjectFactory.from_birth_data(
-            name="East",
-            year=-100,
-            month=6,
-            day=15,
-            hour=12,
-            minute=0,
-            lat=30.0,
-            lng=90.0,
-            tz_str="Asia/Kolkata",
-            online=False,
-            suppress_geonames_warning=True,
+            name="East", year=-100, month=6, day=15, hour=12, minute=0,
+            lat=30.0, lng=90.0, tz_str="Asia/Kolkata",
+            online=False, suppress_geonames_warning=True,
         )
         subj_west = AstrologicalSubjectFactory.from_birth_data(
-            name="West",
-            year=-100,
-            month=6,
-            day=15,
-            hour=12,
-            minute=0,
-            lat=30.0,
-            lng=-90.0,
-            tz_str="America/Chicago",
-            online=False,
-            suppress_geonames_warning=True,
+            name="West", year=-100, month=6, day=15, hour=12, minute=0,
+            lat=30.0, lng=-90.0, tz_str="America/Chicago",
+            online=False, suppress_geonames_warning=True,
         )
         # 180° of longitude = 12 hours = 0.5 days difference
         jd_diff = subj_east.julian_day - subj_west.julian_day
@@ -316,17 +292,9 @@ class TestLMTOffset:
     def test_lmt_offset_zero_longitude(self):
         """Zero longitude means no LMT offset (local time = UT)."""
         subject = AstrologicalSubjectFactory.from_birth_data(
-            name="Greenwich BCE",
-            year=-100,
-            month=1,
-            day=1,
-            hour=12,
-            minute=0,
-            lat=51.5,
-            lng=0.0,
-            tz_str="Etc/GMT",
-            online=False,
-            suppress_geonames_warning=True,
+            name="Greenwich BCE", year=-100, month=1, day=1, hour=12, minute=0,
+            lat=51.5, lng=0.0, tz_str="Etc/GMT",
+            online=False, suppress_geonames_warning=True,
         )
         assert "+00:00" in subject.iso_formatted_local_datetime
         assert "+00:00" in subject.iso_formatted_utc_datetime
@@ -423,7 +391,8 @@ class TestDayOfWeek:
             day_index = int(math.floor(jd + 0.5)) % 7
             day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             assert subject.day_of_week == day_names[day_index], (
-                f"{subject_id}: day_of_week={subject.day_of_week}, expected={day_names[day_index]} (JD={jd})"
+                f"{subject_id}: day_of_week={subject.day_of_week}, "
+                f"expected={day_names[day_index]} (JD={jd})"
             )
 
 
@@ -562,20 +531,14 @@ class TestBCEChartSVG:
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             name="Pre-1CE Gap",
-            year=0,
-            month=12,
-            day=15,
-            hour=12,
-            minute=0,
-            lng=0.0,
-            lat=51.48,
-            tz_str="UTC",
-            city="Greenwich",
-            nation="GB",
-            online=False,
-            suppress_geonames_warning=True,
+            year=0, month=12, day=15, hour=12, minute=0,
+            lng=0.0, lat=51.48, tz_str="UTC",
+            city="Greenwich", nation="GB",
+            online=False, suppress_geonames_warning=True,
         )
-        progressed = SecondaryProgressionFactory.compute(subject, target_iso_utc_datetime="0018-01-01T00:00:00Z")
+        progressed = SecondaryProgressionFactory.compute(
+            subject, target_iso_utc_datetime="0018-01-01T00:00:00Z"
+        )
         # Clamped to 1 BCE Dec 31 23:59:59 Julian — NOT rolled into 1 CE.
         assert extract_year_from_iso(progressed.iso_formatted_utc_datetime) < 1
 
@@ -613,7 +576,9 @@ class TestBCESiderealMode:
     def test_sidereal_lahiri(self):
         """Sidereal Lahiri mode produces different positions from tropical."""
         tropical = _create_bce_subject("ancient_500bc")
-        sidereal = _create_bce_subject("ancient_500bc", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        sidereal = _create_bce_subject(
+            "ancient_500bc", zodiac_type="Sidereal", sidereal_mode="LAHIRI"
+        )
         # Sidereal positions should differ from tropical by roughly the ayanamsa
         assert sidereal.sun.abs_pos != pytest.approx(tropical.sun.abs_pos, abs=1.0)
         assert sidereal.ayanamsa_value is not None
@@ -621,7 +586,9 @@ class TestBCESiderealMode:
     @pytest.mark.extended
     def test_sidereal_fagan_bradley(self):
         """Sidereal Fagan-Bradley mode works with BCE dates."""
-        subject = _create_bce_subject("year_zero", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")
+        subject = _create_bce_subject(
+            "year_zero", zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY"
+        )
         assert subject.sun is not None
         assert 0 <= subject.sun.abs_pos < 360
 
@@ -707,17 +674,9 @@ class TestModernDatesRegression:
     def test_modern_subject_unchanged(self):
         """John Lennon's chart should produce the same results as always."""
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "John Lennon",
-            1940,
-            10,
-            9,
-            18,
-            30,
-            lat=53.4084,
-            lng=-2.9916,
-            tz_str="Europe/London",
-            online=False,
-            suppress_geonames_warning=True,
+            "John Lennon", 1940, 10, 9, 18, 30,
+            lat=53.4084, lng=-2.9916, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True,
         )
         assert subject.sun.sign == "Lib"
         assert subject.day_of_week == "Wednesday"
@@ -729,17 +688,9 @@ class TestModernDatesRegression:
     def test_year_one_uses_modern_path(self):
         """Year 1 AD should use the standard datetime/zoneinfo path."""
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Year 1 AD",
-            1,
-            6,
-            15,
-            12,
-            0,
-            lat=51.5,
-            lng=0.0,
-            tz_str="Etc/GMT",
-            online=False,
-            suppress_geonames_warning=True,
+            "Year 1 AD", 1, 6, 15, 12, 0,
+            lat=51.5, lng=0.0, tz_str="Etc/GMT",
+            online=False, suppress_geonames_warning=True,
         )
         assert subject.year == 1
         assert subject.sun is not None

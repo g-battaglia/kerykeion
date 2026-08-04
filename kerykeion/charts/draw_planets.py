@@ -497,7 +497,9 @@ def _handle_multi_point_group(
         # position gives space_before_first == space_after_last == 0 (0/0). Fall
         # back to centering the group instead of raising ZeroDivisionError.
         edge_space = space_before_first + space_after_last
-        start_position = (leftover_space / edge_space) * space_before_first if edge_space else space_before_first
+        start_position = (
+            (leftover_space / edge_space) * space_before_first if edge_space else space_before_first
+        )
 
     # Apply positions if there's enough space
     if available_space > needed_space:
@@ -872,7 +874,9 @@ def _generate_point_svg(
     # coordinate system imposes. chart_drawer._rebase_glyph_centers then adds
     # each template's Full_Wheel translate so the final SVG carries true
     # root-space values.
-    glyph_ref = glyph_id or (point_name if point_details.point_type == "House" else resolve_glyph_id(point_name))
+    glyph_ref = glyph_id or (
+        point_name if point_details.point_type == "House" else resolve_glyph_id(point_name)
+    )
     parts: list[str] = [
         f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
         f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',

@@ -18,15 +18,8 @@ from typing import List, Tuple
 
 # Vimsottari Dasha lord sequence (repeats 3 times for 27 nakshatras)
 _DASHA_LORDS = [
-    "Ketu",
-    "Venus",
-    "Sun",
-    "Moon",
-    "Mars",
-    "Rahu",
-    "Jupiter",
-    "Saturn",
-    "Mercury",
+    "Ketu", "Venus", "Sun", "Moon", "Mars",
+    "Rahu", "Jupiter", "Saturn", "Mercury",
 ]
 
 # Each entry: (name, deity)

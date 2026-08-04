@@ -276,7 +276,6 @@ class TestVoidWindowsRange:
         import kerykeion.void_of_course_moon.factory as fac
 
         for exc_type in (ValueError, OverflowError):
-
             def boom(*a, **k):
                 raise exc_type("simulated civil-range overflow")
 

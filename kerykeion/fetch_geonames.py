@@ -132,7 +132,9 @@ class FetchGeonames:
         # write time to the writing session's expire_after, and the default store
         # is shared across every instance — so a caller asking for a 1-day TTL
         # could otherwise read a 30-day entry another instance persisted.
-        resolved_cache_name = resolved_cache_name.with_name(f"{resolved_cache_name.name}_{cache_expire_after_days}d")
+        resolved_cache_name = resolved_cache_name.with_name(
+            f"{resolved_cache_name.name}_{cache_expire_after_days}d"
+        )
         # Ensure the cache directory exists (the per-user default lives under
         # ~/.kerykeion/cache/, which may not exist yet on a fresh install).
         resolved_cache_name.parent.mkdir(parents=True, exist_ok=True)
@@ -253,7 +255,9 @@ class FetchGeonames:
 
         return timezone_data
 
-    def get_timezone_for_coordinates(self, lat: Union[str, float, int], lng: Union[str, float, int]) -> dict[str, str]:
+    def get_timezone_for_coordinates(
+        self, lat: Union[str, float, int], lng: Union[str, float, int]
+    ) -> dict[str, str]:
         """
         Resolve the timezone for explicit coordinates via the timezoneJSON endpoint.
 

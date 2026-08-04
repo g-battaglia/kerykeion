@@ -353,7 +353,8 @@ class RelationshipScoreFactory:
         # the documented exception type instead of a NoneType TypeError.
         if self.first_subject.sun is None or self.second_subject.sun is None:
             raise KerykeionException(
-                "RelationshipScoreFactory requires both subjects to include the Sun in their active_points."
+                "RelationshipScoreFactory requires both subjects to include the "
+                "Sun in their active_points."
             )
 
         # Reset state to ensure reentrancy

@@ -25,19 +25,9 @@ from kerykeion.schemas import KerykeionException
 @pytest.fixture(scope="module")
 def rome_subject():
     return AstrologicalSubjectFactory.from_birth_data(
-        name="Review Subject",
-        year=1990,
-        month=6,
-        day=15,
-        hour=14,
-        minute=30,
-        lng=12.5,
-        lat=41.9,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
-        suppress_geonames_warning=True,
+        name="Review Subject", year=1990, month=6, day=15, hour=14, minute=30,
+        lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Rome", nation="IT",
+        online=False, suppress_geonames_warning=True,
     )
 
 
@@ -52,8 +42,7 @@ class TestAlmutenScoreBreakdownContract:
     @staticmethod
     def _almuten(subject, include_score_breakdown):
         return DominantsFactory.from_subject(
-            subject,
-            strategy="almuten_figuris",
+            subject, strategy="almuten_figuris",
             include_accidental_dignities=True,
             include_score_breakdown=include_score_breakdown,
         )
@@ -130,21 +119,10 @@ class TestFixedStarEnrichment:
     @staticmethod
     def _with_algol(**kwargs):
         return AstrologicalSubjectFactory.from_birth_data(
-            name="fs",
-            year=1990,
-            month=6,
-            day=15,
-            hour=14,
-            minute=30,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
-            active_fixed_stars=["Algol"],
-            **kwargs,
+            name="fs", year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Rome", nation="IT",
+            online=False, suppress_geonames_warning=True,
+            active_fixed_stars=["Algol"], **kwargs,
         )
 
     def test_local_space_and_gauquelin_and_oob_are_populated(self):
@@ -164,7 +142,9 @@ class TestFixedStarEnrichment:
         assert algol.is_out_of_bounds is True
 
     def test_nakshatra_is_populated_on_sidereal_charts(self):
-        subject = self._with_algol(zodiac_type="Sidereal", sidereal_mode="LAHIRI", calculate_nakshatra=True)
+        subject = self._with_algol(
+            zodiac_type="Sidereal", sidereal_mode="LAHIRI", calculate_nakshatra=True
+        )
         assert subject.fixed_stars[0].nakshatra is not None
 
     def test_ordinary_points_still_enriched(self):
@@ -175,20 +155,9 @@ class TestFixedStarEnrichment:
 
     def test_stars_absent_when_not_requested(self):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            name="fs",
-            year=1990,
-            month=6,
-            day=15,
-            hour=14,
-            minute=30,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
-            calculate_local_space=True,
+            name="fs", year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Rome", nation="IT",
+            online=False, suppress_geonames_warning=True, calculate_local_space=True,
         )
         assert subject.fixed_stars == []
 
@@ -229,19 +198,9 @@ class TestReportHumanizesProjectedHouse:
         from kerykeion.report import ReportGenerator
 
         second = AstrologicalSubjectFactory.from_birth_data(
-            name="Other",
-            year=1985,
-            month=3,
-            day=2,
-            hour=8,
-            minute=15,
-            lng=9.19,
-            lat=45.46,
-            tz_str="Europe/Rome",
-            city="Milan",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
+            name="Other", year=1985, month=3, day=2, hour=8, minute=15,
+            lng=9.19, lat=45.46, tz_str="Europe/Rome", city="Milan", nation="IT",
+            online=False, suppress_geonames_warning=True,
         )
         comparison = HouseComparisonFactory(rome_subject, second).get_house_comparison()
         table = ReportGenerator(rome_subject)._render_cusp_in_house_table(
@@ -314,33 +273,17 @@ class TestRelocationNullsFixedStarHorizonFields:
         from kerykeion.relocated_chart_factory import RelocatedChartFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
-            name="reloc",
-            year=1990,
-            month=6,
-            day=15,
-            hour=14,
-            minute=30,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
-            active_fixed_stars=["Regulus"],
-            calculate_local_space=True,
-            calculate_gauquelin=True,
+            name="reloc", year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Rome", nation="IT",
+            online=False, suppress_geonames_warning=True,
+            active_fixed_stars=["Regulus"], calculate_local_space=True, calculate_gauquelin=True,
         )
         # sanity: the natal star IS enriched, so the test would catch a no-op
         assert natal.fixed_stars[0].azimuth is not None
 
         relocated = RelocatedChartFactory.relocate(
-            natal,
-            new_city="Sydney",
-            new_nation="AU",
-            new_lat=-33.87,
-            new_lng=151.21,
-            new_tz_str="Australia/Sydney",
+            natal, new_city="Sydney", new_nation="AU",
+            new_lat=-33.87, new_lng=151.21, new_tz_str="Australia/Sydney",
         )
         star = relocated.fixed_stars[0]
         assert star.azimuth is None
@@ -362,34 +305,14 @@ class TestAstroCartographyRejectsCompositeSubject:
         from kerykeion.astro_cartography.acg_factory import AstroCartographyFactory
 
         a = AstrologicalSubjectFactory.from_birth_data(
-            name="a",
-            year=1990,
-            month=6,
-            day=15,
-            hour=14,
-            minute=30,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
+            name="a", year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Rome", nation="IT",
+            online=False, suppress_geonames_warning=True,
         )
         b = AstrologicalSubjectFactory.from_birth_data(
-            name="b",
-            year=1985,
-            month=3,
-            day=2,
-            hour=8,
-            minute=15,
-            lng=9.19,
-            lat=45.46,
-            tz_str="Europe/Rome",
-            city="Milan",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
+            name="b", year=1985, month=3, day=2, hour=8, minute=15,
+            lng=9.19, lat=45.46, tz_str="Europe/Rome", city="Milan", nation="IT",
+            online=False, suppress_geonames_warning=True,
         )
         composite = CompositeSubjectFactory(a, b).get_midpoint_composite_subject_model()
         assert composite.julian_day is None
@@ -400,19 +323,9 @@ class TestAstroCartographyRejectsCompositeSubject:
         from kerykeion.astro_cartography.acg_factory import AstroCartographyFactory
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            name="a",
-            year=1990,
-            month=6,
-            day=15,
-            hour=14,
-            minute=30,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
+            name="a", year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Rome", nation="IT",
+            online=False, suppress_geonames_warning=True,
         )
         lines = AstroCartographyFactory.compute(subject, step=30)
         assert lines
@@ -425,34 +338,14 @@ class TestReportSanitizesHouseComparisonNames:
         from kerykeion.report import ReportGenerator
 
         first = AstrologicalSubjectFactory.from_birth_data(
-            name="A\x1b]0;pwn\x07B",
-            year=1990,
-            month=6,
-            day=15,
-            hour=14,
-            minute=30,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
+            name="A\x1b]0;pwn\x07B", year=1990, month=6, day=15, hour=14, minute=30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Rome", nation="IT",
+            online=False, suppress_geonames_warning=True,
         )
         second = AstrologicalSubjectFactory.from_birth_data(
-            name="C\x1b[2JD",
-            year=1985,
-            month=3,
-            day=2,
-            hour=8,
-            minute=15,
-            lng=9.19,
-            lat=45.46,
-            tz_str="Europe/Rome",
-            city="Milan",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
+            name="C\x1b[2JD", year=1985, month=3, day=2, hour=8, minute=15,
+            lng=9.19, lat=45.46, tz_str="Europe/Rome", city="Milan", nation="IT",
+            online=False, suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_synastry_chart_data(first, second)
         report = ReportGenerator(data).generate_report()

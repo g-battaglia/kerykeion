@@ -164,7 +164,8 @@ class ChartDataFactory:
         _valid_chart_types = get_args(ChartType)
         if chart_type not in _valid_chart_types:
             raise KerykeionException(
-                f"Unknown chart_type {chart_type!r}. Valid chart types: {', '.join(_valid_chart_types)}."
+                f"Unknown chart_type {chart_type!r}. Valid chart types: "
+                f"{', '.join(_valid_chart_types)}."
             )
 
         # Resolve per-chart-type defaults when the caller did not specify them.
@@ -172,7 +173,9 @@ class ChartDataFactory:
         if active_aspects is None:
             active_aspects = DEFAULT_ACTIVE_ASPECTS if is_natal_family else PREDICTIVE_ACTIVE_ASPECTS
         if point_orb_adjustments is None:
-            point_orb_adjustments = DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS if is_natal_family else NO_POINT_ORB_ADJUSTMENTS
+            point_orb_adjustments = (
+                DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS if is_natal_family else NO_POINT_ORB_ADJUSTMENTS
+            )
 
         # Validate chart type requirements
         if chart_type in DOUBLE_CHART_TYPES and not second_subject:

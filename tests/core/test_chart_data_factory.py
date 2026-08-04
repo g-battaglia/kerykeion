@@ -655,22 +655,14 @@ class TestAspectCalculations:
         """Round 18 F4: chart-data active_points must list the catalog stars that
         actually appear in the aspects, or the metadata misdescribes the result."""
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "StarChart",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            city="Roma",
-            online=False,
+            "StarChart", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Roma", online=False,
             active_fixed_stars=["Sirius", "Regulus"],
         )
         chart = ChartDataFactory.create_natal_chart_data(subject)
         star_aspects = [
-            a for a in chart.aspects if a.p1_name in ("Sirius", "Regulus") or a.p2_name in ("Sirius", "Regulus")
+            a for a in chart.aspects
+            if a.p1_name in ("Sirius", "Regulus") or a.p2_name in ("Sirius", "Regulus")
         ]
         assert star_aspects, "expected at least one aspect involving a fixed star"
         assert {"Sirius", "Regulus"}.issubset(set(chart.active_points))
@@ -1158,33 +1150,12 @@ class TestSynastryDistributionRawTotalsRound5:
     def test_synastry_element_fields_are_raw_totals(self):
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.chart_data_factory import ChartDataFactory
-
         john = AstrologicalSubjectFactory.from_birth_data(
-            "John",
-            1990,
-            1,
-            1,
-            12,
-            0,
-            lng=-0.13,
-            lat=51.5,
-            tz_str="Europe/London",
-            online=False,
-            suppress_geonames_warning=True,
-        )
+            "John", 1990, 1, 1, 12, 0, lng=-0.13, lat=51.5, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True)
         jane = AstrologicalSubjectFactory.from_birth_data(
-            "Jane",
-            1992,
-            6,
-            15,
-            14,
-            30,
-            lng=2.35,
-            lat=48.85,
-            tz_str="Europe/Paris",
-            online=False,
-            suppress_geonames_warning=True,
-        )
+            "Jane", 1992, 6, 15, 14, 30, lng=2.35, lat=48.85, tz_str="Europe/Paris",
+            online=False, suppress_geonames_warning=True)
         ed = ChartDataFactory.create_synastry_chart_data(john, jane).element_distribution
         raw_sum = ed.fire + ed.earth + ed.air + ed.water
         assert abs(raw_sum - 100.0) > 1.0  # raw totals, not percentages
@@ -1199,20 +1170,9 @@ class TestDistributionHonorsExplicitFilterRound14:
     def test_explicit_filter_honored(self):
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.chart_data_factory import ChartDataFactory
-
         s = AstrologicalSubjectFactory.from_birth_data(
-            "N",
-            1990,
-            6,
-            15,
-            14,
-            30,
-            lng=12.5,
-            lat=41.9,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-        )
+            "N", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True)
         ed = ChartDataFactory.create_natal_chart_data(s, active_points=["Sun", "Moon"]).element_distribution
         # Sun (Gemini/air) + Moon (Pisces/water) only -> no fire/earth
         assert ed.fire == 0 and ed.earth == 0
@@ -1225,17 +1185,9 @@ def test_unknown_chart_type_raises_with_valid_options():
     from kerykeion.schemas import KerykeionException
 
     subject = AstrologicalSubjectFactory.from_birth_data(
-        "T",
-        1990,
-        6,
-        15,
-        12,
-        0,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        online=False,
-        suppress_geonames_warning=True,
+        "T", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
     )
     with pytest.raises(KerykeionException, match="Unknown chart_type.*Natal"):
         ChartDataFactory.create_chart_data("NatalFoo", subject)

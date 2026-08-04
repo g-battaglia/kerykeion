@@ -926,17 +926,12 @@ class TestAxisOrbFilter:
     def test_axis_orb_filters_dual_chart(self, _subject, _subject2):
         """axis_orb_limit now also filters dual-chart (synastry) aspects (was a no-op)."""
         active_points = [
-            "Sun",
-            "Moon",
-            "Mercury",
-            "Venus",
-            "Mars",
-            "Jupiter",
-            "Saturn",
-            "Ascendant",
-            "Medium_Coeli",
+            "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
+            "Ascendant", "Medium_Coeli",
         ]
-        unfiltered = AspectsFactory.dual_chart_aspects(_subject, _subject2, active_points=active_points).aspects
+        unfiltered = AspectsFactory.dual_chart_aspects(
+            _subject, _subject2, active_points=active_points
+        ).aspects
         axis_aspects, unfiltered_non_axis = self._split_axis(unfiltered)
         assert axis_aspects, "expected the synastry to contain axis aspects"
 
@@ -1101,29 +1096,25 @@ class TestPointOrbAdjustmentsIntegration:
     @pytest.fixture()
     def _subject(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "Orb Test",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lat=41.9,
-            lng=12.5,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Orb Test", 1990, 6, 15, 12, 0,
+            lat=41.9, lng=12.5, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
         )
 
     def test_empty_adjustments_match_legacy_behavior(self, _subject):
         """No adjustments → identical aspect set to the pre-feature behavior."""
         legacy = AspectsFactory.single_chart_aspects(_subject)
-        explicit_empty = AspectsFactory.single_chart_aspects(_subject, point_orb_adjustments={})
+        explicit_empty = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={}
+        )
         assert len(legacy.aspects) == len(explicit_empty.aspects)
 
     def test_luminary_bonus_adds_aspects(self, _subject):
         """Sun/Moon +1.5° should never reduce, and usually increase, the count."""
         base = AspectsFactory.single_chart_aspects(_subject)
-        widened = AspectsFactory.single_chart_aspects(_subject, point_orb_adjustments={"Sun": 1.5, "Moon": 1.5})
+        widened = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={"Sun": 1.5, "Moon": 1.5}
+        )
         assert len(widened.aspects) >= len(base.aspects)
 
     def test_negative_adjustment_tightens(self, _subject):
@@ -1136,7 +1127,9 @@ class TestPointOrbAdjustmentsIntegration:
 
     def test_effective_orb_clamped_to_zero(self, _subject):
         """An adjustment more negative than every base orb yields no crash."""
-        result = AspectsFactory.single_chart_aspects(_subject, point_orb_adjustments={"Sun": -100.0, "Moon": -100.0})
+        result = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={"Sun": -100.0, "Moon": -100.0}
+        )
         # No Sun/Moon aspect should survive a -100° adjustment.
         for a in result.aspects:
             assert "Sun" not in (a.p1_name, a.p2_name)
@@ -1155,7 +1148,9 @@ class TestPointOrbAdjustmentsIntegration:
         from kerykeion.chart_data_factory import ChartDataFactory
 
         with_bonus = ChartDataFactory.create_natal_chart_data(_subject)
-        without = ChartDataFactory.create_natal_chart_data(_subject, point_orb_adjustments={})
+        without = ChartDataFactory.create_natal_chart_data(
+            _subject, point_orb_adjustments={}
+        )
         assert len(with_bonus.aspects) >= len(without.aspects)
 
 
@@ -1177,17 +1172,9 @@ class TestGeometricOppositePairFiltering:
         from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 
         return AstrologicalSubjectFactory.from_birth_data(
-            "All Points",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lat=41.9,
-            lng=12.5,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "All Points", 1990, 6, 15, 12, 0,
+            lat=41.9, lng=12.5, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
             active_points=ALL_ACTIVE_POINTS,
         )
 
@@ -1218,7 +1205,9 @@ class TestGeometricOppositePairFiltering:
         """Filtering targets only the locked pairs, not the points themselves."""
         aspects = AspectsFactory.single_chart_aspects(all_points_subject).aspects
         derived_points = {"Anti_Vertex", "Mean_Priapus", "True_Priapus", "Descendant", "Imum_Coeli"}
-        involving_derived = [a for a in aspects if a.p1_name in derived_points or a.p2_name in derived_points]
+        involving_derived = [
+            a for a in aspects if a.p1_name in derived_points or a.p2_name in derived_points
+        ]
         assert involving_derived, "Derived points should still aspect unrelated points"
 
 
@@ -1230,17 +1219,9 @@ class TestFixedStarAspectFiltering:
         from kerykeion.settings.config_constants import DEFAULT_FIXED_STARS
 
         return AstrologicalSubjectFactory.from_birth_data(
-            "Star One",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lat=41.9,
-            lng=12.5,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            "Star One", 1990, 6, 15, 12, 0,
+            lat=41.9, lng=12.5, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
             active_fixed_stars=list(DEFAULT_FIXED_STARS),
         )
 
@@ -1249,17 +1230,9 @@ class TestFixedStarAspectFiltering:
         from kerykeion.settings.config_constants import DEFAULT_FIXED_STARS
 
         return AstrologicalSubjectFactory.from_birth_data(
-            "Star Two",
-            1985,
-            3,
-            10,
-            8,
-            30,
-            lat=48.85,
-            lng=2.35,
-            tz_str="Europe/Paris",
-            online=False,
-            suppress_geonames_warning=True,
+            "Star Two", 1985, 3, 10, 8, 30,
+            lat=48.85, lng=2.35, tz_str="Europe/Paris",
+            online=False, suppress_geonames_warning=True,
             active_fixed_stars=list(DEFAULT_FIXED_STARS),
         )
 
@@ -1288,7 +1261,9 @@ class TestFixedStarAspectFiltering:
         subject's own stars still aspect them — only star–star pairs are dropped.
         This mirrors the dual-wheel second-subject-only star behavior."""
         stars = self._star_names(star_subject)
-        aspects = AspectsFactory.single_chart_aspects(star_subject, active_points=["Sun", "Moon"]).aspects
+        aspects = AspectsFactory.single_chart_aspects(
+            star_subject, active_points=["Sun", "Moon"]
+        ).aspects
         non_star = {"Sun", "Moon"}
         for a in aspects:
             assert a.p1_name in non_star | stars and a.p2_name in non_star | stars
@@ -1359,19 +1334,9 @@ class TestDualChartFrameValidation:
     @staticmethod
     def _mk(name, **kw):
         base = dict(
-            name=name,
-            year=1990,
-            month=6,
-            day=15,
-            hour=12,
-            minute=0,
-            city="London",
-            nation="GB",
-            lat=51.5,
-            lng=0.0,
-            tz_str="Europe/London",
-            online=False,
-            suppress_geonames_warning=True,
+            name=name, year=1990, month=6, day=15, hour=12, minute=0,
+            city="London", nation="GB", lat=51.5, lng=0.0, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True,
         )
         base.update(kw)
         return AstrologicalSubjectFactory.from_birth_data(**base)
@@ -1469,30 +1434,23 @@ class TestActivePointsListLogging:
     @pytest.fixture(scope="class")
     def subject(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "Active Points",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            suppress_geonames_warning=True,
+            "Active Points", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
         )
 
     def test_typo_name_warns_and_is_dropped(self, subject, caplog):
         from kerykeion.aspects.aspects_utils import get_active_points_list
 
         with caplog.at_level(logging.DEBUG, logger=self._LOGGER):
-            result = get_active_points_list(subject, active_points=["Sun", "Moon", "Mercuryy", "Venus", "Mars"])
+            result = get_active_points_list(
+                subject, active_points=["Sun", "Moon", "Mercuryy", "Venus", "Mars"]
+            )
         # Still dropped (behavior unchanged).
         assert [getattr(p, "name", p) for p in result] == ["Sun", "Moon", "Venus", "Mars"]
         warnings = [
-            r.getMessage() for r in caplog.records if r.levelno == logging.WARNING and "Mercuryy" in r.getMessage()
+            r.getMessage() for r in caplog.records
+            if r.levelno == logging.WARNING and "Mercuryy" in r.getMessage()
         ]
         assert warnings, "expected a WARNING naming the dropped typo point"
 
@@ -1504,7 +1462,10 @@ class TestActivePointsListLogging:
             result = get_active_points_list(subject, active_points=["Sun", "Eris"])
         assert [getattr(p, "name", p) for p in result] == ["Sun"]
         assert not [r for r in caplog.records if r.levelno == logging.WARNING]
-        debugs = [r.getMessage() for r in caplog.records if r.levelno == logging.DEBUG and "Eris" in r.getMessage()]
+        debugs = [
+            r.getMessage() for r in caplog.records
+            if r.levelno == logging.DEBUG and "Eris" in r.getMessage()
+        ]
         assert debugs, "expected a DEBUG for the known-but-absent point"
 
     def test_all_valid_names_do_not_log(self, subject, caplog):
@@ -1513,7 +1474,9 @@ class TestActivePointsListLogging:
         with caplog.at_level(logging.DEBUG, logger=self._LOGGER):
             result = get_active_points_list(subject, active_points=["Sun", "Moon", "Venus"])
         assert [getattr(p, "name", p) for p in result] == ["Sun", "Moon", "Venus"]
-        assert not [r for r in caplog.records if r.name == self._LOGGER], "an all-valid active_points list must not log"
+        assert not [
+            r for r in caplog.records if r.name == self._LOGGER
+        ], "an all-valid active_points list must not log"
 
     def test_case_variant_logs_debug_not_warning(self, subject, caplog):
         from kerykeion.aspects.aspects_utils import get_active_points_list
@@ -1526,5 +1489,8 @@ class TestActivePointsListLogging:
             result = get_active_points_list(subject, active_points=["sun", "Moon"])
         assert [getattr(p, "name", p) for p in result] == ["Moon"]
         assert not [r for r in caplog.records if r.levelno == logging.WARNING]
-        debugs = [r.getMessage() for r in caplog.records if r.levelno == logging.DEBUG and "sun" in r.getMessage()]
+        debugs = [
+            r.getMessage() for r in caplog.records
+            if r.levelno == logging.DEBUG and "sun" in r.getMessage()
+        ]
         assert debugs, "expected a DEBUG (case mismatch), not a WARNING, for 'sun'"

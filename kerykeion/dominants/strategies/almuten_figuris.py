@@ -129,7 +129,9 @@ class AlmutenFigurisStrategy(BaseDominantStrategy):
         # used to pick the winner, so the ranked list's rank 1 is the Almuten
         # (otherwise base ranks ties alphabetically and planets[0] can disagree
         # with dominant_planet).
-        categories = {"planets": Category(scores=totals, dominant={winner}, tiebreak_order=tuple(ranking))}
+        categories = {
+            "planets": Category(scores=totals, dominant={winner}, tiebreak_order=tuple(ranking))
+        }
         self._fill_winner_placement(subject, winner, totals[winner], categories)
 
         return self.build_model(categories=categories, breakdown=breakdown)

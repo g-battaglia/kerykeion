@@ -28,7 +28,7 @@ from kerykeion.heliacal.heliacal_factory import (
 # Fixtures -------------------------------------------------------------------
 
 ROME_GEOPOS = (12.4964, 41.9028, 50.0)  # lng, lat, altitude
-START_JD = ephe.julday(2026, 3, 26, 0)  # 2026-03-26 00:00 UT
+START_JD = ephe.julday(2026, 3, 26, 0)   # 2026-03-26 00:00 UT
 
 
 @pytest.fixture(scope="module")
@@ -44,15 +44,12 @@ _heliacal_cache: dict = {}
 def _cached_rising(factory, planet):
     if planet not in _heliacal_cache:
         _heliacal_cache[planet] = factory.next_heliacal_rising(
-            julian_day=START_JD,
-            planet_name_or_star=planet,
-            geopos=ROME_GEOPOS,
+            julian_day=START_JD, planet_name_or_star=planet, geopos=ROME_GEOPOS,
         )
     return _heliacal_cache[planet]
 
 
 # Tests: next_heliacal_rising ------------------------------------------------
-
 
 class TestNextHeliacalRising:
     """Tests for HeliacalFactory.next_heliacal_rising()."""
@@ -100,9 +97,7 @@ class TestNextHeliacalRising:
         monkeypatch.setattr(hf.ephe, "heliacal_ut", lambda *a, **k: (0.0, 0.0, 0.0))
         with pytest.raises(KerykeionException, match="No heliacal rising"):
             factory.next_heliacal_rising(
-                julian_day=START_JD,
-                planet_name_or_star="Mercury",
-                geopos=ROME_GEOPOS,
+                julian_day=START_JD, planet_name_or_star="Mercury", geopos=ROME_GEOPOS,
             )
 
     def test_unrecognized_body_message_names_supported_planets(self, factory: HeliacalFactory, monkeypatch):
@@ -122,9 +117,7 @@ class TestNextHeliacalRising:
         monkeypatch.setattr(hf.ephe, "heliacal_ut", _raise_unknown_body)
         with pytest.raises(KerykeionException, match="No heliacal rising") as excinfo:
             factory.next_heliacal_rising(
-                julian_day=START_JD,
-                planet_name_or_star="Jupitre",
-                geopos=ROME_GEOPOS,
+                julian_day=START_JD, planet_name_or_star="Jupitre", geopos=ROME_GEOPOS,
             )
         msg = str(excinfo.value)
         for planet in PLANETS:
@@ -143,11 +136,8 @@ class TestSearchEvents:
     def _get_events(self, factory, count=2):
         if count not in _search_cache:
             _search_cache[count] = factory.search_events(
-                julian_day=START_JD,
-                geopos=ROME_GEOPOS,
-                count=count,
-                planets=("Venus",),
-                event_types=[HELIACAL_SETTING],
+                julian_day=START_JD, geopos=ROME_GEOPOS, count=count,
+                planets=("Venus",), event_types=[HELIACAL_SETTING],
             )
         return _search_cache[count]
 
@@ -219,16 +209,12 @@ class TestSearchEvents:
         import kerykeion.heliacal.heliacal_factory as hf
 
         monkeypatch.setattr(
-            hf.ephe,
-            "heliacal_ut",
+            hf.ephe, "heliacal_ut",
             lambda *a, **k: (START_JD + 10.0, START_JD + 10.1, START_JD + 10.2),
         )
         events = factory.search_events(
-            julian_day=START_JD,
-            geopos=ROME_GEOPOS,
-            count=2,
-            planets=["mercury"],
-            event_types=[HELIACAL_SETTING],
+            julian_day=START_JD, geopos=ROME_GEOPOS, count=2,
+            planets=["mercury"], event_types=[HELIACAL_SETTING],
         )
         assert events, "a lowercase planet name must yield events, not raise"
         assert all(e.planet_name == "Mercury" for e in events)
@@ -237,16 +223,12 @@ class TestSearchEvents:
         import kerykeion.heliacal.heliacal_factory as hf
 
         monkeypatch.setattr(
-            hf.ephe,
-            "heliacal_ut",
+            hf.ephe, "heliacal_ut",
             lambda *a, **k: (START_JD + 10.0, START_JD + 10.1, START_JD + 10.2),
         )
         events = factory.search_events(
-            julian_day=START_JD,
-            geopos=ROME_GEOPOS,
-            count=4,
-            planets=["MERCURY", "venus"],
-            event_types=[HELIACAL_SETTING],
+            julian_day=START_JD, geopos=ROME_GEOPOS, count=4,
+            planets=["MERCURY", "venus"], event_types=[HELIACAL_SETTING],
         )
         assert events
         assert {e.planet_name for e in events} <= {"Mercury", "Venus"}
@@ -257,15 +239,11 @@ class TestSearchEvents:
 
         with pytest.raises(KerykeionException, match="Unknown planet"):
             factory.search_events(
-                julian_day=START_JD,
-                geopos=ROME_GEOPOS,
-                count=2,
-                planets=["Jupitre"],
+                julian_day=START_JD, geopos=ROME_GEOPOS, count=2, planets=["Jupitre"],
             )
 
 
 # Tests: geopos / lat-lng keyword alternative --------------------------------
-
 
 class TestGeoposKeywordAlternative:
     """geopos=(lng, lat, altitude_m) — longitude first, easy to invert — can be
@@ -290,11 +268,8 @@ class TestGeoposKeywordAlternative:
     def test_lat_lng_keywords_build_swiss_order_geopos(self, factory: HeliacalFactory, monkeypatch):
         captured = self._capture_heliacal_ut(monkeypatch)
         event = factory.next_heliacal_rising(
-            julian_day=START_JD,
-            planet_name_or_star="Venus",
-            lat=ROME_GEOPOS[1],
-            lng=ROME_GEOPOS[0],
-            altitude=ROME_GEOPOS[2],
+            julian_day=START_JD, planet_name_or_star="Venus",
+            lat=ROME_GEOPOS[1], lng=ROME_GEOPOS[0], altitude=ROME_GEOPOS[2],
         )
         assert captured["geopos"] == ROME_GEOPOS
         assert event.planet_name == "Venus"
@@ -302,23 +277,17 @@ class TestGeoposKeywordAlternative:
     def test_altitude_defaults_to_zero(self, factory: HeliacalFactory, monkeypatch):
         captured = self._capture_heliacal_ut(monkeypatch)
         factory.next_heliacal_rising(
-            julian_day=START_JD,
-            planet_name_or_star="Venus",
-            lat=41.9028,
-            lng=12.4964,
+            julian_day=START_JD, planet_name_or_star="Venus",
+            lat=41.9028, lng=12.4964,
         )
         assert captured["geopos"] == (12.4964, 41.9028, 0.0)
 
     def test_search_events_accepts_keywords(self, factory: HeliacalFactory, monkeypatch):
         captured = self._capture_heliacal_ut(monkeypatch)
         events = factory.search_events(
-            julian_day=START_JD,
-            count=1,
-            planets=("Venus",),
-            event_types=[HELIACAL_SETTING],
-            lat=ROME_GEOPOS[1],
-            lng=ROME_GEOPOS[0],
-            altitude=ROME_GEOPOS[2],
+            julian_day=START_JD, count=1,
+            planets=("Venus",), event_types=[HELIACAL_SETTING],
+            lat=ROME_GEOPOS[1], lng=ROME_GEOPOS[0], altitude=ROME_GEOPOS[2],
         )
         assert captured["geopos"] == ROME_GEOPOS
         assert len(events) == 1
@@ -328,10 +297,8 @@ class TestGeoposKeywordAlternative:
 
         with pytest.raises(KerykeionException, match="not both"):
             factory.next_heliacal_rising(
-                julian_day=START_JD,
-                planet_name_or_star="Venus",
-                geopos=ROME_GEOPOS,
-                lat=41.9028,
+                julian_day=START_JD, planet_name_or_star="Venus",
+                geopos=ROME_GEOPOS, lat=41.9028,
             )
         with pytest.raises(KerykeionException, match="not both"):
             factory.search_events(julian_day=START_JD, geopos=ROME_GEOPOS, lng=12.4964)
@@ -387,7 +354,6 @@ class TestGeoposKeywordAlternative:
 
 # Tests: default constants ---------------------------------------------------
 
-
 class TestBackendHardErrors:
     """R23: a hard backend failure (out-of-range window, invalid body/config)
     must surface as KerykeionException, not be swallowed as a benign 'no event'
@@ -399,10 +365,7 @@ class TestBackendHardErrors:
         # Validated up front against the closed PLANETS set, before any search.
         with pytest.raises(KerykeionException, match="Unknown planet"):
             factory.search_events(
-                julian_day=START_JD,
-                geopos=ROME_GEOPOS,
-                count=3,
-                planets=["Jupitre"],
+                julian_day=START_JD, geopos=ROME_GEOPOS, count=3, planets=["Jupitre"],
             )
 
     def test_out_of_range_window_raises(self, factory: HeliacalFactory):
@@ -419,10 +382,7 @@ class TestBackendHardErrors:
             pytest.skip("Requires the medium (DE440) kernel's ~2650 upper edge.")
         with pytest.raises(KerykeionException, match="ephemeris range"):
             factory.search_events(
-                julian_day=2688970.5,
-                lat=41.9,
-                lng=12.5,
-                count=3,
+                julian_day=2688970.5, lat=41.9, lng=12.5, count=3,
             )
 
     def test_genuine_no_event_still_returns_empty(self, factory: HeliacalFactory, monkeypatch):
@@ -432,10 +392,7 @@ class TestBackendHardErrors:
 
         monkeypatch.setattr(hf.ephe, "heliacal_ut", lambda *a, **k: (0.0, 0.0, 0.0))
         events = factory.search_events(
-            julian_day=START_JD,
-            geopos=ROME_GEOPOS,
-            count=3,
-            planets=("Venus",),
+            julian_day=START_JD, geopos=ROME_GEOPOS, count=3, planets=("Venus",),
         )
         assert events == []
 

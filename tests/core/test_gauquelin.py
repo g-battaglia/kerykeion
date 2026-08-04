@@ -55,7 +55,9 @@ class TestClassicGauquelinMidOffset:
             span = (a - b) % 360
             pos = (a - mid) % 360
             assert span < 180, f"sector {i}: cusps not descending (span={span})"
-            assert 0 < pos < span, f"sector {i}: label at {mid} outside descending arc {a}→{b}"
+            assert 0 < pos < span, (
+                f"sector {i}: label at {mid} outside descending arc {a}→{b}"
+            )
 
 
 class TestModernGauquelinGeometry:
@@ -104,7 +106,7 @@ class TestModernGauquelinGeometry:
         asc = subject_with_gauquelin.ascendant.abs_pos
         assert cusps[0] == pytest.approx(asc, abs=1e-3)  # model rounds to 4 decimals
 
-        rotations = [float(m) for m in re.findall(r"rotate\((-?[\d.]+) 50", svg)]
+        rotations = [float(m) for m in re.findall(r'rotate\((-?[\d.]+) 50', svg)]
         seventh = subject_with_gauquelin.seventh_house.abs_pos
         asc_wheel = (cusps[0] - seventh + 180) % 360
         assert any(abs(rot - (-asc_wheel)) < 1e-3 for rot in rotations), (
@@ -143,9 +145,9 @@ class TestGauquelinHitAreaSweep:
         drawer.save_svg(output_path=str(tmp_path), filename="gauq_sweep")
         svg = (tmp_path / "gauq_sweep.svg").read_text()
 
-        wedge_paths = re.findall(r'kr:node="GauquelinSector"[^>]*><path d="([^"]+)"', svg) or re.findall(
-            r"kr:node='GauquelinSector'[^>]*><path d='([^']+)'", svg
-        )
+        wedge_paths = re.findall(
+            r'kr:node="GauquelinSector"[^>]*><path d="([^"]+)"', svg
+        ) or re.findall(r"kr:node='GauquelinSector'[^>]*><path d='([^']+)'", svg)
         assert len(wedge_paths) == 36
         for d in wedge_paths:
             arcs = re.findall(r"A [\d.]+,[\d.]+ 0 (\d),(\d)", d)
@@ -157,18 +159,9 @@ class TestGauquelinHitAreaSweep:
 @pytest.fixture(scope="module")
 def subject_with_gauquelin():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Gauquelin Test",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "Gauquelin Test", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
         calculate_gauquelin=True,
     )
 
@@ -176,18 +169,9 @@ def subject_with_gauquelin():
 @pytest.fixture(scope="module")
 def subject_without_gauquelin():
     return AstrologicalSubjectFactory.from_birth_data(
-        "No Gauquelin",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "No Gauquelin", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
     )
 
 
@@ -234,7 +218,8 @@ class TestGauquelinCalculation:
         # Sun = ephe planet ID 0, method 0 (with latitude)
         expected_sector = ephe.gauquelin_sector(jd, 0, 0, geopos)
         assert abs(subject_with_gauquelin.sun.gauquelin_sector - expected_sector) < 0.01, (
-            f"Sun sector {subject_with_gauquelin.sun.gauquelin_sector} != ephe reference {expected_sector}"
+            f"Sun sector {subject_with_gauquelin.sun.gauquelin_sector} != "
+            f"ephe reference {expected_sector}"
         )
 
     def test_multiple_planets_match_swe_reference(self, subject_with_gauquelin):
@@ -317,7 +302,9 @@ class TestGauquelinSVG:
 
         # All 36 sector numbers present as kr:sector attributes
         for n in range(1, 37):
-            assert f'kr:sector="{n}"' in svg or f"kr:sector='{n}'" in svg, f"sector {n} missing from SVG"
+            assert f'kr:sector="{n}"' in svg or f"kr:sector='{n}'" in svg, (
+                f"sector {n} missing from SVG"
+            )
 
         # Wedges are transparent and interactive
         assert "fill: transparent" in svg or "fill:transparent" in svg
@@ -343,19 +330,10 @@ class TestGauquelinBackendCallShape:
     libephemeris test environment)."""
 
     _BIRTH = dict(
-        year=1990,
-        month=6,
-        day=15,
-        hour=14,
-        minute=30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
-        calculate_gauquelin=True,
-        suppress_geonames_warning=True,
+        year=1990, month=6, day=15, hour=14, minute=30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
+        calculate_gauquelin=True, suppress_geonames_warning=True,
     )
 
     def _run_with_fake_backend(self, monkeypatch, backend_name):
@@ -384,7 +362,9 @@ class TestGauquelinBackendCallShape:
 
         assert calls, "gauquelin_sector was never attempted"
         for args, kwargs in calls:
-            assert len(args) == 4, f"call must be (tjdut, body, method, geopos), got {args}"
+            assert len(args) == 4, (
+                f"call must be (tjdut, body, method, geopos), got {args}"
+            )
             assert isinstance(args[1], int)  # body id
             assert args[2] == 0  # method
             assert len(args[3]) == 3  # geopos triple
@@ -400,21 +380,10 @@ class TestGauquelinAxisSectorsRound6:
 
     def test_axes_on_exact_sectors_high_latitude(self):
         from kerykeion import AstrologicalSubjectFactory
-
         s = AstrologicalSubjectFactory.from_birth_data(
-            "X",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=18.07,
-            lat=59.33,
-            tz_str="Europe/Stockholm",
-            online=False,
-            suppress_geonames_warning=True,
-            calculate_gauquelin=True,
-        )
+            "X", 1990, 6, 15, 12, 0, lng=18.07, lat=59.33,
+            tz_str="Europe/Stockholm", online=False, suppress_geonames_warning=True,
+            calculate_gauquelin=True)
         assert abs(s.ascendant.gauquelin_sector - 1.0) < 0.05
         assert abs(s.medium_coeli.gauquelin_sector - 10.0) < 0.05
         assert abs(s.imum_coeli.gauquelin_sector - 28.0) < 0.05
@@ -431,20 +400,10 @@ class TestGauquelinPolarFallback:
 
     def test_polar_subject_has_36_cusps(self):
         s = AstrologicalSubjectFactory.from_birth_data(
-            "Polar Gauquelin",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=15.6,
-            lat=78.2232,
-            tz_str="Arctic/Longyearbyen",
-            city="Longyearbyen",
-            nation="NO",
-            online=False,
-            suppress_geonames_warning=True,
-            calculate_gauquelin=True,
+            "Polar Gauquelin", 1990, 6, 15, 12, 0,
+            lng=15.6, lat=78.2232, tz_str="Arctic/Longyearbyen",
+            city="Longyearbyen", nation="NO", online=False,
+            suppress_geonames_warning=True, calculate_gauquelin=True,
         )
         assert s.gauquelin_sector_cusps is not None
         assert len(s.gauquelin_sector_cusps) == 36
@@ -453,20 +412,10 @@ class TestGauquelinPolarFallback:
 
     def test_control_latitude_unchanged(self):
         s = AstrologicalSubjectFactory.from_birth_data(
-            "Sub-polar Gauquelin",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=10.0,
-            lat=60.0,
-            tz_str="Europe/Oslo",
-            city="Oslo",
-            nation="NO",
-            online=False,
-            suppress_geonames_warning=True,
-            calculate_gauquelin=True,
+            "Sub-polar Gauquelin", 1990, 6, 15, 12, 0,
+            lng=10.0, lat=60.0, tz_str="Europe/Oslo",
+            city="Oslo", nation="NO", online=False,
+            suppress_geonames_warning=True, calculate_gauquelin=True,
         )
         assert s.gauquelin_sector_cusps is not None
         assert len(s.gauquelin_sector_cusps) == 36
@@ -480,20 +429,10 @@ class TestGauquelinPolarFallback:
         )
 
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "Polar Natal",
-            1990,
-            6,
-            15,
-            12,
-            0,
-            lng=15.6,
-            lat=78.2232,
-            tz_str="Arctic/Longyearbyen",
-            city="Longyearbyen",
-            nation="NO",
-            online=False,
-            suppress_geonames_warning=True,
-            calculate_gauquelin=True,
+            "Polar Natal", 1990, 6, 15, 12, 0,
+            lng=15.6, lat=78.2232, tz_str="Arctic/Longyearbyen",
+            city="Longyearbyen", nation="NO", online=False,
+            suppress_geonames_warning=True, calculate_gauquelin=True,
         )
         progressed = SecondaryProgressionFactory.compute(natal, target_year=2020)
         assert progressed.gauquelin_sector_cusps is not None

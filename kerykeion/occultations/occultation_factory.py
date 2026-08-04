@@ -69,13 +69,17 @@ def _classify_occultation(retflags: int) -> str:
     return "Unknown"
 
 
+
 def _ensure_scannable(count: int) -> None:
     """Reject absurd event counts upfront, so a caller never receives a
     silently truncated result and never waits on a scan that cannot finish."""
     if count < 0:
         raise ValueError("count must be non-negative")
     if count > _MAX_COUNT:
-        raise ValueError(f"count too large (> {_MAX_COUNT} events per search). Request fewer events per search.")
+        raise ValueError(
+            f"count too large (> {_MAX_COUNT} events per search). "
+            f"Request fewer events per search."
+        )
 
 
 # Only physically real bodies can be occulted by the Moon. STANDARD_PLANETS also
@@ -84,25 +88,10 @@ def _ensure_scannable(count: int) -> None:
 # lun_occult primitive fabricates a plausible-looking but meaningless "occultation"
 # of a point that has no disk to be covered. Restrict string names to the real
 # occultable bodies (the classical planets plus the resolvable minor planets).
-_OCCULTABLE_BODY_NAMES = frozenset(
-    {
-        "Sun",
-        "Mercury",
-        "Venus",
-        "Mars",
-        "Jupiter",
-        "Saturn",
-        "Uranus",
-        "Neptune",
-        "Pluto",
-        "Chiron",
-        "Pholus",
-        "Ceres",
-        "Pallas",
-        "Juno",
-        "Vesta",
-    }
-)
+_OCCULTABLE_BODY_NAMES = frozenset({
+    "Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
+    "Chiron", "Pholus", "Ceres", "Pallas", "Juno", "Vesta",
+})
 _OCCULTABLE_BODY_IDS = frozenset(STANDARD_PLANETS[cast(AstrologicalPoint, name)] for name in _OCCULTABLE_BODY_NAMES)
 
 
@@ -143,7 +132,8 @@ def _resolve_planet_id(planet_id: Union[int, str]) -> int:
             )
         return planet_id
     raise TypeError(
-        f"planet_id must be a Swiss Ephemeris body number (int) or a planet name (str), got {type(planet_id).__name__}."
+        f"planet_id must be a Swiss Ephemeris body number (int) or a planet "
+        f"name (str), got {type(planet_id).__name__}."
     )
 
 

@@ -403,7 +403,6 @@ class TestPerspectiveConfigurations:
         # The perspective's center body has no position as seen from itself and
         # is excluded (Sun in heliocentric, Moon in selenocentric, ...): skip it.
         from kerykeion.astrological_subject_factory import _center_body_names
-
         center = {n.lower() for n in _center_body_names(perspective_type)}
 
         # Verify planets are present

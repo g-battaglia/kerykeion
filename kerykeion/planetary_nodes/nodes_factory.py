@@ -56,7 +56,6 @@ _NODE_PLANETS: Dict[AstrologicalPoint, int] = {
 
 class PlanetaryNodeModel(SubscriptableBaseModel):
     """Nodes and apsides for a single planet."""
-
     planet_name: str
     ascending_node: KerykeionPointModel
     descending_node: KerykeionPointModel
@@ -66,7 +65,6 @@ class PlanetaryNodeModel(SubscriptableBaseModel):
 
 class PlanetaryNodesCollectionModel(SubscriptableBaseModel):
     """Collection of planetary nodes for a specific moment."""
-
     iso_datetime: str = Field(default="")
     julian_day: float
     method: str = Field(description="Calculation method: 'mean' or 'osculating'")
@@ -163,7 +161,9 @@ class PlanetaryNodesFactory:
         if method not in ("mean", "osculating"):
             # Without this, any other string (e.g. "Mean") silently selected
             # the osculating branch while the model echoed the caller's label.
-            raise KerykeionException(f"Invalid nodes method {method!r}: expected 'mean' or 'osculating'.")
+            raise KerykeionException(
+                f"Invalid nodes method {method!r}: expected 'mean' or 'osculating'."
+            )
         nodbit = NODBIT_MEAN if method == "mean" else NODBIT_OSCU
 
         if planets is not None and "Sun" in planets:
@@ -181,9 +181,14 @@ class PlanetaryNodesFactory:
         if planets is not None:
             invalid = sorted(set(planets) - set(_NODE_PLANETS) - {"Sun"})
             if invalid:
-                raise ValueError(f"Unknown planets: {', '.join(invalid)}. Valid: {', '.join(_NODE_PLANETS)}")
+                raise ValueError(
+                    f"Unknown planets: {', '.join(invalid)}. "
+                    f"Valid: {', '.join(_NODE_PLANETS)}"
+                )
 
-        target_planets = _NODE_PLANETS if planets is None else {k: v for k, v in _NODE_PLANETS.items() if k in planets}
+        target_planets = _NODE_PLANETS if planets is None else {
+            k: v for k, v in _NODE_PLANETS.items() if k in planets
+        }
 
         node_results: List[PlanetaryNodeModel] = []
 
@@ -211,15 +216,21 @@ class PlanetaryNodesFactory:
                     peri_lon = (result[2][0] - ayanamsa) % 360
                     aph_lon = (result[3][0] - ayanamsa) % 360
 
-                    node_results.append(
-                        PlanetaryNodeModel(
-                            planet_name=name,
-                            ascending_node=get_kerykeion_point_from_degree(asc_lon, name, "AstrologicalPoint"),
-                            descending_node=get_kerykeion_point_from_degree(desc_lon, name, "AstrologicalPoint"),
-                            perihelion=get_kerykeion_point_from_degree(peri_lon, name, "AstrologicalPoint"),
-                            aphelion=get_kerykeion_point_from_degree(aph_lon, name, "AstrologicalPoint"),
-                        )
-                    )
+                    node_results.append(PlanetaryNodeModel(
+                        planet_name=name,
+                        ascending_node=get_kerykeion_point_from_degree(
+                            asc_lon, name, "AstrologicalPoint"
+                        ),
+                        descending_node=get_kerykeion_point_from_degree(
+                            desc_lon, name, "AstrologicalPoint"
+                        ),
+                        perihelion=get_kerykeion_point_from_degree(
+                            peri_lon, name, "AstrologicalPoint"
+                        ),
+                        aphelion=get_kerykeion_point_from_degree(
+                            aph_lon, name, "AstrologicalPoint"
+                        ),
+                    ))
                 except Exception as e:
                     logger.warning(f"Could not calculate nodes for {name}: {e}")
 

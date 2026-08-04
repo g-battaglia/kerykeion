@@ -377,7 +377,9 @@ class RelocatedChartFactory:
             # dead code that always resolved to None. Altitude only shifts sect
             # by arcminutes near sunrise/sunset; a relocation may change it
             # anyway, so 0.0 is the honest default.
-            is_diurnal = AstrologicalSubjectFactory._compute_is_diurnal(jd, new_lat, new_lng, 0.0)
+            is_diurnal = AstrologicalSubjectFactory._compute_is_diurnal(
+                jd, new_lat, new_lng, 0.0
+            )
         relocated_data["is_diurnal"] = is_diurnal
 
         # Essential dignities depend on sect (the triplicity ruler flips
@@ -385,7 +387,10 @@ class RelocatedChartFactory:
         # sect so the model stays internally consistent when relocation flips
         # is_diurnal. Only do this when the natal subject carried dignity data
         # (the enrichment is opt-in).
-        if any(isinstance(p, dict) and p.get("essential_dignity") is not None for p in relocated_data.values()):
+        if any(
+            isinstance(p, dict) and p.get("essential_dignity") is not None
+            for p in relocated_data.values()
+        ):
             from kerykeion.dignities import calculate_essential_dignity
 
             for point_data in relocated_data.values():

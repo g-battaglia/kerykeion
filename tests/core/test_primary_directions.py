@@ -10,18 +10,9 @@ from kerykeion import AstrologicalSubjectFactory, PrimaryDirectionsFactory
 @pytest.fixture(scope="module")
 def subject():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Primary Dir Test",
-        1940,
-        10,
-        9,
-        18,
-        30,
-        lng=-2.9916,
-        lat=53.4084,
-        tz_str="Europe/London",
-        city="Liverpool",
-        nation="GB",
-        online=False,
+        "Primary Dir Test", 1940, 10, 9, 18, 30,
+        lng=-2.9916, lat=53.4084, tz_str="Europe/London",
+        city="Liverpool", nation="GB", online=False,
     )
 
 
@@ -45,19 +36,25 @@ class TestSpeculum:
         """Right Ascension should be 0-360."""
         speculum = PrimaryDirectionsFactory.compute_speculum(subject)
         for entry in speculum:
-            assert 0 <= entry.right_ascension < 360, f"{entry.name} RA {entry.right_ascension} out of range"
+            assert 0 <= entry.right_ascension < 360, (
+                f"{entry.name} RA {entry.right_ascension} out of range"
+            )
 
     def test_speculum_declination_range(self, subject):
         """Declination should be -90 to +90."""
         speculum = PrimaryDirectionsFactory.compute_speculum(subject)
         for entry in speculum:
-            assert -90 <= entry.declination <= 90, f"{entry.name} dec {entry.declination} out of range"
+            assert -90 <= entry.declination <= 90, (
+                f"{entry.name} dec {entry.declination} out of range"
+            )
 
     def test_speculum_semi_arc_positive(self, subject):
         """Semi-arcs should be positive."""
         speculum = PrimaryDirectionsFactory.compute_speculum(subject)
         for entry in speculum:
-            assert entry.semi_arc > 0, f"{entry.name} semi_arc {entry.semi_arc} should be positive"
+            assert entry.semi_arc > 0, (
+                f"{entry.name} semi_arc {entry.semi_arc} should be positive"
+            )
 
 
 class TestPrimaryDirectionsReferenceFrames:
@@ -75,7 +72,11 @@ class TestPrimaryDirectionsReferenceFrames:
             online=False,
             perspective_type="Marscentric",
         )
-        moon = next(entry for entry in PrimaryDirectionsFactory.compute_speculum(subject) if entry.name == "Moon")
+        moon = next(
+            entry
+            for entry in PrimaryDirectionsFactory.compute_speculum(subject)
+            if entry.name == "Moon"
+        )
 
         with ephemeris_session(perspective_type="Marscentric") as iflag:
             eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
@@ -105,7 +106,11 @@ class TestPrimaryDirectionsReferenceFrames:
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
         )
-        moon = next(entry for entry in PrimaryDirectionsFactory.compute_speculum(subject) if entry.name == "Moon")
+        moon = next(
+            entry
+            for entry in PrimaryDirectionsFactory.compute_speculum(subject)
+            if entry.name == "Moon"
+        )
         with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as iflag:
             expected = ephe.calc_ut(
                 subject.julian_day,
@@ -131,7 +136,11 @@ class TestPrimaryDirectionsReferenceFrames:
             perspective_type="Topocentric",
         )
         assert subject.altitude == 3500.0
-        moon = next(entry for entry in PrimaryDirectionsFactory.compute_speculum(subject) if entry.name == "Moon")
+        moon = next(
+            entry
+            for entry in PrimaryDirectionsFactory.compute_speculum(subject)
+            if entry.name == "Moon"
+        )
         with ephemeris_session(
             perspective_type="Topocentric",
             topo=(subject.lng, subject.lat, subject.altitude),
@@ -209,7 +218,9 @@ class TestPrimaryDirections:
 
     def test_filter_aspects(self, subject):
         """Should respect aspects filter."""
-        conj_only = PrimaryDirectionsFactory.compute(subject, max_years=80, aspects=["conjunction"])
+        conj_only = PrimaryDirectionsFactory.compute(
+            subject, max_years=80, aspects=["conjunction"]
+        )
         all_aspects = PrimaryDirectionsFactory.compute(subject, max_years=80)
         assert len(conj_only) <= len(all_aspects)
         for d in conj_only:
@@ -224,18 +235,9 @@ class TestPrimaryDirectionEdgeCases:
         from unittest.mock import patch
 
         sub = AstrologicalSubjectFactory.from_birth_data(
-            "Test",
-            1990,
-            1,
-            1,
-            12,
-            0,
-            lng=0.0,
-            lat=51.5,
-            tz_str="Etc/GMT",
-            city="Greenwich",
-            nation="GB",
-            online=False,
+            "Test", 1990, 1, 1, 12, 0,
+            lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False,
         )
         with patch.object(PrimaryDirectionsFactory, "_build_speculum", return_value=[]):
             result = PrimaryDirectionsFactory.compute(sub)
@@ -349,18 +351,9 @@ class TestPrimaryDirectionEdgeCases:
         """Speculum at extreme latitude (near-polar) exercises semi-arc fallback."""
         # Near-polar latitude causes tan(dec)*tan(lat) to exceed [-1, 1] range
         polar_subject = AstrologicalSubjectFactory.from_birth_data(
-            "Polar Test",
-            1990,
-            6,
-            21,
-            12,
-            0,
-            lng=25.0,
-            lat=89.5,
-            tz_str="Etc/GMT",
-            city="NorthPole",
-            nation="FI",
-            online=False,
+            "Polar Test", 1990, 6, 21, 12, 0,
+            lng=25.0, lat=89.5, tz_str="Etc/GMT",
+            city="NorthPole", nation="FI", online=False,
         )
         speculum = PrimaryDirectionsFactory.compute_speculum(polar_subject)
         assert len(speculum) > 0
@@ -372,18 +365,9 @@ class TestPrimaryDirectionEdgeCases:
         from unittest.mock import patch
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Test",
-            1990,
-            1,
-            1,
-            12,
-            0,
-            lng=0.0,
-            lat=51.5,
-            tz_str="Etc/GMT",
-            city="Greenwich",
-            nation="GB",
-            online=False,
+            "Test", 1990, 1, 1, 12, 0,
+            lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False,
         )
         # Make one point return None
         original_getattr = subject.__class__.__getattribute__
@@ -412,7 +396,9 @@ class TestPrimaryDirectionEdgeCases:
         # v6 rewrite: the semi-arc uses asin with a [-1, 1] clamp instead of
         # the old acos try/except. dec=80, lat=80: AD_phi clamps to 90 deg, so
         # with MD=90 and SA=180 the pole is atan(sin(45)/tan(80)).
-        expected = math.degrees(math.atan(math.sin(math.radians(45.0)) / math.tan(math.radians(80.0))))
+        expected = math.degrees(math.atan(
+            math.sin(math.radians(45.0)) / math.tan(math.radians(80.0))
+        ))
         pole = PrimaryDirectionsFactory._placidian_pole(90.0, 180.0, 80.0, 80.0)
         assert abs(pole - expected) < 1e-9
 
@@ -432,25 +418,15 @@ class TestPrimaryDirectionEdgeCases:
         # Create the subject outside the mock so that ephemeris calculations
         # are not affected by the patch.
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Test",
-            1990,
-            1,
-            1,
-            12,
-            0,
-            lng=0.0,
-            lat=51.5,
-            tz_str="Etc/GMT",
-            city="Greenwich",
-            nation="GB",
-            online=False,
+            "Test", 1990, 1, 1, 12, 0,
+            lng=0.0, lat=51.5, tz_str="Etc/GMT",
+            city="Greenwich", nation="GB", online=False,
         )
 
         # v6 rewrite: patch the pole helper itself instead of guessing
         # math.sin call counts of the old implementation.
         with patch.object(
-            PrimaryDirectionsFactory,
-            "_placidian_pole",
+            PrimaryDirectionsFactory, "_placidian_pole",
             side_effect=ValueError("Mock pole failure"),
         ):
             speculum = PrimaryDirectionsFactory.compute_speculum(subject)
@@ -486,18 +462,9 @@ class TestSpeculumSweRegressions:
     @pytest.fixture(scope="class")
     def lennon(self):
         return AstrologicalSubjectFactory.from_birth_data(
-            "John Lennon",
-            1940,
-            10,
-            9,
-            18,
-            30,
-            lng=-2.9916,
-            lat=53.4084,
-            tz_str="Europe/London",
-            city="Liverpool",
-            nation="GB",
-            online=False,
+            "John Lennon", 1940, 10, 9, 18, 30,
+            lng=-2.9916, lat=53.4084, tz_str="Europe/London",
+            city="Liverpool", nation="GB", online=False,
         )
 
     def test_sun_ra_dec_matches_swe(self, lennon):
@@ -559,18 +526,9 @@ class TestKnownValues:
     def modern_subject(self):
         # Modern date: the local dev ephemeris kernel is short-range.
         return AstrologicalSubjectFactory.from_birth_data(
-            "Known Values",
-            2000,
-            5,
-            15,
-            14,
-            30,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            "Known Values", 2000, 5, 15, 14, 30,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
         )
 
     def test_reference_pole_diurnal(self):
@@ -596,15 +554,10 @@ class TestKnownValues:
 
         # Ecliptic (beta=0) -> equatorial via the obliquity
         dec = math.degrees(math.asin(math.sin(math.radians(eps)) * math.sin(math.radians(lam))))
-        ra = (
-            math.degrees(
-                math.atan2(
-                    math.sin(math.radians(lam)) * math.cos(math.radians(eps)),
-                    math.cos(math.radians(lam)),
-                )
-            )
-            % 360
-        )
+        ra = math.degrees(math.atan2(
+            math.sin(math.radians(lam)) * math.cos(math.radians(eps)),
+            math.cos(math.radians(lam)),
+        )) % 360
         ad = math.degrees(math.asin(math.tan(math.radians(dec)) * math.tan(math.radians(pole))))
         expected_oa = (ra - ad) % 360
 
@@ -653,15 +606,10 @@ class TestKnownValues:
             eps = ephe.calc_ut(jd, ephe.ECL_NUT, iflag)[0][0]
 
         def ra_of(lam):
-            return (
-                math.degrees(
-                    math.atan2(
-                        math.sin(math.radians(lam)) * math.cos(math.radians(eps)),
-                        math.cos(math.radians(lam)),
-                    )
-                )
-                % 360
-            )
+            return math.degrees(math.atan2(
+                math.sin(math.radians(lam)) * math.cos(math.radians(eps)),
+                math.cos(math.radians(lam)),
+            )) % 360
 
         # Significator MC: on the meridian -> pole 0 -> AD = 0 -> OA = RA.
         ra_mc = ra_of(modern_subject.medium_coeli.abs_pos)
@@ -675,7 +623,10 @@ class TestKnownValues:
         directions = PrimaryDirectionsFactory.compute(
             modern_subject, max_years=360, rate_key="ptolemy", aspects=["conjunction"]
         )
-        matches = [d for d in directions if d.promissor == "Sun" and d.significator == "Medium_Coeli"]
+        matches = [
+            d for d in directions
+            if d.promissor == "Sun" and d.significator == "Medium_Coeli"
+        ]
         direct = [d for d in matches if not d.is_converse]
         converse = [d for d in matches if d.is_converse]
         assert len(direct) == 1

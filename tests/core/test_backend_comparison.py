@@ -50,7 +50,6 @@ TRUE_NODE = 11
 
 # ── Helpers ──────────────────────────────────────────────────────────────
 
-
 def _calc_planet(backend, planet_id: int, jd: float = JD_LENNON):
     """Calculate a planet position using a specific backend module."""
     backend.set_ephe_path("")
@@ -75,27 +74,23 @@ def _angular_diff(a: float, b: float) -> float:
 
 # ── Planetary Position Comparison ────────────────────────────────────────
 
-
 @both_installed
 class TestPlanetaryPositionComparison:
     """Compare planetary longitudes between backends."""
 
-    @pytest.mark.parametrize(
-        "planet_id,name,tolerance",
-        [
-            (SUN, "Sun", 0.01),
-            (MOON, "Moon", 0.02),
-            (MERCURY, "Mercury", 0.01),
-            (VENUS, "Venus", 0.01),
-            (MARS, "Mars", 0.01),
-            (JUPITER, "Jupiter", 0.01),
-            (SATURN, "Saturn", 0.01),
-            (URANUS, "Uranus", 0.01),
-            (NEPTUNE, "Neptune", 0.01),
-            (PLUTO, "Pluto", 0.02),
-            (TRUE_NODE, "True Node", 0.1),
-        ],
-    )
+    @pytest.mark.parametrize("planet_id,name,tolerance", [
+        (SUN, "Sun", 0.01),
+        (MOON, "Moon", 0.02),
+        (MERCURY, "Mercury", 0.01),
+        (VENUS, "Venus", 0.01),
+        (MARS, "Mars", 0.01),
+        (JUPITER, "Jupiter", 0.01),
+        (SATURN, "Saturn", 0.01),
+        (URANUS, "Uranus", 0.01),
+        (NEPTUNE, "Neptune", 0.01),
+        (PLUTO, "Pluto", 0.02),
+        (TRUE_NODE, "True Node", 0.1),
+    ])
     def test_longitude_agreement(self, planet_id, name, tolerance):
         """Longitude should agree within tolerance (degrees)."""
         swe_result = _calc_planet(_swisseph, planet_id)
@@ -107,16 +102,10 @@ class TestPlanetaryPositionComparison:
             f"libephemeris={lib_result[0]:.6f}, diff={diff:.6f}° (tolerance={tolerance}°)"
         )
 
-    @pytest.mark.parametrize(
-        "planet_id,name",
-        [
-            (SUN, "Sun"),
-            (MOON, "Moon"),
-            (MARS, "Mars"),
-            (JUPITER, "Jupiter"),
-            (SATURN, "Saturn"),
-        ],
-    )
+    @pytest.mark.parametrize("planet_id,name", [
+        (SUN, "Sun"), (MOON, "Moon"), (MARS, "Mars"),
+        (JUPITER, "Jupiter"), (SATURN, "Saturn"),
+    ])
     def test_speed_agreement(self, planet_id, name):
         """Daily speed should agree within 0.01 deg/day for major planets."""
         swe_result = _calc_planet(_swisseph, planet_id)
@@ -124,17 +113,13 @@ class TestPlanetaryPositionComparison:
 
         speed_diff = abs(swe_result[3] - lib_result[3])
         assert speed_diff < 0.01, (
-            f"{name} speed: swisseph={swe_result[3]:.6f}, libephemeris={lib_result[3]:.6f}, diff={speed_diff:.6f}"
+            f"{name} speed: swisseph={swe_result[3]:.6f}, "
+            f"libephemeris={lib_result[3]:.6f}, diff={speed_diff:.6f}"
         )
 
-    @pytest.mark.parametrize(
-        "planet_id,name",
-        [
-            (SUN, "Sun"),
-            (MOON, "Moon"),
-            (MARS, "Mars"),
-        ],
-    )
+    @pytest.mark.parametrize("planet_id,name", [
+        (SUN, "Sun"), (MOON, "Moon"), (MARS, "Mars"),
+    ])
     def test_latitude_agreement(self, planet_id, name):
         """Ecliptic latitude should agree within 0.01 degrees."""
         swe_result = _calc_planet(_swisseph, planet_id)
@@ -142,7 +127,8 @@ class TestPlanetaryPositionComparison:
 
         lat_diff = abs(swe_result[1] - lib_result[1])
         assert lat_diff < 0.01, (
-            f"{name} latitude: swisseph={swe_result[1]:.6f}, libephemeris={lib_result[1]:.6f}, diff={lat_diff:.6f}"
+            f"{name} latitude: swisseph={swe_result[1]:.6f}, "
+            f"libephemeris={lib_result[1]:.6f}, diff={lat_diff:.6f}"
         )
 
     def test_retrograde_agreement(self):
@@ -153,7 +139,8 @@ class TestPlanetaryPositionComparison:
             swe_retro = swe_result[3] < 0
             lib_retro = lib_result[3] < 0
             assert swe_retro == lib_retro, (
-                f"Planet {planet_id}: swisseph retrograde={swe_retro}, libephemeris retrograde={lib_retro}"
+                f"Planet {planet_id}: swisseph retrograde={swe_retro}, "
+                f"libephemeris retrograde={lib_retro}"
             )
 
     def test_zodiac_sign_agreement(self):
@@ -172,7 +159,6 @@ class TestPlanetaryPositionComparison:
 
 # ── House Cusp Comparison ────────────────────────────────────────────────
 
-
 @both_installed
 class TestHouseCuspComparison:
     """Compare house cusps between backends."""
@@ -183,7 +169,9 @@ class TestHouseCuspComparison:
         _lib_cusps, lib_ascmc = _calc_houses(_libephemeris)
 
         diff = _angular_diff(swe_ascmc[0], lib_ascmc[0])
-        assert diff < 0.02, f"ASC: swisseph={swe_ascmc[0]:.6f}, libephemeris={lib_ascmc[0]:.6f}, diff={diff:.6f}"
+        assert diff < 0.02, (
+            f"ASC: swisseph={swe_ascmc[0]:.6f}, libephemeris={lib_ascmc[0]:.6f}, diff={diff:.6f}"
+        )
 
     def test_mc_agreement(self):
         """Midheaven should agree within 0.02 degrees."""
@@ -191,7 +179,9 @@ class TestHouseCuspComparison:
         _lib_cusps, lib_ascmc = _calc_houses(_libephemeris)
 
         diff = _angular_diff(swe_ascmc[1], lib_ascmc[1])
-        assert diff < 0.02, f"MC: swisseph={swe_ascmc[1]:.6f}, libephemeris={lib_ascmc[1]:.6f}, diff={diff:.6f}"
+        assert diff < 0.02, (
+            f"MC: swisseph={swe_ascmc[1]:.6f}, libephemeris={lib_ascmc[1]:.6f}, diff={diff:.6f}"
+        )
 
     def test_all_cusps_agreement(self):
         """All 12 house cusps should agree within 0.05 degrees."""
@@ -201,12 +191,12 @@ class TestHouseCuspComparison:
         for i in range(12):
             diff = _angular_diff(swe_cusps[i], lib_cusps[i])
             assert diff < 0.05, (
-                f"House {i + 1}: swisseph={swe_cusps[i]:.6f}, libephemeris={lib_cusps[i]:.6f}, diff={diff:.6f}"
+                f"House {i + 1}: swisseph={swe_cusps[i]:.6f}, "
+                f"libephemeris={lib_cusps[i]:.6f}, diff={diff:.6f}"
             )
 
 
 # ── High-Level Integration Comparison ────────────────────────────────────
-
 
 @both_installed
 class TestKerykeionIntegrationComparison:
@@ -224,22 +214,12 @@ class TestKerykeionIntegrationComparison:
             os.environ["KERYKEION_BACKEND"] = backend_name
             # Force reimport of the backend module
             import kerykeion.ephemeris_backend as eb
-
             importlib.reload(eb)
 
             subject = AstrologicalSubjectFactory.from_birth_data(
-                "Test",
-                1940,
-                10,
-                9,
-                18,
-                30,
-                lng=LON,
-                lat=LAT,
-                tz_str="Europe/London",
-                city="Liverpool",
-                nation="GB",
-                online=False,
+                "Test", 1940, 10, 9, 18, 30,
+                lng=LON, lat=LAT, tz_str="Europe/London",
+                city="Liverpool", nation="GB", online=False,
             )
             results[backend_name] = subject
 

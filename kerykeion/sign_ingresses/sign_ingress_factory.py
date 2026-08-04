@@ -63,14 +63,14 @@ _PLANET_IDS["Moon"] = ephe.MOON
 # Unlisted bodies fall back to the Moon-safe half-day step.
 _SAMPLE_STEP_DAYS = 0.5
 _PLANET_STEP_DAYS = {
-    "Moon": 0.5,  # ~13°/day, never retrograde excursions but fast
-    "Sun": 3.0,  # ~1°/day, never retrogrades
-    "Mercury": 0.5,  # station accel ~0.1°/day² — excursions can last hours
-    "Venus": 1.0,  # station accel ~0.02°/day²
-    "Mars": 2.0,  # station accel ~0.007°/day²
-    "Jupiter": 4.0,  # station accel ~0.0025°/day²
-    "Saturn": 5.0,  # station accel ~0.0011°/day²
-    "Uranus": 7.0,  # station accel ~0.0006°/day²
+    "Moon": 0.5,      # ~13°/day, never retrograde excursions but fast
+    "Sun": 3.0,       # ~1°/day, never retrogrades
+    "Mercury": 0.5,   # station accel ~0.1°/day² — excursions can last hours
+    "Venus": 1.0,     # station accel ~0.02°/day²
+    "Mars": 2.0,      # station accel ~0.007°/day²
+    "Jupiter": 4.0,   # station accel ~0.0025°/day²
+    "Saturn": 5.0,    # station accel ~0.0011°/day²
+    "Uranus": 7.0,    # station accel ~0.0006°/day²
     "Neptune": 7.0,
     "Pluto": 7.0,
 }
@@ -144,7 +144,9 @@ def _lon(jd: float, body: int, iflag: int) -> float:
 
 def _sign_name(sign_num: int) -> str:
     """Zodiac sign name for an index (0=Aries), via the shared degree helper."""
-    return get_kerykeion_point_from_degree((sign_num % 12) * 30 + 15, "Sun", "AstrologicalPoint").sign
+    return get_kerykeion_point_from_degree(
+        (sign_num % 12) * 30 + 15, "Sun", "AstrologicalPoint"
+    ).sign
 
 
 def _bisect_ingress(body: int, a: float, b: float, boundary: float, iflag: int) -> float:
@@ -176,7 +178,8 @@ def _ensure_scannable(start_jd: float, end_jd: float, bodies: List[tuple[str, in
     )
     if (end_jd - start_jd) / finest_step > _MAX_SAMPLES:
         raise ValueError(
-            f"Date range too large to scan at the current resolution (> {_MAX_SAMPLES} samples). Narrow the date range."
+            f"Date range too large to scan at the current resolution "
+            f"(> {_MAX_SAMPLES} samples). Narrow the date range."
         )
 
 
@@ -271,7 +274,8 @@ class SignIngressFactory:
             # broken by a malformed ISO start_date/end_date. Same contract as
             # LunationFinderFactory.from_iso_range.
             raise KerykeionException(
-                f"Invalid ISO date/datetime for ingress range (start_date={start_date!r}, end_date={end_date!r}): {exc}"
+                f"Invalid ISO date/datetime for ingress range "
+                f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
             ) from exc
         # Parse as a date so every valid datetime separator remains exact.
         if is_iso_date_only(end_date):
@@ -313,7 +317,10 @@ class SignIngressFactory:
         if planets is not None:
             invalid = sorted(set(planets) - set(_PLANET_IDS))
             if invalid:
-                raise ValueError(f"Unknown planets: {', '.join(invalid)}. Valid: {', '.join(_PLANET_IDS)}")
+                raise ValueError(
+                    f"Unknown planets: {', '.join(invalid)}. "
+                    f"Valid: {', '.join(_PLANET_IDS)}"
+                )
             # Deduplicate (preserve order): duplicates would repeat the scan and
             # emit every event multiple times.
             bodies = [(name, _PLANET_IDS[name]) for name in dict.fromkeys(planets)]
@@ -334,7 +341,9 @@ class SignIngressFactory:
             # iflag carries FLG_SIDEREAL for a sidereal scan.
             with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
                 for name, body in bodies:
-                    ingresses.extend(SignIngressFactory._scan_planet(name, body, start_jd, end_jd, iflag, tropical))
+                    ingresses.extend(
+                        SignIngressFactory._scan_planet(name, body, start_jd, end_jd, iflag, tropical)
+                    )
             ingresses.sort(key=lambda i: i.julian_day)
 
         return SignIngressesCollectionModel(
@@ -384,12 +393,8 @@ class SignIngressFactory:
             mid = (a + b) / 2.0
             sign_mid = int(_lon(mid, body, iflag) // 30)
             if sign_mid != sign_a:
-                SignIngressFactory._emit_segment(
-                    name, body, a, sign_a, mid, sign_mid, found, depth + 1, iflag, tropical
-                )
-                SignIngressFactory._emit_segment(
-                    name, body, mid, sign_mid, b, sign_b, found, depth + 1, iflag, tropical
-                )
+                SignIngressFactory._emit_segment(name, body, a, sign_a, mid, sign_mid, found, depth + 1, iflag, tropical)
+                SignIngressFactory._emit_segment(name, body, mid, sign_mid, b, sign_b, found, depth + 1, iflag, tropical)
             return
 
         diff = (sign_b - sign_a) % 12
@@ -407,7 +412,9 @@ class SignIngressFactory:
         retro = diff == 11
         boundary = ((sign_a * 30) if retro else ((sign_a + 1) * 30)) % 360.0
         jd_ingress = _bisect_ingress(body, a, b, boundary, iflag)
-        found.append(SignIngressFactory._build(name, jd_ingress, sign_a, sign_b, retro, boundary, tropical))
+        found.append(
+            SignIngressFactory._build(name, jd_ingress, sign_a, sign_b, retro, boundary, tropical)
+        )
 
     @staticmethod
     def _build(
@@ -434,5 +441,7 @@ class SignIngressFactory:
             # tropical frame — a sidereal cardinal boundary is not the
             # equinox/solstice, so season_marker stays None for every sidereal
             # ingress. In a tropical scan the boundary IS the tropical longitude.
-            season_marker=(_SEASON_MARKERS.get(boundary % 360.0) if (name == "Sun" and tropical) else None),
+            season_marker=(
+                _SEASON_MARKERS.get(boundary % 360.0) if (name == "Sun" and tropical) else None
+            ),
         )

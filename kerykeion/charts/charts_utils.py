@@ -1291,7 +1291,9 @@ def draw_houses_cusps_and_text_number(
 
     for i in range(xr):
         # Determine offsets based on chart type
-        dropin, roff, t_roff = (160, 72, 36) if chart_type in DOUBLE_CHART_TYPES else (c3, c1, False)
+        dropin, roff, t_roff = (
+            (160, 72, 36) if chart_type in DOUBLE_CHART_TYPES else (c3, c1, False)
+        )
 
         # Calculate the offset for the current house cusp
         offset = -int(first_subject_houses_list[int(xr / 2)].abs_pos) + int(first_subject_houses_list[i].abs_pos)
@@ -1331,8 +1333,7 @@ def draw_houses_cusps_and_text_number(
 
             # Calculate the text offset for the second subject's house number
             t_text_offset = t_offset + int(
-                degree_difference(second_subject_houses_list[next_index].abs_pos, second_subject_houses_list[i].abs_pos)
-                / 2
+                degree_difference(second_subject_houses_list[next_index].abs_pos, second_subject_houses_list[i].abs_pos) / 2
             )
             t_linecolor = linecolor if i in [0, 9, 6, 3] else transit_house_cusp_color
             xtext = wheel_x(0, (r - 8), t_text_offset) + 8
@@ -1517,7 +1518,9 @@ def draw_transit_aspect_list(
             inner_path += "</g>"
 
     out = f'<g transform="translate({translate_x},{translate_y})">'
-    out += f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{escape_svg_text(grid_title)}:</text>'
+    out += (
+        f'<text y="-15" x="0" style="fill: var(--kerykeion-chart-color-paper-0); font-size: 14px;">{escape_svg_text(grid_title)}:</text>'
+    )
     out += inner_path
     out += "</g>"
 
@@ -1973,7 +1976,9 @@ def draw_secondary_planet_grid(
 
     # Title content and its relative x offset
     _transit_like = chart_type in _TRANSIT_LIKE_HEADER_TYPES
-    header_text = second_subject_name if _transit_like else f"{planets_and_houses_grid_title} {second_subject_name}"
+    header_text = (
+        second_subject_name if _transit_like else f"{planets_and_houses_grid_title} {second_subject_name}"
+    )
     header_x_offset = -50 if _transit_like else 0
 
     svg_output += (

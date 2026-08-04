@@ -24,18 +24,9 @@ def _angular_diff(a: float, b: float) -> float:
 @pytest.fixture(scope="module")
 def barycentric_subject():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Barycentric Test",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "Barycentric Test", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
         perspective_type="Barycentric",
     )
 
@@ -43,18 +34,9 @@ def barycentric_subject():
 @pytest.fixture(scope="module")
 def geocentric_subject():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Geocentric Test",
-        1990,
-        6,
-        15,
-        14,
-        30,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "Geocentric Test", 1990, 6, 15, 14, 30,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
     )
 
 
@@ -157,15 +139,19 @@ class TestBarycentricPerspective:
 
         # Each outer planet's shift should be under 10 degrees
         for name, diff in diffs.items():
-            assert diff < 10.0, f"{name} barycentric shift is {diff:.4f} deg; expected < 10 deg"
+            assert diff < 10.0, (
+                f"{name} barycentric shift is {diff:.4f} deg; expected < 10 deg"
+            )
 
         # More distant planets should show smaller shifts than closer ones:
         # Uranus/Neptune should shift less than Jupiter
         assert diffs["uranus"] < diffs["jupiter"], (
-            f"Uranus diff ({diffs['uranus']:.4f}) should be < Jupiter diff ({diffs['jupiter']:.4f})"
+            f"Uranus diff ({diffs['uranus']:.4f}) should be < "
+            f"Jupiter diff ({diffs['jupiter']:.4f})"
         )
         assert diffs["neptune"] < diffs["jupiter"], (
-            f"Neptune diff ({diffs['neptune']:.4f}) should be < Jupiter diff ({diffs['jupiter']:.4f})"
+            f"Neptune diff ({diffs['neptune']:.4f}) should be < "
+            f"Jupiter diff ({diffs['jupiter']:.4f})"
         )
 
     def test_positions_differ_from_geocentric(self, barycentric_subject, geocentric_subject):
@@ -184,7 +170,9 @@ class TestBarycentricPerspective:
     # ------------------------------------------------------------------
     # Moon vs outer planets: Moon shift should dominate
     # ------------------------------------------------------------------
-    def test_moon_shift_larger_than_outer_planets(self, barycentric_subject, geocentric_subject):
+    def test_moon_shift_larger_than_outer_planets(
+        self, barycentric_subject, geocentric_subject
+    ):
         """The Moon's barycentric shift should be much larger than any outer planet's."""
         moon_diff = _angular_diff(
             barycentric_subject.moon.abs_pos,
@@ -195,4 +183,7 @@ class TestBarycentricPerspective:
                 getattr(barycentric_subject, name).abs_pos,
                 getattr(geocentric_subject, name).abs_pos,
             )
-            assert moon_diff > planet_diff, f"Moon diff ({moon_diff:.4f}) should exceed {name} diff ({planet_diff:.4f})"
+            assert moon_diff > planet_diff, (
+                f"Moon diff ({moon_diff:.4f}) should exceed "
+                f"{name} diff ({planet_diff:.4f})"
+            )

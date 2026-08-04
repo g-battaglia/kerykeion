@@ -83,7 +83,9 @@ def test_dst_spring_forward_midnight_gap_sao_paulo():
 
     from kerykeion.sun_times.utils import _localize_civil_midnight
 
-    s = SunTimesFactory.from_date(2018, 11, 4, latitude=-23.5505, longitude=-46.6333, tz_str="America/Sao_Paulo")
+    s = SunTimesFactory.from_date(
+        2018, 11, 4, latitude=-23.5505, longitude=-46.6333, tz_str="America/Sao_Paulo"
+    )
     assert s.sunrise is not None and s.sunset is not None
     assert s.sunrise < s.solar_noon < s.sunset
     sp = ZoneInfo("America/Sao_Paulo")
@@ -103,7 +105,9 @@ def test_dst_spring_forward_midnight_gap_santiago():
     # Regression: 2022-09-11 America/Santiago also jumps 00:00 -> 01:00.
     from zoneinfo import ZoneInfo
 
-    s = SunTimesFactory.from_date(2022, 9, 11, latitude=-33.4489, longitude=-70.6693, tz_str="America/Santiago")
+    s = SunTimesFactory.from_date(
+        2022, 9, 11, latitude=-33.4489, longitude=-70.6693, tz_str="America/Santiago"
+    )
     assert s.sunrise is not None and s.sunset is not None
     assert s.sunrise < s.solar_noon < s.sunset
     scl = ZoneInfo("America/Santiago")
@@ -332,6 +336,10 @@ def test_planetary_hours_rejects_out_of_range_coordinates():
     from kerykeion.planetary_hours import PlanetaryHoursFactory
 
     with pytest.raises(KerykeionException, match="Latitude"):
-        PlanetaryHoursFactory.from_datetime(2026, 6, 1, 12, 0, latitude=95.0, longitude=12.5, tz_str="Europe/Rome")
+        PlanetaryHoursFactory.from_datetime(
+            2026, 6, 1, 12, 0, latitude=95.0, longitude=12.5, tz_str="Europe/Rome"
+        )
     with pytest.raises(KerykeionException, match="Longitude"):
-        PlanetaryHoursFactory.from_datetime(2026, 6, 1, 12, 0, latitude=41.9, longitude=200.0, tz_str="Europe/Rome")
+        PlanetaryHoursFactory.from_datetime(
+            2026, 6, 1, 12, 0, latitude=41.9, longitude=200.0, tz_str="Europe/Rome"
+        )

@@ -13,18 +13,9 @@ from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
 @pytest.fixture(scope="module")
 def natal_chart():
     return AstrologicalSubjectFactory.from_birth_data(
-        "Transit Test",
-        1990,
-        1,
-        1,
-        12,
-        0,
-        lng=12.4964,
-        lat=41.9028,
-        tz_str="Europe/Rome",
-        city="Rome",
-        nation="IT",
-        online=False,
+        "Transit Test", 1990, 1, 1, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
     )
 
 
@@ -111,7 +102,9 @@ class TestTransitRefinement:
 
         # Most events should have equal or better orb after refinement
         if pairs:
-            assert improved_count / len(pairs) >= 0.8, f"Only {improved_count}/{len(pairs)} events improved"
+            assert improved_count / len(pairs) >= 0.8, (
+                f"Only {improved_count}/{len(pairs)} events improved"
+            )
 
     def test_refined_exact_moment_differs(self, unrefined_events, refined_events):
         """At least some refined exact_moments should differ from unrefined.
@@ -124,7 +117,9 @@ class TestTransitRefinement:
         pairs = self._paired_events(unrefined_events, refined_events)
 
         different_count = sum(
-            1 for unref, ref in pairs if ref.exact_moment != unref.exact_moment or ref.min_orb < unref.min_orb
+            1
+            for unref, ref in pairs
+            if ref.exact_moment != unref.exact_moment or ref.min_orb < unref.min_orb
         )
 
         assert pairs, "No comparable events found"
@@ -233,8 +228,7 @@ class TestRefineExactMomentEdgeCases:
     def test_refine_calc_ut_exception_returns_none(self, transit_factory):
         """If ephe.calc_ut raises during refinement, should return None."""
         with patch.object(
-            _swe_module,
-            "calc_ut",
+            _swe_module, "calc_ut",
             side_effect=RuntimeError("Mock ephe failure"),
         ):
             result = transit_factory._refine_exact_moment(
@@ -285,18 +279,9 @@ class TestRefineExactMomentEdgeCases:
     def test_refine_skipped_for_non_geocentric_perspective(self):
         """Non-geocentric natal charts keep the coarse values (no refinement)."""
         helio_natal = AstrologicalSubjectFactory.from_birth_data(
-            "Helio Test",
-            1990,
-            1,
-            1,
-            12,
-            0,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
+            "Helio Test", 1990, 1, 1, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
             perspective_type="Heliocentric",
         )
         factory = TransitsTimeRangeFactory(natal_chart=helio_natal, ephemeris_data_points=[])
@@ -321,20 +306,10 @@ class TestSiderealRefinement:
     @pytest.fixture(scope="class")
     def sidereal_factory(self):
         natal = AstrologicalSubjectFactory.from_birth_data(
-            "Sidereal Transit Test",
-            1990,
-            1,
-            1,
-            12,
-            0,
-            lng=12.4964,
-            lat=41.9028,
-            tz_str="Europe/Rome",
-            city="Rome",
-            nation="IT",
-            online=False,
-            zodiac_type="Sidereal",
-            sidereal_mode="LAHIRI",
+            "Sidereal Transit Test", 1990, 1, 1, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+            zodiac_type="Sidereal", sidereal_mode="LAHIRI",
         )
         start = datetime(2025, 1, 1)
         ephemeris = EphemerisDataFactory(

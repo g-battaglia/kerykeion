@@ -192,7 +192,8 @@ class FixedStarDiscoveryFactory:
         # into a plausible empty discovery result.
         if subject.julian_day is None:
             raise KerykeionException(
-                "Subject is missing Julian Day — cannot search fixed stars (composite subjects are not supported here)."
+                "Subject is missing Julian Day — cannot search fixed stars "
+                "(composite subjects are not supported here)."
             )
         try:
             validate_julian_day(subject.julian_day)

@@ -307,7 +307,8 @@ def get_active_points_list(
             )
         else:
             logger.warning(
-                "Requested active point %r is not a recognized astrological point name; skipping it. Check for a typo.",
+                "Requested active point %r is not a recognized astrological point "
+                "name; skipping it. Check for a typo.",
                 name,
             )
 

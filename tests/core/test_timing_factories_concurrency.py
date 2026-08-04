@@ -114,7 +114,9 @@ def test_event_scan_factories_match_single_threaded_baselines_under_threads():
     unit_started = time.monotonic()
     base_lun = LunationFinderFactory.from_iso_range("2026-06-01", "2026-06-30").model_dump()
     base_ecl = EclipseFactory.search_global(start_year=2026, count=2).model_dump()
-    base_ing = SignIngressFactory.from_iso_range("2026-06-01", "2026-06-30", planets=["Sun", "Mars"]).model_dump()
+    base_ing = SignIngressFactory.from_iso_range(
+        "2026-06-01", "2026-06-30", planets=["Sun", "Mars"]
+    ).model_dump()
     unit_seconds = time.monotonic() - unit_started
 
     errors: list[str] = []
@@ -125,14 +127,8 @@ def test_event_scan_factories_match_single_threaded_baselines_under_threads():
                 # Sidereal work creates real contention: it mutates the global
                 # sidereal mode inside its own session.
                 VoidOfCourseMoonFactory.from_datetime(
-                    2026,
-                    6,
-                    1,
-                    9,
-                    0,
-                    tz_str="Europe/Rome",
-                    zodiac_type="Sidereal",
-                    sidereal_mode="LAHIRI",
+                    2026, 6, 1, 9, 0, tz_str="Europe/Rome",
+                    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
                 )
                 lun = LunationFinderFactory.from_iso_range("2026-06-01", "2026-06-30").model_dump()
                 ecl = EclipseFactory.search_global(start_year=2026, count=2).model_dump()

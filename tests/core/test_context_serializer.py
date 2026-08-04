@@ -1462,6 +1462,7 @@ class TestHouseComparisonContext:
         assert result == result2
 
 
+
 class TestMidpointsToContext:
     """Tests for midpoint serialization edge cases."""
 
@@ -1568,19 +1569,9 @@ class TestRoundOneRegressions:
 
     def _subject(self, name="RegSubj"):
         from kerykeion import AstrologicalSubjectFactory
-
         return AstrologicalSubjectFactory.from_birth_data(
-            name,
-            1990,
-            6,
-            15,
-            10,
-            30,
-            lng=12.48,
-            lat=41.89,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
+            name, 1990, 6, 15, 10, 30, lng=12.48, lat=41.89,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
         )
 
     def test_axes_always_include_derived_points(self):
@@ -1588,7 +1579,6 @@ class TestRoundOneRegressions:
         absent from DEFAULT_ACTIVE_POINTS; the <axes> section must still emit
         them (regression: the active_points-driven loop dropped them)."""
         from kerykeion.context_serializer import astrological_subject_to_context
-
         ctx = astrological_subject_to_context(self._subject())
         for axis in ("Descendant", "Imum_Coeli", "True_South_Lunar_Node"):
             assert axis in ctx, f"{axis} dropped from <axes>"
@@ -1598,7 +1588,6 @@ class TestRoundOneRegressions:
         per-point owners (only the substituted 'Transit' label)."""
         from kerykeion.chart_data_factory import ChartDataFactory
         from kerykeion.context_serializer import to_context
-
         natal = self._subject("Alice")
         transit = self._subject("BobTheTransit")
         ctx = to_context(ChartDataFactory.create_transit_chart_data(natal, transit))
@@ -1610,7 +1599,6 @@ class TestRoundOneRegressions:
         hardcoded max='44' (a strong synastry exceeds it -> >100%)."""
         from kerykeion.chart_data_factory import ChartDataFactory
         from kerykeion.context_serializer import to_context
-
         s1 = self._subject("A")
         s2 = self._subject("B")
         cd = ChartDataFactory.create_synastry_chart_data(s1, s2, include_relationship_score=True)
