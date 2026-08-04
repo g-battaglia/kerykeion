@@ -52,7 +52,7 @@ from kerykeion.schemas.kr_literals import (
 from kerykeion.settings.config_constants import (
     AXIAL_POINTS,
     DEFAULT_ACTIVE_POINTS,
-    EARTH_CENTRED_PERSPECTIVES,
+    subject_states_a_diurnality,
 )
 from kerykeion.settings.translations import get_translations, load_language_pair
 from kerykeion.charts.charts_utils import (
@@ -261,7 +261,7 @@ class CircleRadiiConfig:
 # were tighter; that stole 18 to 38px from the five existing rows and pushed
 # "Progression Lunar phase: Waxing Gibbous" under the wheel in the default
 # language. When the line is not drawn, nothing moves at all.
-DIURNALITY_GLYPH_DROP: float = 14.0
+DIURNALITY_GLYPH_DROP: int = 14
 
 # How much clear width row 5 really has, and it is not the 258.6px the chord
 # gives at the baseline: the chord narrows going *upward*, and text rises above
@@ -292,7 +292,7 @@ DIURNALITY_ROW_CLEAR_WIDTH: float = 228.0
 #
 # Generated from the three fonts' `hmtx` tables; regenerate with
 # `poe regenerate:glyph-widths` if the reference set ever changes.
-_MEASURED_EM: dict = {
+_MEASURED_EM: dict[float, str] = {
     0.20: "'",
     0.24: "ɉ‛",
     0.26: "|¦Ɩ",
@@ -343,7 +343,7 @@ _MEASURED_EM: dict = {
     1.34: "ǄǱ",
 }
 
-_MEASURED_EM_BY_CHAR: dict = {char: em for em, chars in _MEASURED_EM.items() for char in chars}
+_MEASURED_EM_BY_CHAR: dict[str, float] = {char: em for em, chars in _MEASURED_EM.items() for char in chars}
 
 # Anything outside the table above. Not a single fallback figure — that was
 # tried twice and was wrong both times. `1.0` looked like a safe ceiling because
@@ -361,7 +361,7 @@ _MEASURED_EM_BY_CHAR: dict = {char: em for em, chars in _MEASURED_EM.items() for
 # 0.333 em of real width in all three fonts. Every character is charged; a
 # mark-heavy name truncates a little harder than it strictly needs to, which is
 # the direction this may err in.
-_BLOCK_CEILING_EM: tuple = (
+_BLOCK_CEILING_EM: tuple[tuple[int, int, float], ...] = (
     (0x0000, 0x00FF, 1.02),
     (0x0100, 0x01FF, 1.34),
     (0x0200, 0x02FF, 1.04),
@@ -665,7 +665,7 @@ class ChartRendererProtocol(Protocol):
 #: single-wheel chart reading ``Type: Heliocentric Return`` under a title ending
 #: "Lunar Return", and the dual chart's outer grid still labelled Lunar — one
 #: mapping, five places that need it.
-_RETURN_LABELS: dict = {
+_RETURN_LABELS: dict[str, tuple[str, str]] = {
     "Solar": ("solar_return", "Solar Return"),
     "Lunar": ("lunar_return", "Lunar Return"),
     "Heliocentric": ("heliocentric_return", "Heliocentric Return"),
@@ -687,7 +687,7 @@ def _has_visible_text(text: str) -> bool:
     return any(not char.isspace() and unicodedata.category(char) not in ("Cf", "Mn", "Me", "Cc") for char in text)
 
 
-def return_label_keys(subject: object) -> tuple:
+def return_label_keys(subject: object) -> tuple[str, str]:
     """``(translation_key, english_default)`` for *subject*'s return type.
 
     Falls back to the lunar label for anything not in the map, which is what a
@@ -927,19 +927,11 @@ class InfoSectionBuilder:
         day, which is right for calculations that must pick a branch, but here it
         would label a composite that never had a sky as diurnal.
         """
-        if not self.drawer.show_diurnality:
+        if not self.drawer.show_diurnality or not subject_states_a_diurnality(subject):
             return ""
-        # See the docstring: the objection is which Sun, not a missing horizon.
-        if getattr(subject, "perspective_type", None) not in EARTH_CENTRED_PERSPECTIVES:
-            return ""
-
-        is_diurnal = getattr(subject, "is_diurnal", None)
-        if is_diurnal is None:
-            return ""
-
-        if is_diurnal:
-            return self._translate("diurnal", "Diurnal")
-        return self._translate("nocturnal", "Nocturnal")
+        return (
+            self._translate("diurnal", "Diurnal") if subject.is_diurnal else self._translate("nocturnal", "Nocturnal")
+        )
 
     def build_diurnality_info(self, subject) -> str:
         """Build the diurnality line for a single-wheel chart.
@@ -1029,9 +1021,11 @@ class InfoSectionBuilder:
             if not value:
                 continue
             if not _has_visible_text(wheel_name):
-                # See the note below the return: a value with no owner is worse
-                # than no line. One blank name blanks the whole row rather than
-                # leaving the other value to be read as belonging to both.
+                # A value with no owner is worse than no line — it is precisely
+                # the ambiguity the wheel names were added to prevent. One name
+                # with no visible glyph blanks the whole row rather than leaving
+                # the other value to be read as belonging to both. Reachable: the
+                # name is a plain string with no normalisation upstream.
                 return ""
             labelled.append((wheel_name, value))
         if not labelled:
@@ -1071,12 +1065,6 @@ class InfoSectionBuilder:
             for (name, value), width in zip(labelled, natural)
         ]
         return separator.join(parts)
-
-    #: Wheel names are what tell a reader which value belongs to which chart, so
-    #: a value without one is worse than no line at all — which is precisely the
-    #: ambiguity the labels were added to prevent. A subject name of nothing but
-    #: whitespace produces exactly that, and is reachable: the field is a plain
-    #: string with no normalisation upstream.
 
     def build_location_coordinates(
         self,
@@ -5213,8 +5201,12 @@ class ChartDrawer:  # type: ignore[no-redef]
         lunar_phase_y = offsets["lunar_phase"]
         if template_dict.get("bottom_left_5"):
             lunar_phase_y += DIURNALITY_GLYPH_DROP
-        template_dict["lunar_phase_translate_y"] = lunar_phase_y
-        template_dict["bottom_left_translate_y"] = offsets["bottom_left"]
+        # The template field is ``int``; ``offsets["lunar_phase"]`` is a float in
+        # its config default, so coerce here rather than lean on pydantic's lax
+        # coercion. The value is always whole (an integer offset plus an integer
+        # drop), so this rounds nothing away.
+        template_dict["lunar_phase_translate_y"] = int(lunar_phase_y)
+        template_dict["bottom_left_translate_y"] = int(offsets["bottom_left"])
 
         # ---------------------------------------------------------------------
         # SECURITY: Escape user-controlled plain-text fields

@@ -51,6 +51,10 @@ PERSPECTIVE_TRUE_GEOCENTRIC: str = "True Geocentric"
 """Earth-centered view without refraction correction."""
 
 PERSPECTIVE_HELIOCENTRIC: str = "Heliocentric"
+"""Sun-centered view of planetary positions."""
+
+PERSPECTIVE_TOPOCENTRIC: str = "Topocentric"
+"""Observer location-centered view with parallax correction."""
 
 #: The perspectives cast from the Earth, and so the only ones whose Sun is the
 #: Sun ``is_diurnal`` measures. A whitelist rather than a list of exclusions on
@@ -67,11 +71,27 @@ PERSPECTIVE_HELIOCENTRIC: str = "Heliocentric"
 #: field is deliberately independent of both ``zodiac_type`` and
 #: ``perspective_type``, which is what lets a sidereal or draconic chart carry a
 #: meaningful one, and every consumer of it relies on that.
-EARTH_CENTRED_PERSPECTIVES: frozenset = frozenset({"Apparent Geocentric", "True Geocentric", "Topocentric"})
-"""Sun-centered view of planetary positions."""
+EARTH_CENTRED_PERSPECTIVES: frozenset[str] = frozenset(
+    {PERSPECTIVE_APPARENT_GEOCENTRIC, PERSPECTIVE_TRUE_GEOCENTRIC, PERSPECTIVE_TOPOCENTRIC}
+)
 
-PERSPECTIVE_TOPOCENTRIC: str = "Topocentric"
-"""Observer location-centered view with parallax correction."""
+
+def subject_states_a_diurnality(subject: object) -> bool:
+    """Whether *subject*'s ``is_diurnal`` describes the chart drawn for it.
+
+    The single source of truth for a rule the SVG panel and the text report both
+    apply, so the two cannot drift: the value means something only when the chart
+    is cast from the Earth (otherwise the drawn Sun is not the one measured, or
+    there is no Sun at all) and the engine actually produced one (a midpoint
+    composite represents no single sky and leaves it ``None``).
+
+    The chart additionally honours ``ChartDrawer(show_diurnality=False)``, which
+    is a rendering preference rather than a property of the subject, so that gate
+    stays at the call site.
+    """
+    if getattr(subject, "perspective_type", None) not in EARTH_CENTRED_PERSPECTIVES:
+        return False
+    return getattr(subject, "is_diurnal", None) is not None
 
 
 # =============================================================================

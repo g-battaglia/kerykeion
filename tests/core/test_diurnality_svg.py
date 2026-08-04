@@ -430,9 +430,7 @@ class TestDiurnalityOnDualCharts:
         " Nocturnal ·  Nocturnal": two values, neither attached to a chart. Worse
         than no line, so there is no line.
         """
-        row = _row(
-            _render(ChartDataFactory.create_synastry_chart_data(_subject("   "), _subject("  ", hour=23)))
-        )
+        row = _row(_render(ChartDataFactory.create_synastry_chart_data(_subject("   "), _subject("  ", hour=23))))
         assert row == ""
 
     @pytest.mark.parametrize(
@@ -457,9 +455,7 @@ class TestDiurnalityOnDualCharts:
         is what the whitespace guard existed to prevent. A pasted name is far
         likelier to carry a zero-width character than to be nothing but spaces.
         """
-        row = _row(
-            _render(ChartDataFactory.create_synastry_chart_data(_subject(name), _subject("Antonio", hour=23)))
-        )
+        row = _row(_render(ChartDataFactory.create_synastry_chart_data(_subject(name), _subject("Antonio", hour=23))))
         assert row == "", f"{label}: {row!r}"
 
     def test_an_ordinary_name_is_not_caught_by_that(self):

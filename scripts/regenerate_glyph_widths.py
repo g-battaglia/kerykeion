@@ -63,9 +63,14 @@ FIXTURE_RANGES = ESTIMATOR_RANGES + [
     (0xFF00, 0xFF60),  # fullwidth forms
 ]
 
-#: Marks and format characters have no advance of their own — a matra stacks on
-#: the letter before it, a zero-width joiner fuses two code points into one
-#: glyph. Neither table lists them; both consumers skip them.
+#: Excluded from the *measured* table because they have no advance of their own
+#: — a matra stacks on the letter before it, a zero-width joiner fuses two code
+#: points into one glyph. This drops them from ``_MEASURED_EM``; the estimator
+#: then charges them its block ceiling, which over-estimates a soft hyphen (a
+#: ``Cf`` character with 0.333em of real width) at roughly 1em. That is
+#: deliberately safe — the row-width guard may only ever over-estimate — but it
+#: is an over-estimate, not the "skip" an earlier version of this comment claimed
+#: both consumers performed.
 ZERO_WIDTH_CATEGORIES = frozenset({"Mn", "Me", "Cf", "Cc"})
 
 
@@ -100,7 +105,7 @@ def main() -> None:
         buckets[math.ceil(width * 50) / 50].append(chr(code_point))
     lines = [f"    {width:.2f}: {''.join(sorted(chars))!r}," for width, chars in sorted(buckets.items())]
     print(f"_MEASURED_EM: {len(estimator)} characters in {len(buckets)} buckets — paste into chart_drawer.py:\n")
-    print("_MEASURED_EM: dict = {\n" + "\n".join(lines) + "\n}")
+    print("_MEASURED_EM: dict[float, str] = {\n" + "\n".join(lines) + "\n}")
 
     fixture = _widest_advances(fonts, FIXTURE_RANGES)
     target = ROOT / "tests" / "data" / "glyph_advances.json"

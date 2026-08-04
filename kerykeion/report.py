@@ -30,7 +30,7 @@ from kerykeion.settings.config_constants import (
     AXIAL_POINTS,
     LUNAR_NODES,
     MAIN_PLANETS,
-    EARTH_CENTRED_PERSPECTIVES,
+    subject_states_a_diurnality,
 )
 
 
@@ -575,21 +575,12 @@ class ReportGenerator:
         if iso_local:
             birth_data.append(["ISO Local Datetime", iso_local])
 
-        # Whether the Sun stood above or below the horizon. Omitted rather than
-        # guessed wherever it does not apply, on the same two grounds the chart
-        # panel uses: ``None`` on a midpoint composite, which represents no
-        # single sky, and any perspective not cast from the Earth, whose drawn
-        # Sun is not the Sun ``is_diurnal`` measures — absent entirely on a
-        # heliocentric chart, and a different body on a Marscentric one. These
-        # two rules are duplicated in ``InfoSectionBuilder._diurnality_value``
-        # and must be kept in step: a value here that the chart withholds reads
-        # as one of them being broken. (The report has no ``show_diurnality``
-        # equivalent, so a caller who switches the chart's line off does get a
-        # report that still shows it.)
-        is_diurnal = getattr(subject, "is_diurnal", None)
-        earth_centred = getattr(subject, "perspective_type", None) in EARTH_CENTRED_PERSPECTIVES
-        if is_diurnal is not None and earth_centred:
-            birth_data.append(["Diurnality", "Diurnal" if is_diurnal else "Nocturnal"])
+        # Whether the Sun stood above or below the horizon, on the same rule the
+        # chart panel uses — shared as ``subject_states_a_diurnality`` so the two
+        # cannot drift. The report has no ``show_diurnality`` equivalent, so a
+        # caller who switches the chart's line off still gets it here.
+        if subject_states_a_diurnality(subject):
+            birth_data.append(["Diurnality", "Diurnal" if subject.is_diurnal else "Nocturnal"])
 
         settings_data = [["Setting", "Value"]]
         settings_data.append(["Zodiac Type", str(subject.zodiac_type)])
