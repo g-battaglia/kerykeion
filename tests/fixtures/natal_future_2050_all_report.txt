@@ -15,6 +15,7 @@ Future 2050 Subject — Natal Chart Report
 | Timezone           | Asia/Tokyo                |
 | Day of Week        | Wednesday                 |
 | ISO Local Datetime | 2050-07-20T12:00:00+09:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Natal — Settings-----+---------------------+
@@ -43,7 +44,7 @@ Future 2050 Subject — Natal Chart Report
 | Saturn                | Aqu ♒ | 6.20°    | -0.0732°/d   | -19.24° | R    | Fourth House   |
 | Uranus                | Vir ♍ | 17.97°   | +0.0454°/d   | +5.44°  | -    | Eleventh House |
 | Neptune               | Tau ♉ | 27.90°   | +0.0221°/d   | +18.04° | -    | Eighth House   |
-| Pluto                 | Pis ♓ | 10.39°   | -0.0144°/d   | -19.87° | R    | Fifth House    |
+| Pluto                 | Pis ♓ | 10.39°   | -0.0143°/d   | -19.87° | R    | Fifth House    |
 | Mean North Lunar Node | Sco ♏ | 17.38°   | -0.0530°/d   | -17.02° | R    | First House    |
 | True North Lunar Node | Sco ♏ | 18.28°   | -0.2080°/d   | -17.27° | R    | First House    |
 | Mean Lilith           | Vir ♍ | 10.24°   | +0.1119°/d   | +3.33°  | -    | Eleventh House |

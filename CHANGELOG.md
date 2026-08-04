@@ -2,6 +2,135 @@
 
 ## [Unreleased]
 
+## 6.0.0a78 - 2026-08-05
+
+### Added
+
+- Charts now report their **diurnality** — whether the Sun stood above the
+  horizon or below it — on a sixth line of the bottom-left info panel, reading
+  `Diurnality: Diurnal` or `Diurnality: Nocturnal`. The value has always been on
+  the subject as `is_diurnal`, computed from the Sun's true geometric altitude
+  and therefore correct for sidereal and heliocentric charts and at polar
+  latitudes; until now nothing drew it. The same line was added to the text
+  report. The wording is deliberately descriptive rather than doctrinal: where
+  the Sun was is an observation every tradition shares, while "sect" is one
+  tradition's name for what follows from it and does not belong in a neutral
+  info panel.
+  - Two-wheel charts report both wheels, because diurnality belongs to a single
+    chart and the same placement reads differently under each: a transit shows
+    `Natal Nocturnal · Transit Diurnal`, a synastry names both subjects
+    (shortened, like every other name in that panel). A bare value on a biwheel
+    would be worse than no line, since the reader could not tell which chart it
+    described. That row carries no `Diurnality:` heading. The reason is the
+    budget rather than the total: the row has about 228px of clear width, the
+    values and separator are fixed, and what is left is shared between the two
+    wheel names — so a heading would not overflow the row, it would come
+    straight out of the names. (Measured with `estimate_text_width`, the headed
+    English form is 196px and fits; nine of the ten shipped languages do, Hindi
+    being the exception at 314px. An earlier draft of this entry said it did not
+    fit, which was checkably wrong.) The names are cut to that width rather than to
+    a character count, since eight ideographs are twice the width of eight Latin
+    letters: `kerykeion.charts.glyph_metrics.estimate_text_width` is the public
+    entry point (re-exported from `chart_drawer` for convenience). Note this is
+    *not* what sizes the planet grid, the legend or the auto-size canvas —
+    `ChartDrawer._estimate_text_width` still uses its own 0.7-of-the-em average
+    there. Pointing that at the measured table is a layout change (28 baselines
+    move — 27 under `tests/data/svg` plus the gallery's transit chart, and none
+    under `docs/charts` — one canvas from 1244px to 1177px) and belongs in a change about grid
+    geometry, not in this one. It charges each character the widest advance that character has
+    across Times, Helvetica and Arial Unicode, rounded up, so it reads at or
+    above what those three render. Regenerate the table with
+    `poe regenerate:glyph-widths` if the reference set changes. Known residual,
+    since the panel names no font-family: under a CJK system font the
+    Ambiguous-width characters — Cyrillic, Greek, the middot — render full-width,
+    wider than any of the three reference faces.
+  - The line is omitted, not guessed, on every perspective not cast from the
+    Earth — eight of the eleven, of which seven draw a Sun that is not the one
+    measured and one (heliocentric) draws none at all. `is_diurnal` comes from a tropical *geocentric*
+    Sun, so a Marscentric or Selenocentric chart draws a Sun that is not the one
+    measured: on a Liverpool nativity the measured Sun is at 196° while the
+    Marscentric wheel draws 354°, and the panel was asserting "Nocturnal" one row
+    under `Perspective: Marscentric`. Apparent Geocentric, True Geocentric and
+    Topocentric keep the line — they differ by parallax and aberration, never by
+    a hemisphere.
+  - The line is omitted, not guessed, where it has no referent: a heliocentric
+    chart excludes the Sun (it is the centre body), and a midpoint composite
+    represents no single sky (`is_diurnal` is `None`). Note a heliocentric chart
+    does still have an Ascendant and houses — the objection is the missing Sun,
+    not a missing horizon. Note that `resolve_sect_is_diurnal`
+    defaults a missing value to day, which is right for calculations that must
+    pick a branch but would mislabel a composite here.
+  - `ChartDrawer(..., show_diurnality=False)` omits it entirely. Nothing shifts
+    to accommodate the line — the rows below the wheel's centre get wider the
+    lower they sit, and the new one lands in the widest band of the six. Only the
+    moon glyph moves, dropping 14px out of its way, and only when a line was
+    actually produced. Heliocentric charts and midpoint composites therefore keep
+    the previous layout too, as does any caller who opts out.
+  - New translation keys `diurnality`, `diurnal` and `nocturnal` in all ten
+    shipped languages, plus `heliocentric_return` and `node_return` for the
+    mislabelled return types under *Fixed* — five keys, all with English
+    defaults so an older third-party pack still validates.
+
+### Changed
+
+- **Breaking for direct constructors of `ChartTemplateModel`:** the new panel row
+  adds a required field, `bottom_left_5`. The model is public, so code building
+  one by hand now raises a pydantic `missing` error until it supplies the key.
+  Required rather than defaulted on purpose, and the opposite call from the
+  language keys above: a language pack is written by a third party against a
+  released version and cannot be fixed retroactively, whereas this model is
+  filled in by a renderer in this repository — a renderer that forgets the row
+  should fail loudly at validation rather than silently draw a chart with a
+  blank line where the value belongs. Callers using `ChartDrawer` are unaffected.
+- `uv.lock` no longer carries `[options] prerelease-mode = "allow"`. Not a
+  deliberate policy change: the block came from a `--prerelease` flag passed at
+  lock time, `pyproject.toml` declares no `[tool.uv]` section, and current uv
+  writes the lock without it — which is also what makes `uv lock --check` pass
+  here and fail on the previous release. Verified inert: the lock resolves the
+  same 58 packages at the same versions, the only difference being kerykeion's
+  own bump. The `libephemeris==3.0.0rc15` pin is explicit, so the default
+  `if-necessary-or-explicit` mode still admits it.
+
+### Fixed
+
+- Heliocentric returns and lunar node crossings announced themselves as **"Lunar
+  Return"** in the chart's Type line — and, once the diurnality row shipped, on
+  that row too — contradicting the `return_type` in the same response. The label
+  was a Solar/else-Lunar binary written when those two return types did not
+  exist; it is now a map over all four — and over every heading and filename,
+  not just the Type line: the chart title, the dual chart's outer planet grid and its
+  house-comparison width estimators were four further copies of the same binary,
+  so a heliocentric return read `Type: Heliocentric Return` under a title ending
+  "Lunar Return". Two more turned up after that: the default filename suffix,
+  where a heliocentric and a node return for one subject collided on the same
+  name and the second overwrote the first, and the Italian `return_aspects`
+  heading, which hardcoded "Ritorno Solare" on the aspect grid of every return
+  type — nine of the ten packs were already generic, so an English-only check
+  could not see it. The text report reuses the same mapping now too, rather than
+  deriving "Lunar Node Crossing" where the chart says "Node Return". Two of the four `ReturnType` values
+  carried the wrong label — which downstream is most of what gets asked for:
+  Astrologer Studio's return picker offers eight bodies, six of which route to
+  one of those two. The mapping reads `return_type` by duck-typing: an
+  `isinstance` gate on `PlanetReturnModel` had reinstated the very binary this
+  entry describes, discarding the declared type of anything else and labelling it
+  Lunar — reachable through `kerykeion.report`, which reads subjects with
+  `getattr` by design. A type the map does not know now yields the neutral
+  `Return` — the key every pack already ships (`Ritorno`, `Rückkehr`, `回归`) and
+  which the house-comparison grid already renders — rather than borrowing the
+  lunar label. An unhashable `return_type` is treated as absent instead of
+  raising: widening the read to duck-typed subjects had made a list or a dict a
+  `TypeError` where the old code returned a label. Caught from the lookup rather
+  than screened with `isinstance(str)`, so a `UserString` or a lazy-translation
+  proxy — which hash and compare equal to `str` without subclassing it — still
+  match the map. (A `str`-mixin enum resolves too, but it always did: it is a
+  `str` subclass, so it satisfied the screen as readily as the fix.)
+- Never shipped in this state, recorded because the reasoning is worth keeping:
+  the five new translation keys were first declared **required** on
+  `KerykeionLanguageModel`, which would have rejected every third-party language
+  pack written against an earlier release with a pydantic `missing` error, and
+  its author could not have fixed a release already out. All five carry English
+  defaults, as the sixteen keys added before them do.
+
 ## 6.0.0a77 - 2026-07-21
 
 ### Fixed

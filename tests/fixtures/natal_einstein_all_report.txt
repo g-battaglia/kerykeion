@@ -15,6 +15,7 @@ Einstein Subject — Natal Chart Report
 | Timezone           | Europe/Berlin                |
 | Day of Week        | Friday                       |
 | ISO Local Datetime | 1879-03-14T11:30:00+00:39:57 |
+| Diurnality         | Diurnal                      |
 +--------------------+------------------------------+
 
 +Natal — Settings-----+---------------------+

@@ -50,6 +50,7 @@ Alice — Subject Report
 | Timezone           | Europe/London             |
 | Day of Week        | Friday                    |
 | ISO Local Datetime | 1990-06-15T12:00:00+01:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Astrological Subject — Settings------------+

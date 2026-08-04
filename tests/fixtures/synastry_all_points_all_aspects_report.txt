@@ -15,6 +15,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Timezone           | Europe/London             |
 | Day of Week        | Saturday                  |
 | ISO Local Datetime | 1990-07-21T14:45:00+01:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +First Subject — Settings-------------------+
@@ -40,6 +41,7 @@ Sample Natal Subject & Yoko Ono — Synastry Report
 | Timezone           | Asia/Tokyo                |
 | Day of Week        | Saturday                  |
 | ISO Local Datetime | 1933-02-18T20:30:00+09:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Second Subject — Settings------------------+

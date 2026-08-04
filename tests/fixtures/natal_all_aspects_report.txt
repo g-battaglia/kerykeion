@@ -15,6 +15,7 @@ Sample Natal Subject — Natal Chart Report
 | Timezone           | Europe/London             |
 | Day of Week        | Saturday                  |
 | ISO Local Datetime | 1990-07-21T14:45:00+01:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Natal — Settings-----+---------------------+

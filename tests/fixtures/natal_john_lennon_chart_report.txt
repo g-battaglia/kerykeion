@@ -15,6 +15,7 @@ John Lennon — Natal Chart Report
 | Timezone           | Europe/London             |
 | Day of Week        | Wednesday                 |
 | ISO Local Datetime | 1940-10-09T18:30:00+01:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Natal — Settings-----+---------------------+

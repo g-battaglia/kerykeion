@@ -15,6 +15,7 @@ Quito Subject — Natal Chart Report
 | Timezone           | America/Guayaquil         |
 | Day of Week        | Friday                    |
 | ISO Local Datetime | 1990-06-15T12:00:00-05:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Natal — Settings-----+---------------------+
@@ -39,7 +40,7 @@ Quito Subject — Natal Chart Report
 | Mercury               | Gem ♊ | 6.05°    | +1.7255°/d   | +19.72° | -    | Ninth House    |
 | Venus                 | Tau ♉ | 19.02°   | +1.1762°/d   | +15.61° | -    | Eighth House   |
 | Mars                  | Ari ♈ | 11.19°   | +0.7187°/d   | +2.60°  | -    | Seventh House  |
-| Jupiter               | Can ♋ | 15.93°   | +0.2167°/d   | +22.68° | -    | Tenth House    |
+| Jupiter               | Can ♋ | 15.93°   | +0.2168°/d   | +22.68° | -    | Tenth House    |
 | Saturn                | Cap ♑ | 24.02°   | -0.0588°/d   | -21.19° | R    | Fifth House    |
 | Uranus                | Cap ♑ | 8.16°    | -0.0390°/d   | -23.51° | R    | Fourth House   |
 | Neptune               | Cap ♑ | 13.71°   | -0.0251°/d   | -21.86° | R    | Fourth House   |

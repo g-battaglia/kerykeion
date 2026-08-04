@@ -15,6 +15,7 @@ Johnny Depp — Solar Return Comparison 2024
 | Timezone           | America/Chicago           |
 | Day of Week        | Sunday                    |
 | ISO Local Datetime | 1963-06-09T00:00:00-05:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Natal Subject — Settings-------------------+
@@ -39,6 +40,7 @@ Johnny Depp — Solar Return Comparison 2024
 | Timezone           | America/Chicago           |
 | Day of Week        | Friday                    |
 | ISO Local Datetime | 2024-06-07T17:50:54-05:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Return Subject — Settings------------------+

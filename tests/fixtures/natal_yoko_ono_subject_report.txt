@@ -15,6 +15,7 @@ Yoko Ono — Subject Report
 | Timezone           | Asia/Tokyo                |
 | Day of Week        | Saturday                  |
 | ISO Local Datetime | 1933-02-18T20:30:00+09:00 |
+| Diurnality         | Nocturnal                 |
 +--------------------+---------------------------+
 
 +Astrological Subject — Settings------------+

@@ -15,6 +15,7 @@ and reduces the risk of typos.
 """
 
 import os
+import unicodedata
 
 from typing import cast
 
@@ -55,6 +56,112 @@ PERSPECTIVE_HELIOCENTRIC: str = "Heliocentric"
 
 PERSPECTIVE_TOPOCENTRIC: str = "Topocentric"
 """Observer location-centered view with parallax correction."""
+
+#: The perspectives cast from the Earth, and so the only ones whose Sun is the
+#: Sun ``is_diurnal`` measures. A whitelist rather than a list of exclusions on
+#: purpose: a perspective added upstream should default to *not* claiming a
+#: day/night, since asserting one about the wrong body is worse than omitting it.
+#: Topocentric and True Geocentric differ from Apparent Geocentric by parallax
+#: and aberration — under a hundredth of a degree for the Sun, so the two agree
+#: on which side of the horizon it is at every minute of a sampled day.
+#:
+#: KNOWN LIMIT, not fixed: within the few seconds either side of the horizon
+#: crossing itself, an offset that small is the whole distance, so the value and
+#: a perspective-specific altitude can disagree. Making ``is_diurnal``
+#: perspective-dependent would fix that and cost more than it is worth — the
+#: field is deliberately independent of both ``zodiac_type`` and
+#: ``perspective_type``, which is what lets a sidereal or draconic chart carry a
+#: meaningful one, and every consumer of it relies on that.
+EARTH_CENTRED_PERSPECTIVES: frozenset[str] = frozenset(
+    {PERSPECTIVE_APPARENT_GEOCENTRIC, PERSPECTIVE_TRUE_GEOCENTRIC, PERSPECTIVE_TOPOCENTRIC}
+)
+
+
+#: Translation key and English default per ``ReturnType``.
+#:
+#: A mapping rather than a Solar/else binary, which is what every one of these
+#: call sites was: ``Heliocentric`` and ``Lunar_Node_Crossing`` are both valid
+#: return types and both rendered as "Lunar Return". Fixing only the panel left a
+#: single-wheel chart reading ``Type: Heliocentric Return`` under a title ending
+#: "Lunar Return", and the dual chart's outer grid still labelled Lunar — one
+#: mapping, five places that need it.
+_RETURN_LABELS: dict[str, tuple[str, str]] = {
+    "Solar": ("solar_return", "Solar Return"),
+    "Lunar": ("lunar_return", "Lunar Return"),
+    "Heliocentric": ("heliocentric_return", "Heliocentric Return"),
+    "Lunar_Node_Crossing": ("node_return", "Node Return"),
+}
+
+
+def has_visible_text(text: str) -> bool:
+    """Does *text* put any ink on the page?
+
+    ``str.strip()`` is not enough, and the difference is reachable: it does not
+    remove the zero-width space, the joiners, the bidi marks, the word joiner,
+    the soft hyphen, or a lone combining mark. A wheel name of one zero-width
+    space rendered a row reading "\u200b Nocturnal \u00b7 Antonio Nocturnal" — a
+    value with no owner, exactly what the whitespace guard was written to
+    prevent, and a pasted name is far likelier to carry a zero-width character
+    than to consist only of spaces.
+    """
+    return any(not char.isspace() and unicodedata.category(char) not in ("Cf", "Mn", "Me", "Cc") for char in text)
+
+
+def return_label_keys(subject: object) -> tuple[str, str]:
+    """``(translation_key, english_default)`` for *subject*'s return type.
+
+    Read with :func:`getattr` rather than behind an ``isinstance`` gate. The gate
+    looked like type hygiene and was a Solar/else binary in disguise: it fed
+    ``None`` for every subject that was not a :class:`PlanetReturnModel`, so a
+    duck-typed subject *declaring* ``return_type="Solar"`` came out labelled
+    "Lunar Return" — the very substitution this mapping exists to end, on the one
+    input :mod:`kerykeion.report` documents as supported.
+
+    Anything the map does not know falls through to the neutral ``Return``
+    instead of borrowing the lunar label: a `PlanetReturnModel` always carries
+    one of the four keyed types, so this arm is reached only by a duck-typed
+    subject or by a ``ReturnType`` added upstream without a label here, and
+    naming the wrong body confidently is worse than naming none.
+
+    ``Return`` is the key every language pack already ships — `Ritorno`,
+    `Rückkehr`, `回归` — and which the house-comparison grid already renders in
+    the same drawing. A first version of this invented a lowercase ``return``
+    instead, which no pack has and none ever could: the packs are dumped from
+    :class:`KerykeionLanguageModel`, and ``return`` is a Python keyword, so it
+    cannot be a field and is dropped even when a caller passes it. That would
+    have printed English "Return" beside an Italian "Ritorno" in one SVG.
+
+    ``getattr`` promises nothing about the value, and an unhashable one — a list,
+    a dict — raised ``TypeError`` out of the lookup where the old gate returned a
+    label. Caught rather than pre-screened with ``isinstance(str)``: that screen
+    was written first and quietly narrowed the input class this function had just
+    been widened to serve. A ``UserString``, or any lazy-translation proxy that
+    hashes and compares equal to :class:`str` without subclassing it, matches the
+    map perfectly well; only the lookup itself knows what it can accept.
+    """
+    return_type = getattr(subject, "return_type", None)
+    try:
+        return _RETURN_LABELS.get(return_type or "", ("Return", "Return"))
+    except TypeError:
+        return ("Return", "Return")
+
+
+def subject_states_a_diurnality(subject: object) -> bool:
+    """Whether *subject*'s ``is_diurnal`` describes the chart drawn for it.
+
+    The single source of truth for a rule the SVG panel and the text report both
+    apply, so the two cannot drift: the value means something only when the chart
+    is cast from the Earth (otherwise the drawn Sun is not the one measured, or
+    there is no Sun at all) and the engine actually produced one (a midpoint
+    composite represents no single sky and leaves it ``None``).
+
+    The chart additionally honours ``ChartDrawer(show_diurnality=False)``, which
+    is a rendering preference rather than a property of the subject, so that gate
+    stays at the call site.
+    """
+    if getattr(subject, "perspective_type", None) not in EARTH_CENTRED_PERSPECTIVES:
+        return False
+    return getattr(subject, "is_diurnal", None) is not None
 
 
 # =============================================================================

@@ -6,7 +6,6 @@ Integrates all cases from tests/settings/test_settings.py plus
 settings-related edge cases from tests/edge_cases/test_edge_cases.py.
 """
 
-
 import pytest
 
 from kerykeion.settings.kerykeion_settings import load_settings_mapping, _deep_merge
@@ -124,6 +123,7 @@ class TestLoadLanguagePair:
         assert selected == en
         assert selected["info"] == "Info"
         from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
+
         assert selected is not LANGUAGE_SETTINGS["EN"]
         assert en is not LANGUAGE_SETTINGS["EN"]
 
@@ -214,10 +214,7 @@ class TestGetTranslations:
         # the fallback_dict wins over the built-in EN defaults and the default arg.
         primary = {"info": "Solo primario"}
         fallback = {"transit": "Dal fallback"}
-        assert (
-            get_translations("transit", "default", language_dict=primary, fallback_dict=fallback)
-            == "Dal fallback"
-        )
+        assert get_translations("transit", "default", language_dict=primary, fallback_dict=fallback) == "Dal fallback"
 
     def test_fallback_dict_primary_takes_precedence(self):
         # When the key exists in the primary dict, fallback_dict is never consulted.
@@ -241,10 +238,7 @@ class TestGetTranslations:
         # defer to the explicit fallback_dict, not short-circuit to the default arg.
         primary = {"transit": None}
         fallback = {"transit": "Dal fallback"}
-        assert (
-            get_translations("transit", "default", language_dict=primary, fallback_dict=fallback)
-            == "Dal fallback"
-        )
+        assert get_translations("transit", "default", language_dict=primary, fallback_dict=fallback) == "Dal fallback"
 
     def test_none_in_primary_falls_through_to_en_defaults(self):
         # When neither the primary nor the fallback_dict provide the key (primary
@@ -314,6 +308,13 @@ class TestDeepMerge:
 # =============================================================================
 
 
+#: The keys this change added, in the order their English defaults are asserted.
+#: Named once so the "a pack may omit it" test and the "a shipped pack may not"
+#: test cannot cover different subsets — they did, and the two that only the
+#: first one covered were the two nobody had noticed were new.
+_KEYS_ADDED_HERE = ("diurnality", "diurnal", "nocturnal", "heliocentric_return", "node_return")
+
+
 class TestKerykeionLanguageModelRoundTrip:
     """The Pydantic language model must not silently drop render-time keys.
 
@@ -340,6 +341,44 @@ class TestKerykeionLanguageModelRoundTrip:
                 f"{language}: {key!r} lost in model_dump() round-trip "
                 f"(expected {source[key]!r}, got {dumped.get(key)!r})"
             )
+
+    def test_a_pack_written_before_a_key_existed_still_validates(self):
+        """Adding a key must not invalidate every third-party language pack.
+
+        A pack is a plain dict handed to ``KerykeionLanguageModel``. Declaring a
+        new key as required rejects every pack written before it existed, with a
+        pydantic ``missing`` error rather than a fallback — and there is nothing
+        the pack's author can do about a release that has already shipped. The
+        sixteen keys added before these five all carry English defaults for
+        exactly this reason; this test is what keeps the rest honest.
+        """
+        pack = dict(LANGUAGE_SETTINGS["EN"])
+        for key in _KEYS_ADDED_HERE:
+            pack.pop(key)
+        model = KerykeionLanguageModel(**pack)
+        assert [getattr(model, key) for key in _KEYS_ADDED_HERE] == [
+            "Diurnality",
+            "Diurnal",
+            "Nocturnal",
+            "Heliocentric Return",
+            "Node Return",
+        ]
+
+    @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
+    def test_a_shipped_language_never_falls_back_to_those_defaults(self, language):
+        """The defaults above are a compatibility shim, not a translation.
+
+        Every language kerykeion ships must carry its own value for each, or a
+        locale would silently render English while the test above stayed green.
+
+        Covering all five and not just the three named for this feature:
+        `heliocentric_return` and `node_return` were added by the same change and
+        carry English defaults for the same reason, so leaving them out would
+        have let a pack ship without them under a test that reads as complete.
+        """
+        source = LANGUAGE_SETTINGS[language]
+        for key in _KEYS_ADDED_HERE:
+            assert source.get(key), f"{language} is missing the {key!r} translation"
 
     def test_transit_chart_svg_uses_localized_cusp_label(self):
         """End-to-end: a DE transit chart renders 'Transit-Cusp', not the English default."""

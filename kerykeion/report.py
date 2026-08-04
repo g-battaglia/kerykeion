@@ -26,7 +26,13 @@ from kerykeion.schemas.kr_models import (
     SingleChartDataModel,
     KerykeionPointModel,
 )
-from kerykeion.settings.config_constants import AXIAL_POINTS, LUNAR_NODES, MAIN_PLANETS
+from kerykeion.settings.config_constants import (
+    AXIAL_POINTS,
+    LUNAR_NODES,
+    MAIN_PLANETS,
+    return_label_keys,
+    subject_states_a_diurnality,
+)
 
 
 # Keys must match the ``AspectName`` literal values in kerykeion.schemas.kr_literals.
@@ -94,14 +100,20 @@ def _sign_emoji(emoji: str) -> str:
 def _return_type_label(subject: object) -> str:
     """Human label for a return subject's return_type.
 
-    Derived from the actual value — the old Solar/else-Lunar binary titled
-    Heliocentric and Lunar_Node_Crossing returns as "Lunar Return".
+    Reuses the chart panel's mapping rather than deriving its own. Deriving from
+    the enum agreed on three of the four types and produced "Lunar Node Crossing"
+    where the chart says "Node Return" — the same chart, two names, depending on
+    which surface the reader is looking at. The report has no i18n, so it takes
+    the English defaults.
+
+    No local guard for the missing or empty case: the mapping now falls through
+    to the neutral "Return" itself. This function used to repeat that rule, and
+    the copy quietly stopped agreeing — the mapping was returning the *lunar*
+    label for a duck-typed subject, so the check here only looked like it was
+    covering the case it named. One rule, one place, is what keeps it true.
     """
-    return_type = getattr(subject, "return_type", None)
-    if not return_type:
-        return "Return"
-    label = _humanize(str(return_type))
-    return label if "Return" in label or "Crossing" in label else f"{label} Return"
+    _, english_label = return_label_keys(subject)
+    return english_label
 
 
 class ReportGenerator:
@@ -566,6 +578,13 @@ class ReportGenerator:
         if iso_local:
             birth_data.append(["ISO Local Datetime", iso_local])
 
+        # Whether the Sun stood above or below the horizon, on the same rule the
+        # chart panel uses — shared as ``subject_states_a_diurnality`` so the two
+        # cannot drift. The report has no ``show_diurnality`` equivalent, so a
+        # caller who switches the chart's line off still gets it here.
+        if subject_states_a_diurnality(subject):
+            birth_data.append(["Diurnality", "Diurnal" if subject.is_diurnal else "Nocturnal"])
+
         settings_data = [["Setting", "Value"]]
         settings_data.append(["Zodiac Type", str(subject.zodiac_type)])
         if getattr(subject, "sidereal_mode", None):
@@ -690,9 +709,7 @@ class ReportGenerator:
 
         # Effective, so the houses table title cannot disagree with the
         # settings row above it in the same report.
-        system_name = getattr(subject, "effective_houses_system_name", "") or getattr(
-            subject, "houses_system_name", ""
-        )
+        system_name = getattr(subject, "effective_houses_system_name", "") or getattr(subject, "houses_system_name", "")
         table_title = f"{title} ({system_name})" if system_name else title
         return AsciiTable(houses_data, title=table_title).table
 

@@ -15,6 +15,7 @@ Tokyo Subject — Natal Chart Report
 | Timezone           | Asia/Tokyo                |
 | Day of Week        | Friday                    |
 | ISO Local Datetime | 1990-06-15T12:00:00+09:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Natal — Settings-----+---------------------+
