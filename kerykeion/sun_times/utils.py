@@ -8,8 +8,10 @@ refraction — is delegated to the well-tested
 the active ephemeris backend's ``rise_trans`` routine. This module adds the thin
 layer on top: timezone/Julian-Day bookkeeping, solar noon, day length, the polar
 day / polar night discriminator, and civil/nautical/astronomical twilight. No
-full astrological subject is built, so the computation stays cheap: two
-``rise_trans`` calls for sunrise/sunset (plus one position lookup) and up to six
+full astrological subject is built, so the computation stays cheap: three
+``rise_trans`` calls for sunrise, sunset and the meridian transit (plus one
+position lookup, and a fourth rise/set call on the transition days that need a
+paired sunset re-searched) and up to six
 more for the twilight crossings.
 """
 
@@ -290,7 +292,8 @@ def _civil_day_bounds(year: int, month: int, day: int, tz: ZoneInfo) -> tuple[fl
 def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     """Classify a no-rise/no-set day as polar day or polar night.
 
-    Uses the same apparent upper-limb horizon convention as Swiss Ephemeris
+    Uses the TEXTBOOK apparent upper-limb horizon convention, which is deliberately
+    not quite the one used by Swiss Ephemeris
     rise/set searches. Refraction and the Sun's semidiameter put the apparent
     sunrise/sunset threshold near -0.833 degrees for the Sun's center.
 

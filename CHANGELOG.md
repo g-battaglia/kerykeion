@@ -22,6 +22,19 @@
     stays `None` there, since there is no pair to measure.
   - `MoonPhaseSunInfoModel.solar_noon` moved with it, and stays in the subject's
     local timezone as before.
+  - **New contract, stated because it is a real regression for one case class.**
+    The transit is now searched independently from local midnight instead of
+    being derived from the pair, so `sunrise < solar_noon < sunset` is no longer
+    guaranteed. It holds for every location whose timezone matches its longitude
+    (0 violations in 300 matched city/zone samples), and fails when they do not:
+    65 of 300 random lat/lon/zone triples, 75 of 300 with `tz_str="UTC"` at
+    arbitrary longitudes. Measured worst case: 62.71 N / 121.43 E under UTC
+    reports a solar noon 15 hours BEFORE its sunrise, because the two belong to
+    different solar days. The old midpoint was inside the window by construction
+    and was, for this class alone, better. Both the library API and
+    `/api/v6/sun-times` accept latitude, longitude and timezone as an
+    unvalidated triple, so it is reachable — pass a timezone that belongs to the
+    longitude and it cannot occur.
 
 ### Added
 
@@ -73,15 +86,28 @@
 
   What the fixtures show directly: **exactly eleven points changed position** —
   the eight Uranian points, White Moon, mean Lilith and mean Priapus, every one
-  analytically modelled. No planet, angle or cusp changed POSITION. Angle
-  *speeds* did, in 80 cells (`ascmc_speed` comes from `houses_ex2`, and the
-  parity front excludes cusp and angle speed by design, so the campaign could
-  not have seen it): Ascendant and Medium Coeli move by about 0.002 °/day, five
-  parts per million. Two knock-on effects are worth naming rather than leaving
-  to be discovered: one report gains an aspect row (`Pallas sesquiquadrate
-  Poseidon`, an orb-boundary crossing) and three Zeus aspects flip their
-  Movement column to `Static` as its speed crosses the 0.001 °/day display
-  floor.
+  analytically modelled. No planet, angle or cusp changed POSITION.
+
+  SPEEDS did, and this is where a first correction of this entry was itself
+  wrong — it said 80 cells, which is the number of (fixture, angle) pairs, not
+  of table cells; dual charts carry the same angle two or three times per file.
+  Counted properly: **104 angle-speed cells** (Ascendant 37, Medium Coeli 37,
+  Descendant 15, Imum Coeli 15) across 28 fixtures, plus **122 non-angle speed
+  cells** — the Uranian points and, not previously named anywhere,
+  True Lilith 12, True Priapus 12 and Interpolated Perigee 11 — and
+  **17 declination cells**. `ascmc_speed` comes from `houses_ex2`; the parity
+  front excludes cusp and angle speed by design, so the campaign could not have
+  seen any of it.
+
+  Magnitudes: the scale-free figure is **five parts per million** (5.15–5.74 over
+  all 104 cells). In absolute terms the MC and IC move about 0.002 °/day; the
+  Ascendant's median is 0.0016 with a worst case of 0.0046, so "about 0.002" is
+  right for two of the four angles and loose for the other two.
+
+  Two knock-on effects worth naming rather than leaving to be discovered: one
+  report gains an aspect row (`Pallas sesquiquadrate Poseidon`, an orb-boundary
+  crossing) and three Zeus aspects flip their Movement column to `Static` as its
+  speed crosses the 0.001 °/day display floor.
 
 ### Documentation
 

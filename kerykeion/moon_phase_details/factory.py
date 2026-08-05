@@ -226,12 +226,18 @@ def _build_upcoming_phases(
 
 def _compute_sun_times(
     subject: AstrologicalSubjectModel,
-) -> Optional[tuple[datetime, datetime, Optional[datetime]]]:
+) -> Optional[tuple[Optional[datetime], Optional[datetime], Optional[datetime]]]:
     """
     Compute sunrise, sunset and solar noon as local datetimes.
 
     Uses the backend's `rise_trans` (via `compute_sun_rise_set_ephe` and
     `compute_sun_transit_ephe`) for the subject's local civil day.
+
+    Returns ``None`` only when the location or timezone cannot be resolved at
+    all. Otherwise a 3-tuple, in which the first two elements are ``None`` on a
+    polar day or night — there is no rise/set pair — while the third can still
+    carry the meridian transit. Callers must test the elements, not the tuple:
+    ``(None, None, None)`` is reachable and truthy.
 
     Solar noon is returned from here rather than derived by the caller because
     it needs `jd_midnight`, which only exists inside this function: deriving it
