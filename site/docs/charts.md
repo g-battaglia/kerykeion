@@ -153,9 +153,9 @@ drawer = ChartDrawer(return_data)
 
 Kerykeion supports two visual styles for chart rendering.
 
-### Classic (Default)
+### Modern (Default)
 
-The traditional astrological wheel layout with concentric rings for signs, houses, and planets.
+A concentric-ring layout with graduated ruler scales, aspect lines with midpoint glyphs, and a cleaner visual hierarchy. Supports all chart types (single and dual wheel). Since v6 this is the default style — a render without a `style` argument produces the modern layout.
 
 ```python
 from pathlib import Path
@@ -163,16 +163,8 @@ from pathlib import Path
 output_path = Path("charts_output")
 output_path.mkdir(exist_ok=True)
 
-drawer.save_svg(output_path, filename="chart", style="classic")
-```
-
-### Modern
-
-A concentric-ring layout with graduated ruler scales, aspect lines with midpoint glyphs, and a cleaner visual hierarchy. Supports all chart types (single and dual wheel).
-
-```python
-drawer.save_svg(output_path, filename="chart", style="modern")
-drawer.save_wheel_only_svg_file(output_path, filename="wheel", style="modern")
+drawer.save_svg(output_path, filename="chart")  # modern by default
+drawer.save_wheel_only_svg_file(output_path, filename="wheel")
 ```
 
 **Modern-only parameters** (keyword arguments, ignored by the classic style):
@@ -180,6 +172,17 @@ drawer.save_wheel_only_svg_file(output_path, filename="wheel", style="modern")
 | Parameter                    | Type   | Default | Description                                                    |
 | :--------------------------- | :----- | :------ | :------------------------------------------------------------- |
 | `show_zodiac_background_ring`| `bool` | `True`  | Draw colored zodiac wedges behind the outer planet ring.       |
+
+### Classic
+
+The traditional astrological wheel layout with concentric rings for signs, houses, and planets.
+
+```python
+drawer.save_svg(output_path, filename="chart", style="classic")
+drawer.save_wheel_only_svg_file(output_path, filename="wheel", style="classic")
+```
+
+The classic-only options `external_view`, `show_degree_indicators` and `show_aspect_icons` only take effect with `style="classic"`; the modern renderer ignores them and logs a warning.
 
 Since v5.12, `style` and `show_zodiac_background_ring` can also be set on the `ChartDrawer` constructor as per-instance defaults. Per-render overrides via the render methods still work.
 
@@ -259,7 +262,7 @@ drawer.save_aspect_grid_only_svg_file(output_dir, filename="grid_only")
 | `double_chart_aspect_grid_type` | `"list"`, `"table"`      | `"list"`     | Grid style for Synastry/Transit.            |
 | `auto_size`                     | `bool`                   | `True`       | Automatically adjust chart dimensions.      |
 | `padding`                       | `int`                    | `20`         | Padding around the SVG content.             |
-| `style`                         | `KerykeionChartStyle`    | `"classic"`  | Chart wheel layout ("classic" or "modern"). Per-instance default for all render calls. |
+| `style`                         | `KerykeionChartStyle`    | `"modern"`   | Chart wheel layout ("modern" or "classic"). Per-instance default for all render calls. |
 | `show_zodiac_background_ring`   | `bool`                   | `True`       | Show colored zodiac wedges (modern style only). Per-instance default for all render calls. |
 | `show_diurnality`               | `bool`                   | `True`       | Print the chart's diurnality (Sun above or below the horizon) in the info panel. |
 | `show_house_position_comparison`| `bool`                   | `True`       | Render the house position comparison grid (dual charts). |
@@ -278,7 +281,7 @@ All render/save methods accept `minify` and `remove_css_variables`. The full-cha
 | `minify`               | `bool` | `False` | Minify the SVG output (remove whitespace/comments).          |
 | `remove_css_variables`  | `bool` | `False` | Inline all CSS variables for broader SVG viewer compatibility. |
 | `custom_title`         | `Optional[str]` | `None` | Override the chart title (full chart methods only).   |
-| `style`                | `KerykeionChartStyle` | chart default | Per-call style override (e.g. `"modern"`).   |
+| `style`                | `KerykeionChartStyle` | chart default | Per-call style override (e.g. `"classic"`).  |
 | `show_zodiac_background_ring` | `bool` | chart default | Per-call toggle for the zodiac background ring. |
 
 - `save_svg(output_path, filename, minify, remove_css_variables, *, custom_title, style, show_zodiac_background_ring) -> None`

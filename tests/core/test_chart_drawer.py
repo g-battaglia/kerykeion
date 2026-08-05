@@ -665,23 +665,23 @@ class TestNatalChart:
     def test_natal_chart_classic(self):
         john = _make_john()
         data = ChartDataFactory.create_natal_chart_data(john)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Natal Chart - Classic.svg", svg)
 
     def test_external_natal_chart(self):
         subj = _make_john("ExternalNatal")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, external_view=True).generate_svg_string()
-        compare_chart_svg("John Lennon - ExternalNatal - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, external_view=True).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - ExternalNatal - Natal Chart - Classic.svg", svg)
 
     def test_minified_natal_chart(self):
         from tests.core.conftest import assert_svg_wellformed
 
         subj = _make_john("Minified")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string(minify=True)
+        svg = ChartDrawer(data).generate_svg_string(minify=True, style="classic")
         assert_svg_wellformed(svg)
-        compare_chart_svg("John Lennon - Minified - Natal Chart.svg", svg)
+        compare_chart_svg("John Lennon - Minified - Natal Chart - Classic.svg", svg)
 
     def test_minified_transit_chart(self):
         from tests.core.conftest import assert_svg_wellformed
@@ -689,9 +689,9 @@ class TestNatalChart:
         subj = _make_john("Minified Transit")
         subj2 = _make_paul("Minified Transit")
         data = ChartDataFactory.create_transit_chart_data(subj, subj2)
-        svg = ChartDrawer(data).generate_svg_string(minify=True)
+        svg = ChartDrawer(data).generate_svg_string(minify=True, style="classic")
         assert_svg_wellformed(svg)
-        compare_chart_svg("John Lennon - Minified Transit - Transit Chart.svg", svg)
+        compare_chart_svg("John Lennon - Minified Transit - Transit Chart - Classic.svg", svg)
 
     def test_minified_synastry_chart(self):
         from tests.core.conftest import assert_svg_wellformed
@@ -699,93 +699,93 @@ class TestNatalChart:
         subj = _make_john("Minified Synastry")
         subj2 = _make_paul("Minified Synastry")
         data = ChartDataFactory.create_synastry_chart_data(subj, subj2)
-        svg = ChartDrawer(data).generate_svg_string(minify=True)
+        svg = ChartDrawer(data).generate_svg_string(minify=True, style="classic")
         assert_svg_wellformed(svg)
-        compare_chart_svg("John Lennon - Minified Synastry - Synastry Chart.svg", svg)
+        compare_chart_svg("John Lennon - Minified Synastry - Synastry Chart - Classic.svg", svg)
 
     def test_dark_theme_natal_chart(self):
         subj = _make_john("Dark Theme")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="dark").generate_svg_string()
-        compare_chart_svg("John Lennon - Dark Theme - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Dark Theme - Natal Chart - Classic.svg", svg)
 
     def test_dark_high_contrast_theme_natal_chart(self):
         subj = _make_john("Dark High Contrast Theme")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="dark-high-contrast").generate_svg_string()
-        compare_chart_svg("John Lennon - Dark High Contrast Theme - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="dark-high-contrast").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Dark High Contrast Theme - Natal Chart - Classic.svg", svg)
 
     def test_light_theme_natal_chart(self):
         subj = _make_john("Light Theme")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="light").generate_svg_string()
-        compare_chart_svg("John Lennon - Light Theme - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="light").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Light Theme - Natal Chart - Classic.svg", svg)
 
     def test_black_and_white_natal_chart(self):
         john = _make_john()
         data = ChartDataFactory.create_natal_chart_data(john)
-        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string()
-        compare_chart_svg("John Lennon - Black and White Theme - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Black and White Theme - Natal Chart - Classic.svg", svg)
 
     def test_dark_theme_external_natal_chart(self):
         subj = _make_john("Dark Theme External")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="dark", external_view=True).generate_svg_string()
-        compare_chart_svg("John Lennon - Dark Theme External - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="dark", external_view=True).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Dark Theme External - Natal Chart - Classic.svg", svg)
 
     def test_light_theme_external_natal_chart(self):
         subj = _make_john("Light Theme External")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="light", external_view=True).generate_svg_string()
-        compare_chart_svg("John Lennon - Light Theme External - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="light", external_view=True).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Light Theme External - Natal Chart - Classic.svg", svg)
 
     def test_black_and_white_external_natal_chart(self):
         subj = _make_john("Black and White Theme External")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="black-and-white", external_view=True).generate_svg_string()
-        compare_chart_svg("John Lennon - Black and White Theme External - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="black-and-white", external_view=True).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Black and White Theme External - Natal Chart - Classic.svg", svg)
 
     def test_transparent_background_natal_chart(self):
         subj = _make_john("Transparent Background")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, transparent_background=True).generate_svg_string()
-        compare_chart_svg("John Lennon - Transparent Background - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, transparent_background=True).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Transparent Background - Natal Chart - Classic.svg", svg)
 
     def test_strawberry_natal_chart(self):
         subj = _make_john("Strawberry Theme")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="strawberry").generate_svg_string()
-        compare_chart_svg("John Lennon - Strawberry Theme - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Strawberry Theme - Natal Chart - Classic.svg", svg)
 
     def test_strawberry_external_natal_chart(self):
         subj = _make_john("Strawberry Theme External")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="strawberry", external_view=True).generate_svg_string()
-        compare_chart_svg("John Lennon - Strawberry Theme External - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry", external_view=True).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Strawberry Theme External - Natal Chart - Classic.svg", svg)
 
     def test_heliocentric_natal_chart(self):
         subj = _make_john("Heliocentric", perspective_type="Heliocentric")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - Heliocentric - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Heliocentric - Natal Chart - Classic.svg", svg)
 
     def test_topocentric_natal_chart(self):
         subj = _make_john("Topocentric", perspective_type="Topocentric")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - Topocentric - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Topocentric - Natal Chart - Classic.svg", svg)
 
     def test_true_geocentric_natal_chart(self):
         subj = _make_john("True Geocentric", perspective_type="True Geocentric")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - True Geocentric - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - True Geocentric - Natal Chart - Classic.svg", svg)
 
     def test_english_natal_chart(self):
         subj = _make_john("EN")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, chart_language="EN").generate_svg_string()
-        compare_chart_svg("John Lennon - EN - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language="EN").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - EN - Natal Chart - Classic.svg", svg)
 
     def test_kanye_natal_chart(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
@@ -800,8 +800,8 @@ class TestNatalChart:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("Kanye - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("Kanye - Natal Chart - Classic.svg", svg)
 
     @pytest.mark.skip(reason="v6: snapshot needs regeneration after fixed-stars channel split (active_points no longer includes the 23 hardcoded stars)")
     def test_all_active_points_natal_chart(self):
@@ -809,8 +809,8 @@ class TestNatalChart:
 
         subj = _make_john("All Active Points", active_points=ALL_ACTIVE_POINTS)
         data = ChartDataFactory.create_natal_chart_data(subj, active_points=ALL_ACTIVE_POINTS)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - All Active Points - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - All Active Points - Natal Chart - Classic.svg", svg)
 
 
 # =============================================================================
@@ -850,8 +850,8 @@ class TestNatalChartSiderealModes:
     def test_sidereal_natal(self, display_name, mode):
         subj = _make_sidereal_subject(display_name, mode)
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg(f"John Lennon {display_name} - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg(f"John Lennon {display_name} - Natal Chart - Classic.svg", svg)
 
     def test_sidereal_lahiri_dark_wheel_only(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
@@ -862,8 +862,8 @@ class TestNatalChartSiderealModes:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon Lahiri - Dark Theme - Natal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon Lahiri - Dark Theme - Natal Chart - Classic Wheel Only.svg", svg)
 
     def test_sidereal_fagan_bradley_light_wheel_only(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
@@ -874,8 +874,8 @@ class TestNatalChartSiderealModes:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="light").generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon Fagan-Bradley - Light Theme - Natal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="light").generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon Fagan-Bradley - Light Theme - Natal Chart - Classic Wheel Only.svg", svg)
 
 
 class TestNatalChartHouseSystems:
@@ -911,8 +911,8 @@ class TestNatalChartHouseSystems:
     def test_house_system(self, house_id, house_name):
         subj = _make_john(f"House System {house_name}", houses_system_identifier=house_id)
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg(f"John Lennon - House System {house_name} - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg(f"John Lennon - House System {house_name} - Natal Chart - Classic.svg", svg)
 
 
 class TestNatalChartLanguages:
@@ -948,8 +948,8 @@ class TestNatalChartLanguages:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, chart_language=lang).generate_svg_string()
-        compare_chart_svg(f"{name} - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language=lang).generate_svg_string(style="classic")
+        compare_chart_svg(f"{name} - Natal Chart - Classic.svg", svg)
 
 
 # =============================================================================
@@ -963,13 +963,13 @@ class TestSynastryChart:
     def test_synastry_chart(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Synastry Chart - Classic.svg", svg)
 
     def test_synastry_no_house_comparison(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, show_house_position_comparison=False).generate_svg_string()
+        svg = ChartDrawer(data, show_house_position_comparison=False).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Synastry Chart - No House Comparison.svg", svg)
 
     def test_synastry_house_comparison_only(self):
@@ -979,7 +979,7 @@ class TestSynastryChart:
             data,
             show_house_position_comparison=True,
             show_cusp_position_comparison=False,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Synastry Chart - House Comparison Only.svg", svg)
 
     def test_synastry_cusp_comparison_only(self):
@@ -989,7 +989,7 @@ class TestSynastryChart:
             data,
             show_house_position_comparison=False,
             show_cusp_position_comparison=True,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Synastry Chart - Cusp Comparison Only.svg", svg)
 
     def test_synastry_house_and_cusp_comparison(self):
@@ -999,41 +999,41 @@ class TestSynastryChart:
             data,
             show_house_position_comparison=True,
             show_cusp_position_comparison=True,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Synastry Chart - House and Cusp Comparison.svg", svg)
 
     def test_synastry_list_layout(self):
         john = _make_john("SCTWL")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, double_chart_aspect_grid_type="list", theme="dark").generate_svg_string()
-        compare_chart_svg("John Lennon - SCTWL - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, double_chart_aspect_grid_type="list", theme="dark").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - SCTWL - Synastry Chart - Classic.svg", svg)
 
     def test_black_and_white_synastry(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string()
-        compare_chart_svg("John Lennon - Black and White Theme - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Black and White Theme - Synastry Chart - Classic.svg", svg)
 
     def test_dark_theme_synastry(self):
         john = _make_john("DTS")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="dark").generate_svg_string()
-        compare_chart_svg("John Lennon - DTS - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - DTS - Synastry Chart - Classic.svg", svg)
 
     def test_light_theme_synastry(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="light").generate_svg_string()
-        compare_chart_svg("John Lennon - Light Theme - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, theme="light").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Light Theme - Synastry Chart - Classic.svg", svg)
 
     def test_strawberry_synastry(self):
         john = _make_john("Strawberry Theme Synastry")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="strawberry").generate_svg_string()
-        compare_chart_svg("John Lennon - Strawberry Theme Synastry - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Strawberry Theme Synastry - Synastry Chart - Classic.svg", svg)
 
     @pytest.mark.skipif(
         BACKEND_NAME == "swisseph",
@@ -1043,49 +1043,49 @@ class TestSynastryChart:
         john = _make_john("Heliocentric Synastry", perspective_type="Heliocentric")
         paul = _make_paul("Heliocentric", perspective_type="Heliocentric")
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - Heliocentric - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Heliocentric - Synastry Chart - Classic.svg", svg)
 
     def test_true_geocentric_synastry(self):
         john = _make_john("True Geocentric Synastry", perspective_type="True Geocentric")
         paul = _make_paul("True Geocentric", perspective_type="True Geocentric")
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - True Geocentric - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - True Geocentric - Synastry Chart - Classic.svg", svg)
 
     def test_french_synastry(self):
         john = _make_john("FR")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, chart_language="FR").generate_svg_string()
-        compare_chart_svg("John Lennon - FR - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language="FR").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - FR - Synastry Chart - Classic.svg", svg)
 
     def test_german_synastry(self):
         john = _make_john("DE")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, chart_language="DE").generate_svg_string()
-        compare_chart_svg("John Lennon - DE - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language="DE").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - DE - Synastry Chart - Classic.svg", svg)
 
     def test_turkish_synastry(self):
         john = _make_john("TR")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, chart_language="TR").generate_svg_string()
-        compare_chart_svg("John Lennon - TR - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language="TR").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - TR - Synastry Chart - Classic.svg", svg)
 
     def test_hindi_synastry(self):
         john = _make_john("HI")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, chart_language="HI").generate_svg_string()
-        compare_chart_svg("John Lennon - HI - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language="HI").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - HI - Synastry Chart - Classic.svg", svg)
 
     def test_synastry_with_relationship_score(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul, include_relationship_score=True)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - Relationship Score - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Relationship Score - Synastry Chart - Classic.svg", svg)
 
     def test_synastry_all_active_points_list(self):
         from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
@@ -1097,7 +1097,7 @@ class TestSynastryChart:
         # excluded — it would otherwise be a phantom pinned at 0° Aries — so it
         # drops out of the resolved active_points.
         assert set(data.active_points) == set(ALL_ACTIVE_POINTS) - {"Earth"}
-        svg = ChartDrawer(data, double_chart_aspect_grid_type="list").generate_svg_string()
+        svg = ChartDrawer(data, double_chart_aspect_grid_type="list").generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - All Active Points - Synastry Chart - List.svg", svg)
 
     def test_synastry_all_active_points_grid(self):
@@ -1106,22 +1106,22 @@ class TestSynastryChart:
         john = _make_john("All Active Points", active_points=ALL_ACTIVE_POINTS)
         paul = _make_paul("All Active Points", active_points=ALL_ACTIVE_POINTS)
         data = ChartDataFactory.create_synastry_chart_data(john, paul, active_points=ALL_ACTIVE_POINTS)
-        svg = ChartDrawer(data, double_chart_aspect_grid_type="table").generate_svg_string()
+        svg = ChartDrawer(data, double_chart_aspect_grid_type="table").generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Grid.svg", svg)
 
     def test_transparent_synastry(self):
         john = _make_john("Transparent Synastry")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, transparent_background=True).generate_svg_string()
-        compare_chart_svg("John Lennon - Transparent Synastry - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, transparent_background=True).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Transparent Synastry - Synastry Chart - Classic.svg", svg)
 
     def test_custom_title_synastry(self):
         john = _make_john("Custom Title Synastry")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, custom_title="Beatles Synastry Analysis").generate_svg_string()
-        compare_chart_svg("John Lennon - Custom Title Synastry - Synastry Chart.svg", svg)
+        svg = ChartDrawer(data, custom_title="Beatles Synastry Analysis").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Custom Title Synastry - Synastry Chart - Classic.svg", svg)
 
 
 # =============================================================================
@@ -1135,13 +1135,13 @@ class TestTransitChart:
     def test_transit_chart(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - Transit Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Transit Chart - Classic.svg", svg)
 
     def test_transit_no_house_comparison(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, show_house_position_comparison=False).generate_svg_string()
+        svg = ChartDrawer(data, show_house_position_comparison=False).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Transit Chart - No House Comparison.svg", svg)
 
     def test_transit_house_comparison_only(self):
@@ -1151,7 +1151,7 @@ class TestTransitChart:
             data,
             show_house_position_comparison=True,
             show_cusp_position_comparison=False,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Transit Chart - House Comparison Only.svg", svg)
 
     def test_transit_cusp_comparison_only(self):
@@ -1161,7 +1161,7 @@ class TestTransitChart:
             data,
             show_house_position_comparison=False,
             show_cusp_position_comparison=True,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Transit Chart - Cusp Comparison Only.svg", svg)
 
     def test_transit_house_and_cusp_comparison(self):
@@ -1171,68 +1171,68 @@ class TestTransitChart:
             data,
             show_house_position_comparison=True,
             show_cusp_position_comparison=True,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Transit Chart - House and Cusp Comparison.svg", svg)
 
     def test_transit_table_grid(self):
         john = _make_john("TCWTG")
         paul = _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, double_chart_aspect_grid_type="table", theme="dark").generate_svg_string()
-        compare_chart_svg("John Lennon - TCWTG - Transit Chart.svg", svg)
+        svg = ChartDrawer(data, double_chart_aspect_grid_type="table", theme="dark").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - TCWTG - Transit Chart - Classic.svg", svg)
 
     def test_black_and_white_transit(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string()
-        compare_chart_svg("John Lennon - Black and White Theme - Transit Chart.svg", svg)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Black and White Theme - Transit Chart - Classic.svg", svg)
 
     def test_light_theme_transit(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="light").generate_svg_string()
-        compare_chart_svg("John Lennon - Light Theme - Transit Chart.svg", svg)
+        svg = ChartDrawer(data, theme="light").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Light Theme - Transit Chart - Classic.svg", svg)
 
     def test_dark_theme_transit(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="dark").generate_svg_string()
-        compare_chart_svg("John Lennon - Dark Theme - Transit Chart.svg", svg)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Dark Theme - Transit Chart - Classic.svg", svg)
 
     def test_strawberry_transit(self):
         john = _make_john("Strawberry Theme Transit")
         paul = _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="strawberry").generate_svg_string()
-        compare_chart_svg("John Lennon - Strawberry Theme Transit - Transit Chart.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Strawberry Theme Transit - Transit Chart - Classic.svg", svg)
 
     def test_topocentric_transit(self):
         john = _make_john("Topocentric Transit", perspective_type="Topocentric")
         paul = _make_paul("Topocentric", perspective_type="Topocentric")
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - Topocentric - Transit Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Topocentric - Transit Chart - Classic.svg", svg)
 
     def test_chinese_transit(self):
         john = _make_john("CN")
         paul = _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, chart_language="CN").generate_svg_string()
-        compare_chart_svg("John Lennon - CN - Transit Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language="CN").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - CN - Transit Chart - Classic.svg", svg)
 
     def test_spanish_transit(self):
         john = _make_john("ES")
         paul = _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, chart_language="ES").generate_svg_string()
-        compare_chart_svg("John Lennon - ES - Transit Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language="ES").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - ES - Transit Chart - Classic.svg", svg)
 
     def test_russian_transit(self):
         john = _make_john("RU")
         paul = _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, chart_language="RU").generate_svg_string()
-        compare_chart_svg("John Lennon - RU - Transit Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language="RU").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - RU - Transit Chart - Classic.svg", svg)
 
     def test_transit_all_active_points(self):
         from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
@@ -1240,15 +1240,15 @@ class TestTransitChart:
         john = _make_john("All Active Points Transit", active_points=ALL_ACTIVE_POINTS)
         paul = _make_paul("All Active Points Transit", active_points=ALL_ACTIVE_POINTS)
         data = ChartDataFactory.create_transit_chart_data(john, paul, active_points=ALL_ACTIVE_POINTS)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - All Active Points - Transit Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - All Active Points - Transit Chart - Classic.svg", svg)
 
     def test_custom_title_transit(self):
         john = _make_john("Custom Title Transit")
         paul = _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, custom_title="Transit Analysis 2024").generate_svg_string()
-        compare_chart_svg("John Lennon - Custom Title Transit - Transit Chart.svg", svg)
+        svg = ChartDrawer(data, custom_title="Transit Analysis 2024").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Custom Title Transit - Transit Chart - Classic.svg", svg)
 
 
 # =============================================================================
@@ -1269,8 +1269,8 @@ class TestProgressionChart:
 
     def test_progression_chart(self):
         data = self._progression_data()
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - Progression Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Progression Chart - Classic.svg", svg)
 
     def test_progression_chart_modern(self):
         data = self._progression_data()
@@ -1279,12 +1279,12 @@ class TestProgressionChart:
 
     def test_progression_chart_dark_theme(self):
         data = self._progression_data()
-        svg = ChartDrawer(data, theme="dark").generate_svg_string()
-        compare_chart_svg("John Lennon - Dark Theme - Progression Chart.svg", svg)
+        svg = ChartDrawer(data, theme="dark").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Dark Theme - Progression Chart - Classic.svg", svg)
 
     def test_progression_chart_table_grid(self):
         data = self._progression_data()
-        svg = ChartDrawer(data, double_chart_aspect_grid_type="table").generate_svg_string()
+        svg = ChartDrawer(data, double_chart_aspect_grid_type="table").generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Progression Chart - Table Grid.svg", svg)
 
 
@@ -1303,46 +1303,46 @@ class TestCompositeChart:
         return ChartDataFactory.create_composite_chart_data(model)
 
     def test_composite_chart(self):
-        svg = ChartDrawer(self._composite_data()).generate_svg_string()
-        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart.svg", svg)
+        svg = ChartDrawer(self._composite_data()).generate_svg_string(style="classic")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Classic.svg", svg)
 
     def test_black_and_white_composite(self):
-        svg = ChartDrawer(self._composite_data(), theme="black-and-white").generate_svg_string()
+        svg = ChartDrawer(self._composite_data(), theme="black-and-white").generate_svg_string(style="classic")
         compare_chart_svg(
-            "Angelina Jolie and Brad Pitt Composite Chart - Black and White Theme - Composite Chart.svg", svg
+            "Angelina Jolie and Brad Pitt Composite Chart - Black and White Theme - Composite Chart - Classic.svg", svg
         )
 
     def test_light_theme_composite(self):
-        svg = ChartDrawer(self._composite_data(), theme="light").generate_svg_string()
-        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Light Theme - Composite Chart.svg", svg)
+        svg = ChartDrawer(self._composite_data(), theme="light").generate_svg_string(style="classic")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Light Theme - Composite Chart - Classic.svg", svg)
 
     def test_dark_theme_composite(self):
-        svg = ChartDrawer(self._composite_data(), theme="dark").generate_svg_string()
-        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Dark Theme - Composite Chart.svg", svg)
+        svg = ChartDrawer(self._composite_data(), theme="dark").generate_svg_string(style="classic")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Dark Theme - Composite Chart - Classic.svg", svg)
 
     def test_strawberry_composite(self):
-        svg = ChartDrawer(self._composite_data(), theme="strawberry").generate_svg_string()
-        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart.svg", svg)
+        svg = ChartDrawer(self._composite_data(), theme="strawberry").generate_svg_string(style="classic")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart - Classic.svg", svg)
 
     def test_composite_wheel_only(self):
-        svg = ChartDrawer(self._composite_data()).generate_wheel_only_svg_string()
-        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(self._composite_data()).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Classic Wheel Only.svg", svg)
 
     def test_composite_aspect_grid_only(self):
         svg = ChartDrawer(self._composite_data()).generate_aspect_grid_only_svg_string()
         compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Aspect Grid Only.svg", svg)
 
     def test_italian_composite(self):
-        svg = ChartDrawer(self._composite_data(), chart_language="IT").generate_svg_string()
-        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - IT - Composite Chart.svg", svg)
+        svg = ChartDrawer(self._composite_data(), chart_language="IT").generate_svg_string(style="classic")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - IT - Composite Chart - Classic.svg", svg)
 
     def test_portuguese_composite(self):
-        svg = ChartDrawer(self._composite_data(), chart_language="PT").generate_svg_string()
-        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - PT - Composite Chart.svg", svg)
+        svg = ChartDrawer(self._composite_data(), chart_language="PT").generate_svg_string(style="classic")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - PT - Composite Chart - Classic.svg", svg)
 
     def test_french_composite(self):
-        svg = ChartDrawer(self._composite_data(), chart_language="FR").generate_svg_string()
-        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart.svg", svg)
+        svg = ChartDrawer(self._composite_data(), chart_language="FR").generate_svg_string(style="classic")
+        compare_chart_svg("Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart - Classic.svg", svg)
 
 
 # =============================================================================
@@ -1369,14 +1369,14 @@ class TestReturnCharts:
         john = _make_john()
         sr = self._solar_return(john)
         data = ChartDataFactory.create_return_chart_data(john, sr)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - DualReturnChart Chart - Solar Return.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - DualReturnChart Chart - Solar Return - Classic.svg", svg)
 
     def test_dual_return_solar_no_house_comparison(self):
         john = _make_john()
         sr = self._solar_return(john)
         data = ChartDataFactory.create_return_chart_data(john, sr)
-        svg = ChartDrawer(data, show_house_position_comparison=False).generate_svg_string()
+        svg = ChartDrawer(data, show_house_position_comparison=False).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - DualReturnChart Chart - Solar Return - No House Comparison.svg", svg)
 
     def test_dual_return_solar_house_comparison_only(self):
@@ -1387,7 +1387,7 @@ class TestReturnCharts:
             data,
             show_house_position_comparison=True,
             show_cusp_position_comparison=False,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - DualReturnChart Chart - Solar Return - House Comparison Only.svg", svg)
 
     def test_dual_return_solar_cusp_comparison_only(self):
@@ -1398,7 +1398,7 @@ class TestReturnCharts:
             data,
             show_house_position_comparison=False,
             show_cusp_position_comparison=True,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - DualReturnChart Chart - Solar Return - Cusp Comparison Only.svg", svg)
 
     def test_dual_return_solar_house_and_cusp(self):
@@ -1409,22 +1409,22 @@ class TestReturnCharts:
             data,
             show_house_position_comparison=True,
             show_cusp_position_comparison=True,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - DualReturnChart Chart - Solar Return - House and Cusp Comparison.svg", svg)
 
     def test_bw_dual_return_solar(self):
         john = _make_john()
         sr = self._solar_return(john)
         data = ChartDataFactory.create_return_chart_data(john, sr)
-        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string()
-        compare_chart_svg("John Lennon - Black and White Theme - DualReturnChart Chart - Solar Return.svg", svg)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Black and White Theme - DualReturnChart Chart - Solar Return - Classic.svg", svg)
 
     def test_strawberry_dual_return_solar(self):
         john = _make_john()
         sr = self._solar_return(john)
         data = ChartDataFactory.create_return_chart_data(john, sr)
-        svg = ChartDrawer(data, theme="strawberry").generate_svg_string()
-        compare_chart_svg("John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return - Classic.svg", svg)
 
     # --- Single solar return ---
 
@@ -1432,22 +1432,22 @@ class TestReturnCharts:
         john = _make_john()
         sr = self._solar_return(john)
         data = ChartDataFactory.create_single_wheel_return_chart_data(sr)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon Solar Return - SingleReturnChart Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon Solar Return - SingleReturnChart Chart - Classic.svg", svg)
 
     def test_bw_single_return_solar(self):
         john = _make_john()
         sr = self._solar_return(john)
         data = ChartDataFactory.create_single_wheel_return_chart_data(sr)
-        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string()
-        compare_chart_svg("John Lennon Solar Return - Black and White Theme - SingleReturnChart Chart.svg", svg)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon Solar Return - Black and White Theme - SingleReturnChart Chart - Classic.svg", svg)
 
     def test_strawberry_single_return_solar(self):
         john = _make_john()
         sr = self._solar_return(john)
         data = ChartDataFactory.create_single_wheel_return_chart_data(sr)
-        svg = ChartDrawer(data, theme="strawberry").generate_svg_string()
-        compare_chart_svg("John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart - Classic.svg", svg)
 
     # --- Dual lunar return ---
 
@@ -1455,14 +1455,14 @@ class TestReturnCharts:
         john = _make_john()
         lr = self._lunar_return(john)
         data = ChartDataFactory.create_return_chart_data(john, lr)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon - DualReturnChart Chart - Lunar Return.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - DualReturnChart Chart - Lunar Return - Classic.svg", svg)
 
     def test_dual_return_lunar_no_house_comparison(self):
         john = _make_john()
         lr = self._lunar_return(john)
         data = ChartDataFactory.create_return_chart_data(john, lr)
-        svg = ChartDrawer(data, show_house_position_comparison=False).generate_svg_string()
+        svg = ChartDrawer(data, show_house_position_comparison=False).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - DualReturnChart Chart - Lunar Return - No House Comparison.svg", svg)
 
     def test_dual_return_lunar_house_comparison_only(self):
@@ -1473,7 +1473,7 @@ class TestReturnCharts:
             data,
             show_house_position_comparison=True,
             show_cusp_position_comparison=False,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - DualReturnChart Chart - Lunar Return - House Comparison Only.svg", svg)
 
     def test_dual_return_lunar_cusp_comparison_only(self):
@@ -1484,7 +1484,7 @@ class TestReturnCharts:
             data,
             show_house_position_comparison=False,
             show_cusp_position_comparison=True,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - DualReturnChart Chart - Lunar Return - Cusp Comparison Only.svg", svg)
 
     def test_dual_return_lunar_house_and_cusp(self):
@@ -1495,22 +1495,22 @@ class TestReturnCharts:
             data,
             show_house_position_comparison=True,
             show_cusp_position_comparison=True,
-        ).generate_svg_string()
+        ).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - DualReturnChart Chart - Lunar Return - House and Cusp Comparison.svg", svg)
 
     def test_bw_dual_return_lunar(self):
         john = _make_john()
         lr = self._lunar_return(john)
         data = ChartDataFactory.create_return_chart_data(john, lr)
-        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string()
-        compare_chart_svg("John Lennon - Black and White Theme - DualReturnChart Chart - Lunar Return.svg", svg)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Black and White Theme - DualReturnChart Chart - Lunar Return - Classic.svg", svg)
 
     def test_strawberry_dual_return_lunar(self):
         john = _make_john()
         lr = self._lunar_return(john)
         data = ChartDataFactory.create_return_chart_data(john, lr)
-        svg = ChartDrawer(data, theme="strawberry").generate_svg_string()
-        compare_chart_svg("John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return - Classic.svg", svg)
 
     # --- Single lunar return ---
 
@@ -1518,15 +1518,15 @@ class TestReturnCharts:
         john = _make_john()
         lr = self._lunar_return(john)
         data = ChartDataFactory.create_single_wheel_return_chart_data(lr)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("John Lennon Lunar Return - SingleReturnChart Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon Lunar Return - SingleReturnChart Chart - Classic.svg", svg)
 
     def test_bw_single_return_lunar(self):
         john = _make_john()
         lr = self._lunar_return(john)
         data = ChartDataFactory.create_single_wheel_return_chart_data(lr)
-        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string()
-        compare_chart_svg("John Lennon Lunar Return - Black and White Theme - SingleReturnChart Chart.svg", svg)
+        svg = ChartDrawer(data, theme="black-and-white").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon Lunar Return - Black and White Theme - SingleReturnChart Chart - Classic.svg", svg)
 
     # --- Partial views ---
 
@@ -1534,8 +1534,8 @@ class TestReturnCharts:
         john = _make_john()
         sr = self._solar_return(john)
         data = ChartDataFactory.create_single_wheel_return_chart_data(sr)
-        svg = ChartDrawer(data).generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon Solar Return - Wheel Only.svg", svg)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon Solar Return - Classic Wheel Only.svg", svg)
 
     def test_return_aspect_grid_only(self):
         john = _make_john()
@@ -1556,44 +1556,44 @@ class TestChartOptions:
     def test_custom_title_natal(self):
         subj = _make_john("Custom Title")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, custom_title="My Custom Chart Title").generate_svg_string()
-        compare_chart_svg("John Lennon - Custom Title - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, custom_title="My Custom Chart Title").generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Custom Title - Natal Chart - Classic.svg", svg)
 
     def test_show_aspect_icons_false(self):
         subj = _make_john("No Aspect Icons")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, show_aspect_icons=False).generate_svg_string()
-        compare_chart_svg("John Lennon - No Aspect Icons - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, show_aspect_icons=False).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - No Aspect Icons - Natal Chart - Classic.svg", svg)
 
     def test_auto_size_false(self):
         subj = _make_john("Auto Size False")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, auto_size=False).generate_svg_string()
-        compare_chart_svg("John Lennon - Auto Size False - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, auto_size=False).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Auto Size False - Natal Chart - Classic.svg", svg)
 
     def test_remove_css_variables(self):
         subj = _make_john("No CSS Variables")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string(remove_css_variables=True)
-        compare_chart_svg("John Lennon - No CSS Variables - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(remove_css_variables=True, style="classic")
+        compare_chart_svg("John Lennon - No CSS Variables - Natal Chart - Classic.svg", svg)
 
     def test_custom_padding(self):
         subj = _make_john("Custom Padding")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, padding=50).generate_svg_string()
-        compare_chart_svg("John Lennon - Custom Padding - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, padding=50).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Custom Padding - Natal Chart - Classic.svg", svg)
 
     def test_theme_none(self):
         subj = _make_john("No Theme")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme=None).generate_svg_string()
-        compare_chart_svg("John Lennon - No Theme - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme=None).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - No Theme - Natal Chart - Classic.svg", svg)
 
     def test_show_degree_indicators_false(self):
         subj = _make_john("No Degree Indicators")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string()
-        compare_chart_svg("John Lennon - No Degree Indicators - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - No Degree Indicators - Natal Chart - Classic.svg", svg)
 
     def test_custom_colors_settings(self):
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_COLORS
@@ -1603,8 +1603,8 @@ class TestChartOptions:
         custom_colors["paper_1"] = "#00ff00"
         subj = _make_john("Custom Colors")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, colors_settings=custom_colors).generate_svg_string()
-        compare_chart_svg("John Lennon - Custom Colors - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, colors_settings=custom_colors).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Custom Colors - Natal Chart - Classic.svg", svg)
 
     def test_custom_aspects_settings(self):
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
@@ -1617,8 +1617,8 @@ class TestChartOptions:
                 aspect["color"] = "#0000FF"
         subj = _make_john("Custom Aspect Colors")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, aspects_settings=custom_aspects).generate_svg_string()
-        compare_chart_svg("John Lennon - Custom Aspect Colors - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, aspects_settings=custom_aspects).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Custom Aspect Colors - Natal Chart - Classic.svg", svg)
 
     def test_custom_celestial_points_settings(self):
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
@@ -1631,39 +1631,39 @@ class TestChartOptions:
                 point["color"] = "#C0C0C0"
         subj = _make_john("Custom Planet Colors")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, celestial_points_settings=custom_points).generate_svg_string()
-        compare_chart_svg("John Lennon - Custom Planet Colors - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, celestial_points_settings=custom_points).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Custom Planet Colors - Natal Chart - Classic.svg", svg)
 
     def test_language_pack_override(self):
         custom_language_pack = {"Sun": "Sole Custom", "Moon": "Luna Custom"}
         subj = _make_john("Language Pack")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, chart_language="IT", language_pack=custom_language_pack).generate_svg_string()
-        compare_chart_svg("John Lennon - Language Pack - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, chart_language="IT", language_pack=custom_language_pack).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Language Pack - Natal Chart - Classic.svg", svg)
 
     def test_transparent_background_dark_theme(self):
         subj = _make_john("Transparent Dark")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="dark", transparent_background=True).generate_svg_string()
-        compare_chart_svg("John Lennon - Transparent Dark - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, theme="dark", transparent_background=True).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Transparent Dark - Natal Chart - Classic.svg", svg)
 
     def test_padding_zero(self):
         subj = _make_john("Zero Padding")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, padding=0).generate_svg_string()
-        compare_chart_svg("John Lennon - Zero Padding - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, padding=0).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Zero Padding - Natal Chart - Classic.svg", svg)
 
     def test_padding_large(self):
         subj = _make_john("Large Padding")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, padding=100).generate_svg_string()
-        compare_chart_svg("John Lennon - Large Padding - Natal Chart.svg", svg)
+        svg = ChartDrawer(data, padding=100).generate_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Large Padding - Natal Chart - Classic.svg", svg)
 
     def test_minify_and_remove_css_combined(self):
         subj = _make_john("Minify CSS")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string(minify=True, remove_css_variables=True)
-        compare_chart_svg("John Lennon - Minify CSS - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(minify=True, remove_css_variables=True, style="classic")
+        compare_chart_svg("John Lennon - Minify CSS - Natal Chart - Classic.svg", svg)
 
     def test_very_long_name(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
@@ -1672,8 +1672,8 @@ class TestChartOptions:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("Long Name - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("Long Name - Natal Chart - Classic.svg", svg)
 
     def test_extreme_latitude_north(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
@@ -1691,8 +1691,8 @@ class TestChartOptions:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("Arctic Subject - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("Arctic Subject - Natal Chart - Classic.svg", svg)
 
     def test_extreme_latitude_south(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
@@ -1710,8 +1710,8 @@ class TestChartOptions:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("Antarctic Subject - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("Antarctic Subject - Natal Chart - Classic.svg", svg)
 
     @pytest.mark.extended
     def test_historical_date(self):
@@ -1727,8 +1727,8 @@ class TestChartOptions:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("Historical Subject - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("Historical Subject - Natal Chart - Classic.svg", svg)
 
     def test_future_date(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
@@ -1743,8 +1743,8 @@ class TestChartOptions:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("Future Subject - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("Future Subject - Natal Chart - Classic.svg", svg)
 
     def test_date_line_crossing(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
@@ -1762,8 +1762,8 @@ class TestChartOptions:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_svg_string()
-        compare_chart_svg("Date Line Subject - Natal Chart.svg", svg)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_chart_svg("Date Line Subject - Natal Chart - Classic.svg", svg)
 
     def test_invalid_theme_raises_exception(self):
         john = _make_john()
@@ -1785,20 +1785,20 @@ class TestPartialViews:
     def test_wheel_only_natal(self):
         subj = _make_john("Wheel Only")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data).generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Only - Natal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Only - Natal Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_external_only(self):
         subj = _make_john("Wheel External Only")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, external_view=True).generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel External Only - ExternalNatal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, external_view=True).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel External Only - ExternalNatal Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_only_dark_natal(self):
         subj = _make_john("Wheel Only Dark")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Only Dark - Natal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Only Dark - Natal Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_only_dark_transparent_natal(self):
         from kerykeion.settings.config_constants import TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
@@ -1810,8 +1810,8 @@ class TestPartialViews:
             active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
         )
         data = ChartDataFactory.create_natal_chart_data(subj, active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS)
-        svg = ChartDrawer(data, theme="dark", transparent_background=True).generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Only Dark Transparent - Natal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="dark", transparent_background=True).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Only Dark Transparent - Natal Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_only_classic_transparent_natal(self):
         from kerykeion.settings.config_constants import TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
@@ -1823,20 +1823,20 @@ class TestPartialViews:
             active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
         )
         data = ChartDataFactory.create_natal_chart_data(subj, active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS)
-        svg = ChartDrawer(data, theme="classic", transparent_background=True).generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Only Classic Transparent - Natal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="classic", transparent_background=True).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Only Classic Transparent - Natal Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_only_light_natal(self):
         subj = _make_john("Wheel Only Light")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="light").generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Only Light - Natal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="light").generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Only Light - Natal Chart - Classic Wheel Only.svg", svg)
 
     def test_strawberry_wheel_only(self):
         subj = _make_john("Wheel Only Strawberry")
         data = ChartDataFactory.create_natal_chart_data(subj)
-        svg = ChartDrawer(data, theme="strawberry").generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Only Strawberry - Natal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry").generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Only Strawberry - Natal Chart - Classic Wheel Only.svg", svg)
 
     # --- Wheel-only synastry / transit ---
 
@@ -1844,43 +1844,43 @@ class TestPartialViews:
         john = _make_john("Wheel Synastry Only")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data).generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Synastry Only - Synastry Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Synastry Only - Synastry Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_transit(self):
         john = _make_john("Wheel Transit Only")
         paul = _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data).generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Transit Only - Transit Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Transit Only - Transit Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_synastry_dark(self):
         john = _make_john("Wheel Synastry Dark")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Synastry Dark - Synastry Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Synastry Dark - Synastry Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_transit_dark(self):
         john = _make_john("Wheel Transit Dark")
         paul = _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Transit Dark - Transit Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Transit Dark - Transit Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_synastry_strawberry(self):
         john = _make_john("Wheel Synastry Strawberry")
         paul = _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="strawberry").generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Synastry Strawberry - Synastry Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry").generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Synastry Strawberry - Synastry Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_transit_strawberry(self):
         john = _make_john("Wheel Transit Strawberry")
         paul = _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, theme="strawberry").generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - Wheel Transit Strawberry - Transit Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data, theme="strawberry").generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - Wheel Transit Strawberry - Transit Chart - Classic Wheel Only.svg", svg)
 
     # --- Wheel-only all active points ---
 
@@ -1893,8 +1893,8 @@ class TestPartialViews:
         # excluded — it would otherwise be a phantom pinned at 0° Aries — so it
         # drops out of the resolved active_points.
         assert set(data.active_points) == set(ALL_ACTIVE_POINTS) - {"Earth"}
-        svg = ChartDrawer(data).generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - All Active Points - Natal Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - All Active Points - Natal Chart - Classic Wheel Only.svg", svg)
 
     def test_wheel_only_all_active_points_synastry(self):
         from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
@@ -1906,8 +1906,8 @@ class TestPartialViews:
         # excluded — it would otherwise be a phantom pinned at 0° Aries — so it
         # drops out of the resolved active_points.
         assert set(data.active_points) == set(ALL_ACTIVE_POINTS) - {"Earth"}
-        svg = ChartDrawer(data).generate_wheel_only_svg_string()
-        compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Wheel Only.svg", svg)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string(style="classic")
+        compare_chart_svg("John Lennon - All Active Points - Synastry Chart - Classic Wheel Only.svg", svg)
 
     # --- Aspect-grid-only natal ---
 
@@ -2133,7 +2133,7 @@ class TestIndicatorsOff:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_natal_chart_data(john)
-        svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string()
+        svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Natal Chart - No Degree Indicators.svg", svg)
 
     def test_synastry_chart_no_indicators(self):
@@ -2160,7 +2160,7 @@ class TestIndicatorsOff:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
-        svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string()
+        svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Synastry Chart - No Degree Indicators.svg", svg)
 
     def test_transit_chart_no_indicators(self):
@@ -2187,7 +2187,7 @@ class TestIndicatorsOff:
             suppress_geonames_warning=True,
         )
         data = ChartDataFactory.create_transit_chart_data(john, paul)
-        svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string()
+        svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Transit Chart - No Degree Indicators.svg", svg)
 
 
@@ -2682,6 +2682,54 @@ class TestModernChartStyle:
         classic = ChartDrawer(data).generate_svg_string(style="classic")
         modern = ChartDrawer(data).generate_svg_string(style="modern")
         assert classic != modern
+
+    # =====================================================================
+    # B0. Modern is the default style
+    # =====================================================================
+
+    def test_default_style_is_modern(self):
+        """A render with no style argument is byte-identical to style="modern"."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        drawer = ChartDrawer(data)
+        assert drawer.generate_svg_string() == drawer.generate_svg_string(style="modern")
+        assert drawer.generate_wheel_only_svg_string() == drawer.generate_wheel_only_svg_string(style="modern")
+
+    def test_default_save_filenames_carry_style_suffix(self, tmp_path):
+        """Default filenames spell the style out for both wheels: no bare
+        "... Chart.svg" name survives, so classic and modern output can never
+        shadow each other."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        drawer = ChartDrawer(data)
+        drawer.save_svg(output_path=str(tmp_path))
+        drawer.save_svg(output_path=str(tmp_path), style="classic")
+        drawer.save_wheel_only_svg_file(output_path=str(tmp_path))
+        drawer.save_wheel_only_svg_file(output_path=str(tmp_path), style="classic")
+        names = {p.name for p in tmp_path.glob("*.svg")}
+        assert names == {
+            "John Lennon - Natal Chart - Modern.svg",
+            "John Lennon - Natal Chart - Classic.svg",
+            "John Lennon - Natal Chart - Modern Wheel Only.svg",
+            "John Lennon - Natal Chart - Classic Wheel Only.svg",
+        }
+
+    def test_classic_only_options_warn_under_modern(self, caplog):
+        """Classic-only options are ignored by the modern renderer; with modern
+        as the default that silence must be audible."""
+        import logging
+
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        drawer = ChartDrawer(data, external_view=True, show_degree_indicators=False, show_aspect_icons=False)
+        with caplog.at_level(logging.WARNING, logger="kerykeion"):
+            drawer.generate_svg_string()
+        messages = " ".join(record.getMessage() for record in caplog.records)
+        assert "external_view" in messages
+        assert "show_degree_indicators" in messages
+        assert "show_aspect_icons" in messages
+
+        caplog.clear()
+        with caplog.at_level(logging.WARNING, logger="kerykeion"):
+            drawer.generate_svg_string(style="classic")
+        assert not any("classic-style option" in record.getMessage() for record in caplog.records)
 
     def test_modern_differs_from_classic_synastry(self):
         """Modern dual-chart path produces different SVG than classic."""

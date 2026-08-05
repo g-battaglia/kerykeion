@@ -22,9 +22,18 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from kerykeion import AstrologicalSubjectFactory, ChartDrawer, CompositeSubjectFactory
+from functools import partial
+
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+from kerykeion import ChartDrawer as _ChartDrawer
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+
+# This script regenerates the CLASSIC-style baselines (the modern ones live in
+# generate_modern_baselines.py). The library default style became "modern" in
+# v6, so pin the instance default once here rather than on every one of the
+# ChartDrawer calls below. Call-site kwargs still override the partial's.
+ChartDrawer = partial(_ChartDrawer, style="classic")
 
 # Import test subject definitions
 from tests.data.test_subjects_matrix import (
@@ -242,7 +251,7 @@ def generate_strawberry_theme_charts():
     composite_chart_data = ChartDataFactory.create_composite_chart_data(composite_model)
     ChartDrawer(composite_chart_data, theme="strawberry").save_svg(
         output_path=OUTPUT_DIR_STR,
-        filename="Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart",
+        filename="Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart - Classic",
     )
     print("  Generated: Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart.svg")
     charts_generated += 1
@@ -262,7 +271,7 @@ def generate_strawberry_theme_charts():
     dual_return_chart_data = ChartDataFactory.create_return_chart_data(first, solar_return)
     ChartDrawer(dual_return_chart_data, theme="strawberry").save_svg(
         output_path=OUTPUT_DIR_STR,
-        filename="John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return",
+        filename="John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return - Classic",
     )
     print("  Generated: John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return.svg")
     charts_generated += 1
@@ -271,7 +280,7 @@ def generate_strawberry_theme_charts():
     single_return_chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return)
     ChartDrawer(single_return_chart_data, theme="strawberry").save_svg(
         output_path=OUTPUT_DIR_STR,
-        filename="John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart",
+        filename="John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart - Classic",
     )
     print("  Generated: John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart.svg")
     charts_generated += 1
@@ -284,7 +293,7 @@ def generate_strawberry_theme_charts():
     lunar_dual_return_chart_data = ChartDataFactory.create_return_chart_data(first, lunar_return)
     ChartDrawer(lunar_dual_return_chart_data, theme="strawberry").save_svg(
         output_path=OUTPUT_DIR_STR,
-        filename="John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return",
+        filename="John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return - Classic",
     )
     print("  Generated: John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return.svg")
     charts_generated += 1
@@ -366,7 +375,7 @@ def generate_temporal_subject_charts():
             chart = ChartDrawer(synastry_data)
             chart.save_svg(
                 output_path=OUTPUT_DIR_STR,
-                filename="John and Yoko - Synastry Chart",
+                filename="John and Yoko - Synastry Chart - Classic",
             )
             print("  Generated: John and Yoko - Synastry Chart.svg")
             charts_generated += 1
@@ -510,7 +519,7 @@ def generate_cross_combination_charts():
             chart = ChartDrawer(synastry_data)
             chart.save_svg(
                 output_path=OUTPUT_DIR_STR,
-                filename=f"John Lennon - {house_name} - Synastry Chart",
+                filename=f"John Lennon - {house_name} - Synastry Chart - Classic",
             )
             print(f"  Generated: John Lennon - {house_name} - Synastry Chart.svg")
             charts_generated += 1
@@ -536,7 +545,7 @@ def generate_cross_combination_charts():
             chart = ChartDrawer(transit_data)
             chart.save_svg(
                 output_path=OUTPUT_DIR_STR,
-                filename=f"John Lennon - {house_name} - Transit Chart",
+                filename=f"John Lennon - {house_name} - Transit Chart - Classic",
             )
             print(f"  Generated: John Lennon - {house_name} - Transit Chart.svg")
             charts_generated += 1
@@ -581,7 +590,7 @@ def generate_cross_combination_charts():
         chart = ChartDrawer(composite_chart_data, chart_language="FR")
         chart.save_svg(
             output_path=OUTPUT_DIR_STR,
-            filename="Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart",
+            filename="Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart - Classic",
         )
         print("  Generated: Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart.svg")
         charts_generated += 1

@@ -57,8 +57,8 @@ def regenerate_sidereal_theme_combos():
             suppress_geonames_warning=True,
         )
         chart_data = ChartDataFactory.create_natal_chart_data(subject)
-        chart_svg = ChartDrawer(chart_data, theme=theme).generate_svg_string()
-        file_name = f"{subject.name} - Natal Chart.svg"
+        chart_svg = ChartDrawer(chart_data, theme=theme).generate_svg_string(style="classic")
+        file_name = f"{subject.name} - Natal Chart - Classic.svg"
         file_path = SVG_DIR / file_name
         file_path.write_text(chart_svg, encoding="utf-8")
         print(f"  ✓ {file_name} ({len(chart_svg.splitlines())} lines)")
@@ -81,8 +81,8 @@ def regenerate_house_system_synastry():
             suppress_geonames_warning=True,
         )
         chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
-        chart_svg = ChartDrawer(chart_data).generate_svg_string()
-        file_name = f"John Lennon - {house_name} - Synastry Chart.svg"
+        chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+        file_name = f"John Lennon - {house_name} - Synastry Chart - Classic.svg"
         file_path = SVG_DIR / file_name
         file_path.write_text(chart_svg, encoding="utf-8")
         print(f"  ✓ {file_name} ({len(chart_svg.splitlines())} lines)")
@@ -105,8 +105,8 @@ def regenerate_house_system_transit():
             suppress_geonames_warning=True,
         )
         chart_data = ChartDataFactory.create_transit_chart_data(first, second)
-        chart_svg = ChartDrawer(chart_data).generate_svg_string()
-        file_name = f"John Lennon - {house_name} - Transit Chart.svg"
+        chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+        file_name = f"John Lennon - {house_name} - Transit Chart - Classic.svg"
         file_path = SVG_DIR / file_name
         file_path.write_text(chart_svg, encoding="utf-8")
         print(f"  ✓ {file_name} ({len(chart_svg.splitlines())} lines)")
@@ -148,8 +148,8 @@ def regenerate_john_and_yoko_synastry():
         suppress_geonames_warning=True,
     )
     chart_data = ChartDataFactory.create_synastry_chart_data(john, yoko)
-    chart_svg = ChartDrawer(chart_data).generate_svg_string()
-    file_name = "John and Yoko - Synastry Chart.svg"
+    chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+    file_name = "John and Yoko - Synastry Chart - Classic.svg"
     file_path = SVG_DIR / file_name
     file_path.write_text(chart_svg, encoding="utf-8")
     print(f"  ✓ {file_name} ({len(chart_svg.splitlines())} lines)")

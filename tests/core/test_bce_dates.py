@@ -417,7 +417,7 @@ class TestBCEChartSVG:
         """Natal chart SVG can be generated for a BCE subject."""
         data = ChartDataFactory.create_natal_chart_data(subj_500bc)
         chart = ChartDrawer(data)
-        svg = chart.generate_svg_string()
+        svg = chart.generate_svg_string(style="classic")
 
         assert len(svg) > 0
         assert "<svg" in svg
@@ -427,12 +427,12 @@ class TestBCEChartSVG:
     @pytest.mark.extended
     def test_natal_chart_baseline(self, subj_500bc):
         """Natal chart SVG matches the golden baseline (if available)."""
-        baseline_path = SVG_DIR / "Ancient Greece 500BC - Natal Chart.svg"
+        baseline_path = SVG_DIR / "Ancient Greece 500BC - Natal Chart - Classic.svg"
         if not baseline_path.exists():
             pytest.skip("Baseline not found. Run test generation first.")
 
         data = ChartDataFactory.create_natal_chart_data(subj_500bc)
-        svg = ChartDrawer(data).generate_svg_string()
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
         baseline = baseline_path.read_text()
 
         # Line count should be roughly the same (±5%)
@@ -445,7 +445,7 @@ class TestBCEChartSVG:
         """Transit chart SVG can be generated between two BCE subjects."""
         data = ChartDataFactory.create_transit_chart_data(subj_500bc, subj_200bc)
         chart = ChartDrawer(data)
-        svg = chart.generate_svg_string()
+        svg = chart.generate_svg_string(style="classic")
 
         assert len(svg) > 0
         assert "<svg" in svg
@@ -454,12 +454,12 @@ class TestBCEChartSVG:
     @pytest.mark.extended
     def test_transit_chart_baseline(self, subj_500bc, subj_200bc):
         """Transit chart SVG matches the golden baseline (if available)."""
-        baseline_path = SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart.svg"
+        baseline_path = SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg"
         if not baseline_path.exists():
             pytest.skip("Baseline not found.")
 
         data = ChartDataFactory.create_transit_chart_data(subj_500bc, subj_200bc)
-        svg = ChartDrawer(data).generate_svg_string()
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
         baseline = baseline_path.read_text()
 
         svg_lines = svg.strip().splitlines()
@@ -471,7 +471,7 @@ class TestBCEChartSVG:
         """Synastry chart SVG can be generated between two BCE subjects."""
         data = ChartDataFactory.create_synastry_chart_data(subj_500bc, subj_200bc)
         chart = ChartDrawer(data)
-        svg = chart.generate_svg_string()
+        svg = chart.generate_svg_string(style="classic")
 
         assert len(svg) > 0
         assert "<svg" in svg
@@ -480,12 +480,12 @@ class TestBCEChartSVG:
     @pytest.mark.extended
     def test_synastry_chart_baseline(self, subj_500bc, subj_200bc):
         """Synastry chart SVG matches the golden baseline (if available)."""
-        baseline_path = SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart.svg"
+        baseline_path = SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg"
         if not baseline_path.exists():
             pytest.skip("Baseline not found.")
 
         data = ChartDataFactory.create_synastry_chart_data(subj_500bc, subj_200bc)
-        svg = ChartDrawer(data).generate_svg_string()
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
         baseline = baseline_path.read_text()
 
         svg_lines = svg.strip().splitlines()
@@ -498,7 +498,7 @@ class TestBCEChartSVG:
         progressed = SecondaryProgressionFactory.compute(subj_500bc, target_year=-460)
         data = ChartDataFactory.create_progression_chart_data(subj_500bc, progressed)
         chart = ChartDrawer(data)
-        svg = chart.generate_svg_string()
+        svg = chart.generate_svg_string(style="classic")
 
         assert len(svg) > 0
         assert "<svg" in svg
@@ -508,13 +508,13 @@ class TestBCEChartSVG:
     @pytest.mark.extended
     def test_progression_chart_baseline(self, subj_500bc):
         """Progression chart SVG matches the golden baseline (if available)."""
-        baseline_path = SVG_DIR / "Ancient Greece 500BC - Progression Chart.svg"
+        baseline_path = SVG_DIR / "Ancient Greece 500BC - Progression Chart - Classic.svg"
         if not baseline_path.exists():
             pytest.skip("Baseline not found. Run test generation first.")
 
         progressed = SecondaryProgressionFactory.compute(subj_500bc, target_year=-460)
         data = ChartDataFactory.create_progression_chart_data(subj_500bc, progressed)
-        svg = ChartDrawer(data).generate_svg_string()
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
         baseline = baseline_path.read_text()
 
         svg_lines = svg.strip().splitlines()

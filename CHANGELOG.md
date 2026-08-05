@@ -2,6 +2,32 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING: the default chart style is now `"modern"`.** `ChartDrawer`'s
+  `style` parameter defaults to `"modern"` instead of `"classic"`, so every
+  render call without an explicit `style=` argument — `generate_svg_string()`,
+  `save_svg()`, `generate_wheel_only_svg_string()`, `save_wheel_only_svg_file()`
+  — now produces the modern concentric-ring layout. Pass `style="classic"`
+  (constructor or per render) to keep the traditional wheel.
+  - **Default filenames now spell the style out for both wheels.** `save_svg()`
+    without a `filename` writes `"{name} - {chart type} Chart - Modern.svg"` and,
+    with `style="classic"`, `"... - Classic.svg"` (previously the classic file
+    had no suffix). Wheel-only output follows suit: `" - Modern Wheel Only"` /
+    `" - Classic Wheel Only"` (previously `" - Wheel Only"` for classic). No
+    default name is ambiguous anymore: classic and modern output of the same
+    chart can never shadow each other. Aspect-grid-only filenames are unchanged
+    (the grid is style-independent).
+  - **Classic-only options now warn when the modern style ignores them.**
+    `external_view=True`, `show_degree_indicators=False` and
+    `show_aspect_icons=False` only take effect with `style="classic"`; rendering
+    modern with any of them set logs a `logger.warning` naming the option
+    instead of dropping it silently. The render still succeeds.
+  - The committed classic SVG baselines were renamed to the new default names
+    (`" - Classic"` / `" - Classic Wheel Only"`); the regeneration scripts pin
+    `style="classic"` explicitly and the README's showcase now leads with the
+    modern style.
+
 ## 6.0.0a79 - 2026-08-05
 
 ### Fixed

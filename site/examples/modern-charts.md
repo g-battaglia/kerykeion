@@ -6,13 +6,13 @@ order: 15
 
 # Modern Charts
 
-Kerykeion supports a **modern concentric-ring** chart style as an alternative to the classic wheel. The modern style renders charts with graduated ruler scales, clean aspect lines with midpoint glyphs, and a distinct visual hierarchy.
+Since v6 the **modern concentric-ring** layout is Kerykeion's default chart style. It renders charts with graduated ruler scales, clean aspect lines with midpoint glyphs, and a distinct visual hierarchy.
 
-All chart types and all six themes work with the modern style.
+All chart types and all six themes work with the modern style. The traditional wheel remains available via `style="classic"` — see the [Charts documentation](/content/docs/charts).
 
 ## Modern Natal Chart
 
-Pass `style="modern"` to `save_svg()` or `generate_svg_string()`.
+Modern is the default: `save_svg()` and `generate_svg_string()` render it without any extra argument (passing `style="modern"` explicitly is equivalent).
 
 ```python
 from pathlib import Path
@@ -30,7 +30,7 @@ chart = ChartDrawer(chart_data=chart_data)
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="lennon-modern-natal", style="modern")
+chart.save_svg(output_path=output_dir, filename="lennon-modern-natal")
 ```
 
 ![Modern Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
@@ -59,7 +59,7 @@ chart = ChartDrawer(chart_data=chart_data)
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="lennon-ono-modern-synastry", style="modern")
+chart.save_svg(output_path=output_dir, filename="lennon-ono-modern-synastry")
 ```
 
 ![Modern Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20Modern.svg)
@@ -87,7 +87,7 @@ chart = ChartDrawer(chart_data=chart_data)
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="lennon-modern-transit", style="modern")
+chart.save_svg(output_path=output_dir, filename="lennon-modern-transit")
 ```
 
 ![Modern Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Transit%20Chart%20-%20Modern.svg)
@@ -115,7 +115,6 @@ output_dir.mkdir(exist_ok=True)
 chart.save_wheel_only_svg_file(
     output_path=output_dir,
     filename="lennon-modern-wheel-dark",
-    style="modern",
 )
 ```
 
@@ -135,7 +134,6 @@ Example disabling the zodiac background:
 chart.save_svg(
     output_path=output_dir,
     filename="modern-no-zodiac-bg",
-    style="modern",
     show_zodiac_background_ring=False,
 )
 ```

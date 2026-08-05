@@ -291,6 +291,11 @@ libephemeris.download_leb_for_tier("extended")   # full range, incl. BCE dates
   `.generate_svg_string()`. Other builders: `create_synastry_chart_data`,
   `create_transit_chart_data`, `create_composite_chart_data`,
   `create_return_chart_data`, `create_progression_chart_data`.
+- The wheel style defaults to `"modern"`; pass `style="classic"` (constructor
+  or per render) for the traditional wheel. Default filenames carry the style:
+  `"... - Modern.svg"` / `"... - Classic.svg"`. `external_view`,
+  `show_degree_indicators`, `show_aspect_icons` are classic-only — the modern
+  renderer ignores them and logs a warning.
 - Aspects: `AspectsFactory.single_chart_aspects(subject)` and
   `AspectsFactory.dual_chart_aspects(first, second)`.
 - Returns / progressions / solar arc / transit series and the full

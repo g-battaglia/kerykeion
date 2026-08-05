@@ -142,7 +142,9 @@ class TestGauquelinHitAreaSweep:
     def test_hit_area_arc_sweep_flags(self, subject_with_gauquelin, tmp_path):
         chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
         drawer = ChartDrawer(chart_data=chart_data, theme="light")
-        drawer.save_svg(output_path=str(tmp_path), filename="gauq_sweep")
+        # The two-arc wedge path shape is the classic engine's contract; the
+        # modern wheel draws its own sector geometry.
+        drawer.save_svg(output_path=str(tmp_path), filename="gauq_sweep", style="classic")
         svg = (tmp_path / "gauq_sweep.svg").read_text()
 
         wedge_paths = re.findall(
@@ -292,7 +294,9 @@ class TestGauquelinSVG:
         """Gauquelin mode must emit 36 transparent clickable wedges with kr:sector attrs."""
         chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
         drawer = ChartDrawer(chart_data=chart_data, theme="light")
-        drawer.save_svg(output_path=str(tmp_path), filename="gauq_hit_areas")
+        # Transparent-wedge hit areas are the classic engine's contract; the
+        # modern wheel renders its own click sectors.
+        drawer.save_svg(output_path=str(tmp_path), filename="gauq_hit_areas", style="classic")
         svg = (tmp_path / "gauq_hit_areas.svg").read_text()
 
         # 36 hit-area groups total (double/single quote tolerant for scour)

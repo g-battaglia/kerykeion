@@ -67,7 +67,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
 )
 data = ChartDataFactory.create_natal_chart_data(subject)
-chart = ChartDrawer(data)  # classic by default
+chart = ChartDrawer(data)  # "classic" theme by default (the wheel style defaults to "modern")
 
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
