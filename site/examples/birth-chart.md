@@ -34,12 +34,12 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
-drawer.save_svg(output_path=out_dir, filename="kanye-natal")
+drawer.save_svg(output_path=out_dir, filename="kanye-natal", style="classic")
 ```
 
 The output will be a SVG file in `charts_output/kanye-natal.svg`.
 
-![Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/Kanye%20-%20Natal%20Chart.svg)
+![Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/Kanye%20-%20Natal%20Chart%20-%20Classic.svg)
 
 ## External Birth Chart
 
@@ -63,12 +63,12 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data, external_view=True)
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
-drawer.save_svg(output_path=out_dir, filename="john-lennon-external-natal")
+drawer.save_svg(output_path=out_dir, filename="john-lennon-external-natal", style="classic")
 ```
 
 The output will be a SVG file in `charts_output/john-lennon-external-natal.svg`.
 
-![External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)
+![External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart%20-%20Classic.svg)
 
 ---
 

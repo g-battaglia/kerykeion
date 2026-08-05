@@ -2,6 +2,9 @@ from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion import ChartDrawer
 from pathlib import Path
+
+# Since v6 "modern" is ChartDrawer's default style, so no style= argument is
+# needed anywhere in this example.
 from os import makedirs as mkdirs
 
 OUTPUT = str(Path(__file__).parent / "output")
@@ -64,9 +67,9 @@ def generate_charts_for_theme(theme_name):
     # ════════════════════════════════════════════════════════════════════════════
     meeting_data = ChartDataFactory.create_natal_chart_data(transit)
     meeting_drawer = ChartDrawer(meeting_data, theme=theme_name)
-    meeting_drawer.save_svg(output_path=OUTPUT, filename=f"{prefix}mccartney_meeting_natal", style="modern")
+    meeting_drawer.save_svg(output_path=OUTPUT, filename=f"{prefix}mccartney_meeting_natal")
     meeting_drawer.save_wheel_only_svg_file(
-        output_path=OUTPUT, filename=f"{prefix}mccartney_meeting_natal_wheel", style="modern"
+        output_path=OUTPUT, filename=f"{prefix}mccartney_meeting_natal_wheel"
     )
 
     # ════════════════════════════════════════════════════════════════════════════
@@ -74,8 +77,8 @@ def generate_charts_for_theme(theme_name):
     # ════════════════════════════════════════════════════════════════════════════
     natal_data = ChartDataFactory.create_natal_chart_data(lennon)
     natal_drawer = ChartDrawer(natal_data, theme=theme_name)
-    natal_drawer.save_svg(output_path=OUTPUT, filename=f"{prefix}lennon_natal", style="modern")
-    natal_drawer.save_wheel_only_svg_file(output_path=OUTPUT, filename=f"{prefix}lennon_natal_wheel", style="modern")
+    natal_drawer.save_svg(output_path=OUTPUT, filename=f"{prefix}lennon_natal")
+    natal_drawer.save_wheel_only_svg_file(output_path=OUTPUT, filename=f"{prefix}lennon_natal_wheel")
 
     # ════════════════════════════════════════════════════════════════════════════
     # 2. NATAL CHART — without zodiac ring (for comparison)
@@ -83,13 +86,11 @@ def generate_charts_for_theme(theme_name):
     natal_drawer.save_svg(
         output_path=OUTPUT,
         filename=f"{prefix}lennon_natal_no_zodiac",
-        style="modern",
         show_zodiac_background_ring=False,
     )
     natal_drawer.save_wheel_only_svg_file(
         output_path=OUTPUT,
         filename=f"{prefix}lennon_natal_no_zodiac_wheel",
-        style="modern",
         show_zodiac_background_ring=False,
     )
 
@@ -98,9 +99,9 @@ def generate_charts_for_theme(theme_name):
     # ════════════════════════════════════════════════════════════════════════════
     synastry_data = ChartDataFactory.create_synastry_chart_data(lennon, yoko)
     synastry_drawer = ChartDrawer(synastry_data, theme=theme_name)
-    synastry_drawer.save_svg(output_path=OUTPUT, filename=f"{prefix}lennon_yoko_synastry", style="modern")
+    synastry_drawer.save_svg(output_path=OUTPUT, filename=f"{prefix}lennon_yoko_synastry")
     synastry_drawer.save_wheel_only_svg_file(
-        output_path=OUTPUT, filename=f"{prefix}lennon_yoko_synastry_wheel", style="modern"
+        output_path=OUTPUT, filename=f"{prefix}lennon_yoko_synastry_wheel"
     )
 
     # ════════════════════════════════════════════════════════════════════════════
@@ -108,9 +109,9 @@ def generate_charts_for_theme(theme_name):
     # ════════════════════════════════════════════════════════════════════════════
     transit_data = ChartDataFactory.create_transit_chart_data(lennon, transit)
     transit_drawer = ChartDrawer(transit_data, theme=theme_name)
-    transit_drawer.save_svg(output_path=OUTPUT, filename=f"{prefix}lennon_mccartney_transit", style="modern")
+    transit_drawer.save_svg(output_path=OUTPUT, filename=f"{prefix}lennon_mccartney_transit")
     transit_drawer.save_wheel_only_svg_file(
-        output_path=OUTPUT, filename=f"{prefix}lennon_mccartney_transit_wheel", style="modern"
+        output_path=OUTPUT, filename=f"{prefix}lennon_mccartney_transit_wheel"
     )
 
     # ════════════════════════════════════════════════════════════════════════════
@@ -119,7 +120,6 @@ def generate_charts_for_theme(theme_name):
     synastry_drawer.save_svg(
         output_path=OUTPUT,
         filename=f"{prefix}lennon_yoko_synastry_no_zodiac",
-        style="modern",
         show_zodiac_background_ring=False,
     )
 

@@ -35,12 +35,12 @@ drawer = ChartDrawer(chart_data=chart_data)
 
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
-drawer.save_svg(output_path=out_dir, filename="lennon-transit")
+drawer.save_svg(output_path=out_dir, filename="lennon-transit", style="classic")
 ```
 
 The output will be:
 
-![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20All%20Active%20Points%20-%20Transit%20Chart.svg)
+![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20All%20Active%20Points%20-%20Transit%20Chart%20-%20Classic.svg)
 
 ## New Transit Chart Features
 

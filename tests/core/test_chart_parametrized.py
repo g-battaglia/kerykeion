@@ -187,8 +187,8 @@ class TestTemporalSubjects:
         try:
             subject = create_subject_from_dict(subject_data)
             chart_data = ChartDataFactory.create_natal_chart_data(subject)
-            chart_svg = ChartDrawer(chart_data).generate_svg_string()
-            expected_file = f"{subject_data['name']} - Natal Chart.svg"
+            chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+            expected_file = f"{subject_data['name']} - Natal Chart - Classic.svg"
             _compare_chart_svg(expected_file, chart_svg)
         except AssertionError:
             # A baseline mismatch is a real regression, not an environment problem.
@@ -218,8 +218,8 @@ class TestTemporalSubjects:
             subject = create_subject_from_dict(subject_data)
             subject.name = f"{subject_data['name']} - {theme.title()} Theme"
             chart_data = ChartDataFactory.create_natal_chart_data(subject)
-            chart_svg = ChartDrawer(chart_data, theme=theme).generate_svg_string()
-            expected_file = f"{subject.name} - Natal Chart.svg"
+            chart_svg = ChartDrawer(chart_data, theme=theme).generate_svg_string(style="classic")
+            expected_file = f"{subject.name} - Natal Chart - Classic.svg"
             _compare_chart_svg(expected_file, chart_svg)
         except AssertionError:
             # A baseline mismatch is a real regression, not an environment problem.
@@ -250,8 +250,8 @@ class TestGeographicSubjects:
         try:
             subject = create_subject_from_dict(subject_data)
             chart_data = ChartDataFactory.create_natal_chart_data(subject)
-            chart_svg = ChartDrawer(chart_data).generate_svg_string()
-            expected_file = f"{subject_data['name']} - Natal Chart.svg"
+            chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+            expected_file = f"{subject_data['name']} - Natal Chart - Classic.svg"
             _compare_chart_svg(expected_file, chart_svg)
         except AssertionError:
             # A baseline mismatch is a real regression, not an environment problem.
@@ -267,8 +267,8 @@ class TestGeographicSubjects:
             subject = create_subject_from_dict(subject_data, houses_system_identifier="K")
             subject.name = f"{subject_data['name']} - Koch"
             chart_data = ChartDataFactory.create_natal_chart_data(subject)
-            chart_svg = ChartDrawer(chart_data).generate_svg_string()
-            expected_file = f"{subject.name} - Natal Chart.svg"
+            chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+            expected_file = f"{subject.name} - Natal Chart - Classic.svg"
             _compare_chart_svg(expected_file, chart_svg)
         except AssertionError:
             # A baseline mismatch is a real regression, not an environment problem.
@@ -298,8 +298,8 @@ class TestGeographicSubjects:
             subject = create_subject_from_dict(subject_data, houses_system_identifier="W")
             subject.name = f"{subject_data['name']} - Whole Sign"
             chart_data = ChartDataFactory.create_natal_chart_data(subject)
-            chart_svg = ChartDrawer(chart_data).generate_svg_string()
-            expected_file = f"{subject.name} - Natal Chart.svg"
+            chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+            expected_file = f"{subject.name} - Natal Chart - Classic.svg"
             _compare_chart_svg(expected_file, chart_svg)
         except AssertionError:
             # A baseline mismatch is a real regression, not an environment problem.
@@ -334,8 +334,8 @@ class TestCrossCombinations:
             suppress_geonames_warning=True,
         )
         chart_data = ChartDataFactory.create_natal_chart_data(subject)
-        chart_svg = ChartDrawer(chart_data, theme=theme).generate_svg_string()
-        expected_file = f"{subject.name} - Natal Chart.svg"
+        chart_svg = ChartDrawer(chart_data, theme=theme).generate_svg_string(style="classic")
+        expected_file = f"{subject.name} - Natal Chart - Classic.svg"
         _compare_chart_svg(expected_file, chart_svg)
 
     @pytest.mark.parametrize(
@@ -358,8 +358,8 @@ class TestCrossCombinations:
             suppress_geonames_warning=True,
         )
         chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
-        chart_svg = ChartDrawer(chart_data).generate_svg_string()
-        expected_file = f"John Lennon - {house_name} - Synastry Chart.svg"
+        chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+        expected_file = f"John Lennon - {house_name} - Synastry Chart - Classic.svg"
         _compare_chart_svg(expected_file, chart_svg)
 
     @pytest.mark.parametrize(
@@ -382,8 +382,8 @@ class TestCrossCombinations:
             suppress_geonames_warning=True,
         )
         chart_data = ChartDataFactory.create_transit_chart_data(first, second)
-        chart_svg = ChartDrawer(chart_data).generate_svg_string()
-        expected_file = f"John Lennon - {house_name} - Transit Chart.svg"
+        chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+        expected_file = f"John Lennon - {house_name} - Transit Chart - Classic.svg"
         _compare_chart_svg(expected_file, chart_svg)
 
 
@@ -405,5 +405,5 @@ class TestHistoricalPairs:
         yoko = create_subject_from_dict(yoko_data)
 
         chart_data = ChartDataFactory.create_synastry_chart_data(john, yoko)
-        chart_svg = ChartDrawer(chart_data).generate_svg_string()
-        _compare_chart_svg("John and Yoko - Synastry Chart.svg", chart_svg)
+        chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+        _compare_chart_svg("John and Yoko - Synastry Chart - Classic.svg", chart_svg)

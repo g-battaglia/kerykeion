@@ -253,10 +253,14 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
 
-# Get SVG as string (recommended for web apps)
+# Get SVG as string (recommended for web apps).
+# The wheel style defaults to "modern"; pass style="classic" for the
+# traditional wheel (instance-level via ChartDrawer(..., style="classic")
+# or per render).
 svg_string = drawer.generate_svg_string()
 
-# Or save to file
+# Or save to file. Default filenames carry the style suffix:
+# "... - Modern.svg" / "... - Classic.svg".
 from pathlib import Path
 output_dir = Path("charts")
 output_dir.mkdir(exist_ok=True)

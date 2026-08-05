@@ -72,12 +72,12 @@ chart = ChartDrawer(data)
 
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=out_dir, filename="lennon-heliocentric")
+chart.save_svg(output_path=out_dir, filename="lennon-heliocentric", style="classic")
 ```
 
 The output will be:
 
-![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart.svg)
+![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart%20-%20Classic.svg)
 
 > **Note:** Heliocentric charts have no houses or Ascendant since there is no observer on Earth. The house system is ignored.
 

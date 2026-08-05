@@ -63,9 +63,9 @@ PANEL_ROWS = len(
 #: deciding what they are supposed to represent, which is a change to the
 #: fixtures rather than a refresh of them.
 CANNOT_REGENERATE_HERE = {
-    "Ancient Greece 500BC - Progression Chart.svg": "no generator in the repo; progressed target not recorded",
-    "Ancient Greece 500BC - Synastry Chart.svg": "no generator in the repo; second subject not recorded",
-    "Ancient Greece 500BC - Transit Chart.svg": "no generator in the repo; transit moment not recorded",
+    "Ancient Greece 500BC - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
+    "Ancient Greece 500BC - Synastry Chart - Classic.svg": "no generator in the repo; second subject not recorded",
+    "Ancient Greece 500BC - Transit Chart - Classic.svg": "no generator in the repo; transit moment not recorded",
 }
 
 _ROW = re.compile(r"Bottom_Left_Text_(\d+)")

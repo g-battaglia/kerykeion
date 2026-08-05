@@ -17,15 +17,24 @@ This script creates all types of SVG charts used in tests:
 All files are saved to tests/data/svg/ with geonames authentication included.
 """
 
+from functools import partial
+
 from pathlib import Path
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.chart_drawer import ChartDrawer as _ChartDrawer
 from kerykeion.charts.charts_utils import make_lunar_phase
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
+
+# This script's baselines are CLASSIC-style except where a call passes
+# style="modern" explicitly (Section 14; the bulk of the modern baselines live
+# in generate_modern_baselines.py). The library default style became "modern"
+# in v6, so pin the instance default once here rather than on every one of the
+# ChartDrawer calls below. Call-site kwargs still override the partial's.
+ChartDrawer = partial(_ChartDrawer, style="classic")
 
 # Set output directory for all chart SVGs
 OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
@@ -82,7 +91,7 @@ internal_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
 black_and_white_natal_chart = ChartDrawer(natal_chart_data, theme="black-and-white")
 black_and_white_natal_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Black and White Theme - Natal Chart",
+    filename="John Lennon - Black and White Theme - Natal Chart - Classic",
 )
 
 # External Natal Chart (using external_view parameter)
@@ -145,7 +154,7 @@ synastry_chart_house_and_cusp.save_svg(
 black_and_white_synastry_chart = ChartDrawer(synastry_chart_data, theme="black-and-white")
 black_and_white_synastry_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Black and White Theme - Synastry Chart",
+    filename="John Lennon - Black and White Theme - Synastry Chart - Classic",
 )
 
 # Transits Chart
@@ -200,7 +209,7 @@ transits_chart_house_and_cusp.save_svg(
 black_and_white_transit_chart = ChartDrawer(transits_chart_data, theme="black-and-white")
 black_and_white_transit_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Black and White Theme - Transit Chart",
+    filename="John Lennon - Black and White Theme - Transit Chart - Classic",
 )
 
 # Sidereal Birth Chart (Lahiri)
@@ -708,7 +717,7 @@ composite_chart.save_svg(output_path=OUTPUT_DIR_STR)
 black_and_white_composite_chart = ChartDrawer(composite_chart_data, theme="black-and-white")
 black_and_white_composite_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="Angelina Jolie and Brad Pitt Composite Chart - Black and White Theme - Composite Chart",
+    filename="Angelina Jolie and Brad Pitt Composite Chart - Black and White Theme - Composite Chart - Classic",
 )
 
 ## TO IMPLEMENT (Or check)
@@ -784,7 +793,7 @@ dual_return_chart_house_and_cusp.save_svg(
 black_and_white_dual_return_chart = ChartDrawer(dual_return_chart_data, theme="black-and-white")
 black_and_white_dual_return_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Black and White Theme - DualReturnChart Chart - Solar Return",
+    filename="John Lennon - Black and White Theme - DualReturnChart Chart - Solar Return - Classic",
 )
 
 # Single Wheel Solar Return
@@ -796,7 +805,7 @@ single_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
 black_and_white_single_return_chart = ChartDrawer(single_return_chart_data, theme="black-and-white")
 black_and_white_single_return_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon Solar Return - Black and White Theme - SingleReturnChart Chart",
+    filename="John Lennon Solar Return - Black and White Theme - SingleReturnChart Chart - Classic",
 )
 
 # Lunar Return Charts
@@ -1605,21 +1614,21 @@ ChartDrawer(apc_house_chart_data).save_svg(output_path=OUTPUT_DIR_STR)
 light_theme_synastry_chart = ChartDrawer(synastry_chart_data, theme="light")
 light_theme_synastry_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Light Theme - Synastry Chart",
+    filename="John Lennon - Light Theme - Synastry Chart - Classic",
 )
 
 # Light Theme Transit Chart
 light_theme_transit_chart = ChartDrawer(transits_chart_data, theme="light")
 light_theme_transit_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Light Theme - Transit Chart",
+    filename="John Lennon - Light Theme - Transit Chart - Classic",
 )
 
 # Light Theme Composite Chart
 light_theme_composite_chart = ChartDrawer(composite_chart_data, theme="light")
 light_theme_composite_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="Angelina Jolie and Brad Pitt Composite Chart - Light Theme - Composite Chart",
+    filename="Angelina Jolie and Brad Pitt Composite Chart - Light Theme - Composite Chart - Classic",
 )
 
 # Light Theme External Natal Chart
@@ -1634,14 +1643,14 @@ light_theme_external_chart.save_svg(output_path=OUTPUT_DIR_STR)
 dark_theme_transit_chart = ChartDrawer(transits_chart_data, theme="dark")
 dark_theme_transit_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Dark Theme - Transit Chart",
+    filename="John Lennon - Dark Theme - Transit Chart - Classic",
 )
 
 # Dark Theme Composite Chart
 dark_theme_composite_chart = ChartDrawer(composite_chart_data, theme="dark")
 dark_theme_composite_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="Angelina Jolie and Brad Pitt Composite Chart - Dark Theme - Composite Chart",
+    filename="Angelina Jolie and Brad Pitt Composite Chart - Dark Theme - Composite Chart - Classic",
 )
 
 # Black and White Theme External Natal Chart
@@ -1664,14 +1673,14 @@ bw_theme_external_chart.save_svg(output_path=OUTPUT_DIR_STR)
 bw_lunar_dual_return_chart = ChartDrawer(lunar_dual_return_chart_data, theme="black-and-white")
 bw_lunar_dual_return_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Black and White Theme - DualReturnChart Chart - Lunar Return",
+    filename="John Lennon - Black and White Theme - DualReturnChart Chart - Lunar Return - Classic",
 )
 
 # Black and White Theme Single Lunar Return Chart
 bw_lunar_single_return_chart = ChartDrawer(lunar_single_return_chart_data, theme="black-and-white")
 bw_lunar_single_return_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon Lunar Return - Black and White Theme - SingleReturnChart Chart",
+    filename="John Lennon Lunar Return - Black and White Theme - SingleReturnChart Chart - Classic",
 )
 
 # ----------------------------------------------------------------------------
@@ -1845,14 +1854,14 @@ all_points_transit_chart_data = ChartDataFactory.create_transit_chart_data(
 all_points_transit_chart = ChartDrawer(all_points_transit_chart_data)
 all_points_transit_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - All Active Points - Transit Chart",
+    filename="John Lennon - All Active Points - Transit Chart - Classic",
 )
 
 # Solar Return Chart Wheel Only
 solar_return_wheel_only_chart = ChartDrawer(single_return_chart_data)
 solar_return_wheel_only_chart.save_wheel_only_svg_file(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon Solar Return - Wheel Only",
+    filename="John Lennon Solar Return - Classic Wheel Only",
 )
 
 # Solar Return Chart Aspect Grid Only
@@ -1911,14 +1920,14 @@ spanish_transit_chart.save_svg(output_path=OUTPUT_DIR_STR)
 italian_composite_chart = ChartDrawer(composite_chart_data, chart_language="IT")
 italian_composite_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="Angelina Jolie and Brad Pitt Composite Chart - IT - Composite Chart",
+    filename="Angelina Jolie and Brad Pitt Composite Chart - IT - Composite Chart - Classic",
 )
 
 # Portuguese Composite Chart
 portuguese_composite_chart = ChartDrawer(composite_chart_data, chart_language="PT")
 portuguese_composite_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="Angelina Jolie and Brad Pitt Composite Chart - PT - Composite Chart",
+    filename="Angelina Jolie and Brad Pitt Composite Chart - PT - Composite Chart - Classic",
 )
 
 # Russian Transit Chart
@@ -1972,7 +1981,7 @@ heliocentric_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(
 heliocentric_synastry_chart = ChartDrawer(heliocentric_synastry_chart_data)
 heliocentric_synastry_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Heliocentric - Synastry Chart",
+    filename="John Lennon - Heliocentric - Synastry Chart - Classic",
 )
 
 # Topocentric Transit Chart
@@ -2006,7 +2015,7 @@ topocentric_transit_chart_data = ChartDataFactory.create_transit_chart_data(
 topocentric_transit_chart = ChartDrawer(topocentric_transit_chart_data)
 topocentric_transit_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Topocentric - Transit Chart",
+    filename="John Lennon - Topocentric - Transit Chart - Classic",
 )
 
 # True Geocentric Synastry Chart
@@ -2040,7 +2049,7 @@ true_geocentric_synastry_chart_data = ChartDataFactory.create_synastry_chart_dat
 true_geocentric_synastry_chart = ChartDrawer(true_geocentric_synastry_chart_data)
 true_geocentric_synastry_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - True Geocentric - Synastry Chart",
+    filename="John Lennon - True Geocentric - Synastry Chart - Classic",
 )
 
 # ----------------------------------------------------------------------------
@@ -2056,7 +2065,7 @@ relationship_score_synastry_chart_data = ChartDataFactory.create_synastry_chart_
 relationship_score_synastry_chart = ChartDrawer(relationship_score_synastry_chart_data)
 relationship_score_synastry_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Relationship Score - Synastry Chart",
+    filename="John Lennon - Relationship Score - Synastry Chart - Classic",
 )
 
 # ----------------------------------------------------------------------------
@@ -2194,7 +2203,7 @@ minify_css_subject = AstrologicalSubjectFactory.from_birth_data(
 minify_css_chart_data = ChartDataFactory.create_natal_chart_data(minify_css_subject)
 minify_css_chart = ChartDrawer(minify_css_chart_data)
 minify_css_svg = minify_css_chart.generate_svg_string(minify=True, remove_css_variables=True)
-(OUTPUT_DIR / "John Lennon - Minify CSS - Natal Chart.svg").write_text(minify_css_svg, encoding="utf-8")
+(OUTPUT_DIR / "John Lennon - Minify CSS - Natal Chart - Classic.svg").write_text(minify_css_svg, encoding="utf-8")
 
 # ----------------------------------------------------------------------------
 # Section 13: Edge Cases
@@ -2206,7 +2215,7 @@ long_name_subject = AstrologicalSubjectFactory.from_birth_data(
 )
 long_name_chart_data = ChartDataFactory.create_natal_chart_data(long_name_subject)
 long_name_chart = ChartDrawer(long_name_chart_data)
-long_name_chart.save_svg(output_path=OUTPUT_DIR_STR, filename="Long Name - Natal Chart")
+long_name_chart.save_svg(output_path=OUTPUT_DIR_STR, filename="Long Name - Natal Chart - Classic")
 
 # Extreme latitude north (Arctic)
 arctic_subject = AstrologicalSubjectFactory.from_birth_data(

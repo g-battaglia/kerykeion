@@ -68,12 +68,12 @@ chart = ChartDrawer(data)
 
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=out_dir, filename="john-lennon-morinus")
+chart.save_svg(output_path=out_dir, filename="john-lennon-morinus", style="classic")
 ```
 
 The output will be:
 
-![John Lennon - House System Morinus](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20House%20System%20Morinus%20-%20Natal%20Chart.svg)
+![John Lennon - House System Morinus](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20House%20System%20Morinus%20-%20Natal%20Chart%20-%20Classic.svg)
 
 ### Birth Chart with Whole Sign Houses
 

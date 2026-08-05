@@ -2062,8 +2062,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             language: it must be complete (clone the EN block and edit), or
             model validation fails listing the missing fields.
         external_view (bool, optional):
-            For Natal charts only: place planets outside the zodiac ring.
-            Defaults to False.
+            For Natal charts only: place planets outside the zodiac ring
+            (classic style only). Defaults to False.
         transparent_background (bool, optional):
             Whether to use a transparent background instead of the theme color.
             Defaults to False.
@@ -2087,6 +2087,9 @@ class ChartDrawer:  # type: ignore[no-redef]
             Show degree indicators on planets (classic style only). Defaults to True.
         show_aspect_icons (bool, optional):
             Show aspect icons on aspect lines (classic style only). Defaults to True.
+        style (KerykeionChartStyle, optional):
+            Chart wheel style — 'modern' (concentric rings) or 'classic'
+            (traditional circles). Defaults to 'modern'.
 
     Public Methods:
         generate_svg_string(minify=False, remove_css_variables=False) -> str:
@@ -2095,7 +2098,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         save_svg(output_path=None, filename=None, minify=False, remove_css_variables=False) -> None:
             Generate and write the full chart SVG file to the specified path.
             If output_path is None, saves to the user's home directory.
-            If filename is None, uses default pattern: '{subject.name} - {chart_type} Chart.svg'.
+            If filename is None, uses default pattern:
+            '{subject.name} - {chart_type} Chart - {Modern|Classic}.svg'.
 
         generate_wheel_only_svg_string(minify=False, remove_css_variables=False) -> str:
             Render only the chart wheel (no aspect grid) as an SVG string.
@@ -2293,7 +2297,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         padding: int = 20,
         show_degree_indicators: bool = True,
         show_aspect_icons: bool = True,
-        style: "KerykeionChartStyle" = "classic",
+        style: "KerykeionChartStyle" = "modern",
         show_zodiac_background_ring: bool = True,
         show_diurnality: bool = True,
     ):
@@ -2323,7 +2327,9 @@ class ChartDrawer:  # type: ignore[no-redef]
                 missing fields.
             external_view (bool, optional):
                 Whether to use external visualization (planets on outer ring) for
-                single-subject charts. Only applies to Natal charts. Defaults to False.
+                single-subject charts. Only applies to Natal charts, and only in
+                the classic style — the modern style ignores it and warns.
+                Defaults to False.
             transparent_background (bool, optional):
                 Whether to use a transparent background instead of the theme color.
                 Defaults to False.
@@ -2353,11 +2359,11 @@ class ChartDrawer:  # type: ignore[no-redef]
                 Whether to show aspect icons on aspect lines (classic style only).
                 Defaults to True.
             style (KerykeionChartStyle, optional):
-                Default chart wheel style — "classic" (traditional circles) or "modern"
-                (concentric rings).  This default is used by generate_svg_string(),
+                Default chart wheel style — "modern" (concentric rings) or "classic"
+                (traditional circles).  This default is used by generate_svg_string(),
                 save_svg(), generate_wheel_only_svg_string(), and save_wheel_only_svg_file()
                 unless overridden with an explicit ``style=`` argument at render time.
-                Defaults to "classic".
+                Defaults to "modern".
             show_zodiac_background_ring (bool, optional):
                 Default for whether to draw colored zodiac wedges (modern style only).
                 Can be overridden at render time.  Defaults to True.
@@ -2538,6 +2544,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._validate_chart_style(style)
         self._style: "KerykeionChartStyle" = style
         self._show_zodiac_background_ring: bool = show_zodiac_background_ring
+        # Classic-only options already reported by _warn_classic_only_options,
+        # so a reused drawer warns once per option rather than once per render.
+        self._warned_classic_only: set[str] = set()
 
         # Initialize vertical offsets using the dataclass, then convert to dict
         self._vertical_offsets_config = VerticalOffsetsConfig()
@@ -5164,6 +5173,41 @@ class ChartDrawer:  # type: ignore[no-redef]
         if style not in allowed_styles:
             raise KerykeionException(f"Style {style!r} is not available. Allowed values: {', '.join(allowed_styles)}.")
 
+    def _warn_classic_only_options(self, effective_style: "KerykeionChartStyle") -> None:
+        """Warn when classic-only options are active but the modern style renders.
+
+        With "modern" as the default style, a caller that sets ``external_view``,
+        ``show_degree_indicators=False`` or ``show_aspect_icons=False`` without
+        also asking for ``style="classic"`` would silently lose the option: the
+        modern renderer ignores all three. The render still succeeds — the warning
+        only makes the silence audible. ``show_degree_indicators`` and
+        ``show_aspect_icons`` default to True, so only a non-default False value
+        can be recognised as an explicit request.
+
+        Each option warns once per drawer. The condition is a property of the
+        instance, not of the call, so repeating it on every render would turn a
+        batch job — a year of transits off one drawer — into hundreds of
+        identical lines, which is how a warning stops being read.
+
+        Args:
+            effective_style: The style actually used for this render.
+        """
+        if effective_style != "modern":
+            return
+
+        classic_only = (
+            ("external_view", self.external_view, "to keep the external layout"),
+            ("show_degree_indicators", not self.show_degree_indicators, "for it to take effect"),
+            ("show_aspect_icons", not self.show_aspect_icons, "for it to take effect"),
+        )
+        for name, is_set, remedy in classic_only:
+            if is_set and name not in self._warned_classic_only:
+                self._warned_classic_only.add(name)
+                logger.warning(
+                    f"{name} is a classic-style option and the modern style ignores it; "
+                    f'pass style="classic" {remedy}.'
+                )
+
     def generate_svg_string(
         self,
         minify: bool = False,
@@ -5201,6 +5245,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         )
 
         self._validate_chart_style(effective_style)
+        self._warn_classic_only_options(effective_style)
         td = self._create_template_dictionary(custom_title=custom_title)
 
         DATA_DIR = _MODULE_DIR
@@ -5272,8 +5317,14 @@ class ChartDrawer:  # type: ignore[no-redef]
             _, english_label = return_label_keys(self.second_obj)
             return f"{self.first_obj.name} - {self.chart_type} Chart - {english_label}{suffix}"
 
-        # Handle ExternalNatal renaming for wheel and grid exports
-        external_alias_suffixes = {" - Wheel Only", " - Aspect Grid Only", " - Modern Wheel Only"}
+        # Handle ExternalNatal renaming for wheel and grid exports.
+        #
+        # The modern wheel is deliberately NOT in this set: it ignores
+        # external_view (see _warn_classic_only_options), so naming its file
+        # "ExternalNatal" would have the filename claim a layout the drawing
+        # does not have — and with modern the default style, that mislabelled
+        # file is what a caller who merely set external_view=True now gets.
+        external_alias_suffixes = {" - Classic Wheel Only", " - Aspect Grid Only"}
         if suffix in external_alias_suffixes and self.external_view and self.chart_type == "Natal":
             chart_type_name = "ExternalNatal"
         else:
@@ -5391,13 +5442,15 @@ class ChartDrawer:  # type: ignore[no-redef]
         Generate and save the full chart SVG to disk.
 
         Calls generate_svg_string to render the SVG, then writes a file named
-        "{subject.name} - {chart_type} Chart.svg" in the specified output directory.
+        "{subject.name} - {chart_type} Chart - Modern.svg" (or "... - Classic.svg"
+        when the effective style is "classic") in the specified output directory.
 
         Args:
             output_path (str, Path, or None): Directory path where the SVG file will be saved.
                 If None, defaults to the user's home directory.
             filename (str or None): Custom filename for the SVG file (without extension).
-                If None, uses the default pattern: "{subject.name} - {chart_type} Chart".
+                If None, uses the default pattern:
+                "{subject.name} - {chart_type} Chart - {Modern|Classic}".
             minify (bool): Pass-through to generate_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_svg_string to embed CSS variables.
             custom_title (str or None): Optional override for the SVG title.
@@ -5410,7 +5463,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             None
         """
         effective_style = style if style is not _UNSET else self._style
-        suffix = " - Modern" if effective_style == "modern" else ""
+        suffix = " - Modern" if effective_style == "modern" else " - Classic"
         self.template = self.generate_svg_string(
             minify,
             remove_css_variables,
@@ -5456,6 +5509,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         )
 
         self._validate_chart_style(effective_style)
+        self._warn_classic_only_options(effective_style)
 
         if effective_style == "modern":
             raw_template = _load_cached_file(str(_MODULE_DIR / "templates" / "modern_wheel.xml"))
@@ -5500,13 +5554,16 @@ class ChartDrawer:  # type: ignore[no-redef]
         Generate and save wheel-only chart SVG to disk.
 
         Calls generate_wheel_only_svg_string and writes a file named
-        "{subject.name} - {chart_type} Chart - Wheel Only.svg" in the specified output directory.
+        "{subject.name} - {chart_type} Chart - Modern Wheel Only.svg" (or
+        "... - Classic Wheel Only.svg" when the effective style is "classic")
+        in the specified output directory.
 
         Args:
             output_path (str, Path, or None): Directory path where the SVG file will be saved.
                 If None, defaults to the user's home directory.
             filename (str or None): Custom filename for the SVG file (without extension).
-                If None, uses the default pattern: "{subject.name} - {chart_type} Chart - Wheel Only".
+                If None, uses the default pattern:
+                "{subject.name} - {chart_type} Chart - {Modern|Classic} Wheel Only".
             minify (bool): Pass-through to generate_wheel_only_svg_string for compact output.
             remove_css_variables (bool): Pass-through to generate_wheel_only_svg_string to embed CSS variables.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
@@ -5518,7 +5575,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             None
         """
         effective_style = style if style is not _UNSET else self._style
-        suffix = " - Modern Wheel Only" if effective_style == "modern" else " - Wheel Only"
+        suffix = " - Modern Wheel Only" if effective_style == "modern" else " - Classic Wheel Only"
         template = self.generate_wheel_only_svg_string(
             minify,
             remove_css_variables,
