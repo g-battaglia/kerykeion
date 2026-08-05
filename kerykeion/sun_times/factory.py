@@ -18,8 +18,10 @@ class SunTimesFactory:
     ephemeris backend's rise/set routine directly (with atmospheric refraction)
     rather than building a full astrological subject, so it is fast and has no
     geolocation dependency. Times are returned as timezone-aware UTC datetimes;
-    on polar day/night or transition dates ``day_length`` is
-    ``None``, because no sunrise could be paired with a later sunset. Solar noon
+    on polar day/night dates ``day_length`` is ``None``; on transition dates it
+    is ``None`` only when no sunrise could be paired with a later sunset — a
+    successful pairing can reach past local midnight and push ``day_length``
+    beyond 24 hours (see ``SunTimesModel``). Solar noon
     is still reported: a meridian crossing is not a horizon crossing, so the Sun
     culminates on a day it never rises.
 

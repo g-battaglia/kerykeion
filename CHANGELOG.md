@@ -95,7 +95,11 @@
   Descendant 15, Imum Coeli 15) across 28 fixtures, plus **122 non-angle speed
   cells** — the Uranian points and, not previously named anywhere,
   True Lilith 12, True Priapus 12 and Interpolated Perigee 11 — and
-  **17 declination cells**. `ascmc_speed` comes from `houses_ex2`; the parity
+  **19 declination cells** (Mean Lilith 8, Mean Priapus 8, Hades 1, White
+  Moon 1, Admetos 1 — a first count said 17, having taken the dual-return
+  fixture's Lilith and Priapus rows once when that file carries them in both
+  its tables: the very duplicate-cell trap this paragraph warns about).
+  `ascmc_speed` comes from `houses_ex2`; the parity
   front excludes cusp and angle speed by design, so the campaign could not have
   seen any of it.
 

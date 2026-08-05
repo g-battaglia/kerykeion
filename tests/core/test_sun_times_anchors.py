@@ -231,6 +231,30 @@ def test_the_grid_actually_has_cases_on_both_sides_of_the_cut_off():
     assert min(latitudes) < -30.0 and max(latitudes) > 60.0
 
 
+@pytest.mark.parametrize("name", list(_REFERENCE))
+def test_solar_noon_belongs_to_the_requested_civil_day(name):
+    """The one claim only a calendar can make, pinned because nothing else can.
+
+    Every time comparison in this file unwraps to the nearest day, and the
+    altitude suite's hour angle wraps mod 24 h — so a transit reported for the
+    WRONG CIVIL DAY reads as its sub-day residual everywhere else and sails
+    through. Proven by mutation in review: reverting solar noon to the
+    sunrise/sunset midpoint made Singapore report its 2026-08-05 noon at 05:10
+    on 2026-08-06 and every test in this module still passed. The requests here
+    use tz_str="UTC", and the transit is searched from local midnight, so the
+    returned instant must carry the requested UTC date — at every latitude,
+    polar cases included, since a culmination exists on days a sunrise does not.
+    """
+    case = _REFERENCE[name]
+    events = _our_events(case)
+    assert events["transit"] is not None, f"{name}: no solar noon at all"
+    year, month, day = case["date"]
+    assert events["transit"].astimezone(dt.timezone.utc).date() == dt.date(year, month, day), (
+        f"{name}: solar noon {events['transit'].isoformat()} does not belong to the "
+        f"requested UTC civil day {year:04d}-{month:02d}-{day:02d}"
+    )
+
+
 @pytest.mark.parametrize("name", _ANCHORED)
 def test_sunrise_and_solar_noon_match_the_naval_observatory(name):
     """The tight claim, on the two quantities the two sources agree about."""

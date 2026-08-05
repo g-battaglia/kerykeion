@@ -292,10 +292,11 @@ def _civil_day_bounds(year: int, month: int, day: int, tz: ZoneInfo) -> tuple[fl
 def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     """Classify a no-rise/no-set day as polar day or polar night.
 
-    Uses the TEXTBOOK apparent upper-limb horizon convention, which is deliberately
-    not quite the one used by Swiss Ephemeris
-    rise/set searches. Refraction and the Sun's semidiameter put the apparent
-    sunrise/sunset threshold near -0.833 degrees for the Sun's center.
+    Uses the TEXTBOOK apparent upper-limb horizon convention — deliberately not
+    quite the one the rise/set search itself uses; the note on
+    ``_APPARENT_UPPER_LIMB_HORIZON_DEGREES`` above owns that gap. Refraction and
+    the Sun's semidiameter put the apparent sunrise/sunset threshold near
+    -0.833 degrees for the Sun's center.
 
     Args:
         jd_noon: Julian Day (UT) near local solar noon — used to read the Sun's

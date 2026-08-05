@@ -16,11 +16,16 @@ which does not deform with latitude, and it must be the same angle everywhere:
     at every solar noon, the Sun's hour angle is zero;
     at the instant `is_diurnal` flips, the Sun's geometric centre is at 0.
 
-The independent side is Skyfield reading its own JPL kernel — a separate position
-pipeline from the one under test, with its own frame handling. It is not a claim
-of absolute truth (the anchors are what carry that); it is a claim that two
-implementations that share no code agree on where the Sun was, which is what
-isolates OUR geometry from the convention question.
+The second opinion is Skyfield reading its own de421 kernel — and honesty about
+HOW second it is: the ephemeris backend is itself built on Skyfield's machinery
+(timescale, frames, aberration), so a common-mode error inside Skyfield would
+move both sides together and pass here unseen. Absolute truth is the anchors'
+job, at the latitudes where published instants are well conditioned. What this
+module does isolate is everything KERYKEION adds on top of the backend: the
+Julian-Day and timezone bookkeeping, the event search and its pairing, the
+transit-vs-midpoint choice, and the horizon convention itself. A midpoint
+regression, a wrong search seed or a dropped refraction term fails here (proven
+by mutation); a Skyfield frame bug would not, and no test here claims otherwise.
 
 Needs `skyfield` and `skyfield-data`, both already present as transitive
 dependencies of the ephemeris backend.

@@ -1,7 +1,7 @@
 """
 Mocked unit tests for MoonPhaseDetailsFactory.
 
-These tests mock the Swiss Ephemeris utility layer so the factory logic can be
+These tests mock the ephemeris utility layer so the factory logic can be
 verified without ephemeris data files or real ephe calls. This isolates the
 factory's orchestration, model assembly, and edge-case handling.
 
@@ -13,7 +13,11 @@ Mocking strategy:
     tests in this file making real backend calls — including the one asserting
     that solar noon survives a rise/set failure, whose green then depended on a
     real ephemeris succeeding. A per-class fixture cannot prevent that recurring;
-    a module-level one can.
+    a module-level one can. The two NON-mocked classes at the bottom
+    (`TestMoonPhaseDetailsIntegration`, `TestFactoryFromSubjectRangeEdge`)
+    override it back to the real call: an earlier revision blindfolded them too,
+    silently zeroing the file's only real-ephemeris transit coverage while the
+    commit message claimed the opposite.
 
     The patched helpers:
         - compute_lunar_phase_jd
@@ -184,6 +188,8 @@ def _no_real_transit_calls():
     needed it left thirteen tests calling the real backend — the exact thing the
     module docstring promises does not happen. Tests that want their own value
     still override it with a nested `patch`; this only guarantees the floor.
+    The two real-ephemeris classes shadow this fixture with a no-op, or their
+    transit-path coverage would be silently zero.
     """
     with patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD):
         yield
@@ -690,7 +696,16 @@ class TestComputeLunarPhaseMetrics:
 
 
 class TestMoonPhaseDetailsIntegration:
-    """Integration test exercising real Swiss Ephemeris calls."""
+    """Integration test exercising real ephemeris backend calls."""
+
+    @pytest.fixture(autouse=True)
+    def _no_real_transit_calls(self):
+        """Shadow the module blindfold: this class IS the real-ephemeris path.
+
+        With the module fixture active its transit coverage was silently zero —
+        five real helpers plus one fake, while the commit message said six.
+        """
+        yield
 
     def test_from_subject_returns_valid_overview(self):
         from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
@@ -750,6 +765,14 @@ class TestFactoryFromSubjectRangeEdge:
     lower-precision source (the rc12 behaviour): sealed LEB mode raises the
     typed ``EphemerisRangeError`` by deliberate contract ("LEB mode does not
     silently substitute a lower-precision source")."""
+
+    @pytest.fixture(autouse=True)
+    def _no_real_transit_calls(self):
+        """Shadow the module blindfold — same reason as the class above: the
+        whole point of this class is that the REAL backend degrades cleanly,
+        transit included (it computes fine at 2649-12-20; the edge the class
+        exercises is the forward phase scan, not the transit)."""
+        yield
 
     def test_range_end_subject_returns_model(self) -> None:
         # 2649-12-20 is inside the final synodic month of the medium (DE440)
