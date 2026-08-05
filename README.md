@@ -1804,7 +1804,11 @@ Six lightweight factories that work directly from dates/locations (no full `Astr
 
 ### Sun Times
 
-`SunTimesFactory` returns sunrise / sunset / solar-noon / day-length for a civil date at a location (apparent upper-limb refraction), with polar day/night detection.
+`SunTimesFactory` returns sunrise / sunset / solar-noon / day-length for a civil date at a location, with polar day/night detection.
+
+**What the numbers mean.** Sunrise and sunset are the moment the Sun's apparent **upper limb** meets the horizon: the semidiameter is taken from the real Earth–Sun distance rather than a fixed 16′, and refraction from a standard atmosphere (1013.25 hPa, 15 °C), which puts the Sun's geometric centre near −0.83° at the event. The horizon is the level sea horizon at any elevation, which is the convention published rise/set tables use. Solar noon is the **meridian transit** — the instant the Sun is highest — not the midpoint of sunrise and sunset; the two agree only while the declination is stationary, and away from the solstices the midpoint drifts by up to a minute, more the higher the latitude. Because a transit is a meridian crossing rather than a horizon crossing, solar noon is reported on polar days too, when there is no rise/set pair at all.
+
+**Sunrise is not `is_diurnal`.** `AstrologicalSubjectModel.is_diurnal` tests the Sun's **geometric centre** against the true horizon — no disc, no atmosphere — because that is the question a chart is cast from. Sunrise counts the Sun as risen as soon as its upper edge shows through the air, which happens earlier. The gap is real and grows towards the poles: about **3.3 min at the equator, 4.4 min at Rome, 8.2 min at Reykjavík and 10 min at Tromsø**. Both answers are right to their own question, and neither should ever be derived from the other.
 
 ```python
 from kerykeion import SunTimesFactory

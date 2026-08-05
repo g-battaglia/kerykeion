@@ -2,6 +2,80 @@
 
 ## [Unreleased]
 
+## 6.0.0a79 - 2026-08-05
+
+### Fixed
+
+- **`solar_noon` is now the meridian transit, which is what it always claimed to
+  be.** It was the midpoint between sunrise and sunset. The two coincide only
+  while the Sun's declination is stationary, so the old value was right at the
+  solstices and on the equator — where anyone spot-checking it would look — and
+  wrong everywhere else: measured against two national observatories, +21.5 s at
+  Rome on the equinox, +33.5 s at Ushuaia, +62.4 s at Reykjavík. Worse, when the
+  rise/set pair straddles local midnight the midpoint lands on the wrong civil
+  day entirely, which is what Singapore did. Nothing in the library consumed the
+  field — it is printed in the report, serialised into the AI context and
+  returned to callers — so the correction is visible rather than structural.
+  - `solar_noon` is now also reported on **polar days and polar nights**, where
+    it previously had to be `None`. A transit is a meridian crossing, not a
+    horizon crossing: the Sun culminates on a day it never rises. `day_length`
+    stays `None` there, since there is no pair to measure.
+  - `MoonPhaseSunInfoModel.solar_noon` moved with it, and stays in the subject's
+    local timezone as before.
+
+### Added
+
+- **Sunrise, sunset and solar noon are now anchored to published data we did not
+  produce.** `tests/core/test_sun_times_anchors.py` carries values transcribed by
+  hand from the US Naval Observatory and from IMCCE (Observatoire de Paris) for
+  the same UTC civil day, with the capture date recorded. No script regenerates
+  them: a golden snapshot proves constancy, an anchor proves truth, and only the
+  second kind survives a bad engine bump followed by a blind regeneration.
+  - The tolerances are shaped by what the sources actually do rather than by what
+    would be convenient. The two agree on sunrise and transit, so those are held
+    to 45 s of USNO; they disagree by about two minutes on sunset (a horizon
+    convention), so every event is additionally required to lie inside the span
+    the two of them bracket. Above 60° latitude no time-domain claim is made at
+    all — the Sun grazes the horizon there and clock time stops being a
+    well-conditioned way to state an error, which the sources demonstrate
+    themselves by differing by 10 and 11 minutes at Tromsø. A test asserts that
+    divergence, so the cut-off is earned rather than assumed.
+- **An angle-based check that does not degrade with latitude.**
+  `tests/core/test_sun_times_altitude_invariant.py` never compares times: it takes
+  the instant we return and asks Skyfield — a separate position pipeline — where
+  the Sun was. Across ten sites and four seasons the true upper limb sits at
+  −33.59′ with a spread of 2.5″, solar noon has an hour angle under 0.1 s, and
+  `is_diurnal` flips within a second of the geometric centre crossing zero.
+  - The documented gap between sunrise and diurnality (3.3 min at the equator,
+    4.4 at Rome, 8.2 at Reykjavík) is pinned there too, so the prose cannot drift
+    away from the code.
+
+### Changed
+
+- `libephemeris` pinned to **3.0.0** (from `3.0.0rc15`). Validated rather than
+  assumed: a full cross-engine parity campaign against a file-backed reference
+  returned identical verdicts and identical counts over 5213 compared quantities,
+  and a direct value-by-value diff of 16337 quantities found 16267 bit-identical.
+  House cusps and angles did not move at all. The 70 that did are sidereal
+  ayanamsas at 0.0014″ and the apsis family at 0.064″, and the eight Uranian
+  points, which go from a disordered ±20″ scatter against the reference to a
+  uniform +2..3″ bias — 8 of 9 improve, Kronos by 20″. The report fixtures were
+  regenerated for that reason and no other: exactly eleven points changed
+  position, all of them analytically-modelled bodies, none of them a planet, an
+  angle or a cusp.
+
+### Documentation
+
+- The rise/set horizon convention is now stated where callers will meet it: the
+  apparent upper limb, a semidiameter taken from the real distance rather than a
+  fixed 16′, standard-atmosphere refraction, and a level sea horizon at any
+  elevation. Both the README and the model docstrings say plainly that sunrise
+  and `is_diurnal` answer different questions and must never be derived from one
+  another.
+- `_APPARENT_UPPER_LIMB_HORIZON_DEGREES` now explains why the polar
+  discriminator's textbook −0.833° differs from the −0.827° the search itself
+  implies, and why closing that 0.006° gap would buy nothing.
+
 ## 6.0.0a78 - 2026-08-05
 
 ### Added
