@@ -296,6 +296,12 @@ def test_every_event_lies_inside_the_span_of_the_two_observatories(name):
 def test_the_cut_off_latitude_is_earned():
     """The reason there is no time-domain anchor above 60 degrees, measured.
 
+    Note what this does and does not exercise: it reads only the two published
+    columns and compares them to each other, so it executes no line of this
+    library. That is deliberate — the claim is about the SOURCES, not about us,
+    and it is the premise the cut-off rests on. It belongs in this file because
+    it is the thing that would silently stop being true after a re-capture.
+
     A cut-off chosen for convenience is a way of hiding failures. This one is a
     statement about conditioning, so it has to be demonstrable: the same two
     services that agree to a minute at mid-latitudes must be seen to fall apart
@@ -313,7 +319,12 @@ def test_the_cut_off_latitude_is_earned():
         spreads[name] = worst
 
     below = [spreads[name] for name in _ANCHORED]
-    assert max(below) <= 3 * 60.0, (
+    # 4 minutes, not 3: the widest below the cut-off is Stockholm at exactly
+    # 180.0 s, which against a `<= 3 * 60` bound is zero margin — the next
+    # re-capture would have reddened it for no reason. The claim being made is
+    # "they stay within a few minutes down here and fall apart up there", and
+    # 240 vs 660 states that with room on both sides.
+    assert max(below) <= 4 * 60.0, (
         "below the cut-off the two sources are expected to stay within a few minutes "
         f"of each other; worst was {max(below) / 60.0:.0f} min"
     )

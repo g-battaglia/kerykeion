@@ -70,6 +70,7 @@ _SOLAR_ECLIPSE_JD = 2449305.40616  # Nov 13, 1993
 
 # Sunrise/sunset Julian Days for London on Oct 10, 1993
 _SUNRISE_JD = 2449270.80208
+_SOLAR_NOON_JD = (2449270.80208 + 2449271.26250) / 2  # midway between the two above
 _SUNSET_JD = 2449271.26250
 
 
@@ -280,6 +281,12 @@ class TestFactoryFromSubjectMocked:
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=(16, _SOLAR_ECLIPSE_JD)),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=(4, _LUNAR_ECLIPSE_JD)),
             patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
+            # The transit is a SIXTH backend call, added when solar noon stopped
+            # being the midpoint. Unpatched it ran for real inside the suite whose
+            # whole premise is that it does not, and `test_sun_info_populated`
+            # then compared a real transit against two fabricated JD constants —
+            # passing only because the fabricated window happened to bracket it.
+            patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(31.25, 169.67, 149_200_000.0)),
         ):
             yield
@@ -443,6 +450,12 @@ class TestFactoryEdgeCasesNullReturns:
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=None),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=None),
             patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
+            # The transit is a SIXTH backend call, added when solar noon stopped
+            # being the midpoint. Unpatched it ran for real inside the suite whose
+            # whole premise is that it does not, and `test_sun_info_populated`
+            # then compared a real transit against two fabricated JD constants —
+            # passing only because the fabricated window happened to bracket it.
+            patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(31.25, 169.67, 149_200_000.0)),
         ):
             overview = MoonPhaseDetailsFactory.from_subject(subject)
@@ -465,7 +478,10 @@ class TestFactoryEdgeCasesNullReturns:
 
         assert overview.sun.sunrise is None
         assert overview.sun.sunset is None
-        assert overview.sun.solar_noon is None
+        # solar_noon survives a rise/set failure now, and that is the point: a
+        # transit is a meridian crossing, so it exists on a day with no horizon
+        # crossing and does not depend on the pair. Only day_length does.
+        assert overview.sun.solar_noon is not None
         assert overview.sun.day_length is None
         assert overview.sun.position is None
 

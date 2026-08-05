@@ -300,8 +300,18 @@ def _compute_sun_times(
 
         transit_jd = compute_sun_transit_ephe(jd_midnight, lat, lng)
 
+    solar_noon_local = (
+        julian_to_datetime(transit_jd).replace(tzinfo=timezone.utc).astimezone(tzinfo)
+        if transit_jd is not None
+        else None
+    )
+
     if sunrise_jd is None or sunset_jd is None:
-        return None
+        # Polar day or night: no pair, so no rise, set or day length — but the Sun
+        # still culminates, and the transit above already found when. Returning it
+        # rather than dropping the whole result is what makes the model docstring
+        # true; the earlier version computed the transit here and threw it away.
+        return None, None, solar_noon_local
 
     # Convert JD back to datetime in local timezone
     sunrise_utc = julian_to_datetime(sunrise_jd).replace(tzinfo=timezone.utc)
@@ -309,12 +319,6 @@ def _compute_sun_times(
 
     sunrise_local = sunrise_utc.astimezone(tzinfo)
     sunset_local = sunset_utc.astimezone(tzinfo)
-    solar_noon_local = (
-        julian_to_datetime(transit_jd).replace(tzinfo=timezone.utc).astimezone(tzinfo)
-        if transit_jd is not None
-        else None
-    )
-
     return sunrise_local, sunset_local, solar_noon_local
 
 
@@ -647,15 +651,16 @@ class MoonPhaseDetailsFactory:
             sun_times = _compute_sun_times(subject)
             if sun_times is not None:
                 sunrise_local, sunset_local, solar_noon_local = sun_times
-                # Both endpoints are converted to UTC BEFORE the subtraction: when
-                # two aware datetimes share the same tzinfo object — and ZoneInfo
-                # caches, so they always do here — Python subtracts their
-                # wall-clock fields and never consults the offsets. Across a DST
-                # transition that silently reports the clock elapsed rather than
-                # the time elapsed.
-                sunrise_utc = sunrise_local.astimezone(timezone.utc)
-                sunset_utc = sunset_local.astimezone(timezone.utc)
-                day_length = sunset_utc - sunrise_utc
+                if sunrise_local is not None and sunset_local is not None:
+                    # Both endpoints are converted to UTC BEFORE the subtraction:
+                    # when two aware datetimes share the same tzinfo object — and
+                    # ZoneInfo caches, so they always do here — Python subtracts
+                    # their wall-clock fields and never consults the offsets.
+                    # Across a DST transition that silently reports the clock
+                    # elapsed rather than the time elapsed.
+                    sunrise_utc = sunrise_local.astimezone(timezone.utc)
+                    sunset_utc = sunset_local.astimezone(timezone.utc)
+                    day_length = sunset_utc - sunrise_utc
         except _BACKEND_ERRORS as exc:
             # Expected error: polar regions, ephemeris unavailable, etc.
             logger.debug("Sunrise/sunset calculation failed (expected): %s", exc)

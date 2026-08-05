@@ -18,8 +18,9 @@ class SunTimesFactory:
     ephemeris backend's rise/set routine directly (with atmospheric refraction)
     rather than building a full astrological subject, so it is fast and has no
     geolocation dependency. Times are returned as timezone-aware UTC datetimes;
-    on polar day/night or transition dates the derived ``solar_noon`` and
-    ``day_length`` are ``None`` unless a sunrise can be paired with a later sunset.
+    on polar day/night or transition dates ``day_length`` is ``None``,
+    while ``solar_noon`` is still reported — a meridian crossing happens on a day
+    with no horizon crossing unless a sunrise can be paired with a later sunset.
 
     Example:
         >>> from kerykeion import SunTimesFactory

@@ -660,6 +660,7 @@ __all__ = [
     "compute_next_solar_eclipse_jd",
     "compute_next_lunar_eclipse_jd",
     "compute_sun_rise_set_ephe",
+    "compute_sun_transit_ephe",
     "compute_lunar_phase_jd",
     "greenwich_mean_sidereal_time",
     "equatorial_to_horizontal",

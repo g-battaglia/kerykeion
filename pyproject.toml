@@ -45,7 +45,10 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "libephemeris==3.0.0",
+    # A FLOOR, not a pin. The 3.0.0rc1 exact pin was deliberately relaxed once
+    # before (see CHANGELOG 5.x) "so the stable release does not conflict with
+    # other constraints"; the stable release is what this is.
+    "libephemeris>=3.0.0,<4",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",

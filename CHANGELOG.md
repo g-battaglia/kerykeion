@@ -52,17 +52,36 @@
 
 ### Changed
 
-- `libephemeris` pinned to **3.0.0** (from `3.0.0rc15`). Validated rather than
-  assumed: a full cross-engine parity campaign against a file-backed reference
-  returned identical verdicts and identical counts over 5213 compared quantities,
-  and a direct value-by-value diff of 16337 quantities found 16267 bit-identical.
-  House cusps and angles did not move at all. The 70 that did are sidereal
-  ayanamsas at 0.0014″ and the apsis family at 0.064″, and the eight Uranian
-  points, which go from a disordered ±20″ scatter against the reference to a
-  uniform +2..3″ bias — 8 of 9 improve, Kronos by 20″. The report fixtures were
-  regenerated for that reason and no other: exactly eleven points changed
-  position, all of them analytically-modelled bodies, none of them a planet, an
-  angle or a cusp.
+- `libephemeris` floor raised to **>=3.0.0,<4** (from the exact `==3.0.0rc15`).
+  Validated rather than assumed, and the evidence is worth stating precisely
+  because a first draft of this entry overstated it.
+
+  The cross-engine parity campaign, run against a file-backed reference before
+  and after, returned **identical per-domain counts over 5213 compared
+  quantities** and no divergence appearing or disappearing. Note the verdict it
+  returns is RED in both runs — the pre-existing sidereal-ayanamsa and
+  deep-time offenders — so "identical" means unchanged, not clean. The campaign
+  was also run under kerykeion `6.0.0a75`, the version its lockfile pins.
+
+  Two further measurements come from ad-hoc scripts rather than from that
+  campaign, and are reproducible but not archived in any repository: a
+  value-by-value diff of 16337 quantities found 16267 bit-identical, and the
+  eight Uranian points move from a ±20″ scatter against the reference to a
+  uniform +2..3″ bias (8 of 9 improve, Kronos by 20″). The parity grid does not
+  cover the Uranian family at all, which is exactly why those bodies could move
+  36″ and pass 5213 comparisons unseen.
+
+  What the fixtures show directly: **exactly eleven points changed position** —
+  the eight Uranian points, White Moon, mean Lilith and mean Priapus, every one
+  analytically modelled. No planet, angle or cusp changed POSITION. Angle
+  *speeds* did, in 80 cells (`ascmc_speed` comes from `houses_ex2`, and the
+  parity front excludes cusp and angle speed by design, so the campaign could
+  not have seen it): Ascendant and Medium Coeli move by about 0.002 °/day, five
+  parts per million. Two knock-on effects are worth naming rather than leaving
+  to be discovered: one report gains an aspect row (`Pallas sesquiquadrate
+  Poseidon`, an orb-boundary crossing) and three Zeus aspects flip their
+  Movement column to `Static` as its speed crosses the 0.001 °/day display
+  floor.
 
 ### Documentation
 
