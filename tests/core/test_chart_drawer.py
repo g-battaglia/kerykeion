@@ -2731,6 +2731,33 @@ class TestModernChartStyle:
             drawer.generate_svg_string(style="classic")
         assert not any("classic-style option" in record.getMessage() for record in caplog.records)
 
+    def test_classic_only_options_warn_once_per_drawer(self, caplog):
+        """A drawer reused for many renders must not repeat the same warning:
+        a batch job would drown in identical lines."""
+        import logging
+
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        drawer = ChartDrawer(data, external_view=True)
+        with caplog.at_level(logging.WARNING, logger="kerykeion"):
+            drawer.generate_svg_string()
+            drawer.generate_svg_string()
+            drawer.generate_wheel_only_svg_string()
+        warnings = [r for r in caplog.records if "classic-style option" in r.getMessage()]
+        assert len(warnings) == 1, [r.getMessage() for r in warnings]
+
+    def test_modern_wheel_only_filename_does_not_claim_external_view(self, tmp_path):
+        """The modern wheel ignores external_view, so its default filename must
+        not carry the ExternalNatal alias — the classic wheel still does."""
+        data = ChartDataFactory.create_natal_chart_data(_make_john())
+        drawer = ChartDrawer(data, external_view=True)
+        drawer.save_wheel_only_svg_file(output_path=str(tmp_path))
+        drawer.save_wheel_only_svg_file(output_path=str(tmp_path), style="classic")
+        names = {p.name for p in tmp_path.glob("*.svg")}
+        assert names == {
+            "John Lennon - Natal Chart - Modern Wheel Only.svg",
+            "John Lennon - ExternalNatal Chart - Classic Wheel Only.svg",
+        }
+
     def test_modern_differs_from_classic_synastry(self):
         """Modern dual-chart path produces different SVG than classic."""
         data = ChartDataFactory.create_synastry_chart_data(_make_john(), _make_paul())

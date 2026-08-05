@@ -29,17 +29,17 @@ from kerykeion import ChartDrawer as _ChartDrawer
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
-# This script regenerates the CLASSIC-style baselines (the modern ones live in
-# generate_modern_baselines.py). The library default style became "modern" in
-# v6, so pin the instance default once here rather than on every one of the
-# ChartDrawer calls below. Call-site kwargs still override the partial's.
-ChartDrawer = partial(_ChartDrawer, style="classic")
-
 # Import test subject definitions
 from tests.data.test_subjects_matrix import (
     TEMPORAL_SUBJECTS,
     GEOGRAPHIC_SUBJECTS,
 )
+
+# This script regenerates the CLASSIC-style baselines (the modern ones live in
+# generate_modern_baselines.py). The library default style became "modern" in
+# v6, so pin the instance default once here rather than on every one of the
+# ChartDrawer calls below. Call-site kwargs still override the partial's.
+ChartDrawer = partial(_ChartDrawer, style="classic")
 
 # Output directory
 OUTPUT_DIR = project_root / "tests" / "data" / "svg"
@@ -157,7 +157,7 @@ def generate_strawberry_theme_charts():
     )
     natal_chart_data = ChartDataFactory.create_natal_chart_data(strawberry_natal_subject)
     ChartDrawer(natal_chart_data, theme="strawberry").save_svg(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Strawberry Theme - Natal Chart.svg")
+    print("  Generated: John Lennon - Strawberry Theme - Natal Chart - Classic.svg")
     charts_generated += 1
 
     # 2. External Natal Chart - Strawberry Theme
@@ -166,7 +166,7 @@ def generate_strawberry_theme_charts():
     )
     external_chart_data = ChartDataFactory.create_natal_chart_data(strawberry_external_subject)
     ChartDrawer(external_chart_data, theme="strawberry", external_view=True).save_svg(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Strawberry Theme External - Natal Chart.svg")
+    print("  Generated: John Lennon - Strawberry Theme External - Natal Chart - Classic.svg")
     charts_generated += 1
 
     # 3. Synastry Chart - Strawberry Theme
@@ -175,7 +175,7 @@ def generate_strawberry_theme_charts():
     )
     synastry_chart_data = ChartDataFactory.create_synastry_chart_data(strawberry_synastry_subject, second)
     ChartDrawer(synastry_chart_data, theme="strawberry").save_svg(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Strawberry Theme Synastry - Synastry Chart.svg")
+    print("  Generated: John Lennon - Strawberry Theme Synastry - Synastry Chart - Classic.svg")
     charts_generated += 1
 
     # 4. Transit Chart - Strawberry Theme
@@ -184,7 +184,7 @@ def generate_strawberry_theme_charts():
     )
     transit_chart_data = ChartDataFactory.create_transit_chart_data(strawberry_transit_subject, second)
     ChartDrawer(transit_chart_data, theme="strawberry").save_svg(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Strawberry Theme Transit - Transit Chart.svg")
+    print("  Generated: John Lennon - Strawberry Theme Transit - Transit Chart - Classic.svg")
     charts_generated += 1
 
     # 5. Wheel Only - Strawberry Theme
@@ -193,7 +193,7 @@ def generate_strawberry_theme_charts():
     )
     wheel_chart_data = ChartDataFactory.create_natal_chart_data(wheel_strawberry_subject)
     ChartDrawer(wheel_chart_data, theme="strawberry").save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Wheel Only Strawberry - Natal Chart - Wheel Only.svg")
+    print("  Generated: John Lennon - Wheel Only Strawberry - Natal Chart - Classic Wheel Only.svg")
     charts_generated += 1
 
     # 6. Aspect Grid Only - Strawberry Theme
@@ -211,7 +211,7 @@ def generate_strawberry_theme_charts():
     )
     synastry_wheel_chart_data = ChartDataFactory.create_synastry_chart_data(synastry_wheel_strawberry_subject, second)
     ChartDrawer(synastry_wheel_chart_data, theme="strawberry").save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Wheel Synastry Strawberry - Synastry Chart - Wheel Only.svg")
+    print("  Generated: John Lennon - Wheel Synastry Strawberry - Synastry Chart - Classic Wheel Only.svg")
     charts_generated += 1
 
     # 8. Synastry Aspect Grid Only - Strawberry Theme
@@ -231,7 +231,7 @@ def generate_strawberry_theme_charts():
     )
     transit_wheel_chart_data = ChartDataFactory.create_transit_chart_data(transit_wheel_strawberry_subject, second)
     ChartDrawer(transit_wheel_chart_data, theme="strawberry").save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Wheel Transit Strawberry - Transit Chart - Wheel Only.svg")
+    print("  Generated: John Lennon - Wheel Transit Strawberry - Transit Chart - Classic Wheel Only.svg")
     charts_generated += 1
 
     # 10. Transit Aspect Grid Only - Strawberry Theme
@@ -253,7 +253,7 @@ def generate_strawberry_theme_charts():
         output_path=OUTPUT_DIR_STR,
         filename="Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart - Classic",
     )
-    print("  Generated: Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart.svg")
+    print("  Generated: Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart - Classic.svg")
     charts_generated += 1
 
     # 12. Solar Return - Strawberry Theme
@@ -273,7 +273,7 @@ def generate_strawberry_theme_charts():
         output_path=OUTPUT_DIR_STR,
         filename="John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return - Classic",
     )
-    print("  Generated: John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return.svg")
+    print("  Generated: John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return - Classic.svg")
     charts_generated += 1
 
     # 13. Single Solar Return - Strawberry Theme
@@ -282,7 +282,7 @@ def generate_strawberry_theme_charts():
         output_path=OUTPUT_DIR_STR,
         filename="John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart - Classic",
     )
-    print("  Generated: John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart.svg")
+    print("  Generated: John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart - Classic.svg")
     charts_generated += 1
 
     # 14. Lunar Return - Strawberry Theme
@@ -295,7 +295,7 @@ def generate_strawberry_theme_charts():
         output_path=OUTPUT_DIR_STR,
         filename="John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return - Classic",
     )
-    print("  Generated: John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return.svg")
+    print("  Generated: John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return - Classic.svg")
     charts_generated += 1
 
     print(f"\n  Total Strawberry theme charts: {charts_generated}")
@@ -324,7 +324,7 @@ def generate_temporal_subject_charts():
             chart_data = ChartDataFactory.create_natal_chart_data(subject)
             chart = ChartDrawer(chart_data)
             chart.save_svg(output_path=OUTPUT_DIR_STR)
-            print(f"  Generated: {subject_name} - Natal Chart.svg")
+            print(f"  Generated: {subject_name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
             print(f"  ERROR generating {subject_name}: {e}")
@@ -341,7 +341,7 @@ def generate_temporal_subject_charts():
                 chart_data = ChartDataFactory.create_natal_chart_data(subject)
                 chart = ChartDrawer(chart_data, theme="dark")
                 chart.save_svg(output_path=OUTPUT_DIR_STR)
-                print(f"  Generated: {subject.name} - Natal Chart.svg")
+                print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
                 charts_generated += 1
             except Exception as e:
                 print(f"  ERROR generating {subject_data['name']} dark theme: {e}")
@@ -357,7 +357,7 @@ def generate_temporal_subject_charts():
                 chart_data = ChartDataFactory.create_natal_chart_data(subject)
                 chart = ChartDrawer(chart_data, theme="light")
                 chart.save_svg(output_path=OUTPUT_DIR_STR)
-                print(f"  Generated: {subject.name} - Natal Chart.svg")
+                print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
                 charts_generated += 1
             except Exception as e:
                 print(f"  ERROR generating {subject_data['name']} light theme: {e}")
@@ -377,7 +377,7 @@ def generate_temporal_subject_charts():
                 output_path=OUTPUT_DIR_STR,
                 filename="John and Yoko - Synastry Chart - Classic",
             )
-            print("  Generated: John and Yoko - Synastry Chart.svg")
+            print("  Generated: John and Yoko - Synastry Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
             print(f"  ERROR generating John and Yoko synastry: {e}")
@@ -401,7 +401,7 @@ def generate_geographic_subject_charts():
             chart_data = ChartDataFactory.create_natal_chart_data(subject)
             chart = ChartDrawer(chart_data)
             chart.save_svg(output_path=OUTPUT_DIR_STR)
-            print(f"  Generated: {subject_name} - Natal Chart.svg")
+            print(f"  Generated: {subject_name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
             print(f"  ERROR generating {subject_name}: {e}")
@@ -416,7 +416,7 @@ def generate_geographic_subject_charts():
             chart_data = ChartDataFactory.create_natal_chart_data(subject)
             chart = ChartDrawer(chart_data)
             chart.save_svg(output_path=OUTPUT_DIR_STR)
-            print(f"  Generated: {subject.name} - Natal Chart.svg")
+            print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
             print(f"  ERROR generating {subject_name} Koch: {e}")
@@ -441,7 +441,7 @@ def generate_geographic_subject_charts():
                 chart_data = ChartDataFactory.create_natal_chart_data(subject)
                 chart = ChartDrawer(chart_data)
                 chart.save_svg(output_path=OUTPUT_DIR_STR)
-                print(f"  Generated: {subject.name} - Natal Chart.svg")
+                print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
                 charts_generated += 1
             except Exception as e:
                 print(f"  ERROR generating {subject_data['name']} Whole Sign: {e}")
@@ -487,7 +487,7 @@ def generate_cross_combination_charts():
             chart_data = ChartDataFactory.create_natal_chart_data(subject)
             chart = ChartDrawer(chart_data, theme=theme)
             chart.save_svg(output_path=OUTPUT_DIR_STR)
-            print(f"  Generated: {subject.name} - Natal Chart.svg")
+            print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
             print(f"  ERROR generating {sidereal_mode} {theme}: {e}")
@@ -521,7 +521,7 @@ def generate_cross_combination_charts():
                 output_path=OUTPUT_DIR_STR,
                 filename=f"John Lennon - {house_name} - Synastry Chart - Classic",
             )
-            print(f"  Generated: John Lennon - {house_name} - Synastry Chart.svg")
+            print(f"  Generated: John Lennon - {house_name} - Synastry Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
             print(f"  ERROR generating {house_name} synastry: {e}")
@@ -547,7 +547,7 @@ def generate_cross_combination_charts():
                 output_path=OUTPUT_DIR_STR,
                 filename=f"John Lennon - {house_name} - Transit Chart - Classic",
             )
-            print(f"  Generated: John Lennon - {house_name} - Transit Chart.svg")
+            print(f"  Generated: John Lennon - {house_name} - Transit Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
             print(f"  ERROR generating {house_name} transit: {e}")
@@ -592,7 +592,7 @@ def generate_cross_combination_charts():
             output_path=OUTPUT_DIR_STR,
             filename="Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart - Classic",
         )
-        print("  Generated: Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart.svg")
+        print("  Generated: Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart - Classic.svg")
         charts_generated += 1
     except Exception as e:
         print(f"  ERROR generating French composite: {e}")
@@ -605,7 +605,7 @@ def generate_cross_combination_charts():
         synastry_data = ChartDataFactory.create_synastry_chart_data(hindi_synastry_subject, second)
         chart = ChartDrawer(synastry_data, chart_language="HI")
         chart.save_svg(output_path=OUTPUT_DIR_STR)
-        print("  Generated: John Lennon - HI - Synastry Chart.svg")
+        print("  Generated: John Lennon - HI - Synastry Chart - Classic.svg")
         charts_generated += 1
     except Exception as e:
         print(f"  ERROR generating Hindi synastry: {e}")

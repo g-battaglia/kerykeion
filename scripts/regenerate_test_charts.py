@@ -24,6 +24,10 @@ from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer as _ChartDrawer
 from kerykeion.charts.charts_utils import make_lunar_phase
+from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.schemas import KerykeionException
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 
 # This script's baselines are CLASSIC-style except where a call passes
 # style="modern" explicitly (Section 14; the bulk of the modern baselines live
@@ -31,10 +35,6 @@ from kerykeion.charts.charts_utils import make_lunar_phase
 # in v6, so pin the instance default once here rather than on every one of the
 # ChartDrawer calls below. Call-site kwargs still override the partial's.
 ChartDrawer = partial(_ChartDrawer, style="classic")
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.schemas import KerykeionException
-from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 
 # Set output directory for all chart SVGs
 OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"

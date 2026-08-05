@@ -2062,8 +2062,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             language: it must be complete (clone the EN block and edit), or
             model validation fails listing the missing fields.
         external_view (bool, optional):
-            For Natal charts only: place planets outside the zodiac ring.
-            Defaults to False.
+            For Natal charts only: place planets outside the zodiac ring
+            (classic style only). Defaults to False.
         transparent_background (bool, optional):
             Whether to use a transparent background instead of the theme color.
             Defaults to False.
@@ -2327,7 +2327,9 @@ class ChartDrawer:  # type: ignore[no-redef]
                 missing fields.
             external_view (bool, optional):
                 Whether to use external visualization (planets on outer ring) for
-                single-subject charts. Only applies to Natal charts. Defaults to False.
+                single-subject charts. Only applies to Natal charts, and only in
+                the classic style — the modern style ignores it and warns.
+                Defaults to False.
             transparent_background (bool, optional):
                 Whether to use a transparent background instead of the theme color.
                 Defaults to False.
@@ -2542,6 +2544,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._validate_chart_style(style)
         self._style: "KerykeionChartStyle" = style
         self._show_zodiac_background_ring: bool = show_zodiac_background_ring
+        # Classic-only options already reported by _warn_classic_only_options,
+        # so a reused drawer warns once per option rather than once per render.
+        self._warned_classic_only: set[str] = set()
 
         # Initialize vertical offsets using the dataclass, then convert to dict
         self._vertical_offsets_config = VerticalOffsetsConfig()
@@ -5179,26 +5184,29 @@ class ChartDrawer:  # type: ignore[no-redef]
         ``show_aspect_icons`` default to True, so only a non-default False value
         can be recognised as an explicit request.
 
+        Each option warns once per drawer. The condition is a property of the
+        instance, not of the call, so repeating it on every render would turn a
+        batch job — a year of transits off one drawer — into hundreds of
+        identical lines, which is how a warning stops being read.
+
         Args:
             effective_style: The style actually used for this render.
         """
         if effective_style != "modern":
             return
-        if self.external_view:
-            logger.warning(
-                "external_view is a classic-style option and the modern style ignores it; "
-                'pass style="classic" to keep the external layout.'
-            )
-        if not self.show_degree_indicators:
-            logger.warning(
-                "show_degree_indicators is a classic-style option and the modern style ignores it; "
-                'pass style="classic" for it to take effect.'
-            )
-        if not self.show_aspect_icons:
-            logger.warning(
-                "show_aspect_icons is a classic-style option and the modern style ignores it; "
-                'pass style="classic" for it to take effect.'
-            )
+
+        classic_only = (
+            ("external_view", self.external_view, "to keep the external layout"),
+            ("show_degree_indicators", not self.show_degree_indicators, "for it to take effect"),
+            ("show_aspect_icons", not self.show_aspect_icons, "for it to take effect"),
+        )
+        for name, is_set, remedy in classic_only:
+            if is_set and name not in self._warned_classic_only:
+                self._warned_classic_only.add(name)
+                logger.warning(
+                    f"{name} is a classic-style option and the modern style ignores it; "
+                    f'pass style="classic" {remedy}.'
+                )
 
     def generate_svg_string(
         self,
@@ -5309,8 +5317,14 @@ class ChartDrawer:  # type: ignore[no-redef]
             _, english_label = return_label_keys(self.second_obj)
             return f"{self.first_obj.name} - {self.chart_type} Chart - {english_label}{suffix}"
 
-        # Handle ExternalNatal renaming for wheel and grid exports
-        external_alias_suffixes = {" - Classic Wheel Only", " - Aspect Grid Only", " - Modern Wheel Only"}
+        # Handle ExternalNatal renaming for wheel and grid exports.
+        #
+        # The modern wheel is deliberately NOT in this set: it ignores
+        # external_view (see _warn_classic_only_options), so naming its file
+        # "ExternalNatal" would have the filename claim a layout the drawing
+        # does not have — and with modern the default style, that mislabelled
+        # file is what a caller who merely set external_view=True now gets.
+        external_alias_suffixes = {" - Classic Wheel Only", " - Aspect Grid Only"}
         if suffix in external_alias_suffixes and self.external_view and self.chart_type == "Natal":
             chart_type_name = "ExternalNatal"
         else:
