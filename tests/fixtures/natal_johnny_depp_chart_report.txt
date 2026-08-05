@@ -31,8 +31,8 @@ Johnny Depp — Natal Chart Report
 +Natal Celestial Points-+--------+----------+--------------+---------+------+----------------+
 | Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House          |
 +-----------------------+--------+----------+--------------+---------+------+----------------+
-| Ascendant             | Aqu ♒ | 20.70°   | +507.7850°/d | N/A     | -    | First House    |
-| Medium Coeli          | Sag ♐ | 6.59°    | +341.0190°/d | N/A     | -    | Tenth House    |
+| Ascendant             | Aqu ♒ | 20.70°   | +507.7877°/d | N/A     | -    | First House    |
+| Medium Coeli          | Sag ♐ | 6.59°    | +341.0208°/d | N/A     | -    | Tenth House    |
 | Sun                   | Gem ♊ | 17.66°   | +0.9560°/d   | +22.87° | -    | Fourth House   |
 | Moon                  | Cap ♑ | 8.74°    | +12.4796°/d  | -22.08° | -    | Eleventh House |
 | Mercury               | Tau ♉ | 25.00°   | +0.6817°/d   | +15.27° | -    | Third House    |
