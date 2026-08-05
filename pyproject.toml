@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a78"
+version = "6.0.0a79"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -45,8 +45,22 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    # TODO before tagging 6.0.0: bump the floor to the stable 3.0.0 once released.
-    "libephemeris==3.0.0rc15",
+    # A FLOOR, not a pin — and the precedent is mixed, so here is the whole of it.
+    # The rc1 pin was relaxed once, in 6.0.0a62, "so the stable release does not
+    # conflict with other constraints"; every release after that re-pinned
+    # exactly (a67, a68, a72, a73, a78), and a78's own note reasons FROM the pin
+    # being exact. So this is a change of policy, not a return to one.
+    # The argument for it: an exact pin on a library that is itself pre-release
+    # makes kerykeion unco-installable with anything else that depends on
+    # libephemeris, which is what a62 was about, and 3.0.0 is the first stable
+    # release where that stops being hypothetical.
+    # The argument against, which is real: this project's verification model is
+    # version-locked — the golden fixtures were regenerated for rc15 -> 3.0.0,
+    # and `test_sun_times_altitude_invariant.py` hardcodes an invariant that a
+    # 3.1 with a different refraction or rise/set convention would silently
+    # invalidate. Nothing asserts the installed version. The lockfile protects
+    # this repository; it does not protect `pip install kerykeion`.
+    "libephemeris>=3.0.0,<4",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",

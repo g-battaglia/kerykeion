@@ -253,21 +253,121 @@ def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]
     return _extract_eclipse_result(result)
 
 
+def _extract_event_time(result: object) -> Optional[float]:
+    """
+    Extract the primary event time (JD) from an `ephe.rise_trans` result.
+
+    The backend returns:
+
+        (res, tret)
+
+    where:
+        - res: integer status (0 = event found, -2 = circumpolar, etc.)
+        - tret: tuple of 10 floats, with tret[0] = JD of the event.
+
+    Module-level rather than nested so the rise/set and transit helpers share
+    one reading of that contract: they must agree on what "no event" means, and
+    two copies would be free to drift apart.
+    """
+    if not isinstance(result, tuple) or not result:
+        return None
+
+    if len(result) < 2:
+        return None
+
+    res, tret = result[0], result[1]
+
+    # We only accept res == 0 (event found).
+    if not isinstance(res, int) or res != 0:
+        return None
+
+    if not isinstance(tret, (list, tuple)) or not tret:
+        return None
+
+    if not isinstance(tret[0], (float, int)):
+        return None
+
+    return float(tret[0])
+
+
+def compute_sun_transit_ephe(
+    jd_start: float,
+    latitude: float,
+    longitude: float,
+) -> Optional[float]:
+    """
+    Compute the Sun's next upper meridian transit — true local noon.
+
+    This is the instant the Sun crosses the observer's meridian, i.e. the moment
+    it is highest in the sky. It is NOT the midpoint between sunrise and sunset:
+    the two coincide only when the declination is stationary. Away from the
+    solstices the midpoint drifts, and it drifts further the higher the latitude
+    (measured against this function: +21 s at Rome on the equinox, +34 s at
+    Ushuaia, +62 s at Reykjavik) — while at a longitude far from its timezone
+    the midpoint can land on the wrong civil day altogether.
+
+    A transit is a pure hour-angle search, so unlike rise/set it has no horizon,
+    no disc and no refraction: `atpress`/`attemp` are accepted by the backend and
+    ignored on this path, and the geocentric place is the correct one (diurnal
+    parallax displaces a body in altitude only, leaving the hour angle intact).
+    It also exists on days when rise and set do not — the Sun still culminates
+    during polar night — which is why the caller must not gate it on them.
+
+    Args:
+        jd_start: Julian Day (UT) to search forward from, normally local midnight.
+        latitude: Observer latitude in degrees.
+        longitude: Observer longitude in degrees.
+
+    Returns:
+        The transit instant as a Julian Day, or ``None`` if the backend could not
+        produce one.
+    """
+    try:
+        iflag = configure_ephemeris_path()
+        geopos = (float(longitude), float(latitude), 0.0)
+        CALC_MTRANSIT = getattr(ephe, "CALC_MTRANSIT", getattr(ephe, "SE_CALC_MTRANSIT", 4))
+
+        result = ephe.rise_trans(
+            jd_start,
+            ephe.SUN,
+            CALC_MTRANSIT,
+            geopos,
+            atpress=0.0,
+            attemp=0.0,
+            flags=iflag,
+        )
+        return _extract_event_time(result)
+
+    except _BACKEND_ERRORS as exc:
+        logger.debug("Sun transit calculation failed: %s", exc)
+        return None
+    except (AttributeError, TypeError, IndexError, ValueError) as exc:  # pragma: no cover
+        logger.error("Unexpected error in Sun transit calculation: %s", exc, exc_info=True)
+        return None
+
+
 def compute_sun_rise_set_ephe(
     jd_midnight: float,
     latitude: float,
     longitude: float,
 ) -> tuple[Optional[float], Optional[float]]:
     """
-    Compute precise sunrise and sunset times using Swiss Ephemeris `ephe.rise_trans`.
+    Compute precise sunrise and sunset times via the backend's `rise_trans`.
 
-    This helper delegates the heavy lifting to Swiss Ephemeris' dedicated
+    This helper delegates the heavy lifting to the backend's dedicated
     rise/transit routines, avoiding any custom numerical search logic.
+
+    The event is the apparent UPPER LIMB on the horizon under a standard
+    atmosphere (1013.25 hPa, 15 degrees C), which leaves the Sun's geometric
+    centre near -0.83 degrees. That is deliberately a different question from
+    ``AstrologicalSubjectModel.is_diurnal``, which tests the geometric centre
+    against the true horizon: within a few minutes of the event the two
+    legitimately disagree, by 3.3 min at the equator and 10 min at 70 degrees.
 
     Args:
         jd_midnight: Julian Day at the start of the *local* civil day,
             expressed in UT (i.e. the Julian day of local midnight converted
-            to UTC). Swiss Ephemeris will search for events around this time.
+            to UTC). The backend will search for events around this time.
         latitude: Observer latitude in degrees.
         longitude: Observer longitude in degrees.
 
@@ -276,7 +376,7 @@ def compute_sun_rise_set_ephe(
             Returns None for each event that doesn't occur on this day (polar day/night).
     """
     try:
-        # Ensure Swiss Ephemeris is configured (idempotent).
+        # Ensure the ephemeris backend is configured (idempotent).
         iflag = configure_ephemeris_path()
 
         # Observer position: longitude, latitude, altitude (meters)
@@ -289,38 +389,6 @@ def compute_sun_rise_set_ephe(
         # Compatibility shims for rise/set calculation flags
         CALC_RISE = getattr(ephe, "CALC_RISE", getattr(ephe, "SE_CALC_RISE", 1))
         CALC_SET = getattr(ephe, "CALC_SET", getattr(ephe, "SE_CALC_SET", 2))
-
-        def _extract_event_time(result: object) -> Optional[float]:
-            """
-            Extract the primary event time (JD) from `ephe.rise_trans` result.
-
-            According to the Python wrapper documentation, the result is:
-
-                (res, tret)
-
-            where:
-                - res: integer status (0 = event found, -2 = circumpolar, etc.)
-                - tret: tuple of 10 floats, with tret[0] = JD of the event.
-            """
-            if not isinstance(result, tuple) or not result:
-                return None
-
-            if len(result) < 2:
-                return None
-
-            res, tret = result[0], result[1]
-
-            # We only accept res == 0 (event found).
-            if not isinstance(res, int) or res != 0:
-                return None
-
-            if not isinstance(tret, (list, tuple)) or not tret:
-                return None
-
-            if not isinstance(tret[0], (float, int)):
-                return None
-
-            return float(tret[0])
 
         # Sunrise (next rise after jd_midnight)
         sunrise_result = ephe.rise_trans(
@@ -592,6 +660,7 @@ __all__ = [
     "compute_next_solar_eclipse_jd",
     "compute_next_lunar_eclipse_jd",
     "compute_sun_rise_set_ephe",
+    "compute_sun_transit_ephe",
     "compute_lunar_phase_jd",
     "greenwich_mean_sidereal_time",
     "equatorial_to_horizontal",

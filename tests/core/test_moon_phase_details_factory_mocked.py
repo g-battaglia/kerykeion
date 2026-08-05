@@ -1,17 +1,30 @@
 """
 Mocked unit tests for MoonPhaseDetailsFactory.
 
-These tests mock the Swiss Ephemeris utility layer so the factory logic can be
+These tests mock the ephemeris utility layer so the factory logic can be
 verified without ephemeris data files or real ephe calls. This isolates the
 factory's orchestration, model assembly, and edge-case handling.
 
 Mocking strategy:
-    All five Swiss Ephemeris utility functions imported by factory.py are
-    patched via ``kerykeion.moon_phase_details.factory.<function>``:
+    All SIX ephemeris helpers imported by factory.py are patched via
+    ``kerykeion.moon_phase_details.factory.<function>``. The transit is patched by
+    a MODULE-level autouse fixture rather than per class: it was added later, and
+    patching it only in the two blocks that obviously needed it left thirteen
+    tests in this file making real backend calls — including the one asserting
+    that solar noon survives a rise/set failure, whose green then depended on a
+    real ephemeris succeeding. A per-class fixture cannot prevent that recurring;
+    a module-level one can. The two NON-mocked classes at the bottom
+    (`TestMoonPhaseDetailsIntegration`, `TestFactoryFromSubjectRangeEdge`)
+    override it back to the real call: an earlier revision blindfolded them too,
+    silently zeroing the file's only real-ephemeris transit coverage while the
+    commit message claimed the opposite.
+
+    The patched helpers:
         - compute_lunar_phase_jd
         - compute_next_solar_eclipse_jd
         - compute_next_lunar_eclipse_jd
         - compute_sun_rise_set_ephe
+        - compute_sun_transit_ephe
         - compute_sun_position
 """
 
@@ -70,6 +83,12 @@ _SOLAR_ECLIPSE_JD = 2449305.40616  # Nov 13, 1993
 
 # Sunrise/sunset Julian Days for London on Oct 10, 1993
 _SUNRISE_JD = 2449270.80208
+# The REAL meridian transit for this subject (London, 1993-10-10 11:47:30 UTC),
+# not the midpoint of the pair above. Using the midpoint would encode the very
+# definition this release removes, and would make `sunrise < solar_noon <
+# sunset` tautological — it is 59 minutes from the true transit, and that
+# assertion is one of the few things here that still says something.
+_SOLAR_NOON_JD = 2449270.9913192377
 _SUNSET_JD = 2449271.26250
 
 
@@ -158,6 +177,22 @@ def _side_effect_lunar_phase_jd(jd_start: float, target_angle: float, forward: b
 # 1. Pure utility function tests (no mocking needed)
 # ---------------------------------------------------------------------------
 
+
+
+@pytest.fixture(autouse=True)
+def _no_real_transit_calls():
+    """Patch the transit for EVERY test in this module.
+
+    Module-scoped autouse, deliberately. `compute_sun_transit_ephe` arrived after
+    this file was written, and patching it inside the two fixtures that obviously
+    needed it left thirteen tests calling the real backend — the exact thing the
+    module docstring promises does not happen. Tests that want their own value
+    still override it with a nested `patch`; this only guarantees the floor.
+    The two real-ephemeris classes shadow this fixture with a no-op, or their
+    transit-path coverage would be silently zero.
+    """
+    with patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD):
+        yield
 
 class TestSafeParseIsoDatetime:
     """safe_parse_iso_datetime: tolerant on format, strict on invalid input."""
@@ -280,6 +315,12 @@ class TestFactoryFromSubjectMocked:
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=(16, _SOLAR_ECLIPSE_JD)),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=(4, _LUNAR_ECLIPSE_JD)),
             patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
+            # The transit is a SIXTH backend call, added when solar noon stopped
+            # being the midpoint. Unpatched it ran for real inside the suite whose
+            # whole premise is that it does not, and `test_sun_info_populated`
+            # then compared a real transit against two fabricated JD constants —
+            # passing only because the fabricated window happened to bracket it.
+            patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(31.25, 169.67, 149_200_000.0)),
         ):
             yield
@@ -443,6 +484,12 @@ class TestFactoryEdgeCasesNullReturns:
             patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=None),
             patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=None),
             patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
+            # The transit is a SIXTH backend call, added when solar noon stopped
+            # being the midpoint. Unpatched it ran for real inside the suite whose
+            # whole premise is that it does not, and `test_sun_info_populated`
+            # then compared a real transit against two fabricated JD constants —
+            # passing only because the fabricated window happened to bracket it.
+            patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD),
             patch(f"{_FACTORY}.compute_sun_position", return_value=(31.25, 169.67, 149_200_000.0)),
         ):
             overview = MoonPhaseDetailsFactory.from_subject(subject)
@@ -465,7 +512,10 @@ class TestFactoryEdgeCasesNullReturns:
 
         assert overview.sun.sunrise is None
         assert overview.sun.sunset is None
-        assert overview.sun.solar_noon is None
+        # solar_noon survives a rise/set failure now, and that is the point: a
+        # transit is a meridian crossing, so it exists on a day with no horizon
+        # crossing and does not depend on the pair. Only day_length does.
+        assert overview.sun.solar_noon is not None
         assert overview.sun.day_length is None
         assert overview.sun.position is None
 
@@ -646,7 +696,16 @@ class TestComputeLunarPhaseMetrics:
 
 
 class TestMoonPhaseDetailsIntegration:
-    """Integration test exercising real Swiss Ephemeris calls."""
+    """Integration test exercising real ephemeris backend calls."""
+
+    @pytest.fixture(autouse=True)
+    def _no_real_transit_calls(self):
+        """Shadow the module blindfold: this class IS the real-ephemeris path.
+
+        With the module fixture active its transit coverage was silently zero —
+        five real helpers plus one fake, while the commit message said six.
+        """
+        yield
 
     def test_from_subject_returns_valid_overview(self):
         from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
@@ -706,6 +765,14 @@ class TestFactoryFromSubjectRangeEdge:
     lower-precision source (the rc12 behaviour): sealed LEB mode raises the
     typed ``EphemerisRangeError`` by deliberate contract ("LEB mode does not
     silently substitute a lower-precision source")."""
+
+    @pytest.fixture(autouse=True)
+    def _no_real_transit_calls(self):
+        """Shadow the module blindfold — same reason as the class above: the
+        whole point of this class is that the REAL backend degrades cleanly,
+        transit included (it computes fine at 2649-12-20; the edge the class
+        exercises is the forward phase scan, not the transit)."""
+        yield
 
     def test_range_end_subject_returns_model(self) -> None:
         # 2649-12-20 is inside the final synodic month of the medium (DE440)

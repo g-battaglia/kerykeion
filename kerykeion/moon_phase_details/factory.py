@@ -57,6 +57,7 @@ from kerykeion.moon_phase_details.utils import (
     compute_next_solar_eclipse_jd,
     compute_next_lunar_eclipse_jd,
     compute_sun_rise_set_ephe,
+    compute_sun_transit_ephe,
     compute_lunar_phase_jd,
     compute_sun_position,
 )
@@ -225,12 +226,24 @@ def _build_upcoming_phases(
 
 def _compute_sun_times(
     subject: AstrologicalSubjectModel,
-) -> Optional[tuple[datetime, datetime]]:
+) -> Optional[tuple[Optional[datetime], Optional[datetime], Optional[datetime]]]:
     """
-    Compute precise sunrise and sunset local datetimes using Swiss Ephemeris.
+    Compute sunrise, sunset and solar noon as local datetimes.
 
-    Uses Swiss Ephemeris `ephe.rise_trans` (via `compute_sun_rise_set_ephe`)
-    to obtain sunrise and sunset for the subject's local civil day.
+    Uses the backend's `rise_trans` (via `compute_sun_rise_set_ephe` and
+    `compute_sun_transit_ephe`) for the subject's local civil day.
+
+    Returns ``None`` only when the location or timezone cannot be resolved at
+    all. Otherwise a 3-tuple, in which the first two elements are ``None`` on a
+    polar day or night — there is no rise/set pair — while the third can still
+    carry the meridian transit. Callers must test the elements, not the tuple:
+    ``(None, None, None)`` is reachable and truthy.
+
+    Solar noon is returned from here rather than derived by the caller because
+    it needs `jd_midnight`, which only exists inside this function: deriving it
+    outside meant either re-deriving local midnight — the DST reasoning below is
+    subtle enough that a second copy would drift — or settling for the midpoint
+    of the pair, which is a different quantity (see `compute_sun_transit_ephe`).
     """
     lat = subject.lat
     lng = subject.lng
@@ -278,8 +291,8 @@ def _compute_sun_times(
     midnight_utc = midnight_local.astimezone(timezone.utc)
     jd_midnight = datetime_to_julian(midnight_utc)
 
-    # Compute both sunrise and sunset using Swiss Ephemeris, inside a
-    # serialized session (the helper mutates the global ephemeris path).
+    # Compute sunrise, sunset and the meridian transit inside a serialized
+    # session (the helpers mutate the global ephemeris path).
     with ephemeris_session():
         sunrise_jd, sunset_jd = compute_sun_rise_set_ephe(jd_midnight, lat, lng)
 
@@ -287,13 +300,24 @@ def _compute_sun_times(
             # Midnight-sun transition days: the only set after local midnight
             # precedes the sunrise (the Sun was still up at 00:00). Pair the
             # sunrise with its actual following sunset — same handling as
-            # sun_times.utils — or day_length goes negative and solar_noon
-            # lands at solar midnight.
+            # sun_times.utils — or day_length goes negative.
             _, paired_sunset_jd = compute_sun_rise_set_ephe(sunrise_jd + 1e-6, lat, lng)
             sunset_jd = paired_sunset_jd if paired_sunset_jd is not None and paired_sunset_jd > sunrise_jd else None
 
+        transit_jd = compute_sun_transit_ephe(jd_midnight, lat, lng)
+
+    solar_noon_local = (
+        julian_to_datetime(transit_jd).replace(tzinfo=timezone.utc).astimezone(tzinfo)
+        if transit_jd is not None
+        else None
+    )
+
     if sunrise_jd is None or sunset_jd is None:
-        return None
+        # Polar day or night: no pair, so no rise, set or day length — but the Sun
+        # still culminates, and the transit above already found when. Returning it
+        # rather than dropping the whole result is what makes the model docstring
+        # true; the earlier version computed the transit here and threw it away.
+        return None, None, solar_noon_local
 
     # Convert JD back to datetime in local timezone
     sunrise_utc = julian_to_datetime(sunrise_jd).replace(tzinfo=timezone.utc)
@@ -301,8 +325,7 @@ def _compute_sun_times(
 
     sunrise_local = sunrise_utc.astimezone(tzinfo)
     sunset_local = sunset_utc.astimezone(tzinfo)
-
-    return sunrise_local, sunset_local
+    return sunrise_local, sunset_local, solar_noon_local
 
 
 def _compute_sun_position(
@@ -633,25 +656,17 @@ class MoonPhaseDetailsFactory:
         try:
             sun_times = _compute_sun_times(subject)
             if sun_times is not None:
-                sunrise_local, sunset_local = sun_times
-                # Solar noon as the midpoint between sunrise and sunset, computed in
-                # INSTANT space. Adding a timedelta to an aware datetime is wall-clock
-                # arithmetic: the fields advance and the offset is then re-resolved at
-                # the NEW clock time, so on a DST-transition day the midpoint lands on a
-                # different moment (measured: one hour off across a spring-forward).
-                # Converting to UTC first makes the addition offset-independent; the
-                # result is rendered back in the subject's zone, which restores the
-                # correct local wall clock on either side of the transition.
-                # Both endpoints are converted BEFORE the subtraction, not just
-                # before the addition: when two aware datetimes share the same
-                # tzinfo object — and ZoneInfo caches, so they always do here —
-                # Python subtracts their wall-clock fields and never consults
-                # the offsets. Across a transition that silently reports the
-                # clock elapsed rather than the time elapsed.
-                sunrise_utc = sunrise_local.astimezone(timezone.utc)
-                sunset_utc = sunset_local.astimezone(timezone.utc)
-                day_length = sunset_utc - sunrise_utc
-                solar_noon_local = (sunrise_utc + day_length / 2).astimezone(sunrise_local.tzinfo)
+                sunrise_local, sunset_local, solar_noon_local = sun_times
+                if sunrise_local is not None and sunset_local is not None:
+                    # Both endpoints are converted to UTC BEFORE the subtraction:
+                    # when two aware datetimes share the same tzinfo object — and
+                    # ZoneInfo caches, so they always do here — Python subtracts
+                    # their wall-clock fields and never consults the offsets.
+                    # Across a DST transition that silently reports the clock
+                    # elapsed rather than the time elapsed.
+                    sunrise_utc = sunrise_local.astimezone(timezone.utc)
+                    sunset_utc = sunset_local.astimezone(timezone.utc)
+                    day_length = sunset_utc - sunrise_utc
         except _BACKEND_ERRORS as exc:
             # Expected error: polar regions, ephemeris unavailable, etc.
             logger.debug("Sunrise/sunset calculation failed (expected): %s", exc)

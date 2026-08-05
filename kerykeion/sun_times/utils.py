@@ -8,8 +8,10 @@ refraction — is delegated to the well-tested
 the active ephemeris backend's ``rise_trans`` routine. This module adds the thin
 layer on top: timezone/Julian-Day bookkeeping, solar noon, day length, the polar
 day / polar night discriminator, and civil/nautical/astronomical twilight. No
-full astrological subject is built, so the computation stays cheap: two
-``rise_trans`` calls for sunrise/sunset (plus one position lookup) and up to six
+full astrological subject is built, so the computation stays cheap: three
+``rise_trans`` calls for sunrise, sunset and the meridian transit (plus one
+position lookup, and a fourth rise/set call on the transition days that need a
+paired sunset re-searched) and up to six
 more for the twilight crossings.
 """
 
@@ -25,6 +27,7 @@ from zoneinfo import ZoneInfo
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion.moon_phase_details.utils import (
     compute_sun_rise_set_ephe,
+    compute_sun_transit_ephe,
     configure_ephemeris_path,
 )
 from kerykeion.schemas.kerykeion_exception import KerykeionException
@@ -39,6 +42,22 @@ from kerykeion.utilities import (
 
 logger = logging.getLogger(__name__)
 
+#: Centre-of-disc altitude that stands for "the apparent upper limb is on the
+#: horizon", used ONLY by the polar-day/night discriminator below.
+#:
+#: It is the textbook 34' of refraction plus 16' of semidiameter. The rise/set
+#: search itself does not use this number: it computes both terms for the day in
+#: question — Bennett refraction at the pressure and temperature it is given, and
+#: a semidiameter from the real Earth-Sun distance — which lands the centre at
+#: about -0.827 deg, measured -0.822 to -0.831 over a year.
+#:
+#: The 0.006 deg gap is deliberate rather than an oversight, and small: the
+#: discriminator only has to answer whether the Sun crosses the horizon AT ALL on
+#: a given day, so its threshold matters only within a few hours of the first and
+#: last day of a midnight-sun season. Matching it to the search would mean
+#: recomputing refraction and distance just to classify a day, and would move the
+#: boundary date by a fraction of a day at the very edge of the Arctic circle,
+#: with no external reference to say which side is right.
 _APPARENT_UPPER_LIMB_HORIZON_DEGREES = -0.833
 
 
@@ -273,9 +292,11 @@ def _civil_day_bounds(year: int, month: int, day: int, tz: ZoneInfo) -> tuple[fl
 def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     """Classify a no-rise/no-set day as polar day or polar night.
 
-    Uses the same apparent upper-limb horizon convention as Swiss Ephemeris
-    rise/set searches. Refraction and the Sun's semidiameter put the apparent
-    sunrise/sunset threshold near -0.833 degrees for the Sun's center.
+    Uses the TEXTBOOK apparent upper-limb horizon convention — deliberately not
+    quite the one the rise/set search itself uses; the note on
+    ``_APPARENT_UPPER_LIMB_HORIZON_DEGREES`` above owns that gap. Refraction and
+    the Sun's semidiameter put the apparent sunrise/sunset threshold near
+    -0.833 degrees for the Sun's center.
 
     Args:
         jd_noon: Julian Day (UT) near local solar noon — used to read the Sun's
@@ -385,14 +406,30 @@ def compute_sun_events(
                     f"at ({latitude}, {longitude}) and the geometry is not polar; the date or location may be "
                     f"outside the backend's supported rise/set range."
                 )
+            # The Sun still culminates on a day it never rises: a transit is an
+            # hour-angle crossing, not a horizon crossing. Reporting solar noon
+            # here is what lets a polar-night caller say when the sky is least
+            # dark, which the old midpoint could never do because it had no pair
+            # to take a midpoint of.
+            transit_jd = compute_sun_transit_ephe(jd_midnight, latitude, longitude)
             sunrise = julian_day_to_utc(sunrise_jd) if sunrise_jd is not None else None
             sunset = julian_day_to_utc(sunset_jd) if sunset_jd is not None else None
-            return SunEvents(sunrise, sunset, None, None, is_polar_day, is_polar_night)
+            solar_noon = julian_day_to_utc(transit_jd) if transit_jd is not None else None
+            return SunEvents(sunrise, sunset, solar_noon, None, is_polar_day, is_polar_night)
+
+        # Solar noon is the meridian transit, NOT the midpoint of the pair above.
+        # The two agree only while the declination is stationary; elsewhere the
+        # midpoint lags or leads by up to a minute (measured: +21 s at Rome on
+        # the equinox, +62 s at Reykjavik in April), and when the pair spans two
+        # civil days it lands on the wrong date entirely. Searched from local
+        # midnight so it belongs to the requested civil day rather than to the
+        # sunrise that may have preceded it.
+        transit_jd = compute_sun_transit_ephe(jd_midnight, latitude, longitude)
 
     sunrise = julian_day_to_utc(sunrise_jd)
     sunset = julian_day_to_utc(sunset_jd)
     day_length = sunset - sunrise
-    solar_noon = sunrise + day_length / 2
+    solar_noon = julian_day_to_utc(transit_jd) if transit_jd is not None else None
     return SunEvents(sunrise, sunset, solar_noon, day_length, False, False)
 
 

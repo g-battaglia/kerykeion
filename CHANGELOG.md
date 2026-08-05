@@ -2,6 +2,129 @@
 
 ## [Unreleased]
 
+## 6.0.0a79 - 2026-08-05
+
+### Fixed
+
+- **`solar_noon` is now the meridian transit, which is what it always claimed to
+  be.** It was the midpoint between sunrise and sunset. The two coincide only
+  while the Sun's declination is stationary, so the old value was right at the
+  solstices and on the equator — where anyone spot-checking it would look — and
+  wrong everywhere else: measured against two national observatories, +21.5 s at
+  Rome on the equinox, +33.5 s at Ushuaia, +62.4 s at Reykjavík. Worse, when the
+  rise/set pair straddles local midnight the midpoint lands on the wrong civil
+  day entirely, which is what Singapore did. Nothing in the library consumed the
+  field — it is printed in the report, serialised into the AI context and
+  returned to callers — so the correction is visible rather than structural.
+  - `solar_noon` is now also reported on **polar days and polar nights**, where
+    it previously had to be `None`. A transit is a meridian crossing, not a
+    horizon crossing: the Sun culminates on a day it never rises. `day_length`
+    stays `None` there, since there is no pair to measure.
+  - `MoonPhaseSunInfoModel.solar_noon` moved with it, and stays in the subject's
+    local timezone as before.
+  - **New contract, stated because it is a real regression for one case class.**
+    The transit is now searched independently from local midnight instead of
+    being derived from the pair, so `sunrise < solar_noon < sunset` is no longer
+    guaranteed. It holds for every location whose timezone matches its longitude
+    (0 violations in 300 matched city/zone samples), and fails when they do not:
+    65 of 300 random lat/lon/zone triples, 75 of 300 with `tz_str="UTC"` at
+    arbitrary longitudes. Measured worst case: 62.71 N / 121.43 E under UTC
+    reports a solar noon 15 hours BEFORE its sunrise, because the two belong to
+    different solar days. The old midpoint was inside the window by construction
+    and was, for this class alone, better. Both the library API and
+    `/api/v6/sun-times` accept latitude, longitude and timezone as an
+    unvalidated triple, so it is reachable — pass a timezone that belongs to the
+    longitude and it cannot occur.
+
+### Added
+
+- **Sunrise, sunset and solar noon are now anchored to published data we did not
+  produce.** `tests/core/test_sun_times_anchors.py` carries values transcribed by
+  hand from the US Naval Observatory and from IMCCE (Observatoire de Paris) for
+  the same UTC civil day, with the capture date recorded. No script regenerates
+  them: a golden snapshot proves constancy, an anchor proves truth, and only the
+  second kind survives a bad engine bump followed by a blind regeneration.
+  - The tolerances are shaped by what the sources actually do rather than by what
+    would be convenient. The two agree on sunrise and transit, so those are held
+    to 45 s of USNO; they disagree by about two minutes on sunset (a horizon
+    convention), so every event is additionally required to lie inside the span
+    the two of them bracket. Above 60° latitude no time-domain claim is made at
+    all — the Sun grazes the horizon there and clock time stops being a
+    well-conditioned way to state an error, which the sources demonstrate
+    themselves by differing by 10 and 11 minutes at Tromsø. A test asserts that
+    divergence, so the cut-off is earned rather than assumed.
+- **An angle-based check that does not degrade with latitude.**
+  `tests/core/test_sun_times_altitude_invariant.py` never compares times: it takes
+  the instant we return and asks Skyfield — a separate position pipeline — where
+  the Sun was. Across ten sites and four seasons the true upper limb sits at
+  −33.59′ with a spread of 2.5″, solar noon has an hour angle under 0.1 s, and
+  `is_diurnal` flips within a second of the geometric centre crossing zero.
+  - The documented gap between sunrise and diurnality (3.3 min at the equator,
+    4.4 at Rome, 8.2 at Reykjavík) is pinned there too, so the prose cannot drift
+    away from the code.
+
+### Changed
+
+- `libephemeris` floor raised to **>=3.0.0,<4** (from the exact `==3.0.0rc15`).
+  Validated rather than assumed, and the evidence is worth stating precisely
+  because a first draft of this entry overstated it.
+
+  The cross-engine parity campaign, run against a file-backed reference before
+  and after, returned **identical per-domain counts over 5213 compared
+  quantities** and no divergence appearing or disappearing. Note the verdict it
+  returns is RED in both runs — the pre-existing sidereal-ayanamsa and
+  deep-time offenders — so "identical" means unchanged, not clean. The campaign
+  was also run under kerykeion `6.0.0a75`, the version its lockfile pins.
+
+  Two further measurements come from ad-hoc scripts rather than from that
+  campaign, and are reproducible but not archived in any repository: a
+  value-by-value diff of 16337 quantities found 16267 bit-identical, and the
+  eight Uranian points move from a ±20″ scatter against the reference to a
+  uniform +2..3″ bias (8 of 9 improve, Kronos by 20″). The parity grid does not
+  cover the Uranian family at all, which is exactly why those bodies could move
+  36″ and pass 5213 comparisons unseen.
+
+  What the fixtures show directly: **exactly eleven points changed position** —
+  the eight Uranian points, White Moon, mean Lilith and mean Priapus, every one
+  analytically modelled. No planet, angle or cusp changed POSITION.
+
+  SPEEDS did, and this is where a first correction of this entry was itself
+  wrong — it said 80 cells, which is the number of (fixture, angle) pairs, not
+  of table cells; dual charts carry the same angle two or three times per file.
+  Counted properly: **104 angle-speed cells** (Ascendant 37, Medium Coeli 37,
+  Descendant 15, Imum Coeli 15) across 28 fixtures, plus **122 non-angle speed
+  cells** — the Uranian points and, not previously named anywhere,
+  True Lilith 12, True Priapus 12 and Interpolated Perigee 11 — and
+  **19 declination cells** (Mean Lilith 8, Mean Priapus 8, Hades 1, White
+  Moon 1, Admetos 1 — a first count said 17, having taken the dual-return
+  fixture's Lilith and Priapus rows once when that file carries them in both
+  its tables: the very duplicate-cell trap this paragraph warns about).
+  `ascmc_speed` comes from `houses_ex2`; the parity
+  front excludes cusp and angle speed by design, so the campaign could not have
+  seen any of it.
+
+  Magnitudes: the scale-free figure is **five parts per million** (5.15–5.74 over
+  all 104 cells). In absolute terms the MC and IC move about 0.002 °/day; the
+  Ascendant's median is 0.0016 with a worst case of 0.0046, so "about 0.002" is
+  right for two of the four angles and loose for the other two.
+
+  Two knock-on effects worth naming rather than leaving to be discovered: one
+  report gains an aspect row (`Pallas sesquiquadrate Poseidon`, an orb-boundary
+  crossing) and three Zeus aspects flip their Movement column to `Static` as its
+  speed crosses the 0.001 °/day display floor.
+
+### Documentation
+
+- The rise/set horizon convention is now stated where callers will meet it: the
+  apparent upper limb, a semidiameter taken from the real distance rather than a
+  fixed 16′, standard-atmosphere refraction, and a level sea horizon at any
+  elevation. Both the README and the model docstrings say plainly that sunrise
+  and `is_diurnal` answer different questions and must never be derived from one
+  another.
+- `_APPARENT_UPPER_LIMB_HORIZON_DEGREES` now explains why the polar
+  discriminator's textbook −0.833° differs from the −0.827° the search itself
+  implies, and why closing that 0.006° gap would buy nothing.
+
 ## 6.0.0a78 - 2026-08-05
 
 ### Added

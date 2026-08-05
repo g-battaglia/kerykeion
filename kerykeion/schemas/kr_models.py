@@ -139,13 +139,15 @@ class MoonPhaseSunInfoModel(SubscriptableBaseModel):
     presented for the subject's civil day); ``day_length`` is a ``timedelta``.
     This differs from :class:`SunTimesModel`, whose instants are in UTC. All
     fields are optional and are populated as available — e.g. during polar
-    day/night a full sunrise→sunset pair may be missing, leaving ``solar_noon``
-    and ``day_length`` as ``None``.
+    day/night a full sunrise→sunset pair may be missing, leaving ``day_length``
+    as ``None``.
 
     Attributes:
         sunrise: Moment of sunrise (subject-local), or ``None``.
         sunset: Moment of sunset (subject-local), or ``None``.
-        solar_noon: Midpoint between sunrise and sunset (subject-local), or ``None``.
+        solar_noon: Meridian transit — the moment the Sun is highest
+            (subject-local), or ``None``. Not the midpoint of the pair: the two
+            agree only while the declination is stationary.
         day_length: Duration from sunrise to sunset, or ``None``.
         position: Apparent solar position (altitude/azimuth/distance).
         next_solar_eclipse: Next global solar eclipse, if computed.
@@ -395,11 +397,12 @@ class SunTimesModel(SubscriptableBaseModel):
 
     All instants are timezone-aware ``datetime`` objects in UTC. During polar day
     or polar night the Sun may not provide a complete sunrise -> sunset pair, so
-    ``solar_noon`` and ``day_length`` are ``None`` and the matching
-    ``is_polar_day`` / ``is_polar_night`` flag is set. On transition dates,
-    ``sunrise`` or ``sunset`` can be present independently, and a paired
-    ``sunset`` may fall on the following civil date (so ``day_length`` can
-    exceed 24 hours) when daylight spans local midnight at high latitudes.
+    ``day_length`` is ``None`` and the matching ``is_polar_day`` /
+    ``is_polar_night`` flag is set — but ``solar_noon`` is still reported, since
+    the Sun culminates on a day it never rises. On transition dates, ``sunrise``
+    or ``sunset`` can be present independently, and a paired ``sunset`` may fall
+    on the following civil date (so ``day_length`` can exceed 24 hours) when
+    daylight spans local midnight at high latitudes.
 
     Attributes:
         date: Civil date (``YYYY-MM-DD``) in the requested timezone.
@@ -408,7 +411,12 @@ class SunTimesModel(SubscriptableBaseModel):
         longitude: Observer longitude in degrees (east positive).
         sunrise: Moment of sunrise (upper limb, atmospheric refraction applied), or ``None``.
         sunset: Moment of sunset (upper limb, atmospheric refraction applied), or ``None``.
-        solar_noon: Midpoint between a paired sunrise and later sunset, or ``None``.
+        solar_noon: Meridian transit — the moment the Sun crosses the observer's
+            meridian and is highest in the sky. This is true local noon, not the
+            midpoint of the rise/set pair: the two agree only while the
+            declination is stationary, and away from the solstices the midpoint
+            drifts by up to a minute (further the higher the latitude). Present
+            on polar days too, when there is no pair to take a midpoint of.
         day_length: Duration from sunrise to a later paired sunset, or ``None``.
         is_polar_day: ``True`` when the Sun stays above the horizon all day.
         is_polar_night: ``True`` when the Sun stays below the horizon all day.

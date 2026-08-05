@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from datetime import date
+from zoneinfo import ZoneInfo
+
 import pytest
 
 import kerykeion.sun_times.utils as sun_times_utils
@@ -222,7 +225,14 @@ def test_polar_edge_does_not_return_next_day_events():
     assert s.is_polar_day is True
     assert s.is_polar_night is False
     assert s.sunrise is None and s.sunset is None
-    assert s.solar_noon is None and s.day_length is None
+    # No pair, so no day length. Solar noon is a different kind of event — a
+    # meridian crossing, not a horizon crossing — so it survives here, and it has
+    # to fall inside the requested civil day rather than leaking to the next one,
+    # which is the very failure this test guards for rise/set.
+    assert s.day_length is None
+    assert s.solar_noon is not None
+    local_noon = s.solar_noon.astimezone(ZoneInfo(TROMSO["tz_str"]))
+    assert local_noon.date() == date(2026, 7, 25)
 
 
 def test_no_events_but_not_polar_raises(monkeypatch):
