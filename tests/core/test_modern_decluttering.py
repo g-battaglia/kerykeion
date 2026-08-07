@@ -12,8 +12,10 @@ from __future__ import annotations
 
 import pytest
 
+from kerykeion.charts import draw_modern
 from kerykeion.charts.draw_modern import (
     PLANET_MIN_SEPARATION,
+    _isotonic_non_decreasing,
     _normalize_angle,
     _resolve_planet_collisions,
 )
@@ -304,11 +306,10 @@ def test_modern_chart_2000_02_26_neptune_order():
     ChartPoint glyphs (by display_angle from their ``transform="rotate(...)"``
     attribute) follows the true zodiacal order.
     """
-    import re
-
     from kerykeion import AstrologicalSubjectFactory
     from kerykeion.chart_data_factory import ChartDataFactory
     from kerykeion.charts.chart_drawer import ChartDrawer
+    from kerykeion.charts.svg_metadata import parse_chart_points
     from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
     # The decluttering regression on the 2000-02-26 stellium relies on
@@ -334,14 +335,7 @@ def test_modern_chart_2000_02_26_neptune_order():
     chart_data = ChartDataFactory.create_natal_chart_data(subject, active_points=active)
     svg = ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(style="modern")
 
-    # Each planet is rendered as:
-    #   <g kr:node='ChartPoint' ... kr:slug='NAME' ... transform='rotate(-DEG 50.0 50.0)'>
-    # (attribute quotes may be single or double depending on serializer).
-    pattern = re.compile(
-        r"""<g\s+kr:node=['"]ChartPoint['"][^>]*kr:slug=['"]([^'"]+)['"][^>]*"""
-        r"""transform=['"]rotate\(-(\d+\.\d+)\s+50\.0\s+50\.0\)['"]""",
-    )
-    display_angles = {m.group(1): float(m.group(2)) for m in pattern.finditer(svg)}
+    display_angles = {tag.slug: tag.display_angle for tag in parse_chart_points(svg)}
 
     required = ["True_South_Lunar_Node", "Neptune", "Venus", "Uranus"]
     for name in required:
@@ -364,3 +358,504 @@ def test_modern_chart_2000_02_26_neptune_order():
         f"Forward distances from True_South_Lunar_Node: "
         f"Neptune={d_neptune:.3f}°, Venus={d_venus:.3f}°, Uranus={d_uranus:.3f}°"
     )
+
+
+# =============================================================================
+# PLACEMENT OPTIMALITY — the resolver is a least-squares isotonic fit
+# =============================================================================
+#
+# The resolver promises more than "order preserved and gaps respected": every
+# planet lands as close to its true position as the separations allow. That is
+# the L2-optimal isotonic placement, and it has sharp, testable signatures —
+# cramped runs keep their center of mass, an independent PAVA reimplementation
+# must agree to the last bit, and no rigid nudge of a run can improve the fit.
+
+
+def _resolved_line(angles: list[float], separation: float = PLANET_MIN_SEPARATION) -> list[dict]:
+    """Resolve angles that all live far from the 0/360 seam, sorted by angle.
+
+    Keeping every input (and every displacement it can incur) inside the open
+    interval (40, 320) guarantees the largest gap — where the resolver cuts the
+    circle — is the seam itself, so displays can be compared to true angles
+    without wraparound bookkeeping.
+    """
+    planets = [{"angle": angle, "point": f"P{i}"} for i, angle in enumerate(angles)]
+    resolved = _resolve_planet_collisions(planets, min_separation=separation)
+    return sorted(resolved, key=lambda p: p["angle"])
+
+
+def _cramped_runs(resolved_by_angle: list[dict], separation: float) -> list[list[dict]]:
+    """Maximal runs of neighbours whose display gap sits exactly at *separation*."""
+    runs: list[list[dict]] = []
+    current_run = [resolved_by_angle[0]]
+    for previous, planet in zip(resolved_by_angle, resolved_by_angle[1:]):
+        display_gap = planet["display_angle"] - previous["display_angle"]
+        if abs(display_gap - separation) <= 1e-6:
+            current_run.append(planet)
+        else:
+            if len(current_run) > 1:
+                runs.append(current_run)
+            current_run = [planet]
+    if len(current_run) > 1:
+        runs.append(current_run)
+    return runs
+
+
+def test_isotonic_regression_pools_violators_to_their_mean():
+    assert _isotonic_non_decreasing([1.0, 2.0, 3.0]) == [(1.0, 1), (2.0, 1), (3.0, 1)]
+    assert _isotonic_non_decreasing([5.0, 1.0]) == [(3.0, 2)]
+    # A merge can cascade backwards: pooling (3, 1) to mean 2 does not violate
+    # against nothing, but [3, 1, 1] pools twice.
+    assert _isotonic_non_decreasing([3.0, 1.0, 1.0]) == [(5.0 / 3.0, 3)]
+
+
+def test_cramped_runs_are_centered_on_their_true_positions():
+    """A cramped run spreads around where its planets actually are.
+
+    The least-squares isotonic placement gives every compressed run a zero
+    displacement sum — the run's center of mass stays put. The historical
+    forward walk kept the first planet of a run fixed and pushed everyone else
+    ahead, which fails this on the very first cluster.
+    """
+    import random
+
+    random.seed(19401009)
+    for _ in range(200):
+        count = random.randint(2, 12)
+        base = random.uniform(100, 180)
+        width = random.uniform(0.5, 25.0)
+        angles = sorted(base + random.uniform(0, width) for _ in range(count))
+        resolved = _resolved_line(angles)
+        for run in _cramped_runs(resolved, PLANET_MIN_SEPARATION):
+            displacement_sum = sum(p["display_angle"] - p["angle"] for p in run)
+            assert abs(displacement_sum) <= 1e-6 * len(run), (
+                f"Run of {len(run)} drifted by {displacement_sum:.6f}° from its "
+                f"center of mass; angles={[round(p['angle'], 3) for p in run]}"
+            )
+
+
+def _independent_least_squares_displays(angles: list[float], separation: float) -> list[float]:
+    """O(n²) reference PAVA: pool any adjacent violation until none is left.
+
+    Deliberately a different algorithm shape from the production stack-based
+    pass, so a bug in one cannot hide in the other.
+    """
+    reserved = [index * separation for index in range(len(angles))]
+    deflated = [angle - space for angle, space in zip(angles, reserved)]
+    groups: list[list[float]] = [[value] for value in deflated]
+    pooled_something = True
+    while pooled_something:
+        pooled_something = False
+        for index in range(len(groups) - 1):
+            left_mean = sum(groups[index]) / len(groups[index])
+            right_mean = sum(groups[index + 1]) / len(groups[index + 1])
+            if left_mean > right_mean:
+                groups[index].extend(groups.pop(index + 1))
+                pooled_something = True
+                break
+    fitted = [sum(group) / len(group) for group in groups for _ in group]
+    return [value + space for value, space in zip(fitted, reserved)]
+
+
+def test_matches_an_independent_pava_implementation():
+    import random
+
+    random.seed(26021962)
+    for _ in range(300):
+        count = random.randint(2, 15)
+        angles = sorted(random.uniform(110, 240) for _ in range(count))
+        expected = _independent_least_squares_displays(angles, PLANET_MIN_SEPARATION)
+        resolved = _resolved_line(angles)
+        for planet, expected_display in zip(resolved, expected):
+            assert planet["display_angle"] == pytest.approx(expected_display, abs=1e-9)
+
+
+def test_no_rigid_shift_of_a_cramped_run_improves_the_fit():
+    """Sliding a whole cramped run toward free space must never pay off.
+
+    At the least-squares optimum every feasible rigid nudge of a run raises the
+    total squared displacement — the operational KKT check, and exactly the
+    move an eyeballing reviewer would try ("couldn't this group sit a bit
+    further back?").
+    """
+    import random
+
+    random.seed(7407)
+    nudge = 0.05
+    for _ in range(100):
+        count = random.randint(3, 12)
+        base = random.uniform(110, 200)
+        angles = sorted(base + random.uniform(0, 18.0) for _ in range(count))
+        resolved = _resolved_line(angles)
+        for run in _cramped_runs(resolved, PLANET_MIN_SEPARATION):
+            run_first, run_last = run[0], run[-1]
+            neighbours_before = [p for p in resolved if p["display_angle"] < run_first["display_angle"]]
+            neighbours_after = [p for p in resolved if p["display_angle"] > run_last["display_angle"]]
+            for direction in (-nudge, nudge):
+                if direction < 0 and neighbours_before:
+                    room = run_first["display_angle"] - neighbours_before[-1]["display_angle"]
+                    if room + direction < PLANET_MIN_SEPARATION - 1e-9:
+                        continue
+                if direction > 0 and neighbours_after:
+                    room = neighbours_after[0]["display_angle"] - run_last["display_angle"]
+                    if room - direction < PLANET_MIN_SEPARATION - 1e-9:
+                        continue
+                cost_change = sum(
+                    (p["display_angle"] + direction - p["angle"]) ** 2
+                    - (p["display_angle"] - p["angle"]) ** 2
+                    for p in run
+                )
+                assert cost_change >= -1e-9, (
+                    f"Nudging a run of {len(run)} by {direction:+.2f}° lowered the "
+                    f"squared displacement by {-cost_change:.9f}"
+                )
+
+
+def test_issue_cluster_displacements_shrink_vs_forward_walk():
+    """
+    On the 2000-02-26 stellium the historical forward walk displaced Venus by
+    7.64° at worst, 2.82° on average. The least-squares placement measures
+    4.94° / 1.41° (scripts/report_modern_displacement.py has the full-chart
+    figures). The bounds sit halfway between the two, so any revert to a
+    forward-pushing scheme fails loudly while honest refactors pass.
+    """
+    from kerykeion.utilities import wrap_180
+
+    resolved = _resolve_planet_collisions(_fixture(_ISSUE_CLUSTER))
+    displacements = [abs(wrap_180(p["display_angle"] - p["angle"])) for p in resolved]
+    assert max(displacements) < 6.0
+    assert sum(displacements) / len(displacements) < 2.0
+
+
+def test_resolution_is_deterministic():
+    """Same input, same floats — no measurement, randomness, or dict-order leaks."""
+    import random
+
+    random.seed(313)
+    angles = [random.uniform(0, 360) for _ in range(30)]
+
+    def resolve() -> list[float]:
+        planets = [{"angle": angle, "point": f"P{i}"} for i, angle in enumerate(angles)]
+        return [p["display_angle"] for p in _resolve_planet_collisions(planets)]
+
+    assert resolve() == resolve()
+
+
+# =============================================================================
+# CONTENT-AWARE SEPARATION — pairs reserve what they draw, not the worst case
+# =============================================================================
+
+
+def _stand_in_point(
+    name: str = "Sun",
+    sign: str = "Aqu",
+    position: float = 15.0,
+    retrograde: bool = False,
+    point_type: str = "AstrologicalPoint",
+):
+    """The five attributes _cluster_row_profile reads, without a full model."""
+    from types import SimpleNamespace
+
+    return SimpleNamespace(
+        name=name, point_type=point_type, sign=sign, position=position, retrograde=retrograde
+    )
+
+
+_NATAL_ROW_RADII = {
+    "glyph": 39.0,
+    "degrees": 35.5,
+    "sign": 32.0,
+    "minutes": 28.0,
+    "rx": 25.0,
+}
+
+
+def _resolved_span(points: list, row_radii: dict) -> float:
+    """Span of a jammed cluster of *points* after content-aware resolution."""
+    entries = [
+        {
+            "angle": 150.0 + index * 0.01,
+            "point": f"P{index}",
+            "row_half_widths": draw_modern._cluster_row_profile(point),
+        }
+        for index, point in enumerate(points)
+    ]
+    resolved = _resolve_planet_collisions(entries, row_radii=row_radii)
+    displays = sorted(entry["display_angle"] for entry in resolved)
+    return displays[-1] - displays[0]
+
+
+def test_profile_reserves_the_rx_row_only_for_retrograde_points():
+    direct = draw_modern._cluster_row_profile(_stand_in_point(retrograde=False))
+    retrograde = draw_modern._cluster_row_profile(_stand_in_point(retrograde=True))
+    assert set(direct) == {"glyph", "degrees", "sign", "minutes"}
+    assert set(retrograde) == {"glyph", "degrees", "sign", "minutes", "rx"}
+    rx_half_width, rx_half_height = retrograde["rx"]
+    assert rx_half_width > 0
+    assert rx_half_height > 0
+
+
+def test_profile_reserves_the_widest_measured_glyph_for_unknown_symbols():
+    """A symbol the ink table has never measured cannot be under-reserved.
+
+    House cusps bypass resolve_glyph_id (their slug is the symbol id), so a
+    cusp rendered as a chart point exercises the conservative fallback.
+    """
+    from kerykeion.charts.glyph_ink_metrics import GLYPH_INK_HALF_HEIGHT, GLYPH_INK_HALF_WIDTH
+
+    cusp = _stand_in_point(name="First_House", point_type="House")
+    profile = draw_modern._cluster_row_profile(cusp)
+    scale = draw_modern.PLANET_SCALE_BASE
+    assert profile["glyph"][0] == pytest.approx(max(GLYPH_INK_HALF_WIDTH.values()) * scale)
+    assert profile["glyph"][1] == pytest.approx(max(GLYPH_INK_HALF_HEIGHT.values()) * scale)
+
+
+def test_formatting_helpers_match_what_the_renderer_draws():
+    point = _stand_in_point(position=7.9)  # 7º54'
+    assert draw_modern._format_degrees_text(point) == "7º"
+    assert draw_modern._format_minutes_text(point) == "54'"
+
+
+def test_narrow_content_packs_tighter_than_wide_content():
+    """Five slim clusters must span less arc than five maximal ones."""
+    narrow = [
+        _stand_in_point(name="Mean_Lilith", position=1.05, retrograde=False) for _ in range(5)
+    ]
+    wide = [_stand_in_point(name="Sun", position=29.983, retrograde=True) for _ in range(5)]
+    narrow_span = _resolved_span(narrow, _NATAL_ROW_RADII)
+    wide_span = _resolved_span(wide, _NATAL_ROW_RADII)
+    assert narrow_span < wide_span
+
+
+def test_content_derived_separation_never_exceeds_the_measured_ceiling():
+    """The scalar constants stay a hard ceiling: no pair can fan out further
+    than the layout did before content-awareness existed."""
+    wide = [_stand_in_point(name="Sun", position=29.983, retrograde=True) for _ in range(6)]
+    span = _resolved_span(wide, _NATAL_ROW_RADII)
+    assert span <= 5 * PLANET_MIN_SEPARATION + 1e-9
+
+
+def test_entries_without_profiles_fall_back_to_the_uniform_separation():
+    """The content-aware path must be opt-in per entry: plain dicts resolve
+    exactly as they always did, profiles or not on the parameter list."""
+    angles = [200.0, 200.5, 201.0, 214.0]
+    plain = [{"angle": angle, "point": f"P{i}"} for i, angle in enumerate(angles)]
+    scalar_result = _resolve_planet_collisions([dict(entry) for entry in plain])
+    fallback_result = _resolve_planet_collisions(
+        [dict(entry) for entry in plain], row_radii=_NATAL_ROW_RADII
+    )
+    assert [entry["display_angle"] for entry in scalar_result] == [
+        entry["display_angle"] for entry in fallback_result
+    ]
+
+
+# =============================================================================
+# THE SEPARATIONS ARE MEASURED — THESE GUARD THE MEASUREMENT
+# =============================================================================
+#
+# The three separation constants are not preferences, they are the output of
+# ``scripts/measure_modern_separation.py``: it renders the worst cluster the
+# renderer can be asked to draw and reads the real ink boxes back out of a
+# browser. Two things can silently invalidate that result — lowering a constant
+# below where ink starts touching, and moving the geometry it was measured
+# against. One test each.
+
+#: Separation at which the adversarial cluster's ink first touches, per ring,
+#: from the harness (floor mode, measured in the wheel's pinned font stack with
+#: stroke-aware glyph boxes). Below these, glyphs and text overlap outright;
+#: the shipped constants sit 0.75-1.25 degrees above — margin that doubles as
+#: slack for platforms whose fallback sans inks wider than the measured stack.
+_TOUCHING_SEPARATION = {
+    "PLANET_MIN_SEPARATION": 6.25,
+    "SYN_OUTER_MIN_SEPARATION": 5.00,
+    "SYN_INNER_MIN_SEPARATION": 6.25,
+}
+
+
+def test_separations_stay_above_the_measured_collision_floor():
+    for name, floor in _TOUCHING_SEPARATION.items():
+        value = getattr(draw_modern, name)
+        assert value > floor, (
+            f"{name} is {value}°, at or below the {floor}° where the adversarial "
+            "cluster's ink starts to overlap. Re-run "
+            "scripts/measure_modern_separation.py before lowering it further."
+        )
+
+
+#: Everything the measurement depended on: where each cluster row sits, how big
+#: its content is drawn, and how wide the rings are. Arc length per degree falls
+#: with the radius, so moving a row inward or growing its text eats the gap the
+#: separations were chosen to leave.
+#:
+#: One input is deliberately absent: the glyph set itself. At the shipped
+#: separations every binding pair is text against text — the glyph row, drawn
+#: furthest out and narrower than the strings below it, has room to spare — so
+#: a new point glyph would have to be far wider than any current one to matter.
+_MEASURED_GEOMETRY = {
+    "CENTER": 50.0,
+    "FEASIBLE_TOTAL_DEGREES": 320.0,
+    "DEFAULT_CLUSTER_CLEARANCE": 0.45,
+    # Natal ring rows (the single source both the renderer and row_radii read)
+    "NATAL_PLANET_GLYPH_Y": 11.0,
+    "NATAL_DEGREES_Y": 14.5,
+    "NATAL_SIGN_Y": 18.0,
+    "NATAL_MINUTES_Y": 22.0,
+    "NATAL_RX_Y": 25.0,
+    # Natal ring
+    "PLANET_SCALE_BASE": 0.135,
+    "DEGREES_FONT_SIZE": 2,
+    "SIGN_SCALE_BASE": 0.078,
+    "MINUTES_FONT_SIZE": 1.85,
+    "RX_FONT_SIZE": 1.6,
+    # Dual rings
+    "SYN_R_INNER_PLANET_INNER": 15.5,
+    "SYN_R_INNER_PLANET_OUTER": 29.5,
+    "SYN_R_OUTER_PLANET_INNER": 29.5,
+    "SYN_R_OUTER_PLANET_OUTER": 43.5,
+    "SYN_OUTER_PLANET_GLYPH_Y": 9.0,
+    "SYN_OUTER_DEGREES_Y": 12.0,
+    "SYN_OUTER_SIGN_Y": 14.5,
+    "SYN_OUTER_MINUTES_Y": 16.5,
+    "SYN_OUTER_RX_Y": 18.5,
+    "SYN_INNER_PLANET_GLYPH_Y": 22.5,
+    "SYN_INNER_DEGREES_Y": 25.0,
+    "SYN_INNER_SIGN_Y": 27.5,
+    "SYN_INNER_MINUTES_Y": 29.5,
+    "SYN_INNER_RX_Y": 31.5,
+    "SYN_PLANET_SCALE": 0.115,
+    "SYN_PLANET_SCALE_INNER": 0.095,
+    "SYN_DEGREES_FONT_SIZE": 1.9,
+    "SYN_DEGREES_FONT_SIZE_INNER": 1.6,
+    "SYN_SIGN_SCALE": 0.062,
+    "SYN_MINUTES_FONT_SIZE": 1.4,
+    "SYN_RX_FONT_SIZE": 1.2,
+}
+
+_REMEASURE = (
+    "The separations in draw_modern were measured against this geometry. "
+    "Re-run scripts/measure_modern_separation.py and update the constants "
+    "(and this fixture) to whatever it reports now."
+)
+
+
+@pytest.mark.parametrize(("name", "expected"), sorted(_MEASURED_GEOMETRY.items()))
+def test_measured_geometry_is_unchanged(name, expected):
+    assert getattr(draw_modern, name) == expected, f"{name} moved. {_REMEASURE}"
+
+
+def test_dual_rings_respect_their_own_content_derived_separations():
+    """Each dual ring spaces its planets by what they draw, at its own radius.
+
+    The two rings used to share a hardcoded 10.0°; now each pair of neighbours
+    reserves the arc its actual ink needs — computed per ring, because arc per
+    degree falls with the radius — capped at the ring's measured ceiling. This
+    renders a synastry chart, rebuilds every pair's requirement from the SVG's
+    own metadata, and checks the rendered spacing honours it.
+    """
+    from types import SimpleNamespace
+
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.chart_data_factory import ChartDataFactory
+    from kerykeion.charts.chart_drawer import ChartDrawer
+    from kerykeion.charts.svg_metadata import parse_chart_points
+
+    def subject(name, year, month, day, hour, minute, lat, lng, tz):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, year, month, day, hour, minute,
+            lat=lat, lng=lng, tz_str=tz, online=False, suppress_geonames_warning=True,
+        )
+
+    # 2000-02-26 brings its Aquarius/Pisces stellium, so both rings hold a
+    # cluster tight enough to be compressed down to the pairwise requirements.
+    first = subject("Ring A", 2000, 2, 26, 12, 0, 51.5, 0.0, "UTC")
+    second = subject("Ring B", 1993, 9, 12, 8, 30, 41.9, 12.5, "Europe/Rome")
+    chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
+    svg = ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(style="modern")
+
+    rings: dict[str, list[tuple[float, SimpleNamespace]]] = {"0": [], "1": []}
+    for tag in parse_chart_points(svg):
+        point_stand_in = SimpleNamespace(
+            name=tag.slug,
+            point_type="AstrologicalPoint",
+            sign=tag.sign,
+            position=tag.sign_position,
+            retrograde=tag.retrograde,
+        )
+        rings[tag.horoscope].append((tag.display_angle, point_stand_in))
+
+    # horoscope "0" is subject 1 in the inner ring, "1" is subject 2 outside it;
+    # the geometry below mirrors what draw_modern_dual_horoscope passes in.
+    ring_layouts = {
+        "0": dict(
+            ceiling=draw_modern.SYN_INNER_MIN_SEPARATION,
+            row_radii={
+                "glyph": 50.0 - draw_modern.SYN_INNER_PLANET_GLYPH_Y,
+                "degrees": 50.0 - draw_modern.SYN_INNER_DEGREES_Y,
+                "sign": 50.0 - draw_modern.SYN_INNER_SIGN_Y,
+                "minutes": 50.0 - draw_modern.SYN_INNER_MINUTES_Y,
+                "rx": 50.0 - draw_modern.SYN_INNER_RX_Y,
+            },
+            scales=dict(
+                planet_scale_base=draw_modern.SYN_PLANET_SCALE_INNER,
+                degrees_font_size=draw_modern.SYN_DEGREES_FONT_SIZE_INNER,
+                sign_scale_base=draw_modern.SYN_SIGN_SCALE,
+                minutes_font_size=draw_modern.SYN_MINUTES_FONT_SIZE,
+                rx_font_size=draw_modern.SYN_RX_FONT_SIZE,
+            ),
+        ),
+        "1": dict(
+            ceiling=draw_modern.SYN_OUTER_MIN_SEPARATION,
+            row_radii={
+                "glyph": 50.0 - draw_modern.SYN_OUTER_PLANET_GLYPH_Y,
+                "degrees": 50.0 - draw_modern.SYN_OUTER_DEGREES_Y,
+                "sign": 50.0 - draw_modern.SYN_OUTER_SIGN_Y,
+                "minutes": 50.0 - draw_modern.SYN_OUTER_MINUTES_Y,
+                "rx": 50.0 - draw_modern.SYN_OUTER_RX_Y,
+            },
+            scales=dict(
+                planet_scale_base=draw_modern.SYN_PLANET_SCALE,
+                degrees_font_size=draw_modern.SYN_DEGREES_FONT_SIZE,
+                sign_scale_base=draw_modern.SYN_SIGN_SCALE,
+                minutes_font_size=draw_modern.SYN_MINUTES_FONT_SIZE,
+                rx_font_size=draw_modern.SYN_RX_FONT_SIZE,
+            ),
+        ),
+    }
+
+    def pair_requirement(
+        layout: dict, one: SimpleNamespace, other: SimpleNamespace, pair_mid_angle: float
+    ) -> float:
+        # The production formula, on profiles rebuilt from the SVG's metadata:
+        # the test verifies the rendered spacing against the same contract the
+        # resolver enforces, not against a private reimplementation of it.
+        return draw_modern._pair_required_separation(
+            draw_modern._cluster_row_profile(one, **layout["scales"]),
+            draw_modern._cluster_row_profile(other, **layout["scales"]),
+            pair_mid_angle,
+            row_radii=layout["row_radii"],
+            clearance=draw_modern.DEFAULT_CLUSTER_CLEARANCE,
+            ceiling=layout["ceiling"],
+        )
+
+    for horoscope_id, layout in ring_layouts.items():
+        members = sorted(rings[horoscope_id], key=lambda entry: entry[0])
+        assert len(members) > 2, f"Ring {horoscope_id} rendered too few points to judge"
+        compressed_pairs = 0
+        for (display, planet), (next_display, next_planet) in zip(members, members[1:]):
+            gap = _normalize_angle(next_display - display)
+            pair_mid_angle = display + gap / 2.0
+            requirement = pair_requirement(layout, planet, next_planet, pair_mid_angle)
+            # Tolerance: the SVG serializes display angles to 6 decimals, and
+            # the requirement is re-evaluated here at the truncated midpoint.
+            assert gap >= requirement - 5e-3, (
+                f"Ring {horoscope_id}: {planet.name} and {next_planet.name} sit "
+                f"{gap:.3f}° apart but their ink needs {requirement:.3f}°."
+            )
+            if gap <= requirement + 0.05:
+                compressed_pairs += 1
+        # The stellium must actually compress something down onto its
+        # requirement, or the assertions above never bit.
+        assert compressed_pairs > 0, (
+            f"Ring {horoscope_id} has no pair at its content-derived requirement — "
+            "the fixture is not dense enough to prove anything."
+        )

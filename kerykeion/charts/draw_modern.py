@@ -18,13 +18,25 @@ All positioning uses rotational transforms: rotate(-angle 50 50).
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
+import logging
 import math
 from typing import Optional
 
 from kerykeion.charts.charts_utils import escape_svg_text, normalize_degree
+from kerykeion.charts.glyph_ink_metrics import (
+    GLYPH_INK_HALF_HEIGHT,
+    GLYPH_INK_HALF_WIDTH,
+    SIGN_INK_HALF_HEIGHT,
+    SIGN_INK_HALF_WIDTH,
+    TEXT_INK_HALF_HEIGHT,
+    TEXT_INK_HALF_WIDTH,
+    TEXT_INK_REFERENCE_FONT_SIZE,
+)
 from kerykeion.utilities import wrap_180
 from kerykeion.schemas.kr_models import KerykeionPointModel
 from kerykeion.settings.chart_defaults import resolve_glyph_id
+
+logger = logging.getLogger(__name__)
 
 
 # =============================================================================
@@ -68,7 +80,23 @@ ANGULAR_HOUSES = {1, 4, 7, 10}
 ANGULAR_STROKE_WIDTH = 0.6
 NORMAL_STROKE_WIDTH = 0.07
 
-PLANET_MIN_SEPARATION = 8.0  # Minimum degrees between planet clusters
+# Minimum degrees between planet clusters in the natal ring — with
+# content-aware separations, the per-pair ceiling.
+#
+# Measured, not guessed — see ``scripts/measure_modern_separation.py``, which
+# renders the worst cluster the renderer can be asked to draw (every glyph it
+# knows, all at 29º59' and retrograde, jammed to exactly this separation, at
+# several wheel orientations) and reads the real ink boxes back out of a
+# browser, in the wheel's pinned font stack. Ink first touches at 6.25°; the
+# degree of slack this ceiling keeps above that floor is deliberate — it is
+# also what absorbs a platform whose fallback sans inks wider than the
+# measured stack. Every tenth of a degree above it is a cluster fanned wider
+# than it needs to be, dragging its tether line with it.
+#
+# The binding row is the minutes text at y=22.0 — the smallest radius carrying
+# a two-character string, so the least arc per degree. The glyphs, out at
+# y=11.0, clear each other well before it does.
+PLANET_MIN_SEPARATION = 7.25
 
 # Cusp ring text size (degrees and minutes shown at each house cusp)
 CUSP_FONT_SIZE = 2.0
@@ -130,6 +158,66 @@ SYN_INNER_DEGREES_Y = 25.0
 SYN_INNER_SIGN_Y = 27.5
 SYN_INNER_MINUTES_Y = 29.5
 SYN_INNER_RX_Y = 31.5
+
+# Ink-to-ink air left between neighbouring clusters when the separation is
+# derived from their actual content, in wheel units. 0.45 units is ~2.2px in a
+# default 480px chart — visibly apart, not merely non-touching. Calibrated with
+# scripts/measure_modern_separation.py --mode adversarial, which renders mixed
+# narrow/wide clusters and measures the real rendered gaps in a browser: at
+# 0.35 the worst adversarial pair still came within 0.03 units at its worst
+# wheel orientation (ink tables and probes disagree by ~a pixel of antialias),
+# 0.45 keeps every measured pair at a quarter unit or more of daylight.
+DEFAULT_CLUSTER_CLEARANCE = 0.45
+
+# Text of the retrograde marker, shared by the renderer and the content-aware
+# separation model so the reserved width can never diverge from the drawn text.
+RETROGRADE_LABEL = "RX"
+
+# The one font stack every modern-chart text renders in — declared on the
+# wheel root here, and on the full-chart Main_Chart group by chart_drawer, so
+# no text node can miss it. Without it the SVG inherits whatever the embedding
+# page uses — the same chart came out serif standalone, sans in one host page,
+# monospace in another — and no spacing model can reserve room for an unknown
+# font. Arial, Helvetica and Liberation Sans are metric-compatible, and
+# Liberation is named explicitly so Linux systems that have it never fall
+# through to generic sans-serif (usually DejaVu Sans, whose digits run
+# ~10-14% wider than the measured ink tables). A system with none of the
+# three still resolves to its own sans and can render wider than reserved —
+# that residual risk is the price of not padding every chart for the rarest
+# platform.
+#
+# Liberation Sans is deliberately unquoted: CSS allows multi-word family
+# names as bare identifiers, and the SVG post-processing rewrites double
+# quotes to single quotes, which nested quotes would corrupt.
+MODERN_TEXT_FONT_FAMILY = "Arial, Helvetica, Liberation Sans, sans-serif"
+
+# Below this display offset from the true position, the indicator is drawn as
+# a straight tick instead of a tether arc. Shared with the displacement report
+# so its "straight" column counts the same population the renderer draws.
+STRAIGHT_TETHER_THRESHOLD = 0.5
+
+# Natal cluster row positions (Y in the wheel-local frame; radius = CENTER - y).
+# The single source for the renderer, the content-aware profiles, and the row
+# radii — the dual rings have their own SYN_* equivalents below.
+NATAL_PLANET_GLYPH_Y = 11.0
+NATAL_DEGREES_Y = 14.5
+NATAL_SIGN_Y = 18.0
+NATAL_MINUTES_Y = 22.0
+NATAL_RX_Y = 25.0
+
+# Minimum degrees between planet clusters in each dual ring, measured the same
+# way as PLANET_MIN_SEPARATION (and, like it, the per-pair ceiling once
+# content-aware separations kick in). The two rings differ by more than a
+# rounding: the outer one carries its clusters at radii 41.0–31.5 and the
+# inner one at 27.5–18.5, and arc length per degree falls with the radius, so
+# the inner ring needs half again as much angle to buy the same gap. Ink first
+# touches at 5.00° (outer) and 6.25° (inner); the slack these ceilings keep
+# above the floors doubles as headroom for wider-inking fallback fonts.
+#
+# The binding row is the degrees text in both rings — unlike the natal ring,
+# whose minutes row sits at a tighter radius than its degrees row.
+SYN_OUTER_MIN_SEPARATION = 5.75
+SYN_INNER_MIN_SEPARATION = 7.5
 
 # Dual chart element sizes — slightly smaller than natal to fit in narrower rings
 SYN_PLANET_SCALE = 0.115  # Planet glyph (outer ring)
@@ -622,19 +710,209 @@ def _draw_ruler_ring() -> str:
 # =============================================================================
 
 
+#: Total degrees the resolver may spend on separations around the full circle.
+#: The 40° of slack keeps the wrap gap comfortably open even at maximum load;
+#: with a uniform separation this reproduces the historical `min(sep, 320/n)`
+#: cap exactly (scaling sep by 320/(n*sep) IS capping it at 320/n).
+FEASIBLE_TOTAL_DEGREES = 320.0
+
+#: Stand-in ink reach for a glyph, sign, or string the measured tables do not
+#: know (a future symbol or text added without re-running the dump). The widest
+#: measured entry cannot under-reserve for anything.
+_FALLBACK_GLYPH_INK = (max(GLYPH_INK_HALF_WIDTH.values()), max(GLYPH_INK_HALF_HEIGHT.values()))
+_FALLBACK_SIGN_INK = (max(SIGN_INK_HALF_WIDTH.values()), max(SIGN_INK_HALF_HEIGHT.values()))
+_FALLBACK_TEXT_INK = (max(TEXT_INK_HALF_WIDTH.values()), max(TEXT_INK_HALF_HEIGHT.values()))
+
+
+def _format_degrees_text(point: KerykeionPointModel) -> str:
+    """The degrees line of a planet cluster, e.g. ``"23º"``."""
+    return f"{int(point.position)}º"
+
+
+def _format_minutes_text(point: KerykeionPointModel) -> str:
+    """The minutes line of a planet cluster, e.g. ``"49'"``."""
+    minutes = int((point.position - int(point.position)) * 60)
+    return f"{minutes}'"
+
+
+def _text_ink_reach(text: str, font_size: float) -> tuple[float, float]:
+    """Measured ink reach of a text row's string, scaled to *font_size*."""
+    scale = font_size / TEXT_INK_REFERENCE_FONT_SIZE
+    half_width, half_height = (
+        (TEXT_INK_HALF_WIDTH[text], TEXT_INK_HALF_HEIGHT[text])
+        if text in TEXT_INK_HALF_WIDTH
+        else _FALLBACK_TEXT_INK
+    )
+    return (half_width * scale, half_height * scale)
+
+
+def _cluster_row_profile(
+    point: KerykeionPointModel,
+    planet_scale_base: float = PLANET_SCALE_BASE,
+    degrees_font_size: float = DEGREES_FONT_SIZE,
+    sign_scale_base: float = SIGN_SCALE_BASE,
+    minutes_font_size: float = MINUTES_FONT_SIZE,
+    rx_font_size: float = RX_FONT_SIZE,
+) -> dict[str, tuple[float, float]]:
+    """Ink reach ``(half_width, half_height)`` of each cluster row of *point*.
+
+    This is what the content-aware separation works from: a planet at 4º07'
+    reserves the ink of ``"4º"`` and ``"7'"``, not of the widest strings the
+    rows could ever hold, and the ``rx`` row exists only when the point is
+    actually retrograde. All values come from the browser-measured tables in
+    :mod:`kerykeion.charts.glyph_ink_metrics`, in wheel units.
+
+    Both axes matter: clusters stay upright while the wheel turns, so which
+    axis two neighbours pinch on depends on where the pair sits (see
+    ``required_separation`` in :func:`_resolve_planet_collisions`).
+
+    The keyword defaults mirror the natal ring; dual rings pass their own
+    scales, the same ones they hand to :func:`_draw_single_planet_in_ring`.
+    """
+    point_slug = point.name
+    planet_id = point_slug if point.point_type == "House" else resolve_glyph_id(point_slug)
+    glyph_scale = planet_scale_base * GLYPH_SCALE_MAP.get(planet_id, 1.0)
+    glyph_half_width, glyph_half_height = (
+        (GLYPH_INK_HALF_WIDTH[planet_id], GLYPH_INK_HALF_HEIGHT[planet_id])
+        if planet_id in GLYPH_INK_HALF_WIDTH
+        else _FALLBACK_GLYPH_INK
+    )
+
+    sign_scale = sign_scale_base * ZODIAC_INNER_SCALE_MAP.get(point.sign, 1.0)
+    sign_half_width, sign_half_height = (
+        (SIGN_INK_HALF_WIDTH[point.sign], SIGN_INK_HALF_HEIGHT[point.sign])
+        if point.sign in SIGN_INK_HALF_WIDTH
+        else _FALLBACK_SIGN_INK
+    )
+
+    profile = {
+        "glyph": (glyph_half_width * glyph_scale, glyph_half_height * glyph_scale),
+        "degrees": _text_ink_reach(_format_degrees_text(point), degrees_font_size),
+        "sign": (sign_half_width * sign_scale, sign_half_height * sign_scale),
+        "minutes": _text_ink_reach(_format_minutes_text(point), minutes_font_size),
+    }
+    if point.retrograde is True:
+        profile["rx"] = _text_ink_reach(RETROGRADE_LABEL, rx_font_size)
+    return profile
+
+#: Fixed iteration count for the wraparound fallback's 1-D convex search.
+#: Deterministic and precise far beyond the 1e-6 the placement needs.
+_WRAP_SEARCH_ITERATIONS = 200
+
+#: Bound on orientation-refinement rounds: a pair's separation depends on
+#: where it sits on the wheel, which depends on the separations. Requirements
+#: only ratchet upward and are capped, so the refinement converges; wide
+#: clusters that fan across a quadrant genuinely need several rounds before
+#: the orientations stop moving. The bound exists for pathology, not pacing —
+#: exiting through it (instead of through convergence) is the failure mode.
+_ORIENTATION_REFINEMENT_ROUNDS = 32
+
+
+def _isotonic_non_decreasing(values: list[float]) -> list[tuple[float, int]]:
+    """L2 isotonic regression of *values*, as PAVA merge blocks.
+
+    Returns ``(block_mean, block_size)`` blocks whose expansion is the
+    non-decreasing vector closest to *values* in least squares. Classic
+    stack-based Pool Adjacent Violators: each new element opens a block, and
+    while the previous block's mean exceeds the current one's, the two violate
+    monotonicity and are pooled (their best common value is their joint mean).
+    """
+    blocks: list[tuple[float, int]] = []
+    for value in values:
+        merged_sum = value
+        merged_size = 1
+        while blocks and blocks[-1][0] > merged_sum / merged_size:
+            previous_mean, previous_size = blocks.pop()
+            merged_sum += previous_mean * previous_size
+            merged_size += previous_size
+        blocks.append((merged_sum / merged_size, merged_size))
+    return blocks
+
+
+def _pair_required_separation(
+    first_profile: dict[str, tuple[float, float]],
+    second_profile: dict[str, tuple[float, float]],
+    pair_mid_angle: float,
+    *,
+    row_radii: dict[str, float],
+    clearance: float,
+    ceiling: float,
+) -> float:
+    """Degrees a specific pair needs, where it actually sits, so no ink touches.
+
+    Clusters stay upright while the wheel turns, so two neighbours are two
+    axis-aligned boxes, and which axis separates them depends on where the
+    pair sits: near the top of the wheel neighbours sit side by side and the
+    ink WIDTHS must clear; at the sides they stack vertically and the ink
+    HEIGHTS must clear — a much smaller ask for text rows. A pair's screen
+    offset per degree of separation is ``arc·|sin(mid)|`` horizontally and
+    ``arc·|cos(mid)|`` vertically, and clearing either axis suffices, so each
+    row takes the cheaper one. At the diagonal both components shrink and this
+    degrades exactly to the all-orientation worst case,
+    ``hypot(widths, heights)``.
+
+    Args:
+        first_profile: Row ink reaches of one cluster (:func:`_cluster_row_profile`).
+        second_profile: Row ink reaches of its neighbour.
+        pair_mid_angle: Wheel angle midway between the two display positions.
+        row_radii: Radius of each cluster row, keyed like the profiles.
+        clearance: Ink-to-ink air to keep, wheel units.
+        ceiling: Hard cap, degrees — the measured always-safe separation.
+
+    Returns:
+        Degrees of separation this pair requires, at most *ceiling*.
+    """
+    horizontal_share = abs(math.sin(math.radians(pair_mid_angle)))
+    vertical_share = abs(math.cos(math.radians(pair_mid_angle)))
+    required = 0.0
+    for row, radius in row_radii.items():
+        if row not in first_profile or row not in second_profile:
+            continue  # e.g. the rx row, present only for retrograde points
+        width_needed = first_profile[row][0] + second_profile[row][0] + clearance
+        height_needed = first_profile[row][1] + second_profile[row][1] + clearance
+        arc_per_degree = radius * math.pi / 180.0
+        separating_options = []
+        if horizontal_share > 1e-9:
+            separating_options.append(width_needed / (arc_per_degree * horizontal_share))
+        if vertical_share > 1e-9:
+            separating_options.append(height_needed / (arc_per_degree * vertical_share))
+        required = max(required, min(separating_options))
+    return min(ceiling, required)
+
+
 def _resolve_planet_collisions(
     planets_with_angles: list[dict],
     min_separation: float = PLANET_MIN_SEPARATION,
+    *,
+    row_radii: Optional[dict[str, float]] = None,
+    clearance: float = DEFAULT_CLUSTER_CLEARANCE,
 ) -> list[dict]:
     """
     Resolve collisions between planet clusters by spreading cramped planets.
 
     When planets are too close together, their display positions are spread
-    apart while maintaining tether lines to their true positions.
+    apart while maintaining tether lines to their true positions. Each planet
+    lands as close to its true position as the separations allow: cramped
+    runs are centered on their true positions and spread both ways, never
+    smeared forward.
+
+    How much separation a pair needs depends on what the two clusters draw.
+    When *row_radii* is given and both entries carry a ``"row_half_widths"``
+    profile (see :func:`_cluster_row_profile`), each adjacent pair reserves
+    just enough arc for its own ink plus *clearance* — capped at
+    *min_separation*, which the measurement harness proved sufficient for the
+    widest content possible. Entries without profiles, or a ``None``
+    *row_radii*, fall back to the uniform *min_separation* everywhere.
 
     Args:
-        planets_with_angles: List of dicts with 'angle', 'point', 'color' keys.
-        min_separation: Minimum degrees to maintain between planets.
+        planets_with_angles: List of dicts with 'angle', 'point', 'color' keys,
+            optionally carrying 'row_half_widths'.
+        min_separation: Degrees to maintain between planets; the ceiling for
+            content-derived separations.
+        row_radii: Radius of each cluster row (key matching the profiles),
+            enabling content-aware separations.
+        clearance: Ink-to-ink air added between neighbouring clusters, wheel
+            units. Only used with content-aware separations.
 
     Returns:
         Same list with added 'display_angle' key.
@@ -642,9 +920,20 @@ def _resolve_planet_collisions(
     if not planets_with_angles:
         return planets_with_angles
 
-    # Cap the separation so it is physically possible to fit all planets
-    max_possible_separation = 320.0 / len(planets_with_angles)
-    sep = min(min_separation, max_possible_separation)
+    def required_separation(first: dict, second: dict, pair_mid_angle: float) -> float:
+        """This pair's separation: content-derived when both carry profiles."""
+        first_profile = first.get("row_half_widths")
+        second_profile = second.get("row_half_widths")
+        if row_radii is None or first_profile is None or second_profile is None:
+            return min_separation
+        return _pair_required_separation(
+            first_profile,
+            second_profile,
+            pair_mid_angle,
+            row_radii=row_radii,
+            clearance=clearance,
+            ceiling=min_separation,
+        )
 
     # Sort by true zodiacal angle. This order is the invariant we must preserve.
     sorted_planets = sorted(planets_with_angles, key=lambda p: p["angle"])
@@ -654,18 +943,23 @@ def _resolve_planet_collisions(
         sorted_planets[0]["display_angle"] = sorted_planets[0]["angle"]
         return sorted_planets
 
-    # ── Spreading algorithm ─────────────────────────────────────────────
-    # We work in an "unwrapped" linear coordinate along the circle.
-    # The largest gap in the ORIGINAL (true) angles is where we cut the
-    # circle: starting from the planet right after that cut, every other
-    # planet has a strictly forward zodiacal distance from it (0 < d < 360).
+    # ── Placement algorithm ─────────────────────────────────────────────
+    # We work in an "unwrapped" linear coordinate along the circle. The
+    # largest gap in the ORIGINAL (true) angles is where we cut the circle:
+    # starting from the planet right after that cut, every other planet has
+    # a non-decreasing forward zodiacal distance from it.
     #
-    # Walking forward from the start planet, each planet's linear position
-    # is either its true distance from the start (when that is already far
-    # enough from its predecessor) or `prev_linear + sep` (when the cluster
-    # is tighter than `sep`). This construction is monotonic by definition,
-    # so zodiacal order is preserved and `sep` is respected without any
-    # iterative refinement.
+    # The placement itself is a least-squares isotonic regression. With
+    # cumulative separations S_j, requiring d_j - d_{j-1} >= sep_j is the
+    # same as requiring y_j = d_j - S_j to be non-decreasing, so the
+    # displacement-optimal layout is d = PAVA(x - S) + S: every cramped run
+    # is drawn centered on the true positions of its members (sum of
+    # displacements zero), sparse planets stay exactly where they are, and
+    # zodiacal order is preserved because consecutive d differ by at least
+    # sep_j > 0. The old forward-walk kept the first planet of a run fixed
+    # and pushed everyone else forward — on a 52-point wheel the worst
+    # planet ended up 30-43 degrees from its true position; centering
+    # roughly halves that.
     best_gap = -1.0
     best_gap_pos = 0
     for k in range(n):
@@ -678,17 +972,142 @@ def _resolve_planet_collisions(
     start_k = (best_gap_pos + 1) % n
     base_angle = sorted_planets[start_k]["angle"]
 
-    prev_linear = base_angle
-    sorted_planets[start_k]["display_angle"] = _normalize_angle(base_angle)
+    # The same planets, walked forward from the cut, with their true positions
+    # unwrapped onto a line.
+    ordered = [sorted_planets[(start_k + j) % n] for j in range(n)]
+    unwrapped_positions = [base_angle] + [
+        base_angle + _normalize_angle(planet["angle"] - base_angle) for planet in ordered[1:]
+    ]
 
-    for j in range(1, n):
-        curr_k = (start_k + j) % n
-        # True forward distance from the start planet along the circle
-        forward_from_start = _normalize_angle(sorted_planets[curr_k]["angle"] - base_angle)
-        desired_linear = base_angle + forward_from_start
-        linear = max(desired_linear, prev_linear + sep)
-        sorted_planets[curr_k]["display_angle"] = _normalize_angle(linear)
-        prev_linear = linear
+    def place(pair_separations: list[float], wrap_separation: float) -> list[float]:
+        """Displacement-optimal display positions for the given separations."""
+        # Scale everything down together when the circle cannot hold it all.
+        total_separation = sum(pair_separations) + wrap_separation
+        if total_separation > FEASIBLE_TOTAL_DEGREES:
+            feasibility_scale = FEASIBLE_TOTAL_DEGREES / total_separation
+            pair_separations = [s * feasibility_scale for s in pair_separations]
+            wrap_separation *= feasibility_scale
+
+        reserved_before = [0.0]
+        for separation in pair_separations:
+            reserved_before.append(reserved_before[-1] + separation)
+
+        # "Deflate" the mandatory separations out of the coordinates: requiring
+        # display_j - display_{j-1} >= sep_j is the same as requiring the
+        # deflated values to be non-decreasing, which is what PAVA solves.
+        deflated_positions = [
+            position - reserved for position, reserved in zip(unwrapped_positions, reserved_before)
+        ]
+        blocks = _isotonic_non_decreasing(deflated_positions)
+        fitted_deflated = [block_mean for block_mean, block_size in blocks for _ in range(block_size)]
+
+        # Wraparound guard: the optimum may stretch past the cut on either
+        # side. The pair facing itself across the cut needs
+        # 360 - (display_last - display_first) >= wrap_separation, i.e. the
+        # fitted deflated vector must fit in a window of a fixed width. The
+        # constrained optimum is the unconstrained one clipped into the
+        # best-placed window (clipping preserves both monotonicity and the
+        # pairwise gaps), and the window placement minimizes a sum of
+        # per-element quadratics — convex as a SUM, though no single term is,
+        # so resist the temptation to solve it per element. The window is at
+        # least 40 degrees wide, because the feasibility cap keeps the total
+        # separation at or under 320.
+        window_width = (360.0 - wrap_separation) - reserved_before[-1]
+        if fitted_deflated[-1] - fitted_deflated[0] > window_width:
+
+            def cost_of_window(window_start: float) -> float:
+                window_end = window_start + window_width
+                return sum(
+                    (min(max(fitted, window_start), window_end) - deflated) ** 2
+                    for fitted, deflated in zip(fitted_deflated, deflated_positions)
+                )
+
+            search_low = min(deflated_positions) - window_width
+            search_high = max(deflated_positions)
+            for _ in range(_WRAP_SEARCH_ITERATIONS):
+                step = (search_high - search_low) / 3.0
+                if cost_of_window(search_low + step) <= cost_of_window(search_high - step):
+                    search_high -= step
+                else:
+                    search_low += step
+            best_window_start = (search_low + search_high) / 2.0
+            best_window_end = best_window_start + window_width
+            fitted_deflated = [
+                min(max(fitted, best_window_start), best_window_end) for fitted in fitted_deflated
+            ]
+
+        # Back to angles. Blocks of one are planets nobody crowded: give them
+        # their true angle verbatim rather than a value reconstructed through
+        # the deflate/reinflate float round-trip. A final forward clamp
+        # absorbs the few ulps of noise the block means can carry.
+        display_positions = [
+            fitted + reserved for fitted, reserved in zip(fitted_deflated, reserved_before)
+        ]
+        block_start = 0
+        for block_mean, block_size in blocks:
+            untouched_by_window_clip = fitted_deflated[block_start] == block_mean
+            if block_size == 1 and untouched_by_window_clip:
+                display_positions[block_start] = unwrapped_positions[block_start]
+            block_start += block_size
+        for j in range(1, n):
+            minimum_allowed = display_positions[j - 1] + pair_separations[j - 1]
+            if display_positions[j] < minimum_allowed:
+                display_positions[j] = minimum_allowed
+        return display_positions
+
+    def pair_mid_angles(positions: list[float]) -> list[float]:
+        """Midpoint angle of each adjacent pair (wrap pair last)."""
+        adjacent = [(a + b) / 2.0 for a, b in zip(positions, positions[1:])]
+        wrap_mid = positions[-1] + _normalize_angle(positions[0] - positions[-1]) / 2.0
+        return adjacent + [wrap_mid]
+
+    # A pair's requirement depends on where it sits, but where it sits depends
+    # on the requirements: a spreading cluster rotates every pair it contains.
+    # Solve the fixed point by refinement — place, re-evaluate at the placed
+    # positions, repeat — with a ratchet (requirements only grow, capped at
+    # min_separation) so the loop provably converges. The exit is
+    # verification-shaped on purpose: a placement is only accepted after a
+    # re-evaluation at its own orientations demanded nothing new, so no
+    # unvalidated layout can escape the loop.
+    mid_angles = pair_mid_angles(unwrapped_positions)
+    pair_requirements = [
+        required_separation(planet, follower, mid)
+        for (planet, follower), mid in zip(zip(ordered, ordered[1:]), mid_angles)
+    ]
+    wrap_requirement = required_separation(ordered[-1], ordered[0], mid_angles[-1])
+    requirements_settled = False
+    for _ in range(_ORIENTATION_REFINEMENT_ROUNDS):
+        display_positions = place(pair_requirements, wrap_requirement)
+        mid_angles = pair_mid_angles(display_positions)
+        refined = [
+            max(current, required_separation(planet, follower, mid))
+            for current, (planet, follower), mid in zip(
+                pair_requirements, zip(ordered, ordered[1:]), mid_angles
+            )
+        ]
+        refined_wrap = max(
+            wrap_requirement, required_separation(ordered[-1], ordered[0], mid_angles[-1])
+        )
+        requirements_settled = refined_wrap <= wrap_requirement + 1e-3 and all(
+            new <= old + 1e-3 for new, old in zip(refined, pair_requirements)
+        )
+        pair_requirements, wrap_requirement = refined, refined_wrap
+        if requirements_settled:
+            break
+    if not requirements_settled:
+        # The failure mode the round bound exists for: the last placement was
+        # never re-validated against its own orientations, so some pair may sit
+        # tighter than its ink requires. Say so — a silent near-collision is
+        # indistinguishable from a correct render until someone looks.
+        logger.warning(
+            "Modern decluttering: orientation refinement did not converge in %d rounds "
+            "for %d points; the rendered spacing may be tighter than the ink model requires.",
+            _ORIENTATION_REFINEMENT_ROUNDS,
+            n,
+        )
+
+    for planet, display in zip(ordered, display_positions):
+        planet["display_angle"] = _normalize_angle(display)
 
     return sorted_planets
 
@@ -736,7 +1155,7 @@ def _draw_indicator_line(
 
     angle_diff = wrap_180(display_angle - real_angle)
 
-    if abs(angle_diff) < 0.5:
+    if abs(angle_diff) < STRAIGHT_TETHER_THRESHOLD:
         # Simple straight indicator line
         out += (
             f'  <path d="M {CENTER} {start_y} l 0 {tick_length}" '
@@ -817,6 +1236,7 @@ def _draw_planet_ring(
     gauquelin_sectors: bool = False,
     gauquelin_cusps: Optional[list[float]] = None,
     show_zodiac_background_ring: bool = True,
+    content_aware_separation: bool = True,
 ) -> str:
     """
     Draw the planet ring with data clusters and indicator lines.
@@ -826,7 +1246,8 @@ def _draw_planet_ring(
         planets_settings: List of planet setting dicts (with 'name', 'color', 'id').
         seventh_house_degree_ut: 7th house cusp absolute degree.
         houses: List of 12 house KerykeionPointModel objects.
-        min_separation: Minimum degrees between planet clusters.
+        min_separation: Minimum degrees between planet clusters; with
+            content-aware separation, the per-pair ceiling.
         ring_inner_r: Inner radius of the planet ring (default 22.0).
         ring_outer_r: Outer radius of the planet ring (default 43.5).
         ring_fill_color: Fill color for the ring background.
@@ -839,6 +1260,10 @@ def _draw_planet_ring(
                       minutes_font_size, rx_font_size overrides.
         gauquelin_sectors: If True, draw 36 sector lines instead of 12 house lines.
         gauquelin_cusps: 36 zodiacal longitudes for actual sector boundaries.
+        content_aware_separation: Derive each pair's separation from the ink it
+            actually draws (narrow content packs tighter, capped at
+            min_separation). False falls back to the uniform separation —
+            the measurement harness uses that to probe exact spacings.
 
     Returns:
         SVG group string for the planet ring.
@@ -858,6 +1283,26 @@ def _draw_planet_ring(
     else:
         out += _draw_house_division_lines(houses, seventh_house_degree_ut, line_outer_y, line_inner_y)
 
+    # Row positions and element scales, resolved once: the renderer, the
+    # content-aware profiles, and the row radii must all read the same values.
+    planet_y_config = planet_y_config or {}
+    row_positions = {
+        "glyph_y": planet_y_config.get("glyph_y", NATAL_PLANET_GLYPH_Y),
+        "degrees_y": planet_y_config.get("degrees_y", NATAL_DEGREES_Y),
+        "sign_y": planet_y_config.get("sign_y", NATAL_SIGN_Y),
+        "minutes_y": planet_y_config.get("minutes_y", NATAL_MINUTES_Y),
+        "rx_y": planet_y_config.get("rx_y", NATAL_RX_Y),
+    }
+    scale_config = scale_config or {}
+    element_scales = {
+        "planet_scale_base": scale_config.get("planet_scale_base", PLANET_SCALE_BASE),
+        "degrees_font_size": scale_config.get("degrees_font_size", DEGREES_FONT_SIZE),
+        "sign_scale_base": scale_config.get("sign_scale_base", SIGN_SCALE_BASE),
+        "minutes_font_size": scale_config.get("minutes_font_size", MINUTES_FONT_SIZE),
+        "rx_font_size": scale_config.get("rx_font_size", RX_FONT_SIZE),
+    }
+    planet_kwargs = {**row_positions, **element_scales}
+
     # Build planet angle data
     planets_with_angles = []
     color_map = {s["name"].lower().replace(" ", "_"): s.get("color", COLOR_TEXT) for s in planets_settings}
@@ -866,39 +1311,28 @@ def _draw_planet_ring(
         angle = _zodiac_to_wheel_angle(point.abs_pos, seventh_house_degree_ut)
         name_key = point.name.lower().replace(" ", "_").replace("'", "").replace("\u2019", "")
         color = color_map.get(name_key, COLOR_TEXT)
-        planets_with_angles.append(
-            {
-                "angle": angle,
-                "point": point,
-                "color": color,
-            }
-        )
+        planet_entry = {
+            "angle": angle,
+            "point": point,
+            "color": color,
+        }
+        if content_aware_separation:
+            planet_entry["row_half_widths"] = _cluster_row_profile(point, **element_scales)
+        planets_with_angles.append(planet_entry)
 
     # Resolve collisions
-    resolved = _resolve_planet_collisions(planets_with_angles, min_separation=min_separation)
-
-    # Prepare Y-position kwargs for planet clusters
-    planet_kwargs = {}
-    if planet_y_config:
-        planet_kwargs = {
-            "glyph_y": planet_y_config.get("glyph_y", 11.0),
-            "degrees_y": planet_y_config.get("degrees_y", 14.5),
-            "sign_y": planet_y_config.get("sign_y", 18.0),
-            "minutes_y": planet_y_config.get("minutes_y", 22.0),
-            "rx_y": planet_y_config.get("rx_y", 25.0),
-        }
-
-    # Prepare scale kwargs for planet element sizes
-    if scale_config:
-        planet_kwargs.update(
-            {
-                "planet_scale_base": scale_config.get("planet_scale_base", PLANET_SCALE_BASE),
-                "degrees_font_size": scale_config.get("degrees_font_size", DEGREES_FONT_SIZE),
-                "sign_scale_base": scale_config.get("sign_scale_base", SIGN_SCALE_BASE),
-                "minutes_font_size": scale_config.get("minutes_font_size", MINUTES_FONT_SIZE),
-                "rx_font_size": scale_config.get("rx_font_size", RX_FONT_SIZE),
-            }
-        )
+    row_radii = {
+        "glyph": CENTER - row_positions["glyph_y"],
+        "degrees": CENTER - row_positions["degrees_y"],
+        "sign": CENTER - row_positions["sign_y"],
+        "minutes": CENTER - row_positions["minutes_y"],
+        "rx": CENTER - row_positions["rx_y"],
+    }
+    resolved = _resolve_planet_collisions(
+        planets_with_angles,
+        min_separation=min_separation,
+        row_radii=row_radii if content_aware_separation else None,
+    )
 
     # Prepare indicator kwargs
     ind_kwargs = {}
@@ -952,11 +1386,11 @@ def _draw_single_planet_in_ring(
     display_angle: float,
     counter_rotation: float,
     color: str,
-    glyph_y: float = 11.0,
-    degrees_y: float = 14.5,
-    sign_y: float = 18.0,
-    minutes_y: float = 22.0,
-    rx_y: float = 25.0,
+    glyph_y: float = NATAL_PLANET_GLYPH_Y,
+    degrees_y: float = NATAL_DEGREES_Y,
+    sign_y: float = NATAL_SIGN_Y,
+    minutes_y: float = NATAL_MINUTES_Y,
+    rx_y: float = NATAL_RX_Y,
     planet_scale_base: float = PLANET_SCALE_BASE,
     degrees_font_size: float = DEGREES_FONT_SIZE,
     sign_scale_base: float = SIGN_SCALE_BASE,
@@ -990,8 +1424,10 @@ def _draw_single_planet_in_ring(
     Returns:
         SVG string for the planet group.
     """
-    degrees = int(point.position)
-    minutes = int((point.position - degrees) * 60)
+    # Shared with _cluster_row_profile, so the separation model reserves the
+    # width of exactly what gets drawn.
+    degrees_text = _format_degrees_text(point)
+    minutes_text = _format_minutes_text(point)
     sign = point.sign
     is_retro = point.retrograde is True
     fill_color = COLOR_RETROGRADE if is_retro else color
@@ -1054,7 +1490,7 @@ def _draw_single_planet_in_ring(
         f'  <text text-anchor="middle" dominant-baseline="middle" '
         f'x="{CENTER}" y="{degrees_y}" font-size="{degrees_font_size}" fill="{fill_color}" '
         f'font-weight="500" '
-        f'transform="rotate({counter_rotation:.6f} {CENTER} {degrees_y})">{degrees}º</text>\n'
+        f'transform="rotate({counter_rotation:.6f} {CENTER} {degrees_y})">{degrees_text}</text>\n'
     )
 
     # Sign glyph
@@ -1070,7 +1506,7 @@ def _draw_single_planet_in_ring(
         f'  <text text-anchor="middle" dominant-baseline="middle" '
         f'x="{CENTER}" y="{minutes_y}" font-size="{minutes_font_size}" fill="{fill_color}" '
         f'font-weight="500" '
-        f'transform="rotate({counter_rotation:.6f} {CENTER} {minutes_y})">{minutes}\'</text>\n'
+        f'transform="rotate({counter_rotation:.6f} {CENTER} {minutes_y})">{minutes_text}</text>\n'
     )
 
     # RX text (innermost — near inner edge of planet ring)
@@ -1079,7 +1515,7 @@ def _draw_single_planet_in_ring(
             f'  <text text-anchor="middle" dominant-baseline="middle" '
             f'x="{CENTER}" y="{rx_y}" font-size="{rx_font_size}" fill="{fill_color}" '
             f'font-weight="500" '
-            f'transform="rotate({counter_rotation:.6f} {CENTER} {rx_y})">RX</text>\n'
+            f'transform="rotate({counter_rotation:.6f} {CENTER} {rx_y})">{RETROGRADE_LABEL}</text>\n'
         )
 
     out += "</g>\n"
@@ -1609,7 +2045,10 @@ def draw_modern_horoscope(
     """
     # Orient the entire wheel so that 0° (Ascendant) is at 9 o'clock (LEFT)
     # The SVG initial orientation puts 0° at TOP. We rotate the whole group by -90°.
-    out = f'<g kr:node="ModernHoroscope" transform="rotate(-90 {CENTER} {CENTER})">\n'
+    out = (
+        f'<g kr:node="ModernHoroscope" font-family="{MODERN_TEXT_FONT_FAMILY}" '
+        f'transform="rotate(-90 {CENTER} {CENTER})">\n'
+    )
 
     # If zodiac background ring is enabled, draw the outer colored wedges first,
     # then scale the entire chart content to fit inside the inner boundary.
@@ -1706,7 +2145,10 @@ def draw_modern_dual_horoscope(
     # ── FLAT CONCENTRIC DUAL-RING LAYOUT ──────────────────────────────────
     # Both rings exist at the same coordinate level, no nested scale() transforms.
 
-    out = f'<g kr:node="ModernDualHoroscope" kr:charttype="{chart_type}" transform="rotate(-90 {CENTER} {CENTER})">\n'
+    out = (
+        f'<g kr:node="ModernDualHoroscope" kr:charttype="{chart_type}" '
+        f'font-family="{MODERN_TEXT_FONT_FAMILY}" transform="rotate(-90 {CENTER} {CENTER})">\n'
+    )
 
     # Optional zodiac background ring (outermost)
     if show_zodiac_background_ring:
@@ -1731,7 +2173,7 @@ def draw_modern_dual_horoscope(
         planets_settings=planets_settings,
         seventh_house_degree_ut=seventh_house_degree_ut,
         houses=houses_1,  # Subject 1's houses for divider lines
-        min_separation=10.0,
+        min_separation=SYN_OUTER_MIN_SEPARATION,
         ring_inner_r=SYN_R_OUTER_PLANET_INNER,
         ring_outer_r=SYN_R_OUTER_PLANET_OUTER,
         ring_fill_color=COLOR_OUTER_PLANET_RING,
@@ -1766,7 +2208,7 @@ def draw_modern_dual_horoscope(
         planets_settings=planets_settings,
         seventh_house_degree_ut=seventh_house_degree_ut,
         houses=houses_1,  # Subject 1's own houses
-        min_separation=10.0,
+        min_separation=SYN_INNER_MIN_SEPARATION,
         ring_inner_r=SYN_R_INNER_PLANET_INNER,
         ring_outer_r=SYN_R_INNER_PLANET_OUTER,
         ring_fill_color=COLOR_PLANET_RING,
