@@ -4,6 +4,73 @@
 
 ### Changed
 
+- **Modern decluttering now places every planet as close to its true position
+  as the ink allows.** Two structural upgrades to
+  `draw_modern._resolve_planet_collisions`:
+  - **Least-squares placement instead of a forward walk.** The old algorithm
+    anchored the first planet of a cramped run and pushed everyone else
+    forward, so the last planet of a big cluster drifted far from its true
+    longitude even with free space behind — up to 30° on an all-points natal
+    and 43° in the synastry inner ring. The resolver is now an isotonic
+    regression (pool-adjacent-violators on separation-deflated coordinates):
+    provably the minimum total squared displacement that preserves zodiacal
+    order and pairwise separations. Cramped runs spread symmetrically around
+    their true center of mass; worst-case displacement drops 38–52% and mean
+    displacement roughly halves on the same fixtures
+    (`scripts/report_modern_displacement.py` prints the table). A wraparound
+    guard clips the fit into the feasible window in the rare layouts where the
+    optimum would close the gap the circle was cut at.
+  - **Separations sized by what each pair actually draws.** The spacing
+    constants reserved room for the worst content a cluster can hold — `29º`,
+    `58'`, an RX marker — for every pair, always. Each adjacent pair now
+    reserves the arc its own ink needs: measured glyph artwork, the exact
+    degree/minute strings, an `rx` row only when the point is retrograde, with
+    the old constants as a hard per-pair ceiling so no layout can regress.
+    Both axes of the ink count — clusters stay upright while the wheel turns,
+    so at the worst orientation two neighbours pinch on the diagonal, and
+    width-only spacing under-reserves by up to 40% for square-ish glyphs.
+  - The ink comes from `kerykeion/charts/glyph_ink_metrics.py`, a generated
+    module measured by rasterizing every symbol and every text string a
+    cluster can draw in a browser (`poe regenerate:glyph-ink`): getBBox-style
+    APIs exclude stroke widths and half the glyphs are stroke-only, while
+    text layout boxes overstate ink vertically and reference-font advance
+    tables miss what the viewer's default font rasterizes at wheel sizes.
+  - Validated adversarially before shipping: mixed narrow/wide, retrograde/
+    direct clusters at several wheel orientations, rendered by the actual
+    drawing code and pixel-measured in a browser
+    (`scripts/measure_modern_separation.py --mode adversarial`) — no pair of
+    clusters comes within a quarter wheel-unit of touching, including the
+    engineered worst cases. `tests/core/test_modern_decluttering.py` grew
+    optimality tests (block centering, an independent PAVA cross-check,
+    perturbation/KKT, displacement-regression pins) alongside the existing
+    order/gap invariants.
+
+- **Modern clusters no longer fan out further than the ink requires.** The
+  decluttering separation was a single guessed figure — 8° in the natal ring and
+  a hardcoded 10° in *both* dual rings — so tight clusters were pushed apart well
+  past the point where their glyphs would have collided, and each displaced
+  planet dragged a long tether arc back to its true position. The three
+  separations are now measured rather than assumed: 7.25° natal,
+  `SYN_OUTER_MIN_SEPARATION` 5.75° and `SYN_INNER_MIN_SEPARATION` 7.5°. The
+  outer dual ring is the big win — it carries its clusters at nearly twice the
+  radius of the inner one, so it needed barely half the angle it was being
+  given, and its planets now sit close to where they actually are.
+  - The figures come from `scripts/measure_modern_separation.py`, which renders
+    the worst cluster the renderer can be asked to draw — every glyph it knows,
+    all at 29º59' and retrograde, jammed to exactly the separation under test,
+    at several wheel orientations — and reads the real ink boxes back out of a
+    browser. Ink first touches at 6.50°, 5.25° and 6.75° respectively; the
+    shipped values each leave about 0.25 wheel units of daylight at the tightest
+    pair. In every ring the binding pair is text against text, not glyph against
+    glyph: the degree and minute strings are wider than the glyphs above them.
+  - `tests/core/test_modern_decluttering.py` guards both halves of that result —
+    the separations cannot be lowered under the measured collision floor, and
+    the ring radii, row positions, font sizes and glyph scales they were
+    measured against cannot move without a test failing and naming the script to
+    re-run.
+  - Modern SVG baselines, the v6 gallery and the README charts were regenerated.
+    Classic output is untouched; it has its own, unrelated spacing code.
+
 - **BREAKING: the default chart style is now `"modern"`.** `ChartDrawer`'s
   `style` parameter defaults to `"modern"` instead of `"classic"`, so every
   render call without an explicit `style=` argument — `generate_svg_string()`,

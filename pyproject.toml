@@ -280,6 +280,10 @@ help = "Test Python snippets in markdown files"
 help = "Re-measure the info panel's glyph-width tables from the reference fonts (macOS only)"
 cmd = "python scripts/regenerate_glyph_widths.py"
 
+[tool.poe.tasks."regenerate:glyph-ink"]
+help = "Re-measure modern wheel symbol ink extents in a browser and rewrite glyph_ink_metrics.py (interactive: opens a page)"
+cmd = "python scripts/measure_modern_separation.py --mode dump-ink"
+
 [tool.poe.tasks."regenerate:svg"]
 sequence = ["regenerate:svg:base", "regenerate:svg:extended", "regenerate:svg:modern"]
 help = "Regenerate all SVG chart baselines (tests/data/svg/)"
