@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 6.0.0a80 - 2026-08-07
+
 ### Changed
 
 - **Modern decluttering is now measured, displacement-optimal, and
