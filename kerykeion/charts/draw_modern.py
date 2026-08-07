@@ -167,6 +167,15 @@ DEFAULT_CLUSTER_CLEARANCE = 0.45
 # separation model so the reserved width can never diverge from the drawn text.
 RETROGRADE_LABEL = "RX"
 
+# The one font stack every modern-wheel text renders in, declared on the wheel
+# root so no text node can miss it. Without it the SVG inherits whatever the
+# embedding page uses — the same chart came out serif standalone, sans in one
+# host page, monospace in another — and no spacing model can reserve room for
+# an unknown font. Arial and Helvetica are metric-compatible with each other
+# and with Liberation Sans (the stock Linux substitute), so the measured ink
+# tables in glyph_ink_metrics hold across platforms.
+MODERN_TEXT_FONT_FAMILY = "Arial, Helvetica, sans-serif"
+
 # Minimum degrees between planet clusters in each dual ring, measured the same
 # way as PLANET_MIN_SEPARATION. The two rings differ by more than a rounding:
 # the outer one carries its clusters at radii 41.0–31.5 and the inner one at
@@ -756,6 +765,14 @@ def _cluster_row_profile(
 #: Deterministic and precise far beyond the 1e-6 the placement needs.
 _WRAP_SEARCH_ITERATIONS = 200
 
+#: Bound on orientation-refinement rounds: a pair's separation depends on
+#: where it sits on the wheel, which depends on the separations. Requirements
+#: only ratchet upward and are capped, so the refinement converges; wide
+#: clusters that fan across a quadrant genuinely need several rounds before
+#: the orientations stop moving. The bound exists for pathology, not pacing —
+#: exiting through it (instead of through convergence) is the failure mode.
+_ORIENTATION_REFINEMENT_ROUNDS = 32
+
 
 def _isotonic_non_decreasing(values: list[float]) -> list[tuple[float, int]]:
     """L2 isotonic regression of *values*, as PAVA merge blocks.
@@ -818,20 +835,26 @@ def _resolve_planet_collisions(
     if not planets_with_angles:
         return planets_with_angles
 
-    def required_separation(first: dict, second: dict) -> float:
-        """Degrees this specific pair needs so no row of ink touches.
+    def required_separation(first: dict, second: dict, pair_mid_angle: float) -> float:
+        """Degrees this specific pair needs, where it actually sits, so no ink touches.
 
         Clusters stay upright while the wheel turns, so two neighbours are two
-        axis-aligned boxes whose offset direction sweeps every angle as the
-        pair rides around the wheel. At the worst orientation both axes pinch
-        at once, and the offset that still clears them is the diagonal
-        ``hypot(widths, heights)`` — width alone under-reserves by up to 40%
-        for square-ish glyphs (measured, not hypothetical).
+        axis-aligned boxes, and which axis separates them depends on where the
+        pair sits: near the top of the wheel neighbours sit side by side and
+        the ink WIDTHS must clear; at the sides they stack vertically and the
+        ink HEIGHTS must clear — a much smaller ask for text rows. A pair's
+        screen offset per degree of separation is ``arc·|sin(mid)|``
+        horizontally and ``arc·|cos(mid)|`` vertically, and clearing either
+        axis suffices, so each row takes the cheaper one. At the diagonal both
+        components shrink and this degrades exactly to the all-orientation
+        worst case, ``hypot(widths, heights)``.
         """
         first_profile = first.get("row_half_widths")
         second_profile = second.get("row_half_widths")
         if row_radii is None or first_profile is None or second_profile is None:
             return min_separation
+        horizontal_share = abs(math.sin(math.radians(pair_mid_angle)))
+        vertical_share = abs(math.cos(math.radians(pair_mid_angle)))
         required = 0.0
         for row, radius in row_radii.items():
             if row not in first_profile or row not in second_profile:
@@ -839,7 +862,12 @@ def _resolve_planet_collisions(
             width_needed = first_profile[row][0] + second_profile[row][0] + clearance
             height_needed = first_profile[row][1] + second_profile[row][1] + clearance
             arc_per_degree = radius * math.pi / 180.0
-            required = max(required, math.hypot(width_needed, height_needed) / arc_per_degree)
+            separating_options = []
+            if horizontal_share > 1e-9:
+                separating_options.append(width_needed / (arc_per_degree * horizontal_share))
+            if vertical_share > 1e-9:
+                separating_options.append(height_needed / (arc_per_degree * vertical_share))
+            required = max(required, min(separating_options))
         return min(min_separation, required)
 
     # Sort by true zodiacal angle. This order is the invariant we must preserve.
@@ -886,83 +914,120 @@ def _resolve_planet_collisions(
         base_angle + _normalize_angle(planet["angle"] - base_angle) for planet in ordered[1:]
     ]
 
-    # Separation demanded between each adjacent pair, plus the pair that
-    # faces itself across the cut. Scaled down together when the circle
-    # physically cannot hold them all.
-    pair_separations = [
-        required_separation(planet, follower) for planet, follower in zip(ordered, ordered[1:])
-    ]
-    wrap_separation = required_separation(ordered[-1], ordered[0])
-    total_separation = sum(pair_separations) + wrap_separation
-    if total_separation > FEASIBLE_TOTAL_DEGREES:
-        feasibility_scale = FEASIBLE_TOTAL_DEGREES / total_separation
-        pair_separations = [s * feasibility_scale for s in pair_separations]
-        wrap_separation *= feasibility_scale
+    def place(pair_separations: list[float], wrap_separation: float) -> list[float]:
+        """Displacement-optimal display positions for the given separations."""
+        # Scale everything down together when the circle cannot hold it all.
+        total_separation = sum(pair_separations) + wrap_separation
+        if total_separation > FEASIBLE_TOTAL_DEGREES:
+            feasibility_scale = FEASIBLE_TOTAL_DEGREES / total_separation
+            pair_separations = [s * feasibility_scale for s in pair_separations]
+            wrap_separation *= feasibility_scale
 
-    reserved_before = [0.0]
-    for separation in pair_separations:
-        reserved_before.append(reserved_before[-1] + separation)
+        reserved_before = [0.0]
+        for separation in pair_separations:
+            reserved_before.append(reserved_before[-1] + separation)
 
-    # "Deflate" the mandatory separations out of the coordinates: requiring
-    # display_j - display_{j-1} >= sep_j is the same as requiring the deflated
-    # values to be non-decreasing, which is exactly what PAVA solves.
-    deflated_positions = [
-        position - reserved for position, reserved in zip(unwrapped_positions, reserved_before)
-    ]
-    blocks = _isotonic_non_decreasing(deflated_positions)
-    fitted_deflated = [block_mean for block_mean, block_size in blocks for _ in range(block_size)]
-
-    # Wraparound guard: the optimum may stretch past the cut on either side.
-    # The pair facing itself across the cut needs
-    # 360 - (display_last - display_first) >= wrap_separation, i.e. the fitted
-    # deflated vector must fit in a window of a fixed width. The constrained
-    # optimum is the unconstrained one clipped into the best-placed window
-    # (clipping preserves both monotonicity and the pairwise gaps), and the
-    # window placement minimizes a sum of per-element quadratics — convex as
-    # a SUM, though no single term is, so resist the temptation to solve it
-    # per element. The window is at least 40 degrees wide, because the
-    # feasibility cap keeps the total separation at or under 320.
-    window_width = (360.0 - wrap_separation) - reserved_before[-1]
-    if fitted_deflated[-1] - fitted_deflated[0] > window_width:
-
-        def cost_of_window(window_start: float) -> float:
-            window_end = window_start + window_width
-            return sum(
-                (min(max(fitted, window_start), window_end) - deflated) ** 2
-                for fitted, deflated in zip(fitted_deflated, deflated_positions)
-            )
-
-        search_low = min(deflated_positions) - window_width
-        search_high = max(deflated_positions)
-        for _ in range(_WRAP_SEARCH_ITERATIONS):
-            step = (search_high - search_low) / 3.0
-            if cost_of_window(search_low + step) <= cost_of_window(search_high - step):
-                search_high -= step
-            else:
-                search_low += step
-        best_window_start = (search_low + search_high) / 2.0
-        best_window_end = best_window_start + window_width
-        fitted_deflated = [
-            min(max(fitted, best_window_start), best_window_end) for fitted in fitted_deflated
+        # "Deflate" the mandatory separations out of the coordinates: requiring
+        # display_j - display_{j-1} >= sep_j is the same as requiring the
+        # deflated values to be non-decreasing, which is what PAVA solves.
+        deflated_positions = [
+            position - reserved for position, reserved in zip(unwrapped_positions, reserved_before)
         ]
+        blocks = _isotonic_non_decreasing(deflated_positions)
+        fitted_deflated = [block_mean for block_mean, block_size in blocks for _ in range(block_size)]
 
-    # Back to angles. Blocks of one are planets nobody crowded: give them
-    # their true angle verbatim rather than a value reconstructed through the
-    # deflate/reinflate float round-trip. A final forward clamp absorbs the
-    # few ulps of noise the block means can carry.
-    display_positions = [
-        fitted + reserved for fitted, reserved in zip(fitted_deflated, reserved_before)
+        # Wraparound guard: the optimum may stretch past the cut on either
+        # side. The pair facing itself across the cut needs
+        # 360 - (display_last - display_first) >= wrap_separation, i.e. the
+        # fitted deflated vector must fit in a window of a fixed width. The
+        # constrained optimum is the unconstrained one clipped into the
+        # best-placed window (clipping preserves both monotonicity and the
+        # pairwise gaps), and the window placement minimizes a sum of
+        # per-element quadratics — convex as a SUM, though no single term is,
+        # so resist the temptation to solve it per element. The window is at
+        # least 40 degrees wide, because the feasibility cap keeps the total
+        # separation at or under 320.
+        window_width = (360.0 - wrap_separation) - reserved_before[-1]
+        if fitted_deflated[-1] - fitted_deflated[0] > window_width:
+
+            def cost_of_window(window_start: float) -> float:
+                window_end = window_start + window_width
+                return sum(
+                    (min(max(fitted, window_start), window_end) - deflated) ** 2
+                    for fitted, deflated in zip(fitted_deflated, deflated_positions)
+                )
+
+            search_low = min(deflated_positions) - window_width
+            search_high = max(deflated_positions)
+            for _ in range(_WRAP_SEARCH_ITERATIONS):
+                step = (search_high - search_low) / 3.0
+                if cost_of_window(search_low + step) <= cost_of_window(search_high - step):
+                    search_high -= step
+                else:
+                    search_low += step
+            best_window_start = (search_low + search_high) / 2.0
+            best_window_end = best_window_start + window_width
+            fitted_deflated = [
+                min(max(fitted, best_window_start), best_window_end) for fitted in fitted_deflated
+            ]
+
+        # Back to angles. Blocks of one are planets nobody crowded: give them
+        # their true angle verbatim rather than a value reconstructed through
+        # the deflate/reinflate float round-trip. A final forward clamp
+        # absorbs the few ulps of noise the block means can carry.
+        display_positions = [
+            fitted + reserved for fitted, reserved in zip(fitted_deflated, reserved_before)
+        ]
+        block_start = 0
+        for block_mean, block_size in blocks:
+            untouched_by_window_clip = fitted_deflated[block_start] == block_mean
+            if block_size == 1 and untouched_by_window_clip:
+                display_positions[block_start] = unwrapped_positions[block_start]
+            block_start += block_size
+        for j in range(1, n):
+            minimum_allowed = display_positions[j - 1] + pair_separations[j - 1]
+            if display_positions[j] < minimum_allowed:
+                display_positions[j] = minimum_allowed
+        return display_positions
+
+    def pair_mid_angles(positions: list[float]) -> list[float]:
+        """Midpoint angle of each adjacent pair (wrap pair last)."""
+        adjacent = [(a + b) / 2.0 for a, b in zip(positions, positions[1:])]
+        wrap_mid = positions[-1] + _normalize_angle(positions[0] - positions[-1]) / 2.0
+        return adjacent + [wrap_mid]
+
+    # A pair's requirement depends on where it sits, but where it sits depends
+    # on the requirements: a spreading cluster rotates every pair it contains.
+    # Solve the fixed point by refinement — place, re-evaluate at the placed
+    # positions, repeat — with a ratchet (requirements only grow, capped at
+    # min_separation) so the loop provably converges. The exit is
+    # verification-shaped on purpose: a placement is only accepted after a
+    # re-evaluation at its own orientations demanded nothing new, so no
+    # unvalidated layout can escape the loop.
+    mid_angles = pair_mid_angles(unwrapped_positions)
+    pair_requirements = [
+        required_separation(planet, follower, mid)
+        for (planet, follower), mid in zip(zip(ordered, ordered[1:]), mid_angles)
     ]
-    block_start = 0
-    for block_mean, block_size in blocks:
-        untouched_by_window_clip = fitted_deflated[block_start] == block_mean
-        if block_size == 1 and untouched_by_window_clip:
-            display_positions[block_start] = unwrapped_positions[block_start]
-        block_start += block_size
-    for j in range(1, n):
-        minimum_allowed = display_positions[j - 1] + pair_separations[j - 1]
-        if display_positions[j] < minimum_allowed:
-            display_positions[j] = minimum_allowed
+    wrap_requirement = required_separation(ordered[-1], ordered[0], mid_angles[-1])
+    for _ in range(_ORIENTATION_REFINEMENT_ROUNDS):
+        display_positions = place(pair_requirements, wrap_requirement)
+        mid_angles = pair_mid_angles(display_positions)
+        refined = [
+            max(current, required_separation(planet, follower, mid))
+            for current, (planet, follower), mid in zip(
+                pair_requirements, zip(ordered, ordered[1:]), mid_angles
+            )
+        ]
+        refined_wrap = max(
+            wrap_requirement, required_separation(ordered[-1], ordered[0], mid_angles[-1])
+        )
+        requirements_settled = refined_wrap <= wrap_requirement + 1e-3 and all(
+            new <= old + 1e-3 for new, old in zip(refined, pair_requirements)
+        )
+        pair_requirements, wrap_requirement = refined, refined_wrap
+        if requirements_settled:
+            break
 
     for planet, display in zip(ordered, display_positions):
         planet["display_angle"] = _normalize_angle(display)
@@ -1903,7 +1968,10 @@ def draw_modern_horoscope(
     """
     # Orient the entire wheel so that 0° (Ascendant) is at 9 o'clock (LEFT)
     # The SVG initial orientation puts 0° at TOP. We rotate the whole group by -90°.
-    out = f'<g kr:node="ModernHoroscope" transform="rotate(-90 {CENTER} {CENTER})">\n'
+    out = (
+        f'<g kr:node="ModernHoroscope" font-family="{MODERN_TEXT_FONT_FAMILY}" '
+        f'transform="rotate(-90 {CENTER} {CENTER})">\n'
+    )
 
     # If zodiac background ring is enabled, draw the outer colored wedges first,
     # then scale the entire chart content to fit inside the inner boundary.
@@ -2000,7 +2068,10 @@ def draw_modern_dual_horoscope(
     # ── FLAT CONCENTRIC DUAL-RING LAYOUT ──────────────────────────────────
     # Both rings exist at the same coordinate level, no nested scale() transforms.
 
-    out = f'<g kr:node="ModernDualHoroscope" kr:charttype="{chart_type}" transform="rotate(-90 {CENTER} {CENTER})">\n'
+    out = (
+        f'<g kr:node="ModernDualHoroscope" kr:charttype="{chart_type}" '
+        f'font-family="{MODERN_TEXT_FONT_FAMILY}" transform="rotate(-90 {CENTER} {CENTER})">\n'
+    )
 
     # Optional zodiac background ring (outermost)
     if show_zodiac_background_ring:

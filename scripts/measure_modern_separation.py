@@ -82,8 +82,11 @@ GLYPHS = sorted(KNOWN_GLYPH_NAMES | {"FixedStar"})
 #: the resolver's ``320/n`` cap takes over from the separation under test.
 CHUNK = 14
 
-#: Cluster start angles, so each pair is also seen at several wheel orientations.
-BASE_ANGLES = (0.0, 23.0, 47.0, 71.0)
+#: Cluster start angles, so each pair is also seen at several wheel
+#: orientations. Denser than a quadrant sweep on purpose: separations are now
+#: orientation-aware, so the probe must sample cardinal, diagonal, and
+#: in-between placements rather than trust any single one.
+BASE_ANGLES = (0.0, 13.0, 23.0, 37.0, 45.0, 58.0, 71.0, 84.0)
 
 SEPARATIONS = [round(4.0 + 0.25 * i, 2) for i in range(29)]
 
@@ -278,25 +281,25 @@ const ctx = document.createElement('canvas').getContext('2d');
 // Real ink box of an SVG <text>, in screen pixels.
 //
 // getBoundingClientRect returns the font's layout box — full ascent to full
-// descent — which for "29º" is a third taller than the marks actually drawn.
-// measureText reports both boxes for the same string, so their ratio rescales
-// the layout box onto the ink. Ratios are scale-free, which sidesteps the SVG
-// font-size being in user units while the rect is in pixels.
+// descent — which for "29º" is a third taller than the marks actually drawn,
+// so the ink is measured with canvas measureText instead. Crucially, at the
+// SIZE THE TEXT ACTUALLY RENDERS: the element's font-size attribute is in SVG
+// user units (e.g. "1.85"), and feeding that to measureText as pixels makes
+// the font engine hint glyphs onto a couple of whole pixels — scaled back up,
+// that error dwarfed the gaps this probe exists to measure.
 function textInkRect(el) {
   const rect = el.getBoundingClientRect();
   const cs = getComputedStyle(el);
-  ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const renderedPx = parseFloat(el.getAttribute('font-size')) * PX_PER_UNIT;
+  ctx.font = `${cs.fontWeight} ${renderedPx}px ${cs.fontFamily}`;
   const m = ctx.measureText(el.textContent);
-  const layoutH = m.fontBoundingBoxAscent + m.fontBoundingBoxDescent;
-  const inkH = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
-  if (!(layoutH > 0) || !(m.width > 0)) return rect;
-  const scale = rect.height / layoutH;
-  const width = (m.actualBoundingBoxLeft + m.actualBoundingBoxRight) * scale;
-  const height = inkH * scale;
+  const width = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
+  const height = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
+  if (!(width > 0) || !(height > 0)) return rect;
   // Both boxes hang off the same baseline, so their centers differ by half the
   // difference of (ascent - descent).
   const shift = ((m.actualBoundingBoxAscent - m.actualBoundingBoxDescent)
-               - (m.fontBoundingBoxAscent - m.fontBoundingBoxDescent)) / 2 * scale;
+               - (m.fontBoundingBoxAscent - m.fontBoundingBoxDescent)) / 2;
   const cx = (rect.left + rect.right) / 2, cy = (rect.top + rect.bottom) / 2 - shift;
   return {left: cx - width/2, right: cx + width/2, top: cy - height/2, bottom: cy + height/2};
 }
@@ -477,19 +480,20 @@ function paintedBlack(markup) {
     }
   }
 
-  // Text rows, rendered with the same attributes _draw_single_planet_in_ring
-  // emits (middle-anchored, weight 500, no font-family — the viewer's default
-  // font is part of what gets measured, on purpose). Measured at two raster
-  // scales and merged by the wider reach: at high resolution hinting effects
-  // vanish, but the wheel actually renders these strings at ~17px, where the
-  // font rasterizes proportionally wider. One scale alone under-reserved.
+  // Text rows, rendered with the same attributes the wheel renders them with:
+  // middle-anchored, weight 500, and the wheel root's pinned font stack —
+  // pinning it is what makes these tables valid in every embedding context.
+  // Measured at two raster scales and merged by the wider reach: at high
+  // resolution hinting effects vanish, but the wheel actually renders these
+  // strings at ~17px, where the font rasterizes proportionally wider. One
+  // scale alone under-reserved.
   const TEXT_BOX = TEXT_FONT_SIZE * 4;
   const TEXT_SCALES = [PXU, 2];   // 2 px/unit puts the reference size at ~20px
   for (const text of TEXTS) {
     const center = TEXT_BOX / 2;
     const markup = `<text x="${center}" y="${center}" text-anchor="middle"` +
       ` dominant-baseline="middle" font-size="${TEXT_FONT_SIZE}" font-weight="500"` +
-      ` fill="#000">${text}</text>`;
+      ` font-family="__FONT_FAMILY__" fill="#000">${text}</text>`;
     let widest = null;
     for (const scale of TEXT_SCALES) {
       const ink = await measureInk(markup, TEXT_BOX, scale);
@@ -657,6 +661,7 @@ def build_dump_harness(out_dir: Path) -> int:
         .replace("__SIGN_IDS__", json.dumps(list(dm._ZODIAC_SIGN_IDS)))
         .replace("__TEXTS__", json.dumps(_cluster_text_catalog()))
         .replace("__TEXT_FONT_SIZE__", str(TEXT_INK_REFERENCE_FONT_SIZE))
+        .replace("__FONT_FAMILY__", dm.MODERN_TEXT_FONT_FAMILY)
     )
     (out_dir / "index.html").write_text(page)
     return 1

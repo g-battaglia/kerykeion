@@ -35,15 +35,32 @@
     APIs exclude stroke widths and half the glyphs are stroke-only, while
     text layout boxes overstate ink vertically and reference-font advance
     tables miss what the viewer's default font rasterizes at wheel sizes.
+  - **Separations also know where on the wheel the pair sits.** Clusters stay
+    upright while the wheel turns, so neighbours near the top sit side by side
+    (ink widths must clear) while neighbours at the sides stack vertically
+    (only the much smaller ink heights must clear). Each pair's requirement is
+    now evaluated at its actual orientation instead of the all-orientation
+    worst case, solved to a fixed point (placement moves orientations, so the
+    resolver refines with a ratcheted loop that only accepts a placement after
+    re-evaluating it against itself). Text-row pairs at the wheel's sides pack
+    roughly 40% tighter than the orientation-blind diagonal bound allowed.
+  - **The modern wheel now declares its text font**
+    (`font-family="Arial, Helvetica, sans-serif"` on the wheel root). It never
+    had one, so the same chart rendered serif standalone and picked up
+    whatever font any embedding page used — no spacing model can reserve room
+    for an unknown font, and the adversarial harness caught the probe page's
+    own monospace bleeding into the SVG under test. Arial, Helvetica and
+    Liberation Sans (the stock Linux substitute) are metric-compatible, so the
+    measured ink tables hold across platforms. Standalone charts change
+    appearance: cluster and cusp text is now consistently sans-serif.
   - Validated adversarially before shipping: mixed narrow/wide, retrograde/
-    direct clusters at several wheel orientations, rendered by the actual
+    direct clusters at eight wheel orientations, rendered by the actual
     drawing code and pixel-measured in a browser
-    (`scripts/measure_modern_separation.py --mode adversarial`) — no pair of
-    clusters comes within a quarter wheel-unit of touching, including the
-    engineered worst cases. `tests/core/test_modern_decluttering.py` grew
-    optimality tests (block centering, an independent PAVA cross-check,
-    perturbation/KKT, displacement-regression pins) alongside the existing
-    order/gap invariants.
+    (`scripts/measure_modern_separation.py --mode adversarial`) — no cluster
+    ink touches, including the engineered worst cases.
+    `tests/core/test_modern_decluttering.py` grew optimality tests (block
+    centering, an independent PAVA cross-check, perturbation/KKT,
+    displacement-regression pins) alongside the existing order/gap invariants.
 
 - **Modern clusters no longer fan out further than the ink requires.** The
   decluttering separation was a single guessed figure — 8° in the natal ring and
