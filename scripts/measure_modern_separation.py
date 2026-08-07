@@ -60,10 +60,12 @@ import argparse
 import functools
 import http.server
 import json
+import re
 import socketserver
 import sys
 import tempfile
 import webbrowser
+import xml.etree.ElementTree as ElementTree
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -211,7 +213,13 @@ ADVERSARIAL_SPACINGS = {"jam": 0.01, "ragged": 3.0}
 
 def _wheel_svg(body: str) -> str:
     head, _, _ = TEMPLATE.read_text().partition("</defs>")
-    wheel = f'<g kr:node="ModernHoroscope" transform="rotate(-90 {dm.CENTER} {dm.CENTER})">\n{body}</g>\n'
+    # The font pin matters as much here as in production: without it the probe
+    # page's own CSS would bleed into the SVG under test and every gap would be
+    # measured in a font no chart renders.
+    wheel = (
+        f'<g kr:node="ModernHoroscope" font-family="{dm.MODERN_TEXT_FONT_FAMILY}" '
+        f'transform="rotate(-90 {dm.CENTER} {dm.CENTER})">\n{body}</g>\n'
+    )
     return f"{head}</defs>\n{wheel}</svg>\n"
 
 
@@ -275,6 +283,15 @@ PROBE_HTML = """<!doctype html>
 <body><div id="stage"></div><div id="out">measuring…</div>
 <script>
 const PX_PER_UNIT = 9;                       // 900px stage over a 100-unit viewBox
+// Max stroke width of each symbol, native units: getBoundingClientRect
+// excludes stroke, and half the glyphs are stroke-only, so their rects are
+// padded by half the stroke at the on-screen scale.
+const SYMBOL_STROKE_WIDTHS = __STROKE_WIDTHS__;
+// The adversarial gate: the smallest gap any pair may show, wheel units.
+// Zero would only prove "not literally touching"; the calibration promises
+// visible daylight, and the probe and the ink tables disagree by about a
+// pixel (~0.11 units), so anything below this is a regression to fail on.
+const MIN_ACCEPTED_GAP = __MIN_ACCEPTED_GAP__;
 const stage = document.getElementById('stage');
 const ctx = document.createElement('canvas').getContext('2d');
 
@@ -311,6 +328,20 @@ function gapBetween(a, b) {
                   Math.max(a.top, b.top) - Math.min(a.bottom, b.bottom));
 }
 
+// Glyph rect, padded by the symbol's stroke reach: getBoundingClientRect is
+// the geometry box, and a stroked circle inks half a stroke-width beyond it.
+function glyphInkRect(el) {
+  const href = el.getAttribute('xlink:href') || el.getAttribute('href') || '';
+  const strokeWidth = SYMBOL_STROKE_WIDTHS[href.replace('#', '')] || 0;
+  const rect = el.getBoundingClientRect();
+  if (!strokeWidth) return rect;
+  const ctm = el.getScreenCTM();
+  const onScreenScale = ctm ? Math.hypot(ctm.a, ctm.b) : 0;
+  const pad = strokeWidth / 2 * onScreenScale;
+  return {left: rect.left - pad, right: rect.right + pad,
+          top: rect.top - pad, bottom: rect.bottom + pad};
+}
+
 async function measure(entry) {
   entry.sep = entry.sep === undefined ? null : entry.sep;
   stage.innerHTML = await (await fetch(entry.file)).text();
@@ -323,7 +354,7 @@ async function measure(entry) {
     if (g.getAttribute('kr:node') !== 'ChartPoint') continue;
     const rects = [];
     for (const el of g.querySelectorAll('use, text')) {
-      const rect = el.tagName === 'text' ? textInkRect(el) : el.getBoundingClientRect();
+      const rect = el.tagName === 'text' ? textInkRect(el) : glyphInkRect(el);
       if (rect.right > rect.left && rect.bottom > rect.top) {
         rects.push({rect, row: el.tagName === 'text' ? 'text y=' + el.getAttribute('y') : 'glyph'});
       }
@@ -360,17 +391,19 @@ async function measure(entry) {
                  'Negative means their ink overlaps.', ''];
   const isAdversarial = results.some(r => r.sep === null);
   if (isAdversarial) {
-    // Adversarial mode: the renderer chose the separations itself; the only
-    // question is whether any file has touching ink.
+    // Adversarial mode: the renderer chose the separations itself; the gate
+    // demands not just "no overlap" but the daylight the calibration promises.
     for (const ring of rings) {
       const rows = results.filter(r => r.ring === ring);
       const worstRow = rows.reduce((m, r) => r.gap < m.gap ? r : m);
       lines.push(`── ${ring}   worst gap ${worstRow.gap.toFixed(3)}   ${worstRow.detail}   (${worstRow.file})`);
-      for (const r of rows.filter(r => r.gap < 0)) {
-        lines.push(`   OVERLAP ${r.gap.toFixed(3)}  ${r.detail}  ${r.file}`);
+      for (const r of rows.filter(r => r.gap < MIN_ACCEPTED_GAP)) {
+        lines.push(`   BELOW ${MIN_ACCEPTED_GAP}: ${r.gap.toFixed(3)}  ${r.detail}  ${r.file}`);
       }
     }
-    lines.push('', results.every(r => r.gap >= 0) ? 'PASS: no overlapping ink.' : 'FAIL: overlapping ink found.');
+    lines.push('', results.every(r => r.gap >= MIN_ACCEPTED_GAP)
+      ? `PASS: every pair keeps at least ${MIN_ACCEPTED_GAP} units of daylight.`
+      : `FAIL: pairs below the ${MIN_ACCEPTED_GAP}-unit daylight gate.`);
   } else {
     const worst = {};
     for (const r of results) {
@@ -417,7 +450,12 @@ const PXU = 20;                         // canvas pixels per native unit
 // default font actually inks. Pixels are the only honest answer for either.
 async function measureInk(content, box, pixelsPerUnit = PXU) {
   const side = Math.round((box + 2 * PAD) * pixelsPerUnit);
+  // The wrapper pins the wheel's font stack: a standalone rasterized SVG has
+  // no page context to inherit from, and six glyph symbols (As, Mc, Ds, Ic,
+  // Av, Vx) are <text> that would otherwise measure in the browser's default
+  // serif while production renders them in the pinned stack.
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${side}" height="${side}"` +
+              ` font-family="__FONT_FAMILY__"` +
               ` viewBox="${-PAD} ${-PAD} ${box + 2 * PAD} ${box + 2 * PAD}">${content}</svg>`;
   const img = new Image();
   await new Promise((ok, err) => {
@@ -493,7 +531,7 @@ function paintedBlack(markup) {
     const center = TEXT_BOX / 2;
     const markup = `<text x="${center}" y="${center}" text-anchor="middle"` +
       ` dominant-baseline="middle" font-size="${TEXT_FONT_SIZE}" font-weight="500"` +
-      ` font-family="__FONT_FAMILY__" fill="#000">${text}</text>`;
+      ` fill="#000">${text}</text>`;
     let widest = null;
     for (const scale of TEXT_SCALES) {
       const ink = await measureInk(markup, TEXT_BOX, scale);
@@ -535,6 +573,50 @@ def _cluster_text_catalog() -> list[str]:
 INK_MODULE_PATH = Path(__file__).resolve().parent.parent / "kerykeion" / "charts" / "glyph_ink_metrics.py"
 
 
+class _InkPayloadError(ValueError):
+    """The POSTed measurement payload is not what the dump page produces."""
+
+
+def _validated_ink_payload(data: object) -> dict:
+    """The measurement payload, or _InkPayloadError if any part of it is off.
+
+    The measurements travel through an HTTP endpoint any local page can reach,
+    and they end up interpolated into generated Python source that executes at
+    ``import kerykeion``. Every key must therefore be one this script itself
+    asked the page to measure, and every value a plain finite number — nothing
+    else gets near the generated module.
+    """
+    expected_keys = {
+        "planets": set(GLYPHS),
+        "signs": set(dm._ZODIAC_SIGN_IDS),
+        "texts": set(_cluster_text_catalog()),
+    }
+    if not isinstance(data, dict):
+        raise _InkPayloadError("payload is not an object")
+    validated: dict = {}
+    for section, allowed_names in expected_keys.items():
+        entries = data.get(section)
+        if not isinstance(entries, dict):
+            raise _InkPayloadError(f"section {section!r} is not an object")
+        validated[section] = {}
+        for name, reach in entries.items():
+            if name not in allowed_names:
+                raise _InkPayloadError(f"unexpected {section} key {name!r}")
+            if not isinstance(reach, dict):
+                raise _InkPayloadError(f"{section}[{name!r}] is not an object")
+            half_width = reach.get("half_width")
+            half_height = reach.get("half_height")
+            for value in (half_width, half_height):
+                if not isinstance(value, (int, float)) or not 0 < value < 200:
+                    raise _InkPayloadError(f"{section}[{name!r}] has a non-numeric or absurd reach")
+            validated[section][name] = {"half_width": float(half_width), "half_height": float(half_height)}
+    font_size = data.get("text_font_size")
+    if not isinstance(font_size, (int, float)) or not 0 < font_size < 1000:
+        raise _InkPayloadError("text_font_size is not a sane number")
+    validated["text_font_size"] = float(font_size)
+    return validated
+
+
 def _format_ink_module(data: dict) -> str:
     def table(entries: dict, field: str) -> str:
         rows = "".join(f'    "{name}": {entries[name][field]:.3f},\n' for name in sorted(entries))
@@ -560,8 +642,10 @@ are not all centered on their anchor (the Sun's ink spans 2.1–21.9 in its
 Units: planet glyphs are native symbol units in a 28-unit box anchored at
 (14, 14) (``translate(-14 -14)`` at the use site); zodiac signs a 32-unit box
 anchored at (16, 16); texts are measured at font-size
-``TEXT_INK_REFERENCE_FONT_SIZE`` with the exact attributes the renderer emits
-(middle-anchored, weight 500, no font-family) and scale linearly.
+``TEXT_INK_REFERENCE_FONT_SIZE`` with the renderer's attributes
+(middle-anchored, weight 500) and scale linearly. Everything — symbols and
+texts alike — is rasterized under the wheel's pinned font stack
+(``draw_modern.MODERN_TEXT_FONT_FAMILY``), the one production renders in.
 
 Consumed by ``draw_modern._cluster_row_profile`` to size content-aware cluster
 separations.
@@ -599,7 +683,14 @@ class _HarnessHandler(http.server.SimpleHTTPRequestHandler):
             self.send_error(404)
             return
         length = int(self.headers.get("Content-Length", "0"))
-        data = json.loads(self.rfile.read(length))
+        try:
+            data = _validated_ink_payload(json.loads(self.rfile.read(length)))
+        except (ValueError, _InkPayloadError) as error:
+            # Any local page can POST here while the server runs, and the
+            # payload feeds generated Python source: reject everything that is
+            # not exactly the dump page's own measurement shape.
+            self.send_error(400, f"rejected ink payload: {error}")
+            return
         INK_MODULE_PATH.write_text(_format_ink_module(data))
         message = f"wrote {INK_MODULE_PATH}"
         print(message)
@@ -611,6 +702,46 @@ class _HarnessHandler(http.server.SimpleHTTPRequestHandler):
 
     def log_message(self, *args):  # keep the console readable
         pass
+
+
+#: Smallest gap the adversarial gate accepts, wheel units. Zero would only
+#: prove "not literally touching"; the calibration promises
+#: DEFAULT_CLUSTER_CLEARANCE (0.45) of daylight, and probe and ink tables
+#: disagree by about a pixel (~0.11 units at the probe's scale), so the gate
+#: sits at the promise minus that disagreement, rounded down. The healthy
+#: state measures 0.32+ everywhere; anything under this line is a regression.
+ADVERSARIAL_MIN_GAP = 0.2
+
+
+def _symbol_stroke_widths() -> dict[str, float]:
+    """Max stroke width of each template symbol, native units.
+
+    The probe pads glyph rects by half of this: getBoundingClientRect returns
+    geometry boxes, and the stroke-only glyphs ink half a stroke beyond them.
+    """
+    svg_namespace = "{http://www.w3.org/2000/svg}"
+    widths: dict[str, float] = {}
+    for symbol in ElementTree.fromstring(TEMPLATE.read_text()).iter(f"{svg_namespace}symbol"):
+        symbol_id = symbol.get("id")
+        max_width = 0.0
+        for element in symbol.iter():
+            raw_width = element.get("stroke-width")
+            if raw_width is None:
+                style_match = re.search(r"stroke-width\s*:\s*([\d.]+)", element.get("style") or "")
+                raw_width = style_match.group(1) if style_match else None
+            stroke_paint = element.get("stroke") or ""
+            if raw_width is not None and stroke_paint and "none" not in stroke_paint:
+                max_width = max(max_width, float(raw_width))
+        if symbol_id and max_width:
+            widths[symbol_id] = max_width
+    return widths
+
+
+def _probe_page() -> str:
+    """PROBE_HTML with its data placeholders filled in."""
+    return PROBE_HTML.replace("__STROKE_WIDTHS__", json.dumps(_symbol_stroke_widths())).replace(
+        "__MIN_ACCEPTED_GAP__", str(ADVERSARIAL_MIN_GAP)
+    )
 
 
 def build_harness(out_dir: Path) -> int:
@@ -628,7 +759,7 @@ def build_harness(out_dir: Path) -> int:
                 manifest.append({"ring": ring, "sep": separation, "file": f"svg/{name}"})
 
     (out_dir / "manifest.json").write_text(json.dumps(manifest))
-    (out_dir / "index.html").write_text(PROBE_HTML)
+    (out_dir / "index.html").write_text(_probe_page())
     return len(manifest)
 
 
@@ -648,7 +779,7 @@ def build_adversarial_harness(out_dir: Path) -> int:
                 manifest.append({"ring": ring, "file": f"svg/{name}"})
 
     (out_dir / "manifest.json").write_text(json.dumps(manifest))
-    (out_dir / "index.html").write_text(PROBE_HTML)
+    (out_dir / "index.html").write_text(_probe_page())
     return len(manifest)
 
 

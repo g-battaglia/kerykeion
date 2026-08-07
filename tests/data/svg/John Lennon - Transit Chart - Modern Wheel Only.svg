@@ -187,7 +187,7 @@
 
     </style>
     <g kr:node='Main_Chart'>
-        <g kr:node='ModernDualHoroscope' kr:charttype='Transit' font-family='Arial, Helvetica, sans-serif' transform='rotate(-90 50.0 50.0)'>
+        <g kr:node='ModernDualHoroscope' kr:charttype='Transit' font-family='Arial, Helvetica, Liberation Sans, sans-serif' transform='rotate(-90 50.0 50.0)'>
 <g kr:node='ZodiacBackgrounds'>
   <g kr:node='ZodiacSign' kr:sign='Ari' kr:signnumber='0'>
   <path d='M 66.893181,2.940246 A 50.0,50.0 0 0,0 41.100047,0.798467 L 41.812043,4.734590 A 46.0,46.0 0 0,1 65.541726,6.705026 Z' fill='var(--kerykeion-modern-zodiac-bg-0)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />

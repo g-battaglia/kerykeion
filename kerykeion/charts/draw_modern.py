@@ -18,6 +18,7 @@ All positioning uses rotational transforms: rotate(-angle 50 50).
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
+import logging
 import math
 from typing import Optional
 
@@ -34,6 +35,8 @@ from kerykeion.charts.glyph_ink_metrics import (
 from kerykeion.utilities import wrap_180
 from kerykeion.schemas.kr_models import KerykeionPointModel
 from kerykeion.settings.chart_defaults import resolve_glyph_id
+
+logger = logging.getLogger(__name__)
 
 
 # =============================================================================
@@ -77,15 +80,18 @@ ANGULAR_HOUSES = {1, 4, 7, 10}
 ANGULAR_STROKE_WIDTH = 0.6
 NORMAL_STROKE_WIDTH = 0.07
 
-# Minimum degrees between planet clusters in the natal ring.
+# Minimum degrees between planet clusters in the natal ring — with
+# content-aware separations, the per-pair ceiling.
 #
 # Measured, not guessed — see ``scripts/measure_modern_separation.py``, which
 # renders the worst cluster the renderer can be asked to draw (every glyph it
 # knows, all at 29º59' and retrograde, jammed to exactly this separation, at
 # several wheel orientations) and reads the real ink boxes back out of a
-# browser. Ink first touches at 6.50°; 7.25° leaves 0.33 wheel units of
-# daylight at the tightest pair. Every tenth of a degree above that is a
-# cluster fanned wider than it needs to be, dragging its tether line with it.
+# browser, in the wheel's pinned font stack. Ink first touches at 6.25°; the
+# degree of slack this ceiling keeps above that floor is deliberate — it is
+# also what absorbs a platform whose fallback sans inks wider than the
+# measured stack. Every tenth of a degree above it is a cluster fanned wider
+# than it needs to be, dragging its tether line with it.
 #
 # The binding row is the minutes text at y=22.0 — the smallest radius carrying
 # a two-character string, so the least arc per degree. The glyphs, out at
@@ -167,21 +173,46 @@ DEFAULT_CLUSTER_CLEARANCE = 0.45
 # separation model so the reserved width can never diverge from the drawn text.
 RETROGRADE_LABEL = "RX"
 
-# The one font stack every modern-wheel text renders in, declared on the wheel
-# root so no text node can miss it. Without it the SVG inherits whatever the
-# embedding page uses — the same chart came out serif standalone, sans in one
-# host page, monospace in another — and no spacing model can reserve room for
-# an unknown font. Arial and Helvetica are metric-compatible with each other
-# and with Liberation Sans (the stock Linux substitute), so the measured ink
-# tables in glyph_ink_metrics hold across platforms.
-MODERN_TEXT_FONT_FAMILY = "Arial, Helvetica, sans-serif"
+# The one font stack every modern-chart text renders in — declared on the
+# wheel root here, and on the full-chart Main_Chart group by chart_drawer, so
+# no text node can miss it. Without it the SVG inherits whatever the embedding
+# page uses — the same chart came out serif standalone, sans in one host page,
+# monospace in another — and no spacing model can reserve room for an unknown
+# font. Arial, Helvetica and Liberation Sans are metric-compatible, and
+# Liberation is named explicitly so Linux systems that have it never fall
+# through to generic sans-serif (usually DejaVu Sans, whose digits run
+# ~10-14% wider than the measured ink tables). A system with none of the
+# three still resolves to its own sans and can render wider than reserved —
+# that residual risk is the price of not padding every chart for the rarest
+# platform.
+#
+# Liberation Sans is deliberately unquoted: CSS allows multi-word family
+# names as bare identifiers, and the SVG post-processing rewrites double
+# quotes to single quotes, which nested quotes would corrupt.
+MODERN_TEXT_FONT_FAMILY = "Arial, Helvetica, Liberation Sans, sans-serif"
+
+# Below this display offset from the true position, the indicator is drawn as
+# a straight tick instead of a tether arc. Shared with the displacement report
+# so its "straight" column counts the same population the renderer draws.
+STRAIGHT_TETHER_THRESHOLD = 0.5
+
+# Natal cluster row positions (Y in the wheel-local frame; radius = CENTER - y).
+# The single source for the renderer, the content-aware profiles, and the row
+# radii — the dual rings have their own SYN_* equivalents below.
+NATAL_PLANET_GLYPH_Y = 11.0
+NATAL_DEGREES_Y = 14.5
+NATAL_SIGN_Y = 18.0
+NATAL_MINUTES_Y = 22.0
+NATAL_RX_Y = 25.0
 
 # Minimum degrees between planet clusters in each dual ring, measured the same
-# way as PLANET_MIN_SEPARATION. The two rings differ by more than a rounding:
-# the outer one carries its clusters at radii 41.0–31.5 and the inner one at
-# 27.5–18.5, and arc length per degree falls with the radius, so the inner ring
-# needs half again as much angle to buy the same gap. Ink first touches at
-# 5.25° (outer) and 6.75° (inner); these values leave 0.38 and 0.26 wheel units.
+# way as PLANET_MIN_SEPARATION (and, like it, the per-pair ceiling once
+# content-aware separations kick in). The two rings differ by more than a
+# rounding: the outer one carries its clusters at radii 41.0–31.5 and the
+# inner one at 27.5–18.5, and arc length per degree falls with the radius, so
+# the inner ring needs half again as much angle to buy the same gap. Ink first
+# touches at 5.00° (outer) and 6.25° (inner); the slack these ceilings keep
+# above the floors doubles as headroom for wider-inking fallback fonts.
 #
 # The binding row is the degrees text in both rings — unlike the natal ring,
 # whose minutes row sits at a tighter radius than its degrees row.
@@ -685,10 +716,11 @@ def _draw_ruler_ring() -> str:
 #: cap exactly (scaling sep by 320/(n*sep) IS capping it at 320/n).
 FEASIBLE_TOTAL_DEGREES = 320.0
 
-#: Stand-in ink reach for a glyph or string the measured tables do not know
-#: (a future symbol or text added without re-running the dump). The widest
+#: Stand-in ink reach for a glyph, sign, or string the measured tables do not
+#: know (a future symbol or text added without re-running the dump). The widest
 #: measured entry cannot under-reserve for anything.
 _FALLBACK_GLYPH_INK = (max(GLYPH_INK_HALF_WIDTH.values()), max(GLYPH_INK_HALF_HEIGHT.values()))
+_FALLBACK_SIGN_INK = (max(SIGN_INK_HALF_WIDTH.values()), max(SIGN_INK_HALF_HEIGHT.values()))
 _FALLBACK_TEXT_INK = (max(TEXT_INK_HALF_WIDTH.values()), max(TEXT_INK_HALF_HEIGHT.values()))
 
 
@@ -747,14 +779,16 @@ def _cluster_row_profile(
     )
 
     sign_scale = sign_scale_base * ZODIAC_INNER_SCALE_MAP.get(point.sign, 1.0)
+    sign_half_width, sign_half_height = (
+        (SIGN_INK_HALF_WIDTH[point.sign], SIGN_INK_HALF_HEIGHT[point.sign])
+        if point.sign in SIGN_INK_HALF_WIDTH
+        else _FALLBACK_SIGN_INK
+    )
 
     profile = {
         "glyph": (glyph_half_width * glyph_scale, glyph_half_height * glyph_scale),
         "degrees": _text_ink_reach(_format_degrees_text(point), degrees_font_size),
-        "sign": (
-            SIGN_INK_HALF_WIDTH[point.sign] * sign_scale,
-            SIGN_INK_HALF_HEIGHT[point.sign] * sign_scale,
-        ),
+        "sign": (sign_half_width * sign_scale, sign_half_height * sign_scale),
         "minutes": _text_ink_reach(_format_minutes_text(point), minutes_font_size),
     }
     if point.retrograde is True:
@@ -793,6 +827,57 @@ def _isotonic_non_decreasing(values: list[float]) -> list[tuple[float, int]]:
             merged_size += previous_size
         blocks.append((merged_sum / merged_size, merged_size))
     return blocks
+
+
+def _pair_required_separation(
+    first_profile: dict[str, tuple[float, float]],
+    second_profile: dict[str, tuple[float, float]],
+    pair_mid_angle: float,
+    *,
+    row_radii: dict[str, float],
+    clearance: float,
+    ceiling: float,
+) -> float:
+    """Degrees a specific pair needs, where it actually sits, so no ink touches.
+
+    Clusters stay upright while the wheel turns, so two neighbours are two
+    axis-aligned boxes, and which axis separates them depends on where the
+    pair sits: near the top of the wheel neighbours sit side by side and the
+    ink WIDTHS must clear; at the sides they stack vertically and the ink
+    HEIGHTS must clear — a much smaller ask for text rows. A pair's screen
+    offset per degree of separation is ``arc·|sin(mid)|`` horizontally and
+    ``arc·|cos(mid)|`` vertically, and clearing either axis suffices, so each
+    row takes the cheaper one. At the diagonal both components shrink and this
+    degrades exactly to the all-orientation worst case,
+    ``hypot(widths, heights)``.
+
+    Args:
+        first_profile: Row ink reaches of one cluster (:func:`_cluster_row_profile`).
+        second_profile: Row ink reaches of its neighbour.
+        pair_mid_angle: Wheel angle midway between the two display positions.
+        row_radii: Radius of each cluster row, keyed like the profiles.
+        clearance: Ink-to-ink air to keep, wheel units.
+        ceiling: Hard cap, degrees — the measured always-safe separation.
+
+    Returns:
+        Degrees of separation this pair requires, at most *ceiling*.
+    """
+    horizontal_share = abs(math.sin(math.radians(pair_mid_angle)))
+    vertical_share = abs(math.cos(math.radians(pair_mid_angle)))
+    required = 0.0
+    for row, radius in row_radii.items():
+        if row not in first_profile or row not in second_profile:
+            continue  # e.g. the rx row, present only for retrograde points
+        width_needed = first_profile[row][0] + second_profile[row][0] + clearance
+        height_needed = first_profile[row][1] + second_profile[row][1] + clearance
+        arc_per_degree = radius * math.pi / 180.0
+        separating_options = []
+        if horizontal_share > 1e-9:
+            separating_options.append(width_needed / (arc_per_degree * horizontal_share))
+        if vertical_share > 1e-9:
+            separating_options.append(height_needed / (arc_per_degree * vertical_share))
+        required = max(required, min(separating_options))
+    return min(ceiling, required)
 
 
 def _resolve_planet_collisions(
@@ -836,39 +921,19 @@ def _resolve_planet_collisions(
         return planets_with_angles
 
     def required_separation(first: dict, second: dict, pair_mid_angle: float) -> float:
-        """Degrees this specific pair needs, where it actually sits, so no ink touches.
-
-        Clusters stay upright while the wheel turns, so two neighbours are two
-        axis-aligned boxes, and which axis separates them depends on where the
-        pair sits: near the top of the wheel neighbours sit side by side and
-        the ink WIDTHS must clear; at the sides they stack vertically and the
-        ink HEIGHTS must clear — a much smaller ask for text rows. A pair's
-        screen offset per degree of separation is ``arc·|sin(mid)|``
-        horizontally and ``arc·|cos(mid)|`` vertically, and clearing either
-        axis suffices, so each row takes the cheaper one. At the diagonal both
-        components shrink and this degrades exactly to the all-orientation
-        worst case, ``hypot(widths, heights)``.
-        """
+        """This pair's separation: content-derived when both carry profiles."""
         first_profile = first.get("row_half_widths")
         second_profile = second.get("row_half_widths")
         if row_radii is None or first_profile is None or second_profile is None:
             return min_separation
-        horizontal_share = abs(math.sin(math.radians(pair_mid_angle)))
-        vertical_share = abs(math.cos(math.radians(pair_mid_angle)))
-        required = 0.0
-        for row, radius in row_radii.items():
-            if row not in first_profile or row not in second_profile:
-                continue  # e.g. the rx row, present only for retrograde points
-            width_needed = first_profile[row][0] + second_profile[row][0] + clearance
-            height_needed = first_profile[row][1] + second_profile[row][1] + clearance
-            arc_per_degree = radius * math.pi / 180.0
-            separating_options = []
-            if horizontal_share > 1e-9:
-                separating_options.append(width_needed / (arc_per_degree * horizontal_share))
-            if vertical_share > 1e-9:
-                separating_options.append(height_needed / (arc_per_degree * vertical_share))
-            required = max(required, min(separating_options))
-        return min(min_separation, required)
+        return _pair_required_separation(
+            first_profile,
+            second_profile,
+            pair_mid_angle,
+            row_radii=row_radii,
+            clearance=clearance,
+            ceiling=min_separation,
+        )
 
     # Sort by true zodiacal angle. This order is the invariant we must preserve.
     sorted_planets = sorted(planets_with_angles, key=lambda p: p["angle"])
@@ -1010,6 +1075,7 @@ def _resolve_planet_collisions(
         for (planet, follower), mid in zip(zip(ordered, ordered[1:]), mid_angles)
     ]
     wrap_requirement = required_separation(ordered[-1], ordered[0], mid_angles[-1])
+    requirements_settled = False
     for _ in range(_ORIENTATION_REFINEMENT_ROUNDS):
         display_positions = place(pair_requirements, wrap_requirement)
         mid_angles = pair_mid_angles(display_positions)
@@ -1028,6 +1094,17 @@ def _resolve_planet_collisions(
         pair_requirements, wrap_requirement = refined, refined_wrap
         if requirements_settled:
             break
+    if not requirements_settled:
+        # The failure mode the round bound exists for: the last placement was
+        # never re-validated against its own orientations, so some pair may sit
+        # tighter than its ink requires. Say so — a silent near-collision is
+        # indistinguishable from a correct render until someone looks.
+        logger.warning(
+            "Modern decluttering: orientation refinement did not converge in %d rounds "
+            "for %d points; the rendered spacing may be tighter than the ink model requires.",
+            _ORIENTATION_REFINEMENT_ROUNDS,
+            n,
+        )
 
     for planet, display in zip(ordered, display_positions):
         planet["display_angle"] = _normalize_angle(display)
@@ -1078,7 +1155,7 @@ def _draw_indicator_line(
 
     angle_diff = wrap_180(display_angle - real_angle)
 
-    if abs(angle_diff) < 0.5:
+    if abs(angle_diff) < STRAIGHT_TETHER_THRESHOLD:
         # Simple straight indicator line
         out += (
             f'  <path d="M {CENTER} {start_y} l 0 {tick_length}" '
@@ -1210,11 +1287,11 @@ def _draw_planet_ring(
     # content-aware profiles, and the row radii must all read the same values.
     planet_y_config = planet_y_config or {}
     row_positions = {
-        "glyph_y": planet_y_config.get("glyph_y", 11.0),
-        "degrees_y": planet_y_config.get("degrees_y", 14.5),
-        "sign_y": planet_y_config.get("sign_y", 18.0),
-        "minutes_y": planet_y_config.get("minutes_y", 22.0),
-        "rx_y": planet_y_config.get("rx_y", 25.0),
+        "glyph_y": planet_y_config.get("glyph_y", NATAL_PLANET_GLYPH_Y),
+        "degrees_y": planet_y_config.get("degrees_y", NATAL_DEGREES_Y),
+        "sign_y": planet_y_config.get("sign_y", NATAL_SIGN_Y),
+        "minutes_y": planet_y_config.get("minutes_y", NATAL_MINUTES_Y),
+        "rx_y": planet_y_config.get("rx_y", NATAL_RX_Y),
     }
     scale_config = scale_config or {}
     element_scales = {
@@ -1309,11 +1386,11 @@ def _draw_single_planet_in_ring(
     display_angle: float,
     counter_rotation: float,
     color: str,
-    glyph_y: float = 11.0,
-    degrees_y: float = 14.5,
-    sign_y: float = 18.0,
-    minutes_y: float = 22.0,
-    rx_y: float = 25.0,
+    glyph_y: float = NATAL_PLANET_GLYPH_Y,
+    degrees_y: float = NATAL_DEGREES_Y,
+    sign_y: float = NATAL_SIGN_Y,
+    minutes_y: float = NATAL_MINUTES_Y,
+    rx_y: float = NATAL_RX_Y,
     planet_scale_base: float = PLANET_SCALE_BASE,
     degrees_font_size: float = DEGREES_FONT_SIZE,
     sign_scale_base: float = SIGN_SCALE_BASE,

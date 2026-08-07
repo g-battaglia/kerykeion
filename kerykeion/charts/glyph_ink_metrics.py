@@ -17,8 +17,10 @@ are not all centered on their anchor (the Sun's ink spans 2.1–21.9 in its
 Units: planet glyphs are native symbol units in a 28-unit box anchored at
 (14, 14) (``translate(-14 -14)`` at the use site); zodiac signs a 32-unit box
 anchored at (16, 16); texts are measured at font-size
-``TEXT_INK_REFERENCE_FONT_SIZE`` with the exact attributes the renderer emits
-(middle-anchored, weight 500, no font-family) and scale linearly.
+``TEXT_INK_REFERENCE_FONT_SIZE`` with the renderer's attributes
+(middle-anchored, weight 500) and scale linearly. Everything — symbols and
+texts alike — is rasterized under the wheel's pinned font stack
+(``draw_modern.MODERN_TEXT_FONT_FAMILY``), the one production renders in.
 
 Consumed by ``draw_modern._cluster_row_profile`` to size content-aware cluster
 separations.
@@ -34,20 +36,20 @@ TEXT_INK_REFERENCE_FONT_SIZE: float = 10.0
 #: Planet-glyph ink reach from the (14, 14) anchor, native units.
 GLYPH_INK_HALF_WIDTH: dict[str, float] = {
     "Admetos": 7.100,
-    "Anti_Vertex": 9.300,
+    "Anti_Vertex": 9.500,
     "Apollon": 9.700,
-    "Ascendant": 13.700,
+    "Ascendant": 14.050,
     "Ceres": 6.900,
     "Chiron": 6.700,
     "Cupido": 9.200,
-    "Descendant": 13.650,
+    "Descendant": 12.300,
     "Earth": 11.400,
     "East_Point": 11.900,
     "Eris": 11.350,
     "FixedStar": 10.550,
     "Hades": 9.450,
     "Haumea": 11.450,
-    "Imum_Coeli": 13.650,
+    "Imum_Coeli": 11.950,
     "Interpolated_Lilith": 6.600,
     "Interpolated_Perigee": 7.300,
     "Ixion": 11.900,
@@ -60,7 +62,7 @@ GLYPH_INK_HALF_WIDTH: dict[str, float] = {
     "Mean_North_Lunar_Node": 12.100,
     "Mean_Priapus": 6.600,
     "Mean_South_Lunar_Node": 12.100,
-    "Medium_Coeli": 13.800,
+    "Medium_Coeli": 12.550,
     "Mercury": 7.250,
     "Midpoint": 11.200,
     "Moon": 10.250,
@@ -84,7 +86,7 @@ GLYPH_INK_HALF_WIDTH: dict[str, float] = {
     "True_South_Lunar_Node": 12.100,
     "Uranus": 10.300,
     "Venus": 8.650,
-    "Vertex": 9.750,
+    "Vertex": 9.550,
     "Vesta": 10.800,
     "Vulkanus": 12.100,
     "White_Moon": 7.300,
@@ -93,20 +95,20 @@ GLYPH_INK_HALF_WIDTH: dict[str, float] = {
 
 GLYPH_INK_HALF_HEIGHT: dict[str, float] = {
     "Admetos": 12.100,
-    "Anti_Vertex": 6.250,
+    "Anti_Vertex": 6.800,
     "Apollon": 12.100,
-    "Ascendant": 8.850,
+    "Ascendant": 9.750,
     "Ceres": 12.100,
     "Chiron": 12.100,
     "Cupido": 12.100,
-    "Descendant": 8.550,
+    "Descendant": 9.750,
     "Earth": 11.400,
     "East_Point": 8.900,
     "Eris": 12.100,
     "FixedStar": 11.000,
     "Hades": 12.100,
     "Haumea": 12.100,
-    "Imum_Coeli": 8.550,
+    "Imum_Coeli": 9.750,
     "Interpolated_Lilith": 12.100,
     "Interpolated_Perigee": 11.800,
     "Ixion": 11.900,
@@ -119,7 +121,7 @@ GLYPH_INK_HALF_HEIGHT: dict[str, float] = {
     "Mean_North_Lunar_Node": 9.400,
     "Mean_Priapus": 12.100,
     "Mean_South_Lunar_Node": 9.400,
-    "Medium_Coeli": 7.250,
+    "Medium_Coeli": 8.350,
     "Mercury": 12.100,
     "Midpoint": 4.200,
     "Moon": 12.100,
@@ -143,7 +145,7 @@ GLYPH_INK_HALF_HEIGHT: dict[str, float] = {
     "True_South_Lunar_Node": 9.400,
     "Uranus": 11.900,
     "Venus": 12.100,
-    "Vertex": 6.100,
+    "Vertex": 6.800,
     "Vesta": 12.100,
     "Vulkanus": 11.650,
     "White_Moon": 11.800,

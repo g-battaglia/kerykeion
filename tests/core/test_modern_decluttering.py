@@ -306,11 +306,10 @@ def test_modern_chart_2000_02_26_neptune_order():
     ChartPoint glyphs (by display_angle from their ``transform="rotate(...)"``
     attribute) follows the true zodiacal order.
     """
-    import re
-
     from kerykeion import AstrologicalSubjectFactory
     from kerykeion.chart_data_factory import ChartDataFactory
     from kerykeion.charts.chart_drawer import ChartDrawer
+    from kerykeion.charts.svg_metadata import parse_chart_points
     from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
     # The decluttering regression on the 2000-02-26 stellium relies on
@@ -336,14 +335,7 @@ def test_modern_chart_2000_02_26_neptune_order():
     chart_data = ChartDataFactory.create_natal_chart_data(subject, active_points=active)
     svg = ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(style="modern")
 
-    # Each planet is rendered as:
-    #   <g kr:node='ChartPoint' ... kr:slug='NAME' ... transform='rotate(-DEG 50.0 50.0)'>
-    # (attribute quotes may be single or double depending on serializer).
-    pattern = re.compile(
-        r"""<g\s+kr:node=['"]ChartPoint['"][^>]*kr:slug=['"]([^'"]+)['"][^>]*"""
-        r"""transform=['"]rotate\(-(\d+\.\d+)\s+50\.0\s+50\.0\)['"]""",
-    )
-    display_angles = {m.group(1): float(m.group(2)) for m in pattern.finditer(svg)}
+    display_angles = {tag.slug: tag.display_angle for tag in parse_chart_points(svg)}
 
     required = ["True_South_Lunar_Node", "Neptune", "Venus", "Uranus"]
     for name in required:
@@ -669,12 +661,14 @@ def test_entries_without_profiles_fall_back_to_the_uniform_separation():
 # against. One test each.
 
 #: Separation at which the adversarial cluster's ink first touches, per ring,
-#: from the harness. Below these, glyphs and text overlap outright; the shipped
-#: constants sit a notch above, leaving ~0.25 wheel units of daylight.
+#: from the harness (floor mode, measured in the wheel's pinned font stack with
+#: stroke-aware glyph boxes). Below these, glyphs and text overlap outright;
+#: the shipped constants sit 0.75-1.25 degrees above — margin that doubles as
+#: slack for platforms whose fallback sans inks wider than the measured stack.
 _TOUCHING_SEPARATION = {
-    "PLANET_MIN_SEPARATION": 6.50,
-    "SYN_OUTER_MIN_SEPARATION": 5.25,
-    "SYN_INNER_MIN_SEPARATION": 6.75,
+    "PLANET_MIN_SEPARATION": 6.25,
+    "SYN_OUTER_MIN_SEPARATION": 5.00,
+    "SYN_INNER_MIN_SEPARATION": 6.25,
 }
 
 
@@ -701,6 +695,12 @@ _MEASURED_GEOMETRY = {
     "CENTER": 50.0,
     "FEASIBLE_TOTAL_DEGREES": 320.0,
     "DEFAULT_CLUSTER_CLEARANCE": 0.45,
+    # Natal ring rows (the single source both the renderer and row_radii read)
+    "NATAL_PLANET_GLYPH_Y": 11.0,
+    "NATAL_DEGREES_Y": 14.5,
+    "NATAL_SIGN_Y": 18.0,
+    "NATAL_MINUTES_Y": 22.0,
+    "NATAL_RX_Y": 25.0,
     # Natal ring
     "PLANET_SCALE_BASE": 0.135,
     "DEGREES_FONT_SIZE": 2,
@@ -731,16 +731,6 @@ _MEASURED_GEOMETRY = {
     "SYN_RX_FONT_SIZE": 1.2,
 }
 
-#: The natal ring's row positions live as defaults on the drawing function
-#: rather than as module constants, so they are pinned through the signature.
-_MEASURED_NATAL_ROWS = {
-    "glyph_y": 11.0,
-    "degrees_y": 14.5,
-    "sign_y": 18.0,
-    "minutes_y": 22.0,
-    "rx_y": 25.0,
-}
-
 _REMEASURE = (
     "The separations in draw_modern were measured against this geometry. "
     "Re-run scripts/measure_modern_separation.py and update the constants "
@@ -753,14 +743,6 @@ def test_measured_geometry_is_unchanged(name, expected):
     assert getattr(draw_modern, name) == expected, f"{name} moved. {_REMEASURE}"
 
 
-def test_measured_natal_row_positions_are_unchanged():
-    import inspect
-
-    signature = inspect.signature(draw_modern._draw_single_planet_in_ring)
-    actual = {row: signature.parameters[row].default for row in _MEASURED_NATAL_ROWS}
-    assert actual == _MEASURED_NATAL_ROWS, f"Natal cluster rows moved. {_REMEASURE}"
-
-
 def test_dual_rings_respect_their_own_content_derived_separations():
     """Each dual ring spaces its planets by what they draw, at its own radius.
 
@@ -770,12 +752,12 @@ def test_dual_rings_respect_their_own_content_derived_separations():
     renders a synastry chart, rebuilds every pair's requirement from the SVG's
     own metadata, and checks the rendered spacing honours it.
     """
-    import re
     from types import SimpleNamespace
 
     from kerykeion import AstrologicalSubjectFactory
     from kerykeion.chart_data_factory import ChartDataFactory
     from kerykeion.charts.chart_drawer import ChartDrawer
+    from kerykeion.charts.svg_metadata import parse_chart_points
 
     def subject(name, year, month, day, hour, minute, lat, lng, tz):
         return AstrologicalSubjectFactory.from_birth_data(
@@ -790,26 +772,16 @@ def test_dual_rings_respect_their_own_content_derived_separations():
     chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
     svg = ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(style="modern")
 
-    chart_point_pattern = re.compile(
-        r"""<g\s+kr:node=['"]ChartPoint['"](?P<attributes>[^>]*)"""
-        r"""transform=['"]rotate\(-(?P<display>\d+\.\d+)\s+50\.0\s+50\.0\)['"]""",
-    )
-
-    def attribute(blob: str, name: str) -> str | None:
-        match = re.search(rf"""kr:{name}=['"]([^'"]+)['"]""", blob)
-        return match.group(1) if match else None
-
     rings: dict[str, list[tuple[float, SimpleNamespace]]] = {"0": [], "1": []}
-    for match in chart_point_pattern.finditer(svg):
-        blob = match.group("attributes")
+    for tag in parse_chart_points(svg):
         point_stand_in = SimpleNamespace(
-            name=attribute(blob, "slug"),
+            name=tag.slug,
             point_type="AstrologicalPoint",
-            sign=attribute(blob, "sign"),
-            position=float(attribute(blob, "signposition")),
-            retrograde=attribute(blob, "retrograde") == "true",
+            sign=tag.sign,
+            position=tag.sign_position,
+            retrograde=tag.retrograde,
         )
-        rings[attribute(blob, "horoscope") or "0"].append((float(match.group("display")), point_stand_in))
+        rings[tag.horoscope].append((tag.display_angle, point_stand_in))
 
     # horoscope "0" is subject 1 in the inner ring, "1" is subject 2 outside it;
     # the geometry below mirrors what draw_modern_dual_horoscope passes in.
@@ -853,27 +825,17 @@ def test_dual_rings_respect_their_own_content_derived_separations():
     def pair_requirement(
         layout: dict, one: SimpleNamespace, other: SimpleNamespace, pair_mid_angle: float
     ) -> float:
-        import math
-
-        clearance = draw_modern.DEFAULT_CLUSTER_CLEARANCE
-        first_profile = draw_modern._cluster_row_profile(one, **layout["scales"])
-        second_profile = draw_modern._cluster_row_profile(other, **layout["scales"])
-        horizontal_share = abs(math.sin(math.radians(pair_mid_angle)))
-        vertical_share = abs(math.cos(math.radians(pair_mid_angle)))
-        required = 0.0
-        for row, radius in layout["row_radii"].items():
-            if row not in first_profile or row not in second_profile:
-                continue
-            width_needed = first_profile[row][0] + second_profile[row][0] + clearance
-            height_needed = first_profile[row][1] + second_profile[row][1] + clearance
-            arc_per_degree = radius * math.pi / 180.0
-            separating_options = []
-            if horizontal_share > 1e-9:
-                separating_options.append(width_needed / (arc_per_degree * horizontal_share))
-            if vertical_share > 1e-9:
-                separating_options.append(height_needed / (arc_per_degree * vertical_share))
-            required = max(required, min(separating_options))
-        return min(layout["ceiling"], required)
+        # The production formula, on profiles rebuilt from the SVG's metadata:
+        # the test verifies the rendered spacing against the same contract the
+        # resolver enforces, not against a private reimplementation of it.
+        return draw_modern._pair_required_separation(
+            draw_modern._cluster_row_profile(one, **layout["scales"]),
+            draw_modern._cluster_row_profile(other, **layout["scales"]),
+            pair_mid_angle,
+            row_radii=layout["row_radii"],
+            clearance=draw_modern.DEFAULT_CLUSTER_CLEARANCE,
+            ceiling=layout["ceiling"],
+        )
 
     for horoscope_id, layout in ring_layouts.items():
         members = sorted(rings[horoscope_id], key=lambda entry: entry[0])

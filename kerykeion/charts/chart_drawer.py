@@ -88,7 +88,11 @@ from kerykeion.charts.charts_utils import (
     draw_house_sectors,
 )
 from kerykeion.charts.draw_planets import draw_planets
-from kerykeion.charts.draw_modern import draw_modern_horoscope, draw_modern_dual_horoscope
+from kerykeion.charts.draw_modern import (
+    MODERN_TEXT_FONT_FAMILY,
+    draw_modern_dual_horoscope,
+    draw_modern_horoscope,
+)
 from kerykeion.utilities import (
     get_houses_list,
     get_planet_house,
@@ -5284,6 +5288,17 @@ class ChartDrawer:  # type: ignore[no-redef]
             overrides["makeHouseSectors"] = ""
             overrides["makeGauquelinSectors"] = ""
             template = Template(raw_template).substitute(overrides)
+            # Pin the font on the whole chart, not just the wheel: chart.xml's
+            # panels, title and aspect grid declare no font-family, so without
+            # this they inherit whatever the embedding page uses while the
+            # wheel renders its pinned stack — two fonts in one deliverable.
+            # Scoped to the modern branch; classic keeps its historical
+            # viewer-default text on purpose.
+            template = template.replace(
+                '<g kr:node="Main_Chart">',
+                f'<g kr:node="Main_Chart" font-family="{MODERN_TEXT_FONT_FAMILY}">',
+                1,
+            )
             # Modern wheel-local (100x100) -> scale wrapper -> Full_Wheel translate.
             template = self._rebase_glyph_centers(template, scale, 100.0, self._vertical_offsets["wheel"])
         else:

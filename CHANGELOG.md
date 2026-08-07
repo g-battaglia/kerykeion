@@ -4,9 +4,22 @@
 
 ### Changed
 
-- **Modern decluttering now places every planet as close to its true position
-  as the ink allows.** Two structural upgrades to
-  `draw_modern._resolve_planet_collisions`:
+- **Modern decluttering is now measured, displacement-optimal, and
+  content-aware.** One overhaul of `draw_modern._resolve_planet_collisions`,
+  landed in stages on this branch and summarized here once, with the final
+  figures. Classic output is untouched; it has its own, unrelated spacing code.
+  - **Measured separations instead of guessed ones.** The old spacing was 8° in
+    the natal ring and a hardcoded 10° in *both* dual rings. The ceilings are
+    now `PLANET_MIN_SEPARATION` 7.25°, `SYN_OUTER_MIN_SEPARATION` 5.75° and
+    `SYN_INNER_MIN_SEPARATION` 7.5°, derived with
+    `scripts/measure_modern_separation.py`: it renders the worst cluster the
+    renderer can be asked to draw — every glyph it knows, all at 29º59' and
+    retrograde, jammed to exactly the separation under test, across eight
+    wheel orientations — and reads the real ink boxes back out of a browser.
+    Measured in the wheel's pinned font stack, ink first touches at 6.25°
+    (natal), 5.00° (dual outer) and 6.25° (dual inner); the slack each ceiling
+    keeps above its floor doubles as headroom for platforms whose fallback
+    sans inks wider than the measured stack.
   - **Least-squares placement instead of a forward walk.** The old algorithm
     anchored the first planet of a cramped run and pushed everyone else
     forward, so the last planet of a big cluster drifted far from its true
@@ -14,79 +27,53 @@
     and 43° in the synastry inner ring. The resolver is now an isotonic
     regression (pool-adjacent-violators on separation-deflated coordinates):
     provably the minimum total squared displacement that preserves zodiacal
-    order and pairwise separations. Cramped runs spread symmetrically around
-    their true center of mass; worst-case displacement drops 38–52% and mean
-    displacement roughly halves on the same fixtures
-    (`scripts/report_modern_displacement.py` prints the table). A wraparound
-    guard clips the fit into the feasible window in the rare layouts where the
-    optimum would close the gap the circle was cut at.
-  - **Separations sized by what each pair actually draws.** The spacing
-    constants reserved room for the worst content a cluster can hold — `29º`,
-    `58'`, an RX marker — for every pair, always. Each adjacent pair now
-    reserves the arc its own ink needs: measured glyph artwork, the exact
-    degree/minute strings, an `rx` row only when the point is retrograde, with
-    the old constants as a hard per-pair ceiling so no layout can regress.
-    Both axes of the ink count — clusters stay upright while the wheel turns,
-    so at the worst orientation two neighbours pinch on the diagonal, and
-    width-only spacing under-reserves by up to 40% for square-ish glyphs.
+    order and pairwise separations, with cramped runs centered on their true
+    center of mass and a wraparound guard for layouts where the optimum would
+    close the gap the circle was cut at. Refinement that cannot converge
+    (bounded at 32 rounds) now logs a warning instead of shipping silently.
+  - **Separations sized by what each pair actually draws, where it draws it.**
+    Each adjacent pair reserves the arc its own ink needs — measured glyph
+    artwork, the exact degree/minute strings, an `rx` row only when the point
+    is retrograde — evaluated at the pair's actual wheel orientation (top of
+    wheel: widths bind; sides: only the much smaller text heights bind) and
+    solved to a fixed point with a ratcheted refinement loop. The measured
+    ceilings above cap every pair, so no layout can regress. Net effect on the
+    fixtures `scripts/report_modern_displacement.py` prints: worst-case
+    displacement 7.4°→2.7° (stellium), 30.0°→14.3° (all-points natal),
+    43.4°→13.0° (synastry outer ring); means roughly a third of what they were.
+  - **Modern charts now declare their text font** —
+    `font-family="Arial, Helvetica, 'Liberation Sans', sans-serif"` on the
+    wheel root and, for full charts, on the whole `Main_Chart` group (title,
+    panels and aspect grid included). No text node ever declared one, so the
+    same chart rendered serif standalone and picked up whatever font any
+    embedding page used — no spacing model can reserve room for an unknown
+    font, and the adversarial harness caught its own probe page's monospace
+    bleeding into the SVG under test. The three named fonts are
+    metric-compatible, so the measured ink tables hold across platforms.
+    Standalone modern charts change appearance: text is now consistently
+    sans-serif.
   - The ink comes from `kerykeion/charts/glyph_ink_metrics.py`, a generated
     module measured by rasterizing every symbol and every text string a
-    cluster can draw in a browser (`poe regenerate:glyph-ink`): getBBox-style
-    APIs exclude stroke widths and half the glyphs are stroke-only, while
-    text layout boxes overstate ink vertically and reference-font advance
-    tables miss what the viewer's default font rasterizes at wheel sizes.
-  - **Separations also know where on the wheel the pair sits.** Clusters stay
-    upright while the wheel turns, so neighbours near the top sit side by side
-    (ink widths must clear) while neighbours at the sides stack vertically
-    (only the much smaller ink heights must clear). Each pair's requirement is
-    now evaluated at its actual orientation instead of the all-orientation
-    worst case, solved to a fixed point (placement moves orientations, so the
-    resolver refines with a ratcheted loop that only accepts a placement after
-    re-evaluating it against itself). Text-row pairs at the wheel's sides pack
-    roughly 40% tighter than the orientation-blind diagonal bound allowed.
-  - **The modern wheel now declares its text font**
-    (`font-family="Arial, Helvetica, sans-serif"` on the wheel root). It never
-    had one, so the same chart rendered serif standalone and picked up
-    whatever font any embedding page used — no spacing model can reserve room
-    for an unknown font, and the adversarial harness caught the probe page's
-    own monospace bleeding into the SVG under test. Arial, Helvetica and
-    Liberation Sans (the stock Linux substitute) are metric-compatible, so the
-    measured ink tables hold across platforms. Standalone charts change
-    appearance: cluster and cusp text is now consistently sans-serif.
-  - Validated adversarially before shipping: mixed narrow/wide, retrograde/
-    direct clusters at eight wheel orientations, rendered by the actual
-    drawing code and pixel-measured in a browser
-    (`scripts/measure_modern_separation.py --mode adversarial`) — no cluster
-    ink touches, including the engineered worst cases.
+    cluster can draw in a browser under the pinned font stack
+    (`poe regenerate:glyph-ink`): getBBox-style APIs exclude stroke widths and
+    half the glyphs are stroke-only, while text layout boxes overstate ink
+    vertically and reference-font advance tables miss what the actual font
+    rasterizes at wheel sizes. The regeneration endpoint validates its
+    payload against the script's own glyph/text catalog before writing the
+    module.
+  - Validated adversarially before shipping: mixed narrow/wide,
+    retrograde/direct clusters at eight wheel orientations, rendered by the
+    actual drawing code and pixel-measured in a browser with stroke-aware
+    glyph boxes (`scripts/measure_modern_separation.py --mode adversarial`).
+    The gate fails any pair with less than 0.2 wheel units of daylight; the
+    shipped state measures 0.32+ everywhere, engineered worst cases included.
     `tests/core/test_modern_decluttering.py` grew optimality tests (block
     centering, an independent PAVA cross-check, perturbation/KKT,
-    displacement-regression pins) alongside the existing order/gap invariants.
-
-- **Modern clusters no longer fan out further than the ink requires.** The
-  decluttering separation was a single guessed figure — 8° in the natal ring and
-  a hardcoded 10° in *both* dual rings — so tight clusters were pushed apart well
-  past the point where their glyphs would have collided, and each displaced
-  planet dragged a long tether arc back to its true position. The three
-  separations are now measured rather than assumed: 7.25° natal,
-  `SYN_OUTER_MIN_SEPARATION` 5.75° and `SYN_INNER_MIN_SEPARATION` 7.5°. The
-  outer dual ring is the big win — it carries its clusters at nearly twice the
-  radius of the inner one, so it needed barely half the angle it was being
-  given, and its planets now sit close to where they actually are.
-  - The figures come from `scripts/measure_modern_separation.py`, which renders
-    the worst cluster the renderer can be asked to draw — every glyph it knows,
-    all at 29º59' and retrograde, jammed to exactly the separation under test,
-    at several wheel orientations — and reads the real ink boxes back out of a
-    browser. Ink first touches at 6.50°, 5.25° and 6.75° respectively; the
-    shipped values each leave about 0.25 wheel units of daylight at the tightest
-    pair. In every ring the binding pair is text against text, not glyph against
-    glyph: the degree and minute strings are wider than the glyphs above them.
-  - `tests/core/test_modern_decluttering.py` guards both halves of that result —
-    the separations cannot be lowered under the measured collision floor, and
-    the ring radii, row positions, font sizes and glyph scales they were
-    measured against cannot move without a test failing and naming the script to
-    re-run.
-  - Modern SVG baselines, the v6 gallery and the README charts were regenerated.
-    Classic output is untouched; it has its own, unrelated spacing code.
+    displacement-regression pins) alongside the existing order/gap
+    invariants, and verifies rendered dual-ring spacing against the same
+    `_pair_required_separation` the resolver uses.
+  - Modern SVG baselines, the v6 gallery and the README charts were
+    regenerated.
 
 - **BREAKING: the default chart style is now `"modern"`.** `ChartDrawer`'s
   `style` parameter defaults to `"modern"` instead of `"classic"`, so every

@@ -207,7 +207,7 @@
 
     <!---
     Main Chart -->
-    <g kr:node='Main_Chart'>
+    <g kr:node='Main_Chart' font-family='Arial, Helvetica, Liberation Sans, sans-serif'>
         <g kr:node='Top_Left_Text' transform='translate(0,2)'>
             <text kr:node='Chart_Title' x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>Synastry: John Lennon and Paul McCartney</text>
             <text kr:node='Top_Left_Text_0' x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>John Lennon:</text>
@@ -269,7 +269,7 @@
             <!-- Background Circle -->
             <g kr:node='Background_Circle'>
                 <g transform='scale(4.8000)'>
-<g kr:node='ModernDualHoroscope' kr:charttype='Synastry' font-family='Arial, Helvetica, sans-serif' transform='rotate(-90 50.0 50.0)'>
+<g kr:node='ModernDualHoroscope' kr:charttype='Synastry' font-family='Arial, Helvetica, Liberation Sans, sans-serif' transform='rotate(-90 50.0 50.0)'>
 <g kr:node='ZodiacBackgrounds'>
   <g kr:node='ZodiacSign' kr:sign='Ari' kr:signnumber='0'>
   <path d='M 66.863906,2.929747 A 50.0,50.0 0 0,0 41.069445,0.804013 L 41.783889,4.739692 A 46.0,46.0 0 0,1 65.514793,6.695368 Z' fill='var(--kerykeion-modern-zodiac-bg-0)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />

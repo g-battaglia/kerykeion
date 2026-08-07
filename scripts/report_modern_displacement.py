@@ -22,7 +22,6 @@ Usage::
 
 from __future__ import annotations
 
-import re
 import sys
 from pathlib import Path
 from statistics import mean
@@ -32,35 +31,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.draw_modern import STRAIGHT_TETHER_THRESHOLD
+from kerykeion.charts.svg_metadata import parse_chart_points, parse_indicators
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, DEFAULT_ACTIVE_POINTS
 from kerykeion.utilities import wrap_180
-
-#: Below this displacement the renderer draws a straight tick instead of a
-#: tether arc (draw_modern._draw_indicator_line).
-STRAIGHT_TETHER_THRESHOLD = 0.5
-
-_CHARTPOINT = re.compile(
-    r"""<g\s+kr:node=['"]ChartPoint['"](?P<attrs>[^>]*)"""
-    r"""transform=['"]rotate\(-(?P<angle>\d+(?:\.\d+)?)\s+50\.0\s+50\.0\)['"]"""
-)
-_INDICATOR = re.compile(
-    r"""<g\s+kr:node=['"]Indicator['"](?P<attrs>[^>]*)"""
-    r"""transform=['"]rotate\(-(?P<angle>\d+(?:\.\d+)?)\s+50\.0\s+50\.0\)['"]"""
-)
-_SLUG = re.compile(r"""kr:slug=['"]([^'"]+)['"]""")
-_HOROSCOPE = re.compile(r"""kr:horoscope=['"]([^'"]+)['"]""")
-
-
-def _keyed_angles(pattern: re.Pattern, svg: str) -> dict[tuple[str, str], float]:
-    out: dict[tuple[str, str], float] = {}
-    for match in pattern.finditer(svg):
-        attrs = match.group("attrs")
-        slug = _SLUG.search(attrs)
-        if not slug:
-            continue
-        horoscope = _HOROSCOPE.search(attrs)
-        out[(slug.group(1), horoscope.group(1) if horoscope else "0")] = float(match.group("angle"))
-    return out
 
 
 def _subject(name: str, year: int, month: int, day: int, hour: int, minute: int,
@@ -74,15 +48,17 @@ def _subject(name: str, year: int, month: int, day: int, hour: int, minute: int,
 
 def _measure(svg: str) -> dict[str, list[tuple[str, float]]]:
     """ring id -> [(slug, |displacement| in degrees), ...]"""
-    displays = _keyed_angles(_CHARTPOINT, svg)
-    reals = _keyed_angles(_INDICATOR, svg)
+    true_angles = {
+        (indicator.slug, indicator.horoscope): indicator.true_angle
+        for indicator in parse_indicators(svg)
+    }
     rings: dict[str, list[tuple[str, float]]] = {}
-    for key, display in displays.items():
-        real = reals.get(key)
-        if real is None:
+    for point in parse_chart_points(svg):
+        true_angle = true_angles.get((point.slug, point.horoscope))
+        if true_angle is None:
             continue
-        slug, ring = key
-        rings.setdefault(ring, []).append((slug, abs(wrap_180(display - real))))
+        displacement = abs(wrap_180(point.display_angle - true_angle))
+        rings.setdefault(point.horoscope, []).append((point.slug, displacement))
     return rings
 
 

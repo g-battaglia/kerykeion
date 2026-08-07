@@ -192,7 +192,7 @@
 
     <!---
     Main Chart -->
-    <g kr:node='Main_Chart'>
+    <g kr:node='Main_Chart' font-family='Arial, Helvetica, Liberation Sans, sans-serif'>
         <g kr:node='Top_Left_Text' transform='translate(0,0)'>
             <text kr:node='Chart_Title' x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>John Lennon Sidereal LAHIRI - Birth Chart</text>
             <text kr:node='Top_Left_Text_0' x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Location:</text>
@@ -263,7 +263,7 @@
             <!-- Background Circle -->
             <g kr:node='Background_Circle'>
                 <g transform='scale(4.8000)'>
-<g kr:node='ModernHoroscope' font-family='Arial, Helvetica, sans-serif' transform='rotate(-90 50.0 50.0)'>
+<g kr:node='ModernHoroscope' font-family='Arial, Helvetica, Liberation Sans, sans-serif' transform='rotate(-90 50.0 50.0)'>
 <g kr:node='ZodiacBackgrounds'>
   <g kr:node='ZodiacSign' kr:sign='Ari' kr:signnumber='0'>
   <path d='M 47.135903,0.082098 A 50.0,50.0 0 0,0 22.560668,8.201877 L 24.755815,11.545727 A 46.0,46.0 0 0,1 47.365031,4.075530 Z' fill='var(--kerykeion-modern-zodiac-bg-0)' style='fill-opacity: var(--kerykeion-modern-zodiac-bg-opacity, 0.5)' />
@@ -540,7 +540,7 @@
 <g kr:node='Indicator' kr:slug='Uranus' kr:absoluteposition='32.521437910465735' transform='rotate(-35.805249 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Can' kr:absoluteposition='97.5376388272794' kr:signposition='7.537638827279395' kr:slug='Chiron' kr:cx='370.5568121520782' kr:cy='459.4915555628144' transform='rotate(-100.219799 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Can' kr:absoluteposition='97.5376388272794' kr:signposition='7.537638827279395' kr:slug='Chiron' kr:cx='370.55681215207807' kr:cy='459.4915555628144' transform='rotate(-100.219799 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(190.219799) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='var(--kerykeion-chart-color-chiron)' />
   </g>
@@ -553,7 +553,7 @@
 <g kr:node='Indicator' kr:slug='Chiron' kr:absoluteposition='97.5376388272794' transform='rotate(-100.821450 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 50.4462757137 7.5023431471 L 50.4349875633 8.5772838793' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Can' kr:absoluteposition='101.15750973379633' kr:signposition='11.157509733796331' kr:slug='Pluto' kr:cx='384.69960687076826' kr:cy='456.32213118403325' transform='rotate(-105.042972 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Can' kr:absoluteposition='101.15750973379633' kr:signposition='11.157509733796331' kr:slug='Pluto' kr:cx='384.6996068707682' kr:cy='456.32213118403325' transform='rotate(-105.042972 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(195.042972) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pluto' kr:slug='Pluto' kr:node='Glyph' fill='var(--kerykeion-chart-color-pluto)' />
   </g>
