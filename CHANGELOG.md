@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 6.0.0a81 - 2026-08-11
+
 ### Changed
 
 - **libephemeris floor raised to 3.1.0** (closes the warning flood in
