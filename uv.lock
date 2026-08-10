@@ -297,7 +297,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.0a80"
+version = "6.0.0a81"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -337,7 +337,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "libephemeris", specifier = ">=3.0.0,<4" },
+    { name = "libephemeris", specifier = ">=3.1.0,<4" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'all'", specifier = ">=2.10.3.1" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -369,7 +369,7 @@ dev = [
 
 [[package]]
 name = "libephemeris"
-version = "3.0.0"
+version = "3.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
@@ -379,9 +379,9 @@ dependencies = [
     { name = "skyfield-data" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c8/fc/cbee4148c3678562894845b684a50057100b159d05e34ef43857eb0c5874/libephemeris-3.0.0.tar.gz", hash = "sha256:9e4681d9486f0a7562464b252e7f5ea672efc70524fdc3e351728eb301c59b97", size = 12398126, upload-time = "2026-08-04T18:49:09.689Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2d/10/a96a116fe2a49a72bbe5ebac712650fe61124e7cd5ba364f6db3f5f914a7/libephemeris-3.1.0.tar.gz", hash = "sha256:e2e03623e30f5bc3b1fc0d2dd5f14327faaa4d98a01a6dcc0693165a20796ba5", size = 12369112, upload-time = "2026-08-10T22:40:57.681Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/92/85/9e0ec8a77b3f0b045a4ce2e2b71139f4629e722d5cbfcce202ef50a051d1/libephemeris-3.0.0-py3-none-any.whl", hash = "sha256:9128a4765a3fa1386602e28cc05b4cdf4a48244bd2f6970a8b52aee3602bf7a5", size = 12446980, upload-time = "2026-08-04T18:49:06.024Z" },
+    { url = "https://files.pythonhosted.org/packages/a6/f4/9ef390fe89ba3c854674880c6a77f0cbc6fad79ae5b3c071577e44e1d75d/libephemeris-3.1.0-py3-none-any.whl", hash = "sha256:7ea715519763f9218165a9298ac9463192b616acc6384a6c93ce0c72b8c0c68e", size = 12418131, upload-time = "2026-08-10T22:40:50.558Z" },
 ]
 
 [[package]]
