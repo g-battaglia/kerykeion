@@ -416,6 +416,30 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
+### Why do I see libephemeris log lines, and how do I quiet them?
+
+Kerykeion pins libephemeris to its sealed `leb` mode by default: positions
+come only from local, verified ephemeris files or from declared analytical
+models — no network, no silent source substitution. That is the normal,
+intended state, not a misconfiguration. The backend logs through its own
+`libephemeris` logger, so standard logging configuration controls it:
+
+```python
+import logging
+
+logging.getLogger("libephemeris").setLevel(logging.ERROR)
+```
+
+Two messages people ask about:
+
+- `Excluding ['Earth'] from active_points` — informational and correct: you
+  passed the perspective's center body in `active_points`, and it has no
+  position as seen from itself. Remove it from your list or ignore the line.
+- `LEB body=NN ... unavailable in sealed mode` for bodies 40–47/56 (Uranian
+  points, White Moon) — a logging bug fixed in libephemeris 3.1.0: those
+  bodies are always computed from their analytical models by design, and the
+  routing is no longer reported as a warning. Upgrade rather than filter.
+
 ### How do I cache GeoNames results?
 
 Results are cached for 30 days by default. Customize with:

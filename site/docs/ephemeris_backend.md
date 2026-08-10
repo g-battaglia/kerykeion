@@ -101,10 +101,13 @@ download_leb_for_tier("extended")  # full range (incl. BCE dates), ~1154 MB
 ```
 
 Asteroids (Chiron, Ceres, Pallas, Juno, Vesta), other curated minor
-bodies and exotics (centaurs, trans-Neptunians), lunar apsides, and the
-Hamburg/Uranian points are **separate companion groups**, available at
-every tier — they are not folded into the core by tier. Install them
-alongside the core with `download_leb2_for_tier(tier, groups=[...])`.
+bodies and exotics (centaurs, trans-Neptunians), and lunar apsides are
+**separate companion groups**, available at every tier — they are not
+folded into the core by tier. Install them alongside the core with
+`download_leb2_for_tier(tier, groups=[...])`. The Hamburg/Uranian points
+and the White Moon need **no files at all**: they are fictitious bodies,
+always computed from their runtime analytical models (provenance
+`source="Analytical"`), at every tier and for every date.
 
 ## Architecture
 

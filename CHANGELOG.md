@@ -2,6 +2,29 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **libephemeris floor raised to 3.1.0** (closes the warning flood in
+  issue #240). Sealed `leb` mode no longer logs a WARNING for every
+  Uranian/fictitious-body calculation — routing those bodies to their
+  runtime analytical models is by-design source selection, now signalled
+  with a typed dispatch and logged at DEBUG. Upstream also retired the
+  `uranians` LEB companion: the Hamburg bodies (Cupido–Poseidon) and the
+  White Moon are always computed from their analytical models, so their
+  provenance is the invariant `source="Analytical"` /
+  `precision_class="analytical"` instead of flipping to `"LEB"` when a
+  companion file happened to be on disk. Positions move by at most the
+  retired file's fit residual (~1e-9°): every golden fixture — reports,
+  SVG baselines, gallery — passes unchanged, so none were regenerated.
+
+### Documentation
+
+- New FAQ entry: why libephemeris log lines appear, why sealed mode is
+  the normal state, and how to quiet the logger
+  (`logging.getLogger("libephemeris")`). The backend guide no longer
+  tells users to install a uranians companion group; Uranian points and
+  the White Moon need no data files at any tier.
+
 ## 6.0.0a80 - 2026-08-07
 
 ### Changed
