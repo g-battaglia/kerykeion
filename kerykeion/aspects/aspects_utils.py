@@ -8,7 +8,7 @@ import logging
 from kerykeion.ephemeris_backend import ephe as _ephe
 
 difdeg2n = _ephe.difdeg2n
-from typing import Optional, Union, get_args
+from typing import Mapping, Optional, Union, get_args
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.schemas.kr_literals import AspectMovementType, AstrologicalPoint
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
@@ -32,7 +32,7 @@ def get_aspect_from_two_points(
     aspects_settings: list[dict],
     point_one: Union[float, int],
     point_two: Union[float, int],
-    extra_orb: float = 0.0,
+    extra_orb: Union[float, Mapping[str, float]] = 0.0,
 ):
     """
     Utility function to calculate the aspects between two points.
@@ -41,9 +41,12 @@ def get_aspect_from_two_points(
         aspects_settings (list[dict]): List of aspect setting dictionaries.
         point_one (Union[float, int]): First point.
         point_two (Union[float, int]): Second point.
-        extra_orb (float): Additive orb adjustment in degrees applied to every
-            aspect's base orb (e.g. a luminary widening). Defaults to ``0.0``.
-            The effective orb is clamped to ``>= 0.0``.
+        extra_orb (Union[float, Mapping[str, float]]): Additive orb adjustment
+            in degrees. A number applies to every aspect's base orb (e.g. a
+            luminary widening); a mapping of aspect name → adjustment applies
+            per aspect, with missing names getting ``0.0`` (callers resolve
+            any ``"*"`` wildcard *before* building the mapping). Defaults to
+            ``0.0``. The effective orb is clamped to ``>= 0.0``.
 
     Returns:
         dict: Dictionary containing the aspect details. The ``orbit`` field
@@ -56,6 +59,9 @@ def get_aspect_from_two_points(
     # exported as kr:planetsdiff).
     diff = distance
 
+    # Hoisted out of the loop; the scalar path stays exactly as before.
+    extra_orb_is_map = isinstance(extra_orb, Mapping)
+
     # Pick the CLOSEST qualifying aspect, not the first: with user-supplied
     # overlapping orbs the ascending-degree order could label a separation
     # with a wider aspect whose window merely contains it. Ties keep the
@@ -65,7 +71,8 @@ def get_aspect_from_two_points(
     best_deviation: Optional[float] = None
     for aspect in aspects_settings:
         aspect_degree = aspect["degree"]  # type: ignore
-        aspect_orb = max(0.0, aspect["orb"] + extra_orb)  # type: ignore
+        extra = extra_orb.get(aspect["name"], 0.0) if extra_orb_is_map else extra_orb  # type: ignore[union-attr]
+        aspect_orb = max(0.0, aspect["orb"] + extra)  # type: ignore
 
         deviation = abs(distance - aspect_degree)
         if deviation <= aspect_orb and (best_deviation is None or deviation < best_deviation):

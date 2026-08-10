@@ -1154,6 +1154,255 @@ class TestPointOrbAdjustmentsIntegration:
         assert len(with_bonus.aspects) >= len(without.aspects)
 
 
+class TestAspectKeyedOrbAdjustmentResolver:
+    """Unit tests for aspect-keyed table entries ({"Sun": {"*": 1.5, "conjunction": 3.0}})."""
+
+    def test_wildcard_map_equals_scalar(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        scalar = {"Sun": 1.5}
+        mapped = {"Sun": {"*": 1.5}}
+        for aspect_name in ("conjunction", "trine", None):
+            assert resolve_pair_orb_adjustment(
+                "Sun", "Mars", mapped, aspect_name=aspect_name
+            ) == resolve_pair_orb_adjustment("Sun", "Mars", scalar, aspect_name=aspect_name)
+
+    def test_aspect_override_beats_wildcard(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        table = {"Sun": {"*": 1.5, "conjunction": 3.0}}
+        assert resolve_pair_orb_adjustment("Sun", "Mars", table, aspect_name="conjunction") == 3.0
+        assert resolve_pair_orb_adjustment("Sun", "Mars", table, aspect_name="trine") == 1.5
+
+    def test_no_wildcard_means_unconfigured_for_other_aspects(self):
+        """Explicit-only carries over per aspect: no "*" → absent, not 0.0."""
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        table = {"Ascendant": {"conjunction": -3.0}}
+        assert resolve_pair_orb_adjustment("Mars", "Ascendant", table, aspect_name="conjunction") == -3.0
+        # A trine treats the Ascendant as NOT configured (0.0), not as explicit 0.
+        assert resolve_pair_orb_adjustment("Mars", "Ascendant", table, aspect_name="trine") == 0.0
+
+    def test_absence_preserves_other_points_tightening(self):
+        """The reason absent ≠ 0: an unrelated explicit 0 would neutralize a negative."""
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        table = {"Sun": {"conjunction": 1.5}, "Ascendant": -3.0}
+        # conjunction: both explicit → widest of (1.5, -3.0) = 1.5
+        assert resolve_pair_orb_adjustment("Sun", "Ascendant", table, aspect_name="conjunction") == 1.5
+        # trine: Sun unconfigured → only the Ascendant's -3.0 is explicit
+        assert resolve_pair_orb_adjustment("Sun", "Ascendant", table, aspect_name="trine") == -3.0
+
+    def test_legacy_call_without_aspect_name_uses_wildcard_only(self):
+        """Pre-existing callers (no aspect_name) must see overrides as absent."""
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        assert resolve_pair_orb_adjustment("Sun", "Mars", {"Sun": {"*": 1.0, "conjunction": 5.0}}) == 1.0
+        assert resolve_pair_orb_adjustment("Sun", "Mars", {"Sun": {"conjunction": 5.0}}) == 0.0
+
+    def test_empty_inner_map_is_absent(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        assert resolve_pair_orb_adjustment("Sun", "Mars", {"Sun": {}}, aspect_name="conjunction") == 0.0
+
+    def test_strategies_apply_to_per_aspect_resolved_values(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        table = {"Sun": {"conjunction": 1.5}, "Moon": 1.0}
+        assert resolve_pair_orb_adjustment("Sun", "Moon", table, "sum", aspect_name="conjunction") == 2.5
+        assert resolve_pair_orb_adjustment("Sun", "Moon", table, "sum", aspect_name="trine") == 1.0
+        assert resolve_pair_orb_adjustment("Sun", "Moon", table, "min_explicit", aspect_name="conjunction") == 1.0
+        assert resolve_pair_orb_adjustment("Sun", "Moon", table, "none", aspect_name="conjunction") == 0.0
+
+    def test_lookup_point_adjustment_contract(self):
+        from kerykeion.aspects.orb_utils import lookup_point_adjustment
+
+        assert lookup_point_adjustment(None) is None
+        assert lookup_point_adjustment(1.5) == 1.5
+        assert lookup_point_adjustment({"*": 1.5}, "trine") == 1.5
+        assert lookup_point_adjustment({"conjunction": 3.0}, "conjunction") == 3.0
+        assert lookup_point_adjustment({"conjunction": 3.0}, "trine") is None
+        assert lookup_point_adjustment({"conjunction": 3.0}, None) is None
+        assert lookup_point_adjustment({}, "conjunction") is None
+
+    def test_non_finite_resolved_leaf_rejected(self):
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustment
+
+        with pytest.raises(ValueError, match="finite"):
+            resolve_pair_orb_adjustment(
+                "Sun", "Mars", {"Sun": {"conjunction": float("nan")}}, aspect_name="conjunction"
+            )
+
+    def test_validate_accepts_map_form(self):
+        from kerykeion.aspects.orb_utils import validate_point_orb_adjustments
+
+        validate_point_orb_adjustments({"Sun": {"*": 1.5, "conjunction": 3.0}, "Moon": 1.5})
+
+    @pytest.mark.parametrize("leaf", [float("nan"), float("inf"), True, 10**309])
+    def test_validate_rejects_bad_inner_leaf(self, leaf):
+        from kerykeion.aspects.orb_utils import validate_point_orb_adjustments
+
+        with pytest.raises(ValueError, match="finite"):
+            validate_point_orb_adjustments({"Sun": {"conjunction": leaf}})
+
+    def test_validate_rejects_non_string_inner_key(self):
+        from kerykeion.aspects.orb_utils import validate_point_orb_adjustments
+
+        with pytest.raises(ValueError, match="aspect names"):
+            validate_point_orb_adjustments({"Sun": {1: 2.0}})
+
+    def test_validate_warns_on_unknown_aspect_name(self, caplog):
+        """Permissive like active_aspects: a probable typo warns, never raises."""
+        from kerykeion.aspects.orb_utils import validate_point_orb_adjustments
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.orb_utils"):
+            validate_point_orb_adjustments({"Sun": {"conjuction": 1.0}})
+        assert any("unrecognized aspect name" in record.getMessage() for record in caplog.records)
+
+    def test_validate_accepts_wildcard_without_warning(self, caplog):
+        from kerykeion.aspects.orb_utils import validate_point_orb_adjustments
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.orb_utils"):
+            validate_point_orb_adjustments({"Sun": {"*": 1.5}})
+        assert not caplog.records
+
+    def test_has_aspect_keyed_adjustments(self):
+        from kerykeion.aspects.orb_utils import has_aspect_keyed_adjustments
+
+        assert has_aspect_keyed_adjustments({"Sun": {"conjunction": 1.0}})
+        assert has_aspect_keyed_adjustments({"Sun": 1.5, "Moon": {"*": 1.0}})
+        assert not has_aspect_keyed_adjustments({"Sun": 1.5})
+        assert not has_aspect_keyed_adjustments({})
+        assert not has_aspect_keyed_adjustments(None)
+
+
+class TestAspectKeyedExtraOrbInAspectDetection:
+    """get_aspect_from_two_points with a per-aspect extra_orb mapping."""
+
+    SETTINGS = [
+        {"name": "conjunction", "degree": 0, "orb": 6.0},
+        {"name": "trine", "degree": 120, "orb": 6.0},
+    ]
+
+    def test_map_extra_widens_only_named_aspect(self):
+        from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+
+        # 7° separation: outside the 6° base orb, inside 6+1.5.
+        hit = get_aspect_from_two_points(self.SETTINGS, 10.0, 17.0, extra_orb={"conjunction": 1.5})
+        assert hit["verdict"] is True and hit["name"] == "conjunction"
+        miss = get_aspect_from_two_points(self.SETTINGS, 10.0, 17.0, extra_orb={"trine": 1.5})
+        assert miss["verdict"] is False
+
+    def test_missing_name_in_map_defaults_to_zero(self):
+        from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+
+        # 127° separation: a trine at 7° deviation needs the extra; an empty
+        # map must behave exactly like extra_orb=0.0.
+        assert get_aspect_from_two_points(self.SETTINGS, 0.0, 127.0, extra_orb={})["verdict"] is False
+        assert get_aspect_from_two_points(self.SETTINGS, 0.0, 127.0, extra_orb={"trine": 1.5})["verdict"] is True
+
+    def test_scalar_path_unchanged(self):
+        from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+
+        scalar = get_aspect_from_two_points(self.SETTINGS, 10.0, 17.0, extra_orb=1.5)
+        mapped = get_aspect_from_two_points(
+            self.SETTINGS, 10.0, 17.0, extra_orb={"conjunction": 1.5, "trine": 1.5}
+        )
+        assert scalar == mapped
+
+
+class TestAspectKeyedOrbAdjustmentsIntegration:
+    """Aspect-keyed adjustments threaded through the factories end to end."""
+
+    @pytest.fixture()
+    def _subject(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Orb Matrix Test", 1990, 6, 15, 12, 0,
+            lat=41.9, lng=12.5, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+
+    @pytest.fixture()
+    def _subject2(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Orb Matrix Other", 1985, 2, 3, 6, 30,
+            lat=48.85, lng=2.35, tz_str="Europe/Paris",
+            online=False, suppress_geonames_warning=True,
+        )
+
+    @staticmethod
+    def _is_sun_conjunction(aspect):
+        return aspect.aspect == "conjunction" and "Sun" in (aspect.p1_name, aspect.p2_name)
+
+    def test_wildcard_map_table_matches_scalar_table(self, _subject):
+        """{"Sun": 1.5} and {"Sun": {"*": 1.5}} must produce identical aspects."""
+        scalar = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={"Sun": 1.5, "Moon": 1.5}
+        ).aspects
+        mapped = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={"Sun": {"*": 1.5}, "Moon": {"*": 1.5}}
+        ).aspects
+        assert mapped == scalar
+
+    def test_tightening_one_aspect_leaves_every_other_aspect_untouched(self, _subject):
+        base = AspectsFactory.single_chart_aspects(_subject).aspects
+        result = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={"Sun": {"conjunction": -100.0}}
+        ).aspects
+        assert not any(self._is_sun_conjunction(a) for a in result)
+        expected = [a for a in base if not self._is_sun_conjunction(a)]
+        assert result == expected
+
+    def test_widening_one_aspect_leaves_every_other_aspect_untouched(self, _subject):
+        base = AspectsFactory.single_chart_aspects(_subject).aspects
+        result = AspectsFactory.single_chart_aspects(
+            _subject, point_orb_adjustments={"Sun": {"conjunction": 3.0}}
+        ).aspects
+        assert [a for a in result if not self._is_sun_conjunction(a)] == [
+            a for a in base if not self._is_sun_conjunction(a)
+        ]
+        assert sum(self._is_sun_conjunction(a) for a in result) >= sum(
+            self._is_sun_conjunction(a) for a in base
+        )
+
+    def test_dual_chart_tightening_one_aspect(self, _subject, _subject2):
+        base = AspectsFactory.dual_chart_aspects(_subject, _subject2).aspects
+        result = AspectsFactory.dual_chart_aspects(
+            _subject, _subject2, point_orb_adjustments={"Sun": {"conjunction": -100.0}}
+        ).aspects
+        assert not any(self._is_sun_conjunction(a) for a in result)
+        expected = [a for a in base if not self._is_sun_conjunction(a)]
+        assert result == expected
+
+    def test_factory_validates_map_leaves_up_front(self, _subject):
+        with pytest.raises(ValueError, match="finite"):
+            AspectsFactory.single_chart_aspects(
+                _subject, point_orb_adjustments={"Sun": {"conjunction": float("nan")}}
+            )
+
+    def test_secondary_progressions_accept_map_form(self, _subject):
+        from kerykeion.secondary_progressions import SecondaryProgressionFactory
+
+        scalar = SecondaryProgressionFactory.compute_full(
+            _subject, target_year=2020, point_orb_adjustments={"Sun": 1.0}
+        ).progressed_to_natal_aspects
+        mapped = SecondaryProgressionFactory.compute_full(
+            _subject, target_year=2020, point_orb_adjustments={"Sun": {"*": 1.0}}
+        ).progressed_to_natal_aspects
+        assert mapped == scalar
+
+    def test_solar_arc_accepts_map_form(self, _subject):
+        from kerykeion.secondary_progressions import SolarArcFactory
+
+        scalar = SolarArcFactory.compute(
+            _subject, target_year=2020, point_orb_adjustments={"Sun": 1.0}
+        ).directed_to_natal_aspects
+        mapped = SolarArcFactory.compute(
+            _subject, target_year=2020, point_orb_adjustments={"Sun": {"*": 1.0}}
+        ).directed_to_natal_aspects
+        assert mapped == scalar
+
+
 # =============================================================================
 # Regression tests — geometric opposite pairs, fixed stars, unknown aspects
 # =============================================================================
