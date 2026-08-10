@@ -35,6 +35,7 @@ from kerykeion.aspects.orb_utils import (
     has_aspect_keyed_adjustments,
     resolve_pair_orb_adjustment,
     resolve_pair_orb_adjustments_for_aspects,
+    validate_point_orb_adjustments,
 )
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES
@@ -168,6 +169,12 @@ class SolarArcFactory:
             A :class:`SolarArcSubjectModel` describing the arc and every
             directed point + directed-to-natal aspect found.
         """
+        # Validate the WHOLE table up front, like the AspectsFactory entry
+        # points do: the per-pair resolver only ever validates the leaves it
+        # resolves, so a typo'd aspect key or a non-finite leaf outside the
+        # selected aspects would otherwise be silently ignored.
+        validate_point_orb_adjustments(point_orb_adjustments)
+
         if natal_subject.sun is None:
             raise KerykeionException("Natal subject is missing the Sun — cannot compute solar arc.")
         if (target_iso_utc_datetime is None) == (target_year is None):
@@ -229,8 +236,18 @@ class SolarArcFactory:
                             aspect_names,
                         )
                         # The tautological hit below IS a conjunction, so the
-                        # guard is sized to the conjunction's own extra.
-                        conjunction_extra = extra_orb.get("conjunction", 0.0)
+                        # guard is sized to the conjunction's own extra —
+                        # resolved directly, NOT read from the per-aspect map:
+                        # that map only covers the aspects the caller enabled,
+                        # and a filtered-out conjunction would silently read as
+                        # 0.0, breaking the number ≡ {"*": number} equivalence.
+                        conjunction_extra = resolve_pair_orb_adjustment(
+                            d.name,
+                            natal_name,
+                            point_orb_adjustments,
+                            point_orb_adjustment_strategy,
+                            aspect_name="conjunction",
+                        )
                     else:
                         extra_orb = resolve_pair_orb_adjustment(
                             d.name,
@@ -243,9 +260,13 @@ class SolarArcFactory:
                     # with its own natal position) using the SAME effective orb
                     # the detection below uses — otherwise a per-pair widening
                     # (extra_orb) lets the self-conjunction slip past a guard
-                    # sized only to the base orb.
+                    # sized only to the base orb. Clamp the SUM, like detection
+                    # does: clamping only the delta would keep the guard at the
+                    # base orb when a negative conjunction delta has already
+                    # closed the conjunction window, discarding same-name
+                    # contacts another aspect could still legitimately make.
                     if natal_name == d.name and _is_near_zero_arc(
-                        solar_arc, aspect_orb + max(0.0, conjunction_extra)
+                        solar_arc, max(0.0, aspect_orb + conjunction_extra)
                     ):
                         continue
                     outcome = get_aspect_from_two_points(

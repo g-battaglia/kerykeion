@@ -11,6 +11,7 @@ Uses session-scoped conftest fixtures: johnny_depp, john_lennon, yoko_ono, paul_
 """
 
 import logging
+from typing import ClassVar
 
 import pytest
 from pytest import approx
@@ -1279,7 +1280,7 @@ class TestAspectKeyedOrbAdjustmentResolver:
 class TestAspectKeyedExtraOrbInAspectDetection:
     """get_aspect_from_two_points with a per-aspect extra_orb mapping."""
 
-    SETTINGS = [
+    SETTINGS: ClassVar[list[dict]] = [
         {"name": "conjunction", "degree": 0, "orb": 6.0},
         {"name": "trine", "degree": 120, "orb": 6.0},
     ]
@@ -1401,6 +1402,84 @@ class TestAspectKeyedOrbAdjustmentsIntegration:
             _subject, target_year=2020, point_orb_adjustments={"Sun": {"*": 1.0}}
         ).directed_to_natal_aspects
         assert mapped == scalar
+
+    def test_strategy_validated_even_with_no_aspects_in_play(self):
+        """An empty aspect_names must not swallow a misspelled strategy."""
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustments_for_aspects
+
+        with pytest.raises(ValueError, match="Unknown orb adjustment strategy"):
+            resolve_pair_orb_adjustments_for_aspects(
+                "Sun", "Mars", {"Sun": {"conjunction": 1.0}}, "bogus", []  # type: ignore[arg-type]
+            )
+
+    def test_predictive_factories_validate_table_up_front(self, _subject):
+        """A non-finite leaf must raise even when its aspect is not selected."""
+        from kerykeion.secondary_progressions import SecondaryProgressionFactory, SolarArcFactory
+
+        bad_table = {"Sun": {"conjunction": float("nan")}}
+        with pytest.raises(ValueError, match="finite"):
+            SecondaryProgressionFactory.compute_full(
+                _subject, target_year=2020, aspects=["trine"], point_orb_adjustments=bad_table
+            )
+        with pytest.raises(ValueError, match="finite"):
+            SolarArcFactory.compute(
+                _subject, target_year=2020, aspects=["trine"], point_orb_adjustments=bad_table
+            )
+
+    def test_predictive_factories_warn_on_typo_aspect_key(self, _subject, caplog):
+        """The unknown-aspect-name warning must fire from the predictive entry points too."""
+        from kerykeion.secondary_progressions import SecondaryProgressionFactory, SolarArcFactory
+
+        typo_table = {"Sun": {"conjuction": 1.0}}
+        for factory_call in (
+            lambda: SecondaryProgressionFactory.compute_full(
+                _subject, target_year=2020, point_orb_adjustments=typo_table
+            ),
+            lambda: SolarArcFactory.compute(
+                _subject, target_year=2020, point_orb_adjustments=typo_table
+            ),
+        ):
+            caplog.clear()
+            with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.orb_utils"):
+                factory_call()
+            assert any("unrecognized aspect name" in record.getMessage() for record in caplog.records)
+
+    def test_solar_arc_guard_equivalence_when_conjunction_not_selected(self, _subject):
+        """number ≡ {"*": number} must hold in the self-conjunction guard even
+        when the aspect filter excludes the conjunction (the guard's delta is
+        resolved directly, not read from the filtered per-aspect map)."""
+        from kerykeion.secondary_progressions import SolarArcFactory
+
+        # ~5 years after birth → solar arc ≈ 5°: inside the scalar guard
+        # (3 + 27), outside the base orb alone. The huge widening makes the
+        # semi-sextile window (3 + 27 = 30) reach the same-name pair.
+        scalar = SolarArcFactory.compute(
+            _subject, target_year=1995, aspects=["semi-sextile"],
+            point_orb_adjustments={"Sun": 27.0},
+        ).directed_to_natal_aspects
+        mapped = SolarArcFactory.compute(
+            _subject, target_year=1995, aspects=["semi-sextile"],
+            point_orb_adjustments={"Sun": {"*": 27.0}},
+        ).directed_to_natal_aspects
+        assert mapped == scalar
+
+    def test_solar_arc_guard_tightens_with_negative_conjunction_delta(self, _subject):
+        """The guard clamps the SUM like detection: with the conjunction window
+        closed by a negative delta, a same-name contact another aspect can
+        still make must survive the guard."""
+        from kerykeion.secondary_progressions import SolarArcFactory
+
+        # Target ~6 months after birth → solar arc ≈ 0.5°. The conjunction
+        # window is max(0, 3 - 100) = 0, so the guard must not skip; the
+        # widened semi-sextile (3 + 27 = 30) then reaches |0.5 - 30| ≈ 29.5.
+        result = SolarArcFactory.compute(
+            _subject, target_year=1991, aspects=["conjunction", "semi-sextile"],
+            point_orb_adjustments={"Sun": {"conjunction": -100.0, "semi-sextile": 27.0}},
+        ).directed_to_natal_aspects
+        assert any(
+            a.directed_point == "Sun" and a.natal_point == "Sun" and a.aspect == "semi-sextile"
+            for a in result
+        )
 
 
 # =============================================================================

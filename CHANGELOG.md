@@ -16,7 +16,10 @@
   Supported end to end: `AspectsFactory` (single and dual charts),
   `ChartDataFactory`, `SecondaryProgressionFactory.compute_full` and
   `SolarArcFactory.compute` (whose self-conjunction guard now sizes itself to
-  the conjunction's own delta). The combination strategies
+  the conjunction's own delta — resolved independently of the aspect filter,
+  with the whole sum clamped at zero exactly like detection). Both predictive
+  entry points now validate the full adjustment table up front, like the
+  `AspectsFactory` entry points always did. The combination strategies
   (`max_explicit`/`min_explicit`/`sum`/`none`) operate on the per-aspect
   resolved values. New helpers in `kerykeion.aspects.orb_utils`:
   `lookup_point_adjustment`, `has_aspect_keyed_adjustments`,

@@ -36,6 +36,7 @@ from kerykeion.aspects.orb_utils import (
     has_aspect_keyed_adjustments,
     resolve_pair_orb_adjustment,
     resolve_pair_orb_adjustments_for_aspects,
+    validate_point_orb_adjustments,
 )
 from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
@@ -488,6 +489,12 @@ class SecondaryProgressionFactory:
             A :class:`SecondaryProgressionsResultModel` with the progressed subject
             and (optionally) the cross-aspect contacts.
         """
+        # Validate the WHOLE table up front, like the AspectsFactory entry
+        # points do: the per-pair resolver only ever validates the leaves it
+        # resolves, so a typo'd aspect key or a non-finite leaf outside the
+        # selected aspects would otherwise be silently ignored.
+        validate_point_orb_adjustments(point_orb_adjustments)
+
         progressed = SecondaryProgressionFactory.compute(
             natal_subject,
             target_iso_utc_datetime=target_iso_utc_datetime,

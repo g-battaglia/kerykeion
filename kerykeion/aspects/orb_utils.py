@@ -174,6 +174,17 @@ def has_aspect_keyed_adjustments(
     )
 
 
+def _validate_strategy(strategy: OrbAdjustmentStrategy) -> None:
+    """Fail fast on a misspelled strategy rather than silently returning 0.0,
+    which would quietly disable the orb adjustment and yield wrong aspects.
+    """
+    if strategy not in ("max_explicit", "min_explicit", "sum", "none"):
+        raise ValueError(
+            f"Unknown orb adjustment strategy: {strategy!r}. "
+            "Expected one of: 'max_explicit', 'min_explicit', 'sum', 'none'."
+        )
+
+
 def resolve_pair_orb_adjustments_for_aspects(
     first_name: str,
     second_name: str,
@@ -188,6 +199,10 @@ def resolve_pair_orb_adjustments_for_aspects(
     fed directly to ``get_aspect_from_two_points`` as a per-aspect
     ``extra_orb``.
     """
+    # Validated even when aspect_names is empty (the comprehension would then
+    # never reach the per-pair resolver's own check) — a typo must raise here
+    # exactly as it does on the scalar path.
+    _validate_strategy(strategy)
     return {
         aspect_name: resolve_pair_orb_adjustment(
             first_name,
@@ -231,15 +246,9 @@ def resolve_pair_orb_adjustment(
         ValueError: If ``strategy`` is not a recognised
             :data:`OrbAdjustmentStrategy` value.
     """
-    # Fail fast on a misspelled strategy rather than silently returning 0.0,
-    # which would quietly disable the orb adjustment and yield wrong aspects.
     # Validated *before* any early return so the error surfaces even when the
     # table is empty or the pair is unconfigured.
-    if strategy not in ("max_explicit", "min_explicit", "sum", "none"):
-        raise ValueError(
-            f"Unknown orb adjustment strategy: {strategy!r}. "
-            "Expected one of: 'max_explicit', 'min_explicit', 'sum', 'none'."
-        )
+    _validate_strategy(strategy)
 
     if not point_orb_adjustments or strategy == "none":
         return 0.0
