@@ -323,6 +323,28 @@ def _extract_percentages(text: str, section: str) -> List[float]:
     return pcts
 
 
+def _celestial_points_section(text: str) -> str:
+    """The Celestial Points table only, sliced out of a full report.
+
+    Which points a preset TABULATES is a statement about that table, not about
+    the whole document: the angles keep their names in the Angularities
+    section (a planet on the Descendant is a fact of the chart even when the
+    Descendant is not among the drawn points), and asserting over the full
+    text would conflate the two.
+    """
+    lines = text.splitlines()
+    start = next((i for i, line in enumerate(lines) if "Celestial Points" in line), None)
+    if start is None:
+        return ""
+    section: List[str] = []
+    for line in lines[start:]:
+        # Tables are separated by a blank line; the first one ends the section.
+        if not line.strip() and section:
+            break
+        section.append(line)
+    return "\n".join(section)
+
+
 # =====================================================================
 # 1. TestSubjectReport
 # =====================================================================
@@ -1803,11 +1825,14 @@ class TestActivePointsContentValidation:
         )
         chart = ChartDataFactory.create_natal_chart_data(subject)
         text = ReportGenerator(chart).generate_report()
+        points_table = _celestial_points_section(text)
 
         for name in present_names:
             assert name in text, f"{name!r} should appear with {len(active_points)}-point preset"
         for name in absent_names:
-            assert name not in text, f"{name!r} should NOT appear with {len(active_points)}-point preset"
+            assert name not in points_table, (
+                f"{name!r} should NOT be tabulated with the {len(active_points)}-point preset"
+            )
 
     @pytest.mark.parametrize(
         "active_points,expected_min,present_names,absent_names",
@@ -1841,9 +1866,9 @@ class TestActivePointsContentValidation:
     def test_traditional_points_has_fewer_celestial_rows(self) -> None:
         subject = _snapshot_subject(active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS)
         chart = ChartDataFactory.create_natal_chart_data(subject)
-        text = ReportGenerator(chart).generate_report()
+        points_table = _celestial_points_section(ReportGenerator(chart).generate_report())
         for absent in ("Ceres", "Chiron", "Eris", "Ascendant", "Medium Coeli"):
-            assert absent not in text, f"{absent!r} should not appear in traditional report"
+            assert absent not in points_table, f"{absent!r} should not be tabulated in a traditional report"
 
     def test_all_points_has_extra_bodies(self) -> None:
         subject = _snapshot_subject(active_points=ALL_ACTIVE_POINTS)

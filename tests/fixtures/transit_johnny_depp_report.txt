@@ -54,43 +54,43 @@ Johnny Depp — Transit 1940-10-09
 | Active Points Count | 14                  |
 +---------------------+---------------------+
 
-+Natal Subject Celestial Points--+----------+--------------+---------+------+----------------+
-| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House          |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
-| Ascendant             | Aqu ♒ | 20.70°   | +507.7877°/d | N/A     | -    | First House    |
-| Medium Coeli          | Sag ♐ | 6.59°    | +341.0208°/d | N/A     | -    | Tenth House    |
-| Sun                   | Gem ♊ | 17.66°   | +0.9560°/d   | +22.87° | -    | Fourth House   |
-| Moon                  | Cap ♑ | 8.74°    | +12.4796°/d  | -22.08° | -    | Eleventh House |
-| Mercury               | Tau ♉ | 25.00°   | +0.6817°/d   | +15.27° | -    | Third House    |
-| Venus                 | Tau ♉ | 25.60°   | +1.2129°/d   | +17.95° | -    | Third House    |
-| Mars                  | Vir ♍ | 3.01°    | +0.5146°/d   | +11.55° | -    | Seventh House  |
-| Jupiter               | Ari ♈ | 13.91°   | +0.1660°/d   | +4.37°  | -    | Second House   |
-| Saturn                | Aqu ♒ | 23.08°   | -0.0094°/d   | -14.84° | R    | First House    |
-| Uranus                | Vir ♍ | 1.57°    | +0.0268°/d   | +11.62° | -    | Seventh House  |
-| Neptune               | Sco ♏ | 13.42°   | -0.0213°/d   | -14.13° | R    | Ninth House    |
-| Pluto                 | Vir ♍ | 9.63°    | +0.0095°/d   | +20.46° | -    | Seventh House  |
-| True North Lunar Node | Can ♋ | 20.64°   | -0.0232°/d   | +21.86° | R    | Fifth House    |
-| Chiron                | Pis ♓ | 14.87°   | +0.0086°/d   | -1.23°  | -    | First House    |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
++Natal Subject Celestial Points--+----------+--------------+------------+---------+------+----------------+
+| Point                 | Sign   | Position | Speed        | Motion     | Decl.   | Ret. | House          |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
+| Ascendant             | Aqu ♒ | 20.70°   | +507.7877°/d | -          | N/A     | -    | First House    |
+| Medium Coeli          | Sag ♐ | 6.59°    | +341.0208°/d | -          | N/A     | -    | Tenth House    |
+| Sun                   | Gem ♊ | 17.66°   | +0.9560°/d   | Average    | +22.87° | -    | Fourth House   |
+| Moon                  | Cap ♑ | 8.74°    | +12.4796°/d  | Average    | -22.08° | -    | Eleventh House |
+| Mercury               | Tau ♉ | 25.00°   | +0.6817°/d   | Slow       | +15.27° | -    | Third House    |
+| Venus                 | Tau ♉ | 25.60°   | +1.2129°/d   | Average    | +17.95° | -    | Third House    |
+| Mars                  | Vir ♍ | 3.01°    | +0.5146°/d   | Average    | +11.55° | -    | Seventh House  |
+| Jupiter               | Ari ♈ | 13.91°   | +0.1660°/d   | Fast       | +4.37°  | -    | Second House   |
+| Saturn                | Aqu ♒ | 23.08°   | -0.0094°/d   | Retrograde | -14.84° | R    | First House    |
+| Uranus                | Vir ♍ | 1.57°    | +0.0268°/d   | Fast       | +11.62° | -    | Seventh House  |
+| Neptune               | Sco ♏ | 13.42°   | -0.0213°/d   | Retrograde | -14.13° | R    | Ninth House    |
+| Pluto                 | Vir ♍ | 9.63°    | +0.0095°/d   | Fast       | +20.46° | -    | Seventh House  |
+| True North Lunar Node | Can ♋ | 20.64°   | -0.0232°/d   | -          | +21.86° | R    | Fifth House    |
+| Chiron                | Pis ♓ | 14.87°   | +0.0086°/d   | -          | -1.23°  | -    | First House    |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
 
-+Transit Subject Celestial Points+----------+--------------+---------+------+----------------+
-| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House          |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
-| Ascendant             | Ari ♈ | 19.71°   | +886.9442°/d | N/A     | -    | First House    |
-| Medium Coeli          | Cap ♑ | 7.06°    | +332.1251°/d | N/A     | -    | Tenth House    |
-| Sun                   | Lib ♎ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
-| Moon                  | Aqu ♒ | 3.55°    | +12.5291°/d  | -14.60° | -    | Eleventh House |
-| Mercury               | Sco ♏ | 8.56°    | +1.3195°/d   | -16.23° | -    | Seventh House  |
-| Venus                 | Vir ♍ | 3.22°    | +1.1337°/d   | +10.57° | -    | Sixth House    |
-| Mars                  | Lib ♎ | 2.66°    | +0.6449°/d   | -0.18°  | -    | Sixth House    |
-| Jupiter               | Tau ♉ | 13.69°   | -0.1069°/d   | +14.61° | R    | First House    |
-| Saturn                | Tau ♉ | 13.22°   | -0.0669°/d   | +13.30° | R    | First House    |
-| Uranus                | Tau ♉ | 25.55°   | -0.0294°/d   | +18.88° | R    | First House    |
-| Neptune               | Vir ♍ | 26.03°   | +0.0353°/d   | +2.68°  | -    | Sixth House    |
-| Pluto                 | Leo ♌ | 4.19°    | +0.0114°/d   | +23.12° | -    | Fifth House    |
-| True North Lunar Node | Lib ♎ | 11.02°   | +0.0059°/d   | -4.36°  | -    | Sixth House    |
-| Chiron                | Leo ♌ | 0.57°    | +0.0529°/d   | +13.41° | -    | Fifth House    |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
++Transit Subject Celestial Points+----------+--------------+------------+---------+------+----------------+
+| Point                 | Sign   | Position | Speed        | Motion     | Decl.   | Ret. | House          |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
+| Ascendant             | Ari ♈ | 19.71°   | +886.9442°/d | -          | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑ | 7.06°    | +332.1251°/d | -          | N/A     | -    | Tenth House    |
+| Sun                   | Lib ♎ | 16.27°   | +0.9885°/d   | Average    | -6.40°  | -    | Sixth House    |
+| Moon                  | Aqu ♒ | 3.55°    | +12.5291°/d  | Average    | -14.60° | -    | Eleventh House |
+| Mercury               | Sco ♏ | 8.56°    | +1.3195°/d   | Average    | -16.23° | -    | Seventh House  |
+| Venus                 | Vir ♍ | 3.22°    | +1.1337°/d   | Average    | +10.57° | -    | Sixth House    |
+| Mars                  | Lib ♎ | 2.66°    | +0.6449°/d   | Fast       | -0.18°  | -    | Sixth House    |
+| Jupiter               | Tau ♉ | 13.69°   | -0.1069°/d   | Retrograde | +14.61° | R    | First House    |
+| Saturn                | Tau ♉ | 13.22°   | -0.0669°/d   | Retrograde | +13.30° | R    | First House    |
+| Uranus                | Tau ♉ | 25.55°   | -0.0294°/d   | Retrograde | +18.88° | R    | First House    |
+| Neptune               | Vir ♍ | 26.03°   | +0.0353°/d   | Fast       | +2.68°  | -    | Sixth House    |
+| Pluto                 | Leo ♌ | 4.19°    | +0.0114°/d   | Fast       | +23.12° | -    | Fifth House    |
+| True North Lunar Node | Lib ♎ | 11.02°   | +0.0059°/d   | -          | -4.36°  | -    | Sixth House    |
+| Chiron                | Leo ♌ | 0.57°    | +0.0529°/d   | -          | +13.41° | -    | Fifth House    |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
 
 +Natal Subject Houses (Placidus)-----+-------------------+
 | House          | Sign   | Position | Absolute Position |
@@ -152,6 +152,24 @@ Johnny Depp — Transit 1940-10-09
 | Mutable  | 6.6   | 40%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
+
++Natal Subject Angularities-----+
+| Point  | Angle     | Distance |
++--------+-----------+----------+
+| Saturn | Ascendant | 2.39°    |
++--------+-----------+----------+
+
++Transit Subject Angularities---+
+| Point | Angle      | Distance |
++-------+------------+----------+
+| Sun   | Descendant | 3.44°    |
++-------+------------+----------+
+
++Transit Subject Stelliums---------+
+| House | Count | Points           |
++-------+-------+------------------+
+| 6     | 3     | Sun, Venus, Mars |
++-------+-------+------------------+
 
 +Johnny Depp points in John Lennon houses-------------------+---------------------+------+--------+
 | Point                               | Owner House         | Projected House     | Sign | Degree |

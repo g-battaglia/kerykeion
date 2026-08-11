@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Optional, Sequence, Union, Literal
+from typing import Mapping, Optional, Sequence, Union, Literal
 
 from simple_ascii_tables import AsciiTable
+
+from kerykeion.fixed_stars.catalog import FixedStarCatalog
 
 from kerykeion.utilities import (
     get_available_astrological_points_list,
@@ -15,6 +17,7 @@ from kerykeion.utilities import (
     strip_illegal_control_chars,
 )
 from kerykeion.schemas.kr_models import (
+    AngularityModel,
     AstrologicalSubjectModel,
     ChartDataModel,
     CompositeSubjectModel,
@@ -24,6 +27,7 @@ from kerykeion.schemas.kr_models import (
     PointInHouseModel,
     RelationshipScoreModel,
     SingleChartDataModel,
+    StelliumModel,
     KerykeionPointModel,
 )
 from kerykeion.settings.config_constants import (
@@ -270,6 +274,8 @@ class ReportGenerator:
             moon_data.append(["Illumination", moon.illumination])
         if moon.age_days is not None:
             moon_data.append(["Age (days)", str(moon.age_days)])
+        if moon.age_days_precise is not None:
+            moon_data.append(["Age (exact days)", f"{moon.age_days_precise:.4f}"])
         if moon.lunar_cycle is not None:
             moon_data.append(["Lunar Cycle", moon.lunar_cycle])
         if moon.zodiac is not None:
@@ -366,8 +372,9 @@ class ReportGenerator:
         return sections
 
     def _build_single_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> list[str]:
-        assert self._chart_data is not None
+        assert isinstance(self._chart_data, SingleChartDataModel)
         assert self._primary_subject is not None
+        chart_data = self._chart_data
         sections: list[str] = [
             self._subject_data_report(self._primary_subject, self._primary_subject_label()),
         ]
@@ -397,6 +404,8 @@ class ReportGenerator:
                 self._lunar_phase_report(self._primary_subject),
                 self._elements_report(),
                 self._qualities_report(),
+                self._angularities_report(chart_data.angularities, "Angularities"),
+                self._stelliums_report(chart_data.stelliums, "Stelliums"),
                 self._active_configuration_report(),
             ]
         )
@@ -407,8 +416,9 @@ class ReportGenerator:
         return sections
 
     def _build_dual_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> list[str]:
-        assert self._chart_data is not None
+        assert isinstance(self._chart_data, DualChartDataModel)
         assert self._primary_subject is not None
+        chart_data = self._chart_data
         primary_label, secondary_label = self._subject_role_labels()
 
         sections: list[str] = [
@@ -443,6 +453,16 @@ class ReportGenerator:
                 self._lunar_phase_report(self._primary_subject),
                 self._elements_report(),
                 self._qualities_report(),
+                # Per subject, and labelled with the same role names the
+                # Celestial Points and Houses tables above already use.
+                self._angularities_report(
+                    chart_data.first_subject_angularities, f"{primary_label} Angularities"
+                ),
+                self._stelliums_report(chart_data.first_subject_stelliums, f"{primary_label} Stelliums"),
+                self._angularities_report(
+                    chart_data.second_subject_angularities, f"{secondary_label} Angularities"
+                ),
+                self._stelliums_report(chart_data.second_subject_stelliums, f"{secondary_label} Stelliums"),
                 self._house_comparison_report(),
                 self._relationship_score_report(),
                 self._active_configuration_report(),
@@ -627,31 +647,61 @@ class ReportGenerator:
 
         return self._points_table(sorted_points, title)
 
-    def _points_table(self, points: Sequence[KerykeionPointModel], title: str) -> str:
-        # Show a magnitude column only when at least one point carries a magnitude
-        # (fixed stars). Planet/midpoint tables keep their original 7-column layout.
+    def _points_table(
+        self,
+        points: Sequence[KerykeionPointModel],
+        title: str,
+        *,
+        constellations: Optional[Mapping[str, str]] = None,
+    ) -> str:
+        """Render a table of points, widening only for data that is present.
+
+        Every optional column follows the rule the magnitude column has always
+        followed: it appears only when at least one row can fill it. A chart
+        that computes none of them keeps the original seven-column layout, so
+        adding columns here cannot reshape reports that have no such data.
+        """
         show_mag = any(getattr(point, "magnitude", None) is not None for point in points)
-        header = ["Point", "Sign", "Position", "Speed", "Decl.", "Ret.", "House"]
+        show_motion = any(getattr(point, "motion_state", None) is not None for point in points)
+        # Only when a point IS out of bounds: a column of "-" states nothing the
+        # reader did not already know, and out-of-bounds is the exception.
+        show_oob = any(getattr(point, "is_out_of_bounds", None) for point in points)
+        show_constellation = bool(constellations)
+
+        header: list[str] = ["Point"]
+        if show_constellation:
+            header.append("Constellation")
+        header.extend(["Sign", "Position"])
         if show_mag:
-            header.insert(3, "Mag.")
+            header.append("Mag.")
+        header.append("Speed")
+        if show_motion:
+            header.append("Motion")
+        header.append("Decl.")
+        if show_oob:
+            header.append("OOB")
+        header.extend(["Ret.", "House"])
+
         celestial_data: list[list[str]] = [header]
         for point in points:
-            speed_str = f"{point.speed:+.4f}°/d" if point.speed is not None else "N/A"
-            decl_str = f"{point.declination:+.2f}°" if point.declination is not None else "N/A"
-            ret_str = "R" if point.retrograde else "-"
-            house_str = _humanize(point.house) if point.house else "-"
-            row = [
-                _humanize(point.name),
-                f"{point.sign} {_sign_emoji(point.emoji)}",
-                f"{format_degrees_below_bound(point.position, 30.0)}°",
-                speed_str,
-                decl_str,
-                ret_str,
-                house_str,
-            ]
+            name = str(point.name)
+            row: list[str] = [_humanize(name)]
+            if show_constellation:
+                row.append((constellations or {}).get(name, "-"))
+            row.append(f"{point.sign} {_sign_emoji(point.emoji)}")
+            row.append(f"{format_degrees_below_bound(point.position, 30.0)}°")
             if show_mag:
                 mag = getattr(point, "magnitude", None)
-                row.insert(3, f"{mag:+.2f}" if mag is not None else "N/A")
+                row.append(f"{mag:+.2f}" if mag is not None else "N/A")
+            row.append(f"{point.speed:+.4f}°/d" if point.speed is not None else "N/A")
+            if show_motion:
+                motion = getattr(point, "motion_state", None)
+                row.append(str(motion).capitalize() if motion else "-")
+            row.append(f"{point.declination:+.2f}°" if point.declination is not None else "N/A")
+            if show_oob:
+                row.append("Y" if getattr(point, "is_out_of_bounds", None) else "-")
+            row.append("R" if point.retrograde else "-")
+            row.append(_humanize(point.house) if point.house else "-")
             celestial_data.append(row)
 
         return AsciiTable(celestial_data, title=title).table
@@ -661,7 +711,14 @@ class ReportGenerator:
         stars = list(getattr(subject, "fixed_stars", None) or [])
         if not stars:
             return ""
-        return self._points_table(stars, title)
+        # The constellation is catalog metadata, not a field of the point model:
+        # look it up per star so the table can name the sky region it belongs to.
+        constellations: dict[str, str] = {}
+        for star in stars:
+            metadata = FixedStarCatalog.find(str(star.name))
+            if metadata is not None and metadata.constellation:
+                constellations[str(star.name)] = metadata.constellation
+        return self._points_table(stars, title, constellations=constellations)
 
     def _midpoints_report(self, subject: SubjectLike, title: str) -> str:
         """Render the v6 ``subject.active_midpoints`` array; empty string when none are active."""
@@ -762,6 +819,40 @@ class ReportGenerator:
             ["Total", total, "100%"],
         ]
         return AsciiTable(quality_data, title="Quality Distribution").table
+
+    @staticmethod
+    def _angularities_report(angularities: Sequence[AngularityModel], title: str) -> str:
+        """Planets standing on an angle. Empty string when the chart has none."""
+        if not angularities:
+            return ""
+
+        angularity_data: list[list[str]] = [["Point", "Angle", "Distance"]]
+        for item in angularities:
+            angularity_data.append(
+                [
+                    _humanize(item.point),
+                    _humanize(item.angle),
+                    f"{item.distance:.2f}°",
+                ]
+            )
+        return AsciiTable(angularity_data, title=title).table
+
+    @staticmethod
+    def _stelliums_report(stelliums: Sequence[StelliumModel], title: str) -> str:
+        """Houses holding a cluster of planets. Empty string when the chart has none."""
+        if not stelliums:
+            return ""
+
+        stellium_data: list[list[str]] = [["House", "Count", "Points"]]
+        for item in stelliums:
+            stellium_data.append(
+                [
+                    str(item.house),
+                    str(len(item.points)),
+                    ", ".join(_humanize(point) for point in item.points),
+                ]
+            )
+        return AsciiTable(stellium_data, title=title).table
 
     def _active_configuration_report(self) -> str:
         if not self._active_points and not self._active_aspects:

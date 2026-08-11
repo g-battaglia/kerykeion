@@ -172,6 +172,13 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Total    | 35.400000000000006 | 100%       |
 +----------+--------------------+------------+
 
++Angularities---------+----------+
+| Point  | Angle      | Distance |
++--------+------------+----------+
+| Venus  | Descendant | 0.63°    |
+| Saturn | Imum Coeli | 1.02°    |
++--------+------------+----------+
+
 +Active Celestial Points-----+
 | #  | Active Point          |
 +----+-----------------------+

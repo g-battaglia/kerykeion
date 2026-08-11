@@ -28,24 +28,24 @@ John Lennon — Natal Chart Report
 | Active Points Count | 14                  |
 +---------------------+---------------------+
 
-+Natal Celestial Points-+--------+----------+--------------+---------+------+----------------+
-| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House          |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
-| Ascendant             | Ari ♈ | 19.71°   | +886.9442°/d | N/A     | -    | First House    |
-| Medium Coeli          | Cap ♑ | 7.06°    | +332.1251°/d | N/A     | -    | Tenth House    |
-| Sun                   | Lib ♎ | 16.27°   | +0.9885°/d   | -6.40°  | -    | Sixth House    |
-| Moon                  | Aqu ♒ | 3.55°    | +12.5291°/d  | -14.60° | -    | Eleventh House |
-| Mercury               | Sco ♏ | 8.56°    | +1.3195°/d   | -16.23° | -    | Seventh House  |
-| Venus                 | Vir ♍ | 3.22°    | +1.1337°/d   | +10.57° | -    | Sixth House    |
-| Mars                  | Lib ♎ | 2.66°    | +0.6449°/d   | -0.18°  | -    | Sixth House    |
-| Jupiter               | Tau ♉ | 13.69°   | -0.1069°/d   | +14.61° | R    | First House    |
-| Saturn                | Tau ♉ | 13.22°   | -0.0669°/d   | +13.30° | R    | First House    |
-| Uranus                | Tau ♉ | 25.55°   | -0.0294°/d   | +18.88° | R    | First House    |
-| Neptune               | Vir ♍ | 26.03°   | +0.0353°/d   | +2.68°  | -    | Sixth House    |
-| Pluto                 | Leo ♌ | 4.19°    | +0.0114°/d   | +23.12° | -    | Fifth House    |
-| True North Lunar Node | Lib ♎ | 11.02°   | +0.0059°/d   | -4.36°  | -    | Sixth House    |
-| Chiron                | Leo ♌ | 0.57°    | +0.0529°/d   | +13.41° | -    | Fifth House    |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
++Natal Celestial Points-+--------+----------+--------------+------------+---------+------+----------------+
+| Point                 | Sign   | Position | Speed        | Motion     | Decl.   | Ret. | House          |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
+| Ascendant             | Ari ♈ | 19.71°   | +886.9442°/d | -          | N/A     | -    | First House    |
+| Medium Coeli          | Cap ♑ | 7.06°    | +332.1251°/d | -          | N/A     | -    | Tenth House    |
+| Sun                   | Lib ♎ | 16.27°   | +0.9885°/d   | Average    | -6.40°  | -    | Sixth House    |
+| Moon                  | Aqu ♒ | 3.55°    | +12.5291°/d  | Average    | -14.60° | -    | Eleventh House |
+| Mercury               | Sco ♏ | 8.56°    | +1.3195°/d   | Average    | -16.23° | -    | Seventh House  |
+| Venus                 | Vir ♍ | 3.22°    | +1.1337°/d   | Average    | +10.57° | -    | Sixth House    |
+| Mars                  | Lib ♎ | 2.66°    | +0.6449°/d   | Fast       | -0.18°  | -    | Sixth House    |
+| Jupiter               | Tau ♉ | 13.69°   | -0.1069°/d   | Retrograde | +14.61° | R    | First House    |
+| Saturn                | Tau ♉ | 13.22°   | -0.0669°/d   | Retrograde | +13.30° | R    | First House    |
+| Uranus                | Tau ♉ | 25.55°   | -0.0294°/d   | Retrograde | +18.88° | R    | First House    |
+| Neptune               | Vir ♍ | 26.03°   | +0.0353°/d   | Fast       | +2.68°  | -    | Sixth House    |
+| Pluto                 | Leo ♌ | 4.19°    | +0.0114°/d   | Fast       | +23.12° | -    | Fifth House    |
+| True North Lunar Node | Lib ♎ | 11.02°   | +0.0059°/d   | -          | -4.36°  | -    | Sixth House    |
+| Chiron                | Leo ♌ | 0.57°    | +0.0529°/d   | -          | +13.41° | -    | Fifth House    |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
 
 +Natal Houses (Placidus)--+----------+-------------------+
 | House          | Sign   | Position | Absolute Position |
@@ -90,6 +90,18 @@ John Lennon — Natal Chart Report
 | Mutable  | 2.0   | 12%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
+
++Angularities--------+----------+
+| Point | Angle      | Distance |
++-------+------------+----------+
+| Sun   | Descendant | 3.44°    |
++-------+------------+----------+
+
++Stelliums------+------------------+
+| House | Count | Points           |
++-------+-------+------------------+
+| 6     | 3     | Sun, Venus, Mars |
++-------+-------+------------------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |
