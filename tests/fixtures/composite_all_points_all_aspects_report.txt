@@ -115,10 +115,6 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Ixion                 | Lib ♎ | 25.96°   | N/A   | N/A   | -    | First House    |
 | Orcus                 | Can ♋ | 4.31°    | N/A   | N/A   | -    | Ninth House    |
 | Quaoar                | Lib ♎ | 20.42°   | N/A   | N/A   | -    | Twelfth House  |
-| Pars Fortunae         | Sco ♏ | 27.58°   | N/A   | N/A   | -    | Second House   |
-| Pars Spiritus         | Vir ♍ | 16.66°   | N/A   | N/A   | -    | Eleventh House |
-| Pars Amoris           | Lib ♎ | 0.90°    | N/A   | N/A   | -    | Twelfth House  |
-| Pars Fidei            | Tau ♉ | 13.79°   | N/A   | N/A   | -    | Seventh House  |
 | Vertex                | Tau ♉ | 19.11°   | N/A   | N/A   | -    | Seventh House  |
 | White Moon            | Gem ♊ | 19.85°   | N/A   | N/A   | -    | Eighth House   |
 | Anti Vertex           | Sco ♏ | 19.11°   | N/A   | N/A   | -    | First House    |
@@ -127,6 +123,15 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mean Priapus          | Pis ♓ | 0.75°    | N/A   | N/A   | -    | Fourth House   |
 | True Priapus          | Vir ♍ | 14.42°   | N/A   | N/A   | -    | Eleventh House |
 +-----------------------+--------+----------+-------+-------+------+----------------+
+
++Composite Chart Arabic Parts-------+-------+-------+------+----------------+
+| Point         | Sign   | Position | Speed | Decl. | Ret. | House          |
++---------------+--------+----------+-------+-------+------+----------------+
+| Pars Fortunae | Sco ♏ | 27.58°   | N/A   | N/A   | -    | Second House   |
+| Pars Spiritus | Vir ♍ | 16.66°   | N/A   | N/A   | -    | Eleventh House |
+| Pars Amoris   | Lib ♎ | 0.90°    | N/A   | N/A   | -    | Twelfth House  |
+| Pars Fidei    | Tau ♉ | 13.79°   | N/A   | N/A   | -    | Seventh House  |
++---------------+--------+----------+-------+-------+------+----------------+
 
 +Composite Chart Houses (Placidus)---+-------------------+
 | House          | Sign   | Position | Absolute Position |
@@ -171,6 +176,13 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mutable  | 6.299999999999999  | 18%        |
 | Total    | 35.400000000000006 | 100%       |
 +----------+--------------------+------------+
+
++Angularities---------+----------+
+| Point  | Angle      | Distance |
++--------+------------+----------+
+| Venus  | Descendant | 0.63°    |
+| Saturn | Imum Coeli | 1.02°    |
++--------+------------+----------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |

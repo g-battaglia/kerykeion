@@ -2,18 +2,19 @@
 Moon Phase Overview — Sun, 10 Oct 1993 11:12:00 +0000
 =====================================================
 
-+Moon Summary--+--------------------+
-| Field        | Value              |
-+--------------+--------------------+
-| Phase Name   | Waning Crescent 🌘 |
-| Major Phase  | Last Quarter       |
-| Stage        | Waning             |
-| Illumination | 32%                |
-| Age (days)   | 24                 |
-| Lunar Cycle  | 80.736%            |
-| Sun Sign     | Lib                |
-| Moon Sign    | Leo                |
-+--------------+--------------------+
++Moon Summary------+--------------------+
+| Field            | Value              |
++------------------+--------------------+
+| Phase Name       | Waning Crescent 🌘 |
+| Major Phase      | Last Quarter       |
+| Stage            | Waning             |
+| Illumination     | 32%                |
+| Age (days)       | 24                 |
+| Age (exact days) | 24.3345            |
+| Lunar Cycle      | 80.736%            |
+| Sun Sign         | Lib                |
+| Moon Sign        | Leo                |
++------------------+--------------------+
 
 +Illumination Details--------+
 | Field            | Value   |

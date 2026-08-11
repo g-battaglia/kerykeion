@@ -341,6 +341,44 @@ windows intersecting a UTC range. `MundaneAspectFactory` defaults to Sun–Pluto
 signs but not exact aspect times. Sun/planetary-hour datetimes are timezone-aware
 UTC values anchored to the requested civil timezone.
 
+## 5B. Traditional / Hellenistic Techniques
+
+```python
+from kerykeion import (
+    AstrologicalSubjectFactory,
+    ProfectionsFactory,
+    FirdariaFactory,
+    MutualReceptionsFactory,
+    HoraryIndicatorsFactory,
+)
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+)
+
+profections = ProfectionsFactory.from_subject(subject, target_date="2026-06-04")
+print(profections.current.age, profections.current.sign, profections.current.lord)
+
+firdaria = FirdariaFactory.from_subject(subject, target_date="2026-06-04")
+print(firdaria.is_diurnal, firdaria.current.lord if firdaria.current else None)
+
+receptions = MutualReceptionsFactory.from_subject(subject)
+print(len(receptions.receptions), "mutual receptions found")
+
+indicators = HoraryIndicatorsFactory.from_subject(subject)
+print(indicators.querent.ruler, indicators.quesited.ruler)
+```
+
+`ProfectionsFactory` computes annual profections from the subject's houses — age,
+activated house/sign, and the Lord of the Year via classical rulership. BCE births
+supported. `FirdariaFactory` builds the Persian time-lord sequence (diurnal or
+nocturnal) with seven-planet sub-periods; all arithmetic on Julian Days.
+`MutualReceptionsFactory` finds domicile and exaltation receptions among the
+classical planets. `HoraryIndicatorsFactory` assembles horary significators (1st/7th
+house), classical considerations (Ascendant degree, Saturn, Moon void), and
+receptions. All require terrestrial perspective.
+
 ## 6. AI Context Serialization
 
 Convert any Kerykeion model to AI-readable XML:
@@ -614,6 +652,10 @@ export KERYKEION_GEONAMES_USERNAME="your_username"  # For online mode
 | Void-of-Course   | `VoidOfCourseMoonFactory`      | Moment/range     |
 | Sun Times        | `SunTimesFactory`              | Date + location  |
 | Planetary Hours  | `PlanetaryHoursFactory`        | Moment + location|
+| Profections      | `ProfectionsFactory`           | Subject          |
+| Firdaria         | `FirdariaFactory`              | Subject          |
+| Receptions       | `MutualReceptionsFactory`      | Subject          |
+| Horary           | `HoraryIndicatorsFactory`      | Subject          |
 
 ---
 

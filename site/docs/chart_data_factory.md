@@ -249,6 +249,8 @@ Used for Natal, Composite, and Single Return charts.
 - `aspects`: List of internal aspects.
 - `element_distribution`: Fire/Earth/Air/Water breakdown.
 - `quality_distribution`: Cardinal/Fixed/Mutable breakdown.
+- `angularities`: List of `AngularityModel` — classical planets conjunct the four angles (Ascendant, Medium Coeli, Descendant, Imum Coeli) within the orb (default 8°). Each entry carries `point`, `angle`, and `distance`.
+- `stelliums`: List of `StelliumModel` — houses with three or more classical planets. Each entry carries `house` (1-12) and `points` (list of planet names).
 
 ### `DualChartDataModel`
 
@@ -258,6 +260,8 @@ Used for Synastry, Transit, and Dual Return charts.
 - `aspects`: Inter-chart aspects.
 - `relationship_score`: Compatibility score (if requested).
 - `house_comparison`: Planet overlays in houses (if requested).
+- `first_subject_angularities`, `first_subject_stelliums`: Angularities and stelliums for the first (natal) subject.
+- `second_subject_angularities`, `second_subject_stelliums`: Angularities and stelliums for the second (transit/partner/return) subject.
 
 ## Analysis Example
 

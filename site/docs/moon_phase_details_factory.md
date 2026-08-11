@@ -14,7 +14,7 @@ The `MoonPhaseDetailsFactory` builds a complete `MoonPhaseOverviewModel` from an
 
 | Section | Data |
 | :--- | :--- |
-| **Moon Summary** | Phase name, emoji, major phase label, waxing/waning stage, illumination percentage, age in days, lunar cycle progress, Sun and Moon zodiac signs |
+| **Moon Summary** | Phase name, emoji, major phase label, waxing/waning stage, illumination percentage, age in days, precise age in days (`age_days_precise`), lunar cycle progress, Sun and Moon zodiac signs |
 | **Illumination Details** | Numeric percentage, visible fraction (0-1), phase angle in degrees |
 | **Upcoming Phases** | Last and next occurrence of New Moon, First Quarter, Full Moon, Last Quarter (precise ephemeris timing) |
 | **Next Lunar Eclipse** | Date, timestamp, eclipse type (Total, Partial, Penumbral) |

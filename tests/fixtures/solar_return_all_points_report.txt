@@ -27,62 +27,67 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Active Points Count | 52                  |
 +---------------------+---------------------+
 
-+Solar Return Chart Celestial Points--------+--------------+---------+------+----------------+
-| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House          |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
-| Ascendant             | Sco ♏ | 5.82°    | +245.7250°/d | N/A     | -    | First House    |
-| Medium Coeli          | Leo ♌ | 19.91°   | +367.6364°/d | N/A     | -    | Tenth House    |
-| Descendant            | Tau ♉ | 5.82°    | +245.7250°/d | N/A     | -    | Seventh House  |
-| Imum Coeli            | Aqu ♒ | 19.91°   | +367.6364°/d | N/A     | -    | Fourth House   |
-| Sun                   | Can ♋ | 28.54°   | +0.9551°/d   | +20.45° | -    | Ninth House    |
-| Moon                  | Can ♋ | 21.21°   | +14.4024°/d  | +23.21° | -    | Ninth House    |
-| Mercury               | Leo ♌ | 17.61°   | +1.6910°/d   | +16.88° | -    | Ninth House    |
-| Venus                 | Can ♋ | 1.71°    | +1.2038°/d   | +22.74° | -    | Eighth House   |
-| Mars                  | Tau ♉ | 5.97°    | +0.6554°/d   | +11.57° | -    | Seventh House  |
-| Jupiter               | Can ♋ | 23.91°   | +0.2240°/d   | +21.56° | -    | Ninth House    |
-| Saturn                | Cap ♑ | 21.52°   | -0.0732°/d   | -21.66° | R    | Third House    |
-| Uranus                | Cap ♑ | 6.74°    | -0.0366°/d   | -23.60° | R    | Second House   |
-| Neptune               | Cap ♑ | 12.76°   | -0.0257°/d   | -21.96° | R    | Third House    |
-| Pluto                 | Sco ♏ | 14.97°   | -0.0025°/d   | -1.42°  | R    | First House    |
-| Mean North Lunar Node | Aqu ♒ | 7.79°    | -0.0529°/d   | -18.32° | R    | Third House    |
-| True North Lunar Node | Aqu ♒ | 7.26°    | -0.0080°/d   | -18.46° | R    | Third House    |
-| Mean Lilith           | Sco ♏ | 28.99°   | +0.1119°/d   | -24.62° | -    | First House    |
-| True Lilith           | Sag ♐ | 18.01°   | -1.4330°/d   | -26.88° | R    | Second House   |
-| Chiron                | Can ♋ | 19.88°   | +0.1071°/d   | +15.79° | -    | Ninth House    |
-| Pholus                | Can ♋ | 7.99°    | +0.1329°/d   | +13.79° | -    | Eighth House   |
-| Ceres                 | Leo ♌ | 13.71°   | +0.4493°/d   | +23.05° | -    | Ninth House    |
-| Pallas                | Can ♋ | 7.25°    | +0.5959°/d   | -1.55°  | -    | Eighth House   |
-| Juno                  | Sco ♏ | 10.10°   | +0.0843°/d   | -2.06°  | -    | First House    |
-| Vesta                 | Tau ♉ | 18.15°   | +0.3292°/d   | +10.88° | -    | Seventh House  |
-| Interpolated Lilith   | Sco ♏ | 25.48°   | +0.1694°/d   | -23.89° | -    | First House    |
-| Interpolated Perigee  | Gem ♊ | 20.98°   | +0.1733°/d   | +26.84° | -    | Eighth House   |
-| Cupido                | Sco ♏ | 18.62°   | -0.0043°/d   | -16.34° | R    | First House    |
-| Hades                 | Gem ♊ | 9.92°    | +0.0153°/d   | +20.93° | -    | Eighth House   |
-| Zeus                  | Vir ♍ | 26.03°   | +0.0109°/d   | +1.58°  | -    | Eleventh House |
-| Kronos                | Gem ♊ | 21.89°   | +0.0138°/d   | +23.21° | -    | Eighth House   |
-| Apollon               | Lib ♎ | 13.82°   | +0.0052°/d   | -5.46°  | -    | Eleventh House |
-| Admetos               | Tau ♉ | 14.96°   | +0.0054°/d   | +16.33° | -    | Seventh House  |
-| Vulkanus              | Can ♋ | 15.34°   | +0.0136°/d   | +22.57° | -    | Ninth House    |
-| Poseidon              | Lib ♎ | 28.68°   | +0.0013°/d   | -11.01° | -    | Twelfth House  |
-| Eris                  | Ari ♈ | 17.60°   | -0.0013°/d   | -9.16°  | R    | Sixth House    |
-| Sedna                 | Tau ♉ | 11.55°   | +0.0038°/d   | +4.25°  | -    | Seventh House  |
-| Haumea                | Vir ♍ | 26.32°   | +0.0134°/d   | +23.02° | -    | Eleventh House |
-| Makemake              | Vir ♍ | 4.50°    | +0.0202°/d   | +35.44° | -    | Tenth House    |
-| Ixion                 | Sco ♏ | 22.70°   | -0.0060°/d   | -12.62° | R    | First House    |
-| Orcus                 | Leo ♌ | 10.84°   | +0.0234°/d   | +4.04°  | -    | Ninth House    |
-| Quaoar                | Sco ♏ | 24.08°   | -0.0062°/d   | -13.09° | R    | First House    |
-| Pars Fortunae         | Lib ♎ | 28.48°   | N/A          | N/A     | -    | Twelfth House  |
-| Pars Spiritus         | Sco ♏ | 13.15°   | N/A          | N/A     | -    | First House    |
-| Pars Amoris           | Lib ♎ | 8.98°    | N/A          | N/A     | -    | Eleventh House |
-| Pars Fidei            | Tau ♉ | 8.21°    | N/A          | N/A     | -    | Seventh House  |
-| Vertex                | Gem ♊ | 11.46°   | N/A          | N/A     | -    | Eighth House   |
-| White Moon            | Can ♋ | 26.43°   | +0.1409°/d   | +20.87° | -    | Ninth House    |
-| Anti Vertex           | Sag ♐ | 11.46°   | N/A          | N/A     | -    | Second House   |
-| Mean South Lunar Node | Leo ♌ | 7.79°    | -0.0529°/d   | +18.32° | R    | Ninth House    |
-| True South Lunar Node | Leo ♌ | 7.26°    | -0.0080°/d   | +18.46° | R    | Ninth House    |
-| Mean Priapus          | Tau ♉ | 28.99°   | +0.1119°/d   | +24.62° | -    | Seventh House  |
-| True Priapus          | Gem ♊ | 18.01°   | -1.4330°/d   | +26.88° | R    | Eighth House   |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
++Solar Return Chart Celestial Points--------+--------------+------------+---------+-----+------+----------------+
+| Point                 | Sign   | Position | Speed        | Motion     | Decl.   | OOB | Ret. | House          |
++-----------------------+--------+----------+--------------+------------+---------+-----+------+----------------+
+| Ascendant             | Sco ♏ | 5.82°    | +245.7250°/d | -          | N/A     | -   | -    | First House    |
+| Medium Coeli          | Leo ♌ | 19.91°   | +367.6364°/d | -          | N/A     | -   | -    | Tenth House    |
+| Descendant            | Tau ♉ | 5.82°    | +245.7250°/d | -          | N/A     | -   | -    | Seventh House  |
+| Imum Coeli            | Aqu ♒ | 19.91°   | +367.6364°/d | -          | N/A     | -   | -    | Fourth House   |
+| Sun                   | Can ♋ | 28.54°   | +0.9551°/d   | Average    | +20.45° | -   | -    | Ninth House    |
+| Moon                  | Can ♋ | 21.21°   | +14.4024°/d  | Average    | +23.21° | -   | -    | Ninth House    |
+| Mercury               | Leo ♌ | 17.61°   | +1.6910°/d   | Fast       | +16.88° | -   | -    | Ninth House    |
+| Venus                 | Can ♋ | 1.71°    | +1.2038°/d   | Average    | +22.74° | -   | -    | Eighth House   |
+| Mars                  | Tau ♉ | 5.97°    | +0.6554°/d   | Fast       | +11.57° | -   | -    | Seventh House  |
+| Jupiter               | Can ♋ | 23.91°   | +0.2240°/d   | Fast       | +21.56° | -   | -    | Ninth House    |
+| Saturn                | Cap ♑ | 21.52°   | -0.0732°/d   | Retrograde | -21.66° | -   | R    | Third House    |
+| Uranus                | Cap ♑ | 6.74°    | -0.0366°/d   | Retrograde | -23.60° | Y   | R    | Second House   |
+| Neptune               | Cap ♑ | 12.76°   | -0.0257°/d   | Retrograde | -21.96° | -   | R    | Third House    |
+| Pluto                 | Sco ♏ | 14.97°   | -0.0025°/d   | Retrograde | -1.42°  | -   | R    | First House    |
+| Mean North Lunar Node | Aqu ♒ | 7.79°    | -0.0529°/d   | -          | -18.32° | -   | R    | Third House    |
+| True North Lunar Node | Aqu ♒ | 7.26°    | -0.0080°/d   | -          | -18.46° | -   | R    | Third House    |
+| Mean Lilith           | Sco ♏ | 28.99°   | +0.1119°/d   | -          | -24.62° | Y   | -    | First House    |
+| True Lilith           | Sag ♐ | 18.01°   | -1.4330°/d   | -          | -26.88° | Y   | R    | Second House   |
+| Chiron                | Can ♋ | 19.88°   | +0.1071°/d   | -          | +15.79° | -   | -    | Ninth House    |
+| Pholus                | Can ♋ | 7.99°    | +0.1329°/d   | -          | +13.79° | -   | -    | Eighth House   |
+| Ceres                 | Leo ♌ | 13.71°   | +0.4493°/d   | -          | +23.05° | -   | -    | Ninth House    |
+| Pallas                | Can ♋ | 7.25°    | +0.5959°/d   | -          | -1.55°  | -   | -    | Eighth House   |
+| Juno                  | Sco ♏ | 10.10°   | +0.0843°/d   | -          | -2.06°  | -   | -    | First House    |
+| Vesta                 | Tau ♉ | 18.15°   | +0.3292°/d   | -          | +10.88° | -   | -    | Seventh House  |
+| Interpolated Lilith   | Sco ♏ | 25.48°   | +0.1694°/d   | -          | -23.89° | Y   | -    | First House    |
+| Interpolated Perigee  | Gem ♊ | 20.98°   | +0.1733°/d   | -          | +26.84° | Y   | -    | Eighth House   |
+| Cupido                | Sco ♏ | 18.62°   | -0.0043°/d   | -          | -16.34° | -   | R    | First House    |
+| Hades                 | Gem ♊ | 9.92°    | +0.0153°/d   | -          | +20.93° | -   | -    | Eighth House   |
+| Zeus                  | Vir ♍ | 26.03°   | +0.0109°/d   | -          | +1.58°  | -   | -    | Eleventh House |
+| Kronos                | Gem ♊ | 21.89°   | +0.0138°/d   | -          | +23.21° | -   | -    | Eighth House   |
+| Apollon               | Lib ♎ | 13.82°   | +0.0052°/d   | -          | -5.46°  | -   | -    | Eleventh House |
+| Admetos               | Tau ♉ | 14.96°   | +0.0054°/d   | -          | +16.33° | -   | -    | Seventh House  |
+| Vulkanus              | Can ♋ | 15.34°   | +0.0136°/d   | -          | +22.57° | -   | -    | Ninth House    |
+| Poseidon              | Lib ♎ | 28.68°   | +0.0013°/d   | -          | -11.01° | -   | -    | Twelfth House  |
+| Eris                  | Ari ♈ | 17.60°   | -0.0013°/d   | -          | -9.16°  | -   | R    | Sixth House    |
+| Sedna                 | Tau ♉ | 11.55°   | +0.0038°/d   | -          | +4.25°  | -   | -    | Seventh House  |
+| Haumea                | Vir ♍ | 26.32°   | +0.0134°/d   | -          | +23.02° | -   | -    | Eleventh House |
+| Makemake              | Vir ♍ | 4.50°    | +0.0202°/d   | -          | +35.44° | Y   | -    | Tenth House    |
+| Ixion                 | Sco ♏ | 22.70°   | -0.0060°/d   | -          | -12.62° | -   | R    | First House    |
+| Orcus                 | Leo ♌ | 10.84°   | +0.0234°/d   | -          | +4.04°  | -   | -    | Ninth House    |
+| Quaoar                | Sco ♏ | 24.08°   | -0.0062°/d   | -          | -13.09° | -   | R    | First House    |
+| Vertex                | Gem ♊ | 11.46°   | N/A          | -          | N/A     | -   | -    | Eighth House   |
+| White Moon            | Can ♋ | 26.43°   | +0.1409°/d   | -          | +20.87° | -   | -    | Ninth House    |
+| Anti Vertex           | Sag ♐ | 11.46°   | N/A          | -          | N/A     | -   | -    | Second House   |
+| Mean South Lunar Node | Leo ♌ | 7.79°    | -0.0529°/d   | -          | +18.32° | -   | R    | Ninth House    |
+| True South Lunar Node | Leo ♌ | 7.26°    | -0.0080°/d   | -          | +18.46° | -   | R    | Ninth House    |
+| Mean Priapus          | Tau ♉ | 28.99°   | +0.1119°/d   | -          | +24.62° | Y   | -    | Seventh House  |
+| True Priapus          | Gem ♊ | 18.01°   | -1.4330°/d   | -          | +26.88° | Y   | R    | Eighth House   |
++-----------------------+--------+----------+--------------+------------+---------+-----+------+----------------+
+
++Solar Return Chart Arabic Parts----+-------+-------+------+----------------+
+| Point         | Sign   | Position | Speed | Decl. | Ret. | House          |
++---------------+--------+----------+-------+-------+------+----------------+
+| Pars Fortunae | Lib ♎ | 28.48°   | N/A   | N/A   | -    | Twelfth House  |
+| Pars Spiritus | Sco ♏ | 13.15°   | N/A   | N/A   | -    | First House    |
+| Pars Amoris   | Lib ♎ | 8.98°    | N/A   | N/A   | -    | Eleventh House |
+| Pars Fidei    | Tau ♉ | 8.21°    | N/A   | N/A   | -    | Seventh House  |
++---------------+--------+----------+-------+-------+------+----------------+
 
 +Solar Return Chart Houses (Placidus)+-------------------+
 | House          | Sign   | Position | Absolute Position |
@@ -127,6 +132,19 @@ Sample Natal Subject Solar Return — Solar Return 1990
 | Mutable  | 4.6                | 13%        |
 | Total    | 35.40000000000001  | 100%       |
 +----------+--------------------+------------+
+
++Angularities------------+----------+
+| Point   | Angle        | Distance |
++---------+--------------+----------+
+| Mars    | Descendant   | 0.15°    |
+| Mercury | Medium Coeli | 2.30°    |
++---------+--------------+----------+
+
++Stelliums------+-----------------------------+
+| House | Count | Points                      |
++-------+-------+-----------------------------+
+| 9     | 4     | Sun, Moon, Mercury, Jupiter |
++-------+-------+-----------------------------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |

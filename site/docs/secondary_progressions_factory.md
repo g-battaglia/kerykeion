@@ -88,6 +88,18 @@ for asp in result.progressed_to_natal_aspects:
 | `ephemeris_iso_utc_datetime`   | str                           | The actual ephemeris date looked up           |
 | `progressed_subject`           | AstrologicalSubjectModel      | The full progressed chart                    |
 | `progressed_to_natal_aspects`  | List[ProgressedToNatalAspectModel] | Cross-chart aspects                          |
+| `progressed_points`            | List[ProgressedPointModel]        | Per-point natal-vs-progressed comparison     |
+
+### `ProgressedPointModel`
+
+| Field              | Type   | Description                                           |
+| :----------------- | :----- | :---------------------------------------------------- |
+| `name`             | str    | Planet name.                                          |
+| `natal_abs_pos`    | float  | Natal absolute longitude.                             |
+| `progressed_abs_pos` | float | Progressed absolute longitude.                       |
+| `natal_sign`       | str    | Sign of the natal placement.                          |
+| `progressed_sign`  | str    | Sign of the progressed placement.                     |
+| `sign_changed`     | bool   | Whether the planet changed signs from natal to progressed. |
 
 ### `ProgressedToNatalAspectModel`
 
