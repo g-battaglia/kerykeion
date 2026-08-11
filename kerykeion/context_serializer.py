@@ -1235,10 +1235,10 @@ __all__ = [
 
 
 if __name__ == "__main__":
-    from kerykeion import astrological_subject_factory
+    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
     from kerykeion.chart_data_factory import ChartDataFactory
 
-    natal_model = astrological_subject_factory.AstrologicalSubjectFactory.from_iso_utc_time(
+    natal_model = AstrologicalSubjectFactory.from_iso_utc_time(
         name="Test Subject",
         iso_utc_time="1990-01-01T12:00:00Z",
         city="New York",

@@ -46,7 +46,6 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from kerykeion import AstrologicalSubjectFactory
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.utilities import (
     get_houses_list,
@@ -56,6 +55,7 @@ from kerykeion.utilities import (
     safe_timezone,
 )
 from kerykeion.astrological_subject_factory import (
+    AstrologicalSubjectFactory,
     DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
     DEFAULT_PERSPECTIVE_TYPE,
     DEFAULT_ZODIAC_TYPE,
