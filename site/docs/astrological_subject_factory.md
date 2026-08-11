@@ -245,6 +245,10 @@ Adds `subject.nutation` with `true_obliquity`, `mean_obliquity`, `nutation_in_lo
 
 Adds `azimuth` and `altitude_above_horizon` fields for each point. Useful for astro-locality work.
 
+### Motion State
+
+Always computed for the ten planets (Sun through Pluto) in Earth-centred perspectives. Access via `subject.sun.motion_state`. Returns a `MotionState` literal: `"retrograde"`, `"stationary"` (< 5% of mean motion), `"slow"` (< 80%), `"average"` (80-120%), or `"fast"` (> 120%). `None` for nodes, asteroids, fixed stars, and non-geocentric perspectives.
+
 ### Declination & Out-of-Bounds
 
 Always computed. Access via `subject.sun.declination` and `subject.sun.is_out_of_bounds`. A planet is out-of-bounds when its declination exceeds the Sun's maximum (~23.44°).

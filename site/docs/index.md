@@ -92,6 +92,8 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[House Comparison](/content/docs/house_comparison)**: Bidirectional synastry house overlay analysis.
 -   **[Element & Quality Distribution](/content/docs/element_quality_distribution)**: Analyzing element (Fire/Earth/Air/Water) and quality (Cardinal/Fixed/Mutable) balance.
 -   **[Chart Dominants](/content/docs/dominants_factory)**: Dominant planet/sign/element/quality via modern, Almuten Figuris, or elemental schools.
+-   **[Mutual Receptions](/content/docs/receptions_factory)**: Mutual reception detection via `MutualReceptionsFactory`.
+-   **[Horary Indicators](/content/docs/horary_factory)**: Horary chart significators and considerations via `HoraryIndicatorsFactory`.
 
 ## Forecasting
 
@@ -103,6 +105,8 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[Solar Arc Directions](/content/docs/solar_arc_factory)**: Solar arc directed charts via `SolarArcFactory`.
 -   **[Primary Directions](/content/docs/primary_directions_factory)**: Placidus semi-arc method via `PrimaryDirectionsFactory`.
 -   **[Zodiacal Releasing](/content/docs/zodiacal_releasing_factory)**: Hellenistic aphesis time-lord periods from the Lot of Fortune or Spirit.
+-   **[Profections](/content/docs/profections_factory)**: Annual profection timeline via `ProfectionsFactory`.
+-   **[Firdaria](/content/docs/firdaria_factory)**: Persian planetary time-lord periods via `FirdariaFactory`.
 -   **[Lunation Finder](/content/docs/lunation_factory)**: New/First-Quarter/Full/Last-Quarter Moons over a date range.
 -   **[Retrograde Stations](/content/docs/retrograde_station_factory)**: Planetary retrograde/direct stations over a date range.
 -   **[Sign Ingresses](/content/docs/sign_ingress_factory)**: Planet sign-change moments over a date range.

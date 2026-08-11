@@ -84,6 +84,7 @@ Detailed information about a celestial body or house cusp.
 | `nakshatra_pada` | `int \| None`                 | Nakshatra pada/quarter (1-4). Requires `calculate_nakshatra=True` |
 | `nakshatra_lord` | `str \| None`                 | Vimsottari Dasha lord planet. Requires `calculate_nakshatra=True` |
 | `gauquelin_sector` | `float \| None`             | Gauquelin 36-sector position. Requires `calculate_gauquelin=True` |
+| `motion_state` | `MotionState \| None`           | Speed classification (`retrograde`/`stationary`/`slow`/`average`/`fast`). Populated for the ten planets in Earth-centred perspectives. |
 | `azimuth`    | `float \| None`                   | Azimuth angle in degrees. Requires `calculate_local_space=True` |
 | `altitude_above_horizon` | `float \| None`       | Altitude above horizon. Requires `calculate_local_space=True` |
 
@@ -98,6 +99,8 @@ The complete data structure for a calculated single chart (Natal, Return, etc.).
 | `aspects`              | `List[AspectModel]`        | List of internal aspects                    |
 | `element_distribution` | `ElementDistributionModel` | Points/Percentage for each element          |
 | `quality_distribution` | `QualityDistributionModel` | Points/Percentage for each quality          |
+| `angularities`         | `List[AngularityModel]`    | Classical planets conjunct the four angles (within orb) |
+| `stelliums`            | `List[StelliumModel]`      | Houses with three or more classical planets |
 | `active_points`        | `List[AstrologicalPoint]`  | Points used in calculation                  |
 | `active_aspects`       | `List[ActiveAspect]`       | Aspect configuration used                   |
 
@@ -115,8 +118,31 @@ Data structure for comparing two charts (Synastry, Transits).
 | `relationship_score`   | `RelationshipScoreModel \| None` | Compatibility scoring (optional, synastry only) |
 | `element_distribution` | `ElementDistributionModel` | Points/Percentage for each element      |
 | `quality_distribution` | `QualityDistributionModel` | Points/Percentage for each quality      |
+| `first_subject_angularities` | `List[AngularityModel]` | Angularities for the first subject    |
+| `first_subject_stelliums` | `List[StelliumModel]`     | Stelliums for the first subject       |
+| `second_subject_angularities` | `List[AngularityModel]` | Angularities for the second subject  |
+| `second_subject_stelliums` | `List[StelliumModel]`    | Stelliums for the second subject      |
 | `active_points`        | `List[AstrologicalPoint]`  | Points used in calculation              |
 | `active_aspects`       | `List[ActiveAspect]`       | Aspect configuration used               |
+
+### AngularityModel
+
+A classical planet conjunct one of the four chart angles.
+
+| Field      | Type    | Description                                                        |
+| :--------- | :------ | :----------------------------------------------------------------- |
+| `point`    | `str`   | The planet's name.                                                 |
+| `angle`    | `str`   | Which angle (`Ascendant`, `Medium_Coeli`, `Descendant`, `Imum_Coeli`). |
+| `distance` | `float` | Shortest ecliptic arc between planet and angle, in degrees.        |
+
+### StelliumModel
+
+A concentration of classical planets in one house.
+
+| Field    | Type         | Description                                  |
+| :------- | :----------- | :------------------------------------------- |
+| `house`  | `int`        | House number (1-12).                         |
+| `points` | `list[str]`  | Names of the planets gathered there.         |
 
 ### AspectModel
 
@@ -438,6 +464,29 @@ These models are returned by the v6 advanced calculation factories. Each factory
 | `ACGLineModel` | [`AstroCartographyFactory`](/content/docs/astro_cartography_factory) | A planetary line on the ACG map |
 | `ACGLinePointModel` | `AstroCartographyFactory` | A geographic coordinate on an ACG line |
 
+### Traditional / Hellenistic Models
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `ProfectionsModel` | [`ProfectionsFactory`](/content/docs/profections_factory) | Annual profection timeline with activated houses |
+| `ProfectionYearModel` | `ProfectionsFactory` | A single profection year |
+| `FirdariaModel` | [`FirdariaFactory`](/content/docs/firdaria_factory) | Firdaria planetary period timeline |
+| `FirdariaPeriodModel` | `FirdariaFactory` | A major firdaria period |
+| `FirdariaSubPeriodModel` | `FirdariaFactory` | A sub-period within a major firdaria |
+| `MutualReceptionModel` | [`MutualReceptionsFactory`](/content/docs/receptions_factory) | A single mutual reception pair |
+| `MutualReceptionsModel` | `MutualReceptionsFactory` | Collection of mutual receptions in a chart |
+| `HoraryIndicatorsModel` | [`HoraryIndicatorsFactory`](/content/docs/horary_factory) | Horary chart analysis with significators and considerations |
+| `HorarySignificatorModel` | `HoraryIndicatorsFactory` | A horary significator planet |
+| `HoraryConsiderationModel` | `HoraryIndicatorsFactory` | A horary consideration before judgment |
+
+### Chart Analysis Models
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `AngularityModel` | [`ChartDataFactory`](/content/docs/chart_data_factory) | A planet conjunct a chart angle (within orb) |
+| `StelliumModel` | `ChartDataFactory` | A house concentration of three or more planets |
+| `ProgressedPointModel` | [`SecondaryProgressionFactory`](/content/docs/secondary_progressions_factory) | Per-point natal-vs-progressed comparison with sign-change flag |
+
 ---
 
 ## Literals & Constants (`kr_literals`)
@@ -445,6 +494,20 @@ These models are returned by the v6 advanced calculation factories. Each factory
 Import from: `kerykeion.schemas.kr_literals`
 
 These Literal types define the allowed string values for various model fields, providing strict type checking and autocompletion in your IDE.
+
+---
+
+### `MotionState`
+
+Classification of a celestial body's speed relative to its mean daily motion. Populated on `KerykeionPointModel.motion_state` for the ten planets in Earth-centred perspectives; `None` elsewhere.
+
+| Value           | Description                                           |
+| :-------------- | :---------------------------------------------------- |
+| `"retrograde"`  | Moving backward (negative speed).                     |
+| `"stationary"`  | Near-zero speed at a station (< 5% of mean motion).   |
+| `"slow"`        | Below 80% of mean daily motion.                       |
+| `"average"`     | Between 80% and 120% of mean daily motion.            |
+| `"fast"`        | Above 120% of mean daily motion.                      |
 
 ---
 

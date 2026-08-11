@@ -115,6 +115,10 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
   - [Astro-Cartography (ACG)](#astro-cartography-acg)
   - [Chart Dominants](#chart-dominants)
   - [Zodiacal Releasing (Aphesis)](#zodiacal-releasing-aphesis)
+  - [Profections (Annual)](#profections-annual)
+  - [Firdaria (Planetary Periods)](#firdaria-planetary-periods)
+  - [Mutual Receptions](#mutual-receptions)
+  - [Horary Indicators](#horary-indicators)
 - [Documentation](#documentation)
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Development](#development)
@@ -2343,6 +2347,55 @@ from kerykeion import AstrologicalSubjectFactory, ZodiacalReleasingFactory
 subject = AstrologicalSubjectFactory.from_birth_data("Jane", 1990, 6, 15, 12, 0, "Rome", "IT")
 zr = ZodiacalReleasingFactory.from_subject(subject, lot="fortune", levels=2, target_date="2026-06-04")
 print(zr.lot_sign, len(zr.periods), "top-level periods")
+```
+
+### Profections (Annual)
+
+`ProfectionsFactory` computes annual profections — a traditional timing technique where each year of life activates one house (cycling every 12 years). The sign on the cusp determines the Lord of the Year. Respects the subject's house system and supports BCE births.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, ProfectionsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data("Jane", 1990, 6, 15, 12, 0, "Rome", "IT")
+profections = ProfectionsFactory.from_subject(subject, target_date="2026-06-04")
+print(f"Age {profections.current.age}: house {profections.current.house}, lord {profections.current.lord}")
+```
+
+### Firdaria (Planetary Periods)
+
+`FirdariaFactory` computes the Persian time-lord sequence that divides life into planetary periods. Day charts begin with the Sun (10 years), night charts with the Moon (9 years). Each major period is subdivided among the seven classical planets. All date arithmetic uses Julian Days, so BCE births are supported.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, FirdariaFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data("Jane", 1990, 6, 15, 12, 0, "Rome", "IT")
+firdaria = FirdariaFactory.from_subject(subject, target_date="2026-06-04")
+print(f"Current lord: {firdaria.current.lord}" if firdaria.current else "No current period")
+```
+
+### Mutual Receptions
+
+`MutualReceptionsFactory` detects domicile and exaltation mutual receptions among the seven classical planets (Sun through Saturn). A reception is found when two planets each occupy a sign ruled by the other.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, MutualReceptionsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data("Jane", 1990, 6, 15, 12, 0, "Rome", "IT")
+receptions = MutualReceptionsFactory.from_subject(subject)
+for r in receptions.receptions:
+    print(f"{r.first_planet} ↔ {r.second_planet} ({r.reception_type})")
+```
+
+### Horary Indicators
+
+`HoraryIndicatorsFactory` assembles horary significators (querent/quesited via classical rulership), considerations before judgment (Ascendant degree, Saturn placement, Moon void-of-course), and mutual receptions for a question chart.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, HoraryIndicatorsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data("Question", 2026, 6, 4, 15, 30, "Rome", "IT")
+indicators = HoraryIndicatorsFactory.from_subject(subject)
+print(f"Querent ruler: {indicators.querent.ruler}, Quesited ruler: {indicators.quesited.ruler}")
 ```
 
 ## Documentation
