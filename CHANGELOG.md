@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 6.0.0a83 - 2026-08-11
+
 ### Added
 
 - **Annual profections** (`ProfectionsFactory.from_subject`): the Hellenistic
