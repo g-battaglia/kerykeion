@@ -2,6 +2,57 @@
 
 ## [Unreleased]
 
+## 6.0.0a84 - 2026-08-12
+
+Structural release. No calculation changed and no public name moved:
+`kerykeion.__all__` exports exactly what a83 exported, and the JSON schema of
+every Pydantic model among them is byte-identical to a83.
+
+### Changed
+
+- **One package per domain.** `kerykeion/__init__.py` is now the only `.py` file
+  in the package root. The 16 single-file modules became packages
+  (`astrological_subject/factory.py`, `report/generator.py`,
+  `geonames/fetcher.py`, `utilities/core.py`, `ephemeris_backend/backend.py`, …),
+  and 23 files inside existing packages lost the prefix that repeated their
+  directory (`eclipses/eclipse_factory.py` → `eclipses/factory.py`).
+  Imports of the form `from kerykeion import X` are unaffected; direct module
+  imports may need updating — see the v5 → v6 table in the migration guide.
+- **`schemas/` dropped the legacy `kr_` prefix**: `kr_models` → `models`,
+  `kr_literals` → `literals`, `kerykeion_exception` → `exceptions`.
+- `kerykeion.report`, `kerykeion.utilities`, `kerykeion.ephemeris_backend`,
+  `kerykeion.motion` and `kerykeion.swisseph_setup` became packages under the
+  same name, keeping their existing imports valid.
+- The removed-v5-name `ImportError` now also names the defaults that changed in
+  v6, since porting the call alone does not reproduce v5 output.
+
+### Added
+
+- `scripts/check_import_graph.py`, a structural gate wired into `poe check`,
+  covering module paths in `tests/`, `scripts/` and `examples/` — including the
+  ones written inside strings — plus patch targets, logger names and cold
+  leaf-first imports, none of which mypy or pyright can see.
+- `kerykeion.settings.V5_DEFAULT_ACTIVE_POINTS`: the 18 points v5 activated by
+  default, for callers who need numerical continuity. A frozen historical
+  record, not a maintained preset.
+- `DEFAULT_ACTIVE_POINTS`, `DEFAULT_ACTIVE_ASPECTS` and `ALL_ACTIVE_POINTS` are
+  re-exported from `kerykeion.settings`.
+- `SIGN_CODES` is exported from `kerykeion.schemas`.
+- A "What changes in the results" section in the migration guide, documenting
+  the four v5 → v6 behavioural changes (active points, aspect orbs, predictive
+  orb routing, chart style) with runnable examples for restoring v5 behaviour.
+
+### Removed
+
+- `kerykeion/kr_types/`, the v4-era compatibility shim deprecated throughout v5.
+- `setup.cfg`: flake8 configuration, unused by the project's gates, naming a
+  file that no longer exists.
+
+### Fixed
+
+- The composite polar-fallback documentation example referenced two subjects
+  that were never defined; the snippet now runs.
+
 ## 6.0.0a83 - 2026-08-11
 
 ### Added
