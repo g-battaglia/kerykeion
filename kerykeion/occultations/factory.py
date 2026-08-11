@@ -31,7 +31,7 @@ License: AGPL-3.0
 
 import logging
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
-from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso, validate_julian_day
+from kerykeion.predictive.utils import jd_to_iso_utc as _jd_to_iso, validate_julian_day
 from kerykeion.settings.config_constants import STANDARD_PLANETS
 
 from pydantic import Field

@@ -21,8 +21,8 @@ import math
 from contextlib import contextmanager
 from typing import Iterator, cast
 
-from kerykeion._predictive_utils import validate_julian_day
-from kerykeion.astrological_subject_factory import _precision_class_for_source
+from kerykeion.predictive.utils import validate_julian_day
+from kerykeion.astrological_subject.factory import _precision_class_for_source
 from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, ephe
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 from kerykeion.schemas.exceptions import KerykeionException

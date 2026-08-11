@@ -355,7 +355,7 @@ class PrimaryDirectionsFactory:
         Must be called inside an :func:`ephemeris_session` (``iflag`` is the
         session flag).
         """
-        from kerykeion.astrological_subject_factory import STANDARD_PLANETS, _PLANETOCENTRIC_CENTERS
+        from kerykeion.astrological_subject.factory import STANDARD_PLANETS, _PLANETOCENTRIC_CENTERS
 
         entries: List[SpeculumEntryModel] = []
         lat_rad = math.radians(geo_lat)

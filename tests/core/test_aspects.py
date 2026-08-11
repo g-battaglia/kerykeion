@@ -1556,7 +1556,7 @@ class TestGeometricOppositePairFiltering:
 
     def test_no_longitudinal_aspect_between_derived_pairs(self, all_points_subject):
         """No opposition (or any other aspect) between a derived point and its primary."""
-        from kerykeion.astrological_subject_factory import OPPOSITE_PAIRS
+        from kerykeion.astrological_subject.factory import OPPOSITE_PAIRS
 
         aspects = AspectsFactory.single_chart_aspects(all_points_subject).aspects
         for derived, config in OPPOSITE_PAIRS.items():

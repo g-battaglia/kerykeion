@@ -2118,7 +2118,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             Generate and write the aspect-grid-only SVG file to the specified path.
 
     Example:
-        >>> from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        >>> from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
         >>> from kerykeion.chart_data.factory import ChartDataFactory
         >>> from kerykeion.charts.drawer import ChartDrawer
         >>>
@@ -5676,7 +5676,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
     from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
-    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+    from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
     from kerykeion.chart_data.factory import ChartDataFactory
 
     ACTIVE_PLANETS: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS

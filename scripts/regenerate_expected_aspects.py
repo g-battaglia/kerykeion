@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from pprint import pformat
 
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 from kerykeion.aspects.factory import AspectsFactory
 
 

@@ -359,13 +359,13 @@ class RelocatedChartFactory:
             )
             # The weekday follows the local calendar date, which can change
             # across timezones for the same UTC instant.
-            from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory as _ASF
+            from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory as _ASF
 
             _ASF._calculate_day_of_week(relocated_data)
 
         # Sect (day/night) depends on the observer's horizon: recompute it for
         # the new location so the Arabic part formulas pick the right branch.
-        from kerykeion.astrological_subject_factory import ARABIC_PARTS_CONFIG, AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import ARABIC_PARTS_CONFIG, AstrologicalSubjectFactory
 
         # _compute_is_diurnal calls ephe.* (tropical geocentric Sun + azalt), so
         # it must run inside an ephemeris session — same lock/path contract as

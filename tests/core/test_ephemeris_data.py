@@ -985,7 +985,7 @@ class TestFixedStarsInEphemeris:
 
     def test_active_fixed_stars_passthrough_and_isolation(self, monkeypatch):
         """The factory forwards a fresh copy of the star list to from_birth_data."""
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         captured = []
         real = AstrologicalSubjectFactory.from_birth_data.__func__

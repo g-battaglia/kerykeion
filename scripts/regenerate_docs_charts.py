@@ -13,7 +13,7 @@ Usage:
 """
 
 from pathlib import Path
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 

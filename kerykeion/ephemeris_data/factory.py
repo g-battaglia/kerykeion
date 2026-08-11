@@ -54,7 +54,7 @@ from kerykeion.utilities import (
     localize_naive,
     safe_timezone,
 )
-from kerykeion.astrological_subject_factory import (
+from kerykeion.astrological_subject.factory import (
     AstrologicalSubjectFactory,
     DEFAULT_HOUSES_SYSTEM_IDENTIFIER,
     DEFAULT_PERSPECTIVE_TYPE,

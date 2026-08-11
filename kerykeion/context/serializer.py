@@ -1235,7 +1235,7 @@ __all__ = [
 
 
 if __name__ == "__main__":
-    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+    from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
     from kerykeion.chart_data.factory import ChartDataFactory
 
     natal_model = AstrologicalSubjectFactory.from_iso_utc_time(

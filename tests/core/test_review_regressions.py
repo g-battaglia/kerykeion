@@ -97,7 +97,7 @@ class TestAstronomicalYearZeroIsoFormat:
         assert iso.startswith("-0001-"), iso
 
     def test_matches_sibling_formatter_sign_convention(self):
-        from kerykeion._predictive_utils import jd_to_iso_utc
+        from kerykeion.predictive.utils import jd_to_iso_utc
         from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
@@ -243,13 +243,13 @@ class TestGuardAspectOrbValidation:
 
     @pytest.mark.parametrize("orb", [float("nan"), float("inf"), -1.0])
     def test_invalid_orb_rejected(self, orb):
-        from kerykeion._predictive_utils import build_aspect_settings
+        from kerykeion.predictive.utils import build_aspect_settings
 
         with pytest.raises(KerykeionException):
             build_aspect_settings(orb, None)
 
     def test_valid_orb_accepted(self):
-        from kerykeion._predictive_utils import build_aspect_settings
+        from kerykeion.predictive.utils import build_aspect_settings
 
         settings = build_aspect_settings(3.0, None)
         assert settings

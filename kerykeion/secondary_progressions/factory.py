@@ -28,7 +28,7 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence
 from pydantic import Field
 from kerykeion.schemas.models import SubscriptableBaseModel
 
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 from kerykeion.aspects.utils import get_aspect_from_two_points
 from kerykeion.aspects.orb_utils import (
     OrbAdjustmentStrategy,
@@ -41,7 +41,7 @@ from kerykeion.aspects.orb_utils import (
 from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
-from kerykeion._predictive_utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
+from kerykeion.predictive.utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
 from kerykeion.utilities import datetime_to_julian
 
 # Mean tropical year (epoch J2000) — the "year" unit of the day-for-a-year

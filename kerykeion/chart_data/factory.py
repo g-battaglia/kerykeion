@@ -947,7 +947,7 @@ class ChartDataFactory:
 
 if __name__ == "__main__":
     # Example usage
-    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+    from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
     # Create a natal chart data
     subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject")

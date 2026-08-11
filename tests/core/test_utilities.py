@@ -1121,7 +1121,7 @@ class TestFormatAncientIso:
         """Round 34 regression: for a year<1 subject, local_time minus the displayed
         offset must equal the UTC time exactly (they used to disagree by up to 30s
         because the offset was minute-rounded for display but exact for the JD/UTC)."""
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, LocationData
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory, LocationData
 
         for lng in (7.6869, 23.7275, 62.624, -47.3):
             loc = LocationData(city="X", lng=lng, lat=45.0, tz_str="UTC", nation="XX")

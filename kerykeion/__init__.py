@@ -62,7 +62,7 @@ except _PackageNotFoundError:  # running from a source tree without installation
 # =============================================================================
 # CORE FACTORIES
 # =============================================================================
-from .astrological_subject_factory import AstrologicalSubjectFactory
+from .astrological_subject import AstrologicalSubjectFactory
 from .composite_subject import CompositeSubjectFactory
 from .planetary_returns import PlanetaryReturnFactory
 from .chart_data import ChartDataFactory
@@ -197,7 +197,7 @@ from .schemas.literals import DominantMethod
 # =============================================================================
 from .settings import KerykeionSettingsModel
 from .context import to_context
-from ._predictive_utils import PTOLEMAIC_ASPECTS
+from .predictive import PTOLEMAIC_ASPECTS
 
 # =============================================================================
 # EPHEMERIS BACKEND

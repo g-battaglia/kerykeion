@@ -23,7 +23,7 @@ from numbers import Real
 from typing import List, Optional, Sequence, Tuple
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
-from kerykeion._predictive_utils import jd_to_iso_utc, validate_julian_day
+from kerykeion.predictive.utils import jd_to_iso_utc, validate_julian_day
 
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.models import SubscriptableBaseModel

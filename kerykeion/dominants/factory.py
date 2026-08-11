@@ -145,7 +145,7 @@ class DominantsFactory:
             A :class:`DominantsModel` for the chosen school.
         """
         # Local import avoids an import-time dependency on the subject factory.
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         subject = AstrologicalSubjectFactory.from_birth_data(name, year, month, day, hour, minute, **subject_kwargs)
         return cls.from_subject(

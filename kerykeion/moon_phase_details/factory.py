@@ -735,7 +735,7 @@ __all__ = ["MoonPhaseDetailsFactory"]
 if __name__ == "__main__":
     # Inline manual test example.
     # Run with: python -m kerykeion.moon_phase_details.factory
-    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+    from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
     test_subject = AstrologicalSubjectFactory.from_birth_data(
         name="Moon Phase Example",

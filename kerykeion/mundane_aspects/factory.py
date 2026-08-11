@@ -19,7 +19,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
-from kerykeion._predictive_utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_bounds
+from kerykeion.predictive.utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_bounds
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.mundane_aspects.utils import MundaneAspectEvent, _lon_speed, scan_mundane_aspects
 from kerykeion.schemas.exceptions import KerykeionException

@@ -341,7 +341,7 @@ class TestGauquelinBackendCallShape:
     )
 
     def _run_with_fake_backend(self, monkeypatch, backend_name):
-        import kerykeion.astrological_subject_factory as asf
+        import kerykeion.astrological_subject.factory as asf
 
         calls = []
 

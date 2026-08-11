@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
-from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
+from kerykeion.predictive.utils import jd_to_iso_utc as _jd_to_iso
 
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint, SiderealMode, ZodiacType

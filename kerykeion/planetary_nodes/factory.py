@@ -22,7 +22,7 @@ import logging
 from typing import Dict, List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
-from kerykeion._predictive_utils import validate_julian_day
+from kerykeion.predictive.utils import validate_julian_day
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint

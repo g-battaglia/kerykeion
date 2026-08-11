@@ -241,7 +241,7 @@ class TestDeclinationArtifactFiltering:
 
     def test_no_contra_parallel_for_derived_pairs(self, all_points_subject):
         """No parallel/contra-parallel between a derived point and its primary."""
-        from kerykeion.astrological_subject_factory import OPPOSITE_PAIRS
+        from kerykeion.astrological_subject.factory import OPPOSITE_PAIRS
 
         aspects = AspectsFactory.single_chart_declination_aspects(all_points_subject, orb=5.0)
         for derived, config in OPPOSITE_PAIRS.items():

@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
-from kerykeion._predictive_utils import is_iso_date_only
+from kerykeion.predictive.utils import is_iso_date_only
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import SIGN_CODES, SiderealMode, ZodiacType
 from kerykeion.schemas.models import (

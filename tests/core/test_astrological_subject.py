@@ -799,7 +799,7 @@ class TestChartConfiguration:
 
     def test_valid_sidereal_configuration(self):
         """Test valid sidereal configuration."""
-        from kerykeion.astrological_subject_factory import ChartConfiguration
+        from kerykeion.astrological_subject.factory import ChartConfiguration
 
         config = ChartConfiguration(zodiac_type="Sidereal", sidereal_mode="LAHIRI")
         assert config.zodiac_type == "Sidereal"
@@ -807,14 +807,14 @@ class TestChartConfiguration:
 
     def test_sidereal_without_mode_uses_default(self):
         """Test that sidereal without mode sets default."""
-        from kerykeion.astrological_subject_factory import ChartConfiguration
+        from kerykeion.astrological_subject.factory import ChartConfiguration
 
         config = ChartConfiguration(zodiac_type="Sidereal")
         assert config.sidereal_mode == "FAGAN_BRADLEY"
 
     def test_invalid_sidereal_mode_with_tropical_raises_error(self):
         """Test that sidereal mode with tropical zodiac raises error."""
-        from kerykeion.astrological_subject_factory import ChartConfiguration
+        from kerykeion.astrological_subject.factory import ChartConfiguration
         from kerykeion.schemas import KerykeionException
         import pytest
 
@@ -823,7 +823,7 @@ class TestChartConfiguration:
 
     def test_invalid_zodiac_type_raises_error(self):
         """Test that invalid zodiac type raises error."""
-        from kerykeion.astrological_subject_factory import ChartConfiguration
+        from kerykeion.astrological_subject.factory import ChartConfiguration
         from kerykeion.schemas import KerykeionException
         import pytest
 
@@ -835,7 +835,7 @@ class TestChartConfiguration:
 
     def test_invalid_house_system_raises_error(self):
         """Test that invalid house system raises error."""
-        from kerykeion.astrological_subject_factory import ChartConfiguration
+        from kerykeion.astrological_subject.factory import ChartConfiguration
         from kerykeion.schemas import KerykeionException
         import pytest
 
@@ -844,7 +844,7 @@ class TestChartConfiguration:
 
     def test_invalid_perspective_raises_error(self):
         """Test that invalid perspective type raises error."""
-        from kerykeion.astrological_subject_factory import ChartConfiguration
+        from kerykeion.astrological_subject.factory import ChartConfiguration
         from kerykeion.schemas import KerykeionException
         import pytest
 
@@ -857,7 +857,7 @@ class TestLocationData:
 
     def test_default_location_is_greenwich(self):
         """Test that default location is Greenwich."""
-        from kerykeion.astrological_subject_factory import LocationData
+        from kerykeion.astrological_subject.factory import LocationData
 
         location = LocationData()
         assert location.city == "Greenwich"
@@ -873,7 +873,7 @@ class TestLocationData:
         clamping is applied locally only at the houses call for quadrant systems
         undefined inside the polar circle.
         """
-        from kerykeion.astrological_subject_factory import LocationData
+        from kerykeion.astrological_subject.factory import LocationData
 
         # North Pole: latitude is preserved, not clamped to 66.
         location = LocationData(lat=90.0)
@@ -1289,7 +1289,7 @@ class TestSiderealModeValidation:
 
     def test_invalid_sidereal_mode_raises_error(self):
         """Test that invalid sidereal mode raises error."""
-        from kerykeion.astrological_subject_factory import ChartConfiguration
+        from kerykeion.astrological_subject.factory import ChartConfiguration
         from kerykeion.schemas import KerykeionException
         import pytest
 
@@ -1480,7 +1480,7 @@ class TestExceptionHandlingInPlanetCalculation:
         Pars_Amoris) must degrade gracefully on backend errors: the dependent
         Arabic part is skipped and no raw backend exception escapes."""
         from kerykeion.ephemeris_backend import ephe
-        from kerykeion.astrological_subject_factory import STANDARD_PLANETS
+        from kerykeion.astrological_subject.factory import STANDARD_PLANETS
 
         venus_id = STANDARD_PLANETS["Venus"]
         real_calc_ut = ephe.calc_ut
@@ -2330,7 +2330,7 @@ class TestAllDwarfPlanetsAndFixedStars:
             "altitude": 0,
         }
 
-        with patch("kerykeion.astrological_subject_factory.FetchGeonames", return_value=mock_geonames):
+        with patch("kerykeion.astrological_subject.factory.FetchGeonames", return_value=mock_geonames):
             try:
                 AstrologicalSubjectFactory.from_birth_data(
                     "Geonames Error",
@@ -2473,7 +2473,7 @@ class TestDayOfWeekAnteCommonEra:
     @staticmethod
     def _weekday(year, month, day, hour, minute, lng):
         from kerykeion.ephemeris_backend import ephe
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         dec_hour = hour + minute / 60.0
         jd_local = ephe.julday(year, month, day, dec_hour, ephe.JUL_CAL)
@@ -2518,7 +2518,7 @@ class TestOnlineGeonamesGating:
         return data
 
     def test_explicit_coordinates_survive_online_fetch(self, _mock_geonames):
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         s = AstrologicalSubjectFactory.from_birth_data(
             "Precise", 1990, 6, 15, 12, 0,
@@ -2533,7 +2533,7 @@ class TestOnlineGeonamesGating:
     def test_from_current_time_uses_target_timezone_instant(self, monkeypatch):
         from datetime import datetime, timedelta, timezone
         from kerykeion.geonames import fetcher
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         auckland = {"countryCode": "NZ", "timezonestr": "Pacific/Auckland", "lat": "-36.85", "lng": "174.76"}
         monkeypatch.setattr(
@@ -2565,7 +2565,7 @@ class TestOnlineGeonamesGating:
         default / city-only chart is shifted by the host-city offset."""
         from datetime import datetime, timedelta, timezone
         from kerykeion.geonames import fetcher
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         monkeypatch.setattr(
             fetcher.FetchGeonames, "get_serialized_data", lambda self: dict(fetched)
@@ -2585,7 +2585,7 @@ class TestOnlineGeonamesGating:
     ):
         """The current-time prefetch must preserve the coordinate-only route."""
         from kerykeion.geonames import fetcher
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         captured = {}
 
@@ -2621,7 +2621,7 @@ class TestOnlineGeonamesGating:
 
     def test_from_iso_utc_time_failed_fetch_raises_kerykeion_exception(self, monkeypatch):
         from kerykeion.geonames import fetcher
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
         from kerykeion.schemas import KerykeionException
 
         monkeypatch.setattr(
@@ -2643,7 +2643,7 @@ class TestOnlineGeonamesGating:
         the default city "Greenwich" (which silently produced a chart in the
         wrong zone)."""
         from kerykeion.geonames import fetcher
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         captured = {}
 
@@ -2677,7 +2677,7 @@ class TestOnlineGeonamesGating:
         """A timezoneJSON response without a timezoneId must raise a clear
         KerykeionException, not fall back to a default timezone."""
         from kerykeion.geonames import fetcher
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
         from kerykeion.schemas import KerykeionException
 
         monkeypatch.setattr(
@@ -2696,7 +2696,7 @@ class TestOnlineGeonamesGating:
         """Explicit lng/lat must never be overwritten by the city centroid in
         from_iso_utc_time (and the GeoNames lookup is skipped entirely)."""
         from kerykeion.geonames import fetcher
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         def fail_city_lookup(self):
             raise AssertionError("no GeoNames lookup should run when lng/lat are explicit")
@@ -2716,7 +2716,7 @@ class TestOnlineGeonamesGating:
     def test_from_iso_utc_time_city_centroid_fills_missing_coordinates(self, _mock_geonames):
         """Without explicit lng/lat, from_iso_utc_time still resolves them from
         the city centroid (legacy behavior preserved)."""
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         s = AstrologicalSubjectFactory.from_iso_utc_time(
             "ISO City", "1990-06-15T12:00:00Z",
@@ -2729,7 +2729,7 @@ class TestOnlineGeonamesGating:
     def test_from_iso_utc_time_defaults_remain_greenwich_offline(self):
         """With no location at all and online=False, the historical Greenwich
         defaults still apply."""
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         s = AstrologicalSubjectFactory.from_iso_utc_time(
             "ISO Default", "1990-06-15T12:00:00Z", online=False,
@@ -2742,7 +2742,7 @@ class TestOnlineGeonamesGating:
         """A GeoNames payload with non-numeric lat/lng must surface as
         KerykeionException, not a raw ValueError from float()."""
         from kerykeion.geonames import fetcher
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
         from kerykeion.schemas import KerykeionException
 
         bad = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "not-a-number", "lng": "12.5"}
@@ -2762,7 +2762,7 @@ class TestOnlineGeonamesGating:
         wall clock re-interpreted in that timezone (which shifted the moment by
         the full host-target offset)."""
         from datetime import datetime, timedelta, timezone
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         before = datetime.now(timezone.utc)
         s = AstrologicalSubjectFactory.from_birth_data(

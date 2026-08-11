@@ -148,7 +148,7 @@ _TNO_NODE_REGEX = re.compile(
 
 def _tnos_available() -> bool:
     """Probe whether the loaded ephemeris can compute a TNO (Eris)."""
-    from kerykeion.astrological_subject_factory import TNO_PLANETS
+    from kerykeion.astrological_subject.factory import TNO_PLANETS
     from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
     try:

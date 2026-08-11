@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
-from kerykeion._predictive_utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_bounds
+from kerykeion.predictive.utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_bounds
 
 from kerykeion.moon_phase_details.utils import compute_lunar_phase_jd
 from kerykeion.schemas.exceptions import KerykeionException

@@ -80,12 +80,12 @@ from typing import List, Literal, Union, cast
 from kerykeion.schemas import KerykeionException
 from kerykeion.geonames.fetcher import FetchGeonames
 from kerykeion.utilities import julian_to_datetime, datetime_to_julian
-from kerykeion.astrological_subject_factory import (
+from kerykeion.astrological_subject.factory import (
     GEONAMES_DEFAULT_USERNAME_WARNING,
     DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
     DEFAULT_GEONAMES_USERNAME,
 )
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 from kerykeion.schemas.literals import AstrologicalPoint
 from kerykeion.schemas.models import PlanetReturnModel, AstrologicalSubjectModel
 
@@ -988,7 +988,7 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the heliocentric return chart.
         """
-        from kerykeion.astrological_subject_factory import STANDARD_PLANETS
+        from kerykeion.astrological_subject.factory import STANDARD_PLANETS
 
         # julian_day is Optional on the model (composite subjects have no
         # single moment in time); without this guard it reaches calc_ut as

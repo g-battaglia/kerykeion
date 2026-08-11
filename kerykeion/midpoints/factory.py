@@ -29,7 +29,7 @@ from kerykeion.schemas.models import SubscriptableBaseModel
 from kerykeion.aspects.utils import get_aspect_from_two_points
 from kerykeion.schemas.literals import SIGN_CODES, SignNumbers
 from kerykeion.schemas.models import AstrologicalSubjectModel, KerykeionPointModel
-from kerykeion._predictive_utils import gather_active_points, build_aspect_settings
+from kerykeion.predictive.utils import gather_active_points, build_aspect_settings
 from kerykeion.utilities import _ZODIAC_SIGNS, circular_mean, get_planet_house, HOUSE_FIELD_NAMES
 
 

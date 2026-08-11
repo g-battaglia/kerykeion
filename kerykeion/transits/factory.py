@@ -71,7 +71,7 @@ import math
 from typing import Union, List, Optional, cast
 from datetime import datetime, timedelta
 from kerykeion.schemas.models import AstrologicalSubjectModel
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint
@@ -345,7 +345,7 @@ class TransitsTimeRangeFactory:
         # perspective's center body, and the geocentric-only points (lunar
         # nodes, Lilith/apogee variants) in non-geocentric perspectives. Those
         # were already warned about at subject-build time.
-        from kerykeion.astrological_subject_factory import (
+        from kerykeion.astrological_subject.factory import (
             _GEO_TOPO_PERSPECTIVES,
             _GEOCENTRIC_ONLY_POINT_NAMES,
             _center_body_names,
@@ -1013,7 +1013,7 @@ class TransitsTimeRangeFactory:
             natal_pos = natal_point.abs_pos
 
             # Determine the transit planet's Swiss Ephemeris ID
-            from kerykeion.astrological_subject_factory import STANDARD_PLANETS, TNO_PLANETS
+            from kerykeion.astrological_subject.factory import STANDARD_PLANETS, TNO_PLANETS
 
             # Transit point names come from aspect results, which use the AstrologicalPoint vocabulary.
             transit_point_name = cast(AstrologicalPoint, p1_name)

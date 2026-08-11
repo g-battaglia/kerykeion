@@ -551,7 +551,7 @@ class TestFixedStarProvenance:
         Asserted against the same helper the planetary path uses, so a future
         change to the grading scale cannot leave stars on a stale copy of it.
         """
-        from kerykeion.astrological_subject_factory import _precision_class_for_source
+        from kerykeion.astrological_subject.factory import _precision_class_for_source
 
         prominent = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
         for star in prominent:
@@ -571,7 +571,7 @@ class TestFixedStarProvenance:
         Both must satisfy the same contract, or a chart's provenance would depend
         on how its stars were asked for.
         """
-        from kerykeion.astrological_subject_factory import _precision_class_for_source
+        from kerykeion.astrological_subject.factory import _precision_class_for_source
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Natal Stars", 1990, 6, 15, 14, 30,
