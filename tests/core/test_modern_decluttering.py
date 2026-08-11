@@ -307,7 +307,7 @@ def test_modern_chart_2000_02_26_neptune_order():
     attribute) follows the true zodiacal order.
     """
     from kerykeion import AstrologicalSubjectFactory
-    from kerykeion.chart_data_factory import ChartDataFactory
+    from kerykeion.chart_data.factory import ChartDataFactory
     from kerykeion.charts.drawer import ChartDrawer
     from kerykeion.charts.svg_metadata import parse_chart_points
     from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
@@ -755,7 +755,7 @@ def test_dual_rings_respect_their_own_content_derived_separations():
     from types import SimpleNamespace
 
     from kerykeion import AstrologicalSubjectFactory
-    from kerykeion.chart_data_factory import ChartDataFactory
+    from kerykeion.chart_data.factory import ChartDataFactory
     from kerykeion.charts.drawer import ChartDrawer
     from kerykeion.charts.svg_metadata import parse_chart_points
 

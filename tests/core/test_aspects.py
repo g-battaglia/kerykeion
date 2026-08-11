@@ -1146,7 +1146,7 @@ class TestPointOrbAdjustmentsIntegration:
 
     def test_chart_data_natal_applies_luminary_bonus(self, _subject):
         """create_natal_chart_data defaults to the luminary bonus."""
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
 
         with_bonus = ChartDataFactory.create_natal_chart_data(_subject)
         without = ChartDataFactory.create_natal_chart_data(
@@ -1744,14 +1744,14 @@ class TestDualChartFrameValidation:
             AspectsFactory.dual_chart_aspects(lahiri, fagan)
 
     def test_synastry_chart_data_rejects_mixed_frame(self, tropical, sidereal):
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
         from kerykeion.schemas import KerykeionException
 
         with pytest.raises(KerykeionException):
             ChartDataFactory.create_synastry_chart_data(tropical, sidereal)
 
     def test_transit_chart_data_rejects_mixed_frame(self, tropical, sidereal):
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
         from kerykeion.schemas import KerykeionException
 
         with pytest.raises(KerykeionException):

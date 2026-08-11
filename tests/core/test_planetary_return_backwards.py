@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from unittest.mock import patch
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException
 from kerykeion.utilities import datetime_to_julian, julian_to_datetime
 
@@ -209,7 +209,7 @@ class TestSwissephFallback:
     """
 
     def test_solar_backwards_raises_on_swisseph(self, factory):
-        import kerykeion.planetary_return_factory as prf
+        import kerykeion.planetary_returns.factory as prf
 
         original = prf.ephe.solcross_ut
 
@@ -225,7 +225,7 @@ class TestSwissephFallback:
                 )
 
     def test_lunar_backwards_raises_on_swisseph(self, factory):
-        import kerykeion.planetary_return_factory as prf
+        import kerykeion.planetary_returns.factory as prf
 
         original = prf.ephe.mooncross_ut
 
@@ -241,7 +241,7 @@ class TestSwissephFallback:
                 )
 
     def test_node_crossing_backwards_raises_on_swisseph(self, factory):
-        import kerykeion.planetary_return_factory as prf
+        import kerykeion.planetary_returns.factory as prf
 
         original = prf.ephe.mooncross_node_ut
 

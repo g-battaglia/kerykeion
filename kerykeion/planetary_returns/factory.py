@@ -40,7 +40,7 @@ Example:
     Basic Solar Return calculation for a specific year:
 
     >>> from kerykeion import AstrologicalSubjectFactory
-    >>> from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+    >>> from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
     >>>
     >>> # Create natal chart
     >>> subject = AstrologicalSubjectFactory.from_birth_data(

@@ -19,10 +19,10 @@ Categories:
 from pathlib import Path
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
 SVG_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
 

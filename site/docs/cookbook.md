@@ -276,7 +276,7 @@ Moon,Ari,21.80,Eighth_House,False,14.0131,13.1955,
 # doc-snippet: no-run — requires optional pandas dependency
 import pandas as pd
 from datetime import datetime
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 
 ephemeris = EphemerisDataFactory(
     start_datetime=datetime(2024, 1, 1),

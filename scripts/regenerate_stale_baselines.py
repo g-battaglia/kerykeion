@@ -13,7 +13,7 @@ Failing tests:
 
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDrawer
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 
 SVG_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
 

@@ -1016,7 +1016,7 @@ class TestReturnSiblingYearValidationRound16:
     def test_sibling_entry_points_wrap_year(self):
         import pytest
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+        from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
         from kerykeion.schemas import KerykeionException
         subj = AstrologicalSubjectFactory.from_birth_data(
             "S", 1990, 6, 15, 12, 0, lng=12.5, lat=41.9, tz_str="Europe/Rome",

@@ -54,7 +54,7 @@ The choice of house system depends on your astrological tradition and preference
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 morinus_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -80,7 +80,7 @@ The output will be:
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 whole_sign_subject = AstrologicalSubjectFactory.from_birth_data(

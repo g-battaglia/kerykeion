@@ -13,7 +13,7 @@ Here is an example:
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 first = AstrologicalSubjectFactory.from_birth_data(
@@ -48,7 +48,7 @@ Here is an example of how to enable the Aspect Table Grid View:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 first = AstrologicalSubjectFactory.from_birth_data(

@@ -13,8 +13,8 @@ The **Dual Return Chart** compares a natal chart with a Solar or Lunar return ch
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 # Base natal subject

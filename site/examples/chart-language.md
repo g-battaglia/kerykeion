@@ -28,7 +28,7 @@ To set the language for your chart, use the `chart_language` parameter when crea
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 # Russian Language Chart (offline)

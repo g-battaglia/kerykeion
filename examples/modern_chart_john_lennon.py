@@ -1,5 +1,5 @@
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion import ChartDrawer
 from pathlib import Path
 

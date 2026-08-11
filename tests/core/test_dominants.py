@@ -280,7 +280,7 @@ def test_elemental_matches_chart_distribution_with_active_stars():
     does, or the dominants numbers silently diverge from the chart's element
     distribution for a star-bearing subject."""
     from kerykeion import AstrologicalSubjectFactory
-    from kerykeion.chart_data_factory import ChartDataFactory
+    from kerykeion.chart_data.factory import ChartDataFactory
 
     subject = AstrologicalSubjectFactory.from_birth_data(
         "Star Dominant", 1990, 6, 15, 12, 0,

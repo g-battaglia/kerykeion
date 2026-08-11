@@ -21,7 +21,7 @@ from kerykeion.context.serializer import (
     dual_chart_data_to_context,
     moon_phase_overview_to_context,
 )
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from typing import get_args
 from kerykeion.schemas import AstrologicalPoint
 
@@ -1423,7 +1423,7 @@ class TestHouseComparisonContext:
 
     def test_return_subject_to_context(self, _subjects):
         from kerykeion.context.serializer import astrological_subject_to_context
-        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+        from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
         s1, _ = _subjects
         factory = PlanetaryReturnFactory(s1, lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False)
@@ -1586,7 +1586,7 @@ class TestRoundOneRegressions:
     def test_transit_per_point_owner_substituted(self):
         """In a transit chart the transit subject's real name must not leak into
         per-point owners (only the substituted 'Transit' label)."""
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
         from kerykeion.context.serializer import to_context
         natal = self._subject("Alice")
         transit = self._subject("BobTheTransit")
@@ -1597,7 +1597,7 @@ class TestRoundOneRegressions:
     def test_relationship_score_no_hardcoded_max(self):
         """The relationship_score is an open-ended sum; it must not carry a
         hardcoded max='44' (a strong synastry exceeds it -> >100%)."""
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
         from kerykeion.context.serializer import to_context
         s1 = self._subject("A")
         s2 = self._subject("B")

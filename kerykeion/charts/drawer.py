@@ -2119,7 +2119,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
     Example:
         >>> from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-        >>> from kerykeion.chart_data_factory import ChartDataFactory
+        >>> from kerykeion.chart_data.factory import ChartDataFactory
         >>> from kerykeion.charts.drawer import ChartDrawer
         >>>
         >>> # Step 1: Create subject
@@ -5675,9 +5675,9 @@ class ChartDrawer:  # type: ignore[no-redef]
 
 if __name__ == "__main__":
     from kerykeion.utilities import setup_logging
-    from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+    from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
     from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-    from kerykeion.chart_data_factory import ChartDataFactory
+    from kerykeion.chart_data.factory import ChartDataFactory
 
     ACTIVE_PLANETS: list[AstrologicalPoint] = DEFAULT_ACTIVE_POINTS
     # ACTIVE_PLANETS: list[AstrologicalPoint] = ALL_ACTIVE_POINTS

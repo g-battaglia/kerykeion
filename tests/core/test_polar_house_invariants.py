@@ -531,7 +531,7 @@ class TestACompositeCannotMixTwoDivisions:
         )
 
     def test_a_substituted_parent_cannot_compose_with_an_intact_one(self):
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
         from kerykeion.schemas.exceptions import KerykeionException
 
         polar = self._subject("Polar", 78.2232)
@@ -555,7 +555,7 @@ class TestACompositeCannotMixTwoDivisions:
         parents' own substitution records travel with the composite, which is
         what the effective view reads.
         """
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         composite = CompositeSubjectFactory(
             self._subject("Polar A", 78.2232), self._subject("Polar B", 79.0)
@@ -575,7 +575,7 @@ class TestACompositeCannotMixTwoDivisions:
 
     def test_a_composite_of_intact_parents_records_no_substitution(self):
         """The negative control: inheriting records must not become inventing them."""
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         composite = CompositeSubjectFactory(
             self._subject("Temperate A", 41.9, lng=12.5, tz_str="Europe/Rome", city="Rome", nation="IT"),
@@ -596,7 +596,7 @@ class TestACompositeCannotMixTwoDivisions:
         list where a future reader could mistake it for the one that explains
         these cusps.
         """
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         parents = [self._subject("Polar A", 78.2232, calculate_gauquelin=True),
                    self._subject("Polar B", 79.0, calculate_gauquelin=True)]
@@ -613,7 +613,7 @@ class TestACompositeCannotMixTwoDivisions:
 
     def test_davison_accepts_parents_with_different_effective_systems(self):
         """Davison recasts its houses and does not average the parents' cusps."""
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         polar = self._subject("Polar", 78.2232)
         temperate = self._subject("Temperate", 41.9, lng=12.5, tz_str="Europe/Rome", city="Rome", nation="IT")
@@ -627,7 +627,7 @@ class TestACompositeCannotMixTwoDivisions:
 
     def test_temperate_davison_of_two_polar_parents_restores_the_request(self):
         """Matching parent fallbacks must not become the Davison chart setting."""
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         north = self._subject("North Polar", 78.2232)
         south = self._subject("South Polar", -78.2232)
@@ -643,7 +643,7 @@ class TestACompositeCannotMixTwoDivisions:
 
     def test_polar_davison_records_its_own_fallback(self):
         """A polar midpoint may substitute, but the new cast must say that it did."""
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         davison = CompositeSubjectFactory(
             self._subject("Polar A", 78.2232),

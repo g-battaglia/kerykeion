@@ -26,7 +26,7 @@ To apply a theme to your astrological chart, pass the `theme` parameter to `Char
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -59,7 +59,7 @@ If no theme is specified, the Classic theme is applied by default.
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -81,7 +81,7 @@ chart.save_svg(output_path=out_dir)
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -103,7 +103,7 @@ chart.save_svg(output_path=out_dir)
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -128,7 +128,7 @@ Use `None` as the theme parameter to override the default CSS variables. This al
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(

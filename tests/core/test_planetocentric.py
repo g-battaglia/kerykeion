@@ -434,7 +434,7 @@ class TestDegenerateCenterBodyExclusion:
         assert helio.earth.abs_pos != 0.0 or helio.earth.speed != 0.0
 
     def test_no_phantom_earth_aspects_in_geocentric(self):
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
 
         geo = AstrologicalSubjectFactory.from_birth_data(
             "Geo", **_BIRTH_KWARGS, active_points=["Sun", "Moon", "Mars", "Earth"],
@@ -445,7 +445,7 @@ class TestDegenerateCenterBodyExclusion:
     def test_heliocentric_synastry_skips_relationship_score(self):
         """A synastry whose partners have no natal Sun (heliocentric) must not
         crash the relationship-score path — the score is geocentric and is skipped."""
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
 
         john = AstrologicalSubjectFactory.from_birth_data(
             "John", **_BIRTH_KWARGS, perspective_type="Heliocentric",

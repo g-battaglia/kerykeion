@@ -23,7 +23,7 @@ from typing import Dict, Any
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory, ChartDrawer
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 
 from tests.data.test_subjects_matrix import (
     TEMPORAL_SUBJECTS,

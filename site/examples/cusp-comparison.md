@@ -13,7 +13,7 @@ Kerykeion introduces **cusp comparison grids** for Transit, Synastry, and Dual R
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 person_a = AstrologicalSubjectFactory.from_birth_data(

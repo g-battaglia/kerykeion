@@ -33,7 +33,7 @@ Classes:
 Dependencies:
     - kerykeion.AstrologicalSubjectFactory: For creating astrological subjects
     - kerykeion.aspects.AspectsFactory: For calculating angular relationships
-    - kerykeion.ephemeris_data_factory: For generating time-series planetary positions
+    - kerykeion.ephemeris_data.factory: For generating time-series planetary positions
     - kerykeion.schemas: For type definitions and model structures
     - datetime: For date/time handling
 
@@ -42,7 +42,7 @@ Example:
 
     >>> from datetime import datetime, timedelta
     >>> from kerykeion import AstrologicalSubjectFactory
-    >>> from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+    >>> from kerykeion.ephemeris_data.factory import EphemerisDataFactory
     >>> from kerykeion.transits.factory import TransitsTimeRangeFactory
     >>>
     >>> # Create natal chart
@@ -1098,7 +1098,7 @@ class TransitsTimeRangeFactory:
 
 if __name__ == "__main__":
     from datetime import timedelta
-    from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+    from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 
     # Create a natal chart for the subject
     person = AstrologicalSubjectFactory.from_birth_data("Johnny Depp", 1963, 6, 9, 20, 15, "Owensboro", "US")

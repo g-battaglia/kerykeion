@@ -63,10 +63,10 @@ except _PackageNotFoundError:  # running from a source tree without installation
 # CORE FACTORIES
 # =============================================================================
 from .astrological_subject_factory import AstrologicalSubjectFactory
-from .composite_subject_factory import CompositeSubjectFactory
-from .planetary_return_factory import PlanetaryReturnFactory
-from .chart_data_factory import ChartDataFactory
-from .ephemeris_data_factory import EphemerisDataFactory
+from .composite_subject import CompositeSubjectFactory
+from .planetary_returns import PlanetaryReturnFactory
+from .chart_data import ChartDataFactory
+from .ephemeris_data import EphemerisDataFactory
 from .transits import TransitsTimeRangeFactory
 from .moon_phase_details import MoonPhaseDetailsFactory
 from .sun_times import SunTimesFactory

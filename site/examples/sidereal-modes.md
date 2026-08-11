@@ -131,7 +131,7 @@ The most widely used ayanamsa for Vedic astrology:
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data(

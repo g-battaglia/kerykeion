@@ -29,7 +29,7 @@ from statistics import mean
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 from kerykeion.charts.draw_modern import STRAIGHT_TETHER_THRESHOLD
 from kerykeion.charts.svg_metadata import parse_chart_points, parse_indicators

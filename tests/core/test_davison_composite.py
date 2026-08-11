@@ -323,14 +323,14 @@ class TestDavisonMidpointComponentsInverse:
         ],
     )
     def test_components_round_trip_within_one_second(self, mid_jd, lng):
-        from kerykeion.composite_subject_factory import _davison_midpoint_components
+        from kerykeion.composite_subject.factory import _davison_midpoint_components
 
         y, mo, d, h, mi, s = _davison_midpoint_components(mid_jd, lng)
         got = self._encode(y, mo, d, h, mi, s, lng)
         assert abs(got - mid_jd) * 86400.0 < 1.0
 
     def test_unrepresentable_gap_clamps_with_warning(self, caplog):
-        from kerykeion.composite_subject_factory import _davison_midpoint_components
+        from kerykeion.composite_subject.factory import _davison_midpoint_components
 
         with caplog.at_level("WARNING"):
             y, mo, d, h, mi, s = _davison_midpoint_components(1721424.5, 0.0)

@@ -103,7 +103,7 @@ drawer = ChartDrawer(transit_data)
 Composite charts display a single wheel calculated from the midpoints of two subjects, representing the relationship as a unified entity.
 
 ```python
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
 # Create composite subject first
 composite_sub = CompositeSubjectFactory(subject_a, subject_b).get_midpoint_composite_subject_model()

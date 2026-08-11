@@ -29,11 +29,11 @@ import pytest
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import BACKEND_NAME
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 from kerykeion.charts.utils import make_lunar_phase
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.schemas.models import KerykeionPointModel
 from kerykeion.secondary_progressions import SecondaryProgressionFactory
 from kerykeion.schemas import KerykeionException
@@ -3290,7 +3290,7 @@ class TestChartDrawerCompositeLocation:
     """Composite chart uses average of both subjects' locations."""
 
     def test_composite_chart_uses_average_location(self):
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         first = AstrologicalSubjectFactory.from_birth_data(
             name="First",
@@ -3935,7 +3935,7 @@ class TestModernNoClassicHitAreaLeakRound7:
 
     def test_modern_natal_emits_twelve_house_sectors(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
         from kerykeion.charts.drawer import ChartDrawer
 
         s = AstrologicalSubjectFactory.from_birth_data(
@@ -3953,7 +3953,7 @@ class TestSvgControlCharStripRound8:
     def test_control_char_name_yields_parseable_svg(self):
         import xml.dom.minidom
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
         from kerykeion.charts.drawer import ChartDrawer
 
         s = AstrologicalSubjectFactory.from_birth_data(
@@ -3970,7 +3970,7 @@ class TestSaveSvgRobustnessRound9:
 
     def _drawer(self, name="T"):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
         from kerykeion.charts.drawer import ChartDrawer
         s = AstrologicalSubjectFactory.from_birth_data(
             name, 1990, 6, 15, 12, 0, city="London", nation="GB",

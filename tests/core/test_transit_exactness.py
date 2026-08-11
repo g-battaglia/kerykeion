@@ -8,7 +8,7 @@ import pytest
 from datetime import datetime, timedelta
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 from kerykeion.schemas.models import AspectModel, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.transits.factory import TransitsTimeRangeFactory
 

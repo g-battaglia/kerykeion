@@ -36,7 +36,7 @@ Calculating a return involves the **Natal Subject** and the **Return Location** 
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
 # 1. Create Natal Subject
 natal_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -79,7 +79,7 @@ When using `sidereal_mode="USER"` on the natal subject, pass the custom ayanamsa
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
 natal = AstrologicalSubjectFactory.from_birth_data(
     "Sidereal User", 1990, 6, 15, 12, 0,

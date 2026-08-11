@@ -33,7 +33,7 @@ Example:
     Basic usage for daily ephemeris data:
 
     >>> from datetime import datetime
-    >>> from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+    >>> from kerykeion.ephemeris_data.factory import EphemerisDataFactory
     >>>
     >>> start = datetime(2024, 1, 1)
     >>> end = datetime(2024, 1, 31)

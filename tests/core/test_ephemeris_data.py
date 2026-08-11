@@ -14,7 +14,7 @@ from datetime import datetime
 
 import pytest
 
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 
 
 # ---------------------------------------------------------------------------
@@ -412,7 +412,7 @@ class TestEdgeCases:
         request must still raise the plain ``ValueError`` cap message, proving
         the comprehension is never reached.
         """
-        from kerykeion import ephemeris_data_factory as edf
+        from kerykeion.ephemeris_data import factory as edf
 
         def _boom(*_args, **_kwargs):
             raise AssertionError("series was materialized before the cap check")

@@ -24,12 +24,12 @@ sys.path.insert(0, str(project_root))
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.report.generator import ReportGenerator
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
 from kerykeion.dominants import DominantsFactory
 from kerykeion.firdaria import FirdariaFactory
 from kerykeion.horary import HoraryIndicatorsFactory
 from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.profections import ProfectionsFactory
 from kerykeion.receptions import MutualReceptionsFactory
 from kerykeion.zodiacal_releasing import ZodiacalReleasingFactory
