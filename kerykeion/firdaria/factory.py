@@ -5,11 +5,10 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List, Optional, Tuple, cast
 
 from kerykeion.schemas.kr_literals import ClassicalPlanet
-
 from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -17,7 +16,12 @@ from kerykeion.schemas.kr_models import (
     FirdariaPeriodModel,
     FirdariaSubPeriodModel,
 )
-from kerykeion.utilities import resolve_subject_birth_datetime, resolve_subject_local_now
+from kerykeion.utilities import (
+    civil_jd,
+    jd_to_iso_date,
+    resolve_subject_local_moment,
+    resolve_subject_local_now,
+)
 
 # A firdaria "year" is the Julian year of 365.25 days — the convention shared
 # by the common two-level implementations this factory is validated against.
@@ -61,6 +65,10 @@ DEFAULT_LIFE_CAP_YEARS = 120
 class FirdariaFactory:
     """Compute the firdaria periods of a chart.
 
+    All date arithmetic runs on Julian Days over the subject's LOCAL
+    wall-clock anchor (never ``datetime``), so deep-BCE births — which the
+    engine supports elsewhere — build a timeline too.
+
     Example:
         >>> from kerykeion import AstrologicalSubjectFactory, FirdariaFactory
         >>> subject = AstrologicalSubjectFactory.from_birth_data(
@@ -103,7 +111,10 @@ class FirdariaFactory:
                 "an averaged one must never be derived). Refusing to guess."
             )
 
-        birth = resolve_subject_birth_datetime(subject)
+        # Local wall-clock anchor as a Julian Day: the timeline lives in the
+        # subject's civil frame, and JD arithmetic is BCE-safe.
+        birth_year, birth_month, birth_day, birth_hour = resolve_subject_local_moment(subject)
+        birth_jd = civil_jd(birth_year, birth_month, birth_day, birth_hour)
 
         if target_date is not None:
             try:
@@ -119,6 +130,9 @@ class FirdariaFactory:
                 )
         else:
             target = resolve_subject_local_now(subject)
+        target_jd = civil_jd(
+            target.year, target.month, target.day, target.hour + target.minute / 60.0
+        )
 
         sequence = DIURNAL_SEQUENCE if is_diurnal else NOCTURNAL_SEQUENCE
         # The ring excludes the nodes by construction, so its members are the
@@ -128,57 +142,57 @@ class FirdariaFactory:
         life_cap_years = max(1, life_cap_years)
 
         periods: List[FirdariaPeriodModel] = []
-        bounds: List[Tuple[FirdariaPeriodModel, datetime, datetime, List[Tuple[FirdariaSubPeriodModel, datetime, datetime]]]] = []
-        cursor = birth
+        bounds: List[Tuple[FirdariaPeriodModel, float, float, List[Tuple[FirdariaSubPeriodModel, float, float]]]] = []
+        cursor_jd = birth_jd
         age_cursor = 0
 
         while age_cursor < life_cap_years:
             for lord, years in sequence:
-                period_start = cursor
-                period_end = period_start + timedelta(days=years * JULIAN_YEAR_DAYS)
+                period_start_jd = cursor_jd
+                period_end_jd = period_start_jd + years * JULIAN_YEAR_DAYS
 
                 sub_periods: List[FirdariaSubPeriodModel] = []
-                sub_bounds: List[Tuple[FirdariaSubPeriodModel, datetime, datetime]] = []
+                sub_bounds: List[Tuple[FirdariaSubPeriodModel, float, float]] = []
                 if lord not in NODES:
                     start_idx = sub_ring_planets.index(cast(ClassicalPlanet, lord))
                     ring = sub_ring_planets[start_idx:] + sub_ring_planets[:start_idx]
                     sub_days = years * JULIAN_YEAR_DAYS / len(ring)
-                    sub_cursor = period_start
+                    sub_cursor_jd = period_start_jd
                     for sub_lord in ring:
-                        sub_end = sub_cursor + timedelta(days=sub_days)
+                        sub_end_jd = sub_cursor_jd + sub_days
                         sub_period = FirdariaSubPeriodModel(
                             lord=sub_lord,
-                            start=sub_cursor.date().isoformat(),
-                            end=sub_end.date().isoformat(),
+                            start=jd_to_iso_date(sub_cursor_jd),
+                            end=jd_to_iso_date(sub_end_jd),
                         )
                         sub_periods.append(sub_period)
-                        sub_bounds.append((sub_period, sub_cursor, sub_end))
-                        sub_cursor = sub_end
+                        sub_bounds.append((sub_period, sub_cursor_jd, sub_end_jd))
+                        sub_cursor_jd = sub_end_jd
 
                 period = FirdariaPeriodModel(
                     lord=lord,
                     years=years,
                     age_start=age_cursor,
                     age_end=age_cursor + years,
-                    start=period_start.date().isoformat(),
-                    end=period_end.date().isoformat(),
+                    start=jd_to_iso_date(period_start_jd),
+                    end=jd_to_iso_date(period_end_jd),
                     sub_periods=sub_periods,
                 )
                 periods.append(period)
-                bounds.append((period, period_start, period_end, sub_bounds))
+                bounds.append((period, period_start_jd, period_end_jd, sub_bounds))
 
-                cursor = period_end
+                cursor_jd = period_end_jd
                 age_cursor += years
                 if age_cursor >= life_cap_years:
                     break
 
         current: Optional[FirdariaPeriodModel] = None
         current_sub: Optional[FirdariaSubPeriodModel] = None
-        for period, start, end, sub_bounds in bounds:
-            if start <= target < end:
+        for period, start_jd, end_jd, sub_bounds in bounds:
+            if start_jd <= target_jd < end_jd:
                 current = period
-                for sub_period, sub_start, sub_end in sub_bounds:
-                    if sub_start <= target < sub_end:
+                for sub_period, sub_start_jd, sub_end_jd in sub_bounds:
+                    if sub_start_jd <= target_jd < sub_end_jd:
                         current_sub = sub_period
                         break
                 break

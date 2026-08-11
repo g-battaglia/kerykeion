@@ -5,8 +5,8 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from datetime import date, datetime
-from typing import List, Optional
+from datetime import date
+from typing import List, Optional, Tuple
 
 from kerykeion.dignities.rulers import get_domicile_ruler
 from kerykeion.schemas.kerykeion_exception import KerykeionException
@@ -16,7 +16,11 @@ from kerykeion.schemas.kr_models import (
     ProfectionsModel,
     ProfectionYearModel,
 )
-from kerykeion.utilities import resolve_subject_birth_datetime, resolve_subject_local_now
+from kerykeion.utilities import (
+    format_astronomical_iso_date,
+    resolve_subject_local_moment,
+    resolve_subject_local_now,
+)
 
 # House cusp fields on the subject, in house order (1st..12th).
 HOUSE_CUSP_FIELDS: tuple[str, ...] = (
@@ -35,22 +39,21 @@ HOUSE_CUSP_FIELDS: tuple[str, ...] = (
 )
 
 
-def _anniversary(year: int, birth: datetime) -> date:
-    """The birthday anniversary in ``year``, in the civil calendar.
+def _is_gregorian_leap(year: int) -> bool:
+    """Proleptic-Gregorian leap rule, valid for any astronomical year."""
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
-    A February 29 birthday rolls to March 1 in common years — the same
-    convention civil calendars (and the previous client implementation) use.
-    Any other ValueError (a year outside the ``date`` range) is a real error
-    and surfaces as such.
+
+def _anniversary(year: int, birth_month: int, birth_day: int) -> Tuple[int, int]:
+    """The birthday anniversary ``(month, day)`` in ``year``.
+
+    A February 29 birthday rolls to March 1 in common years — the civil
+    convention. Pure integer arithmetic, so BCE years work (Python's ``date``
+    stops at year 1; astronomical numbering does not).
     """
-    try:
-        return date(year, birth.month, birth.day)
-    except ValueError as exc:
-        if birth.month == 2 and birth.day == 29 and 1 <= year <= 9999:
-            return date(year, 3, 1)
-        raise KerykeionException(
-            f"Cannot build the profection anniversary for year {year}: {exc}"
-        ) from exc
+    if birth_month == 2 and birth_day == 29 and not _is_gregorian_leap(year):
+        return (3, 1)
+    return (birth_month, birth_day)
 
 
 class ProfectionsFactory:
@@ -82,7 +85,8 @@ class ProfectionsFactory:
         """Build the profection years around a target date.
 
         Args:
-            subject: The natal chart. Requires the twelve house cusps.
+            subject: The natal chart. Requires the twelve house cusps. BCE
+                birth years (astronomical numbering) are supported.
             target_date: ISO date (``YYYY-MM-DD``) the "current" year is
                 resolved against. When omitted, today in the subject's own
                 timezone is used.
@@ -106,7 +110,8 @@ class ProfectionsFactory:
                 )
             cusps.append(cusp)
 
-        birth = resolve_subject_birth_datetime(subject)
+        # Birth components without datetime: BCE-safe, ISO-only-subject-safe.
+        birth_year, birth_month, birth_day, _birth_hour = resolve_subject_local_moment(subject)
 
         if target_date is not None:
             try:
@@ -118,17 +123,24 @@ class ProfectionsFactory:
         else:
             target = resolve_subject_local_now(subject).date()
 
-        age = target.year - birth.year
-        if target < _anniversary(target.year, birth):
+        # Age by civil anniversary — pure integer arithmetic on astronomical
+        # years, so a BCE birth with a CE target just yields a large age.
+        age = target.year - birth_year
+        if (target.month, target.day) < _anniversary(target.year, birth_month, birth_day):
             age -= 1
         if age < 0:
             raise KerykeionException(
                 f"target_date {target.isoformat()} precedes the birth date "
-                f"{birth.date().isoformat()} — no profection year exists yet."
+                f"{format_astronomical_iso_date(birth_year, birth_month, birth_day)} "
+                "— no profection year exists yet."
             )
 
         years_before = max(0, years_before)
         years_after = max(0, years_after)
+
+        def _year_boundary(year: int) -> str:
+            month, day = _anniversary(year, birth_month, birth_day)
+            return format_astronomical_iso_date(year, month, day)
 
         current: Optional[ProfectionYearModel] = None
         years: List[ProfectionYearModel] = []
@@ -140,8 +152,8 @@ class ProfectionsFactory:
                 house=house,
                 sign=sign,
                 lord=get_domicile_ruler(sign),
-                year_start=_anniversary(birth.year + entry_age, birth).isoformat(),
-                year_end=_anniversary(birth.year + entry_age + 1, birth).isoformat(),
+                year_start=_year_boundary(birth_year + entry_age),
+                year_end=_year_boundary(birth_year + entry_age + 1),
             )
             years.append(entry)
             if entry_age == age:

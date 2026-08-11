@@ -44,10 +44,19 @@
 - **Angularity and stellium analysis on chart data**: `angularities` and
   `stelliums` on `SingleChartDataModel`, per-subject variants on
   `DualChartDataModel` (classical planets vs the four angles, 8° default orb;
-  three-planet stellium threshold).
+  three-planet stellium threshold). Angularities report EVERY (planet, angle)
+  pair within the orb — not just each planet's nearest angle — so consumers
+  can filter by angle without losing entries; both analyses honour the
+  chart's effective `active_points` (an excluded planet never appears).
 - **Subject helpers** in `kerykeion.utilities`:
   `resolve_subject_birth_datetime` (shared split-components/ISO fallback,
-  now also used by zodiacal releasing) and `resolve_subject_local_now`.
+  now also used by zodiacal releasing), `resolve_subject_local_now`, and the
+  BCE-safe civil-date kit (`resolve_subject_local_moment`, `civil_jd`,
+  `jd_to_iso_date`, `format_astronomical_iso_date`): profections and firdaria
+  run their date arithmetic on Julian Days, so deep-antiquity births
+  (astronomical year ≤ 0) build timelines instead of hitting Python's
+  ``datetime`` year-1 floor. `MotionState` is re-exported from
+  `kerykeion.schemas` like every other public literal.
 
 ## 6.0.0a82 - 2026-08-11
 

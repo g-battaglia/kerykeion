@@ -100,6 +100,34 @@ def test_angularities_respect_the_orb(john_lennon):
     assert distances == sorted(distances)
 
 
+def test_angularities_report_every_pair_within_orb(john_lennon):
+    """ALL (planet, angle) pairs inside the orb are emitted — not just each
+    planet's nearest angle — so an ASC/MC-only consumer can filter without
+    losing a planet whose nearest angle happens to be DSC or IC."""
+    wide = _compute_angularities(john_lennon, orb=180.0)
+    # With an unbounded orb every present planet pairs with every present angle.
+    from kerykeion.chart_data_factory import _ANGLE_FIELDS, _CLASSICAL_PLANET_FIELDS
+
+    present_planets = [f for f in _CLASSICAL_PLANET_FIELDS if getattr(john_lennon, f, None) is not None]
+    present_angles = [f for f in _ANGLE_FIELDS if getattr(john_lennon, f, None) is not None]
+    assert len(wide) == len(present_planets) * len(present_angles)
+
+
+def test_analysis_honours_active_points(john_lennon):
+    """A chart restricted to Sun+Moon must not report an excluded planet in
+    its angularity or stellium analysis (the serialized active_points and the
+    analysis must agree)."""
+    restricted = ChartDataFactory.create_natal_chart_data(
+        john_lennon, active_points=["Sun", "Moon"]
+    )
+    for entry in restricted.angularities:
+        assert entry.point in ("Sun", "Moon")
+    for stellium in restricted.stelliums:
+        assert all(point in ("Sun", "Moon") for point in stellium.points)
+    # Two points can never form a 3-planet stellium.
+    assert restricted.stelliums == []
+
+
 def test_stelliums_threshold(john_lennon):
     stelliums = _compute_stelliums(john_lennon)
     for stellium in stelliums:
@@ -109,8 +137,10 @@ def test_stelliums_threshold(john_lennon):
 
 def test_chart_data_carries_the_analysis(john_lennon):
     chart_data = ChartDataFactory.create_natal_chart_data(john_lennon)
-    assert chart_data.angularities == _compute_angularities(john_lennon)
-    assert chart_data.stelliums == _compute_stelliums(john_lennon)
+    # The factory applies the subject's own active_points as the filter.
+    own = set(str(p) for p in john_lennon.active_points)
+    assert chart_data.angularities == _compute_angularities(john_lennon, active_points=own)
+    assert chart_data.stelliums == _compute_stelliums(john_lennon, active_points=own)
 
 
 # ---------------------------------------------------------------------------

@@ -437,15 +437,15 @@ def _compute_lunar_phase_metrics(
     # Calculate PRECISE lunar age using actual time since last new moon
     # This replaces the previous approximation: phase * SYNODIC_MONTH_DAYS
     # Improvement: from ±6-12 hours precision to ~1 second precision
-    age_days_precise = 0.0
+    # Start from the approximation so a missing/None timestamp can never
+    # leave the age at a bogus 0.0; the precise value overrides it whenever
+    # the last-new-moon instant is actually known.
+    age_days_precise = phase * SYNODIC_MONTH_DAYS
     if upcoming_phases.new_moon and upcoming_phases.new_moon.last:
         last_new_moon_ts = upcoming_phases.new_moon.last.timestamp
-        if last_new_moon_ts:
+        if last_new_moon_ts is not None:
             last_new_moon_dt = datetime.fromtimestamp(last_new_moon_ts, tz=timezone.utc)
             age_days_precise = (base_dt - last_new_moon_dt).total_seconds() / 86400.0
-    else:
-        # Fallback to approximation if we don't have last new moon data
-        age_days_precise = phase * SYNODIC_MONTH_DAYS
 
     age_days = round(age_days_precise)
 

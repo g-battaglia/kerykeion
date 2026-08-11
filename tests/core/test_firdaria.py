@@ -106,3 +106,23 @@ def test_unresolvable_sect_is_refused():
 def test_invalid_target_raises(john_lennon):
     with pytest.raises(KerykeionException, match="Invalid target_date"):
         FirdariaFactory.from_subject(john_lennon, target_date="not-a-date")
+
+
+# ---------------------------------------------------------------------------
+# BCE support: JD-based arithmetic must build a timeline for deep-antiquity
+# births the engine supports elsewhere. Synthetic subject: the factory only
+# reads fields, so no ephemeris tier is required.
+# ---------------------------------------------------------------------------
+
+def test_bce_subject_builds_firdaria():
+    subject = SimpleNamespace(
+        year=-562, month=10, day=7, hour=6, minute=30, tz_str="UTC", is_diurnal=True
+    )
+    firdaria = FirdariaFactory.from_subject(subject, target_date="2024-06-15")  # type: ignore[arg-type]
+    assert firdaria.periods[0].start == "-0562-10-07"
+    assert firdaria.periods[0].lord == "Sun"
+    # Contiguity holds across the era boundary too.
+    for prev, nxt in zip(firdaria.periods, firdaria.periods[1:]):
+        assert prev.end == nxt.start
+    # The 2024 target falls far beyond the 120-year cap: no current period.
+    assert firdaria.current is None

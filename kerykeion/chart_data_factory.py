@@ -30,7 +30,7 @@ License: AGPL-3.0
 """
 
 import logging
-from typing import Mapping, Union, Optional, Literal, cast, get_args
+from typing import Collection, Mapping, Union, Optional, Literal, cast, get_args
 
 from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
@@ -95,40 +95,74 @@ def _angular_distance(a: float, b: float) -> float:
     return 360.0 - d if d > 180.0 else d
 
 
-def _compute_angularities(subject: object, orb: float = ANGULARITY_ORB_DEGREES) -> list[AngularityModel]:
-    """Classical planets within ``orb`` of an angle, closest first.
+def _subject_point_filter(subject: object, active_points: Optional[Collection[str]]) -> Optional[set[str]]:
+    """Effective point-name filter for a subject's analyses.
 
-    Each planet is reported once, against its nearest angle.
+    Mirrors the distribution semantics: the subject's own ``active_points``
+    intersected with the caller's explicit filter (when given). ``None``
+    means "no restriction known" (a subject without the field).
+    """
+    own = getattr(subject, "active_points", None)
+    if own is None and active_points is None:
+        return None
+    effective = set(str(p) for p in own) if own is not None else None
+    if active_points is not None:
+        caller = set(str(p) for p in active_points)
+        effective = caller if effective is None else (effective & caller)
+    return effective
+
+
+def _compute_angularities(
+    subject: object,
+    orb: float = ANGULARITY_ORB_DEGREES,
+    active_points: Optional[set[str]] = None,
+) -> list[AngularityModel]:
+    """Every (classical planet, angle) pair within ``orb``, closest first.
+
+    ALL pairs inside the orb are reported — not just each planet's nearest
+    angle — so a consumer that only cares about specific angles (e.g. an
+    ASC/MC-only ruleset) can filter without losing a planet whose nearest
+    angle happened to be another one. ``active_points`` restricts the planets
+    to the chart's effective selection: an excluded planet must never appear
+    in the analysis of a chart that excluded it.
     """
     results: list[AngularityModel] = []
     for planet_field in _CLASSICAL_PLANET_FIELDS:
         planet = getattr(subject, planet_field, None)
         if planet is None or planet.abs_pos is None:
             continue
-        best_angle: Optional[str] = None
-        best_distance = orb
+        if active_points is not None and str(planet.name) not in active_points:
+            continue
         for angle_field in _ANGLE_FIELDS:
             angle = getattr(subject, angle_field, None)
             if angle is None or angle.abs_pos is None:
                 continue
             distance = _angular_distance(planet.abs_pos, angle.abs_pos)
-            if distance <= best_distance:
-                best_distance = distance
-                best_angle = str(angle.name)
-        if best_angle is not None:
-            results.append(
-                AngularityModel(point=str(planet.name), angle=best_angle, distance=round(best_distance, 4))
-            )
+            if distance <= orb:
+                results.append(
+                    AngularityModel(point=str(planet.name), angle=str(angle.name), distance=round(distance, 4))
+                )
     results.sort(key=lambda entry: entry.distance)
     return results
 
 
-def _compute_stelliums(subject: object, min_points: int = STELLIUM_MIN_POINTS) -> list[StelliumModel]:
-    """Houses gathering at least ``min_points`` classical planets, biggest first."""
+def _compute_stelliums(
+    subject: object,
+    min_points: int = STELLIUM_MIN_POINTS,
+    active_points: Optional[set[str]] = None,
+) -> list[StelliumModel]:
+    """Houses gathering at least ``min_points`` classical planets, biggest first.
+
+    ``active_points`` restricts the planets to the chart's effective
+    selection, keeping the analysis consistent with the serialized
+    ``active_points`` list.
+    """
     buckets: dict[int, list[str]] = {}
     for planet_field in _CLASSICAL_PLANET_FIELDS:
         planet = getattr(subject, planet_field, None)
         if planet is None or planet.house is None:
+            continue
+        if active_points is not None and str(planet.name) not in active_points:
             continue
         house_number = _HOUSE_NAME_TO_NUMBER.get(str(planet.house))
         if house_number is None:
@@ -522,8 +556,12 @@ class ChartDataFactory:
                 aspects=single_model.aspects,
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
-                angularities=_compute_angularities(first_subject),
-                stelliums=_compute_stelliums(first_subject),
+                angularities=_compute_angularities(
+                    first_subject, active_points=_subject_point_filter(first_subject, active_points)
+                ),
+                stelliums=_compute_stelliums(
+                    first_subject, active_points=_subject_point_filter(first_subject, active_points)
+                ),
                 active_points=list(single_model.active_points),
                 active_aspects=list(single_model.active_aspects),
             )
@@ -541,10 +579,18 @@ class ChartDataFactory:
                 relationship_score=relationship_score,
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
-                first_subject_angularities=_compute_angularities(first_subject),
-                first_subject_stelliums=_compute_stelliums(first_subject),
-                second_subject_angularities=_compute_angularities(second_subject),
-                second_subject_stelliums=_compute_stelliums(second_subject),
+                first_subject_angularities=_compute_angularities(
+                    first_subject, active_points=_subject_point_filter(first_subject, active_points)
+                ),
+                first_subject_stelliums=_compute_stelliums(
+                    first_subject, active_points=_subject_point_filter(first_subject, active_points)
+                ),
+                second_subject_angularities=_compute_angularities(
+                    second_subject, active_points=_subject_point_filter(second_subject, active_points)
+                ),
+                second_subject_stelliums=_compute_stelliums(
+                    second_subject, active_points=_subject_point_filter(second_subject, active_points)
+                ),
                 active_points=list(dual_model.active_points),
                 active_aspects=list(dual_model.active_aspects),
             )

@@ -71,3 +71,43 @@ def test_target_before_birth_raises(john_lennon):
 def test_invalid_target_raises(john_lennon):
     with pytest.raises(KerykeionException, match="Invalid target_date"):
         ProfectionsFactory.from_subject(john_lennon, target_date="not-a-date")
+
+
+# ---------------------------------------------------------------------------
+# BCE support: the engine renders deep-antiquity charts, so the time-lord
+# techniques must too. All date arithmetic is calendar-integer/JD based —
+# Python's date/datetime year-1 floor must never be hit. The subjects are
+# synthetic (the factories only read fields), so the tests run on any
+# ephemeris tier.
+# ---------------------------------------------------------------------------
+
+def _bce_subject():
+    from types import SimpleNamespace
+
+    signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+    fields = {
+        name: SimpleNamespace(sign=signs[i])
+        for i, name in enumerate(HOUSE_CUSP_FIELDS)
+    }
+    return SimpleNamespace(
+        year=-562, month=10, day=7, hour=6, minute=30, tz_str="UTC", is_diurnal=True, **fields
+    )
+
+
+def test_bce_subject_builds_profections():
+    profections = ProfectionsFactory.from_subject(_bce_subject(), target_date="2024-06-15")
+    # Age spans the whole era gap (astronomical years: -562 -> 2024, birthday
+    # Oct 7 not yet reached on June 15).
+    assert profections.current.age == 2024 - (-562) - 1
+    assert 1 <= profections.current.house <= 12
+    # Boundaries keep the birthday and 4-digit CE years.
+    assert profections.current.year_start == "2023-10-07"
+    assert profections.current.year_end == "2024-10-07"
+
+
+def test_bce_target_in_antiquity():
+    profections = ProfectionsFactory.from_subject(_bce_subject(), target_date="0001-01-01")
+    assert profections.current.age == 1 - (-562) - 1  # birthday Oct 7 not yet reached
+    # A window straddling year zero formats negative years astronomically.
+    starts = [entry.year_start for entry in profections.years]
+    assert any(value.startswith("-") or value.startswith("0000") for value in starts)

@@ -714,9 +714,90 @@ def resolve_subject_local_now(subject: Any) -> datetime:
     if tz_str:
         try:
             return datetime.now(ZoneInfo(tz_str)).replace(tzinfo=None)
-        except ZoneInfoNotFoundError:
+        except (ZoneInfoNotFoundError, ValueError):
+            # ZoneInfo raises ValueError for structurally invalid keys (e.g.
+            # absolute paths, ".."), ZoneInfoNotFoundError for unknown zones —
+            # both mean the same thing here: no usable subject timezone.
             logger.warning(f"Unknown timezone {tz_str!r} on subject; using UTC for the current moment.")
     return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+# ── Proleptic-Gregorian civil-date helpers (BCE-safe) ────────────────────────
+# Python's datetime/date stop at year 1, but supported subjects reach deep
+# BCE (astronomical numbering: 0 = 1 BCE). Time-lord timelines therefore do
+# their date arithmetic on Julian Days via the ephemeris backend, which is
+# calendar-exact and unbounded, and only FORMAT dates as ISO strings.
+
+_ANCIENT_ISO_RE = re.compile(
+    r"^(?P<year>-?\d{1,6})-(?P<month>\d{2})-(?P<day>\d{2})"
+    r"(?:[T ](?P<hour>\d{2}):(?P<minute>\d{2})(?::(?P<second>\d{2}(?:\.\d+)?))?)?"
+)
+
+
+def format_astronomical_iso_date(year: int, month: int, day: int) -> str:
+    """``YYYY-MM-DD`` with astronomical year numbering (0 = 1 BCE, -1 = 2 BCE)."""
+    if year < 0:
+        return f"-{abs(year):04d}-{month:02d}-{day:02d}"
+    return f"{year:04d}-{month:02d}-{day:02d}"
+
+
+def jd_to_iso_date(jd: float) -> str:
+    """Proleptic-Gregorian ISO date of a Julian Day (BCE-safe)."""
+    from kerykeion.ephemeris_backend import ephe
+
+    year, month, day, _hour = ephe.revjul(jd)
+    return format_astronomical_iso_date(int(year), int(month), int(day))
+
+
+def civil_jd(year: int, month: int, day: int, hour: float = 0.0) -> float:
+    """Julian Day of a proleptic-Gregorian civil moment (BCE-safe).
+
+    The backend's ``julday`` also normalizes overflowing components the way
+    civil calendars do — February 29 of a common year rolls to March 1 —
+    which is exactly the anniversary convention the time-lord techniques use.
+    """
+    from kerykeion.ephemeris_backend import ephe
+
+    return ephe.julday(int(year), int(month), int(day), float(hour))
+
+
+def resolve_subject_local_moment(subject: Any) -> tuple[int, int, int, float]:
+    """Local (wall-clock) birth/anchor components of a subject-like model.
+
+    Returns ``(year, month, day, hour_float)`` without ever building a
+    ``datetime``, so BCE subjects work. Split-component subjects are read
+    directly; ISO-only subjects (returns, Davison) are parsed at face value,
+    negative years included. A midpoint composite carries neither and is
+    rejected: it has no single moment for a time-lord timeline to anchor to.
+
+    Raises:
+        KerykeionException: When the subject has no usable moment.
+    """
+    if getattr(subject, "year", None) is not None:
+        try:
+            return (
+                int(subject.year),
+                int(subject.month),
+                int(subject.day),
+                float(subject.hour) + float(subject.minute) / 60.0,
+            )
+        except (TypeError, ValueError) as exc:
+            raise KerykeionException(f"Invalid birth date on subject: {exc}") from exc
+
+    iso = getattr(subject, "iso_formatted_local_datetime", None) or getattr(
+        subject, "iso_formatted_utc_datetime", None
+    )
+    if iso is None:
+        raise KerykeionException(
+            "Subject carries neither birth-date components nor an ISO "
+            "timestamp — cannot anchor a time-lord timeline (midpoint "
+            "composites have no single moment in time)."
+        )
+    match = _ANCIENT_ISO_RE.match(str(iso))
+    if not match:
+        raise KerykeionException(f"Cannot parse the subject's ISO timestamp {iso!r}.")
+    hour = int(match.group("hour") or 0) + int(match.group("minute") or 0) / 60.0
+    return (int(match.group("year")), int(match.group("month")), int(match.group("day")), hour)
 
 
 def require_same_frame(first: Any, second: Any) -> None:
