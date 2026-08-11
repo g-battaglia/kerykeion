@@ -17,7 +17,7 @@ from kerykeion.schemas.kr_models import (
 )
 from kerykeion.utilities import (
     civil_jd,
-    jd_to_iso_date,
+    jd_to_iso_datetime,
     parse_astronomical_iso_moment,
     resolve_subject_local_moment,
     resolve_subject_local_now,
@@ -56,6 +56,18 @@ NOCTURNAL_SEQUENCE: Tuple[Tuple[str, int], ...] = (
 
 # The nodes rule no sub-periods and are excluded from the sub-lord ring.
 NODES = frozenset({"North_Node", "South_Node"})
+
+
+def _jd_second_grid(jd: float) -> int:
+    """Whole-second grid shared by serialization and current-selection.
+
+    Boundaries are fractional Julian Days; the public ``start``/``end``
+    timestamps round them to the second, so the "which period contains the
+    target" comparison must happen on the same grid — otherwise feeding a
+    serialized boundary back as ``target_date`` could disagree with it by a
+    sub-second residue.
+    """
+    return round(jd * 86400.0)
 
 # How far the timeline is unrolled, in years of life. The 75-year cycle
 # repeats, so the cap only bounds the output length.
@@ -160,8 +172,8 @@ class FirdariaFactory:
                         sub_end_jd = sub_cursor_jd + sub_days
                         sub_period = FirdariaSubPeriodModel(
                             lord=sub_lord,
-                            start=jd_to_iso_date(sub_cursor_jd),
-                            end=jd_to_iso_date(sub_end_jd),
+                            start=jd_to_iso_datetime(sub_cursor_jd),
+                            end=jd_to_iso_datetime(sub_end_jd),
                         )
                         sub_periods.append(sub_period)
                         sub_bounds.append((sub_period, sub_cursor_jd, sub_end_jd))
@@ -172,8 +184,8 @@ class FirdariaFactory:
                     years=years,
                     age_start=age_cursor,
                     age_end=age_cursor + years,
-                    start=jd_to_iso_date(period_start_jd),
-                    end=jd_to_iso_date(period_end_jd),
+                    start=jd_to_iso_datetime(period_start_jd),
+                    end=jd_to_iso_datetime(period_end_jd),
                     sub_periods=sub_periods,
                 )
                 periods.append(period)
@@ -186,11 +198,12 @@ class FirdariaFactory:
 
         current: Optional[FirdariaPeriodModel] = None
         current_sub: Optional[FirdariaSubPeriodModel] = None
+        target_s = _jd_second_grid(target_jd)
         for period, start_jd, end_jd, sub_bounds in bounds:
-            if start_jd <= target_jd < end_jd:
+            if _jd_second_grid(start_jd) <= target_s < _jd_second_grid(end_jd):
                 current = period
                 for sub_period, sub_start_jd, sub_end_jd in sub_bounds:
-                    if sub_start_jd <= target_jd < sub_end_jd:
+                    if _jd_second_grid(sub_start_jd) <= target_s < _jd_second_grid(sub_end_jd):
                         current_sub = sub_period
                         break
                 break

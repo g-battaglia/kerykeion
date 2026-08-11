@@ -15,8 +15,12 @@
   technique, two levels. Day charts open with the Sun, night charts with the
   Moon; the 75-year cycle repeats up to `life_cap_years`; planetary periods
   subdivide into seven sub-periods opening with their own lord, the node
-  periods stay undivided. Years are Julian (365.25 days). A subject without a
-  boolean `is_diurnal` (midpoint composite) is refused, never guessed.
+  periods stay undivided. Years are Julian (365.25 days). Boundaries are
+  local ISO **datetimes** at second resolution (they fall at the birth time
+  of day, not midnight), and `current`/`current_sub` selection runs on the
+  same whole-second grid, so a serialized boundary fed back as
+  `target_date` agrees with the timeline. A subject without a boolean
+  `is_diurnal` (midpoint composite) is refused, never guessed.
 - **Mutual receptions** (`MutualReceptionsFactory.from_subject`): domicile and
   exaltation receptions among the seven classical planets.
 - **Horary indicators** (`HoraryIndicatorsFactory.from_subject`): querent/
@@ -47,7 +51,10 @@
   three-planet stellium threshold). Angularities report EVERY (planet, angle)
   pair within the orb — not just each planet's nearest angle — so consumers
   can filter by angle without losing entries; both analyses honour the
-  chart's effective `active_points` (an excluded planet never appears).
+  chart's effective `active_points` (an excluded planet never appears). On
+  synastry the per-subject analyses honour the COMMON set the chart
+  serializes (the two subjects' intersection); transit-like charts keep
+  each subject's own set, mirroring their distribution convention.
 - **Subject helpers** in `kerykeion.utilities`:
   `resolve_subject_birth_datetime` (shared split-components/ISO fallback,
   now also used by zodiacal releasing), `resolve_subject_local_now`, and the

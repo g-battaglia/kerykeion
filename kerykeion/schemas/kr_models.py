@@ -2082,8 +2082,9 @@ class FirdariaSubPeriodModel(SubscriptableBaseModel):
 
     Attributes:
         lord: Planet ruling the sub-period.
-        start: ISO date (``YYYY-MM-DD``) the sub-period begins.
-        end: ISO date the sub-period ends.
+        start: Local ISO datetime (``YYYY-MM-DDTHH:MM:SS``, second
+            resolution) the sub-period begins.
+        end: Local ISO datetime the sub-period ends.
     """
 
     lord: ClassicalPlanet
@@ -2100,8 +2101,10 @@ class FirdariaPeriodModel(SubscriptableBaseModel):
         years: Length of the period in firdaria years.
         age_start: Age at which the period begins.
         age_end: Age at which the period ends.
-        start: ISO date the period begins.
-        end: ISO date the period ends.
+        start: Local ISO datetime (``YYYY-MM-DDTHH:MM:SS``, second
+            resolution) the period begins — boundaries fall at the birth
+            time of day, not at midnight.
+        end: Local ISO datetime the period ends.
         sub_periods: The seven sub-lord periods, starting from the period's
             own lord. Empty for the node periods, which are not subdivided
             per the common convention.

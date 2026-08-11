@@ -119,7 +119,7 @@ def test_bce_subject_builds_firdaria():
         year=-562, month=10, day=7, hour=6, minute=30, tz_str="UTC", is_diurnal=True
     )
     firdaria = FirdariaFactory.from_subject(subject, target_date="2024-06-15")  # type: ignore[arg-type]
-    assert firdaria.periods[0].start == "-0562-10-07"
+    assert firdaria.periods[0].start == "-0562-10-07T06:30:00"
     assert firdaria.periods[0].lord == "Sun"
     # Contiguity holds across the era boundary too.
     for prev, nxt in zip(firdaria.periods, firdaria.periods[1:]):
@@ -133,11 +133,12 @@ def test_bce_anchor_uses_the_julian_calendar():
     dates; the firdaria anchor must live on that same instant (the two
     calendars are six days apart at year -562)."""
     from kerykeion.ephemeris_backend import ephe
-    from kerykeion.utilities import civil_jd, jd_to_iso_date
+    from kerykeion.utilities import civil_jd, jd_to_iso_date, jd_to_iso_datetime
 
     bce_jd = civil_jd(-562, 10, 7, 6.5)
     assert bce_jd == approx(ephe.julday(-562, 10, 7, 6.5, ephe.JUL_CAL))
     assert jd_to_iso_date(bce_jd) == "-0562-10-07"
+    assert jd_to_iso_datetime(bce_jd) == "-0562-10-07T06:30:00"
     # CE stays proleptic Gregorian, exactly as before.
     ce_jd = civil_jd(1940, 10, 9, 18.5)
     assert ce_jd == approx(ephe.julday(1940, 10, 9, 18.5, ephe.GREG_CAL))
@@ -162,3 +163,27 @@ def test_bce_target_date_resolves_current():
 def test_timezone_aware_target_refused(john_lennon):
     with pytest.raises(KerykeionException, match="timezone-naive"):
         FirdariaFactory.from_subject(john_lennon, target_date="2024-06-15T12:00:00+02:00")
+
+
+def test_boundaries_carry_the_birth_time(john_lennon):
+    """Boundaries fall at the birth time of day, not at midnight: a chart
+    born at 18:30 flips its periods at 18:30 (± the .25-day steps of the
+    365.25-day year), and the serialized timestamps must say so."""
+    firdaria = FirdariaFactory.from_subject(john_lennon, target_date=TARGET)
+    assert firdaria.periods[0].start.endswith("T18:30:00")
+    # Each 365.25-day year shifts a boundary by 6 hours: Lennon's opening
+    # Moon period (night chart, 9 years) ends 6 hours past the birth time.
+    assert firdaria.periods[0].end.endswith("T00:30:00")
+
+
+def test_serialized_boundary_agrees_with_selection(john_lennon):
+    """Feeding a serialized boundary back as target_date must select the
+    NEXT period (end-exclusive): the public timestamps and the current
+    selection live on the same whole-second grid."""
+    firdaria = FirdariaFactory.from_subject(john_lennon, target_date=TARGET)
+    at_boundary = FirdariaFactory.from_subject(john_lennon, target_date=firdaria.periods[0].end)
+    assert at_boundary.current == firdaria.periods[1]
+    sub_boundary = firdaria.periods[0].sub_periods[0].end
+    at_sub_boundary = FirdariaFactory.from_subject(john_lennon, target_date=sub_boundary)
+    assert at_sub_boundary.current == firdaria.periods[0]
+    assert at_sub_boundary.current_sub == firdaria.periods[0].sub_periods[1]

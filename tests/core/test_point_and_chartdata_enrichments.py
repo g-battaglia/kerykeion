@@ -143,6 +143,34 @@ def test_chart_data_carries_the_analysis(john_lennon):
     assert chart_data.stelliums == _compute_stelliums(john_lennon, active_points=own)
 
 
+def test_synastry_enrichments_honour_the_common_set(john_lennon):
+    """A synastry with a Sun-only partner serializes the COMMON active_points
+    (the intersection); the per-subject analyses must not surface planets
+    that contract excludes — active_points=['Sun'] with a Venus/Mars
+    stellium in the payload would be internally inconsistent."""
+    sun_only = john_lennon.model_copy(update={"active_points": ["Sun"]})
+    data = ChartDataFactory.create_chart_data("Synastry", john_lennon, sun_only)
+    allowed = set(str(p) for p in data.active_points)
+    for entry in data.first_subject_angularities + data.second_subject_angularities:
+        assert entry.point in allowed
+    assert data.first_subject_stelliums == []
+    assert data.second_subject_stelliums == []
+
+
+def test_transit_first_subject_analysis_keeps_the_natal_set(john_lennon):
+    """Transit-like charts mirror the distribution convention instead: the
+    NATAL analysis is not truncated by the moving chart's tracking set."""
+    moving = john_lennon.model_copy(update={"active_points": ["Sun"]})
+    data = ChartDataFactory.create_chart_data("Transit", john_lennon, moving)
+    natal_own = set(str(p) for p in john_lennon.active_points)
+    assert data.first_subject_angularities == _compute_angularities(
+        john_lennon, active_points=natal_own
+    )
+    assert data.first_subject_stelliums == _compute_stelliums(
+        john_lennon, active_points=natal_own
+    )
+
+
 def test_non_terrestrial_perspective_yields_no_analysis():
     """A Heliocentric (or barycentric/planetocentric) chart measures planet
     longitudes from a non-Earth origin while ASC/MC stay terrestrial horizon

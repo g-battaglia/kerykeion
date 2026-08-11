@@ -39,7 +39,9 @@ from kerykeion.utilities import (
     format_timedelta_hhmm,
     extract_year_from_iso,
     civil_jd,
+    civil_leap_year,
     jd_to_iso_date,
+    jd_to_iso_datetime,
     parse_astronomical_iso_moment,
     resolve_subject_local_moment,
 )
@@ -1254,6 +1256,21 @@ class TestParseAstronomicalIsoMoment:
             with pytest.raises(KerykeionException, match="Invalid target_date"):
                 parse_astronomical_iso_moment(value)
 
+    def test_impossible_calendar_days_rejected(self):
+        """2026-02-31 must not silently normalize into another date; the
+        leap rule follows the calendar convention (Julian below 1 CE)."""
+        for value in ("2026-02-31", "2025-02-29", "1900-02-29", "2026-04-31"):
+            with pytest.raises(KerykeionException, match="Invalid target_date"):
+                parse_astronomical_iso_moment(value)
+        # Real leap days parse: Gregorian 2024, Julian century year -100.
+        assert parse_astronomical_iso_moment("2024-02-29")[:3] == (2024, 2, 29)
+        assert parse_astronomical_iso_moment("-0100-02-29")[:3] == (-100, 2, 29)
+
+    def test_civil_leap_year_convention(self):
+        assert civil_leap_year(2024) and not civil_leap_year(1900) and civil_leap_year(2000)
+        # BCE is Julian: every fourth astronomical year, centuries included.
+        assert civil_leap_year(-100) and civil_leap_year(0) and not civil_leap_year(-99)
+
 
 class TestCivilJdCalendarConvention:
     """civil_jd / jd_to_iso_date mirror the subject factory's calendar split:
@@ -1276,6 +1293,14 @@ class TestCivilJdCalendarConvention:
     def test_round_trip_both_eras(self):
         assert jd_to_iso_date(civil_jd(-562, 10, 7, 6.5)) == "-0562-10-07"
         assert jd_to_iso_date(civil_jd(1940, 10, 9, 18.5)) == "1940-10-09"
+
+    def test_datetime_round_trip_keeps_the_time_of_day(self):
+        assert jd_to_iso_datetime(civil_jd(1940, 10, 9, 18.5)) == "1940-10-09T18:30:00"
+        assert jd_to_iso_datetime(civil_jd(-562, 10, 7, 6.5)) == "-0562-10-07T06:30:00"
+        # Half-day steps (the 365.25-day firdaria year) stay exact.
+        assert jd_to_iso_datetime(civil_jd(2000, 1, 1, 18.0) + 3652.5) == "2010-01-01T06:00:00"
+        # Rounding at midnight rolls the date instead of printing 24:00:00.
+        assert jd_to_iso_datetime(civil_jd(2000, 1, 2, 0.0) - 0.4 / 86400.0) == "2000-01-02T00:00:00"
 
 
 class TestResolveSubjectLocalMomentSeconds:

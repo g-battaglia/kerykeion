@@ -745,6 +745,20 @@ def format_astronomical_iso_date(year: int, month: int, day: int) -> str:
 # calendar convention (verified against ephe.julday(1, 1, 1, 0.0, GREG_CAL)).
 _GREGORIAN_CE_EPOCH_JD = 1721425.5
 
+_DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+
+
+def civil_leap_year(year: int) -> bool:
+    """Leap rule in the engine's calendar convention for ``year``.
+
+    Mirrors the subject factory's asymmetry: ``year < 1`` dates are
+    Julian-calendar (leap every fourth astronomical year, century years
+    included), ``year >= 1`` is proleptic Gregorian.
+    """
+    if year < 1:
+        return year % 4 == 0
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
 
 def jd_to_iso_date(jd: float) -> str:
     """ISO date of a Julian Day in the engine's calendar convention (BCE-safe).
@@ -761,6 +775,26 @@ def jd_to_iso_date(jd: float) -> str:
     cal_flag = ephe.JUL_CAL if jd < _GREGORIAN_CE_EPOCH_JD else ephe.GREG_CAL
     year, month, day, _hour = ephe.revjul(jd, cal_flag)
     return format_astronomical_iso_date(int(year), int(month), int(day))
+
+
+def jd_to_iso_datetime(jd: float) -> str:
+    """ISO datetime (second resolution) of a Julian Day, BCE-safe.
+
+    Same calendar convention as :func:`jd_to_iso_date`. The instant is
+    rounded half-up to the whole second (a half-second nudge before the
+    floor), so boundaries computed as fractional Julian Days serialize to
+    the very instant a same-grid selection compares against.
+    """
+    from kerykeion.ephemeris_backend import ephe
+
+    nudged = jd + 0.5 / 86400.0
+    cal_flag = ephe.JUL_CAL if nudged < _GREGORIAN_CE_EPOCH_JD else ephe.GREG_CAL
+    year, month, day, dec_hour = ephe.revjul(nudged, cal_flag)
+    total_seconds = int(dec_hour * 3600.0)
+    hour, remainder = divmod(total_seconds, 3600)
+    minute, second = divmod(remainder, 60)
+    date_part = format_astronomical_iso_date(int(year), int(month), int(day))
+    return f"{date_part}T{hour:02d}:{minute:02d}:{second:02d}"
 
 
 def civil_jd(year: int, month: int, day: int, hour: float = 0.0) -> float:
@@ -816,7 +850,15 @@ def parse_astronomical_iso_moment(value: str) -> tuple[int, int, int, float]:
     hour = int(match.group("hour") or 0)
     minute = int(match.group("minute") or 0)
     second = float(match.group("second") or 0.0)
-    if not (1 <= month <= 12 and 1 <= day <= 31 and hour <= 23 and minute <= 59 and second < 60):
+    if not (1 <= month <= 12 and hour <= 23 and minute <= 59 and second < 60):
+        raise KerykeionException(
+            f"Invalid target_date {value!r}: date/time component out of range."
+        )
+    # Impossible calendar days (2026-02-31, 2025-02-29) must not silently
+    # normalize into another date; the leap rule follows the calendar
+    # convention of the year (Julian below 1 CE, Gregorian from 1 CE).
+    days_in_month = 29 if month == 2 and civil_leap_year(year) else _DAYS_IN_MONTH[month - 1]
+    if not (1 <= day <= days_in_month):
         raise KerykeionException(
             f"Invalid target_date {value!r}: date/time component out of range."
         )

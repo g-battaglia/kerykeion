@@ -16,6 +16,7 @@ from kerykeion.schemas.kr_models import (
     ProfectionYearModel,
 )
 from kerykeion.utilities import (
+    civil_leap_year,
     format_astronomical_iso_date,
     parse_astronomical_iso_moment,
     resolve_subject_local_moment,
@@ -39,26 +40,16 @@ HOUSE_CUSP_FIELDS: tuple[str, ...] = (
 )
 
 
-def _is_leap_year(year: int) -> bool:
-    """Leap rule in the engine's calendar convention for ``year``.
-
-    Mirrors the subject factory's asymmetry: ``year < 1`` dates are
-    Julian-calendar (leap every fourth astronomical year, century years
-    included), ``year >= 1`` is proleptic Gregorian.
-    """
-    if year < 1:
-        return year % 4 == 0
-    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-
-
 def _anniversary(year: int, birth_month: int, birth_day: int) -> Tuple[int, int]:
     """The birthday anniversary ``(month, day)`` in ``year``.
 
     A February 29 birthday rolls to March 1 in common years — the civil
-    convention. Pure integer arithmetic, so BCE years work (Python's ``date``
-    stops at year 1; astronomical numbering does not).
+    convention, with the leap rule of the engine's calendar convention
+    (Julian below 1 CE, Gregorian from 1 CE). Pure integer arithmetic, so
+    BCE years work (Python's ``date`` stops at year 1; astronomical
+    numbering does not).
     """
-    if birth_month == 2 and birth_day == 29 and not _is_leap_year(year):
+    if birth_month == 2 and birth_day == 29 and not civil_leap_year(year):
         return (3, 1)
     return (birth_month, birth_day)
 

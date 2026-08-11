@@ -595,6 +595,20 @@ class ChartDataFactory:
             if second_subject is None:
                 raise KerykeionException(f"Second subject is required for {chart_type} charts.")
             dual_model = cast(DualChartAspectsModel, aspects_model)
+            # Synastry is symmetric: its distributions and its serialized
+            # active_points both describe the COMMON point set, so the
+            # per-subject analyses must honour it too — a Sun-only partner
+            # must not surface the other partner's Venus stellium under a
+            # contract that declares only the Sun active. Transit-like charts
+            # keep each subject's own set instead, mirroring their
+            # distribution convention (the natal analysis is never truncated
+            # by the moving chart's tracking set).
+            if chart_type == "Synastry":
+                first_analysis_filter: Optional[set[str]] = {str(p) for p in effective_active_points}
+                second_analysis_filter = first_analysis_filter
+            else:
+                first_analysis_filter = _subject_point_filter(first_subject, active_points)
+                second_analysis_filter = _subject_point_filter(second_subject, active_points)
             return DualChartDataModel(
                 chart_type=cast(Literal["Transit", "Synastry", "DualReturnChart", "Progression"], chart_type),
                 first_subject=first_subject,
@@ -605,16 +619,16 @@ class ChartDataFactory:
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
                 first_subject_angularities=_compute_angularities(
-                    first_subject, active_points=_subject_point_filter(first_subject, active_points)
+                    first_subject, active_points=first_analysis_filter
                 ),
                 first_subject_stelliums=_compute_stelliums(
-                    first_subject, active_points=_subject_point_filter(first_subject, active_points)
+                    first_subject, active_points=first_analysis_filter
                 ),
                 second_subject_angularities=_compute_angularities(
-                    second_subject, active_points=_subject_point_filter(second_subject, active_points)
+                    second_subject, active_points=second_analysis_filter
                 ),
                 second_subject_stelliums=_compute_stelliums(
-                    second_subject, active_points=_subject_point_filter(second_subject, active_points)
+                    second_subject, active_points=second_analysis_filter
                 ),
                 active_points=list(dual_model.active_points),
                 active_aspects=list(dual_model.active_aspects),
