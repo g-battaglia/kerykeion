@@ -384,9 +384,28 @@ def check_fresh_imports(report: Report) -> None:
             parts = parts[:-1]
         modules.append(".".join(("kerykeion", *parts)))
 
+    # A plain `import kerykeion.foo` executes kerykeion/__init__.py first, and that
+    # initializer eagerly imports most of the package — so every probe would start
+    # from the same fully-warmed state as the test suite, and leaf-first ordering
+    # would never actually be exercised.
+    #
+    # Instead, seed sys.modules with a stub root carrying only __path__. Submodules
+    # then resolve normally while the real root initializer never runs, so each
+    # module is imported genuinely leaf-first. A module that only works because
+    # __init__ happened to import its dependencies first fails here, which is the
+    # entire point. A top-level `from kerykeion import X` would fail here too — and
+    # should, since that is the import shape that made the tree order-dependent.
+    _PROBE = """
+import sys, types, importlib
+root = types.ModuleType("kerykeion")
+root.__path__ = [{package_root!r}]
+sys.modules["kerykeion"] = root
+importlib.import_module({name!r})
+"""
+
     def probe(name: str) -> tuple[str, int, str]:
         proc = subprocess.run(
-            [sys.executable, "-c", f"import {name}"],
+            [sys.executable, "-c", _PROBE.format(package_root=str(PACKAGE_ROOT), name=name)],
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),

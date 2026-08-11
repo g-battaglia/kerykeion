@@ -21,6 +21,7 @@ The main entry points are:
 
 from .backend import (
     BACKEND_NAME,
+    DEFAULT_SWEPH_DOWNLOAD_DIR,
     EPHE_DATA_PATH,
     EPHEMERIS_LOCK,
     ephe,
@@ -35,4 +36,9 @@ __all__ = [
     "EPHEMERIS_LOCK",
     "ephemeris_session",
     "reset_ephemeris_session",
+    # Not part of the module's original __all__, but backend.py re-exports it
+    # from config_constants explicitly "for backward compatibility". Leaving it
+    # off this facade would break `from kerykeion.ephemeris_backend import
+    # DEFAULT_SWEPH_DOWNLOAD_DIR` and quietly undo that stated intent.
+    "DEFAULT_SWEPH_DOWNLOAD_DIR",
 ]

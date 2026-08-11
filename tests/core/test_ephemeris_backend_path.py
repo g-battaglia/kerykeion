@@ -167,7 +167,10 @@ class TestSwephAutoDetect:
         assert info["ephe_path"] == ""
 
     def test_setup_script_targets_the_autodetected_dir(self):
-        from kerykeion.ephemeris_backend.backend import DEFAULT_SWEPH_DOWNLOAD_DIR
+        # Deliberately the package path, not the submodule: backend.py re-exports
+        # this constant "for backward compatibility", so this import is the
+        # contract, and testing it through .backend would hide a regression.
+        from kerykeion.ephemeris_backend import DEFAULT_SWEPH_DOWNLOAD_DIR
         from kerykeion.swisseph_setup.download import _DEFAULT_TARGET
 
         assert str(_DEFAULT_TARGET) == DEFAULT_SWEPH_DOWNLOAD_DIR
