@@ -22,9 +22,14 @@ from kerykeion.schemas.kr_models import (
     ChartDataModel,
     CompositeSubjectModel,
     DualChartDataModel,
+    FirdariaModel,
+    HoraryIndicatorsModel,
     MoonPhaseOverviewModel,
+    MutualReceptionModel,
+    MutualReceptionsModel,
     PlanetReturnModel,
     PointInHouseModel,
+    ProfectionsModel,
     RelationshipScoreModel,
     SingleChartDataModel,
     StelliumModel,
@@ -64,7 +69,29 @@ MOVEMENT_SYMBOLS = {
 
 
 SubjectLike = Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]
-LiteralReportKind = Literal["subject", "single_chart", "dual_chart", "moon_phase_overview"]
+LiteralReportKind = Literal[
+    "subject",
+    "single_chart",
+    "dual_chart",
+    "moon_phase_overview",
+    "profections",
+    "firdaria",
+    "horary_indicators",
+    "mutual_receptions",
+]
+
+# The horary model carries stable keys, not prose. These labels restate the
+# FACT each key stands for and nothing else — the doctrinal reading travels
+# in the model's own ``status`` field, so no tradition is asserted here.
+HORARY_CONSIDERATION_LABELS = {
+    "asc_early_degree": "Ascendant below 3°",
+    "asc_late_degree": "Ascendant at or past 27°",
+    "asc_judgeable": "Ascendant in the judgeable degrees",
+    "moon_void": "Moon void of course",
+    "moon_not_void": "Moon not void of course",
+    "saturn_in_first": "Saturn in the 1st house",
+    "saturn_in_seventh": "Saturn in the 7th house",
+}
 
 # Ordering constants for celestial point reports.
 # Canonical definitions live in `kerykeion.settings.config_constants`; the module-private
@@ -132,7 +159,15 @@ class ReportGenerator:
 
     def __init__(
         self,
-        model: Union[ChartDataModel, AstrologicalSubjectModel, MoonPhaseOverviewModel],
+        model: Union[
+            ChartDataModel,
+            AstrologicalSubjectModel,
+            MoonPhaseOverviewModel,
+            ProfectionsModel,
+            FirdariaModel,
+            HoraryIndicatorsModel,
+            MutualReceptionsModel,
+        ],
         *,
         include_aspects: bool = True,
         max_aspects: Optional[int] = None,
@@ -173,6 +208,14 @@ class ReportGenerator:
 
         if self._model_kind == "moon_phase_overview":
             sections = self._build_moon_phase_overview_report()
+        elif self._model_kind == "profections":
+            sections = self._build_profections_report()
+        elif self._model_kind == "firdaria":
+            sections = self._build_firdaria_report()
+        elif self._model_kind == "horary_indicators":
+            sections = self._build_horary_indicators_report()
+        elif self._model_kind == "mutual_receptions":
+            sections = self._build_mutual_receptions_report()
         elif self._model_kind == "subject":
             sections = self._build_subject_report()
         elif self._model_kind == "single_chart":
@@ -200,9 +243,31 @@ class ReportGenerator:
     # ------------------------------------------------------------------ #
 
     def _resolve_model(self) -> None:
+        # Technique results are subject-less like the moon-phase overview: the
+        # factory has already read the chart, and what survives is the
+        # technique's own timeline. They carry no points and no aspects.
+        standalone_kinds: tuple[tuple[type, LiteralReportKind, str], ...] = (
+            (ProfectionsModel, "profections", "Profections"),
+            (FirdariaModel, "firdaria", "Firdaria"),
+            (HoraryIndicatorsModel, "horary_indicators", "HoraryIndicators"),
+            (MutualReceptionsModel, "mutual_receptions", "MutualReceptions"),
+        )
+
         if isinstance(self.model, MoonPhaseOverviewModel):
             self._model_kind = "moon_phase_overview"
             self.chart_type = "MoonPhaseOverview"
+            self._primary_subject = None
+            self._secondary_subject = None
+            self._active_points = []
+            self._active_aspects = []
+        elif any(isinstance(self.model, model_type) for model_type, _, _ in standalone_kinds):
+            kind, chart_type = next(
+                (kind, chart_type)
+                for model_type, kind, chart_type in standalone_kinds
+                if isinstance(self.model, model_type)
+            )
+            self._model_kind = kind
+            self.chart_type = chart_type
             self._primary_subject = None
             self._secondary_subject = None
             self._active_points = []
@@ -235,7 +300,8 @@ class ReportGenerator:
         else:
             supported = (
                 "AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel, "
-                "SingleChartDataModel, DualChartDataModel, MoonPhaseOverviewModel"
+                "SingleChartDataModel, DualChartDataModel, MoonPhaseOverviewModel, "
+                "ProfectionsModel, FirdariaModel, HoraryIndicatorsModel, MutualReceptionsModel"
             )
             raise TypeError(f"Unsupported model type {type(self.model)!r}. Supported models: {supported}.")
 
@@ -371,6 +437,160 @@ class ReportGenerator:
 
         return sections
 
+    def _build_profections_report(self) -> list[str]:
+        """Build a report from a ProfectionsModel."""
+        assert isinstance(self.model, ProfectionsModel)
+        profections = self.model
+        current = profections.current
+
+        summary = [
+            ["Field", "Value"],
+            ["Age", str(current.age)],
+            ["Profected House", str(current.house)],
+            ["Sign", str(current.sign)],
+            ["Lord of the Year", _humanize(str(current.lord))],
+            ["Year Begins", current.year_start],
+            ["Year Ends", current.year_end],
+        ]
+        sections = [AsciiTable(summary, title="Current Profection Year").table]
+
+        if profections.years:
+            years_data: list[list[str]] = [["", "Age", "House", "Sign", "Lord", "Begins", "Ends"]]
+            for year in profections.years:
+                years_data.append(
+                    [
+                        "*" if year.age == current.age else "",
+                        str(year.age),
+                        str(year.house),
+                        str(year.sign),
+                        _humanize(str(year.lord)),
+                        year.year_start,
+                        year.year_end,
+                    ]
+                )
+            sections.append(AsciiTable(years_data, title="Profection Years").table)
+
+        return sections
+
+    def _build_firdaria_report(self) -> list[str]:
+        """Build a report from a FirdariaModel."""
+        assert isinstance(self.model, FirdariaModel)
+        firdaria = self.model
+
+        summary = [
+            ["Field", "Value"],
+            ["Sect", "Diurnal" if firdaria.is_diurnal else "Nocturnal"],
+        ]
+        if firdaria.current is not None:
+            summary.append(["Current Lord", _humanize(str(firdaria.current.lord))])
+            summary.append(["Ages", f"{firdaria.current.age_start}–{firdaria.current.age_end}"])
+        if firdaria.current_sub is not None:
+            summary.append(["Current Sub-Lord", _humanize(str(firdaria.current_sub.lord))])
+        sections = [AsciiTable(summary, title="Firdaria Summary").table]
+
+        if firdaria.periods:
+            periods_data: list[list[str]] = [["", "Lord", "Years", "Ages", "Begins", "Ends"]]
+            current_start = firdaria.current.start if firdaria.current is not None else None
+            for period in firdaria.periods:
+                periods_data.append(
+                    [
+                        "*" if period.start == current_start else "",
+                        _humanize(str(period.lord)),
+                        str(period.years),
+                        f"{period.age_start}–{period.age_end}",
+                        period.start,
+                        period.end,
+                    ]
+                )
+            sections.append(AsciiTable(periods_data, title="Firdaria Periods").table)
+
+        # Only the running period's sub-lords: unrolling all of them would bury
+        # the timeline under seven rows per period for no added meaning.
+        if firdaria.current is not None and firdaria.current.sub_periods:
+            current_sub_start = firdaria.current_sub.start if firdaria.current_sub is not None else None
+            sub_data: list[list[str]] = [["", "Sub-Lord", "Begins", "Ends"]]
+            for sub_period in firdaria.current.sub_periods:
+                sub_data.append(
+                    [
+                        "*" if sub_period.start == current_sub_start else "",
+                        _humanize(str(sub_period.lord)),
+                        sub_period.start,
+                        sub_period.end,
+                    ]
+                )
+            title = f"Sub-Periods of the {_humanize(str(firdaria.current.lord))} Period"
+            sections.append(AsciiTable(sub_data, title=title).table)
+
+        return sections
+
+    def _build_horary_indicators_report(self) -> list[str]:
+        """Build a report from a HoraryIndicatorsModel."""
+        assert isinstance(self.model, HoraryIndicatorsModel)
+        indicators = self.model
+
+        significator_data: list[list[str]] = [
+            ["Role", "House", "Sign", "Ruler", "Ruler Sign", "Ruler House", "Dignity", "Ret."]
+        ]
+        for role, significator in (("Querent", indicators.querent), ("Quesited", indicators.quesited)):
+            significator_data.append(
+                [
+                    role,
+                    str(significator.house),
+                    str(significator.sign) if significator.sign else "-",
+                    _humanize(str(significator.ruler)) if significator.ruler else "-",
+                    str(significator.ruler_sign) if significator.ruler_sign else "-",
+                    str(significator.ruler_house_number) if significator.ruler_house_number else "-",
+                    str(significator.essential_dignity) if significator.essential_dignity else "-",
+                    "R" if significator.ruler_retrograde else "-",
+                ]
+            )
+        sections = [AsciiTable(significator_data, title="Significators").table]
+
+        if indicators.ascendant_degree is not None:
+            ascendant_data = [
+                ["Field", "Value"],
+                ["Ascendant Degree", f"{indicators.ascendant_degree:.2f}°"],
+            ]
+            sections.append(AsciiTable(ascendant_data, title="Ascendant").table)
+
+        if indicators.considerations:
+            considerations_data: list[list[str]] = [["Consideration", "Status"]]
+            for consideration in indicators.considerations:
+                label = HORARY_CONSIDERATION_LABELS.get(consideration.key, _humanize(consideration.key))
+                considerations_data.append([label, str(consideration.status).capitalize()])
+            sections.append(AsciiTable(considerations_data, title="Considerations Before Judgment").table)
+
+        receptions_table = self._receptions_table(indicators.mutual_receptions)
+        if receptions_table:
+            sections.append(receptions_table)
+
+        return sections
+
+    def _build_mutual_receptions_report(self) -> list[str]:
+        """Build a report from a MutualReceptionsModel."""
+        assert isinstance(self.model, MutualReceptionsModel)
+        table = self._receptions_table(self.model.receptions)
+        if not table:
+            return ["No mutual receptions between the classical planets."]
+        return [table]
+
+    @staticmethod
+    def _receptions_table(receptions: Sequence[MutualReceptionModel]) -> str:
+        """Render mutual receptions; empty string when the chart has none."""
+        if not receptions:
+            return ""
+
+        reception_data: list[list[str]] = [["First Planet", "Second Planet", "Type"]]
+        for reception in receptions:
+            reception_data.append(
+                [
+                    _humanize(str(reception.first_planet)),
+                    _humanize(str(reception.second_planet)),
+                    str(reception.reception_type).capitalize(),
+                ]
+            )
+        return AsciiTable(reception_data, title="Mutual Receptions").table
+
     def _build_single_chart_report(self, *, include_aspects: bool, max_aspects: Optional[int]) -> list[str]:
         assert isinstance(self._chart_data, SingleChartDataModel)
         assert self._primary_subject is not None
@@ -478,12 +698,30 @@ class ReportGenerator:
     # Section helpers
     # ------------------------------------------------------------------ #
 
+    @staticmethod
+    def _banner(base_title: str) -> str:
+        separator = "=" * len(base_title)
+        return f"\n{separator}\n{base_title}\n{separator}\n"
+
     def _build_title(self) -> str:
         if self._model_kind == "moon_phase_overview":
             assert isinstance(self.model, MoonPhaseOverviewModel)
-            base_title = f"Moon Phase Overview — {self.model.datestamp}"
-            separator = "=" * len(base_title)
-            return f"\n{separator}\n{base_title}\n{separator}\n"
+            return self._banner(f"Moon Phase Overview — {self.model.datestamp}")
+
+        if self._model_kind == "profections":
+            assert isinstance(self.model, ProfectionsModel)
+            return self._banner(f"Annual Profections — Age {self.model.current.age}")
+
+        if self._model_kind == "firdaria":
+            assert isinstance(self.model, FirdariaModel)
+            sect = "Day" if self.model.is_diurnal else "Night"
+            return self._banner(f"Firdaria — {sect} Chart")
+
+        if self._model_kind == "horary_indicators":
+            return self._banner("Horary Indicators")
+
+        if self._model_kind == "mutual_receptions":
+            return self._banner("Mutual Receptions")
 
         assert self._primary_subject is not None
 
@@ -532,8 +770,7 @@ class ReportGenerator:
         else:
             base_title = f"{primary_name} — Chart Report"
 
-        separator = "=" * len(base_title)
-        return f"\n{separator}\n{base_title}\n{separator}\n"
+        return self._banner(base_title)
 
     def _primary_subject_label(self) -> str:
         if self.chart_type == "Composite":

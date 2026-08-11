@@ -25,8 +25,12 @@ sys.path.insert(0, str(project_root))
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.report import ReportGenerator
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.firdaria import FirdariaFactory
+from kerykeion.horary import HoraryIndicatorsFactory
 from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.profections import ProfectionsFactory
+from kerykeion.receptions import MutualReceptionsFactory
 
 FIXTURES_DIR = project_root / "tests" / "fixtures"
 
@@ -206,6 +210,41 @@ def main():
     moon_overview = MoonPhaseDetailsFactory.from_subject(moon_phase_subject)
     report_gen = ReportGenerator(moon_overview)
     _capture_and_save(report_gen, FIXTURES_DIR / "moon_phase_overview_report.txt")
+
+    # --- Time-lord and horary technique reports ---
+    # Pinned target date: "current period" is resolved against it, so an
+    # unpinned run would rewrite these fixtures every single day.
+    print("\n[Technique Reports]")
+    technique_target = "2026-06-04"
+
+    profections = ProfectionsFactory.from_subject(john, target_date=technique_target)
+    _capture_and_save(ReportGenerator(profections), FIXTURES_DIR / "profections_john_lennon_report.txt")
+
+    firdaria = FirdariaFactory.from_subject(john, target_date=technique_target)
+    _capture_and_save(ReportGenerator(firdaria), FIXTURES_DIR / "firdaria_john_lennon_report.txt")
+
+    # Dignities on: the significator table has an essential-dignity column,
+    # and a chart cast without them would pin a table of dashes.
+    horary_subject = AstrologicalSubjectFactory.from_birth_data(
+        "Horary Question",
+        2026,
+        6,
+        4,
+        15,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
+        calculate_dignities=True,
+    )
+    horary = HoraryIndicatorsFactory.from_subject(horary_subject, is_moon_void=False)
+    _capture_and_save(ReportGenerator(horary), FIXTURES_DIR / "horary_indicators_report.txt")
+
+    receptions = MutualReceptionsFactory.from_subject(horary_subject)
+    _capture_and_save(ReportGenerator(receptions), FIXTURES_DIR / "mutual_receptions_report.txt")
 
     print("\nDone! All report snapshots regenerated.")
 

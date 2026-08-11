@@ -37,18 +37,26 @@ import pytest
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import BACKEND_NAME
-from kerykeion.report import ASPECT_SYMBOLS, ReportGenerator
+from kerykeion.report import ASPECT_SYMBOLS, HORARY_CONSIDERATION_LABELS, ReportGenerator
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.firdaria import FirdariaFactory
+from kerykeion.horary import HoraryIndicatorsFactory
 from kerykeion.midpoints import MidpointFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
+from kerykeion.profections import ProfectionsFactory
+from kerykeion.receptions import MutualReceptionsFactory
 from kerykeion.schemas.kr_literals import AspectName
 from kerykeion.schemas.kr_models import (
+    FirdariaModel,
+    HoraryIndicatorsModel,
     MoonPhaseOverviewModel,
     MoonPhaseMoonSummaryModel,
     MoonPhaseSunInfoModel,
     MoonPhaseLocationModel,
+    MutualReceptionsModel,
+    ProfectionsModel,
 )
 from kerykeion.settings.config_constants import (
     ALL_ACTIVE_ASPECTS,
@@ -302,6 +310,65 @@ def _make_moon_phase_overview() -> MoonPhaseOverviewModel:
         online=False,
     )
     return MoonPhaseDetailsFactory.from_subject(subject)
+
+
+# Technique reports resolve their "current" period against a target date, so
+# the fixtures pin one: an unpinned run would rewrite them every day. Kept in
+# step with scripts/regenerate_report_snapshots.py.
+_TECHNIQUE_TARGET_DATE = "2026-06-04"
+
+
+def _technique_natal_subject():
+    """John Lennon, the subject the time-lord fixtures are built from."""
+    return AstrologicalSubjectFactory.from_birth_data(
+        "John Lennon",
+        1940,
+        10,
+        9,
+        18,
+        30,
+        lng=-2.9916,
+        lat=53.4084,
+        tz_str="Europe/London",
+        city="Liverpool",
+        nation="GB",
+        online=False,
+    )
+
+
+def _technique_horary_subject():
+    """A question chart WITH dignities: the significator table has that column."""
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Horary Question",
+        2026,
+        6,
+        4,
+        15,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
+        calculate_dignities=True,
+    )
+
+
+def _technique_profections() -> ProfectionsModel:
+    return ProfectionsFactory.from_subject(_technique_natal_subject(), target_date=_TECHNIQUE_TARGET_DATE)
+
+
+def _technique_firdaria() -> FirdariaModel:
+    return FirdariaFactory.from_subject(_technique_natal_subject(), target_date=_TECHNIQUE_TARGET_DATE)
+
+
+def _technique_horary() -> HoraryIndicatorsModel:
+    return HoraryIndicatorsFactory.from_subject(_technique_horary_subject(), is_moon_void=False)
+
+
+def _technique_receptions() -> MutualReceptionsModel:
+    return MutualReceptionsFactory.from_subject(_technique_horary_subject())
 
 
 def _extract_percentages(text: str, section: str) -> List[float]:
@@ -936,6 +1003,84 @@ class TestMoonPhaseOverviewReport:
 
 
 # =====================================================================
+# 7B. TestTechniqueReports — subject-less technique models
+# =====================================================================
+
+
+class TestTechniqueReports:
+    """Profections, firdaria, horary and receptions as report inputs."""
+
+    def test_profections_report_sections(self) -> None:
+        text = ReportGenerator(_technique_profections()).generate_report()
+        assert "Annual Profections" in text
+        assert "Current Profection Year" in text
+        assert "Profection Years" in text
+        assert "Lord of the Year" in text
+
+    def test_profections_marks_the_current_year(self) -> None:
+        profections = _technique_profections()
+        text = ReportGenerator(profections).generate_report()
+        years_rows = [line for line in text.splitlines() if line.startswith("| *")]
+        assert len(years_rows) == 1, "exactly one row is the current profection year"
+        assert f"| {profections.current.age} " in years_rows[0]
+
+    def test_firdaria_report_sections(self) -> None:
+        firdaria = _technique_firdaria()
+        text = ReportGenerator(firdaria).generate_report()
+        assert "Firdaria — Night Chart" in text or "Firdaria — Day Chart" in text
+        assert "Firdaria Summary" in text
+        assert "Firdaria Periods" in text
+        assert ("Nocturnal" if not firdaria.is_diurnal else "Diurnal") in text
+
+    def test_firdaria_lists_only_the_running_periods_sub_lords(self) -> None:
+        firdaria = _technique_firdaria()
+        text = ReportGenerator(firdaria).generate_report()
+        assert firdaria.current is not None
+        lord = str(firdaria.current.lord).replace("_", " ")
+        assert f"Sub-Periods of the {lord} Period" in text
+        # Seven classical sub-lords, and no other period's ring alongside them.
+        assert text.count("Sub-Periods of the") == 1
+
+    def test_horary_report_sections(self) -> None:
+        text = ReportGenerator(_technique_horary()).generate_report()
+        assert "Horary Indicators" in text
+        assert "Significators" in text
+        assert "Querent" in text and "Quesited" in text
+        assert "Considerations Before Judgment" in text
+
+    def test_horary_considerations_render_labels_not_raw_keys(self) -> None:
+        indicators = _technique_horary()
+        text = ReportGenerator(indicators).generate_report()
+        for consideration in indicators.considerations:
+            assert consideration.key not in text, "the stable key is an identifier, not display prose"
+            assert HORARY_CONSIDERATION_LABELS[consideration.key] in text
+
+    def test_mutual_receptions_report(self) -> None:
+        receptions = _technique_receptions()
+        text = ReportGenerator(receptions).generate_report()
+        assert "Mutual Receptions" in text
+        if receptions.receptions:
+            first = receptions.receptions[0]
+            assert str(first.first_planet).replace("_", " ") in text
+            assert str(first.reception_type).capitalize() in text
+
+    def test_empty_receptions_state_the_absence(self) -> None:
+        text = ReportGenerator(MutualReceptionsModel(receptions=[])).generate_report()
+        assert "No mutual receptions" in text
+
+    @pytest.mark.parametrize(
+        "build",
+        [_technique_profections, _technique_firdaria, _technique_horary, _technique_receptions],
+        ids=["profections", "firdaria", "horary", "receptions"],
+    )
+    def test_print_matches_generate(self, capsys, build) -> None:
+        model = build()
+        expected = ReportGenerator(model).generate_report()
+        ReportGenerator(model).print_report()
+        assert capsys.readouterr().out == expected + "\n"
+
+
+# =====================================================================
 # 8. TestGoldenFileSnapshots
 # =====================================================================
 
@@ -1082,6 +1227,25 @@ class TestGoldenFileSnapshots:
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
         _assert_report_match(captured, expected + "\n")
+
+    @pytest.mark.parametrize(
+        ("fixture_name", "build"),
+        [
+            ("profections_john_lennon_report.txt", lambda: _technique_profections()),
+            ("firdaria_john_lennon_report.txt", lambda: _technique_firdaria()),
+            ("horary_indicators_report.txt", lambda: _technique_horary()),
+            ("mutual_receptions_report.txt", lambda: _technique_receptions()),
+        ],
+        ids=["profections", "firdaria", "horary", "receptions"],
+    )
+    def test_technique_report_snapshot(self, capsys, fixture_name, build) -> None:
+        fixture = FIXTURES_DIR / fixture_name
+        if not fixture.exists():
+            pytest.skip(f"Fixture {fixture.name} not found")
+
+        ReportGenerator(build()).print_report()
+        captured = capsys.readouterr().out
+        _assert_report_match(captured, fixture.read_text(encoding="utf-8") + "\n")
 
     def test_natal_traditional_points_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_traditional_points_report.txt"
