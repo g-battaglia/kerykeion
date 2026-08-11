@@ -26,8 +26,8 @@ To apply a theme to your astrological chart, pass the `theme` parameter to `Char
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Dark Theme", 1940, 10, 9, 18, 30,
@@ -59,8 +59,8 @@ If no theme is specified, the Classic theme is applied by default.
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Classic Theme", 1940, 10, 9, 18, 30,
@@ -81,8 +81,8 @@ chart.save_svg(output_path=out_dir)
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Dark", 1940, 10, 9, 18, 30,
@@ -103,8 +103,8 @@ chart.save_svg(output_path=out_dir)
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Light Theme", 1940, 10, 9, 18, 30,
@@ -128,8 +128,8 @@ Use `None` as the theme parameter to override the default CSS variables. This al
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Custom Theme", 1940, 10, 9, 18, 30,

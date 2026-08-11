@@ -13,7 +13,7 @@ import pytest
 from datetime import datetime, timedelta, timezone
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException
 from pytest import approx
 
@@ -1174,8 +1174,8 @@ class TestPlanetaryReturnV6FlagPropagation:
         """Regression for the IndexError in _calculate_secondary_indicator_adjustments
         when the return subject's collected point count differs from
         active_points length."""
-        from kerykeion.chart_data_factory import ChartDataFactory
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.chart_data.factory import ChartDataFactory
+        from kerykeion.charts.drawer import ChartDrawer
 
         natal = self._make_natal(active_fixed_stars=["Betelgeuse"])
         factory = self._make_factory(natal, active_fixed_stars=["Betelgeuse"])
@@ -1205,11 +1205,11 @@ class TestReturnFactoryOnlineGating:
     the fields the caller provided."""
 
     def test_partial_input_fetches_and_preserves_tz(self, monkeypatch, johnny_depp):
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
 
         rome = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "41.89193", "lng": "12.51133"}
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(rome)
+            fetcher.FetchGeonames, "get_serialized_data", lambda self: dict(rome)
         )
         factory = PlanetaryReturnFactory(
             johnny_depp,
@@ -1228,7 +1228,7 @@ class TestReturnEnrichmentParityRound4:
 
     def test_return_inherits_natal_enrichments(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+        from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
             name="T", year=1990, month=6, day=15, hour=12, minute=0,
@@ -1246,7 +1246,7 @@ class TestReturnEnrichmentParityRound4:
 
     def test_user_sidereal_return_reads_ayanamsa_from_subject(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+        from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
         sid = AstrologicalSubjectFactory.from_birth_data(
             name="S", year=1990, month=6, day=15, hour=12, minute=0,

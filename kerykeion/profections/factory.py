@@ -8,14 +8,14 @@ from __future__ import annotations
 from typing import List, Optional, Tuple
 
 from kerykeion.dignities.rulers import get_domicile_ruler
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     KerykeionPointModel,
     ProfectionsModel,
     ProfectionYearModel,
 )
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     civil_leap_year,
     format_astronomical_iso_date,
     parse_astronomical_iso_moment,

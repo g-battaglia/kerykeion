@@ -33,7 +33,7 @@ Requires **Python 3.12** or higher.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Create an astrological subject (offline mode with explicit coordinates)
 subject = AstrologicalSubjectFactory.from_birth_data(

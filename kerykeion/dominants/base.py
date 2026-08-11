@@ -30,14 +30,14 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Literal, Optional, Protocol, cast, runtime_checkable
 
 from kerykeion.dominants.data import DOMINANT_PLANET_COUNT
-from kerykeion.schemas.kr_literals import DominantMethod, Element, Houses, Quality, Sign
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.literals import DominantMethod, Element, Houses, Quality, Sign
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     DominantBreakdownItemModel,
     DominantScoreModel,
     DominantsModel,
 )
-from kerykeion.utilities import distribute_percentages_to_100
+from kerykeion.utilities.core import distribute_percentages_to_100
 
 #: Allowed distribution methods for the element/quality tally (mirrors
 #: ``charts_utils.ElementQualityDistributionMethod`` without importing the

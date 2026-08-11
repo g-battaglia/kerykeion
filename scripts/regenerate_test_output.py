@@ -23,8 +23,8 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.settings.config_constants import (
     ALL_ACTIVE_ASPECTS,
     ALL_ACTIVE_POINTS,

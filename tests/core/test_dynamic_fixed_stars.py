@@ -160,7 +160,7 @@ class TestFixedStarEdgeCases:
         from unittest.mock import patch
 
         with patch(
-            "kerykeion.fixed_stars.discovery_factory.FixedStarCatalog.list_all",
+            "kerykeion.fixed_stars.factory.FixedStarCatalog.list_all",
             return_value=[],
         ):
             result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
@@ -168,7 +168,7 @@ class TestFixedStarEdgeCases:
 
     def test_no_sefstars_parser_present(self):
         """v6: the legacy ``_parse_star_names_from_catalog`` helper is gone."""
-        from kerykeion.fixed_stars import discovery_factory as df
+        from kerykeion.fixed_stars import factory as df
 
         assert not hasattr(df, "_parse_star_names_from_catalog")
 
@@ -197,7 +197,7 @@ class TestFixedStarEdgeCases:
                 raise RuntimeError("Mock fixstar failure")
             return original_fixstar_ut(name, jd, iflag)
 
-        with patch("kerykeion.fixed_stars.discovery_factory.ephe.fixstar_ut", side_effect=mock_fixstar_ut):
+        with patch("kerykeion.fixed_stars.factory.ephe.fixstar_ut", side_effect=mock_fixstar_ut):
             result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
             assert isinstance(result, list)
             # The non-failing stars (9 of every 10 calls) must still be returned;
@@ -437,7 +437,7 @@ class TestFixedStarCatalogIsKnownName:
     def test_is_known_name_matches_find_for_active_point_names(self):
         from typing import get_args
         from kerykeion.fixed_stars.catalog import FixedStarCatalog
-        from kerykeion.schemas.kr_literals import AstrologicalPoint
+        from kerykeion.schemas.literals import AstrologicalPoint
 
         for name in get_args(AstrologicalPoint):
             assert FixedStarCatalog.is_known_name(name) == (
@@ -487,7 +487,7 @@ def test_composite_subject_raises_clean_exception():
     returns NaN positions on libephemeris, so discovery used to silently
     return [] instead of failing. Mirrors the PlanetaryNodesFactory guard."""
     from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
-    from kerykeion.fixed_stars.discovery_factory import FixedStarDiscoveryFactory
+    from kerykeion.fixed_stars.factory import FixedStarDiscoveryFactory
     from kerykeion.schemas import KerykeionException
 
     a = AstrologicalSubjectFactory.from_birth_data(
@@ -551,7 +551,7 @@ class TestFixedStarProvenance:
         Asserted against the same helper the planetary path uses, so a future
         change to the grading scale cannot leave stars on a stale copy of it.
         """
-        from kerykeion.astrological_subject_factory import _precision_class_for_source
+        from kerykeion.astrological_subject.factory import _precision_class_for_source
 
         prominent = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
         for star in prominent:
@@ -571,7 +571,7 @@ class TestFixedStarProvenance:
         Both must satisfy the same contract, or a chart's provenance would depend
         on how its stars were asked for.
         """
-        from kerykeion.astrological_subject_factory import _precision_class_for_source
+        from kerykeion.astrological_subject.factory import _precision_class_for_source
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Natal Stars", 1990, 6, 15, 14, 30,
@@ -591,7 +591,7 @@ class TestFixedStarProvenance:
         an unset field degrades silently into a missing attribute rather than an
         error — which is exactly why it needs an explicit test.
         """
-        from kerykeion.context_serializer import astrological_subject_to_context
+        from kerykeion.context.serializer import astrological_subject_to_context
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Serialized Stars", 1990, 6, 15, 14, 30,

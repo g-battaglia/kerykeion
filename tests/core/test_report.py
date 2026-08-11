@@ -37,20 +37,20 @@ import pytest
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import BACKEND_NAME
-from kerykeion.report import ASPECT_SYMBOLS, HORARY_CONSIDERATION_LABELS, ReportGenerator
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.report.generator import ASPECT_SYMBOLS, HORARY_CONSIDERATION_LABELS, ReportGenerator
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
 from kerykeion.dominants import DominantsFactory
 from kerykeion.firdaria import FirdariaFactory
 from kerykeion.horary import HoraryIndicatorsFactory
 from kerykeion.midpoints import MidpointFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
 from kerykeion.profections import ProfectionsFactory
 from kerykeion.receptions import MutualReceptionsFactory
 from kerykeion.zodiacal_releasing import ZodiacalReleasingFactory
-from kerykeion.schemas.kr_literals import AspectName
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.literals import AspectName
+from kerykeion.schemas.models import (
     DominantsModel,
     FirdariaModel,
     HoraryIndicatorsModel,
@@ -2575,7 +2575,7 @@ class TestReportMissingDataScenarios:
 
     def test_report_houses_with_composite_no_houses(self):
         """Composite chart report generates houses section correctly."""
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         first = AstrologicalSubjectFactory.from_birth_data(
             name="First",

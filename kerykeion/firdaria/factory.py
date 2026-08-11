@@ -7,15 +7,15 @@ from __future__ import annotations
 
 from typing import List, Optional, Tuple, cast
 
-from kerykeion.schemas.kr_literals import ClassicalPlanet
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.literals import ClassicalPlanet
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     FirdariaModel,
     FirdariaPeriodModel,
     FirdariaSubPeriodModel,
 )
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     civil_jd,
     jd_to_iso_datetime,
     parse_astronomical_iso_moment,

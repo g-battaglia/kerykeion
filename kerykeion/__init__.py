@@ -62,12 +62,12 @@ except _PackageNotFoundError:  # running from a source tree without installation
 # =============================================================================
 # CORE FACTORIES
 # =============================================================================
-from .astrological_subject_factory import AstrologicalSubjectFactory
-from .composite_subject_factory import CompositeSubjectFactory
-from .planetary_return_factory import PlanetaryReturnFactory
-from .chart_data_factory import ChartDataFactory
-from .ephemeris_data_factory import EphemerisDataFactory
-from .transits_time_range_factory import TransitsTimeRangeFactory
+from .astrological_subject import AstrologicalSubjectFactory
+from .composite_subject import CompositeSubjectFactory
+from .planetary_returns import PlanetaryReturnFactory
+from .chart_data import ChartDataFactory
+from .ephemeris_data import EphemerisDataFactory
+from .transits import TransitsTimeRangeFactory
 from .moon_phase_details import MoonPhaseDetailsFactory
 from .sun_times import SunTimesFactory
 from .planetary_hours import PlanetaryHoursFactory
@@ -102,7 +102,7 @@ from .mundane_aspects import (
 from .planetary_nodes import PlanetaryNodesFactory, PlanetaryNodeModel, PlanetaryNodesCollectionModel
 from .heliacal import HeliacalFactory, HeliacalEventModel
 from .occultations import OccultationFactory, OccultationModel
-from .relocated_chart_factory import RelocatedChartFactory
+from .relocated_chart import RelocatedChartFactory
 from .fixed_stars import FixedStarDiscoveryFactory, FixedStarMetadataModel
 from .primary_directions import PrimaryDirectionsFactory, PrimaryDirectionModel, SpeculumEntryModel
 from .astro_cartography import AstroCartographyFactory, ACGLineModel, ACGLinePointModel
@@ -122,8 +122,8 @@ from .secondary_progressions import (
 # ANALYSIS FACTORIES
 # =============================================================================
 from .aspects import AspectsFactory
-from .relationship_score_factory import RelationshipScoreFactory
-from .house_comparison.house_comparison_factory import HouseComparisonFactory
+from .relationship_score import RelationshipScoreFactory
+from .house_comparison import HouseComparisonFactory
 from .dominants import DominantsFactory, DominantStrategy, BaseDominantStrategy
 from .zodiacal_releasing import ZodiacalReleasingFactory
 from .profections import ProfectionsFactory
@@ -134,14 +134,14 @@ from .horary import HoraryIndicatorsFactory
 # =============================================================================
 # VISUALIZATION
 # =============================================================================
-from .charts.chart_drawer import ChartDrawer
+from .charts import ChartDrawer
 from .report import ReportGenerator
 
 # =============================================================================
 # DATA MODELS
 # =============================================================================
 from .schemas import KerykeionException
-from .schemas.kr_models import (
+from .schemas.models import (
     AstrologicalSubjectModel,
     CompositeSubjectModel,
     KerykeionPointModel,
@@ -190,14 +190,14 @@ from .schemas.kr_models import (
     RelationshipScoreModel,
     EphemerisDictModel,
 )
-from .schemas.kr_literals import DominantMethod
+from .schemas.literals import DominantMethod
 
 # =============================================================================
 # SETTINGS AND UTILITIES
 # =============================================================================
 from .settings import KerykeionSettingsModel
-from .context_serializer import to_context
-from ._predictive_utils import PTOLEMAIC_ASPECTS
+from .context import to_context
+from .predictive import PTOLEMAIC_ASPECTS
 
 # =============================================================================
 # EPHEMERIS BACKEND
@@ -341,6 +341,24 @@ __all__ = [
 # =============================================================================
 _MIGRATION_GUIDE_URL = "https://www.kerykeion.net/content/docs/migration"
 
+# Appended to every removed-name message below. Rewriting the call is only half
+# the upgrade: v6 also changed defaults that alter the numbers, and those change
+# silently for code that already used the v5 factories correctly. This error is
+# the one moment we know the reader is looking, so it says both things.
+_BEHAVIOUR_CHANGES_NOTE = (
+    "\n\n"
+    "Note: v6 also changed defaults that affect RESULTS, not just imports:\n"
+    "  - active points: 18 -> 14 (Descendant, Imum_Coeli, True_South_Lunar_Node,\n"
+    "    Mean_Lilith are no longer active unless requested)\n"
+    "  - aspect orbs are narrower (conjunction/opposition 10 -> 6 degrees,\n"
+    "    quintile dropped), and transits/returns/progressions now use a flat\n"
+    "    3-degree orb, so expect FEWER aspects\n"
+    "  - chart style: 'classic' -> 'modern'\n"
+    "Porting the call above does not restore v5 output. See 'What changes in the\n"
+    "results' in the guide; kerykeion.settings.V5_DEFAULT_ACTIVE_POINTS restores\n"
+    "the old point set, and the guide gives the v5 aspect list."
+)
+
 _V5_REMOVED_NAMES = {
     "AstrologicalSubject": (
         "'AstrologicalSubject' was removed in v6. Use the factory instead:\n"
@@ -372,5 +390,8 @@ def __getattr__(name: str):
     # Trade-off: hasattr()/getattr(..., default) also raise for these names —
     # feature-detect with try/except ImportError instead.
     if name in _V5_REMOVED_NAMES:
-        raise ImportError(f"{_V5_REMOVED_NAMES[name]}\nMigration guide: {_MIGRATION_GUIDE_URL}")
+        raise ImportError(
+            f"{_V5_REMOVED_NAMES[name]}{_BEHAVIOUR_CHANGES_NOTE}"
+            f"\nMigration guide: {_MIGRATION_GUIDE_URL}"
+        )
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

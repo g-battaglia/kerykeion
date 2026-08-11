@@ -5,8 +5,8 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from kerykeion.schemas.kr_models import SunTimesModel
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.models import SunTimesModel
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.sun_times.utils import compute_sun_events, compute_twilight_events, resolve_timezone
 
 

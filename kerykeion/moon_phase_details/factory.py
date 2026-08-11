@@ -32,7 +32,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from zoneinfo import ZoneInfo
 
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     KerykeionPointModel,
     LunarPhaseModel,
@@ -61,9 +61,9 @@ from kerykeion.moon_phase_details.utils import (
     compute_lunar_phase_jd,
     compute_sun_position,
 )
-from kerykeion.ephemeris_backend import ephemeris_session, ephe
-from kerykeion.schemas.kr_literals import LunarPhaseEmoji, LunarPhaseName
-from kerykeion.utilities import datetime_to_julian, julian_to_datetime, localize_naive
+from kerykeion.ephemeris_backend.backend import ephemeris_session, ephe
+from kerykeion.schemas.literals import LunarPhaseEmoji, LunarPhaseName
+from kerykeion.utilities.core import datetime_to_julian, julian_to_datetime, localize_naive
 
 
 logger = logging.getLogger(__name__)
@@ -735,7 +735,7 @@ __all__ = ["MoonPhaseDetailsFactory"]
 if __name__ == "__main__":
     # Inline manual test example.
     # Run with: python -m kerykeion.moon_phase_details.factory
-    from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+    from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
     test_subject = AstrologicalSubjectFactory.from_birth_data(
         name="Moon Phase Example",

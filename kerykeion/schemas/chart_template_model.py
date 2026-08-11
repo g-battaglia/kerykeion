@@ -1,6 +1,6 @@
 """Pydantic model for SVG chart template configuration."""
 
-from .kr_models import SubscriptableBaseModel
+from .models import SubscriptableBaseModel
 
 
 class ChartTemplateModel(SubscriptableBaseModel):

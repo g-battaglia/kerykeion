@@ -9,6 +9,6 @@ and Naibod (0.98564 degrees = 1 year) rate keys.
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from .directions_factory import PrimaryDirectionModel, PrimaryDirectionsFactory, SpeculumEntryModel
+from .factory import PrimaryDirectionModel, PrimaryDirectionsFactory, SpeculumEntryModel
 
 __all__ = ["PrimaryDirectionsFactory", "PrimaryDirectionModel", "SpeculumEntryModel"]

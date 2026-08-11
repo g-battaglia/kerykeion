@@ -164,7 +164,7 @@ def test_arabic_parts_inherit_derived_provenance_from_primaries() -> None:
 
 @pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="libephemeris contract")
 def test_relocation_preserves_derived_lot_provenance() -> None:
-    from kerykeion.relocated_chart_factory import RelocatedChartFactory
+    from kerykeion.relocated_chart.factory import RelocatedChartFactory
 
     subject = _subject(active_points=["Sun", "Moon", "Ascendant", "Pars_Fortunae"])
     part = subject.pars_fortunae

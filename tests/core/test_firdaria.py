@@ -24,7 +24,7 @@ from kerykeion.firdaria.factory import (
     NOCTURNAL_SEQUENCE,
     NODES,
 )
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 
 pytestmark = pytest.mark.core
 

@@ -30,8 +30,8 @@ import pytest
 from typing import Dict, Any
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.aspects.aspects_factory import AspectsFactory
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.aspects.factory import AspectsFactory
 
 from tests.data.test_subjects_matrix import (
     TEMPORAL_SUBJECTS,
@@ -148,7 +148,7 @@ _TNO_NODE_REGEX = re.compile(
 
 def _tnos_available() -> bool:
     """Probe whether the loaded ephemeris can compute a TNO (Eris)."""
-    from kerykeion.astrological_subject_factory import TNO_PLANETS
+    from kerykeion.astrological_subject.factory import TNO_PLANETS
     from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
     try:

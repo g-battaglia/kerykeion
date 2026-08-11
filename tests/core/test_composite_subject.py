@@ -14,7 +14,7 @@ import pytest
 from pytest import approx
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
 from kerykeion.schemas import KerykeionException
 
 
@@ -710,7 +710,7 @@ class TestCompositeDisjointActivePoints:
 
     def test_disjoint_active_points_raises(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
         from kerykeion.schemas import KerykeionException
 
         a = AstrologicalSubjectFactory.from_birth_data(
@@ -732,7 +732,7 @@ class TestCompositeMidheavenInvariantRound5:
 
     def _pair_composite(self, h1, h2):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
         a = AstrologicalSubjectFactory.from_birth_data(
             "C1", 1990, 6, 15, h1, 0, lng=12.5, lat=41.9, tz_str="Etc/GMT",
             online=False, suppress_geonames_warning=True)
@@ -761,7 +761,7 @@ class TestUserSiderealCompositeRound10:
 
     def test_user_sidereal_midpoint_composite_builds(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         kw = dict(zodiac_type="Sidereal", sidereal_mode="USER",
                   custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=23.5)
@@ -781,7 +781,7 @@ class TestDavisonEnrichmentRound13:
 
     def test_davison_inherits_enrichments(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
         kw = dict(calculate_dignities=True, calculate_gauquelin=True,
                   calculate_nutation=True, active_fixed_stars=["Regulus"])
         a = AstrologicalSubjectFactory.from_birth_data(
@@ -802,7 +802,7 @@ class TestMidpointCompositeLunarPhaseGuardRound16:
 
     def test_planetocentric_midpoint_lunar_phase_none(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
         kw = dict(city="X", nation="GB", lng=0.0, lat=51.5, tz_str="Etc/GMT",
                   online=False, suppress_geonames_warning=True)
         a = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 12, 0, perspective_type="Marscentric", **kw)
@@ -812,7 +812,7 @@ class TestMidpointCompositeLunarPhaseGuardRound16:
 
     def test_geocentric_midpoint_lunar_phase_present(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
         kw = dict(city="X", nation="GB", lng=0.0, lat=51.5, tz_str="Etc/GMT",
                   online=False, suppress_geonames_warning=True)
         a = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 12, 0, **kw)
@@ -824,8 +824,8 @@ class TestMidpointCompositeLunarPhaseGuardRound16:
 def test_none_subjects_raise_clean_exception():
     """None inputs must fail with a clear KerykeionException, not a raw
     AttributeError on .active_points deep in the pipeline."""
-    from kerykeion.composite_subject_factory import CompositeSubjectFactory
-    from kerykeion.relationship_score_factory import RelationshipScoreFactory
+    from kerykeion.composite_subject.factory import CompositeSubjectFactory
+    from kerykeion.relationship_score.factory import RelationshipScoreFactory
     from kerykeion.schemas import KerykeionException
 
     with pytest.raises(KerykeionException):

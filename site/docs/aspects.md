@@ -253,14 +253,14 @@ single-chart method.
 
 ## Aspect Utilities
 
-Import from: `kerykeion.aspects.aspects_utils`
+Import from: `kerykeion.aspects.utils`
 
 ### `calculate_aspect_movement`
 
 Determines if an aspect is Applying (orb decreasing) or Separating (orb increasing).
 
 ```python
-from kerykeion.aspects.aspects_utils import calculate_aspect_movement
+from kerykeion.aspects.utils import calculate_aspect_movement
 
 movement = calculate_aspect_movement(
     point_one_abs_pos=120.0,
@@ -283,7 +283,7 @@ Applying
 Low-level function to check if two points form an aspect.
 
 ```python
-from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+from kerykeion.aspects.utils import get_aspect_from_two_points
 
 aspect = get_aspect_from_two_points(
     [{"name": "trine", "degree": 120, "orb": 8}],
@@ -298,7 +298,7 @@ aspect = get_aspect_from_two_points(
 Extracts active celestial points from a subject based on configuration.
 
 ```python
-from kerykeion.aspects.aspects_utils import get_active_points_list
+from kerykeion.aspects.utils import get_active_points_list
 from kerykeion.settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
 points = get_active_points_list(
@@ -313,7 +313,7 @@ points = get_active_points_list(
 Converts a planet name to its Swiss Ephemeris ID.
 
 ```python
-from kerykeion.aspects.aspects_utils import planet_id_decoder
+from kerykeion.aspects.utils import planet_id_decoder
 from kerykeion.settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
 swe_id = planet_id_decoder(DEFAULT_CELESTIAL_POINTS_SETTINGS, "Jupiter")

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
 JOHN_LOCATION = {
     "city": "Liverpool",

@@ -24,8 +24,8 @@ from pathlib import Path
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory, SecondaryProgressionFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 from kerykeion.utilities import format_ancient_iso, format_iso_display, extract_year_from_iso
 
 
@@ -709,7 +709,7 @@ class TestBCEReport:
     @pytest.mark.extended
     def test_natal_report(self):
         """Natal report can be generated for a BCE subject without error."""
-        from kerykeion.report import ReportGenerator
+        from kerykeion.report.generator import ReportGenerator
 
         subject = _create_bce_subject("ides_of_march")
         data = ChartDataFactory.create_natal_chart_data(subject)

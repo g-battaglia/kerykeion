@@ -33,7 +33,7 @@ Creating any chart follows the same 3-step process:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # 1. Subject
 subject = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 6, 15, 12, 0, "London", "GB")
@@ -103,7 +103,7 @@ drawer = ChartDrawer(transit_data)
 Composite charts display a single wheel calculated from the midpoints of two subjects, representing the relationship as a unified entity.
 
 ```python
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
 # Create composite subject first
 composite_sub = CompositeSubjectFactory(subject_a, subject_b).get_midpoint_composite_subject_model()
@@ -315,7 +315,7 @@ and the owner semantics of `kr:house` are unchanged.
 
 ## Helper Functions (`charts_utils`)
 
-Import from: `kerykeion.charts.charts_utils`
+Import from: `kerykeion.charts.utils`
 
 Utility functions used in SVG generation that can be helpful for custom rendering logic.
 
@@ -328,7 +328,7 @@ Utility functions used in SVG generation that can be helpful for custom renderin
 | `wheel_y(sign_index, radius, offset)` | Calculates Y coordinate for a wheel sector (`sign_index` 0-11, 30° each). |
 
 ```python
-from kerykeion.charts.charts_utils import degree_difference
+from kerykeion.charts.utils import degree_difference
 
 diff = degree_difference(350, 10) # Returns 20.0
 ```

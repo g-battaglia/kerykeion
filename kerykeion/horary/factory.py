@@ -9,15 +9,15 @@ from typing import List, Optional
 
 from kerykeion.dignities.rulers import get_domicile_ruler
 from kerykeion.receptions import MutualReceptionsFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     HoraryConsiderationModel,
     HoraryIndicatorsModel,
     HorarySignificatorModel,
     KerykeionPointModel,
 )
-from kerykeion.utilities import has_terrestrial_frame
+from kerykeion.utilities.core import has_terrestrial_frame
 
 # House cusp fields in house order, and the engine house-name → number map.
 HOUSE_CUSP_FIELDS: tuple[str, ...] = (

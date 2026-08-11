@@ -25,9 +25,9 @@ import logging
 import math
 from datetime import datetime, timezone
 from typing import Optional
-from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.utilities import wrap_180
+from kerykeion.ephemeris_backend.backend import ephe, EPHE_DATA_PATH
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.utilities.core import wrap_180
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +142,7 @@ def configure_ephemeris_path() -> int:
     default data discovery — or, on pyswisseph, to the low-precision
     Moshier ephemeris.
 
-    Prefer ``kerykeion.ephemeris_backend.ephemeris_session`` for new code;
+    Prefer ``kerykeion.ephemeris_backend.backend.ephemeris_session`` for new code;
     it handles path setup, locking, and cleanup in one place.
 
     Returns:
@@ -193,7 +193,7 @@ def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]
             Returns None if calculation fails or no eclipse found.
 
     Examples:
-        >>> from kerykeion.utilities import datetime_to_julian
+        >>> from kerykeion.utilities.core import datetime_to_julian
         >>> jd = datetime_to_julian(datetime(2025, 1, 1, tzinfo=timezone.utc))
         >>> result = compute_next_solar_eclipse_jd(jd)
         >>> if result:
@@ -231,7 +231,7 @@ def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]
             Returns None if calculation fails or no eclipse found.
 
     Examples:
-        >>> from kerykeion.utilities import datetime_to_julian
+        >>> from kerykeion.utilities.core import datetime_to_julian
         >>> jd = datetime_to_julian(datetime(2025, 1, 1, tzinfo=timezone.utc))
         >>> result = compute_next_lunar_eclipse_jd(jd)
         >>> if result:
@@ -456,7 +456,7 @@ def compute_lunar_phase_jd(
 
     Examples:
         >>> # Find next Full Moon after Jan 1, 2025
-        >>> from kerykeion.utilities import datetime_to_julian, julian_to_datetime
+        >>> from kerykeion.utilities.core import datetime_to_julian, julian_to_datetime
         >>> jd = datetime_to_julian(datetime(2025, 1, 1, tzinfo=timezone.utc))
         >>> full_moon_jd = compute_lunar_phase_jd(jd, 180.0, forward=True)
         >>> if full_moon_jd:

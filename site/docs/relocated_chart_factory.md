@@ -79,7 +79,7 @@ The relocated subject works with all downstream tools:
 
 ```python
 from kerykeion import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from pathlib import Path
 
 chart_data = ChartDataFactory.create_natal_chart_data(relocated)

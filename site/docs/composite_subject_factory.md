@@ -65,7 +65,7 @@ The returned `composite_subject` is a `CompositeSubjectModel` (which inherits fr
 
 ```python
 from kerykeion import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Generate Data
 composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
@@ -123,6 +123,17 @@ When both parents' cusps came from the same substitute, the composite is valid a
 
 ```python
 # Two subjects far inside the Arctic circle, both cast with houses_system_identifier="P"
+polar_a = AstrologicalSubjectFactory.from_birth_data(
+    "Polar A", 1990, 6, 15, 12, 0,
+    lng=18.9553, lat=69.6492, tz_str="Europe/Oslo",
+    houses_system_identifier="P", online=False,
+)
+polar_b = AstrologicalSubjectFactory.from_birth_data(
+    "Polar B", 1988, 2, 3, 8, 30,
+    lng=20.2253, lat=67.8558, tz_str="Europe/Stockholm",
+    houses_system_identifier="P", online=False,
+)
+
 composite = CompositeSubjectFactory(polar_a, polar_b).get_midpoint_composite_subject_model()
 
 print(composite.houses_system_identifier)            # "P" — the REQUESTED system

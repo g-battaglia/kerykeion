@@ -33,8 +33,8 @@ The process involves three steps:
 ```python
 from datetime import datetime, timedelta
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
-from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
+from kerykeion.transits.factory import TransitsTimeRangeFactory
 
 # 1. Create Natal Subject
 natal_subject = AstrologicalSubjectFactory.from_birth_data(

@@ -16,7 +16,7 @@ Usage:
 from pathlib import Path
 from xml.etree import ElementTree
 
-from kerykeion.charts.charts_utils import make_lunar_phase
+from kerykeion.charts.utils import make_lunar_phase
 
 from tests.data.compare_svg_lines import compare_svg_lines
 

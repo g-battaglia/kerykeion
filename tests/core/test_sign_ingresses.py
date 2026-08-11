@@ -3,7 +3,7 @@
 
 import pytest
 
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.sign_ingresses import SignIngressFactory
 from kerykeion.utilities import datetime_to_julian
 from datetime import datetime
@@ -172,7 +172,7 @@ class TestIngressErrorContract:
         # Simulate the backend rejecting a date (as a raw libephemeris
         # EphemerisRangeError / swisseph.Error would) instead of using extreme
         # years: the local dev kernel range differs from production DE441.
-        import kerykeion.sign_ingresses.sign_ingress_factory as sif
+        import kerykeion.sign_ingresses.factory as sif
 
         def failing_calc_ut(jd, body, flags):
             raise RuntimeError(f"jd {jd} outside ephemeris range")
@@ -185,7 +185,7 @@ class TestIngressErrorContract:
         # First samples succeed, then the scan walks past the range edge: the
         # whole search must raise rather than return partial ingresses claiming
         # full coverage.
-        import kerykeion.sign_ingresses.sign_ingress_factory as sif
+        import kerykeion.sign_ingresses.factory as sif
 
         calls = {"n": 0}
 

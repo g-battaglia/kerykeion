@@ -10,9 +10,9 @@ order: 20
 
 This section documents the low-level functions used by `ChartDrawer` to render SVG elements. These are generally considered internal API but are documented here for completeness and for users who wish to implement custom drawing logic.
 
-## Chart Utilities (`kerykeion.charts.charts_utils`)
+## Chart Utilities (`kerykeion.charts.utils`)
 
-Import from: `kerykeion.charts.charts_utils`
+Import from: `kerykeion.charts.utils`
 
 ### Drawing Functions
 

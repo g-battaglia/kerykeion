@@ -46,14 +46,14 @@ class TestCuspsInReciprocalHouses:
     """Tests for calculate_cusps_in_reciprocal_houses."""
 
     def test_returns_12_cusps(self, subject_pair):
-        from kerykeion.house_comparison.house_comparison_utils import calculate_cusps_in_reciprocal_houses
+        from kerykeion.house_comparison.utils import calculate_cusps_in_reciprocal_houses
 
         s1, s2 = subject_pair
         result = calculate_cusps_in_reciprocal_houses(s1, s2)
         assert len(result) == 12
 
     def test_cusp_projected_house_numbers_valid(self, subject_pair):
-        from kerykeion.house_comparison.house_comparison_utils import calculate_cusps_in_reciprocal_houses
+        from kerykeion.house_comparison.utils import calculate_cusps_in_reciprocal_houses
 
         s1, s2 = subject_pair
         result = calculate_cusps_in_reciprocal_houses(s1, s2)
@@ -68,7 +68,7 @@ class TestCuspsInReciprocalHouses:
         "First_House".."Twelfth_House" (no digits), so the parsing always
         fell back to 1. The Nth cusp must report owner house N.
         """
-        from kerykeion.house_comparison.house_comparison_utils import calculate_cusps_in_reciprocal_houses
+        from kerykeion.house_comparison.utils import calculate_cusps_in_reciprocal_houses
 
         s1, s2 = subject_pair
         for cusp_subject, house_subject in ((s1, s2), (s2, s1)):
@@ -86,7 +86,7 @@ class TestCuspsInReciprocalHouses:
                                               H7=341.15° H12=133.85°
             Second (1985-03-20 15:30 London): H1=152.31° H4=233.00° H5=271.48°
         """
-        from kerykeion.house_comparison.house_comparison_utils import calculate_cusps_in_reciprocal_houses
+        from kerykeion.house_comparison.utils import calculate_cusps_in_reciprocal_houses
 
         s1, s2 = subject_pair
 
@@ -115,14 +115,14 @@ class TestPointsInReciprocalHouses:
     """Tests for calculate_points_in_reciprocal_houses."""
 
     def test_returns_points(self, subject_pair):
-        from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
+        from kerykeion.house_comparison.utils import calculate_points_in_reciprocal_houses
 
         s1, s2 = subject_pair
         result = calculate_points_in_reciprocal_houses(s1, s2)
         assert len(result) > 0
 
     def test_limited_active_points(self):
-        from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
+        from kerykeion.house_comparison.utils import calculate_points_in_reciprocal_houses
 
         s1 = AstrologicalSubjectFactory.from_birth_data(
             "First",
@@ -193,7 +193,7 @@ class TestHouseComparisonMalformedData:
 
     def test_cusps_in_houses_with_malformed_cusp_name(self):
         """calculate_cusps_in_reciprocal_houses works with normal subjects."""
-        from kerykeion.house_comparison.house_comparison_utils import calculate_cusps_in_reciprocal_houses
+        from kerykeion.house_comparison.utils import calculate_cusps_in_reciprocal_houses
 
         first = AstrologicalSubjectFactory.from_birth_data(
             name="First",
@@ -227,7 +227,7 @@ class TestHouseComparisonMalformedData:
 
     def test_point_not_in_active_points_skipped(self):
         """Points not in active_points list are silently skipped."""
-        from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
+        from kerykeion.house_comparison.utils import calculate_points_in_reciprocal_houses
 
         first = AstrologicalSubjectFactory.from_birth_data(
             name="First",

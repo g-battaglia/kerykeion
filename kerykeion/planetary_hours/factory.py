@@ -8,8 +8,8 @@ from __future__ import annotations
 from datetime import date, timedelta, timezone
 
 from kerykeion.planetary_hours.utils import build_hours, weekday_ruler
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_models import PlanetaryHoursModel
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.models import PlanetaryHoursModel
 from kerykeion.sun_times.utils import compute_sun_events, localize_datetime, resolve_timezone
 
 _POLAR_MESSAGE = (

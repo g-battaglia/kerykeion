@@ -213,7 +213,7 @@ class TestKerykeionIntegrationComparison:
         for backend_name in ("swisseph", "libephemeris"):
             os.environ["KERYKEION_BACKEND"] = backend_name
             # Force reimport of the backend module
-            import kerykeion.ephemeris_backend as eb
+            import kerykeion.ephemeris_backend.backend as eb
             importlib.reload(eb)
 
             subject = AstrologicalSubjectFactory.from_birth_data(

@@ -20,12 +20,12 @@ All files are saved to tests/data/svg/ with geonames authentication included.
 from functools import partial
 
 from pathlib import Path
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer as _ChartDrawer
-from kerykeion.charts.charts_utils import make_lunar_phase
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer as _ChartDrawer
+from kerykeion.charts.utils import make_lunar_phase
+from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 

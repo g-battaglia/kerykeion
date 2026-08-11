@@ -17,7 +17,7 @@ from kerykeion import (
     ChartDataFactory,
     DominantsFactory,
 )
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.schemas import KerykeionException
 
@@ -71,7 +71,7 @@ class TestAstronomicalYearZeroIsoFormat:
     JD_YEAR_ZERO = 1721223.5
 
     def test_jd_to_utc_iso_has_no_spurious_minus(self):
-        from kerykeion.secondary_progressions.secondary_progression_factory import (
+        from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
 
@@ -80,7 +80,7 @@ class TestAstronomicalYearZeroIsoFormat:
         assert iso.startswith("0000-"), iso
 
     def test_jd_to_date_label_has_no_spurious_minus(self):
-        from kerykeion.secondary_progressions.secondary_progression_factory import (
+        from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
 
@@ -88,7 +88,7 @@ class TestAstronomicalYearZeroIsoFormat:
         assert label.startswith("0000-"), label
 
     def test_negative_years_keep_their_minus(self):
-        from kerykeion.secondary_progressions.secondary_progression_factory import (
+        from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
 
@@ -97,8 +97,8 @@ class TestAstronomicalYearZeroIsoFormat:
         assert iso.startswith("-0001-"), iso
 
     def test_matches_sibling_formatter_sign_convention(self):
-        from kerykeion._predictive_utils import jd_to_iso_utc
-        from kerykeion.secondary_progressions.secondary_progression_factory import (
+        from kerykeion.predictive.utils import jd_to_iso_utc
+        from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
 
@@ -195,7 +195,7 @@ class TestReportHumanizesProjectedHouse:
 
     def test_projected_house_name_has_no_underscore(self, rome_subject):
         from kerykeion.house_comparison import HouseComparisonFactory
-        from kerykeion.report import ReportGenerator
+        from kerykeion.report.generator import ReportGenerator
 
         second = AstrologicalSubjectFactory.from_birth_data(
             name="Other", year=1985, month=3, day=2, hour=8, minute=15,
@@ -243,13 +243,13 @@ class TestGuardAspectOrbValidation:
 
     @pytest.mark.parametrize("orb", [float("nan"), float("inf"), -1.0])
     def test_invalid_orb_rejected(self, orb):
-        from kerykeion._predictive_utils import build_aspect_settings
+        from kerykeion.predictive.utils import build_aspect_settings
 
         with pytest.raises(KerykeionException):
             build_aspect_settings(orb, None)
 
     def test_valid_orb_accepted(self):
-        from kerykeion._predictive_utils import build_aspect_settings
+        from kerykeion.predictive.utils import build_aspect_settings
 
         settings = build_aspect_settings(3.0, None)
         assert settings
@@ -270,7 +270,7 @@ class TestRelocationNullsFixedStarHorizonFields:
     """
 
     def test_fixed_star_location_fields_reset_on_relocation(self):
-        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.relocated_chart.factory import RelocatedChartFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
             name="reloc", year=1990, month=6, day=15, hour=14, minute=30,
@@ -302,7 +302,7 @@ class TestAstroCartographyRejectsCompositeSubject:
 
     def test_composite_raises_clean_exception(self):
         from kerykeion import CompositeSubjectFactory
-        from kerykeion.astro_cartography.acg_factory import AstroCartographyFactory
+        from kerykeion.astro_cartography.factory import AstroCartographyFactory
 
         a = AstrologicalSubjectFactory.from_birth_data(
             name="a", year=1990, month=6, day=15, hour=14, minute=30,
@@ -320,7 +320,7 @@ class TestAstroCartographyRejectsCompositeSubject:
             AstroCartographyFactory.compute(composite)
 
     def test_ordinary_subject_still_computes(self):
-        from kerykeion.astro_cartography.acg_factory import AstroCartographyFactory
+        from kerykeion.astro_cartography.factory import AstroCartographyFactory
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             name="a", year=1990, month=6, day=15, hour=14, minute=30,
@@ -335,7 +335,7 @@ class TestReportSanitizesHouseComparisonNames:
     """The house-comparison section rendered subject names without _san."""
 
     def test_control_chars_in_names_are_stripped(self):
-        from kerykeion.report import ReportGenerator
+        from kerykeion.report.generator import ReportGenerator
 
         first = AstrologicalSubjectFactory.from_birth_data(
             name="A\x1b]0;pwn\x07B", year=1990, month=6, day=15, hour=14, minute=30,

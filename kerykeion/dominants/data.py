@@ -25,8 +25,8 @@ from __future__ import annotations
 
 from typing import Dict, List, Tuple
 
-from kerykeion.schemas.kr_literals import Element, Quality, Sign
-from kerykeion.schemas.kr_models import ActiveAspect
+from kerykeion.schemas.literals import Element, Quality, Sign
+from kerykeion.schemas.models import ActiveAspect
 
 # =============================================================================
 # ZODIAC: SIGN INDEX -> ELEMENT / QUALITY (Title-case)
@@ -99,7 +99,7 @@ QUALITY_LOWER_TO_TITLE: Dict[str, Quality] = {
 # =============================================================================
 # RULERSHIP — MODERN (used by the modern weighted method)
 # =============================================================================
-# The traditional rulerships live in ``kerykeion.dignities.dignity_data`` and
+# The traditional rulerships live in ``kerykeion.dignities.data`` and
 # are consumed verbatim by the dignity engine and the Almuten Figuris. The
 # modern weighted method instead assigns the outer planets as rulers of the
 # three signs they are commonly given in modern practice, so we keep a separate

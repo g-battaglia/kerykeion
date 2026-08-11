@@ -18,7 +18,7 @@ import pytest
 from pytest import approx
 
 from kerykeion import ZodiacalReleasingFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.zodiacal_releasing.factory import GENERAL_YEARS, TROPICAL_YEAR_DAYS
 
 pytestmark = pytest.mark.core

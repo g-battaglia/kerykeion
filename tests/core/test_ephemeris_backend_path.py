@@ -118,6 +118,10 @@ class TestSwissephPathValidation:
             env={**os.environ, **env},
             cwd=str(KERYKEION_ROOT),
         )
+        # Assert the import actually succeeded first: this check is negative, so a
+        # subprocess dying of ImportError would produce a traceback that does not
+        # contain the string either, and the test would pass while proving nothing.
+        assert result.returncode == 0, result.stderr
         assert "does not contain readable .se1 files" not in result.stderr
 
 
@@ -163,7 +167,10 @@ class TestSwephAutoDetect:
         assert info["ephe_path"] == ""
 
     def test_setup_script_targets_the_autodetected_dir(self):
+        # Deliberately the package path, not the submodule: backend.py re-exports
+        # this constant "for backward compatibility", so this import is the
+        # contract, and testing it through .backend would hide a regression.
         from kerykeion.ephemeris_backend import DEFAULT_SWEPH_DOWNLOAD_DIR
-        from kerykeion.swisseph_setup import _DEFAULT_TARGET
+        from kerykeion.swisseph_setup.download import _DEFAULT_TARGET
 
         assert str(_DEFAULT_TARGET) == DEFAULT_SWEPH_DOWNLOAD_DIR

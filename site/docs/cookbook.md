@@ -135,7 +135,7 @@ Aspect distribution:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from pathlib import Path
 
 # Sample birth data
@@ -168,7 +168,7 @@ for person in people:
 ```python
 from itertools import combinations
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
 
 # Create subjects
 subjects = []
@@ -276,7 +276,7 @@ Moon,Ari,21.80,Eighth_House,False,14.0131,13.1955,
 # doc-snippet: no-run — requires optional pandas dependency
 import pandas as pd
 from datetime import datetime
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 
 ephemeris = EphemerisDataFactory(
     start_datetime=datetime(2024, 1, 1),
@@ -346,7 +346,7 @@ print(f"Found {len(aspects.aspects)} aspects with tight orbs")
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from pathlib import Path
 
 subject = AstrologicalSubjectFactory.from_birth_data(

@@ -26,8 +26,8 @@ from functools import partial
 
 from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
 from kerykeion import ChartDrawer as _ChartDrawer
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
 # Import test subject definitions
 from tests.data.test_subjects_matrix import (

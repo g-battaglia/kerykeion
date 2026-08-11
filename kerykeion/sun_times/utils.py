@@ -24,14 +24,14 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 from zoneinfo import ZoneInfo
 
-from kerykeion.ephemeris_backend import ephemeris_session, ephe
+from kerykeion.ephemeris_backend.backend import ephemeris_session, ephe
 from kerykeion.moon_phase_details.utils import (
     compute_sun_rise_set_ephe,
     compute_sun_transit_ephe,
     configure_ephemeris_path,
 )
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.utilities import (
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.utilities.core import (
     datetime_to_julian,
     is_ambiguous,
     is_nonexistent,
@@ -100,7 +100,7 @@ class TwilightEvents:
 def resolve_timezone(tz_str: str) -> ZoneInfo:
     """Resolve an IANA timezone string, raising ``KerykeionException`` if invalid.
 
-    A thin alias for :func:`kerykeion.utilities.safe_timezone`, kept as its own
+    A thin alias for :func:`kerykeion.utilities.core.safe_timezone`, kept as its own
     name because the timing factories import it from here. Delegating rather than
     re-implementing is the point: two wrappers around the same constructor drift
     apart on WHICH failures they wrap, and the gap is not hypothetical —
@@ -309,7 +309,7 @@ def _polar_state(jd_noon: float, latitude: float) -> tuple[bool, bool]:
     Note:
         This function mutates global ephemeris state (``set_ephe_path``,
         ``calc_ut``). The caller must invoke it inside an
-        :func:`~kerykeion.ephemeris_backend.ephemeris_session`.
+        :func:`~kerykeion.ephemeris_backend.backend.ephemeris_session`.
     """
     iflag = configure_ephemeris_path()
     # Equatorial coordinates: [right_ascension, declination, distance, ...].
@@ -445,7 +445,7 @@ def _next_event_jd(
 
     Note:
         Mutates global ephemeris state via the backend; the caller must invoke it
-        inside an :func:`~kerykeion.ephemeris_backend.ephemeris_session`.
+        inside an :func:`~kerykeion.ephemeris_backend.backend.ephemeris_session`.
     """
     try:
         result = ephe.rise_trans(jd_start, ephe.SUN, rsmi, geopos, atpress=0.0, attemp=0.0, flags=iflag)

@@ -9,7 +9,7 @@ import pytest
 
 from kerykeion import KerykeionException, TriplicityLordsModel
 from kerykeion.dignities import get_triplicity_lords
-from kerykeion.dignities.dignity_data import TRIPLICITY_RULERS
+from kerykeion.dignities.data import TRIPLICITY_RULERS
 
 ELEMENTS = ["Fire", "Earth", "Air", "Water"]
 

@@ -8,7 +8,7 @@ modality, house (and, for the modern method, polarity, hemispheres and
 quadrants) — under one of several interchangeable astrological "schools", or a
 user-defined custom strategy.
 
-Built-in schools (see :data:`~kerykeion.schemas.kr_literals.DominantMethod`):
+Built-in schools (see :data:`~kerykeion.schemas.literals.DominantMethod`):
     - ``"modern"``: modern weighted method (Astrotheme-style).
     - ``"almuten_figuris"``: traditional Almuten Figuris / Lord of the Geniture.
     - ``"elemental"``: simple elemental & modal balance.

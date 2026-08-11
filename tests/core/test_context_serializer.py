@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.context_serializer import (
+from kerykeion.context.serializer import (
     to_context,
     kerykeion_point_to_context,
     lunar_phase_to_context,
@@ -21,7 +21,7 @@ from kerykeion.context_serializer import (
     dual_chart_data_to_context,
     moon_phase_overview_to_context,
 )
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from typing import get_args
 from kerykeion.schemas import AstrologicalPoint
 
@@ -566,7 +566,7 @@ class TestToContextDispatcher:
 
     def test_dispatcher_with_moon_phase_overview(self):
         """Test dispatcher with MoonPhaseOverviewModel."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -666,7 +666,7 @@ class TestNonQualitativeOutput:
 
     def test_no_interpretive_language_moon_phase_overview(self):
         """Ensure no interpretive language in moon phase overview output."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             moon=MoonPhaseMoonSummaryModel(
@@ -778,7 +778,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_minimal_overview(self):
         """Test a minimal MoonPhaseOverviewModel (only required fields)."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -794,7 +794,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_moon_details(self):
         """Test MoonPhaseOverviewModel with moon summary fields."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -819,7 +819,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_sun_info(self):
         """Test MoonPhaseOverviewModel with sun info."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseSunInfoModel,
@@ -846,7 +846,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_location(self):
         """Test MoonPhaseOverviewModel with location info."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseLocationModel,
@@ -868,7 +868,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_upcoming_phases(self):
         """Test MoonPhaseOverviewModel with upcoming phases."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -903,7 +903,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_zodiac(self):
         """Test MoonPhaseOverviewModel with zodiac info."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseZodiacModel,
@@ -926,7 +926,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_moonrise_moonset(self):
         """Test MoonPhaseOverviewModel with moonrise/moonset fields."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -947,7 +947,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_next_lunar_eclipse(self):
         """Test MoonPhaseOverviewModel with next lunar eclipse."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseEclipseModel,
@@ -972,7 +972,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_detailed_position(self):
         """Test MoonPhaseOverviewModel with detailed moon position."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1007,7 +1007,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_visibility_and_viewing_conditions(self):
         """Test MoonPhaseOverviewModel with visibility and viewing conditions."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1050,7 +1050,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_visibility_without_viewing_conditions(self):
         """Test MoonPhaseOverviewModel with visibility but no viewing conditions."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1078,7 +1078,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_illumination_details(self):
         """Test MoonPhaseOverviewModel with illumination details."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1107,7 +1107,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_events_and_optimal_viewing(self):
         """Test MoonPhaseOverviewModel with events and optimal viewing period."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseEventsModel,
@@ -1143,7 +1143,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_events_without_optimal_viewing(self):
         """Test MoonPhaseOverviewModel with events but no optimal viewing period."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseEventsModel,
@@ -1167,7 +1167,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_sun_position_and_eclipse(self):
         """Test MoonPhaseOverviewModel with sun position and solar eclipse."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseSunInfoModel,
@@ -1204,7 +1204,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_extended_location(self):
         """Test MoonPhaseOverviewModel with all location attributes."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseLocationModel,
@@ -1230,7 +1230,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_none_fields_omitted(self):
         """Test that None/optional fields are omitted from XML output."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -1253,8 +1253,8 @@ class TestTransitMomentToContext:
     """Tests for transit_moment_to_context function."""
 
     def test_transit_moment_with_aspects(self):
-        from kerykeion.context_serializer import transit_moment_to_context
-        from kerykeion.schemas.kr_models import TransitMomentModel, AspectModel
+        from kerykeion.context.serializer import transit_moment_to_context
+        from kerykeion.schemas.models import TransitMomentModel, AspectModel
 
         aspect = AspectModel(
             p1_name="Sun",
@@ -1279,15 +1279,15 @@ class TestTransitMomentToContext:
         assert "2024-01-15" in result
 
     def test_transit_moment_no_aspects(self):
-        from kerykeion.context_serializer import transit_moment_to_context
-        from kerykeion.schemas.kr_models import TransitMomentModel
+        from kerykeion.context.serializer import transit_moment_to_context
+        from kerykeion.schemas.models import TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         result = transit_moment_to_context(moment)
         assert "<transit_moment " in result
 
     def test_transit_moment_via_to_context(self):
-        from kerykeion.schemas.kr_models import TransitMomentModel
+        from kerykeion.schemas.models import TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         result = to_context(moment)
@@ -1314,8 +1314,8 @@ class TestTransitsTimeRangeToContext:
         )
 
     def test_time_range_with_subject(self, _subject):
-        from kerykeion.context_serializer import transits_time_range_to_context
-        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+        from kerykeion.context.serializer import transits_time_range_to_context
+        from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         tr = TransitsTimeRangeModel(
@@ -1327,7 +1327,7 @@ class TestTransitsTimeRangeToContext:
         assert "<transit_analysis " in result
 
     def test_time_range_via_to_context(self, _subject):
-        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+        from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         tr = TransitsTimeRangeModel(
@@ -1339,8 +1339,8 @@ class TestTransitsTimeRangeToContext:
         assert "<transit_analysis " in result
 
     def test_time_range_no_subject(self):
-        from kerykeion.context_serializer import transits_time_range_to_context
-        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+        from kerykeion.context.serializer import transits_time_range_to_context
+        from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         tr = TransitsTimeRangeModel(subject=None, transits=[moment], dates=["2024-01-15T12:00:00"])
@@ -1382,7 +1382,7 @@ class TestHouseComparisonContext:
         return s1, s2
 
     def test_house_comparison_to_context(self, _subjects):
-        from kerykeion.context_serializer import house_comparison_to_context
+        from kerykeion.context.serializer import house_comparison_to_context
         from kerykeion.house_comparison import HouseComparisonFactory
 
         s1, s2 = _subjects
@@ -1392,7 +1392,7 @@ class TestHouseComparisonContext:
         assert "<house_overlay>" in result
 
     def test_house_comparison_transit_context(self, _subjects):
-        from kerykeion.context_serializer import house_comparison_to_context
+        from kerykeion.context.serializer import house_comparison_to_context
         from kerykeion.house_comparison import HouseComparisonFactory
 
         s1, s2 = _subjects
@@ -1422,8 +1422,8 @@ class TestHouseComparisonContext:
             assert "<point_in_house " in result
 
     def test_return_subject_to_context(self, _subjects):
-        from kerykeion.context_serializer import astrological_subject_to_context
-        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+        from kerykeion.context.serializer import astrological_subject_to_context
+        from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
         s1, _ = _subjects
         factory = PlanetaryReturnFactory(s1, lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False)
@@ -1432,7 +1432,7 @@ class TestHouseComparisonContext:
         assert '<return_info type="Solar"' in result
 
     def test_solar_arc_to_context(self, _subjects):
-        from kerykeion.context_serializer import solar_arc_to_context, to_context
+        from kerykeion.context.serializer import solar_arc_to_context, to_context
         from kerykeion.secondary_progressions import SolarArcFactory
 
         s1, _ = _subjects
@@ -1448,7 +1448,7 @@ class TestHouseComparisonContext:
         assert result == result2
 
     def test_midpoints_to_context(self, _subjects):
-        from kerykeion.context_serializer import midpoints_to_context, to_context
+        from kerykeion.context.serializer import midpoints_to_context, to_context
         from kerykeion.midpoints import MidpointFactory
 
         s1, _ = _subjects
@@ -1467,7 +1467,7 @@ class TestMidpointsToContext:
     """Tests for midpoint serialization edge cases."""
 
     def test_midpoints_to_context_empty(self):
-        from kerykeion.context_serializer import midpoints_to_context
+        from kerykeion.context.serializer import midpoints_to_context
 
         result = midpoints_to_context([])
         assert 'count="0"' in result
@@ -1482,7 +1482,7 @@ class TestMidpointsToContext:
         "no midpoints"."""
         import pytest
 
-        from kerykeion.context_serializer import to_context
+        from kerykeion.context.serializer import to_context
 
         with pytest.raises(TypeError, match="midpoints_to_context"):
             to_context([])
@@ -1578,7 +1578,7 @@ class TestRoundOneRegressions:
         """Descendant / Imum_Coeli / True_South_Lunar_Node are derived opposites
         absent from DEFAULT_ACTIVE_POINTS; the <axes> section must still emit
         them (regression: the active_points-driven loop dropped them)."""
-        from kerykeion.context_serializer import astrological_subject_to_context
+        from kerykeion.context.serializer import astrological_subject_to_context
         ctx = astrological_subject_to_context(self._subject())
         for axis in ("Descendant", "Imum_Coeli", "True_South_Lunar_Node"):
             assert axis in ctx, f"{axis} dropped from <axes>"
@@ -1586,8 +1586,8 @@ class TestRoundOneRegressions:
     def test_transit_per_point_owner_substituted(self):
         """In a transit chart the transit subject's real name must not leak into
         per-point owners (only the substituted 'Transit' label)."""
-        from kerykeion.chart_data_factory import ChartDataFactory
-        from kerykeion.context_serializer import to_context
+        from kerykeion.chart_data.factory import ChartDataFactory
+        from kerykeion.context.serializer import to_context
         natal = self._subject("Alice")
         transit = self._subject("BobTheTransit")
         ctx = to_context(ChartDataFactory.create_transit_chart_data(natal, transit))
@@ -1597,8 +1597,8 @@ class TestRoundOneRegressions:
     def test_relationship_score_no_hardcoded_max(self):
         """The relationship_score is an open-ended sum; it must not carry a
         hardcoded max='44' (a strong synastry exceeds it -> >100%)."""
-        from kerykeion.chart_data_factory import ChartDataFactory
-        from kerykeion.context_serializer import to_context
+        from kerykeion.chart_data.factory import ChartDataFactory
+        from kerykeion.context.serializer import to_context
         s1 = self._subject("A")
         s2 = self._subject("B")
         cd = ChartDataFactory.create_synastry_chart_data(s1, s2, include_relationship_score=True)

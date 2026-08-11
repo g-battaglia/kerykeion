@@ -19,8 +19,8 @@ import unicodedata
 
 from typing import cast
 
-from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode
-from kerykeion.schemas.kr_models import ActiveAspect
+from kerykeion.schemas.literals import AstrologicalPoint, SiderealMode
+from kerykeion.schemas.models import ActiveAspect
 
 
 # =============================================================================
@@ -115,7 +115,7 @@ def return_label_keys(subject: object) -> tuple[str, str]:
     ``None`` for every subject that was not a :class:`PlanetReturnModel`, so a
     duck-typed subject *declaring* ``return_type="Solar"`` came out labelled
     "Lunar Return" — the very substitution this mapping exists to end, on the one
-    input :mod:`kerykeion.report` documents as supported.
+    input :mod:`kerykeion.report.generator` documents as supported.
 
     Anything the map does not know falls through to the neutral ``Return``
     instead of borrowing the lunar label: a `PlanetReturnModel` always carries
@@ -394,7 +394,50 @@ DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
 ]
 """
 Default list of active points in the charts or aspects calculations.
-The full list of points is available in the `schemas.kr_literals.AstrologicalPoint` literal.
+The full list of points is available in the `schemas.literals.AstrologicalPoint` literal.
+"""
+
+V5_DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    "True_North_Lunar_Node",
+    "True_South_Lunar_Node",
+    "Chiron",
+    "Mean_Lilith",
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
+]
+"""
+The 18 points that ``DEFAULT_ACTIVE_POINTS`` held in v5, kept for result continuity.
+
+v6 trimmed the default set to 14: ``True_South_Lunar_Node``, ``Mean_Lilith``,
+``Descendant`` and ``Imum_Coeli`` are no longer active unless asked for. Code that
+relied on the defaults therefore gets fewer points after upgrading, silently --
+nothing raises, the results are simply narrower.
+
+Pass this list to reproduce v5 output verbatim::
+
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.settings import V5_DEFAULT_ACTIVE_POINTS
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        ..., active_points=V5_DEFAULT_ACTIVE_POINTS,
+    )
+
+This is a frozen historical record, not a maintained preset: it will not follow
+future changes to the default set. See the migration guide for the other two
+behavioural changes (Sun/Moon orb adjustments and the chart style default),
+which this constant does not address.
 """
 
 ALL_ACTIVE_POINTS: list[AstrologicalPoint] = [
@@ -468,7 +511,7 @@ ALL_ACTIVE_POINTS: list[AstrologicalPoint] = [
 ]
 """
 Full list of active points in the charts or aspects calculations.
-The full list of points is available in the `schemas.kr_literals.AstrologicalPoint` literal.
+The full list of points is available in the `schemas.literals.AstrologicalPoint` literal.
 """
 
 # =============================================================================

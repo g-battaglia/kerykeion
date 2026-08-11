@@ -273,7 +273,7 @@ class TestNakshatraTropicalWarning:
     def test_warning_fires_for_tropical_chart(self, caplog):
         import logging
 
-        with caplog.at_level(logging.WARNING, logger="kerykeion.astrological_subject_factory"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.astrological_subject.factory"):
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Tropical Nakshatra", calculate_nakshatra=True, **self._BIRTH
             )
@@ -288,7 +288,7 @@ class TestNakshatraTropicalWarning:
     def test_no_warning_for_sidereal_chart(self, caplog):
         import logging
 
-        with caplog.at_level(logging.WARNING, logger="kerykeion.astrological_subject_factory"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.astrological_subject.factory"):
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Sidereal Nakshatra",
                 calculate_nakshatra=True,

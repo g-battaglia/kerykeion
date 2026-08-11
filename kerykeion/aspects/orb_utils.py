@@ -40,7 +40,7 @@ import math
 from numbers import Real
 from typing import Iterable, Literal, Mapping, Optional, Union, get_args
 
-from kerykeion.schemas.kr_literals import AspectName
+from kerykeion.schemas.literals import AspectName
 
 logger = logging.getLogger(__name__)
 

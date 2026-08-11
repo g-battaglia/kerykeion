@@ -1,5 +1,5 @@
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 
 # Create a natal chart data
 subject = AstrologicalSubjectFactory.from_current_time(name="Test Subject")

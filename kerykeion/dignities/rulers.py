@@ -2,7 +2,7 @@
 """Public lookups for classical sign rulerships.
 
 Single source of truth for "who rules this sign" questions, built on the
-reference tables in :mod:`kerykeion.dignities.dignity_data`. Techniques that
+reference tables in :mod:`kerykeion.dignities.data`. Techniques that
 display a period or house lord (zodiacal releasing, annual profections,
 firdaria, horary significators) resolve it here instead of keeping a private
 copy of the table.
@@ -10,9 +10,9 @@ copy of the table.
 
 from typing import Optional, cast
 
-from kerykeion.schemas.kr_literals import ClassicalPlanet, Sign
+from kerykeion.schemas.literals import ClassicalPlanet, Sign
 
-from .dignity_data import DOMICILE_RULERS, EXALTATION_TABLE
+from .data import DOMICILE_RULERS, EXALTATION_TABLE
 
 __all__ = ["get_domicile_ruler", "get_exaltation_ruler"]
 

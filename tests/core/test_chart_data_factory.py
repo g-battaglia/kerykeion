@@ -30,7 +30,7 @@ from kerykeion import (
     ElementDistributionModel,
     QualityDistributionModel,
 )
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException, AstrologicalSubjectModel
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
@@ -1042,7 +1042,7 @@ class TestAllActivePoints:
 
     def test_all_active_points_with_chart_drawer(self):
         """ChartDrawer reflects the same active points as the chart data."""
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Drawer Test",
@@ -1149,7 +1149,7 @@ class TestSynastryDistributionRawTotalsRound5:
 
     def test_synastry_element_fields_are_raw_totals(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
         john = AstrologicalSubjectFactory.from_birth_data(
             "John", 1990, 1, 1, 12, 0, lng=-0.13, lat=51.5, tz_str="Europe/London",
             online=False, suppress_geonames_warning=True)
@@ -1169,7 +1169,7 @@ class TestDistributionHonorsExplicitFilterRound14:
 
     def test_explicit_filter_honored(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.chart_data_factory import ChartDataFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
         s = AstrologicalSubjectFactory.from_birth_data(
             "N", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
             online=False, suppress_geonames_warning=True)

@@ -14,7 +14,7 @@ from datetime import datetime
 
 import pytest
 
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 
 
 # ---------------------------------------------------------------------------
@@ -412,7 +412,7 @@ class TestEdgeCases:
         request must still raise the plain ``ValueError`` cap message, proving
         the comprehension is never reached.
         """
-        from kerykeion import ephemeris_data_factory as edf
+        from kerykeion.ephemeris_data import factory as edf
 
         def _boom(*_args, **_kwargs):
             raise AssertionError("series was materialized before the cap check")
@@ -799,13 +799,13 @@ class TestEphemerisSessionNestingGuard:
     def test_no_warning_when_not_nested(self, caplog):
         from kerykeion.ephemeris_backend import ephemeris_session
 
-        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend.backend"):
             with ephemeris_session():
                 pass
         assert "Nested ephemeris_session" not in caplog.text
 
     def test_nested_session_is_rejected_without_mutating_outer_sidereal_state(self):
-        from kerykeion.ephemeris_backend import ephe, ephemeris_session, _SESSION_DEPTH
+        from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session, _SESSION_DEPTH
 
         jd = 2451545.0
         with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as outer_iflag:
@@ -944,7 +944,7 @@ class TestFixedStarsInEphemeris:
 
     def test_requested_stars_present_with_point_model_shape(self):
         """Requested stars appear in every sample as KerykeionPointModel entries."""
-        from kerykeion.schemas.kr_models import KerykeionPointModel
+        from kerykeion.schemas.models import KerykeionPointModel
 
         data = self._factory(active_fixed_stars=["Regulus", "Spica"]).get_ephemeris_data()
         assert len(data) == 2
@@ -985,7 +985,7 @@ class TestFixedStarsInEphemeris:
 
     def test_active_fixed_stars_passthrough_and_isolation(self, monkeypatch):
         """The factory forwards a fresh copy of the star list to from_birth_data."""
-        from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 
         captured = []
         real = AstrologicalSubjectFactory.from_birth_data.__func__

@@ -72,7 +72,7 @@ Each point model includes:
 
 ## Utility Functions
 
-Import from: `kerykeion.house_comparison.house_comparison_utils`
+Import from: `kerykeion.house_comparison.utils`
 
 Lower-level functions used by the factory, useful for custom analysis pipelines.
 
@@ -82,7 +82,7 @@ Lower-level functions used by the factory, useful for custom analysis pipelines.
 | `calculate_cusps_in_reciprocal_houses(cusp_subject, house_subject)`                    | Calculates where one subject's house cusps fall in the other's houses. |
 
 ```python
-from kerykeion.house_comparison.house_comparison_utils import calculate_points_in_reciprocal_houses
+from kerykeion.house_comparison.utils import calculate_points_in_reciprocal_houses
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
 # Returns List[PointInHouseModel]

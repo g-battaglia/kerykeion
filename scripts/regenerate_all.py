@@ -50,9 +50,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 
 
 # =============================================================================
@@ -923,7 +923,7 @@ def regenerate_ephemeris() -> None:
         ephemeris_data,
         "Expected ephemeris data for various time ranges.",
         "--ephemeris",
-        imports=("from kerykeion.schemas.kr_models import KerykeionPointModel",),
+        imports=("from kerykeion.schemas.models import KerykeionPointModel",),
     )
 
 

@@ -8,7 +8,7 @@ settings-related edge cases from tests/edge_cases/test_edge_cases.py.
 
 import pytest
 
-from kerykeion.settings.kerykeion_settings import load_settings_mapping, _deep_merge
+from kerykeion.settings.loader import load_settings_mapping, _deep_merge
 from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 from kerykeion.settings.translations import load_language_settings, load_language_pair, get_translations
 from kerykeion.schemas.settings_models import KerykeionLanguageModel
@@ -383,7 +383,7 @@ class TestKerykeionLanguageModelRoundTrip:
     def test_transit_chart_svg_uses_localized_cusp_label(self):
         """End-to-end: a DE transit chart renders 'Transit-Cusp', not the English default."""
         from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         natal = AstrologicalSubjectFactory.from_birth_data(
             "DE Natal",

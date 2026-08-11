@@ -12,8 +12,8 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
-from kerykeion.schemas.kr_literals import ClassicalPlanet
-from kerykeion.schemas.kr_models import PlanetaryHourModel
+from kerykeion.schemas.literals import ClassicalPlanet
+from kerykeion.schemas.models import PlanetaryHourModel
 
 # Descending Chaldean order of orbital speed. The ruler of each successive
 # planetary hour steps through this list cyclically.

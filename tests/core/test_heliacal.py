@@ -17,7 +17,7 @@ from kerykeion.heliacal import (
     HeliacalEventModel,
     HELIACAL_SETTING,
 )
-from kerykeion.heliacal.heliacal_factory import (
+from kerykeion.heliacal.factory import (
     DEFAULT_PRESSURE,
     DEFAULT_TEMPERATURE,
     DEFAULT_HUMIDITY,
@@ -91,7 +91,7 @@ class TestNextHeliacalRising:
 
         libephemeris signals 'no event' by returning jd 0.0; drive that
         sentinel directly so the assertion doesn't depend on astronomy."""
-        import kerykeion.heliacal.heliacal_factory as hf
+        import kerykeion.heliacal.factory as hf
         from kerykeion.schemas import KerykeionException
 
         monkeypatch.setattr(hf.ephe, "heliacal_ut", lambda *a, **k: (0.0, 0.0, 0.0))
@@ -107,9 +107,9 @@ class TestNextHeliacalRising:
         hard-validate against PLANETS). The message must own both possibilities:
         keep 'No heliacal rising' but also name the supported planet set and the
         fixed-star option so it is actionable, not a bare/misleading assertion."""
-        import kerykeion.heliacal.heliacal_factory as hf
+        import kerykeion.heliacal.factory as hf
         from kerykeion.schemas import KerykeionException
-        from kerykeion.heliacal.heliacal_factory import PLANETS
+        from kerykeion.heliacal.factory import PLANETS
 
         def _raise_unknown_body(*a, **k):
             raise ValueError("body not found")
@@ -206,7 +206,7 @@ class TestSearchEvents:
         be accepted (not the R23 regression 'Unknown planet') and canonicalized
         to the PLANETS spelling in the returned model. Backend-independent logic,
         so drive it with a stubbed heliacal_ut for speed/determinism."""
-        import kerykeion.heliacal.heliacal_factory as hf
+        import kerykeion.heliacal.factory as hf
 
         monkeypatch.setattr(
             hf.ephe, "heliacal_ut",
@@ -220,7 +220,7 @@ class TestSearchEvents:
         assert all(e.planet_name == "Mercury" for e in events)
 
     def test_mixed_case_planet_names_accepted_and_canonicalized(self, factory: HeliacalFactory, monkeypatch):
-        import kerykeion.heliacal.heliacal_factory as hf
+        import kerykeion.heliacal.factory as hf
 
         monkeypatch.setattr(
             hf.ephe, "heliacal_ut",
@@ -254,7 +254,7 @@ class TestGeoposKeywordAlternative:
     def _capture_heliacal_ut(monkeypatch):
         """Stub the backend call (real heliacal searches take seconds) and
         capture the geopos it receives."""
-        import kerykeion.heliacal.heliacal_factory as hf
+        import kerykeion.heliacal.factory as hf
 
         captured = {}
 
@@ -388,7 +388,7 @@ class TestBackendHardErrors:
     def test_genuine_no_event_still_returns_empty(self, factory: HeliacalFactory, monkeypatch):
         # The libephemeris 'no event' sentinel (jd 0.0 -> our ValueError) is NOT
         # a hard error: it must stay a benign skip returning [].
-        import kerykeion.heliacal.heliacal_factory as hf
+        import kerykeion.heliacal.factory as hf
 
         monkeypatch.setattr(hf.ephe, "heliacal_ut", lambda *a, **k: (0.0, 0.0, 0.0))
         events = factory.search_events(

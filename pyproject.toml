@@ -110,7 +110,8 @@ include = [
 # MyPy Static Analysis
 [tool.mypy]
 ignore_missing_imports = true
-mypy_path = "kerykeion"
+# No mypy_path: adding "kerykeion" here would also resolve `utilities`, `report`,
+# `schemas` as top-level modules, masking imports written without the package prefix.
 files = "kerykeion"
 
 # PyTest Automated Testing
@@ -139,9 +140,6 @@ omit = [
     "*/__pycache__/*",
 
     "setup.py",
-    "**/draw_planets_legacy.py",  # Legacy code, not used
-    "kerykeion/charts/draw_planets_legacy.py",  # Legacy code, not used
-    "kerykeion/kr_types/*",  # Deprecated v4 backward compat, excluded from coverage
 ]
 
 [tool.coverage.report]
@@ -248,8 +246,16 @@ help = "Static type analysis with mypy"
 cmd = "pyright"
 help = "Static type checking with pyright"
 
+[tool.poe.tasks.imports]
+cmd = "python scripts/check_import_graph.py --paths --patch-targets --loggers"
+help = "Check module paths, patch targets and logger names outside kerykeion/"
+
+[tool.poe.tasks."imports:fresh"]
+cmd = "python scripts/check_import_graph.py --fresh-imports"
+help = "Import every module in a cold interpreter (catches leaf-first cycles)"
+
 [tool.poe.tasks.check]
-sequence = ["lint", "analyze", "typecheck", "test:core"]
+sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core"]
 help = "Run all quality checks (lint, analyze, typecheck, test:core)"
 
 # cmd, not `script = "...:main"`: poethepoet 0.40.0 discards a script function's
@@ -368,6 +374,9 @@ select = [
     "F",      # Pyflakes - logic errors, undefined names, unused imports
     "E",      # pycodestyle errors
     "W",      # pycodestyle warnings
+    "INP",    # flake8-no-pep420 - a package dir missing __init__.py still imports
+              # fine as a PEP 420 namespace package, so this is the only thing that
+              # catches one that was forgotten. Scoped to kerykeion/ below.
 ]
 
 # Ignore rules that conflict with project structure
@@ -382,8 +391,14 @@ ignore = [
 "kerykeion/settings/__init__.py" = ["F401", "F403"]
 # Schemas re-exports for public API
 "kerykeion/schemas/__init__.py" = ["F401", "F403"]
-# Types re-exports for public API
-"kerykeion/kr_types/__init__.py" = ["F405", "F403", "F401"]
+# Utilities is a flat facade: it also re-exports semi-private names that other
+# modules import, which by design stay out of __all__.
+"kerykeion/utilities/__init__.py" = ["F401"]
+# INP001 only guards the shipped package; these trees are scripts, not packages.
+"scripts/*" = ["INP001"]
+"examples/*" = ["INP001"]
+"tests/*" = ["INP001"]
+"workspace/*" = ["INP001"]
 
 # Pyright Static Type Checking
 # Pyright is configured in pyrightconfig.json, which takes precedence over a

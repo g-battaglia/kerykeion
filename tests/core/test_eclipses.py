@@ -4,7 +4,7 @@
 import pytest
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.eclipses import EclipseFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 
 
 class TestGlobalSearch:
@@ -74,7 +74,7 @@ class TestDefaultStartYear:
 
     @staticmethod
     def _capture_julday(monkeypatch):
-        import kerykeion.eclipses.eclipse_factory as ef
+        import kerykeion.eclipses.factory as ef
 
         captured = {}
 
@@ -169,32 +169,32 @@ class TestClassifyHelpers:
 
     def test_classify_solar_annular_total(self):
         """ECL_ANNULAR_TOTAL flag should classify as 'annular-total'."""
-        from kerykeion.eclipses.eclipse_factory import (
+        from kerykeion.eclipses.factory import (
             _classify_solar_eclipse, ECL_ANNULAR_TOTAL,
         )
         assert _classify_solar_eclipse(ECL_ANNULAR_TOTAL) == "annular-total"
 
     def test_classify_solar_unknown(self):
         """Flag 0 (no type bits) should classify as 'unknown'."""
-        from kerykeion.eclipses.eclipse_factory import _classify_solar_eclipse
+        from kerykeion.eclipses.factory import _classify_solar_eclipse
         assert _classify_solar_eclipse(0) == "unknown"
 
     def test_classify_lunar_unknown(self):
         """Flag 0 (no type bits) should classify as 'unknown'."""
-        from kerykeion.eclipses.eclipse_factory import _classify_lunar_eclipse
+        from kerykeion.eclipses.factory import _classify_lunar_eclipse
         assert _classify_lunar_eclipse(0) == "unknown"
 
     def test_jd_to_iso_bce_year(self):
         """BCE Julian Days must format with a signed 4-digit extended year and
         real seconds, e.g. -0044-03-15T12:00:00Z (not the old '-044-...')."""
-        from kerykeion.eclipses.eclipse_factory import _jd_to_iso
+        from kerykeion.eclipses.factory import _jd_to_iso
 
         jd = ephe.julday(-44, 3, 15, 12.0)
         assert _jd_to_iso(jd) == "-0044-03-15T12:00:00Z"
 
     def test_jd_to_iso_ce_year_with_seconds(self):
         """CE formatting keeps the unsigned year and includes real seconds."""
-        from kerykeion.eclipses.eclipse_factory import _jd_to_iso
+        from kerykeion.eclipses.factory import _jd_to_iso
 
         jd = ephe.julday(2026, 8, 12, 17.0 + 30.0 / 60.0 + 42.0 / 3600.0)
         assert _jd_to_iso(jd) == "2026-08-12T17:30:42Z"
@@ -205,11 +205,11 @@ class TestEclipseSearchBreakAndErrorPaths:
 
     def test_solar_local_break_on_zero_tret(self):
         """_find_solar_local should return empty list if tret[0] == 0."""
-        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from kerykeion.eclipses.factory import EclipseFactory
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_loc",
+            "kerykeion.eclipses.factory.ephe.sol_eclipse_when_loc",
             return_value=(0, zero_tret, [0.0] * 10),
         ):
             result = EclipseFactory._find_solar_local(2451545.0, (12.0, 41.0, 0.0), 3)
@@ -218,10 +218,10 @@ class TestEclipseSearchBreakAndErrorPaths:
     def test_solar_local_backend_failure_raises(self):
         """A backend failure must abort the search as KerykeionException
         (with the failing JD), never silently return partial results."""
-        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from kerykeion.eclipses.factory import EclipseFactory
         from unittest.mock import patch
         with patch(
-            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_loc",
+            "kerykeion.eclipses.factory.ephe.sol_eclipse_when_loc",
             side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match=r"JD 2451545\."):
@@ -229,11 +229,11 @@ class TestEclipseSearchBreakAndErrorPaths:
 
     def test_solar_global_break_on_zero_tret(self):
         """_find_solar_global should return empty list if tret[0] == 0."""
-        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from kerykeion.eclipses.factory import EclipseFactory
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_glob",
+            "kerykeion.eclipses.factory.ephe.sol_eclipse_when_glob",
             return_value=(0, zero_tret),
         ):
             result = EclipseFactory._find_solar_global(2451545.0, 3)
@@ -241,10 +241,10 @@ class TestEclipseSearchBreakAndErrorPaths:
 
     def test_solar_global_backend_failure_raises(self):
         """A backend failure must abort the search as KerykeionException."""
-        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from kerykeion.eclipses.factory import EclipseFactory
         from unittest.mock import patch
         with patch(
-            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_glob",
+            "kerykeion.eclipses.factory.ephe.sol_eclipse_when_glob",
             side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match="ephemeris range"):
@@ -254,11 +254,11 @@ class TestEclipseSearchBreakAndErrorPaths:
         """If the backend fails after some events were already found (e.g. the
         scan walked past the ephemeris range edge), the whole search must raise
         rather than return a truncated list claiming full coverage."""
-        from kerykeion.eclipses.eclipse_factory import EclipseFactory, ECL_TOTAL
+        from kerykeion.eclipses.factory import EclipseFactory, ECL_TOTAL
         from unittest.mock import patch
         good = (ECL_TOTAL, [2451550.0] + [0.0] * 9)
         with patch(
-            "kerykeion.eclipses.eclipse_factory.ephe.sol_eclipse_when_glob",
+            "kerykeion.eclipses.factory.ephe.sol_eclipse_when_glob",
             side_effect=[good, RuntimeError("jd 2451560 outside ephemeris range")],
         ):
             with pytest.raises(KerykeionException, match=r"JD 2451560\."):
@@ -266,11 +266,11 @@ class TestEclipseSearchBreakAndErrorPaths:
 
     def test_lunar_local_break_on_zero_tret(self):
         """_find_lunar_local should return empty list if tret[0] == 0."""
-        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from kerykeion.eclipses.factory import EclipseFactory
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when_loc",
+            "kerykeion.eclipses.factory.ephe.lun_eclipse_when_loc",
             return_value=(0, zero_tret, [0.0] * 10),
         ):
             result = EclipseFactory._find_lunar_local(2451545.0, (12.0, 41.0, 0.0), 3)
@@ -278,10 +278,10 @@ class TestEclipseSearchBreakAndErrorPaths:
 
     def test_lunar_local_backend_failure_raises(self):
         """A backend failure must abort the search as KerykeionException."""
-        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from kerykeion.eclipses.factory import EclipseFactory
         from unittest.mock import patch
         with patch(
-            "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when_loc",
+            "kerykeion.eclipses.factory.ephe.lun_eclipse_when_loc",
             side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match=r"JD 2451545\."):
@@ -289,11 +289,11 @@ class TestEclipseSearchBreakAndErrorPaths:
 
     def test_lunar_global_break_on_zero_tret(self):
         """_find_lunar_global should return empty list if tret[0] == 0."""
-        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from kerykeion.eclipses.factory import EclipseFactory
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when",
+            "kerykeion.eclipses.factory.ephe.lun_eclipse_when",
             return_value=(0, zero_tret),
         ):
             result = EclipseFactory._find_lunar_global(2451545.0, 3)
@@ -301,10 +301,10 @@ class TestEclipseSearchBreakAndErrorPaths:
 
     def test_lunar_global_backend_failure_raises(self):
         """A backend failure must abort the search as KerykeionException."""
-        from kerykeion.eclipses.eclipse_factory import EclipseFactory
+        from kerykeion.eclipses.factory import EclipseFactory
         from unittest.mock import patch
         with patch(
-            "kerykeion.eclipses.eclipse_factory.ephe.lun_eclipse_when",
+            "kerykeion.eclipses.factory.ephe.lun_eclipse_when",
             side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match="ephemeris range"):
@@ -388,7 +388,7 @@ class TestEclipseEnrichment:
     def test_swisseph_guard_returns_none(self):
         """When libephemeris extensions are absent, series fields stay empty."""
         from unittest.mock import patch
-        from kerykeion.eclipses import eclipse_factory as ef
+        from kerykeion.eclipses import factory as ef
 
         with patch.object(ef.ephe, "get_saros_number", None, create=True), \
              patch.object(ef.ephe, "get_inex_number", None, create=True):
@@ -400,7 +400,7 @@ class TestEclipseEnrichment:
         non-positive number must become None, never a plausible-looking
         series value."""
         from unittest.mock import patch
-        from kerykeion.eclipses import eclipse_factory as ef
+        from kerykeion.eclipses import factory as ef
 
         with patch.object(ef.ephe, "get_saros_number", lambda jd, kind: 0, create=True), \
              patch.object(ef.ephe, "get_inex_number", lambda jd, kind: -3, create=True):
@@ -413,7 +413,7 @@ class TestEclipseEnrichment:
         with no residual threshold (every 2026-2027 eclipse reports inex 50,
         mathematically impossible for consecutive eclipses)."""
         from unittest.mock import patch
-        from kerykeion.eclipses import eclipse_factory as ef
+        from kerykeion.eclipses import factory as ef
 
         with patch.object(ef.ephe, "get_saros_number", lambda jd, kind: 126, create=True), \
              patch.object(ef.ephe, "get_inex_number", lambda jd, kind: 50, create=True):
@@ -512,9 +512,9 @@ class TestSiderealEclipses:
 @pytest.mark.parametrize(
     "module_path",
     [
-        "kerykeion.eclipses.eclipse_factory",
-        "kerykeion.lunations.lunation_factory",
-        "kerykeion.occultations.occultation_factory",
+        "kerykeion.eclipses.factory",
+        "kerykeion.lunations.factory",
+        "kerykeion.occultations.factory",
     ],
 )
 def test_jd_to_iso_rolls_over_midnight(module_path):

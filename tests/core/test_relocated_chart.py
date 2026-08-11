@@ -325,7 +325,7 @@ class TestRelocatedStaleLocationFields:
         """_compute_is_diurnal calls ephe.* (Sun position + azalt): relocation
         must wrap it in an ephemeris session, so no tracked ephe call may run
         after the last session reset."""
-        import kerykeion.ephemeris_backend as eb
+        import kerykeion.ephemeris_backend.backend as eb
 
         events = []
         real_reset = eb.reset_ephemeris_session
@@ -417,7 +417,7 @@ class TestRelocatedLocalDatetimeRecompute:
         data: dict = {}
         # Mock revjul to return a value 0.4s before midnight of -0500-03-21.
         with patch(
-            "kerykeion.relocated_chart_factory.ephe.revjul",
+            "kerykeion.relocated_chart.factory.ephe.revjul",
             return_value=(-500.0, 3.0, 21.0, 23.999888888),
         ):
             RelocatedChartFactory._recompute_local_datetime_fields(
@@ -475,7 +475,7 @@ class TestPolarRelocation:
         # to Porphyry at the real latitude, and relocation must do the same
         # instead of crashing.
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.relocated_chart.factory import RelocatedChartFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
             "Polar Move", 1990, 6, 15, 12, 0,
@@ -496,7 +496,7 @@ class TestPolarRelocation:
         # to a polar latitude must use the REAL latitude for the cusps, matching
         # an independent backend call there (not the 66°-clamped one).
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.relocated_chart.factory import RelocatedChartFactory
         from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
         natal = AstrologicalSubjectFactory.from_birth_data(
@@ -518,7 +518,7 @@ class TestRelocatedMidpointsRehoused:
 
     def test_active_midpoints_get_new_houses(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.relocated_chart.factory import RelocatedChartFactory
         from kerykeion.midpoints import MidpointFactory
         from kerykeion.utilities import get_planet_house
 
@@ -549,7 +549,7 @@ class TestRelocatedDerivedOppositesRehoused:
 
     def test_south_node_rehoused(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.relocated_chart.factory import RelocatedChartFactory
         from kerykeion.utilities import get_planet_house
 
         s = AstrologicalSubjectFactory.from_birth_data(

@@ -340,7 +340,7 @@ class TestPrimaryDirectionEdgeCases:
                 raise RuntimeError("Mock equatorial failure")
             return original_calc_ut(jd, planet_id, iflag)
 
-        with patch("kerykeion.primary_directions.directions_factory.ephe.calc_ut", side_effect=failing_eq_calc_ut):
+        with patch("kerykeion.primary_directions.factory.ephe.calc_ut", side_effect=failing_eq_calc_ut):
             speculum = PrimaryDirectionsFactory.compute_speculum(subject)
             # Should still return entries (using ecliptic fallback for RA)
             assert len(speculum) > 0
@@ -445,7 +445,7 @@ class TestPrimaryDirectionEdgeCases:
 
         # v6 rewrite: dropped the unused obliquity argument; the AD math now
         # lives in _ascensional_difference, called by _oblique_ascension.
-        with patch("kerykeion.primary_directions.directions_factory.math.tan", side_effect=mock_tan):
+        with patch("kerykeion.primary_directions.factory.math.tan", side_effect=mock_tan):
             oa = PrimaryDirectionsFactory._oblique_ascension(100.0, 30.0, 45.0)
             # Should use ad=0 fallback, so OA ≈ RA = 100
             assert abs(oa - 100.0) < 0.01

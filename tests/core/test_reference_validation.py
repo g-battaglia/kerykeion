@@ -31,7 +31,7 @@ from kerykeion import (
     SolarArcFactory,
 )
 from kerykeion.ephemeris_backend import ephe
-from kerykeion.secondary_progressions.secondary_progression_factory import (
+from kerykeion.secondary_progressions.factory import (
     DAYS_PER_TROPICAL_YEAR,
 )
 

@@ -47,8 +47,8 @@ from kerykeion.moon_phase_details.factory import (
     _build_moon_zodiac_info,
 )
 from kerykeion.moon_phase_details.utils import safe_parse_iso_datetime
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     LunarPhaseModel,
     MoonPhaseOverviewModel,
@@ -713,7 +713,7 @@ class TestMoonPhaseDetailsIntegration:
 
     def test_from_subject_returns_valid_overview(self):
         from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "John Lennon",

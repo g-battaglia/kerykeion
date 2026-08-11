@@ -22,7 +22,7 @@ import logging
 import math
 from typing import Optional
 
-from kerykeion.charts.charts_utils import escape_svg_text, normalize_degree
+from kerykeion.charts.utils import escape_svg_text, normalize_degree
 from kerykeion.charts.glyph_ink_metrics import (
     GLYPH_INK_HALF_HEIGHT,
     GLYPH_INK_HALF_WIDTH,
@@ -32,8 +32,8 @@ from kerykeion.charts.glyph_ink_metrics import (
     TEXT_INK_HALF_WIDTH,
     TEXT_INK_REFERENCE_FONT_SIZE,
 )
-from kerykeion.utilities import wrap_180
-from kerykeion.schemas.kr_models import KerykeionPointModel
+from kerykeion.utilities.core import wrap_180
+from kerykeion.schemas.models import KerykeionPointModel
 from kerykeion.settings.chart_defaults import resolve_glyph_id
 
 logger = logging.getLogger(__name__)

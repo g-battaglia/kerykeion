@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
 JOHN_LOCATION = {
     "city": "Liverpool",

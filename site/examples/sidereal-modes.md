@@ -131,8 +131,8 @@ The most widely used ayanamsa for Vedic astrology:
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon Lahiri", 1940, 10, 9, 18, 30,

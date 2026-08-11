@@ -10,7 +10,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 import pytest
 
 from kerykeion import ChartDataFactory, SecondaryProgressionFactory
-from kerykeion.chart_data_factory import (
+from kerykeion.chart_data.factory import (
     ANGULARITY_ORB_DEGREES,
     STELLIUM_MIN_POINTS,
     _angular_distance,
@@ -18,7 +18,7 @@ from kerykeion.chart_data_factory import (
     _compute_stelliums,
 )
 from kerykeion.fixed_stars.catalog import FixedStarCatalog, _constellation_from_nomenclature
-from kerykeion.motion import MEAN_DAILY_MOTION_DEGREES, classify_motion_state
+from kerykeion.motion.state import MEAN_DAILY_MOTION_DEGREES, classify_motion_state
 
 pytestmark = pytest.mark.core
 
@@ -106,7 +106,7 @@ def test_angularities_report_every_pair_within_orb(john_lennon):
     losing a planet whose nearest angle happens to be DSC or IC."""
     wide = _compute_angularities(john_lennon, orb=180.0)
     # With an unbounded orb every present planet pairs with every present angle.
-    from kerykeion.chart_data_factory import _ANGLE_FIELDS, _CLASSICAL_PLANET_FIELDS
+    from kerykeion.chart_data.factory import _ANGLE_FIELDS, _CLASSICAL_PLANET_FIELDS
 
     present_planets = [f for f in _CLASSICAL_PLANET_FIELDS if getattr(john_lennon, f, None) is not None]
     present_angles = [f for f in _ANGLE_FIELDS if getattr(john_lennon, f, None) is not None]

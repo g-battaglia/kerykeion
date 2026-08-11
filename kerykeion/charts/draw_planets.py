@@ -14,7 +14,7 @@ Main responsibilities:
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from kerykeion.charts.charts_utils import (
+from kerykeion.charts.utils import (
     DOUBLE_CHART_TYPES,
     degree_difference,
     escape_svg_text,
@@ -23,7 +23,7 @@ from kerykeion.charts.charts_utils import (
     convert_decimal_to_degree_string,
 )
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
-from kerykeion.schemas.kr_literals import Houses
+from kerykeion.schemas.literals import Houses
 from kerykeion.settings.chart_defaults import resolve_glyph_id
 import logging
 from typing import Union, get_args, Optional, Sequence, Mapping, Any

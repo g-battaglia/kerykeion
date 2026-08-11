@@ -24,12 +24,12 @@ from kerykeion.dominants.data import (
     POLARITY_BY_ELEMENT,
     QUALITY_LOWER_TO_TITLE,
 )
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, DominantsModel
+from kerykeion.schemas.models import AstrologicalSubjectModel, DominantsModel
 
 if TYPE_CHECKING:
     from typing import Sequence
 
-    from kerykeion.schemas.kr_literals import Element
+    from kerykeion.schemas.literals import Element
     from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 
 
@@ -69,7 +69,7 @@ class ElementalBalanceStrategy(BaseDominantStrategy):
         # Local import: the element/quality helpers live in the (heavier) charts
         # package; importing lazily keeps the dominants package import-light and
         # free of any import-time coupling to the rendering code.
-        from kerykeion.charts.charts_utils import calculate_element_points, calculate_quality_points
+        from kerykeion.charts.utils import calculate_element_points, calculate_quality_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
         # `is not None` (not truthiness): an explicit empty list is a valid

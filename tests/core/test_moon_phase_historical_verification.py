@@ -31,7 +31,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
+from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 from kerykeion.moon_phase_details.factory import MoonPhaseDetailsFactory
 
 

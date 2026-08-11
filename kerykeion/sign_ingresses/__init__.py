@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Sign ingress finder: zodiac sign boundary crossings over a range."""
 
-from .sign_ingress_factory import (
+from .factory import (
     SignIngressFactory,
     IngressModel,
     SignIngressesCollectionModel,
