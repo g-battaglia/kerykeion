@@ -18,7 +18,7 @@ from __future__ import annotations
 import math
 from typing import Optional
 
-from .dignity_data import (
+from .data import (
     CHALDEAN_DECANS,
     DETRIMENT_RULERS,
     DIGNITY_PLANETS,

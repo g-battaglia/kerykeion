@@ -22,8 +22,8 @@ from functools import partial
 from pathlib import Path
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer as _ChartDrawer
-from kerykeion.charts.charts_utils import make_lunar_phase
+from kerykeion.charts.drawer import ChartDrawer as _ChartDrawer
+from kerykeion.charts.utils import make_lunar_phase
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException

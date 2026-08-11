@@ -55,7 +55,7 @@ The choice of house system depends on your astrological tradition and preference
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 morinus_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - House System Morinus", 1940, 10, 9, 18, 30,
@@ -81,7 +81,7 @@ The output will be:
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 whole_sign_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Whole Sign", 1940, 10, 9, 18, 30,

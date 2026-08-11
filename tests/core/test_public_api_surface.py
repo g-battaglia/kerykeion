@@ -63,9 +63,9 @@ REMOVED_PRE_B1_ALIASES = {
     "SecondaryProgressionsResult": ("kerykeion", "SecondaryProgressionsResultModel"),
     "SolarArcDirectedAspect": ("kerykeion", "SolarArcDirectedAspectModel"),
     "SolarArcDirectedPoint": ("kerykeion", "SolarArcDirectedPointModel"),
-    "ACGLine": ("kerykeion.astro_cartography.acg_factory", "ACGLineModel"),
-    "ACGLinePoint": ("kerykeion.astro_cartography.acg_factory", "ACGLinePointModel"),
-    "SpeculumEntry": ("kerykeion.primary_directions.directions_factory", "SpeculumEntryModel"),
+    "ACGLine": ("kerykeion.astro_cartography.factory", "ACGLineModel"),
+    "ACGLinePoint": ("kerykeion.astro_cartography.factory", "ACGLinePointModel"),
+    "SpeculumEntry": ("kerykeion.primary_directions.factory", "SpeculumEntryModel"),
     "FixedStarMetadata": ("kerykeion.fixed_stars", "FixedStarMetadataModel"),
 }
 

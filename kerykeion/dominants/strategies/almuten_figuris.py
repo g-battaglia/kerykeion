@@ -15,7 +15,7 @@ optional accidental-dignity layer (house placement, weekday ruler) can be added
 on request; the essential tally is the firm core and the default.
 
 Reference: kerykeion.net "The Almuten Figuris". The dignity tables themselves are
-reused verbatim from :mod:`kerykeion.dignities.dignity_data`, so this school is
+reused verbatim from :mod:`kerykeion.dignities.data`, so this school is
 consistent with the rest of the library's traditional astrology.
 
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
@@ -26,11 +26,11 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
-from kerykeion.dignities.dignity_data import DOMICILE_RULERS, EXALTATION_TABLE, TRIPLICITY_RULERS
+from kerykeion.dignities.data import DOMICILE_RULERS, EXALTATION_TABLE, TRIPLICITY_RULERS
 
 # The term/face lookups are non-trivial (Egyptian bounds, Chaldean decans); we
 # reuse the dignity engine's helpers rather than duplicate those tables.
-from kerykeion.dignities.dignity_factory import _get_decan, _get_decan_ruler, _get_term_ruler
+from kerykeion.dignities.factory import _get_decan, _get_decan_ruler, _get_term_ruler
 from kerykeion.dominants.base import BaseDominantStrategy, BreakdownItem, Category, DominantsConfig
 from kerykeion.dominants.data import (
     ALMUTEN_DAY_RULER_BONUS,

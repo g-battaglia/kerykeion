@@ -15,7 +15,7 @@ from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Base natal subject
 natal_subject = AstrologicalSubjectFactory.from_birth_data(

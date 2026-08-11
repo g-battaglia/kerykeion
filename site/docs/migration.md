@@ -71,7 +71,7 @@ chart.makeSVG()
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -204,7 +204,7 @@ v5 included a compatibility layer in `kerykeion.backword` that allowed gradual m
 
 # New
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 ```
 
 ### Step 2: Update Subject Creation

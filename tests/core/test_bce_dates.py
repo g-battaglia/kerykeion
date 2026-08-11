@@ -25,7 +25,7 @@ import pytest
 
 from kerykeion import AstrologicalSubjectFactory, SecondaryProgressionFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from kerykeion.utilities import format_ancient_iso, format_iso_display, extract_year_from_iso
 
 

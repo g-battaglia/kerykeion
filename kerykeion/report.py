@@ -161,7 +161,7 @@ def _return_type_label(subject: object) -> str:
 class ReportGenerator:
     """
     Generate textual reports for astrological data models with a structure that mirrors the
-    chart-specific dispatch logic used in :class:`~kerykeion.charts.chart_drawer.ChartDrawer`.
+    chart-specific dispatch logic used in :class:`~kerykeion.charts.drawer.ChartDrawer`.
 
     The generator accepts any of the chart data models handled by ``ChartDrawer`` as well as
     raw ``AstrologicalSubjectModel`` instances. The ``print_report`` method automatically

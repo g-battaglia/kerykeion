@@ -28,7 +28,7 @@ from pydantic import BaseModel, Field  # noqa: F401  (BaseModel kept for back-co
 
 from kerykeion.schemas.models import SubscriptableBaseModel
 
-from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+from kerykeion.aspects.utils import get_aspect_from_two_points
 from kerykeion.aspects.orb_utils import (
     OrbAdjustmentStrategy,
     PointOrbAdjustment,
@@ -43,7 +43,7 @@ from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
 from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house, HOUSE_FIELD_NAMES
 
-from .secondary_progression_factory import SecondaryProgressionFactory
+from .factory import SecondaryProgressionFactory
 
 
 def _normalise_long(longitude: float) -> float:
@@ -418,7 +418,7 @@ class SolarArcFactory:
         # planets so the biwheel outer ring renders directed midpoint glyphs
         # rather than stale natal ones.
         if directed.active_midpoints:
-            from kerykeion.midpoints.midpoint_factory import MidpointFactory
+            from kerykeion.midpoints.factory import MidpointFactory
             pair_names = [
                 _midpoint_name_to_pair_key(mp.name) for mp in directed.active_midpoints
             ]

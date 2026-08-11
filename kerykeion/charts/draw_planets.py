@@ -14,7 +14,7 @@ Main responsibilities:
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from kerykeion.charts.charts_utils import (
+from kerykeion.charts.utils import (
     DOUBLE_CHART_TYPES,
     degree_difference,
     escape_svg_text,

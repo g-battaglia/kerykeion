@@ -149,65 +149,65 @@ from .settings_models import (
 # lazily (see __getattr__ below) to avoid import cycles and keep this
 # package import light.
 _FEATURE_MODEL_HOMES = {
-    "LunationModel": "kerykeion.lunations.lunation_factory",
-    "LunationsCollectionModel": "kerykeion.lunations.lunation_factory",
-    "StationModel": "kerykeion.retrograde_stations.retrograde_station_factory",
-    "RetrogradeStationsCollectionModel": "kerykeion.retrograde_stations.retrograde_station_factory",
-    "IngressModel": "kerykeion.sign_ingresses.sign_ingress_factory",
-    "SignIngressesCollectionModel": "kerykeion.sign_ingresses.sign_ingress_factory",
+    "LunationModel": "kerykeion.lunations.factory",
+    "LunationsCollectionModel": "kerykeion.lunations.factory",
+    "StationModel": "kerykeion.retrograde_stations.factory",
+    "RetrogradeStationsCollectionModel": "kerykeion.retrograde_stations.factory",
+    "IngressModel": "kerykeion.sign_ingresses.factory",
+    "SignIngressesCollectionModel": "kerykeion.sign_ingresses.factory",
     "MundaneAspectModel": "kerykeion.mundane_aspects.factory",
     "MundaneAspectsCollectionModel": "kerykeion.mundane_aspects.factory",
-    "MidpointModel": "kerykeion.midpoints.midpoint_factory",
-    "MidpointAspectModel": "kerykeion.midpoints.midpoint_factory",
-    "ProgressedPointModel": "kerykeion.secondary_progressions.secondary_progression_factory",
-    "ProgressedToNatalAspectModel": "kerykeion.secondary_progressions.secondary_progression_factory",
-    "SecondaryProgressionsResultModel": "kerykeion.secondary_progressions.secondary_progression_factory",
-    "SolarArcDirectedAspectModel": "kerykeion.secondary_progressions.solar_arc_factory",
-    "SolarArcDirectedPointModel": "kerykeion.secondary_progressions.solar_arc_factory",
-    "SolarArcSubjectModel": "kerykeion.secondary_progressions.solar_arc_factory",
-    "SolarEclipseModel": "kerykeion.eclipses.eclipse_factory",
-    "LunarEclipseModel": "kerykeion.eclipses.eclipse_factory",
-    "EclipseSearchResultModel": "kerykeion.eclipses.eclipse_factory",
-    "OccultationModel": "kerykeion.occultations.occultation_factory",
-    "HeliacalEventModel": "kerykeion.heliacal.heliacal_factory",
-    "PlanetaryNodeModel": "kerykeion.planetary_nodes.nodes_factory",
-    "PlanetaryNodesCollectionModel": "kerykeion.planetary_nodes.nodes_factory",
-    "PrimaryDirectionModel": "kerykeion.primary_directions.directions_factory",
-    "SpeculumEntryModel": "kerykeion.primary_directions.directions_factory",
-    "ACGLineModel": "kerykeion.astro_cartography.acg_factory",
-    "ACGLinePointModel": "kerykeion.astro_cartography.acg_factory",
+    "MidpointModel": "kerykeion.midpoints.factory",
+    "MidpointAspectModel": "kerykeion.midpoints.factory",
+    "ProgressedPointModel": "kerykeion.secondary_progressions.factory",
+    "ProgressedToNatalAspectModel": "kerykeion.secondary_progressions.factory",
+    "SecondaryProgressionsResultModel": "kerykeion.secondary_progressions.factory",
+    "SolarArcDirectedAspectModel": "kerykeion.secondary_progressions.solar_arc",
+    "SolarArcDirectedPointModel": "kerykeion.secondary_progressions.solar_arc",
+    "SolarArcSubjectModel": "kerykeion.secondary_progressions.solar_arc",
+    "SolarEclipseModel": "kerykeion.eclipses.factory",
+    "LunarEclipseModel": "kerykeion.eclipses.factory",
+    "EclipseSearchResultModel": "kerykeion.eclipses.factory",
+    "OccultationModel": "kerykeion.occultations.factory",
+    "HeliacalEventModel": "kerykeion.heliacal.factory",
+    "PlanetaryNodeModel": "kerykeion.planetary_nodes.factory",
+    "PlanetaryNodesCollectionModel": "kerykeion.planetary_nodes.factory",
+    "PrimaryDirectionModel": "kerykeion.primary_directions.factory",
+    "SpeculumEntryModel": "kerykeion.primary_directions.factory",
+    "ACGLineModel": "kerykeion.astro_cartography.factory",
+    "ACGLinePointModel": "kerykeion.astro_cartography.factory",
     "FixedStarMetadataModel": "kerykeion.fixed_stars.catalog",
 }
 
 if TYPE_CHECKING:  # static analyzers see the lazy re-exports as plain imports
-    from kerykeion.lunations.lunation_factory import LunationModel, LunationsCollectionModel
-    from kerykeion.retrograde_stations.retrograde_station_factory import (
+    from kerykeion.lunations.factory import LunationModel, LunationsCollectionModel
+    from kerykeion.retrograde_stations.factory import (
         StationModel,
         RetrogradeStationsCollectionModel,
     )
-    from kerykeion.sign_ingresses.sign_ingress_factory import IngressModel, SignIngressesCollectionModel
+    from kerykeion.sign_ingresses.factory import IngressModel, SignIngressesCollectionModel
     from kerykeion.mundane_aspects.factory import MundaneAspectModel, MundaneAspectsCollectionModel
-    from kerykeion.midpoints.midpoint_factory import MidpointModel, MidpointAspectModel
-    from kerykeion.secondary_progressions.secondary_progression_factory import (
+    from kerykeion.midpoints.factory import MidpointModel, MidpointAspectModel
+    from kerykeion.secondary_progressions.factory import (
         ProgressedPointModel,
         ProgressedToNatalAspectModel,
         SecondaryProgressionsResultModel,
     )
-    from kerykeion.secondary_progressions.solar_arc_factory import (
+    from kerykeion.secondary_progressions.solar_arc import (
         SolarArcDirectedAspectModel,
         SolarArcDirectedPointModel,
         SolarArcSubjectModel,
     )
-    from kerykeion.eclipses.eclipse_factory import (
+    from kerykeion.eclipses.factory import (
         SolarEclipseModel,
         LunarEclipseModel,
         EclipseSearchResultModel,
     )
-    from kerykeion.occultations.occultation_factory import OccultationModel
-    from kerykeion.heliacal.heliacal_factory import HeliacalEventModel
-    from kerykeion.planetary_nodes.nodes_factory import PlanetaryNodeModel, PlanetaryNodesCollectionModel
-    from kerykeion.primary_directions.directions_factory import PrimaryDirectionModel, SpeculumEntryModel
-    from kerykeion.astro_cartography.acg_factory import ACGLineModel, ACGLinePointModel
+    from kerykeion.occultations.factory import OccultationModel
+    from kerykeion.heliacal.factory import HeliacalEventModel
+    from kerykeion.planetary_nodes.factory import PlanetaryNodeModel, PlanetaryNodesCollectionModel
+    from kerykeion.primary_directions.factory import PrimaryDirectionModel, SpeculumEntryModel
+    from kerykeion.astro_cartography.factory import ACGLineModel, ACGLinePointModel
     from kerykeion.fixed_stars.catalog import FixedStarMetadataModel
 
 

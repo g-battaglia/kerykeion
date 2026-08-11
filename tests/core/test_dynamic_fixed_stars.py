@@ -160,7 +160,7 @@ class TestFixedStarEdgeCases:
         from unittest.mock import patch
 
         with patch(
-            "kerykeion.fixed_stars.discovery_factory.FixedStarCatalog.list_all",
+            "kerykeion.fixed_stars.factory.FixedStarCatalog.list_all",
             return_value=[],
         ):
             result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
@@ -168,7 +168,7 @@ class TestFixedStarEdgeCases:
 
     def test_no_sefstars_parser_present(self):
         """v6: the legacy ``_parse_star_names_from_catalog`` helper is gone."""
-        from kerykeion.fixed_stars import discovery_factory as df
+        from kerykeion.fixed_stars import factory as df
 
         assert not hasattr(df, "_parse_star_names_from_catalog")
 
@@ -197,7 +197,7 @@ class TestFixedStarEdgeCases:
                 raise RuntimeError("Mock fixstar failure")
             return original_fixstar_ut(name, jd, iflag)
 
-        with patch("kerykeion.fixed_stars.discovery_factory.ephe.fixstar_ut", side_effect=mock_fixstar_ut):
+        with patch("kerykeion.fixed_stars.factory.ephe.fixstar_ut", side_effect=mock_fixstar_ut):
             result = FixedStarDiscoveryFactory.find_prominent_stars(subject_all_stars, orb=2.0)
             assert isinstance(result, list)
             # The non-failing stars (9 of every 10 calls) must still be returned;
@@ -487,7 +487,7 @@ def test_composite_subject_raises_clean_exception():
     returns NaN positions on libephemeris, so discovery used to silently
     return [] instead of failing. Mirrors the PlanetaryNodesFactory guard."""
     from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
-    from kerykeion.fixed_stars.discovery_factory import FixedStarDiscoveryFactory
+    from kerykeion.fixed_stars.factory import FixedStarDiscoveryFactory
     from kerykeion.schemas import KerykeionException
 
     a = AstrologicalSubjectFactory.from_birth_data(

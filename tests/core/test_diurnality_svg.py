@@ -42,7 +42,7 @@ from kerykeion.report import ReportGenerator, _return_type_label
 from kerykeion.settings.config_constants import return_label_keys
 from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 from kerykeion.secondary_progressions import SecondaryProgressionFactory, SolarArcFactory
-from kerykeion.charts.chart_drawer import (
+from kerykeion.charts.drawer import (
     DIURNALITY_ROW_CLEAR_WIDTH,
     ChartDrawer,
 )

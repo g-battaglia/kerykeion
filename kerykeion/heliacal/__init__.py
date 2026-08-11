@@ -6,7 +6,7 @@ Provides :class:`HeliacalFactory` for computing heliacal risings,
 settings, and related visibility events of planets and stars.
 """
 
-from .heliacal_factory import (
+from .factory import (
     HeliacalFactory,
     HeliacalEventModel,
     HELIACAL_RISING,

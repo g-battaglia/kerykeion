@@ -1175,7 +1175,7 @@ class TestPlanetaryReturnV6FlagPropagation:
         when the return subject's collected point count differs from
         active_points length."""
         from kerykeion.chart_data_factory import ChartDataFactory
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         natal = self._make_natal(active_fixed_stars=["Betelgeuse"])
         factory = self._make_factory(natal, active_fixed_stars=["Betelgeuse"])

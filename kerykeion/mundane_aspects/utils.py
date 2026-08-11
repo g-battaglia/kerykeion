@@ -29,7 +29,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Sequence, Tuple
 
-from kerykeion.aspects.aspects_utils import difdeg2n
+from kerykeion.aspects.utils import difdeg2n
 from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas.exceptions import KerykeionException
 

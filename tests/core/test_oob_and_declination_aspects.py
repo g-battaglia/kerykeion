@@ -260,7 +260,7 @@ class TestDeclinationArtifactFiltering:
         Lilith/Priapus across charts) is a real aspect, exactly as in the
         longitudinal dual path.
         """
-        from kerykeion.aspects.aspects_factory import GEOMETRIC_OPPOSITE_PAIRS
+        from kerykeion.aspects.factory import GEOMETRIC_OPPOSITE_PAIRS
 
         other = AstrologicalSubjectFactory.from_birth_data(
             "Other Declination", 1985, 3, 10, 14, 30,

@@ -22,7 +22,7 @@ import logging
 import math
 from typing import Optional
 
-from kerykeion.charts.charts_utils import escape_svg_text, normalize_degree
+from kerykeion.charts.utils import escape_svg_text, normalize_degree
 from kerykeion.charts.glyph_ink_metrics import (
     GLYPH_INK_HALF_HEIGHT,
     GLYPH_INK_HALF_WIDTH,

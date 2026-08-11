@@ -131,7 +131,7 @@ class TestPhenomenaEdgeCases:
                 raise RuntimeError("Mock Sun failure")
             return original_calc_ut(jd, planet_id, iflag)
 
-        with patch("kerykeion.planetary_phenomena.phenomena_factory.ephe.calc_ut", side_effect=mock_calc_ut):
+        with patch("kerykeion.planetary_phenomena.factory.ephe.calc_ut", side_effect=mock_calc_ut):
             result = PlanetaryPhenomenaFactory.from_julian_day(2451545.0, planets=["Venus"])
             assert len(result.phenomena) == 1
             # Without Sun longitude, morning/evening cannot be determined
@@ -149,7 +149,7 @@ class TestPhenomenaEdgeCases:
                 raise RuntimeError("Mock pheno failure")
             return original_pheno_ut(jd, planet_id, iflag)
 
-        with patch("kerykeion.planetary_phenomena.phenomena_factory.ephe.pheno_ut", side_effect=mock_pheno_ut):
+        with patch("kerykeion.planetary_phenomena.factory.ephe.pheno_ut", side_effect=mock_pheno_ut):
             result = PlanetaryPhenomenaFactory.from_julian_day(2451545.0)
             names = [p.name for p in result.phenomena]
             assert "Mars" not in names
@@ -195,7 +195,7 @@ class TestPhenomenaEdgeCases:
                     raise RuntimeError("Mock Venus position failure")
             return original_calc_ut(jd, planet_id, iflag)
 
-        with patch("kerykeion.planetary_phenomena.phenomena_factory.ephe.calc_ut", side_effect=mock_calc_ut):
+        with patch("kerykeion.planetary_phenomena.factory.ephe.calc_ut", side_effect=mock_calc_ut):
             result = PlanetaryPhenomenaFactory.from_julian_day(2451545.0, planets=["Venus"])
             if len(result.phenomena) > 0:
                 venus = result.phenomena[0]
@@ -269,7 +269,7 @@ class TestAllFailedGuard:
         """Parity with PlanetaryNodesFactory: if the backend fails for every
         requested planet, surface a KerykeionException instead of silently
         returning an empty collection (indistinguishable from 'no phenomena')."""
-        import kerykeion.planetary_phenomena.phenomena_factory as pf
+        import kerykeion.planetary_phenomena.factory as pf
         from kerykeion.schemas import KerykeionException
 
         monkeypatch.setattr(pf.ephe, "pheno_ut", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("backend down")))

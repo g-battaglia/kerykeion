@@ -20,7 +20,7 @@ Here is an example of how to generate a wheel-only natal chart:
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Wheel Natal Only Chart
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -47,7 +47,7 @@ Here is an example of how to generate an aspect grid-only natal chart:
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Aspect Grid Only Natal Chart
 subject = AstrologicalSubjectFactory.from_birth_data(

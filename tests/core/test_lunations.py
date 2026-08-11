@@ -93,7 +93,7 @@ class TestLunationsRange:
 
     def test_offset_aware_input_normalized_to_utc(self):
         from datetime import datetime
-        from kerykeion.lunations.lunation_factory import _to_utc_naive
+        from kerykeion.lunations.factory import _to_utc_naive
 
         # +02:00 wall-clock midnight is 22:00 UTC on the previous day.
         naive = _to_utc_naive(datetime.fromisoformat("2026-01-01T00:00:00+02:00"))
@@ -206,14 +206,14 @@ class TestLunationFormatter:
         # BCE years format with a signed 4-digit extended year and real seconds
         # (datetime caps at year 1, so revjul is used instead).
         from kerykeion.ephemeris_backend import ephe
-        from kerykeion.lunations.lunation_factory import _jd_to_iso
+        from kerykeion.lunations.factory import _jd_to_iso
 
         jd = ephe.julday(-44, 3, 15, 12.0)
         assert _jd_to_iso(jd) == "-0044-03-15T12:00:00Z"
 
     def test_jd_to_iso_ce_year(self):
         from kerykeion.ephemeris_backend import ephe
-        from kerykeion.lunations.lunation_factory import _jd_to_iso
+        from kerykeion.lunations.factory import _jd_to_iso
 
         jd = ephe.julday(2026, 8, 12, 17.0 + 30.0 / 60.0 + 42.0 / 3600.0)
         assert _jd_to_iso(jd) == "2026-08-12T17:30:42Z"
@@ -226,7 +226,7 @@ class TestLunationTruncationContract:
         # compute_lunar_phase_jd swallows backend RuntimeErrors and returns
         # None; the factory must surface that as KerykeionException instead of
         # returning an empty/partial result claiming the full range.
-        import kerykeion.lunations.lunation_factory as lf
+        import kerykeion.lunations.factory as lf
 
         monkeypatch.setattr(lf, "compute_lunar_phase_jd", lambda *a, **k: None)
         with pytest.raises(KerykeionException, match="ephemeris"):
@@ -236,7 +236,7 @@ class TestLunationTruncationContract:
         # First solver call succeeds, second fails (e.g. the scan walked past
         # the ephemeris range edge): the events already found must NOT be
         # returned as if they covered the whole requested range.
-        import kerykeion.lunations.lunation_factory as lf
+        import kerykeion.lunations.factory as lf
 
         hits = iter([2461042.0, None])
         monkeypatch.setattr(lf, "compute_lunar_phase_jd", lambda *a, **k: next(hits))

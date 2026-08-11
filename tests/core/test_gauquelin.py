@@ -6,7 +6,7 @@ import re
 import pytest
 from kerykeion.ephemeris_backend import ephe
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
-from kerykeion.charts.charts_utils import (
+from kerykeion.charts.utils import (
     _classic_gauquelin_mid_offset,
     draw_gauquelin_sectors,
     wheel_x,
@@ -428,7 +428,7 @@ class TestGauquelinPolarFallback:
         """A secondary-progressed chart infers calculate_gauquelin from the
         natal's ``gauquelin_sector_cusps is not None`` — so the polar natal must
         carry cusps for the progressed chart to keep its Gauquelin sectors."""
-        from kerykeion.secondary_progressions.secondary_progression_factory import (
+        from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
 

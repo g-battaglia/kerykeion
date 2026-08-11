@@ -154,7 +154,7 @@ For more installation options and environment setup, see the [Getting Started gu
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person",
@@ -266,7 +266,7 @@ To improve compatibility across different applications, you can use the `remove_
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 john = AstrologicalSubjectFactory.from_birth_data(
@@ -302,7 +302,7 @@ An "external" birth chart places the zodiac wheel on the outer ring, offering an
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 birth_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -334,7 +334,7 @@ Synastry charts overlay two individuals' planetary positions to analyze relation
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subjects
 first = AstrologicalSubjectFactory.from_birth_data(
@@ -375,7 +375,7 @@ Transit charts compare current planetary positions against a natal chart:
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subjects
 transit = AstrologicalSubjectFactory.from_birth_data(
@@ -417,7 +417,7 @@ from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create natal subject
 john = AstrologicalSubjectFactory.from_birth_data(
@@ -460,7 +460,7 @@ from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create natal subject
 john = AstrologicalSubjectFactory.from_birth_data(
@@ -505,7 +505,7 @@ from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create natal subject
 john = AstrologicalSubjectFactory.from_birth_data(
@@ -552,7 +552,7 @@ Composite charts create a single chart from two individuals' midpoints to repres
 from pathlib import Path
 from kerykeion import CompositeSubjectFactory, AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subjects (offline configuration)
 angelina = AstrologicalSubjectFactory.from_birth_data(
@@ -602,7 +602,7 @@ For _all_ the charts, you can generate a wheel-only chart by using the method `s
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 birth_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -632,7 +632,7 @@ birth_chart_svg.save_wheel_only_svg_file(output_path=output_dir, filename="john-
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 birth_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -664,7 +664,7 @@ birth_chart_svg.save_wheel_only_svg_file(
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subjects
 first = AstrologicalSubjectFactory.from_birth_data(
@@ -703,7 +703,7 @@ To save the SVG file in a custom location, specify the `output_path` parameter i
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subjects
 first = AstrologicalSubjectFactory.from_birth_data(
@@ -741,7 +741,7 @@ You can switch chart language by passing `chart_language` to the `ChartDrawer` c
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 birth_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -774,7 +774,7 @@ built-in strings:
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 birth_chart = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
@@ -826,7 +826,7 @@ To generate a minified SVG, set `minify=True` in the `save_svg()` method:
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 birth_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -860,7 +860,7 @@ To generate an SVG without CSS variables, set `remove_css_variables=True` in the
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 birth_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -896,7 +896,7 @@ It's possible to generate a grid-only SVG, useful for creating a custom layout. 
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subjects
 birth_chart = AstrologicalSubjectFactory.from_birth_data(
@@ -978,7 +978,7 @@ Default filenames spell the style out: `save_svg()` writes `"{name} - {chart typ
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 john = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
@@ -1004,7 +1004,7 @@ chart.save_svg(output_path=output_dir, filename="john-lennon-classic", style="cl
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 john = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
@@ -1037,7 +1037,7 @@ chart.save_svg(output_path=output_dir, filename="lennon-mccartney-synastry-class
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 john = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
@@ -1071,7 +1071,7 @@ chart.save_svg(output_path=output_dir, filename="lennon-transit-classic", style=
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 john = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
@@ -1519,7 +1519,7 @@ Here's an example of how to set the theme:
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 dark_theme_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -1607,7 +1607,7 @@ Example:
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -2234,7 +2234,7 @@ from pathlib import Path
 
 from kerykeion import AstrologicalSubjectFactory, SecondaryProgressionFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 natal = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1985, 4, 15, 8, 30,

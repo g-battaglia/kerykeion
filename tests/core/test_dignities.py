@@ -8,8 +8,8 @@ triplicity, Egyptian terms, Chaldean decans, detriment, and fall.
 import pytest
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.dignities.dignity_factory import calculate_essential_dignity
-from kerykeion.dignities.dignity_data import (
+from kerykeion.dignities.factory import calculate_essential_dignity
+from kerykeion.dignities.data import (
     DOMICILE_RULERS,
     FALL_TABLE,
     DETRIMENT_RULERS,
@@ -136,23 +136,23 @@ class TestDignityHelperEdgeCases:
 
     def test_get_decan_ruler_unknown_sign(self):
         """_get_decan_ruler should return None for an unknown sign."""
-        from kerykeion.dignities.dignity_factory import _get_decan_ruler
+        from kerykeion.dignities.factory import _get_decan_ruler
         assert _get_decan_ruler("Unknown", 1) is None
 
     def test_get_term_ruler_unknown_sign(self):
         """_get_term_ruler should return None for an unknown sign."""
-        from kerykeion.dignities.dignity_factory import _get_term_ruler
+        from kerykeion.dignities.factory import _get_term_ruler
         assert _get_term_ruler("Unknown", 15.0) is None
 
     def test_get_term_ruler_no_match(self):
         """_get_term_ruler should return None when degree matches no term range."""
-        from kerykeion.dignities.dignity_factory import _get_term_ruler
+        from kerykeion.dignities.factory import _get_term_ruler
         # Egyptian terms cover 0-30 for each sign, so degree 30+ should not match
         assert _get_term_ruler("Ari", 30.0) is None
 
     def test_compute_dignity_non_classical_planet(self):
         """_compute_dignity should return (None, None) for non-classical planets."""
-        from kerykeion.dignities.dignity_factory import _compute_dignity
+        from kerykeion.dignities.factory import _compute_dignity
         result = _compute_dignity("Uranus", "Aqu", "Air", 15.0, True, 2, None, None)
         assert result == (None, None)
 
@@ -162,7 +162,7 @@ class TestDignityHelperEdgeCases:
         # but is NOT in detriment in Aries (DETRIMENT_RULERS["Ari"] should not include Saturn)
         # Let's pick a case: Moon is in fall in Scorpio (FALL_TABLE["Sco"] == "Moon")
         # and Moon is NOT in detriment in Scorpio
-        from kerykeion.dignities.dignity_data import DETRIMENT_RULERS
+        from kerykeion.dignities.data import DETRIMENT_RULERS
         # Find a planet that is in fall but not in detriment for a sign
         for sign, fall_planet in FALL_TABLE.items():
             if fall_planet and fall_planet not in DETRIMENT_RULERS.get(sign, []):
@@ -317,7 +317,7 @@ class TestDignityScoreDocumentedRange:
     }
 
     def test_achievable_score_range_is_minus9_to_plus11(self):
-        from kerykeion.dignities.dignity_factory import DIGNITY_PLANETS
+        from kerykeion.dignities.factory import DIGNITY_PLANETS
 
         scores = set()
         for planet in DIGNITY_PLANETS:

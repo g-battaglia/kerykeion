@@ -8,7 +8,7 @@ import math
 from typing import Any, Callable, Mapping, Sequence, Union, List, Optional, cast
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, OPPOSITE_PAIRS
-from kerykeion.aspects.aspects_utils import (
+from kerykeion.aspects.utils import (
     get_aspect_from_two_points,
     get_active_points_list,
     calculate_aspect_movement,

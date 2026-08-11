@@ -135,7 +135,7 @@ Aspect distribution:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from pathlib import Path
 
 # Sample birth data
@@ -346,7 +346,7 @@ print(f"Found {len(aspects.aspects)} aspects with tight orbs")
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from pathlib import Path
 
 subject = AstrologicalSubjectFactory.from_birth_data(

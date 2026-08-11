@@ -45,7 +45,7 @@ from kerykeion.utilities import (
     parse_astronomical_iso_moment,
     resolve_subject_local_moment,
 )
-from kerykeion.charts.charts_utils import convert_decimal_to_degree_string, format_datetime_with_timezone
+from kerykeion.charts.utils import convert_decimal_to_degree_string, format_datetime_with_timezone
 
 
 # =============================================================================
@@ -304,7 +304,7 @@ class TestCircularMean:
         assert circular_mean(0.0, 180.0) == 90.0
 
     def test_antipodal_matches_midpoint_factory_convention(self):
-        from kerykeion.midpoints.midpoint_factory import MidpointFactory
+        from kerykeion.midpoints.factory import MidpointFactory
 
         for first, second in [(10.0, 190.0), (0.0, 180.0), (350.0, 170.0)]:
             assert circular_mean(first, second) == MidpointFactory._shorter_arc_midpoint(first, second)
@@ -664,39 +664,39 @@ class TestChartsUtilsInternalFunctions:
     """Tests for internal functions in charts_utils module."""
 
     def test_degree_sum_exact_360(self):
-        from kerykeion.charts.charts_utils import degree_sum
+        from kerykeion.charts.utils import degree_sum
 
         assert degree_sum(180, 180) == 0.0
 
     def test_normalize_degree_360(self):
-        from kerykeion.charts.charts_utils import normalize_degree
+        from kerykeion.charts.utils import normalize_degree
 
         assert normalize_degree(360) == 0.0
 
     def test_normalize_degree_negative(self):
-        from kerykeion.charts.charts_utils import normalize_degree
+        from kerykeion.charts.utils import normalize_degree
 
         assert normalize_degree(-90) == 270.0
 
     def test_dec_hour_join(self):
-        from kerykeion.charts.charts_utils import hms_to_decimal_hours
+        from kerykeion.charts.utils import hms_to_decimal_hours
 
         assert hms_to_decimal_hours(12, 30, 0) == pytest.approx(12.5, abs=0.001)
 
     def test_offset_to_tz_none_raises(self):
-        from kerykeion.charts.charts_utils import timedelta_to_decimal_hours
+        from kerykeion.charts.utils import timedelta_to_decimal_hours
 
         with pytest.raises(KerykeionException):
             timedelta_to_decimal_hours(None)
 
     def test_offset_to_tz_valid(self):
         from datetime import timedelta
-        from kerykeion.charts.charts_utils import timedelta_to_decimal_hours
+        from kerykeion.charts.utils import timedelta_to_decimal_hours
 
         assert timedelta_to_decimal_hours(timedelta(hours=2)) == 2.0
 
     def test_get_decoded_celestial_point_unknown_raises(self):
-        from kerykeion.charts.charts_utils import get_decoded_kerykeion_celestial_point_name
+        from kerykeion.charts.utils import get_decoded_kerykeion_celestial_point_name
         from kerykeion.schemas.settings_models import KerykeionLanguageCelestialPointModel
 
         lang_model = KerykeionLanguageCelestialPointModel(
@@ -776,7 +776,7 @@ class TestPlanetGridLayout:
     """Tests for _planet_grid_layout_position."""
 
     def test_fourth_column_layout(self):
-        from kerykeion.charts.charts_utils import _planet_grid_layout_position
+        from kerykeion.charts.utils import _planet_grid_layout_position
 
         offset, row = _planet_grid_layout_position(40)
         assert row == 4  # 40 - 36 = 4
@@ -787,7 +787,7 @@ class TestChartsUtilsDistributionEdgeCases:
     """Tests for element distribution calculation edge cases."""
 
     def test_distribution_skips_missing_point(self):
-        from kerykeion.charts.charts_utils import calculate_element_points
+        from kerykeion.charts.utils import calculate_element_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
         from kerykeion import AstrologicalSubjectFactory
 
@@ -814,7 +814,7 @@ class TestChartsUtilsDistributionEdgeCases:
         assert len(dist) == 4  # Fire, Earth, Air, Water
 
     def test_distribution_with_custom_weights(self):
-        from kerykeion.charts.charts_utils import calculate_element_points
+        from kerykeion.charts.utils import calculate_element_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
         from kerykeion import AstrologicalSubjectFactory
 
@@ -847,7 +847,7 @@ class TestChartsUtilsDistributionEdgeCases:
         inclusion is opt-in (include_fixed_stars=True, as the chart data
         factory does) so callers naming an explicit point subset are not
         polluted, and every star weighs 0.2 unless the table says otherwise."""
-        from kerykeion.charts.charts_utils import calculate_element_points
+        from kerykeion.charts.utils import calculate_element_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
         from kerykeion import AstrologicalSubjectFactory
 
@@ -887,7 +887,7 @@ class TestChartsUtilsDistributionEdgeCases:
         """A catalog star missing from the weight table weighs 0.2 (the star
         fallback), never the generic 1.0 point fallback; slugs go through the
         shared catalog slugger (strip + spaces/hyphens -> underscores)."""
-        from kerykeion.charts.charts_utils import (
+        from kerykeion.charts.utils import (
             _FIXED_STAR_FALLBACK_WEIGHT,
             calculate_element_points,
         )
@@ -917,7 +917,7 @@ class TestChartsUtilsDistributionEdgeCases:
     def test_synastry_distribution_counts_fixed_stars_when_opted_in(self):
         """The include_fixed_stars flag must reach the synastry helpers too:
         both subjects' active stars contribute, off by default."""
-        from kerykeion.charts.charts_utils import calculate_synastry_element_points
+        from kerykeion.charts.utils import calculate_synastry_element_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
         from kerykeion import AstrologicalSubjectFactory
 
@@ -949,7 +949,7 @@ class TestChartsUtilsDistributionEdgeCases:
         """In pure_count every counted item contributes exactly 1 — a fixed
         star must NOT keep its 0.2 weighted-mode table weight, or the integer
         semantics of the count break (Sun+Moon+Regulus must total 3, not 2.2)."""
-        from kerykeion.charts.charts_utils import calculate_element_points
+        from kerykeion.charts.utils import calculate_element_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
         from kerykeion import AstrologicalSubjectFactory
 

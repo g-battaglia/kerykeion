@@ -17,7 +17,7 @@ from kerykeion import (
     ChartDataFactory,
     DominantsFactory,
 )
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.schemas import KerykeionException
 
@@ -71,7 +71,7 @@ class TestAstronomicalYearZeroIsoFormat:
     JD_YEAR_ZERO = 1721223.5
 
     def test_jd_to_utc_iso_has_no_spurious_minus(self):
-        from kerykeion.secondary_progressions.secondary_progression_factory import (
+        from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
 
@@ -80,7 +80,7 @@ class TestAstronomicalYearZeroIsoFormat:
         assert iso.startswith("0000-"), iso
 
     def test_jd_to_date_label_has_no_spurious_minus(self):
-        from kerykeion.secondary_progressions.secondary_progression_factory import (
+        from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
 
@@ -88,7 +88,7 @@ class TestAstronomicalYearZeroIsoFormat:
         assert label.startswith("0000-"), label
 
     def test_negative_years_keep_their_minus(self):
-        from kerykeion.secondary_progressions.secondary_progression_factory import (
+        from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
 
@@ -98,7 +98,7 @@ class TestAstronomicalYearZeroIsoFormat:
 
     def test_matches_sibling_formatter_sign_convention(self):
         from kerykeion._predictive_utils import jd_to_iso_utc
-        from kerykeion.secondary_progressions.secondary_progression_factory import (
+        from kerykeion.secondary_progressions.factory import (
             SecondaryProgressionFactory,
         )
 
@@ -302,7 +302,7 @@ class TestAstroCartographyRejectsCompositeSubject:
 
     def test_composite_raises_clean_exception(self):
         from kerykeion import CompositeSubjectFactory
-        from kerykeion.astro_cartography.acg_factory import AstroCartographyFactory
+        from kerykeion.astro_cartography.factory import AstroCartographyFactory
 
         a = AstrologicalSubjectFactory.from_birth_data(
             name="a", year=1990, month=6, day=15, hour=14, minute=30,
@@ -320,7 +320,7 @@ class TestAstroCartographyRejectsCompositeSubject:
             AstroCartographyFactory.compute(composite)
 
     def test_ordinary_subject_still_computes(self):
-        from kerykeion.astro_cartography.acg_factory import AstroCartographyFactory
+        from kerykeion.astro_cartography.factory import AstroCartographyFactory
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             name="a", year=1990, month=6, day=15, hour=14, minute=30,

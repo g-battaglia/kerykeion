@@ -1042,7 +1042,7 @@ class TestAllActivePoints:
 
     def test_all_active_points_with_chart_drawer(self):
         """ChartDrawer reflects the same active points as the chart data."""
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Drawer Test",

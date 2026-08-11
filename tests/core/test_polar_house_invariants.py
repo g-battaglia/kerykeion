@@ -415,7 +415,7 @@ class TestTheChartIsLabelledWithTheSystemItUsed:
         that reason, and it is the rendered output a reader trusts.
         """
         from kerykeion import ChartDataFactory
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         svg = ChartDrawer(
             ChartDataFactory.create_natal_chart_data(self._subject("P", 78.2232))
@@ -694,7 +694,7 @@ class TestDualWheelEffectiveHouseLabels:
 
     def test_synastry_labels_both_effective_systems(self):
         from kerykeion import ChartDataFactory
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         polar, temperate = self._subjects()
         svg = ChartDrawer(
@@ -705,7 +705,7 @@ class TestDualWheelEffectiveHouseLabels:
 
     def test_transit_labels_both_effective_systems(self):
         from kerykeion import ChartDataFactory
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         polar, temperate = self._subjects()
         svg = ChartDrawer(

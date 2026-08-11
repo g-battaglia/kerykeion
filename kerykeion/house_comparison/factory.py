@@ -9,7 +9,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from kerykeion.house_comparison.house_comparison_utils import (
+from kerykeion.house_comparison.utils import (
     calculate_points_in_reciprocal_houses,
     calculate_cusps_in_reciprocal_houses,
 )

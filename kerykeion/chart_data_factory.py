@@ -33,7 +33,7 @@ import logging
 from typing import Collection, Mapping, Union, Optional, Literal, cast, get_args
 
 from kerykeion.aspects import AspectsFactory
-from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
+from kerykeion.house_comparison.factory import HouseComparisonFactory
 from kerykeion.relationship_score_factory import RelationshipScoreFactory
 from kerykeion.schemas import KerykeionException, ChartType, ActiveAspect
 from kerykeion.schemas.models import (
@@ -63,7 +63,7 @@ from kerykeion.settings.config_constants import (
 )
 from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, PointOrbAdjustment
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
-from kerykeion.charts.charts_utils import (
+from kerykeion.charts.utils import (
     DOUBLE_CHART_TYPES,
     ElementQualityDistributionMethod,
     calculate_element_points,

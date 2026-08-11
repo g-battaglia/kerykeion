@@ -8,7 +8,7 @@ Exposes :class:`MidpointFactory` plus the result Pydantic models
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from .midpoint_factory import (
+from .factory import (
     MidpointFactory,
     MidpointModel,
     MidpointAspectModel,

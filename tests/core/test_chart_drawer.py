@@ -30,8 +30,8 @@ import pytest
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import BACKEND_NAME
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.charts.charts_utils import make_lunar_phase
+from kerykeion.charts.drawer import ChartDrawer
+from kerykeion.charts.utils import make_lunar_phase
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.schemas.models import KerykeionPointModel
@@ -632,7 +632,7 @@ class TestChartDrawerBasic:
         chart = ChartDrawer(self.chart_data, theme=None)
         assert chart.chart_data is not None
 
-    @patch("kerykeion.charts.chart_drawer.logging")
+    @patch("kerykeion.charts.drawer.logging")
     def test_chart_drawer_logging(self, mock_logging):
         chart = ChartDrawer(self.chart_data)
         assert chart is not None
@@ -3789,7 +3789,7 @@ class TestTransitAspectGridIndex:
     """The dual-chart aspect grid must render every aspect for each (p1, p2) pair."""
 
     def test_all_aspects_per_pair_are_rendered_in_order(self):
-        from kerykeion.charts.charts_utils import draw_transit_aspect_grid
+        from kerykeion.charts.utils import draw_transit_aspect_grid
 
         planets = [
             {"id": 0, "name": "Sun", "is_active": True},
@@ -3811,7 +3811,7 @@ class TestTransitAspectGridIndex:
         assert svg.index("#orb120") < svg.index("#orb60")
 
     def test_inactive_planets_are_excluded(self):
-        from kerykeion.charts.charts_utils import draw_transit_aspect_grid
+        from kerykeion.charts.utils import draw_transit_aspect_grid
 
         planets = [
             {"id": 0, "name": "Sun", "is_active": True},
@@ -3910,7 +3910,7 @@ class TestMinifyFallbackScope:
         assert '"' in svg, "Optimizer output must not be mangled by the string-based fallback"
 
     def test_string_fallback_applies_when_optimizer_fails(self, monkeypatch):
-        import kerykeion.charts.chart_drawer as chart_drawer_module
+        import kerykeion.charts.drawer as chart_drawer_module
 
         def _boom(_svg):
             raise RuntimeError("forced optimizer failure")
@@ -3936,7 +3936,7 @@ class TestModernNoClassicHitAreaLeakRound7:
     def test_modern_natal_emits_twelve_house_sectors(self):
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.chart_data_factory import ChartDataFactory
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         s = AstrologicalSubjectFactory.from_birth_data(
             "N", 1990, 6, 15, 12, 0, lng=-74.0, lat=40.7,
@@ -3954,7 +3954,7 @@ class TestSvgControlCharStripRound8:
         import xml.dom.minidom
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.chart_data_factory import ChartDataFactory
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         s = AstrologicalSubjectFactory.from_birth_data(
             "Ann\x0ca", 1990, 6, 15, 12, 0, city="London", nation="GB",
@@ -3971,7 +3971,7 @@ class TestSaveSvgRobustnessRound9:
     def _drawer(self, name="T"):
         from kerykeion import AstrologicalSubjectFactory
         from kerykeion.chart_data_factory import ChartDataFactory
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
         s = AstrologicalSubjectFactory.from_birth_data(
             name, 1990, 6, 15, 12, 0, city="London", nation="GB",
             lng=-0.1, lat=51.5, tz_str="Europe/London", online=False,

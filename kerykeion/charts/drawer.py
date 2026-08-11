@@ -23,7 +23,7 @@ _MODULE_DIR = Path(__file__).parent
 from kerykeion.ephemeris_backend import ephe
 from svg_polish import optimize as _svg_polish_optimize
 
-from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
+from kerykeion.house_comparison.factory import HouseComparisonFactory
 from kerykeion.schemas import (
     KerykeionException,
     ChartType,
@@ -57,7 +57,7 @@ from kerykeion.settings.config_constants import (
 )
 from kerykeion.settings.translations import get_translations, load_language_pair
 from kerykeion.charts.glyph_metrics import estimate_text_width
-from kerykeion.charts.charts_utils import (
+from kerykeion.charts.utils import (
     draw_zodiac_slice,
     convert_latitude_coordinate_to_string,
     convert_longitude_coordinate_to_string,
@@ -459,7 +459,7 @@ from typing import Protocol, TYPE_CHECKING
 from kerykeion.schemas.models import ChartDataModel
 
 if TYPE_CHECKING:
-    from kerykeion.charts.chart_drawer import ChartDrawer  # type: ignore[attr-defined]  # noqa: F811
+    from kerykeion.charts.drawer import ChartDrawer  # type: ignore[attr-defined]  # noqa: F811
 
 
 class ChartRendererProtocol(Protocol):
@@ -2120,7 +2120,7 @@ class ChartDrawer:  # type: ignore[no-redef]
     Example:
         >>> from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
         >>> from kerykeion.chart_data_factory import ChartDataFactory
-        >>> from kerykeion.charts.chart_drawer import ChartDrawer
+        >>> from kerykeion.charts.drawer import ChartDrawer
         >>>
         >>> # Step 1: Create subject
         >>> subject = AstrologicalSubjectFactory.from_birth_data(
@@ -2817,7 +2817,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         if self._renderer.is_dual_wheel():
             return 0
 
-        from kerykeion.charts.charts_utils import (
+        from kerykeion.charts.utils import (
             _GAUQUELIN_COLUMN_WIDTH,
             _GAUQUELIN_MAX_ROWS,
             _GRID_COLUMN_WIDTH,
@@ -3562,7 +3562,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if has_gauquelin:
             # Unified Gauquelin grid replaces both planet and house grids
-            from kerykeion.charts.charts_utils import _GAUQUELIN_COLUMN_WIDTH
+            from kerykeion.charts.utils import _GAUQUELIN_COLUMN_WIDTH
 
             main_grid_right = 645 + grid_shift + _GAUQUELIN_COLUMN_WIDTH
             extents.append(main_grid_right)
@@ -4275,7 +4275,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 break
 
         if has_gauquelin:
-            from kerykeion.charts.charts_utils import (
+            from kerykeion.charts.utils import (
                 draw_gauquelin_sector_hit_areas,
                 draw_gauquelin_sectors,
             )
@@ -4451,7 +4451,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         )
 
         if has_gauquelin:
-            from kerykeion.charts.charts_utils import draw_gauquelin_unified_grid
+            from kerykeion.charts.utils import draw_gauquelin_unified_grid
 
             # Shift the Gauquelin grid 30px left for better symmetry: the unified
             # grid (220px) replaces both planet grid (80px) + house grid (120px),

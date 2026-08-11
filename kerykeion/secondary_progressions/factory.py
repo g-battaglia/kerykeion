@@ -29,7 +29,7 @@ from pydantic import Field
 from kerykeion.schemas.models import SubscriptableBaseModel
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+from kerykeion.aspects.utils import get_aspect_from_two_points
 from kerykeion.aspects.orb_utils import (
     OrbAdjustmentStrategy,
     PointOrbAdjustment,

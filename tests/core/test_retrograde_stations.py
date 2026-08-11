@@ -172,7 +172,7 @@ class TestStationErrorContract:
         # Simulate the backend rejecting a date (as a raw libephemeris
         # EphemerisRangeError / swisseph.Error would) instead of using extreme
         # years: the local dev kernel range differs from production DE441.
-        import kerykeion.retrograde_stations.retrograde_station_factory as rsf
+        import kerykeion.retrograde_stations.factory as rsf
 
         def failing_calc_ut(jd, body, flags):
             raise RuntimeError(f"jd {jd} outside ephemeris range")
@@ -187,7 +187,7 @@ class TestStationErrorContract:
         # First samples succeed, then the scan walks past the range edge: the
         # whole search must raise rather than return partial stations claiming
         # full coverage.
-        import kerykeion.retrograde_stations.retrograde_station_factory as rsf
+        import kerykeion.retrograde_stations.factory as rsf
 
         calls = {"n": 0}
 

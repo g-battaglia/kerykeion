@@ -50,7 +50,7 @@ In heliocentric charts, we view the solar system from the Sun's perspective. The
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 

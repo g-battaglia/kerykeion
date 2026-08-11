@@ -34,8 +34,8 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional, cast
 
-from kerykeion.dignities.dignity_data import DETRIMENT_RULERS, FALL_TABLE
-from kerykeion.dignities.dignity_factory import calculate_essential_dignity
+from kerykeion.dignities.data import DETRIMENT_RULERS, FALL_TABLE
+from kerykeion.dignities.factory import calculate_essential_dignity
 from kerykeion.dominants.base import BaseDominantStrategy, BreakdownItem, Category, DominantsConfig
 from kerykeion.dominants.data import (
     ANGLE_WEIGHTS,
@@ -213,7 +213,7 @@ class ModernDominantStrategy(BaseDominantStrategy):
         """
         # Local import keeps the dominants package free of an import-time
         # dependency on the (heavier) aspects/subject machinery.
-        from kerykeion.aspects.aspects_factory import AspectsFactory
+        from kerykeion.aspects.factory import AspectsFactory
 
         scores: Dict[str, float] = {name: 0.0 for name in planet_names}
         planet_set = set(planet_names)

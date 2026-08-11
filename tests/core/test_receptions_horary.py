@@ -12,7 +12,7 @@ import pytest
 
 from kerykeion import HoraryIndicatorsFactory, MutualReceptionsFactory
 from kerykeion.dignities import get_domicile_ruler, get_exaltation_ruler
-from kerykeion.dignities.dignity_data import DOMICILE_RULERS
+from kerykeion.dignities.data import DOMICILE_RULERS
 from kerykeion.horary.factory import HOUSE_CUSP_FIELDS, HOUSE_NAME_TO_NUMBER
 from kerykeion.schemas.literals import SIGN_CODES
 from kerykeion.zodiacal_releasing.factory import TRADITIONAL_RULERS

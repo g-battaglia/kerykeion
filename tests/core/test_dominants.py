@@ -51,7 +51,7 @@ def test_almuten_essential_anchor(john_lennon):
     """Essential-dignity tally over the five hylegiacal places (hand-verified).
 
     The expected scores are derived purely from the published Ptolemaic tables
-    in ``kerykeion.dignities.dignity_data`` applied to Lennon's five places:
+    in ``kerykeion.dignities.data`` applied to Lennon's five places:
         Sun 16°Lib · Moon 3°Aqu · Asc 19°Ari · Fortune 2°Cap · Syzygy 8°Lib (New)
     Saturn wins (domicile in Aquarius, exaltation in Libra ×2, domicile in
     Capricorn), ahead of Mercury (triplicity/term of Air, repeatedly).
@@ -252,7 +252,7 @@ def test_modern_percentages_sum_to_100(john_lennon):
 
 def test_elemental_matches_distribution(john_lennon):
     """The elemental school agrees with the library's distribution helpers."""
-    from kerykeion.charts.charts_utils import calculate_element_points, calculate_quality_points
+    from kerykeion.charts.utils import calculate_element_points, calculate_quality_points
     from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
     for method in ("weighted", "pure_count"):

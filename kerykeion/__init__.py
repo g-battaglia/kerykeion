@@ -123,7 +123,7 @@ from .secondary_progressions import (
 # =============================================================================
 from .aspects import AspectsFactory
 from .relationship_score_factory import RelationshipScoreFactory
-from .house_comparison.house_comparison_factory import HouseComparisonFactory
+from .house_comparison import HouseComparisonFactory
 from .dominants import DominantsFactory, DominantStrategy, BaseDominantStrategy
 from .zodiacal_releasing import ZodiacalReleasingFactory
 from .profections import ProfectionsFactory
@@ -134,7 +134,7 @@ from .horary import HoraryIndicatorsFactory
 # =============================================================================
 # VISUALIZATION
 # =============================================================================
-from .charts.chart_drawer import ChartDrawer
+from .charts import ChartDrawer
 from .report import ReportGenerator
 
 # =============================================================================

@@ -101,7 +101,7 @@ Ascendant: Vir
 ```python
 from pathlib import Path
 from kerykeion import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Calculate chart data
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
@@ -458,7 +458,7 @@ from kerykeion import (
     ReportGenerator,
     to_context
 )
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from kerykeion.relationship_score_factory import RelationshipScoreFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 

@@ -990,7 +990,7 @@ class TransitsTimeRangeFactory:
             a plain ``calc_ut`` would not reproduce the ephemeris positions.
         """
         from kerykeion.ephemeris_backend import ephe, ephemeris_session
-        from kerykeion.aspects.aspects_utils import difdeg2n
+        from kerykeion.aspects.utils import difdeg2n
         from kerykeion.utilities import datetime_to_julian
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
 

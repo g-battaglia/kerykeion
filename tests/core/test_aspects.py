@@ -18,7 +18,7 @@ from pytest import approx
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
-from kerykeion.aspects.aspects_utils import calculate_aspect_movement
+from kerykeion.aspects.utils import calculate_aspect_movement
 from kerykeion.ephemeris_backend import BACKEND_NAME
 
 # ---------------------------------------------------------------------------
@@ -832,14 +832,14 @@ class TestPlanetIdDecoder:
     """Tests for planet_id_decoder utility function."""
 
     def test_valid_planet_returns_int(self):
-        from kerykeion.aspects.aspects_utils import planet_id_decoder
+        from kerykeion.aspects.utils import planet_id_decoder
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
         result = planet_id_decoder(DEFAULT_CELESTIAL_POINTS_SETTINGS, "Sun")
         assert isinstance(result, int)
 
     def test_invalid_planet_raises(self):
-        from kerykeion.aspects.aspects_utils import planet_id_decoder
+        from kerykeion.aspects.utils import planet_id_decoder
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
         with pytest.raises(ValueError, match="not found"):
@@ -883,7 +883,7 @@ class TestAxisOrbFilter:
 
     @staticmethod
     def _split_axis(aspects):
-        from kerykeion.aspects.aspects_factory import AXES_LIST
+        from kerykeion.aspects.factory import AXES_LIST
 
         axis = [a for a in aspects if a.p1_name in AXES_LIST or a.p2_name in AXES_LIST]
         non_axis = [a for a in aspects if a.p1_name not in AXES_LIST and a.p2_name not in AXES_LIST]
@@ -1286,7 +1286,7 @@ class TestAspectKeyedExtraOrbInAspectDetection:
     ]
 
     def test_map_extra_widens_only_named_aspect(self):
-        from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+        from kerykeion.aspects.utils import get_aspect_from_two_points
 
         # 7° separation: outside the 6° base orb, inside 6+1.5.
         hit = get_aspect_from_two_points(self.SETTINGS, 10.0, 17.0, extra_orb={"conjunction": 1.5})
@@ -1295,7 +1295,7 @@ class TestAspectKeyedExtraOrbInAspectDetection:
         assert miss["verdict"] is False
 
     def test_missing_name_in_map_defaults_to_zero(self):
-        from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+        from kerykeion.aspects.utils import get_aspect_from_two_points
 
         # 127° separation: a trine at 7° deviation needs the extra; an empty
         # map must behave exactly like extra_orb=0.0.
@@ -1303,7 +1303,7 @@ class TestAspectKeyedExtraOrbInAspectDetection:
         assert get_aspect_from_two_points(self.SETTINGS, 0.0, 127.0, extra_orb={"trine": 1.5})["verdict"] is True
 
     def test_scalar_path_unchanged(self):
-        from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+        from kerykeion.aspects.utils import get_aspect_from_two_points
 
         scalar = get_aspect_from_two_points(self.SETTINGS, 10.0, 17.0, extra_orb=1.5)
         mapped = get_aspect_from_two_points(
@@ -1657,7 +1657,7 @@ class TestUnknownActiveAspectWarning:
     """Active aspect names with no settings entry are dropped with a warning."""
 
     def test_declination_names_warn_and_point_to_declination_methods(self, johnny_depp, caplog):
-        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.aspects_factory"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.factory"):
             AspectsFactory.single_chart_aspects(
                 johnny_depp,
                 active_aspects=[
@@ -1672,7 +1672,7 @@ class TestUnknownActiveAspectWarning:
     def test_unknown_aspect_name_warns(self, caplog):
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
 
-        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.aspects_factory"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.factory"):
             filtered = AspectsFactory._update_aspect_settings(
                 DEFAULT_CHART_ASPECTS_SETTINGS,
                 [{"name": "conjunction", "orb": 6}, {"name": "not_a_real_aspect", "orb": 3}],
@@ -1682,12 +1682,12 @@ class TestUnknownActiveAspectWarning:
         assert [s["name"] for s in filtered] == ["conjunction"]
 
     def test_known_aspects_do_not_warn(self, johnny_depp, caplog):
-        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.aspects_factory"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.aspects.factory"):
             AspectsFactory.single_chart_aspects(
                 johnny_depp,
                 active_aspects=[{"name": "conjunction", "orb": 6}, {"name": "trine", "orb": 6}],
             )
-        factory_records = [r for r in caplog.records if r.name == "kerykeion.aspects.aspects_factory"]
+        factory_records = [r for r in caplog.records if r.name == "kerykeion.aspects.factory"]
         assert factory_records == []
 
 
@@ -1765,7 +1765,7 @@ class TestDualChartFrameValidation:
             RelationshipScoreFactory(tropical, sidereal)
 
     def test_house_comparison_rejects_mixed_frame(self, tropical, sidereal):
-        from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
+        from kerykeion.house_comparison.factory import HouseComparisonFactory
         from kerykeion.schemas import KerykeionException
 
         with pytest.raises(KerykeionException):
@@ -1773,7 +1773,7 @@ class TestDualChartFrameValidation:
 
     def test_same_frame_still_works(self, tropical, tropical_other):
         from kerykeion.relationship_score_factory import RelationshipScoreFactory
-        from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
+        from kerykeion.house_comparison.factory import HouseComparisonFactory
 
         # Aspects, relationship score and house comparison all succeed for a
         # matched frame (the overwhelmingly common case must not regress).
@@ -1795,7 +1795,7 @@ class TestActivePointsListLogging:
     a name outside the known catalog (a certain typo) and a DEBUG for a known
     point simply absent from the subject (a legitimate config)."""
 
-    _LOGGER = "kerykeion.aspects.aspects_utils"
+    _LOGGER = "kerykeion.aspects.utils"
 
     @pytest.fixture(scope="class")
     def subject(self):
@@ -1806,7 +1806,7 @@ class TestActivePointsListLogging:
         )
 
     def test_typo_name_warns_and_is_dropped(self, subject, caplog):
-        from kerykeion.aspects.aspects_utils import get_active_points_list
+        from kerykeion.aspects.utils import get_active_points_list
 
         with caplog.at_level(logging.DEBUG, logger=self._LOGGER):
             result = get_active_points_list(
@@ -1821,7 +1821,7 @@ class TestActivePointsListLogging:
         assert warnings, "expected a WARNING naming the dropped typo point"
 
     def test_known_but_absent_point_logs_debug_not_warning(self, subject, caplog):
-        from kerykeion.aspects.aspects_utils import get_active_points_list
+        from kerykeion.aspects.utils import get_active_points_list
 
         # 'Eris' is a real catalog name but not calculated on a default subject.
         with caplog.at_level(logging.DEBUG, logger=self._LOGGER):
@@ -1835,7 +1835,7 @@ class TestActivePointsListLogging:
         assert debugs, "expected a DEBUG for the known-but-absent point"
 
     def test_all_valid_names_do_not_log(self, subject, caplog):
-        from kerykeion.aspects.aspects_utils import get_active_points_list
+        from kerykeion.aspects.utils import get_active_points_list
 
         with caplog.at_level(logging.DEBUG, logger=self._LOGGER):
             result = get_active_points_list(subject, active_points=["Sun", "Moon", "Venus"])
@@ -1845,7 +1845,7 @@ class TestActivePointsListLogging:
         ], "an all-valid active_points list must not log"
 
     def test_case_variant_logs_debug_not_warning(self, subject, caplog):
-        from kerykeion.aspects.aspects_utils import get_active_points_list
+        from kerykeion.aspects.utils import get_active_points_list
 
         # 'sun' is a case-variant of the canonical 'Sun': a case mismatch, not a
         # typo. Resolution stays case-sensitive (so 'sun' is still dropped), but

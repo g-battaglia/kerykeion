@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 import pytest
 
 from kerykeion import VoidOfCourseMoonFactory
-from kerykeion.aspects.aspects_utils import difdeg2n
+from kerykeion.aspects.utils import difdeg2n
 from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import SIGN_CODES

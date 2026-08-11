@@ -65,7 +65,7 @@ The returned `composite_subject` is a `CompositeSubjectModel` (which inherits fr
 
 ```python
 from kerykeion import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Generate Data
 composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)

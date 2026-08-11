@@ -14,6 +14,6 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from .catalog import FixedStarCatalog, FixedStarMetadataModel
-from .discovery_factory import FixedStarDiscoveryFactory
+from .factory import FixedStarDiscoveryFactory
 
 __all__ = ["FixedStarCatalog", "FixedStarMetadataModel", "FixedStarDiscoveryFactory"]

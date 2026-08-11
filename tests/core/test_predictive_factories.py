@@ -14,7 +14,7 @@ from kerykeion import (
 )
 from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas import KerykeionException
-from kerykeion.secondary_progressions.secondary_progression_factory import DAYS_PER_TROPICAL_YEAR
+from kerykeion.secondary_progressions.factory import DAYS_PER_TROPICAL_YEAR
 
 
 @lru_cache(maxsize=1)
@@ -955,7 +955,7 @@ class TestSolarArcDirectedAnglesRound12:
 
     def test_directed_angles_agree_between_apis(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.secondary_progressions.solar_arc_factory import SolarArcFactory
+        from kerykeion.secondary_progressions.solar_arc import SolarArcFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
             "John", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
@@ -996,7 +996,7 @@ class TestSolarArcDirectedStaleTripleRound15:
 
     def test_directed_nulls_location_triple(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.secondary_progressions.solar_arc_factory import SolarArcFactory
+        from kerykeion.secondary_progressions.solar_arc import SolarArcFactory
         natal = AstrologicalSubjectFactory.from_birth_data(
             "J", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
             online=False, suppress_geonames_warning=True,

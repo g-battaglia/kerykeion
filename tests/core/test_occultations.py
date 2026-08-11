@@ -123,7 +123,7 @@ class TestClassifyOccultation:
 
     def test_classify_unknown_flag(self):
         """Flag 0 (no matching bits) should return 'Unknown'."""
-        from kerykeion.occultations.occultation_factory import _classify_occultation
+        from kerykeion.occultations.factory import _classify_occultation
         assert _classify_occultation(0) == "Unknown"
 
 
@@ -133,7 +133,7 @@ class TestJdToIso:
     def test_jd_to_iso_bce_year(self):
         """BCE Julian Days must format with a signed 4-digit extended year and
         real seconds, e.g. -0044-03-15T12:00:00Z (not the old '-44-...')."""
-        from kerykeion.occultations.occultation_factory import _jd_to_iso
+        from kerykeion.occultations.factory import _jd_to_iso
 
         jd = ephe.julday(-44, 3, 15, 12.0)
         assert _jd_to_iso(jd) == "-0044-03-15T12:00:00Z"
@@ -141,7 +141,7 @@ class TestJdToIso:
     def test_jd_to_iso_ce_year_with_seconds(self):
         """CE formatting keeps the unsigned year and rounds to the nearest
         second instead of truncating."""
-        from kerykeion.occultations.occultation_factory import _jd_to_iso
+        from kerykeion.occultations.factory import _jd_to_iso
 
         jd = ephe.julday(2026, 8, 12, 17.0 + 30.0 / 60.0 + 42.0 / 3600.0)
         assert _jd_to_iso(jd) == "2026-08-12T17:30:42Z"
@@ -156,7 +156,7 @@ class TestOccultationBreakAndErrorPaths:
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_glob",
+            "kerykeion.occultations.factory.ephe.lun_occult_when_glob",
             return_value=(0, zero_tret),
         ):
             results = factory.search_global(start_jd, ephe.VENUS, count=3)
@@ -167,7 +167,7 @@ class TestOccultationBreakAndErrorPaths:
         (with the failing JD), never silently return partial results."""
         from unittest.mock import patch
         with patch(
-            "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_glob",
+            "kerykeion.occultations.factory.ephe.lun_occult_when_glob",
             side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match="ephemeris range"):
@@ -180,7 +180,7 @@ class TestOccultationBreakAndErrorPaths:
         from unittest.mock import patch
         good = (4, [start_jd + 5.0] + [0.0] * 9)  # 4 = ECL_TOTAL
         with patch(
-            "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_glob",
+            "kerykeion.occultations.factory.ephe.lun_occult_when_glob",
             side_effect=[good, RuntimeError("jd outside ephemeris range")],
         ):
             with pytest.raises(KerykeionException, match=r"JD "):
@@ -192,7 +192,7 @@ class TestOccultationBreakAndErrorPaths:
         from unittest.mock import patch
         zero_tret = [0.0] * 10
         with patch(
-            "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_loc",
+            "kerykeion.occultations.factory.ephe.lun_occult_when_loc",
             return_value=(0, zero_tret, [0.0] * 10),
         ):
             results = factory.search_local(start_jd, ephe.VENUS, lat=41.9, lng=12.5, count=3)
@@ -202,7 +202,7 @@ class TestOccultationBreakAndErrorPaths:
         """A backend failure must abort the search as KerykeionException."""
         from unittest.mock import patch
         with patch(
-            "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_loc",
+            "kerykeion.occultations.factory.ephe.lun_occult_when_loc",
             side_effect=RuntimeError("ephe failure"),
         ):
             with pytest.raises(KerykeionException, match="ephemeris range"):
@@ -236,7 +236,7 @@ class TestPlanetNameResolution:
             return (4, [start_jd + 5.0] + [0.0] * 9)  # 4 = ECL_TOTAL
 
         with patch(
-            "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_glob",
+            "kerykeion.occultations.factory.ephe.lun_occult_when_glob",
             side_effect=fake_glob,
         ):
             results = factory.search_global(start_jd, "Venus", count=1)
@@ -253,7 +253,7 @@ class TestPlanetNameResolution:
             return (4, [start_jd + 5.0] + [0.0] * 9, [0.0] * 10)
 
         with patch(
-            "kerykeion.occultations.occultation_factory.ephe.lun_occult_when_loc",
+            "kerykeion.occultations.factory.ephe.lun_occult_when_loc",
             side_effect=fake_loc,
         ):
             results = factory.search_local(start_jd, "Mars", lat=41.9, lng=12.5, count=1)
