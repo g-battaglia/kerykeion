@@ -10,7 +10,7 @@ copy of the table.
 
 from typing import Optional, cast
 
-from kerykeion.schemas.kr_literals import ClassicalPlanet, Sign
+from kerykeion.schemas.literals import ClassicalPlanet, Sign
 
 from .dignity_data import DOMICILE_RULERS, EXALTATION_TABLE
 

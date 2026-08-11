@@ -14,7 +14,7 @@ import pytest
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
-from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, PREDICTIVE_ACTIVE_ASPECTS
 
 

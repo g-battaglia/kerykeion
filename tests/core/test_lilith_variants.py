@@ -5,7 +5,7 @@ import math
 import pytest
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.literals import AstrologicalPoint
 from typing import List
 
 

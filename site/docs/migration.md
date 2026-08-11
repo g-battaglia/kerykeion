@@ -157,7 +157,7 @@ In active_points lists:
 | v4 Import | v5 Import |
 |:----------|:----------|
 | `from kerykeion.kr_types import *` | `from kerykeion.schemas import *` |
-| `from kerykeion.kr_types.kr_literals import Planet` | `from kerykeion.schemas.kr_literals import AstrologicalPoint` |
+| `from kerykeion.kr_types.kr_literals import Planet` | `from kerykeion.schemas.literals import AstrologicalPoint` |
 | `from kerykeion.kr_types import KerykeionException` | `from kerykeion.schemas import KerykeionException` |
 
 ### 6. Type Aliases
@@ -169,7 +169,7 @@ The `Planet` and `AxialCusps` types were unified into `AstrologicalPoint`:
 # from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 
 # v6 (correct)
-from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.literals import AstrologicalPoint
 ```
 
 The v5 model aliases `NatalAspectsModel` and `SynastryAspectsModel` were also removed — use `SingleChartAspectsModel` and `DualChartAspectsModel` instead.

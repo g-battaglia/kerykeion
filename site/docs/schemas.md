@@ -14,11 +14,11 @@ This section documents the core data structures, Pydantic models, and type defin
 
 The `kerykeion.schemas` package contains all the data definitions:
 
--   **`kr_models`**: Pydantic models for astrological subjects, charts, and points.
--   **`kr_literals`**: String literals for strict type hinting (Zodiac signs, Planets, Houses, etc.).
+-   **`models`**: Pydantic models for astrological subjects, charts, and points.
+-   **`literals`**: String literals for strict type hinting (Zodiac signs, Planets, Houses, etc.).
 -   **`settings_models`**: Configuration models for library settings.
 -   **`chart_template_model`**: Models for SVG chart generation.
--   **`kerykeion_exception`**: Standard exception class for the library.
+-   **`exceptions`**: Standard exception class for the library.
 
 ### Subscriptable Models
 
@@ -35,9 +35,9 @@ print(subject.name)
 print(subject["name"])
 ```
 
-## Core Models (`kr_models`)
+## Core Models (`models`)
 
-Import from: `kerykeion.schemas.kr_models`
+Import from: `kerykeion.schemas.models`
 
 ### AstrologicalSubjectModel
 
@@ -489,9 +489,9 @@ These models are returned by the v6 advanced calculation factories. Each factory
 
 ---
 
-## Literals & Constants (`kr_literals`)
+## Literals & Constants (`literals`)
 
-Import from: `kerykeion.schemas.kr_literals`
+Import from: `kerykeion.schemas.literals`
 
 These Literal types define the allowed string values for various model fields, providing strict type checking and autocompletion in your IDE.
 
@@ -961,9 +961,9 @@ Defines all the string labels used in chart generation and reports. Planet/point
 
 ---
 
-## Exceptions (`kerykeion_exception`)
+## Exceptions (`exceptions`)
 
-Import from: `kerykeion.schemas.kerykeion_exception`
+Import from: `kerykeion.schemas.exceptions`
 
 ### `KerykeionException`
 

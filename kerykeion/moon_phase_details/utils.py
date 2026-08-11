@@ -26,7 +26,7 @@ import math
 from datetime import datetime, timezone
 from typing import Optional
 from kerykeion.ephemeris_backend import ephe, EPHE_DATA_PATH
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.utilities import wrap_180
 
 logger = logging.getLogger(__name__)

@@ -30,7 +30,7 @@ from kerykeion.moon_phase_details.utils import (
     compute_sun_transit_ephe,
     configure_ephemeris_path,
 )
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.utilities import (
     datetime_to_julian,
     is_ambiguous,

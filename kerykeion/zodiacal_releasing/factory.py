@@ -10,10 +10,10 @@ from typing import Iterator, List, Literal, Optional
 
 from kerykeion.dignities.rulers import get_domicile_ruler
 from kerykeion.dominants.utils import part_of_fortune_degree
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.utilities import resolve_sect_is_diurnal, resolve_subject_birth_datetime
-from kerykeion.schemas.kr_literals import SIGN_CODES, Sign
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.literals import SIGN_CODES, Sign
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     ZodiacalReleasingModel,
     ZRPeriodModel,

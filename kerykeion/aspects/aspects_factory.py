@@ -21,7 +21,7 @@ from kerykeion.aspects.orb_utils import (
     resolve_pair_orb_adjustments_for_aspects,
     validate_point_orb_adjustments,
 )
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     AspectModel,
     ActiveAspect,
@@ -30,8 +30,8 @@ from kerykeion.schemas.kr_models import (
     SingleChartAspectsModel,
     DualChartAspectsModel,
 )
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint, AspectMovementType
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.literals import AstrologicalPoint, AspectMovementType
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS, AXIAL_POINTS
 from kerykeion.settings.chart_defaults import (
     DEFAULT_CELESTIAL_POINTS_SETTINGS,

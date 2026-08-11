@@ -32,7 +32,7 @@ from kerykeion.schemas import (
     KerykeionPointModel,
 )
 from kerykeion.schemas import ChartTemplateModel
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     CompositeSubjectModel,
     PlanetReturnModel,
@@ -42,7 +42,7 @@ from kerykeion.schemas.kr_models import (
 from kerykeion.schemas.settings_models import (
     KerykeionLanguageModel,
 )
-from kerykeion.schemas.kr_literals import (
+from kerykeion.schemas.literals import (
     KerykeionChartTheme,
     KerykeionChartStyle,
     KerykeionChartLanguage,
@@ -456,7 +456,7 @@ DEFAULT_GRID_POSITIONS = GridPositionsConfig()
 
 from typing import Protocol, TYPE_CHECKING
 
-from kerykeion.schemas.kr_models import ChartDataModel
+from kerykeion.schemas.models import ChartDataModel
 
 if TYPE_CHECKING:
     from kerykeion.charts.chart_drawer import ChartDrawer  # type: ignore[attr-defined]  # noqa: F811

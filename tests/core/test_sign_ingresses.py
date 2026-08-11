@@ -3,7 +3,7 @@
 
 import pytest
 
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.sign_ingresses import SignIngressFactory
 from kerykeion.utilities import datetime_to_julian
 from datetime import datetime

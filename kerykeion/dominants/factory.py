@@ -32,9 +32,9 @@ from kerykeion.dominants.strategies import (
     ElementalBalanceStrategy,
     ModernDominantStrategy,
 )
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import DominantMethod
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, DominantsModel
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.literals import DominantMethod
+from kerykeion.schemas.models import AstrologicalSubjectModel, DominantsModel
 
 #: Registry of built-in schools. Instances are stateless and safe to share.
 _BUILTIN_STRATEGIES: Dict[str, DominantStrategy] = {

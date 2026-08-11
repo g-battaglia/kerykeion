@@ -26,7 +26,7 @@ from typing import Optional
 from kerykeion.aspects.aspects_utils import difdeg2n
 from kerykeion.ephemeris_backend import ephe
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
-from kerykeion.schemas.kr_literals import VocAspectName, VocTargetPlanet
+from kerykeion.schemas.literals import VocAspectName, VocTargetPlanet
 from kerykeion.sun_times.utils import julian_day_to_utc
 from kerykeion.utilities import datetime_to_julian
 

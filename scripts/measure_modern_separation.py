@@ -71,7 +71,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from kerykeion.charts import draw_modern as dm
-from kerykeion.schemas.kr_models import KerykeionPointModel
+from kerykeion.schemas.models import KerykeionPointModel
 from kerykeion.settings.chart_defaults import KNOWN_GLYPH_NAMES
 
 TEMPLATE = Path(__file__).resolve().parent.parent / "kerykeion" / "charts" / "templates" / "modern_wheel.xml"

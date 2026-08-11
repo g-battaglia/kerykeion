@@ -86,8 +86,8 @@ from kerykeion.astrological_subject_factory import (
     DEFAULT_GEONAMES_USERNAME,
 )
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
-from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import PlanetReturnModel, AstrologicalSubjectModel
+from kerykeion.schemas.literals import AstrologicalPoint
+from kerykeion.schemas.models import PlanetReturnModel, AstrologicalSubjectModel
 
 
 # Backend errors the return-crossing search can raise when it walks off the

@@ -1305,7 +1305,7 @@ class TestSiderealModeValidation:
         Factory-built subjects always carry a mode; this guards direct/manual
         model construction (the previously-masked ambiguous case).
         """
-        from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+        from kerykeion.schemas.models import AstrologicalSubjectModel
         from pydantic import ValidationError
         import pytest
 

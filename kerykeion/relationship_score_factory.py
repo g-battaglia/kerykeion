@@ -47,14 +47,14 @@ from typing import Optional
 
 from kerykeion.aspects import AspectsFactory
 from kerykeion.settings.config_constants import DISCEPOLO_SCORE_ACTIVE_ASPECTS
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     RelationshipScoreAspectModel,
     RelationshipScoreModel,
     ScoreBreakdownItemModel,
 )
-from kerykeion.schemas.kr_literals import RelationshipScoreDescription
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.literals import RelationshipScoreDescription
+from kerykeion.schemas.exceptions import KerykeionException
 
 # Scoring constants
 DESTINY_SIGN_POINTS = 5

@@ -141,7 +141,7 @@ from .report import ReportGenerator
 # DATA MODELS
 # =============================================================================
 from .schemas import KerykeionException
-from .schemas.kr_models import (
+from .schemas.models import (
     AstrologicalSubjectModel,
     CompositeSubjectModel,
     KerykeionPointModel,
@@ -190,7 +190,7 @@ from .schemas.kr_models import (
     RelationshipScoreModel,
     EphemerisDictModel,
 )
-from .schemas.kr_literals import DominantMethod
+from .schemas.literals import DominantMethod
 
 # =============================================================================
 # SETTINGS AND UTILITIES

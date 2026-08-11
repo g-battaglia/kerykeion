@@ -5,7 +5,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from pydantic import Field
 from typing import Optional
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.models import SubscriptableBaseModel
 
 
 class KerykeionSettingsCelestialPointModel(SubscriptableBaseModel):

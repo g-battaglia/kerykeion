@@ -21,8 +21,8 @@ from typing import Literal, Mapping, Optional, Sequence, Union
 from xml.sax.saxutils import escape as _xml_escape
 
 from kerykeion.schemas import ChartType, KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.literals import AstrologicalPoint
+from kerykeion.schemas.models import (
     AspectModel,
     AstrologicalSubjectModel,
     CompositeSubjectModel,

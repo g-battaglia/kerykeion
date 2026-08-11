@@ -31,7 +31,7 @@ from typing import Dict, List, Sequence, Tuple
 
 from kerykeion.aspects.aspects_utils import difdeg2n
 from kerykeion.ephemeris_backend import ephe
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 
 # Uniform sampling step (days). See module docstring for the safety argument.
 _STEP_DAYS = 0.25

@@ -26,7 +26,7 @@ from zoneinfo import ZoneInfo, available_timezones
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.utilities import is_ambiguous, is_nonexistent, localize_naive, safe_timezone
 
 _ROME = ZoneInfo("Europe/Rome")

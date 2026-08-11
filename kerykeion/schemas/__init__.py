@@ -3,7 +3,7 @@
 Canonical home of all public Kerykeion models, literals and settings.
 
 Every public Pydantic model in the package is importable from
-``kerykeion.schemas``. Models defined in this package (``kr_models``,
+``kerykeion.schemas``. Models defined in this package (``models``,
 ``settings_models``, ...) are imported eagerly; models defined next to their
 feature factory (lunations, eclipses, astro-cartography, ...) are re-exported
 lazily via PEP 562 so that ``import kerykeion.schemas`` stays lightweight and
@@ -15,8 +15,8 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 from importlib import import_module
 from typing import TYPE_CHECKING
 
-from .kerykeion_exception import KerykeionException
-from .kr_literals import (
+from .exceptions import KerykeionException
+from .literals import (
     ZodiacType,
     Sign,
     SignNumbers,
@@ -47,7 +47,7 @@ from .kr_literals import (
     ReturnType,
     DominantMethod,
 )
-from .kr_models import (
+from .models import (
     SubscriptableBaseModel,
     LunarPhaseModel,
     KerykeionPointModel,
@@ -232,7 +232,7 @@ __all__ = [
     "KerykeionSettingsCelestialPointModel",
     "KerykeionLanguageCelestialPointModel",
     "KerykeionLanguageModel",
-    # Main Literal Types (from kr_literals)
+    # Main Literal Types (from literals)
     "ZodiacType",
     "Sign",
     "SignNumbers",
@@ -262,7 +262,7 @@ __all__ = [
     "AspectName",
     "ReturnType",
     "DominantMethod",
-    # Main Model Classes (from kr_models)
+    # Main Model Classes (from models)
     "SubscriptableBaseModel",
     "LunarPhaseModel",
     "KerykeionPointModel",
@@ -286,7 +286,7 @@ __all__ = [
     "DominantBreakdownItemModel",
     "DominantsModel",
     "TriplicityLordsModel",
-    # Chart data (from kr_models)
+    # Chart data (from models)
     "ChartDataModel",
     "AngularityModel",
     "StelliumModel",
@@ -296,25 +296,25 @@ __all__ = [
     "DualChartAspectsModel",
     "ElementDistributionModel",
     "QualityDistributionModel",
-    # House comparison (from kr_models)
+    # House comparison (from models)
     "HouseComparisonModel",
     "PointInHouseModel",
-    # Transit events (from kr_models)
+    # Transit events (from models)
     "TransitEventModel",
     "TransitEventsTimeRangeModel",
-    # Sun times / planetary hours (from kr_models)
+    # Sun times / planetary hours (from models)
     "SunTimesModel",
     "PlanetaryHourModel",
     "PlanetaryHoursModel",
-    # Void of course Moon (from kr_models)
+    # Void of course Moon (from models)
     "VoidOfCourseAspectModel",
     "VoidOfCourseMoonModel",
     "VoidOfCourseWindowModel",
     "VoidOfCourseWindowsCollectionModel",
-    # Planetary phenomena (from kr_models)
+    # Planetary phenomena (from models)
     "PlanetaryPhenomenaModel",
     "PlanetaryPhenomenaCollectionModel",
-    # Zodiacal releasing (from kr_models)
+    # Zodiacal releasing (from models)
     "ZodiacalReleasingModel",
     "ZRPeriodModel",
     "ProfectionsModel",
@@ -327,7 +327,7 @@ __all__ = [
     "HoraryIndicatorsModel",
     "HorarySignificatorModel",
     "HoraryConsiderationModel",
-    # Moon phase details (from kr_models)
+    # Moon phase details (from models)
     "MoonPhaseOverviewModel",
     "MoonPhaseEclipseModel",
     "MoonPhaseEventMomentModel",

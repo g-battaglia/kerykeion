@@ -13,8 +13,8 @@ from __future__ import annotations
 from typing import Literal
 
 from kerykeion.schemas import KerykeionException
-from kerykeion.schemas.kr_literals import Element
-from kerykeion.schemas.kr_models import TriplicityLordsModel
+from kerykeion.schemas.literals import Element
+from kerykeion.schemas.models import TriplicityLordsModel
 
 from .dignity_data import TRIPLICITY_RULERS
 
@@ -29,7 +29,7 @@ def get_triplicity_lords(element: Element, is_diurnal: bool) -> TriplicityLordsM
             (out-of-sect); the participating lord is the same for both sects.
 
     Returns:
-        A :class:`~kerykeion.schemas.kr_models.TriplicityLordsModel` with
+        A :class:`~kerykeion.schemas.models.TriplicityLordsModel` with
         ``primary`` (in-sect lord), ``secondary`` (out-of-sect lord) and
         ``participating`` (active in both sects).
 

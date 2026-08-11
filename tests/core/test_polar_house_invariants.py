@@ -532,7 +532,7 @@ class TestACompositeCannotMixTwoDivisions:
 
     def test_a_substituted_parent_cannot_compose_with_an_intact_one(self):
         from kerykeion.composite_subject_factory import CompositeSubjectFactory
-        from kerykeion.schemas.kerykeion_exception import KerykeionException
+        from kerykeion.schemas.exceptions import KerykeionException
 
         polar = self._subject("Polar", 78.2232)
         temperate = self._subject(

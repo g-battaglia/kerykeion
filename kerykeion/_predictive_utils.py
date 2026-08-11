@@ -12,7 +12,7 @@ from datetime import date
 from typing import Iterable, List, Optional, Sequence
 
 from kerykeion.schemas import KerykeionException
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
+from kerykeion.schemas.models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS, DEFAULT_PREDICTIVE_POINTS
 
 PTOLEMAIC_ASPECTS: tuple[str, ...] = (

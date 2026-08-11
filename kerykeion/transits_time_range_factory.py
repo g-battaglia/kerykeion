@@ -70,12 +70,12 @@ import math
 
 from typing import Union, List, Optional, cast
 from datetime import datetime, timedelta
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects import AspectsFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import ActiveAspect, TransitEventModel, TransitEventsTimeRangeModel, TransitMomentModel, TransitsTimeRangeModel
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.literals import AstrologicalPoint
+from kerykeion.schemas.models import ActiveAspect, TransitEventModel, TransitEventsTimeRangeModel, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.schemas.settings_models import KerykeionSettingsModel
 from kerykeion.settings.config_constants import (
     DEFAULT_ACTIVE_POINTS,

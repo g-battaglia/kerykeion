@@ -19,10 +19,10 @@ from typing import List, Optional
 
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion._predictive_utils import validate_julian_day
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     PlanetaryPhenomenaModel,
     PlanetaryPhenomenaCollectionModel,

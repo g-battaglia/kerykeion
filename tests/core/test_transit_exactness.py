@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
-from kerykeion.schemas.kr_models import AspectModel, TransitMomentModel, TransitsTimeRangeModel
+from kerykeion.schemas.models import AspectModel, TransitMomentModel, TransitsTimeRangeModel
 from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
 
 

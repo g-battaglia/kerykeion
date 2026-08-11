@@ -923,7 +923,7 @@ def regenerate_ephemeris() -> None:
         ephemeris_data,
         "Expected ephemeris data for various time ranges.",
         "--ephemeris",
-        imports=("from kerykeion.schemas.kr_models import KerykeionPointModel",),
+        imports=("from kerykeion.schemas.models import KerykeionPointModel",),
     )
 
 

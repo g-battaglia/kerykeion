@@ -6,7 +6,7 @@ import pytest
 
 from kerykeion import PlanetaryHoursFactory
 from kerykeion.planetary_hours.utils import CHALDEAN_ORDER
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 
 ROME = dict(latitude=41.9028, longitude=12.4964, tz_str="Europe/Rome")
 TROMSO = dict(latitude=69.6492, longitude=18.9553, tz_str="Europe/Oslo")

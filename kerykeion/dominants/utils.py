@@ -26,8 +26,8 @@ from kerykeion.dominants.data import (
     SIGN_NUM_TO_QUALITY,
 )
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
-from kerykeion.schemas.kr_literals import SIGN_CODES, Element, Quality, Sign
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
+from kerykeion.schemas.literals import SIGN_CODES, Element, Quality, Sign
+from kerykeion.schemas.models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.utilities import resolve_sect_is_diurnal, wrap_180
 
 logger = logging.getLogger(__name__)

@@ -49,8 +49,8 @@ from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
 from kerykeion.profections import ProfectionsFactory
 from kerykeion.receptions import MutualReceptionsFactory
 from kerykeion.zodiacal_releasing import ZodiacalReleasingFactory
-from kerykeion.schemas.kr_literals import AspectName
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.literals import AspectName
+from kerykeion.schemas.models import (
     DominantsModel,
     FirdariaModel,
     HoraryIndicatorsModel,

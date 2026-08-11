@@ -46,7 +46,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.utilities import (
     get_houses_list,
     get_available_astrological_points_list,
@@ -67,7 +67,7 @@ from kerykeion.schemas import (
     PerspectiveType,
     ZodiacType,
 )
-from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.literals import AstrologicalPoint
 from datetime import datetime, timedelta, timezone
 
 from typing import Any, List, Literal, Optional

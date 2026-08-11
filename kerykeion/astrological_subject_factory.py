@@ -1060,7 +1060,7 @@ class AstrologicalSubjectFactory:
                     f"Unknown active_points {_unknown_points}: not valid astrological "
                     "points (and not fixed star names, which are redirected to "
                     "active_fixed_stars). Check the AstrologicalPoint literal in "
-                    "kerykeion.schemas.kr_literals for valid names."
+                    "kerykeion.schemas.literals for valid names."
                 )
 
         # The center body of the perspective has no position as seen from itself
@@ -1593,7 +1593,7 @@ class AstrologicalSubjectFactory:
 
             # Calculate Nutation/Obliquity parameters (optional, v6.0)
             if config.calculate_nutation:
-                from kerykeion.schemas.kr_models import NutationObliquityModel
+                from kerykeion.schemas.models import NutationObliquityModel
 
                 try:
                     # Reuse the ECL_NUT result already fetched for OOB detection; only
@@ -3690,7 +3690,7 @@ class AstrologicalSubjectFactory:
 
 
 if __name__ == "__main__":
-    from kerykeion.schemas.kr_literals import AstrologicalPoint
+    from kerykeion.schemas.literals import AstrologicalPoint
 
     # Example usage
     new_active_points: List[AstrologicalPoint] = [

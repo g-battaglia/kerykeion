@@ -24,11 +24,11 @@ from __future__ import annotations
 from typing import List, Optional, Sequence, cast
 
 from pydantic import Field
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.models import SubscriptableBaseModel
 
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
-from kerykeion.schemas.kr_literals import SIGN_CODES, SignNumbers
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, KerykeionPointModel
+from kerykeion.schemas.literals import SIGN_CODES, SignNumbers
+from kerykeion.schemas.models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings
 from kerykeion.utilities import _ZODIAC_SIGNS, circular_mean, get_planet_house, HOUSE_FIELD_NAMES
 

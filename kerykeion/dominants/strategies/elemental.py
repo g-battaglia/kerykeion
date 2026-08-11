@@ -24,12 +24,12 @@ from kerykeion.dominants.data import (
     POLARITY_BY_ELEMENT,
     QUALITY_LOWER_TO_TITLE,
 )
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, DominantsModel
+from kerykeion.schemas.models import AstrologicalSubjectModel, DominantsModel
 
 if TYPE_CHECKING:
     from typing import Sequence
 
-    from kerykeion.schemas.kr_literals import Element
+    from kerykeion.schemas.literals import Element
     from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 
 

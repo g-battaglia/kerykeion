@@ -6,7 +6,7 @@ import pytest
 from kerykeion.aspects.aspects_utils import difdeg2n
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.mundane_aspects import MundaneAspectFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 
 
 class TestGreatConjunction2020:

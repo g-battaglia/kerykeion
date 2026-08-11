@@ -77,7 +77,7 @@ from typing import TYPE_CHECKING, Iterator, Optional, Sequence, Tuple
 if TYPE_CHECKING:
     # Type-only: the runtime import lives inside the polar fallback branch below,
     # because the models package imports back into kerykeion at load time.
-    from kerykeion.schemas.kr_models import PolarHouseFallbackModel
+    from kerykeion.schemas.models import PolarHouseFallbackModel
 
 logger = logging.getLogger(__name__)
 
@@ -326,7 +326,7 @@ def houses_ex2_with_polar_fallback_ex(
         # module, but this module must not import utilities at load time, and the
         # models package imports back into kerykeion.
         from kerykeion.utilities import _POLAR_LATITUDE_LIMIT, check_and_adjust_polar_latitude
-        from kerykeion.schemas.kr_models import PolarHouseFallbackModel
+        from kerykeion.schemas.models import PolarHouseFallbackModel
 
         # The threshold and obliquity are knowable only from the backend that
         # measured them; libephemeris' PolarCircleError carries both, while the

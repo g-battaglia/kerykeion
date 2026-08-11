@@ -18,7 +18,7 @@ from functools import lru_cache
 from typing import Optional
 
 from pydantic import ConfigDict, Field
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.models import SubscriptableBaseModel
 
 
 class FixedStarMetadataModel(SubscriptableBaseModel):

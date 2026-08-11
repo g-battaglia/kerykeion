@@ -31,14 +31,14 @@ from datetime import datetime, timedelta
 from typing import Union, Optional, Literal
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field, field_validator, model_validator
-from kerykeion.schemas.kr_literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
+from kerykeion.schemas.literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
 
-# Import directly from kr_literals (NOT from the kerykeion.schemas package
+# Import directly from literals (NOT from the kerykeion.schemas package
 # __init__): importing from the package while the package is importing this
 # module works only because of the import order in schemas/__init__.py, and
 # any reordering there would break the whole package with a partial-import
 # error.
-from kerykeion.schemas.kr_literals import (
+from kerykeion.schemas.literals import (
     LunarPhaseEmoji,
     LunarPhaseName,
     AstrologicalPoint,
@@ -57,7 +57,7 @@ from kerykeion.schemas.kr_literals import (
     PerspectiveType,
     AspectMovementType,
 )
-from kerykeion.schemas.kr_literals import ReturnType, DominantMethod
+from kerykeion.schemas.literals import ReturnType, DominantMethod
 
 # Type alias for any astrological subject model (birth chart, composite, or return)
 AnySubjectModel = Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]

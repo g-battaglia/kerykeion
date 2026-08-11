@@ -45,9 +45,9 @@ from typing import Union
 # Fix the circular import by changing this import
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory, _GEO_TOPO_PERSPECTIVES
 from kerykeion._predictive_utils import jd_to_ymd_hms
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_models import CompositeSubjectModel, AstrologicalSubjectModel, PolarHouseFallbackModel
-from kerykeion.schemas.kr_literals import (
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.models import CompositeSubjectModel, AstrologicalSubjectModel, PolarHouseFallbackModel
+from kerykeion.schemas.literals import (
     ZodiacType,
     PerspectiveType,
     HousesSystemIdentifier,

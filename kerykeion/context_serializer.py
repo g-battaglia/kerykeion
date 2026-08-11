@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Optional, Union
 from xml.sax.saxutils import escape, quoteattr
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     KerykeionPointModel,
     LunarPhaseModel,
     AstrologicalSubjectModel,

@@ -25,8 +25,8 @@ from __future__ import annotations
 
 from typing import Dict, List, Tuple
 
-from kerykeion.schemas.kr_literals import Element, Quality, Sign
-from kerykeion.schemas.kr_models import ActiveAspect
+from kerykeion.schemas.literals import Element, Quality, Sign
+from kerykeion.schemas.models import ActiveAspect
 
 # =============================================================================
 # ZODIAC: SIGN INDEX -> ELEMENT / QUALITY (Title-case)

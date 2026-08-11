@@ -9,7 +9,7 @@ import pytest
 
 import kerykeion.sun_times.utils as sun_times_utils
 from kerykeion import SunTimesFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 
 # Rome
 ROME = dict(latitude=41.9028, longitude=12.4964, tz_str="Europe/Rome")

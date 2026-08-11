@@ -27,9 +27,9 @@ from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from kerykeion._predictive_utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_bounds
 
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import SiderealMode, ZodiacType
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.literals import SiderealMode, ZodiacType
+from kerykeion.schemas.models import SubscriptableBaseModel
 from kerykeion.utilities import (
     datetime_to_julian,
     get_kerykeion_point_from_degree,

@@ -26,7 +26,7 @@ from typing import List, Mapping, Optional, Sequence
 
 from pydantic import BaseModel, Field  # noqa: F401  (BaseModel kept for back-compat imports)
 
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.models import SubscriptableBaseModel
 
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
 from kerykeion.aspects.orb_utils import (
@@ -38,8 +38,8 @@ from kerykeion.aspects.orb_utils import (
     validate_point_orb_adjustments,
 )
 from kerykeion.schemas import KerykeionException
-from kerykeion.schemas.kr_literals import SIGN_CODES
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+from kerykeion.schemas.literals import SIGN_CODES
+from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion._predictive_utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
 from kerykeion.utilities import _ZODIAC_SIGNS, get_planet_house, HOUSE_FIELD_NAMES
 

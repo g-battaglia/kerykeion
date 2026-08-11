@@ -41,7 +41,7 @@ from kerykeion.dominants.data import (
     WEEKDAY_RULERS,
 )
 from kerykeion.dominants.utils import ZodiacPosition, part_of_fortune_degree, prenatal_syzygy, zodiac_breakdown
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, DominantsModel
+from kerykeion.schemas.models import AstrologicalSubjectModel, DominantsModel
 from kerykeion.utilities import get_house_number, resolve_sect_is_diurnal
 
 

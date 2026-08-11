@@ -60,8 +60,8 @@ from kerykeion.dominants.data import (
     RULER_BONUS_SUN_SIGN,
 )
 from kerykeion.dominants.utils import angle_degrees, rulers_inverse, scoring_planets
-from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, DominantsModel, KerykeionPointModel
+from kerykeion.schemas.literals import AstrologicalPoint
+from kerykeion.schemas.models import AstrologicalSubjectModel, DominantsModel, KerykeionPointModel
 from kerykeion.utilities import get_house_number, resolve_sect_is_diurnal
 
 #: The four chart angles, in the order the engine references them.

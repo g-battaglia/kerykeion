@@ -34,7 +34,7 @@ from kerykeion.charts.chart_drawer import ChartDrawer
 from kerykeion.charts.charts_utils import make_lunar_phase
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.schemas.kr_models import KerykeionPointModel
+from kerykeion.schemas.models import KerykeionPointModel
 from kerykeion.secondary_progressions import SecondaryProgressionFactory
 from kerykeion.schemas import KerykeionException
 

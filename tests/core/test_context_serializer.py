@@ -566,7 +566,7 @@ class TestToContextDispatcher:
 
     def test_dispatcher_with_moon_phase_overview(self):
         """Test dispatcher with MoonPhaseOverviewModel."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -666,7 +666,7 @@ class TestNonQualitativeOutput:
 
     def test_no_interpretive_language_moon_phase_overview(self):
         """Ensure no interpretive language in moon phase overview output."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             moon=MoonPhaseMoonSummaryModel(
@@ -778,7 +778,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_minimal_overview(self):
         """Test a minimal MoonPhaseOverviewModel (only required fields)."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -794,7 +794,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_moon_details(self):
         """Test MoonPhaseOverviewModel with moon summary fields."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -819,7 +819,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_sun_info(self):
         """Test MoonPhaseOverviewModel with sun info."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseSunInfoModel,
@@ -846,7 +846,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_location(self):
         """Test MoonPhaseOverviewModel with location info."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseLocationModel,
@@ -868,7 +868,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_upcoming_phases(self):
         """Test MoonPhaseOverviewModel with upcoming phases."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -903,7 +903,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_zodiac(self):
         """Test MoonPhaseOverviewModel with zodiac info."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseZodiacModel,
@@ -926,7 +926,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_moonrise_moonset(self):
         """Test MoonPhaseOverviewModel with moonrise/moonset fields."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -947,7 +947,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_next_lunar_eclipse(self):
         """Test MoonPhaseOverviewModel with next lunar eclipse."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseEclipseModel,
@@ -972,7 +972,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_detailed_position(self):
         """Test MoonPhaseOverviewModel with detailed moon position."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1007,7 +1007,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_visibility_and_viewing_conditions(self):
         """Test MoonPhaseOverviewModel with visibility and viewing conditions."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1050,7 +1050,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_visibility_without_viewing_conditions(self):
         """Test MoonPhaseOverviewModel with visibility but no viewing conditions."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1078,7 +1078,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_illumination_details(self):
         """Test MoonPhaseOverviewModel with illumination details."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1107,7 +1107,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_events_and_optimal_viewing(self):
         """Test MoonPhaseOverviewModel with events and optimal viewing period."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseEventsModel,
@@ -1143,7 +1143,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_events_without_optimal_viewing(self):
         """Test MoonPhaseOverviewModel with events but no optimal viewing period."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseEventsModel,
@@ -1167,7 +1167,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_sun_position_and_eclipse(self):
         """Test MoonPhaseOverviewModel with sun position and solar eclipse."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseSunInfoModel,
@@ -1204,7 +1204,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_extended_location(self):
         """Test MoonPhaseOverviewModel with all location attributes."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseLocationModel,
@@ -1230,7 +1230,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_none_fields_omitted(self):
         """Test that None/optional fields are omitted from XML output."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -1254,7 +1254,7 @@ class TestTransitMomentToContext:
 
     def test_transit_moment_with_aspects(self):
         from kerykeion.context_serializer import transit_moment_to_context
-        from kerykeion.schemas.kr_models import TransitMomentModel, AspectModel
+        from kerykeion.schemas.models import TransitMomentModel, AspectModel
 
         aspect = AspectModel(
             p1_name="Sun",
@@ -1280,14 +1280,14 @@ class TestTransitMomentToContext:
 
     def test_transit_moment_no_aspects(self):
         from kerykeion.context_serializer import transit_moment_to_context
-        from kerykeion.schemas.kr_models import TransitMomentModel
+        from kerykeion.schemas.models import TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         result = transit_moment_to_context(moment)
         assert "<transit_moment " in result
 
     def test_transit_moment_via_to_context(self):
-        from kerykeion.schemas.kr_models import TransitMomentModel
+        from kerykeion.schemas.models import TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         result = to_context(moment)
@@ -1315,7 +1315,7 @@ class TestTransitsTimeRangeToContext:
 
     def test_time_range_with_subject(self, _subject):
         from kerykeion.context_serializer import transits_time_range_to_context
-        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+        from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         tr = TransitsTimeRangeModel(
@@ -1327,7 +1327,7 @@ class TestTransitsTimeRangeToContext:
         assert "<transit_analysis " in result
 
     def test_time_range_via_to_context(self, _subject):
-        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+        from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         tr = TransitsTimeRangeModel(
@@ -1340,7 +1340,7 @@ class TestTransitsTimeRangeToContext:
 
     def test_time_range_no_subject(self):
         from kerykeion.context_serializer import transits_time_range_to_context
-        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+        from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         tr = TransitsTimeRangeModel(subject=None, transits=[moment], dates=["2024-01-15T12:00:00"])

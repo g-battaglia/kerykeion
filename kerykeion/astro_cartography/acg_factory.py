@@ -26,9 +26,9 @@ from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from typing import List, Optional, Dict, Literal
 from pydantic import Field
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.models import SubscriptableBaseModel
 
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
 from kerykeion.utilities import wrap_180
 

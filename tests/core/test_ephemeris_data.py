@@ -944,7 +944,7 @@ class TestFixedStarsInEphemeris:
 
     def test_requested_stars_present_with_point_model_shape(self):
         """Requested stars appear in every sample as KerykeionPointModel entries."""
-        from kerykeion.schemas.kr_models import KerykeionPointModel
+        from kerykeion.schemas.models import KerykeionPointModel
 
         data = self._factory(active_fixed_stars=["Regulus", "Spica"]).get_ephemeris_data()
         assert len(data) == 2

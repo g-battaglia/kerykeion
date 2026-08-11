@@ -16,7 +16,7 @@ from kerykeion.utilities import (
     format_timedelta_hhmm,
     strip_illegal_control_chars,
 )
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     AngularityModel,
     AstrologicalSubjectModel,
     ChartDataModel,
@@ -48,7 +48,7 @@ from kerykeion.settings.config_constants import (
 )
 
 
-# Keys must match the ``AspectName`` literal values in kerykeion.schemas.kr_literals.
+# Keys must match the ``AspectName`` literal values in kerykeion.schemas.literals.
 ASPECT_SYMBOLS = {
     "conjunction": "☌",
     "opposition": "☍",

@@ -6,14 +6,14 @@ Sources:
     - William Lilly, Christian Astrology (1647)
     - Robert Hand, Night & Day (2009)
 
-All tables use the 3-letter sign abbreviations from kr_literals.Sign.
+All tables use the 3-letter sign abbreviations from literals.Sign.
 """
 
 from typing import Dict, List, Optional, Tuple
 
-from kerykeion.schemas.kr_literals import ClassicalPlanet
+from kerykeion.schemas.literals import ClassicalPlanet
 
-from kerykeion.schemas.kr_literals import SIGN_CODES
+from kerykeion.schemas.literals import SIGN_CODES
 
 # =========================================================================
 # DOMICILE (Rulership) — planet rules the sign

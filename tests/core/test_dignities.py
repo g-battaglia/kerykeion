@@ -340,7 +340,7 @@ class TestDignityScoreDocumentedRange:
         assert lo["dignity_score"] == -9
 
     def test_field_doc_states_true_range(self):
-        from kerykeion.schemas.kr_models import KerykeionPointModel
+        from kerykeion.schemas.models import KerykeionPointModel
 
         desc = KerykeionPointModel.model_fields["dignity_score"].description or ""
         assert "-9" in desc and "+11" in desc

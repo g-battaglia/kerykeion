@@ -52,11 +52,11 @@ import math
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from typing import List, Optional, Literal, Tuple, cast
 from pydantic import Field
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.models import SubscriptableBaseModel
 
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.literals import AstrologicalPoint
+from kerykeion.schemas.models import AstrologicalSubjectModel
 
 
 def _require_geometry(subject: AstrologicalSubjectModel) -> None:

@@ -25,8 +25,8 @@ from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion._predictive_utils import validate_julian_day
 
 from kerykeion.schemas import KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.literals import AstrologicalPoint
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     KerykeionPointModel,
     SubscriptableBaseModel,

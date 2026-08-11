@@ -4,7 +4,7 @@
 import pytest
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion.eclipses import EclipseFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 
 
 class TestGlobalSearch:

@@ -20,9 +20,9 @@ from typing import List, Optional
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion._predictive_utils import jd_to_iso_utc as _jd_to_iso
 
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode, ZodiacType
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.literals import AstrologicalPoint, SiderealMode, ZodiacType
+from kerykeion.schemas.models import SubscriptableBaseModel
 from kerykeion.utilities import get_kerykeion_point_from_degree, validate_latitude, validate_longitude
 from pydantic import Field
 

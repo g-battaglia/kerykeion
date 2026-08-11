@@ -13,7 +13,7 @@ from typing import get_args
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.schemas import KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode
+from kerykeion.schemas.literals import AstrologicalPoint, SiderealMode
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 
 

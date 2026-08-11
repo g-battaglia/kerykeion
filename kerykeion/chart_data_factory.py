@@ -36,7 +36,7 @@ from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.house_comparison_factory import HouseComparisonFactory
 from kerykeion.relationship_score_factory import RelationshipScoreFactory
 from kerykeion.schemas import KerykeionException, ChartType, ActiveAspect
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     AngularityModel,
     AstrologicalSubjectModel,
     CompositeSubjectModel,
@@ -51,7 +51,7 @@ from kerykeion.schemas.kr_models import (
     StelliumModel,
 )
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
-from kerykeion.schemas.kr_literals import (
+from kerykeion.schemas.literals import (
     AstrologicalPoint,
 )
 from kerykeion.utilities import find_common_active_points, distribute_percentages_to_100, has_terrestrial_frame

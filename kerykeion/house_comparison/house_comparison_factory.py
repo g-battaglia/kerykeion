@@ -15,12 +15,12 @@ from kerykeion.house_comparison.house_comparison_utils import (
 )
 from typing import Union
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     HouseComparisonModel,
     PlanetReturnModel,
 )
-from kerykeion.schemas.kr_literals import AstrologicalPoint
+from kerykeion.schemas.literals import AstrologicalPoint
 
 
 class HouseComparisonFactory:

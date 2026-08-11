@@ -33,7 +33,7 @@ from kerykeion.charts.glyph_ink_metrics import (
     TEXT_INK_REFERENCE_FONT_SIZE,
 )
 from kerykeion.utilities import wrap_180
-from kerykeion.schemas.kr_models import KerykeionPointModel
+from kerykeion.schemas.models import KerykeionPointModel
 from kerykeion.settings.chart_defaults import resolve_glyph_id
 
 logger = logging.getLogger(__name__)

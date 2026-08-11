@@ -37,9 +37,9 @@ from kerykeion.settings.config_constants import STANDARD_PLANETS
 from pydantic import Field
 from typing import List, Union, cast
 
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.literals import AstrologicalPoint
+from kerykeion.schemas.models import SubscriptableBaseModel
 from kerykeion.utilities import validate_latitude, validate_longitude
 
 logger = logging.getLogger(__name__)

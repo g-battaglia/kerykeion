@@ -10,9 +10,9 @@ from typing import Optional
 
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
 from kerykeion._predictive_utils import is_iso_date_only
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import SIGN_CODES, SiderealMode, ZodiacType
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.literals import SIGN_CODES, SiderealMode, ZodiacType
+from kerykeion.schemas.models import (
     VoidOfCourseAspectModel,
     VoidOfCourseMoonModel,
     VoidOfCourseWindowModel,

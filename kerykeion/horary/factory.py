@@ -9,8 +9,8 @@ from typing import List, Optional
 
 from kerykeion.dignities.rulers import get_domicile_ruler
 from kerykeion.receptions import MutualReceptionsFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     HoraryConsiderationModel,
     HoraryIndicatorsModel,

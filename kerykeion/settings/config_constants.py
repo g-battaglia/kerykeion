@@ -19,8 +19,8 @@ import unicodedata
 
 from typing import cast
 
-from kerykeion.schemas.kr_literals import AstrologicalPoint, SiderealMode
-from kerykeion.schemas.kr_models import ActiveAspect
+from kerykeion.schemas.literals import AstrologicalPoint, SiderealMode
+from kerykeion.schemas.models import ActiveAspect
 
 
 # =============================================================================
@@ -394,7 +394,7 @@ DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
 ]
 """
 Default list of active points in the charts or aspects calculations.
-The full list of points is available in the `schemas.kr_literals.AstrologicalPoint` literal.
+The full list of points is available in the `schemas.literals.AstrologicalPoint` literal.
 """
 
 ALL_ACTIVE_POINTS: list[AstrologicalPoint] = [
@@ -468,7 +468,7 @@ ALL_ACTIVE_POINTS: list[AstrologicalPoint] = [
 ]
 """
 Full list of active points in the charts or aspects calculations.
-The full list of points is available in the `schemas.kr_literals.AstrologicalPoint` literal.
+The full list of points is available in the `schemas.literals.AstrologicalPoint` literal.
 """
 
 # =============================================================================

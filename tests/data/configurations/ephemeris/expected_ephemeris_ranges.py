@@ -7,7 +7,7 @@ DO NOT EDIT MANUALLY - regenerate using: python scripts/regenerate_all.py --ephe
 Total entries: 3
 """
 
-from kerykeion.schemas.kr_models import KerykeionPointModel
+from kerykeion.schemas.models import KerykeionPointModel
 
 EXPECTED_EPHEMERIS_RANGES = {'daily_2023_jan': {'first_point': {'date': '2023-01-01T00:00:00+00:00',
                                     'houses': [KerykeionPointModel(name='First_House', quality='Cardinal', element='Air', sign='Lib', sign_num=6, position=7.235750208012206, abs_pos=187.2357502080122, emoji='♎️', point_type='House', house=None, retrograde=None, speed=254.4169525799134, declination=None, ecliptic_latitude=None, magnitude=None, near_point=None, orb=None, aspect=None, longitude=None, latitude=None, degree=None, decan_number=None, decan_ruler=None, term_ruler=None, essential_dignity=None, dignity_score=None, nakshatra=None, nakshatra_number=None, nakshatra_pada=None, nakshatra_lord=None, gauquelin_sector=None, azimuth=None, altitude_above_horizon=None, is_out_of_bounds=None),

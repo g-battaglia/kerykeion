@@ -8,8 +8,8 @@ from __future__ import annotations
 from typing import List, Optional, Tuple
 
 from kerykeion.dignities.rulers import get_domicile_ruler
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     KerykeionPointModel,
     ProfectionsModel,

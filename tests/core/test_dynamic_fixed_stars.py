@@ -437,7 +437,7 @@ class TestFixedStarCatalogIsKnownName:
     def test_is_known_name_matches_find_for_active_point_names(self):
         from typing import get_args
         from kerykeion.fixed_stars.catalog import FixedStarCatalog
-        from kerykeion.schemas.kr_literals import AstrologicalPoint
+        from kerykeion.schemas.literals import AstrologicalPoint
 
         for name in get_args(AstrologicalPoint):
             assert FixedStarCatalog.is_known_name(name) == (

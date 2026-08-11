@@ -15,7 +15,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from typing import Optional
 
-from kerykeion.schemas.kr_literals import MotionState
+from kerykeion.schemas.literals import MotionState
 
 __all__ = ["MEAN_DAILY_MOTION_DEGREES", "classify_motion_state"]
 

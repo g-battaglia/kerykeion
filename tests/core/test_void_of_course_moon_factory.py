@@ -10,9 +10,9 @@ import pytest
 from kerykeion import VoidOfCourseMoonFactory
 from kerykeion.aspects.aspects_utils import difdeg2n
 from kerykeion.ephemeris_backend import ephe
-from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.schemas.kr_literals import SIGN_CODES
-from kerykeion.schemas.kr_models import VoidOfCourseAspectModel
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.schemas.literals import SIGN_CODES
+from kerykeion.schemas.models import VoidOfCourseAspectModel
 from kerykeion.utilities import datetime_to_julian
 from kerykeion.void_of_course_moon.utils import _BODY_ID
 

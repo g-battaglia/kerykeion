@@ -6,7 +6,7 @@ from datetime import datetime
 import pytest
 
 from kerykeion.lunations import LunationFinderFactory
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.utilities import datetime_to_julian
 
 

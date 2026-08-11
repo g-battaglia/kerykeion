@@ -33,7 +33,7 @@ from kerykeion import (
 from kerykeion.dominants.base import Category
 from kerykeion.dominants.strategies.modern import ModernDominantStrategy
 from kerykeion.dominants.utils import part_of_fortune_degree, prenatal_syzygy, zodiac_breakdown
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.utilities import get_kerykeion_point_from_degree
 
 pytestmark = pytest.mark.core

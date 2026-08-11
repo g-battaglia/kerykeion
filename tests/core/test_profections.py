@@ -15,7 +15,7 @@ import pytest
 from kerykeion import ProfectionsFactory
 from kerykeion.dignities import get_domicile_ruler
 from kerykeion.profections.factory import HOUSE_CUSP_FIELDS
-from kerykeion.schemas.kerykeion_exception import KerykeionException
+from kerykeion.schemas.exceptions import KerykeionException
 
 pytestmark = pytest.mark.core
 

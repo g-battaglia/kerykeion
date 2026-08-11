@@ -24,7 +24,7 @@ from kerykeion.schemas import (
     PlanetReturnModel,
     ZodiacType,
 )
-from kerykeion.schemas.kr_literals import (
+from kerykeion.schemas.literals import (
     LunarPhaseEmoji,
     LunarPhaseName,
     PointType,

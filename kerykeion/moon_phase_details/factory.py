@@ -32,7 +32,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from zoneinfo import ZoneInfo
 
-from kerykeion.schemas.kr_models import (
+from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     KerykeionPointModel,
     LunarPhaseModel,
@@ -62,7 +62,7 @@ from kerykeion.moon_phase_details.utils import (
     compute_sun_position,
 )
 from kerykeion.ephemeris_backend import ephemeris_session, ephe
-from kerykeion.schemas.kr_literals import LunarPhaseEmoji, LunarPhaseName
+from kerykeion.schemas.literals import LunarPhaseEmoji, LunarPhaseName
 from kerykeion.utilities import datetime_to_julian, julian_to_datetime, localize_naive
 
 

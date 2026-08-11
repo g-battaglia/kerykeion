@@ -9,8 +9,8 @@ from kerykeion.ephemeris_backend import ephe as _ephe
 
 difdeg2n = _ephe.difdeg2n
 from typing import Mapping, Optional, Union, get_args
-from kerykeion.schemas.kr_models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
-from kerykeion.schemas.kr_literals import AspectMovementType, AstrologicalPoint
+from kerykeion.schemas.models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
+from kerykeion.schemas.literals import AspectMovementType, AstrologicalPoint
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS, _CelestialPointSetting
 
