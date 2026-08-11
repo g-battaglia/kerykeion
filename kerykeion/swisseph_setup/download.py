@@ -186,6 +186,9 @@ def download_swisseph_data(target: Path, *, skip_asteroids: bool = False) -> dic
 def main() -> None:
     """CLI entry point: download Swiss Ephemeris data files with license confirmation."""
     parser = argparse.ArgumentParser(
+        # Explicit: under `python -m kerykeion.swisseph_setup` argparse would
+        # otherwise derive the program name from __main__.py.
+        prog="python -m kerykeion.swisseph_setup",
         description="Download Swiss Ephemeris data files for the swisseph backend.",
     )
     parser.add_argument(

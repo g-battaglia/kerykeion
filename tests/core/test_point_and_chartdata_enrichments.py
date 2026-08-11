@@ -18,7 +18,7 @@ from kerykeion.chart_data_factory import (
     _compute_stelliums,
 )
 from kerykeion.fixed_stars.catalog import FixedStarCatalog, _constellation_from_nomenclature
-from kerykeion.motion import MEAN_DAILY_MOTION_DEGREES, classify_motion_state
+from kerykeion.motion.state import MEAN_DAILY_MOTION_DEGREES, classify_motion_state
 
 pytestmark = pytest.mark.core
 

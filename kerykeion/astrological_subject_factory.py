@@ -1571,7 +1571,7 @@ class AstrologicalSubjectFactory:
             # the same reason as OOB: the tabulated means are geocentric, and a
             # heliocentric speed measured against them would be meaningless.
             if calc_data.get("perspective_type") in _GEOCENTRIC_OOB_PERSPECTIVES:
-                from kerykeion.motion import classify_motion_state
+                from kerykeion.motion.state import classify_motion_state
 
                 for pk in point_keys:
                     point = calc_data[pk]

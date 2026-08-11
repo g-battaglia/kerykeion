@@ -168,6 +168,6 @@ class TestSwephAutoDetect:
 
     def test_setup_script_targets_the_autodetected_dir(self):
         from kerykeion.ephemeris_backend import DEFAULT_SWEPH_DOWNLOAD_DIR
-        from kerykeion.swisseph_setup import _DEFAULT_TARGET
+        from kerykeion.swisseph_setup.download import _DEFAULT_TARGET
 
         assert str(_DEFAULT_TARGET) == DEFAULT_SWEPH_DOWNLOAD_DIR
