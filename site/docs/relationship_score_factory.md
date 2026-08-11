@@ -34,7 +34,7 @@ To calculate a score, create two astrological subjects via `AstrologicalSubjectF
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
 
 # 1. Create Subjects (offline mode: explicit coordinates, no GeoNames lookup)
 person_a = AstrologicalSubjectFactory.from_birth_data(

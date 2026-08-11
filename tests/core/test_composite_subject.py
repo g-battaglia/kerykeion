@@ -825,7 +825,7 @@ def test_none_subjects_raise_clean_exception():
     """None inputs must fail with a clear KerykeionException, not a raw
     AttributeError on .active_points deep in the pipeline."""
     from kerykeion.composite_subject_factory import CompositeSubjectFactory
-    from kerykeion.relationship_score_factory import RelationshipScoreFactory
+    from kerykeion.relationship_score.factory import RelationshipScoreFactory
     from kerykeion.schemas import KerykeionException
 
     with pytest.raises(KerykeionException):

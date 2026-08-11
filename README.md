@@ -1314,7 +1314,7 @@ Kerykeion can calculate a relationship compatibility score based on synastry asp
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
 
 # Create two subjects
 person1 = AstrologicalSubjectFactory.from_birth_data(

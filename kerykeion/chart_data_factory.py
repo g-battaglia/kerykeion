@@ -34,7 +34,7 @@ from typing import Collection, Mapping, Union, Optional, Literal, cast, get_args
 
 from kerykeion.aspects import AspectsFactory
 from kerykeion.house_comparison.factory import HouseComparisonFactory
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
 from kerykeion.schemas import KerykeionException, ChartType, ActiveAspect
 from kerykeion.schemas.models import (
     AngularityModel,

@@ -11,7 +11,7 @@ import pytest
 from pytest import approx
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.relationship_score_factory import (
+from kerykeion.relationship_score.factory import (
     RelationshipScoreFactory,
     DESTINY_SIGN_POINTS,
     MAJOR_ASPECT_POINTS_HIGH_PRECISION,
@@ -745,7 +745,7 @@ if __name__ == "__main__":
 class TestMissingSunGuard:
     def test_subjects_without_sun_raise_kerykeion_exception(self):
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.relationship_score_factory import RelationshipScoreFactory
+        from kerykeion.relationship_score.factory import RelationshipScoreFactory
         from kerykeion.schemas import KerykeionException
         import pytest
 

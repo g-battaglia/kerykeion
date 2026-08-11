@@ -591,7 +591,7 @@ class TestFixedStarProvenance:
         an unset field degrades silently into a missing attribute rather than an
         error — which is exactly why it needs an explicit test.
         """
-        from kerykeion.context_serializer import astrological_subject_to_context
+        from kerykeion.context.serializer import astrological_subject_to_context
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Serialized Stars", 1990, 6, 15, 14, 30,

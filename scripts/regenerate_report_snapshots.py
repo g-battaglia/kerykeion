@@ -23,7 +23,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.report import ReportGenerator
+from kerykeion.report.generator import ReportGenerator
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.dominants import DominantsFactory
 from kerykeion.firdaria import FirdariaFactory

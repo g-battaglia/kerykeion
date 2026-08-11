@@ -90,7 +90,7 @@ For finer control, use these individual converters:
 | `moon_phase_overview_to_context`  | `MoonPhaseOverviewModel`   | Moon phase overview as `<moon_phase_overview>`. |
 
 ```python
-from kerykeion.context_serializer import kerykeion_point_to_context
+from kerykeion.context.serializer import kerykeion_point_to_context
 
 sun_context = kerykeion_point_to_context(subject.sun)
 print(sun_context)

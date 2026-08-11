@@ -709,7 +709,7 @@ class TestBCEReport:
     @pytest.mark.extended
     def test_natal_report(self):
         """Natal report can be generated for a BCE subject without error."""
-        from kerykeion.report import ReportGenerator
+        from kerykeion.report.generator import ReportGenerator
 
         subject = _create_bce_subject("ides_of_march")
         data = ChartDataFactory.create_natal_chart_data(subject)

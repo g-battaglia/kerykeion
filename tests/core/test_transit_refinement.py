@@ -7,7 +7,7 @@ from unittest.mock import patch
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import ephe as _swe_module
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
-from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
+from kerykeion.transits.factory import TransitsTimeRangeFactory
 
 
 @pytest.fixture(scope="module")

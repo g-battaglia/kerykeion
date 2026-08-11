@@ -37,7 +37,7 @@ import pytest
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import BACKEND_NAME
-from kerykeion.report import ASPECT_SYMBOLS, HORARY_CONSIDERATION_LABELS, ReportGenerator
+from kerykeion.report.generator import ASPECT_SYMBOLS, HORARY_CONSIDERATION_LABELS, ReportGenerator
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
 from kerykeion.dominants import DominantsFactory

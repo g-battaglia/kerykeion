@@ -1758,7 +1758,7 @@ class TestDualChartFrameValidation:
             ChartDataFactory.create_transit_chart_data(tropical, sidereal)
 
     def test_relationship_score_rejects_mixed_frame(self, tropical, sidereal):
-        from kerykeion.relationship_score_factory import RelationshipScoreFactory
+        from kerykeion.relationship_score.factory import RelationshipScoreFactory
         from kerykeion.schemas import KerykeionException
 
         with pytest.raises(KerykeionException):
@@ -1772,7 +1772,7 @@ class TestDualChartFrameValidation:
             HouseComparisonFactory(tropical, sidereal)
 
     def test_same_frame_still_works(self, tropical, tropical_other):
-        from kerykeion.relationship_score_factory import RelationshipScoreFactory
+        from kerykeion.relationship_score.factory import RelationshipScoreFactory
         from kerykeion.house_comparison.factory import HouseComparisonFactory
 
         # Aspects, relationship score and house comparison all succeed for a

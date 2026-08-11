@@ -195,7 +195,7 @@ class TestReportHumanizesProjectedHouse:
 
     def test_projected_house_name_has_no_underscore(self, rome_subject):
         from kerykeion.house_comparison import HouseComparisonFactory
-        from kerykeion.report import ReportGenerator
+        from kerykeion.report.generator import ReportGenerator
 
         second = AstrologicalSubjectFactory.from_birth_data(
             name="Other", year=1985, month=3, day=2, hour=8, minute=15,
@@ -270,7 +270,7 @@ class TestRelocationNullsFixedStarHorizonFields:
     """
 
     def test_fixed_star_location_fields_reset_on_relocation(self):
-        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.relocated_chart.factory import RelocatedChartFactory
 
         natal = AstrologicalSubjectFactory.from_birth_data(
             name="reloc", year=1990, month=6, day=15, hour=14, minute=30,
@@ -335,7 +335,7 @@ class TestReportSanitizesHouseComparisonNames:
     """The house-comparison section rendered subject names without _san."""
 
     def test_control_chars_in_names_are_stripped(self):
-        from kerykeion.report import ReportGenerator
+        from kerykeion.report.generator import ReportGenerator
 
         first = AstrologicalSubjectFactory.from_birth_data(
             name="A\x1b]0;pwn\x07B", year=1990, month=6, day=15, hour=14, minute=30,

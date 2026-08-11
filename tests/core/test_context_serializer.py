@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.context_serializer import (
+from kerykeion.context.serializer import (
     to_context,
     kerykeion_point_to_context,
     lunar_phase_to_context,
@@ -1253,7 +1253,7 @@ class TestTransitMomentToContext:
     """Tests for transit_moment_to_context function."""
 
     def test_transit_moment_with_aspects(self):
-        from kerykeion.context_serializer import transit_moment_to_context
+        from kerykeion.context.serializer import transit_moment_to_context
         from kerykeion.schemas.models import TransitMomentModel, AspectModel
 
         aspect = AspectModel(
@@ -1279,7 +1279,7 @@ class TestTransitMomentToContext:
         assert "2024-01-15" in result
 
     def test_transit_moment_no_aspects(self):
-        from kerykeion.context_serializer import transit_moment_to_context
+        from kerykeion.context.serializer import transit_moment_to_context
         from kerykeion.schemas.models import TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
@@ -1314,7 +1314,7 @@ class TestTransitsTimeRangeToContext:
         )
 
     def test_time_range_with_subject(self, _subject):
-        from kerykeion.context_serializer import transits_time_range_to_context
+        from kerykeion.context.serializer import transits_time_range_to_context
         from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
@@ -1339,7 +1339,7 @@ class TestTransitsTimeRangeToContext:
         assert "<transit_analysis " in result
 
     def test_time_range_no_subject(self):
-        from kerykeion.context_serializer import transits_time_range_to_context
+        from kerykeion.context.serializer import transits_time_range_to_context
         from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
@@ -1382,7 +1382,7 @@ class TestHouseComparisonContext:
         return s1, s2
 
     def test_house_comparison_to_context(self, _subjects):
-        from kerykeion.context_serializer import house_comparison_to_context
+        from kerykeion.context.serializer import house_comparison_to_context
         from kerykeion.house_comparison import HouseComparisonFactory
 
         s1, s2 = _subjects
@@ -1392,7 +1392,7 @@ class TestHouseComparisonContext:
         assert "<house_overlay>" in result
 
     def test_house_comparison_transit_context(self, _subjects):
-        from kerykeion.context_serializer import house_comparison_to_context
+        from kerykeion.context.serializer import house_comparison_to_context
         from kerykeion.house_comparison import HouseComparisonFactory
 
         s1, s2 = _subjects
@@ -1422,7 +1422,7 @@ class TestHouseComparisonContext:
             assert "<point_in_house " in result
 
     def test_return_subject_to_context(self, _subjects):
-        from kerykeion.context_serializer import astrological_subject_to_context
+        from kerykeion.context.serializer import astrological_subject_to_context
         from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
         s1, _ = _subjects
@@ -1432,7 +1432,7 @@ class TestHouseComparisonContext:
         assert '<return_info type="Solar"' in result
 
     def test_solar_arc_to_context(self, _subjects):
-        from kerykeion.context_serializer import solar_arc_to_context, to_context
+        from kerykeion.context.serializer import solar_arc_to_context, to_context
         from kerykeion.secondary_progressions import SolarArcFactory
 
         s1, _ = _subjects
@@ -1448,7 +1448,7 @@ class TestHouseComparisonContext:
         assert result == result2
 
     def test_midpoints_to_context(self, _subjects):
-        from kerykeion.context_serializer import midpoints_to_context, to_context
+        from kerykeion.context.serializer import midpoints_to_context, to_context
         from kerykeion.midpoints import MidpointFactory
 
         s1, _ = _subjects
@@ -1467,7 +1467,7 @@ class TestMidpointsToContext:
     """Tests for midpoint serialization edge cases."""
 
     def test_midpoints_to_context_empty(self):
-        from kerykeion.context_serializer import midpoints_to_context
+        from kerykeion.context.serializer import midpoints_to_context
 
         result = midpoints_to_context([])
         assert 'count="0"' in result
@@ -1482,7 +1482,7 @@ class TestMidpointsToContext:
         "no midpoints"."""
         import pytest
 
-        from kerykeion.context_serializer import to_context
+        from kerykeion.context.serializer import to_context
 
         with pytest.raises(TypeError, match="midpoints_to_context"):
             to_context([])
@@ -1578,7 +1578,7 @@ class TestRoundOneRegressions:
         """Descendant / Imum_Coeli / True_South_Lunar_Node are derived opposites
         absent from DEFAULT_ACTIVE_POINTS; the <axes> section must still emit
         them (regression: the active_points-driven loop dropped them)."""
-        from kerykeion.context_serializer import astrological_subject_to_context
+        from kerykeion.context.serializer import astrological_subject_to_context
         ctx = astrological_subject_to_context(self._subject())
         for axis in ("Descendant", "Imum_Coeli", "True_South_Lunar_Node"):
             assert axis in ctx, f"{axis} dropped from <axes>"
@@ -1587,7 +1587,7 @@ class TestRoundOneRegressions:
         """In a transit chart the transit subject's real name must not leak into
         per-point owners (only the substituted 'Transit' label)."""
         from kerykeion.chart_data_factory import ChartDataFactory
-        from kerykeion.context_serializer import to_context
+        from kerykeion.context.serializer import to_context
         natal = self._subject("Alice")
         transit = self._subject("BobTheTransit")
         ctx = to_context(ChartDataFactory.create_transit_chart_data(natal, transit))
@@ -1598,7 +1598,7 @@ class TestRoundOneRegressions:
         """The relationship_score is an open-ended sum; it must not carry a
         hardcoded max='44' (a strong synastry exceeds it -> >100%)."""
         from kerykeion.chart_data_factory import ChartDataFactory
-        from kerykeion.context_serializer import to_context
+        from kerykeion.context.serializer import to_context
         s1 = self._subject("A")
         s2 = self._subject("B")
         cd = ChartDataFactory.create_synastry_chart_data(s1, s2, include_relationship_score=True)

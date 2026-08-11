@@ -43,7 +43,7 @@ Example:
     >>> from datetime import datetime, timedelta
     >>> from kerykeion import AstrologicalSubjectFactory
     >>> from kerykeion.ephemeris_data_factory import EphemerisDataFactory
-    >>> from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
+    >>> from kerykeion.transits.factory import TransitsTimeRangeFactory
     >>>
     >>> # Create natal chart
     >>> person = AstrologicalSubjectFactory.from_birth_data(

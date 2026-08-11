@@ -115,7 +115,7 @@ def return_label_keys(subject: object) -> tuple[str, str]:
     ``None`` for every subject that was not a :class:`PlanetReturnModel`, so a
     duck-typed subject *declaring* ``return_type="Solar"`` came out labelled
     "Lunar Return" — the very substitution this mapping exists to end, on the one
-    input :mod:`kerykeion.report` documents as supported.
+    input :mod:`kerykeion.report.generator` documents as supported.
 
     Anything the map does not know falls through to the neutral ``Return``
     instead of borrowing the lunar label: a `PlanetReturnModel` always carries

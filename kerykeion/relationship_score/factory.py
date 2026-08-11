@@ -26,7 +26,7 @@ Classes:
 
 Example:
     >>> from kerykeion import AstrologicalSubjectFactory
-    >>> from kerykeion.relationship_score_factory import RelationshipScoreFactory
+    >>> from kerykeion.relationship_score.factory import RelationshipScoreFactory
     >>>
     >>> person1 = AstrologicalSubjectFactory.from_birth_data("John", 1990, 5, 15, 12, 0, "New York", "US")
     >>> person2 = AstrologicalSubjectFactory.from_birth_data("Jane", 1988, 8, 22, 14, 30, "London", "GB")

@@ -225,7 +225,7 @@ drawer.save_svg(output_path=Path("charts_output"), filename="alice-bob-synastry"
 Kerykeion can calculate a compatibility score using Ciro Discepolo's method.
 
 ```python
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
 
 # Calculate compatibility
 score_factory = RelationshipScoreFactory(alice, bob)
@@ -333,7 +333,7 @@ for aspect in transit_aspects.aspects[:10]:
 
 ```python
 from kerykeion.ephemeris_data_factory import EphemerisDataFactory
-from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
+from kerykeion.transits.factory import TransitsTimeRangeFactory
 from datetime import datetime
 
 # Generate ephemeris data for a date range
@@ -459,7 +459,7 @@ from kerykeion import (
     to_context
 )
 from kerykeion.charts.drawer import ChartDrawer
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 
 # Setup

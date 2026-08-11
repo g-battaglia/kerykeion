@@ -168,7 +168,7 @@ for person in people:
 ```python
 from itertools import combinations
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
 
 # Create subjects
 subjects = []

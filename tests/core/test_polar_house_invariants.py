@@ -450,7 +450,7 @@ class TestASubstitutionDoesNotBecomeASetting:
 
     def test_relocating_away_from_the_pole_restores_the_requested_system(self):
         """Rome can cast Placidus, so a chart relocated there must get Placidus."""
-        from kerykeion.relocated_chart_factory import RelocatedChartFactory
+        from kerykeion.relocated_chart.factory import RelocatedChartFactory
 
         relocated = RelocatedChartFactory.relocate(
             self._polar_placidus(),
@@ -502,7 +502,7 @@ class TestTheEffectiveViewNamesTheMainHouses:
 
     def test_the_report_cannot_contradict_itself(self):
         """The settings row and the houses table title read the same source."""
-        from kerykeion.report import ReportGenerator
+        from kerykeion.report.generator import ReportGenerator
 
         report = ReportGenerator(self._polar("P", gauquelin=False)).generate_report()
         assert "Houses (Porphyry)" in report
