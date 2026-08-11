@@ -1521,7 +1521,7 @@ class TestEnrichmentSessionContainment:
     session's ephemeris path configured — never after the session reset."""
 
     def test_enrichment_swe_calls_run_before_session_reset(self, monkeypatch):
-        import kerykeion.ephemeris_backend as eb
+        import kerykeion.ephemeris_backend.backend as eb
 
         events = []
 
@@ -2988,7 +2988,7 @@ class TestPolarLatitudePreserved:
         # real latitude and emits a WARNING naming the system that was requested.
         import logging
 
-        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend.backend"):
             s = self._mk(houses_system_identifier="P")
         assert s.lat == 78.2232
         warnings = [r for r in caplog.records if r.levelno == logging.WARNING and "'P'" in r.getMessage()]
@@ -2997,7 +2997,7 @@ class TestPolarLatitudePreserved:
     def test_whole_sign_does_not_warn(self, caplog):
         import logging
 
-        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend.backend"):
             self._mk(houses_system_identifier="W")
         polar_warnings = [
             r for r in caplog.records
@@ -3020,7 +3020,7 @@ class TestPolarFallbackErrorHandling:
     substituted SYSTEM rather than a substituted latitude."""
 
     def _polar_error_type(self):
-        from kerykeion import ephemeris_backend as eb
+        from kerykeion.ephemeris_backend import backend as eb
 
         if not eb.POLAR_HOUSES_ERROR_TYPES:
             pytest.skip("backend exposes no polar houses error type")
@@ -3028,8 +3028,8 @@ class TestPolarFallbackErrorHandling:
 
     def test_normal_latitude_error_reraised_without_polar_warning(self, monkeypatch, caplog):
         import logging
-        from kerykeion import ephemeris_backend as eb
-        from kerykeion.ephemeris_backend import houses_ex2_with_polar_fallback
+        from kerykeion.ephemeris_backend import backend as eb
+        from kerykeion.ephemeris_backend.backend import houses_ex2_with_polar_fallback
 
         err_type = self._polar_error_type()
 
@@ -3037,7 +3037,7 @@ class TestPolarFallbackErrorHandling:
             raise err_type(f"forced at lat={lat}")
 
         monkeypatch.setattr(eb.ephe, "houses_ex2", always_fail)
-        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend.backend"):
             # 41.9 is NOT inside the polar circle → not a polar-undefined error.
             with pytest.raises(err_type, match="forced at lat=41.9"):
                 houses_ex2_with_polar_fallback(2451545.0, 41.9, 12.5, b"P", 0)
@@ -3047,8 +3047,8 @@ class TestPolarFallbackErrorHandling:
 
     def test_polar_latitude_retry_failure_surfaces_original(self, monkeypatch, caplog):
         import logging
-        from kerykeion import ephemeris_backend as eb
-        from kerykeion.ephemeris_backend import houses_ex2_with_polar_fallback
+        from kerykeion.ephemeris_backend import backend as eb
+        from kerykeion.ephemeris_backend.backend import houses_ex2_with_polar_fallback
 
         err_type = self._polar_error_type()
         calls = []
@@ -3062,7 +3062,7 @@ class TestPolarFallbackErrorHandling:
             raise err_type(f"forced at lat={lat} hsys={hsys.decode('ascii')}")
 
         monkeypatch.setattr(eb.ephe, "houses_ex2", always_fail)
-        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend.backend"):
             # 78.0 IS inside the polar circle → warn, retry with the substitute
             # system at the SAME latitude; that retry also fails, so the ORIGINAL
             # error (for the requested Placidus) surfaces with the Porphyry retry
@@ -3087,8 +3087,8 @@ class TestPolarFallbackErrorHandling:
         asserted here so the substitution strategy cannot be widened to swallow it.
         """
         import logging
-        from kerykeion import ephemeris_backend as eb
-        from kerykeion.ephemeris_backend import houses_ex2_with_polar_fallback
+        from kerykeion.ephemeris_backend import backend as eb
+        from kerykeion.ephemeris_backend.backend import houses_ex2_with_polar_fallback
 
         err_type = self._polar_error_type()
         calls = []
@@ -3098,7 +3098,7 @@ class TestPolarFallbackErrorHandling:
             raise err_type(f"forced at lat={lat} hsys={hsys.decode('ascii')}")
 
         monkeypatch.setattr(eb.ephe, "houses_ex2", always_fail)
-        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend.backend"):
             with pytest.raises(err_type, match=r"forced at lat=78\.0 hsys=G"):
                 houses_ex2_with_polar_fallback(2451545.0, 78.0, 12.5, b"G", 0)
         # Same system, clamped latitude — the mirror image of the Placidus case.
@@ -3116,7 +3116,7 @@ class TestPolarFallbackErrorHandling:
         """
         import logging
 
-        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend"):
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend.backend"):
             subject = AstrologicalSubjectFactory.from_birth_data(
                 "Polar Wording", 1995, 1, 15, 2, 0,
                 lat=78.2232, lng=15.6467, city="Longyearbyen", nation="NO",

@@ -61,9 +61,9 @@ from kerykeion.moon_phase_details.utils import (
     compute_lunar_phase_jd,
     compute_sun_position,
 )
-from kerykeion.ephemeris_backend import ephemeris_session, ephe
+from kerykeion.ephemeris_backend.backend import ephemeris_session, ephe
 from kerykeion.schemas.literals import LunarPhaseEmoji, LunarPhaseName
-from kerykeion.utilities import datetime_to_julian, julian_to_datetime, localize_naive
+from kerykeion.utilities.core import datetime_to_julian, julian_to_datetime, localize_naive
 
 
 logger = logging.getLogger(__name__)

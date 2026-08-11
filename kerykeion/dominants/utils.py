@@ -25,10 +25,10 @@ from kerykeion.dominants.data import (
     SIGN_NUM_TO_ELEMENT,
     SIGN_NUM_TO_QUALITY,
 )
-from kerykeion.ephemeris_backend import ephemeris_session, ephe
+from kerykeion.ephemeris_backend.backend import ephemeris_session, ephe
 from kerykeion.schemas.literals import SIGN_CODES, Element, Quality, Sign
 from kerykeion.schemas.models import AstrologicalSubjectModel, KerykeionPointModel
-from kerykeion.utilities import resolve_sect_is_diurnal, wrap_180
+from kerykeion.utilities.core import resolve_sect_is_diurnal, wrap_180
 
 logger = logging.getLogger(__name__)
 
@@ -168,7 +168,7 @@ def house_cusps(subject: AstrologicalSubjectModel) -> List[float]:
 
     Returns:
         A list of twelve cusp longitudes suitable for
-        :func:`kerykeion.utilities.get_planet_house`.
+        :func:`kerykeion.utilities.core.get_planet_house`.
     """
     return [getattr(subject, attr).abs_pos for attr in _HOUSE_ATTRS]
 

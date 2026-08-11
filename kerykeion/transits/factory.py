@@ -989,9 +989,9 @@ class TransitsTimeRangeFactory:
             keeping the coarse values) for non-geocentric perspectives, where
             a plain ``calc_ut`` would not reproduce the ephemeris positions.
         """
-        from kerykeion.ephemeris_backend import ephe, ephemeris_session
+        from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
         from kerykeion.aspects.utils import difdeg2n
-        from kerykeion.utilities import datetime_to_julian
+        from kerykeion.utilities.core import datetime_to_julian
         from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
 
         # Non-geocentric perspectives (Heliocentric, Topocentric, Barycentric,

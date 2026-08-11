@@ -15,7 +15,7 @@ from kerykeion.schemas.models import (
     MutualReceptionModel,
     MutualReceptionsModel,
 )
-from kerykeion.utilities import has_terrestrial_frame
+from kerykeion.utilities.core import has_terrestrial_frame
 
 # Subject fields of the seven classical planets — the only participants in
 # classical reception (no nodes, no outer planets).

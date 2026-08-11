@@ -23,13 +23,13 @@ from typing import Iterator, cast
 
 from kerykeion.predictive.utils import validate_julian_day
 from kerykeion.astrological_subject.factory import _precision_class_for_source
-from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, ephe
+from kerykeion.ephemeris_backend.backend import BACKEND_NAME, EPHE_DATA_PATH, ephemeris_session, ephe
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint
 from kerykeion.schemas.models import AstrologicalSubjectModel, KerykeionPointModel
-from kerykeion.utilities import HOUSE_FIELD_NAMES
-from kerykeion.utilities import get_kerykeion_point_from_degree, get_planet_house
+from kerykeion.utilities.core import HOUSE_FIELD_NAMES
+from kerykeion.utilities.core import get_kerykeion_point_from_degree, get_planet_house
 
 logger = logging.getLogger(__name__)
 

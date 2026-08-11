@@ -38,7 +38,7 @@ from kerykeion.settings.chart_defaults import (
     DEFAULT_CHART_ASPECTS_SETTINGS,
     _CelestialPointSetting,
 )
-from kerykeion.utilities import find_common_active_points, require_same_frame
+from kerykeion.utilities.core import find_common_active_points, require_same_frame
 
 logger = logging.getLogger(__name__)
 
@@ -1179,7 +1179,7 @@ class AspectsFactory:
 
 
 if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
+    from kerykeion.utilities.core import setup_logging
 
     setup_logging(level="debug")
 

@@ -21,7 +21,7 @@ from __future__ import annotations
 import logging
 from typing import Dict, List, Optional
 
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 from kerykeion.predictive.utils import validate_julian_day
 
 from kerykeion.schemas import KerykeionException
@@ -31,7 +31,7 @@ from kerykeion.schemas.models import (
     KerykeionPointModel,
     SubscriptableBaseModel,
 )
-from kerykeion.utilities import get_kerykeion_point_from_degree
+from kerykeion.utilities.core import get_kerykeion_point_from_degree
 from pydantic import Field
 
 logger = logging.getLogger(__name__)

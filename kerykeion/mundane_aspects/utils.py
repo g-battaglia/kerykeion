@@ -30,7 +30,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Sequence, Tuple
 
 from kerykeion.aspects.utils import difdeg2n
-from kerykeion.ephemeris_backend import ephe
+from kerykeion.ephemeris_backend.backend import ephe
 from kerykeion.schemas.exceptions import KerykeionException
 
 # Uniform sampling step (days). See module docstring for the safety argument.

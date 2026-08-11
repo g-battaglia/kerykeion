@@ -377,7 +377,7 @@ class FetchGeonames:
 
 if __name__ == "__main__":
     """Run a tiny demonstration when executing the module directly."""
-    from kerykeion.utilities import setup_logging as configure_logging
+    from kerykeion.utilities.core import setup_logging as configure_logging
 
     configure_logging("debug")
     geonames = FetchGeonames("Montichiari", "IT")

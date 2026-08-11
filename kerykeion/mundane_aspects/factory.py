@@ -20,14 +20,14 @@ from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
 from kerykeion.predictive.utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_bounds
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 from kerykeion.mundane_aspects.utils import MundaneAspectEvent, _lon_speed, scan_mundane_aspects
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import SIGN_CODES, Sign, SiderealMode, ZodiacType
 from kerykeion.schemas.models import SubscriptableBaseModel
 from kerykeion.settings.chart_defaults import DEFAULT_CHART_ASPECTS_SETTINGS
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
-from kerykeion.utilities import datetime_to_julian
+from kerykeion.utilities.core import datetime_to_julian
 from pydantic import Field
 
 # Canonical body order (fastest mean geocentric motion first, the traditional

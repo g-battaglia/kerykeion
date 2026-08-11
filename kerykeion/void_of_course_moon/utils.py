@@ -24,11 +24,11 @@ from datetime import datetime
 from typing import Optional
 
 from kerykeion.aspects.utils import difdeg2n
-from kerykeion.ephemeris_backend import ephe
+from kerykeion.ephemeris_backend.backend import ephe
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from kerykeion.schemas.literals import VocAspectName, VocTargetPlanet
 from kerykeion.sun_times.utils import julian_day_to_utc
-from kerykeion.utilities import datetime_to_julian
+from kerykeion.utilities.core import datetime_to_julian
 
 # Traditional aspecting bodies (the Moon itself is excluded).
 VOC_BODIES: tuple[VocTargetPlanet, ...] = ("Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn")

@@ -38,11 +38,11 @@ from kerykeion.aspects.orb_utils import (
     resolve_pair_orb_adjustments_for_aspects,
     validate_point_orb_adjustments,
 )
-from kerykeion.ephemeris_backend import ephe
+from kerykeion.ephemeris_backend.backend import ephe
 from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
 from kerykeion.predictive.utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
-from kerykeion.utilities import datetime_to_julian
+from kerykeion.utilities.core import datetime_to_julian
 
 # Mean tropical year (epoch J2000) — the "year" unit of the day-for-a-year
 # method. Previously 365.25 (the Julian year), which contradicted this name

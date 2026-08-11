@@ -44,7 +44,7 @@ Usage
 All kerykeion internals import from this module instead of importing
 ``swisseph`` or ``libephemeris`` directly::
 
-    from kerykeion.ephemeris_backend import ephe
+    from kerykeion.ephemeris_backend.backend import ephe
 
     ephe.calc_ut(jd, planet_id, flags)
     ephe.houses_ex2(jd, lat, lon, hsys, flags)
@@ -55,7 +55,7 @@ Detecting the active backend
 ----------------------------
 ::
 
-    from kerykeion.ephemeris_backend import BACKEND_NAME
+    from kerykeion.ephemeris_backend.backend import BACKEND_NAME
     print(BACKEND_NAME)  # "libephemeris" or "swisseph"
 
 Author: Giacomo Battaglia
@@ -173,7 +173,7 @@ else:
 # ---------------------------------------------------------------------------
 # All kerykeion modules import this single object:
 #
-#     from kerykeion.ephemeris_backend import ephe
+#     from kerykeion.ephemeris_backend.backend import ephe
 #
 # It is the actual backend module (swisseph or libephemeris).
 # As of libephemeris >= 1.0.0a1, both backends are fully API-compatible
@@ -325,7 +325,7 @@ def houses_ex2_with_polar_fallback_ex(
         # Lazy imports avoid an import cycle: utilities does not import this
         # module, but this module must not import utilities at load time, and the
         # models package imports back into kerykeion.
-        from kerykeion.utilities import _POLAR_LATITUDE_LIMIT, check_and_adjust_polar_latitude
+        from kerykeion.utilities.core import _POLAR_LATITUDE_LIMIT, check_and_adjust_polar_latitude
         from kerykeion.schemas.models import PolarHouseFallbackModel
 
         # The threshold and obliquity are knowable only from the backend that
@@ -635,7 +635,7 @@ def ephemeris_session(
 
     Usage::
 
-        from kerykeion.ephemeris_backend import ephemeris_session
+        from kerykeion.ephemeris_backend.backend import ephemeris_session
 
         with ephemeris_session(zodiac_type=subject.zodiac_type,
                                sidereal_mode=subject.sidereal_mode) as iflag:

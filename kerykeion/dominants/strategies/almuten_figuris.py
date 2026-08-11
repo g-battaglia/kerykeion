@@ -42,7 +42,7 @@ from kerykeion.dominants.data import (
 )
 from kerykeion.dominants.utils import ZodiacPosition, part_of_fortune_degree, prenatal_syzygy, zodiac_breakdown
 from kerykeion.schemas.models import AstrologicalSubjectModel, DominantsModel
-from kerykeion.utilities import get_house_number, resolve_sect_is_diurnal
+from kerykeion.utilities.core import get_house_number, resolve_sect_is_diurnal
 
 
 class AlmutenFigurisStrategy(BaseDominantStrategy):

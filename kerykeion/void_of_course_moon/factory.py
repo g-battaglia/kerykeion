@@ -8,7 +8,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Optional
 
-from kerykeion.ephemeris_backend import ephemeris_session, ephe
+from kerykeion.ephemeris_backend.backend import ephemeris_session, ephe
 from kerykeion.predictive.utils import is_iso_date_only
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import SIGN_CODES, SiderealMode, ZodiacType
@@ -19,7 +19,7 @@ from kerykeion.schemas.models import (
     VoidOfCourseWindowsCollectionModel,
 )
 from kerykeion.sun_times.utils import localize_datetime, resolve_timezone
-from kerykeion.utilities import datetime_to_julian
+from kerykeion.utilities.core import datetime_to_julian
 from kerykeion.void_of_course_moon.utils import AspectEvent, compute_void_of_course, compute_void_windows
 
 

@@ -73,7 +73,7 @@ def jd_to_ymd_hms(jd: float, cal: Optional[int] = None) -> tuple[int, int, int, 
         jd: Julian Day (UT).
         cal: ``ephe.GREG_CAL``/``ephe.JUL_CAL``; defaults to Gregorian.
     """
-    from kerykeion.ephemeris_backend import ephe
+    from kerykeion.ephemeris_backend.backend import ephe
 
     if cal is None:
         cal = getattr(ephe, "GREG_CAL", 1)

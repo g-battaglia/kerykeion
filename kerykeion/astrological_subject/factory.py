@@ -30,7 +30,7 @@ Copyright: (C) 2025 Kerykeion Project
 License: AGPL-3.0
 """
 
-from kerykeion.ephemeris_backend import (
+from kerykeion.ephemeris_backend.backend import (
     ephe,
     EPHE_DATA_PATH,
     BACKEND_NAME,
@@ -62,7 +62,7 @@ from kerykeion.schemas import (
     AstrologicalPoint,
     Houses,
 )
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     get_kerykeion_point_from_degree,
     get_planet_house,
     validate_latitude,
@@ -2167,7 +2167,7 @@ class AstrologicalSubjectFactory:
             conversion raises rather than guess — except below 1902-01-01, where
             daylight saving did not yet exist and the wall time resolves to the
             offset in force before the change. See
-            :func:`kerykeion.utilities.localize_naive`.
+            :func:`kerykeion.utilities.core.localize_naive`.
 
         Calendar asymmetry (year < 1 vs 1-1582 CE):
             The two code paths interpret the input date in DIFFERENT calendars:

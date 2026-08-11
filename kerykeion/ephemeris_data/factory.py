@@ -24,7 +24,7 @@ Classes:
 
 Dependencies:
     - kerykeion.AstrologicalSubjectFactory: For creating astrological subjects
-    - kerykeion.utilities: For house and planetary data extraction
+    - kerykeion.utilities.core: For house and planetary data extraction
     - kerykeion.schemas: For type definitions and model structures
     - datetime: For date/time handling
     - logging: For performance warnings
@@ -47,7 +47,7 @@ License: AGPL-3.0
 """
 
 from kerykeion.schemas.models import AstrologicalSubjectModel
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     get_houses_list,
     get_available_astrological_points_list,
     normalize_zodiac_type,

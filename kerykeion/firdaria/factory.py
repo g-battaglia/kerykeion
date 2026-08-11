@@ -15,7 +15,7 @@ from kerykeion.schemas.models import (
     FirdariaPeriodModel,
     FirdariaSubPeriodModel,
 )
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     civil_jd,
     jd_to_iso_datetime,
     parse_astronomical_iso_moment,

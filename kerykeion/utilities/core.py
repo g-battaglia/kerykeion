@@ -40,7 +40,9 @@ from datetime import datetime, timedelta, timezone, tzinfo as _tzinfo
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
-logger = getLogger(__name__)
+# __package__, not __name__: the logger must stay "kerykeion.utilities.core" so that
+# setup_logging() and every caplog filter naming it keep addressing the same one.
+logger = getLogger(__package__)
 
 
 # Pre-compiled regex patterns (invariant, compiled once at module load)
@@ -567,7 +569,7 @@ def validate_latitude(latitude: float) -> float:
     into every house system that is defined at all latitudes (Whole Sign,
     Equal, Porphyry, Morinus, Meridian/axial, …). A house system that is
     undefined there is substituted *locally* at the house call — see
-    :func:`kerykeion.ephemeris_backend.houses_ex2_with_polar_fallback`.
+    :func:`kerykeion.ephemeris_backend.backend.houses_ex2_with_polar_fallback`.
 
     Args:
         latitude: The latitude value to validate.
@@ -617,7 +619,7 @@ def check_and_adjust_polar_latitude(latitude: float) -> float:
     system inside the polar circle: moving the observer keeps the house count but
     reports cusps for a place the subject was not born in, so the house call now
     substitutes a system that IS defined at every latitude (see
-    :func:`kerykeion.ephemeris_backend.houses_ex2_with_polar_fallback`, whose
+    :func:`kerykeion.ephemeris_backend.backend.houses_ex2_with_polar_fallback`, whose
     default ``polar_strategy`` does exactly that) and records the substitution.
 
     The clamp survives only where substitution is impossible because the output
@@ -770,7 +772,7 @@ def jd_to_iso_date(jd: float) -> str:
     (Julian labels run about two days ahead there); the seam belongs to the
     convention, not to the arithmetic.
     """
-    from kerykeion.ephemeris_backend import ephe
+    from kerykeion.ephemeris_backend.backend import ephe
 
     cal_flag = ephe.JUL_CAL if jd < _GREGORIAN_CE_EPOCH_JD else ephe.GREG_CAL
     year, month, day, _hour = ephe.revjul(jd, cal_flag)
@@ -785,7 +787,7 @@ def jd_to_iso_datetime(jd: float) -> str:
     floor), so boundaries computed as fractional Julian Days serialize to
     the very instant a same-grid selection compares against.
     """
-    from kerykeion.ephemeris_backend import ephe
+    from kerykeion.ephemeris_backend.backend import ephe
 
     nudged = jd + 0.5 / 86400.0
     cal_flag = ephe.JUL_CAL if nudged < _GREGORIAN_CE_EPOCH_JD else ephe.GREG_CAL
@@ -810,7 +812,7 @@ def civil_jd(year: int, month: int, day: int, hour: float = 0.0) -> float:
     civil calendars do — February 29 of a common year rolls to March 1 —
     which is exactly the anniversary convention the time-lord techniques use.
     """
-    from kerykeion.ephemeris_backend import ephe
+    from kerykeion.ephemeris_backend.backend import ephe
 
     cal_flag = ephe.JUL_CAL if year < 1 else ephe.GREG_CAL
     return ephe.julday(int(year), int(month), int(day), float(hour), cal_flag)

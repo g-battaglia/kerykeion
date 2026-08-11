@@ -20,7 +20,7 @@ _UNSET: Any = object()
 # Module directory for resolving template/theme paths
 _MODULE_DIR = Path(__file__).parent
 
-from kerykeion.ephemeris_backend import ephe
+from kerykeion.ephemeris_backend.backend import ephe
 from svg_polish import optimize as _svg_polish_optimize
 
 from kerykeion.house_comparison.factory import HouseComparisonFactory
@@ -93,7 +93,7 @@ from kerykeion.charts.draw_modern import (
     draw_modern_dual_horoscope,
     draw_modern_horoscope,
 )
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     get_houses_list,
     get_planet_house,
     inline_css_variables_in_svg,
@@ -5674,7 +5674,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
 
 if __name__ == "__main__":
-    from kerykeion.utilities import setup_logging
+    from kerykeion.utilities.core import setup_logging
     from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
     from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
     from kerykeion.chart_data.factory import ChartDataFactory

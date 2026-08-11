@@ -15,7 +15,7 @@ Classes:
     OccultationModel: Pydantic model describing a single occultation event.
 
 Example:
-    >>> from kerykeion.ephemeris_backend import ephe
+    >>> from kerykeion.ephemeris_backend.backend import ephe
     >>> from kerykeion.occultations import OccultationFactory
     >>>
     >>> jd = ephe.julday(2024, 1, 1, 0.0)
@@ -30,7 +30,7 @@ License: AGPL-3.0
 """
 
 import logging
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 from kerykeion.predictive.utils import jd_to_iso_utc as _jd_to_iso, validate_julian_day
 from kerykeion.settings.config_constants import STANDARD_PLANETS
 
@@ -40,7 +40,7 @@ from typing import List, Union, cast
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint
 from kerykeion.schemas.models import SubscriptableBaseModel
-from kerykeion.utilities import validate_latitude, validate_longitude
+from kerykeion.utilities.core import validate_latitude, validate_longitude
 
 logger = logging.getLogger(__name__)
 

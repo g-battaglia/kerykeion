@@ -56,7 +56,7 @@ from kerykeion.schemas.literals import (
     Houses,
     CompositeChartType,
 )
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     get_kerykeion_point_from_degree,
     circular_mean,
     calculate_moon_phase,
@@ -76,7 +76,7 @@ def _davison_midpoint_components(
     (ignoring tz_str) — so decompose the LMT-shifted instant in the Julian
     calendar or the Davison chart lands days away from the true time midpoint.
     """
-    from kerykeion.ephemeris_backend import ephe
+    from kerykeion.ephemeris_backend.backend import ephe
 
     lmt_shift = mid_lng / 15.0 / 24.0  # days; mirrors _calculate_time_conversions_bce
     greg_cal = getattr(ephe, "GREG_CAL", 1)

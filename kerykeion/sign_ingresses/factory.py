@@ -23,14 +23,14 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Literal, Optional
 
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from kerykeion.predictive.utils import is_iso_date_only, jd_to_iso_utc as _jd_to_iso, validate_julian_bounds
 
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import SiderealMode, ZodiacType
 from kerykeion.schemas.models import SubscriptableBaseModel
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     datetime_to_julian,
     get_kerykeion_point_from_degree,
     wrap_180,

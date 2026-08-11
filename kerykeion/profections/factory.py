@@ -15,7 +15,7 @@ from kerykeion.schemas.models import (
     ProfectionsModel,
     ProfectionYearModel,
 )
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     civil_leap_year,
     format_astronomical_iso_date,
     parse_astronomical_iso_moment,

@@ -5,7 +5,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 
-from kerykeion.ephemeris_backend import ephe as _ephe
+from kerykeion.ephemeris_backend.backend import ephe as _ephe
 
 difdeg2n = _ephe.difdeg2n
 from typing import Mapping, Optional, Union, get_args

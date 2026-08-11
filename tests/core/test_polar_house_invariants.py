@@ -28,7 +28,7 @@ import logging
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.ephemeris_backend import (
+from kerykeion.ephemeris_backend.backend import (
     BACKEND_NAME,
     ephe,
     ephemeris_session,

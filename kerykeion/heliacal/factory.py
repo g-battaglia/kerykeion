@@ -22,12 +22,12 @@ import math
 from numbers import Real
 from typing import List, Optional, Sequence, Tuple
 
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 from kerykeion.predictive.utils import jd_to_iso_utc, validate_julian_day
 
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.models import SubscriptableBaseModel
-from kerykeion.utilities import validate_latitude, validate_longitude
+from kerykeion.utilities.core import validate_latitude, validate_longitude
 
 logger = logging.getLogger(__name__)
 

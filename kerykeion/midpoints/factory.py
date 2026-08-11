@@ -30,7 +30,7 @@ from kerykeion.aspects.utils import get_aspect_from_two_points
 from kerykeion.schemas.literals import SIGN_CODES, SignNumbers
 from kerykeion.schemas.models import AstrologicalSubjectModel, KerykeionPointModel
 from kerykeion.predictive.utils import gather_active_points, build_aspect_settings
-from kerykeion.utilities import _ZODIAC_SIGNS, circular_mean, get_planet_house, HOUSE_FIELD_NAMES
+from kerykeion.utilities.core import _ZODIAC_SIGNS, circular_mean, get_planet_house, HOUSE_FIELD_NAMES
 
 
 class MidpointAspectModel(SubscriptableBaseModel):
@@ -87,7 +87,7 @@ class MidpointFactory:
         two zodiacal longitudes (0-360°) — the convention used by all
         serious midpoint literature (Ebertin, Witte, et al.).
 
-        Delegates to :func:`kerykeion.utilities.circular_mean`, which
+        Delegates to :func:`kerykeion.utilities.core.circular_mean`, which
         implements the same convention (including the antipodal tie-break).
         """
         return circular_mean(a, b)

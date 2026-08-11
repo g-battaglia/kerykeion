@@ -30,10 +30,10 @@ Classes:
     PlanetaryReturnFactory: Main factory class for calculating planetary returns
 
 Dependencies:
-    - kerykeion.ephemeris_backend: Ephemeris calculations (libephemeris or swisseph)
+    - kerykeion.ephemeris_backend.backend: Ephemeris calculations (libephemeris or swisseph)
     - kerykeion.AstrologicalSubjectFactory: For creating complete chart data
     - kerykeion.geonames.fetcher: For online location data retrieval
-    - kerykeion.utilities: For date/time conversions and astronomical functions
+    - kerykeion.utilities.core: For date/time conversions and astronomical functions
     - kerykeion.schemas: For type definitions and model structures
 
 Example:
@@ -72,14 +72,14 @@ License: AGPL-3.0
 import calendar
 import logging
 
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 
 from datetime import datetime, timezone
 from typing import List, Literal, Union, cast
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.geonames.fetcher import FetchGeonames
-from kerykeion.utilities import julian_to_datetime, datetime_to_julian
+from kerykeion.utilities.core import julian_to_datetime, datetime_to_julian
 from kerykeion.astrological_subject.factory import (
     GEONAMES_DEFAULT_USERNAME_WARNING,
     DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,

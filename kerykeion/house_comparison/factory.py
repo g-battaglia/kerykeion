@@ -72,7 +72,7 @@ class HouseComparisonFactory:
         # Reject mixed reference frames early (mirrors CompositeSubjectFactory and
         # the aspects/relationship-score entry points). The house *system* may
         # legitimately differ between the two subjects, so it is not checked here.
-        from kerykeion.utilities import require_same_frame
+        from kerykeion.utilities.core import require_same_frame
 
         require_same_frame(first_subject, second_subject)
 

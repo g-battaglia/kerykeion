@@ -62,7 +62,7 @@ from kerykeion.dominants.data import (
 from kerykeion.dominants.utils import angle_degrees, rulers_inverse, scoring_planets
 from kerykeion.schemas.literals import AstrologicalPoint
 from kerykeion.schemas.models import AstrologicalSubjectModel, DominantsModel, KerykeionPointModel
-from kerykeion.utilities import get_house_number, resolve_sect_is_diurnal
+from kerykeion.utilities.core import get_house_number, resolve_sect_is_diurnal
 
 #: The four chart angles, in the order the engine references them.
 _ANGLE_NAMES: tuple[str, ...] = ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")

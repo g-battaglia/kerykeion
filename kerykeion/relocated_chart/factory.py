@@ -30,13 +30,13 @@ import math
 from datetime import datetime, timezone
 from typing import Optional
 
-from kerykeion.ephemeris_backend import ephe, ephemeris_session, houses_ex2_with_polar_fallback_ex
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session, houses_ex2_with_polar_fallback_ex
 
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint, Houses
 from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.settings.config_constants import AXIAL_POINTS
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     validate_latitude,
     normalize_longitude,
     safe_timezone,

@@ -17,7 +17,7 @@ from kerykeion.schemas.models import (
     HorarySignificatorModel,
     KerykeionPointModel,
 )
-from kerykeion.utilities import has_terrestrial_frame
+from kerykeion.utilities.core import has_terrestrial_frame
 
 # House cusp fields in house order, and the engine house-name → number map.
 HOUSE_CUSP_FIELDS: tuple[str, ...] = (

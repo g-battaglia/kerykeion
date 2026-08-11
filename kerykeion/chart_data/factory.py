@@ -54,7 +54,7 @@ from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointMod
 from kerykeion.schemas.literals import (
     AstrologicalPoint,
 )
-from kerykeion.utilities import find_common_active_points, distribute_percentages_to_100, has_terrestrial_frame
+from kerykeion.utilities.core import find_common_active_points, distribute_percentages_to_100, has_terrestrial_frame
 from kerykeion.settings.config_constants import (
     DEFAULT_ACTIVE_ASPECTS,
     PREDICTIVE_ACTIVE_ASPECTS,

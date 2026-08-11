@@ -37,7 +37,7 @@ from kerykeion.schemas.models import (
     DominantScoreModel,
     DominantsModel,
 )
-from kerykeion.utilities import distribute_percentages_to_100
+from kerykeion.utilities.core import distribute_percentages_to_100
 
 #: Allowed distribution methods for the element/quality tally (mirrors
 #: ``charts_utils.ElementQualityDistributionMethod`` without importing the

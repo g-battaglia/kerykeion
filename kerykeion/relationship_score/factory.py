@@ -121,7 +121,7 @@ class RelationshipScoreFactory:
         # it is only meaningful when both share the same reference frame (zodiac,
         # perspective, sidereal mode). Reject mixed frames early with a clear
         # error rather than emitting a plausible-but-meaningless score.
-        from kerykeion.utilities import require_same_frame
+        from kerykeion.utilities.core import require_same_frame
 
         require_same_frame(first_subject, second_subject)
 
@@ -389,7 +389,7 @@ class RelationshipScoreFactory:
 
 if __name__ == "__main__":
     from kerykeion import AstrologicalSubjectFactory
-    from kerykeion.utilities import setup_logging
+    from kerykeion.utilities.core import setup_logging
 
     setup_logging(level="critical")
 

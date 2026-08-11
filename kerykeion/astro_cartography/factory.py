@@ -22,7 +22,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import math
 from numbers import Real
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
 from typing import List, Optional, Dict, Literal
 from pydantic import Field
@@ -30,7 +30,7 @@ from kerykeion.schemas.models import SubscriptableBaseModel
 
 from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
-from kerykeion.utilities import wrap_180
+from kerykeion.utilities.core import wrap_180
 
 
 class ACGLinePointModel(SubscriptableBaseModel):

@@ -35,7 +35,7 @@ from kerykeion.schemas.models import (
 )
 from kerykeion.secondary_progressions import SolarArcSubjectModel
 from kerykeion.midpoints import MidpointModel
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     format_degrees_below_bound,
     format_timedelta_hhmm,
     strip_illegal_control_chars as _strip_illegal,
@@ -65,7 +65,7 @@ SIGN_FULL_NAMES = {
 
 
 # XML-1.0-illegal control-character stripping is shared with the ASCII report
-# generator; the canonical implementation lives in kerykeion.utilities
+# generator; the canonical implementation lives in kerykeion.utilities.core
 # (imported above as ``_strip_illegal``). quoteattr/escape pass control chars
 # through verbatim, producing a document a conforming parser then rejects, so
 # strip them first.

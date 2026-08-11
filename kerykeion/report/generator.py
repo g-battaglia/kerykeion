@@ -8,7 +8,7 @@ from simple_ascii_tables import AsciiTable
 
 from kerykeion.fixed_stars.catalog import FixedStarCatalog
 
-from kerykeion.utilities import (
+from kerykeion.utilities.core import (
     get_available_astrological_points_list,
     get_houses_list,
     format_degrees_below_bound,

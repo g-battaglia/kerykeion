@@ -325,7 +325,7 @@ class TestRelocatedStaleLocationFields:
         """_compute_is_diurnal calls ephe.* (Sun position + azalt): relocation
         must wrap it in an ephemeris session, so no tracked ephe call may run
         after the last session reset."""
-        import kerykeion.ephemeris_backend as eb
+        import kerykeion.ephemeris_backend.backend as eb
 
         events = []
         real_reset = eb.reset_ephemeris_session

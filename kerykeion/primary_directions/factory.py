@@ -49,7 +49,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import math
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 from typing import List, Optional, Literal, Tuple, cast
 from pydantic import Field
 from kerykeion.schemas.models import SubscriptableBaseModel

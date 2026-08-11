@@ -391,6 +391,9 @@ ignore = [
 "kerykeion/settings/__init__.py" = ["F401", "F403"]
 # Schemas re-exports for public API
 "kerykeion/schemas/__init__.py" = ["F401", "F403"]
+# Utilities is a flat facade: it also re-exports semi-private names that other
+# modules import, which by design stay out of __all__.
+"kerykeion/utilities/__init__.py" = ["F401"]
 # INP001 only guards the shipped package; these trees are scripts, not packages.
 "scripts/*" = ["INP001"]
 "examples/*" = ["INP001"]

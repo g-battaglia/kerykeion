@@ -197,12 +197,55 @@ def _callee_name(node: ast.Call) -> str:
     return ""
 
 
+def _module_aliases(tree: ast.AST) -> dict[str, str]:
+    """Local name -> kerykeion module path, for module objects bound by import.
+
+    `monkeypatch.setattr(eb, "name", ...)` passes the module *object*, so the
+    string scan below cannot see it. Resolving the alias catches the same
+    silent no-op when `eb` turns out to be a package.
+    """
+    aliases: dict[str, str] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name.startswith("kerykeion") and alias.asname:
+                    aliases[alias.asname] = alias.name
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            if node.module != "kerykeion" and not node.module.startswith("kerykeion."):
+                continue
+            for alias in node.names:
+                candidate = f"{node.module}.{alias.name}"
+                if module_exists(candidate):
+                    aliases[alias.asname or alias.name] = candidate
+    return aliases
+
+
 def check_patch_targets(report: Report) -> None:
     for path in iter_python_files():
         try:
             tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         except SyntaxError:
             continue
+
+        aliases = _module_aliases(tree)
+
+        # setattr(<module alias>, "attr", ...) — the object form
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call) or _callee_name(node) not in PATCH_FUNCS:
+                continue
+            if len(node.args) < 2 or not isinstance(node.args[0], ast.Name):
+                continue
+            dotted = aliases.get(node.args[0].id)
+            if dotted is None:
+                continue
+            report.checked += 1
+            module = importlib.import_module(dotted)
+            if getattr(module, "__path__", None) is not None:
+                report.fail(
+                    f"{rel(path)}:{node.lineno}",
+                    f"patch target sets an attribute on the PACKAGE {dotted!r} — "
+                    "this is a silent no-op; bind the alias to the defining submodule",
+                )
 
         for node in ast.walk(tree):
             if not isinstance(node, ast.Call) or _callee_name(node) not in PATCH_FUNCS:

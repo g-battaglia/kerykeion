@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 from typing import List, Optional
 
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 from kerykeion.predictive.utils import validate_julian_day
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP
