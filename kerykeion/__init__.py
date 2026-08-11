@@ -341,6 +341,22 @@ __all__ = [
 # =============================================================================
 _MIGRATION_GUIDE_URL = "https://www.kerykeion.net/content/docs/migration"
 
+# Appended to every removed-name message below. Rewriting the call is only half
+# the upgrade: v6 also changed defaults that alter the numbers, and those change
+# silently for code that already used the v5 factories correctly. This error is
+# the one moment we know the reader is looking, so it says both things.
+_BEHAVIOUR_CHANGES_NOTE = (
+    "\n\n"
+    "Note: v6 also changed defaults that affect RESULTS, not just imports:\n"
+    "  - active points: 18 -> 14 (Descendant, Imum_Coeli, True_South_Lunar_Node,\n"
+    "    Mean_Lilith are no longer active unless requested)\n"
+    "  - Sun/Moon aspect orbs: +1.5 degrees by default (new in v6)\n"
+    "  - chart style: 'classic' -> 'modern'\n"
+    "Porting the call above does not restore v5 output. See 'What changes in the\n"
+    "results' in the guide; kerykeion.settings.V5_DEFAULT_ACTIVE_POINTS restores\n"
+    "the old point set."
+)
+
 _V5_REMOVED_NAMES = {
     "AstrologicalSubject": (
         "'AstrologicalSubject' was removed in v6. Use the factory instead:\n"
@@ -372,5 +388,8 @@ def __getattr__(name: str):
     # Trade-off: hasattr()/getattr(..., default) also raise for these names —
     # feature-detect with try/except ImportError instead.
     if name in _V5_REMOVED_NAMES:
-        raise ImportError(f"{_V5_REMOVED_NAMES[name]}\nMigration guide: {_MIGRATION_GUIDE_URL}")
+        raise ImportError(
+            f"{_V5_REMOVED_NAMES[name]}{_BEHAVIOUR_CHANGES_NOTE}"
+            f"\nMigration guide: {_MIGRATION_GUIDE_URL}"
+        )
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

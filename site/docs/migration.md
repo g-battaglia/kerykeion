@@ -182,6 +182,79 @@ The v5 model aliases `NatalAspectsModel` and `SynastryAspectsModel` were also re
 | `disable_chiron_and_lilith` | Removed | Use `active_points` to exclude |
 | `new_settings_file` | Removed | Use `language_pack` parameter |
 
+## What Changes in the Results
+
+Everything above is about code that stops working: you get an `ImportError`, you fix the call, you move on. This section is about the opposite — code that keeps working and quietly returns **different numbers**.
+
+It applies even if you were already using the v5 factory API correctly. Nothing raises, nothing warns; the output is simply not the same as before.
+
+| What | v5 | v6 | What you see |
+|:-----|:---|:---|:-------------|
+| Default active points | 18 | 14 | Fewer points in charts and aspects |
+| Sun/Moon aspect orbs | no adjustment | `+1.5°` | Aspects appear or disappear near the orb boundary |
+| Chart style | `"classic"` | `"modern"` | A different drawing, and a different filename |
+
+These are deliberate v6 choices, not oversights. What follows is how to opt back into the old behaviour where you need continuity.
+
+### Active points: 18 → 14
+
+Four points left the default set: `Descendant`, `Imum_Coeli`, `True_South_Lunar_Node` and `Mean_Lilith`. They still exist — they are simply no longer computed unless you ask for them.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.settings import V5_DEFAULT_ACTIVE_POINTS
+
+# v6 defaults: 14 points
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+)
+
+# The v5 set, restored explicitly
+subject_v5 = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    active_points=V5_DEFAULT_ACTIVE_POINTS,
+)
+
+print(len(subject.active_points), len(subject_v5.active_points))
+```
+
+`V5_DEFAULT_ACTIVE_POINTS` is a frozen historical record: it will not track future changes to the default set. If you want the current defaults plus one point, build the list from `DEFAULT_ACTIVE_POINTS` instead.
+
+### Sun and Moon orbs
+
+v6 widens the orb for aspects involving the Sun or the Moon by 1.5°, which v4 and v5 never did. Near the boundary this changes which aspects are reported.
+
+The adjustment applies to the chart-data factories. `AspectsFactory` does not apply it by default, so the two can disagree on the same subject — pass `point_orb_adjustments={}` to compute without it:
+
+```python
+from kerykeion import AspectsFactory, ChartDataFactory
+
+# v6 default for chart data: Sun/Moon orbs widened by 1.5°
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+
+# v5-equivalent orbs
+chart_data_v5 = ChartDataFactory.create_natal_chart_data(
+    subject, point_orb_adjustments={},
+)
+
+print(len(chart_data.aspects), len(chart_data_v5.aspects))
+```
+
+### Chart style
+
+`ChartDrawer` now defaults to `style="modern"`. The v5 drawing is still available, and the saved filename reflects the style (`"... - Classic.svg"` vs `"... - Modern.svg"`), so scripts that look for a fixed filename need updating either way.
+
+```python
+from kerykeion import ChartDrawer
+
+drawer = ChartDrawer(chart_data, style="classic")  # the v5 look
+svg = drawer.generate_svg_string()
+```
+
+Note that `external_view` only takes effect in the classic style.
+
 ## Backward Compatibility Layer (Removed in v6)
 
 v5 included a compatibility layer in `kerykeion.backword` that allowed gradual migration. **This layer has been removed in v6.0.**
