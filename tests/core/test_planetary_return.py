@@ -1205,11 +1205,11 @@ class TestReturnFactoryOnlineGating:
     the fields the caller provided."""
 
     def test_partial_input_fetches_and_preserves_tz(self, monkeypatch, johnny_depp):
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
 
         rome = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "41.89193", "lng": "12.51133"}
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(rome)
+            fetcher.FetchGeonames, "get_serialized_data", lambda self: dict(rome)
         )
         factory = PlanetaryReturnFactory(
             johnny_depp,

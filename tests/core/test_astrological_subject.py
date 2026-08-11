@@ -2509,11 +2509,11 @@ class TestOnlineGeonamesGating:
 
     @pytest.fixture
     def _mock_geonames(self, monkeypatch):
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
 
         data = dict(self._ROME)
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(data)
+            fetcher.FetchGeonames, "get_serialized_data", lambda self: dict(data)
         )
         return data
 
@@ -2532,12 +2532,12 @@ class TestOnlineGeonamesGating:
 
     def test_from_current_time_uses_target_timezone_instant(self, monkeypatch):
         from datetime import datetime, timedelta, timezone
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
         auckland = {"countryCode": "NZ", "timezonestr": "Pacific/Auckland", "lat": "-36.85", "lng": "174.76"}
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(auckland)
+            fetcher.FetchGeonames, "get_serialized_data", lambda self: dict(auckland)
         )
         before = datetime.now(timezone.utc)
         s = AstrologicalSubjectFactory.from_current_time(
@@ -2564,11 +2564,11 @@ class TestOnlineGeonamesGating:
         online paths — not only when both city and nation are explicit — or the
         default / city-only chart is shifted by the host-city offset."""
         from datetime import datetime, timedelta, timezone
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(fetched)
+            fetcher.FetchGeonames, "get_serialized_data", lambda self: dict(fetched)
         )
         before = datetime.now(timezone.utc)
         s = AstrologicalSubjectFactory.from_current_time(
@@ -2584,7 +2584,7 @@ class TestOnlineGeonamesGating:
         self, monkeypatch, city
     ):
         """The current-time prefetch must preserve the coordinate-only route."""
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
         captured = {}
@@ -2599,10 +2599,10 @@ class TestOnlineGeonamesGating:
             )
 
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup
+            fetcher.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup
         )
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+            fetcher.FetchGeonames, "get_serialized_data", fail_city_lookup
         )
 
         subject = AstrologicalSubjectFactory.from_current_time(
@@ -2620,12 +2620,12 @@ class TestOnlineGeonamesGating:
         assert subject.lng == pytest.approx(12.4964)
 
     def test_from_iso_utc_time_failed_fetch_raises_kerykeion_exception(self, monkeypatch):
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
         from kerykeion.schemas import KerykeionException
 
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: {}
+            fetcher.FetchGeonames, "get_serialized_data", lambda self: {}
         )
         with pytest.raises(KerykeionException, match="Missing data from geonames"):
             AstrologicalSubjectFactory.from_iso_utc_time(
@@ -2642,7 +2642,7 @@ class TestOnlineGeonamesGating:
         must be resolved from the coordinates (timezoneJSON endpoint), NOT from
         the default city "Greenwich" (which silently produced a chart in the
         wrong zone)."""
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
         captured = {}
@@ -2657,10 +2657,10 @@ class TestOnlineGeonamesGating:
             )
 
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup
+            fetcher.FetchGeonames, "get_timezone_for_coordinates", fake_tz_lookup
         )
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+            fetcher.FetchGeonames, "get_serialized_data", fail_city_lookup
         )
 
         s = AstrologicalSubjectFactory.from_birth_data(
@@ -2676,12 +2676,12 @@ class TestOnlineGeonamesGating:
     def test_explicit_coordinates_without_city_missing_timezone_id_raises(self, monkeypatch):
         """A timezoneJSON response without a timezoneId must raise a clear
         KerykeionException, not fall back to a default timezone."""
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
         from kerykeion.schemas import KerykeionException
 
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames,
+            fetcher.FetchGeonames,
             "get_timezone_for_coordinates",
             lambda self, lat, lng: {},
         )
@@ -2695,14 +2695,14 @@ class TestOnlineGeonamesGating:
     def test_from_iso_utc_time_explicit_coordinates_win(self, monkeypatch):
         """Explicit lng/lat must never be overwritten by the city centroid in
         from_iso_utc_time (and the GeoNames lookup is skipped entirely)."""
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 
         def fail_city_lookup(self):
             raise AssertionError("no GeoNames lookup should run when lng/lat are explicit")
 
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", fail_city_lookup
+            fetcher.FetchGeonames, "get_serialized_data", fail_city_lookup
         )
         s = AstrologicalSubjectFactory.from_iso_utc_time(
             "ISO Precise", "1990-06-15T12:00:00Z",
@@ -2741,13 +2741,13 @@ class TestOnlineGeonamesGating:
     def test_malformed_geonames_coordinates_raise_kerykeion_exception(self, monkeypatch):
         """A GeoNames payload with non-numeric lat/lng must surface as
         KerykeionException, not a raw ValueError from float()."""
-        from kerykeion import fetch_geonames
+        from kerykeion.geonames import fetcher
         from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
         from kerykeion.schemas import KerykeionException
 
         bad = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "not-a-number", "lng": "12.5"}
         monkeypatch.setattr(
-            fetch_geonames.FetchGeonames, "get_serialized_data", lambda self: dict(bad)
+            fetcher.FetchGeonames, "get_serialized_data", lambda self: dict(bad)
         )
         with pytest.raises(KerykeionException, match="Invalid coordinates from geonames"):
             AstrologicalSubjectFactory.from_birth_data(

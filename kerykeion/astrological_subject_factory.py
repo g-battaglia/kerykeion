@@ -49,7 +49,7 @@ from contextlib import contextmanager
 from functools import partial
 
 
-from kerykeion.fetch_geonames import FetchGeonames
+from kerykeion.geonames.fetcher import FetchGeonames
 from kerykeion.schemas import (
     KerykeionException,
     ZodiacType,

@@ -32,7 +32,7 @@ Classes:
 Dependencies:
     - kerykeion.ephemeris_backend: Ephemeris calculations (libephemeris or swisseph)
     - kerykeion.AstrologicalSubjectFactory: For creating complete chart data
-    - kerykeion.fetch_geonames: For online location data retrieval
+    - kerykeion.geonames.fetcher: For online location data retrieval
     - kerykeion.utilities: For date/time conversions and astronomical functions
     - kerykeion.schemas: For type definitions and model structures
 
@@ -78,7 +78,7 @@ from datetime import datetime, timezone
 from typing import List, Literal, Union, cast
 
 from kerykeion.schemas import KerykeionException
-from kerykeion.fetch_geonames import FetchGeonames
+from kerykeion.geonames.fetcher import FetchGeonames
 from kerykeion.utilities import julian_to_datetime, datetime_to_julian
 from kerykeion.astrological_subject_factory import (
     GEONAMES_DEFAULT_USERNAME_WARNING,

@@ -6,7 +6,7 @@ tags: ['docs', 'utility', 'geonames', 'location', 'timezone']
 order: 21
 ---
 
-# FetchGeonames (`kerykeion.fetch_geonames`)
+# FetchGeonames (`kerykeion.geonames.fetcher`)
 
 The `FetchGeonames` class provides an interface to the GeoNames API to retrieve geographical coordinates and timezone information necessary for chart calculations.
 
@@ -18,7 +18,7 @@ The `FetchGeonames` class provides an interface to the GeoNames API to retrieve 
 Initialize the class with a city and country code to fetch its geographical data.
 
 ```python
-from kerykeion.fetch_geonames import FetchGeonames
+from kerykeion.geonames.fetcher import FetchGeonames
 
 # Initialize the fetcher
 geonames = FetchGeonames(
