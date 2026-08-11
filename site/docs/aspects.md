@@ -171,6 +171,29 @@ aspects = AspectsFactory.single_chart_aspects(
 A built-in preset, `DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` (luminary widening), is
 available in `kerykeion.settings.config_constants`.
 
+##### Aspect-keyed adjustments
+
+A point's entry can also vary **by aspect**: instead of a single number, pass a
+mapping of aspect name → adjustment, with `"*"` as the default for aspects not
+listed. `number` and `{"*": number}` are equivalent.
+
+```python
+aspects = AspectsFactory.single_chart_aspects(
+    subject,
+    point_orb_adjustments={
+        "Sun": {"*": 1.5, "conjunction": 3.0},  # 3.0° for Sun conjunctions, 1.5° otherwise
+        "Ascendant": {"conjunction": -3.0},     # configured ONLY for conjunctions
+    },
+)
+```
+
+Without a `"*"` key, the point is **unconfigured** for the aspects it does not
+list — not treated as `0.0`. That preserves the explicit-only rule per aspect:
+in the example above, a Mars–Ascendant trine resolves exactly as if the
+Ascendant were absent from the table, so another point's negative adjustment
+still tightens the pair. Unknown aspect names log a warning (they can never
+match) but do not raise, mirroring how `active_aspects` treats unknown names.
+
 ## Return Data Structure
 
 The factory returns a `SingleChartAspectsModel` (for single charts) or `DualChartAspectsModel` (for dual charts) containing a list of `AspectModel` objects.

@@ -15,7 +15,10 @@ from kerykeion.aspects.aspects_utils import (
 )
 from kerykeion.aspects.orb_utils import (
     OrbAdjustmentStrategy,
+    PointOrbAdjustment,
+    has_aspect_keyed_adjustments,
     resolve_pair_orb_adjustment,
+    resolve_pair_orb_adjustments_for_aspects,
     validate_point_orb_adjustments,
 )
 from kerykeion.schemas.kr_models import (
@@ -117,7 +120,7 @@ class AspectsFactory:
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_aspects: Optional[List[ActiveAspect]] = None,
         axis_orb_limit: Optional[float] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> SingleChartAspectsModel:
         """
@@ -139,7 +142,11 @@ class AspectsFactory:
             axis_orb_limit: Optional orb threshold applied to chart axes; when None, no special axis filter
             point_orb_adjustments: Optional per-point orb adjustment table (e.g.
                 ``{"Sun": 1.5, "Moon": 1.5}``); widens/tightens the base orb when
-                a configured point is involved in the aspect
+                a configured point is involved in the aspect. An entry can also
+                vary by aspect: ``{"Sun": {"*": 1.5, "conjunction": 3.0}}``
+                applies 3.0° to Sun conjunctions and 1.5° to every other Sun
+                aspect (``"*"`` is the default for unlisted aspects; without it
+                the point is unconfigured for those aspects).
             point_orb_adjustment_strategy: How to combine the two points'
                 adjustments (default ``"max_explicit"``)
 
@@ -231,7 +238,7 @@ class AspectsFactory:
         axis_orb_limit: Optional[float] = None,
         first_subject_is_fixed: bool = False,
         second_subject_is_fixed: bool = False,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> DualChartAspectsModel:
         """
@@ -259,7 +266,9 @@ class AspectsFactory:
                 are time-sensitive points, so the tighter orb is applied uniformly
                 to both single-chart and dual-chart (synastry/transit) aspects.
                 When ``None`` (default) no axis-specific filtering is performed.
-            point_orb_adjustments: Optional per-point orb adjustment table
+            point_orb_adjustments: Optional per-point orb adjustment table; a
+                point's entry is a number or an aspect-keyed mapping with a
+                ``"*"`` default (see ``single_chart_aspects``)
             point_orb_adjustment_strategy: How to combine the two points'
                 adjustments (default ``"max_explicit"``)
 
@@ -375,7 +384,7 @@ class AspectsFactory:
         aspects_settings: Sequence[Mapping[str, Any]],
         axis_orb_limit: Optional[float],
         celestial_points: List[_CelestialPointSetting],
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         star_names: frozenset = frozenset(),
     ) -> SingleChartAspectsModel:
@@ -418,7 +427,7 @@ class AspectsFactory:
         celestial_points: List[_CelestialPointSetting],
         first_subject_is_fixed: bool,
         second_subject_is_fixed: bool,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         star_names: frozenset = frozenset(),
     ) -> DualChartAspectsModel:
@@ -486,7 +495,7 @@ class AspectsFactory:
         active_aspects: List[ActiveAspect],
         aspects_settings: Sequence[Mapping[str, Any]],
         celestial_points: List[_CelestialPointSetting],
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         star_names: frozenset = frozenset(),
     ) -> List[AspectModel]:
@@ -515,6 +524,12 @@ class AspectsFactory:
         all_aspects_list = []
         n_points = len(active_points_list)
 
+        # Aspect-keyed table entries need the resolver to run once per aspect
+        # for the pair. Decided once per call: tables of plain numbers (the
+        # overwhelmingly common case) keep the single-resolve scalar path.
+        aspect_keyed = has_aspect_keyed_adjustments(point_orb_adjustments)
+        aspect_names = [setting["name"] for setting in filtered_settings] if aspect_keyed else []
+
         for first_idx, first_point in enumerate(active_points_list):
             first_name = first_point["name"]
             first_abs_pos = first_point["abs_pos"]
@@ -541,12 +556,24 @@ class AspectsFactory:
                     continue
 
                 second_abs_pos = second_point["abs_pos"]
-                extra_orb = resolve_pair_orb_adjustment(
-                    first_name,
-                    second_name,
-                    point_orb_adjustments,
-                    point_orb_adjustment_strategy,
-                )
+                extra_orb: Union[float, dict]
+                if aspect_keyed:
+                    # Resolve the pair once per aspect in play; "*" wildcards
+                    # collapse here, so downstream sees plain per-aspect deltas.
+                    extra_orb = resolve_pair_orb_adjustments_for_aspects(
+                        first_name,
+                        second_name,
+                        point_orb_adjustments,
+                        point_orb_adjustment_strategy,
+                        aspect_names,
+                    )
+                else:
+                    extra_orb = resolve_pair_orb_adjustment(
+                        first_name,
+                        second_name,
+                        point_orb_adjustments,
+                        point_orb_adjustment_strategy,
+                    )
                 aspect = get_aspect_from_two_points(
                     filtered_settings, first_abs_pos, second_abs_pos, extra_orb=extra_orb
                 )
@@ -606,7 +633,7 @@ class AspectsFactory:
         celestial_points: List[_CelestialPointSetting],
         first_subject_is_fixed: bool,
         second_subject_is_fixed: bool,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         star_names: frozenset = frozenset(),
     ) -> List[AspectModel]:
@@ -641,6 +668,11 @@ class AspectsFactory:
         # Update aspects settings with active aspects orbs
         filtered_settings = AspectsFactory._update_aspect_settings(aspects_settings, active_aspects)
 
+        # See _calculate_single_chart_aspects: aspect-keyed entries switch the
+        # pair to a per-aspect resolve; plain-number tables keep the scalar path.
+        aspect_keyed = has_aspect_keyed_adjustments(point_orb_adjustments)
+        aspect_names = [setting["name"] for setting in filtered_settings] if aspect_keyed else []
+
         all_aspects_list = []
         for first in range(len(first_active_points_list)):
             # Read the point name before the inner loop so the orb resolver
@@ -658,12 +690,22 @@ class AspectsFactory:
                 if first_is_star and second_name in star_names:
                     continue
 
-                extra_orb = resolve_pair_orb_adjustment(
-                    first_name,
-                    second_name,
-                    point_orb_adjustments,
-                    point_orb_adjustment_strategy,
-                )
+                extra_orb: Union[float, dict]
+                if aspect_keyed:
+                    extra_orb = resolve_pair_orb_adjustments_for_aspects(
+                        first_name,
+                        second_name,
+                        point_orb_adjustments,
+                        point_orb_adjustment_strategy,
+                        aspect_names,
+                    )
+                else:
+                    extra_orb = resolve_pair_orb_adjustment(
+                        first_name,
+                        second_name,
+                        point_orb_adjustments,
+                        point_orb_adjustment_strategy,
+                    )
                 aspect = get_aspect_from_two_points(
                     filtered_settings,
                     first_active_points_list[first]["abs_pos"],

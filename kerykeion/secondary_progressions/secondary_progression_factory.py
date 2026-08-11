@@ -30,7 +30,14 @@ from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 from kerykeion.astrological_subject_factory import AstrologicalSubjectFactory
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
-from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
+from kerykeion.aspects.orb_utils import (
+    OrbAdjustmentStrategy,
+    PointOrbAdjustment,
+    has_aspect_keyed_adjustments,
+    resolve_pair_orb_adjustment,
+    resolve_pair_orb_adjustments_for_aspects,
+    validate_point_orb_adjustments,
+)
 from kerykeion.ephemeris_backend import ephe
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
@@ -448,7 +455,7 @@ class SecondaryProgressionFactory:
         compute_aspects: bool = True,
         aspect_orb: float = 3.0,
         aspects: Optional[Sequence[str]] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> SecondaryProgressionsResultModel:
         """Build the progressed chart with optional progressed-to-natal aspects.
@@ -482,6 +489,12 @@ class SecondaryProgressionFactory:
             A :class:`SecondaryProgressionsResultModel` with the progressed subject
             and (optionally) the cross-aspect contacts.
         """
+        # Validate the WHOLE table up front, like the AspectsFactory entry
+        # points do: the per-pair resolver only ever validates the leaves it
+        # resolves, so a typo'd aspect key or a non-finite leaf outside the
+        # selected aspects would otherwise be silently ignored.
+        validate_point_orb_adjustments(point_orb_adjustments)
+
         progressed = SecondaryProgressionFactory.compute(
             natal_subject,
             target_iso_utc_datetime=target_iso_utc_datetime,
@@ -504,15 +517,29 @@ class SecondaryProgressionFactory:
             natal_targets = gather_active_points(natal_subject, natal_subject.active_points)
             effective_aspects = aspects if aspects is not None else PTOLEMAIC_ASPECTS
             aspect_settings = build_aspect_settings(aspect_orb, effective_aspects)
+            # Aspect-keyed table entries resolve once per aspect for the pair;
+            # plain-number tables keep the single-resolve scalar path.
+            aspect_keyed = has_aspect_keyed_adjustments(point_orb_adjustments)
+            aspect_names = [setting["name"] for setting in aspect_settings] if aspect_keyed else []
 
             for prog_name, prog_pos in progressed_points:
                 for natal_name, natal_pos in natal_targets:
-                    extra_orb = resolve_pair_orb_adjustment(
-                        prog_name,
-                        natal_name,
-                        point_orb_adjustments,
-                        point_orb_adjustment_strategy,
-                    )
+                    extra_orb: float | dict
+                    if aspect_keyed:
+                        extra_orb = resolve_pair_orb_adjustments_for_aspects(
+                            prog_name,
+                            natal_name,
+                            point_orb_adjustments,
+                            point_orb_adjustment_strategy,
+                            aspect_names,
+                        )
+                    else:
+                        extra_orb = resolve_pair_orb_adjustment(
+                            prog_name,
+                            natal_name,
+                            point_orb_adjustments,
+                            point_orb_adjustment_strategy,
+                        )
                     outcome = get_aspect_from_two_points(
                         aspects_settings=aspect_settings,
                         point_one=prog_pos,

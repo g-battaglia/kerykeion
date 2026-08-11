@@ -29,7 +29,14 @@ from pydantic import BaseModel, Field  # noqa: F401  (BaseModel kept for back-co
 from kerykeion.schemas.kr_models import SubscriptableBaseModel
 
 from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
-from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, resolve_pair_orb_adjustment
+from kerykeion.aspects.orb_utils import (
+    OrbAdjustmentStrategy,
+    PointOrbAdjustment,
+    has_aspect_keyed_adjustments,
+    resolve_pair_orb_adjustment,
+    resolve_pair_orb_adjustments_for_aspects,
+    validate_point_orb_adjustments,
+)
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.kr_literals import SIGN_CODES
 from kerykeion.schemas.kr_models import AstrologicalSubjectModel
@@ -133,7 +140,7 @@ class SolarArcFactory:
         compute_aspects: bool = True,
         aspect_orb: float = 3.0,
         aspects: Optional[Sequence[str]] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
     ) -> SolarArcSubjectModel:
         """Compute the solar arc and directed-to-natal aspect picture.
@@ -162,6 +169,12 @@ class SolarArcFactory:
             A :class:`SolarArcSubjectModel` describing the arc and every
             directed point + directed-to-natal aspect found.
         """
+        # Validate the WHOLE table up front, like the AspectsFactory entry
+        # points do: the per-pair resolver only ever validates the leaves it
+        # resolves, so a typo'd aspect key or a non-finite leaf outside the
+        # selected aspects would otherwise be silently ignored.
+        validate_point_orb_adjustments(point_orb_adjustments)
+
         if natal_subject.sun is None:
             raise KerykeionException("Natal subject is missing the Sun — cannot compute solar arc.")
         if (target_iso_utc_datetime is None) == (target_year is None):
@@ -207,23 +220,65 @@ class SolarArcFactory:
         if compute_aspects:
             effective_aspects = aspects if aspects is not None else PTOLEMAIC_ASPECTS
             aspect_settings = build_aspect_settings(aspect_orb, effective_aspects)
+            # Aspect-keyed table entries resolve once per aspect for the pair;
+            # plain-number tables keep the single-resolve scalar path.
+            aspect_keyed = has_aspect_keyed_adjustments(point_orb_adjustments)
+            aspect_names = [setting["name"] for setting in aspect_settings] if aspect_keyed else []
             for d in directed_points:
                 for natal_name, natal_pos in natal_targets:
-                    extra_orb = resolve_pair_orb_adjustment(
-                        d.name,
-                        natal_name,
-                        point_orb_adjustments,
-                        point_orb_adjustment_strategy,
-                    )
+                    extra_orb: float | dict
+                    scalar_extra: Optional[float]
+                    if aspect_keyed:
+                        extra_orb = resolve_pair_orb_adjustments_for_aspects(
+                            d.name,
+                            natal_name,
+                            point_orb_adjustments,
+                            point_orb_adjustment_strategy,
+                            aspect_names,
+                        )
+                        scalar_extra = None
+                    else:
+                        scalar_extra = resolve_pair_orb_adjustment(
+                            d.name,
+                            natal_name,
+                            point_orb_adjustments,
+                            point_orb_adjustment_strategy,
+                        )
+                        extra_orb = scalar_extra
                     # Skip the tautological self-conjunction (a directed point
                     # with its own natal position) using the SAME effective orb
                     # the detection below uses — otherwise a per-pair widening
                     # (extra_orb) lets the self-conjunction slip past a guard
-                    # sized only to the base orb.
-                    if natal_name == d.name and _is_near_zero_arc(
-                        solar_arc, aspect_orb + max(0.0, extra_orb)
-                    ):
-                        continue
+                    # sized only to the base orb. Clamp the SUM, like detection
+                    # does: clamping only the delta would keep the guard at the
+                    # base orb when a negative conjunction delta has already
+                    # closed the conjunction window, discarding same-name
+                    # contacts another aspect could still legitimately make.
+                    if natal_name == d.name:
+                        if scalar_extra is None:
+                            # The tautological hit IS a conjunction, so the
+                            # guard is sized to the conjunction's own extra —
+                            # resolved directly, NOT read from the per-aspect
+                            # map (that map only covers the aspects the caller
+                            # enabled, and a filtered-out conjunction would
+                            # silently read as 0.0, breaking the number ≡
+                            # {"*": number} equivalence). Resolved HERE, only
+                            # for same-name pairs: no other pair consumes this
+                            # value, and resolving it for every pair would
+                            # evaluate — and possibly reject, e.g. a 'sum'
+                            # overflow — an adjustment that is irrelevant to
+                            # the pair being examined.
+                            conjunction_extra = resolve_pair_orb_adjustment(
+                                d.name,
+                                natal_name,
+                                point_orb_adjustments,
+                                point_orb_adjustment_strategy,
+                                aspect_name="conjunction",
+                            )
+                        else:
+                            conjunction_extra = scalar_extra
+                        if _is_near_zero_arc(solar_arc, max(0.0, aspect_orb + conjunction_extra)):
+                            continue
                     outcome = get_aspect_from_two_points(
                         aspects_settings=aspect_settings,
                         point_one=d.directed_abs_pos,

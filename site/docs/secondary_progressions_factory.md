@@ -61,7 +61,7 @@ Returns a `SecondaryProgressionsResultModel` with the progressed subject **plus*
 | `compute_aspects`              | bool              | True            | Whether to compute progressed-to-natal aspects     |
 | `aspect_orb`                   | float             | 3.0             | Orb in degrees for aspect detection                |
 | `aspects`                      | Sequence[str] or None | None        | Whitelist of aspect names (defaults to the 5 Ptolemaic majors: conjunction, opposition, trine, square, sextile) |
-| `point_orb_adjustments`         | Mapping[str, float] or None | None   | Finite additive per-point orb adjustments          |
+| `point_orb_adjustments`         | Mapping[str, float or Mapping[str, float]] or None | None   | Finite additive per-point orb adjustments; entries may be aspect-keyed with a `"*"` default |
 | `point_orb_adjustment_strategy`| str               | "max_explicit" | `max_explicit`, `min_explicit`, `sum`, or `none`   |
 
 ```python

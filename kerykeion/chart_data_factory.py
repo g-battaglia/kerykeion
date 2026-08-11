@@ -59,7 +59,7 @@ from kerykeion.settings.config_constants import (
     DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS,
     NO_POINT_ORB_ADJUSTMENTS,
 )
-from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy
+from kerykeion.aspects.orb_utils import OrbAdjustmentStrategy, PointOrbAdjustment
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.charts.charts_utils import (
     DOUBLE_CHART_TYPES,
@@ -116,7 +116,7 @@ class ChartDataFactory:
         include_relationship_score: bool = False,
         *,
         axis_orb_limit: Optional[float] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
@@ -144,6 +144,11 @@ class ChartDataFactory:
                 ``{"Sun": 1.5, "Moon": 1.5}``). When ``None``, the per-chart-type
                 default applies — natal/synastry/composite use
                 ``DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS``, every other type uses none.
+                An entry can also vary by aspect:
+                ``{"Sun": {"*": 1.5, "conjunction": 3.0}}`` applies 3.0° to Sun
+                conjunctions and 1.5° to every other Sun aspect (``"*"`` is the
+                default for unlisted aspects; without it the point is
+                unconfigured for those aspects).
             point_orb_adjustment_strategy: How to combine the two points'
                 adjustments (default ``"max_explicit"``)
             distribution_method: Strategy for element/modality weighting ("pure_count" or "weighted")
@@ -473,7 +478,7 @@ class ChartDataFactory:
         active_aspects: Optional[list[ActiveAspect]] = None,
         *,
         axis_orb_limit: Optional[float] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
@@ -519,7 +524,7 @@ class ChartDataFactory:
         include_relationship_score: bool = True,
         *,
         axis_orb_limit: Optional[float] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
@@ -570,7 +575,7 @@ class ChartDataFactory:
         include_house_comparison: bool = True,
         *,
         axis_orb_limit: Optional[float] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
@@ -616,7 +621,7 @@ class ChartDataFactory:
         active_aspects: Optional[list[ActiveAspect]] = None,
         *,
         axis_orb_limit: Optional[float] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
@@ -660,7 +665,7 @@ class ChartDataFactory:
         include_house_comparison: bool = True,
         *,
         axis_orb_limit: Optional[float] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
@@ -707,7 +712,7 @@ class ChartDataFactory:
         active_aspects: Optional[list[ActiveAspect]] = None,
         *,
         axis_orb_limit: Optional[float] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
@@ -752,7 +757,7 @@ class ChartDataFactory:
         include_house_comparison: bool = True,
         *,
         axis_orb_limit: Optional[float] = None,
-        point_orb_adjustments: Optional[Mapping[str, float]] = None,
+        point_orb_adjustments: Optional[Mapping[str, PointOrbAdjustment]] = None,
         point_orb_adjustment_strategy: OrbAdjustmentStrategy = "max_explicit",
         distribution_method: ElementQualityDistributionMethod = "weighted",
         custom_distribution_weights: Optional[Mapping[str, float]] = None,
