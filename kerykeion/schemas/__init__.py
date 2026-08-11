@@ -19,6 +19,7 @@ from .exceptions import KerykeionException
 from .literals import (
     ZodiacType,
     Sign,
+    SIGN_CODES,
     SignNumbers,
     AspectMovementType,
     MotionState,
@@ -235,6 +236,7 @@ __all__ = [
     # Main Literal Types (from literals)
     "ZodiacType",
     "Sign",
+    "SIGN_CODES",
     "SignNumbers",
     "AspectMovementType",
     "MotionState",
