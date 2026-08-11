@@ -13,9 +13,47 @@ The `ReportGenerator` class generates concise, human-readable text reports (tabl
 ## Supported Inputs
 
 - **`AstrologicalSubjectModel`**: Basic birth/event data, celestial points, houses.
-- **`SingleChartDataModel`**: Natal, Composite, Returns (includes elements, aspects).
-- **`DualChartDataModel`**: Synastry, Transits (includes comparison tables).
+- **`SingleChartDataModel`**: Natal, Composite, Returns (includes elements, aspects, angularities, stelliums).
+- **`DualChartDataModel`**: Synastry, Transits (includes comparison tables, per-subject angularities and stelliums).
 - **`MoonPhaseOverviewModel`**: Detailed lunar phase context produced by [`MoonPhaseDetailsFactory`](/content/docs/moon_phase_details_factory) (includes moon summary, illumination, upcoming phases, eclipses, sun info, and location).
+- **`ProfectionsModel`**: Annual profections from [`ProfectionsFactory`](/content/docs/profections_factory) — current year plus the surrounding window.
+- **`FirdariaModel`**: Firdaria periods from [`FirdariaFactory`](/content/docs/firdaria_factory) — sect summary, the timeline, and the running period's sub-lords.
+- **`HoraryIndicatorsModel`**: Significators, considerations and receptions from [`HoraryIndicatorsFactory`](/content/docs/horary_factory).
+- **`MutualReceptionsModel`**: Domicile and exaltation receptions from [`MutualReceptionsFactory`](/content/docs/receptions_factory).
+- **`DominantsModel`**: Ranked dominants from [`DominantsFactory`](/content/docs/dominants_factory) — one table per scored category.
+- **`ZodiacalReleasingModel`**: Periods from [`ZodiacalReleasingFactory`](/content/docs/zodiacal_releasing_factory) — L1 timeline plus the current period chain.
+
+The generator is **pure rendering**: it never calls a factory. Compute the
+technique first, then hand the result over.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, ProfectionsFactory, ReportGenerator
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+)
+profections = ProfectionsFactory.from_subject(subject, target_date="2026-06-04")
+ReportGenerator(profections).print_report()
+```
+
+## Optional Columns and Sections
+
+Nothing renders on speculation: every optional column and section appears only
+when the chart actually carries the data, so a report never widens into columns
+of `-`.
+
+| Column / section | Appears when |
+| :--------------- | :----------- |
+| `Motion` | A point has a `motion_state` (the ten planets, Earth-centred perspectives) |
+| `OOB` | A point **is** out of bounds |
+| `Mag.` | A point has a magnitude (fixed stars) |
+| `Constellation` | The star is found in the catalog (Fixed Stars table only) |
+| Arabic Parts | A lot is among the active points |
+| Essential Dignities | The subject was built with `calculate_dignities=True` |
+| Nakshatras | The subject was built with `calculate_nakshatra=True` |
+| Gauquelin Sectors | The subject was built with `calculate_gauquelin=True` |
+| Angularities / Stelliums | Chart data reports at least one |
 
 ## Usage
 

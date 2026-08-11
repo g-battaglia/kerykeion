@@ -44,6 +44,7 @@ Kanye — Subject Report
 | Timezone           | America/New_York          |
 | Day of Week        | Wednesday                 |
 | ISO Local Datetime | 1977-06-08T08:45:00-04:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Astrological Subject — Settings------------+
@@ -56,24 +57,24 @@ Kanye — Subject Report
 | Active Points Count | 14                  |
 +---------------------+---------------------+
 
-+Celestial Points-------+--------+----------+--------------+---------+------+----------------+
-| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House          |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
-| Ascendant             | Can ♋ | 18.00°   | +306.3482°/d | N/A     | -    | First House    |
-| Medium Coeli          | Ari ♈ | 3.98°    | +393.1522°/d | N/A     | -    | Tenth House    |
-| Sun                   | Gem ♊ | 17.60°   | +0.9564°/d   | +22.86° | -    | Twelfth House  |
-| Moon                  | Pis ♓ | 16.43°   | +12.8096°/d  | -2.54°  | -    | Ninth House    |
-| Mercury               | Tau ♉ | 26.29°   | +1.5275°/d   | +16.98° | -    | Eleventh House |
-| Venus                 | Tau ♉ | 2.03°    | +0.9041°/d   | +9.85°  | -    | Tenth House    |
-| Mars                  | Tau ♉ | 1.79°    | +0.7428°/d   | +11.13° | -    | Tenth House    |
-| Jupiter               | Gem ♊ | 14.61°   | +0.2323°/d   | +22.07° | -    | Eleventh House |
-| Saturn                | Leo ♌ | 12.80°   | +0.0906°/d   | +17.91° | -    | Second House   |
-| Uranus                | Sco ♏ | 8.27°    | -0.0295°/d   | -13.84° | R    | Fourth House   |
-| Neptune               | Sag ♐ | 14.69°   | -0.0270°/d   | -21.04° | R    | Fifth House    |
-| Pluto                 | Lib ♎ | 11.45°   | -0.0071°/d   | +11.36° | R    | Fourth House   |
-| True North Lunar Node | Lib ♎ | 22.82°   | -0.0023°/d   | -8.87°  | R    | Fourth House   |
-| Chiron                | Tau ♉ | 4.17°    | +0.0482°/d   | +12.60° | -    | Tenth House    |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
++Celestial Points-------+--------+----------+--------------+------------+---------+------+----------------+
+| Point                 | Sign   | Position | Speed        | Motion     | Decl.   | Ret. | House          |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
+| Ascendant             | Can ♋ | 18.00°   | +306.3499°/d | -          | N/A     | -    | First House    |
+| Medium Coeli          | Ari ♈ | 3.98°    | +393.1543°/d | -          | N/A     | -    | Tenth House    |
+| Sun                   | Gem ♊ | 17.60°   | +0.9564°/d   | Average    | +22.86° | -    | Twelfth House  |
+| Moon                  | Pis ♓ | 16.43°   | +12.8096°/d  | Average    | -2.54°  | -    | Ninth House    |
+| Mercury               | Tau ♉ | 26.29°   | +1.5275°/d   | Average    | +16.98° | -    | Eleventh House |
+| Venus                 | Tau ♉ | 2.03°    | +0.9041°/d   | Slow       | +9.85°  | -    | Tenth House    |
+| Mars                  | Tau ♉ | 1.79°    | +0.7428°/d   | Fast       | +11.13° | -    | Tenth House    |
+| Jupiter               | Gem ♊ | 14.61°   | +0.2323°/d   | Fast       | +22.07° | -    | Eleventh House |
+| Saturn                | Leo ♌ | 12.80°   | +0.0906°/d   | Fast       | +17.91° | -    | Second House   |
+| Uranus                | Sco ♏ | 8.27°    | -0.0295°/d   | Retrograde | -13.84° | R    | Fourth House   |
+| Neptune               | Sag ♐ | 14.69°   | -0.0270°/d   | Retrograde | -21.04° | R    | Fifth House    |
+| Pluto                 | Lib ♎ | 11.45°   | -0.0071°/d   | Retrograde | +11.36° | R    | Fourth House   |
+| True North Lunar Node | Lib ♎ | 22.82°   | -0.0023°/d   | -          | -8.87°  | R    | Fourth House   |
+| Chiron                | Tau ♉ | 4.17°    | +0.0482°/d   | -          | +12.60° | -    | Tenth House    |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
 
 +Houses (Placidus)--------+----------+-------------------+
 | House          | Sign   | Position | Absolute Position |
@@ -116,6 +117,7 @@ Kanye — Natal Chart Report
 | Timezone           | America/New_York          |
 | Day of Week        | Wednesday                 |
 | ISO Local Datetime | 1977-06-08T08:45:00-04:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Natal — Settings-----+---------------------+
@@ -128,24 +130,24 @@ Kanye — Natal Chart Report
 | Active Points Count | 14                  |
 +---------------------+---------------------+
 
-+Natal Celestial Points-+--------+----------+--------------+---------+------+----------------+
-| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House          |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
-| Ascendant             | Can ♋ | 18.00°   | +306.3482°/d | N/A     | -    | First House    |
-| Medium Coeli          | Ari ♈ | 3.98°    | +393.1522°/d | N/A     | -    | Tenth House    |
-| Sun                   | Gem ♊ | 17.60°   | +0.9564°/d   | +22.86° | -    | Twelfth House  |
-| Moon                  | Pis ♓ | 16.43°   | +12.8096°/d  | -2.54°  | -    | Ninth House    |
-| Mercury               | Tau ♉ | 26.29°   | +1.5275°/d   | +16.98° | -    | Eleventh House |
-| Venus                 | Tau ♉ | 2.03°    | +0.9041°/d   | +9.85°  | -    | Tenth House    |
-| Mars                  | Tau ♉ | 1.79°    | +0.7428°/d   | +11.13° | -    | Tenth House    |
-| Jupiter               | Gem ♊ | 14.61°   | +0.2323°/d   | +22.07° | -    | Eleventh House |
-| Saturn                | Leo ♌ | 12.80°   | +0.0906°/d   | +17.91° | -    | Second House   |
-| Uranus                | Sco ♏ | 8.27°    | -0.0295°/d   | -13.84° | R    | Fourth House   |
-| Neptune               | Sag ♐ | 14.69°   | -0.0270°/d   | -21.04° | R    | Fifth House    |
-| Pluto                 | Lib ♎ | 11.45°   | -0.0071°/d   | +11.36° | R    | Fourth House   |
-| True North Lunar Node | Lib ♎ | 22.82°   | -0.0023°/d   | -8.87°  | R    | Fourth House   |
-| Chiron                | Tau ♉ | 4.17°    | +0.0482°/d   | +12.60° | -    | Tenth House    |
-+-----------------------+--------+----------+--------------+---------+------+----------------+
++Natal Celestial Points-+--------+----------+--------------+------------+---------+------+----------------+
+| Point                 | Sign   | Position | Speed        | Motion     | Decl.   | Ret. | House          |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
+| Ascendant             | Can ♋ | 18.00°   | +306.3499°/d | -          | N/A     | -    | First House    |
+| Medium Coeli          | Ari ♈ | 3.98°    | +393.1543°/d | -          | N/A     | -    | Tenth House    |
+| Sun                   | Gem ♊ | 17.60°   | +0.9564°/d   | Average    | +22.86° | -    | Twelfth House  |
+| Moon                  | Pis ♓ | 16.43°   | +12.8096°/d  | Average    | -2.54°  | -    | Ninth House    |
+| Mercury               | Tau ♉ | 26.29°   | +1.5275°/d   | Average    | +16.98° | -    | Eleventh House |
+| Venus                 | Tau ♉ | 2.03°    | +0.9041°/d   | Slow       | +9.85°  | -    | Tenth House    |
+| Mars                  | Tau ♉ | 1.79°    | +0.7428°/d   | Fast       | +11.13° | -    | Tenth House    |
+| Jupiter               | Gem ♊ | 14.61°   | +0.2323°/d   | Fast       | +22.07° | -    | Eleventh House |
+| Saturn                | Leo ♌ | 12.80°   | +0.0906°/d   | Fast       | +17.91° | -    | Second House   |
+| Uranus                | Sco ♏ | 8.27°    | -0.0295°/d   | Retrograde | -13.84° | R    | Fourth House   |
+| Neptune               | Sag ♐ | 14.69°   | -0.0270°/d   | Retrograde | -21.04° | R    | Fifth House    |
+| Pluto                 | Lib ♎ | 11.45°   | -0.0071°/d   | Retrograde | +11.36° | R    | Fourth House   |
+| True North Lunar Node | Lib ♎ | 22.82°   | -0.0023°/d   | -          | -8.87°  | R    | Fourth House   |
+| Chiron                | Tau ♉ | 4.17°    | +0.0482°/d   | -          | +12.60° | -    | Tenth House    |
++-----------------------+--------+----------+--------------+------------+---------+------+----------------+
 
 +Natal Houses (Placidus)--+----------+-------------------+
 | House          | Sign   | Position | Absolute Position |

@@ -1139,13 +1139,26 @@ Each report contains:
 
 - A chart-aware title summarising the subject(s) and chart type
 - Birth/event metadata and configuration settings
-- Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
+- Celestial points with sign, position, **daily motion**, **motion state**, **declination**, retrograde flag, and house (an **out-of-bounds** column appears when a point actually is)
+- Arabic Parts, fixed stars (with **constellation**) and midpoints in tables of their own, when active
 - House cusp tables for every subject involved
+- Essential dignities, nakshatras and Gauquelin sectors, when the chart computed them
 - Lunar phase details when available
 - Chart diurnality (Sun above or below the horizon), when it applies
-- Element/quality distributions and active configuration summaries (for chart data)
+- Element/quality distributions, **angularities** and **stelliums**, and active configuration summaries (for chart data)
 - Aspect listings tailored for single or dual charts, with symbols for type and movement
 - Dual-chart extras such as house comparisons and relationship scores (when provided by the data)
+
+Technique results are accepted directly, each rendering its own report:
+`ProfectionsModel`, `FirdariaModel`, `HoraryIndicatorsModel`,
+`MutualReceptionsModel`, `DominantsModel` and `ZodiacalReleasingModel`.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, FirdariaFactory, ReportGenerator
+
+subject = AstrologicalSubjectFactory.from_birth_data("Jane", 1990, 6, 15, 12, 0, "Rome", "IT")
+ReportGenerator(FirdariaFactory.from_subject(subject, target_date="2026-06-04")).print_report()
+```
 
 ### Section Access
 
