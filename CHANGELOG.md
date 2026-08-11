@@ -2,6 +2,39 @@
 
 ## [Unreleased]
 
+## 6.0.0a82 - 2026-08-11
+
+### Added
+
+- **Aspect-keyed per-point orb adjustments (the orb matrix).** A
+  `point_orb_adjustments` entry can now vary by aspect: instead of a single
+  number, a point may carry a mapping of aspect name → additive delta, with
+  `"*"` as the default for aspects not listed
+  (`{"Sun": {"*": 1.5, "conjunction": 3.0}}` applies 3.0° to Sun conjunctions
+  and 1.5° to every other Sun aspect). `number` and `{"*": number}` are
+  equivalent, so every existing table is valid unchanged and resolves
+  identically. The explicit-only rule carries over per aspect: without `"*"`,
+  a point is *unconfigured* (not `0.0`) for the aspects it does not list, so
+  negative adjustments on the other endpoint keep tightening — and the
+  equivalence extends to the error contract (e.g. a `sum` overflow raises
+  identically on both forms). Supported end to end: `AspectsFactory` (single
+  and dual charts), `ChartDataFactory`,
+  `SecondaryProgressionFactory.compute_full` and `SolarArcFactory.compute`.
+  The solar-arc self-conjunction guard sizes itself to the conjunction's own
+  delta — resolved independently of the aspect filter, only for same-name
+  pairs, with the whole sum clamped at zero exactly like detection. Both
+  predictive entry points now validate the full adjustment table up front,
+  like the `AspectsFactory` entry points always did. The combination
+  strategies (`max_explicit`/`min_explicit`/`sum`/`none`) operate on the
+  per-aspect resolved values. New helpers in `kerykeion.aspects.orb_utils`:
+  `lookup_point_adjustment`, `has_aspect_keyed_adjustments`,
+  `resolve_pair_orb_adjustments_for_aspects`; `resolve_pair_orb_adjustment`
+  gains a keyword-only `aspect_name` parameter (default `None` = legacy
+  behavior, `"*"` only). `get_aspect_from_two_points` accepts a per-aspect
+  `extra_orb` mapping; the scalar path is byte-identical to before. Unknown
+  aspect names in a mapping log a warning (never an error), mirroring
+  `active_aspects`; non-finite leaves are rejected up front.
+
 ## 6.0.0a81 - 2026-08-11
 
 ### Changed
