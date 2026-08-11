@@ -8,12 +8,14 @@ from __future__ import annotations
 from typing import List
 
 from kerykeion.dignities.rulers import get_domicile_ruler, get_exaltation_ruler
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     KerykeionPointModel,
     MutualReceptionModel,
     MutualReceptionsModel,
 )
+from kerykeion.utilities import has_terrestrial_frame
 
 # Subject fields of the seven classical planets — the only participants in
 # classical reception (no nodes, no outer planets).
@@ -51,7 +53,23 @@ class MutualReceptionsFactory:
         Returns:
             A :class:`MutualReceptionsModel`, one entry per deduplicated pair
             and reception type.
+
+        Raises:
+            KerykeionException: When the chart's perspective is not
+                terrestrial: reception is a dignity technique defined on
+                sign placements as seen from Earth, and a heliocentric or
+                planetocentric chart's signs live in another frame (the
+                heliocentric one even lacks the Sun).
         """
+        if not has_terrestrial_frame(subject):
+            raise KerykeionException(
+                "Mutual receptions are a terrestrial dignity technique: sign "
+                "placements are read as seen from Earth, but this chart's "
+                f"perspective ({getattr(subject, 'perspective_type', None)!r}) "
+                "measures its longitudes from another origin. Cast the chart "
+                "geocentrically (or topocentrically)."
+            )
+
         planets: List[KerykeionPointModel] = []
         for field in CLASSICAL_PLANET_FIELDS:
             point = getattr(subject, field, None)

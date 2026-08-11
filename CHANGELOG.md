@@ -22,12 +22,18 @@
   `target_date` agrees with the timeline. A subject without a boolean
   `is_diurnal` (midpoint composite) is refused, never guessed.
 - **Mutual receptions** (`MutualReceptionsFactory.from_subject`): domicile and
-  exaltation receptions among the seven classical planets.
+  exaltation receptions among the seven classical planets. Non-terrestrial
+  perspectives are refused: reception is a dignity technique on sign
+  placements as seen from Earth.
 - **Horary indicators** (`HoraryIndicatorsFactory.from_subject`): querent/
   quesited significators via classical rulership, the considerations before
   judgment as stable keys (wording belongs to the consuming product), and the
   chart's mutual receptions. The Ascendant degree is read from the true
-  Ascendant point, not the first-house cusp (Whole Sign safe).
+  Ascendant point, not the first-house cusp (Whole Sign safe). Non-terrestrial
+  perspectives (heliocentric, barycentric, selenocentric, planetocentric) are
+  refused with a clear error: cusps, angles and rulership placements only
+  exist in an Earth frame, and mixing frames would produce plausible but
+  invalid indicators.
 - **Shared rulership lookups** (`kerykeion.dignities.get_domicile_ruler` /
   `get_exaltation_ruler`): single public source over the dignity tables.
   Zodiacal releasing's private `TRADITIONAL_RULERS` copy now derives from it.

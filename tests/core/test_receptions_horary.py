@@ -155,3 +155,21 @@ def test_receptions_are_included(john_lennon):
     indicators = HoraryIndicatorsFactory.from_subject(john_lennon)
     standalone = MutualReceptionsFactory.from_subject(john_lennon).receptions
     assert indicators.mutual_receptions == standalone
+
+
+def test_non_terrestrial_chart_is_refused():
+    """Horary indicators and receptions read cusps, angles and sign
+    placements as seen from Earth: a chart cast from another origin
+    (heliocentric, barycentric, planetocentric) would mix frames into
+    plausible but invalid output — refuse, never mix."""
+    from kerykeion.schemas import KerykeionException
+
+    helio = SimpleNamespace(
+        perspective_type="Heliocentric",
+        mercury=SimpleNamespace(name="Mercury", sign="Vir"),
+        venus=SimpleNamespace(name="Venus", sign="Tau"),
+    )
+    with pytest.raises(KerykeionException, match="terrestrial"):
+        HoraryIndicatorsFactory.from_subject(helio)  # type: ignore[arg-type]
+    with pytest.raises(KerykeionException, match="terrestrial"):
+        MutualReceptionsFactory.from_subject(helio)  # type: ignore[arg-type]

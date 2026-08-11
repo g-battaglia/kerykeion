@@ -916,6 +916,24 @@ def resolve_subject_local_moment(subject: Any) -> tuple[int, int, int, float]:
     return (int(match.group("year")), int(match.group("month")), int(match.group("day")), hour)
 
 
+# Perspectives whose planet longitudes share the Earth frame of the angles
+# and houses. Techniques built on house cusps, angles, house placements or
+# sign rulership read the chart as seen from Earth; a chart measured from
+# another origin (Heliocentric, Barycentric, Selenocentric, planetocentric)
+# would feed them plausible-looking but frame-inconsistent data.
+TERRESTRIAL_PERSPECTIVES = frozenset({"Apparent Geocentric", "True Geocentric", "Topocentric"})
+
+
+def has_terrestrial_frame(subject: Any) -> bool:
+    """Whether the subject's planet longitudes share the angles' Earth frame.
+
+    A subject that carries no ``perspective_type`` at all is trusted:
+    duck-typed inputs default to the geocentric contract.
+    """
+    perspective = getattr(subject, "perspective_type", None)
+    return perspective is None or str(perspective) in TERRESTRIAL_PERSPECTIVES
+
+
 def require_same_frame(first: Any, second: Any) -> None:
     """
     Reject two subjects whose astrological reference frame differs.

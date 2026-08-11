@@ -9,6 +9,7 @@ from typing import List, Optional
 
 from kerykeion.dignities.rulers import get_domicile_ruler
 from kerykeion.receptions import MutualReceptionsFactory
+from kerykeion.schemas.kerykeion_exception import KerykeionException
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
     HoraryConsiderationModel,
@@ -16,6 +17,7 @@ from kerykeion.schemas.kr_models import (
     HorarySignificatorModel,
     KerykeionPointModel,
 )
+from kerykeion.utilities import has_terrestrial_frame
 
 # House cusp fields in house order, and the engine house-name → number map.
 HOUSE_CUSP_FIELDS: tuple[str, ...] = (
@@ -109,7 +111,27 @@ class HoraryIndicatorsFactory:
 
         Returns:
             A :class:`HoraryIndicatorsModel`.
+
+        Raises:
+            KerykeionException: When the chart's perspective is not
+                terrestrial (heliocentric, barycentric, selenocentric or
+                planetocentric): significators, house considerations and
+                receptions read house cusps, angles and sign rulership as
+                seen from Earth, and a chart measured from another origin
+                would produce plausible but frame-inconsistent indicators
+                (a heliocentric chart even lacks the Sun). Refused, never
+                mixed.
         """
+        if not has_terrestrial_frame(subject):
+            raise KerykeionException(
+                "Horary indicators are a terrestrial technique: house cusps, "
+                "angles and rulership placements are read as seen from Earth, "
+                f"but this chart's perspective "
+                f"({getattr(subject, 'perspective_type', None)!r}) measures its "
+                "longitudes from another origin. Cast the question chart "
+                "geocentrically (or topocentrically)."
+            )
+
         # Read the Ascendant degree from the true Ascendant point, NOT the
         # first-house cusp: under Whole Sign the cusp sits at 0° of the rising
         # sign, which would flag every Whole Sign chart as "too early". Fall
