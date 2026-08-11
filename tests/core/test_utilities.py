@@ -38,6 +38,10 @@ from kerykeion.utilities import (
     format_iso_display,
     format_timedelta_hhmm,
     extract_year_from_iso,
+    civil_jd,
+    jd_to_iso_date,
+    parse_astronomical_iso_moment,
+    resolve_subject_local_moment,
 )
 from kerykeion.charts.charts_utils import convert_decimal_to_degree_string, format_datetime_with_timezone
 
@@ -1219,3 +1223,84 @@ class TestHorizonSystemHouseAssignmentRound6:
         houses = {getattr(s, p).house for p in
                   ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]}
         assert len(houses) > 1, "H-system collapsed every planet into one house"
+
+
+# =============================================================================
+# BCE-safe civil-date helpers (time-lord techniques)
+# =============================================================================
+
+
+class TestParseAstronomicalIsoMoment:
+    """parse_astronomical_iso_moment: the BCE-safe target-date parser."""
+
+    def test_plain_date(self):
+        assert parse_astronomical_iso_moment("2026-06-04") == (2026, 6, 4, 0.0)
+
+    def test_datetime_keeps_seconds_in_the_hour_fraction(self):
+        year, month, day, hour = parse_astronomical_iso_moment("2026-06-04T12:30:30.5")
+        assert (year, month, day) == (2026, 6, 4)
+        assert hour == pytest.approx(12 + 30 / 60 + 30.5 / 3600)
+
+    def test_negative_astronomical_year(self):
+        assert parse_astronomical_iso_moment("-0550-10-07") == (-550, 10, 7, 0.0)
+
+    def test_timezone_aware_rejected(self):
+        for value in ("2026-06-04T12:00:00+02:00", "2026-06-04T12:00:00Z"):
+            with pytest.raises(KerykeionException, match="timezone-naive"):
+                parse_astronomical_iso_moment(value)
+
+    def test_garbage_and_out_of_range_rejected(self):
+        for value in ("not-a-date", "2026-13-01", "2026-06-04T25:00", "2026-06-04junk"):
+            with pytest.raises(KerykeionException, match="Invalid target_date"):
+                parse_astronomical_iso_moment(value)
+
+
+class TestCivilJdCalendarConvention:
+    """civil_jd / jd_to_iso_date mirror the subject factory's calendar split:
+    Julian for year < 1, proleptic Gregorian from 1 CE on."""
+
+    def test_bce_uses_julian_calendar(self):
+        from kerykeion.ephemeris_backend import ephe
+
+        assert civil_jd(-562, 10, 7, 6.5) == pytest.approx(
+            ephe.julday(-562, 10, 7, 6.5, ephe.JUL_CAL)
+        )
+
+    def test_ce_uses_gregorian_calendar(self):
+        from kerykeion.ephemeris_backend import ephe
+
+        assert civil_jd(1940, 10, 9, 18.5) == pytest.approx(
+            ephe.julday(1940, 10, 9, 18.5, ephe.GREG_CAL)
+        )
+
+    def test_round_trip_both_eras(self):
+        assert jd_to_iso_date(civil_jd(-562, 10, 7, 6.5)) == "-0562-10-07"
+        assert jd_to_iso_date(civil_jd(1940, 10, 9, 18.5)) == "1940-10-09"
+
+
+class TestResolveSubjectLocalMomentSeconds:
+    """Birth seconds must survive into the hour fraction: the model has no
+    split seconds field, but the local ISO timestamp retains them."""
+
+    def test_split_seconds_attribute_wins(self):
+        from types import SimpleNamespace
+
+        subject = SimpleNamespace(year=1990, month=6, day=15, hour=12, minute=30, seconds=45)
+        assert resolve_subject_local_moment(subject)[3] == pytest.approx(12 + 30 / 60 + 45 / 3600)
+
+    def test_seconds_recovered_from_local_iso(self):
+        from types import SimpleNamespace
+
+        subject = SimpleNamespace(
+            year=1990, month=6, day=15, hour=12, minute=30,
+            iso_formatted_local_datetime="1990-06-15T12:30:45+02:00",
+        )
+        assert resolve_subject_local_moment(subject)[3] == pytest.approx(12 + 30 / 60 + 45 / 3600)
+
+    def test_iso_only_subject_keeps_seconds(self):
+        from types import SimpleNamespace
+
+        subject = SimpleNamespace(iso_formatted_local_datetime="1990-06-15T12:30:45+02:00")
+        year, month, day, hour = resolve_subject_local_moment(subject)
+        assert (year, month, day) == (1990, 6, 15)
+        assert hour == pytest.approx(12 + 30 / 60 + 45 / 3600)

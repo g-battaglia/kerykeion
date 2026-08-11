@@ -741,16 +741,36 @@ def format_astronomical_iso_date(year: int, month: int, day: int) -> str:
     return f"{year:04d}-{month:02d}-{day:02d}"
 
 
+# JD of 0001-01-01 00:00 proleptic Gregorian — the seam of the engine's
+# calendar convention (verified against ephe.julday(1, 1, 1, 0.0, GREG_CAL)).
+_GREGORIAN_CE_EPOCH_JD = 1721425.5
+
+
 def jd_to_iso_date(jd: float) -> str:
-    """Proleptic-Gregorian ISO date of a Julian Day (BCE-safe)."""
+    """ISO date of a Julian Day in the engine's calendar convention (BCE-safe).
+
+    Instants before 1 CE format as Julian-calendar dates, from 1 CE on as
+    proleptic Gregorian — the same asymmetry the subject factory applies to
+    its inputs, so a timeline's boundary dates and the chart's own dates
+    share one convention. A timeline crossing 1 CE shows the calendar seam
+    (Julian labels run about two days ahead there); the seam belongs to the
+    convention, not to the arithmetic.
+    """
     from kerykeion.ephemeris_backend import ephe
 
-    year, month, day, _hour = ephe.revjul(jd)
+    cal_flag = ephe.JUL_CAL if jd < _GREGORIAN_CE_EPOCH_JD else ephe.GREG_CAL
+    year, month, day, _hour = ephe.revjul(jd, cal_flag)
     return format_astronomical_iso_date(int(year), int(month), int(day))
 
 
 def civil_jd(year: int, month: int, day: int, hour: float = 0.0) -> float:
-    """Julian Day of a proleptic-Gregorian civil moment (BCE-safe).
+    """Julian Day of a civil moment in the engine's calendar convention (BCE-safe).
+
+    Mirrors the subject factory's asymmetric convention: components with
+    ``year < 1`` are Julian-calendar dates (every BCE date predates the
+    Gregorian reform), ``year >= 1`` is proleptic Gregorian. A single fixed
+    calendar here would anchor a BCE timeline days away from the chart's
+    own instant (six days at year -562).
 
     The backend's ``julday`` also normalizes overflowing components the way
     civil calendars do — February 29 of a common year rolls to March 1 —
@@ -758,7 +778,49 @@ def civil_jd(year: int, month: int, day: int, hour: float = 0.0) -> float:
     """
     from kerykeion.ephemeris_backend import ephe
 
-    return ephe.julday(int(year), int(month), int(day), float(hour))
+    cal_flag = ephe.JUL_CAL if year < 1 else ephe.GREG_CAL
+    return ephe.julday(int(year), int(month), int(day), float(hour), cal_flag)
+
+
+def parse_astronomical_iso_moment(value: str) -> tuple[int, int, int, float]:
+    """Parse a timezone-naive ISO date/datetime, astronomical years included.
+
+    ``datetime.fromisoformat`` rejects the astronomical year numbering
+    (``-0550-10-07``) the engine itself emits for BCE moments, so target
+    dates for the time-lord techniques go through this parser instead.
+    Returns ``(year, month, day, hour_float)`` with seconds folded into the
+    hour fraction. Timezone-aware values are rejected: the techniques
+    compare in the subject's local civil frame, and an explicit offset
+    would silently name a different instant.
+
+    Raises:
+        KerykeionException: On unparseable input, out-of-range components,
+            or a timezone-aware value.
+    """
+    text = str(value).strip()
+    match = _ANCIENT_ISO_RE.match(text)
+    rest = text[match.end() :] if match else ""
+    if match and rest and rest[0] in "+-Zz":
+        raise KerykeionException(
+            f"target_date {value!r} must be timezone-naive "
+            "(pass a bare ISO date, e.g. '2026-06-04')."
+        )
+    if not match or rest:
+        raise KerykeionException(
+            f"Invalid target_date {value!r} (expected ISO YYYY-MM-DD; "
+            "astronomical year numbering accepted, e.g. '-0550-10-07')."
+        )
+    year = int(match.group("year"))
+    month = int(match.group("month"))
+    day = int(match.group("day"))
+    hour = int(match.group("hour") or 0)
+    minute = int(match.group("minute") or 0)
+    second = float(match.group("second") or 0.0)
+    if not (1 <= month <= 12 and 1 <= day <= 31 and hour <= 23 and minute <= 59 and second < 60):
+        raise KerykeionException(
+            f"Invalid target_date {value!r}: date/time component out of range."
+        )
+    return year, month, day, hour + minute / 60.0 + second / 3600.0
 
 
 def resolve_subject_local_moment(subject: Any) -> tuple[int, int, int, float]:
@@ -767,7 +829,10 @@ def resolve_subject_local_moment(subject: Any) -> tuple[int, int, int, float]:
     Returns ``(year, month, day, hour_float)`` without ever building a
     ``datetime``, so BCE subjects work. Split-component subjects are read
     directly; ISO-only subjects (returns, Davison) are parsed at face value,
-    negative years included. A midpoint composite carries neither and is
+    negative years included. Seconds are retained in the hour fraction: the
+    subject model carries no split seconds field, so when the subject lacks
+    a ``seconds`` attribute they are recovered from the local ISO timestamp
+    (which preserves them). A midpoint composite carries neither and is
     rejected: it has no single moment for a time-lord timeline to anchor to.
 
     Raises:
@@ -775,11 +840,16 @@ def resolve_subject_local_moment(subject: Any) -> tuple[int, int, int, float]:
     """
     if getattr(subject, "year", None) is not None:
         try:
+            seconds = getattr(subject, "seconds", None)
+            if seconds is None:
+                iso_local = getattr(subject, "iso_formatted_local_datetime", None)
+                iso_match = _ANCIENT_ISO_RE.match(str(iso_local)) if iso_local else None
+                seconds = float(iso_match.group("second") or 0.0) if iso_match else 0.0
             return (
                 int(subject.year),
                 int(subject.month),
                 int(subject.day),
-                float(subject.hour) + float(subject.minute) / 60.0,
+                float(subject.hour) + float(subject.minute) / 60.0 + float(seconds) / 3600.0,
             )
         except (TypeError, ValueError) as exc:
             raise KerykeionException(f"Invalid birth date on subject: {exc}") from exc
@@ -796,7 +866,11 @@ def resolve_subject_local_moment(subject: Any) -> tuple[int, int, int, float]:
     match = _ANCIENT_ISO_RE.match(str(iso))
     if not match:
         raise KerykeionException(f"Cannot parse the subject's ISO timestamp {iso!r}.")
-    hour = int(match.group("hour") or 0) + int(match.group("minute") or 0) / 60.0
+    hour = (
+        int(match.group("hour") or 0)
+        + int(match.group("minute") or 0) / 60.0
+        + float(match.group("second") or 0.0) / 3600.0
+    )
     return (int(match.group("year")), int(match.group("month")), int(match.group("day")), hour)
 
 

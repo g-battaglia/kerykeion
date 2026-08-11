@@ -126,3 +126,39 @@ def test_bce_subject_builds_firdaria():
         assert prev.end == nxt.start
     # The 2024 target falls far beyond the 120-year cap: no current period.
     assert firdaria.current is None
+
+
+def test_bce_anchor_uses_the_julian_calendar():
+    """The subject factory interprets year<1 components as Julian-calendar
+    dates; the firdaria anchor must live on that same instant (the two
+    calendars are six days apart at year -562)."""
+    from kerykeion.ephemeris_backend import ephe
+    from kerykeion.utilities import civil_jd, jd_to_iso_date
+
+    bce_jd = civil_jd(-562, 10, 7, 6.5)
+    assert bce_jd == approx(ephe.julday(-562, 10, 7, 6.5, ephe.JUL_CAL))
+    assert jd_to_iso_date(bce_jd) == "-0562-10-07"
+    # CE stays proleptic Gregorian, exactly as before.
+    ce_jd = civil_jd(1940, 10, 9, 18.5)
+    assert ce_jd == approx(ephe.julday(1940, 10, 9, 18.5, ephe.GREG_CAL))
+    assert jd_to_iso_date(ce_jd) == "1940-10-09"
+
+
+def test_bce_target_date_resolves_current():
+    """Astronomical-year targets parse (datetime.fromisoformat cannot) and
+    resolve against the Julian-calendar timeline: ten firdaria years are
+    3652.5 days, half a day short of ten Julian-calendar years here."""
+    subject = SimpleNamespace(
+        year=-562, month=10, day=7, hour=6, minute=30, tz_str="UTC", is_diurnal=True
+    )
+    at_birth = FirdariaFactory.from_subject(subject, target_date="-0562-10-08")  # type: ignore[arg-type]
+    assert at_birth.current is not None and at_birth.current.lord == "Sun"
+    assert at_birth.current_sub is not None and at_birth.current_sub.lord == "Sun"
+    # -0552-10-07 00:00 falls ~5.5 hours after the Sun period's end.
+    next_period = FirdariaFactory.from_subject(subject, target_date="-0552-10-07")  # type: ignore[arg-type]
+    assert next_period.current is not None and next_period.current.lord == "Venus"
+
+
+def test_timezone_aware_target_refused(john_lennon):
+    with pytest.raises(KerykeionException, match="timezone-naive"):
+        FirdariaFactory.from_subject(john_lennon, target_date="2024-06-15T12:00:00+02:00")

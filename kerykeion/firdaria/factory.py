@@ -5,7 +5,6 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import List, Optional, Tuple, cast
 
 from kerykeion.schemas.kr_literals import ClassicalPlanet
@@ -19,6 +18,7 @@ from kerykeion.schemas.kr_models import (
 from kerykeion.utilities import (
     civil_jd,
     jd_to_iso_date,
+    parse_astronomical_iso_moment,
     resolve_subject_local_moment,
     resolve_subject_local_now,
 )
@@ -93,7 +93,9 @@ class FirdariaFactory:
                 must be a boolean. A midpoint composite (``None``) has no
                 horizon and is rejected — never guessed.
             target_date: ISO date or datetime the current period is resolved
-                against. When omitted, now in the subject's timezone.
+                against; astronomical year numbering is accepted (e.g.
+                ``'-0550-10-07'``). When omitted, now in the subject's
+                timezone.
             life_cap_years: How far the timeline is unrolled.
 
         Returns:
@@ -117,22 +119,18 @@ class FirdariaFactory:
         birth_jd = civil_jd(birth_year, birth_month, birth_day, birth_hour)
 
         if target_date is not None:
-            try:
-                target = datetime.fromisoformat(target_date)
-            except ValueError as exc:
-                raise KerykeionException(
-                    f"Invalid target_date {target_date!r} (expected ISO YYYY-MM-DD)."
-                ) from exc
-            if target.tzinfo is not None:
-                raise KerykeionException(
-                    f"target_date {target_date!r} must be timezone-naive "
-                    "(pass a bare ISO date, e.g. '2026-06-04')."
-                )
+            # BCE-safe: datetime.fromisoformat rejects the astronomical year
+            # numbering this factory itself emits for BCE boundaries.
+            target_year, target_month, target_day, target_hour = parse_astronomical_iso_moment(
+                target_date
+            )
         else:
-            target = resolve_subject_local_now(subject)
-        target_jd = civil_jd(
-            target.year, target.month, target.day, target.hour + target.minute / 60.0
-        )
+            now = resolve_subject_local_now(subject)
+            target_year, target_month, target_day = now.year, now.month, now.day
+            target_hour = (
+                now.hour + now.minute / 60.0 + now.second / 3600.0 + now.microsecond / 3_600_000_000.0
+            )
+        target_jd = civil_jd(target_year, target_month, target_day, target_hour)
 
         sequence = DIURNAL_SEQUENCE if is_diurnal else NOCTURNAL_SEQUENCE
         # The ring excludes the nodes by construction, so its members are the

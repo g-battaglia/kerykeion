@@ -143,6 +143,29 @@ def test_chart_data_carries_the_analysis(john_lennon):
     assert chart_data.stelliums == _compute_stelliums(john_lennon, active_points=own)
 
 
+def test_non_terrestrial_perspective_yields_no_analysis():
+    """A Heliocentric (or barycentric/planetocentric) chart measures planet
+    longitudes from a non-Earth origin while ASC/MC stay terrestrial horizon
+    longitudes: the comparison would emit plausible but false analyses, so
+    it must stay silent even with an unbounded orb."""
+    from types import SimpleNamespace
+
+    helio = SimpleNamespace(
+        perspective_type="Heliocentric",
+        sun=SimpleNamespace(name="Sun", abs_pos=100.0, house="First_House"),
+        mercury=SimpleNamespace(name="Mercury", abs_pos=101.0, house="First_House"),
+        venus=SimpleNamespace(name="Venus", abs_pos=102.0, house="First_House"),
+        ascendant=SimpleNamespace(name="Ascendant", abs_pos=100.0),
+    )
+    assert _compute_angularities(helio, orb=180.0) == []
+    assert _compute_stelliums(helio) == []
+    # The terrestrial perspectives keep the analysis (Lennon is Apparent
+    # Geocentric and does produce angularities — see the tests above).
+    for perspective in ("Apparent Geocentric", "True Geocentric", "Topocentric"):
+        terrestrial = SimpleNamespace(**{**helio.__dict__, "perspective_type": perspective})
+        assert _compute_angularities(terrestrial, orb=180.0) != []
+
+
 # ---------------------------------------------------------------------------
 # Progressed points (sign_changed)
 # ---------------------------------------------------------------------------

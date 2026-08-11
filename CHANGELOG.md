@@ -52,11 +52,18 @@
   `resolve_subject_birth_datetime` (shared split-components/ISO fallback,
   now also used by zodiacal releasing), `resolve_subject_local_now`, and the
   BCE-safe civil-date kit (`resolve_subject_local_moment`, `civil_jd`,
-  `jd_to_iso_date`, `format_astronomical_iso_date`): profections and firdaria
-  run their date arithmetic on Julian Days, so deep-antiquity births
-  (astronomical year ≤ 0) build timelines instead of hitting Python's
-  ``datetime`` year-1 floor. `MotionState` is re-exported from
-  `kerykeion.schemas` like every other public literal.
+  `jd_to_iso_date`, `format_astronomical_iso_date`,
+  `parse_astronomical_iso_moment`): profections and firdaria run their date
+  arithmetic on Julian Days, so deep-antiquity births (astronomical year ≤ 0)
+  build timelines instead of hitting Python's ``datetime`` year-1 floor. The
+  kit follows the subject factory's calendar convention (Julian calendar for
+  year < 1, proleptic Gregorian from 1 CE), accepts astronomical-year
+  `target_date` values (which the factories themselves emit), keeps birth
+  seconds in the hour fraction, and the angularity/stellium analyses stay
+  silent for non-terrestrial perspectives (heliocentric/barycentric/
+  planetocentric longitudes don't share the angles' Earth frame).
+  `MotionState` is re-exported from `kerykeion.schemas` like every other
+  public literal.
 
 ## 6.0.0a82 - 2026-08-11
 

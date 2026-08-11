@@ -5,7 +5,6 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-from datetime import date
 from typing import List, Optional, Tuple
 
 from kerykeion.dignities.rulers import get_domicile_ruler
@@ -18,6 +17,7 @@ from kerykeion.schemas.kr_models import (
 )
 from kerykeion.utilities import (
     format_astronomical_iso_date,
+    parse_astronomical_iso_moment,
     resolve_subject_local_moment,
     resolve_subject_local_now,
 )
@@ -39,8 +39,15 @@ HOUSE_CUSP_FIELDS: tuple[str, ...] = (
 )
 
 
-def _is_gregorian_leap(year: int) -> bool:
-    """Proleptic-Gregorian leap rule, valid for any astronomical year."""
+def _is_leap_year(year: int) -> bool:
+    """Leap rule in the engine's calendar convention for ``year``.
+
+    Mirrors the subject factory's asymmetry: ``year < 1`` dates are
+    Julian-calendar (leap every fourth astronomical year, century years
+    included), ``year >= 1`` is proleptic Gregorian.
+    """
+    if year < 1:
+        return year % 4 == 0
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
 
@@ -51,7 +58,7 @@ def _anniversary(year: int, birth_month: int, birth_day: int) -> Tuple[int, int]
     convention. Pure integer arithmetic, so BCE years work (Python's ``date``
     stops at year 1; astronomical numbering does not).
     """
-    if birth_month == 2 and birth_day == 29 and not _is_gregorian_leap(year):
+    if birth_month == 2 and birth_day == 29 and not _is_leap_year(year):
         return (3, 1)
     return (birth_month, birth_day)
 
@@ -88,8 +95,9 @@ class ProfectionsFactory:
             subject: The natal chart. Requires the twelve house cusps. BCE
                 birth years (astronomical numbering) are supported.
             target_date: ISO date (``YYYY-MM-DD``) the "current" year is
-                resolved against. When omitted, today in the subject's own
-                timezone is used.
+                resolved against; astronomical year numbering is accepted
+                (e.g. ``'-0550-10-07'``). When omitted, today in the
+                subject's own timezone is used.
             years_before: Past years to include in the table.
             years_after: Future years to include in the table.
 
@@ -114,23 +122,24 @@ class ProfectionsFactory:
         birth_year, birth_month, birth_day, _birth_hour = resolve_subject_local_moment(subject)
 
         if target_date is not None:
-            try:
-                target = date.fromisoformat(target_date)
-            except ValueError as exc:
-                raise KerykeionException(
-                    f"Invalid target_date {target_date!r} (expected ISO YYYY-MM-DD)."
-                ) from exc
+            # BCE-safe: date.fromisoformat rejects the astronomical year
+            # numbering this factory itself emits for BCE boundaries.
+            target_year, target_month, target_day, _target_hour = parse_astronomical_iso_moment(
+                target_date
+            )
         else:
-            target = resolve_subject_local_now(subject).date()
+            now = resolve_subject_local_now(subject)
+            target_year, target_month, target_day = now.year, now.month, now.day
 
         # Age by civil anniversary — pure integer arithmetic on astronomical
         # years, so a BCE birth with a CE target just yields a large age.
-        age = target.year - birth_year
-        if (target.month, target.day) < _anniversary(target.year, birth_month, birth_day):
+        age = target_year - birth_year
+        if (target_month, target_day) < _anniversary(target_year, birth_month, birth_day):
             age -= 1
         if age < 0:
             raise KerykeionException(
-                f"target_date {target.isoformat()} precedes the birth date "
+                f"target_date {format_astronomical_iso_date(target_year, target_month, target_day)} "
+                "precedes the birth date "
                 f"{format_astronomical_iso_date(birth_year, birth_month, birth_day)} "
                 "— no profection year exists yet."
             )

@@ -111,3 +111,25 @@ def test_bce_target_in_antiquity():
     # A window straddling year zero formats negative years astronomically.
     starts = [entry.year_start for entry in profections.years]
     assert any(value.startswith("-") or value.startswith("0000") for value in starts)
+
+
+def test_bce_target_date_parses():
+    """Astronomical-year targets parse — the factory itself emits such
+    boundaries, so it must also accept them to resolve `current`."""
+    profections = ProfectionsFactory.from_subject(_bce_subject(), target_date="-0550-10-07")
+    # The twelfth birthday: the profection wheel returns to the 1st house.
+    assert profections.current.age == 12
+    assert profections.current.house == 1
+    assert profections.current.year_start == "-0550-10-07"
+
+
+def test_bce_leap_anniversary_uses_the_julian_rule():
+    """BCE dates are Julian-calendar in the engine's convention, where every
+    fourth astronomical year — century years included — is leap. A Feb-29
+    birthday therefore keeps its day in year -100; the Gregorian century
+    rule only applies from 1 CE on."""
+    from kerykeion.profections.factory import _anniversary
+
+    assert _anniversary(-100, 2, 29) == (2, 29)  # Julian leap century year
+    assert _anniversary(1900, 2, 29) == (3, 1)  # Gregorian common century year
+    assert _anniversary(2000, 2, 29) == (2, 29)  # Gregorian leap year

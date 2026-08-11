@@ -95,6 +95,24 @@ def _angular_distance(a: float, b: float) -> float:
     return 360.0 - d if d > 180.0 else d
 
 
+# Perspectives whose planet longitudes share the Earth frame of the angles
+# and houses. Angularity and stellium read planets against the Ascendant/MC
+# axis and the house cusps — terrestrial horizon constructs — so a chart
+# measured from another origin (Heliocentric, Barycentric, Selenocentric,
+# planetocentric) would yield plausible-looking but false analyses.
+_TERRESTRIAL_PERSPECTIVES = frozenset({"Apparent Geocentric", "True Geocentric", "Topocentric"})
+
+
+def _has_terrestrial_frame(subject: object) -> bool:
+    """Whether the subject's planet longitudes share the angles' Earth frame.
+
+    A subject that carries no ``perspective_type`` at all is trusted:
+    duck-typed inputs default to the geocentric contract.
+    """
+    perspective = getattr(subject, "perspective_type", None)
+    return perspective is None or str(perspective) in _TERRESTRIAL_PERSPECTIVES
+
+
 def _subject_point_filter(subject: object, active_points: Optional[Collection[str]]) -> Optional[set[str]]:
     """Effective point-name filter for a subject's analyses.
 
@@ -124,8 +142,12 @@ def _compute_angularities(
     ASC/MC-only ruleset) can filter without losing a planet whose nearest
     angle happened to be another one. ``active_points`` restricts the planets
     to the chart's effective selection: an excluded planet must never appear
-    in the analysis of a chart that excluded it.
+    in the analysis of a chart that excluded it. Non-terrestrial perspectives
+    yield no angularities: their longitudes and the angles live in different
+    frames.
     """
+    if not _has_terrestrial_frame(subject):
+        return []
     results: list[AngularityModel] = []
     for planet_field in _CLASSICAL_PLANET_FIELDS:
         planet = getattr(subject, planet_field, None)
@@ -155,8 +177,11 @@ def _compute_stelliums(
 
     ``active_points`` restricts the planets to the chart's effective
     selection, keeping the analysis consistent with the serialized
-    ``active_points`` list.
+    ``active_points`` list. Non-terrestrial perspectives yield no stelliums:
+    grouping their longitudes into terrestrial houses would be meaningless.
     """
+    if not _has_terrestrial_frame(subject):
+        return []
     buckets: dict[int, list[str]] = {}
     for planet_field in _CLASSICAL_PLANET_FIELDS:
         planet = getattr(subject, planet_field, None)
