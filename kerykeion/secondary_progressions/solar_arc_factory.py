@@ -227,6 +227,7 @@ class SolarArcFactory:
             for d in directed_points:
                 for natal_name, natal_pos in natal_targets:
                     extra_orb: float | dict
+                    scalar_extra: Optional[float]
                     if aspect_keyed:
                         extra_orb = resolve_pair_orb_adjustments_for_aspects(
                             d.name,
@@ -235,27 +236,15 @@ class SolarArcFactory:
                             point_orb_adjustment_strategy,
                             aspect_names,
                         )
-                        # The tautological hit below IS a conjunction, so the
-                        # guard is sized to the conjunction's own extra —
-                        # resolved directly, NOT read from the per-aspect map:
-                        # that map only covers the aspects the caller enabled,
-                        # and a filtered-out conjunction would silently read as
-                        # 0.0, breaking the number ≡ {"*": number} equivalence.
-                        conjunction_extra = resolve_pair_orb_adjustment(
-                            d.name,
-                            natal_name,
-                            point_orb_adjustments,
-                            point_orb_adjustment_strategy,
-                            aspect_name="conjunction",
-                        )
+                        scalar_extra = None
                     else:
-                        extra_orb = resolve_pair_orb_adjustment(
+                        scalar_extra = resolve_pair_orb_adjustment(
                             d.name,
                             natal_name,
                             point_orb_adjustments,
                             point_orb_adjustment_strategy,
                         )
-                        conjunction_extra = extra_orb
+                        extra_orb = scalar_extra
                     # Skip the tautological self-conjunction (a directed point
                     # with its own natal position) using the SAME effective orb
                     # the detection below uses — otherwise a per-pair widening
@@ -265,10 +254,31 @@ class SolarArcFactory:
                     # base orb when a negative conjunction delta has already
                     # closed the conjunction window, discarding same-name
                     # contacts another aspect could still legitimately make.
-                    if natal_name == d.name and _is_near_zero_arc(
-                        solar_arc, max(0.0, aspect_orb + conjunction_extra)
-                    ):
-                        continue
+                    if natal_name == d.name:
+                        if scalar_extra is None:
+                            # The tautological hit IS a conjunction, so the
+                            # guard is sized to the conjunction's own extra —
+                            # resolved directly, NOT read from the per-aspect
+                            # map (that map only covers the aspects the caller
+                            # enabled, and a filtered-out conjunction would
+                            # silently read as 0.0, breaking the number ≡
+                            # {"*": number} equivalence). Resolved HERE, only
+                            # for same-name pairs: no other pair consumes this
+                            # value, and resolving it for every pair would
+                            # evaluate — and possibly reject, e.g. a 'sum'
+                            # overflow — an adjustment that is irrelevant to
+                            # the pair being examined.
+                            conjunction_extra = resolve_pair_orb_adjustment(
+                                d.name,
+                                natal_name,
+                                point_orb_adjustments,
+                                point_orb_adjustment_strategy,
+                                aspect_name="conjunction",
+                            )
+                        else:
+                            conjunction_extra = scalar_extra
+                        if _is_near_zero_arc(solar_arc, max(0.0, aspect_orb + conjunction_extra)):
+                            continue
                     outcome = get_aspect_from_two_points(
                         aspects_settings=aspect_settings,
                         point_one=d.directed_abs_pos,

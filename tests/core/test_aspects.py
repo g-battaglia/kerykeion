@@ -1412,6 +1412,24 @@ class TestAspectKeyedOrbAdjustmentsIntegration:
                 "Sun", "Mars", {"Sun": {"conjunction": 1.0}}, "bogus", []  # type: ignore[arg-type]
             )
 
+    def test_empty_aspect_names_keeps_scalar_wildcard_error_parity(self):
+        """number ≡ {"*": number} extends to the error contract: with no
+        aspects in play, a sum overflow must raise on BOTH forms — not only
+        when the table happens to be scalar."""
+        from kerykeion.aspects.orb_utils import resolve_pair_orb_adjustments_for_aspects
+
+        with pytest.raises(ValueError, match="must be finite"):
+            resolve_pair_orb_adjustments_for_aspects(
+                "Sun", "Moon", {"Sun": 1e308, "Moon": {"*": 1e308}}, "sum", []
+            )
+        # A well-formed table still just returns the empty mapping.
+        assert (
+            resolve_pair_orb_adjustments_for_aspects(
+                "Sun", "Moon", {"Sun": {"*": 1.5}, "Moon": 1.5}, "sum", []
+            )
+            == {}
+        )
+
     def test_predictive_factories_validate_table_up_front(self, _subject):
         """A non-finite leaf must raise even when its aspect is not selected."""
         from kerykeion.secondary_progressions import SecondaryProgressionFactory, SolarArcFactory
@@ -1462,6 +1480,26 @@ class TestAspectKeyedOrbAdjustmentsIntegration:
             point_orb_adjustments={"Sun": {"*": 27.0}},
         ).directed_to_natal_aspects
         assert mapped == scalar
+
+    def test_solar_arc_guard_delta_resolved_only_for_self_pairs(self, _subject):
+        """The guard's conjunction delta must not be resolved for cross-name
+        pairs: with 'sum' and huge-but-finite conjunction-only deltas on two
+        points that only ever meet cross-pair (Moon is a natal target but not
+        directed), an eager resolve would overflow and raise for a value no
+        pair consumes."""
+        from kerykeion.secondary_progressions import SolarArcFactory
+
+        result = SolarArcFactory.compute(
+            _subject,
+            target_year=2020,
+            active_points=["Sun"],  # Moon never directed → Moon–Moon never guarded
+            aspects=["trine"],
+            point_orb_adjustments={"Sun": {"conjunction": 8e307}, "Moon": {"conjunction": 1.1e308}},
+            point_orb_adjustment_strategy="sum",
+        )
+        # The call completing IS the assertion; the guard still ran for Sun–Sun
+        # (8e307 + 8e307 is finite) without touching the poisonous cross-sum.
+        assert result.directed_points
 
     def test_solar_arc_guard_tightens_with_negative_conjunction_delta(self, _subject):
         """The guard clamps the SUM like detection: with the conjunction window

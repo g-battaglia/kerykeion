@@ -199,10 +199,15 @@ def resolve_pair_orb_adjustments_for_aspects(
     fed directly to ``get_aspect_from_two_points`` as a per-aspect
     ``extra_orb``.
     """
-    # Validated even when aspect_names is empty (the comprehension would then
-    # never reach the per-pair resolver's own check) — a typo must raise here
-    # exactly as it does on the scalar path.
-    _validate_strategy(strategy)
+    names = list(aspect_names)
+    if not names:
+        # No aspects in play, but the call must keep the scalar path's whole
+        # contract — strategy validation AND the pair's wildcard-value checks.
+        # ``number ≡ {"*": number}`` extends to the error behavior: a sum
+        # overflow raises identically on both forms instead of the wildcard
+        # one silently returning an empty result. Resolve once, discard.
+        resolve_pair_orb_adjustment(first_name, second_name, point_orb_adjustments, strategy)
+        return {}
     return {
         aspect_name: resolve_pair_orb_adjustment(
             first_name,
@@ -211,7 +216,7 @@ def resolve_pair_orb_adjustments_for_aspects(
             strategy,
             aspect_name=aspect_name,
         )
-        for aspect_name in aspect_names
+        for aspect_name in names
     }
 
 
