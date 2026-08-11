@@ -24,8 +24,11 @@ from .backend import (
     DEFAULT_SWEPH_DOWNLOAD_DIR,
     EPHE_DATA_PATH,
     EPHEMERIS_LOCK,
+    POLAR_HOUSES_ERROR_TYPES,
     ephe,
     ephemeris_session,
+    houses_ex2_with_polar_fallback,
+    houses_ex2_with_polar_fallback_ex,
     reset_ephemeris_session,
 )
 
@@ -36,9 +39,15 @@ __all__ = [
     "EPHEMERIS_LOCK",
     "ephemeris_session",
     "reset_ephemeris_session",
-    # Not part of the module's original __all__, but backend.py re-exports it
-    # from config_constants explicitly "for backward compatibility". Leaving it
-    # off this facade would break `from kerykeion.ephemeris_backend import
-    # DEFAULT_SWEPH_DOWNLOAD_DIR` and quietly undo that stated intent.
+    # Below: not in the module's original __all__, but importable from this
+    # dotted path before it became a package. The path did not change, so
+    # nothing would signal the break -- and dropping them would narrow the
+    # surface silently, which is the failure this whole refactor set out to
+    # avoid. The polar helpers matter especially: they are the only public way
+    # to compute houses above the polar circle, and the docstrings of
+    # validate_latitude / check_and_adjust_polar_latitude send callers here.
     "DEFAULT_SWEPH_DOWNLOAD_DIR",
+    "houses_ex2_with_polar_fallback",
+    "houses_ex2_with_polar_fallback_ex",
+    "POLAR_HOUSES_ERROR_TYPES",
 ]

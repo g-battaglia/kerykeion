@@ -15,6 +15,14 @@ The main entry points are:
     - main
 """
 
-from .download import download_swisseph_data, main
+from .download import DEFAULT_SWEPH_DOWNLOAD_DIR, download_swisseph_data, main
 
-__all__ = ["download_swisseph_data", "main"]
+__all__ = [
+    "download_swisseph_data",
+    "main",
+    # The directory this downloader targets, importable from this dotted path
+    # before it became a package. ephemeris_backend re-exports the same
+    # constant "for backward compatibility"; the module that actually owns the
+    # download would be an odd place to drop it.
+    "DEFAULT_SWEPH_DOWNLOAD_DIR",
+]

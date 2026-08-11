@@ -255,7 +255,7 @@ cmd = "python scripts/check_import_graph.py --fresh-imports"
 help = "Import every module in a cold interpreter (catches leaf-first cycles)"
 
 [tool.poe.tasks.check]
-sequence = ["lint", "analyze", "typecheck", "imports", "test:core"]
+sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core"]
 help = "Run all quality checks (lint, analyze, typecheck, test:core)"
 
 # cmd, not `script = "...:main"`: poethepoet 0.40.0 discards a script function's

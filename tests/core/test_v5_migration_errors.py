@@ -17,7 +17,8 @@ import kerykeion
 from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint
-from kerykeion.settings import DEFAULT_ACTIVE_POINTS, V5_DEFAULT_ACTIVE_POINTS
+from kerykeion.settings import DEFAULT_ACTIVE_ASPECTS, DEFAULT_ACTIVE_POINTS, V5_DEFAULT_ACTIVE_POINTS
+from kerykeion.settings.config_constants import PREDICTIVE_ACTIVE_ASPECTS
 
 REMOVED_NAME_TO_REPLACEMENT = {
     "AstrologicalSubject": "AstrologicalSubjectFactory",
@@ -129,6 +130,31 @@ def test_v5_default_active_points_are_all_valid_today():
     would hand users a list the factory rejects."""
     valid = set(get_args(AstrologicalPoint))
     assert set(V5_DEFAULT_ACTIVE_POINTS) <= valid
+
+
+def test_default_aspect_orbs_match_what_the_guide_documents():
+    """The migration guide prints these orbs in a table; keep them honest.
+
+    If a default changes and this table is not updated, the guide starts telling
+    users the wrong thing about the numbers they are getting — the exact failure
+    the "What changes in the results" section exists to prevent.
+    """
+    documented = {
+        "conjunction": 6,
+        "opposition": 6,
+        "trine": 6,
+        "square": 6,
+        "sextile": 5,
+    }
+    actual = {a["name"]: a["orb"] for a in DEFAULT_ACTIVE_ASPECTS}
+    assert actual == documented
+    assert "quintile" not in actual, "the guide states quintile left the defaults"
+
+
+def test_predictive_charts_use_a_flat_three_degree_orb():
+    """The guide's claim that non-natal charts moved to a flat 3°."""
+    orbs = {a["orb"] for a in PREDICTIVE_ACTIVE_ASPECTS}
+    assert orbs == {3}
 
 
 def test_v5_default_active_points_actually_restores_the_v5_output(subject):

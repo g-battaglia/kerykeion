@@ -188,6 +188,63 @@ def test_top_level_all_attributes_exist():
     assert not missing, f"kerykeion.__all__ names without an attribute: {missing}"
 
 
+# Modules that became packages under the SAME dotted path. Because the path did
+# not change, nothing signals a break if the facade drops a name — so the names
+# that were importable before the move are pinned here explicitly.
+FACADE_SURVIVORS = {
+    "kerykeion.ephemeris_backend": (
+        "ephe",
+        "BACKEND_NAME",
+        "EPHE_DATA_PATH",
+        "EPHEMERIS_LOCK",
+        "ephemeris_session",
+        "reset_ephemeris_session",
+        "DEFAULT_SWEPH_DOWNLOAD_DIR",
+        "houses_ex2_with_polar_fallback",
+        "houses_ex2_with_polar_fallback_ex",
+        "POLAR_HOUSES_ERROR_TYPES",
+    ),
+    "kerykeion.report": (
+        "ReportGenerator",
+        "ASPECT_SYMBOLS",
+        "MOVEMENT_SYMBOLS",
+        "HORARY_CONSIDERATION_LABELS",
+    ),
+    "kerykeion.motion": (
+        "classify_motion_state",
+        "MEAN_DAILY_MOTION_DEGREES",
+        "STATIONARY_FRACTION",
+        "SLOW_FRACTION",
+        "FAST_FRACTION",
+    ),
+    "kerykeion.swisseph_setup": (
+        "download_swisseph_data",
+        "main",
+        "DEFAULT_SWEPH_DOWNLOAD_DIR",
+    ),
+    "kerykeion.utilities": ("setup_logging", "localize_naive", "safe_timezone"),
+}
+
+
+@pytest.mark.parametrize("dotted,names", sorted(FACADE_SURVIVORS.items()))
+def test_package_facade_keeps_pre_move_names(dotted, names):
+    module = importlib.import_module(dotted)
+    missing = sorted(name for name in names if not hasattr(module, name))
+    assert not missing, f"{dotted} no longer exports: {missing}"
+
+
+def test_utilities_logger_keeps_its_pre_move_name():
+    """utilities/core.py uses getLogger(__package__) so the name survives the move.
+
+    A switch to __name__ would rename it to "kerykeion.utilities.core"; caplog
+    filters would still capture through the hierarchy and stay green, while any
+    logging configuration attached to "kerykeion.utilities" would stop applying.
+    """
+    from kerykeion.utilities.core import logger
+
+    assert logger.name == "kerykeion.utilities"
+
+
 @pytest.mark.parametrize("old_name", sorted(REMOVED_PRE_B1_ALIASES))
 def test_removed_pre_b1_aliases_raise(old_name):
     """Rule 6 — pre-b1 alias names are gone in 6.0.0 stable: plain

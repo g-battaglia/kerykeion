@@ -350,11 +350,13 @@ _BEHAVIOUR_CHANGES_NOTE = (
     "Note: v6 also changed defaults that affect RESULTS, not just imports:\n"
     "  - active points: 18 -> 14 (Descendant, Imum_Coeli, True_South_Lunar_Node,\n"
     "    Mean_Lilith are no longer active unless requested)\n"
-    "  - Sun/Moon aspect orbs: +1.5 degrees by default (new in v6)\n"
+    "  - aspect orbs are narrower (conjunction/opposition 10 -> 6 degrees,\n"
+    "    quintile dropped), and transits/returns/progressions now use a flat\n"
+    "    3-degree orb, so expect FEWER aspects\n"
     "  - chart style: 'classic' -> 'modern'\n"
     "Porting the call above does not restore v5 output. See 'What changes in the\n"
     "results' in the guide; kerykeion.settings.V5_DEFAULT_ACTIVE_POINTS restores\n"
-    "the old point set."
+    "the old point set, and the guide gives the v5 aspect list."
 )
 
 _V5_REMOVED_NAMES = {

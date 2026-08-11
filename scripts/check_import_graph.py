@@ -46,7 +46,17 @@ PACKAGE_ROOT = REPO_ROOT / "kerykeion"
 SCAN_ROOTS = ("kerykeion", "tests", "scripts", "examples")
 
 MODULE_PATH_RE = re.compile(r"^kerykeion(\.[A-Za-z_]\w*)+$")
-PATCH_FUNCS = {"patch", "setattr", "patch.object"}
+
+
+def _is_patch_call(name: str) -> bool:
+    """True for patch / mock.patch / monkeypatch.setattr / (mock.)patch.object.
+
+    Matched on the trailing segments so every import style spells the same:
+    `patch(...)`, `mock.patch(...)`, `patch.object(...)` and
+    `mock.patch.object(...)` all count.
+    """
+    parts = name.split(".")
+    return parts[-1] in {"patch", "setattr"} or ".".join(parts[-2:]) == "patch.object"
 
 # "kerykeion.net" is the docs domain, not a module path.
 DOMAIN_SUFFIXES = {"net", "com", "org", "io", "dev", "app"}
@@ -187,10 +197,18 @@ def check_paths(report: Report) -> None:
 # --patch-targets
 # --------------------------------------------------------------------------- #
 def _callee_name(node: ast.Call) -> str:
+    """Dotted-ish name of the callee, normalised for _is_patch_call.
+
+    `patch.object(...)` after `from unittest.mock import patch` has an ast.Name
+    for func.value, so returning only func.attr would yield "object" and miss
+    every bare patch.object call in the suite. Both spellings normalise here.
+    """
     func = node.func
     if isinstance(func, ast.Attribute):
         if isinstance(func.value, ast.Attribute):
             return f"{func.value.attr}.{func.attr}"
+        if isinstance(func.value, ast.Name):
+            return f"{func.value.id}.{func.attr}"
         return func.attr
     if isinstance(func, ast.Name):
         return func.id
@@ -220,6 +238,84 @@ def _module_aliases(tree: ast.AST) -> dict[str, str]:
     return aliases
 
 
+def _string_constants(tree: ast.AST) -> dict[str, str]:
+    """Every `NAME = "literal"` binding in the file, module- or class-level.
+
+    Tests rarely spell a patch target or a logger name inline; the idiom is a
+    constant reused across a class. Both keys are recorded — bare (`_FACTORY`)
+    and attribute-style (`self._LOGGER` / `cls._LOGGER`) — so the lookup works
+    whichever way the constant is referenced.
+    """
+    constants: dict[str, str] = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign) or not isinstance(node.value, ast.Constant):
+            continue
+        if not isinstance(node.value.value, str):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Name):
+                constants[target.id] = node.value.value
+    return constants
+
+
+def _resolve_str(node: ast.AST, constants: dict[str, str]) -> str | None:
+    """Best-effort static value of a string expression.
+
+    Handles the three shapes that appear in the suite: a literal, a reference to
+    a string constant (bare or attribute), and an f-string whose leading piece is
+    one of those — which is how patch targets are actually built
+    (``f"{_FACTORY}.compute_sun_transit_ephe"``).
+    """
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    if isinstance(node, ast.Name):
+        return constants.get(node.id)
+    if isinstance(node, ast.Attribute):
+        return constants.get(node.attr)
+    if isinstance(node, ast.JoinedStr):
+        parts: list[str] = []
+        for value in node.values:
+            if isinstance(value, ast.Constant) and isinstance(value.value, str):
+                parts.append(value.value)
+            elif isinstance(value, ast.FormattedValue):
+                resolved = _resolve_str(value.value, constants)
+                if resolved is None:
+                    return None
+                parts.append(resolved)
+            else:
+                return None
+        return "".join(parts)
+    return None
+
+
+def _package_patch_is_a_noop(package, attr: str) -> bool:
+    """Would patching ``attr`` on this package leave the real binding untouched?
+
+    Only when the package merely re-exports the object from a submodule that
+    holds its own binding: rebinding the package attribute then leaves the
+    submodule's copy — the one the code actually reads — in place.
+
+    If no submodule holds the same object, the package attribute IS the binding
+    (a name defined in __init__.py, or reached through a deferred
+    ``from kerykeion.x import Y`` inside a function), so the patch works and
+    flagging it would be a false positive.
+    """
+    # getattr guarded: kerykeion/__init__.py raises ImportError for the removed v5
+    # names, and the three-argument getattr does not swallow that either.
+    try:
+        target = getattr(package, attr, None)
+    except ImportError:
+        return False
+    if target is None:
+        return False
+    for name, module in list(sys.modules.items()):
+        if not name.startswith(package.__name__ + ".") or module is None:
+            continue
+        if getattr(module, attr, None) is target:
+            return True
+    return False
+
+
 def check_patch_targets(report: Report) -> None:
     for path in iter_python_files():
         try:
@@ -228,10 +324,11 @@ def check_patch_targets(report: Report) -> None:
             continue
 
         aliases = _module_aliases(tree)
+        constants = _string_constants(tree)
 
         # setattr(<module alias>, "attr", ...) — the object form
         for node in ast.walk(tree):
-            if not isinstance(node, ast.Call) or _callee_name(node) not in PATCH_FUNCS:
+            if not isinstance(node, ast.Call) or not _is_patch_call(_callee_name(node)):
                 continue
             if len(node.args) < 2 or not isinstance(node.args[0], ast.Name):
                 continue
@@ -240,20 +337,29 @@ def check_patch_targets(report: Report) -> None:
                 continue
             report.checked += 1
             module = importlib.import_module(dotted)
-            if getattr(module, "__path__", None) is not None:
+            attr_node = node.args[1]
+            attr_name = attr_node.value if isinstance(attr_node, ast.Constant) else None
+            if (
+                getattr(module, "__path__", None) is not None
+                and isinstance(attr_name, str)
+                and _package_patch_is_a_noop(module, attr_name)
+            ):
                 report.fail(
                     f"{rel(path)}:{node.lineno}",
-                    f"patch target sets an attribute on the PACKAGE {dotted!r} — "
-                    "this is a silent no-op; bind the alias to the defining submodule",
+                    f"patch target sets {attr_name!r} on the PACKAGE {dotted!r}, which only "
+                    "re-exports it — this is a silent no-op; bind the alias to the defining "
+                    "submodule",
                 )
 
         for node in ast.walk(tree):
-            if not isinstance(node, ast.Call) or _callee_name(node) not in PATCH_FUNCS:
+            if not isinstance(node, ast.Call) or not _is_patch_call(_callee_name(node)):
                 continue
-            if not node.args or not isinstance(node.args[0], ast.Constant):
+            if not node.args:
                 continue
-            target = node.args[0].value
-            if not isinstance(target, str) or not target.startswith("kerykeion."):
+            # Not just literals: f-strings built from a module-level constant are
+            # the dominant idiom here, and skipping them left 37 targets unchecked.
+            target = _resolve_str(node.args[0], constants)
+            if target is None or not target.startswith("kerykeion."):
                 continue
 
             report.checked += 1
@@ -265,7 +371,10 @@ def check_patch_targets(report: Report) -> None:
                 report.fail(where, f"patch holder does not resolve: {holder_path!r} ({exc})")
                 continue
 
-            if not hasattr(holder, attr):
+            # safe_hasattr, not hasattr: kerykeion/__init__.py raises ImportError
+            # (not AttributeError) for the removed v5 names, and hasattr does not
+            # swallow that — a patch naming one would abort the whole gate.
+            if not safe_hasattr(holder, attr):
                 report.fail(where, f"patch target has no attribute {attr!r}: {target}")
                 continue
 
@@ -278,12 +387,19 @@ def check_patch_targets(report: Report) -> None:
             # holder to the *libephemeris module object* that the factory holds a
             # reference to — patching an attribute there mutates the very object the
             # code calls through, so those keep working and are not flagged.
+            # Only when the package merely re-exports the name: if the package
+            # attribute is the binding itself, or the code reaches it through a
+            # deferred import, the patch works and flagging it is a false positive.
             holder_name = getattr(holder, "__name__", "")
-            if getattr(holder, "__path__", None) is not None and holder_name.startswith("kerykeion"):
+            if (
+                getattr(holder, "__path__", None) is not None
+                and holder_name.startswith("kerykeion")
+                and _package_patch_is_a_noop(holder, attr)
+            ):
                 report.fail(
                     where,
-                    f"patch target sets {attr!r} on the PACKAGE {holder_path!r} — "
-                    "this is a silent no-op; point it at the defining submodule",
+                    f"patch target sets {attr!r} on the PACKAGE {holder_path!r}, which only "
+                    "re-exports it — this is a silent no-op; point it at the defining submodule",
                 )
 
 
@@ -307,7 +423,9 @@ def registered_logger_names() -> set[str]:
             module_name = package_name
 
         for node in ast.walk(tree):
-            if not isinstance(node, ast.Call) or _callee_name(node) != "getLogger":
+            # endswith, not ==: _callee_name now returns the qualified form, so
+            # `logging.getLogger(...)` and a bare `getLogger(...)` both land here.
+            if not isinstance(node, ast.Call) or not _callee_name(node).endswith("getLogger"):
                 continue
             for arg in node.args:
                 if isinstance(arg, ast.Name) and arg.id == "__name__":
@@ -316,6 +434,15 @@ def registered_logger_names() -> set[str]:
                     names.add(package_name)
                 elif isinstance(arg, ast.Constant) and isinstance(arg.value, str):
                     names.add(arg.value)
+
+    # Every ancestor of a registered name is itself a legitimate filter target:
+    # `caplog.at_level(logger="kerykeion.charts")` genuinely constrains capture to
+    # that subtree. Without these, the gate would reject the specific filter while
+    # accepting the broader "kerykeion" — backwards.
+    for name in list(names):
+        parts = name.split(".")
+        for stop in range(1, len(parts)):
+            names.add(".".join(parts[:stop]))
     return names
 
 
@@ -333,30 +460,32 @@ def check_loggers(report: Report) -> None:
         except SyntaxError:
             continue
 
+        constants = _string_constants(tree)
+
         for node in ast.walk(tree):
             candidates: list[tuple[int, str]] = []
 
-            # caplog.at_level(..., logger="kerykeion.x")
+            # caplog.at_level(..., logger="kerykeion.x") — or a constant holding it
             if isinstance(node, ast.Call):
                 for kw in node.keywords:
-                    if (
-                        kw.arg == "logger"
-                        and isinstance(kw.value, ast.Constant)
-                        and isinstance(kw.value.value, str)
-                        and kw.value.value.startswith("kerykeion")
-                    ):
-                        candidates.append((node.lineno, kw.value.value))
+                    if kw.arg != "logger":
+                        continue
+                    value = _resolve_str(kw.value, constants)
+                    if value and value.startswith("kerykeion"):
+                        candidates.append((node.lineno, value))
+                # caplog.set_level(level, "kerykeion.x") — positional logger name
+                if _callee_name(node).endswith(("at_level", "set_level")) and len(node.args) > 1:
+                    value = _resolve_str(node.args[1], constants)
+                    if value and value.startswith("kerykeion"):
+                        candidates.append((node.lineno, value))
 
-            # record.name == "kerykeion.x"
+            # record.name == "kerykeion.x" — or a constant holding it
             elif isinstance(node, ast.Compare) and isinstance(node.left, ast.Attribute):
                 if node.left.attr == "name":
                     for comparator in node.comparators:
-                        if (
-                            isinstance(comparator, ast.Constant)
-                            and isinstance(comparator.value, str)
-                            and comparator.value.startswith("kerykeion")
-                        ):
-                            candidates.append((node.lineno, comparator.value))
+                        value = _resolve_str(comparator, constants)
+                        if value and value.startswith("kerykeion"):
+                            candidates.append((node.lineno, value))
 
             for lineno, name in candidates:
                 report.checked += 1
@@ -395,7 +524,7 @@ def check_fresh_imports(report: Report) -> None:
     # __init__ happened to import its dependencies first fails here, which is the
     # entire point. A top-level `from kerykeion import X` would fail here too — and
     # should, since that is the import shape that made the tree order-dependent.
-    _PROBE = """
+    _STUBBED_PROBE = """
 import sys, types, importlib
 root = types.ModuleType("kerykeion")
 root.__path__ = [{package_root!r}]
@@ -403,9 +532,24 @@ sys.modules["kerykeion"] = root
 importlib.import_module({name!r})
 """
 
+    # The root itself must NOT be stubbed, or the probe would find the stub already
+    # in sys.modules and return it without ever executing kerykeion/__init__.py --
+    # leaving the facade that every user depends on unchecked by the whole mode.
+    _ROOT_PROBE = """
+import kerykeion
+assert hasattr(kerykeion, "__all__"), "kerykeion/__init__.py did not execute"
+for _name in kerykeion.__all__:
+    getattr(kerykeion, _name)
+"""
+
     def probe(name: str) -> tuple[str, int, str]:
+        code = (
+            _ROOT_PROBE
+            if name == "kerykeion"
+            else _STUBBED_PROBE.format(package_root=str(PACKAGE_ROOT), name=name)
+        )
         proc = subprocess.run(
-            [sys.executable, "-c", _PROBE.format(package_root=str(PACKAGE_ROOT), name=name)],
+            [sys.executable, "-c", code],
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),

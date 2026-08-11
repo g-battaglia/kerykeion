@@ -40,8 +40,9 @@ from datetime import datetime, timedelta, timezone, tzinfo as _tzinfo
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
-# __package__, not __name__: the logger must stay "kerykeion.utilities.core" so that
-# setup_logging() and every caplog filter naming it keep addressing the same one.
+# __package__, not __name__: __package__ is "kerykeion.utilities" while __name__ is
+# "kerykeion.utilities.core". The logger must keep the pre-move name, so that
+# setup_logging() and every caplog filter naming it address the same one.
 logger = getLogger(__package__)
 
 
