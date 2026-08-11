@@ -40,6 +40,7 @@ from kerykeion.ephemeris_backend import BACKEND_NAME
 from kerykeion.report import ASPECT_SYMBOLS, HORARY_CONSIDERATION_LABELS, ReportGenerator
 from kerykeion.chart_data_factory import ChartDataFactory
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.dominants import DominantsFactory
 from kerykeion.firdaria import FirdariaFactory
 from kerykeion.horary import HoraryIndicatorsFactory
 from kerykeion.midpoints import MidpointFactory
@@ -47,8 +48,10 @@ from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
 from kerykeion.profections import ProfectionsFactory
 from kerykeion.receptions import MutualReceptionsFactory
+from kerykeion.zodiacal_releasing import ZodiacalReleasingFactory
 from kerykeion.schemas.kr_literals import AspectName
 from kerykeion.schemas.kr_models import (
+    DominantsModel,
     FirdariaModel,
     HoraryIndicatorsModel,
     MoonPhaseOverviewModel,
@@ -57,6 +60,7 @@ from kerykeion.schemas.kr_models import (
     MoonPhaseLocationModel,
     MutualReceptionsModel,
     ProfectionsModel,
+    ZodiacalReleasingModel,
 )
 from kerykeion.settings.config_constants import (
     ALL_ACTIVE_ASPECTS,
@@ -369,6 +373,16 @@ def _technique_horary() -> HoraryIndicatorsModel:
 
 def _technique_receptions() -> MutualReceptionsModel:
     return MutualReceptionsFactory.from_subject(_technique_horary_subject())
+
+
+def _technique_dominants() -> DominantsModel:
+    return DominantsFactory.from_subject(_technique_natal_subject(), strategy="modern")
+
+
+def _technique_releasing() -> ZodiacalReleasingModel:
+    return ZodiacalReleasingFactory.from_subject(
+        _technique_natal_subject(), lot="fortune", levels=2, target_date=_TECHNIQUE_TARGET_DATE
+    )
 
 
 def _extract_percentages(text: str, section: str) -> List[float]:
@@ -1068,16 +1082,81 @@ class TestTechniqueReports:
         text = ReportGenerator(MutualReceptionsModel(receptions=[])).generate_report()
         assert "No mutual receptions" in text
 
+    def test_dominants_report_sections(self) -> None:
+        dominants = _technique_dominants()
+        text = ReportGenerator(dominants).generate_report()
+        assert "Chart Dominants" in text
+        assert "Dominants Summary" in text
+        assert "Dominant Planets" in text
+        assert str(dominants.dominant_planet) in text
+
+    def test_dominants_skips_categories_the_school_left_empty(self) -> None:
+        empty = DominantsModel(strategy_name="custom")
+        text = ReportGenerator(empty).generate_report()
+        assert "Dominants Summary" in text
+        for category in ("Dominant Planets", "Dominant Signs", "Dominant Houses"):
+            assert category not in text, "an unscored category must not render an empty table"
+
+    def test_zodiacal_releasing_report_sections(self) -> None:
+        releasing = _technique_releasing()
+        text = ReportGenerator(releasing).generate_report()
+        assert "Zodiacal Releasing — Lot of Fortune" in text
+        assert "Releasing Summary" in text
+        assert "Level 1 Periods" in text
+        assert "Current Period Chain" in text
+        assert str(releasing.lot_sign) in text
+
+    def test_zodiacal_releasing_without_target_has_no_current_chain(self) -> None:
+        releasing = ZodiacalReleasingFactory.from_subject(
+            _technique_natal_subject(), lot="fortune", levels=1
+        )
+        text = ReportGenerator(releasing).generate_report()
+        assert "Level 1 Periods" in text
+        assert "Current Period Chain" not in text
+
     @pytest.mark.parametrize(
         "build",
-        [_technique_profections, _technique_firdaria, _technique_horary, _technique_receptions],
-        ids=["profections", "firdaria", "horary", "receptions"],
+        [
+            _technique_profections,
+            _technique_firdaria,
+            _technique_horary,
+            _technique_receptions,
+            _technique_dominants,
+            _technique_releasing,
+        ],
+        ids=["profections", "firdaria", "horary", "receptions", "dominants", "releasing"],
     )
     def test_print_matches_generate(self, capsys, build) -> None:
         model = build()
         expected = ReportGenerator(model).generate_report()
         ReportGenerator(model).print_report()
         assert capsys.readouterr().out == expected + "\n"
+
+    @pytest.mark.parametrize(
+        ("build", "expected_titles"),
+        [
+            (_technique_profections, ["Current Profection Year", "Profection Years"]),
+            (_technique_firdaria, ["Firdaria Summary", "Firdaria Periods"]),
+            (
+                _technique_horary,
+                ["Significators", "Ascendant", "Considerations Before Judgment", "Mutual Receptions"],
+            ),
+            (_technique_receptions, ["Mutual Receptions"]),
+            (_technique_dominants, ["Dominants Summary", "Dominant Planets", "Dominant Signs"]),
+            (_technique_releasing, ["Releasing Summary", "Level 1 Periods", "Current Period Chain"]),
+        ],
+        ids=["profections", "firdaria", "horary", "receptions", "dominants", "releasing"],
+    )
+    def test_section_titles_survive_rendering(self, build, expected_titles) -> None:
+        """Every section title must actually reach the output.
+
+        AsciiTable DROPS a title wider than its table instead of widening or
+        wrapping it, so a title that outgrows its columns disappears in
+        silence. Pinning the titles turns that into a failing test.
+        """
+        text = ReportGenerator(build()).generate_report()
+        for title in expected_titles:
+            assert f"+{title}" in text, f"section title {title!r} was dropped by the table renderer"
 
 
 # =====================================================================
@@ -1235,8 +1314,10 @@ class TestGoldenFileSnapshots:
             ("firdaria_john_lennon_report.txt", lambda: _technique_firdaria()),
             ("horary_indicators_report.txt", lambda: _technique_horary()),
             ("mutual_receptions_report.txt", lambda: _technique_receptions()),
+            ("dominants_john_lennon_report.txt", lambda: _technique_dominants()),
+            ("zodiacal_releasing_john_lennon_report.txt", lambda: _technique_releasing()),
         ],
-        ids=["profections", "firdaria", "horary", "receptions"],
+        ids=["profections", "firdaria", "horary", "receptions", "dominants", "releasing"],
     )
     def test_technique_report_snapshot(self, capsys, fixture_name, build) -> None:
         fixture = FIXTURES_DIR / fixture_name

@@ -72,10 +72,6 @@ Ancient Rome Subject — Natal Chart Report
 | Ixion                 | Ari ♈ | 16.26°   | +0.0033°/d   | -          | -2.10°  | -   | -    | Twelfth House  |
 | Orcus                 | Lib ♎ | 9.37°    | +0.0026°/d   | -          | -19.14° | -   | -    | Sixth House    |
 | Quaoar                | Pis ♓ | 16.09°   | +0.0137°/d   | -          | -6.19°  | -   | -    | Twelfth House  |
-| Pars Fortunae         | Gem ♊ | 5.74°    | N/A          | -          | N/A     | -   | -    | Second House   |
-| Pars Spiritus         | Pis ♓ | 2.59°    | N/A          | -          | N/A     | -   | -    | Twelfth House  |
-| Pars Amoris           | Tau ♉ | 28.29°   | N/A          | -          | N/A     | -   | -    | Second House   |
-| Pars Fidei            | Can ♋ | 15.82°   | N/A          | -          | N/A     | -   | -    | Fourth House   |
 | Vertex                | Lib ♎ | 7.92°    | N/A          | -          | N/A     | -   | -    | Sixth House    |
 | White Moon            | Gem ♊ | 23.24°   | +0.1408°/d   | -          | +23.51° | -   | -    | Third House    |
 | Anti Vertex           | Ari ♈ | 7.92°    | N/A          | -          | N/A     | -   | -    | Twelfth House  |
@@ -84,6 +80,15 @@ Ancient Rome Subject — Natal Chart Report
 | Mean Priapus          | Vir ♍ | 20.07°   | +0.1109°/d   | -          | +5.31°  | -   | -    | Sixth House    |
 | True Priapus          | Vir ♍ | 25.71°   | -1.4951°/d   | -          | +3.63°  | -   | R    | Sixth House    |
 +-----------------------+--------+----------+--------------+------------+---------+-----+------+----------------+
+
++Natal Arabic Parts------+----------+-------+-------+------+---------------+
+| Point         | Sign   | Position | Speed | Decl. | Ret. | House         |
++---------------+--------+----------+-------+-------+------+---------------+
+| Pars Fortunae | Gem ♊ | 5.74°    | N/A   | N/A   | -    | Second House  |
+| Pars Spiritus | Pis ♓ | 2.59°    | N/A   | N/A   | -    | Twelfth House |
+| Pars Amoris   | Tau ♉ | 28.29°   | N/A   | N/A   | -    | Second House  |
+| Pars Fidei    | Can ♋ | 15.82°   | N/A   | N/A   | -    | Fourth House  |
++---------------+--------+----------+-------+-------+------+---------------+
 
 +Natal Houses (Placidus)--+----------+-------------------+
 | House          | Sign   | Position | Absolute Position |

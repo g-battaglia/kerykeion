@@ -72,10 +72,6 @@ Buenos Aires Subject — Natal Chart Report
 | Ixion                 | Sco ♏ | 23.11°   | -0.0160°/d   | -          | -12.63° | -   | R    | Third House    |
 | Orcus                 | Leo ♌ | 10.09°   | +0.0174°/d   | -          | +4.18°  | -   | -    | Twelfth House  |
 | Quaoar                | Sco ♏ | 24.50°   | -0.0164°/d   | -          | -13.15° | -   | R    | Third House    |
-| Pars Fortunae         | Tau ♉ | 22.94°   | N/A          | -          | N/A     | -   | -    | Ninth House    |
-| Pars Spiritus         | Sag ♐ | 7.38°    | N/A          | -          | N/A     | -   | -    | Third House    |
-| Pars Amoris           | Can ♋ | 24.84°   | N/A          | -          | N/A     | -   | -    | Eleventh House |
-| Pars Fidei            | Aqu ♒ | 22.05°   | N/A          | -          | N/A     | -   | -    | Sixth House    |
 | Vertex                | Pis ♓ | 16.80°   | N/A          | -          | N/A     | -   | -    | Seventh House  |
 | White Moon            | Can ♋ | 21.37°   | +0.1408°/d   | -          | +21.74° | -   | -    | Eleventh House |
 | Anti Vertex           | Vir ♍ | 16.80°   | N/A          | -          | N/A     | -   | -    | First House    |
@@ -84,6 +80,15 @@ Buenos Aires Subject — Natal Chart Report
 | Mean Priapus          | Tau ♉ | 24.97°   | +0.1120°/d   | -          | +23.82° | Y   | -    | Ninth House    |
 | True Priapus          | Gem ♊ | 19.15°   | +0.9132°/d   | -          | +26.89° | Y   | -    | Tenth House    |
 +-----------------------+--------+----------+--------------+------------+---------+-----+------+----------------+
+
++Natal Arabic Parts------+----------+-------+-------+------+----------------+
+| Point         | Sign   | Position | Speed | Decl. | Ret. | House          |
++---------------+--------+----------+-------+-------+------+----------------+
+| Pars Fortunae | Tau ♉ | 22.94°   | N/A   | N/A   | -    | Ninth House    |
+| Pars Spiritus | Sag ♐ | 7.38°    | N/A   | N/A   | -    | Third House    |
+| Pars Amoris   | Can ♋ | 24.84°   | N/A   | N/A   | -    | Eleventh House |
+| Pars Fidei    | Aqu ♒ | 22.05°   | N/A   | N/A   | -    | Sixth House    |
++---------------+--------+----------+-------+-------+------+----------------+
 
 +Natal Houses (Placidus)--+----------+-------------------+
 | House          | Sign   | Position | Absolute Position |

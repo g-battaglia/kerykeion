@@ -72,10 +72,6 @@ Einstein Subject — Natal Chart Report
 | Ixion                 | Can ♋ | 26.14°   | -0.0105°/d   | -          | +35.67° | Y   | R    | First House    |
 | Orcus                 | Cap ♑ | 29.36°   | +0.0244°/d   | -          | -9.77°  | -   | -    | Eighth House   |
 | Quaoar                | Can ♋ | 9.96°    | -0.0035°/d   | -          | +15.06° | -   | R    | Twelfth House  |
-| Pars Fortunae         | Ari ♈ | 2.67°    | N/A          | -          | N/A     | -   | -    | Tenth House    |
-| Pars Spiritus         | Lib ♎ | 20.63°   | N/A          | -          | N/A     | -   | -    | Fifth House    |
-| Pars Amoris           | Leo ♌ | 5.12°    | N/A          | -          | N/A     | -   | -    | Second House   |
-| Pars Fidei            | Gem ♊ | 4.94°    | N/A          | -          | N/A     | -   | -    | Twelfth House  |
 | Vertex                | Sco ♏ | 27.91°   | N/A          | -          | N/A     | -   | -    | Fifth House    |
 | White Moon            | Leo ♌ | 29.39°   | +0.1408°/d   | -          | +11.70° | -   | -    | Third House    |
 | Anti Vertex           | Tau ♉ | 27.91°   | N/A          | -          | N/A     | -   | -    | Eleventh House |
@@ -84,6 +80,15 @@ Einstein Subject — Natal Chart Report
 | Mean Priapus          | Lib ♎ | 27.98°   | +0.1121°/d   | -          | -15.55° | -   | -    | Fifth House    |
 | True Priapus          | Lib ♎ | 1.62°    | -0.7974°/d   | -          | -4.68°  | -   | R    | Fourth House   |
 +-----------------------+--------+----------+--------------+------------+---------+-----+------+----------------+
+
++Natal Arabic Parts------+----------+-------+-------+------+---------------+
+| Point         | Sign   | Position | Speed | Decl. | Ret. | House         |
++---------------+--------+----------+-------+-------+------+---------------+
+| Pars Fortunae | Ari ♈ | 2.67°    | N/A   | N/A   | -    | Tenth House   |
+| Pars Spiritus | Lib ♎ | 20.63°   | N/A   | N/A   | -    | Fifth House   |
+| Pars Amoris   | Leo ♌ | 5.12°    | N/A   | N/A   | -    | Second House  |
+| Pars Fidei    | Gem ♊ | 4.94°    | N/A   | N/A   | -    | Twelfth House |
++---------------+--------+----------+-------+-------+------+---------------+
 
 +Natal Houses (Placidus)--+----------+-------------------+
 | House          | Sign   | Position | Absolute Position |

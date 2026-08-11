@@ -72,10 +72,6 @@ Future 2050 Subject — Natal Chart Report
 | Ixion                 | Aqu ♒ | 24.02°   | -0.0233°/d   | -          | -31.51° | Y   | R    | Fourth House   |
 | Orcus                 | Lib ♎ | 11.93°   | +0.0090°/d   | -          | -22.93° | -   | -    | Twelfth House  |
 | Quaoar                | Aqu ♒ | 14.55°   | -0.0190°/d   | -          | -9.99°  | -   | R    | Fourth House   |
-| Pars Fortunae         | Sco ♏ | 11.01°   | N/A          | -          | N/A     | -   | -    | First House    |
-| Pars Spiritus         | Lib ♎ | 13.19°   | N/A          | -          | N/A     | -   | -    | Twelfth House  |
-| Pars Amoris           | Sag ♐ | 11.84°   | N/A          | -          | N/A     | -   | -    | Second House   |
-| Pars Fidei            | Tau ♉ | 2.29°    | N/A          | -          | N/A     | -   | -    | Seventh House  |
 | Vertex                | Gem ♊ | 8.07°    | N/A          | -          | N/A     | -   | -    | Eighth House   |
 | White Moon            | Aqu ♒ | 22.17°   | +0.1408°/d   | -          | -14.12° | -   | -    | Fourth House   |
 | Anti Vertex           | Sag ♐ | 8.07°    | N/A          | -          | N/A     | -   | -    | Second House   |
@@ -84,6 +80,15 @@ Future 2050 Subject — Natal Chart Report
 | Mean Priapus          | Pis ♓ | 10.24°   | +0.1119°/d   | -          | -3.33°  | -   | -    | Fifth House    |
 | True Priapus          | Pis ♓ | 11.79°   | +1.3024°/d   | -          | -2.87°  | -   | -    | Fifth House    |
 +-----------------------+--------+----------+--------------+------------+---------+-----+------+----------------+
+
++Natal Arabic Parts------+----------+-------+-------+------+---------------+
+| Point         | Sign   | Position | Speed | Decl. | Ret. | House         |
++---------------+--------+----------+-------+-------+------+---------------+
+| Pars Fortunae | Sco ♏ | 11.01°   | N/A   | N/A   | -    | First House   |
+| Pars Spiritus | Lib ♎ | 13.19°   | N/A   | N/A   | -    | Twelfth House |
+| Pars Amoris   | Sag ♐ | 11.84°   | N/A   | N/A   | -    | Second House  |
+| Pars Fidei    | Tau ♉ | 2.29°    | N/A   | N/A   | -    | Seventh House |
++---------------+--------+----------+-------+-------+------+---------------+
 
 +Natal Houses (Placidus)--+----------+-------------------+
 | House          | Sign   | Position | Absolute Position |

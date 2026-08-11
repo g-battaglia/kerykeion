@@ -25,12 +25,14 @@ sys.path.insert(0, str(project_root))
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.report import ReportGenerator
 from kerykeion.composite_subject_factory import CompositeSubjectFactory
+from kerykeion.dominants import DominantsFactory
 from kerykeion.firdaria import FirdariaFactory
 from kerykeion.horary import HoraryIndicatorsFactory
 from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
 from kerykeion.planetary_return_factory import PlanetaryReturnFactory
 from kerykeion.profections import ProfectionsFactory
 from kerykeion.receptions import MutualReceptionsFactory
+from kerykeion.zodiacal_releasing import ZodiacalReleasingFactory
 
 FIXTURES_DIR = project_root / "tests" / "fixtures"
 
@@ -245,6 +247,16 @@ def main():
 
     receptions = MutualReceptionsFactory.from_subject(horary_subject)
     _capture_and_save(ReportGenerator(receptions), FIXTURES_DIR / "mutual_receptions_report.txt")
+
+    dominants = DominantsFactory.from_subject(john, strategy="modern")
+    _capture_and_save(ReportGenerator(dominants), FIXTURES_DIR / "dominants_john_lennon_report.txt")
+
+    releasing = ZodiacalReleasingFactory.from_subject(
+        john, lot="fortune", levels=2, target_date=technique_target
+    )
+    _capture_and_save(
+        ReportGenerator(releasing), FIXTURES_DIR / "zodiacal_releasing_john_lennon_report.txt"
+    )
 
     print("\nDone! All report snapshots regenerated.")
 
