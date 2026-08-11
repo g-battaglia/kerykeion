@@ -1566,6 +1566,19 @@ class AstrologicalSubjectFactory:
                         if point.declination is not None:
                             point_updates[pk]["is_out_of_bounds"] = abs(point.declination) > true_obliquity
 
+            # Classify each planet's motion state (retrograde/stationary/slow/
+            # average/fast) against its mean daily motion. Geocentric-only for
+            # the same reason as OOB: the tabulated means are geocentric, and a
+            # heliocentric speed measured against them would be meaningless.
+            if calc_data.get("perspective_type") in _GEOCENTRIC_OOB_PERSPECTIVES:
+                from kerykeion.motion import classify_motion_state
+
+                for pk in point_keys:
+                    point = calc_data[pk]
+                    motion_state = classify_motion_state(str(point.name), point.speed)
+                    if motion_state is not None:
+                        point_updates[pk]["motion_state"] = motion_state
+
             # Apply all accumulated updates with a single model_copy per point
             for pk in enrichable_keys:
                 if not point_updates[pk]:

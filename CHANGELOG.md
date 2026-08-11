@@ -2,6 +2,53 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Annual profections** (`ProfectionsFactory.from_subject`): the Hellenistic
+  year-lord technique. Age advances on the birthday anniversary in the
+  subject's own timezone; the profected house is `(age % 12) + 1`, its sign is
+  read from the subject's own house cusps (whole-sign charts profect through
+  whole signs by construction), and the Lord of the Year is the sign's
+  traditional ruler. Returns the current year plus a configurable window
+  (`years_before`/`years_after`).
+- **Firdaria** (`FirdariaFactory.from_subject`): the Persian time-lord
+  technique, two levels. Day charts open with the Sun, night charts with the
+  Moon; the 75-year cycle repeats up to `life_cap_years`; planetary periods
+  subdivide into seven sub-periods opening with their own lord, the node
+  periods stay undivided. Years are Julian (365.25 days). A subject without a
+  boolean `is_diurnal` (midpoint composite) is refused, never guessed.
+- **Mutual receptions** (`MutualReceptionsFactory.from_subject`): domicile and
+  exaltation receptions among the seven classical planets.
+- **Horary indicators** (`HoraryIndicatorsFactory.from_subject`): querent/
+  quesited significators via classical rulership, the considerations before
+  judgment as stable keys (wording belongs to the consuming product), and the
+  chart's mutual receptions. The Ascendant degree is read from the true
+  Ascendant point, not the first-house cusp (Whole Sign safe).
+- **Shared rulership lookups** (`kerykeion.dignities.get_domicile_ruler` /
+  `get_exaltation_ruler`): single public source over the dignity tables.
+  Zodiacal releasing's private `TRADITIONAL_RULERS` copy now derives from it.
+- **Per-point `motion_state`** on `KerykeionPointModel`: the speed classified
+  against the body's mean daily motion (retrograde/stationary/slow/average/
+  fast, thresholds 5%/80%/120%) for the ten planets, Earth-centred
+  perspectives only. Tables and classifier in the new `kerykeion.motion`.
+- **`progressed_points` with `sign_changed`** on
+  `SecondaryProgressionsResultModel` (`ProgressedPointModel`): natal-vs-
+  progressed sign comparison per active point — the secondary-progressions
+  counterpart of the solar-arc flag, so consumers stop re-deriving ingresses
+  by comparing sign strings.
+- **`age_days_precise`** on `MoonPhaseMoonSummaryModel`: the unrounded lunar
+  age the integer `age_days` was already rounded from.
+- **`constellation`** on `FixedStarMetadataModel`: full IAU constellation
+  name derived from the Bayer/Flamsteed nomenclature suffix (component-letter
+  designations included).
+- **Angularity and stellium analysis on chart data**: `angularities` and
+  `stelliums` on `SingleChartDataModel`, per-subject variants on
+  `DualChartDataModel` (classical planets vs the four angles, 8° default orb;
+  three-planet stellium threshold).
+- **Subject helpers** in `kerykeion.utilities`:
+  `resolve_subject_birth_datetime` (shared split-components/ISO fallback,
+  now also used by zodiacal releasing) and `resolve_subject_local_now`.
+
 ## 6.0.0a82 - 2026-08-11
 
 ### Added

@@ -37,6 +37,64 @@ class FixedStarMetadataModel(SubscriptableBaseModel):
         description="Bayer/Flamsteed nomenclature (e.g. 'alLeo', 'epVir').",
     )
     magnitude: Optional[float] = Field(default=None, description="Visual magnitude.")
+    constellation: Optional[str] = Field(
+        default=None,
+        description="Full IAU constellation name (e.g. 'Eridanus'), derived from the nomenclature suffix.",
+    )
+
+
+# IAU three-letter constellation abbreviations → full names. The Bayer/
+# Flamsteed nomenclature in the catalog always ends with this abbreviation
+# ('alLeo' → Leo, 'epVir' → Virgo), so the constellation is factual catalog
+# data derived once here — not something for clients to hardcode per star.
+CONSTELLATION_NAMES: dict[str, str] = {
+    "And": "Andromeda", "Ant": "Antlia", "Aps": "Apus", "Aqr": "Aquarius",
+    "Aql": "Aquila", "Ara": "Ara", "Ari": "Aries", "Aur": "Auriga",
+    "Boo": "Boötes", "Cae": "Caelum", "Cam": "Camelopardalis", "Cnc": "Cancer",
+    "CVn": "Canes Venatici", "CMa": "Canis Major", "CMi": "Canis Minor",
+    "Cap": "Capricornus", "Car": "Carina", "Cas": "Cassiopeia",
+    "Cen": "Centaurus", "Cep": "Cepheus", "Cet": "Cetus", "Cha": "Chamaeleon",
+    "Cir": "Circinus", "Col": "Columba", "Com": "Coma Berenices",
+    "CrA": "Corona Australis", "CrB": "Corona Borealis", "Crv": "Corvus",
+    "Crt": "Crater", "Cru": "Crux", "Cyg": "Cygnus", "Del": "Delphinus",
+    "Dor": "Dorado", "Dra": "Draco", "Equ": "Equuleus", "Eri": "Eridanus",
+    "For": "Fornax", "Gem": "Gemini", "Gru": "Grus", "Her": "Hercules",
+    "Hor": "Horologium", "Hya": "Hydra", "Hyi": "Hydrus", "Ind": "Indus",
+    "Lac": "Lacerta", "Leo": "Leo", "LMi": "Leo Minor", "Lep": "Lepus",
+    "Lib": "Libra", "Lup": "Lupus", "Lyn": "Lynx", "Lyr": "Lyra",
+    "Men": "Mensa", "Mic": "Microscopium", "Mon": "Monoceros", "Mus": "Musca",
+    "Nor": "Norma", "Oct": "Octans", "Oph": "Ophiuchus", "Ori": "Orion",
+    "Pav": "Pavo", "Peg": "Pegasus", "Per": "Perseus", "Phe": "Phoenix",
+    "Pic": "Pictor", "Psc": "Pisces", "PsA": "Piscis Austrinus",
+    "Pup": "Puppis", "Pyx": "Pyxis", "Ret": "Reticulum", "Sge": "Sagitta",
+    "Sgr": "Sagittarius", "Sco": "Scorpius", "Scl": "Sculptor",
+    "Sct": "Scutum", "Ser": "Serpens", "Sex": "Sextans", "Tau": "Taurus",
+    "Tel": "Telescopium", "Tri": "Triangulum", "TrA": "Triangulum Australe",
+    "Tuc": "Tucana", "UMa": "Ursa Major", "UMi": "Ursa Minor", "Vel": "Vela",
+    "Vir": "Virgo", "Vol": "Volans", "Vul": "Vulpecula",
+}
+
+_CONSTELLATION_NAMES_LOWER = {abbr.lower(): name for abbr, name in CONSTELLATION_NAMES.items()}
+
+
+def _constellation_from_nomenclature(nomenclature: Optional[str]) -> Optional[str]:
+    """Full constellation name from a Bayer/Flamsteed designation, or ``None``.
+
+    Handles multiple-star component suffixes too ('th01OriA' → Orion). Some
+    catalog entries carry no real designation (the nomenclature just echoes
+    the proper name, e.g. 'Bharani'): those legitimately resolve to ``None``.
+    """
+    if not nomenclature or len(nomenclature) < 4:
+        return None
+    candidates = [nomenclature[-3:]]
+    # A trailing component letter (A/B/C…) shifts the abbreviation left by one.
+    if nomenclature[-1].isupper() and len(nomenclature) >= 5:
+        candidates.append(nomenclature[-4:-1])
+    for suffix in candidates:
+        match = CONSTELLATION_NAMES.get(suffix) or _CONSTELLATION_NAMES_LOWER.get(suffix.lower())
+        if match:
+            return match
+    return None
 
 
 def _to_slug(name: str) -> str:
@@ -65,6 +123,7 @@ def _load_catalog() -> tuple[FixedStarMetadataModel, ...]:
             hip_number=getattr(e, "hip_number", None),
             nomenclature=getattr(e, "nomenclature", None),
             magnitude=getattr(e, "magnitude", None),
+            constellation=_constellation_from_nomenclature(getattr(e, "nomenclature", None)),
         )
         for e in entries
     )

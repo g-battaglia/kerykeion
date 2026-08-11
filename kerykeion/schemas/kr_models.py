@@ -42,6 +42,7 @@ from kerykeion.schemas.kr_literals import (
     LunarPhaseEmoji,
     LunarPhaseName,
     AstrologicalPoint,
+    MotionState,
     Houses,
     Quality,
     Element,
@@ -343,6 +344,10 @@ class MoonPhaseMoonSummaryModel(SubscriptableBaseModel):
     stage: Optional[str] = None
     illumination: Optional[str] = None
     age_days: Optional[int] = None
+    age_days_precise: Optional[float] = Field(
+        default=None,
+        description="Lunar age in days since the last new moon, unrounded — the exact value age_days is rounded from.",
+    )
     lunar_cycle: Optional[str] = None
     emoji: Optional[LunarPhaseEmoji] = None
     zodiac: Optional[MoonPhaseZodiacModel] = None
@@ -651,6 +656,14 @@ class KerykeionPointModel(SubscriptableBaseModel):
     speed: Optional[float] = Field(
         default=None,
         description="Daily motion in degrees/day. Negative = retrograde. Populated for planets, house cusps, and fixed stars.",
+    )
+    motion_state: Optional[MotionState] = Field(
+        default=None,
+        description=(
+            "Classification of the speed against the body's mean daily motion "
+            "(retrograde/stationary/slow/average/fast). Populated for the ten "
+            "planets in Earth-centred perspectives; None elsewhere."
+        ),
     )
     declination: Optional[float] = Field(
         default=None, description="Declination in degrees north (+) or south (-) of the celestial equator."
@@ -1645,6 +1658,33 @@ class QualityDistributionModel(SubscriptableBaseModel):
     mutable_percentage: int
 
 
+class AngularityModel(SubscriptableBaseModel):
+    """A classical planet conjunct one of the four chart angles.
+
+    Attributes:
+        point: The planet's name.
+        angle: Which angle it stands on (Ascendant, Medium_Coeli, Descendant,
+            Imum_Coeli).
+        distance: Shortest ecliptic arc between planet and angle, in degrees.
+    """
+
+    point: str
+    angle: str
+    distance: float
+
+
+class StelliumModel(SubscriptableBaseModel):
+    """A concentration of classical planets in one house.
+
+    Attributes:
+        house: House number (1-12).
+        points: Names of the planets gathered there, in chart order.
+    """
+
+    house: int
+    points: list[str] = Field(default_factory=list)
+
+
 class SingleChartDataModel(SubscriptableBaseModel):
     """
     Chart data model for single-subject astrological charts.
@@ -1680,6 +1720,11 @@ class SingleChartDataModel(SubscriptableBaseModel):
     # Element and quality distributions
     element_distribution: "ElementDistributionModel"
     quality_distribution: "QualityDistributionModel"
+
+    # Angularity and stellium analysis (classical planets vs the four angles;
+    # 8-degree default orb, three-planet stellium threshold)
+    angularities: list["AngularityModel"] = Field(default_factory=list)
+    stelliums: list["StelliumModel"] = Field(default_factory=list)
 
     # Configuration and metadata
     # Union with str: catalog fixed stars aspect the regular points (see the
@@ -1744,6 +1789,13 @@ class DualChartDataModel(SubscriptableBaseModel):
     # Combined element and quality distributions
     element_distribution: "ElementDistributionModel"
     quality_distribution: "QualityDistributionModel"
+
+    # Angularity and stellium analysis, per subject (classical planets vs the
+    # four angles; 8-degree default orb, three-planet stellium threshold)
+    first_subject_angularities: list["AngularityModel"] = Field(default_factory=list)
+    first_subject_stelliums: list["StelliumModel"] = Field(default_factory=list)
+    second_subject_angularities: list["AngularityModel"] = Field(default_factory=list)
+    second_subject_stelliums: list["StelliumModel"] = Field(default_factory=list)
 
     # Configuration and metadata
     # Union with str: catalog fixed stars aspect the regular points (see the
@@ -1986,3 +2038,191 @@ class ZodiacalReleasingModel(SubscriptableBaseModel):
     lot_degree: float
     periods: list[ZRPeriodModel] = Field(default_factory=list)
     current_path: list[ZRPeriodModel] = Field(default_factory=list)
+
+
+class ProfectionYearModel(SubscriptableBaseModel):
+    """One year of annual profections.
+
+    Attributes:
+        age: Completed age the profection year begins at (0 = birth).
+        house: Profected house for that year, counted from the Ascendant
+            (age 0 activates the 1st house, cycling every 12 years).
+        sign: Sign on the cusp of the profected house, in the subject's own
+            house system.
+        lord: Traditional (domicile) ruler of that sign — the Lord of the Year.
+        year_start: ISO date (``YYYY-MM-DD``) the profection year begins
+            (the birthday anniversary in the subject's civil calendar).
+        year_end: ISO date the profection year ends (the next anniversary).
+    """
+
+    age: int
+    house: int
+    sign: Sign
+    lord: ClassicalPlanet
+    year_start: str
+    year_end: str
+
+
+class ProfectionsModel(SubscriptableBaseModel):
+    """Annual profections for a subject.
+
+    Attributes:
+        current: The profection year containing the target date.
+        years: Profection years around the current one (a window of
+            ``years_before`` past and ``years_after`` future years, current
+            included).
+    """
+
+    current: ProfectionYearModel
+    years: list[ProfectionYearModel] = Field(default_factory=list)
+
+
+class FirdariaSubPeriodModel(SubscriptableBaseModel):
+    """One sub-period (sub-lord) inside a firdaria major period.
+
+    Attributes:
+        lord: Planet ruling the sub-period.
+        start: ISO date (``YYYY-MM-DD``) the sub-period begins.
+        end: ISO date the sub-period ends.
+    """
+
+    lord: ClassicalPlanet
+    start: str
+    end: str
+
+
+class FirdariaPeriodModel(SubscriptableBaseModel):
+    """One firdaria major period.
+
+    Attributes:
+        lord: Ruler of the period — one of the seven classical planets or a
+            lunar node (``North_Node`` / ``South_Node``).
+        years: Length of the period in firdaria years.
+        age_start: Age at which the period begins.
+        age_end: Age at which the period ends.
+        start: ISO date the period begins.
+        end: ISO date the period ends.
+        sub_periods: The seven sub-lord periods, starting from the period's
+            own lord. Empty for the node periods, which are not subdivided
+            per the common convention.
+    """
+
+    lord: str
+    years: int
+    age_start: int
+    age_end: int
+    start: str
+    end: str
+    sub_periods: list[FirdariaSubPeriodModel] = Field(default_factory=list)
+
+
+class FirdariaModel(SubscriptableBaseModel):
+    """Firdaria (Persian time-lord) periods for a subject.
+
+    Attributes:
+        is_diurnal: Sect the sequence was chosen from — day charts open with
+            the Sun's period, night charts with the Moon's.
+        periods: The major periods from birth up to the life cap, in order.
+        current: The major period containing the target date, if any.
+        current_sub: The sub-period containing the target date, if any.
+    """
+
+    is_diurnal: bool
+    periods: list[FirdariaPeriodModel] = Field(default_factory=list)
+    current: Optional[FirdariaPeriodModel] = None
+    current_sub: Optional[FirdariaSubPeriodModel] = None
+
+
+class MutualReceptionModel(SubscriptableBaseModel):
+    """A mutual reception between two classical planets.
+
+    Attributes:
+        first_planet: One planet of the pair.
+        second_planet: The other planet.
+        reception_type: ``"domicile"`` when each planet sits in a sign the
+            other rules; ``"exaltation"`` when each sits in the sign of the
+            other's exaltation.
+    """
+
+    first_planet: ClassicalPlanet
+    second_planet: ClassicalPlanet
+    reception_type: Literal["domicile", "exaltation"]
+
+
+class MutualReceptionsModel(SubscriptableBaseModel):
+    """All mutual receptions among the seven classical planets of a chart.
+
+    Attributes:
+        receptions: One entry per deduplicated pair, domicile and exaltation
+            receptions listed separately.
+    """
+
+    receptions: list[MutualReceptionModel] = Field(default_factory=list)
+
+
+class HorarySignificatorModel(SubscriptableBaseModel):
+    """The significator of a horary house (classical rulership).
+
+    Attributes:
+        house: House the significator describes (1 = querent, 7 = quesited).
+        sign: Sign on that house cusp.
+        ruler: Traditional ruler of that sign — the significator planet.
+        ruler_sign: Sign the ruler occupies in the chart.
+        ruler_house: House the ruler occupies, as the engine names it.
+        ruler_house_number: Same house as a number (1-12).
+        ruler_retrograde: Whether the ruler is retrograde.
+        essential_dignity: The ruler's essential dignity, when the chart was
+            computed with dignities enabled.
+    """
+
+    house: int
+    sign: Optional[Sign] = None
+    ruler: Optional[ClassicalPlanet] = None
+    ruler_sign: Optional[Sign] = None
+    ruler_house: Optional[Houses] = None
+    ruler_house_number: Optional[int] = None
+    ruler_retrograde: Optional[bool] = None
+    essential_dignity: Optional[str] = None
+
+
+class HoraryConsiderationModel(SubscriptableBaseModel):
+    """One of the classical "considerations before judgment".
+
+    The model carries a stable key, not display prose: wording belongs to the
+    consuming product (and its active school), the engine states the fact.
+
+    Attributes:
+        key: Which consideration fired.
+        status: Its classical reading — favorable, caution, or neutral.
+    """
+
+    key: Literal[
+        "asc_early_degree",
+        "asc_late_degree",
+        "asc_judgeable",
+        "moon_void",
+        "moon_not_void",
+        "saturn_in_first",
+        "saturn_in_seventh",
+    ]
+    status: Literal["favorable", "caution", "neutral"]
+
+
+class HoraryIndicatorsModel(SubscriptableBaseModel):
+    """Horary significators and considerations for a question chart.
+
+    Attributes:
+        querent: Significator of the 1st house.
+        quesited: Significator of the 7th house.
+        ascendant_degree: The Ascendant's degree within its sign (0-30),
+            read from the true Ascendant point — not the first-house cusp,
+            which sits at 0° under Whole Sign.
+        considerations: The classical considerations before judgment.
+        mutual_receptions: Mutual receptions among the classical planets.
+    """
+
+    querent: HorarySignificatorModel
+    quesited: HorarySignificatorModel
+    ascendant_degree: Optional[float] = None
+    considerations: list[HoraryConsiderationModel] = Field(default_factory=list)
+    mutual_receptions: list[MutualReceptionModel] = Field(default_factory=list)

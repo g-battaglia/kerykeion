@@ -10,6 +10,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from .secondary_progression_factory import (
+    ProgressedPointModel,
     ProgressedToNatalAspectModel,
     SecondaryProgressionFactory,
     SecondaryProgressionsResultModel,
@@ -22,6 +23,7 @@ from .solar_arc_factory import (
 )
 
 __all__ = [
+    "ProgressedPointModel",
     "ProgressedToNatalAspectModel",
     "SecondaryProgressionFactory",
     "SecondaryProgressionsResultModel",

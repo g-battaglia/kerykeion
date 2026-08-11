@@ -8,9 +8,10 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import Iterator, List, Literal, Optional
 
+from kerykeion.dignities.rulers import get_domicile_ruler
 from kerykeion.dominants.utils import part_of_fortune_degree
 from kerykeion.schemas.kerykeion_exception import KerykeionException
-from kerykeion.utilities import resolve_sect_is_diurnal
+from kerykeion.utilities import resolve_sect_is_diurnal, resolve_subject_birth_datetime
 from kerykeion.schemas.kr_literals import SIGN_CODES, Sign
 from kerykeion.schemas.kr_models import (
     AstrologicalSubjectModel,
@@ -36,20 +37,9 @@ GENERAL_YEARS: dict[Sign, int] = {
 }
 
 # Traditional (domicile) ruler of each sign, for display alongside each period.
-TRADITIONAL_RULERS: dict[Sign, str] = {
-    "Ari": "Mars",
-    "Tau": "Venus",
-    "Gem": "Mercury",
-    "Can": "Moon",
-    "Leo": "Sun",
-    "Vir": "Mercury",
-    "Lib": "Venus",
-    "Sco": "Mars",
-    "Sag": "Jupiter",
-    "Cap": "Saturn",
-    "Aqu": "Saturn",
-    "Pis": "Jupiter",
-}
+# Resolved from the shared dignity tables (single source of truth); kept as a
+# mapping for backward compatibility with existing imports of this name.
+TRADITIONAL_RULERS: dict[Sign, str] = {sign: get_domicile_ruler(sign) for sign in SIGN_CODES}
 
 # Length of a year in days. The tropical year matches the Hellenistic convention
 # used by modern zodiacal-releasing implementations.
@@ -245,34 +235,10 @@ class ZodiacalReleasingFactory:
             )
         fortune_sign_num = int(fortune_degree % 360.0 // 30)
 
-        # PlanetReturnModel / CompositeSubjectModel don't carry the split
-        # year/month/day fields (getattr would raise a raw AttributeError
-        # before the except below could fire); fall back to their local ISO
-        # timestamp — a return or Davison chart is a real moment in time.
-        if getattr(subject, "year", None) is not None:
-            try:
-                birth_dt = datetime(
-                    subject.year, subject.month, subject.day, subject.hour, subject.minute
-                )
-            except (TypeError, ValueError) as exc:
-                raise KerykeionException(f"Invalid birth date on subject: {exc}") from exc
-        else:
-            _iso = getattr(subject, "iso_formatted_local_datetime", None) or getattr(
-                subject, "iso_formatted_utc_datetime", None
-            )
-            if _iso is None:
-                raise KerykeionException(
-                    "Subject carries neither birth-date components nor an ISO "
-                    "timestamp — cannot anchor zodiacal releasing (midpoint "
-                    "composites have no single moment in time)."
-                )
-            try:
-                birth_dt = datetime.fromisoformat(_iso).replace(tzinfo=None)
-            except ValueError as exc:
-                raise KerykeionException(
-                    f"Cannot parse the subject's ISO timestamp {_iso!r} for "
-                    f"zodiacal releasing: {exc}"
-                ) from exc
+        # Split-component subjects and ISO-only subjects (returns, Davison)
+        # both resolve through the shared helper; midpoint composites are
+        # rejected there — they have no single moment in time.
+        birth_dt = resolve_subject_birth_datetime(subject)
 
         target_dt: Optional[datetime] = None
         if target_date is not None:

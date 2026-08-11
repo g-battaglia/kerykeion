@@ -651,7 +651,11 @@ class TestComputeLunarPhaseMetrics:
         upcoming = self._make_upcoming_phases()
 
         result = _compute_lunar_phase_metrics(lunar, base_dt, upcoming)
-        assert len(result) == 9
+        # (phase, phase_name, emoji, stage, major_phase, illumination_str,
+        #  age_days, age_days_precise, lunar_cycle_str, illumination_details)
+        assert len(result) == 10
+        # age_days is the rounded form of age_days_precise, always paired.
+        assert result[6] == round(result[7])
 
     def test_phase_fraction(self) -> None:
         lunar = self._make_lunar_phase(degrees=180.0)

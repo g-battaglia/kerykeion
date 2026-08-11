@@ -401,7 +401,7 @@ def _compute_lunar_phase_metrics(
     lunar_phase: LunarPhaseModel,
     base_dt: datetime,
     upcoming_phases: MoonPhaseUpcomingPhasesModel,
-) -> tuple[float, LunarPhaseName, LunarPhaseEmoji, str, str, str, int, str, MoonPhaseIlluminationDetailsModel]:
+) -> tuple[float, LunarPhaseName, LunarPhaseEmoji, str, str, str, int, float, str, MoonPhaseIlluminationDetailsModel]:
     """
     Compute lunar phase metrics including phase fraction, illumination, and age.
 
@@ -412,7 +412,7 @@ def _compute_lunar_phase_metrics(
 
     Returns:
         Tuple of (phase, phase_name, emoji, stage, major_phase, illumination_str,
-                  age_days, lunar_cycle_str, illumination_details)
+                  age_days, age_days_precise, lunar_cycle_str, illumination_details)
     """
     # Phase fraction based on angular separation between Sun and Moon
     degrees_between = float(lunar_phase.degrees_between_s_m)
@@ -466,6 +466,7 @@ def _compute_lunar_phase_metrics(
         major_phase,
         illumination_str,
         age_days,
+        age_days_precise,
         lunar_cycle_str,
         illumination_details,
     )
@@ -580,6 +581,7 @@ class MoonPhaseDetailsFactory:
         major_phase: Optional[str] = None
         illumination_str: Optional[str] = None
         age_days: Optional[int] = None
+        age_days_precise: Optional[float] = None
         lunar_cycle_str: Optional[str] = None
         detailed: Optional[MoonPhaseMoonDetailedModel] = None
         next_lunar_eclipse: Optional[MoonPhaseEclipseModel] = None
@@ -601,6 +603,7 @@ class MoonPhaseDetailsFactory:
                 major_phase,
                 illumination_str,
                 age_days,
+                age_days_precise,
                 lunar_cycle_str,
                 illumination_details,
             ) = _compute_lunar_phase_metrics(lunar_phase, base_dt, upcoming_phases)
@@ -626,6 +629,7 @@ class MoonPhaseDetailsFactory:
             stage=stage,
             illumination=illumination_str,
             age_days=age_days,
+            age_days_precise=age_days_precise,
             lunar_cycle=lunar_cycle_str,
             emoji=emoji,
             zodiac=zodiac,

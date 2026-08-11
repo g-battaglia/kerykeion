@@ -664,6 +664,61 @@ def resolve_sect_is_diurnal(subject: Any) -> bool:
     return True if value is None else bool(value)
 
 
+def resolve_subject_birth_datetime(subject: Any) -> datetime:
+    """Local (naive) birth/anchor datetime of a subject-like model.
+
+    ``AstrologicalSubjectModel`` carries split ``year/month/day/hour/minute``
+    components; ``PlanetReturnModel`` and ``CompositeSubjectModel`` don't
+    (getattr on them would raise a raw AttributeError), but a return or
+    Davison chart is still a real moment in time — fall back to their local
+    ISO timestamp. A midpoint composite carries neither and is rejected:
+    it has no single moment for a time-lord timeline to anchor to.
+
+    Raises:
+        KerykeionException: When the subject has no usable moment or its
+            fields cannot be parsed into one.
+    """
+    if getattr(subject, "year", None) is not None:
+        try:
+            return datetime(subject.year, subject.month, subject.day, subject.hour, subject.minute)
+        except (TypeError, ValueError) as exc:
+            raise KerykeionException(f"Invalid birth date on subject: {exc}") from exc
+
+    iso = getattr(subject, "iso_formatted_local_datetime", None) or getattr(
+        subject, "iso_formatted_utc_datetime", None
+    )
+    if iso is None:
+        raise KerykeionException(
+            "Subject carries neither birth-date components nor an ISO "
+            "timestamp — cannot anchor a time-lord timeline (midpoint "
+            "composites have no single moment in time)."
+        )
+    try:
+        return datetime.fromisoformat(iso).replace(tzinfo=None)
+    except ValueError as exc:
+        raise KerykeionException(
+            f"Cannot parse the subject's ISO timestamp {iso!r}: {exc}"
+        ) from exc
+
+
+def resolve_subject_local_now(subject: Any) -> datetime:
+    """Current wall-clock time in the subject's own timezone, as a naive datetime.
+
+    Time-lord timelines (profections, firdaria) are built from the subject's
+    *local* birth moment, so "which period contains today" must compare
+    against today in that same local frame — using the server's clock frame
+    would shift period boundaries by up to a day. Falls back to UTC when the
+    subject carries no usable timezone.
+    """
+    tz_str = getattr(subject, "tz_str", None)
+    if tz_str:
+        try:
+            return datetime.now(ZoneInfo(tz_str)).replace(tzinfo=None)
+        except ZoneInfoNotFoundError:
+            logger.warning(f"Unknown timezone {tz_str!r} on subject; using UTC for the current moment.")
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
 def require_same_frame(first: Any, second: Any) -> None:
     """
     Reject two subjects whose astrological reference frame differs.

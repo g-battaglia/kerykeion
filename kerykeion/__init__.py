@@ -108,6 +108,7 @@ from .primary_directions import PrimaryDirectionsFactory, PrimaryDirectionModel,
 from .astro_cartography import AstroCartographyFactory, ACGLineModel, ACGLinePointModel
 from .midpoints import MidpointFactory, MidpointModel, MidpointAspectModel
 from .secondary_progressions import (
+    ProgressedPointModel,
     ProgressedToNatalAspectModel,
     SecondaryProgressionFactory,
     SecondaryProgressionsResultModel,
@@ -125,6 +126,10 @@ from .relationship_score_factory import RelationshipScoreFactory
 from .house_comparison.house_comparison_factory import HouseComparisonFactory
 from .dominants import DominantsFactory, DominantStrategy, BaseDominantStrategy
 from .zodiacal_releasing import ZodiacalReleasingFactory
+from .profections import ProfectionsFactory
+from .firdaria import FirdariaFactory
+from .receptions import MutualReceptionsFactory
+from .horary import HoraryIndicatorsFactory
 
 # =============================================================================
 # VISUALIZATION
@@ -144,6 +149,8 @@ from .schemas.kr_models import (
     AspectModel,
     MoonPhaseOverviewModel,
     ChartDataModel,
+    AngularityModel,
+    StelliumModel,
     SingleChartDataModel,
     DualChartDataModel,
     SingleChartAspectsModel,
@@ -170,6 +177,16 @@ from .schemas.kr_models import (
     TriplicityLordsModel,
     ZodiacalReleasingModel,
     ZRPeriodModel,
+    ProfectionsModel,
+    ProfectionYearModel,
+    FirdariaModel,
+    FirdariaPeriodModel,
+    FirdariaSubPeriodModel,
+    MutualReceptionModel,
+    MutualReceptionsModel,
+    HoraryIndicatorsModel,
+    HorarySignificatorModel,
+    HoraryConsiderationModel,
     RelationshipScoreModel,
     EphemerisDictModel,
 )
@@ -237,6 +254,7 @@ __all__ = [
     "MidpointFactory",
     "MidpointModel",
     "MidpointAspectModel",
+    "ProgressedPointModel",
     "ProgressedToNatalAspectModel",
     "SecondaryProgressionFactory",
     "SecondaryProgressionsResultModel",
@@ -252,6 +270,10 @@ __all__ = [
     "DominantStrategy",
     "BaseDominantStrategy",
     "ZodiacalReleasingFactory",
+    "ProfectionsFactory",
+    "FirdariaFactory",
+    "MutualReceptionsFactory",
+    "HoraryIndicatorsFactory",
     # Visualization
     "ChartDrawer",
     "ReportGenerator",
@@ -263,6 +285,8 @@ __all__ = [
     "EphemerisWarningModel",
     "AspectModel",
     "ChartDataModel",
+    "AngularityModel",
+    "StelliumModel",
     "SingleChartDataModel",
     "DualChartDataModel",
     "SingleChartAspectsModel",
@@ -290,6 +314,16 @@ __all__ = [
     "DominantBreakdownItemModel",
     "ZodiacalReleasingModel",
     "ZRPeriodModel",
+    "ProfectionsModel",
+    "ProfectionYearModel",
+    "FirdariaModel",
+    "FirdariaPeriodModel",
+    "FirdariaSubPeriodModel",
+    "MutualReceptionModel",
+    "MutualReceptionsModel",
+    "HoraryIndicatorsModel",
+    "HorarySignificatorModel",
+    "HoraryConsiderationModel",
     "RelationshipScoreModel",
     "EphemerisDictModel",
     "DominantMethod",

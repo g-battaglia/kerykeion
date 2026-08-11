@@ -62,6 +62,22 @@ class ProgressedToNatalAspectModel(SubscriptableBaseModel):
     orb: float
 
 
+class ProgressedPointModel(SubscriptableBaseModel):
+    """A natal point next to its secondary-progressed position.
+
+    The per-point counterpart of :class:`SolarArcDirectedPointModel`'s
+    ``sign_changed``: consumers highlighting progressed sign ingresses read
+    the flag instead of re-deriving it by comparing sign strings.
+    """
+
+    name: str = Field(description="Name of the point (Sun, Moon, Mercury, ...).")
+    natal_abs_pos: float = Field(description="Natal longitude (0-360).")
+    progressed_abs_pos: float = Field(description="Progressed longitude (0-360).")
+    natal_sign: str
+    progressed_sign: str
+    sign_changed: bool = Field(description="True if the progressed position is in a different sign than the natal one.")
+
+
 class SecondaryProgressionsResultModel(SubscriptableBaseModel):
     """Full secondary progressions result: progressed subject + cross-aspects."""
 
@@ -75,6 +91,10 @@ class SecondaryProgressionsResultModel(SubscriptableBaseModel):
         )
     )
     progressed_subject: AstrologicalSubjectModel
+    progressed_points: List[ProgressedPointModel] = Field(
+        default_factory=list,
+        description="Natal-vs-progressed comparison per point, with the sign_changed ingress flag.",
+    )
     progressed_to_natal_aspects: List[ProgressedToNatalAspectModel] = Field(default_factory=list)
 
 _ANCIENT_ISO_RE = re.compile(
@@ -559,11 +579,32 @@ class SecondaryProgressionFactory:
                             )
                         )
 
+        # Natal-vs-progressed comparison per point. Every active point carried
+        # by BOTH subjects participates; the flag is computed here so no
+        # consumer has to re-derive an ingress by comparing sign strings.
+        progressed_point_models: List[ProgressedPointModel] = []
+        for point_name in natal_subject.active_points:
+            natal_point = getattr(natal_subject, str(point_name).lower(), None)
+            progressed_point = getattr(progressed, str(point_name).lower(), None)
+            if natal_point is None or progressed_point is None:
+                continue
+            progressed_point_models.append(
+                ProgressedPointModel(
+                    name=str(point_name),
+                    natal_abs_pos=natal_point.abs_pos,
+                    progressed_abs_pos=progressed_point.abs_pos,
+                    natal_sign=natal_point.sign,
+                    progressed_sign=progressed_point.sign,
+                    sign_changed=natal_point.sign != progressed_point.sign,
+                )
+            )
+
         return SecondaryProgressionsResultModel(
             natal_name=natal_subject.name,
             target_iso_utc_datetime=result_target_iso,
             ephemeris_iso_utc_datetime=ephemeris_iso,
             progressed_subject=progressed,
+            progressed_points=progressed_point_models,
             progressed_to_natal_aspects=progressed_to_natal,
         )
 

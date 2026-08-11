@@ -37,6 +37,7 @@ from kerykeion.house_comparison.house_comparison_factory import HouseComparisonF
 from kerykeion.relationship_score_factory import RelationshipScoreFactory
 from kerykeion.schemas import KerykeionException, ChartType, ActiveAspect
 from kerykeion.schemas.kr_models import (
+    AngularityModel,
     AstrologicalSubjectModel,
     CompositeSubjectModel,
     PlanetReturnModel,
@@ -47,6 +48,7 @@ from kerykeion.schemas.kr_models import (
     SingleChartDataModel,
     DualChartDataModel,
     ChartDataModel,
+    StelliumModel,
 )
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
 from kerykeion.schemas.kr_literals import (
@@ -69,6 +71,76 @@ from kerykeion.charts.charts_utils import (
     calculate_synastry_element_points,
     calculate_synastry_quality_points,
 )
+
+
+# --- Angularity & stellium analysis -----------------------------------------
+# Classical seven planets against the four chart angles. The 8-degree orb and
+# the three-planet stellium threshold are the common conventions for these
+# summary indicators; they are analysis defaults, not the user's aspect orbs.
+ANGULARITY_ORB_DEGREES = 8.0
+STELLIUM_MIN_POINTS = 3
+
+_CLASSICAL_PLANET_FIELDS = ("sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn")
+_ANGLE_FIELDS = ("ascendant", "medium_coeli", "descendant", "imum_coeli")
+_HOUSE_NAME_TO_NUMBER = {
+    "First_House": 1, "Second_House": 2, "Third_House": 3, "Fourth_House": 4,
+    "Fifth_House": 5, "Sixth_House": 6, "Seventh_House": 7, "Eighth_House": 8,
+    "Ninth_House": 9, "Tenth_House": 10, "Eleventh_House": 11, "Twelfth_House": 12,
+}
+
+
+def _angular_distance(a: float, b: float) -> float:
+    """Shortest arc between two ecliptic longitudes (0-180)."""
+    d = abs(a - b) % 360.0
+    return 360.0 - d if d > 180.0 else d
+
+
+def _compute_angularities(subject: object, orb: float = ANGULARITY_ORB_DEGREES) -> list[AngularityModel]:
+    """Classical planets within ``orb`` of an angle, closest first.
+
+    Each planet is reported once, against its nearest angle.
+    """
+    results: list[AngularityModel] = []
+    for planet_field in _CLASSICAL_PLANET_FIELDS:
+        planet = getattr(subject, planet_field, None)
+        if planet is None or planet.abs_pos is None:
+            continue
+        best_angle: Optional[str] = None
+        best_distance = orb
+        for angle_field in _ANGLE_FIELDS:
+            angle = getattr(subject, angle_field, None)
+            if angle is None or angle.abs_pos is None:
+                continue
+            distance = _angular_distance(planet.abs_pos, angle.abs_pos)
+            if distance <= best_distance:
+                best_distance = distance
+                best_angle = str(angle.name)
+        if best_angle is not None:
+            results.append(
+                AngularityModel(point=str(planet.name), angle=best_angle, distance=round(best_distance, 4))
+            )
+    results.sort(key=lambda entry: entry.distance)
+    return results
+
+
+def _compute_stelliums(subject: object, min_points: int = STELLIUM_MIN_POINTS) -> list[StelliumModel]:
+    """Houses gathering at least ``min_points`` classical planets, biggest first."""
+    buckets: dict[int, list[str]] = {}
+    for planet_field in _CLASSICAL_PLANET_FIELDS:
+        planet = getattr(subject, planet_field, None)
+        if planet is None or planet.house is None:
+            continue
+        house_number = _HOUSE_NAME_TO_NUMBER.get(str(planet.house))
+        if house_number is None:
+            continue
+        buckets.setdefault(house_number, []).append(str(planet.name))
+    stelliums = [
+        StelliumModel(house=house, points=points)
+        for house, points in buckets.items()
+        if len(points) >= min_points
+    ]
+    stelliums.sort(key=lambda entry: (-len(entry.points), entry.house))
+    return stelliums
 
 
 class ChartDataFactory:
@@ -450,6 +522,8 @@ class ChartDataFactory:
                 aspects=single_model.aspects,
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
+                angularities=_compute_angularities(first_subject),
+                stelliums=_compute_stelliums(first_subject),
                 active_points=list(single_model.active_points),
                 active_aspects=list(single_model.active_aspects),
             )
@@ -467,6 +541,10 @@ class ChartDataFactory:
                 relationship_score=relationship_score,
                 element_distribution=element_distribution,
                 quality_distribution=quality_distribution,
+                first_subject_angularities=_compute_angularities(first_subject),
+                first_subject_stelliums=_compute_stelliums(first_subject),
+                second_subject_angularities=_compute_angularities(second_subject),
+                second_subject_stelliums=_compute_stelliums(second_subject),
                 active_points=list(dual_model.active_points),
                 active_aspects=list(dual_model.active_aspects),
             )

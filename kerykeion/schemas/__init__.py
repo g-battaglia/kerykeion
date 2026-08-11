@@ -71,6 +71,8 @@ from .kr_models import (
     DominantsModel,
     TriplicityLordsModel,
     # Chart data
+    AngularityModel,
+    StelliumModel,
     ChartDataModel,
     SingleChartDataModel,
     DualChartDataModel,
@@ -99,6 +101,20 @@ from .kr_models import (
     # Zodiacal releasing
     ZodiacalReleasingModel,
     ZRPeriodModel,
+    # Annual profections
+    ProfectionsModel,
+    ProfectionYearModel,
+    # Firdaria
+    FirdariaModel,
+    FirdariaPeriodModel,
+    FirdariaSubPeriodModel,
+    # Mutual receptions
+    MutualReceptionModel,
+    MutualReceptionsModel,
+    # Horary indicators
+    HoraryIndicatorsModel,
+    HorarySignificatorModel,
+    HoraryConsiderationModel,
     # Moon phase details
     MoonPhaseOverviewModel,
     MoonPhaseEclipseModel,
@@ -142,6 +158,7 @@ _FEATURE_MODEL_HOMES = {
     "MundaneAspectsCollectionModel": "kerykeion.mundane_aspects.factory",
     "MidpointModel": "kerykeion.midpoints.midpoint_factory",
     "MidpointAspectModel": "kerykeion.midpoints.midpoint_factory",
+    "ProgressedPointModel": "kerykeion.secondary_progressions.secondary_progression_factory",
     "ProgressedToNatalAspectModel": "kerykeion.secondary_progressions.secondary_progression_factory",
     "SecondaryProgressionsResultModel": "kerykeion.secondary_progressions.secondary_progression_factory",
     "SolarArcDirectedAspectModel": "kerykeion.secondary_progressions.solar_arc_factory",
@@ -171,6 +188,7 @@ if TYPE_CHECKING:  # static analyzers see the lazy re-exports as plain imports
     from kerykeion.mundane_aspects.factory import MundaneAspectModel, MundaneAspectsCollectionModel
     from kerykeion.midpoints.midpoint_factory import MidpointModel, MidpointAspectModel
     from kerykeion.secondary_progressions.secondary_progression_factory import (
+        ProgressedPointModel,
         ProgressedToNatalAspectModel,
         SecondaryProgressionsResultModel,
     )
@@ -268,6 +286,8 @@ __all__ = [
     "TriplicityLordsModel",
     # Chart data (from kr_models)
     "ChartDataModel",
+    "AngularityModel",
+    "StelliumModel",
     "SingleChartDataModel",
     "DualChartDataModel",
     "SingleChartAspectsModel",
@@ -295,6 +315,16 @@ __all__ = [
     # Zodiacal releasing (from kr_models)
     "ZodiacalReleasingModel",
     "ZRPeriodModel",
+    "ProfectionsModel",
+    "ProfectionYearModel",
+    "FirdariaModel",
+    "FirdariaPeriodModel",
+    "FirdariaSubPeriodModel",
+    "MutualReceptionModel",
+    "MutualReceptionsModel",
+    "HoraryIndicatorsModel",
+    "HorarySignificatorModel",
+    "HoraryConsiderationModel",
     # Moon phase details (from kr_models)
     "MoonPhaseOverviewModel",
     "MoonPhaseEclipseModel",
@@ -326,6 +356,7 @@ __all__ = [
     "MundaneAspectsCollectionModel",
     "MidpointModel",
     "MidpointAspectModel",
+    "ProgressedPointModel",
     "ProgressedToNatalAspectModel",
     "SecondaryProgressionsResultModel",
     "SolarArcDirectedAspectModel",
