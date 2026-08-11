@@ -19,10 +19,10 @@ This guide provides comprehensive instructions for migrating your code from Kery
 | `NatalAspects()` | `AspectsFactory.single_chart_aspects()` |
 | `SynastryAspects()` | `AspectsFactory.dual_chart_aspects()` |
 | `relationship_score()` | `RelationshipScoreFactory` |
-| `kerykeion.kr_types` (deprecated shim) | `kerykeion.schemas` |
+| `kerykeion.kr_types` | `kerykeion.schemas` |
 | `mean_node`, `true_node` | `mean_north_lunar_node`, `true_north_lunar_node` |
 
-> **Note:** `kerykeion.kr_types` is the one entry above that is *not* removed: it still works as a deprecated shim that re-exports `kerykeion.schemas` and emits a `DeprecationWarning` on import. Update your imports anyway — the shim will be removed in a future release.
+> **Note:** `kerykeion.kr_types` was a deprecated shim throughout v5 and is **removed in v6**. Import from `kerykeion.schemas` instead.
 
 ## Breaking Changes
 

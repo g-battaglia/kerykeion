@@ -118,6 +118,10 @@ class TestSwissephPathValidation:
             env={**os.environ, **env},
             cwd=str(KERYKEION_ROOT),
         )
+        # Assert the import actually succeeded first: this check is negative, so a
+        # subprocess dying of ImportError would produce a traceback that does not
+        # contain the string either, and the test would pass while proving nothing.
+        assert result.returncode == 0, result.stderr
         assert "does not contain readable .se1 files" not in result.stderr
 
 

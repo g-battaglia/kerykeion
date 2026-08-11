@@ -30,7 +30,8 @@ import kerykeion
 import kerykeion.schemas as schemas
 
 # Modules that must not be imported by the discovery walk.
-_EXCLUDED_MODULES = ("draw_planets_legacy",)
+# __main__ modules run a CLI when executed; the walk must not trigger them.
+_EXCLUDED_MODULES = ("__main__",)
 
 
 def _collect_public_models() -> dict[str, type]:
@@ -40,7 +41,6 @@ def _collect_public_models() -> dict[str, type]:
         if any(excluded in module_info.name for excluded in _EXCLUDED_MODULES):
             continue
         with warnings.catch_warnings():
-            # The walk imports deprecated shim modules (kr_types) on purpose.
             warnings.simplefilter("ignore", DeprecationWarning)
             module = importlib.import_module(module_info.name)
         for name, obj in vars(module).items():
