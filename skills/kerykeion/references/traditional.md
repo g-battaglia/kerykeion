@@ -32,7 +32,7 @@ Each factory validates its own prerequisites and raises `KerykeionException`. Ve
 | `MutualReceptionsFactory` | **raises** (explicit terrestrial-frame gate) | accepted |
 | `FirdariaFactory` | accepted (sect is computed geocentrically at birth) | **raises** — no boolean `is_diurnal` |
 | `ProfectionsFactory` | accepted (houses are still cast for the birthplace) | **raises** — no birth moment to anchor |
-| `ZodiacalReleasingFactory` | **raises** for Heliocentric only (Sun absent → lot unresolvable) | **raises** — no birth moment |
+| `ZodiacalReleasingFactory` | **raises** for Heliocentric and Selenocentric (the dropped center body — Sun or Moon — makes the lot unresolvable) | **raises** — no birth moment |
 | `PrimaryDirectionsFactory` | accepted (session forwards the subject's own frame) | **raises** — `julian_day` is `None` |
 
 The explicit gate is `has_terrestrial_frame` (`kerykeion/utilities/core.py`):
@@ -88,6 +88,7 @@ Optional). `FirdariaPeriodModel`: `lord: str` (classical planet or
 `lord` (classical planet), `start`, `end`.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import ProfectionsFactory, FirdariaFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -132,6 +133,7 @@ deepest computed level; empty without `target_date`). `ZRPeriodModel`: `sign`,
 `years: float`, `is_angular`, `is_loosing_the_bond`, `subperiods` (nested).
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import ZodiacalReleasingFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -168,6 +170,7 @@ Keys: `asc_early_degree` (< 3°), `asc_late_degree` (≥ 27°), `asc_judgeable`,
 `moon_void`, `moon_not_void`, `saturn_in_first`, `saturn_in_seventh`.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import HoraryIndicatorsFactory
 question = AstrologicalSubjectFactory.from_birth_data(
     name="Question", year=2025, month=6, day=4, hour=15, minute=30,
@@ -207,6 +210,7 @@ with per-point `name`, `ecliptic_longitude`, `right_ascension`, `declination`,
 (Placidian "under the pole"), `oblique_ascension` (OA east / OD west).
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import PrimaryDirectionsFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -270,6 +274,7 @@ every point; with `zodiac_type="Tropical"` it computes them anyway and only
 logs a warning — use `"Sidereal"` for meaningful nakshatras.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import MutualReceptionsFactory
 from kerykeion.dignities import (calculate_essential_dignity,
     get_domicile_ruler, get_triplicity_lords)

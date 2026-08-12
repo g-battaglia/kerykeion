@@ -53,7 +53,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(..., active_points=V5_DEFAU
 ```
 
 - **Narrower orbs, fewer aspects.** Quintile dropped from the defaults; the v6 `DEFAULT_ACTIVE_ASPECTS` is conjunction 6° / opposition 6° / trine 6° / sextile 5° / square 6° (v5 used 10° conjunction/opposition), and transits/returns/progressions now use a flat 3° orb (`PREDICTIVE_ACTIVE_ASPECTS`). Expect FEWER aspects than v5; the migration guide lists the v5 aspect set. See `references/aspects-and-orbs.md`.
-- **Chart style: `"classic"` → `"modern"`.** Pass the theme explicitly to keep v5 visuals — see `references/charts-and-drawing.md`.
+- **Chart style: `"classic"` → `"modern"`.** To keep the v5 wheel geometry pass `style="classic"` to `ChartDrawer` (the `theme` kwarg only controls the palette and already defaults to `"classic"`) — see `references/charts-and-drawing.md`.
 
 To branch on library generation at runtime, prefer the try/except probe above (or `importlib.metadata.version("kerykeion")` / `kerykeion.__version__`) — never `hasattr`, for the reason given.
 

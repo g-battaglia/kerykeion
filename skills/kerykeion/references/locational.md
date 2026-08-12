@@ -40,6 +40,7 @@ coordinates instead), for `|lat| > 90`, or when the new local wall time would
 leave the representable range. Longitudes outside [-180, 180) are wrapped.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import RelocatedChartFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -81,6 +82,7 @@ Models (also importable from `kerykeion.astro_cartography`):
 - `ACGLinePointModel`: `longitude: float` (−180…180), `latitude: float`.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import AstroCartographyFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,

@@ -54,6 +54,7 @@ Attribute after init: `gen.chart_type` (`"Natal"`, `"Synastry"`, `"Subject"`,
 sanitized against terminal-control characters before printing.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 chart_data = ChartDataFactory.create_natal_chart_data(
     AstrologicalSubjectFactory.from_birth_data(
         name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -95,6 +96,7 @@ guessing. For an intentionally empty midpoints set call
 `<midpoints_analysis count="0" ...>`).
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import to_context
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -132,6 +134,7 @@ Use a named serializer instead of `to_context` when you need the extra kwargs
 (synastry/transit labeling) or an empty midpoints list.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion.context import lunar_phase_to_context, midpoints_to_context
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,

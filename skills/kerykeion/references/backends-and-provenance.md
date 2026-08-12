@@ -27,6 +27,7 @@ rather than silently swapped; if neither imports, `ImportError` with install
 lines.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import BACKEND_NAME    # top-level re-export: "libephemeris" | "swisseph"
 
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -110,6 +111,7 @@ never in the model.
 Within the sealed range nothing warns — the empty list is the normal case:
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 s = AstrologicalSubjectFactory.from_birth_data(
     name="Old Chart", year=1855, month=3, day=10, hour=6, minute=0,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
@@ -151,6 +153,7 @@ the coverage window + `source_reviewed` are filled from
 `get_body_coverage(body_id, jd)`.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 s = AstrologicalSubjectFactory.from_birth_data(
     name="Classes", year=1990, month=7, day=15, hour=10, minute=30,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,

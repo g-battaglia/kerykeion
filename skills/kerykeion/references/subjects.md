@@ -29,6 +29,7 @@ All three are classmethods on `AstrologicalSubjectFactory` returning `Astrologic
 **Trap — `from_iso_utc_time` LACKS `is_dst`, `seconds`, and `cache_expire_after_days`** (seconds come from the timestamp; the fold side is derived from the unambiguous UTC instant). `from_current_time` lacks the same three. Both DO accept all v6 flags (`active_fixed_stars`, `calculate_dignities`, `calculate_nakshatra`, `calculate_gauquelin`, `calculate_nutation`, `calculate_local_space`) and forward them to `from_birth_data`. `from_iso_utc_time` quirks: `name` and `iso_utc_time` are required; `tz_str` defaults to `"Etc/GMT"` (the wall time is converted INTO this zone — pass the real zone); offset-less timestamps are read as UTC; malformed timestamps raise `KerykeionException`; a UTC instant landing in a historical double-DST fold raises rather than silently shifting an hour.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
@@ -42,6 +43,7 @@ print(subject.iso_formatted_utc_datetime, subject.julian_day, subject.is_diurnal
 `from_current_time` notes: it captures the instant at execution time (seconds included) and, when online, resolves the timezone BEFORE reading the clock so the wall time matches the resolved zone. Passing `tz_str` together with `online=True` and a `city` is contradictory (the lookup may resolve a different zone than the one the clock was read in) — either give the full offline triple `lng`/`lat`/`tz_str` with `online=False`, or let the online lookup provide everything.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 event = AstrologicalSubjectFactory.from_iso_utc_time(
     name="Event", iso_utc_time="1990-07-15T08:30:00Z",
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False)
@@ -172,6 +174,7 @@ v6 rule: **planets/points go in `active_points` (typed `AstrologicalPoint` names
 - Perspective-incompatible points are **dropped with a warning**: the center body of the perspective (Earth for geo/topocentric, Sun for heliocentric, the center planet for planetocentric), and the geocentric-only points (nodes, Lilith/apogee family) in non-geocentric frames. A list reduced to nothing raises.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion.settings.config_constants import URANIAN_ACTIVE_POINTS
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -183,6 +186,7 @@ print(subject.mercury)                          # None — not requested
 ```
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion.settings.config_constants import ROYAL_FIXED_STARS
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -241,6 +245,7 @@ With `chart_name=None` the composite is named `"{first} and {second} Composite C
 `CompositeSubjectModel` adds `first_subject`, `second_subject`, `composite_chart_type` (values of the `CompositeChartType` literal: `"Midpoint"` | `"Davison"`), and `Optional is_diurnal`; location/time metadata fields are optional. It feeds `ChartDataFactory.create_composite_chart_data` — see `references/charts-and-drawing.md`.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
 a = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)

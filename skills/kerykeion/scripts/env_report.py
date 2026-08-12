@@ -26,8 +26,28 @@ ENV_VARS = (
 REPORTED_ENV = {name: os.environ.get(name) for name in ENV_VARS}
 os.environ["KERYKEION_LEB_MODE"] = "leb"
 
-import kerykeion
-from kerykeion import AstrologicalSubjectFactory, BACKEND_NAME
+
+def report_environment() -> None:
+    print("=== Kerykeion environment report ===")
+    print(f"Python:    {sys.version.split()[0]}")
+    print("\n--- Environment variables ---")
+    for name in ENV_VARS:
+        print(f"{name} = {REPORTED_ENV[name] or 'unset'}")
+
+
+# A broken configuration (e.g. an invalid KERYKEION_BACKEND, or a backend
+# package that is missing) raises at import time — exactly the scenario this
+# diagnostic exists for, so report it instead of crashing.
+try:
+    import kerykeion
+    from kerykeion import AstrologicalSubjectFactory, BACKEND_NAME
+except Exception as exc:
+    report_environment()
+    print("\n--- Import failed ---")
+    print(f"{type(exc).__name__}: {str(exc)[:300]}")
+    print("kerykeion could not be imported under this configuration; fix the")
+    print("environment above (KERYKEION_BACKEND is the usual culprit) and re-run.")
+    sys.exit(0)
 
 
 def probe(year: int) -> tuple[bool, str]:
@@ -49,14 +69,9 @@ def probe(year: int) -> tuple[bool, str]:
 
 
 def main() -> None:
-    print("=== Kerykeion environment report ===")
-    print(f"Python:    {sys.version.split()[0]}")
-    print(f"kerykeion: {kerykeion.__version__}")
+    report_environment()
+    print(f"\nkerykeion: {kerykeion.__version__}")
     print(f"Backend:   {BACKEND_NAME}")
-
-    print("\n--- Environment variables ---")
-    for name in ENV_VARS:
-        print(f"{name} = {REPORTED_ENV[name] or 'unset'}")
 
     # A fresh install ships the 1849-2150 LEB kernel; probes always run in
     # sealed `leb` mode (whatever KERYKEION_LEB_MODE says above) so that
@@ -70,11 +85,17 @@ def main() -> None:
     ok, detail = probe(1600)
     if ok:
         print(f"year 1600: OK   {detail}")
-        print("A wider LEB tier (medium/extended) is installed.")
+        if BACKEND_NAME == "libephemeris":
+            print("A wider LEB tier (medium/extended) is installed.")
+        else:
+            print("Computed by the swisseph backend (LEB tiers do not apply).")
     else:
         print(f"year 1600: FAIL {detail}")
-        print("Expected on a default install (1849-2150 kernel). To widen coverage:")
-        print('  python -c "import libephemeris; libephemeris.download_leb_for_tier(\'medium\')"')
+        if BACKEND_NAME == "libephemeris":
+            print("Expected on a default install (1849-2150 kernel). To widen coverage:")
+            print('  python -c "import libephemeris; libephemeris.download_leb_for_tier(\'medium\')"')
+        else:
+            print("The swisseph backend cannot compute year 1600 with its current data files.")
 
     sys.exit(0)
 

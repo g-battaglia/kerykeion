@@ -225,8 +225,9 @@ from bare `kerykeion` — use the exact import path shown there.
    of silently degrading. Widen with `libephemeris.download_leb_for_tier(...)`.
 7. **Provenance populates on libephemeris only**, and `source="Keplerian"` is
    normal for default points on old dates (e.g. Chiron). Never match
-   exhaustively on `source` values; house-geometry points and fixed stars have
-   provenance `None` by design.
+   exhaustively on `source` values; house-geometry points have provenance
+   `None` by design, and fixed stars carry `source`/`precision_class` but keep
+   their coverage and review fields `None`.
 8. **`ChartDrawer`: `theme` defaults to `"classic"` but `style` defaults to
    `"modern"`** — two orthogonal knobs. Default filenames carry the style
    suffix (`" - Modern.svg"` / `" - Classic.svg"`). `external_view`,

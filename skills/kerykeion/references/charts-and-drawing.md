@@ -75,7 +75,7 @@ Internally the factory sets aspect-movement frames: Synastry treats both subject
 
 Semantics worth knowing before debugging output:
 
-- The serialized `active_points` / `active_aspects` on the result come from the **aspects model**, not from the raw inputs: catalog fixed stars that actually aspected appear in `active_points` (as plain strings), and `parallel`/`contra-parallel` names passed in `active_aspects` are dropped (the longitudinal engine ignores them — see `references/aspects-and-orbs.md`).
+- The serialized `active_points` / `active_aspects` on the result come from the **aspects model**, not from the raw inputs: requested catalog fixed stars are appended to `active_points` (as plain strings) as considered participants — they appear even when they match no aspect — and `parallel`/`contra-parallel` names passed in `active_aspects` are dropped (the longitudinal engine ignores them — see `references/aspects-and-orbs.md`).
 - Element/quality distributions for Transit/DualReturnChart/Progression are computed over the FIRST subject's own points intersected with the caller's explicit `active_points` filter — the second subject's (possibly smaller) tracking set never truncates the natal distribution. Synastry distributions instead use the common point set of both partners, and its per-subject angularities/stelliums honour that same common set.
 - Failure modes (`KerykeionException`): unknown `chart_type`; missing `second_subject` for a dual type; wrong subject class for Composite / SingleReturnChart / DualReturnChart / Progression (see the wrapper table).
 
@@ -89,6 +89,7 @@ drawer.save_svg(output_path=out_dir)   # "{name} - Transit Chart - Modern.svg"
 ```
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 first = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)
@@ -104,7 +105,7 @@ assert data.first_subject_angularities is not None and data.aspects
 
 ## Chart data models
 
-**CALLOUT — `ChartDataModel` is a `Union` type ALIAS**, `ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]` (kerykeion/schemas/models.py) — not a class you can construct. `isinstance(x, ChartDataModel)` raises `TypeError` on Python 3.12–3.13 (it works from 3.14, where `typing.Union` is a runtime type); the portable check is `isinstance(x, (SingleChartDataModel, DualChartDataModel))` or branching on `x.chart_type`. All three names are top-level exports.
+**CALLOUT — `ChartDataModel` is a `Union` type ALIAS**, `ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]` (kerykeion/schemas/models.py) — a type alias, not a class you can construct or subclass. `isinstance(x, ChartDataModel)` works at runtime on all supported Pythons (3.12+); branching on `x.chart_type` or testing `isinstance(x, DualChartDataModel)` is the idiomatic way to tell the two shapes apart. All three names are top-level exports.
 
 `SingleChartDataModel` fields:
 
@@ -157,6 +158,7 @@ Constructor: `ChartDrawer(chart_data, *, ...)` — `chart_data` is the only posi
 Classic-only options (`external_view`, `show_degree_indicators=False`, `show_aspect_icons=False`): the modern renderer ignores all three, logs one warning per option per drawer instance, and renders anyway. Pass `style="classic"` for them to take effect.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)
@@ -189,6 +191,7 @@ Default filenames (a80 — style suffix included):
 - `DualReturnChart` inserts the English return label (e.g. `"... - DualReturnChart Chart - Solar Return - Modern.svg"`); Natal with `external_view=True` renames to `ExternalNatal` for classic wheel-only and grid-only exports only.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 import tempfile
 from pathlib import Path
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -210,6 +213,7 @@ with tempfile.TemporaryDirectory() as tmp:
 All three literals import from `kerykeion.schemas`.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)

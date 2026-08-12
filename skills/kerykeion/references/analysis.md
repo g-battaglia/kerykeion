@@ -42,6 +42,7 @@ empty), and `score_breakdown` (list of `DominantBreakdownItemModel`: `category`,
 `rule`, `points`, `detail` — only populated with `include_score_breakdown=True`).
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import DominantsFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -113,6 +114,7 @@ same quality/mode group), `aspects` (list of `RelationshipScoreAspectModel`: `p1
 | >= 30 | `"Rare Exceptional"` |
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import RelationshipScoreFactory
 
 a = AstrologicalSubjectFactory.from_birth_data(
@@ -149,6 +151,7 @@ and `calculate_cusps_in_reciprocal_houses(cusp_subject, house_subject)` — each
 returning `list[PointInHouseModel]`.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import HouseComparisonFactory
 
 a = AstrologicalSubjectFactory.from_birth_data(
@@ -178,6 +181,7 @@ points, with 90° dial positions and optional aspect activations.
 third points only, the two constituents are excluded).
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import MidpointFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(

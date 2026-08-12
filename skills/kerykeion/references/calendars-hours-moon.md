@@ -15,9 +15,12 @@ Classmethod `from_subject(subject, *, using_default_location=False,
 location_precision=0)` → `MoonPhaseOverviewModel`. The two extras are
 keyword-only metadata echoed into the result's `location` block.
 
-Every subject already carries `subject.lunar_phase` (`LunarPhaseModel`:
-`degrees_between_s_m`, `moon_phase` int, `moon_emoji`, `moon_phase_name`); this
-factory builds a much richer, UI/API-oriented overview around that instant:
+Subjects carry `subject.lunar_phase` (`LunarPhaseModel`: `degrees_between_s_m`,
+`moon_phase` int, `moon_emoji`, `moon_phase_name`) — but it is `None` when
+`calculate_lunar_phase=False`, when Sun or Moon is not among the active points,
+or in non-geo/topocentric perspectives (see `references/subjects.md`); guard
+access. This factory builds a much richer, UI/API-oriented overview around
+that instant:
 
 - `MoonPhaseOverviewModel`: `timestamp` (Unix), `datestamp` (RFC-2822 style),
   `sun`, `moon`, `location`.

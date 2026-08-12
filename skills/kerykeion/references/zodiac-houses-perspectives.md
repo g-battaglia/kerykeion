@@ -24,6 +24,7 @@ house fallbacks, Arabic parts, and `SIGN_CODES`.
   charts.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion.schemas import SIGN_CODES
 kwargs = dict(year=1990, month=7, day=15, hour=10, minute=30, lng=12.4964,
               lat=41.9028, tz_str="Europe/Rome", online=False)
@@ -45,6 +46,7 @@ one of the two on any chart). The backend extrapolates other dates via its
 precession model.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 u = AstrologicalSubjectFactory.from_birth_data(
     name="Custom Ayanamsa", year=2000, month=1, day=1, hour=0, minute=0,
     lng=0.0, lat=51.5, tz_str="Etc/GMT", online=False,
@@ -144,6 +146,7 @@ charts. Raw access: `houses_ex2_with_polar_fallback_ex` in
 `kerykeion.ephemeris_backend` (see `references/backends-and-provenance.md`).
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 s = AstrologicalSubjectFactory.from_birth_data(
     name="Polar", year=1990, month=7, day=15, hour=10, minute=30,
     lng=18.95, lat=69.65, tz_str="Europe/Oslo", city="Tromso", online=False)
@@ -204,6 +207,7 @@ list). Lots are never retrograde. On libephemeris a lot carries
 formula's primaries (see `references/backends-and-provenance.md`).
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 lots = AstrologicalSubjectFactory.from_birth_data(
     name="Lots", year=1990, month=7, day=15, hour=10, minute=30,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,

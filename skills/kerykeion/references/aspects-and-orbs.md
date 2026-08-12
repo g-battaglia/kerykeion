@@ -29,6 +29,7 @@ Declination geometry: a **parallel** is two declinations of the same sign within
 Deprecated (DeprecationWarning, removal in 7.0.0): `natal_aspects` → `single_chart_aspects`, `synastry_aspects` → `dual_chart_aspects` — see `references/migration-and-deprecations.md`.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import AspectsFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -39,6 +40,7 @@ assert all(a.aspect_movement in ("Applying", "Separating", "Static") for a in mo
 ```
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import AspectsFactory
 first = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -101,6 +103,7 @@ Field reading notes:
 - `PTOLEMAIC_ASPECTS` — top-level export (`from kerykeion import PTOLEMAIC_ASPECTS`, home kerykeion/predictive/utils.py): `tuple` of the five names `("conjunction", "opposition", "trine", "sextile", "square")` — names only, no orbs; not an `active_aspects` value.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import AspectsFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
@@ -141,6 +144,7 @@ delta = resolve_pair_orb_adjustment(
 APIs accepting `point_orb_adjustments` + `point_orb_adjustment_strategy`: `AspectsFactory.single_chart_aspects` / `dual_chart_aspects` (default `None` = no adjustment), every `ChartDataFactory` method (default `None` = Sun/Moon +1.5° for Natal/Synastry/Composite, none otherwise), `SecondaryProgressionFactory.compute_full`, and `SolarArcFactory.compute` (see `references/predictive.md`). The declination methods do not accept them.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import AspectsFactory
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,

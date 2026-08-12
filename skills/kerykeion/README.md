@@ -51,11 +51,11 @@ maintained under three mechanical gates:
 
 - `poe docs:check` — every name exported by `kerykeion.__all__` must appear in
   the skill corpus.
-- `poe docs:snippets` (or the focused
-  `python scripts/test_markdown_snippets.py --skill`) — every ```` ```python ````
-  block is executed in isolation. A block must be fully self-contained and run
-  offline on a default install, or carry `# doc-snippet: no-run` as its first
-  line.
+- `python scripts/test_markdown_snippets.py --skill` — every ```` ```python ````
+  block runs in its own process with **no shared page context and no import
+  prelude**: a block must import everything it uses and run offline on a
+  default install, or carry `# doc-snippet: no-run` as its first line. (The
+  broader `poe docs:snippets` run also covers the skill, page-level.)
 - `tests/core/test_agent_skill_contract.py` — validates frontmatter, the
   vendored license, reference reachability, and version references.
 

@@ -119,6 +119,7 @@ non-chronological series; points requested but missing from one or both sides.
 exceeds it). Use `step_type="hours", step=4` for series that include the Moon.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from datetime import datetime
 from kerykeion import EphemerisDataFactory, TransitsTimeRangeFactory
 
@@ -187,6 +188,7 @@ Deprecated (DeprecationWarning, removal in 7.0.0 — see `references/migration-a
 `next_return_from_month_and_year(year, month, return_type)` → use `next_return_from_date`.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import PlanetaryReturnFactory
 
 natal = AstrologicalSubjectFactory.from_birth_data(
@@ -231,6 +233,7 @@ planet positions are identical under both conventions; only angles, cusps and ho
 placements differ.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import SecondaryProgressionFactory
 
 natal = AstrologicalSubjectFactory.from_birth_data(
@@ -265,6 +268,7 @@ kwargs behave exactly as in `SecondaryProgressionFactory` (one of
   nulled on shifted points; house placement is recomputed against the natal cusps.
 
 ```python
+from kerykeion import AstrologicalSubjectFactory
 from kerykeion import SolarArcFactory
 
 natal = AstrologicalSubjectFactory.from_birth_data(

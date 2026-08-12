@@ -66,20 +66,26 @@ def extract_python_snippets(content):
     ]
 
 
-def test_snippet(code: str, *, timeout: float) -> Tuple[bool, Optional[str]]:
-    """Test if Python snippet runs without errors."""
+def test_snippet(code: str, *, timeout: float, bare: bool = False) -> Tuple[bool, Optional[str]]:
+    """Test if Python snippet runs without errors.
+
+    With ``bare=True`` no import prelude is injected: the block must import
+    everything it uses itself (harness plumbing — sys.path and the warnings
+    filter — is still applied). This is the contract for the agent skill,
+    whose blocks are copy-pasted individually into foreign codebases.
+    """
     # Normalize indentation for nested code blocks
     code = textwrap.dedent(code)
 
-    # Add basic imports
     project_root = str(Path(__file__).parent.parent)
-    full_code = (
-        f"""
+    prelude = f"""
 import sys
 sys.path.insert(0, '{project_root}')
 import warnings
 warnings.filterwarnings('ignore')
-
+"""
+    if not bare:
+        prelude += """
 # Common imports for kerykeion
 from typing import Literal, Union
 from kerykeion import (
@@ -90,8 +96,7 @@ from kerykeion import (
     KerykeionSettingsModel,
 )
 """
-        + code
-    )
+    full_code = prelude + code
 
     try:
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
@@ -159,7 +164,12 @@ def main():
         "-ai", "--ai-guide", dest="ai_guide_only", action="store_true", help="Run snippets only for the AI-agent guide (kerykeion/llms.txt)."
     )
     parser.add_argument(
-        "--skill", dest="skill_only", action="store_true", help="Run snippets only for the agent skill (skills/kerykeion)."
+        "--skill", dest="skill_only", action="store_true",
+        help="Run snippets only for the agent skill (skills/kerykeion); implies --isolated.",
+    )
+    parser.add_argument(
+        "--isolated", dest="isolated", action="store_true",
+        help="Run each snippet in its own process with no shared page context and no import prelude.",
     )
     parser.add_argument("--timeout", type=float, default=20.0, help="Per-snippet timeout in seconds (default: 20).")
     parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")
@@ -184,7 +194,10 @@ def main():
     elif args.skill_only:
         targets = [Path("skills/kerykeion")]
         exclude_release_notes = False
-        mode_description = "skills/kerykeion only"
+        # Skill blocks are copy-pasted individually into foreign codebases, so
+        # the gate must prove each one stands alone.
+        args.isolated = True
+        mode_description = "skills/kerykeion only (isolated blocks, no import prelude)"
     elif args.all_files:
         targets = args.paths or [Path(".")]
         exclude_release_notes = False
@@ -226,6 +239,19 @@ def main():
             # If it fails (or hits the narrowly ignored GeoNames-warning path),
             # replay cumulatively to identify the exact failing block(s).
             dedented_snippets = [textwrap.dedent(snippet) for snippet in snippets]
+
+            if args.isolated:
+                for i, dedented in enumerate(dedented_snippets, 1):
+                    success, error = test_snippet(dedented, timeout=args.timeout, bare=True)
+                    total_snippets += 1
+                    if success:
+                        print(f"  ✅ Snippet {i}: {error if error else 'OK'}")
+                    else:
+                        print(f"  ❌ Snippet {i}:")
+                        print(f"     {error if error else 'Unknown error'}")
+                        failed_snippets += 1
+                continue
+
             combined_success, combined_error = test_snippet(
                 "\n".join(dedented_snippets), timeout=args.timeout
             )
