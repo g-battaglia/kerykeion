@@ -7,6 +7,7 @@
     height='100%'
     viewBox='0 -15 1703 836'
     preserveAspectRatio='xMidYMid'
+    font-family='Arial, Helvetica, Liberation Sans, sans-serif'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
     <title>John Lennon (Full v6) - Birth Chart</title>
@@ -201,7 +202,7 @@
 
     <!---
     Main Chart -->
-    <g kr:node='Main_Chart' font-family='Arial, Helvetica, Liberation Sans, sans-serif'>
+    <g kr:node='Main_Chart'>
         <g kr:node='Top_Left_Text' transform='translate(0,32)'>
             <text kr:node='Chart_Title' x='20' y='22' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 24px'>John Lennon (Full v6) - Birth Chart</text>
             <text kr:node='Top_Left_Text_0' x='20' y='58' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Location:</text>

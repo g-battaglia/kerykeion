@@ -36,6 +36,8 @@ from kerykeion.charts.drawer import info_row_clear_width
 from kerykeion.charts.glyph_metrics import estimate_text_width
 from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 
+from .svg_text_overlap import find_text_overlaps
+
 pytestmark = pytest.mark.core
 
 STYLES = ["classic", "modern"]
@@ -551,3 +553,59 @@ class TestGauquelinBadgeHasItsOwnRoom:
             "fixture drifted: this sky now has an out-of-bounds body"
         )
         assert _render(chart_data, "classic") == _render(chart_data, "classic", show_out_of_bounds=True)
+
+
+class TestNothingPrintsOnTopOfAnythingElse:
+    """No two strings share a baseline and the same pixels.
+
+    This is the assertion the gallery sweep could only make with an eye. What
+    it caught, once written: the multi-column point grid put a long name — "N.
+    Node (M)" wants 56px where the stride left 25 — on top of the row beside
+    it, in every chart that carries the node under both its names.
+
+    Only unrotated text is examined; the wheel's own labels are governed by the
+    browser-measured separation model and are not this test's business.
+    """
+
+    @pytest.mark.parametrize("style", STYLES)
+    @pytest.mark.parametrize(
+        "fixture",
+        ["station_data", "out_of_bounds_data", "sidereal_data", "polar_data", "synastry_data", "two_angles_data"],
+    )
+    def test_no_overlap(self, request, fixture, style):
+        chart_data = request.getfixturevalue(fixture)
+        svg = ChartDrawer(chart_data, style=style, **{mark: True for mark in ALL_MARKS}).generate_svg_string()
+        overlaps = find_text_overlaps(svg)
+        assert not overlaps, "\n".join(str(o) for o in overlaps[:6])
+
+    @pytest.mark.parametrize("style", STYLES)
+    def test_no_overlap_with_every_point_the_library_knows(self, style):
+        """The crowded case, which is where the columns actually ran out of room."""
+        from kerykeion.settings.config_constants import ALL_ACTIVE_ASPECTS, ALL_ACTIVE_POINTS, URANIAN_ACTIVE_POINTS
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Every point", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+            active_points=list(ALL_ACTIVE_POINTS) + list(URANIAN_ACTIVE_POINTS),
+            suppress_geonames_warning=True,
+        )
+        chart_data = ChartDataFactory.create_natal_chart_data(subject, active_aspects=list(ALL_ACTIVE_ASPECTS))
+        svg = ChartDrawer(chart_data, style=style, **{mark: True for mark in ALL_MARKS}).generate_svg_string()
+        overlaps = find_text_overlaps(svg)
+        assert not overlaps, "\n".join(str(o) for o in overlaps[:6])
+
+    @pytest.mark.xfail(
+        reason=(
+            "A biwheel lays out four side tables at fixed offsets 105px apart, and a "
+            "language whose point names are longer than English overruns that into the "
+            "cusp column beside it. Fixing it means laying the four out as a chain — "
+            "each starting where the one before ends — and feeding that into the canvas "
+            "width estimator, which is its own change. Left failing rather than narrowed "
+            "away, so it reports the day the chain lands."
+        ),
+        strict=False,
+    )
+    @pytest.mark.parametrize("language", list(LANGUAGE_SETTINGS))
+    def test_no_overlap_in_any_language(self, synastry_data, language):
+        svg = ChartDrawer(synastry_data, chart_language=language, **{m: True for m in ALL_MARKS}).generate_svg_string()
+        overlaps = find_text_overlaps(svg)
+        assert not overlaps, "\n".join(str(o) for o in overlaps[:6])

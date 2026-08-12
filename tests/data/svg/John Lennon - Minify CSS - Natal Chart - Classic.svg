@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--- This file is part of Kerykeion. Chart glyphs: Symbola (public domain) + Noto Sans Symbols 2 (SIL OFL 1.1) + Kerykeion clean-room originals. See the NOTICE file. -->
-<svg style="background-color:#ffffff" preserveAspectRatio="xMidYMid" viewBox="0 -15 890 580" xmlns="http://www.w3.org/2000/svg" xmlns:kr="https://www.kerykeion.net/" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg font-family="Arial, Helvetica, Liberation Sans, sans-serif" style="background-color:#ffffff" preserveAspectRatio="xMidYMid" viewBox="0 -15 890 580" xmlns="http://www.w3.org/2000/svg" xmlns:kr="https://www.kerykeion.net/" xmlns:xlink="http://www.w3.org/1999/xlink">
  <title>John Lennon - Minify CSS - Birth Chart</title>
  <!-- Colors -->
  <!---
@@ -267,73 +267,73 @@
      <line x1="120" y1="240" y2="240" stroke="#ff7e00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="1" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="55.46043348493119" y="305.50908565577413">1</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="56.4604529146698" y="308.34119633297087">1</tspan></text>
     </g>
     <g kr:absoluteposition="59.539355319478915" kr:horoscope="0" kr:node="Cusp" kr:sign="Tau" kr:signposition="29.539355319478915" kr:slug="Second_House">
      <line x1="148.07" x2="56.149" y1="317.13" y2="394.27" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="2" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="113.58477894018444" y="390.08053307884376">2</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="114.48511446080713" y="390.8313323396582">2</tspan></text>
     </g>
     <g kr:absoluteposition="80.23902557714422" kr:horoscope="0" kr:node="Cusp" kr:sign="Gem" kr:signposition="20.23902557714422" kr:slug="Third_House">
      <line x1="181.82" x2="123.65" y1="344.95" y2="449.91" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="3" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="168.19335368730236" y="422.24744188746274">3</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="169.4965216965274" y="422.74226107661104">3</tspan></text>
     </g>
     <g kr:absoluteposition="97.07097923305986" kr:horoscope="0" kr:node="Cusp" kr:sign="Can" kr:signposition="7.070979233059859" kr:slug="Fourth_House">
      <line x1="215.05" x2="190.1" y1="357.38" y2="474.76" stroke="#000" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="4" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="226.95149640135483" y="434.7368706728781">4</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="227.3576625108809" y="434.7577256012021">4</tspan></text>
     </g>
     <g kr:absoluteposition="115.31371115556101" kr:horoscope="0" kr:node="Cusp" kr:sign="Can" kr:signposition="25.31371115556101" kr:slug="Fifth_House">
      <line x1="252.54" x2="265.09" y1="359.34" y2="478.69" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="5" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="299.5090856557741" y="424.5395665150688">5</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="300.7618352143262" y="424.1033637735675">5</tspan></text>
     </g>
     <g kr:absoluteposition="142.10542080689618" kr:horoscope="0" kr:node="Cusp" kr:sign="Leo" kr:signposition="22.105420806896177" kr:slug="Sixth_House">
      <line x1="305.36" x2="370.71" y1="340.64" y2="441.28" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="6" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="404.92698377076397" y="336.0834470872967">6</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="406.2429884620511" y="333.66868729850484">6</tspan></text>
     </g>
     <g kr:absoluteposition="199.7467671946414" kr:horoscope="0" kr:node="Cusp" kr:sign="Lib" kr:signposition="19.746767194641393" kr:slug="Seventh_House">
      <line x1="360" x2="480" y1="240" y2="240" stroke="#00f" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="7" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="418.5395665150688" y="180.49091434422593">7</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="417.5395470853302" y="177.65880366702916">7</tspan></text>
     </g>
     <g kr:absoluteposition="239.53935531947891" kr:horoscope="0" kr:node="Cusp" kr:sign="Sco" kr:signposition="29.539355319478915" kr:slug="Eighth_House">
      <line x1="331.93" x2="423.85" y1="162.87" y2="85.731" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="8" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="360.4152210598155" y="95.91946692115621">8</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="359.51488553919296" y="95.16866766034187">8</tspan></text>
     </g>
     <g kr:absoluteposition="260.2390255771442" kr:horoscope="0" kr:node="Cusp" kr:sign="Sag" kr:signposition="20.23902557714422" kr:slug="Ninth_House">
      <line x1="298.18" x2="356.35" y1="135.05" y2="30.091" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="9" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="305.8066463126977" y="63.752558112537265">9</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="304.5034783034725" y="63.257738923388935">9</tspan></text>
     </g>
     <g kr:absoluteposition="277.07097923305986" kr:horoscope="0" kr:node="Cusp" kr:sign="Cap" kr:signposition="7.070979233059859" kr:slug="Tenth_House">
      <line x1="264.95" x2="289.9" y1="122.62" y2="5.2446" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="10" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="247.04850359864525" y="51.263129327121824">10</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="246.64233748911923" y="51.24227439879789">10</tspan></text>
     </g>
     <g kr:absoluteposition="295.313711155561" kr:horoscope="0" kr:node="Cusp" kr:sign="Cap" kr:signposition="25.31371115556101" kr:slug="Eleventh_House">
      <line x1="227.46" x2="214.91" y1="120.66" y2="1.3147" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="11" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="174.49091434422596" y="61.460433484931166">11</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="173.2381647856738" y="61.896636226432534">11</tspan></text>
     </g>
     <g kr:absoluteposition="322.1054208068962" kr:horoscope="0" kr:node="Cusp" kr:sign="Aqu" kr:signposition="22.105420806896177" kr:slug="Twelfth_House">
      <line x1="174.64" x2="109.29" y1="139.36" y2="38.719" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="12" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="69.07301622923602" y="149.91655291270325">12</tspan></text>
+     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="67.75701153794898" y="152.33131270149508">12</tspan></text>
     </g>
    </g>
    <!-- Gauquelin Sectors Overlay -->

@@ -22,7 +22,15 @@ import logging
 import math
 from typing import Optional
 
-from kerykeion.charts.utils import STATION_LABELS, escape_svg_text, normalize_degree
+from kerykeion.charts.glyph_metrics import estimate_text_width
+from kerykeion.charts.spreading import spread_around_wheel
+from kerykeion.charts.utils import (
+    CHART_TEXT_FONT_FAMILY,
+    label_separation_degrees,
+    STATION_LABELS,
+    escape_svg_text,
+    normalize_degree,
+)
 from kerykeion.charts.glyph_ink_metrics import (
     GLYPH_INK_HALF_HEIGHT,
     GLYPH_INK_HALF_WIDTH,
@@ -183,6 +191,9 @@ RETROGRADE_LABEL = "RX"
 # (that group carries a 0.37 scale, so these are not wheel units). Sized
 # against the 0.25 stroke so the gaps read as deliberate rather than as a
 # rendering artefact.
+#: Size the house numbers are drawn at, in the wheel's 100-unit frame.
+HOUSE_NUMBER_FONT_SIZE = 1.5
+
 SEPARATING_DASH_ARRAY_SCALED = "1.5 1"
 
 def motion_marker(point: KerykeionPointModel, show_motion_state: bool = False) -> Optional[str]:
@@ -199,23 +210,9 @@ def motion_marker(point: KerykeionPointModel, show_motion_state: bool = False) -
             return station
     return RETROGRADE_LABEL if point.retrograde is True else None
 
-# The one font stack every modern-chart text renders in — declared on the
-# wheel root here, and on the full-chart Main_Chart group by chart_drawer, so
-# no text node can miss it. Without it the SVG inherits whatever the embedding
-# page uses — the same chart came out serif standalone, sans in one host page,
-# monospace in another — and no spacing model can reserve room for an unknown
-# font. Arial, Helvetica and Liberation Sans are metric-compatible, and
-# Liberation is named explicitly so Linux systems that have it never fall
-# through to generic sans-serif (usually DejaVu Sans, whose digits run
-# ~10-14% wider than the measured ink tables). A system with none of the
-# three still resolves to its own sans and can render wider than reserved —
-# that residual risk is the price of not padding every chart for the rarest
-# platform.
-#
-# Liberation Sans is deliberately unquoted: CSS allows multi-word family
-# names as bare identifiers, and the SVG post-processing rewrites double
-# quotes to single quotes, which nested quotes would corrupt.
-MODERN_TEXT_FONT_FAMILY = "Arial, Helvetica, Liberation Sans, sans-serif"
+# Kept as the name the modern renderer and its measurement harness use; the
+# stack itself is chart-wide and lives with the other shared chart constants.
+MODERN_TEXT_FONT_FAMILY = CHART_TEXT_FONT_FAMILY
 
 # Below this display offset from the true position, the indicator is drawn as
 # a straight tick instead of a tether arc. Shared with the displacement report
@@ -1860,16 +1857,31 @@ def _draw_house_ring(
 
     out += f'<path d="{_annulus_path(house_outer_r, house_inner_r)}" fill="{COLOR_HOUSE_RING}" fill-rule="evenodd"/>\n'
 
+    # Quadrant house systems make sectors wildly unequal — Campanus does it at
+    # Liverpool, Placidus inside the polar circle — and three or four numbers
+    # then want the same few degrees of a ring only 14 to 21 units across. They
+    # are spread by the least movement that separates them, which keeps a crowd
+    # centred on the houses it belongs to instead of sliding it sideways.
+    label_radius = CENTER - text_y
+    wanted = []
+    for index, sector in enumerate(houses):
+        sector_angle = _zodiac_to_wheel_angle(sector.abs_pos, seventh_house_degree_ut)
+        sector_span = _normalize_angle(
+            _zodiac_to_wheel_angle(houses[(index + 1) % 12].abs_pos, seventh_house_degree_ut) - sector_angle
+        )
+        wanted.append(_normalize_angle(sector_angle + sector_span / 2))
+    # The widest label the ring carries, measured at the size it is drawn. The
+    # estimator scales with the font size and carries no unit of its own, so it
+    # answers in the wheel's 100-unit frame here just as it answers in pixels
+    # for the panel.
+    label_width = estimate_text_width("12", HOUSE_NUMBER_FONT_SIZE)
+    placed = spread_around_wheel(wanted, label_separation_degrees(label_width, max(label_radius, 0.1), gutter_px=0.3))
+
     for i, house in enumerate(houses):
         house_num = i + 1
         cusp_angle = _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut)
-        next_house = houses[(i + 1) % 12]
-        next_angle = _zodiac_to_wheel_angle(next_house.abs_pos, seventh_house_degree_ut)
-
-        # Angular span of this house sector
-        span = _normalize_angle(next_angle - cusp_angle)
-        # Absolute mid-angle of the sector
-        mid_angle_abs = _normalize_angle(cusp_angle + span / 2)
+        # Where the number goes, after spreading (see above).
+        mid_angle_abs = placed[i]
         stroke_w = ANGULAR_STROKE_WIDTH if house_num in ANGULAR_HOUSES else NORMAL_STROKE_WIDTH
 
         # Divider line from house ring outer edge down to line_inner_radius
@@ -1891,7 +1903,7 @@ def _draw_house_ring(
             out += (
                 f'<g kr:node="HouseNumber" kr:house="{house_num}"{horoscope_attr}>'
                 f'<text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="{text_y}" font-size="1.5" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{text_y}" font-size="{HOUSE_NUMBER_FONT_SIZE}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate(-{mid_angle_abs:.6f} {CENTER} {CENTER}) '
                 f'rotate({angle_upright:.6f} {CENTER} {text_y})">'

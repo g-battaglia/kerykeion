@@ -7,6 +7,7 @@
     height='100%'
     viewBox='40 -488 748 762'
     preserveAspectRatio='xMidYMid'
+    font-family='Arial, Helvetica, Liberation Sans, sans-serif'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
 

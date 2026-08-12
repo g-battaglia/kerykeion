@@ -89,10 +89,12 @@ from kerykeion.charts.utils import (
     draw_house_sectors,
     convert_decimal_to_degree_string,
     gauquelin_column_width,
+    planet_grid_column_width,
+    get_decoded_kerykeion_celestial_point_name,
+    CHART_TEXT_FONT_FAMILY,
 )
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.charts.draw_modern import (
-    MODERN_TEXT_FONT_FAMILY,
     draw_modern_dual_horoscope,
     draw_modern_horoscope,
 )
@@ -280,6 +282,10 @@ _INFO_ROW_FIRST_Y: float = 452.0
 _INFO_ROW_STEP: float = 14.0
 _INFO_ROW_TEXT_X: float = 20.0
 _INFO_ROW_TEXT_RISE: float = 10.0
+_INFO_ROW_COUNT: int = 6
+#: Baseline the moon glyph's default offset was chosen against — the fifth row,
+#: i.e. the last one before the diurnality line existed.
+_INFO_ROW_LEGACY_LAST_Y: float = 508.0
 
 # How much clear width row 5 really has, and it is not the 258.6px the chord
 # gives at the baseline: the chord narrows going *upward*, and text rises above
@@ -3005,7 +3011,6 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         from kerykeion.charts.utils import (
             _GAUQUELIN_MAX_ROWS,
-            _GRID_COLUMN_WIDTH,
             _SECOND_COLUMN_THRESHOLD,
             _gauquelin_grid_thresholds,
             _select_planet_grid_thresholds,
@@ -3032,7 +3037,18 @@ class ChartDrawer:  # type: ignore[no-redef]
             n = self._count_active_planets()
             if n <= _SECOND_COLUMN_THRESHOLD:
                 return 0
-            col_width = _GRID_COLUMN_WIDTH
+            # The grid sizes its own columns from the names it prints, so the
+            # estimator has to ask the same question — reserving the fixed
+            # stride while the grid draws a wider one clips the last column.
+            col_width = planet_grid_column_width(
+                [
+                    get_decoded_kerykeion_celestial_point_name(
+                        point["name"], self._language_model.celestial_points
+                    )
+                    for point in self.available_kerykeion_celestial_points
+                ],
+                self.show_out_of_bounds,
+            )
             thresholds = _select_planet_grid_thresholds(self.chart_type, n)
 
         # Determine how many columns will be used
@@ -5231,16 +5247,35 @@ class ChartDrawer:  # type: ignore[no-redef]
         # ---------------------------------------------------------------------
         # LAYOUT: bottom-left block and moon glyph
         # ---------------------------------------------------------------------
-        # Written here, after the renderer, because the drop must key off whether
-        # row 5 in particular got filled — not off the flag. `show_diurnality=True`
-        # still leaves row 5 empty on a heliocentric chart, on a midpoint composite,
-        # and on a Davison composite, which puts its line in row 4 instead; in all
-        # three the glyph must stay where it is, since only row 5 reaches into its
-        # clearance. This is also the single point every height branch converges
-        # on, right-panel synastry included.
+        # Written here, after the renderer: this is the single point every height
+        # branch converges on, right-panel synastry included.
+        #
+        # The six rows have fixed baselines and every renderer fills all six,
+        # blanks included, so a row with nothing to say used to leave a hole and
+        # the block stopped looking like a block — a heliocentric chart printed
+        # two lines, two gaps, one line, a gap. The rows are packed to the bottom
+        # instead. Downwards and not upwards: the rows sit under the wheel's
+        # centre so the chord widens as it descends (row 0 clears 134px, row 5
+        # clears 229), which makes moving a line down always safe and moving one
+        # up the mistake documented above DIURNALITY_GLYPH_DROP.
+        #
+        # All six nodes stay in the markup — the empties simply migrate to the
+        # top — because the baseline-freshness guard counts them.
+        filled = [template_dict.get(f"bottom_left_{i}", "") for i in range(_INFO_ROW_COUNT)]
+        filled = [row for row in filled if row]
+        for index in range(_INFO_ROW_COUNT):
+            slot = index - (_INFO_ROW_COUNT - len(filled))
+            template_dict[f"bottom_left_{index}"] = filled[slot] if slot >= 0 else ""
+
+        # The glyph keeps the 10px gap below the last line it has always had.
+        # Expressed against the last *filled* row rather than against row 5
+        # specifically: with the rows packed down, "is row 5 filled" is true
+        # whenever anything is written at all, and the old test of it would drop
+        # the glyph on every chart.
         lunar_phase_y = offsets["lunar_phase"]
-        if template_dict.get("bottom_left_5"):
-            lunar_phase_y += DIURNALITY_GLYPH_DROP
+        if filled:
+            last_row_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * (_INFO_ROW_COUNT - 1)
+            lunar_phase_y = offsets["lunar_phase"] + (last_row_y - _INFO_ROW_LEGACY_LAST_Y)
         # The template field is ``int``; the offsets are floats on a dataclass a
         # caller can supply, so coerce here rather than lean on pydantic's lax
         # coercion. ``round`` rather than ``int``: the shipped defaults are whole,
@@ -5248,6 +5283,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # truncation.
         template_dict["lunar_phase_translate_y"] = round(lunar_phase_y)
         template_dict["bottom_left_translate_y"] = round(offsets["bottom_left"])
+        template_dict["chart_font_family"] = CHART_TEXT_FONT_FAMILY
 
         # ---------------------------------------------------------------------
         # SECURITY: Escape user-controlled plain-text fields
@@ -5599,17 +5635,6 @@ class ChartDrawer:  # type: ignore[no-redef]
             overrides["makeHouseSectors"] = ""
             overrides["makeGauquelinSectors"] = ""
             template = Template(raw_template).substitute(overrides)
-            # Pin the font on the whole chart, not just the wheel: chart.xml's
-            # panels, title and aspect grid declare no font-family, so without
-            # this they inherit whatever the embedding page uses while the
-            # wheel renders its pinned stack — two fonts in one deliverable.
-            # Scoped to the modern branch; classic keeps its historical
-            # viewer-default text on purpose.
-            template = template.replace(
-                '<g kr:node="Main_Chart">',
-                f'<g kr:node="Main_Chart" font-family="{MODERN_TEXT_FONT_FAMILY}">',
-                1,
-            )
             # Modern wheel-local (100x100) -> scale wrapper -> Full_Wheel translate.
             template = self._rebase_glyph_centers(template, scale, 100.0, self._vertical_offsets["wheel"])
         else:

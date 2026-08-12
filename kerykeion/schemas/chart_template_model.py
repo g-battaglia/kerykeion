@@ -441,3 +441,6 @@ class ChartTemplateModel(SubscriptableBaseModel):
 
     makeLunarPhase: str
     """SVG markup for lunar phase"""
+
+    chart_font_family: str
+    """Font stack declared on the SVG root, so every text node inherits one font"""

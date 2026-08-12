@@ -55,10 +55,14 @@ def _row_re(index: int):
 BLOCK_TRANSFORM = re.compile(r"Bottom_Left_Text' transform='translate\(0,([-\d.]+)\)'")
 MOON_TRANSFORM = re.compile(r"Lunar_Phase' transform='translate\(10,([-\d.]+)\)'")
 
-# The layout the panel had before the diurnality line existed. Hard-coded rather
-# than derived so that a change to either constant has to be an explicit edit here.
-LAYOUT_WITHOUT_LINE = ("0", "518")
-# With the line: the block does not move at all; only the glyph drops.
+# The block never moves; only the glyph does. Hard-coded rather than derived so
+# that a change to either constant has to be an explicit edit here.
+#
+# Both cases now read the same, and that is the point of packing the rows: the
+# glyph sits 10px below the last line, and the last line is the last slot
+# whenever the panel says anything at all. Before, dropping a line left a blank
+# in slot 5 and the glyph rose to meet a row that was no longer there.
+LAYOUT_WITHOUT_LINE = ("0", "532")
 LAYOUT_WITH_LINE = ("0", "532")
 
 
@@ -129,10 +133,37 @@ def _render(chart_data, **drawer_kwargs) -> str:
 
 
 def _row(svg: str, index: int = 5) -> str:
-    """The text of a bottom-left row. Composites put diurnality in row 4."""
+    """The text of a bottom-left row.
+
+    The panel packs its filled rows to the bottom, so the diurnality line — the
+    last one every renderer writes — always lands in the last slot when it is
+    written at all. That is why the default index is 5 for every chart type,
+    composites included: they leave row 5 empty and the packing closes the gap.
+    """
     match = _row_re(index).search(svg)
     assert match is not None, f"the Bottom_Left_Text_{index} node is missing from the template"
     return match.group(1)
+
+
+#: Every word any shipped language uses for the two values of the line.
+_DIURNALITY_WORDS = frozenset(
+    pack[key] for pack in LANGUAGE_SETTINGS.values() for key in ("diurnal", "nocturnal")
+)
+
+
+def _states_diurnality(svg: str) -> bool:
+    """Whether the panel names a diurnality anywhere.
+
+    Asked of the content rather than of a slot. With the rows packed to the
+    bottom, a line the chart does not state leaves no blank behind at a fixed
+    index — the line above simply moves down into it — so "row 5 is empty" is
+    no longer the same question as "the chart states no diurnality", and it is
+    the second one these tests mean.
+    """
+    return any(
+        any(word in _row(svg, index) for word in _DIURNALITY_WORDS)
+        for index in range(6)
+    )
 
 
 def _layout(svg: str) -> tuple:
@@ -217,7 +248,7 @@ class TestDiurnalityOmitted:
     def test_heliocentric_chart_does_not_include_the_sun(self):
         subject = _subject(perspective_type="Heliocentric")
         svg = _render(ChartDataFactory.create_natal_chart_data(subject))
-        assert _row(svg) == ""
+        assert not _states_diurnality(svg)
         assert _layout(svg) == LAYOUT_WITHOUT_LINE
 
     @pytest.mark.parametrize(
@@ -247,17 +278,17 @@ class TestDiurnalityOmitted:
         parallax and aberration, fractions of a degree, so they keep the line.
         """
         subject = _subject(perspective_type=perspective)
-        row = _row(_render(ChartDataFactory.create_natal_chart_data(subject)))
-        assert bool(row) is expected, f"{perspective}: {row!r}"
+        svg = _render(ChartDataFactory.create_natal_chart_data(subject))
+        assert _states_diurnality(svg) is expected, f"{perspective}: {_row(svg)!r}"
 
     def test_midpoint_composite_has_no_single_sky(self):
         composite = _composite("Midpoint")
         assert composite.is_diurnal is None, "a midpoint composite must not claim a diurnality"
         svg = _render(ChartDataFactory.create_composite_chart_data(composite))
-        # Row 4, not 5: the composite renderer puts it in the slot it already
-        # left blank, so that no empty row opens up above it. Reading row 5 here
-        # would pass no matter what this renderer does.
-        assert _row(svg, 4) == ""
+        # Asked of the content: the composite renderer writes into row 4 and
+        # leaves row 5 blank, and the packing then closes that gap, so no fixed
+        # slot answers this question any more.
+        assert not _states_diurnality(svg)
         assert _layout(svg) == LAYOUT_WITHOUT_LINE
 
     def test_a_davison_composite_does_have_one(self):
@@ -270,7 +301,7 @@ class TestDiurnalityOmitted:
         composite = _composite("Davison")
         assert isinstance(composite.is_diurnal, bool)
         svg = _render(ChartDataFactory.create_composite_chart_data(composite))
-        assert _row(svg, 4) == f"Diurnality: {'Diurnal' if composite.is_diurnal else 'Nocturnal'}"
+        assert _row(svg) == f"Diurnality: {'Diurnal' if composite.is_diurnal else 'Nocturnal'}"
         # Row 4 already existed, so nothing had to move for it.
         assert _layout(svg) == LAYOUT_WITHOUT_LINE
 
@@ -460,8 +491,8 @@ class TestDiurnalityOnDualCharts:
         " Nocturnal ·  Nocturnal": two values, neither attached to a chart. Worse
         than no line, so there is no line.
         """
-        row = _row(_render(ChartDataFactory.create_synastry_chart_data(_subject("   "), _subject("  ", hour=23))))
-        assert row == ""
+        svg = _render(ChartDataFactory.create_synastry_chart_data(_subject("   "), _subject("  ", hour=23)))
+        assert not _states_diurnality(svg)
 
     @pytest.mark.parametrize(
         "name,label",
@@ -485,8 +516,8 @@ class TestDiurnalityOnDualCharts:
         is what the whitespace guard existed to prevent. A pasted name is far
         likelier to carry a zero-width character than to be nothing but spaces.
         """
-        row = _row(_render(ChartDataFactory.create_synastry_chart_data(_subject(name), _subject("Antonio", hour=23))))
-        assert row == "", f"{label}: {row!r}"
+        svg = _render(ChartDataFactory.create_synastry_chart_data(_subject(name), _subject("Antonio", hour=23)))
+        assert not _states_diurnality(svg), f"{label}: {_row(svg)!r}"
 
     def test_an_ordinary_name_is_not_caught_by_that(self):
         row = _row(
@@ -504,8 +535,8 @@ class TestDiurnalityOnDualCharts:
         """
         data = ChartDataFactory.create_synastry_chart_data(_subject("Alessandro"), _subject("Antonio", hour=23))
 
-        wide = _row(_render(data, language_pack={"nocturnal": "W" * 11, "diurnal": "W" * 11}))
-        assert wide == "", f"should have been dropped, got {wide!r}"
+        wide_svg = _render(data, language_pack={"nocturnal": "W" * 11, "diurnal": "W" * 11})
+        assert "W" not in _row(wide_svg), f"should have been dropped, got {_row(wide_svg)!r}"
 
         # And a pack that does leave room still renders, cut to fit.
         fits = _row(_render(data, language_pack={"nocturnal": "W" * 8, "diurnal": "W" * 8}))
@@ -541,7 +572,7 @@ class TestDiurnalityLayout:
             ChartDataFactory.create_natal_chart_data(_subject(hour=hour)),
             show_diurnality=False,
         )
-        assert _row(svg) == ""
+        assert not _states_diurnality(svg)
 
     def test_block_and_moon_return_to_their_original_offsets(self):
         data = ChartDataFactory.create_natal_chart_data(_subject())
@@ -557,8 +588,10 @@ class TestDiurnalityLayout:
         data = ChartDataFactory.create_natal_chart_data(_subject())
         off_block, off_moon = (float(v) for v in _layout(_render(data, show_diurnality=False)))
         on_block, on_moon = (float(v) for v in _layout(_render(data, show_diurnality=True)))
-        # Last visible row: y=508 without the line, y=522 with it.
-        assert off_moon - (off_block + 508.0) == pytest.approx(10.0)
+        # The last visible row is y=522 either way now: dropping a line no
+        # longer empties the last slot, it empties the first one, because the
+        # rows pack downwards. The gap below the text is what stayed constant.
+        assert off_moon - (off_block + 522.0) == pytest.approx(10.0)
         assert on_moon - (on_block + 522.0) == pytest.approx(10.0)
 
     def test_showing_the_line_moves_the_glyph_and_nothing_else(self):
@@ -575,12 +608,17 @@ class TestDiurnalityLayout:
         assert _layout(_render(data, show_diurnality=True)) == LAYOUT_WITH_LINE
 
     def test_off_leaves_the_other_rows_untouched(self):
-        """Nothing but the empty node itself may differ when the line is off."""
+        """Dropping the line costs a row, and the blank goes to the top.
+
+        It used to stay in the last slot, which left the panel ending one row
+        short of where it ends everywhere else. The rows pack downwards now, so
+        the text still finishes on the bottom line and the gap opens above it.
+        """
         data = ChartDataFactory.create_natal_chart_data(_subject())
         svg_off = _render(data, show_diurnality=False)
         rows = re.findall(r"Bottom_Left_Text_(\d)'[^>]*>([^<]*)<", svg_off)
-        assert rows[-1] == ("5", ""), "the node exists but carries nothing"
-        assert all(text for _, text in rows[:-1]), "the other rows are untouched"
+        assert rows[0] == ("0", ""), "the node exists but carries nothing"
+        assert all(text for _, text in rows[1:]), "every other row is filled"
 
 
 class TestDiurnalityOnOtherRenderers:
@@ -700,7 +738,7 @@ class TestDiurnalityOnOtherRenderers:
         natal = _subject("Demo", year=1950, month=6, day=15, hour=5, minute=0)
         directed = SolarArcFactory.compute_directed_subject(natal, target_year=2020)
         assert directed.iso_formatted_utc_datetime == natal.iso_formatted_utc_datetime
-        assert _row(_render(ChartDataFactory.create_progression_chart_data(natal, directed))) == ""
+        assert not _states_diurnality(_render(ChartDataFactory.create_progression_chart_data(natal, directed)))
 
     def test_a_secondary_progression_still_states_one(self):
         """The counterpart that makes the test above mean something.
