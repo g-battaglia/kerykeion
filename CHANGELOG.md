@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Optional command-line interface (`kerykeion[cli]`).** A new extra exposes the
+  whole library from the terminal: charts (`natal`, `synastry`, `transit`,
+  `composite`, `return`, `progression`), analytical techniques (`technique …`),
+  astronomical events (`sky …`), time series (`ephemeris`, `transits`), subject
+  profiles (`subject …`) and a guarded `call` dispatcher over `__all__`. Output
+  is text on a TTY and JSON in a pipe (`-f text|json|xml|svg`), warnings stay on
+  stderr, and every error is a clean classified exit (0–9, 130) — never a
+  traceback. `import kerykeion` stays free of `typer`; without the extra the
+  command prints an install hint and exits `3`. New `cli`, `test:cli` and
+  `cli:smoke` poe tasks, plus a `build:smoke` CLI environment. Dependencies are
+  typer & rich (MIT — see NOTICE); no Apache-2.0 was added.
+
 ## 6.0.0a84 - 2026-08-12
 
 Structural release. No calculation changed and no public name moved:

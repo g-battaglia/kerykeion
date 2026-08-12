@@ -71,3 +71,19 @@ installed or used on the default path:
 
   pyswisseph           Swiss Ephemeris by Astrodienst AG — AGPL-3.0, or a
                        separate commercial license obtained from Astrodienst.
+
+--------------------------------------------------------------------------------
+Optional command-line interface — only with the `cli` / `all` extras, never
+installed or used on the default path. Typer vendors Click (BSD-3-Clause), so
+Click is carried transitively under Typer's MIT, not listed separately.
+--------------------------------------------------------------------------------
+
+  typer                 MIT — command-line argument framework (Typer)
+  rich                  MIT — terminal formatting, used only for CLI chrome
+                         (help panels, progress); payloads never go through Rich
+  shellingham (trans.)  ISC — detects the user's shell for shell completion
+  annotated-doc         MIT — Annotated[…] metadata used by Typer
+  markdown-it-py         MIT — Rich's Markdown parser
+  mdurl (trans.)        MIT — URL normalisation for markdown-it-py
+  pygments (trans.)     BSD-2-Clause — syntax highlighting in Rich
+  colorama (trans.)     BSD-3-Clause — cross-platform ANSI on Windows

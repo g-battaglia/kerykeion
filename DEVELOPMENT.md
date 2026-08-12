@@ -109,12 +109,32 @@ uv run poe docs:snippets
 uv run poe docs:check
 ```
 
+### Command-Line Interface
+
+```bash
+# Run the `cli` marker (offline; in-process via typer's CliRunner)
+uv run poe test:cli
+
+# Smoke-test the entry point and the lazy-import guard (no traceback without the extra)
+uv run poe cli:smoke
+```
+
+> **Why `typer` and `rich` live in two places.** They are declared both in the
+> `[cli]` optional extra (`kerykeion[cli]`) **and** in the `[dev]` dependency
+> group. This is intentional, not redundancy: `pyrightconfig.json` runs in
+> `basic` mode where `reportMissingImports` is an error and includes the whole
+> `kerykeion/` tree — so without `typer`/`rich` in the dev environment **every
+> contributor's `poe typecheck` fails** on the `kerykeion/cli/` imports. The
+> extra is what a user installs; the dev group is what a contributor needs to
+> type-check. Never "clean up" one away without removing the other.
+
 ## 📁 Project Structure
 
 ```
 kerykeion/
 ├── kerykeion/                       # Main package
 │   ├── __init__.py                  # Public API exports
+│   ├── cli/                        # Optional CLI — install with kerykeion[cli]; never imported by the library
 │   ├── astrological_subject_factory.py  # Core subject creation
 │   ├── chart_data_factory.py        # Chart data computation
 │   ├── composite_subject_factory.py # Composite/Davison charts

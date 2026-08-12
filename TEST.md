@@ -328,3 +328,5 @@ Report golden files live in `tests/fixtures/` (36 `.txt` files). The `assert_rep
 5. **Semantic file organization.** Each test file maps to a specific module or concern (e.g., `test_chart_drawer.py` covers `kerykeion.charts.chart_drawer`, `test_aspects.py` covers `kerykeion.aspects`).
 
 6. **Parametrized coverage explosion.** Configuration axes (house systems, sidereal modes, perspectives, temporal subjects, geographic subjects) are combined via `pytest.mark.parametrize` to achieve broad coverage with minimal test code.
+
+7. **Identity, not snapshots, for the CLI.** `tests/core/test_cli.py` asserts that a command's payload **equals the library model built from the same inputs** — `json.loads(stdout) == json.loads(model.model_dump_json())` — never a golden file. Both sides move together with ephemeris drift, so there is deliberately no `regenerate:cli` task to keep in step. The file carries the `cli` marker (run via `poe test:cli`), runs fully offline on base-tier dates (1849–2150), and avoids the token `all_points` in its node ids — `tests/conftest.py` skips that token on the Swiss Ephemeris backend, which would silently disable a test.

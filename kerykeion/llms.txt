@@ -36,6 +36,27 @@ from kerykeion import (
 )
 ```
 
+## Command-Line Interface (Optional)
+
+Install with `pip install "kerykeion[cli]"` to get a `kerykeion` command that
+exposes the whole library locally — same in-process engine as the Python API,
+no API key, offline-capable. Output defaults to text on a terminal and JSON in a
+pipe (`-f text|json|xml|svg`).
+
+```bash
+pip install "kerykeion[cli]"
+```
+
+```console
+$ kerykeion subject save ada --date 1990-07-15 --time 10:30 --lat 41.9 --lng 12.5 --tz Europe/Rome --offline
+$ kerykeion natal -s ada                  # ASCII report on a terminal
+$ kerykeion natal -s ada | jq .sun.sign   # JSON in a pipe, no extra flag
+$ kerykeion call ProfectionsFactory.from_subject -s ada
+```
+
+`call` dispatches only to names in `kerykeion.__all__` (so `call os.system` is
+refused). Full reference: [CLI docs](https://www.kerykeion.net/content/docs/cli).
+
 ## 1. Creating Astrological Subjects
 
 ### Basic Natal Chart (Offline - Recommended)

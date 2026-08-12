@@ -145,3 +145,4 @@ For more examples, see the [Examples Gallery](/content/examples/).
 ## Integration
 
 -   **[AI Context Serializer](/content/docs/context_serializer)**: Serializing chart data to non-qualitative XML for LLM/AI consumption.
+-   **[Command Line Interface](/content/docs/cli)**: The optional `kerykeion[cli]` extra — every chart, technique and factory from the terminal.

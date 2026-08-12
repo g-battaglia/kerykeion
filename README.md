@@ -119,6 +119,7 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
   - [Firdaria (Planetary Periods)](#firdaria-planetary-periods)
   - [Mutual Receptions](#mutual-receptions)
   - [Horary Indicators](#horary-indicators)
+- [Command Line Interface](#command-line-interface)
 - [Documentation](#documentation)
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Development](#development)
@@ -2410,6 +2411,50 @@ subject = AstrologicalSubjectFactory.from_birth_data("Question", 2026, 6, 4, 15,
 indicators = HoraryIndicatorsFactory.from_subject(subject)
 print(f"Querent ruler: {indicators.querent.ruler}, Quesited ruler: {indicators.quesited.ruler}")
 ```
+
+## Command Line Interface
+
+Kerykeion ships an optional command-line interface that exposes the whole
+library — every chart type, analytical technique, sky event and factory —
+without writing any Python. Install the `cli` extra (it adds
+[Typer](https://typer.tiangolo.com) and [Rich](https://rich.readthedocs.io);
+`kerykeion[all]` also pulls the Swiss Ephemeris backend):
+
+```bash
+pip3 install "kerykeion[cli]"
+```
+
+Save a subject profile once, then reuse it across every command:
+
+```console
+$ kerykeion subject save john --name "John Lennon" --date 1940-10-09 --time 18:30 \
+      --lat 53.4 --lng -2.9833 --tz Europe/London --offline
+$ kerykeion natal -s john                       # on a terminal → ASCII report
+$ kerykeion natal -s john -f svg -o /tmp/john.svg
+```
+
+In a pipeline the default format flips to JSON, so `jq` works with no extra flag:
+
+```console
+$ kerykeion natal -s john | jq -r .sun.sign
+Lib
+```
+
+The command tree covers charts (`natal`, `synastry`, `transit`, `composite`,
+`return`, `progression`), analytical techniques (`technique profections`,
+`technique firdaria`, …), astronomical events (`sky eclipses`, `sky lunations`,
+…), time series (`ephemeris`, `transits`), subject profiles (`subject …`) and a
+guarded dispatcher (`call`) that reaches any public factory method:
+
+```console
+$ kerykeion call ProfectionsFactory.from_subject -s john -f json
+$ kerykeion call --list
+```
+
+`call` only dispatches to names in `kerykeion.__all__`, so `kerykeion call
+os.system` is refused by design.
+
+**📖 Full CLI reference: [Command Line Interface](https://www.kerykeion.net/content/docs/cli)**
 
 ## Documentation
 
