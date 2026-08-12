@@ -1,0 +1,72 @@
+# -*- coding: utf-8 -*-
+"""Human-readable text output.
+
+For the models :class:`~kerykeion.ReportGenerator` supports, the report is the
+verbatim ASCII report from the library — the CLI must never reflow it, so it
+goes to stdout through :func:`sys.stdout.write`, not ``rich.Console.print``.
+
+For anything else (models the report generator does not cover, plain dicts,
+lists of small models) we degrade to a generic renderer rather than crash: the
+``call`` dispatcher relies on a text path that always produces *something*
+legible for any factory's return value.
+"""
+
+from __future__ import annotations
+
+import sys
+from typing import Any
+
+import pydantic
+
+from kerykeion.cli.rendering.json_out import render_json
+
+
+def _try_report(model: pydantic.BaseModel) -> str | None:
+    """The ASCII report for *model*, or ``None`` if the generator rejects it.
+
+    ``ReportGenerator`` is typed for a narrow union of chart/technique models,
+    but here we pass an arbitrary model *on purpose* — this is a runtime probe:
+    accept-or-reject is exactly the question. The single ``type: ignore``
+    encodes that deliberate widening; we never assume success and fall back to
+    JSON on ``TypeError``/``ValueError``.
+    """
+    from kerykeion import ReportGenerator
+
+    try:
+        return ReportGenerator(model).generate_report()  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return None
+
+
+def render_text(obj: Any) -> str:
+    """Render *obj* as text; never raises on an unsupported shape."""
+    if isinstance(obj, pydantic.BaseModel):
+        report = _try_report(obj)
+        if report is not None:
+            return report
+    if isinstance(obj, (list, tuple)) and obj and all(
+        isinstance(item, pydantic.BaseModel) for item in obj
+    ):
+        # One blank-line-separated block per item — readable in a terminal yet
+        # greppable. The first line of each item is the model class for context.
+        blocks = []
+        for item in obj:
+            cls = type(item).__name__
+            report = _try_report(item)
+            if report is not None:
+                blocks.append(f"# {cls}\n{report}")
+            else:
+                blocks.append(f"# {cls}\n{render_json(item)}")
+        return "\n\n".join(blocks)
+    if isinstance(obj, (list, tuple)) and all(isinstance(item, str) for item in obj):
+        # A plain list of names (e.g. ``subject list``) reads best one per line.
+        return "\n".join(obj)
+    return render_json(obj)
+
+
+def emit_text(obj: Any) -> None:
+    """Write *obj* as text to stdout, with a trailing newline."""
+    text = render_text(obj)
+    sys.stdout.write(text)
+    if not text.endswith("\n"):
+        sys.stdout.write("\n")

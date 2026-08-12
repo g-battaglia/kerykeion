@@ -1,0 +1,422 @@
+# -*- coding: utf-8 -*-
+"""Turn a profile + inline flags into an :class:`AstrologicalSubjectModel`.
+
+The merge precedence (lowest → highest): the library's own defaults → profile
+recipe → inline flags. Because every CLI flag alias is ``Optional`` with a
+``None`` default, "not given" is just ``None`` and overrides nothing — no need
+to consult Click's parameter source for the standard flags.
+
+Non-obvious mappings live here and nowhere else:
+
+* ``--date`` → year/month/day via **regex**, never ``date.fromisoformat`` (which
+  rejects year < 1; BCE dates are a real case);
+* ``--time`` → hour/minute/seconds (``seconds`` is keyword-only in the factory);
+* ``--houses placidus`` → ``P``; ``--points all`` → the full point-set constant;
+* online default is False when lat+lng+tz are all known, else True;
+* ``--set key=value`` is whitelisted against the factory signature and refuses
+  underscore-prefixed (private) parameters.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+from typing import Any, Optional
+
+# ── Parsing helpers ──────────────────────────────────────────────────────────
+
+_DATE_RE = re.compile(r"^\s*(-?\d{1,5})-(\d{1,2})-(\d{1,2})\s*$")
+_TIME_RE = re.compile(r"^\s*(\d{1,2}):(\d{2})(?::(\d{2}))?\s*$")
+
+_HOUSES_BY_NAME = {
+    "placidus": "P",
+    "plac": "P",
+    "koch": "K",
+    "whole_sign": "W",
+    "wholesign": "W",
+    "whole": "W",
+    "campanus": "C",
+    "regiomontanus": "R",
+    "equal": "A",
+    "equal_house": "A",
+    "morinus": "M",
+    "porphyrius": "B",
+    "meridian": "X",
+    "azimuthal": "H",
+    "polich_page": "T",
+    "apc": "n",
+}
+
+_CALC_KEYS = {
+    "lunar_phase": "calculate_lunar_phase",
+    "dignities": "calculate_dignities",
+    "nakshatra": "calculate_nakshatra",
+    "gauquelin": "calculate_gauquelin",
+    "nutation": "calculate_nutation",
+    "local_space": "calculate_local_space",
+}
+
+
+def parse_date(value: str) -> tuple[int, int, int]:
+    """Split a ``YYYY-MM-DD`` string (negative year = BCE) into ints."""
+    match = _DATE_RE.match(value)
+    if match is None:
+        raise ValueError(f"invalid date {value!r}; expected YYYY-MM-DD (negative year = BCE)")
+    year, month, day = (int(g) for g in match.groups())
+    if not 1 <= month <= 12:
+        raise ValueError(f"month out of range in {value!r}")
+    if not 1 <= day <= 31:
+        raise ValueError(f"day out of range in {value!r}")
+    return year, month, day
+
+
+def parse_time(value: str) -> tuple[int, int, int]:
+    """Split ``HH:MM`` or ``HH:MM:SS`` into hour, minute, seconds."""
+    match = _TIME_RE.match(value)
+    if match is None:
+        raise ValueError(f"invalid time {value!r}; expected HH:MM or HH:MM:SS")
+    hour, minute, seconds = (int(g) if g is not None else 0 for g in match.groups())
+    if not 0 <= hour <= 24:
+        raise ValueError(f"hour out of range in {value!r}")
+    if not 0 <= minute <= 59:
+        raise ValueError(f"minute out of range in {value!r}")
+    if not 0 <= seconds <= 59:
+        raise ValueError(f"seconds out of range in {value!r}")
+    return hour, minute, seconds
+
+
+def resolve_house_system(value: Optional[str]) -> Optional[str]:
+    """Accept a single letter or a common house-system name; return the letter."""
+    if value is None:
+        return None
+    v = value.strip()
+    if len(v) == 1 and v.isalpha():
+        return v.upper()
+    key = v.lower().replace("-", "_")
+    if key in _HOUSES_BY_NAME:
+        return _HOUSES_BY_NAME[key]
+    raise ValueError(
+        f"unknown house system {value!r}; give a letter (P, K, W, C, R, A, M, …) "
+        "or a name (placidus, koch, whole-sign, …)."
+    )
+
+
+def _point_sets() -> dict[str, list[str]]:
+    from kerykeion.settings import config_constants as cc
+
+    return {
+        "default": list(cc.DEFAULT_ACTIVE_POINTS),
+        "all": list(cc.ALL_ACTIVE_POINTS),
+        "traditional": list(cc.TRADITIONAL_ASTROLOGY_ACTIVE_POINTS),
+        "v5": list(cc.V5_DEFAULT_ACTIVE_POINTS),
+        "uranian": list(cc.URANIAN_ACTIVE_POINTS),
+        "main": list(cc.MAIN_PLANETS),
+        "nodes": list(cc.LUNAR_NODES),
+        "axes": list(cc.AXIAL_POINTS),
+    }
+
+
+def resolve_points(value: Optional[str]) -> Optional[list[str]]:
+    """A preset alias, or a comma-separated list of point names."""
+    if value is None:
+        return None
+    key = value.strip().lower()
+    sets = _point_sets()
+    if key in sets:
+        return sets[key]
+    parts = [p.strip() for p in value.split(",") if p.strip()]
+    if not parts:
+        raise ValueError(f"empty point set {value!r}")
+    return parts
+
+
+def _fixed_star_sets() -> dict[str, list[str]]:
+    from kerykeion.settings import config_constants as cc
+
+    return {
+        "royal": list(cc.ROYAL_FIXED_STARS),
+        "behenian": list(cc.BEHENIAN_FIXED_STARS),
+        "default_stars": list(cc.DEFAULT_FIXED_STARS),
+        "default-stars": list(cc.DEFAULT_FIXED_STARS),
+    }
+
+
+def resolve_fixed_stars(value: Optional[str]) -> Optional[list[str]]:
+    if value is None:
+        return None
+    key = value.strip().lower().replace("-", "_")
+    sets = _fixed_star_sets()
+    if key in sets:
+        return sets[key]
+    parts = [p.strip() for p in value.split(",") if p.strip()]
+    if not parts:
+        raise ValueError(f"empty fixed-star set {value!r}")
+    return parts
+
+
+def _coerce_set_value(raw: str) -> Any:
+    """Best-effort scalar coercion for ``--set key=value``."""
+    lowered = raw.lower()
+    if lowered in {"true", "false"}:
+        return lowered == "true"
+    if lowered in {"none", "null"}:
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        pass
+    try:
+        return float(raw)
+    except ValueError:
+        pass
+    return raw
+
+
+# ── Flag collection ──────────────────────────────────────────────────────────
+
+
+@dataclass
+class SubjectFlags:
+    """Inline subject flags gathered from a command (None = not given)."""
+
+    name: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
+    seconds: Optional[int] = None
+    iso_utc: Optional[str] = None
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    tz: Optional[str] = None
+    city: Optional[str] = None
+    nation: Optional[str] = None
+    online: Optional[bool] = None
+    offline: Optional[bool] = None
+    altitude: Optional[float] = None
+    zodiac: Optional[str] = None
+    sidereal_mode: Optional[str] = None
+    houses: Optional[str] = None
+    perspective: Optional[str] = None
+    points: Optional[str] = None
+    fixed_stars: Optional[str] = None
+    with_flags: list[str] = field(default_factory=list)
+    without_flags: list[str] = field(default_factory=list)
+    set_flags: list[str] = field(default_factory=list)
+
+
+def _profile_input_dict(profile_spec: Optional[str]) -> dict[str, Any]:
+    """Load a profile recipe (if any) and return its non-None input fields."""
+    if profile_spec is None:
+        return {}
+    from kerykeion.cli import profiles
+
+    path = profiles.resolve_path(profile_spec)
+    profile = profiles.load(path)
+    base = profile.input.model_dump(exclude_none=True)
+    # 'extra' holds --set-style advanced params persisted to the recipe.
+    extra = base.pop("extra", None) or {}
+    return {**base, **extra}
+
+
+def _apply_calc_toggles(
+    merged: dict[str, Any], flags: SubjectFlags
+) -> None:
+    """Fold ``--with`` / ``--without`` onto the calculate_* parameters."""
+    current = {
+        f"calculate_{k.replace('calculate_', '')}": merged.get(f"calculate_{k.replace('calculate_', '')}")
+        for k in _CALC_KEYS
+    }
+    for feature in flags.with_flags:
+        key = _calc_param_for(feature)
+        current[key] = True
+    for feature in flags.without_flags:
+        key = _calc_param_for(feature)
+        current[key] = False
+    for key, value in current.items():
+        if value is not None:
+            merged[key] = value
+
+
+def _calc_param_for(feature: str) -> str:
+    key = feature.strip().lower().removeprefix("calculate_")
+    if key not in _CALC_KEYS:
+        raise ValueError(
+            f"unknown feature {feature!r} for --with/--without; choose from "
+            f"{', '.join(sorted(_CALC_KEYS))}."
+        )
+    return _CALC_KEYS[key]
+
+
+def _apply_set_flags(merged: dict[str, Any], set_flags: list[str]) -> None:
+    """Whitelisted advanced parameters from ``--set key=value``."""
+    if not set_flags:
+        return
+    import inspect
+
+    from kerykeion import AstrologicalSubjectFactory
+
+    allowed = set(inspect.signature(AstrologicalSubjectFactory.from_birth_data).parameters)
+    for item in set_flags:
+        if "=" not in item:
+            raise ValueError(f"--set expects key=value, got {item!r}")
+        raw_key, raw_value = item.split("=", 1)
+        key = raw_key.strip()
+        if key.startswith("_"):
+            raise ValueError(f"--set refuses private parameter {key!r}")
+        if key not in allowed:
+            raise ValueError(
+                f"--set {key!r} is not a from_birth_data parameter "
+                f"(known: {', '.join(sorted(allowed))})"
+            )
+        merged[key] = _coerce_set_value(raw_value)
+
+
+def merge_inputs(
+    flags: SubjectFlags, profile_spec: Optional[str] = None
+) -> dict[str, Any]:
+    """Return the merged recipe dict (in ``ProfileInput`` field names).
+
+    Every layer applied here, none in ``materialize``: profile base → inline flags
+    → resolved structured flags (houses/points/fixed-stars) → calculate_* toggles
+    → ``--set`` → online default → mode. ``date``/``time`` stay as strings — they
+    are a recipe shape, not a factory call. ``materialize`` turns this dict into a
+    subject; ``subject save`` persists it verbatim.
+    """
+    merged: dict[str, Any] = {}
+    merged.update(_profile_input_dict(profile_spec))
+    inline = {
+        "name": flags.name,
+        "date": flags.date,
+        "time": flags.time,
+        "seconds": flags.seconds,
+        "iso_utc_time": flags.iso_utc,
+        "lat": flags.lat,
+        "lng": flags.lng,
+        "tz_str": flags.tz,
+        "city": flags.city,
+        "nation": flags.nation,
+        "altitude": flags.altitude,
+        "zodiac_type": flags.zodiac,
+        "sidereal_mode": flags.sidereal_mode,
+        "perspective_type": flags.perspective,
+    }
+    for key, value in inline.items():
+        if value is not None:
+            merged[key] = value
+
+    # Resolve structured flags into factory parameter names.
+    houses = resolve_house_system(flags.houses) or merged.get("houses_system_identifier")
+    if houses is not None:
+        merged["houses_system_identifier"] = houses
+    points = resolve_points(flags.points)
+    if points is not None:
+        merged["active_points"] = points
+    fixed_stars = resolve_fixed_stars(flags.fixed_stars)
+    if fixed_stars is not None:
+        merged["active_fixed_stars"] = fixed_stars
+
+    _apply_calc_toggles(merged, flags)
+    _apply_set_flags(merged, flags.set_flags)
+
+    # Decide online (explicit flag > recipe > inferred from coordinates).
+    if flags.online is True:
+        merged["online"] = True
+    elif flags.offline is True:
+        merged["online"] = False
+    elif "online" not in merged:
+        coords_complete = (
+            merged.get("lat") is not None
+            and merged.get("lng") is not None
+            and merged.get("tz_str") is not None
+        )
+        merged["online"] = not coords_complete
+
+    iso_utc = merged.get("iso_utc_time")
+    if "mode" not in merged:
+        merged["mode"] = "iso_utc" if iso_utc else "birth"
+    return merged
+
+
+def materialize(merged: dict[str, Any]):
+    """Turn a merged recipe dict into an ``AstrologicalSubjectModel``.
+
+    Raises ``ValueError`` with a readable message on any bad input; the command
+    layer turns that into exit 4.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+
+    name = merged.get("name") or "Now"
+    mode = merged.get("mode", "birth")
+    iso_utc = merged.get("iso_utc_time")
+
+    # The factory never wants to hear from GeoNames unprompted from a pipeline.
+    factory_kwargs = {**merged, "suppress_geonames_warning": True}
+
+    if mode == "iso_utc":
+        if not iso_utc:
+            raise ValueError("iso_utc mode needs --iso-utc")
+        factory_kwargs.pop("date", None)
+        factory_kwargs.pop("time", None)
+        factory_kwargs.pop("seconds", None)
+        factory_kwargs.pop("name", None)
+        factory_kwargs.pop("mode", None)
+        factory_kwargs.pop("iso_utc_time", None)
+        return AstrologicalSubjectFactory.from_iso_utc_time(
+            name=name, iso_utc_time=iso_utc, **_kwargs_for(factory_kwargs, "iso_utc")
+        )
+
+    date_str = factory_kwargs.pop("date", None)
+    time_str = factory_kwargs.pop("time", None)
+    if not date_str:
+        raise ValueError("birth mode needs --date (or a profile with a date)")
+    year, month, day = parse_date(date_str)
+    hour = minute = None
+    seconds = factory_kwargs.pop("seconds", None)
+    if time_str is not None:
+        hour, minute, parsed_seconds = parse_time(time_str)
+        seconds = seconds if seconds is not None else parsed_seconds
+    if seconds:
+        factory_kwargs["seconds"] = seconds
+    factory_kwargs.pop("name", None)
+    factory_kwargs.pop("mode", None)
+    factory_kwargs.pop("iso_utc_time", None)
+    return AstrologicalSubjectFactory.from_birth_data(
+        name=name,
+        year=year,
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        **_kwargs_for(factory_kwargs, "birth"),
+    )
+
+
+def resolve_subject(
+    flags: SubjectFlags, profile_spec: Optional[str] = None
+):
+    """Build an ``AstrologicalSubjectModel`` from a profile plus inline flags."""
+    return materialize(merge_inputs(flags, profile_spec))
+
+
+_FACTORY_PARAMS: dict[str, set[str]] = {}
+
+
+def _kwargs_for(merged: dict[str, Any], mode: str) -> dict[str, Any]:
+    """Drop keys the chosen factory method does not accept.
+
+    Guards against a recipe or --set carrying a key valid for ``from_birth_data``
+    (e.g. ``is_dst``, ``cache_expire_after_days``) into ``from_iso_utc_time``,
+    which would raise ``TypeError`` from an unexpected keyword.
+    """
+    import inspect
+
+    from kerykeion import AstrologicalSubjectFactory
+
+    method = (
+        AstrologicalSubjectFactory.from_birth_data
+        if mode == "birth"
+        else AstrologicalSubjectFactory.from_iso_utc_time
+    )
+    allowed = _FACTORY_PARAMS.setdefault(
+        mode, set(inspect.signature(method).parameters)
+    )
+    return {k: v for k, v in merged.items() if k in allowed}

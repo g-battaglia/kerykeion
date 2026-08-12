@@ -67,7 +67,19 @@ def _make_app() -> typer.Typer:
     return app
 
 
+def _register_commands(app: typer.Typer) -> None:
+    """Attach every command group to *app*.
+
+    Imported here (not at module top) so the groups are only loaded when the CLI
+    actually runs, keeping the import-graph cold-import gate green.
+    """
+    from kerykeion.cli.commands import subject
+
+    app.add_typer(subject.subject_app, name="subject")
+
+
 app = _make_app()
+_register_commands(app)
 
 
 def run() -> None:
