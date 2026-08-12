@@ -197,7 +197,7 @@ natal = AstrologicalSubjectFactory.from_birth_data(
 factory = PlanetaryReturnFactory(
     natal, lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False)
 sr = factory.next_return_from_date(2025, 1, 1, return_type="Solar")
-print(sr.return_type, sr.iso_formatted_utc_datetime)     # Solar 2025-07-15T...
+print(sr.return_type, sr.iso_formatted_utc_datetime)     # Solar 2025-07-14T19:35:00+00:00 (UTC — July 15 in Rome local time)
 print(sr.sun.sign, round(sr.sun.abs_pos - natal.sun.abs_pos, 3))  # ~0.0
 ```
 
@@ -277,7 +277,7 @@ natal = AstrologicalSubjectFactory.from_birth_data(
 directed = SolarArcFactory.compute_directed_subject(natal, target_year=2026)
 print(directed.name)                                        # Example Person (directed)
 arc = (directed.sun.abs_pos - natal.sun.abs_pos) % 360
-print(round(arc, 2))                                        # ~35.5 for 2026
+print(round(arc, 2))                                        # ~33.95 for 2026 (target = Jan 1 UTC)
 print(directed.first_house.abs_pos == natal.first_house.abs_pos)  # True (cusps stay natal)
 ```
 

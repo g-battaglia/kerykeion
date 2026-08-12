@@ -65,7 +65,7 @@ attribute and `compute(subject, config) -> DominantsModel` qualifies — pass th
 **Subpackage import:** `from kerykeion.dominants.base import DistributionMethod`
 
 `DominantsConfig` is the dataclass the factory hands to `compute` (fields mirror the
-`from_subject` kwargs plus `dominant_planet_count`, default 2). `Category` (raw
+`from_subject` kwargs plus `dominant_planet_count`, default 3). `Category` (raw
 `scores`/`dominant`/`tiebreak_order`) and `BreakdownItem` are the plain-dataclass value
 objects a custom school feeds to `build_model`.
 

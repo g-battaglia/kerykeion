@@ -140,7 +140,10 @@ print(to_context(subject)[:400])                # non-interpretive XML for promp
 
 (`AstrologicalSubjectFactory`, `ChartDataFactory`, `ChartDrawer`,
 `CompositeSubjectFactory`, `KerykeionSettingsModel` are the usual top-level
-imports; everything public is re-exported from the package root — 120 names.)
+imports; the package root exports 120 names. Some public APIs are deliberately
+subpackage-only — e.g. `kerykeion.utilities` helpers, `FixedStarCatalog`, the
+named context serializers — and the references mark each one as **Subpackage
+import** with its exact path.)
 
 ## Reading results
 
@@ -195,7 +198,7 @@ imports; everything public is re-exported from the package root — 120 names.)
 | Profections, firdaria, zodiacal releasing | `ProfectionsFactory`, `FirdariaFactory`, `ZodiacalReleasingFactory` | `references/traditional.md` |
 | Horary indicators; primary directions; receptions; dignities | `HoraryIndicatorsFactory`, `PrimaryDirectionsFactory`, `MutualReceptionsFactory` | `references/traditional.md` |
 | Relocate a chart; astrocartography lines | `RelocatedChartFactory`, `AstroCartographyFactory` | `references/locational.md` |
-| Text report of any result model | `ReportGenerator` | `references/reports-and-ai-context.md` |
+| Text report of a subject / chart data / supported result (12 model types) | `ReportGenerator` | `references/reports-and-ai-context.md` |
 | LLM/prompt-ready XML | `to_context` + named serializers | `references/reports-and-ai-context.md` |
 | JD / ISO / timezone / angle helpers | `kerykeion.utilities` | `references/utilities.md` |
 | v5 code breaks; ImportError; DeprecationWarning | removed-name map | `references/migration-and-deprecations.md` |

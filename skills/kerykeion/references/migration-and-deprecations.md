@@ -111,7 +111,7 @@ South nodes are separate points (`Mean_South_Lunar_Node`, `True_South_Lunar_Node
 ## Migration checklist
 
 1. Replace the four removed classes per the table above (the `ImportError` message itself contains the replacement).
-2. Decide whether you need v5-identical RESULTS; if yes, pass `V5_DEFAULT_ACTIVE_POINTS`, the v5 aspect list from the guide, and the classic chart theme.
+2. Decide whether you need v5-identical RESULTS; if yes, pass `V5_DEFAULT_ACTIVE_POINTS`, the v5 aspect list from the guide, `point_orb_adjustments={}` (the v6 natal-family default otherwise widens Sun/Moon orbs by 1.5°), and `style="classic"` on `ChartDrawer` for the v5 wheel geometry.
 3. Point `kr_types` imports at `kerykeion.schemas`.
 4. Silence 7.0.0 removals by switching to the replacements in the DeprecationWarning table.
 5. Fixed stars moved out of `active_points` into `active_fixed_stars` — v5-style star names in `active_points` still work but are redirected with a warning; see `references/subjects.md`.
