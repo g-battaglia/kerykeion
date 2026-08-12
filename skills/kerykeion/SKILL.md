@@ -32,8 +32,9 @@ names, and env-var behavior in this skill are copied from the source. When you
 need a detail not covered here, read the source
 (`kerykeion/astrological_subject/factory.py`, `kerykeion/schemas/models.py`,
 `kerykeion/schemas/literals.py`, `kerykeion/ephemeris_backend/backend.py`)
-rather than guessing — the subject model has ~40 optional point fields and
-inventing one produces a silent `None`.
+rather than guessing — the subject model has ~40 optional point fields: a
+real field that was not activated reads as a silent `None`, while a
+misspelled name raises `AttributeError`.
 
 ## The one mental model
 
@@ -237,9 +238,11 @@ from bare `kerykeion` — use the exact import path shown there.
    `show_degree_indicators`, `show_aspect_icons` are classic-only.
 9. **Time is local wall-clock** + `tz_str`; never pre-convert to UTC except
    with `from_iso_utc_time` (which is UTC by contract).
-10. **Sidereal coherence.** `Sidereal` requires `sidereal_mode`;
-    `sidereal_mode` with Tropical raises; `USER` mode needs both
-    `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0`.
+10. **Sidereal coherence.** The subject factories default a missing
+    `sidereal_mode` to `FAGAN_BRADLEY`, but the subject-less event factories
+    (and direct model construction) require it explicitly with
+    `zodiac_type="Sidereal"`. `sidereal_mode` with Tropical raises; `USER`
+    mode needs both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0`.
 
 Also: `ephemeris_session()` rejects same-thread nesting (`RuntimeError`) — never
 build a subject inside an open session (`references/backends-and-provenance.md`);

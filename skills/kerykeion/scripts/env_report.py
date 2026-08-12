@@ -27,12 +27,23 @@ REPORTED_ENV = {name: os.environ.get(name) for name in ENV_VARS}
 os.environ["KERYKEION_LEB_MODE"] = "leb"
 
 
+_VALID_LEB_MODES = {None, "leb", "auto", "skyfield", "horizons"}
+
+
 def report_environment() -> None:
     print("=== Kerykeion environment report ===")
     print(f"Python:    {sys.version.split()[0]}")
     print("\n--- Environment variables ---")
     for name in ENV_VARS:
         print(f"{name} = {REPORTED_ENV[name] or 'unset'}")
+    saved_mode = REPORTED_ENV["KERYKEION_LEB_MODE"]
+    if saved_mode not in _VALID_LEB_MODES:
+        print(
+            f"WARNING: KERYKEION_LEB_MODE={saved_mode!r} is INVALID (valid: leb, auto, "
+            "skyfield, horizons).\n         A normal `import kerykeion` raises ValueError "
+            "under this setting; the probes\n         below only succeed because this "
+            "diagnostic forces sealed 'leb' mode."
+        )
 
 
 # A broken configuration (e.g. an invalid KERYKEION_BACKEND, or a backend

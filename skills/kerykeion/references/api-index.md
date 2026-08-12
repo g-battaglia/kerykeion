@@ -1,10 +1,10 @@
 # API Index
 
-Complete map of every public kerykeion name to the reference file that
-documents it. Names are importable from bare `kerykeion` unless the Kind
-column marks them otherwise (subpackage import, `kerykeion.settings`,
-`kerykeion.schemas`, env-var). Use this file to answer "where is X
-documented?"; the domain file is always the richer source.
+Map of every name this skill documents to the reference file that covers it:
+the 120 root exports, the literals and presets, the env vars, and every API
+the references mark as a **Subpackage import**. Names are importable from
+bare `kerykeion` unless the Kind column says otherwise. Use this file to
+answer "where is X documented?"; the domain file is always the richer source.
 
 | Name | Kind | Primary reference |
 |---|---|---|
@@ -29,11 +29,14 @@ documented?"; the domain file is always the richer source.
 | `BaseDominantStrategy` | model | `references/analysis.md` |
 | `BEHENIAN_FIXED_STARS` | subpackage import — `kerykeion.settings.config_constants` | `references/subjects.md` |
 | `BreakdownItem` | subpackage import — `kerykeion.dominants` | `references/analysis.md` |
+| `calculate_essential_dignity` | subpackage import — `kerykeion.dignities` | `references/traditional.md` |
 | `calculate_moon_phase` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
+| `calculate_nakshatra` | subpackage import — `kerykeion.vedic` | `references/predictive.md` |
 | `Category` | subpackage import — `kerykeion.dominants` | `references/analysis.md` |
 | `ChartDataFactory` | factory | `references/charts-and-drawing.md` |
 | `ChartDataModel` | alias | `references/charts-and-drawing.md` |
 | `ChartDrawer` | class | `references/charts-and-drawing.md` |
+| `ChartPointTag` | subpackage import — `kerykeion.charts.svg_metadata` | `references/charts-and-drawing.md` |
 | `ChartType` | literal — `kerykeion.schemas` | `references/charts-and-drawing.md` |
 | `check_and_adjust_polar_latitude` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `circular_mean` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
@@ -52,6 +55,7 @@ documented?"; the domain file is always the richer source.
 | `DEFAULT_CHART_COLORS` | constant/function — `kerykeion.settings` | `references/charts-and-drawing.md` |
 | `DEFAULT_FIXED_STARS` | subpackage import — `kerykeion.settings.config_constants` | `references/subjects.md` |
 | `DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` | subpackage import — `kerykeion.settings.config_constants` | `references/aspects-and-orbs.md` |
+| `DEFAULT_SWEPH_DOWNLOAD_DIR` | subpackage import — `kerykeion.ephemeris_backend` | `references/backends-and-provenance.md` |
 | `DISCEPOLO_SCORE_ACTIVE_ASPECTS` | subpackage import — `kerykeion.settings.config_constants` | `references/aspects-and-orbs.md` |
 | `distribute_percentages_to_100` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `DistributionMethod` | subpackage import — `kerykeion.dominants.base` | `references/analysis.md` |
@@ -97,6 +101,8 @@ documented?"; the domain file is always the richer source.
 | `format_iso_display` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `format_timedelta_hhmm` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `get_available_astrological_points_list` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
+| `get_domicile_ruler` | subpackage import — `kerykeion.dignities` | `references/traditional.md` |
+| `get_exaltation_ruler` | subpackage import — `kerykeion.dignities` | `references/traditional.md` |
 | `get_house_name` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `get_house_number` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `get_houses_list` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
@@ -106,6 +112,7 @@ documented?"; the domain file is always the richer source.
 | `get_number_from_name` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `get_planet_house` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `get_translations` | constant/function — `kerykeion.settings` | `references/charts-and-drawing.md` |
+| `get_triplicity_lords` | subpackage import — `kerykeion.dignities` | `references/analysis.md` |
 | `has_terrestrial_frame` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `HELIACAL_RISING` | subpackage import — `kerykeion.heliacal` | `references/mundane-events.md` |
 | `HELIACAL_SETTING` | subpackage import — `kerykeion.heliacal` | `references/mundane-events.md` |
@@ -121,7 +128,10 @@ documented?"; the domain file is always the richer source.
 | `HouseComparisonModel` | model | `references/analysis.md` |
 | `HouseNumbers` | literal — `kerykeion.schemas` | `references/subjects.md` |
 | `Houses` | literal — `kerykeion.schemas` | `references/subjects.md` |
+| `houses_ex2_with_polar_fallback` | subpackage import — `kerykeion.ephemeris_backend` | `references/backends-and-provenance.md` |
+| `houses_ex2_with_polar_fallback_ex` | subpackage import — `kerykeion.ephemeris_backend` | `references/backends-and-provenance.md` |
 | `HousesSystemIdentifier` | literal — `kerykeion.schemas` | `references/zodiac-houses-perspectives.md` |
+| `IndicatorTag` | subpackage import — `kerykeion.charts.svg_metadata` | `references/charts-and-drawing.md` |
 | `IngressModel` | model | `references/mundane-events.md` |
 | `inline_css_variables_in_svg` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `is_ambiguous` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
@@ -177,6 +187,8 @@ documented?"; the domain file is always the richer source.
 | `OccultationModel` | model | `references/mundane-events.md` |
 | `OrbAdjustmentStrategy` | subpackage import — `kerykeion.aspects.orb_utils` | `references/aspects-and-orbs.md` |
 | `parse_astronomical_iso_moment` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
+| `parse_chart_points` | subpackage import — `kerykeion.charts.svg_metadata` | `references/charts-and-drawing.md` |
+| `parse_indicators` | subpackage import — `kerykeion.charts.svg_metadata` | `references/charts-and-drawing.md` |
 | `PerspectiveType` | literal — `kerykeion.schemas` | `references/zodiac-houses-perspectives.md` |
 | `PlanetaryHourModel` | model | `references/calendars-hours-moon.md` |
 | `PlanetaryHoursFactory` | factory | `references/calendars-hours-moon.md` |
@@ -192,6 +204,7 @@ documented?"; the domain file is always the richer source.
 | `point_in_house_to_context` | subpackage import — `kerykeion.context` | `references/reports-and-ai-context.md` |
 | `PointOrbAdjustment` | subpackage import — `kerykeion.aspects.orb_utils` | `references/aspects-and-orbs.md` |
 | `PointType` | literal — `kerykeion.schemas` | `references/subjects.md` |
+| `POLAR_HOUSES_ERROR_TYPES` | subpackage import — `kerykeion.ephemeris_backend` | `references/backends-and-provenance.md` |
 | `PREDICTIVE_ACTIVE_ASPECTS` | subpackage import — `kerykeion.settings.config_constants` | `references/aspects-and-orbs.md` |
 | `PrimaryDirectionModel` | model | `references/traditional.md` |
 | `PrimaryDirectionsFactory` | factory | `references/traditional.md` |
@@ -211,6 +224,7 @@ documented?"; the domain file is always the richer source.
 | `ReportGenerator` | class | `references/reports-and-ai-context.md` |
 | `require_same_frame` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `reset_ephemeris_session` | subpackage import — `kerykeion.ephemeris_backend` | `references/backends-and-provenance.md` |
+| `resolve_pair_orb_adjustment` | subpackage import — `kerykeion.aspects.orb_utils` | `references/aspects-and-orbs.md` |
 | `resolve_sect_is_diurnal` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `resolve_subject_birth_datetime` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `resolve_subject_local_moment` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
@@ -260,6 +274,7 @@ documented?"; the domain file is always the richer source.
 | `V5_DEFAULT_ACTIVE_POINTS` | constant/function — `kerykeion.settings` | `references/migration-and-deprecations.md` |
 | `validate_latitude` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `validate_longitude` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
+| `validate_point_orb_adjustments` | subpackage import — `kerykeion.aspects.orb_utils` | `references/aspects-and-orbs.md` |
 | `VocAspectName` | literal — `kerykeion.schemas` | `references/calendars-hours-moon.md` |
 | `VocTargetPlanet` | literal — `kerykeion.schemas` | `references/calendars-hours-moon.md` |
 | `VoidOfCourseAspectModel` | model | `references/calendars-hours-moon.md` |

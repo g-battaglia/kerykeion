@@ -127,6 +127,30 @@ def test_version_pins_match_pyproject():
             )
 
 
+def test_subpackage_imports_are_indexed():
+    """Every API a reference documents as a subpackage import must have a row
+    in api-index.md. The docs:check gate only audits ``kerykeion.__all__``,
+    so without this check the index's completeness claim can silently rot as
+    references document new subpackage-only names.
+    """
+    index_text = (REFERENCES_DIR / "api-index.md").read_text(encoding="utf-8")
+    indexed = set(re.findall(r"^\| `([^`]+)` \|", index_text, re.MULTILINE))
+    missing = []
+    for ref in sorted(REFERENCES_DIR.glob("*.md")):
+        if ref.name == "api-index.md":
+            continue
+        for match in re.finditer(
+            r"\*\*Subpackage import:\*\*\s*`from\s+[\w.]+\s+import\s+([^`]+)`",
+            ref.read_text(encoding="utf-8"),
+        ):
+            for name in re.findall(r"\w+", match.group(1)):
+                if name not in indexed:
+                    missing.append(f"{name} ({ref.name})")
+    assert not missing, (
+        f"subpackage APIs documented in references but absent from api-index.md: {missing}"
+    )
+
+
 def test_install_doc_present():
     readme = SKILL_DIR / "README.md"
     assert readme.is_file(), "the skill needs its human-facing README"
