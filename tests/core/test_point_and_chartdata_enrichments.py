@@ -103,6 +103,32 @@ def test_real_mercury_stations_are_named(year, month, day, expected):
     assert subject.mercury.motion_state == expected
 
 
+def test_the_named_stations_agree_with_the_station_finder():
+    """Cross-check against the independent implementation in this repo.
+
+    ``RetrogradeStationFactory`` locates the exact instant a planet's speed
+    passes through zero and labels it SR or SD; ``classify_motion_state``
+    answers the same question from a single chart's speed plus one extra
+    sample. They share no code, so agreement across a whole year of Mercury
+    stations is real evidence rather than a restatement of the same logic.
+    """
+    from kerykeion import AstrologicalSubjectFactory, RetrogradeStationFactory
+
+    stations = RetrogradeStationFactory.from_iso_range("1990-01-01", "1990-12-31", planets=["Mercury"]).stations
+    assert len(stations) == 6, "Mercury stations six times a year; the fixture range drifted"
+
+    for station in stations:
+        year, month, day = (int(part) for part in station.iso_utc[:10].split("-"))
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Station cross-check", year, month, day, 12, 0, "London", "GB", suppress_geonames_warning=True
+        )
+        expected = "stationary_retrograde" if station.station_type == "SR" else "stationary_direct"
+        assert subject.mercury.motion_state == expected, (
+            f"{station.iso_utc}: the station finder says {station.station_type}, "
+            f"the classifier says {subject.mercury.motion_state}"
+        )
+
+
 def test_points_carry_motion_state(john_lennon):
     """The stored state agrees with a fresh classification of the stored speed.
 
