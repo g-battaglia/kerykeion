@@ -63,7 +63,11 @@ from kerykeion.schemas.literals import (
     PerspectiveType,
     SiderealMode,
 )
-from kerykeion.settings.chart_defaults import DEFAULT_CHART_COLORS
+from kerykeion.settings.chart_defaults import (
+    DEFAULT_CELESTIAL_POINTS_SETTINGS,
+    DEFAULT_CHART_ASPECTS_SETTINGS,
+    DEFAULT_CHART_COLORS,
+)
 from kerykeion.settings.config_constants import (
     ALL_ACTIVE_ASPECTS,
     ALL_ACTIVE_POINTS,
@@ -1430,6 +1434,222 @@ for slug, label, kwargs in (
                  ChartDataFactory.create_natal_chart_data(subject(f"Zodiac {sl}", **k)),
                  show_ayanamsa_value=True,
              ).generate_svg_string(style=s))
+
+
+# ---------------------------------------------------------------------------
+# 27. The output matrix
+# ---------------------------------------------------------------------------
+section(
+    "Every output, for every chart type",
+    "Three ways to render times two styles times every kind of chart. The wheel-only and "
+    "grid-only templates were previously shown for two chart types out of ten, which is exactly "
+    "where a template that cannot draw a biwheel return would have hidden.",
+)
+for slug, label, data in CHART_TYPES:
+    for style in STYLES:
+        emit(f"matrix_wheel_{slug}_{style}", f"wheel only · {label} · {style}",
+             "generate_wheel_only_svg_string",
+             lambda d=data, st=style: ChartDrawer(d, **ALL_MARKS).generate_wheel_only_svg_string(style=st))
+    emit(f"matrix_grid_{slug}", f"aspect grid only · {label}", "generate_aspect_grid_only_svg_string",
+         lambda d=data: ChartDrawer(d, **ALL_MARKS).generate_aspect_grid_only_svg_string())
+
+section(
+    "Saving to disk",
+    "The save_* methods take the same content through a different door — filename sanitising, "
+    "path handling, the default suffix. Rendered here so a broken writer is visible, not assumed.",
+)
+_saved = OUT / "_saved"
+_saved.mkdir(exist_ok=True)
+for slug, method, suffix in (
+    ("save_full", "save_svg", ""),
+    ("save_wheel", "save_wheel_only_svg_file", " - Wheel Only"),
+    ("save_grid", "save_aspect_grid_only_svg_file", " - Grid Only"),
+):
+    def render_saved(m=method, sl=slug):
+        drawer = ChartDrawer(natal)
+        getattr(drawer, m)(output_path=str(_saved), filename=sl)
+        return (_saved / f"{sl}.svg").read_text(encoding="utf-8")
+
+    emit(f"disk_{slug}", f"{method}()", "written to disk, then read back", render_saved)
+
+
+# ---------------------------------------------------------------------------
+# 28. Both stations
+# ---------------------------------------------------------------------------
+section(
+    "The two stations, side by side",
+    "A station that opens the retrograde phase and one that closes it are read very differently, "
+    "and the sign of the speed cannot tell them apart. Mercury does both within a month of 1990, "
+    "so here they are next to each other — the gallery previously showed only SR.",
+)
+STATIONS = [
+    ("sr", "SR — the retrograde phase opens", 1990, 8, 25),
+    ("sd", "SD — the retrograde phase closes", 1990, 9, 17),
+]
+for slug, label, year, month, day in STATIONS:
+    for style in STYLES:
+        emit(f"station_{slug}_{style}", f"{label} · {style}",
+             f"{year}-{month:02d}-{day:02d} — Mercury",
+             lambda y=year, m=month, d=day, sl=slug, st=style: ChartDrawer(
+                 ChartDataFactory.create_natal_chart_data(
+                     subject(f"Station {sl}", year=y, month=m, day=d, hour=12, minute=0)
+                 ),
+                 show_motion_state=True,
+             ).generate_svg_string(style=st))
+    emit(f"station_{slug}_wheel", f"{label} · wheel only", "the marker without the panel",
+         lambda y=year, m=month, d=day, sl=slug: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(
+                 subject(f"Station {sl} wheel", year=y, month=m, day=d, hour=12, minute=0)
+             ),
+             show_motion_state=True,
+         ).generate_wheel_only_svg_string(style="modern"))
+
+
+# ---------------------------------------------------------------------------
+# 29. Skies that are not ordinary
+# ---------------------------------------------------------------------------
+section(
+    "Configurations of the sky itself",
+    "Not settings — actual moments, found by sweeping five thousand days. Seven planets "
+    "retrograde at once, six in a single house, four out of bounds. These are the charts where "
+    "the decluttering, the badges and the grids all have the most to do.",
+)
+SKIES = [
+    ("retrograde_heavy", "Seven planets retrograde", 1984, 5, 3),
+    ("stellium_six", "Six planets in one house", 1982, 11, 11),
+    ("oob_four", "Four bodies out of bounds", 1987, 5, 30),
+]
+for slug, label, year, month, day in SKIES:
+    for style in STYLES:
+        emit(f"sky_{slug}_{style}", f"{label} · {style}", f"{year}-{month:02d}-{day:02d}",
+             lambda y=year, m=month, d=day, sl=slug, st=style: ChartDrawer(
+                 ChartDataFactory.create_natal_chart_data(
+                     subject(f"Sky {sl}", year=y, month=m, day=d, hour=12, minute=0)
+                 ),
+                 **ALL_MARKS,
+             ).generate_svg_string(style=st))
+
+
+# ---------------------------------------------------------------------------
+# 30. The Sun through the zodiac
+# ---------------------------------------------------------------------------
+section(
+    "One chart per sign",
+    "The Sun in each of the twelve, roughly a month apart. Every sign glyph gets drawn in the "
+    "wheel, in the grid and on the cusps at least once across this row.",
+)
+SIGN_DATES = [
+    ("aries", "Aries", 4, 5), ("taurus", "Taurus", 5, 5), ("gemini", "Gemini", 6, 5),
+    ("cancer", "Cancer", 7, 5), ("leo", "Leo", 8, 5), ("virgo", "Virgo", 9, 5),
+    ("libra", "Libra", 10, 5), ("scorpio", "Scorpio", 11, 5), ("sagittarius", "Sagittarius", 12, 5),
+    ("capricorn", "Capricorn", 1, 5), ("aquarius", "Aquarius", 2, 5), ("pisces", "Pisces", 3, 5),
+]
+for slug, label, month, day in SIGN_DATES:
+    emit(f"sign_{slug}", f"Sun in {label}", f"1990-{month:02d}-{day:02d}",
+         lambda m=month, d=day, sl=slug: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(
+                 subject(f"Sun {sl}", year=1990, month=m, day=d, hour=12, minute=0)
+             ),
+             **ALL_MARKS,
+         ).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 31. Point and aspect settings
+# ---------------------------------------------------------------------------
+section(
+    "Point and aspect settings",
+    "The two override tables that had no card at all: the per-point settings that carry each "
+    "body's colour and weight, and the aspect table that decides colour and major/minor.",
+)
+_recoloured_points = [
+    {**body, "color": "#3b6ea5" if body["name"] in ("Sun", "Moon") else body["color"]}
+    for body in DEFAULT_CELESTIAL_POINTS_SETTINGS
+]
+emit("settings_points_colour", "Luminaries recoloured", "celestial_points_settings",
+     lambda: ChartDrawer(natal, celestial_points_settings=_recoloured_points).generate_svg_string())
+
+_reweighted_points = [
+    {**body, "element_points": 100 if body["name"] in ("Sun", "Moon") else 5}
+    for body in DEFAULT_CELESTIAL_POINTS_SETTINGS
+]
+emit("settings_points_weight", "Luminaries dominate the distribution",
+     "celestial_points_settings — element_points",
+     lambda: ChartDrawer(natal, celestial_points_settings=_reweighted_points).generate_svg_string())
+
+_recoloured_aspects = [
+    {**aspect, "color": "#c2453d" if aspect["is_major"] else "#7d838f"}
+    for aspect in DEFAULT_CHART_ASPECTS_SETTINGS
+]
+emit("settings_aspects_colour", "Majors red, minors grey", "aspects_settings",
+     lambda: ChartDrawer(natal, aspects_settings=_recoloured_aspects,
+                         show_aspect_movement=True).generate_svg_string())
+
+_majors_only = [a for a in DEFAULT_CHART_ASPECTS_SETTINGS if a["is_major"]]
+emit("settings_aspects_subset", "Only the major aspects styled",
+     f"aspects_settings — {len(_majors_only)} of {len(DEFAULT_CHART_ASPECTS_SETTINGS)}",
+     lambda: ChartDrawer(natal, aspects_settings=_majors_only).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 32. Dual-chart options
+# ---------------------------------------------------------------------------
+section(
+    "Options that only a biwheel has",
+    "House and cusp comparison, the two aspect-grid shapes, and the classic-only external view — "
+    "each against a synastry and a transit, since the two lay their panels out differently.",
+)
+DUAL_OPTIONS = [
+    ("house_on", "House comparison on", dict(show_house_position_comparison=True)),
+    ("house_off", "House comparison off", dict(show_house_position_comparison=False)),
+    ("cusp_on", "Cusp comparison on", dict(show_cusp_position_comparison=True)),
+    ("both_on", "Both comparisons on",
+     dict(show_house_position_comparison=True, show_cusp_position_comparison=True)),
+    ("grid_list", "Aspects as a list", dict(double_chart_aspect_grid_type="list")),
+    ("grid_table", "Aspects as a table", dict(double_chart_aspect_grid_type="table")),
+    ("external", "External view", dict(external_view=True)),
+    ("no_indicators", "No degree indicators", dict(show_degree_indicators=False)),
+]
+transit_data = {slug: data for slug, _, data in CHART_TYPES}["transit"]
+for slug, label, kwargs in DUAL_OPTIONS:
+    for wheel_slug, wheel_data in (("synastry", synastry), ("transit", transit_data)):
+        emit(f"dual_{slug}_{wheel_slug}", f"{label} · {wheel_slug}",
+             ", ".join(f"{k}={v!r}" for k, v in kwargs.items()),
+             lambda d=wheel_data, k=kwargs: ChartDrawer(d, **k, **ALL_MARKS).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 33. Themes against chart types
+# ---------------------------------------------------------------------------
+section(
+    "Themes on the charts that are not natal",
+    "Themes were shown on a natal only, so the panels a biwheel or a Gauquelin chart adds — "
+    "comparison grids, the unified sector table — had never been seen in anything but the default.",
+)
+for theme in THEMES:
+    for slug, label, data in (("synastry", "Synastry", synastry),
+                              ("gauquelin", "Gauquelin", ChartDataFactory.create_natal_chart_data(gauquelin))):
+        emit(f"themed_{slug}_{theme}", f"{label} · {theme}", f"theme={theme}",
+             lambda d=data, t=theme: ChartDrawer(d, theme=t, **ALL_MARKS).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 34. House systems in the modern style
+# ---------------------------------------------------------------------------
+section(
+    "House systems, modern",
+    "The same twenty-three, drawn the other way. The modern wheel builds its cusp ring "
+    "differently, so an identifier that lands cleanly in one style is not evidence about the other.",
+)
+for identifier in HOUSE_SYSTEMS:
+    emit(f"house_modern_{identifier}", f"house system {identifier!r} · modern",
+         f"houses_system_identifier={identifier!r}",
+         lambda i=identifier: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(
+                 subject(f"Houses modern {i}", houses_system_identifier=i)
+             ),
+             **ALL_MARKS,
+         ).generate_svg_string(style="modern"))
 
 
 # ---------------------------------------------------------------------------

@@ -73,7 +73,7 @@ in the targets say so; edit the script, never the output.
 
 ## The validation gallery
 
-`poe gallery` writes several hundred charts into `svg_validation_gallery/`
+`poe gallery` writes upwards of five hundred charts into `svg_validation_gallery/`
 (gitignored) with a page that opens any of them full screen and steps through
 the whole sweep with a slider, the arrow keys or the screen edges. `i` shows the
 technical details of the chart on screen — its size, viewBox, node and element
@@ -107,8 +107,13 @@ layout gives way:
   UTC+14 to UTC−11
 - **minimal charts**, down to a single point; **the heaviest chart** the library
   can draw, in every theme and every language
-- **overrides** (partial palettes, language packs) and **post-processing**
-  (variables inlined, minified)
+- **overrides** (partial palettes, language packs, point and aspect settings) and
+  **post-processing** (variables inlined, minified)
+- **the full output matrix** — all three render methods across all ten chart
+  types in both styles, plus the three `save_*` writers read back off disk
+- **skies rather than settings**: both Mercury stations side by side, seven
+  planets retrograde at once, six in one house, four bodies out of bounds, and
+  the Sun through all twelve signs
 
 A render that raises becomes a red card rather than stopping the run: a sweep
 that omits what broke is worse than none. The sweep writes `cards.json`, and
