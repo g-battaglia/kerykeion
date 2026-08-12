@@ -31,14 +31,29 @@ import kerykeion.schemas as schemas
 
 # Modules that must not be imported by the discovery walk.
 # __main__ modules run a CLI when executed; the walk must not trigger them.
-_EXCLUDED_MODULES = ("__main__",)
+# kerykeion.cli is the whole command-line package: its leaves import the optional
+# [cli] extra (typer/rich), absent from a bare install, so importing them here
+# would break the walk for anyone who has not installed it.
+_EXCLUDED_MODULES = ("__main__", "kerykeion.cli")
+
+
+def _is_excluded(module_name: str) -> bool:
+    """Precise exclusion: exact name, dot-prefixed subtree, or dot-suffixed leaf.
+
+    Never a bare substring: ``"kerykeion.cli" in "kerykeion.client"`` is True,
+    so a substring test would swallow a future ``kerykeion.client`` too.
+    """
+    return any(
+        module_name == ex or module_name.startswith(ex + ".") or module_name.endswith("." + ex)
+        for ex in _EXCLUDED_MODULES
+    )
 
 
 def _collect_public_models() -> dict[str, type]:
     """Map name -> class for every public BaseModel defined in the package."""
     models: dict[str, type] = {}
     for module_info in pkgutil.walk_packages(kerykeion.__path__, "kerykeion."):
-        if any(excluded in module_info.name for excluded in _EXCLUDED_MODULES):
+        if _is_excluded(module_info.name):
             continue
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
