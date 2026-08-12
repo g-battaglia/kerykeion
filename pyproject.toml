@@ -78,7 +78,22 @@ dependencies = [
 
 [project.optional-dependencies]
 swiss = ["pyswisseph>=2.10.3.1"]
-all = ["pyswisseph>=2.10.3.1"]
+# The command-line interface. A FLOOR, not a pin (project policy): typer >=0.26
+# vendorizes click, which removes a silent conflict — click 8.3 already enters
+# the runtime graph as a transitive of libephemeris, so below 0.26 the CLI's
+# correctness would depend on which click another dependency resolves. The .4
+# patch is the settled point. rich shares the same floor family.
+cli = ["typer>=0.26.4", "rich>=13.8.0"]
+# ``all`` includes ``cli`` on purpose: a name that says "all" but omits an extra
+# is a lie in the name.
+all = ["pyswisseph>=2.10.3.1", "typer>=0.26.4", "rich>=13.8.0"]
+
+[project.scripts]
+# The console command is installed for EVERY user — even ``pip install kerykeion``
+# with no extras, because ``[project.scripts]`` is static metadata. ``main``
+# degrades to an install hint (exit code 3) when the [cli] extra is absent, so
+# the bare command never crashes with a ModuleNotFoundError traceback.
+kerykeion = "kerykeion.cli:main"
 
 [project.urls]
 Homepage = "https://www.kerykeion.net/"
@@ -129,6 +144,7 @@ markers = [
     "base: DE440s tier (1849-2150)",
     "medium: DE440 tier (1550-2650, cumulative)",
     "extended: DE441 tier (full range, cumulative)",
+    "cli: command-line interface tests (requires the kerykeion[cli] extra)",
 ]
 
 # Coverage Configuration
@@ -419,4 +435,12 @@ dev = [
     "ruff>=0.12.9",
     "types-requests>=2.32.4.20250611",
     "pyswisseph>=2.10.3.2",
+    # CLI deps repeated in the dev group, NOT redundantly: pyrightconfig.json is
+    # typeCheckingMode "basic" where reportMissingImports is an ERROR and the
+    # include covers the whole ``kerykeion`` tree, so without typer/rich in the
+    # venv ``poe typecheck`` fails for every contributor. mypy would not fail
+    # (ignore_missing_imports = true) — it would just degrade the CLI to Any,
+    # which is worse. Keep these floors aligned with the [cli] extra above.
+    "typer>=0.26.4",
+    "rich>=13.8.0",
 ]
