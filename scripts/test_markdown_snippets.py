@@ -158,6 +158,9 @@ def main():
     parser.add_argument(
         "-ai", "--ai-guide", dest="ai_guide_only", action="store_true", help="Run snippets only for the AI-agent guide (kerykeion/llms.txt)."
     )
+    parser.add_argument(
+        "--skill", dest="skill_only", action="store_true", help="Run snippets only for the agent skill (skills/kerykeion)."
+    )
     parser.add_argument("--timeout", type=float, default=20.0, help="Per-snippet timeout in seconds (default: 20).")
     parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")
     args = parser.parse_args()
@@ -178,6 +181,10 @@ def main():
         targets = [Path("kerykeion/llms.txt")]
         exclude_release_notes = False
         mode_description = "kerykeion/llms.txt only"
+    elif args.skill_only:
+        targets = [Path("skills/kerykeion")]
+        exclude_release_notes = False
+        mode_description = "skills/kerykeion only"
     elif args.all_files:
         targets = args.paths or [Path(".")]
         exclude_release_notes = False
@@ -191,9 +198,9 @@ def main():
         if args.paths:
             targets = args.paths
         else:
-            targets = [Path("README.md"), Path("kerykeion/llms.txt"), Path("site/docs"), Path("site/examples")]
+            targets = [Path("README.md"), Path("kerykeion/llms.txt"), Path("site/docs"), Path("site/examples"), Path("skills/kerykeion")]
         exclude_release_notes = True
-        mode_description = "README.md, kerykeion/llms.txt, site/docs, and site/examples (default)"
+        mode_description = "README.md, kerykeion/llms.txt, site/docs, site/examples, and skills/kerykeion (default)"
 
     print(f"� Testing Python snippets in {mode_description}")
 

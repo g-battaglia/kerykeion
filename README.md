@@ -123,6 +123,7 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 - [Projects built with Kerykeion](#projects-built-with-kerykeion)
 - [Development](#development)
 - [Using the Swiss Ephemeris Backend (Optional)](#using-the-swiss-ephemeris-backend-optional)
+- [AI Agent Skill](#ai-agent-skill)
 - [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
 - [License](#license)
 - [Contributing](#contributing)
@@ -2458,6 +2459,31 @@ For the full configuration guide, see [Swiss Ephemeris Configuration](https://gi
 > The setup utility above downloads it automatically; for the manual procedure
 > and a diagnostic warning reference, see the
 > [Fixed Stars Catalog section of the configuration guide](https://github.com/g-battaglia/kerykeion/blob/alpha/v6/site/docs/swisseph_configuration.md#fixed-stars-catalog-sefstarstxt).
+
+## AI Agent Skill
+
+Kerykeion ships a cross-platform [Agent Skill](https://agentskills.io/) that teaches AI coding agents the real v6 API — factories, chart types, backends, sidereal modes, predictive and traditional techniques — so generated code stops guessing method names. It works with any skills-aware agent (Claude Code, Cursor, Codex, Copilot, Gemini CLI, and others).
+
+Install it into your project with [skills.sh](https://skills.sh/):
+
+```bash
+npx skills add g-battaglia/kerykeion
+```
+
+Or copy the folder manually into your agent's skills directory:
+
+```bash
+# Claude Code
+cp -r skills/kerykeion /path/to/your-project/.claude/skills/kerykeion
+
+# Codex
+cp -r skills/kerykeion /path/to/your-project/.agents/skills/kerykeion
+
+# Generic agentskills.io layout (Cursor and others)
+cp -r skills/kerykeion /path/to/your-project/skills/kerykeion
+```
+
+Prefer a single-file guide? The package also ships `kerykeion/llms.txt`, a self-contained AI-agent reference installed with the library. For turning chart *data* into LLM input at runtime, see [AI Context Serializer](#ai-context-serializer).
 
 ## Integrating Kerykeion into Your Project
 

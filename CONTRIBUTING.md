@@ -48,6 +48,16 @@ Thank you for your interest in contributing to Kerykeion! Contributions of all k
 - Use [Ruff](https://docs.astral.sh/ruff/) for linting.
 - Type annotations are encouraged.
 
+## Keeping the Agent Skill in Sync
+
+`skills/kerykeion/` is the cross-platform AI Agent Skill that documents the
+current public API for coding agents. If your change alters public behavior —
+signatures, defaults, model fields, chart options, backend or env-var
+semantics — update the skill **in the same commit**. This is enforced locally:
+`poe docs:check` and `poe docs:snippets` cover the skill folder, and
+`tests/core/test_agent_skill_contract.py` (part of `poe check` and
+`poe quality`) validates its structure, license, and version references.
+
 ## License
 
 This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. See the [LICENSE](LICENSE) file for the full text.
