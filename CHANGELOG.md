@@ -2,6 +2,81 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **The stationary band is symmetric, and the two stations are named.**
+  `MotionState` gains `"stationary_retrograde"` and `"stationary_direct"`. The
+  band of < 5% of mean daily motion now brackets zero on both sides and is
+  tested **before** the sign of the speed; previously a negative speed answered
+  `"retrograde"` one branch earlier, so only the forward half of the band could
+  ever report a station. A planet creeping backwards at a hundredth of its mean
+  motion was reported as plainly retrograde, hiding the very event the reader
+  was looking for.
+
+  Which station it is comes from the trend, not the sign: both stations are
+  approached from one side of zero and left on the other. `classify_motion_state`
+  takes an optional `speed_sampler` and, for a body already inside the band,
+  asks it for the speed one day later — falling through the band opens the
+  retrograde phase (`"stationary_retrograde"`), rising through it closes the
+  phase (`"stationary_direct"`). Without a usable second sample the generic
+  `"stationary"` stands, which is an absence of a claim rather than a guess. The
+  subject factory supplies the sampler as a closure over the same ephemeris
+  flags, so the extra call is only ever spent on a body already stationary.
+
+  **This is a behavioural change with two edges for downstream code.** A chart
+  cast within the band of a station now reports a different `motion_state` than
+  it did before — `"stationary_retrograde"` where it said `"retrograde"`, and
+  either named station where it said `"stationary"`. And any consumer that
+  matches the literal exhaustively — a `match` statement, a dict keyed by every
+  value, a mirrored TypeScript union — must be extended before it meets one of
+  the new values.
+
+### Added
+
+- **Point state and chart analyses in the `kr:` SVG metadata.** Every rendered
+  ChartPoint now carries `kr:motionstate`, `kr:speed`, `kr:declination` and
+  `kr:oob`, plus `kr:magnitude`, `kr:nearpoint` and `kr:orb` on fixed stars.
+  Angularity and stelliums are annotated onto the finished markup as
+  `kr:angularity` with `kr:angularitydistance`, and `kr:stellium`; in a dual
+  wheel each ring is annotated from its own subject's analysis. A consumer
+  reading the SVG no longer has to re-fetch the JSON to say what the wheel
+  already knows.
+
+  These are unconditional — no rendering flag gates them, in either style and in
+  full or wheel-only output — because an attribute only some serializers emit
+  leaves a consumer unable to tell a body that has no such state from a style
+  that forgot to say so. An attribute is **absent** when the model does not
+  carry the value, so silence means "this chart does not compute it" rather than
+  zero or false; `kr:oob` follows `kr:retrograde` and marks only the exception.
+  Attribute names are lowercase letters with no separators, since consumers
+  rewrite the namespace with a general pattern and a name carrying an underscore
+  would be dropped in silence. The emitter, `point_state_attributes`, lives in
+  `kerykeion.charts.svg_metadata` beside the parser.
+
+- **Six opt-in marks on `ChartDrawer`**, each drawing something the chart data
+  already carried and the wheel never showed. All default to `False`: passing
+  every one of them its own default reproduces the previous SVG byte for byte,
+  in both styles. Each is silent where it has no referent.
+
+  | Parameter | Draws |
+  | :-- | :-- |
+  | `show_motion_state` | `SR`/`SD` at a station — modern recolours the cluster and reuses the row that holds `RX`, classic writes the letters at the foot of the glyph |
+  | `show_out_of_bounds` | An `OOB` badge in the point tables; in the Gauquelin grid, off the declination column |
+  | `show_aspect_movement` | A dashed line for a separating aspect |
+  | `show_relationship_score` | The synastry score in the info panel (needs a score on the chart data) |
+  | `show_ayanamsa_value` | The ayanamsa offset in degrees and minutes, after the mode name |
+  | `show_polar_fallback_note` | A note on the domification line when the requested house system was substituted |
+
+  Nine language keys across all ten languages (`relationship_score` and its six
+  bands, `polar_fallback`), each with an English default on the model so a
+  language pack written before this release still validates, and a new
+  `--kerykeion-modern-stationary` CSS variable in the six themes.
+
+- `examples/svg_extended_example.py`: all six marks, each on a subject that
+  genuinely has its referent — Mercury at its August 1990 station (with Uranus
+  out of bounds), a Longyearbyen chart whose Placidus request could not be
+  honoured, a sidereal Lahiri chart, and a synastry pair. Runs offline.
+
 ## 6.0.0a84 - 2026-08-12
 
 Structural release. No calculation changed and no public name moved:

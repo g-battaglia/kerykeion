@@ -122,6 +122,13 @@ print(f"Ayanamsa value: {subject.ayanamsa_value:.4f}°")
 
 > `ayanamsa_value` is `None` for tropical charts.
 
+A rendered chart names the ayanamsa mode but not its offset. Pass
+`show_ayanamsa_value=True` to `ChartDrawer` to append the value to that line —
+`Ayanamsa: Lahiri (23°43')`. The mode names the convention; the offset says
+where it actually put the zodiac for this date, which is what differs between
+two charts drawn under the same ayanamsa centuries apart. Degrees and minutes
+only, and nothing at all on a tropical chart.
+
 ## Examples
 
 ### Lahiri (Vedic Standard)

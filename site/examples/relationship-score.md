@@ -104,6 +104,7 @@ RelationshipScoreModel(
 
 ### Additional Notes
 
+- To print the score on the chart itself, pass `show_relationship_score=True` to `ChartDrawer`. The line takes one of the two rows the synastry info panel leaves empty and reads `Relationship Score: 16 (Very Important)` — the number travels with its band, since a count of weighted contacts means nothing without the scale it sits on. It needs a score on the chart data, which `create_synastry_chart_data` computes unless `include_relationship_score=False`; a chart drawn from the generic factory path prints nothing rather than a zero it never measured.
 - This implementation is based on the Ciro Discepolo method. Additional details can be found [here](http://www.cirodiscepolo.it/Articoli/Discepoloele.htm).
 - Logging is available for debugging purposes, with detailed messages during aspect evaluations.
 

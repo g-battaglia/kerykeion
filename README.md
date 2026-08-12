@@ -938,6 +938,21 @@ point's house in the other subject's cusp system, while
 available in classic/modern, full/wheel-only output even when house-comparison
 data or tables are disabled.
 
+Each point also carries the physical state the model computed for it —
+`kr:motionstate`, `kr:speed`, `kr:declination`, `kr:oob` when the body is out of
+bounds, plus `kr:magnitude`, `kr:nearpoint` and `kr:orb` on fixed stars — and the
+chart-level analyses it takes part in: `kr:angularity` with
+`kr:angularitydistance`, and `kr:stellium`. None of these are gated by a
+rendering option; the opt-in marks above only decide whether a reader sees them
+drawn. An attribute is **absent** when the model does not carry the value, so
+silence means "this chart does not compute it" rather than zero or false — a
+heliocentric chart states no motion state, a midpoint composite none at all.
+Attribute names are lowercase letters with no separators (`motionstate`, not
+`motion_state`), because consumers rewrite the namespace with a general pattern
+and a name carrying an underscore would be dropped silently. See the
+[charts documentation](https://www.kerykeion.net/content/docs/charts) for the
+full table.
+
 ## Classic Chart Style
 
 Since v6 the **modern** concentric-ring layout is the default chart style. The traditional **classic** wheel remains fully supported: set it at the instance level via `ChartDrawer(chart_data=..., style="classic")` or per-render via `save_svg(style="classic")`. Both styles work with all six themes.
@@ -971,6 +986,40 @@ Default filenames spell the style out: `save_svg()` writes `"{name} - {chart typ
 | `external_view` | `bool` | `False` | Place planets outside the zodiac ring (Natal charts only) |
 | `show_degree_indicators` | `bool` | `True` | Show degree indicators on planets |
 | `show_aspect_icons` | `bool` | `True` | Show aspect icons on aspect lines |
+
+**Opt-in marks** (constructor only, both styles). Six facts the chart data already carries and the wheel did not show. Every one defaults to `False`, so no chart gains a mark it was not asked for, and every one is silent where it has no referent — a chart with no station, data that never computed a score, a tropical zodiac, a house system that was honoured:
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `show_motion_state` | `bool` | `False` | Mark a planet at a station: `SR` where the retrograde phase opens, `SD` where it closes. Modern recolours the cluster and uses the row that holds `RX`; classic writes the two letters at the foot of the glyph, where its `℞` sits |
+| `show_out_of_bounds` | `bool` | `False` | Badge out-of-bounds planets `OOB` in the point tables (in the Gauquelin grid, off the declination column) |
+| `show_aspect_movement` | `bool` | `False` | Dash the separating aspect lines; applying ones stay solid |
+| `show_relationship_score` | `bool` | `False` | Print the synastry relationship score in the info panel. Needs a score on the chart data, which `create_synastry_chart_data` computes by default |
+| `show_ayanamsa_value` | `bool` | `False` | Append the ayanamsa offset in degrees and minutes to the zodiac line of a sidereal chart |
+| `show_polar_fallback_note` | `bool` | `False` | Mark the domification line when the requested house system was undefined at that latitude and another stood in for it |
+
+```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+
+# 25 August 1990: Mercury is at a station, Uranus is out of bounds.
+station = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False, suppress_geonames_warning=True,
+)
+drawer = ChartDrawer(
+    ChartDataFactory.create_natal_chart_data(station),
+    show_motion_state=True,
+    show_out_of_bounds=True,
+    show_aspect_movement=True,
+)
+svg = drawer.generate_svg_string()
+
+print(station.mercury.motion_state)     # stationary_retrograde
+print(station.uranus.is_out_of_bounds)  # True
+```
+
+`examples/svg_extended_example.py` renders all six, each on a subject that has its referent.
 
 ### Classic Birth Chart
 
@@ -1139,7 +1188,7 @@ Each report contains:
 
 - A chart-aware title summarising the subject(s) and chart type
 - Birth/event metadata and configuration settings
-- Celestial points with sign, position, **daily motion**, **motion state**, **declination**, retrograde flag, and house (an **out-of-bounds** column appears when a point actually is)
+- Celestial points with sign, position, **daily motion**, **motion state** (including the two named stations, SR and SD), **declination**, retrograde flag, and house (an **out-of-bounds** column appears when a point actually is)
 - Arabic Parts, fixed stars (with **constellation**) and midpoints in tables of their own, when active
 - House cusp tables for every subject involved
 - Essential dignities, nakshatras and Gauquelin sectors, when the chart computed them
@@ -2073,6 +2122,31 @@ print(f"Tokyo ASC: {relocated.first_house.abs_pos:.2f}")
 ```
 
 **📖 Full documentation: [Relocated Chart Factory](https://www.kerykeion.net/content/docs/relocated_chart_factory)**
+
+### Motion State & Stations
+
+Every planet carries a `motion_state`: `"fast"`, `"average"`, `"slow"`,
+`"retrograde"`, or one of the three stationary values. The stationary band
+brackets zero speed on both sides and is tested before the sign, so a planet
+edging backwards at a hundredth of its mean motion reports a station rather than
+a plain retrograde. Which station it is comes from the trend, not the sign —
+both stations are approached from one side of zero and left on the other — so
+the factory samples the speed again a day later: falling through the band opens
+the retrograde phase (`"stationary_retrograde"`, SR), rising through it closes
+the phase (`"stationary_direct"`, SD). Where no second sample is available the
+generic `"stationary"` stands.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+)
+print(f"Mercury: {subject.mercury.motion_state} at {subject.mercury.speed:.5f}°/day")
+# Mercury: stationary_retrograde at 0.01237°/day
+```
+
+`ChartDrawer(..., show_motion_state=True)` draws these as SR/SD on the wheel;
+`RetrogradeStationFactory` finds the instants of the stations themselves.
 
 ### Declination & Out-of-Bounds Detection
 
