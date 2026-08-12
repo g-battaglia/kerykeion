@@ -30,6 +30,9 @@ def main() -> int:
         # geonames tests, but pytest's addopts do not — without this the local
         # quality gate silently depends on GeoNames being reachable.
         ("test", ["pytest", "--tb=no", "-q", "-m", "not online"]),
+        # The CLI is an optional extra; this proves the entry point still works
+        # from the dev checkout and that ``import kerykeion`` stays typer-free.
+        ("cli", ["python", "scripts/cli_smoke_check.py"]),
     ]
 
     results = []

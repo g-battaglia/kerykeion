@@ -224,6 +224,15 @@ KERYKEION_BACKEND = "swisseph"
 cmd = "pytest tests/core/test_backend_comparison.py -v"
 help = "Compare libephemeris vs swisseph (both must be installed via pip install kerykeion[all])"
 
+# ── Command-line interface ──
+[tool.poe.tasks."test:cli"]
+cmd = "pytest tests/ -m 'cli and not online'"
+help = "Run CLI tests (requires the kerykeion[cli] extra)"
+
+[tool.poe.tasks."cli:smoke"]
+cmd = "python scripts/cli_smoke_check.py"
+help = "Smoke-check the kerykeion CLI entry point, --version, --help"
+
 # ── Coverage ──
 [tool.poe.tasks."test:core:cov"]
 cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py --cov --cov-report=term-missing --cov-report=html"
@@ -271,8 +280,8 @@ cmd = "python scripts/check_import_graph.py --fresh-imports"
 help = "Import every module in a cold interpreter (catches leaf-first cycles)"
 
 [tool.poe.tasks.check]
-sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core"]
-help = "Run all quality checks (lint, analyze, typecheck, test:core)"
+sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core", "cli:smoke"]
+help = "Run all quality checks (lint, analyze, typecheck, test:core, cli:smoke)"
 
 # cmd, not `script = "...:main"`: poethepoet 0.40.0 discards a script function's
 # int return, so a `script` task exits 0 even when the checks fail — the gate
@@ -374,8 +383,15 @@ help = "Run performance benchmarks (subject creation, aspects, SVG rendering)"
 
 # Utilities
 [tool.poe.tasks."build:smoke"]
-shell = "rm -rf dist && uv build && uv run --isolated --no-project --with dist/*.whl python scripts/build_smoke_check.py"
-help = "Build sdist+wheel, then import the wheel and render a chart in an isolated environment, so missing packaged data files (templates, themes) are caught before publishing"
+shell = """
+rm -rf dist && uv build &&
+echo '== build:smoke env 1: wheel only (library chart + CLI install-hint guard) ==' &&
+uv run --isolated --no-project --with dist/*.whl python scripts/build_smoke_check.py &&
+uv run --isolated --no-project --with dist/*.whl python scripts/build_smoke_check_cli.py &&
+echo '== build:smoke env 2: wheel + [cli] (CLI functional) ==' &&
+uv run --isolated --no-project --with "typer>=0.26.4" --with "rich>=13.8.0" --with dist/*.whl python scripts/build_smoke_check_cli.py
+"""
+help = "Build sdist+wheel, then in ISOLATED envs verify: (env 1) the wheel imports and renders a chart and the bare kerykeion command degrades to the install hint; (env 2) with [cli], --version/--help work. Catches missing packaged data and a broken CLI guard before publishing."
 
 [tool.poe.tasks.clean]
 cmd = "rm -rf dist build *.egg-info htmlcov .coverage .coverage.* coverage.xml .pytest_cache .mypy_cache .ruff_cache"
