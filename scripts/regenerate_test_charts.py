@@ -2466,4 +2466,81 @@ polar_subject = AstrologicalSubjectFactory.from_birth_data(
 polar_chart_data = ChartDataFactory.create_natal_chart_data(polar_subject)
 ChartDrawer(polar_chart_data, show_polar_fallback_note=True).save_svg(output_path=OUTPUT_DIR_STR)
 
+# ---------------------------------------------------------------------------
+# Complete charts with every mark switched on
+#
+# The six baselines above each isolate one mark, which is what a regression on
+# that mark needs. These four are the other half of the picture: whole charts
+# rendered the way someone who turns the feature on actually sees them, with
+# every option enabled at once. A mark stays silent where its subject has no
+# referent, so between them these carry the full set without any one of them
+# claiming something its own sky does not have.
+# ---------------------------------------------------------------------------
+
+ALL_MARKS_ON = dict(
+    show_motion_state=True,
+    show_out_of_bounds=True,
+    show_aspect_movement=True,
+    show_relationship_score=True,
+    show_ayanamsa_value=True,
+    show_polar_fallback_note=True,
+)
+
+# Station, out-of-bounds body and separating aspects, in both styles.
+all_marks_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station - All Marks", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+)
+all_marks_chart_data = ChartDataFactory.create_natal_chart_data(all_marks_subject)
+ChartDrawer(all_marks_chart_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR)
+ChartDrawer(all_marks_chart_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Sidereal: the ayanamsa offset joins the marks that the sky supports.
+all_marks_sidereal = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - All Marks Sidereal",
+    1940,
+    10,
+    9,
+    18,
+    30,
+    "Liverpool",
+    "GB",
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+    suppress_geonames_warning=True,
+)
+ChartDrawer(
+    ChartDataFactory.create_natal_chart_data(all_marks_sidereal), **ALL_MARKS_ON
+).save_svg(output_path=OUTPUT_DIR_STR)
+
+# Polar: the domification line admits the substitution.
+all_marks_polar = AstrologicalSubjectFactory.from_birth_data(
+    "Polar Fallback - All Marks",
+    1990,
+    6,
+    15,
+    12,
+    0,
+    "Longyearbyen",
+    "SJ",
+    lng=15.6,
+    lat=78.2,
+    tz_str="Arctic/Longyearbyen",
+    houses_system_identifier="P",
+    suppress_geonames_warning=True,
+)
+ChartDrawer(
+    ChartDataFactory.create_natal_chart_data(all_marks_polar), **ALL_MARKS_ON
+).save_svg(output_path=OUTPUT_DIR_STR)
+
+# Synastry: the score, on a dual wheel that also carries wheel marks.
+all_marks_syn_first = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - All Marks Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+all_marks_syn_second = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+all_marks_syn_data = ChartDataFactory.create_synastry_chart_data(all_marks_syn_first, all_marks_syn_second)
+ChartDrawer(all_marks_syn_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR)
+ChartDrawer(all_marks_syn_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
 print("All charts regenerated successfully!")

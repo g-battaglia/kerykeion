@@ -1021,6 +1021,35 @@ print(station.uranus.is_out_of_bounds)  # True
 
 `examples/svg_extended_example.py` renders all six, each on a subject that has its referent.
 
+Rendered, with every option on. A mark draws nothing where there is nothing to
+mark, so no single chart shows the set — these four between them carry every
+referent, and none of them claims something its own sky does not have:
+
+<table>
+  <tr>
+    <td align="center"><b>Stations, out-of-bounds and separating aspects</b><br><sub>Mercury at its August 1990 station; Uranus past the obliquity</sub></td>
+    <td align="center"><b>The same sky, classic</b><br><sub>SR at the foot of the glyph, where ℞ sits</sub></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_wheel_modern.svg" width="380" alt="Modern wheel with station, out-of-bounds and separating-aspect marks"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_wheel_classic.svg" width="380" alt="Classic wheel with station, out-of-bounds and separating-aspect marks"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Ayanamsa offset</b><br><sub>Sidereal Lahiri — the offset next to the mode name</sub></td>
+    <td align="center"><b>Polar fallback note</b><br><sub>Placidus undefined at 78°N, so the line says what drew the cusps</sub></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_sidereal_classic.svg" width="380" alt="Sidereal chart showing the ayanamsa offset in degrees"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_polar_classic.svg" width="380" alt="Polar chart admitting the house-system substitution"></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><b>Relationship score</b><br><sub>The synastry score and its band, in a panel row that was empty</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_synastry_classic.svg" width="770" alt="Synastry chart printing the relationship score"></td>
+  </tr>
+</table>
+
 ### Classic Birth Chart
 
 ```python

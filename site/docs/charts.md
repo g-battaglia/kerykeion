@@ -267,7 +267,20 @@ print(subject.uranus.is_out_of_bounds)  # True
 
 The three remaining options need charts that have their referent — a synastry, a
 sidereal chart and a subject inside the polar circle. `examples/svg_extended_example.py`
-renders all four cases.
+renders all four cases, and the four below are those cases rendered, with every
+option switched on:
+
+| | |
+| :--: | :--: |
+| ![Modern wheel with a station, an out-of-bounds body and dashed separating aspects](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_wheel_modern.svg) | ![The same chart in the classic style](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_wheel_classic.svg) |
+| **Modern** — the station recolours Mercury's cluster and writes `SR` in the row that holds `RX` | **Classic** — the same two letters at the foot of the glyph, where `℞` sits |
+| ![Sidereal chart printing the ayanamsa offset](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_sidereal_classic.svg) | ![Polar chart admitting the house-system substitution](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_polar_classic.svg) |
+| **Ayanamsa offset** — the degrees next to the mode name | **Polar fallback** — Placidus was undefined at 78°N, so the line names what drew the cusps |
+
+![Synastry chart printing the relationship score](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_synastry_classic.svg)
+
+**Relationship score** — the value and its band, in one of the two panel rows a
+synastry leaves empty.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
