@@ -473,3 +473,41 @@ RefineFlag = Annotated[
         rich_help_panel="Series",
     ),
 ]
+
+# ── Dispatcher (`kerykeion call`) flags ──────────────────────────────────────
+ListFlag = Annotated[
+    Optional[bool],
+    typer.Option("--list", help="List the call targets available (Factory.method / function)."),
+]
+JsonListFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--json",
+        help="With --list: emit a JSON array. With --explain: a JSON array of parameters.",
+    ),
+]
+ExplainFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--explain",
+        help="Describe every parameter of the target (cli | subject | json-only | unsupported) and exit.",
+    ),
+]
+ParamOpt = Annotated[
+    Optional[list[str]],
+    typer.Option(
+        "--param",
+        help="A method parameter as key=value (repeatable). Value is coerced to the "
+        "parameter's type; use --param key='{...}' JSON for structural types.",
+        rich_help_panel="Call",
+    ),
+]
+CallSubject2Opt = Annotated[
+    Optional[str],
+    typer.Option(
+        "-S",
+        "--subject2",
+        help="Second subject (profile): bound to the target's second subject parameter.",
+        rich_help_panel="Call",
+    ),
+]

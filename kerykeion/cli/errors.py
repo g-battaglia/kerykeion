@@ -155,9 +155,11 @@ def classify(exc: BaseException) -> ExitCode:
 
     if isinstance(exc, pydantic.ValidationError):
         return ExitCode.INVALID_INPUT
-    if isinstance(exc, (ValueError, KeyError, FileNotFoundError)):
+    if isinstance(exc, (ValueError, KeyError, FileNotFoundError, TypeError)):
         # FileNotFoundError covers ProfileNotFound (unknown -s target): a missing
-        # input file is a user-input problem, not an unexpected crash.
+        # input file is a user-input problem, not an unexpected crash. TypeError
+        # covers a wrong/missing argument to a dispatched factory (``call``),
+        # which is bad input, not a bug in the CLI.
         return ExitCode.INVALID_INPUT
     return ExitCode.UNEXPECTED
 
