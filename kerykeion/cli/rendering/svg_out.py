@@ -12,14 +12,17 @@ from __future__ import annotations
 from typing import Any
 
 _NOT_WIRED = (
-    "SVG output is produced by chart commands (natal, synastry, transit, …) "
-    "with -f svg, and is wired in the chart phase of the CLI build-out."
+    "SVG output is produced by chart commands (natal, synastry, transit, …) with "
+    "-f svg, and will be wired in a later phase of the CLI build-out. Use "
+    "-f text, -f json or -f xml for now."
 )
 
 
 def render_svg(_obj: Any) -> str:
-    raise NotImplementedError(_NOT_WIRED)
+    from kerykeion import KerykeionException
+
+    raise KerykeionException(_NOT_WIRED)
 
 
 def emit_svg(_obj: Any) -> None:
-    raise NotImplementedError(_NOT_WIRED)
+    render_svg(_obj)

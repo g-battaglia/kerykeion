@@ -20,6 +20,16 @@ from typing import Annotated, Optional
 import typer
 
 # ── Subject identity & birth data ────────────────────────────────────────────
+SubjectProfile = Annotated[
+    Optional[str],
+    typer.Option(
+        "-s",
+        "--subject",
+        help="Profile name (e.g. -s ada) or file path. Omit to build the subject "
+        "fully from the inline flags below.",
+        rich_help_panel="Subject",
+    ),
+]
 SubjectName = Annotated[
     Optional[str],
     typer.Option("--name", help="Subject display name.", rich_help_panel="Subject"),

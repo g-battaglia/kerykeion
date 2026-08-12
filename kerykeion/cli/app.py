@@ -24,9 +24,11 @@ try:
 except PackageNotFoundError:  # running from a source tree without installation
     __version__ = "0.0.0"
 
+from kerykeion.cli.typer_app import KerykeionTyper  # noqa: E402 — after stdlib import block
+
 
 def _make_app() -> typer.Typer:
-    app = typer.Typer(
+    app = KerykeionTyper(
         name="kerykeion",
         help="Command-line interface for the Kerykeion astrology library.",
         # Click/typer's pretty exception display would wrap and colorize our own
@@ -52,14 +54,33 @@ def _make_app() -> typer.Typer:
                 is_eager=True,
             ),
         ] = False,
+        traceback: Annotated[
+            bool,
+            typer.Option(
+                "--traceback",
+                help="Show a full traceback on error (default: a one-line message).",
+            ),
+        ] = False,
+        warnings_as_errors: Annotated[
+            bool,
+            typer.Option(
+                "--warnings-as-errors",
+                help="Exit 9 when any ephemeris warning or house fallback occurs.",
+            ),
+        ] = False,
     ) -> None:
+        from kerykeion.cli import errors
+
+        # These are read by later code (the error boundary, the warning emitter),
+        # so they must be set before the chosen command runs.
+        errors.set_traceback_enabled(traceback)
+        errors.set_warnings_as_errors(warnings_as_errors)
+
         # ``--version`` short-circuits before any subcommand is required.
         if version:
             typer.echo(__version__)
             raise typer.Exit(0)
         # Reached with neither --version nor a subcommand: show help and exit 0.
-        # (``no_args_is_help`` already covers the fully-bare case; this branch
-        # also catches e.g. ``kerykeion --no-color`` once that option exists.)
         if ctx.invoked_subcommand is None:
             typer.echo(ctx.get_help())
             raise typer.Exit(0)
@@ -73,9 +94,10 @@ def _register_commands(app: typer.Typer) -> None:
     Imported here (not at module top) so the groups are only loaded when the CLI
     actually runs, keeping the import-graph cold-import gate green.
     """
-    from kerykeion.cli.commands import subject
+    from kerykeion.cli.commands import charts, subject
 
     app.add_typer(subject.subject_app, name="subject")
+    app.command(name="natal")(charts.natal)
 
 
 app = _make_app()
@@ -86,6 +108,15 @@ def run() -> None:
     """Entry point invoked by :func:`kerykeion.cli.main`.
 
     ``app()`` raises ``SystemExit`` (via Click) with the command's exit code, so
-    nothing runs after this in :func:`kerykeion.cli.main`.
+    nothing runs after this in :func:`kerykeion.cli.main`. Anything that escapes
+    Click (a runtime error from the library, with pretty exceptions disabled)
+    reaches :func:`handle_uncaught` and becomes a clean, classified exit.
     """
-    app()
+    try:
+        app()
+    except SystemExit:
+        raise
+    except BaseException as exc:  # noqa: BLE001 — the whole point is to catch all
+        from kerykeion.cli.errors import handle_uncaught
+
+        handle_uncaught(exc)

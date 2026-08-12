@@ -43,64 +43,14 @@ from kerykeion.cli.options import (
 )
 from kerykeion.cli.rendering import emit, formats
 
-subject_app = typer.Typer(
+from kerykeion.cli.typer_app import KerykeionTyper
+
+subject_app = KerykeionTyper(
     name="subject",
     help="Store and inspect subject profiles (birth-data recipes).",
     no_args_is_help=True,
     add_completion=False,
 )
-
-
-def _build_flags(
-    *,
-    name: Optional[str],
-    date: Optional[str],
-    time: Optional[str],
-    seconds: Optional[int],
-    iso_utc: Optional[str],
-    lat: Optional[float],
-    lng: Optional[float],
-    tz: Optional[str],
-    city: Optional[str],
-    nation: Optional[str],
-    online: Optional[bool],
-    offline: Optional[bool],
-    altitude: Optional[float],
-    zodiac: Optional[str],
-    sidereal_mode: Optional[str],
-    houses: Optional[str],
-    perspective: Optional[str],
-    points: Optional[str],
-    fixed_stars: Optional[str],
-    with_flags: Optional[list[str]],
-    without_flags: Optional[list[str]],
-    set_flags: Optional[list[str]],
-) -> subject_resolver.SubjectFlags:
-    """Gather the per-command subject parameters into a :class:`SubjectFlags`."""
-    return subject_resolver.SubjectFlags(
-        name=name,
-        date=date,
-        time=time,
-        seconds=seconds,
-        iso_utc=iso_utc,
-        lat=lat,
-        lng=lng,
-        tz=tz,
-        city=city,
-        nation=nation,
-        online=online,
-        offline=offline,
-        altitude=altitude,
-        zodiac=zodiac,
-        sidereal_mode=sidereal_mode,
-        houses=houses,
-        perspective=perspective,
-        points=points,
-        fixed_stars=fixed_stars,
-        with_flags=with_flags or [],
-        without_flags=without_flags or [],
-        set_flags=set_flags or [],
-    )
 
 
 @subject_app.command("save")
@@ -130,7 +80,7 @@ def save(
     set_flags: SetFlags = None,  # type: ignore[assignment]
 ) -> None:
     """Build a recipe from the flags and persist it as a profile (0600)."""
-    flags = _build_flags(
+    flags = subject_resolver.build_flags(
         name=name, date=date, time=time, seconds=seconds, iso_utc=iso_utc, lat=lat,
         lng=lng, tz=tz, city=city, nation=nation, online=online, offline=offline,
         altitude=altitude, zodiac=zodiac, sidereal_mode=sidereal_mode, houses=houses,

@@ -203,6 +203,64 @@ class SubjectFlags:
     set_flags: list[str] = field(default_factory=list)
 
 
+def build_flags(
+    *,
+    name: Optional[str],
+    date: Optional[str],
+    time: Optional[str],
+    seconds: Optional[int],
+    iso_utc: Optional[str],
+    lat: Optional[float],
+    lng: Optional[float],
+    tz: Optional[str],
+    city: Optional[str],
+    nation: Optional[str],
+    online: Optional[bool],
+    offline: Optional[bool],
+    altitude: Optional[float],
+    zodiac: Optional[str],
+    sidereal_mode: Optional[str],
+    houses: Optional[str],
+    perspective: Optional[str],
+    points: Optional[str],
+    fixed_stars: Optional[str],
+    with_flags: Optional[list[str]],
+    without_flags: Optional[list[str]],
+    set_flags: Optional[list[str]],
+) -> SubjectFlags:
+    """Gather the per-command subject parameters into a :class:`SubjectFlags`.
+
+    Every subject-building command (``subject save``, ``natal``, ``synastry`` …)
+    spells the same flags in its signature; this is the single place that knows
+    how the keyword names map onto :class:`SubjectFlags` fields, so the mapping
+    cannot drift between commands.
+    """
+    return SubjectFlags(
+        name=name,
+        date=date,
+        time=time,
+        seconds=seconds,
+        iso_utc=iso_utc,
+        lat=lat,
+        lng=lng,
+        tz=tz,
+        city=city,
+        nation=nation,
+        online=online,
+        offline=offline,
+        altitude=altitude,
+        zodiac=zodiac,
+        sidereal_mode=sidereal_mode,
+        houses=houses,
+        perspective=perspective,
+        points=points,
+        fixed_stars=fixed_stars,
+        with_flags=with_flags or [],
+        without_flags=without_flags or [],
+        set_flags=set_flags or [],
+    )
+
+
 def _profile_input_dict(profile_spec: Optional[str]) -> dict[str, Any]:
     """Load a profile recipe (if any) and return its non-None input fields."""
     if profile_spec is None:
