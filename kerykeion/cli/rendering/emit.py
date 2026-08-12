@@ -49,6 +49,9 @@ def write_output(content: str, output_path: str | None = None) -> None:
 
     data = content if content.endswith("\n") else content + "\n"
     if output_path:
-        Path(output_path).write_text(data, encoding="utf-8")
+        # ``newline=""`` disables the platform default translation: on Windows
+        # the default would turn every "\n" into "\r\n", corrupting byte-exact
+        # JSON/SVG that pipelines, ``jq`` and hash-pinned checks compare against.
+        Path(output_path).write_text(data, encoding="utf-8", newline="")
     else:
         sys.stdout.write(data)

@@ -48,6 +48,12 @@ def _list_targets() -> list[dict[str, object]]:
     targets: list[dict[str, object]] = []
     for owner_name, owner in sorted(registry.public_names().items()):
         if isinstance(owner, type):
+            # Pydantic models are kept in public_names() so ``--explain`` can
+            # describe them, but they are not dispatchable (resolve_target
+            # refuses them). Listing model_validate/model_dump here would
+            # advertise targets the command cannot deliver.
+            if registry._is_pydantic_model(owner):  # type: ignore[attr-defined]
+                continue
             members = []
             for name in dir(owner):
                 if name.startswith("_"):

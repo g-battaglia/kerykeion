@@ -172,6 +172,31 @@ def _coerce_set_value(raw: str) -> Any:
     return raw
 
 
+def _coerce_set_value_typed(annotation: Any, raw: str) -> Any:
+    """Coerce a ``--set`` value for a ``ProfileInput`` field of *annotation*.
+
+    Scalar fields use :func:`_coerce_set_value` (so ``true``/``false``/``none``/
+    ints/floats still work as before). List fields (``active_points``,
+    ``active_fixed_stars`` — both ``Optional[list[str]]``) split a
+    comma-separated value, so ``--set active_points=sun,moon`` persists
+    ``["sun", "moon"]`` instead of a bare string the recipe then rejects. This
+    matches how the dedicated ``--points`` flag and ``introspect.coerce_value``
+    (``--param``) already handle lists, so the two advanced-parameter paths agree.
+    """
+    import typing
+
+    origin = typing.get_origin(annotation)
+    if origin is typing.Union:  # unwrap Optional[list[...]] -> list[...]
+        non_none = [a for a in typing.get_args(annotation) if a is not type(None)]
+        if len(non_none) == 1:
+            annotation = non_none[0]
+            origin = typing.get_origin(annotation)
+    if origin in (list, set):
+        parts = [p.strip() for p in raw.split(",") if p.strip()]
+        return origin(parts)
+    return _coerce_set_value(raw)
+
+
 # ── Flag collection ──────────────────────────────────────────────────────────
 
 
@@ -336,7 +361,7 @@ def _apply_set_flags(merged: dict[str, Any], set_flags: list[str]) -> None:
                 f"--set {key!r} is not a profile field "
                 f"(known: {', '.join(sorted(allowed))})"
             )
-        merged[key] = _coerce_set_value(raw_value)
+        merged[key] = _coerce_set_value_typed(ProfileInput.model_fields[key].annotation, raw_value)
 
 
 def merge_inputs(

@@ -91,9 +91,16 @@ def _backend_error_types() -> Tuple[Type[BaseException], ...]:
     """Hard-error types from the active ephemeris backend, best-effort.
 
     kerykeion does not yet expose a stable ``BACKEND_ERROR_TYPES`` (tracked in
-    ``MANDATORY_EVOLUTIONS.md §2``); until then we catch what we can reach. The
-    important one is Skyfield's ``EphemerisRangeError`` (a ``ValueError``
-    subclass), which we must classify before plain ``ValueError`` below.
+    ``MANDATORY_EVOLUTIONS.md §2``); until then we register the concrete
+    coverage/data error types we can reach from each backend, best-effort. The
+    important Skyfield one is ``EphemerisRangeError`` (a ``ValueError``
+    subclass), which we must classify before plain ``ValueError`` below. With the
+    v6 default ``libephemeris`` backend, its ``EphemerisRangeError`` and
+    ``DataNotFoundError`` (the base of SPK/Star/Unknown-body-not-found) are the
+    analogues — both subclass ``libephemeris.Error`` (not ``ValueError``), so
+    without this they would fall through to exit 5/4 instead of the documented
+    exit 6. Ambiguous types (input validation, polar circle, network-sealed) are
+    deliberately left out so they keep their clearer codes.
     """
     global _backend_types
     if _backend_types is not None:
@@ -105,8 +112,15 @@ def _backend_error_types() -> Tuple[Type[BaseException], ...]:
         found.append(EphemerisRangeError)
     except Exception:  # pragma: no cover - skyfield is an indirect, optional dep
         pass
+    try:
+        from libephemeris.exceptions import DataNotFoundError, EphemerisRangeError as _LibEphRangeError
+
+        found.append(_LibEphRangeError)
+        found.append(DataNotFoundError)
+    except Exception:  # pragma: no cover - libephemeris may be absent (swisseph env)
+        pass
     # TODO(BACKEND_ERROR_TYPES): once kerykeion exposes the active backend's
-    # hard-error types, extend this tuple so they map to exit 6 instead of 4.
+    # hard-error types itself, prefer that tuple over backend-specific probing.
     _backend_types = tuple(found)
     return _backend_types
 

@@ -145,14 +145,12 @@ def transits(
         raise ValueError("--step must be a positive integer.")
     # Read the natal tz from the profile recipe so the pre-flight sample count
     # is DST-aware (the library counts in the natal timezone); the heavy natal
-    # materialization only runs once the check has passed.
-    natal_tz: Optional[str] = None
-    try:
-        from kerykeion.cli import profiles as _profiles
+    # materialization only runs once the check has passed. Let a missing or
+    # unreadable profile surface now (clear exit 4) rather than swallowing the
+    # error and falling through to an unrelated sampling-limit message.
+    from kerykeion.cli import profiles as _profiles
 
-        natal_tz = _profiles.load(_profiles.resolve_path(profile)).input.tz_str
-    except Exception:
-        pass
+    natal_tz: Optional[str] = _profiles.load(_profiles.resolve_path(profile)).input.tz_str
     if not no_limit:
         check_ephemeris_sampling(start, end, stype, step_n, tz_str=natal_tz)
 

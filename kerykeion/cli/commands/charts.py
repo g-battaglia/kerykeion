@@ -190,14 +190,21 @@ def transit(
 ) -> None:
     """Transit dual wheel: natal (inner) vs a transit moment (outer).
 
-    The transit moment defaults to now at the given coordinates; pass
-    ``--to-date`` (and optionally ``--to-time``) for a specific moment.
+    The transit moment defaults to now at the natal birthplace (offline), so
+    ``transit -s ada`` works without re-typing coordinates. Pass ``--lat``/
+    ``--lng``/``--tz`` for a relocated transit, or ``--city --online`` to
+    geocode. For a specific moment, pass ``--to-date`` and ``--to-time``
+    together; omit both for the current moment.
     """
     if not profile:
         raise ValueError("transit needs -s <profile> for the natal subject")
     if to_time is not None and to_date is None:
         raise ValueError(
             "--to-time requires --to-date (omit both to transit the current moment)."
+        )
+    if to_date is not None and to_time is None:
+        raise ValueError(
+            "--to-date also requires --to-time (omit both to transit the current moment)."
         )
     from kerykeion import ChartDataFactory
 
@@ -206,15 +213,18 @@ def transit(
     )
     # The transit moment is a minimal subject: just a place and a moment. No
     # zodiac/points/houses overrides — those follow the natal chart's settings
-    # via the dual-wheel rendering. Build the flags directly rather than via
-    # build_flags(), which would require spelling every keyword-only argument.
+    # via the dual-wheel rendering. Location defaults to the natal birthplace
+    # (offline) when no inline coord is given, mirroring `return`; override with
+    # --lat/--lng/--tz for a relocated transit. Build the flags directly rather
+    # than via build_flags(), which would require spelling every keyword-only
+    # argument.
     transit_flags = subject_resolver.SubjectFlags(
         name="Transit",
         date=to_date,
         time=to_time,
-        lat=lat,
-        lng=lng,
-        tz=tz,
+        lat=lat if lat is not None else getattr(natal, "lat", None),
+        lng=lng if lng is not None else getattr(natal, "lng", None),
+        tz=tz if tz is not None else getattr(natal, "tz_str", None),
         city=city,
         nation=nation,
         online=online,

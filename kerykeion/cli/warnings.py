@@ -131,9 +131,20 @@ def output_with_warnings(obj: Any, fmt: str, output: str | None) -> None:
     from kerykeion.cli.rendering import emit
 
     eph, polar = collect_warnings(obj)
+    # The payload is rendered and written first, but a render crash (e.g. SVG on
+    # a non-chart object) must NOT silently bypass ``--warnings-as-errors``. Hold
+    # the render error, always emit warnings in the ``finally``, then: if there
+    # are fatal warnings, exit 9 (honouring the user's explicit choice over the
+    # secondary render failure); only otherwise re-raise the render error so it
+    # reaches the error boundary as normal.
+    render_error = None
     try:
         emit.write_output(emit.render(obj, fmt), output)
+    except Exception as exc:  # noqa: BLE001 — held, not swallowed
+        render_error = exc
     finally:
         emit_warnings(eph, polar)
     if (eph or polar) and errors.warnings_as_errors():
         raise SystemExit(int(errors.ExitCode.WARNINGS_AS_ERRORS))
+    if render_error is not None:
+        raise render_error

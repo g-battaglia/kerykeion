@@ -548,3 +548,153 @@ class TestNoExtraFallback:
         r = self._run(["status", "--bogus"])
         assert r.returncode == 4, r.stderr
         assert "Traceback" not in r.stderr
+
+
+# ── second code-review pass (PR #249) ────────────────────────────────────────
+
+
+class TestCodeReviewFixes:
+    """Regressions surfaced by the v6 CLI code-review pass.
+
+    Each test names the review finding it pins (``# Fn``). Findings deferred as
+    out-of-scope or wontfix-by-design (Click-in-NOTICE, test:core without the
+    extra, ``**kwargs`` dispatch with no current caller) are documented in the PR
+    comment, not here.
+    """
+
+    # F1: a Union-typed subject parameter (AstrologicalSubjectModel |
+    # CompositeSubjectModel | PlanetReturnModel, as in AspectsFactory) must still
+    # be recognised as a -s binding site, not misclassified json-only.
+    def test_union_subject_param_is_recognised(self):
+        from kerykeion.cli import introspect, registry
+
+        target = registry.resolve_target("AspectsFactory.single_chart_aspects")
+        classes = [p.classification for p in introspect.explain(target)]
+        assert introspect.SUBJECT in classes
+
+    def test_call_aspects_binds_subject_flag(self, runner, app, ada_profile):
+        # Before the fix this raised "has no subject parameter; -s is not used
+        # here." Now -s binds; the call may need more, but never that message.
+        r = runner.invoke(app, ["call", "AspectsFactory.single_chart_aspects", "-s", "ada"])
+        assert "no subject parameter" not in r.output
+        assert "Traceback" not in r.output
+
+    # F2: --to-date without --to-time is the symmetric case of the already-tested
+    # --to-time-without---to-date; it must not fall through to the misleading
+    # "birth mode needs --time / use kerykeion now".
+    def test_transit_to_date_requires_to_time(self, runner, app, ada_profile):
+        r = runner.invoke(app, ["transit", "-s", "ada", "--to-date", "2025-06-01"])
+        assert r.exit_code == 4
+        assert "--to-time" in r.output
+        assert "kerykeion now" not in r.output
+
+    # F3: --set on a list-typed profile field (active_points) must coerce to a
+    # list, matching --points / --param, not store a string the recipe rejects.
+    def test_set_active_points_is_coerced_to_list(self, runner, app, deterministic_cli_env):
+        from kerykeion.cli import profiles
+
+        r = runner.invoke(app, [
+            "subject", "save", "bod",
+            "--name", "Bod", "--date", "2000-01-01", "--time", "12:00",
+            "--lat", "0", "--lng", "0", "--tz", "UTC", "--offline",
+            "--set", "active_points=sun,moon",
+        ])
+        assert r.exit_code == 0, r.output
+        assert profiles.load(profiles.resolve_path("bod")).input.active_points == ["sun", "moon"]
+
+    # F8: a partially-supplied --lat (no --lng) must not silently trigger a
+    # global eclipse search that ignores the coordinate.
+    def test_sky_eclipses_partial_coord_is_rejected(self, runner, app):
+        r = runner.invoke(app, ["sky", "eclipses", "--lat", "48.14"])
+        assert r.exit_code == 4
+        assert "--lat" in r.output and "--lng" in r.output
+
+    # F10: transit -s ada (no inline coords) defaults the transit moment to the
+    # natal birthplace and stays offline, instead of going online with an empty
+    # GeoNames query.
+    def test_transit_inherits_natal_coords_offline(self, runner, app, ada_profile):
+        r = runner.invoke(app, ["transit", "-s", "ada"])
+        assert r.exit_code == 0, r.output
+        assert r.output  # a transit chart was produced
+
+    # F12: --warnings-as-errors must not be bypassed when the renderer itself
+    # crashes; the warnings are fatal (exit 9) even then.
+    def test_warnings_as_errors_survives_render_crash(self, monkeypatch):
+        import kerykeion.cli.rendering.emit as _emit
+        from kerykeion.cli import errors, warnings
+
+        class _Obj:
+            ephemeris_warnings = ["fake"]
+            polar_house_fallbacks = None
+
+        def _boom(*a, **k):
+            raise RuntimeError("render exploded")
+
+        errors.set_warnings_as_errors(True)
+        try:
+            monkeypatch.setattr(_emit, "render", _boom)
+            with pytest.raises(SystemExit) as ei:
+                warnings.output_with_warnings(_Obj(), "svg", None)
+            assert ei.value.code == int(errors.ExitCode.WARNINGS_AS_ERRORS)
+        finally:
+            errors.set_warnings_as_errors(False)
+
+    # F15: call --list must not advertise pydantic-model methods (model_validate,
+    # model_dump) that resolve_target refuses to dispatch.
+    def test_call_list_omits_pydantic_models(self, runner, app):
+        r = runner.invoke(app, ["call", "--list", "--json"])
+        assert r.exit_code == 0, r.output
+        owners = {entry["owner"] for entry in json.loads(r.output)}
+        assert "AstrologicalSubjectModel" not in owners
+
+    # F9: a libephemeris coverage/data error maps to exit 6 (ephemeris), not 5/4.
+    def test_libephemeris_range_error_is_exit_six(self):
+        from kerykeion.cli import errors
+
+        try:
+            from libephemeris import EphemerisRangeError
+        except ImportError:
+            pytest.skip("libephemeris not installed")
+        errors._backend_types = None  # rebuild the cached tuple for this test
+        try:
+            assert errors.classify(EphemerisRangeError("out of range")) is errors.ExitCode.EPHEMERIS
+        finally:
+            errors._backend_types = None  # rebuild normally afterwards
+
+    # F11: main(argv) must honor an explicit argv on the typer path (Click reads
+    # sys.argv, so without the swap a passed argv is silently ignored).
+    def test_main_honors_explicit_argv(self, monkeypatch):
+        from kerykeion.cli import main
+
+        # If argv were ignored, Click would see this bogus command line and exit
+        # 2 (unknown command). A 0 means the explicit argv won.
+        monkeypatch.setattr(sys, "argv", ["kerykeion", "definitely-not-a-command"])
+        with pytest.raises(SystemExit) as ei:
+            main(["--version"])
+        assert ei.value.code == 0
+
+    # F7: -o files keep LF endings on every platform (no CRLF translation), so
+    # byte-exact JSON/SVG survives a Windows save for jq/diff.
+    def test_output_file_uses_lf(self, tmp_path):
+        from kerykeion.cli.rendering.emit import write_output
+
+        out = tmp_path / "o.json"
+        write_output("a\nb", str(out))
+        assert out.read_bytes() == b"a\nb\n"
+
+    # F6: a saved profile is UTF-8 with LF endings and round-trips, even with a
+    # non-ASCII name (the Windows cp1252 default would otherwise raise).
+    def test_profile_save_is_utf8_lf_and_round_trips(self, runner, app, deterministic_cli_env):
+        from kerykeion.cli import profiles
+
+        r = runner.invoke(app, [
+            "subject", "save", "maja",
+            "--name", "München", "--date", "2000-01-01", "--time", "12:00",
+            "--lat", "0", "--lng", "0", "--tz", "UTC", "--offline",
+        ])
+        assert r.exit_code == 0, r.output
+        path = profiles.resolve_path("maja")
+        raw = path.read_bytes()
+        assert b"\r\n" not in raw  # LF only, no platform translation
+        assert "München".encode("utf-8") in raw  # UTF-8, not cp1252-mangled
+        assert profiles.load(path).input.name == "München"

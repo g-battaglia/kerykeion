@@ -151,7 +151,18 @@ def main(argv: list[str] | None = None) -> int:
             if exc.name in {"typer", "rich"}:
                 return _stdlib_dispatch(args)
             raise
-        run()
+        # Click reads ``sys.argv`` directly, so an explicit *argv* (programmatic
+        # callers, ``python -m`` tests) must be swapped in for the call. The
+        # console-script path (argv is None) uses the real command line as-is.
+        if argv is not None:
+            saved = sys.argv
+            sys.argv = ["kerykeion", *args]
+            try:
+                run()
+            finally:
+                sys.argv = saved
+        else:
+            run()
         return 0
 
     return _stdlib_dispatch(args)

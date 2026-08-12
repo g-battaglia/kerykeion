@@ -233,7 +233,7 @@ ToDateOpt = Annotated[
     Optional[str],
     typer.Option(
         "--to-date",
-        help="Transit date YYYY-MM-DD. Omit (with --now) for the current moment.",
+        help="Transit date YYYY-MM-DD. Give with --to-time; omit both for the current moment.",
         rich_help_panel="Transit",
     ),
 ]

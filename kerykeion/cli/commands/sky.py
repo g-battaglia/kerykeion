@@ -217,6 +217,12 @@ def eclipses(
     from kerykeion import EclipseFactory
 
     extra = _zodiac_kwargs(zodiac, sidereal_mode)
+    # A partially-supplied location (only one of --lat/--lng) is almost certainly
+    # a typo; don't silently fall back to a global search that ignores the coord.
+    if (lat is None) != (lng is None):
+        raise ValueError(
+            "eclipses needs both --lat and --lng (or neither, for a global search)."
+        )
     has_loc = (lat is not None and lng is not None) or profile is not None
     if has_loc:
         la, lo = _latlng(profile, lat, lng, "eclipses")

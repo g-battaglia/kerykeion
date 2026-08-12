@@ -20,7 +20,7 @@ from __future__ import annotations
 import difflib
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -90,7 +90,9 @@ class ProfileNotFound(FileNotFoundError):
 
 
 def _now_iso() -> str:
-    return datetime.now().isoformat(timespec="seconds")
+    # Aware UTC so ``created_at`` carries an offset and reads identically in
+    # every timezone, instead of a naive local wall time.
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def make_meta() -> dict[str, Any]:
@@ -117,7 +119,11 @@ def save(path: Path, profile: Profile) -> None:
     data = profile.model_dump_json(indent=2)
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     try:
-        handle = os.fdopen(fd, "w")
+        # Pin UTF-8 and LF: the locale default encoding would raise
+        # UnicodeEncodeError on a non-ASCII name under Windows cp1252, and the
+        # default newline translation would write CRLF — both breaking the
+        # round-trip with load(), which reads UTF-8. Matches write_output().
+        handle = os.fdopen(fd, "w", encoding="utf-8", newline="\n")
     except Exception:
         os.close(fd)
         raise

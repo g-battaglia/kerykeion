@@ -54,6 +54,30 @@ exit-code-classification path it could reach:
   past the ceiling into the wrong exit code.
 - A typoed `call --param` is rejected up front (was silently dropped for
   instance-method targets, running the factory with defaults).
+- A second review pass closed a further round of CLI correctness gaps:
+  - `call -s` now binds a `Union`-typed subject parameter (every
+    `AspectsFactory` method, and any `AstrologicalSubjectModel | …` param),
+    which was misclassified and rejected as "has no subject parameter".
+  - `transit -s <profile>` defaults the transit moment to the natal birthplace
+    (offline) instead of going online with an empty location query; `--to-date`
+    without `--to-time` is now a clean exit 4 (was a misleading "use `kerykeion
+    now`"), and the `--to-date` help no longer references a nonexistent `--now`.
+  - `--set active_points=sun,moon` (and `active_fixed_stars`) is coerced to a
+    list, matching `--points`/`--param`, instead of failing recipe validation.
+  - `sky eclipses` with only one of `--lat`/`--lng` is rejected, not silently
+    routed to a global search that ignores the coordinate.
+  - `call --list` no longer advertises Pydantic-model methods (`model_validate`,
+    `model_dump`, …) it refuses to dispatch.
+  - `--warnings-as-errors` is honoured even when the renderer itself crashes
+    (the render error is held; exit 9 still fires when warnings are present).
+  - `-o` files and saved profiles are written UTF-8 with LF endings on every
+    platform (no cp1252 `UnicodeEncodeError` on non-ASCII names; no CRLF
+    corruption of byte-exact JSON/SVG), and `created_at` is now UTC-aware.
+  - libephemeris coverage/data errors (`EphemerisRangeError`, `DataNotFoundError`)
+    map to exit 6 (ephemeris), not 5/4.
+  - `transits` no longer swallows a missing/unreadable profile behind a bare
+    `except` (clean exit 4 up front); `main(argv)` honours an explicit `argv`
+    on the Typer path, not only on the no-extra path.
 
 ## 6.0.0a84 - 2026-08-12
 

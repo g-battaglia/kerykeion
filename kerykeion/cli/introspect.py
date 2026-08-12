@@ -58,7 +58,18 @@ def _strip_optional(annotation: Any) -> Any:
 
 
 def _is_subject(annotation: Any) -> bool:
-    return getattr(annotation, "__name__", None) == "AstrologicalSubjectModel"
+    if getattr(annotation, "__name__", None) == "AstrologicalSubjectModel":
+        return True
+    # A subject parameter is frequently typed as a Union of the subject-like
+    # models — ``AstrologicalSubjectModel | CompositeSubjectModel |
+    # PlanetReturnModel`` (see ``kerykeion/aspects/factory.py``). A Union has no
+    # ``__name__``, so the plain check above misses it and the parameter would be
+    # misclassified JSON_ONLY, breaking ``call -s`` for every such target. Treat
+    # a Union as a subject binding site when any arm is one.
+    origin = get_origin(annotation)
+    if origin is Union:
+        return any(_is_subject(arg) for arg in get_args(annotation))
+    return False
 
 
 def _is_pydantic_model(annotation: Any) -> bool:
