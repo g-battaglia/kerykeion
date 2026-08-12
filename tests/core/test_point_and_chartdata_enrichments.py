@@ -104,10 +104,21 @@ def test_real_mercury_stations_are_named(year, month, day, expected):
 
 
 def test_points_carry_motion_state(john_lennon):
+    """The stored state agrees with a fresh classification of the stored speed.
+
+    Compared against the sampler-less call, which resolves a station only as
+    far as ``stationary``: the subject factory has an ephemeris to consult and
+    can name the turn, so a body at a station is allowed to be more specific
+    than this recomputation, and only that.
+    """
     for field in ("sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"):
         point = getattr(john_lennon, field)
         assert point.motion_state is not None
-        assert point.motion_state == classify_motion_state(str(point.name), point.speed)
+        recomputed = classify_motion_state(str(point.name), point.speed)
+        if recomputed == "stationary":
+            assert point.motion_state in ("stationary", "stationary_retrograde", "stationary_direct")
+        else:
+            assert point.motion_state == recomputed
     # The Sun is never retrograde; on a real chart it is not stationary either.
     assert john_lennon.sun.motion_state in ("slow", "average", "fast")
 
