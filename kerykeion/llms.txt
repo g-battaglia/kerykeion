@@ -353,7 +353,8 @@ full/wheel-only output.
 -   `kr:declination` — degrees, 4 decimals
 -   `kr:oob` — `"true"`, only when the body IS out of bounds
 -   `kr:magnitude`, `kr:nearpoint`, `kr:orb` — fixed stars
--   `kr:angularity` + `kr:angularitydistance` — the angle the point stands on
+-   `kr:angularity` — every angle the point stands on, as space-separated
+    `Angle:distance` pairs, closest first (a point near the poles can stand on two)
 -   `kr:stellium` — the house of the stellium the point belongs to
 
 An attribute is absent when the model does not carry the value: silence means

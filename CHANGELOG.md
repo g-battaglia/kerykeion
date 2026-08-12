@@ -4,6 +4,16 @@
 
 ### Changed
 
+- **`kr:angularity` carries every angle a point stands on, and
+  `kr:angularitydistance` is gone.** The value is now a space-separated list of
+  `Angle:distance` pairs, closest first — `Ascendant:0.8991 Medium_Coeli:4.3156`.
+  Near the poles the Ascendant and the Midheaven close on each other and a
+  planet can sit within orb of both, which a scalar pair of attributes could
+  only express by repeating the attribute names — invalid XML. `ChartPointTag`
+  exposes the pairs already split as `angularities`.
+
+### Changed
+
 - **The stationary band is symmetric, and the two stations are named.**
   `MotionState` gains `"stationary_retrograde"` and `"stationary_direct"`. The
   band of < 5% of mean daily motion now brackets zero on both sides and is

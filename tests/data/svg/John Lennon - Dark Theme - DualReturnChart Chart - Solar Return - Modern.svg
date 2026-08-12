@@ -607,7 +607,7 @@
 <g kr:node='Indicator' kr:slug='Ascendant' kr:absoluteposition='206.04731420732583' kr:horoscope='1' transform='rotate(-186.300547 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Sco' kr:absoluteposition='213.90388345449603' kr:signposition='3.9038834544960253' kr:slug='Mercury' kr:horoscope='1' kr:motionstate='average' kr:speed='1.473379' kr:declination='-13.8464' kr:cx='515.5570905953311' kr:cy='245.71701141857415' transform='rotate(-194.157116 50.0 50.0)' kr:projectedhouse='Seventh_House' kr:projectedhoroscope='0' kr:angularity='Ascendant' kr:angularitydistance='7.8566'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Sco' kr:absoluteposition='213.90388345449603' kr:signposition='3.9038834544960253' kr:slug='Mercury' kr:horoscope='1' kr:motionstate='average' kr:speed='1.473379' kr:declination='-13.8464' kr:cx='515.5570905953311' kr:cy='245.71701141857415' transform='rotate(-194.157116 50.0 50.0)' kr:projectedhouse='Seventh_House' kr:projectedhoroscope='0' kr:angularity='Ascendant:7.8566'>
   <g transform='translate(50.0 9.0) rotate(284.157116) scale(0.115) translate(-14 -14)'>
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>
@@ -837,7 +837,7 @@
 <g kr:node='Indicator' kr:slug='True_North_Lunar_Node' kr:absoluteposition='191.024247807456' kr:horoscope='0' transform='rotate(-171.277481 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:horoscope='0' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='461.2214907536599' kr:cy='297.2817428861739' transform='rotate(-176.562388 50.0 50.0)' kr:projectedhouse='Twelfth_House' kr:projectedhoroscope='1' kr:angularity='Descendant' kr:angularitydistance='3.4789' kr:stellium='6'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:horoscope='0' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='461.2214907536599' kr:cy='297.2817428861739' transform='rotate(-176.562388 50.0 50.0)' kr:projectedhouse='Twelfth_House' kr:projectedhoroscope='1' kr:angularity='Descendant:3.4789' kr:stellium='6'>
   <g transform='translate(50.0 22.5) rotate(266.562388) scale(0.10450000000000001) translate(-14 -14)'>
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='var(--kerykeion-chart-color-sun)' />
   </g>

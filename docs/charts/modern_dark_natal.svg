@@ -442,7 +442,7 @@
 <g kr:node='Indicator' kr:slug='True_North_Lunar_Node' kr:absoluteposition='191.024247807456' transform='rotate(-171.313119 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='#4e607d' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='511.9130998928288' kr:cy='300.3437063588573' transform='rotate(-176.556766 50.0 50.0)' kr:angularity='Descendant' kr:angularitydistance='3.4432' kr:stellium='6'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='511.9130998928288' kr:cy='300.3437063588573' transform='rotate(-176.556766 50.0 50.0)' kr:angularity='Descendant:3.4432' kr:stellium='6'>
   <g transform='translate(50.0 11.0) rotate(266.556766) scale(0.14850000000000002) translate(-14 -14)'>
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='#f4bf50' />
   </g>

@@ -941,8 +941,9 @@ data or tables are disabled.
 Each point also carries the physical state the model computed for it —
 `kr:motionstate`, `kr:speed`, `kr:declination`, `kr:oob` when the body is out of
 bounds, plus `kr:magnitude`, `kr:nearpoint` and `kr:orb` on fixed stars — and the
-chart-level analyses it takes part in: `kr:angularity` with
-`kr:angularitydistance`, and `kr:stellium`. None of these are gated by a
+chart-level analyses it takes part in: `kr:angularity` (one attribute listing
+every angle the point stands on, as `Ascendant:0.8991 Medium_Coeli:4.3156`,
+closest first) and `kr:stellium`. None of these are gated by a
 rendering option; the opt-in marks above only decide whether a reader sees them
 drawn. An attribute is **absent** when the model does not carry the value, so
 silence means "this chart does not compute it" rather than zero or false — a

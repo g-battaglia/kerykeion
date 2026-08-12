@@ -4,6 +4,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import logging
+import math
 import re
 from functools import lru_cache
 from math import ceil
@@ -87,6 +88,7 @@ from kerykeion.charts.utils import (
     format_datetime_with_timezone,
     draw_house_sectors,
     convert_decimal_to_degree_string,
+    gauquelin_column_width,
 )
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.charts.draw_modern import (
@@ -270,6 +272,15 @@ class CircleRadiiConfig:
 # language. When the line is not drawn, nothing moves at all.
 DIURNALITY_GLYPH_DROP: int = 14
 
+# The geometry the paragraph above describes, as numbers the code can use.
+_WHEEL_CENTRE_X: float = 340.0
+_WHEEL_CENTRE_Y: float = 290.0
+_WHEEL_RADIUS: float = 240.0
+_INFO_ROW_FIRST_Y: float = 452.0
+_INFO_ROW_STEP: float = 14.0
+_INFO_ROW_TEXT_X: float = 20.0
+_INFO_ROW_TEXT_RISE: float = 10.0
+
 # How much clear width row 5 really has, and it is not the 258.6px the chord
 # gives at the baseline: the chord narrows going *upward*, and text rises above
 # its baseline. Ideographs fill the em box, so the binding measurement is the
@@ -279,6 +290,25 @@ DIURNALITY_GLYPH_DROP: int = 14
 # sits a little under the geometry, since the estimator below is close to the
 # truth rather than wildly conservative and the last pixel is not worth having.
 DIURNALITY_ROW_CLEAR_WIDTH: float = 228.0
+
+
+def info_row_clear_width(row_index: int) -> float:
+    """Clear width in px available to bottom-left row *row_index*, at 10px text.
+
+    Derived from the geometry described above rather than tabulated, so the two
+    cannot drift: the rows sit inside the wheel's chord, the chord narrows going
+    upward, and text rises about 10px above its baseline — so the binding
+    measurement for a row drawn at ``y`` is the chord at ``y - 10``.
+
+    The spread is wide enough to matter. Row 5 has 229px and row 0 only 134,
+    which is why a line that fits at the bottom of the panel can run under the
+    wheel at the top of it. Anything written into these rows should be measured
+    against its own row, never against the roomiest one.
+    """
+    baseline_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * row_index
+    measured_y = baseline_y - _INFO_ROW_TEXT_RISE
+    half_chord = math.sqrt(_WHEEL_RADIUS**2 - (measured_y - _WHEEL_CENTRE_Y) ** 2)
+    return (_WHEEL_CENTRE_X - half_chord) - _INFO_ROW_TEXT_X
 
 
 def truncate_to_width(text: str, budget: float, ellipsis_symbol: str = "…", font_size: float = 10.0) -> str:
@@ -639,7 +669,7 @@ class InfoSectionBuilder:
         """Build the zodiac/ayanamsa info string."""
         return self.drawer._get_zodiac_info()
 
-    def _translated_house_system(self, subject) -> str:
+    def _translated_house_system(self, subject, terse: bool = False) -> str:
         """Translate the effective house system of one wheel.
 
         Near the poles the requested system can be undefined, and the subject
@@ -651,34 +681,89 @@ class InfoSectionBuilder:
         house_key = "houses_system_" + subject.effective_houses_system_identifier
         name = self._translate(house_key, subject.effective_houses_system_name)
         if self.drawer.show_polar_fallback_note and subject._main_house_fallback() is not None:
-            name += f"* ({self._translate('polar_fallback', 'polar fallback')})"
+            name += "*" if terse else f"* ({self._translate('polar_fallback', 'polar fallback')})"
         return name
 
-    def _translated_house_systems(self, subject, second_subject=None) -> str:
-        """Translate one system, or both when a dual wheel uses different ones."""
-        first_system = self._translated_house_system(subject)
-        if (
-            second_subject is not None
-            and second_subject.effective_houses_system_identifier != subject.effective_houses_system_identifier
-        ):
-            return f"{first_system} / {self._translated_house_system(second_subject)}"
+    def _translated_house_systems(self, subject, second_subject=None, terse: bool = False) -> str:
+        """Translate one system, or both when the two wheels do not tell the same story.
+
+        Landing on the same system is not the same as having asked for it. One
+        wheel can use Porphyry natively while the other asked for Placidus and
+        was given Porphyry at a polar latitude — identical effective
+        identifiers, different facts. Collapsing on the identifier alone would
+        print one unqualified name and hide the substitution entirely, so the
+        rendered names are what decide: they already carry the fallback mark.
+        """
+        first_system = self._translated_house_system(subject, terse=terse)
+        if second_subject is None:
+            return first_system
+        second_system = self._translated_house_system(second_subject, terse=terse)
+        if second_system != first_system:
+            return f"{first_system} / {second_system}"
         return first_system
 
-    def build_domification_info(self, second_subject=None) -> str:
+    def _marks_a_polar_fallback(self, subject, second_subject=None) -> bool:
+        """Whether this row is about to gain a fallback mark from either wheel."""
+        if not self.drawer.show_polar_fallback_note:
+            return False
+        subjects = [subject] + ([second_subject] if second_subject is not None else [])
+        return any(s is not None and s._main_house_fallback() is not None for s in subjects)
+
+    def _fit_house_row(self, compose, subject, second_subject, row_index: int) -> str:
+        """Compose a house-system row, shedding the fallback wording before the words break.
+
+        The spelled-out note is worth the room when there is room: at row 1 the
+        wheel leaves ~147px and "Domification: Porphyry* (polar fallback)" wants
+        180. Cutting that mid-word would leave "(pol…", which reads as damage
+        rather than as a deliberate mark, so the row drops to the bare asterisk
+        instead — keeping the one thing it must not lose, that a substitution
+        happened. The truncation below is a floor no shipped translation reaches.
+
+        The measuring only happens when a mark is actually being added. A dual
+        wheel naming two different systems already ran a few pixels past this
+        row before the option existed, and it is not this feature's place to
+        start truncating that: with nothing to mark, the row is returned exactly
+        as it was.
+        """
+        verbose = compose(False)
+        if not self._marks_a_polar_fallback(subject, second_subject):
+            return verbose
+
+        budget = info_row_clear_width(row_index)
+        if estimate_text_width(verbose) <= budget:
+            return verbose
+        terse = compose(True)
+        if estimate_text_width(terse) <= budget:
+            return terse
+        return truncate_to_width(terse, budget)
+
+    def build_domification_info(self, second_subject=None, row_index: int = 1) -> str:
         """Build the domification string, including both differing dual-wheel systems."""
-        systems = self._translated_house_systems(self.drawer.first_obj, second_subject)
-        return f"{self._translate('domification', 'Domification')}: {systems}"
+        label = self._translate("domification", "Domification")
+        first = self.drawer.first_obj
+        return self._fit_house_row(
+            lambda terse: f"{label}: {self._translated_house_systems(first, second_subject, terse=terse)}",
+            first,
+            second_subject,
+            row_index,
+        )
 
     def build_perspective_info(self, subject) -> str:
         """Build the perspective type string."""
         return self.drawer._get_perspective_string(subject)
 
-    def build_houses_system_info(self, subject, second_subject=None) -> str:
+    def build_houses_system_info(self, subject, second_subject=None, row_index: int = 1) -> str:
         """Build compact house-system text, including a differing second wheel."""
         # The system the cusps came from, not the one requested: the compact
         # renderers label dual wheels and returns, where a polar chart would
         # otherwise read as the system it could not actually be cast in.
-        return f"{self._translated_house_systems(subject, second_subject)} {self._translate('houses', 'Houses')}"
+        houses = self._translate("houses", "Houses")
+        return self._fit_house_row(
+            lambda terse: f"{self._translated_house_systems(subject, second_subject, terse=terse)} {houses}",
+            subject,
+            second_subject,
+            row_index,
+        )
 
     def build_lunar_phase_info(
         self,
@@ -760,28 +845,35 @@ class InfoSectionBuilder:
             return ""
         return f"{self._translate('diurnality', 'Diurnality')}: {value}"
 
-    def build_relationship_score_info(self) -> str:
-        """Build the synastry relationship-score line.
+    def build_relationship_score_info(self) -> tuple[str, str]:
+        """Build the synastry relationship-score rows: the value, then its band.
 
-        Returns ``""`` unless the option is on AND the chart data actually
-        carries a score: ``create_synastry_chart_data`` computes one by
+        Returns two empty strings unless the option is on AND the chart data
+        actually carries a score: ``create_synastry_chart_data`` computes one by
         default, but the generic factory does not, and a chart drawn from the
         generic path must print nothing rather than a zero it never measured.
 
-        The score is a count of weighted contacts, so the number travels with
-        its band ("Exceptional") — the number alone means nothing without the
-        scale it sits on.
+        Two rows rather than one because of where they sit. The score is a count
+        of weighted contacts, so the number means nothing without the band it
+        falls in — but a synastry panel's first row has only ~134px of clear
+        width before the wheel, and "Relationship Score: 12 (Important)" needs
+        156 even in English. A synastry leaves rows 0 and 1 both empty, so the
+        pair fits with room to spare in every shipped language instead of one
+        row being truncated in most of them.
         """
         if not self.drawer.show_relationship_score:
-            return ""
+            return "", ""
         score = getattr(self.drawer.chart_data, "relationship_score", None)
         if score is None:
-            return ""
+            return "", ""
 
         label = self._translate("relationship_score", "Relationship Score")
         description_key = "relationship_score_" + str(score.score_description).lower().replace(" ", "_")
         description = self._translate(description_key, str(score.score_description))
-        return f"{label}: {score.score_value} ({description})"
+        return (
+            truncate_to_width(f"{label}: {score.score_value}", info_row_clear_width(0)),
+            truncate_to_width(str(description), info_row_clear_width(1)),
+        )
 
     @staticmethod
     def _is_symbolic_direction(first, second) -> bool:
@@ -1506,12 +1598,12 @@ class SynastryChartRenderer(BaseChartRenderer):
         template_dict["top_left_4"] = f"{d.second_obj.city}, {d.second_obj.nation}"
         template_dict["top_left_5"] = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
 
-        # Bottom left section. Rows 0 and 1 are the synastry panel's spare
-        # ones — the score can take the first without moving anything else.
-        template_dict["bottom_left_0"] = builder.build_relationship_score_info()
-        template_dict["bottom_left_1"] = ""
+        # Bottom left section. Rows 0 and 1 are the synastry panel's spare ones,
+        # and the score takes both: the value on the first, its band on the
+        # second. Nothing else moves.
+        template_dict["bottom_left_0"], template_dict["bottom_left_1"] = builder.build_relationship_score_info()
         template_dict["bottom_left_2"] = builder.build_zodiac_info()
-        template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj, d.second_obj)
+        template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj, d.second_obj, row_index=3)
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
         # Both natals keep their own sect: a placement that is in sect for one
         # partner can be out of sect for the other, which is precisely what a
@@ -2912,7 +3004,6 @@ class ChartDrawer:  # type: ignore[no-redef]
             return 0
 
         from kerykeion.charts.utils import (
-            _GAUQUELIN_COLUMN_WIDTH,
             _GAUQUELIN_MAX_ROWS,
             _GRID_COLUMN_WIDTH,
             _SECOND_COLUMN_THRESHOLD,
@@ -2934,7 +3025,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
             if n_gauq <= _GAUQUELIN_MAX_ROWS:
                 return 0
-            col_width = _GAUQUELIN_COLUMN_WIDTH
+            col_width = gauquelin_column_width(self._gauquelin_grid_carries_oob_badges())
             thresholds = _gauquelin_grid_thresholds(n_gauq)
             n = n_gauq
         else:
@@ -3656,9 +3747,9 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if has_gauquelin:
             # Unified Gauquelin grid replaces both planet and house grids
-            from kerykeion.charts.utils import _GAUQUELIN_COLUMN_WIDTH
-
-            main_grid_right = 645 + grid_shift + _GAUQUELIN_COLUMN_WIDTH
+            main_grid_right = 645 + grid_shift + gauquelin_column_width(
+                self._gauquelin_grid_carries_oob_badges()
+            )
             extents.append(main_grid_right)
         else:
             main_planet_grid_right = 645 + grid_shift + 80
@@ -4108,7 +4199,22 @@ class ChartDrawer:  # type: ignore[no-redef]
             # The mode names the convention; the offset says where it actually
             # put the zodiac for this date, which is what differs between two
             # charts drawn under the same ayanamsa centuries apart.
+            #
+            # That difference is exactly why a dual wheel cannot always show
+            # one: this line has no ring label, so printing the first subject's
+            # offset on a chart whose second subject has another one states
+            # something false about the outer wheel. The rendered strings are
+            # what is compared rather than the floats — two offsets that round
+            # to the same degrees and minutes are the same claim on this line,
+            # and hiding the value for a difference no reader could see would
+            # be its own kind of dishonesty.
             value = getattr(self.first_obj, "ayanamsa_value", None)
+            if self.show_ayanamsa_value and value is not None and self.second_obj is not None:
+                second_value = getattr(self.second_obj, "ayanamsa_value", None)
+                if second_value is None or convert_decimal_to_degree_string(
+                    second_value, "2"
+                ) != convert_decimal_to_degree_string(value, "2"):
+                    return line
             if self.show_ayanamsa_value and value is not None:
                 # Degrees and minutes, not seconds: the info panel escapes its
                 # own text, and the seconds symbol is already an entity — it
@@ -5289,10 +5395,18 @@ class ChartDrawer:  # type: ignore[no-redef]
         of every draw signature while still delivering it to consumers that
         read the SVG rather than the model.
 
-        ``kr:angularity`` names the angle the point stands on and
-        ``kr:angularitydistance`` how far off it sits; ``kr:stellium`` carries
-        the house of the crowd it belongs to. All three are absent for points
-        that take part in neither.
+        ``kr:angularity`` lists the angles the point stands on, each with its
+        arc, as ``Angle:distance`` pairs separated by a space and ordered
+        closest first: ``kr:angularity="Ascendant:0.8991 Medium_Coeli:4.3156"``.
+        One attribute rather than two, and a list rather than a single value,
+        because the analysis is genuinely one-to-many — near the poles the
+        Ascendant and the Midheaven close on each other, and a planet can sit
+        within orb of both. Two attributes repeated per pair would be duplicate
+        attribute names, which is not valid XML; keeping only the closest pair
+        would silently drop what ``_compute_angularities`` deliberately reports.
+
+        ``kr:stellium`` carries the house of the crowd the point belongs to.
+        Both are absent for a point that takes part in neither.
         """
         chart_data = self.chart_data
         rings: tuple[tuple[str, list, list], ...]
@@ -5318,15 +5432,22 @@ class ChartDrawer:  # type: ignore[no-redef]
                 ),
             )
 
+        # Collected per point before being rendered, so a point standing on two
+        # angles produces one attribute holding two pairs rather than the
+        # attribute twice.
+        angles_by_point: dict[tuple[str, str], list[str]] = {}
         analysis_by_point: dict[tuple[str, str], list[str]] = {}
         for ring, angularities, stelliums in rings:
             for angularity in angularities:
-                analysis_by_point.setdefault((ring, str(angularity.point)), []).append(
-                    f'kr:angularity="{angularity.angle}" kr:angularitydistance="{round(angularity.distance, 4)}"'
+                angles_by_point.setdefault((ring, str(angularity.point)), []).append(
+                    f"{escape_svg_text(str(angularity.angle))}:{round(angularity.distance, 4)}"
                 )
             for stellium in stelliums:
                 for name in stellium.points:
                     analysis_by_point.setdefault((ring, str(name)), []).append(f'kr:stellium="{stellium.house}"')
+
+        for key, pairs in angles_by_point.items():
+            analysis_by_point.setdefault(key, []).insert(0, f'kr:angularity="{" ".join(pairs)}"')
 
         if not analysis_by_point:
             return svg
@@ -5341,6 +5462,18 @@ class ChartDrawer:  # type: ignore[no-redef]
             return f'{tag[:-1]} {" ".join(attributes)}>'
 
         return self._CHART_POINT_TAG_RE.sub(_annotate, svg)
+
+    def _gauquelin_grid_carries_oob_badges(self) -> bool:
+        """Whether the Gauquelin table will be widened for out-of-bounds badges.
+
+        The grid widens itself only when a body actually needs the badge, so
+        the estimator has to ask the same question rather than reserving on the
+        option alone: reserving more would move the sector column on charts
+        that draw no badge, and reserving less would clip the one that does.
+        """
+        if not self.show_out_of_bounds:
+            return False
+        return any(getattr(p, "is_out_of_bounds", None) for p in self.available_kerykeion_celestial_points)
 
     def _validate_chart_style(self, style: KerykeionChartStyle) -> None:
         """Validate that the given style is a supported chart style.

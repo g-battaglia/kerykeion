@@ -34,6 +34,8 @@ import re
 from dataclasses import dataclass
 from typing import Optional
 
+from kerykeion.charts.utils import escape_svg_text
+
 # ``attributes`` spans the whole tag body, transform included, rather than
 # stopping at it: the drawer appends chart-level analyses (angularity,
 # stellium) to the finished markup, so they land *after* the transform and a
@@ -51,6 +53,18 @@ _INDICATOR_GROUP = re.compile(
 def _attribute(blob: str, name: str) -> Optional[str]:
     match = re.search(rf"""kr:{name}=['"]([^'"]+)['"]""", blob)
     return match.group(1) if match else None
+
+
+def _parse_angularities(value: Optional[str]) -> tuple[tuple[str, float], ...]:
+    """``"Ascendant:0.9 Medium_Coeli:4.3"`` back into ordered ``(angle, arc)`` pairs."""
+    if not value:
+        return ()
+    pairs = []
+    for token in value.split(" "):
+        angle, _, distance = token.rpartition(":")
+        if angle:
+            pairs.append((angle, float(distance)))
+    return tuple(pairs)
 
 
 # Rounding applied to each numeric state attribute before it reaches the
@@ -101,7 +115,12 @@ def point_state_attributes(point: object) -> str:
         attributes.append(f'kr:magnitude="{round(magnitude, _STATE_PRECISION["magnitude"])}"')
     near_point = getattr(point, "near_point", None)
     if near_point is not None:
-        attributes.append(f'kr:nearpoint="{near_point}"')
+        # Escaped, like every other string this codebase puts in an attribute:
+        # chart data can be deserialized or built by a caller, so a name is not
+        # a trusted literal. An unescaped quote here would close the attribute
+        # and let the rest of the value be read as markup, and a bare apostrophe
+        # would be malformed anyway once post-processing swaps the delimiters.
+        attributes.append(f'kr:nearpoint="{escape_svg_text(str(near_point))}"')
     orb = getattr(point, "orb", None)
     if orb is not None:
         attributes.append(f'kr:orb="{round(orb, _STATE_PRECISION["orb"])}"')
@@ -123,9 +142,13 @@ class ChartPointTag:
     speed: Optional[float] = None
     declination: Optional[float] = None
     out_of_bounds: bool = False
-    angularity: Optional[str] = None  #: angle the point stands on, when within orb
-    angularity_distance: Optional[float] = None  #: arc to that angle, in degrees
+    #: Every angle the point stands on, closest first, as ``(angle, degrees)``.
+    #: Empty when it stands on none — near the poles it can stand on two.
+    angularities: tuple[tuple[str, float], ...] = ()
     stellium: Optional[str] = None  #: house whose stellium the point belongs to
+    magnitude: Optional[float] = None  #: fixed stars: catalogue brightness
+    near_point: Optional[str] = None  #: discovery stars: the point that surfaced it
+    orb: Optional[float] = None  #: discovery stars: arc to that point
 
 
 @dataclass(frozen=True)
@@ -148,6 +171,8 @@ def parse_chart_points(svg: str) -> list[ChartPointTag]:
         sign_position = _attribute(blob, "signposition")
         speed = _attribute(blob, "speed")
         declination = _attribute(blob, "declination")
+        magnitude = _attribute(blob, "magnitude")
+        orb = _attribute(blob, "orb")
         points.append(
             ChartPointTag(
                 slug=slug,
@@ -160,11 +185,11 @@ def parse_chart_points(svg: str) -> list[ChartPointTag]:
                 speed=float(speed) if speed is not None else None,
                 declination=float(declination) if declination is not None else None,
                 out_of_bounds=_attribute(blob, "oob") == "true",
-                angularity=_attribute(blob, "angularity"),
-                angularity_distance=(
-                    float(angularity_distance) if (angularity_distance := _attribute(blob, "angularitydistance")) else None
-                ),
+                angularities=_parse_angularities(_attribute(blob, "angularity")),
                 stellium=_attribute(blob, "stellium"),
+                magnitude=float(magnitude) if magnitude is not None else None,
+                near_point=_attribute(blob, "nearpoint"),
+                orb=float(orb) if orb is not None else None,
             )
         )
     return points

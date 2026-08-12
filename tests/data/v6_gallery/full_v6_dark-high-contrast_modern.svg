@@ -961,7 +961,7 @@
 <g kr:node='Indicator' kr:slug='Interpolated_Perigee' kr:absoluteposition='194.65097858137133' transform='rotate(-174.939850 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 29.5233602783 12.7581253733 L 30.0412988125 13.7001257315' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:gauquelinsector='19.1268' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='489.12214710721724' kr:cy='459.83915379864544' transform='rotate(-210.018766 50.0 50.0)' kr:angularity='Descendant' kr:angularitydistance='3.4432' kr:stellium='6'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:gauquelinsector='19.1268' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='489.12214710721724' kr:cy='459.83915379864544' transform='rotate(-210.018766 50.0 50.0)' kr:angularity='Descendant:3.4432' kr:stellium='6'>
   <g transform='translate(50.0 11.0) rotate(300.018766) scale(0.14850000000000002) translate(-14 -14)'>
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='var(--kerykeion-chart-color-sun)' />
   </g>

@@ -619,7 +619,7 @@
 <g kr:node='Indicator' kr:slug='True_North_Lunar_Node' kr:absoluteposition='167.99366940673622' transform='rotate(-171.277481 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='173.2373159493924' kr:signposition='23.23731594939241' kr:slug='Sun' kr:motionstate='average' kr:speed='0.988452' kr:declination='-6.3989' kr:cx='511.9066327612078' kr:cy='300.45063580377916' transform='rotate(-176.521127 50.0 50.0)' kr:angularity='Descendant' kr:angularitydistance='3.4789' kr:stellium='6'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='173.2373159493924' kr:signposition='23.23731594939241' kr:slug='Sun' kr:motionstate='average' kr:speed='0.988452' kr:declination='-6.3989' kr:cx='511.9066327612078' kr:cy='300.45063580377916' transform='rotate(-176.521127 50.0 50.0)' kr:angularity='Descendant:3.4789' kr:stellium='6'>
   <g transform='translate(50.0 11.0) rotate(266.521127) scale(0.14850000000000002) translate(-14 -14)'>
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='var(--kerykeion-chart-color-sun)' />
   </g>

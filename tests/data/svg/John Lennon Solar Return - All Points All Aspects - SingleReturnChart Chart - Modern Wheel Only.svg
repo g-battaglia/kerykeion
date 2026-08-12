@@ -450,7 +450,7 @@
 <g kr:node='Indicator' kr:slug='True_Lilith' kr:absoluteposition='213.2527227368998' transform='rotate(-7.205409 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 52.6270519896 7.5812706715 L 52.5606030275 8.6542150016' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Sco' kr:absoluteposition='213.90388345449603' kr:signposition='3.9038834544960253' kr:slug='Mercury' kr:motionstate='average' kr:speed='1.473379' kr:declination='-13.8464' kr:cx='14.578528861544996' kr:cy='55.717847705876686' transform='rotate(-9.169768 50.0 50.0)' kr:angularity='Ascendant' kr:angularitydistance='7.8566'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Sco' kr:absoluteposition='213.90388345449603' kr:signposition='3.9038834544960253' kr:slug='Mercury' kr:motionstate='average' kr:speed='1.473379' kr:declination='-13.8464' kr:cx='14.578528861544996' kr:cy='55.717847705876686' transform='rotate(-9.169768 50.0 50.0)' kr:angularity='Ascendant:7.8566'>
   <g transform='translate(50.0 11.0) rotate(99.169768) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>

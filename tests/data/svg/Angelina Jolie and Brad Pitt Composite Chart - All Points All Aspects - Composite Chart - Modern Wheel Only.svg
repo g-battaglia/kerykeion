@@ -722,7 +722,7 @@
 <g kr:node='Indicator' kr:slug='Chiron' kr:absoluteposition='3.673669958830767' transform='rotate(-178.052371 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.2085756427 7.6212902232 L 53.1274175529 8.6932222940' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.21847778017385' kr:signposition='4.21847778017385' kr:slug='Mercury' kr:cx='85.8753449772637' kr:cy='50.57794702380097' transform='rotate(-179.077052 50.0 50.0)' kr:angularity='Descendant' kr:angularitydistance='1.4028'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.21847778017385' kr:signposition='4.21847778017385' kr:slug='Mercury' kr:cx='85.8753449772637' kr:cy='50.57794702380097' transform='rotate(-179.077052 50.0 50.0)' kr:angularity='Descendant:1.4028'>
   <g transform='translate(50.0 11.0) rotate(269.077052) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>

@@ -23,11 +23,13 @@ pin that contract for both chart styles:
 """
 
 import re
+import xml.etree.ElementTree as ET
 
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
+from kerykeion.charts.svg_metadata import ChartPointTag, parse_chart_points, point_state_attributes
 from kerykeion.secondary_progressions import SecondaryProgressionFactory
 
 
@@ -430,11 +432,15 @@ class TestAnalysisMetadata:
         svg = _svg(getattr(ChartDrawer(chart_data=natal_chart_data, style=style), output_method))
         by_slug = {_attr(a, "slug"): a for a in _node_attrs(svg, "ChartPoint")}
 
-        expected_angular = {a.point: a.angle for a in natal_chart_data.angularities}
+        expected_angular: dict[str, list[str]] = {}
+        for angularity in natal_chart_data.angularities:
+            expected_angular.setdefault(str(angularity.point), []).append(str(angularity.angle))
         assert expected_angular, "fixture no longer exercises angularity"
-        for name, angle in expected_angular.items():
-            assert _attr(by_slug[name], "angularity") == angle
-            assert _attr(by_slug[name], "angularitydistance") is not None
+        for name, angles in expected_angular.items():
+            value = _attr(by_slug[name], "angularity")
+            assert value is not None
+            assert [pair.rpartition(":")[0] for pair in value.split(" ")] == angles
+            assert all(float(pair.rpartition(":")[2]) >= 0 for pair in value.split(" "))
 
         expected_stellium = {name: str(s.house) for s in natal_chart_data.stelliums for name in s.points}
         assert expected_stellium, "fixture no longer exercises stelliums"
@@ -485,3 +491,137 @@ class TestAttributeNamingContract:
         assert names, "no kr: attributes found at all"
         offenders = {name for name in names if not name.isalpha() or not name.islower()}
         assert not offenders, f"{style}/{output_method}: unreachable attribute names {sorted(offenders)}"
+
+
+# =============================================================================
+# Metadata soundness — the cases a review found, pinned so they stay found
+# =============================================================================
+
+
+@pytest.fixture(scope="module")
+def two_angles_chart_data():
+    """A point standing on two angles at once.
+
+    Near the poles the Ascendant and the Midheaven close on each other, so a
+    planet can sit inside the orb of both — here Venus is 0.9° from the
+    Ascendant and 4.3° from the Midheaven. Every chart in the ordinary fixtures
+    has at most one angularity per point, which is why an encoding that could
+    not express two passed the whole suite.
+    """
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Two angles", 2000, 1, 16, 8, 0, "Tromso", "NO", lng=18.95, lat=67.0, tz_str="UTC",
+        suppress_geonames_warning=True,
+    )
+    return ChartDataFactory.create_natal_chart_data(subject)
+
+
+@pytest.fixture(scope="module")
+def star_chart_data():
+    """A chart carrying fixed stars, which are the only points with magnitude."""
+    from kerykeion.settings.config_constants import DEFAULT_FIXED_STARS
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Fixed stars", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+        active_fixed_stars=list(DEFAULT_FIXED_STARS),
+        suppress_geonames_warning=True,
+    )
+    return ChartDataFactory.create_natal_chart_data(subject)
+
+
+class TestMetadataIsWellFormed:
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    @pytest.mark.parametrize(
+        "output_method",
+        ["generate_svg_string", "generate_wheel_only_svg_string", "generate_aspect_grid_only_svg_string"],
+    )
+    def test_two_angularities_still_parse_as_xml(self, two_angles_chart_data, style, output_method):
+        """Duplicate attribute names are not valid XML, whatever they carry."""
+        from collections import Counter
+
+        counts = Counter(a.point for a in two_angles_chart_data.angularities)
+        assert max(counts.values()) >= 2, "fixture no longer has a point on two angles"
+
+        svg = getattr(ChartDrawer(chart_data=two_angles_chart_data, style=style), output_method)()
+        ET.fromstring(svg)
+
+    def test_both_angles_survive_the_round_trip(self, two_angles_chart_data):
+        """Modern only: parse_chart_points is pinned to that style's transform."""
+        svg = _svg(ChartDrawer(chart_data=two_angles_chart_data, style="modern").generate_wheel_only_svg_string)
+        tags = {t.slug: t for t in parse_chart_points(svg)}
+        expected = {}
+        for angularity in two_angles_chart_data.angularities:
+            expected.setdefault(str(angularity.point), []).append(str(angularity.angle))
+
+        for name, angles in expected.items():
+            assert [angle for angle, _ in tags[name].angularities] == angles
+
+    def test_a_hostile_name_cannot_escape_its_attribute(self):
+        """Chart data can be deserialized or built by a caller, so names are not literals."""
+
+        class Point:
+            motion_state = None
+            speed = None
+            declination = None
+            is_out_of_bounds = None
+            magnitude = None
+            orb = None
+            near_point = 'Sun" onmouseover="alert(1)'
+
+        emitted = point_state_attributes(Point())
+        assert 'onmouseover="alert(1)"' not in emitted
+        ET.fromstring(f'<g xmlns:kr="https://www.kerykeion.net/" {emitted.strip()} />')
+
+    def test_an_apostrophe_survives_the_delimiter_swap(self):
+        """Post-processing rewrites attribute delimiters to single quotes."""
+
+        class Point:
+            motion_state = None
+            speed = None
+            declination = None
+            is_out_of_bounds = None
+            magnitude = None
+            orb = None
+            near_point = "Regulus's star"
+
+        emitted = point_state_attributes(Point())
+        fragment = f'<g xmlns:kr="https://www.kerykeion.net/" {emitted.strip()} />'
+        ET.fromstring(fragment.replace('"', "'").replace("&apos;", "&#39;"))
+
+    def test_the_parser_exposes_every_attribute_the_emitter_writes(self, star_chart_data):
+        """The contract in one assertion, so the next attribute cannot skip the parser.
+
+        Checked against a chart carrying fixed stars, because the star-only
+        attributes were the ones the emitter wrote and the parser dropped.
+        """
+        svg = _svg(ChartDrawer(chart_data=star_chart_data, style="modern").generate_wheel_only_svg_string)
+        emitted = set()
+        for attrs in _node_attrs(svg, "ChartPoint"):
+            emitted.update(re.findall(r"kr:([a-z]+)=", attrs))
+
+        # Structural attributes the tag models under other names, or not at all
+        # because they identify the tag rather than describe the point.
+        structural = {"node", "cx", "cy", "slug", "horoscope", "sign", "signposition", "absoluteposition", "house"}
+        exposed = {
+            "retrograde": "retrograde",
+            "motionstate": "motion_state",
+            "speed": "speed",
+            "declination": "declination",
+            "oob": "out_of_bounds",
+            "angularity": "angularities",
+            "angularitydistance": "angularities",
+            "stellium": "stellium",
+            "magnitude": "magnitude",
+            "nearpoint": "near_point",
+            "orb": "orb",
+            "gauquelinsector": None,
+            "projectedhouse": None,
+            "projectedhoroscope": None,
+        }
+        unmodelled = {name for name in emitted - structural if exposed.get(name, "missing") == "missing"}
+        assert not unmodelled, f"emitted but absent from ChartPointTag: {sorted(unmodelled)}"
+
+        fields = set(ChartPointTag.__dataclass_fields__)
+        for name in emitted - structural:
+            field = exposed[name]
+            if field is not None:
+                assert field in fields, f"{name} maps to {field}, which ChartPointTag does not have"

@@ -237,7 +237,7 @@
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
             <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiac: Tropical</text>
-            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domification: Porphyry* (polar fallback)</text>
+            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domification: Porphyry*</text>
             <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunation Day: 21</text>
             <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunar phase: Last Quarter</text>
             <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Apparent Geocentric</text>
@@ -607,7 +607,7 @@
 <g kr:node='Indicator' kr:slug='Venus' kr:absoluteposition='48.67960302185039' transform='rotate(-236.065383 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Gem' kr:absoluteposition='65.54786664029474' kr:signposition='5.5478666402947425' kr:slug='Mercury' kr:motionstate='fast' kr:speed='1.712122' kr:declination='19.5799' kr:cx='391.9168998320106' kr:cy='125.78751056075858' transform='rotate(-252.455294 50.0 50.0)' kr:angularity='Medium_Coeli' kr:angularitydistance='5.0784'>
+<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Gem' kr:absoluteposition='65.54786664029474' kr:signposition='5.5478666402947425' kr:slug='Mercury' kr:motionstate='fast' kr:speed='1.712122' kr:declination='19.5799' kr:cx='391.9168998320106' kr:cy='125.78751056075858' transform='rotate(-252.455294 50.0 50.0)' kr:angularity='Medium_Coeli:5.0784'>
   <g transform='translate(50.0 11.0) rotate(342.455294) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>

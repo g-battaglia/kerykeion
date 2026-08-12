@@ -26,10 +26,15 @@ Usage:
 
 import re
 from collections import Counter
+import xml.etree.ElementTree as ET
+from html import unescape
 
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+from kerykeion.charts.drawer import info_row_clear_width
+from kerykeion.charts.glyph_metrics import estimate_text_width
+from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 
 pytestmark = pytest.mark.core
 
@@ -103,6 +108,16 @@ def polar_data():
         lat=78.2,
         tz_str="Arctic/Longyearbyen",
         houses_system_identifier="P",
+        suppress_geonames_warning=True,
+    )
+    return ChartDataFactory.create_natal_chart_data(subject)
+
+
+@pytest.fixture(scope="module")
+def two_angles_data():
+    """Venus stands on both the Ascendant and the Midheaven at this latitude."""
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Two angles", 2000, 1, 16, 8, 0, "Tromso", "NO", lng=18.95, lat=67.0, tz_str="UTC",
         suppress_geonames_warning=True,
     )
     return ChartDataFactory.create_natal_chart_data(subject)
@@ -345,3 +360,194 @@ class TestPolarFallbackNote:
     def test_a_chart_whose_system_was_honoured_says_nothing(self, station_data, style):
         assert not station_data.subject.polar_house_fallbacks
         assert _render(station_data, style) == _render(station_data, style, show_polar_fallback_note=True)
+
+
+# ---------------------------------------------------------------------------
+# The panel rows have to fit the wheel, and the dual wheels have to be honest
+# ---------------------------------------------------------------------------
+
+
+class TestEveryOutputIsWellFormed:
+    """Every chart type, style and template, with every mark on, parses as XML.
+
+    The earlier version of this sweep covered eighteen combinations and missed
+    an encoding that produced duplicate attribute names, because none of its
+    subjects had a point standing on two angles. The subject list is what makes
+    a sweep like this worth anything, so it now includes the polar and
+    high-latitude skies where the wheel's geometry stops being ordinary.
+    """
+
+    @pytest.mark.parametrize("style", STYLES)
+    @pytest.mark.parametrize(
+        "output_method",
+        ["generate_svg_string", "generate_wheel_only_svg_string", "generate_aspect_grid_only_svg_string"],
+    )
+    @pytest.mark.parametrize(
+        "fixture",
+        ["station_data", "out_of_bounds_data", "sidereal_data", "polar_data", "synastry_data", "two_angles_data"],
+    )
+    def test_it_parses(self, request, fixture, style, output_method):
+        chart_data = request.getfixturevalue(fixture)
+        marks = {mark: True for mark in ALL_MARKS}
+        svg = getattr(ChartDrawer(chart_data, style=style, **marks), output_method)()
+        ET.fromstring(svg)
+
+
+class TestRowsFitTheWheel:
+    """The info rows sit inside the wheel's chord, and it narrows going up.
+
+    Row 5 has ~229px of clear width but row 0 only ~134, so a line that fits at
+    the bottom of the panel runs under the opaque wheel at the top of it. The
+    marks that write into the panel are checked against *their own* row, in
+    every shipped language, because a translation is exactly how this breaks
+    after the English case has been eyeballed once.
+    """
+
+    LANGUAGES = list(LANGUAGE_SETTINGS)
+
+    @pytest.mark.parametrize("language", LANGUAGES)
+    def test_the_score_rows_fit(self, synastry_data, language):
+        svg = _render(synastry_data, "classic", chart_language=language, show_relationship_score=True)
+        for index, row in enumerate(_info_rows(svg)[:2]):
+            budget = info_row_clear_width(index)
+            width = estimate_text_width(unescape(row))
+            assert width <= budget, f"{language} row {index}: {width:.0f}px in a {budget:.0f}px row — {row!r}"
+
+    @pytest.mark.parametrize("language", LANGUAGES)
+    def test_the_polar_note_fits(self, polar_data, language):
+        index = 1  # the domification row, the only one this mark writes to
+        row = _info_rows(_render(polar_data, "classic", chart_language=language, show_polar_fallback_note=True))[index]
+        width = estimate_text_width(unescape(row))
+        budget = info_row_clear_width(index)
+        assert width <= budget, f"{language} row {index}: {width:.0f}px in a {budget:.0f}px row — {row!r}"
+
+    @pytest.mark.parametrize("language", LANGUAGES)
+    def test_no_mark_pushes_a_row_over_that_was_within_it(self, polar_data, synastry_data, language):
+        """The invariant these marks owe the panel, stated without inheriting its debts.
+
+        A few rows already overrun in a couple of languages with every mark off
+        — the Hindi lunar-phase and perspective rows badly, the Russian
+        perspective row by a fraction. That is not this feature's doing and not
+        this feature's to fix, but it does mean "every row fits" is the wrong
+        assertion here. What these marks must guarantee is narrower and
+        entirely theirs: no row that fitted before may stop fitting because a
+        mark was switched on.
+        """
+        for chart_data, marks in (
+            (polar_data, {"show_polar_fallback_note": True}),
+            (synastry_data, {"show_relationship_score": True}),
+        ):
+            before = _info_rows(_render(chart_data, "classic", chart_language=language))
+            after = _info_rows(_render(chart_data, "classic", chart_language=language, **marks))
+            for index, (was, now) in enumerate(zip(before, after)):
+                budget = info_row_clear_width(index)
+                if estimate_text_width(unescape(was)) > budget:
+                    continue  # already over before the mark; not this feature's row to fix
+                width = estimate_text_width(unescape(now))
+                assert width <= budget, (
+                    f"{language} row {index} fitted at {estimate_text_width(unescape(was)):.0f}px "
+                    f"and now needs {width:.0f}px in a {budget:.0f}px row — {now!r}"
+                )
+
+    @pytest.mark.parametrize("language", LANGUAGES)
+    def test_the_substitution_is_still_marked_after_it_is_shortened(self, polar_data, language):
+        """Shedding the spelled-out note must not shed the fact it points at."""
+        svg = _render(polar_data, "classic", chart_language=language, show_polar_fallback_note=True)
+        assert "*" in _info_rows(svg)[1], language
+
+
+class TestDualWheelsDoNotSpeakForEachOther:
+    def test_one_wheels_ayanamsa_is_not_claimed_for_both(self, john_lennon, paul_mccartney):
+        """The zodiac line carries no ring label, so it can only state a shared value."""
+        first = AstrologicalSubjectFactory.from_birth_data(
+            "Early", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+            zodiac_type="Sidereal", sidereal_mode="LAHIRI", suppress_geonames_warning=True,
+        )
+        later = AstrologicalSubjectFactory.from_birth_data(
+            "Late", 2000, 6, 18, 15, 30, "Liverpool", "GB",
+            zodiac_type="Sidereal", sidereal_mode="LAHIRI", suppress_geonames_warning=True,
+        )
+        assert first.ayanamsa_value != later.ayanamsa_value
+
+        row = _info_rows(_render(ChartDataFactory.create_synastry_chart_data(first, later), "classic",
+                                 show_ayanamsa_value=True))[2]
+        assert "(" not in row, f"the outer wheel has another offset, so none may be printed: {row!r}"
+
+    def test_a_shared_ayanamsa_is_still_printed(self):
+        """Suppressing it whenever the chart is dual would hide it needlessly."""
+        pair = [
+            AstrologicalSubjectFactory.from_birth_data(
+                name, 1940, 10, 9, 18, 30, "Liverpool", "GB",
+                zodiac_type="Sidereal", sidereal_mode="LAHIRI", suppress_geonames_warning=True,
+            )
+            for name in ("One", "Two")
+        ]
+        row = _info_rows(_render(ChartDataFactory.create_synastry_chart_data(*pair), "classic",
+                                 show_ayanamsa_value=True))[2]
+        assert "(" in row
+
+    def test_a_second_wheels_substitution_is_not_hidden_by_the_first(self):
+        """Landing on the same system is not the same as having asked for it."""
+        native = AstrologicalSubjectFactory.from_birth_data(
+            "Porphyry native", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+            houses_system_identifier="O", suppress_geonames_warning=True,
+        )
+        substituted = AstrologicalSubjectFactory.from_birth_data(
+            "Polar", 1990, 6, 15, 12, 0, "Longyearbyen", "SJ",
+            lng=15.6, lat=78.2, tz_str="Arctic/Longyearbyen",
+            houses_system_identifier="P", suppress_geonames_warning=True,
+        )
+        assert native._main_house_fallback() is None
+        assert substituted._main_house_fallback() is not None
+        assert (
+            native.effective_houses_system_identifier == substituted.effective_houses_system_identifier
+        ), "fixture no longer exercises the collapse"
+
+        chart_data = ChartDataFactory.create_synastry_chart_data(native, substituted)
+        row = _info_rows(_render(chart_data, "classic", show_polar_fallback_note=True))[3]
+        assert "*" in row, f"the second wheel's substitution vanished: {row!r}"
+
+
+class TestGauquelinBadgeHasItsOwnRoom:
+    """The Gauquelin table runs right up to its column width.
+
+    Its declination text ends where the right-aligned sector value begins, so
+    unlike the standard grids — which have slack after the retrograde glyph —
+    it has nowhere to put a badge and has to be widened for one.
+    """
+
+    @pytest.fixture(scope="class")
+    def gauquelin_oob_data(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Gauquelin OOB", 1990, 1, 1, 12, 0, "London", "GB",
+            calculate_gauquelin=True, suppress_geonames_warning=True,
+        )
+        return ChartDataFactory.create_natal_chart_data(subject)
+
+    def test_the_badge_never_reaches_the_sector_value(self, gauquelin_oob_data):
+        svg = _render(gauquelin_oob_data, "classic", show_out_of_bounds=True)
+        rows = re.findall(
+            r"<text x='135'[^>]*>([^<]*)</text>.*?<text text-anchor='end' x='(\d+)'[^>]*>([^<]*)</text>", svg
+        )
+        badged = [row for row in rows if "OOB" in row[0]]
+        assert badged, "fixture no longer has an out-of-bounds body in the Gauquelin table"
+        for declination, sector_end, sector in badged:
+            ends_at = 135 + estimate_text_width(unescape(declination))
+            starts_at = int(sector_end) - estimate_text_width(sector)
+            assert ends_at <= starts_at, f"{declination!r} overlaps {sector!r}"
+
+    def test_a_table_with_nothing_out_of_bounds_keeps_its_old_width(self):
+        """The extra room is earned by a badge, not by the option being on.
+
+        23 April 1990 is picked because nothing is out of bounds that day, so
+        the assertion actually runs instead of skipping itself away.
+        """
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Gauquelin in bounds", 1990, 4, 23, 12, 0, "London", "GB",
+            calculate_gauquelin=True, suppress_geonames_warning=True,
+        )
+        chart_data = ChartDataFactory.create_natal_chart_data(subject)
+        assert not any(getattr(p, "is_out_of_bounds", None) for p in _points(chart_data)), (
+            "fixture drifted: this sky now has an out-of-bounds body"
+        )
+        assert _render(chart_data, "classic") == _render(chart_data, "classic", show_out_of_bounds=True)

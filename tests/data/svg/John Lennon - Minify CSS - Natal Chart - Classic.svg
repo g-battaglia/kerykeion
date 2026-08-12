@@ -378,7 +378,7 @@
     <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="191.024247807456" kr:cx="504.3844994111007" kr:cy="313.10273475937083" kr:declination="-4.3633" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="11.024247807455993" kr:slug="True_North_Lunar_Node" kr:speed="0.005933">
      <use x="404.3844994111007" y="263.10273475937083" xlink:href="#True_North_Lunar_Node"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="196.2678943501122" kr:angularity="Descendant" kr:angularitydistance="3.4789" kr:cx="485.79991207416776" kr:cy="297.6410496114698" kr:declination="-6.3989" kr:house="Sixth_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="16.267894350112186" kr:slug="Sun" kr:speed="0.988482" kr:stellium="6">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="196.2678943501122" kr:angularity="Descendant:3.4789" kr:cx="485.79991207416776" kr:cy="297.6410496114698" kr:declination="-6.3989" kr:house="Sixth_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="16.267894350112186" kr:slug="Sun" kr:speed="0.988482" kr:stellium="6">
      <use x="385.79991207416776" y="247.64104961146978" xlink:href="#Sun"/>
     </g>
     <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="218.55823263691192" kr:cx="496.9560835494866" kr:cy="235.955686360112" kr:declination="-16.233" kr:house="Seventh_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Sco" kr:signposition="8.558232636911924" kr:slug="Mercury" kr:speed="1.319465">

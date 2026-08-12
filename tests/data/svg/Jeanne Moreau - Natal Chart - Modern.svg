@@ -580,7 +580,7 @@
 <g kr:node='Indicator' kr:slug='Venus' kr:absoluteposition='263.1908674343136' transform='rotate(-254.877536 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Cap' kr:absoluteposition='273.1897215610263' kr:signposition='3.1897215610263174' kr:slug='Mars' kr:motionstate='fast' kr:speed='0.737702' kr:declination='-23.9324' kr:oob='true' kr:cx='363.3360668622044' kr:cy='119.36432331015082' transform='rotate(-262.212562 50.0 50.0)' kr:angularity='Medium_Coeli' kr:angularitydistance='0.3464' kr:stellium='9'>
+<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Cap' kr:absoluteposition='273.1897215610263' kr:signposition='3.1897215610263174' kr:slug='Mars' kr:motionstate='fast' kr:speed='0.737702' kr:declination='-23.9324' kr:oob='true' kr:cx='363.3360668622044' kr:cy='119.36432331015082' transform='rotate(-262.212562 50.0 50.0)' kr:angularity='Medium_Coeli:0.3464' kr:stellium='9'>
   <g transform='translate(50.0 11.0) rotate(352.212562) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Mars' kr:slug='Mars' kr:node='Glyph' fill='var(--kerykeion-chart-color-mars)' />
   </g>

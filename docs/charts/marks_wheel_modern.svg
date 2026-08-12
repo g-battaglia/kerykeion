@@ -430,7 +430,7 @@
 <g kr:node='Indicator' kr:slug='Jupiter' kr:absoluteposition='121.49989489612106' transform='rotate(-267.570369 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Leo' kr:absoluteposition='134.1249507098759' kr:signposition='14.12495070987589' kr:slug='Venus' kr:motionstate='average' kr:speed='1.227841' kr:declination='17.3607' kr:cx='315.35253005772216' kr:cy='119.54880932817004' transform='rotate(-278.228015 50.0 50.0)' kr:angularity='Medium_Coeli' kr:angularitydistance='1.7388'>
+<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Leo' kr:absoluteposition='134.1249507098759' kr:signposition='14.12495070987589' kr:slug='Venus' kr:motionstate='average' kr:speed='1.227841' kr:declination='17.3607' kr:cx='315.35253005772216' kr:cy='119.54880932817004' transform='rotate(-278.228015 50.0 50.0)' kr:angularity='Medium_Coeli:1.7388'>
   <g transform='translate(50.0 11.0) rotate(368.228015) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='#400052' />
   </g>
@@ -483,7 +483,7 @@
 <g kr:node='Indicator' kr:slug='Mercury' kr:absoluteposition='173.5670165495044' transform='rotate(-319.637490 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Sco' kr:absoluteposition='210.54123811638087' kr:signposition='0.5412381163808675' kr:slug='Moon' kr:motionstate='average' kr:speed='12.181463' kr:declination='-16.5213' kr:cx='168.22630807015054' kr:cy='277.5539188179904' transform='rotate(-355.855804 50.0 50.0)' kr:angularity='Ascendant' kr:angularitydistance='3.3883'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Sco' kr:absoluteposition='210.54123811638087' kr:signposition='0.5412381163808675' kr:slug='Moon' kr:motionstate='average' kr:speed='12.181463' kr:declination='-16.5213' kr:cx='168.22630807015054' kr:cy='277.5539188179904' transform='rotate(-355.855804 50.0 50.0)' kr:angularity='Ascendant:3.3883'>
   <g transform='translate(50.0 11.0) rotate(445.855804) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Moon' kr:slug='Moon' kr:node='Glyph' fill='#150052' />
   </g>

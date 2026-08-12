@@ -59,8 +59,8 @@
         </g>
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
-            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: #000000; font-size: 10px'>Relationship Score: 12 (Important)</text>
-            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: #000000; font-size: 10px'></text>
+            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: #000000; font-size: 10px'>Relationship Score: 12</text>
+            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: #000000; font-size: 10px'>Important</text>
             <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: #000000; font-size: 10px'>Zodiac: Tropical</text>
             <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: #000000; font-size: 10px'>Placidus Houses</text>
             <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: #000000; font-size: 10px'>Perspective: Apparent Geocentric</text>
@@ -632,7 +632,7 @@
 <g kr:node='Indicator' kr:slug='True_North_Lunar_Node' kr:absoluteposition='191.024247807456' kr:horoscope='0' transform='rotate(-171.313119 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:horoscope='0' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='461.22597440915183' kr:cy='297.20671413000866' transform='rotate(-176.597850 50.0 50.0)' kr:projectedhouse='First_House' kr:projectedhoroscope='1' kr:angularity='Descendant' kr:angularitydistance='3.4432' kr:stellium='6'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:horoscope='0' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='461.22597440915183' kr:cy='297.20671413000866' transform='rotate(-176.597850 50.0 50.0)' kr:projectedhouse='First_House' kr:projectedhoroscope='1' kr:angularity='Descendant:3.4432' kr:stellium='6'>
   <g transform='translate(50.0 22.5) rotate(266.597850) scale(0.10450000000000001) translate(-14 -14)'>
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='#984b00' />
   </g>

@@ -432,9 +432,16 @@ own subject's analysis:
 
 | Attribute               | Emitted when                                | Value                                     |
 | :---------------------- | :------------------------------------------- | :------------------------------------------ |
-| `kr:angularity`         | the point stands on an angle, within orb    | The angle's name, e.g. `Ascendant`.         |
-| `kr:angularitydistance` | as above                                    | Arc to that angle in degrees, 4 decimals.   |
+| `kr:angularity`         | the point stands on one or more angles      | `Angle:distance` pairs separated by a space, closest first: `Ascendant:0.8991 Medium_Coeli:4.3156`. |
 | `kr:stellium`           | the point belongs to a stellium             | The house of the crowd, e.g. `Fifth_House`. |
+
+`kr:angularity` is one attribute holding a list rather than a pair of scalar
+attributes, because the analysis is genuinely one-to-many: near the poles the
+Ascendant and the Midheaven close on each other and a planet can sit within orb
+of both. Repeating a pair of attributes per angle would repeat the attribute
+names, which is not valid XML, and keeping only the closest angle would drop
+what the chart data deliberately reports. `parse_chart_points` returns the
+pairs already split, as `ChartPointTag.angularities`.
 
 **An attribute is absent when the model does not carry the value.** Silence is
 not a default: it means the chart does not compute that quantity, which is a
@@ -450,8 +457,7 @@ rewrite the namespace with a general pattern rather than an allow-list (a
 browser client maps `kr:name` to `data-kr-name` through `/\bkr:([a-zA-Z]+)=/`
 before sanitizing), so a name carrying an underscore or a digit would be dropped
 in silence instead of rejected loudly. That is why the attributes read
-`motionstate` and `angularitydistance` rather than `motion_state` and
-`angularity_distance`.
+`motionstate` and `nearpoint` rather than `motion_state` and `near_point`.
 
 `kerykeion.charts.svg_metadata` holds both ends of this contract: the emitter
 (`point_state_attributes`) and a parser that reads the markup back.

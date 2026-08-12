@@ -393,6 +393,23 @@ _GRID_COLUMN_WIDTH: int = 125
 #: Width in pixels of each column in the Gauquelin unified grid.
 _GAUQUELIN_COLUMN_WIDTH: int = 220
 
+#: Room the OOB badge needs in the Gauquelin table. Its columns run right up to
+#: their width — the declination text ends around x=186 and the right-aligned
+#: sector value starts there — so unlike the standard grids, which have slack
+#: after the retrograde glyph, this one has nowhere to put a badge and must be
+#: widened for it.
+_GAUQUELIN_OOB_BADGE_WIDTH: int = 26
+
+
+def gauquelin_column_width(with_out_of_bounds: bool = False) -> int:
+    """Width of one Gauquelin column, wider when it has to carry OOB badges.
+
+    Shared with the drawer's width estimator: the grid and the canvas that has
+    to hold it must be sized from the same number, or the table is drawn wider
+    than the space reserved for it and the last column is clipped.
+    """
+    return _GAUQUELIN_COLUMN_WIDTH + (_GAUQUELIN_OOB_BADGE_WIDTH if with_out_of_bounds else 0)
+
 #: Maximum rows per column in the Gauquelin unified grid.
 _GAUQUELIN_MAX_ROWS: int = 18
 
@@ -1708,7 +1725,7 @@ def _gauquelin_grid_thresholds(n: int) -> tuple[int, int, int]:
     return (rows_per_col, rows_per_col * 2, rows_per_col * 3)
 
 
-def _gauquelin_grid_layout_position(index: int, thresholds: tuple[int, int, int]) -> tuple[int, int]:
+def _gauquelin_grid_layout_position(index: int, thresholds: tuple[int, int, int], column_width: Optional[int] = None) -> tuple[int, int]:
     """Calculate grid position for a point in the Gauquelin unified grid.
 
     Args:
@@ -1727,7 +1744,7 @@ def _gauquelin_grid_layout_position(index: int, thresholds: tuple[int, int, int]
         col, row = 2, index - t3
     else:
         col, row = 3, index - t4
-    offset = -(_GAUQUELIN_COLUMN_WIDTH * col)
+    offset = -((column_width if column_width is not None else _GAUQUELIN_COLUMN_WIDTH) * col)
     return offset, row
 
 
@@ -1790,6 +1807,13 @@ def draw_gauquelin_unified_grid(
     COL_DECL = 135  # Declination text start
     COL_SECTOR_END = 212  # Sector text-anchor="end"
 
+    # The badge only earns its extra width when a body actually needs it, so
+    # switching the option on for a table with nothing out of bounds leaves the
+    # layout exactly as it was.
+    badge_shown = show_out_of_bounds and any(getattr(p, "is_out_of_bounds", None) for p in gauq_points)
+    COL_SECTOR_END = COL_SECTOR_END + (_GAUQUELIN_OOB_BADGE_WIDTH if badge_shown else 0)
+    column_width = gauquelin_column_width(badge_shown)
+
     # Multi-column thresholds
     thresholds = _gauquelin_grid_thresholds(n)
 
@@ -1813,7 +1837,7 @@ def draw_gauquelin_unified_grid(
     hdr_y = 24
     hdr_fs = max(fs - 1, 7)
     for col in range(num_cols):
-        col_offset = -(_GAUQUELIN_COLUMN_WIDTH * col)
+        col_offset = -(column_width * col)
         svg += (
             f'<g transform="translate({col_offset},{hdr_y})" opacity="0.55">'
             f'<text text-anchor="end" x="{COL_NAME_END}" style="fill:{text_color}; font-size:{hdr_fs}px;">Planet</text>'
@@ -1826,7 +1850,7 @@ def draw_gauquelin_unified_grid(
     BASE_Y = 30  # Below title + header
 
     for i, point in enumerate(gauq_points):
-        offset, row_index = _gauquelin_grid_layout_position(i, thresholds)
+        offset, row_index = _gauquelin_grid_layout_position(i, thresholds, column_width)
         y = BASE_Y + 10 + row_index * row_h
 
         # Get display name (localized, with fallback)
