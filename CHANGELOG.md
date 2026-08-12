@@ -13,10 +13,16 @@
   profiles (`subject …`) and a guarded `call` dispatcher over `__all__`. Output
   is text on a TTY and JSON in a pipe (`-f text|json|xml|svg`), warnings stay on
   stderr, and every error is a clean classified exit (0–9, 130) — never a
-  traceback. `import kerykeion` stays free of `typer`; without the extra the
-  command prints an install hint and exits `3`. New `cli`, `test:cli` and
-  `cli:smoke` poe tasks, plus a `build:smoke` CLI environment. Dependencies are
-  typer & rich (MIT — see NOTICE); no Apache-2.0 was added.
+  traceback. New `cli`, `test:cli` and `cli:smoke` poe tasks, plus a
+  `build:smoke` CLI environment. Dependencies are typer & rich (MIT — see
+  NOTICE); no Apache-2.0 was added.
+- **Useful command without the extra.** `pip install kerykeion` (no extras)
+  installs the `kerykeion` command for everyone (the script is static metadata),
+  and it is no longer a dead end: a stdlib-only core serves `kerykeion status`
+  (active backend, LEB calc mode, ephemeris data files, environment knobs; `--json`
+  for machine-readable output), `--version`/`-V` and `--help`/`-h`. Any other
+  subcommand prints an install hint and exits `3`. `import kerykeion` stays free
+  of `typer`; `--version`/`--help` do not even import the library (instant).
 
 ### Fixed
 

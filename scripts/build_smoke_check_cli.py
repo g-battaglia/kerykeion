@@ -5,8 +5,10 @@ Run by ``poe build:smoke`` in two isolated environments:
 
 * the wheel installed ALONE (no ``[cli]`` extra) — the ``kerykeion`` command is
   installed by the static ``[project.scripts]`` metadata even without the extra,
-  so this is the default path for a bare ``pip install kerykeion``. It must
-  degrade to the install hint (exit 3, no traceback), not crash;
+  so this is the default path for a bare ``pip install kerykeion``. Without the
+  extra the command is still useful through a stdlib-only core: ``status``,
+  ``--version`` and ``--help`` exit 0, while a full-CLI command (``natal`` …)
+  prints the install hint and exits 3 — never a traceback;
 * the wheel installed WITH ``[cli]`` — ``--version`` and ``--help`` must exit 0.
 
 The script tells the two environments apart by probing for ``typer`` (the extra
@@ -15,7 +17,7 @@ it once per environment.
 
 Unlike ``scripts/build_smoke_check.py`` (which lives in the wheel-only env and
 imports kerykeion to render a chart), this script exercises the COMMAND through
-a subprocess, because the whole point is the entry point's install-hint guard.
+a subprocess, because the whole point is the entry point's no-extra behaviour.
 """
 
 from __future__ import annotations
@@ -37,18 +39,51 @@ def _fail(label: str, detail: str) -> int:
 
 
 def _smoke_without_extra() -> int:
-    """The bare ``pip install kerykeion`` path: command present, CLI absent."""
-    r = _run(["--version"])
+    """The bare ``pip install kerykeion`` path: base commands work, full CLI degrades.
+
+    Without the ``[cli]`` extra the command is served by a stdlib-only core:
+    ``status``, ``--version`` and ``--help`` exit 0; any full-CLI command still
+    prints the install hint and exits 3, never a traceback.
+    """
     problems = []
-    if r.returncode != 3:
-        problems.append(f"  expected exit 3, got {r.returncode}")
-    if "kerykeion[cli]" not in r.stderr:
-        problems.append(f"  stderr missing the install hint; got:\n{r.stderr!r}")
+
+    # --version works and prints the version on stdout (exit 0, no install hint).
+    r = _run(["--version"])
+    if r.returncode != 0:
+        problems.append(f"  --version expected exit 0, got {r.returncode}\n{r.stderr}")
+    if not r.stdout.strip():
+        problems.append("  --version printed nothing on stdout")
+    if "kerykeion[cli]" in r.stderr:
+        problems.append("  --version wrongly printed the install hint")
+
+    # status works without the extra (exit 0, backend reported, no traceback).
+    r = _run(["status"])
+    if r.returncode != 0:
+        problems.append(f"  status expected exit 0, got {r.returncode}\n{r.stderr}")
+    if "Backend:" not in r.stdout:
+        problems.append(f"  status stdout missing 'Backend:'; got:\n{r.stdout!r}")
     if "Traceback" in r.stderr or "Traceback" in r.stdout:
-        problems.append("  a traceback was printed instead of a clean install hint")
+        problems.append("  status printed a traceback")
+
+    # --help works and looks like a help screen (the smoke contract needs 'Usage').
+    r = _run(["--help"])
+    if r.returncode != 0 or "Usage" not in r.stdout:
+        problems.append(
+            f"  --help expected exit 0 with 'Usage'; got rc={r.returncode}\n{r.stdout!r}"
+        )
+
+    # A full-CLI command still degrades to exit 3 + install hint, no traceback.
+    r = _run(["natal"])
+    if r.returncode != 3:
+        problems.append(f"  natal expected exit 3, got {r.returncode}\n{r.stderr}")
+    if "kerykeion[cli]" not in r.stderr:
+        problems.append(f"  natal stderr missing the install hint; got:\n{r.stderr!r}")
+    if "Traceback" in r.stderr or "Traceback" in r.stdout:
+        problems.append("  natal printed a traceback instead of the clean install hint")
+
     if problems:
         return _fail("wheel-without-extra", "\n".join(problems))
-    print("wheel-without-extra OK: command degrades to exit 3 with the install hint")
+    print("wheel-without-extra OK: status/--version/--help exit 0; full-CLI commands degrade to exit 3")
     return 0
 
 

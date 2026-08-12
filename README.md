@@ -2424,6 +2424,13 @@ without writing any Python. Install the `cli` extra (it adds
 pip3 install "kerykeion[cli]"
 ```
 
+> **No extra? Still useful.** A bare `pip install kerykeion` installs the
+> `kerykeion` command too, and a stdlib-only core works without the extra:
+> `kerykeion status` reports the active backend, the LEB calc mode, the
+> ephemeris data files and the environment knobs in effect (`--json` for
+> machine-readable output); `kerykeion --version` and `kerykeion --help` work as
+> well. Every other subcommand prints an install hint and exits `3`.
+
 Save a subject profile once, then reuse it across every command:
 
 ```console

@@ -430,3 +430,121 @@ class TestSamplingDstAwareness:
             count_samples(datetime(2024, 1, 1), datetime(2024, 1, 2), "days", 0)
         with pytest.raises(ValueError):
             count_samples(datetime(2024, 1, 1), datetime(2024, 1, 2), "hours", -1)
+
+
+# ── kerykeion status (diagnostics) ───────────────────────────────────────────
+#
+# ``status`` is a stdlib-only diagnostic (kerykeion/cli/diagnostics.py) served
+# both by this Typer command and by the no-extra dispatch in kerykeion.cli.main.
+# TestStatus exercises the Typer registration; TestNoExtraFallback exercises the
+# stdlib path that a bare ``pip install kerykeion`` (no [cli]) actually sees.
+
+
+class TestStatus:
+    """``kerykeion status`` reports runtime backend/ephemeris state (Typer path).
+
+    The no-extra path cannot run here (typer is installed in the dev env and
+    CliRunner is in-process); it is covered by :class:`TestNoExtraFallback`.
+    """
+
+    def test_status_text_lists_backend_and_mode(self, runner, app):
+        r = runner.invoke(app, ["status"])
+        assert r.exit_code == 0, r.output
+        assert "Backend:" in r.output
+        assert "Environment:" in r.output
+
+    def test_status_json_is_parseable(self, runner, app):
+        r = runner.invoke(app, ["status", "--json"])
+        assert r.exit_code == 0, r.output
+        payload = json.loads(r.output)
+        assert payload["backend"] in ("libephemeris", "swisseph")
+        assert "kerykeion_version" in payload
+        assert "python_version" in payload
+
+    def test_status_reports_python_version_and_platform(self, runner, app):
+        import platform as _platform
+
+        r = runner.invoke(app, ["status"])
+        assert r.exit_code == 0, r.output
+        assert _platform.python_version() in r.output
+
+    def test_status_lists_leb_files_on_libephemeris(self, runner, app):
+        from kerykeion import BACKEND_NAME
+
+        r = runner.invoke(app, ["status"])
+        assert r.exit_code == 0, r.output
+        # calc_mode / LEB inventory exist only on the libephemeris backend.
+        if BACKEND_NAME == "libephemeris":
+            assert "calc mode:" in r.output
+            assert "Ephemeris data (libephemeris LEB):" in r.output
+            assert "files:" in r.output  # the inventory summary line
+
+
+class TestNoExtraFallback:
+    """The stdlib core that runs when the ``[cli]`` extra is absent.
+
+    The dev env has typer installed, and CliRunner runs in-process, so it
+    cannot show the no-extra behaviour. We spawn a subprocess that blocks
+    typer/rich via a ``sys.meta_path`` finder and drives ``kerykeion.cli.main``
+    the way a bare ``pip install kerykeion`` would. click is NOT blocked: it is
+    a transitive of libephemeris (present even without the extra), and the
+    dispatch decision is based on typer, not click.
+    """
+
+    _SCRIPT = textwrap.dedent(
+        """\
+        import sys
+        class _Blocker:
+            def find_spec(self, name, path=None, target=None):
+                if name in ("typer", "rich"):
+                    raise ImportError("blocked by test")
+                return None
+        sys.meta_path.insert(0, _Blocker())
+        sys.argv = ["kerykeion", *sys.argv[1:]]
+        from kerykeion.cli import main
+        raise SystemExit(main())
+        """
+    )
+
+    def _run(self, args):
+        return subprocess.run(
+            [sys.executable, "-c", self._SCRIPT, *args],
+            capture_output=True,
+            text=True,
+        )
+
+    def test_status_works_without_extra(self):
+        r = self._run(["status"])
+        assert r.returncode == 0, r.stderr
+        assert "Backend:" in r.stdout
+
+    def test_status_json_works_without_extra(self):
+        r = self._run(["status", "--json"])
+        assert r.returncode == 0, r.stderr
+        json.loads(r.stdout)  # valid JSON, no further assertion needed
+
+    def test_version_works_without_extra(self):
+        r = self._run(["--version"])
+        assert r.returncode == 0, r.stderr
+        assert r.stdout.strip()
+
+    def test_help_works_without_extra(self):
+        r = self._run(["--help"])
+        assert r.returncode == 0, r.stderr
+        assert "Usage" in r.stdout
+
+    def test_bare_invocation_shows_help_without_extra(self):
+        r = self._run([])
+        assert r.returncode == 0, r.stderr
+        assert "Usage" in r.stdout
+
+    def test_full_cli_command_degrades_to_install_hint(self):
+        r = self._run(["natal", "-s", "ada"])
+        assert r.returncode == 3, r.stderr
+        assert "kerykeion[cli]" in r.stderr
+        assert "Traceback" not in r.stderr
+
+    def test_status_unknown_option_is_invalid_input(self):
+        r = self._run(["status", "--bogus"])
+        assert r.returncode == 4, r.stderr
+        assert "Traceback" not in r.stderr

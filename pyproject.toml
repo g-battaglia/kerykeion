@@ -91,8 +91,10 @@ all = ["pyswisseph>=2.10.3.1", "typer>=0.26.4", "rich>=13.8.0"]
 [project.scripts]
 # The console command is installed for EVERY user — even ``pip install kerykeion``
 # with no extras, because ``[project.scripts]`` is static metadata. ``main``
-# degrades to an install hint (exit code 3) when the [cli] extra is absent, so
-# the bare command never crashes with a ModuleNotFoundError traceback.
+# serves a small stdlib-only core without the [cli] extra (``status``,
+# ``--version``, ``--help``); every other subcommand prints an install hint and
+# exits 3, so the bare command is useful out of the box and never crashes with a
+# ModuleNotFoundError traceback.
 kerykeion = "kerykeion.cli:main"
 
 [project.urls]

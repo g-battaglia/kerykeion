@@ -94,8 +94,12 @@ def _register_commands(app: typer.Typer) -> None:
     Imported here (not at module top) so the groups are only loaded when the CLI
     actually runs, keeping the import-graph cold-import gate green.
     """
-    from kerykeion.cli.commands import call, charts, series, sky, subject, technique
+    from kerykeion.cli.commands import call, charts, series, sky, status as status_cmd, subject, technique
 
+    # ``status`` is a stdlib-only diagnostic, so it works with or without the
+    # extra; registered here for the full ([cli]) app, and served directly by
+    # the no-extra dispatch in ``kerykeion.cli.main``.
+    app.command(name="status")(status_cmd.status)
     app.add_typer(subject.subject_app, name="subject")
     app.command(name="natal")(charts.natal)
     app.command(name="now")(charts.now)
