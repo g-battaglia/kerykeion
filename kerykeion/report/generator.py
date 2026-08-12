@@ -280,13 +280,15 @@ class ReportGenerator:
             self._active_points = []
             self._active_aspects = []
         elif any(isinstance(self.model, model_type) for model_type, _, _ in standalone_kinds):
-            kind, chart_type = next(
-                (kind, chart_type)
-                for model_type, kind, chart_type in standalone_kinds
-                if isinstance(self.model, model_type)
-            )
-            self._model_kind = kind
-            self.chart_type = chart_type
+            # A plain for-loop, not ``next()`` over a generator expression: pyright
+            # (1.1.408, the declared floor) widens the unpacked literal to ``str``
+            # inside a genexpr, which then cannot be assigned to ``_model_kind``.
+            # Unpacking in a real loop keeps the ``LiteralReportKind`` narrowing.
+            for model_type, kind, chart_type in standalone_kinds:
+                if isinstance(self.model, model_type):
+                    self._model_kind = kind
+                    self.chart_type = chart_type
+                    break
             self._primary_subject = None
             self._secondary_subject = None
             self._active_points = []
