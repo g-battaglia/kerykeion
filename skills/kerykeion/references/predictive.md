@@ -85,9 +85,13 @@ Constructor (`kerykeion/transits/factory.py`):
 | `settings_file` | `None` | `Path \| KerykeionSettingsModel \| dict \| None` |
 | `axis_orb_limit` (kw-only) | `None` | discard transit-to-axis aspects with orb >= limit; non-finite or `<= 0` raises `KerykeionException` |
 
-Construction-time `logging.warning`s (misconfigurations, not errors): frame mismatch between
-natal and series (`zodiac_type`/`sidereal_mode`/`perspective_type`/custom ayanamsa);
-non-chronological series; points requested but missing from one or both sides.
+The constructor logs three misconfigurations, but they are not equal. A **frame mismatch**
+between natal and series (`zodiac_type`/`sidereal_mode`/`perspective_type`/custom ayanamsa) is
+only *warned* at construction yet is **fatal at calculation**: both `get_transit_moments()` and
+`get_transit_events()` call `AspectsFactory.dual_chart_aspects()`, whose `require_same_frame()`
+raises `KerykeionException` — align the frames or you get no results. The other two are genuine
+warnings (degraded results, not errors): a non-chronological series, and points requested but
+missing from one or both sides.
 
 - **`get_transit_moments()`** → `TransitsTimeRangeModel`: `dates` (list of ISO strings),
   `subject` (the natal), `transits` (list of `TransitMomentModel`: `date` + `aspects`, the

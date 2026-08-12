@@ -9,13 +9,21 @@ subject -> chart data -> report -> LLM context flow on real output:
     python quickstart.py --svg out_dir  # also write an SVG wheel to out_dir/
 
 Everything is offline (online=False with explicit coordinates): no network,
-no GeoNames account. Swap the birth data for your own; keep online=False and
-always provide lng/lat/tz_str (plus city/nation for correct display labels).
+no GeoNames account. To guarantee that, the script forces sealed `leb` mode
+before importing kerykeion — otherwise KERYKEION_LEB_MODE=horizons/skyfield
+could let the ephemeris backend query Horizons or download DE440 during
+subject construction, even with online=False (which only disables GeoNames).
+Swap the birth data for your own; keep online=False and always provide
+lng/lat/tz_str (plus city/nation for correct display labels).
 """
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
+
+# Force sealed mode before the import: the backend reads this at import time.
+os.environ["KERYKEION_LEB_MODE"] = "leb"
 
 from kerykeion import (
     AstrologicalSubjectFactory,

@@ -27,7 +27,9 @@ REPORTED_ENV = {name: os.environ.get(name) for name in ENV_VARS}
 os.environ["KERYKEION_LEB_MODE"] = "leb"
 
 
-_VALID_LEB_MODES = {None, "leb", "auto", "skyfield", "horizons"}
+# backend.py reads KERYKEION_LEB_MODE as `.strip().lower()` and only validates
+# it when the resolved backend is libephemeris; swisseph ignores the variable.
+_VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
 
 
 def report_environment() -> None:
@@ -36,10 +38,23 @@ def report_environment() -> None:
     print("\n--- Environment variables ---")
     for name in ENV_VARS:
         print(f"{name} = {REPORTED_ENV[name] or 'unset'}")
-    saved_mode = REPORTED_ENV["KERYKEION_LEB_MODE"]
-    if saved_mode not in _VALID_LEB_MODES:
+
+
+def warn_if_leb_mode_invalid() -> None:
+    """Flag an invalid KERYKEION_LEB_MODE only when it actually matters.
+
+    Called after import, so BACKEND_NAME is known. The backend normalizes the
+    value (`.strip().lower()`) and validates it exclusively for libephemeris,
+    so `"AUTO"`/`" auto "` are valid and swisseph never rejects the variable.
+    """
+    if BACKEND_NAME != "libephemeris":
+        return
+    saved = REPORTED_ENV["KERYKEION_LEB_MODE"]
+    if saved is None:
+        return
+    if saved.strip().lower() not in _VALID_LEB_MODES:
         print(
-            f"WARNING: KERYKEION_LEB_MODE={saved_mode!r} is INVALID (valid: leb, auto, "
+            f"\nWARNING: KERYKEION_LEB_MODE={saved!r} is INVALID (valid: leb, auto, "
             "skyfield, horizons).\n         A normal `import kerykeion` raises ValueError "
             "under this setting; the probes\n         below only succeed because this "
             "diagnostic forces sealed 'leb' mode."
@@ -83,11 +98,14 @@ def main() -> None:
     report_environment()
     print(f"\nkerykeion: {kerykeion.__version__}")
     print(f"Backend:   {BACKEND_NAME}")
+    warn_if_leb_mode_invalid()
 
-    # A fresh install ships the 1849-2150 LEB kernel; probes always run in
-    # sealed `leb` mode (whatever KERYKEION_LEB_MODE says above) so that
-    # out-of-coverage dates RAISE instead of triggering a download.
-    print("\n--- Ephemeris coverage probes (offline, sealed leb mode, Greenwich) ---")
+    # A fresh install ships the 1849-2150 LEB kernel. On libephemeris the probes
+    # run in sealed `leb` mode (forced above) so out-of-coverage dates RAISE
+    # instead of triggering a download; swisseph ignores the LEB mode and reads
+    # its own .se1 files (or the Moshier fallback).
+    engine = "sealed leb mode" if BACKEND_NAME == "libephemeris" else "swisseph .se1 / Moshier"
+    print(f"\n--- Ephemeris coverage probes (offline, {engine}, Greenwich) ---")
     for year in (1850, 2024, 2149):
         ok, detail = probe(year)
         print(f"year {year}: {'OK  ' if ok else 'FAIL'} {detail}")

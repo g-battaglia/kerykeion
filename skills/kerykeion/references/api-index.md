@@ -31,7 +31,7 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `BreakdownItem` | subpackage import — `kerykeion.dominants` | `references/analysis.md` |
 | `calculate_essential_dignity` | subpackage import — `kerykeion.dignities` | `references/traditional.md` |
 | `calculate_moon_phase` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
-| `calculate_nakshatra` | subpackage import — `kerykeion.vedic` | `references/predictive.md` |
+| `calculate_nakshatra` | subpackage import — `kerykeion.vedic` | `references/traditional.md` |
 | `Category` | subpackage import — `kerykeion.dominants` | `references/analysis.md` |
 | `ChartDataFactory` | factory | `references/charts-and-drawing.md` |
 | `ChartDataModel` | alias | `references/charts-and-drawing.md` |
@@ -112,7 +112,7 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `get_number_from_name` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `get_planet_house` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `get_translations` | constant/function — `kerykeion.settings` | `references/charts-and-drawing.md` |
-| `get_triplicity_lords` | subpackage import — `kerykeion.dignities` | `references/analysis.md` |
+| `get_triplicity_lords` | subpackage import — `kerykeion.dignities` | `references/traditional.md` |
 | `has_terrestrial_frame` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `HELIACAL_RISING` | subpackage import — `kerykeion.heliacal` | `references/mundane-events.md` |
 | `HELIACAL_SETTING` | subpackage import — `kerykeion.heliacal` | `references/mundane-events.md` |
