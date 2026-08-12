@@ -22,6 +22,7 @@ from kerykeion.charts.utils import (
     wheel_y,
     convert_decimal_to_degree_string,
 )
+from kerykeion.charts.svg_metadata import point_state_attributes
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
 from kerykeion.schemas.literals import Houses
 from kerykeion.settings.chart_defaults import resolve_glyph_id
@@ -864,6 +865,7 @@ def _generate_point_svg(
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
     gauq = getattr(point_details, "gauquelin_sector", None)
     gauq_attr = f' kr:gauquelinsector="{gauq}"' if gauq is not None else ""
+    state_attrs = point_state_attributes(point_details)
 
     # kr:cx / kr:cy — the rendered glyph center, emitted so frontend hit-
     # detection can use an exact center without having to measure the symbol's
@@ -880,7 +882,7 @@ def _generate_point_svg(
     parts: list[str] = [
         f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
         f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',
-        f'kr:signposition="{point_details["position"]}" kr:slug="{escape_svg_text(point_details["name"])}"{retro_attr}{horoscope_attr}{gauq_attr} ',
+        f'kr:signposition="{point_details["position"]}" kr:slug="{escape_svg_text(point_details["name"])}"{retro_attr}{horoscope_attr}{gauq_attr}{state_attrs} ',
         f'kr:cx="{x}" kr:cy="{y}" ',
         f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
         f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{glyph_ref}" />',
@@ -1226,6 +1228,7 @@ def _draw_secondary_points(
         if celestial_points is not None and point_idx < len(celestial_points):
             cp = celestial_points[point_idx]
             kr_attrs += f' kr:house="{cp.house}" kr:sign="{cp.sign}" kr:absoluteposition="{cp.abs_pos}" kr:signposition="{cp.position}"'
+            kr_attrs += point_state_attributes(cp)
         # kr:cx / kr:cy — glyph center in the FULL_WHEEL-LOCAL frame, matching
         # _generate_point_svg. The outer translate(-6,-6) plus inner scale(0.5)
         # and pre-doubled use x/y place the symbol center exactly at

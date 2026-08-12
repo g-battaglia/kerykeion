@@ -32,6 +32,7 @@ from kerykeion.charts.glyph_ink_metrics import (
     TEXT_INK_HALF_WIDTH,
     TEXT_INK_REFERENCE_FONT_SIZE,
 )
+from kerykeion.charts.svg_metadata import point_state_attributes
 from kerykeion.utilities.core import wrap_180
 from kerykeion.schemas.models import KerykeionPointModel
 from kerykeion.settings.chart_defaults import resolve_glyph_id
@@ -1439,6 +1440,7 @@ def _draw_single_planet_in_ring(
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
     gauq = getattr(point, "gauquelin_sector", None)
     gauq_attr = f' kr:gauquelinsector="{gauq}"' if gauq is not None else ""
+    state_attrs = point_state_attributes(point)
 
     # kr:cx / kr:cy — glyph center in the WHEEL-LOCAL 100-unit frame (the
     # ModernHoroscope group's own coordinate space, i.e. the viewBox of the
@@ -1472,7 +1474,7 @@ def _draw_single_planet_in_ring(
     out = (
         f'<g kr:node="ChartPoint" kr:house="{point.house}" '
         f'kr:sign="{sign}" kr:absoluteposition="{point.abs_pos}" '
-        f'kr:signposition="{point.position}" kr:slug="{escape_svg_text(point_slug)}"{retro_attr}{horoscope_attr}{gauq_attr} '
+        f'kr:signposition="{point.position}" kr:slug="{escape_svg_text(point_slug)}"{retro_attr}{horoscope_attr}{gauq_attr}{state_attrs} '
         f'kr:cx="{glyph_cx}" kr:cy="{glyph_cy}" '
         f'transform="rotate(-{display_angle:.6f} {CENTER} {CENTER})">\n'
     )

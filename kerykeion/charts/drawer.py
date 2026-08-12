@@ -5098,6 +5098,7 @@ class ChartDrawer:  # type: ignore[no-redef]
     _GLYPH_CENTER_ATTR_RE = re.compile(r'kr:(cx|cy)="([^"]+)"')
     _CHART_POINT_TAG_RE = re.compile(r'<g\b(?=[^>]*\bkr:node=(["\'])ChartPoint\1)[^>]*>')
     _CHART_POINT_ID_ATTR_RE = re.compile(r'\bkr:(horoscope|absoluteposition)=(["\'])(.*?)\2')
+    _CHART_POINT_ANALYSIS_ATTR_RE = re.compile(r'\bkr:(horoscope|slug)=(["\'])(.*?)\2')
 
     @classmethod
     def _rebase_glyph_centers(cls, svg: str, scale: float, tx: float, ty: float) -> str:
@@ -5161,6 +5162,69 @@ class ChartDrawer:  # type: ignore[no-redef]
 
             projected_house, target_ring = projection
             return f'{tag[:-1]} kr:projectedhouse="{projected_house}" kr:projectedhoroscope="{target_ring}">'
+
+        return self._CHART_POINT_TAG_RE.sub(_annotate, svg)
+
+    def _inject_analysis_metadata(self, svg: str) -> str:
+        """Tag each point with the chart-level analyses it takes part in.
+
+        Angularity and stelliums are properties of the chart, not of the point:
+        they live on the chart data, keyed by point name, and the three point
+        serializers never see them. Annotating the finished markup — the same
+        route ``_inject_projected_house_metadata`` takes — keeps that data out
+        of every draw signature while still delivering it to consumers that
+        read the SVG rather than the model.
+
+        ``kr:angularity`` names the angle the point stands on and
+        ``kr:angularitydistance`` how far off it sits; ``kr:stellium`` carries
+        the house of the crowd it belongs to. All three are absent for points
+        that take part in neither.
+        """
+        chart_data = self.chart_data
+        rings: tuple[tuple[str, list, list], ...]
+        if self._renderer.is_dual_wheel():
+            rings = (
+                (
+                    "0",
+                    list(getattr(chart_data, "first_subject_angularities", []) or []),
+                    list(getattr(chart_data, "first_subject_stelliums", []) or []),
+                ),
+                (
+                    "1",
+                    list(getattr(chart_data, "second_subject_angularities", []) or []),
+                    list(getattr(chart_data, "second_subject_stelliums", []) or []),
+                ),
+            )
+        else:
+            rings = (
+                (
+                    "0",
+                    list(getattr(chart_data, "angularities", []) or []),
+                    list(getattr(chart_data, "stelliums", []) or []),
+                ),
+            )
+
+        analysis_by_point: dict[tuple[str, str], list[str]] = {}
+        for ring, angularities, stelliums in rings:
+            for angularity in angularities:
+                analysis_by_point.setdefault((ring, str(angularity.point)), []).append(
+                    f'kr:angularity="{angularity.angle}" kr:angularitydistance="{round(angularity.distance, 4)}"'
+                )
+            for stellium in stelliums:
+                for name in stellium.points:
+                    analysis_by_point.setdefault((ring, str(name)), []).append(f'kr:stellium="{stellium.house}"')
+
+        if not analysis_by_point:
+            return svg
+
+        def _annotate(match: "re.Match[str]") -> str:
+            tag = match.group(0)
+            identity = {name: value for name, _, value in self._CHART_POINT_ANALYSIS_ATTR_RE.findall(tag)}
+            key = (identity.get("horoscope", "0"), identity.get("slug", ""))
+            attributes = analysis_by_point.get(key)
+            if not attributes:
+                return tag
+            return f'{tag[:-1]} {" ".join(attributes)}>'
 
         return self._CHART_POINT_TAG_RE.sub(_annotate, svg)
 
@@ -5307,6 +5371,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             template = self._rebase_glyph_centers(template, 1.0, 100.0, self._vertical_offsets["wheel"])
 
         template = self._inject_projected_house_metadata(template)
+        template = self._inject_analysis_metadata(template)
 
         logger.debug("Template dictionary includes %s fields", len(template_data))
 
@@ -5552,6 +5617,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             template = self._rebase_glyph_centers(template, 1.0, 100.0, 50.0)
 
         template = self._inject_projected_house_metadata(template)
+        template = self._inject_analysis_metadata(template)
 
         return self._apply_svg_post_processing(template, minify, remove_css_variables)
 
