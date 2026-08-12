@@ -21,16 +21,29 @@ import textwrap
 from typing import Optional, Tuple
 
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+SKILL_DIR = PROJECT_ROOT / "skills" / "kerykeion"
+
+
 def find_markdown_files(
     targets: list[Path],
     *,
     exclude_release_notes: bool = False,
 ) -> list[Path]:
-    """Collect markdown files from the provided targets."""
+    """Collect markdown files from the provided targets.
+
+    Relative targets resolve against the repository root, not the caller's
+    working directory, and a target that does not exist raises instead of
+    being skipped: a silently empty corpus reports "all snippets passed"
+    while verifying nothing.
+    """
     markdown_files: set[Path] = set()
 
     for target in targets:
-        path = target.resolve()
+        path = target if target.is_absolute() else (PROJECT_ROOT / target)
+        path = path.resolve()
+        if not path.exists():
+            raise FileNotFoundError(f"Snippet target not found: {path}")
         # Explicit files: accept markdown and markdown-formatted .txt
         # (kerykeion/llms.txt is the AI-agent guide with ```python blocks).
         if path.is_file() and path.suffix.lower() in (".md", ".txt"):
@@ -213,7 +226,10 @@ def main():
         else:
             targets = [Path("README.md"), Path("kerykeion/llms.txt"), Path("site/docs"), Path("site/examples"), Path("skills/kerykeion")]
         exclude_release_notes = True
-        mode_description = "README.md, kerykeion/llms.txt, site/docs, site/examples, and skills/kerykeion (default)"
+        mode_description = (
+            "README.md, kerykeion/llms.txt, site/docs, site/examples, and "
+            "skills/kerykeion (default; skill blocks always run isolated)"
+        )
 
     print(f"� Testing Python snippets in {mode_description}")
 
@@ -225,13 +241,21 @@ def main():
 
     for md_file in md_files:
         try:
-            content = md_file.read_text()
+            # Explicit UTF-8: the corpus contains em-dashes, arrows and emoji,
+            # so a non-UTF-8 locale would otherwise raise UnicodeDecodeError
+            # and be swallowed as a skipped file.
+            content = md_file.read_text(encoding="utf-8")
             snippets = extract_python_snippets(content)
 
             if not snippets:
                 continue
 
             print(f"\n📝 {md_file} ({len(snippets)} snippets)")
+
+            # Skill blocks are copy-pasted one at a time into foreign
+            # codebases, so they are always verified standalone — no shared
+            # page context, no injected imports — whatever mode is running.
+            isolated = args.isolated or md_file.is_relative_to(SKILL_DIR)
 
             # Snippets on one page often build on each other. A single clean
             # page-level execution proves the same sequential contract as the
@@ -240,7 +264,7 @@ def main():
             # replay cumulatively to identify the exact failing block(s).
             dedented_snippets = [textwrap.dedent(snippet) for snippet in snippets]
 
-            if args.isolated:
+            if isolated:
                 for i, dedented in enumerate(dedented_snippets, 1):
                     success, error = test_snippet(dedented, timeout=args.timeout, bare=True)
                     total_snippets += 1
@@ -285,7 +309,11 @@ def main():
                     failed_snippets += 1
 
         except Exception as e:
+            # A file we cannot even read is a gate failure, not a skip:
+            # counting it keeps the run from reporting a green 0/0.
             print(f"❌ Error reading {md_file}: {e}")
+            failed_snippets += 1
+            total_snippets += 1
 
     print(f"\n📊 Results: {total_snippets - failed_snippets}/{total_snippets} snippets passed")
 

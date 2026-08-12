@@ -108,9 +108,10 @@ uv run poe docs:snippets
 # Audit public-API documentation coverage
 uv run poe docs:check
 
-# Both gates also cover skills/kerykeion (the AI Agent Skill).
-# Focused run of the skill's snippets only:
-uv run python scripts/test_markdown_snippets.py --skill
+# Both gates also cover skills/kerykeion (the AI Agent Skill). Skill blocks
+# always run standalone — no import prelude, no shared page context — even in
+# the default docs:snippets run. Focused version:
+uv run poe docs:snippets:skill
 ```
 
 ## 📁 Project Structure

@@ -54,9 +54,13 @@ Thank you for your interest in contributing to Kerykeion! Contributions of all k
 current public API for coding agents. If your change alters public behavior —
 signatures, defaults, model fields, chart options, backend or env-var
 semantics — update the skill **in the same commit**. This is enforced locally:
-`poe docs:check` and `poe docs:snippets` cover the skill folder, and
+`poe docs:check` requires every export to be documented in a reference file,
+`poe docs:snippets` executes each skill code block standalone, and
 `tests/core/test_agent_skill_contract.py` (part of `poe check` and
 `poe quality`) validates its structure, license, and version references.
+A release version bump must also update the "Verified against" line in
+`skills/kerykeion/SKILL.md` — the contract test fails until it does, which is
+the prompt to re-read the skill for API drift.
 
 ## License
 

@@ -37,27 +37,45 @@ def report_environment() -> None:
     print(f"Python:    {sys.version.split()[0]}")
     print("\n--- Environment variables ---")
     for name in ENV_VARS:
-        print(f"{name} = {REPORTED_ENV[name] or 'unset'}")
+        value = REPORTED_ENV[name]
+        # An empty string is NOT the same as absent: backend.py defaults only a
+        # missing key, so KERYKEION_LEB_MODE='' reaches validation and kills the
+        # import. Printing it as "unset" would hide the actual culprit.
+        print(f"{name} = {'unset' if value is None else repr(value)}")
 
 
-def warn_if_leb_mode_invalid() -> None:
-    """Flag an invalid KERYKEION_LEB_MODE only when it actually matters.
+def saved_leb_mode() -> str:
+    """The caller's effective LEB mode, normalized the way backend.py does."""
+    saved = REPORTED_ENV["KERYKEION_LEB_MODE"]
+    return "leb" if saved is None else saved.strip().lower()
+
+
+def report_leb_mode_substitution() -> None:
+    """Explain how the forced sealed mode relates to the caller's real one.
 
     Called after import, so BACKEND_NAME is known. The backend normalizes the
     value (`.strip().lower()`) and validates it exclusively for libephemeris,
     so `"AUTO"`/`" auto "` are valid and swisseph never rejects the variable.
+    Both branches matter: an INVALID value means the user's own import is
+    broken even though the probes below pass, while a VALID non-default value
+    means the probes describe a stricter configuration than the user runs.
     """
     if BACKEND_NAME != "libephemeris":
         return
-    saved = REPORTED_ENV["KERYKEION_LEB_MODE"]
-    if saved is None:
-        return
-    if saved.strip().lower() not in _VALID_LEB_MODES:
+    mode = saved_leb_mode()
+    if mode not in _VALID_LEB_MODES:
+        raw = REPORTED_ENV["KERYKEION_LEB_MODE"]
         print(
-            f"\nWARNING: KERYKEION_LEB_MODE={saved!r} is INVALID (valid: leb, auto, "
+            f"\nWARNING: KERYKEION_LEB_MODE={raw!r} is INVALID (valid: leb, auto, "
             "skyfield, horizons).\n         A normal `import kerykeion` raises ValueError "
             "under this setting; the probes\n         below only succeed because this "
             "diagnostic forces sealed 'leb' mode."
+        )
+    elif mode != "leb":
+        print(
+            f"\nNOTE: your KERYKEION_LEB_MODE is {mode!r}, but the probes below run in "
+            "sealed\n      'leb' mode so this diagnostic never touches the network. Your "
+            "real\n      configuration may resolve dates that the probes report as FAIL."
         )
 
 
@@ -98,7 +116,7 @@ def main() -> None:
     report_environment()
     print(f"\nkerykeion: {kerykeion.__version__}")
     print(f"Backend:   {BACKEND_NAME}")
-    warn_if_leb_mode_invalid()
+    report_leb_mode_substitution()
 
     # A fresh install ships the 1849-2150 LEB kernel. On libephemeris the probes
     # run in sealed `leb` mode (forced above) so out-of-coverage dates RAISE
@@ -120,11 +138,19 @@ def main() -> None:
             print("Computed by the swisseph backend (LEB tiers do not apply).")
     else:
         print(f"year 1600: FAIL {detail}")
-        if BACKEND_NAME == "libephemeris":
+        if BACKEND_NAME != "libephemeris":
+            print("The swisseph backend cannot compute year 1600 with its current data files.")
+        elif saved_leb_mode() == "leb":
             print("Expected on a default install (1849-2150 kernel). To widen coverage:")
             print('  python -c "import libephemeris; libephemeris.download_leb_for_tier(\'medium\')"')
         else:
-            print("The swisseph backend cannot compute year 1600 with its current data files.")
+            # Their real mode (auto/skyfield/horizons) may well resolve 1600 via
+            # Skyfield or Horizons; recommending a tier download would be wrong.
+            print(
+                f"This probe ran in sealed 'leb' mode, not your {saved_leb_mode()!r} mode — "
+                "it means the\ninstalled LEB kernel does not cover 1600, NOT that your "
+                "configuration fails there."
+            )
 
     sys.exit(0)
 

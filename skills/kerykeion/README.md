@@ -10,15 +10,15 @@ Gemini CLI, Windsurf, Cline, and others.
 
 ## Install
 
-With [skills.sh](https://skills.sh/):
+The skill lives in the [kerykeion repository](https://github.com/g-battaglia/kerykeion),
+not in the PyPI package. **While v6 is in alpha, take it from the `alpha/v6`
+branch**: the registry command resolves the repository's default branch, which
+still carries the v5-era skill.
 
 ```bash
-npx skills add g-battaglia/kerykeion
-```
+git clone --branch alpha/v6 --depth 1 https://github.com/g-battaglia/kerykeion.git
+cd kerykeion
 
-Or copy the folder manually into your agent's skills directory:
-
-```bash
 # Claude Code
 cp -r skills/kerykeion /path/to/your-project/.claude/skills/kerykeion
 
@@ -27,6 +27,12 @@ cp -r skills/kerykeion /path/to/your-project/.agents/skills/kerykeion
 
 # Generic agentskills.io layout (Cursor and others)
 cp -r skills/kerykeion /path/to/your-project/skills/kerykeion
+```
+
+Once v6 is the default branch, [skills.sh](https://skills.sh/) installs it in one step:
+
+```bash
+npx skills add g-battaglia/kerykeion
 ```
 
 ## What's inside
@@ -50,12 +56,13 @@ The canonical copy of this skill lives at `skills/kerykeion/` in the
 maintained under three mechanical gates:
 
 - `poe docs:check` — every name exported by `kerykeion.__all__` must appear in
-  the skill corpus.
-- `python scripts/test_markdown_snippets.py --skill` — every ```` ```python ````
-  block runs in its own process with **no shared page context and no import
-  prelude**: a block must import everything it uses and run offline on a
-  default install, or carry `# doc-snippet: no-run` as its first line. (The
-  broader `poe docs:snippets` run also covers the skill, page-level.)
+  a reference file (`references/api-index.md` is excluded, so its generated
+  routing rows cannot stand in for real documentation).
+- `poe docs:snippets` (focused: `poe docs:snippets:skill`) — every
+  ```` ```python ```` block in the skill runs in its own process with **no
+  shared page context and no import prelude**, in both runs: a block must
+  import everything it uses and run offline on a default install, or carry
+  `# doc-snippet: no-run` as its first line.
 - `tests/core/test_agent_skill_contract.py` — validates frontmatter, the
   vendored license, reference reachability, and version references.
 

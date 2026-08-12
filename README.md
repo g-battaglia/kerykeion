@@ -2464,15 +2464,12 @@ For the full configuration guide, see [Swiss Ephemeris Configuration](https://gi
 
 Kerykeion ships a cross-platform [Agent Skill](https://agentskills.io/) that teaches AI coding agents the real v6 API — factories, chart types, backends, sidereal modes, predictive and traditional techniques — so generated code stops guessing method names. It works with any skills-aware agent (Claude Code, Cursor, Codex, Copilot, Gemini CLI, and others).
 
-Install it into your project with [skills.sh](https://skills.sh/):
+> **During the v6 alpha, install from the `alpha/v6` branch.** The skill is not part of the PyPI package, and the registry command below resolves this repository's default branch — which still carries the v5-era skill. Until v6 is merged to the default branch, clone the branch and copy the folder.
 
 ```bash
-npx skills add g-battaglia/kerykeion
-```
+git clone --branch alpha/v6 --depth 1 https://github.com/g-battaglia/kerykeion.git
+cd kerykeion
 
-Or copy the folder manually into your agent's skills directory:
-
-```bash
 # Claude Code
 cp -r skills/kerykeion /path/to/your-project/.claude/skills/kerykeion
 
@@ -2481,6 +2478,12 @@ cp -r skills/kerykeion /path/to/your-project/.agents/skills/kerykeion
 
 # Generic agentskills.io layout (Cursor and others)
 cp -r skills/kerykeion /path/to/your-project/skills/kerykeion
+```
+
+Once v6 is the default branch, [skills.sh](https://skills.sh/) installs it in one step:
+
+```bash
+npx skills add g-battaglia/kerykeion
 ```
 
 Prefer a single-file guide? The package also ships `kerykeion/llms.txt`, a self-contained AI-agent reference installed with the library. For turning chart *data* into LLM input at runtime, see [AI Context Serializer](#ai-context-serializer).

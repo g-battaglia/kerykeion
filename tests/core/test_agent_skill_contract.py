@@ -29,12 +29,14 @@ REFERENCES_DIR = SKILL_DIR / "references"
 
 
 def _skill_corpus() -> list[Path]:
-    """Every text file that ships with the skill."""
-    return sorted(
-        path
-        for path in SKILL_DIR.rglob("*")
-        if path.is_file() and path.suffix in (".md", ".py", "")
-    )
+    """Every file that ships with the skill.
+
+    Deliberately unfiltered by extension: the license and version-pin guards
+    below must cover whatever the skill distributes, and an allow-list would
+    silently exempt any future asset (JSON, .txt, YAML) from both. Callers
+    read with ``errors="ignore"``, so a binary file is harmless here.
+    """
+    return sorted(path for path in SKILL_DIR.rglob("*") if path.is_file())
 
 
 def _frontmatter() -> str:
@@ -94,15 +96,31 @@ def test_no_foreign_license_strings_in_the_skill():
 
 
 def test_references_are_reachable_in_both_directions():
-    skill_text = SKILL_MD.read_text(encoding="utf-8")
-    mentioned = set(re.findall(r"references/([a-z0-9-]+\.md)", skill_text))
+    """No dangling pointers anywhere, and no reference SKILL.md cannot reach.
 
+    Links are checked across the whole corpus, not just SKILL.md: the
+    references cross-link each other heavily, and a rename that updates only
+    the router would leave those cross-links pointing at nothing while this
+    gate stayed green.
+    """
     on_disk = {path.name for path in REFERENCES_DIR.glob("*.md")}
 
-    dangling = mentioned - on_disk
-    assert not dangling, f"SKILL.md points at missing reference files: {sorted(dangling)}"
+    dangling: dict[str, list[str]] = {}
+    for path in _skill_corpus():
+        if path.suffix != ".md":
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for target in set(re.findall(r"references/([a-z0-9-]+\.md)", text)):
+            if target not in on_disk:
+                dangling.setdefault(path.name, []).append(target)
+    assert not dangling, f"pointers at missing reference files: {dangling}"
 
-    orphans = on_disk - mentioned
+    # The router must still reach every reference directly: an agent loads
+    # SKILL.md first, so a file only linked from a sibling is unreachable.
+    from_router = set(
+        re.findall(r"references/([a-z0-9-]+\.md)", SKILL_MD.read_text(encoding="utf-8"))
+    )
+    orphans = on_disk - from_router
     assert not orphans, (
         f"reference files never mentioned in SKILL.md (agents will never load "
         f"them): {sorted(orphans)}"
@@ -114,8 +132,11 @@ def test_version_pins_match_pyproject():
     version = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.MULTILINE).group(1)
 
     assert version in SKILL_MD.read_text(encoding="utf-8"), (
-        f"SKILL.md must state the version it was verified against ({version}); "
-        "update the 'Verified against' line in the same commit as the bump"
+        f"The skill claims a version it was not verified against. Fix by editing "
+        f"the 'Verified against kerykeion X' line at the top of "
+        f"skills/kerykeion/SKILL.md to read {version}.\n"
+        f"This gate is intentional: a release bump is the moment to re-read the "
+        f"skill for API drift, and nothing else forces that review."
     )
 
     # Any fully-qualified alpha version mentioned anywhere in the skill must be
@@ -157,6 +178,15 @@ def test_install_doc_present():
     assert "npx skills add g-battaglia/kerykeion" in readme.read_text(encoding="utf-8")
 
 
+# Both scripts exit 0 by design (env_report is a report, not a gate), so a
+# returncode assertion alone proves nothing. Each entry pins output that only
+# a working run can produce.
+_SCRIPT_EXPECTATIONS = {
+    "quickstart.py": ("=== Subject ===", "Sun:", "Aspects found:", "OK — quickstart completed."),
+    "env_report.py": ("=== Kerykeion environment report ===", "Backend:", "year 2024: OK"),
+}
+
+
 @pytest.mark.parametrize(
     "script",
     sorted((SKILL_DIR / "scripts").glob("*.py"), key=lambda p: p.name),
@@ -174,4 +204,17 @@ def test_bundled_scripts_run(script: Path, tmp_path: Path):
     )
     assert result.returncode == 0, (
         f"{script.name} failed:\n{result.stdout}\n{result.stderr}"
+    )
+
+    expected = _SCRIPT_EXPECTATIONS.get(script.name)
+    assert expected is not None, (
+        f"{script.name} ships with the skill but has no output expectations; add "
+        f"them to _SCRIPT_EXPECTATIONS so this test can actually fail"
+    )
+    for marker in expected:
+        assert marker in result.stdout, (
+            f"{script.name} ran but did not produce {marker!r}:\n{result.stdout}"
+        )
+    assert "Traceback" not in result.stderr, (
+        f"{script.name} exited 0 but raised:\n{result.stderr}"
     )

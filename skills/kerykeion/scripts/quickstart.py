@@ -23,6 +23,11 @@ import os
 from pathlib import Path
 
 # Force sealed mode before the import: the backend reads this at import time.
+# Snapshot the caller's value first — overriding it silently would let this
+# script report a clean run on an environment where their own `import
+# kerykeion` raises ValueError.
+_SAVED_LEB_MODE = os.environ.get("KERYKEION_LEB_MODE")
+_VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
 os.environ["KERYKEION_LEB_MODE"] = "leb"
 
 from kerykeion import (
@@ -37,6 +42,32 @@ from kerykeion import (
 
 def section(title: str) -> None:
     print(f"\n=== {title} ===")
+
+
+def warn_if_leb_mode_overridden() -> None:
+    """Say so when this run does not reflect the caller's real configuration.
+
+    Without this, the script prescribed as the install sanity check would
+    print a clean bill of health for an environment where the user's own
+    `import kerykeion` dies on an invalid KERYKEION_LEB_MODE.
+    """
+    if _SAVED_LEB_MODE is None or BACKEND_NAME != "libephemeris":
+        return
+    mode = _SAVED_LEB_MODE.strip().lower()
+    if mode == "leb":
+        return
+    if mode not in _VALID_LEB_MODES:
+        print(
+            f"WARNING: your KERYKEION_LEB_MODE={_SAVED_LEB_MODE!r} is INVALID (valid: "
+            "leb, auto,\n         skyfield, horizons). A plain `import kerykeion` raises "
+            "ValueError under it;\n         this run only works because the script forces "
+            "sealed 'leb' mode."
+        )
+    else:
+        print(
+            f"NOTE: run in sealed 'leb' mode, not your {mode!r} mode, so this check "
+            "stays offline."
+        )
 
 
 def build_subject():
@@ -54,6 +85,7 @@ def main() -> None:
     parser.add_argument("--svg", metavar="DIR", help="also render the natal SVG into DIR/")
     args = parser.parse_args()
 
+    warn_if_leb_mode_overridden()
     subject = build_subject()
 
     # 1) Read positions straight off the subject model
