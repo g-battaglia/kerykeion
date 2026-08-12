@@ -39,6 +39,7 @@
     --kerykeion-modern-house-ring: #e4e4e7;
     --kerykeion-modern-stroke: #d4d4d8;
     --kerykeion-modern-retrograde: #b03030;
+    --kerykeion-modern-stationary: #8a5a12;
     --kerykeion-modern-indicator: #8a8278;
     --kerykeion-modern-zodiac-bg-0: #ff7200;
     --kerykeion-modern-zodiac-bg-1: #6b3d00;
@@ -513,55 +514,55 @@
    <!-- Gauquelin Sectors Overlay -->
    <!-- Planets -->
    <g kr:node="Planets_Wheel">
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="19.74676719464139" kr:cx="140.0" kr:cy="290.00000000000006" kr:house="First_House" kr:node="ChartPoint" kr:sign="Ari" kr:signposition="19.74676719464139" kr:slug="Ascendant">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="19.74676719464139" kr:cx="140.0" kr:cy="290.00000000000006" kr:house="First_House" kr:node="ChartPoint" kr:sign="Ari" kr:signposition="19.74676719464139" kr:slug="Ascendant" kr:speed="886.832442">
      <use x="40.0" y="240.00000000000006" xlink:href="#Ascendant"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.21501423317537" kr:cx="186.08748014191332" kr:cy="352.1846945070414" kr:house="First_House" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.215014233175367" kr:slug="Saturn">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.21501423317537" kr:cx="186.08748014191332" kr:cy="352.1846945070414" kr:declination="13.2969" kr:house="First_House" kr:motionstate="retrograde" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.215014233175367" kr:slug="Saturn" kr:speed="-0.066938">
      <use x="86.0874801419133" y="302.1846945070414" xlink:href="#Saturn"/>
      <g transform="translate(108.09 320.18) scale(.55)">
       <use xlink:href="#retrograde"/>
      </g>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.69186967968114" kr:cx="208.77606924032162" kr:cy="354.0021874312053" kr:house="First_House" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.69186967968114" kr:slug="Jupiter">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.69186967968114" kr:cx="208.77606924032162" kr:cy="354.0021874312053" kr:declination="14.6101" kr:house="First_House" kr:motionstate="retrograde" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.69186967968114" kr:slug="Jupiter" kr:speed="-0.10691">
      <use x="108.77606924032162" y="304.0021874312053" xlink:href="#Jupiter"/>
      <g transform="translate(130.78 322) scale(.55)">
       <use xlink:href="#retrograde"/>
      </g>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="55.55201631118552" kr:cx="205.70317893375875" kr:cy="387.57235188055057" kr:house="First_House" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="25.55201631118552" kr:slug="Uranus">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="55.55201631118552" kr:cx="205.70317893375875" kr:cy="387.57235188055057" kr:declination="18.8846" kr:house="First_House" kr:motionstate="retrograde" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="25.55201631118552" kr:slug="Uranus" kr:speed="-0.029366">
      <use x="105.70317893375875" y="337.57235188055057" xlink:href="#Uranus"/>
      <g transform="translate(127.7 355.57) scale(.55)">
       <use xlink:href="#retrograde"/>
      </g>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="120.56821722799918" kr:cx="367.85811332497553" kr:cy="433.3175687833589" kr:house="Fifth_House" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="0.5682172279991846" kr:slug="Chiron">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="120.56821722799918" kr:cx="367.85811332497553" kr:cy="433.3175687833589" kr:declination="13.4146" kr:house="Fifth_House" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="0.5682172279991846" kr:slug="Chiron" kr:speed="0.05292">
      <use x="267.85811332497553" y="383.3175687833589" xlink:href="#Chiron"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="124.18808813451612" kr:cx="382.9639614870184" kr:cy="450.3436871639853" kr:house="Fifth_House" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="4.188088134516121" kr:slug="Pluto">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="124.18808813451612" kr:cx="382.9639614870184" kr:cy="450.3436871639853" kr:declination="23.1195" kr:house="Fifth_House" kr:motionstate="fast" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="4.188088134516121" kr:slug="Pluto" kr:speed="0.011365">
      <use x="282.9639614870184" y="400.3436871639853" xlink:href="#Pluto"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="153.21541744281757" kr:cx="441.4201220870136" kr:cy="395.02361084944306" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="3.215417442817568" kr:slug="Venus">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="153.21541744281757" kr:cx="441.4201220870136" kr:cy="395.02361084944306" kr:declination="10.5716" kr:house="Sixth_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="3.215417442817568" kr:slug="Venus" kr:speed="1.133712" kr:stellium="6">
      <use x="341.4201220870136" y="345.02361084944306" xlink:href="#Venus"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="176.03011967681334" kr:cx="492.8038056731051" kr:cy="354.86136732921943" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="26.030119676813342" kr:slug="Neptune">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="176.03011967681334" kr:cx="492.8038056731051" kr:cy="354.86136732921943" kr:declination="2.6814" kr:house="Sixth_House" kr:motionstate="fast" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="26.030119676813342" kr:slug="Neptune" kr:speed="0.035317">
      <use x="392.8038056731051" y="304.86136732921943" xlink:href="#Neptune"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="182.66253120510896" kr:cx="479.6204943706032" kr:cy="332.68626888951957" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="2.6625312051089622" kr:slug="Mars">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="182.66253120510896" kr:cx="479.6204943706032" kr:cy="332.68626888951957" kr:declination="-0.1807" kr:house="Sixth_House" kr:motionstate="fast" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="2.6625312051089622" kr:slug="Mars" kr:speed="0.644941" kr:stellium="6">
      <use x="379.6204943706032" y="282.68626888951957" xlink:href="#Mars"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="191.024247807456" kr:cx="504.3844994111007" kr:cy="313.10273475937083" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="11.024247807455993" kr:slug="True_North_Lunar_Node">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="191.024247807456" kr:cx="504.3844994111007" kr:cy="313.10273475937083" kr:declination="-4.3633" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="11.024247807455993" kr:slug="True_North_Lunar_Node" kr:speed="0.005933">
      <use x="404.3844994111007" y="263.10273475937083" xlink:href="#True_North_Lunar_Node"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="196.2678943501122" kr:cx="485.79991207416776" kr:cy="297.6410496114698" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="16.267894350112186" kr:slug="Sun">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="196.2678943501122" kr:angularity="Descendant" kr:angularitydistance="3.4789" kr:cx="485.79991207416776" kr:cy="297.6410496114698" kr:declination="-6.3989" kr:house="Sixth_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="16.267894350112186" kr:slug="Sun" kr:speed="0.988482" kr:stellium="6">
      <use x="385.79991207416776" y="247.64104961146978" xlink:href="#Sun"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="218.55823263691192" kr:cx="496.9560835494866" kr:cy="235.955686360112" kr:house="Seventh_House" kr:node="ChartPoint" kr:sign="Sco" kr:signposition="8.558232636911924" kr:slug="Mercury">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="218.55823263691192" kr:cx="496.9560835494866" kr:cy="235.955686360112" kr:declination="-16.233" kr:house="Seventh_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Sco" kr:signposition="8.558232636911924" kr:slug="Mercury" kr:speed="1.319465">
      <use x="396.9560835494866" y="185.955686360112" xlink:href="#Mercury"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="277.07097923305986" kr:cx="381.58233816355187" kr:cy="94.37047985323889" kr:house="Tenth_House" kr:node="ChartPoint" kr:sign="Cap" kr:signposition="7.070979233059859" kr:slug="Medium_Coeli">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="277.07097923305986" kr:cx="381.58233816355187" kr:cy="94.37047985323889" kr:house="Tenth_House" kr:node="ChartPoint" kr:sign="Cap" kr:signposition="7.070979233059859" kr:slug="Medium_Coeli" kr:speed="332.128397">
      <use x="281.58233816355187" y="44.37047985323888" xlink:href="#Medium_Coeli"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="303.5466251977386" kr:cx="299.84096533045516" kr:cy="128.93090943818459" kr:house="Eleventh_House" kr:node="ChartPoint" kr:sign="Aqu" kr:signposition="3.5466251977385923" kr:slug="Moon">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="303.5466251977386" kr:cx="299.84096533045516" kr:cy="128.93090943818459" kr:declination="-14.5969" kr:house="Eleventh_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Aqu" kr:signposition="3.5466251977385923" kr:slug="Moon" kr:speed="12.529073">
      <use x="199.84096533045516" y="78.93090943818459" xlink:href="#Moon"/>
     </g>
     <g kr:absoluteposition="196.2678943501122" kr:node="Indicator" kr:slug="Sun">

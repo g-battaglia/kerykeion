@@ -41,6 +41,7 @@
     --kerykeion-modern-house-ring: #eec5d6;
     --kerykeion-modern-stroke: #c8a0b3;
     --kerykeion-modern-retrograde: #ff4f9a;
+    --kerykeion-modern-stationary: #ff9f43;
     --kerykeion-modern-indicator: #a0788e;
     --kerykeion-modern-zodiac-bg-0: #fce8f1;
     --kerykeion-modern-zodiac-bg-1: #f5d1e3;
@@ -509,7 +510,7 @@
 <line x1='50.0' y1='6.5' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-39.808771 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-30.275171 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-17.800471 50.0 50.0)'/>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='19.711128718293267' kr:signposition='19.711128718293267' kr:slug='Ascendant' kr:gauquelinsector='1.0' kr:cx='168.47964026320344' kr:cy='561.5522465181045' transform='rotate(-5.181006 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='19.711128718293267' kr:signposition='19.711128718293267' kr:slug='Ascendant' kr:gauquelinsector='1.0' kr:speed='886.944184' kr:cx='168.47964026320344' kr:cy='561.5522465181045' transform='rotate(-5.181006 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(95.181006) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='var(--kerykeion-chart-color-first-house)' />
   </g>
@@ -522,7 +523,7 @@
 <g kr:node='Indicator' kr:slug='Ascendant' kr:absoluteposition='19.711128718293267' transform='rotate(-0.000000 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.1621465242 7.6736384661 L 46.2592216415 8.7442464343' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='20.13849003243521' kr:signposition='20.13849003243521' kr:slug='Sedna' kr:retrograde='true' kr:gauquelinsector='36.976' kr:cx='170.47574595417814' kr:cy='576.374882159568' transform='rotate(-10.158304 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='20.13849003243521' kr:signposition='20.13849003243521' kr:slug='Sedna' kr:retrograde='true' kr:gauquelinsector='36.976' kr:speed='-0.007875' kr:declination='-1.4764' kr:cx='170.47574595417814' kr:cy='576.374882159568' transform='rotate(-10.158304 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(100.158304) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Sedna' kr:slug='Sedna' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -549,7 +550,7 @@
 <g kr:node='Indicator' kr:slug='Pars_Fidei' kr:absoluteposition='20.18798416479904' transform='rotate(-0.476855 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 38.7821849701 9.0071881185 L 39.0659297032 10.0440651249' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='43.21501423317537' kr:signposition='13.215014233175367' kr:slug='Saturn' kr:retrograde='true' kr:gauquelinsector='35.0688' kr:cx='179.70790683562615' kr:cy='608.9884993072837' transform='rotate(-21.452878 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='43.21501423317537' kr:signposition='13.215014233175367' kr:slug='Saturn' kr:retrograde='true' kr:gauquelinsector='35.0688' kr:motionstate='retrograde' kr:speed='-0.066938' kr:declination='13.2969' kr:cx='179.70790683562615' kr:cy='608.9884993072837' transform='rotate(-21.452878 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(111.452878) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Saturn' kr:slug='Saturn' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -563,7 +564,7 @@
 <g kr:node='Indicator' kr:slug='Saturn' kr:absoluteposition='43.21501423317537' transform='rotate(-23.503886 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.5210404501 7.5272271220 L 51.4825670740 8.6015384359' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='43.69186967968114' kr:signposition='13.69186967968114' kr:slug='Jupiter' kr:retrograde='true' kr:gauquelinsector='35.2597' kr:cx='186.93220789301807' kr:cy='624.9389459993846' transform='rotate(-27.280715 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='43.69186967968114' kr:signposition='13.69186967968114' kr:slug='Jupiter' kr:retrograde='true' kr:gauquelinsector='35.2597' kr:motionstate='retrograde' kr:speed='-0.10691' kr:declination='14.6101' kr:cx='186.93220789301807' kr:cy='624.9389459993846' transform='rotate(-27.280715 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(117.280715) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Jupiter' kr:slug='Jupiter' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -577,7 +578,7 @@
 <g kr:node='Indicator' kr:slug='Jupiter' kr:absoluteposition='43.69186967968114' transform='rotate(-23.980741 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 47.5535477342 7.5704717053 L 47.6154285857 8.6436891857' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='46.94823587732511' kr:signposition='16.94823587732511' kr:slug='Kronos' kr:retrograde='true' kr:gauquelinsector='35.2736' kr:cx='196.53775623894828' kr:cy='641.2874115035379' transform='rotate(-33.592054 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='46.94823587732459' kr:signposition='16.948235877324592' kr:slug='Kronos' kr:retrograde='true' kr:gauquelinsector='35.2736' kr:speed='-0.011384' kr:declination='16.9059' kr:cx='196.53775623894828' kr:cy='641.2874115035379' transform='rotate(-33.592054 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(123.592054) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Kronos' kr:slug='Kronos' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -588,10 +589,10 @@
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(123.592054 50.0 22.0)'>56'</text>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(123.592054 50.0 25.0)'>RX</text>
 </g>
-<g kr:node='Indicator' kr:slug='Kronos' kr:absoluteposition='46.94823587732511' transform='rotate(-27.237107 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Kronos' kr:absoluteposition='46.94823587732459' transform='rotate(-27.237107 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 45.2957823361 7.7611513394 L 45.4147713711 8.8295457467' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='55.55201631118552' kr:signposition='25.55201631118552' kr:slug='Uranus' kr:retrograde='true' kr:gauquelinsector='34.3871' kr:cx='208.74102564351637' kr:cy='657.4997211964405' transform='rotate(-40.346690 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Tau' kr:absoluteposition='55.55201631118552' kr:signposition='25.55201631118552' kr:slug='Uranus' kr:retrograde='true' kr:gauquelinsector='34.3871' kr:motionstate='retrograde' kr:speed='-0.029366' kr:declination='18.8846' kr:cx='208.74102564351637' kr:cy='657.4997211964405' transform='rotate(-40.346690 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(130.346690) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Uranus' kr:slug='Uranus' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -605,7 +606,7 @@
 <g kr:node='Indicator' kr:slug='Uranus' kr:absoluteposition='55.55201631118552' transform='rotate(-35.840888 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.6611980104 7.6313511984 L 46.7456500607 8.7030287857' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Gem' kr:absoluteposition='72.91355592934868' kr:signposition='12.913555929348675' kr:slug='Orcus' kr:retrograde='true' kr:gauquelinsector='32.176' kr:cx='223.7652718700317' kr:cy='673.0849879118393' transform='rotate(-47.553277 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Gem' kr:absoluteposition='72.91355592934868' kr:signposition='12.913555929348675' kr:slug='Orcus' kr:retrograde='true' kr:gauquelinsector='32.176' kr:speed='-0.01098' kr:declination='28.3349' kr:oob='true' kr:cx='223.7652718700317' kr:cy='673.0849879118393' transform='rotate(-47.553277 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(137.553277) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Orcus' kr:slug='Orcus' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -619,7 +620,7 @@
 <g kr:node='Indicator' kr:slug='Orcus' kr:absoluteposition='72.91355592934868' transform='rotate(-53.202427 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 54.1835559711 7.7064087664 L 54.0777366142 8.7761878388' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Gem' kr:absoluteposition='76.18144875273634' kr:signposition='16.181448752736344' kr:slug='White_Moon' kr:gauquelinsector='31.6607' kr:cx='240.73256883750895' kr:cy='686.7376399063169' transform='rotate(-54.803277 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Gem' kr:absoluteposition='76.18144875273634' kr:signposition='16.181448752736344' kr:slug='White_Moon' kr:gauquelinsector='31.6607' kr:speed='0.140805' kr:declination='22.7274' kr:cx='240.73256883750895' kr:cy='686.7376399063169' transform='rotate(-54.803277 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(144.803277) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#White_Moon' kr:slug='White_Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
@@ -632,7 +633,7 @@
 <g kr:node='Indicator' kr:slug='White_Moon' kr:absoluteposition='76.18144875273634' transform='rotate(-56.470320 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.2363799643 7.5179877526 L 51.2051068240 8.5925327683' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Gem' kr:absoluteposition='78.74339855667877' kr:signposition='18.74339855667877' kr:slug='Vulkanus' kr:retrograde='true' kr:gauquelinsector='31.25' kr:cx='258.37970260488805' kr:cy='697.6549808912766' transform='rotate(-61.710983 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Gem' kr:absoluteposition='78.74339855667873' kr:signposition='18.743398556678727' kr:slug='Vulkanus' kr:retrograde='true' kr:gauquelinsector='31.25' kr:speed='-0.004558' kr:declination='22.9728' kr:cx='258.37970260488805' kr:cy='697.6549808912766' transform='rotate(-61.710983 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(151.710983) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Vulkanus' kr:slug='Vulkanus' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -643,10 +644,10 @@
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(151.710983 50.0 22.0)'>44'</text>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(151.710983 50.0 25.0)'>RX</text>
 </g>
-<g kr:node='Indicator' kr:slug='Vulkanus' kr:absoluteposition='78.74339855667877' transform='rotate(-59.032270 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Vulkanus' kr:absoluteposition='78.74339855667873' transform='rotate(-59.032270 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 48.0137479621 7.5464394562 L 48.0639884549 8.6202648112' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Can' kr:absoluteposition='97.05841127817382' kr:signposition='7.058411278173821' kr:slug='Imum_Coeli' kr:gauquelinsector='28.0' kr:cx='274.69707605860276' kr:cy='705.363215017469' transform='rotate(-67.717450 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Can' kr:absoluteposition='97.05841127817382' kr:signposition='7.058411278173821' kr:slug='Imum_Coeli' kr:gauquelinsector='28.0' kr:speed='332.125062' kr:cx='274.69707605860276' kr:cy='705.363215017469' transform='rotate(-67.717450 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(157.717450) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Imum_Coeli' kr:slug='Imum_Coeli' kr:node='Glyph' fill='var(--kerykeion-chart-color-fourth-house)' />
   </g>
@@ -659,7 +660,7 @@
 <g kr:node='Indicator' kr:slug='Imum_Coeli' kr:absoluteposition='97.05841127817382' transform='rotate(-77.347283 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 57.1094893534 8.0988644410 L 56.9296610932 9.1587166934' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Can' kr:absoluteposition='102.02744598982235' kr:signposition='12.027445989822354' kr:slug='Makemake' kr:gauquelinsector='27.1259' kr:cx='291.0167374857846' kr:cy='711.1113144804542' transform='rotate(-73.476056 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Can' kr:absoluteposition='102.02744598982235' kr:signposition='12.027445989822354' kr:slug='Makemake' kr:gauquelinsector='27.1259' kr:speed='0.001123' kr:declination='34.6397' kr:oob='true' kr:cx='291.0167374857846' kr:cy='711.1113144804542' transform='rotate(-73.476056 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(163.476056) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Makemake' kr:slug='Makemake' kr:node='Glyph' fill='var(--kerykeion-chart-color-makemake)' />
   </g>
@@ -672,7 +673,7 @@
 <g kr:node='Indicator' kr:slug='Makemake' kr:absoluteposition='102.02744598982235' transform='rotate(-82.316317 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 56.5314090841 8.0048729568 L 56.3662028544 9.0671026408' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='120.56821722799918' kr:signposition='0.5682172279991846' kr:slug='Chiron' kr:gauquelinsector='25.0206' kr:cx='305.1614379373163' kr:cy='714.6635134503149' transform='rotate(-78.329310 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='120.56821722799918' kr:signposition='0.5682172279991846' kr:slug='Chiron' kr:gauquelinsector='25.0206' kr:speed='0.05292' kr:declination='13.4146' kr:cx='305.1614379373163' kr:cy='714.6635134503149' transform='rotate(-78.329310 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(168.329310) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='var(--kerykeion-chart-color-chiron)' />
   </g>
@@ -685,7 +686,7 @@
 <g kr:node='Indicator' kr:slug='Chiron' kr:absoluteposition='120.56821722799918' transform='rotate(-100.857089 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 66.2830804246 10.7430096430 L 65.8712142727 11.7359805756' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='124.18808813451612' kr:signposition='4.188088134516121' kr:slug='Pluto' kr:gauquelinsector='23.1038' kr:cx='322.3659370162761' kr:cy='717.3188430928894' transform='rotate(-84.123170 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='124.18808813451612' kr:signposition='4.188088134516121' kr:slug='Pluto' kr:gauquelinsector='23.1038' kr:motionstate='fast' kr:speed='0.011365' kr:declination='23.1195' kr:cx='322.3659370162761' kr:cy='717.3188430928894' transform='rotate(-84.123170 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(174.123170) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pluto' kr:slug='Pluto' kr:node='Glyph' fill='var(--kerykeion-chart-color-pluto)' />
   </g>
@@ -711,7 +712,7 @@
 <g kr:node='Indicator' kr:slug='Pars_Spiritus' kr:absoluteposition='126.98985956591966' transform='rotate(-107.278731 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 62.6231987096 9.4179244698 L 62.3039060363 10.4444122626' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='132.65675439303078' kr:signposition='12.65675439303078' kr:slug='Vesta' kr:gauquelinsector='22.7155' kr:cx='358.6650528084203' kr:cy='717.2095849526506' transform='rotate(-96.221743 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='132.65675439303078' kr:signposition='12.65675439303078' kr:slug='Vesta' kr:gauquelinsector='22.7155' kr:speed='0.354694' kr:declination='17.8958' kr:cx='358.6650528084203' kr:cy='717.2095849526506' transform='rotate(-96.221743 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(186.221743) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Vesta' kr:slug='Vesta' kr:node='Glyph' fill='var(--kerykeion-chart-color-vesta)' />
   </g>
@@ -724,7 +725,7 @@
 <g kr:node='Indicator' kr:slug='Vesta' kr:absoluteposition='132.65675439303078' transform='rotate(-112.945626 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 62.2297895006 9.2976382900 L 61.9204477661 10.3271686156' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='133.70059555349113' kr:signposition='13.700595553491127' kr:slug='Haumea' kr:gauquelinsector='22.7837' kr:cx='377.5421207769643' kr:cy='714.0824064069998' transform='rotate(-102.590666 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='133.70059555349113' kr:signposition='13.700595553491127' kr:slug='Haumea' kr:gauquelinsector='22.7837' kr:speed='0.011717' kr:declination='22.5048' kr:cx='377.5421207769643' kr:cy='714.0824064069998' transform='rotate(-102.590666 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(192.590666) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Haumea' kr:slug='Haumea' kr:node='Glyph' fill='var(--kerykeion-chart-color-haumea)' />
   </g>
@@ -737,7 +738,7 @@
 <g kr:node='Indicator' kr:slug='Haumea' kr:absoluteposition='133.70059555349113' transform='rotate(-113.989467 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 58.3995648127 8.3382992311 L 58.1871052322 9.3920951917' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='136.0911199338761' kr:signposition='16.091119933876087' kr:slug='Juno' kr:gauquelinsector='23.778' kr:cx='395.3418215405929' kr:cy='709.0901252822168' transform='rotate(-108.743757 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='136.0911199338761' kr:signposition='16.091119933876087' kr:slug='Juno' kr:gauquelinsector='23.778' kr:speed='0.435069' kr:declination='6.6987' kr:cx='395.3418215405929' kr:cy='709.0901252822168' transform='rotate(-108.743757 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(198.743757) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Juno' kr:slug='Juno' kr:node='Glyph' fill='var(--kerykeion-chart-color-juno)' />
   </g>
@@ -750,7 +751,7 @@
 <g kr:node='Indicator' kr:slug='Juno' kr:absoluteposition='136.0911199338761' transform='rotate(-116.379991 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.6475363216 7.8769026127 L 55.5046868735 8.9423691937' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='137.72900468518876' kr:signposition='17.729004685188755' kr:slug='Zeus' kr:gauquelinsector='22.3788' kr:cx='412.7964123783252' kr:cy='702.0826336298976' transform='rotate(-115.004186 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='137.72900468518878' kr:signposition='17.729004685188784' kr:slug='Zeus' kr:gauquelinsector='22.3788' kr:speed='0.010626' kr:declination='15.5256' kr:cx='412.7964123783252' kr:cy='702.0826336298976' transform='rotate(-115.004186 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(205.004186) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Zeus' kr:slug='Zeus' kr:node='Glyph' fill='var(--kerykeion-chart-color-zeus)' />
   </g>
@@ -760,10 +761,10 @@
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-zeus)' font-weight='500' transform='rotate(205.004186 50.0 22.0)'>43'</text>
 </g>
-<g kr:node='Indicator' kr:slug='Zeus' kr:absoluteposition='137.72900468518876' transform='rotate(-118.017876 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Zeus' kr:absoluteposition='137.72900468518878' transform='rotate(-118.017876 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 52.2344185283 7.5587774229 L 52.1779008831 8.6322906998' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='153.21541744281757' kr:signposition='3.215417442817568' kr:slug='Venus' kr:gauquelinsector='21.1337' kr:cx='431.78349190033776' kr:cy='691.7288468031661' transform='rotate(-122.203699 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='153.21541744281757' kr:signposition='3.215417442817568' kr:slug='Venus' kr:gauquelinsector='21.1337' kr:motionstate='average' kr:speed='1.133712' kr:declination='10.5716' kr:cx='431.78349190033776' kr:cy='691.7288468031661' transform='rotate(-122.203699 50.0 50.0)' kr:stellium='6'>
   <g transform='translate(50.0 11.0) rotate(212.203699) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='var(--kerykeion-chart-color-venus)' />
   </g>
@@ -776,7 +777,7 @@
 <g kr:node='Indicator' kr:slug='Venus' kr:absoluteposition='153.21541744281757' transform='rotate(-133.504289 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 58.3281401658 8.3239627438 L 58.1174872087 9.3781213332' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='161.9301645827131' kr:signposition='11.930164582713104' kr:slug='Cupido' kr:gauquelinsector='20.5591' kr:cx='449.3326252321406' kr:cy='679.0694677070901' transform='rotate(-129.407232 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='161.93016458271364' kr:signposition='11.930164582713644' kr:slug='Cupido' kr:gauquelinsector='20.5591' kr:speed='0.022932' kr:declination='7.5919' kr:cx='449.3326252321406' kr:cy='679.0694677070901' transform='rotate(-129.407232 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(219.407232) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Cupido' kr:slug='Cupido' kr:node='Glyph' fill='var(--kerykeion-chart-color-cupido)' />
   </g>
@@ -786,10 +787,10 @@
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-cupido)' font-weight='500' transform='rotate(219.407232 50.0 22.0)'>55'</text>
 </g>
-<g kr:node='Indicator' kr:slug='Cupido' kr:absoluteposition='161.9301645827131' transform='rotate(-142.219036 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Cupido' kr:absoluteposition='161.93016458271364' transform='rotate(-142.219036 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 59.4243490156 8.5580931226 L 59.1859684229 9.6063295907' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='163.95560538213897' kr:signposition='13.95560538213897' kr:slug='Apollon' kr:gauquelinsector='20.5358' kr:cx='464.7277660668988' kr:cy='664.7606439354425' transform='rotate(-136.403855 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='163.9556053821392' kr:signposition='13.955605382139197' kr:slug='Apollon' kr:gauquelinsector='20.5358' kr:speed='0.013332' kr:declination='6.314' kr:cx='464.7277660668988' kr:cy='664.7606439354425' transform='rotate(-136.403855 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(226.403855) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Apollon' kr:slug='Apollon' kr:node='Glyph' fill='var(--kerykeion-chart-color-apollon)' />
   </g>
@@ -799,10 +800,10 @@
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-apollon)' font-weight='500' transform='rotate(226.403855 50.0 22.0)'>57'</text>
 </g>
-<g kr:node='Indicator' kr:slug='Apollon' kr:absoluteposition='163.95560538213897' transform='rotate(-144.244477 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Apollon' kr:absoluteposition='163.9556053821392' transform='rotate(-144.244477 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.7977631008 7.8973166766 L 55.6511137988 8.9622669019' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='175.82086804505036' kr:signposition='25.82086804505036' kr:slug='Quaoar' kr:gauquelinsector='19.9575' kr:cx='478.7180321394174' kr:cy='648.0706311108517' transform='rotate(-143.653855 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='175.82086804505036' kr:signposition='25.82086804505036' kr:slug='Quaoar' kr:gauquelinsector='19.9575' kr:speed='0.023234' kr:declination='0.0714' kr:cx='478.7180321394174' kr:cy='648.0706311108517' transform='rotate(-143.653855 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(233.653855) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Quaoar' kr:slug='Quaoar' kr:node='Glyph' fill='var(--kerykeion-chart-color-quaoar)' />
   </g>
@@ -815,7 +816,7 @@
 <g kr:node='Indicator' kr:slug='Quaoar' kr:absoluteposition='175.82086804505036' transform='rotate(-156.109739 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 59.1667328715 8.5003492971 L 58.9348684518 9.5500463443' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='176.03011967681334' kr:signposition='26.030119676813342' kr:slug='Neptune' kr:gauquelinsector='19.7538' kr:cx='489.1400744681632' kr:cy='632.1298111203707' transform='rotate(-149.993158 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='176.03011967681334' kr:signposition='26.030119676813342' kr:slug='Neptune' kr:gauquelinsector='19.7538' kr:motionstate='fast' kr:speed='0.035317' kr:declination='2.6814' kr:cx='489.1400744681632' kr:cy='632.1298111203707' transform='rotate(-149.993158 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(239.993158) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Neptune' kr:slug='Neptune' kr:node='Glyph' fill='var(--kerykeion-chart-color-neptune)' />
   </g>
@@ -828,7 +829,7 @@
 <g kr:node='Indicator' kr:slug='Neptune' kr:absoluteposition='176.03011967681334' transform='rotate(-156.318991 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 54.6827542587 7.7587664414 L 54.5643081216 8.8272211726' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='177.79108085099756' kr:signposition='27.79108085099756' kr:slug='True_Priapus' kr:gauquelinsector='19.8786' kr:cx='497.2714192450204' kr:cy='616.1912164352282' transform='rotate(-155.948495 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Vir' kr:absoluteposition='177.79108085099756' kr:signposition='27.79108085099756' kr:slug='True_Priapus' kr:gauquelinsector='19.8786' kr:speed='1.142852' kr:declination='-0.2381' kr:cx='497.2714192450204' kr:cy='616.1912164352282' transform='rotate(-155.948495 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(245.948495) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#True_Priapus' kr:slug='True_Priapus' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
@@ -841,7 +842,7 @@
 <g kr:node='Indicator' kr:slug='True_Priapus' kr:absoluteposition='177.79108085099756' transform='rotate(-158.079952 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.5806755628 7.5294047044 L 51.5406937692 8.6036609383' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='182.66253120510896' kr:signposition='2.6625312051089622' kr:slug='Mars' kr:gauquelinsector='19.5094' kr:cx='503.59913431481124' kr:cy='599.818485926718' transform='rotate(-161.790573 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='182.66253120510896' kr:signposition='2.6625312051089622' kr:slug='Mars' kr:gauquelinsector='19.5094' kr:motionstate='fast' kr:speed='0.644941' kr:declination='-0.1807' kr:cx='503.59913431481135' kr:cy='599.8184859267176' transform='rotate(-161.790573 50.0 50.0)' kr:stellium='6'>
   <g transform='translate(50.0 11.0) rotate(251.790573) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Mars' kr:slug='Mars' kr:node='Glyph' fill='var(--kerykeion-chart-color-mars)' />
   </g>
@@ -854,7 +855,7 @@
 <g kr:node='Indicator' kr:slug='Mars' kr:absoluteposition='182.66253120510896' transform='rotate(-162.951402 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 50.8610034048 7.5087223876 L 50.8392250834 8.5835017625' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='185.38835212434' kr:signposition='5.3883521243400025' kr:slug='Poseidon' kr:gauquelinsector='19.5454' kr:cx='508.08672120582486' kr:cy='583.5227974740064' transform='rotate(-167.415921 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='185.38835212433992' kr:signposition='5.388352124339917' kr:slug='Poseidon' kr:gauquelinsector='19.5454' kr:speed='0.012732' kr:declination='-2.1421' kr:cx='508.08672120582486' kr:cy='583.5227974740064' transform='rotate(-167.415921 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(257.415921) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Poseidon' kr:slug='Poseidon' kr:node='Glyph' fill='var(--kerykeion-chart-color-poseidon)' />
   </g>
@@ -864,10 +865,10 @@
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-poseidon)' font-weight='500' transform='rotate(257.415921 50.0 22.0)'>23'</text>
 </g>
-<g kr:node='Indicator' kr:slug='Poseidon' kr:absoluteposition='185.38835212434' transform='rotate(-165.677223 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Poseidon' kr:absoluteposition='185.38835212433992' transform='rotate(-165.677223 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 48.7104933672 7.5195671792 L 48.7431102997 8.5940722447' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='186.22621408770144' kr:signposition='6.226214087701436' kr:slug='Ixion' kr:gauquelinsector='19.5405' kr:cx='510.9404926902645' kr:cy='566.9869991854396' transform='rotate(-173.000612 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='186.22621408770144' kr:signposition='6.226214087701436' kr:slug='Ixion' kr:gauquelinsector='19.5405' kr:speed='0.022892' kr:declination='13.5373' kr:cx='510.9404926902645' kr:cy='566.9869991854396' transform='rotate(-173.000612 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(263.000612) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Ixion' kr:slug='Ixion' kr:node='Glyph' fill='var(--kerykeion-chart-color-ixion)' />
   </g>
@@ -893,7 +894,7 @@
 <g kr:node='Indicator' kr:slug='Vertex' kr:absoluteposition='186.33574073329902' transform='rotate(-166.624612 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 41.7342996542 8.3115339957 L 41.9433732512 9.3660069593' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='190.58264567398498' kr:signposition='10.582645673984985' kr:slug='Mean_North_Lunar_Node' kr:retrograde='true' kr:gauquelinsector='19.3409' kr:cx='512.0414812954807' kr:cy='538.0731538644435' transform='rotate(-182.638049 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='190.58264567398498' kr:signposition='10.582645673984985' kr:slug='Mean_North_Lunar_Node' kr:retrograde='true' kr:gauquelinsector='19.3409' kr:speed='-0.052963' kr:declination='-4.1903' kr:cx='512.0414812954807' kr:cy='538.0731538644435' transform='rotate(-182.638049 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(272.638049) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Mean_North_Lunar_Node' kr:slug='Mean_North_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -907,7 +908,7 @@
 <g kr:node='Indicator' kr:slug='Mean_North_Lunar_Node' kr:absoluteposition='190.58264567398498' transform='rotate(-170.871517 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 41.3332200661 8.3930663762 L 41.5524386174 9.4454770502' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='191.024247807456' kr:signposition='11.024247807455993' kr:slug='True_North_Lunar_Node' kr:gauquelinsector='19.3239' kr:cx='510.78882127131476' kr:cy='523.8125101745399' transform='rotate(-187.401945 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='191.024247807456' kr:signposition='11.024247807455993' kr:slug='True_North_Lunar_Node' kr:gauquelinsector='19.3239' kr:speed='0.005933' kr:declination='-4.3633' kr:cx='510.78882127131476' kr:cy='523.8125101745399' transform='rotate(-187.401945 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(277.401945) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#True_North_Lunar_Node' kr:slug='True_North_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
@@ -920,7 +921,7 @@
 <g kr:node='Indicator' kr:slug='True_North_Lunar_Node' kr:absoluteposition='191.024247807456' transform='rotate(-171.313119 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 38.2220910948 9.1645881394 L 38.5200029083 10.1974838512' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='193.37224802236497' kr:signposition='13.372248022364971' kr:slug='Mean_Priapus' kr:gauquelinsector='19.2541' kr:cx='508.26665019489786' kr:cy='509.2924992925441' transform='rotate(-192.306318 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='193.37224802236497' kr:signposition='13.372248022364971' kr:slug='Mean_Priapus' kr:gauquelinsector='19.2541' kr:speed='0.110736' kr:declination='-5.0483' kr:cx='508.26665019489786' kr:cy='509.2924992925441' transform='rotate(-192.306318 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(282.306318) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mean_Priapus' kr:slug='Mean_Priapus' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
@@ -933,7 +934,7 @@
 <g kr:node='Indicator' kr:slug='Mean_Priapus' kr:absoluteposition='193.37224802236497' transform='rotate(-173.661119 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 36.4124578093 9.7305488339 L 36.7561427000 10.7491290693' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='194.10373868256784' kr:signposition='14.103738682567837' kr:slug='Pallas' kr:gauquelinsector='17.7121' kr:cx='503.82884881678507' kr:cy='492.8848941320175' transform='rotate(-197.963262 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='194.10373868256784' kr:signposition='14.103738682567837' kr:slug='Pallas' kr:gauquelinsector='17.7121' kr:speed='0.452247' kr:declination='3.3328' kr:cx='503.82884881678507' kr:cy='492.8848941320175' transform='rotate(-197.963262 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(287.963262) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pallas' kr:slug='Pallas' kr:node='Glyph' fill='var(--kerykeion-chart-color-pallas)' />
   </g>
@@ -946,7 +947,7 @@
 <g kr:node='Indicator' kr:slug='Pallas' kr:absoluteposition='194.10373868256784' transform='rotate(-174.392610 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 33.0051171504 11.0458736855 L 33.4349877166 12.0311839393' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='194.65097858137133' kr:signposition='14.650978581371334' kr:slug='Interpolated_Perigee' kr:gauquelinsector='19.1322' kr:cx='497.6469637216042' kr:cy='476.6563556960033' transform='rotate(-203.743094 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='194.65097858137133' kr:signposition='14.650978581371334' kr:slug='Interpolated_Perigee' kr:gauquelinsector='19.1322' kr:speed='0.550378' kr:declination='-5.4417' kr:cx='497.6469637216042' kr:cy='476.6563556960033' transform='rotate(-203.743094 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(293.743094) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Interpolated_Perigee' kr:slug='Interpolated_Perigee' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
@@ -959,7 +960,7 @@
 <g kr:node='Indicator' kr:slug='Interpolated_Perigee' kr:absoluteposition='194.65097858137133' transform='rotate(-174.939850 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 29.5233602783 12.7581253733 L 30.0412988125 13.7001257315' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:gauquelinsector='19.1268' kr:cx='489.12214710721724' kr:cy='459.83915379864544' transform='rotate(-210.018766 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:gauquelinsector='19.1268' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='489.12214710721724' kr:cy='459.83915379864544' transform='rotate(-210.018766 50.0 50.0)' kr:angularity='Descendant' kr:angularitydistance='3.4432' kr:stellium='6'>
   <g transform='translate(50.0 11.0) rotate(300.018766) scale(0.14850000000000002) translate(-14 -14)'>
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='var(--kerykeion-chart-color-sun)' />
   </g>
@@ -972,7 +973,7 @@
 <g kr:node='Indicator' kr:slug='Sun' kr:absoluteposition='196.2678943501122' transform='rotate(-176.556766 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 26.5661878902 14.5443029966 L 27.1589254906 15.4411235678' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Lib' kr:absoluteposition='199.71112871829325' kr:signposition='19.711128718293253' kr:slug='Descendant' kr:gauquelinsector='19.0' kr:cx='478.94848824917096' kr:cy='444.2433108377145' transform='rotate(-216.216583 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Lib' kr:absoluteposition='199.71112871829325' kr:signposition='19.711128718293253' kr:slug='Descendant' kr:gauquelinsector='19.0' kr:speed='886.944184' kr:cx='478.94848824917096' kr:cy='444.2433108377145' transform='rotate(-216.216583 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(306.216583) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Descendant' kr:slug='Descendant' kr:node='Glyph' fill='var(--kerykeion-chart-color-seventh-house)' />
   </g>
@@ -985,7 +986,7 @@
 <g kr:node='Indicator' kr:slug='Descendant' kr:absoluteposition='199.71112871829325' transform='rotate(-180.000000 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 24.8893343007 15.7114528138 L 25.5244864331 16.5787513603' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Sco' kr:absoluteposition='211.4519380251646' kr:signposition='1.4519380251645941' kr:slug='Ceres' kr:gauquelinsector='17.4237' kr:cx='466.60088289935794' kr:cy='429.2381799340938' transform='rotate(-222.684814 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Sco' kr:absoluteposition='211.4519380251646' kr:signposition='1.4519380251645941' kr:slug='Ceres' kr:gauquelinsector='17.4237' kr:speed='0.436916' kr:declination='-6.8999' kr:cx='466.60088289935794' kr:cy='429.2381799340938' transform='rotate(-222.684814 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(312.684814) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Ceres' kr:slug='Ceres' kr:node='Glyph' fill='var(--kerykeion-chart-color-ceres)' />
   </g>
@@ -998,7 +999,7 @@
 <g kr:node='Indicator' kr:slug='Ceres' kr:absoluteposition='211.4519380251646' transform='rotate(-191.740809 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 28.1464950120 13.5490148317 L 28.6992601381 14.4710103389' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Sco' kr:absoluteposition='218.55823263691192' kr:signposition='8.558232636911924' kr:slug='Mercury' kr:gauquelinsector='18.3629' kr:cx='451.9212907924024' kr:cy='415.10030235572543' transform='rotate(-229.469039 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Sco' kr:absoluteposition='218.55823263691192' kr:signposition='8.558232636911924' kr:slug='Mercury' kr:gauquelinsector='18.3629' kr:motionstate='average' kr:speed='1.319465' kr:declination='-16.233' kr:cx='451.9212907924024' kr:cy='415.10030235572543' transform='rotate(-229.469039 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(319.469039) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>
@@ -1024,7 +1025,7 @@
 <g kr:node='Indicator' kr:slug='Pars_Fortunae' kr:absoluteposition='272.4323978706669' transform='rotate(-252.721269 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Cap' kr:absoluteposition='277.0584112781738' kr:signposition='7.058411278173821' kr:slug='Medium_Coeli' kr:gauquelinsector='10.0' kr:cx='376.3312832005341' kr:cy='377.6517180455868' transform='rotate(-257.821755 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Cap' kr:absoluteposition='277.0584112781738' kr:signposition='7.058411278173821' kr:slug='Medium_Coeli' kr:gauquelinsector='10.0' kr:speed='332.125062' kr:cx='376.3312832005341' kr:cy='377.6517180455868' transform='rotate(-257.821755 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(347.821755) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='var(--kerykeion-chart-color-tenth-house)' />
   </g>
@@ -1037,7 +1038,7 @@
 <g kr:node='Indicator' kr:slug='Medium_Coeli' kr:absoluteposition='277.0584112781738' transform='rotate(-257.347283 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Cap' kr:absoluteposition='285.01942432458986' kr:signposition='15.019424324589863' kr:slug='Pholus' kr:gauquelinsector='8.8977' kr:cx='354.08692584849086' kr:cy='374.35308130892906' transform='rotate(-265.308296 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Cap' kr:absoluteposition='285.01942432458986' kr:signposition='15.019424324589863' kr:slug='Pholus' kr:gauquelinsector='8.8977' kr:speed='0.004581' kr:declination='-17.2736' kr:cx='354.08692584849086' kr:cy='374.35308130892906' transform='rotate(-265.308296 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(355.308296) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pholus' kr:slug='Pholus' kr:node='Glyph' fill='var(--kerykeion-chart-color-pholus)' />
   </g>
@@ -1050,7 +1051,7 @@
 <g kr:node='Indicator' kr:slug='Pholus' kr:absoluteposition='285.01942432458986' transform='rotate(-265.308296 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Aqu' kr:absoluteposition='303.5466251977386' kr:signposition='3.5466251977385923' kr:slug='Moon' kr:gauquelinsector='6.401' kr:cx='298.8152035970058' kr:cy='378.7728529178234' transform='rotate(-283.835496 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Aqu' kr:absoluteposition='303.5466251977386' kr:signposition='3.5466251977385923' kr:slug='Moon' kr:gauquelinsector='6.401' kr:motionstate='average' kr:speed='12.529073' kr:declination='-14.5969' kr:cx='298.8152035970058' kr:cy='378.7728529178234' transform='rotate(-283.835496 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(373.835496) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Moon' kr:slug='Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-moon)' />
   </g>
@@ -1076,7 +1077,7 @@
 <g kr:node='Indicator' kr:slug='Pars_Amoris' kr:absoluteposition='336.65865181099866' transform='rotate(-316.947523 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 56.3377299025 7.9752075593 L 56.1774226167 9.0381876034' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Pis' kr:absoluteposition='357.7910808509975' kr:signposition='27.791080850997503' kr:slug='True_Lilith' kr:gauquelinsector='2.048' kr:cx='217.33178328241445' kr:cy='425.1132150178215' transform='rotate(-315.419070 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Pis' kr:absoluteposition='357.7910808509975' kr:signposition='27.791080850997503' kr:slug='True_Lilith' kr:gauquelinsector='2.048' kr:speed='1.142852' kr:declination='0.2381' kr:cx='217.33178328241445' kr:cy='425.1132150178215' transform='rotate(-315.419070 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(405.419070) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#True_Lilith' kr:slug='True_Lilith' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
@@ -1089,7 +1090,7 @@
 <g kr:node='Indicator' kr:slug='True_Lilith' kr:absoluteposition='357.7910808509975' transform='rotate(-338.079952 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 66.3742340755 10.7809426625 L 65.9600622724 11.7729541128' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='4.394946432800392' kr:signposition='4.394946432800392' kr:slug='Eris' kr:retrograde='true' kr:gauquelinsector='1.6139' kr:cx='204.0003570670001' kr:cy='440.3344744105415' transform='rotate(-322.154421 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='4.394946432800392' kr:signposition='4.394946432800392' kr:slug='Eris' kr:retrograde='true' kr:gauquelinsector='1.6139' kr:speed='-0.010542' kr:declination='-22.4155' kr:cx='204.0003570670001' kr:cy='440.3344744105415' transform='rotate(-322.154421 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(412.154421) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Eris' kr:slug='Eris' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -1116,7 +1117,7 @@
 <g kr:node='Indicator' kr:slug='Anti_Vertex' kr:absoluteposition='6.335740733299019' transform='rotate(-346.624612 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 63.6447241366 9.7498881587 L 63.2995928791 10.7679792229' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='10.582645673984985' kr:signposition='10.582645673984985' kr:slug='Mean_South_Lunar_Node' kr:retrograde='true' kr:gauquelinsector='1.3659' kr:cx='186.13969884849985' kr:cy='468.61709552123494' transform='rotate(-333.300227 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='10.582645673984985' kr:signposition='10.582645673984985' kr:slug='Mean_South_Lunar_Node' kr:retrograde='true' kr:gauquelinsector='1.3659' kr:speed='-0.052963' kr:declination='4.1903' kr:cx='186.13969884849985' kr:cy='468.61709552123494' transform='rotate(-333.300227 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(423.300227) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mean_South_Lunar_Node' kr:slug='Mean_South_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -1130,7 +1131,7 @@
 <g kr:node='Indicator' kr:slug='Mean_South_Lunar_Node' kr:absoluteposition='10.582645673984985' transform='rotate(-350.871517 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 62.8304191911 9.4829623074 L 62.5058850586 10.5078050255' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='11.024247807455993' kr:signposition='11.024247807455993' kr:slug='True_South_Lunar_Node' kr:gauquelinsector='1.3482' kr:cx='179.80725104537584' kr:cy='482.7592745269256' transform='rotate(-338.456937 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='11.024247807455993' kr:signposition='11.024247807455993' kr:slug='True_South_Lunar_Node' kr:gauquelinsector='1.3482' kr:speed='0.005933' kr:declination='4.3633' kr:cx='179.80725104537584' kr:cy='482.7592745269256' transform='rotate(-338.456937 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(428.456937) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#True_South_Lunar_Node' kr:slug='True_South_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
@@ -1143,7 +1144,7 @@
 <g kr:node='Indicator' kr:slug='True_South_Lunar_Node' kr:absoluteposition='11.024247807455993' transform='rotate(-351.313119 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 59.4564451287 8.5654052086 L 59.2172526931 9.6134567239' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='12.49949925413345' kr:signposition='12.49949925413345' kr:slug='Interpolated_Lilith' kr:retrograde='true' kr:gauquelinsector='1.2417' kr:cx='174.7288367585826' kr:cy='497.5588111538459' transform='rotate(-343.664072 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='12.49949925413345' kr:signposition='12.49949925413345' kr:slug='Interpolated_Lilith' kr:retrograde='true' kr:gauquelinsector='1.2417' kr:speed='-0.111369' kr:declination='4.7808' kr:cx='174.7288367585826' kr:cy='497.5588111538459' transform='rotate(-343.664072 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(433.664072) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Interpolated_Lilith' kr:slug='Interpolated_Lilith' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -1157,7 +1158,7 @@
 <g kr:node='Indicator' kr:slug='Interpolated_Lilith' kr:absoluteposition='12.49949925413345' transform='rotate(-352.788371 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 56.7395144080 8.0377676292 L 56.5690443377 9.0991652715' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='13.372248022364964' kr:signposition='13.372248022364964' kr:slug='Mean_Lilith' kr:gauquelinsector='1.1969' kr:cx='170.78132046074924' kr:cy='513.9665070435278' transform='rotate(-349.280618 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='13.372248022364964' kr:signposition='13.372248022364964' kr:slug='Mean_Lilith' kr:gauquelinsector='1.1969' kr:speed='0.110736' kr:declination='5.0483' kr:cx='170.78132046074924' kr:cy='513.9665070435278' transform='rotate(-349.280618 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(439.280618) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mean_Lilith' kr:slug='Mean_Lilith' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
@@ -1170,7 +1171,7 @@
 <g kr:node='Indicator' kr:slug='Mean_Lilith' kr:absoluteposition='13.372248022364964' transform='rotate(-353.661119 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.2461378631 7.6241508761 L 53.1640296701 8.6960105892' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='15.128072936924106' kr:signposition='15.128072936924106' kr:slug='Admetos' kr:retrograde='true' kr:gauquelinsector='1.1691' kr:cx='168.48630328115172' kr:cy='530.3744435671896' transform='rotate(-354.794504 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='15.128072936924058' kr:signposition='15.128072936924058' kr:slug='Admetos' kr:retrograde='true' kr:gauquelinsector='1.1691' kr:speed='-0.011972' kr:declination='5.9617' kr:cx='168.48630328115172' kr:cy='530.3744435671896' transform='rotate(-354.794504 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(444.794504) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Admetos' kr:slug='Admetos' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -1181,10 +1182,10 @@
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(444.794504 50.0 22.0)'>7'</text>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(444.794504 50.0 25.0)'>RX</text>
 </g>
-<g kr:node='Indicator' kr:slug='Admetos' kr:absoluteposition='15.128072936924106' transform='rotate(-355.416944 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Admetos' kr:absoluteposition='15.128072936924058' transform='rotate(-355.416944 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 50.4616949253 7.5025078646 L 50.4500167595 8.5774444304' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='18.74195404980856' kr:signposition='18.74195404980856' kr:slug='Hades' kr:retrograde='true' kr:gauquelinsector='36.9252' kr:cx='167.77779579271044' kr:cy='546.7864820294585' transform='rotate(-0.261649 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Ari' kr:absoluteposition='18.741954049808836' kr:signposition='18.741954049808836' kr:slug='Hades' kr:retrograde='true' kr:gauquelinsector='36.9252' kr:speed='-0.017059' kr:declination='6.7532' kr:cx='167.77779579271044' kr:cy='546.7864820294585' transform='rotate(-0.261649 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(90.261649) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Hades' kr:slug='Hades' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
@@ -1195,7 +1196,7 @@
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(90.261649 50.0 22.0)'>44'</text>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(90.261649 50.0 25.0)'>RX</text>
 </g>
-<g kr:node='Indicator' kr:slug='Hades' kr:absoluteposition='18.74195404980856' transform='rotate(-359.030825 50.0 50.0)'>
+<g kr:node='Indicator' kr:slug='Hades' kr:absoluteposition='18.741954049808836' transform='rotate(-359.030825 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 49.0870882960 7.5098059287 L 49.1101795920 8.5845578963' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
 </g>
@@ -1352,16 +1353,16 @@
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='0.08644559737584245' kr:aspectdegrees='120' kr:planetsdiff='120.08644559737584' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='46.834696' y1='102.607563' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='2.474059699696369' kr:aspectdegrees='180' kr:planetsdiff='177.52594030030363' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='2.474059699696653' kr:aspectdegrees='180' kr:planetsdiff='177.52594030030335' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='46.834696' y1='102.607563' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='1.4611103350765688' kr:aspectdegrees='60' kr:planetsdiff='58.53888966492343' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='1.4611103350765973' kr:aspectdegrees='60' kr:planetsdiff='58.5388896649234' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='46.834696' y1='102.607563' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='1.1398214131880877' kr:aspectdegrees='180' kr:planetsdiff='178.8601785868119' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='1.1398214131881161' kr:aspectdegrees='180' kr:planetsdiff='178.86017858681188' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='46.834696' y1='102.607563' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='2.4755042065665833' kr:aspectdegrees='120' kr:planetsdiff='117.52449579343342' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='2.4755042065665407' kr:aspectdegrees='120' kr:planetsdiff='117.52449579343346' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='46.834696' y1='102.607563' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Moon' kr:tooriginaldegrees='303.5466251977386' kr:from='Mercury' kr:fromoriginaldegrees='218.55823263691192' kr:orb='5.011607439173332' kr:aspectdegrees='90' kr:planetsdiff='84.98839256082667' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1415,7 +1416,7 @@
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Moon' kr:tooriginaldegrees='303.5466251977386' kr:from='True_Priapus' kr:fromoriginaldegrees='177.79108085099756' kr:orb='5.755544346741033' kr:aspectdegrees='120' kr:planetsdiff='125.75554434674103' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='101.173603' y1='37.396936' x2='30.325427' y2='98.892597' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Moon' kr:tooriginaldegrees='303.5466251977386' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='1.8417269266014102' kr:aspectdegrees='120' kr:planetsdiff='118.15827307339859' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Moon' kr:tooriginaldegrees='303.5466251977386' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='1.841726926601325' kr:aspectdegrees='120' kr:planetsdiff='118.15827307339868' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='101.173603' y1='37.396936' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mercury' kr:tooriginaldegrees='218.55823263691192' kr:from='Jupiter' kr:fromoriginaldegrees='43.69186967968114' kr:orb='5.133637042769209' kr:aspectdegrees='180' kr:planetsdiff='174.8663629572308' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1460,7 +1461,7 @@
     <use xlink:href='#orb120' fill='var(--kerykeion-chart-color-trine)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mercury' kr:tooriginaldegrees='218.55823263691192' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='3.3719319458011796' kr:aspectdegrees='60' kr:planetsdiff='56.62806805419882' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mercury' kr:tooriginaldegrees='218.55823263691192' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='3.3719319458017196' kr:aspectdegrees='60' kr:planetsdiff='56.62806805419828' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='67.025284' y1='99.876995' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
   <g transform='translate(42.368631 95.765514) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb60' fill='var(--kerykeion-chart-color-sextile)'/>
@@ -1532,7 +1533,7 @@
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mars' kr:tooriginaldegrees='182.66253120510896' kr:from='True_Priapus' kr:fromoriginaldegrees='177.79108085099756' kr:orb='4.871450354111403' kr:aspectdegrees='0' kr:planetsdiff='4.871450354111403' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='34.548478' y1='100.386758' x2='30.325427' y2='98.892597' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mars' kr:tooriginaldegrees='182.66253120510896' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='2.7258209192310687' kr:aspectdegrees='0' kr:planetsdiff='2.7258209192310687' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mars' kr:tooriginaldegrees='182.66253120510896' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='2.725820919230955' kr:aspectdegrees='0' kr:planetsdiff='2.725820919230955' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='34.548478' y1='100.386758' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Saturn' kr:fromoriginaldegrees='43.21501423317537' kr:orb='0.4768554465057733' kr:aspectdegrees='0' kr:planetsdiff='0.4768554465057733' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1565,19 +1566,19 @@
     <use xlink:href='#orb60' fill='var(--kerykeion-chart-color-sextile)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='1.7617050969680292' kr:aspectdegrees='120' kr:planetsdiff='118.23829490303197' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='1.7617050969674892' kr:aspectdegrees='120' kr:planetsdiff='118.23829490303251' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='28.580064' y1='1.846483' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
   <g transform='translate(23.146022 46.750258) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb120' fill='var(--kerykeion-chart-color-trine)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='4.037135005507594' kr:aspectdegrees='90' kr:planetsdiff='94.0371350055076' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='4.0371350055076505' kr:aspectdegrees='90' kr:planetsdiff='94.03713500550765' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='28.580064' y1='1.846483' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732511' kr:orb='3.256366197643956' kr:aspectdegrees='0' kr:planetsdiff='3.256366197643956' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732459' kr:orb='3.2563661976434446' kr:aspectdegrees='0' kr:planetsdiff='3.2563661976434446' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='28.580064' y1='1.846483' x2='25.879351' y2='3.140965' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Apollon' kr:fromoriginaldegrees='163.95560538213897' kr:orb='0.2637357024578364' kr:aspectdegrees='120' kr:planetsdiff='120.26373570245784' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Apollon' kr:fromoriginaldegrees='163.9556053821392' kr:orb='0.26373570245806377' kr:aspectdegrees='120' kr:planetsdiff='120.26373570245806' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='28.580064' y1='1.846483' x2='19.204340' y2='92.769174' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Pholus' kr:fromoriginaldegrees='285.01942432458986' kr:orb='1.8044100914144963' kr:aspectdegrees='120' kr:planetsdiff='118.1955899085855' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1595,16 +1596,16 @@
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Makemake' kr:fromoriginaldegrees='102.02744598982235' kr:orb='1.1875682433529846' kr:aspectdegrees='60' kr:planetsdiff='58.812431756647015' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='28.981569' y1='1.669881' x2='-2.229502' y2='42.953440' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='1.284849650462263' kr:aspectdegrees='120' kr:planetsdiff='118.71515034953774' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='1.284849650461723' kr:aspectdegrees='120' kr:planetsdiff='118.71515034953828' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='28.981569' y1='1.669881' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='4.513990452013388' kr:aspectdegrees='90' kr:planetsdiff='94.51399045201339' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='4.513990452013445' kr:aspectdegrees='90' kr:planetsdiff='94.51399045201345' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='28.981569' y1='1.669881' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732511' kr:orb='3.7332216441497508' kr:aspectdegrees='0' kr:planetsdiff='3.7332216441497508' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732459' kr:orb='3.733221644149239' kr:aspectdegrees='0' kr:planetsdiff='3.733221644149239' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='28.981569' y1='1.669881' x2='25.879351' y2='3.140965' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Apollon' kr:fromoriginaldegrees='163.95560538213897' kr:orb='0.7405911489636026' kr:aspectdegrees='120' kr:planetsdiff='120.7405911489636' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Apollon' kr:fromoriginaldegrees='163.9556053821392' kr:orb='0.7405911489638299' kr:aspectdegrees='120' kr:planetsdiff='120.74059114896383' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='28.981569' y1='1.669881' x2='19.204340' y2='92.769174' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Uranus' kr:tooriginaldegrees='55.55201631118552' kr:from='Neptune' kr:fromoriginaldegrees='176.03011967681334' kr:orb='0.47810336562781686' kr:aspectdegrees='120' kr:planetsdiff='120.47810336562782' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1661,7 +1662,7 @@
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Pluto' kr:tooriginaldegrees='124.18808813451612' kr:from='Anti_Vertex' kr:fromoriginaldegrees='6.335740733299019' kr:orb='2.147652598782898' kr:aspectdegrees='120' kr:planetsdiff='117.8523474012171' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-1.029300' y1='63.175183' x2='62.191717' y2='-1.273160' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pluto' kr:tooriginaldegrees='124.18808813451612' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='1.2002639898238954' kr:aspectdegrees='60' kr:planetsdiff='61.200263989823895' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pluto' kr:tooriginaldegrees='124.18808813451612' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='1.2002639898237817' kr:aspectdegrees='60' kr:planetsdiff='61.20026398982378' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-1.029300' y1='63.175183' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Mean_North_Lunar_Node' kr:tooriginaldegrees='190.58264567398498' kr:from='Medium_Coeli' kr:fromoriginaldegrees='277.0584112781738' kr:orb='3.5242343958111633' kr:aspectdegrees='90' kr:planetsdiff='86.47576560418884' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1715,10 +1716,10 @@
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Mean_North_Lunar_Node' kr:tooriginaldegrees='190.58264567398498' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='5.598803078751359' kr:aspectdegrees='120' kr:planetsdiff='114.40119692124864' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='41.638773' y1='102.035226' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mean_North_Lunar_Node' kr:tooriginaldegrees='190.58264567398498' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='4.545427262939114' kr:aspectdegrees='180' kr:planetsdiff='175.4545727370609' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mean_North_Lunar_Node' kr:tooriginaldegrees='190.58264567398498' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='4.545427262939086' kr:aspectdegrees='180' kr:planetsdiff='175.45457273706091' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='41.638773' y1='102.035226' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_North_Lunar_Node' kr:tooriginaldegrees='190.58264567398498' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='5.194293549644982' kr:aspectdegrees='0' kr:planetsdiff='5.194293549644982' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_North_Lunar_Node' kr:tooriginaldegrees='190.58264567398498' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='5.194293549645067' kr:aspectdegrees='0' kr:planetsdiff='5.194293549645067' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='41.638773' y1='102.035226' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='True_North_Lunar_Node' kr:tooriginaldegrees='191.024247807456' kr:from='Medium_Coeli' kr:fromoriginaldegrees='277.0584112781738' kr:orb='3.9658365292821713' kr:aspectdegrees='90' kr:planetsdiff='86.03416347071783' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1772,10 +1773,10 @@
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='True_North_Lunar_Node' kr:tooriginaldegrees='191.024247807456' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='5.157200945280351' kr:aspectdegrees='120' kr:planetsdiff='114.84279905471965' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='42.040075' y1='102.098123' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='True_North_Lunar_Node' kr:tooriginaldegrees='191.024247807456' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='4.103825129468106' kr:aspectdegrees='180' kr:planetsdiff='175.8961748705319' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='True_North_Lunar_Node' kr:tooriginaldegrees='191.024247807456' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='4.103825129468078' kr:aspectdegrees='180' kr:planetsdiff='175.89617487053192' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='42.040075' y1='102.098123' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='True_North_Lunar_Node' kr:tooriginaldegrees='191.024247807456' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='5.63589568311599' kr:aspectdegrees='0' kr:planetsdiff='5.63589568311599' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='True_North_Lunar_Node' kr:tooriginaldegrees='191.024247807456' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='5.635895683116075' kr:aspectdegrees='0' kr:planetsdiff='5.635895683116075' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='42.040075' y1='102.098123' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Chiron' kr:tooriginaldegrees='120.56821722799918' kr:from='True_Lilith' kr:fromoriginaldegrees='357.7910808509975' kr:orb='2.777136377001682' kr:aspectdegrees='120' kr:planetsdiff='122.77713637700168' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1796,7 +1797,7 @@
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Chiron' kr:tooriginaldegrees='120.56821722799918' kr:from='True_Priapus' kr:fromoriginaldegrees='177.79108085099756' kr:orb='2.777136377001625' kr:aspectdegrees='60' kr:planetsdiff='57.222863622998375' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-1.759327' y1='59.927079' x2='30.325427' y2='98.892597' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Chiron' kr:tooriginaldegrees='120.56821722799918' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='4.820134896340846' kr:aspectdegrees='60' kr:planetsdiff='64.82013489634085' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Chiron' kr:tooriginaldegrees='120.56821722799918' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='4.820134896340733' kr:aspectdegrees='60' kr:planetsdiff='64.82013489634073' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-1.759327' y1='59.927079' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Pholus' kr:fromoriginaldegrees='285.01942432458986' kr:orb='4.6917043937033895' kr:aspectdegrees='90' kr:planetsdiff='94.69170439370339' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1829,16 +1830,16 @@
     <use xlink:href='#orb60' fill='var(--kerykeion-chart-color-sextile)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='0.9691746684847082' kr:aspectdegrees='0' kr:planetsdiff='0.9691746684847082' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='0.9691746684844311' kr:aspectdegrees='0' kr:planetsdiff='0.9691746684844311' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.000000' y1='-2.702703' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='1.982124033104526' kr:aspectdegrees='120' kr:planetsdiff='118.01787596689547' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='1.9821240331044692' kr:aspectdegrees='120' kr:planetsdiff='118.01787596689553' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.000000' y1='-2.702703' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='4.583055781369161' kr:aspectdegrees='0' kr:planetsdiff='4.583055781369161' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='4.583055781369209' kr:aspectdegrees='0' kr:planetsdiff='4.583055781369209' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.000000' y1='-2.702703' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='0.9677301616144973' kr:aspectdegrees='60' kr:planetsdiff='59.0322698383855' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='0.9677301616145542' kr:aspectdegrees='60' kr:planetsdiff='59.032269838385446' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.000000' y1='-2.702703' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Medium_Coeli' kr:tooriginaldegrees='277.0584112781738' kr:from='Mean_South_Lunar_Node' kr:fromoriginaldegrees='10.582645673984985' kr:orb='3.5242343958111633' kr:aspectdegrees='90' kr:planetsdiff='93.52423439581116' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1877,10 +1878,10 @@
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Medium_Coeli' kr:tooriginaldegrees='277.0584112781738' kr:from='Interpolated_Lilith' kr:fromoriginaldegrees='12.49949925413345' kr:orb='5.441087975959647' kr:aspectdegrees='90' kr:planetsdiff='95.44108797595965' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='101.422851' y1='61.544057' x2='56.616013' y2='-2.285784' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Medium_Coeli' kr:tooriginaldegrees='277.0584112781738' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='4.871753304539283' kr:aspectdegrees='120' kr:planetsdiff='115.12824669546072' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Medium_Coeli' kr:tooriginaldegrees='277.0584112781738' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='4.871753304539823' kr:aspectdegrees='120' kr:planetsdiff='115.12824669546018' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='101.422851' y1='61.544057' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Medium_Coeli' kr:tooriginaldegrees='277.0584112781738' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='1.6700591538338188' kr:aspectdegrees='90' kr:planetsdiff='91.67005915383382' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Medium_Coeli' kr:tooriginaldegrees='277.0584112781738' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='1.670059153833904' kr:aspectdegrees='90' kr:planetsdiff='91.6700591538339' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='101.422851' y1='61.544057' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='Pholus' kr:fromoriginaldegrees='285.01942432458986' kr:orb='4.6917043937033895' kr:aspectdegrees='90' kr:planetsdiff='85.30829560629661' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1904,16 +1905,16 @@
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='3.529679965556909' kr:aspectdegrees='120' kr:planetsdiff='123.52967996555691' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.000000' y1='102.702703' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='0.9691746684846976' kr:aspectdegrees='180' kr:planetsdiff='179.0308253315153' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='0.9691746684844134' kr:aspectdegrees='180' kr:planetsdiff='179.0308253315156' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.000000' y1='102.702703' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='1.9821240331044976' kr:aspectdegrees='60' kr:planetsdiff='61.9821240331045' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='1.9821240331044692' kr:aspectdegrees='60' kr:planetsdiff='61.98212403310447' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.000000' y1='102.702703' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='4.583055781369154' kr:aspectdegrees='180' kr:planetsdiff='175.41694421863085' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='4.583055781369183' kr:aspectdegrees='180' kr:planetsdiff='175.41694421863082' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.000000' y1='102.702703' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='0.9677301616144831' kr:aspectdegrees='120' kr:planetsdiff='120.96773016161448' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Descendant' kr:tooriginaldegrees='199.71112871829325' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='0.9677301616145257' kr:aspectdegrees='120' kr:planetsdiff='120.96773016161453' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.000000' y1='102.702703' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Imum_Coeli' kr:tooriginaldegrees='97.05841127817382' kr:from='Mean_South_Lunar_Node' kr:fromoriginaldegrees='10.582645673984985' kr:orb='3.5242343958111633' kr:aspectdegrees='90' kr:planetsdiff='86.47576560418884' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -1958,10 +1959,10 @@
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Imum_Coeli' kr:tooriginaldegrees='97.05841127817382' kr:from='Interpolated_Lilith' kr:fromoriginaldegrees='12.49949925413345' kr:orb='5.441087975959633' kr:aspectdegrees='90' kr:planetsdiff='84.55891202404037' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-1.422851' y1='38.455943' x2='56.616013' y2='-2.285784' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Imum_Coeli' kr:tooriginaldegrees='97.05841127817382' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='4.871753304539311' kr:aspectdegrees='60' kr:planetsdiff='64.87175330453931' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Imum_Coeli' kr:tooriginaldegrees='97.05841127817382' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='4.871753304539823' kr:aspectdegrees='60' kr:planetsdiff='64.87175330453982' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-1.422851' y1='38.455943' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Imum_Coeli' kr:tooriginaldegrees='97.05841127817382' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='1.6700591538337903' kr:aspectdegrees='90' kr:planetsdiff='88.32994084616621' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Imum_Coeli' kr:tooriginaldegrees='97.05841127817382' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='1.670059153833904' kr:aspectdegrees='90' kr:planetsdiff='88.3299408461661' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-1.422851' y1='38.455943' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_Lilith' kr:tooriginaldegrees='13.372248022364964' kr:from='Mean_South_Lunar_Node' kr:fromoriginaldegrees='10.582645673984985' kr:orb='2.7896023483799794' kr:aspectdegrees='0' kr:planetsdiff='2.7896023483799794' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2000,13 +2001,13 @@
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mean_Lilith' kr:tooriginaldegrees='13.372248022364964' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='2.8092007303714013' kr:aspectdegrees='60' kr:planetsdiff='62.8092007303714' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='55.818841' y1='-2.380492' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_Lilith' kr:tooriginaldegrees='13.372248022364964' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='5.369706027443613' kr:aspectdegrees='0' kr:planetsdiff='5.369706027443613' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_Lilith' kr:tooriginaldegrees='13.372248022364964' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='5.369706027443897' kr:aspectdegrees='0' kr:planetsdiff='5.369706027443897' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='55.818841' y1='-2.380492' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Mean_Lilith' kr:tooriginaldegrees='13.372248022364964' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='4.356756662823784' kr:aspectdegrees='120' kr:planetsdiff='124.35675666282378' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Mean_Lilith' kr:tooriginaldegrees='13.372248022364964' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='4.356756662823813' kr:aspectdegrees='120' kr:planetsdiff='124.35675666282381' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='55.818841' y1='-2.380492' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_Lilith' kr:tooriginaldegrees='13.372248022364964' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='1.7558249145591276' kr:aspectdegrees='0' kr:planetsdiff='1.7558249145591276' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_Lilith' kr:tooriginaldegrees='13.372248022364964' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='1.7558249145590707' kr:aspectdegrees='0' kr:planetsdiff='1.7558249145590707' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='55.818841' y1='-2.380492' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Mean_South_Lunar_Node' kr:tooriginaldegrees='10.582645673984985' kr:from='Pholus' kr:fromoriginaldegrees='285.01942432458986' kr:orb='4.436778650604879' kr:aspectdegrees='90' kr:planetsdiff='85.56322134939512' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2054,10 +2055,10 @@
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mean_South_Lunar_Node' kr:tooriginaldegrees='10.582645673984985' kr:from='Interpolated_Perigee' kr:fromoriginaldegrees='194.65097858137133' kr:orb='4.068332907386349' kr:aspectdegrees='180' kr:planetsdiff='175.93166709261365' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='58.361227' y1='-2.035226' x2='45.351542' y2='102.497302' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_South_Lunar_Node' kr:tooriginaldegrees='10.582645673984985' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='4.545427262939143' kr:aspectdegrees='0' kr:planetsdiff='4.545427262939143' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_South_Lunar_Node' kr:tooriginaldegrees='10.582645673984985' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='4.545427262939086' kr:aspectdegrees='0' kr:planetsdiff='4.545427262939086' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='58.361227' y1='-2.035226' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mean_South_Lunar_Node' kr:tooriginaldegrees='10.582645673984985' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='5.194293549644982' kr:aspectdegrees='180' kr:planetsdiff='174.80570645035502' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mean_South_Lunar_Node' kr:tooriginaldegrees='10.582645673984985' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='5.194293549645067' kr:aspectdegrees='180' kr:planetsdiff='174.80570645035493' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='58.361227' y1='-2.035226' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='True_South_Lunar_Node' kr:tooriginaldegrees='11.024247807455993' kr:from='Pholus' kr:fromoriginaldegrees='285.01942432458986' kr:orb='3.9951765171338707' kr:aspectdegrees='90' kr:planetsdiff='86.00482348286613' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2102,10 +2103,10 @@
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='True_South_Lunar_Node' kr:tooriginaldegrees='11.024247807455993' kr:from='Interpolated_Perigee' kr:fromoriginaldegrees='194.65097858137133' kr:orb='3.626730773915341' kr:aspectdegrees='180' kr:planetsdiff='176.37326922608466' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='57.959925' y1='-2.098123' x2='45.351542' y2='102.497302' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='True_South_Lunar_Node' kr:tooriginaldegrees='11.024247807455993' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='4.1038251294681345' kr:aspectdegrees='0' kr:planetsdiff='4.1038251294681345' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='True_South_Lunar_Node' kr:tooriginaldegrees='11.024247807455993' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='4.103825129468078' kr:aspectdegrees='0' kr:planetsdiff='4.103825129468078' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='57.959925' y1='-2.098123' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='True_South_Lunar_Node' kr:tooriginaldegrees='11.024247807455993' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='5.63589568311599' kr:aspectdegrees='180' kr:planetsdiff='174.364104316884' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='True_South_Lunar_Node' kr:tooriginaldegrees='11.024247807455993' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='5.635895683116075' kr:aspectdegrees='180' kr:planetsdiff='174.36410431688392' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='57.959925' y1='-2.098123' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='True_Lilith' kr:tooriginaldegrees='357.7910808509975' kr:from='Quaoar' kr:fromoriginaldegrees='175.82086804505036' kr:orb='1.970212805947142' kr:aspectdegrees='180' kr:planetsdiff='178.02978719405286' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2138,19 +2139,19 @@
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Interpolated_Perigee' kr:fromoriginaldegrees='194.65097858137133' kr:orb='0.36844574321852974' kr:aspectdegrees='90' kr:planetsdiff='90.36844574321853' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='102.526109' y1='54.310776' x2='45.351542' y2='102.497302' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='3.0892597418767593' kr:aspectdegrees='120' kr:planetsdiff='123.08925974187676' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='3.0892597418762193' kr:aspectdegrees='120' kr:planetsdiff='123.08925974187622' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='102.526109' y1='54.310776' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='3.722529725218692' kr:aspectdegrees='90' kr:planetsdiff='93.72252972521869' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='3.722529725218976' kr:aspectdegrees='90' kr:planetsdiff='93.72252972521898' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='102.526109' y1='54.310776' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732511' kr:orb='1.9288115527352545' kr:aspectdegrees='120' kr:planetsdiff='121.92881155273525' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732459' kr:orb='1.9288115527347145' kr:aspectdegrees='120' kr:planetsdiff='121.92881155273471' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='102.526109' y1='54.310776' x2='25.879351' y2='3.140965' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Apollon' kr:fromoriginaldegrees='163.95560538213897' kr:orb='1.0638189424508937' kr:aspectdegrees='120' kr:planetsdiff='121.0638189424509' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Apollon' kr:fromoriginaldegrees='163.9556053821392' kr:orb='1.0638189424506663' kr:aspectdegrees='120' kr:planetsdiff='121.06381894245067' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='102.526109' y1='54.310776' x2='19.204340' y2='92.769174' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='0.10864861233426382' kr:aspectdegrees='90' kr:planetsdiff='90.10864861233426' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Pholus' kr:tooriginaldegrees='285.01942432458986' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='0.10864861233420697' kr:aspectdegrees='90' kr:planetsdiff='90.1086486123342' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='102.526109' y1='54.310776' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Ceres' kr:tooriginaldegrees='211.4519380251646' kr:from='Pars_Fortunae' kr:fromoriginaldegrees='272.4323978706669' kr:orb='0.9804598455023097' kr:aspectdegrees='60' kr:planetsdiff='60.98045984550231' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2189,16 +2190,16 @@
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Pallas' kr:tooriginaldegrees='194.10373868256784' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='2.077710070168507' kr:aspectdegrees='120' kr:planetsdiff='117.92228992983149' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.850352' y1='102.450510' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Pallas' kr:tooriginaldegrees='194.10373868256784' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='4.6382153672407185' kr:aspectdegrees='180' kr:planetsdiff='175.36178463275928' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Pallas' kr:tooriginaldegrees='194.10373868256784' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='4.638215367241003' kr:aspectdegrees='180' kr:planetsdiff='175.361784632759' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.850352' y1='102.450510' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pallas' kr:tooriginaldegrees='194.10373868256784' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='3.6252660026209185' kr:aspectdegrees='60' kr:planetsdiff='56.37473399737908' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pallas' kr:tooriginaldegrees='194.10373868256784' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='3.625266002620947' kr:aspectdegrees='60' kr:planetsdiff='56.37473399737905' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.850352' y1='102.450510' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Pallas' kr:tooriginaldegrees='194.10373868256784' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='1.024334254356262' kr:aspectdegrees='180' kr:planetsdiff='178.97566574564374' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Pallas' kr:tooriginaldegrees='194.10373868256784' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='1.0243342543562335' kr:aspectdegrees='180' kr:planetsdiff='178.97566574564377' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.850352' y1='102.450510' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pallas' kr:tooriginaldegrees='194.10373868256784' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='4.639659874110933' kr:aspectdegrees='120' kr:planetsdiff='115.36034012588907' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pallas' kr:tooriginaldegrees='194.10373868256784' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='4.63965987411089' kr:aspectdegrees='120' kr:planetsdiff='115.36034012588911' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.850352' y1='102.450510' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Vesta' kr:fromoriginaldegrees='132.65675439303078' kr:orb='3.434365540845306' kr:aspectdegrees='0' kr:planetsdiff='3.434365540845306' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2234,19 +2235,19 @@
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='0.09032881886025734' kr:aspectdegrees='60' kr:planetsdiff='59.90967118113974' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='2.785389' y1='73.416989' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='2.6508341159324686' kr:aspectdegrees='120' kr:planetsdiff='117.34916588406753' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='2.650834115932753' kr:aspectdegrees='120' kr:planetsdiff='117.34916588406725' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='2.785389' y1='73.416989' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='1.6378847513126402' kr:aspectdegrees='0' kr:planetsdiff='1.6378847513126402' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='1.637884751312697' kr:aspectdegrees='0' kr:planetsdiff='1.637884751312697' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='2.785389' y1='73.416989' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732511' kr:orb='0.8571159434490312' kr:aspectdegrees='90' kr:planetsdiff='89.14288405655097' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732459' kr:orb='0.8571159434485054' kr:aspectdegrees='90' kr:planetsdiff='89.1428840565515' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='2.785389' y1='73.416989' x2='25.879351' y2='3.140965' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='0.9630469969519879' kr:aspectdegrees='120' kr:planetsdiff='120.96304699695199' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='0.9630469969520306' kr:aspectdegrees='120' kr:planetsdiff='120.96304699695203' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='2.785389' y1='73.416989' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='2.652278622802683' kr:aspectdegrees='60' kr:planetsdiff='57.34772137719732' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Juno' kr:tooriginaldegrees='136.0911199338761' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='2.6522786228026405' kr:aspectdegrees='60' kr:planetsdiff='57.34772137719736' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='2.785389' y1='73.416989' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Vesta' kr:tooriginaldegrees='132.65675439303078' kr:from='Haumea' kr:fromoriginaldegrees='133.70059555349113' kr:orb='1.0438411604603743' kr:aspectdegrees='0' kr:planetsdiff='1.0438411604603743' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2270,13 +2271,13 @@
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Vesta' kr:tooriginaldegrees='132.65675439303078' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='3.5246943597055633' kr:aspectdegrees='60' kr:planetsdiff='56.47530564029444' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='1.467386' y1='70.546538' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Vesta' kr:tooriginaldegrees='132.65675439303078' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='5.072250292157946' kr:aspectdegrees='0' kr:planetsdiff='5.072250292157946' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Vesta' kr:tooriginaldegrees='132.65675439303078' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='5.072250292158003' kr:aspectdegrees='0' kr:planetsdiff='5.072250292158003' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='1.467386' y1='70.546538' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Vesta' kr:tooriginaldegrees='132.65675439303078' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732511' kr:orb='4.291481484294337' kr:aspectdegrees='90' kr:planetsdiff='85.70851851570566' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Vesta' kr:tooriginaldegrees='132.65675439303078' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732459' kr:orb='4.291481484293811' kr:aspectdegrees='90' kr:planetsdiff='85.70851851570619' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='1.467386' y1='70.546538' x2='25.879351' y2='3.140965' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Vesta' kr:tooriginaldegrees='132.65675439303078' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='2.471318543893318' kr:aspectdegrees='120' kr:planetsdiff='117.52868145610668' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Vesta' kr:tooriginaldegrees='132.65675439303078' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='2.4713185438932754' kr:aspectdegrees='120' kr:planetsdiff='117.52868145610672' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='1.467386' y1='70.546538' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='Eris' kr:tooriginaldegrees='4.394946432800392' kr:from='Ixion' kr:fromoriginaldegrees='186.22621408770144' kr:orb='1.8312676549010405' kr:aspectdegrees='180' kr:planetsdiff='178.16873234509896' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2294,7 +2295,7 @@
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Eris' kr:tooriginaldegrees='4.394946432800392' kr:from='Anti_Vertex' kr:fromoriginaldegrees='6.335740733299019' kr:orb='1.9407943004986237' kr:aspectdegrees='0' kr:planetsdiff='1.9407943004986237' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='63.921180' y1='-0.830853' x2='62.191717' y2='-1.273160' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Eris' kr:tooriginaldegrees='4.394946432800392' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='0.993405691539607' kr:aspectdegrees='180' kr:planetsdiff='179.0065943084604' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Eris' kr:tooriginaldegrees='4.394946432800392' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='0.9934056915395217' kr:aspectdegrees='180' kr:planetsdiff='179.00659430846048' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='63.921180' y1='-0.830853' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='Pars_Fidei' kr:fromoriginaldegrees='20.18798416479904' kr:orb='0.04949413236380451' kr:aspectdegrees='0' kr:planetsdiff='0.04949413236380451' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2306,16 +2307,16 @@
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='3.957041279698842' kr:aspectdegrees='60' kr:planetsdiff='56.04295872030116' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.606901' y1='-2.701237' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='1.3965359826266521' kr:aspectdegrees='0' kr:planetsdiff='1.3965359826266521' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='1.396535982626375' kr:aspectdegrees='0' kr:planetsdiff='1.396535982626375' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.606901' y1='-2.701237' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='2.4094853472464592' kr:aspectdegrees='120' kr:planetsdiff='117.59051465275354' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='2.409485347246431' kr:aspectdegrees='120' kr:planetsdiff='117.59051465275357' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.606901' y1='-2.701237' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='5.010417095511105' kr:aspectdegrees='0' kr:planetsdiff='5.010417095511105' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='5.010417095511153' kr:aspectdegrees='0' kr:planetsdiff='5.010417095511153' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.606901' y1='-2.701237' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='1.3950914757564306' kr:aspectdegrees='60' kr:planetsdiff='58.60490852424357' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Sedna' kr:tooriginaldegrees='20.13849003243521' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='1.3950914757564874' kr:aspectdegrees='60' kr:planetsdiff='58.60490852424351' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.606901' y1='-2.701237' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='Orcus' kr:fromoriginaldegrees='72.91355592934868' kr:orb='0.7870396241424515' kr:aspectdegrees='60' kr:planetsdiff='60.78703962414245' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2333,16 +2334,16 @@
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='2.4808531992452174' kr:aspectdegrees='60' kr:planetsdiff='57.51914680075478' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='1.849745' y1='71.427269' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='5.041358496317429' kr:aspectdegrees='120' kr:planetsdiff='114.95864150368257' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='5.041358496317713' kr:aspectdegrees='120' kr:planetsdiff='114.95864150368229' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='1.849745' y1='71.427269' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='4.028409131697629' kr:aspectdegrees='0' kr:planetsdiff='4.028409131697629' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='4.0284091316976856' kr:aspectdegrees='0' kr:planetsdiff='4.0284091316976856' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='1.849745' y1='71.427269' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732511' kr:orb='3.2476403238339913' kr:aspectdegrees='90' kr:planetsdiff='86.75235967616601' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732459' kr:orb='3.2476403238334655' kr:aspectdegrees='90' kr:planetsdiff='86.75235967616653' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='1.849745' y1='71.427269' x2='25.879351' y2='3.140965' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='1.4274773834329721' kr:aspectdegrees='120' kr:planetsdiff='118.57252261656703' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Haumea' kr:tooriginaldegrees='133.70059555349113' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='1.4274773834329295' kr:aspectdegrees='120' kr:planetsdiff='118.57252261656707' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='1.849745' y1='71.427269' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Ixion' kr:fromoriginaldegrees='186.22621408770144' kr:orb='5.80123190212089' kr:aspectdegrees='90' kr:planetsdiff='84.19876809787911' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2366,16 +2367,16 @@
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Interpolated_Perigee' kr:fromoriginaldegrees='194.65097858137133' kr:orb='2.623532591548951' kr:aspectdegrees='90' kr:planetsdiff='92.62353259154895' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-2.229502' y1='42.953440' x2='45.351542' y2='102.497302' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='0.09728140710922162' kr:aspectdegrees='60' kr:planetsdiff='59.90271859289078' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='0.09728140710871003' kr:aspectdegrees='60' kr:planetsdiff='59.90271859289129' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-2.229502' y1='42.953440' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732511' kr:orb='4.920789887502757' kr:aspectdegrees='60' kr:planetsdiff='55.07921011249724' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732459' kr:orb='4.920789887502238' kr:aspectdegrees='60' kr:planetsdiff='55.07921011249776' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-2.229502' y1='42.953440' x2='25.879351' y2='3.140965' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Apollon' kr:fromoriginaldegrees='163.95560538213897' kr:orb='1.9281593923166156' kr:aspectdegrees='60' kr:planetsdiff='61.928159392316616' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Apollon' kr:fromoriginaldegrees='163.9556053821392' kr:orb='1.928159392316843' kr:aspectdegrees='60' kr:planetsdiff='61.92815939231684' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-2.229502' y1='42.953440' x2='19.204340' y2='92.769174' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='3.1006269471017447' kr:aspectdegrees='90' kr:planetsdiff='86.89937305289826' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Makemake' kr:tooriginaldegrees='102.02744598982235' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='3.100626947101702' kr:aspectdegrees='90' kr:planetsdiff='86.8993730528983' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-2.229502' y1='42.953440' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Ixion' kr:tooriginaldegrees='186.22621408770144' kr:from='Pars_Fortunae' kr:fromoriginaldegrees='272.4323978706669' kr:orb='3.793816217034532' kr:aspectdegrees='90' kr:planetsdiff='86.20618378296547' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2390,7 +2391,7 @@
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='Ixion' kr:tooriginaldegrees='186.22621408770144' kr:from='Anti_Vertex' kr:fromoriginaldegrees='6.335740733299019' kr:orb='0.10952664559758318' kr:aspectdegrees='180' kr:planetsdiff='179.89047335440242' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='37.710291' y1='101.249760' x2='62.191717' y2='-1.273160' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Ixion' kr:tooriginaldegrees='186.22621408770144' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='0.8378619633614335' kr:aspectdegrees='0' kr:planetsdiff='0.8378619633614335' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Ixion' kr:tooriginaldegrees='186.22621408770144' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='0.8378619633615187' kr:aspectdegrees='0' kr:planetsdiff='0.8378619633615187' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='37.710291' y1='101.249760' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Interpolated_Lilith' kr:fromoriginaldegrees='12.49949925413345' kr:orb='0.41405667521522105' kr:aspectdegrees='60' kr:planetsdiff='60.41405667521522' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2408,22 +2409,22 @@
     <use xlink:href='#orb0' fill='var(--kerykeion-chart-color-conjunction)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='0.9833913466355853' kr:aspectdegrees='90' kr:planetsdiff='89.01660865336441' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='0.9833913466350168' kr:aspectdegrees='90' kr:planetsdiff='89.01660865336498' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='7.797955' y1='18.431625' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
   <g transform='translate(12.754967 55.042830) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb90' fill='var(--kerykeion-chart-color-square)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='4.815448755840066' kr:aspectdegrees='60' kr:planetsdiff='64.81544875584007' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='4.815448755840123' kr:aspectdegrees='60' kr:planetsdiff='64.81544875584012' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='7.797955' y1='18.431625' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Apollon' kr:fromoriginaldegrees='163.95560538213897' kr:orb='1.0420494527903088' kr:aspectdegrees='90' kr:planetsdiff='91.04204945279031' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Apollon' kr:fromoriginaldegrees='163.9556053821392' kr:orb='1.0420494527905362' kr:aspectdegrees='90' kr:planetsdiff='91.04204945279054' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='7.797955' y1='18.431625' x2='19.204340' y2='92.769174' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='2.214517007575431' kr:aspectdegrees='60' kr:planetsdiff='57.78548299242457' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='2.214517007575381' kr:aspectdegrees='60' kr:planetsdiff='57.78548299242462' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='7.797955' y1='18.431625' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='5.829842627330095' kr:aspectdegrees='0' kr:planetsdiff='5.829842627330095' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Orcus' kr:tooriginaldegrees='72.91355592934868' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='5.829842627330038' kr:aspectdegrees='0' kr:planetsdiff='5.829842627330038' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='7.797955' y1='18.431625' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Quaoar' kr:tooriginaldegrees='175.82086804505036' kr:from='True_Priapus' kr:fromoriginaldegrees='177.79108085099756' kr:orb='1.9702128059471988' kr:aspectdegrees='0' kr:planetsdiff='1.9702128059471988' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2441,7 +2442,7 @@
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Pars_Fortunae' kr:tooriginaldegrees='272.4323978706669' kr:from='True_Priapus' kr:fromoriginaldegrees='177.79108085099756' kr:orb='4.641317019669316' kr:aspectdegrees='90' kr:planetsdiff='94.64131701966932' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='100.324289' y1='65.653779' x2='30.325427' y2='98.892597' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Pars_Fortunae' kr:tooriginaldegrees='272.4323978706669' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='2.955954253673127' kr:aspectdegrees='90' kr:planetsdiff='87.04404574632687' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Pars_Fortunae' kr:tooriginaldegrees='272.4323978706669' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='2.955954253673042' kr:aspectdegrees='90' kr:planetsdiff='87.04404574632696' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='100.324289' y1='65.653779' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pars_Spiritus' kr:tooriginaldegrees='126.98985956591966' kr:from='Vertex' kr:fromoriginaldegrees='186.33574073329902' kr:orb='0.6541188326206111' kr:aspectdegrees='60' kr:planetsdiff='59.34588116737939' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2453,10 +2454,10 @@
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Pars_Spiritus' kr:tooriginaldegrees='126.98985956591966' kr:from='Interpolated_Lilith' kr:fromoriginaldegrees='12.49949925413345' kr:orb='5.509639688213795' kr:aspectdegrees='120' kr:planetsdiff='114.4903603117862' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-0.324289' y1='65.653779' x2='56.616013' y2='-2.285784' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pars_Spiritus' kr:tooriginaldegrees='126.98985956591966' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='1.6015074415796562' kr:aspectdegrees='60' kr:planetsdiff='58.398492558420344' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pars_Spiritus' kr:tooriginaldegrees='126.98985956591966' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='1.6015074415797699' kr:aspectdegrees='60' kr:planetsdiff='58.39849255842023' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='-0.324289' y1='65.653779' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Pars_Amoris' kr:tooriginaldegrees='336.65865181099866' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='5.271512771714441' kr:aspectdegrees='180' kr:planetsdiff='174.72848722828556' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Pars_Amoris' kr:tooriginaldegrees='336.65865181099866' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='5.271512771714981' kr:aspectdegrees='180' kr:planetsdiff='174.72848722828502' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='85.978444' y1='11.488620' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='Interpolated_Perigee' kr:fromoriginaldegrees='194.65097858137133' kr:orb='5.537005583427714' kr:aspectdegrees='180' kr:planetsdiff='174.4629944165723' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2465,22 +2466,22 @@
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='4.0065354120627035' kr:aspectdegrees='60' kr:planetsdiff='55.9934645879373' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.561376' y1='-2.700877' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='1.4460301149904815' kr:aspectdegrees='0' kr:planetsdiff='1.4460301149904815' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='1.4460301149902044' kr:aspectdegrees='0' kr:planetsdiff='1.4460301149902044' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.561376' y1='-2.700877' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='2.458979479610292' kr:aspectdegrees='120' kr:planetsdiff='117.54102052038971' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='2.4589794796102638' kr:aspectdegrees='120' kr:planetsdiff='117.54102052038974' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.561376' y1='-2.700877' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='5.0599112278749345' kr:aspectdegrees='0' kr:planetsdiff='5.0599112278749345' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='5.0599112278749825' kr:aspectdegrees='0' kr:planetsdiff='5.0599112278749825' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.561376' y1='-2.700877' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='1.444585608120292' kr:aspectdegrees='60' kr:planetsdiff='58.55541439187971' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pars_Fidei' kr:tooriginaldegrees='20.18798416479904' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='1.444585608120292' kr:aspectdegrees='60' kr:planetsdiff='58.55541439187971' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='49.561376' y1='-2.700877' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Vertex' kr:tooriginaldegrees='186.33574073329902' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='0.9473886089590167' kr:aspectdegrees='0' kr:planetsdiff='0.9473886089590167' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Vertex' kr:tooriginaldegrees='186.33574073329902' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='0.9473886089591019' kr:aspectdegrees='0' kr:planetsdiff='0.9473886089591019' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='37.808283' y1='101.273160' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Anti_Vertex' kr:tooriginaldegrees='6.335740733299019' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212434' kr:orb='0.9473886089590167' kr:aspectdegrees='180' kr:planetsdiff='179.05261139104098' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Anti_Vertex' kr:tooriginaldegrees='6.335740733299019' kr:from='Poseidon' kr:fromoriginaldegrees='185.38835212433992' kr:orb='0.9473886089591019' kr:aspectdegrees='180' kr:planetsdiff='179.0526113910409' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='62.191717' y1='-1.273160' x2='36.962184' y2='101.064569' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='Interpolated_Lilith' kr:tooriginaldegrees='12.49949925413345' kr:from='Mean_Priapus' kr:fromoriginaldegrees='193.37224802236497' kr:orb='0.8727487682315314' kr:aspectdegrees='180' kr:planetsdiff='179.12725123176847' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2492,10 +2493,10 @@
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Interpolated_Lilith' kr:tooriginaldegrees='12.49949925413345' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='3.681949498602876' kr:aspectdegrees='60' kr:planetsdiff='63.681949498602876' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='56.616013' y1='-2.285784' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Interpolated_Lilith' kr:tooriginaldegrees='12.49949925413345' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='5.2295054310553155' kr:aspectdegrees='120' kr:planetsdiff='125.22950543105532' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Interpolated_Lilith' kr:tooriginaldegrees='12.49949925413345' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='5.2295054310553155' kr:aspectdegrees='120' kr:planetsdiff='125.22950543105532' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='56.616013' y1='-2.285784' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Interpolated_Lilith' kr:tooriginaldegrees='12.49949925413345' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='2.628573682790659' kr:aspectdegrees='0' kr:planetsdiff='2.628573682790659' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Interpolated_Lilith' kr:tooriginaldegrees='12.49949925413345' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='2.628573682790602' kr:aspectdegrees='0' kr:planetsdiff='2.628573682790602' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='56.616013' y1='-2.285784' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='Interpolated_Perigee' kr:fromoriginaldegrees='194.65097858137133' kr:orb='1.2787305590063625' kr:aspectdegrees='0' kr:planetsdiff='1.2787305590063625' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -2504,85 +2505,85 @@
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='2.809200730371373' kr:aspectdegrees='120' kr:planetsdiff='117.19079926962863' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.181159' y1='102.380492' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='5.369706027443584' kr:aspectdegrees='180' kr:planetsdiff='174.63029397255642' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='5.369706027443868' kr:aspectdegrees='180' kr:planetsdiff='174.63029397255613' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.181159' y1='102.380492' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='4.356756662823784' kr:aspectdegrees='60' kr:planetsdiff='55.643243337176216' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='4.356756662823813' kr:aspectdegrees='60' kr:planetsdiff='55.64324333717619' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.181159' y1='102.380492' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='1.7558249145591276' kr:aspectdegrees='180' kr:planetsdiff='178.24417508544087' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='1.7558249145590992' kr:aspectdegrees='180' kr:planetsdiff='178.2441750854409' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.181159' y1='102.380492' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='5.371150534313799' kr:aspectdegrees='120' kr:planetsdiff='114.6288494656862' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Mean_Priapus' kr:tooriginaldegrees='193.37224802236497' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='5.371150534313756' kr:aspectdegrees='120' kr:planetsdiff='114.62884946568624' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.181159' y1='102.380492' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Interpolated_Perigee' kr:tooriginaldegrees='194.65097858137133' kr:from='White_Moon' kr:fromoriginaldegrees='76.18144875273634' kr:orb='1.5304701713650104' kr:aspectdegrees='120' kr:planetsdiff='118.46952982863499' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='45.351542' y1='102.497302' x2='6.067038' y2='20.888667' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Interpolated_Perigee' kr:tooriginaldegrees='194.65097858137133' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='4.090975468437222' kr:aspectdegrees='180' kr:planetsdiff='175.90902453156278' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Interpolated_Perigee' kr:tooriginaldegrees='194.65097858137133' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='4.090975468437506' kr:aspectdegrees='180' kr:planetsdiff='175.9090245315625' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='45.351542' y1='102.497302' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Interpolated_Perigee' kr:tooriginaldegrees='194.65097858137133' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='3.0780261038174217' kr:aspectdegrees='60' kr:planetsdiff='56.92197389618258' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Interpolated_Perigee' kr:tooriginaldegrees='194.65097858137133' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='3.07802610381745' kr:aspectdegrees='60' kr:planetsdiff='56.92197389618255' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='45.351542' y1='102.497302' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Interpolated_Perigee' kr:tooriginaldegrees='194.65097858137133' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='0.47709435555276514' kr:aspectdegrees='180' kr:planetsdiff='179.52290564444723' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='opposition' kr:to='Interpolated_Perigee' kr:tooriginaldegrees='194.65097858137133' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='0.4770943555527367' kr:aspectdegrees='180' kr:planetsdiff='179.52290564444726' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='45.351542' y1='102.497302' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Interpolated_Perigee' kr:tooriginaldegrees='194.65097858137133' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='4.092419975307436' kr:aspectdegrees='120' kr:planetsdiff='115.90758002469256' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Interpolated_Perigee' kr:tooriginaldegrees='194.65097858137133' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='4.0924199753073935' kr:aspectdegrees='120' kr:planetsdiff='115.9075800246926' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='45.351542' y1='102.497302' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Cupido' kr:fromoriginaldegrees='161.9301645827131' kr:orb='4.251284170023268' kr:aspectdegrees='90' kr:planetsdiff='85.74871582997673' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Cupido' kr:fromoriginaldegrees='161.93016458271364' kr:orb='4.2512841700227' kr:aspectdegrees='90' kr:planetsdiff='85.7487158299773' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='6.067038' y1='20.888667' x2='17.711979' y2='91.654034' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Hades' kr:fromoriginaldegrees='18.74195404980856' kr:orb='2.5605052970722113' kr:aspectdegrees='60' kr:planetsdiff='57.43949470292779' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Hades' kr:fromoriginaldegrees='18.741954049808836' kr:orb='2.5605052970724955' kr:aspectdegrees='60' kr:planetsdiff='57.439494702927504' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='6.067038' y1='20.888667' x2='50.891439' y2='-2.695163' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='1.5475559324523829' kr:aspectdegrees='60' kr:planetsdiff='61.54755593245238' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='1.5475559324524397' kr:aspectdegrees='60' kr:planetsdiff='61.54755593245244' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='6.067038' y1='20.888667' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Apollon' kr:fromoriginaldegrees='163.95560538213897' kr:orb='2.2258433705973744' kr:aspectdegrees='90' kr:planetsdiff='87.77415662940263' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Apollon' kr:fromoriginaldegrees='163.9556053821392' kr:orb='2.225843370597147' kr:aspectdegrees='90' kr:planetsdiff='87.77415662940285' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='6.067038' y1='20.888667' x2='19.204340' y2='92.769174' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='1.0533758158122382' kr:aspectdegrees='60' kr:planetsdiff='61.05337581581224' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='1.053375815812288' kr:aspectdegrees='60' kr:planetsdiff='61.05337581581229' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='6.067038' y1='20.888667' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='2.5619498039424116' kr:aspectdegrees='0' kr:planetsdiff='2.5619498039424116' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='White_Moon' kr:tooriginaldegrees='76.18144875273634' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='2.5619498039424116' kr:aspectdegrees='0' kr:planetsdiff='2.5619498039424116' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='6.067038' y1='20.888667' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Cupido' kr:tooriginaldegrees='161.9301645827131' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732511' kr:orb='5.018071294612014' kr:aspectdegrees='120' kr:planetsdiff='114.98192870538799' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Cupido' kr:tooriginaldegrees='161.93016458271364' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732459' kr:orb='5.018071294610948' kr:aspectdegrees='120' kr:planetsdiff='114.98192870538905' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='17.711979' y1='91.654034' x2='25.879351' y2='3.140965' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Cupido' kr:tooriginaldegrees='161.9301645827131' kr:from='Apollon' kr:fromoriginaldegrees='163.95560538213897' kr:orb='2.025440799425837' kr:aspectdegrees='0' kr:planetsdiff='2.025440799425837' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Cupido' kr:tooriginaldegrees='161.93016458271364' kr:from='Apollon' kr:fromoriginaldegrees='163.9556053821392' kr:orb='2.025440799425553' kr:aspectdegrees='0' kr:planetsdiff='2.025440799425553' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='17.711979' y1='91.654034' x2='19.204340' y2='92.769174' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
   <g transform='translate(18.458160 92.211604) rotate(90) scale(0.45) translate(-5 -5)'>
     <use xlink:href='#orb0' fill='var(--kerykeion-chart-color-conjunction)'/>
   </g>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Hades' kr:tooriginaldegrees='18.74195404980856' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518876' kr:orb='1.0129493646198' kr:aspectdegrees='120' kr:planetsdiff='118.9870506353802' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Hades' kr:tooriginaldegrees='18.741954049808836' kr:from='Zeus' kr:fromoriginaldegrees='137.72900468518878' kr:orb='1.0129493646200558' kr:aspectdegrees='120' kr:planetsdiff='118.98705063537994' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.891439' y1='-2.695163' x2='3.473997' y2='74.756937' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Hades' kr:tooriginaldegrees='18.74195404980856' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='3.613881112884453' kr:aspectdegrees='0' kr:planetsdiff='3.613881112884453' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Hades' kr:tooriginaldegrees='18.741954049808836' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='3.613881112884778' kr:aspectdegrees='0' kr:planetsdiff='3.613881112884778' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.891439' y1='-2.695163' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Hades' kr:tooriginaldegrees='18.74195404980856' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='0.0014445068702002573' kr:aspectdegrees='60' kr:planetsdiff='60.0014445068702' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Hades' kr:tooriginaldegrees='18.741954049808836' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='0.0014445068699160402' kr:aspectdegrees='60' kr:planetsdiff='60.001444506869916' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='50.891439' y1='-2.695163' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Zeus' kr:tooriginaldegrees='137.72900468518876' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732511' kr:orb='0.7807688078636374' kr:aspectdegrees='90' kr:planetsdiff='90.78076880786364' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Zeus' kr:tooriginaldegrees='137.72900468518878' kr:from='Kronos' kr:fromoriginaldegrees='46.94823587732459' kr:orb='0.7807688078641917' kr:aspectdegrees='90' kr:planetsdiff='90.78076880786419' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='3.473997' y1='74.756937' x2='25.879351' y2='3.140965' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Zeus' kr:tooriginaldegrees='137.72900468518876' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924106' kr:orb='2.6009317482646566' kr:aspectdegrees='120' kr:planetsdiff='122.60093174826466' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Zeus' kr:tooriginaldegrees='137.72900468518878' kr:from='Admetos' kr:fromoriginaldegrees='15.128072936924058' kr:orb='2.6009317482647276' kr:aspectdegrees='120' kr:planetsdiff='122.60093174826473' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='3.473997' y1='74.756937' x2='54.211164' y2='-2.534189' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Zeus' kr:tooriginaldegrees='137.72900468518876' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='1.0143938714900145' kr:aspectdegrees='60' kr:planetsdiff='58.985606128509986' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Zeus' kr:tooriginaldegrees='137.72900468518878' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='1.0143938714899434' kr:aspectdegrees='60' kr:planetsdiff='58.98560612851006' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='3.473997' y1='74.756937' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='trine' kr:to='Kronos' kr:tooriginaldegrees='46.94823587732511' kr:from='Apollon' kr:fromoriginaldegrees='163.95560538213897' kr:orb='2.992630495186148' kr:aspectdegrees='120' kr:planetsdiff='117.00736950481385' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='trine' kr:to='Kronos' kr:tooriginaldegrees='46.94823587732459' kr:from='Apollon' kr:fromoriginaldegrees='163.9556053821392' kr:orb='2.992630495185381' kr:aspectdegrees='120' kr:planetsdiff='117.00736950481462' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='25.879351' y1='3.140965' x2='19.204340' y2='92.769174' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='square' kr:to='Apollon' kr:tooriginaldegrees='163.95560538213897' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='4.7877931745398' kr:aspectdegrees='90' kr:planetsdiff='85.2122068254602' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='square' kr:to='Apollon' kr:tooriginaldegrees='163.9556053821392' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='4.78779317453953' kr:aspectdegrees='90' kr:planetsdiff='85.21220682546047' kr:aspectmovement='Applying' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='19.204340' y1='92.769174' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.25'/>
 </g>
-<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Admetos' kr:tooriginaldegrees='15.128072936924106' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667877' kr:orb='3.6153256197546852' kr:aspectdegrees='60' kr:planetsdiff='63.615325619754685' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
+<g kr:node='Aspect' kr:aspectname='sextile' kr:to='Admetos' kr:tooriginaldegrees='15.128072936924058' kr:from='Vulkanus' kr:fromoriginaldegrees='78.74339855667873' kr:orb='3.6153256197546852' kr:aspectdegrees='60' kr:planetsdiff='63.615325619754685' kr:aspectmovement='Separating' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='54.211164' y1='-2.534189' x2='4.809686' y2='22.881549' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.25'/>
 </g>
 </g>
