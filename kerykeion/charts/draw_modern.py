@@ -110,6 +110,30 @@ PLANET_MIN_SEPARATION = 7.25
 # Cusp ring text size (degrees and minutes shown at each house cusp)
 CUSP_FONT_SIZE = 2.0
 
+#: How far the degree and minute texts sit either side of the cusp line, which
+#: is what makes a cusp reading a band of ring rather than a point — and
+#: therefore what two neighbouring cusps have to clear.
+CUSP_TEXT_OFFSET_DEGREES = 4.669
+
+#: Scale of the sign glyph on the cusp line.
+CUSP_GLYPH_SCALE = 0.12
+
+#: How far the ring will shrink to fit its tightest pair. Below this the text
+#: stops being worth reading, so the ring keeps the size and takes the overlap.
+CUSP_MIN_SCALE = 0.62
+
+
+def _cusp_cluster_span(scale: float) -> float:
+    """Degrees of ring one cusp reading occupies at *scale*.
+
+    The two texts sit a fixed angular distance either side of the line, so the
+    band is that distance doubled plus the arc the outermost string itself
+    covers — and all three shrink together.
+    """
+    return 2.0 * CUSP_TEXT_OFFSET_DEGREES * scale + label_separation_degrees(
+        estimate_text_width("59'", CUSP_FONT_SIZE * scale), R_CUSP_OUTER - 2.75, gutter_px=0.4
+    )
+
 # Planet cluster element sizes — descending visual hierarchy:
 #   planet glyph (largest) > degrees text > zodiac sign > minutes text > RX text
 # Note: planet glyphs are ~28px native, zodiac signs are ~32px native,
@@ -546,8 +570,40 @@ def _draw_cusp_ring(
         f'<path d="{_annulus_path(R_CUSP_OUTER, R_CUSP_INNER)}" fill="{COLOR_BACKGROUND}" fill-rule="evenodd"/>\n'
     )
 
-    for house in houses:
-        cusp_angle = _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut)
+    # A cusp's reading is not one string but a spread: minutes at -4.67°, the
+    # sign glyph on the line, degrees at +4.67°, so each one occupies about
+    # thirteen degrees of ring. Two cusps closer together than that interleave —
+    # with Campanus at Liverpool four of the twelve houses are under eight
+    # degrees wide, so their readings printed through each other by construction
+    # rather than by bad luck.
+    #
+    # The whole ring shrinks to fit the tightest pair rather than the readings
+    # stepping aside from their own cusps. Moving them was tried and reads
+    # worse: a number that has slid two degrees off the line it describes is a
+    # number attached to the wrong house, and on a quadrant chart the eye has
+    # nothing else to go on. Smaller text on a crowded chart still says exactly
+    # what it belongs to.
+    #
+    # One factor for all twelve, not per-cusp: a ring of readings at four
+    # different sizes looks like a mistake even when each one is individually
+    # correct. And a floor, because past a point the honest answer is a smaller
+    # number rather than an unreadable one — below it the ring accepts the
+    # crowding it cannot design its way out of.
+    angles = [_zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses]
+    tightest = min(
+        (angles[(i + 1) % len(angles)] - angles[i]) % 360.0 for i in range(len(angles))
+    ) if len(angles) > 1 else 360.0
+    nominal_span = _cusp_cluster_span(1.0)
+    fit = 1.0 if nominal_span <= tightest else max(CUSP_MIN_SCALE, tightest / nominal_span)
+
+    # Rounded, not formatted to a fixed width: at full size these have to come
+    # out as the very strings the nominal constants produce, or every chart with
+    # a cusp ring shows a diff for a number that did not change.
+    font_size = round(CUSP_FONT_SIZE * fit, 4)
+    text_offset = CUSP_TEXT_OFFSET_DEGREES * fit
+    glyph_scale = round(CUSP_GLYPH_SCALE * fit, 4)
+
+    for house, cusp_angle in zip(houses, angles):
 
         # Determine if a full zodiac sign boundary falls in this house
         # Place sign glyph at the house cusp
@@ -556,9 +612,6 @@ def _draw_cusp_ring(
         sign_abbrev: str = house.sign
         degrees = int(house.position)
         minutes = int((house.position - degrees) * 60)
-
-        # Cusp data text spacing around the cusp line
-        text_offset = 4.669  # ~4.67° offset for degree/minute text
 
         # Determine layout: upper houses use one orientation, lower the alternate
         is_upper_half = cusp_angle >= 0 and cusp_angle < 180
@@ -577,7 +630,7 @@ def _draw_cusp_ring(
             # Minutes text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="2.75" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({-text_offset:.6f} {CENTER} {CENTER}) '
                 f'rotate({angle_upright + text_offset:.6f} {CENTER} 2.75)">'
@@ -585,7 +638,7 @@ def _draw_cusp_ring(
             )
 
             # Sign glyph
-            final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
+            final_scale = glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
             parts.append(
                 f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
@@ -595,7 +648,7 @@ def _draw_cusp_ring(
             # Degrees text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="2.75" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({text_offset:.6f} {CENTER} {CENTER}) '
                 f'rotate({angle_upright - text_offset:.6f} {CENTER} 2.75)">'
@@ -606,7 +659,7 @@ def _draw_cusp_ring(
             # Minutes text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="2.75" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({text_offset:.6f} {CENTER} {CENTER}) '
                 f'rotate({angle_upright - text_offset:.6f} {CENTER} 2.75)">'
@@ -614,7 +667,7 @@ def _draw_cusp_ring(
             )
 
             # Sign glyph
-            final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
+            final_scale = glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
             parts.append(
                 f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
@@ -624,7 +677,7 @@ def _draw_cusp_ring(
             # Degrees text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="2.75" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({-text_offset:.6f} {CENTER} {CENTER}) '
                 f'rotate({angle_upright + text_offset:.6f} {CENTER} 2.75)">'
@@ -647,7 +700,7 @@ def _draw_cusp_ring(
                 sign_angle = _zodiac_to_wheel_angle(mid_sign_abs, seventh_house_degree_ut)
                 sign_abbrev = _ZODIAC_SIGN_IDS[sign_num]
                 upright_angle = 90 + sign_angle
-                final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
+                final_scale = glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
 
                 parts.append(
                     f'<g transform="rotate(-{sign_angle:.6f} {CENTER} {CENTER}) '

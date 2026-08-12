@@ -609,3 +609,79 @@ class TestNothingPrintsOnTopOfAnythingElse:
         svg = ChartDrawer(synastry_data, chart_language=language, **{m: True for m in ALL_MARKS}).generate_svg_string()
         overlaps = find_text_overlaps(svg)
         assert not overlaps, "\n".join(str(o) for o in overlaps[:6])
+
+
+class TestTheCuspRingShrinksOnlyWhenItMustFit:
+    """The readings scale down for crowding, and for nothing else.
+
+    A cusp reading is a band of ring — minutes one side of the line, degrees
+    the other — so two cusps closer together than that band print through each
+    other, which quadrant systems arrange routinely. The ring answers by
+    shrinking to fit its tightest pair rather than by sliding the readings off
+    the lines they describe.
+
+    What must not happen is a chart paying for that when it has no crowding at
+    all, so the trigger is pinned from both sides: an ordinary chart is
+    byte-identical to one rendered with the mechanism unable to fire, and a
+    crowded one is not.
+    """
+
+    @staticmethod
+    def _tightest_house(subject) -> float:
+        from kerykeion.utilities.core import get_houses_list
+
+        cusps = [house.abs_pos for house in get_houses_list(subject)]
+        return min((cusps[(i + 1) % 12] - cusps[i]) % 360.0 for i in range(12))
+
+    @staticmethod
+    def _chart(house_system: str, lat: float = 51.5, lng: float = 0.0):
+        return AstrologicalSubjectFactory.from_birth_data(
+            f"Cusp {house_system}", 1990, 6, 15, 12, 0, city="probe", nation="XX",
+            lat=lat, lng=lng, tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier=house_system,
+        )
+
+    @pytest.mark.parametrize("house_system", ["P", "K", "O", "W", "A", "R", "C"])
+    def test_an_uncrowded_chart_is_untouched(self, house_system):
+        from kerykeion.charts.draw_modern import _cusp_cluster_span
+
+        subject = self._chart(house_system)
+        if self._tightest_house(subject) < _cusp_cluster_span(1.0):
+            pytest.skip("this sky is crowded, so shrinking is the correct answer")
+
+        chart_data = ChartDataFactory.create_natal_chart_data(subject)
+        svg = ChartDrawer(chart_data).generate_svg_string(style="modern")
+        # The nominal sizes, spelled out: if the ring shrank at all, none of
+        # these three would be in the markup.
+        from kerykeion.charts.draw_modern import CUSP_FONT_SIZE, CUSP_GLYPH_SCALE
+
+        assert f"font-size='{CUSP_FONT_SIZE}'" in svg
+        assert f"scale({CUSP_GLYPH_SCALE}" in svg or f"scale({CUSP_GLYPH_SCALE * 1.0}" in svg
+
+    def test_a_crowded_chart_does_shrink(self):
+        """Campanus at Liverpool packs four houses under eight degrees."""
+        from kerykeion.charts.draw_modern import CUSP_FONT_SIZE, _cusp_cluster_span
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Campanus", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+            lat=53.4084, lng=-2.9916, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+        )
+        assert self._tightest_house(subject) < _cusp_cluster_span(1.0), "fixture is no longer crowded"
+
+        svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(style="modern")
+        assert f"font-size='{CUSP_FONT_SIZE}'" not in svg, "the ring should have shrunk and did not"
+
+    def test_the_ring_keeps_one_size_for_all_twelve(self):
+        """Readings at four sizes look like a mistake even when each is right."""
+        import re
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Campanus", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+            lat=53.4084, lng=-2.9916, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+        )
+        svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(style="modern")
+        cusp_block = svg[svg.index("kr:node='CuspRing'") : svg.index("kr:node='RulerRing'")]
+        sizes = set(re.findall(r"kr:node='Cusp'.*?font-size='([\d.]+)'", cusp_block))
+        assert len(sizes) <= 1, f"the cusp ring drew its readings at {sorted(sizes)}"
