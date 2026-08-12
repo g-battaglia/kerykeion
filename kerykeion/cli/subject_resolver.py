@@ -76,7 +76,7 @@ def parse_time(value: str) -> tuple[int, int, int]:
     if match is None:
         raise ValueError(f"invalid time {value!r}; expected HH:MM or HH:MM:SS")
     hour, minute, seconds = (int(g) if g is not None else 0 for g in match.groups())
-    if not 0 <= hour <= 24:
+    if not 0 <= hour <= 23:
         raise ValueError(f"hour out of range in {value!r}")
     if not 0 <= minute <= 59:
         raise ValueError(f"minute out of range in {value!r}")
@@ -310,14 +310,20 @@ def _calc_param_for(feature: str) -> str:
 
 
 def _apply_set_flags(merged: dict[str, Any], set_flags: list[str]) -> None:
-    """Whitelisted advanced parameters from ``--set key=value``."""
+    """Whitelisted advanced parameters from ``--set key=value``.
+
+    The whitelist is the profile recipe shape (:class:`ProfileInput` fields),
+    **not** the raw ``from_birth_data`` signature: ``--set`` values are persisted
+    to the recipe, and factory-only keys like ``year``/``month``/``hour``/
+    ``suppress_geonames_warning`` would either collide in :func:`materialize`
+    (duplicate keyword) or break ``subject save`` (``ProfileInput`` rejects them).
+    Use the dedicated flags (``--date``/``--time``/``--lat``…) for those.
+    """
     if not set_flags:
         return
-    import inspect
+    from kerykeion.cli.profiles import ProfileInput
 
-    from kerykeion import AstrologicalSubjectFactory
-
-    allowed = set(inspect.signature(AstrologicalSubjectFactory.from_birth_data).parameters)
+    allowed = set(ProfileInput.model_fields) - {"extra"}
     for item in set_flags:
         if "=" not in item:
             raise ValueError(f"--set expects key=value, got {item!r}")
@@ -327,7 +333,7 @@ def _apply_set_flags(merged: dict[str, Any], set_flags: list[str]) -> None:
             raise ValueError(f"--set refuses private parameter {key!r}")
         if key not in allowed:
             raise ValueError(
-                f"--set {key!r} is not a from_birth_data parameter "
+                f"--set {key!r} is not a profile field "
                 f"(known: {', '.join(sorted(allowed))})"
             )
         merged[key] = _coerce_set_value(raw_value)
@@ -380,10 +386,13 @@ def merge_inputs(
     _apply_calc_toggles(merged, flags)
     _apply_set_flags(merged, flags.set_flags)
 
-    # Decide online (explicit flag > recipe > inferred from coordinates).
+    # Decide online (explicit flag — including --no-online — > recipe > inferred
+    # from coordinates). ``--no-online`` arrives as ``flags.online is False`` and
+    # must override a profile's ``online=True``: a falsy flag is an explicit
+    # choice, not "not given".
     if flags.online is True:
         merged["online"] = True
-    elif flags.offline is True:
+    elif flags.offline is True or flags.online is False:
         merged["online"] = False
     elif "online" not in merged:
         coords_complete = (
@@ -393,11 +402,19 @@ def merge_inputs(
         )
         merged["online"] = not coords_complete
 
-    iso_utc = merged.get("iso_utc_time")
-    if "mode" not in merged:
-        merged["mode"] = "iso_utc" if iso_utc else "birth"
+    # Mode is derived from what is *actually* present, so a profile saved in one
+    # mode cannot pin it: an inline --iso-utc forces iso_utc mode, inline
+    # --date/--time force birth mode, and only when neither is given does the
+    # profile's (or the default) mode survive. ``mode_override`` (the ``now``
+    # command) always wins.
     if flags.mode_override:
         merged["mode"] = flags.mode_override
+    elif flags.iso_utc is not None:
+        merged["mode"] = "iso_utc"
+    elif flags.date is not None or flags.time is not None:
+        merged["mode"] = "birth"
+    elif "mode" not in merged:
+        merged["mode"] = "iso_utc" if merged.get("iso_utc_time") else "birth"
     return merged
 
 
@@ -444,17 +461,25 @@ def materialize(merged: dict[str, Any]):
     time_str = factory_kwargs.pop("time", None)
     if not date_str:
         raise ValueError("birth mode needs --date (or a profile with a date)")
+    if not time_str:
+        # ``from_birth_data`` fills ``hour=minute=None`` from ``datetime.now()``,
+        # which would make a date-only natal non-deterministic across runs. A
+        # natal chart needs a birth time for the houses and Ascendant.
+        raise ValueError(
+            "birth mode needs --time (HH:MM[:SS]); a natal chart requires a birth "
+            "time. Pass --time, or use `kerykeion now` for the current moment."
+        )
     year, month, day = parse_date(date_str)
-    hour = minute = None
     seconds = factory_kwargs.pop("seconds", None)
-    if time_str is not None:
-        hour, minute, parsed_seconds = parse_time(time_str)
-        seconds = seconds if seconds is not None else parsed_seconds
+    hour, minute, parsed_seconds = parse_time(time_str)
+    seconds = seconds if seconds is not None else parsed_seconds
     if seconds:
         factory_kwargs["seconds"] = seconds
-    factory_kwargs.pop("name", None)
-    factory_kwargs.pop("mode", None)
-    factory_kwargs.pop("iso_utc_time", None)
+    # The birth date/time components are passed explicitly below; drop any
+    # same-named keys (e.g. from a hand-edited profile's ``extra``) so they
+    # cannot collide as duplicate keyword arguments.
+    for k in ("name", "mode", "iso_utc_time", "year", "month", "day", "hour", "minute"):
+        factory_kwargs.pop(k, None)
     return AstrologicalSubjectFactory.from_birth_data(
         name=name,
         year=year,

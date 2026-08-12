@@ -124,11 +124,16 @@ def output_with_warnings(obj: Any, fmt: str, output: str | None) -> None:
     """Emit the payload, then warnings; exit 9 if ``--warnings-as-errors``.
 
     The payload is written first so it is never lost when a warning escalates.
+    Warnings are emitted in a ``finally`` so a render error (e.g. SVG on a
+    non-chart object) still surfaces them instead of swallowing them, and so
+    ``--warnings-as-errors`` is not silently bypassed by a downstream crash.
     """
     from kerykeion.cli.rendering import emit
 
     eph, polar = collect_warnings(obj)
-    emit.write_output(emit.render(obj, fmt), output)
-    emit_warnings(eph, polar)
+    try:
+        emit.write_output(emit.render(obj, fmt), output)
+    finally:
+        emit_warnings(eph, polar)
     if (eph or polar) and errors.warnings_as_errors():
         raise SystemExit(int(errors.ExitCode.WARNINGS_AS_ERRORS))

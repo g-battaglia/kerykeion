@@ -155,13 +155,30 @@ def classify(exc: BaseException) -> ExitCode:
 
     if isinstance(exc, pydantic.ValidationError):
         return ExitCode.INVALID_INPUT
-    if isinstance(exc, (ValueError, KeyError, FileNotFoundError, TypeError)):
-        # FileNotFoundError covers ProfileNotFound (unknown -s target): a missing
-        # input file is a user-input problem, not an unexpected crash. TypeError
-        # covers a wrong/missing argument to a dispatched factory (``call``),
-        # which is bad input, not a bug in the CLI.
+    if isinstance(exc, (ValueError, KeyError, OSError, TypeError)):
+        # OSError covers ProfileNotFound (unknown -s target), a missing input
+        # file (FileNotFoundError), `-o` pointed at a directory or a read-only
+        # path (IsADirectoryError/PermissionError): all user-input problems, not
+        # unexpected crashes. TypeError covers a wrong/missing argument to a
+        # dispatched factory (``call``), which is bad input, not a bug in the CLI.
         return ExitCode.INVALID_INPUT
     return ExitCode.UNEXPECTED
+
+
+def _is_typer_exit(exc: BaseException) -> bool:
+    """True if *exc* is typer's/click's control-flow ``Exit`` signal.
+
+    ``typer.Exit`` is a ``RuntimeError`` (not ``SystemExit``): if it reached
+    :func:`error_boundary`'s ``except BaseException`` it would be classified as
+    UNEXPECTED (exit 1). The caller re-raises it so click/typer's outer handler
+    converts it to the intended ``SystemExit(code)``. typer is imported lazily so
+    this module keeps no module-level typer dependency.
+    """
+    try:
+        from typer import Exit
+    except Exception:  # pragma: no cover - typer is a hard [cli] dependency
+        return False
+    return isinstance(exc, Exit)
 
 
 # ── The boundary ─────────────────────────────────────────────────────────────
@@ -217,6 +234,12 @@ def error_boundary(func: _F) -> _F:
         except SystemExit:
             raise
         except BaseException as exc:  # noqa: BLE001 — the whole point is to catch all
+            # ``typer.Exit`` is a control-flow signal carrying an exit code, not a
+            # crash; let it propagate to click/typer's outer handler. Without
+            # this it would fall through to ``handle_uncaught`` and misclassify
+            # as UNEXPECTED (exit 1).
+            if _is_typer_exit(exc):
+                raise
             handle_uncaught(exc)
 
     return wrapper  # type: ignore[return-value]

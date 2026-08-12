@@ -18,6 +18,37 @@
   `cli:smoke` poe tasks, plus a `build:smoke` CLI environment. Dependencies are
   typer & rich (MIT — see NOTICE); no Apache-2.0 was added.
 
+### Fixed
+
+A pre-merge review of the CLI hardened every silent-wrong-output and
+exit-code-classification path it could reach:
+
+- A date-only `natal` (no `--time`) now requires `--time` (exit 4). The factory
+  fills `hour`/`minute` from `datetime.now()`, which made two runs a minute apart
+  produce different Ascendants/houses with no warning.
+- `--no-online` overrides a profile saved with `online=True` (a falsy flag is an
+  explicit choice); `transit` and `return` forward `--offline`/`--online` to the
+  natal subject, not only to the transit/return moment.
+- `--set` is whitelisted against the profile recipe shape, not the raw factory
+  signature, so `--set year=…`/`--set hour=…` is rejected instead of colliding as
+  a duplicate keyword (`materialize`) or breaking `subject save` (`extra=forbid`).
+- `--step 0` is rejected (was silently rewritten to 1); `--year 0` and
+  `--target-year 0` are accepted (were falsy-rejected); `--time 24:00` is
+  rejected (off-by-one; the factory caps the hour at 23).
+- `transit --to-time` without `--to-date` is rejected (the time was silently
+  dropped and the transit cast for the current moment).
+- `-o` on a directory or read-only path is now exit 4, not exit 1 with a
+  traceback (`OSError` is classified as invalid input).
+- `typer.Exit` (a `RuntimeError`, not `SystemExit`) propagates through the error
+  boundary instead of being misclassified as exit 1.
+- Warnings are emitted in a `finally`, so they survive a render failure and
+  `--warnings-as-errors` (exit 9) is not silently bypassed.
+- The ephemeris pre-flight sample count is DST-aware for hours/minutes (counts in
+  UTC, matching the library), so a series across a DST boundary no longer slips
+  past the ceiling into the wrong exit code.
+- A typoed `call --param` is rejected up front (was silently dropped for
+  instance-method targets, running the factory with defaults).
+
 ## 6.0.0a84 - 2026-08-12
 
 Structural release. No calculation changed and no public name moved:

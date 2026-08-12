@@ -195,9 +195,15 @@ def transit(
     """
     if not profile:
         raise ValueError("transit needs -s <profile> for the natal subject")
+    if to_time is not None and to_date is None:
+        raise ValueError(
+            "--to-time requires --to-date (omit both to transit the current moment)."
+        )
     from kerykeion import ChartDataFactory
 
-    natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+    natal = subject_resolver.resolve_subject(
+        subject_resolver.SubjectFlags(online=online, offline=offline), profile
+    )
     # The transit moment is a minimal subject: just a place and a moment. No
     # zodiac/points/houses overrides — those follow the natal chart's settings
     # via the dual-wheel rendering. Build the flags directly rather than via
@@ -266,14 +272,16 @@ def return_chart(
     """
     if not profile:
         raise ValueError("return needs -s <profile> for the natal subject")
-    if not year:
+    if year is None:
         raise ValueError("return needs --year")
     rtype = return_type or "Solar"
     if rtype not in _RETURN_TYPES:
         raise ValueError(f"--type must be {' or '.join(_RETURN_TYPES)}, got {rtype!r}")
     from kerykeion import ChartDataFactory, PlanetaryReturnFactory
 
-    natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+    natal = subject_resolver.resolve_subject(
+        subject_resolver.SubjectFlags(online=online, offline=offline), profile
+    )
     # PlanetaryReturnFactory does its own geocoding (unlike the other chart
     # factories): it needs a return-chart location. Default to the natal
     # birthplace (offline); explicit flags relocate the return.
@@ -317,7 +325,7 @@ def progression(
     """
     if not profile:
         raise ValueError("progression needs -s <profile> for the natal subject")
-    if not target_year:
+    if target_year is None:
         raise ValueError("progression needs --target-year")
     from kerykeion import ChartDataFactory, SecondaryProgressionFactory
 

@@ -303,3 +303,130 @@ class TestTtyDetection:
         assert formats.resolve_format(None, None) == "text"
         monkeypatch.setattr(formats, "stdout_is_tty", lambda: False)
         assert formats.resolve_format(None, None) == "json"
+
+
+# ── input-validation regressions ─────────────────────────────────────────────
+# Each test below pins one finding from the feat/cli review: the failure mode is
+# named in the docstring so a regression points at the behaviour lost.
+
+
+class TestInputValidationRegressions:
+    """Guard against silent or mis-classified bad-input handling."""
+
+    def test_natal_without_time_is_rejected(self, runner, app):
+        # #1: birth mode requires --time; missing it must be exit 4 (invalid
+        # input), not an opaque downstream crash or silent defaults.
+        r = runner.invoke(app, [
+            "natal", "--date", "1990-01-01",
+            "--lat", "48.85", "--lng", "2.35", "--tz", "Europe/Paris", "--offline",
+        ])
+        assert r.exit_code == 4
+        assert "Traceback" not in r.output
+
+    def test_hour_twenty_four_is_rejected(self, runner, app):
+        # #15: parse_time accepted 24:00 (off-by-one: hour range was <= 24);
+        # 24 is not a valid wall-clock hour and must be exit 4.
+        r = runner.invoke(app, [
+            "natal", "--date", "2024-01-01", "--time", "24:00",
+            "--lat", "48.85", "--lng", "2.35", "--tz", "Europe/Paris", "--offline",
+        ])
+        assert r.exit_code == 4
+        assert "Traceback" not in r.output
+
+    def test_step_zero_is_rejected_not_silently_one(self, runner, app):
+        # #5: `step or 1` rewrote --step 0 to 1 (falsy-zero). The pre-flight
+        # check then passed and the factory ran with step=1, producing a huge
+        # series instead of an error. Now 0 is a clean exit 4.
+        r = runner.invoke(app, [
+            "ephemeris", "--lat", "0", "--lng", "0", "--tz", "UTC",
+            "--from", "2024-01-01", "--to", "2024-01-05", "--step", "0",
+        ])
+        assert r.exit_code == 4
+        assert "Traceback" not in r.output
+
+    def test_transits_step_zero_is_rejected(self, runner, app, ada_profile):
+        # #5b: same falsy-zero bug on `transits` (step_n was `step or 1`).
+        r = runner.invoke(app, [
+            "transits", "-s", "ada",
+            "--from", "2024-01-01", "--to", "2024-01-05", "--step", "0",
+        ])
+        assert r.exit_code == 4
+
+    def test_transit_to_time_requires_to_date(self, runner, app, ada_profile):
+        # #8: `--to-time` without `--to-date` silently dropped the time and
+        # built a transit to the natal date at 00:00; now a clean exit 4.
+        r = runner.invoke(app, ["transit", "-s", "ada", "--to-time", "12:30"])
+        assert r.exit_code == 4
+        assert "--to-date" in r.output
+
+    def test_call_param_typo_is_rejected(self, runner, app, ada_profile):
+        # #14: a typoed --param key (e.g. years_beforee) was silently dropped
+        # by the init/method split and the factory ran with the default — a
+        # wrong result with no error. Now exit 4 naming the unknown key.
+        r = runner.invoke(app, [
+            "call", "ProfectionsFactory.from_subject", "-s", "ada",
+            "--param", "years_beforee=3",
+        ])
+        assert r.exit_code == 4
+        assert "Traceback" not in r.output
+
+    def test_output_to_directory_is_exit_four(self, runner, app, ada_profile, tmp_path):
+        # #10: -o on a directory raised IsADirectoryError → exit 1 with a
+        # traceback; OSError now classifies as invalid input → exit 4, clean.
+        r = runner.invoke(app, ["natal", "-s", "ada", "-o", str(tmp_path)])
+        assert r.exit_code == 4
+        assert "Traceback" not in r.output
+
+
+# ── sampling-limit DST awareness (#13) ───────────────────────────────────────
+
+
+class TestSamplingDstAwareness:
+    """The pre-flight sample count must match the library's UTC-based count.
+
+    Across a DST fall-back a wall-clock 48h span is 49 UTC hours; the library
+    counts in UTC (one extra sample), so the pre-flight check must too, or it
+    under-counts and lets an over-ceiling series slip through to exit 4 instead
+    of the dedicated exit 8.
+    """
+
+    def test_fall_back_hours_count_matches_library(self):
+        # Europe/Rome fell back on 2024-10-27 03:00 CEST → 02:00 CET: the local
+        # 2024-10-26 → 2024-10-28 span is 48 wall-clock hours but 49 UTC hours.
+        from datetime import datetime
+
+        from kerykeion import EphemerisDataFactory
+        from kerykeion.cli.sampling import count_samples
+
+        start, end = datetime(2024, 10, 26), datetime(2024, 10, 28)
+        cli_count = count_samples(start, end, "hours", 1, tz_str="Europe/Rome")
+        # Library's own n_samples formula: int(utc_delta_hours) // step + 1.
+        factory = EphemerisDataFactory(
+            start, end, step_type="hours", step=1, tz_str="Europe/Rome"
+        )
+        factory.get_ephemeris_data(as_model=True)
+        library_count = len(factory.dates_list)
+        assert cli_count == library_count == 50
+        # And the DST correction actually changed the answer vs naive.
+        assert count_samples(start, end, "hours", 1) == 49
+
+    def test_days_count_is_dst_independent(self):
+        # Days use wall-clock day arithmetic in both the CLI and the library,
+        # so a range that spans a fall-back boundary still counts whole days.
+        from datetime import datetime
+
+        from kerykeion.cli.sampling import count_samples
+
+        start, end = datetime(2024, 10, 26), datetime(2024, 10, 28)
+        assert count_samples(start, end, "days", 1) == 3
+        assert count_samples(start, end, "days", 1, tz_str="Europe/Rome") == 3
+
+    def test_count_samples_rejects_non_positive_step(self):
+        from datetime import datetime
+
+        from kerykeion.cli.sampling import count_samples
+
+        with pytest.raises(ValueError):
+            count_samples(datetime(2024, 1, 1), datetime(2024, 1, 2), "days", 0)
+        with pytest.raises(ValueError):
+            count_samples(datetime(2024, 1, 1), datetime(2024, 1, 2), "hours", -1)

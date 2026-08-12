@@ -137,6 +137,19 @@ def call(
 
     _bind_subjects(target, kwargs, profile, subject2)
 
+    # Reject unknown --param keys up front. For instance-method targets the
+    # init/method split below would otherwise silently drop a key in neither set
+    # (e.g. a typo), and the library would run with defaults — a wrong result
+    # with no error. For the static/function paths Python would raise TypeError
+    # anyway; this gives a uniform, clean exit-4 message.
+    known = set(target.method_params) | set(target.init_params)
+    unknown = [k for k in kwargs if k not in known]
+    if unknown:
+        raise ValueError(
+            f"--param {unknown[0]!r} is not a parameter of {target.spec} "
+            f"(known: {', '.join(sorted(known))})"
+        )
+
     if target.needs_instance:
         owner = registry.public_names()[target.owner_name]
         init_kwargs = {k: v for k, v in kwargs.items() if k in target.init_params}
