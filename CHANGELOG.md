@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 6.0.0a85 - 2026-08-12
+
 ### Added
 
 - **Optional command-line interface (`kerykeion[cli]`).** A new extra exposes the
