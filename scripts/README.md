@@ -39,7 +39,7 @@ outside the loaded ephemeris and their fixtures are silently left stale.
 
 | Script | `poe` task | What it produces |
 | :-- | :-- | :-- |
-| `generate_svg_validation_gallery.py` | `gallery`, `gallery:index` | The visual validation sweep: ~300 charts in `svg_validation_gallery/` (gitignored) plus a page that opens any of them full screen and steps through the lot with a slider. One section per axis — every theme, language, house system, perspective, sidereal mode, chart type, output template and opt-in mark — then the sections that are deliberately not defaults: polar latitudes, dates before the common era, the heaviest chart the library can draw. A render that raises becomes a red card instead of stopping the run. `gallery:index` rewrites just the page from `cards.json`, so reworking the viewer costs seconds rather than a full re-render. |
+| `generate_svg_validation_gallery.py` | `gallery`, `gallery:index` | The visual validation sweep (see below). |
 | `generate_glyph_gallery.py` | — | A self-contained poster of every chart glyph, plus its Markdown page. |
 | `report_modern_displacement.py` | — | How far the modern decluttering moves each planet from its true position. Reads the SVG back through `charts.svg_metadata`, so it measures what was drawn rather than what was intended. |
 | `benchmark.py` | `benchmark` | Timings for subject creation, aspects and SVG rendering. |
@@ -68,3 +68,49 @@ in the targets say so; edit the script, never the output.
 | `regenerate_glyph_widths.py` | `regenerate:glyph-widths` | `charts/glyph_metrics.py` — the per-character width tables the info panel measures rows against. Reads the reference fonts, so macOS only. |
 | `measure_modern_separation.py` | `regenerate:glyph-ink` | `charts/glyph_ink_metrics.py` — the ink extents of every modern glyph, measured in a real browser. Interactive: it opens a page. The modern wheel's spacing is derived from these numbers, so changing a glyph without re-measuring invalidates the separation model. |
 | `extract_swisseph_full_docs.py` | — | One-off extraction of upstream ephemeris documentation. |
+
+---
+
+## The validation gallery
+
+`poe gallery` writes several hundred charts into `svg_validation_gallery/`
+(gitignored) with a page that opens any of them full screen and steps through
+the whole sweep with a slider, the arrow keys or the screen edges. `i` shows the
+technical details of the chart on screen — its size, viewBox, node and element
+counts, the `kr:` attributes it carries, its info-panel lines, and whether it
+parses as XML — all **read back out of the rendered file**, never restated from
+the arguments, so the panel cannot agree with a request the renderer ignored.
+
+It is organised by axis. Each section holds one dimension at every value it can
+take while the rest stay at a default:
+
+- **themes** (all six, plus the un-themed output), **languages** (all ten, single
+  and dual wheel), **chart types** (natal through both composites, all four
+  returns, progressions and solar arc), **output templates**
+- **house systems** — all twenty-three, then all twenty-three again inside the
+  polar circle where most are undefined and another stands in
+- **perspectives** (all eleven), **sidereal modes** (all forty-eight),
+  **tropical against sidereal** side by side
+- **the opt-in marks**, one at a time against an unmarked reference, then all of
+  them together on subjects that between them carry every referent
+
+And the sections that are deliberately not defaults, because that is where
+layout gives way:
+
+- **latitudes** from 89°N to 89°S and both sides of the dateline; **dates** from
+  500 BCE to 2400; **times of day** every three hours, where diurnality flips
+- **names and titles** in Cyrillic, Greek, CJK, Arabic, Hebrew, Devanagari, with
+  emoji, with characters that are markup, and longer than the block they sit in
+- **aspect webs** from none at all to every aspect at double orb; **orb rules**;
+  **distribution weighting**
+- **calendar edges** — a leap day, both sides of midnight, daylight-saving jumps,
+  UTC+14 to UTC−11
+- **minimal charts**, down to a single point; **the heaviest chart** the library
+  can draw, in every theme and every language
+- **overrides** (partial palettes, language packs) and **post-processing**
+  (variables inlined, minified)
+
+A render that raises becomes a red card rather than stopping the run: a sweep
+that omits what broke is worse than none. The sweep writes `cards.json`, and
+`poe gallery:index` rebuilds the page from that alone — reworking the viewer
+costs a second instead of a full re-render.

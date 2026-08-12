@@ -36,6 +36,8 @@ import html
 import json
 import re
 import sys
+import xml.etree.ElementTree as ET
+from collections import Counter
 import traceback
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -49,6 +51,7 @@ from kerykeion import (
     MidpointFactory,
     PlanetaryReturnFactory,
     SecondaryProgressionFactory,
+    SolarArcFactory,
 )
 from kerykeion.schemas.literals import (
     HousesSystemIdentifier,
@@ -57,6 +60,7 @@ from kerykeion.schemas.literals import (
     PerspectiveType,
     SiderealMode,
 )
+from kerykeion.settings.chart_defaults import DEFAULT_CHART_COLORS
 from kerykeion.settings.config_constants import (
     ALL_ACTIVE_ASPECTS,
     ALL_ACTIVE_POINTS,
@@ -94,6 +98,51 @@ class Card:
     detail: str
     aspect: str = "890/580"
     error: Optional[str] = None
+    facts: dict = field(default_factory=dict)
+
+
+def inspect_svg(svg: str) -> dict:
+    """What the finished markup actually contains.
+
+    Read back out of the rendered file rather than restated from the request:
+    the point of a validation sweep is to describe what was produced, and a
+    summary copied from the arguments would agree with itself even when the
+    renderer disagreed with both.
+    """
+    facts: dict[str, Any] = {"bytes": len(svg.encode("utf-8"))}
+
+    viewbox = re.search(r"viewBox='([^']+)'", svg)
+    if viewbox:
+        facts["viewBox"] = viewbox.group(1)
+
+    try:
+        ET.fromstring(svg)
+        facts["xml"] = "well-formed"
+    except ET.ParseError as exc:
+        facts["xml"] = f"INVALID — {exc}"
+
+    nodes = Counter(re.findall(r"kr:node='([A-Za-z_]+)'", svg))
+    facts["nodes"] = dict(sorted(nodes.items(), key=lambda kv: (-kv[1], kv[0])))
+    facts["kr attributes"] = sorted(set(re.findall(r"\bkr:([a-z]+)=", svg)))
+
+    elements = Counter(re.findall(r"<([a-zA-Z]+)[ />]", svg))
+    facts["elements"] = dict(sorted(elements.items(), key=lambda kv: (-kv[1], kv[0]))[:10])
+
+    title = re.search(r"<title>([^<]*)</title>", svg)
+    if title:
+        facts["title"] = html.unescape(title.group(1))
+
+    panel = [html.unescape(m.group(2)) for m in re.finditer(r"Bottom_Left_Text_(\d)'[^>]*>([^<]*)</text>", svg)]
+    if any(panel):
+        facts["info panel"] = panel
+    top = [html.unescape(m.group(2)) for m in re.finditer(r"Top_Left_Text_(\d)'[^>]*>([^<]*)</text>", svg)]
+    if any(top):
+        facts["subject block"] = top
+
+    facts["css variables"] = "inlined or absent" if "var(--" not in svg else f"{len(set(re.findall(r'var\((--[a-z0-9-]+)', svg)))} referenced"
+    themed = re.search(r"kr:node='Theme_Colors_Tag'", svg)
+    facts["theme block"] = "present" if themed else "none"
+    return facts
 
 
 @dataclass
@@ -164,6 +213,18 @@ _PAGE = """<!doctype html>
                            font-family: ui-monospace, Menlo, monospace;
                            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
   .viewer-bar .where {{ font-size: 12px; color: #7d838f; white-space: nowrap; }}
+  .viewer-bar code {{ color: #b9c6ff; }}
+
+  .facts {{ position: absolute; top: 52px; right: 14px; z-index: 2; width: min(560px, 92vw);
+            max-height: calc(100vh - 150px); overflow: auto; padding: 14px 16px;
+            background: #14161cf2; border: 1px solid #343845; border-radius: 8px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.6); backdrop-filter: blur(6px); }}
+  .facts[hidden] {{ display: none; }}
+  .facts dl {{ margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 5px 14px; }}
+  .facts dt {{ font-size: 11.5px; color: #858b96; text-transform: lowercase; white-space: nowrap; }}
+  .facts dd {{ margin: 0; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+               color: #e8e6e1; word-break: break-word; }}
+  .facts dd.bad {{ color: #ff9ca3; }}
   .viewer button {{ background: #23262f; color: #e8e6e1; border: 1px solid #343845;
                     border-radius: 6px; padding: 7px 13px; font-size: 14px; cursor: pointer; }}
   .viewer button:hover {{ background: #2e323d; }}
@@ -207,7 +268,8 @@ _PAGE = """<!doctype html>
      gives way. Anything that raised is shown as a red card rather than left out.</p>
   <p class="totals"><b>{ok}</b> charts rendered · <b>{failed}</b> failed · {n_sections} sections
      &nbsp;·&nbsp; click any chart to open it full screen · <kbd>←</kbd> <kbd>→</kbd> to step,
-     <kbd>Home</kbd>/<kbd>End</kbd> to jump, <kbd>Esc</kbd> to close</p>
+     <kbd>Home</kbd>/<kbd>End</kbd> to jump, <kbd>i</kbd> for the technical details,
+     <kbd>Esc</kbd> to close</p>
 </header>
 
 <nav>{nav}</nav>
@@ -215,10 +277,15 @@ _PAGE = """<!doctype html>
 
 <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Chart viewer">
   <div class="viewer-bar">
-    <div class="who"><b id="v-title"></b><span id="v-detail"></span></div>
+    <div class="who">
+      <b id="v-title"></b>
+      <span><code id="v-file"></code> · <span id="v-detail"></span></span>
+    </div>
     <div class="where" id="v-section"></div>
+    <button type="button" id="v-info" title="Technical details (i)" aria-expanded="false">ⓘ Details</button>
     <button type="button" id="v-close" title="Close (Esc)">Close ✕</button>
   </div>
+  <aside class="facts" id="v-facts" hidden></aside>
   <div class="viewer-stage">
     <button type="button" class="edge prev" id="v-edge-prev" aria-label="Previous"></button>
     <img id="v-img" alt="">
@@ -238,6 +305,9 @@ const viewer = document.getElementById('viewer');
 const img = document.getElementById('v-img');
 const range = document.getElementById('v-range');
 const elTitle = document.getElementById('v-title');
+const elFile = document.getElementById('v-file');
+const elFacts = document.getElementById('v-facts');
+const btnInfo = document.getElementById('v-info');
 const elDetail = document.getElementById('v-detail');
 const elSection = document.getElementById('v-section');
 const elIdx = document.getElementById('v-idx');
@@ -253,12 +323,42 @@ function show(i) {{
   img.src = c.f;
   img.alt = c.t;
   elTitle.textContent = c.t;
+  elFile.textContent = c.f;
   elDetail.textContent = c.d;
   elSection.textContent = c.s;
+  renderFacts(c);
   elIdx.textContent = (at + 1) + ' / ' + CHARTS.length;
   range.value = String(at);
   btnPrev.disabled = at === 0;
   btnNext.disabled = at === CHARTS.length - 1;
+}}
+
+function fmt(v) {{
+  if (Array.isArray(v)) return v.map(x => String(x) || '∅').join('\n');
+  if (v && typeof v === 'object') {{
+    return Object.entries(v).map(([k, n]) => k + ' × ' + n).join(', ');
+  }}
+  return String(v);
+}}
+
+function renderFacts(c) {{
+  const x = c.x || {{}};
+  const rows = [['file', c.f], ['section', c.s], ['rendered with', c.d]];
+  for (const [k, v] of Object.entries(x)) {{
+    if (k === 'bytes') {{ rows.push(['size', (v / 1024).toFixed(1) + ' KB (' + v + ' bytes)']); }}
+    else rows.push([k, fmt(v)]);
+  }}
+  elFacts.innerHTML = '<dl>' + rows.map(([k, v]) => {{
+    const bad = String(v).startsWith('INVALID') ? ' class="bad"' : '';
+    const esc = s => String(s).replace(/[&<>]/g, ch => ({{'&': '&amp;', '<': '&lt;', '>': '&gt;'}})[ch]);
+    return '<dt>' + esc(k) + '</dt><dd' + bad + '>' + esc(v).replace(/\n/g, '<br>') + '</dd>';
+  }}).join('') + '</dl>';
+}}
+
+function toggleFacts(force) {{
+  const show = force !== undefined ? force : elFacts.hidden;
+  elFacts.hidden = !show;
+  btnInfo.setAttribute('aria-expanded', String(show));
 }}
 
 function open(i) {{
@@ -290,12 +390,14 @@ btnNext.addEventListener('click', () => show(at + 1));
 document.getElementById('v-edge-prev').addEventListener('click', () => show(at - 1));
 document.getElementById('v-edge-next').addEventListener('click', () => show(at + 1));
 document.getElementById('v-close').addEventListener('click', close);
+btnInfo.addEventListener('click', () => toggleFacts());
 
 viewer.addEventListener('click', e => {{ if (e.target === viewer) close(); }});
 
 document.addEventListener('keydown', e => {{
   if (!viewer.classList.contains('open')) return;
-  if (e.key === 'Escape') {{ close(); }}
+  if (e.key === 'Escape') {{ if (!elFacts.hidden) toggleFacts(false); else close(); }}
+  else if (e.key === 'i' || e.key === 'I') {{ toggleFacts(); }}
   else if (e.key === 'ArrowRight' || e.key === 'PageDown') {{ e.preventDefault(); show(at + 1); }}
   else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {{ e.preventDefault(); show(at - 1); }}
   else if (e.key === 'Home') {{ e.preventDefault(); show(0); }}
@@ -330,6 +432,7 @@ def build_index(out: Path) -> None:
                         "t": card["title"],
                         "d": card["detail"],
                         "s": s["name"],
+                        "x": card.get("facts") or {},
                     }
                 )
     index_of = {c["f"]: i for i, c in enumerate(flat)}
@@ -405,7 +508,7 @@ def emit(filename: str, title: str, detail: str, render: Callable[[], str]) -> N
     match = re.search(r"viewBox='([-\d.]+)\s+([-\d.]+)\s+([\d.]+)\s+([\d.]+)'", svg[:900])
     aspect = f"{match.group(3)}/{match.group(4)}" if match else "890/580"
     counters["ok"] += 1
-    current.cards.append(Card(filename, title, detail, aspect))
+    current.cards.append(Card(filename, title, detail, aspect, facts=inspect_svg(svg)))
     print(f"  ok  {filename}")
 
 
@@ -854,6 +957,375 @@ for language in LANGUAGES:
              ChartDataFactory.create_natal_chart_data(loaded, active_aspects=list(ALL_ACTIVE_ASPECTS)),
              chart_language=lang, **ALL_MARKS,
          ).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 15. Lunar phases
+# ---------------------------------------------------------------------------
+section(
+    "Lunar phases",
+    "The moon glyph is drawn, not picked from a set, so every phase is a different shape. "
+    "Eight dates through one lunation, plus the two syzygies exactly.",
+)
+PHASES = [
+    ("new", "New Moon", 2024, 1, 11),
+    ("waxing_crescent", "Waxing Crescent", 2024, 1, 14),
+    ("first_quarter", "First Quarter", 2024, 1, 18),
+    ("waxing_gibbous", "Waxing Gibbous", 2024, 1, 22),
+    ("full", "Full Moon", 2024, 1, 25),
+    ("waning_gibbous", "Waning Gibbous", 2024, 1, 29),
+    ("last_quarter", "Last Quarter", 2024, 2, 2),
+    ("waning_crescent", "Waning Crescent", 2024, 2, 6),
+]
+for slug, label, year, month, day in PHASES:
+    emit(f"moon_{slug}", label, f"{year}-{month:02d}-{day:02d} — read the glyph under the panel",
+         lambda y=year, m=month, d=day, sl=slug: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(
+                 subject(f"Moon {sl}", year=y, month=m, day=d, hour=12, minute=0)
+             )
+         ).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 16. Time of day
+# ---------------------------------------------------------------------------
+section(
+    "Time of day",
+    "The same date every three hours. Diurnality flips when the Sun crosses the horizon, and the "
+    "whole wheel rotates with the Ascendant — this is where a chart drawn at the wrong hour shows.",
+)
+for hour in range(0, 24, 3):
+    emit(f"hour_{hour:02d}", f"{hour:02d}:00", "diurnality and the Ascendant both turn on this",
+         lambda h=hour: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(
+                 subject(f"Hour {h:02d}", year=1990, month=6, day=15, hour=h, minute=0)
+             ),
+             **ALL_MARKS,
+         ).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 17. Names and titles
+# ---------------------------------------------------------------------------
+section(
+    "Names and titles",
+    "Subject names and custom titles reach the markup as text, so this section is about escaping "
+    "and truncation: scripts that are not Latin, characters that are markup, names longer than "
+    "the block they sit in.",
+)
+NAMES = [
+    ("plain", "A plain name", "Jane Doe"),
+    ("accents", "Diacritics", "Zoë Ångström-Führer"),
+    ("cyrillic", "Cyrillic", "Пётр Ильич Чайковский"),
+    ("greek", "Greek", "Κλαύδιος Πτολεμαῖος"),
+    ("cjk", "CJK", "李白 · 杜甫"),
+    ("arabic", "Arabic (right to left)", "أبو معشر البلخي"),
+    ("hebrew", "Hebrew (right to left)", "אברהם אבן עזרא"),
+    ("devanagari", "Devanagari", "वराहमिहिर"),
+    ("emoji", "Emoji", "Chart 🪐✨ Test"),
+    ("markup", "Characters that are markup", "A <b>&amp;</b> \"quoted\" 'name'"),
+    ("very_long", "Longer than its block", "Bartholomew Maximilian Fitzwilliam-Cholmondeley the Third of Aberystwyth"),
+]
+for slug, label, name in NAMES:
+    emit(f"name_{slug}", label, name,
+         lambda n=name, sl=slug: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(
+                 AstrologicalSubjectFactory.from_birth_data(
+                     n, 1940, 10, 9, 18, 30, lng=-2.9916, lat=53.4084,
+                     tz_str="Europe/London", city="Liverpool", nation="GB",
+                     online=False, suppress_geonames_warning=True,
+                 )
+             )
+         ).generate_svg_string())
+
+for slug, label, title in (
+    ("short", "Short custom title", "Natal"),
+    ("long", "Custom title at the 40-char limit", "A Title That Runs To Forty Characters!!"),
+    ("unicode", "Custom title, non-Latin", "出生図 · натальная карта"),
+):
+    emit(f"title_{slug}", label, f"custom_title={title!r}",
+         lambda t=title: ChartDrawer(natal, custom_title=t).generate_svg_string())
+
+emit("name_long_city", "A very long place name",
+     "Llanfairpwllgwyngyll… — the location line, not the name",
+     lambda: ChartDrawer(
+         ChartDataFactory.create_natal_chart_data(
+             AstrologicalSubjectFactory.from_birth_data(
+                 "Long City", 1940, 10, 9, 18, 30, lng=-4.2, lat=53.22,
+                 tz_str="Europe/London",
+                 city="Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch",
+                 nation="GB", online=False, suppress_geonames_warning=True,
+             )
+         )
+     ).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 18. Aspect webs
+# ---------------------------------------------------------------------------
+section(
+    "How dense the aspect web is",
+    "From no aspects at all to every aspect the library knows at a wide orb. The lines converge "
+    "on the middle of the wheel, so this is where the core turns into a solid disc.",
+)
+ASPECT_SETS = [
+    ("none", "No aspects", []),
+    ("conjunction_only", "Conjunctions only", [{"name": "conjunction", "orb": 6}]),
+    ("tight", "Majors at a 2° orb", [{"name": n, "orb": 2} for n in
+                                     ("conjunction", "opposition", "trine", "square", "sextile")]),
+    ("default", "The default set", None),
+    ("wide", "Majors at a 12° orb", [{"name": n, "orb": 12} for n in
+                                     ("conjunction", "opposition", "trine", "square", "sextile")]),
+    ("all", "Every aspect", list(ALL_ACTIVE_ASPECTS)),
+    ("all_wide", "Every aspect, orbs doubled",
+     [{**a, "orb": a["orb"] * 2} for a in ALL_ACTIVE_ASPECTS]),
+]
+for slug, label, aspects in ASPECT_SETS:
+    for style in STYLES:
+        emit(f"aspects_{slug}_{style}", f"{label} · {style}",
+             "no aspects" if aspects == [] else f"{len(aspects)} kinds" if aspects else "default",
+             lambda a=aspects, s=style: ChartDrawer(
+                 ChartDataFactory.create_natal_chart_data(john, **({} if a is None else {"active_aspects": a})),
+                 show_aspect_movement=True,
+             ).generate_svg_string(style=s))
+
+
+# ---------------------------------------------------------------------------
+# 19. Orb configuration
+# ---------------------------------------------------------------------------
+section(
+    "Orb rules",
+    "The knobs that decide which contacts exist at all: a tighter limit on the axes, per-point "
+    "adjustments, and the two strategies for combining them.",
+)
+ORB_CASES = [
+    ("axis_1", "Axes limited to 1°", dict(axis_orb_limit=1.0)),
+    ("axis_10", "Axes allowed 10°", dict(axis_orb_limit=10.0)),
+    ("point_tight", "Outer planets tightened",
+     dict(point_orb_adjustments={"Uranus": -3.0, "Neptune": -3.0, "Pluto": -3.0})),
+    ("point_wide", "Luminaries widened",
+     dict(point_orb_adjustments={"Sun": 4.0, "Moon": 4.0})),
+    ("strategy_sum", "Adjustments summed",
+     dict(point_orb_adjustments={"Sun": 3.0, "Moon": 2.0}, point_orb_adjustment_strategy="sum")),
+    ("strategy_max", "The larger adjustment wins",
+     dict(point_orb_adjustments={"Sun": 3.0, "Moon": 2.0}, point_orb_adjustment_strategy="max_explicit")),
+    ("strategy_min", "The smaller adjustment wins",
+     dict(point_orb_adjustments={"Sun": 3.0, "Moon": 2.0}, point_orb_adjustment_strategy="min_explicit")),
+    ("strategy_none", "Adjustments ignored",
+     dict(point_orb_adjustments={"Sun": 3.0, "Moon": 2.0}, point_orb_adjustment_strategy="none")),
+]
+for slug, label, kwargs in ORB_CASES:
+    emit(f"orb_{slug}", label, ", ".join(f"{k}={v}" for k, v in kwargs.items()),
+         lambda k=kwargs: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(john, **k), show_aspect_movement=True
+         ).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 20. Element and quality distribution
+# ---------------------------------------------------------------------------
+section(
+    "Distribution weighting",
+    "The percentages under the title come from a weighting choice, so the same sky reports "
+    "different balances depending on how the points are counted.",
+)
+for method in ("classic", "weighted", "traditional"):
+    emit(f"dist_{method}", f"distribution: {method}", f"distribution_method={method!r}",
+         lambda m=method: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(john, distribution_method=m)
+         ).generate_svg_string())
+emit("dist_custom", "Custom weights", "custom_distribution_weights",
+     lambda: ChartDrawer(
+         ChartDataFactory.create_natal_chart_data(
+             john, distribution_method="weighted",
+             custom_distribution_weights={"Sun": 5.0, "Moon": 5.0, "Ascendant": 4.0},
+         )
+     ).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 21. Return and directed charts
+# ---------------------------------------------------------------------------
+section(
+    "Returns and directions",
+    "Every return the factory computes and both directed techniques, single wheel and biwheel.",
+)
+# Heliocentric and node crossings are not `next_return_from_year` return types;
+# they have their own entry points, and a heliocentric return needs a body that
+# is not the origin — the Sun cannot return to itself.
+RETURN_MOMENTS = {
+    "Solar": lambda: returns.next_return_from_year(2025, "Solar"),
+    "Lunar": lambda: returns.next_return_from_year(2025, "Lunar"),
+    "Heliocentric": lambda: returns.next_heliocentric_return_from_year("Mars", 2025),
+    "Lunar_Node_Crossing": lambda: returns.next_lunar_node_crossing_from_year(2025),
+}
+for return_type in RETURN_MOMENTS:
+    for mode in ("single", "dual"):
+        def render_return(rt=return_type, m=mode):
+            moment = RETURN_MOMENTS[rt]()
+            data = (
+                ChartDataFactory.create_single_wheel_return_chart_data(moment)
+                if m == "single"
+                else ChartDataFactory.create_return_chart_data(john, moment)
+            )
+            return ChartDrawer(data, **ALL_MARKS).generate_svg_string()
+
+        emit(f"return_{return_type.lower()}_{mode}", f"{return_type.replace('_', ' ')} · {mode}",
+             f"return_type={return_type!r}", render_return)
+
+solar_arc = SolarArcFactory.compute_directed_subject(john, target_year=2000)
+emit("directed_solar_arc", "Solar arc directions", "SolarArcFactory.compute(target_year=2000)",
+     lambda: ChartDrawer(
+         ChartDataFactory.create_progression_chart_data(john, solar_arc), **ALL_MARKS
+     ).generate_svg_string())
+emit("directed_progression_dual", "Secondary progression · biwheel", "progressed to 2000",
+     lambda: ChartDrawer(
+         ChartDataFactory.create_progression_chart_data(john, progressed), **ALL_MARKS
+     ).generate_svg_string(style="modern"))
+
+
+# ---------------------------------------------------------------------------
+# 22. Minimal charts
+# ---------------------------------------------------------------------------
+section(
+    "How little can be on the wheel",
+    "The other end of the load: a chart with one point, with two, with the angles alone. "
+    "Grids and aspect tables have to hold their shape when there is almost nothing to put in them.",
+)
+MINIMAL = [
+    ("one_point", "The Sun alone", ["Sun"]),
+    ("two_points", "Sun and Moon", ["Sun", "Moon"]),
+    ("angles_only", "The four angles", ["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]),
+    ("luminaries_angles", "Luminaries and angles",
+     ["Sun", "Moon", "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]),
+    ("seven", "The seven classical", ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]),
+]
+for slug, label, points in MINIMAL:
+    for style in STYLES:
+        emit(f"minimal_{slug}_{style}", f"{label} · {style}", f"{len(points)} active points",
+             lambda p=points, s=style, sl=slug: ChartDrawer(
+                 ChartDataFactory.create_natal_chart_data(subject(f"Minimal {sl}", active_points=p)),
+                 **ALL_MARKS,
+             ).generate_svg_string(style=s))
+
+
+# ---------------------------------------------------------------------------
+# 23. Calendar edges
+# ---------------------------------------------------------------------------
+section(
+    "Calendar and clock edges",
+    "Moments that break date arithmetic: a leap day, both sides of midnight, the turn of a year, "
+    "a daylight-saving jump, and the two extreme offsets from UTC.",
+)
+EDGES = [
+    ("leap_day", "29 February", dict(year=2024, month=2, day=29, hour=12, minute=0)),
+    ("midnight", "00:00 exactly", dict(year=1990, month=6, day=15, hour=0, minute=0)),
+    ("one_minute_past", "00:01", dict(year=1990, month=6, day=15, hour=0, minute=1)),
+    ("one_to_midnight", "23:59", dict(year=1990, month=6, day=15, hour=23, minute=59)),
+    ("new_year", "1 January, 00:00", dict(year=2000, month=1, day=1, hour=0, minute=0)),
+    ("new_year_eve", "31 December, 23:59", dict(year=1999, month=12, day=31, hour=23, minute=59)),
+    ("dst_spring", "Into daylight saving", dict(year=2024, month=3, day=31, hour=2, minute=30)),
+    ("dst_autumn", "Out of daylight saving", dict(year=2024, month=10, day=27, hour=2, minute=30)),
+]
+for slug, label, when in EDGES:
+    emit(f"edge_{slug}", label, ", ".join(f"{k}={v}" for k, v in when.items()),
+         lambda w=when, sl=slug: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(subject(f"Edge {sl}", **w)), **ALL_MARKS
+         ).generate_svg_string())
+
+for slug, label, tz, lng in (
+    ("utc_plus_14", "UTC+14 — Kiritimati", "Pacific/Kiritimati", -157.4),
+    ("utc_minus_11", "UTC−11 — Niue", "Pacific/Niue", -169.9),
+    ("utc_plus_0545", "UTC+5:45 — Kathmandu", "Asia/Kathmandu", 85.3),
+    ("utc_plus_0845", "UTC+8:45 — Eucla", "Australia/Eucla", 128.9),
+):
+    emit(f"tz_{slug}", label, f"tz_str={tz!r}",
+         lambda t=tz, ln=lng, sl=slug: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(
+                 subject(f"TZ {sl}", year=1990, month=6, day=15, hour=12, minute=0,
+                         tz_str=t, lng=ln, lat=0.0, city=sl, nation="XX")
+             )
+         ).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 24. Overrides
+# ---------------------------------------------------------------------------
+section(
+    "Colour and label overrides",
+    "Two hooks a caller can use to make the chart theirs: a partial colour override, which has to "
+    "merge over the palette rather than replace it, and a language pack that renames anything.",
+)
+def palette(**overrides: str) -> dict:
+    """A colour override merged over the defaults.
+
+    ``colors_settings`` replaces the table wholesale and the renderer indexes it
+    by key, so handing it a couple of entries raises KeyError partway through
+    drawing. Callers that expose this option have to merge; so does this sweep.
+    """
+    return {**DEFAULT_CHART_COLORS, **overrides}
+
+
+emit("override_colors_partial", "One colour overridden", 'colors_settings merged: paper_0="#8b0000"',
+     lambda: ChartDrawer(natal, colors_settings=palette(paper_0="#8b0000")).generate_svg_string())
+emit("override_colors_many", "A whole palette shifted",
+     "paper, sun, moon and two aspects",
+     lambda: ChartDrawer(natal, colors_settings=palette(
+         paper_0="#1b2a41", paper_1="#f2efe6",
+         sun="#e07a3f", moon="#5b8fa8",
+         conjunction="#7a3f9d", opposition="#c2453d",
+     )).generate_svg_string())
+emit("override_language_pack", "A language pack", 'language_pack={"zodiac": "Rueda", …}',
+     lambda: ChartDrawer(natal, language_pack={
+         "zodiac": "Rueda", "tropical": "Trópico", "domification": "Casas",
+         "perspective": "Perspectiva", "diurnality": "Sector",
+     }).generate_svg_string())
+emit("override_both", "Both at once", "colours plus labels",
+     lambda: ChartDrawer(
+         natal,
+         colors_settings=palette(paper_0="#22303c"),
+         language_pack={"zodiac": "Zodíaco", "domification": "Domificação"},
+     ).generate_svg_string())
+
+
+# ---------------------------------------------------------------------------
+# 25. Post-processing
+# ---------------------------------------------------------------------------
+section(
+    "Post-processing",
+    "The same chart written four ways. Inlining the variables is what makes an SVG survive being "
+    "embedded somewhere with no stylesheet; minifying is what makes it small.",
+)
+for slug, label, kwargs in (
+    ("plain", "As rendered", {}),
+    ("inlined", "CSS variables inlined", dict(remove_css_variables=True)),
+    ("minified", "Minified", dict(minify=True)),
+    ("both", "Inlined and minified", dict(remove_css_variables=True, minify=True)),
+):
+    emit(f"post_{slug}", label, ", ".join(f"{k}=True" for k in kwargs) or "no post-processing",
+         lambda k=kwargs: ChartDrawer(natal).generate_svg_string(**k))
+
+
+# ---------------------------------------------------------------------------
+# 26. Zodiac types side by side
+# ---------------------------------------------------------------------------
+section(
+    "Tropical against sidereal",
+    "The same birth moment under both zodiacs and three ayanamsas — roughly 24° of difference, "
+    "which moves nearly every point into the previous sign.",
+)
+for slug, label, kwargs in (
+    ("tropical", "Tropical", dict(zodiac_type="Tropical")),
+    ("lahiri", "Sidereal · Lahiri", dict(zodiac_type="Sidereal", sidereal_mode="LAHIRI")),
+    ("fagan", "Sidereal · Fagan–Bradley", dict(zodiac_type="Sidereal", sidereal_mode="FAGAN_BRADLEY")),
+    ("krishnamurti", "Sidereal · Krishnamurti", dict(zodiac_type="Sidereal", sidereal_mode="KRISHNAMURTI")),
+):
+    for style in STYLES:
+        emit(f"zodiac_{slug}_{style}", f"{label} · {style}", ", ".join(f"{k}={v}" for k, v in kwargs.items()),
+             lambda k=kwargs, sl=slug, s=style: ChartDrawer(
+                 ChartDataFactory.create_natal_chart_data(subject(f"Zodiac {sl}", **k)),
+                 show_ayanamsa_value=True,
+             ).generate_svg_string(style=s))
 
 
 # ---------------------------------------------------------------------------
