@@ -190,3 +190,58 @@ OutputOpt = Annotated[
         help="Write to a file. Format is inferred from the suffix unless -f is also given.",
     ),
 ]
+
+# ── Second subject & technique-specific flags ────────────────────────────────
+Subject2Profile = Annotated[
+    Optional[str],
+    typer.Option(
+        "-S",
+        "--subject2",
+        help="Second subject (synastry, composite): profile name or file path.",
+        rich_help_panel="Second subject",
+    ),
+]
+ReturnTypeOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--type",
+        help="Return type: Solar | Lunar (planetary returns). Default Solar.",
+        rich_help_panel="Return",
+    ),
+]
+YearOpt = Annotated[
+    Optional[int],
+    typer.Option("--year", help="Year for the return.", rich_help_panel="Return"),
+]
+MonthOpt = Annotated[
+    int,
+    typer.Option("--month", help="Month to search from (default 1).", rich_help_panel="Return"),
+]
+DayOpt = Annotated[
+    int,
+    typer.Option("--day", help="Day to search from (default 1).", rich_help_panel="Return"),
+]
+TargetYearOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--target-year",
+        help="Target year for the secondary progression.",
+        rich_help_panel="Progression",
+    ),
+]
+ToDateOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--to-date",
+        help="Transit date YYYY-MM-DD. Omit (with --now) for the current moment.",
+        rich_help_panel="Transit",
+    ),
+]
+ToTimeOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--to-time",
+        help="Transit time HH:MM[:SS]. Used with --to-date.",
+        rich_help_panel="Transit",
+    ),
+]

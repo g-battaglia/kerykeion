@@ -98,6 +98,14 @@ def _register_commands(app: typer.Typer) -> None:
 
     app.add_typer(subject.subject_app, name="subject")
     app.command(name="natal")(charts.natal)
+    app.command(name="now")(charts.now)
+    app.command(name="synastry")(charts.synastry)
+    app.command(name="transit")(charts.transit)
+    app.command(name="composite")(charts.composite)
+    # ``return`` is a Python keyword, so the callable is ``return_chart``; the
+    # command name the user types is still ``return``.
+    app.command(name="return")(charts.return_chart)
+    app.command(name="progression")(charts.progression)
 
 
 app = _make_app()

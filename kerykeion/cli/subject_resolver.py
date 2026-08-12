@@ -201,6 +201,9 @@ class SubjectFlags:
     with_flags: list[str] = field(default_factory=list)
     without_flags: list[str] = field(default_factory=list)
     set_flags: list[str] = field(default_factory=list)
+    # Commands that do not derive from a birth date (``now``) set this to
+    # "current" so materialize() dispatches to from_current_time.
+    mode_override: Optional[str] = None
 
 
 def build_flags(
@@ -227,6 +230,7 @@ def build_flags(
     with_flags: Optional[list[str]],
     without_flags: Optional[list[str]],
     set_flags: Optional[list[str]],
+    mode_override: Optional[str] = None,
 ) -> SubjectFlags:
     """Gather the per-command subject parameters into a :class:`SubjectFlags`.
 
@@ -258,6 +262,7 @@ def build_flags(
         with_flags=with_flags or [],
         without_flags=without_flags or [],
         set_flags=set_flags or [],
+        mode_override=mode_override,
     )
 
 
@@ -391,6 +396,8 @@ def merge_inputs(
     iso_utc = merged.get("iso_utc_time")
     if "mode" not in merged:
         merged["mode"] = "iso_utc" if iso_utc else "birth"
+    if flags.mode_override:
+        merged["mode"] = flags.mode_override
     return merged
 
 
@@ -420,6 +427,17 @@ def materialize(merged: dict[str, Any]):
         factory_kwargs.pop("iso_utc_time", None)
         return AstrologicalSubjectFactory.from_iso_utc_time(
             name=name, iso_utc_time=iso_utc, **_kwargs_for(factory_kwargs, "iso_utc")
+        )
+
+    if mode == "current":
+        # from_current_time derives year/month/day/hour/minute from now(); the
+        # birth-date fields are irrelevant and not accepted by its signature.
+        for k in ("date", "time", "seconds", "iso_utc_time"):
+            factory_kwargs.pop(k, None)
+        factory_kwargs.pop("name", None)
+        factory_kwargs.pop("mode", None)
+        return AstrologicalSubjectFactory.from_current_time(
+            name=name, **_kwargs_for(factory_kwargs, "current")
         )
 
     date_str = factory_kwargs.pop("date", None)
@@ -472,6 +490,8 @@ def _kwargs_for(merged: dict[str, Any], mode: str) -> dict[str, Any]:
     method = (
         AstrologicalSubjectFactory.from_birth_data
         if mode == "birth"
+        else AstrologicalSubjectFactory.from_current_time
+        if mode == "current"
         else AstrologicalSubjectFactory.from_iso_utc_time
     )
     allowed = _FACTORY_PARAMS.setdefault(

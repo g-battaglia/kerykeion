@@ -1,28 +1,42 @@
 # -*- coding: utf-8 -*-
-"""SVG chart output.
+"""SVG chart output via :class:`kerykeion.ChartDrawer`.
 
-Wired in the chart phase (renders via ``ChartDrawer.generate_svg_string``).
-Until then, asking for SVG explicitly raises a clear error instead of producing
-a half-built file. The dispatcher never routes a non-chart command here, so this
-only fires if a user combines ``-f svg`` with a command that has no chart.
+The drawer accepts a ``ChartDataModel`` (single or dual — discriminated by its
+``chart_type``) and returns an SVG string from ``generate_svg_string()``. We
+**never** call ``save_svg()``: with ``output_path=None`` it writes into
+``Path.home()`` under a derived name *and* prints a line to stdout, which would
+both surprise the user and pollute a piped payload. We render to a string and
+let :func:`kerykeion.cli.rendering.emit.write_output` handle the file/stdout
+choice — exactly like the other formats.
+
+A non-chart object (a plain subject, a summary dict, …) has no ``chart_type``;
+asking for SVG there is a user error, surfaced as a clean message.
 """
 
 from __future__ import annotations
 
 from typing import Any
 
-_NOT_WIRED = (
-    "SVG output is produced by chart commands (natal, synastry, transit, …) with "
-    "-f svg, and will be wired in a later phase of the CLI build-out. Use "
-    "-f text, -f json or -f xml for now."
-)
+
+def render_svg(obj: Any) -> str:
+    """Render *obj* (a ChartDataModel) to an SVG string via ChartDrawer."""
+    from kerykeion import ChartDrawer, KerykeionException
+
+    if not hasattr(obj, "chart_type"):
+        raise KerykeionException(
+            "SVG output needs a chart-data model, which only the chart commands "
+            "(natal, synastry, transit, composite, return, progression) produce."
+        )
+    # ChartDrawer fixes theme/language/palette at construction. We expose the
+    # common ones as CLI flags later; the defaults ("classic"/"EN"/"modern")
+    # match what the library itself uses out of the box.
+    return ChartDrawer(obj).generate_svg_string()
 
 
-def render_svg(_obj: Any) -> str:
-    from kerykeion import KerykeionException
+def emit_svg(obj: Any) -> None:
+    import sys
 
-    raise KerykeionException(_NOT_WIRED)
-
-
-def emit_svg(_obj: Any) -> None:
-    render_svg(_obj)
+    svg = render_svg(obj)
+    sys.stdout.write(svg)
+    if not svg.endswith("\n"):
+        sys.stdout.write("\n")
