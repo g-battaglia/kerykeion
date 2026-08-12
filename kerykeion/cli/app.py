@@ -94,7 +94,7 @@ def _register_commands(app: typer.Typer) -> None:
     Imported here (not at module top) so the groups are only loaded when the CLI
     actually runs, keeping the import-graph cold-import gate green.
     """
-    from kerykeion.cli.commands import charts, subject
+    from kerykeion.cli.commands import charts, series, sky, subject, technique
 
     app.add_typer(subject.subject_app, name="subject")
     app.command(name="natal")(charts.natal)
@@ -106,6 +106,14 @@ def _register_commands(app: typer.Typer) -> None:
     # command name the user types is still ``return``.
     app.command(name="return")(charts.return_chart)
     app.command(name="progression")(charts.progression)
+    # Time series: top-level (not under a group).
+    app.command(name="ephemeris")(series.ephemeris)
+    # ``transits`` (plural) is the time-series; ``transit`` (singular) above is
+    # the single-moment dual-wheel chart.
+    app.command(name="transits")(series.transits)
+    # Analytical-technique and astronomical-event groups.
+    app.add_typer(technique.technique_app, name="technique")
+    app.add_typer(sky.sky_app, name="sky")
 
 
 app = _make_app()

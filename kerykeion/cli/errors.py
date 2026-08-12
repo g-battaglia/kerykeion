@@ -44,6 +44,21 @@ class ExitCode(IntEnum):
     INTERRUPTED = 130
 
 
+class SamplingLimitError(ValueError):
+    """A requested ephemeris/transit series exceeds the sampling ceiling.
+
+    Raised **before** the heavy computation runs: the sample count is
+    pre-computed from the factory's own step defaults (read off the signature
+    via ``inspect``), so the user gets a fast, clear message instead of a run
+    that churns for minutes and then fails — or worse, silently consumes all
+    memory. Mapped to exit 8 (:attr:`ExitCode.SAMPLING_LIMIT`).
+
+    Subclasses :class:`ValueError` so that, should the explicit ``classify``
+    branch ever be missed, it still falls through to a sane exit (4) rather
+    than exit 1.
+    """
+
+
 # ── Global knobs set by the root callback ────────────────────────────────────
 
 _traceback_enabled = False
@@ -134,6 +149,8 @@ def classify(exc: BaseException) -> ExitCode:
             return ExitCode.KERYKEION_ERROR
     except Exception:  # pragma: no cover - kerykeion is the core dep
         pass
+    if isinstance(exc, SamplingLimitError):
+        return ExitCode.SAMPLING_LIMIT
     import pydantic
 
     if isinstance(exc, pydantic.ValidationError):

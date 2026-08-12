@@ -1,0 +1,306 @@
+# -*- coding: utf-8 -*-
+"""``kerykeion sky <sub>`` — astronomical events (sun, moon, planets).
+
+Two input shapes meet here:
+
+* **moment** commands (``sun-times``, ``hours``) take a single date/time and a
+  location, given either inline (``--lat/--lng/--tz``) or derived from
+  ``-s <profile>``;
+* **range** commands (``lunations``, ``ingresses``, ``stations``, and ``voc``
+  with ``--to``) take ``--from``/``--to`` and need no location;
+* ``voc`` without ``--to`` and ``eclipses`` straddle the two.
+
+The functions are decorator-free; :mod:`kerykeion.cli.app` registers the group.
+"""
+
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Any, Optional
+
+from kerykeion.cli import subject_resolver, warnings
+from kerykeion.cli.options import (
+    CountOpt,
+    FormatOpt,
+    FromOpt,
+    OutputOpt,
+    PhaseOpt,
+    PlanetsOpt,
+    SiderealSkyOpt,
+    StartYearOpt,
+    SubjectLat,
+    SubjectLng,
+    SubjectProfile,
+    SubjectTz,
+    ToOpt,
+    ZodiacSkyOpt,
+)
+from kerykeion.cli.rendering import formats
+from kerykeion.cli.typer_app import KerykeionTyper
+
+sky_app = KerykeionTyper(
+    name="sky",
+    help="Astronomical events: sun, moon, eclipses, ingresses, stations.",
+    no_args_is_help=True,
+    add_completion=False,
+)
+
+
+def _emit(model: object, fmt: Optional[str], output: Optional[str]) -> None:
+    warnings.output_with_warnings(model, formats.resolve_format(fmt, output), output)
+
+
+def _split_csv(values: Optional[list[str]]) -> Optional[list[str]]:
+    if values is None:
+        return None
+    out: list[str] = []
+    for item in values:
+        out.extend(part.strip() for part in item.split(",") if part.strip())
+    return out or None
+
+
+def _parse_dt(value: str) -> datetime:
+    try:
+        return datetime.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError(
+            f"expected an ISO date or datetime (YYYY-MM-DD or YYYY-MM-DDThh:mm), got {value!r}"
+        ) from exc
+
+
+def _zodiac_kwargs(zodiac: Optional[str], sidereal_mode: Optional[str]) -> dict[str, Any]:
+    kwargs: dict[str, Any] = {}
+    if zodiac is not None:
+        z = zodiac.strip()
+        if z not in ("Tropical", "Sidereal"):
+            raise ValueError("--zodiac must be Tropical or Sidereal")
+        kwargs["zodiac_type"] = z
+    if sidereal_mode is not None:
+        kwargs["sidereal_mode"] = sidereal_mode
+    return kwargs
+
+
+def _location(
+    profile: Optional[str], lat: Optional[float], lng: Optional[float], tz: Optional[str], cmd: str
+) -> tuple[float, float, str]:
+    """Resolve (lat, lng, tz) from a profile or inline flags."""
+    if profile:
+        subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+        lat_v = getattr(subject, "lat", None)
+        lng_v = getattr(subject, "lng", None)
+        tz_v = getattr(subject, "tz_str", None)
+        if lat_v is None or lng_v is None or tz_v is None:
+            raise ValueError(f"the {cmd} profile has no lat/lng/tz to derive a location from")
+        return float(lat_v), float(lng_v), str(tz_v)
+    if lat is None or lng is None or tz is None:
+        raise ValueError(f"{cmd} needs -s <profile> or --lat/--lng/--tz")
+    return lat, lng, tz
+
+
+def _latlng(
+    profile: Optional[str], lat: Optional[float], lng: Optional[float], cmd: str
+) -> tuple[float, float]:
+    """Resolve (lat, lng) only — for commands that take no timezone (eclipses)."""
+    if profile:
+        subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+        lat_v = getattr(subject, "lat", None)
+        lng_v = getattr(subject, "lng", None)
+        if lat_v is None or lng_v is None:
+            raise ValueError(f"the {cmd} profile has no lat/lng to derive a location from")
+        return float(lat_v), float(lng_v)
+    if lat is None or lng is None:
+        raise ValueError(f"{cmd} needs -s <profile> or --lat/--lng")
+    return lat, lng
+
+
+def _moment(value: Optional[str], cmd: str) -> datetime:
+    if value is None:
+        raise ValueError(f"{cmd} needs --from (an ISO date or datetime)")
+    return _parse_dt(value)
+
+
+@sky_app.command("sun-times")
+def sun_times(
+    profile: SubjectProfile = None,  # type: ignore[assignment]
+    lat: SubjectLat = None,  # type: ignore[assignment]
+    lng: SubjectLng = None,  # type: ignore[assignment]
+    tz: SubjectTz = None,  # type: ignore[assignment]
+    from_: FromOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Sunrise, sunset, noon and twilight bands for a date and place."""
+    from kerykeion import SunTimesFactory
+
+    la, lo, tz_str = _location(profile, lat, lng, tz, "sun-times")
+    moment = _moment(from_, "sun-times")
+    model = SunTimesFactory.from_date(
+        moment.year, moment.month, moment.day, latitude=la, longitude=lo, tz_str=tz_str
+    )
+    _emit(model, fmt, output)
+
+
+@sky_app.command("hours")
+def hours(
+    profile: SubjectProfile = None,  # type: ignore[assignment]
+    lat: SubjectLat = None,  # type: ignore[assignment]
+    lng: SubjectLng = None,  # type: ignore[assignment]
+    tz: SubjectTz = None,  # type: ignore[assignment]
+    from_: FromOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Planetary hours and the day/hour rulers for a moment."""
+    from kerykeion import PlanetaryHoursFactory
+
+    la, lo, tz_str = _location(profile, lat, lng, tz, "hours")
+    moment = _moment(from_, "hours")
+    model = PlanetaryHoursFactory.from_datetime(
+        moment.year, moment.month, moment.day, moment.hour, moment.minute,
+        latitude=la, longitude=lo, tz_str=tz_str,
+    )
+    _emit(model, fmt, output)
+
+
+@sky_app.command("voc")
+def voc(
+    profile: SubjectProfile = None,  # type: ignore[assignment]
+    tz: SubjectTz = None,  # type: ignore[assignment]
+    from_: FromOpt = None,  # type: ignore[assignment]
+    to: ToOpt = None,  # type: ignore[assignment]
+    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
+    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Void-of-Course Moon: the status at a moment, or the windows in a range.
+
+    With ``--to`` it lists VoC windows across the range; without it, the Moon's
+    status at ``--from`` (needs ``--tz`` or ``-s``).
+    """
+    from kerykeion import VoidOfCourseMoonFactory
+
+    extra = _zodiac_kwargs(zodiac, sidereal_mode)
+    model: object
+    if to is not None:
+        if from_ is None:
+            raise ValueError("voc --to also needs --from")
+        model = VoidOfCourseMoonFactory.from_iso_range(from_, to, **extra)
+    else:
+        moment = _moment(from_, "voc")
+        tz_str = tz
+        if tz_str is None and profile:
+            subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+            tz_str = getattr(subject, "tz_str", None)
+        if tz_str is None:
+            raise ValueError("voc at a moment needs --tz (or -s a profile with a timezone)")
+        model = VoidOfCourseMoonFactory.from_datetime(
+            moment.year, moment.month, moment.day, moment.hour, moment.minute,
+            tz_str=tz_str, **extra,
+        )
+    _emit(model, fmt, output)
+
+
+@sky_app.command("eclipses")
+def eclipses(
+    profile: SubjectProfile = None,  # type: ignore[assignment]
+    lat: SubjectLat = None,  # type: ignore[assignment]
+    lng: SubjectLng = None,  # type: ignore[assignment]
+    start_year: StartYearOpt = None,  # type: ignore[assignment]
+    count: CountOpt = None,  # type: ignore[assignment]
+    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
+    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Solar and lunar eclipses. Located (with -s/--lat/--lng) or global."""
+    from kerykeion import EclipseFactory
+
+    extra = _zodiac_kwargs(zodiac, sidereal_mode)
+    has_loc = (lat is not None and lng is not None) or profile is not None
+    if has_loc:
+        la, lo = _latlng(profile, lat, lng, "eclipses")
+        kwargs: dict[str, Any] = {}
+        if start_year is not None:
+            kwargs["start_year"] = start_year
+        if count is not None:
+            kwargs["count"] = count
+        model = EclipseFactory.search_from_location(la, lo, **kwargs, **extra)
+    else:
+        kwargs = {}
+        if start_year is not None:
+            kwargs["start_year"] = start_year
+        if count is not None:
+            kwargs["count"] = count
+        model = EclipseFactory.search_global(**kwargs, **extra)
+    _emit(model, fmt, output)
+
+
+def _range_factory_call(from_: Optional[str], to: Optional[str], cmd: str):
+    """Validate the --from/--to pair and return (start, end) as ISO strings."""
+    if from_ is None or to is None:
+        raise ValueError(f"{cmd} needs --from and --to")
+    return from_, to
+
+
+@sky_app.command("lunations")
+def lunations(
+    from_: FromOpt = None,  # type: ignore[assignment]
+    to: ToOpt = None,  # type: ignore[assignment]
+    phase: PhaseOpt = None,  # type: ignore[assignment]
+    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
+    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """New and quarter moons in a range (filterable with --phase)."""
+    from kerykeion import LunationFinderFactory
+
+    start, end = _range_factory_call(from_, to, "lunations")
+    extra = _zodiac_kwargs(zodiac, sidereal_mode)
+    phases = _split_csv(phase)
+    if phases is not None:
+        extra["phases"] = phases
+    _emit(LunationFinderFactory.from_iso_range(start, end, **extra), fmt, output)
+
+
+@sky_app.command("ingresses")
+def ingresses(
+    from_: FromOpt = None,  # type: ignore[assignment]
+    to: ToOpt = None,  # type: ignore[assignment]
+    planets: PlanetsOpt = None,  # type: ignore[assignment]
+    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
+    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Sign ingresses of the planets in a range."""
+    from kerykeion import SignIngressFactory
+
+    start, end = _range_factory_call(from_, to, "ingresses")
+    extra = _zodiac_kwargs(zodiac, sidereal_mode)
+    active = _split_csv(planets)
+    if active is not None:
+        extra["planets"] = active
+    _emit(SignIngressFactory.from_iso_range(start, end, **extra), fmt, output)
+
+
+@sky_app.command("stations")
+def stations(
+    from_: FromOpt = None,  # type: ignore[assignment]
+    to: ToOpt = None,  # type: ignore[assignment]
+    planets: PlanetsOpt = None,  # type: ignore[assignment]
+    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
+    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Retrograde/direct stations of the planets in a range."""
+    from kerykeion import RetrogradeStationFactory
+
+    start, end = _range_factory_call(from_, to, "stations")
+    extra = _zodiac_kwargs(zodiac, sidereal_mode)
+    active = _split_csv(planets)
+    if active is not None:
+        extra["planets"] = active
+    _emit(RetrogradeStationFactory.from_iso_range(start, end, **extra), fmt, output)

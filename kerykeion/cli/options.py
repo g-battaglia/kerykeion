@@ -245,3 +245,231 @@ ToTimeOpt = Annotated[
         rich_help_panel="Transit",
     ),
 ]
+
+# ── Technique-specific flags ─────────────────────────────────────────────────
+TargetDateOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--target-date",
+        help="ISO date YYYY-MM-DD the technique is evaluated for (profections, "
+        "firdaria, zodiacal releasing). Defaults to the subject's local now.",
+        rich_help_panel="Technique",
+    ),
+]
+LotOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--lot",
+        help="Lot for zodiacal releasing: fortune | spirit (default fortune).",
+        rich_help_panel="Technique",
+    ),
+]
+LotLevelsOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--levels",
+        help="Number of releasing levels to compute (1–4, default 2).",
+        rich_help_panel="Technique",
+    ),
+]
+LifeCapOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--life-cap-years",
+        help="Upper age bound for the technique span (firdaria 120, zodiacal releasing 100).",
+        rich_help_panel="Technique",
+    ),
+]
+YearsBeforeOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--years-before", help="Past profected years to show (default 3).", rich_help_panel="Technique"
+    ),
+]
+YearsAfterOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--years-after", help="Future profected years to show (default 4).", rich_help_panel="Technique"
+    ),
+]
+RateKeyOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--rate",
+        help="Primary-direction rate: ptolemy | naibod (default ptolemy).",
+        rich_help_panel="Technique",
+    ),
+]
+MaxYearsOpt = Annotated[
+    Optional[float],
+    typer.Option(
+        "--max-years",
+        help="Hard ceiling on direction arcs, in years of life (primary directions, default 100).",
+        rich_help_panel="Technique",
+    ),
+]
+IsMoonVoidOpt = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--moon-void/--no-moon-void",
+        help="For the horary considerations: force the Moon's void state rather than compute it.",
+        rich_help_panel="Technique",
+    ),
+]
+MethodOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--method",
+        help="Node method: mean | osculating (planetary nodes, default mean).",
+        rich_help_panel="Technique",
+    ),
+]
+PlanetsOpt = Annotated[
+    Optional[list[str]],
+    typer.Option(
+        "--planets",
+        help="Comma list of planet names to restrict to (repeatable or CSV). "
+        "Default is technique-specific.",
+        rich_help_panel="Technique",
+    ),
+]
+MidpointOrbOpt = Annotated[
+    Optional[float],
+    typer.Option(
+        "--orb", help="Orb for midpoint aspects, in degrees (default 1.0).", rich_help_panel="Technique"
+    ),
+]
+AcgStepOpt = Annotated[
+    Optional[float],
+    typer.Option(
+        "--step",
+        help="Latitude scanning step in degrees for astro-cartography (default 1.0).",
+        rich_help_panel="Technique",
+    ),
+]
+AcgLatRangeOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--lat-range",
+        help="Latitude band 'min,max' for astro-cartography (default -66,66).",
+        rich_help_panel="Technique",
+    ),
+]
+RelocateCityOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--new-city", help="City label for the relocated chart (default 'Relocated').",
+        rich_help_panel="Technique",
+    ),
+]
+RelocateNationOpt = Annotated[
+    Optional[str],
+    typer.Option("--new-nation", help="Nation for the relocated chart.", rich_help_panel="Technique"),
+]
+RelocateTzOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--new-tz", help="Timezone for the relocated chart (default: original).",
+        rich_help_panel="Technique",
+    ),
+]
+RelocateLatOpt = Annotated[
+    Optional[float],
+    typer.Option("--new-lat", help="Latitude of the relocation (required).", rich_help_panel="Technique"),
+]
+RelocateLngOpt = Annotated[
+    Optional[float],
+    typer.Option("--new-lng", help="Longitude of the relocation (required).", rich_help_panel="Technique"),
+]
+
+# ── Sky-specific flags ───────────────────────────────────────────────────────
+FromOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--from",
+        help="Range start (ISO date or datetime YYYY-MM-DD[Thh:mm]). "
+        "For sun-times/hours/eclipses this is a single moment or start year.",
+        rich_help_panel="Range",
+    ),
+]
+ToOpt = Annotated[
+    Optional[str],
+    typer.Option("--to", help="Range end (ISO date or datetime).", rich_help_panel="Range"),
+]
+StartYearOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--start-year", help="First year to search (eclipses). Default: current UTC year.",
+        rich_help_panel="Sky",
+    ),
+]
+CountOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--count", help="How many events to return (eclipses default 5/10, heliacal default 5).",
+        rich_help_panel="Sky",
+    ),
+]
+PhaseOpt = Annotated[
+    Optional[list[str]],
+    typer.Option(
+        "--phase",
+        help="Lunation phase to include (repeatable): new | first_quarter | full | last_quarter. "
+        "Default: all four.",
+        rich_help_panel="Sky",
+    ),
+]
+ZodiacSkyOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--zodiac", help="Tropical | Sidereal (sky searches).", rich_help_panel="Sky"
+    ),
+]
+SiderealSkyOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--sidereal-mode", help="Ayanamsa for sidereal sky searches.", rich_help_panel="Sky"
+    ),
+]
+
+# ── Series (ephemeris / transits) flags ──────────────────────────────────────
+StepTypeOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--step-type",
+        help="Sampling granularity: days | hours | minutes (default days).",
+        rich_help_panel="Series",
+    ),
+]
+SeriesStepOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--step", help="Sample every N units (default 1). Must be positive.", rich_help_panel="Series"
+    ),
+]
+NoLimitFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--no-limit",
+        help="Disable the ephemeris sampling ceiling (730 days / 8760 hours / 525600 minutes). "
+        "The pre-flight check is skipped and max_*=None is passed through. Use carefully.",
+        rich_help_panel="Series",
+    ),
+]
+EventsFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--events",
+        help="For `transits`: return discrete events (applying→exact→separating) instead of "
+        "per-sample aspect lists.",
+        rich_help_panel="Series",
+    ),
+]
+RefineFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--refine",
+        help="For `transits --events`: refine exact moments to sub-step precision (geocentric only).",
+        rich_help_panel="Series",
+    ),
+]
