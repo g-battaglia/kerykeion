@@ -14,6 +14,7 @@ Categories:
   A8. Natal — 2 files (sidereal LAHIRI, FR language)
   A9. No Zodiac Ring — 4 files (natal, synastry, composite, single return)
   A10. All Points All Aspects — 14 files (all chart types, modern style)
+  A11. Optional marks — 6 files (one per opt-in mark, all styles' shared panels)
 """
 
 from pathlib import Path
@@ -466,6 +467,68 @@ def generate_a10_all_points_all_aspects():
     _write("John Lennon Lunar Return - All Points All Aspects - SingleReturnChart Chart - Modern Wheel Only.svg", svg)
 
 
+def generate_a11_optional_marks():
+    """One baseline per opt-in mark, each on a subject that actually has its referent.
+
+    A mark drawn on a chart that has nothing to mark would pin an empty
+    promise: the station subject really does have Mercury at a station, the
+    out-of-bounds one really does have a body past the obliquity, and so on.
+    """
+    print("\n=== A11. Optional marks (6 files) ===")
+
+    # Station markers — Mercury turns retrograde on this date.
+    station = AstrologicalSubjectFactory.from_birth_data(
+        "Mercury Station", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+    )
+    data = ChartDataFactory.create_natal_chart_data(station)
+    svg = ChartDrawer(data, show_motion_state=True).generate_svg_string(style="modern")
+    _write("Mercury Station - Motion State - Natal Chart - Modern.svg", svg)
+
+    # Separating aspects dashed, on the same chart.
+    svg = ChartDrawer(data, show_aspect_movement=True).generate_svg_string(style="modern")
+    _write("Mercury Station - Aspect Movement - Natal Chart - Modern.svg", svg)
+
+    # Out-of-bounds badge — Uranus sits past the obliquity here.
+    oob = AstrologicalSubjectFactory.from_birth_data(
+        "Out Of Bounds", 1990, 1, 1, 12, 0, "London", "GB", suppress_geonames_warning=True
+    )
+    data = ChartDataFactory.create_natal_chart_data(oob)
+    svg = ChartDrawer(data, show_out_of_bounds=True).generate_svg_string(style="modern")
+    _write("Out Of Bounds - Natal Chart - Modern.svg", svg)
+
+    # Relationship score line.
+    john, paul = _make_john("Relationship Score"), _make_paul()
+    data = ChartDataFactory.create_synastry_chart_data(john, paul)
+    svg = ChartDrawer(data, show_relationship_score=True).generate_svg_string(style="modern")
+    _write("John Lennon - Relationship Score - Synastry Chart - Modern.svg", svg)
+
+    # Ayanamsa offset in degrees.
+    sidereal = _make_john("Ayanamsa Value", zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+    data = ChartDataFactory.create_natal_chart_data(sidereal)
+    svg = ChartDrawer(data, show_ayanamsa_value=True).generate_svg_string(style="modern")
+    _write("John Lennon - Ayanamsa Value - Natal Chart - Modern.svg", svg)
+
+    # Polar fallback note — Placidus is undefined this far north.
+    polar = AstrologicalSubjectFactory.from_birth_data(
+        "Polar Fallback",
+        1990,
+        6,
+        15,
+        12,
+        0,
+        "Longyearbyen",
+        "SJ",
+        lng=15.6,
+        lat=78.2,
+        tz_str="Arctic/Longyearbyen",
+        houses_system_identifier="P",
+        suppress_geonames_warning=True,
+    )
+    data = ChartDataFactory.create_natal_chart_data(polar)
+    svg = ChartDrawer(data, show_polar_fallback_note=True).generate_svg_string(style="modern")
+    _write("Polar Fallback - Natal Chart - Modern.svg", svg)
+
+
 if __name__ == "__main__":
     print(f"SVG output directory: {SVG_DIR}")
     generate_a1_synastry()
@@ -478,4 +541,5 @@ if __name__ == "__main__":
     generate_a8_natal()
     generate_a9_no_zodiac_ring()
     generate_a10_all_points_all_aspects()
-    print("\nDone! Generated 43 modern SVG baselines.")
+    generate_a11_optional_marks()
+    print("\nDone! Generated 49 modern SVG baselines.")

@@ -264,6 +264,49 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
         title="Nocturnal",
         description="The 'Sun below the horizon' value in the chart, in the language",
     )
+    relationship_score: str = Field(
+        default="Relationship Score",
+        title="Relationship Score",
+        description="The relationship score label in the chart, in the language",
+    )
+    relationship_score_minimal: str = Field(
+        default="Minimal",
+        title="Relationship Score: Minimal",
+        description="The 'Minimal' relationship score band in the chart, in the language",
+    )
+    relationship_score_medium: str = Field(
+        default="Medium",
+        title="Relationship Score: Medium",
+        description="The 'Medium' relationship score band in the chart, in the language",
+    )
+    relationship_score_important: str = Field(
+        default="Important",
+        title="Relationship Score: Important",
+        description="The 'Important' relationship score band in the chart, in the language",
+    )
+    relationship_score_very_important: str = Field(
+        default="Very Important",
+        title="Relationship Score: Very Important",
+        description="The 'Very Important' relationship score band in the chart, in the language",
+    )
+    relationship_score_exceptional: str = Field(
+        default="Exceptional",
+        title="Relationship Score: Exceptional",
+        description="The 'Exceptional' relationship score band in the chart, in the language",
+    )
+    relationship_score_rare_exceptional: str = Field(
+        default="Rare Exceptional",
+        title="Relationship Score: Rare Exceptional",
+        description="The 'Rare Exceptional' relationship score band in the chart, in the language",
+    )
+    polar_fallback: str = Field(
+        default="polar fallback",
+        title="Polar Fallback",
+        description=(
+            "The parenthetical note appended to the house system label when a polar "
+            "latitude forced a substitute system, in the language"
+        ),
+    )
     day: str = Field(title="Day", description="The day label in the chart, in the language")
     celestial_points: KerykeionLanguageCelestialPointModel = Field(
         title="Celestial Points", description="The celestial points translations in the chart, in the language"

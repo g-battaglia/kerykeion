@@ -86,6 +86,7 @@ from kerykeion.charts.utils import (
     format_location_string,
     format_datetime_with_timezone,
     draw_house_sectors,
+    convert_decimal_to_degree_string,
 )
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.charts.draw_modern import (
@@ -639,9 +640,19 @@ class InfoSectionBuilder:
         return self.drawer._get_zodiac_info()
 
     def _translated_house_system(self, subject) -> str:
-        """Translate the effective house system of one wheel."""
+        """Translate the effective house system of one wheel.
+
+        Near the poles the requested system can be undefined, and the subject
+        factory quietly stands another one in its place. The chart has always
+        printed the system actually used; with ``show_polar_fallback_note`` it
+        also admits that a substitution happened, which is the difference
+        between a reader trusting the line and a reader being misled by it.
+        """
         house_key = "houses_system_" + subject.effective_houses_system_identifier
-        return self._translate(house_key, subject.effective_houses_system_name)
+        name = self._translate(house_key, subject.effective_houses_system_name)
+        if self.drawer.show_polar_fallback_note and subject._main_house_fallback() is not None:
+            name += f"* ({self._translate('polar_fallback', 'polar fallback')})"
+        return name
 
     def _translated_house_systems(self, subject, second_subject=None) -> str:
         """Translate one system, or both when a dual wheel uses different ones."""
@@ -748,6 +759,29 @@ class InfoSectionBuilder:
         if not value:
             return ""
         return f"{self._translate('diurnality', 'Diurnality')}: {value}"
+
+    def build_relationship_score_info(self) -> str:
+        """Build the synastry relationship-score line.
+
+        Returns ``""`` unless the option is on AND the chart data actually
+        carries a score: ``create_synastry_chart_data`` computes one by
+        default, but the generic factory does not, and a chart drawn from the
+        generic path must print nothing rather than a zero it never measured.
+
+        The score is a count of weighted contacts, so the number travels with
+        its band ("Exceptional") — the number alone means nothing without the
+        scale it sits on.
+        """
+        if not self.drawer.show_relationship_score:
+            return ""
+        score = getattr(self.drawer.chart_data, "relationship_score", None)
+        if score is None:
+            return ""
+
+        label = self._translate("relationship_score", "Relationship Score")
+        description_key = "relationship_score_" + str(score.score_description).lower().replace(" ", "_")
+        description = self._translate(description_key, str(score.score_description))
+        return f"{label}: {score.score_value} ({description})"
 
     @staticmethod
     def _is_symbolic_direction(first, second) -> bool:
@@ -1252,6 +1286,7 @@ class TransitChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
         template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
             planets_and_houses_grid_title="",
@@ -1260,6 +1295,7 @@ class TransitChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
 
     def setup_house_comparison(self, template_dict: dict) -> None:
@@ -1470,8 +1506,9 @@ class SynastryChartRenderer(BaseChartRenderer):
         template_dict["top_left_4"] = f"{d.second_obj.city}, {d.second_obj.nation}"
         template_dict["top_left_5"] = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
 
-        # Bottom left section
-        template_dict["bottom_left_0"] = ""
+        # Bottom left section. Rows 0 and 1 are the synastry panel's spare
+        # ones — the score can take the first without moving anything else.
+        template_dict["bottom_left_0"] = builder.build_relationship_score_info()
         template_dict["bottom_left_1"] = ""
         template_dict["bottom_left_2"] = builder.build_zodiac_info()
         template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj, d.second_obj)
@@ -1516,6 +1553,7 @@ class SynastryChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
         template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
             planets_and_houses_grid_title="",
@@ -1524,6 +1562,7 @@ class SynastryChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
 
     def setup_house_comparison(self, template_dict: dict) -> None:
@@ -1846,6 +1885,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
         template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
             planets_and_houses_grid_title="",
@@ -1854,6 +1894,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
 
     def setup_house_comparison(self, template_dict: dict) -> None:
@@ -2304,6 +2345,12 @@ class ChartDrawer:  # type: ignore[no-redef]
         style: "KerykeionChartStyle" = "modern",
         show_zodiac_background_ring: bool = True,
         show_diurnality: bool = True,
+        show_motion_state: bool = False,
+        show_out_of_bounds: bool = False,
+        show_aspect_movement: bool = False,
+        show_relationship_score: bool = False,
+        show_ayanamsa_value: bool = False,
+        show_polar_fallback_note: bool = False,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -2376,6 +2423,32 @@ class ChartDrawer:  # type: ignore[no-redef]
                 above or below the horizon) in the bottom-left info panel.
                 Set to False to omit the line; the panel then keeps exactly the
                 spacing it had before the line existed. Defaults to True.
+            show_motion_state (bool, optional):
+                Mark planets at a station on the wheel — "SR" where the
+                retrograde phase opens, "SD" where it closes. Defaults to False.
+            show_out_of_bounds (bool, optional):
+                Badge out-of-bounds planets in the point tables. The badge
+                appears only in a table that has at least one such planet.
+                Defaults to False.
+            show_aspect_movement (bool, optional):
+                Dash the aspect lines that are separating, leaving applying
+                aspects solid. Defaults to False.
+            show_relationship_score (bool, optional):
+                Print the synastry relationship score in the info panel. The
+                line needs a score on the chart data, which
+                ``create_synastry_chart_data`` computes unless asked not to.
+                Defaults to False.
+            show_ayanamsa_value (bool, optional):
+                Append the ayanamsa offset in degrees to the zodiac line of a
+                sidereal chart. Defaults to False.
+            show_polar_fallback_note (bool, optional):
+                Mark the domification line when the requested house system
+                could not be used at this latitude and another one stood in
+                for it. Defaults to False.
+
+            Every option in this last group is off by default: each one adds
+            marks a reader has not asked for, and a chart that gains them
+            without being asked is a chart whose look changed under its owner.
 
         Raises:
             KerykeionException: If ``theme`` is not a valid KerykeionChartTheme
@@ -2423,6 +2496,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             style=style,
             show_zodiac_background_ring=show_zodiac_background_ring,
             show_diurnality=show_diurnality,
+            show_motion_state=show_motion_state,
+            show_out_of_bounds=show_out_of_bounds,
+            show_aspect_movement=show_aspect_movement,
+            show_relationship_score=show_relationship_score,
+            show_ayanamsa_value=show_ayanamsa_value,
+            show_polar_fallback_note=show_polar_fallback_note,
         )
 
         # =====================================================================
@@ -2513,6 +2592,12 @@ class ChartDrawer:  # type: ignore[no-redef]
         style: "KerykeionChartStyle",
         show_zodiac_background_ring: bool,
         show_diurnality: bool,
+        show_motion_state: bool,
+        show_out_of_bounds: bool,
+        show_aspect_movement: bool,
+        show_relationship_score: bool,
+        show_ayanamsa_value: bool,
+        show_polar_fallback_note: bool,
     ) -> None:
         """
         Store basic configuration parameters as instance attributes.
@@ -2543,6 +2628,15 @@ class ChartDrawer:  # type: ignore[no-redef]
         self.show_diurnality = show_diurnality
         self.auto_size = auto_size
         self._padding = padding
+
+        # Opt-in marks. Every one of these adds something to the chart that the
+        # reader did not ask for, so each stays off until it is asked for.
+        self.show_motion_state = show_motion_state
+        self.show_out_of_bounds = show_out_of_bounds
+        self.show_aspect_movement = show_aspect_movement
+        self.show_relationship_score = show_relationship_score
+        self.show_ayanamsa_value = show_ayanamsa_value
+        self.show_polar_fallback_note = show_polar_fallback_note
 
         # Chart style defaults (can be overridden per-render call)
         self._validate_chart_style(style)
@@ -4010,7 +4104,17 @@ class ChartDrawer:  # type: ignore[no-redef]
             # the mode actually used for the positions — no fallback needed.
             mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore[operator]
             mode_name = ephe.get_ayanamsa_name(getattr(ephe, mode_const))
-            return f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
+            line = f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
+            # The mode names the convention; the offset says where it actually
+            # put the zodiac for this date, which is what differs between two
+            # charts drawn under the same ayanamsa centuries apart.
+            value = getattr(self.first_obj, "ayanamsa_value", None)
+            if self.show_ayanamsa_value and value is not None:
+                # Degrees and minutes, not seconds: the info panel escapes its
+                # own text, and the seconds symbol is already an entity — it
+                # would reach the reader as a literal &quot;.
+                line += f" ({convert_decimal_to_degree_string(value, '2')})"
+            return line
 
     # =========================================================================
     # TEMPLATE HELPER METHODS
@@ -4359,6 +4463,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             external_view=self.external_view,
             first_circle_radius=self.first_circle_radius,
             show_degree_indicators=self.show_degree_indicators,
+            show_motion_state=self.show_motion_state,
         )
 
     def _setup_dual_wheel_planets(self, template_dict: dict) -> None:
@@ -4383,6 +4488,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             external_view=self.external_view,
             second_circle_radius=self.second_circle_radius,
             show_degree_indicators=self.show_degree_indicators,
+            show_motion_state=self.show_motion_state,
         )
 
     def _setup_lunar_phase(self, template_dict: dict, subject, latitude: float) -> None:
@@ -4462,6 +4568,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 text_color=self.chart_colors_settings["paper_0"],
                 x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift + gauquelin_x_nudge,
                 celestial_point_language=self._language_model.celestial_points,
+                show_out_of_bounds=self.show_out_of_bounds,
             )
         else:
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
@@ -4472,6 +4579,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
                 x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
+                show_out_of_bounds=self.show_out_of_bounds,
             )
 
     def _setup_secondary_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
@@ -4493,6 +4601,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             chart_type=self.chart_type,
             text_color=self.chart_colors_settings["paper_0"],
             celestial_point_language=self._language_model.celestial_points,
+            show_out_of_bounds=self.show_out_of_bounds,
         )
 
     def _setup_secondary_houses_grid(self, template_dict: dict, houses_list: list) -> None:
@@ -4751,6 +4860,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                         seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                         show_aspect_icon=self.show_aspect_icons,
                         rendered_icon_positions=rendered_icon_positions,
+                        show_aspect_movement=self.show_aspect_movement,
                     )
                 )
         return "".join(parts)
@@ -5076,6 +5186,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 aspects_settings=self.aspects_settings,
                 chart_type=self.chart_type,
                 show_zodiac_background_ring=show_zodiac_background_ring,
+                show_motion_state=self.show_motion_state,
+                show_aspect_movement=self.show_aspect_movement,
             )
         else:
             has_gauquelin = any(
@@ -5093,6 +5205,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 show_zodiac_background_ring=show_zodiac_background_ring,
                 gauquelin_sectors=has_gauquelin,
                 gauquelin_cusps=gauq_cusps,
+                show_motion_state=self.show_motion_state,
+                show_aspect_movement=self.show_aspect_movement,
             )
 
     _GLYPH_CENTER_ATTR_RE = re.compile(r'kr:(cx|cy)="([^"]+)"')

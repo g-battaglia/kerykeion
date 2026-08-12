@@ -2391,4 +2391,79 @@ modern_single_return.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 modern_dual_return = ChartDrawer(dual_return_chart_data)
 modern_dual_return.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
+# ---------------------------------------------------------------------------
+# Opt-in chart marks (classic style)
+#
+# Each subject is chosen so the mark has a real referent: a chart with nothing
+# to mark would pin an empty promise. The suffix in the subject name is what
+# names the baseline file, as everywhere else in this script.
+# ---------------------------------------------------------------------------
+
+# show_motion_state — Mercury turns retrograde on this date
+station_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station - Motion State", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+)
+station_chart_data = ChartDataFactory.create_natal_chart_data(station_subject)
+ChartDrawer(station_chart_data, show_motion_state=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_aspect_movement — same sky, separating aspects dashed
+movement_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station - Aspect Movement", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+)
+movement_chart_data = ChartDataFactory.create_natal_chart_data(movement_subject)
+ChartDrawer(movement_chart_data, show_aspect_movement=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_out_of_bounds — Uranus sits past the obliquity here
+oob_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Out Of Bounds", 1990, 1, 1, 12, 0, "London", "GB", suppress_geonames_warning=True
+)
+oob_chart_data = ChartDataFactory.create_natal_chart_data(oob_subject)
+ChartDrawer(oob_chart_data, show_out_of_bounds=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_relationship_score — synastry info panel
+score_first = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Relationship Score", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+score_second = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+score_chart_data = ChartDataFactory.create_synastry_chart_data(score_first, score_second)
+ChartDrawer(score_chart_data, show_relationship_score=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_ayanamsa_value — the offset in degrees on a sidereal chart
+ayanamsa_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Ayanamsa Value",
+    1940,
+    10,
+    9,
+    18,
+    30,
+    "Liverpool",
+    "GB",
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+    suppress_geonames_warning=True,
+)
+ayanamsa_chart_data = ChartDataFactory.create_natal_chart_data(ayanamsa_subject)
+ChartDrawer(ayanamsa_chart_data, show_ayanamsa_value=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_polar_fallback_note — Placidus is undefined this far north
+polar_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Polar Fallback",
+    1990,
+    6,
+    15,
+    12,
+    0,
+    "Longyearbyen",
+    "SJ",
+    lng=15.6,
+    lat=78.2,
+    tz_str="Arctic/Longyearbyen",
+    houses_system_identifier="P",
+    suppress_geonames_warning=True,
+)
+polar_chart_data = ChartDataFactory.create_natal_chart_data(polar_subject)
+ChartDrawer(polar_chart_data, show_polar_fallback_note=True).save_svg(output_path=OUTPUT_DIR_STR)
+
 print("All charts regenerated successfully!")

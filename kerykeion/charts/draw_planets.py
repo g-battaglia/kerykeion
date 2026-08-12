@@ -16,6 +16,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from kerykeion.charts.utils import (
     DOUBLE_CHART_TYPES,
+    STATION_LABELS,
     degree_difference,
     escape_svg_text,
     wheel_x,
@@ -78,6 +79,7 @@ def draw_planets(
     first_circle_radius: Union[int, float, None] = None,
     second_circle_radius: Union[int, float, None] = None,
     show_degree_indicators: bool = True,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Draws celestial points on an astrological chart.
@@ -214,6 +216,7 @@ def draw_planets(
             available_planets_setting[point_idx]["name"],
             horoscope_id=h_id,
             glyph_id=glyph_id,
+            show_motion_state=show_motion_state,
         )
 
     # -------------------------------------------------------------------------
@@ -260,6 +263,7 @@ def draw_planets(
                 transit_ring_exclude_points,
                 second_subject_available_kerykeion_celestial_points,
                 show_degree_indicators=show_degree_indicators,
+                show_motion_state=show_motion_state,
             )
         # Primary/inner points (natal planets): pure degree indicators, so the
         # flag gates the whole call (their glyphs are drawn in section 5).
@@ -842,13 +846,16 @@ def _generate_point_svg(
     point_name: str,
     horoscope_id: Union[str, None] = None,
     glyph_id: Union[str, None] = None,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Generate SVG markup for a celestial point.
 
     Creates a group element containing the point symbol with proper
     positioning, scaling, and metadata attributes. If the point is
-    retrograde, a small retrograde symbol (℞) is rendered next to the glyph.
+    retrograde, a small retrograde symbol (℞) is rendered next to the glyph;
+    with ``show_motion_state`` a body at a station takes that same spot with
+    an "SR" or "SD" mark instead, naming the turn it is making.
 
     Args:
         point_details: Model containing point data.
@@ -888,13 +895,22 @@ def _generate_point_svg(
         f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{glyph_ref}" />',
     ]
 
-    if is_retrograde:
-        # Position the retrograde symbol at the bottom-right foot of the planet glyph.
-        # Planet glyphs occupy ~24x24 units; x=+22 sits just past the right edge,
-        # y=+18 aligns the symbol with the glyph's baseline (foot).
-        retro_x = x * (1 / scale) + 22
-        retro_y = y * (1 / scale) + 18
-        parts.append(f'<g transform="translate({retro_x},{retro_y}) scale(0.55)">')
+    # Both marks share the bottom-right foot of the planet glyph. Planet glyphs
+    # occupy ~24x24 units; x=+22 sits just past the right edge, y=+18 aligns
+    # with the glyph's baseline (foot).
+    marker_x = x * (1 / scale) + 22
+    marker_y = y * (1 / scale) + 18
+    station = STATION_LABELS.get(getattr(point_details, "motion_state", None) or "") if show_motion_state else None
+    if station is not None:
+        # A station wins the spot: it is the rarer and more specific event, and
+        # the reader who turned the option on turned it on to see exactly this.
+        parts.append(
+            f'<text x="{marker_x}" y="{marker_y + 6}" '
+            f'style="fill: var(--kerykeion-color-warning); font-size: 11px; font-weight: bold;"'
+            f">{station}</text>"
+        )
+    elif is_retrograde:
+        parts.append(f'<g transform="translate({marker_x},{marker_y}) scale(0.55)">')
         parts.append('<use xlink:href="#retrograde" />')
         parts.append("</g>")
 
@@ -1127,6 +1143,7 @@ def _draw_secondary_points(
     exclude_points: list[str],
     celestial_points: Union[list[KerykeionPointModel], None] = None,
     show_degree_indicators: bool = True,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Draw secondary celestial points for transit/synastry charts.
@@ -1201,11 +1218,15 @@ def _draw_secondary_points(
         # Draw point symbol
         point_x = wheel_x(0, radius - point_radius, point_offset) + point_radius
         point_y = wheel_y(0, radius - point_radius, point_offset) + point_radius
-        is_retrograde = (
-            celestial_points is not None
-            and point_idx < len(celestial_points)
-            and celestial_points[point_idx].retrograde is True
+        # Bound once per iteration rather than inside the glyph branch below:
+        # a point that carries its own glyph_id would otherwise leave the name
+        # pointing at the previous iteration's model.
+        point_details = (
+            celestial_points[point_idx]
+            if celestial_points is not None and point_idx < len(celestial_points)
+            else None
         )
+        is_retrograde = point_details is not None and point_details.retrograde is True
         retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
         point_color = points_settings[point_idx]["color"]
 
@@ -1214,19 +1235,14 @@ def _draw_secondary_points(
         # v6: dynamic points fall back to their shared generic symbols.
         point_glyph = points_settings[point_idx].get("glyph_id")
         if not point_glyph:
-            point_details = (
-                celestial_points[point_idx]
-                if celestial_points is not None and point_idx < len(celestial_points)
-                else None
-            )
             point_glyph = (
                 point_name
                 if point_details is not None and point_details.point_type == "House"
                 else resolve_glyph_id(point_name)
             )
         kr_attrs = f'kr:node="ChartPoint" kr:slug="{escape_svg_text(point_name)}" kr:horoscope="1"'
-        if celestial_points is not None and point_idx < len(celestial_points):
-            cp = celestial_points[point_idx]
+        if point_details is not None:
+            cp = point_details
             kr_attrs += f' kr:house="{cp.house}" kr:sign="{cp.sign}" kr:absoluteposition="{cp.abs_pos}" kr:signposition="{cp.position}"'
             kr_attrs += point_state_attributes(cp)
         # kr:cx / kr:cy — glyph center in the FULL_WHEEL-LOCAL frame, matching
@@ -1239,13 +1255,24 @@ def _draw_secondary_points(
             f'<g {kr_attrs}{retro_attr} class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
             f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{point_glyph}" />'
         )
-        if is_retrograde:
-            # Same offset logic as _generate_point_svg: bottom-right foot of the glyph.
-            # Inner coordinate space is 2x due to scale(0.5) wrapper.
-            retro_x = point_x * 2 + 22
-            retro_y = point_y * 2 + 18
+        # Same offset logic as _generate_point_svg: bottom-right foot of the
+        # glyph. Inner coordinate space is 2x due to the scale(0.5) wrapper.
+        marker_x = point_x * 2 + 22
+        marker_y = point_y * 2 + 18
+        station = (
+            STATION_LABELS.get(getattr(point_details, "motion_state", None) or "")
+            if show_motion_state and point_details is not None
+            else None
+        )
+        if station is not None:
             point_svg += (
-                f'<g transform="translate({retro_x},{retro_y}) scale(0.55)"><use xlink:href="#retrograde" /></g>'
+                f'<text x="{marker_x}" y="{marker_y + 6}" '
+                f'style="fill: var(--kerykeion-color-warning); font-size: 11px; font-weight: bold;"'
+                f">{station}</text>"
+            )
+        elif is_retrograde:
+            point_svg += (
+                f'<g transform="translate({marker_x},{marker_y}) scale(0.55)"><use xlink:href="#retrograde" /></g>'
             )
         point_svg += "</g></g>"
 

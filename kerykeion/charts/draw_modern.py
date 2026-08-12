@@ -22,7 +22,7 @@ import logging
 import math
 from typing import Optional
 
-from kerykeion.charts.utils import escape_svg_text, normalize_degree
+from kerykeion.charts.utils import STATION_LABELS, escape_svg_text, normalize_degree
 from kerykeion.charts.glyph_ink_metrics import (
     GLYPH_INK_HALF_HEIGHT,
     GLYPH_INK_HALF_WIDTH,
@@ -174,6 +174,31 @@ DEFAULT_CLUSTER_CLEARANCE = 0.45
 # separation model so the reserved width can never diverge from the drawn text.
 RETROGRADE_LABEL = "RX"
 
+# The two stations reuse that same marker row. They can: a body at a station
+# is turning, and the classification treats "about to turn" and "moving
+# backwards" as one question with one answer, so the two markers are mutually
+# exclusive and the row's reserved ink is unchanged. Both labels are two
+# characters wide, like RX, so the measured separation model still holds.
+# Dash pattern for a separating aspect line, in the aspect group's own units
+# (that group carries a 0.37 scale, so these are not wheel units). Sized
+# against the 0.25 stroke so the gaps read as deliberate rather than as a
+# rendering artefact.
+SEPARATING_DASH_ARRAY_SCALED = "1.5 1"
+
+def motion_marker(point: KerykeionPointModel, show_motion_state: bool = False) -> Optional[str]:
+    """Label for *point*'s marker row, or ``None`` when the row stays empty.
+
+    A named station wins over plain retrograde: it is the rarer and more
+    specific event, and the reader who turned the option on turned it on to
+    see exactly this. Both the renderer and the separation model call it, so
+    the reserved width can never disagree with the drawn text.
+    """
+    if show_motion_state:
+        station = STATION_LABELS.get(getattr(point, "motion_state", None) or "")
+        if station is not None:
+            return station
+    return RETROGRADE_LABEL if point.retrograde is True else None
+
 # The one font stack every modern-chart text renders in — declared on the
 # wheel root here, and on the full-chart Main_Chart group by chart_drawer, so
 # no text node can miss it. Without it the SVG inherits whatever the embedding
@@ -239,6 +264,7 @@ COLOR_HOUSE_RING = "var(--kerykeion-modern-house-ring, #d5d5dd)"
 COLOR_STROKE = "var(--kerykeion-modern-stroke, #b0b0bf)"
 COLOR_TEXT = "var(--kerykeion-chart-color-paper-0, #333333)"
 COLOR_RETROGRADE = "var(--kerykeion-modern-retrograde, #c43a5e)"
+COLOR_STATIONARY = "var(--kerykeion-modern-stationary, #c07c1e)"
 COLOR_INDICATOR = "var(--kerykeion-modern-indicator, #8a8a9e)"
 COLOR_WHITE = "var(--kerykeion-chart-color-paper-1, #ffffff)"
 COLOR_ZODIAC_BG_OPACITY = "var(--kerykeion-modern-zodiac-bg-opacity, 0.5)"
@@ -754,13 +780,14 @@ def _cluster_row_profile(
     sign_scale_base: float = SIGN_SCALE_BASE,
     minutes_font_size: float = MINUTES_FONT_SIZE,
     rx_font_size: float = RX_FONT_SIZE,
+    show_motion_state: bool = False,
 ) -> dict[str, tuple[float, float]]:
     """Ink reach ``(half_width, half_height)`` of each cluster row of *point*.
 
     This is what the content-aware separation works from: a planet at 4º07'
     reserves the ink of ``"4º"`` and ``"7'"``, not of the widest strings the
-    rows could ever hold, and the ``rx`` row exists only when the point is
-    actually retrograde. All values come from the browser-measured tables in
+    rows could ever hold, and the marker row exists only when the point
+    actually carries a marker. All values come from the browser-measured tables in
     :mod:`kerykeion.charts.glyph_ink_metrics`, in wheel units.
 
     Both axes matter: clusters stay upright while the wheel turns, so which
@@ -792,8 +819,9 @@ def _cluster_row_profile(
         "sign": (sign_half_width * sign_scale, sign_half_height * sign_scale),
         "minutes": _text_ink_reach(_format_minutes_text(point), minutes_font_size),
     }
-    if point.retrograde is True:
-        profile["rx"] = _text_ink_reach(RETROGRADE_LABEL, rx_font_size)
+    marker = motion_marker(point, show_motion_state)
+    if marker is not None:
+        profile["rx"] = _text_ink_reach(marker, rx_font_size)
     return profile
 
 #: Fixed iteration count for the wraparound fallback's 1-D convex search.
@@ -1237,6 +1265,7 @@ def _draw_planet_ring(
     gauquelin_sectors: bool = False,
     gauquelin_cusps: Optional[list[float]] = None,
     show_zodiac_background_ring: bool = True,
+    show_motion_state: bool = False,
     content_aware_separation: bool = True,
 ) -> str:
     """
@@ -1318,7 +1347,9 @@ def _draw_planet_ring(
             "color": color,
         }
         if content_aware_separation:
-            planet_entry["row_half_widths"] = _cluster_row_profile(point, **element_scales)
+            planet_entry["row_half_widths"] = _cluster_row_profile(
+                point, show_motion_state=show_motion_state, **element_scales
+            )
         planets_with_angles.append(planet_entry)
 
     # Resolve collisions
@@ -1363,6 +1394,7 @@ def _draw_planet_ring(
             color=color,
             horoscope_id=horoscope_id,
             show_zodiac_background_ring=show_zodiac_background_ring,
+            show_motion_state=show_motion_state,
             **planet_kwargs,
         )
         out += planet_svg
@@ -1399,6 +1431,7 @@ def _draw_single_planet_in_ring(
     rx_font_size: float = RX_FONT_SIZE,
     horoscope_id: Optional[str] = None,
     show_zodiac_background_ring: bool = True,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Draw a single planet with its data cluster in the planet ring.
@@ -1431,7 +1464,16 @@ def _draw_single_planet_in_ring(
     minutes_text = _format_minutes_text(point)
     sign = point.sign
     is_retro = point.retrograde is True
-    fill_color = COLOR_RETROGRADE if is_retro else color
+    marker = motion_marker(point, show_motion_state)
+    # A station is the rarer event and takes the colour as well as the label:
+    # a reader who asked to see stations should not have to tell one apart
+    # from an ordinary retrograde by reading the two letters.
+    if marker in STATION_LABELS.values():
+        fill_color = COLOR_STATIONARY
+    elif is_retro:
+        fill_color = COLOR_RETROGRADE
+    else:
+        fill_color = color
 
     point_slug = point.name
     planet_id = point_slug if point.point_type == "House" else resolve_glyph_id(point_slug)
@@ -1511,13 +1553,14 @@ def _draw_single_planet_in_ring(
         f'transform="rotate({counter_rotation:.6f} {CENTER} {minutes_y})">{minutes_text}</text>\n'
     )
 
-    # RX text (innermost — near inner edge of planet ring)
-    if is_retro:
+    # Marker text (innermost — near inner edge of planet ring): RX for a plain
+    # retrograde, SR/SD for a named station.
+    if marker is not None:
         out += (
             f'  <text text-anchor="middle" dominant-baseline="middle" '
             f'x="{CENTER}" y="{rx_y}" font-size="{rx_font_size}" fill="{fill_color}" '
             f'font-weight="500" '
-            f'transform="rotate({counter_rotation:.6f} {CENTER} {rx_y})">{RETROGRADE_LABEL}</text>\n'
+            f'transform="rotate({counter_rotation:.6f} {CENTER} {rx_y})">{marker}</text>\n'
         )
 
     out += "</g>\n"
@@ -1887,6 +1930,7 @@ def _draw_aspect_core(
     aspects_settings: list[dict],
     seventh_house_degree_ut: float,
     core_radius: float = R_ASPECT,
+    show_aspect_movement: bool = False,
 ) -> str:
     """
     Draw aspect lines in the central core circle with small glyphs at midpoints.
@@ -1978,11 +2022,18 @@ def _draw_aspect_core(
             f'translate(-{CENTER} -{CENTER})">\n'
         )
 
-        # Aspect line (drawn first so glyphs render on top)
+        # Aspect line (drawn first so glyphs render on top). A separating
+        # aspect is dashed only on request: the movement has always been in
+        # the metadata, but drawing it changes how every existing chart looks.
+        dash_attr = (
+            f' stroke-dasharray="{SEPARATING_DASH_ARRAY_SCALED}"'
+            if show_aspect_movement and str(movement).lower() == "separating"
+            else ""
+        )
         out += (
             f'  <line x1="{sx1:.6f}" y1="{sy1:.6f}" '
             f'x2="{sx2:.6f}" y2="{sy2:.6f}" '
-            f'stroke="{color}" stroke-width="0.25"/>\n'
+            f'stroke="{color}" stroke-width="0.25"{dash_attr}/>\n'
         )
 
         # Aspect glyph at midpoint — with deduplication
@@ -2023,6 +2074,8 @@ def draw_modern_horoscope(
     planets_settings: list[dict],
     aspects_settings: list[dict],
     show_zodiac_background_ring: bool = True,
+    show_motion_state: bool = False,
+    show_aspect_movement: bool = False,
     gauquelin_sectors: bool = False,
     gauquelin_cusps: Optional[list[float]] = None,
 ) -> str:
@@ -2079,6 +2132,7 @@ def draw_modern_horoscope(
         planets, planets_settings, seventh_house_degree_ut, houses,
         gauquelin_sectors=gauquelin_sectors, gauquelin_cusps=gauquelin_cusps,
         show_zodiac_background_ring=show_zodiac_background_ring,
+        show_motion_state=show_motion_state,
     )
     if gauquelin_sectors:
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut, gauquelin_cusps=gauquelin_cusps)
@@ -2096,7 +2150,9 @@ def draw_modern_horoscope(
         )
     else:
         out += _draw_house_sectors_modern(houses, seventh_house_degree_ut, outer_r=house_sector_outer_r)
-    out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut)
+    out += _draw_aspect_core(
+        aspects_list, aspects_settings, seventh_house_degree_ut, show_aspect_movement=show_aspect_movement
+    )
 
     if show_zodiac_background_ring:
         out += "</g>\n"  # Close the scale wrapper
@@ -2120,6 +2176,8 @@ def draw_modern_dual_horoscope(
     aspects_settings: list[dict],
     chart_type: str = "Transit",
     show_zodiac_background_ring: bool = True,
+    show_motion_state: bool = False,
+    show_aspect_movement: bool = False,
 ) -> str:
     """
     Generate a dual modern chart with two concentric planet rings.
@@ -2202,6 +2260,7 @@ def draw_modern_dual_horoscope(
             "rx_font_size": SYN_RX_FONT_SIZE,
         },
         show_zodiac_background_ring=show_zodiac_background_ring,
+        show_motion_state=show_motion_state,
     )
 
     # ─── INNER PLANET RING (Subject 1) ──────────────────────────────
@@ -2237,6 +2296,7 @@ def draw_modern_dual_horoscope(
             "rx_font_size": SYN_RX_FONT_SIZE,
         },
         show_zodiac_background_ring=show_zodiac_background_ring,
+        show_motion_state=show_motion_state,
     )
 
     # ─── HOUSE NUMBER RING (Subject 1's houses — shared) ────────────
@@ -2264,7 +2324,13 @@ def draw_modern_dual_horoscope(
     )
 
     # ─── ASPECT CORE (cross-chart aspects) ──────────────────────────
-    out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut, core_radius=SYN_R_ASPECT)
+    out += _draw_aspect_core(
+        aspects_list,
+        aspects_settings,
+        seventh_house_degree_ut,
+        core_radius=SYN_R_ASPECT,
+        show_aspect_movement=show_aspect_movement,
+    )
 
     if show_zodiac_background_ring:
         out += "</g>\n"  # Close zodiac bg scale wrapper

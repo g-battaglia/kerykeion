@@ -53,6 +53,37 @@ _XML_TEXT_ENTITIES = {'"': "&quot;", "'": "&apos;"}
 _SVG_ILLEGAL_TRANSLATION = {c: None for c in range(0x20) if c not in (0x09, 0x0A, 0x0D)}
 
 
+# The two stations, as chart tables have long abbreviated them. Both renderers
+# mark a station, so the wording lives here rather than in either of them —
+# and both marks are two characters wide, which is what lets the modern style
+# reuse the retrograde row without remeasuring its separation model.
+# Dash pattern for a separating aspect line in the classic wheel, whose
+# aspect lines are drawn at stroke-width 1 in root units.
+SEPARATING_DASH_ARRAY = "5 3.2"
+
+# Badge for an out-of-bounds body in the point tables. It sits past the
+# retrograde glyph, in the gap before the next column, so a table that gains
+# it keeps every column where it was.
+OUT_OF_BOUNDS_BADGE = "OOB"
+OUT_OF_BOUNDS_BADGE_X = 84
+
+
+def out_of_bounds_badge_svg(point: object, text_color: str) -> str:
+    """The OOB badge for *point*, or nothing when it is inside the bounds."""
+    if not getattr(point, "is_out_of_bounds", None):
+        return ""
+    return (
+        f'<text text-anchor="start" x="{OUT_OF_BOUNDS_BADGE_X}" '
+        f'style="fill:{text_color}; font-size: 7px; font-weight: 700;">{OUT_OF_BOUNDS_BADGE}</text>'
+    )
+
+
+STATION_LABELS: dict[str, str] = {
+    "stationary_retrograde": "SR",
+    "stationary_direct": "SD",
+}
+
+
 def escape_svg_text(value: object) -> str:
     """Escape a plain-text value for safe embedding in SVG markup.
 
@@ -825,6 +856,7 @@ def draw_aspect_line(
     show_aspect_icon: bool = True,
     rendered_icon_positions: Optional[list[tuple[float, float, int]]] = None,
     icon_collision_threshold: float = 16.0,
+    show_aspect_movement: bool = False,
 ) -> str:
     """Draws svg aspects: ring, aspect ring, degreeA degreeB
 
@@ -902,9 +934,17 @@ def draw_aspect_line(
             if rendered_icon_positions is not None:
                 rendered_icon_positions.append((mid_x, mid_y, current_aspect_degrees))
 
+    # A separating aspect is dashed only on request: the movement has always
+    # been in the metadata, but drawing it changes how every existing chart looks.
+    dash_style = (
+        f" stroke-dasharray: {SEPARATING_DASH_ARRAY};"
+        if show_aspect_movement and str(aspect["aspect_movement"]).lower() == "separating"
+        else ""
+    )
+
     return (
         f'<g kr:node="Aspect" kr:aspectname="{escape_svg_text(aspect["aspect"])}" kr:to="{escape_svg_text(aspect["p1_name"])}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{escape_svg_text(aspect["p2_name"])}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}" kr:orb="{aspect["orbit"]}" kr:aspectdegrees="{aspect["aspect_degrees"]}" kr:planetsdiff="{aspect["diff"]}" kr:aspectmovement="{aspect["aspect_movement"]}">'
-        f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
+        f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;{dash_style}"/>'
         f"{aspect_icon_svg}"
         f"</g>"
     )
@@ -1698,6 +1738,7 @@ def draw_gauquelin_unified_grid(
     y_position: int = 0,
     celestial_point_language: Optional["KerykeionLanguageCelestialPointModel"] = None,
     plus_zone_color: str = "var(--kerykeion-color-warning, #e6a817)",
+    show_out_of_bounds: bool = False,
 ) -> str:
     """Unified Gauquelin table replacing both planet grid and house cusp grid.
 
@@ -1802,6 +1843,9 @@ def draw_gauquelin_unified_grid(
         # Longitude string + retrograde marker
         long_str = convert_decimal_to_degree_string(point.position)
         r_str = " R" if point.retrograde else ""
+        # Out of bounds is a claim about the declination, so it rides on that
+        # column instead of asking the table for a new one.
+        oob_str = " OOB" if show_out_of_bounds and getattr(point, "is_out_of_bounds", None) else ""
 
         # Declination in DMS
         decl = getattr(point, "declination", None)
@@ -1837,7 +1881,7 @@ def draw_gauquelin_unified_grid(
         # Longitude + retrograde
         svg += f'<text x="{COL_LONG}" style="fill:{text_color}; font-size:{fs}px;">{long_str}{r_str}</text>'
         # Declination
-        svg += f'<text x="{COL_DECL}" style="fill:{text_color}; font-size:{fs}px;">{decl_str}</text>'
+        svg += f'<text x="{COL_DECL}" style="fill:{text_color}; font-size:{fs}px;">{decl_str}{oob_str}</text>'
         # Sector (highlighted if plus zone)
         svg += (
             f'<text text-anchor="end" x="{COL_SECTOR_END}" '
@@ -1865,6 +1909,7 @@ def draw_main_planet_grid(
     text_color: str = "#000000",
     x_position: int = 645,
     y_position: int = 0,
+    show_out_of_bounds: bool = False,
 ) -> str:
     """
     Draw the planet grid (main subject) and optional title.
@@ -1928,6 +1973,9 @@ def draw_main_planet_grid(
         if planet["retrograde"]:
             svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
+        if show_out_of_bounds:
+            svg_output += out_of_bounds_badge_svg(planet, text_color)
+
         svg_output += end_of_line
 
     # Close the wrapper group
@@ -1945,6 +1993,7 @@ def draw_secondary_planet_grid(
     text_color: str = "#000000",
     x_position: int = 910,
     y_position: int = 0,
+    show_out_of_bounds: bool = False,
 ) -> str:
     """
     Draw the planet grid for the secondary subject and its title.
@@ -2014,6 +2063,9 @@ def draw_secondary_planet_grid(
 
         if t_planet["retrograde"]:
             svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+
+        if show_out_of_bounds:
+            svg_output += out_of_bounds_badge_svg(t_planet, text_color)
 
         svg_output += end_of_line
 
