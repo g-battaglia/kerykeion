@@ -35,7 +35,10 @@ from __future__ import annotations
 import html
 import json
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 import xml.etree.ElementTree as ET
 from collections import Counter
 import traceback
@@ -152,7 +155,10 @@ class Section:
     cards: list[Card] = field(default_factory=list)
 
 
-_PAGE = """<!doctype html>
+# Raw: every backslash in here belongs to the CSS or the JavaScript. Without the
+# r-prefix Python turned the JS "\n" escapes into real newlines, which broke the
+# string literals they sat in and took the whole script down with them.
+_PAGE = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kerykeion SVG — validation sweep</title>
@@ -238,7 +244,17 @@ _PAGE = """<!doctype html>
      does not sit on a tall white slab. */
   .viewer-stage img {{ max-width: 100%; max-height: 100%; width: auto; height: auto;
                        object-fit: contain; background: #fff;
-                       border-radius: 6px; box-shadow: 0 12px 40px rgba(0,0,0,.55); }}
+                       border-radius: 6px; box-shadow: 0 12px 40px rgba(0,0,0,.55);
+                       transform-origin: 0 0; will-change: transform; }}
+  .viewer-stage.zoomed {{ cursor: grab; }}
+  .viewer-stage.zoomed.dragging {{ cursor: grabbing; }}
+  /* The edges step through the sweep; once zoomed they would fight the drag. */
+  .viewer-stage.zoomed .edge {{ pointer-events: none; }}
+  .zoom-badge {{ position: absolute; left: 14px; bottom: 14px; z-index: 3;
+                 padding: 4px 9px; border-radius: 999px; background: #14161cd9;
+                 border: 1px solid #343845; font: 11.5px/1 ui-monospace, Menlo, monospace;
+                 color: #c6cad2; pointer-events: none; opacity: 0; transition: opacity .15s; }}
+  .viewer-stage.zoomed .zoom-badge {{ opacity: 1; }}
   .viewer-stage .edge {{ position: absolute; top: 0; bottom: 0; width: 16%; border: 0;
                          background: transparent; border-radius: 0; }}
   .viewer-stage .edge:hover {{ background: linear-gradient(90deg, rgba(255,255,255,.05), transparent); }}
@@ -269,7 +285,7 @@ _PAGE = """<!doctype html>
   <p class="totals"><b>{ok}</b> charts rendered · <b>{failed}</b> failed · {n_sections} sections
      &nbsp;·&nbsp; click any chart to open it full screen · <kbd>←</kbd> <kbd>→</kbd> to step,
      <kbd>Home</kbd>/<kbd>End</kbd> to jump, <kbd>i</kbd> for the technical details,
-     <kbd>Esc</kbd> to close</p>
+     <kbd>Esc</kbd> to close. Scroll to zoom, drag to pan, double-click to reset.</p>
 </header>
 
 <nav>{nav}</nav>
@@ -290,6 +306,7 @@ _PAGE = """<!doctype html>
     <button type="button" class="edge prev" id="v-edge-prev" aria-label="Previous"></button>
     <img id="v-img" alt="">
     <button type="button" class="edge next" id="v-edge-next" aria-label="Next"></button>
+    <div class="zoom-badge" id="v-zoom"></div>
   </div>
   <div class="viewer-foot">
     <button type="button" id="v-prev" title="Previous (←)">‹ Prev</button>
@@ -331,6 +348,7 @@ function show(i) {{
   range.value = String(at);
   btnPrev.disabled = at === 0;
   btnNext.disabled = at === CHARTS.length - 1;
+  resetZoom();
 }}
 
 function fmt(v) {{
@@ -360,6 +378,60 @@ function toggleFacts(force) {{
   elFacts.hidden = !show;
   btnInfo.setAttribute('aria-expanded', String(show));
 }}
+
+// ---- zoom and pan -------------------------------------------------------
+// A validation sweep is for looking closely: the interesting defects are a
+// badge overlapping a column or a row running under the wheel, and neither is
+// legible at fit-to-screen on a 1560-unit biwheel.
+const stage = document.querySelector('.viewer-stage');
+const zoomBadge = document.getElementById('v-zoom');
+let scale = 1, tx = 0, ty = 0, dragging = false, lastX = 0, lastY = 0;
+
+function applyTransform() {{
+  img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+  stage.classList.toggle('zoomed', scale !== 1);
+  zoomBadge.textContent = Math.round(scale * 100) + '%';
+}}
+
+function resetZoom() {{
+  scale = 1; tx = 0; ty = 0;
+  applyTransform();
+}}
+
+stage.addEventListener('wheel', e => {{
+  if (!viewer.classList.contains('open')) return;
+  e.preventDefault();
+  const rect = img.getBoundingClientRect();
+  // Anchor on the cursor: zooming should magnify what is under the pointer,
+  // not drift the chart away from it.
+  const ox = e.clientX - rect.left;
+  const oy = e.clientY - rect.top;
+  const factor = Math.exp(-e.deltaY * 0.0015);
+  const next = Math.min(12, Math.max(1, scale * factor));
+  const ratio = next / scale;
+  tx -= ox * (ratio - 1);
+  ty -= oy * (ratio - 1);
+  scale = next;
+  if (scale === 1) {{ tx = 0; ty = 0; }}
+  applyTransform();
+}}, {{passive: false}});
+
+stage.addEventListener('pointerdown', e => {{
+  if (scale === 1) return;
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  stage.classList.add('dragging');
+  stage.setPointerCapture(e.pointerId);
+}});
+stage.addEventListener('pointermove', e => {{
+  if (!dragging) return;
+  tx += e.clientX - lastX; ty += e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  applyTransform();
+}});
+for (const ev of ['pointerup', 'pointercancel']) {{
+  stage.addEventListener(ev, () => {{ dragging = false; stage.classList.remove('dragging'); }});
+}}
+img.addEventListener('dblclick', resetZoom);
 
 function open(i) {{
   show(i);
@@ -400,12 +472,45 @@ document.addEventListener('keydown', e => {{
   else if (e.key === 'i' || e.key === 'I') {{ toggleFacts(); }}
   else if (e.key === 'ArrowRight' || e.key === 'PageDown') {{ e.preventDefault(); show(at + 1); }}
   else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {{ e.preventDefault(); show(at - 1); }}
+  else if (e.key === '0') {{ resetZoom(); }}
+  else if (e.key === '+' || e.key === '=') {{ scale = Math.min(12, scale * 1.25); applyTransform(); }}
+  else if (e.key === '-') {{ scale = Math.max(1, scale / 1.25); if (scale === 1) {{ tx = 0; ty = 0; }} applyTransform(); }}
   else if (e.key === 'Home') {{ e.preventDefault(); show(0); }}
   else if (e.key === 'End') {{ e.preventDefault(); show(CHARTS.length - 1); }}
 }});
 </script>
 </body></html>
 """
+
+
+def _check_script(page: str) -> None:
+    """Parse the emitted JavaScript, when there is something around to parse it.
+
+    The page is built by a Python format string, which is a fine way to produce
+    a syntax error nobody notices: an escape eaten one level too early once
+    turned a JS string literal into two lines and took the whole viewer down,
+    and the page still looked perfectly fine until it was clicked. A parser
+    catches in a second what reading cannot.
+    """
+    script = re.search(r"<script>(.*?)</script>", page, re.S)
+    if not script:
+        return
+    if shutil.which("node") is None:
+        print("  ..  node not found — the viewer script was not syntax-checked")
+        return
+    with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as handle:
+        handle.write(script.group(1))
+        path = handle.name
+    try:
+        result = subprocess.run(["node", "--check", path], capture_output=True, text=True)
+        if result.returncode != 0:
+            raise SystemExit(
+                "The viewer script does not parse — the page would be dead on arrival:\n"
+                + (result.stderr or result.stdout)
+            )
+        print("  ok  viewer script parses")
+    finally:
+        Path(path).unlink(missing_ok=True)
 
 
 def build_index(out: Path) -> None:
@@ -465,17 +570,16 @@ def build_index(out: Path) -> None:
                 )
         body.append("</div></section>")
 
-    (out / "index.html").write_text(
-        _PAGE.format(
+    page = _PAGE.format(
             nav=nav,
             body="".join(body),
             ok=data["ok"],
             failed=data["failed"],
             n_sections=len(data["sections"]),
             charts=json.dumps(flat, ensure_ascii=False),
-        ),
-        encoding="utf-8",
     )
+    _check_script(page)
+    (out / "index.html").write_text(page, encoding="utf-8")
 
 
 sections: list[Section] = []
