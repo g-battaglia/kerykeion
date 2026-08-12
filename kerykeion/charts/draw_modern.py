@@ -20,7 +20,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import math
-from typing import Optional
+from typing import Optional, Sequence
 
 from kerykeion.charts.glyph_metrics import estimate_text_width
 from kerykeion.charts.spreading import spread_around_wheel
@@ -121,6 +121,36 @@ CUSP_GLYPH_SCALE = 0.12
 #: How far the ring will shrink to fit its tightest pair. Below this the text
 #: stops being worth reading, so the ring keeps the size and takes the overlap.
 CUSP_MIN_SCALE = 0.62
+
+#: Distance of a cusp reading from the wheel's rim, in the 100-unit frame.
+CUSP_LABEL_Y = 2.75
+
+#: How far a staggered reading moves off that line, either way. The ring is
+#: 5.5 units deep and the text about 2 tall, so a lane each side of centre
+#: clears the other lane and still sits inside the ring.
+CUSP_LANE_OFFSET = 1.1
+
+
+def _cusp_lanes(angles: Sequence[float], band: float) -> list[int]:
+    """Which radial lane each reading takes, so crowded neighbours never share one.
+
+    Two lanes are enough: a reading only has to clear the one before and the
+    one after it. Runs of crowded cusps alternate, and a run ends wherever a
+    gap is wide enough that the two readings clear anyway — which resets the
+    alternation and keeps a lone crowded pair from staggering the whole ring.
+
+    A run that closes the circle would need an even number of members to
+    alternate cleanly; with twelve cusps it always has one.
+    """
+    count = len(angles)
+    lanes = [0] * count
+    for index in range(1, count):
+        gap = (angles[index] - angles[index - 1]) % 360.0
+        lanes[index] = 1 - lanes[index - 1] if gap < band else 0
+    # The seam: the last reading also has the first as a neighbour.
+    if count > 1 and (angles[0] - angles[-1]) % 360.0 < band and lanes[0] == lanes[-1]:
+        lanes[-1] = 1 - lanes[-1]
+    return lanes
 
 
 def _cusp_cluster_span(scale: float) -> float:
@@ -603,7 +633,19 @@ def _draw_cusp_ring(
     text_offset = CUSP_TEXT_OFFSET_DEGREES * fit
     glyph_scale = round(CUSP_GLYPH_SCALE * fit, 4)
 
-    for house, cusp_angle in zip(houses, angles):
+    # Shrinking buys room but cannot buy enough when houses are only a few
+    # degrees wide: at the floor the readings are small and still shoulder to
+    # shoulder. So a crowded run also alternates between two radial lanes — one
+    # reading a little nearer the rim, the next a little nearer the wheel — and
+    # two labels that cannot be pulled apart sideways simply pass each other.
+    #
+    # Only where the ring already had to shrink. On a chart with room this
+    # would be a stagger with nothing to solve, and a cusp ring that wanders in
+    # and out for no visible reason reads as a defect rather than as a device.
+    lanes = _cusp_lanes(angles, _cusp_cluster_span(fit)) if fit < 1.0 else [0] * len(angles)
+
+    for house, cusp_angle, lane in zip(houses, angles, lanes):
+        label_y = CUSP_LABEL_Y + (CUSP_LANE_OFFSET if lane else -CUSP_LANE_OFFSET) if fit < 1.0 else CUSP_LABEL_Y
 
         # Determine if a full zodiac sign boundary falls in this house
         # Place sign glyph at the house cusp
@@ -630,17 +672,17 @@ def _draw_cusp_ring(
             # Minutes text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{font_size}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{label_y}" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({-text_offset:.6f} {CENTER} {CENTER}) '
-                f'rotate({angle_upright + text_offset:.6f} {CENTER} 2.75)">'
+                f'rotate({angle_upright + text_offset:.6f} {CENTER} {label_y})">'
                 f"{minutes}'</text>\n"
             )
 
             # Sign glyph
             final_scale = glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
             parts.append(
-                f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
+                f'    <g transform="translate({CENTER} {label_y}) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
                 f"    </g>\n"
             )
@@ -648,10 +690,10 @@ def _draw_cusp_ring(
             # Degrees text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{font_size}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{label_y}" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({text_offset:.6f} {CENTER} {CENTER}) '
-                f'rotate({angle_upright - text_offset:.6f} {CENTER} 2.75)">'
+                f'rotate({angle_upright - text_offset:.6f} {CENTER} {label_y})">'
                 f"{degrees}º</text>\n"
             )
         else:
@@ -659,17 +701,17 @@ def _draw_cusp_ring(
             # Minutes text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{font_size}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{label_y}" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({text_offset:.6f} {CENTER} {CENTER}) '
-                f'rotate({angle_upright - text_offset:.6f} {CENTER} 2.75)">'
+                f'rotate({angle_upright - text_offset:.6f} {CENTER} {label_y})">'
                 f"{minutes}'</text>\n"
             )
 
             # Sign glyph
             final_scale = glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
             parts.append(
-                f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
+                f'    <g transform="translate({CENTER} {label_y}) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
                 f"    </g>\n"
             )
@@ -677,10 +719,10 @@ def _draw_cusp_ring(
             # Degrees text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{font_size}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{label_y}" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({-text_offset:.6f} {CENTER} {CENTER}) '
-                f'rotate({angle_upright + text_offset:.6f} {CENTER} 2.75)">'
+                f'rotate({angle_upright + text_offset:.6f} {CENTER} {label_y})">'
                 f"{degrees}º</text>\n"
             )
 

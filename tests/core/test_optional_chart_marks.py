@@ -672,6 +672,44 @@ class TestTheCuspRingShrinksOnlyWhenItMustFit:
         svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(style="modern")
         assert f"font-size='{CUSP_FONT_SIZE}'" not in svg, "the ring should have shrunk and did not"
 
+    def test_a_crowded_ring_alternates_between_two_radial_lanes(self):
+        """Shrinking runs out before the crowding does, so the readings also stagger.
+
+        One reading a little nearer the rim, the next a little nearer the wheel,
+        which lets two that cannot be pulled apart sideways pass each other.
+        """
+        import re
+
+        from kerykeion.charts.draw_modern import CUSP_LABEL_Y, CUSP_LANE_OFFSET
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Campanus", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+            lat=53.4084, lng=-2.9916, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+        )
+        svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(style="modern")
+        cusp_block = svg[svg.index("kr:node='CuspRing'") : svg.index("kr:node='RulerRing'")]
+        heights = {float(y) for y in re.findall(r"y='([\d.]+)'", cusp_block)}
+        assert heights == {
+            round(CUSP_LABEL_Y - CUSP_LANE_OFFSET, 4),
+            round(CUSP_LABEL_Y + CUSP_LANE_OFFSET, 4),
+        }, heights
+
+    @pytest.mark.parametrize("house_system", ["P", "W", "O", "A"])
+    def test_an_uncrowded_ring_stays_on_one_lane(self, house_system):
+        """A ring that wanders in and out for no visible reason reads as a defect."""
+        import re
+
+        from kerykeion.charts.draw_modern import CUSP_LABEL_Y, _cusp_cluster_span
+
+        subject = self._chart(house_system)
+        if self._tightest_house(subject) < _cusp_cluster_span(1.0):
+            pytest.skip("this sky is crowded, so staggering is the correct answer")
+
+        svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(style="modern")
+        cusp_block = svg[svg.index("kr:node='CuspRing'") : svg.index("kr:node='RulerRing'")]
+        assert {float(y) for y in re.findall(r"y='([\d.]+)'", cusp_block)} == {CUSP_LABEL_Y}
+
     def test_the_ring_keeps_one_size_for_all_twelve(self):
         """Readings at four sizes look like a mistake even when each is right."""
         import re
