@@ -117,6 +117,14 @@ def _humanize(name: str) -> str:
     return name.replace("_", " ")
 
 
+# The two stations carry the abbreviations chart tables have long used for
+# them, so the column reads at a glance without losing the full word.
+_MOTION_STATE_LABELS: dict[str, str] = {
+    "stationary_retrograde": "Stationary (SR)",
+    "stationary_direct": "Stationary (SD)",
+}
+
+
 def _san(value: object) -> str:
     """Sanitize an untrusted subject-provided string for terminal-safe output.
 
@@ -1161,7 +1169,7 @@ class ReportGenerator:
             row.append(f"{point.speed:+.4f}°/d" if point.speed is not None else "N/A")
             if show_motion:
                 motion = getattr(point, "motion_state", None)
-                row.append(str(motion).capitalize() if motion else "-")
+                row.append(_MOTION_STATE_LABELS.get(str(motion), str(motion).capitalize()) if motion else "-")
             row.append(f"{point.declination:+.2f}°" if point.declination is not None else "N/A")
             if show_oob:
                 row.append("Y" if getattr(point, "is_out_of_bounds", None) else "-")

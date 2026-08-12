@@ -42,6 +42,67 @@ def test_classify_motion_state_unknown_bodies():
     assert classify_motion_state("Sun", None) is None
 
 
+def test_stationary_band_is_symmetric_around_zero():
+    """A body creeping backwards inside the band is stationary, not retrograde."""
+    mean = MEAN_DAILY_MOTION_DEGREES["Mercury"]
+    assert classify_motion_state("Mercury", -mean * 0.01) == "stationary"
+    # Just outside the band the answer is the plain direction again.
+    assert classify_motion_state("Mercury", -mean * 0.2) == "retrograde"
+
+
+def test_the_two_stations_are_told_apart_by_the_trend():
+    mean = MEAN_DAILY_MOTION_DEGREES["Mercury"]
+    inside = mean * 0.01
+
+    # Speed falling through the band: the retrograde phase is opening.
+    assert classify_motion_state("Mercury", inside, speed_sampler=lambda days: -0.3) == "stationary_retrograde"
+    assert classify_motion_state("Mercury", -inside, speed_sampler=lambda days: -0.3) == "stationary_retrograde"
+    # Speed rising through it: the retrograde phase is closing.
+    assert classify_motion_state("Mercury", -inside, speed_sampler=lambda days: 0.3) == "stationary_direct"
+    assert classify_motion_state("Mercury", inside, speed_sampler=lambda days: 0.3) == "stationary_direct"
+
+
+@pytest.mark.parametrize(
+    "sampler",
+    [None, lambda days: None, lambda days: MEAN_DAILY_MOTION_DEGREES["Mercury"] * 0.01],
+    ids=["no_sampler", "sampler_returns_none", "speed_unchanged"],
+)
+def test_station_falls_back_when_the_trend_is_unresolved(sampler):
+    """Without a usable second sample the generic station is reported, never a guess."""
+    inside = MEAN_DAILY_MOTION_DEGREES["Mercury"] * 0.01
+    assert classify_motion_state("Mercury", inside, speed_sampler=sampler) == "stationary"
+
+
+def test_the_sampler_is_only_consulted_inside_the_band():
+    """The extra ephemeris call must not be spent on ordinary motion."""
+    calls: list[float] = []
+
+    def sampler(days: float):
+        calls.append(days)
+        return 0.0
+
+    classify_motion_state("Mercury", MEAN_DAILY_MOTION_DEGREES["Mercury"], speed_sampler=sampler)
+    assert calls == []
+
+
+@pytest.mark.parametrize(
+    ("year", "month", "day", "expected"),
+    [
+        (1990, 8, 25, "stationary_retrograde"),
+        (1990, 9, 17, "stationary_direct"),
+    ],
+    ids=["turns_retrograde", "turns_direct"],
+)
+def test_real_mercury_stations_are_named(year, month, day, expected):
+    """Both 1990 Mercury stations, read off the ephemeris rather than mocked."""
+    from kerykeion import AstrologicalSubjectFactory
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Mercury station", year, month, day, 12, 0, "London", "GB", suppress_geonames_warning=True
+    )
+    assert subject.mercury.motion_state == expected
+
+
 def test_points_carry_motion_state(john_lennon):
     for field in ("sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"):
         point = getattr(john_lennon, field)

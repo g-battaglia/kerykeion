@@ -43,7 +43,7 @@ import math
 from datetime import datetime, timezone, timedelta
 from os import getenv
 from pathlib import Path
-from typing import Optional, List, Dict, Any, cast, get_args
+from typing import Callable, Optional, List, Dict, Any, cast, get_args
 from dataclasses import dataclass, field
 from contextlib import contextmanager
 from functools import partial
@@ -1573,9 +1573,31 @@ class AstrologicalSubjectFactory:
             if calc_data.get("perspective_type") in _GEOCENTRIC_OOB_PERSPECTIVES:
                 from kerykeion.motion.state import classify_motion_state
 
+                station_julian_day = calc_data["julian_day"]
+                station_iflag = calc_data["_iflag"]
+
+                def _make_speed_sampler(planet_id: int) -> Callable[[float], Optional[float]]:
+                    """Speed of ``planet_id`` a given number of days from the chart.
+
+                    Only ever called for a body already inside the stationary
+                    band, which is why the second ephemeris call can be spent
+                    freely: it buys the difference between the two stations.
+                    """
+
+                    def _sample(delta_days: float) -> Optional[float]:
+                        try:
+                            return ephe.calc_ut(station_julian_day + delta_days, planet_id, station_iflag)[0][3]
+                        except Exception as e:
+                            logger.debug("Could not sample station trend for body %s: %s", planet_id, e)
+                            return None
+
+                    return _sample
+
                 for pk in point_keys:
                     point = calc_data[pk]
-                    motion_state = classify_motion_state(str(point.name), point.speed)
+                    planet_id = STANDARD_PLANETS.get(point.name)
+                    sampler = _make_speed_sampler(planet_id) if planet_id is not None else None
+                    motion_state = classify_motion_state(str(point.name), point.speed, speed_sampler=sampler)
                     if motion_state is not None:
                         point_updates[pk]["motion_state"] = motion_state
 

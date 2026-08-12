@@ -39,8 +39,21 @@ SignNumbers: TypeAlias = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 """Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pis (11)"""
 
 
-MotionState: TypeAlias = Literal["retrograde", "stationary", "slow", "average", "fast"]
-"""Literal type for a body's motion state relative to its mean daily motion."""
+MotionState: TypeAlias = Literal[
+    "retrograde",
+    "stationary",
+    "stationary_retrograde",
+    "stationary_direct",
+    "slow",
+    "average",
+    "fast",
+]
+"""Literal type for a body's motion state relative to its mean daily motion.
+
+``stationary_retrograde`` and ``stationary_direct`` name the two stations —
+the turn into the retrograde phase and the turn out of it. Plain
+``stationary`` remains for a station whose direction could not be resolved.
+"""
 
 AspectMovementType: TypeAlias = Literal["Applying", "Separating", "Static"]
 """Literal type for Aspect Movement.
