@@ -99,3 +99,7 @@ scripts/.glyph-cache/
 /docs/*.html
 /docs/search.js
 /docs/kerykeion/
+
+# Visual validation sweep: hundreds of charts, tens of megabytes, rebuilt on
+# demand with `uv run poe gallery`. The script that makes it is tracked.
+/svg_validation_gallery/
