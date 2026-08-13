@@ -211,13 +211,13 @@ def transit(
     natal = subject_resolver.resolve_subject(
         subject_resolver.SubjectFlags(online=online, offline=offline), profile
     )
-    # The transit moment is a minimal subject: just a place and a moment. No
-    # zodiac/points/houses overrides — those follow the natal chart's settings
-    # via the dual-wheel rendering. Location defaults to the natal birthplace
-    # (offline) when no inline coord is given, mirroring `return`; override with
-    # --lat/--lng/--tz for a relocated transit. Build the flags directly rather
-    # than via build_flags(), which would require spelling every keyword-only
-    # argument.
+    # The transit moment is a minimal subject: just a place and a moment, but it
+    # MUST share the natal frame (zodiac, sidereal mode, houses, perspective) —
+    # ``create_transit_chart_data`` passes both subjects verbatim to
+    # ``create_chart_data``; it does not re-frame the transit wheel. Without
+    # inheriting these the outer ring would always be Tropical/Placidus/
+    # Apparent-Geocentric regardless of the natal, producing a dual wheel whose
+    # two rings disagree. ``series transits`` does the same inheritance.
     transit_flags = subject_resolver.SubjectFlags(
         name="Transit",
         date=to_date,
@@ -230,6 +230,10 @@ def transit(
         online=online,
         offline=offline,
         altitude=altitude,
+        zodiac=getattr(natal, "zodiac_type", None),
+        sidereal_mode=getattr(natal, "sidereal_mode", None),
+        houses=getattr(natal, "houses_system_identifier", None),
+        perspective=getattr(natal, "perspective_type", None),
         # Default to "now" when no --to-date is given.
         mode_override=None if to_date else "current",
     )

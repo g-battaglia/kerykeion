@@ -78,6 +78,31 @@ exit-code-classification path it could reach:
   - `transits` no longer swallows a missing/unreadable profile behind a bare
     `except` (clean exit 4 up front); `main(argv)` honours an explicit `argv`
     on the Typer path, not only on the no-extra path.
+- A third review pass closed a further round of CLI correctness gaps:
+  - `--houses porphyry` no longer silently builds Alcabitius (coded `"B"`, should
+    be `"O"`); `--houses apc` no longer always fails (coded `"n"`, not even a
+    valid code; APC is `"Y"`). An unknown house-system letter is now rejected at
+    the flag instead of as a confusing factory literal error.
+  - `technique directions` no longer advertises a `--planets` flag that always
+    crashed (primary directions have no planet filter; it was bound to the
+    factory's `aspects` parameter). It is now `--aspects`, validated.
+  - The transit wheel now inherits the natal frame (zodiac, sidereal mode,
+    houses, perspective), so a Sidereal natal no longer pairs with a Tropical
+    transit ring (`create_transit_chart_data` does not re-frame).
+  - An offset-bearing `sky --from` (e.g. `…T12:30:00Z`) is now honoured: the
+    instant is converted into `--tz` before the wall-clock parts are extracted,
+    instead of being re-read verbatim (a multi-hour shift).
+  - `transits --refine` without `--events` is rejected (it was a silent no-op);
+    a typoed `call Factory.method` is exit 4, not exit 1 with a traceback; a
+    dict `--param` is parsed as JSON instead of forwarded as a literal string.
+  - `emit_warnings` resolves `sys.stderr` at call time (the import-time default
+    arg defeated CliRunner/capsys redirection); `subject show|list|verify` route
+    through the warnings funnel, and `verify` collects from the materialised
+    subject so `--warnings-as-errors` engages there too.
+  - `-o` into a new directory now creates the parent (matching `subject save`);
+    a `-s` lookup miss no longer creates the profile store as a side effect; the
+    `--traceback`/`--warnings-as-errors` knobs are reset between in-process test
+    runs so the suite is no longer order-dependent.
 
 ## 6.0.0a84 - 2026-08-12
 

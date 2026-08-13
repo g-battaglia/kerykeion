@@ -111,7 +111,16 @@ def make_meta() -> dict[str, Any]:
 
 def save(path: Path, profile: Profile) -> None:
     """Write *profile* to *path* with mode 0600 (PII: birth data)."""
+    # Ensure the store exists with 0700 perms (birth data is PII). Only enforce
+    # the restrictive mode when writing into the standard XDG store, so a
+    # user-chosen path elsewhere is created but not chmodmed.
+    store = config.profiles_dir()
     path.parent.mkdir(parents=True, exist_ok=True)
+    if path.parent == store:
+        try:
+            store.chmod(0o700)
+        except OSError:
+            pass
     try:
         path.chmod(0o600)
     except OSError:
@@ -145,8 +154,14 @@ def load(path: Path) -> Profile:
 
 
 def list_profiles() -> list[str]:
-    """Names of every profile in the store (usable with ``-s``)."""
+    """Names of every profile in the store (usable with ``-s``).
+
+    Read-only: it does not create the store (a missing directory simply yields
+    an empty list), so a lookup miss for ``-s`` never has filesystem side effects.
+    """
     store = config.profiles_dir()
+    if not store.is_dir():
+        return []
     return sorted(p.stem for p in store.glob("*.json"))
 
 

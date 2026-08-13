@@ -113,10 +113,29 @@ def _latlng(
     return lat, lng
 
 
-def _moment(value: Optional[str], cmd: str) -> datetime:
+def _moment(value: Optional[str], cmd: str, tz_str: Optional[str] = None) -> datetime:
+    """Parse ``--from`` into the wall-clock components the moment factories use.
+
+    The moment factories (``from_datetime``/``from_date``) take naive year/month/
+    day/hour/minute in ``tz_str``. An offset-bearing input (``...T12:30:00Z`` or
+    ``...+01:00``) denotes an *absolute instant*; extracting its raw components
+    and re-fitting them into ``tz_str`` would shift the moment by the offset
+    (e.g. 12:30Z re-read as 12:30 Europe/Rome = 10:30Z — a two-hour error). When
+    the input is offset-aware we convert the instant into ``tz_str`` first, so
+    the wall-clock parts match what the user meant. A naive input is already
+    wall-clock and is returned as-is.
+
+    Seconds are truncated: the ``from_datetime`` factories do not accept them
+    (sub-minute lunar motion, at most ~0.008°, is below their resolution).
+    """
     if value is None:
         raise ValueError(f"{cmd} needs --from (an ISO date or datetime)")
-    return _parse_dt(value)
+    dt = _parse_dt(value)
+    if dt.tzinfo is not None and tz_str:
+        from zoneinfo import ZoneInfo
+
+        dt = dt.astimezone(ZoneInfo(tz_str)).replace(tzinfo=None)
+    return dt
 
 
 @sky_app.command("sun-times")
@@ -133,7 +152,7 @@ def sun_times(
     from kerykeion import SunTimesFactory
 
     la, lo, tz_str = _location(profile, lat, lng, tz, "sun-times")
-    moment = _moment(from_, "sun-times")
+    moment = _moment(from_, "sun-times", tz_str)
     model = SunTimesFactory.from_date(
         moment.year, moment.month, moment.day, latitude=la, longitude=lo, tz_str=tz_str
     )
@@ -154,7 +173,7 @@ def hours(
     from kerykeion import PlanetaryHoursFactory
 
     la, lo, tz_str = _location(profile, lat, lng, tz, "hours")
-    moment = _moment(from_, "hours")
+    moment = _moment(from_, "hours", tz_str)
     model = PlanetaryHoursFactory.from_datetime(
         moment.year, moment.month, moment.day, moment.hour, moment.minute,
         latitude=la, longitude=lo, tz_str=tz_str,
@@ -187,13 +206,13 @@ def voc(
             raise ValueError("voc --to also needs --from")
         model = VoidOfCourseMoonFactory.from_iso_range(from_, to, **extra)
     else:
-        moment = _moment(from_, "voc")
         tz_str = tz
         if tz_str is None and profile:
             subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
             tz_str = getattr(subject, "tz_str", None)
         if tz_str is None:
             raise ValueError("voc at a moment needs --tz (or -s a profile with a timezone)")
+        moment = _moment(from_, "voc", tz_str)
         model = VoidOfCourseMoonFactory.from_datetime(
             moment.year, moment.month, moment.day, moment.hour, moment.minute,
             tz_str=tz_str, **extra,

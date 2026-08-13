@@ -136,6 +136,12 @@ def transits(
 
     if not profile:
         raise ValueError("transits needs -s <profile> for the natal subject")
+    # ``--refine`` sharpens the exact moment of a transit event, so it only
+    # applies to the ``--events`` collapse. On the plain moments path
+    # ``get_transit_moments()`` takes no refine argument, so accepting ``--refine``
+    # there would silently drop the user's request. Fail loudly instead.
+    if refine and not events:
+        raise ValueError("--refine sharpens exact moments and requires --events.")
     start, end = _resolve_range(from_, to, "transits")
     stype: StepType = (step_type or "days")  # type: ignore[assignment]
     if stype not in _STEP_TYPES:

@@ -30,27 +30,40 @@ def _base_config_dir() -> Path:
 
 
 def app_dir() -> Path:
-    """The application config directory, created 0700 on first access."""
-    path = _base_config_dir()
-    path.mkdir(parents=True, exist_ok=True)
-    try:
-        path.chmod(0o700)
-    except OSError:
-        # Non-POSIX filesystems (Windows) ignore the mode; the directory still
-        # exists. The restriction is best-effort on those platforms.
-        pass
-    return path
+    """The application config directory path (not created here).
+
+    Pure path accessor — callers that need the directory to exist on disk use
+    :func:`ensure_profile_store` (the write path). Keeping this side-effect-free
+    means a read-only lookup (e.g. resolving ``-s`` for a missing profile) does
+    not silently create ``~/.config/kerykeion`` or mask a read-only HOME with a
+    misleading "invalid input" error.
+    """
+    return _base_config_dir()
 
 
 def profiles_dir() -> Path:
-    """The profiles store, created 0700 on first access."""
-    path = app_dir() / PROFILES_SUBDIR
-    path.mkdir(parents=True, exist_ok=True)
-    try:
-        path.chmod(0o700)
-    except OSError:
-        pass
-    return path
+    """The profiles store path (not created here; use :func:`ensure_profile_store`)."""
+    return app_dir() / PROFILES_SUBDIR
+
+
+def ensure_profile_store() -> Path:
+    """Create the 0700 profile store dirs if missing; return ``profiles_dir()``.
+
+    The store holds birth data (PII), so both the app dir and the subjects
+    subdir are created ``0700``. Called from the write path (``profiles.save``),
+    never from a read/lookup.
+    """
+    app = app_dir()
+    store = app / PROFILES_SUBDIR
+    for d in (app, store):
+        d.mkdir(parents=True, exist_ok=True)
+        try:
+            d.chmod(0o700)
+        except OSError:
+            # Non-POSIX filesystems (Windows) ignore the mode; the directory
+            # still exists. The restriction is best-effort on those platforms.
+            pass
+    return store
 
 
 def config_file() -> Path:

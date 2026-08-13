@@ -19,6 +19,7 @@ from kerykeion.cli.commands.charts import _emit_subject_or_chart
 from kerykeion.cli.options import (
     AcgLatRangeOpt,
     AcgStepOpt,
+    AspectsOpt,
     FormatOpt,
     IsMoonVoidOpt,
     LifeCapOpt,
@@ -208,7 +209,7 @@ def directions(
     profile: SubjectProfile = None,  # type: ignore[assignment]
     max_years: MaxYearsOpt = None,  # type: ignore[assignment]
     rate: RateKeyOpt = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
+    aspects: AspectsOpt = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]
 ) -> None:
@@ -222,9 +223,20 @@ def directions(
     chosen_rate = _choose(rate, ("ptolemy", "naibod"), "rate")
     if chosen_rate is not None:
         kwargs["rate_key"] = chosen_rate
-    aspects = _split_csv(planets)
-    if aspects is not None:
-        kwargs["aspects"] = aspects
+    # ``aspects`` here is the set of aspect ANGLES (conjunction, sextile, …),
+    # not planets: PrimaryDirectionsFactory.compute validates it against
+    # ASPECT_ANGLES and has no planet filter. Binding ``--planets`` to it (as the
+    # sibling techniques do for their real planet filters) made the documented
+    # flag always crash; the flag is now named for what it actually controls.
+    chosen_aspects = _split_csv(aspects)
+    if chosen_aspects is not None:
+        valid = set(PrimaryDirectionsFactory.ASPECT_ANGLES)
+        invalid = [a for a in chosen_aspects if a not in valid]
+        if invalid:
+            raise ValueError(
+                f"--aspects must be one of {', '.join(sorted(valid))}; got {invalid}."
+            )
+        kwargs["aspects"] = chosen_aspects
     _emit(PrimaryDirectionsFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 

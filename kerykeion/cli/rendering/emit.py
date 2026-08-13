@@ -49,9 +49,15 @@ def write_output(content: str, output_path: str | None = None) -> None:
 
     data = content if content.endswith("\n") else content + "\n"
     if output_path:
+        target = Path(output_path)
+        # Create the parent directory so `-o path/in/a/new/dir/out.json` works,
+        # mirroring ``profiles.save()`` (which mkdirs its parent). Without this a
+        # missing directory raised FileNotFoundError → exit 4 "invalid input",
+        # a confusing label for a normal create-on-write expectation.
+        target.parent.mkdir(parents=True, exist_ok=True)
         # ``newline=""`` disables the platform default translation: on Windows
         # the default would turn every "\n" into "\r\n", corrupting byte-exact
         # JSON/SVG that pipelines, ``jq`` and hash-pinned checks compare against.
-        Path(output_path).write_text(data, encoding="utf-8", newline="")
+        target.write_text(data, encoding="utf-8", newline="")
     else:
         sys.stdout.write(data)

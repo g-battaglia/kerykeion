@@ -68,6 +68,25 @@ def app():
     return app
 
 
+@pytest.fixture(autouse=True)
+def _reset_cli_error_policy():
+    """Reset the CLI's process-global error knobs around every test.
+
+    ``--traceback`` and ``--warnings-as-errors`` set module globals in
+    :mod:`kerykeion.cli.errors` (via the root callback) that typer never resets,
+    so without this a test that escalates warnings leaks the policy into every
+    later test in the same process — making the suite order-dependent. Reset
+    before and after so each test starts and ends clean.
+    """
+    from kerykeion.cli import errors
+
+    errors.set_traceback_enabled(False)
+    errors.set_warnings_as_errors(False)
+    yield
+    errors.set_traceback_enabled(False)
+    errors.set_warnings_as_errors(False)
+
+
 @pytest.fixture
 def ada_profile(runner, app):
     """Save the Ada profile once; most chart tests reuse it."""
@@ -698,3 +717,196 @@ class TestCodeReviewFixes:
         assert b"\r\n" not in raw  # LF only, no platform translation
         assert "München".encode("utf-8") in raw  # UTF-8, not cp1252-mangled
         assert profiles.load(path).input.name == "München"
+
+
+class TestThirdReviewPass:
+    """Regressions from the third code-review sweep (every finding verified).
+
+    Numbering mirrors the review's final 15. ``#10`` (sampling DST divergence)
+    and the ``**kwargs`` half of ``#9`` are deferred with rationale in the PR
+    comment, not pinned here.
+    """
+
+    # #1 / #2: the house-system name map is checked against the authoritative
+    # HousesSystemIdentifier Literal. Porphyry is "O" (not "B" = Alcabitius);
+    # APC is "Y" (not "n", which is not even a member).
+    def test_house_name_map_matches_the_literal(self):
+        from kerykeion.cli.subject_resolver import resolve_house_system
+
+        assert resolve_house_system("porphyry") == "O"
+        assert resolve_house_system("porphyrius") == "O"
+        assert resolve_house_system("apc") == "Y"
+        assert resolve_house_system("placidus") == "P"  # unchanged sanity check
+
+    # #6: an unknown single letter is rejected here with a helpful message, not
+    # deferred to a confusing pydantic "input does not match the literal".
+    def test_unknown_house_letter_is_rejected_cleanly(self):
+        from kerykeion.cli.subject_resolver import resolve_house_system
+
+        with pytest.raises(ValueError) as ei:
+            resolve_house_system("G")
+        assert "house-system letter" in str(ei.value)
+
+    # #3: technique directions has no planet filter; --planets used to bind to
+    # ``aspects`` (which wants ANGLES) and always crashed. The flag is now
+    # ``--aspects`` and validates its values.
+    def test_directions_aspects_rejects_non_angle(self, runner, app, ada_profile):
+        r = runner.invoke(app, ["technique", "directions", "-s", "ada", "--aspects", "sun,moon"])
+        assert r.exit_code == 4
+        assert "must be" in r.output
+
+    def test_directions_no_longer_advertises_a_planets_flag(self, runner, app, ada_profile):
+        r = runner.invoke(app, ["technique", "directions", "-s", "ada", "--planets", "sun"])
+        assert r.exit_code == 2  # Click: unknown option
+        assert "Traceback" not in r.output
+
+    # #4: the transit wheel inherits the natal frame (zodiac/sidereal/houses/
+    # perspective). create_transit_chart_data does not re-frame, so both rings
+    # must be built in the same zodiac. Run in a subprocess: the transit JSON is
+    # large, and pushing it through CliRunner's stdout capture under pytest
+    # closes the buffer (a CliRunner/pytest-capture artefact, not a CLI bug — a
+    # bare-process run produces both wheels Sidereal).
+    def test_transit_inherits_natal_zodiac_frame(self, deterministic_cli_env):
+        from kerykeion.cli import config, profiles
+
+        # Persist a Sidereal profile into the isolated store.
+        profiles.save(
+            config.profile_path("cyb"),
+            profiles.Profile(
+                name="Cyb",
+                input=profiles.ProfileInput(
+                    name="Cyb", mode="birth", date="2000-01-01", time="12:00",
+                    lat=0.0, lng=0.0, tz_str="UTC", online=False, zodiac_type="Sidereal",
+                ),
+                meta=profiles.make_meta(),
+            ),
+        )
+        out = deterministic_cli_env / "transit.json"
+        script = textwrap.dedent(f"""
+            import sys
+            from kerykeion.cli import main
+            sys.argv = ["kerykeion", "transit", "-s", "cyb", "-f", "json", "-o", {str(out)!r}]
+            sys.exit(main())
+        """)
+        env = {
+            **os.environ, "XDG_CONFIG_HOME": str(deterministic_cli_env),
+            "NO_COLOR": "1", "TERM": "dumb",
+        }
+        res = subprocess.run(
+            [sys.executable, "-c", script], env=env, capture_output=True, text=True,
+        )
+        assert res.returncode == 0, res.stderr
+
+        def _zodiacs(node):
+            found = []
+            if isinstance(node, dict):
+                if "zodiac_type" in node:
+                    found.append(node["zodiac_type"])
+                for v in node.values():
+                    found.extend(_zodiacs(v))
+            elif isinstance(node, list):
+                for v in node:
+                    found.extend(_zodiacs(v))
+            return found
+
+        zodiacs = _zodiacs(json.loads(out.read_text(encoding="utf-8")))
+        assert zodiacs.count("Sidereal") >= 2  # natal inner + transit outer
+
+    # #5: an offset-bearing --from is an absolute instant; the wall-clock parts
+    # must be converted into --tz before extraction (12:30Z -> 14:30 Europe/Rome
+    # in summer), not re-read verbatim as a Rome wall time.
+    def test_sky_voc_moment_respects_offset(self, runner, app):
+        from kerykeion import VoidOfCourseMoonFactory
+
+        r = runner.invoke(app, [
+            "sky", "voc", "--from", "2030-06-15T12:30:00Z", "--tz", "Europe/Rome",
+            "-f", "json",
+        ])
+        assert r.exit_code == 0, r.output
+        expected = VoidOfCourseMoonFactory.from_datetime(
+            2030, 6, 15, 14, 30, tz_str="Europe/Rome"
+        )
+        assert json.loads(r.output) == json.loads(expected.model_dump_json())
+
+    # #7: --refine only applies to the --events collapse; without --events it is
+    # a silent no-op, so it must be rejected up front.
+    def test_refine_requires_events(self, runner, app, ada_profile):
+        r = runner.invoke(app, [
+            "transits", "-s", "ada", "--from", "2025-01-01", "--to", "2025-01-10", "--refine",
+        ])
+        assert r.exit_code == 4
+        assert "--events" in r.output
+
+    # #8: a typo in a method name is a user-input problem (exit 4), not an
+    # unexpected crash (exit 1 with a "rerun with --traceback" hint).
+    def test_call_unknown_member_is_exit_four(self, runner, app):
+        r = runner.invoke(app, ["call", "ChartDataFactory.nonExistentMethod"])
+        assert r.exit_code == 4
+        assert "no public member" in r.output
+        assert "Traceback" not in r.output
+
+    # #9: a dict/Mapping --param is parsed as JSON, not forwarded as a literal
+    # string that the factory then rejects with a confusing TypeError.
+    def test_call_param_dict_is_parsed_as_json(self):
+        from kerykeion.cli.introspect import coerce_value
+
+        assert coerce_value(dict, '{"sun": 1.5}') == {"sun": 1.5}
+        with pytest.raises(ValueError):
+            coerce_value(dict, "not json")
+
+    # #11: emit_warnings resolves sys.stderr at call time so a redirected stderr
+    # (CliRunner, capsys, an embedding host) actually captures the warnings.
+    def test_emit_warnings_honors_redirected_stderr(self, monkeypatch):
+        import io
+
+        from kerykeion.cli import warnings as _w
+
+        class _Warn:
+            code = "X"
+            point_name = "Moon"
+            message = "boom"
+
+        captured = io.StringIO()
+        monkeypatch.setattr(sys, "stderr", captured)
+        _w.emit_warnings([_Warn()], [])
+        assert "kerykeion: warning:" in captured.getvalue()
+
+    # #12: -o into a not-yet-existing directory creates it (mirroring subject
+    # save) instead of failing with a confusing exit-4 "invalid input".
+    def test_output_file_creates_parent_dir(self, tmp_path):
+        from kerykeion.cli.rendering.emit import write_output
+
+        out = tmp_path / "new" / "deep" / "o.json"
+        write_output("{}", str(out))
+        assert out.read_text() == "{}\n"
+
+    # #13: a lookup miss for -s must not create the profile store as a side
+    # effect of gathering "did you mean" suggestions.
+    def test_resolve_path_does_not_create_store_on_miss(self, deterministic_cli_env, monkeypatch):
+        from kerykeion.cli import config, profiles
+
+        store = config.profiles_dir()
+        assert not store.exists()
+        with pytest.raises(profiles.ProfileNotFound):
+            profiles.resolve_path("nonexistent")
+        # Still absent: the read-only lookup did not mkdir anything.
+        assert not store.exists()
+
+    # #15: commands that render a derivative of a subject still surface (and can
+    # escalate via --warnings-as-errors) the warnings carried on that subject.
+    def test_output_with_warnings_collects_from_warning_source(self, monkeypatch):
+        import io
+
+        from kerykeion.cli import warnings as _w
+
+        class _Sink:  # what is rendered (a compact summary): no warnings
+            pass
+
+        class _Subject:  # what was materialised: carries a warning
+            ephemeris_warnings = ["fake"]
+            polar_house_fallbacks = None
+
+        captured = io.StringIO()
+        monkeypatch.setattr(sys, "stderr", captured)
+        _w.output_with_warnings(_Sink(), "json", None, warning_source=_Subject())
+        assert "kerykeion: warning:" in captured.getvalue()

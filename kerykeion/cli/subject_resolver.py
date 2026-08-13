@@ -40,11 +40,14 @@ _HOUSES_BY_NAME = {
     "equal": "A",
     "equal_house": "A",
     "morinus": "M",
-    "porphyrius": "B",
+    # Porphyry is "O" — "B" is Alcabitius (see the HousesSystemIdentifier Literal
+    # in kerykeion/schemas/literals.py). APC (topocentric) is "Y".
+    "porphyry": "O",
+    "porphyrius": "O",
     "meridian": "X",
     "azimuthal": "H",
     "polich_page": "T",
-    "apc": "n",
+    "apc": "Y",
 }
 
 _CALC_KEYS = {
@@ -85,13 +88,44 @@ def parse_time(value: str) -> tuple[int, int, int]:
     return hour, minute, seconds
 
 
+_VALID_HOUSE_LETTERS: Optional[frozenset[str]] = None
+
+
+def _valid_house_letters() -> frozenset[str]:
+    """The single-letter codes the factory accepts (``HousesSystemIdentifier``).
+
+    Resolved lazily so this module stays free of a kerykeion import at module
+    load (the cold-import invariant). Cached after first use.
+    """
+    global _VALID_HOUSE_LETTERS
+    if _VALID_HOUSE_LETTERS is None:
+        import typing
+
+        from kerykeion.schemas.literals import HousesSystemIdentifier
+
+        _VALID_HOUSE_LETTERS = frozenset(typing.get_args(HousesSystemIdentifier))
+    return _VALID_HOUSE_LETTERS
+
+
 def resolve_house_system(value: Optional[str]) -> Optional[str]:
     """Accept a single letter or a common house-system name; return the letter."""
     if value is None:
         return None
     v = value.strip()
     if len(v) == 1 and v.isalpha():
-        return v.upper()
+        up = v.upper()
+        # Validate membership here rather than letting an unknown letter (G, J,
+        # E, …) reach the factory, where it becomes a confusing pydantic
+        # "input does not match the literal" ValidationError with no hint that
+        # the house-system letter was the cause. (Note: "i" upper-cases to "I",
+        # a distinct system — Sunshine vs Sunshine/alt.; that pre-exists.)
+        if up not in _valid_house_letters():
+            raise ValueError(
+                f"unknown house-system letter {value!r}; give a valid letter "
+                f"({', '.join(sorted(_valid_house_letters()))}) or a name "
+                "(placidus, koch, whole-sign, porphyry, …)."
+            )
+        return up
     key = v.lower().replace("-", "_")
     if key in _HOUSES_BY_NAME:
         return _HOUSES_BY_NAME[key]

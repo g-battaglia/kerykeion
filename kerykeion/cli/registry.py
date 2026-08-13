@@ -111,8 +111,18 @@ def _classify_member(owner: type, member: str) -> tuple[str, Callable[..., Any]]
     """Return (kind, underlying_function) for *member* on *owner*.
 
     Uses ``getattr_static`` so we see the raw descriptor without triggering it.
+    Raises :class:`ValueError` (→ clean exit 4) for a missing member rather than
+    letting the ``AttributeError`` from ``getattr_static`` fall through to
+    :func:`errors.classify`, which does not list it and would exit 1 ("a bug").
     """
-    raw = inspect.getattr_static(owner, member)
+    try:
+        raw = inspect.getattr_static(owner, member)
+    except AttributeError:
+        public = sorted(m for m in dir(owner) if not m.startswith("_"))
+        raise ValueError(
+            f"{owner.__name__} has no public member {member!r}; "
+            f"choose from: {', '.join(public[:24])}{' …' if len(public) > 24 else ''}"
+        ) from None
     if isinstance(raw, staticmethod):
         return STATIC, raw.__func__  # type: ignore[attr-defined]
     if isinstance(raw, classmethod):

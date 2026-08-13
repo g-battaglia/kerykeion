@@ -19,7 +19,9 @@ raw string.
 
 from __future__ import annotations
 
+import collections.abc
 import inspect
+import json
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Any, Literal, Union, get_args, get_origin
@@ -150,6 +152,19 @@ def coerce_value(annotation: Any, raw: str) -> Any:
                 raise ValueError(f"expected {len(inner)} comma-separated values, got {len(parts)}")
             return tuple(coerce_value(t, p) for t, p in zip(inner, parts))
         return tuple(parts)
+    if annotation is dict or origin in (dict, collections.abc.Mapping):
+        # Structural params like ``custom_weights: Dict[str, float]``: parse the
+        # raw value as JSON so ``--param custom_weights='{"sun":1.5}'`` reaches
+        # the factory as a dict instead of the literal string (which the factory
+        # would reject with a confusing TypeError). ``--explain`` already marks
+        # these ``json-only``; this is the coercion that honours that hint.
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"{raw!r} is not valid JSON for a mapping parameter") from exc
+        if not isinstance(parsed, dict):
+            raise ValueError(f"{raw!r} parsed to a {type(parsed).__name__}, not a JSON object")
+        return parsed
     if _is_pydantic_model(annotation):
         return _load_model_file(annotation, raw)
     # Unknown structural type (Mapping, TypedDict, Protocol, custom class): leave

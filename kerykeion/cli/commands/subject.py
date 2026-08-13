@@ -14,7 +14,7 @@ from typing import Optional
 
 import typer
 
-from kerykeion.cli import config, profiles, subject_resolver
+from kerykeion.cli import config, profiles, subject_resolver, warnings
 from kerykeion.cli.options import (
     FixedStarsFlag,
     FormatOpt,
@@ -41,7 +41,7 @@ from kerykeion.cli.options import (
     WithoutFlags,
     ZodiacTypeOpt,
 )
-from kerykeion.cli.rendering import emit, formats
+from kerykeion.cli.rendering import formats
 
 from kerykeion.cli.typer_app import KerykeionTyper
 
@@ -113,8 +113,10 @@ def show(
     path = profiles.resolve_path(profile_spec)
     profile = profiles.load(path)
     resolved = formats.resolve_format(fmt, output)
-    content = emit.render(profile, resolved)
-    emit.write_output(content, output)
+    # Route through the warnings funnel for parity with the compute commands
+    # (a recipe carries no ephemeris warnings, so this is a no-op for warnings,
+    # but it keeps --warnings-as-errors uniformly honoured across subcommands).
+    warnings.output_with_warnings(profile, resolved, output)
 
 
 @subject_app.command("list")
@@ -124,7 +126,7 @@ def list_cmd(
     """List profile names in the store (text: one per line; pipe: JSON array)."""
     names = profiles.list_profiles()
     resolved = formats.resolve_format(fmt, None)
-    emit.write_output(emit.render(names, resolved))
+    warnings.output_with_warnings(names, resolved, None)
 
 
 @subject_app.command("path")
@@ -149,7 +151,10 @@ def verify(
     model = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile_spec)
     summary = _subject_summary(model)
     resolved = formats.resolve_format(fmt, output)
-    emit.write_output(emit.render(summary, resolved), output)
+    # The compact summary carries no warnings, but the materialised subject it
+    # was built from may (an ephemeris gap, a polar-house fallback). Collect from
+    # the subject so --warnings-as-errors engages here too, like the charts.
+    warnings.output_with_warnings(summary, resolved, output, warning_source=model)
 
 
 def _subject_summary(model: object) -> dict[str, object]:

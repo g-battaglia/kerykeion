@@ -112,25 +112,40 @@ def _fmt_polar(w: Any) -> str:
     return f"{head}{detail}: {message}" if message else f"{head}{detail}"
 
 
-def emit_warnings(eph: list, polar: list, stream=sys.stderr) -> None:
-    """Write every warning to *stream* (stderr by default), one per line."""
+def emit_warnings(eph: list, polar: list, stream=None) -> None:
+    """Write every warning to *stream* (current ``sys.stderr`` by default)."""
+    if stream is None:
+        # Resolve at call time, not def time: a default argument of
+        # ``stream=sys.stderr`` would bind the stream object present at module
+        # import, so any later reassignment of ``sys.stderr`` (typer's
+        # CliRunner, pytest capsys, an embedding host redirecting stderr) would
+        # NOT redirect these warnings — they'd bypass the runner's buffer.
+        stream = sys.stderr
     for w in eph:
         stream.write(f"kerykeion: warning: {_fmt_ephemeris(w)}\n")
     for w in polar:
         stream.write(f"kerykeion: warning: {_fmt_polar(w)}\n")
 
 
-def output_with_warnings(obj: Any, fmt: str, output: str | None) -> None:
+def output_with_warnings(
+    obj: Any, fmt: str, output: str | None, warning_source: Any = None
+) -> None:
     """Emit the payload, then warnings; exit 9 if ``--warnings-as-errors``.
 
     The payload is written first so it is never lost when a warning escalates.
     Warnings are emitted in a ``finally`` so a render error (e.g. SVG on a
     non-chart object) still surfaces them instead of swallowing them, and so
     ``--warnings-as-errors`` is not silently bypassed by a downstream crash.
+
+    ``warning_source`` (default: *obj*) is what warnings are collected from. It
+    differs from *obj* when a command renders a derivative of a subject (e.g.
+    ``subject verify`` prints a compact summary but should still surface — and
+    honour ``--warnings-as-errors`` for — the warnings on the materialised
+    subject it was built from).
     """
     from kerykeion.cli.rendering import emit
 
-    eph, polar = collect_warnings(obj)
+    eph, polar = collect_warnings(warning_source if warning_source is not None else obj)
     # The payload is rendered and written first, but a render crash (e.g. SVG on
     # a non-chart object) must NOT silently bypass ``--warnings-as-errors``. Hold
     # the render error, always emit warnings in the ``finally``, then: if there

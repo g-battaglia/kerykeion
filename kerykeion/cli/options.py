@@ -333,6 +333,16 @@ PlanetsOpt = Annotated[
         rich_help_panel="Technique",
     ),
 ]
+AspectsOpt = Annotated[
+    Optional[list[str]],
+    typer.Option(
+        "--aspects",
+        help="Primary-direction aspect angles to compute: "
+        "conjunction, sextile, square, trine, opposition (repeatable or CSV). "
+        "Default is all five.",
+        rich_help_panel="Technique",
+    ),
+]
 MidpointOrbOpt = Annotated[
     Optional[float],
     typer.Option(
