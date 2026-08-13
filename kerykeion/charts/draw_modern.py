@@ -118,38 +118,94 @@ CUSP_TEXT_OFFSET_DEGREES = 4.669
 #: Scale of the sign glyph on the cusp line.
 CUSP_GLYPH_SCALE = 0.12
 
-#: How far the ring will shrink to fit its tightest pair. Below this the text
-#: stops being worth reading, so the ring keeps the size and takes the overlap.
+#: How far the ring will shrink once even the staggered lanes have run out.
+#: Below this the text stops being worth reading, so the ring keeps the size
+#: and takes the overlap.
 CUSP_MIN_SCALE = 0.62
 
 #: Distance of a cusp reading from the wheel's rim, in the 100-unit frame.
 CUSP_LABEL_Y = 2.75
 
-#: How far a staggered reading moves off that line, either way. The ring is
-#: 5.5 units deep and the text about 2 tall, so a lane each side of centre
-#: clears the other lane and still sits inside the ring.
-CUSP_LANE_OFFSET = 1.1
+#: Ink the ring has to hold, in wheel units at full scale. Measured extents,
+#: not em boxes: a sign glyph inks about two thirds of its 32-unit box, and
+#: sizing the lanes off the box would cost a third of the ring for nothing.
+_CUSP_SIGN_HALF_HEIGHT = max(SIGN_INK_HALF_HEIGHT.values()) * CUSP_GLYPH_SCALE
+_CUSP_TEXT_HALF_HEIGHT = (
+    max(TEXT_INK_HALF_HEIGHT.values()) / TEXT_INK_REFERENCE_FONT_SIZE * CUSP_FONT_SIZE
+)
+
+#: Clear air between the ring's edge and a reading, and between the two lanes.
+CUSP_RING_MARGIN = 0.15
+CUSP_LANE_GUTTER = 0.3
+
+#: The largest scale at which two lanes are actually two lanes.
+#:
+#: Staggering buys vertical room the ring does not have in unlimited supply:
+#: it is 5.5 units deep, so a reading pushed outward must still stay inside the
+#: rim, and one pushed inward must clear the ink its neighbour left on the
+#: other lane. Both bounds move with the text size — larger text needs a bigger
+#: offset and leaves less room for it — and they meet at exactly one scale.
+#: Above it, staggering either pushes a glyph out of the ring or drops a
+#: reading onto the neighbouring sign, so shrinking to here is the price of
+#: using the lanes at all; below it there is slack, and the offset can stay put.
+#:
+#: The binding pair is a reading's text against the *next* cusp's sign glyph —
+#: taller than a text and only a fraction of the offset away, so it needs more
+#: separation than two texts do.
+CUSP_STAGGER_SCALE = (CUSP_LABEL_Y - CUSP_RING_MARGIN - CUSP_LANE_GUTTER / 2) / (
+    _CUSP_SIGN_HALF_HEIGHT + (_CUSP_SIGN_HALF_HEIGHT + _CUSP_TEXT_HALF_HEIGHT) / 2
+)
+
+#: How far a staggered reading moves off the centre line, either way: as far
+#: as the rim allows at the scale above, which is also exactly as far as the
+#: other lane needs. One value for every scale — a ring whose stagger depth
+#: changed with the crowding would read as two different devices.
+CUSP_LANE_OFFSET = CUSP_LABEL_Y - CUSP_RING_MARGIN - _CUSP_SIGN_HALF_HEIGHT * CUSP_STAGGER_SCALE
 
 
-def _cusp_lanes(angles: Sequence[float], band: float) -> list[int]:
-    """Which radial lane each reading takes, so crowded neighbours never share one.
+def _cusp_lanes(angles: Sequence[float], band: float) -> list[Optional[int]]:
+    """Which radial lane each reading takes, or ``None`` to stay on the centre line.
 
-    Two lanes are enough: a reading only has to clear the one before and the
-    one after it. Runs of crowded cusps alternate, and a run ends wherever a
-    gap is wide enough that the two readings clear anyway — which resets the
-    alternation and keeps a lone crowded pair from staggering the whole ring.
+    Only the readings that would actually print through a neighbour move.
+    Staggering a cusp with clear air either side would push it off the line it
+    describes to solve a problem it does not have, and a ring where every
+    reading sits high or low reads as a wobble rather than as a device.
 
-    A run that closes the circle would need an even number of members to
-    alternate cleanly; with twelve cusps it always has one.
+    Two lanes are enough for the ones that do move: a reading only has to clear
+    the one before and the one after it. Crowded runs alternate, and a run ends
+    wherever a gap is wide enough that the two readings clear anyway — which
+    resets the alternation, so one tight pair does not stagger the whole ring.
     """
     count = len(angles)
-    lanes = [0] * count
-    for index in range(1, count):
-        gap = (angles[index] - angles[index - 1]) % 360.0
-        lanes[index] = 1 - lanes[index - 1] if gap < band else 0
-    # The seam: the last reading also has the first as a neighbour.
-    if count > 1 and (angles[0] - angles[-1]) % 360.0 < band and lanes[0] == lanes[-1]:
-        lanes[-1] = 1 - lanes[-1]
+    if count < 2:
+        return [None] * count
+
+    #: ``tight[i]``: readings *i* and *i+1* are closer than the band they occupy.
+    tight = [
+        ((angles[(index + 1) % count] - angles[index]) % 360.0) < band for index in range(count)
+    ]
+    if not any(tight):
+        return [None] * count
+
+    # Walk from where a run starts, so the alternation never has to reconcile
+    # two halves meeting at an arbitrary seam.
+    start = next((index for index in range(count) if not tight[index - 1]), None)
+    if start is None:
+        # Every gap is tight, so there is no such place, and if the readings
+        # are odd in number no walk can alternate all the way round anyway.
+        # Begin just after the widest gap: whatever the seam costs, it costs
+        # least there.
+        start = max(range(count), key=lambda index: (angles[index] - angles[index - 1]) % 360.0)
+
+    lanes: list[Optional[int]] = [None] * count
+    for step in range(count):
+        index = (start + step) % count
+        previous = (index - 1) % count
+        preceding = lanes[previous]
+        if tight[previous] and preceding is not None:
+            lanes[index] = 1 - preceding
+        elif tight[index] or tight[previous]:
+            lanes[index] = 0
     return lanes
 
 
@@ -607,24 +663,44 @@ def _draw_cusp_ring(
     # degrees wide, so their readings printed through each other by construction
     # rather than by bad luck.
     #
-    # The whole ring shrinks to fit the tightest pair rather than the readings
-    # stepping aside from their own cusps. Moving them was tried and reads
-    # worse: a number that has slid two degrees off the line it describes is a
-    # number attached to the wrong house, and on a quadrant chart the eye has
-    # nothing else to go on. Smaller text on a crowded chart still says exactly
-    # what it belongs to.
+    # The ring answers by resizing itself rather than by the readings stepping
+    # aside from their own cusps. Moving them was tried and reads worse: a
+    # number that has slid two degrees off the line it describes is a number
+    # attached to the wrong house, and on a quadrant chart the eye has nothing
+    # else to go on. Smaller text on a crowded chart still says exactly what it
+    # belongs to.
     #
     # One factor for all twelve, not per-cusp: a ring of readings at four
     # different sizes looks like a mistake even when each one is individually
-    # correct. And a floor, because past a point the honest answer is a smaller
-    # number rather than an unreadable one — below it the ring accepts the
-    # crowding it cannot design its way out of.
+    # correct.
+    #
+    # Shrinking is the first answer and, past a point, the wrong one — four
+    # degrees of house would take the text below legibility. So it stops at the
+    # scale where a second device takes over: the crowded readings alternate
+    # between two radial lanes, one a little nearer the rim and the next a
+    # little nearer the wheel, and two that cannot be pulled apart sideways
+    # simply pass each other. What each reading then has to clear is not its
+    # neighbour — that one is on the other lane — but the one two cusps along,
+    # which is two gaps away rather than one.
+    #
+    # Hence the three cases below, in the order a chart meets them: room enough
+    # already; not enough, but a modest shrink is all it takes; or crowded past
+    # that, where the ring stops at the largest size two lanes physically fit
+    # and lets the stagger finish the job. Only the last of the three still has
+    # a floor, for skies no arrangement can fix.
     angles = [_zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses]
-    tightest = min(
-        (angles[(i + 1) % len(angles)] - angles[i]) % 360.0 for i in range(len(angles))
-    ) if len(angles) > 1 else 360.0
+    count = len(angles)
+    gaps = [(angles[(i + 1) % count] - angles[i]) % 360.0 for i in range(count)] if count > 1 else [360.0]
     nominal_span = _cusp_cluster_span(1.0)
-    fit = 1.0 if nominal_span <= tightest else max(CUSP_MIN_SCALE, tightest / nominal_span)
+    shrink_alone = min(gaps) / nominal_span
+
+    if shrink_alone >= 1.0:
+        fit = 1.0
+    elif shrink_alone >= CUSP_STAGGER_SCALE:
+        fit = shrink_alone
+    else:
+        two_gaps = min(gaps[i] + gaps[(i + 1) % count] for i in range(count))
+        fit = min(CUSP_STAGGER_SCALE, max(CUSP_MIN_SCALE, two_gaps / nominal_span))
 
     # Rounded, not formatted to a fixed width: at full size these have to come
     # out as the very strings the nominal constants produce, or every chart with
@@ -633,19 +709,15 @@ def _draw_cusp_ring(
     text_offset = CUSP_TEXT_OFFSET_DEGREES * fit
     glyph_scale = round(CUSP_GLYPH_SCALE * fit, 4)
 
-    # Shrinking buys room but cannot buy enough when houses are only a few
-    # degrees wide: at the floor the readings are small and still shoulder to
-    # shoulder. So a crowded run also alternates between two radial lanes — one
-    # reading a little nearer the rim, the next a little nearer the wheel — and
-    # two labels that cannot be pulled apart sideways simply pass each other.
-    #
-    # Only where the ring already had to shrink. On a chart with room this
-    # would be a stagger with nothing to solve, and a cusp ring that wanders in
-    # and out for no visible reason reads as a defect rather than as a device.
-    lanes = _cusp_lanes(angles, _cusp_cluster_span(fit)) if fit < 1.0 else [0] * len(angles)
+    # Which readings stagger is decided at the size they end up drawn, and only
+    # the ones that would otherwise print through a neighbour move: everything
+    # with clear air either side stays on the centre line where it belongs.
+    lanes = _cusp_lanes(angles, _cusp_cluster_span(fit))
 
     for house, cusp_angle, lane in zip(houses, angles, lanes):
-        label_y = CUSP_LABEL_Y + (CUSP_LANE_OFFSET if lane else -CUSP_LANE_OFFSET) if fit < 1.0 else CUSP_LABEL_Y
+        label_y = CUSP_LABEL_Y if lane is None else round(
+            CUSP_LABEL_Y + (CUSP_LANE_OFFSET if lane else -CUSP_LANE_OFFSET), 4
+        )
 
         # Determine if a full zodiac sign boundary falls in this house
         # Place sign glyph at the house cusp

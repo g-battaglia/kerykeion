@@ -617,8 +617,8 @@ class TestTheCuspRingShrinksOnlyWhenItMustFit:
     A cusp reading is a band of ring — minutes one side of the line, degrees
     the other — so two cusps closer together than that band print through each
     other, which quadrant systems arrange routinely. The ring answers by
-    shrinking to fit its tightest pair rather than by sliding the readings off
-    the lines they describe.
+    resizing itself, and past a point by staggering the crowded readings onto
+    two radial lanes, rather than by sliding them off the lines they describe.
 
     What must not happen is a chart paying for that when it has no crowding at
     all, so the trigger is pinned from both sides: an ordinary chart is
@@ -692,8 +692,128 @@ class TestTheCuspRingShrinksOnlyWhenItMustFit:
         heights = {float(y) for y in re.findall(r"y='([\d.]+)'", cusp_block)}
         assert heights == {
             round(CUSP_LABEL_Y - CUSP_LANE_OFFSET, 4),
-            round(CUSP_LABEL_Y + CUSP_LANE_OFFSET, 4),
+            CUSP_LABEL_Y,
+            round(CUSP_LANE_OFFSET + CUSP_LABEL_Y, 4),
         }, heights
+
+    def test_only_the_crowded_readings_leave_the_centre_line(self):
+        """A reading with clear air either side has nothing to step around.
+
+        Liverpool's Campanus crowding is local — three cusps of the twelve in
+        each half. Staggering the other nine would move them off the lines they
+        describe to solve a problem they do not have, and a ring where every
+        reading sits high or low reads as a wobble rather than as a device.
+        """
+        from kerykeion.charts.draw_modern import (
+            _cusp_cluster_span,
+            _cusp_lanes,
+            _zodiac_to_wheel_angle,
+        )
+        from kerykeion.utilities.core import get_houses_list
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Campanus", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+            lat=53.4084, lng=-2.9916, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+        )
+        angles = [
+            _zodiac_to_wheel_angle(house.abs_pos, subject.seventh_house.abs_pos)
+            for house in get_houses_list(subject)
+        ]
+        band = _cusp_cluster_span(self._fit(angles))
+        lanes = _cusp_lanes(angles, band)
+
+        for index, lane in enumerate(lanes):
+            before = (angles[index] - angles[index - 1]) % 360.0
+            after = (angles[(index + 1) % len(angles)] - angles[index]) % 360.0
+            crowded = before < band or after < band
+            assert (lane is not None) == crowded, (
+                f"cusp {index} has {before:.1f}° / {after:.1f}° of room in a {band:.1f}° band "
+                f"and was put on lane {lane}"
+            )
+        assert None in lanes and set(lanes) >= {0, 1}, f"fixture no longer mixes the two: {lanes}"
+
+    def test_the_stagger_costs_less_size_than_shrinking_alone_would(self):
+        """The lanes exist so the ring can stop shrinking earlier, not as well as.
+
+        Fitting Liverpool's tightest pair by size alone drives the readings to
+        the floor. With the crowded ones passing each other on separate lanes,
+        what has to fit in one gap is the reading two cusps along — two gaps of
+        room — so the ring keeps most of its size.
+        """
+        from kerykeion.charts.draw_modern import (
+            CUSP_MIN_SCALE,
+            CUSP_STAGGER_SCALE,
+            _cusp_cluster_span,
+            _zodiac_to_wheel_angle,
+        )
+        from kerykeion.utilities.core import get_houses_list
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Campanus", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+            lat=53.4084, lng=-2.9916, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+        )
+        angles = [
+            _zodiac_to_wheel_angle(house.abs_pos, subject.seventh_house.abs_pos)
+            for house in get_houses_list(subject)
+        ]
+        gaps = [(angles[(i + 1) % 12] - angles[i]) % 360.0 for i in range(12)]
+        shrink_alone = min(gaps) / _cusp_cluster_span(1.0)
+
+        assert shrink_alone <= CUSP_MIN_SCALE, "fixture no longer bottoms out on size alone"
+        assert self._fit(angles) == pytest.approx(CUSP_STAGGER_SCALE)
+
+    @staticmethod
+    def _fit(angles) -> float:
+        """The scale the renderer settles on for *angles*, by the same three cases."""
+        from kerykeion.charts.draw_modern import (
+            CUSP_MIN_SCALE,
+            CUSP_STAGGER_SCALE,
+            _cusp_cluster_span,
+        )
+
+        count = len(angles)
+        gaps = [(angles[(i + 1) % count] - angles[i]) % 360.0 for i in range(count)]
+        shrink_alone = min(gaps) / _cusp_cluster_span(1.0)
+        if shrink_alone >= 1.0:
+            return 1.0
+        if shrink_alone >= CUSP_STAGGER_SCALE:
+            return shrink_alone
+        two_gaps = min(gaps[i] + gaps[(i + 1) % count] for i in range(count))
+        return min(CUSP_STAGGER_SCALE, max(CUSP_MIN_SCALE, two_gaps / _cusp_cluster_span(1.0)))
+
+    def test_a_staggered_reading_stays_inside_the_ring(self):
+        """Both lanes hold their ink between the rim and the wheel.
+
+        The offset and the scale it is paired with come from one solve: the
+        largest text for which a reading pushed outward still clears the rim
+        and one pushed inward still clears the other lane. This is that solve,
+        checked against the measured ink rather than against itself.
+        """
+        from kerykeion.charts.draw_modern import (
+            CUSP_LABEL_Y,
+            CUSP_LANE_GUTTER,
+            CUSP_LANE_OFFSET,
+            CUSP_RING_MARGIN,
+            CUSP_STAGGER_SCALE,
+            R_CUSP_INNER,
+            R_CUSP_OUTER,
+            _CUSP_SIGN_HALF_HEIGHT,
+            _CUSP_TEXT_HALF_HEIGHT,
+        )
+
+        depth = R_CUSP_OUTER - R_CUSP_INNER
+        assert CUSP_LABEL_Y == pytest.approx(depth / 2), "the centre line is no longer centred"
+
+        tallest = _CUSP_SIGN_HALF_HEIGHT * CUSP_STAGGER_SCALE
+        assert CUSP_LABEL_Y - CUSP_LANE_OFFSET - tallest >= CUSP_RING_MARGIN - 1e-9
+        assert CUSP_LABEL_Y + CUSP_LANE_OFFSET + tallest <= depth - CUSP_RING_MARGIN + 1e-9
+
+        # The lanes clear each other for the binding pair: one lane's text
+        # against the next cusp's sign glyph on the other.
+        reach = (_CUSP_SIGN_HALF_HEIGHT + _CUSP_TEXT_HALF_HEIGHT) * CUSP_STAGGER_SCALE
+        assert 2 * CUSP_LANE_OFFSET - reach >= CUSP_LANE_GUTTER - 1e-9
 
     @pytest.mark.parametrize("house_system", ["P", "W", "O", "A"])
     def test_an_uncrowded_ring_stays_on_one_lane(self, house_system):
