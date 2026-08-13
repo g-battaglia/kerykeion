@@ -17,12 +17,23 @@ from types import ModuleType
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DOCUMENTATION_TARGETS = (
+# Two INDEPENDENT corpora, deliberately disjoint. Folding the skill into the
+# published corpus would make the published check unfalsifiable: the skill is
+# a subset, so anything it documents would satisfy the union and a name
+# documented only in the skill would still count as "published".
+PUBLISHED_TARGETS = (
     PROJECT_ROOT / "README.md",
     PROJECT_ROOT / "kerykeion" / "llms.txt",
     PROJECT_ROOT / "site" / "docs",
     PROJECT_ROOT / "site" / "examples",
 )
+# The skill is copied verbatim into third-party repos, so it must cover every
+# export by itself. api-index.md is excluded on purpose: it is a generated
+# routing table listing every name, so including it would let a one-line index
+# row satisfy the gate while the reference meant to teach the name stays silent.
+SKILL_TARGET = PROJECT_ROOT / "skills" / "kerykeion"
+SKILL_INDEX = SKILL_TARGET / "references" / "api-index.md"
+DOCUMENTATION_TARGETS = PUBLISHED_TARGETS
 
 
 def get_public_api_names(package: ModuleType) -> list[str]:
@@ -40,10 +51,10 @@ def get_public_api_names(package: ModuleType) -> list[str]:
     return names
 
 
-def iter_documentation_files() -> list[Path]:
+def iter_documentation_files(targets: tuple[Path, ...] = DOCUMENTATION_TARGETS) -> list[Path]:
     """Return the maintained user-facing Markdown/text documentation corpus."""
     files: set[Path] = set()
-    for target in DOCUMENTATION_TARGETS:
+    for target in targets:
         if target.is_file():
             files.add(target)
         elif target.is_dir():
@@ -83,13 +94,32 @@ def main() -> int:
     print(f"Documentation files scanned: {len(documentation_files)}")
     print(f"Explicit public exports: {len(public_names)}")
     print(f"Documented exports: {documented_count}")
-    print(f"Coverage: {coverage:.1f}%")
+    print(f"Published-docs coverage: {coverage:.1f}%")
+
+    # Standalone pass over a disjoint corpus: the skill must cover every export
+    # on its own (it ships into third-party repos without the published docs),
+    # and must do so in a reference file — api-index.md is dropped so its
+    # generated one-line rows cannot stand in for real documentation.
+    skill_files = [f for f in iter_documentation_files((SKILL_TARGET,)) if f != SKILL_INDEX]
+    skill_content = load_documentation_content(skill_files)
+    missing_in_skill = undocumented_names(public_names, skill_content)
+    skill_documented = len(public_names) - len(missing_in_skill)
+    skill_coverage = skill_documented / len(public_names) * 100 if public_names else 100.0
+    print(f"Agent-skill standalone coverage: {skill_coverage:.1f}%")
 
     if missing:
-        print("\nMISSING PUBLIC API DOCUMENTATION:")
-        print("=================================")
+        print("\nMISSING FROM THE PUBLISHED DOCS (README, llms.txt, site/):")
+        print("==========================================================")
         for name in missing:
             print(f"  - {name}")
+
+    if missing_in_skill:
+        print("\nMISSING FROM THE AGENT SKILL (skills/kerykeion, excluding api-index.md):")
+        print("========================================================================")
+        for name in missing_in_skill:
+            print(f"  - {name}")
+
+    if missing or missing_in_skill:
         return 1
 
     print("\nAll explicitly exported public APIs are documented.")

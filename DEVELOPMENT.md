@@ -107,6 +107,11 @@ uv run poe docs:snippets
 
 # Audit public-API documentation coverage
 uv run poe docs:check
+
+# Both gates also cover skills/kerykeion (the AI Agent Skill). Skill blocks
+# always run standalone — no import prelude, no shared page context — even in
+# the default docs:snippets run. Focused version:
+uv run poe docs:snippets:skill
 ```
 
 ## 📁 Project Structure
@@ -157,6 +162,7 @@ kerykeion/
 ├── tests/core/                      # Test suite (74 files)
 ├── examples/                        # Usage examples
 ├── site/docs/                       # Documentation source (markdown)
+├── skills/kerykeion/                # Cross-platform AI Agent Skill (agentskills.io)
 ├── release_notes/                   # Selective longer release notes
 ├── pyproject.toml                   # Project configuration
 ├── uv.lock                          # Dependency lock file
