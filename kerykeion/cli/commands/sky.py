@@ -18,7 +18,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Optional
 
-from kerykeion.cli import subject_resolver, warnings
+from kerykeion.cli import subject_resolver
+from kerykeion.cli.commands._shared import _emit, _split_csv, _parse_dt
 from kerykeion.cli.options import (
     CountOpt,
     FormatOpt,
@@ -35,7 +36,6 @@ from kerykeion.cli.options import (
     ToOpt,
     ZodiacSkyOpt,
 )
-from kerykeion.cli.rendering import formats
 from kerykeion.cli.typer_app import KerykeionTyper
 
 sky_app = KerykeionTyper(
@@ -44,28 +44,6 @@ sky_app = KerykeionTyper(
     no_args_is_help=True,
     add_completion=False,
 )
-
-
-def _emit(model: object, fmt: Optional[str], output: Optional[str]) -> None:
-    warnings.output_with_warnings(model, formats.resolve_format(fmt, output), output)
-
-
-def _split_csv(values: Optional[list[str]]) -> Optional[list[str]]:
-    if values is None:
-        return None
-    out: list[str] = []
-    for item in values:
-        out.extend(part.strip() for part in item.split(",") if part.strip())
-    return out or None
-
-
-def _parse_dt(value: str) -> datetime:
-    try:
-        return datetime.fromisoformat(value)
-    except ValueError as exc:
-        raise ValueError(
-            f"expected an ISO date or datetime (YYYY-MM-DD or YYYY-MM-DDThh:mm), got {value!r}"
-        ) from exc
 
 
 def _zodiac_kwargs(zodiac: Optional[str], sidereal_mode: Optional[str]) -> dict[str, Any]:

@@ -19,6 +19,7 @@ from __future__ import annotations
 from typing import Optional
 
 from kerykeion.cli import subject_resolver, warnings
+from kerykeion.cli.commands._shared import _emit as _emit_chart
 from kerykeion.cli.options import (
     DayOpt,
     FixedStarsFlag,
@@ -65,10 +66,6 @@ def _natal_chart(subject: object) -> object:
     # ``subject`` is the AstrologicalSubjectModel returned by resolve_subject;
     # typed ``object`` here because the resolver is intentionally untyped.
     return ChartDataFactory.create_natal_chart_data(subject)  # type: ignore[arg-type]
-
-
-def _emit_chart(chart: object, fmt: Optional[str], output: Optional[str]) -> None:
-    warnings.output_with_warnings(chart, formats.resolve_format(fmt, output), output)
 
 
 def _emit_subject_or_chart(subject: object, fmt: Optional[str], output: Optional[str]) -> None:

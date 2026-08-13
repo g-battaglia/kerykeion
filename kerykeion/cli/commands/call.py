@@ -25,7 +25,8 @@ from typing import Any, Optional
 
 import typer
 
-from kerykeion.cli import introspect, registry, subject_resolver, warnings
+from kerykeion.cli import introspect, registry, subject_resolver
+from kerykeion.cli.commands._shared import _emit
 from kerykeion.cli.options import (
     CallSubject2Opt,
     ExplainFlag,
@@ -37,10 +38,6 @@ from kerykeion.cli.options import (
     SubjectProfile,
 )
 from kerykeion.cli.rendering import formats
-
-
-def _emit(obj: object, fmt: Optional[str], output: Optional[str]) -> None:
-    warnings.output_with_warnings(obj, formats.resolve_format(fmt, output), output)
 
 
 def _list_targets() -> list[dict[str, object]]:

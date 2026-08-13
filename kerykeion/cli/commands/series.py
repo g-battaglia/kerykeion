@@ -11,9 +11,10 @@ unless ``--no-limit`` disables both the pre-check and the library's own guard.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, get_args
 
-from kerykeion.cli import subject_resolver, warnings
+from kerykeion.cli import subject_resolver
+from kerykeion.cli.commands._shared import _emit, _parse_dt
 from kerykeion.cli.options import (
     EventsFlag,
     FormatOpt,
@@ -32,23 +33,9 @@ from kerykeion.cli.options import (
     ToOpt,
     ZodiacTypeOpt,
 )
-from kerykeion.cli.rendering import formats
 from kerykeion.cli.sampling import StepType, check_ephemeris_sampling, validate_range
 
-_STEP_TYPES = ("days", "hours", "minutes")
-
-
-def _emit(model: object, fmt: Optional[str], output: Optional[str]) -> None:
-    warnings.output_with_warnings(model, formats.resolve_format(fmt, output), output)
-
-
-def _parse_dt(value: str) -> datetime:
-    try:
-        return datetime.fromisoformat(value)
-    except ValueError as exc:
-        raise ValueError(
-            f"expected an ISO date or datetime (YYYY-MM-DD[Thh:mm]), got {value!r}"
-        ) from exc
+_STEP_TYPES: tuple[StepType, ...] = get_args(StepType)
 
 
 def _resolve_range(from_: Optional[str], to: Optional[str], cmd: str) -> tuple[datetime, datetime]:

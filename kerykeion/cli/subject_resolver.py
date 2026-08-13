@@ -343,10 +343,7 @@ def _apply_calc_toggles(
     merged: dict[str, Any], flags: SubjectFlags
 ) -> None:
     """Fold ``--with`` / ``--without`` onto the calculate_* parameters."""
-    current = {
-        f"calculate_{k.replace('calculate_', '')}": merged.get(f"calculate_{k.replace('calculate_', '')}")
-        for k in _CALC_KEYS
-    }
+    current = {param: merged.get(param) for param in _CALC_KEYS.values()}
     for feature in flags.with_flags:
         key = _calc_param_for(feature)
         current[key] = True
@@ -584,7 +581,7 @@ def _kwargs_for(merged: dict[str, Any], mode: str) -> dict[str, Any]:
         if mode == "current"
         else AstrologicalSubjectFactory.from_iso_utc_time
     )
-    allowed = _FACTORY_PARAMS.setdefault(
-        mode, set(inspect.signature(method).parameters)
-    )
+    if mode not in _FACTORY_PARAMS:
+        _FACTORY_PARAMS[mode] = set(inspect.signature(method).parameters)
+    allowed = _FACTORY_PARAMS[mode]
     return {k: v for k, v in merged.items() if k in allowed}

@@ -14,7 +14,8 @@ from typing import Any, Optional
 
 import typer
 
-from kerykeion.cli import subject_resolver, warnings
+from kerykeion.cli import subject_resolver
+from kerykeion.cli.commands._shared import _emit, _split_csv
 from kerykeion.cli.commands.charts import _emit_subject_or_chart
 from kerykeion.cli.options import (
     AcgLatRangeOpt,
@@ -41,7 +42,6 @@ from kerykeion.cli.options import (
     YearsAfterOpt,
     YearsBeforeOpt,
 )
-from kerykeion.cli.rendering import formats
 from kerykeion.cli.typer_app import KerykeionTyper
 
 technique_app = KerykeionTyper(
@@ -56,20 +56,6 @@ def _need_subject(profile: Optional[str], cmd: str) -> object:
     if not profile:
         raise ValueError(f"{cmd} needs -s <profile>")
     return subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-
-
-def _emit(model: object, fmt: Optional[str], output: Optional[str]) -> None:
-    warnings.output_with_warnings(model, formats.resolve_format(fmt, output), output)
-
-
-def _split_csv(values: Optional[list[str]]) -> Optional[list[str]]:
-    """Flatten a repeatable option that may also carry comma-separated tokens."""
-    if values is None:
-        return None
-    out: list[str] = []
-    for item in values:
-        out.extend(part.strip() for part in item.split(",") if part.strip())
-    return out or None
 
 
 def _choose(value: Any, allowed: tuple[str, ...], label: str) -> Any:

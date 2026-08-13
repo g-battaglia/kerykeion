@@ -8,9 +8,9 @@ aliases as parameter annotations; typer reads the ``Option`` metadata from the
 ``Annotated`` wrapper. Only this style is used (not ``x: T = typer.Option(...)``)
 because pyright in basic mode flags the assignment form.
 
-Every alias is ``Optional`` with a ``None`` default so the resolver can tell
-"not given on the command line" apart from "given as this value" via
-:func:`kerykeion.cli.context.was_given`.
+Every alias is ``Optional`` with a ``None`` default: a ``None`` value means the
+flag was not supplied on the command line, so the resolver can tell "not given"
+apart from "given as this value".
 """
 
 from __future__ import annotations

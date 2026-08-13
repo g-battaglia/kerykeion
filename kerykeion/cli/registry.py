@@ -20,6 +20,7 @@ On top of the allowlist:
 
 from __future__ import annotations
 
+import functools
 import inspect
 from dataclasses import dataclass
 from typing import Any, Callable, Optional
@@ -61,6 +62,7 @@ def _is_protocol(obj: Any) -> bool:
     return isinstance(obj, type) and bool(getattr(obj, "_is_protocol", False))
 
 
+@functools.cache
 def public_names() -> dict[str, Any]:
     """The ``__all__`` names usable as the *owner* of a call target.
 

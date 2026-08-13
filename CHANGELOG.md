@@ -125,6 +125,22 @@ exit-code-classification path it could reach:
     surfaced as an error; an explicit `--seconds 0` is forwarded; `--param x=none`
     maps to `None` (matching `--set`).
 
+### Changed
+
+- **CLI internal consolidation, no behavior change.** The `_emit`/`_split_csv`/
+  `_parse_dt` helpers copied verbatim across the command modules now live in a
+  single leaf module `cli/commands/_shared.py` (a behaviour change — e.g. a newly
+  accepted datetime form — now lands in one place, not five); `series._STEP_TYPES`
+  is derived from the `StepType` `Literal` instead of restating its values;
+  `registry.public_names()` is cached (built once; every caller reads it); and the
+  dead `cli/context.py` (`was_given`/`kk()` had no callers) was removed, with the
+  stale `options.py` docstring that referenced `was_given`. As a side effect the
+  `--from`/`--to` parse error in `ephemeris`/`transits` now reads identically to
+  `sky`'s.
+- `subject_resolver._kwargs_for` computes each factory signature at most once per
+  mode: `dict.setdefault` evaluated its default (`inspect.signature(...)`) on every
+  call, defeating the intended cache (the result was always correct, just wasteful).
+
 ## 6.0.0a84 - 2026-08-12
 
 Structural release. No calculation changed and no public name moved:
