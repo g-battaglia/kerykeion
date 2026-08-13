@@ -57,7 +57,12 @@ def _collect(obj: Any, eph: list, polar: list, seen: set[int]) -> None:
         polar.append(item)
 
     # Chart-data wrappers and composite subjects nest their subjects directly.
-    for attr in ("subject", "first_subject", "second_subject"):
+    # ``subjects`` (plural) is a list of subjects on models such as
+    # ``RelationshipScoreModel``; the list/tuple branch below iterates it once
+    # it is handed to _collect, so listing it here is enough to reach the
+    # warnings on each nested subject — otherwise --warnings-as-errors (exit 9)
+    # would be silently bypassed for relationship-score payloads.
+    for attr in ("subject", "first_subject", "second_subject", "subjects"):
         child = getattr(obj, attr, None)
         if child is not None:
             _collect(child, eph, polar, seen)

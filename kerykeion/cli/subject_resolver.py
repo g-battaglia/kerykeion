@@ -532,7 +532,13 @@ def materialize(merged: dict[str, Any]):
     seconds = factory_kwargs.pop("seconds", None)
     hour, minute, parsed_seconds = parse_time(time_str)
     seconds = seconds if seconds is not None else parsed_seconds
-    if seconds:
+    # ``is not None`` (not truthiness): an explicit ``--seconds 0`` must reach
+    # the factory, not be dropped — same falsy-zero guard the codebase already
+    # applies to ``--step``. Today the factory default is ``seconds: int = 0``
+    # so the drop is latent, but the moment that default widens to
+    # ``Optional[int]`` (→ now.second, the pattern used for hour/minute) an
+    # explicit 0 would silently turn nondeterministic.
+    if seconds is not None:
         factory_kwargs["seconds"] = seconds
     # The birth date/time components are passed explicitly below; drop any
     # same-named keys (e.g. from a hand-edited profile's ``extra``) so they

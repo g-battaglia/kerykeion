@@ -206,6 +206,18 @@ def transit(
         raise ValueError(
             "--to-date also requires --to-time (omit both to transit the current moment)."
         )
+    # A relocated transit needs matching coordinates AND timezone. Letting the
+    # natal tz_str stand in when only --lat/--lng are overridden would localise
+    # the transit moment in the natal zone (e.g. Rome) at the new coordinates
+    # (e.g. New York) — a multi-hour UTC error in the houses/Ascendant, with no
+    # warning. Require the whole inline group, or none (use the natal place).
+    _geo_provided = [v for v in (lat, lng, tz) if v is not None]
+    if 0 < len(_geo_provided) < 3:
+        raise ValueError(
+            "a relocated transit needs --lat, --lng and --tz together (or none, "
+            "to use the natal birthplace); the natal timezone does not match new "
+            "coordinates."
+        )
     from kerykeion import ChartDataFactory
 
     natal = subject_resolver.resolve_subject(
@@ -291,6 +303,16 @@ def return_chart(
     rtype = return_type or "Solar"
     if rtype not in _RETURN_TYPES:
         raise ValueError(f"--type must be {' or '.join(_RETURN_TYPES)}, got {rtype!r}")
+    # Same relocated-location invariant as `transit`: --lat/--lng/--tz must be
+    # given together, otherwise the natal timezone would silently localise the
+    # return at the new coordinates (wrong houses/Ascendant).
+    _geo_provided = [v for v in (lat, lng, tz) if v is not None]
+    if 0 < len(_geo_provided) < 3:
+        raise ValueError(
+            "a relocated return needs --lat, --lng and --tz together (or none, "
+            "to use the natal birthplace); the natal timezone does not match new "
+            "coordinates."
+        )
     from kerykeion import ChartDataFactory, PlanetaryReturnFactory
 
     natal = subject_resolver.resolve_subject(

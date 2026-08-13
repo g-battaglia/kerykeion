@@ -22,6 +22,7 @@ from __future__ import annotations
 import collections.abc
 import inspect
 import json
+import types
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Any, Literal, Union, get_args, get_origin
@@ -31,6 +32,15 @@ CLI = "cli"
 JSON_ONLY = "json-only"
 SUBJECT = "subject"
 UNSUPPORTED = "unsupported"
+
+# Sentinel for "no coercion matched" (distinct from None, a valid coercion).
+_NO_MATCH = object()
+
+
+def _is_union(annotation: Any) -> bool:
+    """True for both ``typing.Union`` and PEP 604 ``X | Y`` (``types.UnionType``)."""
+    origin = get_origin(annotation)
+    return origin is Union or origin is types.UnionType
 
 
 @dataclass(frozen=True)
@@ -51,8 +61,7 @@ class ParamInfo:
 
 def _strip_optional(annotation: Any) -> Any:
     """Unwrap ``Optional[X]`` / ``Union[X, None]`` → ``X`` (best effort)."""
-    origin = get_origin(annotation)
-    if origin is Union:
+    if _is_union(annotation):
         args = [a for a in get_args(annotation) if a is not type(None)]
         if len(args) == 1:
             return args[0]
@@ -67,9 +76,9 @@ def _is_subject(annotation: Any) -> bool:
     # PlanetReturnModel`` (see ``kerykeion/aspects/factory.py``). A Union has no
     # ``__name__``, so the plain check above misses it and the parameter would be
     # misclassified JSON_ONLY, breaking ``call -s`` for every such target. Treat
-    # a Union as a subject binding site when any arm is one.
-    origin = get_origin(annotation)
-    if origin is Union:
+    # a Union as a subject binding site when any arm is one. Covers both
+    # ``typing.Union`` and PEP 604 ``X | Y``.
+    if _is_union(annotation):
         return any(_is_subject(arg) for arg in get_args(annotation))
     return False
 
@@ -102,9 +111,10 @@ def coerce_value(annotation: Any, raw: str) -> Any:
         return _coerce_scalar(raw)
 
     origin = get_origin(annotation)
-    if origin is Union:
+    if _is_union(annotation):
         # A multi-type union like ``int | float`` (after Optional stripping):
-        # try each member until one accepts the value.
+        # try each member until one accepts the value. Handles both
+        # ``typing.Union`` and PEP 604 ``X | Y``.
         args = [a for a in get_args(annotation) if a is not type(None)]
         last_error: Exception | None = None
         for arg in args:
@@ -119,6 +129,15 @@ def coerce_value(annotation: Any, raw: str) -> Any:
         choices = [a for a in get_args(annotation) if not isinstance(a, type)]
         if raw in choices:
             return raw
+        # A raw CLI string can never equal a non-string Literal member, so
+        # ``Literal[1, 2]`` would reject ``--param x=1`` outright. Coerce *raw*
+        # to each member's own type and compare by value AND type, so ``1``
+        # reaches an int Literal as ``1`` (and ``True``/``1`` do not collide,
+        # since ``type(coerced) is type(member)`` rules out the bool/int alias).
+        for member in choices:
+            coerced = _coerce_literal_member(member, raw)
+            if coerced is not _NO_MATCH and coerced == member and type(coerced) is type(member):
+                return coerced
         import difflib
 
         suggest = difflib.get_close_matches(raw, [str(c) for c in choices], n=1)
@@ -172,10 +191,44 @@ def coerce_value(annotation: Any, raw: str) -> Any:
     return raw
 
 
+def _coerce_literal_member(member: Any, raw: str) -> Any:
+    """Coerce *raw* to *member*'s own scalar type for a non-string Literal.
+
+    Returns the coerced value, or ``_NO_MATCH`` if *raw* cannot be that member.
+    ``bool`` is checked before ``int`` (a ``bool`` is an ``int`` subclass) so
+    ``Literal[True, False]`` is handled by the boolean branch rather than
+    misreading ``bool("False") == True``.
+    """
+    if isinstance(member, bool):
+        lowered = raw.lower()
+        if lowered in {"true", "1", "yes"}:
+            return True
+        if lowered in {"false", "0", "no"}:
+            return False
+        return _NO_MATCH
+    if isinstance(member, int):
+        try:
+            return int(raw)
+        except ValueError:
+            return _NO_MATCH
+    if isinstance(member, float):
+        try:
+            return float(raw)
+        except ValueError:
+            return _NO_MATCH
+    return _NO_MATCH
+
+
 def _coerce_scalar(raw: str) -> Any:
     lowered = raw.lower()
     if lowered in {"true", "false"}:
         return lowered == "true"
+    # Map none/null → None so the --param path agrees with --set
+    # (subject_resolver._coerce_set_value) on null sentinels; otherwise
+    # ``--param foo=none`` would reach the factory as the literal string
+    # "none" while ``--set foo=none`` persists JSON null.
+    if lowered in {"none", "null"}:
+        return None
     try:
         return int(raw)
     except ValueError:
@@ -210,7 +263,7 @@ def _classify(annotation: Any) -> str:
     origin = get_origin(annotation)
     if origin is Literal:
         return CLI
-    if origin is Union:
+    if _is_union(annotation):
         args = [a for a in get_args(annotation) if a is not type(None)]
         if all(
             a in (bool, int, float, str, datetime, date) or get_origin(a) is Literal for a in args

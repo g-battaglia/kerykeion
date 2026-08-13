@@ -18,7 +18,7 @@ step **before** constructing anything, and raise :class:`SamplingLimitError`
 from __future__ import annotations
 
 import inspect
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Literal
 
 from kerykeion.cli.errors import SamplingLimitError
@@ -44,6 +44,20 @@ def _ceiling_for(step_type: StepType) -> int | None:
     return default if isinstance(default, int) else None
 
 
+def _zone(tz_str: str):
+    """Resolve *tz_str* to a ZoneInfo, or None if it is unset/unknown."""
+    if tz_str is None:
+        return None
+    try:
+        from zoneinfo import ZoneInfo
+    except Exception:  # pragma: no cover
+        return None
+    try:
+        return ZoneInfo(tz_str)
+    except Exception:
+        return None
+
+
 def _utc_bounds(
     start: datetime, end: datetime, tz_str: str | None
 ) -> tuple[datetime, datetime]:
@@ -62,20 +76,57 @@ def _utc_bounds(
       the offset (a CPython optimisation documented for ``datetime.__sub__``),
       so ``end - start`` on two ``ZoneInfo``-aware datetimes silently collapses
       back to the wall-clock delta. Converting both to UTC first defeats that.
+
+    Naive bounds are localized with :func:`kerykeion.utilities.localize_naive`
+    at ``is_dst=False`` — the same call ``EphemerisDataFactory`` makes — so a
+    bound inside a DST fall-back fold resolves to the same UTC instant the
+    library would pick, rather than ``replace(tzinfo=tz)``'s ``fold=0`` default.
     """
     if tz_str is None:
         return start, end
-    try:
-        from zoneinfo import ZoneInfo
-
-        tz = ZoneInfo(tz_str)
-    except Exception:
+    tz = _zone(tz_str)
+    if tz is None:
         return start, end
-    from datetime import timezone
+    from kerykeion.utilities import localize_naive
 
-    s = start if start.tzinfo is not None else start.replace(tzinfo=tz)
-    e = end if end.tzinfo is not None else end.replace(tzinfo=tz)
+    s = start if start.tzinfo is not None else localize_naive(start, tz, is_dst=False)
+    e = end if end.tzinfo is not None else localize_naive(end, tz, is_dst=False)
     return s.astimezone(timezone.utc), e.astimezone(timezone.utc)
+
+
+def _to_local_naive(dt: datetime, tz_str: str | None) -> datetime:
+    """Convert an aware datetime to wall-clock naive in *tz_str*.
+
+    Mirrors ``EphemerisDataFactory._to_local_naive``: naive inputs and inputs
+    without a known zone are returned unchanged; aware inputs are converted to
+    the zone and stripped of ``tzinfo``. Used for the ``days`` count, which the
+    library takes on local calendar days (DST-independent) rather than UTC.
+    """
+    if dt.tzinfo is None or tz_str is None:
+        return dt
+    tz = _zone(tz_str)
+    if tz is None:
+        return dt
+    return dt.astimezone(tz).replace(tzinfo=None)
+
+
+def validate_range(start: datetime, end: datetime) -> None:
+    """Validate ``--from``/``--to`` awareness consistency and ordering.
+
+    Always run, independent of ``--no-limit``: ``--no-limit`` is meant to bypass
+    the *sample ceiling*, not range validation, so an inverted range still
+    surfaces the clean ``--to must not precede --from`` message instead of the
+    library's generic mid-run sampling error. Comparing a naive bound against an
+    aware one would otherwise raise ``TypeError: can't compare offset-naive and
+    offset-aware datetimes``; reject the mix up front with a usable message.
+    """
+    if (start.tzinfo is None) != (end.tzinfo is None):
+        raise ValueError(
+            "--from and --to must use the same ISO form (both offset-aware or "
+            f"both naive); got {start.isoformat()!r} and {end.isoformat()!r}."
+        )
+    if end < start:
+        raise ValueError("--to must not precede --from.")
 
 
 def count_samples(
@@ -91,18 +142,20 @@ def count_samples(
     check agrees with the guard that would fire anyway:
 
     * ``days`` — ``(local_end - local_start).days // step + 1`` on wall-clock
-      naive bounds (DST-independent; a local date is never skipped).
+      naive bounds in *tz_str* (DST-independent; a local date is never skipped),
+      matching ``EphemerisDataFactory``'s local-naive day difference.
     * ``hours`` / ``minutes`` — ``int(utc_delta_seconds / unit) // step + 1``,
       where the delta is measured in UTC so a DST transition counts the extra
       hour. Pass *tz_str* or the span stays wall-clock and silently disagrees
       with the library near a DST boundary.
     """
+    validate_range(start, end)
     if step <= 0:
         raise ValueError("--step must be a positive integer.")
-    if end < start:
-        raise ValueError("--to must not precede --from.")
     if step_type == "days":
-        span_units = (end - start).days
+        local_start = _to_local_naive(start, tz_str)
+        local_end = _to_local_naive(end, tz_str)
+        span_units = (local_end - local_start).days
     else:
         s_utc, e_utc = _utc_bounds(start, end, tz_str)
         unit_seconds = 3_600 if step_type == "hours" else 60

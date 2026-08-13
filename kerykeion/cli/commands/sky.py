@@ -71,10 +71,17 @@ def _parse_dt(value: str) -> datetime:
 def _zodiac_kwargs(zodiac: Optional[str], sidereal_mode: Optional[str]) -> dict[str, Any]:
     kwargs: dict[str, Any] = {}
     if zodiac is not None:
-        z = zodiac.strip()
-        if z not in ("Tropical", "Sidereal"):
+        # Case-insensitive, matching kerykeion.utilities.normalize_zodiac_type
+        # (which the factories themselves call): the CLI must not be stricter
+        # than the library and reject ``--zodiac tropical``/``SIDEREAL`` the
+        # factory would accept. Map to the canonical Literal values.
+        z = zodiac.strip().lower()
+        if z in ("tropical", "tropic"):
+            kwargs["zodiac_type"] = "Tropical"
+        elif z == "sidereal":
+            kwargs["zodiac_type"] = "Sidereal"
+        else:
             raise ValueError("--zodiac must be Tropical or Sidereal")
-        kwargs["zodiac_type"] = z
     if sidereal_mode is not None:
         kwargs["sidereal_mode"] = sidereal_mode
     return kwargs
@@ -83,12 +90,17 @@ def _zodiac_kwargs(zodiac: Optional[str], sidereal_mode: Optional[str]) -> dict[
 def _location(
     profile: Optional[str], lat: Optional[float], lng: Optional[float], tz: Optional[str], cmd: str
 ) -> tuple[float, float, str]:
-    """Resolve (lat, lng, tz) from a profile or inline flags."""
+    """Resolve (lat, lng, tz) from a profile or inline flags.
+
+    Inline flags take precedence over the profile (universal CLI convention: an
+    explicit value wins), so a relocated reading is honoured even when a profile
+    supplies the birthplace — mirroring ``charts.transit``.
+    """
     if profile:
         subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-        lat_v = getattr(subject, "lat", None)
-        lng_v = getattr(subject, "lng", None)
-        tz_v = getattr(subject, "tz_str", None)
+        lat_v = lat if lat is not None else getattr(subject, "lat", None)
+        lng_v = lng if lng is not None else getattr(subject, "lng", None)
+        tz_v = tz if tz is not None else getattr(subject, "tz_str", None)
         if lat_v is None or lng_v is None or tz_v is None:
             raise ValueError(f"the {cmd} profile has no lat/lng/tz to derive a location from")
         return float(lat_v), float(lng_v), str(tz_v)
@@ -100,17 +112,42 @@ def _location(
 def _latlng(
     profile: Optional[str], lat: Optional[float], lng: Optional[float], cmd: str
 ) -> tuple[float, float]:
-    """Resolve (lat, lng) only — for commands that take no timezone (eclipses)."""
+    """Resolve (lat, lng) only — for commands that take no timezone (eclipses).
+
+    Inline flags take precedence over the profile (see :func:`_location`).
+    """
     if profile:
         subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-        lat_v = getattr(subject, "lat", None)
-        lng_v = getattr(subject, "lng", None)
+        lat_v = lat if lat is not None else getattr(subject, "lat", None)
+        lng_v = lng if lng is not None else getattr(subject, "lng", None)
         if lat_v is None or lng_v is None:
             raise ValueError(f"the {cmd} profile has no lat/lng to derive a location from")
         return float(lat_v), float(lng_v)
     if lat is None or lng is None:
         raise ValueError(f"{cmd} needs -s <profile> or --lat/--lng")
     return lat, lng
+
+
+def _attach_tz_offset(value: str, tz_str: Optional[str], cmd: str) -> str:
+    """Return *value* as an ISO string, attaching *tz_str*'s offset if naive.
+
+    ``VoidOfCourseMoonFactory.from_iso_range`` is UTC-only: naive ISO bounds are
+    read as UTC. When the user gives ``--tz`` (or ``-s`` a profile with a zone)
+    we interpret a naive bound in that zone and emit an offset-aware ISO string,
+    so the library converts it to the UTC instant the user meant.
+    """
+    if tz_str is None:
+        return value
+    dt = _parse_dt(value)
+    if dt.tzinfo is not None:
+        return value
+    from zoneinfo import ZoneInfo
+
+    try:
+        tz = ZoneInfo(tz_str)
+    except Exception:
+        raise ValueError(f"{cmd}: unknown timezone {tz_str!r}") from None
+    return dt.replace(tzinfo=tz).isoformat()
 
 
 def _moment(value: Optional[str], cmd: str, tz_str: Optional[str] = None) -> datetime:
@@ -127,6 +164,12 @@ def _moment(value: Optional[str], cmd: str, tz_str: Optional[str] = None) -> dat
 
     Seconds are truncated: the ``from_datetime`` factories do not accept them
     (sub-minute lunar motion, at most ~0.008°, is below their resolution).
+
+    An aware instant that lands on the *second* reading of a DST fall-back
+    (``fold=1``) cannot be carried through the naive components — the factories
+    rebuild without ``fold`` and would silently pick the first reading, shifting
+    the instant by one hour. That ambiguity is surfaced as an error instead of
+    guessed.
     """
     if value is None:
         raise ValueError(f"{cmd} needs --from (an ISO date or datetime)")
@@ -134,7 +177,15 @@ def _moment(value: Optional[str], cmd: str, tz_str: Optional[str] = None) -> dat
     if dt.tzinfo is not None and tz_str:
         from zoneinfo import ZoneInfo
 
-        dt = dt.astimezone(ZoneInfo(tz_str)).replace(tzinfo=None)
+        local = dt.astimezone(ZoneInfo(tz_str))
+        if local.fold:
+            raise ValueError(
+                f"{cmd}: {value!r} falls on an ambiguous wall time in "
+                f"{tz_str!r} (the second reading of a DST fall-back). The moment "
+                "factories take wall-clock components without DST disambiguation; "
+                "use a non-ambiguous moment or drop the UTC offset."
+            )
+        dt = local.replace(tzinfo=None)
     return dt
 
 
@@ -204,7 +255,16 @@ def voc(
     if to is not None:
         if from_ is None:
             raise ValueError("voc --to also needs --from")
-        model = VoidOfCourseMoonFactory.from_iso_range(from_, to, **extra)
+        # from_iso_range is UTC-only; honour --tz (or a profile's timezone) by
+        # attaching that zone's offset to naive bounds so the library converts
+        # them to the intended UTC instants rather than reading them as UTC.
+        range_tz = tz
+        if range_tz is None and profile:
+            subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+            range_tz = getattr(subject, "tz_str", None)
+        start_iso = _attach_tz_offset(from_, range_tz, "voc")
+        end_iso = _attach_tz_offset(to, range_tz, "voc")
+        model = VoidOfCourseMoonFactory.from_iso_range(start_iso, end_iso, **extra)
     else:
         tz_str = tz
         if tz_str is None and profile:

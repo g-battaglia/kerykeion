@@ -910,3 +910,222 @@ class TestThirdReviewPass:
         monkeypatch.setattr(sys, "stderr", captured)
         _w.output_with_warnings(_Sink(), "json", None, warning_source=_Subject())
         assert "kerykeion: warning:" in captured.getvalue()
+
+
+class TestXhighReviewFixes:
+    """Regressions surfaced by the extra-high-effort (xhigh) review pass."""
+
+    # transit: a partially-supplied relocated location is rejected, not silently
+    # localised at the natal timezone (a multi-hour UTC error in houses/ASC).
+    def test_transit_partial_geo_override_is_rejected(self, runner, app, ada_profile):
+        r = runner.invoke(
+            app, ["transit", "-s", ada_profile, "--lat", "40.0", "--lng", "-74.0"]
+        )
+        assert r.exit_code == 4
+        assert "relocated transit needs --lat, --lng and --tz together" in r.output
+
+    def test_return_partial_geo_override_is_rejected(self, runner, app, ada_profile):
+        r = runner.invoke(
+            app,
+            ["return", "-s", ada_profile, "--year", "2025",
+             "--lat", "40.0", "--lng", "-74.0"],
+        )
+        assert r.exit_code == 4
+        assert "relocated return needs --lat, --lng and --tz together" in r.output
+
+    # sky: inline --lat/--lng/--tz take precedence over the profile's location.
+    def test_sky_location_inline_overrides_profile(self, ada_profile):
+        from kerykeion.cli.commands.sky import _latlng, _location
+
+        # ada is London (51.5074 / -0.1278); inline 40 / 10 wins.
+        assert _location(ada_profile, 40.0, 10.0, "Europe/Rome", "t") == (
+            40.0, 10.0, "Europe/Rome",
+        )
+        assert _latlng(ada_profile, 40.0, 10.0, "t") == (40.0, 10.0)
+        # Without inline flags the profile is used.
+        lat, _lng, _tz = _location(ada_profile, None, None, None, "t")
+        assert abs(lat - 51.5074) < 1e-3
+
+    # sky voc range: --tz is honoured by attaching the zone's offset to naive
+    # bounds (from_iso_range is UTC-only).
+    def test_sky_attach_tz_offset_for_naive_bound(self):
+        from kerykeion.cli.commands.sky import _attach_tz_offset
+
+        # Rome summer is +02:00; a naive bound becomes offset-aware.
+        assert _attach_tz_offset("2025-06-01T00:00:00", "Europe/Rome", "voc") == (
+            "2025-06-01T00:00:00+02:00"
+        )
+        # Already-aware bounds pass through unchanged.
+        assert _attach_tz_offset("2025-06-01T00:00:00+00:00", "Europe/Rome", "voc") == (
+            "2025-06-01T00:00:00+00:00"
+        )
+        assert _attach_tz_offset("2025-06-01T00:00:00", None, "voc") == (
+            "2025-06-01T00:00:00"
+        )
+        with pytest.raises(ValueError):
+            _attach_tz_offset("2025-06-01T00:00:00", "Not/A/Zone", "voc")
+
+    # warnings: a plural `subjects` list (RelationshipScoreModel) is recursed.
+    def test_collect_warnings_recurses_plural_subjects(self):
+        from kerykeion.cli.warnings import collect_warnings
+
+        class _Warn:
+            code = "X"
+            point_name = "Moon"
+            message = "boom"
+
+        class _Subj:
+            ephemeris_warnings = [_Warn()]
+            polar_house_fallbacks = None
+
+        class _Score:
+            ephemeris_warnings = None
+            polar_house_fallbacks = None
+            subjects = [_Subj()]
+
+        eph, _polar = collect_warnings(_Score())
+        assert len(eph) == 1
+
+    # introspect: non-string Literal members coerce by value AND type.
+    def test_coerce_value_non_string_literal(self):
+        from typing import Literal
+
+        from kerykeion.cli.introspect import coerce_value
+
+        assert coerce_value(Literal[1, 2], "1") == 1
+        assert coerce_value(Literal[1, 2], "2") == 2
+        assert type(coerce_value(Literal[1, 2], "1")) is int
+        with pytest.raises(ValueError):
+            coerce_value(Literal[1, 2], "3")
+        # bool Literal stays boolean (no bool/int aliasing).
+        assert coerce_value(Literal[True, False], "true") is True
+        assert coerce_value(Literal[True, False], "false") is False
+
+    # introspect: PEP 604 `X | Y` unions are classified/coerced, not misread.
+    def test_introspect_handles_pep604_union(self):
+        from kerykeion import AstrologicalSubjectModel
+        from kerykeion.cli.introspect import _classify, _is_subject, _strip_optional
+
+        assert _strip_optional(int | None) is int
+        assert _classify(int | str | None) == "cli"
+        # A PEP 604 subject union is recognised as a subject binding site.
+        assert _is_subject(AstrologicalSubjectModel | None) is True
+
+    # sampling: mixed offset-aware/naive bounds raise a clean ValueError.
+    def test_count_samples_mixed_awareness_is_clean_error(self):
+        from datetime import datetime, timezone
+
+        from kerykeion.cli.sampling import count_samples
+
+        with pytest.raises(ValueError, match="same ISO form"):
+            count_samples(
+                datetime(2024, 1, 1),
+                datetime(2024, 12, 31, tzinfo=timezone.utc),
+                "days", 1,
+            )
+
+    # sky: --zodiac accepts the casing the library accepts.
+    def test_zodiac_kwargs_case_insensitive(self):
+        from kerykeion.cli.commands.sky import _zodiac_kwargs
+
+        assert _zodiac_kwargs("tropical", None)["zodiac_type"] == "Tropical"
+        assert _zodiac_kwargs("SIDEREAL", None)["zodiac_type"] == "Sidereal"
+        assert _zodiac_kwargs("Tropic", None)["zodiac_type"] == "Tropical"  # legacy
+        with pytest.raises(ValueError):
+            _zodiac_kwargs("galactic", None)
+
+    # series: --no-limit no longer skips the inverted-range check.
+    def test_no_limit_still_rejects_inverted_range(self, runner, app):
+        r = runner.invoke(
+            app,
+            ["ephemeris", "--lat", "0", "--lng", "0", "--tz", "UTC",
+             "--from", "2025-12-31", "--to", "2025-01-01", "--no-limit"],
+        )
+        assert r.exit_code == 4
+        assert "must not precede" in r.output
+
+    # sky _moment: an aware instant in the fold's second reading is surfaced.
+    def test_moment_rejects_ambiguous_fold(self):
+        from kerykeion.cli.commands.sky import _moment
+
+        # 2024-10-27 01:30 UTC = 02:30 Europe/Rome, the second (CET/fold=1) reading.
+        with pytest.raises(ValueError, match="ambiguous wall time"):
+            _moment("2024-10-27T01:30:00+00:00", "hours", "Europe/Rome")
+
+    # sampling: the hours count across a fold bound matches the library
+    # (localize_naive is_dst=False, not replace(tzinfo=tz) fold=0).
+    def test_utc_bounds_fold_matches_library(self):
+        from datetime import datetime
+
+        from kerykeion import EphemerisDataFactory
+        from kerykeion.cli.sampling import count_samples
+
+        # Both bounds sit inside Rome's 2024-10-27 fall-back fold.
+        start = datetime(2024, 10, 27, 1, 30)
+        end = datetime(2024, 10, 27, 2, 30)
+        cli = count_samples(start, end, "hours", 1, tz_str="Europe/Rome")
+        factory = EphemerisDataFactory(
+            start, end, step_type="hours", step=1, tz_str="Europe/Rome", is_dst=False
+        )
+        factory.get_ephemeris_data(as_model=True)
+        assert cli == len(factory.dates_list)
+
+    # sampling: days count on aware bounds spanning DST matches the library.
+    def test_days_count_aware_matches_library_across_dst(self):
+        from datetime import datetime, timezone
+
+        from kerykeion import EphemerisDataFactory
+        from kerykeion.cli.sampling import count_samples
+
+        start = datetime(2024, 3, 30, 12, 0, tzinfo=timezone.utc)
+        end = datetime(2024, 3, 31, 12, 0, tzinfo=timezone.utc)
+        cli = count_samples(start, end, "days", 1, tz_str="Europe/Rome")
+        factory = EphemerisDataFactory(
+            start, end, step_type="days", step=1, tz_str="Europe/Rome"
+        )
+        factory.get_ephemeris_data(as_model=True)
+        assert cli == len(factory.dates_list) == 2
+
+    # subject_resolver: explicit --seconds 0 is forwarded to the factory rather
+    # than dropped by `if seconds:` truthiness (latent today — the factory
+    # default is 0 — but the codebase already fixed this antipattern for --step).
+    def test_seconds_zero_is_forwarded_to_factory(self, monkeypatch):
+        import inspect
+
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.cli import subject_resolver as sr
+
+        captured = {}
+        # Preserve the real parameter names on the spy: _kwargs_for introspects
+        # the factory signature on every call, so a bare (*args, **kwargs) spy
+        # would make it filter "seconds" out before the call reaches the spy.
+        real_params = list(
+            inspect.signature(AstrologicalSubjectFactory.from_birth_data).parameters.values()
+        )
+
+        def _spy(*args, **kwargs):
+            captured.update(kwargs)
+            return object()  # only the forwarded kwargs matter here
+
+        _spy.__signature__ = inspect.Signature(parameters=real_params)
+        monkeypatch.setattr(AstrologicalSubjectFactory, "from_birth_data", _spy)
+        flags = sr.build_flags(
+            name="A", date="2000-01-01", time="12:30:45", seconds=0,
+            iso_utc=None, lat=45.0, lng=9.0, tz="Europe/Rome", city=None,
+            nation=None, online=None, offline=True, altitude=None, zodiac=None,
+            sidereal_mode=None, houses=None, perspective=None, points=None,
+            fixed_stars=None, with_flags=None, without_flags=None, set_flags=None,
+        )
+        sr.resolve_subject(flags, None)
+        # Without the fix seconds=0 is dropped (absent); with it, forwarded as 0.
+        assert captured.get("seconds") == 0
+
+    # introspect: --param none / null maps to None, matching --set.
+    def test_coerce_scalar_maps_none_to_None(self):
+        from typing import Any
+
+        from kerykeion.cli.introspect import coerce_value
+
+        assert coerce_value(Any, "none") is None
+        assert coerce_value(Any, "null") is None
+        assert coerce_value(Any, "0") == 0

@@ -103,6 +103,27 @@ exit-code-classification path it could reach:
     a `-s` lookup miss no longer creates the profile store as a side effect; the
     `--traceback`/`--warnings-as-errors` knobs are reset between in-process test
     runs so the suite is no longer order-dependent.
+- A fourth review pass (extra-high effort) closed a further round of CLI gaps:
+  - The sampling pre-flight now matches `EphemerisDataFactory` to the sample:
+    hours/minutes bounds localise via the public `kerykeion.utilities.localize_naive`
+    (`is_dst=False`, the factory's own default) and aware bounds are converted to
+    local-naive before counting days — so exit 8 fires exactly when the library's
+    own ceiling would. This overturns a third-pass deferral (`localize_naive` is
+    public, so the coupling is sound). `transits` materialises the natal before the
+    pre-flight so online/city profiles (whose recipe `tz_str` is `None`) get a
+    DST-aware count; `--no-limit` no longer skips range validation; mixed
+    offset-aware/naive `--from`/`--to` raise a clean error.
+  - A relocated `transit`/`return` with only `--lat`/`--lng` (no `--tz`) is a clean
+    exit 4 instead of silently localising at the natal timezone; inline
+    `--lat`/`--lng`/`--tz` override the profile in `sky` (an explicit value wins);
+    `sky voc --from … --to …` honours `--tz`/`-s` (`from_iso_range` is UTC-only);
+    `--warnings-as-errors` is no longer bypassed for relationship scores (the
+    plural `subjects` list is now recursed).
+  - `--zodiac` is case-insensitive (matching `normalize_zodiac_type`); a non-string
+    `Literal` parameter coerces by value and type; PEP 604 `X | Y` unions classify
+    like `typing.Union`; an aware `--from` on a DST fall-back's second reading is
+    surfaced as an error; an explicit `--seconds 0` is forwarded; `--param x=none`
+    maps to `None` (matching `--set`).
 
 ## 6.0.0a84 - 2026-08-12
 

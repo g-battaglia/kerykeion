@@ -33,7 +33,7 @@ from kerykeion.cli.options import (
     ZodiacTypeOpt,
 )
 from kerykeion.cli.rendering import formats
-from kerykeion.cli.sampling import StepType, check_ephemeris_sampling
+from kerykeion.cli.sampling import StepType, check_ephemeris_sampling, validate_range
 
 _STEP_TYPES = ("days", "hours", "minutes")
 
@@ -87,6 +87,10 @@ def ephemeris(
     step_n = step if step is not None else 1
     if step_n <= 0:
         raise ValueError("--step must be a positive integer.")
+    # Range validation runs unconditionally: --no-limit bypasses the sample
+    # ceiling, not an inverted or mixed-awareness range, which would otherwise
+    # surface as the library's generic 'No dates found' error.
+    validate_range(start, end)
     if not no_limit:
         check_ephemeris_sampling(start, end, stype, step_n, tz_str=tz)
 
@@ -149,18 +153,18 @@ def transits(
     step_n = step if step is not None else 1
     if step_n <= 0:
         raise ValueError("--step must be a positive integer.")
-    # Read the natal tz from the profile recipe so the pre-flight sample count
-    # is DST-aware (the library counts in the natal timezone); the heavy natal
-    # materialization only runs once the check has passed. Let a missing or
-    # unreadable profile surface now (clear exit 4) rather than swallowing the
-    # error and falling through to an unrelated sampling-limit message.
-    from kerykeion.cli import profiles as _profiles
-
-    natal_tz: Optional[str] = _profiles.load(_profiles.resolve_path(profile)).input.tz_str
+    # Range validation runs unconditionally even with --no-limit (see ephemeris).
+    validate_range(start, end)
+    # Materialise the natal before the pre-flight so its *resolved* timezone
+    # (not the stored recipe value) drives the DST-aware sample count: an
+    # online/city profile keeps tz_str=None in the recipe (the zone is resolved
+    # by GeoNames only at materialisation), so reading the recipe would run the
+    # count DST-unaware and diverge from the library. The materialisation is one
+    # subject build — negligible next to the series it guards.
+    natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+    natal_tz = getattr(natal, "tz_str", None)
     if not no_limit:
         check_ephemeris_sampling(start, end, stype, step_n, tz_str=natal_tz)
-
-    natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
     # Inherit the natal frame so the transit wheel matches the natal one.
     eph_kwargs: dict[str, Any] = dict(step_type=stype, step=step_n)
     if no_limit:
