@@ -140,6 +140,16 @@ exit-code-classification path it could reach:
 - `subject_resolver._kwargs_for` computes each factory signature at most once per
   mode: `dict.setdefault` evaluated its default (`inspect.signature(...)`) on every
   call, defeating the intended cache (the result was always correct, just wasteful).
+- **CLI cleanup hardened after review.** `registry.public_names()` now returns a
+  read-only `types.MappingProxyType`: it is `@functools.cache`d and shared by every
+  caller (`resolve_target`, `call --list`, `--explain`), so the map must be
+  immutable — a mutation would leak across the process. `subject_resolver`'s
+  signature cache converges to the same pattern (`@functools.cache` returning an
+  immutable `frozenset`), replacing the hand-rolled `_FACTORY_PARAMS` global. The
+  consolidation was also finished: `subject show`/`list` now use the shared `_emit`
+  (only `verify`, which passes `warning_source=`, stays inline), the ceremony-only
+  `_emit as _emit_chart` alias in `charts` was dropped, and the `--from` help text
+  matches the parse-error wording.
 
 ## 6.0.0a84 - 2026-08-12
 

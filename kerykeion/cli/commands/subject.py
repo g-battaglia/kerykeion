@@ -15,6 +15,7 @@ from typing import Optional
 import typer
 
 from kerykeion.cli import config, profiles, subject_resolver, warnings
+from kerykeion.cli.commands._shared import _emit
 from kerykeion.cli.options import (
     FixedStarsFlag,
     FormatOpt,
@@ -112,11 +113,10 @@ def show(
     """Print a stored profile (recipe + provenance)."""
     path = profiles.resolve_path(profile_spec)
     profile = profiles.load(path)
-    resolved = formats.resolve_format(fmt, output)
     # Route through the warnings funnel for parity with the compute commands
     # (a recipe carries no ephemeris warnings, so this is a no-op for warnings,
     # but it keeps --warnings-as-errors uniformly honoured across subcommands).
-    warnings.output_with_warnings(profile, resolved, output)
+    _emit(profile, fmt, output)
 
 
 @subject_app.command("list")
@@ -125,8 +125,7 @@ def list_cmd(
 ) -> None:
     """List profile names in the store (text: one per line; pipe: JSON array)."""
     names = profiles.list_profiles()
-    resolved = formats.resolve_format(fmt, None)
-    warnings.output_with_warnings(names, resolved, None)
+    _emit(names, fmt, None)
 
 
 @subject_app.command("path")

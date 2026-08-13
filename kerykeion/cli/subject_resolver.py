@@ -19,6 +19,7 @@ Non-obvious mappings live here and nowhere else:
 
 from __future__ import annotations
 
+import functools
 import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
@@ -560,15 +561,13 @@ def resolve_subject(
     return materialize(merge_inputs(flags, profile_spec))
 
 
-_FACTORY_PARAMS: dict[str, set[str]] = {}
+@functools.cache
+def _factory_params(mode: str) -> frozenset[str]:
+    """The parameter names accepted by the factory method for *mode*.
 
-
-def _kwargs_for(merged: dict[str, Any], mode: str) -> dict[str, Any]:
-    """Drop keys the chosen factory method does not accept.
-
-    Guards against a recipe or --set carrying a key valid for ``from_birth_data``
-    (e.g. ``is_dst``, ``cache_expire_after_days``) into ``from_iso_utc_time``,
-    which would raise ``TypeError`` from an unexpected keyword.
+    Cached and immutable (a ``frozenset``): the signature is resolved once per
+    mode and shared, but callers cannot mutate it — matching
+    :func:`registry.public_names`, which returns a read-only ``MappingProxyType``.
     """
     import inspect
 
@@ -581,7 +580,15 @@ def _kwargs_for(merged: dict[str, Any], mode: str) -> dict[str, Any]:
         if mode == "current"
         else AstrologicalSubjectFactory.from_iso_utc_time
     )
-    if mode not in _FACTORY_PARAMS:
-        _FACTORY_PARAMS[mode] = set(inspect.signature(method).parameters)
-    allowed = _FACTORY_PARAMS[mode]
+    return frozenset(inspect.signature(method).parameters)
+
+
+def _kwargs_for(merged: dict[str, Any], mode: str) -> dict[str, Any]:
+    """Drop keys the chosen factory method does not accept.
+
+    Guards against a recipe or --set carrying a key valid for ``from_birth_data``
+    (e.g. ``is_dst``, ``cache_expire_after_days``) into ``from_iso_utc_time``,
+    which would raise ``TypeError`` from an unexpected keyword.
+    """
+    allowed = _factory_params(mode)
     return {k: v for k, v in merged.items() if k in allowed}

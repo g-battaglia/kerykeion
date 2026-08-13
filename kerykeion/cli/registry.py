@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import functools
 import inspect
+import types
 from dataclasses import dataclass
 from typing import Any, Callable, Optional
 
@@ -63,12 +64,14 @@ def _is_protocol(obj: Any) -> bool:
 
 
 @functools.cache
-def public_names() -> dict[str, Any]:
+def public_names() -> types.MappingProxyType[str, Any]:
     """The ``__all__`` names usable as the *owner* of a call target.
 
     Excludes exceptions and Protocols outright. Pydantic models are kept in the
     map (so ``--explain`` can describe them) but :func:`resolve_target` refuses
-    to invoke a bare model.
+    to invoke a bare model. Cached and returned read-only (a
+    :class:`types.MappingProxyType`): every caller shares the one object, so it
+    must not be mutable.
     """
     import kerykeion
 
@@ -82,7 +85,7 @@ def public_names() -> dict[str, Any]:
         if _is_exception(obj) or _is_protocol(obj):
             continue
         out[name] = obj
-    return out
+    return types.MappingProxyType(out)
 
 
 def _params_of(fn: Callable[..., Any]) -> dict[str, inspect.Parameter]:

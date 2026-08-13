@@ -275,6 +275,18 @@ class TestCallDispatcher:
         r = runner.invoke(app, ["call", "NoSuchFactory.method"])
         assert r.exit_code == 4
 
+    def test_public_names_is_immutable_and_cached(self):
+        # public_names() is @functools.cache'd, so resolve_target, `call --list`
+        # and `--explain` all share ONE object. It must be immutable, or a future
+        # caller filtering/extending it (names.pop(...) / names[x] = y) would leak
+        # into every later dispatch in the process.
+        import kerykeion.cli.registry as registry
+
+        first = registry.public_names()
+        assert registry.public_names() is first  # cached → same object
+        with pytest.raises(TypeError):
+            first["__inject__"] = object()
+
 
 # ── entry point & import isolation (subprocess — CliRunner can't show these) ──
 

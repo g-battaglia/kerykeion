@@ -397,7 +397,7 @@ FromOpt = Annotated[
     Optional[str],
     typer.Option(
         "--from",
-        help="Range start (ISO date or datetime YYYY-MM-DD[Thh:mm]). "
+        help="Range start (ISO date or datetime: YYYY-MM-DD or YYYY-MM-DDThh:mm). "
         "For sun-times/hours/eclipses this is a single moment or start year.",
         rich_help_panel="Range",
     ),

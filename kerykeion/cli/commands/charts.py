@@ -19,7 +19,7 @@ from __future__ import annotations
 from typing import Optional
 
 from kerykeion.cli import subject_resolver, warnings
-from kerykeion.cli.commands._shared import _emit as _emit_chart
+from kerykeion.cli.commands._shared import _emit
 from kerykeion.cli.options import (
     DayOpt,
     FixedStarsFlag,
@@ -167,7 +167,7 @@ def synastry(
     first = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
     second = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject2)
     chart = ChartDataFactory.create_synastry_chart_data(first, second)
-    _emit_chart(chart, fmt, output)
+    _emit(chart, fmt, output)
 
 
 def transit(
@@ -248,7 +248,7 @@ def transit(
     )
     transit_subject = subject_resolver.resolve_subject(transit_flags, None)
     chart = ChartDataFactory.create_transit_chart_data(natal, transit_subject)
-    _emit_chart(chart, fmt, output)
+    _emit(chart, fmt, output)
 
 
 def composite(
@@ -268,7 +268,7 @@ def composite(
     second = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject2)
     composite_subject = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
     chart = ChartDataFactory.create_composite_chart_data(composite_subject)
-    _emit_chart(chart, fmt, output)
+    _emit(chart, fmt, output)
 
 
 def return_chart(
@@ -342,7 +342,7 @@ def return_chart(
         year, month, day, return_type=rtype  # type: ignore[arg-type]  # validated above
     )
     chart = ChartDataFactory.create_return_chart_data(natal, return_subject)
-    _emit_chart(chart, fmt, output)
+    _emit(chart, fmt, output)
 
 
 def progression(
@@ -365,4 +365,4 @@ def progression(
     natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
     progressed = SecondaryProgressionFactory.compute(natal, target_year=target_year)
     chart = ChartDataFactory.create_progression_chart_data(natal, progressed)
-    _emit_chart(chart, fmt, output)
+    _emit(chart, fmt, output)
