@@ -23,8 +23,9 @@ fonts themselves are not redistributed by this project.
     redistributed.")
    Used for: the classic glyphs — the twelve zodiac signs; Sun's font family is
    not used (Sun is clean-room); Moon, Mercury, Venus, Mars, Jupiter, Saturn,
-   Neptune, Chiron; Mean/True Lilith; the lunar nodes; Ceres, Pallas, Juno,
-   Vesta; and the retrograde marker.
+   Neptune, Chiron; Mean/True/Interpolated Lilith and Mean/True Priapus (the
+   Lilith glyph rotated); Ceres, Pallas, Juno, Vesta; and the retrograde marker.
+   The lunar nodes are NOT from Symbola — they are clean-room, see 3 below.
    No attribution is required; it is recorded here as a courtesy.
 
 2. Noto Sans Symbols 2 — The Noto Project Authors (Google)
@@ -41,11 +42,12 @@ fonts themselves are not redistributed by this project.
 
 3. Clean-room original artwork — Kerykeion
    Original geometry drawn for this project: Sun, Earth, Uranus, Pluto, Ixion,
-   the fixed-star marker, the midpoint marker, Vertex / Anti-Vertex / East Point,
-   the Arabic parts (Fortunae, Spiritus, Amoris, Fidei) and all aspect glyphs
-   (conjunction, opposition, square, trine, sextile, semi-sextile, semi-square,
-   sesquiquadrate, quintile, biquintile, quincunx). The Ascendant / MC /
-   Descendant / Imum Coeli markers are plain text labels.
+   the four lunar nodes (Mean/True, North/South), White Moon, Interpolated
+   Perigee, the fixed-star marker, the midpoint marker, Vertex / Anti-Vertex /
+   East Point, the Arabic parts (Fortunae, Spiritus, Amoris, Fidei) and all
+   aspect glyphs (conjunction, opposition, square, trine, sextile, semi-sextile,
+   semi-square, sesquiquadrate, quintile, biquintile, quincunx). The Ascendant /
+   MC / Descendant / Imum Coeli markers are plain text labels.
 
 --------------------------------------------------------------------------------
 Runtime dependencies (installed from PyPI, not bundled in this package)

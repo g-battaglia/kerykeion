@@ -1,20 +1,29 @@
 #!/usr/bin/env python3
 """Generate the chart-glyph <symbol> definitions in the SVG templates.
 
-Builds all 75 glyph symbols from open, self-contained sources:
+Builds all 80 glyph symbols from open, self-contained sources:
 
   * Symbola (George Douros)          -- public domain  -> classic signs/planets/
-                                                          asteroids/nodes/Lilith/Rx
+                                                          asteroids/Lilith/Priapus/Rx
   * Noto Sans Symbols 2 (Google)     -- SIL OFL 1.1    -> modern TNO / Uranian points
   * clean-room geometry (this file)  -- original       -> Sun/Earth/Uranus/Pluto/
-                                                          Ixion, aspects, Arabic parts,
-                                                          Vertex/East Point/Midpoint/star
+                                                          Ixion, the lunar nodes,
+                                                          White Moon / Interpolated
+                                                          Perigee, aspects, Arabic
+                                                          parts, Vertex/East Point/
+                                                          Midpoint/star
 
 Only the glyph outlines are derived from the fonts; the fonts themselves are never
 redistributed (downloaded to a git-ignored cache at build time). Outlines are
 normalised into the per-group coordinate box the templates already expect and the
 existing `var(--kerykeion-chart-color-*)` style hooks are preserved, so themes and
 the Python renderers keep working unchanged.
+
+Every symbol the templates carry is declared in SPEC. That is load-bearing: the
+block between the markers is rewritten wholesale, so anything absent from SPEC is
+silently deleted on the next run. Five points (Interpolated Lilith, Mean/True
+Priapus, White Moon, Interpolated Perigee) were in exactly that state and are now
+declared here.
 
 Run with:  uv run python scripts/build_chart_glyphs.py
 Idempotent: rewrites the block between the GLYPHS:BEGIN / GLYPHS:END markers.
@@ -112,11 +121,45 @@ def V(name: str) -> str:
     return f"var(--kerykeion-chart-color-{name})"
 
 
-def sk(v, w=1.8):
+# --------------------------------------------------------------------- weight
+# One weight for every glyph, and it is not a taste call — it is measured.
+#
+# The font-derived silhouettes cannot be re-weighted: their stem is baked into
+# the contour, so a stroke-width has nothing to act on and ink can only be added
+# to a filled shape, never removed. They are therefore the fixed point, and the
+# stroke artwork is tuned to *them*.
+#
+# Measured in the browser over all 45 silhouettes, each in its own units, with
+# stem = 2*area/perimeter (exact for a ribbon of constant width):
+#
+#     stem / ink extent -> min 5.78%   median 7.41%   max 10.47%
+#
+# `outline()` below places that ink at INK_FRACTION of the box, so stroke
+# artwork lands on the same apparent weight at STEM_FRACTION * INK_FRACTION *
+# box. Before this, seven unrelated widths were in use (1.1 … 1.9) and the
+# stroke family ran 1.35x heavier than the silhouettes — the Sun read bolder
+# than the Moon, and the aspects, drawn in a 10-unit box, reached 16% of their
+# own ink: more than twice the silhouettes.
+INK_FRACTION = 0.84  # = 1 - 2 * outline()'s pad_frac
+STEM_FRACTION = 0.0741  # measured median of the 45 font silhouettes
+
+
+def stroke_for(box: int) -> float:
+    """Stroke width that reads at the same weight as the silhouettes, in `box` units."""
+    return round(box * INK_FRACTION * STEM_FRACTION, 3)
+
+
+W_SIGN = stroke_for(BOX["sign"])  # 1.992
+W_POINT = stroke_for(BOX["point"])  # 1.494 — planets, points
+W_RETRO = stroke_for(BOX["retro"])  # 0.747
+W_ASPECT = stroke_for(BOX["aspect"])  # 0.622
+
+
+def sk(v, w=W_POINT):
     return f'fill="none" stroke="{V(v)}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round"'
 
 
-def ska(v, w=1.2):
+def ska(v, w=W_ASPECT):
     return sk(v, w)
 
 
@@ -139,10 +182,11 @@ SPEC = [
     ("Pluto", P, "C", "Pluto"),
     ("Chiron", P, "S", ("chiron", [0x26B7])),
     ("Mean_Lilith", PT, "S", ("mean-lilith", [0x26B8])),
-    ("Mean_North_Lunar_Node", PT, "S", ("mean-node", [0x260A])),
-    ("True_North_Lunar_Node", PT, "S", ("true-node", [0x260A])),
-    ("Mean_South_Lunar_Node", PT, "S", ("mean-node", [0x260B])),
-    ("True_South_Lunar_Node", PT, "S", ("true-node", [0x260B])),
+    # Drawn, not traced: Symbola's U+260A/U+260B read as a blob at wheel sizes.
+    ("Mean_North_Lunar_Node", PT, "C", "Mean_North_Lunar_Node"),
+    ("True_North_Lunar_Node", PT, "C", "True_North_Lunar_Node"),
+    ("Mean_South_Lunar_Node", PT, "C", "Mean_South_Lunar_Node"),
+    ("True_South_Lunar_Node", PT, "C", "True_South_Lunar_Node"),
     ("Ascendant", "text", "T", "Ascendant"),
     ("Medium_Coeli", "text", "T", "Medium_Coeli"),
     ("Descendant", "text", "T", "Descendant"),
@@ -172,6 +216,12 @@ SPEC = [
     ("Vesta", PT, "S", ("vesta", [0x26B6])),
     ("Vertex", PT, "C", "Vertex"),
     ("True_Lilith", PT, "S", ("mean-lilith", [0x26B8])),
+    # Priapus is Lilith's opposite point, so it is Lilith's glyph turned around.
+    ("Interpolated_Lilith", PT, "S", ("mean-lilith", [0x26B8])),
+    ("Mean_Priapus", PT, "R", ("mean-lilith", [0x26B8])),
+    ("True_Priapus", PT, "R", ("mean-lilith", [0x26B8])),
+    ("White_Moon", PT, "C", "White_Moon"),
+    ("Interpolated_Perigee", PT, "C", "Interpolated_Perigee"),
     ("Eris", PT, "N", ("eris", [0x2BF0])),
     ("East_Point", PT, "C", "East_Point"),
     ("Pars_Fortunae", PT, "C", "Pars_Fortunae"),
@@ -205,24 +255,73 @@ TEXT = {
     "Imum_Coeli": '<text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-fourth-house)">Ic</text>',
 }
 
+# ------------------------------------------------------------- lunar nodes
+# An arc with a ring on each end. The rings are placed by DERIVATION, not by
+# six hand-tuned numbers: a ring whose centre sits at (R + r) along the radius
+# through the contact point is internally tangent to the arc there, so the two
+# curves share a tangent and the stroke reads as one continuous line. Change R
+# or RING and the joint stays closed.
+_NODE_R = 6.4  # arc radius
+_NODE_RING = 2.2  # ring radius
+_NODE_CY = 11.65  # arc centre, y
+_NODE_THETA = 145.0  # where the arc meets the rings, degrees from centre
+
+
+def _lunar_node(colour: str, south: bool = False) -> str:
+    import math
+
+    rad = math.radians(_NODE_THETA)
+    cos, sin = math.cos(rad), math.sin(rad)
+    tx, ty = 12 + _NODE_R * cos, _NODE_CY + _NODE_R * sin  # tangency, left side
+    rx, ry = 12 + (_NODE_R + _NODE_RING) * cos, _NODE_CY + (_NODE_R + _NODE_RING) * sin
+    if south:  # mirror about the box's horizontal axis
+        ty, ry = 24 - ty, 24 - ry
+    sweep = 0 if south else 1
+    pen = (
+        f'fill="none" stroke="{V(colour)}" stroke-width="{W_POINT}" stroke-linecap="round"'
+    )
+    return (
+        f'<path d="M{tx:.4f},{ty:.4f} A{_NODE_R},{_NODE_R} 0 1,{sweep} {24 - tx:.4f},{ty:.4f}" {pen}/>'
+        f'<circle cx="{rx:.4f}" cy="{ry:.4f}" r="{_NODE_RING}" {pen}/>'
+        f'<circle cx="{24 - rx:.4f}" cy="{ry:.4f}" r="{_NODE_RING}" {pen}/>'
+    )
+
+
+def _lilith_cross(colour: str, filled_centre: bool = False) -> str:
+    """Circle over a cross — White Moon / Interpolated Perigee share this build."""
+    dot = f'<circle cx="12" cy="7.5" r="1.6" fill="{V(colour)}"/>' if filled_centre else ""
+    pen = f'fill="none" stroke="{V(colour)}" stroke-width="{W_POINT}" stroke-linecap="round"'
+    return (
+        f'<circle cx="12" cy="7.5" r="4.5" {pen}/>{dot}'
+        f'<line x1="12" y1="12" x2="12" y2="21" {pen}/>'
+        f'<line x1="7.5" y1="16.5" x2="16.5" y2="16.5" {pen}/>'
+    )
+
+
 CLEAN = {
     # planets / points (box 24, centre 12)
     "Sun": f'<circle cx="12" cy="12" r="9" {sk("sun")}/><circle cx="12" cy="12" r="1.9" fill="{V("sun")}"/>',
+    "Mean_North_Lunar_Node": _lunar_node("mean-node"),
+    "True_North_Lunar_Node": _lunar_node("true-node"),
+    "Mean_South_Lunar_Node": _lunar_node("mean-node", south=True),
+    "True_South_Lunar_Node": _lunar_node("true-node", south=True),
+    "White_Moon": _lilith_cross("mean-lilith"),
+    "Interpolated_Perigee": _lilith_cross("mean-lilith", filled_centre=True),
     "Earth": f'<circle cx="12" cy="12" r="8.5" {sk("earth")}/><line x1="12" y1="3.5" x2="12" y2="20.5" {sk("earth")}/><line x1="3.5" y1="12" x2="20.5" y2="12" {sk("earth")}/>',
     # Herschel "H": two serifed bars + cross-bar + central stem to a hollow globe
     "Uranus": (f'<line x1="6.5" y1="3" x2="6.5" y2="13.5" {sk("uranus")}/><line x1="17.5" y1="3" x2="17.5" y2="13.5" {sk("uranus")}/>'
                f'<line x1="4.6" y1="3" x2="8.4" y2="3" {sk("uranus")}/><line x1="15.6" y1="3" x2="19.4" y2="3" {sk("uranus")}/>'
                f'<line x1="4.6" y1="13.5" x2="8.4" y2="13.5" {sk("uranus")}/><line x1="15.6" y1="13.5" x2="19.4" y2="13.5" {sk("uranus")}/>'
                f'<line x1="6.5" y1="8.25" x2="17.5" y2="8.25" {sk("uranus")}/><line x1="12" y1="8.25" x2="12" y2="18" {sk("uranus")}/>'
-               f'<circle cx="12" cy="20" r="2.1" {sk("uranus", 1.6)}/>'),
+               f'<circle cx="12" cy="20" r="2.1" {sk("uranus")}/>'),
     # astrological bowl: circle cradled in an upward crescent, over a cross
-    "Pluto": (f'<circle cx="12" cy="6.8" r="3.8" {sk("pluto", 1.9)}/>'
-              f'<path d="M5.6,8 A6.4,6.4 0 0 0 18.4,8" {sk("pluto", 1.9)}/>'
-              f'<line x1="12" y1="14.4" x2="12" y2="21.5" {sk("pluto", 1.9)}/><line x1="8.4" y1="18" x2="15.6" y2="18" {sk("pluto", 1.9)}/>'),
+    "Pluto": (f'<circle cx="12" cy="6.8" r="3.8" {sk("pluto")}/>'
+              f'<path d="M5.6,8 A6.4,6.4 0 0 0 18.4,8" {sk("pluto")}/>'
+              f'<line x1="12" y1="14.4" x2="12" y2="21.5" {sk("pluto")}/><line x1="8.4" y1="18" x2="15.6" y2="18" {sk("pluto")}/>'),
     "Ixion": (f'<circle cx="12" cy="12" r="9" {sk("ixion")}/><line x1="6" y1="6" x2="18" y2="18" {sk("ixion")}/>'
               f'<line x1="18" y1="6" x2="6" y2="18" {sk("ixion")}/><line x1="12" y1="3" x2="12" y2="21" {sk("ixion")}/>'),
     "FixedStar": f'<path d="M12,3 L14.12,9.09 L20.56,9.22 L15.42,13.11 L17.29,19.28 L12,15.6 L6.71,19.28 L8.58,13.11 L3.44,9.22 L9.88,9.09 Z" fill="{V("fixed-star-default, #d4a053")}"/>',
-    "Midpoint": (f'<line x1="5" y1="12" x2="19" y2="12" stroke="{V("midpoint-default, #b58bff")}" stroke-width="1.6"/>'
+    "Midpoint": (f'<line x1="5" y1="12" x2="19" y2="12" stroke="{V("midpoint-default, #b58bff")}" stroke-width="{W_POINT}"/>'
                  f'<circle cx="5" cy="12" r="2.2" fill="{V("midpoint-default, #b58bff")}"/>'
                  f'<circle cx="19" cy="12" r="2.2" fill="{V("midpoint-default, #b58bff")}"/>'
                  f'<circle cx="12" cy="12" r="2.2" fill="{V("midpoint-default, #b58bff")}"/>'),
@@ -246,13 +345,13 @@ CLEAN = {
     "orb72": f'<circle cx="4.4" cy="4.4" r="2.9" {ska("quintile")}/><line x1="6.4" y1="6.4" x2="9.2" y2="9.2" {ska("quintile")}/>',
     "orb90": f'<rect x="1.3" y="1.3" width="7.4" height="7.4" {ska("square")}/>',
     "orb120": f'<path d="M5,1.2 L9,9 L1,9 Z" {ska("trine")}/>',
-    "orb135": f'<rect x="1" y="1" width="5.3" height="5.3" {ska("sesquiquadrate", 1.1)}/><path d="M4.4,9.4 L9.4,9.4 M9.4,9.4 L9.4,4.4" {ska("sesquiquadrate", 1.1)}/>',
-    "orb144": f'<circle cx="5" cy="4.5" r="2.8" {ska("biquintile", 1.1)}/><line x1="3.2" y1="6.5" x2="1.1" y2="9.2" {ska("biquintile", 1.1)}/><line x1="6.8" y1="6.5" x2="8.9" y2="9.2" {ska("biquintile", 1.1)}/>',
+    "orb135": f'<rect x="1" y="1" width="5.3" height="5.3" {ska("sesquiquadrate")}/><path d="M4.4,9.4 L9.4,9.4 M9.4,9.4 L9.4,4.4" {ska("sesquiquadrate")}/>',
+    "orb144": f'<circle cx="5" cy="4.5" r="2.8" {ska("biquintile")}/><line x1="3.2" y1="6.5" x2="1.1" y2="9.2" {ska("biquintile")}/><line x1="6.8" y1="6.5" x2="8.9" y2="9.2" {ska("biquintile")}/>',
     "orb150": f'<line x1="1" y1="4.4" x2="9" y2="4.4" {ska("quincunx")}/><path d="M1.6,9 L5,4.4 L8.4,9" {ska("quincunx")}/>',
-    "orb180": f'<circle cx="3" cy="3" r="1.9" {ska("opposition", 1.1)}/><circle cx="7" cy="7" r="1.9" {ska("opposition", 1.1)}/><line x1="4.35" y1="4.35" x2="5.65" y2="5.65" {ska("opposition", 1.1)}/>',
+    "orb180": f'<circle cx="3" cy="3" r="1.9" {ska("opposition")}/><circle cx="7" cy="7" r="1.9" {ska("opposition")}/><line x1="4.35" y1="4.35" x2="5.65" y2="5.65" {ska("opposition")}/>',
     # retrograde clean-room fallback (box 12) — used by build_lines() only if
     # Symbola ever loses U+211E (the "S" font glyph is the normal path)
-    "retrograde": f'<path d="M3,11.2 L3,1.2 L6.2,1.2 C8.4,1.2 8.4,5.4 6.2,5.4 L3,5.4 M5.6,5.4 L9.2,11.2" fill="none" stroke="{V("paper-0")}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+    "retrograde": f'<path d="M3,11.2 L3,1.2 L6.2,1.2 C8.4,1.2 8.4,5.4 6.2,5.4 L3,5.4 M5.6,5.4 L9.2,11.2" fill="none" stroke="{V("paper-0")}" stroke-width="{W_RETRO}" stroke-linecap="round" stroke-linejoin="round"/>',
 }
 
 SECTION = {  # printed as a comment before this id
@@ -269,10 +368,12 @@ def build_lines() -> list[str]:
         if sid in SECTION:
             lines.append(f"<!-- {SECTION[sid]} -->")
         box = BOX[group]
-        if kind in ("S", "N"):
+        if kind in ("S", "N", "R"):
             varname, cps = payload
             try:
-                inner = fonts[kind].outline(cps, box, V(varname))
+                inner = fonts["S" if kind == "R" else kind].outline(cps, box, V(varname))
+                if kind == "R":  # opposite point -> the same glyph, turned around
+                    inner = f'<g transform="rotate(180 {box / 2:g} {box / 2:g})">{inner}</g>'
             except (KeyError, ValueError):
                 # font no longer carries the codepoint -> fall back to clean-room
                 if sid not in CLEAN:
