@@ -139,7 +139,9 @@ class TestOneWeightForEveryGlyph:
 
         assert found <= allowed, (
             f"undeclared stroke widths in the templates: {sorted(found - allowed)}. "
-            f"Widths must come from stroke_for(box), which yields {sorted(allowed)}."
+            f"Widths must come from stroke_for(box), which yields {sorted(allowed)}. "
+            "There are no sanctioned exceptions: if a glyph needs a different "
+            "weight, say why here rather than writing the number into the artwork."
         )
 
     def test_the_derived_width_tracks_the_measured_silhouette_weight(self):

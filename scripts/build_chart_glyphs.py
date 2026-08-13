@@ -4,7 +4,7 @@
 Builds all 80 glyph symbols from open, self-contained sources:
 
   * Symbola (George Douros)          -- public domain  -> classic signs/planets/
-                                                          asteroids/Lilith/Priapus/Rx
+                                                          asteroids/Lilith/Priapus/℞
   * Noto Sans Symbols 2 (Google)     -- SIL OFL 1.1    -> modern TNO / Uranian points
   * clean-room geometry (this file)  -- original       -> Sun/Earth/Uranus/Pluto/
                                                           Ixion, the lunar nodes,
@@ -287,12 +287,114 @@ def _lunar_node(colour: str, south: bool = False) -> str:
     )
 
 
-def _lilith_cross(colour: str, filled_centre: bool = False) -> str:
-    """Circle over a cross — White Moon / Interpolated Perigee share this build."""
-    dot = f'<circle cx="12" cy="7.5" r="1.6" fill="{V(colour)}"/>' if filled_centre else ""
-    pen = f'fill="none" stroke="{V(colour)}" stroke-width="{W_POINT}" stroke-linecap="round"'
+def _meet_circle(cx: float, cy: float, r: float, tx: float, ty: float) -> tuple[float, float]:
+    """Where the ray from (cx, cy) toward (tx, ty) crosses the circle.
+
+    Legs that spring from a circle are anchored here instead of at eyeballed
+    coordinates. A round cap reaches half a stroke width BACK along its own
+    line, so a leg starting even slightly inside the circle pushes a blob into
+    the counter: the quintile started 0.072 units in and the biquintile 0.109,
+    both visible. Anchored on the circle the cap tip lands exactly on the inner
+    edge of the ring — joined, not overlapping — whatever the stroke becomes.
+    """
+    import math
+
+    d = math.hypot(tx - cx, ty - cy)
+    return (round(cx + (tx - cx) / d * r, 3), round(cy + (ty - cy) / d * r, 3))
+
+
+_Q72 = _meet_circle(4.4, 4.4, 2.9, 9.2, 9.2)
+_Q144L = _meet_circle(5, 4.5, 2.8, 1.1, 9.2)
+_Q144R = _meet_circle(5, 4.5, 2.8, 8.9, 9.2)
+
+
+def _crescent(cx: float, cy: float, r_out: float, sx: float, r_in: float) -> str:
+    """A hollow lune: the disc at (cx, cy) with a second disc bitten out of it.
+
+    Derived rather than eyeballed. The two circles meet on their radical line,
+    and those two intersection points ARE the crescent's horns — so the horns
+    stay sharp and the two arcs stay tangent to each other however the radii or
+    the offset are retuned. The bite is offset to the left, leaving the belly on
+    the right, as the symbol is conventionally drawn.
+    """
+    import math
+
+    d = cx - sx  # the bite sits to the left, so this is positive
+    a = (d * d + r_out * r_out - r_in * r_in) / (2 * d)
+    h = math.sqrt(max(r_out * r_out - a * a, 0.0))
+    px = cx - a  # foot of the radical line, on the centre line
+    top, bottom = (px, cy - h), (px, cy + h)
+
+    def arc_flags(ox: float, oy: float, radius: float) -> tuple[int, int]:
+        """large-arc / sweep for the path that bellies out to the RIGHT."""
+        a0 = math.atan2(top[1] - oy, top[0] - ox)
+        a1 = math.atan2(bottom[1] - oy, bottom[0] - ox)
+        span = (a1 - a0) % (2 * math.pi)  # clockwise, screen coordinates
+        return (1 if span > math.pi else 0, 1)
+
+    out_large, out_sweep = arc_flags(cx, cy, r_out)
+    # the inner edge is travelled backwards, so its sweep is the mirror image
+    in_span = arc_flags(sx, cy, r_in)
+    in_large, in_sweep = in_span[0], 0
     return (
-        f'<circle cx="12" cy="7.5" r="4.5" {pen}/>{dot}'
+        f'M{top[0]:.3f},{top[1]:.3f} '
+        f'A{r_out},{r_out} 0 {out_large},{out_sweep} {bottom[0]:.3f},{bottom[1]:.3f} '
+        f'A{r_in},{r_in} 0 {in_large},{in_sweep} {top[0]:.3f},{top[1]:.3f} Z'
+    )
+
+
+_CROSS_X = 12.0  # the shaft both marks below hang from
+
+
+def _white_moon(colour: str) -> str:
+    """Hollow crescent over a cross.
+
+    The crescent is HOLLOW and that is the whole point: this is the light twin
+    of Lilith's filled dark moon, so an open belly is what tells them apart at a
+    glance. It used to be drawn as a plain circle, which read as a Venus variant
+    and lost the distinction entirely.
+    """
+    pen = (f'fill="none" stroke="{V(colour)}" stroke-width="{W_POINT}" '
+           f'stroke-linecap="round" stroke-linejoin="round"')
+    # The whole lune is scaled, not reshaped. Shortening the horns by moving the
+    # bite instead would have made it WIDER, because the lune spans (a + r_out)
+    # and a rises as the horns retract — so the only lever that shortens the horn
+    # while keeping the crescent's shape is size. At 0.88 the lower horn reaches
+    # the top of the shaft instead of hanging past it.
+    import math
+
+    _S = 0.88
+    r_out, r_in, gap, cy = 6.0 * _S, 5.2 * _S, 2.6 * _S, 8.0
+    # Centre the LUNE, not the disc that generates it. The crescent runs from the
+    # horns at (cx - a) to the belly at (cx + r_out), and that span is not
+    # symmetric about cx — so putting cx on the shaft leaves the moon sitting off
+    # to the right, which is exactly how it looked.
+    a = (gap * gap + r_out * r_out - r_in * r_in) / (2 * gap)
+    cx = _CROSS_X + (a - r_out) / 2
+
+    # The shaft STOPS where it meets the crescent's outer arc. Running it further
+    # up pushed its round cap through the thin lower band and out into the hollow,
+    # leaving a stub floating inside the moon's opening. Ending on the arc buries
+    # the cap under the stroke instead: joined, with nothing showing through.
+    shaft_top = cy + math.sqrt(r_out * r_out - (_CROSS_X - cx) ** 2)
+    return (
+        f'<path d="{_crescent(cx, cy, r_out, cx - gap, r_in)}" {pen}/>'
+        f'<line x1="{_CROSS_X:g}" y1="{shaft_top:.3f}" x2="{_CROSS_X:g}" y2="21.4" {pen}/>'
+        f'<line x1="7.0" y1="17.8" x2="17.0" y2="17.8" {pen}/>'
+    )
+
+
+def _interpolated_perigee(colour: str) -> str:
+    """Circle with a filled centre over a cross — unchanged from what shipped.
+
+    Deliberately NOT the White Moon's crescent: sharing a builder with it once
+    handed this mark a crescent it never had.
+    """
+    pen = (f'fill="none" stroke="{V(colour)}" stroke-width="{W_POINT}" '
+           f'stroke-linecap="round"')
+    return (
+        f'<circle cx="12" cy="7.5" r="4.5" {pen}/>'
+        f'<circle cx="12" cy="7.5" r="1.6" fill="{V(colour)}"/>'
         f'<line x1="12" y1="12" x2="12" y2="21" {pen}/>'
         f'<line x1="7.5" y1="16.5" x2="16.5" y2="16.5" {pen}/>'
     )
@@ -305,14 +407,17 @@ CLEAN = {
     "True_North_Lunar_Node": _lunar_node("true-node"),
     "Mean_South_Lunar_Node": _lunar_node("mean-node", south=True),
     "True_South_Lunar_Node": _lunar_node("true-node", south=True),
-    "White_Moon": _lilith_cross("mean-lilith"),
-    "Interpolated_Perigee": _lilith_cross("mean-lilith", filled_centre=True),
+    "White_Moon": _white_moon("mean-lilith"),
+    "Interpolated_Perigee": _interpolated_perigee("mean-lilith"),
     "Earth": f'<circle cx="12" cy="12" r="8.5" {sk("earth")}/><line x1="12" y1="3.5" x2="12" y2="20.5" {sk("earth")}/><line x1="3.5" y1="12" x2="20.5" y2="12" {sk("earth")}/>',
     # Herschel "H": two serifed bars + cross-bar + central stem to a hollow globe
     "Uranus": (f'<line x1="6.5" y1="3" x2="6.5" y2="13.5" {sk("uranus")}/><line x1="17.5" y1="3" x2="17.5" y2="13.5" {sk("uranus")}/>'
                f'<line x1="4.6" y1="3" x2="8.4" y2="3" {sk("uranus")}/><line x1="15.6" y1="3" x2="19.4" y2="3" {sk("uranus")}/>'
                f'<line x1="4.6" y1="13.5" x2="8.4" y2="13.5" {sk("uranus")}/><line x1="15.6" y1="13.5" x2="19.4" y2="13.5" {sk("uranus")}/>'
-               f'<line x1="6.5" y1="8.25" x2="17.5" y2="8.25" {sk("uranus")}/><line x1="12" y1="8.25" x2="12" y2="18" {sk("uranus")}/>'
+               f'<line x1="6.5" y1="8.25" x2="17.5" y2="8.25" {sk("uranus")}/>'
+               # the stem stops ON the globe (20 - 2.1), not 0.1 short of it, so
+               # its round cap lands flush with the ring instead of inside it
+               f'<line x1="12" y1="8.25" x2="12" y2="17.9" {sk("uranus")}/>'
                f'<circle cx="12" cy="20" r="2.1" {sk("uranus")}/>'),
     # astrological bowl: circle cradled in an upward crescent, over a cross
     "Pluto": (f'<circle cx="12" cy="6.8" r="3.8" {sk("pluto")}/>'
@@ -342,15 +447,17 @@ CLEAN = {
     "orb30": f'<line x1="1" y1="5.6" x2="9" y2="5.6" {ska("semi-sextile")}/><path d="M1.6,1 L5,5.6 L8.4,1" {ska("semi-sextile")}/>',
     "orb45": f'<path d="M1.4,8.8 L8.8,8.8 M1.4,8.8 L5.1,1.4" {ska("semi-square")}/>',
     "orb60": f'<path d="M1.3,1.3 L8.7,8.7 M1.3,8.7 L8.7,1.3 M1,5 L9,5" {ska("sextile")}/>',
-    "orb72": f'<circle cx="4.4" cy="4.4" r="2.9" {ska("quintile")}/><line x1="6.4" y1="6.4" x2="9.2" y2="9.2" {ska("quintile")}/>',
+    "orb72": f'<circle cx="4.4" cy="4.4" r="2.9" {ska("quintile")}/><line x1="{_Q72[0]}" y1="{_Q72[1]}" x2="9.2" y2="9.2" {ska("quintile")}/>',
     "orb90": f'<rect x="1.3" y="1.3" width="7.4" height="7.4" {ska("square")}/>',
     "orb120": f'<path d="M5,1.2 L9,9 L1,9 Z" {ska("trine")}/>',
     "orb135": f'<rect x="1" y="1" width="5.3" height="5.3" {ska("sesquiquadrate")}/><path d="M4.4,9.4 L9.4,9.4 M9.4,9.4 L9.4,4.4" {ska("sesquiquadrate")}/>',
-    "orb144": f'<circle cx="5" cy="4.5" r="2.8" {ska("biquintile")}/><line x1="3.2" y1="6.5" x2="1.1" y2="9.2" {ska("biquintile")}/><line x1="6.8" y1="6.5" x2="8.9" y2="9.2" {ska("biquintile")}/>',
+    "orb144": f'<circle cx="5" cy="4.5" r="2.8" {ska("biquintile")}/><line x1="{_Q144L[0]}" y1="{_Q144L[1]}" x2="1.1" y2="9.2" {ska("biquintile")}/><line x1="{_Q144R[0]}" y1="{_Q144R[1]}" x2="8.9" y2="9.2" {ska("biquintile")}/>',
     "orb150": f'<line x1="1" y1="4.4" x2="9" y2="4.4" {ska("quincunx")}/><path d="M1.6,9 L5,4.4 L8.4,9" {ska("quincunx")}/>',
     "orb180": f'<circle cx="3" cy="3" r="1.9" {ska("opposition")}/><circle cx="7" cy="7" r="1.9" {ska("opposition")}/><line x1="4.35" y1="4.35" x2="5.65" y2="5.65" {ska("opposition")}/>',
     # retrograde clean-room fallback (box 12) — used by build_lines() only if
-    # Symbola ever loses U+211E (the "S" font glyph is the normal path)
+    # Symbola ever loses U+211E. The serif ℞ is the shipped mark: it is the only
+    # serif glyph in the set, but at wheel sizes it still reads better than any
+    # monoline redraw, so the exception is kept deliberately.
     "retrograde": f'<path d="M3,11.2 L3,1.2 L6.2,1.2 C8.4,1.2 8.4,5.4 6.2,5.4 L3,5.4 M5.6,5.4 L9.2,11.2" fill="none" stroke="{V("paper-0")}" stroke-width="{W_RETRO}" stroke-linecap="round" stroke-linejoin="round"/>',
 }
 
