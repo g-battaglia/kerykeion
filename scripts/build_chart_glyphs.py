@@ -6,6 +6,8 @@ Builds all 80 glyph symbols from open, self-contained sources:
   * Symbola (George Douros)          -- public domain  -> classic signs/planets/
                                                           asteroids/Lilith/Priapus/℞
   * Noto Sans Symbols 2 (Google)     -- SIL OFL 1.1    -> modern TNO / Uranian points
+  * Noto Sans (Google)               -- SIL OFL 1.1    -> the six lettered marks
+                                                          (As/Mc/Ds/Ic, Vx, Av)
   * clean-room geometry (this file)  -- original       -> Sun/Earth/Uranus/Pluto/
                                                           Ixion, the lunar nodes,
                                                           White Moon / Interpolated
@@ -14,7 +16,9 @@ Builds all 80 glyph symbols from open, self-contained sources:
                                                           Midpoint/star
 
 Only the glyph outlines are derived from the fonts; the fonts themselves are never
-redistributed (downloaded to a git-ignored cache at build time). Outlines are
+redistributed (downloaded to a git-ignored cache at build time). Nothing a viewer
+loads depends on a font: all 80 symbols are geometry, including the lettered
+marks, which were live <text> until they were traced here. Outlines are
 normalised into the per-group coordinate box the templates already expect and the
 existing `var(--kerykeion-chart-color-*)` style hooks are preserved, so themes and
 the Python renderers keep working unchanged.
@@ -50,6 +54,17 @@ FONT_SOURCES = {
         "https://github.com/notofonts/notofonts.github.io/raw/main/fonts/"
         "NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf",
         "c4a0a80f0041ce4be81e2478faad22776d23edb98ae3f0d19bd37044820ecf9d",
+    ),
+    # Latin letters for the six lettered marks (As/Mc/Ds/Ic, Vx, Av). They used
+    # to be live <text>, which is the one thing in the glyph set that depended on
+    # the *viewer's* fonts — the label rendered in whatever they happened to have,
+    # at whatever width. Traced here instead, so all 80 symbols are geometry.
+    # Symbola cannot supply these: its Latin is a serif face, and the rest of the
+    # set is sans. Noto Sans is the same project and the same licence as Noto2.
+    "NotoSans": (
+        "https://github.com/notofonts/notofonts.github.io/raw/main/fonts/"
+        "NotoSans/unhinted/ttf/NotoSans-Regular.ttf",
+        "f3961a9cde016d41a4879aecda1474d3a36d6bf54fa0e4643de029cc2248b0e8",
     ),
 }
 
@@ -116,6 +131,60 @@ class Font:
         t = f"translate({ox:.3f},{oy:.3f}) scale({s:.5f},{-s:.5f}) translate({-xmin:.3f},{-ymax:.3f})"
         return f'<g transform="{t}"><path d="{sp.getCommands()}" style="fill: {css}"/></g>'
 
+    def _set(self, chars):
+        """Lay `chars` on one baseline using the font's advances. Font units."""
+        hmtx = self.ttf["hmtx"]
+        parts: list[tuple[float, str]] = []
+        pen = 0.0
+        xmin = ymin = float("inf")
+        xmax = ymax = float("-inf")
+        for ch in chars:
+            cp = ord(ch)
+            if cp not in self.cmap:
+                raise KeyError(f"{ch!r} not in font")
+            name = self.cmap[cp]
+            bp = BoundsPen(self.gs)
+            self.gs[name].draw(bp)
+            if bp.bounds:
+                x0, y0, x1, y1 = bp.bounds
+                xmin, xmax = min(xmin, x0 + pen), max(xmax, x1 + pen)
+                ymin, ymax = min(ymin, y0), max(ymax, y1)
+            sp = SVGPathPen(self.gs)
+            self.gs[name].draw(sp)
+            if commands := sp.getCommands():
+                parts.append((pen, commands))
+            pen += hmtx[name][0]
+        if not parts:
+            raise ValueError(f"nothing drawn for {chars!r}")
+        return parts, (xmin, ymin, xmax, ymax)
+
+    def label_scale(self, every: list[str], box: int, pad_frac=0.08) -> float:
+        """The ONE type size all the lettered marks share.
+
+        Fitting each label to the box on its own is what makes a narrow pair like
+        "Ic" come out bigger than a wide one like "Mc" — the narrow one has room
+        to grow into. So the scale is solved once, against whichever label is the
+        largest, and every label is then set at it. They read as one typeface at
+        one size, which is what they are.
+        """
+        limit = box * (1 - 2 * pad_frac)
+        widest = max(
+            max(b[2] - b[0], b[3] - b[1]) for b in (self._set(c)[1] for c in every)
+        )
+        return limit / widest
+
+    def label(self, chars, box, css, scale) -> str:
+        """A lettered mark as outlines: no <text>, so no dependency on the viewer's fonts."""
+        parts, (xmin, ymin, xmax, ymax) = self._set(chars)
+        ox = box / 2 - (xmin + xmax) / 2 * scale
+        oy = box / 2 + (ymin + ymax) / 2 * scale  # y is flipped below
+        t = f"translate({ox:.3f},{oy:.3f}) scale({scale:.5f},{-scale:.5f})"
+        inner = "".join(
+            f'<path d="{d}" transform="translate({off:.0f},0)"/>' if off else f'<path d="{d}"/>'
+            for off, d in parts
+        )
+        return f'<g transform="{t}" style="fill: {css}">{inner}</g>'
+
 
 def V(name: str) -> str:
     return f"var(--kerykeion-chart-color-{name})"
@@ -167,7 +236,7 @@ def ska(v, w=W_ASPECT):
 # (id, group, kind, payload)
 #   kind "S"/"N" -> font glyph: payload = (css_var_name, [codepoints])
 #   kind "C"     -> clean-room: payload = key into CLEAN
-#   kind "T"     -> kept text label: payload = key into TEXT
+#   kind "L"     -> traced label: payload = (css_var_name, "As")
 P, PT, S, A = "planet", "point", "sign", "aspect"
 SPEC = [
     ("Sun", P, "C", "Sun"),
@@ -187,10 +256,10 @@ SPEC = [
     ("True_North_Lunar_Node", PT, "C", "True_North_Lunar_Node"),
     ("Mean_South_Lunar_Node", PT, "C", "Mean_South_Lunar_Node"),
     ("True_South_Lunar_Node", PT, "C", "True_South_Lunar_Node"),
-    ("Ascendant", "text", "T", "Ascendant"),
-    ("Medium_Coeli", "text", "T", "Medium_Coeli"),
-    ("Descendant", "text", "T", "Descendant"),
-    ("Imum_Coeli", "text", "T", "Imum_Coeli"),
+    ("Ascendant", "text", "L", ("first-house", "As")),
+    ("Medium_Coeli", "text", "L", ("tenth-house", "Mc")),
+    ("Descendant", "text", "L", ("seventh-house", "Ds")),
+    ("Imum_Coeli", "text", "L", ("fourth-house", "Ic")),
     ("Earth", PT, "C", "Earth"),
     ("Pholus", PT, "N", ("pholus", [0x2BDB])),
     ("Sedna", PT, "N", ("sedna", [0x2BF2])),
@@ -209,12 +278,12 @@ SPEC = [
     ("Poseidon", PT, "N", ("poseidon", [0x2BE7])),
     ("FixedStar", PT, "C", "FixedStar"),
     ("Midpoint", PT, "C", "Midpoint"),
-    ("Anti_Vertex", PT, "C", "Anti_Vertex"),
+    ("Anti_Vertex", PT, "L", ("anti-vertex", "Av")),
     ("Ceres", PT, "S", ("ceres", [0x26B3])),
     ("Pallas", PT, "S", ("pallas", [0x26B4])),
     ("Juno", PT, "S", ("juno", [0x26B5])),
     ("Vesta", PT, "S", ("vesta", [0x26B6])),
-    ("Vertex", PT, "C", "Vertex"),
+    ("Vertex", PT, "L", ("vertex", "Vx")),
     ("True_Lilith", PT, "S", ("mean-lilith", [0x26B8])),
     # Priapus is Lilith's opposite point, so it is Lilith's glyph turned around.
     ("Interpolated_Lilith", PT, "S", ("mean-lilith", [0x26B8])),
@@ -248,13 +317,6 @@ SPEC = [
 ]
 
 # --------------------------------------------------------------------------- clean-room
-TEXT = {
-    "Ascendant": '<text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-first-house)">As</text>',
-    "Medium_Coeli": '<text y="20" style="font-size: 20px; fill: var(--kerykeion-chart-color-tenth-house)">Mc</text>',
-    "Descendant": '<text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-seventh-house)">Ds</text>',
-    "Imum_Coeli": '<text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-fourth-house)">Ic</text>',
-}
-
 # ------------------------------------------------------------- lunar nodes
 # An arc with a ring on each end. The rings are placed by DERIVATION, not by
 # six hand-tuned numbers: a ring whose centre sits at (R + r) along the radius
@@ -430,8 +492,6 @@ CLEAN = {
                  f'<circle cx="5" cy="12" r="2.2" fill="{V("midpoint-default, #b58bff")}"/>'
                  f'<circle cx="19" cy="12" r="2.2" fill="{V("midpoint-default, #b58bff")}"/>'
                  f'<circle cx="12" cy="12" r="2.2" fill="{V("midpoint-default, #b58bff")}"/>'),
-    "Vertex": f'<text x="12" y="16.5" text-anchor="middle" style="font-size:13px; fill: {V("vertex")}">Vx</text>',
-    "Anti_Vertex": f'<text x="12" y="16.5" text-anchor="middle" style="font-size:13px; fill: {V("anti-vertex")}">Av</text>',
     "East_Point": (f'<circle cx="9" cy="12" r="6" {sk("ceres")}/><line x1="9" y1="6.2" x2="9" y2="17.8" {sk("ceres")}/>'
                    f'<line x1="3.2" y1="12" x2="14.8" y2="12" {sk("ceres")}/><line x1="14.8" y1="12" x2="19" y2="7.6" {sk("ceres")}/>'
                    f'<line x1="14.8" y1="12" x2="19" y2="16.4" {sk("ceres")}/>'),
@@ -469,7 +529,10 @@ SECTION = {  # printed as a comment before this id
 
 def build_lines() -> list[str]:
     """Return the block as a list of un-indented lines (markers + <symbol> defs)."""
-    fonts = {"S": fetch_font("Symbola"), "N": fetch_font("Noto2")}
+    fonts = {"S": fetch_font("Symbola"), "N": fetch_font("Noto2"), "L": fetch_font("NotoSans")}
+    # solved once, over every lettered mark, so they all come out at one size
+    every_label = [payload[1] for _, _, kind, payload in SPEC if kind == "L"]
+    label_size = fonts["L"].label_scale(every_label, BOX["text"])
     lines = [BEGIN]
     for sid, group, kind, payload in SPEC:
         if sid in SECTION:
@@ -488,8 +551,9 @@ def build_lines() -> list[str]:
                 inner = CLEAN[sid]
         elif kind == "C":
             inner = CLEAN[payload]
-        else:  # T
-            inner = TEXT[payload]
+        else:  # L — a lettered mark, traced so it needs no font at view time
+            varname, chars = payload
+            inner = fonts["L"].label(chars, box, V(varname), label_size)
         lines += [f'<symbol id="{sid}">', f"    {inner}", "</symbol>"]
     lines.append(END)
     return lines

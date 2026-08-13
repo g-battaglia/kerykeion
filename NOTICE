@@ -25,7 +25,7 @@ fonts themselves are not redistributed by this project.
    not used (Sun is clean-room); Moon, Mercury, Venus, Mars, Jupiter, Saturn,
    Neptune, Chiron; Mean/True/Interpolated Lilith and Mean/True Priapus (the
    Lilith glyph rotated); Ceres, Pallas, Juno, Vesta; and the retrograde marker.
-   The lunar nodes are NOT from Symbola — they are clean-room, see 3 below.
+   The lunar nodes are NOT from Symbola — they are clean-room, see 4 below.
    No attribution is required; it is recorded here as a courtesy.
 
 2. Noto Sans Symbols 2 — The Noto Project Authors (Google)
@@ -40,14 +40,27 @@ fonts themselves are not redistributed by this project.
    declares no Reserved Font Name; in any case no derivative font is named
    "Noto", and the font is not sold on its own.
 
-3. Clean-room original artwork — Kerykeion
+3. Noto Sans — The Noto Project Authors (Google)
+   License: SIL Open Font License, Version 1.1 (see licenses/NotoSans-OFL.txt)
+   Copyright 2022 The Noto Project Authors
+   (https://github.com/notofonts/latin-greek-cyrillic)
+   Used for the six lettered marks only — the Ascendant / MC / Descendant /
+   Imum Coeli labels (As, Mc, Ds, Ic) and Vertex / Anti-Vertex (Vx, Av).
+   These were previously live SVG <text>, which made them depend on whatever
+   font the *viewer* happened to have; they are now traced to outlines like
+   every other glyph, so a rendered chart needs no fonts at all. Symbola could
+   not supply them: its Latin is a serif face and the rest of the set is sans.
+   Same license terms and caveats as 2 above.
+
+4. Clean-room original artwork — Kerykeion
    Original geometry drawn for this project: Sun, Earth, Uranus, Pluto, Ixion,
    the four lunar nodes (Mean/True, North/South), White Moon, Interpolated
-   Perigee, the fixed-star marker, the midpoint marker, Vertex / Anti-Vertex /
-   East Point, the Arabic parts (Fortunae, Spiritus, Amoris, Fidei) and all
-   aspect glyphs (conjunction, opposition, square, trine, sextile, semi-sextile,
-   semi-square, sesquiquadrate, quintile, biquintile, quincunx). The Ascendant /
-   MC / Descendant / Imum Coeli markers are plain text labels.
+   Perigee, the fixed-star marker, the midpoint marker, East Point, the Arabic
+   parts (Fortunae, Spiritus, Amoris, Fidei) and all aspect glyphs (conjunction,
+   opposition, square, trine, sextile, semi-sextile, semi-square,
+   sesquiquadrate, quintile, biquintile, quincunx).
+   Vertex / Anti-Vertex and the four angle markers are NOT clean-room: they are
+   lettered marks traced from Noto Sans, see 3 above.
 
 --------------------------------------------------------------------------------
 Runtime dependencies (installed from PyPI, not bundled in this package)

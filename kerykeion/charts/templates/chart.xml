@@ -231,16 +231,16 @@
         </symbol>
         <!-- Angles -->
         <symbol id="Ascendant">
-            <text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-first-house)">As</text>
+            <g transform="translate(3.396,17.669) scale(0.01604,-0.01604)" style="fill: var(--kerykeion-chart-color-first-house)"><path d="M545 0 459 221H176L91 0H0L279 717H360L638 0ZM352 517Q349 525 342.0 546.0Q335 567 328.5 589.5Q322 612 318 624Q311 593 302.0 563.5Q293 534 287 517L206 301H432Z"/><path d="M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z" transform="translate(639,0)"/></g>
         </symbol>
         <symbol id="Medium_Coeli">
-            <text y="20" style="font-size: 20px; fill: var(--kerykeion-chart-color-tenth-house)">Mc</text>
+            <g transform="translate(0.364,17.645) scale(0.01604,-0.01604)" style="fill: var(--kerykeion-chart-color-tenth-house)"><path d="M412 0 177 626H173Q176 595 178.0 542.5Q180 490 180 433V0H97V714H230L450 129H454L678 714H810V0H721V439Q721 491 723.5 542.0Q726 593 728 625H724L486 0Z"/><path d="M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z" transform="translate(907,0)"/></g>
         </symbol>
         <symbol id="Descendant">
-            <text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-seventh-house)">Ds</text>
+            <g transform="translate(1.888,17.645) scale(0.01604,-0.01604)" style="fill: var(--kerykeion-chart-color-seventh-house)"><path d="M669 364Q669 183 570.5 91.5Q472 0 296 0H97V714H317Q425 714 504.0 674.0Q583 634 626.0 556.5Q669 479 669 364ZM574 361Q574 504 503.5 570.5Q433 637 304 637H187V77H284Q574 77 574 361Z"/><path d="M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z" transform="translate(730,0)"/></g>
         </symbol>
         <symbol id="Imum_Coeli">
-            <text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-fourth-house)">Ic</text>
+            <g transform="translate(5.376,17.645) scale(0.01604,-0.01604)" style="fill: var(--kerykeion-chart-color-fourth-house)"><path d="M298 0H40V52L124 71V642L40 662V714H298V662L214 642V71L298 52Z"/><path d="M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z" transform="translate(339,0)"/></g>
         </symbol>
         <!-- Points -->
         <symbol id="Earth">
@@ -298,7 +298,7 @@
             <line x1="5" y1="12" x2="19" y2="12" stroke="var(--kerykeion-chart-color-midpoint-default, #b58bff)" stroke-width="1.494"/><circle cx="5" cy="12" r="2.2" fill="var(--kerykeion-chart-color-midpoint-default, #b58bff)"/><circle cx="19" cy="12" r="2.2" fill="var(--kerykeion-chart-color-midpoint-default, #b58bff)"/><circle cx="12" cy="12" r="2.2" fill="var(--kerykeion-chart-color-midpoint-default, #b58bff)"/>
         </symbol>
         <symbol id="Anti_Vertex">
-            <text x="12" y="16.5" text-anchor="middle" style="font-size:13px; fill: var(--kerykeion-chart-color-anti-vertex)">Av</text>
+            <g transform="translate(2.802,17.750) scale(0.01604,-0.01604)" style="fill: var(--kerykeion-chart-color-anti-vertex)"><path d="M545 0 459 221H176L91 0H0L279 717H360L638 0ZM352 517Q349 525 342.0 546.0Q335 567 328.5 589.5Q322 612 318 624Q311 593 302.0 563.5Q293 534 287 517L206 301H432Z"/><path d="M203 0 0 536H94L208 220Q216 198 225.0 171.0Q234 144 241.0 119.5Q248 95 251 78H255Q259 95 266.5 120.0Q274 145 283.5 172.0Q293 199 300 220L414 536H508L304 0Z" transform="translate(639,0)"/></g>
         </symbol>
         <symbol id="Ceres">
             <g transform="translate(7.102,1.920) scale(0.01074,-0.01074) translate(-202.000,-1467.000)"><path d="M1114 932Q1114 726 978.5 575.0Q843 424 641 401V0H937V-125H641V-410H516V-125H220V0H516V522H579Q750 522 869.5 641.5Q989 761 989 932Q989 1103 869.5 1222.5Q750 1342 579 1342Q436 1342 279 1220L202 1319Q389 1467 579 1467Q802 1467 958.0 1311.0Q1114 1155 1114 932Z" style="fill: var(--kerykeion-chart-color-ceres)"/></g>
@@ -313,7 +313,7 @@
             <g transform="translate(3.220,1.920) scale(0.01244,-0.01244) translate(-90.000,-1274.000)"><path d="M859 635H734V1274H859ZM1342 561H1156L796 133L436 561H250V686H494L796 327L1098 686H1342ZM1502 0H1156L796 -347L436 0H90V125H486L796 -173L1106 125H1502Z" style="fill: var(--kerykeion-chart-color-vesta)"/></g>
         </symbol>
         <symbol id="Vertex">
-            <text x="12" y="16.5" text-anchor="middle" style="font-size:13px; fill: var(--kerykeion-chart-color-vertex)">Vx</text>
+            <g transform="translate(3.091,17.726) scale(0.01604,-0.01604)" style="fill: var(--kerykeion-chart-color-vertex)"><path d="M600 714 345 0H255L0 714H94L255 256Q271 212 282.0 173.5Q293 135 300 100Q307 135 318.0 174.0Q329 213 345 258L505 714Z"/><path d="M212 274 27 536H127L265 334L402 536H501L316 274L511 0H411L265 214L117 0H18Z" transform="translate(600,0)"/></g>
         </symbol>
         <symbol id="True_Lilith">
             <g transform="translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)"><path d="M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z" style="fill: var(--kerykeion-chart-color-mean-lilith)"/></g>
