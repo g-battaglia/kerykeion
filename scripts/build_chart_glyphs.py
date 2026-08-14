@@ -272,7 +272,7 @@ SPEC = [
     ("Mercury", P, "S", ("mercury", [0x263F])),
     ("Venus", P, "S", ("venus", [0x2640])),
     ("Mars", P, "S", ("mars", [0x2642])),
-    ("Jupiter", P, "S", ("jupiter", [0x2643])),
+    ("Jupiter", P, "C", "Jupiter"),
     ("Saturn", P, "S", ("saturn", [0x2644])),
     ("Uranus", P, "C", "Uranus"),
     ("Neptune", P, "S", ("neptune", [0x2646])),
@@ -642,6 +642,27 @@ def _eris(colour: str) -> str:
     )
 
 
+def _jupiter(colour: str) -> str:
+    """The "24" figure: a numeral 2 whose base runs on, crossed by an upright.
+
+    The 2 and its base are ONE path, so the corner where the tail turns into the
+    bar is a real join rather than two strokes that happen to meet. A first pass
+    drew the hook too small and too closed and the diagonal too short, which read
+    as a comma rather than a 2; the bowl now spans a third of the glyph and the
+    tail sweeps the full diagonal, as the figure is written.
+
+    Proportions are taken off the reference and fitted to the shared contract:
+    the upright carries the full ink height (INK_FRACTION of the box) and the
+    mark centres on 12.
+    """
+    top, bottom = 2.667, 21.333      # the upright: 20.16 of ink once stroked
+    return (
+        f'<path d="M5.10,7.6 C5.10,4.2 11.03,3.2 12.43,6.9 '
+        f'C13.53,9.8 10.53,12.4 4.24,17.74 H19.75" {sk(colour)}/>'
+        f'<path d="M15.72,{top} V{bottom}" {sk(colour)}/>'
+    )
+
+
 CLEAN = {
     # planets / points (box 24, centre 12)
     "Chiron": _chiron("chiron"),
@@ -649,6 +670,7 @@ CLEAN = {
     "Mean_Priapus": _priapus("mean-lilith"),
     "True_Priapus": _priapus("true-lilith"),
     "Pholus": _pholus("pholus"),
+    "Jupiter": _jupiter("jupiter"),
     "Sun": f'<circle cx="12" cy="12" r="9" {sk("sun")}/><circle cx="12" cy="12" r="1.9" fill="{V("sun")}"/>',
     "Mean_North_Lunar_Node": _lunar_node("mean-node"),
     "True_North_Lunar_Node": _lunar_node("true-node"),

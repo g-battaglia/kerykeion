@@ -1147,9 +1147,8 @@
    </g>
   </symbol>
   <symbol id="Jupiter">
-   <g transform="translate(3.481 1.92) scale(.01191 -.01191) translate(-70 -1492)">
-    <path d="m1500-200h-125v383h-1180v125h363q147 0 256 123 106 119 106 268 0 170-96 274-99 108-267 108-165 0-262-89-100-91-100-254v-63h-125v62q0 215 137 344 133 125 350 125 220 0 356-144 132-141 132-363 0-229-177-391h507v1184h125z" fill="var(--kerykeion-chart-color-jupiter)"/>
-   </g>
+   <path d="m5.1 7.6c0-3.4 5.93-4.4 7.33-0.7 1.1 2.9-1.9 5.5-8.19 10.84h15.51" fill="none" stroke="var(--kerykeion-chart-color-jupiter)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m15.72 2.667v18.666" fill="none" stroke="var(--kerykeion-chart-color-jupiter)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
   </symbol>
   <symbol id="Saturn">
    <g transform="translate(5.768 1.92) scale(.01117 -.01117) translate(-50 -1492)">

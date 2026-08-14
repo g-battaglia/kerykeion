@@ -121,8 +121,8 @@
     --kerykeion-chart-color-seventh-house: var(--kerykeion-color-warning);
     --kerykeion-chart-color-fourth-house: var(--kerykeion-color-warning);
     --kerykeion-chart-color-mean-lilith: var(--kerykeion-color-secondary);
-    --kerykeion-chart-color-true-lilith: var(--kerykeion-color-secondary);
-    --kerykeion-chart-color-interpolated-lilith: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-true-lilith: #0555ea;
+    --kerykeion-chart-color-interpolated-lilith: #033da9;
     --kerykeion-chart-color-ceres: var(--kerykeion-color-accent);
     --kerykeion-chart-color-pallas: var(--kerykeion-color-primary);
     --kerykeion-chart-color-juno: var(--kerykeion-color-accent);
