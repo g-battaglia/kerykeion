@@ -23,6 +23,7 @@ a subprocess, because the whole point is the entry point's no-extra behaviour.
 from __future__ import annotations
 
 import importlib.util
+import json
 import subprocess
 import sys
 
@@ -88,14 +89,38 @@ def _smoke_without_extra() -> int:
 
 
 def _smoke_with_extra() -> int:
-    """The ``pip install kerykeion[cli]`` path: --version and --help work."""
+    """The ``pip install kerykeion[cli]`` path: the CLI is actually functional."""
     rv = _run(["--version"])
     if rv.returncode != 0 or not rv.stdout.strip():
         return _fail("wheel-with-extra --version", f"rc={rv.returncode} out={rv.stdout!r}\n{rv.stderr}")
     rh = _run(["--help"])
     if rh.returncode != 0 or "Usage" not in rh.stdout:
         return _fail("wheel-with-extra --help", f"rc={rh.returncode}\n{rh.stdout}\n{rh.stderr}")
-    print(f"wheel-with-extra OK: --version ({rv.stdout.strip()}) and --help green")
+
+    # ``info`` and ``doctor`` read the installed library rather than the repo, so
+    # they are the cheapest proof that the *packaged* CLI can reach it. A wheel
+    # that ships the commands but cannot introspect what it installed would pass
+    # a --help-only check.
+    ri = _run(["info", "literals", "HousesSystemIdentifier", "-f", "json"])
+    if ri.returncode != 0 or "HousesSystemIdentifier" not in ri.stdout:
+        return _fail("wheel-with-extra info", f"rc={ri.returncode}\n{ri.stdout}\n{ri.stderr}")
+    try:
+        tables = json.loads(ri.stdout)
+    except json.JSONDecodeError as exc:
+        return _fail("wheel-with-extra info json", f"{exc}\n{ri.stdout}")
+    if not tables.get("HousesSystemIdentifier"):
+        return _fail("wheel-with-extra info json", f"empty table: {ri.stdout}")
+
+    # doctor exercises the backend end to end and exits non-zero if the packaged
+    # install cannot actually compute.
+    rd = _run(["doctor", "-f", "json"])
+    if rd.returncode != 0:
+        return _fail("wheel-with-extra doctor", f"rc={rd.returncode}\n{rd.stdout}\n{rd.stderr}")
+
+    print(
+        f"wheel-with-extra OK: --version ({rv.stdout.strip()}), --help, "
+        f"info ({len(tables)} literal tables) and doctor green"
+    )
     return 0
 
 

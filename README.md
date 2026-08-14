@@ -2449,10 +2449,12 @@ Lib
 ```
 
 The command tree covers charts (`natal`, `synastry`, `transit`, `composite`,
-`return`, `progression`), analytical techniques (`technique profections`,
-`technique firdaria`, …), astronomical events (`sky eclipses`, `sky lunations`,
-…), time series (`ephemeris`, `transits`), subject profiles (`subject …`) and a
-guarded dispatcher (`call`) that reaches any public factory method:
+`return`, `progression`), analyses (`aspects`, `dominants`, `moon`,
+`relationship-score`), analytical techniques (`technique profections`,
+`technique solar-arc`, …), astronomical events (`sky eclipses`, `sky mundane`,
+`sky occultations`, …), time series (`ephemeris`, `transits`), subject profiles
+(`subject …`) and a guarded dispatcher (`call`) that reaches any public factory
+method:
 
 ```console
 $ kerykeion call ProfectionsFactory.from_subject -s john -f json
@@ -2461,6 +2463,20 @@ $ kerykeion call --list
 
 `call` only dispatches to names in `kerykeion.__all__`, so `kerykeion call
 os.system` is refused by design.
+
+SVG output is fully controllable — themes, ten chart languages, styles,
+wheel-only or aspect-grid-only variants, and a JSON settings file for palettes:
+
+```console
+$ kerykeion natal -s john -f svg -o /tmp/john.svg --theme dark --chart-language IT
+```
+
+And the CLI describes itself, so no table of valid values has to be memorised:
+
+```console
+$ kerykeion info literals SiderealMode    # what --sidereal-mode accepts
+$ kerykeion doctor                        # check the install; exits 6 if broken
+```
 
 **📖 Full CLI reference: [Command Line Interface](https://www.kerykeion.net/content/docs/cli)**
 

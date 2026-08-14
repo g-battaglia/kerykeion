@@ -64,6 +64,14 @@ The same subject-building flags (`--date`, `--time`, `--lat`, `--lng`, `--tz`,
 `--zodiac`, `--houses`, `--points`, `--with`, `--without`, `--set`, …) are
 spelled identically by `subject save`, `natal` and `now`.
 
+Profiles are stored as JSON recipes (`0600`, in a `0700` directory — birth data
+is personal) and written atomically. `subject save --snapshot` additionally
+caches the computed subject, so later reads reuse it instead of recomputing;
+the cache is dropped automatically when the kerykeion version or the ephemeris
+backend changes, and any inline override bypasses it. `subject verify` always
+recomputes from the recipe and reports how the stored copy compares
+(`absent` / `matches` / `stale` / `drifted`).
+
 ## Charts
 
 | Command | Chart |
@@ -82,6 +90,54 @@ $ kerykeion synastry -s ada -S bob -f text
 $ kerykeion return -s ada --year 2026 --type Solar
 ```
 
+### Chart appearance
+
+Every chart command exposes the drawer's options, so an SVG is not limited to
+the default look. Values are case-insensitive and an unknown one is exit `4`
+listing the valid set.
+
+| Flag | Values |
+|------|--------|
+| `--theme` | `light`, `dark`, `dark-high-contrast`, `classic`, `strawberry`, `black-and-white` |
+| `--chart-language` | `EN FR PT IT CN ES RU TR DE HI` |
+| `--style` | `classic`, `modern` (default) |
+| `--svg-variant` | `full` (default), `wheel`, `aspect-grid` |
+| `--custom-title`, `--padding`, `--transparent-background` | title, spacing, background |
+| `--auto-size/--no-auto-size`, `--zodiac-ring/--no-…`, `--diurnality/--no-…` | layout toggles |
+| `--aspect-grid-type`, `--house-position-comparison/--no-…`, `--cusp-position-comparison` | dual wheels |
+| `--chart-settings file.json` | `colors_settings`, `celestial_points_settings`, `aspects_settings`, `language_pack` |
+
+```console
+$ kerykeion natal -s ada -f svg -o /tmp/ada.svg --theme dark --chart-language IT
+$ kerykeion natal -s ada -f svg -o /tmp/wheel.svg --svg-variant wheel
+$ kerykeion natal -s ada -f svg -o /tmp/themed.svg --chart-settings ./palette.json
+```
+
+`--chart-settings` **merges** its mapping sections over the library defaults, so
+overriding one colour does not require restating the palette. `--external-view`,
+`--degree-indicators` and `--aspect-icons` apply to `--style classic` only; under
+the default `modern` style the library ignores them and says so on stderr.
+
+For `-f text`, `--no-aspects` and `--max-aspects N` shape the report.
+
+## Analyses
+
+| Command | What it reports |
+|---------|-----------------|
+| `aspects -s ada [-S bob] [--declinations]` | aspects within one chart or between two |
+| `dominants -s ada [--method …]` | dominant signs, elements, qualities, planets |
+| `moon -s ada` | moon phase details |
+| `relationship-score -s ada -S bob` | Discepolo relationship score |
+
+```console
+$ kerykeion aspects -s ada --aspects trine:6,square
+$ kerykeion dominants -s ada --method almuten_figuris
+$ kerykeion relationship-score -s ada -S bob
+```
+
+`--aspects` takes a name or `name:orb`. Declination aspects use a single `--orb`
+instead, and refuse `--aspects`/`--axis-orb-limit`, which have no meaning there.
+
 ## Techniques, sky events and time series
 
 Curated subcommand groups cover the analytical techniques and astronomical
@@ -92,9 +148,15 @@ reference.
 $ kerykeion technique profections -s ada
 $ kerykeion technique firdaria -s ada
 $ kerykeion technique zr -s ada --lot fortune
+$ kerykeion technique solar-arc -s ada --target-year 2026
+$ kerykeion technique house-comparison -s ada -S bob
+$ kerykeion technique fixed-stars -s ada --orb 1.5
 $ kerykeion sky eclipses --start-year 2025 --count 5
 $ kerykeion sky lunations --from 2026-01-01 --to 2026-12-31
 $ kerykeion sky sun-times --from 2026-06-21 --lat 41.9 --lng 12.5 --tz Europe/Rome
+$ kerykeion sky mundane --from 2026-01-01 --to 2026-03-01
+$ kerykeion sky phenomena -s ada
+$ kerykeion sky occultations -s ada --planet Venus
 ```
 
 Time series (`ephemeris`, `transits`) sample positions over a range. A
@@ -148,6 +210,30 @@ kerykeion: error: 'os' is not in the kerykeion public API; ...
 
 Errors are one clean line on stderr by default — never a traceback — with the
 right code. `--traceback` shows the full traceback (always shown for exit `1`).
+
+## Discovering values, and checking the install
+
+The CLI validates against the library's own literals — 23 house systems, 48
+ayanamsas, 11 perspectives, 76 points — and `info` lists them, read at runtime so
+they cannot drift from what the flags accept. With `-f json` it is the source a
+script should consult instead of hard-coding tables.
+
+```console
+$ kerykeion info literals                 # every enum, by name
+$ kerykeion info literals SiderealMode    # one of them
+$ kerykeion info houses                   # letters and name aliases
+$ kerykeion info points                   # what --points accepts
+$ kerykeion info methods                  # per-command strategy names
+```
+
+`status` reports the runtime environment; `doctor` judges it — the same probes
+plus a real calculation — and exits `6` when the install is genuinely broken.
+A widened profile-store mode or a stray `./.env` are warnings, not failures.
+
+```console
+$ kerykeion status --json
+$ kerykeion doctor
+```
 
 ## Global flags
 

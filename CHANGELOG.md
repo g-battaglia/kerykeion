@@ -149,6 +149,36 @@ exit-code-classification path it could reach:
   - NOTICE no longer states that Typer's vendored Click is carried "under Typer's
     MIT": bundling does not relicense it, and it remains BSD-3-Clause.
 
+- **The CLI reaches the whole library now.** A measured audit of the finished
+  feature found the computation fully covered but the *presentation* not: 
+  `ChartDrawer`'s 20 parameters were unreachable (`svg_out` built it with
+  defaults only, and no `call` path could supply its chart-data argument), the
+  report knobs were never wired, `--snapshot` was documented but did not exist,
+  and nothing could list the values the flags validate against. Closed:
+  - **Chart appearance from the terminal**: `--theme` (6), `--chart-language`
+    (10), `--style`, `--custom-title`, `--padding`, `--transparent-background`,
+    the visibility toggles in `--x/--no-x` form, `--aspect-grid-type`,
+    `--svg-variant full|wheel|aspect-grid`, and `--chart-settings file.json`
+    for palettes and point/aspect tables (mapping sections merge over the
+    library defaults, so one colour can be overridden alone). Plus
+    `--no-aspects`/`--max-aspects` for text reports and `--envelope` to carry
+    provenance and warnings in-band for consumers that cannot read stderr.
+  - **Ten more curated commands**, so every public factory has one: `aspects`,
+    `dominants`, `moon`, `relationship-score`, `technique house-comparison`,
+    `technique solar-arc`, `technique fixed-stars`, `sky mundane`,
+    `sky phenomena`, `sky occultations`. The tree goes from 34 commands to 50.
+  - **`info` and `doctor`**: `info literals|points|stars|houses|methods` lists
+    what the flags accept, derived at runtime from the library (27 enum tables,
+    including the 48 ayanamsas and 23 house systems); `doctor` runs the
+    environment checks plus a real calculation and exits 6 when broken, where
+    `status` only reports.
+  - **`--snapshot` is real**: `subject save --snapshot` caches the computed
+    subject and later reads reuse it, dropped automatically when the kerykeion
+    version or backend changes; `subject verify` reports
+    absent/matches/stale/drifted.
+  - `--aspects` has one meaning everywhere (`name` or `name:orb`), parsed once
+    and refused where a per-aspect orb has nowhere to go.
+
 ### Changed
 
 - **CLI internal consolidation, no behavior change.** The `_emit`/`_split_csv`/
