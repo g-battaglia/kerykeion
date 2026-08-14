@@ -132,8 +132,40 @@ def emit_warnings(eph: list, polar: list, stream=None) -> None:
         stream.write(f"kerykeion: warning: {_fmt_polar(w)}\n")
 
 
+def _wrap_envelope(obj: Any, eph: list, polar: list) -> dict:
+    """``--envelope``: the payload plus provenance and the warnings, in-band.
+
+    The data half goes through :func:`render_json` and back, so the enveloped
+    ``data`` is byte-for-byte what the un-enveloped payload would have been —
+    the envelope cannot drift from the plain output by construction.
+
+    The warnings are the same strings written to stderr, for a consumer that
+    cannot read stderr (a pipeline, a CI step capturing only stdout).
+    """
+    import json
+    from datetime import datetime, timezone
+
+    from kerykeion.cli.rendering.json_out import render_json
+
+    meta: dict[str, Any] = {
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds")
+    }
+    try:
+        from kerykeion import BACKEND_NAME, __version__
+
+        meta["version"] = __version__
+        meta["backend"] = BACKEND_NAME
+    except Exception:  # pragma: no cover - defensive; kerykeion is the core dep
+        pass
+    return {
+        "kerykeion": meta,
+        "warnings": [_fmt_ephemeris(w) for w in eph] + [_fmt_polar(w) for w in polar],
+        "data": json.loads(render_json(obj)),
+    }
+
+
 def output_with_warnings(
-    obj: Any, fmt: str, output: str | None, warning_source: Any = None
+    obj: Any, fmt: str, output: str | None, warning_source: Any = None, opts: Any = None
 ) -> None:
     """Emit the payload, then warnings; exit 9 if ``--warnings-as-errors``.
 
@@ -151,6 +183,14 @@ def output_with_warnings(
     from kerykeion.cli.rendering import emit
 
     eph, polar = collect_warnings(warning_source if warning_source is not None else obj)
+    payload = obj
+    if opts is not None and getattr(opts, "envelope", None):
+        if fmt != "json":
+            raise ValueError(
+                "--envelope wraps the payload in a JSON object; it needs --format json "
+                f"(or an -o path ending in .json), not {fmt!r}."
+            )
+        payload = _wrap_envelope(obj, eph, polar)
     # The payload is rendered and written first, but a render crash (e.g. SVG on
     # a non-chart object) must NOT silently bypass ``--warnings-as-errors``. Hold
     # the render error, always emit warnings in the ``finally``, then: if there
@@ -159,7 +199,7 @@ def output_with_warnings(
     # reaches the error boundary as normal.
     render_error = None
     try:
-        emit.write_output(emit.render(obj, fmt), output)
+        emit.write_output(emit.render(payload, fmt, opts), output)
     except Exception as exc:  # noqa: BLE001 — held, not swallowed
         render_error = exc
     finally:

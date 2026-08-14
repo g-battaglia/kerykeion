@@ -18,8 +18,14 @@ from __future__ import annotations
 from typing import Any
 
 
-def render_svg(obj: Any) -> str:
-    """Render *obj* (a ChartDataModel) to an SVG string via ChartDrawer."""
+def render_svg(obj: Any, opts: Any = None) -> str:
+    """Render *obj* (a ChartDataModel) to an SVG string via ChartDrawer.
+
+    ``ChartDrawer`` fixes theme, language, palette and layout at construction, so
+    every option travels through *opts*. Only the ones the user actually gave are
+    forwarded (see :class:`~kerykeion.cli.rendering.options.RenderOptions`); with
+    no options this is exactly ``ChartDrawer(obj).generate_svg_string()``.
+    """
     from kerykeion import ChartDrawer, KerykeionException
 
     if not hasattr(obj, "chart_type"):
@@ -27,9 +33,15 @@ def render_svg(obj: Any) -> str:
             "SVG output needs a chart-data model, which only the chart commands "
             "(natal, synastry, transit, composite, return, progression) produce."
         )
-    # ChartDrawer fixes theme/language/palette at construction. We expose the
-    # common ones as CLI flags later; the defaults ("classic"/"EN"/"modern")
-    # match what the library itself uses out of the box.
-    return ChartDrawer(obj).generate_svg_string()
+    from kerykeion.cli.rendering.options import SVG_VARIANTS
+
+    kwargs = opts.chart_kwargs() if opts is not None else {}
+    variant = (getattr(opts, "svg_variant", None) or "full") if opts is not None else "full"
+    method = SVG_VARIANTS.get(variant)
+    if method is None:
+        raise ValueError(
+            f"--svg-variant must be one of {', '.join(sorted(SVG_VARIANTS))}, got {variant!r}"
+        )
+    return getattr(ChartDrawer(obj, **kwargs), method)()
 
 

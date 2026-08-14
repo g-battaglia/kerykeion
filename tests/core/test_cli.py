@@ -1281,3 +1281,165 @@ class TestFullPrReviewFixes:
         ):
             assert not hasattr(module, name), f"{name} should be deleted"
         assert hasattr(emit, "write_output") and hasattr(emit, "render")
+
+
+@pytest.fixture
+def bob_profile(runner, app):
+    """A second stored subject, for the dual-wheel and two-subject commands."""
+    result = runner.invoke(app, [
+        "subject", "save", "bob",
+        "--name", "Bob", "--date", "1985-06-01", "--time", "09:30",
+        "--lat", "45.0", "--lng", "9.0", "--tz", "Europe/Rome", "--offline",
+    ])
+    assert result.exit_code == 0, result.output
+    return "bob"
+
+
+class TestRenderOptions:
+    """The chart/report knobs: ChartDrawer's 20 parameters used to be unreachable."""
+
+    def _svg(self, runner, app, tmp_path, name, *extra):
+        target = tmp_path / f"{name}.svg"
+        result = runner.invoke(
+            app, ["natal", "-s", "ada", "-f", "svg", "-o", str(target), *extra]
+        )
+        assert result.exit_code == 0, result.output
+        return target.read_text(encoding="utf-8")
+
+    # Each flag must reach ChartDrawer and change the drawing. Asserting on the
+    # rendered SVG (not on a spy) is what proves the whole chain is connected.
+    @pytest.mark.parametrize("flags", [
+        ["--theme", "dark"],
+        ["--chart-language", "IT"],
+        ["--style", "classic"],
+        ["--transparent-background"],
+        ["--custom-title", "ADA-XYZ"],
+        ["--padding", "80"],
+        ["--no-zodiac-ring"],
+        ["--no-diurnality"],
+        ["--no-auto-size"],
+    ])
+    def test_chart_flag_changes_the_svg(self, runner, app, ada_profile, tmp_path, flags):
+        base = self._svg(runner, app, tmp_path, "base")
+        assert self._svg(runner, app, tmp_path, "opt", *flags) != base
+
+    # The classic-only knobs are inert under the default modern style — the
+    # library says so on stderr — but must work when the style is classic.
+    @pytest.mark.parametrize("flag", [
+        "--no-degree-indicators", "--external-view", "--no-aspect-icons",
+    ])
+    def test_classic_only_flags_work_under_classic_style(
+        self, runner, app, ada_profile, tmp_path, flag
+    ):
+        base = self._svg(runner, app, tmp_path, "classic", "--style", "classic")
+        assert self._svg(runner, app, tmp_path, "opt", "--style", "classic", flag) != base
+
+    def test_custom_title_lands_in_the_svg(self, runner, app, ada_profile, tmp_path):
+        assert "ADA-XYZ" in self._svg(
+            runner, app, tmp_path, "title", "--custom-title", "ADA-XYZ"
+        )
+
+    def test_svg_variants_render_different_drawings(self, runner, app, ada_profile, tmp_path):
+        sizes = {
+            variant: len(self._svg(runner, app, tmp_path, variant, "--svg-variant", variant))
+            for variant in ("full", "wheel", "aspect-grid")
+        }
+        assert len(set(sizes.values())) == 3, sizes
+
+    # Case-insensitive like every other enum flag; an unknown value is exit 4.
+    @pytest.mark.parametrize("flags", [
+        ["--theme", "DARK"], ["--chart-language", "it"], ["--style", "MODERN"],
+    ])
+    def test_chart_enums_are_case_insensitive(self, runner, app, ada_profile, tmp_path, flags):
+        assert self._svg(runner, app, tmp_path, "ci", *flags)
+
+    @pytest.mark.parametrize("flags", [
+        ["--theme", "nope"], ["--svg-variant", "bogus"], ["--aspect-grid-type", "x"],
+    ])
+    def test_unknown_chart_value_is_invalid_input(
+        self, runner, app, ada_profile, tmp_path, flags
+    ):
+        result = runner.invoke(
+            app, ["natal", "-s", "ada", "-f", "svg", "-o", str(tmp_path / "x.svg"), *flags]
+        )
+        assert result.exit_code == 4
+        assert "must be one of" in result.output
+
+    # `style` is annotated with an unevaluated forward-ref in chart_drawer, so
+    # reading the raw signature yields no choices and would reject everything.
+    def test_chart_choices_resolve_forward_refs(self):
+        from kerykeion.cli.rendering.options import chart_choices
+
+        assert chart_choices("style") == ("classic", "modern")
+        assert "dark" in chart_choices("theme")
+        assert "IT" in chart_choices("chart_language")
+
+    # Report knobs act where a report has aspects: the dual-wheel models.
+    def test_report_knobs_shorten_the_report(self, runner, app, ada_profile, bob_profile):
+        base = runner.invoke(app, ["synastry", "-s", "ada", "-S", "bob", "-f", "text"])
+        trimmed = runner.invoke(
+            app, ["synastry", "-s", "ada", "-S", "bob", "-f", "text", "--no-aspects"]
+        )
+        capped = runner.invoke(
+            app, ["synastry", "-s", "ada", "-S", "bob", "-f", "text", "--max-aspects", "3"]
+        )
+        assert base.exit_code == trimmed.exit_code == capped.exit_code == 0
+        assert len(trimmed.output) < len(base.output)
+        assert len(capped.output) < len(base.output)
+
+    # --envelope carries the warnings in-band for consumers that only read stdout.
+    def test_envelope_wraps_without_changing_the_payload(self, runner, app, ada_profile):
+        plain = runner.invoke(app, ["natal", "-s", "ada", "-f", "json"])
+        wrapped = runner.invoke(app, ["natal", "-s", "ada", "-f", "json", "--envelope"])
+        assert wrapped.exit_code == 0
+        body = json.loads(wrapped.output)
+        assert set(body) == {"kerykeion", "warnings", "data"}
+        assert {"version", "backend", "generated_at"} <= set(body["kerykeion"])
+        # The enveloped data must be exactly the un-enveloped payload.
+        assert body["data"] == json.loads(plain.output)
+
+    @pytest.mark.parametrize("fmt", ["text", "svg", "xml"])
+    def test_envelope_outside_json_is_invalid_input(self, runner, app, ada_profile, tmp_path, fmt):
+        result = runner.invoke(
+            app,
+            ["natal", "-s", "ada", "-f", fmt, "--envelope", "-o", str(tmp_path / f"o.{fmt}")],
+        )
+        assert result.exit_code == 4
+        assert "--envelope" in result.output
+
+    # A partial settings file must overlay the library defaults: replacing the
+    # whole palette wholesale made ChartDrawer die on KeyError('zodiac_icon_0').
+    def test_partial_chart_settings_merge_over_defaults(
+        self, runner, app, ada_profile, tmp_path
+    ):
+        settings = tmp_path / "palette.json"
+        settings.write_text(json.dumps({"colors_settings": {"paper_0": "#101010"}}))
+        base = self._svg(runner, app, tmp_path, "plain")
+        themed = self._svg(runner, app, tmp_path, "themed", "--chart-settings", str(settings))
+        assert themed != base
+        assert "#101010" in themed
+
+    @pytest.mark.parametrize("body,needle", [
+        ('{"colours": {}}', "unknown key"),
+        ("[1, 2]", "must hold a JSON object"),
+    ])
+    def test_bad_chart_settings_are_named(
+        self, runner, app, ada_profile, tmp_path, body, needle
+    ):
+        settings = tmp_path / "bad.json"
+        settings.write_text(body)
+        result = runner.invoke(
+            app,
+            ["natal", "-s", "ada", "-f", "svg", "-o", str(tmp_path / "x.svg"),
+             "--chart-settings", str(settings)],
+        )
+        assert result.exit_code == 4
+        assert needle in result.output
+
+    # _render_from() reads the flags out of the caller's frame; the guard turns a
+    # renamed/dropped parameter into a loud failure instead of a silent no-op.
+    def test_render_from_rejects_a_missing_flag(self):
+        from kerykeion.cli.commands._shared import _render_from
+
+        with pytest.raises(AssertionError, match="absent from the command signature"):
+            _render_from({"theme": "dark"})

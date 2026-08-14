@@ -521,3 +521,177 @@ CallSubject2Opt = Annotated[
         rich_help_panel="Call",
     ),
 ]
+
+# ── Report shaping (--format text) ───────────────────────────────────────────
+NoAspectsFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--no-aspects",
+        help="Omit the aspects section from the text report.",
+        rich_help_panel="Report",
+    ),
+]
+MaxAspectsOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--max-aspects",
+        help="Keep at most N aspects in the text report (the tightest ones first).",
+        rich_help_panel="Report",
+    ),
+]
+EnvelopeFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--envelope",
+        help="Wrap the payload with provenance and the warnings, in-band (JSON only) "
+        "— for a pipeline that cannot read stderr.",
+        rich_help_panel="Report",
+    ),
+]
+
+# ── Chart appearance (--format svg) ──────────────────────────────────────────
+# Boolean convention, and the reason it is asymmetric: a flag whose library
+# default is False needs no negative form ("not given" already means False), but
+# a flag whose default is True is *useless* without one — that is exactly the
+# bug that made the documented `--no-online` unreachable. So every knob the
+# library defaults to True is declared in the paired `--x/--no-x` form.
+ThemeOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--theme",
+        help="Chart theme: light, dark, dark-high-contrast, classic, strawberry, "
+        "black-and-white.",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+ChartLanguageOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--chart-language",
+        help="Language of the chart labels: EN, FR, PT, IT, CN, ES, RU, TR, DE, HI.",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+ChartStyleOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--style", help="Chart style: classic or modern.", rich_help_panel="Chart (SVG)"
+    ),
+]
+CustomTitleOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--custom-title",
+        help="Replace the chart's title line.",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+PaddingOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--padding", help="Outer padding in SVG units.", rich_help_panel="Chart (SVG)"
+    ),
+]
+ExternalViewFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--external-view",
+        help="Draw the external (outer-ring) layout. Classic style only — with the "
+        "default --style modern the library ignores it and says so on stderr.",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+TransparentBackgroundFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--transparent-background",
+        help="Omit the background rectangle (for compositing).",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+CuspComparisonFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--cusp-position-comparison",
+        help="Show the cusp-position comparison (dual wheels).",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+AutoSizeFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--auto-size/--no-auto-size",
+        help="Size the viewBox to the content (default: on).",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+DegreeIndicatorsFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--degree-indicators/--no-degree-indicators",
+        help="Draw the degree ticks (default: on). Classic style only — with the "
+        "default --style modern the library ignores it and says so on stderr.",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+AspectIconsFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--aspect-icons/--no-aspect-icons",
+        help="Draw aspect glyphs in the grid (default: on). Classic style only — with "
+        "the default --style modern the library ignores it and says so on stderr.",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+ZodiacRingFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--zodiac-ring/--no-zodiac-ring",
+        help="Draw the zodiac background ring (default: on).",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+DiurnalityFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--diurnality/--no-diurnality",
+        help="Mark day/night sect (default: on).",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+HousePositionComparisonFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--house-position-comparison/--no-house-position-comparison",
+        help="Show the house-position comparison (default: on). Dual wheels only "
+        "(synastry, transit, return, progression).",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+AspectGridTypeOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--aspect-grid-type",
+        help="Dual-chart aspect grid: list or table.",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+SvgVariantOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--svg-variant",
+        help="Which SVG to render: full (default), wheel (wheel only), "
+        "aspect-grid (grid only).",
+        rich_help_panel="Chart (SVG)",
+    ),
+]
+ChartSettingsOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--chart-settings",
+        help="JSON file with any of: colors_settings, celestial_points_settings, "
+        "aspects_settings, language_pack. Structural settings that are too big "
+        "for a flag.",
+        rich_help_panel="Chart (SVG)",
+    ),
+]

@@ -21,9 +21,17 @@ from kerykeion.cli import warnings
 from kerykeion.cli.rendering import formats
 
 
-def _emit(model: object, fmt: Optional[str], output: Optional[str]) -> None:
-    """Resolve the format and route the payload through the warnings funnel."""
-    warnings.output_with_warnings(model, formats.resolve_format(fmt, output), output)
+def _emit(
+    model: object, fmt: Optional[str], output: Optional[str], opts: object = None
+) -> None:
+    """Resolve the format and route the payload through the warnings funnel.
+
+    *opts* is an optional ``RenderOptions`` with the report/chart knobs; commands
+    that expose none simply omit it.
+    """
+    warnings.output_with_warnings(
+        model, formats.resolve_format(fmt, output), output, opts=opts
+    )
 
 
 def _split_csv(values: Optional[list[str]]) -> Optional[list[str]]:
@@ -44,3 +52,107 @@ def _parse_dt(value: str) -> datetime:
         raise ValueError(
             f"expected an ISO date or datetime (YYYY-MM-DD or YYYY-MM-DDThh:mm), got {value!r}"
         ) from exc
+
+
+def _choose(value: object, allowed: tuple[str, ...], label: str) -> object:
+    """Validate an enum-style flag case-insensitively, returning the canonical form.
+
+    The rest of the CLI normalises case (``--zodiac tropical``, ``--houses
+    PLACIDUS``, ``--points ALL``), so these flags must too: rejecting
+    ``--lot Fortune`` while accepting ``--zodiac Tropical`` is one CLI with two
+    rules.
+    """
+    if value is None:
+        return None
+    v = str(value).strip().lower()
+    canonical = {choice.lower(): choice for choice in allowed}
+    if v not in canonical:
+        raise ValueError(f"--{label} must be {' or '.join(allowed)}, got {value!r}")
+    return canonical[v]
+
+
+# The render flags every chart-producing command exposes. Declared once: the
+# commands must spell them in their signatures (typer reads the signature), but
+# the *set* lives here so it cannot drift command by command.
+_RENDER_FLAG_NAMES = (
+    "no_aspects", "max_aspects", "envelope", "theme", "chart_language", "style",
+    "custom_title", "padding", "external_view", "transparent_background",
+    "cusp_position_comparison", "auto_size", "degree_indicators", "aspect_icons",
+    "zodiac_ring", "diurnality", "house_position_comparison", "aspect_grid_type",
+    "svg_variant", "chart_settings",
+)
+
+
+def _render_from(scope: dict) -> object:
+    """Build ``RenderOptions`` from a command's ``locals()``.
+
+    Reading the flags out of the calling frame keeps twenty ``name=name`` lines
+    out of eight command bodies. The membership check is what makes that safe:
+    a renamed or dropped parameter raises here instead of silently rendering with
+    the flag ignored — the exact failure mode (a flag that quietly does nothing)
+    this CLI's reviews kept finding.
+    """
+    missing = [name for name in _RENDER_FLAG_NAMES if name not in scope]
+    if missing:
+        raise AssertionError(
+            f"render flags absent from the command signature: {', '.join(missing)}"
+        )
+    return _render_opts(**{name: scope[name] for name in _RENDER_FLAG_NAMES})
+
+
+def _render_opts(
+    *,
+    no_aspects: Optional[bool] = None,
+    max_aspects: Optional[int] = None,
+    envelope: Optional[bool] = None,
+    theme: Optional[str] = None,
+    chart_language: Optional[str] = None,
+    style: Optional[str] = None,
+    custom_title: Optional[str] = None,
+    padding: Optional[int] = None,
+    external_view: Optional[bool] = None,
+    transparent_background: Optional[bool] = None,
+    cusp_position_comparison: Optional[bool] = None,
+    auto_size: Optional[bool] = None,
+    degree_indicators: Optional[bool] = None,
+    aspect_icons: Optional[bool] = None,
+    zodiac_ring: Optional[bool] = None,
+    diurnality: Optional[bool] = None,
+    house_position_comparison: Optional[bool] = None,
+    aspect_grid_type: Optional[str] = None,
+    svg_variant: Optional[str] = None,
+    chart_settings: Optional[str] = None,
+) -> object:
+    """Translate the render flags into ``RenderOptions`` (``None`` if none were given).
+
+    The flag names and the ``ChartDrawer`` parameter names differ on purpose —
+    ``--degree-indicators`` reads better than ``--show-degree-indicators``, and the
+    paired ``--x/--no-x`` form needs the short stem. That translation lives **only
+    here**, so a command never has to know the library's parameter spelling.
+    """
+    from kerykeion.cli.rendering import options as render_options
+
+    return render_options.build(
+        # ``--no-aspects`` is the negative face of ReportGenerator's
+        # ``include_aspects``; not passing it must stay "not given", not False.
+        include_aspects=False if no_aspects else None,
+        max_aspects=max_aspects,
+        envelope=envelope,
+        theme=theme,
+        chart_language=chart_language,
+        style=style,
+        custom_title=custom_title,
+        padding=padding,
+        external_view=external_view,
+        transparent_background=transparent_background,
+        show_cusp_position_comparison=cusp_position_comparison,
+        auto_size=auto_size,
+        show_degree_indicators=degree_indicators,
+        show_aspect_icons=aspect_icons,
+        show_zodiac_background_ring=zodiac_ring,
+        show_diurnality=diurnality,
+        show_house_position_comparison=house_position_comparison,
+        double_chart_aspect_grid_type=aspect_grid_type,
+        svg_variant=svg_variant,
+        chart_settings=chart_settings,
+    )

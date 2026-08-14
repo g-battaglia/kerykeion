@@ -20,7 +20,7 @@ import pydantic
 from kerykeion.cli.rendering.json_out import render_json
 
 
-def _try_report(model: pydantic.BaseModel) -> str | None:
+def _try_report(model: pydantic.BaseModel, opts: Any = None) -> str | None:
     """The ASCII report for *model*, or ``None`` if the generator rejects it.
 
     ``ReportGenerator`` is typed for a narrow union of chart/technique models,
@@ -28,19 +28,23 @@ def _try_report(model: pydantic.BaseModel) -> str | None:
     accept-or-reject is exactly the question. The single ``type: ignore``
     encodes that deliberate widening; we never assume success and fall back to
     JSON on ``TypeError``/``ValueError``.
+
+    *opts* carries ``--no-aspects`` / ``--max-aspects``; only the ones given are
+    forwarded, so with no options the call is the plain ``ReportGenerator(model)``.
     """
     from kerykeion import ReportGenerator
 
+    kwargs = opts.report_kwargs() if opts is not None else {}
     try:
-        return ReportGenerator(model).generate_report()  # type: ignore[arg-type]
+        return ReportGenerator(model, **kwargs).generate_report()  # type: ignore[arg-type]
     except (TypeError, ValueError):
         return None
 
 
-def render_text(obj: Any) -> str:
+def render_text(obj: Any, opts: Any = None) -> str:
     """Render *obj* as text; never raises on an unsupported shape."""
     if isinstance(obj, pydantic.BaseModel):
-        report = _try_report(obj)
+        report = _try_report(obj, opts)
         if report is not None:
             return report
     if isinstance(obj, (list, tuple)) and obj and all(
@@ -51,7 +55,7 @@ def render_text(obj: Any) -> str:
         blocks = []
         for item in obj:
             cls = type(item).__name__
-            report = _try_report(item)
+            report = _try_report(item, opts)
             if report is not None:
                 blocks.append(f"# {cls}\n{report}")
             else:

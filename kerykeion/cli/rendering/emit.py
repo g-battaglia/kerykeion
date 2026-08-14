@@ -16,8 +16,13 @@ from __future__ import annotations
 from typing import Any
 
 
-def render(obj: Any, fmt: str) -> str:
-    """Render *obj* for *fmt* and return the string (no trailing newline)."""
+def render(obj: Any, fmt: str, opts: Any = None) -> str:
+    """Render *obj* for *fmt* and return the string (no trailing newline).
+
+    *opts* is an optional :class:`~kerykeion.cli.rendering.options.RenderOptions`
+    carrying the report/chart knobs. It defaults to ``None`` — "no options given"
+    — so every caller that does not care keeps working unchanged.
+    """
     if fmt == "json":
         from kerykeion.cli.rendering.json_out import render_json
 
@@ -25,7 +30,7 @@ def render(obj: Any, fmt: str) -> str:
     if fmt == "text":
         from kerykeion.cli.rendering.text import render_text
 
-        return render_text(obj)
+        return render_text(obj, opts)
     if fmt == "xml":
         from kerykeion.cli.rendering.xml_out import render_xml
 
@@ -33,7 +38,7 @@ def render(obj: Any, fmt: str) -> str:
     if fmt == "svg":
         from kerykeion.cli.rendering.svg_out import render_svg
 
-        return render_svg(obj)
+        return render_svg(obj, opts)
     raise ValueError(f"unsupported format {fmt!r}")  # pragma: no cover - resolve_format guards
 
 

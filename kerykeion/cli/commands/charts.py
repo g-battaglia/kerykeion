@@ -19,21 +19,38 @@ from __future__ import annotations
 from typing import Optional
 
 from kerykeion.cli import subject_resolver, warnings
-from kerykeion.cli.commands._shared import _emit
+from kerykeion.cli.commands._shared import _emit, _render_from
 from kerykeion.cli.options import (
+    AspectGridTypeOpt,
+    AspectIconsFlag,
+    AutoSizeFlag,
+    ChartLanguageOpt,
+    ChartSettingsOpt,
+    ChartStyleOpt,
+    CuspComparisonFlag,
+    CustomTitleOpt,
     DayOpt,
+    DegreeIndicatorsFlag,
+    DiurnalityFlag,
+    EnvelopeFlag,
+    ExternalViewFlag,
     FixedStarsFlag,
     FormatOpt,
+    HousePositionComparisonFlag,
     HousesSystemOpt,
+    MaxAspectsOpt,
     MonthOpt,
+    NoAspectsFlag,
     OfflineFlag,
     OnlineFlag,
     OutputOpt,
+    PaddingOpt,
     PerspectiveOpt,
     PointsFlag,
     ReturnTypeOpt,
     SetFlags,
     SiderealModeOpt,
+    SvgVariantOpt,
     Subject2Profile,
     SubjectAltitude,
     SubjectCity,
@@ -48,11 +65,14 @@ from kerykeion.cli.options import (
     SubjectTime,
     SubjectTz,
     TargetYearOpt,
+    ThemeOpt,
     ToDateOpt,
     ToTimeOpt,
+    TransparentBackgroundFlag,
     WithFlags,
     WithoutFlags,
     YearOpt,
+    ZodiacRingFlag,
     ZodiacTypeOpt,
 )
 from kerykeion.cli.rendering import formats
@@ -68,13 +88,15 @@ def _natal_chart(subject: object) -> object:
     return ChartDataFactory.create_natal_chart_data(subject)  # type: ignore[arg-type]
 
 
-def _emit_subject_or_chart(subject: object, fmt: Optional[str], output: Optional[str]) -> None:
+def _emit_subject_or_chart(
+    subject: object, fmt: Optional[str], output: Optional[str], opts: object = None
+) -> None:
     """Subject for text/json/xml; a natal chart-data wrapper for SVG."""
     resolved = formats.resolve_format(fmt, output)
     if resolved == "svg":
-        warnings.output_with_warnings(_natal_chart(subject), resolved, output)
+        warnings.output_with_warnings(_natal_chart(subject), resolved, output, opts=opts)
     else:
-        warnings.output_with_warnings(subject, resolved, output)
+        warnings.output_with_warnings(subject, resolved, output, opts=opts)
 
 
 def natal(
@@ -103,6 +125,26 @@ def natal(
     set_flags: SetFlags = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]
+    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
+    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
+    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
+    theme: ThemeOpt = None,  # type: ignore[assignment]
+    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
+    style: ChartStyleOpt = None,  # type: ignore[assignment]
+    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
+    padding: PaddingOpt = None,  # type: ignore[assignment]
+    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
+    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
+    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
+    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
+    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
+    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
+    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
+    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
+    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
+    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
+    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
+    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
 ) -> None:
     """Natal chart for a subject: report (text), JSON, XML or SVG."""
     flags = subject_resolver.build_flags(
@@ -113,7 +155,7 @@ def natal(
         with_flags=with_flags, without_flags=without_flags, set_flags=set_flags,
     )
     model = subject_resolver.resolve_subject(flags, profile)
-    _emit_subject_or_chart(model, fmt, output)
+    _emit_subject_or_chart(model, fmt, output, _render_from(locals()))
 
 
 def now(
@@ -137,6 +179,26 @@ def now(
     set_flags: SetFlags = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]
+    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
+    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
+    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
+    theme: ThemeOpt = None,  # type: ignore[assignment]
+    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
+    style: ChartStyleOpt = None,  # type: ignore[assignment]
+    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
+    padding: PaddingOpt = None,  # type: ignore[assignment]
+    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
+    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
+    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
+    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
+    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
+    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
+    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
+    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
+    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
+    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
+    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
+    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
 ) -> None:
     """Subject for the current moment (transit-style snapshot)."""
     flags = subject_resolver.build_flags(
@@ -148,7 +210,7 @@ def now(
         mode_override="current",
     )
     model = subject_resolver.resolve_subject(flags, None)
-    _emit_subject_or_chart(model, fmt, output)
+    _emit_subject_or_chart(model, fmt, output, _render_from(locals()))
 
 
 def synastry(
@@ -156,6 +218,26 @@ def synastry(
     subject2: Subject2Profile = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]
+    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
+    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
+    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
+    theme: ThemeOpt = None,  # type: ignore[assignment]
+    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
+    style: ChartStyleOpt = None,  # type: ignore[assignment]
+    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
+    padding: PaddingOpt = None,  # type: ignore[assignment]
+    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
+    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
+    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
+    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
+    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
+    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
+    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
+    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
+    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
+    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
+    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
+    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
 ) -> None:
     """Synastry (dual wheel) between two stored subjects."""
     if not profile:
@@ -167,7 +249,7 @@ def synastry(
     first = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
     second = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject2)
     chart = ChartDataFactory.create_synastry_chart_data(first, second)
-    _emit(chart, fmt, output)
+    _emit(chart, fmt, output, _render_from(locals()))
 
 
 def transit(
@@ -184,6 +266,26 @@ def transit(
     to_time: ToTimeOpt = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]
+    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
+    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
+    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
+    theme: ThemeOpt = None,  # type: ignore[assignment]
+    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
+    style: ChartStyleOpt = None,  # type: ignore[assignment]
+    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
+    padding: PaddingOpt = None,  # type: ignore[assignment]
+    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
+    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
+    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
+    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
+    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
+    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
+    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
+    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
+    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
+    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
+    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
+    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
 ) -> None:
     """Transit dual wheel: natal (inner) vs a transit moment (outer).
 
@@ -248,7 +350,7 @@ def transit(
     )
     transit_subject = subject_resolver.resolve_subject(transit_flags, None)
     chart = ChartDataFactory.create_transit_chart_data(natal, transit_subject)
-    _emit(chart, fmt, output)
+    _emit(chart, fmt, output, _render_from(locals()))
 
 
 def composite(
@@ -256,6 +358,26 @@ def composite(
     subject2: Subject2Profile = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]
+    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
+    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
+    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
+    theme: ThemeOpt = None,  # type: ignore[assignment]
+    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
+    style: ChartStyleOpt = None,  # type: ignore[assignment]
+    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
+    padding: PaddingOpt = None,  # type: ignore[assignment]
+    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
+    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
+    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
+    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
+    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
+    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
+    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
+    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
+    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
+    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
+    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
+    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
 ) -> None:
     """Composite chart (midpoint) of two stored subjects."""
     if not profile:
@@ -268,7 +390,7 @@ def composite(
     second = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject2)
     composite_subject = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
     chart = ChartDataFactory.create_composite_chart_data(composite_subject)
-    _emit(chart, fmt, output)
+    _emit(chart, fmt, output, _render_from(locals()))
 
 
 def return_chart(
@@ -286,6 +408,26 @@ def return_chart(
     offline: OfflineFlag = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]
+    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
+    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
+    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
+    theme: ThemeOpt = None,  # type: ignore[assignment]
+    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
+    style: ChartStyleOpt = None,  # type: ignore[assignment]
+    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
+    padding: PaddingOpt = None,  # type: ignore[assignment]
+    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
+    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
+    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
+    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
+    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
+    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
+    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
+    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
+    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
+    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
+    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
+    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
 ) -> None:
     """Planetary return (Solar/Lunar) as a dual wheel: natal + return chart.
 
@@ -344,7 +486,7 @@ def return_chart(
         year, month, day, return_type=rtype  # type: ignore[arg-type]  # validated above
     )
     chart = ChartDataFactory.create_return_chart_data(natal, return_subject)
-    _emit(chart, fmt, output)
+    _emit(chart, fmt, output, _render_from(locals()))
 
 
 def progression(
@@ -352,6 +494,26 @@ def progression(
     target_year: TargetYearOpt = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]
+    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
+    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
+    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
+    theme: ThemeOpt = None,  # type: ignore[assignment]
+    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
+    style: ChartStyleOpt = None,  # type: ignore[assignment]
+    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
+    padding: PaddingOpt = None,  # type: ignore[assignment]
+    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
+    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
+    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
+    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
+    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
+    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
+    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
+    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
+    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
+    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
+    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
+    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
 ) -> None:
     """Secondary progression dual wheel for a target year.
 
@@ -367,4 +529,4 @@ def progression(
     natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
     progressed = SecondaryProgressionFactory.compute(natal, target_year=target_year)
     chart = ChartDataFactory.create_progression_chart_data(natal, progressed)
-    _emit(chart, fmt, output)
+    _emit(chart, fmt, output, _render_from(locals()))

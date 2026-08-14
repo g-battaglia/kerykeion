@@ -13,22 +13,38 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from kerykeion.cli import subject_resolver
-from kerykeion.cli.commands._shared import _emit, _split_csv
+from kerykeion.cli.commands._shared import _choose, _emit, _render_from, _split_csv
 from kerykeion.cli.commands.charts import _emit_subject_or_chart
 from kerykeion.cli.options import (
     AcgLatRangeOpt,
     AcgStepOpt,
+    AspectGridTypeOpt,
+    AspectIconsFlag,
     AspectsOpt,
+    AutoSizeFlag,
+    ChartLanguageOpt,
+    ChartSettingsOpt,
+    ChartStyleOpt,
     CountOpt,
+    CuspComparisonFlag,
+    CustomTitleOpt,
+    DegreeIndicatorsFlag,
+    DiurnalityFlag,
+    EnvelopeFlag,
+    ExternalViewFlag,
     FormatOpt,
+    HousePositionComparisonFlag,
     IsMoonVoidOpt,
     LifeCapOpt,
     LotLevelsOpt,
     LotOpt,
+    MaxAspectsOpt,
     MaxYearsOpt,
     MethodOpt,
     MidpointOrbOpt,
+    NoAspectsFlag,
     OutputOpt,
+    PaddingOpt,
     PlanetsOpt,
     RateKeyOpt,
     RelocateCityOpt,
@@ -37,9 +53,13 @@ from kerykeion.cli.options import (
     RelocateNationOpt,
     RelocateTzOpt,
     SubjectProfile,
+    SvgVariantOpt,
     TargetDateOpt,
+    ThemeOpt,
+    TransparentBackgroundFlag,
     YearsAfterOpt,
     YearsBeforeOpt,
+    ZodiacRingFlag,
 )
 from kerykeion.cli.typer_app import KerykeionTyper
 
@@ -55,23 +75,6 @@ def _need_subject(profile: Optional[str], cmd: str) -> object:
     if not profile:
         raise ValueError(f"{cmd} needs -s <profile>")
     return subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-
-
-def _choose(value: Any, allowed: tuple[str, ...], label: str) -> Any:
-    """Validate an enum-style flag case-insensitively, returning the canonical form.
-
-    The rest of the CLI normalises case (``--zodiac tropical``, ``--houses
-    PLACIDUS``, ``--points ALL``), so these flags must too: rejecting
-    ``--lot Fortune`` while accepting ``--zodiac Tropical`` is one CLI with two
-    rules.
-    """
-    if value is None:
-        return None
-    v = str(value).strip().lower()
-    canonical = {choice.lower(): choice for choice in allowed}
-    if v not in canonical:
-        raise ValueError(f"--{label} must be {' or '.join(allowed)}, got {value!r}")
-    return canonical[v]
 
 
 @technique_app.command("profections")
@@ -301,6 +304,26 @@ def relocate(
     new_tz: RelocateTzOpt = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]
+    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
+    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
+    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
+    theme: ThemeOpt = None,  # type: ignore[assignment]
+    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
+    style: ChartStyleOpt = None,  # type: ignore[assignment]
+    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
+    padding: PaddingOpt = None,  # type: ignore[assignment]
+    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
+    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
+    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
+    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
+    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
+    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
+    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
+    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
+    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
+    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
+    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
+    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
 ) -> None:
     """Recast houses/angles for the same birth moment at a new location."""
     from kerykeion import RelocatedChartFactory
@@ -318,7 +341,7 @@ def relocate(
     )
     # A relocated chart is a subject; emit it like `natal` (subject for text/json,
     # natal chart wrapper for svg).
-    _emit_subject_or_chart(relocated, fmt, output)
+    _emit_subject_or_chart(relocated, fmt, output, _render_from(locals()))
 
 
 @technique_app.command("nodes")
