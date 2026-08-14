@@ -101,6 +101,41 @@ class TestEverySymbolIsDeclared:
             assert list(_symbols(name)) == reference, f"{name} diverged from {TEMPLATE_FILES[0]}"
 
 
+class TestHeadingsAgreeWithGroups:
+    """A symbol's heading and its box must come from the same fact."""
+
+    def test_every_symbol_sits_under_the_heading_its_group_names(self):
+        builder = _load_builder()
+        block = _block("modern_wheel.xml")
+        heading_of = {v: k for k, v in builder.SECTION.items()}
+
+        current = None
+        wrong = []
+        for m in re.finditer(r"<!--\s*(\w+)\s*-->|<symbol id=\"([^\"]+)\"", block):
+            if m.group(1) in heading_of:
+                current = heading_of[m.group(1)]
+            elif m.group(2):
+                group = next(g for sid, g, _, _ in builder.SPEC if sid == m.group(2))
+                if group != current:
+                    wrong.append((m.group(2), group, current))
+
+        assert not wrong, (
+            "these symbols are filed under a heading that contradicts their group — "
+            "the box would come from one and the reader's expectation from the "
+            f"other: {wrong}"
+        )
+
+    def test_each_group_is_contiguous(self):
+        builder = _load_builder()
+        seen: list[str] = []
+        for _, group, _, _ in builder.SPEC:
+            if not seen or seen[-1] != group:
+                seen.append(group)
+        assert len(seen) == len(set(seen)), (
+            f"a group is split across the list, so its heading would print twice: {seen}"
+        )
+
+
 class TestTheTemplatesMatchTheGenerator:
     """Hand edits inside the generated block are reverted on the next build."""
 

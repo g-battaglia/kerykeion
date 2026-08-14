@@ -278,16 +278,16 @@ SPEC = [
     ("Neptune", P, "S", ("neptune", [0x2646])),
     ("Pluto", P, "C", "Pluto"),
     ("Chiron", P, "C", "Chiron"),
+    ("Ascendant", "text", "L", ("first-house", "As")),
+    ("Medium_Coeli", "text", "L", ("tenth-house", "Mc")),
+    ("Descendant", "text", "L", ("seventh-house", "Ds")),
+    ("Imum_Coeli", "text", "L", ("fourth-house", "Ic")),
     ("Mean_Lilith", PT, "S", ("mean-lilith", [0x26B8])),
     # Drawn, not traced: Symbola's U+260A/U+260B read as a blob at wheel sizes.
     ("Mean_North_Lunar_Node", PT, "C", "Mean_North_Lunar_Node"),
     ("True_North_Lunar_Node", PT, "C", "True_North_Lunar_Node"),
     ("Mean_South_Lunar_Node", PT, "C", "Mean_South_Lunar_Node"),
     ("True_South_Lunar_Node", PT, "C", "True_South_Lunar_Node"),
-    ("Ascendant", "text", "L", ("first-house", "As")),
-    ("Medium_Coeli", "text", "L", ("tenth-house", "Mc")),
-    ("Descendant", "text", "L", ("seventh-house", "Ds")),
-    ("Imum_Coeli", "text", "L", ("fourth-house", "Ic")),
     ("Earth", PT, "C", "Earth"),
     ("Pholus", PT, "C", "Pholus"),
     ("Sedna", PT, "N", ("sedna", [0x2BF2])),
@@ -312,10 +312,12 @@ SPEC = [
     ("Juno", PT, "S", ("juno", [0x26B5])),
     ("Vesta", PT, "S", ("vesta", [0x26B6])),
     ("Vertex", PT, "L", ("vertex", "Vx")),
-    # U+2BDE is the TRUE Black Moon (Unicode names it descriptively, "black
-    # diamond on cross"). It used to share U+26B8 with the mean Lilith, which
-    # left the two indistinguishable in a chart carrying both.
-    ("True_Lilith", PT, "N", ("true-lilith", [0x2BDE])),
+    # All three Liliths wear the SAME crescent: the glyph says which end of the
+    # apsidal line a point is, the colour says which method computed it. Unicode
+    # does offer U+2BDE for the true Black Moon, but it is a diamond on a cross —
+    # adopting it would put a third shape on the apogee axis and break the very
+    # rule that lets the six points be read at a glance.
+    ("True_Lilith", PT, "S", ("true-lilith", [0x26B8])),
     # Priapus is Lilith's opposite point, so it is Lilith's glyph turned around.
     ("Interpolated_Lilith", PT, "S", ("interpolated-lilith", [0x26B8])),
     ("Mean_Priapus", PT, "C", "Mean_Priapus"),
@@ -520,9 +522,9 @@ def _east_point(box: int) -> str:
     out = []
     for shape in coords:
         if shape[0] == "circle":
-            out.append(f'<circle cx="{fx(shape[1])}" cy="{fy(shape[2])}" r="{round(shape[3] * k, 3):g}" {sk("ceres")}/>')
+            out.append(f'<circle cx="{fx(shape[1])}" cy="{fy(shape[2])}" r="{round(shape[3] * k, 3):g}" {sk("east-point")}/>')
         else:
-            out.append(f'<line x1="{fx(shape[1])}" y1="{fy(shape[2])}" x2="{fx(shape[3])}" y2="{fy(shape[4])}" {sk("ceres")}/>')
+            out.append(f'<line x1="{fx(shape[1])}" y1="{fy(shape[2])}" x2="{fx(shape[3])}" y2="{fy(shape[4])}" {sk("east-point")}/>')
     return "".join(out)
 
 
@@ -707,10 +709,17 @@ CLEAN = {
     "retrograde": f'<path d="M3,11.2 L3,1.2 L6.2,1.2 C8.4,1.2 8.4,5.4 6.2,5.4 L3,5.4 M5.6,5.4 L9.2,11.2" fill="none" stroke="{V("paper-0")}" stroke-width="{W_RETRO}" stroke-linecap="round" stroke-linejoin="round"/>',
 }
 
-SECTION = {  # printed as a comment before this id
-    "Sun": "Planets", "Ascendant": "Angles", "Earth": "Points",
-    "Ari": "Signs", "orb0": "Aspects", "retrograde": "Retrograde",
+SECTION = {  # heading per group, printed when the group changes
+    "planet": "Planets", "text": "Angles", "point": "Points",
+    "sign": "Signs", "aspect": "Aspects", "retro": "Retrograde",
 }
+"""Keyed by GROUP, not by id.
+
+Keying it on an id meant the heading came from a symbol's position in the list
+while its box came from its group tag, and the two could drift apart without
+anyone noticing — five points sat under "Planets" while declared as points. Now
+one fact decides both.
+"""
 
 
 def build_lines() -> list[str]:
@@ -719,9 +728,11 @@ def build_lines() -> list[str]:
     # one cap height for every lettered mark; see Font.label_scale
     label_size = fonts["L"].label_scale(BOX["text"], LABEL_CAP_FRACTION)
     lines = [BEGIN]
+    last_group = None
     for sid, group, kind, payload in SPEC:
-        if sid in SECTION:
-            lines.append(f"<!-- {SECTION[sid]} -->")
+        if group != last_group:
+            lines.append(f"<!-- {SECTION[group]} -->")
+            last_group = group
         box = BOX[group]
         if kind in ("S", "N", "R"):
             varname, cps = payload

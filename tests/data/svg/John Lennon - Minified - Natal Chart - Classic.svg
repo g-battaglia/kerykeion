@@ -1183,11 +1183,6 @@
    <path d="m9.6 2.667v9.494" fill="none" stroke="var(--kerykeion-chart-color-chiron)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
    <path d="m16 3.1-6.4 3.9 6.8 4.3" fill="none" stroke="var(--kerykeion-chart-color-chiron)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
   </symbol>
-  <symbol id="True_North_Lunar_Node">
-   <path d="m6.7574 15.321a6.4 6.4 0 1 1 10.485 0" fill="none" stroke="var(--kerykeion-chart-color-true-node)" stroke-linecap="round" stroke-width="1.494"/>
-   <circle cx="4.9553" cy="16.583" r="2.2" fill="none" stroke="var(--kerykeion-chart-color-true-node)" stroke-linecap="round" stroke-width="1.494"/>
-   <circle cx="19.045" cy="16.583" r="2.2" fill="none" stroke="var(--kerykeion-chart-color-true-node)" stroke-linecap="round" stroke-width="1.494"/>
-  </symbol>
   <!-- Angles -->
   <symbol id="Ascendant">
    <g transform="translate(.458 19.605) scale(.02151 -.02151)" fill="var(--kerykeion-chart-color-first-house)">
@@ -1202,6 +1197,11 @@
    </g>
   </symbol>
   <!-- Points -->
+  <symbol id="True_North_Lunar_Node">
+   <path d="m6.7574 15.321a6.4 6.4 0 1 1 10.485 0" fill="none" stroke="var(--kerykeion-chart-color-true-node)" stroke-linecap="round" stroke-width="1.494"/>
+   <circle cx="4.9553" cy="16.583" r="2.2" fill="none" stroke="var(--kerykeion-chart-color-true-node)" stroke-linecap="round" stroke-width="1.494"/>
+   <circle cx="19.045" cy="16.583" r="2.2" fill="none" stroke="var(--kerykeion-chart-color-true-node)" stroke-linecap="round" stroke-width="1.494"/>
+  </symbol>
   <!-- Signs -->
   <symbol id="Ari">
    <g transform="translate(2.56 3.291) scale(.01329 -.01329) translate(-173 -1518)">

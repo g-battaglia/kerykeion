@@ -412,434 +412,434 @@
 <line x1='50.0' y1='6.5' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.6' transform='rotate(-272.054767 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-304.580696 50.0 50.0)'/>
 <line x1='50.0' y1='6.5' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.07' transform='rotate(-334.005087 50.0 50.0)'/>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='185.62129941235852' kr:signposition='5.621299412358525' kr:slug='Ascendant' kr:cx='14.50070845428236' kr:cy='55.212935809324705' transform='rotate(-8.353961 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(98.353961) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='185.62129941235852' kr:signposition='5.621299412358525' kr:slug='Ascendant' kr:cx='14.498659212647482' kr:cy='55.19896165597136' transform='rotate(-8.331407 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(98.331407) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='var(--kerykeion-chart-color-first-house)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-first-house)' font-weight='500' transform='rotate(98.353961 50.0 14.5)'>5º</text>
-  <g transform='translate(50.0 18.0) rotate(98.353961) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-first-house)' font-weight='500' transform='rotate(98.331407 50.0 14.5)'>5º</text>
+  <g transform='translate(50.0 18.0) rotate(98.331407) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-first-house)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-first-house)' font-weight='500' transform='rotate(98.353961 50.0 22.0)'>37'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-first-house)' font-weight='500' transform='rotate(98.331407 50.0 22.0)'>37'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Ascendant' kr:absoluteposition='185.62129941235852' transform='rotate(-0.000000 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 43.8252571935 7.9509506496 L 43.9814418645 9.0145442508' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 43.8418096327 7.9485233149 L 43.9975756243 9.0121783134' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='199.31214385873366' kr:signposition='19.312143858733663' kr:slug='Poseidon' kr:cx='15.088278874630568' kr:cy='58.27925890792368' transform='rotate(-13.341148 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(103.341148) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='199.31214385873366' kr:signposition='19.312143858733663' kr:slug='Poseidon' kr:cx='15.087762137077227' kr:cy='58.277079642162555' transform='rotate(-13.337571 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(103.337571) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Poseidon' kr:slug='Poseidon' kr:node='Glyph' fill='var(--kerykeion-chart-color-poseidon)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-poseidon)' font-weight='500' transform='rotate(103.341148 50.0 14.5)'>19º</text>
-  <g transform='translate(50.0 18.0) rotate(103.341148) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-poseidon)' font-weight='500' transform='rotate(103.337571 50.0 14.5)'>19º</text>
+  <g transform='translate(50.0 18.0) rotate(103.337571) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-poseidon)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-poseidon)' font-weight='500' transform='rotate(103.341148 50.0 22.0)'>18'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-poseidon)' font-weight='500' transform='rotate(103.337571 50.0 22.0)'>18'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Poseidon' kr:absoluteposition='199.31214385873366' transform='rotate(-13.690844 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='201.1824073288692' kr:signposition='21.182407328869203' kr:slug='Cupido' kr:cx='16.080350736770363' kr:cy='61.69751229362402' transform='rotate(-19.027239 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(109.027239) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='201.1824073288692' kr:signposition='21.182407328869203' kr:slug='Cupido' kr:cx='16.079600940793654' kr:cy='61.69533786019852' transform='rotate(-19.023566 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(109.023566) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Cupido' kr:slug='Cupido' kr:node='Glyph' fill='var(--kerykeion-chart-color-cupido)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-cupido)' font-weight='500' transform='rotate(109.027239 50.0 14.5)'>21º</text>
-  <g transform='translate(50.0 18.0) rotate(109.027239) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-cupido)' font-weight='500' transform='rotate(109.023566 50.0 14.5)'>21º</text>
+  <g transform='translate(50.0 18.0) rotate(109.023566) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-cupido)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-cupido)' font-weight='500' transform='rotate(109.027239 50.0 22.0)'>10'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-cupido)' font-weight='500' transform='rotate(109.023566 50.0 22.0)'>10'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Cupido' kr:absoluteposition='201.1824073288692' transform='rotate(-15.561108 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 47.4305136347 7.5777447580 L 47.4955065251 8.6507782729' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 47.4332331065 7.5775801290 L 47.4981572103 8.6506178081' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='205.81278935592445' kr:signposition='25.81278935592445' kr:slug='Venus' kr:cx='17.459393314857167' kr:cy='65.11566460870435' transform='rotate(-24.915669 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(114.915669) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='205.81278935592445' kr:signposition='25.81278935592445' kr:slug='Venus' kr:cx='17.458383093902683' kr:cy='65.11348964127086' transform='rotate(-24.911839 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(114.911839) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='var(--kerykeion-chart-color-venus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-venus)' font-weight='500' transform='rotate(114.915669 50.0 14.5)'>25º</text>
-  <g transform='translate(50.0 18.0) rotate(114.915669) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-venus)' font-weight='500' transform='rotate(114.911839 50.0 14.5)'>25º</text>
+  <g transform='translate(50.0 18.0) rotate(114.911839) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-venus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-venus)' font-weight='500' transform='rotate(114.915669 50.0 22.0)'>48'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-venus)' font-weight='500' transform='rotate(114.911839 50.0 22.0)'>48'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Venus' kr:absoluteposition='205.81278935592445' transform='rotate(-20.191490 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.4997388310 7.6443844131 L 46.5882748489 8.7157323367' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.5025697835 7.6441505589 L 46.5910341948 8.7155043977' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='209.92036156580946' kr:signposition='29.920361565809458' kr:slug='Quaoar' kr:cx='19.277395597253452' kr:cy='68.53364450701315' transform='rotate(-31.100799 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(121.100799) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='209.92036156580946' kr:signposition='29.920361565809458' kr:slug='Quaoar' kr:cx='19.276083641347803' kr:cy='68.53146954740892' transform='rotate(-31.096743 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(121.096743) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Quaoar' kr:slug='Quaoar' kr:node='Glyph' fill='var(--kerykeion-chart-color-quaoar)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-quaoar)' font-weight='500' transform='rotate(121.100799 50.0 14.5)'>29º</text>
-  <g transform='translate(50.0 18.0) rotate(121.100799) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-quaoar)' font-weight='500' transform='rotate(121.096743 50.0 14.5)'>29º</text>
+  <g transform='translate(50.0 18.0) rotate(121.096743) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-quaoar)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-quaoar)' font-weight='500' transform='rotate(121.100799 50.0 22.0)'>55'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-quaoar)' font-weight='500' transform='rotate(121.096743 50.0 22.0)'>55'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Quaoar' kr:absoluteposition='209.92036156580946' transform='rotate(-24.299062 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 44.9665517599 7.7991185067 L 45.0938683918 8.8665525680' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 44.9695392553 7.7987622848 L 45.0967803212 8.8662053564' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='213.55530230098935' kr:signposition='3.5553023009893536' kr:slug='Ixion' kr:cx='21.599302625366803' kr:cy='71.92657722113744' transform='rotate(-37.669707 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(127.669707) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='213.55530230098935' kr:signposition='3.5553023009893536' kr:slug='Ixion' kr:cx='21.583276613223468' kr:cy='71.90580361364147' transform='rotate(-37.627810 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(127.627810) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Ixion' kr:slug='Ixion' kr:node='Glyph' fill='var(--kerykeion-chart-color-ixion)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-ixion)' font-weight='500' transform='rotate(127.669707 50.0 14.5)'>3º</text>
-  <g transform='translate(50.0 18.0) rotate(127.669707) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-ixion)' font-weight='500' transform='rotate(127.627810 50.0 14.5)'>3º</text>
+  <g transform='translate(50.0 18.0) rotate(127.627810) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Sco' fill='var(--kerykeion-chart-color-ixion)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-ixion)' font-weight='500' transform='rotate(127.669707 50.0 22.0)'>33'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-ixion)' font-weight='500' transform='rotate(127.627810 50.0 22.0)'>33'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Ixion' kr:absoluteposition='213.55530230098935' transform='rotate(-27.934003 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 42.8130976867 8.1120729190 L 42.9948840394 9.1715910746' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 42.8437297645 8.1068287627 L 43.0247413058 9.1664795646' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='221.79209449168985' kr:signposition='11.792094491689852' kr:slug='Pars_Amoris' kr:cx='24.552521297124166' kr:cy='75.29427262576809' transform='rotate(-44.827006 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(134.827006) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='221.79209449168985' kr:signposition='11.792094491689852' kr:slug='Pars_Amoris' kr:cx='24.49504724535671' kr:cy='75.23631876846173' transform='rotate(-44.696668 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(134.696668) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pars_Amoris' kr:slug='Pars_Amoris' kr:node='Glyph' fill='var(--kerykeion-chart-color-pars-amoris)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pars-amoris)' font-weight='500' transform='rotate(134.827006 50.0 14.5)'>11º</text>
-  <g transform='translate(50.0 18.0) rotate(134.827006) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pars-amoris)' font-weight='500' transform='rotate(134.696668 50.0 14.5)'>11º</text>
+  <g transform='translate(50.0 18.0) rotate(134.696668) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Sco' fill='var(--kerykeion-chart-color-pars-amoris)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pars-amoris)' font-weight='500' transform='rotate(134.827006 50.0 22.0)'>47'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pars-amoris)' font-weight='500' transform='rotate(134.696668 50.0 22.0)'>47'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Pars_Amoris' kr:absoluteposition='221.79209449168985' transform='rotate(-36.170795 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 43.6035247220 7.9841089108 L 43.7653179203 9.0468638031' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 43.6991198242 7.9696667987 L 43.8584950286 9.0327869915' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='229.27510762988507' kr:signposition='19.27510762988507' kr:slug='Pars_Spiritus' kr:cx='27.948086300290612' kr:cy='78.30348922271898' transform='rotate(-52.077006 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(142.077006) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='229.27510762988507' kr:signposition='19.27510762988507' kr:slug='Pars_Spiritus' kr:cx='27.883758039409642' kr:cy='78.25325187550315' transform='rotate(-51.946668 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(141.946668) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pars_Spiritus' kr:slug='Pars_Spiritus' kr:node='Glyph' fill='var(--kerykeion-chart-color-pars-spiritus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pars-spiritus)' font-weight='500' transform='rotate(142.077006 50.0 14.5)'>19º</text>
-  <g transform='translate(50.0 18.0) rotate(142.077006) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pars-spiritus)' font-weight='500' transform='rotate(141.946668 50.0 14.5)'>19º</text>
+  <g transform='translate(50.0 18.0) rotate(141.946668) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Sco' fill='var(--kerykeion-chart-color-pars-spiritus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pars-spiritus)' font-weight='500' transform='rotate(142.077006 50.0 22.0)'>16'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pars-spiritus)' font-weight='500' transform='rotate(141.946668 50.0 22.0)'>16'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Pars_Spiritus' kr:absoluteposition='229.27510762988507' transform='rotate(-43.653808 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 43.7744493254 7.9584429546 L 43.9319191366 9.0218470446' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 43.8701023707 7.9443897315 L 44.0251527225 9.0081492854' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='238.57135373651133' kr:signposition='28.571353736511327' kr:slug='Neptune' kr:cx='31.696263622832575' kr:cy='80.8601301785193' transform='rotate(-59.327006 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(149.327006) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='238.57135373651133' kr:signposition='28.571353736511327' kr:slug='Neptune' kr:cx='31.626109768203598' kr:cy='80.81841264163191' transform='rotate(-59.196668 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(149.196668) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Neptune' kr:slug='Neptune' kr:node='Glyph' fill='var(--kerykeion-chart-color-neptune)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(149.327006 50.0 14.5)'>28º</text>
-  <g transform='translate(50.0 18.0) rotate(149.327006) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(149.196668 50.0 14.5)'>28º</text>
+  <g transform='translate(50.0 18.0) rotate(149.196668) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Sco' fill='var(--kerykeion-chart-color-neptune)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(149.327006 50.0 22.0)'>34'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(149.196668 50.0 22.0)'>34'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Neptune' kr:absoluteposition='238.57135373651133' transform='rotate(-52.950054 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 45.2795608947 7.7629611046 L 45.3989602368 8.8313097355' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 45.3756547315 7.7523322438 L 45.4926234648 8.8209497223' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='277.6760660054407' kr:signposition='7.676066005440703' kr:slug='Imum_Coeli' kr:cx='49.442553245052665' kr:cy='85.8756693751545' transform='rotate(-89.109793 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(179.109793) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='277.6760660054407' kr:signposition='7.676066005440703' kr:slug='Imum_Coeli' kr:cx='49.44603127385521' kr:cy='85.87572324916187' transform='rotate(-89.115348 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(179.115348) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Imum_Coeli' kr:slug='Imum_Coeli' kr:node='Glyph' fill='var(--kerykeion-chart-color-fourth-house)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-fourth-house)' font-weight='500' transform='rotate(179.109793 50.0 14.5)'>7º</text>
-  <g transform='translate(50.0 18.0) rotate(179.109793) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-fourth-house)' font-weight='500' transform='rotate(179.115348 50.0 14.5)'>7º</text>
+  <g transform='translate(50.0 18.0) rotate(179.115348) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='var(--kerykeion-chart-color-fourth-house)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-fourth-house)' font-weight='500' transform='rotate(179.109793 50.0 22.0)'>40'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-fourth-house)' font-weight='500' transform='rotate(179.115348 50.0 22.0)'>40'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Imum_Coeli' kr:absoluteposition='277.6760660054407' transform='rotate(-92.054767 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 52.1835164876 7.5561281720 L 52.1282863647 8.6297084595' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 52.1794016859 7.5559166869 L 52.1242756433 8.6295023236' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='287.74704311728254' kr:signposition='17.747043117282544' kr:slug='Interpolated_Lilith' kr:cx='53.125236229573154' kr:cy='85.74363297860702' transform='rotate(-94.996935 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(184.996935) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='287.74704311728254' kr:signposition='17.747043117282544' kr:slug='Interpolated_Lilith' kr:cx='53.12870144058243' kr:cy='85.74332982943388' transform='rotate(-95.002490 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(185.002490) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Interpolated_Lilith' kr:slug='Interpolated_Lilith' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(184.996935 50.0 14.5)'>17º</text>
-  <g transform='translate(50.0 18.0) rotate(184.996935) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(185.002490 50.0 14.5)'>17º</text>
+  <g transform='translate(50.0 18.0) rotate(185.002490) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(184.996935 50.0 22.0)'>44'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(185.002490 50.0 22.0)'>44'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Interpolated_Lilith' kr:absoluteposition='287.74704311728254' transform='rotate(-102.125744 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.2742672189 7.8285392083 L 55.1408592833 8.8952290989' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.2701788120 7.8280280839 L 55.1368742891 8.8947309030' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='290.20883900384183' kr:signposition='20.20883900384183' kr:slug='Mean_Lilith' kr:cx='56.84713383638387' kr:cy='85.22060701104749' transform='rotate(-101.001476 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(191.001476) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='290.20883900384183' kr:signposition='20.20883900384183' kr:slug='Mean_Lilith' kr:cx='56.8505483242841' kr:cy='85.21994303880471' transform='rotate(-101.007030 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(191.007030) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mean_Lilith' kr:slug='Mean_Lilith' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(191.001476 50.0 14.5)'>20º</text>
-  <g transform='translate(50.0 18.0) rotate(191.001476) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(191.007030 50.0 14.5)'>20º</text>
+  <g transform='translate(50.0 18.0) rotate(191.007030) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(191.001476 50.0 22.0)'>12'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(191.007030 50.0 22.0)'>12'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Mean_Lilith' kr:absoluteposition='290.20883900384183' transform='rotate(-104.587540 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 52.6582801500 7.5832162152 L 52.5910412992 8.6561113345' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 52.6541679722 7.5829587032 L 52.5870331352 8.6558603360' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='290.91179854538956' kr:signposition='20.91179854538956' kr:slug='Pallas' kr:cx='60.526649364464326' kr:cy='84.30107947510723' transform='rotate(-107.060713 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(197.060713) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='290.91179854538956' kr:signposition='20.91179854538956' kr:slug='Pallas' kr:cx='60.52997468995347' kr:cy='84.30005879045893' transform='rotate(-107.066267 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(197.066267) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pallas' kr:slug='Pallas' kr:node='Glyph' fill='var(--kerykeion-chart-color-pallas)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pallas)' font-weight='500' transform='rotate(197.060713 50.0 14.5)'>20º</text>
-  <g transform='translate(50.0 18.0) rotate(197.060713) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pallas)' font-weight='500' transform='rotate(197.066267 50.0 14.5)'>20º</text>
+  <g transform='translate(50.0 18.0) rotate(197.066267) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='var(--kerykeion-chart-color-pallas)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pallas)' font-weight='500' transform='rotate(197.060713 50.0 22.0)'>54'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pallas)' font-weight='500' transform='rotate(197.066267 50.0 22.0)'>54'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Pallas' kr:absoluteposition='290.91179854538956' transform='rotate(-105.290499 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 48.6871265233 7.5202829196 L 48.7203344995 8.5947698810' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 48.6830082629 7.5204103979 L 48.7163204069 8.5948941349' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='293.6631045357957' kr:signposition='23.663104535795696' kr:slug='True_Lilith' kr:cx='64.21395606304316' kr:cy='82.94446619749482' transform='rotate(-113.337880 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(203.337880) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Cap' kr:absoluteposition='293.6631045357957' kr:signposition='23.663104535795696' kr:slug='True_Lilith' kr:cx='64.21714985208348' kr:cy='82.94308804716707' transform='rotate(-113.343434 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(203.343434) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#True_Lilith' kr:slug='True_Lilith' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(203.337880 50.0 14.5)'>23º</text>
-  <g transform='translate(50.0 18.0) rotate(203.337880) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(203.343434 50.0 14.5)'>23º</text>
+  <g transform='translate(50.0 18.0) rotate(203.343434) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(203.337880 50.0 22.0)'>39'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(203.343434 50.0 22.0)'>39'</text>
 </g>
 <g kr:node='Indicator' kr:slug='True_Lilith' kr:absoluteposition='293.6631045357957' transform='rotate(-108.041805 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.0771494639 7.6814314553 L 46.1763745068 8.7518423067' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.0730468386 7.6818119614 L 46.1723756538 8.7522131883' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Aqu' kr:absoluteposition='307.07788341779303' kr:signposition='7.077883417793032' kr:slug='Vesta' kr:cx='67.31183368988938' kr:cy='81.42729409754538' transform='rotate(-118.848323 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(208.848323) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fourth_House' kr:sign='Aqu' kr:absoluteposition='307.07788341779303' kr:signposition='7.077883417793032' kr:slug='Vesta' kr:cx='67.31502535242717' kr:cy='81.42553574793601' transform='rotate(-118.854142 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(208.854142) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Vesta' kr:slug='Vesta' kr:node='Glyph' fill='var(--kerykeion-chart-color-vesta)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-vesta)' font-weight='500' transform='rotate(208.848323 50.0 14.5)'>7º</text>
-  <g transform='translate(50.0 18.0) rotate(208.848323) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-vesta)' font-weight='500' transform='rotate(208.854142 50.0 14.5)'>7º</text>
+  <g transform='translate(50.0 18.0) rotate(208.854142) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Aqu' fill='var(--kerykeion-chart-color-vesta)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-vesta)' font-weight='500' transform='rotate(208.848323 50.0 22.0)'>4'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-vesta)' font-weight='500' transform='rotate(208.854142 50.0 22.0)'>4'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Vesta' kr:absoluteposition='307.07788341779303' transform='rotate(-121.456584 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.9340482940 7.5440291926 L 51.8851282489 8.6179155131' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.9297364613 7.5438329899 L 51.8809254802 8.6177242731' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Aqu' kr:absoluteposition='321.2161075746845' kr:signposition='21.216107574684486' kr:slug='Ceres' kr:cx='70.63436607675582' kr:cy='79.35297832606479' transform='rotate(-125.106202 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(215.106202) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Aqu' kr:absoluteposition='321.2161075746845' kr:signposition='21.216107574684486' kr:slug='Ceres' kr:cx='70.63734705492412' kr:cy='79.35088255120473' transform='rotate(-125.112021 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(215.112021) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Ceres' kr:slug='Ceres' kr:node='Glyph' fill='var(--kerykeion-chart-color-ceres)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-ceres)' font-weight='500' transform='rotate(215.106202 50.0 14.5)'>21º</text>
-  <g transform='translate(50.0 18.0) rotate(215.106202) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-ceres)' font-weight='500' transform='rotate(215.112021 50.0 14.5)'>21º</text>
+  <g transform='translate(50.0 18.0) rotate(215.112021) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Aqu' fill='var(--kerykeion-chart-color-ceres)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-ceres)' font-weight='500' transform='rotate(215.106202 50.0 22.0)'>12'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-ceres)' font-weight='500' transform='rotate(215.112021 50.0 22.0)'>12'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Ceres' kr:absoluteposition='321.2161075746845' transform='rotate(-135.594808 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 57.7366993826 8.2101270322 L 57.5410063982 9.2671649955' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 57.7324551687 8.2093415096 L 57.5368695380 9.2663993420' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Aqu' kr:absoluteposition='325.36686913487233' kr:signposition='25.36686913487233' kr:slug='Mars' kr:cx='74.1737088874607' kr:cy='76.51426405963974' transform='rotate(-132.356202 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(222.356202) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Aqu' kr:absoluteposition='325.36686913487233' kr:signposition='25.36686913487233' kr:slug='Mars' kr:cx='74.17640154793166' kr:cy='76.51180884423331' transform='rotate(-132.362021 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(222.362021) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Mars' kr:slug='Mars' kr:node='Glyph' fill='var(--kerykeion-chart-color-mars)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(222.356202 50.0 14.5)'>25º</text>
-  <g transform='translate(50.0 18.0) rotate(222.356202) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(222.362021 50.0 14.5)'>25º</text>
+  <g transform='translate(50.0 18.0) rotate(222.362021) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Aqu' fill='var(--kerykeion-chart-color-mars)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(222.356202 50.0 22.0)'>22'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(222.362021 50.0 22.0)'>22'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Mars' kr:absoluteposition='325.36686913487233' transform='rotate(-139.745570 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.4659915236 7.8529605231 L 55.3277340909 8.9190326981' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.4617110476 7.8524056151 L 55.3235618858 8.9184918260' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Aqu' kr:absoluteposition='329.4473181163938' kr:signposition='29.447318116393774' kr:slug='Pholus' kr:cx='77.14198662206857' kr:cy='73.46672031212395' transform='rotate(-139.153598 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(229.153598) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Aqu' kr:absoluteposition='329.4473181163938' kr:signposition='29.447318116393774' kr:slug='Pholus' kr:cx='77.14436975909291' kr:cy='73.46396365454146' transform='rotate(-139.159417 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(229.159417) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pholus' kr:slug='Pholus' kr:node='Glyph' fill='var(--kerykeion-chart-color-pholus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pholus)' font-weight='500' transform='rotate(229.153598 50.0 14.5)'>29º</text>
-  <g transform='translate(50.0 18.0) rotate(229.153598) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pholus)' font-weight='500' transform='rotate(229.159417 50.0 14.5)'>29º</text>
+  <g transform='translate(50.0 18.0) rotate(229.159417) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Aqu' fill='var(--kerykeion-chart-color-pholus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pholus)' font-weight='500' transform='rotate(229.153598 50.0 22.0)'>26'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pholus)' font-weight='500' transform='rotate(229.159417 50.0 22.0)'>26'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Pholus' kr:absoluteposition='329.4473181163938' transform='rotate(-143.826019 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.4619975404 7.6412397132 L 53.3744293673 8.7126671793' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.4576955724 7.6408883317 L 53.3702362139 8.7123246857' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Pis' kr:absoluteposition='332.95802316366576' kr:signposition='2.9580231636657572' kr:slug='Moon' kr:cx='79.75578271528664' kr:cy='70.04913451998985' transform='rotate(-146.028323 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(236.028323) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Pis' kr:absoluteposition='332.95802316366576' kr:signposition='2.9580231636657572' kr:slug='Moon' kr:cx='79.7576401157506' kr:cy='70.04637759650034' transform='rotate(-146.033632 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(236.033632) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Moon' kr:slug='Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-moon)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-moon)' font-weight='500' transform='rotate(236.028323 50.0 14.5)'>2º</text>
-  <g transform='translate(50.0 18.0) rotate(236.028323) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-moon)' font-weight='500' transform='rotate(236.033632 50.0 14.5)'>2º</text>
+  <g transform='translate(50.0 18.0) rotate(236.033632) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Pis' fill='var(--kerykeion-chart-color-moon)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-moon)' font-weight='500' transform='rotate(236.028323 50.0 22.0)'>57'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-moon)' font-weight='500' transform='rotate(236.033632 50.0 22.0)'>57'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Moon' kr:absoluteposition='332.95802316366576' transform='rotate(-147.336724 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 50.9704412418 7.5110809293 L 50.9458947868 8.5858006470' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 50.9665046904 7.5109912014 L 50.9420578071 8.5857131887' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='345.98509600131376' kr:signposition='15.985096001313764' kr:slug='Pars_Fidei' kr:cx='81.77971763571227' kr:cy='66.65604836071265' transform='rotate(-152.340544 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(242.340544) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='345.98509600131376' kr:signposition='15.985096001313764' kr:slug='Pars_Fidei' kr:cx='81.77140671669729' kr:cy='66.67189597023093' transform='rotate(-152.311969 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(242.311969) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pars_Fidei' kr:slug='Pars_Fidei' kr:node='Glyph' fill='var(--kerykeion-chart-color-pars-fidei)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pars-fidei)' font-weight='500' transform='rotate(242.340544 50.0 14.5)'>15º</text>
-  <g transform='translate(50.0 18.0) rotate(242.340544) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pars-fidei)' font-weight='500' transform='rotate(242.311969 50.0 14.5)'>15º</text>
+  <g transform='translate(50.0 18.0) rotate(242.311969) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Pis' fill='var(--kerykeion-chart-color-pars-fidei)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pars-fidei)' font-weight='500' transform='rotate(242.340544 50.0 22.0)'>59'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pars-fidei)' font-weight='500' transform='rotate(242.311969 50.0 22.0)'>59'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Pars_Fidei' kr:absoluteposition='345.98509600131376' transform='rotate(-160.363797 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.9319360737 7.9160109493 L 55.7818929847 8.9804883194' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.9529241254 7.9189746518 L 55.8023501622 8.9833770576' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='349.64199427659315' kr:signposition='19.641994276593152' kr:slug='Sun' kr:cx='83.38993773755034' kr:cy='63.13340998684319' transform='rotate(-158.528580 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(248.528580) scale(0.14850000000000002) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='349.64199427659315' kr:signposition='19.641994276593152' kr:slug='Sun' kr:cx='83.36819350028884' kr:cy='63.18855801546487' transform='rotate(-158.433918 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(248.433918) scale(0.14850000000000002) translate(-14 -14)'>
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='var(--kerykeion-chart-color-sun)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(248.528580 50.0 14.5)'>19º</text>
-  <g transform='translate(50.0 18.0) rotate(248.528580) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(248.433918 50.0 14.5)'>19º</text>
+  <g transform='translate(50.0 18.0) rotate(248.433918) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Pis' fill='var(--kerykeion-chart-color-sun)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(248.528580 50.0 22.0)'>38'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(248.433918 50.0 22.0)'>38'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Sun' kr:absoluteposition='349.64199427659315' transform='rotate(-164.020695 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 54.0676221273 7.6951013448 L 53.9647352147 8.7651664284' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 54.1375115870 7.7018794996 L 54.0328568822 8.7717731358' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='351.0263673303981' kr:signposition='21.026367330398102' kr:slug='True_South_Lunar_Node' kr:cx='84.49063495557998' kr:cy='59.88789666010546' transform='rotate(-164.003275 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(254.003275) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='351.0263673303981' kr:signposition='21.026367330398102' kr:slug='True_South_Lunar_Node' kr:cx='84.46524001004016' kr:cy='59.97605287928685' transform='rotate(-163.856777 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(253.856777) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#True_South_Lunar_Node' kr:slug='True_South_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(254.003275 50.0 14.5)'>21º</text>
-  <g transform='translate(50.0 18.0) rotate(254.003275) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(253.856777 50.0 14.5)'>21º</text>
+  <g transform='translate(50.0 18.0) rotate(253.856777) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Pis' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(254.003275 50.0 22.0)'>1'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(253.856777 50.0 22.0)'>1'</text>
 </g>
 <g kr:node='Indicator' kr:slug='True_South_Lunar_Node' kr:absoluteposition='351.0263673303981' transform='rotate(-165.405068 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.0396968339 7.5127191916 L 51.0133986198 8.5873974709' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.1483284695 7.5155164592 L 51.1192825141 8.5901239841' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='351.237379914613' kr:signposition='21.237379914612973' kr:slug='Mean_South_Lunar_Node' kr:cx='85.20447300655805' kr:cy='56.92960895942379' transform='rotate(-168.864326 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(258.864326) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='351.237379914613' kr:signposition='21.237379914612973' kr:slug='Mean_South_Lunar_Node' kr:cx='85.18663972509479' kr:cy='57.019600049602666' transform='rotate(-168.717827 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(258.717827) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mean_South_Lunar_Node' kr:slug='Mean_South_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-node)' font-weight='500' transform='rotate(258.864326 50.0 14.5)'>21º</text>
-  <g transform='translate(50.0 18.0) rotate(258.864326) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-node)' font-weight='500' transform='rotate(258.717827 50.0 14.5)'>21º</text>
+  <g transform='translate(50.0 18.0) rotate(258.717827) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Pis' fill='var(--kerykeion-chart-color-mean-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-node)' font-weight='500' transform='rotate(258.864326 50.0 22.0)'>14'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-node)' font-weight='500' transform='rotate(258.717827 50.0 22.0)'>14'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Mean_South_Lunar_Node' kr:absoluteposition='351.237379914613' transform='rotate(-165.616081 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 47.5918560352 7.5682802299 L 47.6527679120 8.6415531418' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 47.7003568781 7.5622615882 L 47.7585243218 8.6356867362' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='3.673669958830767' kr:signposition='3.673669958830767' kr:slug='Chiron' kr:cx='85.66892183733768' kr:cy='53.88618256929547' transform='rotate(-173.782065 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(263.782065) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='3.673669958830767' kr:signposition='3.673669958830767' kr:slug='Chiron' kr:cx='85.65761989286645' kr:cy='53.988551563644954' transform='rotate(-173.617601 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(263.617601) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='var(--kerykeion-chart-color-chiron)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-chiron)' font-weight='500' transform='rotate(263.782065 50.0 14.5)'>3º</text>
-  <g transform='translate(50.0 18.0) rotate(263.782065) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-chiron)' font-weight='500' transform='rotate(263.617601 50.0 14.5)'>3º</text>
+  <g transform='translate(50.0 18.0) rotate(263.617601) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Ari' fill='var(--kerykeion-chart-color-chiron)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-chiron)' font-weight='500' transform='rotate(263.782065 50.0 22.0)'>40'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-chiron)' font-weight='500' transform='rotate(263.617601 50.0 22.0)'>40'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Chiron' kr:absoluteposition='3.673669958830767' transform='rotate(-178.052371 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.1646314441 7.6179860339 L 53.0845848841 8.6900016813' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.2862728459 7.6272444750 L 53.2031494739 8.6990259383' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.21847778017385' kr:signposition='4.21847778017385' kr:slug='Mercury' kr:cx='85.87592228516338' kr:cy='50.540925308076005' transform='rotate(-179.136179 50.0 50.0)' kr:angularity='Descendant:1.4028'>
-  <g transform='translate(50.0 11.0) rotate(269.136179) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.21847778017385' kr:signposition='4.21847778017385' kr:slug='Mercury' kr:cx='85.87423413628807' kr:cy='50.6432146879426' transform='rotate(-178.972813 50.0 50.0)' kr:angularity='Descendant:1.4028'>
+  <g transform='translate(50.0 11.0) rotate(268.972813) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mercury)' font-weight='500' transform='rotate(269.136179 50.0 14.5)'>4º</text>
-  <g transform='translate(50.0 18.0) rotate(269.136179) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mercury)' font-weight='500' transform='rotate(268.972813 50.0 14.5)'>4º</text>
+  <g transform='translate(50.0 18.0) rotate(268.972813) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Ari' fill='var(--kerykeion-chart-color-mercury)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mercury)' font-weight='500' transform='rotate(269.136179 50.0 22.0)'>13'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mercury)' font-weight='500' transform='rotate(268.972813 50.0 22.0)'>13'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Mercury' kr:absoluteposition='4.21847778017385' transform='rotate(-178.597178 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 49.6001944161 7.5018805652 L 49.6103071456 8.5768329980' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.441357597653' kr:signposition='4.441357597653' kr:slug='Anti_Vertex' kr:cx='85.7992698637863' kr:cy='47.594448666146924' transform='rotate(-183.844242 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(273.844242) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.441357597653' kr:signposition='4.441357597653' kr:slug='Anti_Vertex' kr:cx='85.7960799878769' kr:cy='47.54743858353772' transform='rotate(-183.919484 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(273.919484) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Anti_Vertex' kr:slug='Anti_Vertex' kr:node='Glyph' fill='var(--kerykeion-chart-color-anti-vertex)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-anti-vertex)' font-weight='500' transform='rotate(273.844242 50.0 14.5)'>4º</text>
-  <g transform='translate(50.0 18.0) rotate(273.844242) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-anti-vertex)' font-weight='500' transform='rotate(273.919484 50.0 14.5)'>4º</text>
+  <g transform='translate(50.0 18.0) rotate(273.919484) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Ari' fill='var(--kerykeion-chart-color-anti-vertex)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-anti-vertex)' font-weight='500' transform='rotate(273.844242 50.0 22.0)'>26'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-anti-vertex)' font-weight='500' transform='rotate(273.919484 50.0 22.0)'>26'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Anti_Vertex' kr:absoluteposition='4.441357597653' transform='rotate(-178.820058 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.2780108177 7.6632925639 L 46.3721552499 8.7341622226' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.2224168057 7.6682168435 L 46.3179674394 8.7389619469' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Ari' kr:absoluteposition='5.621299412358529' kr:signposition='5.621299412358529' kr:slug='Descendant' kr:cx='85.47858183993165' kr:cy='44.64793211671676' transform='rotate(-188.578585 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(278.578585) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Ari' kr:absoluteposition='5.621299412358529' kr:signposition='5.621299412358529' kr:slug='Descendant' kr:cx='85.47145989685414' kr:cy='44.60093222992447' transform='rotate(-188.654495 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(278.654495) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Descendant' kr:slug='Descendant' kr:node='Glyph' fill='var(--kerykeion-chart-color-seventh-house)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-seventh-house)' font-weight='500' transform='rotate(278.578585 50.0 14.5)'>5º</text>
-  <g transform='translate(50.0 18.0) rotate(278.578585) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-seventh-house)' font-weight='500' transform='rotate(278.654495 50.0 14.5)'>5º</text>
+  <g transform='translate(50.0 18.0) rotate(278.654495) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Ari' fill='var(--kerykeion-chart-color-seventh-house)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-seventh-house)' font-weight='500' transform='rotate(278.578585 50.0 22.0)'>37'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-seventh-house)' font-weight='500' transform='rotate(278.654495 50.0 22.0)'>37'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Descendant' kr:absoluteposition='5.621299412358529' transform='rotate(-180.000000 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 43.6604547090 7.9754813769 L 43.8208079135 9.0384544950' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 43.6047831597 7.9839173463 L 43.7665445269 9.0466770840' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Ari' kr:absoluteposition='11.921144130072085' kr:signposition='11.921144130072085' kr:slug='Eris' kr:cx='84.86378184573181' kr:cy='41.521137139142866' transform='rotate(-193.668954 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(283.668954) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Ari' kr:absoluteposition='11.921144130072085' kr:signposition='11.921144130072085' kr:slug='Eris' kr:cx='84.85080491442349' kr:cy='41.46795471080965' transform='rotate(-193.756371 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(283.756371) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Eris' kr:slug='Eris' kr:node='Glyph' fill='var(--kerykeion-chart-color-eris)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-eris)' font-weight='500' transform='rotate(283.668954 50.0 14.5)'>11º</text>
-  <g transform='translate(50.0 18.0) rotate(283.668954) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-eris)' font-weight='500' transform='rotate(283.756371 50.0 14.5)'>11º</text>
+  <g transform='translate(50.0 18.0) rotate(283.756371) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Ari' fill='var(--kerykeion-chart-color-eris)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-eris)' font-weight='500' transform='rotate(283.668954 50.0 22.0)'>55'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-eris)' font-weight='500' transform='rotate(283.756371 50.0 22.0)'>55'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Eris' kr:absoluteposition='11.921144130072085' transform='rotate(-186.299845 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 44.5489106912 7.8510305541 L 44.6867911855 8.9171515460' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 44.4846095975 7.8593964364 L 44.6241165312 8.9253058206' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Ari' kr:absoluteposition='13.629273978623788' kr:signposition='13.629273978623788' kr:slug='Jupiter' kr:cx='83.87644680890875' kr:cy='38.17795484684751' transform='rotate(-199.237729 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(289.237729) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Ari' kr:absoluteposition='13.629273978623788' kr:signposition='13.629273978623788' kr:slug='Jupiter' kr:cx='83.8578410080201' kr:cy='38.12477359055276' transform='rotate(-199.327700 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(289.327700) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Jupiter' kr:slug='Jupiter' kr:node='Glyph' fill='var(--kerykeion-chart-color-jupiter)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-jupiter)' font-weight='500' transform='rotate(289.237729 50.0 14.5)'>13º</text>
-  <g transform='translate(50.0 18.0) rotate(289.237729) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-jupiter)' font-weight='500' transform='rotate(289.327700 50.0 14.5)'>13º</text>
+  <g transform='translate(50.0 18.0) rotate(289.327700) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Ari' fill='var(--kerykeion-chart-color-jupiter)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-jupiter)' font-weight='500' transform='rotate(289.237729 50.0 22.0)'>37'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-jupiter)' font-weight='500' transform='rotate(289.327700 50.0 22.0)'>37'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Jupiter' kr:absoluteposition='13.629273978623788' transform='rotate(-188.007975 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 41.7233909400 8.3136983834 L 41.9327404633 9.3681166008' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 41.6579415788 8.3267464517 L 41.8689465859 9.3808346297' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='31.219210075093404' kr:signposition='1.2192100750934038' kr:slug='Sedna' kr:cx='82.51758258344786' kr:cy='34.83486818624222' transform='rotate(-205.002799 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(295.002799) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='31.219210075093404' kr:signposition='1.2192100750934038' kr:slug='Sedna' kr:cx='82.49272842364788' kr:cy='34.78168867491975' transform='rotate(-205.096537 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(295.096537) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Sedna' kr:slug='Sedna' kr:node='Glyph' fill='var(--kerykeion-chart-color-sedna)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-sedna)' font-weight='500' transform='rotate(295.002799 50.0 14.5)'>1º</text>
-  <g transform='translate(50.0 18.0) rotate(295.002799) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-sedna)' font-weight='500' transform='rotate(295.096537 50.0 14.5)'>1º</text>
+  <g transform='translate(50.0 18.0) rotate(295.096537) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-chart-color-sedna)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-sedna)' font-weight='500' transform='rotate(295.002799 50.0 22.0)'>13'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-sedna)' font-weight='500' transform='rotate(295.096537 50.0 22.0)'>13'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Sedna' kr:absoluteposition='31.219210075093404' transform='rotate(-205.597911 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 50.4414249948 7.5022924857 L 50.4302595391 8.5772344993' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 50.3718967931 7.5016271750 L 50.3624899919 8.5765860170' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='31.93533695478685' kr:signposition='1.9353369547868517' kr:slug='Admetos' kr:cx='80.69271491578722' kr:cy='31.416898776086555' transform='rotate(-211.193078 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(301.193078) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Tau' kr:absoluteposition='31.93533695478685' kr:signposition='1.9353369547868517' kr:slug='Admetos' kr:cx='80.66045583653504' kr:cy='31.36372226285826' transform='rotate(-211.292398 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(301.292398) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Admetos' kr:slug='Admetos' kr:node='Glyph' fill='var(--kerykeion-chart-color-admetos)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-admetos)' font-weight='500' transform='rotate(301.193078 50.0 14.5)'>1º</text>
-  <g transform='translate(50.0 18.0) rotate(301.193078) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-admetos)' font-weight='500' transform='rotate(301.292398 50.0 14.5)'>1º</text>
+  <g transform='translate(50.0 18.0) rotate(301.292398) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-chart-color-admetos)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-admetos)' font-weight='500' transform='rotate(301.193078 50.0 22.0)'>56'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-admetos)' font-weight='500' transform='rotate(301.292398 50.0 22.0)'>56'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Admetos' kr:absoluteposition='31.93533695478685' transform='rotate(-206.314038 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.3852712005 7.6539997673 L 46.4767025760 8.7251044791' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.3118717552 7.6603293583 L 46.4051597049 8.7312739686' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eighth_House' kr:sign='Tau' kr:absoluteposition='33.265477389668554' kr:signposition='3.265477389668554' kr:slug='Saturn' kr:cx='78.41608202894624' kr:cy='28.093364427091984' transform='rotate(-217.629487 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(307.629487) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Eighth_House' kr:sign='Tau' kr:absoluteposition='33.265477389668554' kr:signposition='3.265477389668554' kr:slug='Saturn' kr:cx='78.38429666427012' kr:cy='28.052195944133643' transform='rotate(-217.712542 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(307.712542) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Saturn' kr:slug='Saturn' kr:node='Glyph' fill='var(--kerykeion-chart-color-saturn)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-saturn)' font-weight='500' transform='rotate(307.629487 50.0 14.5)'>3º</text>
-  <g transform='translate(50.0 18.0) rotate(307.629487) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-saturn)' font-weight='500' transform='rotate(307.712542 50.0 14.5)'>3º</text>
+  <g transform='translate(50.0 18.0) rotate(307.712542) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-chart-color-saturn)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-saturn)' font-weight='500' transform='rotate(307.629487 50.0 22.0)'>15'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-saturn)' font-weight='500' transform='rotate(307.712542 50.0 22.0)'>15'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Saturn' kr:absoluteposition='33.265477389668554' transform='rotate(-207.644178 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 42.6306844038 8.1437795824 L 42.8170847394 9.2024957459' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 42.5700180371 8.1545060009 L 42.7579528749 9.2129508491' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eighth_House' kr:sign='Tau' kr:absoluteposition='47.77253091567336' kr:signposition='17.772530915673357' kr:slug='Hades' kr:cx='75.74841268484329' kr:cy='25.01213005854639' transform='rotate(-224.141194 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(314.141194) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Eighth_House' kr:sign='Tau' kr:absoluteposition='47.77253091567336' kr:signposition='17.772530915673357' kr:slug='Hades' kr:cx='75.71216361476996' kr:cy='24.974831823795853' transform='rotate(-224.224249 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(314.224249) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Hades' kr:slug='Hades' kr:node='Glyph' fill='var(--kerykeion-chart-color-hades)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-hades)' font-weight='500' transform='rotate(314.141194 50.0 14.5)'>17º</text>
-  <g transform='translate(50.0 18.0) rotate(314.141194) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-hades)' font-weight='500' transform='rotate(314.224249 50.0 14.5)'>17º</text>
+  <g transform='translate(50.0 18.0) rotate(314.224249) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-chart-color-hades)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-hades)' font-weight='500' transform='rotate(314.141194 50.0 22.0)'>46'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-hades)' font-weight='500' transform='rotate(314.224249 50.0 22.0)'>46'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Hades' kr:absoluteposition='47.77253091567336' transform='rotate(-222.151232 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 48.5242123738 7.5256306594 L 48.5615411196 8.5999823545' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 48.4626437562 7.5278145632 L 48.5015298259 8.6021110183' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
 <g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Gem' kr:absoluteposition='66.58803393189073' kr:signposition='6.588033931890735' kr:slug='Kronos' kr:cx='67.4131860103851' kr:cy='18.628749579149243' transform='rotate(-240.966735 50.0 50.0)'>
   <g transform='translate(50.0 11.0) rotate(330.966735) scale(0.135) translate(-14 -14)'>
@@ -854,239 +854,239 @@
 <g kr:node='Indicator' kr:slug='Kronos' kr:absoluteposition='66.58803393189073' transform='rotate(-240.966735 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Can' kr:absoluteposition='93.70163115651003' kr:signposition='3.7016311565100324' kr:slug='Vulkanus' kr:cx='55.08632973077479' kr:cy='14.482347348538966' transform='rotate(-261.850328 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(351.850328) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Can' kr:absoluteposition='93.70163115651003' kr:signposition='3.7016311565100324' kr:slug='Vulkanus' kr:cx='55.04626674066949' kr:cy='14.476633155315739' transform='rotate(-261.914951 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(351.914951) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Vulkanus' kr:slug='Vulkanus' kr:node='Glyph' fill='var(--kerykeion-chart-color-vulkanus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-vulkanus)' font-weight='500' transform='rotate(351.850328 50.0 14.5)'>3º</text>
-  <g transform='translate(50.0 18.0) rotate(351.850328) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-vulkanus)' font-weight='500' transform='rotate(351.914951 50.0 14.5)'>3º</text>
+  <g transform='translate(50.0 18.0) rotate(351.914951) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Can' fill='var(--kerykeion-chart-color-vulkanus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-vulkanus)' font-weight='500' transform='rotate(351.850328 50.0 22.0)'>42'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-vulkanus)' font-weight='500' transform='rotate(351.914951 50.0 22.0)'>42'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Vulkanus' kr:absoluteposition='93.70163115651003' transform='rotate(-268.080332 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 54.6120974777 7.7509934217 L 54.4954385415 8.8196447645' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 54.5644426099 7.7458183885 L 54.4489890616 8.8146006292' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='97.6760660054407' kr:signposition='7.676066005440703' kr:slug='Medium_Coeli' kr:cx='51.42945347232089' kr:cy='14.148485906862035' transform='rotate(-267.716741 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(357.716741) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='97.6760660054407' kr:signposition='7.676066005440703' kr:slug='Medium_Coeli' kr:cx='51.38939003098477' kr:cy='14.146910937245579' transform='rotate(-267.780767 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(357.780767) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='var(--kerykeion-chart-color-tenth-house)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-tenth-house)' font-weight='500' transform='rotate(357.716741 50.0 14.5)'>7º</text>
-  <g transform='translate(50.0 18.0) rotate(357.716741) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-tenth-house)' font-weight='500' transform='rotate(357.780767 50.0 14.5)'>7º</text>
+  <g transform='translate(50.0 18.0) rotate(357.780767) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Can' fill='var(--kerykeion-chart-color-tenth-house)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-tenth-house)' font-weight='500' transform='rotate(357.716741 50.0 22.0)'>40'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-tenth-house)' font-weight='500' transform='rotate(357.780767 50.0 22.0)'>40'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Medium_Coeli' kr:absoluteposition='97.6760660054407' transform='rotate(-272.054767 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.2147218299 7.6217560114 L 53.1334082777 8.6936763005' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.1673639296 7.6181901550 L 53.0872482537 8.6902006393' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='108.4273579053688' kr:signposition='18.427357905368794' kr:slug='Orcus' kr:cx='47.74186502818632' kr:cy='14.191129221251998' transform='rotate(-273.608338 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(363.608338) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='108.4273579053688' kr:signposition='18.427357905368794' kr:slug='Orcus' kr:cx='47.70185154131625' kr:cy='14.19367494894442' transform='rotate(-273.672364 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(363.672364) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Orcus' kr:slug='Orcus' kr:node='Glyph' fill='var(--kerykeion-chart-color-orcus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-orcus)' font-weight='500' transform='rotate(363.608338 50.0 14.5)'>18º</text>
-  <g transform='translate(50.0 18.0) rotate(363.608338) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-orcus)' font-weight='500' transform='rotate(363.672364 50.0 14.5)'>18º</text>
+  <g transform='translate(50.0 18.0) rotate(363.672364) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Can' fill='var(--kerykeion-chart-color-orcus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-orcus)' font-weight='500' transform='rotate(363.608338 50.0 22.0)'>25'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-orcus)' font-weight='500' transform='rotate(363.672364 50.0 22.0)'>25'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Orcus' kr:absoluteposition='108.4273579053688' transform='rotate(-282.806058 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 56.7932813622 8.0464384309 L 56.6214513042 9.1076167529' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 56.7463957923 8.0388734206 L 56.5757516634 9.1002430929' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='110.20883900384187' kr:signposition='20.208839003841874' kr:slug='Mean_Priapus' kr:cx='44.00308702723992' kr:cy='14.62470586981442' transform='rotate(-279.621460 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(369.621460) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='110.20883900384187' kr:signposition='20.208839003841874' kr:slug='Mean_Priapus' kr:cx='43.96356037824307' kr:cy='14.631429252896254' transform='rotate(-279.685486 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(369.685486) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Mean_Priapus' kr:slug='Mean_Priapus' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(369.621460 50.0 14.5)'>20º</text>
-  <g transform='translate(50.0 18.0) rotate(369.621460) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(369.685486 50.0 14.5)'>20º</text>
+  <g transform='translate(50.0 18.0) rotate(369.685486) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Can' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(369.621460 50.0 22.0)'>12'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(369.685486 50.0 22.0)'>12'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Mean_Priapus' kr:absoluteposition='110.20883900384187' transform='rotate(-284.587540 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.6790529712 7.6595398084 L 53.5859945725 8.7305043897' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 53.6317370028 7.6554550580 L 53.5398754198 8.7265229595' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='113.66310453579571' kr:signposition='23.66310453579571' kr:slug='True_Priapus' kr:cx='40.28561369654454' kr:cy='15.460094112067452' transform='rotate(-285.708696 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(375.708696) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='113.66310453579571' kr:signposition='23.66310453579571' kr:slug='True_Priapus' kr:cx='40.24702287956024' kr:cy='15.470971092598361' transform='rotate(-285.772722 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(375.772722) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#True_Priapus' kr:slug='True_Priapus' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(375.708696 50.0 14.5)'>23º</text>
-  <g transform='translate(50.0 18.0) rotate(375.708696) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(375.772722 50.0 14.5)'>23º</text>
+  <g transform='translate(50.0 18.0) rotate(375.772722) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Can' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(375.708696 50.0 22.0)'>39'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(375.772722 50.0 22.0)'>39'</text>
 </g>
 <g kr:node='Indicator' kr:slug='True_Priapus' kr:absoluteposition='113.66310453579571' transform='rotate(-288.041805 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.7301403767 7.5352309052 L 51.6863780025 8.6093397705' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.6826867152 7.5333240597 L 51.6401246395 8.6074811570' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='117.9166116751609' kr:signposition='27.916611675160894' kr:slug='Interpolated_Perigee' kr:cx='36.598349062740716' kr:cy='16.71681877951181' transform='rotate(-291.932445 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(381.932445) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='117.9166116751609' kr:signposition='27.916611675160894' kr:slug='Interpolated_Perigee' kr:cx='36.56116488452143' kr:cy='16.73181533748827' transform='rotate(-291.996470 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(381.996470) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Interpolated_Perigee' kr:slug='Interpolated_Perigee' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(381.932445 50.0 14.5)'>27º</text>
-  <g transform='translate(50.0 18.0) rotate(381.932445) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(381.996470 50.0 14.5)'>27º</text>
+  <g transform='translate(50.0 18.0) rotate(381.996470) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Can' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(381.932445 50.0 22.0)'>54'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(381.996470 50.0 22.0)'>54'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Interpolated_Perigee' kr:absoluteposition='117.9166116751609' transform='rotate(-292.295312 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Leo' kr:absoluteposition='123.57166872973522' kr:signposition='3.5716687297352223' kr:slug='White_Moon' kr:cx='32.910480140435645' kr:cy='18.45126451076753' transform='rotate(-298.443801 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(388.443801) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Leo' kr:absoluteposition='123.57166872973522' kr:signposition='3.5716687297352223' kr:slug='White_Moon' kr:cx='32.87216166385' kr:cy='18.47205122544902' transform='rotate(-298.513414 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(388.513414) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#White_Moon' kr:slug='White_Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(388.443801 50.0 14.5)'>3º</text>
-  <g transform='translate(50.0 18.0) rotate(388.443801) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(388.513414 50.0 14.5)'>3º</text>
+  <g transform='translate(50.0 18.0) rotate(388.513414) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='var(--kerykeion-chart-color-mean-lilith)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(388.443801 50.0 22.0)'>34'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-lilith)' font-weight='500' transform='rotate(388.513414 50.0 22.0)'>34'</text>
 </g>
 <g kr:node='Indicator' kr:slug='White_Moon' kr:absoluteposition='123.57166872973522' transform='rotate(-297.950369 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 49.5823595523 7.5020520912 L 49.5929233989 8.5770001854' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Leo' kr:absoluteposition='132.55010654897265' kr:signposition='12.55010654897265' kr:slug='Makemake' kr:cx='29.214750843561923' kr:cy='20.753670016482573' transform='rotate(-305.401255 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(395.401255) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Leo' kr:absoluteposition='132.55010654897265' kr:signposition='12.55010654897265' kr:slug='Makemake' kr:cx='29.175232020322156' kr:cy='20.781796109401512' transform='rotate(-305.478713 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(395.478713) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Makemake' kr:slug='Makemake' kr:node='Glyph' fill='var(--kerykeion-chart-color-makemake)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-makemake)' font-weight='500' transform='rotate(395.401255 50.0 14.5)'>12º</text>
-  <g transform='translate(50.0 18.0) rotate(395.401255) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-makemake)' font-weight='500' transform='rotate(395.478713 50.0 14.5)'>12º</text>
+  <g transform='translate(50.0 18.0) rotate(395.478713) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='var(--kerykeion-chart-color-makemake)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-makemake)' font-weight='500' transform='rotate(395.401255 50.0 22.0)'>33'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-makemake)' font-weight='500' transform='rotate(395.478713 50.0 22.0)'>33'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Makemake' kr:absoluteposition='132.55010654897265' transform='rotate(-306.928807 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.1329502634 7.5151035814 L 51.1042932862 8.5897215496' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.0755143276 7.5136107803 L 51.0483101416 8.5882665076' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Leo' kr:absoluteposition='141.96749119483206' kr:signposition='21.967491194832064' kr:slug='Pars_Fortunae' kr:cx='25.690073261561118' kr:cy='23.610572913158293' transform='rotate(-312.651255 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(402.651255) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Leo' kr:absoluteposition='141.96749119483206' kr:signposition='21.967491194832064' kr:slug='Pars_Fortunae' kr:cx='25.65441987723392' kr:cy='23.643461371303374' transform='rotate(-312.728713 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(402.728713) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pars_Fortunae' kr:slug='Pars_Fortunae' kr:node='Glyph' fill='var(--kerykeion-chart-color-pars-fortunae)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pars-fortunae)' font-weight='500' transform='rotate(402.651255 50.0 14.5)'>21º</text>
-  <g transform='translate(50.0 18.0) rotate(402.651255) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pars-fortunae)' font-weight='500' transform='rotate(402.728713 50.0 14.5)'>21º</text>
+  <g transform='translate(50.0 18.0) rotate(402.728713) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='var(--kerykeion-chart-color-pars-fortunae)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pars-fortunae)' font-weight='500' transform='rotate(402.651255 50.0 22.0)'>58'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pars-fortunae)' font-weight='500' transform='rotate(402.728713 50.0 22.0)'>58'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Pars_Fortunae' kr:absoluteposition='141.96749119483206' transform='rotate(-316.346192 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 52.7388750857 7.5883440165 L 52.6695976571 8.6611094325' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 52.6815366954 7.5846801149 L 52.6137095907 8.6575382062' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Vir' kr:absoluteposition='152.23227461036356' kr:signposition='2.232274610363561' kr:slug='Juno' kr:cx='22.684029789315737' kr:cy='26.736032766335597' transform='rotate(-319.580233 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(409.580233) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Vir' kr:absoluteposition='152.23227461036356' kr:signposition='2.232274610363561' kr:slug='Juno' kr:cx='22.66802527861629' kr:cy='26.75483796938292' transform='rotate(-319.619666 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(409.619666) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Juno' kr:slug='Juno' kr:node='Glyph' fill='var(--kerykeion-chart-color-juno)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-juno)' font-weight='500' transform='rotate(409.580233 50.0 14.5)'>2º</text>
-  <g transform='translate(50.0 18.0) rotate(409.580233) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-juno)' font-weight='500' transform='rotate(409.619666 50.0 14.5)'>2º</text>
+  <g transform='translate(50.0 18.0) rotate(409.619666) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-juno)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-juno)' font-weight='500' transform='rotate(409.580233 50.0 22.0)'>13'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-juno)' font-weight='500' transform='rotate(409.619666 50.0 22.0)'>13'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Juno' kr:absoluteposition='152.23227461036356' transform='rotate(-326.610975 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.2020795662 7.8195736367 L 55.0704975536 8.8864903036' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.1730484634 7.8160033947 L 55.0422007670 8.8830103677' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Vir' kr:absoluteposition='158.37615470043949' kr:signposition='8.376154700439486' kr:slug='Haumea' kr:cx='20.108601394338898' kr:cy='30.15362276390269' transform='rotate(-326.417850 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(416.417850) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Eleventh_House' kr:sign='Vir' kr:absoluteposition='158.37615470043949' kr:signposition='8.376154700439486' kr:slug='Haumea' kr:cx='20.096122611588434' kr:cy='30.172430377405107' transform='rotate(-326.453893 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(416.453893) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Haumea' kr:slug='Haumea' kr:node='Glyph' fill='var(--kerykeion-chart-color-haumea)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-haumea)' font-weight='500' transform='rotate(416.417850 50.0 14.5)'>8º</text>
-  <g transform='translate(50.0 18.0) rotate(416.417850) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-haumea)' font-weight='500' transform='rotate(416.453893 50.0 14.5)'>8º</text>
+  <g transform='translate(50.0 18.0) rotate(416.453893) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-haumea)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-haumea)' font-weight='500' transform='rotate(416.417850 50.0 22.0)'>22'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-haumea)' font-weight='500' transform='rotate(416.453893 50.0 22.0)'>22'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Haumea' kr:absoluteposition='158.37615470043949' transform='rotate(-332.754855 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 54.6909905496 7.7596803082 L 54.5723360828 8.8281119240' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 54.6644176385 7.7567377196 L 54.5464353100 8.8252437655' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='160.07101580872052' kr:signposition='10.071015808720517' kr:slug='Zeus' kr:cx='18.10204754903853' kr:cy='33.57151773789796' transform='rotate(-332.750061 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(422.750061) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='160.07101580872052' kr:signposition='10.071015808720517' kr:slug='Zeus' kr:cx='18.092367301545618' kr:cy='33.590326768015004' transform='rotate(-332.783841 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(422.783841) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Zeus' kr:slug='Zeus' kr:node='Glyph' fill='var(--kerykeion-chart-color-zeus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-zeus)' font-weight='500' transform='rotate(422.750061 50.0 14.5)'>10º</text>
-  <g transform='translate(50.0 18.0) rotate(422.750061) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-zeus)' font-weight='500' transform='rotate(422.783841 50.0 14.5)'>10º</text>
+  <g transform='translate(50.0 18.0) rotate(422.783841) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-zeus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-zeus)' font-weight='500' transform='rotate(422.750061 50.0 22.0)'>4'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-zeus)' font-weight='500' transform='rotate(422.783841 50.0 22.0)'>4'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Zeus' kr:absoluteposition='160.07101580872052' transform='rotate(-334.449716 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.2605600681 7.5186983684 L 51.2286753135 8.5932254097' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.2355140162 7.5179625593 L 51.2042627793 8.5925082122' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='171.0263673303981' kr:signposition='21.026367330398102' kr:slug='True_North_Lunar_Node' kr:cx='16.708136824327923' kr:cy='36.61993100569621' transform='rotate(-338.104703 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(428.104703) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='171.0263673303981' kr:signposition='21.026367330398102' kr:slug='True_North_Lunar_Node' kr:cx='16.70531498447346' kr:cy='36.62695435897744' transform='rotate(-338.116790 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(428.116790) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#True_North_Lunar_Node' kr:slug='True_North_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(428.104703 50.0 14.5)'>21º</text>
-  <g transform='translate(50.0 18.0) rotate(428.104703) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(428.116790 50.0 14.5)'>21º</text>
+  <g transform='translate(50.0 18.0) rotate(428.116790) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(428.104703 50.0 22.0)'>1'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(428.116790 50.0 22.0)'>1'</text>
 </g>
 <g kr:node='Indicator' kr:slug='True_North_Lunar_Node' kr:absoluteposition='171.0263673303981' transform='rotate(-345.405068 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.4005143560 7.8445205852 L 55.2639131105 8.9108062410' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 55.3916213639 7.8433822625 L 55.2552450588 8.9096967111' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='171.23737991461297' kr:signposition='21.237379914612973' kr:slug='Mean_North_Lunar_Node' kr:cx='15.670371006181895' kr:cy='39.56683302410991' transform='rotate(-343.095373 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(433.095373) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='171.23737991461297' kr:signposition='21.237379914612973' kr:slug='Mean_North_Lunar_Node' kr:cx='15.668200647218484' kr:cy='39.573977114913326' transform='rotate(-343.107296 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(433.107296) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Mean_North_Lunar_Node' kr:slug='Mean_North_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-chart-color-mean-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-node)' font-weight='500' transform='rotate(433.095373 50.0 14.5)'>21º</text>
-  <g transform='translate(50.0 18.0) rotate(433.095373) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-mean-node)' font-weight='500' transform='rotate(433.107296 50.0 14.5)'>21º</text>
+  <g transform='translate(50.0 18.0) rotate(433.107296) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-mean-node)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-node)' font-weight='500' transform='rotate(433.095373 50.0 22.0)'>14'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-mean-node)' font-weight='500' transform='rotate(433.107296 50.0 22.0)'>14'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Mean_North_Lunar_Node' kr:absoluteposition='171.23737991461297' transform='rotate(-345.616081 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.8691691961 7.5411233484 L 51.8218902106 8.6150831696' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.8603336253 7.5407353007 L 51.8132781277 8.6147049372' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='175.37575260994487' kr:signposition='25.37575260994487' kr:slug='Pluto' kr:cx='14.891734038131851' kr:cy='42.59837442511912' transform='rotate(-348.095072 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(438.095072) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='175.37575260994487' kr:signposition='25.37575260994487' kr:slug='Pluto' kr:cx='14.897942687346458' kr:cy='42.56898577452675' transform='rotate(-348.047107 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(438.047107) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Pluto' kr:slug='Pluto' kr:node='Glyph' fill='var(--kerykeion-chart-color-pluto)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pluto)' font-weight='500' transform='rotate(438.095072 50.0 14.5)'>25º</text>
-  <g transform='translate(50.0 18.0) rotate(438.095072) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-pluto)' font-weight='500' transform='rotate(438.047107 50.0 14.5)'>25º</text>
+  <g transform='translate(50.0 18.0) rotate(438.047107) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-pluto)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pluto)' font-weight='500' transform='rotate(438.095072 50.0 22.0)'>22'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-pluto)' font-weight='500' transform='rotate(438.047107 50.0 22.0)'>22'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Pluto' kr:absoluteposition='175.37575260994487' transform='rotate(-349.754453 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.2306983781 7.5178227782 L 51.1995689485 8.5923719668' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.2662623364 7.5188679565 L 51.2342333479 8.5933907082' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='181.60629293058918' kr:signposition='1.606292930589177' kr:slug='Apollon' kr:cx='14.343709600201379' kr:cy='45.99958065632756' transform='rotate(-353.598531 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(443.598531) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='181.60629293058918' kr:signposition='1.606292930589177' kr:slug='Apollon' kr:cx='14.349824480945472' kr:cy='45.94544879664773' transform='rotate(-353.511540 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(443.511540) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Apollon' kr:slug='Apollon' kr:node='Glyph' fill='var(--kerykeion-chart-color-apollon)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-apollon)' font-weight='500' transform='rotate(443.598531 50.0 14.5)'>1º</text>
-  <g transform='translate(50.0 18.0) rotate(443.598531) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-apollon)' font-weight='500' transform='rotate(443.511540 50.0 14.5)'>1º</text>
+  <g transform='translate(50.0 18.0) rotate(443.511540) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-apollon)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-apollon)' font-weight='500' transform='rotate(443.598531 50.0 22.0)'>36'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-apollon)' font-weight='500' transform='rotate(443.511540 50.0 22.0)'>36'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Apollon' kr:absoluteposition='181.60629293058918' transform='rotate(-355.984994 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.7696822547 7.5368603997 L 51.7249197036 8.6109280484' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 1 51.8341514340 7.5395962276 L 51.7877581918 8.6135946759' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='184.43406588546029' kr:signposition='4.434065885460285' kr:slug='Uranus' kr:cx='14.126444892530074' kr:cy='49.319967683622025' transform='rotate(-358.914010 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(448.914010) scale(0.12825) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='184.43406588546029' kr:signposition='4.434065885460285' kr:slug='Uranus' kr:cx='14.127877121669243' kr:cy='49.24820202052739' transform='rotate(-358.799387 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(448.799387) scale(0.12825) translate(-14 -14)'>
     <use xlink:href='#Uranus' kr:slug='Uranus' kr:node='Glyph' fill='var(--kerykeion-chart-color-uranus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-uranus)' font-weight='500' transform='rotate(448.914010 50.0 14.5)'>4º</text>
-  <g transform='translate(50.0 18.0) rotate(448.914010) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-uranus)' font-weight='500' transform='rotate(448.799387 50.0 14.5)'>4º</text>
+  <g transform='translate(50.0 18.0) rotate(448.799387) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-uranus)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-uranus)' font-weight='500' transform='rotate(448.914010 50.0 22.0)'>26'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-uranus)' font-weight='500' transform='rotate(448.799387 50.0 22.0)'>26'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Uranus' kr:absoluteposition='184.43406588546029' transform='rotate(-358.812766 50.0 50.0)'>
   <path d='M 50.0 6.5 l 0 1.075' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='184.441357597653' kr:signposition='4.4413575976529955' kr:slug='Vertex' kr:cx='14.19165368146254' kr:cy='52.266436394802454' transform='rotate(-3.621621 50.0 50.0)'>
-  <g transform='translate(50.0 11.0) rotate(93.621621) scale(0.135) translate(-14 -14)'>
+<g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='184.441357597653' kr:signposition='4.4413575976529955' kr:slug='Vertex' kr:cx='14.190771691767182' kr:cy='52.25245820579595' transform='rotate(-3.599255 50.0 50.0)'>
+  <g transform='translate(50.0 11.0) rotate(93.599255) scale(0.135) translate(-14 -14)'>
     <use xlink:href='#Vertex' kr:slug='Vertex' kr:node='Glyph' fill='var(--kerykeion-chart-color-vertex)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-vertex)' font-weight='500' transform='rotate(93.621621 50.0 14.5)'>4º</text>
-  <g transform='translate(50.0 18.0) rotate(93.621621) scale(0.0702) translate(-16 -16)'>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.5' font-size='2' fill='var(--kerykeion-chart-color-vertex)' font-weight='500' transform='rotate(93.599255 50.0 14.5)'>4º</text>
+  <g transform='translate(50.0 18.0) rotate(93.599255) scale(0.0702) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-vertex)' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-vertex)' font-weight='500' transform='rotate(93.621621 50.0 22.0)'>26'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='22.0' font-size='1.85' fill='var(--kerykeion-chart-color-vertex)' font-weight='500' transform='rotate(93.599255 50.0 22.0)'>26'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Vertex' kr:absoluteposition='184.441357597653' transform='rotate(-358.820058 50.0 50.0)'>
-  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.4425366733 7.6491504846 L 46.5325195692 8.7203778547' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
+  <path d='M 50.0 6.5 l 0 1.075 A 42.5 42.5 0 0 0 46.4590688685 7.6477650327 L 46.5486335972 8.7190274466' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
 </g>
 <g kr:node='HouseRing'>
@@ -3141,6 +3141,20 @@
         <symbol id='Chiron'>
             <circle cx='12' cy='16.433' r='4.9' fill='none' stroke='var(--kerykeion-chart-color-chiron)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M9.6,2.667 L9.6,12.161' fill='none' stroke='var(--kerykeion-chart-color-chiron)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M16,3.1 L9.6,7 L16.4,11.3' fill='none' stroke='var(--kerykeion-chart-color-chiron)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
+        <!-- Angles -->
+        <symbol id='Ascendant'>
+            <g transform='translate(0.458,19.605) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-first-house)'><path d='M545 0 459 221H176L91 0H0L279 717H360L638 0ZM352 517Q349 525 342.0 546.0Q335 567 328.5 589.5Q322 612 318 624Q311 593 302.0 563.5Q293 534 287 517L206 301H432Z'/><path d='M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z' transform='translate(639,0)'/></g>
+        </symbol>
+        <symbol id='Medium_Coeli'>
+            <g transform='translate(-1.852,18.721) scale(0.01909,-0.01909)' style='fill: var(--kerykeion-chart-color-tenth-house)'><path d='M412 0 177 626H173Q176 595 178.0 542.5Q180 490 180 433V0H97V714H230L450 129H454L678 714H810V0H721V439Q721 491 723.5 542.0Q726 593 728 625H724L486 0Z'/><path d='M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z' transform='translate(907,0)'/></g>
+        </symbol>
+        <symbol id='Descendant'>
+            <g transform='translate(-1.564,19.572) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-seventh-house)'><path d='M669 364Q669 183 570.5 91.5Q472 0 296 0H97V714H317Q425 714 504.0 674.0Q583 634 626.0 556.5Q669 479 669 364ZM574 361Q574 504 503.5 570.5Q433 637 304 637H187V77H284Q574 77 574 361Z'/><path d='M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z' transform='translate(730,0)'/></g>
+        </symbol>
+        <symbol id='Imum_Coeli'>
+            <g transform='translate(3.115,19.572) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-fourth-house)'><path d='M298 0H40V52L124 71V642L40 662V714H298V662L214 642V71L298 52Z'/><path d='M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z' transform='translate(339,0)'/></g>
+        </symbol>
+        <!-- Points -->
         <symbol id='Mean_Lilith'>
             <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-mean-lilith)'/></g>
         </symbol>
@@ -3156,20 +3170,6 @@
         <symbol id='True_South_Lunar_Node'>
             <path d='M6.7574,8.6791 A6.4,6.4 0 1,0 17.2426,8.6791' fill='none' stroke='var(--kerykeion-chart-color-true-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='4.9553' cy='7.4172' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-true-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='19.0447' cy='7.4172' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-true-node)' stroke-width='1.494' stroke-linecap='round'/>
         </symbol>
-        <!-- Angles -->
-        <symbol id='Ascendant'>
-            <g transform='translate(0.458,19.605) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-first-house)'><path d='M545 0 459 221H176L91 0H0L279 717H360L638 0ZM352 517Q349 525 342.0 546.0Q335 567 328.5 589.5Q322 612 318 624Q311 593 302.0 563.5Q293 534 287 517L206 301H432Z'/><path d='M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z' transform='translate(639,0)'/></g>
-        </symbol>
-        <symbol id='Medium_Coeli'>
-            <g transform='translate(-1.852,18.721) scale(0.01909,-0.01909)' style='fill: var(--kerykeion-chart-color-tenth-house)'><path d='M412 0 177 626H173Q176 595 178.0 542.5Q180 490 180 433V0H97V714H230L450 129H454L678 714H810V0H721V439Q721 491 723.5 542.0Q726 593 728 625H724L486 0Z'/><path d='M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z' transform='translate(907,0)'/></g>
-        </symbol>
-        <symbol id='Descendant'>
-            <g transform='translate(-1.564,19.572) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-seventh-house)'><path d='M669 364Q669 183 570.5 91.5Q472 0 296 0H97V714H317Q425 714 504.0 674.0Q583 634 626.0 556.5Q669 479 669 364ZM574 361Q574 504 503.5 570.5Q433 637 304 637H187V77H284Q574 77 574 361Z'/><path d='M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z' transform='translate(730,0)'/></g>
-        </symbol>
-        <symbol id='Imum_Coeli'>
-            <g transform='translate(3.115,19.572) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-fourth-house)'><path d='M298 0H40V52L124 71V642L40 662V714H298V662L214 642V71L298 52Z'/><path d='M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z' transform='translate(339,0)'/></g>
-        </symbol>
-        <!-- Points -->
         <symbol id='Earth'>
             <circle cx='12' cy='12' r='9.333' fill='none' stroke='var(--kerykeion-chart-color-earth)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='2.667' x2='12' y2='21.333' fill='none' stroke='var(--kerykeion-chart-color-earth)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='2.667' y1='12' x2='21.333' y2='12' fill='none' stroke='var(--kerykeion-chart-color-earth)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
@@ -3243,7 +3243,7 @@
             <g transform='translate(0.050,19.680) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-vertex)'><path d='M600 714 345 0H255L0 714H94L255 256Q271 212 282.0 173.5Q293 135 300 100Q307 135 318.0 174.0Q329 213 345 258L505 714Z'/><path d='M212 274 27 536H127L265 334L402 536H501L316 274L511 0H411L265 214L117 0H18Z' transform='translate(600,0)'/></g>
         </symbol>
         <symbol id='True_Lilith'>
-            <g transform='translate(5.305,1.920) scale(0.02136,-0.02136) translate(-51.000,-789.000)'><path d='M180 -5V68H330V196L51 476L365 789L678 476L402 200V68H552V-5H402V-155H330V-5Z' style='fill: var(--kerykeion-chart-color-true-lilith)'/></g>
+            <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-true-lilith)'/></g>
         </symbol>
         <symbol id='Interpolated_Lilith'>
             <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-interpolated-lilith)'/></g>
@@ -3264,7 +3264,7 @@
             <circle cx='12' cy='6.967' r='4.3' fill='none' stroke='var(--kerykeion-chart-color-eris)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='11.267' x2='12' y2='17.480' fill='none' stroke='var(--kerykeion-chart-color-eris)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.6' y1='13.367' x2='15.4' y2='13.367' fill='none' stroke='var(--kerykeion-chart-color-eris)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M8.8,17.480 L15.2,17.480 L12,22.080 Z' fill='var(--kerykeion-chart-color-eris)'/>
         </symbol>
         <symbol id='East_Point'>
-            <circle cx='9.667' cy='12' r='7' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='9.667' y1='5.234' x2='9.667' y2='18.766' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='2.9' y1='12' x2='16.433' y2='12' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='16.433' y1='12' x2='21.333' y2='6.867' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='16.433' y1='12' x2='21.333' y2='17.133' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='9.667' cy='12' r='7' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='9.667' y1='5.234' x2='9.667' y2='18.766' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='2.9' y1='12' x2='16.433' y2='12' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='16.433' y1='12' x2='21.333' y2='6.867' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='16.433' y1='12' x2='21.333' y2='17.133' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='Pars_Fortunae'>
             <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-pars-fortunae)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='5.6' y1='5.6' x2='18.4' y2='18.4' fill='none' stroke='var(--kerykeion-chart-color-pars-fortunae)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='18.4' y1='5.6' x2='5.6' y2='18.4' fill='none' stroke='var(--kerykeion-chart-color-pars-fortunae)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
