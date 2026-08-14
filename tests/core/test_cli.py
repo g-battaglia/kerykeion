@@ -1443,3 +1443,120 @@ class TestRenderOptions:
 
         with pytest.raises(AssertionError, match="absent from the command signature"):
             _render_from({"theme": "dark"})
+
+
+class TestSnapshot:
+    """``subject save --snapshot``: the profile field that used to be a stub."""
+
+    _RECIPE = [
+        "--name", "Ada", "--date", "1900-12-10", "--time", "18:00",
+        "--lat", "51.5074", "--lng", "-0.1278", "--tz", "Europe/London", "--offline",
+    ]
+
+    def _save(self, runner, app, name, *extra):
+        result = runner.invoke(app, ["subject", "save", name, *self._RECIPE, *extra])
+        assert result.exit_code == 0, result.output
+        return name
+
+    def _profile_path(self, name):
+        from kerykeion.cli import config
+
+        return config.profile_path(name)
+
+    def _verify_state(self, runner, app, name):
+        result = runner.invoke(app, ["subject", "verify", name, "-f", "json"])
+        assert result.exit_code == 0, result.output
+        return json.loads(result.output)["snapshot"]
+
+    def test_save_without_snapshot_stores_none(self, runner, app):
+        self._save(runner, app, "plain")
+        stored = json.loads(self._profile_path("plain").read_text(encoding="utf-8"))
+        assert stored["snapshot"] is None
+        assert self._verify_state(runner, app, "plain") == "absent"
+
+    def test_save_with_snapshot_stores_the_subject(self, runner, app):
+        self._save(runner, app, "snap", "--snapshot")
+        stored = json.loads(self._profile_path("snap").read_text(encoding="utf-8"))
+        assert stored["snapshot"], "the snapshot field is still empty"
+        assert stored["snapshot"]["name"] == "Ada"
+        assert self._verify_state(runner, app, "snap") == "matches"
+
+    def test_reading_a_snapshot_profile_skips_the_factory(self, runner, app, monkeypatch):
+        """The point of the feature: reuse, not recompute."""
+        import kerykeion
+
+        self._save(runner, app, "snap", "--snapshot")
+        self._save(runner, app, "plain")
+
+        calls = []
+        original = kerykeion.AstrologicalSubjectFactory.from_birth_data
+
+        def counting(*args, **kwargs):
+            calls.append(1)
+            return original(*args, **kwargs)
+
+        monkeypatch.setattr(
+            kerykeion.AstrologicalSubjectFactory, "from_birth_data", staticmethod(counting)
+        )
+        assert runner.invoke(app, ["natal", "-s", "snap", "-f", "json"]).exit_code == 0
+        assert calls == [], "the stored snapshot was not used"
+        assert runner.invoke(app, ["natal", "-s", "plain", "-f", "json"]).exit_code == 0
+        assert len(calls) == 1, "the profile without a snapshot must recompute"
+
+    # A snapshot from another version/backend holds numbers this install would
+    # not compute: silently reusing it is worse than the work it saves.
+    @pytest.mark.parametrize("field,value", [
+        ("kerykeion_version", "0.0.1-ancient"),
+        ("backend", "some-other-backend"),
+    ])
+    def test_snapshot_from_other_provenance_is_ignored(
+        self, runner, app, monkeypatch, field, value
+    ):
+        import kerykeion
+
+        self._save(runner, app, "snap", "--snapshot")
+        path = self._profile_path("snap")
+        stored = json.loads(path.read_text(encoding="utf-8"))
+        stored["meta"][field] = value
+        path.write_text(json.dumps(stored), encoding="utf-8")
+
+        assert self._verify_state(runner, app, "snap") == "stale"
+
+        calls = []
+        original = kerykeion.AstrologicalSubjectFactory.from_birth_data
+        monkeypatch.setattr(
+            kerykeion.AstrologicalSubjectFactory,
+            "from_birth_data",
+            staticmethod(lambda *a, **k: (calls.append(1), original(*a, **k))[1]),
+        )
+        result = runner.invoke(app, ["natal", "-s", "snap", "-f", "json"])
+        assert result.exit_code == 0
+        assert len(calls) == 1, "a stale snapshot must be recomputed, not reused"
+        assert "ignoring the stored snapshot" in result.output
+
+    def test_verify_reports_a_drifted_snapshot(self, runner, app):
+        """verify recomputes on purpose, so it can catch a cache that disagrees."""
+        self._save(runner, app, "snap", "--snapshot")
+        path = self._profile_path("snap")
+        stored = json.loads(path.read_text(encoding="utf-8"))
+        stored["snapshot"]["name"] = "TAMPERED"
+        path.write_text(json.dumps(stored), encoding="utf-8")
+        assert self._verify_state(runner, app, "snap") == "drifted"
+
+    def test_an_inline_override_bypasses_the_snapshot(self, runner, app):
+        self._save(runner, app, "snap", "--snapshot")
+        path = self._profile_path("snap")
+        stored = json.loads(path.read_text(encoding="utf-8"))
+        stored["snapshot"]["name"] = "FROM-SNAPSHOT"
+        path.write_text(json.dumps(stored), encoding="utf-8")
+
+        reused = runner.invoke(app, ["natal", "-s", "snap", "-f", "json"])
+        assert json.loads(reused.output)["name"] == "FROM-SNAPSHOT"
+
+        # An override describes something the snapshot does not: recompute.
+        overridden = runner.invoke(
+            app, ["natal", "-s", "snap", "--houses", "koch", "-f", "json"]
+        )
+        body = json.loads(overridden.output)
+        assert body["name"] != "FROM-SNAPSHOT"
+        assert body["houses_system_identifier"] == "K"

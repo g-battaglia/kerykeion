@@ -27,6 +27,7 @@ from kerykeion.cli.options import (
     PointsFlag,
     SetFlags,
     SiderealModeOpt,
+    SnapshotFlag,
     SubjectAltitude,
     SubjectCity,
     SubjectDate,
@@ -79,6 +80,7 @@ def save(
     with_flags: WithFlags = None,  # type: ignore[assignment]
     without_flags: WithoutFlags = None,  # type: ignore[assignment]
     set_flags: SetFlags = None,  # type: ignore[assignment]
+    snapshot: SnapshotFlag = None,  # type: ignore[assignment]
 ) -> None:
     """Build a recipe from the flags and persist it as a profile (0600)."""
     flags = subject_resolver.build_flags(
@@ -93,8 +95,17 @@ def save(
         flags.name = store_name
 
     recipe = subject_resolver.merge_inputs(flags)
+    stored_snapshot = None
+    if snapshot:
+        # Materialise now so a broken recipe fails at `save` — where the user can
+        # fix it — instead of at the first read. The dump is JSON-mode so the
+        # profile stays a plain, diffable JSON document.
+        stored_snapshot = subject_resolver.materialize(recipe).model_dump(mode="json")
     profile = profiles.Profile(
-        name=flags.name, input=profiles.ProfileInput(**recipe), meta=profiles.make_meta()
+        name=flags.name,
+        input=profiles.ProfileInput(**recipe),
+        snapshot=stored_snapshot,
+        meta=profiles.make_meta(),
     )
     path = config.profile_path(store_name)
     profiles.save(path, profile)
@@ -147,13 +158,45 @@ def verify(
     Round-trips the recipe through the factory (so a malformed recipe, a bad
     timezone, or an ephemeris gap surface here, not in the middle of a chart).
     """
-    model = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile_spec)
+    # Deliberately NOT resolve_subject(): that would hand back the stored
+    # snapshot, and "the snapshot reads back fine" is not what verify claims —
+    # it claims the *recipe* still rebuilds. Always recompute here.
+    model = subject_resolver.materialize(
+        subject_resolver.merge_inputs(subject_resolver.SubjectFlags(), profile_spec)
+    )
     summary = _subject_summary(model)
+    summary["snapshot"] = _snapshot_state(profile_spec, model)
     resolved = formats.resolve_format(fmt, output)
     # The compact summary carries no warnings, but the materialised subject it
     # was built from may (an ephemeris gap, a polar-house fallback). Collect from
     # the subject so --warnings-as-errors engages here too, like the charts.
     warnings.output_with_warnings(summary, resolved, output, warning_source=model)
+
+
+def _snapshot_state(profile_spec: str, recomputed: object) -> str:
+    """How the stored snapshot compares to a fresh computation.
+
+    ``verify`` exists to catch a recipe that no longer rebuilds; with snapshots
+    it must also catch a *snapshot* that no longer matches, because that is the
+    copy every other command reads. The states are deliberately distinct:
+
+    * ``absent``  — nothing stored (``subject save --snapshot`` never run);
+    * ``stale``   — written by another kerykeion version or backend, so it is
+      already being ignored at read time;
+    * ``matches`` — byte-identical to what this installation computes now;
+    * ``drifted`` — present, current provenance, and yet different. That is the
+      interesting one: the recipe and the cache disagree, so re-save it.
+    """
+    try:
+        profile = profiles.load(profiles.resolve_path(profile_spec))
+    except Exception:  # pragma: no cover - verify already loaded it once
+        return "absent"
+    if not profile.snapshot:
+        return "absent"
+    if subject_resolver.snapshot_is_usable(profile.meta) is not None:
+        return "stale"
+    fresh = recomputed.model_dump(mode="json")  # type: ignore[attr-defined]
+    return "matches" if fresh == profile.snapshot else "drifted"
 
 
 def _subject_summary(model: object) -> dict[str, object]:

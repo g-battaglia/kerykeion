@@ -522,6 +522,17 @@ CallSubject2Opt = Annotated[
     ),
 ]
 
+SnapshotFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--snapshot",
+        help="Also store the computed subject in the profile, so later reads reuse "
+        "it instead of recomputing. Ignored automatically if the kerykeion version "
+        "or ephemeris backend changes.",
+        rich_help_panel="Subject",
+    ),
+]
+
 # ── Report shaping (--format text) ───────────────────────────────────────────
 NoAspectsFlag = Annotated[
     Optional[bool],

@@ -568,10 +568,82 @@ def materialize(merged: dict[str, Any]):
     )
 
 
+def snapshot_is_usable(meta: Optional[dict[str, Any]]) -> Optional[str]:
+    """``None`` if a snapshot written with *meta* is still trustworthy, else why not.
+
+    A snapshot is a cache of computed positions. Reusing one produced by a
+    different kerykeion version or a different ephemeris backend would answer
+    with numbers this installation would not compute — a silently wrong result,
+    which is worse than the recomputation it saves. Provenance mismatch is the
+    one thing we can check cheaply, so we check it and fall back.
+    """
+    meta = meta or {}
+    try:
+        from kerykeion import BACKEND_NAME, __version__
+    except Exception:  # pragma: no cover - defensive; kerykeion is the core dep
+        return None
+    stored_version = meta.get("kerykeion_version")
+    if stored_version and stored_version != __version__:
+        return f"written by kerykeion {stored_version}, running {__version__}"
+    stored_backend = meta.get("backend")
+    if stored_backend and stored_backend != BACKEND_NAME:
+        return f"written with the {stored_backend} backend, running {BACKEND_NAME}"
+    return None
+
+
+def _subject_from_snapshot(flags: SubjectFlags, profile_spec: Optional[str]):
+    """The stored subject for *profile_spec*, or ``None`` to compute it normally.
+
+    Only taken when the read is unambiguous: a profile was named, it carries a
+    snapshot, **no inline flag overrides the recipe** (an override means the user
+    asked for something the snapshot does not describe), and the provenance still
+    matches. Anything else falls through to the ordinary path — including a
+    broken profile, so the real error comes from there rather than from here.
+    """
+    if profile_spec is None or flags != SubjectFlags():
+        return None
+
+    from kerykeion.cli import profiles
+
+    try:
+        profile = profiles.load(profiles.resolve_path(profile_spec))
+    except Exception:
+        return None
+    if not profile.snapshot:
+        return None
+    reason = snapshot_is_usable(profile.meta)
+    if reason is not None:
+        _note(f"ignoring the stored snapshot for {profile_spec!r} ({reason}); recomputing.")
+        return None
+
+    from kerykeion.schemas.models import AstrologicalSubjectModel
+
+    try:
+        return AstrologicalSubjectModel.model_validate(profile.snapshot)
+    except Exception:
+        _note(f"the stored snapshot for {profile_spec!r} is unreadable; recomputing.")
+        return None
+
+
+def _note(message: str) -> None:
+    """A diagnostic line on stderr, never on the payload stream."""
+    import sys
+
+    sys.stderr.write(f"kerykeion: note: {message}\n")
+
+
 def resolve_subject(
     flags: SubjectFlags, profile_spec: Optional[str] = None
 ):
-    """Build an ``AstrologicalSubjectModel`` from a profile plus inline flags."""
+    """Build an ``AstrologicalSubjectModel`` from a profile plus inline flags.
+
+    Uses a stored ``--snapshot`` when one is present and trustworthy; see
+    :func:`_subject_from_snapshot`. Callers that must exercise the recipe itself
+    (``subject verify``) skip this and call ``materialize(merge_inputs(...))``.
+    """
+    stored = _subject_from_snapshot(flags, profile_spec)
+    if stored is not None:
+        return stored
     return materialize(merge_inputs(flags, profile_spec))
 
 
