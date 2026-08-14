@@ -1445,6 +1445,91 @@ class TestRenderOptions:
             _render_from({"theme": "dark"})
 
 
+class TestInfoAndDoctor:
+    """The CLI can now list what it validates against, and judge its own install."""
+
+    def test_literals_are_derived_from_the_library(self, runner, app):
+        import typing
+
+        from kerykeion.schemas import literals as lib
+
+        result = runner.invoke(app, ["info", "literals", "-f", "json"])
+        assert result.exit_code == 0, result.output
+        tables = json.loads(result.output)
+        # Read from the source of truth, never transcribed: compare to the library.
+        assert tables["HousesSystemIdentifier"] == list(
+            typing.get_args(lib.HousesSystemIdentifier)
+        )
+        assert tables["SiderealMode"] == list(typing.get_args(lib.SiderealMode))
+        assert len(tables["SiderealMode"]) > 40
+
+    def test_a_single_literal_can_be_named_case_insensitively(self, runner, app):
+        result = runner.invoke(
+            app, ["info", "literals", "housessystemidentifier", "-f", "json"]
+        )
+        assert result.exit_code == 0, result.output
+        assert list(json.loads(result.output)) == ["HousesSystemIdentifier"]
+
+    def test_an_unknown_literal_suggests_and_exits_four(self, runner, app):
+        result = runner.invoke(app, ["info", "literals", "HouseSystem"])
+        assert result.exit_code == 4
+        assert "no literal named" in result.output
+
+    # info must describe what the flags actually accept, so it is read from the
+    # resolver's own tables rather than a copy.
+    def test_points_and_stars_match_the_resolver(self, runner, app):
+        from kerykeion.cli import subject_resolver
+
+        points = json.loads(runner.invoke(app, ["info", "points", "-f", "json"]).output)
+        stars = json.loads(runner.invoke(app, ["info", "stars", "-f", "json"]).output)
+        assert points == subject_resolver._point_sets()
+        assert stars == subject_resolver._fixed_star_sets()
+
+    def test_houses_lists_both_letters_and_names(self, runner, app):
+        body = json.loads(runner.invoke(app, ["info", "houses", "-f", "json"]).output)
+        # Case matters: 'i' and 'I' are different systems and both must show.
+        assert "i" in body["letters"] and "I" in body["letters"]
+        assert body["names"]["placidus"] == "P"
+
+    def test_methods_reports_the_library_strategies(self, runner, app):
+        from kerykeion import DominantsFactory
+
+        body = json.loads(runner.invoke(app, ["info", "methods", "-f", "json"]).output)
+        assert body["dominants_method"] == list(DominantsFactory.available_methods())
+
+    def test_doctor_passes_on_a_working_install(self, runner, app):
+        result = runner.invoke(app, ["doctor", "-f", "json"])
+        assert result.exit_code == 0, result.output
+        body = json.loads(result.output)
+        assert body["ok"] is True
+        names = {c["check"] for c in body["checks"]}
+        assert {"backend", "ephemeris data", "sample calculation"} <= names
+
+    def test_doctor_text_is_readable_not_json(self, runner, app):
+        result = runner.invoke(app, ["doctor", "-f", "text"])
+        assert result.exit_code == 0
+        assert "All checks passed." in result.output
+        assert not result.output.lstrip().startswith("{")
+
+    # This is what separates doctor from status: it judges, and says so.
+    def test_doctor_fails_when_a_calculation_raises(self, runner, app, monkeypatch):
+        import kerykeion
+
+        def boom(*args, **kwargs):
+            raise RuntimeError("ephemeris unreachable")
+
+        monkeypatch.setattr(
+            kerykeion.AstrologicalSubjectFactory, "from_birth_data", staticmethod(boom)
+        )
+        result = runner.invoke(app, ["doctor", "-f", "json"])
+        assert result.exit_code == 6
+        body = json.loads(result.output)
+        assert body["ok"] is False
+        assert any(c["status"] == "fail" for c in body["checks"])
+        # status only reports, so it stays green on the same broken install.
+        assert runner.invoke(app, ["status", "--json"]).exit_code == 0
+
+
 class TestSnapshot:
     """``subject save --snapshot``: the profile field that used to be a stub."""
 
