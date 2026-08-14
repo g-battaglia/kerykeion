@@ -124,6 +124,30 @@ exit-code-classification path it could reach:
     like `typing.Union`; an aware `--from` on a DST fall-back's second reading is
     surfaced as an error; an explicit `--seconds 0` is forwarded; `--param x=none`
     maps to `None` (matching `--set`).
+- A fifth pass reviewed the finished CLI end-to-end and closed fifteen more gaps:
+  - `call --param` can now pass a `Sequence[str]` parameter (nine params across
+    `MidpointFactory`, `SolarArcFactory`, `SecondaryProgressionFactory` and
+    `HeliacalFactory`): the abstract origin was unhandled, so the raw string
+    reached the factory and was refused, and `--explain` mislabelled them
+    `json-only`.
+  - House-system letters keep their case when already valid: `i` (Sunshine/alt.)
+    and `I` (Sunshine) are different systems, but every letter was upper-cased —
+    making `--houses i` unreachable and casting a `transit` ring with `I` when the
+    natal used `i`.
+  - `--no-online` now exists (it was documented and implemented in the resolver,
+    but declared without a secondary flag, so typer never generated it).
+  - `subject save` is atomic (temp file + `os.replace`): it truncated the existing
+    profile before writing, so an interruption left a zero-byte or half-written
+    recipe — destroying stored birth data with no backup.
+  - The app config directory is created `0700` like the `subjects/` store;
+    `ensure_profile_store()` promised it but had no callers.
+  - Bare `@app.command` (no parentheses) registered nothing and rebound the
+    decorated name to typer's decorator, silently.
+  - The enum-style flags (`--lot`, `--rate`, `--method`, `--type`) are
+    case-insensitive like `--zodiac`/`--houses`/`--points`, so `--lot Fortune`
+    and `--type solar` no longer fail.
+  - NOTICE no longer states that Typer's vendored Click is carried "under Typer's
+    MIT": bundling does not relicense it, and it remains BSD-3-Clause.
 
 ### Changed
 
@@ -150,6 +174,22 @@ exit-code-classification path it could reach:
   (only `verify`, which passes `warning_source=`, stays inline), the ceremony-only
   `_emit as _emit_chart` alias in `charts` was dropped, and the `--from` help text
   matches the parse-error wording.
+- **Dead code and duplicated sources of truth removed (fifth pass).** A family of
+  `emit_*` helpers (`emit`, `emit_json`, `emit_text`, `emit_xml`, `emit_svg`) wrote
+  straight to `sys.stdout`, bypassing `-o` file handling and the warnings funnel;
+  they had no callers and are gone, leaving `render` + `write_output` as the single
+  funnel. Also removed: `profiles.as_json`, `config.config_file`/`CONFIG_FILENAME`
+  and `config.DEFAULT_ONLINE` (whose comment contradicted the real default computed
+  in `merge_inputs`). `sky --zodiac` delegates to the library's own
+  `normalize_zodiac_type` instead of re-implementing its spelling table; `sky` no
+  longer materialises a subject it discards when every coordinate is inline;
+  `technique stars` uses the shared `CountOpt`; and the `all` extra self-references
+  `kerykeion[cli,swiss]` rather than restating their version floors a third time.
+- The `kerykeion.cli` docstrings no longer claim `--version`/`--help` skip the
+  backend init. They cannot: the entry point is a submodule, so importing it
+  imports `kerykeion/__init__.py` first (~1.3 s). The **typer** isolation that
+  module does provide is real and test-gated; making the startup claim true is a
+  separate change to `kerykeion/__init__.py` (PEP 562).
 
 ## 6.0.0a84 - 2026-08-12
 

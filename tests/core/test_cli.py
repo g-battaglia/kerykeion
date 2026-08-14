@@ -1141,3 +1141,143 @@ class TestXhighReviewFixes:
         assert coerce_value(Any, "none") is None
         assert coerce_value(Any, "null") is None
         assert coerce_value(Any, "0") == 0
+
+
+class TestFullPrReviewFixes:
+    """Regressions from the xhigh review of the whole `feat/cli` PR."""
+
+    # `Sequence[str]` params (MidpointFactory, SolarArcFactory, Heliacal…) were
+    # unreachable: the origin is an ABC, so coercion fell through to "raw string"
+    # and the factory rejected it. They coerce like a list now.
+    def test_sequence_param_coerces_like_a_list(self):
+        from typing import Optional, Sequence
+
+        from kerykeion.cli.introspect import CLI, _classify, coerce_value
+
+        assert coerce_value(Optional[Sequence[str]], "Sun,Moon") == ["Sun", "Moon"]
+        # --explain must advertise it as usable from the CLI, not "json-only".
+        assert _classify(Optional[Sequence[str]]) == CLI
+        # A plain str is a Sequence too, but stays a scalar.
+        assert coerce_value(str, "Sun,Moon") == "Sun,Moon"
+
+    def test_call_binds_a_sequence_param(self, runner, app, ada_profile):
+        r = runner.invoke(
+            app,
+            ["call", "MidpointFactory.compute", "-s", ada_profile,
+             "--param", "active_points=Sun,Moon", "-f", "json"],
+        )
+        assert r.exit_code == 0, r.output
+        assert json.loads(r.output)
+
+    # House letters are case-SIGNIFICANT: 'i' (Sunshine/alt.) != 'I' (Sunshine).
+    # Upper-casing every letter made 'i' unreachable and silently re-framed a
+    # transit ring inheriting a natal 'i'.
+    def test_house_letter_case_is_preserved_when_valid(self):
+        from kerykeion.cli.subject_resolver import resolve_house_system
+
+        assert resolve_house_system("i") == "i"
+        assert resolve_house_system("I") == "I"
+        # The convenience upper-casing survives for unambiguous letters.
+        assert resolve_house_system("p") == "P"
+        assert resolve_house_system("placidus") == "P"
+        with pytest.raises(ValueError):
+            resolve_house_system("G")
+
+    # Bare ``@app.command`` (no parentheses) silently registered nothing and
+    # rebound the module symbol to typer's decorator.
+    def test_bare_command_decorator_registers(self):
+        from kerykeion.cli.typer_app import KerykeionTyper
+
+        t = KerykeionTyper()
+
+        @t.command
+        def hello() -> None: ...
+
+        assert len(t.registered_commands) == 1
+        assert hello.__name__ == "hello"
+
+    # subject save is atomic: a failure mid-write must not destroy the profile
+    # that was already on disk (it holds birth data and has no backup).
+    def test_save_failure_leaves_the_previous_profile_intact(
+        self, runner, app, ada_profile, monkeypatch, deterministic_cli_env
+    ):
+        from kerykeion.cli import config, profiles
+
+        path = config.profile_path(ada_profile)
+        original = path.read_text(encoding="utf-8")
+
+        def boom(*a, **k):
+            raise OSError("disk full")
+
+        monkeypatch.setattr(profiles.os, "replace", boom)
+        with pytest.raises(OSError):
+            profiles.save(path, profiles.load(path))
+
+        assert path.read_text(encoding="utf-8") == original
+        # And no scratch file is left behind next to it.
+        assert not list(path.parent.glob(".*.tmp"))
+
+    # The store holds PII: BOTH the app dir and the subjects dir must be 0700.
+    def test_profile_store_dirs_are_private(self, runner, app, ada_profile):
+        from kerykeion.cli import config
+
+        assert config.app_dir().stat().st_mode & 0o777 == 0o700
+        assert config.profiles_dir().stat().st_mode & 0o777 == 0o700
+
+    # --no-online was documented and implemented in the resolver, but typer was
+    # never told to generate it, so the flag did not exist.
+    def test_no_online_flag_exists(self, runner, app):
+        r = runner.invoke(app, [
+            "subject", "save", "bob", "--name", "Bob",
+            "--date", "1990-01-01", "--time", "12:00",
+            "--lat", "40.0", "--lng", "10.0", "--tz", "Europe/Rome", "--no-online",
+        ])
+        assert r.exit_code == 0, r.output
+
+    # --online with --offline is contradictory; letting --online win silently
+    # would geocode a subject the user asked to keep off the network.
+    def test_online_and_offline_together_is_rejected(self, runner, app):
+        r = runner.invoke(app, [
+            "subject", "save", "clash", "--name", "C",
+            "--date", "1990-01-01", "--time", "12:00",
+            "--lat", "40.0", "--lng", "10.0", "--tz", "Europe/Rome",
+            "--online", "--offline",
+        ])
+        assert r.exit_code == 4
+        assert "mutually exclusive" in r.output
+
+    # Enum-style flags follow the same case rule as --zodiac/--houses/--points.
+    def test_enum_flags_are_case_insensitive(self, runner, app, ada_profile):
+        assert runner.invoke(
+            app, ["technique", "zr", "-s", ada_profile, "--lot", "Fortune", "-f", "json"]
+        ).exit_code == 0
+        assert runner.invoke(
+            app, ["return", "-s", ada_profile, "--type", "solar", "--year", "2020", "-f", "json"]
+        ).exit_code == 0
+
+    # sky must not build (and discard) a subject when every coordinate is inline.
+    def test_sky_skips_subject_build_when_fully_inline(self, monkeypatch, ada_profile):
+        from kerykeion.cli import subject_resolver
+        from kerykeion.cli.commands import sky
+
+        def boom(*a, **k):  # pragma: no cover - must never run
+            raise AssertionError("resolve_subject called despite complete inline coords")
+
+        monkeypatch.setattr(subject_resolver, "resolve_subject", boom)
+        assert sky._location(ada_profile, 40.0, 10.0, "Europe/Rome", "sun-times") == (
+            40.0, 10.0, "Europe/Rome",
+        )
+        assert sky._latlng(ada_profile, 40.0, 10.0, "eclipses") == (40.0, 10.0)
+
+    # The rendering helpers that bypassed -o and the warnings funnel are gone;
+    # write_output/render are the only funnel.
+    def test_stdout_bypassing_emitters_are_gone(self):
+        from kerykeion.cli.rendering import emit, json_out, svg_out, text, xml_out
+
+        assert not hasattr(emit, "emit")
+        for module, name in (
+            (json_out, "emit_json"), (text, "emit_text"),
+            (xml_out, "emit_xml"), (svg_out, "emit_svg"),
+        ):
+            assert not hasattr(module, name), f"{name} should be deleted"
+        assert hasattr(emit, "write_output") and hasattr(emit, "render")

@@ -13,7 +13,6 @@ legible for any factory's return value.
 
 from __future__ import annotations
 
-import sys
 from typing import Any
 
 import pydantic
@@ -64,9 +63,3 @@ def render_text(obj: Any) -> str:
     return render_json(obj)
 
 
-def emit_text(obj: Any) -> None:
-    """Write *obj* as text to stdout, with a trailing newline."""
-    text = render_text(obj)
-    sys.stdout.write(text)
-    if not text.endswith("\n"):
-        sys.stdout.write("\n")

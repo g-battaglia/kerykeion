@@ -12,8 +12,6 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-import typer
-
 from kerykeion.cli import subject_resolver
 from kerykeion.cli.commands._shared import _emit, _split_csv
 from kerykeion.cli.commands.charts import _emit_subject_or_chart
@@ -21,6 +19,7 @@ from kerykeion.cli.options import (
     AcgLatRangeOpt,
     AcgStepOpt,
     AspectsOpt,
+    CountOpt,
     FormatOpt,
     IsMoonVoidOpt,
     LifeCapOpt,
@@ -59,12 +58,20 @@ def _need_subject(profile: Optional[str], cmd: str) -> object:
 
 
 def _choose(value: Any, allowed: tuple[str, ...], label: str) -> Any:
+    """Validate an enum-style flag case-insensitively, returning the canonical form.
+
+    The rest of the CLI normalises case (``--zodiac tropical``, ``--houses
+    PLACIDUS``, ``--points ALL``), so these flags must too: rejecting
+    ``--lot Fortune`` while accepting ``--zodiac Tropical`` is one CLI with two
+    rules.
+    """
     if value is None:
         return None
-    v = str(value).strip()
-    if v not in allowed:
+    v = str(value).strip().lower()
+    canonical = {choice.lower(): choice for choice in allowed}
+    if v not in canonical:
         raise ValueError(f"--{label} must be {' or '.join(allowed)}, got {value!r}")
-    return v
+    return canonical[v]
 
 
 @technique_app.command("profections")
@@ -257,7 +264,7 @@ def acg(
 @technique_app.command("stars")
 def stars(
     profile: SubjectProfile = None,  # type: ignore[assignment]
-    count: Optional[int] = typer.Option(None, "--count", help="Number of events (default 5)."),
+    count: CountOpt = None,  # type: ignore[assignment]
     planets: PlanetsOpt = None,  # type: ignore[assignment]
     fmt: FormatOpt = None,  # type: ignore[assignment]
     output: OutputOpt = None,  # type: ignore[assignment]

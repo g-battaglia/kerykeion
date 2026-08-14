@@ -36,6 +36,19 @@ UNSUPPORTED = "unsupported"
 # Sentinel for "no coercion matched" (distinct from None, a valid coercion).
 _NO_MATCH = object()
 
+# Abstract container origins that a comma-separated value can satisfy. The
+# public API annotates several parameters ``Sequence[str]`` (MidpointFactory,
+# SolarArcFactory, SecondaryProgressionFactory, HeliacalFactory …) rather than
+# ``list[str]``; they coerce exactly like a list, but cannot be *instantiated*,
+# so the coercion materialises a ``list``. ``str`` is a Sequence too, but the
+# scalar branches above match it first.
+_SEQUENCE_ORIGINS = (
+    collections.abc.Sequence,
+    collections.abc.MutableSequence,
+    collections.abc.Iterable,
+    collections.abc.Collection,
+)
+
 
 def _is_union(annotation: Any) -> bool:
     """True for both ``typing.Union`` and PEP 604 ``X | Y`` (``types.UnionType``)."""
@@ -159,10 +172,16 @@ def coerce_value(annotation: Any, raw: str) -> Any:
         return datetime.fromisoformat(raw)
     if annotation is date:
         return date.fromisoformat(raw)
-    if origin in (list, set, frozenset):
+    if origin in (list, set, frozenset) or origin in _SEQUENCE_ORIGINS:
+        # ``Sequence[str]`` & co. are ABCs — they cannot be instantiated, so an
+        # abstract origin materialises as a ``list`` (what every library method
+        # taking one expects). Without this branch a ``Sequence[str]`` parameter
+        # fell through to "return the raw string", and the factory rejected it
+        # with "must be a sequence of point names, not a single string".
+        factory = origin if origin in (list, set, frozenset) else list
         (inner,) = get_args(annotation) or (str,)
         parts = [p.strip() for p in raw.split(",") if p.strip()]
-        return origin(coerce_value(inner, p) for p in parts)
+        return factory(coerce_value(inner, p) for p in parts)
     if origin is tuple:
         inner = get_args(annotation)
         parts = [p.strip() for p in raw.split(",")]
@@ -272,7 +291,7 @@ def _classify(annotation: Any) -> str:
         return JSON_ONLY
     if annotation in (bool, int, float, str, datetime, date):
         return CLI
-    if origin in (list, set, frozenset, tuple):
+    if origin in (list, set, frozenset, tuple) or origin in _SEQUENCE_ORIGINS:
         return CLI
     # Mapping / TypedDict / Protocol / custom: we forward the raw string; mark
     # json-only so --explain tells the user to use --param key='{...}' JSON.

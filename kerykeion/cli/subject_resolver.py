@@ -114,12 +114,19 @@ def resolve_house_system(value: Optional[str]) -> Optional[str]:
         return None
     v = value.strip()
     if len(v) == 1 and v.isalpha():
+        # Case is significant: "i" (Sunshine/alt.) and "I" (Sunshine) are two
+        # different systems. Accept a letter that is already valid exactly as
+        # given, so `--houses i` selects "i" instead of silently becoming "I"
+        # (which made "i" unreachable from the CLI), and so a natal cast with
+        # "i" keeps that system when `transit` inherits its letter. Only a
+        # letter that is not valid as typed gets the upper-case convenience.
+        if v in _valid_house_letters():
+            return v
         up = v.upper()
         # Validate membership here rather than letting an unknown letter (G, J,
         # E, …) reach the factory, where it becomes a confusing pydantic
         # "input does not match the literal" ValidationError with no hint that
-        # the house-system letter was the cause. (Note: "i" upper-cases to "I",
-        # a distinct system — Sunshine vs Sunshine/alt.; that pre-exists.)
+        # the house-system letter was the cause.
         if up not in _valid_house_letters():
             raise ValueError(
                 f"unknown house-system letter {value!r}; give a valid letter "
@@ -447,6 +454,13 @@ def merge_inputs(
     # from coordinates). ``--no-online`` arrives as ``flags.online is False`` and
     # must override a profile's ``online=True``: a falsy flag is an explicit
     # choice, not "not given".
+    if flags.online is True and flags.offline is True:
+        # Contradictory: silently letting --online win would geocode a subject the
+        # user explicitly asked to keep offline (a network call in a pipeline).
+        raise ValueError(
+            "--online and --offline are mutually exclusive; pass one (or use "
+            "--no-online, which means the same as --offline)."
+        )
     if flags.online is True:
         merged["online"] = True
     elif flags.offline is True or flags.online is False:

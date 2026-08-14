@@ -297,9 +297,11 @@ def return_chart(
         raise ValueError("return needs -s <profile> for the natal subject")
     if year is None:
         raise ValueError("return needs --year")
-    rtype = return_type or "Solar"
-    if rtype not in _RETURN_TYPES:
-        raise ValueError(f"--type must be {' or '.join(_RETURN_TYPES)}, got {rtype!r}")
+    # Case-insensitive like every other enum-style flag (`--lot`, `--rate`,
+    # `--zodiac`): `--type solar` must not fail where `--zodiac tropical` works.
+    rtype = {t.lower(): t for t in _RETURN_TYPES}.get(str(return_type or "Solar").strip().lower())
+    if rtype is None:
+        raise ValueError(f"--type must be {' or '.join(_RETURN_TYPES)}, got {return_type!r}")
     # Same relocated-location invariant as `transit`: --lat/--lng/--tz must be
     # given together, otherwise the natal timezone would silently localise the
     # return at the new coordinates (wrong houses/Ascendant).

@@ -49,17 +49,17 @@ sky_app = KerykeionTyper(
 def _zodiac_kwargs(zodiac: Optional[str], sidereal_mode: Optional[str]) -> dict[str, Any]:
     kwargs: dict[str, Any] = {}
     if zodiac is not None:
-        # Case-insensitive, matching kerykeion.utilities.normalize_zodiac_type
-        # (which the factories themselves call): the CLI must not be stricter
-        # than the library and reject ``--zodiac tropical``/``SIDEREAL`` the
-        # factory would accept. Map to the canonical Literal values.
-        z = zodiac.strip().lower()
-        if z in ("tropical", "tropic"):
-            kwargs["zodiac_type"] = "Tropical"
-        elif z == "sidereal":
-            kwargs["zodiac_type"] = "Sidereal"
-        else:
-            raise ValueError("--zodiac must be Tropical or Sidereal")
+        # Delegate to the library helper the factories themselves call, rather
+        # than re-implementing its spelling table here: a hand-rolled copy
+        # accepts exactly today's spellings, so the moment the library widens
+        # what it takes, `sky --zodiac X` would reject a value every other entry
+        # point accepts. Only the error message is ours (it names the flag).
+        from kerykeion.utilities import normalize_zodiac_type
+
+        try:
+            kwargs["zodiac_type"] = normalize_zodiac_type(zodiac)
+        except ValueError:
+            raise ValueError("--zodiac must be Tropical or Sidereal") from None
     if sidereal_mode is not None:
         kwargs["sidereal_mode"] = sidereal_mode
     return kwargs
@@ -74,6 +74,10 @@ def _location(
     explicit value wins), so a relocated reading is honoured even when a profile
     supplies the birthplace — mirroring ``charts.transit``.
     """
+    # Every value given inline: the profile would be materialised (a full
+    # ephemeris subject build) only for its coordinates to be overridden below.
+    if lat is not None and lng is not None and tz is not None:
+        return lat, lng, tz
     if profile:
         subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
         lat_v = lat if lat is not None else getattr(subject, "lat", None)
@@ -94,6 +98,9 @@ def _latlng(
 
     Inline flags take precedence over the profile (see :func:`_location`).
     """
+    # Both given inline: skip the subject build whose values we would discard.
+    if lat is not None and lng is not None:
+        return lat, lng
     if profile:
         subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
         lat_v = lat if lat is not None else getattr(subject, "lat", None)

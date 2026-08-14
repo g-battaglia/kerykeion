@@ -74,8 +74,9 @@ installed or used on the default path:
 
 --------------------------------------------------------------------------------
 Optional command-line interface — only with the `cli` / `all` extras, never
-installed or used on the default path. Typer vendors Click (BSD-3-Clause), so
-Click is carried transitively under Typer's MIT, not listed separately.
+installed or used on the default path. Typer bundles a vendored copy of Click,
+which remains under its own BSD-3-Clause license (included in the Typer
+distribution at `typer/_click/LICENSE.txt`) — bundling does not relicense it.
 --------------------------------------------------------------------------------
 
   typer                 MIT — command-line argument framework (Typer)

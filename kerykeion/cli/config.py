@@ -13,12 +13,6 @@ from pathlib import Path
 
 APP_DIR_NAME = "kerykeion"
 PROFILES_SUBDIR = "subjects"
-CONFIG_FILENAME = "config.json"
-
-# Default to offline for any subject that resolves a full coordinate + timezone:
-# the CLI is for batch/scripted use, and silently calling the GeoNames API from
-# a pipeline is the wrong default. ``--online`` opts back in.
-DEFAULT_ONLINE = False
 
 
 def _base_config_dir() -> Path:
@@ -64,11 +58,6 @@ def ensure_profile_store() -> Path:
             # still exists. The restriction is best-effort on those platforms.
             pass
     return store
-
-
-def config_file() -> Path:
-    """The optional global config.json path (not auto-created)."""
-    return app_dir() / CONFIG_FILENAME
 
 
 def profile_path(name: str) -> Path:

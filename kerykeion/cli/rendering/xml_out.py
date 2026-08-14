@@ -10,7 +10,6 @@ format change would break pipelines.
 
 from __future__ import annotations
 
-import sys
 from typing import Any
 
 
@@ -21,7 +20,3 @@ def render_xml(obj: Any) -> str:
     return to_context(obj)
 
 
-def emit_xml(obj: Any) -> None:
-    """Write *obj* as XML to stdout, with a trailing newline."""
-    sys.stdout.write(render_xml(obj))
-    sys.stdout.write("\n")

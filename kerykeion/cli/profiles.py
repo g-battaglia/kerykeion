@@ -18,8 +18,8 @@ dependency of kerykeion and always present.
 from __future__ import annotations
 
 import difflib
-import json
 import os
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
@@ -110,42 +110,57 @@ def make_meta() -> dict[str, Any]:
 
 
 def save(path: Path, profile: Profile) -> None:
-    """Write *profile* to *path* with mode 0600 (PII: birth data)."""
+    """Write *profile* to *path* atomically, with mode 0600 (PII: birth data).
+
+    The write goes to a temporary file in the destination directory and is then
+    ``os.replace``d onto *path*. Overwriting in place (``O_TRUNC``) would empty
+    an existing profile *before* writing the new one, so a full disk, a Ctrl-C
+    or a serialisation failure between the two left a zero-byte or half-written
+    recipe — the user's birth data, gone, with every later ``-s`` failing to
+    validate. ``os.replace`` is atomic within a filesystem: the profile is
+    either the old one or the new one, never a fragment.
+    """
     # Ensure the store exists with 0700 perms (birth data is PII). Only enforce
     # the restrictive mode when writing into the standard XDG store, so a
     # user-chosen path elsewhere is created but not chmodmed.
     store = config.profiles_dir()
-    path.parent.mkdir(parents=True, exist_ok=True)
     if path.parent == store:
+        config.ensure_profile_store()
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+    data = profile.model_dump_json(indent=2)
+    # Same directory as the target, so os.replace stays within one filesystem
+    # (a cross-device rename is not atomic and would raise).
+    fd, tmp_name = tempfile.mkstemp(
+        prefix=f".{path.name}.", suffix=".tmp", dir=str(path.parent)
+    )
+    tmp_path = Path(tmp_name)
+    try:
         try:
-            store.chmod(0o700)
+            # Pin UTF-8 and LF: the locale default encoding would raise
+            # UnicodeEncodeError on a non-ASCII name under Windows cp1252, and
+            # the default newline translation would write CRLF — both breaking
+            # the round-trip with load(), which reads UTF-8. Matches
+            # write_output().
+            with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
+                handle.write(data)
+                handle.flush()
+                os.fsync(handle.fileno())
+        except BaseException:
+            os.close(fd)
+            raise
+        # mkstemp already creates 0600; set it explicitly so the mode is pinned
+        # regardless of platform, before the file becomes visible as the profile.
+        try:
+            tmp_path.chmod(0o600)
         except OSError:
             pass
-    try:
-        path.chmod(0o600)
-    except OSError:
-        pass
-    data = profile.model_dump_json(indent=2)
-    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
-    try:
-        # Pin UTF-8 and LF: the locale default encoding would raise
-        # UnicodeEncodeError on a non-ASCII name under Windows cp1252, and the
-        # default newline translation would write CRLF — both breaking the
-        # round-trip with load(), which reads UTF-8. Matches write_output().
-        handle = os.fdopen(fd, "w", encoding="utf-8", newline="\n")
-    except Exception:
-        os.close(fd)
+        os.replace(tmp_path, path)
+    except BaseException:
+        # Never leave the scratch file behind on failure — including Ctrl-C.
+        tmp_path.unlink(missing_ok=True)
         raise
-    try:
-        handle.write(data)
-    finally:
-        handle.close()
-    # Belt-and-suspenders: if the path pre-existed, fdopen respected the new
-    # mode, but chmod again in case the umask widened it.
-    try:
-        path.chmod(0o600)
-    except OSError:
-        pass
 
 
 def load(path: Path) -> Profile:
@@ -187,6 +202,3 @@ def resolve_path(spec: str) -> Path:
     raise ProfileNotFound(spec, suggestions)
 
 
-def as_json(profile: Profile) -> str:
-    """Pretty JSON of a profile (for ``subject show --format json`` on the recipe)."""
-    return json.dumps(profile.model_dump(mode="json"), indent=2, default=str)

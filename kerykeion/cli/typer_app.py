@@ -29,9 +29,12 @@ class KerykeionTyper(typer.Typer):
     """
 
     def command(self, name=None, **kwargs):  # type: ignore[override]
-        # Bare ``@app.command`` (the callable form): wrap the function directly.
+        # Bare ``@app.command`` (the callable form). ``super().command(fn)`` would
+        # pass the function as the *name* argument and hand back typer's
+        # decorator, registering nothing and rebinding the module symbol to that
+        # decorator — silently. Call the decorator factory, then apply it.
         if callable(name):
-            return super().command(error_boundary(name))
+            return super().command()(error_boundary(name))
         decorator = super().command(name, **kwargs)
 
         def register(func):

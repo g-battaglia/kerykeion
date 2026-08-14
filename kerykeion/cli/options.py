@@ -90,9 +90,9 @@ SubjectAltitude = Annotated[
 OnlineFlag = Annotated[
     Optional[bool],
     typer.Option(
-        "--online",
+        "--online/--no-online",
         help="Call the GeoNames API to resolve city/timezone. Default depends on whether "
-        "lat+lng+tz are all known.",
+        "lat+lng+tz are all known. ``--no-online`` overrides a profile saved online.",
         rich_help_panel="Subject",
     ),
 ]

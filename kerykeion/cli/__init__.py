@@ -17,8 +17,15 @@ and exits 3 — never a traceback.
 
 Import discipline: this module imports ONLY stdlib at module level. typer,
 rich, :mod:`kerykeion.cli.app` and :mod:`kerykeion.cli.diagnostics` are imported
-lazily inside functions, so ``import kerykeion.cli`` stays typer-free and cheap
-— the invariant pinned by ``tests/core/test_cli.py`` and the cold-import gate.
+lazily inside functions, so ``import kerykeion.cli`` stays **typer-free** — the
+invariant pinned by ``tests/core/test_cli.py`` and the cold-import gate, and the
+reason a no-extra install can serve ``status``/``--version``/``--help`` at all.
+
+It does not make the command *fast*: the entry point is ``kerykeion.cli:main``,
+and importing a submodule imports its parent package first, so
+``kerykeion/__init__.py`` (backend selection, LEB pin) always runs — about 1.3 s
+before ``main()`` is even entered. Making that lazy is a separate change to
+``kerykeion/__init__.py`` (PEP 562), tracked outside this module.
 """
 
 from __future__ import annotations
@@ -63,11 +70,12 @@ Full command-line interface:
 
 
 def _version_string() -> str:
-    """Installed kerykeion version, without importing kerykeion.
+    """The installed kerykeion version, read from package metadata.
 
-    Reading it via ``importlib.metadata`` (the same source
-    ``kerykeion.__version__`` uses) keeps ``--version`` fast in the no-extra
-    path: no ~1.5 s backend init, no typer.
+    Uses ``importlib.metadata`` — the same source ``kerykeion.__version__``
+    derives from — so ``--version`` needs no attribute off the package and no
+    typer. (The package itself is already imported by the time this runs: the
+    entry point is a submodule of ``kerykeion``. See the module docstring.)
     """
     try:
         return importlib.metadata.version("kerykeion")

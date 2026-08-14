@@ -85,8 +85,10 @@ swiss = ["pyswisseph>=2.10.3.1"]
 # patch is the settled point. rich shares the same floor family.
 cli = ["typer>=0.26.4", "rich>=13.8.0"]
 # ``all`` includes ``cli`` on purpose: a name that says "all" but omits an extra
-# is a lie in the name.
-all = ["pyswisseph>=2.10.3.1", "typer>=0.26.4", "rich>=13.8.0"]
+# is a lie in the name. Self-referencing the other extras (PEP 508, supported by
+# every resolver this project targets) keeps the version floors defined once —
+# re-listing them here made the same pins live in three hand-synced places.
+all = ["kerykeion[swiss]", "kerykeion[cli]"]
 
 [project.scripts]
 # The console command is installed for EVERY user — even ``pip install kerykeion``

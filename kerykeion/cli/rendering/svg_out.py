@@ -33,10 +33,3 @@ def render_svg(obj: Any) -> str:
     return ChartDrawer(obj).generate_svg_string()
 
 
-def emit_svg(obj: Any) -> None:
-    import sys
-
-    svg = render_svg(obj)
-    sys.stdout.write(svg)
-    if not svg.endswith("\n"):
-        sys.stdout.write("\n")

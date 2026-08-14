@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Dispatch an object to the right renderer and write it to stdout.
+"""Dispatch an object to the right renderer, and write rendered output.
 
-This is the single funnel every command uses once it has a result and a format.
+:func:`render` turns an object into a string for a format; :func:`write_output`
+puts that string on stdout or into ``-o``'s file. Commands never call the
+per-format renderers directly — routing everything through this pair is what
+keeps ``-o`` handling and the warnings funnel in one place (a helper that wrote
+straight to ``sys.stdout`` would silently bypass both).
+
 ``xml`` and ``svg`` are wired lazily so their (heavier) modules only load when
 asked for: ``svg_out`` imports the ~5,700-line ``ChartDrawer``.
 """
@@ -30,11 +35,6 @@ def render(obj: Any, fmt: str) -> str:
 
         return render_svg(obj)
     raise ValueError(f"unsupported format {fmt!r}")  # pragma: no cover - resolve_format guards
-
-
-def emit(obj: Any, fmt: str) -> None:
-    """Render *obj* for *fmt* and write the result to stdout."""
-    write_output(render(obj, fmt))
 
 
 def write_output(content: str, output_path: str | None = None) -> None:

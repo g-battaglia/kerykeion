@@ -10,7 +10,6 @@ falls back to :func:`json.dumps` with ``default=str``.
 from __future__ import annotations
 
 import json
-import sys
 from typing import Any
 
 import pydantic
@@ -29,7 +28,3 @@ def render_json(obj: Any) -> str:
     return json.dumps(obj, indent=2, default=str)
 
 
-def emit_json(obj: Any) -> None:
-    """Write *obj* as JSON to stdout, with a trailing newline."""
-    sys.stdout.write(render_json(obj))
-    sys.stdout.write("\n")
