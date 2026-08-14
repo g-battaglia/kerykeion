@@ -1445,6 +1445,109 @@ class TestRenderOptions:
             _render_from({"theme": "dark"})
 
 
+class TestCuratedCommands:
+    """Every public factory now has a command; `call` stays the universal valve."""
+
+    @pytest.mark.parametrize("args", [
+        ["aspects", "-s", "ada"],
+        ["aspects", "-s", "ada", "-S", "bob"],
+        ["aspects", "-s", "ada", "--declinations"],
+        ["aspects", "-s", "ada", "--aspects", "trine:6,square"],
+        ["dominants", "-s", "ada"],
+        ["dominants", "-s", "ada", "--method", "almuten_figuris"],
+        ["moon", "-s", "ada"],
+        ["relationship-score", "-s", "ada", "-S", "bob"],
+        ["technique", "house-comparison", "-s", "ada", "-S", "bob"],
+        ["technique", "solar-arc", "-s", "ada", "--target-year", "2026"],
+        ["technique", "fixed-stars", "-s", "ada", "--orb", "1.5"],
+        ["sky", "mundane", "--from", "2025-01-01", "--to", "2025-02-01"],
+        ["sky", "phenomena", "-s", "ada"],
+        ["sky", "occultations", "-s", "ada", "--planet", "Venus", "--count", "2"],
+    ])
+    def test_command_produces_json(self, runner, app, ada_profile, bob_profile, args):
+        result = runner.invoke(app, [*args, "-f", "json"])
+        assert result.exit_code == 0, result.output
+        assert json.loads(result.output) is not None
+
+    # The declination variants take (subject, active_points, orb) — no
+    # active_aspects, no axis_orb_limit. Forwarding those crashed the factory.
+    def test_declination_aspects_take_a_single_orb(self, runner, app, ada_profile):
+        assert runner.invoke(
+            app, ["aspects", "-s", "ada", "--declinations", "--orb", "1.5", "-f", "json"]
+        ).exit_code == 0
+
+    @pytest.mark.parametrize("flags,needle", [
+        (["--declinations", "--aspects", "trine:6"], "--aspects does not apply"),
+        (["--declinations", "--axis-orb-limit", "2"], "--axis-orb-limit does not apply"),
+        (["--orb", "1.5"], "--orb applies to --declinations"),
+    ])
+    def test_mismatched_aspect_options_are_refused(
+        self, runner, app, ada_profile, flags, needle
+    ):
+        result = runner.invoke(app, ["aspects", "-s", "ada", *flags])
+        assert result.exit_code == 4
+        assert needle in result.output
+
+    def test_dominants_method_is_validated_against_the_library(self, runner, app, ada_profile):
+        result = runner.invoke(app, ["dominants", "-s", "ada", "--method", "nope"])
+        assert result.exit_code == 4
+        assert "--method must be one of" in result.output
+
+    def test_relationship_score_needs_both_subjects(self, runner, app, ada_profile):
+        result = runner.invoke(app, ["relationship-score", "-s", "ada"])
+        assert result.exit_code == 4
+        assert "-S" in result.output
+
+    # Occultations search from a Julian day and the Moon is the occulter, so
+    # there is no sensible default body: it must be asked for.
+    def test_occultations_require_a_planet(self, runner, app, ada_profile):
+        result = runner.invoke(app, ["sky", "occultations", "-s", "ada"])
+        assert result.exit_code == 4
+        assert "--planet" in result.output
+
+
+class TestAspectsFlagHasOneMeaning:
+    """`--aspects` used to mean angle-names on one command and nothing elsewhere."""
+
+    def test_name_and_name_with_orb_both_parse(self):
+        from kerykeion.cli.commands._shared import _active_aspects, _parse_aspects
+
+        parsed = _parse_aspects(["trine:6", "square"])
+        assert parsed == [("trine", 6.0), ("square", None)]
+        # An omitted orb takes the library's own default for that aspect.
+        from kerykeion.settings import config_constants as cc
+
+        defaults = {entry["name"]: entry["orb"] for entry in cc.ALL_ACTIVE_ASPECTS}
+        assert _active_aspects(parsed) == [
+            {"name": "trine", "orb": 6.0},
+            {"name": "square", "orb": defaults["square"]},
+        ]
+
+    def test_a_non_numeric_orb_is_named(self):
+        from kerykeion.cli.commands._shared import _parse_aspects
+
+        with pytest.raises(ValueError, match="is not a number for the orb"):
+            _parse_aspects(["trine:wide"])
+
+    # The factories that take plain names must refuse an orb instead of dropping
+    # it — a silently ignored orb is the failure mode this shared parser avoids.
+    def test_orb_is_refused_where_it_cannot_be_used(self):
+        from kerykeion.cli.commands._shared import _aspect_names, _parse_aspects
+
+        assert _aspect_names(_parse_aspects(["trine", "square"]), "mundane") == [
+            "trine", "square",
+        ]
+        with pytest.raises(ValueError, match="without an orb"):
+            _aspect_names(_parse_aspects(["trine:6"]), "mundane")
+
+    def test_directions_still_validates_its_angles(self, runner, app, ada_profile):
+        result = runner.invoke(
+            app, ["technique", "directions", "-s", "ada", "--aspects", "nonsense"]
+        )
+        assert result.exit_code == 4
+        assert "--aspects must be one of" in result.output
+
+
 class TestInfoAndDoctor:
     """The CLI can now list what it validates against, and judge its own install."""
 

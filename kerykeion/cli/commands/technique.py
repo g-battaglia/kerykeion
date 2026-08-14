@@ -13,15 +13,24 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from kerykeion.cli import subject_resolver
-from kerykeion.cli.commands._shared import _choose, _emit, _render_from, _split_csv
+from kerykeion.cli.commands._shared import (
+    _aspect_names,
+    _choose,
+    _emit,
+    _parse_aspects,
+    _render_from,
+    _split_csv,
+)
 from kerykeion.cli.commands.charts import _emit_subject_or_chart
 from kerykeion.cli.options import (
     AcgLatRangeOpt,
     AcgStepOpt,
     AspectGridTypeOpt,
     AspectIconsFlag,
+    AspectOrbOpt,
     AspectsOpt,
     AutoSizeFlag,
+    ComputeAspectsFlag,
     ChartLanguageOpt,
     ChartSettingsOpt,
     ChartStyleOpt,
@@ -52,9 +61,13 @@ from kerykeion.cli.options import (
     RelocateLngOpt,
     RelocateNationOpt,
     RelocateTzOpt,
+    StarOrbOpt,
+    Subject2Profile,
     SubjectProfile,
     SvgVariantOpt,
     TargetDateOpt,
+    TargetIsoOpt,
+    TargetYearOpt,
     ThemeOpt,
     TransparentBackgroundFlag,
     YearsAfterOpt,
@@ -224,7 +237,9 @@ def directions(
     # ASPECT_ANGLES and has no planet filter. Binding ``--planets`` to it (as the
     # sibling techniques do for their real planet filters) made the documented
     # flag always crash; the flag is now named for what it actually controls.
-    chosen_aspects = _split_csv(aspects)
+    # Shared --aspects syntax; primary directions have no per-aspect orb, so a
+    # ':orb' suffix is refused by name rather than silently dropped.
+    chosen_aspects = _aspect_names(_parse_aspects(aspects), "primary directions")
     if chosen_aspects is not None:
         valid = set(PrimaryDirectionsFactory.ASPECT_ANGLES)
         invalid = [a for a in chosen_aspects if a not in valid]
@@ -364,3 +379,91 @@ def nodes(
     if active is not None:
         kwargs["planets"] = active
     _emit(PlanetaryNodesFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
+
+
+@technique_app.command("house-comparison")
+def house_comparison(
+    profile: SubjectProfile = None,  # type: ignore[assignment]
+    subject2: Subject2Profile = None,  # type: ignore[assignment]
+    planets: PlanetsOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Where each of one subject's points falls in the other's houses."""
+    from kerykeion import HouseComparisonFactory
+
+    if not profile:
+        raise ValueError("house-comparison needs -s <profile> for the first subject")
+    if not subject2:
+        raise ValueError("house-comparison needs -S <profile> for the second subject")
+    first = _need_subject(profile, "house-comparison")
+    second = _need_subject(subject2, "house-comparison")
+    kwargs: dict[str, Any] = {}
+    active = _split_csv(planets)
+    if active is not None:
+        kwargs["active_points"] = active
+    factory = HouseComparisonFactory(first, second, **kwargs)  # type: ignore[arg-type]
+    _emit(factory.get_house_comparison(), fmt, output)
+
+
+@technique_app.command("solar-arc")
+def solar_arc(
+    profile: SubjectProfile = None,  # type: ignore[assignment]
+    target_year: TargetYearOpt = None,  # type: ignore[assignment]
+    target_iso: TargetIsoOpt = None,  # type: ignore[assignment]
+    planets: PlanetsOpt = None,  # type: ignore[assignment]
+    compute_aspects: ComputeAspectsFlag = None,  # type: ignore[assignment]
+    aspect_orb: AspectOrbOpt = None,  # type: ignore[assignment]
+    aspects: AspectsOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Solar-arc directions to a target year or moment.
+
+    The sibling of ``progression``: both move a natal chart forward, one by the
+    Sun's arc and one by the secondary-progression day-for-a-year rule.
+    """
+    from kerykeion import SolarArcFactory
+
+    subject = _need_subject(profile, "solar-arc")
+    if target_year is None and target_iso is None:
+        raise ValueError("solar-arc needs --target-year or --target-iso")
+    kwargs: dict[str, Any] = {}
+    if target_year is not None:
+        kwargs["target_year"] = target_year
+    if target_iso is not None:
+        kwargs["target_iso_utc_datetime"] = target_iso
+    active = _split_csv(planets)
+    if active is not None:
+        kwargs["active_points"] = active
+    if compute_aspects is not None:
+        kwargs["compute_aspects"] = compute_aspects
+    if aspect_orb is not None:
+        kwargs["aspect_orb"] = aspect_orb
+    # Solar arc takes one orb for all aspects (--aspect-orb), so a per-aspect
+    # ':orb' has nowhere to go and is refused rather than dropped.
+    chosen = _aspect_names(_parse_aspects(aspects), "solar arc")
+    if chosen is not None:
+        kwargs["aspects"] = chosen
+    _emit(SolarArcFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
+
+
+@technique_app.command("fixed-stars")
+def fixed_stars(
+    profile: SubjectProfile = None,  # type: ignore[assignment]
+    orb: StarOrbOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Fixed stars conjunct the subject's points, within an orb."""
+    from kerykeion import FixedStarDiscoveryFactory
+
+    subject = _need_subject(profile, "fixed-stars")
+    kwargs: dict[str, Any] = {}
+    if orb is not None:
+        kwargs["orb"] = orb
+    _emit(
+        FixedStarDiscoveryFactory.find_prominent_stars(subject, **kwargs),  # type: ignore[arg-type]
+        fmt,
+        output,
+    )

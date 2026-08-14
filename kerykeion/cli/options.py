@@ -337,10 +337,10 @@ AspectsOpt = Annotated[
     Optional[list[str]],
     typer.Option(
         "--aspects",
-        help="Primary-direction aspect angles to compute: "
-        "conjunction, sextile, square, trine, opposition (repeatable or CSV). "
-        "Default is all five.",
-        rich_help_panel="Technique",
+        help="Aspects to use, repeatable or CSV: a name (`trine`) or a name with an "
+        "orb (`trine:6`) where the command supports per-aspect orbs. "
+        "`kerykeion info literals AspectName` lists the names.",
+        rich_help_panel="Analysis",
     ),
 ]
 MidpointOrbOpt = Annotated[
@@ -519,6 +519,137 @@ CallSubject2Opt = Annotated[
         "--subject2",
         help="Second subject (profile): bound to the target's second subject parameter.",
         rich_help_panel="Call",
+    ),
+]
+
+# ── Analysis commands (aspects, dominants, moon, relationship-score) ─────────
+DeclinationsFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--declinations",
+        help="Use the declination aspects (parallel / contra-parallel) instead of "
+        "the ecliptic ones.",
+        rich_help_panel="Analysis",
+    ),
+]
+DeclinationOrbOpt = Annotated[
+    Optional[float],
+    typer.Option(
+        "--orb",
+        help="Orb for declination aspects (used with --declinations).",
+        rich_help_panel="Analysis",
+    ),
+]
+AxisOrbLimitOpt = Annotated[
+    Optional[float],
+    typer.Option(
+        "--axis-orb-limit",
+        help="Cap the orb used for the axes (Asc/MC and their opposites).",
+        rich_help_panel="Analysis",
+    ),
+]
+DominantMethodOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--method",
+        help="Dominants strategy. `kerykeion info methods` lists what is available.",
+        rich_help_panel="Analysis",
+    ),
+]
+DistributionMethodOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--distribution-method",
+        help="How element/quality distributions are weighted.",
+        rich_help_panel="Analysis",
+    ),
+]
+CustomWeightsOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--custom-weights",
+        help='JSON object of per-point weights, e.g. \'{"Sun": 1.5}\'.',
+        rich_help_panel="Analysis",
+    ),
+]
+AccidentalDignitiesFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--accidental-dignities",
+        help="Include accidental dignities in the dominants scoring.",
+        rich_help_panel="Analysis",
+    ),
+]
+ScoreBreakdownFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--score-breakdown",
+        help="Include the per-point score breakdown.",
+        rich_help_panel="Analysis",
+    ),
+]
+MajorAspectsOnlyFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--all-aspects/--major-aspects-only",
+        help="Score every aspect, or only the major ones (default: major only).",
+        rich_help_panel="Analysis",
+    ),
+]
+UsingDefaultLocationFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        "--using-default-location",
+        help="Use the library's default location rather than the subject's.",
+        rich_help_panel="Analysis",
+    ),
+]
+LocationPrecisionOpt = Annotated[
+    Optional[int],
+    typer.Option(
+        "--location-precision",
+        help="Rounding applied to the location before the lookup.",
+        rich_help_panel="Analysis",
+    ),
+]
+StarOrbOpt = Annotated[
+    Optional[float],
+    typer.Option(
+        "--orb", help="Orb, in degrees, for a star to count as prominent.",
+        rich_help_panel="Technique",
+    ),
+]
+TargetIsoOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--target-iso",
+        help="Target moment as an ISO UTC datetime (alternative to --target-year).",
+        rich_help_panel="Technique",
+    ),
+]
+ComputeAspectsFlag = Annotated[
+    Optional[bool],
+    typer.Option(
+        # Deliberately not "--aspects": that flag names *which* aspects, and one
+        # flag with two meanings is what these reviews keep having to undo.
+        "--compute-aspects/--no-compute-aspects",
+        help="Compute the directed aspects (default: on).",
+        rich_help_panel="Technique",
+    ),
+]
+AspectOrbOpt = Annotated[
+    Optional[float],
+    typer.Option(
+        "--aspect-orb", help="Orb for the directed aspects.", rich_help_panel="Technique"
+    ),
+]
+PlanetIdOpt = Annotated[
+    Optional[str],
+    typer.Option(
+        "--planet",
+        help="The body occulted by the Moon, by name or Swiss Ephemeris id "
+        "(required; calculated points such as the nodes cannot be occulted).",
+        rich_help_panel="Sky",
     ),
 ]
 

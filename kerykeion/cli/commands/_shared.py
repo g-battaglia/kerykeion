@@ -54,6 +54,80 @@ def _parse_dt(value: str) -> datetime:
         ) from exc
 
 
+def _parse_aspects(values: Optional[list[str]]) -> Optional[list[tuple[str, Optional[float]]]]:
+    """Parse ``--aspects``: repeatable/CSV tokens of ``name`` or ``name:orb``.
+
+    The library asks for aspects in two shapes — a plain list of names
+    (``MundaneAspectFactory``, ``SolarArcFactory``, primary directions) and a
+    list of ``ActiveAspect`` ``{name, orb}`` records (``AspectsFactory``). One
+    flag, one syntax: the optional ``:orb`` suffix is what the second shape needs
+    and the first cannot use, so :func:`_aspect_names` rejects it explicitly
+    rather than dropping it. Two meanings for one flag name is precisely what the
+    reviews of this CLI kept having to undo.
+    """
+    tokens = _split_csv(values)
+    if tokens is None:
+        return None
+    parsed: list[tuple[str, Optional[float]]] = []
+    for token in tokens:
+        name, sep, raw_orb = token.partition(":")
+        name = name.strip()
+        if not name:
+            raise ValueError(f"--aspects: empty aspect name in {token!r}")
+        if not sep:
+            parsed.append((name, None))
+            continue
+        try:
+            parsed.append((name, float(raw_orb)))
+        except ValueError:
+            raise ValueError(
+                f"--aspects: {raw_orb.strip()!r} is not a number for the orb of {name!r} "
+                f"(use e.g. 'trine:6')"
+            ) from None
+    return parsed or None
+
+
+def _aspect_names(
+    parsed: Optional[list[tuple[str, Optional[float]]]], context: str
+) -> Optional[list[str]]:
+    """Aspect names only, for the factories that take no per-aspect orb."""
+    if parsed is None:
+        return None
+    with_orb = [name for name, orb in parsed if orb is not None]
+    if with_orb:
+        raise ValueError(
+            f"--aspects: {context} takes aspect names without an orb; drop the ':orb' "
+            f"from {with_orb[0]!r}."
+        )
+    return [name for name, _ in parsed]
+
+
+def _active_aspects(
+    parsed: Optional[list[tuple[str, Optional[float]]]],
+) -> Optional[list[dict[str, object]]]:
+    """``ActiveAspect`` records; an omitted orb takes the library's own default."""
+    if parsed is None:
+        return None
+    from kerykeion.settings import config_constants as cc
+
+    # str keys on purpose: the user's token is an arbitrary string until it has
+    # been checked against this table, which is exactly what the lookup below is.
+    defaults: dict[str, float] = {
+        str(entry["name"]): float(entry["orb"]) for entry in cc.ALL_ACTIVE_ASPECTS
+    }
+    out: list[dict[str, object]] = []
+    for name, orb in parsed:
+        if orb is None:
+            if name not in defaults:
+                raise ValueError(
+                    f"--aspects: unknown aspect {name!r}; choose from "
+                    f"{', '.join(sorted(defaults))} (or give an explicit orb, 'name:6')."
+                )
+            orb = defaults[name]
+        out.append({"name": name, "orb": orb})
+    return out
+
+
 def _choose(value: object, allowed: tuple[str, ...], label: str) -> object:
     """Validate an enum-style flag case-insensitively, returning the canonical form.
 

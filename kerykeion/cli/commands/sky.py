@@ -19,13 +19,21 @@ from datetime import datetime
 from typing import Any, Optional
 
 from kerykeion.cli import subject_resolver
-from kerykeion.cli.commands._shared import _emit, _split_csv, _parse_dt
+from kerykeion.cli.commands._shared import (
+    _aspect_names,
+    _emit,
+    _parse_aspects,
+    _parse_dt,
+    _split_csv,
+)
 from kerykeion.cli.options import (
+    AspectsOpt,
     CountOpt,
     FormatOpt,
     FromOpt,
     OutputOpt,
     PhaseOpt,
+    PlanetIdOpt,
     PlanetsOpt,
     SiderealSkyOpt,
     StartYearOpt,
@@ -374,3 +382,106 @@ def stations(
     if active is not None:
         extra["planets"] = active
     _emit(RetrogradeStationFactory.from_iso_range(start, end, **extra), fmt, output)
+
+
+@sky_app.command("mundane")
+def mundane(
+    from_: FromOpt = None,  # type: ignore[assignment]
+    to: ToOpt = None,  # type: ignore[assignment]
+    planets: PlanetsOpt = None,  # type: ignore[assignment]
+    aspects: AspectsOpt = None,  # type: ignore[assignment]
+    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
+    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Mundane (planet-to-planet) aspects exact within a range."""
+    from kerykeion import MundaneAspectFactory
+
+    start, end = _range_factory_call(from_, to, "mundane")
+    extra = _zodiac_kwargs(zodiac, sidereal_mode)
+    active = _split_csv(planets)
+    if active is not None:
+        extra["points"] = active
+    # This factory takes aspect names only; a per-aspect ':orb' is refused.
+    chosen = _aspect_names(_parse_aspects(aspects), "mundane aspects")
+    if chosen is not None:
+        extra["aspects"] = chosen
+    _emit(MundaneAspectFactory.from_iso_range(start, end, **extra), fmt, output)
+
+
+@sky_app.command("phenomena")
+def phenomena(
+    profile: SubjectProfile = None,  # type: ignore[assignment]
+    planets: PlanetsOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Planetary phenomena (phase, elongation, magnitude, diameter) for a moment."""
+    from kerykeion import PlanetaryPhenomenaFactory
+
+    if not profile:
+        raise ValueError("phenomena needs -s <profile> for the moment to describe")
+    subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+    active = _split_csv(planets)
+    _emit(
+        PlanetaryPhenomenaFactory.from_subject(subject, active),  # type: ignore[arg-type]
+        fmt,
+        output,
+    )
+
+
+@sky_app.command("occultations")
+def occultations(
+    profile: SubjectProfile = None,  # type: ignore[assignment]
+    lat: SubjectLat = None,  # type: ignore[assignment]
+    lng: SubjectLng = None,  # type: ignore[assignment]
+    planet: PlanetIdOpt = None,  # type: ignore[assignment]
+    count: CountOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,  # type: ignore[assignment]
+    output: OutputOpt = None,  # type: ignore[assignment]
+) -> None:
+    """Lunar occultations of a body, globally or as seen from a place.
+
+    The factory searches forward from a Julian day, and the library exposes no
+    public date-to-JD helper, so the starting instant comes from ``-s``'s subject
+    (``technique stars`` reads its ``julian_day`` the same way). Give
+    ``--lat``/``--lng`` — or a profile that has them — for a local search.
+    """
+    from kerykeion import OccultationFactory
+
+    if not profile:
+        raise ValueError(
+            "occultations needs -s <profile> to fix the moment to search from "
+            "(use `subject save now-ish ...` for an arbitrary date)."
+        )
+    subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+    julian_day = getattr(subject, "julian_day", None)
+    if julian_day is None:
+        raise ValueError("the subject has no julian_day to search occultations from")
+
+    if planet is None:
+        # No default is honest here: the Moon is the occulter, not the occulted
+        # body, so there is no "obvious" one to pick. A wrong name gets the
+        # library's own message, which lists every occultable body.
+        raise ValueError(
+            "occultations needs --planet: the body being occulted by the Moon "
+            "(e.g. Venus, Mars, Aldebaran)."
+        )
+    kwargs: dict[str, Any] = {"planet_id": planet}
+    if count is not None:
+        kwargs["count"] = count
+    # A half-given coordinate is a typo, not a global search (same rule as
+    # ``sky eclipses``).
+    if (lat is None) != (lng is None):
+        raise ValueError("occultations needs both --lat and --lng (or neither).")
+    la = lat if lat is not None else getattr(subject, "lat", None)
+    lo = lng if lng is not None else getattr(subject, "lng", None)
+
+    factory = OccultationFactory()
+    model: Any
+    if la is not None and lo is not None:
+        model = factory.search_local(julian_day, lat=float(la), lng=float(lo), **kwargs)
+    else:
+        model = factory.search_global(julian_day, **kwargs)
+    _emit(model, fmt, output)

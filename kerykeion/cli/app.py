@@ -95,7 +95,8 @@ def _register_commands(app: typer.Typer) -> None:
     actually runs, keeping the import-graph cold-import gate green.
     """
     from kerykeion.cli.commands import (
-        call, charts, info, series, sky, status as status_cmd, subject, technique,
+        analysis, call, charts, info, series, sky, status as status_cmd, subject,
+        technique,
     )
 
     # ``status`` is a stdlib-only diagnostic, so it works with or without the
@@ -120,6 +121,11 @@ def _register_commands(app: typer.Typer) -> None:
     # ``transits`` (plural) is the time-series; ``transit`` (singular) above is
     # the single-moment dual-wheel chart.
     app.command(name="transits")(series.transits)
+    # Analyses of a stored subject (or a pair), reported rather than drawn.
+    app.command(name="aspects")(analysis.aspects)
+    app.command(name="dominants")(analysis.dominants)
+    app.command(name="moon")(analysis.moon)
+    app.command(name="relationship-score")(analysis.relationship_score)
     # Guarded dispatcher over the public API.
     app.command(name="call")(call.call)
     # Analytical-technique and astronomical-event groups.
