@@ -2543,4 +2543,20 @@ all_marks_syn_data = ChartDataFactory.create_synastry_chart_data(all_marks_syn_f
 ChartDrawer(all_marks_syn_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR)
 ChartDrawer(all_marks_syn_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
+# Three plain natal baselines that had been committed without a generator. No
+# test read them and no script wrote them, so they quietly kept a picture of an
+# older library — they were still drawing the font-traced Jupiter six commits
+# after it was redrawn. The birth data below is read straight off the panels of
+# the files they replace, so these regenerate what was there rather than
+# redefining it.
+for _name, _y, _m, _d, _hh, _mm, _city, _nation in (
+    ("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US"),
+    ("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB"),
+    ("Yoko Ono", 1933, 2, 18, 20, 30, "Tokyo", "JP"),
+):
+    _subject = AstrologicalSubjectFactory.from_birth_data(
+        _name, _y, _m, _d, _hh, _mm, _city, _nation, suppress_geonames_warning=True
+    )
+    ChartDrawer(ChartDataFactory.create_natal_chart_data(_subject)).save_svg(output_path=OUTPUT_DIR_STR)
+
 print("All charts regenerated successfully!")

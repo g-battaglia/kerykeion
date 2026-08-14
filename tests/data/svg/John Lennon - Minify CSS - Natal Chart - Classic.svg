@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--- This file is part of Kerykeion. Chart glyphs: Symbola (public domain) + Noto Sans Symbols 2 (SIL OFL 1.1) + Kerykeion clean-room originals. See the NOTICE file. -->
+<!--- This file is part of Kerykeion. Chart glyphs: Symbola (public domain) + Noto Sans Symbols 2 (SIL OFL 1.1) + Noto Sans (SIL OFL 1.1) + Kerykeion clean-room originals. See the NOTICE file. -->
 <svg font-family="Arial, Helvetica, Liberation Sans, sans-serif" style="background-color:#ffffff" preserveAspectRatio="xMidYMid" viewBox="0 -15 890 580" xmlns="http://www.w3.org/2000/svg" xmlns:kr="https://www.kerykeion.net/" xmlns:xlink="http://www.w3.org/1999/xlink">
  <title>John Lennon - Minify CSS - Birth Chart</title>
  <!-- Colors -->
@@ -1001,11 +1001,23 @@
    <line x1="12" x2="12" y1="14.4" y2="21.5" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
    <line x1="8.4" x2="15.6" y1="18" y2="18" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
   </symbol>
+  <!-- Lunar nodes -->
+  <symbol id="True_North_Lunar_Node">
+   <path d="m6.7574 15.321a6.4 6.4 0 1 1 10.485 0" fill="none" stroke="#4c1541" stroke-linecap="round" stroke-width="1.494"/>
+   <circle cx="4.9553" cy="16.583" r="2.2" fill="none" stroke="#4c1541" stroke-linecap="round" stroke-width="1.494"/>
+   <circle cx="19.045" cy="16.583" r="2.2" fill="none" stroke="#4c1541" stroke-linecap="round" stroke-width="1.494"/>
+  </symbol>
+  <!-- Lunar apsides -->
+  <!-- Centaurs -->
   <symbol id="Chiron">
    <circle cx="12" cy="16.433" r="4.9" fill="none" stroke="#666f06" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
    <path d="m9.6 2.667v9.494" fill="none" stroke="#666f06" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
    <path d="m16 3.1-6.4 3.9 6.8 4.3" fill="none" stroke="#666f06" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
   </symbol>
+  <!-- Asteroids -->
+  <!-- Trans-Neptunian objects -->
+  <!-- Uranian points -->
+  <!-- Arabic parts -->
   <!-- Angles -->
   <symbol id="Ascendant">
    <g transform="translate(.458 19.605) scale(.02151 -.02151)" fill="#ff7e00">
@@ -1019,12 +1031,7 @@
     <path transform="translate(907)" d="m300-10q-71 0-126.5 29t-87 90-31.5 156q0 99 33 161t89.5 91 128.5 29q41 0 79-8.5t62-20.5l-27-73q-24 9-56 17t-60 8q-158 0-158-203 0-97 38.5-148.5t114.5-51.5q44 0 77.5 9t61.5 22v-78q-27-14-59.5-21.5t-78.5-7.5z"/>
    </g>
   </symbol>
-  <!-- Points -->
-  <symbol id="True_North_Lunar_Node">
-   <path d="m6.7574 15.321a6.4 6.4 0 1 1 10.485 0" fill="none" stroke="#4c1541" stroke-linecap="round" stroke-width="1.494"/>
-   <circle cx="4.9553" cy="16.583" r="2.2" fill="none" stroke="#4c1541" stroke-linecap="round" stroke-width="1.494"/>
-   <circle cx="19.045" cy="16.583" r="2.2" fill="none" stroke="#4c1541" stroke-linecap="round" stroke-width="1.494"/>
-  </symbol>
+  <!-- Axes and other points -->
   <!-- Signs -->
   <symbol id="Ari">
    <g transform="translate(2.56 3.291) scale(.01329 -.01329) translate(-173 -1518)">

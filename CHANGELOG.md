@@ -4,6 +4,77 @@
 
 ### Changed
 
+- **A rendered chart needs no fonts, and every glyph carries the same weight.**
+  All 80 `<symbol>` definitions are geometry. The six lettered marks (As/Mc/Ds/Ic,
+  Vx, Av) were live `<text>` and rendered in whatever face the *viewer* happened
+  to have, at whatever width; they are traced to outlines now like everything
+  else. Fonts are still used at build time — Symbola, Noto Sans Symbols 2 and
+  Noto Sans, downloaded to a git-ignored cache and never redistributed — but
+  nothing a reader loads depends on one.
+
+  The weight is measured rather than chosen. Filled silhouettes cannot be
+  re-weighted (their stem is baked into the contour, so a `stroke-width` has
+  nothing to act on), so they are the fixed point: their stem is 7.41% of their
+  ink at the median across all 45 of them, and the drawn glyphs are stroked to
+  land there. Seven unrelated widths were in use before, and the aspects — drawn
+  in a 10-unit box — reached 16% of their own ink, better than twice the
+  silhouettes. The Sun read thinner than the Moon beside it.
+
+  Jupiter, the four lunar nodes, both centaurs, Eris, both Priapus points, the
+  White Moon and the Interpolated Perigee are drawn rather than traced. The
+  redraws are visible: a chart rendered with 6.0.0a85 does not match one rendered
+  before it pixel for pixel.
+
+- **The six lunar-apside points are told apart by colour, not by six shapes.**
+  Mean, True and Interpolated Lilith share one crescent; Mean Priapus, True
+  Priapus and the Interpolated Perigee share its opposite. The glyph says which
+  end of the apsidal line a point is, the colour says which method computed it.
+  White Moon keeps a mark of its own — it is a different point, not a third way
+  of finding the same one.
+
+### Fixed
+
+- **Four points drew their glyph in one colour and their degree in another.**
+  A point's colour is written in two places: the `var()` inside its `<symbol>`,
+  which paints the mark, and `DEFAULT_CELESTIAL_POINTS_SETTINGS["color"]`, which
+  paints the degree text and the pointer line. True Lilith, Interpolated Lilith,
+  True Priapus and the Interpolated Perigee had the second still set to the mean
+  apogee's colour, so each rendered in two colours at once. **Visible change:**
+  the degree readout and pointer for those four points now match their glyph.
+  White Moon no longer borrows the mean apogee's colour at all.
+
+- **The published glyph gallery was missing five symbols and three months old.**
+  `site/docs/chart-glyphs.md` and its poster carried their own section table and
+  their own copy of the box rule, and had drifted: Interpolated Lilith, Mean and
+  True Priapus, White Moon and the Interpolated Perigee appeared nowhere. Both
+  are generated from `scripts/glyph_catalog.py` now, the same list the templates
+  are built from, and the poster resolves the light theme's real colours instead
+  of flattening every `var()` to one ink — without which the six apside points
+  would print as two shapes repeated three times each.
+
+- **Seventy-three committed SVGs drew a glyph set the library no longer had**,
+  nineteen of them the documentation charts the README serves by raw URL. Three
+  generators produced committed output and had no task, so `regenerate:all` never
+  reached them; they have one now (`regenerate:docs-charts`, `regenerate:gallery-v6`,
+  `regenerate:glyph-gallery`) and are part of that sequence. Five baselines that
+  no script produced at all — three natal charts and the two paired-BCE charts —
+  are reproducible now too.
+
+- **Every rendered chart credits the fonts its glyphs come from.** The header
+  line named two sources; Noto Sans became the third when the lettered marks were
+  traced, and was recorded in `NOTICE` but not in the output.
+
+### Added
+
+- **`--kerykeion-chart-color-white-moon`**, in all six themes. White Moon shared
+  the mean apogee's variable, which made the colour axis say it was a way of
+  computing the Black Moon. It keeps the family's hue at low saturation instead —
+  pale where the three method colours are vivid.
+- **`--kerykeion-chart-color-interpolated-lilith`**, in all six themes, for the
+  third rung of the apside ladder.
+
+### Changed
+
 - **`kr:angularity` carries every angle a point stands on, and
   `kr:angularitydistance` is gone.** The value is now a space-separated list of
   `Angle:distance` pairs, closest first — `Ascendant:0.8991 Medium_Coeli:4.3156`.

@@ -1,8 +1,19 @@
 #!/usr/bin/env python3
 """Generate a versioned, self-contained glyph gallery (SVG poster + Markdown page)
 that illustrates every chart glyph Kerykeion renders. Pure illustration — glyph +
-name + id, grouped by category. The SVG carries its own light background so it
+name + id, grouped by family. The SVG carries its own light background so it
 renders identically on GitHub, MkDocs and any docs theme.
+
+The contents come from `glyph_catalog.py`, the same list the templates are built
+from, so a symbol cannot ship without being documented. It used to carry its own
+section table and its own copy of the box rule, and by the time anyone looked it
+was missing five points — Interpolated Lilith, Mean/True Priapus, White Moon,
+Interpolated Perigee — and describing a set the library no longer drew.
+
+Colours are resolved from the light theme rather than flattened to one ink. That
+is not decoration: six of the lunar-apside points wear two shapes between them
+and are told apart by colour alone, so a monochrome poster would print three
+identical Liliths and three identical perigee marks.
 
 Writes the Kerykeion docs by default. Pass --api-docs-dir to ALSO write the page
 into another docs tree (opt-in; nothing outside this repo is touched otherwise):
@@ -15,9 +26,14 @@ import argparse
 import html
 import pathlib
 import re
+import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from glyph_catalog import IDS, box_of, families  # noqa: E402
+
 TPL = ROOT / "kerykeion/charts/templates/chart.xml"
+THEME = ROOT / "kerykeion/charts/themes/light.css"
 
 defs = TPL.read_text(encoding="utf-8")
 defs = defs[defs.index("GLYPHS:BEGIN"):defs.index("GLYPHS:END")]
@@ -26,47 +42,57 @@ _ids = [sid for sid, _ in _matches]
 _dupes = sorted({sid for sid in _ids if _ids.count(sid) > 1})
 if _dupes:
     raise ValueError(f"duplicate glyph ids in {TPL}: {', '.join(_dupes)}")
+if _ids != IDS:
+    raise ValueError(
+        "the templates and glyph_catalog.py disagree. Missing from the templates: "
+        f"{[i for i in IDS if i not in _ids]}; not in the catalog: "
+        f"{[i for i in _ids if i not in IDS]}. Run build_chart_glyphs.py first."
+    )
 SYM = dict(_matches)
 
-SIGNS = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+
+# ---- colour ----------------------------------------------------------------
+_DECL = re.compile(r"(--kerykeion-[a-z0-9-]+)\s*:\s*([^;]+);")
+_VAR = re.compile(r"var\(\s*(--[a-z0-9-]+)\s*(?:,\s*([^)]*))?\)")
+THEME_VARS = dict(_DECL.findall(THEME.read_text(encoding="utf-8")))
 
 
-def box(i):
-    return 32 if i in SIGNS else (10 if i.startswith("orb") else (12 if i == "retrograde" else 24))
+def resolve(value: str, depth: int = 0) -> str:
+    """Substitute `var(--x, fallback)` against the light theme, recursively.
+
+    Theme variables are defined in terms of one another (`--...-mean-lilith:
+    var(--kerykeion-color-secondary)`), so one pass is not enough. The depth cap
+    is a cycle guard, not a policy: a self-referential declaration would
+    otherwise hang the docs build.
+    """
+    if depth > 10:
+        raise ValueError(f"cyclic CSS variable while resolving {value!r}")
+
+    def sub(match: re.Match) -> str:
+        name, fallback = match.group(1), (match.group(2) or "").strip()
+        if name in THEME_VARS:
+            return resolve(THEME_VARS[name].strip(), depth + 1)
+        if fallback:
+            return resolve(fallback, depth + 1)
+        raise KeyError(f"{name} is used by a glyph but undefined in {THEME.name}")
+
+    return _VAR.sub(sub, value)
 
 
-NAME = {
- "Sun": "Sun", "Moon": "Moon", "Mercury": "Mercury", "Venus": "Venus", "Mars": "Mars", "Jupiter": "Jupiter",
- "Saturn": "Saturn", "Uranus": "Uranus", "Neptune": "Neptune", "Pluto": "Pluto", "Chiron": "Chiron",
- "Earth": "Earth", "Mean_Lilith": "Mean Lilith", "True_Lilith": "True Lilith",
- "Mean_North_Lunar_Node": "Mean North Node", "True_North_Lunar_Node": "True North Node",
- "Mean_South_Lunar_Node": "Mean South Node", "True_South_Lunar_Node": "True South Node",
- "Ceres": "Ceres", "Pallas": "Pallas", "Juno": "Juno", "Vesta": "Vesta", "Pholus": "Pholus",
- "Eris": "Eris", "Sedna": "Sedna", "Haumea": "Haumea", "Makemake": "Makemake", "Ixion": "Ixion", "Orcus": "Orcus", "Quaoar": "Quaoar",
- "Cupido": "Cupido", "Hades": "Hades", "Zeus": "Zeus", "Kronos": "Kronos", "Apollon": "Apollon", "Admetos": "Admetos", "Vulkanus": "Vulkanus", "Poseidon": "Poseidon",
- "Ascendant": "Ascendant", "Medium_Coeli": "Medium Coeli", "Descendant": "Descendant", "Imum_Coeli": "Imum Coeli",
- "Vertex": "Vertex", "Anti_Vertex": "Anti-Vertex", "East_Point": "East Point", "FixedStar": "Fixed Star", "Midpoint": "Midpoint",
- "Pars_Fortunae": "Pars Fortunae", "Pars_Spiritus": "Pars Spiritus", "Pars_Amoris": "Pars Amoris", "Pars_Fidei": "Pars Fidei",
- "Ari": "Aries", "Tau": "Taurus", "Gem": "Gemini", "Can": "Cancer", "Leo": "Leo", "Vir": "Virgo",
- "Lib": "Libra", "Sco": "Scorpio", "Sag": "Sagittarius", "Cap": "Capricorn", "Aqu": "Aquarius", "Pis": "Pisces",
- "orb0": "Conjunction", "orb30": "Semi-sextile", "orb45": "Semi-square", "orb60": "Sextile", "orb72": "Quintile",
- "orb90": "Square", "orb120": "Trine", "orb135": "Sesquiquadrate", "orb144": "Biquintile", "orb150": "Quincunx", "orb180": "Opposition", "retrograde": "Retrograde",
-}
-ANGLE = {"orb0": "0°", "orb30": "30°", "orb45": "45°", "orb60": "60°", "orb72": "72°", "orb90": "90°",
-         "orb120": "120°", "orb135": "135°", "orb144": "144°", "orb150": "150°", "orb180": "180°"}
+def paint(inner: str) -> str:
+    """The symbol as it renders under the light theme."""
+    return resolve(inner)
 
-SECTIONS = [
- ("Luminaries & planets", ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]),
- ("Minor bodies & Lilith", ["Chiron", "Earth", "Mean_Lilith", "True_Lilith", "Ceres", "Pallas", "Juno", "Vesta", "Pholus"]),
- ("Lunar nodes", ["Mean_North_Lunar_Node", "True_North_Lunar_Node", "Mean_South_Lunar_Node", "True_South_Lunar_Node"]),
- ("Trans-Neptunian objects", ["Eris", "Sedna", "Haumea", "Makemake", "Ixion", "Orcus", "Quaoar"]),
- ("Uranian points", ["Cupido", "Hades", "Zeus", "Kronos", "Apollon", "Admetos", "Vulkanus", "Poseidon"]),
- ("Arabic parts (Lots)", ["Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei"]),
- ("Angles & special points", ["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli", "Vertex", "Anti_Vertex", "East_Point", "FixedStar", "Midpoint"]),
- ("Zodiac signs", SIGNS),
- ("Aspects", ["orb0", "orb30", "orb45", "orb60", "orb72", "orb90", "orb120", "orb135", "orb144", "orb150", "orb180"]),
- ("Other", ["retrograde"]),
-]
+
+# ---- labels ----------------------------------------------------------------
+def caption(sid: str, label: str) -> str:
+    """`orb144` -> "Biquintile 144°". The angle is in the id; a second table
+    listing it again is a second thing to forget to update."""
+    return f"{label} {sid[3:]}°" if sid.startswith("orb") else label
+
+
+SECTIONS = [(family, [(sid, caption(sid, label)) for sid, label in items])
+            for family, items in families()]
 
 # ---- poster geometry -------------------------------------------------------
 INK = "#1f2433"
@@ -90,47 +116,43 @@ def chunks(xs, n):
         yield xs[i:i + n]
 
 
-def ink(inner):  # neutralise theme variables for a standalone poster
-    return re.sub(r'var\([^)]*\)', INK, inner)
-
-
 # compute layout & height
 rows = []
 y = TITLE
-for title, ids in SECTIONS:
+for title, items in SECTIONS:
     rows.append(("hdr", title, y))
     y += HDR
-    for row in chunks(ids, COLS):
-        rows.append(("row", row, y))
+    for row in chunks(items, COLS):
+        rows.append(("row", (title, row), y))
         y += CH
     y += GAP
 H = y + M - GAP
 W = M * 2 + COLS * CW
 
 
-def glyph_g(i, gx, gy):
-    b = box(i)
+def glyph_g(sid, family, gx, gy):
+    b = box_of(family)
     s = DISP / b
-    return f'<g transform="translate({gx:.1f},{gy:.1f}) scale({s:.4f})">{ink(SYM[i])}</g>'
+    return f'<g transform="translate({gx:.1f},{gy:.1f}) scale({s:.4f})">{paint(SYM[sid])}</g>'
 
 
 parts = [f'<rect x="0" y="0" width="{W}" height="{H}" fill="{BG}"/>',
          f'<text x="{M}" y="40" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="26" font-weight="700" fill="{INK}">Kerykeion — Chart Glyphs</text>',
-         f'<text x="{M}" y="62" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="13" fill="{SUB}">Astrological symbols rendered in Kerykeion charts — planets, points, zodiac signs and aspects.</text>']
+         f'<text x="{M}" y="62" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="13" fill="{SUB}">Astrological symbols rendered in Kerykeion charts, in the colours of the light theme.</text>']
 
 for kind, payload, yy in rows:
     if kind == "hdr":
         parts.append(f'<text x="{M}" y="{yy + 30:.0f}" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="16" font-weight="600" fill="{INK}">{html.escape(payload)}</text>')
         parts.append(f'<line x1="{M}" y1="{yy + 38:.0f}" x2="{W - M}" y2="{yy + 38:.0f}" stroke="{RULE}" stroke-width="1"/>')
     else:
-        for col, i in enumerate(payload):
+        family, row = payload
+        for col, (sid, label) in enumerate(row):
             cl = M + col * CW
             parts.append(f'<rect x="{cl + 6}" y="{yy:.0f}" width="{CW - 12}" height="{CH - 12}" rx="9" fill="{CARD}" stroke="{BORDER}"/>')
-            parts.append(glyph_g(i, cl + (CW - DISP) / 2, yy + 10))
+            parts.append(glyph_g(sid, family, cl + (CW - DISP) / 2, yy + 10))
             cx = cl + CW / 2
-            label = NAME.get(i, i) + (f" {ANGLE[i]}" if i in ANGLE else "")
             parts.append(f'<text x="{cx:.1f}" y="{yy + DISP + 30:.0f}" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="13" font-weight="600" fill="{INK}">{html.escape(label)}</text>')
-            parts.append(f'<text x="{cx:.1f}" y="{yy + DISP + 46:.0f}" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9.5" fill="{SUB}">{html.escape(i)}</text>')
+            parts.append(f'<text x="{cx:.1f}" y="{yy + DISP + 46:.0f}" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9.5" fill="{SUB}">{html.escape(sid)}</text>')
 
 svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
        f'font-family="sans-serif">\n' + "\n".join(parts) + "\n</svg>\n")
@@ -140,18 +162,15 @@ svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBo
 def md(img_rel):
     lines = ["# Chart Glyphs", "",
              "Visual reference for the astrological glyphs used in Kerykeion charts: "
-             "planets, points, lunar nodes, asteroids, Trans-Neptunian and Uranian points, "
-             "Arabic parts, zodiac signs and aspects.", "",
+             "planets, lunar nodes and apsides, centaurs, asteroids, Trans-Neptunian and "
+             "Uranian points, Arabic parts, angles, zodiac signs and aspects.", "",
+             "Every glyph is geometry — no font is needed to render a chart. The colours "
+             "shown are the light theme's; each is a CSS variable a theme can override.", "",
              f"![Kerykeion chart glyphs]({img_rel})", "",
-             "## Glyphs by category", ""]
-    for title, ids in SECTIONS:
-        lines.append(f"### {title}")
-        lines.append("")
-        lines.append("| Glyph (id) | Name |")
-        lines.append("|---|---|")
-        for i in ids:
-            nm = NAME.get(i, i) + (f" {ANGLE[i]}" if i in ANGLE else "")
-            lines.append(f"| `{i}` | {nm} |")
+             "## Glyphs by family", ""]
+    for title, items in SECTIONS:
+        lines += [f"### {title}", "", "| Glyph (id) | Name |", "|---|---|"]
+        lines += [f"| `{sid}` | {label} |" for sid, label in items]
         lines.append("")
     return "\n".join(lines)
 
@@ -181,7 +200,7 @@ def main() -> None:
         else:
             print(f"  --api-docs-dir not found, skipped: {args.api_docs_dir}")
 
-    print(f"poster {W}x{H}px, {sum(len(ids) for _, ids in SECTIONS)} glyphs")
+    print(f"poster {W}x{H}px, {sum(len(items) for _, items in SECTIONS)} glyphs")
     for w in written:
         print("  wrote", w)
 
