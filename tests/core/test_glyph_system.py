@@ -135,13 +135,34 @@ class TestOneWeightForEveryGlyph:
             f"{builder.stroke_for(box)}"
             for box in {builder.BOX[group] for group in builder.BOX}
         }
+        # One sanctioned exception: the Midpoint's rule joins its dots rather
+        # than being a stroke of the mark, and at full weight it reads a third
+        # the diameter of the dots it connects. Declared rather than left to
+        # slip through — W_CONNECTOR currently equals stroke_for(12) by pure
+        # arithmetic coincidence, so without naming it here the guard would
+        # "pass" for the wrong reason and stop catching a second exception.
+        allowed.add(f"{builder.W_CONNECTOR}")
         found = set(WIDTH_RE.findall(_block("modern_wheel.xml")))
 
         assert found <= allowed, (
             f"undeclared stroke widths in the templates: {sorted(found - allowed)}. "
             f"Widths must come from stroke_for(box), which yields {sorted(allowed)}. "
-            "There are no sanctioned exceptions: if a glyph needs a different "
-            "weight, say why here rather than writing the number into the artwork."
+            "If a glyph needs another weight, name it here with the reason rather "
+            "than writing the number into the artwork."
+        )
+
+    def test_the_connector_is_the_only_width_that_is_not_a_box_weight(self):
+        builder = _load_builder()
+        derived = {f"{builder.stroke_for(builder.BOX[g])}" for g in builder.BOX}
+        # It may only appear in the Midpoint; anywhere else it is a leak.
+        wearers = [
+            sid
+            for sid, body in _symbols("modern_wheel.xml").items()
+            if f"{builder.W_CONNECTOR}" in WIDTH_RE.findall(body)
+            and f"{builder.W_CONNECTOR}" not in derived - {f"{builder.W_CONNECTOR}"}
+        ]
+        assert wearers == ["Midpoint"], (
+            f"the connector weight should be the Midpoint's alone, found on: {wearers}"
         )
 
     def test_the_derived_width_tracks_the_measured_silhouette_weight(self):
