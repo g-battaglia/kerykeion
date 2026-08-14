@@ -307,6 +307,10 @@ help = "Audit documentation coverage"
 cmd = "python scripts/test_markdown_snippets.py"
 help = "Test Python snippets in markdown files"
 
+[tool.poe.tasks."docs:snippets:skill"]
+cmd = "python scripts/test_markdown_snippets.py --skill"
+help = "Test the agent skill's snippets standalone (no import prelude, no shared page context)"
+
 # Regenerate Golden Standards — one command per category
 [tool.poe.tasks."regenerate:glyph-widths"]
 help = "Re-measure the info panel's glyph-width tables from the reference fonts (macOS only)"
