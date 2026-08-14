@@ -27,38 +27,66 @@ SKILL_DIR = REPO_ROOT / "skills" / "kerykeion"
 SKILL_MD = SKILL_DIR / "SKILL.md"
 REFERENCES_DIR = SKILL_DIR / "references"
 
+# Every skill this repository distributes. The guards below are about being
+# *distributed* — copied verbatim into a stranger's repository — so they apply
+# to each one; discovering them from disk means a skill added later cannot ship
+# unguarded by forgetting to register it here.
+SKILL_DIRS = sorted(
+    path for path in (REPO_ROOT / "skills").iterdir()
+    if path.is_dir() and (path / "SKILL.md").is_file()
+)
+SKILL_IDS = [path.name for path in SKILL_DIRS]
 
-def _skill_corpus() -> list[Path]:
-    """Every file that ships with the skill.
+
+def _corpus(skill_dir: Path) -> list[Path]:
+    """Every file that ships with *skill_dir*.
 
     Deliberately unfiltered by extension: the license and version-pin guards
     below must cover whatever the skill distributes, and an allow-list would
     silently exempt any future asset (JSON, .txt, YAML) from both. Callers
     read with ``errors="ignore"``, so a binary file is harmless here.
     """
-    return sorted(path for path in SKILL_DIR.rglob("*") if path.is_file())
+    return sorted(path for path in skill_dir.rglob("*") if path.is_file())
 
 
-def _frontmatter() -> str:
-    text = SKILL_MD.read_text(encoding="utf-8")
+def _skill_corpus() -> list[Path]:
+    """Every file shipped by the library skill (kerykeion-specific guards)."""
+    return _corpus(SKILL_DIR)
+
+
+def _frontmatter(skill_dir: Path = SKILL_DIR) -> str:
+    text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     assert text.startswith("---\n"), "SKILL.md must open with YAML frontmatter"
     end = text.index("\n---", 4)
     return text[4:end]
 
 
-def test_the_skill_exists_and_is_not_vacuous():
-    assert SKILL_MD.is_file(), "skills/kerykeion/SKILL.md is missing"
-    references = list(REFERENCES_DIR.glob("*.md"))
-    assert references, "the skill has no reference files at all"
+def test_every_skill_is_discovered():
+    """A distributed skill that this module never sees is a skill with no guards."""
+    assert SKILL_DIRS, "no skills found under skills/"
+    assert SKILL_DIR in SKILL_DIRS
 
 
-def test_frontmatter_contract():
-    frontmatter = _frontmatter()
+@pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=SKILL_IDS)
+def test_the_skill_exists_and_is_not_vacuous(skill_dir: Path):
+    assert (skill_dir / "SKILL.md").is_file(), f"{skill_dir.name}/SKILL.md is missing"
+    references = list((skill_dir / "references").glob("*.md"))
+    assert references, f"{skill_dir.name} has no reference files at all"
+
+
+@pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=SKILL_IDS)
+def test_frontmatter_contract(skill_dir: Path):
+    frontmatter = _frontmatter(skill_dir)
 
     name_match = re.search(r"^name:\s*(\S+)\s*$", frontmatter, re.MULTILINE)
     assert name_match, "frontmatter has no name field"
     name = name_match.group(1)
-    assert name == "kerykeion"
+    # The declared name is how an agent addresses the skill; if it disagrees with
+    # the directory, installing by path gives a skill that answers to something
+    # else.
+    assert name == skill_dir.name, (
+        f"{skill_dir.name}/SKILL.md declares name {name!r}"
+    )
     assert re.fullmatch(r"[a-z0-9-]{1,64}", name)
 
     # description is a `>-` block scalar: gather its indented lines.
@@ -79,20 +107,51 @@ def test_frontmatter_contract():
     assert license_match.group(1) == "AGPL-3.0"
 
 
-def test_vendored_license_is_byte_identical_to_the_repo_license():
-    vendored = SKILL_DIR / "LICENSE"
-    assert vendored.is_file(), "the skill must vendor the AGPL license text"
+@pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=SKILL_IDS)
+def test_vendored_license_is_byte_identical_to_the_repo_license(skill_dir: Path):
+    vendored = skill_dir / "LICENSE"
+    assert vendored.is_file(), f"{skill_dir.name} must vendor the AGPL license text"
     assert vendored.read_bytes() == (REPO_ROOT / "LICENSE").read_bytes(), (
-        "skills/kerykeion/LICENSE has drifted from the repository LICENSE"
+        f"skills/{skill_dir.name}/LICENSE has drifted from the repository LICENSE"
     )
 
 
-def test_no_foreign_license_strings_in_the_skill():
-    # The skill folder is AGPL-only; a stray permissive-license string is a
+@pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=SKILL_IDS)
+def test_no_foreign_license_strings_in_the_skill(skill_dir: Path):
+    # The skill folders are AGPL-only; a stray permissive-license string is a
     # regression that has slipped into this project before.
-    for path in _skill_corpus():
+    for path in _corpus(skill_dir):
         content = path.read_text(encoding="utf-8", errors="ignore").lower()
         assert "apache" not in content, f"foreign license string in {path}"
+
+
+@pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=SKILL_IDS)
+def test_every_skill_reference_is_reachable(skill_dir: Path):
+    """No dangling pointers, and no reference the router cannot reach.
+
+    The same rule as the library skill's own check below, applied to every
+    distributed skill: an agent opens SKILL.md first, so a reference only linked
+    from a sibling is a file no agent will ever load.
+    """
+    references_dir = skill_dir / "references"
+    on_disk = {path.name for path in references_dir.glob("*.md")}
+
+    dangling: dict[str, list[str]] = {}
+    for path in _corpus(skill_dir):
+        if path.suffix != ".md":
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for target in set(re.findall(r"references/([a-z0-9-]+\.md)", text)):
+            if target not in on_disk:
+                dangling.setdefault(path.name, []).append(target)
+    assert not dangling, f"{skill_dir.name}: pointers at missing references: {dangling}"
+
+    router = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    orphans = on_disk - set(re.findall(r"references/([a-z0-9-]+\.md)", router))
+    assert not orphans, (
+        f"{skill_dir.name}: references never mentioned in SKILL.md (agents will "
+        f"never load them): {sorted(orphans)}"
+    )
 
 
 def test_references_are_reachable_in_both_directions():
@@ -127,21 +186,23 @@ def test_references_are_reachable_in_both_directions():
     )
 
 
-def test_version_pins_match_pyproject():
+@pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=SKILL_IDS)
+def test_version_pins_match_pyproject(skill_dir: Path):
     pyproject = (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
     version = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.MULTILINE).group(1)
+    SKILL_MD = skill_dir / "SKILL.md"  # noqa: N806 — shadows the module-level path
 
     assert version in SKILL_MD.read_text(encoding="utf-8"), (
         f"The skill claims a version it was not verified against. Fix by editing "
         f"the 'Verified against kerykeion X' line at the top of "
-        f"skills/kerykeion/SKILL.md to read {version}.\n"
+        f"skills/{skill_dir.name}/SKILL.md to read {version}.\n"
         f"This gate is intentional: a release bump is the moment to re-read the "
         f"skill for API drift, and nothing else forces that review."
     )
 
     # Any fully-qualified alpha version mentioned anywhere in the skill must be
     # the current one. Bare history tags like "a75" deliberately do not match.
-    for path in _skill_corpus():
+    for path in _corpus(skill_dir):
         for pinned in re.findall(r"\b6\.0\.0a\d+\b", path.read_text(encoding="utf-8", errors="ignore")):
             assert pinned == version, (
                 f"{path} pins {pinned} but pyproject says {version}"

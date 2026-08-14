@@ -311,6 +311,12 @@ help = "Test Python snippets in markdown files"
 cmd = "python scripts/test_markdown_snippets.py --skill"
 help = "Test the agent skill's snippets standalone (no import prelude, no shared page context)"
 
+# The CLI skill's examples are shell, which the python snippet runner ignores.
+# Without this they would ship unverified into third-party repositories.
+[tool.poe.tasks."skill:cli:smoke"]
+cmd = "python scripts/test_skill_cli_snippets.py"
+help = "Run every bash block in skills/kerykeion-cli against a sandboxed profile store"
+
 # Regenerate Golden Standards — one command per category
 [tool.poe.tasks."regenerate:glyph-widths"]
 help = "Re-measure the info panel's glyph-width tables from the reference fonts (macOS only)"

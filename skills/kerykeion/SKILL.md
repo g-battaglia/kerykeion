@@ -261,6 +261,15 @@ an empty list passed to `to_context` raises `TypeError`
 - Point-set and aspect-set presets, and where to import each:
   `references/subjects.md` and `references/aspects-and-orbs.md`.
 
+## Not writing Python?
+
+If the task is to run kerykeion from a **terminal** — a shell command, a
+pipeline, a Makefile, cron, CI — the library ships an optional CLI
+(`pip install "kerykeion[cli]"`) that covers the same surface without any
+Python, and the sibling **`kerykeion-cli`** skill documents it: the command
+tree, the exit-code contract, the profile store, and the `call` dispatcher.
+Reach for that one instead of generating a script to be run once.
+
 ## Reference index
 
 | File | Read when the task involves |
