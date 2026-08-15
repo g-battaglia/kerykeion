@@ -109,6 +109,12 @@ def aspects(
         if chosen is not None:
             kwargs["active_aspects"] = chosen
         if axis_orb_limit is not None:
+            # Reject it here (exit 4, invalid input) rather than letting the
+            # factory raise a kerykeion-level error (exit 5): a bad flag value
+            # is not a library failure, and pipeline branching relies on that
+            # distinction.
+            if axis_orb_limit <= 0:
+                raise ValueError("--axis-orb-limit must be a positive number.")
             kwargs["axis_orb_limit"] = axis_orb_limit
         model = (
             AspectsFactory.dual_chart_aspects(first, second, **kwargs)  # type: ignore[arg-type]

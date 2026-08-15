@@ -317,6 +317,20 @@ def transit(
             "to use the natal birthplace); the natal timezone does not match new "
             "coordinates."
         )
+    # ``--city`` relocates by geocoding, so the natal coordinates must NOT be
+    # inherited: the factory only geocodes when coordinates are missing, and
+    # inherited ones satisfied that gate — the wheel stayed cast for the natal
+    # birthplace while the requested city appeared as a display label. Geocoding
+    # needs the network, so an explicit --offline alongside a bare --city has
+    # no honest resolution.
+    if city is not None and not _geo_provided:
+        if offline is True or online is False:
+            raise ValueError(
+                "--city cannot be resolved with --offline; drop it (geocoding "
+                "needs the network) or pass --lat/--lng/--tz for an offline "
+                "relocation."
+            )
+    _inherit_geo = city is None
     from kerykeion import ChartDataFactory
 
     natal = subject_resolver.resolve_subject(
@@ -328,14 +342,17 @@ def transit(
     # ``create_chart_data``; it does not re-frame the transit wheel. Without
     # inheriting these the outer ring would always be Tropical/Placidus/
     # Apparent-Geocentric regardless of the natal, producing a dual wheel whose
-    # two rings disagree. ``series transits`` does the same inheritance.
+    # two rings disagree. ``series transits`` does the same inheritance. The
+    # custom-ayanamsa pair is part of that frame: without it a natal cast with
+    # ``--sidereal-mode USER`` crashes the transit resolution (the mode needs
+    # its two numbers on every rebuild).
     transit_flags = subject_resolver.SubjectFlags(
         name="Transit",
         date=to_date,
         time=to_time,
-        lat=lat if lat is not None else getattr(natal, "lat", None),
-        lng=lng if lng is not None else getattr(natal, "lng", None),
-        tz=tz if tz is not None else getattr(natal, "tz_str", None),
+        lat=lat if lat is not None else (getattr(natal, "lat", None) if _inherit_geo else None),
+        lng=lng if lng is not None else (getattr(natal, "lng", None) if _inherit_geo else None),
+        tz=tz if tz is not None else (getattr(natal, "tz_str", None) if _inherit_geo else None),
         city=city,
         nation=nation,
         online=online,
@@ -345,6 +362,8 @@ def transit(
         sidereal_mode=getattr(natal, "sidereal_mode", None),
         houses=getattr(natal, "houses_system_identifier", None),
         perspective=getattr(natal, "perspective_type", None),
+        custom_ayanamsa_t0=getattr(natal, "custom_ayanamsa_t0", None),
+        custom_ayanamsa_ayan_t0=getattr(natal, "custom_ayanamsa_ayan_t0", None),
         # Default to "now" when no --to-date is given.
         mode_override=None if to_date else "current",
     )
@@ -466,21 +485,18 @@ def return_chart(
     r_lng = lng if lng is not None else getattr(natal, "lng", None)
     r_tz = tz if tz is not None else getattr(natal, "tz_str", None)
     coords = r_lat is not None and r_lng is not None and r_tz is not None
-    if online is True:
-        if not city:
-            raise ValueError("--online return needs --city (and ideally --nation)")
+    if city is not None and online is True:
         factory = PlanetaryReturnFactory(natal, city=city, nation=nation, online=True)
-    elif offline is True or coords:
-        if not coords:
-            raise ValueError(
-                "return needs the return-chart location: pass --lat/--lng/--tz "
-                "(or -s a profile with coordinates), or use --city --online."
-            )
+    elif coords:
+        # Complete coordinates (inline or inherited from the natal) decide the
+        # place even under --online: the location is already specified and
+        # geocoding has nothing to add. Requiring --city first used to reject
+        # `--lat/--lng/--tz --online` — a fully specified relocated return.
         factory = PlanetaryReturnFactory(natal, lat=r_lat, lng=r_lng, tz_str=r_tz, online=False)
     else:
         raise ValueError(
             "return needs the return-chart location: pass --lat/--lng/--tz "
-            "(or -s a profile with coordinates), or use --city --online."
+            "(or -s a profile with coordinates), or --city with --online."
         )
     return_subject = factory.next_return_from_date(
         year, month, day, return_type=rtype  # type: ignore[arg-type]  # validated above

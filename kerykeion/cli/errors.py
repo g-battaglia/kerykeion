@@ -23,6 +23,7 @@ an ephemeris problem (6), not bad input (4).
 
 from __future__ import annotations
 
+import os
 import sys
 import traceback as _traceback
 from enum import IntEnum
@@ -150,6 +151,11 @@ def classify(exc: BaseException) -> ExitCode:
     """Map an exception to the exit code the CLI should return for it."""
     if isinstance(exc, KeyboardInterrupt):
         return ExitCode.INTERRUPTED
+    if isinstance(exc, BrokenPipeError):
+        # The consumer closed the pipe (`… | head`): the payload that mattered
+        # was already written. Reporting "invalid input" (4) would make
+        # pipefail scripts misclassify a normal truncation.
+        return ExitCode.OK
     backend = _backend_error_types()
     if backend and isinstance(exc, backend):
         return ExitCode.EPHEMERIS
@@ -220,6 +226,16 @@ def handle_uncaught(exc: BaseException) -> NoReturn:
     resort, from :func:`kerykeion.cli.app.run`.
     """
     code = classify(exc)
+    if isinstance(exc, BrokenPipeError):
+        # Say nothing and exit 0 (see classify): a truncated stream is not an
+        # error. Point stdout at devnull first, or the interpreter's own
+        # shutdown flush would raise a second BrokenPipeError after us.
+        try:
+            _devnull = os.open(os.devnull, os.O_WRONLY)
+            os.dup2(_devnull, sys.stdout.fileno())
+        except (OSError, ValueError):  # stdout already closed / not a real fd
+            pass
+        raise SystemExit(0)
     show_trace = _traceback_enabled or code == ExitCode.UNEXPECTED
     if show_trace:
         _traceback.print_exception(type(exc), exc, exc.__traceback__, file=sys.stderr)

@@ -122,6 +122,11 @@ uv run poe test:cli
 
 # Smoke-test the entry point and the lazy-import guard (no traceback without the extra)
 uv run poe cli:smoke
+
+# Run every bash block in skills/kerykeion-cli against a sandboxed profile
+# store (also part of `poe check` and `poe quality`): the CLI skill's examples
+# are shell, which the python snippet runner and pytest both ignore.
+uv run poe skill:cli:smoke
 ```
 
 > **Why `typer` and `rich` live in two places.** They are declared both in the

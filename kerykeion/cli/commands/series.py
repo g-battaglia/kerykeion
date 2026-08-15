@@ -153,6 +153,9 @@ def transits(
     if not no_limit:
         check_ephemeris_sampling(start, end, stype, step_n, tz_str=natal_tz)
     # Inherit the natal frame so the transit wheel matches the natal one.
+    # The custom-ayanamsa pair is part of that frame: without it a natal cast
+    # with ``--sidereal-mode USER`` crashes here (the mode needs its two
+    # numbers on every rebuild, and EphemerisDataFactory accepts both).
     eph_kwargs: dict[str, Any] = dict(step_type=stype, step=step_n)
     if no_limit:
         eph_kwargs.update(max_days=None, max_hours=None, max_minutes=None)
@@ -161,6 +164,8 @@ def transits(
         ("zodiac_type", "zodiac_type"), ("sidereal_mode", "sidereal_mode"),
         ("houses_system_identifier", "houses_system_identifier"),
         ("perspective_type", "perspective_type"),
+        ("custom_ayanamsa_t0", "custom_ayanamsa_t0"),
+        ("custom_ayanamsa_ayan_t0", "custom_ayanamsa_ayan_t0"),
     ):
         value = getattr(natal, src, None)
         if value is not None:

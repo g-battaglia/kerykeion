@@ -33,6 +33,10 @@ def main() -> int:
         # The CLI is an optional extra; this proves the entry point still works
         # from the dev checkout and that ``import kerykeion`` stays typer-free.
         ("cli", ["python", "scripts/cli_smoke_check.py"]),
+        # The CLI skill's examples are shell, which the python snippet runner
+        # and pytest both ignore; without this a broken example would ship
+        # verified-by-nothing into third-party repositories.
+        ("skill-cli", ["python", "scripts/test_skill_cli_snippets.py"]),
     ]
 
     results = []

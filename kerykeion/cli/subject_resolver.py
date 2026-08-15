@@ -108,6 +108,70 @@ def _valid_house_letters() -> frozenset[str]:
     return _VALID_HOUSE_LETTERS
 
 
+_VALID_SIDEREAL_MODES: Optional[frozenset[str]] = None
+
+
+def _valid_sidereal_modes() -> frozenset[str]:
+    """The exact ``SiderealMode`` strings the factory accepts (``LAHIRI``…)."""
+    global _VALID_SIDEREAL_MODES
+    if _VALID_SIDEREAL_MODES is None:
+        import typing
+
+        from kerykeion.schemas.literals import SiderealMode
+
+        _VALID_SIDEREAL_MODES = frozenset(typing.get_args(SiderealMode))
+    return _VALID_SIDEREAL_MODES
+
+
+def resolve_sidereal_mode(value: Optional[str]) -> Optional[str]:
+    """Canonicalise a ``SiderealMode`` name, case-insensitively.
+
+    ``--sidereal-mode lahari`` must work exactly like ``--houses placidus``
+    already does, and a typo must fail *here* (exit 4, invalid input) instead
+    of inside the factory as a ``KerykeionException`` (exit 5), which breaks
+    the documented exit-code contract for pipeline branching.
+    """
+    if value is None:
+        return None
+    v = value.strip()
+    modes = _valid_sidereal_modes()
+    if v in modes:
+        return v
+    up = v.upper()
+    if up in modes:
+        return up
+    import difflib
+
+    close = difflib.get_close_matches(up, modes, n=3, cutoff=0.5)
+    hint = f" Did you mean: {', '.join(close)}?" if close else ""
+    raise ValueError(
+        f"unknown sidereal mode {value!r} (see `kerykeion info literals "
+        f"SiderealMode` for the valid names).{hint}"
+    )
+
+
+def resolve_perspective(value: Optional[str]) -> Optional[str]:
+    """Canonicalise a ``PerspectiveType`` name, case/separator-insensitively.
+
+    The Literal's values contain spaces (``"Apparent Geocentric"``); accept
+    ``apparent geocentric``, ``Apparent-Geocentric`` and ``apparent_geocentric``
+    alike, and fail here (exit 4) on a typo instead of letting the factory
+    raise a kerykeion-level error (exit 5).
+    """
+    if value is None:
+        return None
+    import typing
+
+    from kerykeion.schemas.literals import PerspectiveType
+
+    valid = list(typing.get_args(PerspectiveType))
+    by_key = {v.lower(): v for v in valid}
+    key = value.strip().lower().replace("-", " ").replace("_", " ")
+    if key in by_key:
+        return by_key[key]
+    raise ValueError(f"unknown perspective {value!r}; give one of: {', '.join(valid)}.")
+
+
 def resolve_house_system(value: Optional[str]) -> Optional[str]:
     """Accept a single letter or a common house-system name; return the letter."""
     if value is None:
@@ -263,6 +327,11 @@ class SubjectFlags:
     sidereal_mode: Optional[str] = None
     houses: Optional[str] = None
     perspective: Optional[str] = None
+    # Not wired to dedicated CLI flags (``--set`` and the profile recipe carry
+    # them); these fields exist so a transit wheel can inherit a natal frame
+    # that uses a USER-defined ayanamsa (see `transit` in commands/charts.py).
+    custom_ayanamsa_t0: Optional[float] = None
+    custom_ayanamsa_ayan_t0: Optional[float] = None
     points: Optional[str] = None
     fixed_stars: Optional[str] = None
     with_flags: list[str] = field(default_factory=list)
@@ -431,6 +500,8 @@ def merge_inputs(
         "zodiac_type": flags.zodiac,
         "sidereal_mode": flags.sidereal_mode,
         "perspective_type": flags.perspective,
+        "custom_ayanamsa_t0": flags.custom_ayanamsa_t0,
+        "custom_ayanamsa_ayan_t0": flags.custom_ayanamsa_ayan_t0,
     }
     for key, value in inline.items():
         if value is not None:
@@ -449,6 +520,34 @@ def merge_inputs(
 
     _apply_calc_toggles(merged, flags)
     _apply_set_flags(merged, flags.set_flags)
+
+    # Canonicalise the enum-shaped recipe values wherever they came from
+    # (inline flag, profile recipe or --set): a typo must be invalid input
+    # (exit 4), not a kerykeion-level error (exit 5) that pipeline branching
+    # cannot distinguish from a library bug.
+    if merged.get("sidereal_mode") is not None:
+        merged["sidereal_mode"] = resolve_sidereal_mode(str(merged["sidereal_mode"]))
+    if merged.get("perspective_type") is not None:
+        merged["perspective_type"] = resolve_perspective(str(merged["perspective_type"]))
+
+    # Coordinates are all-or-nothing. A partial group (--lat without --lng and
+    # --tz, or a recipe edited that way) would silently blend the user's values
+    # with the geocoded defaults — the factory fills the gaps from its default
+    # city, producing a chart at the user's latitude on Greenwich's longitude
+    # and timezone. `transit` and `return` already enforce this invariant for
+    # relocated charts; this is the same rule for the base subject.
+    _partial_geo = [
+        flag_name
+        for flag_name, key in (("--lat", "lat"), ("--lng", "lng"), ("--tz", "tz_str"))
+        if merged.get(key) is not None
+    ]
+    if 0 < len(_partial_geo) < 3:
+        raise ValueError(
+            f"coordinates are all-or-nothing: only {', '.join(_partial_geo)} "
+            "given. Pass --lat, --lng and --tz together, or none of them (and "
+            "let the city/geocode default supply the place); a partial group "
+            "silently mixes your values with geocoded defaults."
+        )
 
     # Decide online (explicit flag — including --no-online — > recipe > inferred
     # from coordinates). ``--no-online`` arrives as ``flags.online is False`` and

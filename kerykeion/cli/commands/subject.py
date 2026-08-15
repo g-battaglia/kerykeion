@@ -83,6 +83,15 @@ def save(
     snapshot: SnapshotFlag = None,  # type: ignore[assignment]
 ) -> None:
     """Build a recipe from the flags and persist it as a profile (0600)."""
+    if store_name.endswith(".json"):
+        # The store appends its own .json (this would become foo.json.json) while
+        # -s treats any .json spec as a file path — so the name `subject list`
+        # shows could never be loaded back. Refuse it where it is typed.
+        raise ValueError(
+            "profile names cannot end in '.json': -s resolves a .json spec as a "
+            "file path, so the stored profile would never load back. Drop the "
+            "suffix (the store adds its own)."
+        )
     flags = subject_resolver.build_flags(
         name=name, date=date, time=time, seconds=seconds, iso_utc=iso_utc, lat=lat,
         lng=lng, tz=tz, city=city, nation=nation, online=online, offline=offline,

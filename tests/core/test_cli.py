@@ -1748,3 +1748,224 @@ class TestSnapshot:
         body = json.loads(overridden.output)
         assert body["name"] != "FROM-SNAPSHOT"
         assert body["houses_system_identifier"] == "K"
+
+
+class TestFourthReviewPass:
+    """Regressions from the fourth code-review sweep (feat/cli vs alpha/v6).
+
+    Every finding was reproduced on a live interpreter before the fix; these
+    pin the fixed behaviour. Numbering mirrors the review's report.
+    """
+
+    @staticmethod
+    def _save_profile(store_name: str, **recipe):
+        from kerykeion.cli import config, profiles
+
+        base = dict(
+            name=store_name.capitalize(), mode="birth",
+            date="2000-01-01", time="12:00",
+            lat=0.0, lng=0.0, tz_str="UTC", online=False,
+        )
+        base.update(recipe)
+        profiles.save(
+            config.profile_path(store_name),
+            profiles.Profile(
+                name=base["name"],
+                input=profiles.ProfileInput(**base),
+                meta=profiles.make_meta(),
+            ),
+        )
+
+    @staticmethod
+    def _run_cli(args: list[str], env_root) -> "subprocess.CompletedProcess[str]":
+        # {args!r} is a flat list literal, so `+` splices it after the prog name.
+        script = textwrap.dedent(f"""
+            import sys
+            from kerykeion.cli import main
+            sys.argv = ["kerykeion"] + {args!r}
+            sys.exit(main())
+        """)
+        env = {
+            **os.environ, "XDG_CONFIG_HOME": str(env_root),
+            "NO_COLOR": "1", "TERM": "dumb",
+        }
+        # Force the offline default-geo fallback: a developer's GEONAMES
+        # username would turn this test into a network call.
+        env.pop("KERYKEION_GEONAMES_USERNAME", None)
+        return subprocess.run(
+            [sys.executable, "-c", script], env=env, capture_output=True, text=True,
+        )
+
+    # #1: `transit --city X --online` used to inherit the natal coordinates,
+    # which satisfied the factory's geocode gate — the wheel stayed cast for
+    # the natal birthplace (London) while the requested city (Paris) appeared
+    # as a display label.
+    def test_transit_city_geocodes_instead_of_inheriting(self, deterministic_cli_env):
+        self._save_profile(
+            "geosrc", lat=51.5074, lng=-0.1278, tz_str="Europe/London",
+        )
+        out = deterministic_cli_env / "transit_geo.json"
+        res = self._run_cli(
+            ["transit", "-s", "geosrc", "--city", "Paris", "--nation", "FR",
+             "--online", "-f", "json", "-o", str(out)],
+            deterministic_cli_env,
+        )
+        assert res.returncode == 0, res.stderr
+
+        geo: list[tuple[float, str]] = []
+
+        def _walk(node):
+            if isinstance(node, dict):
+                if "lat" in node and "tz_str" in node:
+                    geo.append((node["lat"], node["tz_str"]))
+                for value in node.values():
+                    _walk(value)
+            elif isinstance(node, list):
+                for value in node:
+                    _walk(value)
+
+        _walk(json.loads(out.read_text(encoding="utf-8")))
+        paris = [lat for lat, tz in geo if tz == "Europe/Paris"]
+        assert paris and any(abs(lat - 48.85) < 0.1 for lat in paris), geo
+
+    # …and a city cannot be resolved against an explicit --offline: refusing
+    # beats silently stamping the label over the natal birthplace.
+    def test_transit_city_with_offline_is_rejected(self, runner, app, ada_profile):
+        r = runner.invoke(app, ["transit", "-s", "ada", "--city", "Paris", "--offline"])
+        assert r.exit_code == 4
+        assert "--offline" in r.output
+
+    # #2: USER-ayanamsa profiles crashed only on transit/transits — the custom
+    # pair was not inherited with the rest of the natal frame, so a Sidereal
+    # USER rebuild had no numbers to work with.
+    def test_transit_with_user_ayanamsa_profile(self, deterministic_cli_env):
+        self._save_profile(
+            "useray", zodiac_type="Sidereal", sidereal_mode="USER",
+            custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=23.85,
+        )
+        out = deterministic_cli_env / "useray_transit.json"
+        res = self._run_cli(
+            ["transit", "-s", "useray", "-f", "json", "-o", str(out)],
+            deterministic_cli_env,
+        )
+        assert res.returncode == 0, res.stderr
+
+    def test_transits_series_with_user_ayanamsa_profile(self, deterministic_cli_env):
+        # Not CliRunner: the series command emits a sampling warning via logging
+        # mid-run, and under ``log_cli`` pytest's live handler suspends the global
+        # capture — whose suspend closes whatever sys.stdout currently is, i.e.
+        # typer's own stream (pytest/pytest#12658 territory). A subprocess with
+        # ``-o`` sidesteps the whole interaction, like the transit test above.
+        self._save_profile(
+            "useray", zodiac_type="Sidereal", sidereal_mode="USER",
+            custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=23.85,
+        )
+        out = deterministic_cli_env / "useray_transits.json"
+        res = self._run_cli(
+            ["transits", "-s", "useray",
+             "--from", "2025-01-01", "--to", "2025-01-02", "-f", "json", "-o", str(out)],
+            deterministic_cli_env,
+        )
+        assert res.returncode == 0, res.stderr
+        payload = json.loads(out.read_text(encoding="utf-8"))
+        assert payload["transits"], "the series must have sampled its range"
+
+    # #3: a partial --lat/--lng/--tz group used to silently blend the user's
+    # values with the geocoded Greenwich defaults (their latitude, Greenwich's
+    # longitude and timezone).
+    def test_partial_coordinate_group_is_rejected(self, runner, app):
+        r = runner.invoke(app, [
+            "natal", "--name", "T", "--date", "2000-01-01", "--time", "12:00",
+            "--lat", "40.7", "-f", "json",
+        ])
+        assert r.exit_code == 4
+        assert "all-or-nothing" in r.output
+
+    # #4: a fully specified relocated return (--lat/--lng/--tz + --online) was
+    # rejected with "needs --city": the geocode requirement was checked before
+    # the complete-coordinates branch.
+    def test_return_online_with_full_coordinates(self, runner, app, ada_profile):
+        r = runner.invoke(app, [
+            "return", "-s", "ada", "--year", "2030",
+            "--lat", "40.7", "--lng", "-74", "--tz", "America/New_York", "--online",
+        ])
+        assert r.exit_code == 0, r.output
+
+    # #5: a profile named foo.json was stored as foo.json.json and listed as
+    # "foo.json" — a name -s can never load, because any .json spec resolves
+    # as a file path first.
+    def test_subject_save_rejects_json_suffix(self, runner, app):
+        r = runner.invoke(app, [
+            "subject", "save", "foo.json", "--name", "F",
+            "--date", "2000-01-01", "--time", "12:00",
+            "--lat", "0", "--lng", "0", "--tz", "UTC",
+        ])
+        assert r.exit_code == 4
+        assert "cannot end in '.json'" in r.output
+
+    # #6: enum-shaped flag typos must be invalid input (exit 4) like every
+    # other bad flag, not kerykeion-level errors (exit 5) that pipeline
+    # branching cannot distinguish from library bugs.
+    def test_sidereal_mode_is_canonicalised(self):
+        from kerykeion.cli.subject_resolver import resolve_sidereal_mode
+
+        assert resolve_sidereal_mode("lahiri") == "LAHIRI"
+        assert resolve_sidereal_mode("USER") == "USER"
+        with pytest.raises(ValueError) as ei:
+            resolve_sidereal_mode("lahari")
+        assert "LAHIRI" in str(ei.value)  # the difflib hint points at the fix
+
+    def test_perspective_is_canonicalised(self):
+        from kerykeion.cli.subject_resolver import resolve_perspective
+
+        assert resolve_perspective("apparent geocentric") == "Apparent Geocentric"
+        assert resolve_perspective("Topocentric") == "Topocentric"
+        assert resolve_perspective("true-geocentric") == "True Geocentric"
+        with pytest.raises(ValueError) as ei:
+            resolve_perspective("apparent")
+        assert "Apparent Geocentric" in str(ei.value)
+
+    def test_sidereal_mode_typo_is_exit_four(self, runner, app):
+        r = runner.invoke(app, [
+            "natal", "--name", "T", "--date", "2000-01-01", "--time", "12:00",
+            "--lat", "0", "--lng", "0", "--tz", "UTC",
+            "--zodiac", "Sidereal", "--sidereal-mode", "lahari", "-f", "text",
+        ])
+        assert r.exit_code == 4
+        assert "sidereal mode" in r.output
+
+    def test_axis_orb_limit_zero_is_exit_four(self, runner, app, ada_profile):
+        r = runner.invoke(app, ["aspects", "-s", "ada", "--axis-orb-limit", "0"])
+        assert r.exit_code == 4
+        assert "positive" in r.output
+
+    # #7: the CLI skill's bash-block gate must run from the aggregate gates —
+    # a broken example would otherwise ship verified-by-nothing while
+    # `poe check` and `poe quality` stay green.
+    def test_skill_cli_bash_gate_is_wired_into_the_aggregates(self):
+        import re
+        from pathlib import Path
+
+        repo = Path(__file__).resolve().parents[2]
+        pyproject = (repo / "pyproject.toml").read_text(encoding="utf-8")
+        sequence = re.search(r"^sequence = \[(.*?)\]", pyproject, re.MULTILINE | re.DOTALL)
+        assert sequence and '"skill:cli:smoke"' in sequence.group(1), (
+            "skill:cli:smoke must stay in the `poe check` sequence"
+        )
+        quality = (repo / "scripts" / "quality_check.py").read_text(encoding="utf-8")
+        assert "test_skill_cli_snippets.py" in quality, (
+            "`poe quality` must run the CLI skill's bash gate too"
+        )
+
+    # #8: a consumer closing the pipe (`… | head`) is a benign truncation:
+    # exit 0, not "invalid input" (4) with a broken-pipe message.
+    def test_broken_pipe_is_a_benign_truncation(self, monkeypatch):
+        from kerykeion.cli import errors
+
+        assert errors.classify(BrokenPipeError()) == errors.ExitCode.OK
+        # Neutralise the stdout-to-devnull redirect: the real one would point
+        # this pytest process's fd 1 at devnull for every later test.
+        monkeypatch.setattr(errors.os, "dup2", lambda *a: None)
+        with pytest.raises(SystemExit) as ei:
+            errors.handle_uncaught(BrokenPipeError())
+        assert ei.value.code == 0
