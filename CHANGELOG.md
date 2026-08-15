@@ -64,6 +64,21 @@
   line named two sources; Noto Sans became the third when the lettered marks were
   traced, and was recorded in `NOTICE` but not in the output.
 
+- **An over-subscribed modern wheel now spends its air before its ink.** Each
+  adjacent pair of clusters asks for the arc its own ink needs plus
+  `DEFAULT_CLUSTER_CLEARANCE` of daylight, and on a very full wheel those asks
+  can sum past what a circle has. The only answer was to scale every separation
+  down together, which compresses the ink reservations — so clusters overlap
+  *and* land further from their true degrees. The clearance is the cheaper thing
+  to give up: it is air, and the ink is the reading. Past the budget the
+  affordable clearance is now solved by bisection, down to none if that is what
+  it takes, and only what remains falls back to the old uniform compression. On a
+  54-cluster stress fixture the worst ink overrun halves.
+
+  Dormant on everything that ships today: the default fourteen points ask for
+  about a quarter of the budget, no committed baseline changed, and the reduction
+  is logged at INFO when it happens rather than being applied silently.
+
 ### Added
 
 - **`--kerykeion-chart-color-white-moon`**, in all six themes. White Moon shared

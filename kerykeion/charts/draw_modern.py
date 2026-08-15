@@ -992,6 +992,11 @@ def _cluster_row_profile(
 #: Deterministic and precise far beyond the 1e-6 the placement needs.
 _WRAP_SEARCH_ITERATIONS = 200
 
+#: Bisection steps for the clearance an over-subscribed wheel can still afford.
+#: 40 halvings take the interval below a millionth of a wheel unit — far past
+#: anything a renderer can draw, and cheap: each step is one pass over the pairs.
+_CLEARANCE_SEARCH_ITERATIONS = 40
+
 #: Bound on orientation-refinement rounds: a pair's separation depends on
 #: where it sits on the wheel, which depends on the separations. Requirements
 #: only ratchet upward and are capped, so the refinement converges; wide
@@ -1113,7 +1118,9 @@ def _resolve_planet_collisions(
     if not planets_with_angles:
         return planets_with_angles
 
-    def required_separation(first: dict, second: dict, pair_mid_angle: float) -> float:
+    def required_separation(
+        first: dict, second: dict, pair_mid_angle: float, air: Optional[float] = None
+    ) -> float:
         """This pair's separation: content-derived when both carry profiles."""
         first_profile = first.get("row_half_widths")
         second_profile = second.get("row_half_widths")
@@ -1124,7 +1131,7 @@ def _resolve_planet_collisions(
             second_profile,
             pair_mid_angle,
             row_radii=row_radii,
-            clearance=clearance,
+            clearance=clearance if air is None else air,
             ceiling=min_separation,
         )
 
@@ -1263,23 +1270,71 @@ def _resolve_planet_collisions(
     # re-evaluation at its own orientations demanded nothing new, so no
     # unvalidated layout can escape the loop.
     mid_angles = pair_mid_angles(unwrapped_positions)
+
+    # ── The air yields before the positions do ──────────────────────────
+    # Every pair asks for its ink plus `clearance` of daylight, and on a full
+    # wheel the sum of those asks can exceed what a circle has. `place` handles
+    # that by scaling every separation down together, which compresses the ink
+    # reservations — so clusters overlap AND land far from their true degrees:
+    # at 52 points the worst was 35 degrees out before any of this.
+    #
+    # But the two things being compressed are not worth the same. The ink
+    # reservation is what keeps a reading legible; the clearance on top of it is
+    # air, and air is the cheaper thing to spend. So when the wheel is
+    # over-subscribed, give up the clearance first — as much of it as it takes,
+    # down to none — and only then let `place` fall back to compressing what is
+    # left. Uncrowded wheels never reach this: the default fourteen points ask
+    # for about a quarter of the budget, and nothing here moves them.
+    #
+    # Solved once, on the true orientations, so the refinement below still has a
+    # fixed clearance to ratchet against and still provably converges.
+    effective_clearance = clearance
+
+    def total_demand(air: float) -> float:
+        pairs = zip(zip(ordered, ordered[1:]), mid_angles)
+        return sum(
+            required_separation(planet, follower, mid, air) for (planet, follower), mid in pairs
+        ) + required_separation(ordered[-1], ordered[0], mid_angles[-1], air)
+
+    if row_radii is not None and total_demand(clearance) > FEASIBLE_TOTAL_DEGREES:
+        # Demand rises monotonically with the air asked for, so the largest
+        # clearance that still fits is a bisection away. Zero is always feasible
+        # to *ask* for; whether the ink itself fits is `place`'s problem.
+        too_much, enough = clearance, 0.0
+        for _ in range(_CLEARANCE_SEARCH_ITERATIONS):
+            trial = (enough + too_much) / 2.0
+            if total_demand(trial) > FEASIBLE_TOTAL_DEGREES:
+                too_much = trial
+            else:
+                enough = trial
+        effective_clearance = enough
+        logger.info(
+            "Modern decluttering: %d points ask for more arc than the wheel has; "
+            "the air between clusters was reduced from %.2f to %.2f wheel units so "
+            "the points could stay nearer their true degrees.",
+            n,
+            clearance,
+            effective_clearance,
+        )
+
     pair_requirements = [
-        required_separation(planet, follower, mid)
+        required_separation(planet, follower, mid, effective_clearance)
         for (planet, follower), mid in zip(zip(ordered, ordered[1:]), mid_angles)
     ]
-    wrap_requirement = required_separation(ordered[-1], ordered[0], mid_angles[-1])
+    wrap_requirement = required_separation(ordered[-1], ordered[0], mid_angles[-1], effective_clearance)
     requirements_settled = False
     for _ in range(_ORIENTATION_REFINEMENT_ROUNDS):
         display_positions = place(pair_requirements, wrap_requirement)
         mid_angles = pair_mid_angles(display_positions)
         refined = [
-            max(current, required_separation(planet, follower, mid))
+            max(current, required_separation(planet, follower, mid, effective_clearance))
             for current, (planet, follower), mid in zip(
                 pair_requirements, zip(ordered, ordered[1:]), mid_angles
             )
         ]
         refined_wrap = max(
-            wrap_requirement, required_separation(ordered[-1], ordered[0], mid_angles[-1])
+            wrap_requirement,
+            required_separation(ordered[-1], ordered[0], mid_angles[-1], effective_clearance),
         )
         requirements_settled = refined_wrap <= wrap_requirement + 1e-3 and all(
             new <= old + 1e-3 for new, old in zip(refined, pair_requirements)

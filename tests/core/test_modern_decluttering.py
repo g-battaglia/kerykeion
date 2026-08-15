@@ -859,3 +859,151 @@ def test_dual_rings_respect_their_own_content_derived_separations():
             f"Ring {horoscope_id} has no pair at its content-derived requirement — "
             "the fixture is not dense enough to prove anything."
         )
+
+
+# =============================================================================
+# THE AIR YIELDS BEFORE THE POSITIONS DO
+# =============================================================================
+#
+# Every adjacent pair asks for its ink plus DEFAULT_CLUSTER_CLEARANCE of
+# daylight. On a full wheel those asks can sum past what a circle has, and the
+# placement's last resort is to scale every separation down together — which
+# eats into the ink reservations, so clusters overlap *and* land far from their
+# true degrees. The clearance is the cheaper thing to spend: it is air, and the
+# ink is the reading. So an over-subscribed wheel now gives up the air first,
+# as far as none, before anything compresses the ink.
+
+
+def _packed_ring(count: int, spread: float = 0.4) -> list[dict]:
+    """`count` clusters packed into a narrow arc, with varied content.
+
+    Varied on purpose: identical clusters would make every pair's requirement
+    identical, and the ladder is about a *sum* of differing requirements.
+    """
+    entries = []
+    for index in range(count):
+        point = _stand_in_point(
+            sign=("Aqu", "Vir", "Cap", "Leo")[index % 4],
+            position=15.0 + (index % 40) * 0.7,
+            retrograde=index % 3 == 0,
+        )
+        entries.append(
+            {
+                "angle": 150.0 + index * spread,
+                "point": f"P{index}",
+                "row_half_widths": draw_modern._cluster_row_profile(point),
+            }
+        )
+    return entries
+
+
+def _total_demand(entries: list[dict], air: float) -> float:
+    """What the wheel is asked for at *air* units of clearance, in degrees."""
+    ordered = sorted(entries, key=lambda entry: entry["angle"])
+    pairs = list(zip(ordered, ordered[1:] + [ordered[0]]))
+    return sum(
+        draw_modern._pair_required_separation(
+            first["row_half_widths"],
+            second["row_half_widths"],
+            (first["angle"] + second["angle"]) / 2.0,
+            row_radii=_NATAL_ROW_RADII,
+            clearance=air,
+            ceiling=PLANET_MIN_SEPARATION,
+        )
+        for first, second in pairs
+    )
+
+
+def test_an_uncrowded_wheel_never_spends_its_air():
+    """The common case must be untouched: fourteen points ask for a quarter of
+    the wheel, and every pair keeps its full clearance."""
+    entries = _packed_ring(10, spread=30.0)
+    assert _total_demand(entries, draw_modern.DEFAULT_CLUSTER_CLEARANCE) < 320.0, (
+        "fixture is already over-subscribed — it cannot prove the dormant case"
+    )
+
+    resolved = _resolve_planet_collisions(entries, row_radii=_NATAL_ROW_RADII)
+    ordered = sorted(resolved, key=lambda entry: entry["display_angle"])
+    for first, second in zip(ordered, ordered[1:]):
+        gap = second["display_angle"] - first["display_angle"]
+        with_full_air = draw_modern._pair_required_separation(
+            first["row_half_widths"],
+            second["row_half_widths"],
+            (first["display_angle"] + second["display_angle"]) / 2.0,
+            row_radii=_NATAL_ROW_RADII,
+            clearance=draw_modern.DEFAULT_CLUSTER_CLEARANCE,
+            ceiling=PLANET_MIN_SEPARATION,
+        )
+        assert gap >= with_full_air - 1e-6
+
+
+#: How far a pair may still fall short of its bare ink on an over-subscribed
+#: wheel, in degrees. Not zero, and the reason is worth stating: the affordable
+#: clearance is solved once on the *true* orientations, while the refinement
+#: below re-evaluates every pair at the orientations it was actually placed at
+#: and ratchets the requirements upward from there. A wheel that fit when the
+#: air was priced can therefore be marginally over again by the time it is
+#: placed, and `place` compresses the remainder. Measured at 0.19° on the
+#: fixture here against a ~6.9° requirement — under 3%, and roughly half of what
+#: the same fixture gave up before the air was spent first.
+_INK_COMPRESSION_RESIDUE = 0.25
+
+
+def test_an_oversubscribed_wheel_gives_up_air_before_ink():
+    """Past the budget, the clearance goes first and the ink very nearly stays.
+
+    The fixture is checked into the band it needs to be in — over budget with
+    the air, under it without — so a drift in the ink tables that moved it out
+    would fail here rather than quietly make the test prove nothing.
+    """
+    entries = _packed_ring(52)
+    with_air = _total_demand(entries, draw_modern.DEFAULT_CLUSTER_CLEARANCE)
+    without_air = _total_demand(entries, 0.0)
+    assert with_air > draw_modern.FEASIBLE_TOTAL_DEGREES, (
+        f"fixture only asks for {with_air:.1f}° — it never reaches the ladder"
+    )
+    assert without_air <= draw_modern.FEASIBLE_TOTAL_DEGREES, (
+        f"fixture asks {without_air:.1f}° even with no air — beyond what the "
+        "ladder can rescue, so it cannot prove the ink survives"
+    )
+
+    resolved = _resolve_planet_collisions(entries, row_radii=_NATAL_ROW_RADII)
+    ordered = sorted(resolved, key=lambda entry: entry["display_angle"])
+    worst_shortfall = 0.0
+    for first, second in zip(ordered, ordered[1:]):
+        gap = second["display_angle"] - first["display_angle"]
+        bare_ink = draw_modern._pair_required_separation(
+            first["row_half_widths"],
+            second["row_half_widths"],
+            (first["display_angle"] + second["display_angle"]) / 2.0,
+            row_radii=_NATAL_ROW_RADII,
+            clearance=0.0,
+            ceiling=PLANET_MIN_SEPARATION,
+        )
+        worst_shortfall = max(worst_shortfall, bare_ink - gap)
+
+    assert worst_shortfall <= _INK_COMPRESSION_RESIDUE, (
+        f"the tightest pair falls {worst_shortfall:.3f}° short of its bare ink. "
+        "Spending the air is meant to keep this to the refinement residue; a "
+        "larger figure means the ink is being compressed again."
+    )
+
+
+def test_spending_the_air_is_reported(caplog):
+    """A layout that quietly drops its own guarantee is indistinguishable from
+    one that never needed to, so it says when it does — and stays silent when
+    it does not."""
+    import logging
+
+    with caplog.at_level(logging.INFO, logger=draw_modern.logger.name):
+        _resolve_planet_collisions(_packed_ring(54), row_radii=_NATAL_ROW_RADII)
+    assert any("air between clusters was reduced" in record.message for record in caplog.records), (
+        f"the reduction was not reported; captured: {[r.message for r in caplog.records]}"
+    )
+
+    caplog.clear()
+    with caplog.at_level(logging.INFO, logger=draw_modern.logger.name):
+        _resolve_planet_collisions(_packed_ring(10, spread=30.0), row_radii=_NATAL_ROW_RADII)
+    assert not [r for r in caplog.records if "air between clusters" in r.message], (
+        "an uncrowded wheel reported spending air it never spent"
+    )
