@@ -247,12 +247,28 @@ _SCRIPT_EXPECTATIONS = {
     "env_report.py": ("=== Kerykeion environment report ===", "Backend:", "year 2024: OK"),
 }
 
+_BUNDLED_SCRIPTS = sorted((SKILL_DIR / "scripts").glob("*.py"), key=lambda p: p.name)
 
-@pytest.mark.parametrize(
-    "script",
-    sorted((SKILL_DIR / "scripts").glob("*.py"), key=lambda p: p.name),
-    ids=lambda p: p.name,
-)
+
+def test_bundled_script_expectations_are_in_step():
+    """The parametrized run below cannot fail if the glob is empty.
+
+    ``test_bundled_scripts_run`` takes its parameters from a glob evaluated at
+    collection time: delete the scripts or rename the folder and pytest reports
+    no failure — it reports no *test*, and the "the bundled scripts actually
+    run" guarantee evaporates in silence. Pinning the expectation keys to the
+    files on disk makes both directions loud: a script added without
+    expectations, and expectations left behind by a deleted script.
+    """
+    on_disk = {path.name for path in _BUNDLED_SCRIPTS}
+    assert on_disk, "the skill ships no scripts; test_bundled_scripts_run would vanish"
+    assert on_disk == set(_SCRIPT_EXPECTATIONS), (
+        f"_SCRIPT_EXPECTATIONS {sorted(_SCRIPT_EXPECTATIONS)} does not match the "
+        f"scripts on disk {sorted(on_disk)}"
+    )
+
+
+@pytest.mark.parametrize("script", _BUNDLED_SCRIPTS, ids=lambda p: p.name)
 def test_bundled_scripts_run(script: Path, tmp_path: Path):
     env = dict(os.environ, PYTHONPATH=str(REPO_ROOT))
     result = subprocess.run(

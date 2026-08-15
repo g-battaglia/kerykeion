@@ -100,7 +100,12 @@ def main() -> int:
     # on its own (it ships into third-party repos without the published docs),
     # and must do so in a reference file — api-index.md is dropped so its
     # generated one-line rows cannot stand in for real documentation.
-    skill_files = [f for f in iter_documentation_files((SKILL_TARGET,)) if f != SKILL_INDEX]
+    # Only the reference files, so the claim above is the claim enforced: a name
+    # mentioned once in the router table or the install README would otherwise
+    # satisfy a gate that says "in a reference file".
+    skill_files = [
+        f for f in iter_documentation_files((SKILL_TARGET / "references",)) if f != SKILL_INDEX
+    ]
     skill_content = load_documentation_content(skill_files)
     missing_in_skill = undocumented_names(public_names, skill_content)
     skill_documented = len(public_names) - len(missing_in_skill)

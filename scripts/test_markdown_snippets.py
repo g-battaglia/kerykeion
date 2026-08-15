@@ -32,26 +32,44 @@ def find_markdown_files(
 ) -> list[Path]:
     """Collect markdown files from the provided targets.
 
-    Relative targets resolve against the repository root, not the caller's
-    working directory, and a target that does not exist raises instead of
-    being skipped: a silently empty corpus reports "all snippets passed"
-    while verifying nothing.
+    A target that cannot contribute files raises instead of being skipped: a
+    silently empty corpus reports "all snippets passed" while verifying nothing.
+    That covers three cases, not just the obvious one — a missing path, an
+    existing file with a suffix this runner does not read (``README.mdx``), and
+    an existing directory holding no markdown at all (a renamed docs folder).
+
+    A relative target is tried against the caller's working directory first and
+    then against the repository root. Rebasing unconditionally would silently
+    scan the wrong corpus where both exist — this repository has ``docs/`` *and*
+    ``site/docs/``, so ``test_markdown_snippets.py docs`` run from ``site/``
+    would have verified the other one without a word.
     """
     markdown_files: set[Path] = set()
 
     for target in targets:
-        path = target if target.is_absolute() else (PROJECT_ROOT / target)
-        path = path.resolve()
+        if target.is_absolute():
+            path = target.resolve()
+        else:
+            local = (Path.cwd() / target).resolve()
+            path = local if local.exists() else (PROJECT_ROOT / target).resolve()
         if not path.exists():
             raise FileNotFoundError(f"Snippet target not found: {path}")
         # Explicit files: accept markdown and markdown-formatted .txt
         # (kerykeion/llms.txt is the AI-agent guide with ```python blocks).
-        if path.is_file() and path.suffix.lower() in (".md", ".txt"):
+        if path.is_file():
+            if path.suffix.lower() not in (".md", ".txt"):
+                raise ValueError(
+                    f"Snippet target {path} is not a markdown (.md/.txt) file; it "
+                    f"would contribute no snippets and pass silently."
+                )
             markdown_files.add(path)
             continue
 
         if not path.is_dir():
             continue
+
+        if not any(path.rglob("*.md")):
+            raise FileNotFoundError(f"Snippet target {path} holds no markdown files")
 
         for md_file in path.rglob("*.md"):
             if md_file.name.lower().startswith("v4."):
@@ -223,13 +241,16 @@ def main():
         # Default: README, llms.txt, and site/docs (or user-specified paths if provided)
         if args.paths:
             targets = args.paths
+            # Report what was actually scanned: printing the default corpus for
+            # an explicit path list misnames the run in its own log.
+            mode_description = ", ".join(str(p) for p in args.paths)
         else:
             targets = [Path("README.md"), Path("kerykeion/llms.txt"), Path("site/docs"), Path("site/examples"), Path("skills/kerykeion")]
+            mode_description = (
+                "README.md, kerykeion/llms.txt, site/docs, site/examples, and "
+                "skills/kerykeion (default; skill blocks always run isolated)"
+            )
         exclude_release_notes = True
-        mode_description = (
-            "README.md, kerykeion/llms.txt, site/docs, site/examples, and "
-            "skills/kerykeion (default; skill blocks always run isolated)"
-        )
 
     print(f"� Testing Python snippets in {mode_description}")
 
@@ -320,8 +341,13 @@ def main():
     if failed_snippets > 0:
         print(f"❌ {failed_snippets} snippets failed")
         sys.exit(1)
-    else:
-        print("🎉 All snippets passed!")
+    if total_snippets == 0:
+        # The corpus resolved to files, but none of them held a runnable block.
+        # Reporting success here is the same lie as an empty corpus: a renamed
+        # fence language or a docs reshuffle would verify nothing, loudly green.
+        print("❌ No snippets were found to run; refusing to report success.")
+        sys.exit(1)
+    print("🎉 All snippets passed!")
 
 
 if __name__ == "__main__":

@@ -119,6 +119,17 @@ def main() -> int:
     if failed:
         print("🚨 The CLI skill documents commands that do not run.")
         return 1
+    if ran == 0:
+        # A gate whose whole purpose is falsifiability must not be able to pass
+        # vacuously: a renamed directory, a changed fence language, or every
+        # block marked skip would otherwise report success having verified
+        # nothing at all.
+        print(
+            "🚨 No runnable bash block was found. Either the skill lost its "
+            "examples, the fences are no longer bash/console/sh, or every block "
+            f"is marked '{SKIP_MARKER}'. Refusing to report success."
+        )
+        return 1
     print("🎉 Every runnable block in the CLI skill works.")
     return 0
 
