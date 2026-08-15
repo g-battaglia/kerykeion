@@ -16,6 +16,7 @@ import re
 import sys
 import subprocess
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import textwrap
 from typing import Optional, Tuple
@@ -168,39 +169,47 @@ from kerykeion import (
 
 def main():
     parser = argparse.ArgumentParser(description="Execute Python snippets embedded in markdown files.")
-    parser.add_argument(
+    # Corpus selectors are mutually exclusive: the branches below are checked in
+    # a fixed order, so a silently-shadowed flag would run a different corpus
+    # than the caller asked for (--skill --readme used to run README.md without
+    # even setting the isolation --skill implies).
+    corpus = parser.add_mutually_exclusive_group()
+    corpus.add_argument(
         "-a", "--all", dest="all_files", action="store_true", help="Run snippets for every markdown file."
     )
-    parser.add_argument(
+    corpus.add_argument(
         "-an",
         "--all-no-release",
         dest="all_no_release",
         action="store_true",
         help="Run snippets for all markdown files excluding release notes.",
     )
-    parser.add_argument(
+    corpus.add_argument(
         "-r", "--readme", dest="readme_only", action="store_true", help="Run snippets only for README.md."
     )
-    parser.add_argument(
+    corpus.add_argument(
         "-d", "--docs", dest="docs_only", action="store_true", help="Run snippets only for site-docs folder."
     )
-    parser.add_argument(
+    corpus.add_argument(
         "-e",
         "--examples",
         dest="examples_only",
         action="store_true",
         help="Run snippets only for site-examples folder.",
     )
-    parser.add_argument(
+    corpus.add_argument(
         "-ai", "--ai-guide", dest="ai_guide_only", action="store_true", help="Run snippets only for the AI-agent guide (kerykeion/llms.txt)."
     )
-    parser.add_argument(
+    corpus.add_argument(
         "--skill", dest="skill_only", action="store_true",
         help="Run snippets only for the agent skill (skills/kerykeion); implies --isolated.",
     )
     parser.add_argument(
         "--isolated", dest="isolated", action="store_true",
-        help="Run each snippet in its own process with no shared page context and no import prelude.",
+        help=(
+            "Run each snippet in its own process with no shared page context. "
+            "Skill-corpus snippets additionally run without the import prelude."
+        ),
     )
     parser.add_argument("--timeout", type=float, default=20.0, help="Per-snippet timeout in seconds (default: 20).")
     parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")
@@ -274,8 +283,8 @@ def main():
             print(f"\n📝 {md_file} ({len(snippets)} snippets)")
 
             # Skill blocks are copy-pasted one at a time into foreign
-            # codebases, so they are always verified standalone — no shared
-            # page context, no injected imports — whatever mode is running.
+            # codebases, so they always run isolated (bare, decided below)
+            # whatever mode is running.
             isolated = args.isolated or md_file.is_relative_to(SKILL_DIR)
 
             # Snippets on one page often build on each other. A single clean
@@ -286,8 +295,25 @@ def main():
             dedented_snippets = [textwrap.dedent(snippet) for snippet in snippets]
 
             if isolated:
-                for i, dedented in enumerate(dedented_snippets, 1):
-                    success, error = test_snippet(dedented, timeout=args.timeout, bare=True)
+                # Isolation means "own process, no shared page context". Only
+                # the skill corpus additionally runs bare: its blocks must
+                # stand alone when pasted into a foreign codebase, while the
+                # docs corpus is authored against the injected prelude —
+                # stripping it there reports a healthy corpus as broken.
+                bare = md_file.is_relative_to(SKILL_DIR)
+                # Each isolated snippet already runs in its own subprocess with
+                # its own tempfile and timeout, so the runs share no state;
+                # dispatching them through a pool just stops dozens of
+                # sequential interpreter startups from being one long
+                # single-core wait.
+                with ThreadPoolExecutor(max_workers=8) as pool:
+                    outcomes = list(
+                        pool.map(
+                            lambda code: test_snippet(code, timeout=args.timeout, bare=bare),
+                            dedented_snippets,
+                        )
+                    )
+                for i, (success, error) in enumerate(outcomes, 1):
                     total_snippets += 1
                     if success:
                         print(f"  ✅ Snippet {i}: {error if error else 'OK'}")

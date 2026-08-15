@@ -523,11 +523,16 @@ logger.debug("Ephemeris data path: %r", EPHE_DATA_PATH)
 
 _PINNED_LEB_MODE: Optional[str] = None
 
+# Public and unconditional (outside the libephemeris branch) so the agent-skill
+# scripts can import it: until 6.0.0a85 the tuple lived in three hand-synced
+# copies — here, env_report.py, quickstart.py — and a mode renamed here would
+# have made both diagnostics call a working environment invalid.
+VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
+
 if BACKEND_NAME == "libephemeris":
-    _VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
     _PINNED_LEB_MODE = os.environ.get("KERYKEION_LEB_MODE", "leb").strip().lower()
-    if _PINNED_LEB_MODE not in _VALID_LEB_MODES:
-        raise ValueError(f"Invalid KERYKEION_LEB_MODE={_PINNED_LEB_MODE!r}. Must be one of {_VALID_LEB_MODES}.")
+    if _PINNED_LEB_MODE not in VALID_LEB_MODES:
+        raise ValueError(f"Invalid KERYKEION_LEB_MODE={_PINNED_LEB_MODE!r}. Must be one of {VALID_LEB_MODES}.")
     _backend_module.set_calc_mode(_PINNED_LEB_MODE)
     if _PINNED_LEB_MODE == "leb":
         if not hasattr(_backend_module, "set_network_policy"):

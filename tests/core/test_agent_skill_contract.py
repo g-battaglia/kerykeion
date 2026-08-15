@@ -186,6 +186,32 @@ def test_references_are_reachable_in_both_directions():
     )
 
 
+# Any prerelease-suffixed version token (6.0.0a84, 6.1.0b2, 7.0.0rc1, ...) is a
+# kerykeion pin and must be the current version. Matching every family — not
+# just the 6.0.0 alphas this project happens to be on — keeps the sweep alive
+# once the version leaves this line; bare history tags ("a75") and final
+# versions quoted in prose ("removal in 7.0.0") deliberately do not match.
+_PRERELEASE_PIN = re.compile(r"\b\d+\.\d+\.\d+(?:a|b|rc)\d+\b")
+
+
+def _stale_pins(text: str, version: str) -> list[str]:
+    """Version tokens in *text* that look like kerykeion pins but are not *version*."""
+    return [pin for pin in _PRERELEASE_PIN.findall(text) if pin != version]
+
+
+def test_stale_pin_sweep_survives_version_family_changes():
+    """The sweep must catch stale pins in any version family, not just 6.0.0aN.
+
+    The pattern was once hardcoded to ``6\\.0\\.0a\\d+``: the day the version
+    moved on to 6.1.0a2, the regex would have matched nothing and a stale
+    "verified in 6.1.0a1" would have shipped green.
+    """
+    assert _stale_pins("verified in 6.1.0a1", "6.1.0a2") == ["6.1.0a1"]
+    assert _stale_pins("verified against 6.0.0a85", "6.0.0a85") == []
+    # Future-release prose and bare history tags are not pins.
+    assert _stale_pins("removal in 7.0.0; deprecated since a75", "6.0.0a85") == []
+
+
 @pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=SKILL_IDS)
 def test_version_pins_match_pyproject(skill_dir: Path):
     pyproject = (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
@@ -200,13 +226,11 @@ def test_version_pins_match_pyproject(skill_dir: Path):
         f"skill for API drift, and nothing else forces that review."
     )
 
-    # Any fully-qualified alpha version mentioned anywhere in the skill must be
-    # the current one. Bare history tags like "a75" deliberately do not match.
+    # Any prerelease version token mentioned anywhere in the skill must be the
+    # current one, whatever family it belongs to (see _stale_pins).
     for path in _corpus(skill_dir):
-        for pinned in re.findall(r"\b6\.0\.0a\d+\b", path.read_text(encoding="utf-8", errors="ignore")):
-            assert pinned == version, (
-                f"{path} pins {pinned} but pyproject says {version}"
-            )
+        stale = _stale_pins(path.read_text(encoding="utf-8", errors="ignore"), version)
+        assert not stale, f"{path} pins {stale} but pyproject says {version}"
 
 
 def test_subpackage_imports_are_indexed():

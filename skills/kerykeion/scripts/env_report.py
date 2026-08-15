@@ -29,7 +29,6 @@ os.environ["KERYKEION_LEB_MODE"] = "leb"
 
 # backend.py reads KERYKEION_LEB_MODE as `.strip().lower()` and only validates
 # it when the resolved backend is libephemeris; swisseph ignores the variable.
-_VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
 
 
 def report_environment() -> None:
@@ -63,13 +62,13 @@ def report_leb_mode_substitution() -> None:
     if BACKEND_NAME != "libephemeris":
         return
     mode = saved_leb_mode()
-    if mode not in _VALID_LEB_MODES:
+    if mode not in VALID_LEB_MODES:
         raw = REPORTED_ENV["KERYKEION_LEB_MODE"]
         print(
-            f"\nWARNING: KERYKEION_LEB_MODE={raw!r} is INVALID (valid: leb, auto, "
-            "skyfield, horizons).\n         A normal `import kerykeion` raises ValueError "
-            "under this setting; the probes\n         below only succeed because this "
-            "diagnostic forces sealed 'leb' mode."
+            f"\nWARNING: KERYKEION_LEB_MODE={raw!r} is INVALID (valid: "
+            f"{', '.join(VALID_LEB_MODES)}).\n         A normal `import kerykeion` "
+            "raises ValueError under this setting; the probes\n         below only "
+            "succeed because this diagnostic forces sealed 'leb' mode."
         )
     elif mode != "leb":
         print(
@@ -92,6 +91,15 @@ except Exception as exc:
     print("kerykeion could not be imported under this configuration; fix the")
     print("environment above (KERYKEION_BACKEND is the usual culprit) and re-run.")
     sys.exit(0)
+
+try:
+    # The backend owns the valid-mode list (single source of truth since
+    # 6.0.0a85). The literal is only a fallback for version-skewed installs —
+    # this skill newer than the installed package — and cannot drift, because
+    # every kerykeion that defines the constant imports it right here.
+    from kerykeion.ephemeris_backend.backend import VALID_LEB_MODES
+except ImportError:
+    VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
 
 
 def probe(year: int) -> tuple[bool, str]:

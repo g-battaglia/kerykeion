@@ -27,7 +27,6 @@ from pathlib import Path
 # script report a clean run on an environment where their own `import
 # kerykeion` raises ValueError.
 _SAVED_LEB_MODE = os.environ.get("KERYKEION_LEB_MODE")
-_VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
 os.environ["KERYKEION_LEB_MODE"] = "leb"
 
 from kerykeion import (
@@ -38,6 +37,15 @@ from kerykeion import (
     ReportGenerator,
     to_context,
 )
+
+try:
+    # The backend owns the valid-mode list (single source of truth since
+    # 6.0.0a85). The literal is only a fallback for version-skewed installs —
+    # this skill newer than the installed package — and cannot drift, because
+    # every kerykeion that defines the constant imports it right here.
+    from kerykeion.ephemeris_backend.backend import VALID_LEB_MODES
+except ImportError:
+    VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
 
 
 def section(title: str) -> None:
@@ -56,10 +64,10 @@ def warn_if_leb_mode_overridden() -> None:
     mode = _SAVED_LEB_MODE.strip().lower()
     if mode == "leb":
         return
-    if mode not in _VALID_LEB_MODES:
+    if mode not in VALID_LEB_MODES:
         print(
             f"WARNING: your KERYKEION_LEB_MODE={_SAVED_LEB_MODE!r} is INVALID (valid: "
-            "leb, auto,\n         skyfield, horizons). A plain `import kerykeion` raises "
+            f"{', '.join(VALID_LEB_MODES)}).\n         A plain `import kerykeion` raises "
             "ValueError under it;\n         this run only works because the script forces "
             "sealed 'leb' mode."
         )
