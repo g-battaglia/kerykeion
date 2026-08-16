@@ -572,6 +572,29 @@ def merge_inputs(
         )
         merged["online"] = not coords_complete
 
+    # A city and explicit coordinates are two answers to the same question.
+    # Whoever the factory honoured, the other would be silently dropped — a
+    # chart cast at one place while the user typed two. Refuse the mix for every
+    # command that goes through this merge (natal, now, transit's transiting
+    # subject, `subject save`); `return` enforces the same rule locally because
+    # its location goes straight to the factory.
+    if merged.get("city") is not None and any(
+        merged.get(key) is not None for key in ("lat", "lng", "tz_str")
+    ):
+        raise ValueError(
+            "pass either --city or --lat/--lng/--tz, not both: mixing them "
+            "silently picks one place and drops the other."
+        )
+    # Offline geocoding cannot run. Rejecting here makes the mistake invalid
+    # input (exit 4) for every command, instead of the factory's kerykeion-level
+    # error (exit 5) that pipeline branching cannot tell apart from a bug — and
+    # `subject save` fails at the keyboard rather than at the first read.
+    if merged.get("city") is not None and merged.get("online") is False:
+        raise ValueError(
+            "--city cannot be resolved with --offline; drop it (geocoding "
+            "needs the network) or pass --lat/--lng/--tz for an offline subject."
+        )
+
     # Mode is derived from what is *actually* present, so a profile saved in one
     # mode cannot pin it: an inline --iso-utc forces iso_utc mode, inline
     # --date/--time force birth mode, and only when neither is given does the

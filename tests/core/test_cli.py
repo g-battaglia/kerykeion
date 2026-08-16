@@ -1969,3 +1969,107 @@ class TestFourthReviewPass:
         with pytest.raises(SystemExit) as ei:
             errors.handle_uncaught(BrokenPipeError())
         assert ei.value.code == 0
+
+
+class TestFifthReviewPass:
+    """Regressions from the fifth code-review sweep (lens: cross-command
+    consistency of the fourth pass's relocation fixes).
+
+    The sweep found `return --city` silently ignored (recast at the natal
+    birthplace) whenever --online was not explicit — the same label-over-place
+    bug the fourth pass had just fixed in `transit` — plus two contract gaps:
+    `--city --offline` exited 5 on `natal`/`now`/`save` but 4 on `transit`, and
+    `--city` mixed with `--lat/--lng/--tz` silently picked one place on every
+    command.
+    """
+
+    # #1: `return --city Paris` (no --online) used to ignore the city and cast
+    # the return at the natal birthplace — exit 0, London houses, Paris label.
+    def test_return_city_geocodes_without_explicit_online(self, deterministic_cli_env):
+        TestFourthReviewPass._save_profile(
+            "geosrc", lat=51.5074, lng=-0.1278, tz_str="Europe/London",
+        )
+        out = deterministic_cli_env / "return_geo.json"
+        res = TestFourthReviewPass._run_cli(
+            ["return", "-s", "geosrc", "--year", "2030",
+             "--city", "Paris", "--nation", "FR", "-f", "json", "-o", str(out)],
+            deterministic_cli_env,
+        )
+        assert res.returncode == 0, res.stderr
+
+        geo: list[tuple[float, str]] = []
+
+        def _walk(node):
+            if isinstance(node, dict):
+                if "lat" in node and "tz_str" in node:
+                    geo.append((node["lat"], node["tz_str"]))
+                for value in node.values():
+                    _walk(value)
+            elif isinstance(node, list):
+                for value in node:
+                    _walk(value)
+
+        _walk(json.loads(out.read_text(encoding="utf-8")))
+        paris = [lat for lat, tz in geo if tz == "Europe/Paris"]
+        assert paris and any(abs(lat - 48.85) < 0.1 for lat in paris), geo
+
+    # …and the city must be honoured or refused, never dropped: --offline
+    # cannot geocode, so exit 4 with the fix instead of a silent birthplace.
+    def test_return_city_with_offline_is_exit_four(self, runner, app, ada_profile):
+        r = runner.invoke(app, ["return", "-s", "ada", "--year", "2030", "--city", "Paris", "--offline"])
+        assert r.exit_code == 4
+        assert "cannot be resolved with --offline" in r.output
+
+    # #2: a city and explicit coordinates are two answers to one question —
+    # `return` used to drop the coordinates' rival silently (and `transit` the
+    # city's). One command, one place: refuse the mix everywhere.
+    def test_return_city_and_coordinates_is_exit_four(self, runner, app, ada_profile):
+        r = runner.invoke(app, [
+            "return", "-s", "ada", "--year", "2030", "--city", "Paris",
+            "--lat", "40.7", "--lng", "-74", "--tz", "America/New_York",
+        ])
+        assert r.exit_code == 4
+        assert "not both" in r.output
+
+    def test_transit_city_and_coordinates_is_exit_four(self, runner, app, ada_profile):
+        r = runner.invoke(app, [
+            "transit", "-s", "ada", "--city", "Paris",
+            "--lat", "40.7", "--lng", "-74", "--tz", "America/New_York", "--online",
+        ])
+        assert r.exit_code == 4
+        assert "not both" in r.output
+
+    def test_natal_city_and_coordinates_is_exit_four(self, runner, app):
+        r = runner.invoke(app, [
+            "natal", "--name", "T", "--date", "2000-01-01", "--time", "12:00",
+            "--city", "Paris", "--lat", "0", "--lng", "0", "--tz", "UTC", "--online",
+        ])
+        assert r.exit_code == 4
+        assert "not both" in r.output
+
+    # #3: `--city --offline` used to exit 5 (a kerykeion-level error from the
+    # factory) on natal/now/save while transit exited 4 — the same mistake with
+    # two different codes breaks the documented contract for pipeline branching.
+    def test_natal_city_with_offline_is_exit_four(self, runner, app):
+        r = runner.invoke(app, [
+            "natal", "--name", "T", "--date", "2000-01-01", "--time", "12:00",
+            "--city", "Paris", "--nation", "FR", "--offline", "-f", "json",
+        ])
+        assert r.exit_code == 4
+        assert "cannot be resolved with --offline" in r.output
+
+    def test_now_city_with_offline_is_exit_four(self, runner, app):
+        r = runner.invoke(app, ["now", "--city", "Paris", "--nation", "FR", "--offline"])
+        assert r.exit_code == 4
+        assert "cannot be resolved with --offline" in r.output
+
+    def test_subject_save_city_with_offline_is_exit_four(self, runner, app):
+        # Fails at the keyboard, not at the first `-s` read: an offline recipe
+        # with a city can never materialise.
+        r = runner.invoke(app, [
+            "subject", "save", "x", "--name", "X",
+            "--date", "2000-01-01", "--time", "12:00",
+            "--city", "Paris", "--offline",
+        ])
+        assert r.exit_code == 4
+        assert "cannot be resolved with --offline" in r.output

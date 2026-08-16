@@ -134,9 +134,12 @@ reason to read before composing a command.
 - **House-system letters are case-sensitive.** `i` (Sunshine/alt.) and `I`
   (Sunshine) are different systems. `--houses placidus` (a name) is safer than a
   letter; `kerykeion info houses` lists both.
-- **A relocated `transit`/`return` needs `--lat`, `--lng` and `--tz` together.**
-  Two out of three is exit 4, on purpose: the natal timezone at new coordinates
-  is a multi-hour error in the houses and Ascendant.
+- **A relocated `transit`/`return` takes either `--lat`/`--lng`/`--tz` together
+  or `--city` (geocoded; needs the network or the local default-geo database).**
+  Two coordinates out of three is exit 4, on purpose: the natal timezone at new
+  coordinates is a multi-hour error in the houses and Ascendant. Passing both
+  `--city` and coordinates is also exit 4 — one command, one place, never a
+  silent pick between the two.
 - **`--online` and `--offline` are mutually exclusive** (exit 4). Prefer
   `--offline` in scripts; the default goes online only when lat/lng/tz are not
   all known.

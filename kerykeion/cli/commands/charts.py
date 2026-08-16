@@ -451,8 +451,9 @@ def return_chart(
     """Planetary return (Solar/Lunar) as a dual wheel: natal + return chart.
 
     The return is cast for the natal birthplace by default (offline, no network).
-    Override the location for a relocated return with ``--lat/--lng/--tz`` (or
-    ``--city --nation --online``).
+    Override the location for a relocated return with ``--lat/--lng/--tz`` or
+    with ``--city --nation`` (geocoded; never mix the two — exit 4, one command
+    one place).
     """
     if not profile:
         raise ValueError("return needs -s <profile> for the natal subject")
@@ -485,7 +486,25 @@ def return_chart(
     r_lng = lng if lng is not None else getattr(natal, "lng", None)
     r_tz = tz if tz is not None else getattr(natal, "tz_str", None)
     coords = r_lat is not None and r_lng is not None and r_tz is not None
-    if city is not None and online is True:
+    if city is not None and any(v is not None for v in (lat, lng, tz)):
+        # A city and explicit coordinates are two answers to the same question:
+        # whichever the factory honoured, the other would be silently dropped.
+        raise ValueError(
+            "pass either --city or --lat/--lng/--tz, not both: mixing them "
+            "silently picks one place and drops the other."
+        )
+    if city is not None:
+        # The city decides the return place, geocoded like `transit` — no
+        # explicit --online needed (the geocode runs offline through the default
+        # local database when no GeoNames username is configured). It used to be
+        # honoured only under --online and silently ignored otherwise, recasting
+        # the return at the natal birthplace with the city as a label.
+        if offline is True or online is False:
+            raise ValueError(
+                "--city cannot be resolved with --offline; drop it (geocoding "
+                "needs the network) or pass --lat/--lng/--tz for an offline "
+                "relocated return."
+            )
         factory = PlanetaryReturnFactory(natal, city=city, nation=nation, online=True)
     elif coords:
         # Complete coordinates (inline or inherited from the natal) decide the
@@ -496,7 +515,7 @@ def return_chart(
     else:
         raise ValueError(
             "return needs the return-chart location: pass --lat/--lng/--tz "
-            "(or -s a profile with coordinates), or --city with --online."
+            "(or -s a profile with coordinates), or --city (geocoded)."
         )
     return_subject = factory.next_return_from_date(
         year, month, day, return_type=rtype  # type: ignore[arg-type]  # validated above
