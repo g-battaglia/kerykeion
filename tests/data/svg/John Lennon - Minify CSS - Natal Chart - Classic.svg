@@ -980,15 +980,11 @@
    </g>
   </symbol>
   <symbol id="Uranus">
-   <line x1="6.5" x2="6.5" y1="3" y2="13.5" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <line x1="17.5" x2="17.5" y1="3" y2="13.5" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <line x1="4.6" x2="8.4" y1="3" y2="3" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <line x1="15.6" x2="19.4" y1="3" y2="3" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <line x1="4.6" x2="8.4" y1="13.5" y2="13.5" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <line x1="15.6" x2="19.4" y1="13.5" y2="13.5" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <line x1="6.5" x2="17.5" y1="8.25" y2="8.25" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <line x1="12" x2="12" y1="8.25" y2="17.9" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <circle cx="12" cy="20" r="2.1" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m3.4 2.667a7.428 7.428 0 0 1 0 14.233" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m20.6 2.667a7.428 7.428 0 0 0 0 14.233" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="8.7" x2="15.3" y1="9.784" y2="9.784" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="12" x2="12" y1="2.667" y2="16.533" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <circle cx="12" cy="18.933" r="2.4" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
   </symbol>
   <symbol id="Neptune">
    <g transform="translate(1.92 2.746) scale(.01094 -.01094) translate(-50 -1492)">
@@ -996,7 +992,7 @@
    </g>
   </symbol>
   <symbol id="Pluto">
-   <circle cx="12" cy="6.8" r="3.8" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <circle cx="12" cy="7.3" r="3.8" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
    <path d="m5.6 8a6.4 6.4 0 0 0 12.8 0" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
    <line x1="12" x2="12" y1="14.4" y2="21.5" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
    <line x1="8.4" x2="15.6" y1="18" y2="18" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
@@ -1010,9 +1006,9 @@
   <!-- Lunar apsides -->
   <!-- Centaurs -->
   <symbol id="Chiron">
-   <circle cx="12" cy="16.433" r="4.9" fill="none" stroke="#666f06" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <path d="m9.6 2.667v9.494" fill="none" stroke="#666f06" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
-   <path d="m16 3.1-6.4 3.9 6.8 4.3" fill="none" stroke="#666f06" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <circle cx="10.5" cy="17.533" r="3.8" fill="none" stroke="#666f06" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m10.5 2.667v11.066" fill="none" stroke="#666f06" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m16.9 3.1-6.4 3.9 6.8 4.3" fill="none" stroke="#666f06" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
   </symbol>
   <!-- Asteroids -->
   <!-- Trans-Neptunian objects -->

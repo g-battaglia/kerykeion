@@ -220,11 +220,17 @@ def _cusp_cluster_span(scale: float) -> float:
         estimate_text_width("59'", CUSP_FONT_SIZE * scale), R_CUSP_OUTER - 2.75, gutter_px=0.4
     )
 
+# Native drawing box of a planet-family symbol, from ``scripts.glyph_catalog``.
+# The glyph is centred on it at the use site; anchoring it on the 28-unit box
+# the set used before the symbols were redrawn left every mark riding two units
+# high and left of its own row, which the eye reads as uneven cluster spacing.
+PLANET_GLYPH_BOX = 24
+
 # Planet cluster element sizes — descending visual hierarchy:
 #   planet glyph (largest) > degrees text > zodiac sign > minutes text > RX text
-# Note: planet glyphs are ~28px native, zodiac signs are ~32px native,
+# Note: planet glyphs are 24 units native, zodiac signs 32,
 # so zodiac sign scale must be proportionally smaller to appear smaller.
-PLANET_SCALE_BASE = 0.135  # Planet glyph: 28 * 0.135 ≈ 3.78 visual units
+PLANET_SCALE_BASE = 0.135  # Planet glyph: 24 * 0.135 ≈ 3.24 visual units
 DEGREES_FONT_SIZE = 2  # Degrees text font size
 SIGN_SCALE_BASE = 0.078  # Zodiac sign: 32 * 0.078 ≈ 2.50 visual units
 MINUTES_FONT_SIZE = 1.85  # Minutes text font size
@@ -1743,7 +1749,7 @@ def _draw_single_planet_in_ring(
     # Planet glyph (outermost, largest — near outer edge of planet ring)
     planet_scale = planet_scale_base * GLYPH_SCALE_MAP.get(planet_id, 1.0)
     out += (
-        f'  <g transform="translate({CENTER} {glyph_y}) rotate({counter_rotation:.6f}) scale({planet_scale}) translate(-14 -14)">\n'
+        f'  <g transform="translate({CENTER} {glyph_y}) rotate({counter_rotation:.6f}) scale({planet_scale}) translate(-{PLANET_GLYPH_BOX / 2:g} -{PLANET_GLYPH_BOX / 2:g})">\n'
         f'    <use xlink:href="#{planet_id}" kr:slug="{escape_svg_text(point_slug)}" kr:node="Glyph" fill="{fill_color}" />\n'
         f"  </g>\n"
     )

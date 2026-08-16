@@ -62,10 +62,23 @@ PANEL_ROWS = len(
 #: source file, and the transit against 1970-01-01. Regenerating them means
 #: deciding what they are supposed to represent, which is a change to the
 #: fixtures rather than a refresh of them.
+#: Six more joined them when the glyph set was redrawn: the same reason, found
+#: the same way — ``poe regenerate:svg`` runs to completion and leaves these
+#: files untouched, because no script in ``scripts/`` casts a progression, and
+#: the Ptolemaic pair's second subject and transit moment appear in no source
+#: file either. They are listed rather than hand-patched: their modern variants
+#: place clusters from the ink tables, so pasting a new glyph block into them
+#: would leave the drawing disagreeing with the geometry that produced it.
 CANNOT_REGENERATE_HERE = {
     "Ancient Greece 500BC - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
     "Ancient Greece 500BC - Synastry Chart - Classic.svg": "no generator in the repo; second subject not recorded",
     "Ancient Greece 500BC - Transit Chart - Classic.svg": "no generator in the repo; transit moment not recorded",
+    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg": "no generator in the repo; the pairing is not recorded",
+    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg": "no generator in the repo; transit moment not recorded",
+    "John Lennon - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
+    "John Lennon - Progression Chart - Modern.svg": "no generator in the repo; progressed target not recorded",
+    "John Lennon - Progression Chart - Table Grid.svg": "no generator in the repo; progressed target not recorded",
+    "John Lennon - Dark Theme - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
 }
 
 _ROW = re.compile(r"Bottom_Left_Text_(\d+)")

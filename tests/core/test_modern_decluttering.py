@@ -937,6 +937,12 @@ def test_an_uncrowded_wheel_never_spends_its_air():
         assert gap >= with_full_air - 1e-6
 
 
+#: The ring counts below moved from 52/54 to 64/66 when the planet glyph was
+#: re-anchored on its real 24-unit box: every symbol reserves two native units
+#: less on each side than it did under the old 28-unit convention, so the same
+#: fixture stopped reaching the ladder at all. The band is 62 to 70 points; the
+#: counts sit inside it rather than on its edge.
+#:
 #: How far a pair may still fall short of its bare ink on an over-subscribed
 #: wheel, in degrees. Not zero, and the reason is worth stating: the affordable
 #: clearance is solved once on the *true* orientations, while the refinement
@@ -956,7 +962,7 @@ def test_an_oversubscribed_wheel_gives_up_air_before_ink():
     the air, under it without — so a drift in the ink tables that moved it out
     would fail here rather than quietly make the test prove nothing.
     """
-    entries = _packed_ring(52)
+    entries = _packed_ring(64)
     with_air = _total_demand(entries, draw_modern.DEFAULT_CLUSTER_CLEARANCE)
     without_air = _total_demand(entries, 0.0)
     assert with_air > draw_modern.FEASIBLE_TOTAL_DEGREES, (
@@ -996,7 +1002,7 @@ def test_spending_the_air_is_reported(caplog):
     import logging
 
     with caplog.at_level(logging.INFO, logger=draw_modern.logger.name):
-        _resolve_planet_collisions(_packed_ring(54), row_radii=_NATAL_ROW_RADII)
+        _resolve_planet_collisions(_packed_ring(66), row_radii=_NATAL_ROW_RADII)
     assert any("air between clusters was reduced" in record.message for record in caplog.records), (
         f"the reduction was not reported; captured: {[r.message for r in caplog.records]}"
     )

@@ -263,6 +263,26 @@ _R24 = round((INK_FRACTION * BOX["body"] - W_BODY) / 2, 3)
 # Half weight, for a line that joins marks rather than being one. See Midpoint.
 W_CONNECTOR = round(W_BODY / 2, 3)
 
+# Uranus, crescent-armed form. The arms are arcs that open outward: their tips
+# flare away from the stem at top and bottom, the belly curves in toward it, and
+# the cross-bar joins the two bellies — which is why the bar is short. Proportions
+# taken off the reference mark and rescaled to the shared ink height: arms from
+# the ink's top down to just past the globe's shoulder, bellies 3.3 either side of
+# the stem, globe hung under it with its bottom on the ink line.
+_U_TOP = round((BOX["body"] - INK_FRACTION * BOX["body"]) / 2 + W_BODY / 2, 3)  # 2.667
+_U_BOT = 16.9
+_U_TIP_X = 3.4
+_U_BELLY_X = 8.7
+_U_BAR_Y = round((_U_TOP + _U_BOT) / 2, 3)  # the arcs' widest point, by definition
+# radius through three points of a circular arc, from chord and sagitta
+_U_ARC_R = round(
+    ((_U_BELLY_X - _U_TIP_X) ** 2 + ((_U_BOT - _U_TOP) / 2) ** 2)
+    / (2 * (_U_BELLY_X - _U_TIP_X)),
+    3,
+)
+_U_GLOBE_R = 2.4
+_U_GLOBE_CY = round((BOX["body"] + INK_FRACTION * BOX["body"]) / 2 - W_BODY / 2 - _U_GLOBE_R, 3)
+
 
 def sk(v, w=W_BODY):
     return f'fill="none" stroke="{V(v)}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round"'
@@ -472,16 +492,24 @@ def _centaur_frame(box: int = 24) -> tuple[float, float, float]:
 
 
 def _chiron(colour: str) -> str:
-    """Ring under a stem, with a K to its right — the key."""
-    import math
+    """Ring under a stem, with a K to its right — the key.
 
+    The ring is smaller than the shared centaur frame and hangs centred under
+    the stem, which lands flush on it. Drawn at frame size and met off to one
+    side, the ball read as an oversized weight stuck to the K's foot; hung on
+    its own axis it reads as what it is, the eye of the key. The ring keeps the
+    frame's baseline, so Chiron and Pholus still sit on the same line, and the
+    stem shifts left so ring and arms centre the mark on the box.
+    """
     r, cy, top = _centaur_frame()
-    sx = 12 - 2.4  # the stem hangs left of the ring's centre, as the mark is drawn
-    foot = cy - math.sqrt(r * r - (12 - sx) ** 2)
+    ring_r = 3.8
+    ring_cy = (cy + r) - ring_r  # same ink bottom as the frame
+    arm = 6.8  # how far the K reaches right of the stem
+    sx = 12 + (ring_r - arm) / 2  # ink left (sx - ring_r) and right (sx + arm) about 12
     return (
-        f'<circle cx="12" cy="{cy:.3f}" r="{r}" {sk(colour)}/>'
-        f'<path d="M{sx:g},{top:.3f} L{sx:g},{foot:.3f}" {sk(colour)}/>'
-        f'<path d="M16,3.1 L{sx:g},7 L16.4,11.3" {sk(colour)}/>'
+        f'<circle cx="{sx:.3f}" cy="{ring_cy:.3f}" r="{ring_r}" {sk(colour)}/>'
+        f'<path d="M{sx:.3f},{top:.3f} L{sx:.3f},{ring_cy - ring_r:.3f}" {sk(colour)}/>'
+        f'<path d="M{sx + arm - 0.4:.3f},3.1 L{sx:.3f},7 L{sx + arm:.3f},11.3" {sk(colour)}/>'
     )
 
 
@@ -608,17 +636,21 @@ CLEAN = {
     "Interpolated_Perigee": _priapus("interpolated-lilith"),
     # r solved from the shared optical size: 2r + stroke = INK_FRACTION * box
     "Earth": f'<circle cx="12" cy="12" r="{_R24}" {sk("earth")}/><line x1="12" y1="{12 - _R24:g}" x2="12" y2="{12 + _R24:g}" {sk("earth")}/><line x1="{12 - _R24:g}" y1="12" x2="{12 + _R24:g}" y2="12" {sk("earth")}/>',
-    # Herschel "H": two serifed bars + cross-bar + central stem to a hollow globe
-    "Uranus": (f'<line x1="6.5" y1="3" x2="6.5" y2="13.5" {sk("uranus")}/><line x1="17.5" y1="3" x2="17.5" y2="13.5" {sk("uranus")}/>'
-               f'<line x1="4.6" y1="3" x2="8.4" y2="3" {sk("uranus")}/><line x1="15.6" y1="3" x2="19.4" y2="3" {sk("uranus")}/>'
-               f'<line x1="4.6" y1="13.5" x2="8.4" y2="13.5" {sk("uranus")}/><line x1="15.6" y1="13.5" x2="19.4" y2="13.5" {sk("uranus")}/>'
-               f'<line x1="6.5" y1="8.25" x2="17.5" y2="8.25" {sk("uranus")}/>'
-               # the stem stops ON the globe (20 - 2.1), not 0.1 short of it, so
-               # its round cap lands flush with the ring instead of inside it
-               f'<line x1="12" y1="8.25" x2="12" y2="17.9" {sk("uranus")}/>'
-               f'<circle cx="12" cy="20" r="2.1" {sk("uranus")}/>'),
-    # astrological bowl: circle cradled in an upward crescent, over a cross
-    "Pluto": (f'<circle cx="12" cy="6.8" r="3.8" {sk("pluto")}/>'
+    # Crescent-armed Uranus: two arcs flanking a central stem, over a hollow
+    # globe. The arcs open OUTWARD — tips flaring away at top and bottom, belly
+    # curving in toward the stem — and the bar spans belly to belly, so it is
+    # short and actually joins the arms instead of floating between them.
+    "Uranus": (f'<path d="M{_U_TIP_X:g},{_U_TOP:g} A{_U_ARC_R},{_U_ARC_R} 0 0 1 {_U_TIP_X:g},{_U_BOT:g}" {sk("uranus")}/>'
+               f'<path d="M{24 - _U_TIP_X:g},{_U_TOP:g} A{_U_ARC_R},{_U_ARC_R} 0 0 0 {24 - _U_TIP_X:g},{_U_BOT:g}" {sk("uranus")}/>'
+               f'<line x1="{_U_BELLY_X:g}" y1="{_U_BAR_Y}" x2="{24 - _U_BELLY_X:g}" y2="{_U_BAR_Y}" {sk("uranus")}/>'
+               # the stem stops ON the globe, not short of it, so its round cap
+               # lands flush with the ring instead of inside it
+               f'<line x1="12" y1="{_U_TOP:g}" x2="12" y2="{_U_GLOBE_CY - _U_GLOBE_R:.3f}" {sk("uranus")}/>'
+               f'<circle cx="12" cy="{_U_GLOBE_CY:.3f}" r="{_U_GLOBE_R:g}" {sk("uranus")}/>'),
+    # astrological bowl: circle cradled in an upward crescent, over a cross.
+    # The orb sits at 7.3, nested a touch into the bowl rather than floating
+    # clear above it.
+    "Pluto": (f'<circle cx="12" cy="7.3" r="3.8" {sk("pluto")}/>'
               f'<path d="M5.6,8 A6.4,6.4 0 0 0 18.4,8" {sk("pluto")}/>'
               f'<line x1="12" y1="14.4" x2="12" y2="21.5" {sk("pluto")}/><line x1="8.4" y1="18" x2="15.6" y2="18" {sk("pluto")}/>'),
     "Ixion": (f'<circle cx="12" cy="12" r="9" {sk("ixion")}/><line x1="6" y1="6" x2="18" y2="18" {sk("ixion")}/>'
