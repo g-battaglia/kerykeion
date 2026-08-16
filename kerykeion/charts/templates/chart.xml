@@ -3,6 +3,8 @@
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:kr="https://www.kerykeion.net/"
+    role="img"
+    aria-labelledby="kerykeion-chart-title kerykeion-chart-desc"
     width="100%"
     height="100%"
     viewBox="$viewbox"
@@ -10,7 +12,8 @@
     font-family="$chart_font_family"
     style="background-color: $background_color"
 >
-    <title>$stringTitle</title>
+    <title id="kerykeion-chart-title">$stringTitle</title>
+    <desc id="kerykeion-chart-desc">$stringDescription</desc>
 
     <!-- Colors -->
     <style kr:node="Theme_Colors_Tag">

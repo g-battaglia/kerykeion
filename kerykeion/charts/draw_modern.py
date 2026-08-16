@@ -375,6 +375,12 @@ COLOR_PLANET_RING = "var(--kerykeion-modern-planet-ring, #e8e8ed)"
 COLOR_OUTER_PLANET_RING = "var(--kerykeion-modern-planet-ring-outer, #d8d9e4)"
 COLOR_HOUSE_RING = "var(--kerykeion-modern-house-ring, #d5d5dd)"
 COLOR_STROKE = "var(--kerykeion-modern-stroke, #b0b0bf)"
+# A house or sector boundary is read, not merely seen: it says where one house
+# ends and the next begins, so WCAG 1.4.11 asks 3:1 of it. The ring outlines
+# that share COLOR_STROKE are decoration and stay as pale as the palette likes.
+# The fallback chain keeps a hand-written theme that only knows the old variable
+# working exactly as before.
+COLOR_CUSP = "var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))"
 COLOR_TEXT = "var(--kerykeion-chart-color-paper-0, #333333)"
 COLOR_RETROGRADE = "var(--kerykeion-modern-retrograde, #c43a5e)"
 COLOR_STATIONARY = "var(--kerykeion-modern-stationary, #c07c1e)"
@@ -1466,7 +1472,7 @@ def _draw_gauquelin_division_lines(
         out += (
             f'<line x1="{CENTER}" y1="{line_outer_y}" '
             f'x2="{CENTER}" y2="{line_inner_y}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
             f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
         )
     return out
@@ -1826,7 +1832,7 @@ def _draw_house_division_lines(
         out += (
             f'<line x1="{CENTER}" y1="{line_outer_y}" '
             f'x2="{CENTER}" y2="{line_inner_y}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
             f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 
@@ -1879,7 +1885,7 @@ def _draw_gauquelin_cusp_ring(
         out += (
             f'<line x1="{CENTER}" y1="{CENTER - ring_outer}" '
             f'x2="{CENTER}" y2="{CENTER - ring_inner}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
             f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 
@@ -1926,7 +1932,7 @@ def _draw_gauquelin_house_ring(
         out += (
             f'<line x1="{CENTER}" y1="{CENTER - R_HOUSE_OUTER}" '
             f'x2="{CENTER}" y2="{CENTER - R_HOUSE_INNER}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
             f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 
@@ -2120,7 +2126,7 @@ def _draw_house_ring(
         out += (
             f'<line x1="{CENTER}" y1="{house_line_y1}" '
             f'x2="{CENTER}" y2="{house_line_y2}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
             f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 

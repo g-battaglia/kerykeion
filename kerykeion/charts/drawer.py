@@ -137,6 +137,9 @@ def _load_cached_file(path: str) -> str:
 # substitution; all other fields are either numeric or trusted SVG fragments.
 _PLAIN_TEXT_TEMPLATE_FIELDS = (
     "stringTitle",
+    # Built from the title plus the subject's city and nation, so it carries the
+    # same user-controlled text and needs the same escaping.
+    "stringDescription",
     "top_left_0",
     "top_left_1",
     "top_left_2",
@@ -5090,6 +5093,50 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Fallback for unknown chart types
         return self._truncate_name(self.first_obj.name)
 
+    def _get_chart_description(self, title: str) -> str:
+        """One sentence for a reader who cannot see the wheel.
+
+        The title alone ("John Lennon - Natal") says whose chart it is and
+        nothing about what was drawn. A screen reader announcing a chart should
+        also be told the kind of drawing, the moment and place it was cast for,
+        the house system, and how much is on it — the same facts a sighted
+        reader takes from the corners of the sheet in a glance.
+
+        Everything here already exists on the subject; nothing is computed.
+        """
+        parts = [title]
+
+        moment = getattr(self.first_obj, "iso_formatted_local_datetime", None)
+        if moment:
+            parts.append(format_iso_display(moment, "%Y-%m-%d %H:%M"))
+
+        where = ", ".join(
+            str(x) for x in (getattr(self.first_obj, "city", None),
+                             getattr(self.first_obj, "nation", None)) if x
+        )
+        if where:
+            parts.append(where)
+
+        system_id = getattr(self.first_obj, "effective_houses_system_identifier", None)
+        if system_id:
+            parts.append(self._translate(
+                f"houses_system_{system_id}",
+                getattr(self.first_obj, "effective_houses_system_name", system_id),
+            ))
+
+        points = len(getattr(self, "available_planets_setting", []) or [])
+        aspects = len(getattr(self, "aspects_list", []) or [])
+        counted = self._translate(
+            "chart_contents",
+            "{points} points, {aspects} aspects",
+        )
+        try:
+            parts.append(counted.format(points=points, aspects=aspects))
+        except (KeyError, IndexError):  # a language pack with a broken pattern
+            parts.append(f"{points} points, {aspects} aspects")
+
+        return ". ".join(p for p in parts if p) + "."
+
     def _create_template_dictionary(self, *, custom_title: Union[str, None] = None) -> ChartTemplateModel:
         """
         Assemble chart data and rendering instructions into a template dictionary.
@@ -5231,8 +5278,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         template_dict["fixed_string"] = f"{self._translate('fixed', 'Fixed')} {fixed_percentage}%"
         template_dict["mutable_string"] = f"{self._translate('mutable', 'Mutable')} {mutable_percentage}%"
 
-        # Chart title
+        # Chart title, and the sentence a screen reader gets with it
         template_dict["stringTitle"] = self._get_chart_title(custom_title_override=custom_title)
+        template_dict["stringDescription"] = self._get_chart_description(template_dict["stringTitle"])
 
         # Set viewbox dynamically for all chart types
         template_dict["viewbox"] = self._dynamic_viewbox()

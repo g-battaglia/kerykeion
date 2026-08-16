@@ -80,6 +80,9 @@ class ChartTemplateModel(SubscriptableBaseModel):
     stringTitle: str
     """Chart title string"""
 
+    stringDescription: str = ""
+    """Sentence read by a screen reader in place of the wheel (SVG <desc>)"""
+
     top_left_0: str
     """Top left panel content - line 0"""
 

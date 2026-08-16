@@ -689,7 +689,7 @@ class TestDiurnalityOnOtherRenderers:
         others = {"Solar", "Lunar", "Heliocentric", "Node"} - {expected}
 
         single = _render(ChartDataFactory.create_single_wheel_return_chart_data(relabelled))
-        assert re.search(rf"<title>[^<]*{expected} Return", single), re.search(r"<title>[^<]*", single).group(0)
+        assert re.search(rf"<title[^>]*>[^<]*{expected} Return", single), re.search(r"<title[^>]*>[^<]*", single).group(0)
 
         dual = _render(
             ChartDataFactory.create_return_chart_data(natal, relabelled),
