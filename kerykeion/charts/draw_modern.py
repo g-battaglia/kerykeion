@@ -89,6 +89,20 @@ ANGULAR_HOUSES = {1, 4, 7, 10}
 ANGULAR_STROKE_WIDTH = 0.6
 NORMAL_STROKE_WIDTH = 0.07
 
+# A cusp and a reading can occupy the same place: an angle's cluster sits on its
+# own cusp by construction, and any point within a couple of degrees of one
+# lands there too. Where that happens the line drops to this opacity for the
+# length of the reading — it passes behind the words rather than through them,
+# so the axis stays whole and the text keeps the contrast of the ring under it
+# (2.09:1 → 5.02:1 on the light theme, 2.48 → 5.81 on the dark).
+CUSP_DIM_OPACITY = 0.35
+# How close a mark must come before the line makes room: a hair past touching,
+# not a clearance. Measured ink, so a wider tolerance dims lines that are still
+# visibly clear of the text.
+CUSP_DIM_TOLERANCE = 0.10
+# Air left at each end of the dimmed stretch.
+CUSP_DIM_MARGIN = 0.45
+
 # Minimum degrees between planet clusters in the natal ring — with
 # content-aware separations, the per-pair ceiling.
 #
@@ -1465,11 +1479,14 @@ def _draw_gauquelin_division_lines(
     line_inner_y: float = HOUSE_LINE_INNER_Y,
     gauquelin_cusps: Optional[list[float]] = None,
     seventh_house_degree_ut: float = 0.0,
+    clusters: Sequence[dict] = (),
+    row_radii: Optional[dict[str, float]] = None,
 ) -> str:
     """Draw 36 Gauquelin sector division lines through the planet ring.
 
     Replaces house division lines when Gauquelin mode is active.
-    Angular sectors (1, 10, 19, 28) get thicker lines.
+    Angular sectors (1, 10, 19, 28) get thicker lines. Like the house cusps,
+    a sector line dims where a reading is written across it.
     """
     out = ""
     for i in range(36):
@@ -1480,13 +1497,8 @@ def _draw_gauquelin_division_lines(
             angle = (360.0 - i * 10.0) % 360.0
         is_angular = i % 9 == 0
         stroke_w = ANGULAR_STROKE_WIDTH if is_angular else NORMAL_STROKE_WIDTH
-
-        out += (
-            f'<line x1="{CENTER}" y1="{line_outer_y}" '
-            f'x2="{CENTER}" y2="{line_inner_y}" '
-            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
-            f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
-        )
+        out += _cusp_line_svg(angle, stroke_w, line_outer_y, line_inner_y,
+                              clusters, row_radii)
     return out
 
 
@@ -1550,12 +1562,6 @@ def _draw_planet_ring(
         f'stroke="{COLOR_STROKE}" stroke-width="0.25"/>\n'
     )
 
-    # Division lines through the planet ring
-    if gauquelin_sectors:
-        out += _draw_gauquelin_division_lines(line_outer_y, line_inner_y, gauquelin_cusps=gauquelin_cusps, seventh_house_degree_ut=seventh_house_degree_ut)
-    else:
-        out += _draw_house_division_lines(houses, seventh_house_degree_ut, line_outer_y, line_inner_y)
-
     # Row positions and element scales, resolved once: the renderer, the
     # content-aware profiles, and the row radii must all read the same values.
     planet_y_config = planet_y_config or {}
@@ -1608,6 +1614,21 @@ def _draw_planet_ring(
         min_separation=min_separation,
         row_radii=row_radii if content_aware_separation else None,
     )
+
+    # The cusps are drawn after the clusters are resolved, not before: a line
+    # has to know what is written across it before it can step out of the way.
+    # Nothing about the clusters changes — only the order the two are worked out
+    # in, and the cusps still come first in the markup, under the readings.
+    if gauquelin_sectors:
+        out += _draw_gauquelin_division_lines(
+            line_outer_y, line_inner_y, gauquelin_cusps=gauquelin_cusps,
+            seventh_house_degree_ut=seventh_house_degree_ut,
+            clusters=resolved, row_radii=row_radii)
+    else:
+        out += _draw_house_division_lines(
+            houses, seventh_house_degree_ut, line_outer_y, line_inner_y,
+            clusters=resolved, row_radii=row_radii)
+
 
     # Prepare indicator kwargs
     ind_kwargs = {}
@@ -1815,11 +1836,102 @@ def _draw_single_planet_in_ring(
 # =============================================================================
 
 
+def _reading_span_on_line(
+    line_angle: float,
+    y_top: float,
+    y_bottom: float,
+    clusters: Sequence[dict],
+    row_radii: dict[str, float],
+) -> Optional[tuple[float, float]]:
+    """The stretch of a cusp line that a cluster's reading lies across.
+
+    A cusp runs radially while the readings stay upright for the reader, so
+    which side of a mark faces the line changes with the angle: on the horizon
+    the line runs the LENGTH of "As 19º ♈ 45'" and only the text's height keeps
+    them apart, at the Midheaven it crosses the words and their width does. The
+    projection ``half_w·|sin θ| + half_h·|cos θ|`` carries both, and every angle
+    between; width alone makes a mark look narrow exactly where it is widest.
+
+    All or nothing per reading: one row touching commits the whole cluster, from
+    its first mark to its last. A stretch dimmed under some rows and solid under
+    the others reads as a defect rather than as a decision.
+
+    Returns ``None`` when no reading touches this segment — which is the common
+    case, and is why an ordinary cusp is drawn in one piece.
+    """
+    spans: list[tuple[float, float]] = []
+    for cluster in clusters:
+        profile = cluster.get("row_half_widths")
+        if not profile:
+            continue
+        angle = cluster["display_angle"]
+        gap = abs((line_angle - angle + 180.0) % 360.0 - 180.0)
+        if gap >= 90.0:  # the far side of the wheel: its sine is small for the
+            continue     # wrong reason, and 180° away is not "close"
+        here = []
+        for row, (half_w, half_h) in profile.items():
+            radius = row_radii.get(row)
+            if radius is None:
+                continue
+            top, bottom = CENTER - radius - half_h, CENTER - radius + half_h
+            if bottom > y_top and top < y_bottom:
+                here.append((top, bottom, half_w, half_h, radius))
+        if not here:
+            continue
+        theta = math.radians(angle)
+        if any(abs(radius * math.sin(math.radians(gap)))
+               <= half_w * abs(math.sin(theta)) + half_h * abs(math.cos(theta)) + CUSP_DIM_TOLERANCE
+               for _, _, half_w, half_h, radius in here):
+            spans.append((min(r[0] for r in here), max(r[1] for r in here)))
+    if not spans:
+        return None
+    return (max(y_top, min(a for a, _ in spans) - CUSP_DIM_MARGIN),
+            min(y_bottom, max(b for _, b in spans) + CUSP_DIM_MARGIN))
+
+
+def _cusp_line_svg(
+    cusp_angle: float,
+    stroke_w: float,
+    line_outer_y: float,
+    line_inner_y: float,
+    clusters: Sequence[dict] = (),
+    row_radii: Optional[dict[str, float]] = None,
+) -> str:
+    """One cusp line, dimmed over the stretch a reading is written across it.
+
+    The line is never broken and never recoloured: only its opacity drops, so
+    the axis stays continuous and passes behind the words instead of through
+    them. Without clusters to consult — the measurement harness, a ring drawn
+    before its points are resolved — it comes out whole, exactly as before.
+    """
+    y_top, y_bottom = sorted((line_outer_y, line_inner_y))
+    head = f'<line x1="{CENTER}" y1="{{y1}}" x2="{CENTER}" y2="{{y2}}" '
+    tail = (f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}"{{fade}} '
+            f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})"/>\n')
+
+    span = (_reading_span_on_line(cusp_angle, y_top, y_bottom, clusters, row_radii)
+            if clusters and row_radii else None)
+    if span is None:
+        return (head + tail).format(y1=line_outer_y, y2=line_inner_y, fade="")
+
+    lo, hi = span
+    pieces = []
+    if lo > y_top + 0.05:
+        pieces.append((y_top, lo, ""))
+    pieces.append((lo, hi, f' stroke-opacity="{CUSP_DIM_OPACITY}"'))
+    if hi < y_bottom - 0.05:
+        pieces.append((hi, y_bottom, ""))
+    return "".join((head + tail).format(y1=f"{a:.3f}", y2=f"{b:.3f}", fade=fade)
+                   for a, b, fade in pieces)
+
+
 def _draw_house_division_lines(
     houses: list[KerykeionPointModel],
     seventh_house_degree_ut: float,
     line_outer_y: float = HOUSE_LINE_OUTER_Y,
     line_inner_y: float = HOUSE_LINE_INNER_Y,
+    clusters: Sequence[dict] = (),
+    row_radii: Optional[dict[str, float]] = None,
 ) -> str:
     """
     Draw house division lines that cross the planet ring.
@@ -1831,6 +1943,9 @@ def _draw_house_division_lines(
         seventh_house_degree_ut: 7th house cusp absolute degree.
         line_outer_y: Y coordinate for the outer end of lines (default 6.5).
         line_inner_y: Y coordinate for the inner end of lines (default 28.0).
+        clusters: Resolved point clusters of this ring, so a line can step out
+            of the way of a reading written across it. Empty draws whole lines.
+        row_radii: Radius of each cluster row, matching *clusters*.
 
     Returns:
         SVG string with house division lines.
@@ -1840,13 +1955,8 @@ def _draw_house_division_lines(
         house_num = i + 1
         cusp_angle = _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut)
         stroke_w = ANGULAR_STROKE_WIDTH if house_num in ANGULAR_HOUSES else NORMAL_STROKE_WIDTH
-
-        out += (
-            f'<line x1="{CENTER}" y1="{line_outer_y}" '
-            f'x2="{CENTER}" y2="{line_inner_y}" '
-            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
-            f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})"/>\n'
-        )
+        out += _cusp_line_svg(cusp_angle, stroke_w, line_outer_y, line_inner_y,
+                              clusters, row_radii)
 
     return out
 
