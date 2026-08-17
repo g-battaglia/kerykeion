@@ -651,12 +651,28 @@ class TestTheCuspRingShrinksOnlyWhenItMustFit:
 
         chart_data = ChartDataFactory.create_natal_chart_data(subject)
         svg = ChartDrawer(chart_data).generate_svg_string(style="modern")
-        # The nominal sizes, spelled out: if the ring shrank at all, none of
-        # these three would be in the markup.
-        from kerykeion.charts.draw_modern import CUSP_FONT_SIZE, CUSP_GLYPH_SCALE
+        # The nominal sizes, spelled out: if the ring shrank at all, neither of
+        # these would be in the markup.
+        #
+        # The glyph scale is NOT CUSP_GLYPH_SCALE on its own — every sign carries
+        # its own factor on top (0.9 by default), so the string to look for is
+        # the product. Asserting the bare constant used to pass by accident: it
+        # matched the "scale(0.12" prefix of the planet glyphs' own 0.12825, and
+        # said nothing whatever about the cusp ring.
+        from kerykeion.charts.draw_modern import (
+            CUSP_FONT_SIZE,
+            CUSP_GLYPH_SCALE,
+            ZODIAC_OUTER_SCALE_MAP,
+        )
 
         assert f"font-size='{CUSP_FONT_SIZE}'" in svg
-        assert f"scale({CUSP_GLYPH_SCALE}" in svg or f"scale({CUSP_GLYPH_SCALE * 1.0}" in svg
+        cusp_ring = svg[svg.index("CuspRing"):]
+        cusp_ring = cusp_ring[:cusp_ring.index("kr:node='PlanetRing'")]
+        drawn = set(re.findall(r"scale\(([\d.]+)\)", cusp_ring))
+        assert drawn, "no sign glyph in the cusp ring at all"
+        nominal = {str(round(CUSP_GLYPH_SCALE * factor, 4))
+                   for factor in ZODIAC_OUTER_SCALE_MAP.values()}
+        assert drawn <= nominal, f"the ring shrank: {sorted(drawn - nominal)}"
 
     def test_a_crowded_chart_does_shrink(self):
         """Campanus at Liverpool packs four houses under eight degrees."""

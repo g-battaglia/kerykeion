@@ -244,7 +244,7 @@ PLANET_GLYPH_BOX = 24
 #   planet glyph (largest) > degrees text > zodiac sign > minutes text > RX text
 # Note: planet glyphs are 24 units native, zodiac signs 32,
 # so zodiac sign scale must be proportionally smaller to appear smaller.
-PLANET_SCALE_BASE = 0.135  # Planet glyph: 24 * 0.135 ≈ 3.24 visual units
+PLANET_SCALE_BASE = 0.162  # Planet glyph: 24 * 0.162 ≈ 3.89 visual units
 DEGREES_FONT_SIZE = 2  # Degrees text font size
 SIGN_SCALE_BASE = 0.078  # Zodiac sign: 32 * 0.078 ≈ 2.50 visual units
 MINUTES_FONT_SIZE = 1.85  # Minutes text font size
@@ -352,9 +352,28 @@ STRAIGHT_TETHER_THRESHOLD = 0.5
 # Natal cluster row positions (Y in the wheel-local frame; radius = CENTER - y).
 # The single source for the renderer, the content-aware profiles, and the row
 # radii — the dual rings have their own SYN_* equivalents below.
-NATAL_PLANET_GLYPH_Y = 11.0
-NATAL_DEGREES_Y = 14.5
-NATAL_SIGN_Y = 18.0
+# The glyph sits 0.9 further out than the rows below it. At +20% it would
+# otherwise crowd the degrees (0.88 units of air down to 0.56) while leaving
+# 2.88 unused toward the graduated ruler; moving it out spends that margin and
+# brings the reading back into balance — 1.26 above, 1.86 below. Radius rises
+# with it, so the clusters spread rather than tighten: the same glyph covers
+# fewer degrees of arc further out.
+#
+# Measured on the drawing, the glyph now leaves 1.93 toward the degrees and 1.68
+# toward the graduated ruler. Dead level would be 10.24 — this is deliberately
+# a shade past it, on Giacomo's eye: the ruler is a row of thin ticks and takes
+# a closer neighbour better than a line of digits does.
+NATAL_PLANET_GLYPH_Y = 10.1
+# Degrees and sign are nudged off their round numbers to even out the air the
+# reader actually sees. Measured on the rendered ink of nine clusters (the
+# rasterised difference between the wheel and the same wheel without that
+# cluster), the three gaps ran 1.86 / 1.35 / 1.95: the sign sat almost against
+# the degrees while the rows either side had half a unit more. The row centres
+# are evenly spaced, but the ink inside them is not — a sign glyph inks a thin
+# band high in its 32-unit box, a line of digits fills most of its own. Moving
+# the degrees 0.14 out and the sign 0.23 in brings all three to 1.72.
+NATAL_DEGREES_Y = 14.36
+NATAL_SIGN_Y = 18.23
 NATAL_MINUTES_Y = 22.0
 NATAL_RX_Y = 25.0
 
