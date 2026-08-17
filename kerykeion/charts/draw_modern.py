@@ -380,6 +380,18 @@ COLOR_STROKE = "var(--kerykeion-modern-stroke, #b0b0bf)"
 # that share COLOR_STROKE are decoration and stay as pale as the palette likes.
 # The fallback chain keeps a hand-written theme that only knows the old variable
 # working exactly as before.
+#
+# One known exception, taken deliberately. An angle's cluster sits on its own
+# cusp by construction, so the reading "As 19º ♈ 45'" is always laid across the
+# angular line — and a line at 3:1 from the ring is a mid tone, which caps any
+# ink resting on it at 5.5:1 in the light theme and 4.2:1 in the dark one. No
+# colour clears the 7:1 the rest of the text carries: the ink that wins on the
+# line loses on the ring, since the two grounds pull opposite ways. Measured
+# alternatives (repainting the angles, haloing the text, breaking the line
+# behind it) were rendered and rejected on Giacomo's reading: the axis is to
+# stay exactly as drawn, whole and plainly visible. So the crossing keeps the
+# contrast it has, and this note is the record of the trade rather than a gap
+# nobody noticed.
 COLOR_CUSP = "var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))"
 COLOR_TEXT = "var(--kerykeion-chart-color-paper-0, #333333)"
 COLOR_RETROGRADE = "var(--kerykeion-modern-retrograde, #c43a5e)"
