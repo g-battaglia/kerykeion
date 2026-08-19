@@ -3,6 +3,8 @@
     xmlns='http://www.w3.org/2000/svg'
     xmlns:xlink='http://www.w3.org/1999/xlink'
     xmlns:kr='https://www.kerykeion.net/'
+    role='img'
+    aria-labelledby='kerykeion-chart-title kerykeion-chart-desc'
     width='100%'
     height='100%'
     viewBox='0 -15 1560 580'
@@ -10,7 +12,8 @@
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>Synastry: John Lennon and Paul McCartney</title>
+    <title id='kerykeion-chart-title'>Synastry: John Lennon and Paul McCartney</title>
+    <desc id='kerykeion-chart-desc'>Synastry: John Lennon and Paul McCartney. 1940-10-09 18:30. Liverpool, GB. Placidus. 14 points, 60 aspects.</desc>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -24,8 +27,8 @@
     --kerykeion-color-neutral-content: #c8cbd0;
     --kerykeion-color-base-content: #ccd0d4;
     --kerykeion-color-primary: #38bdf8;
-    --kerykeion-color-secondary: #818cf8;
-    --kerykeion-color-accent: #f471b5;
+    --kerykeion-color-secondary: #a3abfa;
+    --kerykeion-color-accent: #f792c6;
     --kerykeion-color-neutral: #1e293b;
     --kerykeion-color-base-100: #0f172a;
 
@@ -34,9 +37,11 @@
     --kerykeion-modern-planet-ring-outer: #162038;
     --kerykeion-modern-house-ring: #243050;
     --kerykeion-modern-stroke: #384a6b;
+    /* See classic.css: the cusp is read, the ring outline is only seen. */
+    --kerykeion-modern-cusp: #627cad;
     --kerykeion-modern-retrograde: #fb7085;
     --kerykeion-modern-stationary: #e0a33c;
-    --kerykeion-modern-indicator: #4e607d;
+    --kerykeion-modern-indicator: #5c7193;
     --kerykeion-modern-zodiac-bg-0: #131c2e;
     --kerykeion-modern-zodiac-bg-1: #1e293b;
     --kerykeion-modern-zodiac-bg-2: #131c2e;
@@ -54,7 +59,7 @@
     --kerykeion-color-info-content: #000000;
     --kerykeion-color-success: #2dd4bf;
     --kerykeion-color-warning: #f4bf50;
-    --kerykeion-color-error: #fb7085;
+    --kerykeion-color-error: #fc93a3;
 
     /* Zodiac */
     --kerykeion-color-base-200: #0a1020;
@@ -188,13 +193,13 @@
     /* Elements Percentage */
     --kerykeion-chart-color-air-percentage: var(--kerykeion-color-primary);
     --kerykeion-chart-color-earth-percentage: var(--kerykeion-color-warning);
-    --kerykeion-chart-color-fire-percentage: var(--kerykeion-color-accent);
-    --kerykeion-chart-color-water-percentage: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-fire-percentage: #f57aba;
+    --kerykeion-chart-color-water-percentage: #949ef9;
 
     /* Modalities Percentage */
     --kerykeion-chart-color-cardinal-percentage: var(--kerykeion-color-success);
     --kerykeion-chart-color-fixed-percentage: var(--kerykeion-color-warning);
-    --kerykeion-chart-color-mutable-percentage: var(--kerykeion-color-error);
+    --kerykeion-chart-color-mutable-percentage: #fb7a8d;
 
     /* Aspects */
     --kerykeion-chart-color-lunar-phase-0: var(--kerykeion-color-black);

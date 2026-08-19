@@ -2226,8 +2226,9 @@ class ChartDrawer:  # type: ignore[no-redef]
             element/quality distributions, and other analytical data. This is the ONLY source
             of chart information - no calculations are performed by ChartDrawer.
         theme (KerykeionChartTheme, optional):
-            CSS theme for the chart. Available: 'classic', 'dark', 'dark-high-contrast',
-            'light', 'strawberry', 'black-and-white'. If None, no styles applied.
+            CSS theme for the chart. Available: 'classic' (the light rainbow
+            theme), 'dark', 'black-and-white'. If None, no styles are applied and
+            the drawing takes its colours from the document that hosts it.
             Defaults to 'classic'.
         double_chart_aspect_grid_type (Literal['list', 'table'], optional):
             Specifies rendering style for double-chart aspect grids. Defaults to 'list'.
@@ -6129,7 +6130,7 @@ if __name__ == "__main__":
     birth_chart = ChartDrawer(
         chart_data=birth_chart_data,
         chart_language="IT",
-        theme="strawberry",
+        theme="classic",
     )
     birth_chart.save_svg()  # minify=True, remove_css_variables=True)
 

@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+### Removed
+
+- **Three of the six chart themes are gone: `light`, `strawberry` and
+  `dark-high-contrast`.** They were the three the accessibility pass never
+  covered, and measuring them says why: against the surface each mark is drawn
+  on, `light` had 66 marks under threshold, `strawberry` 72, `dark-high-contrast`
+  19 — while `classic`, `dark` and `black-and-white` have none. The worst of them
+  was the one called `light`, which is the first name anyone tries for a pale
+  chart: its Ascendant sat at 1.51:1, yellow on white.
+
+  What ships now: **`classic`** (the light rainbow theme, still the default),
+  **`dark`**, **`black-and-white`**, and `theme=None` for a drawing that takes
+  its colours from the document hosting it. Passing a removed name raises
+  `KerykeionException`, as any unknown name always has — there is no silent
+  fallback to a theme the caller did not ask for.
+
+  The 40 committed baselines that verified the removed themes are deleted with
+  them; the remaining 338 cover the three that ship. The theming guide is rewritten
+  around the mechanism — how to override the properties, and what each family of
+  names paints — rather than around a list of themes.
+
+
 ### Changed
 
 - **A rendered chart needs no fonts, and every glyph carries the same weight.**

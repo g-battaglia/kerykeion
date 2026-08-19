@@ -277,7 +277,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(
     chart_data=chart_data,
-    theme="dark",  # "classic", "light", "strawberry", "dark-high-contrast"
+    theme="dark",  # "classic", "dark", "black-and-white", or None for no CSS
     chart_language="IT",  # "EN", "FR", "ES", "PT", "CN", "RU", "TR", "DE", "HI"
     transparent_background=True
 )

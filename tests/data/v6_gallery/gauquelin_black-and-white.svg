@@ -3,6 +3,8 @@
     xmlns='http://www.w3.org/2000/svg'
     xmlns:xlink='http://www.w3.org/1999/xlink'
     xmlns:kr='https://www.kerykeion.net/'
+    role='img'
+    aria-labelledby='kerykeion-chart-title kerykeion-chart-desc'
     width='100%'
     height='100%'
     viewBox='0 -15 885 580'
@@ -10,7 +12,8 @@
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>John Lennon (Gauquelin) - Birth Chart</title>
+    <title id='kerykeion-chart-title'>John Lennon (Gauquelin) - Birth Chart</title>
+    <desc id='kerykeion-chart-desc'>John Lennon (Gauquelin) - Birth Chart. 1940-10-09 18:30. Liverpool, GB. Placidus. 14 points, 20 aspects.</desc>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -34,6 +37,8 @@
     --kerykeion-modern-planet-ring-outer: #d8d8d8;
     --kerykeion-modern-house-ring: #d0d0d0;
     --kerykeion-modern-stroke: #a0a0a0;
+    /* See classic.css: the cusp is read, the ring outline is only seen. */
+    --kerykeion-modern-cusp: #727272;
     --kerykeion-modern-retrograde: #444444;
     --kerykeion-modern-stationary: #6e6e6e;
     --kerykeion-modern-indicator: #808080;
@@ -182,12 +187,12 @@
     --kerykeion-chart-color-air-percentage: #111111;
     --kerykeion-chart-color-earth-percentage: #333333;
     --kerykeion-chart-color-fire-percentage: #555555;
-    --kerykeion-chart-color-water-percentage: #777777;
+    --kerykeion-chart-color-water-percentage: #585858;
 
     /* Modalities Percentage */
     --kerykeion-chart-color-cardinal-percentage: #222222;
     --kerykeion-chart-color-fixed-percentage: #444444;
-    --kerykeion-chart-color-mutable-percentage: #666666;
+    --kerykeion-chart-color-mutable-percentage: #595959;
 
     /* Aspects */
     --kerykeion-chart-color-lunar-phase-0: var(--kerykeion-color-black);
@@ -246,17 +251,17 @@
                 Mutable 12%</text>
         </g>
 
-        <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
-            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiac: Tropical</text>
-            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domification: Placidus</text>
-            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunation Day: 9</text>
-            <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunar phase: First Quarter</text>
-            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Apparent Geocentric</text>
-            <text kr:node='Bottom_Left_Text_5' x='20' y='522' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Diurnality: Nocturnal</text>
+        <g kr:node='Bottom_Left_Text' transform='translate(0,7)'>
+            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunation Day: 9</text>
+            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Lunar phase: First Quarter</text>
+            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domification: Placidus</text>
+            <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Diurnality: Nocturnal</text>
+            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiac: Tropical</text>
+            <text kr:node='Bottom_Left_Text_5' x='20' y='522' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Apparent Geocentric</text>
         </g>
 
         <!-- Lunar Phase -->
-        <g kr:node='Lunar_Phase' transform='translate(10,532)'>
+        <g kr:node='Lunar_Phase' transform='translate(10,424)'>
             <g transform='rotate(0 20 10)'>
     <defs>
         <clipPath id='moonPhaseCutOffCircle'>

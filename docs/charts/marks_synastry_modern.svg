@@ -3,6 +3,8 @@
     xmlns='http://www.w3.org/2000/svg'
     xmlns:xlink='http://www.w3.org/1999/xlink'
     xmlns:kr='https://www.kerykeion.net/'
+    role='img'
+    aria-labelledby='kerykeion-chart-title kerykeion-chart-desc'
     width='100%'
     height='100%'
     viewBox='0 -15 1560 580'
@@ -10,7 +12,8 @@
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
     style='background-color: #ffffff'
 >
-    <title>Synastry: John Lennon and Paul McCartney</title>
+    <title id='kerykeion-chart-title'>Synastry: John Lennon and Paul McCartney</title>
+    <desc id='kerykeion-chart-desc'>Synastry: John Lennon and Paul McCartney. 1940-10-09 18:30. Liverpool, GB. Placidus. 14 points, 60 aspects.</desc>
 
     <!-- Colors -->
     
@@ -32,13 +35,13 @@
         <g kr:node='Elements_Percentages' transform='translate(0,12)'>
             <text kr:node='Elements_Text' x='20' y='138' style='fill: #000000; font-size: 10px;'>Elements:</text>
             <text kr:node='Fire_Text' x='20' y='152'
-                style='fill: #ff6600; font-size: 10px;'>
+                style='fill: #943b00; font-size: 10px;'>
                 Fire 23%</text>
             <text kr:node='Earth_Text' x='20' y='164'
                 style='fill: #6a2d04; font-size: 10px;'>
                 Earth 26%</text>
             <text kr:node='Air_Text' x='20' y='176'
-                style='fill: #6f76d1; font-size: 10px;'>
+                style='fill: #414ac2; font-size: 10px;'>
                 Air 39%</text>
             <text kr:node='Water_Text' x='20' y='188'
                 style='fill: #630e73; font-size: 10px;'>
@@ -49,7 +52,7 @@
         <g kr:node='Qualities_Percentages' transform='translate(0,12)'>
             <text kr:node='Qualities_Text' x='20' y='208' style='fill: #000000; font-size: 10px;'>Qualities:</text>
             <text kr:node='Cardinal_Text' x='20' y='222'
-                style='fill: #ff6600; font-size: 10px;'>
+                style='fill: #943b00; font-size: 10px;'>
                 Cardinal 36%</text>
             <text kr:node='Fixed_Text' x='20' y='234'
                 style='fill: #6a2d04; font-size: 10px;'>
@@ -195,112 +198,116 @@
 <g transform='translate(4.000000 4.000000) scale(0.920000)'>
 <circle fill='#ffffff' r='50.0' cx='50.0' cy='50.0' stroke='#d4d4d8' stroke-width='0.15'/>
 <g kr:node='CuspRing'>
-<path d='M 0.0,50.0 A 50.0,50.0 0 1,1 100.0,50.0 A 50.0,50.0 0 1,1 0.0,50.0 M 5.5,50.0 A 44.5,44.5 0 1,1 94.5,50.0 A 44.5,44.5 0 1,1 5.5,50.0 Z' fill='#ffffff' fill-rule='evenodd'/>
+<path d='M 0.0,50.0 A 50.0,50.0 0 1,1 100.0,50.0 A 50.0,50.0 0 1,1 0.0,50.0 M 4.347999999999999,50.0 A 45.652,45.652 0 1,1 95.652,50.0 A 45.652,45.652 0 1,1 4.347999999999999,50.0 Z' fill='#ffffff' fill-rule='evenodd'/>
   <g kr:node='Cusp' kr:absoluteposition='19.711128718293267' kr:signposition='19.711128718293267' kr:sign='Ari' kr:slug='First_House' kr:horoscope='0' transform='rotate(-0.000000 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(94.669000 50.0 2.75)'>42'</text>
-    <g transform='translate(50.0 2.75) rotate(90.000000) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(94.669000 50.0 2.1739999999999995)'>42'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(90.000000) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Ari' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(85.331000 50.0 2.75)'>19º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(85.331000 50.0 2.1739999999999995)'>19º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='59.519861580707236' kr:signposition='29.519861580707236' kr:sign='Tau' kr:slug='Second_House' kr:horoscope='0' transform='rotate(-39.808733 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(134.477733 50.0 2.75)'>31'</text>
-    <g transform='translate(50.0 2.75) rotate(129.808733) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(134.477733 50.0 2.1739999999999995)'>31'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(129.808733) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Tau' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(125.139733 50.0 2.75)'>29º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(125.139733 50.0 2.1739999999999995)'>29º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='80.22482043789802' kr:signposition='20.224820437898018' kr:sign='Gem' kr:slug='Third_House' kr:horoscope='0' transform='rotate(-60.513692 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(155.182692 50.0 2.75)'>13'</text>
-    <g transform='translate(50.0 2.75) rotate(150.513692) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(155.182692 50.0 2.1739999999999995)'>13'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(150.513692) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Gem' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(145.844692 50.0 2.75)'>20º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(145.844692 50.0 2.1739999999999995)'>20º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='97.05841127817382' kr:signposition='7.058411278173821' kr:sign='Can' kr:slug='Fourth_House' kr:horoscope='0' transform='rotate(-77.347283 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(172.016283 50.0 2.75)'>3'</text>
-    <g transform='translate(50.0 2.75) rotate(167.347283) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(172.016283 50.0 2.1739999999999995)'>3'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(167.347283) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Can' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(162.678283 50.0 2.75)'>7º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(162.678283 50.0 2.1739999999999995)'>7º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='115.30021486872414' kr:signposition='25.30021486872414' kr:sign='Can' kr:slug='Fifth_House' kr:horoscope='0' transform='rotate(-95.589086 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(190.258086 50.0 2.75)'>18'</text>
-    <g transform='translate(50.0 2.75) rotate(185.589086) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(190.258086 50.0 2.1739999999999995)'>18'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(185.589086) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Can' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(180.920086 50.0 2.75)'>25º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(180.920086 50.0 2.1739999999999995)'>25º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='142.0860027656957' kr:signposition='22.086002765695696' kr:sign='Leo' kr:slug='Sixth_House' kr:horoscope='0' transform='rotate(-122.374874 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(217.043874 50.0 2.75)'>5'</text>
-    <g transform='translate(50.0 2.75) rotate(212.374874) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(217.043874 50.0 2.1739999999999995)'>5'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(212.374874) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Leo' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(207.705874 50.0 2.75)'>22º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(207.705874 50.0 2.1739999999999995)'>22º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='199.71112871829325' kr:signposition='19.711128718293253' kr:sign='Lib' kr:slug='Seventh_House' kr:horoscope='0' transform='rotate(-180.000000 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(265.331000 50.0 2.75)'>42'</text>
-    <g transform='translate(50.0 2.75) rotate(270.000000) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(265.331000 50.0 2.1739999999999995)'>42'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(270.000000) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Lib' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(274.669000 50.0 2.75)'>19º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(274.669000 50.0 2.1739999999999995)'>19º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='239.51986158070724' kr:signposition='29.519861580707243' kr:sign='Sco' kr:slug='Eighth_House' kr:horoscope='0' transform='rotate(-219.808733 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(305.139733 50.0 2.75)'>31'</text>
-    <g transform='translate(50.0 2.75) rotate(309.808733) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(305.139733 50.0 2.1739999999999995)'>31'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(309.808733) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Sco' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(314.477733 50.0 2.75)'>29º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(314.477733 50.0 2.1739999999999995)'>29º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='260.224820437898' kr:signposition='20.224820437898018' kr:sign='Sag' kr:slug='Ninth_House' kr:horoscope='0' transform='rotate(-240.513692 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(325.844692 50.0 2.75)'>13'</text>
-    <g transform='translate(50.0 2.75) rotate(330.513692) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(325.844692 50.0 2.1739999999999995)'>13'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(330.513692) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Sag' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(335.182692 50.0 2.75)'>20º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(335.182692 50.0 2.1739999999999995)'>20º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='277.0584112781738' kr:signposition='7.058411278173821' kr:sign='Cap' kr:slug='Tenth_House' kr:horoscope='0' transform='rotate(-257.347283 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(342.678283 50.0 2.75)'>3'</text>
-    <g transform='translate(50.0 2.75) rotate(347.347283) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(342.678283 50.0 2.1739999999999995)'>3'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(347.347283) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Cap' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(352.016283 50.0 2.75)'>7º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(352.016283 50.0 2.1739999999999995)'>7º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='295.30021486872414' kr:signposition='25.30021486872414' kr:sign='Cap' kr:slug='Eleventh_House' kr:horoscope='0' transform='rotate(-275.589086 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(360.920086 50.0 2.75)'>18'</text>
-    <g transform='translate(50.0 2.75) rotate(365.589086) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(360.920086 50.0 2.1739999999999995)'>18'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(365.589086) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Cap' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(370.258086 50.0 2.75)'>25º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(370.258086 50.0 2.1739999999999995)'>25º</text>
   </g>
   <g kr:node='Cusp' kr:absoluteposition='322.0860027656957' kr:signposition='22.086002765695696' kr:sign='Aqu' kr:slug='Twelfth_House' kr:horoscope='0' transform='rotate(-302.374874 50.0 50.0)'>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(387.705874 50.0 2.75)'>5'</text>
-    <g transform='translate(50.0 2.75) rotate(392.374874) scale(0.108) translate(-16 -16)'>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(4.669000 50.0 50.0) rotate(387.705874 50.0 2.1739999999999995)'>5'</text>
+    <g transform='translate(50.0 2.1739999999999995) rotate(392.374874) scale(0.108) translate(-16 -16)'>
       <use xlink:href='#Aqu' fill='#000000' />
     </g>
-    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.75' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(397.043874 50.0 2.75)'>22º</text>
+    <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='2.1739999999999995' font-size='2.0' fill='#000000' font-weight='500' transform='rotate(-4.669000 50.0 50.0) rotate(397.043874 50.0 2.1739999999999995)'>22º</text>
   </g>
 </g>
 <g kr:node='RulerRing'>
-<path d='M 5.5,50.0 A 44.5,44.5 0 1,1 94.5,50.0 A 44.5,44.5 0 1,1 5.5,50.0 M 6.5,50.0 A 43.5,43.5 0 1,1 93.5,50.0 A 43.5,43.5 0 1,1 6.5,50.0 Z' fill='#ffffff' fill-rule='evenodd' stroke='#d4d4d8' stroke-width='0.2'/>
-<circle r='43.65' cx='50.0' cy='50.0' fill='none' stroke='#d4d4d8' stroke-dasharray='0.0975 0.664336' stroke-width='0.3'/>
-<circle r='43.85' cx='50.0' cy='50.0' fill='none' stroke='#d4d4d8' stroke-dasharray='0.1300 3.696634' stroke-width='0.7'/>
-<circle r='44.0' cx='50.0' cy='50.0' fill='none' stroke='#d4d4d8' stroke-dasharray='0.2600 7.419449' stroke-width='1'/>
+<path d='M 4.347999999999999,50.0 A 45.652,45.652 0 1,1 95.652,50.0 A 45.652,45.652 0 1,1 4.347999999999999,50.0 M 5.347999999999999,50.0 A 44.652,44.652 0 1,1 94.652,50.0 A 44.652,44.652 0 1,1 5.347999999999999,50.0 Z' fill='#ffffff' fill-rule='evenodd' stroke='#d4d4d8' stroke-width='0.2'/>
+<circle r='44.802' cx='50.0' cy='50.0' fill='none' stroke='#d4d4d8' stroke-dasharray='0.0975 0.684442' stroke-width='0.3'/>
+<circle r='45.002' cx='50.0' cy='50.0' fill='none' stroke='#d4d4d8' stroke-dasharray='0.1300 3.797165' stroke-width='0.7'/>
+<circle r='45.152' cx='50.0' cy='50.0' fill='none' stroke='#d4d4d8' stroke-dasharray='0.2600 7.620511' stroke-width='1'/>
 </g>
 <g kr:node='PlanetRing' kr:horoscope='1'>
 <path d='M 6.5,50.0 A 43.5,43.5 0 1,1 93.5,50.0 A 43.5,43.5 0 1,1 6.5,50.0 M 20.5,50.0 A 29.5,29.5 0 1,1 79.5,50.0 A 29.5,29.5 0 1,1 20.5,50.0 Z' fill='#e8e8ed' fill-rule='evenodd' stroke='#d4d4d8' stroke-width='0.25'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-39.808733 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-60.513692 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-77.347283 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-95.589086 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-122.374874 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-219.808733 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-240.513692 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-257.347283 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-275.589086 50.0 50.0)'/>
-<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-302.374874 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='6.500' x2='50.0' y2='7.447' stroke='#81818d)' stroke-width='0.07' transform='rotate(-39.808733 50.0 50.0)'/>
+<line x1='50.0' y1='7.447' x2='50.0' y2='17.650' stroke='#81818d)' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-39.808733 50.0 50.0)'/>
+<line x1='50.0' y1='17.650' x2='50.0' y2='20.500' stroke='#81818d)' stroke-width='0.07' transform='rotate(-39.808733 50.0 50.0)'/>
+<line x1='50.0' y1='6.500' x2='50.0' y2='7.388' stroke='#81818d)' stroke-width='0.07' transform='rotate(-60.513692 50.0 50.0)'/>
+<line x1='50.0' y1='7.388' x2='50.0' y2='19.550' stroke='#81818d)' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-60.513692 50.0 50.0)'/>
+<line x1='50.0' y1='19.550' x2='50.0' y2='20.500' stroke='#81818d)' stroke-width='0.07' transform='rotate(-60.513692 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-77.347283 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-95.589086 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-122.374874 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-219.808733 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-240.513692 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-257.347283 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-275.589086 50.0 50.0)'/>
+<line x1='50.0' y1='6.5' x2='50.0' y2='20.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-302.374874 50.0 50.0)'/>
 <g kr:node='ChartPoint' kr:house='Eighth_House' kr:sign='Tau' kr:absoluteposition='49.065465495848706' kr:signposition='19.065465495848706' kr:slug='Venus' kr:horoscope='1' kr:motionstate='average' kr:speed='1.162485' kr:declination='15.4905' kr:cx='182.19072645200043' kr:cy='378.75532839358226' transform='rotate(-29.354337 50.0 50.0)' kr:projectedhouse='First_House' kr:projectedhoroscope='0'>
   <g transform='translate(50.0 9.0) rotate(119.354337) scale(0.115) translate(-12 -12)'>
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='#400052' />
@@ -356,13 +363,13 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Ninth_House' kr:sign='Gem' kr:absoluteposition='86.66863893486945' kr:signposition='26.66863893486945' kr:slug='Sun' kr:horoscope='1' kr:motionstate='average' kr:speed='0.954795' kr:declination='23.4022' kr:cx='269.13220926809663' kr:cy='456.6104179599198' transform='rotate(-66.957510 50.0 50.0)' kr:projectedhouse='Third_House' kr:projectedhoroscope='0' kr:stellium='9'>
   <g transform='translate(50.0 9.0) rotate(156.957510) scale(0.12650000000000003) translate(-12 -12)'>
-    <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='#984b00' />
+    <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='#7e3e00' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='#984b00' font-weight='500' transform='rotate(156.957510 50.0 12.0)'>26º</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='#7e3e00' font-weight='500' transform='rotate(156.957510 50.0 12.0)'>26º</text>
   <g transform='translate(50.0 14.5) rotate(156.957510) scale(0.0558) translate(-16 -16)'>
-    <use xlink:href='#Gem' fill='#984b00' />
+    <use xlink:href='#Gem' fill='#7e3e00' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='#984b00' font-weight='500' transform='rotate(156.957510 50.0 16.5)'>40'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='#7e3e00' font-weight='500' transform='rotate(156.957510 50.0 16.5)'>40'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Sun' kr:absoluteposition='86.66863893486945' kr:horoscope='1' transform='rotate(-66.957510 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
@@ -382,13 +389,13 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='104.42718866435325' kr:signposition='14.427188664353253' kr:slug='Medium_Coeli' kr:horoscope='1' kr:speed='335.051683' kr:cx='323.3262844091106' kr:cy='470.28661166152665' transform='rotate(-84.716060 50.0 50.0)' kr:projectedhouse='Fourth_House' kr:projectedhoroscope='0'>
   <g transform='translate(50.0 9.0) rotate(174.716060) scale(0.10925) translate(-12 -12)'>
-    <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='#ff0000' />
+    <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='#a80000' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='#ff0000' font-weight='500' transform='rotate(174.716060 50.0 12.0)'>14º</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='#a80000' font-weight='500' transform='rotate(174.716060 50.0 12.0)'>14º</text>
   <g transform='translate(50.0 14.5) rotate(174.716060) scale(0.0558) translate(-16 -16)'>
-    <use xlink:href='#Can' fill='#ff0000' />
+    <use xlink:href='#Can' fill='#a80000' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='#ff0000' font-weight='500' transform='rotate(174.716060 50.0 16.5)'>25'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='#a80000' font-weight='500' transform='rotate(174.716060 50.0 16.5)'>25'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Medium_Coeli' kr:absoluteposition='104.42718866435325' kr:horoscope='1' transform='rotate(-84.716060 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
@@ -421,13 +428,13 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Leo' kr:absoluteposition='132.1571764244524' kr:signposition='12.157176424452388' kr:slug='Chiron' kr:horoscope='1' kr:speed='0.102361' kr:declination='11.253' kr:cx='409.1295881451208' kr:cy='457.3391023607034' transform='rotate(-112.446048 50.0 50.0)' kr:projectedhouse='Fifth_House' kr:projectedhoroscope='0'>
   <g transform='translate(50.0 9.0) rotate(202.446048) scale(0.10925) translate(-12 -12)'>
-    <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='#666f06' />
+    <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='#505705' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='#666f06' font-weight='500' transform='rotate(202.446048 50.0 12.0)'>12º</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='#505705' font-weight='500' transform='rotate(202.446048 50.0 12.0)'>12º</text>
   <g transform='translate(50.0 14.5) rotate(202.446048) scale(0.0558) translate(-16 -16)'>
-    <use xlink:href='#Leo' fill='#666f06' />
+    <use xlink:href='#Leo' fill='#505705' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='#666f06' font-weight='500' transform='rotate(202.446048 50.0 16.5)'>9'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='#505705' font-weight='500' transform='rotate(202.446048 50.0 16.5)'>9'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Chiron' kr:absoluteposition='132.1571764244524' kr:horoscope='1' transform='rotate(-112.446048 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
@@ -474,13 +481,13 @@
 </g>
 <g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='190.7711605396098' kr:signposition='10.77116053960981' kr:slug='Ascendant' kr:horoscope='1' kr:speed='247.916462' kr:cx='518.8564779565127' kr:cy='318.13601658002625' transform='rotate(-171.060032 50.0 50.0)' kr:projectedhouse='Sixth_House' kr:projectedhoroscope='0'>
   <g transform='translate(50.0 9.0) rotate(261.060032) scale(0.10925) translate(-12 -12)'>
-    <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='#ff7e00' />
+    <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='#7f3f00' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='#ff7e00' font-weight='500' transform='rotate(261.060032 50.0 12.0)'>10º</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='12.0' font-size='1.9' fill='#7f3f00' font-weight='500' transform='rotate(261.060032 50.0 12.0)'>10º</text>
   <g transform='translate(50.0 14.5) rotate(261.060032) scale(0.0558) translate(-16 -16)'>
-    <use xlink:href='#Lib' fill='#ff7e00' />
+    <use xlink:href='#Lib' fill='#7f3f00' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='#ff7e00' font-weight='500' transform='rotate(261.060032 50.0 16.5)'>46'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='16.5' font-size='1.4' fill='#7f3f00' font-weight='500' transform='rotate(261.060032 50.0 16.5)'>46'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Ascendant' kr:absoluteposition='190.7711605396098' kr:horoscope='1' transform='rotate(-171.060032 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 -0.7' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
@@ -488,27 +495,31 @@
 </g>
 <g kr:node='PlanetRing' kr:horoscope='0'>
 <path d='M 20.5,50.0 A 29.5,29.5 0 1,1 79.5,50.0 A 29.5,29.5 0 1,1 20.5,50.0 M 34.5,50.0 A 15.5,15.5 0 1,1 65.5,50.0 A 15.5,15.5 0 1,1 34.5,50.0 Z' fill='#f4f4f5' fill-rule='evenodd' stroke='#d4d4d8' stroke-width='0.25'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-39.808733 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-60.513692 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-77.347283 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-95.589086 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-122.374874 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-219.808733 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-240.513692 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-257.347283 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-275.589086 50.0 50.0)'/>
-<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-302.374874 50.0 50.0)'/>
+<line x1='50.0' y1='20.500' x2='50.0' y2='21.342' stroke='#81818d)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='21.342' x2='50.0' y2='30.650' stroke='#81818d)' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='30.650' x2='50.0' y2='34.500' stroke='#81818d)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-39.808733 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-60.513692 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-77.347283 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-95.589086 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-122.374874 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-219.808733 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-240.513692 50.0 50.0)'/>
+<line x1='50.0' y1='20.500' x2='50.0' y2='21.423' stroke='#81818d)' stroke-width='0.6' transform='rotate(-257.347283 50.0 50.0)'/>
+<line x1='50.0' y1='21.423' x2='50.0' y2='30.650' stroke='#81818d)' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-257.347283 50.0 50.0)'/>
+<line x1='50.0' y1='30.650' x2='50.0' y2='34.500' stroke='#81818d)' stroke-width='0.6' transform='rotate(-257.347283 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-275.589086 50.0 50.0)'/>
+<line x1='50.0' y1='20.5' x2='50.0' y2='34.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-302.374874 50.0 50.0)'/>
 <g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='19.711128718293267' kr:signposition='19.711128718293267' kr:slug='Ascendant' kr:horoscope='0' kr:speed='886.944184' kr:cx='218.55999999999997' kr:cy='290.0' transform='rotate(-0.000000 50.0 50.0)' kr:projectedhouse='Seventh_House' kr:projectedhoroscope='1'>
   <g transform='translate(50.0 22.5) rotate(90.000000) scale(0.09025) translate(-12 -12)'>
-    <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='#ff7e00' />
+    <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='#7f3f00' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='#ff7e00' font-weight='500' transform='rotate(90.000000 50.0 25.0)'>19º</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='#7f3f00' font-weight='500' transform='rotate(90.000000 50.0 25.0)'>19º</text>
   <g transform='translate(50.0 27.5) rotate(90.000000) scale(0.0558) translate(-16 -16)'>
-    <use xlink:href='#Ari' fill='#ff7e00' />
+    <use xlink:href='#Ari' fill='#7f3f00' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='#ff7e00' font-weight='500' transform='rotate(90.000000 50.0 29.5)'>42'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='#7f3f00' font-weight='500' transform='rotate(90.000000 50.0 29.5)'>42'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Ascendant' kr:absoluteposition='19.711128718293267' kr:horoscope='0' transform='rotate(-0.000000 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
@@ -557,13 +568,13 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Leo' kr:absoluteposition='120.56821722799918' kr:signposition='0.5682172279991846' kr:slug='Chiron' kr:horoscope='0' kr:speed='0.05292' kr:declination='13.4146' kr:cx='360.07666335991354' kr:cy='409.76894918271887' transform='rotate(-99.515921 50.0 50.0)' kr:projectedhouse='Tenth_House' kr:projectedhoroscope='1'>
   <g transform='translate(50.0 22.5) rotate(189.515921) scale(0.09025) translate(-12 -12)'>
-    <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='#666f06' />
+    <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='#505705' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='#666f06' font-weight='500' transform='rotate(189.515921 50.0 25.0)'>0º</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='#505705' font-weight='500' transform='rotate(189.515921 50.0 25.0)'>0º</text>
   <g transform='translate(50.0 27.5) rotate(189.515921) scale(0.0558) translate(-16 -16)'>
-    <use xlink:href='#Leo' fill='#666f06' />
+    <use xlink:href='#Leo' fill='#505705' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='#666f06' font-weight='500' transform='rotate(189.515921 50.0 29.5)'>34'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='#505705' font-weight='500' transform='rotate(189.515921 50.0 29.5)'>34'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Chiron' kr:absoluteposition='120.56821722799918' kr:horoscope='0' transform='rotate(-100.857089 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7 A 28.8 28.8 0 0 1 50.6740825970 21.2078897499 L 50.6576986450 21.9076979852' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
@@ -635,13 +646,13 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Lib' kr:absoluteposition='196.2678943501122' kr:signposition='16.267894350112186' kr:slug='Sun' kr:horoscope='0' kr:motionstate='average' kr:speed='0.988482' kr:declination='-6.3989' kr:cx='461.2207755654562' kr:cy='297.29363909919425' transform='rotate(-176.556766 50.0 50.0)' kr:projectedhouse='First_House' kr:projectedhoroscope='1' kr:angularity='Descendant:3.4432' kr:stellium='6'>
   <g transform='translate(50.0 22.5) rotate(266.556766) scale(0.10450000000000001) translate(-12 -12)'>
-    <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='#984b00' />
+    <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='#7e3e00' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='#984b00' font-weight='500' transform='rotate(266.556766 50.0 25.0)'>16º</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='#7e3e00' font-weight='500' transform='rotate(266.556766 50.0 25.0)'>16º</text>
   <g transform='translate(50.0 27.5) rotate(266.556766) scale(0.0558) translate(-16 -16)'>
-    <use xlink:href='#Lib' fill='#984b00' />
+    <use xlink:href='#Lib' fill='#7e3e00' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='#984b00' font-weight='500' transform='rotate(266.556766 50.0 29.5)'>16'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='#7e3e00' font-weight='500' transform='rotate(266.556766 50.0 29.5)'>16'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Sun' kr:absoluteposition='196.2678943501122' kr:horoscope='0' transform='rotate(-176.556766 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
@@ -661,13 +672,13 @@
 </g>
 <g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Cap' kr:absoluteposition='277.0584112781738' kr:signposition='7.058411278173821' kr:slug='Medium_Coeli' kr:horoscope='0' kr:speed='332.125062' kr:cx='366.6003491219327' kr:cy='171.50909306368146' transform='rotate(-257.347283 50.0 50.0)' kr:projectedhouse='Third_House' kr:projectedhoroscope='1'>
   <g transform='translate(50.0 22.5) rotate(347.347283) scale(0.09025) translate(-12 -12)'>
-    <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='#ff0000' />
+    <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='#a80000' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='#ff0000' font-weight='500' transform='rotate(347.347283 50.0 25.0)'>7º</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='25.0' font-size='1.6' fill='#a80000' font-weight='500' transform='rotate(347.347283 50.0 25.0)'>7º</text>
   <g transform='translate(50.0 27.5) rotate(347.347283) scale(0.0558) translate(-16 -16)'>
-    <use xlink:href='#Cap' fill='#ff0000' />
+    <use xlink:href='#Cap' fill='#a80000' />
   </g>
-  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='#ff0000' font-weight='500' transform='rotate(347.347283 50.0 29.5)'>3'</text>
+  <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.5' font-size='1.4' fill='#a80000' font-weight='500' transform='rotate(347.347283 50.0 29.5)'>3'</text>
 </g>
 <g kr:node='Indicator' kr:slug='Medium_Coeli' kr:absoluteposition='277.0584112781738' kr:horoscope='0' transform='rotate(-257.347283 50.0 50.0)'>
   <path d='M 50.0 20.5 l 0 0.7' fill='transparent' stroke='#8a8278' stroke-width='0.1'/>
@@ -688,29 +699,29 @@
 </g>
 <g kr:node='HouseRing'>
 <path d='M 34.5,50.0 A 15.5,15.5 0 1,1 65.5,50.0 A 15.5,15.5 0 1,1 34.5,50.0 M 37.5,50.0 A 12.5,12.5 0 1,1 62.5,50.0 A 12.5,12.5 0 1,1 37.5,50.0 Z' fill='#e4e4e7' fill-rule='evenodd'/>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='1' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-19.904366 50.0 50.0) rotate(109.904366 50.0 36.0)'>1</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-39.808733 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-39.808733 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='2' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-50.161212 50.0 50.0) rotate(140.161212 50.0 36.0)'>2</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-60.513692 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-60.513692 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='3' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-68.930487 50.0 50.0) rotate(158.930487 50.0 36.0)'>3</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-77.347283 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-77.347283 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='4' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-86.468184 50.0 50.0) rotate(176.468184 50.0 36.0)'>4</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-95.589086 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-95.589086 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='5' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-108.981980 50.0 50.0) rotate(198.981980 50.0 36.0)'>5</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-122.374874 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-122.374874 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='6' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-151.187437 50.0 50.0) rotate(241.187437 50.0 36.0)'>6</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='7' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-199.904366 50.0 50.0) rotate(289.904366 50.0 36.0)'>7</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-219.808733 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-219.808733 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='8' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-230.161212 50.0 50.0) rotate(320.161212 50.0 36.0)'>8</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-240.513692 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-240.513692 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='9' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-248.930487 50.0 50.0) rotate(338.930487 50.0 36.0)'>9</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.6' transform='rotate(-257.347283 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-257.347283 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='10' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-266.468184 50.0 50.0) rotate(356.468184 50.0 36.0)'>10</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-275.589086 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-275.589086 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='11' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-288.981980 50.0 50.0) rotate(378.981980 50.0 36.0)'>11</text></g>
-<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#d4d4d8' stroke-width='0.07' transform='rotate(-302.374874 50.0 50.0)'/>
+<line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-302.374874 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='12' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-331.187437 50.0 50.0) rotate(421.187437 50.0 36.0)'>12</text></g>
 </g>
 <g kr:node='HouseSector' kr:house='1' kr:horoscope='0'><path d='M 50.000000,4.000000 A 46.0,46.0 0 0,0 20.549568,14.663446 L 41.997165,40.397676 A 12.5,12.5 0 0,1 50.000000,37.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
@@ -728,19 +739,19 @@
 <g kr:node='AspectCore'>
 <path d='M 37.5,50.0 A 12.5,12.5 0 1,1 62.5,50.0 A 12.5,12.5 0 1,1 37.5,50.0 Z' fill='#ffffff' fill-rule='evenodd'/>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Moon' kr:fromoriginaldegrees='138.20014920582454' kr:orb='1.9322548557123582' kr:aspectdegrees='60' kr:planetsdiff='58.06774514428764' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='47.970959' y1='83.722797' x2='20.307144' y2='66.114539' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='47.970959' y1='83.722797' x2='20.307144' y2='66.114539' stroke='#bb8b23' stroke-width='0.25'/>
   <g transform='translate(34.139052 74.918668) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb60' fill='#d59e28'/>
+    <use xlink:href='#orb60' fill='#bb8b23'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Mercury' kr:fromoriginaldegrees='78.336450359776' kr:orb='2.0685560096638085' kr:aspectdegrees='120' kr:planetsdiff='117.93144399033619' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='47.970959' y1='83.722797' x2='21.156048' y2='32.411069' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='47.970959' y1='83.722797' x2='21.156048' y2='32.411069' stroke='#2ba800' stroke-width='0.25'/>
   <g transform='translate(34.563504 58.066933) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb120' fill='#36d100'/>
+    <use xlink:href='#orb120' fill='#2ba800'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Chiron' kr:fromoriginaldegrees='132.1571764244524' kr:orb='4.110717925659799' kr:aspectdegrees='60' kr:planetsdiff='64.1107179256598' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='47.970959' y1='83.722797' x2='18.775693' y2='62.899098' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='47.970959' y1='83.722797' x2='18.775693' y2='62.899098' stroke='#bb8b23' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Ascendant' kr:fromoriginaldegrees='190.7711605396098' kr:orb='5.496733810502377' kr:aspectdegrees='0' kr:planetsdiff='5.496733810502377' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='47.970959' y1='83.722797' x2='44.750016' y2='83.373368' stroke='#5757e2' stroke-width='0.25'/>
@@ -761,25 +772,25 @@
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Moon' kr:tooriginaldegrees='303.5466251977386' kr:from='Saturn' kr:fromoriginaldegrees='65.21641635974422' kr:orb='1.6697911620056232' kr:aspectdegrees='120' kr:planetsdiff='121.66979116200562' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='82.803592' y1='41.921113' x2='25.901516' y2='26.322857' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='82.803592' y1='41.921113' x2='25.901516' y2='26.322857' stroke='#2ba800' stroke-width='0.25'/>
   <g transform='translate(54.352554 34.121985) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb120' fill='#36d100'/>
+    <use xlink:href='#orb120' fill='#2ba800'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Moon' kr:tooriginaldegrees='303.5466251977386' kr:from='Uranus' kr:fromoriginaldegrees='61.9717855705379' kr:orb='1.5748396272007028' kr:aspectdegrees='120' kr:planetsdiff='118.4251603727993' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='82.803592' y1='41.921113' x2='27.280254' y2='24.996856' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='82.803592' y1='41.921113' x2='27.280254' y2='24.996856' stroke='#2ba800' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Moon' kr:tooriginaldegrees='303.5466251977386' kr:from='Neptune' kr:fromoriginaldegrees='177.119512516296' kr:orb='6.427112681442594' kr:aspectdegrees='120' kr:planetsdiff='126.4271126814426' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='82.803592' y1='41.921113' x2='37.021614' y2='81.191434' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='82.803592' y1='41.921113' x2='37.021614' y2='81.191434' stroke='#2ba800' stroke-width='0.25'/>
   <g transform='translate(59.912603 61.556273) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb120' fill='#36d100'/>
+    <use xlink:href='#orb120' fill='#2ba800'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='Moon' kr:tooriginaldegrees='303.5466251977386' kr:from='Pluto' kr:fromoriginaldegrees='124.27211482618223' kr:orb='0.725489628443654' kr:aspectdegrees='180' kr:planetsdiff='179.27451037155635' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='82.803592' y1='41.921113' x2='17.301332' y2='58.493593' stroke='#510060' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Moon' kr:tooriginaldegrees='303.5466251977386' kr:from='Ascendant' kr:fromoriginaldegrees='190.7711605396098' kr:orb='7.224535341871217' kr:aspectdegrees='120' kr:planetsdiff='112.77546465812878' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='82.803592' y1='41.921113' x2='44.750016' y2='83.373368' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='82.803592' y1='41.921113' x2='44.750016' y2='83.373368' stroke='#2ba800' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Mercury' kr:tooriginaldegrees='218.55823263691192' kr:from='Mars' kr:fromoriginaldegrees='122.71877710068114' kr:orb='5.839455536230787' kr:aspectdegrees='90' kr:planetsdiff='95.83945553623079' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='60.913643' y1='81.972432' x2='17.083107' y2='57.604092' stroke='#dc0000' stroke-width='0.25'/>
@@ -791,21 +802,21 @@
   <line x1='60.913643' y1='81.972432' x2='17.301332' y2='58.493593' stroke='#dc0000' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mercury' kr:tooriginaldegrees='218.55823263691192' kr:from='True_North_Lunar_Node' kr:fromoriginaldegrees='156.6456702999568' kr:orb='1.9125623369551192' kr:aspectdegrees='60' kr:planetsdiff='61.91256233695512' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='60.913643' y1='81.972432' x2='26.931302' y2='74.681556' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='60.913643' y1='81.972432' x2='26.931302' y2='74.681556' stroke='#bb8b23' stroke-width='0.25'/>
   <g transform='translate(43.922473 78.326994) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb60' fill='#d59e28'/>
+    <use xlink:href='#orb60' fill='#bb8b23'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Mercury' kr:tooriginaldegrees='218.55823263691192' kr:from='Chiron' kr:fromoriginaldegrees='132.1571764244524' kr:orb='3.5989437875404633' kr:aspectdegrees='90' kr:planetsdiff='86.40105621245954' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='60.913643' y1='81.972432' x2='18.775693' y2='62.899098' stroke='#dc0000' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Mercury' kr:tooriginaldegrees='218.55823263691192' kr:from='Medium_Coeli' kr:fromoriginaldegrees='104.42718866435325' kr:orb='5.868956027441328' kr:aspectdegrees='120' kr:planetsdiff='114.13104397255867' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='60.913643' y1='81.972432' x2='16.359779' y2='46.888801' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='60.913643' y1='81.972432' x2='16.359779' y2='46.888801' stroke='#2ba800' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Venus' kr:tooriginaldegrees='153.21541744281757' kr:from='Jupiter' kr:fromoriginaldegrees='91.84711471209363' kr:orb='1.36830273072394' kr:aspectdegrees='60' kr:planetsdiff='61.36830273072394' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='25.495850' y1='73.257056' x2='17.845025' y2='39.636524' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='25.495850' y1='73.257056' x2='17.845025' y2='39.636524' stroke='#bb8b23' stroke-width='0.25'/>
   <g transform='translate(21.670437 56.446790) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb60' fill='#d59e28'/>
+    <use xlink:href='#orb60' fill='#bb8b23'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Venus' kr:tooriginaldegrees='153.21541744281757' kr:from='Saturn' kr:fromoriginaldegrees='65.21641635974422' kr:orb='2.0009989169266476' kr:aspectdegrees='90' kr:planetsdiff='87.99900108307335' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -827,16 +838,16 @@
   <line x1='40.095178' y1='82.299204' x2='18.911661' y2='36.776566' stroke='#dc0000' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mars' kr:tooriginaldegrees='182.66253120510896' kr:from='Mars' kr:fromoriginaldegrees='122.71877710068114' kr:orb='0.056245895572175186' kr:aspectdegrees='60' kr:planetsdiff='59.943754104427825' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='40.095178' y1='82.299204' x2='17.083107' y2='57.604092' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='40.095178' y1='82.299204' x2='17.083107' y2='57.604092' stroke='#bb8b23' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Mars' kr:tooriginaldegrees='182.66253120510896' kr:from='Jupiter' kr:fromoriginaldegrees='91.84711471209363' kr:orb='0.8154164930153343' kr:aspectdegrees='90' kr:planetsdiff='90.81541649301533' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='40.095178' y1='82.299204' x2='17.845025' y2='39.636524' stroke='#dc0000' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Mars' kr:tooriginaldegrees='182.66253120510896' kr:from='Saturn' kr:fromoriginaldegrees='65.21641635974422' kr:orb='2.5538851546352532' kr:aspectdegrees='120' kr:planetsdiff='117.44611484536475' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='40.095178' y1='82.299204' x2='25.901516' y2='26.322857' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='40.095178' y1='82.299204' x2='25.901516' y2='26.322857' stroke='#2ba800' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Mars' kr:tooriginaldegrees='182.66253120510896' kr:from='Uranus' kr:fromoriginaldegrees='61.9717855705379' kr:orb='0.6907456345710727' kr:aspectdegrees='120' kr:planetsdiff='120.69074563457107' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='40.095178' y1='82.299204' x2='27.280254' y2='24.996856' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='40.095178' y1='82.299204' x2='27.280254' y2='24.996856' stroke='#2ba800' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Mars' kr:tooriginaldegrees='182.66253120510896' kr:from='Neptune' kr:fromoriginaldegrees='177.119512516296' kr:orb='5.543018688812964' kr:aspectdegrees='0' kr:planetsdiff='5.543018688812964' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='40.095178' y1='82.299204' x2='37.021614' y2='81.191434' stroke='#5757e2' stroke-width='0.25'/>
@@ -845,7 +856,7 @@
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Mars' kr:tooriginaldegrees='182.66253120510896' kr:from='Pluto' kr:fromoriginaldegrees='124.27211482618223' kr:orb='1.60958362107327' kr:aspectdegrees='60' kr:planetsdiff='58.39041637892673' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='40.095178' y1='82.299204' x2='17.301332' y2='58.493593' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='40.095178' y1='82.299204' x2='17.301332' y2='58.493593' stroke='#bb8b23' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Moon' kr:fromoriginaldegrees='138.20014920582454' kr:orb='4.508279526143383' kr:aspectdegrees='90' kr:planetsdiff='94.50827952614338' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='36.269272' y1='19.132361' x2='20.307144' y2='66.114539' stroke='#dc0000' stroke-width='0.25'/>
@@ -863,9 +874,9 @@
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Jupiter' kr:tooriginaldegrees='43.69186967968114' kr:from='Medium_Coeli' kr:fromoriginaldegrees='104.42718866435325' kr:orb='0.7353189846721193' kr:aspectdegrees='60' kr:planetsdiff='60.73531898467212' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='36.269272' y1='19.132361' x2='16.359779' y2='46.888801' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='36.269272' y1='19.132361' x2='16.359779' y2='46.888801' stroke='#bb8b23' stroke-width='0.25'/>
   <g transform='translate(26.314525 33.010581) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb60' fill='#d59e28'/>
+    <use xlink:href='#orb60' fill='#bb8b23'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Moon' kr:fromoriginaldegrees='138.20014920582454' kr:orb='4.985134972649178' kr:aspectdegrees='90' kr:planetsdiff='94.98513497264918' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -878,13 +889,13 @@
   <line x1='36.526647' y1='19.019154' x2='18.775693' y2='62.899098' stroke='#dc0000' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Saturn' kr:tooriginaldegrees='43.21501423317537' kr:from='Medium_Coeli' kr:fromoriginaldegrees='104.42718866435325' kr:orb='1.212174431177914' kr:aspectdegrees='60' kr:planetsdiff='61.212174431177914' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='36.526647' y1='19.019154' x2='16.359779' y2='46.888801' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='36.526647' y1='19.019154' x2='16.359779' y2='46.888801' stroke='#bb8b23' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Uranus' kr:tooriginaldegrees='55.55201631118552' kr:from='Moon' kr:fromoriginaldegrees='138.20014920582454' kr:orb='7.351867105360952' kr:aspectdegrees='90' kr:planetsdiff='82.64813289463905' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='30.218368' y1='22.613305' x2='20.307144' y2='66.114539' stroke='#dc0000' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Uranus' kr:tooriginaldegrees='55.55201631118552' kr:from='Neptune' kr:fromoriginaldegrees='177.119512516296' kr:orb='1.5674962051104728' kr:aspectdegrees='120' kr:planetsdiff='121.56749620511047' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='30.218368' y1='22.613305' x2='37.021614' y2='81.191434' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='30.218368' y1='22.613305' x2='37.021614' y2='81.191434' stroke='#2ba800' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Neptune' kr:tooriginaldegrees='176.03011967681334' kr:from='Sun' kr:fromoriginaldegrees='86.66863893486945' kr:orb='0.6385192580561068' kr:aspectdegrees='90' kr:planetsdiff='89.3614807419439' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='36.430937' y1='80.939046' x2='18.911661' y2='36.776566' stroke='#dc0000' stroke-width='0.25'/>
@@ -893,7 +904,7 @@
   <line x1='36.430937' y1='80.939046' x2='17.845025' y2='39.636524' stroke='#dc0000' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Neptune' kr:tooriginaldegrees='176.03011967681334' kr:from='Uranus' kr:fromoriginaldegrees='61.9717855705379' kr:orb='5.941665893724547' kr:aspectdegrees='120' kr:planetsdiff='114.05833410627545' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='36.430937' y1='80.939046' x2='27.280254' y2='24.996856' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='36.430937' y1='80.939046' x2='27.280254' y2='24.996856' stroke='#2ba800' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Neptune' kr:tooriginaldegrees='176.03011967681334' kr:from='Neptune' kr:fromoriginaldegrees='177.119512516296' kr:orb='1.0893928394826844' kr:aspectdegrees='0' kr:planetsdiff='1.0893928394826844' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='36.430937' y1='80.939046' x2='37.021614' y2='81.191434' stroke='#5757e2' stroke-width='0.25'/>
@@ -905,22 +916,22 @@
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pluto' kr:tooriginaldegrees='124.18808813451612' kr:from='Saturn' kr:fromoriginaldegrees='65.21641635974422' kr:orb='1.028328225228094' kr:aspectdegrees='60' kr:planetsdiff='58.971671774771906' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='17.288911' y1='58.445630' x2='25.901516' y2='26.322857' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='17.288911' y1='58.445630' x2='25.901516' y2='26.322857' stroke='#bb8b23' stroke-width='0.25'/>
   <g transform='translate(21.595213 42.384244) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb60' fill='#d59e28'/>
+    <use xlink:href='#orb60' fill='#bb8b23'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Pluto' kr:tooriginaldegrees='124.18808813451612' kr:from='Uranus' kr:fromoriginaldegrees='61.9717855705379' kr:orb='2.216302563978225' kr:aspectdegrees='60' kr:planetsdiff='62.216302563978225' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='17.288911' y1='58.445630' x2='27.280254' y2='24.996856' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='17.288911' y1='58.445630' x2='27.280254' y2='24.996856' stroke='#bb8b23' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Pluto' kr:tooriginaldegrees='124.18808813451612' kr:from='Pluto' kr:fromoriginaldegrees='124.27211482618223' kr:orb='0.08402669166611076' kr:aspectdegrees='0' kr:planetsdiff='0.08402669166611076' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='17.288911' y1='58.445630' x2='17.301332' y2='58.493593' stroke='#5757e2' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='True_North_Lunar_Node' kr:tooriginaldegrees='191.024247807456' kr:from='Saturn' kr:fromoriginaldegrees='65.21641635974422' kr:orb='5.807831447711777' kr:aspectdegrees='120' kr:planetsdiff='125.80783144771178' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='44.897484' y1='83.396233' x2='25.901516' y2='26.322857' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='44.897484' y1='83.396233' x2='25.901516' y2='26.322857' stroke='#2ba800' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='True_North_Lunar_Node' kr:tooriginaldegrees='191.024247807456' kr:from='Chiron' kr:fromoriginaldegrees='132.1571764244524' kr:orb='1.132928616996395' kr:aspectdegrees='60' kr:planetsdiff='58.867071383003605' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='44.897484' y1='83.396233' x2='18.775693' y2='62.899098' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='44.897484' y1='83.396233' x2='18.775693' y2='62.899098' stroke='#bb8b23' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='True_North_Lunar_Node' kr:tooriginaldegrees='191.024247807456' kr:from='Ascendant' kr:fromoriginaldegrees='190.7711605396098' kr:orb='0.2530872678461833' kr:aspectdegrees='0' kr:planetsdiff='0.2530872678461833' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='44.897484' y1='83.396233' x2='44.750016' y2='83.373368' stroke='#5757e2' stroke-width='0.25'/>
@@ -932,30 +943,30 @@
   <line x1='16.820944' y1='56.363512' x2='17.083107' y2='57.604092' stroke='#5757e2' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Chiron' kr:tooriginaldegrees='120.56821722799918' kr:from='Saturn' kr:fromoriginaldegrees='65.21641635974422' kr:orb='4.648199131745031' kr:aspectdegrees='60' kr:planetsdiff='55.35180086825497' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='16.820944' y1='56.363512' x2='25.901516' y2='26.322857' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='16.820944' y1='56.363512' x2='25.901516' y2='26.322857' stroke='#bb8b23' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Chiron' kr:tooriginaldegrees='120.56821722799918' kr:from='Uranus' kr:fromoriginaldegrees='61.9717855705379' kr:orb='1.403568342538712' kr:aspectdegrees='60' kr:planetsdiff='58.59643165746129' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='16.820944' y1='56.363512' x2='27.280254' y2='24.996856' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='16.820944' y1='56.363512' x2='27.280254' y2='24.996856' stroke='#bb8b23' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Chiron' kr:tooriginaldegrees='120.56821722799918' kr:from='Neptune' kr:fromoriginaldegrees='177.119512516296' kr:orb='3.448704711703158' kr:aspectdegrees='60' kr:planetsdiff='56.55129528829684' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='16.820944' y1='56.363512' x2='37.021614' y2='81.191434' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='16.820944' y1='56.363512' x2='37.021614' y2='81.191434' stroke='#bb8b23' stroke-width='0.25'/>
   <g transform='translate(26.921279 68.777473) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb60' fill='#d59e28'/>
+    <use xlink:href='#orb60' fill='#bb8b23'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='conjunction' kr:to='Chiron' kr:tooriginaldegrees='120.56821722799918' kr:from='Pluto' kr:fromoriginaldegrees='124.27211482618223' kr:orb='3.7038975981830617' kr:aspectdegrees='0' kr:planetsdiff='3.7038975981830617' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='16.820944' y1='56.363512' x2='17.301332' y2='58.493593' stroke='#5757e2' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Moon' kr:fromoriginaldegrees='138.20014920582454' kr:orb='1.5109795124687366' kr:aspectdegrees='120' kr:planetsdiff='118.48902048753126' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='50.000000' y1='16.216216' x2='20.307144' y2='66.114539' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='50.000000' y1='16.216216' x2='20.307144' y2='66.114539' stroke='#2ba800' stroke-width='0.25'/>
   <g transform='translate(35.153572 41.165377) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb120' fill='#36d100'/>
+    <use xlink:href='#orb120' fill='#2ba800'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Mercury' kr:fromoriginaldegrees='78.336450359776' kr:orb='1.374678358517258' kr:aspectdegrees='60' kr:planetsdiff='58.62532164148274' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='50.000000' y1='16.216216' x2='21.156048' y2='32.411069' stroke='#d59e28' stroke-width='0.25'/>
+  <line x1='50.000000' y1='16.216216' x2='21.156048' y2='32.411069' stroke='#bb8b23' stroke-width='0.25'/>
   <g transform='translate(35.578024 24.313643) rotate(90) scale(0.45) translate(-5 -5)'>
-    <use xlink:href='#orb60' fill='#d59e28'/>
+    <use xlink:href='#orb60' fill='#bb8b23'/>
   </g>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Ascendant' kr:tooriginaldegrees='19.711128718293267' kr:from='Medium_Coeli' kr:fromoriginaldegrees='104.42718866435325' kr:orb='5.28394005394' kr:aspectdegrees='90' kr:planetsdiff='84.71605994606' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
@@ -968,7 +979,7 @@
   <line x1='82.963366' y1='57.400037' x2='17.845025' y2='39.636524' stroke='#510060' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='trine' kr:to='Medium_Coeli' kr:tooriginaldegrees='277.0584112781738' kr:from='True_North_Lunar_Node' kr:fromoriginaldegrees='156.6456702999568' kr:orb='0.41274097821701616' kr:aspectdegrees='120' kr:planetsdiff='120.41274097821702' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
-  <line x1='82.963366' y1='57.400037' x2='26.931302' y2='74.681556' stroke='#36d100' stroke-width='0.25'/>
+  <line x1='82.963366' y1='57.400037' x2='26.931302' y2='74.681556' stroke='#2ba800' stroke-width='0.25'/>
 </g>
 <g kr:node='Aspect' kr:aspectname='square' kr:to='Medium_Coeli' kr:tooriginaldegrees='277.0584112781738' kr:from='Ascendant' kr:fromoriginaldegrees='190.7711605396098' kr:orb='3.712749261435988' kr:aspectdegrees='90' kr:planetsdiff='86.28725073856401' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>
   <line x1='82.963366' y1='57.400037' x2='44.750016' y2='83.373368' stroke='#dc0000' stroke-width='0.25'/>
@@ -1082,7 +1093,7 @@
         <!-- GLYPHS:BEGIN (generated by scripts/build_chart_glyphs.py — do not edit by hand) -->
         <!-- Planets -->
         <symbol id='Sun'>
-            <circle cx='12' cy='12' r='9' fill='none' stroke='#984b00' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><circle cx='12' cy='12' r='1.9' fill='#984b00'/>
+            <circle cx='12' cy='12' r='9' fill='none' stroke='#7e3e00' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><circle cx='12' cy='12' r='1.9' fill='#7e3e00'/>
         </symbol>
         <symbol id='Moon'>
             <g transform='translate(3.745,1.920) scale(0.01276,-0.01276) translate(-123.000,-1530.000)'><path d='M1417 740Q1417 408 1185.5 179.0Q954 -50 621 -50Q501 -50 373 -8Q240 36 151 108Q123 131 123 155Q123 200 174 200Q180 200 190 198Q250 186 371 161Q431 149 433 149Q678 149 849.5 322.0Q1021 495 1021 740Q1021 982 851.0 1156.5Q681 1331 440 1331Q436 1331 375.0 1318.5Q314 1306 190 1281Q180 1279 174 1279Q123 1279 123 1324Q123 1349 153 1372Q360 1530 627 1530Q956 1530 1186.5 1299.5Q1417 1069 1417 740ZM1317 740Q1317 1028 1116.0 1229.0Q915 1430 627 1430Q578 1430 531 1424Q785 1388 953.0 1192.5Q1121 997 1121 740Q1121 484 953.0 288.0Q785 92 532 56Q576 50 621 50Q912 50 1114.5 249.5Q1317 449 1317 740Z' style='fill: #150052'/></g>
@@ -1132,7 +1143,7 @@
             <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: #333333'/></g>
         </symbol>
         <symbol id='Interpolated_Lilith'>
-            <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: #666666'/></g>
+            <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: #525252'/></g>
         </symbol>
         <symbol id='Mean_Priapus'>
             <g transform='translate(24,0) scale(-1,1)'><path d='M7.500,3.714 A5.1,5.1 0 1,1 7.500,10.286 A3.7,3.7 0 1,0 7.500,3.714 Z' fill='#000000'/></g><line x1='12' y1='10.455' x2='12' y2='17.6' fill='none' stroke='#000000' stroke-width='1.494' stroke-linecap='round'/><path d='M8.6,16.8 L15.4,16.8 L12,22.1 Z' fill='#000000'/>
@@ -1141,17 +1152,17 @@
             <g transform='translate(24,0) scale(-1,1)'><path d='M7.500,3.714 A5.1,5.1 0 1,1 7.500,10.286 A3.7,3.7 0 1,0 7.500,3.714 Z' fill='#333333'/></g><line x1='12' y1='10.455' x2='12' y2='17.6' fill='none' stroke='#333333' stroke-width='1.494' stroke-linecap='round'/><path d='M8.6,16.8 L15.4,16.8 L12,22.1 Z' fill='#333333'/>
         </symbol>
         <symbol id='Interpolated_Perigee'>
-            <g transform='translate(24,0) scale(-1,1)'><path d='M7.500,3.714 A5.1,5.1 0 1,1 7.500,10.286 A3.7,3.7 0 1,0 7.500,3.714 Z' fill='#666666'/></g><line x1='12' y1='10.455' x2='12' y2='17.6' fill='none' stroke='#666666' stroke-width='1.494' stroke-linecap='round'/><path d='M8.6,16.8 L15.4,16.8 L12,22.1 Z' fill='#666666'/>
+            <g transform='translate(24,0) scale(-1,1)'><path d='M7.500,3.714 A5.1,5.1 0 1,1 7.500,10.286 A3.7,3.7 0 1,0 7.500,3.714 Z' fill='#525252'/></g><line x1='12' y1='10.455' x2='12' y2='17.6' fill='none' stroke='#525252' stroke-width='1.494' stroke-linecap='round'/><path d='M8.6,16.8 L15.4,16.8 L12,22.1 Z' fill='#525252'/>
         </symbol>
         <symbol id='White_Moon'>
-            <path d='M8.030,3.439 A5.28,5.28 0 1,1 8.030,12.561 A4.5760000000000005,4.5760000000000005 0 1,0 8.030,3.439 Z' fill='none' stroke='#5b6f7a' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='13.115' x2='12' y2='21.4' fill='none' stroke='#5b6f7a' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='7.0' y1='17.8' x2='17.0' y2='17.8' fill='none' stroke='#5b6f7a' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
+            <path d='M8.030,3.439 A5.28,5.28 0 1,1 8.030,12.561 A4.5760000000000005,4.5760000000000005 0 1,0 8.030,3.439 Z' fill='none' stroke='#45545d' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='13.115' x2='12' y2='21.4' fill='none' stroke='#45545d' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='7.0' y1='17.8' x2='17.0' y2='17.8' fill='none' stroke='#45545d' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <!-- Centaurs -->
         <symbol id='Chiron'>
-            <circle cx='10.500' cy='17.533' r='3.8' fill='none' stroke='#666f06' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M10.500,2.667 L10.500,13.733' fill='none' stroke='#666f06' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M16.900,3.1 L10.500,7 L17.300,11.3' fill='none' stroke='#666f06' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='10.500' cy='17.533' r='3.8' fill='none' stroke='#505705' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M10.500,2.667 L10.500,13.733' fill='none' stroke='#505705' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M16.900,3.1 L10.500,7 L17.300,11.3' fill='none' stroke='#505705' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='Pholus'>
-            <circle cx='12' cy='16.433' r='4.9' fill='none' stroke='#5a5a5a' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M12,2.667 L12,11.533' fill='none' stroke='#5a5a5a' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M12,2.667 H13.8 A2.917,2.917 0 0 1 13.8,8.5 H12' fill='none' stroke='#5a5a5a' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='12' cy='16.433' r='4.9' fill='none' stroke='#525252' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M12,2.667 L12,11.533' fill='none' stroke='#525252' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M12,2.667 H13.8 A2.917,2.917 0 0 1 13.8,8.5 H12' fill='none' stroke='#525252' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <!-- Asteroids -->
         <symbol id='Ceres'>
@@ -1164,29 +1175,29 @@
             <g transform='translate(6.260,1.920) scale(0.01102,-0.01102) translate(-216.000,-1420.000)'><path d='M1258 798H887L1149 536L1061 447L799 709V0H1095V-125H799V-410H674V-125H378V0H674V709L412 447L324 536L586 798H216V923H586L324 1184L412 1273L674 1011V1420H799V1011L1061 1273L1149 1184L887 923H1258Z' style='fill: #591f52'/></g>
         </symbol>
         <symbol id='Vesta'>
-            <g transform='translate(3.220,1.920) scale(0.01244,-0.01244) translate(-90.000,-1274.000)'><path d='M859 635H734V1274H859ZM1342 561H1156L796 133L436 561H250V686H494L796 327L1098 686H1342ZM1502 0H1156L796 -347L436 0H90V125H486L796 -173L1106 125H1502Z' style='fill: #963209'/></g>
+            <g transform='translate(3.220,1.920) scale(0.01244,-0.01244) translate(-90.000,-1274.000)'><path d='M859 635H734V1274H859ZM1342 561H1156L796 133L436 561H250V686H494L796 327L1098 686H1342ZM1502 0H1156L796 -347L436 0H90V125H486L796 -173L1106 125H1502Z' style='fill: #913009'/></g>
         </symbol>
         <!-- Trans-Neptunian objects -->
         <symbol id='Eris'>
             <circle cx='12' cy='6.967' r='4.3' fill='none' stroke='#800000' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='11.267' x2='12' y2='17.480' fill='none' stroke='#800000' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.6' y1='13.367' x2='15.4' y2='13.367' fill='none' stroke='#800000' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M8.8,17.480 L15.2,17.480 L12,22.080 Z' fill='#800000'/>
         </symbol>
         <symbol id='Sedna'>
-            <g transform='translate(3.732,1.920) scale(0.02684,-0.02684) translate(-11.000,-733.000)'><path d='M275 400V539H137Q72 539 41.5 565.5Q11 592 11 635Q11 676 39.0 703.0Q67 730 107 730Q148 730 175.0 702.0Q202 674 202 625V583H275V733H347V583H445V539H347V456Q432 445 494.5 392.0Q557 339 592.0 238.5Q627 138 627 -18H555Q555 134 521.5 226.0Q488 318 425.5 359.0Q363 400 275 400ZM137 583H158V625Q158 656 144.0 671.0Q130 686 107 686Q85 686 70.0 672.0Q55 658 55 635Q55 611 73.0 597.0Q91 583 137 583Z' style='fill: #b8860b'/></g>
+            <g transform='translate(3.732,1.920) scale(0.02684,-0.02684) translate(-11.000,-733.000)'><path d='M275 400V539H137Q72 539 41.5 565.5Q11 592 11 635Q11 676 39.0 703.0Q67 730 107 730Q148 730 175.0 702.0Q202 674 202 625V583H275V733H347V583H445V539H347V456Q432 445 494.5 392.0Q557 339 592.0 238.5Q627 138 627 -18H555Q555 134 521.5 226.0Q488 318 425.5 359.0Q363 400 275 400ZM137 583H158V625Q158 656 144.0 671.0Q130 686 107 686Q85 686 70.0 672.0Q55 658 55 635Q55 611 73.0 597.0Q91 583 137 583Z' style='fill: #6b4e07'/></g>
         </symbol>
         <symbol id='Haumea'>
-            <g transform='translate(2.541,1.920) scale(0.02218,-0.02218) translate(-50.000,-820.000)'><path d='M474 559Q439 559 409.0 576.5Q379 594 361.0 624.0Q343 654 343 689Q343 725 361.0 755.0Q379 785 409.0 802.5Q439 820 474 820Q511 820 541.0 802.5Q571 785 589.0 755.0Q607 725 607 689Q607 654 589.0 624.0Q571 594 541.0 576.5Q511 559 474 559ZM475 622Q504 622 523.5 641.5Q543 661 543 689Q543 718 523.5 738.0Q504 758 475 758Q447 758 427.0 738.0Q407 718 407 689Q407 661 427.0 641.5Q447 622 475 622ZM75 -89 50 -28Q100 -4 132.0 31.5Q164 67 183.0 120.5Q202 174 210.0 251.5Q218 329 219 438H128V509H822V438H734Q735 329 743.0 251.5Q751 174 770.0 120.5Q789 67 821.0 31.5Q853 -4 903 -28L878 -89Q811 -67 769.5 -20.5Q728 26 706.0 86.0Q684 146 675.0 211.0Q666 276 664.5 335.0Q663 394 663 438H290Q290 394 288.5 335.0Q287 276 278.0 211.0Q269 146 247.0 86.0Q225 26 183.5 -20.5Q142 -67 75 -89ZM474 127Q439 127 409.0 144.5Q379 162 361.0 192.0Q343 222 343 257Q343 293 361.0 323.0Q379 353 409.0 370.5Q439 388 474 388Q511 388 541.0 370.5Q571 353 589.0 323.0Q607 293 607 257Q607 222 589.0 192.0Q571 162 541.0 144.5Q511 127 474 127ZM475 190Q504 190 523.5 209.5Q543 229 543 257Q543 286 523.5 306.0Q504 326 475 326Q447 326 427.0 306.0Q407 286 407 257Q407 229 427.0 209.5Q447 190 475 190Z' style='fill: #8b4513'/></g>
+            <g transform='translate(2.541,1.920) scale(0.02218,-0.02218) translate(-50.000,-820.000)'><path d='M474 559Q439 559 409.0 576.5Q379 594 361.0 624.0Q343 654 343 689Q343 725 361.0 755.0Q379 785 409.0 802.5Q439 820 474 820Q511 820 541.0 802.5Q571 785 589.0 755.0Q607 725 607 689Q607 654 589.0 624.0Q571 594 541.0 576.5Q511 559 474 559ZM475 622Q504 622 523.5 641.5Q543 661 543 689Q543 718 523.5 738.0Q504 758 475 758Q447 758 427.0 738.0Q407 718 407 689Q407 661 427.0 641.5Q447 622 475 622ZM75 -89 50 -28Q100 -4 132.0 31.5Q164 67 183.0 120.5Q202 174 210.0 251.5Q218 329 219 438H128V509H822V438H734Q735 329 743.0 251.5Q751 174 770.0 120.5Q789 67 821.0 31.5Q853 -4 903 -28L878 -89Q811 -67 769.5 -20.5Q728 26 706.0 86.0Q684 146 675.0 211.0Q666 276 664.5 335.0Q663 394 663 438H290Q290 394 288.5 335.0Q287 276 278.0 211.0Q269 146 247.0 86.0Q225 26 183.5 -20.5Q142 -67 75 -89ZM474 127Q439 127 409.0 144.5Q379 162 361.0 192.0Q343 222 343 257Q343 293 361.0 323.0Q379 353 409.0 370.5Q439 388 474 388Q511 388 541.0 370.5Q571 353 589.0 323.0Q607 293 607 257Q607 222 589.0 192.0Q571 162 541.0 144.5Q511 127 474 127ZM475 190Q504 190 523.5 209.5Q543 229 543 257Q543 286 523.5 306.0Q504 326 475 326Q447 326 427.0 306.0Q407 286 407 257Q407 229 427.0 209.5Q447 190 475 190Z' style='fill: #824112'/></g>
         </symbol>
         <symbol id='Makemake'>
-            <g transform='translate(1.920,2.433) scale(0.02093,-0.02093) translate(-50.000,-833.000)'><path d='M496 -81V762H326Q257 762 211.5 737.0Q166 712 143.5 672.0Q121 632 121 585Q121 507 172.0 455.5Q223 404 315 404V338Q234 338 174.5 370.0Q115 402 82.5 458.5Q50 515 50 586Q50 658 85.5 713.5Q121 769 185.0 801.0Q249 833 335 833H728Q814 833 878.0 801.0Q942 769 977.5 713.5Q1013 658 1013 586Q1013 515 980.5 458.5Q948 402 888.5 370.0Q829 338 748 338V404Q840 404 891.0 455.5Q942 507 942 585Q942 632 919.5 672.0Q897 712 852.0 737.0Q807 762 737 762H567V-81ZM315 454Q280 454 250.0 471.0Q220 488 202.5 517.5Q185 547 185 583Q185 619 202.5 647.5Q220 676 250.0 693.0Q280 710 315 710Q351 710 381.0 693.0Q411 676 428.5 647.5Q446 619 446 583Q446 547 428.5 517.5Q411 488 381.0 471.0Q351 454 315 454ZM747 454Q712 454 682.0 471.0Q652 488 634.5 517.5Q617 547 617 583Q617 619 634.5 647.5Q652 676 682.0 693.0Q712 710 747 710Q783 710 813.0 693.0Q843 676 860.5 647.5Q878 619 878 583Q878 547 860.5 517.5Q843 488 813.0 471.0Q783 454 747 454ZM315 514Q344 514 364.0 534.0Q384 554 384 582Q384 610 364.0 630.0Q344 650 315 650Q287 650 267.5 630.0Q248 610 248 582Q248 554 267.5 534.0Q287 514 315 514ZM747 514Q776 514 796.0 534.0Q816 554 816 582Q816 610 796.0 630.0Q776 650 747 650Q719 650 699.5 630.0Q680 610 680 582Q680 554 699.5 534.0Q719 514 747 514Z' style='fill: #a0522d'/></g>
+            <g transform='translate(1.920,2.433) scale(0.02093,-0.02093) translate(-50.000,-833.000)'><path d='M496 -81V762H326Q257 762 211.5 737.0Q166 712 143.5 672.0Q121 632 121 585Q121 507 172.0 455.5Q223 404 315 404V338Q234 338 174.5 370.0Q115 402 82.5 458.5Q50 515 50 586Q50 658 85.5 713.5Q121 769 185.0 801.0Q249 833 335 833H728Q814 833 878.0 801.0Q942 769 977.5 713.5Q1013 658 1013 586Q1013 515 980.5 458.5Q948 402 888.5 370.0Q829 338 748 338V404Q840 404 891.0 455.5Q942 507 942 585Q942 632 919.5 672.0Q897 712 852.0 737.0Q807 762 737 762H567V-81ZM315 454Q280 454 250.0 471.0Q220 488 202.5 517.5Q185 547 185 583Q185 619 202.5 647.5Q220 676 250.0 693.0Q280 710 315 710Q351 710 381.0 693.0Q411 676 428.5 647.5Q446 619 446 583Q446 547 428.5 517.5Q411 488 381.0 471.0Q351 454 315 454ZM747 454Q712 454 682.0 471.0Q652 488 634.5 517.5Q617 547 617 583Q617 619 634.5 647.5Q652 676 682.0 693.0Q712 710 747 710Q783 710 813.0 693.0Q843 676 860.5 647.5Q878 619 878 583Q878 547 860.5 517.5Q843 488 813.0 471.0Q783 454 747 454ZM315 514Q344 514 364.0 534.0Q384 554 384 582Q384 610 364.0 630.0Q344 650 315 650Q287 650 267.5 630.0Q248 610 248 582Q248 554 267.5 534.0Q287 514 315 514ZM747 514Q776 514 796.0 534.0Q816 554 816 582Q816 610 796.0 630.0Q776 650 747 650Q719 650 699.5 630.0Q680 610 680 582Q680 554 699.5 534.0Q719 514 747 514Z' style='fill: #804224'/></g>
         </symbol>
         <symbol id='Ixion'>
-            <circle cx='12' cy='12' r='9' fill='none' stroke='#556b2f' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='6' y1='6' x2='18' y2='18' fill='none' stroke='#556b2f' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='18' y1='6' x2='6' y2='18' fill='none' stroke='#556b2f' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='3' x2='12' y2='21' fill='none' stroke='#556b2f' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='12' cy='12' r='9' fill='none' stroke='#475927' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='6' y1='6' x2='18' y2='18' fill='none' stroke='#475927' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='18' y1='6' x2='6' y2='18' fill='none' stroke='#475927' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='3' x2='12' y2='21' fill='none' stroke='#475927' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='Orcus'>
             <g transform='translate(1.920,1.920) scale(0.02187,-0.02187) translate(-50.000,-810.000)'><path d='M512 -112Q411 -112 326.5 -78.0Q242 -44 180.0 18.0Q118 80 84.0 164.5Q50 249 50 349Q50 450 84.0 534.0Q118 618 180.0 680.0Q242 742 326.5 776.0Q411 810 512 810Q607 810 690.5 776.0Q774 742 837.5 680.0Q901 618 936.5 534.0Q972 450 972 349Q972 249 938.0 164.5Q904 80 842.0 18.0Q780 -44 696.0 -78.0Q612 -112 512 -112ZM363 240Q346 263 336.0 290.5Q326 318 326 348Q326 399 351.0 440.5Q376 482 418.0 506.5Q460 531 510 531Q561 531 603.5 506.5Q646 482 671.0 440.5Q696 399 696 348Q696 315 684.0 285.0Q672 255 651 231H884Q901 288 901 350Q901 431 872.5 502.5Q844 574 791.5 628.5Q739 683 668.0 713.5Q597 744 512 744Q427 744 355.0 715.0Q283 686 231.0 633.0Q179 580 150.0 508.0Q121 436 121 350Q121 268 150.0 196.5Q179 125 231.0 70.5Q283 16 354.5 -14.5Q426 -45 512 -45Q568 -45 621 -30L390 211Q376 224 364 239ZM510 231Q544 231 570.5 246.5Q597 262 613.0 288.5Q629 315 629 347Q629 380 613.5 407.5Q598 435 571.0 451.0Q544 467 511 467Q479 467 452.0 451.0Q425 435 409.0 407.5Q393 380 393 347Q393 315 409.0 288.5Q425 262 452.0 246.5Q479 231 510 231ZM524 167 690 -3Q745 24 788.5 67.5Q832 111 859 167Z' style='fill: #2f4f4f'/></g>
         </symbol>
         <symbol id='Quaoar'>
-            <g transform='translate(2.006,1.920) scale(0.02154,-0.02154) translate(-50.000,-838.000)'><path d='M978 374 824 220 977 -98 666 62 514 -90 50 374 514 838ZM153 372 512 13 618 119 466 413 764 265 875 376 516 735ZM690 130 846 38 761 196 606 274Z' style='fill: #8a2be2'/></g>
+            <g transform='translate(2.006,1.920) scale(0.02154,-0.02154) translate(-50.000,-838.000)'><path d='M978 374 824 220 977 -98 666 62 514 -90 50 374 514 838ZM153 372 512 13 618 119 466 413 764 265 875 376 516 735ZM690 130 846 38 761 196 606 274Z' style='fill: #731bc4'/></g>
         </symbol>
         <!-- Uranian points -->
         <symbol id='Cupido'>
@@ -1228,10 +1239,10 @@
         </symbol>
         <!-- Angles -->
         <symbol id='Ascendant'>
-            <g transform='translate(0.458,19.605) scale(0.02151,-0.02151)' style='fill: #ff7e00'><path d='M545 0 459 221H176L91 0H0L279 717H360L638 0ZM352 517Q349 525 342.0 546.0Q335 567 328.5 589.5Q322 612 318 624Q311 593 302.0 563.5Q293 534 287 517L206 301H432Z'/><path d='M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z' transform='translate(639,0)'/></g>
+            <g transform='translate(0.458,19.605) scale(0.02151,-0.02151)' style='fill: #7f3f00'><path d='M545 0 459 221H176L91 0H0L279 717H360L638 0ZM352 517Q349 525 342.0 546.0Q335 567 328.5 589.5Q322 612 318 624Q311 593 302.0 563.5Q293 534 287 517L206 301H432Z'/><path d='M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z' transform='translate(639,0)'/></g>
         </symbol>
         <symbol id='Medium_Coeli'>
-            <g transform='translate(-1.852,18.721) scale(0.01909,-0.01909)' style='fill: #ff0000'><path d='M412 0 177 626H173Q176 595 178.0 542.5Q180 490 180 433V0H97V714H230L450 129H454L678 714H810V0H721V439Q721 491 723.5 542.0Q726 593 728 625H724L486 0Z'/><path d='M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z' transform='translate(907,0)'/></g>
+            <g transform='translate(-1.852,18.721) scale(0.01909,-0.01909)' style='fill: #a80000'><path d='M412 0 177 626H173Q176 595 178.0 542.5Q180 490 180 433V0H97V714H230L450 129H454L678 714H810V0H721V439Q721 491 723.5 542.0Q726 593 728 625H724L486 0Z'/><path d='M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z' transform='translate(907,0)'/></g>
         </symbol>
         <symbol id='Descendant'>
             <g transform='translate(-1.564,19.572) scale(0.02151,-0.02151)' style='fill: #0000ff'><path d='M669 364Q669 183 570.5 91.5Q472 0 296 0H97V714H317Q425 714 504.0 674.0Q583 634 626.0 556.5Q669 479 669 364ZM574 361Q574 504 503.5 570.5Q433 637 304 637H187V77H284Q574 77 574 361Z'/><path d='M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z' transform='translate(730,0)'/></g>
@@ -1253,44 +1264,44 @@
             <circle cx='12' cy='12' r='9.333' fill='none' stroke='#6a2d04' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='2.667' x2='12' y2='21.333' fill='none' stroke='#6a2d04' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='2.667' y1='12' x2='21.333' y2='12' fill='none' stroke='#6a2d04' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='FixedStar'>
-            <path d='M12.00,1.40 L14.49,8.57 L22.08,8.72 L16.03,13.31 L18.23,20.57 L12.00,16.24 L5.77,20.57 L7.97,13.31 L1.92,8.72 L9.51,8.57 Z' fill='#d4a053'/>
+            <path d='M12.00,1.40 L14.49,8.57 L22.08,8.72 L16.03,13.31 L18.23,20.57 L12.00,16.24 L5.77,20.57 L7.97,13.31 L1.92,8.72 L9.51,8.57 Z' fill='#bb822f'/>
         </symbol>
         <symbol id='Midpoint'>
             <line x1='5' y1='12' x2='19' y2='12' stroke='#8b65d0' stroke-width='0.747'/><circle cx='5' cy='12' r='2.2' fill='#8b65d0'/><circle cx='19' cy='12' r='2.2' fill='#8b65d0'/><circle cx='12' cy='12' r='2.2' fill='#8b65d0'/>
         </symbol>
         <!-- Signs -->
         <symbol id='Ari'>
-            <g transform='translate(2.560,3.291) scale(0.01329,-0.01329) translate(-173.000,-1518.000)'><path d='M2196 1110Q2196 938 2089 740H1938Q2048 936 2048 1100Q2048 1215 2002 1295Q1946 1394 1840 1394Q1640 1394 1467 949Q1372 704 1313 333Q1259 -11 1259 -302V-395H1111V-296Q1111 -20 1059 312Q1003 668 915 904Q736 1382 529 1382Q424 1382 368 1285Q321 1205 321 1092Q321 922 431 740H281Q173 936 173 1107Q173 1275 267 1392Q367 1518 531 1518Q842 1518 1021 1029Q1138 707 1172 288H1197Q1225 699 1348 1030Q1528 1518 1839 1518Q2003 1518 2103 1393Q2196 1278 2196 1110Z' style='fill: #ff7200'/></g>
+            <g transform='translate(2.560,3.291) scale(0.01329,-0.01329) translate(-173.000,-1518.000)'><path d='M2196 1110Q2196 938 2089 740H1938Q2048 936 2048 1100Q2048 1215 2002 1295Q1946 1394 1840 1394Q1640 1394 1467 949Q1372 704 1313 333Q1259 -11 1259 -302V-395H1111V-296Q1111 -20 1059 312Q1003 668 915 904Q736 1382 529 1382Q424 1382 368 1285Q321 1205 321 1092Q321 922 431 740H281Q173 936 173 1107Q173 1275 267 1392Q367 1518 531 1518Q842 1518 1021 1029Q1138 707 1172 288H1197Q1225 699 1348 1030Q1528 1518 1839 1518Q2003 1518 2103 1393Q2196 1278 2196 1110Z' style='fill: #b25000'/></g>
         </symbol>
         <symbol id='Tau'>
             <g transform='translate(3.169,2.560) scale(0.01415,-0.01415) translate(-173.000,-1480.000)'><path d='M1986 1369H1960Q1822 1369 1713 1174L1654 1068Q1587 948 1535 892Q1466 818 1360 776Q1715 580 1715 211Q1715 -46 1526.5 -232.5Q1338 -419 1080 -419Q823 -419 633.5 -232.5Q444 -46 444 211Q444 392 542 543Q634 685 799 776Q693 818 624 892Q572 948 505 1068L446 1174Q337 1369 200 1369H173V1480H246Q442 1480 599 1206L680 1065Q757 932 841 876Q934 814 1080 814Q1226 814 1319 876Q1403 932 1480 1065L1561 1206Q1718 1480 1913 1480H1986ZM1567 208Q1567 411 1425.0 551.0Q1283 691 1080 691Q877 691 734.5 551.0Q592 411 592 208Q592 7 735.5 -132.0Q879 -271 1080 -271Q1281 -271 1424.0 -131.5Q1567 8 1567 208Z' style='fill: #6b3d00'/></g>
         </symbol>
         <symbol id='Gem'>
-            <g transform='translate(2.898,2.560) scale(0.01609,-0.01609) translate(-173.000,-1572.000)'><path d='M1802 -99Q1424 0 987 0Q550 0 173 -99V24Q379 79 555 100V1375Q365 1393 173 1448V1572Q505 1480 987 1480Q1470 1480 1802 1572V1448Q1610 1393 1419 1375V100Q1595 79 1802 24ZM1271 109V1365Q1157 1357 987 1357Q817 1357 703 1365V109Q830 123 987 123Q1144 123 1271 109Z' style='fill: #69acf1'/></g>
+            <g transform='translate(2.898,2.560) scale(0.01609,-0.01609) translate(-173.000,-1572.000)'><path d='M1802 -99Q1424 0 987 0Q550 0 173 -99V24Q379 79 555 100V1375Q365 1393 173 1448V1572Q505 1480 987 1480Q1470 1480 1802 1572V1448Q1610 1393 1419 1375V100Q1595 79 1802 24ZM1271 109V1365Q1157 1357 987 1357Q817 1357 703 1365V109Q830 123 987 123Q1144 123 1271 109Z' style='fill: #1473d6'/></g>
         </symbol>
         <symbol id='Can'>
             <g transform='translate(2.560,5.457) scale(0.01424,-0.01424) translate(-173.000,-1481.000)'><path d='M2061 1120Q1596 1333 1162 1333Q878 1333 699 1258Q926 1145 926 907Q926 750 815.0 640.0Q704 530 547 530Q391 530 282.0 639.5Q173 749 173 905Q173 1207 576 1364Q875 1481 1231 1481Q1625 1481 2061 1281ZM2061 575Q2061 274 1658 116Q1359 0 1003 0Q610 0 173 199V360Q638 148 1072 148Q1356 148 1534 222Q1308 338 1308 573Q1308 729 1419.5 839.5Q1531 950 1687 950Q1843 950 1952.0 840.5Q2061 731 2061 575ZM1962 570Q1962 687 1882.5 769.0Q1803 851 1686 851Q1569 851 1488.0 770.0Q1407 689 1407 572Q1407 458 1490.0 377.0Q1573 296 1687 296Q1802 296 1882.0 375.5Q1962 455 1962 570ZM827 908Q827 1023 744.0 1103.5Q661 1184 546 1184Q430 1184 351.0 1105.0Q272 1026 272 910Q272 794 352.0 711.5Q432 629 548 629Q665 629 746.0 710.0Q827 791 827 908Z' style='fill: #2b4972'/></g>
         </symbol>
         <symbol id='Leo'>
-            <g transform='translate(5.490,2.560) scale(0.01329,-0.01329) translate(-173.000,-1604.000)'><path d='M1755 -260Q1582 -419 1423 -419Q1287 -419 1192.5 -328.5Q1098 -238 1098 -102Q1098 76 1286 476L1382 680Q1493 916 1493 1064Q1493 1250 1387 1363Q1278 1480 1094 1480Q926 1480 821.0 1379.5Q716 1279 716 1112Q716 960 814 756L853 675Q950 474 950 379Q950 223 834.5 111.5Q719 0 562 0Q399 0 286.0 114.0Q173 228 173 391Q173 549 284.0 663.0Q395 777 552 777Q608 777 676 756Q568 963 568 1122Q568 1338 725 1474Q874 1604 1093 1604Q1340 1604 1489 1462Q1641 1317 1641 1072Q1641 940 1600 818Q1579 754 1498 578L1429 428Q1245 28 1245 -87Q1245 -170 1295.5 -227.0Q1346 -284 1428 -284Q1533 -284 1668 -165ZM827 388Q827 505 749.0 585.5Q671 666 554 666Q440 666 362.0 585.0Q284 504 284 390Q284 273 362.0 192.0Q440 111 556 111Q671 111 749.0 192.0Q827 273 827 388Z' style='fill: #ff7200'/></g>
+            <g transform='translate(5.490,2.560) scale(0.01329,-0.01329) translate(-173.000,-1604.000)'><path d='M1755 -260Q1582 -419 1423 -419Q1287 -419 1192.5 -328.5Q1098 -238 1098 -102Q1098 76 1286 476L1382 680Q1493 916 1493 1064Q1493 1250 1387 1363Q1278 1480 1094 1480Q926 1480 821.0 1379.5Q716 1279 716 1112Q716 960 814 756L853 675Q950 474 950 379Q950 223 834.5 111.5Q719 0 562 0Q399 0 286.0 114.0Q173 228 173 391Q173 549 284.0 663.0Q395 777 552 777Q608 777 676 756Q568 963 568 1122Q568 1338 725 1474Q874 1604 1093 1604Q1340 1604 1489 1462Q1641 1317 1641 1072Q1641 940 1600 818Q1579 754 1498 578L1429 428Q1245 28 1245 -87Q1245 -170 1295.5 -227.0Q1346 -284 1428 -284Q1533 -284 1668 -165ZM827 388Q827 505 749.0 585.5Q671 666 554 666Q440 666 362.0 585.0Q284 504 284 390Q284 273 362.0 192.0Q440 111 556 111Q671 111 749.0 192.0Q827 273 827 388Z' style='fill: #b25000'/></g>
         </symbol>
         <symbol id='Vir'>
             <g transform='translate(4.934,2.560) scale(0.01413,-0.01413) translate(-173.000,-1507.000)'><path d='M1739 652Q1739 224 1361 -100Q1379 -230 1514 -395H1340Q1277 -315 1228 -183Q1089 -262 888 -294V-167Q1078 -128 1199 -56Q1184 40 1184 137V1037Q1184 1257 1120 1369Q963 1200 888 893V0H739V987Q739 1262 674 1369Q521 1191 443 928V0H295V1075Q295 1298 173 1480H329Q412 1366 443 1187Q518 1372 617 1480L762 1507Q862 1379 888 1167Q939 1327 1069 1480L1212 1507Q1332 1340 1332 1138V856Q1392 1026 1459 1122L1581 1167Q1739 922 1739 652ZM1591 644Q1591 822 1513 989Q1403 853 1332 626V39Q1591 302 1591 644Z' style='fill: #6b3d00'/></g>
         </symbol>
         <symbol id='Lib'>
-            <g transform='translate(2.560,4.748) scale(0.01690,-0.01690) translate(-173.000,-1480.000)'><path d='M1764 592H1135V730Q1296 834 1296 1009Q1296 1143 1199.5 1237.5Q1103 1332 969 1332Q835 1332 738.5 1237.5Q642 1143 642 1009Q642 834 802 730V592H173V740H614Q494 863 494 1016Q494 1209 635.0 1344.5Q776 1480 969 1480Q1163 1480 1303.5 1344.5Q1444 1209 1444 1016Q1444 863 1324 740H1764ZM1764 148H173V296H1764Z' style='fill: #69acf1'/></g>
+            <g transform='translate(2.560,4.748) scale(0.01690,-0.01690) translate(-173.000,-1480.000)'><path d='M1764 592H1135V730Q1296 834 1296 1009Q1296 1143 1199.5 1237.5Q1103 1332 969 1332Q835 1332 738.5 1237.5Q642 1143 642 1009Q642 834 802 730V592H173V740H614Q494 863 494 1016Q494 1209 635.0 1344.5Q776 1480 969 1480Q1163 1480 1303.5 1344.5Q1444 1209 1444 1016Q1444 863 1324 740H1764ZM1764 148H173V296H1764Z' style='fill: #1473d6'/></g>
         </symbol>
         <symbol id='Sco'>
             <g transform='translate(3.755,2.560) scale(0.01397,-0.01397) translate(-173.000,-1509.000)'><path d='M1926 -211 1692 -415V-271H1556Q1352 -271 1264 -156Q1186 -55 1186 157V1049Q1186 1274 1121 1372Q955 1181 890 894V0H742V996Q742 1265 677 1372Q518 1193 446 927V0H298V1056Q298 1320 173 1480H332Q416 1352 446 1189Q516 1363 620 1480L763 1509Q863 1392 890 1173Q945 1330 1069 1480L1215 1509Q1334 1347 1334 1126V205Q1334 83 1337 55Q1347 -36 1389 -81Q1452 -148 1601 -148H1692V0Z' style='fill: #2b4972'/></g>
         </symbol>
         <symbol id='Sag'>
-            <g transform='translate(2.560,2.577) scale(0.01728,-0.01728) translate(-173.000,-1517.000)'><path d='M1729 686 1583 663 1508 1194 841 526 1155 212 1050 108 736 422 275 -37 173 65 634 524 320 838 424 943 738 629 1406 1296 875 1371 898 1517 1627 1415Z' style='fill: #ff7200'/></g>
+            <g transform='translate(2.560,2.577) scale(0.01728,-0.01728) translate(-173.000,-1517.000)'><path d='M1729 686 1583 663 1508 1194 841 526 1155 212 1050 108 736 422 275 -37 173 65 634 524 320 838 424 943 738 629 1406 1296 875 1371 898 1517 1627 1415Z' style='fill: #b25000'/></g>
         </symbol>
         <symbol id='Cap'>
             <g transform='translate(2.560,3.168) scale(0.01415,-0.01415) translate(-173.000,-1518.000)'><path d='M2073 383Q2073 225 1966.5 112.5Q1860 0 1702 0Q1491 0 1333 164Q1233 -97 1174 -169Q1068 -296 850 -296H716V-173H779Q931 -173 1017 -109Q1089 -56 1139 61Q1143 71 1223 307Q1169 402 1147 501Q1140 537 1117 711L1080 994Q1044 1273 994 1379Q865 1227 774.0 973.5Q683 720 683 518V438H536V490Q536 623 491 875Q442 1147 392 1242Q331 1358 201 1358H173V1480H284Q439 1480 499 1358Q570 1213 628 871Q712 1247 908 1480L1103 1518Q1174 1360 1223 1029L1250 848Q1261 773 1268 713Q1287 549 1313 468Q1456 741 1708 741Q1861 741 1967.0 638.0Q2073 535 2073 383ZM1950 381Q1950 485 1880.5 557.0Q1811 629 1708 629Q1490 629 1366 289Q1527 111 1691 111Q1805 111 1877.5 189.0Q1950 267 1950 381Z' style='fill: #6b3d00'/></g>
         </symbol>
         <symbol id='Aqu'>
-            <g transform='translate(2.560,6.967) scale(0.01464,-0.01464) translate(-173.000,-1357.000)'><path d='M2009 939 1894 888 1775 1172 1342 888 1222 1172 794 888 674 1172 242 888 174 990 729 1357 851 1073 1281 1357 1401 1073 1831 1357ZM2008 174 1893 123 1774 407 1342 123 1222 407 794 123 673 407 241 123 173 225 728 592 850 308 1280 592 1400 308 1830 592Z' style='fill: #69acf1'/></g>
+            <g transform='translate(2.560,6.967) scale(0.01464,-0.01464) translate(-173.000,-1357.000)'><path d='M2009 939 1894 888 1775 1172 1342 888 1222 1172 794 888 674 1172 242 888 174 990 729 1357 851 1073 1281 1357 1401 1073 1831 1357ZM2008 174 1893 123 1774 407 1342 123 1222 407 794 123 673 407 241 123 173 225 728 592 850 308 1280 592 1400 308 1830 592Z' style='fill: #1473d6'/></g>
         </symbol>
         <symbol id='Pis'>
             <g transform='translate(5.172,2.560) scale(0.01730,-0.01730) translate(-173.000,-1517.000)'><path d='M1425 -37H1264Q1128 118 1044 314Q952 525 952 716H646Q646 523 555 313Q471 120 334 -37H173Q499 307 499 716H184V827H499Q479 1182 173 1517H326Q606 1217 646 827H952Q992 1217 1272 1517H1425Q1119 1182 1099 827H1414V716H1099Q1099 307 1425 -37Z' style='fill: #2b4972'/></g>
@@ -1306,7 +1317,7 @@
             <path d='M1.4,8.8 L8.8,8.8 M1.4,8.8 L5.1,1.4' fill='none' stroke='#b14e58' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb60'>
-            <path d='M1.3,1.3 L8.7,8.7 M1.3,8.7 L8.7,1.3 M1,5 L9,5' fill='none' stroke='#d59e28' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
+            <path d='M1.3,1.3 L8.7,8.7 M1.3,8.7 L8.7,1.3 M1,5 L9,5' fill='none' stroke='#bb8b23' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb72'>
             <circle cx='4.4' cy='4.4' r='2.9' fill='none' stroke='#1f99b3' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.451' y1='6.451' x2='9.2' y2='9.2' fill='none' stroke='#1f99b3' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
@@ -1315,7 +1326,7 @@
             <rect x='1.3' y='1.3' width='7.4' height='7.4' fill='none' stroke='#dc0000' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb120'>
-            <path d='M5,1.2 L9,9 L1,9 Z' fill='none' stroke='#36d100' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
+            <path d='M5,1.2 L9,9 L1,9 Z' fill='none' stroke='#2ba800' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb135'>
             <rect x='1' y='1' width='5.3' height='5.3' fill='none' stroke='#985a10' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><path d='M4.4,9.4 L9.4,9.4 M9.4,9.4 L9.4,4.4' fill='none' stroke='#985a10' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
@@ -1324,7 +1335,7 @@
             <circle cx='5' cy='4.5' r='2.8' fill='none' stroke='#7a9810' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><line x1='3.212' y1='6.655' x2='1.1' y2='9.2' fill='none' stroke='#7a9810' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.788' y1='6.655' x2='8.9' y2='9.2' fill='none' stroke='#7a9810' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb150'>
-            <line x1='1' y1='4.4' x2='9' y2='4.4' fill='none' stroke='#26bbcf' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><path d='M1.6,9 L5,4.4 L8.4,9' fill='none' stroke='#26bbcf' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
+            <line x1='1' y1='4.4' x2='9' y2='4.4' fill='none' stroke='#20a0b1' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><path d='M1.6,9 L5,4.4 L8.4,9' fill='none' stroke='#20a0b1' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb180'>
             <circle cx='3' cy='3' r='1.9' fill='none' stroke='#510060' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><circle cx='7' cy='7' r='1.9' fill='none' stroke='#510060' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><line x1='4.35' y1='4.35' x2='5.65' y2='5.65' fill='none' stroke='#510060' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>

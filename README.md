@@ -1565,26 +1565,23 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
     <td></td>
     <td align="center"><strong>Classic</strong></td>
     <td align="center"><strong>Dark</strong></td>
-    <td align="center"><strong>Light</strong></td>
     <td align="center"><strong>Black & White</strong></td>
   </tr>
   <tr>
     <td align="center"><strong>Modern Style</strong> (default)</td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_classic_natal.svg" width="220" alt="Modern Classic Natal Chart"></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_dark_natal.svg" width="220" alt="Modern Dark Natal Chart"></td>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_light_natal.svg" width="220" alt="Modern Light Natal Chart"></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_black_and_white_natal.svg" width="220" alt="Modern Black and White Natal Chart"></td>
   </tr>
   <tr>
     <td align="center"><strong>Classic Style</strong></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_default_natal.svg" width="220" alt="Classic Natal Chart"></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_dark_natal.svg" width="220" alt="Dark Natal Chart"></td>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_light_natal.svg" width="220" alt="Light Natal Chart"></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_black_and_white_natal.svg" width="220" alt="Black and White Natal Chart"></td>
   </tr>
 </table>
 
-Kerykeion provides 6 chart themes: **Classic** (default), **Dark**, **Dark High Contrast**, **Light**, **Black & White** (optimized for monochrome printing), and **Strawberry**. Each is available in both **modern** (the default style) and **classic** chart styles — the theme picks the palette, the style picks the wheel layout.
+Kerykeion ships three chart themes — **Classic** (the default: light, with the rainbow zodiac band), **Dark**, and **Black & White** (for monochrome printing) — plus the option of no theme at all. Each works in both **modern** (the default style) and **classic** chart styles: the theme picks the palette, the style picks the wheel layout. All three meet WCAG AAA on the text a reader reads.
 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables.
 
@@ -1613,11 +1610,11 @@ dark_theme_subject = AstrologicalSubjectFactory.from_birth_data(
 chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_subject)
 
 # Step 3: Create visualization with dark high contrast theme
-dark_theme_natal_chart = ChartDrawer(chart_data=chart_data, theme="dark-high-contrast")
+dark_theme_natal_chart = ChartDrawer(chart_data=chart_data, theme="dark")
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
-dark_theme_natal_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-dark-high-contrast")
+dark_theme_natal_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-dark")
 ```
 
 ![John Lennon](https://www.kerykeion.net/img/showcase/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg)

@@ -8,20 +8,24 @@ order: 11
 
 ## Overview
 
-The theming functionality allows you to customize the look and feel of your astrological charts. You can choose from six unique themes to enhance your charting experience:
+A chart is an SVG whose every colour comes from a CSS custom property. A theme
+is nothing more than a file that sets those properties on `:root`, which the
+drawer copies into the document it produces. Three themes ship with the library,
+and the fourth option is to ship none at all and dress the drawing yourself.
 
-1. **Classic**: The default theme with a classic, traditional color scheme.
-2. **Dark**: A dark theme that is easy on the eyes, especially in low-light environments.
-3. **Dark High Contrast**: A dark theme with high contrast for better visibility.
-4. **Light**: A light theme with a clean and bright appearance.
-5. **Strawberry**: A strawberry-toned theme with pink and red accents.
-6. **Black and White**: A monochrome theme optimized for printing.
+| `theme` | what it is |
+| --- | --- |
+| `"classic"` | The default: a light chart with the rainbow zodiac band. |
+| `"dark"` | For dark backgrounds and low light. |
+| `"black-and-white"` | Monochrome, for printing and for photocopies. |
+| `None` | No stylesheet is emitted. The drawing takes its colours from the document that hosts it. |
 
-## How to Use Themes
+All three shipped themes meet WCAG AAA on everything a reader reads — degrees,
+minutes, house numbers and percentages at 7:1 — and the AA 3:1 floor on the marks
+a reader looks at: aspect lines, sign icons against their own band, the degree
+indicator and the house cusps.
 
-### Applying a Theme
-
-To apply a theme to your astrological chart, pass the `theme` parameter to `ChartDrawer`. Example with the "Dark" theme:
+## Applying a theme
 
 ```python
 from pathlib import Path
@@ -30,208 +34,73 @@ from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark Theme", 1940, 10, 9, 18, 30,
+    "John Lennon", 1940, 10, 9, 18, 30,
     lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
 )
 data = ChartDataFactory.create_natal_chart_data(subject)
-chart = ChartDrawer(data, theme="dark")
 
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=out_dir)
+
+for theme in ("classic", "dark", "black-and-white"):
+    ChartDrawer(data, theme=theme).save_svg(output_path=out_dir)
 ```
 
-The `theme` parameter accepts the following values:
+Passing a name that is not one of the three raises `KerykeionException`. There is
+no silent fallback: a misspelt theme is a bug you want to hear about, not a chart
+that quietly comes out in the wrong colours.
 
-- `"classic"`: Classic theme (default)
-- `"dark"`: Dark theme
-- `"dark-high-contrast"`: Dark high-contrast theme
-- `"light"`: Light theme
-- `"strawberry"`: Strawberry theme
-- `"black-and-white"`: Optimized for monochrome printing
+## Making your own
 
-If no theme is specified, the Classic theme is applied by default.
+### The mechanism
 
-### Example Usage
-
-#### Classic Theme (Default)
+Pass `theme=None` and the SVG carries no `<style>` block of its own. Every colour
+then resolves against whatever the surrounding document defines, so you style the
+chart the way you style anything else on the page:
 
 ```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data.factory import ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
-
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Classic Theme", 1940, 10, 9, 18, 30,
-    lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
-)
-data = ChartDataFactory.create_natal_chart_data(subject)
-chart = ChartDrawer(data)  # "classic" theme by default (the wheel style defaults to "modern")
-
-out_dir = Path("charts_output")
-out_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=out_dir)
-```
-
-![John Lennon - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
-
-#### Dark Theme
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data.factory import ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
-
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark", 1940, 10, 9, 18, 30,
-    lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
-)
-data = ChartDataFactory.create_natal_chart_data(subject)
-chart = ChartDrawer(data, theme="dark")
-
-out_dir = Path("charts_output")
-out_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=out_dir)
-```
-
-![John Lennon - Dark - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart%20-%20Modern.svg)
-
-#### Light Theme
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data.factory import ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
-
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Light Theme", 1940, 10, 9, 18, 30,
-    lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
-)
-data = ChartDataFactory.create_natal_chart_data(subject)
-chart = ChartDrawer(data, theme="light")
-
-out_dir = Path("charts_output")
-out_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=out_dir)
-```
-
-![John Lennon - Light - Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Light%20Theme%20-%20Natal%20Chart%20-%20Modern.svg)
-
-### Overriding Default CSS Variables
-
-You can choose not to set any theme, which makes it easier to override the default CSS variables.
-Use `None` as the theme parameter to override the default CSS variables. This allows for further customization of the chart's appearance.
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data.factory import ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
-
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Custom Theme", 1940, 10, 9, 18, 30,
-    lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
-)
-data = ChartDataFactory.create_natal_chart_data(subject)
 chart = ChartDrawer(data, theme=None)
-
-out_dir = Path("charts_output")
-out_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=out_dir)
 ```
 
-## Default CSS Variables
-
-Here are the default CSS variables that you can override:
-
-```css
-:root {
-    /* Main Colors */
-    --kerykeion-chart-color-paper-0: #000000;
-    --kerykeion-chart-color-paper-1: #ffffff;
-    --kerykeion-chart-color-zodiac-bg-0: #ff7200;
-    --kerykeion-chart-color-zodiac-bg-1: #6b3d00;
-    --kerykeion-chart-color-zodiac-bg-2: #69acf1;
-    --kerykeion-chart-color-zodiac-bg-3: #2b4972;
-    --kerykeion-chart-color-zodiac-bg-4: #ff7200;
-    --kerykeion-chart-color-zodiac-bg-5: #6b3d00;
-    --kerykeion-chart-color-zodiac-bg-6: #69acf1;
-    --kerykeion-chart-color-zodiac-bg-7: #2b4972;
-    --kerykeion-chart-color-zodiac-bg-8: #ff7200;
-    --kerykeion-chart-color-zodiac-bg-9: #6b3d00;
-    --kerykeion-chart-color-zodiac-bg-10: #69acf1;
-    --kerykeion-chart-color-zodiac-bg-11: #2b4972;
-    --kerykeion-chart-color-zodiac-icon-0: #ff7200;
-    --kerykeion-chart-color-zodiac-icon-1: #6b3d00;
-    --kerykeion-chart-color-zodiac-icon-2: #69acf1;
-    --kerykeion-chart-color-zodiac-icon-3: #2b4972;
-    --kerykeion-chart-color-zodiac-icon-4: #ff7200;
-    --kerykeion-chart-color-zodiac-icon-5: #6b3d00;
-    --kerykeion-chart-color-zodiac-icon-6: #69acf1;
-    --kerykeion-chart-color-zodiac-icon-7: #2b4972;
-    --kerykeion-chart-color-zodiac-icon-8: #ff7200;
-    --kerykeion-chart-color-zodiac-icon-9: #6b3d00;
-    --kerykeion-chart-color-zodiac-icon-10: #69acf1;
-    --kerykeion-chart-color-zodiac-icon-11: #2b4972;
-    --kerykeion-chart-color-zodiac-radix-ring-0: #ff0000;
-    --kerykeion-chart-color-zodiac-radix-ring-1: #ff0000;
-    --kerykeion-chart-color-zodiac-radix-ring-2: #ff0000;
-    --kerykeion-chart-color-zodiac-transit-ring-0: #ff0000;
-    --kerykeion-chart-color-zodiac-transit-ring-1: #ff0000;
-    --kerykeion-chart-color-zodiac-transit-ring-2: #0000ff;
-    --kerykeion-chart-color-zodiac-transit-ring-3: #0000ff;
-    --kerykeion-chart-color-houses-radix-line: #ff0000;
-    --kerykeion-chart-color-houses-transit-line: #0000ff;
-    --kerykeion-chart-color-lunar-phase-0: #000000;
-    --kerykeion-chart-color-lunar-phase-1: #ffffff;
-
-    /* Aspects */
-    --kerykeion-chart-color-conjunction: #5757e2;
-    --kerykeion-chart-color-semi-sextile: #810757;
-    --kerykeion-chart-color-semi-square: #b14e58;
-    --kerykeion-chart-color-sextile: #d59e28;
-    --kerykeion-chart-color-quintile: #1f99b3;
-    --kerykeion-chart-color-square: #dc0000;
-    --kerykeion-chart-color-trine: #36d100;
-    --kerykeion-chart-color-sesquiquadrate: #985a10;
-    --kerykeion-chart-color-biquintile: #7a9810;
-    --kerykeion-chart-color-quincunx: #26bbcf;
-    --kerykeion-chart-color-opposition: #510060;
-
-    /* Planets */
-    --kerykeion-chart-color-sun: #984b00;
-    --kerykeion-chart-color-moon: #150052;
-    --kerykeion-chart-color-mercury: #520800;
-    --kerykeion-chart-color-venus: #400052;
-    --kerykeion-chart-color-mars: #540000;
-    --kerykeion-chart-color-jupiter: #47133d;
-    --kerykeion-chart-color-saturn: #124500;
-    --kerykeion-chart-color-uranus: #6f0766;
-    --kerykeion-chart-color-neptune: #06537f;
-    --kerykeion-chart-color-pluto: #713f04;
-    --kerykeion-chart-color-mean-node: #4c1541;
-    --kerykeion-chart-color-true-node: #4c1541;
-    --kerykeion-chart-color-chiron: #666f06;
-    --kerykeion-chart-color-first-house: #ff7e00;
-    --kerykeion-chart-color-tenth-house: #ff0000;
-    --kerykeion-chart-color-seventh-house: #0000ff;
-    --kerykeion-chart-color-fourth-house: #000000;
-    --kerykeion-chart-color-mean-lilith: #000000;
-
-    /* Elements Percentage */
-    --kerykeion-chart-color-air-percentage: #6f76d1;
-    --kerykeion-chart-color-earth-percentage: #6a2d04;
-    --kerykeion-chart-color-fire-percentage: #ff6600;
-    --kerykeion-chart-color-water-percentage: #630e73;
-
-    /* Other */
-    --kerykeion-chart-color-house-number: #f00;
-}
+```html
+<style>
+  :root {
+    --kerykeion-chart-color-paper-1: #fdf6e3;
+    --kerykeion-chart-color-sun: #b58900;
+    --kerykeion-chart-color-moon: #6c71c4;
+    --kerykeion-modern-planet-ring: #eee8d5;
+  }
+</style>
 ```
 
----
+The other way round works too: keep a shipped theme and override the few
+properties you want, since your rule comes after the one the drawer emitted.
 
-> **Need this in production?** Use the [Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe) for hosted calculations, charts, and AI interpretations - no server setup required. [Learn more →](/content/docs/astrologer-api)
+### The families of names
+
+There are around a hundred properties, and they are named rather than numbered,
+so it is the families that are worth knowing:
+
+| family | what it paints |
+| --- | --- |
+| `--kerykeion-chart-color-<point>` | A point's ink: `sun`, `moon`, `mercury`, … and also `first-house`, `tenth-house` for the angles. It fills the glyph **and** the degrees and minutes beside it, so it is text as well as drawing. |
+| `--kerykeion-chart-color-<aspect>` | One per aspect: `conjunction`, `square`, `trine`, … Colours the line and the symbol at its midpoint. |
+| `--kerykeion-chart-color-zodiac-icon-<n>` | The twelve sign glyphs, `0` = Aries. |
+| `--kerykeion-modern-zodiac-bg-<n>` | The twelve bands behind them, plus `--kerykeion-modern-zodiac-bg-opacity`. |
+| `--kerykeion-modern-*` | The modern wheel's own structure: `planet-ring`, `house-ring`, `stroke` (the ring outlines), `cusp` (the house boundaries, which carry 3:1 because they are read), `indicator`, `retrograde`, `stationary`. |
+| `--kerykeion-chart-color-paper-0` / `-1` | Foreground and background of the sheet. |
+| `--kerykeion-chart-color-<element>-percentage` | The element and quality lines in the side panel. |
+
+Two of these deserve a warning. A point's colour is **text**, not just a glyph,
+so a shade that looks fine on a symbol may be unreadable on the minutes next to
+it. And `--kerykeion-modern-cusp` is deliberately darker than
+`--kerykeion-modern-stroke`: the ring outlines are decoration, a house boundary
+is information.
+
+### Measure what you make
+
+A palette that pleases the eye on a big screen can still lose a reader. Before
+shipping your own, put it through the same measurement the built-in themes are
+held to — every mark against the surface it is actually drawn on, at the
+threshold its role demands. That check exists as a tool, not only as an internal
+guard, precisely so that a custom palette can be held to it.

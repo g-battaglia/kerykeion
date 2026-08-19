@@ -3,6 +3,8 @@
     xmlns='http://www.w3.org/2000/svg'
     xmlns:xlink='http://www.w3.org/1999/xlink'
     xmlns:kr='https://www.kerykeion.net/'
+    role='img'
+    aria-labelledby='kerykeion-chart-title kerykeion-chart-desc'
     width='100%'
     height='100%'
     viewBox='0 -15 890 580'
@@ -10,7 +12,8 @@
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
     style='background-color: #ffffff'
 >
-    <title>John Lennon - Birth Chart</title>
+    <title id='kerykeion-chart-title'>John Lennon - Birth Chart</title>
+    <desc id='kerykeion-chart-desc'>John Lennon - Birth Chart. 1940-10-09 18:30. Liverpool, GB. Placidus. 14 points, 20 aspects.</desc>
 
     <!-- Colors -->
     
@@ -41,7 +44,7 @@
                 style='fill: #111111; font-size: 10px;'>
                 Air 36%</text>
             <text kr:node='Water_Text' x='20' y='188'
-                style='fill: #777777; font-size: 10px;'>
+                style='fill: #585858; font-size: 10px;'>
                 Water 9%</text>
         </g>
 
@@ -55,21 +58,21 @@
                 style='fill: #444444; font-size: 10px;'>
                 Fixed 43%</text>
             <text kr:node='Mutable_Text' x='20' y='246'
-                style='fill: #666666; font-size: 10px;'>
+                style='fill: #595959; font-size: 10px;'>
                 Mutable 12%</text>
         </g>
 
-        <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
-            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: #111111; font-size: 10px'>Zodiac: Tropical</text>
-            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: #111111; font-size: 10px'>Domification: Placidus</text>
-            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: #111111; font-size: 10px'>Lunation Day: 9</text>
-            <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: #111111; font-size: 10px'>Lunar phase: First Quarter</text>
-            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: #111111; font-size: 10px'>Perspective: Apparent Geocentric</text>
-            <text kr:node='Bottom_Left_Text_5' x='20' y='522' style='fill: #111111; font-size: 10px'>Diurnality: Nocturnal</text>
+        <g kr:node='Bottom_Left_Text' transform='translate(0,7)'>
+            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: #111111; font-size: 10px'>Lunation Day: 9</text>
+            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: #111111; font-size: 10px'>Lunar phase: First Quarter</text>
+            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: #111111; font-size: 10px'>Domification: Placidus</text>
+            <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: #111111; font-size: 10px'>Diurnality: Nocturnal</text>
+            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: #111111; font-size: 10px'>Zodiac: Tropical</text>
+            <text kr:node='Bottom_Left_Text_5' x='20' y='522' style='fill: #111111; font-size: 10px'>Perspective: Apparent Geocentric</text>
         </g>
 
         <!-- Lunar Phase -->
-        <g kr:node='Lunar_Phase' transform='translate(10,532)'>
+        <g kr:node='Lunar_Phase' transform='translate(10,424)'>
             <g transform='rotate(0 20 10)'>
     <defs>
         <clipPath id='moonPhaseCutOffCircle'>

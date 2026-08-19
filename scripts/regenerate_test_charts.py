@@ -377,24 +377,6 @@ dark_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(dark_them
 dark_theme_natal_chart = ChartDrawer(dark_theme_natal_chart_data, theme="dark")
 dark_theme_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
-# Dark High Contrast Theme Natal Chart
-dark_high_contrast_theme_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark High Contrast Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-dark_high_contrast_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(dark_high_contrast_theme_subject)
-dark_high_contrast_theme_natal_chart = ChartDrawer(
-    dark_high_contrast_theme_natal_chart_data, theme="dark-high-contrast"
-)
-dark_high_contrast_theme_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
-
-# Light Theme Natal Chart
-light_theme_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-light_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(light_theme_subject)
-light_theme_natal_chart = ChartDrawer(light_theme_natal_chart_data, theme="light")
-light_theme_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
-
 # Dark Theme External Natal Chart
 dark_theme_external_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Dark Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
@@ -461,24 +443,6 @@ sidereal_dark_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_dar
 sidereal_dark_chart = ChartDrawer(sidereal_dark_chart_data, theme="dark")
 sidereal_dark_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
-# Wheel Sidereal Birth Chart (Fagan-Bradley) Light Theme
-sidereal_light_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon Fagan-Bradley - Light Theme",
-    1940,
-    10,
-    9,
-    18,
-    30,
-    "Liverpool",
-    "GB",
-    zodiac_type="Sidereal",
-    sidereal_mode="FAGAN_BRADLEY",
-    suppress_geonames_warning=True,
-)
-sidereal_light_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_light_subject)
-sidereal_light_chart = ChartDrawer(sidereal_light_chart_data, theme="light")
-sidereal_light_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-
 # Wheel Only Dark Transparent Natal Chart (Hero Image)
 # Uses TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: Sun to Saturn + lunar nodes
 wheel_dark_transparent_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -538,14 +502,6 @@ aspect_grid_dark_subject = AstrologicalSubjectFactory.from_birth_data(
 aspect_grid_dark_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_dark_subject)
 aspect_grid_dark_chart = ChartDrawer(aspect_grid_dark_chart_data, theme="dark")
 aspect_grid_dark_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
-
-# Aspect Grid Only Light Theme Natal Chart
-aspect_grid_light_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-aspect_grid_light_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_light_subject)
-aspect_grid_light_chart = ChartDrawer(aspect_grid_light_chart_data, theme="light")
-aspect_grid_light_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Synastry Chart Aspect Grid Only
 aspect_grid_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -1610,35 +1566,6 @@ ChartDrawer(apc_house_chart_data).save_svg(output_path=OUTPUT_DIR_STR)
 # Section 4: Theme + Chart Type Combinations
 # ----------------------------------------------------------------------------
 
-# Light Theme Synastry Chart
-light_theme_synastry_chart = ChartDrawer(synastry_chart_data, theme="light")
-light_theme_synastry_chart.save_svg(
-    output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Light Theme - Synastry Chart - Classic",
-)
-
-# Light Theme Transit Chart
-light_theme_transit_chart = ChartDrawer(transits_chart_data, theme="light")
-light_theme_transit_chart.save_svg(
-    output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Light Theme - Transit Chart - Classic",
-)
-
-# Light Theme Composite Chart
-light_theme_composite_chart = ChartDrawer(composite_chart_data, theme="light")
-light_theme_composite_chart.save_svg(
-    output_path=OUTPUT_DIR_STR,
-    filename="Angelina Jolie and Brad Pitt Composite Chart - Light Theme - Composite Chart - Classic",
-)
-
-# Light Theme External Natal Chart
-light_theme_external_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Light Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-light_theme_external_chart_data = ChartDataFactory.create_natal_chart_data(light_theme_external_subject)
-light_theme_external_chart = ChartDrawer(light_theme_external_chart_data, theme="light", external_view=True)
-light_theme_external_chart.save_svg(output_path=OUTPUT_DIR_STR)
-
 # Dark Theme Transit Chart
 dark_theme_transit_chart = ChartDrawer(transits_chart_data, theme="dark")
 dark_theme_transit_chart.save_svg(
@@ -1695,14 +1622,6 @@ wheel_only_dark_chart_data = ChartDataFactory.create_natal_chart_data(wheel_only
 wheel_only_dark_chart = ChartDrawer(wheel_only_dark_chart_data, theme="dark")
 wheel_only_dark_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
-# Wheel Only Light Theme Natal Chart
-wheel_only_light_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel Only Light", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-wheel_only_light_chart_data = ChartDataFactory.create_natal_chart_data(wheel_only_light_subject)
-wheel_only_light_chart = ChartDrawer(wheel_only_light_chart_data, theme="light")
-wheel_only_light_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-
 # Wheel Synastry Dark Theme
 wheel_synastry_dark_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Wheel Synastry Dark", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
@@ -1754,16 +1673,6 @@ aspect_grid_dark_transit_chart_data = ChartDataFactory.create_transit_chart_data
 )
 aspect_grid_dark_transit_chart = ChartDrawer(aspect_grid_dark_transit_chart_data, theme="dark")
 aspect_grid_dark_transit_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
-
-# Aspect Grid Light Transit
-aspect_grid_light_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Light Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-aspect_grid_light_transit_chart_data = ChartDataFactory.create_transit_chart_data(
-    aspect_grid_light_transit_subject, second
-)
-aspect_grid_light_transit_chart = ChartDrawer(aspect_grid_light_transit_chart_data, theme="light")
-aspect_grid_light_transit_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # ----------------------------------------------------------------------------
 # Section 6: Composite Chart Variations
@@ -2313,10 +2222,6 @@ modern_natal_chart.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 dark_theme_modern_natal = ChartDrawer(dark_theme_natal_chart_data, theme="dark")
 dark_theme_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
-# Modern Natal Chart - Light Theme
-light_theme_modern_natal = ChartDrawer(light_theme_natal_chart_data, theme="light")
-light_theme_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
-
 # Modern Natal Chart - Black and White Theme
 bw_modern_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Black and White Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
@@ -2324,18 +2229,6 @@ bw_modern_subject = AstrologicalSubjectFactory.from_birth_data(
 bw_modern_natal_data = ChartDataFactory.create_natal_chart_data(bw_modern_subject)
 bw_modern_natal = ChartDrawer(bw_modern_natal_data, theme="black-and-white")
 bw_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
-
-# Modern Natal Chart - Strawberry Theme
-strawberry_modern_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Strawberry Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-strawberry_modern_natal_data = ChartDataFactory.create_natal_chart_data(strawberry_modern_subject)
-strawberry_modern_natal = ChartDrawer(strawberry_modern_natal_data, theme="strawberry")
-strawberry_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
-
-# Modern Natal Chart - Dark High Contrast Theme
-dhc_modern_natal = ChartDrawer(dark_high_contrast_theme_natal_chart_data, theme="dark-high-contrast")
-dhc_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
 # Modern Synastry Chart
 modern_synastry = ChartDrawer(synastry_chart_data)

@@ -38,9 +38,6 @@ MARKS_ALL_ON = {
 CHARTS = [
     ("classic_default_natal", "classic", "classic"),
     ("classic_dark_natal", "classic", "dark"),
-    ("classic_light_natal", "classic", "light"),
-    ("classic_dark_high_contrast_natal", "classic", "dark-high-contrast"),
-    ("classic_strawberry_natal", "classic", "strawberry"),
     ("classic_black_and_white_natal", "classic", "black-and-white"),
     # Same style and theme, so these two render byte-identically. Both filenames
     # were already committed and the README links `modern_classic_natal`, so
@@ -49,7 +46,6 @@ CHARTS = [
     ("modern_default_natal", "modern", "classic"),
     ("modern_classic_natal", "modern", "classic"),
     ("modern_dark_natal", "modern", "dark"),
-    ("modern_light_natal", "modern", "light"),
     ("modern_black_and_white_natal", "modern", "black-and-white"),
 ]
 

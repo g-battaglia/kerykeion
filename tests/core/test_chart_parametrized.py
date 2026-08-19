@@ -60,16 +60,16 @@ TEMPORAL_SUBJECTS_FOR_EXTENDED_TESTS = [s for s in TEMPORAL_SUBJECTS if s["id"] 
 
 # Sidereal × Theme combinations
 SIDEREAL_THEME_COMBOS = [
-    ("LAHIRI", "strawberry"),
+    ("LAHIRI", "classic"),
     ("LAHIRI", "black-and-white"),
     ("FAGAN_BRADLEY", "dark"),
-    ("FAGAN_BRADLEY", "strawberry"),
-    ("KRISHNAMURTI", "light"),
-    ("KRISHNAMURTI", "strawberry"),
+    ("FAGAN_BRADLEY", "classic"),
+    ("KRISHNAMURTI", "black-and-white"),
+    ("KRISHNAMURTI", "dark"),
     ("RAMAN", "dark"),
-    ("RAMAN", "strawberry"),
-    ("J2000", "light"),
-    ("J2000", "strawberry"),
+    ("RAMAN", "classic"),
+    ("J2000", "black-and-white"),
+    ("J2000", "classic"),
 ]
 
 # House systems for cross-chart testing

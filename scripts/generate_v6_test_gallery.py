@@ -8,6 +8,7 @@ Default output: tests/data/v6_gallery/
 """
 
 import sys
+from typing import get_args
 from pathlib import Path
 
 # Add project root to path
@@ -20,6 +21,7 @@ from kerykeion import (
     CompositeSubjectFactory,
     PlanetaryReturnFactory,
 )
+from kerykeion.schemas.literals import KerykeionChartTheme
 from kerykeion.settings.config_constants import (
     ALL_ACTIVE_POINTS,
     DEFAULT_ACTIVE_POINTS,
@@ -30,7 +32,7 @@ from kerykeion.settings.config_constants import (
 OUTPUT_DIR = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).parent.parent / "tests" / "data" / "v6_gallery"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-THEMES = ["dark", "light", "classic", "dark-high-contrast", "strawberry", "black-and-white"]
+THEMES = list(get_args(KerykeionChartTheme))
 STYLES = ["classic", "modern"]
 
 charts = []  # (filename, title, description, aspect_ratio)
@@ -141,7 +143,7 @@ save(ChartDrawer(chart_data=cd_full, theme="dark"), "gauquelin_all_points", "cla
 # ===========================================================================
 print("\n--- Uranian Planets ---")
 
-for theme in ["dark", "light", "classic"]:
+for theme in THEMES:
     cd = ChartDataFactory.create_natal_chart_data(john_uran)
     save(ChartDrawer(chart_data=cd, theme=theme), f"uranian_{theme}", "classic",
          f"Uranian Planets - {theme}", "Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon")

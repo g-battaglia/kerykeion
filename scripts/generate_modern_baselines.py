@@ -4,9 +4,9 @@ Generate the 43 new modern chart SVG baselines required by the expanded
 TestModernChartStyle test class.
 
 Categories:
-  A1. Synastry  — 4 files (light, bw, strawberry, FR)
-  A2. Transit   — 4 files (light, bw, strawberry, ES)
-  A3. Composite — 5 files (dark, bw, strawberry, wheel-only, IT)
+  A1. Synastry  — 2 files (bw, FR)
+  A2. Transit   — 2 files (bw, ES)
+  A3. Composite — 4 files (dark, bw, wheel-only, IT)
   A4. DualReturn Solar  — 2 files (dark, bw)
   A5. DualReturn Lunar  — 3 files (default, dark, bw)
   A6. SingleReturn Solar — 2 files (dark, wheel-only)
@@ -105,9 +105,7 @@ def generate_a1_synastry():
     print("\n=== A1. Synastry (4 files) ===")
 
     for suffix, theme in [
-        ("Light Theme Synastry", "light"),
         ("BW Theme Synastry", "black-and-white"),
-        ("Strawberry Theme Synastry", "strawberry"),
     ]:
         john, paul = _make_john(suffix), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
@@ -125,9 +123,7 @@ def generate_a2_transit():
     print("\n=== A2. Transit (4 files) ===")
 
     for suffix, theme in [
-        ("Light Theme Transit", "light"),
         ("BW Theme Transit", "black-and-white"),
-        ("Strawberry Theme Transit", "strawberry"),
     ]:
         john, paul = _make_john(suffix), _make_paul()
         data = ChartDataFactory.create_transit_chart_data(john, paul)
@@ -147,7 +143,6 @@ def generate_a3_composite():
     for theme_label, theme in [
         ("Dark Theme", "dark"),
         ("BW Theme", "black-and-white"),
-        ("Strawberry Theme", "strawberry"),
     ]:
         angelina, brad = _make_angelina(), _make_brad()
         factory = CompositeSubjectFactory(angelina, brad)
