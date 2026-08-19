@@ -33,6 +33,8 @@ from kerykeion.charts.draw_modern import (
     CENTER,
     CUSP_DIM_MARGIN,
     CUSP_DIM_OPACITY,
+    HOUSE_LINE_INNER_Y,
+    HOUSE_LINE_OUTER_Y,
     _reading_span_on_line,
 )
 
@@ -43,7 +45,9 @@ PROFILE = {
     "sign": (0.94, 0.90),
     "minutes": (1.20, 0.93),
 }
-LINE_TOP, LINE_BOTTOM = 6.5, 28.0
+# Read from the geometry, not restated: the ring radii move when the bands
+# are retuned, and a hard-coded 6.5 turns that into a failure here.
+LINE_TOP, LINE_BOTTOM = HOUSE_LINE_OUTER_Y, HOUSE_LINE_INNER_Y
 
 POINTS = [
     "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus",
@@ -117,7 +121,7 @@ def test_no_clusters_leaves_the_line_whole():
 
 def test_a_cluster_outside_the_segment_is_ignored():
     """A dual chart's inner ring must not dim the outer ring's cusps."""
-    assert _reading_span_on_line(0.0, 6.5, 12.0, [_cluster(0.0)], {"minutes": 10.0}) is None
+    assert _reading_span_on_line(0.0, LINE_TOP, 12.0, [_cluster(0.0)], {"minutes": 10.0}) is None
 
 
 # =============================================================================
@@ -157,8 +161,8 @@ def test_dimming_never_breaks_or_recolours_the_line():
         pieces = re.findall(
             rf"<line x1='50\.0' y1='([\d.]+)' x2='50\.0' y2='([\d.]+)'"
             rf"[^>]*stroke-width='0\.6'[^>]*rotate\({angle} ", svg)
-        outer_ring = sorted((float(a), float(b)) for a, b in pieces if float(b) <= 28.0)
-        assert outer_ring[0][0] == pytest.approx(6.5)
-        assert outer_ring[-1][1] == pytest.approx(28.0)
+        outer_ring = sorted((float(a), float(b)) for a, b in pieces if float(b) <= LINE_BOTTOM)
+        assert outer_ring[0][0] == pytest.approx(LINE_TOP)
+        assert outer_ring[-1][1] == pytest.approx(LINE_BOTTOM)
         for (_, end), (start, _) in zip(outer_ring, outer_ring[1:]):
             assert start == pytest.approx(end, abs=1e-6)

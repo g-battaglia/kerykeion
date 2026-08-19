@@ -55,15 +55,19 @@ def _row_re(index: int):
 BLOCK_TRANSFORM = re.compile(r"Bottom_Left_Text' transform='translate\(0,([-\d.]+)\)'")
 MOON_TRANSFORM = re.compile(r"Lunar_Phase' transform='translate\(10,([-\d.]+)\)'")
 
-# The block never moves; only the glyph does. Hard-coded rather than derived so
-# that a change to either constant has to be an explicit edit here.
+# Hard-coded rather than derived, so a change to either constant has to be an
+# explicit edit here.
 #
-# Both cases now read the same, and that is the point of packing the rows: the
-# glyph sits 10px below the last line, and the last line is the last slot
-# whenever the panel says anything at all. Before, dropping a line left a blank
-# in slot 5 and the glyph rose to meet a row that was no longer there.
-LAYOUT_WITHOUT_LINE = ("0", "532")
-LAYOUT_WITH_LINE = ("0", "532")
+# On a natal chart the glyph no longer trails the text: it leads the block, and
+# the block slides down 7px so its last line closes level with the foot of the
+# aspect grid. Both cases still read the same, which is the point — turning the
+# diurnality line off costs a row but moves nothing, because the rows pack
+# downwards and the glyph is anchored above them rather than below.
+LAYOUT_WITHOUT_LINE = ("7", "424")
+LAYOUT_WITH_LINE = ("7", "424")
+#: Every other chart type keeps the older arrangement — glyph under the block,
+#: block on the template baselines. Only the natal panel was reordered.
+LAYOUT_NON_NATAL = ("0", "532")
 
 
 _ADVANCES = json.loads((Path(__file__).parents[1] / "data" / "glyph_advances.json").read_text())["advances"]
@@ -132,17 +136,29 @@ def _render(chart_data, **drawer_kwargs) -> str:
     return ChartDrawer(chart_data, **drawer_kwargs).generate_svg_string(minify=False)
 
 
-def _row(svg: str, index: int = 5) -> str:
-    """The text of a bottom-left row.
+def _row(svg: str, index: int | None = None) -> str:
+    """The diurnality line, found by what it says rather than by where it sits.
 
-    The panel packs its filled rows to the bottom, so the diurnality line — the
-    last one every renderer writes — always lands in the last slot when it is
-    written at all. That is why the default index is 5 for every chart type,
-    composites included: they leave row 5 empty and the packing closes the gap.
+    It used to be read from slot 5: the panel packs its filled rows to the
+    bottom and diurnality was the last line every renderer wrote. The natal
+    block now leads with the moon and ends with the ayanamsa, so the line moved
+    — and an assertion keyed to a slot number fails for a layout change that has
+    nothing to do with the value it is checking. Passing *index* still reads a
+    specific slot, for the tests that are about the packing itself.
     """
-    match = _row_re(index).search(svg)
-    assert match is not None, f"the Bottom_Left_Text_{index} node is missing from the template"
-    return match.group(1)
+    if index is not None:
+        match = _row_re(index).search(svg)
+        assert match is not None, f"the Bottom_Left_Text_{index} node is missing from the template"
+        return match.group(1)
+    for slot in range(6):
+        found = _row_re(slot).search(svg)
+        if found and any(word in found.group(1) for word in _DIURNALITY_WORDS):
+            return found.group(1)
+    # A custom language pack spells the two values however it likes, so nothing
+    # above matches. On every chart type but natal the line is still the last
+    # one written, and the rows pack downwards: read the last filled slot.
+    filled = [m.group(1) for slot in range(6) if (m := _row_re(slot).search(svg)) and m.group(1)]
+    return filled[-1] if filled else ""
 
 
 #: Every word any shipped language uses for the two values of the line.
@@ -289,7 +305,7 @@ class TestDiurnalityOmitted:
         # leaves row 5 blank, and the packing then closes that gap, so no fixed
         # slot answers this question any more.
         assert not _states_diurnality(svg)
-        assert _layout(svg) == LAYOUT_WITHOUT_LINE
+        assert _layout(svg) == LAYOUT_NON_NATAL
 
     def test_a_davison_composite_does_have_one(self):
         """The counterpart that makes the test above mean something.
@@ -303,7 +319,7 @@ class TestDiurnalityOmitted:
         svg = _render(ChartDataFactory.create_composite_chart_data(composite))
         assert _row(svg) == f"Diurnality: {'Diurnal' if composite.is_diurnal else 'Nocturnal'}"
         # Row 4 already existed, so nothing had to move for it.
-        assert _layout(svg) == LAYOUT_WITHOUT_LINE
+        assert _layout(svg) == LAYOUT_NON_NATAL
 
 
 class TestDiurnalityInTheTextReport:
@@ -578,21 +594,21 @@ class TestDiurnalityLayout:
         data = ChartDataFactory.create_natal_chart_data(_subject())
         assert _layout(_render(data, show_diurnality=False)) == LAYOUT_WITHOUT_LINE
 
-    def test_the_glyph_keeps_its_gap_below_the_last_row(self):
+    def test_the_glyph_keeps_its_gap_above_the_first_row(self):
         """Read from the rendered output, not restated from the constants.
 
-        The gap is read from rendered output on both sides. Asserting it as
-        `532 - 522 == 518 - 508` — as an earlier revision did — is a tautology on
-        integer literals that holds whatever the code does.
+        The moon leads the natal block now, so the gap that has to hold is the
+        one between the bottom of the glyph and the first line under it — the
+        glyph is 20px tall from its own origin. Reading both sides from the
+        render rather than restating the constants: asserting it as arithmetic
+        on integer literals is a tautology that holds whatever the code does.
         """
         data = ChartDataFactory.create_natal_chart_data(_subject())
         off_block, off_moon = (float(v) for v in _layout(_render(data, show_diurnality=False)))
         on_block, on_moon = (float(v) for v in _layout(_render(data, show_diurnality=True)))
-        # The last visible row is y=522 either way now: dropping a line no
-        # longer empties the last slot, it empties the first one, because the
-        # rows pack downwards. The gap below the text is what stayed constant.
-        assert off_moon - (off_block + 522.0) == pytest.approx(10.0)
-        assert on_moon - (on_block + 522.0) == pytest.approx(10.0)
+        first_row_y = 452.0
+        for block, moon in ((off_block, off_moon), (on_block, on_moon)):
+            assert (block + first_row_y) - (moon + 20.0) == pytest.approx(15.0)
 
     def test_showing_the_line_moves_the_glyph_and_nothing_else(self):
         """The five pre-existing rows must not move.
@@ -600,8 +616,9 @@ class TestDiurnalityLayout:
         They sit inside the wheel's chord and the lower a row is the more clear
         width it has, so shifting the block upwards to make room narrows every
         row above — an earlier revision did exactly that and pushed a default
-        English progression row under the wheel. The new row needs no room made
-        for it; only the moon glyph is in its way.
+        English progression row under the wheel. Nothing needs room made for it
+        now: the glyph sits above the block at a fixed height, so turning the
+        line on or off leaves both offsets exactly where they were.
         """
         data = ChartDataFactory.create_natal_chart_data(_subject())
         assert _layout(_render(data, show_diurnality=False)) == LAYOUT_WITHOUT_LINE

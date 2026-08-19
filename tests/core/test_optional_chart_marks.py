@@ -332,8 +332,10 @@ class TestRelationshipScoreLine:
 class TestAyanamsaValue:
     @pytest.mark.parametrize("style", STYLES)
     def test_the_offset_joins_the_mode_name(self, sidereal_data, style):
-        off = _info_rows(_render(sidereal_data, style))[0]
-        on = _info_rows(_render(sidereal_data, style, show_ayanamsa_value=True))[0]
+        # The zodiac line sits second from the bottom: the perspective closes the
+        # block, and both are down where the wheel has stopped narrowing it.
+        off = _info_rows(_render(sidereal_data, style))[4]
+        on = _info_rows(_render(sidereal_data, style, show_ayanamsa_value=True))[4]
         assert off == "Ayanamsa: Lahiri"
         assert on.startswith(off) and re.search(r"\(\d+°\d+&apos;\)$", on), on
 
@@ -344,7 +346,7 @@ class TestAyanamsaValue:
 
     def test_the_offset_never_reaches_the_reader_as_an_entity(self, sidereal_data):
         """The panel escapes its own text, so the seconds symbol would double-escape."""
-        row = _info_rows(_render(sidereal_data, "modern", show_ayanamsa_value=True))[0]
+        row = _info_rows(_render(sidereal_data, "modern", show_ayanamsa_value=True))[4]
         assert "&amp;" not in row
 
 
@@ -353,8 +355,8 @@ class TestPolarFallbackNote:
     def test_the_substitution_is_admitted(self, polar_data, style):
         assert polar_data.subject.polar_house_fallbacks, "fixture no longer triggers a fallback"
 
-        off = _info_rows(_render(polar_data, style))[1]
-        on = _info_rows(_render(polar_data, style, show_polar_fallback_note=True))[1]
+        off = _info_rows(_render(polar_data, style))[2]      # the domification row
+        on = _info_rows(_render(polar_data, style, show_polar_fallback_note=True))[2]
         assert "*" not in off
         assert on.startswith(off) and "*" in on
 
@@ -417,7 +419,10 @@ class TestRowsFitTheWheel:
 
     @pytest.mark.parametrize("language", LANGUAGES)
     def test_the_polar_note_fits(self, polar_data, language):
-        index = 1  # the domification row, the only one this mark writes to
+        # The domification row, the only one this mark writes to. It moved from
+        # slot 1 to slot 2 when the natal panel was reordered around the moon
+        # glyph (lunation, phase, domification, diurnality, perspective, zodiac).
+        index = 2
         row = _info_rows(_render(polar_data, "classic", chart_language=language, show_polar_fallback_note=True))[index]
         width = estimate_text_width(unescape(row))
         budget = info_row_clear_width(index)
@@ -455,7 +460,7 @@ class TestRowsFitTheWheel:
     def test_the_substitution_is_still_marked_after_it_is_shortened(self, polar_data, language):
         """Shedding the spelled-out note must not shed the fact it points at."""
         svg = _render(polar_data, "classic", chart_language=language, show_polar_fallback_note=True)
-        assert "*" in _info_rows(svg)[1], language
+        assert "*" in _info_rows(svg)[2], language  # the domification row; see above
 
 
 class TestDualWheelsDoNotSpeakForEachOther:

@@ -63,14 +63,17 @@ R_HOUSE_OUTER = 22.0
 
 # Ring 3: Planet band
 R_PLANET_INNER = 22.0
-R_PLANET_OUTER = 43.5
+R_PLANET_OUTER = 44.652
 
 # Ring 2: Graduated ruler
-R_RULER_INNER = 43.5
-R_RULER_OUTER = 44.5
+R_RULER_INNER = 44.652
+R_RULER_OUTER = 45.652
 
 # Ring 1: Cusp/zodiac ring
-R_CUSP_INNER = 44.5
+# Same visual thickness as the zodiac band: that band is 4.0 units deep in the
+# outer frame, and this one lives inside the 0.92 wrapper, so it needs
+# 4.0 / 0.92 = 4.348 of its own to look the same weight.
+R_CUSP_INNER = 45.652
 R_CUSP_OUTER = 50.0
 
 # Ring 0 (optional): Zodiac background ring (outermost, outside cusp ring)
@@ -81,7 +84,7 @@ R_ZODIAC_BG_OUTER = 50.0
 ZODIAC_BG_SCALE = R_ZODIAC_BG_INNER / R_CUSP_OUTER  # 0.92
 
 # House line endpoints
-HOUSE_LINE_OUTER_Y = 6.5  # Just inside the ruler ring outer edge
+HOUSE_LINE_OUTER_Y = 5.348  # Just inside the ruler ring outer edge
 HOUSE_LINE_INNER_Y = 28.0  # At the house ring boundary
 
 # Angular houses (1, 4, 7, 10) use thicker lines
@@ -137,8 +140,9 @@ CUSP_GLYPH_SCALE = 0.12
 #: and takes the overlap.
 CUSP_MIN_SCALE = 0.62
 
-#: Distance of a cusp reading from the wheel's rim, in the 100-unit frame.
-CUSP_LABEL_Y = 2.75
+#: Distance of a cusp reading from the wheel's rim, in the 100-unit frame:
+#: the middle of the band, so the reading has the same air above and below.
+CUSP_LABEL_Y = (R_CUSP_OUTER - R_CUSP_INNER) / 2
 
 #: Ink the ring has to hold, in wheel units at full scale. Measured extents,
 #: not em boxes: a sign glyph inks about two thirds of its 32-unit box, and

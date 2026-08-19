@@ -290,6 +290,12 @@ _INFO_ROW_COUNT: int = 6
 #: i.e. the last one before the diurnality line existed.
 _INFO_ROW_LEGACY_LAST_Y: float = 508.0
 
+#: Natal only. The moon glyph rides above the block rather than below it, and the
+#: block slides down until its last line closes level with the foot of the aspect
+#: grid — measured there, at y 532. Chosen by eye from three renders 3px apart.
+_NATAL_MOON_GLYPH_Y: float = 424.0
+_NATAL_BLOCK_DROP: float = 7.0
+
 # How much clear width row 5 really has, and it is not the 258.6px the chord
 # gives at the baseline: the chord narrows going *upward*, and text rises above
 # its baseline. Ideographs fill the em box, so the binding measurement is the
@@ -301,7 +307,7 @@ _INFO_ROW_LEGACY_LAST_Y: float = 508.0
 DIURNALITY_ROW_CLEAR_WIDTH: float = 228.0
 
 
-def info_row_clear_width(row_index: int) -> float:
+def info_row_clear_width(row_index: int, drop: float = 0.0) -> float:
     """Clear width in px available to bottom-left row *row_index*, at 10px text.
 
     Derived from the geometry described above rather than tabulated, so the two
@@ -313,8 +319,12 @@ def info_row_clear_width(row_index: int) -> float:
     which is why a line that fits at the bottom of the panel can run under the
     wheel at the top of it. Anything written into these rows should be measured
     against its own row, never against the roomiest one.
+
+    *drop* is how far the block has been slid down from the template baselines.
+    The natal layout does that to close level with the aspect grid, and a row
+    measured without it is charged for a chord it no longer sits on.
     """
-    baseline_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * row_index
+    baseline_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * row_index + drop
     measured_y = baseline_y - _INFO_ROW_TEXT_RISE
     half_chord = math.sqrt(_WHEEL_RADIUS**2 - (measured_y - _WHEEL_CENTRE_Y) ** 2)
     return (_WHEEL_CENTRE_X - half_chord) - _INFO_ROW_TEXT_X
@@ -1067,12 +1077,34 @@ class NatalChartRenderer(BaseChartRenderer):
         localized_weekday = self._translate(f"weekdays.{d.first_obj.day_of_week}", d.first_obj.day_of_week)
         template_dict["top_left_5"] = f"{self._translate('day_of_week', 'Day of Week')}: {localized_weekday}"
 
-        # Bottom left section - Technical info
-        template_dict["bottom_left_0"] = builder.build_zodiac_info()
-        template_dict["bottom_left_1"] = builder.build_domification_info()
-        builder.build_lunar_phase_info(template_dict, d.first_obj)
-        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
-        template_dict["bottom_left_5"] = builder.build_diurnality_info(d.first_obj)
+        # Bottom left section - Technical info.
+        #
+        # The moon leads: glyph, then the lunation day it depicts, then the phase
+        # it is called, then everything else. The two lunar lines used to sit in
+        # the middle of the block with the glyph stranded underneath it, so the
+        # picture and its caption were four lines apart.
+        builder.build_lunar_phase_info(
+            template_dict, d.first_obj, key_lunation="bottom_left_0", key_phase="bottom_left_1"
+        )
+        # These two are the only lines the moon's position forces into the narrow
+        # end of the panel — row 1 clears 154px against the 199 Hindi wants for
+        # "चंद्र चरण: शुक्ल पक्ष सप्तमी". Everything else is ordered longest-last and
+        # lands where the wheel has stopped narrowing the block. Measured against
+        # their own chord, so the ellipsis appears only where it must.
+        for index in (0, 1):
+            key = f"bottom_left_{index}"
+            if template_dict.get(key):
+                template_dict[key] = truncate_to_width(
+                    template_dict[key], info_row_clear_width(index, _NATAL_BLOCK_DROP)
+                )
+        template_dict["bottom_left_2"] = builder.build_domification_info()
+        template_dict["bottom_left_3"] = builder.build_diurnality_info(d.first_obj)
+        # The two longest lines go last, where the wheel has stopped narrowing the
+        # panel: the zodiac line — which on a sidereal chart carries the ayanamsa
+        # name and its offset, "Ayanamsa: Krishnamurti (23°45\')" — and then the
+        # perspective, which closes the block.
+        template_dict["bottom_left_4"] = builder.build_zodiac_info()
+        template_dict["bottom_left_5"] = builder.build_perspective_info(d.first_obj)
 
         # Lunar phase visualization
         d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
@@ -5315,13 +5347,24 @@ class ChartDrawer:  # type: ignore[no-redef]
             slot = index - (_INFO_ROW_COUNT - len(filled))
             template_dict[f"bottom_left_{index}"] = filled[slot] if slot >= 0 else ""
 
+
         # The glyph keeps the 10px gap below the last line it has always had.
         # Expressed against the last *filled* row rather than against row 5
         # specifically: with the rows packed down, "is row 5 filled" is true
         # whenever anything is written at all, and the old test of it would drop
         # the glyph on every chart.
         lunar_phase_y = offsets["lunar_phase"]
-        if filled:
+        bottom_left_y = offsets["bottom_left"]
+        if self.chart_type == "Natal":
+            # The natal block leads with the moon instead of trailing it, and its
+            # last line closes level with the foot of the aspect grid (y 532), so
+            # the two columns end together instead of one hanging below the other.
+            # The block only drops _NATAL_BLOCK_DROP: it cannot rise, because the
+            # chord narrows going up and the longest line — Hindi's perspective,
+            # 201px — already needs every pixel the wheel leaves at this height.
+            lunar_phase_y = _NATAL_MOON_GLYPH_Y
+            bottom_left_y = offsets["bottom_left"] + _NATAL_BLOCK_DROP
+        elif filled:
             last_row_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * (_INFO_ROW_COUNT - 1)
             lunar_phase_y = offsets["lunar_phase"] + (last_row_y - _INFO_ROW_LEGACY_LAST_Y)
         # The template field is ``int``; the offsets are floats on a dataclass a
@@ -5330,7 +5373,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # but a caller passing 518.5 should not silently lose half a pixel to
         # truncation.
         template_dict["lunar_phase_translate_y"] = round(lunar_phase_y)
-        template_dict["bottom_left_translate_y"] = round(offsets["bottom_left"])
+        template_dict["bottom_left_translate_y"] = round(bottom_left_y)
         template_dict["chart_font_family"] = CHART_TEXT_FONT_FAMILY
 
         # ---------------------------------------------------------------------
