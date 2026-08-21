@@ -79,7 +79,7 @@
         </g>
 
         <!-- Full Wheel -->
-        <g kr:node="Full_Wheel" transform="translate(100,$full_wheel_translate_y)">
+        <g kr:node="Full_Wheel" transform="$full_wheel_transform">
 
             <!-- Background Circle -->
             <g kr:node='Background_Circle'>

@@ -2817,6 +2817,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         self.show_aspect_icons = show_aspect_icons
         self.show_diurnality = show_diurnality
         self.auto_size = auto_size
+
+        # Set when the template dictionary is built, and read again when the
+        # glyph centres are rebased into root space. Defaults here so a code
+        # path that rebases without building a template cannot fall over on a
+        # missing attribute — and so that path gets the identity, which is what
+        # a chart drawn at nominal size means.
+        self._wheel_scale: float = 1.0
+        self._wheel_translate_y: int = 0
         self._padding = padding
 
         # Opt-in marks. Every one of these adds something to the chart that the
@@ -3448,6 +3456,54 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.first_circle_radius = self._SINGLE_WHEEL_FIRST_CIRCLE
             self.second_circle_radius = self._SINGLE_WHEEL_SECOND_CIRCLE
             self.third_circle_radius = self._SINGLE_WHEEL_THIRD_CIRCLE
+
+    #: Canvas heights at which the wheel is allowed to grow, and by how much.
+    #:
+    #: A chart with every point active is drawn on a canvas twice the usual
+    #: height, because the aspect grid is a pyramid and 52 points make a tall
+    #: one. The wheel is not: it is a fixed 480 across whatever else happens, so
+    #: on that canvas it occupies 13% of the page and its glyphs are the same 20
+    #: pixels they are on a chart a quarter the size. Growing it is the only way
+    #: to spend room the canvas already has.
+    #:
+    #: The room is not where it looks. Between the wheel's edge and the planet
+    #: grid there are 42 pixels — the grid is parked at wheel_right + 20 — so the
+    #: white is vertical, and a circle cannot take vertical room without also
+    #: taking horizontal. The two figures below are what an ink-overlap sweep
+    #: allows on the two canvas shapes that have any margin at all, with about a
+    #: tenth held back: the taller shape tolerates 1.62 and the shorter 1.25, in
+    #: the worst language of the ten.
+    #:
+    #: Height, not width, decides. For a single wheel the height comes from the
+    #: point count alone and never from the radius, so it can be asked without
+    #: circularity; the width cannot, because it is computed FROM the radius.
+    _WHEEL_GROWTH_MIN_HEIGHT: int = 800
+    _WHEEL_GROWTH_TALL_HEIGHT: int = 1000
+    _WHEEL_GROWTH_SCALE: float = 1.15
+    _WHEEL_GROWTH_SCALE_TALL: float = 1.45
+
+    def _wheel_growth_scale(self) -> float:
+        """How much larger than nominal this chart draws its wheel.
+
+        Three conditions, and all of them carry weight:
+
+        * ``auto_size`` off freezes the width but not the height, so a chart
+          that opted out is already overlapping its own grid at scale 1 — a gate
+          on height alone would fire on the one case that is broken already;
+        * a dual wheel has no margin: its planet grid sits hard against the
+          rings, and the sweep finds ink touching at 1.05;
+        * below 800 the canvas is the ordinary one and there is nothing to
+          spend. Under 800 this returns exactly 1.0, and a scale of 1.0 is not
+          written into the transform at all, so every ordinary chart stays byte
+          for byte what it was.
+        """
+        if not self.auto_size or self._renderer.is_dual_wheel():
+            return 1.0
+        if self.height < self._WHEEL_GROWTH_MIN_HEIGHT:
+            return 1.0
+        if self.height < self._WHEEL_GROWTH_TALL_HEIGHT:
+            return self._WHEEL_GROWTH_SCALE
+        return self._WHEEL_GROWTH_SCALE_TALL
 
     def _apply_dynamic_height_adjustment(self) -> None:
         """Adjust chart height and vertical offsets based on active celestial points.
@@ -5263,7 +5319,22 @@ class ChartDrawer:  # type: ignore[no-redef]
         # These offsets are applied as transform="translate(x, y)" on SVG groups.
         # They are dynamically adjusted based on active celestial points count.
         offsets = self._vertical_offsets
-        template_dict["full_wheel_translate_y"] = offsets["wheel"]
+
+        # How much bigger the wheel is drawn than its nominal 480 diameter, and
+        # where that leaves it. See _wheel_growth_scale for when it is not 1.
+        wheel_scale = self._wheel_growth_scale()
+        wheel_bottom = offsets["wheel"] + 2 * self.main_radius
+        wheel_translate_y = wheel_bottom - 2 * self.main_radius * wheel_scale
+        # round(), not the float: "translate(100,50.0)" is a different string
+        # from "translate(100,50)", and every baseline in the repository carries
+        # the second one.
+        self._wheel_scale = wheel_scale
+        self._wheel_translate_y = round(wheel_translate_y)
+        template_dict["full_wheel_transform"] = (
+            f"translate(100,{self._wheel_translate_y})"
+            if wheel_scale == 1.0
+            else f"translate(100,{self._wheel_translate_y}) scale({wheel_scale:g})"
+        )
         template_dict["houses_and_planets_translate_y"] = offsets["grid"]
         template_dict["aspect_grid_translate_y"] = offsets["aspect_grid"]
         template_dict["aspect_list_translate_y"] = offsets["aspect_list"]
@@ -5802,11 +5873,15 @@ class ChartDrawer:  # type: ignore[no-redef]
             overrides["makeGauquelinSectors"] = ""
             template = Template(raw_template).substitute(overrides)
             # Modern wheel-local (100x100) -> scale wrapper -> Full_Wheel translate.
-            template = self._rebase_glyph_centers(template, scale, 100.0, self._vertical_offsets["wheel"])
+            template = self._rebase_glyph_centers(
+                template, scale * self._wheel_scale, 100.0, float(self._wheel_translate_y)
+            )
         else:
             template = Template(raw_template).substitute(template_data)
             # Classic values are Full_Wheel-local; add the template's translate.
-            template = self._rebase_glyph_centers(template, 1.0, 100.0, self._vertical_offsets["wheel"])
+            template = self._rebase_glyph_centers(
+                template, self._wheel_scale, 100.0, float(self._wheel_translate_y)
+            )
 
         template = self._inject_projected_house_metadata(template)
         template = self._inject_analysis_metadata(template)
