@@ -1,6 +1,78 @@
 # Changelog
 
-## [Unreleased]
+## [6.0.0a86]
+
+### Fixed
+
+- **Every mark a reader has to read now carries the contrast it needs.** The
+  three shipped themes were measured against the surface each mark is actually
+  drawn on — not against the page — and where a point's colour doubles as text
+  it is held to 7:1 rather than 3:1. House cusp lines got a variable of their
+  own, `--kerykeion-modern-cusp`, because a boundary is information and was
+  being drawn at the weight of decoration. Every chart also declares
+  `role="img"` and names itself through `<title>` and a new `<desc>`, so a
+  screen reader announces the subject, the date, the place and the house system
+  instead of "graphic".
+
+- **A cusp line no longer prints through the reading that sits on it.** An
+  angle's cluster is written across its own line by construction, so "As 19º ♈
+  45'" always had a 0.6-wide stroke running through the words. Where a reading
+  crosses a line the line drops to 0.35 for exactly the span of that reading —
+  all of it or none, because a line dimmed under some rows and solid under the
+  others reads as damage. The trigger is geometric, never "this point is that
+  axis": a planet within a degree of a cusp covers the line just as squarely.
+
+- **The outer ring of a dual wheel had no visible indicators.** Not missing:
+  misplaced. Both rings anchored their tether at the boundary between them,
+  which is the inner ring's outer edge and the outer ring's *inner* edge — so
+  every outer tether was drawn twelve units from the planet it points at,
+  pointing outward at nothing. The boundary then carried two families of
+  identical brackets back to back, which is why the inner ring's own tether
+  looked as though it pointed the wrong way. It never did.
+
+- **The chart angles are placed like any other point.** The four angles had a
+  radius of their own, further out than the two the points alternate between,
+  but the code that recognised one did it by index in a fixed list and the v6
+  catalog moved them off those indices. For years that outer lane went to Ceres,
+  Pallas, Juno and Vesta while the angles alternated with everything else.
+  Repairing the classification sent the angles into the zodiac ring, so the lane
+  is removed rather than restored: an angle is a point.
+
+- **A lunar disc no longer hangs halfway up a tall page.** On a Natal chart
+  taller than the usual 580 the glyph followed the blank rows inside its text
+  block but not the offset of the block itself, so on a chart with every point
+  active it stayed 500 pixels above the lines it captions.
+
+- **A long point name no longer runs into the column beside it.** Grid names are
+  capped by inked width — ten Latin characters and ten CJK ones are not the same
+  amount of room — and any trailing marker survives the cut, because dropping
+  the "(T)" would print the true lunar node under the mean node's label.
+
+### Changed
+
+- **The modern wheel grows on a canvas that has room for it.** A chart with
+  every point active is drawn twice as tall, because the aspect grid is a
+  pyramid; the wheel was a fixed 480 regardless, so it occupied 13% of the page
+  with glyphs the size of a chart a quarter as large. It now takes a scale on
+  the two canvas shapes that have margin — measured by an ink-overlap sweep, not
+  assumed — and none at all below that, where ordinary charts stay byte for byte
+  what they were.
+
+- **The cluster reads at the size the ring can afford.** The cusp ring is as
+  thick as the zodiac band beside it, the planet cluster is 12% larger with the
+  room that freed, the sign glyph is 18% larger again because a thin outline
+  beside solid figures reads smaller than it measures, and the aspect web —
+  lines and the marks that name them — is heavier so it survives being read at a
+  glance. Each row is also centred on its own ink rather than on its anchor: a
+  middle-anchored string centres its advance width while the ink sits a tenth of
+  the font size high, and the cluster read as a crooked skewer.
+
+- **The bottom-left panel is ordered longest-last.** The wheel's chord limits
+  those rows and stops narrowing them towards the bottom, so the house system
+  moved down next to last and the zodiac line goes last of all when it carries
+  an ayanamsa. The lunation day is gone: the phase already says where in the
+  cycle the moon is, in the words a reader thinks in, and the disc beside it
+  says the same in a picture.
 
 ### Removed
 
