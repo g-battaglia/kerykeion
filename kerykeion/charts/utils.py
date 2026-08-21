@@ -17,6 +17,7 @@ The module is organized in the following sections:
 
 import datetime
 import math
+import re
 from typing import Literal, Mapping, Optional, Sequence, Union
 from xml.sax.saxutils import escape as _xml_escape
 
@@ -463,6 +464,73 @@ def planet_grid_column_width(
         content_right = OUT_OF_BOUNDS_BADGE_X + estimate_text_width(OUT_OF_BOUNDS_BADGE, 7)
     widest_name = max((estimate_text_width(n, font_size) for n in names), default=0.0)
     return max(_GRID_COLUMN_WIDTH, math.ceil(content_right + widest_name + _GRID_COLUMN_GUTTER))
+
+
+#: Where a planet-grid row ends its reading and starts the sign glyph after it.
+#: The reading is anchored at its END, which is the whole trick: left-anchored,
+#: it ran from x=19 to anywhere between 57 and 62.8 depending on how many digits
+#: the degrees needed, so "29°59'59"" printed its seconds mark across the sign
+#: glyph at 60 while "3°32'47"" left a hole beside it. Anchored at the end, every
+#: row hands the sign glyph the same gap, and the digits line up in a column as
+#: figures should.
+#:
+#: The room comes from the left, not the right. Everything after the sign — the
+#: retrograde mark at 74, the out-of-bounds badge at 84 — is already as far
+#: right as it can go: the houses grid is drawn immediately beside this one, and
+#: pushing the badge out by six units put it 1.1 units into "Cusp 8:".
+#: Right edge of the planet glyph that opens the row: drawn at x=5 at scale 0.4
+#: in a 24-unit box, so its box ends at 14.6. The reading must start after it.
+_GRID_PLANET_GLYPH_RIGHT: float = 14.6
+_GRID_READING_RIGHT: int = 61
+_GRID_SIGN_X: int = 63
+_GRID_RETROGRADE_X: int = 74
+
+#: Widest a point's name may print in a planet grid before it is abbreviated.
+#: Sized on the names the grids were laid out for: the longest English label
+#: ("N. Node (T)") inks 53 units at the grid's 10px, so 56 leaves every name the
+#: layout was built around untouched and catches only the ones that outgrow it.
+#: A translated name has no such ceiling — German prints "Nordknoten (T)" at 68
+#: — and a name is the one thing in the row that grows leftward, into whatever
+#: block the grid was placed beside.
+_GRID_NAME_MAX_WIDTH: float = 56.0
+
+#: Matches a trailing parenthesised marker, e.g. the "(T)"/"(M)" that separates
+#: the true lunar node from the mean one.
+_TRAILING_MARKER = re.compile(r"\s*(\([^()]{1,3}\))\s*$")
+
+
+def abbreviate_point_name(
+    name: str,
+    max_width: float = _GRID_NAME_MAX_WIDTH,
+    font_size: float = 10.0,
+) -> str:
+    """Shorten *name* with a full stop until it inks no wider than *max_width*.
+
+    A trailing marker survives the cut, and the head is what gets shortened:
+    "Nordknoten (T)" becomes "Nordkn. (T)", never "Nordknoten." — dropping the
+    marker would merge the true lunar node with the mean one, which is the one
+    distinction the parenthesis exists to make.
+
+    Cutting by inked width rather than by a character count is what makes this
+    work in every language the charts ship: ten Latin characters and ten CJK
+    ones are not the same amount of room, and the grid cares about the room.
+    """
+    if estimate_text_width(name, font_size) <= max_width:
+        return name
+
+    marker_match = _TRAILING_MARKER.search(name)
+    marker = f" {marker_match.group(1)}" if marker_match else ""
+    head = name[: marker_match.start()] if marker_match else name
+
+    budget = max_width - estimate_text_width(marker, font_size)
+    # One character at a time, because the widths are per-character: cutting a
+    # proportional share of the string overshoots on "Nordknoten" and undershoots
+    # on a string of narrow letters.
+    for cut in range(len(head) - 1, 0, -1):
+        candidate = f"{head[:cut].rstrip()}."
+        if estimate_text_width(candidate, font_size) <= budget:
+            return f"{candidate}{marker}"
+    return f"{head[:1]}.{marker}"
 
 
 #: Width in pixels of each column in the Gauquelin unified grid.
@@ -2042,6 +2110,18 @@ def draw_gauquelin_unified_grid(
 # =============================================================================
 
 
+def _grid_point_label(point_name: str, celestial_point_language) -> str:
+    """The name a planet grid prints: decoded for the language, then capped.
+
+    One function for both grids and for the stride that spaces their columns —
+    a stride measured on the full name while the row draws the short one leaves
+    a gap nobody asked for, and the reverse overlaps.
+    """
+    return abbreviate_point_name(
+        get_decoded_kerykeion_celestial_point_name(point_name, celestial_point_language)
+    )
+
+
 def draw_main_planet_grid(
     planets_and_houses_grid_title: str,
     subject_name: str,
@@ -2097,7 +2177,7 @@ def draw_main_planet_grid(
     # names keeps the stride it always had and one carrying "N. Node (M)" gets
     # the room that name needs.
     column_width = planet_grid_column_width(
-        [get_decoded_kerykeion_celestial_point_name(p["name"], celestial_point_language) for p in available_kerykeion_celestial_points],
+        [_grid_point_label(p["name"], celestial_point_language) for p in available_kerykeion_celestial_points],
         show_out_of_bounds,
     )
 
@@ -2105,10 +2185,7 @@ def draw_main_planet_grid(
         offset, row_index = _planet_grid_layout_position(i, column_thresholds, column_width)
         line_height = LINE_START + (row_index * LINE_STEP)
 
-        decoded_name = get_decoded_kerykeion_celestial_point_name(
-            planet["name"],
-            celestial_point_language,
-        )
+        decoded_name = _grid_point_label(planet["name"], celestial_point_language)
 
         # v6: dynamic points without dedicated symbols fall back to shared glyphs.
         planet_glyph = _resolve_point_glyph_id(planet["name"])
@@ -2116,12 +2193,12 @@ def draw_main_planet_grid(
             f'<g transform="translate({offset},{BASE_Y + line_height})">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(decoded_name)}</text>'
             f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet_glyph}" /></g>'
-            f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
-            f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{planet["sign"]}" /></g>'
+            f'<text text-anchor="end" x="{_GRID_READING_RIGHT}" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
+            f'<g transform="translate({_GRID_SIGN_X},-8)"><use transform="scale(0.3)" xlink:href="#{planet["sign"]}" /></g>'
         )
 
         if planet["retrograde"]:
-            svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+            svg_output += f'<g transform="translate({_GRID_RETROGRADE_X},-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
         if show_out_of_bounds:
             svg_output += out_of_bounds_badge_svg(planet, text_color)
@@ -2198,7 +2275,7 @@ def draw_secondary_planet_grid(
     # names keeps the stride it always had and one carrying "N. Node (M)" gets
     # the room that name needs.
     column_width = planet_grid_column_width(
-        [get_decoded_kerykeion_celestial_point_name(p["name"], celestial_point_language) for p in second_subject_available_kerykeion_celestial_points],
+        [_grid_point_label(p["name"], celestial_point_language) for p in second_subject_available_kerykeion_celestial_points],
         show_out_of_bounds,
     )
 
@@ -2206,21 +2283,18 @@ def draw_secondary_planet_grid(
         offset, row_index = _planet_grid_layout_position(i, column_thresholds, column_width)
         line_height = LINE_START + (row_index * LINE_STEP)
 
-        second_decoded_name = get_decoded_kerykeion_celestial_point_name(
-            t_planet["name"],
-            celestial_point_language,
-        )
+        second_decoded_name = _grid_point_label(t_planet["name"], celestial_point_language)
         t_planet_glyph = _resolve_point_glyph_id(t_planet["name"])
         svg_output += (
             f'<g transform="translate({offset},{BASE_Y + line_height})">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(second_decoded_name)}</text>'
             f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet_glyph}" /></g>'
-            f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
-            f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
+            f'<text text-anchor="end" x="{_GRID_READING_RIGHT}" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
+            f'<g transform="translate({_GRID_SIGN_X},-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
         )
 
         if t_planet["retrograde"]:
-            svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+            svg_output += f'<g transform="translate({_GRID_RETROGRADE_X},-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
 
         if show_out_of_bounds:
             svg_output += out_of_bounds_badge_svg(t_planet, text_color)

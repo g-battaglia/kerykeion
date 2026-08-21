@@ -1653,6 +1653,100 @@ for identifier in HOUSE_SYSTEMS:
 
 
 # ---------------------------------------------------------------------------
+# 35. Natal skies — the Sun round the year
+# ---------------------------------------------------------------------------
+# Almost every card above draws one sky. That is the right call when the card is
+# about an option — a theme, a language, a house system — because a second sky
+# would only add noise to the comparison. It is the wrong call for the drawing
+# itself: layout defects live in the sky, not in the options. A cluster only
+# collides when two points are close, a reading only runs off the ruler when it
+# lands at a particular angle, and a wheel only looks crowded when the planets
+# happen to bunch. The three sweeps below vary nothing but the birth data, so
+# what they show is the drawing meeting skies it was not tuned on.
+section(
+    "Natal skies · the year round",
+    "Twelve births, one a month through 1985, same hour and place. The Sun walks the "
+    "twelve signs and drags the inner planets with it, so every sign takes its turn "
+    "carrying a crowd and every sign takes its turn empty.",
+)
+for month in range(1, 13):
+    emit(f"sky_month_{month:02d}", f"1985-{month:02d}-14 · modern",
+         f"year=1985 month={month} hour=9 — Rome",
+         lambda m=month: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(
+                 subject(f"Sky {m:02d}", year=1985, month=m, day=14, hour=9, minute=20,
+                         lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+                         city="Rome", nation="IT")
+             ),
+             **ALL_MARKS,
+         ).generate_svg_string(style="modern"))
+
+
+# ---------------------------------------------------------------------------
+# 36. Natal skies — the wheel turning
+# ---------------------------------------------------------------------------
+section(
+    "Natal skies · the wheel turning",
+    "One day, twelve births two hours apart. The sky barely moves; the Ascendant sweeps "
+    "the whole zodiac. Everything anchored to the wheel rather than to the sky — the "
+    "cluster rows, the axis readings, the degree indicators — meets every orientation "
+    "here, which is where a mark that only clears its neighbour at one angle shows up.",
+)
+for hour in range(0, 24, 2):
+    emit(f"sky_hour_{hour:02d}", f"1978-03-21 {hour:02d}:10 · modern",
+         f"hour={hour} — Buenos Aires, southern hemisphere",
+         lambda h=hour: ChartDrawer(
+             ChartDataFactory.create_natal_chart_data(
+                 subject(f"Sky {h:02d}h", year=1978, month=3, day=21, hour=h, minute=10,
+                         lng=-58.3816, lat=-34.6037, tz_str="America/Argentina/Buenos_Aires",
+                         city="Buenos Aires", nation="AR")
+             ),
+             **ALL_MARKS,
+         ).generate_svg_string(style="modern"))
+
+
+# ---------------------------------------------------------------------------
+# 37. Natal skies — across the decades
+# ---------------------------------------------------------------------------
+# Both styles here, and only here: the outer planets are what redraw the aspect
+# web, and the web is drawn the same way in either style. A card that differs
+# between the two is telling you something about the style, not about the sky.
+DECADES = [
+    (1911, 2, 7, 4, 45, "Bergen", "NO", 5.3221, 60.3913, "Europe/Oslo"),
+    (1923, 11, 30, 23, 10, "Cairo", "EG", 31.2357, 30.0444, "Africa/Cairo"),
+    (1936, 5, 19, 13, 5, "Valparaiso", "CL", -71.6127, -33.0472, "America/Santiago"),
+    (1947, 8, 15, 0, 1, "Delhi", "IN", 77.2090, 28.6139, "Asia/Kolkata"),
+    (1959, 12, 24, 17, 40, "Reykjavik", "IS", -21.9426, 64.1466, "Atlantic/Reykjavik"),
+    (1964, 4, 2, 6, 55, "Kyoto", "JP", 135.7681, 35.0116, "Asia/Tokyo"),
+    (1972, 9, 11, 20, 15, "Lagos", "NG", 3.3792, 6.5244, "Africa/Lagos"),
+    (1988, 6, 30, 11, 35, "Perth", "AU", 115.8575, -31.9505, "Australia/Perth"),
+    (1996, 1, 21, 3, 20, "Quito", "EC", -78.4678, -0.1807, "America/Guayaquil"),
+    (2004, 10, 5, 15, 50, "Vancouver", "CA", -123.1207, 49.2827, "America/Vancouver"),
+    (2013, 7, 18, 8, 30, "Lisbon", "PT", -9.1393, 38.7223, "Europe/Lisbon"),
+    (2025, 3, 3, 22, 5, "Ulaanbaatar", "MN", 106.9057, 47.8864, "Asia/Ulaanbaatar"),
+]
+section(
+    "Natal skies · across the decades",
+    "Twelve births spread over a century and round the globe, in both styles. The outer "
+    "planets take a different arrangement in each, so the aspect web changes shape rather "
+    "than just rotating — and the panel gets a different date, place and time zone to fit "
+    "every time.",
+)
+for year, month, day, hour, minute, city, nation, lng, lat, tz in DECADES:
+    for style in STYLES:
+        emit(f"sky_decade_{year}_{style}", f"{year}-{month:02d}-{day:02d} · {city} · {style}",
+             f"{hour:02d}:{minute:02d} — {city}, {nation}",
+             lambda y=year, mo=month, d=day, h=hour, mi=minute, c=city, n=nation,
+                    lo=lng, la=lat, t=tz, s=style: ChartDrawer(
+                 ChartDataFactory.create_natal_chart_data(
+                     subject(f"Sky {y}", year=y, month=mo, day=d, hour=h, minute=mi,
+                             lng=lo, lat=la, tz_str=t, city=c, nation=n)
+                 ),
+                 **ALL_MARKS,
+             ).generate_svg_string(style=s))
+
+
+# ---------------------------------------------------------------------------
 # Index
 # ---------------------------------------------------------------------------
 print(f"\nWriting index for {counters['ok']} charts ({counters['failed']} failed)…")

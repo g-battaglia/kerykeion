@@ -84,6 +84,21 @@ R_ZODIAC_BG_INNER = 46.0
 R_ZODIAC_BG_OUTER = 50.0
 ZODIAC_BG_SCALE = R_ZODIAC_BG_INNER / R_CUSP_OUTER  # 0.92
 
+# The aspect core is drawn in its own frame: the group is scaled by
+# ASPECT_CORE_SCALE, so a length written inside it lands on the wheel that much
+# smaller — which is why both numbers below read thinner and smaller than they
+# look. A line at 0.32 inks 0.118 wheel units and a glyph at 0.58 spans 2.15.
+#
+# Both went up together, on the drawing: the web is the one part of the wheel
+# read at a glance rather than point by point, and at 0.25 / 0.45 the lines
+# thinned out against the ring around them while the marks that name each aspect
+# were too small to tell a square from a trine without looking twice. Raising
+# only the glyph would have left it sitting on a thread; raising only the line
+# would have made a denser chart look like a scribble.
+ASPECT_CORE_SCALE = 0.37
+ASPECT_LINE_WIDTH = 0.32
+ASPECT_GLYPH_SCALE = 0.58
+
 # House line endpoints
 HOUSE_LINE_OUTER_Y = 5.348  # Just inside the ruler ring outer edge
 HOUSE_LINE_INNER_Y = 28.0  # At the house ring boundary
@@ -2384,7 +2399,7 @@ def _draw_aspect_core(
         color_map[s["name"]] = s.get("color", COLOR_STROKE)
 
     # Scale factor for aspect rendering inside the core
-    aspect_scale = 0.37
+    aspect_scale = ASPECT_CORE_SCALE
 
     # Track rendered icon positions to avoid overlapping icons of the same aspect type
     # Third element is the aspect's degrees: an int from ASPECT_DEGREE_MAP, or
@@ -2460,7 +2475,7 @@ def _draw_aspect_core(
         out += (
             f'  <line x1="{sx1:.6f}" y1="{sy1:.6f}" '
             f'x2="{sx2:.6f}" y2="{sy2:.6f}" '
-            f'stroke="{color}" stroke-width="0.25"{dash_attr}/>\n'
+            f'stroke="{color}" stroke-width="{ASPECT_LINE_WIDTH}"{dash_attr}/>\n'
         )
 
         # Aspect glyph at midpoint — with deduplication
@@ -2476,7 +2491,8 @@ def _draw_aspect_core(
 
             if should_render_icon:
                 out += (
-                    f'  <g transform="translate({mx:.6f} {my:.6f}) rotate(90) scale(0.45) translate(-5 -5)">\n'
+                    f'  <g transform="translate({mx:.6f} {my:.6f}) rotate(90) '
+                    f'scale({ASPECT_GLYPH_SCALE}) translate(-5 -5)">\n'
                     f'    <use xlink:href="#{symbol_id}" fill="{color}"/>\n'
                     f"  </g>\n"
                 )
