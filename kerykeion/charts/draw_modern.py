@@ -39,6 +39,7 @@ from kerykeion.charts.glyph_ink_metrics import (
     TEXT_INK_HALF_HEIGHT,
     TEXT_INK_HALF_WIDTH,
     TEXT_INK_REFERENCE_FONT_SIZE,
+    TEXT_INK_CENTRE_Y,
 )
 from kerykeion.charts.svg_metadata import point_state_attributes
 from kerykeion.utilities.core import wrap_180
@@ -125,15 +126,24 @@ CUSP_DIM_MARGIN = 0.45
 PLANET_MIN_SEPARATION = 7.25
 
 # Cusp ring text size (degrees and minutes shown at each house cusp)
-CUSP_FONT_SIZE = 2.0
+CUSP_FONT_SIZE = 1.9
 
 #: How far the degree and minute texts sit either side of the cusp line, which
 #: is what makes a cusp reading a band of ring rather than a point — and
-#: therefore what two neighbouring cusps have to clear.
-CUSP_TEXT_OFFSET_DEGREES = 4.669
+#: therefore what two neighbouring cusps have to clear. At 4.0° the three parts
+#: read as one reading, with about half a character of air between the glyph and
+#: the digits either side; below 3.5° they start to touch.
+CUSP_TEXT_OFFSET_DEGREES = 4.0
 
-#: Scale of the sign glyph on the cusp line.
-CUSP_GLYPH_SCALE = 0.12
+#: Scale of the sign glyph on the cusp line. Sized against the text beside it
+#: rather than by eye: a sign glyph inks 13.45 units of half-height in its native
+#: box against the 5.0-per-10-of-font a line of digits inks, so at 0.12 it stood
+#: 1.61 times taller than the numbers it sits between — and that is the ordinary
+#: case, not the worst, since seven of the twelve signs share that height. This
+#: leaves it a little taller than the digits on purpose: matching the inked
+#: extents exactly makes the glyph look smaller than them, because part of its
+#: ink is a descender the numbers do not have.
+CUSP_GLYPH_SCALE = 0.085
 
 #: How far the ring will shrink once even the staggered lanes have run out.
 #: Below this the text stops being worth reading, so the ring keeps the size
@@ -248,11 +258,11 @@ PLANET_GLYPH_BOX = 24
 #   planet glyph (largest) > degrees text > zodiac sign > minutes text > RX text
 # Note: planet glyphs are 24 units native, zodiac signs 32,
 # so zodiac sign scale must be proportionally smaller to appear smaller.
-PLANET_SCALE_BASE = 0.162  # Planet glyph: 24 * 0.162 ≈ 3.89 visual units
-DEGREES_FONT_SIZE = 2  # Degrees text font size
-SIGN_SCALE_BASE = 0.078  # Zodiac sign: 32 * 0.078 ≈ 2.50 visual units
-MINUTES_FONT_SIZE = 1.85  # Minutes text font size
-RX_FONT_SIZE = 1.6  # Retrograde indicator font size
+PLANET_SCALE_BASE = 0.18144  # Planet glyph: 24 * 0.18144 ≈ 4.35 visual units
+DEGREES_FONT_SIZE = 2.24  # Degrees text font size
+SIGN_SCALE_BASE = 0.08736  # Zodiac sign: 32 * 0.08736 ≈ 2.80 visual units
+MINUTES_FONT_SIZE = 2.072  # Minutes text font size
+RX_FONT_SIZE = 1.792  # Retrograde indicator font size
 
 # =============================================================================
 # SYNASTRY MODE — Flat dual-ring layout constants
@@ -356,18 +366,21 @@ STRAIGHT_TETHER_THRESHOLD = 0.5
 # Natal cluster row positions (Y in the wheel-local frame; radius = CENTER - y).
 # The single source for the renderer, the content-aware profiles, and the row
 # radii — the dual rings have their own SYN_* equivalents below.
-# The glyph sits 0.9 further out than the rows below it. At +20% it would
-# otherwise crowd the degrees (0.88 units of air down to 0.56) while leaving
-# 2.88 unused toward the graduated ruler; moving it out spends that margin and
-# brings the reading back into balance — 1.26 above, 1.86 below. Radius rises
-# with it, so the clusters spread rather than tighten: the same glyph covers
-# fewer degrees of arc further out.
+# The glyph row sits nearest the graduated ruler, and two things share that
+# margin with it: the reading below and the indicator's tab, the little tick the
+# displaced-planet tether drops inward from the ruler. At the +20% glyph size
+# it left 0.41 to the tab — under a quarter of any other gap in the cluster, so
+# the two touched on screen — while opening 2.43 down to the degrees, the widest
+# gap of the four when the rows below run 2.03 and 1.99. Moving the row 0.90
+# inward spends the wrong margin on the right one: 1.31 to the tab, 1.53 to the
+# degrees. That leaves the glyph the tightest row of the cluster, which is
+# deliberate and Giacomo's call — it is also the largest mark, and a big shape
+# carries a closer neighbour than a line of digits does.
 #
-# Measured on the drawing, the glyph now leaves 1.93 toward the degrees and 1.68
-# toward the graduated ruler. Dead level would be 10.24 — this is deliberately
-# a shade past it, on Giacomo's eye: the ruler is a row of thin ticks and takes
-# a closer neighbour better than a line of digits does.
-NATAL_PLANET_GLYPH_Y = 10.1
+# Radius falls with the move, so the glyph covers slightly more degrees of arc
+# than it did further out. It does not bind: at the shipped separations the
+# tight pair is always text against text, and the glyph row still has room.
+NATAL_PLANET_GLYPH_Y = 9.57
 # Degrees and sign are nudged off their round numbers to even out the air the
 # reader actually sees. Measured on the rendered ink of nine clusters (the
 # rasterised difference between the wheel and the same wheel without that
@@ -376,10 +389,10 @@ NATAL_PLANET_GLYPH_Y = 10.1
 # are evenly spaced, but the ink inside them is not — a sign glyph inks a thin
 # band high in its 32-unit box, a line of digits fills most of its own. Moving
 # the degrees 0.14 out and the sign 0.23 in brings all three to 1.72.
-NATAL_DEGREES_Y = 14.36
-NATAL_SIGN_Y = 18.23
-NATAL_MINUTES_Y = 22.0
-NATAL_RX_Y = 25.0
+NATAL_DEGREES_Y = 13.81
+NATAL_SIGN_Y = 17.89
+NATAL_MINUTES_Y = 21.89
+NATAL_RX_Y = 25.25
 
 # Minimum degrees between planet clusters in each dual ring, measured the same
 # way as PLANET_MIN_SEPARATION (and, like it, the per-pair ceiling once
@@ -813,7 +826,7 @@ def _draw_cusp_ring(
             )
 
             # Sign glyph
-            final_scale = glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
+            final_scale = round(glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0), 4)
             parts.append(
                 f'    <g transform="translate({CENTER} {label_y}) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
@@ -842,7 +855,7 @@ def _draw_cusp_ring(
             )
 
             # Sign glyph
-            final_scale = glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
+            final_scale = round(glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0), 4)
             parts.append(
                 f'    <g transform="translate({CENTER} {label_y}) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
@@ -875,7 +888,7 @@ def _draw_cusp_ring(
                 sign_angle = _zodiac_to_wheel_angle(mid_sign_abs, seventh_house_degree_ut)
                 sign_abbrev = _ZODIAC_SIGN_IDS[sign_num]
                 upright_angle = 90 + sign_angle
-                final_scale = glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
+                final_scale = round(glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0), 4)
 
                 parts.append(
                     f'<g transform="rotate(-{sign_angle:.6f} {CENTER} {CENTER}) '
@@ -1701,6 +1714,28 @@ def _draw_planet_ring(
     return out
 
 
+def _text_ink_offset(text: str, font_size: float) -> float:
+    """How far to slide *text* so its ink lands on the cluster's axis.
+
+    ``dominant-baseline="middle"`` centres the em box, and an em box is not ink:
+    digits have no descenders, so "16º" inks a whole native unit ABOVE where it
+    is anchored — 0.22 wheel units at this size — while a glyph sits on its
+    centre. A column of rows drawn as anchored therefore leans: glyphs on the
+    axis, numbers beside it, which reads as a crooked skewer rather than as a
+    mistake anyone can name.
+
+    The offset is across the row, not along it: a reading is drawn upright while
+    its column runs radially, so what pushes it off the skewer is the baseline
+    and never the advance width. (Measuring the horizontal centre first, and
+    correcting with it, moved every row along its own length and changed nothing
+    at all.)
+
+    Returns 0.0 for a string the tables have never seen, which is the honest
+    answer: better a mark on its anchor than one moved by a guess.
+    """
+    return -TEXT_INK_CENTRE_Y.get(text, 0.0) / TEXT_INK_REFERENCE_FONT_SIZE * font_size
+
+
 def _draw_single_planet_in_ring(
     point: KerykeionPointModel,
     display_angle: float,
@@ -1821,7 +1856,7 @@ def _draw_single_planet_in_ring(
         f'  <text text-anchor="middle" dominant-baseline="middle" '
         f'x="{CENTER}" y="{degrees_y}" font-size="{degrees_font_size}" fill="{fill_color}" '
         f'font-weight="500" '
-        f'transform="rotate({counter_rotation:.6f} {CENTER} {degrees_y})">{degrees_text}</text>\n'
+        f'transform="rotate({counter_rotation:.6f} {CENTER} {degrees_y}) translate(0 {_text_ink_offset(degrees_text, degrees_font_size):.4f})">{degrees_text}</text>\n'
     )
 
     # Sign glyph
@@ -1837,7 +1872,7 @@ def _draw_single_planet_in_ring(
         f'  <text text-anchor="middle" dominant-baseline="middle" '
         f'x="{CENTER}" y="{minutes_y}" font-size="{minutes_font_size}" fill="{fill_color}" '
         f'font-weight="500" '
-        f'transform="rotate({counter_rotation:.6f} {CENTER} {minutes_y})">{minutes_text}</text>\n'
+        f'transform="rotate({counter_rotation:.6f} {CENTER} {minutes_y}) translate(0 {_text_ink_offset(minutes_text, minutes_font_size):.4f})">{minutes_text}</text>\n'
     )
 
     # Marker text (innermost — near inner edge of planet ring): RX for a plain
@@ -1845,9 +1880,10 @@ def _draw_single_planet_in_ring(
     if marker is not None:
         out += (
             f'  <text text-anchor="middle" dominant-baseline="middle" '
-            f'x="{CENTER}" y="{rx_y}" font-size="{rx_font_size}" fill="{fill_color}" '
+            f'x="{CENTER}" y="{rx_y}" '
+            f'font-size="{rx_font_size}" fill="{fill_color}" '
             f'font-weight="500" '
-            f'transform="rotate({counter_rotation:.6f} {CENTER} {rx_y})">{marker}</text>\n'
+            f'transform="rotate({counter_rotation:.6f} {CENTER} {rx_y}) translate(0 {_text_ink_offset(marker, rx_font_size):.4f})">{marker}</text>\n'
         )
 
     out += "</g>\n"

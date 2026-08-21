@@ -696,17 +696,17 @@ _MEASURED_GEOMETRY = {
     "FEASIBLE_TOTAL_DEGREES": 320.0,
     "DEFAULT_CLUSTER_CLEARANCE": 0.45,
     # Natal ring rows (the single source both the renderer and row_radii read)
-    "NATAL_PLANET_GLYPH_Y": 10.1,
-    "NATAL_DEGREES_Y": 14.36,
-    "NATAL_SIGN_Y": 18.23,
-    "NATAL_MINUTES_Y": 22.0,
-    "NATAL_RX_Y": 25.0,
+    "NATAL_PLANET_GLYPH_Y": 9.57,
+    "NATAL_DEGREES_Y": 13.81,
+    "NATAL_SIGN_Y": 17.89,
+    "NATAL_MINUTES_Y": 21.89,
+    "NATAL_RX_Y": 25.25,
     # Natal ring
-    "PLANET_SCALE_BASE": 0.162,
-    "DEGREES_FONT_SIZE": 2,
-    "SIGN_SCALE_BASE": 0.078,
-    "MINUTES_FONT_SIZE": 1.85,
-    "RX_FONT_SIZE": 1.6,
+    "PLANET_SCALE_BASE": 0.18144,
+    "DEGREES_FONT_SIZE": 2.24,
+    "SIGN_SCALE_BASE": 0.08736,
+    "MINUTES_FONT_SIZE": 2.072,
+    "RX_FONT_SIZE": 1.792,
     # Dual rings
     "SYN_R_INNER_PLANET_INNER": 15.5,
     "SYN_R_INNER_PLANET_OUTER": 29.5,
@@ -962,13 +962,14 @@ def test_an_oversubscribed_wheel_gives_up_air_before_ink():
     the air, under it without — so a drift in the ink tables that moved it out
     would fail here rather than quietly make the test prove nothing.
     """
-    # 52 is the only count that satisfies all three assertions with the glyph at
-    # 0.162 — it was 64 at 0.135. The window is narrow because the residue grows
-    # with the count (0.11° at 50, 0.34° at 55, 0.52° at 59): more ink per point
-    # means the ladder has less air to spend before it starts squeezing. If a
+    # 47 is the only count that satisfies all three assertions at the current
+    # cluster size — it was 52 at the previous one, and 64 before that. The
+    # window narrows every time the ink grows, because the residue climbs with
+    # the count (0.10° at 46, 0.21° at 47, 0.26° at 48): more ink per point
+    # leaves the ladder less air to spend before it starts squeezing. If a
     # future change to the ink tables fails this, re-run the sweep rather than
     # widening _INK_COMPRESSION_RESIDUE — the threshold is the property.
-    entries = _packed_ring(52)
+    entries = _packed_ring(47)
     with_air = _total_demand(entries, draw_modern.DEFAULT_CLUSTER_CLEARANCE)
     without_air = _total_demand(entries, 0.0)
     assert with_air > draw_modern.FEASIBLE_TOTAL_DEGREES, (
@@ -1008,7 +1009,7 @@ def test_spending_the_air_is_reported(caplog):
     import logging
 
     with caplog.at_level(logging.INFO, logger=draw_modern.logger.name):
-        _resolve_planet_collisions(_packed_ring(57), row_radii=_NATAL_ROW_RADII)
+        _resolve_planet_collisions(_packed_ring(52), row_radii=_NATAL_ROW_RADII)
     assert any("air between clusters was reduced" in record.message for record in caplog.records), (
         f"the reduction was not reported; captured: {[r.message for r in caplog.records]}"
     )

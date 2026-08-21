@@ -771,8 +771,8 @@ class TestTheCuspRingShrinksOnlyWhenItMustFit:
         from kerykeion.utilities.core import get_houses_list
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Campanus", 1940, 10, 9, 18, 30, "Liverpool", "GB",
-            lat=53.4084, lng=-2.9916, tz_str="Europe/London",
+            "Campanus", 1940, 10, 9, 18, 30, "Edinburgh", "GB",
+            lat=57.0, lng=-2.9916, tz_str="Europe/London",
             online=False, suppress_geonames_warning=True, houses_system_identifier="C",
         )
         angles = [
