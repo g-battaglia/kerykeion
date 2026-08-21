@@ -1445,6 +1445,58 @@ def draw_aspect_grid(
     return "".join(parts)
 
 
+#: Cap height of a digit as a fraction of the font size. Figures in the fonts
+#: these charts pin have no descender, so this is their whole inked height.
+_DIGIT_CAP_HEIGHT_RATIO: float = 0.716
+
+#: Font size the house numbers are drawn at, and the air wanted between two of
+#: them. The gutter is halved into each label's own half-extent, so a pair gets
+#: the whole of it and a label at the seam is not charged for a neighbour twice.
+#:
+#: Nothing, not three: when four cusps share three degrees the numbers have
+#: nowhere honest to go, and Giacomo's call is that they should sit against each
+#: other rather than march away from the houses they name. Zero here means the
+#: inked figures just touch — the reach is a cap height, and figures carry no
+#: descender, so touching is the tightest a stack can be drawn and still be
+#: read. What a reader cannot do is work out which of four lines "11" belongs
+#: to once it has been pushed a house away.
+_HOUSE_NUMBER_FONT_SIZE: float = 14.0
+_HOUSE_NUMBER_GUTTER: float = 0.0
+
+
+def _house_number_half_extents(wanted_angles: "Sequence[float]", radius_px: float) -> list[float]:
+    """How far each house number reaches along the wheel, in degrees.
+
+    A number is drawn upright while the arc it sits on turns, so what one of
+    them has to clear depends on where it is: at the top of the wheel two
+    numbers stand side by side and their widths meet, on the flank they stack
+    and only their heights do. Projecting the label box onto the tangent gives
+    both ends of that and everything between — and the flanks are exactly where
+    a quadrant system at high latitude piles four cusps into three degrees, so
+    charging those pairs a full "12" of width walked the crowd out of its own
+    houses.
+
+    Measured at the angle each number *wants*, not the one it ends up at: the
+    spread has to know the requirement before it can satisfy it. A label that
+    moves far enough to change which way it stacks is one already inside a crowd
+    being spread, where the estimate is a shade generous rather than short.
+    """
+    arc_per_degree = 2.0 * math.pi * radius_px / 360.0
+    if arc_per_degree <= 0:
+        return [0.0] * len(wanted_angles)
+
+    half_height = _HOUSE_NUMBER_FONT_SIZE * _DIGIT_CAP_HEIGHT_RATIO / 2.0
+    out = []
+    for index, angle in enumerate(wanted_angles):
+        half_width = estimate_text_width(str(index + 1), _HOUSE_NUMBER_FONT_SIZE) / 2.0
+        radians = math.radians(angle)
+        # The tangent at this angle is (-sin, -cos) in the drawing's frame, so
+        # the width counts by |sin| and the height by |cos|.
+        reach = half_width * abs(math.sin(radians)) + half_height * abs(math.cos(radians))
+        out.append((reach + _HOUSE_NUMBER_GUTTER / 2.0) / arc_per_degree)
+    return out
+
+
 def draw_houses_cusps_and_text_number(
     r: Union[int, float],
     first_subject_houses_list: list[KerykeionPointModel],
@@ -1517,7 +1569,8 @@ def draw_houses_cusps_and_text_number(
         _wanted.append(_base + _span / 2.0)
     _placed = spread_around_wheel(
         _wanted,
-        label_separation_degrees(estimate_text_width("12", 14), max(_label_radius, 1.0)),
+        0.0,
+        half_extents=_house_number_half_extents(_wanted, max(_label_radius, 1.0)),
     )
 
     # The outer wheel of a dual chart draws its own set, on a wider ring.
@@ -1534,7 +1587,8 @@ def draw_houses_cusps_and_text_number(
             _second_wanted.append(_base + _span / 2.0)
         _placed_second = spread_around_wheel(
             _second_wanted,
-            label_separation_degrees(estimate_text_width("12", 14), max(r - 8, 1.0)),
+            0.0,
+            half_extents=_house_number_half_extents(_second_wanted, max(r - 8, 1.0)),
         )
 
     for i in range(xr):
@@ -2629,6 +2683,51 @@ def calculate_synastry_element_points(
 # =============================================================================
 
 
+#: The comparison tables put a glyph, a name and one or two house numbers on a
+#: row, and printed their headers at fixed offsets that only ever fitted the
+#: English words: "Progressed Point" inks 79 units at the bold 10px these
+#: headers use, and the next column started at 77, so the two ran together.
+#: Sizing the columns from what is actually printed fixes every language at
+#: once, and keeps the header over the values it names rather than 13 units to
+#: their left, which is where the old constants had it.
+_HOUSE_COMPARISON_NAME_X: float = 15.0
+_HOUSE_COMPARISON_GUTTER: float = 8.0
+
+#: Bold text inks wider than the same string at the same size in book weight.
+#: The estimator measures book weight, so the headers get this on top.
+_BOLD_WIDTH_FACTOR: float = 1.06
+
+
+def _house_comparison_columns(
+    headers: "Sequence[str]",
+    names: "Sequence[str]",
+    minimum_x: "Sequence[float]",
+    font_size: float = 10.0,
+) -> list[float]:
+    """Where each column after the name starts, header and values alike.
+
+    *minimum_x* is what the layout used before, kept as a floor so a table of
+    short English words is drawn exactly where it always was and only the ones
+    that outgrew their offsets move.
+    """
+    widest_name = max((estimate_text_width(n, font_size) for n in names), default=0.0)
+    columns: list[float] = []
+    left = max(
+        _HOUSE_COMPARISON_NAME_X + widest_name,
+        estimate_text_width(headers[0], font_size) * _BOLD_WIDTH_FACTOR,
+    )
+    for index, floor in enumerate(minimum_x):
+        x = max(floor, left + _HOUSE_COMPARISON_GUTTER)
+        columns.append(x)
+        # A house number is at most two figures; the header above it is what
+        # sets the stride to the next column.
+        left = x + max(
+            estimate_text_width(headers[index + 1], font_size) * _BOLD_WIDTH_FACTOR,
+            estimate_text_width("12", font_size),
+        )
+    return columns
+
+
 def draw_house_comparison_grid(
     house_comparison: "HouseComparisonModel",
     celestial_point_language: KerykeionLanguageCelestialPointModel,
@@ -2666,17 +2765,6 @@ def draw_house_comparison_grid(
     # Add title
     svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{escape_svg_text(house_position_comparison_label)}</text>'
 
-    # Add column headers
-    line_increment = 10
-    svg_output += (
-        f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
-        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_label)}</text>'
-        f'<text text-anchor="start" x="132" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(radix_label)}</text>'
-        f"</g>"
-    )
-    line_increment += 15
-
     # Create a dictionary to store all points by name for combined display
     all_points_by_name = {}
 
@@ -2689,6 +2777,26 @@ def draw_house_comparison_grid(
                 "native_house": point.point_owner_house_number,
             }
 
+    # Columns sized from what this table actually prints — headers included.
+    _decoded_names = [
+        get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)
+        for name in all_points_by_name
+    ]
+    _native_x, _secondary_x = _house_comparison_columns(
+        [return_point_label, return_label, radix_label], _decoded_names, (90.0, 140.0)
+    )
+
+    # Add column headers
+    line_increment = 10
+    svg_output += (
+        f'<g transform="translate(0,{line_increment})">'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
+        f'<text text-anchor="start" x="{_native_x:.1f}" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_label)}</text>'
+        f'<text text-anchor="start" x="{_secondary_x:.1f}" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(radix_label)}</text>'
+        f"</g>"
+    )
+    line_increment += 15
+
     # Display all points organized by name
     for name, point_data in all_points_by_name.items():
         native_house = point_data.get("native_house", "-")
@@ -2699,8 +2807,8 @@ def draw_house_comparison_grid(
             f'<g transform="translate(0,{line_increment})">'
             f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{point_glyph}" /></g>'
             f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(get_decoded_kerykeion_celestial_point_name(name, celestial_point_language))}</text>'
-            f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
-            f'<text text-anchor="start" x="140" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
+            f'<text text-anchor="start" x="{_native_x:.1f}" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
+            f'<text text-anchor="start" x="{_secondary_x:.1f}" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
             f"</g>"
         )
         line_increment += 12
@@ -2752,16 +2860,6 @@ def draw_single_house_comparison_grid(
     # Add title
     svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{escape_svg_text(house_position_comparison_label)}</text>'
 
-    # Add column headers
-    line_increment = 10
-    svg_output += (
-        f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
-        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(natal_house_label)}</text>'
-        f"</g>"
-    )
-    line_increment += 15
-
     # Create a dictionary to store all points by name for combined display
     all_points_by_name = {}
 
@@ -2769,6 +2867,25 @@ def draw_single_house_comparison_grid(
         # Only process points that are active
         if point.point_name in active_points and point.point_name not in all_points_by_name:
             all_points_by_name[point.point_name] = {"name": point.point_name, "house": point.projected_house_number}
+
+    # Columns sized from what this table actually prints — headers included.
+    _decoded_names = [
+        get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)
+        for name in all_points_by_name
+    ]
+    (_house_x,) = _house_comparison_columns(
+        [return_point_label, natal_house_label], _decoded_names, (90.0,)
+    )
+
+    # Add column headers
+    line_increment = 10
+    svg_output += (
+        f'<g transform="translate(0,{line_increment})">'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
+        f'<text text-anchor="start" x="{_house_x:.1f}" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(natal_house_label)}</text>'
+        f"</g>"
+    )
+    line_increment += 15
 
     # Display all points organized by name
     for name, point_data in all_points_by_name.items():
@@ -2779,7 +2896,7 @@ def draw_single_house_comparison_grid(
             f'<g transform="translate(0,{line_increment})">'
             f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{point_glyph}" /></g>'
             f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(get_decoded_kerykeion_celestial_point_name(name, celestial_point_language))}</text>'
-            f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{house}</text>'
+            f'<text text-anchor="start" x="{_house_x:.1f}" style="fill:{text_color}; font-size: 10px;">{house}</text>'
             f"</g>"
         )
         line_increment += 12

@@ -138,7 +138,7 @@ CUSP_DIM_MARGIN = 0.45
 # The binding row is the minutes text at y=22.0 — the smallest radius carrying
 # a two-character string, so the least arc per degree. The glyphs, out at
 # y=11.0, clear each other well before it does.
-PLANET_MIN_SEPARATION = 7.25
+PLANET_MIN_SEPARATION = 7.75
 
 # Cusp ring text size (degrees and minutes shown at each house cusp)
 CUSP_FONT_SIZE = 1.9
@@ -314,18 +314,28 @@ SYN_INDICATOR_ARC_R_INWARD = 28.8  # Arc for inner-ring ticks (just inside bound
 
 # Planet cluster Y-positioning within each 14-unit ring
 # Outer ring (Subject 2) - glyphs near outer edge, all elements within 6.5-20.5
-SYN_OUTER_PLANET_GLYPH_Y = 9.0
-SYN_OUTER_DEGREES_Y = 12.0
-SYN_OUTER_SIGN_Y = 14.5
-SYN_OUTER_MINUTES_Y = 16.5
-SYN_OUTER_RX_Y = 18.5
+# Placed from the ink, not spaced by hand: each row's half-height at the size it
+# is drawn, laid out so the air between every pair comes out the same 1.27 and
+# the block sits centred in its ring with 0.55 to spare at either end. Spacing
+# the anchors evenly instead — which is what the round numbers here used to be —
+# left 1.09 between the glyph and the degrees and 0.60 between the sign and the
+# minutes, because a sign glyph inks a thin band in a tall box while a line of
+# digits fills its own.
+SYN_OUTER_PLANET_GLYPH_Y = 8.38
+SYN_OUTER_DEGREES_Y = 11.82
+SYN_OUTER_SIGN_Y = 14.76
+SYN_OUTER_MINUTES_Y = 17.37
+SYN_OUTER_RX_Y = 19.54
 
 # Inner ring (Subject 1) - glyphs near outer edge, all elements within 20.5-34.5
-SYN_INNER_PLANET_GLYPH_Y = 22.5
-SYN_INNER_DEGREES_Y = 25.0
-SYN_INNER_SIGN_Y = 27.5
-SYN_INNER_MINUTES_Y = 29.5
-SYN_INNER_RX_Y = 31.5
+# The same block, moved inward by the 14 units between the two rings: same sizes
+# mean the same spacing, and a reader comparing the two wheels compares like
+# with like.
+SYN_INNER_PLANET_GLYPH_Y = 22.38
+SYN_INNER_DEGREES_Y = 25.82
+SYN_INNER_SIGN_Y = 28.76
+SYN_INNER_MINUTES_Y = 31.37
+SYN_INNER_RX_Y = 33.54
 
 # Ink-to-ink air left between neighbouring clusters when the separation is
 # derived from their actual content, in wheel units. 0.45 units is ~2.2px in a
@@ -420,17 +430,34 @@ NATAL_RX_Y = 25.25
 #
 # The binding row is the degrees text in both rings — unlike the natal ring,
 # whose minutes row sits at a tighter radius than its degrees row.
+#
+# Re-measured after the dual rings took the natal treatment: bigger glyph,
+# bigger degrees, one size for both wheels. Ink now touches at 5.25° outside and
+# 8.25° inside, against 5.00° and 6.25° before, so the inner ceiling had to rise
+# from 7.5 — which the enlargement had left below the point where its own
+# degrees text overlaps. The outer one already stood where it needed to.
 SYN_OUTER_MIN_SEPARATION = 5.75
-SYN_INNER_MIN_SEPARATION = 7.5
+SYN_INNER_MIN_SEPARATION = 9.0
 
-# Dual chart element sizes — slightly smaller than natal to fit in narrower rings
-SYN_PLANET_SCALE = 0.115  # Planet glyph (outer ring)
-SYN_PLANET_SCALE_INNER = 0.095  # Planet glyph (inner ring — slightly smaller)
-SYN_DEGREES_FONT_SIZE_INNER = 1.6  # Degrees text (inner ring — slightly smaller)
-SYN_DEGREES_FONT_SIZE = 1.9  # Degrees text
+# Dual chart element sizes — smaller than natal to fit in narrower rings, but
+# not by as much as they used to be. The glyph and the degrees are what a reader
+# goes to first, and at 0.115 / 1.9 they were the two hardest things on the
+# drawing to make out; the minutes and the retrograde mark are what a reader
+# consults after, so they give the room back.
+#
+# One size for both rings. The inner ring used to draw everything smaller again
+# — 0.095 and 1.6 — on the reasoning that its radius is shorter, and the effect
+# was that the same planet looked like two different weights of information
+# depending on whose wheel it was in. Room was never the constraint: with the
+# rows placed by their ink both rings clear 1.27 units between every pair, and
+# the inner ring has the deeper margin of the two.
+SYN_PLANET_SCALE = 0.132  # Planet glyph, both rings
+SYN_PLANET_SCALE_INNER = SYN_PLANET_SCALE
+SYN_DEGREES_FONT_SIZE = 2.12  # Degrees text, both rings
+SYN_DEGREES_FONT_SIZE_INNER = SYN_DEGREES_FONT_SIZE
 SYN_SIGN_SCALE = 0.062  # Zodiac sign
-SYN_MINUTES_FONT_SIZE = 1.4  # Minutes text
-SYN_RX_FONT_SIZE = 1.2  # Retrograde indicator
+SYN_MINUTES_FONT_SIZE = 1.22  # Minutes text
+SYN_RX_FONT_SIZE = 1.02  # Retrograde indicator
 
 # Colors — use CSS custom properties to inherit from the active theme.
 # Each theme CSS file can define --kerykeion-modern-* overrides.

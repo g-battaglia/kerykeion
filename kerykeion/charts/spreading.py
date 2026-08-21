@@ -54,13 +54,30 @@ def isotonic_non_decreasing(values: Sequence[float]) -> list[float]:
     return out
 
 
-def spread_around_wheel(angles: Sequence[float], min_separation: float) -> list[float]:
+def spread_around_wheel(
+    angles: Sequence[float],
+    min_separation: float,
+    half_extents: Sequence[float] | None = None,
+) -> list[float]:
     """Angles moved as little as possible so consecutive ones sit apart.
 
     *angles* are degrees on the wheel in drawing order; the return is the same
     length and the same order, each entry normalised to ``[0, 360)``. An input
     already comfortable is returned unchanged, so a chart with evenly spaced
     houses keeps exactly the placement it had.
+
+    *min_separation* is the room every pair needs, in degrees. Pass
+    *half_extents* instead — one figure per label, how far its ink reaches to
+    either side along the wheel, in degrees — when the labels are not all the
+    same size or do not all face the same way. Then each pair is asked for the
+    sum of its own two halves, and *min_separation* becomes a floor under that.
+
+    Why that matters for a wheel: a label is drawn upright while the arc it sits
+    on turns. Two labels at the top of the wheel stand side by side and have to
+    clear each other's *width*; the same two on the flank stack one above the
+    other and only have to clear their *height*. Sizing every pair by the width
+    is safe and, on the flanks, a third too generous — enough to walk a crowd of
+    house numbers out of the houses they belong to.
 
     The circle is cut at the widest existing gap before the row is straightened
     out. Cutting anywhere else can split a crowd across the seam, and the
@@ -71,7 +88,7 @@ def spread_around_wheel(angles: Sequence[float], min_separation: float) -> list[
     which spreads the crowding evenly instead of piling it all at the seam.
     """
     count = len(angles)
-    if count < 2 or min_separation <= 0:
+    if count < 2 or (min_separation <= 0 and not half_extents):
         return [angle % 360.0 for angle in angles]
 
     order = sorted(range(count), key=lambda i: angles[i] % 360.0)
@@ -88,18 +105,31 @@ def spread_around_wheel(angles: Sequence[float], min_separation: float) -> list[
     start = rolled[0]
     unrolled = [(angle - start) % 360.0 for angle in rolled]
 
-    separation = min_separation
-    needed = separation * (count - 1)
+    # What each consecutive pair needs, in the unrolled order.
+    if half_extents is None:
+        gaps_needed = [min_separation] * (count - 1)
+    else:
+        rolled_index = [order[(cut + 1 + i) % count] for i in range(count)]
+        gaps_needed = [
+            max(min_separation, half_extents[rolled_index[i]] + half_extents[rolled_index[i + 1]])
+            for i in range(count - 1)
+        ]
+
+    needed = sum(gaps_needed)
     available = unrolled[-1] - unrolled[0]
     if needed > available and needed > 0:
         # More labels than the arc can hold at full separation: share the
         # shortfall rather than letting the last few pile up.
-        separation = available / (count - 1) if count > 1 else 0.0
+        shrink = available / needed
+        gaps_needed = [gap * shrink for gap in gaps_needed]
 
-    # Subtracting a ramp turns "at least `separation` apart" into "non
-    # decreasing", which is what the isotonic fit solves; adding it back
-    # restores the spacing.
-    ramp = [i * separation for i in range(count)]
+    # Subtracting a ramp turns "at least this much apart" into "non decreasing",
+    # which is what the isotonic fit solves; adding it back restores the
+    # spacing. The ramp is cumulative, so it carries a different requirement per
+    # pair just as happily as one shared by all.
+    ramp = [0.0]
+    for gap in gaps_needed:
+        ramp.append(ramp[-1] + gap)
     fitted = isotonic_non_decreasing([value - offset for value, offset in zip(unrolled, ramp)])
     placed = [value + offset for value, offset in zip(fitted, ramp)]
 
